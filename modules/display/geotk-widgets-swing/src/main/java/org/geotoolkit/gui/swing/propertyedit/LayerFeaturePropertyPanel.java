@@ -271,6 +271,7 @@ public class LayerFeaturePropertyPanel extends javax.swing.JPanel implements Pro
         guiCommit = new JButton();
         guiRollback = new JButton();
         jbu_action = new JButton();
+        guiShowId = new JCheckBox();
 
         jScrollPane1.setViewportView(tab_data);
 
@@ -306,6 +307,13 @@ public class LayerFeaturePropertyPanel extends javax.swing.JPanel implements Pro
         });
 
         jbu_action.setText(MessageBundle.getString("property_action")); // NOI18N
+        guiShowId.setText(MessageBundle.getString("show_id")); // NOI18N
+        guiShowId.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                guiShowIdActionPerformed(evt);
+            }
+        });
+
         GroupLayout jPanel1Layout = new GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -313,7 +321,9 @@ public class LayerFeaturePropertyPanel extends javax.swing.JPanel implements Pro
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addComponent(jcb_edit)
                 .addPreferredGap(ComponentPlacement.RELATED)
-                .addComponent(guiCount, GroupLayout.DEFAULT_SIZE, 677, Short.MAX_VALUE)
+                .addComponent(guiShowId)
+                .addPreferredGap(ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(guiCount, GroupLayout.PREFERRED_SIZE, 562, GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(ComponentPlacement.RELATED)
                 .addComponent(guiCommit)
                 .addPreferredGap(ComponentPlacement.RELATED)
@@ -328,7 +338,8 @@ public class LayerFeaturePropertyPanel extends javax.swing.JPanel implements Pro
                 .addComponent(guiCount)
                 .addComponent(jcb_edit)
                 .addComponent(guiRollback)
-                .addComponent(guiCommit))
+                .addComponent(guiCommit)
+                .addComponent(guiShowId))
         );
 
         add(jPanel1, BorderLayout.SOUTH);
@@ -380,10 +391,15 @@ public class LayerFeaturePropertyPanel extends javax.swing.JPanel implements Pro
         }
     }//GEN-LAST:event_guiRollbackActionPerformed
 
+    private void guiShowIdActionPerformed(ActionEvent evt) {//GEN-FIRST:event_guiShowIdActionPerformed
+        setTarget(layer);
+    }//GEN-LAST:event_guiShowIdActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private JButton guiCommit;
     private JLabel guiCount;
     private JButton guiRollback;
+    private JCheckBox guiShowId;
     private JPanel jPanel1;
     private JScrollPane jScrollPane1;
     private JButton jbu_action;
@@ -409,7 +425,7 @@ public class LayerFeaturePropertyPanel extends javax.swing.JPanel implements Pro
             
             jcb_edit.setEnabled(editable);
 
-            FeatureCollectionModel m = new FeatureCollectionModel(tab_data, layer);
+            FeatureCollectionModel m = new FeatureCollectionModel(tab_data, layer, guiShowId.isSelected());
             tab_data.setModel(m);
             tab_data.packAll();
             tab_data.getModel().addTableModelListener(tableListener);

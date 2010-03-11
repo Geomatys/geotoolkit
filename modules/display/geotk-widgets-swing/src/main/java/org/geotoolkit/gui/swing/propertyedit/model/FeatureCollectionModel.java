@@ -20,21 +20,29 @@ package org.geotoolkit.gui.swing.propertyedit.model;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.table.DefaultTableModel;
+import org.geotoolkit.feature.SchemaException;
 
 import org.jdesktop.swingx.JXTable;
 
 import org.geotoolkit.data.DataStoreException;
+import org.geotoolkit.data.DataStoreRuntimeException;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.factory.FactoryFinder;
+import org.geotoolkit.factory.Hints;
+import org.geotoolkit.factory.HintsPending;
+import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapLayer;
 
 import org.opengis.feature.Feature;
 import org.opengis.feature.simple.SimpleFeature;
+import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.GeometryDescriptor;
@@ -53,6 +61,8 @@ public class FeatureCollectionModel extends DefaultTableModel {
 
     private final ArrayList<PropertyDescriptor> columns = new ArrayList<PropertyDescriptor>();
     private final ArrayList<Feature> features = new ArrayList<Feature>();
+    private final boolean selectIds;
+    private FeatureCollection featureCollection = null;
     private MapLayer layer;
     private JXTable tab;
     private Query query = null;
@@ -61,10 +71,11 @@ public class FeatureCollectionModel extends DefaultTableModel {
      * @param tab
      * @param layer 
      */
-    public FeatureCollectionModel(JXTable tab, FeatureMapLayer layer) {
+    public FeatureCollectionModel(JXTable tab, FeatureMapLayer layer, boolean selectIds) {
         super();
         this.tab = tab;
         this.layer = layer;
+        this.selectIds = selectIds;
 
         setQuery(layer.getQuery());
     }
@@ -75,15 +86,20 @@ public class FeatureCollectionModel extends DefaultTableModel {
         columns.clear();
         features.clear();
 
-        final FeatureType ft = ((FeatureMapLayer)layer).getCollection().getFeatureType();
+        try {
+            featureCollection = ((FeatureMapLayer) layer).getCollection().subCollection(query);
+        } catch (DataStoreException ex) {
+            throw new DataStoreRuntimeException(ex);
+        }
+        final FeatureType ft = featureCollection.getFeatureType();
 
-        for(Name name : query.getPropertyNames()){
-            columns.add(ft.getDescriptor(name));
+        for(PropertyDescriptor desc : ft.getDescriptors()){
+            columns.add(desc);
         }
 
         FeatureIterator<SimpleFeature> fi = null;
         try {
-            fi = (FeatureIterator<SimpleFeature>)  ((FeatureMapLayer)layer).getCollection().subCollection(query).iterator();
+            fi = (FeatureIterator<SimpleFeature>)  featureCollection.iterator();
             while (fi.hasNext()) {
                 features.add(fi.next());
             }
@@ -123,6 +139,9 @@ public class FeatureCollectionModel extends DefaultTableModel {
 
         final QueryBuilder builder = new QueryBuilder(query);
         builder.setProperties(props.toArray(new Name[props.size()]));
+        if(!selectIds){
+            builder.setHints(new Hints(HintsPending.FEATURE_HIDE_ID_PROPERTY, Boolean.TRUE));
+        }
         query = builder.buildQuery();
         return query;
     }
@@ -172,24 +191,18 @@ public class FeatureCollectionModel extends DefaultTableModel {
     public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
         if(columnIndex == 0) return;
 
-        FeatureCollection collection = ((FeatureMapLayer)layer).getCollection();
-
-        if (collection.isWritable()) {
-
-            FilterFactory ff = FactoryFinder.getFilterFactory(null);
-            Filter filter = ff.id(Collections.singleton(features.get(rowIndex).getIdentifier()));
-            FeatureType schema = collection.getFeatureType();
-
-            AttributeDescriptor NAME = (AttributeDescriptor) columns.get(columnIndex-1);
+        if (featureCollection.isWritable()) {
+            final FilterFactory ff = FactoryFinder.getFilterFactory(null);
+            final Filter filter = ff.id(Collections.singleton(features.get(rowIndex).getIdentifier()));
+            final AttributeDescriptor NAME = (AttributeDescriptor) columns.get(columnIndex-1);
 
             try {
-                collection.update(filter, NAME, aValue);
+                featureCollection.update(filter, NAME, aValue);
             } catch (DataStoreException ex) {
                 ex.printStackTrace();
             }
 
             setQuery(query);
-
             fireTableCellUpdated(rowIndex, columnIndex);
         }
     }

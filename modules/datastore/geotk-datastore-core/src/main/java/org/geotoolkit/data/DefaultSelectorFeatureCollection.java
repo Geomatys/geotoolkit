@@ -31,6 +31,7 @@ import org.geotoolkit.data.query.QueryUtilities;
 import org.geotoolkit.data.query.Selector;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
+import org.geotoolkit.factory.HintsPending;
 import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.feature.SchemaException;
 import org.geotoolkit.util.collection.CloseableIterator;
@@ -89,7 +90,14 @@ public class DefaultSelectorFeatureCollection extends AbstractFeatureCollection<
     public FeatureType getFeatureType() throws DataStoreRuntimeException{
         try {
             FeatureType ft = getSession().getDataStore().getFeatureType(query.getTypeName());
-            return FeatureTypeUtilities.createSubType((SimpleFeatureType) ft, query.getPropertyNames(), query.getCoordinateSystemReproject());
+            ft = FeatureTypeUtilities.createSubType((SimpleFeatureType) ft, query.getPropertyNames(), query.getCoordinateSystemReproject());
+
+            final Boolean hide = (Boolean) query.getHints().get(HintsPending.FEATURE_HIDE_ID_PROPERTY);
+            if(hide != null && hide){
+                ft = FeatureTypeUtilities.excludePrimaryKeyFields((SimpleFeatureType) ft);
+            }
+
+            return ft;
         } catch (DataStoreException ex) {
             throw new DataStoreRuntimeException(ex);
         } catch (SchemaException ex) {

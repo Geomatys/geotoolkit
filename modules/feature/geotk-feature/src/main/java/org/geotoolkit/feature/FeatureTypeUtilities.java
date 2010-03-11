@@ -195,7 +195,7 @@ public class FeatureTypeUtilities {
     public static SimpleFeatureType excludePrimaryKeyFields(SimpleFeatureType sft) throws SchemaException{
         final List<Name> pkeys = new ArrayList<Name>();
         for(AttributeDescriptor desc : sft.getAttributeDescriptors()){
-            if(isPartOfPrimaryKey(desc)) pkeys.add(desc.getName());
+            if(!isPartOfPrimaryKey(desc)) pkeys.add(desc.getName());
         }
 
         if(pkeys.isEmpty()){
