@@ -25,7 +25,7 @@ import javax.sql.DataSource;
 import org.opengis.referencing.FactoryException;
 
 import org.geotoolkit.test.Depend;
-import org.geotoolkit.internal.sql.Dialect;
+import org.geotoolkit.internal.sql.DefaultDataSource;
 
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -115,21 +115,17 @@ public final class AutomaticInstallationTest {
     private static void testInstall(final String driver) throws FactoryException {
         final ThreadedEpsgFactory factory = new ThreadedEpsgFactory();
         final DataSource datasource = factory.getDataSource();
-        assertTrue(datasource instanceof EmbeddedDataSource);
-        final String url = ((EmbeddedDataSource) datasource).url;
-        final Dialect dialect = Dialect.forURL(url);
-        if (dialect != null) switch (dialect) {
-            case HSQL:
-            case DERBY: {
-                /*
-                 * Just make sure that the factory is the expected one and works. However we
-                 * can do that only if there is no Geotoolkit.org/EPSG/DataSource.properties
-                 * file redirecting the connection to an other database, for example a local
-                 * PostgreSQL database.
-                 */
-                assertTrue(url, url.startsWith("jdbc:" + driver + ':'));
-                assertNotNull(factory.createProjectedCRS("3395"));
-            }
+        assertTrue(datasource instanceof DefaultDataSource);
+        final String url = ((DefaultDataSource) datasource).url;
+        if (datasource instanceof EmbeddedDataSource) {
+            /*
+             * Just make sure that the factory is the expected one and works. However we
+             * can do that only if there is no Geotoolkit.org/EPSG/DataSource.properties
+             * file redirecting the connection to an other database, for example a local
+             * PostgreSQL database.
+             */
+            assertTrue(url, url.startsWith("jdbc:" + driver + ':'));
+            assertNotNull(factory.createProjectedCRS("3395"));
         }
         factory.dispose(false);
     }
