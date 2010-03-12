@@ -34,6 +34,7 @@ public class JOSMImportPane extends JPanel{
 
     private final JOSMDBCreationPane guiCreatePane = new JOSMDBCreationPane();
     private final JOSMDBConfigPane guiConfigPane = new JOSMDBConfigPane();
+    private final JOSMAnalyzePane guiAnalyzePane = new JOSMAnalyzePane();
     private final JOSMExtractTypePane guiExtractPane = new JOSMExtractTypePane();
 
     public JOSMImportPane(){
@@ -42,13 +43,15 @@ public class JOSMImportPane extends JPanel{
 
         tabs.addTab("Configuration", guiConfigPane);
         tabs.addTab("Import", guiCreatePane);
-        tabs.addTab("Compose", guiExtractPane);
+        tabs.addTab("Analyze", guiAnalyzePane);
+        tabs.addTab("Restructure", guiExtractPane);
 
         tabs.addChangeListener(new ChangeListener() {
             @Override
             public void stateChanged(ChangeEvent ce) {
                 guiCreatePane.setDBParameters(guiConfigPane.getDBConnectionParameters());
                 guiCreatePane.setOsmFile(guiConfigPane.getOSMFile());
+                guiAnalyzePane.setDBParameters(guiConfigPane.getDBConnectionParameters());
                 guiExtractPane.setDBParameters(guiConfigPane.getDBConnectionParameters());
             }
         });
