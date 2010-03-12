@@ -240,7 +240,7 @@ public class CachedStrokeSimple extends CachedStroke{
 
         // we cache each possible expression ------------------------------
         this.cachedDashes = candidateDashes;
-        if(!Float.isNaN(candidateOffset)) cachedDashOffset = candidateOffset;
+        if(!Float.isNaN(candidateOffset)) cachedDashOffset = (candidateOffset>0) ? candidateOffset : 0;
         if(candidateCap != -1) cachedCap = candidateCap;
         if(candidateJoin != -1) cachedJoin = candidateJoin;
         if(!Float.isNaN(candidateWidth)) cachedWidth = candidateWidth;
@@ -393,7 +393,7 @@ public class CachedStrokeSimple extends CachedStroke{
                 for(int i=0 ;i<s.length; i++){
                     s[i] = s[i]*coeff;
                 }
-                j2dStroke = new BasicStroke(candidateWidth*coeff, candidateCap, candidateJoin, 0f, s, candidateOffset);
+                j2dStroke = new BasicStroke(candidateWidth*coeff, candidateCap, candidateJoin, 1f, s, candidateOffset);
             }else{
                 j2dStroke = new BasicStroke(candidateWidth*coeff, candidateCap, candidateJoin, 10f);
             }

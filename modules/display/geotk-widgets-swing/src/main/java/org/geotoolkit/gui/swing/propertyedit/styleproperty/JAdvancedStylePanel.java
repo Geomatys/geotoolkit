@@ -197,13 +197,15 @@ public class JAdvancedStylePanel extends StyleElementEditor<MutableStyle> implem
             final Object obj = editor.create();
             if(obj instanceof Symbolizer){
                 final TreePath oldPath = tree.getSelectionModel().getSelectionPath();
-                final Symbolizer symbol = (Symbolizer) ((DefaultMutableTreeNode)oldPath.getLastPathComponent()).getUserObject();
-                final MutableRule rule = (MutableRule) ((DefaultMutableTreeNode)oldPath.getParentPath().getLastPathComponent()).getUserObject();
+                if(oldPath != null){
+                    final Symbolizer symbol = (Symbolizer) ((DefaultMutableTreeNode)oldPath.getLastPathComponent()).getUserObject();
+                    final MutableRule rule = (MutableRule) ((DefaultMutableTreeNode)oldPath.getParentPath().getLastPathComponent()).getUserObject();
 
-                final int index =rule.symbolizers().indexOf(symbol);
-                if(index >=0){
-                    rule.symbolizers().remove(symbol);
-                    rule.symbolizers().add(index,(Symbolizer) obj);
+                    final int index =rule.symbolizers().indexOf(symbol);
+                    if(index >=0){
+                        rule.symbolizers().remove(symbol);
+                        rule.symbolizers().add(index,(Symbolizer) obj);
+                    }
                 }
 
             }else{
