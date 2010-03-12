@@ -7,9 +7,40 @@
   <BODY>
   <H1>Installation instructions</H1>
   <ul>
+    <li><a href="#Derby">Derby or JavaDB</a></li>
+    <li><a href="#HSQL">HSQL</a></li>
     <li><a href="#Access">MS-Access on Windows</a></li>
     <li><a href="#PostgreSQL">PostgreSQL</a></li>
   </ul>
+
+
+  <hr>
+  <h2><a name="Derby">Derby (a.k.a. JavaDB)</a></h2>
+  <h3>Requirements</h3>
+  <ul>
+    <li>Make sure that the <code>derby.jar</code> and <code>geotk-epsg.jar</code> files
+        are on the classpath.</li>
+  </ul>
+  <h3>Steps</h3>
+  <p>None. Just having the above JAR files on the classpath should cause an automatic
+  installation in the <code>$HOME/Geotoolkit.org/EPSG</code> directory, where <code>$HOME</code>
+  is the user home directory (the exact location may vary on different platforms).</p>
+
+
+  <hr>
+  <h2><a name="HSQL">HSQL</a></h2>
+  <h3>Requirements</h3>
+  <ul>
+    <li>Make sure that the <code>hsql.jar</code> and <code>geotk-epsg.jar</code> files
+        are on the classpath.</li>
+    <li>Make sure that the <code>derby.jar</code> file is <strong>not</strong> on the
+        classpath, otherwise the Derby database will have precedence over the HSQL database.</li>
+  </ul>
+  <h3>Steps</h3>
+  <p>None. Just having the above JAR files on the classpath should cause an automatic
+  installation in the <code>$HOME/Geotoolkit.org/EPSG</code> directory, where <code>$HOME</code>
+  is the user home directory (the exact location may vary on different platforms).</p>
+
 
 
   <hr>

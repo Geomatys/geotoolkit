@@ -18,7 +18,9 @@
 
 /**
  * {@linkplain org.opengis.referencing.AuthorityFactory Authority factories} for the
- * <A HREF="http://www.epsg.org">EPSG</A> database.
+ * <A HREF="http://www.epsg.org">EPSG</A> database. Every classes in this package except
+ * {@link org.geotoolkit.referencing.factory.epsg.PropertyEpsgFactory} require a connection
+ * to a database, which may be on Derby (a.k.a. JavaDB), HSQL, PostgreSQL or MS-Access.
  *
  *
  * {@section Installation}
@@ -28,12 +30,15 @@
  *
  * {@section Fetching a connection}
  *
- * The connection to the database can be specified in a simple properties file or through JNDI.
- * The steps used for fetching the connection parameters are described there:
+ * By default, this package fetches a connection to a database in the {@code Geotoolkit.org/EPSG}
+ * directory (relative to the user home directory). This database will be automatically created
+ * if the {@code geotk-epsg} module is available on the classpath. The automatic installation and
+ * usage will work only if one of the {@code derby.jar} or {@code hsql.jar} driver is available on
+ * the classpath.
  * <p>
- * </ul>
- *   <li>{@link org.geotoolkit.referencing.factory.epsg.ThreadedEpsgFactory#getDataSource}</li>
- * </ul>
+ * The connection to the database can also be specified explicitly in a simple properties file or
+ * through JNDI. The steps used for fetching the connection parameters are described in the javadoc
+ * of the {@link org.geotoolkit.referencing.factory.epsg.ThreadedEpsgFactory#getDataSource()} method.
  *
  *
  * {@section Getting a factory instance}

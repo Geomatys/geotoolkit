@@ -98,7 +98,7 @@ import org.geotoolkit.lang.ThreadSafe;
  * However, names may be ambiguous since the same name may be used for more than one object.
  * This is the case of "WGS 84" for example. If such an ambiguity is found, an exception
  * will be thrown. If names are not wanted as a legal EPSG code, subclasses can override the
- * {@link #isPrimaryKey} method.
+ * {@link #isPrimaryKey(String)} method.
  * <p>
  * This factory doesn't cache any result. Any call to a {@code createFoo} method will send a new
  * query to the EPSG database. For caching, this factory should be wrapped in some buffered factory
