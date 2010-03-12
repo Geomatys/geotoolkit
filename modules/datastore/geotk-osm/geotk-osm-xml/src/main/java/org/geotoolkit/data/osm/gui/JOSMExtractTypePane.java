@@ -87,11 +87,170 @@ public class JOSMExtractTypePane extends javax.swing.JPanel {
 
 //        processLanduse(store, session);
 //        processHighWay(store, session);
-        processLeisure(store, session);
-        processWaterWay(store, session);
+//        processLeisure(store, session);
+//        processWaterWay(store, session);
+//        processBuilding(store, session);
+        processNatural(store, session);
+        processRailWay(store, session);
         
     }
-    
+
+    private void processRailWay(DataStore store, Session session) throws DataStoreException{
+        //create the new schema-------------------------------------------------
+        final SimpleFeatureTypeBuilder sftb = new SimpleFeatureTypeBuilder();
+        sftb.setName("RailWay");
+        sftb.add("id", Long.class, 1,1,false, SimpleFeatureTypeBuilder.PRIMARY_KEY);
+        sftb.add("geometry", LineString.class, EPSG_4326);
+        sftb.add("type", String.class);
+        final SimpleFeatureType sft = sftb.buildFeatureType();
+        store.createSchema(sft.getName(), sft);
+        final SimpleFeatureType targetType = (SimpleFeatureType) store.getFeatureType("RailWay");
+        //final SimpleFeatureType targetType = sft;
+
+        //source datas----------------------------------------------------------
+        final Join join1 = new DefaultJoin(
+                new DefaultSelector(session, store.getFeatureType("Way").getName(), "s1"),
+                new DefaultSelector(session, store.getFeatureType("WayTag").getName(), "s2"),
+                JoinType.INNER,
+                FF.equals(FF.property("id"), FF.property("wayId"))
+                );
+
+        final QueryBuilder qb = new QueryBuilder();
+        qb.setSource(join1);
+        qb.setFilter(FF.equals(FF.property("k"), FF.literal("railway")));
+        final FeatureCollection col = QueryUtilities.evaluate("translateCol", qb.buildQuery());
+        final SimpleFeatureType sourceType = (SimpleFeatureType) col.getFeatureType();
+
+
+        //insert the datas------------------------------------------------------
+        final Map<PropertyDescriptor,List<PropertyDescriptor>> mappings = new HashMap<PropertyDescriptor,List<PropertyDescriptor>>();
+        List<PropertyDescriptor> target = null;
+        PropertyDescriptor p = null;
+
+        p = sourceType.getDescriptor("id");
+        target = new ArrayList<PropertyDescriptor>();
+        target.add(targetType.getDescriptor("id"));
+        mappings.put(p, target);
+
+        p = sourceType.getDescriptor("geometry");
+        target = new ArrayList<PropertyDescriptor>();
+        target.add(targetType.getDescriptor("geometry"));
+        mappings.put(p, target);
+
+        p = sourceType.getDescriptor("v");
+        target = new ArrayList<PropertyDescriptor>();
+        target.add(targetType.getDescriptor("type"));
+        mappings.put(p, target);
+
+        GenericMappingFeatureCollection mapped = new GenericMappingFeatureCollection(col, targetType, mappings, new HashMap());
+
+        store.addFeatures(targetType.getName(), mapped);
+    }
+
+    private void processNatural(DataStore store, Session session) throws DataStoreException{
+        //create the new schema-------------------------------------------------
+        final SimpleFeatureTypeBuilder sftb = new SimpleFeatureTypeBuilder();
+        sftb.setName("Natural");
+        sftb.add("id", Long.class, 1,1,false, SimpleFeatureTypeBuilder.PRIMARY_KEY);
+        sftb.add("geometry", LineString.class, EPSG_4326);
+        sftb.add("type", String.class);
+        final SimpleFeatureType sft = sftb.buildFeatureType();
+        store.createSchema(sft.getName(), sft);
+        final SimpleFeatureType targetType = (SimpleFeatureType) store.getFeatureType("Natural");
+        //final SimpleFeatureType targetType = sft;
+
+        //source datas----------------------------------------------------------
+        final Join join1 = new DefaultJoin(
+                new DefaultSelector(session, store.getFeatureType("Way").getName(), "s1"),
+                new DefaultSelector(session, store.getFeatureType("WayTag").getName(), "s2"),
+                JoinType.INNER,
+                FF.equals(FF.property("id"), FF.property("wayId"))
+                );
+
+        final QueryBuilder qb = new QueryBuilder();
+        qb.setSource(join1);
+        qb.setFilter(FF.equals(FF.property("k"), FF.literal("natural")));
+        final FeatureCollection col = QueryUtilities.evaluate("translateCol", qb.buildQuery());
+        final SimpleFeatureType sourceType = (SimpleFeatureType) col.getFeatureType();
+
+
+        //insert the datas------------------------------------------------------
+        final Map<PropertyDescriptor,List<PropertyDescriptor>> mappings = new HashMap<PropertyDescriptor,List<PropertyDescriptor>>();
+        List<PropertyDescriptor> target = null;
+        PropertyDescriptor p = null;
+
+        p = sourceType.getDescriptor("id");
+        target = new ArrayList<PropertyDescriptor>();
+        target.add(targetType.getDescriptor("id"));
+        mappings.put(p, target);
+
+        p = sourceType.getDescriptor("geometry");
+        target = new ArrayList<PropertyDescriptor>();
+        target.add(targetType.getDescriptor("geometry"));
+        mappings.put(p, target);
+
+        p = sourceType.getDescriptor("v");
+        target = new ArrayList<PropertyDescriptor>();
+        target.add(targetType.getDescriptor("type"));
+        mappings.put(p, target);
+
+        GenericMappingFeatureCollection mapped = new GenericMappingFeatureCollection(col, targetType, mappings, new HashMap());
+
+        store.addFeatures(targetType.getName(), mapped);
+    }
+
+    private void processBuilding(DataStore store, Session session) throws DataStoreException{
+        //create the new schema-------------------------------------------------
+        final SimpleFeatureTypeBuilder sftb = new SimpleFeatureTypeBuilder();
+        sftb.setName("Building");
+        sftb.add("id", Long.class, 1,1,false, SimpleFeatureTypeBuilder.PRIMARY_KEY);
+        sftb.add("geometry", LineString.class, EPSG_4326);
+        sftb.add("type", String.class);
+        final SimpleFeatureType sft = sftb.buildFeatureType();
+        store.createSchema(sft.getName(), sft);
+        final SimpleFeatureType targetType = (SimpleFeatureType) store.getFeatureType("Building");
+        //final SimpleFeatureType targetType = sft;
+
+        //source datas----------------------------------------------------------
+        final Join join1 = new DefaultJoin(
+                new DefaultSelector(session, store.getFeatureType("Way").getName(), "s1"),
+                new DefaultSelector(session, store.getFeatureType("WayTag").getName(), "s2"),
+                JoinType.INNER,
+                FF.equals(FF.property("id"), FF.property("wayId"))
+                );
+
+        final QueryBuilder qb = new QueryBuilder();
+        qb.setSource(join1);
+        qb.setFilter(FF.equals(FF.property("k"), FF.literal("building")));
+        final FeatureCollection col = QueryUtilities.evaluate("translateCol", qb.buildQuery());
+        final SimpleFeatureType sourceType = (SimpleFeatureType) col.getFeatureType();
+
+
+        //insert the datas------------------------------------------------------
+        final Map<PropertyDescriptor,List<PropertyDescriptor>> mappings = new HashMap<PropertyDescriptor,List<PropertyDescriptor>>();
+        List<PropertyDescriptor> target = null;
+        PropertyDescriptor p = null;
+
+        p = sourceType.getDescriptor("id");
+        target = new ArrayList<PropertyDescriptor>();
+        target.add(targetType.getDescriptor("id"));
+        mappings.put(p, target);
+
+        p = sourceType.getDescriptor("geometry");
+        target = new ArrayList<PropertyDescriptor>();
+        target.add(targetType.getDescriptor("geometry"));
+        mappings.put(p, target);
+
+        p = sourceType.getDescriptor("v");
+        target = new ArrayList<PropertyDescriptor>();
+        target.add(targetType.getDescriptor("type"));
+        mappings.put(p, target);
+
+        GenericMappingFeatureCollection mapped = new GenericMappingFeatureCollection(col, targetType, mappings, new HashMap());
+
+        store.addFeatures(targetType.getName(), mapped);
+    }
+
     private void processLanduse(DataStore store, Session session) throws DataStoreException{
         //create the new schema-------------------------------------------------
         final SimpleFeatureTypeBuilder sftb = new SimpleFeatureTypeBuilder();
