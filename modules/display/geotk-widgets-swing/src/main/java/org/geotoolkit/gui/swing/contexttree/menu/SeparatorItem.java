@@ -25,6 +25,7 @@ import javax.swing.tree.TreePath;
 
 import org.geotoolkit.gui.swing.contexttree.JContextTree;
 import org.geotoolkit.gui.swing.contexttree.TreePopupItem;
+import org.geotoolkit.gui.swing.go2.Map2D;
 
 /**
  * Default popup control separator, use for JContextTreePopup
@@ -35,6 +36,7 @@ import org.geotoolkit.gui.swing.contexttree.TreePopupItem;
 public class SeparatorItem extends JSeparator implements TreePopupItem{
 
     private JContextTree tree = null;
+    private Map2D map = null;
 
     /** 
      * Creates a new instance of separator
@@ -62,6 +64,16 @@ public class SeparatorItem extends JSeparator implements TreePopupItem{
     @Override
     public JContextTree getTree() {
         return tree;
+    }
+
+    @Override
+    public void setMapView(Map2D map) {
+        this.map = map;
+    }
+
+    @Override
+    public Map2D getMapView() {
+        return map;
     }
     
 }

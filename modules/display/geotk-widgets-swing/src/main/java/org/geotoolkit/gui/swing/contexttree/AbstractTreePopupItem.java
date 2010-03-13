@@ -20,6 +20,7 @@ package org.geotoolkit.gui.swing.contexttree;
 import javax.swing.JMenuItem;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
+import org.geotoolkit.gui.swing.go2.Map2D;
 
 /**
  *
@@ -29,12 +30,23 @@ import javax.swing.tree.TreePath;
 public abstract class AbstractTreePopupItem extends JMenuItem implements TreePopupItem{
 
     protected JContextTree tree = null;
+    protected Map2D map = null;
 
     public AbstractTreePopupItem() {
     }
 
     public AbstractTreePopupItem(String str) {
         super(str);
+    }
+
+    @Override
+    public void setMapView(Map2D map){
+        this.map = map;
+    }
+
+    @Override
+    public Map2D getMapView(){
+        return map;
     }
 
     @Override

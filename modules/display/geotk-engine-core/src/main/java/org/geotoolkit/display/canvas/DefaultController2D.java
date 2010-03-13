@@ -502,7 +502,12 @@ public class DefaultController2D implements CanvasController2D{
     @Override
     public void setVisibleArea(Envelope env) throws NoninvertibleTransformException,TransformException{
         final CoordinateReferenceSystem crs2D = CRSUtilities.getCRS2D(env.getCoordinateReferenceSystem());
-        final Envelope env2D = CRS.transform(env, crs2D);
+        Envelope env2D = CRS.transform(env, crs2D);
+
+        //check that the provided envelope is in the canvas crs
+        if(!CRS.equalsIgnoreMetadata(canvas.getObjectiveCRS2D(),crs2D)){
+            env2D = CRS.transform(env2D, canvas.getObjectiveCRS2D());
+        }
 
         //configure the 2D envelope
         Rectangle2D rect2D = new Rectangle2D.Double(env2D.getMinimum(0), env2D.getMinimum(1), env2D.getSpan(0), env2D.getSpan(1));

@@ -20,6 +20,7 @@ package org.geotoolkit.gui.swing.contexttree;
 import java.awt.Component;
 
 import javax.swing.tree.TreePath;
+import org.geotoolkit.gui.swing.go2.Map2D;
 
 
 /**
@@ -30,23 +31,31 @@ import javax.swing.tree.TreePath;
  */
 public interface TreePopupItem {
 
+    /**
+     * An item might need to know on which map he can work. like for exemple
+     * the Zoom to layer action.
+     * @param map
+     */
+    void setMapView(Map2D map);
 
-    public void setTree(JContextTree tree);
+    Map2D getMapView();
 
-    public JContextTree getTree();
+    void setTree(JContextTree tree);
+
+    JContextTree getTree();
 
     /**
      * return true if the control should by shown
      * @param selection 
      * @return 
      */
-    public boolean isValid(TreePath[] selection);
+    boolean isValid(TreePath[] selection);
     
     /**
      * return the component to by shown
      * @param selection 
      * @return 
      */
-    public Component getComponent(TreePath[] selection);
+    Component getComponent(TreePath[] selection);
     
 }
