@@ -32,10 +32,12 @@ public interface MutableUserLayer extends MutableLayer, UserLayer{
     
     void setSource(Source source);
 
+    @Override
     MutableConstraints getConstraints();
     
     void setConstraints(MutableConstraints constraints);
 
+    @Override
     List<MutableStyle> styles();
     
 }

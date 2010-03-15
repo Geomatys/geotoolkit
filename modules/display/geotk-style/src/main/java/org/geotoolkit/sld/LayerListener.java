@@ -16,8 +16,7 @@
  */
 package org.geotoolkit.sld;
 
-import java.beans.PropertyChangeEvent;
-import java.util.EventListener;
+import java.beans.PropertyChangeListener;
 
 import org.geotoolkit.style.CollectionChangeEvent;
 import org.opengis.sld.Constraint;
@@ -28,14 +27,8 @@ import org.opengis.sld.Constraint;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public interface LayerListener extends EventListener{
+public interface LayerListener extends PropertyChangeListener{
 
-    /**
-     * Called when a property change.
-     * Same as a bean property change.
-     */
-    void propertyChange(PropertyChangeEvent event);
-    
     /**
      * Called when a change occurs in the living style collection.
      */

@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.style;
 
+import java.beans.PropertyChangeListener;
 import java.util.List;
 
 import org.opengis.filter.Id;
@@ -71,7 +72,9 @@ public interface MutableFeatureTypeStyle extends FeatureTypeStyle{
     //--------------------------------------------------------------------------
     
     void addListener(FeatureTypeStyleListener listener);
+
+    void addListener(PropertyChangeListener listener);
     
-    void removeListener(FeatureTypeStyleListener listener);
+    void removeListener(PropertyChangeListener listener);
     
 }

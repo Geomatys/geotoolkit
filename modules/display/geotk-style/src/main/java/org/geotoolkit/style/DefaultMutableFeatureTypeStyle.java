@@ -17,6 +17,7 @@
 package org.geotoolkit.style;
 
 import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.Collection;
 import java.util.EventObject;
 import java.util.List;
@@ -316,9 +317,9 @@ public class DefaultMutableFeatureTypeStyle implements MutableFeatureTypeStyle{
         //TODO make fire property change thread safe, preserve fire order
         
         final PropertyChangeEvent event = new PropertyChangeEvent(this,propertyName,oldValue,newValue);
-        final FeatureTypeStyleListener[] lists = listeners.getListeners(FeatureTypeStyleListener.class);
+        final PropertyChangeListener[] lists = listeners.getListeners(PropertyChangeListener.class);
         
-        for(FeatureTypeStyleListener listener : lists){
+        for(PropertyChangeListener listener : lists){
             listener.propertyChange(event);
         }
         
@@ -413,15 +414,29 @@ public class DefaultMutableFeatureTypeStyle implements MutableFeatureTypeStyle{
      */
     @Override
     public void addListener(FeatureTypeStyleListener listener){
-        listeners.add(FeatureTypeStyleListener.class, listener);
+        addListener((PropertyChangeListener)listener);
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public void addListener(PropertyChangeListener listener){
+        listeners.add(PropertyChangeListener.class, listener);
+        if(listener instanceof FeatureTypeStyleListener){
+            listeners.add(FeatureTypeStyleListener.class, (FeatureTypeStyleListener)listener);
+        }
     }
     
     /**
      * {@inheritDoc }
      */
     @Override
-    public void removeListener(FeatureTypeStyleListener listener){
-        listeners.remove(FeatureTypeStyleListener.class, listener);
+    public void removeListener(PropertyChangeListener listener){
+        listeners.remove(PropertyChangeListener.class, listener);
+        if(listener instanceof FeatureTypeStyleListener){
+            listeners.remove(FeatureTypeStyleListener.class, (FeatureTypeStyleListener)listener);
+        }
     }
     
 }

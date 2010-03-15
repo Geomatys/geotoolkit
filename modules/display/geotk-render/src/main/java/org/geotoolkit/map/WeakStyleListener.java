@@ -18,51 +18,109 @@
 package org.geotoolkit.map;
 
 import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.lang.reflect.Method;
+import java.util.EventListener;
 
 import org.geotoolkit.style.CollectionChangeEvent;
+import org.geotoolkit.style.FeatureTypeStyleListener;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
+import org.geotoolkit.style.MutableRule;
+import org.geotoolkit.style.RuleListener;
 import org.geotoolkit.style.StyleListener;
+
+import org.opengis.feature.type.Name;
+import org.opengis.style.SemanticType;
+import org.opengis.style.Symbolizer;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class WeakStyleListener extends WeakListener<StyleListener> implements StyleListener {
+public class WeakStyleListener extends WeakListener<PropertyChangeListener>
+        implements StyleListener, FeatureTypeStyleListener, RuleListener {
 
 
-    public WeakStyleListener(StyleListener listener, Object src) {
+    public WeakStyleListener(PropertyChangeListener listener, Object src) {
         super(listener,src);
     }
 
-    @Override
-    public void propertyChange(PropertyChangeEvent evt) {
-        final StyleListener listener = listenerRef.get();
-        if (listener != null) {
-            listener.propertyChange(evt);
-        }else{
-            removeListener();
-        }
-    }
+    private <T extends PropertyChangeListener> T getRef(Class<T> clazz){
+        final EventListener listener = listenerRef.get();
 
-    @Override
-    public void featureTypeStyleChange(CollectionChangeEvent<MutableFeatureTypeStyle> evt) {
-        final StyleListener listener = listenerRef.get();
         if (listener != null) {
-            listener.featureTypeStyleChange(evt);
+            if(clazz.isInstance(listener)){
+                return (T) listener;
+            }else{
+                throw new IllegalStateException("Listener should have been of class : "+ clazz +" but was : " +listener);
+            }
         }else{
             removeListener();
+            return null;
         }
     }
 
     @Override
     protected void removeListener() {
         try {
-            Method method = src.getClass().getMethod("removeListener", StyleListener.class);
+            Method method = src.getClass().getMethod("removeListener", PropertyChangeListener.class);
             method.invoke(src, this);
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void propertyChange(PropertyChangeEvent evt) {
+        final PropertyChangeListener listener = getRef(PropertyChangeListener.class);
+        if (listener != null) {
+            listener.propertyChange(evt);
+        }
+    }
+
+    @Override
+    public void featureTypeStyleChange(CollectionChangeEvent<MutableFeatureTypeStyle> evt) {
+        final StyleListener listener = getRef(StyleListener.class);
+        if (listener != null) {
+            listener.featureTypeStyleChange(evt);
+        }
+    }
+
+
+    //feature type style listener ----------------------------------------------
+
+    @Override
+    public void ruleChange(CollectionChangeEvent<MutableRule> event) {
+        final FeatureTypeStyleListener listener = getRef(FeatureTypeStyleListener.class);
+        if (listener != null) {
+            listener.ruleChange(event);
+        }
+    }
+
+    @Override
+    public void featureTypeNameChange(CollectionChangeEvent<Name> event) {
+        final FeatureTypeStyleListener listener = getRef(FeatureTypeStyleListener.class);
+        if (listener != null) {
+            listener.featureTypeNameChange(event);
+        }
+    }
+
+    @Override
+    public void semanticTypeChange(CollectionChangeEvent<SemanticType> event) {
+        final FeatureTypeStyleListener listener = getRef(FeatureTypeStyleListener.class);
+        if (listener != null) {
+            listener.semanticTypeChange(event);
+        }
+    }
+
+    //rule listener methods ----------------------------------------------------
+
+    @Override
+    public void symbolizerChange(CollectionChangeEvent<Symbolizer> event) {
+        final RuleListener listener = getRef(RuleListener.class);
+        if (listener != null) {
+            listener.symbolizerChange(event);
         }
     }
 

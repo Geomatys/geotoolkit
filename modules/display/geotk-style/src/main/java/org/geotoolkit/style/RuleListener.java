@@ -16,8 +16,7 @@
  */
 package org.geotoolkit.style;
 
-import java.beans.PropertyChangeEvent;
-import java.util.EventListener;
+import java.beans.PropertyChangeListener;
 
 import org.opengis.style.Symbolizer;
 
@@ -27,13 +26,7 @@ import org.opengis.style.Symbolizer;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public interface RuleListener extends EventListener{
-
-    /**
-     * Called when a property change.
-     * Same as a bean property change.
-     */
-    void propertyChange(PropertyChangeEvent event);
+public interface RuleListener extends PropertyChangeListener{
     
     /**
      * Called when a change occurs in the living symbolizer collection.

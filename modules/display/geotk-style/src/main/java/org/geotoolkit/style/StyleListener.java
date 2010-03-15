@@ -16,8 +16,7 @@
  */
 package org.geotoolkit.style;
 
-import java.beans.PropertyChangeEvent;
-import java.util.EventListener;
+import java.beans.PropertyChangeListener;
 
 
 /**
@@ -26,14 +25,8 @@ import java.util.EventListener;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public interface StyleListener extends EventListener{
+public interface StyleListener extends PropertyChangeListener{
 
-    /**
-     * Called when a property change.
-     * Same as a bean property change.
-     */
-    void propertyChange(PropertyChangeEvent event);
-    
     /**
      * Called when a change occures in the living feature type style collection.
      */

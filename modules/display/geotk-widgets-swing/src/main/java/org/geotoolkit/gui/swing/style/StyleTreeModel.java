@@ -18,27 +18,30 @@
 package org.geotoolkit.gui.swing.style;
 
 import java.beans.PropertyChangeEvent;
-import java.util.Collection;
+import java.beans.PropertyChangeListener;
+import java.lang.reflect.Method;
 import java.util.EventObject;
 import java.util.List;
 import java.util.logging.Level;
 import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.TreeNode;
 
 import org.geotoolkit.gui.swing.tree.DefaultMutableTreeNode;
 import org.geotoolkit.map.WeakStyleListener;
 import org.geotoolkit.style.CollectionChangeEvent;
 import org.geotoolkit.style.DefaultStyleFactory;
+import org.geotoolkit.style.FeatureTypeStyleListener;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
+import org.geotoolkit.style.RuleListener;
 import org.geotoolkit.style.StyleListener;
 import org.geotoolkit.style.StyleUtilities;
 import org.geotoolkit.util.NumberRange;
-
 import org.geotoolkit.util.RandomStyleFactory;
 import org.geotoolkit.util.logging.Logging;
+import org.opengis.feature.type.Name;
+import org.opengis.style.SemanticType;
 
 import org.opengis.style.Symbolizer;
 
@@ -47,12 +50,12 @@ import org.opengis.style.Symbolizer;
  * @author Johann Sorel (Puzzle-GIS)
  * @module pending
  */
-public class StyleTreeModel extends DefaultTreeModel implements StyleListener {
+public class StyleTreeModel<T> extends DefaultTreeModel implements StyleListener, FeatureTypeStyleListener, RuleListener {
 
     private static final MutableStyleFactory SF = new DefaultStyleFactory();
 
-    private WeakStyleListener weakListener = null;
-    private MutableStyle style = null;
+    private final WeakStyleListener weakListener = new WeakStyleListener(this, this.styleElement);
+    private T styleElement = null;
 
     public StyleTreeModel(){
         super(null);
@@ -63,32 +66,41 @@ public class StyleTreeModel extends DefaultTreeModel implements StyleListener {
      * create a StyleTreeModel
      * @param style , can't be null
      */
-    public StyleTreeModel(MutableStyle style) {
+    public StyleTreeModel(T style) {
         super(new DefaultMutableTreeNode());
         if (style == null) {
             throw new NullPointerException("Style can't be null");
         }
-        setStyle(style);
+        setStyleElement(style);
     }
 
     /**
      * Set the model Style
      * @param style , can't be null
      */
-    public void setStyle(MutableStyle style) {
+    public void setStyleElement(T style) {
         if (style == null) {
             throw new NullPointerException("Style can't be null");
         }
 
-        if(this.style != null){
-            this.style.removeListener(weakListener);
+        if(this.styleElement != null){
+            try {
+                Method method = styleElement.getClass().getMethod("removeListener", PropertyChangeListener.class);
+                method.invoke(styleElement, weakListener);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
         
-        this.style = style;
+        this.styleElement = style;
 
-        if(this.style != null){
-            weakListener = new WeakStyleListener(this, this.style);
-            this.style.addListener(weakListener);
+        if(this.styleElement != null){
+            try {
+                Method method = styleElement.getClass().getMethod("addListener", PropertyChangeListener.class);
+                method.invoke(styleElement, weakListener);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
 
         setRoot(parse(style));
@@ -98,8 +110,8 @@ public class StyleTreeModel extends DefaultTreeModel implements StyleListener {
      * 
      * @return Style
      */
-    public MutableStyle getStyle() {
-        return style;
+    public T getStyleElement() {
+        return styleElement;
     }
 
 
@@ -110,7 +122,25 @@ public class StyleTreeModel extends DefaultTreeModel implements StyleListener {
     }
 
     @Override
+    public void featureTypeNameChange(CollectionChangeEvent<Name> event) {
+    }
+
+    @Override
+    public void semanticTypeChange(CollectionChangeEvent<SemanticType> event) {
+    }
+
+    @Override
     public void featureTypeStyleChange(CollectionChangeEvent<MutableFeatureTypeStyle> event) {
+        styleElementChange(event);
+    }
+    
+    @Override
+    public void ruleChange(CollectionChangeEvent<MutableRule> event) {
+        styleElementChange(event);
+    }
+
+    @Override
+    public void symbolizerChange(CollectionChangeEvent<Symbolizer> event) {
         styleElementChange(event);
     }
 
@@ -118,21 +148,34 @@ public class StyleTreeModel extends DefaultTreeModel implements StyleListener {
         final int type = event.getType();
         final DefaultMutableTreeNode parent = search(event.getSource());
 
+        if(parent == null){
+            //some elements like Semantics in Feature type style might not
+            //be visible as tree nodes. we ignore them.
+            return;
+        }
+
+        final NumberRange range = event.getRange();
+        if(range == null){
+            //event is vague, reload the entire node
+            final Object stylElement = parent.getUserObject();
+            final DefaultMutableTreeNode node = parse(stylElement);
+
+            final DefaultMutableTreeNode sp = (DefaultMutableTreeNode) parent.getParent();
+            if(sp != null){
+                final int i = sp.getIndex(parent);
+                removeNodeFromParent(parent);
+                insertNodeInto(node, sp, i);
+            }else{
+                //it's the root node
+                setRoot(node);
+            }
+            return;
+        }
+
         if(type == CollectionChangeEvent.ITEM_ADDED){
-            final NumberRange range = event.getRange();
             int index = (int) range.getMinimum();
             for(Object added : event.getItems()){
-                final DefaultMutableTreeNode child;
-                if(added instanceof MutableFeatureTypeStyle){
-                    child = parse((MutableFeatureTypeStyle)added);
-                }else if(added instanceof MutableRule){
-                    child = parse((MutableRule)added);
-                }else if(added instanceof Symbolizer){
-                    child = parse((Symbolizer)added);
-                }else{
-                    Logging.getLogger(StyleTreeModel.class).log(Level.WARNING, "Unexpected type : " + added);
-                    child = null;
-                }
+                final DefaultMutableTreeNode child = parse(added);
 
                 if(child != null){
                     insertNodeInto(child, parent, index);
@@ -183,7 +226,9 @@ public class StyleTreeModel extends DefaultTreeModel implements StyleListener {
         if(removeObject instanceof MutableStyle){
             removed = false;
         }else if(removeObject instanceof MutableFeatureTypeStyle){
-            removed = getStyle().featureTypeStyles().remove((MutableFeatureTypeStyle)removeObject);
+            final DefaultMutableTreeNode styleNode = (DefaultMutableTreeNode)node.getParent();
+            final MutableStyle style = (MutableStyle) styleNode.getUserObject();
+            removed = style.featureTypeStyles().remove((MutableFeatureTypeStyle)removeObject);
         }else if (removeObject instanceof MutableRule){
             final DefaultMutableTreeNode ftsnode = (DefaultMutableTreeNode)node.getParent();
             final MutableFeatureTypeStyle fts = (MutableFeatureTypeStyle) ftsnode.getUserObject();
@@ -217,7 +262,13 @@ public class StyleTreeModel extends DefaultTreeModel implements StyleListener {
 
 
         if (targetObj instanceof MutableFeatureTypeStyle && movedObj instanceof MutableFeatureTypeStyle) {
-            copy = moveAt(movedNode,(MutableFeatureTypeStyle) movedObj, indexof(style, (MutableFeatureTypeStyle) targetObj));
+            final DefaultMutableTreeNode targetParentNode = (DefaultMutableTreeNode)targetNode.getParent();
+            MutableFeatureTypeStyle targetFTS = (MutableFeatureTypeStyle) targetObj;
+            int targetIndex = indexof((MutableStyle)targetParentNode.getUserObject(),targetFTS);
+
+            if (parentMovedNode == targetParentNode) {
+                copy = moveAt(movedNode, (MutableFeatureTypeStyle)movedObj, targetIndex);
+            }
 
         } else if (targetObj instanceof MutableFeatureTypeStyle && movedObj instanceof MutableRule) {
 
@@ -292,8 +343,8 @@ public class StyleTreeModel extends DefaultTreeModel implements StyleListener {
 
         if (obj instanceof MutableFeatureTypeStyle) {
             final MutableFeatureTypeStyle fts = StyleUtilities.copy((MutableFeatureTypeStyle) obj);
-            final int index = indexof(style, (MutableFeatureTypeStyle) obj) + 1;
-            getStyle().featureTypeStyles().add(index, fts);
+            final int index = indexof((MutableStyle) parentobj, (MutableFeatureTypeStyle) obj) + 1;
+            ((MutableStyle) parentobj).featureTypeStyles().add(index, fts);
         } else if (obj instanceof MutableRule) {
             final MutableRule rule = StyleUtilities.copy((MutableRule) obj);
             final int index = indexof((MutableFeatureTypeStyle) parentobj, (MutableRule) obj) + 1;
@@ -310,9 +361,10 @@ public class StyleTreeModel extends DefaultTreeModel implements StyleListener {
     /**
      * add a new FeatureTypeStyle
      */
-    public void newFeatureTypeStyle() {
+    public void newFeatureTypeStyle(DefaultMutableTreeNode stylenode) {
         final MutableFeatureTypeStyle fts = SF.featureTypeStyle(RandomStyleFactory.createPointSymbolizer());
-        getStyle().featureTypeStyles().add(fts);
+        final MutableStyle style = (MutableStyle) stylenode.getUserObject();
+        style.featureTypeStyles().add(fts);
     }
     /**
      * add a new rule
@@ -436,7 +488,9 @@ public class StyleTreeModel extends DefaultTreeModel implements StyleListener {
     }
 
     private DefaultMutableTreeNode moveAt(DefaultMutableTreeNode ftsnode, MutableFeatureTypeStyle fts, int target) {
-        final int origine = indexof(style, fts);
+        final DefaultMutableTreeNode parentnode = (DefaultMutableTreeNode)ftsnode.getParent();
+        final MutableStyle style = (MutableStyle) parentnode.getUserObject();
+        final int origine = indexof(style,fts);
 
         if (origine != target) {
             final List<MutableFeatureTypeStyle> ntypes = style.featureTypeStyles();
@@ -486,13 +540,7 @@ public class StyleTreeModel extends DefaultTreeModel implements StyleListener {
 
         return symbolnode;        
     }
-    
-    private void remove(final MutableFeatureTypeStyle fts){
-        final DefaultMutableTreeNode ftsNode = (DefaultMutableTreeNode) getRoot().getChildAt(indexof(style, fts));
-        style.featureTypeStyles().remove(fts);
-        removeNodeFromParent(ftsNode);        
-    }
-    
+        
     private void remove(DefaultMutableTreeNode parentNode, MutableRule rule){
         final MutableFeatureTypeStyle fts = (MutableFeatureTypeStyle) parentNode.getUserObject();
         final DefaultMutableTreeNode ruleNode = (DefaultMutableTreeNode) parentNode.getChildAt(indexof(fts, rule));
@@ -517,6 +565,21 @@ public class StyleTreeModel extends DefaultTreeModel implements StyleListener {
     ////////////////////////////////////////////////////////////////////////////
     // STYLE PARSING ///////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
+
+    private static DefaultMutableTreeNode parse(Object obj){
+        if(obj instanceof MutableStyle){
+            return parse((MutableStyle)obj);
+        }else if(obj instanceof MutableFeatureTypeStyle){
+            return parse((MutableFeatureTypeStyle)obj);
+        }else if(obj instanceof MutableRule){
+            return parse((MutableRule)obj);
+        }else if(obj instanceof Symbolizer){
+            return parse((Symbolizer)obj);
+        }else{
+            Logging.getLogger(StyleTreeModel.class).log(Level.WARNING, "Unexpected type : " + obj);
+            return null;
+        }
+    }
 
     private static DefaultMutableTreeNode parse(MutableStyle style) {
         final DefaultMutableTreeNode node = new DefaultMutableTreeNode(style);

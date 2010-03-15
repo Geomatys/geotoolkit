@@ -244,7 +244,7 @@ public class JStyleTree extends JXTree implements DragGestureListener, DragSourc
 
                 if (val instanceof MutableStyle) {
                     final MutableStyle style = (MutableStyle) val;
-                    add(new NewFTSItem());
+                    add(new NewFTSItem(node));
                 } else if (val instanceof MutableFeatureTypeStyle) {
                     final MutableFeatureTypeStyle fts = (MutableFeatureTypeStyle) val;
                     add(new NewRuleItem(node));
@@ -278,14 +278,16 @@ public class JStyleTree extends JXTree implements DragGestureListener, DragSourc
 
     class NewFTSItem extends JMenuItem {
 
-        NewFTSItem() {
+        private final DefaultMutableTreeNode parentNode;
+
+        NewFTSItem(DefaultMutableTreeNode node) {
+            this.parentNode = node;
             setText("new FTS");
             setIcon(ICON_NEW);
             addActionListener(new ActionListener() {
-
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    treemodel.newFeatureTypeStyle();
+                    treemodel.newFeatureTypeStyle(parentNode);
                 }
             });
         }
@@ -293,18 +295,16 @@ public class JStyleTree extends JXTree implements DragGestureListener, DragSourc
 
     class NewRuleItem extends JMenuItem {
 
-        private final DefaultMutableTreeNode NODE;
+        private final DefaultMutableTreeNode parentNode;
 
         NewRuleItem(DefaultMutableTreeNode node) {
-
-            this.NODE = node;
+            this.parentNode = node;
             setText("New Rule");
             setIcon(ICON_NEW);
             addActionListener(new ActionListener() {
-
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    treemodel.newRule(NODE);
+                    treemodel.newRule(parentNode);
                 }
             });
         }
@@ -312,17 +312,17 @@ public class JStyleTree extends JXTree implements DragGestureListener, DragSourc
 
     class DuplicateItem extends JMenuItem {
 
-        private final DefaultMutableTreeNode NODE;
+        private final DefaultMutableTreeNode parentNode;
 
         DuplicateItem(DefaultMutableTreeNode node) {
-            this.NODE = node;
+            this.parentNode = node;
             setText("Duplicate");
             setIcon(ICON_DUPLICATE);
             addActionListener(new ActionListener() {
 
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    treemodel.duplicateNode(NODE);
+                    treemodel.duplicateNode(parentNode);
                 }
             });
         }
@@ -330,17 +330,17 @@ public class JStyleTree extends JXTree implements DragGestureListener, DragSourc
     
     class DeleteItem extends JMenuItem {
         
-        private final DefaultMutableTreeNode NODE;
+        private final DefaultMutableTreeNode parentNode;
 
         DeleteItem(DefaultMutableTreeNode node) {
-            this.NODE = node;
+            this.parentNode = node;
             setText("Delete");
             setIcon(ICON_DELETE);
             addActionListener(new ActionListener() {
 
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    treemodel.deleteNode(NODE);
+                    treemodel.deleteNode(parentNode);
                 }
             });
         }

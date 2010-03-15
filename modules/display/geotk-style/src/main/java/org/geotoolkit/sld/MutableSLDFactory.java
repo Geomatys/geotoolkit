@@ -26,18 +26,25 @@ import org.geotoolkit.style.MutableStyle;
  */
 public interface MutableSLDFactory extends org.opengis.sld.SLDFactory {
     
+    @Override
     MutableStyledLayerDescriptor createSLD();
         
+    @Override
     MutableNamedLayer createNamedLayer();
     
+    @Override
     MutableUserLayer createUserLayer();
     
+    @Override
     MutableNamedStyle createNamedStyle();
     
+    @Override
     MutableStyle createUserStyle();
     
+    @Override
     MutableLayerCoverageConstraints createLayerCoverageConstraints();
     
+    @Override
     MutableLayerFeatureConstraints createLayerFeatureConstraints();
     
 }

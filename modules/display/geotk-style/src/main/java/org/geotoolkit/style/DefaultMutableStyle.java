@@ -17,6 +17,7 @@
 package org.geotoolkit.style;
 
 import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.Collection;
 import java.util.EventObject;
 import java.util.List;
@@ -264,9 +265,9 @@ public class DefaultMutableStyle implements MutableStyle{
         //TODO make fire property change thread safe, preserve fire order
         
         final PropertyChangeEvent event = new PropertyChangeEvent(this,propertyName,oldValue,newValue);
-        final StyleListener[] lists = listeners.getListeners(StyleListener.class);
+        final PropertyChangeListener[] lists = listeners.getListeners(PropertyChangeListener.class);
         
-        for(StyleListener listener : lists){
+        for(PropertyChangeListener listener : lists){
             listener.propertyChange(event);
         }
         
@@ -313,15 +314,29 @@ public class DefaultMutableStyle implements MutableStyle{
      */
     @Override
     public void addListener(StyleListener listener){
-        listeners.add(StyleListener.class, listener);
+        addListener((PropertyChangeListener)listener);
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public void addListener(PropertyChangeListener listener){
+        listeners.add(PropertyChangeListener.class, listener);
+        if(listener instanceof StyleListener){
+            listeners.add(StyleListener.class, (StyleListener)listener);
+        }
     }
     
     /**
      * {@inheritDoc }
      */
     @Override
-    public void removeListener(StyleListener listener){
-        listeners.remove(StyleListener.class, listener);
+    public void removeListener(PropertyChangeListener listener){
+        listeners.remove(PropertyChangeListener.class, listener);
+        if(listener instanceof StyleListener){
+            listeners.remove(StyleListener.class, (StyleListener)listener);
+        }
     }
     
     

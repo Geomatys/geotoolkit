@@ -27,8 +27,10 @@ import org.opengis.sld.NamedLayer;
  */
 public interface MutableNamedLayer extends MutableLayer, NamedLayer{
 
+    @Override
     List<MutableLayerStyle> styles();
     
+    @Override
     MutableLayerFeatureConstraints getConstraints();
     
 }

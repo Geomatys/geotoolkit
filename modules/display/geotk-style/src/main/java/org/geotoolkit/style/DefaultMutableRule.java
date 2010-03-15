@@ -17,6 +17,7 @@
 package org.geotoolkit.style;
 
 import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.Collection;
 import java.util.List;
 import javax.swing.event.EventListenerList;
@@ -338,9 +339,9 @@ public class DefaultMutableRule implements MutableRule{
         //TODO make fire property change thread safe, preserve fire order
         
         final PropertyChangeEvent event = new PropertyChangeEvent(this,propertyName,oldValue,newValue);
-        final RuleListener[] lists = listeners.getListeners(RuleListener.class);
+        final PropertyChangeListener[] lists = listeners.getListeners(PropertyChangeListener.class);
         
-        for(RuleListener listener : lists){
+        for(PropertyChangeListener listener : lists){
             listener.propertyChange(event);
         }
         
@@ -375,15 +376,29 @@ public class DefaultMutableRule implements MutableRule{
      */
     @Override
     public void addListener(RuleListener listener){
-        listeners.add(RuleListener.class, listener);
+        addListener((PropertyChangeListener)listener);
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public void addListener(PropertyChangeListener listener){
+        listeners.add(PropertyChangeListener.class, listener);
+        if(listener instanceof RuleListener){
+            listeners.add(RuleListener.class, (RuleListener)listener);
+        }
     }
     
     /**
      * {@inheritDoc }
      */
     @Override
-    public void removeListener(RuleListener listener){
-        listeners.remove(RuleListener.class, listener);
+    public void removeListener(PropertyChangeListener listener){
+        listeners.remove(PropertyChangeListener.class, listener);
+        if(listener instanceof RuleListener){
+            listeners.remove(RuleListener.class, (RuleListener)listener);
+        }
     }
 
 }

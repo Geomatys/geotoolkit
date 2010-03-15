@@ -17,6 +17,7 @@
 package org.geotoolkit.style;
 
 
+import java.beans.PropertyChangeListener;
 import java.util.List;
 
 import org.opengis.filter.Filter;
@@ -105,7 +106,9 @@ public interface MutableRule extends Rule{
     //--------------------------------------------------------------------------
     
     void addListener(RuleListener listener);
-    
-    void removeListener(RuleListener listener);
+
+    void addListener(PropertyChangeListener listener);
+
+    void removeListener(PropertyChangeListener listener);
     
 }

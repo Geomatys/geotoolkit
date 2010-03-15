@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.style;
 
+import java.beans.PropertyChangeListener;
 import java.util.List;
 
 import org.geotoolkit.sld.MutableLayerStyle;
@@ -63,8 +64,13 @@ public interface MutableStyle extends MutableLayerStyle,Style{
     // listeners management ----------------------------------------------------
     //--------------------------------------------------------------------------
     
+    @Override
     void addListener(StyleListener listener);
-    
-    void removeListener(StyleListener listener);
+
+    @Override
+    void addListener(PropertyChangeListener listener);
+
+    @Override
+    void removeListener(PropertyChangeListener listener);
     
 }

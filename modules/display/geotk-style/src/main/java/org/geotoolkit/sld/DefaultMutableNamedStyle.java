@@ -17,6 +17,7 @@
 package org.geotoolkit.sld;
 
 import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import javax.swing.event.EventListenerList;
 
 import org.geotoolkit.style.StyleConstants;
@@ -125,15 +126,29 @@ class DefaultMutableNamedStyle implements MutableNamedStyle{
      */
     @Override
     public void addListener(StyleListener listener) {
-        listeners.add(StyleListener.class, listener);
+        addListener((PropertyChangeListener)listener);
     }
 
     /**
      * {@inheritDoc }
      */
     @Override
-    public void removeListener(StyleListener listener) {
-        listeners.remove(StyleListener.class, listener);
+    public void addListener(PropertyChangeListener listener) {
+        listeners.add(PropertyChangeListener.class, listener);
+        if(listener instanceof StyleListener){
+            listeners.add(StyleListener.class, (StyleListener)listener);
+        }
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public void removeListener(PropertyChangeListener listener) {
+        listeners.remove(PropertyChangeListener.class, listener);
+        if(listener instanceof StyleListener){
+            listeners.remove(StyleListener.class, (StyleListener)listener);
+        }
     }
     
     /**

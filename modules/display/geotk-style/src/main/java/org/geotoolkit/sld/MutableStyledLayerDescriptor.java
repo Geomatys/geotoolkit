@@ -45,8 +45,10 @@ public interface MutableStyledLayerDescriptor extends StyledLayerDescriptor, Clo
      */
     void setDescription(Description description);
             
+    @Override
     List<SLDLibrary> libraries();
     
+    @Override
     List<MutableLayer> layers();
     
     /**
