@@ -80,7 +80,7 @@ public enum QueryType {
     /**
      * {@code true} if this is a query which modify the database.
      */
-    final boolean isWrite;
+    private final boolean isWrite;
 
     /**
      * Creates a query type.

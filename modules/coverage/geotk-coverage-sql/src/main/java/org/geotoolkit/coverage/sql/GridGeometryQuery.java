@@ -55,12 +55,12 @@ final class GridGeometryQuery extends Query {
      */
     public GridGeometryQuery(final Database database) {
         super(database, "GridGeometries");
-        final QueryType[] all    = {LIST, SELECT, EXISTS, INSERT};
+        final QueryType[] lse    = {LIST, SELECT, EXISTS        };
         final QueryType[] lsi    = {LIST, SELECT,         INSERT};
         final QueryType[] si     = {      SELECT,         INSERT};
-        final QueryType[] select = {      SELECT, EXISTS        };
+        final QueryType[] select = {      SELECT, EXISTS, DELETE};
         final QueryType[] list   = {LIST                        };
-        identifier        = addMandatoryColumn("identifier",              all);
+        identifier        = addMandatoryColumn("identifier",              lse);
         width             = addMandatoryColumn("width",                    si);
         height            = addMandatoryColumn("height",                   si);
         scaleX            = addMandatoryColumn("scaleX",                   si);

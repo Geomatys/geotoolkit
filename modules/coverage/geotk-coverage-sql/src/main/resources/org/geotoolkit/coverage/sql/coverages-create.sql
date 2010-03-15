@@ -287,8 +287,10 @@ COMMENT ON INDEX "Series_index" IS
 -- Dependencies: (none)                                                                         --
 --------------------------------------------------------------------------------------------------
 
+CREATE SEQUENCE "seq_GridGeometries" START 1000;
+
 CREATE TABLE "GridGeometries" (
-    "identifier"        integer           NOT NULL PRIMARY KEY,
+    "identifier"        integer           NOT NULL PRIMARY KEY DEFAULT nextval('coverages."seq_GridGeometries"'),
     "width"             integer           NOT NULL,
     "height"            integer           NOT NULL,
     "scaleX"            double precision  NOT NULL DEFAULT 1,
@@ -300,6 +302,8 @@ CREATE TABLE "GridGeometries" (
     "horizontalSRID"    integer           NOT NULL DEFAULT 4326,
     CONSTRAINT "GridGeometries_size" CHECK (width > 0 AND height > 0)
 );
+
+ALTER SEQUENCE "seq_GridGeometries" OWNED BY "GridGeometries"."identifier";
 
 SELECT AddGeometryColumn('GridGeometries', 'horizontalExtent', 4326, 'POLYGON', 2);
 ALTER TABLE "GridGeometries" ALTER COLUMN "horizontalExtent" SET NOT NULL;
@@ -375,7 +379,7 @@ CREATE FUNCTION "ComputeDefaultExtent"() RETURNS "trigger"
     AS $$
   BEGIN
     IF NEW."horizontalExtent" IS NULL THEN
-      NEW."horizontalExtent" := Transform(Affine(GeometryFromText(
+      NEW."horizontalExtent" := postgis.Transform(postgis.Affine(postgis.GeometryFromText(
         'POLYGON((0 0,0 ' || NEW."height" || ',' || NEW."width" || ' ' || NEW."height" || ',' || NEW."width" || ' 0,0 0))',
         NEW."horizontalSRID"), NEW."scaleX", NEW."shearX", NEW."shearY", NEW."scaleY", NEW."translateX", NEW."translateY"), 4326);
     END IF;
@@ -574,9 +578,9 @@ CREATE VIEW "DomainOfTiles" AS
            ymin("geographic")       AS "south",
            ymax("geographic")       AS "north"
       FROM
-   (SELECT *, Transform("horizontalExtent", 4326) AS "geographic"
+   (SELECT *, postgis.Transform("horizontalExtent", 4326) AS "geographic"
       FROM
-   (SELECT "series", "extent", "count", "tmin", "tmax", Affine(GeometryFromText('POLYGON((' ||
+   (SELECT "series", "extent", "count", "tmin", "tmax", postgis.Affine(postgis.GeometryFromText('POLYGON((' ||
            "xmin" || ' ' || "ymin" || ',' ||
            "xmax" || ' ' || "ymin" || ',' ||
            "xmax" || ' ' || "ymax" || ',' ||

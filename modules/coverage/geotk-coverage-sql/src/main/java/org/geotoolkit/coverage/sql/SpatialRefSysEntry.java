@@ -222,7 +222,7 @@ final class SpatialRefSysEntry {
      * <p>
      * The {@link #createSpatioTemporalCRS} method must have been invoked before this method.
      */
-    final GeneralGridGeometry getGridGeometry(final Dimension size, final AffineTransform gridToCRS,
+    final GeneralGridGeometry createGridGeometry(final Dimension size, final AffineTransform gridToCRS,
             final double[] altitudes, final MathTransformFactory mtFactory) throws FactoryException
     {
         assert uninitialized() == 0 : this;

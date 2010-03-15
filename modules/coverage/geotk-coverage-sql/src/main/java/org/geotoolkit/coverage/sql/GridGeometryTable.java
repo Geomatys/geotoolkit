@@ -18,9 +18,13 @@
 package org.geotoolkit.coverage.sql;
 
 import java.sql.Array;
+import java.sql.Types;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.PreparedStatement;
 import java.awt.Dimension;
+import java.awt.geom.AffineTransform;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -29,6 +33,9 @@ import java.util.Map;
 import java.util.SortedMap;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.logging.LogRecord;
 
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.ReferenceIdentifier;
@@ -39,6 +46,8 @@ import org.opengis.referencing.operation.MathTransformFactory;
 import org.geotoolkit.util.collection.WeakHashSet;
 import org.geotoolkit.internal.sql.table.Column;
 import org.geotoolkit.internal.sql.table.Database;
+import org.geotoolkit.internal.sql.table.QueryType;
+import org.geotoolkit.internal.sql.table.LocalCache;
 import org.geotoolkit.internal.sql.table.SingletonTable;
 import org.geotoolkit.internal.sql.table.CatalogException;
 import org.geotoolkit.internal.sql.table.IllegalRecordException;
@@ -144,7 +153,7 @@ final class GridGeometryTable extends SingletonTable<GridGeometryEntry> {
     @SuppressWarnings("fallthrough")
     protected GridGeometryEntry createEntry(final ResultSet results) throws CatalogException, SQLException {
         final GridGeometryQuery query  = (GridGeometryQuery) super.query;
-        final String identifier        = results.getString(indexOf(query.identifier));
+        final int    identifier        = results.getInt   (indexOf(query.identifier));
         final int    width             = results.getInt   (indexOf(query.width));
         final int    height            = results.getInt   (indexOf(query.height));
         final double scaleX            = results.getDouble(indexOf(query.scaleX));
@@ -217,11 +226,34 @@ final class GridGeometryTable extends SingletonTable<GridGeometryEntry> {
                 }
                 altitudes[i] = z;
             }
-            verticalOrdinates.free();
+// TODO: Uncomment when the JDBC driver will support this method.
+// In order to test if the JDBC driver support this method, just
+// uncomment the line below and try running GridGeometryTableTest.
+//          verticalOrdinates.free();
         } else {
             altitudes = null;
         }
         return altitudes;
+    }
+
+    /**
+     * Returns {@code true} if the specified arrays are equal when comparing the values
+     * at {@code float} precision. This method is a workaround for the cases where some
+     * original array was stored with {@code double} precision while the other array has
+     * been casted to {@code float} precision. The precision lost causes the comparison
+     * to fail when comparing the array at full {@code double} precision. For example
+     * {@code (double) 0.1f} is not equals to {@code 0.1}.
+     */
+    private static boolean equalsAsFloat(final double[] a1, final double[] a2) {
+        if (a1 == null || a2 == null || a1.length != a2.length) {
+            return false;
+        }
+        for (int i=0; i<a1.length; i++) {
+            if (Float.floatToIntBits((float) a1[i]) != Float.floatToIntBits((float) a2[i])) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
@@ -290,5 +322,173 @@ final class GridGeometryTable extends SingletonTable<GridGeometryEntry> {
     @SuppressWarnings({"unchecked","rawtypes"})
     private static SortedMap<Date,SortedSet<Number>> unsafe(final SortedMap centroids) {
         return centroids;
+    }
+
+    /**
+     * Returns the identifier for the specified grid geometry.
+     *
+     * @param  size              The image width and height in pixels.
+     * @param  gridToCRS         The transform from grid coordinates to "real world" coordinates.
+     * @param  horizontalSRID    The "real world" horizontal coordinate reference system.
+     * @param  verticalOrdinates The vertical coordinates, or {@code null}.
+     * @param  verticalSRID      The "real world" vertical coordinate reference system.
+     *                           Ignored if {@code verticalOrdinates} is {@code null}.
+     * @return The identifier of a matching entry, or {@code null} if none was found.
+     * @throws SQLException If the operation failed.
+     */
+    Integer find(final Dimension size,
+                 final AffineTransform  gridToCRS, final int horizontalSRID,
+                 final double[] verticalOrdinates, final int verticalSRID)
+            throws SQLException, CatalogException
+    {
+        Integer id = null;
+        final GridGeometryQuery query = (GridGeometryQuery) super.query;
+        synchronized (getLock()) {
+            final LocalCache.Stmt ce = getStatement(QueryType.LIST);
+            final PreparedStatement statement = ce.statement;
+            statement.setInt   (indexOf(query.byWidth),          size.width );
+            statement.setInt   (indexOf(query.byHeight),         size.height);
+            statement.setDouble(indexOf(query.byScaleX),         gridToCRS.getScaleX());
+            statement.setDouble(indexOf(query.byShearY),         gridToCRS.getShearY());
+            statement.setDouble(indexOf(query.byShearX),         gridToCRS.getShearX());
+            statement.setDouble(indexOf(query.byScaleY),         gridToCRS.getScaleY());
+            statement.setDouble(indexOf(query.byTranslateX),     gridToCRS.getTranslateX());
+            statement.setDouble(indexOf(query.byTranslateY),     gridToCRS.getTranslateY());
+            statement.setInt   (indexOf(query.byHorizontalSRID), horizontalSRID);
+
+            boolean foundStrictlyEquals = false;
+            final int idIndex = indexOf(query.identifier);
+            int vsIndex = indexOf(query.verticalSRID);
+            int voIndex = indexOf(query.verticalOrdinates);
+            final ResultSet results = statement.executeQuery();
+            while (results.next()) {
+                final int nextID   = results.getInt(idIndex);
+                final int nextSRID = results.getInt(vsIndex);
+                /*
+                 * We check vertical SRID in Java code rather than in the SQL statement because it is
+                 * uneasy to write a statement that works for both non-null and null values (the former
+                 * requires "? IS NULL" since the "? = NULL" statement doesn't work with PostgreSQL 8.2.
+                 */
+                if (results.wasNull() != (verticalOrdinates == null) ||
+                    (verticalOrdinates != null && nextSRID != verticalSRID))
+                {
+                    continue;
+                }
+                /*
+                 * We compare the arrays in this Java code rather than in the SQL statement (in the
+                 * WHERE clause) in order to make sure that we are insensitive to the array type
+                 * (since we convert to double[] in all cases), and because we need to relax the
+                 * tolerance threshold in some cases.
+                 */
+                final double[] altitudes = asDoubleArray(results.getArray(voIndex));
+                final boolean isStrictlyEquals;
+                if (Arrays.equals(altitudes, verticalOrdinates)) {
+                    isStrictlyEquals = true;
+                } else if (equalsAsFloat(altitudes, verticalOrdinates)) {
+                    isStrictlyEquals = false;
+                } else {
+                    continue;
+                }
+                /*
+                 * If there is more than one record with different ID, then there is a choice:
+                 *   1) If the new record is more accurate than the previous one, keep the new one.
+                 *   2) Otherwise we keep the previous record. A warning will be logged if and only
+                 *      if the two records are strictly equals.
+                 */
+                if (id != null && !id.equals(nextID)) {
+                    if (!isStrictlyEquals) {
+                        continue;
+                    }
+                    if (foundStrictlyEquals) {
+                        // Could happen if there is insuffisient conditions in the WHERE clause.
+                        final Logger logger = getLogger();
+                        final LogRecord record = errors().getLogRecord(Level.WARNING,
+                                Errors.Keys.DUPLICATED_RECORD_$1, id);
+                        record.setSourceClassName(GridGeometryTable.class.getName());
+                        record.setSourceMethodName("find");
+                        record.setLoggerName(logger.getName());
+                        logger.log(record);
+                        continue;
+                    }
+                }
+                id = nextID;
+                foundStrictlyEquals = isStrictlyEquals;
+            }
+            results.close();
+            ce.release();
+        }
+        return id;
+    }
+
+    /**
+     * Returns the identifier for the specified grid geometry. If a suitable entry already
+     * exists, its identifier is returned. Otherwise a new entry is created and its identifier
+     * is returned.
+     *
+     * @param  size              The image width and height in pixels.
+     * @param  gridToCRS         The transform from grid coordinates to "real world" coordinates.
+     * @param  horizontalSRID    The "real world" horizontal coordinate reference system.
+     * @param  verticalOrdinates The vertical coordinates, or {@code null}.
+     * @param  verticalSRID      The "real world" vertical coordinate reference system.
+     *                           Ignored if {@code verticalOrdinates} is {@code null}.
+     * @return The identifier of a matching entry.
+     * @throws SQLException If the operation failed.
+     */
+    int findOrCreate(final Dimension size,
+                     final AffineTransform  gridToCRS, final int horizontalSRID,
+                     final double[] verticalOrdinates, final int verticalSRID)
+            throws SQLException, CatalogException
+    {
+        synchronized (getLock()) {
+            boolean success = false;
+            transactionBegin();
+            try {
+                Integer id = find(size, gridToCRS, horizontalSRID, verticalOrdinates, verticalSRID);
+                if (id == null) {
+                    /*
+                     * No match found. Add a new record in the database.
+                     */
+                    final GridGeometryQuery query = (GridGeometryQuery) super.query;
+                    final LocalCache.Stmt ce = getStatement(QueryType.INSERT);
+                    final PreparedStatement statement = ce.statement;
+                    statement.setInt   (indexOf(query.width),          size.width );
+                    statement.setInt   (indexOf(query.height),         size.height);
+                    statement.setDouble(indexOf(query.scaleX),         gridToCRS.getScaleX());
+                    statement.setDouble(indexOf(query.scaleY),         gridToCRS.getScaleY());
+                    statement.setDouble(indexOf(query.translateX),     gridToCRS.getTranslateX());
+                    statement.setDouble(indexOf(query.translateY),     gridToCRS.getTranslateY());
+                    statement.setDouble(indexOf(query.shearX),         gridToCRS.getShearX());
+                    statement.setDouble(indexOf(query.shearY),         gridToCRS.getShearY());
+                    statement.setInt   (indexOf(query.horizontalSRID), horizontalSRID);
+                    final int vsIndex = indexOf(query.verticalSRID);
+                    final int voIndex = indexOf(query.verticalOrdinates);
+                    if (verticalOrdinates == null || verticalOrdinates.length == 0) {
+                        statement.setNull(vsIndex, Types.INTEGER);
+                        statement.setNull(voIndex, Types.ARRAY);
+                    } else {
+                        statement.setInt(vsIndex, verticalSRID);
+                        final Double[] numbers = new Double[verticalOrdinates.length];
+                        for (int i=0; i<numbers.length; i++) {
+                            numbers[i] = verticalOrdinates[i];
+                        }
+                        final Array array = statement.getConnection().createArrayOf("float8", numbers);
+                        statement.setArray(voIndex, array);
+                    }
+                    success = updateSingleton(statement);
+                    /*
+                     * Get the identifier of the entry that we just generated.
+                     */
+                    final ResultSet keys = statement.getGeneratedKeys();
+                    if (keys.next()) {
+                        id = keys.getInt(query.identifier.name);
+                    }
+                    keys.close();
+                    ce.release();
+                }
+                return id;
+            } finally {
+                transactionEnd(success);
+            }
+        }
     }
 }

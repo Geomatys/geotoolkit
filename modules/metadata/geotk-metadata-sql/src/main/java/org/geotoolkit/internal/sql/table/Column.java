@@ -35,7 +35,7 @@ import org.geotoolkit.internal.sql.Ordering;
  * }
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.09
+ * @version 3.10
  *
  * @since 3.09 (derived from Seagis)
  * @module
@@ -46,12 +46,12 @@ public final class Column extends ColumnOrParameter {
      * than {@link Query#table}, except if we are building a more complex query with
      * {@code JOIN} clauses.
      */
-    final String table;
+    public final String table;
 
     /**
      * The name of the column, as declared in the database.
      */
-    final String name;
+    public final String name;
 
     /**
      * The default value, or {@link #MANDATORY} if the value is mandatory.

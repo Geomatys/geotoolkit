@@ -104,11 +104,11 @@ final class GridGeometryEntry extends Entry {
     /**
      * Creates an entry from the given grid geometry.
      *
-     * @param name              The identifier of this grid geometry.
+     * @param identifier        The identifier of this grid geometry.
      * @param gridToCRS         The grid to CRS affine transform.
      * @param verticalOrdinates The vertical ordinate values, or {@code null} if none.
      */
-    GridGeometryEntry(final String             name,
+    GridGeometryEntry(final int                identifier,
                       final Dimension          size,
                       final SpatialRefSysEntry srsEntry,
                       final AffineTransform2D  gridToCRS,
@@ -116,16 +116,16 @@ final class GridGeometryEntry extends Entry {
                       final MathTransformFactory mtFactory)
             throws FactoryException, TransformException
     {
-        super(name, null);
+        super(identifier, null);
         this.srsEntry          = srsEntry;
         this.gridToCRS         = gridToCRS;
         this.verticalOrdinates = verticalOrdinates;
         if (verticalOrdinates != null) {
             if (verticalOrdinates.length > Short.MAX_VALUE - 1) {
-                throw new IllegalArgumentException(); // See 'getAltitudeIndex' for this limitation.
+                throw new IllegalArgumentException(); // See 'indexOfNearestAltitude' for this limitation.
             }
         }
-        geometry = srsEntry.getGridGeometry(size, gridToCRS, verticalOrdinates, mtFactory);
+        geometry = srsEntry.createGridGeometry(size, gridToCRS, verticalOrdinates, mtFactory);
         geographicBoundingShape = srsEntry.toDatabaseHorizontalCRS().createTransformedShape(getShape());
     }
 
@@ -135,6 +135,13 @@ final class GridGeometryEntry extends Entry {
      */
     public int getHorizontalSRID() {
         return srsEntry.horizontalSRID;
+    }
+
+    /**
+     * Returns the SRID of the vertical component of the CRS.
+     */
+    public int getVerticalSRID() {
+        return srsEntry.verticalSRID;
     }
 
     /**
@@ -266,7 +273,7 @@ final class GridGeometryEntry extends Entry {
      * @param z The value to search for.
      * @return  The 1-based altitude index, or {@code 0} if none.
      */
-    final short getAltitudeIndex(final double z) {
+    final short indexOfNearestAltitude(final double z) {
         short index = 0;
         if (!Double.isNaN(z) && !Double.isInfinite(z)) {
             double delta = Double.POSITIVE_INFINITY;
