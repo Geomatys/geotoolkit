@@ -67,7 +67,7 @@ import org.opengis.style.Symbolizer;
  * @author Johann Sorel (Puzzle-GIS)
  * @module pending
  */
-public class JStyleTree extends JXTree implements DragGestureListener, DragSourceListener, DropTargetListener {
+public class JStyleTree<T> extends JXTree implements DragGestureListener, DragSourceListener, DropTargetListener {
 
     private static final Icon ICON_STYLE = IconBundle.getInstance().getIcon("16_style");
     private static final Icon ICON_FTS = IconBundle.getInstance().getIcon("16_style_fts");
@@ -76,8 +76,8 @@ public class JStyleTree extends JXTree implements DragGestureListener, DragSourc
     private static final Icon ICON_DUPLICATE = IconBundle.getInstance().getIcon("16_duplicate");
     private static final Icon ICON_DELETE = IconBundle.getInstance().getIcon("16_delete");
     
-    private MutableStyle style = null;
-    private StyleTreeModel treemodel = null;
+    private T style = null;
+    private StyleTreeModel<T> treemodel = null;
     /** Variables needed for DnD */
     private DragSource dragSource = null;
 
@@ -96,11 +96,11 @@ public class JStyleTree extends JXTree implements DragGestureListener, DragSourc
         DropTarget dropTarget = new DropTarget(this, this);
     }
 
-    public MutableStyle getStyle() {
+    public T getStyleElement() {
         return style;
     }
 
-    public void setStyle(MutableStyle style) {
+    public void setStyleElement(T style) {
 
         this.style = style;
 
@@ -179,7 +179,7 @@ public class JStyleTree extends JXTree implements DragGestureListener, DragSourc
             final Object parentObj = targetNode.getUserObject();
             final Transferable trans = dtde.getTransferable();
 
-            setStyle(style);
+            setStyleElement(style);
         }
 
     }

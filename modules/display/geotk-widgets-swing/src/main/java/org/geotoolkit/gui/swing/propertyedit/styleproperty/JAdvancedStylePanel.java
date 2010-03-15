@@ -19,7 +19,6 @@ package org.geotoolkit.gui.swing.propertyedit.styleproperty;
 
 import java.awt.Component;
 import java.awt.GridLayout;
-import java.lang.ref.WeakReference;
 import java.util.WeakHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -47,7 +46,6 @@ import org.geotoolkit.gui.swing.style.JStylePane;
 import org.geotoolkit.gui.swing.style.JStyleTree;
 import org.geotoolkit.gui.swing.style.JTextSymbolizerPane;
 import org.geotoolkit.gui.swing.style.StyleElementEditor;
-
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableRule;
@@ -64,12 +62,12 @@ import org.opengis.style.TextSymbolizer;
  * @author Johann Sorel (Puzzle-GIS)
  * @module pending
  */
-public class JAdvancedStylePanel extends StyleElementEditor<MutableStyle> implements PropertyPane {
+public class JAdvancedStylePanel<T extends Object> extends StyleElementEditor<T> implements PropertyPane {
 
     private final WeakHashMap<Class,StyleElementEditor> guiPanels = new WeakHashMap<Class, StyleElementEditor>();
 
     private MapLayer layer = null;
-    private MutableStyle style = null;
+    private T style = null;
     private StyleElementEditor editor = null;
     private final TreeSelectionListener listener = new TreeSelectionListener() {
 
@@ -213,10 +211,10 @@ public class JAdvancedStylePanel extends StyleElementEditor<MutableStyle> implem
             }
         }
 
-        style = tree.getStyle();
+        style = (T) tree.getStyleElement();
 
-        if (layer != null) {
-            layer.setStyle(style);
+        if (layer != null && style instanceof MutableStyle) {
+            layer.setStyle((MutableStyle)style);
         }
     }
 
@@ -231,20 +229,20 @@ public class JAdvancedStylePanel extends StyleElementEditor<MutableStyle> implem
     }
 
     @Override
-    public void parse(MutableStyle style) {
+    public void parse(T style) {
         this.style = style;
         parse();
     }
 
     @Override
-    public MutableStyle create() {
-        style = tree.getStyle();
+    public T create() {
+        style = (T) tree.getStyleElement();
         apply();
         return style;
     }
 
     private void parse() {
-        tree.setStyle(style);
+        tree.setStyleElement(style);
     }
 
     @Override
@@ -262,7 +260,7 @@ public class JAdvancedStylePanel extends StyleElementEditor<MutableStyle> implem
 
         if (layer instanceof MapLayer) {
             setLayer((MapLayer) layer);
-            parse(this.layer.getStyle());
+            parse((T) this.layer.getStyle());
         }
     }
 
