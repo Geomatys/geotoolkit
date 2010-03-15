@@ -76,6 +76,7 @@ import org.geotoolkit.style.CollectionChangeEvent;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.util.SimpleInternationalString;
 import org.geotoolkit.style.DefaultStyleFactory;
+import org.geotoolkit.style.MutableFeatureTypeStyle;
 
 import org.opengis.style.Description;
 import org.opengis.style.FeatureTypeStyle;
@@ -87,6 +88,7 @@ public class JContextTree extends JScrollPane implements ContextListener {
     private static final MutableStyleFactory SF = new DefaultStyleFactory();
     private static final ImageIcon ICON_LAYER_VISIBLE = IconBundle.getInstance().getIcon("16_maplayer_visible");
     private static final ImageIcon ICON_LAYER_UNVISIBLE = IconBundle.getInstance().getIcon("16_maplayer_unvisible");
+    private static final ImageIcon ICON_FTS = IconBundle.getInstance().getIcon("16_style_fts");
     
     private final List<TreePopupItem> controls = new ArrayList<TreePopupItem>();
     private final DefaultMutableTreeNode root = new DefaultMutableTreeNode(null);
@@ -217,22 +219,35 @@ public class JContextTree extends JScrollPane implements ContextListener {
 
         if(layer instanceof DynamicMapLayer){
             //this kind of layer have there own style systems we rely on it
-            DynamicMapLayer dynlayer = (DynamicMapLayer) layer;
+            final DynamicMapLayer dynlayer = (DynamicMapLayer) layer;
             try {
-                Image img = dynlayer.getLegend();
-                DefaultMutableTreeNode imgNode = new org.geotoolkit.gui.swing.tree.DefaultMutableTreeNode(img);
+                final Image img = dynlayer.getLegend();
+                final DefaultMutableTreeNode imgNode = new DefaultMutableTreeNode(img);
                 layerNode.add(imgNode);
             } catch (PortrayalException ex) {
                 Logger.getLogger(JContextTree.class.getName()).log(Level.SEVERE, null, ex);
             }
 
         }else{
-            for(FeatureTypeStyle fts : layer.getStyle().featureTypeStyles()){
-                for(Rule rule : fts.rules()){
-                    DefaultMutableTreeNode ruleNode = new DefaultMutableTreeNode(rule);
-                    layerNode.add(ruleNode);
+            final List<MutableFeatureTypeStyle> ftss = layer.getStyle().featureTypeStyles();
+            if(ftss.size() == 1){
+                for(FeatureTypeStyle fts : layer.getStyle().featureTypeStyles()){
+                    for(Rule rule : fts.rules()){
+                        DefaultMutableTreeNode ruleNode = new DefaultMutableTreeNode(rule);
+                        layerNode.add(ruleNode);
+                    }
+                }
+            }else{
+                for(FeatureTypeStyle fts : layer.getStyle().featureTypeStyles()){
+                    final DefaultMutableTreeNode ftsNode = new DefaultMutableTreeNode(fts);
+                    for(Rule rule : fts.rules()){
+                        final DefaultMutableTreeNode ruleNode = new DefaultMutableTreeNode(rule);
+                        ftsNode.add(ruleNode);
+                    }
+                    layerNode.add(ftsNode);
                 }
             }
+            
         }
         return layerNode;
     }
@@ -458,10 +473,34 @@ public class JContextTree extends JScrollPane implements ContextListener {
                     panel.add(label,gc);
                 }
 
-            } else if(obj instanceof Rule){
+            } else if(obj instanceof FeatureTypeStyle){
+                final FeatureTypeStyle fts = (FeatureTypeStyle) obj;
+
+                gc.weightx = 0;
+                gc.weighty = 1;
+                gc.gridx = 0;
+                this.icon.setIcon(ICON_FTS);
+                panel.add(icon,gc);
+
+                gc.weightx = 1;
+                gc.weighty = 1;
+                gc.gridx = 1;
+                this.label.setText(fts.getDescription().getTitle().toString());
+                panel.add(label,gc);
+            }else if(obj instanceof Rule){
                 final Rule rule = (Rule) obj;
 
-                final MapLayer layer = (MapLayer) ((DefaultMutableTreeNode)node.getParent()).getUserObject();
+                MapLayer layer = null;
+                DefaultMutableTreeNode parent = (DefaultMutableTreeNode) node.getParent();
+
+                while(layer == null && parent != null){
+                    Object cdt = parent.getUserObject();
+                    if(cdt instanceof MapLayer){
+                        layer = (MapLayer) cdt;
+                    }else{
+                        parent = (DefaultMutableTreeNode) parent.getParent();
+                    }
+                }
 
                 Dimension dim = DefaultGlyphService.glyphPreferredSize(rule, null, layer);
                 final BufferedImage img = new BufferedImage(dim.width, dim.height, BufferedImage.TYPE_INT_ARGB);
