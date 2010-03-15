@@ -26,10 +26,12 @@ import com.vividsolutions.jts.geom.prep.PreparedGeometryFactory;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.geotoolkit.filter.DefaultLiteral;
+import org.geotoolkit.filter.DefaultPropertyName;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.geometry.jts.SRIDGenerator;
 import org.geotoolkit.geometry.jts.SRIDGenerator.Version;
 import org.geotoolkit.referencing.CRS;
+import org.opengis.feature.Feature;
 import org.opengis.filter.FilterVisitor;
 import org.opengis.filter.expression.PropertyName;
 import org.opengis.filter.spatial.BBOX;
@@ -59,7 +61,7 @@ public class DefaultBBox extends AbstractBinarySpatialOperator<PropertyName,Defa
     private final int srid;
 
     public DefaultBBox(PropertyName property, DefaultLiteral<Envelope> bbox) {
-        super(property,bbox);
+        super(nonNullPropertyName(property),bbox);
         boundingGeometry = toGeometry(bbox.getValue());
         boundingEnv = boundingGeometry.getGeometry().getEnvelopeInternal();
         this.crs = bbox.getValue().getCoordinateReferenceSystem();
@@ -68,6 +70,12 @@ public class DefaultBBox extends AbstractBinarySpatialOperator<PropertyName,Defa
         }else{
             this.srid = 0;
         }
+    }
+
+    private static PropertyName nonNullPropertyName(PropertyName proper) {
+        if (proper == null)
+            return new DefaultPropertyName("");
+        return proper;
     }
 
     /**
@@ -123,7 +131,12 @@ public class DefaultBBox extends AbstractBinarySpatialOperator<PropertyName,Defa
      */
     @Override
     public boolean evaluate(Object object) {
-        Geometry candidate = left.evaluate(object, Geometry.class);
+        Geometry candidate;
+        if (object instanceof Feature && left.getPropertyName().isEmpty()) {
+            candidate = (Geometry) ((Feature)object).getDefaultGeometryProperty().getValue();
+        } else {
+            candidate = left.evaluate(object, Geometry.class);
+        }
 
         if(candidate == null){
             return false;

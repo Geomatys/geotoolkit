@@ -174,7 +174,12 @@ public class OGC110toGTTransformer {
             final EnvelopeEntry box = binary.getEnvelope();
             final String pnt = binary.getPropertyName();
             
-            final Expression geom = visitPropertyName(pnt);
+            final Expression geom;
+            if (pnt != null) {
+                geom = visitPropertyName(pnt);
+            } else {
+                geom = null;
+            }
             final double minx = box.getLowerCorner().getOrdinate(0);
             final double maxx = box.getUpperCorner().getOrdinate(0);
             final double miny = box.getLowerCorner().getOrdinate(1);

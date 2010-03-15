@@ -328,19 +328,22 @@ public class JAXPStreamFeatureWriter extends JAXPFeatureWriter {
              * The boundedby part
              */
             writeBounds(featureCollection.getEnvelope(), streamWriter);
-            
+
             // we write each feature member of the collection
             FeatureIterator iterator =featureCollection.iterator();
-            while (iterator.hasNext()) {
-                final SimpleFeature f = (SimpleFeature) iterator.next();
+            try {
+                while (iterator.hasNext()) {
+                    final SimpleFeature f = (SimpleFeature) iterator.next();
 
-                streamWriter.writeStartElement("gml", "featureMember", GML_NAMESPACE);
-                writeFeature(f, streamWriter, false);
-                streamWriter.writeEndElement();
+                    streamWriter.writeStartElement("gml", "featureMember", GML_NAMESPACE);
+                    writeFeature(f, streamWriter, false);
+                    streamWriter.writeEndElement();
+                }
+
+            } finally {
+                // we close the stream
+                iterator.close();
             }
-
-            // we close the stream
-            iterator.close();
 
             streamWriter.writeEndElement();
 

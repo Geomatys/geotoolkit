@@ -226,7 +226,7 @@ public class DefaultFilterFactory2 implements FilterFactory2{
      */
     @Override
     public BBOX bbox(Expression e, BoundingBox bounds) {
-        if(!(e instanceof PropertyName)){
+        if(e != null && !(e instanceof PropertyName)){
             throw new IllegalArgumentException("Expression expected to be a PropertyName, instead found a " + e.getClass());
         }
         return new DefaultBBox((PropertyName)e, new DefaultLiteral<Envelope>(bounds));
