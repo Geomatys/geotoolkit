@@ -17,9 +17,14 @@
 package org.geotoolkit.style;
 
 import java.beans.PropertyChangeEvent;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.EventObject;
 import java.util.List;
+import org.geotoolkit.filter.DefaultFilterFactory2;
+import org.geotoolkit.filter.identity.DefaultFeatureId;
 import org.geotoolkit.util.NumberRange;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -29,6 +34,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.opengis.feature.type.Name;
+import org.opengis.filter.Filter;
+import org.opengis.filter.FilterFactory;
 import org.opengis.style.SemanticType;
 import org.opengis.style.Symbolizer;
 
@@ -41,6 +48,7 @@ import org.opengis.style.Symbolizer;
 public class ListenerTest {
 
     private static final MutableStyleFactory SF = new DefaultStyleFactory();
+    private static final FilterFactory FF = new DefaultFilterFactory2();
     private static double DELTA = 0d;
 
     public ListenerTest() {
@@ -63,15 +71,16 @@ public class ListenerTest {
     }
 
     @Test
-    public void testRuleListener() {
+    public void testRuleListener() throws URISyntaxException {
         final MutableRule rule = SF.rule();
-        final List<CollectionChangeEvent<Symbolizer>> events = new ArrayList();
+        final List<PropertyChangeEvent> propEvents = new ArrayList<PropertyChangeEvent>();
+        final List<CollectionChangeEvent<Symbolizer>> events = new ArrayList<CollectionChangeEvent<Symbolizer>>();
         NumberRange range;
 
         rule.addListener(new RuleListener() {
             @Override
             public void propertyChange(PropertyChangeEvent event) {
-                //todo add test on this event
+                propEvents.add(event);
             }
             @Override
             public void symbolizerChange(CollectionChangeEvent<Symbolizer> event) {
@@ -103,18 +112,99 @@ public class ListenerTest {
         assertEquals(0d, range.getMinimum(), DELTA);
         assertEquals(0d, range.getMaximum(), DELTA);
 
+
+        //test property events
+        rule.setName("currentName");
+        rule.setDescription(SF.description("title", "abstract"));
+        rule.setElseFilter(true);
+        rule.setFilter(Filter.INCLUDE);
+        rule.setOnlineResource(SF.onlineResource(new URI("http://test.com")));
+        rule.setLegendGraphic(SF.graphicLegend(SF.graphic()));
+        rule.setMinScaleDenominator(0);
+        rule.setMaxScaleDenominator(10);
+        propEvents.clear();
+
+        //ensure that no events are fired when the new value is the same
+        rule.setName("currentName");
+        assertEquals(0, propEvents.size());
+        rule.setDescription(SF.description("title", "abstract"));
+        assertEquals(0, propEvents.size());
+        rule.setElseFilter(true);
+        assertEquals(0, propEvents.size());
+        rule.setFilter(Filter.INCLUDE);
+        assertEquals(0, propEvents.size());
+        rule.setOnlineResource(SF.onlineResource(new URI("http://test.com")));
+        assertEquals(0, propEvents.size());
+        rule.setLegendGraphic(SF.graphicLegend(SF.graphic()));
+        assertEquals(0, propEvents.size());
+        rule.setMinScaleDenominator(0);
+        assertEquals(0, propEvents.size());
+        rule.setMaxScaleDenominator(10);
+        assertEquals(0, propEvents.size());
+
+        //ensure that event are correctly send
+
+        propEvents.clear();
+        rule.setName("newName");
+        assertEquals(1, propEvents.size());
+        assertEquals(propEvents.get(0).getOldValue(), "currentName");
+        assertEquals(propEvents.get(0).getNewValue(), "newName");
+
+        propEvents.clear();
+        rule.setDescription(SF.description("newtitle", "newabstract"));
+        assertEquals(1, propEvents.size());
+        assertEquals(propEvents.get(0).getOldValue(), SF.description("title", "abstract"));
+        assertEquals(propEvents.get(0).getNewValue(), SF.description("newtitle", "newabstract"));
+
+        propEvents.clear();
+        rule.setElseFilter(false);
+        assertEquals(1, propEvents.size());
+        assertEquals(propEvents.get(0).getOldValue(), true);
+        assertEquals(propEvents.get(0).getNewValue(), false);
+
+        propEvents.clear();
+        rule.setFilter(Filter.EXCLUDE);
+        assertEquals(1, propEvents.size());
+        assertEquals(propEvents.get(0).getOldValue(), Filter.INCLUDE);
+        assertEquals(propEvents.get(0).getNewValue(), Filter.EXCLUDE);
+
+        propEvents.clear();
+        rule.setOnlineResource(SF.onlineResource(new URI("http://test2.com")));
+        assertEquals(1, propEvents.size());
+        assertEquals(propEvents.get(0).getOldValue(), SF.onlineResource(new URI("http://test.com")));
+        assertEquals(propEvents.get(0).getNewValue(), SF.onlineResource(new URI("http://test2.com")));
+
+        propEvents.clear();
+        rule.setLegendGraphic(null);
+        assertEquals(1, propEvents.size());
+        assertEquals(propEvents.get(0).getOldValue(), SF.graphicLegend(SF.graphic()));
+        assertEquals(propEvents.get(0).getNewValue(), null);
+
+        propEvents.clear();
+        rule.setMinScaleDenominator(100d);
+        assertEquals(1, propEvents.size());
+        assertEquals(propEvents.get(0).getOldValue(), 0d);
+        assertEquals(propEvents.get(0).getNewValue(), 100d);
+
+        propEvents.clear();
+        rule.setMaxScaleDenominator(1000d);
+        assertEquals(1, propEvents.size());
+        assertEquals(propEvents.get(0).getOldValue(), 10d);
+        assertEquals(propEvents.get(0).getNewValue(), 1000d);
+
     }
 
     @Test
-    public void testFTSListener() {
+    public void testFTSListener() throws URISyntaxException {
         final MutableFeatureTypeStyle fts = SF.featureTypeStyle();
+        final List<PropertyChangeEvent> propEvents = new ArrayList<PropertyChangeEvent>();
         final List<CollectionChangeEvent<MutableRule>> events = new ArrayList();
         NumberRange range;
 
         fts.addListener(new FeatureTypeStyleListener() {
             @Override
             public void propertyChange(PropertyChangeEvent event) {
-                //todo add test on this event
+                propEvents.add(event);
             }
             @Override
             public void ruleChange(CollectionChangeEvent<MutableRule> event) {
@@ -176,11 +266,56 @@ public class ListenerTest {
         range = sub.getRange();
         assertEquals(0d, range.getMinimum(), DELTA);
         assertEquals(0d, range.getMaximum(), DELTA);
+
+
+        //test property events
+        fts.setName("currentName");
+        fts.setDescription(SF.description("title", "abstract"));
+        fts.setOnlineResource(SF.onlineResource(new URI("http://test.com")));
+        fts.setFeatureInstanceIDs(FF.id(Collections.singleton(new DefaultFeatureId("id1"))));
+        propEvents.clear();
+
+        //ensure that no events are fired when the new value is the same
+        fts.setName("currentName");
+        assertEquals(0, propEvents.size());
+        fts.setDescription(SF.description("title", "abstract"));
+        assertEquals(0, propEvents.size());
+        fts.setOnlineResource(SF.onlineResource(new URI("http://test.com")));
+        assertEquals(0, propEvents.size());
+        fts.setFeatureInstanceIDs(FF.id(Collections.singleton(new DefaultFeatureId("id1"))));
+        assertEquals(0, propEvents.size());
+
+        //ensure that event are correctly send
+        propEvents.clear();
+        fts.setName("newName");
+        assertEquals(1, propEvents.size());
+        assertEquals(propEvents.get(0).getOldValue(), "currentName");
+        assertEquals(propEvents.get(0).getNewValue(), "newName");
+
+        propEvents.clear();
+        fts.setDescription(SF.description("newtitle", "newabstract"));
+        assertEquals(1, propEvents.size());
+        assertEquals(propEvents.get(0).getOldValue(), SF.description("title", "abstract"));
+        assertEquals(propEvents.get(0).getNewValue(), SF.description("newtitle", "newabstract"));
+
+        propEvents.clear();
+        fts.setOnlineResource(SF.onlineResource(new URI("http://test2.com")));
+        assertEquals(1, propEvents.size());
+        assertEquals(propEvents.get(0).getOldValue(), SF.onlineResource(new URI("http://test.com")));
+        assertEquals(propEvents.get(0).getNewValue(), SF.onlineResource(new URI("http://test2.com")));
+
+        propEvents.clear();
+        fts.setFeatureInstanceIDs(FF.id(Collections.singleton(new DefaultFeatureId("id2"))));
+        assertEquals(1, propEvents.size());
+        assertEquals(propEvents.get(0).getOldValue(), FF.id(Collections.singleton(new DefaultFeatureId("id1"))));
+        assertEquals(propEvents.get(0).getNewValue(), FF.id(Collections.singleton(new DefaultFeatureId("id2"))));
+
     }
 
     @Test
     public void testStyleListener() {
         final MutableStyle style = SF.style();
+        final List<PropertyChangeEvent> propEvents = new ArrayList<PropertyChangeEvent>();
         final List<CollectionChangeEvent<MutableFeatureTypeStyle>> events = new ArrayList();
         NumberRange range;
 
@@ -188,7 +323,7 @@ public class ListenerTest {
 
             @Override
             public void propertyChange(PropertyChangeEvent event) {
-                throw new UnsupportedOperationException("Not supported yet.");
+                propEvents.add(event);
             }
 
             @Override
@@ -243,6 +378,50 @@ public class ListenerTest {
         range = sub.getRange();
         assertEquals(0d, range.getMinimum(), DELTA);
         assertEquals(0d, range.getMaximum(), DELTA);
+
+
+        //test property events
+        style.setName("currentName");
+        style.setDescription(SF.description("title", "abstract"));
+        style.setDefault(true);
+        style.setDefaultSpecification(SF.lineSymbolizer());
+        propEvents.clear();
+
+        //ensure that no events are fired when the new value is the same
+        style.setName("currentName");
+        assertEquals(0, propEvents.size());
+        style.setDescription(SF.description("title", "abstract"));
+        assertEquals(0, propEvents.size());
+        style.setDefault(true);
+        assertEquals(0, propEvents.size());
+        style.setDefaultSpecification(SF.lineSymbolizer());
+        assertEquals(0, propEvents.size());
+
+        //ensure that event are correctly send
+        propEvents.clear();
+        style.setName("newName");
+        assertEquals(1, propEvents.size());
+        assertEquals(propEvents.get(0).getOldValue(), "currentName");
+        assertEquals(propEvents.get(0).getNewValue(), "newName");
+
+        propEvents.clear();
+        style.setDescription(SF.description("newtitle", "newabstract"));
+        assertEquals(1, propEvents.size());
+        assertEquals(propEvents.get(0).getOldValue(), SF.description("title", "abstract"));
+        assertEquals(propEvents.get(0).getNewValue(), SF.description("newtitle", "newabstract"));
+
+        propEvents.clear();
+        style.setDefault(false);
+        assertEquals(1, propEvents.size());
+        assertEquals(propEvents.get(0).getOldValue(), true);
+        assertEquals(propEvents.get(0).getNewValue(), false);
+
+        propEvents.clear();
+        style.setDefaultSpecification(SF.pointSymbolizer());
+        assertEquals(1, propEvents.size());
+        assertEquals(propEvents.get(0).getOldValue(), SF.lineSymbolizer());
+        assertEquals(propEvents.get(0).getNewValue(), SF.pointSymbolizer());
+
     }
 
 
