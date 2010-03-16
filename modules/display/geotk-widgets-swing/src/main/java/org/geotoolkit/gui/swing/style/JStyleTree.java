@@ -225,7 +225,6 @@ public class JStyleTree<T> extends JXTree implements DragGestureListener, DragSo
     class StylePopup extends JPopupMenu {
 
         private final JTree tree;
-        private Object buffer = null;
 
         StylePopup(JTree tree) {
             super();
@@ -233,14 +232,16 @@ public class JStyleTree<T> extends JXTree implements DragGestureListener, DragSo
         }
 
         @Override
-        public void setVisible(boolean b) {
+        public void setVisible(boolean visible) {
             final TreePath path = tree.getSelectionModel().getSelectionPath();
 
-            if (path != null && b == true) {
+            if (path != null && visible) {
                 removeAll();
 
                 final DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
                 final Object val = node.getUserObject();
+
+                add(new ColapseSubNodes(node));
 
                 if (val instanceof MutableStyle) {
                     final MutableStyle style = (MutableStyle) val;
@@ -269,10 +270,27 @@ public class JStyleTree<T> extends JXTree implements DragGestureListener, DragSo
                     add(new DeleteItem(node));
                 }
                 
-                super.setVisible(b);
-            } else {
-                super.setVisible(false);
             }
+
+            super.setVisible(visible);
+        }
+    }
+
+    class ColapseSubNodes extends JMenuItem{
+
+        private final DefaultMutableTreeNode parentNode;
+
+        ColapseSubNodes(DefaultMutableTreeNode node) {
+            this.parentNode = node;
+            setText("Collapse sub nodes.");
+            addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    for(int i=0,n=parentNode.getChildCount(); i<n; i++){
+                        collapsePath(new TreePath(treemodel.getPathToRoot(parentNode.getChildAt(i))));
+                    }
+                }
+            });
         }
     }
 

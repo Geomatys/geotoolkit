@@ -18,7 +18,6 @@
 package org.geotoolkit.gui.swing.contexttree;
 
 import java.awt.Component;
-import java.awt.Point;
 import javax.swing.JPopupMenu;
 import javax.swing.tree.TreePath;
 
@@ -53,15 +52,7 @@ final class TreePopup extends JPopupMenu {
             TreePath[] selection = {};
 
             if (tree != null) {
-
-                Point location = tree.getMousePosition();
-                if (location != null) {
-                    TreePath path = tree.getRealTree().getPathForLocation(location.x, location.y);
-
-                    selection = new TreePath[]{path};
-                }
-
-                
+                selection = tree.getRealTree().getSelectionPaths();
             }
             
             if(selection == null){

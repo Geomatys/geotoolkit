@@ -6,27 +6,30 @@
 package org.geotoolkit.gui.swing.style;
 
 import javax.swing.tree.DefaultMutableTreeNode;
-import org.geotoolkit.style.DefaultDescription;
+import junit.framework.TestCase;
+
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
+
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.opengis.style.Rule;
+
 import org.opengis.style.SemanticType;
 import org.opengis.style.Symbolizer;
+
 import static org.junit.Assert.*;
 
 /**
  *
  * @author sorel
  */
-public class StyleModelTest {
+public class StyleModelTest extends TestCase{
 
     private static final MutableStyleFactory SF = new DefaultStyleFactory();
     private static double DELTA = 0d;
