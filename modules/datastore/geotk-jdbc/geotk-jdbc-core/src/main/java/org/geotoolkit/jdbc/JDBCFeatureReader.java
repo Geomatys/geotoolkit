@@ -71,10 +71,9 @@ public class JDBCFeatureReader implements  FeatureReader<SimpleFeatureType, Simp
     protected static final Logger LOGGER = Logging.getLogger(JDBCFeatureReader.class);
 
     /**
-     * When true, the stack trace that created a reader that wasn't closed is recorded and then
-     * printed out when warning the user about this.
+     * Stores the creation stack trace if assertion are enable.
      */
-    protected static final Boolean TRACE_ENABLED = "true".equalsIgnoreCase(System.getProperty("gt2.jdbc.trace"));
+    protected Throwable creationStack;
 
     /**
      * the datastore
@@ -111,7 +110,6 @@ public class JDBCFeatureReader implements  FeatureReader<SimpleFeatureType, Simp
     protected Statement st;
     protected ResultSet rs;
     protected Connection cx;
-    protected Exception tracer;
     protected String[] columnNames;
 
     public JDBCFeatureReader(final String sql, final Connection cx, final JDBCDataStore store, 
@@ -141,10 +139,7 @@ public class JDBCFeatureReader implements  FeatureReader<SimpleFeatureType, Simp
     protected void init(final JDBCDataStore store, final Name typeName, final SimpleFeatureType featureType, final PrimaryKey pkey,
                         final Hints chints) throws IOException, DataStoreException{
         // init the tracer if we need to debug a connection leak
-        if (TRACE_ENABLED) {
-            tracer = new Exception();
-            tracer.fillInStackTrace();
-        }
+        assert(creationStack = new Exception().fillInStackTrace()) != null;
 
         // init base fields
         this.dataStore = (DefaultJDBCDataStore) store;
@@ -341,15 +336,15 @@ public class JDBCFeatureReader implements  FeatureReader<SimpleFeatureType, Simp
         hints = null;
         next = null;
         builder = null;
-        tracer = null;
+        creationStack = null;
     }
 
     @Override
     protected void finalize() throws Throwable {
         if (dataStore != null) {
             LOGGER.warning("There is code leaving feature readers/iterators open, this is leaking statements and connections!");
-            if(TRACE_ENABLED) {
-                LOGGER.log(Level.WARNING, "The unclosed reader originated on this stack trace", tracer);
+            if(creationStack != null) {
+                LOGGER.log(Level.WARNING, "The unclosed reader originated on this stack trace", creationStack);
             }
             close();
         }

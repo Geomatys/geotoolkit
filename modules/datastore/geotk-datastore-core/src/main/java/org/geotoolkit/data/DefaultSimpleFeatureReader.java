@@ -20,6 +20,7 @@ package org.geotoolkit.data;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.NoSuchElementException;
+import java.util.logging.Level;
 
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.HintsPending;
@@ -27,6 +28,7 @@ import org.geotoolkit.feature.SchemaException;
 import org.geotoolkit.feature.simple.DefaultSimpleFeature;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.feature.simple.SimpleFeatureTypeBuilder;
+import org.geotoolkit.util.logging.Logging;
 
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
@@ -59,6 +61,11 @@ import org.opengis.feature.type.PropertyDescriptor;
  */
 public abstract class DefaultSimpleFeatureReader implements FeatureReader<SimpleFeatureType, SimpleFeature> {
 
+    /**
+     * Stores the creation stack trace if assertion are enable.
+     */
+    protected Throwable creationStack;
+
     protected final PropertyReader attributeReader;
     protected final SimpleFeatureType schema;
     protected final FeatureIDReader fidReader;
@@ -68,6 +75,11 @@ public abstract class DefaultSimpleFeatureReader implements FeatureReader<Simple
      * if the attributs between reader and schema are the same but not in the same order.
      */
     protected final int[] attributIndexes;
+
+    /**
+     * Store the stat of the reader.
+     */
+    protected boolean closed = false;
 
     /**
      * Creates a new instance of AbstractFeatureReader
@@ -105,6 +117,9 @@ public abstract class DefaultSimpleFeatureReader implements FeatureReader<Simple
 
         this.schema = schema;
         this.buffer = new Object[attributeReader.getPropertyCount()];
+
+        // init the tracer if we need to debug a connection leak
+        assert(creationStack = new Exception().fillInStackTrace()) != null;
     }
 
     public DefaultSimpleFeatureReader(PropertyReader attributeReader, FeatureIDReader fidReader)
@@ -140,16 +155,43 @@ public abstract class DefaultSimpleFeatureReader implements FeatureReader<Simple
      */
     @Override
     public void close() throws DataStoreRuntimeException {
+        closed = true;
+
+        Exception ex = null;
+
         try {
             fidReader.close();
-        } catch (DataStoreException ex) {
-            throw new DataStoreRuntimeException(ex);
+        } catch (DataStoreException e) {
+            ex = e;
         }
 
         try {
             attributeReader.close();
-        } catch (IOException ex) {
+        } catch (IOException e) {
+            if(ex== null){
+                ex = e;
+            }else{
+                //we tryed to close both and both failed
+                //return the first exception
+            }
+        }
+
+        if(ex != null){
             throw new DataStoreRuntimeException(ex);
+        }
+
+    }
+
+    @Override
+    protected void finalize() throws Throwable {
+        if (!closed) {
+            Logging.getLogger(DefaultSimpleFeatureReader.class).warning(
+                "There is code leaving feature simple readers/iterators open, this is leaking data stream!");
+            if(creationStack != null) {
+                Logging.getLogger(DefaultSimpleFeatureReader.class).log(Level.WARNING,
+                    "The unclosed reader originated on this stack trace", creationStack);
+            }
+            close();
         }
     }
 
@@ -178,7 +220,7 @@ public abstract class DefaultSimpleFeatureReader implements FeatureReader<Simple
      */
     private static SimpleFeatureType createSchema(PropertyReader attributeReader) throws SchemaException {
         final SimpleFeatureTypeBuilder b = new SimpleFeatureTypeBuilder();
-        b.setName("xxx");
+        b.setName("noTypeName");
         b.addAll(getDescriptors(attributeReader));
         return b.buildFeatureType();
     }
