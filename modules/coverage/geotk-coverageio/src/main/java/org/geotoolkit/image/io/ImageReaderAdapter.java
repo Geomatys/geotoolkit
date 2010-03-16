@@ -212,13 +212,13 @@ public abstract class ImageReaderAdapter extends SpatialImageReader {
 
     /**
      * Ensures that the input of the {@linkplain #main} reader is initialized.
+     * If not, this method tries to create an informative error message.
      */
     private void ensureInitialized() throws IOException {
         if (main.getInput() == null) {
             final Object mainInput = createInput("main");
             if (mainInput == null) {
-                throw new InvalidImageStoreException(getErrorResources().getString(
-                        Errors.Keys.UNKNOWN_TYPE_$1, input.getClass()));
+                throw new InvalidImageStoreException(getErrorResources(), input, inputTypes, false);
             }
             main.setInput(mainInput, seekForwardOnly, ignoreMetadata);
             initialize();

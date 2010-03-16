@@ -166,7 +166,8 @@ public final class WorldFileImageWriterTest extends TextImageWriterTestBase {
      */
     @Test
     public void testImageIO() throws IOException {
-        final RenderedImage image = ImageIO.read(TestData.file(TileTest.class, "A1.png"));
+        // We use A2.png because it is the smallest file of the mosaic test-data directory.
+        final RenderedImage image = ImageIO.read(TestData.file(TileTest.class, "A2.png"));
         final File file = TemporaryFile.createTempFile("TEST", ".png", null);
         WorldFileImageWriter.Spi.registerDefaults(null);
         try {
@@ -174,7 +175,7 @@ public final class WorldFileImageWriterTest extends TextImageWriterTestBase {
             assertTrue(file.length() != 0);
             /*
              * When using the XImageIO methods, the WorldFileImageWriter plugin
-             * should be selected in the input is a file.
+             * should be selected if the output is a file.
              */
             ImageWriter writer = XImageIO.getWriterBySuffix(file, image);
             assertTrue(writer instanceof WorldFileImageWriter);
@@ -182,7 +183,7 @@ public final class WorldFileImageWriterTest extends TextImageWriterTestBase {
             writer.dispose();
             assertTrue(file.length() != 0);
             /*
-             * If the input is a stream, then the standard writer should be selected.
+             * If the output is a stream, then the standard writer should be selected.
              */
             final ImageOutputStream out = ImageIO.createImageOutputStream(file);
             try {

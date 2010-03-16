@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.internal.image.io;
 
+import java.util.Arrays;
 import java.util.Locale;
 import java.util.List;
 import java.util.LinkedList;
@@ -44,7 +45,7 @@ import org.geotoolkit.internal.io.IOUtilities;
  * Utility methods about image formats.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.08
+ * @version 3.10
  *
  * @since 3.01
  * @module
@@ -445,6 +446,35 @@ attmpt: while (true) {
             }
         }
         return false;
+    }
+
+    /**
+     * Simplifies the given array of format names, MIME types or file suffixes.
+     * This method sorts the elements by alphabetical order, ignoring cases,
+     * and remove duplicated values.
+     *
+     * @param choices The array to simplify.
+     * @return The simplified array.
+     *
+     * @since 3.10
+     */
+    public static String[] simplify(String[] choices) {
+        if (choices != null) {
+            Arrays.sort(choices, String.CASE_INSENSITIVE_ORDER);
+            int count = 0;
+            for (int i=1; i<choices.length; i++) {
+                final String o1 = choices[i-1];
+                final String o2 = choices[i];
+                if (!o1.equalsIgnoreCase(o2)) {
+                    choices[count++] = o1;
+                } else if (o1.compareTo(o2) > 0) {
+                    choices[i-1] = o2; // Order lower-cases before upper-cases.
+                    choices[i]   = o1;
+                }
+            }
+            choices = XArrays.resize(choices, count);
+        }
+        return choices;
     }
 
     /**

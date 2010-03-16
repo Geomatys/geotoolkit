@@ -334,7 +334,8 @@ public class MosaicImageWriter extends ImageWriter implements Disposable {
             }
         }
         if (onlyOneImage) {
-            throw new InvalidImageStoreException(Errors.format(Errors.Keys.INVALID_MOSAIC_INPUT));
+            throw new InvalidImageStoreException(Errors.getResources(locale)
+                    .getString(Errors.Keys.INVALID_MOSAIC_INPUT));
         }
         return success;
     }

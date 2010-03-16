@@ -355,9 +355,14 @@ public final class Errors extends IndexedResourceBundle {
         public static final int EMPTY_ENVELOPE = 51;
 
         /**
-         * Premature end of data file
+         * Premature end of data file.
          */
         public static final int END_OF_DATA_FILE = 52;
+
+        /**
+         * Expected one of {0}.
+         */
+        public static final int EXPECTED_ONE_OF_$1 = 245;
 
         /**
          * No factory of kind "{0}" found.
@@ -1137,6 +1142,11 @@ public final class Errors extends IndexedResourceBundle {
         public static final int UNKNOWN_COMMAND_$1 = 192;
 
         /**
+         * File suffix "{0}" is unknown.
+         */
+        public static final int UNKNOWN_FILE_SUFFIX_$1 = 246;
+
+        /**
          * Image format "{0}" is unknown.
          */
         public static final int UNKNOWN_IMAGE_FORMAT_$1 = 193;
@@ -1145,6 +1155,11 @@ public final class Errors extends IndexedResourceBundle {
          * Interpolation "{0}" is unknown.
          */
         public static final int UNKNOWN_INTERPOLATION_$1 = 194;
+
+        /**
+         * MIME type "{0}" is unknown.
+         */
+        public static final int UNKNOWN_MIME_TYPE_$1 = 247;
 
         /**
          * Unknown parameter: {0}

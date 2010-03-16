@@ -17,7 +17,15 @@
  */
 package org.geotoolkit.image.io;
 
+import java.io.File;
+import java.util.Arrays;
 import javax.imageio.IIOException;
+
+import org.geotoolkit.resources.Errors;
+import org.geotoolkit.resources.IndexedResourceBundle;
+import org.geotoolkit.internal.image.io.Formats;
+import org.geotoolkit.internal.io.IOUtilities;
+import org.geotoolkit.util.converter.Classes;
 
 
 /**
@@ -33,7 +41,7 @@ import javax.imageio.IIOException;
  * reader or writer until first needed.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.08
+ * @version 3.10
  *
  * @since 3.08
  * @module
@@ -63,5 +71,81 @@ public class InvalidImageStoreException extends IIOException {
      */
     public InvalidImageStoreException(final String message, final Throwable cause) {
         super(message, cause);
+    }
+
+    /**
+     * Builds an error message for an input of unsupported type.
+     *
+     * @param  resources The resource bundle to use for formatting the message, or {@code null} if unknown.
+     * @param  io        The actual input or output object.
+     * @param  expected  The expected input or output types.
+     * @param  write     {@code true} for building a message for write operation, or {@code false}
+     *                   for read operation.
+     *
+     * @since 3.10
+     */
+    InvalidImageStoreException(final IndexedResourceBundle resources, final Object io,
+            final Class<?>[] expected, final boolean write)
+    {
+        super(unknownType(resources, io, expected, write));
+    }
+
+    /**
+     * Workaround for RFE #4093999 ("Relax constraint on placement of this()/super()
+     * call in constructors").
+     */
+    private static String unknownType(final IndexedResourceBundle resources, final Object io,
+            final Class<?>[] expected, final boolean write)
+    {
+        /*
+         * In the particular case where the input or output object is a file,
+         * check if the file (read mode) and the parent directory (read/write
+         * mode) exists.
+         */
+        if (io instanceof File) {
+            File file = (File) io;
+            if (write) {
+                file = file.getParentFile();
+                if (file != null && !file.isDirectory()) {
+                    return resources.getString(Errors.Keys.NOT_A_DIRECTORY_$1, file);
+                }
+            } else if (!file.exists()) {
+                int key = Errors.Keys.FILE_DOES_NOT_EXIST_$1;
+                final File parent = file.getParentFile();
+                if (parent != null && !parent.isDirectory()) {
+                    key = Errors.Keys.NOT_A_DIRECTORY_$1;
+                    file = parent;
+                }
+                return resources.getString(key, file);
+            }
+        }
+        /*
+         * If the given input or output was supposed to be a supported type, format an error
+         * message saying that we can't read or write to that input or output object.
+         */
+        if (expected != null) {
+            for (final Class<?> e : expected) {
+                if (e.isInstance(io)) {
+                    return resources.getString(
+                            write ? Errors.Keys.CANT_WRITE_$1 : Errors.Keys.CANT_READ_$1,
+                            IOUtilities.name(io));
+                }
+            }
+        }
+        /*
+         * If the input or output object is not a supported type, format an error
+         * message with the list of expected types.
+         */
+        String message = resources.getString(Errors.Keys.UNKNOWN_TYPE_$1, Classes.getShortClassName(io));
+        if (expected != null && expected.length != 0) {
+            String[] names = new String[expected.length];
+            for (int i=0; i<expected.length; i++) {
+                names[i] = Classes.getShortName(expected[i]);
+            }
+            names = Formats.simplify(names);
+            message = message + ' ' + resources.getString(
+                    Errors.Keys.EXPECTED_ONE_OF_$1, Arrays.toString(names));
+        }
+        return message;
     }
 }

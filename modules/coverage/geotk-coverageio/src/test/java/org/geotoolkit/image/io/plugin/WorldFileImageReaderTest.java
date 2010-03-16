@@ -17,10 +17,17 @@
  */
 package org.geotoolkit.image.io.plugin;
 
+import java.io.File;
 import java.io.IOException;
+import java.util.Locale;
+import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
+import javax.imageio.stream.ImageInputStream;
 
 import org.geotoolkit.test.Depend;
 import org.geotoolkit.test.TestData;
+import org.geotoolkit.image.io.XImageIO;
+import org.geotoolkit.image.io.mosaic.TileTest;
 import org.geotoolkit.image.io.TextImageReaderTestBase;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
@@ -34,7 +41,7 @@ import static org.geotoolkit.test.Commons.*;
  * Tests {@link WorldFileImageReader}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.08
+ * @version 3.10
  *
  * @since 3.07
  */
@@ -111,5 +118,56 @@ public final class WorldFileImageReaderTest extends TextImageReaderTestBase {
                 "    ├───centerPoint=“0.0 0.0”\n" +
                 "    └───pointInPixel=“upperLeft”"), metadata.toString());
         reader.dispose();
+    }
+
+    /**
+     * Tests reading an image though the standard {@link ImageIO} API and
+     * the {@link XImageIO} extension.
+     *
+     * @throws IOException If an error occured while reading the test image or
+     *         writing it to the temporary file.
+     *
+     * @since 3.10
+     */
+    @Test
+    public void testImageIO() throws IOException {
+        final Locale locale = Locale.getDefault();
+        File file = TestData.file(TileTest.class, "A2.png");
+        WorldFileImageReader.Spi.registerDefaults(null);
+        Locale.setDefault(Locale.US);
+        try {
+            assertNotNull(ImageIO.read(file));
+            /*
+             * When using the XImageIO methods, the WorldFileImageReader plugin
+             * should be selected in the input is a file except if there is no
+             * PGW (or TFW) and no PRJ file. This is the case of A2.png.
+             */
+            ImageReader reader = XImageIO.getReaderBySuffix(file, true, true);
+            assertFalse(reader instanceof WorldFileImageReader);
+            reader.dispose();
+            /*
+             * Test again, but now using a file which have a TFW file.
+             */
+            file = TestData.file(this, "matrix.txt");
+            reader = XImageIO.getReaderByFormatName("matrix", file, true, true);
+            assertTrue(reader instanceof WorldFileImageReader);
+            reader.dispose();
+            /*
+             * If the input is a stream, then the standard reader should be selected.
+             */
+            final ImageInputStream in = ImageIO.createImageInputStream(file);
+            try {
+                reader = XImageIO.getReaderByFormatName("matrix", in, true, true);
+                assertTrue(reader instanceof TextMatrixImageReader);
+                // Don't botter to read the image. The purpose of
+                // this test is not to test the JDK PNG ImageReader.
+                reader.dispose();
+            } finally {
+                in.close();
+            }
+        } finally {
+            Locale.setDefault(locale);
+            WorldFileImageReader.Spi.unregisterDefaults(null);
+        }
     }
 }

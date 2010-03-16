@@ -217,13 +217,13 @@ public abstract class ImageWriterAdapter extends SpatialImageWriter {
 
     /**
      * Ensures that the output of the {@linkplain #main} writer is initialized.
+     * If not, this method tries to create an informative error message.
      */
     private void ensureOutputInitialized() throws IOException {
         if (main.getOutput() == null) {
             final Object mainOutput = createOutput("main");
             if (mainOutput == null) {
-                throw new InvalidImageStoreException(getErrorResources().getString(
-                        Errors.Keys.UNKNOWN_TYPE_$1, output.getClass()));
+                throw new InvalidImageStoreException(getErrorResources(), output, outputTypes, true);
             }
             main.setOutput(mainOutput);
             initialize();

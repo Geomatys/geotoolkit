@@ -18,6 +18,7 @@
 package org.geotoolkit.image.io;
 
 import java.util.List;
+import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.io.Closeable;
@@ -33,13 +34,13 @@ import javax.imageio.spi.ImageReaderWriterSpi;
 import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.ImageOutputStream;
 import java.awt.image.RenderedImage;
-import org.geotoolkit.internal.image.io.Formats;
 
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.util.XArrays;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.NullArgumentException;
 import org.geotoolkit.internal.io.IOUtilities;
+import org.geotoolkit.internal.image.io.Formats;
 
 
 /**
@@ -124,7 +125,7 @@ import org.geotoolkit.internal.io.IOUtilities;
  * the first argument. All other arguments are optional and can be {@code null}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.09
+ * @version 3.10
  *
  * @since 3.07
  * @module
@@ -268,6 +269,7 @@ public final class XImageIO {
     {
         List<ImageReaderSpi> tryAgain = null; // Will be created only if needed.
         Iterator<ImageReaderSpi> it = getServiceProviders(ImageReaderSpi.class, mode, name);
+        boolean hasFound = false;
         while (it.hasNext()) {
             final ImageReaderSpi spi = it.next();
             if (input == null || spi.canDecodeInput(input)) {
@@ -278,6 +280,7 @@ public final class XImageIO {
              * to decode the given input. If the input was not already an ImageInputStream,
              * remember that Spi so we can try it again with an ImageInputStream later.
              */
+            hasFound = true;
             if (input instanceof ImageInputStream) {
                 continue;
             }
@@ -307,7 +310,55 @@ public final class XImageIO {
                 stream.close();
             }
         }
-        throw new UnsupportedImageFormatException(Errors.format(Errors.Keys.NO_IMAGE_READER));
+        throw new UnsupportedImageFormatException(errorMessage(false, mode, name, hasFound));
+    }
+
+    /**
+     * Creates an error message for an {@link ImageReader} or {@link ImageWriter} not found.
+     *
+     * @param  write {@code true} for a message appropriate for writers, or {@code false} for readers.
+     * @param  mode  Either {@link #NAME}, {@link #SUFFIX} or {@link #MIME}.
+     * @param  name  The name, suffix or MIME type to look for, or {@code null}.
+     * @param  hasFound {@code true} if at least one reader or writer was found.
+     * @return The error message to declare in exception constructor.
+     */
+    private static String errorMessage(final boolean write, final int mode, final String name, final boolean hasFound) {
+        if (name == null || hasFound) {
+            return Errors.format(write ? Errors.Keys.NO_IMAGE_WRITER : Errors.Keys.NO_IMAGE_READER);
+        }
+        final int key;
+        String[] choices;
+        switch (mode) {
+            case NAME:   {
+                key = Errors.Keys.UNKNOWN_IMAGE_FORMAT_$1;
+                choices = write ? ImageIO.getWriterFormatNames() : ImageIO.getReaderFormatNames();
+                break;
+            }
+            case SUFFIX: {
+                key = Errors.Keys.UNKNOWN_FILE_SUFFIX_$1;
+                choices = write ? ImageIO.getWriterFileSuffixes() : ImageIO.getReaderFileSuffixes();
+                break;
+            }
+            case MIME: {
+                key = Errors.Keys.UNKNOWN_MIME_TYPE_$1;
+                choices = write ? ImageIO.getWriterMIMETypes() : ImageIO.getReaderMIMETypes();
+                break;
+            }
+            default: throw new AssertionError(mode);
+        }
+        choices = Formats.simplify(choices);
+        final boolean hasChoices = (choices != null && choices.length != 0);
+        final Errors resources = Errors.getResources(null);
+        String message;
+        if (mode == NAME && hasChoices) {
+            message = resources.getString(Errors.Keys.NO_IMAGE_FORMAT_$2, name, Arrays.toString(choices));
+        } else {
+            message = resources.getString(key, name);
+            if (hasChoices) {
+                message = message + ' ' + resources.getString(Errors.Keys.EXPECTED_ONE_OF_$1, Arrays.toString(choices));
+            }
+        }
+        return message;
     }
 
     /**
@@ -507,7 +558,9 @@ public final class XImageIO {
     {
         ImageWriterSpi fallback = null;
         Iterator<ImageWriterSpi> it = getServiceProviders(ImageWriterSpi.class, mode, name);
+        boolean hasFound = false;
         while (it.hasNext()) {
+            hasFound = true;
             final ImageWriterSpi spi = it.next();
             if (image == null || spi.canEncodeImage(image)) {
                 if (output == null) {
@@ -544,7 +597,7 @@ public final class XImageIO {
                 return createWriterInstance(fallback, stream);
             }
         }
-        throw new UnsupportedImageFormatException(Errors.format(Errors.Keys.NO_IMAGE_WRITER));
+        throw new UnsupportedImageFormatException(errorMessage(true, mode, name, hasFound));
     }
 
     /**
