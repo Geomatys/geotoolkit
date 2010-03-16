@@ -346,13 +346,15 @@ public class ColorRamp extends JComponent {
      * Returns a graduation for the specified sample dimension, minimum and maximum values. If
      * the supplied {@code reuse} object is non-null and is of the appropriate class, then this
      * method can return {@code reuse} without creating a new graduation object. Otherwise this
-     * method must returns a graduation of the appropriate class, usually {@link NumberGraduation}
-     * or {@link LogarithmicNumberGraduation}.
+     * method must returns a graduation of the appropriate class, usually
+     * {@link org.geotoolkit.display.axis.NumberGraduation} or
+     * {@link org.geotoolkit.display.axis.LogarithmicNumberGraduation}.
      * <p>
      * In every cases, this method must set graduations's
-     * {@linkplain AbstractGraduation#setMinimum minimum},
-     * {@linkplain AbstractGraduation#setMaximum maximum} and
-     * {@linkplain AbstractGraduation#setUnit unit} according the values given in arguments.
+     * {@linkplain org.geotoolkit.display.axis.AbstractGraduation#setMinimum minimum},
+     * {@linkplain org.geotoolkit.display.axis.AbstractGraduation#setMaximum maximum} and
+     * {@linkplain org.geotoolkit.display.axis.AbstractGraduation#setUnit unit}
+     * according the values given in arguments.
      *
      * @param  reuse   The graduation to reuse if possible.
      * @param  band    The sample dimension to create graduation for.

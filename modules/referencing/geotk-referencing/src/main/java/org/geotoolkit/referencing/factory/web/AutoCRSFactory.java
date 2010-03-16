@@ -49,7 +49,7 @@ import org.geotoolkit.referencing.operation.projection.TransverseMercator;
 /**
  * The factory for {@linkplain ProjectedCRS projected CRS} in the {@code AUTO} and {@code AUTO2}
  * space. The expected format is {@code AUTO:code,<unit>,lon0,lat0} where the {@code AUTO} prefix
- * is optional. The {@code <unit> parameter is also optional, since it was not present in the WMS
+ * is optional. The {@code <unit>} parameter is also optional, since it was not present in the WMS
  * 1.0 specification (it has been added later).
  * <p>
  * The parameters are as below:

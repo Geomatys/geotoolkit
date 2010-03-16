@@ -28,7 +28,7 @@
  *       do the real work of creating Coordinate Reference System objects from authority
  *       codes. They differ in the way their data are stored:
  *       {@link org.geotoolkit.referencing.factory.epsg.DirectEpsgFactory} uses a connection
- *       to an EPSG database, {@link org.geotoolkit.referencing.factory.DirectPostgisFactory}
+ *       to an EPSG database, {@link org.geotoolkit.referencing.factory.wkt.DirectPostgisFactory}
  *       uses a connection to a PostGIS {@code "spatial_ref_sys"} table and
  *       {@link org.geotoolkit.referencing.factory.PropertyAuthorityFactory} uses static
  *       WKT strings in a property file.</p></li>

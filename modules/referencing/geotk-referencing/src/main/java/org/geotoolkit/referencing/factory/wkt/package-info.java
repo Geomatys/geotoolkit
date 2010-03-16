@@ -25,8 +25,8 @@
  *   <li>{@link org.geotoolkit.referencing.factory.wkt.PropertyAuthorityFactory} (and its
  *       {@link org.geotoolkit.referencing.factory.epsg.PropertyEpsgFactory} specialization)
  *       for parsing CRS from a {@linkplain java.util.Properties property file}.</li>
- *   <li>{@link org.geotoolkit.referencing.factory.wkt.PostgisAuthorityFactory} for parsing CRS
- *       from the {@value org.geotoolkit.referencing.factory.wkt.PostgisAuthorityFactory#TABLE}
+ *   <li>{@link org.geotoolkit.referencing.factory.wkt.DirectPostgisFactory} for parsing CRS
+ *       from the {@value org.geotoolkit.referencing.factory.wkt.DirectPostgisFactory#TABLE}
  *       table of a PostGIS database:.</li>
  * </ul>
  * <p>

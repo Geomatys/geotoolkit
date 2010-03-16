@@ -59,7 +59,7 @@ import org.geotoolkit.resources.Vocabulary;
  * @since 3.10 (derived from 2.5)
  * @module
  */
-public class PostgisAuthorityFactory extends WKTParsingAuthorityFactory implements CRSAuthorityFactory {
+public class DirectPostgisFactory extends WKTParsingAuthorityFactory implements CRSAuthorityFactory {
     /**
      * The standard name of the table containing CRS definitions, which is {@value}.
      */
@@ -99,7 +99,7 @@ public class PostgisAuthorityFactory extends WKTParsingAuthorityFactory implemen
      * <p>
      * <b>Note:</b> we recommand to avoid keeping the connection open for a long time. An easy
      * way to get the connection created only when first needed and closed automatically after
-     * a short timeout is to instantiate this {@code PostgisAuthorityFactory} class only in a
+     * a short timeout is to instantiate this {@code DirectPostgisFactory} class only in a
      * {@link org.geotoolkit.referencing.factory.ThreadedAuthorityFactory}. This approach also
      * gives concurrency and caching services in bonus.
      *
@@ -107,7 +107,7 @@ public class PostgisAuthorityFactory extends WKTParsingAuthorityFactory implemen
      * @param connection The connection to the database.
      * @throws SQLException If an error occured while fetching metadata from the database.
      */
-    public PostgisAuthorityFactory(final Hints hints, final Connection connection) throws SQLException {
+    public DirectPostgisFactory(final Hints hints, final Connection connection) throws SQLException {
         super(hints, new SpatialRefSysMap(connection));
     }
 
@@ -200,7 +200,7 @@ public class PostgisAuthorityFactory extends WKTParsingAuthorityFactory implemen
                     authorities[count++] = authority;
                 }
             } catch (FactoryException exception) {
-                Logging.unexpectedException(LOGGER, PostgisAuthorityFactory.class, "getAuthority", exception);
+                Logging.unexpectedException(LOGGER, DirectPostgisFactory.class, "getAuthority", exception);
                 authorities = new Citation[] {getPrimaryKeyAuthority()};
             }
             authorities[count] = pkAuthority;
@@ -258,7 +258,7 @@ public class PostgisAuthorityFactory extends WKTParsingAuthorityFactory implemen
      * then this method parses the code as an integer. This is consistent with common practice
      * where the spatial CRS table contains entries from a single authority with primary keys
      * identical to the authority codes. This is also consistent with the codes returned by the
-     * {@link #getAuthorityCodes()} method.
+     * {@link #getAuthorityCodes(Class)} method.
      *
      * @param  type The type of the object being created (usually
      *         <code>{@linkplain CoordinateReferenceSystem}.class</code>).
@@ -311,7 +311,7 @@ public class PostgisAuthorityFactory extends WKTParsingAuthorityFactory implemen
         try {
             ((SpatialRefSysMap) definitions).dispose();
         } catch (SQLException exception) {
-            Logging.unexpectedException(PostgisAuthorityFactory.class, "dispose", exception);
+            Logging.unexpectedException(DirectPostgisFactory.class, "dispose", exception);
         }
         authority   = null;
         authorities = null;

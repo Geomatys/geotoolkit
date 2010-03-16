@@ -36,7 +36,7 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.naming.DefaultNameSpace;
 import org.geotoolkit.util.collection.BackingStoreException;
 
-import static org.geotoolkit.referencing.factory.wkt.PostgisAuthorityFactory.*;
+import static org.geotoolkit.referencing.factory.wkt.DirectPostgisFactory.*;
 
 
 /**

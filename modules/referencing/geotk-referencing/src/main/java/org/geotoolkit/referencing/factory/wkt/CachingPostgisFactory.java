@@ -32,7 +32,7 @@ import org.geotoolkit.referencing.factory.NoSuchFactoryException;
 
 
 /**
- * Provides caching services for a {@link PostgisAuthorityFactory}. Also provides multi-thread
+ * Provides caching services for a {@link DirectPostgisFactory}. Also provides multi-thread
  * concurrency, but this is not the main purpose of this class.
  * <p>
  * This class implements only the {@link CRSAuthorityFactory} interface because the PostGIS
@@ -45,7 +45,7 @@ import org.geotoolkit.referencing.factory.NoSuchFactoryException;
  * @since 3.10
  * @module
  */
-final class PostgisCachingFactory extends ThreadedAuthorityFactory implements CRSAuthorityFactory, Disposable {
+final class CachingPostgisFactory extends ThreadedAuthorityFactory implements CRSAuthorityFactory, Disposable {
     /**
      * Provides connection to the PostGIS database.
      */
@@ -60,7 +60,7 @@ final class PostgisCachingFactory extends ThreadedAuthorityFactory implements CR
      * @param userHints An optional set of hints, or {@code null} for the default ones.
      * @param datasource Provides connection to the PostGIS database.
      */
-    PostgisCachingFactory(final Hints userHints, final DataSource datasource) {
+    CachingPostgisFactory(final Hints userHints, final DataSource datasource) {
         super(userHints, 10, 2);
         this.datasource = datasource;
         WKTParsingAuthorityFactory.copyRelevantHints(userHints, hints);
@@ -94,7 +94,7 @@ final class PostgisCachingFactory extends ThreadedAuthorityFactory implements CR
             throw new FactoryException(e);
         }
         try {
-            return new PostgisAuthorityFactory(localHints, connection);
+            return new DirectPostgisFactory(localHints, connection);
         } catch (SQLException e) {
             try {
                 connection.close();

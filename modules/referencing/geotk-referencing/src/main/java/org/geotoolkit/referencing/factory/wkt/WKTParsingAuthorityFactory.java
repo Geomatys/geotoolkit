@@ -272,7 +272,7 @@ public class WKTParsingAuthorityFactory extends DirectAuthorityFactory {
      * <p>
      * The default implementation returns {@code null} in all cases. This method is overriden
      * and made public by implementations that are backed by a SQL database. For example the
-     * {@link PostgisAuthorityFactory} overrides this method in order to return
+     * {@link DirectPostgisFactory} overrides this method in order to return
      * {@link Citations#POSTGIS}.
      *
      * @return The authority which is reponsible for the maintenance of primary keys,
@@ -553,7 +553,7 @@ public class WKTParsingAuthorityFactory extends DirectAuthorityFactory {
     /**
      * Returns the primary key for the specified authority code. The default implementation
      * returns the given code with the "authority" part trimmed. This method is overriden by
-     * {@link PostgisAuthorityFactory}. Note that {@code PostgisAuthorityFactory} will trim
+     * {@link DirectPostgisFactory}. Note that {@code DirectPostgisFactory} will trim
      * the authority itself, because it needs the authority part of the code.
      *
      * @param  type The type of the object being created.
@@ -644,7 +644,7 @@ public class WKTParsingAuthorityFactory extends DirectAuthorityFactory {
 
         /**
          * The primary key corresponding to the code. For {@link PropertyAuthorityFactory},
-         * this is equals to {@link #code}. For {@link PostgisAuthorityFactory}, this is an
+         * this is equals to {@link #code}. For {@link DirectPostgisFactory}, this is an
          * {@link Integer} obtained from the {@code srid} column.
          */
         Comparable<?> primaryKey;

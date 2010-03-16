@@ -47,7 +47,7 @@ import org.geotoolkit.factory.Hints;
  * }
  *
  * The following example creates a factory which use the definitions provided in the
- * {@value org.geotoolkit.referencing.factory.wkt.PostgisAuthorityFactory#TABLE} table
+ * {@value org.geotoolkit.referencing.factory.wkt.DirectPostgisFactory#TABLE} table
  * of a PostGIS database:
  *
  * {@preformat java
@@ -108,7 +108,7 @@ public class AuthorityFactoryProvider {
         } catch (IOException e) {
             throw new FactoryException(e);
         }
-        return new PropertyCachingFactory(factory);
+        return new CachingPropertyFactory(factory);
     }
 
     /**
@@ -121,6 +121,6 @@ public class AuthorityFactoryProvider {
      * @throws FactoryException If the authority factory can not be created.
      */
     public CRSAuthorityFactory createFromPostGIS(final DataSource datasource) throws FactoryException {
-        return new PostgisCachingFactory(hints, datasource);
+        return new CachingPostgisFactory(hints, datasource);
     }
 }

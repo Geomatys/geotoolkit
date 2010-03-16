@@ -49,7 +49,7 @@ import static org.junit.Assume.*;
 
 
 /**
- * Tests {@link PostgisAuthorityFactory}. This test case requires the test configuration
+ * Tests {@link DirectPostgisFactory}. This test case requires the test configuration
  * described in the {@code geotk-coverage-sql} module, otherwise the test will be skipped.
  *
  * @author Martin Desruisseaux (Geomatys)
@@ -58,7 +58,7 @@ import static org.junit.Assume.*;
  * @since 3.10
  */
 @Depend(WKTFormatTest.class)
-public class PostgisAuthorityFactoryTest {
+public class DirectPostgisFactoryTest {
     /**
      * Gets the connection parameters to the coverage database.
      */
@@ -88,7 +88,7 @@ public class PostgisAuthorityFactoryTest {
     @Test
     public void testUsingCoverageSQL() throws FactoryException, IOException, SQLException {
         final Connection connection = getCoverageDataSource().getConnection();
-        final PostgisAuthorityFactory factory = new PostgisAuthorityFactory(null, connection);
+        final DirectPostgisFactory factory = new DirectPostgisFactory(null, connection);
         try {
             /*
              * Test general information.
@@ -139,14 +139,14 @@ public class PostgisAuthorityFactoryTest {
     }
 
     /**
-     * Tests the wrapping of {@link PostgisAuthorityFactory} in {@link PostgisCachingFactory}.
+     * Tests the wrapping of {@link DirectPostgisFactory} in {@link CachingPostgisFactory}.
      *
      * @throws FactoryException Should not happen.
      * @throws IOException If an error occured while reading the properties file.
      */
     @Test
     public void testCaching() throws FactoryException, IOException {
-        final PostgisCachingFactory factory = new PostgisCachingFactory(null, getCoverageDataSource());
+        final CachingPostgisFactory factory = new CachingPostgisFactory(null, getCoverageDataSource());
         try {
             /*
              * Test general information.

@@ -34,7 +34,7 @@ import org.geotoolkit.referencing.factory.AbstractAuthorityFactory;
  * @since 3.10
  * @module
  */
-final class PropertyCachingFactory extends CachingAuthorityFactory
+final class CachingPropertyFactory extends CachingAuthorityFactory
         implements CRSAuthorityFactory, CSAuthorityFactory, DatumAuthorityFactory
 {
     /**
@@ -42,7 +42,7 @@ final class PropertyCachingFactory extends CachingAuthorityFactory
      *
      * @param factory The factory to cache. Can not be {@code null}.
      */
-    PropertyCachingFactory(final AbstractAuthorityFactory factory) {
+    CachingPropertyFactory(final AbstractAuthorityFactory factory) {
         super(factory, 10);
     }
 }
