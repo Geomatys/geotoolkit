@@ -20,8 +20,6 @@ package org.geotoolkit.util;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
-import javax.measure.unit.NonSI;
-import javax.measure.unit.Unit;
 
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.MultiLineString;
@@ -35,7 +33,6 @@ import org.geotoolkit.factory.Factory;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyle;
-import org.geotoolkit.style.StyleConstants;
 import org.geotoolkit.style.MutableStyleFactory;
 
 import org.opengis.feature.simple.SimpleFeature;
@@ -43,9 +40,6 @@ import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.AttributeType;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.filter.FilterFactory;
-import org.opengis.filter.expression.Expression;
-import org.opengis.style.AnchorPoint;
-import org.opengis.style.Displacement;
 import org.opengis.style.Fill;
 import org.opengis.style.Graphic;
 import org.opengis.style.GraphicalSymbol;
@@ -56,6 +50,8 @@ import org.opengis.style.PolygonSymbolizer;
 import org.opengis.style.RasterSymbolizer;
 import org.opengis.style.Stroke;
 import org.opengis.style.Symbolizer;
+
+import static org.geotoolkit.style.StyleConstants.*;
 
 /**
  * Random style factory. This is a convini class if you dont need special styles.
@@ -82,54 +78,52 @@ public class RandomStyleFactory extends Factory {
 
     //----------------------creation--------------------------------------------
     public static PointSymbolizer createPointSymbolizer() {
-        
-        final Unit uom = NonSI.PIXEL;
-        final String geom = StyleConstants.DEFAULT_GEOM;
-        final String name = null;
-        
-        final List<GraphicalSymbol> symbols = new ArrayList<GraphicalSymbol>();
-        
+                
+        final List<GraphicalSymbol> symbols = new ArrayList<GraphicalSymbol>();        
         final Fill fill = SF.fill(SF.literal(randomColor()), FF.literal(0.6f) );
         final Stroke stroke = SF.stroke(randomColor(), 1);
-        final Mark mark = SF.mark(FF.literal("square"), stroke, fill);
+        final Mark mark = SF.mark(MARK_SQUARE, stroke, fill);
         symbols.add(mark);
+                
+        final Graphic gra = SF.graphic(
+                symbols,
+                LITERAL_ONE_FLOAT,
+                FF.literal(randomPointSize()),
+                LITERAL_ZERO_FLOAT,
+                DEFAULT_ANCHOR_POINT,
+                DEFAULT_DISPLACEMENT);
         
-        final Expression opa = FF.literal(1);
-        final Expression size = FF.literal(randomPointSize());
-        final Expression rotation = FF.literal(0);
-        final AnchorPoint anchor = SF.anchorPoint(0, 0);
-        final Displacement displacement = SF.displacement(0, 0);
-        
-        final Graphic gra = SF.graphic(symbols,opa,size,rotation,anchor,displacement);
-        
-        return SF.pointSymbolizer(name,geom,StyleConstants.DEFAULT_DESCRIPTION,uom,gra);
+        return SF.pointSymbolizer(
+                null,
+                DEFAULT_GEOM,
+                DEFAULT_DESCRIPTION,
+                DEFAULT_UOM,
+                gra);
     }
 
     public static LineSymbolizer createLineSymbolizer() {
-        
-        final Unit uom = NonSI.PIXEL;
-        final String geom = StyleConstants.DEFAULT_GEOM;
-        final String name = null;
-        
         final Stroke stroke = SF.stroke(randomColor(), 1);
-        final Expression offset = FF.literal(0);
-        
-        return SF.lineSymbolizer(name,geom,StyleConstants.DEFAULT_DESCRIPTION,uom,stroke,offset);
+        return SF.lineSymbolizer(
+                null,
+                DEFAULT_GEOM,
+                DEFAULT_DESCRIPTION,
+                DEFAULT_UOM,
+                stroke,
+                LITERAL_ZERO_FLOAT);
     }
 
-    public static PolygonSymbolizer createPolygonSymbolizer() {
-        
-        final Unit uom = NonSI.PIXEL;
-        final String geom = StyleConstants.DEFAULT_GEOM;
-        final String name = null;
-        
+    public static PolygonSymbolizer createPolygonSymbolizer() {        
         final Fill fill = SF.fill(SF.literal(randomColor()), FF.literal(0.6f) );
         final Stroke stroke = SF.stroke(randomColor(), 1);
-        
-        final Displacement displacement = SF.displacement(0, 0);
-        final Expression offset = FF.literal(0);
-        
-        return SF.polygonSymbolizer(name,geom,StyleConstants.DEFAULT_DESCRIPTION,uom,stroke, fill,displacement,offset);
+        return SF.polygonSymbolizer(
+                null,
+                DEFAULT_GEOM,
+                DEFAULT_DESCRIPTION,
+                DEFAULT_UOM,
+                stroke,
+                fill,
+                DEFAULT_DISPLACEMENT,
+                LITERAL_ZERO_FLOAT);
     }
 
     public static RasterSymbolizer createRasterSymbolizer() {

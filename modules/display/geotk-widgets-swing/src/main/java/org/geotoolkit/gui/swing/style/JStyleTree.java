@@ -18,6 +18,7 @@
 package org.geotoolkit.gui.swing.style;
 
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.datatransfer.StringSelection;
@@ -42,22 +43,31 @@ import java.awt.event.InputEvent;
 import java.awt.image.BufferedImage;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JSeparator;
+import javax.swing.JSpinner;
 import javax.swing.JTree;
+import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingConstants;
 import javax.swing.tree.DefaultTreeCellRenderer;
+import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
 import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.display2d.service.DefaultGlyphService;
+import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.gui.swing.tree.DefaultMutableTreeNode;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.MutableStyle;
+import org.geotoolkit.style.MutableStyleFactory;
+import org.geotoolkit.util.RandomStyleFactory;
 import org.jdesktop.swingx.JXTree;
 
 import org.opengis.style.Symbolizer;
@@ -68,6 +78,8 @@ import org.opengis.style.Symbolizer;
  * @module pending
  */
 public class JStyleTree<T> extends JXTree implements DragGestureListener, DragSourceListener, DropTargetListener {
+
+    private static final MutableStyleFactory SF = (MutableStyleFactory) FactoryFinder.getStyleFactory(null);
 
     private static final Icon ICON_STYLE = IconBundle.getInstance().getIcon("16_style");
     private static final Icon ICON_FTS = IconBundle.getInstance().getIcon("16_style_fts");
@@ -241,23 +253,31 @@ public class JStyleTree<T> extends JXTree implements DragGestureListener, DragSo
                 final DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
                 final Object val = node.getUserObject();
 
-                add(new ColapseSubNodes(node));
-
                 if (val instanceof MutableStyle) {
                     final MutableStyle style = (MutableStyle) val;
-                    add(new NewFTSItem(node));
+                    add(new NewFTSItem(style));
+                    add(new JSeparator(SwingConstants.HORIZONTAL));
+                    add(new ExpandSubNodes(node));
+                    add(new CollapseSubNodes(node));
                 } else if (val instanceof MutableFeatureTypeStyle) {
                     final MutableFeatureTypeStyle fts = (MutableFeatureTypeStyle) val;
-                    add(new NewRuleItem(node));
+                    add(new NewRuleItem(fts));
+                    add(new JSeparator(SwingConstants.HORIZONTAL));
+                    add(new ExpandSubNodes(node));
+                    add(new CollapseSubNodes(node));
+                    add(new ChangeRuleScaleNodes(fts));
                     add(new JSeparator(SwingConstants.HORIZONTAL));
                     add(new DuplicateItem(node));
                 } else if (val instanceof MutableRule) {
                     final MutableRule rule = (MutableRule) val;
-                    add(new NewPointSymbolizerItem(node));
-                    add(new NewLineSymbolizerItem(node));
-                    add(new NewPolygonSymbolizerItem(node));
-                    add(new NewRasterSymbolizerItem(node));
-                    add(new NewTextSymbolizerItem(node));
+                    add(new NewPointSymbolizerItem(rule));
+                    add(new NewLineSymbolizerItem(rule));
+                    add(new NewPolygonSymbolizerItem(rule));
+                    add(new NewRasterSymbolizerItem(rule));
+                    add(new NewTextSymbolizerItem(rule));
+                    add(new JSeparator(SwingConstants.HORIZONTAL));
+                    add(new ExpandSubNodes(node));
+                    add(new CollapseSubNodes(node));
                     add(new JSeparator(SwingConstants.HORIZONTAL));
                     add(new DuplicateItem(node));
                 } else if (val instanceof Symbolizer) {
@@ -276,11 +296,11 @@ public class JStyleTree<T> extends JXTree implements DragGestureListener, DragSo
         }
     }
 
-    class ColapseSubNodes extends JMenuItem{
+    class CollapseSubNodes extends JMenuItem{
 
         private final DefaultMutableTreeNode parentNode;
 
-        ColapseSubNodes(DefaultMutableTreeNode node) {
+        CollapseSubNodes(DefaultMutableTreeNode node) {
             this.parentNode = node;
             setText("Collapse sub nodes.");
             addActionListener(new ActionListener() {
@@ -294,18 +314,79 @@ public class JStyleTree<T> extends JXTree implements DragGestureListener, DragSo
         }
     }
 
-    class NewFTSItem extends JMenuItem {
+    class ExpandSubNodes extends JMenuItem{
 
         private final DefaultMutableTreeNode parentNode;
 
-        NewFTSItem(DefaultMutableTreeNode node) {
+        ExpandSubNodes(DefaultMutableTreeNode node) {
             this.parentNode = node;
+            setText("Expand sub nodes.");
+            addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    for(int i=0,n=parentNode.getChildCount(); i<n; i++){
+                        TreeNode child = parentNode.getChildAt(i);
+                        for(int k=0,l=child.getChildCount(); k<l; k++){
+                            expandPath(new TreePath(treemodel.getPathToRoot(child.getChildAt(k))));
+                        }
+                    }
+                }
+            });
+        }
+    }
+
+
+    class ChangeRuleScaleNodes extends JMenuItem{
+
+        private final MutableFeatureTypeStyle fts;
+
+        ChangeRuleScaleNodes(MutableFeatureTypeStyle cdt) {
+            this.fts = cdt;
+            setText("Change rules valid scale.");
+            addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    JPanel pan = new JPanel();
+                    pan.add(new JLabel(" Min scale : "));
+                    JSpinner spiMin = new JSpinner(new SpinnerNumberModel());
+                    spiMin.setPreferredSize(new Dimension(150, spiMin.getPreferredSize().height));
+                    pan.add(spiMin);
+                    pan.add(new JLabel(" Max scale : "));
+                    JSpinner spiMax = new JSpinner(new SpinnerNumberModel());
+                    spiMax.setPreferredSize(new Dimension(150, spiMax.getPreferredSize().height));
+                    spiMax.setValue(Double.MAX_VALUE);
+                    pan.add(spiMax);
+
+                    JOptionPane jop = new JOptionPane(pan);
+                    JDialog dialog = jop.createDialog("Change scale");
+                    dialog.pack();
+                    dialog.setLocationRelativeTo(null);
+                    dialog.setVisible(true);
+
+                    double min = ((Number)spiMin.getValue()).doubleValue();
+                    double max = ((Number)spiMax.getValue()).doubleValue();
+
+                    for(MutableRule rule : fts.rules()){
+                        rule.setMinScaleDenominator(min);
+                        rule.setMaxScaleDenominator(max);
+                    }
+                }
+            });
+        }
+    }
+
+    class NewFTSItem extends JMenuItem {
+
+        private final MutableStyle style;
+
+        NewFTSItem(MutableStyle cdt) {
+            this.style = cdt;
             setText("new FTS");
             setIcon(ICON_NEW);
             addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    treemodel.newFeatureTypeStyle(parentNode);
+                    style.featureTypeStyles().add(SF.featureTypeStyle(RandomStyleFactory.createPointSymbolizer()));
                 }
             });
         }
@@ -313,16 +394,16 @@ public class JStyleTree<T> extends JXTree implements DragGestureListener, DragSo
 
     class NewRuleItem extends JMenuItem {
 
-        private final DefaultMutableTreeNode parentNode;
+        private final MutableFeatureTypeStyle fts;
 
-        NewRuleItem(DefaultMutableTreeNode node) {
-            this.parentNode = node;
+        NewRuleItem(MutableFeatureTypeStyle cdt) {
+            this.fts = cdt;
             setText("New Rule");
             setIcon(ICON_NEW);
             addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    treemodel.newRule(parentNode);
+                    fts.rules().add(SF.rule(RandomStyleFactory.createPointSymbolizer()));
                 }
             });
         }
@@ -367,17 +448,17 @@ public class JStyleTree<T> extends JXTree implements DragGestureListener, DragSo
 
     class NewPointSymbolizerItem extends JMenuItem {
 
-        private final DefaultMutableTreeNode NODE;
+        private final MutableRule rule;
 
-        NewPointSymbolizerItem(DefaultMutableTreeNode node) {
-            this.NODE = node;
+        NewPointSymbolizerItem(MutableRule cdt) {
+            this.rule = cdt;
             setText("Point Symbolizer");
             setIcon(ICON_NEW);
             addActionListener(new ActionListener() {
 
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    treemodel.newPointSymbolizer(NODE);
+                    rule.symbolizers().add(RandomStyleFactory.createPointSymbolizer());
                 }
             });
         }
@@ -385,16 +466,16 @@ public class JStyleTree<T> extends JXTree implements DragGestureListener, DragSo
 
     class NewLineSymbolizerItem extends JMenuItem {
 
-        private final DefaultMutableTreeNode NODE;
+        private final MutableRule rule;
 
-        NewLineSymbolizerItem(DefaultMutableTreeNode node) {
-            this.NODE = node;
+        NewLineSymbolizerItem(MutableRule cdt) {
+            this.rule = cdt;
             setText("Line Symbolizer");
             setIcon(ICON_NEW);
             addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    treemodel.newLineSymbolizer(NODE);
+                    rule.symbolizers().add(RandomStyleFactory.createLineSymbolizer());
                 }
             });
         }
@@ -402,17 +483,17 @@ public class JStyleTree<T> extends JXTree implements DragGestureListener, DragSo
 
     class NewPolygonSymbolizerItem extends JMenuItem {
 
-        private final DefaultMutableTreeNode NODE;
+        private final MutableRule rule;
 
-        NewPolygonSymbolizerItem(DefaultMutableTreeNode node) {
-            this.NODE = node;
+        NewPolygonSymbolizerItem(MutableRule cdt) {
+            this.rule = cdt;
             setText("Polygon Symbolizer");
             setIcon(ICON_NEW);
             addActionListener(new ActionListener() {
 
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    treemodel.newPolygonSymbolizer(NODE);
+                    rule.symbolizers().add(RandomStyleFactory.createPolygonSymbolizer());
                 }
             });
         }
@@ -420,17 +501,17 @@ public class JStyleTree<T> extends JXTree implements DragGestureListener, DragSo
     
     class NewTextSymbolizerItem extends JMenuItem {
 
-        private final DefaultMutableTreeNode NODE;
+        private final MutableRule rule;
 
-        NewTextSymbolizerItem(DefaultMutableTreeNode node) {
-            this.NODE = node;
+        NewTextSymbolizerItem(MutableRule cdt) {
+            this.rule = cdt;
             setText("Text Symbolizer");
             setIcon(ICON_NEW);
             addActionListener(new ActionListener() {
 
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    treemodel.newTextSymbolizer(NODE);
+                    rule.symbolizers().add(SF.textSymbolizer());
                     
                 }
             });
@@ -439,17 +520,17 @@ public class JStyleTree<T> extends JXTree implements DragGestureListener, DragSo
 
     class NewRasterSymbolizerItem extends JMenuItem {
 
-        private final DefaultMutableTreeNode NODE;
+        private final MutableRule rule;
 
-        NewRasterSymbolizerItem(DefaultMutableTreeNode node) {
-            this.NODE = node;
+        NewRasterSymbolizerItem(MutableRule cdt) {
+            this.rule = cdt;
             setText("Raster Symbolizer");
             setIcon(ICON_NEW);
             addActionListener(new ActionListener() {
 
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    treemodel.newRasterSymbolizer(NODE);
+                    rule.symbolizers().add(SF.rasterSymbolizer());
                 }
             });
         }

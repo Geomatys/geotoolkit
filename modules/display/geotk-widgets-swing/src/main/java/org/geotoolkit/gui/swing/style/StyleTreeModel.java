@@ -28,17 +28,14 @@ import javax.swing.tree.DefaultTreeModel;
 import org.geotoolkit.gui.swing.tree.DefaultMutableTreeNode;
 import org.geotoolkit.map.WeakStyleListener;
 import org.geotoolkit.style.CollectionChangeEvent;
-import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.FeatureTypeStyleListener;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.MutableStyle;
-import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.style.RuleListener;
 import org.geotoolkit.style.StyleListener;
 import org.geotoolkit.style.StyleUtilities;
 import org.geotoolkit.util.NumberRange;
-import org.geotoolkit.util.RandomStyleFactory;
 import org.geotoolkit.util.logging.Logging;
 import org.opengis.feature.type.Name;
 import org.opengis.style.SemanticType;
@@ -51,8 +48,6 @@ import org.opengis.style.Symbolizer;
  * @module pending
  */
 public class StyleTreeModel<T> extends DefaultTreeModel implements StyleListener, FeatureTypeStyleListener, RuleListener {
-
-    private static final MutableStyleFactory SF = new DefaultStyleFactory();
 
     private final WeakStyleListener weakListener = new WeakStyleListener(this, this.styleElement);
     private T styleElement = null;
@@ -357,71 +352,6 @@ public class StyleTreeModel<T> extends DefaultTreeModel implements StyleListener
         }
 
     }
-
-    /**
-     * add a new FeatureTypeStyle
-     */
-    public void newFeatureTypeStyle(DefaultMutableTreeNode stylenode) {
-        final MutableFeatureTypeStyle fts = SF.featureTypeStyle(RandomStyleFactory.createPointSymbolizer());
-        final MutableStyle style = (MutableStyle) stylenode.getUserObject();
-        style.featureTypeStyles().add(fts);
-    }
-    /**
-     * add a new rule
-     * @param ftsnode
-     */
-    public void newRule(DefaultMutableTreeNode ftsnode) {
-        final MutableRule rule = SF.rule(RandomStyleFactory.createPointSymbolizer());
-        final MutableFeatureTypeStyle fts = (MutableFeatureTypeStyle) ftsnode.getUserObject();
-        fts.rules().add(rule);
-    }
-    /**
-     * add a new symbolizer
-     * @param rulenode
-     */
-    public void newPointSymbolizer(DefaultMutableTreeNode rulenode) {
-        final Symbolizer symbol = RandomStyleFactory.createPointSymbolizer();
-        final MutableRule rule = (MutableRule) rulenode.getUserObject();
-        rule.symbolizers().add(symbol);
-    }
-    /**
-     * add a new symbolizer
-     * @param rulenode
-     */
-    public void newLineSymbolizer(DefaultMutableTreeNode rulenode) {
-        final Symbolizer symbol = RandomStyleFactory.createLineSymbolizer();
-        final MutableRule rule = (MutableRule) rulenode.getUserObject();
-        rule.symbolizers().add(symbol);
-    }
-    /**
-     * add a new symbolizer
-     * @param rulenode
-     */
-    public void newPolygonSymbolizer(DefaultMutableTreeNode rulenode) {
-        final Symbolizer symbol = RandomStyleFactory.createPolygonSymbolizer();
-        final MutableRule rule = (MutableRule) rulenode.getUserObject();
-        rule.symbolizers().add(symbol);
-    }
-    /**
-     * add a new symbolizer
-     * @param rulenode
-     */
-    public void newRasterSymbolizer(DefaultMutableTreeNode rulenode) {
-        final Symbolizer symbol = RandomStyleFactory.createRasterSymbolizer();
-        final MutableRule rule = (MutableRule) rulenode.getUserObject();
-        rule.symbolizers().add(symbol);
-    }
-
-    /**
-     * add a new symbolizer
-     * @param rulenode
-     */
-    public void newTextSymbolizer(DefaultMutableTreeNode rulenode) {
-        final Symbolizer symbol = SF.textSymbolizer();
-        final MutableRule rule = (MutableRule) rulenode.getUserObject();
-        rule.symbolizers().add(symbol);
-    }
-
 
     //-------------------utilities----------------------------------------------
     private DefaultMutableTreeNode search(Object userObject){
