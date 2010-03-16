@@ -119,7 +119,7 @@ public abstract class DefaultSimpleFeatureReader implements FeatureReader<Simple
         this.buffer = new Object[attributeReader.getPropertyCount()];
 
         // init the tracer if we need to debug a connection leak
-        assert(creationStack = new Exception().fillInStackTrace()) != null;
+        assert(creationStack = new IllegalStateException().fillInStackTrace()) != null;
     }
 
     public DefaultSimpleFeatureReader(PropertyReader attributeReader, FeatureIDReader fidReader)
@@ -186,7 +186,8 @@ public abstract class DefaultSimpleFeatureReader implements FeatureReader<Simple
     protected void finalize() throws Throwable {
         if (!closed) {
             Logging.getLogger(DefaultSimpleFeatureReader.class).warning(
-                "There is code leaving feature simple readers/iterators open, this is leaking data stream!");
+                "UNCLOSED ITERATOR : There is code leaving simple feature reader open, " +
+                "this may cause memory leaks or data integrity problems !");
             if(creationStack != null) {
                 Logging.getLogger(DefaultSimpleFeatureReader.class).log(Level.WARNING,
                     "The unclosed reader originated on this stack trace", creationStack);

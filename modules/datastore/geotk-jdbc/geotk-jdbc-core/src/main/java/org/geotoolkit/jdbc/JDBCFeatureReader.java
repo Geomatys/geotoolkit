@@ -139,7 +139,7 @@ public class JDBCFeatureReader implements  FeatureReader<SimpleFeatureType, Simp
     protected void init(final JDBCDataStore store, final Name typeName, final SimpleFeatureType featureType, final PrimaryKey pkey,
                         final Hints chints) throws IOException, DataStoreException{
         // init the tracer if we need to debug a connection leak
-        assert(creationStack = new Exception().fillInStackTrace()) != null;
+        assert(creationStack = new IllegalStateException().fillInStackTrace()) != null;
 
         // init base fields
         this.dataStore = (DefaultJDBCDataStore) store;
@@ -342,10 +342,13 @@ public class JDBCFeatureReader implements  FeatureReader<SimpleFeatureType, Simp
     @Override
     protected void finalize() throws Throwable {
         if (dataStore != null) {
-            LOGGER.warning("There is code leaving feature readers/iterators open, this is leaking statements and connections!");
+            LOGGER.warning(
+                "UNCLOSED ITERATOR : There is code leaving JDBC feature reader/writer open, " +
+                "this may cause memory leaks or data integrity problems !");
             if(creationStack != null) {
-                LOGGER.log(Level.WARNING, "The unclosed reader originated on this stack trace", creationStack);
-            }
+                LOGGER.log(Level.WARNING,
+                    "The unclosed reader originated on this stack trace", creationStack);
+            }            
             close();
         }
     }
