@@ -109,6 +109,7 @@ public class PackerSpecificMojo extends AbstractMojo {
             });
             packer.addPack(coverage, storage, new String[] {
                     "geotk-metadata-sql-" + VERSION + ".jar",
+                    "geotk-coverage-sql-" + VERSION + ".jar",
                     "geotk-epsg-javadb-"  + VERSION + ".jar",
                     "derby-*.jar",
                     "derbyLocale_cs-*.jar",
