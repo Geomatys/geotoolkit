@@ -18,8 +18,11 @@
 
 package org.geotoolkit.data.memory;
 
+import java.io.Closeable;
+import java.io.IOException;
 import java.util.Iterator;
-import java.util.NoSuchElementException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.FeatureReader;
@@ -65,6 +68,13 @@ public class GenericWrapFeatureIterator<F extends Feature> implements FeatureIte
      */
     @Override
     public void close() throws DataStoreRuntimeException {
+        if (iterator instanceof Closeable) {
+            try {
+                ((Closeable) iterator).close();
+            } catch (IOException ex) {
+                Logger.getLogger(GenericWrapFeatureIterator.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
     }
 
     /**
@@ -99,7 +109,7 @@ public class GenericWrapFeatureIterator<F extends Feature> implements FeatureIte
             super(ite);
             this.type = type;
         }
-        
+
         @Override
         public T getFeatureType() {
             return type;
