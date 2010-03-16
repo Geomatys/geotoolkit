@@ -20,7 +20,6 @@ DROP VIEW     "BoundingBoxes";
 DROP FUNCTION "ComputeDefaultExtent"() CASCADE;
 SELECT DropGeometryColumn('GridGeometries', 'horizontalExtent');
 DROP TABLE    "GridGeometries";
-DROP SEQUENCE "seq_GridGeometries";
 DROP TABLE    "Series";
 DROP TABLE    "Layers";
 DROP VIEW     "RangeOfFormats";

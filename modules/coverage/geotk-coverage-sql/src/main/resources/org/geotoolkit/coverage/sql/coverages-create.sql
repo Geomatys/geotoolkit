@@ -239,13 +239,16 @@ COMMENT ON CONSTRAINT "Layers_fallback_fkey" ON "Layers" IS
 -- Dependencies: "Layers", "Formats"                                                            --
 --------------------------------------------------------------------------------------------------
 
+CREATE SEQUENCE "seq_Series" START 1000;
+
 CREATE TABLE "Series" (
-    "identifier" integer           NOT NULL PRIMARY KEY,
+    "identifier" integer           NOT NULL PRIMARY KEY DEFAULT nextval('coverages."seq_Series"'),
     "layer"      character varying NOT NULL REFERENCES "Layers"  ON UPDATE CASCADE ON DELETE CASCADE,
     "pathname"   character varying NOT NULL,
     "extension"  character varying, -- Accepts NULL since some file formats have no extension
     "format"     character varying NOT NULL REFERENCES "Formats" ON UPDATE CASCADE ON DELETE RESTRICT,
-    "quicklook"  integer           UNIQUE   REFERENCES "Series"  ON UPDATE CASCADE ON DELETE RESTRICT
+    "quicklook"  integer           UNIQUE   REFERENCES "Series"  ON UPDATE CASCADE ON DELETE RESTRICT,
+    "comments"   character varying
 );
 
 ALTER TABLE "Series" OWNER TO geoadmin;
@@ -254,6 +257,8 @@ GRANT SELECT ON TABLE "Series" TO PUBLIC;
 
 CREATE INDEX "Series_index" ON "Series" ("layer");
 
+COMMENT ON SEQUENCE "seq_Series" IS
+    'Primary keys generator for the Series table.';
 COMMENT ON TABLE "Series" IS
     'Series of images.  Each image belongs to a series.';
 COMMENT ON COLUMN "Series"."identifier" IS
@@ -268,6 +273,8 @@ COMMENT ON COLUMN "Series"."format" IS
     'Format of the images in the series.';
 COMMENT ON COLUMN "Series"."quicklook" IS
     'Series of overview images.';
+COMMENT ON COLUMN "Series"."comments" IS
+    'Free text for comments.';
 COMMENT ON CONSTRAINT "Series_quicklook_key" ON "Series" IS
     'Each series has only one overview series.';
 COMMENT ON CONSTRAINT "Series_layer_fkey" ON "Series" IS
@@ -329,6 +336,8 @@ CREATE INDEX "HorizontalExtent_index" ON "GridGeometries" USING gist ("horizonta
 COMMENT ON INDEX "HorizontalExtent_index" IS
     'Index of geometries intersecting a geographical area.';
 
+COMMENT ON SEQUENCE "seq_GridGeometries" IS
+    'Primary keys generator for the GridGeometries table.';
 COMMENT ON TABLE "GridGeometries" IS
     'Spatial referencing parameters for a Grid Coverage.  Defines the spatial envelope of the images, as well as their grid dimensions.';
 COMMENT ON COLUMN "GridGeometries"."identifier" IS

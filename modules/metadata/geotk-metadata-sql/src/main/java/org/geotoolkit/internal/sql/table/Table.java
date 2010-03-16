@@ -44,7 +44,7 @@ import org.geotoolkit.resources.Errors;
  * @since 3.09 (derived from Seagis)
  * @module
  */
-@ThreadSafe(concurrent=true)
+@ThreadSafe(concurrent = true)
 public class Table implements Localized {
     /**
      * The query executed by this table.
@@ -311,7 +311,7 @@ public class Table implements Localized {
      * @throws CatalogException if the statement can not be configured.
      * @throws SQLException if a SQL error occured while configuring the statement.
      */
-    void configure(final QueryType type, final PreparedStatement statement)
+    protected void configure(final QueryType type, final PreparedStatement statement)
             throws CatalogException, SQLException
     {
     }
@@ -408,10 +408,6 @@ public class Table implements Localized {
      * Notifies that the state of this table changed. Subclasses should invoke this method every
      * time some {@code setXXX(...)} method has been invoked on this {@code Table} object.
      *
-     * {@section Overriding}
-     * If a subclass override this method, then it must invoke
-     * {@code super.fireStateChanged(property)} first.
-     *
      * @param property The name of the property that changed.
      * @throws CatalogException If this table is not modifiable.
      */
@@ -477,12 +473,29 @@ public class Table implements Localized {
     }
 
     /**
+     * Sets the {@linkplain LogRecord#setLoggerName logger name},
+     * {@linkplain LogRecord#setSourceClassName source class name} and
+     * {@linkplain LogRecord#setSourceMethodName source method name} in the given record,
+     * and {@linkplain Logger#log(LogRecord) logs} it.
+     *
+     * @param methodName The name of the caller method.
+     * @param record     The record to log.
+     */
+    protected final void log(final String methodName, final LogRecord record) {
+        final Logger logger = getLogger();
+        record.setLoggerName(logger.getName());
+        record.setSourceClassName(getClass().getName());
+        record.setSourceMethodName(methodName);
+        logger.log(record);
+    }
+
+    /**
      * Returns the logger to use. The default implementation looks for the package name
      * of the implementing class.
      *
      * @return The logger to use.
      */
-    protected Logger getLogger() {
+    private Logger getLogger() {
         return Logging.getLogger(getClass());
     }
 

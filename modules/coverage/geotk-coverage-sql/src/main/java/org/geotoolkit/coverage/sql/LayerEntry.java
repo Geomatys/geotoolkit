@@ -17,8 +17,9 @@
  */
 package org.geotoolkit.coverage.sql;
 
-import java.util.Set;
 import java.util.Map;
+import java.util.Collections;
+import java.sql.SQLException;
 import java.awt.geom.Dimension2D;
 
 import org.geotoolkit.util.Utilities;
@@ -47,26 +48,22 @@ final class LayerEntry extends Entry {
     private final double timeInterval;
 
     /**
-     * The domain for this layer. May be shared by many instances of {@code LayerEntry}.
-     * May be {@code null} if not applicable.
+     * The domain for this layer, or {@code null} if not yet computed.
+     * May be shared by many instances of {@code LayerEntry}.
      */
     private DomainOfLayerEntry domain;
 
     /**
-     * The series associated with their names. This map will be created only when first needed.
-     * It will contains every series, including the hidden ones.
-     *
-     * @todo To be defined later.
+     * The series associated with their identifiers.
+     * This map will be created only when first needed.
      */
-    private Map<String,SeriesEntry> seriesMap;
+    private Map<Integer,SeriesEntry> series;
 
     /**
-     * A immutable view over the visible series. It may contains less entries
-     * than {@link #seriesMap} because some series may be hidden.
-     *
-     * @todo To be defined later.
+     * Provides indirectly a connection to the database.
+     * This is set to {@code null} when no longer needed.
      */
-    private Set<SeriesEntry> series;
+    private transient SeriesTable table;
 
     /**
      * A fallback layer to be used if no image can be found for a given date in this layer.
@@ -87,6 +84,35 @@ final class LayerEntry extends Entry {
     protected LayerEntry(final String name, final double timeInterval, final String remarks) {
         super(name, remarks);
         this.timeInterval = timeInterval;
+    }
+
+    /**
+     * Returns the name of this layer.
+     *
+     * @return The name of this layer.
+     */
+    public String getName() {
+        return (String) identifier;
+    }
+
+    /**
+     * Returns all series in this layer as (<var>identifier</var>, <var>series</var>) pairs.
+     */
+    public synchronized Map<Integer,SeriesEntry> series() throws CatalogException {
+        if (series == null) {
+            if (table != null) {
+                table.setLayer(getName());
+                try {
+                    series = Collections.unmodifiableMap(table.getEntriesMap());
+                } catch (SQLException e) {
+                    throw new CatalogException(e);
+                }
+                table = null;
+            } else {
+                series = Collections.emptyMap();
+            }
+        }
+        return series;
     }
 
     /**

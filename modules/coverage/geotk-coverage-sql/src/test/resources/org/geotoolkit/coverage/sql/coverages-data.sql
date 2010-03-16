@@ -32,10 +32,10 @@ INSERT INTO "Categories" ("format", "band", "name", "lower", "upper", "c0", "c1"
  ('PNG Temperature [-3 … 32.25]°C', 1, 'Temperature', 1, 255, -3, 0.15, 'rainbow');
 
 INSERT INTO "Layers" ("name", "period") VALUES
- ('SST (World - weekly)', 8);
+ ('SST (World - 8 days)', 8);
 
 INSERT INTO "Series" ("identifier", "layer", "pathname", "extension", "format") VALUES
- (100, 'SST (World - weekly)', 'World/SST/8-days', 'png', 'PNG Temperature [-3 … 32.25]°C');
+ (100, 'SST (World - 8 days)', 'World/SST/8-days', 'png', 'PNG Temperature [-3 … 32.25]°C');
 
 INSERT INTO "GridGeometries" ("identifier", "width", "height", "scaleX", "scaleY", "translateX", "translateY", "horizontalSRID") VALUES
  (100, 4096, 2048, 0.087890625, -0.087890625, -180, 90, 4326);

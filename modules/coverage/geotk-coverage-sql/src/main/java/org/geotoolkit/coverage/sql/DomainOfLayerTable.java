@@ -22,6 +22,7 @@ import java.util.Calendar;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.util.DateRange;
 import org.geotoolkit.measure.Latitude;
 import org.geotoolkit.measure.Longitude;
@@ -46,6 +47,7 @@ import org.geotoolkit.internal.sql.table.CatalogException;
  * @since 3.10 (derived from Seagis)
  * @module
  */
+@ThreadSafe(concurrent = true)
 final class DomainOfLayerTable extends SingletonTable<DomainOfLayerEntry> {
     /**
      * Creates a domain of layer table.

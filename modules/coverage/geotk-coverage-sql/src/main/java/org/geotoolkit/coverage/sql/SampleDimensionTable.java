@@ -26,6 +26,7 @@ import java.text.ParseException;
 import javax.measure.unit.Unit;
 import javax.measure.unit.UnitFormat;
 
+import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.coverage.Category;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
@@ -50,6 +51,7 @@ import org.geotoolkit.internal.sql.table.IllegalRecordException;
  * @since 3.09 (derived from Seagis)
  * @module
  */
+@ThreadSafe(concurrent = true)
 final class SampleDimensionTable extends Table {
     /**
      * Connection to the {@linkplain Category categories} table.

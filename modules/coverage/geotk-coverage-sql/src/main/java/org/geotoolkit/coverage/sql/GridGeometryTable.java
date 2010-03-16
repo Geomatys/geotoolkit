@@ -34,8 +34,6 @@ import java.util.SortedMap;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.logging.LogRecord;
 
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.ReferenceIdentifier;
@@ -43,6 +41,7 @@ import org.opengis.referencing.crs.CRSAuthorityFactory;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransformFactory;
 
+import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.util.collection.WeakHashSet;
 import org.geotoolkit.internal.sql.table.Column;
 import org.geotoolkit.internal.sql.table.Database;
@@ -73,6 +72,7 @@ import static java.lang.reflect.Array.getDouble;
  * @since 3.10 (derived from Seagis)
  * @module
  */
+@ThreadSafe(concurrent = true)
 final class GridGeometryTable extends SingletonTable<GridGeometryEntry> {
     /**
      * The authority factory connected to the PostGIS {@code "spatial_ref_sys"} table.
@@ -341,6 +341,8 @@ final class GridGeometryTable extends SingletonTable<GridGeometryEntry> {
                  final double[] verticalOrdinates, final int verticalSRID)
             throws SQLException, CatalogException
     {
+        ensureNonNull("size",      size);
+        ensureNonNull("gridToCRS", gridToCRS);
         Integer id = null;
         final GridGeometryQuery query = (GridGeometryQuery) super.query;
         synchronized (getLock()) {
@@ -395,19 +397,13 @@ final class GridGeometryTable extends SingletonTable<GridGeometryEntry> {
                  *   2) Otherwise we keep the previous record. A warning will be logged if and only
                  *      if the two records are strictly equals.
                  */
-                if (id != null && !id.equals(nextID)) {
+                if (id != null && id.intValue() != nextID) {
                     if (!isStrictlyEquals) {
                         continue;
                     }
                     if (foundStrictlyEquals) {
                         // Could happen if there is insuffisient conditions in the WHERE clause.
-                        final Logger logger = getLogger();
-                        final LogRecord record = errors().getLogRecord(Level.WARNING,
-                                Errors.Keys.DUPLICATED_RECORD_$1, id);
-                        record.setSourceClassName(GridGeometryTable.class.getName());
-                        record.setSourceMethodName("find");
-                        record.setLoggerName(logger.getName());
-                        logger.log(record);
+                        log("find", errors().getLogRecord(Level.WARNING, Errors.Keys.DUPLICATED_RECORD_$1, id));
                         continue;
                     }
                 }

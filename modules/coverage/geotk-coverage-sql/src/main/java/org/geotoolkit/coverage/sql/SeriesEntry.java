@@ -57,11 +57,6 @@ final class SeriesEntry extends Entry {
     private static final String FILE_PROTOCOL = "file";
 
     /**
-     * The layer which contains this series.
-     */
-    final LayerEntry layer;
-
-    /**
      * The protocol in a URL, or {@code "file"} if the files should be read locally.
      * The protocol may be for example {@code "file"}, {@code "ftp"} or {@code "dods"}
      * (the later is for OpenDAP).
@@ -93,26 +88,22 @@ final class SeriesEntry extends Entry {
     /**
      * Creates a new series entry.
      *
-     * @param name       The name for this series.
-     * @param layer      The layer which contains this series.
+     * @param identifier The identifier for this series.
      * @param root       The root directory or URL, or {@code null} if none.
      * @param pathname   The relative or absolute directory which contains the data files for this series.
      * @param extension  The extension to add to filenames, not including the dot character.
      * @param format     The format of all coverages in this series.
      * @param remarks    The remarks, or {@code null} if none.
      */
-    protected SeriesEntry(final String name, final LayerEntry layer, final String root,
-                          final String pathname, final String extension, final FormatEntry format,
-                          final String remarks)
+    protected SeriesEntry(final int identifier, final String root, final String pathname,
+                          final String extension, final FormatEntry format, final String remarks)
     {
-        super(name, remarks);
-        this.layer      = layer;
-        this.extension  = extension;
-        this.format     = format;
+        super(identifier, remarks);
+        this.extension = extension;
+        this.format    = format;
         /*
-         * Checks if the pathname contains a URL host. If it does, then this URL will have
-         * precedence over the root parameter. The following section makes this check, which
-         * ignore totally the root parameter.
+         * Checks if the pathname contains a URL host. If it does, then the URL will have
+         * precedence over the root parameter. In such case the root parameter is ignored.
          */
         int split = pathname.indexOf("://");
         if (split >= 0) {
@@ -236,8 +227,7 @@ final class SeriesEntry extends Entry {
         }
         if (super.equals(object)) {
             final SeriesEntry that = (SeriesEntry) object;
-            return Utilities.equals(this.layer,      that.layer )    &&
-                   Utilities.equals(this.protocol,   that.protocol)  &&
+            return Utilities.equals(this.protocol,   that.protocol)  &&
                    Utilities.equals(this.host,       that.host)      &&
                    Utilities.equals(this.path,       that.path)      &&
                    Utilities.equals(this.extension,  that.extension) &&

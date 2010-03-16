@@ -32,6 +32,7 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform1D;
 import org.opengis.referencing.operation.MathTransformFactory;
 
+import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.coverage.Category;
 import org.geotoolkit.referencing.operation.matrix.Matrix2;
@@ -57,6 +58,7 @@ import org.geotoolkit.internal.sql.table.IllegalRecordException;
  * @since 3.09 (derived from Seagis)
  * @module
  */
+@ThreadSafe(concurrent = true)
 final class CategoryTable extends Table {
     /**
      * Maximum number of bands allowed in an image. This is an arbitrary number used

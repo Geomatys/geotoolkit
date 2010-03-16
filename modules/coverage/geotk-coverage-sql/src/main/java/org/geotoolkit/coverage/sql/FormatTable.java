@@ -20,6 +20,7 @@ package org.geotoolkit.coverage.sql;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.internal.sql.table.Database;
 import org.geotoolkit.internal.sql.table.SingletonTable;
@@ -36,13 +37,8 @@ import org.geotoolkit.internal.sql.table.IllegalRecordException;
  * @since 3.09 (derived from Seagis)
  * @module
  */
+@ThreadSafe(concurrent = true)
 final class FormatTable extends SingletonTable<FormatEntry> {
-    /**
-     * Connection to the {@linkplain SampleDimension sample dimensions} table.
-     * Will be created only when first needed.
-     */
-    private SampleDimensionTable bands;
-
     /**
      * Creates a format table.
      *
