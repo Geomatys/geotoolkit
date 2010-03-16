@@ -37,11 +37,9 @@ import java.util.logging.Logger;
 
 import org.geotoolkit.data.AbstractDataStore;
 import org.geotoolkit.data.DataStoreException;
-import org.geotoolkit.data.DataUtilities;
+import org.geotoolkit.data.DataStoreRuntimeException;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureWriter;
-import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.data.memory.GenericWrapFeatureIterator;
 import org.geotoolkit.data.query.DefaultQueryCapabilities;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryCapabilities;
@@ -189,62 +187,12 @@ public class OMDataStore extends AbstractDataStore {
         try {
             final Name name = query.getTypeName();
             final SimpleFeatureType sft = types.get(name);
-            final FeatureCollection<SimpleFeature> collection = getFeatureCollection(sft, name.getLocalPart());
-            FeatureReader fr = GenericWrapFeatureIterator.wrapToReader(collection.iterator(), sft);
-            fr = handleRemaining(fr, query);
-            return fr;
-        } catch (IOException ex) {
+            return handleRemaining(new OMReader(sft), query);
+        } catch (SQLException ex) {
             throw new DataStoreException(ex);
         }
     }
     
-   private FeatureCollection<SimpleFeature> getFeatureCollection(SimpleFeatureType sft, String typeName) throws IOException {
-        
-        final FeatureCollection<SimpleFeature> collection = DataUtilities.collection(typeName + "-collection", sft);
-        SimpleFeatureBuilder builder = new SimpleFeatureBuilder(sft);
-        try {
-            ResultSet result = getAllSamplingPoint.executeQuery();
-            boolean firstCRS = true;
-            while (result.next()) {
-                if (firstCRS) {
-                    String srsName = result.getString("point_srsname");
-                    CoordinateReferenceSystem crs;
-                    try {
-                        crs = CRS.decode(srsName);
-                        if (sft instanceof DefaultSimpleFeatureType) {
-                            ((DefaultSimpleFeatureType) sft).setCoordinateReferenceSystem(crs);
-                        }
-                        if (sft.getGeometryDescriptor() instanceof DefaultGeometryDescriptor) {
-                            ((DefaultGeometryDescriptor) sft.getGeometryDescriptor()).setCoordinateReferenceSystem(crs);
-                        }
-                        firstCRS = false;
-                    } catch (NoSuchAuthorityCodeException ex) {
-                        throw new IOException(ex);
-                    } catch (FactoryException ex) {
-                        throw new IOException(ex);
-                    }
-                    
-                }
-                builder.reset();
-                String id = result.getString("id");
-                builder.set(DESC, result.getString("description"));
-                builder.set(NAME, result.getString("name"));
-                builder.set(SAMPLED, result.getString("sampled_feature"));
-
-                double x         = result.getDouble("x_value");
-                double y         = result.getDouble("y_value");
-                Coordinate coord = new Coordinate(x, y);
-                builder.set(POSITION, GF.createPoint(coord));
-                collection.add(builder.buildFeature(id));
-            }
-            result.close();
-
-        } catch (SQLException ex) {
-            getLogger().log(Level.SEVERE, "SQL exception while reading the record of samplingPoint table", ex);
-        }
-        return collection;
-    }
-   
     /**
      * {@inheritDoc }
      */
@@ -413,6 +361,100 @@ public class OMDataStore extends AbstractDataStore {
     @Override
     public void removeFeatures(Name groupName, Filter filter) throws DataStoreException {
         throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    private class OMReader implements FeatureReader{
+
+        private boolean firstCRS = true;
+        private final SimpleFeatureType type;
+        private final SimpleFeatureBuilder builder;
+        private final ResultSet result;
+        private SimpleFeature next = null;
+
+        private OMReader(SimpleFeatureType type) throws SQLException{
+            this.type = type;
+            builder = new SimpleFeatureBuilder(type);
+            result = getAllSamplingPoint.executeQuery();
+        }
+
+        @Override
+        public FeatureType getFeatureType() {
+            return type;
+        }
+
+        @Override
+        public Feature next() throws DataStoreRuntimeException {
+            try {
+                getNext();
+            } catch (Exception ex) {
+                throw new DataStoreRuntimeException(ex);
+            }
+            SimpleFeature candidate = next;
+            next = null;
+            return candidate;
+        }
+
+        @Override
+        public boolean hasNext() throws DataStoreRuntimeException {
+            try {
+                getNext();
+            } catch (Exception ex) {
+                throw new DataStoreRuntimeException(ex);
+            }
+            return next != null;
+        }
+
+        private void getNext() throws Exception{
+            if(next != null) return;
+
+            if(!result.next()){
+                return;
+            }
+
+
+            if (firstCRS) {
+                try {
+                    CoordinateReferenceSystem crs = CRS.decode(result.getString("point_srsname"));
+                    if (type instanceof DefaultSimpleFeatureType) {
+                        ((DefaultSimpleFeatureType) type).setCoordinateReferenceSystem(crs);
+                    }
+                    if (type.getGeometryDescriptor() instanceof DefaultGeometryDescriptor) {
+                        ((DefaultGeometryDescriptor) type.getGeometryDescriptor()).setCoordinateReferenceSystem(crs);
+                    }
+                    firstCRS = false;
+                } catch (NoSuchAuthorityCodeException ex) {
+                    throw new IOException(ex);
+                } catch (FactoryException ex) {
+                    throw new IOException(ex);
+                }
+            }
+            builder.reset();
+            String id = result.getString("id");
+            builder.set(DESC, result.getString("description"));
+            builder.set(NAME, result.getString("name"));
+            builder.set(SAMPLED, result.getString("sampled_feature"));
+
+            double x         = result.getDouble("x_value");
+            double y         = result.getDouble("y_value");
+            Coordinate coord = new Coordinate(x, y);
+            builder.set(POSITION, GF.createPoint(coord));
+            next = builder.buildFeature(id);
+        }
+
+        @Override
+        public void close() {
+            try {
+                result.close();
+            } catch (SQLException ex) {
+                throw new DataStoreRuntimeException(ex);
+            }
+        }
+
+        @Override
+        public void remove() throws DataStoreRuntimeException{
+            throw new DataStoreRuntimeException("Not supported.");
+        }
+
     }
 
 }
