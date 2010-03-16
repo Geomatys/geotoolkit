@@ -307,18 +307,21 @@ public class JAXPEventFeatureWriter extends JAXPFeatureWriter {
 
             // we write each feature member of the collection
             QName memberName = new QName("http://www.opengis.net/gml", "featureMember", "gml");
-            FeatureIterator iterator =featureCollection.iterator();
-            while (iterator.hasNext()) {
-                final SimpleFeature f = (SimpleFeature) iterator.next();
+            FeatureIterator iterator = featureCollection.iterator();
+            try {
+                while (iterator.hasNext()) {
+                    final SimpleFeature f = (SimpleFeature) iterator.next();
 
-                eventWriter.add(new StartElementEvent(memberName));
-                writeFeature(f, eventWriter, false);
-                eventWriter.add(new EndElementEvent(memberName));
-            }
+                    eventWriter.add(new StartElementEvent(memberName));
+                    writeFeature(f, eventWriter, false);
+                    eventWriter.add(new EndElementEvent(memberName));
+                }
 
-            eventWriter.add(new EndElementEvent(root));
+                eventWriter.add(new EndElementEvent(root));
             // we close the stream
-            iterator.close();
+            } finally {
+                iterator.close();
+            }
             eventWriter.flush();
             eventWriter.close();
             

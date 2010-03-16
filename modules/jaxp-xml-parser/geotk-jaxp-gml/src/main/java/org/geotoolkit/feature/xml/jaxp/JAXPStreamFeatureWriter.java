@@ -330,7 +330,7 @@ public class JAXPStreamFeatureWriter extends JAXPFeatureWriter {
             writeBounds(featureCollection.getEnvelope(), streamWriter);
 
             // we write each feature member of the collection
-            FeatureIterator iterator =featureCollection.iterator();
+            FeatureIterator iterator = featureCollection.iterator();
             try {
                 while (iterator.hasNext()) {
                     final SimpleFeature f = (SimpleFeature) iterator.next();
