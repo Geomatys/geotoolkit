@@ -39,6 +39,7 @@ import org.geotoolkit.data.memory.GenericReprojectFeatureIterator;
 import org.geotoolkit.data.memory.GenericRetypeFeatureIterator;
 import org.geotoolkit.data.memory.GenericSortByFeatureIterator;
 import org.geotoolkit.data.memory.GenericStartIndexFeatureIterator;
+import org.geotoolkit.data.memory.GenericWrapFeatureIterator;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.factory.FactoryFinder;
@@ -485,5 +486,37 @@ public class GenericIteratorTest extends TestCase{
         ite.close();
         assertTrue(checkIte.isClosed());
     }
+    
+    @Test
+    public void testWrapIterator(){
+
+        //check has next do not iterate
+        FeatureIterator ite = GenericWrapFeatureIterator.wrapToIterator(collection.iterator());
+        testIterationOnNext(ite, 3);
+
+        //check sub iterator is properly closed
+        CheckCloseFeatureIterator checkIte = new CheckCloseFeatureIterator(collection.iterator());
+        assertFalse(checkIte.isClosed());
+        ite = GenericWrapFeatureIterator.wrapToIterator(checkIte);
+        while(ite.hasNext()) ite.next();
+        ite.close();
+        assertTrue(checkIte.isClosed());
+    }
+
+    @Test
+    public void testWrapReader(){
+        //check has next do not iterate
+        FeatureReader reader = GenericWrapFeatureIterator.wrapToReader(collection.iterator(),collection.getFeatureType());
+        testIterationOnNext(reader, 3);
+
+        //check sub iterator is properly closed
+        CheckCloseFeatureIterator checkIte = new CheckCloseFeatureIterator(collection.iterator());
+        assertFalse(checkIte.isClosed());
+        reader = GenericWrapFeatureIterator.wrapToReader(checkIte,collection.getFeatureType());
+        while(reader.hasNext()) reader.next();
+        reader.close();
+        assertTrue(checkIte.isClosed());
+    }
+    
 
 }
