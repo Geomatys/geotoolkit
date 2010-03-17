@@ -42,7 +42,7 @@ import org.geotoolkit.resources.Vocabulary;
 
 /**
  * An authority factory creating CRS from the {@value #TABLE} table in a spatial
- * SQL database. This class is called <code><u>Postgis</u>AuthorityFactory</code> because
+ * SQL database. This class is called <code>Direct<u>Postgis</u>Factory</code> because
  * of some assumptions more suitable to PostGIS, like the default {@linkplain #getAuthority()
  * authority} if none were explicitly defined. But this class should be usable with other OGC
  * compliant spatial database as well.

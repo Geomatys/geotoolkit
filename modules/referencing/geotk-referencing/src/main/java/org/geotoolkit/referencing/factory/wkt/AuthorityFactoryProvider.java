@@ -53,7 +53,7 @@ import org.geotoolkit.factory.Hints;
  * {@preformat java
  *     final PGSimpleDataSource ds = new PGSimpleDataSource();
  *     ds.setServerName  ("myServer");
- *     ds.setDatabaseName("myDatabase);
+ *     ds.setDatabaseName("myDatabase");
  *     ds.setUser        ("myUsername");
  *     ds.setPassword    ("myPassword");
  *     AuthorityFactoryProvider provider = new AuthorityFactoryProvider();
