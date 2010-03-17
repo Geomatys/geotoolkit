@@ -314,6 +314,8 @@ public final class StringUtilities {
      * Returns the values of the list separated by commas.
      *
      * @param values The list to extract values.
+     * @return A string which contains values concatened with comma(s), or an empty
+     *         string if the list is empty or {@code null}.
      */
     public static String toCommaSeparatedValues(final List<String> values) {
         if (values == null || values.isEmpty()) {
@@ -334,8 +336,13 @@ public final class StringUtilities {
      * Returns the values of the array separated by commas.
      *
      * @param values The array to extract values.
+     * @return A string which contains values concatened with comma(s), or an empty
+     *         string if the array is empty or {@code null}.
      */
     public static String toCommaSeparatedValues(final String[] values) {
+        if (values == null || values.length == 0) {
+            return "";
+        }
         return toCommaSeparatedValues(Arrays.asList(values));
     }
 
