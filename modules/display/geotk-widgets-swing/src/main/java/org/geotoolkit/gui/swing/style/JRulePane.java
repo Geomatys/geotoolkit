@@ -28,6 +28,7 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
@@ -40,9 +41,9 @@ import org.geotoolkit.filter.text.cql2.CQL;
 import org.geotoolkit.filter.text.cql2.CQLException;
 import org.geotoolkit.gui.swing.propertyedit.filterproperty.JCQLPropertyPanel;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
+import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.style.MutableRule;
-import org.jdesktop.swingx.JXTitledPanel;
 import org.opengis.filter.Filter;
 
 /**
@@ -52,8 +53,7 @@ import org.opengis.filter.Filter;
  */
 public class JRulePane extends StyleElementEditor<MutableRule> {
 
-    private MutableRule rule = null;
-    
+    private MutableRule rule = null;    
     private MapLayer layer = null;
     
 
@@ -71,7 +71,7 @@ public class JRulePane extends StyleElementEditor<MutableRule> {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jXTitledPanel1 = new JXTitledPanel();
+        jPanel1 = new JPanel();
         but_edit = new JButton();
         jScrollPane1 = new JScrollPane();
         jtp_filter = new JTextPane();
@@ -80,19 +80,19 @@ public class JRulePane extends StyleElementEditor<MutableRule> {
         jLabel4 = new JLabel();
         jsp_maxscale = new JSpinner();
         jck_else = new JCheckBox();
-        jXTitledPanel2 = new JXTitledPanel();
-        jLabel1 = new JLabel();
+        jPanel2 = new JPanel();
         jtf_title = new JTextField();
-        jLabel2 = new JLabel();
-        jtf_name = new JTextField();
+        jLabel1 = new JLabel();
         jLabel6 = new JLabel();
         jtf_abstract = new JTextField();
+        jLabel2 = new JLabel();
+        jtf_name = new JTextField();
 
         setOpaque(false);
 
+        jPanel1.setBorder(BorderFactory.createEtchedBorder());
+        jPanel1.setOpaque(false);
 
-        jXTitledPanel1.setBorder(BorderFactory.createEtchedBorder());
-        jXTitledPanel1.setTitle(MessageBundle.getString("filter2")); // NOI18N
         but_edit.setText(MessageBundle.getString("edit")); // NOI18N
         but_edit.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
@@ -115,98 +115,98 @@ public class JRulePane extends StyleElementEditor<MutableRule> {
         jsp_maxscale.setModel(new SpinnerNumberModel(Double.valueOf(0.0d), Double.valueOf(0.0d), null, Double.valueOf(1000.0d)));
 
         jck_else.setText(MessageBundle.getString("else_filter")); // NOI18N
-        GroupLayout jXTitledPanel1Layout = new GroupLayout(jXTitledPanel1);
-        jXTitledPanel1.setLayout(jXTitledPanel1Layout);
-
-
-
-
-        jXTitledPanel1Layout.setHorizontalGroup(
-            jXTitledPanel1Layout.createParallelGroup(Alignment.LEADING)
-            .addGroup(jXTitledPanel1Layout.createSequentialGroup()
+        GroupLayout jPanel1Layout = new GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jXTitledPanel1Layout.createParallelGroup(Alignment.LEADING)
-                    .addGroup(jXTitledPanel1Layout.createParallelGroup(Alignment.LEADING, false)
-                        .addGroup(jXTitledPanel1Layout.createSequentialGroup()
+                .addGroup(jPanel1Layout.createParallelGroup(Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createParallelGroup(Alignment.LEADING, false)
+                        .addGroup(jPanel1Layout.createSequentialGroup()
                             .addComponent(jLabel3)
                             .addPreferredGap(ComponentPlacement.RELATED)
                             .addComponent(jsp_minscale, GroupLayout.PREFERRED_SIZE, 146, GroupLayout.PREFERRED_SIZE))
-                        .addGroup(jXTitledPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createSequentialGroup()
                             .addComponent(jLabel4)
                             .addPreferredGap(ComponentPlacement.RELATED)
                             .addComponent(jsp_maxscale)))
-                    .addGroup(jXTitledPanel1Layout.createSequentialGroup()
+                    .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(but_edit)
                         .addPreferredGap(ComponentPlacement.RELATED)
-                        .addComponent(jScrollPane1, GroupLayout.DEFAULT_SIZE, 211, Short.MAX_VALUE))
+                        .addComponent(jScrollPane1, GroupLayout.DEFAULT_SIZE, 360, Short.MAX_VALUE))
                     .addComponent(jck_else))
                 .addContainerGap())
         );
 
-        jXTitledPanel1Layout.linkSize(SwingConstants.HORIZONTAL, new Component[] {jLabel3, jLabel4});
+        jPanel1Layout.linkSize(SwingConstants.HORIZONTAL, new Component[] {jLabel3, jLabel4});
 
-        jXTitledPanel1Layout.setVerticalGroup(
-            jXTitledPanel1Layout.createParallelGroup(Alignment.LEADING)
-            .addGroup(jXTitledPanel1Layout.createSequentialGroup()
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jck_else)
                 .addGap(4, 4, 4)
-                .addGroup(jXTitledPanel1Layout.createParallelGroup(Alignment.BASELINE)
+                .addGroup(jPanel1Layout.createParallelGroup(Alignment.BASELINE)
                     .addComponent(jLabel3)
                     .addComponent(jsp_minscale, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(ComponentPlacement.RELATED)
-                .addGroup(jXTitledPanel1Layout.createParallelGroup(Alignment.BASELINE)
+                .addGroup(jPanel1Layout.createParallelGroup(Alignment.BASELINE)
                     .addComponent(jLabel4)
                     .addComponent(jsp_maxscale, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(ComponentPlacement.RELATED)
-                .addGroup(jXTitledPanel1Layout.createParallelGroup(Alignment.LEADING)
+                .addGroup(jPanel1Layout.createParallelGroup(Alignment.LEADING)
                     .addComponent(but_edit)
                     .addComponent(jScrollPane1, GroupLayout.PREFERRED_SIZE, 50, GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jXTitledPanel2.setBorder(BorderFactory.createEtchedBorder());
-        jXTitledPanel2.setTitle(MessageBundle.getString("general")); // NOI18N
+        jPanel2.setBorder(BorderFactory.createEtchedBorder());
+        jPanel2.setOpaque(false);
+
+
+
+
         jLabel1.setFont(jLabel1.getFont().deriveFont(jLabel1.getFont().getStyle() | Font.BOLD));
         jLabel1.setHorizontalAlignment(SwingConstants.RIGHT);
         jLabel1.setText(MessageBundle.getString("title")); // NOI18N
+        jLabel6.setText(MessageBundle.getString("abstract")); // NOI18N
         jLabel2.setHorizontalAlignment(SwingConstants.RIGHT);
         jLabel2.setText(MessageBundle.getString("name")); // NOI18N
-        jLabel6.setText(MessageBundle.getString("abstract")); // NOI18N
-        GroupLayout jXTitledPanel2Layout = new GroupLayout(jXTitledPanel2);
-        jXTitledPanel2.setLayout(jXTitledPanel2Layout);
-        jXTitledPanel2Layout.setHorizontalGroup(
-            jXTitledPanel2Layout.createParallelGroup(Alignment.LEADING)
-            .addGroup(jXTitledPanel2Layout.createSequentialGroup()
+        GroupLayout jPanel2Layout = new GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jXTitledPanel2Layout.createParallelGroup(Alignment.LEADING)
-                    .addGroup(jXTitledPanel2Layout.createSequentialGroup()
+                .addGroup(jPanel2Layout.createParallelGroup(Alignment.LEADING)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
                         .addComponent(jLabel2)
                         .addPreferredGap(ComponentPlacement.RELATED)
-                        .addComponent(jtf_name, GroupLayout.DEFAULT_SIZE, 198, Short.MAX_VALUE))
-                    .addGroup(jXTitledPanel2Layout.createSequentialGroup()
+                        .addComponent(jtf_name, GroupLayout.DEFAULT_SIZE, 347, Short.MAX_VALUE))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
                         .addComponent(jLabel1)
                         .addPreferredGap(ComponentPlacement.RELATED)
-                        .addComponent(jtf_title, GroupLayout.DEFAULT_SIZE, 204, Short.MAX_VALUE))
-                    .addGroup(Alignment.TRAILING, jXTitledPanel2Layout.createSequentialGroup()
+                        .addComponent(jtf_title, GroupLayout.DEFAULT_SIZE, 353, Short.MAX_VALUE))
+                    .addGroup(Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                         .addComponent(jLabel6)
                         .addPreferredGap(ComponentPlacement.RELATED)
-                        .addComponent(jtf_abstract, GroupLayout.DEFAULT_SIZE, 183, Short.MAX_VALUE)))
+                        .addComponent(jtf_abstract, GroupLayout.DEFAULT_SIZE, 332, Short.MAX_VALUE)))
                 .addContainerGap())
         );
-        jXTitledPanel2Layout.setVerticalGroup(
-            jXTitledPanel2Layout.createParallelGroup(Alignment.LEADING)
-            .addGroup(jXTitledPanel2Layout.createSequentialGroup()
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jXTitledPanel2Layout.createParallelGroup(Alignment.BASELINE)
+                .addGroup(jPanel2Layout.createParallelGroup(Alignment.BASELINE)
                     .addComponent(jLabel2)
                     .addComponent(jtf_name, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(ComponentPlacement.RELATED)
-                .addGroup(jXTitledPanel2Layout.createParallelGroup(Alignment.BASELINE)
+                .addGroup(jPanel2Layout.createParallelGroup(Alignment.BASELINE)
                     .addComponent(jLabel1)
                     .addComponent(jtf_title, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(ComponentPlacement.RELATED)
-                .addGroup(jXTitledPanel2Layout.createParallelGroup(Alignment.BASELINE)
+                .addGroup(jPanel2Layout.createParallelGroup(Alignment.BASELINE)
                     .addComponent(jLabel6)
                     .addComponent(jtf_abstract, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -216,15 +216,21 @@ public class JRulePane extends StyleElementEditor<MutableRule> {
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(Alignment.LEADING)
-            .addComponent(jXTitledPanel2, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(jXTitledPanel1, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(Alignment.TRAILING)
+                    .addComponent(jPanel1, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel2, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(jXTitledPanel2, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                .addContainerGap()
+                .addComponent(jPanel2, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(ComponentPlacement.RELATED)
-                .addComponent(jXTitledPanel1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                .addComponent(jPanel1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -235,6 +241,9 @@ public class JRulePane extends StyleElementEditor<MutableRule> {
         
         final JDialog dialog = new JDialog();
         final JCQLPropertyPanel cql = new JCQLPropertyPanel();
+        if(layer instanceof FeatureMapLayer){
+            cql.setLayer((FeatureMapLayer)layer);
+        }
         if(rule.getFilter() != null){
             cql.setFilter(rule.getFilter());
         }
@@ -246,6 +255,7 @@ public class JRulePane extends StyleElementEditor<MutableRule> {
         dialog.setVisible(true);
 
         rule.setFilter(cql.getFilter());
+        parse(rule);
                 
     }//GEN-LAST:event_but_editActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -255,9 +265,9 @@ public class JRulePane extends StyleElementEditor<MutableRule> {
     private JLabel jLabel3;
     private JLabel jLabel4;
     private JLabel jLabel6;
+    private JPanel jPanel1;
+    private JPanel jPanel2;
     private JScrollPane jScrollPane1;
-    private JXTitledPanel jXTitledPanel1;
-    private JXTitledPanel jXTitledPanel2;
     private JCheckBox jck_else;
     private JSpinner jsp_maxscale;
     private JSpinner jsp_minscale;
