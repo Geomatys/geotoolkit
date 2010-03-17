@@ -135,9 +135,12 @@ final class SpatialRefSysEntry {
      * cache before to create the CRS.
      *
      * @param  factory The factory used for creating the CRS.
+     * @param  databaseCRS {@link org.geotoolkit.internal.sql.table.SpatialDatabase#horizontalCRS}.
      * @throws FactoryException if an error occured while creating the CRS.
      */
-    final void createSpatioTemporalCRS(final CRSAuthorityFactory factory) throws FactoryException {
+    final void createSpatioTemporalCRS(final CRSAuthorityFactory factory, final SingleCRS databaseCRS)
+            throws FactoryException
+    {
         if (horizontalSRID != 0) {
             final CoordinateReferenceSystem crs =
                     factory.createCoordinateReferenceSystem(String.valueOf(horizontalSRID));
@@ -193,6 +196,7 @@ final class SpatialRefSysEntry {
         }
         assert CRS.getHorizontalCRS(spatioTemporalCRS) == CRS.getHorizontalCRS(spatialCRS);
         assert CRS.getVerticalCRS  (spatioTemporalCRS) == CRS.getVerticalCRS  (spatialCRS);
+        toDatabaseHorizontalCRS = (MathTransform2D) CRS.findMathTransform(horizontalCRS, databaseCRS, true);
     }
 
     /**
@@ -272,13 +276,7 @@ final class SpatialRefSysEntry {
      */
     final MathTransform2D toDatabaseHorizontalCRS() throws FactoryException {
         assert uninitialized() == 0 : this;
-        // No need to synhronize - this is not a big deal if the transform is searched twice.
-        MathTransform2D tr = toDatabaseHorizontalCRS;
-        if (tr == null) {
-            tr = (MathTransform2D) CRS.findMathTransform(horizontalCRS, SQLCoverageReader.HORIZONTAL_CRS, true);
-            toDatabaseHorizontalCRS = tr;
-        }
-        return tr;
+        return toDatabaseHorizontalCRS;
     }
 
     /**

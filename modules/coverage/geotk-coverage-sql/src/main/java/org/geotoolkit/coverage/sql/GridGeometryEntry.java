@@ -94,7 +94,7 @@ final class GridGeometryEntry extends Entry {
      * {@code "spatial_ref_sys"} table content is inconsistent with the EPSG database
      * used by Geotk.
      */
-    private final Shape geographicBoundingShape;
+    private final Shape standardEnvelope;
 
     /**
      * The vertical ordinates, or {@code null}.
@@ -126,7 +126,7 @@ final class GridGeometryEntry extends Entry {
             }
         }
         geometry = srsEntry.createGridGeometry(size, gridToCRS, verticalOrdinates, mtFactory);
-        geographicBoundingShape = srsEntry.toDatabaseHorizontalCRS().createTransformedShape(getShape());
+        standardEnvelope = srsEntry.toDatabaseHorizontalCRS().createTransformedShape(getShape());
     }
 
     /**
@@ -203,10 +203,10 @@ final class GridGeometryEntry extends Entry {
      */
     public boolean isEmpty() {
         RectangularShape bounds;
-        if (geographicBoundingShape instanceof RectangularShape) {
-            bounds = (RectangularShape) geographicBoundingShape;
+        if (standardEnvelope instanceof RectangularShape) {
+            bounds = (RectangularShape) standardEnvelope;
         } else {
-            bounds = geographicBoundingShape.getBounds2D();
+            bounds = standardEnvelope.getBounds2D();
         }
         return bounds.isEmpty();
     }
@@ -216,10 +216,10 @@ final class GridGeometryEntry extends Entry {
      */
     public DefaultGeographicBoundingBox getGeographicBoundingBox() {
         Rectangle2D bounds;
-        if (geographicBoundingShape instanceof Rectangle2D) {
-            bounds = (Rectangle2D) geographicBoundingShape;
+        if (standardEnvelope instanceof Rectangle2D) {
+            bounds = (Rectangle2D) standardEnvelope;
         } else {
-            bounds = geographicBoundingShape.getBounds2D();
+            bounds = standardEnvelope.getBounds2D();
         }
         return new DefaultGeographicBoundingBox(bounds);
     }

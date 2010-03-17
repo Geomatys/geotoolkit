@@ -32,6 +32,7 @@ import org.geotoolkit.gui.swing.tree.DefaultMutableTreeNode;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
 import org.geotoolkit.util.Utilities;
 
+import org.geotoolkit.util.MeasurementRange;
 import org.geotoolkit.internal.sql.table.Entry;
 import org.geotoolkit.internal.sql.table.Database;
 import org.geotoolkit.internal.sql.table.CatalogException;
@@ -41,7 +42,7 @@ import org.geotoolkit.internal.sql.table.CatalogException;
  * Information about an image format.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.09
+ * @version 3.10
  *
  * @since 3.09 (derived from Seagis)
  * @module
@@ -96,6 +97,15 @@ final class FormatEntry extends Entry {
     }
 
     /**
+     * Returns the name of this layer.
+     *
+     * @return The name of this layer.
+     */
+    public String getIdentifier() {
+        return (String) identifier;
+    }
+
+    /**
      * Returns the sample dimensions for coverages encoded with this format.
      * The array length is equals to the expected number of bands.
      * <p>
@@ -115,7 +125,7 @@ final class FormatEntry extends Entry {
     {
         if (sampleDimensions == null) {
             final SampleDimensionTable  table = database.getTable(SampleDimensionTable.class);
-            final GridSampleDimension[] bands = table.getSampleDimensions((String) identifier);
+            final GridSampleDimension[] bands = table.getSampleDimensions(getIdentifier());
             for (int i=0; i<bands.length; i++) {
                 bands[i] = bands[i].geophysics(geophysics);
             }
@@ -123,6 +133,21 @@ final class FormatEntry extends Entry {
             database = null;
         }
         return sampleDimensions;
+    }
+
+    /**
+     * Returns the ranges of valid sample values for each band in this format.
+     * The range are always expressed in <cite>geophysics</cite> values.
+     */
+    final MeasurementRange<Double>[] getSampleValueRanges() throws CatalogException, SQLException {
+        final List<GridSampleDimension> bands = getSampleDimensions();
+        @SuppressWarnings({"unchecked","rawtypes"})  // Generic array creation.
+        final MeasurementRange<Double>[] ranges = new MeasurementRange[bands.size()];
+        for (int i=0; i<ranges.length; i++) {
+            final GridSampleDimension band = bands.get(i).geophysics(true);
+            ranges[i] = MeasurementRange.create(band.getMinimumValue(), band.getMaximumValue(), band.getUnits());
+        }
+        return ranges;
     }
 
     /**

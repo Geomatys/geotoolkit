@@ -34,7 +34,6 @@ import java.util.GregorianCalendar;
 import java.util.concurrent.locks.ReentrantLock;
 import java.lang.reflect.Constructor;
 
-import org.opengis.referencing.crs.SingleCRS;
 import org.opengis.referencing.operation.MathTransformFactory;
 
 import org.geotoolkit.factory.Hints;
@@ -62,7 +61,7 @@ import org.geotoolkit.factory.AuthorityFactoryFinder;
  * @since 3.09 (derived from Seagis)
  * @module
  */
-@ThreadSafe(concurrent=true)
+@ThreadSafe(concurrent = true)
 public class Database implements Localized {
     /**
      * The data source, which is mandatory. It is recommanded to provide a data source that
@@ -194,12 +193,6 @@ public class Database implements Localized {
     private final Map<Class<? extends Table>, Table> tables = new HashMap<Class<? extends Table>, Table>();
 
     /**
-     * The horizontal coordinate reference system used for performing the search in the database.
-     * It must match the CRS used in the geometry columns indexed by PostGIS.
-     */
-    final SingleCRS horizontalCRS;
-
-    /**
      * The math transform factory, created only when first needed.
      */
     private transient MathTransformFactory mtFactory;
@@ -216,29 +209,25 @@ public class Database implements Localized {
      * @param toCopy The existing instance to copy.
      */
     public Database(final Database toCopy) {
-        this.source        = toCopy.source;
-        this.catalog       = toCopy.catalog;
-        this.schema        = toCopy.schema;
-        this.timezone      = toCopy.timezone;
-        this.hints         = toCopy.hints;
-        this.horizontalCRS = toCopy.horizontalCRS;
-        this.properties    = toCopy.properties;
+        this.source     = toCopy.source;
+        this.catalog    = toCopy.catalog;
+        this.schema     = toCopy.schema;
+        this.timezone   = toCopy.timezone;
+        this.hints      = toCopy.hints;
+        this.properties = toCopy.properties;
     }
 
     /**
-     * Creates a new instance using the provided data source, CRS and configuration properties.
+     * Creates a new instance using the provided data source and configuration properties.
      * If a properties map is specified, then the keys enumerated in {@link ConfigurationKey}
      * will be used.
      *
      * @param  datasource The data source.
-     * @param  horizontalCRS The horizontal coordinate reference system used in PostGIS tables.
      * @param  properties The configuration properties, or {@code null} if none.
      */
-    public Database(final DataSource datasource, final SingleCRS horizontalCRS, final Properties properties) {
+    public Database(final DataSource datasource, final Properties properties) {
         Table.ensureNonNull("datasource", datasource);
-        Table.ensureNonNull("horizontalCRS", horizontalCRS);
         final String username, password, tz;
-        this.horizontalCRS = horizontalCRS;
         this.properties = properties; // Must be set before to ask for properties.
         username = getProperty(ConfigurationKey.USER);
         password = getProperty(ConfigurationKey.PASSWORD);
@@ -287,7 +276,7 @@ public class Database implements Localized {
      *         {@linkplain Locale#getDefault() system default}.
      */
     @Override
-    public Locale getLocale() {
+    public final Locale getLocale() {
         return session.get().locale;
     }
 
@@ -298,7 +287,7 @@ public class Database implements Localized {
      * @param locale The new locale for message formatting, or {@code null} for the
      *        {@linkplain Locale#getDefault() system default}.
      */
-    public void setLocale(final Locale locale) {
+    public final void setLocale(final Locale locale) {
         session.get().locale = locale;
     }
 
@@ -311,7 +300,7 @@ public class Database implements Localized {
      *
      * @see Table#getCalendar()
      */
-    public TimeZone getTimeZone() {
+    public final TimeZone getTimeZone() {
         return (TimeZone) timezone.clone();
     }
 
@@ -340,7 +329,7 @@ public class Database implements Localized {
      *         for returning directly the data source given to the constructor.
      * @return The data source.
      */
-    public DataSource getDataSource(final boolean wrap) {
+    public final DataSource getDataSource(final boolean wrap) {
         return wrap ? source : source.wrapped;
     }
 

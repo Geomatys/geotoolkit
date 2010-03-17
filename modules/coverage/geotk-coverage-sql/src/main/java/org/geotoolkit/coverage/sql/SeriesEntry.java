@@ -172,6 +172,13 @@ final class SeriesEntry extends Entry {
     }
 
     /**
+     * Returns the identifier of this series.
+     */
+    public Integer getIdentifier() {
+        return (Integer) identifier;
+    }
+
+    /**
      * Returns the given filename as a {@link File} augmented with series-dependent
      * {@linkplain File#getParent parent} and extension. The returned file should be
      * {@linkplain File#isAbsolute absolute}. If it is not, then there is probably no

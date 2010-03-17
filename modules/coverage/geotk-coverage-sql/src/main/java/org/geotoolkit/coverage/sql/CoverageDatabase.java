@@ -21,7 +21,7 @@ import java.util.Properties;
 import javax.sql.DataSource;
 
 import org.geotoolkit.lang.ThreadSafe;
-import org.geotoolkit.internal.sql.table.Database;
+import org.geotoolkit.internal.sql.table.SpatialDatabase;
 
 
 /**
@@ -39,7 +39,7 @@ public class CoverageDatabase {
     /**
      * The object which will manage the connections to the database.
      */
-    private final Database database;
+    private final SpatialDatabase database;
 
     /**
      * Creates a new instance using the given data source.
@@ -48,6 +48,6 @@ public class CoverageDatabase {
      * @param properties The configuration properties, or {@code null} if none.
      */
     public CoverageDatabase(final DataSource datasource, final Properties properties) {
-        database = new Database(datasource, SQLCoverageReader.HORIZONTAL_CRS, properties);
+        database = new SpatialDatabase(datasource, properties);
     }
 }

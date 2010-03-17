@@ -102,7 +102,7 @@ public final class CRSUtilities {
      * {@linkplain CoordinateSystemAxis#getDirection direction} or an
      * {@linkplain AxisDirection#opposite opposite} direction than {@code axis}
      * ocurs in the coordinate system, then the dimension of the first such occurrence
-     * is returned. That is, the a value <var>k</var> such that:
+     * is returned. That is, the value <var>k</var> such that:
      *
      * {@preformat java
      *     cs.getAxis(k).getDirection().absolute() == axis.getDirection().absolute()
@@ -134,6 +134,35 @@ public final class CRSUtilities {
             }
         }
         return candidate;
+    }
+
+    /**
+     * Returns the index of the first dimension in {@code fullCS} where axes colinear with
+     * the {@code subCS} axes are found. If no such dimension is found, returns -1.
+     *
+     * @param  fullCS The coordinate system which contains all axes.
+     * @param  subCS  The coordinate system to search into {@code fullCS}.
+     * @return The first dimension of a sequence of axes colinear with {@code subCS} axes,
+     *         or {@code -1} if none.
+     *
+     * @since 3.10
+     */
+    public static int dimensionColinearWith(final CoordinateSystem fullCS, final CoordinateSystem subCS) {
+        final int dim = dimensionColinearWith(fullCS, subCS.getAxis(0));
+        if (dim >= 0) {
+            int i = subCS.getDimension();
+            if (dim + i <= fullCS.getDimension()) {
+                while (--i > 0) { // Intentionally exclude 0.
+                    if (!subCS.getAxis(i).getDirection().absolute().equals(
+                        fullCS.getAxis(i + dim).getDirection().absolute()))
+                    {
+                        return -1;
+                    }
+                }
+                return dim;
+            }
+        }
+        return -1;
     }
 
     /**

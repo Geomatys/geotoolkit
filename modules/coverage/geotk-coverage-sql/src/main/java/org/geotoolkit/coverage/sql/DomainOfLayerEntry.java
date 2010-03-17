@@ -42,6 +42,11 @@ final class DomainOfLayerEntry extends Entry {
     private static final long serialVersionUID = 2371725033886216666L;
 
     /**
+     * A null domain.
+     */
+    static final DomainOfLayerEntry NULL = new DomainOfLayerEntry("NULL", null, null, null, null);
+
+    /**
      * The time range, or {@code null} if none.
      */
     final DateRange timeRange;

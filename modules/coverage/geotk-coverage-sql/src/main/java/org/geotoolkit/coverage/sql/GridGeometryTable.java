@@ -50,6 +50,7 @@ import org.geotoolkit.internal.sql.table.LocalCache;
 import org.geotoolkit.internal.sql.table.SingletonTable;
 import org.geotoolkit.internal.sql.table.CatalogException;
 import org.geotoolkit.internal.sql.table.IllegalRecordException;
+import org.geotoolkit.internal.sql.table.SpatialDatabase;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.referencing.factory.AbstractAuthorityFactory;
@@ -153,6 +154,7 @@ final class GridGeometryTable extends SingletonTable<GridGeometryEntry> {
     @SuppressWarnings("fallthrough")
     protected GridGeometryEntry createEntry(final ResultSet results) throws CatalogException, SQLException {
         final GridGeometryQuery query  = (GridGeometryQuery) super.query;
+        final SpatialDatabase database = (SpatialDatabase) getDatabase();
         final int    identifier        = results.getInt   (indexOf(query.identifier));
         final int    width             = results.getInt   (indexOf(query.width));
         final int    height            = results.getInt   (indexOf(query.height));
@@ -169,13 +171,13 @@ final class GridGeometryTable extends SingletonTable<GridGeometryEntry> {
          * Creates the SpatialRefSysEntry object, looking for an existing one in the cache first.
          * If a new object has been created, it will be completed after insertion in the cache.
          */
-        SpatialRefSysEntry srsEntry = new SpatialRefSysEntry(horizontalSRID, verticalSRID, SQLCoverageReader.TEMPORAL_CRS);
+        SpatialRefSysEntry srsEntry = new SpatialRefSysEntry(horizontalSRID, verticalSRID, database.temporalCRS);
         synchronized (gridCRS) {
             final SpatialRefSysEntry candidate = gridCRS.unique(srsEntry);
             if (candidate != srsEntry) {
                 srsEntry = candidate;
             } else try {
-                srsEntry.createSpatioTemporalCRS(getAuthorityFactory());
+                srsEntry.createSpatioTemporalCRS(getAuthorityFactory(), database.horizontalCRS);
             } catch (FactoryException exception) {
                 gridCRS.remove(srsEntry);
                 final Column column;

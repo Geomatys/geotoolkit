@@ -160,7 +160,7 @@ public abstract class SingletonTable<E extends Entry> extends Table {
      * {@inheritDoc}
      */
     @Override
-    protected final void fireStateChanged(final String property) throws CatalogException {
+    protected void fireStateChanged(final String property) throws CatalogException {
         cache.clear();
         fireStateChanged(property);
     }

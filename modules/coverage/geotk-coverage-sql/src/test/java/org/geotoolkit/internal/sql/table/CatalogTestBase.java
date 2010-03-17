@@ -32,7 +32,6 @@ import java.util.Properties;
 import org.postgresql.ds.PGSimpleDataSource;
 
 import org.geotoolkit.internal.io.Installation;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -52,7 +51,7 @@ public class CatalogTestBase {
     /**
      * The connection to the database.
      */
-    private static Database database;
+    private static SpatialDatabase database;
 
     /**
      * Creates the database when first needed.
@@ -74,7 +73,7 @@ public class CatalogTestBase {
             final PGSimpleDataSource ds = new PGSimpleDataSource();
             ds.setServerName(properties.getProperty("server"));
             ds.setDatabaseName(properties.getProperty("database"));
-            database = new Database(ds, DefaultGeographicCRS.WGS84, properties);
+            database = new SpatialDatabase(ds, properties);
         }
         return database;
     }

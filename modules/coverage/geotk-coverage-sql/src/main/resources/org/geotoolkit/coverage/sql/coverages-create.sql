@@ -205,7 +205,8 @@ CREATE TABLE "Layers" (
     "period"    double precision,
     "minScale"  double precision CHECK ("minScale" >= 1),
     "maxScale"  double precision CHECK ("maxScale" >= 1),
-    "fallback"  character varying REFERENCES "Layers" ON UPDATE CASCADE ON DELETE RESTRICT
+    "fallback"  character varying REFERENCES "Layers" ON UPDATE CASCADE ON DELETE RESTRICT,
+    "comments"  character varying
 );
 
 ALTER TABLE "Layers" OWNER TO geoadmin;
@@ -224,6 +225,8 @@ COMMENT ON COLUMN "Layers"."maxScale" IS
     'Maximum scale to request this Layer.';
 COMMENT ON COLUMN "Layers"."fallback" IS
     'Fallback layer which is suggested if no data is available for the current layer.';
+COMMENT ON COLUMN "Layers"."comments" IS
+    'Free text for comments.';
 COMMENT ON CONSTRAINT "Layers_minScale_check" ON "Layers" IS
     'The minimum scale shall be equals or greater than 1.';
 COMMENT ON CONSTRAINT "Layers_maxScale_check" ON "Layers" IS

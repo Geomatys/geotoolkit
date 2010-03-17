@@ -59,7 +59,7 @@ public final class SeriesTableTest extends CatalogTestBase {
     public void testSelectAndList() throws CatalogException, SQLException {
         final SeriesTable table = new SeriesTable(getDatabase());
         final SeriesEntry entry = table.getEntry(TEMPERATURE_ID);
-        assertEquals("Expected the identifier that we requested.", TEMPERATURE_ID, entry.identifier);
+        assertEquals("Expected the identifier that we requested.", TEMPERATURE_ID, entry.getIdentifier());
         assertSame("The entry should be cached.", entry, table.getEntry(TEMPERATURE_ID));
 
         table.setLayer(LayerTableTest.TEMPERATURE);

@@ -27,7 +27,7 @@ import static org.geotoolkit.internal.sql.table.QueryType.*;
 
 
 /**
- * The query to execute for a {@link SeriesTable}.
+ * The query to execute for a {@link LayerTable}.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @version 3.10
@@ -35,33 +35,29 @@ import static org.geotoolkit.internal.sql.table.QueryType.*;
  * @since 3.10 (derived from Seagis)
  * @module
  */
-final class SeriesQuery extends Query {
+final class LayerQuery extends Query {
     /**
      * Column to appear after the {@code "SELECT"} clause.
      */
-    final Column identifier, layer, pathname, extension, format, comments;
+    final Column name, period, fallback, comments;
 
     /**
      * Parameter to appear after the {@code "FROM"} clause.
      */
-    final Parameter byIdentifier, byLayer;
+    final Parameter byName;
 
     /**
      * Creates a new query for the specified database.
      *
      * @param database The database for which this query is created.
      */
-    public SeriesQuery(final Database database) {
-        super(database, "Series");
-        final QueryType[] sle = {SELECT, LIST, EXISTS};
-        final QueryType[] sli = {SELECT, LIST, INSERT};
-        identifier   = addMandatoryColumn("identifier", sle);
-        layer        = addMandatoryColumn("layer",   INSERT);
-        pathname     = addMandatoryColumn("pathname",   sli);
-        extension    = addMandatoryColumn("extension",  sli);
-        format       = addMandatoryColumn("format",     sli);
-        comments     = addOptionalColumn ("comments", null, SELECT, LIST);
-        byIdentifier = addParameter(identifier, SELECT, EXISTS, DELETE);
-        byLayer      = addParameter(layer, LIST, DELETE_ALL);
+    public LayerQuery(final Database database) {
+        super(database, "Layers");
+        final QueryType[] sl = {SELECT, LIST};
+        name     = addMandatoryColumn("name", SELECT, LIST, EXISTS, INSERT);
+        period   = addOptionalColumn ("period",      1, sl);
+        fallback = addOptionalColumn ("fallback", null, sl);
+        comments = addOptionalColumn ("comments", null, sl);
+        byName   = addParameter(name, SELECT, EXISTS);
     }
 }

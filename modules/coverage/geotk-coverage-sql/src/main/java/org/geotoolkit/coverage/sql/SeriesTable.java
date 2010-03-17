@@ -81,13 +81,6 @@ final class SeriesTable extends SingletonTable<SeriesEntry> {
     }
 
     /**
-     * Creates a series table connected to the same database than the specified one.
-     */
-    public SeriesTable(final SeriesTable table) {
-        super(table);
-    }
-
-    /**
      * Returns the layer for the series to be returned by {@link #getEntries() getEntries()}.
      * The default value is {@code null}, which means that no filtering should be performed.
      */
@@ -163,7 +156,7 @@ final class SeriesTable extends SingletonTable<SeriesEntry> {
         final Set<SeriesEntry> entries = getEntries();
         final Map<Integer,SeriesEntry> map = new HashMap<Integer,SeriesEntry>(Utilities.hashMapCapacity(entries.size()));
         for (final SeriesEntry entry : entries) {
-            final Integer identifier = (Integer) entry.identifier;
+            final Integer identifier = entry.getIdentifier();
             if (map.put(identifier, entry) != null) {
                 throw new DuplicatedRecordException(errors().getString(Errors.Keys.DUPLICATED_RECORD_$1, identifier));
             }
@@ -182,7 +175,7 @@ final class SeriesTable extends SingletonTable<SeriesEntry> {
      * @param  format    The format for the series considered.
      * @return The identifier of a matching entry, or {@code null} if none.
      * @throws CatalogException if a logical error occured.
-     * @throws SQLException if an error occured while reading from or writing to the database.
+     * @throws SQLException if an error occured while reading from the database.
      */
     Integer find(final String path, final String extension, final String format)
             throws SQLException, CatalogException
@@ -222,6 +215,7 @@ final class SeriesTable extends SingletonTable<SeriesEntry> {
                 id = nextID;
             }
             results.close();
+            ce.release();
         }
         return id;
     }

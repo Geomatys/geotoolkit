@@ -49,7 +49,7 @@ import org.geotoolkit.referencing.datum.DefaultTemporalDatum;
  * </TD></TR></TABLE>
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.04
+ * @version 3.10
  *
  * @since 1.2
  * @module
@@ -272,13 +272,21 @@ public class DefaultTemporalCRS extends AbstractSingleCRS implements TemporalCRS
     }
 
     /**
-     * Convert the given value into a {@link Date} object.
-     * This method is the converse of {@link #toValue}.
+     * Convert the given value into a {@link Date} object. If the given value is
+     * {@link Double#NaN NaN} or infinite, then this method returns {@code null}.
+     * This is consistent with usage in {@link org.geotoolkit.util.DateRange},
+     * where the {@code null} value is used for unbounded ranges.
+     * <p>
+     * This method is the converse of {@link #toValue(Date)}.
      *
      * @param  value A value in this axis unit.
-     * @return The value as a {@linkplain Date date}.
+     * @return The value as a {@linkplain Date date}, or {@code null} if the given
+     *         value is NaN or infinite.
      */
     public Date toDate(final double value) {
+        if (Double.isNaN(value) || Double.isInfinite(value)) {
+            return null;
+        }
         if (toMillis == null) {
             initializeConverter();
         }
@@ -287,12 +295,18 @@ public class DefaultTemporalCRS extends AbstractSingleCRS implements TemporalCRS
 
     /**
      * Convert the given {@linkplain Date date} into a value in this axis unit.
-     * This method is the converse of {@link #toDate}.
+     * If the given time is {@code null}, then this method returns {@link Double#NaN NaN}.
+     * <p>
+     * This method is the converse of {@link #toDate(double)}.
      *
-     * @param  time The value as a {@linkplain Date date}.
-     * @return value A value in this axis unit.
+     * @param  time The value as a {@linkplain Date date}, or {@code null}.
+     * @return value A value in this axis unit, or {@link Double#NaN NaN}
+     *         if the given time is {@code null}.
      */
     public double toValue(final Date time) {
+        if (time == null) {
+            return Double.NaN;
+        }
         if (toMillis == null) {
             initializeConverter();
         }
@@ -307,6 +321,6 @@ public class DefaultTemporalCRS extends AbstractSingleCRS implements TemporalCRS
      */
     @Override
     public int hashCode() {
-        return (int)serialVersionUID ^ super.hashCode();
+        return (int) serialVersionUID ^ super.hashCode();
     }
 }

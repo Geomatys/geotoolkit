@@ -47,7 +47,7 @@ public class Entry implements Serializable {
      * <p>
      * This field is not allowed to be null.
      */
-    public final Comparable<?> identifier;
+    protected final Comparable<?> identifier;
 
     /**
      * A description of this entry, of {@code null} if none. If provided, the description should
