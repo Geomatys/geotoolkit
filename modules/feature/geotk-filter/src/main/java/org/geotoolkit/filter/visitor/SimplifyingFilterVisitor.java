@@ -124,20 +124,21 @@ public class SimplifyingFilterVisitor extends DuplicatingFilterVisitor {
     @Override
     public Object visit(And filter, Object extraData) {
         // scan, clone and simplify the children
-        List<Filter> newChildren = new ArrayList<Filter>(filter.getChildren().size());
-        for (Filter child : filter.getChildren()) {
-            Filter cloned = (Filter) child.accept(this, extraData);
-            
+        final List<Filter> children = filter.getChildren();
+        final List<Filter> newChildren = new ArrayList<Filter>(children.size());
+
+        for (Filter child : children) {
+            final Filter cloned = (Filter) child.accept(this, extraData);
+
             // if any of the child filters is exclude, 
-            // the whole chain of AND is equivalent to 
-            // EXCLUDE
+            // the whole chain of AND is equivalent to EXCLUDE
             if(cloned == Filter.EXCLUDE)
                 return Filter.EXCLUDE;
             
             // these can be skipped
             if(cloned == Filter.INCLUDE)
                 continue;
-            
+
             newChildren.add(cloned);
         }
         
@@ -156,13 +157,14 @@ public class SimplifyingFilterVisitor extends DuplicatingFilterVisitor {
     @Override
     public Object visit(Or filter, Object extraData) {
      // scan, clone and simplify the children
-        List<Filter> newChildren = new ArrayList<Filter>(filter.getChildren().size());
-        for (Filter child : filter.getChildren()) {
-            Filter cloned = (Filter) child.accept(this, extraData);
-            
+        final List<Filter> children = filter.getChildren();
+        final List<Filter> newChildren = new ArrayList<Filter>(children.size());
+
+        for (Filter child : children) {
+            final Filter cloned = (Filter) child.accept(this, extraData);
+
             // if any of the child filters is include, 
-            // the whole chain of OR is equivalent to 
-            // INCLUDE
+            // the whole chain of OR is equivalent to INCLUDE
             if(cloned == Filter.INCLUDE)
                 return Filter.INCLUDE;
             
@@ -199,7 +201,7 @@ public class SimplifyingFilterVisitor extends DuplicatingFilterVisitor {
             return Filter.EXCLUDE;
         }
 
-        Set<Identifier> validFids = new HashSet<Identifier>();
+        final Set<Identifier> validFids = new HashSet<Identifier>();
 
         for (Identifier id : filter.getIdentifiers()) {
             if(id instanceof FeatureId || id instanceof GmlObjectId){
@@ -212,12 +214,10 @@ public class SimplifyingFilterVisitor extends DuplicatingFilterVisitor {
             }
         }
 
-        Filter validIdFilter;
         if (validFids.size() == 0) {
-            validIdFilter = Filter.EXCLUDE;
+            return Filter.EXCLUDE;
         } else {
-            validIdFilter = getFactory(extraData).id(validFids);
+            return getFactory(extraData).id(validFids);
         }
-        return validIdFilter;
     }
 }

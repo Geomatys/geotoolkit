@@ -62,7 +62,7 @@ public class IsStaticExpressionVisitor implements ExpressionVisitor {
      */
     @Override
     public Boolean visit(NilExpression expression, Object data) {
-        return true;
+        return Boolean.TRUE;
     }
 
     /**
@@ -94,7 +94,7 @@ public class IsStaticExpressionVisitor implements ExpressionVisitor {
                 if(!(Boolean)parameter.accept(this, data)) return false;
             }
         }
-        return true;
+        return Boolean.TRUE;
     }
 
     /**
@@ -103,7 +103,7 @@ public class IsStaticExpressionVisitor implements ExpressionVisitor {
      */
     @Override
     public Boolean visit(Literal expression, Object data) {
-        return true;
+        return Boolean.TRUE;
     }
 
     /**
@@ -123,7 +123,7 @@ public class IsStaticExpressionVisitor implements ExpressionVisitor {
      */
     @Override
     public Boolean visit(PropertyName expression, Object data) {
-        return false;
+        return Boolean.FALSE;
     }
 
     /**

@@ -134,7 +134,8 @@ public abstract class AbstractDataStore implements DataStore{
         getFeatureType(typeName);
 
         try{
-            getFeatureWriter(typeName, Filter.EXCLUDE);
+            final FeatureWriter writer = getFeatureWriter(typeName, Filter.EXCLUDE);
+            writer.close();
             return true;
         }catch(Exception ex){
             //catch anything, don't log it
@@ -459,6 +460,7 @@ public abstract class AbstractDataStore implements DataStore{
         if(filter != null && filter != Filter.INCLUDE){
             if(filter == Filter.EXCLUDE){
                 //filter that exclude everything, use optimzed writer
+                writer.close(); //close the previous writer
                 writer = GenericEmptyFeatureIterator.createWriter(writer.getFeatureType());
             }else{
                 writer = GenericFilterFeatureIterator.wrap(writer, filter);

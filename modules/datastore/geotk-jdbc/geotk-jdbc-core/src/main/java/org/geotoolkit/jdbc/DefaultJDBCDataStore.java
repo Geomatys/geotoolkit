@@ -2765,12 +2765,12 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
         final Filter[] split = new Filter[2];
         if ( original != null ) {
             //create a filter splitter
-            final CapabilitiesFilterSplitter splitter = new CapabilitiesFilterSplitter(getFilterCapabilities(),
-                    schema, null);
+            final CapabilitiesFilterSplitter splitter = new CapabilitiesFilterSplitter(
+                    getFilterCapabilities(), schema);
             original.accept(splitter, null);
 
-            split[0] = splitter.getFilterPre();
-            split[1] = splitter.getFilterPost();
+            split[0] = splitter.getPreFilter();
+            split[1] = splitter.getPostFilter();
         }
 
         final SimplifyingFilterVisitor visitor = new SimplifyingFilterVisitor();

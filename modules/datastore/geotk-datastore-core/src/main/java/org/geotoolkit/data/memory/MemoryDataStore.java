@@ -17,14 +17,18 @@
 
 package org.geotoolkit.data.memory;
 
+import java.io.Closeable;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.logging.Level;
 
 import org.geotoolkit.data.AbstractDataStore;
 import org.geotoolkit.data.DataStoreException;
@@ -41,6 +45,7 @@ import org.geotoolkit.feature.SchemaException;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.filter.identity.DefaultFeatureId;
 import org.geotoolkit.util.Converters;
+import org.geotoolkit.util.collection.CloseableIterator;
 
 import org.opengis.feature.Feature;
 import org.opengis.feature.Property;
@@ -235,8 +240,10 @@ public class MemoryDataStore extends AbstractDataStore{
 
         final List<FeatureId> ids = new ArrayList<FeatureId>();
 
+        final Iterator<? extends Feature> ite = collection.iterator();
         try{
-            for(final Feature f : collection){
+            while(ite.hasNext()){
+                final Feature f = ite.next();
                 final Feature candidate = writer.next();
                 for(Property property : f.getProperties()){
                     candidate.getProperty(property.getName()).setValue(property.getValue());
@@ -264,6 +271,15 @@ public class MemoryDataStore extends AbstractDataStore{
                 ids.add(new DefaultFeatureId(vals[0].toString()));
             }
         }finally{
+            //todo must close safely both iterator
+            if(ite instanceof Closeable){
+                try {
+                    ((Closeable) ite).close();
+                } catch (IOException ex) {
+                    throw new DataStoreException(ex);
+                }
+            }
+
             writer.close();
         }
 

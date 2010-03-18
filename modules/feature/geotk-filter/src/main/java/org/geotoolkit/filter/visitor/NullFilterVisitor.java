@@ -35,7 +35,6 @@ import org.opengis.filter.PropertyIsNotEqualTo;
 import org.opengis.filter.PropertyIsNull;
 import org.opengis.filter.expression.Add;
 import org.opengis.filter.expression.Divide;
-import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.ExpressionVisitor;
 import org.opengis.filter.expression.Function;
 import org.opengis.filter.expression.Literal;
@@ -104,14 +103,17 @@ public abstract class NullFilterVisitor implements FilterVisitor, ExpressionVisi
     public NullFilterVisitor() {        
     }
 
+    @Override
     public Object visit( ExcludeFilter filter, Object data ) {
         return data;
     }
 
+    @Override
     public Object visit( IncludeFilter filter, Object data ) {
         return data;
     }
 
+    @Override
     public Object visit( And filter, Object data ) {
         if( data == null ) return null;
         if (filter.getChildren() != null) {
@@ -123,10 +125,12 @@ public abstract class NullFilterVisitor implements FilterVisitor, ExpressionVisi
         return data;
     }
 
+    @Override
     public Object visit( Id filter, Object data ) {
         return data;
     }
 
+    @Override
     public Object visit( Not filter, Object data ) {
         if( data == null ) return data;
 
@@ -137,6 +141,7 @@ public abstract class NullFilterVisitor implements FilterVisitor, ExpressionVisi
         return data;
     }
 
+    @Override
     public Object visit( Or filter, Object data ) {
         if( data == null ) return null;
         if (filter.getChildren() != null) {
@@ -148,118 +153,147 @@ public abstract class NullFilterVisitor implements FilterVisitor, ExpressionVisi
         return data;
     }
 
+    @Override
     public Object visit( PropertyIsBetween filter, Object data ) {
         return data;
     }
 
+    @Override
     public Object visit( PropertyIsEqualTo filter, Object data ) {
         return data;
     }
 
+    @Override
     public Object visit( PropertyIsNotEqualTo filter, Object data ) {
         return data;
     }
 
+    @Override
     public Object visit( PropertyIsGreaterThan filter, Object data ) {
         return data;
     }
 
+    @Override
     public Object visit( PropertyIsGreaterThanOrEqualTo filter, Object data ) {
         return data;
     }
 
+    @Override
     public Object visit( PropertyIsLessThan filter, Object data ) {        
         return data;
     }
 
+    @Override
     public Object visit( PropertyIsLessThanOrEqualTo filter, Object data ) {
         return data;
     }
 
+    @Override
     public Object visit( PropertyIsLike filter, Object data ) {        
         return data;
     }
 
+    @Override
     public Object visit( PropertyIsNull filter, Object data ) {
         return data;
     }
 
+    @Override
     public Object visit( final BBOX filter, Object data ) {
         return data;
     }
 
+    @Override
     public Object visit( Beyond filter, Object data ) {
         return data;
     }
 
+    @Override
     public Object visit( Contains filter, Object data ) {
         return data;
     }
 
+    @Override
     public Object visit( Crosses filter, Object data ) {
         return data;
     }
 
+    @Override
     public Object visit( Disjoint filter, Object data ) {
         return data;
     }
 
+    @Override
     public Object visit( DWithin filter, Object data ) {
         return data;
     }
 
+    @Override
     public Object visit( Equals filter, Object data ) {
         return data;
     }
 
+    @Override
     public Object visit( Intersects filter, Object data ) {
         return data;
     }
 
+    @Override
     public Object visit( Overlaps filter, Object data ) {
         return data;
     }
 
+    @Override
     public Object visit( Touches filter, Object data ) {
         return data;
     }
 
+    @Override
     public Object visit( Within filter, Object data ) {
         return data;
     }
 
+    @Override
     public Object visitNullFilter( Object data ) {
         return data;
     }
 
+    @Override
     public Object visit( NilExpression expression, Object data ) {        
         return null;
     }
 
+    @Override
     public Object visit( Add expression, Object data ) {
         return data;
     }
 
+    @Override
     public Object visit( Divide expression, Object data ) {
         return data;
     }
 
+    @Override
     public Object visit( Function expression, Object data ) {
         return data;
     }
 
+    @Override
     public Object visit( Literal expression, Object data ) {        
         return data;
     }
 
+    @Override
     public Object visit( Multiply expression, Object data ) {
         return data;
     }
 
+    @Override
     public Object visit( PropertyName expression, Object data ) {
         return data;
     }
 
+    @Override
     public Object visit( Subtract expression, Object data ) {
         return data;
     }

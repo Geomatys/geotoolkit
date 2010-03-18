@@ -348,9 +348,11 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
             FeatureCollection<SimpleFeature> fc = loadFeatures(sds);
 
             assertEquals(10, fc.size());
-            for (FeatureIterator<SimpleFeature> i = fc.iterator(); i.hasNext();) {
+            FeatureIterator<SimpleFeature> i = fc.iterator();
+            for (; i.hasNext();) {
                 assertEquals(-1, ((Byte) i.next().getAttribute(1)).byteValue());
             }
+            i.close();
     }
 
     /**
@@ -631,9 +633,10 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
         ShapefileDataStore s = new ShapefileDataStore(tmpFile.toURL());
         s.createSchema(type.getName(),type);
 
-        // was failing in GEOT-2427
-        FeatureWriter<SimpleFeatureType, SimpleFeature> writer = s.getFeatureWriter(s.getNames().iterator().next(),Filter.INCLUDE);
-        SimpleFeature feature1 = writer.next();
+//        // was failing in GEOT-2427
+//        FeatureWriter<SimpleFeatureType, SimpleFeature> writer = s.getFeatureWriter(s.getNames().iterator().next(),Filter.INCLUDE);
+//        SimpleFeature feature1 = writer.next();
+//        writer.close();
 
     }
 
@@ -773,6 +776,7 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
                         + Arrays.asList(fromShape.getCoordinates()));
             }
         }
+        fci.close();
         tmpFile.delete();
     }
 

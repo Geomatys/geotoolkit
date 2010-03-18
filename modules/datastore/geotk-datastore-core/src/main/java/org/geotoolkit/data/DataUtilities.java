@@ -16,9 +16,12 @@
  */
 package org.geotoolkit.data;
 
+import java.io.Closeable;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -107,8 +110,10 @@ public class DataUtilities {
             throws DataStoreRuntimeException{
         final List<FeatureId> ids = new ArrayList<FeatureId>();
 
+        final Iterator<? extends Feature> ite = collection.iterator();
         try{
-            for(final Feature f : collection){
+            while(ite.hasNext()){
+                final Feature f = ite.next();
                 final Feature candidate = writer.next();
 
                 for(Property property : f.getProperties()){
@@ -118,6 +123,15 @@ public class DataUtilities {
                 ids.add(candidate.getIdentifier());
             }
         }finally{
+            //todo must close safely both iterator
+            if(ite instanceof Closeable){
+                try {
+                    ((Closeable) ite).close();
+                } catch (IOException ex) {
+                    throw new DataStoreRuntimeException(ex);
+                }
+            }
+
             writer.close();
         }
 

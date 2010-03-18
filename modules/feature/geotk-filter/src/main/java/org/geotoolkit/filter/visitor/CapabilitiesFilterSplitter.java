@@ -17,12 +17,13 @@
  */
 package org.geotoolkit.filter.visitor;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Deque;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-import java.util.Stack;
 import java.util.logging.Logger;
 
 import org.geotoolkit.factory.FactoryFinder;
@@ -102,15 +103,6 @@ import org.opengis.filter.spatial.Within;
  * statements into AND statements (DeMorgans rule/modus poens) and still see if we can handle the
  * other side of the OR. Same with NOT and certain kinds of AND statements.
  * </p>
- * <p>
- * In addition this class supports the case where we're doing an split in the middle of a
- * client-side transaction. I.e. imagine doing a <Transaction> against a WFS-T where you have to
- * filter against actions that happened previously in the transaction. That's what the
- * ClientTransactionAccessor interface does, and this class splits filters while respecting the
- * information about deletes and updates that have happened previously in the Transaction. I can't
- * say with certainty exactly how the logic for that part of this works, but the test suite does
- * seem to test it and the tests do pass.
- * </p>
  * 
  * @author dzwiers
  * @author commented and ported from gt to ogc filters by saul.farber
@@ -118,20 +110,24 @@ import org.opengis.filter.spatial.Within;
  * @module pending
  * @since 2.5.3
  */
-@SuppressWarnings({"nls", "unchecked"})
 public class CapabilitiesFilterSplitter implements FilterVisitor, ExpressionVisitor {
 
     private static final Logger LOGGER = Logging.getLogger(CapabilitiesFilterSplitter.class);
+
+    private static final Class[] SPATIAL_OPS = new Class[]{Beyond.class, Contains.class, Crosses.class,
+            Disjoint.class, DWithin.class, Equals.class, Intersects.class, Overlaps.class,
+            Touches.class, Within.class};
+
     /**
      * The stack holding the bits of the filter that are not processable by something with the given
      * {@link FilterCapabilities}
      */
-    private final Stack postStack = new Stack();
+    private final Deque postStack = new ArrayDeque();
     /**
      * The stack holding the bits of the filter that <b>are</b> processable by something with the
      * given {@link FilterCapabilities}
      */
-    private final Stack preStack = new Stack();
+    private final Deque preStack = new ArrayDeque();
     /**
      * Operates similar to postStack. When a update is determined to affect an attribute expression
      * the update filter is pushed on to the stack, then ored with the filter that contains the
@@ -143,13 +139,8 @@ public class CapabilitiesFilterSplitter implements FilterVisitor, ExpressionVisi
      */
     private final DefaultFilterCapabilities fcs;
     private final FeatureType parent;
-    private Filter original = null;
-    /**
-     * If we're in the middle of a client-side transaction, this object will help us figure out what
-     * we need to handle from updates/deletes that we're tracking client-side.
-     */
-    private final ClientTransactionAccessor transactionAccessor;
     private final FilterFactory ff;
+    private Filter original = null;
 
     /**
      * Create a new instance.
@@ -157,19 +148,12 @@ public class CapabilitiesFilterSplitter implements FilterVisitor, ExpressionVisi
      * @param fcs
      *            The FilterCapabilties that describes what Filters/Expressions the server can
      *            process.
-     * @param parent
-     *            The FeatureType that this filter involves. Why is this needed?
-     * @param transactionAccessor
-     *            If the transaction is handled on the client and not the server then different
-     *            filters must be sent to the server. This class provides a generic way of obtaining
-     *            the information from the transaction.
+     * @param parent The FeatureType that this filter involves. Why is this needed?
      */
-    public CapabilitiesFilterSplitter(DefaultFilterCapabilities fcs, FeatureType parent,
-            ClientTransactionAccessor transactionAccessor) {
+    public CapabilitiesFilterSplitter(DefaultFilterCapabilities fcs, FeatureType parent) {
         this.ff = FactoryFinder.getFilterFactory(null);
         this.fcs = fcs;
         this.parent = parent;
-        this.transactionAccessor = transactionAccessor;
     }
 
     /**
@@ -179,7 +163,7 @@ public class CapabilitiesFilterSplitter implements FilterVisitor, ExpressionVisi
      * @return the filter that cannot be sent to the server and must be post-processed on the client
      *         by geotoolkit.
      */
-    public Filter getFilterPost() {
+    public Filter getPostFilter() {
         if (!changedStack.isEmpty()){
             // Return the original filter to ensure that
             // correct features are filtered
@@ -190,10 +174,8 @@ public class CapabilitiesFilterSplitter implements FilterVisitor, ExpressionVisi
             LOGGER.warning("Too many post stack items after run: " + postStack.size());
         }
 
-        // JE: Changed to peek because get implies that the value can be retrieved multiple
-        // times
-        Filter f = postStack.isEmpty() ? Filter.INCLUDE : (Filter) postStack.peek();
-        return f;
+        // JE: Changed to peek because get implies that the value can be retrieved multiple times
+        return (postStack.isEmpty()) ? Filter.INCLUDE : (Filter) postStack.peek();
     }
 
     /**
@@ -201,7 +183,7 @@ public class CapabilitiesFilterSplitter implements FilterVisitor, ExpressionVisi
      * 
      * @return the filter that can be sent to the server for pre-processing.
      */
-    public Filter getFilterPre() {
+    public Filter getPreFilter() {
         if (preStack.isEmpty()) {
             return Filter.INCLUDE;
         }
@@ -212,19 +194,8 @@ public class CapabilitiesFilterSplitter implements FilterVisitor, ExpressionVisi
 
         // JE: Changed to peek because get implies that the value can be retrieved multiple
         // times
-        Filter f = preStack.isEmpty() ? Filter.INCLUDE : (Filter) preStack.peek();
-        // deal with deletes here !!!
-        if (transactionAccessor != null && f != null && f != Filter.EXCLUDE) {
-            Filter deleteFilter = transactionAccessor.getDeleteFilter();
-            if (deleteFilter != null) {
-                if (deleteFilter == Filter.EXCLUDE) {
-                    f = Filter.EXCLUDE;
-                } else {
-                    f = ff.and(f, ff.not(deleteFilter));
-                }
-            }
-        }
-
+        final Filter f = preStack.isEmpty() ? Filter.INCLUDE : (Filter) preStack.peek();
+        
         if (changedStack.isEmpty()) {
             return f;
         }
@@ -249,8 +220,7 @@ public class CapabilitiesFilterSplitter implements FilterVisitor, ExpressionVisi
     /**
      * @see FilterVisitor#visit(IncludeFilter, Object)
      * 
-     * @param filter
-     *            the {@link Filter} to visit
+     * @param filter the {@link Filter} to visit
      */
     public void visit(IncludeFilter filter) {
         return;
@@ -259,14 +229,13 @@ public class CapabilitiesFilterSplitter implements FilterVisitor, ExpressionVisi
     /**
      * @see FilterVisitor#visit(ExcludeFilter, Object)
      * 
-     * @param filter
-     *            the {@link Filter} to visit
+     * @param filter the {@link Filter} to visit
      */
     public void visit(ExcludeFilter filter) {
         if (fcs.supports(Filter.EXCLUDE)) {
-            preStack.push(filter);
+            preStack.addFirst(filter);
         } else {
-            postStack.push(filter);
+            postStack.addFirst(filter);
         }
     }
 
@@ -275,8 +244,7 @@ public class CapabilitiesFilterSplitter implements FilterVisitor, ExpressionVisi
      *      an example of how all the other methods are implemented. If you want to know how this
      *      class works read this method first!
      * 
-     * @param filter
-     *            the {@link Filter} to visit
+     * @param filter the {@link Filter} to visit
      */
     @Override
     public Object visit(PropertyIsBetween filter, Object extradata) {
@@ -284,88 +252,7 @@ public class CapabilitiesFilterSplitter implements FilterVisitor, ExpressionVisi
             original = filter;
         }
 
-        // Do we support this filter type at all?
-        if (fcs.supports(filter)) {
-            // Yes, we do. Now, can we support the sub-filters?
-
-            // first, remember how big the current list of "I can't support these"
-            // filters is.
-            int i = postStack.size();
-
-            Expression lowerBound = filter.getLowerBoundary();
-            Expression expr = filter.getExpression();
-            Expression upperBound = filter.getUpperBoundary();
-            if (lowerBound == null || upperBound == null || expr == null) {
-                // Well, one of the boundaries is null, so I guess
-                // we're saying that *no* datastore could support this.
-                postStack.push(filter);
-                return null;
-            }
-
-            // Ok, here's the magic. We know how big our list of "can't support"
-            // filters is. Now we send off the lowerBound Expression to see if
-            // it can be supported.
-            lowerBound.accept(this, null);
-
-            // Now we're back, and we check. Did the postStack get bigger?
-            if (i < postStack.size()) {
-                // Yes, it did. Well, that means we can't support
-                // this particular filter. Let's back out anything that was
-                // added by the lowerBound.accept() and add ourselves.
-                postStack.pop(); // lowerBound.accept()'s bum filter
-                postStack.push(filter);
-
-                return null;
-            }
-
-            // Aha! The postStack didn't get any bigger, so we're still
-            // all good. Now try again with the middle expression itself...
-
-            expr.accept(this, null);
-
-            // Did postStack get bigger?
-            if (i < postStack.size()) {
-                // Yes, it did. So that means we can't support
-                // this particular filter. We need to back out what we've
-                // done, which is BOTH the lowerbounds filter *and* the
-                // thing that was added by expr.accept() when it failed.
-                preStack.pop(); // lowerBound.accept()'s success
-                postStack.pop(); // expr.accept()'s bum filter
-                postStack.push(filter);
-
-                return null;
-            }
-
-            // Same deal again...
-            upperBound.accept(this, null);
-
-            if (i < postStack.size()) {
-                // post process it
-                postStack.pop(); // upperBound.accept()'s bum filter
-                preStack.pop(); // expr.accept()'s success
-                preStack.pop(); // lowerBound.accept()'s success
-                postStack.push(filter);
-
-                return null;
-            }
-
-            // Well, by getting here it means that postStack didn't get
-            // taller, even after accepting all three middle filters. This
-            // means that this whole filter is totally pre-filterable.
-
-            // Let's clean up the pre-stack (which got one added to it
-            // for the success at each of the three above .accept() calls)
-            // and add us to the stack.
-
-            preStack.pop(); // upperBounds.accept()'s success
-            preStack.pop(); // expr.accept()'s success
-            preStack.pop(); // lowerBounds.accept()'s success
-
-            // finally we add ourselves to the "can be pre-proccessed" filter
-            // stack. Now when we return we've added exactly one thing to
-            // the preStack...namely, the given filter.
-            preStack.push(filter);
-        } else {
+        if (!(fcs.supports(filter))) {
             // No, we don't support this filter.
             // So we push it onto the postStack, saying
             // "Hey, here's one more filter that we don't support.
@@ -373,8 +260,86 @@ public class CapabilitiesFilterSplitter implements FilterVisitor, ExpressionVisi
             // "Hmm, I called accept() on this filter and now
             // the postStack is taller than it was...I guess this
             // filter wasn't accepted.
-            postStack.push(filter);
+            postStack.addFirst(filter);
+            return null;
         }
+
+        // Do we support this filter type at all?
+        // Yes, we do. Now, can we support the sub-filters?
+        // first, remember how big the current list of "I can't support these" filters is.
+        final int i = postStack.size();
+
+        final Expression lowerBound = filter.getLowerBoundary();
+        final Expression expr = filter.getExpression();
+        final Expression upperBound = filter.getUpperBoundary();
+        if (lowerBound == null || upperBound == null || expr == null) {
+            // Well, one of the boundaries is null, so I guess
+            // we're saying that *no* datastore could support this.
+            postStack.addFirst(filter);
+            return null;
+        }
+
+        // Ok, here's the magic. We know how big our list of "can't support"
+        // filters is. Now we send off the lowerBound Expression to see if
+        // it can be supported.
+        lowerBound.accept(this, null);
+
+        // Now we're back, and we check. Did the postStack get bigger?
+        if (i < postStack.size()) {
+            // Yes, it did. Well, that means we can't support
+            // this particular filter. Let's back out anything that was
+            // added by the lowerBound.accept() and add ourselves.
+            postStack.removeFirst(); // lowerBound.accept()'s bum filter
+            postStack.addFirst(filter);
+            return null;
+        }
+
+        // Aha! The postStack didn't get any bigger, so we're still
+        // all good. Now try again with the middle expression itself...
+
+        expr.accept(this, null);
+
+        // Did postStack get bigger?
+        if (i < postStack.size()) {
+            // Yes, it did. So that means we can't support
+            // this particular filter. We need to back out what we've
+            // done, which is BOTH the lowerbounds filter *and* the
+            // thing that was added by expr.accept() when it failed.
+            preStack.removeFirst(); // lowerBound.accept()'s success
+            postStack.removeFirst(); // expr.accept()'s bum filter
+            postStack.addFirst(filter);
+            return null;
+        }
+
+        // Same deal again...
+        upperBound.accept(this, null);
+
+        if (i < postStack.size()) {
+            // post process it
+            postStack.removeFirst(); // upperBound.accept()'s bum filter
+            preStack.removeFirst(); // expr.accept()'s success
+            preStack.removeFirst(); // lowerBound.accept()'s success
+            postStack.addFirst(filter);
+            return null;
+        }
+
+        // Well, by getting here it means that postStack didn't get
+        // taller, even after accepting all three middle filters. This
+        // means that this whole filter is totally pre-filterable.
+
+        // Let's clean up the pre-stack (which got one added to it
+        // for the success at each of the three above .accept() calls)
+        // and add us to the stack.
+
+        preStack.removeFirst(); // upperBounds.accept()'s success
+        preStack.removeFirst(); // expr.accept()'s success
+        preStack.removeFirst(); // lowerBounds.accept()'s success
+
+        // finally we add ourselves to the "can be pre-proccessed" filter
+        // stack. Now when we return we've added exactly one thing to
+        // the preStack...namely, the given filter.
+        preStack.addFirst(filter);
+        
         return null;
     }
 
@@ -421,49 +386,44 @@ public class CapabilitiesFilterSplitter implements FilterVisitor, ExpressionVisi
 
         // supports it as a group -- no need to check the type
         if (!fcs.supports(filter)) {
-            postStack.push(filter);
+            postStack.addFirst(filter);
             return;
         }
 
-        int i = postStack.size();
-        Expression leftValue = filter.getExpression1();
-        Expression rightValue = filter.getExpression2();
+        final int i = postStack.size();
+        final Expression leftValue = filter.getExpression1();
+        final Expression rightValue = filter.getExpression2();
         if (leftValue == null || rightValue == null) {
-            postStack.push(filter);
+            postStack.addFirst(filter);
             return;
         }
 
         leftValue.accept(this, null);
-
         if (i < postStack.size()) {
-            postStack.pop();
-            postStack.push(filter);
-
+            postStack.removeFirst();
+            postStack.addFirst(filter);
             return;
         }
 
         rightValue.accept(this, null);
-
         if (i < postStack.size()) {
-            preStack.pop(); // left
-            postStack.pop();
-            postStack.push(filter);
-
+            preStack.removeFirst(); // left
+            postStack.removeFirst();
+            postStack.addFirst(filter);
             return;
         }
 
-        preStack.pop(); // left side
-        preStack.pop(); // right side
-        preStack.push(filter);
-
+        preStack.removeFirst(); // left side
+        preStack.removeFirst(); // right side
+        preStack.addFirst(filter);
     }
 
     @Override
     public Object visit(BBOX filter, Object notUsed) {
         if (!fcs.supports(filter)) {
-            postStack.push(filter);
+            postStack.addFirst(filter);
         } else {
-            preStack.push(filter);
+            preStack.addFirst(filter);
         }
         return null;
     }
@@ -533,15 +493,11 @@ public class CapabilitiesFilterSplitter implements FilterVisitor, ExpressionVisi
             original = filter;
         }
 
-        Class[] spatialOps = new Class[]{Beyond.class, Contains.class, Crosses.class,
-            Disjoint.class, DWithin.class, Equals.class, Intersects.class, Overlaps.class,
-            Touches.class, Within.class};
-
-        for (int i = 0; i < spatialOps.length; i++) {
-            if (spatialOps[i].isAssignableFrom(filter.getClass())) {
+        for(final Class clazz : SPATIAL_OPS) {
+            if (clazz.isAssignableFrom(filter.getClass())) {
                 // if (!fcs.supports(spatialOps[i])) {
                 if (!fcs.supports(filter)) {
-                    postStack.push(filter);
+                    postStack.addFirst(filter);
                     return;
                 } else {
                     // fcs supports this filter, no need to check the rest
@@ -550,40 +506,33 @@ public class CapabilitiesFilterSplitter implements FilterVisitor, ExpressionVisi
             }
         }
 
-        // TODO check against tranasaction ?
-
-        int i = postStack.size();
-
-        Expression leftGeometry, rightGeometry;
-        leftGeometry = ((BinarySpatialOperator) filter).getExpression1();
-        rightGeometry = ((BinarySpatialOperator) filter).getExpression2();
+        final int i = postStack.size();
+        final Expression leftGeometry = filter.getExpression1();
+        final Expression rightGeometry = filter.getExpression2();
 
         if (leftGeometry == null || rightGeometry == null) {
-            postStack.push(filter);
+            postStack.addFirst(filter);
             return;
         }
+
         leftGeometry.accept(this, null);
-
         if (i < postStack.size()) {
-            postStack.pop();
-            postStack.push(filter);
-
+            postStack.removeFirst();
+            postStack.addFirst(filter);
             return;
         }
 
         rightGeometry.accept(this, null);
-
         if (i < postStack.size()) {
-            preStack.pop(); // left
-            postStack.pop();
-            postStack.push(filter);
-
+            preStack.removeFirst(); // left
+            postStack.removeFirst();
+            postStack.addFirst(filter);
             return;
         }
 
-        preStack.pop(); // left side
-        preStack.pop(); // right side
-        preStack.push(filter);
+        preStack.removeFirst(); // left side
+        preStack.removeFirst(); // right side
+        preStack.addFirst(filter);
     }
 
     @Override
@@ -594,23 +543,21 @@ public class CapabilitiesFilterSplitter implements FilterVisitor, ExpressionVisi
 
         // if (!fcs.supports(PropertyIsLike.class)) {
         if (!fcs.supports(filter)) {
-            postStack.push(filter);
-
+            postStack.addFirst(filter);
             return null;
         }
 
-        int i = postStack.size();
+        final int i = postStack.size();
         filter.getExpression().accept(this, null);
 
         if (i < postStack.size()) {
-            postStack.pop();
-            postStack.push(filter);
-
+            postStack.removeFirst();
+            postStack.addFirst(filter);
             return null;
         }
 
-        preStack.pop(); // value
-        preStack.push(filter);
+        preStack.removeFirst(); // value
+        preStack.addFirst(filter);
         return null;
     }
 
@@ -637,97 +584,83 @@ public class CapabilitiesFilterSplitter implements FilterVisitor, ExpressionVisi
             original = filter;
         }
 
-        // if (!fcs.supports(Not.class) && !fcs.supports(And.class) && !fcs.supports(Or.class))
-        // {
         if (!fcs.supports(filter)) {
-            postStack.push(filter);
+            postStack.addFirst(filter);
             return;
         }
 
-        int i = postStack.size();
-        int j = preStack.size();
-        if (filter instanceof Not) {
+        final int i = postStack.size();
+        final int j = preStack.size();
 
-            if (((Not) filter).getFilter() != null) {
-                Filter next = ((Not) filter).getFilter();
-                next.accept(this, null);
+        if (filter instanceof Not) {
+            final Filter subFilter = ((Not) filter).getFilter();
+            if (subFilter != null) {
+                subFilter.accept(this, null);
 
                 if (i < postStack.size()) {
                     // since and can split filter into both pre and post parts
                     // the parts have to be combined since ~(A^B) == ~A | ~B
                     // combining is easy since filter==combined result however both post and pre
-                    // stacks
-                    // must be cleared since both may have components of the filter
-                    popToSize(postStack, i);
-                    popToSize(preStack, j);
-                    postStack.push(filter);
+                    // stacks must be cleared since both may have components of the filter
+                    removeFirstToSize(postStack, i);
+                    removeFirstToSize(preStack, j);
+                    postStack.addFirst(filter);
                 } else {
-                    popToSize(preStack, j);
-                    preStack.push(filter);
+                    removeFirstToSize(preStack, j);
+                    preStack.addFirst(filter);
                 }
             }
-        } else {
-            if (filter instanceof Or) {
-                Filter orReplacement;
-                orReplacement = translateOr((Or) filter);
-                orReplacement.accept(this, null);
-                
-                if (postStack.size() > i) {
-                    popToSize(postStack, i);
-                    postStack.push(filter);
+        } else if (filter instanceof Or) {
+            final Filter orReplacement = translateOr((Or) filter);
+            orReplacement.accept(this, null);
 
-                    return;
+            if (postStack.size() > i) {
+                removeFirstToSize(postStack, i);
+                postStack.addFirst(filter);
+                return;
+            }
+
+            preStack.removeFirst();
+            preStack.addFirst(filter);
+        } else if (filter instanceof And) {
+            // it's an AND
+            final Iterator it = ((And) filter).getChildren().iterator();
+
+            while (it.hasNext()) {
+                final Filter next = (Filter) it.next();
+                next.accept(this, null);
+            }
+
+            // combine the unsupported and add to the top
+            if (i < postStack.size()) {
+                Filter f = (Filter) postStack.removeFirst();
+
+                while (postStack.size() > i) {
+                    f = ff.and(f, (Filter) postStack.removeFirst());
                 }
 
-                preStack.pop();
-                preStack.push(filter);
-            } else {
-                // it's an AND
-                Iterator it = ((And) filter).getChildren().iterator();
+                postStack.addFirst(f);
 
-                while (it.hasNext()) {
-                    Filter next = (Filter) it.next();
-                    next.accept(this, null);
-                }
+                if (j < preStack.size()) {
+                    f = (Filter) preStack.removeFirst();
 
-                // combine the unsupported and add to the top
-                if (i < postStack.size()) {
-                    if (filter instanceof And) {
-                        Filter f = (Filter) postStack.pop();
-
-                        while (postStack.size() > i) {
-                            f = ff.and(f, (Filter) postStack.pop());
-                        }
-
-                        postStack.push(f);
-
-                        if (j < preStack.size()) {
-                            f = (Filter) preStack.pop();
-
-                            while (preStack.size() > j) {
-                                f = ff.and(f, (Filter) preStack.pop());
-                            }
-                            preStack.push(f);
-                        }
-                    } else {
-                        LOGGER.warning("LogicFilter found which is not 'and, or, not");
-
-                        popToSize(postStack, i);
-                        popToSize(preStack, j);
-
-                        postStack.push(filter);
+                    while (preStack.size() > j) {
+                        f = ff.and(f, (Filter) preStack.removeFirst());
                     }
-                } else {
-                    popToSize(preStack, j);
-                    preStack.push(filter);
+                    preStack.addFirst(f);
                 }
+            } else {
+                removeFirstToSize(preStack, j);
+                preStack.addFirst(filter);
             }
+        }else{
+            throw new IllegalArgumentException("LogicFilter found which is not 'and, or, not : " + filter);
         }
     }
 
-    private void popToSize(Stack stack, int j) {
+    private void removeFirstToSize(Deque stack, int j) {
         while (j < stack.size()) {
-            stack.pop();
+            stack.removeFirst();
         }
     }
 
@@ -744,9 +677,9 @@ public class CapabilitiesFilterSplitter implements FilterVisitor, ExpressionVisi
     @Override
     public Object visit(ExcludeFilter filter, Object notUsed) {
         if (fcs.supports(Filter.EXCLUDE)) {
-            preStack.push(filter);
+            preStack.addFirst(filter);
         } else {
-            postStack.push(filter);
+            postStack.addFirst(filter);
         }
         return null;
     }
@@ -758,22 +691,20 @@ public class CapabilitiesFilterSplitter implements FilterVisitor, ExpressionVisi
         }
 
         if (!fcs.supports(filter)) {
-            postStack.push(filter);
-
+            postStack.addFirst(filter);
             return null;
         }
 
-        int i = postStack.size();
-        ((PropertyIsNull) filter).getExpression().accept(this, null);
+        final int i = postStack.size();
+        filter.getExpression().accept(this, null);
 
         if (i < postStack.size()) {
-            postStack.pop();
-            postStack.push(filter);
+            postStack.removeFirst();
+            postStack.addFirst(filter);
         }
 
-        preStack.pop(); // null
-        preStack.push(filter);
-
+        preStack.removeFirst(); // null
+        preStack.addFirst(filter);
         return null;
     }
 
@@ -786,9 +717,9 @@ public class CapabilitiesFilterSplitter implements FilterVisitor, ExpressionVisi
         // figure out how to check that this is top level.
         // otherwise this is fine
         if (!postStack.isEmpty()) {
-            postStack.push(filter);
+            postStack.addFirst(filter);
         }
-        preStack.push(filter);
+        preStack.addFirst(filter);
         return null;
     }
 
@@ -798,26 +729,17 @@ public class CapabilitiesFilterSplitter implements FilterVisitor, ExpressionVisi
         if (parent != null && expression.evaluate(parent) == null) {
             throw new IllegalArgumentException("Property '" + expression.getPropertyName() + "' could not be found in " + parent.getName());
         }
-        if (transactionAccessor != null) {
-            Filter updateFilter = (Filter) transactionAccessor.getUpdateFilter(expression.getPropertyName());
-            if (updateFilter != null) {
-                changedStack.add(updateFilter);
-                preStack.push(updateFilter);
-            } else {
-                preStack.push(expression);
-            }
-        } else {
-            preStack.push(expression);
-        }
+
+        preStack.addFirst(expression);
         return null;
     }
 
     @Override
     public Object visit(Literal expression, Object notUsed) {
         if (expression.getValue() == null) {
-            postStack.push(expression);
+            postStack.addFirst(expression);
         }
-        preStack.push(expression);
+        preStack.addFirst(expression);
         return null;
     }
 
@@ -849,39 +771,37 @@ public class CapabilitiesFilterSplitter implements FilterVisitor, ExpressionVisi
         // if (!fcs.supports(Add.class) && !fcs.supports(Subtract.class)
         // && !fcs.supports(Multiply.class) && !fcs.supports(Divide.class)) {
         /*if (!fcs.fullySupports(expression)) {
-        postStack.push(expression);
+        postStack.addFirst(expression);
         return;
         }*/
 
-        int i = postStack.size();
-        Expression leftValue = expression.getExpression1();
-        Expression rightValue = expression.getExpression2();
+        final int i = postStack.size();
+        final Expression leftValue = expression.getExpression1();
+        final Expression rightValue = expression.getExpression2();
+
         if (leftValue == null || rightValue == null) {
-            postStack.push(expression);
+            postStack.addFirst(expression);
             return;
         }
+
         leftValue.accept(this, null);
-
         if (i < postStack.size()) {
-            postStack.pop();
-            postStack.push(expression);
-
+            postStack.removeFirst();
+            postStack.addFirst(expression);
             return;
         }
 
         rightValue.accept(this, null);
-
         if (i < postStack.size()) {
-            preStack.pop(); // left
-            postStack.pop();
-            postStack.push(expression);
-
+            preStack.removeFirst(); // left
+            postStack.removeFirst();
+            postStack.addFirst(expression);
             return;
         }
 
-        preStack.pop(); // left side
-        preStack.pop(); // right side
-        preStack.push(expression);
+        preStack.removeFirst(); // left side
+        preStack.removeFirst(); // right side
+        preStack.addFirst(expression);
     }
 
     /**
@@ -890,70 +810,67 @@ public class CapabilitiesFilterSplitter implements FilterVisitor, ExpressionVisi
     @Override
     public Object visit(Function expression, Object notUsed) {
         /*if (!fcs.fullySupports(expression)) {
-        postStack.push(expression);
+        postStack.addFirst(expression);
         return null;
         }*/
 
         if (expression.getName() == null) {
-            postStack.push(expression);
+            postStack.addFirst(expression);
             return null;
         }
 
-        int i = postStack.size();
-        int j = preStack.size();
+        final int i = postStack.size();
+        final int j = preStack.size();
 
         for (int k = 0; k < expression.getParameters().size(); k++) {
-            ((Expression) expression.getParameters().get(i)).accept(this, null);
+            expression.getParameters().get(k).accept(this, null);
 
             if (i < postStack.size()) {
                 while (j < preStack.size()) {
-                    preStack.pop();
+                    preStack.removeFirst();
                 }
-                postStack.pop();
-                postStack.push(expression);
-
+                postStack.removeFirst();
+                postStack.addFirst(expression);
                 return null;
             }
         }
+        
         while (j < preStack.size()) {
-            preStack.pop();
+            preStack.removeFirst();
         }
-        preStack.push(expression);
+        preStack.addFirst(expression);
         return null;
     }
 
     @Override
     public Object visit(NilExpression nilExpression, Object notUsed) {
-        postStack.push(nilExpression);
+        postStack.addFirst(nilExpression);
         return null;
     }
 
     private Filter translateOr(Or filter) {
-        if (!(filter instanceof Or)) {
-            return filter;
-        }
 
         // a|b == ~~(a|b) negative introduction
         // ~(a|b) == (~a + ~b) modus ponens
         // ~~(a|b) == ~(~a + ~b) substitution
         // a|b == ~(~a + ~b) negative simpilification
-        Iterator i = filter.getChildren().iterator();
-        List translated = new ArrayList();
+        final Iterator<Filter> ite = filter.getChildren().iterator();
+        final List translated = new ArrayList();
 
-        while (i.hasNext()) {
-            Filter f = (Filter) i.next();
+        while (ite.hasNext()) {
+            Filter f = ite.next();
 
             if (f instanceof Not) {
                 // simplify it
-                Not logic = (Not) f;
-                Filter next = logic.getFilter();
+                final Not logic = (Not) f;
+                final Filter next = logic.getFilter();
                 translated.add(next);
             } else {
                 translated.add(ff.not(f));
             }
         }
 
-        Filter and = ff.and(translated);
+        final Filter and = ff.and(translated);
         return ff.not(and);
     }
 }

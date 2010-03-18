@@ -285,6 +285,7 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
                 String id = next.getID();
                 actualFids.add(id);
             }
+            indexIter.close();
         }
 
         TreeSet<String> lackingFids = new TreeSet<String>(expectedFids);
@@ -427,9 +428,11 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
 
         assertEquals(10, fc.size());
 
-        for (FeatureIterator<SimpleFeature> i = fc.iterator(); i.hasNext();) {
+        FeatureIterator<SimpleFeature> i = fc.iterator();
+        for (; i.hasNext();) {
             assertEquals(-1, ((Byte) i.next().getAttribute(1)).byteValue());
         }
+        i.close();
         sds.dispose();
     }
 

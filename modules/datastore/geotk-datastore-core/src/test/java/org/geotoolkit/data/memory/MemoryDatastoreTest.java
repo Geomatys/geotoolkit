@@ -31,11 +31,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import junit.framework.TestCase;
+import org.geotoolkit.data.FeatureCollection;
 
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
+import org.geotoolkit.data.session.Session;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
@@ -791,6 +793,35 @@ public class MemoryDatastoreTest extends TestCase{
 
         assertFalse(reader.hasNext());
 
+
+    }
+
+    @Test
+    public void testNoIteratorUnclosed() throws Exception{
+        final SimpleFeatureTypeBuilder builder = new SimpleFeatureTypeBuilder();
+        final MemoryDataStore store = new MemoryDataStore();
+        Set<Name> names;
+
+        names = store.getNames();
+        assertEquals(0,names.size());
+
+        //test creation of one schema ------------------------------------------
+        Name name = new DefaultName("http://test.com", "TestSchema1");
+        builder.reset();
+        builder.setName(name);
+        builder.add("ListAtt", List.class);
+        builder.add("MapAtt", Map.class);
+        builder.add("SetAtt", Set.class);
+        final SimpleFeatureType type1 = builder.buildFeatureType();
+
+        store.createSchema(name,type1);
+
+        store.isWritable(name);
+
+        final Session session = store.createSession(true);
+        final FeatureCollection col = session.getFeatureCollection(QueryBuilder.all(name));
+
+        col.isWritable();
 
     }
 

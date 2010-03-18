@@ -17,7 +17,10 @@
 
 package org.geotoolkit.data.session;
 
+import java.io.Closeable;
+import java.io.IOException;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -29,6 +32,7 @@ import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
+import org.geotoolkit.util.logging.Logging;
 
 import org.opengis.feature.Feature;
 import org.opengis.feature.simple.SimpleFeature;
@@ -79,11 +83,23 @@ class AddDelta extends AbstractDelta{
         this.features = DataUtilities.collection("temp", ft);
 
         //we must copy the features since they might be changed later
-        for(Feature f : features){
-            SimpleFeature sf = (SimpleFeature) f;
-            sf = SimpleFeatureBuilder.deep(sf);
-            this.features.add(sf);
+        final Iterator<? extends Feature> ite = features.iterator();
+        try{
+            while(ite.hasNext()){
+                SimpleFeature sf = (SimpleFeature) ite.next();
+                sf = SimpleFeatureBuilder.deep(sf);
+                this.features.add(sf);
+            }
+        }finally{
+            if(ite instanceof Closeable){
+                try {
+                    ((Closeable) ite).close();
+                } catch (IOException ex) {
+                    Logging.getLogger(AddDelta.class).log(Level.WARNING, "Error while closing iterator : ", ex);
+                }
+            }
         }
+        
         
     }
 

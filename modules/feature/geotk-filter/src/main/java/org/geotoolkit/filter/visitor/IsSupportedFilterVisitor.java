@@ -127,10 +127,10 @@ public class IsSupportedFilterVisitor implements FilterVisitor, ExpressionVisito
 
     @Override
     public Object visit( PropertyIsBetween filter, Object extraData ) {
-        ScalarCapabilities scalar = capabilities.getScalarCapabilities();
+        final ScalarCapabilities scalar = capabilities.getScalarCapabilities();
         if( scalar == null ) return false;
 
-        ComparisonOperators operators = scalar.getComparisonOperators();
+        final ComparisonOperators operators = scalar.getComparisonOperators();
         if( operators == null ) return false;
 
         return operators.getOperator( PropertyIsBetween.NAME ) != null;
@@ -138,10 +138,10 @@ public class IsSupportedFilterVisitor implements FilterVisitor, ExpressionVisito
 
     @Override
     public Object visit( PropertyIsEqualTo filter, Object extraData ) {
-        ScalarCapabilities scalar = capabilities.getScalarCapabilities();
+        final ScalarCapabilities scalar = capabilities.getScalarCapabilities();
         if( scalar == null ) return false;
 
-        ComparisonOperators operators = scalar.getComparisonOperators();
+        final ComparisonOperators operators = scalar.getComparisonOperators();
         if( operators == null ) return false;
 
         return operators.getOperator( PropertyIsEqualTo.NAME ) != null;
@@ -149,10 +149,10 @@ public class IsSupportedFilterVisitor implements FilterVisitor, ExpressionVisito
 
     @Override
     public Object visit( PropertyIsNotEqualTo filter, Object extraData ) {
-        ScalarCapabilities scalar = capabilities.getScalarCapabilities();
+        final ScalarCapabilities scalar = capabilities.getScalarCapabilities();
         if( scalar == null ) return false;
 
-        ComparisonOperators operators = scalar.getComparisonOperators();
+        final ComparisonOperators operators = scalar.getComparisonOperators();
         if( operators == null ) return false;
 
         return operators.getOperator( PropertyIsNotEqualTo.NAME ) != null;
@@ -160,10 +160,10 @@ public class IsSupportedFilterVisitor implements FilterVisitor, ExpressionVisito
 
     @Override
     public Object visit( PropertyIsGreaterThan filter, Object extraData ) {
-        ScalarCapabilities scalar = capabilities.getScalarCapabilities();
+        final ScalarCapabilities scalar = capabilities.getScalarCapabilities();
         if( scalar == null ) return false;
 
-        ComparisonOperators operators = scalar.getComparisonOperators();
+        final ComparisonOperators operators = scalar.getComparisonOperators();
         if( operators == null ) return false;
 
         return operators.getOperator( PropertyIsGreaterThan.NAME ) != null;
@@ -171,10 +171,10 @@ public class IsSupportedFilterVisitor implements FilterVisitor, ExpressionVisito
 
     @Override
     public Object visit( PropertyIsGreaterThanOrEqualTo filter, Object extraData ) {
-        ScalarCapabilities scalar = capabilities.getScalarCapabilities();
+        final ScalarCapabilities scalar = capabilities.getScalarCapabilities();
         if( scalar == null ) return false;
 
-        ComparisonOperators operators = scalar.getComparisonOperators();
+        final ComparisonOperators operators = scalar.getComparisonOperators();
         if( operators == null ) return false;
 
         return operators.getOperator( PropertyIsGreaterThanOrEqualTo.NAME ) != null;
@@ -182,10 +182,10 @@ public class IsSupportedFilterVisitor implements FilterVisitor, ExpressionVisito
 
     @Override
     public Object visit( PropertyIsLessThan filter, Object extraData ) {
-        ScalarCapabilities scalar = capabilities.getScalarCapabilities();
+        final ScalarCapabilities scalar = capabilities.getScalarCapabilities();
         if( scalar == null ) return false;
 
-        ComparisonOperators operators = scalar.getComparisonOperators();
+        final ComparisonOperators operators = scalar.getComparisonOperators();
         if( operators == null ) return false;
 
         return operators.getOperator( PropertyIsLessThan.NAME ) != null;
@@ -193,10 +193,10 @@ public class IsSupportedFilterVisitor implements FilterVisitor, ExpressionVisito
 
     @Override
     public Object visit( PropertyIsLessThanOrEqualTo filter, Object extraData ) {
-        ScalarCapabilities scalar = capabilities.getScalarCapabilities();
+        final ScalarCapabilities scalar = capabilities.getScalarCapabilities();
         if( scalar == null ) return false;
 
-        ComparisonOperators operators = scalar.getComparisonOperators();
+        final ComparisonOperators operators = scalar.getComparisonOperators();
         if( operators == null ) return false;
 
         return operators.getOperator( PropertyIsLessThanOrEqualTo.NAME ) != null;
@@ -204,10 +204,10 @@ public class IsSupportedFilterVisitor implements FilterVisitor, ExpressionVisito
 
     @Override
     public Object visit( PropertyIsLike filter, Object extraData ) {
-        ScalarCapabilities scalar = capabilities.getScalarCapabilities();
+        final ScalarCapabilities scalar = capabilities.getScalarCapabilities();
         if( scalar == null ) return false;
 
-        ComparisonOperators operators = scalar.getComparisonOperators();
+        final ComparisonOperators operators = scalar.getComparisonOperators();
         if( operators == null ) return false;
 
         return operators.getOperator( PropertyIsLike.NAME ) != null;
@@ -215,10 +215,10 @@ public class IsSupportedFilterVisitor implements FilterVisitor, ExpressionVisito
 
     @Override
     public Object visit( PropertyIsNull filter, Object extraData ) {
-        ScalarCapabilities scalar = capabilities.getScalarCapabilities();
+        final ScalarCapabilities scalar = capabilities.getScalarCapabilities();
         if( scalar == null ) return false;
 
-        ComparisonOperators operators = scalar.getComparisonOperators();
+        final ComparisonOperators operators = scalar.getComparisonOperators();
         if( operators == null ) return false;
 
         return operators.getOperator( PropertyIsNull.NAME ) != null;
@@ -226,10 +226,10 @@ public class IsSupportedFilterVisitor implements FilterVisitor, ExpressionVisito
 
     @Override
     public Object visit( BBOX filter, Object extraData ) {
-        SpatialCapabilities spatial = capabilities.getSpatialCapabilities();
+        final SpatialCapabilities spatial = capabilities.getSpatialCapabilities();
         if( spatial == null ) return false;
 
-        SpatialOperators operators = spatial.getSpatialOperators();
+        final SpatialOperators operators = spatial.getSpatialOperators();
         if( operators == null ) return false;
 
         return operators.getOperator( BBOX.NAME ) != null;
@@ -237,10 +237,10 @@ public class IsSupportedFilterVisitor implements FilterVisitor, ExpressionVisito
 
     @Override
     public Object visit( Beyond filter, Object extraData ) {
-        SpatialCapabilities spatial = capabilities.getSpatialCapabilities();
+        final SpatialCapabilities spatial = capabilities.getSpatialCapabilities();
         if( spatial == null ) return false;
 
-        SpatialOperators operators = spatial.getSpatialOperators();
+        final SpatialOperators operators = spatial.getSpatialOperators();
         if( operators == null ) return false;
 
         return operators.getOperator( Beyond.NAME ) != null;
@@ -248,10 +248,10 @@ public class IsSupportedFilterVisitor implements FilterVisitor, ExpressionVisito
 
     @Override
     public Object visit( Contains filter, Object extraData ) {
-        SpatialCapabilities spatial = capabilities.getSpatialCapabilities();
+        final SpatialCapabilities spatial = capabilities.getSpatialCapabilities();
         if( spatial == null ) return false;
 
-        SpatialOperators operators = spatial.getSpatialOperators();
+        final SpatialOperators operators = spatial.getSpatialOperators();
         if( operators == null ) return false;
 
         return operators.getOperator( Contains.NAME ) != null;
@@ -259,10 +259,10 @@ public class IsSupportedFilterVisitor implements FilterVisitor, ExpressionVisito
 
     @Override
     public Object visit( Crosses filter, Object extraData ) {
-        SpatialCapabilities spatial = capabilities.getSpatialCapabilities();
+        final SpatialCapabilities spatial = capabilities.getSpatialCapabilities();
         if( spatial == null ) return false;
 
-        SpatialOperators operators = spatial.getSpatialOperators();
+        final SpatialOperators operators = spatial.getSpatialOperators();
         if( operators == null ) return false;
 
         return operators.getOperator( Crosses.NAME ) != null;
@@ -270,10 +270,10 @@ public class IsSupportedFilterVisitor implements FilterVisitor, ExpressionVisito
 
     @Override
     public Object visit( Disjoint filter, Object extraData ) {
-        SpatialCapabilities spatial = capabilities.getSpatialCapabilities();
+        final SpatialCapabilities spatial = capabilities.getSpatialCapabilities();
         if( spatial == null ) return false;
 
-        SpatialOperators operators = spatial.getSpatialOperators();
+        final SpatialOperators operators = spatial.getSpatialOperators();
         if( operators == null ) return false;
 
         return operators.getOperator( Disjoint.NAME ) != null;
@@ -281,10 +281,10 @@ public class IsSupportedFilterVisitor implements FilterVisitor, ExpressionVisito
 
     @Override
     public Object visit( DWithin filter, Object extraData ) {
-        SpatialCapabilities spatial = capabilities.getSpatialCapabilities();
+        final SpatialCapabilities spatial = capabilities.getSpatialCapabilities();
         if( spatial == null ) return false;
 
-        SpatialOperators operators = spatial.getSpatialOperators();
+        final SpatialOperators operators = spatial.getSpatialOperators();
         if( operators == null ) return false;
 
         return operators.getOperator( DWithin.NAME ) != null;
@@ -292,10 +292,10 @@ public class IsSupportedFilterVisitor implements FilterVisitor, ExpressionVisito
 
     @Override
     public Object visit( Equals filter, Object extraData ) {
-        SpatialCapabilities spatial = capabilities.getSpatialCapabilities();
+        final SpatialCapabilities spatial = capabilities.getSpatialCapabilities();
         if( spatial == null ) return false;
 
-        SpatialOperators operators = spatial.getSpatialOperators();
+        final SpatialOperators operators = spatial.getSpatialOperators();
         if( operators == null ) return false;
 
         return operators.getOperator( Equals.NAME ) != null;
@@ -303,10 +303,10 @@ public class IsSupportedFilterVisitor implements FilterVisitor, ExpressionVisito
 
     @Override
     public Object visit( Intersects filter, Object extraData ) {
-        SpatialCapabilities spatial = capabilities.getSpatialCapabilities();
+        final SpatialCapabilities spatial = capabilities.getSpatialCapabilities();
         if( spatial == null ) return false;
 
-        SpatialOperators operators = spatial.getSpatialOperators();
+        final SpatialOperators operators = spatial.getSpatialOperators();
         if( operators == null ) return false;
 
         return operators.getOperator( Intersects.NAME ) != null;
@@ -314,10 +314,10 @@ public class IsSupportedFilterVisitor implements FilterVisitor, ExpressionVisito
 
     @Override
     public Object visit( Overlaps filter, Object extraData ) {
-        SpatialCapabilities spatial = capabilities.getSpatialCapabilities();
+        final SpatialCapabilities spatial = capabilities.getSpatialCapabilities();
         if( spatial == null ) return false;
 
-        SpatialOperators operators = spatial.getSpatialOperators();
+        final SpatialOperators operators = spatial.getSpatialOperators();
         if( operators == null ) return false;
 
         return operators.getOperator( Overlaps.NAME ) != null;
@@ -325,10 +325,10 @@ public class IsSupportedFilterVisitor implements FilterVisitor, ExpressionVisito
 
     @Override
     public Object visit( Touches filter, Object extraData ) {
-        SpatialCapabilities spatial = capabilities.getSpatialCapabilities();
+        final SpatialCapabilities spatial = capabilities.getSpatialCapabilities();
         if( spatial == null ) return false;
 
-        SpatialOperators operators = spatial.getSpatialOperators();
+        final SpatialOperators operators = spatial.getSpatialOperators();
         if( operators == null ) return false;
 
         return operators.getOperator( Touches.NAME ) != null;
@@ -336,10 +336,10 @@ public class IsSupportedFilterVisitor implements FilterVisitor, ExpressionVisito
 
     @Override
     public Object visit( Within filter, Object extraData ) {
-        SpatialCapabilities spatial = capabilities.getSpatialCapabilities();
+        final SpatialCapabilities spatial = capabilities.getSpatialCapabilities();
         if( spatial == null ) return false;
 
-        SpatialOperators operators = spatial.getSpatialOperators();
+        final SpatialOperators operators = spatial.getSpatialOperators();
         if( operators == null ) return false;
 
         return operators.getOperator( Within.NAME ) != null;
@@ -361,10 +361,10 @@ public class IsSupportedFilterVisitor implements FilterVisitor, ExpressionVisito
 
     @Override
     public Object visit( Add expression, Object extraData ) {
-        ScalarCapabilities scalar = capabilities.getScalarCapabilities();
+        final ScalarCapabilities scalar = capabilities.getScalarCapabilities();
         if( scalar == null ) return false;
 
-        ArithmeticOperators operators = scalar.getArithmeticOperators();
+        final ArithmeticOperators operators = scalar.getArithmeticOperators();
         if( operators == null ) return false;
 
         return operators.hasSimpleArithmetic();
@@ -372,10 +372,10 @@ public class IsSupportedFilterVisitor implements FilterVisitor, ExpressionVisito
 
     @Override
     public Object visit( Divide expression, Object extraData ) {
-        ScalarCapabilities scalar = capabilities.getScalarCapabilities();
+        final ScalarCapabilities scalar = capabilities.getScalarCapabilities();
         if( scalar == null ) return false;
 
-        ArithmeticOperators operators = scalar.getArithmeticOperators();
+        final ArithmeticOperators operators = scalar.getArithmeticOperators();
         if( operators == null ) return false;
 
         return operators.hasSimpleArithmetic();
@@ -383,17 +383,17 @@ public class IsSupportedFilterVisitor implements FilterVisitor, ExpressionVisito
 
     @Override
     public Object visit( Function function, Object extraData ) {
-        ScalarCapabilities scalar = capabilities.getScalarCapabilities();
+        final ScalarCapabilities scalar = capabilities.getScalarCapabilities();
         if( scalar == null ) return false;
 
-        ArithmeticOperators operators = scalar.getArithmeticOperators();
+        final ArithmeticOperators operators = scalar.getArithmeticOperators();
         if( operators == null ) return false;
 
-        Functions functions = operators.getFunctions();
+        final Functions functions = operators.getFunctions();
         if( functions == null ) return false;
 
         // Note that only function name is checked here
-        FunctionName found = functions.getFunctionName( function.getName() );
+        final FunctionName found = functions.getFunctionName( function.getName() );
         // And that's enough to assess if the function is supported
         return found != null;
     }
@@ -405,10 +405,10 @@ public class IsSupportedFilterVisitor implements FilterVisitor, ExpressionVisito
 
     @Override
     public Object visit( Multiply expression, Object extraData ) {
-        ScalarCapabilities scalar = capabilities.getScalarCapabilities();
+        final ScalarCapabilities scalar = capabilities.getScalarCapabilities();
         if( scalar == null ) return false;
 
-        ArithmeticOperators operators = scalar.getArithmeticOperators();
+        final ArithmeticOperators operators = scalar.getArithmeticOperators();
         if( operators == null ) return false;
 
         return operators.hasSimpleArithmetic();
@@ -425,10 +425,10 @@ public class IsSupportedFilterVisitor implements FilterVisitor, ExpressionVisito
 
     @Override
     public Object visit( Subtract expression, Object extraData ) {
-        ScalarCapabilities scalar = capabilities.getScalarCapabilities();
+        final ScalarCapabilities scalar = capabilities.getScalarCapabilities();
         if( scalar == null ) return false;
 
-        ArithmeticOperators operators = scalar.getArithmeticOperators();
+        final ArithmeticOperators operators = scalar.getArithmeticOperators();
         if( operators == null ) return false;
 
         return operators.hasSimpleArithmetic();
