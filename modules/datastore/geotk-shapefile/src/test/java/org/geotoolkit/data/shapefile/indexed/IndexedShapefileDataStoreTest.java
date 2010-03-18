@@ -682,35 +682,39 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
         FeatureIterator<SimpleFeature> fci = fc.iterator();
 
         // verify
-        while (fci.hasNext()) {
-            SimpleFeature f = fci.next();
-            Geometry fromShape = (Geometry) f.getDefaultGeometry();
+        try{
+            while (fci.hasNext()) {
+                SimpleFeature f = fci.next();
+                Geometry fromShape = (Geometry) f.getDefaultGeometry();
 
-            if (fromShape instanceof GeometryCollection) {
-                if (!(geom instanceof GeometryCollection)) {
-                    fromShape = ((GeometryCollection) fromShape)
-                            .getGeometryN(0);
-                }
-            }
-
-            try {
-                Coordinate[] c1 = geom.getCoordinates();
-                Coordinate[] c2 = fromShape.getCoordinates();
-
-                for (int cc = 0, ccc = c1.length; cc < ccc; cc++) {
-                    if (d3) {
-                        assertTrue(c1[cc].equals3D(c2[cc]));
-                    } else {
-                        assertTrue(c1[cc].equals2D(c2[cc]));
+                if (fromShape instanceof GeometryCollection) {
+                    if (!(geom instanceof GeometryCollection)) {
+                        fromShape = ((GeometryCollection) fromShape)
+                                .getGeometryN(0);
                     }
                 }
-            } catch (Throwable t) {
-                fail("Bogus : " + Arrays.asList(geom.getCoordinates()) + " : "
-                        + Arrays.asList(fromShape.getCoordinates()));
+
+                try {
+                    Coordinate[] c1 = geom.getCoordinates();
+                    Coordinate[] c2 = fromShape.getCoordinates();
+
+                    for (int cc = 0, ccc = c1.length; cc < ccc; cc++) {
+                        if (d3) {
+                            assertTrue(c1[cc].equals3D(c2[cc]));
+                        } else {
+                            assertTrue(c1[cc].equals2D(c2[cc]));
+                        }
+                    }
+                } catch (Throwable t) {
+                    fail("Bogus : " + Arrays.asList(geom.getCoordinates()) + " : "
+                            + Arrays.asList(fromShape.getCoordinates()));
+                }
             }
+        }finally{
+            fci.close();
+            s.dispose();
+            tmpFile.delete();
         }
-        s.dispose();
-        tmpFile.delete();
     }
 
     public void testIndexOutOfDate() throws Exception {
