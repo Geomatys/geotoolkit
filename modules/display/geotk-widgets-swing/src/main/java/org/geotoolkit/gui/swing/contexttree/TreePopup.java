@@ -68,20 +68,19 @@ final class TreePopup extends JPopupMenu {
             removeLastSeparators();
 
             if (getComponentCount() > 0) {
-                super.setVisible(view);
+                super.setVisible(getComponentCount() > 0);
             }
         } else {
             super.setVisible(view);
         }
 
-
     }
 
     private void removeLastSeparators() {
-        if (getComponentCount() > 0) {
-            while (getComponent(getComponentCount() - 1) instanceof TitledSeparatorItem) {
-                remove(getComponentCount() - 1);
-            }
+        while (getComponentCount() > 0 &&
+            (   getComponent(getComponentCount() - 1) instanceof TitledSeparatorItem
+            || getComponent(getComponentCount() - 1) instanceof SeparatorItem)) {
+            remove(getComponentCount() - 1);
         }
     }
 

@@ -3,7 +3,7 @@
  *    http://www.geotoolkit.org
  *
  *    (C) 2007 - 2008, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2008 - 2009, Johann Sorel
+ *    (C) 2008 - 2010, Johann Sorel
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -67,6 +67,7 @@ import org.jdesktop.swingx.JXTree;
 import org.geotoolkit.display.exception.PortrayalException;
 import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.display2d.service.DefaultGlyphService;
+import org.geotoolkit.gui.swing.style.JOpacitySlider;
 import org.geotoolkit.map.ContextListener;
 import org.geotoolkit.map.DynamicMapLayer;
 import org.geotoolkit.map.MapContext;
@@ -318,6 +319,11 @@ public class JContextTree extends JScrollPane implements ContextListener {
             @Override
             public void mouseReleased(MouseEvent releaseEvent) {
 
+                if(releaseEvent.getButton() != MouseEvent.BUTTON1){
+                    //forward event only on left click to avoid disturbing popup menu.
+                    return;
+                }
+
                 int row = getRowAt(releaseEvent.getPoint());
                 final TreePath under = tree.getPathForRow(row);
 
@@ -379,16 +385,26 @@ public class JContextTree extends JScrollPane implements ContextListener {
         private final JPanel panel = new JPanel(new GridBagLayout());
         private final GridBagConstraints gc = new GridBagConstraints();
         private final JLabel icon = new JLabel();
+        private final JOpacitySlider opacity = new JOpacitySlider();
         private final JCheckBox visibleCheck = new VisibleCheck();
         private final JCheckBox selectCheck = new SelectionCheck();
-        private final JLabel label = new JLabel();
+        private final JLabel label = new JLabel(" "){
+
+            @Override
+            public Dimension getPreferredSize() {
+                final Dimension dim = super.getPreferredSize();
+                dim.height += 2;
+                return dim;
+            }
+
+        };
         private final JTextField field = new JTextField();
 
         private Object value = null;
 
         public ContextCellRenderer() {
             field.setOpaque(false);
-            field.setPreferredSize(new Dimension(140,field.getPreferredSize().height));
+            field.setPreferredSize(new Dimension(140,label.getPreferredSize().height));
 
             visibleCheck.addActionListener(new ActionListener() {
 
@@ -411,6 +427,9 @@ public class JContextTree extends JScrollPane implements ContextListener {
             });
 
             panel.setOpaque(false);
+
+            opacity.setPreferredSize(new Dimension(60, 22));
+
         }
 
         @Override
@@ -453,6 +472,7 @@ public class JContextTree extends JScrollPane implements ContextListener {
                 gc.weightx = 0;
                 gc.weighty = 1;
                 gc.gridx = 0;
+                panel.add(opacity);
 //                this.icon.setIcon((layer.isVisible()) ? ICON_LAYER_VISIBLE : ICON_LAYER_UNVISIBLE);
 //                panel.add(icon,gc);
                 gc.gridx = 1;
