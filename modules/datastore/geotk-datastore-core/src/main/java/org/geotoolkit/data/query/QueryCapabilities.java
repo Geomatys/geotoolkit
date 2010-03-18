@@ -21,7 +21,6 @@ package org.geotoolkit.data.query;
  * Gives some information about the capabilities of the datastore.
  * Some datastore might not be able to handle sort by parameters for exemple.
  *
- *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */

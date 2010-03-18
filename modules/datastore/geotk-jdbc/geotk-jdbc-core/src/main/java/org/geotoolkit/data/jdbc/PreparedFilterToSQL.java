@@ -16,8 +16,13 @@
  */
 package org.geotoolkit.data.jdbc;
 
+
 import com.vividsolutions.jts.geom.Coordinate;
-import org.geotoolkit.jdbc.dialect.PreparedStatementSQLDialect;
+import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.LinearRing;
+import com.vividsolutions.jts.geom.Polygon;
+
 import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
@@ -25,23 +30,18 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import org.geotoolkit.data.jdbc.FilterToSQL;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.GeometryDescriptor;
-import org.opengis.filter.BinaryComparisonOperator;
 import org.opengis.filter.Id;
 import org.opengis.filter.expression.Literal;
 import org.opengis.filter.expression.PropertyName;
 import org.opengis.filter.identity.Identifier;
 import org.opengis.filter.spatial.BinarySpatialOperator;
+import org.opengis.geometry.Envelope;
 
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.LinearRing;
-import com.vividsolutions.jts.geom.Polygon;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.jdbc.JDBCDataStore;
-import org.opengis.geometry.Envelope;
+import org.geotoolkit.jdbc.dialect.PreparedStatementSQLDialect;
 
 /**
  * Extension of FilterToSQL intended for use with prepared statements.

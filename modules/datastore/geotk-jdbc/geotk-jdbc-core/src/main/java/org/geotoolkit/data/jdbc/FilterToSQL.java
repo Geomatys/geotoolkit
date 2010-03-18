@@ -3,6 +3,7 @@
  *    http://www.geotoolkit.org
  *
  *    (C) 2002-2008, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2009-2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -135,6 +136,7 @@ import com.vividsolutions.jts.geom.Geometry;
  * The code is split into methods to support the FilterVisitor interface first
  * then the ExpressionVisitor methods second.
  *
+ * @module pending
  */
 public class FilterToSQL implements FilterVisitor, ExpressionVisitor {
     /** error message for exceptions */
@@ -165,11 +167,12 @@ public class FilterToSQL implements FilterVisitor, ExpressionVisitor {
      * Default constructor
      */
     public FilterToSQL() {
+        this(null);
     }
 
 
     public FilterToSQL(Writer out) {
-        this.out = out;
+        setWriter(out);
     }
 
     /**
@@ -190,41 +193,15 @@ public class FilterToSQL implements FilterVisitor, ExpressionVisitor {
     public void encode(Filter filter) throws FilterToSQLException {
         if (out == null) throw new FilterToSQLException("Can't encode to a null writer.");
         // TODO; test if the filter is supported
-        //if (getCapabilities().fullySupports(filter)) {
+        try {
+            out.write("WHERE ");
+            filter.accept(this, null);
 
-            try {
-                out.write("WHERE ");
-                filter.accept(this, null);
-
-                //out.write(";");
-            } catch (java.io.IOException ioe) {
-                LOGGER.warning("Unable to export filter" + ioe);
-                throw new FilterToSQLException("Problem writing filter: ", ioe);
-            }
-//        } else {
-//            throw new FilterToSQLException("Filter type not supported");
-//        }
-    }
-
-    /**
-     * purely a convenience method.
-     *
-     * Equivalent to:
-     *
-     *  StringWriter out = new StringWriter();
-     *  new FilterToSQL(out).encode(filter);
-     *  out.getBuffer().toString();
-     *
-     * @param filter
-     * @return a string representing the filter encoded to SQL.
-     * @throws FilterToSQLException
-     */
-
-    public String encodeToString(Filter filter) throws FilterToSQLException {
-        StringWriter out = new StringWriter();
-        this.out = out;
-        this.encode(filter);
-        return out.getBuffer().toString();
+            //out.write(";");
+        } catch (IOException ioe) {
+            LOGGER.warning("Unable to export filter" + ioe);
+            throw new FilterToSQLException("Problem writing filter: ", ioe);
+        }
     }
 
     /**
@@ -249,14 +226,33 @@ public class FilterToSQL implements FilterVisitor, ExpressionVisitor {
      *  new FilterToSQL(out).encode(filter);
      *  out.getBuffer().toString();
      *
+     * @param filter
+     * @return a string representing the filter encoded to SQL.
+     * @throws FilterToSQLException
+     */
+    public String encodeToString(Filter filter) throws FilterToSQLException {
+        final StringWriter out = new StringWriter();
+        setWriter(out);
+        this.encode(filter);
+        return out.getBuffer().toString();
+    }
+
+    /**
+     * purely a convenience method.
+     *
+     * Equivalent to:
+     *
+     *  StringWriter out = new StringWriter();
+     *  new FilterToSQL(out).encode(filter);
+     *  out.getBuffer().toString();
+     *
      * @param expression
      * @return a string representing the filter encoded to SQL.
      * @throws FilterToSQLException
      */
-
     public String encodeToString(Expression expression) throws FilterToSQLException {
-        StringWriter out = new StringWriter();
-        this.out = out;
+        final StringWriter out = new StringWriter();
+        setWriter(out);
         this.encode(expression);
         return out.getBuffer().toString();
     }
@@ -285,6 +281,34 @@ public class FilterToSQL implements FilterVisitor, ExpressionVisitor {
 
     public FIDMapper getFIDMapper() {
         return this.mapper;
+    }
+
+    /**
+     * Describes the capabilities of this encoder.
+     *
+     * <p>
+     * Performs lazy creation of capabilities.
+     * </p>
+     *
+     * If you're subclassing this class, override createFilterCapabilities
+     * to declare which filtercapabilities you support.  Don't use
+     * this method.
+     *
+     * @return The capabilities supported by this encoder.
+     */
+    public synchronized final DefaultFilterCapabilities getCapabilities() {
+        if (capabilities == null) {
+            capabilities = createFilterCapabilities();
+        }
+
+        return capabilities;
+    }
+
+    /**
+     * Sets the capabilities for the encoder.
+     */
+    public void setCapabilities(DefaultFilterCapabilities capabilities) {
+        this.capabilities = capabilities;
     }
 
     /**
@@ -334,36 +358,11 @@ public class FilterToSQL implements FilterVisitor, ExpressionVisitor {
         return caps;
     }
 
-    /**
-     * Describes the capabilities of this encoder.
-     *
-     * <p>
-     * Performs lazy creation of capabilities.
-     * </p>
-     *
-     * If you're subclassing this class, override createFilterCapabilities
-     * to declare which filtercapabilities you support.  Don't use
-     * this method.
-     *
-     * @return The capabilities supported by this encoder.
-     */
-    public synchronized final DefaultFilterCapabilities getCapabilities() {
-        if (capabilities == null) {
-            capabilities = createFilterCapabilities();
-        }
-
-        return capabilities; //maybe clone?  Make immutable somehow
-    }
-
-    /**
-     * Sets the capabilities for the encoder.
-     */
-    public void setCapabilities(DefaultFilterCapabilities capabilities) {
-        this.capabilities = capabilities;
-    }
 
 
-    // BEGIN IMPLEMENTING org.opengis.filter.FilterVisitor METHODS
+    ////////////////////////////////////////////////////////////////////////////
+    // Filter visitor methods //////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
 
     /**
      * Writes the SQL for the IncludeFilter by writing "FALSE".
@@ -381,7 +380,6 @@ public class FilterToSQL implements FilterVisitor, ExpressionVisitor {
         }
         return extraData;
     }
-
 
     /**
      * Writes the SQL for the IncludeFilter by writing "TRUE".
@@ -409,12 +407,12 @@ public class FilterToSQL implements FilterVisitor, ExpressionVisitor {
     public Object visit(PropertyIsBetween filter, Object extraData) throws RuntimeException {
         LOGGER.finer("exporting PropertyIsBetween");
 
-        Expression expr = (Expression) filter.getExpression();
-        Expression lowerbounds = (Expression) filter.getLowerBoundary();
-        Expression upperbounds = (Expression) filter.getUpperBoundary();
+        final Expression expr = (Expression) filter.getExpression();
+        final Expression lowerbounds = (Expression) filter.getLowerBoundary();
+        final Expression upperbounds = (Expression) filter.getUpperBoundary();
 
-        Class context;
-        AttributeDescriptor attType = (AttributeDescriptor)expr.evaluate(featureType);
+        final Class context;
+        final AttributeDescriptor attType = (AttributeDescriptor)expr.evaluate(featureType);
         if (attType != null) {
             context = attType.getType().getBinding();
         } else {
@@ -446,31 +444,31 @@ public class FilterToSQL implements FilterVisitor, ExpressionVisitor {
      *       when Java uses one, and escapes correctly with an '_'.
      */
     @Override
-    public Object visit(PropertyIsLike filter, Object extraData)
-	{
-    	char esc = filter.getEscape().charAt(0);
-    	char multi = filter.getWildCard().charAt(0);
-    	char single = filter.getSingleChar().charAt(0);
-        boolean matchCase = filter.isMatchingCase();
-
-        String literal = filter.getLiteral();
-        Expression att = filter.getExpression();
+    public Object visit(PropertyIsLike filter, Object extraData){
+        final char esc = filter.getEscape().charAt(0);
+        final char multi = filter.getWildCard().charAt(0);
+        final char single = filter.getSingleChar().charAt(0);
+        final boolean matchCase = filter.isMatchingCase();
+        final Expression att = filter.getExpression();
 
         //JD: hack for date values, we append some additional padding to handle
         // the matching of time/timezone/etc...
-        AttributeDescriptor ad = (AttributeDescriptor) att.evaluate( featureType );
+        final AttributeDescriptor ad = (AttributeDescriptor) att.evaluate( featureType );
+        final String literal;
         if ( ad != null && Date.class.isAssignableFrom( ad.getType().getBinding() ) ) {
-            literal += multi;
+            literal = filter.getLiteral() + multi;
+        }else{
+            literal = filter.getLiteral();
         }
 
-    	String pattern = DefaultPropertyIsLike.convertToSQL92(esc, multi, single, literal);
+        final String pattern = DefaultPropertyIsLike.convertToSQL92(esc, multi, single, literal);
 
         try {
             if (!matchCase){
                 out.write(" UPPER(");
             }
 
-	    	att.accept(this, extraData);
+            att.accept(this, extraData);
 
             if (!matchCase){
                 out.write(") LIKE '");
@@ -478,8 +476,8 @@ public class FilterToSQL implements FilterVisitor, ExpressionVisitor {
                 out.write(" LIKE '");
             }
 
-	    	out.write(pattern);
-	    	out.write("' ");
+            out.write(pattern);
+            out.write("' ");
     	} catch (IOException ioe) {
             throw new RuntimeException(IO_ERROR, ioe);
         }
@@ -513,7 +511,7 @@ public class FilterToSQL implements FilterVisitor, ExpressionVisitor {
             out.write("NOT (");
             filter.getFilter().accept(this, extraData);
             out.write(")");
-        } catch (java.io.IOException ioe) {
+        } catch (IOException ioe) {
             throw new RuntimeException(IO_ERROR, ioe);
         }
 
@@ -542,20 +540,20 @@ public class FilterToSQL implements FilterVisitor, ExpressionVisitor {
     protected Object visit(BinaryLogicOperator filter, Object extraData) {
         LOGGER.finer("exporting LogicFilter");
 
-        String type = (String)extraData;
+        final String type = (String)extraData;
 
         try {
-            java.util.Iterator list = filter.getChildren().iterator();
+            final Iterator<Filter> list = filter.getChildren().iterator();
 
             if (filter instanceof Not) {
                 out.write(type + " (");
-                ((Filter) list.next()).accept(this, extraData);
+                list.next().accept(this, extraData);
                 out.write(")");
             } else { //AND or OR
                 out.write("(");
 
                 while (list.hasNext()) {
-                    ((Filter) list.next()).accept(this, extraData);
+                    list.next().accept(this, extraData);
 
                     if (list.hasNext()) {
                         out.write(" " + type + " ");
@@ -564,7 +562,7 @@ public class FilterToSQL implements FilterVisitor, ExpressionVisitor {
 
                 out.write(")");
             }
-        } catch (java.io.IOException ioe) {
+        } catch (IOException ioe) {
             throw new RuntimeException(IO_ERROR, ioe);
         }
         return extraData;
@@ -668,20 +666,22 @@ public class FilterToSQL implements FilterVisitor, ExpressionVisitor {
     protected void visitBinaryComparisonOperator(BinaryComparisonOperator filter, Object extraData) throws RuntimeException {
         LOGGER.finer("exporting SQL ComparisonFilter");
 
-        Expression left = filter.getExpression1();
-        Expression right = filter.getExpression2();
-        Class leftContext = null, rightContext = null;
+        final Expression left = filter.getExpression1();
+        final Expression right = filter.getExpression2();
+        Class leftContext = null;
+        Class rightContext = null;
+        
         if (left instanceof PropertyName) {
             // aha!  It's a propertyname, we should get the class and pass it in
             // as context to the tree walker.
-            AttributeDescriptor attType = (AttributeDescriptor)left.evaluate(featureType);
+            final AttributeDescriptor attType = (AttributeDescriptor)left.evaluate(featureType);
             if (attType != null) {
                 rightContext = attType.getType().getBinding();
             }
         }
 
         if (right instanceof PropertyName) {
-            AttributeDescriptor attType = (AttributeDescriptor)right.evaluate(featureType);
+            final AttributeDescriptor attType = (AttributeDescriptor)right.evaluate(featureType);
             if (attType != null) {
                 leftContext = attType.getType().getBinding();
             }
@@ -691,17 +691,17 @@ public class FilterToSQL implements FilterVisitor, ExpressionVisitor {
         boolean matchCase = true;
         if ( !filter.isMatchingCase() ) {
             //we only do for = and !=
-            if ( filter instanceof PropertyIsEqualTo ||
-                    filter instanceof PropertyIsNotEqualTo ) {
+            if (   filter instanceof PropertyIsEqualTo
+                || filter instanceof PropertyIsNotEqualTo ) {
                 //and only for strings
-                if ( String.class.equals( leftContext )
-                        || String.class.equals( rightContext ) ) {
+                if (   String.class.equals(leftContext)
+                    || String.class.equals(rightContext) ) {
                     matchCase = false;
                 }
             }
         }
 
-        String type = (String) extraData;
+        final String type = (String) extraData;
 
         try {
             if ( matchCase ) {
@@ -729,7 +729,7 @@ public class FilterToSQL implements FilterVisitor, ExpressionVisitor {
                 absFuncRight.accept(this, Arrays.asList(rightContext));
             }
 
-        } catch (java.io.IOException ioe) {
+        } catch (IOException ioe) {
             throw new RuntimeException(IO_ERROR, ioe);
         }
     }
@@ -745,12 +745,12 @@ public class FilterToSQL implements FilterVisitor, ExpressionVisitor {
     public Object visit(PropertyIsNull filter, Object extraData) throws RuntimeException {
         LOGGER.finer("exporting NullFilter");
 
-        Expression expr = filter.getExpression();
+        final Expression expr = filter.getExpression();
 
         try {
             expr.accept(this, extraData);
             out.write(" IS NULL ");
-        } catch (java.io.IOException ioe) {
+        } catch (IOException ioe) {
             throw new RuntimeException(IO_ERROR, ioe);
         }
         return extraData;
@@ -771,21 +771,21 @@ public class FilterToSQL implements FilterVisitor, ExpressionVisitor {
                 "Must set a fid mapper before trying to encode FIDFilters");
         }
 
-        Set ids = filter.getIdentifiers();
+        final Set ids = filter.getIdentifiers();
 
         LOGGER.finer("Exporting FID=" + ids);
 
         // prepare column name array
-        String[] colNames = new String[mapper.getColumnCount()];
+        final String[] colNames = new String[mapper.getColumnCount()];
 
-        for (int i = 0; i < colNames.length; i++) {
+        for (int i=0; i<colNames.length; i++) {
             colNames[i] = mapper.getColumnName(i);
         }
 
         for (Iterator i = ids.iterator(); i.hasNext(); ) {
             try {
-                Identifier id = (Identifier) i.next();
-                Object[] attValues = mapper.getPKAttributes(id.toString());
+                final Identifier id = (Identifier) i.next();
+                final Object[] attValues = mapper.getPKAttributes(id.toString());
 
                 out.write("(");
 
@@ -805,7 +805,7 @@ public class FilterToSQL implements FilterVisitor, ExpressionVisitor {
                 if (i.hasNext()) {
                     out.write(" OR ");
                 }
-            } catch (java.io.IOException e) {
+            } catch (IOException e) {
                 throw new RuntimeException(IO_ERROR, e);
             }
         }
@@ -905,14 +905,13 @@ public class FilterToSQL implements FilterVisitor, ExpressionVisitor {
 
         try {
             //first evaluate expression against feautre type get the attribute,
-            //  this handles xpath
+            //this handles xpath
             AttributeDescriptor attribute = null;
             try {
                 attribute = (AttributeDescriptor) expression.evaluate(featureType);
-            }
-            catch( Exception e ) {
+            }catch( Exception e ) {
                 //just log and fall back on just encoding propertyName straight up
-                String msg = "Error occured mapping " + expression + " to feature type";
+                final String msg = "Error occured mapping " + expression + " to feature type";
                 LOGGER.log( Level.WARNING, msg, e );
             }
             if ( attribute != null ) {
@@ -924,7 +923,7 @@ public class FilterToSQL implements FilterVisitor, ExpressionVisitor {
                 out.write(escapeName(expression.getPropertyName()));
             }
 
-        } catch (java.io.IOException ioe) {
+        } catch (IOException ioe) {
             throw new RuntimeException("IO problems writing attribute exp", ioe);
         }
         return extraData;
@@ -945,14 +944,16 @@ public class FilterToSQL implements FilterVisitor, ExpressionVisitor {
         LOGGER.finer("exporting LiteralExpression");
 
         // type to convert the literal to
-        Class target = null;
+        final Class target;
         if ( context instanceof Class ) {
             target = (Class) context;
+        }else{
+            target = null;
         }
 
         try {
             //evaluate the expression
-            Object literal = evaluateLiteral( expression, target );
+            final Object literal = evaluateLiteral( expression, target );
 
             // handle geometry case
             if (literal instanceof Geometry) {
@@ -975,19 +976,22 @@ public class FilterToSQL implements FilterVisitor, ExpressionVisitor {
         // HACK: let expression figure out the right value for numbers,
         // since the context is almost always improperly set and the
         // numeric converters try to force floating points to integrals
-        if(target != null && !(Number.class.isAssignableFrom(target)))
+        if(target != null && !(Number.class.isAssignableFrom(target))){
             // use the target type
             literal = expression.evaluate(null, target);
+        }
 
         // if the target was not known, of the conversion failed, try the
         // type guessing dance literal expression does only for the following
         // method call
-        if(literal == null)
+        if(literal == null){
             literal = expression.evaluate(null);
+        }
 
         // if that failed as well, grab the value as is
-        if(literal == null)
+        if(literal == null){
             literal = expression.getValue();
+        }
 
         return literal;
     }
@@ -1007,14 +1011,14 @@ public class FilterToSQL implements FilterVisitor, ExpressionVisitor {
             out.write(String.valueOf(literal));
         } else {
             // we don't know what this is, let's convert back to a string
-            String encoding = (String) Converters.convert(literal, String.class);
+            String encoding = Converters.convert(literal, String.class);
             if (encoding == null) {
                 // could not convert back to string, use original l value
                 encoding = literal.toString();
             }
 
             // sigle quotes must be escaped to have a valid sql string
-            String escaped = encoding.replaceAll("'", "''");
+            final String escaped = encoding.replaceAll("'", "''");
             out.write("'" + escaped + "'");
         }
     }
@@ -1069,7 +1073,7 @@ public class FilterToSQL implements FilterVisitor, ExpressionVisitor {
             expression.getExpression1().accept(this, extraData);
             out.write(" " + operator + " ");
             expression.getExpression2().accept(this, extraData);
-        } catch (java.io.IOException ioe) {
+        } catch (IOException ioe) {
             throw new RuntimeException("IO problems writing expression", ioe);
         }
         return extraData;
@@ -1085,12 +1089,14 @@ public class FilterToSQL implements FilterVisitor, ExpressionVisitor {
     @Override
     public Object visit(Function function, Object extraData) throws RuntimeException {
         try {
-            List<Expression> parameters = function.getParameters();
-            List contexts = null;
+            final List<Expression> parameters = function.getParameters();
+            final List contexts;
             //check context, if a list which patches parameter size list assume its context
             // to pass along to each Expression for encoding
             if( extraData instanceof List && ((List)extraData).size() == parameters.size() ) {
                 contexts = (List) extraData;
+            }else{
+                contexts = null;
             }
 
             //set the encoding function flag to signal we are inside a function
@@ -1101,16 +1107,14 @@ public class FilterToSQL implements FilterVisitor, ExpressionVisitor {
 
             //write the arguments
             out.write( "(");
-            for ( int i = 0; i < parameters.size(); i++ ) {
-                Expression e = parameters.get( i );
-
-                Object context = contexts != null ? contexts.get( i ) : extraData;
+            for ( int i=0; i<parameters.size(); i++ ) {
+                final Expression e = parameters.get(i);
+                final Object context = contexts != null ? contexts.get( i ) : extraData;
                 e.accept(this, context);
 
                 if ( i < parameters.size()-1 ) {
                     out.write( ",");
                 }
-
             }
             out.write( ")");
 
@@ -1128,7 +1132,7 @@ public class FilterToSQL implements FilterVisitor, ExpressionVisitor {
     public Object visit(NilExpression expression, Object extraData) {
         try {
             out.write(" ");
-        } catch (java.io.IOException ioe) {
+        } catch (IOException ioe) {
             throw new RuntimeException("IO problems writing expression", ioe);
         }
 
