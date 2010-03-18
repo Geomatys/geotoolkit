@@ -36,7 +36,6 @@ import org.geotoolkit.internal.sql.table.Table;
 import org.geotoolkit.internal.sql.table.Database;
 import org.geotoolkit.internal.sql.table.QueryType;
 import org.geotoolkit.internal.sql.table.LocalCache;
-import org.geotoolkit.internal.sql.table.CatalogException;
 import org.geotoolkit.internal.sql.table.IllegalRecordException;
 
 
@@ -73,12 +72,9 @@ final class SampleDimensionTable extends Table {
      *
      * @param  format The format name.
      * @return The sample dimensions for the given format.
-     * @throws CatalogException if an inconsistent record is found in the database.
      * @throws SQLException if an error occured while reading the database.
      */
-    public GridSampleDimension[] getSampleDimensions(final String format)
-            throws CatalogException, SQLException
-    {
+    public GridSampleDimension[] getSampleDimensions(final String format) throws SQLException {
         final SampleDimensionQuery query = (SampleDimensionQuery) super.query;
         String[]  names = new String [8];
         Unit<?>[] units = new Unit<?>[8];

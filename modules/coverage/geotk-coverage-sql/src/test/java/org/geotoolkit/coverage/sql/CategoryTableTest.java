@@ -22,7 +22,6 @@ import java.sql.SQLException;
 
 import org.geotoolkit.coverage.Category;
 import org.geotoolkit.internal.sql.table.CatalogTestBase;
-import org.geotoolkit.internal.sql.table.CatalogException;
 
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -40,11 +39,10 @@ public class CategoryTableTest extends CatalogTestBase {
     /**
      * Tests the {@link CategoryTable#getCategories} method.
      *
-     * @throws SQLException     If the test can't connect to the database.
-     * @throws CatalogException Should never happen in normal test execution.
+     * @throws SQLException If the test can't connect to the database.
      */
     @Test
-    public void testSelect() throws CatalogException, SQLException {
+    public void testSelect() throws SQLException {
         final CategoryTable table = new CategoryTable(getDatabase());
         final Map<Integer,Category[]> map = table.getCategories(FormatTableTest.TEMPERATURE);
         assertEquals("The format should define only one band.", 1, map.size());

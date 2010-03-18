@@ -117,9 +117,7 @@ final class SeriesTable extends SingletonTable<SeriesEntry> {
      * for the {@linkplain #getLayer currently selected layer}.
      */
     @Override
-    protected void configure(final QueryType type, final PreparedStatement statement)
-            throws CatalogException, SQLException
-    {
+    protected void configure(final QueryType type, final PreparedStatement statement) throws SQLException {
         super.configure(type, statement);
         final SeriesQuery query = (SeriesQuery) super.query;
         final int index = query.byLayer.indexOf(type);
@@ -136,7 +134,7 @@ final class SeriesTable extends SingletonTable<SeriesEntry> {
      * Creates a series from the current row in the specified result set.
      */
     @Override
-    protected SeriesEntry createEntry(final ResultSet results) throws CatalogException, SQLException {
+    protected SeriesEntry createEntry(final ResultSet results) throws SQLException {
         final SeriesQuery query     = (SeriesQuery) super.query;
         final int     identifier    = results.getInt    (indexOf(query.identifier));
         final String  formatID      = results.getString (indexOf(query.format));
@@ -152,7 +150,7 @@ final class SeriesTable extends SingletonTable<SeriesEntry> {
     /**
      * Returns all series as (<var>identifier</var>, <var>series</var>) pairs.
      */
-    public Map<Integer,SeriesEntry> getEntriesMap() throws CatalogException, SQLException {
+    public Map<Integer,SeriesEntry> getEntriesMap() throws SQLException {
         final Set<SeriesEntry> entries = getEntries();
         final Map<Integer,SeriesEntry> map = new HashMap<Integer,SeriesEntry>(Utilities.hashMapCapacity(entries.size()));
         for (final SeriesEntry entry : entries) {
@@ -174,12 +172,9 @@ final class SeriesTable extends SingletonTable<SeriesEntry> {
      * @param  extension The extension to add to filenames.
      * @param  format    The format for the series considered.
      * @return The identifier of a matching entry, or {@code null} if none.
-     * @throws CatalogException if a logical error occured.
      * @throws SQLException if an error occured while reading from the database.
      */
-    Integer find(final String path, final String extension, final String format)
-            throws SQLException, CatalogException
-    {
+    Integer find(final String path, final String extension, final String format) throws SQLException {
         ensureNonNull("path",      path);
         ensureNonNull("extension", extension);
         ensureNonNull("format",    format);
@@ -230,12 +225,9 @@ final class SeriesTable extends SingletonTable<SeriesEntry> {
      * @param  extension The extension to add to filenames.
      * @param  format    The format for the series considered.
      * @return The identifier of a matching entry (never {@code null}).
-     * @throws CatalogException if a logical error occured.
      * @throws SQLException if an error occured while reading from or writing to the database.
      */
-    int findOrCreate(final String path, final String extension, final String format)
-            throws SQLException, CatalogException
-    {
+    int findOrCreate(final String path, final String extension, final String format) throws SQLException {
         synchronized (getLock()) {
             boolean success = false;
             transactionBegin();

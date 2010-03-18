@@ -31,7 +31,6 @@ import org.geotoolkit.metadata.iso.extent.DefaultGeographicBoundingBox;
 
 import org.geotoolkit.internal.sql.table.Database;
 import org.geotoolkit.internal.sql.table.SingletonTable;
-import org.geotoolkit.internal.sql.table.CatalogException;
 
 
 /**
@@ -70,11 +69,10 @@ final class DomainOfLayerTable extends SingletonTable<DomainOfLayerEntry> {
      *
      * @param  results The result set to read.
      * @return The entry for current row in the specified result set.
-     * @throws CatalogException if an inconsistent record is found in the database.
      * @throws SQLException if an error occured while reading the database.
      */
     @Override
-    protected DomainOfLayerEntry createEntry(final ResultSet results) throws CatalogException, SQLException {
+    protected DomainOfLayerEntry createEntry(final ResultSet results) throws SQLException {
         final DomainOfLayerQuery query = (DomainOfLayerQuery) super.query;
         final Calendar calendar = getCalendar();
         final String name  = results.getString(indexOf(query.layer));

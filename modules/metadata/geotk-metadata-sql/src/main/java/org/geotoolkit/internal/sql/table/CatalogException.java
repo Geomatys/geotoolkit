@@ -20,6 +20,7 @@ package org.geotoolkit.internal.sql.table;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.sql.SQLNonTransientException;
 import java.util.Locale;
 
 import org.geotoolkit.resources.Errors;
@@ -37,7 +38,7 @@ import org.geotoolkit.util.converter.Classes;
  * @since 3.09 (derived from Seagis)
  * @module
  */
-public class CatalogException extends Exception {
+public class CatalogException extends SQLNonTransientException {
     /**
      * For cross-version compatibility.
      */

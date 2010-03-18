@@ -22,11 +22,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import org.geotoolkit.lang.ThreadSafe;
-import org.geotoolkit.internal.sql.table.CatalogException;
 import org.geotoolkit.internal.sql.table.Database;
 import org.geotoolkit.internal.sql.table.LocalCache;
 import org.geotoolkit.internal.sql.table.QueryType;
 import org.geotoolkit.internal.sql.table.SingletonTable;
+import org.geotoolkit.internal.sql.table.NoSuchTableException;
 
 
 /**
@@ -73,11 +73,10 @@ final class LayerTable extends SingletonTable<LayerEntry> {
      *
      * @param  results The result set to read.
      * @return The entry for current row in the specified result set.
-     * @throws CatalogException if an inconsistent record is found in the database.
      * @throws SQLException if an error occured while reading the database.
      */
     @Override
-    protected LayerEntry createEntry(final ResultSet results) throws CatalogException, SQLException {
+    protected LayerEntry createEntry(final ResultSet results) throws SQLException {
         final LayerQuery query = (LayerQuery) super.query;
         final String name = results.getString(indexOf(query.name));
         double period = results.getDouble(indexOf(query.period));
@@ -93,7 +92,7 @@ final class LayerTable extends SingletonTable<LayerEntry> {
     /**
      * Returns the {@link DomainOfLayerTable} instance, creating it if needed.
      */
-    final DomainOfLayerTable getDomainOfLayerTable() throws CatalogException {
+    final DomainOfLayerTable getDomainOfLayerTable() throws NoSuchTableException {
         DomainOfLayerTable table = domains;
         if (table == null) {
             // This is not a big deal if the following line is invoked twice,
@@ -106,7 +105,7 @@ final class LayerTable extends SingletonTable<LayerEntry> {
     /**
      * Returns the {@link SeriesTable} instance, creating it if needed.
      */
-    final SeriesTable getSeriesTable() throws CatalogException {
+    final SeriesTable getSeriesTable() throws NoSuchTableException {
         SeriesTable table = series;
         if (table == null) {
             // This is not a big deal if the following line is invoked twice,
@@ -121,10 +120,9 @@ final class LayerTable extends SingletonTable<LayerEntry> {
      *
      * @param  name The name of the layer.
      * @return {@code true} if a new layer has been created, or {@code false} if it already exists.
-     * @throws CatalogException if a logical error occured.
      * @throws SQLException if an error occured while reading or writing the database.
      */
-    final boolean createIfAbsent(final String name) throws SQLException, CatalogException {
+    final boolean createIfAbsent(final String name) throws SQLException {
         ensureNonNull("name", name);
         if (exists(name)) {
             return false;
@@ -136,7 +134,7 @@ final class LayerTable extends SingletonTable<LayerEntry> {
             try {
                 final LocalCache.Stmt ce = getStatement(QueryType.INSERT);
                 final PreparedStatement statement = ce.statement;
-                statement.setString(indexOf(query.byName), name);
+                statement.setString(indexOf(query.name), name);
                 success = updateSingleton(statement);
                 ce.release();
             } finally {

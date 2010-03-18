@@ -22,7 +22,7 @@ import java.sql.SQLException;
 
 import org.geotoolkit.test.Depend;
 import org.geotoolkit.internal.sql.table.CatalogTestBase;
-import org.geotoolkit.internal.sql.table.CatalogException;
+import org.geotoolkit.internal.sql.table.Database;
 
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -52,11 +52,10 @@ public final class SeriesTableTest extends CatalogTestBase {
     /**
      * Tests the {@link SeriesTable#getEntry} and {@link SeriesTable#getEntries} methods.
      *
-     * @throws SQLException     If the test can't connect to the database.
-     * @throws CatalogException Should never happen in normal test execution.
+     * @throws SQLException If the test can't connect to the database.
      */
     @Test
-    public void testSelectAndList() throws CatalogException, SQLException {
+    public void testSelectAndList() throws SQLException {
         final SeriesTable table = new SeriesTable(getDatabase());
         final SeriesEntry entry = table.getEntry(TEMPERATURE_ID);
         assertEquals("Expected the identifier that we requested.", TEMPERATURE_ID, entry.getIdentifier());
@@ -78,11 +77,10 @@ public final class SeriesTableTest extends CatalogTestBase {
     /**
      * Tests the {@link SeriesTable#find} methods.
      *
-     * @throws SQLException     If the test can't connect to the database.
-     * @throws CatalogException Should never happen in normal test execution.
+     * @throws SQLException If the test can't connect to the database.
      */
     @Test
-    public void testFind() throws CatalogException, SQLException {
+    public void testFind() throws SQLException {
         final SeriesTable table = new SeriesTable(getDatabase());
         table.setLayer(LayerTableTest.TEMPERATURE);
         assertEquals("Search the existing entry.", TEMPERATURE_ID, table.find(
@@ -96,11 +94,10 @@ public final class SeriesTableTest extends CatalogTestBase {
     /**
      * Tests the {@link SeriesTable#findOrCreate} methods.
      *
-     * @throws SQLException     If the test can't connect to the database.
-     * @throws CatalogException Should never happen in normal test execution.
+     * @throws SQLException If the test can't connect to the database.
      */
     @Test
-    public void testFindOrCreate() throws CatalogException, SQLException {
+    public void testFindOrCreate() throws SQLException {
         final SeriesTable table = new SeriesTable(getDatabase());
         table.setLayer(LayerTableTest.TEMPERATURE);
 
@@ -111,5 +108,24 @@ public final class SeriesTableTest extends CatalogTestBase {
         assertEquals("Should find the existing entry.", Integer.valueOf(id),
                 table.find(path, ext, FormatTableTest.TEMPERATURE));
         assertEquals("Should have deleted the entry.", 1, table.delete(id));
+    }
+
+    /**
+     * Tests the {@link SeriesTable#deleteAll} method.
+     * Note that this test implies the creation of a temporary layer.
+     *
+     * @throws SQLException If the test can't connect to the database.
+     */
+    @Test
+    public void testDeleteAll() throws SQLException {
+        final Database  database = getDatabase();
+        final LayerTable  layers = new LayerTable (database);
+        final SeriesTable series = new SeriesTable(database);
+        final String       layer = "Dummy layer";
+        series.setLayer(layer);
+        assertTrue("The layer should not exist before this test.", layers.createIfAbsent(layer));
+        assertFalse(series.findOrCreate(TEMPERATURE_PATH, "png", FormatTableTest.TEMPERATURE) == TEMPERATURE_ID);
+        assertEquals("Should have deleted the singleton series.", 1, series.deleteAll());
+        assertEquals("Should have deleted the singleton layer.",  1, layers.delete(layer));
     }
 }

@@ -24,7 +24,6 @@ import org.geotoolkit.test.Depend;
 import org.geotoolkit.coverage.Category;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.internal.sql.table.CatalogTestBase;
-import org.geotoolkit.internal.sql.table.CatalogException;
 
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -43,11 +42,10 @@ public class SampleDimensionTableTest extends CatalogTestBase {
     /**
      * Tests the {@link SampleDimensionTable#getSampleDimensions} method.
      *
-     * @throws SQLException     If the test can't connect to the database.
-     * @throws CatalogException Should never happen in normal test execution.
+     * @throws SQLException If the test can't connect to the database.
      */
     @Test
-    public void testSelect() throws CatalogException, SQLException {
+    public void testSelect() throws SQLException {
         final SampleDimensionTable table = new SampleDimensionTable(getDatabase());
         checkTemperatureDimension(table.getSampleDimensions(FormatTableTest.TEMPERATURE));
     }

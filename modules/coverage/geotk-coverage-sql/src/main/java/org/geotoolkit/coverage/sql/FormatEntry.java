@@ -35,7 +35,6 @@ import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.MeasurementRange;
 import org.geotoolkit.internal.sql.table.Entry;
 import org.geotoolkit.internal.sql.table.Database;
-import org.geotoolkit.internal.sql.table.CatalogException;
 
 
 /**
@@ -117,12 +116,9 @@ final class FormatEntry extends Entry {
      * (<code>{@linkplain GridSampleDimension#geophysics geophysics}(true)</code>).
      *
      * @return The sample dimensions.
-     * @throws CatalogException if an inconsistent record is found in the database.
      * @throws SQLException if an error occured while reading the database.
      */
-    public synchronized List<GridSampleDimension> getSampleDimensions()
-            throws CatalogException, SQLException
-    {
+    public synchronized List<GridSampleDimension> getSampleDimensions() throws SQLException {
         if (sampleDimensions == null) {
             final SampleDimensionTable  table = database.getTable(SampleDimensionTable.class);
             final GridSampleDimension[] bands = table.getSampleDimensions(getIdentifier());
@@ -139,7 +135,7 @@ final class FormatEntry extends Entry {
      * Returns the ranges of valid sample values for each band in this format.
      * The range are always expressed in <cite>geophysics</cite> values.
      */
-    final MeasurementRange<Double>[] getSampleValueRanges() throws CatalogException, SQLException {
+    final MeasurementRange<Double>[] getSampleValueRanges() throws SQLException {
         final List<GridSampleDimension> bands = getSampleDimensions();
         @SuppressWarnings({"unchecked","rawtypes"})  // Generic array creation.
         final MeasurementRange<Double>[] ranges = new MeasurementRange[bands.size()];

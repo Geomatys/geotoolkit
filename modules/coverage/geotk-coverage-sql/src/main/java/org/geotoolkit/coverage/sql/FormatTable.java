@@ -24,7 +24,6 @@ import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.internal.sql.table.Database;
 import org.geotoolkit.internal.sql.table.SingletonTable;
-import org.geotoolkit.internal.sql.table.CatalogException;
 import org.geotoolkit.internal.sql.table.IllegalRecordException;
 
 
@@ -60,11 +59,10 @@ final class FormatTable extends SingletonTable<FormatEntry> {
      *
      * @param  results The result set to read.
      * @return The entry for current row in the specified result set.
-     * @throws CatalogException if an inconsistent record is found in the database.
      * @throws SQLException if an error occured while reading the database.
      */
     @Override
-    protected FormatEntry createEntry(final ResultSet results) throws CatalogException, SQLException {
+    protected FormatEntry createEntry(final ResultSet results) throws SQLException {
         final FormatQuery query = (FormatQuery) super.query;
         final int encodingIndex = indexOf(query.encoding);
         final String name     = results.getString(indexOf(query.name));

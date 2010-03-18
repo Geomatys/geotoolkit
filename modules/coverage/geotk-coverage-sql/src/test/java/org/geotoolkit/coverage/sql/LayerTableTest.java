@@ -23,8 +23,8 @@ import java.sql.SQLException;
 
 import org.geotoolkit.test.Depend;
 import org.geotoolkit.util.MeasurementRange;
+import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.internal.sql.table.CatalogTestBase;
-import org.geotoolkit.internal.sql.table.CatalogException;
 
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -49,11 +49,11 @@ public final class LayerTableTest extends CatalogTestBase {
      * Tests the {@link LayerTableTest#getEntry} and @link LayerTableTest#getEntries} methods.
      * Also tests a few methods on the {@link LayerEntry} object.
      *
-     * @throws SQLException     If the test can't connect to the database.
-     * @throws CatalogException Should never happen in normal test execution.
+     * @throws SQLException If the test can't connect to the database.
+     * @throws CoverageStoreException If an error occured while querying the layer.
      */
     @Test
-    public void testSelectAndList() throws CatalogException, SQLException {
+    public void testSelectAndList() throws SQLException, CoverageStoreException {
         final LayerTable table = new LayerTable(getDatabase());
         final LayerEntry entry = table.getEntry(TEMPERATURE);
         assertEquals(TEMPERATURE, entry.getName());

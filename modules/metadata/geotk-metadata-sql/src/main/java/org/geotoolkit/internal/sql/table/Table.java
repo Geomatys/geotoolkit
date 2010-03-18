@@ -204,10 +204,9 @@ public class Table implements Localized {
      *
      * @param  query The SQL query to prepare.
      * @return The prepared statement.
-     * @throws CatalogException if the statement can not be configured.
      * @throws SQLException if a SQL error occured while configuring the statement.
      */
-    final LocalCache.Stmt getStatement(final String query) throws CatalogException, SQLException {
+    final LocalCache.Stmt getStatement(final String query) throws SQLException {
         final Session s = session.get();
         assert Thread.holdsLock(s.cache);
         final LocalCache.Stmt ce = s.cache.prepareStatement(this, query);
@@ -249,10 +248,9 @@ public class Table implements Localized {
      *
      * @param  type The query type.
      * @return The prepared statement.
-     * @throws CatalogException if the statement can not be configured.
      * @throws SQLException if a SQL error occured while configuring the statement.
      */
-    protected final LocalCache.Stmt getStatement(final QueryType type) throws CatalogException, SQLException {
+    protected final LocalCache.Stmt getStatement(final QueryType type) throws SQLException {
         final String sql;
         switch (type) {
             default:         sql = query.select(type); break;
@@ -308,12 +306,9 @@ public class Table implements Localized {
      *
      * @param  type The query type.
      * @param  statement The statement to configure (never {@code null}).
-     * @throws CatalogException if the statement can not be configured.
      * @throws SQLException if a SQL error occured while configuring the statement.
      */
-    protected void configure(final QueryType type, final PreparedStatement statement)
-            throws CatalogException, SQLException
-    {
+    protected void configure(QueryType type, PreparedStatement statement) throws SQLException {
     }
 
     /**

@@ -48,7 +48,6 @@ import org.geotoolkit.internal.sql.table.Database;
 import org.geotoolkit.internal.sql.table.QueryType;
 import org.geotoolkit.internal.sql.table.LocalCache;
 import org.geotoolkit.internal.sql.table.SingletonTable;
-import org.geotoolkit.internal.sql.table.CatalogException;
 import org.geotoolkit.internal.sql.table.IllegalRecordException;
 import org.geotoolkit.internal.sql.table.SpatialDatabase;
 import org.geotoolkit.metadata.iso.citation.Citations;
@@ -147,12 +146,11 @@ final class GridGeometryTable extends SingletonTable<GridGeometryEntry> {
      *
      * @param  results The result set to read.
      * @return The entry for current row in the specified result set.
-     * @throws CatalogException if an inconsistent record is found in the database.
      * @throws SQLException if an error occured while reading the database.
      */
     @Override
     @SuppressWarnings("fallthrough")
-    protected GridGeometryEntry createEntry(final ResultSet results) throws CatalogException, SQLException {
+    protected GridGeometryEntry createEntry(final ResultSet results) throws SQLException {
         final GridGeometryQuery query  = (GridGeometryQuery) super.query;
         final SpatialDatabase database = (SpatialDatabase) getDatabase();
         final int    identifier        = results.getInt   (indexOf(query.identifier));
@@ -266,9 +264,7 @@ final class GridGeometryTable extends SingletonTable<GridGeometryEntry> {
      * @param  centroids The date-extents map.
      * @return The same reference than {@code centroids}, but casted as a date-altitudes map.
      */
-    SortedMap<Date,SortedSet<Number>> identifiersToAltitudes(final SortedMap<Date,List<String>> centroids)
-            throws CatalogException, SQLException
-    {
+    SortedMap<Date,SortedSet<Number>> identifiersToAltitudes(final SortedMap<Date,List<String>> centroids) throws SQLException {
         final Map<Number,Number> numbers = new HashMap<Number,Number>(); // For sharing instances.
         final Map<SortedSet<Number>, SortedSet<Number>> pool = new HashMap<SortedSet<Number>, SortedSet<Number>>();
         final Map<List<String>,SortedSet<Number>> altitudesMap = new HashMap<List<String>,SortedSet<Number>>();
@@ -341,7 +337,7 @@ final class GridGeometryTable extends SingletonTable<GridGeometryEntry> {
     Integer find(final Dimension size,
                  final AffineTransform  gridToCRS, final int horizontalSRID,
                  final double[] verticalOrdinates, final int verticalSRID)
-            throws SQLException, CatalogException
+            throws SQLException
     {
         ensureNonNull("size",      size);
         ensureNonNull("gridToCRS", gridToCRS);
@@ -435,7 +431,7 @@ final class GridGeometryTable extends SingletonTable<GridGeometryEntry> {
     int findOrCreate(final Dimension size,
                      final AffineTransform  gridToCRS, final int horizontalSRID,
                      final double[] verticalOrdinates, final int verticalSRID)
-            throws SQLException, CatalogException
+            throws SQLException
     {
         synchronized (getLock()) {
             boolean success = false;

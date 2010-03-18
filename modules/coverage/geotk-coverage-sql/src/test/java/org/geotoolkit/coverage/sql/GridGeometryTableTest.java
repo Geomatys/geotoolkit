@@ -26,7 +26,6 @@ import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.metadata.extent.GeographicBoundingBox;
 
 import org.geotoolkit.internal.sql.table.CatalogTestBase;
-import org.geotoolkit.internal.sql.table.CatalogException;
 
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -50,11 +49,10 @@ public final class GridGeometryTableTest extends CatalogTestBase {
     /**
      * Tests the {@link GridGeometryTable#getEntry}.
      *
-     * @throws SQLException     If the test can't connect to the database.
-     * @throws CatalogException Should never happen in normal test execution.
+     * @throws SQLException If the test can't connect to the database.
      */
     @Test
-    public void testGetEntry() throws CatalogException, SQLException {
+    public void testGetEntry() throws SQLException {
         final GridGeometryTable table = new GridGeometryTable(getDatabase());
         final GridGeometryEntry entry = table.getEntry(CORIOLIS_ID);
         assertEquals("horizontal SRID", 3395, entry.getHorizontalSRID());
@@ -100,11 +98,10 @@ public final class GridGeometryTableTest extends CatalogTestBase {
     /**
      * Tests the {@link GridGeometryTable#find} methods.
      *
-     * @throws SQLException     If the test can't connect to the database.
-     * @throws CatalogException Should never happen in normal test execution.
+     * @throws SQLException If the test can't connect to the database.
      */
     @Test
-    public void testFind() throws CatalogException, SQLException {
+    public void testFind() throws SQLException {
         final GridGeometryTable table = new GridGeometryTable(getDatabase());
         final GridGeometryEntry entry = table.getEntry(CORIOLIS_ID);
         final double[] depths = entry.getVerticalOrdinates();
@@ -123,11 +120,10 @@ public final class GridGeometryTableTest extends CatalogTestBase {
     /**
      * Tests the {@link GridGeometryTable#findOrCreate} methods.
      *
-     * @throws SQLException     If the test can't connect to the database.
-     * @throws CatalogException Should never happen in normal test execution.
+     * @throws SQLException If the test can't connect to the database.
      */
     @Test
-    public void testFindOrCreate() throws CatalogException, SQLException {
+    public void testFindOrCreate() throws SQLException {
         final GridGeometryTable table = new GridGeometryTable(getDatabase());
         final GridGeometryEntry entry = table.getEntry(CORIOLIS_ID);
         final double[] depths = entry.getVerticalOrdinates();

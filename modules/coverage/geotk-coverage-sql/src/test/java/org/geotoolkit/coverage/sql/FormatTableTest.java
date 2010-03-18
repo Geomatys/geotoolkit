@@ -24,7 +24,6 @@ import java.sql.SQLException;
 import org.geotoolkit.test.Depend;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.internal.sql.table.CatalogTestBase;
-import org.geotoolkit.internal.sql.table.CatalogException;
 
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -53,11 +52,10 @@ public class FormatTableTest extends CatalogTestBase {
     /**
      * Tests the {@link FormatTable#getEntry} and {@link FormatTable#getEntries} methods.
      *
-     * @throws SQLException     If the test can't connect to the database.
-     * @throws CatalogException Should never happen in normal test execution.
+     * @throws SQLException If the test can't connect to the database.
      */
     @Test
-    public void testSelectAndList() throws CatalogException, SQLException {
+    public void testSelectAndList() throws SQLException {
         final FormatTable table = new FormatTable(getDatabase());
         final FormatEntry entry = table.getEntry(TEMPERATURE);
         assertEquals("Unexpected format read from the database.", TEMPERATURE, entry.getIdentifier());
@@ -80,11 +78,10 @@ public class FormatTableTest extends CatalogTestBase {
     /**
      * Tests a for an entry having two bands
      *
-     * @throws SQLException     If the test can't connect to the database.
-     * @throws CatalogException Should never happen in normal test execution.
+     * @throws SQLException If the test can't connect to the database.
      */
     @Test
-    public void testTwoBands() throws CatalogException, SQLException {
+    public void testTwoBands() throws SQLException {
         final FormatTable table = new FormatTable(getDatabase());
         final FormatEntry entry = table.getEntry(CURRENT);
         assertEquals("Unexpected format read from the database.", CURRENT, entry.getIdentifier());

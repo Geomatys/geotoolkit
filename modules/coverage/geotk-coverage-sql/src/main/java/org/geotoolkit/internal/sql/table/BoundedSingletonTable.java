@@ -210,7 +210,6 @@ public abstract class BoundedSingletonTable<E extends Entry> extends SingletonTa
      * {@link #getEnvelope2D()}, {@link #getVerticalRange()} and {@link #getTimeRange()}.
      *
      * @return The spatio-temporal envelope.
-     * @throws CatalogException if a logical error occured.
      * @throws SQLException if an error occured while reading the database.
      *
      * @see #getEnvelope2D()
@@ -218,7 +217,7 @@ public abstract class BoundedSingletonTable<E extends Entry> extends SingletonTa
      * @see #getTimeRange()
      * @see #trimEnvelope()
      */
-    public synchronized GeneralEnvelope getEnvelope() throws CatalogException, SQLException {
+    public synchronized GeneralEnvelope getEnvelope() throws SQLException {
         GeneralEnvelope envelope = this.envelope;
         if (envelope == null) {
             final SpatialDatabase database = (SpatialDatabase) getDatabase();
@@ -516,10 +515,9 @@ public abstract class BoundedSingletonTable<E extends Entry> extends SingletonTa
      * Then the envelope is altered in such a way that the {@code getXXX(...)} method returns
      * an identical or smaller envelope intercepting the same set of elements.
      *
-     * @throws CatalogException if a logical error occured.
      * @throws SQLException if an error occured while reading the database.
      */
-    public synchronized void trimEnvelope() throws CatalogException, SQLException {
+    public synchronized void trimEnvelope() throws SQLException {
         if (trimmed) {
             return;
         }
@@ -585,13 +583,10 @@ public abstract class BoundedSingletonTable<E extends Entry> extends SingletonTa
      *
      * @param  type The query type (mat be {@code null}).
      * @param  statement The statement to configure (never {@code null}).
-     * @throws CatalogException if the statement can not be configured.
      * @throws SQLException if a SQL error occured while configuring the statement.
      */
     @Override
-    protected void configure(final QueryType type, final PreparedStatement statement)
-            throws CatalogException, SQLException
-    {
+    protected void configure(final QueryType type, final PreparedStatement statement) throws SQLException {
         super.configure(type, statement);
         if (byTimeRange != null) {
             int index = byTimeRange.indexOf(type);

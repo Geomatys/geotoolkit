@@ -87,10 +87,9 @@ final class CategoryTable extends Table {
      *
      * @param  format The name of the format for which the categories are defined.
      * @return The categories for each sample dimension in the given format.
-     * @throws CatalogException if an inconsistent record is found in the database.
      * @throws SQLException if an error occured while reading the database.
      */
-    public Map<Integer,Category[]> getCategories(final String format) throws CatalogException, SQLException {
+    public Map<Integer,Category[]> getCategories(final String format) throws SQLException {
         final CategoryQuery query = (CategoryQuery) this.query;
         final List<Category> categories = new ArrayList<Category>();
         final Map<Integer,Category[]> dimensions = new HashMap<Integer,Category[]>();
@@ -184,8 +183,8 @@ final class CategoryTable extends Table {
                     try {
                         category = new Category(name, colors, range, (MathTransform1D) tr);
                     } catch (ClassCastException exception) { // If 'tr' is not a MathTransform1D.
-                        results.close();
-                        throw new CatalogException(exception);
+                        throw new IllegalRecordException(exception, this, results, functionIndex, format);
+                        // 'results' is closed by the above constructor.
                     }
                 }
                 /*

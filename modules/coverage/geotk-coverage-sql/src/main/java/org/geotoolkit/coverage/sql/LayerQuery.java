@@ -58,6 +58,6 @@ final class LayerQuery extends Query {
         period   = addOptionalColumn ("period",      1, sl);
         fallback = addOptionalColumn ("fallback", null, sl);
         comments = addOptionalColumn ("comments", null, sl);
-        byName   = addParameter(name, SELECT, EXISTS);
+        byName   = addParameter(name, SELECT, EXISTS, DELETE);
     }
 }

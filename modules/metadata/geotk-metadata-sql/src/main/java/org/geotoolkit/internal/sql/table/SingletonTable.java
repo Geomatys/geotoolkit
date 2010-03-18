@@ -171,10 +171,9 @@ public abstract class SingletonTable<E extends Entry> extends Table {
      *
      * @param  entry En element created by {@link #getEntries}.
      * @return {@code true} if the element should be added to the set returned by {@link #getEntries}.
-     * @throws CatalogException if a logical error has been detected in the database content.
      * @throws SQLException if an error occured will reading from the database.
      */
-    protected boolean accept(final E entry) throws CatalogException, SQLException {
+    protected boolean accept(final E entry) throws SQLException {
         return true;
     }
 
@@ -192,7 +191,7 @@ public abstract class SingletonTable<E extends Entry> extends Table {
 
     /**
      * Invokes the user's {@link #createEntry(ResultSet)} method, but wraps {@link SQLException}
-     * into {@link ServerException} because the later provides more informations.
+     * into {@link CatalogException} because the later provides more informations.
      *
      * @throws CatalogException If an error occured during {@link #createEntry(ResultSet)}.
      * @throws SQLException If an error occured during {@link CatalogException#setMetadata}.
@@ -224,10 +223,9 @@ public abstract class SingletonTable<E extends Entry> extends Table {
      * @param  identifier The name or numeric identifier of the element to fetch.
      * @return The element for the given identifier, or {@code null} if {@code identifier} was null.
      * @throws NoSuchRecordException if no record was found for the specified key.
-     * @throws CatalogException if a logical error has been detected in the database content.
      * @throws SQLException if an error occured will reading from the database.
      */
-    public final E getEntry(final Comparable<?> identifier) throws NoSuchRecordException, CatalogException, SQLException {
+    public final E getEntry(final Comparable<?> identifier) throws NoSuchRecordException, SQLException {
         if (identifier == null) {
             return null;
         }
@@ -270,10 +268,9 @@ public abstract class SingletonTable<E extends Entry> extends Table {
      * the returned set will not alter this table.
      *
      * @return The set of entries. May be empty, but neven {@code null}.
-     * @throws CatalogException if a logical error has been detected in the database content.
      * @throws SQLException if an error occured will reading from the database.
      */
-    public final Set<E> getEntries() throws CatalogException, SQLException {
+    public final Set<E> getEntries() throws SQLException {
         final Set<E> entries = new LinkedHashSet<E>();
         synchronized (getLock()) {
             final LocalCache.Stmt ce = getStatement(QueryType.LIST);
@@ -316,10 +313,9 @@ public abstract class SingletonTable<E extends Entry> extends Table {
      *
      * @param  identifier The identifier of the entry to fetch.
      * @return {@code true} if an entry of the given identifier was found.
-     * @throws CatalogException if a logical error has been detected in the database content.
      * @throws SQLException if an error occured will reading from the database.
      */
-    public boolean exists(final Comparable<?> identifier) throws CatalogException, SQLException {
+    public boolean exists(final Comparable<?> identifier) throws SQLException {
         if (identifier == null) {
             return false;
         }
@@ -344,10 +340,9 @@ public abstract class SingletonTable<E extends Entry> extends Table {
      *
      * @param  identifier The identifier of the entry to delete.
      * @return The number of entries deleted.
-     * @throws CatalogException if a logical error has been detected in the database content.
      * @throws SQLException if an error occured will reading from or writting to the database.
      */
-    public int delete(final Comparable<?> identifier) throws CatalogException, SQLException {
+    public int delete(final Comparable<?> identifier) throws SQLException {
         if (identifier == null) {
             return 0;
         }
@@ -378,10 +373,9 @@ public abstract class SingletonTable<E extends Entry> extends Table {
      * foreigner tables.
      *
      * @return The number of elements deleted.
-     * @throws CatalogException if a logical error has been detected in the database content.
      * @throws SQLException if an error occured will reading from or writting to the database.
      */
-    public int deleteAll() throws CatalogException, SQLException {
+    public int deleteAll() throws SQLException {
         final int count;
         boolean success = false;
         synchronized (getLock()) {

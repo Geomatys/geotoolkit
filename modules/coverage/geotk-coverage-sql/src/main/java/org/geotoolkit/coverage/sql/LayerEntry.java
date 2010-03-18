@@ -32,8 +32,8 @@ import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.MeasurementRange;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
 import org.geotoolkit.internal.sql.table.Entry;
-import org.geotoolkit.internal.sql.table.CatalogException;
 import org.geotoolkit.internal.sql.table.NoSuchRecordException;
+import org.geotoolkit.coverage.io.CoverageStoreException;
 
 
 /**
@@ -45,7 +45,7 @@ import org.geotoolkit.internal.sql.table.NoSuchRecordException;
  * @since 3.10 (derived from Seagis)
  * @module
  */
-final class LayerEntry extends Entry {
+final class LayerEntry extends Entry implements Layer {
     /**
      * For cross-version compatibility.
      */
@@ -114,6 +114,7 @@ final class LayerEntry extends Entry {
      *
      * @return The name of this layer.
      */
+    @Override
     public String getName() {
         return (String) identifier;
     }
@@ -131,10 +132,10 @@ final class LayerEntry extends Entry {
     /**
      * Returns the domain of this layer.
      *
-     * @throws CatalogException If an error occured while fetching the domain.
+     * @throws SQLException If an error occured while fetching the domain.
      */
-    private synchronized DomainOfLayerEntry getDomain() throws CatalogException {
-        if (domain == null) try {
+    private synchronized DomainOfLayerEntry getDomain() throws SQLException {
+        if (domain == null) {
             final DomainOfLayerTable domains = table.getDomainOfLayerTable();
             try {
                 domain = domains.getEntry(getName());
@@ -143,8 +144,6 @@ final class LayerEntry extends Entry {
                 Logging.recoverableException(LayerEntry.class, "getDomain", exception);
             }
             conditionalRelease();
-        } catch (SQLException e) {
-            throw new CatalogException(e);
         }
         return domain;
     }
@@ -152,16 +151,14 @@ final class LayerEntry extends Entry {
     /**
      * Returns all series in this layer as (<var>identifier</var>, <var>series</var>) pairs.
      *
-     * @throws CatalogException If an error occured while fetching the series.
+     * @throws SQLException If an error occured while fetching the series.
      */
-    public synchronized Map<Integer,SeriesEntry> getSeries() throws CatalogException {
-        if (series == null) try {
+    final synchronized Map<Integer,SeriesEntry> getSeries() throws SQLException {
+        if (series == null) {
             final SeriesTable st = table.getSeriesTable();
             st.setLayer(getName());
             series = Collections.unmodifiableMap(st.getEntriesMap());
             conditionalRelease();
-        } catch (SQLException e) {
-            throw new CatalogException(e);
         }
         return series;
     }
@@ -173,14 +170,15 @@ final class LayerEntry extends Entry {
      * averaged SST coverage as a fallback.
      *
      * @return The fallback layer, or {@code null} if none.
-     * @throws CatalogException If an error occured while fetching the fallback.
+     * @throws CoverageStoreException If an error occured while fetching the fallback.
      */
-    public synchronized LayerEntry getFallback() throws CatalogException {
+    @Override
+    public synchronized LayerEntry getFallback() throws CoverageStoreException {
         if (fallback instanceof String) try {
             fallback = table.getEntry((String) fallback);
             conditionalRelease();
         } catch (SQLException e) {
-            throw new CatalogException(e);
+            throw new CoverageStoreException(e);
         }
         return (LayerEntry) fallback;
     }
@@ -190,9 +188,10 @@ final class LayerEntry extends Entry {
      * The ranges are always expressed in <cite>geophysics</cite> values.
      *
      * @return The range of valid sample values.
-     * @throws CatalogException If an error occured while computing the ranges.
+     * @throws CoverageStoreException If an error occured while computing the ranges.
      */
-    public synchronized List<MeasurementRange<?>> getSampleValueRanges() throws CatalogException {
+    @Override
+    public synchronized List<MeasurementRange<?>> getSampleValueRanges() throws CoverageStoreException {
         List<MeasurementRange<?>> sampleValueRanges = this.sampleValueRanges;
         if (sampleValueRanges == null) try {
             MeasurementRange<?>[] ranges = null;
@@ -224,24 +223,31 @@ final class LayerEntry extends Entry {
             }
             this.sampleValueRanges = sampleValueRanges;
         } catch (SQLException e) {
-            throw new CatalogException(e);
+            throw new CoverageStoreException(e);
         }
         return sampleValueRanges;
     }
 
     /**
      * Returns the typical pixel resolution in this layer, or {@code null} if unknown.
-     * Values are degrees of longitude and latitude.
+     * Values are in the unit of the main CRS used by the database (typically degrees
+     * of longitude and latitude).
      *
      * @return The typical pixel resolution.
      * @throws CatalogException if an error occured while fetching the resolution.
      */
-    public Dimension2D getTypicalResolution() throws CatalogException {
-        final DomainOfLayerEntry domain = getDomain();
+    @Override
+    public double[] getTypicalResolution() throws CoverageStoreException {
+        final DomainOfLayerEntry domain;
+        try {
+            domain = getDomain();
+        } catch (SQLException e) {
+            throw new CoverageStoreException(e);
+        }
         if (domain != null) {
             final Dimension2D resolution = domain.resolution;
             if (resolution != null) {
-                return (Dimension2D) resolution.clone();
+                return new double[] {resolution.getWidth(), resolution.getHeight()};
             }
         }
         return null;

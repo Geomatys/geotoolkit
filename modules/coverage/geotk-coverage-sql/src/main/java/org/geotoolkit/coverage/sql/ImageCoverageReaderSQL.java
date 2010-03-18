@@ -39,8 +39,6 @@ import org.geotoolkit.image.io.mosaic.MosaicImageReader;
 import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.resources.Errors;
 
-import org.geotoolkit.internal.sql.table.CatalogException;
-
 
 /**
  * An implementation of {@link ImageCoverageReader} when the {@link GridGeometry2D} and the
@@ -129,8 +127,6 @@ final class ImageCoverageReaderSQL extends ImageCoverageReader {
         try {
             return format.getSampleDimensions();
         } catch (SQLException e) {
-            throw new CoverageStoreException(e);
-        } catch (CatalogException e) {
             throw new CoverageStoreException(e);
         }
     }
