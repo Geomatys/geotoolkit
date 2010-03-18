@@ -17,9 +17,7 @@
  */
 package org.geotoolkit.measure;
 
-import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
-import javax.measure.unit.NonSI;
 import javax.measure.quantity.Quantity;
 import javax.measure.converter.UnitConverter;
 import static javax.measure.unit.Unit.ONE;
@@ -50,7 +48,7 @@ import static org.geotoolkit.test.Commons.*;
  *
  * @since 2.5
  */
-public class UnitsTest {
+public final class UnitsTest {
     /**
      * Compares two values for equality.
      */

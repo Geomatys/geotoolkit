@@ -213,7 +213,7 @@ public class DefaultNameFactory extends Factory implements NameFactory {
      * @since 3.00
      */
     @Override
-    public GenericName createGenericName(NameSpace scope, CharSequence[] parsedNames)
+    public GenericName createGenericName(NameSpace scope, CharSequence... parsedNames)
             throws IllegalArgumentException
     {
         ensureNonNull("parsedNames", parsedNames);

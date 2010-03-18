@@ -17,6 +17,9 @@
  */
 package org.geotoolkit.internal.jaxb.uom;
 
+import java.io.File;
+import java.net.URI;
+import java.net.URISyntaxException;
 import javax.measure.unit.Unit;
 import javax.measure.unit.NonSI;
 import javax.xml.bind.annotation.XmlValue;
@@ -118,18 +121,33 @@ public final class Measure {
             throw new IllegalStateException();
         }
         uom = uom.trim();
-        int i = uom.lastIndexOf("@gml:id=");
-        if (i >= 0) {
-            i += 8; // 8 is the length of "@gml:id="
-            for (final int length=uom.length(); i<length; i++) {
-                final char c = uom.charAt(i);
-                if (!Character.isWhitespace(c)) {
-                    if (c == '\'') i++;
-                    break;
+        /*
+         * Special processing if the uom looks like a URN or URL.
+         */
+        if (uom.indexOf(':') >= 0) {
+            int i = uom.lastIndexOf("@gml:id=");
+            if (i >= 0) {
+                i += 8; // 8 is the length of "@gml:id="
+                for (final int length=uom.length(); i<length; i++) {
+                    final char c = uom.charAt(i);
+                    if (!Character.isWhitespace(c)) {
+                        if (c == '\'') i++;
+                        break;
+                    }
                 }
+                final int stop = uom.lastIndexOf('\'');
+                uom = ((stop > i) ? uom.substring(i, stop) : uom.substring(i)).trim();
+            } else try {
+                final URI uri = new URI(uom);
+                String part = uri.getFragment();
+                if (part != null) {
+                    uom = part;
+                } else if ((part = uri.getPath()) != null) {
+                    uom = new File(part).getName();
+                }
+            } catch (URISyntaxException e) {
+                // Ignore.
             }
-            final int stop = uom.lastIndexOf('\'');
-            uom = ((stop > i) ? uom.substring(i, stop) : uom.substring(i)).trim();
         }
         unit = Units.valueOf(uom);
     }

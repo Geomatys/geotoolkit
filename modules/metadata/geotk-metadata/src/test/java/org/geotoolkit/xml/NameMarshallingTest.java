@@ -15,9 +15,8 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.naming;
+package org.geotoolkit.xml;
 
-import java.util.Arrays;
 import java.io.StringWriter;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.JAXBException;
@@ -28,7 +27,7 @@ import org.opengis.util.ScopedName;
 import org.opengis.util.GenericName;
 
 import org.geotoolkit.util.Strings;
-import org.geotoolkit.xml.MarshallerPool;
+import org.geotoolkit.naming.DefaultNameFactory;
 import org.geotoolkit.metadata.iso.content.DefaultFeatureCatalogueDescription;
 
 import org.junit.*;
@@ -40,11 +39,11 @@ import static org.geotoolkit.test.Commons.*;
  * Tests the XML marshalling.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.10
  *
  * @since 3.00
  */
-public final class XmlTest {
+public final class NameMarshallingTest {
     /**
      * Marshalls the given name.
      */
@@ -83,7 +82,8 @@ public final class XmlTest {
      */
     @Test
     public void testLocalName() throws JAXBException {
-        final LocalName name = new DefaultLocalName(null, "Some name");
+        final DefaultNameFactory factory = new DefaultNameFactory();
+        final LocalName name = factory.createLocalName(null, "Some name");
         assertEquals("Some name", name.toString());
         final String xml = marshall(name);
         assertMultilinesEquals(
@@ -97,7 +97,8 @@ public final class XmlTest {
      */
     @Test
     public void testTypeName() throws JAXBException {
-        final TypeName name = new DefaultTypeName(null, "Some name");
+        final DefaultNameFactory factory = new DefaultNameFactory();
+        final TypeName name = factory.createTypeName(null, "Some name");
         assertEquals("Some name", name.toString());
         final String xml = marshall(name);
         assertMultilinesEquals(
@@ -115,10 +116,8 @@ public final class XmlTest {
      */
     @Test
     public void testScopedName() throws JAXBException {
-        final String[] parsed = new String[] {
-            "myScope","myName"
-        };
-        final ScopedName name = new DefaultScopedName(null, Arrays.asList(parsed));
+        final DefaultNameFactory factory = new DefaultNameFactory();
+        final ScopedName name = (ScopedName) factory.createGenericName(null, "myScope","myName");
         assertSame(name, name.toFullyQualifiedName());
         assertEquals("myScope:myName", name.toString());
         final String xml = marshall(name);

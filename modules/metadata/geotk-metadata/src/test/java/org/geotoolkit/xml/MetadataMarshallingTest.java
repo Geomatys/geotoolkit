@@ -15,7 +15,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.metadata;
+package org.geotoolkit.xml;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -32,6 +32,7 @@ import org.geotoolkit.metadata.iso.DefaultMetadata;
 import org.geotoolkit.metadata.iso.DefaultIdentifier;
 import org.geotoolkit.metadata.iso.citation.DefaultCitation;
 import org.geotoolkit.metadata.iso.citation.DefaultResponsibleParty;
+import org.geotoolkit.metadata.iso.identification.DefaultResolution;
 import org.geotoolkit.metadata.iso.distribution.DefaultDistribution;
 import org.geotoolkit.metadata.iso.distribution.DefaultDistributor;
 import org.geotoolkit.metadata.iso.identification.DefaultDataIdentification;
@@ -42,9 +43,9 @@ import org.geotoolkit.metadata.iso.quality.DefaultConformanceResult;
 import org.geotoolkit.metadata.iso.quality.DefaultDataQuality;
 import org.geotoolkit.metadata.iso.spatial.DefaultDimension;
 import org.geotoolkit.metadata.iso.spatial.DefaultGridSpatialRepresentation;
+import org.geotoolkit.metadata.MetadataStandardTest;
 import org.geotoolkit.util.DefaultInternationalString;
 import org.geotoolkit.util.SimpleInternationalString;
-import org.geotoolkit.xml.XML;
 
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -100,7 +101,7 @@ public final class MetadataMarshallingTest {
      *
      * @throws JAXBException If an error occured during the creation of the JAXB context,
      *                       or during marshalling / unmarshalling processes.
-     * @throws IOException Should never happen since we are writing to a buffer.
+     * @throws IOException If an error occured while reading the XML file.
      */
     @Test
     public void testMetadata() throws JAXBException, IOException {
@@ -274,7 +275,7 @@ public final class MetadataMarshallingTest {
      *
      * @throws JAXBException If an error occured during the creation of the JAXB context,
      *                       or during marshalling / unmarshalling processes.
-     * @throws IOException Should never happen since we are writing to a buffer.
+     * @throws IOException If an error occured while reading the XML file.
      *
      * @since 3.07
      */

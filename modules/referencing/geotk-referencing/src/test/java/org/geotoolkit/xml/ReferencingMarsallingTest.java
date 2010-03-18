@@ -15,7 +15,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.referencing;
+package org.geotoolkit.xml;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -49,6 +49,8 @@ import org.geotoolkit.metadata.iso.extent.DefaultVerticalExtent;
 import org.geotoolkit.metadata.iso.identification.DefaultDataIdentification;
 import org.geotoolkit.metadata.iso.spatial.DefaultGeometricObjects;
 import org.geotoolkit.metadata.iso.spatial.DefaultVectorSpatialRepresentation;
+import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.referencing.DefaultReferenceIdentifier;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.referencing.crs.DefaultVerticalCRS;
 import org.geotoolkit.referencing.cs.DefaultCoordinateSystemAxis;
@@ -58,7 +60,6 @@ import org.geotoolkit.referencing.datum.DefaultEllipsoid;
 import org.geotoolkit.referencing.datum.DefaultGeodeticDatum;
 import org.geotoolkit.referencing.datum.DefaultPrimeMeridian;
 import org.geotoolkit.referencing.datum.DefaultVerticalDatum;
-import org.geotoolkit.xml.MarshallerPool;
 import org.geotoolkit.test.TestData;
 
 import org.junit.*;
@@ -90,13 +91,13 @@ public class ReferencingMarsallingTest {
      * The resource file which contains an XML representation of a
      * {@linkplain DefaultMetadata metadata} object, with a {@link VerticalCRS}.
      */
-    private static final String VERTICAL_CRS_XML = "verticalCRS.xml";
+    private static final String VERTICAL_CRS_XML = "VerticalCRS.xml";
 
     /**
      * The resource file which contains an XML representation of a
      * {@linkplain DefaultMetadata metadata} object, with a {@link GeographicCRS}.
      */
-    private static final String GEOGRAPHIC_CRS_XML = "geographicCRS.xml";
+    private static final String GEOGRAPHIC_CRS_XML = "GeographicCRS.xml";
 
     /**
      * Tests the marshalling of a {@linkplain DefaultGeographicCRS geographic crs} object
