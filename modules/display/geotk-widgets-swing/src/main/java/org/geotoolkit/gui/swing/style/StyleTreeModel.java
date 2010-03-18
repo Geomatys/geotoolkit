@@ -49,7 +49,7 @@ import org.opengis.style.Symbolizer;
  */
 public class StyleTreeModel<T> extends DefaultTreeModel implements StyleListener, FeatureTypeStyleListener, RuleListener {
 
-    private final WeakStyleListener weakListener = new WeakStyleListener(this, this.styleElement);
+    private WeakStyleListener weakListener = null;
     private T styleElement = null;
 
     public StyleTreeModel(){
@@ -78,10 +78,11 @@ public class StyleTreeModel<T> extends DefaultTreeModel implements StyleListener
             throw new NullPointerException("Style can't be null");
         }
 
-        if(this.styleElement != null){
+        if(this.styleElement != null && weakListener != null){
             try {
-                Method method = styleElement.getClass().getMethod("removeListener", PropertyChangeListener.class);
+                final Method method = styleElement.getClass().getMethod("removeListener", PropertyChangeListener.class);
                 method.invoke(styleElement, weakListener);
+                weakListener = null;
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -90,8 +91,9 @@ public class StyleTreeModel<T> extends DefaultTreeModel implements StyleListener
         this.styleElement = style;
 
         if(this.styleElement != null){
+            weakListener = new WeakStyleListener(this, this.styleElement);
             try {
-                Method method = styleElement.getClass().getMethod("addListener", PropertyChangeListener.class);
+                final Method method = styleElement.getClass().getMethod("addListener", PropertyChangeListener.class);
                 method.invoke(styleElement, weakListener);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -179,14 +181,14 @@ public class StyleTreeModel<T> extends DefaultTreeModel implements StyleListener
             }
         }else if(type == CollectionChangeEvent.ITEM_REMOVED){
             for(Object ele : event.getItems()){
-                final DefaultMutableTreeNode child = search(ele);
+                final DefaultMutableTreeNode child = search(parent,ele);
                 if(child != null){
                     removeNodeFromParent(child);
                 }
             }
         }else if(type == CollectionChangeEvent.ITEM_CHANGED){
             for(Object ele : event.getItems()){
-                final DefaultMutableTreeNode child = search(ele);
+                final DefaultMutableTreeNode child = search(parent,ele);
                 final EventObject subEvent = event.getChangeEvent();
                 if(subEvent instanceof CollectionChangeEvent){
                     styleElementChange((CollectionChangeEvent) subEvent);

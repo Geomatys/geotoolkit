@@ -32,6 +32,11 @@ public abstract class WeakListener<T extends EventListener>{
 
     public WeakListener(T listener, Object src) {
         listenerRef = new WeakReference(listener, ActiveReferenceQueue.getInstance());
+
+        if(src == null){
+            throw new NullPointerException("Weak listener source must be defined.");
+        }
+
         this.src = src;
     }
 

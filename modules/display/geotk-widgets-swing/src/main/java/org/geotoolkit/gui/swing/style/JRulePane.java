@@ -255,7 +255,11 @@ public class JRulePane extends StyleElementEditor<MutableRule> {
         dialog.setVisible(true);
 
         rule.setFilter(cql.getFilter());
-        parse(rule);
+        try {
+            jtp_filter.setText(CQL.toCQL(rule.getFilter()));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
                 
     }//GEN-LAST:event_but_editActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables

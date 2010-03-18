@@ -21,8 +21,9 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.datatransfer.StringSelection;
+import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.dnd.DnDConstants;
 import java.awt.dnd.DragGestureEvent;
 import java.awt.dnd.DragGestureListener;
@@ -38,14 +39,14 @@ import java.awt.dnd.DropTargetDropEvent;
 import java.awt.dnd.DropTargetEvent;
 import java.awt.dnd.DropTargetListener;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
+import javax.swing.AbstractAction;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
-import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
@@ -125,14 +126,20 @@ public class JStyleTree<T> extends JXTree implements DragGestureListener, DragSo
     }
 
     //-------------Drag & drop -------------------------------------------------
+    private StyleElementTransferable dd = null;
+
     @Override
     public void dragGestureRecognized(DragGestureEvent e) {
         final TreePath path = getSelectionModel().getSelectionPath();
         final DefaultMutableTreeNode dragNode = (DefaultMutableTreeNode) path.getLastPathComponent();
 
         if (dragNode != null) {
-            final Transferable transferable = new StringSelection("");
-            e.startDrag(null, transferable);
+            final Object dragged = dragNode.getUserObject();
+            final DefaultMutableTreeNode parentNode = (DefaultMutableTreeNode) dragNode.getParent();
+            final Object parent = (parentNode != null) ? parentNode.getUserObject() : null;
+
+            dd = new StyleElementTransferable(dragged, parent);
+            e.startDrag(null, dd);
         }
     }
 
@@ -176,22 +183,83 @@ public class JStyleTree<T> extends JXTree implements DragGestureListener, DragSo
 
     @Override
     public void drop(DropTargetDropEvent dtde) {
-        final TreePath originPath = getSelectionModel().getSelectionPath();
         final Point loc = dtde.getLocation();
         final TreePath targetPath = getPathForLocation(loc.x, loc.y);
 
-        if (targetPath != null && originPath != null) {
-            final DefaultMutableTreeNode dragNode = (DefaultMutableTreeNode) originPath.getLastPathComponent();
+        final Transferable trs = dd;
+
+        if(!(trs instanceof StyleElementTransferable)) return;        
+        final StyleElementTransferable strs = (StyleElementTransferable) trs;
+
+
+        if (targetPath != null && strs.getStyleElement() != null && strs.getParent() != null) {
             final DefaultMutableTreeNode targetNode = (DefaultMutableTreeNode) targetPath.getLastPathComponent();
+            final DefaultMutableTreeNode targetParentNode = (DefaultMutableTreeNode)targetNode.getParent();
+            final Object targetObj = targetNode.getUserObject();
+            final Object targetParentObj = (targetParentNode != null) ? targetParentNode.getUserObject() : null;
 
-            treemodel.moveNode(dragNode, targetNode);
+            final Object movedObj = strs.getStyleElement();
+            final Object movedParentObj = strs.getParent();
 
-            final DefaultMutableTreeNode dragNodeParent = (DefaultMutableTreeNode) dragNode.getParent();
-            final DefaultMutableTreeNode oldParent = (DefaultMutableTreeNode) dragNode.getParent();
-            final Object parentObj = targetNode.getUserObject();
-            final Transferable trans = dtde.getTransferable();
+            if(targetObj == movedObj){
+                //same object , don't do anything
+                return;
+            }
 
-            setStyleElement(style);
+            if (targetObj instanceof MutableFeatureTypeStyle && movedObj instanceof MutableFeatureTypeStyle) {
+
+                if(movedParentObj != null){
+                    ((MutableStyle)movedParentObj).featureTypeStyles().remove((MutableFeatureTypeStyle)movedObj);
+                }
+
+                final MutableFeatureTypeStyle targetFTS = (MutableFeatureTypeStyle) targetObj;
+                final int targetIndex = ((MutableStyle)targetParentObj).featureTypeStyles().indexOf(targetFTS);
+
+                ((MutableStyle)targetParentObj).featureTypeStyles().add(targetIndex,(MutableFeatureTypeStyle)movedObj);
+
+            } else if (targetObj instanceof MutableFeatureTypeStyle && movedObj instanceof MutableRule) {
+
+                if (movedParentObj == targetParentObj) {
+                    return;
+                }
+
+                if(movedParentObj != null){
+                    ((MutableFeatureTypeStyle)movedParentObj).rules().remove((MutableRule)movedObj);
+                }
+                ((MutableFeatureTypeStyle)targetObj).rules().add((MutableRule)movedObj);
+
+            } else if (targetObj instanceof MutableRule && movedObj instanceof MutableRule) {
+
+                if(movedParentObj != null){
+                    ((MutableFeatureTypeStyle)movedParentObj).rules().remove((MutableRule)movedObj);
+                }
+
+                final MutableRule targetRule = (MutableRule) targetObj;
+                final int targetIndex = ((MutableFeatureTypeStyle)targetParentObj).rules().indexOf(targetRule);
+
+                ((MutableFeatureTypeStyle)targetParentObj).rules().add(targetIndex,(MutableRule)movedObj);
+
+            } else if (targetObj instanceof MutableRule && movedObj instanceof Symbolizer) {
+
+                if(movedParentObj != null){
+                    ((MutableRule)movedParentObj).symbolizers().remove((Symbolizer)movedObj);
+                }
+
+                ((MutableRule)targetObj).symbolizers().add((Symbolizer)movedObj);
+
+            } else if (targetObj instanceof Symbolizer && movedObj instanceof Symbolizer) {
+
+                if(movedParentObj != null){
+                    ((MutableRule)movedParentObj).symbolizers().remove((Symbolizer)movedObj);
+                }
+
+                final Symbolizer targetSymbol = (Symbolizer) targetObj;
+                final int targetIndex = ((MutableRule)targetParentObj).symbolizers().indexOf(targetSymbol);
+
+                ((MutableRule)targetParentObj).symbolizers().add(targetIndex,(Symbolizer)movedObj);
+
+            }
+
         }
 
     }
@@ -255,285 +323,277 @@ public class JStyleTree<T> extends JXTree implements DragGestureListener, DragSo
 
                 if (val instanceof MutableStyle) {
                     final MutableStyle style = (MutableStyle) val;
-                    add(new NewFTSItem(style));
+                    add(new NewFTSAction(style));
                     add(new JSeparator(SwingConstants.HORIZONTAL));
-                    add(new ExpandSubNodes(node));
-                    add(new CollapseSubNodes(node));
+                    add(new ExpandAction(node));
+                    add(new CollapseAction(node));
                 } else if (val instanceof MutableFeatureTypeStyle) {
                     final MutableFeatureTypeStyle fts = (MutableFeatureTypeStyle) val;
-                    add(new NewRuleItem(fts));
+                    add(new NewRuleAction(fts));
                     add(new JSeparator(SwingConstants.HORIZONTAL));
-                    add(new ExpandSubNodes(node));
-                    add(new CollapseSubNodes(node));
-                    add(new ChangeRuleScaleNodes(fts));
+                    add(new ExpandAction(node));
+                    add(new CollapseAction(node));
+                    add(new ChangeRuleScaleAction(fts));
                     add(new JSeparator(SwingConstants.HORIZONTAL));
-                    add(new DuplicateItem(node));
+                    add(new DuplicateAction(node));
                 } else if (val instanceof MutableRule) {
                     final MutableRule rule = (MutableRule) val;
-                    add(new NewPointSymbolizerItem(rule));
-                    add(new NewLineSymbolizerItem(rule));
-                    add(new NewPolygonSymbolizerItem(rule));
-                    add(new NewRasterSymbolizerItem(rule));
-                    add(new NewTextSymbolizerItem(rule));
+                    add(new NewPointSymbolizerAction(rule));
+                    add(new NewLineSymbolizerAction(rule));
+                    add(new NewPolygonSymbolizerAction(rule));
+                    add(new NewRasterSymbolizerAction(rule));
+                    add(new NewTextSymbolizerAction(rule));
                     add(new JSeparator(SwingConstants.HORIZONTAL));
-                    add(new ExpandSubNodes(node));
-                    add(new CollapseSubNodes(node));
+                    add(new ExpandAction(node));
+                    add(new CollapseAction(node));
                     add(new JSeparator(SwingConstants.HORIZONTAL));
-                    add(new DuplicateItem(node));
+                    add(new DuplicateAction(node));
                 } else if (val instanceof Symbolizer) {
                     final Symbolizer symb = (Symbolizer) val;
-                    add(new DuplicateItem(node));
+                    add(new DuplicateAction(node));
                 }
                                 
                 if(treemodel.isDeletable(node)){
                     add(new JSeparator(SwingConstants.HORIZONTAL));
-                    add(new DeleteItem(node));
+                    add(new DeleteAction(node));
                 }
-                
             }
 
             super.setVisible(visible);
         }
     }
 
-    class CollapseSubNodes extends JMenuItem{
-
+    class CollapseAction extends AbstractAction{
         private final DefaultMutableTreeNode parentNode;
 
-        CollapseSubNodes(DefaultMutableTreeNode node) {
+        CollapseAction(DefaultMutableTreeNode node) {
+            super("Collapse sub nodes.");
             this.parentNode = node;
-            setText("Collapse sub nodes.");
-            addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    for(int i=0,n=parentNode.getChildCount(); i<n; i++){
-                        collapsePath(new TreePath(treemodel.getPathToRoot(parentNode.getChildAt(i))));
-                    }
-                }
-            });
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent ae) {
+            for(int i=0,n=parentNode.getChildCount(); i<n; i++){
+                collapsePath(new TreePath(treemodel.getPathToRoot(parentNode.getChildAt(i))));
+            }
         }
     }
 
-    class ExpandSubNodes extends JMenuItem{
-
+    class ExpandAction extends AbstractAction{
         private final DefaultMutableTreeNode parentNode;
 
-        ExpandSubNodes(DefaultMutableTreeNode node) {
+        ExpandAction(DefaultMutableTreeNode node) {
+            super("Expand sub nodes.");
             this.parentNode = node;
-            setText("Expand sub nodes.");
-            addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    for(int i=0,n=parentNode.getChildCount(); i<n; i++){
-                        TreeNode child = parentNode.getChildAt(i);
-                        for(int k=0,l=child.getChildCount(); k<l; k++){
-                            expandPath(new TreePath(treemodel.getPathToRoot(child.getChildAt(k))));
-                        }
-                    }
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent ae) {
+            for(int i=0,n=parentNode.getChildCount(); i<n; i++){
+                final TreeNode child = parentNode.getChildAt(i);
+                for(int k=0,l=child.getChildCount(); k<l; k++){
+                    expandPath(new TreePath(treemodel.getPathToRoot(child.getChildAt(k))));
                 }
-            });
+            }
         }
     }
 
-
-    class ChangeRuleScaleNodes extends JMenuItem{
-
+    class ChangeRuleScaleAction extends AbstractAction{
         private final MutableFeatureTypeStyle fts;
 
-        ChangeRuleScaleNodes(MutableFeatureTypeStyle cdt) {
+        ChangeRuleScaleAction(MutableFeatureTypeStyle cdt) {
+            super("Change rules valid scale.");
             this.fts = cdt;
-            setText("Change rules valid scale.");
-            addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    JPanel pan = new JPanel();
-                    pan.add(new JLabel(" Min scale : "));
-                    JSpinner spiMin = new JSpinner(new SpinnerNumberModel());
-                    spiMin.setPreferredSize(new Dimension(150, spiMin.getPreferredSize().height));
-                    pan.add(spiMin);
-                    pan.add(new JLabel(" Max scale : "));
-                    JSpinner spiMax = new JSpinner(new SpinnerNumberModel());
-                    spiMax.setPreferredSize(new Dimension(150, spiMax.getPreferredSize().height));
-                    spiMax.setValue(Double.MAX_VALUE);
-                    pan.add(spiMax);
+        }
 
-                    JOptionPane jop = new JOptionPane(pan);
-                    JDialog dialog = jop.createDialog("Change scale");
-                    dialog.pack();
-                    dialog.setLocationRelativeTo(null);
-                    dialog.setVisible(true);
+        @Override
+        public void actionPerformed(ActionEvent ae) {
+            final JPanel pan = new JPanel();
+            pan.add(new JLabel(" Min scale : "));
+            final JSpinner spiMin = new JSpinner(new SpinnerNumberModel());
+            spiMin.setPreferredSize(new Dimension(150, spiMin.getPreferredSize().height));
+            pan.add(spiMin);
+            pan.add(new JLabel(" Max scale : "));
+            final JSpinner spiMax = new JSpinner(new SpinnerNumberModel());
+            spiMax.setPreferredSize(new Dimension(150, spiMax.getPreferredSize().height));
+            spiMax.setValue(Double.MAX_VALUE);
+            pan.add(spiMax);
 
-                    double min = ((Number)spiMin.getValue()).doubleValue();
-                    double max = ((Number)spiMax.getValue()).doubleValue();
+            final JOptionPane jop = new JOptionPane(pan);
+            final JDialog dialog = jop.createDialog("Change scale");
+            dialog.pack();
+            dialog.setLocationRelativeTo(null);
+            dialog.setVisible(true);
 
-                    for(MutableRule rule : fts.rules()){
-                        rule.setMinScaleDenominator(min);
-                        rule.setMaxScaleDenominator(max);
-                    }
-                }
-            });
+            final double min = ((Number)spiMin.getValue()).doubleValue();
+            final double max = ((Number)spiMax.getValue()).doubleValue();
+
+            for(MutableRule rule : fts.rules()){
+                rule.setMinScaleDenominator(min);
+                rule.setMaxScaleDenominator(max);
+            }
         }
     }
 
-    class NewFTSItem extends JMenuItem {
-
+    class NewFTSAction extends AbstractAction{
         private final MutableStyle style;
 
-        NewFTSItem(MutableStyle cdt) {
+        NewFTSAction(MutableStyle cdt) {
+            super("new FTS",ICON_NEW);
             this.style = cdt;
-            setText("new FTS");
-            setIcon(ICON_NEW);
-            addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    style.featureTypeStyles().add(SF.featureTypeStyle(RandomStyleFactory.createPointSymbolizer()));
-                }
-            });
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent ae) {
+            style.featureTypeStyles().add(SF.featureTypeStyle(RandomStyleFactory.createPointSymbolizer()));
         }
     }
 
-    class NewRuleItem extends JMenuItem {
-
+    class NewRuleAction extends AbstractAction{
         private final MutableFeatureTypeStyle fts;
 
-        NewRuleItem(MutableFeatureTypeStyle cdt) {
+        NewRuleAction(MutableFeatureTypeStyle cdt) {
+            super("new Rule",ICON_NEW);
             this.fts = cdt;
-            setText("New Rule");
-            setIcon(ICON_NEW);
-            addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    fts.rules().add(SF.rule(RandomStyleFactory.createPointSymbolizer()));
-                }
-            });
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent ae) {
+            fts.rules().add(SF.rule(RandomStyleFactory.createPointSymbolizer()));
         }
     }
 
-    class DuplicateItem extends JMenuItem {
+    class NewPointSymbolizerAction extends AbstractAction {
+        private final MutableRule rule;
 
+        NewPointSymbolizerAction(MutableRule cdt) {
+            super("Point Symbolizer",ICON_NEW);
+            this.rule = cdt;
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            rule.symbolizers().add(RandomStyleFactory.createPointSymbolizer());
+        }
+    }
+
+    class NewLineSymbolizerAction extends AbstractAction {
+        private final MutableRule rule;
+
+        NewLineSymbolizerAction(MutableRule cdt) {
+            super("Line Symbolizer", ICON_NEW);
+            this.rule = cdt;
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            rule.symbolizers().add(RandomStyleFactory.createLineSymbolizer());
+        }
+    }
+
+    class NewPolygonSymbolizerAction extends AbstractAction {
+        private final MutableRule rule;
+
+        NewPolygonSymbolizerAction(MutableRule cdt) {
+            super("Polygon Symbolizer",ICON_NEW);
+            this.rule = cdt;
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            rule.symbolizers().add(RandomStyleFactory.createPolygonSymbolizer());
+        }
+    }
+    
+    class NewTextSymbolizerAction extends AbstractAction {
+        private final MutableRule rule;
+
+        NewTextSymbolizerAction(MutableRule cdt) {
+            super("Text Symbolizer", ICON_NEW);
+            this.rule = cdt;
+        }
+        
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            rule.symbolizers().add(SF.textSymbolizer());
+        }
+    }
+
+    class NewRasterSymbolizerAction extends AbstractAction {
+        private final MutableRule rule;
+
+        NewRasterSymbolizerAction(MutableRule cdt) {
+            super("Raster Symbolizer", ICON_NEW);
+            this.rule = cdt;
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            rule.symbolizers().add(SF.rasterSymbolizer());
+        }
+    }
+
+    class DuplicateAction extends AbstractAction {
         private final DefaultMutableTreeNode parentNode;
 
-        DuplicateItem(DefaultMutableTreeNode node) {
+        DuplicateAction(DefaultMutableTreeNode node) {
+            super("Duplicate", ICON_DUPLICATE);
             this.parentNode = node;
-            setText("Duplicate");
-            setIcon(ICON_DUPLICATE);
-            addActionListener(new ActionListener() {
+        }
 
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    treemodel.duplicateNode(parentNode);
-                }
-            });
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            treemodel.duplicateNode(parentNode);
         }
     }
-    
-    class DeleteItem extends JMenuItem {
-        
+
+    class DeleteAction extends AbstractAction {
         private final DefaultMutableTreeNode parentNode;
 
-        DeleteItem(DefaultMutableTreeNode node) {
+        DeleteAction(DefaultMutableTreeNode node) {
+            super("Delete",ICON_DELETE);
             this.parentNode = node;
-            setText("Delete");
-            setIcon(ICON_DELETE);
-            addActionListener(new ActionListener() {
-
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    treemodel.deleteNode(parentNode);
-                }
-            });
         }
-        
-    }
 
-    class NewPointSymbolizerItem extends JMenuItem {
-
-        private final MutableRule rule;
-
-        NewPointSymbolizerItem(MutableRule cdt) {
-            this.rule = cdt;
-            setText("Point Symbolizer");
-            setIcon(ICON_NEW);
-            addActionListener(new ActionListener() {
-
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    rule.symbolizers().add(RandomStyleFactory.createPointSymbolizer());
-                }
-            });
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            treemodel.deleteNode(parentNode);
         }
     }
 
-    class NewLineSymbolizerItem extends JMenuItem {
+    private static class StyleElementTransferable implements Transferable{
 
-        private final MutableRule rule;
+        private final Object styleElement;
+        private final Object parent;
 
-        NewLineSymbolizerItem(MutableRule cdt) {
-            this.rule = cdt;
-            setText("Line Symbolizer");
-            setIcon(ICON_NEW);
-            addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    rule.symbolizers().add(RandomStyleFactory.createLineSymbolizer());
-                }
-            });
+        public StyleElementTransferable(Object styleElement, Object parent){
+            this.styleElement = styleElement;
+            this.parent = parent;
         }
+
+        @Override
+        public DataFlavor[] getTransferDataFlavors() {
+            return new DataFlavor[0];
+        }
+
+        @Override
+        public boolean isDataFlavorSupported(DataFlavor df) {
+            return true;
+        }
+
+        @Override
+        public Object getTransferData(DataFlavor df) throws UnsupportedFlavorException, IOException {
+            return styleElement;
+        }
+
+        public Object getStyleElement(){
+            return styleElement;
+        }
+
+        public Object getParent(){
+            return parent;
+        }
+
     }
 
-    class NewPolygonSymbolizerItem extends JMenuItem {
-
-        private final MutableRule rule;
-
-        NewPolygonSymbolizerItem(MutableRule cdt) {
-            this.rule = cdt;
-            setText("Polygon Symbolizer");
-            setIcon(ICON_NEW);
-            addActionListener(new ActionListener() {
-
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    rule.symbolizers().add(RandomStyleFactory.createPolygonSymbolizer());
-                }
-            });
-        }
-    }
-    
-    class NewTextSymbolizerItem extends JMenuItem {
-
-        private final MutableRule rule;
-
-        NewTextSymbolizerItem(MutableRule cdt) {
-            this.rule = cdt;
-            setText("Text Symbolizer");
-            setIcon(ICON_NEW);
-            addActionListener(new ActionListener() {
-
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    rule.symbolizers().add(SF.textSymbolizer());
-                    
-                }
-            });
-        }
-    }
-
-    class NewRasterSymbolizerItem extends JMenuItem {
-
-        private final MutableRule rule;
-
-        NewRasterSymbolizerItem(MutableRule cdt) {
-            this.rule = cdt;
-            setText("Raster Symbolizer");
-            setIcon(ICON_NEW);
-            addActionListener(new ActionListener() {
-
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    rule.symbolizers().add(SF.rasterSymbolizer());
-                }
-            });
-        }
-    }
-    
 }
