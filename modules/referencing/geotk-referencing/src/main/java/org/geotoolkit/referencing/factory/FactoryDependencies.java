@@ -20,7 +20,6 @@ package org.geotoolkit.referencing.factory;
 import java.util.Map;
 import java.util.Collection;
 import java.util.IdentityHashMap;
-import java.io.Writer;
 import java.io.Console;
 import java.io.PrintWriter;
 import java.io.IOException;
@@ -268,8 +267,8 @@ public class FactoryDependencies {
      * @param  out Where to write the dependencies tree.
      * @throws IOException if an error occured while writing to the stream.
      */
-    public void print(final Writer out) throws IOException {
-        out.write(Trees.toString(asTree()));
+    public void print(final Appendable out) throws IOException {
+        out.append(Trees.toString(asTree()));
     }
 
     /**
@@ -412,5 +411,15 @@ public class FactoryDependencies {
      */
     private static int intValue(final Integer value) {
         return (value != null) ? value.intValue() : 0;
+    }
+
+    /**
+     * Returns the string representation of the dependencies tree.
+     *
+     * @since 3.10
+     */
+    @Override
+    public String toString() {
+        return Trees.toString(asTree());
     }
 }

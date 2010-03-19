@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.logging.LogRecord;
 import javax.imageio.spi.ServiceRegistry;
 
@@ -38,6 +39,7 @@ import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.referencing.factory.AllAuthoritiesFactory;
 import org.geotoolkit.referencing.factory.MultiAuthoritiesFactory;
 import org.geotoolkit.referencing.factory.CachingAuthorityFactory;
+import org.geotoolkit.referencing.factory.FactoryDependencies;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.resources.Loggings;
@@ -160,7 +162,27 @@ final class DefaultAuthorityFactory extends CachingAuthorityFactory implements C
         hints.clear();
         hints.put(AllAuthoritiesFactory.USER_FACTORIES_KEY, factories);
         hints.put(Hints.FORCE_LONGITUDE_FIRST_AXIS_ORDER, longitudeFirst);
-        return new DefaultAuthorityFactory(AllAuthoritiesFactory.getInstance(hints));
+        final DefaultAuthorityFactory factory = new DefaultAuthorityFactory(AllAuthoritiesFactory.getInstance(hints));
+        factory.log(Level.CONFIG, longitudeFirst);
+        return factory;
+    }
+
+    /**
+     * Formats a tree of factory dependencies and sent it to the logger at the given level.
+     */
+    private void log(final Level level, final boolean longitudeFirst) {
+        final Logger logger = Logging.getLogger(DefaultAuthorityFactory.class);
+        if (logger.isLoggable(level)) {
+            final FactoryDependencies printer = new FactoryDependencies(this);
+            printer.setAbridged(true);
+            final LogRecord record = new LogRecord(level,
+                    "CRS.getAuthorityFactory(" + longitudeFirst +") creates:" + // TODO: localize
+                    System.getProperty("line.separator", "\n") + printer);
+            record.setSourceClassName("org.geotoolkit.referencing.CRS");
+            record.setSourceMethodName("getAuthorityFactory");
+            record.setLoggerName(logger.getName());
+            logger.log(record);
+        }
     }
 
     /**

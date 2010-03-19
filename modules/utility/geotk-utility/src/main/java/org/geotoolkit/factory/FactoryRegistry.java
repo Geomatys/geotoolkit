@@ -867,9 +867,7 @@ public class FactoryRegistry extends ServiceRegistry {
      * @param message   A buffer where to write the logging message.
      * @return {@code true} if at least one factory has been registered.
      */
-    private <T> boolean register(final Iterator<T> factories, final Class<T> category,
-            final StringBuilder message)
-    {
+    private <T> boolean register(final Iterator<T> factories, final Class<T> category, final StringBuilder message) {
         boolean newServices = false;
         final String lineSeparator = System.getProperty("line.separator", "\n");
         while (factories.hasNext()) {
@@ -936,6 +934,9 @@ public class FactoryRegistry extends ServiceRegistry {
                  * MathTransformProviders) would be otherwise quite verbose.
                  */
                 message.append(lineSeparator).append("  \u2022 ").append(factoryClass.getCanonicalName());
+                if (replacement != null) {
+                    message.append("  (shared)"); // TODO: localize
+                }
                 newServices = true;
             }
         }
@@ -974,7 +975,7 @@ public class FactoryRegistry extends ServiceRegistry {
     }
 
     /**
-     * Logs the specified message after all provider for a given category have been registered.
+     * Logs the specified message after the registration of all providers for a given category.
      */
     private static void log(final String method, final StringBuilder message) {
         final LogRecord record = new LogRecord(Level.CONFIG, message.toString());
