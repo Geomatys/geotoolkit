@@ -20,6 +20,7 @@ package org.geotoolkit.sampling.xml.v100;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.v311.CurvePropertyType;
 import org.geotoolkit.gml.xml.v311.FeaturePropertyType;
@@ -57,6 +58,7 @@ import org.geotoolkit.util.Utilities;
     "shape",
     "length"
 })
+@XmlRootElement(name="SamplingCurve")
 public class SamplingCurveType extends SpatiallyExtensiveSamplingFeatureType {
 
     @XmlElement(required = true)
