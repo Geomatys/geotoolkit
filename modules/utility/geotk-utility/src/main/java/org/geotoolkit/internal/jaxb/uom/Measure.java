@@ -26,6 +26,7 @@ import javax.xml.bind.annotation.XmlValue;
 import javax.xml.bind.annotation.XmlAttribute;
 
 import org.geotoolkit.measure.Units;
+import org.geotoolkit.internal.jaxb.MarshalContext;
 
 
 /**
@@ -38,7 +39,7 @@ import org.geotoolkit.measure.Units;
  *
  * @author Cédric Briançon (Geomatys)
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.06
+ * @version 3.10
  *
  * @see org.geotoolkit.measure.Measure
  *
@@ -115,38 +116,38 @@ public final class Measure {
      * time, and can be invoked only once.
      *
      * @param uom The unit of measure as a string.
+     * @throws URISyntaxException If the {@code uom} looks like a URI, but can not be parsed.
      */
-    public void setUOM(String uom) {
+    public void setUOM(String uom) throws URISyntaxException {
         if (unit != null) {
             throw new IllegalStateException();
         }
         uom = uom.trim();
         /*
-         * Special processing if the uom looks like a URN or URL.
+         * Try to guess if the UOM is a URN or URL. We looks for character that are usually
+         * part of URI but not part of unit symbols, for example ':'. We can not search for
+         * '/' and '.' since they are part of UCUM representation.
          */
         if (uom.indexOf(':') >= 0) {
-            int i = uom.lastIndexOf("@gml:id=");
-            if (i >= 0) {
-                i += 8; // 8 is the length of "@gml:id="
-                for (final int length=uom.length(); i<length; i++) {
-                    final char c = uom.charAt(i);
-                    if (!Character.isWhitespace(c)) {
-                        if (c == '\'') i++;
-                        break;
+            final URI uri = MarshalContext.converters().toURI(uom);
+            String part = uri.getFragment();
+            if (part != null) {
+                uom = part;
+                int i = uom.lastIndexOf("@gml:id=");
+                if (i >= 0) {
+                    i += 8; // 8 is the length of "@gml:id="
+                    for (final int length=uom.length(); i<length; i++) {
+                        final char c = uom.charAt(i);
+                        if (!Character.isWhitespace(c)) {
+                            if (c == '\'') i++;
+                            break;
+                        }
                     }
+                    final int stop = uom.lastIndexOf('\'');
+                    uom = ((stop > i) ? uom.substring(i, stop) : uom.substring(i)).trim();
                 }
-                final int stop = uom.lastIndexOf('\'');
-                uom = ((stop > i) ? uom.substring(i, stop) : uom.substring(i)).trim();
-            } else try {
-                final URI uri = new URI(uom);
-                String part = uri.getFragment();
-                if (part != null) {
-                    uom = part;
-                } else if ((part = uri.getPath()) != null) {
-                    uom = new File(part).getName();
-                }
-            } catch (URISyntaxException e) {
-                // Ignore.
+            } else if ((part = uri.getPath()) != null) {
+                uom = new File(part).getName();
             }
         }
         unit = Units.valueOf(uom);

@@ -17,7 +17,9 @@
  */
 package org.geotoolkit.internal.jaxb.uom;
 
+import java.net.URISyntaxException;
 import javax.measure.unit.SI;
+import javax.measure.unit.NonSI;
 
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -34,12 +36,18 @@ import static org.junit.Assert.*;
 public final class MeasureTest {
     /**
      * Tests the {@link Measure#setUOM(String)}.
+     *
+     * @throws URISyntaxException Should not happen.
      */
     @Test
-    public void testSetUOM() {
+    public void testSetUOM() throws URISyntaxException {
         final Measure measure = new Measure();
         measure.setUOM("http://standards.iso.org/ittf/PubliclyAvailableStandards/ISO_19139_Schemas/resources/uom/gmxUom.xml#m");
         assertEquals(SI.METRE, measure.unit);
+
+        measure.unit = null;
+        measure.setUOM("../uom/ML_gmxUom.xsd#xpointer(//*[@gml:id='deg'])");
+        assertEquals(NonSI.DEGREE_ANGLE, measure.unit);
 
         measure.unit = null;
         measure.setUOM("http://my.big.org/units/kg");
