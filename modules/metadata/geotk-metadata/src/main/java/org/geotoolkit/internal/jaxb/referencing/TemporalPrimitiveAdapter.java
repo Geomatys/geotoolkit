@@ -114,6 +114,7 @@ public final class TemporalPrimitiveAdapter extends MetadataAdapter<TemporalPrim
             final Date begin = XmlUtilities.toDate(TimePeriod.select(period.beginPosition, period.begin));
             final Date end   = XmlUtilities.toDate(TimePeriod.select(period.endPosition,   period.end));
             if (begin != null && end != null) {
+                final LogRecord record;
                 if (end.before(begin)) {
                     /*
                      * Be tolerant - we can treat such case as an empty range, which is a similar
@@ -121,16 +122,20 @@ public final class TemporalPrimitiveAdapter extends MetadataAdapter<TemporalPrim
                      * TemporalPrimitive as the source class, since it is the closest we can get
                      * to a public API.
                      */
-                    final LogRecord record = Errors.getResources(null).getLogRecord(
-                            Level.WARNING, Errors.Keys.BAD_RANGE_$2, begin, end);
-                    record.setSourceClassName(TemporalPrimitive.class.getName());
-                    record.setSourceMethodName("setTimePeriod");
-                    Logging.getLogger("org.geotoolkit.xml").log(record);
+                    record = Errors.getResources(null).getLogRecord(Level.WARNING,
+                            Errors.Keys.BAD_RANGE_$2, begin, end);
+                } else if (factory == null) {
+                    record = Errors.getResources(null).getLogRecord(Level.WARNING,
+                            Errors.Keys.MISSING_MODULE_$1, "geotk-temporal");
+                } else {
+                    metadata = factory.createPeriod(
+                               factory.createInstant(factory.createPosition(begin)),
+                               factory.createInstant(factory.createPosition(end)));
                     return;
                 }
-                metadata = factory.createPeriod(
-                           factory.createInstant(factory.createPosition(begin)),
-                           factory.createInstant(factory.createPosition(end)));
+                record.setSourceClassName(TemporalPrimitive.class.getName());
+                record.setSourceMethodName("setTimePeriod");
+                Logging.getLogger("org.geotoolkit.xml").log(record);
             }
         }
     }
