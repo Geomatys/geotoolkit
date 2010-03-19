@@ -160,7 +160,7 @@ public final class TemporalUtilities {
                     //e.g : 1985-04-12T10:15:30-04
                     dateString = dateString.concat("00");
                 }
-            } else if (dateString.endsWith("Z")) {
+            } else if (dateString.charAt(dateString.length()-1) == 'Z') {
                 //e.g : 1985-04-12T10:15:30Z
                 dateString = dateString.substring(0, dateString.length() - 1).concat("+0000");
             } else {
@@ -202,7 +202,7 @@ public final class TemporalUtilities {
     }
 
     public static String getTimeZone(final String dateString) {
-        if (dateString.endsWith("Z")) {
+        if (dateString.charAt(dateString.length()-1) == 'Z') {
             return "GMT+0";
         }
         int index = dateString.lastIndexOf('+');
