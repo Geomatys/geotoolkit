@@ -19,6 +19,7 @@ package org.geotoolkit.swe.xml.v101;
 //jaxB import
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
 
 // Constellation dependencies
@@ -37,6 +38,7 @@ import org.opengis.observation.Phenomenon;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Phenomenon")
+@XmlRootElement(name = "phenomenon")
 @XmlSeeAlso({ CompoundPhenomenonEntry.class })
 public class PhenomenonEntry extends DefinitionType implements Phenomenon {
     /**
