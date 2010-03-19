@@ -234,6 +234,25 @@ public final class StringUtilities {
     }
 
     /**
+     * Convert the given string into a string recognize by HTML.
+     *
+     * @param text The string to convert.
+     * @return The string wit no special chars, which are not recognized in HTML.
+     */
+    public static String htmlEncodeSpecialChars(final String text) {
+        final StringBuilder sb = new StringBuilder();
+        for (int i=0; i<text.length(); i++) {
+            final char c = text.charAt(i);
+            if (c > 127) { // special chars
+                sb.append("&#").append((int)c).append(";");
+            } else {
+                sb.append(c);
+            }
+        }
+        return sb.toString();
+    }
+
+    /**
      * Returns true if one of the {@code String} elements in a {@code List}
      * matches the given {@code String}, insensitive to case.
      *

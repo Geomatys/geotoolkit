@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2009, Geomatys
+ *    (C) 2009-2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -19,8 +19,10 @@ package org.geotoolkit.data.wfs;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.bind.JAXBException;
@@ -37,6 +39,7 @@ import org.opengis.filter.Filter;
  * Abstract Get feature request.
  * 
  * @author Johann Sorel (Geomatys)
+ * @author Cédric Briançon (Geomatys)
  * @module pending
  */
 public abstract class AbstractGetFeature extends AbstractRequest implements GetFeatureRequest{
@@ -132,10 +135,14 @@ public abstract class AbstractGetFeature extends AbstractRequest implements GetF
 
         if(typeName != null){
             final StringBuilder sbN = new StringBuilder();
-            final StringBuilder sbNS = new StringBuilder("{");
+            final StringBuilder sbNS = new StringBuilder();
 
-            sbN.append(typeName.getPrefix()).append(':').append(typeName.getLocalPart()).append(',');
-            sbNS.append("xmlns(").append(typeName.getPrefix()).append('=').append(typeName.getNamespaceURI()).append(')').append(',');
+            String prefix = typeName.getPrefix();
+            if (prefix == null || prefix.isEmpty()) {
+                prefix = "ut";
+            }
+            sbN.append(prefix).append(':').append(typeName.getLocalPart()).append(',');
+            sbNS.append("xmlns(").append(prefix).append('=').append(typeName.getNamespaceURI()).append(')').append(',');
 
             if(sbN.length() > 0 && sbN.charAt(sbN.length()-1) == ','){
                 sbN.deleteCharAt(sbN.length()-1);
@@ -162,8 +169,16 @@ public abstract class AbstractGetFeature extends AbstractRequest implements GetF
             }
 
             final String strFilter = writer.toString();
-
-            requestParameters.put("FILTER",strFilter);
+            try {
+                writer.close();
+            } catch (IOException ex) {
+                // Do nothing
+            }
+            try {
+                requestParameters.put("FILTER", URLEncoder.encode(strFilter, "UTF-8"));
+            } catch (UnsupportedEncodingException ex) {
+                // Should not occur.
+            }
         }
 
         if(propertyNames != null){
@@ -179,7 +194,6 @@ public abstract class AbstractGetFeature extends AbstractRequest implements GetF
 
             requestParameters.put("PROPERTYNAME", sb.toString());
         }
-
 
         return super.getURL();
     }
