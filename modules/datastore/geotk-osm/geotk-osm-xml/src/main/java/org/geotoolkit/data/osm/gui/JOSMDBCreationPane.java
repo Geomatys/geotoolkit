@@ -253,7 +253,7 @@ public class JOSMDBCreationPane extends javax.swing.JPanel {
         guiLblInsertData.setBusy(true);
         final long before = System.currentTimeMillis();
 
-        IdentifiedElement ele = null;
+        Object ele = null;
         try{
             while(reader.hasNext()){
                 //elements are ordered in the osm file

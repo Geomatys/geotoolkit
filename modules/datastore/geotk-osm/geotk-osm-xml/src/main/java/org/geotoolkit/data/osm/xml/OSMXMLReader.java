@@ -33,11 +33,14 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
 import org.geotoolkit.data.osm.model.Bound;
+import org.geotoolkit.data.osm.model.ChangeSet;
 import org.geotoolkit.data.osm.model.IdentifiedElement;
 import org.geotoolkit.data.osm.model.Member;
 import org.geotoolkit.data.osm.model.MemberType;
 import org.geotoolkit.data.osm.model.Node;
 import org.geotoolkit.data.osm.model.Relation;
+import org.geotoolkit.data.osm.model.Transaction;
+import org.geotoolkit.data.osm.model.TransactionType;
 import org.geotoolkit.data.osm.model.User;
 import org.geotoolkit.data.osm.model.Way;
 import org.geotoolkit.factory.FactoryFinder;
@@ -64,7 +67,6 @@ public class OSMXMLReader{
         //to replace static initialization
         FactoryFinder.getFilterFactory(null);
 
-
         ObjectConverter<String,Date> oc = null;
         try {
             oc = ConverterRegistry.system().converter(String.class, Date.class);
@@ -83,6 +85,7 @@ public class OSMXMLReader{
     private final Map<String,String> tags = new HashMap<String, String>();
     private final List<Member> members = new ArrayList<Member>();
     private final List<Long> nodes = new ArrayList<Long>();
+    private final List<IdentifiedElement> transaction = new ArrayList<IdentifiedElement>();
     private long id = -1;
     private int version = -1;
     private int changeset = -1;
@@ -90,7 +93,7 @@ public class OSMXMLReader{
     private int uid = User.USER_ID_NONE;
     private long timestamp = -1;
 
-    private IdentifiedElement current;
+    private Object current;
 
     private long moveToId = -1;
 
@@ -113,7 +116,11 @@ public class OSMXMLReader{
                         break searchLoop;
                     }else if(typeName.equalsIgnoreCase(TAG_NODE)
                             || typeName.equalsIgnoreCase(TAG_WAY)
-                            || typeName.equalsIgnoreCase(TAG_REL)){
+                            || typeName.equalsIgnoreCase(TAG_REL)
+                            || typeName.equalsIgnoreCase(TAG_MODIFY)
+                            || typeName.equalsIgnoreCase(TAG_CREATE)
+                            || typeName.equalsIgnoreCase(TAG_DELETE)
+                            || typeName.equalsIgnoreCase(TAG_CHANGESET)){
                         //there is no bounds tag
                         break searchLoop;
                     }
@@ -143,10 +150,15 @@ public class OSMXMLReader{
         read();
         return current != null;
     }
-    
-    public IdentifiedElement next() throws XMLStreamException{
+
+    /**
+     *
+     * @return IdentifiedElement (Way,node,Relation) or Transaction (in case of daily update files)
+     * @throws XMLStreamException
+     */
+    public Object next() throws XMLStreamException{
         read();
-        final IdentifiedElement ele = current;
+        final Object ele = current;
         current = null;
         return ele;
     }
@@ -183,15 +195,23 @@ public class OSMXMLReader{
             switch (type) {
                 // Si c'est un début d'elément, on garde son type
                 case XMLStreamReader.START_ELEMENT:
-                    if(reader.getLocalName().equalsIgnoreCase(TAG_NODE)){
-                        resetCache();
+                    final String localName = reader.getLocalName();
+                    if(localName.equalsIgnoreCase(TAG_NODE)){
                         current = parseNode(reader);
-                    }else if(reader.getLocalName().equalsIgnoreCase(TAG_WAY)){
-                        resetCache();
+                    }else if(localName.equalsIgnoreCase(TAG_WAY)){
                         current = parseWay(reader);
-                    }else if(reader.getLocalName().equalsIgnoreCase(TAG_REL)){
-                        resetCache();
+                    }else if(localName.equalsIgnoreCase(TAG_REL)){
                         current = parseRelation(reader);
+                    }else if(localName.equalsIgnoreCase(TAG_CREATE)){
+                        current = parseCreate(reader);
+                    }else if(localName.equalsIgnoreCase(TAG_MODIFY)){
+                        current = parseModify(reader);
+                    }else if(localName.equalsIgnoreCase(TAG_DELETE)){
+                        current = parseDelete(reader);
+                    }else if(localName.equalsIgnoreCase(TAG_CHANGESET)){
+                        current = parseChangeSet(reader);
+                    }else{
+                        System.out.println("Unexpected tag : " + localName);
                     }
             }
         }
@@ -281,6 +301,8 @@ public class OSMXMLReader{
 
 
     private Node parseNode(XMLStreamReader reader) throws XMLStreamException {
+        resetCache();
+
         Double lat = null;
         Double lon = null;
 
@@ -328,6 +350,7 @@ public class OSMXMLReader{
     }
 
     private Way parseWay(XMLStreamReader reader) throws XMLStreamException {
+        resetCache();
 
         if(!parseIdentifiedAttributs(reader)){
             //we dont want this entity
@@ -362,6 +385,7 @@ public class OSMXMLReader{
     }
 
     private Relation parseRelation(XMLStreamReader reader) throws XMLStreamException {
+        resetCache();
 
         if(!parseIdentifiedAttributs(reader)){
             //we dont want this entity
@@ -393,6 +417,56 @@ public class OSMXMLReader{
         }
 
         throw new XMLStreamException("Error in xml file, relation tag without end.");
+    }
+
+    private ChangeSet parseChangeSet(XMLStreamReader reader) throws XMLStreamException {
+        //todo, we need this ?
+        toTagEnd(reader, TAG_CHANGESET);
+        return new ChangeSet();
+    }
+
+    private Transaction parseCreate(XMLStreamReader reader) throws XMLStreamException {
+        return parseTransaction(reader, TransactionType.CREATE);
+    }
+
+    private Transaction parseModify(XMLStreamReader reader) throws XMLStreamException {
+        return parseTransaction(reader, TransactionType.MODIFY);
+    }
+
+    private Transaction parseDelete(XMLStreamReader reader) throws XMLStreamException {
+        return parseTransaction(reader, TransactionType.DELETE);
+    }
+
+    private Transaction parseTransaction(XMLStreamReader reader, TransactionType tt) throws XMLStreamException {
+        transaction.clear();
+
+        while (reader.hasNext()) {
+            final int type = reader.next();
+
+            switch (type) {
+                case XMLStreamReader.START_ELEMENT:
+                    final String localName = reader.getLocalName();
+                    if(localName.equalsIgnoreCase(TAG_NODE)){
+                        transaction.add(parseNode(reader));
+                    }else if(localName.equalsIgnoreCase(TAG_WAY)){
+                        transaction.add(parseWay(reader));
+                    }else if(localName.equalsIgnoreCase(TAG_REL)){
+                        transaction.add(parseRelation(reader));
+                    }
+                    break;
+                case XMLStreamReader.CDATA:
+                case XMLStreamReader.CHARACTERS:
+                    break;
+                case XMLStreamReader.END_ELEMENT:
+                    if(reader.getLocalName().equalsIgnoreCase(tt.getTagName())){
+                        //end of the transaction element
+                        return new Transaction(tt,transaction);
+                    }
+                    break;
+            }
+        }
+
+        throw new XMLStreamException("Error in xml file, modify tag without end.");
     }
 
 

@@ -81,6 +81,25 @@ public class OSMXMLConstants {
     public static final String ATT_BOUNDS_MAXLAT = "maxlat";
     public static final String ATT_BOUNDS_MAXLON = "maxlon";
 
+    /**
+     * ChangeSet tag.
+     */
+    public static final String TAG_CHANGESET = "changeset";
+
+    /**
+     * Delete tag.
+     */
+    public static final String TAG_DELETE = "delete";
+
+    /**
+     * Modify tag.
+     */
+    public static final String TAG_MODIFY = "modify";
+
+    /**
+     * Create tag.
+     */
+    public static final String TAG_CREATE = "create";
 
     private OSMXMLConstants(){};
 
