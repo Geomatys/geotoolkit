@@ -31,11 +31,14 @@ import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.referencing.operation.MathTransformFactory;
+import org.opengis.referencing.operation.MathTransform1D;
+import org.opengis.metadata.extent.GeographicBoundingBox;
 
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.internal.sql.table.Entry;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.metadata.iso.extent.DefaultGeographicBoundingBox;
+import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 import org.geotoolkit.referencing.operation.matrix.MatrixFactory;
 import org.geotoolkit.referencing.operation.matrix.XMatrix;
@@ -89,15 +92,22 @@ final class GridGeometryEntry extends Entry {
     /**
      * A shape describing the coverage outline in the database CRS (usually WGS 84). This is the
      * value computed by Geotk, not the PostGIS object declared in the database, in order to make
-     * sure that coordinate transformations are applied using the same algorithm (the Geotk one as
-     * opposed to the Proj4 algorithms used by PostGIS). This is necessary in case the
-     * {@code "spatial_ref_sys"} table content is inconsistent with the EPSG database
-     * used by Geotk.
+     * sure that coordinate transformations are applied using the same algorithm, i.e. the Geotk
+     * algortihm instead than the Proj4 algorithms used by PostGIS. This is necessary in case the
+     * {@code "spatial_ref_sys"} table content is inconsistent with the EPSG database used by Geotk.
+     *
+     * @see #getHorizontalEnvelope()
      */
     private final Shape standardEnvelope;
 
     /**
-     * The vertical ordinates, or {@code null}.
+     * The minimal and maximal <var>z</var> values in the vertical CRS of the database,
+     * or {@link Double#NaN} if none.
+     */
+    final double standardMinZ, standardMaxZ;
+
+    /**
+     * The vertical ordinates in the vertical CRS of the coverage, or {@code null}.
      */
     private final double[] verticalOrdinates;
 
@@ -108,7 +118,7 @@ final class GridGeometryEntry extends Entry {
      * @param gridToCRS         The grid to CRS affine transform.
      * @param verticalOrdinates The vertical ordinate values, or {@code null} if none.
      */
-    GridGeometryEntry(final int                identifier,
+    GridGeometryEntry(final Comparable<?>      identifier,
                       final Dimension          size,
                       final SpatialRefSysEntry srsEntry,
                       final AffineTransform2D  gridToCRS,
@@ -126,7 +136,24 @@ final class GridGeometryEntry extends Entry {
             }
         }
         geometry = srsEntry.createGridGeometry(size, gridToCRS, verticalOrdinates, mtFactory);
-        standardEnvelope = srsEntry.toDatabaseHorizontalCRS().createTransformedShape(getShape());
+        standardEnvelope = srsEntry.toDatabaseHorizontalCRS().createTransformedShape(getHorizontalEnvelope());
+        double min = Double.NaN, max = Double.NaN;
+        if (verticalOrdinates != null && verticalOrdinates.length != 0) {
+            min = verticalOrdinates[0];
+            max = verticalOrdinates[verticalOrdinates.length - 1];
+            final MathTransform1D tr = srsEntry.toDatabaseVerticalCRS();
+            if (tr != null) {
+                min = tr.transform(min);
+                max = tr.transform(max);
+                if (max < min) {
+                    final double t = max;
+                    max = min;
+                    min = max;
+                }
+            }
+        }
+        standardMinZ = min;
+        standardMaxZ = max;
     }
 
     /**
@@ -145,13 +172,20 @@ final class GridGeometryEntry extends Entry {
     }
 
     /**
+     * Returns the temporal component of the CRS.
+     */
+    public DefaultTemporalCRS getTemporalCRS() {
+        return srsEntry.temporalCRS;
+    }
+
+    /**
      * Returns the coordinate reference system. May be up to 4-dimensional.
      *
      * @param includeTime {@code true} if the CRS should include the time component,
      *        or {@code false} for a spatial-only CRS.
      */
-    public CoordinateReferenceSystem getCoordinateReferenceSystem(final boolean includeTime) {
-        final CoordinateReferenceSystem crs = srsEntry.getCoordinateReferenceSystem(includeTime);
+    public CoordinateReferenceSystem getSpatioTemporalCRS(final boolean includeTime) {
+        final CoordinateReferenceSystem crs = srsEntry.getSpatioTemporalCRS(includeTime);
         assert !includeTime || crs.equals(geometry.getCoordinateReferenceSystem()) : crs;
         return crs;
     }
@@ -212,19 +246,6 @@ final class GridGeometryEntry extends Entry {
     }
 
     /**
-     * Returns a copy of the geographic bounding box. This copy can be freely modified.
-     */
-    public DefaultGeographicBoundingBox getGeographicBoundingBox() {
-        Rectangle2D bounds;
-        if (standardEnvelope instanceof Rectangle2D) {
-            bounds = (Rectangle2D) standardEnvelope;
-        } else {
-            bounds = standardEnvelope.getBounds2D();
-        }
-        return new DefaultGeographicBoundingBox(bounds);
-    }
-
-    /**
      * Convenience method returning the two first dimension of the grid range.
      */
     public Dimension getSize() {
@@ -242,10 +263,21 @@ final class GridGeometryEntry extends Entry {
     }
 
     /**
+     * Returns the geographic bounding box. This method transforms the {@link #standardEnvelope}
+     * rather than the coverage envelope, because the "standard" envelope is typically already
+     * in WGS 84.
+     *
+     * @throws TransformException If the envelope can not be converted to WGS84.
+     */
+    public GeographicBoundingBox getGeographicBoundingBox() throws TransformException {
+        return new DefaultGeographicBoundingBox(standardEnvelope.getBounds2D(), srsEntry.getDatabaseCRS());
+    }
+
+    /**
      * Returns the coverage shape in coverage CRS (not database CRS). The returned shape is likely
      * (but not garanteed) to be an instance of {@link Rectangle2D}. It can be freely modified.
      */
-    public Shape getShape() {
+    public Shape getHorizontalEnvelope() {
         final GridEnvelope gridRange = geometry.getGridRange();
         Shape shape = new Rectangle2D.Double(
                 gridRange.getLow (0), gridRange.getLow (1),

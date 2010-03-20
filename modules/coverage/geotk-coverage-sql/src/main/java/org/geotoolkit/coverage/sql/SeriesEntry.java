@@ -86,7 +86,9 @@ final class SeriesEntry extends Entry {
     final FormatEntry format;
 
     /**
-     * Creates a new series entry.
+     * Creates a new series entry. The identifier must be an instance of {@link Integer} rather
+     * than an arbitrary {@link Comparable} because some methods assume integer type. A search
+     * on usage of {@link #getIdentifier()} will list them.
      *
      * @param identifier The identifier for this series.
      * @param root       The root directory or URL, or {@code null} if none.
@@ -95,7 +97,7 @@ final class SeriesEntry extends Entry {
      * @param format     The format of all coverages in this series.
      * @param remarks    The remarks, or {@code null} if none.
      */
-    protected SeriesEntry(final int identifier, final String root, final String pathname,
+    protected SeriesEntry(final Integer identifier, final String root, final String pathname,
                           final String extension, final FormatEntry format, final String remarks)
     {
         super(identifier, remarks);

@@ -58,14 +58,14 @@ final class FormatTable extends SingletonTable<FormatEntry> {
      * Creates a format from the current row in the specified result set.
      *
      * @param  results The result set to read.
+     * @param  identifier The identifier of the format to create.
      * @return The entry for current row in the specified result set.
      * @throws SQLException if an error occured while reading the database.
      */
     @Override
-    protected FormatEntry createEntry(final ResultSet results) throws SQLException {
+    protected FormatEntry createEntry(final ResultSet results, final Comparable<?> identifier) throws SQLException {
         final FormatQuery query = (FormatQuery) super.query;
         final int encodingIndex = indexOf(query.encoding);
-        final String name     = results.getString(indexOf(query.name));
         final String format   = results.getString(indexOf(query.format));
         final String encoding = results.getString(encodingIndex);
         final boolean geophysics;
@@ -78,8 +78,8 @@ final class FormatTable extends SingletonTable<FormatEntry> {
             // Following constructor will close the ResultSet.
             throw new IllegalRecordException(errors().getString(
                     Errors.Keys.UNKNOWN_PARAMETER_$1, encoding),
-                    this, results, encodingIndex, name);
+                    this, results, encodingIndex, identifier);
         }
-        return new FormatEntry(getDatabase(), name, format, geophysics);
+        return new FormatEntry(getDatabase(), identifier, format, geophysics);
     }
 }

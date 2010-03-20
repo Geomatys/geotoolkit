@@ -30,7 +30,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.SortedMap;
+import java.util.NavigableMap;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.logging.Level;
@@ -145,15 +145,15 @@ final class GridGeometryTable extends SingletonTable<GridGeometryEntry> {
      * Creates a grid geometry from the current row in the specified result set.
      *
      * @param  results The result set to read.
+     * @param  identifier The identifier of the grid geometry to create.
      * @return The entry for current row in the specified result set.
      * @throws SQLException if an error occured while reading the database.
      */
     @Override
     @SuppressWarnings("fallthrough")
-    protected GridGeometryEntry createEntry(final ResultSet results) throws SQLException {
+    protected GridGeometryEntry createEntry(final ResultSet results, final Comparable<?> identifier) throws SQLException {
         final GridGeometryQuery query  = (GridGeometryQuery) super.query;
         final SpatialDatabase database = (SpatialDatabase) getDatabase();
-        final int    identifier        = results.getInt   (indexOf(query.identifier));
         final int    width             = results.getInt   (indexOf(query.width));
         final int    height            = results.getInt   (indexOf(query.height));
         final double scaleX            = results.getDouble(indexOf(query.scaleX));
@@ -175,7 +175,7 @@ final class GridGeometryTable extends SingletonTable<GridGeometryEntry> {
             if (candidate != srsEntry) {
                 srsEntry = candidate;
             } else try {
-                srsEntry.createSpatioTemporalCRS(getAuthorityFactory(), database.horizontalCRS);
+                srsEntry.createSpatioTemporalCRS(database, getAuthorityFactory());
             } catch (FactoryException exception) {
                 gridCRS.remove(srsEntry);
                 final Column column;
@@ -200,7 +200,7 @@ final class GridGeometryTable extends SingletonTable<GridGeometryEntry> {
             throw new IllegalRecordException(exception, this, results, indexOf(query.identifier), identifier);
         }
         if (entry.isEmpty()) {
-            throw new IllegalRecordException("The geodetic envelope is empty.", this, results, // TODO: localize
+            throw new IllegalRecordException(errors().getString(Errors.Keys.EMPTY_ENVELOPE), this, results,
                     indexOf(width == 0 ? query.width : height == 0 ? query.height : query.identifier), identifier);
         }
         return entry;
@@ -260,11 +260,13 @@ final class GridGeometryTable extends SingletonTable<GridGeometryEntry> {
      * For every values in the specified map, replaces the collection of {@link GridGeometryEntry}
      * identifiers by a set of altitudes. On input, the values are usually {@code List<String>}.
      * On output, all values will be {@code SortedSet<Number>}.
+     * <p>
+     * This method is for internal usage by {@link GridCoverageTable#getAvailableCentroids()} only.
      *
      * @param  centroids The date-extents map.
      * @return The same reference than {@code centroids}, but casted as a date-altitudes map.
      */
-    SortedMap<Date,SortedSet<Number>> identifiersToAltitudes(final SortedMap<Date,List<String>> centroids) throws SQLException {
+    NavigableMap<Date,SortedSet<Number>> identifiersToAltitudes(final NavigableMap<Date,List<String>> centroids) throws SQLException {
         final Map<Number,Number> numbers = new HashMap<Number,Number>(); // For sharing instances.
         final Map<SortedSet<Number>, SortedSet<Number>> pool = new HashMap<SortedSet<Number>, SortedSet<Number>>();
         final Map<List<String>,SortedSet<Number>> altitudesMap = new HashMap<List<String>,SortedSet<Number>>();
@@ -318,7 +320,7 @@ final class GridGeometryTable extends SingletonTable<GridGeometryEntry> {
      * Unsafe cast of a map. Used because we changed the map type in-place.
      */
     @SuppressWarnings({"unchecked","rawtypes"})
-    private static SortedMap<Date,SortedSet<Number>> unsafe(final SortedMap centroids) {
+    private static NavigableMap<Date,SortedSet<Number>> unsafe(final NavigableMap centroids) {
         return centroids;
     }
 

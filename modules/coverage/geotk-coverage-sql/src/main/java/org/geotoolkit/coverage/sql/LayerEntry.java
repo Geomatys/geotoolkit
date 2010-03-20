@@ -20,6 +20,7 @@ package org.geotoolkit.coverage.sql;
 import java.util.Map;
 import java.util.List;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.sql.SQLException;
 import java.awt.geom.Dimension2D;
@@ -57,7 +58,7 @@ final class LayerEntry extends Entry implements Layer {
      * may set this field to 7, while a layer of mounthly SST coverage may set this field
      * to 30. The value is only approximative.
      */
-    private final double timeInterval;
+    final double timeInterval;
 
     /**
      * The domain for this layer, or {@code null} if not yet computed.
@@ -101,7 +102,7 @@ final class LayerEntry extends Entry implements Layer {
      * @param fallback     The layer on which to fallback, or {@code null} if none.
      * @param remarks      Optional remarks, or {@code null}.
      */
-    LayerEntry(final LayerTable table, final String name, final double timeInterval,
+    LayerEntry(final LayerTable table, final Comparable<?> name, final double timeInterval,
             final String fallback, final String remarks)
     {
         super(name, remarks);
@@ -116,7 +117,7 @@ final class LayerEntry extends Entry implements Layer {
      */
     @Override
     public String getName() {
-        return (String) identifier;
+        return identifier.toString();
     }
 
     /**
@@ -149,11 +150,31 @@ final class LayerEntry extends Entry implements Layer {
     }
 
     /**
+     * Returns all series in this layer.
+     *
+     * @throws SQLException If an error occured while fetching the series.
+     */
+    final Collection<SeriesEntry> getSeries() throws SQLException {
+        return getSeriesMap().values();
+    }
+
+    /**
+     * Returns the series for the given identifier, or {@code null} if none.
+     *
+     * @param  name The series identifier.
+     * @return The series in this layer for the given identifier, or {@code null} if none.
+     * @throws SQLException If an error occured while fetching the series.
+     */
+    final SeriesEntry getSeries(int identifier) throws SQLException {
+        return getSeriesMap().get(identifier);
+    }
+
+    /**
      * Returns all series in this layer as (<var>identifier</var>, <var>series</var>) pairs.
      *
      * @throws SQLException If an error occured while fetching the series.
      */
-    final synchronized Map<Integer,SeriesEntry> getSeries() throws SQLException {
+    final synchronized Map<Integer,SeriesEntry> getSeriesMap() throws SQLException {
         if (series == null) {
             final SeriesTable st = table.getSeriesTable();
             st.setLayer(getName());
@@ -195,7 +216,7 @@ final class LayerEntry extends Entry implements Layer {
         List<MeasurementRange<?>> sampleValueRanges = this.sampleValueRanges;
         if (sampleValueRanges == null) try {
             MeasurementRange<?>[] ranges = null;
-            for (final SeriesEntry series : getSeries().values()) {
+            for (final SeriesEntry series : getSeries()) {
                 final FormatEntry format = series.format;
                 if (format != null) {
                     final MeasurementRange<Double>[] candidates = format.getSampleValueRanges();
@@ -278,7 +299,7 @@ final class LayerEntry extends Entry implements Layer {
     private void writeObject(final ObjectOutputStream out) throws IOException {
         try {
             getDomain();
-            getSeries();
+            getSeriesMap();
             getFallback();
         } catch (Exception e) {
             final InvalidObjectException ex = new InvalidObjectException(e.getLocalizedMessage());

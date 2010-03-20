@@ -20,6 +20,8 @@ package org.geotoolkit.internal.sql.table;
 import java.io.Serializable;
 
 import org.geotoolkit.lang.ThreadSafe;
+import org.geotoolkit.resources.Errors;
+import org.geotoolkit.util.NullArgumentException;
 import org.geotoolkit.util.Utilities;
 
 
@@ -47,7 +49,7 @@ public class Entry implements Serializable {
      * <p>
      * This field is not allowed to be null.
      */
-    protected final Comparable<?> identifier;
+    public final Comparable<?> identifier;
 
     /**
      * A description of this entry, of {@code null} if none. If provided, the description should
@@ -56,23 +58,15 @@ public class Entry implements Serializable {
     public final String description;
 
     /**
-     * Creates an entry for the specified textual identifier and optional description.
-     *
-     * @param identifier  The entry identifier.
-     * @param description The description, or {@code null} if none.
-     */
-    protected Entry(final String identifier, final String description) {
-        this.identifier  = identifier.trim();
-        this.description = description;
-    }
-
-    /**
-     * Creates an entry for the specified numeric identifier and optional description.
+     * Creates an entry for the specified identifier and optional description.
      *
      * @param identifier  The numeric identifier.
      * @param description The description, or {@code null} if none.
      */
-    protected Entry(final int identifier, final String description) {
+    protected Entry(final Comparable<?> identifier, final String description) {
+        if (identifier == null) {
+            throw new NullArgumentException(Errors.format(Errors.Keys.NULL_ARGUMENT_$1, "identifier"));
+        }
         this.identifier  = identifier;
         this.description = description;
     }

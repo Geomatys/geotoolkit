@@ -130,7 +130,7 @@ public abstract class BoundedSingletonTable<E extends Entry> extends SingletonTa
      * @throws IllegalArgumentException if the specified parameters are not one of those
      *         declared for {@link QueryType#SELECT}.
      */
-    protected BoundedSingletonTable(final Query query, final Parameter pkParam,
+    protected BoundedSingletonTable(final Query query, final Parameter[] pkParam,
             final Parameter byTimeRange, final Parameter bySpatialExtent)
     {
         super(query, pkParam);

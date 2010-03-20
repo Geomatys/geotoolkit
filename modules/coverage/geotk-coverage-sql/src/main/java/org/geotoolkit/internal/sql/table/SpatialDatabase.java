@@ -17,23 +17,29 @@
  */
 package org.geotoolkit.internal.sql.table;
 
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Properties;
 import javax.sql.DataSource;
 
+import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.SingleCRS;
 import org.opengis.referencing.crs.VerticalCRS;
 import org.opengis.referencing.crs.TemporalCRS;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import org.geotoolkit.lang.ThreadSafe;
+import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.metadata.iso.extent.DefaultExtent;
 import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.referencing.crs.DefaultVerticalCRS;
 import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
 import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.referencing.factory.wkt.DirectPostgisFactory;
+import org.geotoolkit.resources.Errors;
 
 
 /**
@@ -48,6 +54,11 @@ import org.geotoolkit.referencing.CRS;
  */
 @ThreadSafe(concurrent = true)
 public class SpatialDatabase extends Database {
+    /**
+     * The horizontal SRID of {@link #horizontalCRS}, as declared in the PostGIS geometry column.
+     */
+    public final int horizontalSRID;
+
     /**
      * The horizontal coordinate reference system used for performing the search in the database.
      * It must match the CRS used in the geometry columns indexed by PostGIS.
@@ -77,6 +88,7 @@ public class SpatialDatabase extends Database {
      */
     public SpatialDatabase(final SpatialDatabase toCopy) {
         super(toCopy);
+        this.horizontalSRID    = toCopy.horizontalSRID;
         this.horizontalCRS     = toCopy.horizontalCRS;
         this.verticalCRS       = toCopy.verticalCRS;
         this.temporalCRS       = toCopy.temporalCRS;
@@ -104,9 +116,10 @@ public class SpatialDatabase extends Database {
      */
     public SpatialDatabase(final DataSource datasource, final Properties properties, final TemporalCRS temporalCRS) {
         super(datasource, properties);
-        this.horizontalCRS = DefaultGeographicCRS.WGS84;
-        this.verticalCRS   = DefaultVerticalCRS.ELLIPSOIDAL_HEIGHT;
-        this.temporalCRS   = DefaultTemporalCRS.wrap(temporalCRS);
+        this.horizontalSRID = 4326;
+        this.horizontalCRS  = DefaultGeographicCRS.WGS84;
+        this.verticalCRS    = DefaultVerticalCRS.ELLIPSOIDAL_HEIGHT;
+        this.temporalCRS    = DefaultTemporalCRS.wrap(temporalCRS);
         final Map<String,Object> id = new HashMap<String,Object>(4);
         id.put(CoordinateReferenceSystem.NAME_KEY, "WGS84");
         id.put(CoordinateReferenceSystem.DOMAIN_OF_VALIDITY_KEY, DefaultExtent.WORLD);
@@ -119,14 +132,12 @@ public class SpatialDatabase extends Database {
      * properties.
      *
      * @param  datasource The data source.
-     * @param  horizontalCRS The horizontal coordinate reference system used in PostGIS tables.
-     * @param  verticalCRS The vertical reference system, or {@code null} if none.
-     * @param  temporalCRS The temporal vertical reference system, or {@code null} if none.
-     * @param  spatioTemporalCRS The complete CRS, including the vertical and temporal components.
      * @param  properties The configuration properties, or {@code null} if none.
+     * @param  spatioTemporalCRS The complete CRS, including the vertical and temporal components.
+     * @throws FactoryException If an error occured while fetching the SRID of the horizontal CRS.
      */
-    private SpatialDatabase(final DataSource datasource, final Properties properties,
-            final CoordinateReferenceSystem spatioTemporalCRS)
+    public SpatialDatabase(final DataSource datasource, final Properties properties,
+            final CoordinateReferenceSystem spatioTemporalCRS) throws FactoryException
     {
         super(datasource, properties);
         Table.ensureNonNull("spatioTemporalCRS", spatioTemporalCRS);
@@ -134,5 +145,40 @@ public class SpatialDatabase extends Database {
         this.verticalCRS       = CRS.getVerticalCRS(spatioTemporalCRS);
         this.temporalCRS       = DefaultTemporalCRS.wrap(CRS.getTemporalCRS(spatioTemporalCRS));
         this.spatioTemporalCRS = spatioTemporalCRS;
+        /*
+         * Try to get the PostGIS SRID from the horizontal CRS. First, search for an explicit
+         * PostGIS code. If none are found, lookup for the EPSG code and convert that code to
+         * a PostGIS code (this is usually the same, but not necessarly).
+         */
+        if (horizontalCRS == null) {
+            horizontalSRID = 0;
+            return;
+        }
+        final String code = CRS.lookupIdentifier(Citations.POSTGIS, horizontalCRS, false);
+        if (code != null) try {
+            horizontalSRID = Integer.parseInt(code);
+            return;
+        } catch (NumberFormatException e) {
+            throw new FactoryException(Errors.format(Errors.Keys.NOT_AN_INTEGER_$1, code), e);
+        }
+        /*
+         * No PostGIS code. Search for an EPSG code...
+         */
+        Integer id = CRS.lookupEpsgCode(horizontalCRS, true);
+        if (id != null) {
+            try {
+                final Connection c = datasource.getConnection();
+                final DirectPostgisFactory postgis = new DirectPostgisFactory(null, c);
+                id = postgis.getPrimaryKey(CoordinateReferenceSystem.class, id.toString());
+                c.close();
+            } catch (SQLException e) {
+                throw new FactoryException(e);
+            }
+            if (id != null) {
+                horizontalSRID = id;
+                return;
+            }
+        }
+        throw new FactoryException(Errors.format(Errors.Keys.UNDEFINED_PROPERTY_$1, "SRID"));
     }
 }

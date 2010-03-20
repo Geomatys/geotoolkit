@@ -72,20 +72,20 @@ final class LayerTable extends SingletonTable<LayerEntry> {
      * Creates a layer from the current row in the specified result set.
      *
      * @param  results The result set to read.
+     * @param  identifier The identifier of the layer to create.
      * @return The entry for current row in the specified result set.
      * @throws SQLException if an error occured while reading the database.
      */
     @Override
-    protected LayerEntry createEntry(final ResultSet results) throws SQLException {
+    protected LayerEntry createEntry(final ResultSet results, final Comparable<?> identifier) throws SQLException {
         final LayerQuery query = (LayerQuery) super.query;
-        final String name = results.getString(indexOf(query.name));
         double period = results.getDouble(indexOf(query.period));
         if (results.wasNull()) {
             period = Double.NaN;
         }
         final String fallback = results.getString(indexOf(query.fallback));
         final String comments = results.getString(indexOf(query.comments));
-        final LayerEntry entry = new LayerEntry(this, name, period, fallback, comments);
+        final LayerEntry entry = new LayerEntry(this, identifier, period, fallback, comments);
         return entry;
     }
 

@@ -27,6 +27,7 @@ import java.util.LinkedHashSet;
 import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.util.collection.Cache;
 import org.geotoolkit.internal.sql.TypeMapper;
+import org.geotoolkit.resources.Errors;
 
 
 /**
@@ -38,8 +39,7 @@ import org.geotoolkit.internal.sql.TypeMapper;
  * methods:
  * <p>
  * <ul>
- *   <li>{@link #createEntry}<br>
- *       Creates an entry for the current row.</li>
+ *   <li>{@link #createEntry(ResultSet)}: Creates an entry for the current row.</li>
  * </ul>
  * <p>
  * The entries created by this class are cached for faster access the next time a
@@ -56,31 +56,39 @@ import org.geotoolkit.internal.sql.TypeMapper;
 @ThreadSafe(concurrent = true)
 public abstract class SingletonTable<E extends Entry> extends Table {
     /**
-     * The main parameter to use for the identification of an entry, or {@code null} if unknown.
+     * The main parameters to use for the identification of an entry, or an empty array if none.
      */
-    private final Parameter pkParam;
+    private final Parameter[] pkParam;
 
     /**
-     * The entries created up to date. The keys shall be {@link Integer} or {@link String}
-     * instances only. This field is never shared between different {@code Table} instances.
+     * The entries created up to date. The keys shall be {@link Integer}, {@link String} or
+     * {@link MultiColumnsIdentifier} instances only. Note that this field is shared between
+     * different {@code Table} instances of the same kind created for the same database.
      */
     private final Cache<Comparable<?>,E> cache;
 
     /**
+     * Returns {@code true} if the subclass overrides the
+     * {@link #createIdentifier(ResultSet, int[])} method.
+     */
+    private final boolean invokeCreateIdentifier;
+
+    /**
      * Creates a new table using the specified query. The optional {@code pkParam} argument
-     * defines the parameter to use for looking an element by identifier. This is usually the
+     * defines the parameters to use for looking an element by identifier. This is usually the
      * parameter for the value to search in the primary key column. This information is needed
      * for {@link #getEntry(String)} execution.
      *
      * @param  query The query to use for this table.
-     * @param  pkParam The parameter for looking an element by name, or {@code null} if none.
+     * @param  pkParam The parameters for looking an element by name.
      * @throws IllegalArgumentException if the specified parameters are not one of those
      *         declared for {@link QueryType#SELECT}.
      */
-    protected SingletonTable(final Query query, final Parameter pkParam) {
+    protected SingletonTable(final Query query, final Parameter... pkParam) {
         super(query);
-        this.pkParam = pkParam;
+        this.pkParam = pkParam.clone();
         cache = new Cache<Comparable<?>,E>();
+        invokeCreateIdentifier = isOverriden("createIdentifier", ResultSet.class, int[].class);
     }
 
     /**
@@ -97,35 +105,94 @@ public abstract class SingletonTable<E extends Entry> extends Table {
         super(table);
         pkParam = table.pkParam;
         cache   = table.cache;
+        invokeCreateIdentifier = table.invokeCreateIdentifier;
     }
 
     /**
-     * Returns the columns index of the primary key, or 0 if none. Note that in this method,
-     * the "<cite>primary key</cite>" is inferred from the {@code pkParam} argument given to
-     * the constructor. This is usually the primary key defined in the database, but this is
-     * not verified.
+     * Returns {@code true} if the given method has been overriden. This method does not assume
+     * that the method is public (otherwise we would have used a more efficient approach).
+     */
+    private boolean isOverriden(final String methodName, final Class<?>... parameterTypes) {
+        for (Class<?> c=getClass(); !c.equals(SingletonTable.class); c=c.getSuperclass()) {
+            try {
+                c.getDeclaredMethod(methodName, parameterTypes);
+                return true;
+            } catch (NoSuchMethodException e) {
+                // Ignore and check the super-class.
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Returns the 1-based column indices of the primary keys. Note that some elements in the
+     * returned array may be 0 if the corresponding parameter is not applicable to the current
+     * query type.
+     * <p>
+     * This method infers the "<cite>primary keys</cite>" from the {@code pkParam} argument
+     * given to the constructor. This is usually the primary key defined in the database,
+     * but this is not verified.
      *
-     * @return The index of the primary key column, or 0 if none.
+     * @return The indices of the primary key columns.
+     */
+    private int[] getPrimaryKeyColumns() {
+        final QueryType type = getQueryType();
+        final int[] indices = new int[pkParam.length];
+        for (int i=0; i<indices.length; i++) {
+            indices[i] = pkParam[i].column.indexOf(type);
+        }
+        return indices;
+    }
+
+    /**
+     * Returns the first value of {@link #getPrimaryKeyColumns()} which is different than 0,
+     * or 0 if none. This is a convenience method used only for formatting exception messages.
+     *
+     * @return The index of the first primary key column, or 0 if none.
      */
     private int getPrimaryKeyColumn() {
-        return (pkParam != null) ? pkParam.column.indexOf(getQueryType()) : 0;
+        return getPrimaryKeyColumn(getPrimaryKeyColumns());
     }
 
     /**
-     * Sets the value of the parameter which is checking the primary key.
+     * Returns the first value of the given array which is different than zero.
+     * If none is found, returns zero.
+     */
+    private static int getPrimaryKeyColumn(final int[] pkIndices) {
+        for (final int column : pkIndices) {
+            if (column != 0) {
+                return column;
+            }
+        }
+        return 0;
+    }
+
+    /**
+     * Sets the value of the parameters associated to the primary key columns.
      *
      * @param  statement The statement in which to set the parameter value.
-     * @param  identifier The value to set.
+     * @param  identifier The identifier to set in the statement.
      * @throws SQLException If the parameter can not be set.
      */
     private void setPrimaryKeyParameter(final PreparedStatement statement, final Comparable<?> identifier)
             throws SQLException
     {
-        final int pkIndex = indexOf(pkParam);
-        if (identifier instanceof Number) {
-            statement.setInt(pkIndex, ((Number) identifier).intValue());
+        final Comparable<?>[] identifiers;
+        if (identifier instanceof MultiColumnIdentifier<?>) {
+            identifiers = ((MultiColumnIdentifier<?>) identifier).getIdentifiers();
         } else {
-            statement.setString(pkIndex, identifier.toString());
+            identifiers = new Comparable<?>[] {identifier};
+        }
+        if (identifiers.length != pkParam.length) {
+            throw new CatalogException(errors().getString(Errors.Keys.MISMATCHED_ARRAY_LENGTH));
+        }
+        for (int i=0; i<identifiers.length; i++) {
+            final int pkIndex = indexOf(pkParam[i]);
+            if (identifier instanceof Number) {
+                statement.setInt(pkIndex, ((Number) identifier).intValue());
+            } else {
+                statement.setString(pkIndex, identifier.toString());
+            }
         }
     }
 
@@ -162,7 +229,7 @@ public abstract class SingletonTable<E extends Entry> extends Table {
     @Override
     protected void fireStateChanged(final String property) throws CatalogException {
         cache.clear();
-        fireStateChanged(property);
+        super.fireStateChanged(property);
     }
 
     /**
@@ -178,16 +245,36 @@ public abstract class SingletonTable<E extends Entry> extends Table {
     }
 
     /**
+     * Creates an identifier for the current row in the given result set. This method needs to
+     * be overriden by subclasses using {@link MultiColumnIdentifier}. Other subclasses don't
+     * need to override this method: a {@link String} or {@link Integer} identifier will be
+     * used as needed.
+     *
+     * @param  results The result set.
+     * @param  pkIndices The indices of the column to inspect (typically the primary keys).
+     * @return The {@linkplain MultiColumnIdentifier multi-column identifier}.
+     * @throws SQLException If an error occured while fetching the data.
+     *
+     * @since 3.10
+     */
+    protected Comparable<?> createIdentifier(ResultSet results, int[] pkIndices) throws SQLException {
+        results.close();
+        throw new CatalogException(errors().getString(Errors.Keys.UNSUPPORTED_OPERATION_$1, getQueryType()));
+    }
+
+    /**
      * Creates an {@link Element} object for the current {@linkplain ResultSet result set} row.
      * This method is invoked automatically by {@link #getEntry(String)} and {@link #getEntries()}.
      *
      * @param  results  The result set to use for fetching data. Only the current row should be
      *                  used, i.e. {@link ResultSet#next} should <strong>not</strong> be invoked.
+     * @param  identifier The identifier of the entry being created.
      * @return The element for the current row in the specified {@code results}.
      * @throws CatalogException if a logical error has been detected in the database content.
      * @throws SQLException if an error occured will reading from the database.
      */
-    protected abstract E createEntry(final ResultSet results) throws CatalogException, SQLException;
+    protected abstract E createEntry(final ResultSet results, final Comparable<?> identifier)
+            throws CatalogException, SQLException;
 
     /**
      * Invokes the user's {@link #createEntry(ResultSet)} method, but wraps {@link SQLException}
@@ -198,12 +285,12 @@ public abstract class SingletonTable<E extends Entry> extends Table {
      *         Note that this is not an error occuring during normal execution, but rather
      *         an error occuring while querying database metadata for building the exception.
      */
-    private E createEntry(final ResultSet results, final Comparable<?> key)
+    private E createEntryCatchSQL(final ResultSet results, final Comparable<?> identifier)
             throws CatalogException, SQLException
     {
         CatalogException exception;
         try {
-            return createEntry(results);
+            return createEntry(results, identifier);
         } catch (CatalogException cause) {
             if (cause.isMetadataInitialized()) {
                 throw cause;
@@ -212,7 +299,7 @@ public abstract class SingletonTable<E extends Entry> extends Table {
         } catch (SQLException cause) {
             exception = new CatalogException(cause);
         }
-        exception.setMetadata(this, results, getPrimaryKeyColumn(), key);
+        exception.setMetadata(this, results, getPrimaryKeyColumn(), identifier);
         exception.clearColumnName();
         throw exception;
     }
@@ -225,7 +312,7 @@ public abstract class SingletonTable<E extends Entry> extends Table {
      * @throws NoSuchRecordException if no record was found for the specified key.
      * @throws SQLException if an error occured will reading from the database.
      */
-    public final E getEntry(final Comparable<?> identifier) throws NoSuchRecordException, SQLException {
+    public E getEntry(final Comparable<?> identifier) throws NoSuchRecordException, SQLException {
         if (identifier == null) {
             return null;
         }
@@ -240,7 +327,7 @@ public abstract class SingletonTable<E extends Entry> extends Table {
                     setPrimaryKeyParameter(statement, identifier);
                     final ResultSet results = statement.executeQuery();
                     while (results.next()) {
-                        final E candidate = createEntry(results, identifier);
+                        final E candidate = createEntryCatchSQL(results, identifier);
                         if (entry == null) {
                             entry = candidate;
                         } else if (!entry.equals(candidate)) {
@@ -270,16 +357,19 @@ public abstract class SingletonTable<E extends Entry> extends Table {
      * @return The set of entries. May be empty, but neven {@code null}.
      * @throws SQLException if an error occured will reading from the database.
      */
-    public final Set<E> getEntries() throws SQLException {
+    public Set<E> getEntries() throws SQLException {
         final Set<E> entries = new LinkedHashSet<E>();
         synchronized (getLock()) {
             final LocalCache.Stmt ce = getStatement(QueryType.LIST);
+            final int[] pkIndices = getPrimaryKeyColumns();
+            final int pkIndex = getPrimaryKeyColumn(pkIndices);
             final ResultSet results = ce.statement.executeQuery();
-            final int pkIndex = getPrimaryKeyColumn();
-            final boolean isNumeric = isNumeric(results, pkIndex);
+            final boolean isNumeric = !invokeCreateIdentifier && isNumeric(results, pkIndex);
             while (results.next()) {
                 final Comparable<?> identifier;
-                if (isNumeric) {
+                if (invokeCreateIdentifier) {
+                    identifier = createIdentifier(results, pkIndices);
+                } else if (isNumeric) {
                     identifier = results.getInt(pkIndex);
                 } else {
                     identifier = results.getString(pkIndex);
@@ -290,7 +380,7 @@ public abstract class SingletonTable<E extends Entry> extends Table {
                     try {
                         entry = handler.peek();
                         if (entry == null) {
-                            entry = createEntry(results, identifier);
+                            entry = createEntryCatchSQL(results, identifier);
                         }
                     } finally {
                         handler.putAndUnlock(entry);

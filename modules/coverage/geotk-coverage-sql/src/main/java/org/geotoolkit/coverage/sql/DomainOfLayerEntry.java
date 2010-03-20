@@ -64,7 +64,7 @@ final class DomainOfLayerEntry extends Entry {
     /**
      * Creates a new entry with the specified values, which are <strong>not</strong> cloned.
      */
-    DomainOfLayerEntry(final String name, final DateRange timeRange,
+    DomainOfLayerEntry(final Comparable<?> name, final DateRange timeRange,
                        final GeographicBoundingBox bbox, final Dimension2D resolution,
                        final String remarks)
     {

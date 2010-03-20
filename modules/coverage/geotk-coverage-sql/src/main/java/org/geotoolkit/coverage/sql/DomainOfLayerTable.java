@@ -68,14 +68,14 @@ final class DomainOfLayerTable extends SingletonTable<DomainOfLayerEntry> {
      * Creates a layer from the current row in the specified result set.
      *
      * @param  results The result set to read.
+     * @param  identifier The name of the layer for the entry being read.
      * @return The entry for current row in the specified result set.
      * @throws SQLException if an error occured while reading the database.
      */
     @Override
-    protected DomainOfLayerEntry createEntry(final ResultSet results) throws SQLException {
+    protected DomainOfLayerEntry createEntry(final ResultSet results, final Comparable<?> identifier) throws SQLException {
         final DomainOfLayerQuery query = (DomainOfLayerQuery) super.query;
         final Calendar calendar = getCalendar();
-        final String name  = results.getString(indexOf(query.layer));
         Date   startTime   = results.getTimestamp(indexOf(query.startTime), calendar);
         Date   endTime     = results.getTimestamp(indexOf(query.endTime), calendar);
         double west        = results.getDouble(indexOf(query.west));  if (results.wasNull()) west  = Longitude.MIN_VALUE;
@@ -93,7 +93,7 @@ final class DomainOfLayerTable extends SingletonTable<DomainOfLayerEntry> {
         }
         final DefaultGeographicBoundingBox bbox = new DefaultGeographicBoundingBox(west, east, south, north);
         bbox.freeze();
-        return new DomainOfLayerEntry(name,
+        return new DomainOfLayerEntry(identifier,
                 (startTime!=null || endTime!=null) ? new DateRange(startTime, endTime) : null, bbox,
                 (xResolution>0 || yResolution>0) ? new DoubleDimension2D(xResolution, yResolution) : null, null);
     }

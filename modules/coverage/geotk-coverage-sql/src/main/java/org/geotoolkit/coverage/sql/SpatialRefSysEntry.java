@@ -19,6 +19,8 @@ package org.geotoolkit.coverage.sql;
 
 import java.util.Map;
 import java.util.HashMap;
+import java.util.logging.Level;
+import java.util.logging.LogRecord;
 import java.awt.Dimension;
 import java.awt.geom.AffineTransform;
 
@@ -27,20 +29,26 @@ import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CRSFactory;
 import org.opengis.referencing.crs.SingleCRS;
 import org.opengis.referencing.crs.VerticalCRS;
-import org.opengis.referencing.crs.TemporalCRS;
 import org.opengis.referencing.crs.CRSAuthorityFactory;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.Matrix;
+import org.opengis.referencing.operation.MathTransform;
+import org.opengis.referencing.operation.MathTransform1D;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.MathTransformFactory;
+import org.opengis.referencing.operation.OperationNotFoundException;
 
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.XArrays;
+import org.geotoolkit.util.Utilities;
+import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.internal.referencing.CRSUtilities;
+import org.geotoolkit.internal.sql.table.SpatialDatabase;
+import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.referencing.operation.matrix.MatrixFactory;
+import org.geotoolkit.referencing.operation.transform.IdentityTransform;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.resources.Errors;
 
@@ -63,14 +71,15 @@ final class SpatialRefSysEntry {
     final int horizontalSRID, verticalSRID;
 
     /**
-     * The horizontal CRS. This is created by {@link #createSpatialCRS}.
+     * The horizontal CRS. This is created by {@link #createSpatioTemporalCRS}.
      *
      * @see #horizontalSRID
      */
     private SingleCRS horizontalCRS;
 
     /**
-     * The vertical CRS, or {@code null} if none. This is created by {@link #createSpatialCRS}.
+     * The vertical CRS, or {@code null} if none.
+     * This is created by {@link #createSpatioTemporalCRS}.
      *
      * @see #verticalSRID
      */
@@ -79,28 +88,50 @@ final class SpatialRefSysEntry {
     /**
      * The temporal CRS, or {@code null} if none.
      */
-    private final TemporalCRS temporalCRS;
+    final DefaultTemporalCRS temporalCRS;
 
     /**
      * The {@link #spatioTemporalCRS} without the temporal component.
      * This is created by {@link #createSpatioTemporalCRS}.
+     *
+     * @see #getSpatioTemporalCRS(boolean)
      */
     private CoordinateReferenceSystem spatialCRS;
 
     /**
      * The coordinate reference system made of the combinaison of all the above.
      * This is created by {@link #createSpatioTemporalCRS}.
+     *
+     * @see #getSpatioTemporalCRS(boolean)
      */
     private CoordinateReferenceSystem spatioTemporalCRS;
 
     /**
-     * The transform to the database horizontal CRS created when first needed. The database uses
-     * a single CRS for indexing the whole {@code GridGeometries} table, while individual records
-     * may use different CRS.
+     * The database horizontal CRS. This is a copy of the {@link SpatialDatabase#horizontalCRS}
+     * and is initialized by {@link #createSpatioTemporalCRS}.
+     *
+     * @see #getDatabaseCRS()
+     */
+    private SingleCRS databaseCRS;
+
+    /**
+     * The transform to the database horizontal CRS. The database uses a single CRS for
+     * indexing the whole {@code GridGeometries} table, while individual records may use
+     * different CRS.
+     * <p>
+     * This is created by {@link #createSpatioTemporalCRS}.
      *
      * @see #toDatabaseHorizontalCRS()
      */
-    private transient MathTransform2D toDatabaseHorizontalCRS;
+    private MathTransform2D toDatabaseHorizontalCRS;
+
+    /**
+     * The transform to the database vertical CRS.
+     * This is created by {@link #createSpatioTemporalCRS}.
+     *
+     * @see #toDatabaseVerticalCRS()
+     */
+    private MathTransform1D toDatabaseVerticalCRS;
 
     /**
      * Constructs a new entry for the given SRID.
@@ -109,7 +140,7 @@ final class SpatialRefSysEntry {
      * @param verticalSRID   The SRID of the vertical CRS, or {@code 0} if none.
      * @param temporalCRS    The temporal CRS, or {@code null} if none.
      */
-    SpatialRefSysEntry(final int horizontalSRID, final int verticalSRID, final TemporalCRS temporalCRS) {
+    SpatialRefSysEntry(final int horizontalSRID, final int verticalSRID, final DefaultTemporalCRS temporalCRS) {
         this.horizontalSRID = horizontalSRID;
         this.verticalSRID   = verticalSRID;
         this.temporalCRS    = temporalCRS;
@@ -138,9 +169,10 @@ final class SpatialRefSysEntry {
      * @param  databaseCRS {@link org.geotoolkit.internal.sql.table.SpatialDatabase#horizontalCRS}.
      * @throws FactoryException if an error occured while creating the CRS.
      */
-    final void createSpatioTemporalCRS(final CRSAuthorityFactory factory, final SingleCRS databaseCRS)
+    final void createSpatioTemporalCRS(final SpatialDatabase database, final CRSAuthorityFactory factory)
             throws FactoryException
     {
+        assert uninitialized() != 0 : this;
         if (horizontalSRID != 0) {
             final CoordinateReferenceSystem crs =
                     factory.createCoordinateReferenceSystem(String.valueOf(horizontalSRID));
@@ -196,7 +228,29 @@ final class SpatialRefSysEntry {
         }
         assert CRS.getHorizontalCRS(spatioTemporalCRS) == CRS.getHorizontalCRS(spatialCRS);
         assert CRS.getVerticalCRS  (spatioTemporalCRS) == CRS.getVerticalCRS  (spatialCRS);
-        toDatabaseHorizontalCRS = (MathTransform2D) CRS.findMathTransform(horizontalCRS, databaseCRS, true);
+        databaseCRS = database.horizontalCRS;
+        if (horizontalCRS != null) {
+            toDatabaseHorizontalCRS = (MathTransform2D) CRS.findMathTransform(horizontalCRS, database.horizontalCRS, true);
+        }
+        if (verticalCRS != null) {
+            MathTransform tr;
+            try {
+                tr = CRS.findMathTransform(verticalCRS, database.verticalCRS, true);
+            } catch (OperationNotFoundException e) {
+                tr = IdentityTransform.create(1);
+                /*
+                 * Be lenient with vertical transformations,  because many of them are not yet
+                 * implemented (e.g. "mean sea level" to "ellipsoidal"). Log a warning without
+                 * stack trace in order to not scare the user too much.  Use GridGeometryTable
+                 * as the source class since SpatialRefSysEntry is too low level.
+                 */
+                final LogRecord record = new LogRecord(Level.WARNING, e.getLocalizedMessage());
+                record.setSourceClassName("org.geotoolkit.coverage.sql.GridGeometryTable");
+                record.setSourceMethodName("createEntry");
+                Logging.log(SpatialRefSysEntry.class, record);
+            }
+            toDatabaseVerticalCRS = (MathTransform1D) tr;
+        }
     }
 
     /**
@@ -206,9 +260,35 @@ final class SpatialRefSysEntry {
      * @param includeTime {@code true} if the CRS should include the time component,
      *        or {@code false} for a spatial-only CRS.
      */
-    final CoordinateReferenceSystem getCoordinateReferenceSystem(final boolean includeTime) {
+    public CoordinateReferenceSystem getSpatioTemporalCRS(final boolean includeTime) {
         assert uninitialized() == 0 : this;
         return includeTime ? spatioTemporalCRS : spatialCRS;
+    }
+
+    /**
+     * Returns the database horizontal CRS used in PostGIS geometry columns.
+     */
+    final SingleCRS getDatabaseCRS() {
+        assert uninitialized() == 0 : this;
+        return databaseCRS;
+    }
+
+    /**
+     * Returns the transform from this entry horizontal CRS to the database horizontal CRS,
+     * or {@code null} if none.
+     */
+    final MathTransform2D toDatabaseHorizontalCRS() {
+        assert uninitialized() == 0 : this;
+        return toDatabaseHorizontalCRS;
+    }
+
+    /**
+     * Returns the transform from this entry vertical CRS to the database vertical CRS,
+     * or {@code null} if none.
+     */
+    final MathTransform1D toDatabaseVerticalCRS() {
+        assert uninitialized() == 0 : this;
+        return toDatabaseVerticalCRS;
     }
 
     /**
@@ -268,15 +348,6 @@ final class SpatialRefSysEntry {
         target.setElement(1, 0,   source.getShearY());
         target.setElement(0, dim, source.getTranslateX());
         target.setElement(1, dim, source.getTranslateY());
-    }
-
-    /**
-     * Returns the transform from this entry horizontal CRS to the database horizontal CRS.
-     * The {@code #createSpatialCRS} method must have been invoked before this method.
-     */
-    final MathTransform2D toDatabaseHorizontalCRS() throws FactoryException {
-        assert uninitialized() == 0 : this;
-        return toDatabaseHorizontalCRS;
     }
 
     /**

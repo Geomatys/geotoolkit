@@ -88,20 +88,11 @@ final class FormatEntry extends Entry {
      * @param extension  Filename extension, excluding dot separator (example: {@code "png"}).
      * @param geophysics {@code true} if coverage to be read are already geophysics values.
      */
-    protected FormatEntry(final Database database, final String name, final String formatName, final boolean geophysics) {
+    protected FormatEntry(final Database database, final Comparable<?> name, final String formatName, final boolean geophysics) {
         super(name, null);
         this.database    = database;
         this.imageFormat = formatName.trim();
         this.geophysics  = geophysics;
-    }
-
-    /**
-     * Returns the name of this layer.
-     *
-     * @return The name of this layer.
-     */
-    public String getIdentifier() {
-        return (String) identifier;
     }
 
     /**
@@ -121,7 +112,7 @@ final class FormatEntry extends Entry {
     public synchronized List<GridSampleDimension> getSampleDimensions() throws SQLException {
         if (sampleDimensions == null) {
             final SampleDimensionTable  table = database.getTable(SampleDimensionTable.class);
-            final GridSampleDimension[] bands = table.getSampleDimensions(getIdentifier());
+            final GridSampleDimension[] bands = table.getSampleDimensions(identifier.toString());
             for (int i=0; i<bands.length; i++) {
                 bands[i] = bands[i].geophysics(geophysics);
             }

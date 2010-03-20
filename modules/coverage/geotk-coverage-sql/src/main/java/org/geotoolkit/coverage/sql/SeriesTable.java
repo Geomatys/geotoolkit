@@ -132,18 +132,22 @@ final class SeriesTable extends SingletonTable<SeriesEntry> {
 
     /**
      * Creates a series from the current row in the specified result set.
+     *
+     * @param  results The result set to read.
+     * @param  identifier The identifier of the series to create.
+     * @return The entry for current row in the specified result set.
+     * @throws SQLException if an error occured while reading the database.
      */
     @Override
-    protected SeriesEntry createEntry(final ResultSet results) throws SQLException {
+    protected SeriesEntry createEntry(final ResultSet results, final Comparable<?> identifier) throws SQLException {
         final SeriesQuery query     = (SeriesQuery) super.query;
-        final int     identifier    = results.getInt    (indexOf(query.identifier));
-        final String  formatID      = results.getString (indexOf(query.format));
-        final String  pathname      = results.getString (indexOf(query.pathname));
-        final String  extension     = results.getString (indexOf(query.extension));
+        final String  formatID      = results.getString(indexOf(query.format));
+        final String  pathname      = results.getString(indexOf(query.pathname));
+        final String  extension     = results.getString(indexOf(query.extension));
         final String  rootDirectory = getProperty(ConfigurationKey.ROOT_DIRECTORY);
         final String  rootURL       = getProperty(ConfigurationKey.ROOT_URL);
         final FormatEntry format = getFormatTable().getEntry(formatID);
-        return new SeriesEntry(identifier, (rootDirectory != null) ? rootDirectory : rootURL,
+        return new SeriesEntry((Integer) identifier, (rootDirectory != null) ? rootDirectory : rootURL,
                                pathname, extension, format, null);
     }
 

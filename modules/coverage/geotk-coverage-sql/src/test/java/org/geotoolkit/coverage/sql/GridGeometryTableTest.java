@@ -24,6 +24,7 @@ import java.awt.geom.AffineTransform;
 import org.opengis.geometry.Envelope;
 import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.metadata.extent.GeographicBoundingBox;
+import org.opengis.referencing.operation.TransformException;
 
 import org.geotoolkit.internal.sql.table.CatalogTestBase;
 
@@ -50,10 +51,11 @@ public final class GridGeometryTableTest extends CatalogTestBase {
      * Tests the {@link GridGeometryTable#getEntry}.
      *
      * @throws SQLException If the test can't connect to the database.
+     * @throws TransformException Should not happen.
      */
     @Test
-    public void testGetEntry() throws SQLException {
-        final GridGeometryTable table = new GridGeometryTable(getDatabase());
+    public void testGetEntry() throws SQLException, TransformException {
+        final GridGeometryTable table = getDatabase().getTable(GridGeometryTable.class);
         final GridGeometryEntry entry = table.getEntry(CORIOLIS_ID);
         assertEquals("horizontal SRID", 3395, entry.getHorizontalSRID());
         assertEquals("vertical SRID",   5714, entry.getVerticalSRID());
@@ -102,7 +104,7 @@ public final class GridGeometryTableTest extends CatalogTestBase {
      */
     @Test
     public void testFind() throws SQLException {
-        final GridGeometryTable table = new GridGeometryTable(getDatabase());
+        final GridGeometryTable table = getDatabase().getTable(GridGeometryTable.class);
         final GridGeometryEntry entry = table.getEntry(CORIOLIS_ID);
         final double[] depths = entry.getVerticalOrdinates();
 
@@ -124,7 +126,7 @@ public final class GridGeometryTableTest extends CatalogTestBase {
      */
     @Test
     public void testFindOrCreate() throws SQLException {
-        final GridGeometryTable table = new GridGeometryTable(getDatabase());
+        final GridGeometryTable table = getDatabase().getTable(GridGeometryTable.class);
         final GridGeometryEntry entry = table.getEntry(CORIOLIS_ID);
         final double[] depths = entry.getVerticalOrdinates();
 
