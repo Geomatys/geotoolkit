@@ -81,6 +81,8 @@ public abstract class AbstractMapLayer implements MapLayer {
 
     protected boolean selectable = false;
 
+    private double opacity = 1d;
+
     /**
      * Constructor that can used by subclass only.
      */
@@ -239,6 +241,30 @@ public abstract class AbstractMapLayer implements MapLayer {
             this.visible = visible;
         }
         firePropertyChange(VISIBILITY_PROPERTY, oldVisible, this.visible);
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override 
+    public double getOpacity(){
+        return opacity;
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public void setOpacity(double opacity){
+        final double oldOpacity;
+        synchronized (this) {
+            oldOpacity = this.opacity;
+            if(oldOpacity == opacity){
+                return;
+            }
+            this.opacity = opacity;
+        }
+        firePropertyChange(OPACITY_PROPERTY, oldOpacity, this.opacity);
     }
 
     /**

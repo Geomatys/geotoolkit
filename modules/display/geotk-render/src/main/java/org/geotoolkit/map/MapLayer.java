@@ -20,7 +20,6 @@ package org.geotoolkit.map;
 import java.beans.PropertyChangeEvent;
 import java.util.List;
 
-import org.geotoolkit.data.query.Query;
 import org.geotoolkit.style.MutableStyle;
 
 import org.opengis.display.primitive.Graphic;
@@ -29,7 +28,8 @@ import org.opengis.style.Description;
 
 /**
  * A layer to be rendered. A layer is an aggregation of both a
- * {@link FeatureSource}, a {@link MutableStyle} and, optionally, a {@link Query}
+ * data source : {@link FeatureCollection} or {@ GridCoverageReader}
+ * with a given {@link MutableStyle}.
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
@@ -40,6 +40,7 @@ public interface MapLayer {
     public static final String DESCRIPTION_PROPERTY = "description";
     public static final String STYLE_PROPERTY = "style";
     public static final String VISIBILITY_PROPERTY = "visibility";
+    public static final String OPACITY_PROPERTY = "opacity";
     public static final String SELECTABLE_PROPERTY = "selectable";
     public static final String QUERY_PROPERTY = "query";
     public static final String BOUNDS_PROPERTY = "bounds";
@@ -103,6 +104,21 @@ public interface MapLayer {
      *        <code>false</code>
      */
     void setVisible(boolean visible);
+
+    /**
+     * 
+     * @return double layer opacity between 0 and 1
+     */
+    double getOpacity();
+
+    /**
+     * Specify the global opacity of this layer.
+     * 0 is fully translucent and 1 is opaque.
+     * A {@link PropertyChangeEvent} is fired if the opacity changed.
+     * 
+     * @param opacity : value between 0 and 1
+     */
+    void setOpacity(double opacity);
 
     /**
      * Determine whether this layer is selectable on a map pane or whether the
