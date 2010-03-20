@@ -22,12 +22,21 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.gui.swing.tree.DefaultMutableTreeNode;
 import org.geotoolkit.gui.swing.tree.MutableTreeNode;
 import org.geotoolkit.lang.Static;
-import org.opengis.filter.Filter;
-import org.opengis.style.FeatureTypeStyle;
-import org.opengis.style.Rule;
-import org.opengis.style.Style;
 
+import org.opengis.filter.FilterFactory;
+import org.opengis.filter.expression.Expression;
+import org.opengis.style.FeatureTypeStyle;
+import org.opengis.style.Fill;
+import org.opengis.style.Graphic;
+import org.opengis.style.LineSymbolizer;
+import org.opengis.style.PointSymbolizer;
+import org.opengis.style.PolygonSymbolizer;
+import org.opengis.style.RasterSymbolizer;
+import org.opengis.style.Rule;
+import org.opengis.style.Stroke;
+import org.opengis.style.Style;
 import org.opengis.style.Symbolizer;
+import org.opengis.style.TextSymbolizer;
 
 /**
  * Convinient methods to transform a style in tree.
@@ -40,10 +49,15 @@ public final class StyleUtilities {
 
     private static final MutableStyleFactory SF = (MutableStyleFactory) FactoryFinder.getStyleFactory(
                                             new Hints(Hints.STYLE_FACTORY, MutableStyleFactory.class));
+    private static final FilterFactory FF = FactoryFinder.getFilterFactory(null);
 
     private StyleUtilities(){}
 
     public static MutableStyle copy(Style style){
+        return copy(style,1d);
+    }
+
+    public static MutableStyle copy(Style style, double opacity){
         final MutableStyle copy = SF.style();
         copy.setDefault(style.isDefault());
         copy.setDefaultSpecification(style.getDefaultSpecification());
@@ -51,13 +65,17 @@ public final class StyleUtilities {
         copy.setName(style.getName());
 
         for(FeatureTypeStyle fts : style.featureTypeStyles()){
-            copy.featureTypeStyles().add(copy(fts));
+            copy.featureTypeStyles().add(copy(fts,opacity));
         }
 
         return copy;
     }
 
     public static MutableFeatureTypeStyle copy(FeatureTypeStyle fts){
+        return copy(fts,1d);
+    }
+
+    public static MutableFeatureTypeStyle copy(FeatureTypeStyle fts, double opacity){
         final MutableFeatureTypeStyle copy = SF.featureTypeStyle();
         copy.semanticTypeIdentifiers().addAll(fts.semanticTypeIdentifiers());
         copy.setDescription(fts.getDescription());
@@ -66,13 +84,17 @@ public final class StyleUtilities {
         copy.setOnlineResource(fts.getOnlineResource());
 
         for(Rule r : fts.rules()){
-            copy.rules().add(copy(r));
+            copy.rules().add(copy(r,opacity));
         }
 
         return copy;
     }
 
     public static MutableRule copy(Rule rule){
+        return copy(rule,1d);
+    }
+
+    public static MutableRule copy(Rule rule, double opacity){
         final MutableRule copy = SF.rule();
         copy.setDescription(rule.getDescription());
         copy.setElseFilter(rule.isElseFilter());
@@ -82,8 +104,113 @@ public final class StyleUtilities {
         copy.setMinScaleDenominator(rule.getMinScaleDenominator());
         copy.setName(rule.getName());
         copy.setOnlineResource(rule.getOnlineResource());
+
+        for(Symbolizer symbol : rule.symbolizers()){
+            copy.symbolizers().add(copy(symbol,opacity));
+        }
+
         copy.symbolizers().addAll(rule.symbolizers());
         return copy;
+    }
+
+    public static Symbolizer copy(Symbolizer symbol, double opacity){
+        if(opacity == 1){
+            //no need to modify the symbol
+            return symbol;
+        }
+
+        if(symbol instanceof PointSymbolizer){
+            final PointSymbolizer ps = (PointSymbolizer) symbol;
+            final Graphic gra = ps.getGraphic();
+            return SF.pointSymbolizer(
+                    ps.getName(),
+                    ps.getGeometryPropertyName(),
+                    ps.getDescription(),
+                    ps.getUnitOfMeasure(),
+                    SF.graphic(
+                        gra.graphicalSymbols(),
+                        correctOpacity(gra.getOpacity(),opacity),
+                        gra.getSize(),
+                        gra.getRotation(),
+                        gra.getAnchorPoint(),
+                        gra.getDisplacement())
+                    );
+        }else if(symbol instanceof LineSymbolizer){
+            final LineSymbolizer ps = (LineSymbolizer) symbol;
+            return SF.lineSymbolizer(
+                    ps.getName(),
+                    ps.getGeometryPropertyName(),
+                    ps.getDescription(),
+                    ps.getUnitOfMeasure(),
+                    correctOpacity(ps.getStroke(), opacity),
+                    ps.getPerpendicularOffset());
+        }else if(symbol instanceof PolygonSymbolizer){
+            final PolygonSymbolizer ps = (PolygonSymbolizer) symbol;
+            final Stroke str = ps.getStroke();
+            return SF.polygonSymbolizer(
+                    ps.getName(),
+                    ps.getGeometryPropertyName(),
+                    ps.getDescription(),
+                    ps.getUnitOfMeasure(),
+                    correctOpacity(ps.getStroke(), opacity),
+                    correctOpacity(ps.getFill(), opacity),
+                    ps.getDisplacement(),
+                    ps.getPerpendicularOffset());
+        }else if(symbol instanceof TextSymbolizer){
+            final TextSymbolizer ps = (TextSymbolizer) symbol;
+            return SF.textSymbolizer(
+                    ps.getName(),
+                    ps.getGeometryPropertyName(),
+                    ps.getDescription(),
+                    ps.getUnitOfMeasure(),
+                    ps.getLabel(),
+                    ps.getFont(),
+                    ps.getLabelPlacement(),
+                    SF.halo(
+                        correctOpacity(ps.getHalo().getFill(), opacity),
+                        ps.getHalo().getRadius()),
+                    correctOpacity(ps.getFill(), opacity));
+        }else if(symbol instanceof RasterSymbolizer){
+            final RasterSymbolizer ps = (RasterSymbolizer) symbol;
+            return SF.rasterSymbolizer(
+                    ps.getName(),
+                    ps.getGeometryPropertyName(),
+                    ps.getDescription(),
+                    ps.getUnitOfMeasure(),
+                    correctOpacity(ps.getOpacity(),opacity),
+                    ps.getChannelSelection(),
+                    ps.getOverlapBehavior(),
+                    ps.getColorMap(),
+                    ps.getContrastEnhancement(),
+                    ps.getShadedRelief(),
+                    ps.getImageOutline());
+        }else{
+            return symbol;
+        }
+
+    }
+
+    private static Fill correctOpacity(Fill fl, double opacity){
+        return SF.fill(
+            fl.getGraphicFill(),
+            fl.getColor(),
+            correctOpacity(fl.getOpacity(),opacity));
+    }
+
+    private static Stroke correctOpacity(Stroke str, double opacity){
+        return SF.stroke(
+            str.getGraphicFill(),
+            str.getColor(),
+            correctOpacity(str.getOpacity(),opacity),
+            str.getWidth(),
+            str.getLineJoin(),
+            str.getLineCap(),
+            str.getDashArray(),
+            str.getDashOffset());
+    }
+
+    private static Expression correctOpacity(Expression exp, double opacity){
+        return FF.multiply(exp, FF.literal(opacity));
     }
 
     public static MutableTreeNode asTreeNode(MutableStyle element){

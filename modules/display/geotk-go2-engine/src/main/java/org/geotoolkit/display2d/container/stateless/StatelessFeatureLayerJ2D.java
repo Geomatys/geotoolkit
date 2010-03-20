@@ -65,6 +65,7 @@ import org.geotoolkit.display2d.primitive.ProjectedFeature;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRenderer;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.HintsPending;
+import org.geotoolkit.style.StyleUtilities;
 
 import org.opengis.display.primitive.Graphic;
 import org.opengis.feature.Feature;
@@ -81,6 +82,7 @@ import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.style.Rule;
+import org.opengis.style.Style;
 import org.opengis.style.Symbolizer;
 
 import static org.geotoolkit.display2d.GO2Utilities.*;
@@ -118,12 +120,23 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
         final SimpleFeatureType sft = (SimpleFeatureType) layer.getCollection().getFeatureType();
         final CachedRule[] rules;
 
+        final Style style;
+        final double opacity = layer.getOpacity();
+        if(opacity == 1){
+            style = layer.getStyle();
+        }else if(opacity == 0){
+            //no need to paint
+            return;
+        }else{
+            style = StyleUtilities.copy(layer.getStyle(),opacity);
+        }
+
         final Filter selectionFilter = layer.getSelectionFilter();
         if(selectionFilter != null && !Filter.EXCLUDE.equals(selectionFilter)){
             //merge the style and filter with the selection
             final List<Rule> selectionRules;
             final List<Rule> normalRules = GO2Utilities.getValidRules(
-                    layer.getStyle(), renderingContext.getGeographicScale(), sft);
+                   style, renderingContext.getGeographicScale(), sft);
 
             final List<CachedRule> mixedRules = new ArrayList<CachedRule>();
             final MutableStyle selectionStyle = layer.getSelectionStyle();
@@ -166,7 +179,7 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
 
         }else{
             rules = GO2Utilities.getValidCachedRules(
-                layer.getStyle(), renderingContext.getGeographicScale(), sft);
+                style, renderingContext.getGeographicScale(), sft);
         }
 
         //we perform a first check on the style to see if there is at least
