@@ -24,10 +24,13 @@ import java.awt.Graphics2D;
 import java.awt.LinearGradientPaint;
 import java.awt.RenderingHints;
 import java.awt.Shape;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionListener;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.GeneralPath;
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.JComponent;
 import javax.swing.event.MouseInputListener;
 import org.geotoolkit.renderer.style.WellKnownMarkFactory;
@@ -55,6 +58,7 @@ public class JOpacitySlider extends JComponent implements MouseInputListener{
         HORIZONTAL_MARGIN = (float) TRIANGLE.getBounds().getWidth();
     }
 
+    private final List<ActionListener> listeners = new ArrayList<ActionListener>();
     private double opacity = 1d;
 
     public JOpacitySlider(){
@@ -107,6 +111,14 @@ public class JOpacitySlider extends JComponent implements MouseInputListener{
         repaint();
     }
 
+    public void addActionListener(ActionListener listener){
+        listeners.add(listener);
+    }
+
+    public void removeActionListener(ActionListener listener){
+        listeners.remove(listener);
+    }
+
     @Override
     public void mouseDragged(MouseEvent e) {
         double x = e.getX();
@@ -134,7 +146,11 @@ public class JOpacitySlider extends JComponent implements MouseInputListener{
     @Override
     public void mouseReleased(MouseEvent e) {
         mouseDragged(e);
-        //todo fire event
+        
+        final ActionEvent event = new ActionEvent(this, -1, "opacity");
+        for(ActionListener listener : listeners){
+            listener.actionPerformed(event);
+        }
     }
 
     @Override

@@ -426,6 +426,16 @@ public class JContextTree extends JScrollPane implements ContextListener {
                 }
             });
 
+            opacity.addActionListener(new ActionListener() {
+
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    if (value != null && value instanceof MapLayer) {
+                        ((MapLayer) value).setOpacity(opacity.getOpacity());
+                    }
+                }
+            });
+
             panel.setOpaque(false);
 
             opacity.setPreferredSize(new Dimension(60, 22));
@@ -472,9 +482,8 @@ public class JContextTree extends JScrollPane implements ContextListener {
                 gc.weightx = 0;
                 gc.weighty = 1;
                 gc.gridx = 0;
+                opacity.setOpacity(layer.getOpacity());
                 panel.add(opacity);
-//                this.icon.setIcon((layer.isVisible()) ? ICON_LAYER_VISIBLE : ICON_LAYER_UNVISIBLE);
-//                panel.add(icon,gc);
                 gc.gridx = 1;
                 this.visibleCheck.setSelected(layer.isVisible());
                 panel.add(visibleCheck,gc);

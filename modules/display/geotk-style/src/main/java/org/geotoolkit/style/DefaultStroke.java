@@ -96,16 +96,12 @@ public class DefaultStroke implements Stroke{
      */
     DefaultStroke(GraphicFill fill, Expression color, Expression opacity, 
             Expression width, Expression join, Expression cap, float[] dashes, Expression offset){
-        
-        if(fill == null){
-            throw new IllegalArgumentException("Fill can not be null.");
-        }
-        
+                
         if(dashes != null && dashes.length < 2){
             throw new IllegalArgumentException("Dashes must have 2 or more fields");
         }
         
-        this.fill = null;
+        this.fill = fill;
         this.stroke = null;
         this.color = (color == null || color == NIL) ? DEFAULT_STROKE_COLOR : color;
         this.opacity = (opacity == null || opacity == NIL) ? DEFAULT_STROKE_OPACITY : opacity;

@@ -144,9 +144,6 @@ public class DefaultMutableStyle implements MutableStyle{
 
     @Override
     public void setDefaultSpecification(Symbolizer symbol){
-        if(symbol == null){
-            throw new NullPointerException("default symbolizer can't be null");
-        }
         
         final Symbolizer oldSymbolizer;
         synchronized (this) {

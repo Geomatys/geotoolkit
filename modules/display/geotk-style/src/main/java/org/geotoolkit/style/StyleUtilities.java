@@ -108,8 +108,6 @@ public final class StyleUtilities {
         for(Symbolizer symbol : rule.symbolizers()){
             copy.symbolizers().add(copy(symbol,opacity));
         }
-
-        copy.symbolizers().addAll(rule.symbolizers());
         return copy;
     }
 
