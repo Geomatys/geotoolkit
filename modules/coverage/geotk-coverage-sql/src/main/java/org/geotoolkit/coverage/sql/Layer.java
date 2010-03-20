@@ -19,6 +19,7 @@ package org.geotoolkit.coverage.sql;
 
 import java.util.List;
 
+import org.geotoolkit.util.DateRange;
 import org.geotoolkit.util.MeasurementRange;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 
@@ -52,6 +53,14 @@ public interface Layer {
      * @throws CoverageStoreException If an error occured while fetching the information.
      */
     Layer getFallback() throws CoverageStoreException;
+
+    /**
+     * Returns a time range encompassing all coverages in this layer, or {@code null} if none.
+     *
+     * @return The time range encompassing all coverages, or {@code null}.
+     * @throws CoverageStoreException if an error occured while fetching the time range.
+     */
+    DateRange getTimeRange() throws CoverageStoreException;
 
     /**
      * Returns the ranges of valid sample values for each band.

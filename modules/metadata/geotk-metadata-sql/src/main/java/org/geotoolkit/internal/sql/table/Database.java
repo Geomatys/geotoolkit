@@ -371,10 +371,8 @@ public class Database implements Localized {
                 } catch (Exception exception) { // Too many exeptions for enumerating them.
                     throw new NoSuchTableException(Classes.getShortName(type), exception);
                 }
-                table.freeze();
                 tables.put(type, table);
             }
-            assert !table.isModifiable() : table;
             return table;
         }
     }

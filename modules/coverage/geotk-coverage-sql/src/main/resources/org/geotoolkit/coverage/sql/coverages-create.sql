@@ -107,7 +107,7 @@ CREATE TYPE "Function" AS ENUM ('log');
 
 CREATE TABLE "Categories" (
     "format"   character varying NOT NULL,
-    "band"     smallint          NOT NULL,
+    "band"     smallint          NOT NULL DEFAULT 1,
     "name"     character varying NOT NULL,
     "lower"    integer           NOT NULL,
     "upper"    integer           NOT NULL,

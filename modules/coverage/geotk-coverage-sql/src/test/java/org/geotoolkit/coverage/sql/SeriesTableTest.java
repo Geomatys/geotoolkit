@@ -56,9 +56,9 @@ public final class SeriesTableTest extends CatalogTestBase {
      */
     @Test
     public void testSelectAndList() throws SQLException {
-        final SeriesTable table = new SeriesTable(getDatabase());
+        final SeriesTable table = getDatabase().getTable(SeriesTable.class);
         final SeriesEntry entry = table.getEntry(TEMPERATURE_ID);
-        assertSame("Expected the identifier that we requested.", TEMPERATURE_ID, entry.getIdentifier());
+        assertEquals("Expected the identifier that we requested.", TEMPERATURE_ID, entry.getIdentifier());
         assertSame("The entry should be cached.", entry, table.getEntry(TEMPERATURE_ID));
 
         table.setLayer(LayerTableTest.TEMPERATURE);
@@ -81,7 +81,7 @@ public final class SeriesTableTest extends CatalogTestBase {
      */
     @Test
     public void testFind() throws SQLException {
-        final SeriesTable table = new SeriesTable(getDatabase());
+        final SeriesTable table = getDatabase().getTable(SeriesTable.class);
         table.setLayer(LayerTableTest.TEMPERATURE);
         assertEquals("Search the existing entry.", TEMPERATURE_ID, table.find(
                 TEMPERATURE_PATH, "png", FormatTableTest.TEMPERATURE));
@@ -98,7 +98,7 @@ public final class SeriesTableTest extends CatalogTestBase {
      */
     @Test
     public void testFindOrCreate() throws SQLException {
-        final SeriesTable table = new SeriesTable(getDatabase());
+        final SeriesTable table = getDatabase().getTable(SeriesTable.class);
         table.setLayer(LayerTableTest.TEMPERATURE);
 
         final String path = "World/SST/4-days";
@@ -119,11 +119,12 @@ public final class SeriesTableTest extends CatalogTestBase {
     @Test
     public void testDeleteAll() throws SQLException {
         final Database  database = getDatabase();
-        final LayerTable  layers = new LayerTable (database);
-        final SeriesTable series = new SeriesTable(database);
+        final LayerTable  layers = database.getTable(LayerTable.class);
+        final SeriesTable series = database.getTable(SeriesTable.class);
         final String       layer = "Dummy layer";
         series.setLayer(layer);
         assertTrue("The layer should not exist before this test.", layers.createIfAbsent(layer));
+        assertNull("Should not take entry from an other layer.", series.find(TEMPERATURE_PATH, "png", FormatTableTest.TEMPERATURE));
         assertFalse(series.findOrCreate(TEMPERATURE_PATH, "png", FormatTableTest.TEMPERATURE) == TEMPERATURE_ID);
         assertEquals("Should have deleted the singleton series.", 1, series.deleteAll());
         assertEquals("Should have deleted the singleton layer.",  1, layers.delete(layer));

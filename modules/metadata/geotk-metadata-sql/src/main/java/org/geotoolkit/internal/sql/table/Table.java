@@ -104,13 +104,6 @@ public class Table implements Localized {
     };
 
     /**
-     * {@code true} if this table is unmodifiable (i.e. no {@code set} method are allowed).
-     * A table is always modifiable upon construction, but may become unmodifiable at some
-     * later stage (when {@link #freeze()} is invoked).
-     */
-    private volatile boolean unmodifiable;
-
-    /**
      * Creates a new table using the specified query. The query given in argument should be some
      * subclass with {@code addFooColumn(...)} and {@code addParameter(...)} methods invoked in
      * its constructor.
@@ -407,30 +400,7 @@ public class Table implements Localized {
      * @throws CatalogException If this table is not modifiable.
      */
     protected void fireStateChanged(final String property) throws CatalogException {
-        /*
-         * Set the change flag anyway, because this method is invoked when the
-         * change has already been applied so it is too late for preventing it.
-         */
         session.get().modificationCount++;
-        if (unmodifiable) {
-            throw new CatalogException(errors().getString(Errors.Keys.UNMODIFIABLE_OBJECT_$1, getClass()));
-        }
-    }
-
-    /**
-     * Returns {@code true} if this table is modifiable.
-     *
-     * @return {@code true} if this table is modifiable.
-     */
-    final boolean isModifiable() {
-        return !unmodifiable;
-    }
-
-    /**
-     * Marks this table as unmodifiable.
-     */
-    final void freeze() {
-        unmodifiable = true;
     }
 
     /**
@@ -506,23 +476,5 @@ public class Table implements Localized {
     public final Locale getLocale() {
         final Database database = query.database;
         return (database != null) ? database.getLocale() : null;
-    }
-
-    /**
-     * Returns a string representation of this table, mostly for debugging purpose.
-     */
-    @Override
-    public String toString() {
-        /*
-         * Implementation note:  the string representation does not contain any thread-local
-         * information, because debugger in IDE typically invokes this method in a different
-         * thread than the application we want to debug.
-         */
-        final StringBuilder buffer = new StringBuilder(getClass().getSimpleName());
-        buffer.append('[');
-        if (unmodifiable) {
-            buffer.append("unmodifiable");
-        }
-        return buffer.append(']').toString();
     }
 }

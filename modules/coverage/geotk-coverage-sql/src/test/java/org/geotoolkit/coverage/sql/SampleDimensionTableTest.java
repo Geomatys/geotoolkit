@@ -46,7 +46,7 @@ public class SampleDimensionTableTest extends CatalogTestBase {
      */
     @Test
     public void testSelect() throws SQLException {
-        final SampleDimensionTable table = new SampleDimensionTable(getDatabase());
+        final SampleDimensionTable table = getDatabase().getTable(SampleDimensionTable.class);
         checkTemperatureDimension(table.getSampleDimensions(FormatTableTest.TEMPERATURE));
     }
 

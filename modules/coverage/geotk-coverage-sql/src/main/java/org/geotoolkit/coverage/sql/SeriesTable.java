@@ -94,8 +94,7 @@ final class SeriesTable extends SingletonTable<SeriesEntry> {
      */
     public void setLayer(final String layer) throws CatalogException {
         this.layer.set(layer);
-        // Do not invoke 'fireStateChanged("layer"), because this
-        // change has no impact on the entries to be created.
+        fireStateChanged("layer");
     }
 
     /**

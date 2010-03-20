@@ -43,7 +43,7 @@ public class CategoryTableTest extends CatalogTestBase {
      */
     @Test
     public void testSelect() throws SQLException {
-        final CategoryTable table = new CategoryTable(getDatabase());
+        final CategoryTable table = getDatabase().getTable(CategoryTable.class);
         final Map<Integer,Category[]> map = table.getCategories(FormatTableTest.TEMPERATURE);
         assertEquals("The format should define only one band.", 1, map.size());
         checkTemperatureCategories(map.get(1));

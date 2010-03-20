@@ -30,6 +30,7 @@ import java.io.InvalidObjectException;
 
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.logging.Logging;
+import org.geotoolkit.util.DateRange;
 import org.geotoolkit.util.MeasurementRange;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
 import org.geotoolkit.internal.sql.table.Entry;
@@ -202,6 +203,21 @@ final class LayerEntry extends Entry implements Layer {
             throw new CoverageStoreException(e);
         }
         return (LayerEntry) fallback;
+    }
+
+    /**
+     * Returns a time range encompassing all coverages in this layer, or {@code null} if none.
+     *
+     * @return The time range encompassing all coverages, or {@code null}.
+     * @throws CoverageStoreException if an error occured while fetching the time range.
+     */
+    @Override
+    public DateRange getTimeRange() throws CoverageStoreException {
+        try {
+            return getDomain().timeRange;
+        } catch (SQLException e) {
+            throw new CoverageStoreException(e);
+        }
     }
 
     /**

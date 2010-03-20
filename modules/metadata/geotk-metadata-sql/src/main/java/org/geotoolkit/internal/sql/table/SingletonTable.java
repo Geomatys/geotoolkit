@@ -39,6 +39,7 @@ import org.geotoolkit.resources.Errors;
  * methods:
  * <p>
  * <ul>
+ *   <li>{@link #configure(QueryType, PreparedStatement)} (optional)</li>
  *   <li>{@link #createEntry(ResultSet)}: Creates an entry for the current row.</li>
  * </ul>
  * <p>
@@ -224,27 +225,6 @@ public abstract class SingletonTable<E extends Entry> extends Table {
     }
 
     /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected void fireStateChanged(final String property) throws CatalogException {
-        cache.clear();
-        super.fireStateChanged(property);
-    }
-
-    /**
-     * Returns {@code true} if {@link #getEntries} should accept the given element.
-     * The default implementation always returns {@code true}.
-     *
-     * @param  entry En element created by {@link #getEntries}.
-     * @return {@code true} if the element should be added to the set returned by {@link #getEntries}.
-     * @throws SQLException if an error occured will reading from the database.
-     */
-    protected boolean accept(final E entry) throws SQLException {
-        return true;
-    }
-
-    /**
      * Creates an identifier for the current row in the given result set. This method needs to
      * be overriden by subclasses using {@link MultiColumnIdentifier}. Other subclasses don't
      * need to override this method: a {@link String} or {@link Integer} identifier will be
@@ -386,7 +366,7 @@ public abstract class SingletonTable<E extends Entry> extends Table {
                         handler.putAndUnlock(entry);
                     }
                 }
-                if (accept(entry) && !entries.add(entry)) {
+                if (!entries.add(entry)) {
                     // The ResultSet will be closed by the constructor below.
                     throw new DuplicatedRecordException(this, results, pkIndex, identifier);
                 }

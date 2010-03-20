@@ -56,9 +56,9 @@ public class FormatTableTest extends CatalogTestBase {
      */
     @Test
     public void testSelectAndList() throws SQLException {
-        final FormatTable table = new FormatTable(getDatabase());
+        final FormatTable table = getDatabase().getTable(FormatTable.class);
         final FormatEntry entry = table.getEntry(TEMPERATURE);
-        assertSame("Unexpected format read from the database.", TEMPERATURE, entry.identifier);
+        assertEquals("Unexpected format read from the database.", TEMPERATURE, entry.identifier);
         assertSame("Expected the cached instance.", entry, table.getEntry(TEMPERATURE));
         assertEquals("Wrong image format.", "PNG", entry.imageFormat);
         /*
@@ -82,9 +82,9 @@ public class FormatTableTest extends CatalogTestBase {
      */
     @Test
     public void testTwoBands() throws SQLException {
-        final FormatTable table = new FormatTable(getDatabase());
+        final FormatTable table = getDatabase().getTable(FormatTable.class);
         final FormatEntry entry = table.getEntry(CURRENT);
-        assertSame("Unexpected format read from the database.", CURRENT, entry.identifier);
+        assertEquals("Unexpected format read from the database.", CURRENT, entry.identifier);
         assertSame("Expected the cached instance.", entry, table.getEntry(CURRENT));
         assertEquals("Wrong image format.", "NetCDF", entry.imageFormat);
         /*

@@ -17,10 +17,14 @@
  */
 package org.geotoolkit.coverage.sql;
 
+import java.util.Set;
+import java.util.LinkedHashSet;
+import java.util.Collections;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import org.geotoolkit.util.Utilities;
 import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.internal.sql.table.Database;
 import org.geotoolkit.internal.sql.table.LocalCache;
@@ -53,6 +57,12 @@ final class LayerTable extends SingletonTable<LayerEntry> {
     private volatile SeriesTable series;
 
     /**
+     * The names of all series found in the database.
+     * Computed only when first needed.
+     */
+    private transient Set<String> names;
+
+    /**
      * Creates a layer table.
      *
      * @param database Connection to the database.
@@ -66,6 +76,26 @@ final class LayerTable extends SingletonTable<LayerEntry> {
      */
     private LayerTable(final LayerQuery query) {
         super(query, query.byName);
+    }
+
+    /**
+     * Returns the set of layers declared in the database.
+     *
+     * @return The list of laters.
+     * @throws SQLException If an error occured while fetching the set.
+     */
+    public synchronized Set<String> getNames() throws SQLException {
+        Set<String> names = this.names;
+        if (names == null) {
+            final Set<LayerEntry> entries = getEntries();
+            names = new LinkedHashSet<String>(Utilities.hashMapCapacity(entries.size()));
+            for (final LayerEntry entry : entries) {
+                names.add(entry.getName());
+            }
+            names = Collections.unmodifiableSet(names);
+            this.names = names;
+        }
+        return names;
     }
 
     /**

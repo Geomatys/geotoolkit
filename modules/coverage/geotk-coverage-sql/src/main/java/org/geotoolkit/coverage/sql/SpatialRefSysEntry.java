@@ -23,6 +23,7 @@ import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.awt.Dimension;
 import java.awt.geom.AffineTransform;
+import javax.measure.converter.ConversionException;
 
 import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.referencing.FactoryException;
@@ -48,7 +49,7 @@ import org.geotoolkit.internal.sql.table.SpatialDatabase;
 import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.referencing.operation.matrix.MatrixFactory;
-import org.geotoolkit.referencing.operation.transform.IdentityTransform;
+import org.geotoolkit.referencing.cs.AbstractCS;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.resources.Errors;
 
@@ -229,15 +230,31 @@ final class SpatialRefSysEntry {
         assert CRS.getHorizontalCRS(spatioTemporalCRS) == CRS.getHorizontalCRS(spatialCRS);
         assert CRS.getVerticalCRS  (spatioTemporalCRS) == CRS.getVerticalCRS  (spatialCRS);
         databaseCRS = database.horizontalCRS;
-        if (horizontalCRS != null) {
-            toDatabaseHorizontalCRS = (MathTransform2D) CRS.findMathTransform(horizontalCRS, database.horizontalCRS, true);
+        /*
+         * Get the MathTransforms from coverage CRS to database CRS.
+         */
+        SingleCRS sourceCRS = horizontalCRS;
+        SingleCRS targetCRS = database.horizontalCRS;
+        if (sourceCRS != null && targetCRS != null) {
+            toDatabaseHorizontalCRS = (MathTransform2D) CRS.findMathTransform(sourceCRS, targetCRS, true);
         }
-        if (verticalCRS != null) {
+        sourceCRS = verticalCRS;
+        targetCRS = database.verticalCRS;
+        if (sourceCRS != null && targetCRS != null) {
             MathTransform tr;
             try {
-                tr = CRS.findMathTransform(verticalCRS, database.verticalCRS, true);
+                tr = CRS.findMathTransform(sourceCRS, targetCRS, true);
             } catch (OperationNotFoundException e) {
-                tr = IdentityTransform.create(1);
+                final Matrix matrix;
+                try {
+                    matrix = AbstractCS.swapAndScaleAxis(sourceCRS.getCoordinateSystem(),
+                                                         targetCRS.getCoordinateSystem());
+                } catch (ConversionException ignore) {
+                    throw e;
+                } catch (IllegalArgumentException ignore) {
+                    throw e;
+                }
+                tr = database.getMathTransformFactory().createAffineTransform(matrix);
                 /*
                  * Be lenient with vertical transformations,  because many of them are not yet
                  * implemented (e.g. "mean sea level" to "ellipsoidal"). Log a warning without
