@@ -852,6 +852,16 @@ public final class Errors extends IndexedResourceBundle {
         public static final int NO_IMAGE_WRITER = 144;
 
         /**
+         * No layer has been specified.
+         */
+        public static final int NO_LAYER_SPECIFIED = 248;
+
+        /**
+         * No data series has been specified.
+         */
+        public static final int NO_SERIES_SPECIFIED = 249;
+
+        /**
          * No source axis match {0}.
          */
         public static final int NO_SOURCE_AXIS_$1 = 145;
