@@ -27,6 +27,7 @@ import javax.measure.converter.ConversionException;
 
 import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.referencing.FactoryException;
+import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.crs.CRSFactory;
 import org.opengis.referencing.crs.SingleCRS;
 import org.opengis.referencing.crs.VerticalCRS;
@@ -109,11 +110,18 @@ final class SpatialRefSysEntry {
 
     /**
      * The database horizontal CRS. This is a copy of the {@link SpatialDatabase#horizontalCRS}
-     * and is initialized by {@link #createSpatioTemporalCRS}.
+     * reference and is initialized by {@link #createSpatioTemporalCRS}.
      *
      * @see #getDatabaseCRS()
      */
     private SingleCRS databaseCRS;
+
+    /**
+     * Whatever default grid range computation should be performed on transforms relative to pixel
+     * center or relative to pixel corner. This is a copy of the {@link SpatialDatabase#pixelInCell}
+     * reference and is initialized by {@link #createSpatioTemporalCRS}.
+     */
+    private PixelInCell pixelInCell;
 
     /**
      * The transform to the database horizontal CRS. The database uses a single CRS for
@@ -174,6 +182,12 @@ final class SpatialRefSysEntry {
             throws FactoryException
     {
         assert uninitialized() != 0 : this;
+        databaseCRS = database.horizontalCRS;
+        pixelInCell = database.pixelInCell;
+        /*
+         * Get the CRS components (Horizontal, Vertical, Temporal) from the PostGIS SRID,
+         * except the temporal component which was explicitly given at construction time.
+         */
         if (horizontalSRID != 0) {
             final CoordinateReferenceSystem crs =
                     factory.createCoordinateReferenceSystem(String.valueOf(horizontalSRID));
@@ -188,48 +202,51 @@ final class SpatialRefSysEntry {
             verticalCRS = factory.createVerticalCRS(String.valueOf(verticalSRID));
         }
         /*
-         * Now create the spatio-temporal compound CRS. We try to use the same CRSFactory
-         * than the one used by the CRSAuthorityFactory.
+         * Assemble the components together in a spatio-temporal Compound CRS.
          */
         int count = 0;
         SingleCRS[] elements = new SingleCRS[3];
         if (horizontalCRS != null) elements[count++] = horizontalCRS;
         if (verticalCRS   != null) elements[count++] = verticalCRS;
         if (temporalCRS   != null) elements[count++] = temporalCRS;
-        if (count == 0) {
-            throw new FactoryException(Errors.format(Errors.Keys.UNSPECIFIED_CRS));
-        }
-        spatioTemporalCRS = elements[0];
-        if (count == 1) {
-            if (spatioTemporalCRS != temporalCRS) {
-                spatialCRS = spatioTemporalCRS;
+        switch (count) {
+            case 0: {
+                throw new FactoryException(Errors.format(Errors.Keys.UNSPECIFIED_CRS));
             }
-            return;
-        }
-        elements = XArrays.resize(elements, count);
-        Map<String,?> properties = AbstractIdentifiedObject.getProperties(spatioTemporalCRS);
-        if (verticalCRS != null) {
-            String name = spatioTemporalCRS.getName().getCode();
-            name = name + " + " + verticalCRS.getName().getCode();
-            final Map<String,Object> copy = new HashMap<String,Object>(properties);
-            copy.put(CoordinateReferenceSystem.NAME_KEY, name);
-            properties = copy;
-        }
-        final CRSFactory crsFactory = CRSUtilities.getCRSFactory(factory);
-        spatioTemporalCRS = crsFactory.createCompoundCRS(properties, elements);
-        if (temporalCRS == null) {
-            spatialCRS = spatioTemporalCRS;
-        } else {
-            if (--count == 1) {
-                spatialCRS = elements[0];
-            } else {
+            case 1: {
+                spatioTemporalCRS = elements[0];
+                if (spatioTemporalCRS != temporalCRS) {
+                    spatialCRS = spatioTemporalCRS;
+                }
+                break;
+            }
+            default: {
+                final SingleCRS headCRS = elements[0];
                 elements = XArrays.resize(elements, count);
-                spatialCRS = crsFactory.createCompoundCRS(properties, elements);
+                Map<String,?> properties = AbstractIdentifiedObject.getProperties(headCRS);
+                if (verticalCRS != null) {
+                    String name = headCRS.getName().getCode();
+                    name = name + " + " + verticalCRS.getName().getCode();
+                    final Map<String,Object> copy = new HashMap<String,Object>(properties);
+                    copy.put(CoordinateReferenceSystem.NAME_KEY, name);
+                    properties = copy;
+                }
+                final CRSFactory crsFactory = CRSUtilities.getCRSFactory(factory);
+                spatioTemporalCRS = crsFactory.createCompoundCRS(properties, elements);
+                if (temporalCRS == null) {
+                    spatialCRS = spatioTemporalCRS;
+                } else {
+                    if (--count == 1) {
+                        spatialCRS = elements[0];
+                    } else {
+                        elements = XArrays.resize(elements, count);
+                        spatialCRS = crsFactory.createCompoundCRS(properties, elements);
+                    }
+                }
             }
         }
         assert CRS.getHorizontalCRS(spatioTemporalCRS) == CRS.getHorizontalCRS(spatialCRS);
         assert CRS.getVerticalCRS  (spatioTemporalCRS) == CRS.getVerticalCRS  (spatialCRS);
-        databaseCRS = database.horizontalCRS;
         /*
          * Get the MathTransforms from coverage CRS to database CRS.
          */
@@ -309,6 +326,15 @@ final class SpatialRefSysEntry {
     }
 
     /**
+     * Returns whatever default grid range computation should be performed on transforms
+     * relative to pixel center or relative to pixel corner.
+     */
+    final PixelInCell getPixelInCell() {
+        assert uninitialized() == 0 : this;
+        return pixelInCell;
+    }
+
+    /**
      * Returns a grid geometry for the given horizontal size and transform, and the given vertical
      * ordinate values. The given factory is used for creating the <cite>grid to CRS</cite>
      * transform. Dimensions are handled as below:
@@ -349,7 +375,7 @@ final class SpatialRefSysEntry {
         upper[0] = size.width;
         upper[1] = size.height;
         final GridEnvelope gridRange = new GeneralGridEnvelope(lower, upper, false);
-        return new GeneralGridGeometry(gridRange, SQLCoverageReader.PIXEL_IN_CELL,
+        return new GeneralGridGeometry(gridRange, pixelInCell,
                 mtFactory.createAffineTransform(matrix), spatioTemporalCRS);
     }
 

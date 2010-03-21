@@ -61,7 +61,7 @@ public abstract class MultiColumnIdentifier<T extends MultiColumnIdentifier<T>> 
      * Returns a hash code value for this identifier.
      */
     @Override
-    public final int hashCode() {
+    public int hashCode() {
         return Arrays.hashCode(getIdentifiers());
     }
 
@@ -72,7 +72,7 @@ public abstract class MultiColumnIdentifier<T extends MultiColumnIdentifier<T>> 
      * @return {@code true} if both objects are equal.
      */
     @Override
-    public final boolean equals(final Object other) {
+    public boolean equals(final Object other) {
         if (other == this) {
             return true;
         }
@@ -91,7 +91,7 @@ public abstract class MultiColumnIdentifier<T extends MultiColumnIdentifier<T>> 
      */
     @Override
     @SuppressWarnings({"unchecked","rawtypes"})
-    public final int compareTo(final T that) {
+    public int compareTo(final T that) {
         final Comparable[] id1 = this.getIdentifiers();
         final Comparable[] id2 = that.getIdentifiers();
         int d = id1.length - id2.length;
@@ -110,7 +110,7 @@ public abstract class MultiColumnIdentifier<T extends MultiColumnIdentifier<T>> 
      * Returns a string representation of this identifier for debugging purpose.
      */
     @Override
-    public final String toString() {
+    public String toString() {
         return Classes.getShortClassName(this) + Arrays.toString(getIdentifiers());
     }
 }

@@ -23,6 +23,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 import org.geotoolkit.lang.Immutable;
+import org.geotoolkit.util.Utilities;
 import org.geotoolkit.internal.sql.table.MultiColumnIdentifier;
 
 
@@ -60,12 +61,18 @@ final class GridCoverageIdentifier extends MultiColumnIdentifier<GridCoverageIde
     final short imageIndex;
 
     /**
+     * The altitude in database units, or {@code NaN} if none.
+     */
+    final float z;
+
+    /**
      * Creates a new identifier.
      */
-    GridCoverageIdentifier(final SeriesEntry series, final String filename, final short imageIndex) {
+    GridCoverageIdentifier(final SeriesEntry series, final String filename, final short imageIndex, final float z) {
         this.series     = series;
         this.filename   = filename;
         this.imageIndex = imageIndex;
+        this.z          = z;
     }
 
     /**
@@ -90,7 +97,8 @@ final class GridCoverageIdentifier extends MultiColumnIdentifier<GridCoverageIde
     }
 
     /**
-     * Returns the identifiers.
+     * Returns the identifiers. This method intentionally exclude the {@link #z} value from
+     * the identifiers, because it doesn't appear explicitly as a column in the database.
      */
     @Override
     public Comparable<?>[] getIdentifiers() {
@@ -99,5 +107,39 @@ final class GridCoverageIdentifier extends MultiColumnIdentifier<GridCoverageIde
             filename,
             imageIndex
         };
+    }
+
+    /**
+     * Returns a hash code value for this identifier.
+     */
+    @Override
+    public int hashCode() {
+        return super.hashCode() ^ Float.floatToIntBits(z);
+    }
+
+    /**
+     * Returns {@code true} if this object is equals to the given object.
+     */
+    @Override
+    public boolean equals(final Object other) {
+        if (other == this) {
+            return true;
+        }
+        if (super.equals(other)) {
+            return Utilities.equals(z, ((GridCoverageIdentifier) other).z);
+        }
+        return false;
+    }
+
+    /**
+     * Compares this identifier with the given one for order.
+     */
+    @Override
+    public int compareTo(final GridCoverageIdentifier that) {
+        int d = super.compareTo(that);
+        if (d == 0) {
+            d = Float.compare(z, that.z);
+        }
+        return d;
     }
 }

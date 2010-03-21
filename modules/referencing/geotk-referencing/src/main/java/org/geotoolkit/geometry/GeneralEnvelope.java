@@ -38,14 +38,12 @@ import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.geometry.MismatchedReferenceSystemException;
 import org.opengis.metadata.extent.GeographicBoundingBox;
 import org.opengis.metadata.spatial.PixelOrientation;
-import org.opengis.coverage.grid.GridCoverage;
 
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.Cloneable;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.converter.Classes;
-import org.geotoolkit.util.NullArgumentException;
 import org.geotoolkit.display.shape.XRectangle2D;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
@@ -434,19 +432,6 @@ scanNumber: while (++i < length) {
     private static void fail(final String wkt, char missing) {
         throw new IllegalArgumentException(Errors.format(
                 Errors.Keys.NON_EQUILIBRATED_PARENTHESIS_$2, wkt, missing));
-    }
-
-    /**
-     * Makes sure an argument is non-null.
-     *
-     * @param  name   Argument name.
-     * @param  object User argument.
-     * @throws NullArgumentException if {@code object} is null.
-     */
-    private static void ensureNonNull(String name, Object object) throws NullArgumentException {
-        if (object == null) {
-            throw new NullArgumentException(Errors.format(Errors.Keys.NULL_ARGUMENT_$1, name));
-        }
     }
 
     /**
@@ -934,17 +919,6 @@ scanNumber: while (++i < length) {
     }
 
     /**
-     * Returns {@code true} if at least one of the specified CRS is null, or both CRS are equals.
-     * This special processing for {@code null} values is different from the usual contract of an
-     * {@code equals} method, but allow to handle the case where the CRS is unknown.
-     */
-    private static boolean equalsIgnoreMetadata(final CoordinateReferenceSystem crs1,
-                                                final CoordinateReferenceSystem crs2)
-    {
-        return (crs1 == null) || (crs2 == null) || CRS.equalsIgnoreMetadata(crs1, crs2);
-    }
-
-    /**
      * Returns {@code true} if at least one ordinate in the given position
      * is {@link Double#NaN}. This is used for assertions only.
      */
@@ -1251,71 +1225,12 @@ scanNumber: while (++i < length) {
      */
     @Override
     public boolean equals(final Object object) {
-        if (object!=null && object.getClass().equals(getClass())) {
+        if (object != null && object.getClass().equals(getClass())) {
             final GeneralEnvelope that = (GeneralEnvelope) object;
             return Arrays.equals(this.ordinates, that.ordinates) &&
                     Utilities.equals(this.crs, that.crs);
         }
         return false;
-    }
-
-    /**
-     * Compares to the specified envelope for equality up to the specified tolerance value.
-     * The tolerance value {@code eps} can be either relative to the {@linkplain #getSpan
-     * envelope span} along each dimension or can be an absolute value (as for example some
-     * ground resolution of a {@linkplain GridCoverage grid coverage}).
-     * <p>
-     * If {@code epsIsRelative} is set to {@code true}, the actual tolerance value for a given
-     * dimension <var>i</var> is {@code eps}&times;{@code span} where {@code span} is the
-     * maximum of {@linkplain #getSpan this envelope span} and the specified envelope length
-     * along dimension <var>i</var>.
-     * <p>
-     * If {@code epsIsRelative} is set to {@code false}, the actual tolerance value for a
-     * given dimension <var>i</var> is {@code eps}.
-     * <p>
-     * Relative tolerance value (as opposed to absolute tolerance value) help to workaround the
-     * fact that tolerance value are CRS dependent. For example the tolerance value need to be
-     * smaller for geographic CRS than for UTM projections, because the former typically has a
-     * range of -180 to 180° while the later can have a range of thousands of meters.
-     *
-     * {@note This method assumes that the specified envelope uses the same CRS than this envelope.
-     *        For performance reason, it will no be verified unless Java assertions are enabled.}
-     *
-     * @param envelope The envelope to compare with.
-     * @param eps The tolerance value to use for numerical comparisons.
-     * @param epsIsRelative {@code true} if the tolerance value should be relative to
-     *        axis length, or {@code false} if it is an absolute value.
-     * @return {@code true} if the given object is equal to this envelope up to the given
-     *         tolerance value.
-     *
-     * @see #contains(Envelope, boolean)
-     * @see #intersects(Envelope, boolean)
-     *
-     * @since 2.4
-     */
-    public boolean equals(final Envelope envelope, final double eps, final boolean epsIsRelative) {
-        ensureNonNull("envelope", envelope);
-        final int dimension = getDimension();
-        if (envelope.getDimension() != dimension) {
-            return false;
-        }
-        assert equalsIgnoreMetadata(crs, envelope.getCoordinateReferenceSystem()) : envelope;
-        for (int i=0; i<dimension; i++) {
-            double epsilon;
-            if (epsIsRelative) {
-                epsilon = Math.max(getSpan(i), envelope.getSpan(i));
-                epsilon = (epsilon>0 && epsilon<Double.POSITIVE_INFINITY) ? epsilon*eps : eps;
-            } else {
-                epsilon = eps;
-            }
-            // Comparison below uses '!' in order to catch NaN values.
-            if (!(Math.abs(getMinimum(i) - envelope.getMinimum(i)) <= epsilon &&
-                  Math.abs(getMaximum(i) - envelope.getMaximum(i)) <= epsilon))
-            {
-                return false;
-            }
-        }
-        return true;
     }
 
     /**

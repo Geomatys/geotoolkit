@@ -414,7 +414,10 @@ public class ImageCoverageReader extends GridCoverageReader {
     /**
      * Creates an {@link ImageReader} that claim to be able to decode the given input.
      * This method is invoked automatically by {@link #setInput(Object)} for creating
-     * a new {@linkplain #imageReader image reader}. The image reader input must be set.
+     * a new {@linkplain #imageReader image reader}.
+     * <p>
+     * This method shall {@linkplain ImageReader#setInput(Object, boolean, boolean) set
+     * the input} of the image reader that it create before returning it.
      * <p>
      * The default implementation delegates to {@link XImageIO#getReaderBySuffix(Object,
      * Boolean, Boolean)}. Subclasses can override this method if they want to create a
@@ -777,7 +780,15 @@ public class ImageCoverageReader extends GridCoverageReader {
                 sx = subsampling.getWidth();
                 sy = subsampling.getHeight();
                 imageParam.setSourceSubsampling((int) sx, (int) sy, 0, 0);
-                change.scale(sx, sy);
+                /*
+                 * Conceptually we should invoke the following code now. However this implementation
+                 * will invoke it only after the image has been read,  because the MosaicImageReader
+                 * may have changed the subsampling to more efficient values if it was authorized to
+                 * make such change.
+                 */
+                if (false) {
+                    change.scale(sx, sy);
+                }
             }
             imageParam.setSourceBands(srcBands);
             imageParam.setDestinationBands(dstBands);
@@ -815,6 +826,8 @@ public class ImageCoverageReader extends GridCoverageReader {
          * the 'readAsRenderedImage(...)' method, which could have shifted the image).
          */
         if (change != null) {
+            // Following line is the deferred call discussed before the "if (false)" block.
+            change.scale(imageParam.getSourceXSubsampling(), imageParam.getSourceYSubsampling());
             final int xmin = image.getMinX();
             final int ymin = image.getMinY();
             final int xi = gridGeometry.gridDimensionX;

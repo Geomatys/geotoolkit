@@ -23,17 +23,20 @@ import java.awt.image.RenderedImage;
 import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.coverage.grid.GridGeometry;
 import org.opengis.referencing.datum.PixelInCell;
+import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.geometry.Envelope;
 import org.opengis.geometry.MismatchedDimensionException;
 
+import org.geotoolkit.math.XMath;
 import org.geotoolkit.util.Cloneable;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.metadata.iso.spatial.PixelTranslation;
+import org.geotoolkit.referencing.operation.transform.LinearTransform;
 import org.geotoolkit.referencing.operation.builder.GridToEnvelopeMapper;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.lang.Immutable;
@@ -63,9 +66,9 @@ import org.geotoolkit.lang.Immutable;
  * {@link InvalidGridGeometryException}. In order to check if an attribute is defined,
  * use {@link #isDefined}.
  *
- * @author Martin Desruisseaux (IRD)
+ * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Alessio Fabiani (Geosolutions)
- * @version 3.00
+ * @version 3.10
  *
  * @see GridGeometry2D
  * @see ImageGeometry
@@ -160,6 +163,12 @@ public class GeneralGridGeometry implements GridGeometry, Serializable {
      * accurate than a computed value.
      */
     private MathTransform cornerToCRS;
+
+    /**
+     * The resolution in units of the CRS axes.
+     * Computed only when first needed.
+     */
+    private transient double[] resolution;
 
     /**
      * Constructs a new grid geometry identical to the specified one except for the CRS.
@@ -538,6 +547,34 @@ public class GeneralGridGeometry implements GridGeometry, Serializable {
             return cornerToCRS;
         }
         return PixelTranslation.translate(gridToCRS, PixelInCell.CELL_CENTER, anchor);
+    }
+
+    /**
+     * Returns the grid resolution in units of the {@linkplain #getCoordinateReferenceSystem()
+     * Coordinate Reference System} axes, or {@code null} if it can't be computed. If non-null,
+     * the length of the returned array is the number of CRS dimension.
+     *
+     * @return The grid resolution, or {@code null} if unknown.
+     *
+     * @since 3.10
+     */
+    public synchronized double[] getResolution() {
+        double[] resolution = this.resolution;
+        if (resolution == null) {
+            if (gridToCRS instanceof LinearTransform) {
+                final Matrix mat = ((LinearTransform) gridToCRS).getMatrix();
+                resolution = new double[mat.getNumRow() - 1];
+                final double[] buffer = new double[mat.getNumCol() - 1];
+                for (int j=0; j<resolution.length; j++) {
+                    for (int i=0; i<buffer.length; i++) {
+                        buffer[i] = mat.getElement(j,i);
+                    }
+                    resolution[j] = XMath.magnitude(buffer);
+                }
+                this.resolution = resolution;
+            }
+        }
+        return (resolution != null) ? resolution.clone() : null;
     }
 
     /**

@@ -20,24 +20,29 @@ package org.geotoolkit.coverage.sql;
 import java.util.Arrays;
 import java.awt.Shape;
 import java.awt.Dimension;
-import java.awt.Rectangle;
+import java.awt.geom.Point2D;
+import java.awt.geom.Dimension2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RectangularShape;
-import java.awt.geom.AffineTransform;
 import static java.lang.Math.abs;
 
 import org.opengis.coverage.grid.GridEnvelope;
+import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.referencing.operation.MathTransformFactory;
 import org.opengis.referencing.operation.MathTransform1D;
+import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.metadata.extent.GeographicBoundingBox;
 
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.internal.sql.table.Entry;
+import org.geotoolkit.geometry.AbstractEnvelope;
+import org.geotoolkit.display.shape.DoubleDimension2D;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.metadata.iso.extent.DefaultGeographicBoundingBox;
+import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 import org.geotoolkit.referencing.operation.matrix.MatrixFactory;
@@ -66,6 +71,11 @@ final class GridGeometryEntry extends Entry {
      * For cross-version compatibility.
      */
     private static final long serialVersionUID = -3529884841649813534L;
+
+    /**
+     * Small tolerance factor for comparisons of floating point values.
+     */
+    static final double EPS = 1E-8;
 
     /**
      * The spatial reference systems. Typically many grid geometries will share the same
@@ -148,7 +158,7 @@ final class GridGeometryEntry extends Entry {
                 if (max < min) {
                     final double t = max;
                     max = min;
-                    min = max;
+                    min = t;
                 }
             }
         }
@@ -191,27 +201,25 @@ final class GridGeometryEntry extends Entry {
     }
 
     /**
+     * Returns whatever default grid range computation should be performed on transforms
+     * relative to pixel center or relative to pixel corner.
+     */
+    public PixelInCell getPixelInCell() {
+        return srsEntry.getPixelInCell();
+    }
+
+    /**
      * Returns a matrix for the <cite>grid to CRS</cite> affine transform.  The coefficients for
      * the horizontal and vertical (if any) dimensions are initialized. But the coefficients for
      * the temporal dimension (if any) must be initialized by the caller. The temporal dimension
      * is assumed the last one.
      *
-     * @param clip        The source region to be read in pixel coordinates.
-     * @param subsampling The subsampling which is going to be applies during the reading process.
      * @param dimension   The number of dimensions for the source and target CRS.
      * @param zIndice     The 1-based indice of the <var>z</var> value, or 0 if none.
      */
-    final XMatrix getGridToCRS(final Rectangle clip, final Dimension subsampling,
-                               final int dimension, int zIndice)
-    {
+    final XMatrix getGridToCRS(final int dimension, int zIndice) {
         final XMatrix matrix = MatrixFactory.create(dimension + 1);
-        AffineTransform tr = gridToCRS;
-        if (clip.x != 0 || clip.y != 0 || subsampling.width != 1 || subsampling.height != 1) {
-            tr = new AffineTransform(tr);
-            tr.translate(clip.x, clip.y);
-            tr.scale(subsampling.width, subsampling.height);
-        }
-        SpatialRefSysEntry.copy(tr, matrix);
+        SpatialRefSysEntry.copy(gridToCRS, matrix);
         if (verticalOrdinates != null) {
             final int imax = verticalOrdinates.length - 1;
             if (--zIndice > imax) {
@@ -248,18 +256,33 @@ final class GridGeometryEntry extends Entry {
     /**
      * Convenience method returning the two first dimension of the grid range.
      */
-    public Dimension getSize() {
+    public Dimension getImageSize() {
         final GridEnvelope gridRange = geometry.getGridRange();
         return new Dimension(gridRange.getSpan(0), gridRange.getSpan(1));
     }
 
     /**
-     * Convenience method returning the two first dimension of the grid range.
+     * Returns the horizontal resolution, in units of the database CRS (often WGS84).
+     * This method computes the resolution by projecting a pixel at the image center.
+     *
+     * @return The horizontal resolution, or {@code null} if it can not be computed.
+     * @throws TransformException If the resolution can not be converted to the database CRS.
      */
-    public Rectangle getBounds() {
-        final GridEnvelope gridRange = geometry.getGridRange();
-        return new Rectangle(gridRange.getLow (0), gridRange.getLow (1),
-                             gridRange.getSpan(0), gridRange.getSpan(1));
+    public Dimension2D getStandardResolution() throws TransformException {
+        final double[] resolution = geometry.getResolution();
+        if (resolution != null) {
+            final MathTransform2D toDatabaseHorizontalCRS = srsEntry.toDatabaseHorizontalCRS();
+            if (toDatabaseHorizontalCRS != null) {
+                final Point2D center = getHorizontalCenter();
+                final Rectangle2D.Double pixel = new Rectangle2D.Double(
+                        center.getX(), center.getY(), resolution[0], resolution[1]);
+                pixel.x -= 0.5 * pixel.width;
+                pixel.y -= 0.5 * pixel.height;
+                CRS.transform(toDatabaseHorizontalCRS, pixel, pixel);
+                return new DoubleDimension2D(pixel.width, pixel.height);
+            }
+        }
+        return null;
     }
 
     /**
@@ -287,6 +310,17 @@ final class GridGeometryEntry extends Entry {
     }
 
     /**
+     * Returns the coordinates (in coverage CRS) at the center of the image.
+     */
+    public Point2D getHorizontalCenter() {
+        final GridEnvelope gridRange = geometry.getGridRange();
+        Point2D center = new Point2D.Double(
+                gridRange.getLow(0) + 0.5*gridRange.getSpan(0),
+                gridRange.getLow(1) + 0.5*gridRange.getSpan(1));
+        return gridToCRS.transform(center, center);
+    }
+
+    /**
      * Returns the vertical ordinate values, or {@code null} if none. If non-null,
      * then the array length must be equals to the {@code gridRange.getLength(2)}.
      */
@@ -302,7 +336,7 @@ final class GridGeometryEntry extends Entry {
      * Returns the 1-based index of the closest altitude. If this entry contains no altitude,
      * or if the specified <var>z</var> is not a finite number, then this method returns 0.
      *
-     * @param z The value to search for.
+     * @param z The value to search for, or {@code NaN} if none.
      * @return  The 1-based altitude index, or {@code 0} if none.
      */
     final short indexOfNearestAltitude(final double z) {
@@ -327,8 +361,14 @@ final class GridGeometryEntry extends Entry {
      * regardless the grid size.
      */
     final boolean sameEnvelope(final GridGeometryEntry that) {
-        return Utilities.equals(this.geometry.getEnvelope(), that.geometry.getEnvelope()) &&
-                  Arrays.equals(this.verticalOrdinates,      that.verticalOrdinates);
+        if (Arrays.equals(verticalOrdinates, that.verticalOrdinates)) {
+            final AbstractEnvelope e1 = (AbstractEnvelope) this.geometry.getEnvelope();
+            final AbstractEnvelope e2 = (AbstractEnvelope) that.geometry.getEnvelope();
+            if (CRS.equalsIgnoreMetadata(e1.getCoordinateReferenceSystem(), e2.getCoordinateReferenceSystem())) {
+                return e1.equals(e2, EPS, true);
+            }
+        }
+        return false;
     }
 
     /**

@@ -77,7 +77,7 @@ public final class GridGeometryTableTest extends CatalogTestBase {
         assertEquals("South bound", -1.38E+7, envelope.getMinimum(1), 5E+5);
         assertEquals("North bound", +1.38E+7, envelope.getMaximum(1), 5E+5);
 
-        final Dimension size = entry.getSize();
+        final Dimension size = entry.getImageSize();
         assertEquals("Image width",  720, size.width);
         assertEquals("Image height", 499, size.height);
 
@@ -108,14 +108,14 @@ public final class GridGeometryTableTest extends CatalogTestBase {
         final GridGeometryEntry entry = table.getEntry(CORIOLIS_ID);
         final double[] depths = entry.getVerticalOrdinates();
 
-        assertEquals("Search the existing entry.", CORIOLIS_ID, table.find(entry.getSize(),
+        assertEquals("Search the existing entry.", CORIOLIS_ID, table.find(entry.getImageSize(),
                 entry.gridToCRS, entry.getHorizontalSRID(), depths, entry.getVerticalSRID()));
 
-        assertNull("Wrong horizontal SRID.", table.find(entry.getSize(),
+        assertNull("Wrong horizontal SRID.", table.find(entry.getImageSize(),
                 entry.gridToCRS, 4326, depths, entry.getVerticalSRID()));
 
         depths[1] = 12.8; // Tries a non-existant altitude.
-        assertNull("Wrong depth.", table.find(entry.getSize(),
+        assertNull("Wrong depth.", table.find(entry.getImageSize(),
                 entry.gridToCRS, entry.getHorizontalSRID(), depths, entry.getVerticalSRID()));
     }
 
@@ -131,11 +131,11 @@ public final class GridGeometryTableTest extends CatalogTestBase {
         final double[] depths = entry.getVerticalOrdinates();
 
         depths[1] = 12.8; // Non-existant altitude.
-        final int id = table.findOrCreate(entry.getSize(), entry.gridToCRS,
+        final int id = table.findOrCreate(entry.getImageSize(), entry.gridToCRS,
                 entry.getHorizontalSRID(), depths, entry.getVerticalSRID());
         assertFalse("Should not be the existing ID.", id == CORIOLIS_ID.intValue());
         assertEquals("Should find the existing entry.", Integer.valueOf(id),
-                table.find(entry.getSize(), entry.gridToCRS,
+                table.find(entry.getImageSize(), entry.gridToCRS,
                 entry.getHorizontalSRID(), depths, entry.getVerticalSRID()));
         assertEquals("Should have deleted the entry.", 1, table.delete(id));
     }

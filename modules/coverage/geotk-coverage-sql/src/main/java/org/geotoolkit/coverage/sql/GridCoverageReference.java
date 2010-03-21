@@ -23,17 +23,16 @@ import java.io.IOException;
 import java.util.concurrent.CancellationException;
 
 import org.opengis.geometry.Envelope;
-import org.opengis.coverage.SampleDimension;
-import org.opengis.coverage.grid.GridGeometry;
+import org.opengis.metadata.extent.GeographicBoundingBox;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import org.geotoolkit.image.io.IIOListeners;
 import org.geotoolkit.coverage.CoverageStack;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
+import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.DateRange;
-import org.opengis.metadata.extent.GeographicBoundingBox;
 
 
 /**
@@ -54,27 +53,39 @@ import org.opengis.metadata.extent.GeographicBoundingBox;
 public interface GridCoverageReference extends CoverageStack.Element {
     /**
      * Returns a name for the coverage, for use in graphical user interfaces.
+     *
+     * @return The coverage name, suitable for use in a graphical user interface.
      */
     @Override
     String getName();
 
     /**
-     * Returns the path to the image file, or {@code null} if the file is not accessible
-     * on the local machine. In the later case, {@link #getURI} should be used instead.
+     * Returns the path to the image file as an object of the given type. The current
+     * implementation supports only the {@link java.io.File}, {@link java.net.URL} and
+     * {@link java.net.URI} types.
+     * <p>
+     * In the particular case of input of type {@link java.io.File}, the returned path
+     * is expected to be {@link java.io.File#isAbsolute() absolute}. If the file is not
+     * absolute, then the file is probably not accessible on the local machine (i.e. the
+     * path is relative to a distant server and can nott be represented as a {@code File}
+     * object). In such case, consider using the {@link java.net.URI} type instead.
      *
-     * @return The path to the image file, or {@code null} if the image is not accessible
-     *         through a {@link File} object.
+     * @param  <T>  The compile-time type of the {@code type} argument.
+     * @param  type The desired input type: {@link java.io.File}, {@link java.net.URL} or
+     *         {@link java.net.URI}.
+     * @return The input as an object of the given type.
+     * @throws IOException If the input can not be represented as an object of the given type.
      */
-    File getFile();
+    <T> T getFile(final Class<T> type) throws IOException;
 
     /**
-     * Returns the URI to the image data, or {@code null} if none. The data may or may not
-     * be a file hosted on the local machine.
+     * Returns the image format. The returned string should be one of the names recognized
+     * by the Java image I/O framework. For example, the returned string shall be understood
+     * by {@link javax.imageio.ImageIO#getImageReadersByFormatName(String)}.
      *
-     * @return The path to the image file, or {@code null} if the image is not accessible
-     *         through a {@link URI} object.
+     * @return The Java Image I/O format name.
      */
-    URI getURI();
+    String getImageFormat();
 
     /**
      * Returns the native Coordinate Reference System of the coverage.
@@ -100,6 +111,11 @@ public interface GridCoverageReference extends CoverageStack.Element {
 
     /**
      * Returns the spatio-temporal envelope of the coverage.
+     * This method is equivalent to the following call:
+     *
+     * {@preformat java
+     *     return getGridGeometry().getEnvelope();
+     * }
      *
      * @return The coverage spatio-temporal envelope.
      */
@@ -107,9 +123,14 @@ public interface GridCoverageReference extends CoverageStack.Element {
     Envelope getEnvelope();
 
     /**
-     * Returns the range of values in the third dimension. This is typically the lowest and
-     * highest coverage elevation in metres if the coverage envelope has a vertical dimension,
-     * or the start time and end time otherwise.
+     * Returns the range of values in the third dimension, which may be vertical or temporal.
+     * This method returns the range in units of the database vertical or temporal CRS, which
+     * may not be the same than the vertical or temporal CRS of the coverage. This is done that
+     * way in order to allow sorting coverages by elevation or by time no matter how the coverage
+     * represents those quantities.
+     * <p>
+     * If elevation or time in units of the coverage CRS is desired, use the
+     * {@link #getEnvelope()} method instead.
      */
     @Override
     NumberRange<?> getZRange();
@@ -117,30 +138,31 @@ public interface GridCoverageReference extends CoverageStack.Element {
     /**
      * Returns the temporal part of the {@linkplain #getEnvelope coverage envelope}.
      * Invoking this method is equivalent to extracting the temporal component of the
-     * envelope and transform the coordinates if needed.
+     * envelope and transforming the coordinates if needed.
      *
      * @return The temporal component of the envelope, or {@code null} if none.
      */
     DateRange getTimeRange();
 
     /**
-     * Returns the coverage grid geometry. <strong>This information may be only approximative</strong>,
-     * especially in the case of mosaic image because the reading process may use a different
-     * subsampling than the requested one for performance reason.
+     * Returns the coverage grid geometry.
      *
      * @return The coverage grid geometry.
      */
     @Override
-    GridGeometry getGridGeometry();
+    GridGeometry2D getGridGeometry();
 
     /**
-     * Returns the coverage sample dimensions. This method returns always the
-     * <cite>geophysics</cite> version of sample dimensions
+     * Returns the coverage sample dimensions, or {@code null} if unknown.
+     * <p>
+     * This method returns always the <cite>geophysics</cite> version of sample dimensions
      * (<code>{@linkplain GridSampleDimension#geophysics geophysics}(true)</code>), which is
-     * consistent with the coverage returned by {@link #load load(...)}.
+     * consistent with the coverage returned by {@link #getCoverage getCoverage(...)}.
+     *
+     * @return The sample dimensions, or {@code null}.
      */
     @Override
-    SampleDimension[] getSampleDimensions();
+    GridSampleDimension[] getSampleDimensions();
 
     /**
      * Loads the data if needed and returns the coverage. This method returns always the geophysics
@@ -153,15 +175,13 @@ public interface GridCoverageReference extends CoverageStack.Element {
      * @return The coverage.
      * @throws IOException if an error occured while reading the image.
      * @throws CancellationException if {@link #abort()} has been invoked during the reading process.
-     *
-     * @todo Should probable thrown an exception instead of returning null when the reading is aborted.
      */
     @Override
     GridCoverage2D getCoverage(IIOListeners listeners) throws IOException, CancellationException;
 
     /**
-     * Abort the image reading. This method can be invoked from any thread. If {@link #load
-     * load(...)} was in progress at the time this method is invoked, then it will stop and
+     * Abort the image reading. This method can be invoked from any thread. If {@link #getCoverage
+     * getCoverage(...)} was in progress at the time this method is invoked, then it will stop and
      * throw {@link CancellationException}.
      */
     void abort();

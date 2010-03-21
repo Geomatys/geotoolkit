@@ -1,0 +1,505 @@
+/*
+ *    Geotoolkit.org - An Open Source Java GIS Toolkit
+ *    http://www.geotoolkit.org
+ *
+ *    (C) 2005-2010, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2007-2010, Geomatys
+ *
+ *    This library is free software; you can redistribute it and/or
+ *    modify it under the terms of the GNU Lesser General Public
+ *    License as published by the Free Software Foundation;
+ *    version 2.1 of the License.
+ *
+ *    This library is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *    Lesser General Public License for more details.
+ */
+package org.geotoolkit.coverage.sql;
+
+import java.util.*;
+import java.sql.Timestamp;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.PreparedStatement;
+import java.awt.geom.Dimension2D;
+
+import org.geotoolkit.util.NumberRange;
+import org.geotoolkit.util.collection.RangeSet;
+import org.geotoolkit.internal.sql.table.Database;
+import org.geotoolkit.internal.sql.table.SpatialDatabase;
+import org.geotoolkit.internal.sql.table.BoundedSingletonTable;
+import org.geotoolkit.internal.sql.table.CatalogException;
+import org.geotoolkit.internal.sql.table.NoSuchTableException;
+import org.geotoolkit.internal.sql.table.LocalCache;
+import org.geotoolkit.internal.sql.table.Parameter;
+import org.geotoolkit.internal.sql.table.QueryType;
+import org.geotoolkit.resources.Errors;
+
+
+/**
+ * Connection to a table of grid coverages. This table builds references in the form of
+ * {@link GridCoverageReference} objects, which will defer the image loading until first
+ * needed. A {@code GridCoverageTable} can produce a list of available image intercepting
+ * a given {@linkplain #setEnvelope2D horizontal area} and {@linkplain #setTimeRange time range}.
+ *
+ * {@section Implementation note}
+ * For proper working of this class, the SQL query must sort entries by end time. If this
+ * condition is changed, then {@link GridCoverageEntry#equalsAsSQL} must be updated accordingly.
+ *
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @author Sam Hiatt
+ * @version 3.10
+ *
+ * @since 3.10 (derived from Seagis)
+ * @module
+ */
+class GridCoverageTable extends BoundedSingletonTable<GridCoverageEntry> {
+    /**
+     * Amount of milliseconds in a day.
+     */
+    private static final long MILLIS_IN_DAY = 24*60*60*1000L;
+
+    /**
+     * The currently selected layer, or {@code null} if not yet set.
+     */
+    private LayerEntry layer;
+
+    /**
+     * Shared instance of a table of grid geometries. Will be created only when first needed.
+     */
+    private volatile GridGeometryTable gridGeometryTable;
+
+    /**
+     * Comparator for selecting the "best" image when more than one is available in
+     * the spatio-temporal area of interest. Will be created only when first needed.
+     */
+    private volatile Comparator<GridCoverageReference> comparator;
+
+    /**
+     * The set of available dates. Will be computed by
+     * {@link #getAvailableTimes} when first needed.
+     */
+    private transient SortedSet<Date> availableTimes;
+
+    /**
+     * The set of available altitudes. Will be computed by
+     * {@link #getAvailableElevations} when first needed.
+     */
+    private transient SortedSet<Number> availableElevations;
+
+    /**
+     * The set of available altitudes for each dates. Will be computed by
+     * {@link #getAvailableCentroids} when first needed.
+     */
+    private transient SortedMap<Date, SortedSet<Number>> availableCentroids;
+
+    /**
+     * Constructs a new {@code GridCoverageTable}.
+     *
+     * {@section Implementation note}
+     * This constructor actually expects an instance of {@link SpatialDatabase},
+     * but we have to keep {@link Database} in the method signature because this
+     * constructor is fetched by reflection.
+     *
+     * @param database The connection to the database.
+     */
+    public GridCoverageTable(final Database database) {
+        this(new GridCoverageQuery((SpatialDatabase) database));
+    }
+
+    /**
+     * Constructs a new {@code GridCoverageTable} from the specified query.
+     */
+    GridCoverageTable(final GridCoverageQuery query) {
+        // Method createIdentifier(...) expect the parameter to be in exactly that order.
+        super(query, new Parameter[] {query.bySeries, query.byFilename, query.byIndex},
+                query.byStartTime, query.byHorizontalExtent);
+    }
+
+    /**
+     * Constructs a new {@code GridCoverageTable} with the same initial configuration
+     * than the specified table.
+     *
+     * @param table The table to use as a template.
+     */
+    public GridCoverageTable(final GridCoverageTable table) {
+        super(table);
+        layer             = table.layer;
+        gridGeometryTable = table.gridGeometryTable;
+        comparator        = table.comparator;
+    }
+
+    /**
+     * Sets the layer as a string.
+     *
+     * @param  layer The layer name.
+     * @throws SQLException if the layer can not be set to the given value.
+     */
+    public final void setLayer(final String layer) throws SQLException {
+        ensureNonNull("layer", layer);
+        this.layer = getDatabase().getTable(LayerTable.class).getEntry(layer);
+        fireStateChanged("Layer");
+    }
+
+    /**
+     * Returns the name of the current layer, or {@code null} if none.
+     */
+    public final String getLayer() {
+        final LayerEntry layer = this.layer;
+        return (layer != null) ? layer.getName() : null;
+    }
+
+    /**
+     * Returns the layer for the coverages in this table.
+     *
+     * @throws CatalogException if the layer is not set.
+     */
+    final LayerEntry getLayerEntry() throws CatalogException {
+        final LayerEntry layer = this.layer;
+        if (layer == null) {
+            throw new CatalogException(errors().getString(Errors.Keys.NO_LAYER_SPECIFIED));
+        }
+        return layer;
+    }
+
+    /**
+     * Returns the series for the current layer. The default implementation expects a layer
+     * with only one series. The {@link WritableGridCoverageTable} will override this method
+     * with a more appropriate value.
+     *
+     * @return The series for the {@linkplain #getLayerEntry current layer}.
+     * @throws SQLException if no series can be inferred from the current layer.
+     */
+    SeriesEntry getSeries() throws SQLException {
+        final Iterator<SeriesEntry> iterator = getLayerEntry().getSeries().iterator();
+        if (iterator.hasNext()) {
+            final SeriesEntry series = iterator.next();
+            if (!iterator.hasNext()) {
+                return series;
+            }
+        }
+        throw new CatalogException(errors().getString(Errors.Keys.NO_SERIES_SPECIFIED));
+    }
+
+    /**
+     * Returns the grid geometry table.
+     */
+    private GridGeometryTable getGridGeometryTable() throws NoSuchTableException {
+        GridGeometryTable table = gridGeometryTable;
+        if (table == null) {
+            gridGeometryTable = table = getDatabase().getTable(GridGeometryTable.class);
+        }
+        return table;
+    }
+
+    /**
+     * Returns the two-dimensional coverages that intercept the
+     * {@linkplain #getEnvelope current spatio-temporal envelope}.
+     *
+     * @return List of coverages in the current envelope of interest.
+     * @throws SQLException if an error occured while reading the database.
+     */
+    @Override
+    public final Set<GridCoverageEntry> getEntries() throws SQLException {
+        final Dimension2D resolution = getPreferredResolution();
+        final  Set<GridCoverageEntry> entries  = super.getEntries();
+        final List<GridCoverageEntry> filtered = new ArrayList<GridCoverageEntry>(entries.size());
+loop:   for (final GridCoverageEntry newEntry : entries) {
+            /*
+             * If there is many entries with the same spatio-temporal envelope but different
+             * resolution, keep the one with a resolution close to the requested one and
+             * remove the other entries.
+             */
+            for (int i=filtered.size(); --i>=0;) {
+                final GridCoverageEntry oldEntry = filtered.get(i);
+                if (!oldEntry.equalsAsSQL(newEntry)) {
+                    // Entries not equal according the "ORDER BY" clause.
+                    break;
+                }
+                final GridCoverageEntry coarseResolution = oldEntry.selectCoarseResolution(newEntry);
+                if (coarseResolution != null) {
+                    // Two entries has the same spatio-temporal coordinates.
+                    if (coarseResolution.hasEnoughResolution(resolution)) {
+                        // The entry with the lowest resolution is enough.
+                        filtered.set(i, coarseResolution);
+                    } else if (coarseResolution == oldEntry) {
+                        // No entry has enough resolution;
+                        // keep the one with the finest resolution.
+                        filtered.set(i, newEntry);
+                    }
+                    continue loop;
+                }
+            }
+            filtered.add(newEntry);
+        }
+        entries.retainAll(filtered);
+        return entries;
+    }
+
+    /**
+     * Returns one of the two-dimensional coverages that intercept the {@linkplain #getEnvelope()
+     * current spatio-temporal envelope}. If more than one coverage intercept the envelope (i.e.
+     * if {@link #getEntries()} returns a set containing at least two elements), then a coverage
+     * will be selected using the default {@link GridCoverageComparator}.
+     *
+     * @return A coverage intercepting the given envelope, or {@code null} if none.
+     * @throws SQLException if an error occured while reading the database.
+     */
+    public final GridCoverageEntry getEntry() throws SQLException {
+        final Iterator<GridCoverageEntry> entries = getEntries().iterator();
+        GridCoverageEntry best = null;
+        if (entries.hasNext()) {
+            best = entries.next();
+            if (entries.hasNext()) {
+                Comparator<GridCoverageReference> comparator = this.comparator;
+                if (comparator == null) {
+                    comparator = new GridCoverageComparator(getEnvelope());
+                    this.comparator = comparator;
+                }
+                do {
+                    final GridCoverageEntry entry = entries.next();
+                    if (comparator.compare(entry, best) <= -1) {
+                        best = entry;
+                    }
+                } while (entries.hasNext());
+            }
+        }
+        return best;
+    }
+
+    /**
+     * Returns the set of dates when a coverage is available. Only the images in
+     * the currently {@linkplain #getEnvelope selected envelope} are considered.
+     *
+     * @return The set of dates.
+     * @throws SQLException if an error occured while reading the database.
+     */
+    public final synchronized SortedSet<Date> getAvailableTimes() throws SQLException {
+        if (availableTimes == null) {
+            getAvailableCentroids(); // Computes 'availableTimes' as a side effect.
+        }
+        return availableTimes;
+    }
+
+    /**
+     * Returns the set of altitudes where a coverage is available. Only the images in
+     * the currently {@linkplain #getEnvelope selected envelope} are considered.
+     * <p>
+     * If different images have different set of altitudes, then this method returns
+     * only the altitudes found in every images.
+     *
+     * @return The set of altitudes. May be empty, but will never be null.
+     * @throws SQLException if an error occured while reading the database.
+     */
+    public final synchronized SortedSet<Number> getAvailableElevations() throws SQLException {
+        if (availableElevations == null) {
+            final SortedSet<Number> commons = new TreeSet<Number>();
+            final SortedMap<Date, SortedSet<Number>> centroids = getAvailableCentroids();
+            final Iterator<SortedSet<Number>> iterator = centroids.values().iterator();
+            if (iterator.hasNext()) {
+                commons.addAll(iterator.next());
+                while (iterator.hasNext()) {
+                    final SortedSet<Number> altitudes = iterator.next();
+                    for (final Iterator<Number> it=commons.iterator(); it.hasNext();) {
+                        if (!altitudes.contains(it.next())) {
+                            it.remove();
+                        }
+                    }
+                    if (commons.isEmpty()) {
+                        break; // No need to continue.
+                    }
+                }
+            }
+            availableElevations = Collections.unmodifiableSortedSet(commons);
+        }
+        return availableElevations;
+    }
+
+    /**
+     * Returns the available altitudes for each dates. This method returns the "centroids",
+     * i.e. vertical ranges are replaced by the middle vertical points and temporal ranges are
+     * replaced by the middle time. This method considers only the vertical and temporal axis.
+     * The horizontal axis are omitted.
+     *
+     * @return An immutable collection of centroids. Keys are the dates, and values are the set
+     *         of altitudes for a given date.
+     * @throws SQLException if an error occured while reading the database.
+     */
+    final synchronized SortedMap<Date, SortedSet<Number>> getAvailableCentroids() throws SQLException {
+        if (availableCentroids == null) {
+            final NavigableMap<Date,List<String>> centroids = new TreeMap<Date,List<String>>();
+            final GridCoverageQuery query = (GridCoverageQuery) super.query;
+            final int startTimeIndex = indexOf(query.startTime);
+            final int endTimeIndex   = indexOf(query.endTime);
+            final int extentIndex    = indexOf(query.spatialExtent);
+            final Calendar calendar  = getCalendar();
+            synchronized (getLock()) {
+                final LocalCache.Stmt ce = getStatement(QueryType.AVAILABLE_DATA);
+                final PreparedStatement statement = ce.statement;
+                final ResultSet results = statement.executeQuery();
+                while (results.next()) {
+                    final Date startTime = results.getTimestamp(startTimeIndex, calendar);
+                    final Date   endTime = results.getTimestamp(  endTimeIndex, calendar);
+                    final Date      time;
+                    if (startTime != null) {
+                        if (endTime != null) {
+                            time = new Date((startTime.getTime() + endTime.getTime()) / 2);
+                        } else {
+                            time = new Date(startTime.getTime());
+                        }
+                    } else if (endTime != null) {
+                        time = new Date(endTime.getTime());
+                    } else {
+                        continue;
+                    }
+                    /*
+                     * Now get the spatial extent identifiers. We do not extract the altitudes now,
+                     * because many records will typically use the same spatial extents. So we just
+                     * extract the identifiers for now, and will get the altitudes only once later.
+                     */
+                    List<String> extents = centroids.get(time);
+                    if (extents == null) {
+                        extents = new ArrayList<String>(1); // We will usually have only one element.
+                        centroids.put(time, extents);
+                    }
+                    extents.add(results.getString(extentIndex));
+                }
+                results.close();
+                ce.release();
+            }
+            /*
+             * Now get the altitudes for all dates. Note: 'availableTimes' must be
+             * determined before we wrap 'availableCentroids' in an unmodifiable map.
+             */
+            final NavigableMap<Date, SortedSet<Number>> c = getGridGeometryTable().identifiersToAltitudes(centroids);
+            availableTimes = Collections.unmodifiableSortedSet(c.navigableKeySet());
+            availableCentroids = Collections.unmodifiableSortedMap(c);
+        }
+        return availableCentroids;
+    }
+
+    /**
+     * Returns the range of date for available images.
+     *
+     * @param  addTo If non-null, the set where to add the time range of available coverages.
+     * @return The time range of available coverages. This method returns {@code addTo} if it
+     *         was non-null or a new object otherwise.
+     * @throws SQLException if an error occured while reading the database.
+     */
+    public final synchronized RangeSet<Date> getAvailableTimeRanges(RangeSet<Date> addTo) throws SQLException {
+        final GridCoverageQuery query = (GridCoverageQuery) super.query;
+        final int startTimeIndex = indexOf(query.startTime);
+        final int   endTimeIndex = indexOf(query.endTime);
+        long  lastEndTime = Long.MIN_VALUE;
+        final Calendar calendar = getCalendar();
+        synchronized (getLock()) {
+            final LocalCache.Stmt ce = getStatement(QueryType.AVAILABLE_DATA);
+            final PreparedStatement statement = ce.statement;
+            final ResultSet results = statement.executeQuery();
+            final LayerEntry layer  = this.layer;
+            final long timeInterval = (layer != null) ? Math.round(layer.timeInterval * MILLIS_IN_DAY) : 0;
+            if (addTo == null) {
+                addTo = new RangeSet<Date>(Date.class);
+            }
+            while (results.next()) {
+                final Date startTime = results.getTimestamp(startTimeIndex, calendar);
+                final Date   endTime = results.getTimestamp(  endTimeIndex, calendar);
+                if (startTime != null && endTime != null) {
+                    final long lgEndTime = endTime.getTime();
+                    final long checkTime = lgEndTime - timeInterval;
+                    if (checkTime <= lastEndTime  &&  checkTime < startTime.getTime()) {
+                        /*
+                         * Use case: some layer may produce images every 24 hours, but declare
+                         * a time range spaning only 12 hours for each image. We don't want to
+                         * consider the 12 remaining hours as a hole in data availability. If
+                         * the 'timeInterval' is set to "1 day", then we merge the time range
+                         * of consecutive images.
+                         */
+                        startTime.setTime(checkTime);
+                    }
+                    lastEndTime = lgEndTime;
+                    addTo.add(startTime, endTime);
+                }
+            }
+            results.close();
+            ce.release();
+        }
+        return addTo;
+    }
+
+    /**
+     * Configures the specified query. This method is invoked automatically after this table
+     * {@linkplain #fireStateChanged changed its state}.
+     *
+     * @throws SQLException if a SQL error occured while configuring the statement.
+     */
+    @Override
+    protected final void configure(final QueryType type, final PreparedStatement statement) throws SQLException {
+        super.configure(type, statement);
+        final GridCoverageQuery query = (GridCoverageQuery) super.query;
+        int index = query.byLayer.indexOf(type);
+        if (index != 0) {
+            statement.setString(index, getLayerEntry().getName());
+        }
+        index = query.bySeries.indexOf(type);
+        if (index != 0) {
+            final SeriesEntry series = getSeries();
+            assert getLayerEntry().getSeries().contains(series) : series;
+            statement.setInt(index, series.getIdentifier());
+        }
+    }
+
+    /**
+     * Creates an identifier for the current row in the given result set. This method expects
+     * that {@code pkIndices} are for the "series", "filename" and "index" columns, in that
+     * order. This order is determined by the constructor.
+     */
+    @Override
+    protected final Comparable<?> createIdentifier(final ResultSet results, final int[] pkIndices)
+            throws SQLException
+    {
+        if (pkIndices.length != 3) {
+            /*
+             * pkIndices.length should always be 3. If not, we have a bug.
+             * Invoking the super-class method will intentionally throw an exception.
+             */
+            return super.createIdentifier(results, pkIndices);
+        }
+        final int    seriesID = results.getInt   (pkIndices[0]);
+        final String filename = results.getString(pkIndices[1]);
+        final short  index    = results.getShort (pkIndices[2]); // We expect 0 if null.
+        /*
+         * Gets the SeriesEntry in which this coverage is declared. The entry should be available
+         * from the layer HashMap. If not, we will query the SeriesTable as a fallback, but there
+         * is probably a bug (so it is not worth to keep a reference to the series table).
+         */
+        final LayerEntry layer = getLayerEntry();
+        SeriesEntry series = layer.getSeries(seriesID);
+        if (series == null) { // Should not happen, but be lenient if it happen anyway.
+            series = getDatabase().getTable(SeriesTable.class).getEntry(seriesID);
+        }
+        final NumberRange<?> verticalRange = getVerticalRange();
+        final double z = 0.5*(verticalRange.getMinimum() + verticalRange.getMaximum());
+        return new GridCoverageIdentifier(series, filename, index, (float) z);
+    }
+
+    /**
+     * Creates an entry from the current row in the specified result set.
+     *
+     * @throws SQLException if an error occured while reading the database.
+     */
+    @Override
+    protected final GridCoverageEntry createEntry(final ResultSet results, final Comparable<?> identifier)
+            throws SQLException
+    {
+        final Calendar calendar = getCalendar();
+        final GridCoverageQuery query = (GridCoverageQuery) super.query;
+        final Timestamp startTime = results.getTimestamp(indexOf(query.startTime), calendar);
+        final Timestamp endTime   = results.getTimestamp(indexOf(query.endTime),   calendar);
+        final int       extent    = results.getInt      (indexOf(query.spatialExtent));
+        final GridGeometryEntry geometry = getGridGeometryTable().getEntry(extent);
+        return new GridCoverageEntry((GridCoverageIdentifier) identifier,
+                geometry, startTime, endTime, null);
+    }
+}

@@ -40,6 +40,7 @@ import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.factory.wkt.DirectPostgisFactory;
 import org.geotoolkit.resources.Errors;
+import org.opengis.referencing.datum.PixelInCell;
 
 
 /**
@@ -81,6 +82,13 @@ public class SpatialDatabase extends Database {
     public final CoordinateReferenceSystem spatioTemporalCRS;
 
     /**
+     * Whatever default grid range computation should be performed on transforms
+     * relative to pixel center or relative to pixel corner. The former is OGC
+     * convention while the later is Java convention.
+     */
+    public final PixelInCell pixelInCell;
+
+    /**
      * Creates a new instance using the same configuration than the given instance.
      * The new instance will have its own, initially empty, cache.
      *
@@ -93,6 +101,7 @@ public class SpatialDatabase extends Database {
         this.verticalCRS       = toCopy.verticalCRS;
         this.temporalCRS       = toCopy.temporalCRS;
         this.spatioTemporalCRS = toCopy.spatioTemporalCRS;
+        this.pixelInCell       = toCopy.pixelInCell;
     }
 
     /**
@@ -125,6 +134,7 @@ public class SpatialDatabase extends Database {
         id.put(CoordinateReferenceSystem.DOMAIN_OF_VALIDITY_KEY, DefaultExtent.WORLD);
         spatioTemporalCRS = new DefaultCompoundCRS(id,
                 DefaultGeographicCRS.WGS84_3D, temporalCRS);
+        pixelInCell = PixelInCell.CELL_CORNER;
     }
 
     /**
@@ -145,6 +155,7 @@ public class SpatialDatabase extends Database {
         this.verticalCRS       = CRS.getVerticalCRS(spatioTemporalCRS);
         this.temporalCRS       = DefaultTemporalCRS.wrap(CRS.getTemporalCRS(spatioTemporalCRS));
         this.spatioTemporalCRS = spatioTemporalCRS;
+        this.pixelInCell       = PixelInCell.CELL_CORNER;
         /*
          * Try to get the PostGIS SRID from the horizontal CRS. First, search for an explicit
          * PostGIS code. If none are found, lookup for the EPSG code and convert that code to

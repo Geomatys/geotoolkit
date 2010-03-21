@@ -24,6 +24,8 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.resources.Errors;
+import org.geotoolkit.util.NullArgumentException;
+import org.geotoolkit.referencing.CRS;
 
 import static org.geotoolkit.util.Strings.trimFractionalPart;
 
@@ -37,7 +39,7 @@ import static org.geotoolkit.util.Strings.trimFractionalPart;
  * or {@link org.geotoolkit.util.Cloneable} interfaces is left to implementors.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.09
+ * @version 3.10
  *
  * @since 2.4
  * @module
@@ -60,6 +62,30 @@ public abstract class AbstractEnvelope implements Envelope {
      * Constructs an envelope.
      */
     protected AbstractEnvelope() {
+    }
+
+    /**
+     * Makes sure an argument is non-null.
+     *
+     * @param  name   Argument name.
+     * @param  object User argument.
+     * @throws NullArgumentException if {@code object} is null.
+     */
+    static void ensureNonNull(String name, Object object) throws NullArgumentException {
+        if (object == null) {
+            throw new NullArgumentException(Errors.format(Errors.Keys.NULL_ARGUMENT_$1, name));
+        }
+    }
+
+    /**
+     * Returns {@code true} if at least one of the specified CRS is null, or both CRS are equals.
+     * This special processing for {@code null} values is different from the usual contract of an
+     * {@code equals} method, but allow to handle the case where the CRS is unknown.
+     */
+    static boolean equalsIgnoreMetadata(final CoordinateReferenceSystem crs1,
+                                        final CoordinateReferenceSystem crs2)
+    {
+        return (crs1 == null) || (crs2 == null) || CRS.equalsIgnoreMetadata(crs1, crs2);
     }
 
     /**
@@ -264,6 +290,66 @@ public abstract class AbstractEnvelope implements Envelope {
             }
         }
         return false;
+    }
+
+    /**
+     * Compares to the specified envelope for equality up to the specified tolerance value.
+     * The tolerance value {@code eps} can be either relative to the {@linkplain #getSpan
+     * envelope span} along each dimension or can be an absolute value (as for example some
+     * ground resolution of a {@linkplain org.opengis.coverage.grid.GridCoverage.GridCoverage
+     * grid coverage}).
+     * <p>
+     * If {@code epsIsRelative} is set to {@code true}, the actual tolerance value for a given
+     * dimension <var>i</var> is {@code eps}&times;{@code span} where {@code span} is the
+     * maximum of {@linkplain #getSpan this envelope span} and the specified envelope length
+     * along dimension <var>i</var>.
+     * <p>
+     * If {@code epsIsRelative} is set to {@code false}, the actual tolerance value for a
+     * given dimension <var>i</var> is {@code eps}.
+     * <p>
+     * Relative tolerance value (as opposed to absolute tolerance value) help to workaround the
+     * fact that tolerance value are CRS dependent. For example the tolerance value need to be
+     * smaller for geographic CRS than for UTM projections, because the former typically has a
+     * range of -180 to 180° while the later can have a range of thousands of meters.
+     *
+     * {@note This method assumes that the specified envelope uses the same CRS than this envelope.
+     *        For performance reason, it will no be verified unless Java assertions are enabled.}
+     *
+     * @param envelope The envelope to compare with.
+     * @param eps The tolerance value to use for numerical comparisons.
+     * @param epsIsRelative {@code true} if the tolerance value should be relative to
+     *        axis length, or {@code false} if it is an absolute value.
+     * @return {@code true} if the given object is equal to this envelope up to the given
+     *         tolerance value.
+     *
+     * @see GeneralEnvelope#contains(Envelope, boolean)
+     * @see GeneralEnvelope#intersects(Envelope, boolean)
+     *
+     * @since 2.4
+     */
+    public boolean equals(final Envelope envelope, final double eps, final boolean epsIsRelative) {
+        ensureNonNull("envelope", envelope);
+        final int dimension = getDimension();
+        if (envelope.getDimension() != dimension) {
+            return false;
+        }
+        assert equalsIgnoreMetadata(getCoordinateReferenceSystem(), envelope.getCoordinateReferenceSystem()) : envelope;
+        for (int i=0; i<dimension; i++) {
+            double epsilon;
+            if (epsIsRelative) {
+                epsilon = Math.max(getSpan(i), envelope.getSpan(i));
+                epsilon = (epsilon > 0 && epsilon < Double.POSITIVE_INFINITY) ? epsilon*eps : eps;
+            } else {
+                epsilon = eps;
+            }
+            // Comparison below uses '!' in order to catch NaN values.
+            if (!(Math.abs(getMinimum(i) - envelope.getMinimum(i)) <= epsilon &&
+                  Math.abs(getMaximum(i) - envelope.getMaximum(i)) <= epsilon))
+            {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**

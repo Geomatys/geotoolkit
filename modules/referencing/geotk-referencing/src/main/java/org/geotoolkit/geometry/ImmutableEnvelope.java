@@ -55,6 +55,7 @@ public final class ImmutableEnvelope extends AbstractEnvelope {
      * @param envelope The envelope to copy.
      */
     public ImmutableEnvelope(final Envelope envelope) {
+        ensureNonNull("envelope", envelope);
         crs  = envelope.getCoordinateReferenceSystem();
         final int dim = envelope.getDimension();
         ordinates = new double[2*dim];
@@ -74,7 +75,7 @@ public final class ImmutableEnvelope extends AbstractEnvelope {
      * @param ymax The maximal value for the second ordinate.
      */
     public ImmutableEnvelope(final CoordinateReferenceSystem crs, final double xmin,
-                           final double xmax, final double ymin, final double ymax)
+                             final double xmax, final double ymin, final double ymax)
     {
         this.crs = crs;
         if (crs != null) {
