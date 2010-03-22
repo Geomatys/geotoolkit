@@ -26,12 +26,12 @@ import com.vividsolutions.jts.geom.Polygon;
 import com.vividsolutions.jts.geom.impl.CoordinateArraySequence;
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 
-import java.util.logging.Logger;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
@@ -90,26 +90,34 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
      */
     public AbstractIndexer(String serviceID, File configDirectory, Analyzer analyzer) {
         super(analyzer);
-        //we look if an index has been pre-generated. if yes, we delete the precedent index and replace it.
-        final File preGeneratedIndexDirectory = new File(configDirectory, serviceID + "nextIndex");
-
-        // we get the current index directory
-        final File currentIndexDirectory = new File(configDirectory, serviceID + "index");
-        setFileDirectory(currentIndexDirectory);
-
-        if (preGeneratedIndexDirectory.exists()) {
-            switchIndexDir(preGeneratedIndexDirectory, currentIndexDirectory);
-            LOGGER.info("using pre-created index.");
-
-        } else {
-            //if the index File exists we don't need to index the documents again.
-            if(!currentIndexDirectory.exists()) {
-                create = true;
-            } else {
-                LOGGER.info("Index already created.");
-                create = false;
+        
+        // we get the last index directory
+        long maxTime = 0;
+        File currentIndexDirectory = null;
+        for (File indexDirectory : configDirectory.listFiles(new IndexDirectoryFilter(serviceID))) {
+            String suffix = indexDirectory.getName();
+            suffix = suffix.substring(suffix.indexOf('-') + 1);
+            try {
+                long currentTime = Long.parseLong(suffix);
+                if (currentTime > maxTime) {
+                    maxTime = currentTime;
+                    currentIndexDirectory = indexDirectory;
+                }
+            } catch(NumberFormatException ex) {
+                LOGGER.warning("Unable to parse the timestamp:" + suffix);
             }
         }
+
+        if (currentIndexDirectory == null) {
+            currentIndexDirectory = new File(configDirectory, serviceID + "index-" + System.currentTimeMillis());
+            create = true;
+        } else {
+            LOGGER.info("Index already created.");
+            deleteOldIndexDir(configDirectory, serviceID, currentIndexDirectory.getName());
+            create = false;
+        }
+        
+        setFileDirectory(currentIndexDirectory);
     }
 
     /**
@@ -126,15 +134,18 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
     /**
      * Replace the precedent index directory by another pre-generated.
      */
-    private void switchIndexDir(File preGeneratedDirectory, File indexDirectory) {
-        if (indexDirectory.exists()) {
-            try {
-                NIOUtilities.deleteDirectory(indexDirectory);
-            } catch (IOException ex) {
-                Logger.getLogger(AbstractIndexer.class.getName()).log(Level.SEVERE, null, ex);
+    private void deleteOldIndexDir(File configDirectory, String serviceID, String currentDirName) {
+        for (File indexDirectory : configDirectory.listFiles(new IndexDirectoryFilter(serviceID))) {
+            String dirName = indexDirectory.getName();
+            if (!dirName.equals(currentDirName)) {
+                try {
+                    NIOUtilities.deleteDirectory(indexDirectory);
+                } catch (IOException ex) {
+                    LOGGER.log(Level.SEVERE, "Unable to delete the directory:" + dirName, ex);
+                }
             }
         }
-        preGeneratedDirectory.renameTo(indexDirectory);
+        
     }
     
     /**
@@ -275,16 +286,36 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
      * @return service id
      */
     protected String getServiceID() {
-        File directory = getFileDirectory();
+        File directory       = getFileDirectory();
         String directoryName = directory.getName();
         String serviceId = "";
         if (directoryName.contains("index")) {
             serviceId = directoryName.substring(0, directoryName.indexOf("index"));
 
-        } else if (directoryName.contains("nextIndex")) {
-            serviceId = directoryName.substring(0, directoryName.indexOf("nextIndex"));
         }
         return serviceId;
+    }
+
+    /**
+     * A file filter to retrieve all the index directory in a specified directory.
+     *
+     * @author Guilhem Legal
+     */
+    public static class IndexDirectoryFilter implements FilenameFilter {
+
+        private String prefix;
+
+        public IndexDirectoryFilter(String id) {
+            prefix = "";
+            if (id != null) {
+                prefix = id;
+            }
+        }
+
+        public boolean accept(File dir, String name) {
+            File f = new File(dir, name);
+            return (name.startsWith(prefix + "index-") && f.isDirectory());
+        }
     }
 }
 

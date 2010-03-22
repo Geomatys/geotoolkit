@@ -46,6 +46,7 @@ import org.geotoolkit.lucene.IndexingException;
 import org.geotoolkit.lucene.SearchingException;
 import org.geotoolkit.lucene.filter.SerialChainFilter;
 import org.geotoolkit.lucene.filter.SpatialQuery;
+import org.geotoolkit.lucene.index.AbstractIndexer.IndexDirectoryFilter;
 
 
 /**
@@ -100,20 +101,40 @@ public abstract class AbstractIndexSearcher extends IndexLucene {
     public AbstractIndexSearcher(File configDir, String serviceID, Analyzer analyzer) throws IndexingException {
         super(analyzer);
         try {
-            setFileDirectory(new File(configDir, serviceID + "index"));
+            // we get the last index directory
+            long maxTime = 0;
+            File currentIndexDirectory = null;
+            for (File indexDirectory : configDir.listFiles(new IndexDirectoryFilter(serviceID))) {
+                String suffix = indexDirectory.getName();
+                suffix = suffix.substring(suffix.indexOf('-') + 1);
+                try {
+                    long currentTime = Long.parseLong(suffix);
+                    if (currentTime > maxTime) {
+                        maxTime = currentTime;
+                        currentIndexDirectory = indexDirectory;
+                    }
+                } catch (NumberFormatException ex) {
+                    LOGGER.warning("Unable to parse the timestamp:" + suffix);
+                }
+            }
+            if (currentIndexDirectory != null && currentIndexDirectory.exists()) {
+                setFileDirectory(currentIndexDirectory);
+            } else {
+                throw new IndexingException("The index searcher can't find a index directory.");
+            }
             isCacheEnabled        = true;
             //isMultiLingualEnabled = false;
             initSearcher();
             initIdentifiersList();
 
         } catch (CorruptIndexException ex) {
-            throw new IndexingException("Corruption encountered during indexing", ex);
+            throw new IndexingException("Corruption encountered during index searcher creation", ex);
         } catch (ParseException ex) {
-            throw new IndexingException("Failure to parse during indexing", ex);
+            throw new IndexingException("Failure to parse during index searcher creation", ex);
         } catch (IOException ex) {
-            throw new IndexingException("IO Exception during indexing", ex);
+            throw new IndexingException("IO Exception during index searcher creation", ex);
         }  catch (SearchingException ex) {
-            throw new IndexingException("Searching Exception during indexing", ex);
+            throw new IndexingException("Searching Exception during index searcher creation", ex);
         }
         
     }
@@ -128,7 +149,7 @@ public abstract class AbstractIndexSearcher extends IndexLucene {
     private void initSearcher() throws CorruptIndexException, IOException {
         final File indexDirectory = getFileDirectory();
         final IndexReader ireader = IndexReader.open(new SimpleFSDirectory(indexDirectory), true);
-        searcher   = new IndexSearcher(ireader);
+        searcher                  = new IndexSearcher(ireader);
         LOGGER.info("Creating new Index Searcher with index directory:" + indexDirectory.getPath());
        
     }
@@ -157,13 +178,13 @@ public abstract class AbstractIndexSearcher extends IndexLucene {
             cachedQueries.clear();
             LOGGER.info("refreshing index searcher");
         } catch (ParseException ex) {
-            throw new IndexingException("Parse exception encountered during refreshing the index", ex);
+            throw new IndexingException("Parse exception encountered during refreshing the index searcher", ex);
         } catch (SearchingException ex) {
-            throw new IndexingException("Searching exception encountered during refreshing the index", ex);
+            throw new IndexingException("Searching exception encountered during refreshing the index searcher", ex);
         } catch (CorruptIndexException ex) {
-            throw new IndexingException("Corruption exception encountered during refreshing the index", ex);
+            throw new IndexingException("Corruption exception encountered during refreshing the index searcher", ex);
         } catch (IOException ex) {
-            throw new IndexingException("IO Exception during refreshing the index", ex);
+            throw new IndexingException("IO Exception during refreshing the index searcher", ex);
         }
     }
 
@@ -346,7 +367,7 @@ public abstract class AbstractIndexSearcher extends IndexLucene {
             if (searcher != null)
                 searcher.close();
         } catch (IOException ex) {
-            LOGGER.info("IOException while closing the indexer");
+            LOGGER.info("IOException while closing the index searcher");
         }
     }
 }
