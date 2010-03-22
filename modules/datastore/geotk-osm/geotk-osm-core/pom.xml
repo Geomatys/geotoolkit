@@ -13,7 +13,7 @@
 
   <parent>
     <groupId>org.geotoolkit.pending</groupId>
-    <artifactId>datastore</artifactId>
+    <artifactId>osm</artifactId>
     <version>SNAPSHOT</version>
   </parent>
 
@@ -22,12 +22,12 @@
   <!--     Module Description                                      -->
   <!-- =========================================================== -->
   <groupId>org.geotoolkit.pending</groupId>
-  <artifactId>osm</artifactId>
-  <packaging>pom</packaging>
-  <name>Datastore OSM</name>
+  <artifactId>geotk-osm-core</artifactId>
+  <packaging>jar</packaging>
+  <name>Datastore OSM core</name>
 
   <description>
-    Projects group for open street map data access.
+    Open Street Map model classes.
   </description>
 
 
@@ -50,12 +50,9 @@
 
 
   <!-- =========================================================== -->
-  <!--     Modules included in the build                           -->
+  <!--     Dependency Management                                   -->
   <!-- =========================================================== -->
-  <modules>
-    <module>geotk-osm-core</module>
-    <module>geotk-osm-bin</module>
-    <module>geotk-osm-xml</module>
-  </modules>
+  <dependencies>
+  </dependencies>
 
 </project>
