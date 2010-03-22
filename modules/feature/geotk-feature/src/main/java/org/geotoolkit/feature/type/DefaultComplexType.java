@@ -185,6 +185,7 @@ public class DefaultComplexType extends DefaultAttributeType<AttributeType> impl
             sb.append(" extends ");
             sb.append(superType.getName().getLocalPart());
         }
+        sb.append('\n');
 
         boolean first = true;
 
@@ -193,43 +194,10 @@ public class DefaultComplexType extends DefaultAttributeType<AttributeType> impl
         final TableWriter tablewriter = new TableWriter(writer);
         tablewriter.nextLine(TableWriter.DOUBLE_HORIZONTAL_LINE);
         tablewriter.write("name\t min\t max\t nillable\t type\t CRS\t UserData\n");
-        tablewriter.nextLine('-');
+        tablewriter.nextLine(TableWriter.SINGLE_HORIZONTAL_LINE);
 
         for (PropertyDescriptor property : getDescriptors()) {
-            tablewriter.write(DefaultName.toJCRExtendedForm(property.getName()));
-            tablewriter.write("\t");
-            tablewriter.write(Integer.toString(property.getMinOccurs()));
-            tablewriter.write("\t");
-            tablewriter.write(Integer.toString(property.getMaxOccurs()));
-            tablewriter.write("\t");
-            tablewriter.write(Boolean.toString(property.isNillable()));
-            tablewriter.write("\t");
-            tablewriter.write(property.getType().getBinding().getSimpleName());
-            tablewriter.write("\t");
-
-            if(property instanceof GeometryDescriptor){
-                GeometryDescriptor desc = (GeometryDescriptor) property;
-                try {
-                    tablewriter.write(String.valueOf(CRS.lookupIdentifier(desc.getCoordinateReferenceSystem(), true)));
-                } catch (FactoryException ex) {
-                    tablewriter.write("Error getting identifier");
-                }
-            }else{
-                tablewriter.write("");
-            }
-            tablewriter.write("\t");
-
-            final Map<Object,Object> userDatas = property.getUserData();
-            if(userDatas != null && !userDatas.isEmpty()){
-                for(Map.Entry<Object,Object> param : userDatas.entrySet()){
-                    tablewriter.write(param.getKey().toString());
-                    tablewriter.write("=");
-                    tablewriter.write(param.getValue().toString());
-                    tablewriter.write("  ");
-                }
-            }
-
-            tablewriter.write("\n");
+            toString(tablewriter, property, 0, 0);
         }
         tablewriter.nextLine(TableWriter.DOUBLE_HORIZONTAL_LINE);
         try {
@@ -239,13 +207,7 @@ public class DefaultComplexType extends DefaultAttributeType<AttributeType> impl
             //will never happen is this case
             ex.printStackTrace();
         }
-        sb.append('\n');
         sb.append(writer.getBuffer().toString());
-
-
-        if(!getDescriptors().isEmpty()){
-            sb.append("\n");
-        }
 
         if (description != null) {
             sb.append("\n\tdescription=");
@@ -265,4 +227,75 @@ public class DefaultComplexType extends DefaultAttributeType<AttributeType> impl
         }
         return sb.toString();
     }
+
+    private static void toString(TableWriter tablewriter, PropertyDescriptor property, int depth, int pos){
+
+        if(depth != 0){
+            for(int i=0; i<depth-1;i++){
+                tablewriter.write("\u00A0");
+            }
+            if(pos == 0){
+                tablewriter.write("\u251C\u2500\u2500");
+            }else if(pos == 1){
+                tablewriter.write("\u2514\u2500\u2500");
+            }else{
+                tablewriter.write("\u251C\u2500\u2500");
+            }
+        }
+
+        tablewriter.write(DefaultName.toJCRExtendedForm(property.getName()));
+        tablewriter.write("\t");
+        tablewriter.write(Integer.toString(property.getMinOccurs()));
+        tablewriter.write("\t");
+        tablewriter.write(Integer.toString(property.getMaxOccurs()));
+        tablewriter.write("\t");
+        tablewriter.write(Boolean.toString(property.isNillable()));
+        tablewriter.write("\t");
+        tablewriter.write(property.getType().getBinding().getSimpleName());
+        tablewriter.write("\t");
+
+        if(property instanceof GeometryDescriptor){
+            final GeometryDescriptor desc = (GeometryDescriptor) property;
+            try {
+                tablewriter.write(String.valueOf(CRS.lookupIdentifier(desc.getCoordinateReferenceSystem(), true)));
+            } catch (FactoryException ex) {
+                tablewriter.write("Error getting identifier");
+            }
+        }else{
+            tablewriter.write("");
+        }
+        tablewriter.write("\t");
+
+        final Map<Object,Object> userDatas = property.getUserData();
+        if(userDatas != null && !userDatas.isEmpty()){
+            for(Map.Entry<Object,Object> param : userDatas.entrySet()){
+                tablewriter.write(param.getKey().toString());
+                tablewriter.write("=");
+                tablewriter.write(param.getValue().toString());
+                tablewriter.write("  ");
+            }
+        }
+
+        tablewriter.write("\n");
+
+        System.out.println(">>> "+property);
+        if(property.getType() instanceof ComplexType){
+            final ComplexType ct = (ComplexType) property.getType();
+            final Collection<PropertyDescriptor> descs = ct.getDescriptors();
+            int i=0;
+            int n=descs.size()-1;
+            for(PropertyDescriptor desc : descs){
+                if(i==n){
+                    toString(tablewriter, desc, depth+1, 1);
+                }else if(i == 0){
+                    toString(tablewriter, desc, depth+1, 0);
+                }else{
+                    toString(tablewriter, desc, depth+1, -1);
+                }
+                i++;
+            }
+        }
+
+    }
+
 }

@@ -32,6 +32,7 @@ import org.opengis.feature.type.FeatureTypeFactory;
 import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.feature.type.GeometryType;
 import org.opengis.feature.type.Name;
+import org.opengis.feature.type.PropertyDescriptor;
 import org.opengis.feature.type.Schema;
 import org.opengis.filter.Filter;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -139,9 +140,9 @@ public class DefaultFeatureTypeFactory implements FeatureTypeFactory {
      * {@inheritDoc }
      */
     @Override
-    public FeatureType createFeatureType(final Name name, final Collection schema,
+    public FeatureType createFeatureType(final Name name, final Collection<PropertyDescriptor> schema,
             final GeometryDescriptor defaultGeometry, final boolean isAbstract,
-            final List restrictions, final AttributeType superType, final InternationalString description){
+            final List<Filter> restrictions, final AttributeType superType, final InternationalString description){
         return new DefaultFeatureType(name, schema, defaultGeometry,
                 isAbstract, restrictions, superType, description);
     }
