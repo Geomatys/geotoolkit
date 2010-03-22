@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -78,14 +79,18 @@ public class OSMXMLReader{
     private long moveToId = -1;
 
 
-    private static final XMLStreamReader toReader(File file) throws XMLStreamException, FileNotFoundException{
+    private static final XMLStreamReader toReader(InputStream stream) throws XMLStreamException, FileNotFoundException{
         final XMLInputFactory XMLfactory = XMLInputFactory.newInstance();
         XMLfactory.setProperty("http://java.sun.com/xml/stream/properties/report-cdata-event", Boolean.FALSE);
-        return XMLfactory.createXMLStreamReader(new FileInputStream(file));
+        return XMLfactory.createXMLStreamReader(stream);
     }
 
     public OSMXMLReader(File file) throws FileNotFoundException, XMLStreamException{
-        this(toReader(file));
+        this(toReader(new FileInputStream(file)));
+    }
+
+    public OSMXMLReader(InputStream stream) throws FileNotFoundException, XMLStreamException{
+        this(toReader(stream));
     }
 
     public OSMXMLReader(XMLStreamReader reader) throws FileNotFoundException, XMLStreamException{
