@@ -47,13 +47,20 @@ public abstract class AbstractRequest implements Request {
     protected final Map<String, String> requestParameters = new HashMap<String, String>();
 
     protected AbstractRequest(final String serverURL) {
+        this(serverURL,null);
+    }
 
-        if (serverURL.contains("?")) {
-            this.serverURL = serverURL;
-        } else {
-            this.serverURL = serverURL + "?";
+    protected AbstractRequest(String serverURL, final String subPath) {
+
+        if(subPath != null){
+            if(serverURL.endsWith("/")){
+                serverURL = serverURL + subPath;
+            }else{
+                serverURL = serverURL + "/" + subPath;
+            }
         }
 
+        this.serverURL = serverURL;
     }
 
     /**
@@ -65,6 +72,10 @@ public abstract class AbstractRequest implements Request {
         final List<String> keys = new ArrayList<String>(requestParameters.keySet());
 
         sb.append(serverURL);
+
+        if(!keys.isEmpty() && !serverURL.contains("?")){
+            sb.append("?");
+        }
 
         if (!requestParameters.isEmpty()) {
 
