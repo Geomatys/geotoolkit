@@ -18,13 +18,18 @@ package org.geotoolkit.client;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.geotoolkit.util.StringUtilities;
+import org.geotoolkit.util.logging.Logging;
 
 
 /**
@@ -36,6 +41,11 @@ import org.geotoolkit.util.StringUtilities;
  * @module pending
  */
 public abstract class AbstractRequest implements Request {
+    /**
+     * Logger specific for this implementation of {@link Request}.
+     */
+    private static final Logger LOGGER = Logging.getLogger(AbstractRequest.class);
+
     /**
      * The address of the web service.
      */
@@ -84,8 +94,13 @@ public abstract class AbstractRequest implements Request {
             }
 
             String key = keys.get(0);
-            sb.append(StringUtilities.convertSpacesForUrl(key)).append('=')
-                    .append(StringUtilities.convertSpacesForUrl(requestParameters.get(key)));
+            try {
+                sb.append(StringUtilities.convertSpacesForUrl(key)).append('=')
+                  .append(URLEncoder.encode(requestParameters.get(key), "UTF-8"));
+            } catch (UnsupportedEncodingException ex) {
+                // Should not occur.
+                LOGGER.log(Level.FINER, ex.getLocalizedMessage(), ex);
+            }
 
             for (int i = 1, n = keys.size(); i < n; i++) {
                 key = keys.get(i);
