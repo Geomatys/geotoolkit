@@ -17,15 +17,12 @@
 
 package org.geotoolkit.data.osm.xml;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.List;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import javax.xml.stream.XMLInputFactory;
@@ -43,10 +40,7 @@ import org.geotoolkit.data.osm.model.Transaction;
 import org.geotoolkit.data.osm.model.TransactionType;
 import org.geotoolkit.data.osm.model.User;
 import org.geotoolkit.data.osm.model.Way;
-import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.util.converter.ConverterRegistry;
-import org.geotoolkit.util.converter.NonconvertibleObjectException;
-import org.geotoolkit.util.converter.ObjectConverter;
+import org.geotoolkit.temporal.object.FastDateParser;
 
 import org.opengis.geometry.Envelope;
 
@@ -60,23 +54,8 @@ import static org.geotoolkit.data.osm.xml.OSMXMLConstants.*;
  */
 public class OSMXMLReader{
 
-    private static final ObjectConverter<String,Date> STRING_TO_DATE;
-
-    static{
-        //todo, must update filter factory, use meta-inf object factory registry
-        //to replace static initialization
-        FactoryFinder.getFilterFactory(null);
-
-        ObjectConverter<String,Date> oc = null;
-        try {
-            oc = ConverterRegistry.system().converter(String.class, Date.class);
-        } catch (NonconvertibleObjectException ex) {
-            throw new IllegalStateException("String to date converter is needed to read osm files.");
-        }
-        STRING_TO_DATE = oc;
-    }
-
     private final XMLStreamReader reader;
+    private final FastDateParser dateParser = new FastDateParser();
     private Envelope envelope;
 
     /**
@@ -97,10 +76,19 @@ public class OSMXMLReader{
 
     private long moveToId = -1;
 
-    public OSMXMLReader(File file) throws FileNotFoundException, XMLStreamException{
+
+    private static final XMLStreamReader toReader(File file) throws XMLStreamException, FileNotFoundException{
         final XMLInputFactory XMLfactory = XMLInputFactory.newInstance();
         XMLfactory.setProperty("http://java.sun.com/xml/stream/properties/report-cdata-event", Boolean.FALSE);
-        reader = XMLfactory.createXMLStreamReader(new FileInputStream(file));
+        return XMLfactory.createXMLStreamReader(new FileInputStream(file));
+    }
+
+    public OSMXMLReader(File file) throws FileNotFoundException, XMLStreamException{
+        this(toReader(file));
+    }
+
+    public OSMXMLReader(XMLStreamReader reader) throws FileNotFoundException, XMLStreamException{
+        this.reader = reader;
 
         //search for the bound tag to generate the envelope
         searchLoop :
@@ -126,7 +114,6 @@ public class OSMXMLReader{
                     }
             }
         }
-
     }
 
     public Envelope getEnvelope() {
@@ -183,7 +170,7 @@ public class OSMXMLReader{
         if(current != null) return;
 
         boolean first = true;
-        while ( (reader.hasNext() && current == null) || first) {
+        while ( first || (current == null && reader.hasNext()) ) {
             final int type;
             if(first){
                 type = reader.getEventType();
@@ -216,20 +203,10 @@ public class OSMXMLReader{
             }
         }
 
-        if(reader.hasNext()){
-            //nothing left to read
-            reader.close();
-        }
     }
 
-    private static Long toDateLong(String str){
-        try {
-            Date d = STRING_TO_DATE.convert(str);
-            return d.getTime();
-        } catch (NonconvertibleObjectException ex) {
-            Logger.getLogger(OSMXMLReader.class.getName()).log(Level.SEVERE, null, ex);
-            return null;
-        }
+    private Long toDateLong(String str){
+        return dateParser.parseToMillis(str);
     }
 
     private Envelope parseBound(XMLStreamReader reader) throws XMLStreamException {
@@ -440,6 +417,9 @@ public class OSMXMLReader{
     private Transaction parseTransaction(XMLStreamReader reader, TransactionType tt) throws XMLStreamException {
         transaction.clear();
 
+        final String version = reader.getAttributeValue(null, ATT_VERSION);
+        final String generator = reader.getAttributeValue(null, ATT_GENERATOR);
+
         while (reader.hasNext()) {
             final int type = reader.next();
 
@@ -460,7 +440,7 @@ public class OSMXMLReader{
                 case XMLStreamReader.END_ELEMENT:
                     if(reader.getLocalName().equalsIgnoreCase(tt.getTagName())){
                         //end of the transaction element
-                        return new Transaction(tt,transaction);
+                        return new Transaction(tt,transaction,version,generator);
                     }
                     break;
             }

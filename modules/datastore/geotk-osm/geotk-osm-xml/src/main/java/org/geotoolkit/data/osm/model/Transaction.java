@@ -17,8 +17,8 @@
 
 package org.geotoolkit.data.osm.model;
 
+import java.util.ArrayList;
 import java.util.List;
-import org.geotoolkit.util.collection.UnmodifiableArrayList;
 
 /**
  *
@@ -29,27 +29,35 @@ public class Transaction {
 
     private final List<IdentifiedElement> elements;
     private final TransactionType type;
+    private final String version;
+    private final String generator;
 
-    public Transaction(TransactionType type, List<IdentifiedElement> elements){
-        IdentifiedElement[] ele = elements.toArray(new IdentifiedElement[elements.size()]);
-        this.elements = UnmodifiableArrayList.wrap(ele);
+    public Transaction(TransactionType type, List<IdentifiedElement> elements, String version, String generator){
+
+        if(elements instanceof ArrayList){
+            this.elements = (List<IdentifiedElement>) ((ArrayList)elements).clone();
+        }else{
+            this.elements = new ArrayList<IdentifiedElement>(elements);
+        }
         this.type = type;
+        this.version = version;
+        this.generator = generator;
+    }
+
+    public TransactionType getType(){
+        return type;
     }
 
     public List<IdentifiedElement> getElements(){
         return elements;
     }
 
-    public static Transaction create(List<IdentifiedElement> elements){
-        return new Transaction(TransactionType.CREATE, elements);
+    public String getGenerator() {
+        return generator;
     }
 
-    public static Transaction modify(List<IdentifiedElement> elements){
-        return new Transaction(TransactionType.MODIFY, elements);
-    }
-
-    public static Transaction delete(List<IdentifiedElement> elements){
-        return new Transaction(TransactionType.DELETE, elements);
+    public String getVersion() {
+        return version;
     }
     
 }

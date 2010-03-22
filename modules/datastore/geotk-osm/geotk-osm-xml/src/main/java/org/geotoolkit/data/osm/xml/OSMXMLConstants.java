@@ -41,6 +41,10 @@ public class OSMXMLConstants {
     public static final String ATT_USER = "user";
     public static final String ATT_UID = "uid";
     public static final String ATT_TIMESTAMP = "timestamp";
+    /*
+     * Generator, used only in Create, Modify and Delete tags.
+     */
+    public static final String ATT_GENERATOR = "generator";
 
     /**
      * Tag tag.

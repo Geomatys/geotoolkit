@@ -17,6 +17,7 @@
 
 package org.geotoolkit.data.osm.gui;
 
+import com.ctc.wstx.stax.WstxInputFactory;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -25,11 +26,12 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
+import org.codehaus.stax2.XMLInputFactory2;
 
 import org.geotoolkit.data.osm.db.OSMPostgresDB;
 import org.geotoolkit.data.osm.xml.OSMXMLReader;
-import org.geotoolkit.data.osm.model.IdentifiedElement;
 import org.geotoolkit.data.osm.model.Node;
 import org.geotoolkit.data.osm.model.Relation;
 import org.geotoolkit.data.osm.model.Way;
@@ -345,7 +347,7 @@ public class JOSMDBCreationPane extends javax.swing.JPanel {
     private void processOperations() throws SQLException, ClassNotFoundException, FileNotFoundException, XMLStreamException, IOException{
         reset();
 
-        File f = osmFile;
+        final File f = osmFile;
 
         pgDB = new OSMPostgresDB(
                 dbParameters.get(PostgisNGDataStoreFactory.HOST.getName().getCode()).toString() +":"+
@@ -354,7 +356,18 @@ public class JOSMDBCreationPane extends javax.swing.JPanel {
                 dbParameters.get(PostgisNGDataStoreFactory.USER.getName().getCode()).toString(),
                 dbParameters.get(PostgisNGDataStoreFactory.PASSWD.getName().getCode()).toString()
                 );
-        reader = new OSMXMLReader(f);
+
+
+        XMLInputFactory2 xmlif = new WstxInputFactory();
+        xmlif.setProperty(XMLInputFactory.IS_COALESCING, Boolean.FALSE);
+        xmlif.setProperty(XMLInputFactory.SUPPORT_DTD, Boolean.FALSE);
+        xmlif.setProperty(XMLInputFactory.IS_NAMESPACE_AWARE, Boolean.FALSE);
+        xmlif.setProperty(XMLInputFactory.IS_REPLACING_ENTITY_REFERENCES, Boolean.FALSE);
+        xmlif.setProperty(XMLInputFactory.IS_SUPPORTING_EXTERNAL_ENTITIES, Boolean.FALSE);
+        xmlif.setProperty(XMLInputFactory.IS_VALIDATING, Boolean.FALSE);
+        xmlif.configureForSpeed();
+
+        reader = new OSMXMLReader(xmlif.createXMLStreamReader(f));
 
         if(guiDropTable.isSelected()){
             dropTables();
