@@ -23,6 +23,7 @@ import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.geotoolkit.client.Server;
 import org.geotoolkit.data.wfs.v110.Delete110;
 import org.geotoolkit.data.wfs.v110.DescribeFeatureType110;
 import org.geotoolkit.data.wfs.v110.GetCapabilities110;
@@ -42,7 +43,7 @@ import org.geotoolkit.wfs.xml.v110.WFSCapabilitiesType;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class WebFeatureServer {
+public class WebFeatureServer implements Server{
 
     private static final Logger LOGGER = Logging.getLogger(WebFeatureServer.class);
 

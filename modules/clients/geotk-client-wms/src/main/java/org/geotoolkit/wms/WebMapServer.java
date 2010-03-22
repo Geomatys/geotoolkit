@@ -23,6 +23,7 @@ import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.geotoolkit.client.Server;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.wms.v111.GetCapabilities111;
 import org.geotoolkit.wms.v111.GetLegend111;
@@ -42,7 +43,7 @@ import org.geotoolkit.wms.xml.WMSVersion;
  * @author Cédric Briançon (Geomatys)
  * @module pending
  */
-public class WebMapServer {
+public class WebMapServer implements Server{
 
     private static final Logger LOGGER = Logging.getLogger(WebMapServer.class);
 
