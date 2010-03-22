@@ -59,5 +59,18 @@ public class Transaction {
     public String getVersion() {
         return version;
     }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("Transaction ");
+        sb.append(type.toString());
+        sb.append(" version=").append(version);
+        sb.append(" generator=").append(generator);
+        for(IdentifiedElement ele : elements){
+            sb.append('\n');
+            sb.append(ele.toString());
+        }
+        return sb.toString();
+    }
     
 }
