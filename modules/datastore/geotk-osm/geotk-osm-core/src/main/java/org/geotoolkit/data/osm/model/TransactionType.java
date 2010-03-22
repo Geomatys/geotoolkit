@@ -17,17 +17,15 @@
 
 package org.geotoolkit.data.osm.model;
 
-import org.geotoolkit.data.osm.xml.OSMXMLConstants;
-
 /**
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
 public enum TransactionType {
-    CREATE(OSMXMLConstants.TAG_CREATE),
-    MODIFY(OSMXMLConstants.TAG_MODIFY),
-    DELETE(OSMXMLConstants.TAG_DELETE);
+    CREATE("create"),
+    MODIFY("modify"),
+    DELETE("delete");
 
     private final String tagName;
     private TransactionType(String tagName) {

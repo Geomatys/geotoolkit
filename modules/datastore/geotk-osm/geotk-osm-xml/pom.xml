@@ -55,6 +55,12 @@
   <dependencies>
       <dependency>
           <groupId>org.geotoolkit.pending</groupId>
+          <artifactId>geotk-osm-core</artifactId>
+          <version>${project.version}</version>
+      </dependency>
+
+      <dependency>
+          <groupId>org.geotoolkit.pending</groupId>
           <artifactId>geotk-datastore-core</artifactId>
           <version>${project.version}</version>
       </dependency>
