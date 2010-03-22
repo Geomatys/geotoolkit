@@ -22,9 +22,9 @@
   <!--     Module Description                                      -->
   <!-- =========================================================== -->
   <groupId>org.geotoolkit.pending</groupId>
-  <artifactId>geotk-osm-client</artifactId>
+  <artifactId>geotk-client-osm</artifactId>
   <packaging>jar</packaging>
-  <name>Datastore OSM Client</name>
+  <name>Web Client OSM</name>
 
   <description>
     Open Street Map API Client.
@@ -53,6 +53,16 @@
   <!--     Dependency Management                                   -->
   <!-- =========================================================== -->
   <dependencies>
+      <dependency>
+          <groupId>org.geotoolkit.pending</groupId>
+          <artifactId>geotk-osm-xml</artifactId>
+          <version>${project.version}</version>
+      </dependency>
+      <dependency>
+          <groupId>org.geotoolkit.pending</groupId>
+          <artifactId>geotk-clients-core</artifactId>
+          <version>${project.version}</version>
+      </dependency>
   </dependencies>
 
 </project>

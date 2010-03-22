@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.stream.XMLStreamException;
+import org.geotoolkit.data.osm.model.Api;
 import org.geotoolkit.data.osm.model.IdentifiedElement;
 import org.geotoolkit.data.osm.model.MemberType;
 import org.geotoolkit.data.osm.model.Node;
@@ -297,5 +298,30 @@ public class OSMXMLReaderTest {
 
     }
 
+    @Test
+    public void testReadingCapabilities() throws FileNotFoundException, XMLStreamException, IOException {
+        File testFile = new File("src/test/resources/org/geotoolkit/test-data/osm/capabilities.osm");
+        OSMXMLReader reader = new OSMXMLReader(testFile);
+
+        final List<Object> elements = new ArrayList<Object>();
+        while(reader.hasNext()){
+            elements.add(reader.next());
+        }
+        reader.close();
+
+        assertEquals(1, elements.size());
+
+        //while raise an error if type dont match
+        final Api a = (Api) elements.get(0);
+
+        assertEquals("0.3", a.getVersionMinimum());
+        assertEquals("0.6", a.getVersionMaximum());
+        assertEquals(0.25d, a.getAreaMaximum(),DELTA);
+        assertEquals(5000, a.getTracePointsPerPage());
+        assertEquals(2000, a.getWayNodeMaximum());
+        assertEquals(50000, a.getChangesetMaximum());
+        assertEquals(300, a.getTimeout());
+
+    }
 
 }

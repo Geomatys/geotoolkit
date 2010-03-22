@@ -85,6 +85,31 @@ public class OSMXMLConstants {
     public static final String ATT_BOUNDS_MAXLAT = "maxlat";
     public static final String ATT_BOUNDS_MAXLON = "maxlon";
 
+//  <api>
+//    <version minimum="0.6" maximum="0.6"/>
+//    <area maximum="0.25"/>
+//    <tracepoints per_page="5000"/>
+//    <waynodes maximum="2000"/>
+//    <changesets maximum_elements="50000"/>
+//    <timeout seconds="300"/>
+//  </api>
+
+    /**
+     * Api tag, used in osm server capabilities.
+     */
+    public static final String TAG_API = "api";
+    public static final String TAG_API_VERSION = "version";
+    public static final String TAG_API_AREA = "area";
+    public static final String TAG_API_TRACEPOINTS = "tracepoints";
+    public static final String TAG_API_WAYNODES = "waynodes";
+    public static final String TAG_API_CHANGESETS = "changesets";
+    public static final String TAG_API_TIMEOUT = "timeout";
+    public static final String ATT_API_MINIMUM = "minimum";
+    public static final String ATT_API_MAXIMUM = "maximum";
+    public static final String ATT_API_MAXIMUM_ELEMENTS = "maximum_elements";
+    public static final String ATT_API_PER_PAGE = "per_page";
+    public static final String ATT_API_SECONDS = "seconds";
+
     /**
      * ChangeSet tag.
      */

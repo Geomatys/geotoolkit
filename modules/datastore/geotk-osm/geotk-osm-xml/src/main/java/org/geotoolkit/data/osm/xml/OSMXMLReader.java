@@ -28,6 +28,7 @@ import java.util.Map;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
+import org.geotoolkit.data.osm.model.Api;
 
 import org.geotoolkit.data.osm.model.Bound;
 import org.geotoolkit.data.osm.model.ChangeSet;
@@ -108,7 +109,8 @@ public class OSMXMLReader{
                             || typeName.equalsIgnoreCase(TAG_MODIFY)
                             || typeName.equalsIgnoreCase(TAG_CREATE)
                             || typeName.equalsIgnoreCase(TAG_DELETE)
-                            || typeName.equalsIgnoreCase(TAG_CHANGESET)){
+                            || typeName.equalsIgnoreCase(TAG_CHANGESET)
+                            || typeName.equalsIgnoreCase(TAG_API)){
                         //there is no bounds tag
                         break searchLoop;
                     }
@@ -197,6 +199,8 @@ public class OSMXMLReader{
                         current = parseDelete(reader);
                     }else if(localName.equalsIgnoreCase(TAG_CHANGESET)){
                         current = parseChangeSet(reader);
+                    }else if(localName.equalsIgnoreCase(TAG_API)){
+                        current = parseAPI(reader);
                     }else{
                         System.out.println("Unexpected tag : " + localName);
                     }
@@ -441,6 +445,76 @@ public class OSMXMLReader{
                     if(reader.getLocalName().equalsIgnoreCase(tt.getTagName())){
                         //end of the transaction element
                         return new Transaction(tt,transaction,version,generator);
+                    }
+                    break;
+            }
+        }
+
+        throw new XMLStreamException("Error in xml file, modify tag without end.");
+    }
+
+    private Api parseAPI(XMLStreamReader reader) throws XMLStreamException {
+
+        String versionMinimum = null;
+        String versionMaximum = null;
+        Double areaMaximum = null;
+        Integer tracePointsPerPage = null;
+        Integer wayNodeMaximum = null;
+        Integer changesetMaximum = null;
+        Integer timeout = null;
+
+        while (reader.hasNext()) {
+            final int type = reader.next();
+
+            switch (type) {
+                case XMLStreamReader.START_ELEMENT:
+                    final String localName = reader.getLocalName();
+                    if(localName.equalsIgnoreCase(TAG_API_AREA)){
+                        areaMaximum = Double.valueOf(reader.getAttributeValue(null, ATT_API_MAXIMUM));
+                    }else if(localName.equalsIgnoreCase(TAG_API_CHANGESETS)){
+                        changesetMaximum = Integer.valueOf(reader.getAttributeValue(null, ATT_API_MAXIMUM_ELEMENTS));
+                    }else if(localName.equalsIgnoreCase(TAG_API_TIMEOUT)){
+                        timeout = Integer.valueOf(reader.getAttributeValue(null, ATT_API_SECONDS));
+                    }else if(localName.equalsIgnoreCase(TAG_API_TRACEPOINTS)){
+                        tracePointsPerPage = Integer.valueOf(reader.getAttributeValue(null, ATT_API_PER_PAGE));
+                    }else if(localName.equalsIgnoreCase(TAG_API_VERSION)){
+                        versionMinimum = reader.getAttributeValue(null, ATT_API_MINIMUM);
+                        versionMaximum = reader.getAttributeValue(null, ATT_API_MAXIMUM);
+                    }else if(localName.equalsIgnoreCase(TAG_API_WAYNODES)){
+                        wayNodeMaximum = Integer.valueOf(reader.getAttributeValue(null, ATT_API_MAXIMUM));
+                    }
+                    break;
+                case XMLStreamReader.CDATA:
+                case XMLStreamReader.CHARACTERS:
+                    break;
+                case XMLStreamReader.END_ELEMENT:
+                    if(reader.getLocalName().equalsIgnoreCase(TAG_API)){
+
+                        if(versionMinimum == null){
+                            throw new XMLStreamException("Invalid Api element, missing parameter : versionMinimum");
+                        }
+                        if(versionMaximum == null ){
+                            throw new XMLStreamException("Invalid Api element, missing parameter : versionMaximum");
+                        }
+                        if(areaMaximum == null){
+                            throw new XMLStreamException("Invalid Api element, missing parameter : areaMaximum");
+                        }
+                        if(tracePointsPerPage == null){
+                            throw new XMLStreamException("Invalid Api element, missing parameter : tracePointsPerPage");
+                        }
+                        if(wayNodeMaximum == null){
+                            throw new XMLStreamException("Invalid Api element, missing parameter : wayNodeMaximum");
+                        }
+                        if(changesetMaximum == null){
+                            throw new XMLStreamException("Invalid Api element, missing parameter : changesetMaximum");
+                        }
+                        if(timeout == null){
+                            throw new XMLStreamException("Invalid Api element, missing parameter : timeout");
+                        }
+
+                        //end of the api element
+                        return new Api(versionMinimum, versionMaximum, areaMaximum,
+                                tracePointsPerPage, wayNodeMaximum, changesetMaximum, timeout);
                     }
                     break;
             }
