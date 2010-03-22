@@ -22,12 +22,12 @@
   <!--     Module Description                                      -->
   <!-- =========================================================== -->
   <groupId>org.geotoolkit.pending</groupId>
-  <artifactId>geotk-osm-xml</artifactId>
+  <artifactId>geotk-osm-client</artifactId>
   <packaging>jar</packaging>
-  <name>Datastore OSM XML</name>
+  <name>Datastore OSM Client</name>
 
   <description>
-    Datastore implementation for open street map xml files format.
+    Open Street Map API Client.
   </description>
 
 
@@ -53,30 +53,6 @@
   <!--     Dependency Management                                   -->
   <!-- =========================================================== -->
   <dependencies>
-      <dependency>
-          <groupId>org.geotoolkit.pending</groupId>
-          <artifactId>geotk-osm-core</artifactId>
-          <version>${project.version}</version>
-      </dependency>
-
-      <dependency>
-          <groupId>org.geotoolkit.pending</groupId>
-          <artifactId>geotk-jdbc-postgis</artifactId>
-          <version>${project.version}</version>
-      </dependency>
-      <dependency>
-          <groupId>org.swinglabs</groupId>
-          <artifactId>jxlayer</artifactId>
-      </dependency>
-      <dependency>
-          <groupId>org.swinglabs</groupId>
-          <artifactId>swingx</artifactId>
-      </dependency>
-      <dependency>
-          <groupId>org.codehaus.woodstox</groupId>
-          <artifactId>wstx-lgpl</artifactId>
-          <version>4.0.6</version>
-      </dependency>
   </dependencies>
 
 </project>
