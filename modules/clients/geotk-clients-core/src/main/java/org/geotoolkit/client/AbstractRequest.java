@@ -88,8 +88,8 @@ public abstract class AbstractRequest implements Request {
         }
 
         if (!requestParameters.isEmpty()) {
-
-            if (!(serverURL.endsWith("?") || serverURL.endsWith("&"))) {
+            final char c = sb.charAt(sb.length()-1);
+            if (!(c == '?' || c == '&')) {
                 sb.append("&");
             }
 
