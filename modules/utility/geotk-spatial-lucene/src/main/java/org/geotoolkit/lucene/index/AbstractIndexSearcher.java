@@ -104,17 +104,19 @@ public abstract class AbstractIndexSearcher extends IndexLucene {
             // we get the last index directory
             long maxTime = 0;
             File currentIndexDirectory = null;
-            for (File indexDirectory : configDir.listFiles(new IndexDirectoryFilter(serviceID))) {
-                String suffix = indexDirectory.getName();
-                suffix = suffix.substring(suffix.indexOf('-') + 1);
-                try {
-                    long currentTime = Long.parseLong(suffix);
-                    if (currentTime > maxTime) {
-                        maxTime = currentTime;
-                        currentIndexDirectory = indexDirectory;
+            if (configDir != null && configDir.exists() && configDir.isDirectory()) {
+                for (File indexDirectory : configDir.listFiles(new IndexDirectoryFilter(serviceID))) {
+                    String suffix = indexDirectory.getName();
+                    suffix = suffix.substring(suffix.indexOf('-') + 1);
+                    try {
+                        long currentTime = Long.parseLong(suffix);
+                        if (currentTime > maxTime) {
+                            maxTime = currentTime;
+                            currentIndexDirectory = indexDirectory;
+                        }
+                    } catch (NumberFormatException ex) {
+                        LOGGER.warning("Unable to parse the timestamp:" + suffix);
                     }
-                } catch (NumberFormatException ex) {
-                    LOGGER.warning("Unable to parse the timestamp:" + suffix);
                 }
             }
             if (currentIndexDirectory != null && currentIndexDirectory.exists()) {

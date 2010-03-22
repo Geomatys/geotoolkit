@@ -94,17 +94,19 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
         // we get the last index directory
         long maxTime = 0;
         File currentIndexDirectory = null;
-        for (File indexDirectory : configDirectory.listFiles(new IndexDirectoryFilter(serviceID))) {
-            String suffix = indexDirectory.getName();
-            suffix = suffix.substring(suffix.indexOf('-') + 1);
-            try {
-                long currentTime = Long.parseLong(suffix);
-                if (currentTime > maxTime) {
-                    maxTime = currentTime;
-                    currentIndexDirectory = indexDirectory;
+        if (configDirectory != null && configDirectory.exists() && configDirectory.isDirectory()) {
+            for (File indexDirectory : configDirectory.listFiles(new IndexDirectoryFilter(serviceID))) {
+                String suffix = indexDirectory.getName();
+                suffix = suffix.substring(suffix.indexOf('-') + 1);
+                try {
+                    long currentTime = Long.parseLong(suffix);
+                    if (currentTime > maxTime) {
+                        maxTime = currentTime;
+                        currentIndexDirectory = indexDirectory;
+                    }
+                } catch(NumberFormatException ex) {
+                    LOGGER.warning("Unable to parse the timestamp:" + suffix);
                 }
-            } catch(NumberFormatException ex) {
-                LOGGER.warning("Unable to parse the timestamp:" + suffix);
             }
         }
 
@@ -141,7 +143,7 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
                 try {
                     NIOUtilities.deleteDirectory(indexDirectory);
                 } catch (IOException ex) {
-                    LOGGER.log(Level.SEVERE, "Unable to delete the directory:" + dirName, ex);
+                    LOGGER.log(Level.WARNING, "Unable to delete the directory:" + dirName, ex);
                 }
             }
         }
