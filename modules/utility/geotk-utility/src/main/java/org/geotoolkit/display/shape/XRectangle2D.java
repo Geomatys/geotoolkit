@@ -259,6 +259,17 @@ public class XRectangle2D extends Rectangle2D implements Serializable {
     }
 
     /**
+     * Sets the framing rectangle to the given rectangle. The default implementation delegates
+     * to {@link #setRect(Rectangle2D)}. This is consistent with the default implementation of
+     * {@link #setFrame(double, double, double, double)}, which delegates to the corresponding
+     * method of {@link #setRect(double, double, double, double) setRect}.
+     */
+    @Override
+    public void setFrame(final Rectangle2D r) {
+        setFrame(r);
+    }
+
+    /**
      * Tests if the interior of this rectangle intersects the interior of a
      * specified set of rectangular coordinates.
      *

@@ -75,6 +75,15 @@ import static org.geotoolkit.referencing.CRS.getCoordinateOperationFactory;
  */
 public abstract class BoundedSingletonTable<E extends Entry> extends SingletonTable<E> {
     /**
+     * If no minimal and maximal <var>x</var> or <var>y</var> value was supplied, the value
+     * to use. This is used because the {@code 'infinity'} value doesn't seem to work.
+     * <p>
+     * Note that default values exist in the time dimension as well. Search for usage of
+     * {@code DEFAULT_LIMIT} to find the method.
+     */
+    private static final double DEFAULT_LIMIT = 1E+12;
+
+    /**
      * The parameter to use for looking an element by time range, or {@code null} if none.
      */
     private final Parameter byTimeRange;
@@ -589,28 +598,37 @@ public abstract class BoundedSingletonTable<E extends Entry> extends SingletonTa
     protected void configure(final QueryType type, final PreparedStatement statement) throws SQLException {
         super.configure(type, statement);
         if (byTimeRange != null) {
-            int index = byTimeRange.indexOf(type);
+            final int index = byTimeRange.indexOf(type);
             if (index != 0) {
+                long min = tMin;
+                long max = tMax;
+                /*
+                 * The default for minimum and maximum values are arbitrary, but we need to
+                 * provide something. It seems that 'infinity' value doesn't work through JDBC.
+                 *
+                 * TODO: Revisit if we find some way to specify 'infinity' with future JDBC drivers.
+                 */
+                if (min == Long.MIN_VALUE) {
+                    min = ((SpatialDatabase) getDatabase()).temporalCRS.getDatum().getOrigin().getTime();
+                }
+                if (max == Long.MAX_VALUE) {
+                    max = System.currentTimeMillis();
+                }
                 final Calendar calendar = getCalendar();
-                if (tMax != Long.MAX_VALUE) {
-                    statement.setTimestamp(index, new Timestamp(tMax), calendar);
-                } else {
-                    statement.setString(index, "infinity");
-                }
-                index++;
-                if (tMin != Long.MIN_VALUE) {
-                    statement.setTimestamp(index, new Timestamp(tMin), calendar);
-                } else {
-                    statement.setString(index, "-infinity");
-                }
+                statement.setTimestamp(index,   new Timestamp(max), calendar);
+                statement.setTimestamp(index+1, new Timestamp(min), calendar);
             }
         }
         if (bySpatialExtent != null) {
             final int index = bySpatialExtent.indexOf(type);
             if (index != 0) {
                 final GeneralEnvelope envelope = new GeneralEnvelope(
-                        new double[] {xMin, yMin, zMin},
-                        new double[] {xMax, yMax, zMax});
+                        new double[] {
+                            xMin == NEGATIVE_INFINITY ? -DEFAULT_LIMIT : xMin,
+                            yMin == NEGATIVE_INFINITY ? -DEFAULT_LIMIT : yMin, zMin},
+                        new double[] {
+                            xMax == POSITIVE_INFINITY ? +DEFAULT_LIMIT : xMax,
+                            yMax == POSITIVE_INFINITY ? +DEFAULT_LIMIT : yMax, zMax});
                 statement.setString(index, GeneralEnvelope.toPolygonString(envelope));
             }
         }

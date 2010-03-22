@@ -74,14 +74,14 @@ final class GridCoverageQuery extends Query {
     GridCoverageQuery(final SpatialDatabase database, final boolean tiles) {
         super(database, tiles ? "Tiles" : "GridCoverages");
         final Column layer, horizontalExtent;
-        layer            = addForeignerColumn("Series", "layer");
+        layer            = addForeignerColumn("layer", "Series");
         series           = addMandatoryColumn("series",    SELECT, LIST, INSERT);
         filename         = addMandatoryColumn("filename",  SELECT, LIST, INSERT, EXISTS);
         index            = addOptionalColumn ("index", 1,  SELECT, LIST, INSERT);
         startTime        = addMandatoryColumn("startTime", SELECT, LIST, INSERT, AVAILABLE_DATA, BOUNDING_BOX);
         endTime          = addMandatoryColumn("endTime",   SELECT, LIST, INSERT, AVAILABLE_DATA, BOUNDING_BOX);
         spatialExtent    = addMandatoryColumn("extent",    SELECT, LIST, INSERT, AVAILABLE_DATA);
-        horizontalExtent = addForeignerColumn("GridGeometries", "horizontalExtent", new QueryType[] {BOUNDING_BOX});
+        horizontalExtent = addForeignerColumn("horizontalExtent", "GridGeometries", new QueryType[] {BOUNDING_BOX});
         if (tiles) {
             dx = addMandatoryColumn("dx", INSERT);
             dy = addMandatoryColumn("dy", INSERT);

@@ -64,14 +64,16 @@ public final class LayerTableTest extends CatalogTestBase {
     /**
      * The start time, end time, and a sample time between them.
      */
-    public static final Date START_TIME, END_TIME, SAMPLE_TIME;
+    public static final Date START_TIME, SUB_START_TIME, SAMPLE_TIME, SUB_END_TIME, END_TIME;
     static {
         final DateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.CANADA);
         format.setTimeZone(TimeZone.getTimeZone("UTC"));
         try {
-            START_TIME  = format.parse("1986-01-01");
-            SAMPLE_TIME = format.parse("1986-01-13");
-            END_TIME    = format.parse("1986-02-26");
+            START_TIME     = format.parse("1986-01-01");
+            SUB_START_TIME = format.parse("1986-01-05");
+            SAMPLE_TIME    = format.parse("1986-01-13");
+            SUB_END_TIME   = format.parse("1986-01-20");
+            END_TIME       = format.parse("1986-02-26");
         } catch (ParseException e) {
             throw new ExceptionInInitializerError(e);
         }

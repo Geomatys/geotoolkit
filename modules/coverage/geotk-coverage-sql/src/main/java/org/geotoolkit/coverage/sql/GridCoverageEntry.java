@@ -19,6 +19,7 @@ package org.geotoolkit.coverage.sql;
 
 import java.awt.Dimension;
 import java.awt.geom.Dimension2D;
+import java.awt.geom.Rectangle2D;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -72,12 +73,6 @@ final class GridCoverageEntry extends Entry implements GridCoverageReference {
     private static final long serialVersionUID = -5725249398707248625L;
 
     /**
-     * The grid geometry. Include the image size (in pixels), the horizontal envelope
-     * and the vertical ordinate values.
-     */
-    private final GridGeometryEntry geometry;
-
-    /**
      * The grid geometry as a {@link GridGeometry2D} object.
      * Will be created only when first needed.
      */
@@ -97,19 +92,17 @@ final class GridCoverageEntry extends Entry implements GridCoverageReference {
      * Creates an entry containing coverage information (but not yet the coverage itself).
      *
      * @param  identifier The identifier of this grid geometry.
-     * @param  geometry   The geometry of the grid, including CRS informations.
      * @param  startTime  The coverage start time, or {@code null} if none.
      * @param  endTime    The coverage end time, or {@code null} if none.
      * @param  comments   Optional remarks, or {@code null} if none.
      */
-    protected GridCoverageEntry(final GridCoverageIdentifier identifier, final GridGeometryEntry geometry,
+    protected GridCoverageEntry(final GridCoverageIdentifier identifier,
             final Date startTime, final Date endTime, final String comments) throws SQLException
     {
         super(identifier, comments);
-        this.geometry  = geometry;
         this.startTime = (startTime != null) ? startTime.getTime() : Long.MIN_VALUE;
         this.  endTime = (  endTime != null) ?   endTime.getTime() : Long.MAX_VALUE;
-        if (geometry.isEmpty() || this.startTime > this.endTime) {
+        if (identifier.geometry.isEmpty() || this.startTime > this.endTime) {
             throw new IllegalRecordException(Errors.format(Errors.Keys.EMPTY_ENVELOPE));
         }
     }
@@ -186,6 +179,7 @@ final class GridCoverageEntry extends Entry implements GridCoverageReference {
      */
     @Override
     public CoordinateReferenceSystem getSpatioTemporalCRS(final boolean includeTime) {
+        final GridGeometryEntry geometry = getIdentifier().geometry;
         return geometry.getSpatioTemporalCRS(includeTime);
     }
 
@@ -194,6 +188,7 @@ final class GridCoverageEntry extends Entry implements GridCoverageReference {
      */
     @Override
     public GeographicBoundingBox getGeographicBoundingBox() {
+        final GridGeometryEntry geometry = getIdentifier().geometry;
         try {
             return geometry.getGeographicBoundingBox();
         } catch (TransformException e) {
@@ -204,11 +199,21 @@ final class GridCoverageEntry extends Entry implements GridCoverageReference {
     }
 
     /**
-     * Returns the spatio-temporal envelope of the coverage.
+     * Returns the spatio-temporal envelope of the coverage. The CRS of the returned envelope
+     * is the {@linkplain #getSpatioTemporalCRS(boolean) spatio-temporal CRS} of this entry,
+     * which may vary on a coverage-by-coverage basis.
      */
     @Override
     public Envelope getEnvelope() {
         return getGridGeometry().getEnvelope();
+    }
+
+    /**
+     * Returns the range of values in the two first dimensions, which are horizontal.
+     */
+    @Override
+    public Rectangle2D getXYRange() {
+        return getIdentifier().geometry.standardEnvelope.getBounds2D();
     }
 
     /**
@@ -218,6 +223,7 @@ final class GridCoverageEntry extends Entry implements GridCoverageReference {
      */
     @Override
     public NumberRange<Double> getZRange() {
+        final GridGeometryEntry geometry = getIdentifier().geometry;
         double min = geometry.standardMinZ;
         double max = geometry.standardMaxZ;
         if (!(min <= max)) { // Use '!' for catching NaN values.
@@ -256,6 +262,8 @@ final class GridCoverageEntry extends Entry implements GridCoverageReference {
              */
             double min = Double.NEGATIVE_INFINITY;
             double max = Double.POSITIVE_INFINITY;
+            final GridCoverageIdentifier identifier = getIdentifier();
+            final GridGeometryEntry geometry = identifier.geometry;
             final DefaultTemporalCRS temporalCRS = geometry.getTemporalCRS();
             if (temporalCRS != null) {
                 if (startTime != Long.MIN_VALUE) min = temporalCRS.toValue(new Date(startTime));
@@ -264,8 +272,7 @@ final class GridCoverageEntry extends Entry implements GridCoverageReference {
             final boolean hasTime = !Double.isInfinite(min) || !Double.isInfinite(max);
             final CoordinateReferenceSystem crs = geometry.getSpatioTemporalCRS(hasTime);
             final int dimension = crs.getCoordinateSystem().getDimension();
-            final Matrix gridToCRS = geometry.getGridToCRS(dimension,
-                    geometry.indexOfNearestAltitude(getIdentifier().z));
+            final Matrix gridToCRS = geometry.getGridToCRS(dimension, identifier.zIndex);
             if (hasTime) {
                 gridToCRS.setElement(dimension-1, dimension-1, max - min);
                 gridToCRS.setElement(dimension-1, dimension, min);
@@ -337,6 +344,7 @@ final class GridCoverageEntry extends Entry implements GridCoverageReference {
      */
     final boolean hasEnoughResolution(final Dimension2D requested) {
         if (requested != null) try {
+            final GridGeometryEntry geometry = getIdentifier().geometry;
             final Dimension2D resolution = geometry.getStandardResolution();
             if (resolution != null) {
                 return resolution.getWidth()  <= requested.getWidth()  + GridGeometryEntry.EPS &&
@@ -353,11 +361,15 @@ final class GridCoverageEntry extends Entry implements GridCoverageReference {
      * coarsest resolution. If this method can not select an entry, it returns {@code null}.
      */
     final GridCoverageEntry selectCoarseResolution(final GridCoverageEntry that) {
-        if (startTime == that.startTime && endTime == that.endTime && geometry.sameEnvelope(that.geometry)) {
-            final Dimension size1 = this.geometry.getImageSize();
-            final Dimension size2 = that.geometry.getImageSize();
-            if (size1.width <= size2.width && size1.height <= size2.height) return this;
-            if (size1.width >= size2.width && size1.height >= size2.height) return that;
+        if (startTime == that.startTime && endTime == that.endTime) {
+            final GridGeometryEntry geom1 = this.getIdentifier().geometry;
+            final GridGeometryEntry geom2 = that.getIdentifier().geometry;
+            if (geom1.sameEnvelope(geom2)) {
+                final Dimension size1 = geom1.getImageSize();
+                final Dimension size2 = geom2.getImageSize();
+                if (size1.width <= size2.width && size1.height <= size2.height) return this;
+                if (size1.width >= size2.width && size1.height >= size2.height) return that;
+            }
         }
         return null;
     }
@@ -383,9 +395,11 @@ final class GridCoverageEntry extends Entry implements GridCoverageReference {
         }
         if (super.equals(object)) {
             final GridCoverageEntry that = (GridCoverageEntry) object;
-            return this.startTime == that.startTime &&
-                   this.endTime   == that.endTime   &&
-                   Utilities.equals(this.geometry, that.geometry);
+            if (startTime == that.startTime && endTime == that.endTime) {
+                final GridGeometryEntry geom1 = this.getIdentifier().geometry;
+                final GridGeometryEntry geom2 = that.getIdentifier().geometry;
+                return Utilities.equals(geom1, geom2);
+            }
         }
         return false;
     }

@@ -258,7 +258,7 @@ final class GridGeometryTable extends SingletonTable<GridGeometryEntry> {
 
     /**
      * For every values in the specified map, replaces the collection of {@link GridGeometryEntry}
-     * identifiers by a set of altitudes. On input, the values are usually {@code List<String>}.
+     * identifiers by a set of altitudes. On input, the values are usually {@code List<Integer>}.
      * On output, all values will be {@code SortedSet<Number>}.
      * <p>
      * This method is for internal usage by {@link GridCoverageTable#getAvailableCentroids()} only.
@@ -266,24 +266,45 @@ final class GridGeometryTable extends SingletonTable<GridGeometryEntry> {
      * @param  centroids The date-extents map.
      * @return The same reference than {@code centroids}, but casted as a date-altitudes map.
      */
-    NavigableMap<Date,SortedSet<Number>> identifiersToAltitudes(final NavigableMap<Date,List<String>> centroids) throws SQLException {
-        final Map<Number,Number> numbers = new HashMap<Number,Number>(); // For sharing instances.
-        final Map<SortedSet<Number>, SortedSet<Number>> pool = new HashMap<SortedSet<Number>, SortedSet<Number>>();
-        final Map<List<String>,SortedSet<Number>> altitudesMap = new HashMap<List<String>,SortedSet<Number>>();
-        for (final Map.Entry<Date,List<String>> entry : centroids.entrySet()) {
-            final List<String> extents = entry.getValue();
+    NavigableMap<Date,SortedSet<Number>> identifiersToAltitudes(final NavigableMap<Date,List<Comparable<?>>> centroids) throws SQLException {
+        /*
+         * For sharing instances of java.lang.Double created by this method. Useful since
+         * GridCoverageEntry instances at different dates usually still declare the same
+         * set of altitudes.
+         */
+        final Map<Number,Number> sharedNumbers = new HashMap<Number,Number>();
+        /*
+         * For sharing instances of SortedSet<Number>. This serves the same purpose than
+         * 'sharedNumbers', but applied to the whole Set instead than individual numbers.
+         */
+        final Map<SortedSet<Number>, SortedSet<Number>> sharedSet =
+                new HashMap<SortedSet<Number>, SortedSet<Number>>();
+        /*
+         * The results of conversions from List<Comparable<?>> to SortedSet<Number> found
+         * in previous execution of the loop. This is cached because we often have the same
+         * list of geographic extents at different dates, and we want to avoid querying the
+         * database many time for the same thing.
+         */
+        final Map<List<Comparable<?>>, SortedSet<Number>> altitudesMap =
+                new HashMap<List<Comparable<?>>, SortedSet<Number>>();
+        /*
+         * Now perform in-place the replacements of List<Comparable<?>> by SortedSet<Number>.
+         * The replacements are performed directly in entry values.
+         */
+        for (final Map.Entry<Date,List<Comparable<?>>> entry : centroids.entrySet()) {
+            final List<Comparable<?>> extents = entry.getValue();
             SortedSet<Number> altitudes = altitudesMap.get(extents);
             if (altitudes == null) {
                 altitudes = new TreeSet<Number>();
-                for (final String extent : extents) {
+                for (final Comparable<?> extent : extents) {
                     final double[] ordinates = getEntry(extent).getVerticalOrdinates();
                     if (ordinates != null) {
                         for (int i=0; i<ordinates.length; i++) {
                             final Number z = ordinates[i];
-                            Number shared = numbers.get(z);
+                            Number shared = sharedNumbers.get(z);
                             if (shared == null) {
                                 shared = z;
-                                numbers.put(shared, shared);
+                                sharedNumbers.put(shared, shared);
                             }
                             altitudes.add(shared);
                         }
@@ -295,11 +316,11 @@ final class GridGeometryTable extends SingletonTable<GridGeometryEntry> {
                  * of altitudes values.
                  */
                 altitudes = Collections.unmodifiableSortedSet(altitudes);
-                final SortedSet<Number> existing = pool.get(altitudes);
+                final SortedSet<Number> existing = sharedSet.get(altitudes);
                 if (existing != null) {
                     altitudes = existing;
                 } else {
-                    pool.put(altitudes, altitudes);
+                    sharedSet.put(altitudes, altitudes);
                 }
                 altitudesMap.put(extents, altitudes);
             }

@@ -53,7 +53,7 @@ public class CategoryTableTest extends CatalogTestBase {
      * Checks the categories in the band #1 of the
      * {@code "PNG Temperature [-3 … 32.25]°C"} format.
      */
-    static void checkTemperatureCategories(final Category[] categories) {
+    static void checkTemperatureCategories(final Category... categories) {
         assertNotNull("The band #1 should exists.", categories);
         assertEquals("The band is expected to have 2 categories.", 2, categories.length);
         assertEquals("Missing value", categories[0].getName().toString());

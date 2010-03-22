@@ -108,7 +108,7 @@ final class GridGeometryEntry extends Entry {
      *
      * @see #getHorizontalEnvelope()
      */
-    private final Shape standardEnvelope;
+    final Shape standardEnvelope;
 
     /**
      * The minimal and maximal <var>z</var> values in the vertical CRS of the database,

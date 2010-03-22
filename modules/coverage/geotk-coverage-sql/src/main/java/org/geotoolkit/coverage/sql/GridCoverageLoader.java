@@ -125,7 +125,7 @@ final class GridCoverageLoader extends ImageCoverageReader {
      */
     @Override
     public List<GridSampleDimension> getSampleDimensions(int index) throws CoverageStoreException {
-        if (index != 0) try {
+        if (index == 0) try {
             return entry.getIdentifier().series.format.getSampleDimensions();
         } catch (SQLException e) {
             throw new CoverageStoreException(e);

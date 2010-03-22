@@ -53,7 +53,7 @@ public class SampleDimensionTableTest extends CatalogTestBase {
     /**
      * Checks the sample dimensions of the {@code "PNG Temperature [-3 … 32.25]°C"} format.
      */
-    static void checkTemperatureDimension(final GridSampleDimension[] dimensions) {
+    static void checkTemperatureDimension(final GridSampleDimension... dimensions) {
         assertNotNull("The SampleDimension array can't be null.", dimensions);
         assertEquals("The format should have exactly 1 band.", 1, dimensions.length);
         final GridSampleDimension dim = dimensions[0];

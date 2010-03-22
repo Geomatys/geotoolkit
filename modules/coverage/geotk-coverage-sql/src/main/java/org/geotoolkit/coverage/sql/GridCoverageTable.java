@@ -138,8 +138,10 @@ class GridCoverageTable extends BoundedSingletonTable<GridCoverageEntry> {
      */
     public final void setLayer(final String layer) throws SQLException {
         ensureNonNull("layer", layer);
-        this.layer = getDatabase().getTable(LayerTable.class).getEntry(layer);
-        fireStateChanged("Layer");
+        if (!layer.equals(getLayer())) {
+            this.layer = getDatabase().getTable(LayerTable.class).getEntry(layer);
+            fireStateChanged("Layer");
+        }
     }
 
     /**
@@ -254,7 +256,7 @@ loop:   for (final GridCoverageEntry newEntry : entries) {
             if (entries.hasNext()) {
                 Comparator<GridCoverageReference> comparator = this.comparator;
                 if (comparator == null) {
-                    comparator = new GridCoverageComparator(getEnvelope());
+                    comparator = new GridCoverageComparator(null, getEnvelope());
                     this.comparator = comparator;
                 }
                 do {
@@ -266,6 +268,33 @@ loop:   for (final GridCoverageEntry newEntry : entries) {
             }
         }
         return best;
+    }
+
+    /**
+     * Returns an element for the given identifier. This method is not actually used except
+     * for testing purpose, but we override it anyway in order to ensure consistent behavior.
+     */
+    @Override
+    public GridCoverageEntry getEntry(Comparable<?> identifier) throws SQLException {
+        return super.getEntry(toGridCoverageIdentifier(identifier));
+    }
+
+    /**
+     * Tests if the given entry exists. This method is not actually used except for testing
+     * purpose, but we override it anyway in order to ensure consistent behavior.
+     */
+    @Override
+    public boolean exists(Comparable<?> identifier) throws SQLException {
+        return super.exists(toGridCoverageIdentifier(identifier));
+    }
+
+    /**
+     * Delete the given entry. This method is not actually used except for testing purpose,
+     * but we override it anyway in order to ensure consistent behavior.
+     */
+    @Override
+    public int delete(Comparable<?> identifier) throws SQLException {
+        return super.delete(toGridCoverageIdentifier(identifier));
     }
 
     /**
@@ -320,7 +349,7 @@ loop:   for (final GridCoverageEntry newEntry : entries) {
      * Returns the available altitudes for each dates. This method returns the "centroids",
      * i.e. vertical ranges are replaced by the middle vertical points and temporal ranges are
      * replaced by the middle time. This method considers only the vertical and temporal axis.
-     * The horizontal axis are omitted.
+     * The horizontal axes are omitted.
      *
      * @return An immutable collection of centroids. Keys are the dates, and values are the set
      *         of altitudes for a given date.
@@ -328,14 +357,15 @@ loop:   for (final GridCoverageEntry newEntry : entries) {
      */
     final synchronized SortedMap<Date, SortedSet<Number>> getAvailableCentroids() throws SQLException {
         if (availableCentroids == null) {
-            final NavigableMap<Date,List<String>> centroids = new TreeMap<Date,List<String>>();
+            final NavigableMap<Date, List<Comparable<?>>> centroids =
+                    new TreeMap<Date, List<Comparable<?>>>();
             final GridCoverageQuery query = (GridCoverageQuery) super.query;
-            final int startTimeIndex = indexOf(query.startTime);
-            final int endTimeIndex   = indexOf(query.endTime);
-            final int extentIndex    = indexOf(query.spatialExtent);
-            final Calendar calendar  = getCalendar();
+            final Calendar calendar = getCalendar();
             synchronized (getLock()) {
                 final LocalCache.Stmt ce = getStatement(QueryType.AVAILABLE_DATA);
+                final int startTimeIndex = indexOf(query.startTime);
+                final int endTimeIndex   = indexOf(query.endTime);
+                final int extentIndex    = indexOf(query.spatialExtent);
                 final PreparedStatement statement = ce.statement;
                 final ResultSet results = statement.executeQuery();
                 while (results.next()) {
@@ -353,17 +383,24 @@ loop:   for (final GridCoverageEntry newEntry : entries) {
                     } else {
                         continue;
                     }
+                    final Comparable<?> extentID = results.getInt(extentIndex);
                     /*
                      * Now get the spatial extent identifiers. We do not extract the altitudes now,
                      * because many records will typically use the same spatial extents. So we just
                      * extract the identifiers for now, and will get the altitudes only once later.
                      */
-                    List<String> extents = centroids.get(time);
+                    List<Comparable<?>> extents = centroids.get(time);
                     if (extents == null) {
-                        extents = new ArrayList<String>(1); // We will usually have only one element.
+                        // We will usually have only one element.
+                        extents = Collections.<Comparable<?>>singletonList(extentID);
                         centroids.put(time, extents);
+                    } else {
+                        if (extents.size() == 1) {
+                            extents = new ArrayList<Comparable<?>>(extents);
+                            centroids.put(time, extents);
+                        }
+                        extents.add(extentID);
                     }
-                    extents.add(results.getString(extentIndex));
                 }
                 results.close();
                 ce.release();
@@ -479,9 +516,19 @@ loop:   for (final GridCoverageEntry newEntry : entries) {
         if (series == null) { // Should not happen, but be lenient if it happen anyway.
             series = getDatabase().getTable(SeriesTable.class).getEntry(seriesID);
         }
+        /*
+         * We need to include the altitude in the identifier (since requests for different
+         * altitude result in different coverages), but altitude is not an explicit column
+         * in the 'GridCoverages' table. We need to compute it from the list of vertical
+         * ordinate values.
+         */
+        final GridCoverageQuery query = (GridCoverageQuery) super.query;
+        final int extent = results.getInt(indexOf(query.spatialExtent));
+        final GridGeometryEntry geometry = getGridGeometryTable().getEntry(extent);
         final NumberRange<?> verticalRange = getVerticalRange();
         final double z = 0.5*(verticalRange.getMinimum() + verticalRange.getMaximum());
-        return new GridCoverageIdentifier(series, filename, index, (float) z);
+        return new GridCoverageIdentifier(series, filename, index,
+                geometry.indexOfNearestAltitude(z), geometry);
     }
 
     /**
@@ -493,13 +540,51 @@ loop:   for (final GridCoverageEntry newEntry : entries) {
     protected final GridCoverageEntry createEntry(final ResultSet results, final Comparable<?> identifier)
             throws SQLException
     {
+        final GridCoverageIdentifier id = (GridCoverageIdentifier) identifier;
         final Calendar calendar = getCalendar();
         final GridCoverageQuery query = (GridCoverageQuery) super.query;
         final Timestamp startTime = results.getTimestamp(indexOf(query.startTime), calendar);
         final Timestamp endTime   = results.getTimestamp(indexOf(query.endTime),   calendar);
-        final int       extent    = results.getInt      (indexOf(query.spatialExtent));
-        final GridGeometryEntry geometry = getGridGeometryTable().getEntry(extent);
-        return new GridCoverageEntry((GridCoverageIdentifier) identifier,
-                geometry, startTime, endTime, null);
+        /*
+         * Complete the geometry if it was null. This may happen when toGridCoverageIdentifier
+         * (below) is invoked, which usually don't happen in typical GridCoverageTable usage.
+         */
+        if (id.geometry == null) {
+            id.geometry = getGridGeometryTable().getEntry(results.getInt(indexOf(query.spatialExtent)));
+        }
+        return new GridCoverageEntry(id, startTime, endTime, null);
+    }
+
+    /**
+     * Converts the given identifier into an instance of {@link GridCoverageIdentifier}
+     * if possible. Arbitrary values are used for unspecified parameters like image and
+     * <var>z</var> index.
+     * <p>
+     * This method is invoked indirectly mostly for testing purpose. It is not expected
+     * to be invoked in typical {@code GridCoverageTable} usage.
+     *
+     * @param  identifier The identifier, or {@code null}.
+     * @return The identifier to use, or {@code null} if the given identifier was null.
+     */
+    private Comparable<?> toGridCoverageIdentifier(Comparable<?> identifier) throws SQLException {
+        if (identifier instanceof CharSequence) {
+            identifier = new GridCoverageIdentifier(getSeries(), identifier.toString(),
+                    (short) 1, (short) 0, null); // GridGeometryEntry to be computed by createEntry.
+        }
+        return identifier;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void fireStateChanged(final String property) throws CatalogException {
+        if (!property.equalsIgnoreCase("PreferredResolution")) {
+            comparator          = null;
+            availableTimes      = null;
+            availableElevations = null;
+            availableCentroids  = null;
+        }
+        super.fireStateChanged(property);
     }
 }

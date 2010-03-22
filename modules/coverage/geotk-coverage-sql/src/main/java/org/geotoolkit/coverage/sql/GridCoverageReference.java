@@ -21,6 +21,7 @@ import java.net.URI;
 import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.CancellationException;
+import java.awt.geom.Rectangle2D;
 
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.extent.GeographicBoundingBox;
@@ -110,7 +111,12 @@ public interface GridCoverageReference extends CoverageStack.Element {
     GeographicBoundingBox getGeographicBoundingBox();
 
     /**
-     * Returns the spatio-temporal envelope of the coverage.
+     * Returns the spatio-temporal envelope of the coverage. The CRS of the returned envelope
+     * is the {@linkplain #getSpatioTemporalCRS(boolean) spatio-temporal CRS} of this entry,
+     * which may vary on a coverage-by-coverage basis. If an envelope is some unified CRS is
+     * desired, consider using {@link #getXYRange()},  {@link #getZRange()} and
+     * {@link #getTimeRange()} instead.
+     * <p>
      * This method is equivalent to the following call:
      *
      * {@preformat java
@@ -123,6 +129,18 @@ public interface GridCoverageReference extends CoverageStack.Element {
     Envelope getEnvelope();
 
     /**
+     * Returns the range of values in the two first dimensions, which are horizontal.
+     * This method returns the range in units of the database horizontal CRS, which may
+     * not be the same than the horizontal CRS of the coverage.
+     * <p>
+     * If the range of values in units of the coverage CRS is desired, use the
+     * {@link #getEnvelope()} method instead.
+     *
+     * @return The range of values in the two first dimensions, in units of the database CRS.
+     */
+    Rectangle2D getXYRange();
+
+    /**
      * Returns the range of values in the third dimension, which may be vertical or temporal.
      * This method returns the range in units of the database vertical or temporal CRS, which
      * may not be the same than the vertical or temporal CRS of the coverage. This is done that
@@ -131,6 +149,8 @@ public interface GridCoverageReference extends CoverageStack.Element {
      * <p>
      * If elevation or time in units of the coverage CRS is desired, use the
      * {@link #getEnvelope()} method instead.
+     *
+     * @return The range of values in the third dimension, in units of the database CRS.
      */
     @Override
     NumberRange<?> getZRange();
@@ -166,8 +186,12 @@ public interface GridCoverageReference extends CoverageStack.Element {
 
     /**
      * Loads the data if needed and returns the coverage. This method returns always the geophysics
-     * version of data (<code>{@linkplain GridCoverage2D#view view}(ViewType.GEOPHYSICS)</code>).
-     * <p>
+     * version of data:
+     *
+     * <blockquote><code>
+     * {@linkplain GridCoverage2D#view GridCoverage2D.view}({@linkplain org.geotoolkit.coverage.grid.ViewType#GEOPHYSICS});
+     * </code></blockquote>
+     *
      * If the coverage has already been read previously and has not yet been reclaimed by the
      * garbage collector, then the existing coverage is returned immediately.
      *

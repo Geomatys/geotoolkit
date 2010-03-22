@@ -188,11 +188,12 @@ public abstract class SingletonTable<E extends Entry> extends Table {
             throw new CatalogException(errors().getString(Errors.Keys.MISMATCHED_ARRAY_LENGTH));
         }
         for (int i=0; i<identifiers.length; i++) {
+            final Comparable<?> id = identifiers[i];
             final int pkIndex = indexOf(pkParam[i]);
-            if (identifier instanceof Number) {
-                statement.setInt(pkIndex, ((Number) identifier).intValue());
+            if (id instanceof Number) {
+                statement.setInt(pkIndex, ((Number) id).intValue());
             } else {
-                statement.setString(pkIndex, identifier.toString());
+                statement.setString(pkIndex, id.toString());
             }
         }
     }
