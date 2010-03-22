@@ -26,6 +26,7 @@ import javax.xml.stream.XMLStreamException;
 
 import org.geotoolkit.client.Server;
 import org.geotoolkit.data.osm.client.v060.GetCapabilities060;
+import org.geotoolkit.data.osm.client.v060.GetData060;
 import org.geotoolkit.data.osm.model.Api;
 import org.geotoolkit.data.osm.xml.OSMXMLReader;
 import org.geotoolkit.util.logging.Logging;
@@ -105,6 +106,15 @@ public class OpenStreetMapServer implements Server{
         switch (version) {
             case v060:
                 return new GetCapabilities060(serverURL.toString());
+            default:
+                throw new IllegalArgumentException("Version was not defined");
+        }
+    }
+
+    public GetDataRequest createGetData(){
+        switch (version) {
+            case v060:
+                return new GetData060(serverURL.toString());
             default:
                 throw new IllegalArgumentException("Version was not defined");
         }

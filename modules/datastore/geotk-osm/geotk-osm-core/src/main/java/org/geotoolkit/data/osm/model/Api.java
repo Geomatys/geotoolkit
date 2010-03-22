@@ -72,4 +72,17 @@ public class Api {
         return wayNodeMaximum;
     }
 
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("API : ");
+        sb.append(" versionMinimum = ").append(versionMinimum);
+        sb.append(" versionMaximum = ").append(versionMaximum);
+        sb.append(" areaMaximum = ").append(areaMaximum);
+        sb.append(" tracePointsPerPage = ").append(tracePointsPerPage);
+        sb.append(" wayNodeMaximum = ").append(wayNodeMaximum);
+        sb.append(" changesetMaximum = ").append(changesetMaximum);
+        sb.append(" timeout = ").append(timeout);
+        return sb.toString();
+    }
+
 }
