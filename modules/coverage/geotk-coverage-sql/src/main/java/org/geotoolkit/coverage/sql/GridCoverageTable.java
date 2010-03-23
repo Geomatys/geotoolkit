@@ -68,13 +68,13 @@ class GridCoverageTable extends BoundedSingletonTable<GridCoverageEntry> {
     /**
      * Shared instance of a table of grid geometries. Will be created only when first needed.
      */
-    private volatile GridGeometryTable gridGeometryTable;
+    private transient GridGeometryTable gridGeometryTable;
 
     /**
      * Comparator for selecting the "best" image when more than one is available in
      * the spatio-temporal area of interest. Will be created only when first needed.
      */
-    private volatile Comparator<GridCoverageReference> comparator;
+    private transient Comparator<GridCoverageReference> comparator;
 
     /**
      * The set of available dates. Will be computed by
@@ -111,23 +111,35 @@ class GridCoverageTable extends BoundedSingletonTable<GridCoverageEntry> {
     /**
      * Constructs a new {@code GridCoverageTable} from the specified query.
      */
-    GridCoverageTable(final GridCoverageQuery query) {
+    private GridCoverageTable(final GridCoverageQuery query) {
         // Method createIdentifier(...) expect the parameter to be in exactly that order.
         super(query, new Parameter[] {query.bySeries, query.byFilename, query.byIndex},
                 query.byStartTime, query.byHorizontalExtent);
     }
 
     /**
-     * Constructs a new {@code GridCoverageTable} with the same initial configuration
-     * than the specified table.
+     * Creates a new instance having the same configuration than the given table.
+     * This is a copy constructor used for obtaining a new instance to be used
+     * concurrently with the original instance.
      *
      * @param table The table to use as a template.
      */
-    public GridCoverageTable(final GridCoverageTable table) {
+    private GridCoverageTable(final GridCoverageTable table) {
         super(table);
-        layer             = table.layer;
-        gridGeometryTable = table.gridGeometryTable;
-        comparator        = table.comparator;
+        layer               = table.layer;
+        comparator          = table.comparator;
+        availableTimes      = table.availableTimes;
+        availableElevations = table.availableElevations;
+        availableCentroids  = table.availableCentroids;
+    }
+
+    /**
+     * Returns a copy of this table. This is a copy constructor used for obtaining
+     * a new instance to be used concurrently with the original instance.
+     */
+    @Override
+    protected synchronized GridCoverageTable clone() {
+        return new GridCoverageTable(this);
     }
 
     /**
@@ -136,10 +148,12 @@ class GridCoverageTable extends BoundedSingletonTable<GridCoverageEntry> {
      * @param  layer The layer name.
      * @throws SQLException if the layer can not be set to the given value.
      */
-    public final void setLayer(final String layer) throws SQLException {
+    public final synchronized void setLayer(final String layer) throws SQLException {
         ensureNonNull("layer", layer);
         if (!layer.equals(getLayer())) {
-            this.layer = getDatabase().getTable(LayerTable.class).getEntry(layer);
+            final LayerTable table = getDatabase().getTable(LayerTable.class);
+            this.layer = table.getEntry(layer);
+            table.release();
             fireStateChanged("Layer");
         }
     }
@@ -147,7 +161,7 @@ class GridCoverageTable extends BoundedSingletonTable<GridCoverageEntry> {
     /**
      * Returns the name of the current layer, or {@code null} if none.
      */
-    public final String getLayer() {
+    public final synchronized String getLayer() {
         final LayerEntry layer = this.layer;
         return (layer != null) ? layer.getName() : null;
     }
@@ -157,7 +171,7 @@ class GridCoverageTable extends BoundedSingletonTable<GridCoverageEntry> {
      *
      * @throws CatalogException if the layer is not set.
      */
-    final LayerEntry getLayerEntry() throws CatalogException {
+    final synchronized LayerEntry getLayerEntry() throws CatalogException {
         final LayerEntry layer = this.layer;
         if (layer == null) {
             throw new CatalogException(errors().getString(Errors.Keys.NO_LAYER_SPECIFIED));
@@ -185,7 +199,9 @@ class GridCoverageTable extends BoundedSingletonTable<GridCoverageEntry> {
     }
 
     /**
-     * Returns the grid geometry table.
+     * Returns the {@link GridGeometryTable} instance, creating it if needed.
+     * The {@link GridGeometryTable#release()} method will never been invoked
+     * for the returned instance, but this is not an issue.
      */
     private GridGeometryTable getGridGeometryTable() throws NoSuchTableException {
         GridGeometryTable table = gridGeometryTable;
@@ -434,7 +450,7 @@ loop:   for (final GridCoverageEntry newEntry : entries) {
             final LocalCache.Stmt ce = getStatement(QueryType.AVAILABLE_DATA);
             final PreparedStatement statement = ce.statement;
             final ResultSet results = statement.executeQuery();
-            final LayerEntry layer  = this.layer;
+            final LayerEntry layer  = this.layer; // Don't use getLayerEntry() because we want to accept null.
             final long timeInterval = (layer != null) ? Math.round(layer.timeInterval * MILLIS_IN_DAY) : 0;
             if (addTo == null) {
                 addTo = new RangeSet<Date>(Date.class);
@@ -514,7 +530,9 @@ loop:   for (final GridCoverageEntry newEntry : entries) {
         final LayerEntry layer = getLayerEntry();
         SeriesEntry series = layer.getSeries(seriesID);
         if (series == null) { // Should not happen, but be lenient if it happen anyway.
-            series = getDatabase().getTable(SeriesTable.class).getEntry(seriesID);
+            final SeriesTable table = getDatabase().getTable(SeriesTable.class);
+            series = table.getEntry(seriesID);
+            table.release();
         }
         /*
          * We need to include the altitude in the identifier (since requests for different
@@ -578,13 +596,23 @@ loop:   for (final GridCoverageEntry newEntry : entries) {
      * {@inheritDoc}
      */
     @Override
-    protected void fireStateChanged(final String property) throws CatalogException {
-        if (!property.equalsIgnoreCase("PreferredResolution")) {
+    protected void fireStateChanged(final String property) {
+        if (!"PreferredResolution".equalsIgnoreCase(property)) {
             comparator          = null;
             availableTimes      = null;
             availableElevations = null;
             availableCentroids  = null;
         }
         super.fireStateChanged(property);
+    }
+
+    /**
+     * Resets this table to its initial state. Invoking this method is equivalent to
+     * invoking {@code setFoo(null)} on every setter methods.
+     */
+    @Override
+    public synchronized void reset() {
+        layer = null;
+        super.reset();
     }
 }

@@ -73,6 +73,7 @@ public class FormatTableTest extends CatalogTestBase {
         final Set<FormatEntry> entries = table.getEntries();
         assertFalse(entries.isEmpty());
         assertTrue(entries.contains(entry));
+        table.release();
     }
 
     /**
@@ -100,5 +101,6 @@ public class FormatTableTest extends CatalogTestBase {
         final Set<FormatEntry> entries = table.getEntries();
         assertFalse(entries.isEmpty());
         assertTrue(entries.contains(entry));
+        table.release();
     }
 }

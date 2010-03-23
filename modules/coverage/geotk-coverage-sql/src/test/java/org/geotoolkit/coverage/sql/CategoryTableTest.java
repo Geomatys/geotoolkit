@@ -21,6 +21,7 @@ import java.util.Map;
 import java.sql.SQLException;
 
 import org.geotoolkit.coverage.Category;
+import org.geotoolkit.internal.sql.table.Database;
 import org.geotoolkit.internal.sql.table.CatalogTestBase;
 
 import org.junit.*;
@@ -47,6 +48,30 @@ public class CategoryTableTest extends CatalogTestBase {
         final Map<Integer,Category[]> map = table.getCategories(FormatTableTest.TEMPERATURE);
         assertEquals("The format should define only one band.", 1, map.size());
         checkTemperatureCategories(map.get(1));
+        table.release();
+    }
+
+    /**
+     * Acquires a table and release it.
+     *
+     * @throws SQLException If the test can't connect to the database.
+     */
+    @Test
+    public void testAcquireReleaseCycle() throws SQLException {
+        final Database database = getDatabase();
+        final CategoryTable table1 = database.getTable(CategoryTable.class);
+        final CategoryTable table2 = database.getTable(CategoryTable.class);
+        assertNotSame(table1, table2);
+
+        table2.release();
+        CategoryTable table = database.getTable(CategoryTable.class);
+        assertSame(table2, table);
+        table.release();
+
+        table1.release();
+        table = database.getTable(CategoryTable.class);
+        assertSame(table1, table);
+        table.release();
     }
 
     /**

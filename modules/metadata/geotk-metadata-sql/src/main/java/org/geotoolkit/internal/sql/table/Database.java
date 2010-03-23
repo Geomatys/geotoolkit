@@ -32,18 +32,13 @@ import java.util.Properties;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.concurrent.locks.ReentrantLock;
-import java.lang.reflect.Constructor;
-
-import org.opengis.referencing.operation.MathTransformFactory;
 
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.lang.ThreadSafe;
-import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.Localized;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.internal.sql.StatementPool;
 import org.geotoolkit.internal.sql.AuthenticatedDataSource;
-import org.geotoolkit.factory.AuthorityFactoryFinder;
 
 
 /**
@@ -92,7 +87,7 @@ public class Database implements Localized {
     /**
      * The hints to use for fetching factories. Shall be considered read-only.
      */
-    public final Hints hints;
+    final Hints hints;
 
     /**
      * Provides information for SQL statements being executed.
@@ -190,12 +185,8 @@ public class Database implements Localized {
      * The tables created up to date. Every access to this map
      * will need to be synchronized on {@code tables}.
      */
-    private final Map<Class<? extends Table>, Table> tables = new HashMap<Class<? extends Table>, Table>();
-
-    /**
-     * The math transform factory, created only when first needed.
-     */
-    private transient MathTransformFactory mtFactory;
+    private final Map<Class<? extends Table>, TableReference> tables =
+            new HashMap<Class<? extends Table>, TableReference>();
 
     /**
      * The properties given at construction time, or {@code null} if none.
@@ -248,23 +239,6 @@ public class Database implements Localized {
     final String getProperty(final ConfigurationKey key) {
         // No need to synchronize since 'Properties' is already synchronized.
         return (properties != null) ? properties.getProperty(key.key, key.defaultValue) : key.defaultValue;
-    }
-
-    /**
-     * Returns the math transform factory. The factory is determined by the hints
-     * given at construction time.
-     *
-     * @return The math transform factory.
-     *
-     * @since 3.10
-     */
-    public final MathTransformFactory getMathTransformFactory() {
-        MathTransformFactory mtFactory = this.mtFactory;
-        if (mtFactory == null) {
-            // Not a big deal if invoked concurrently in 2 threads.
-            this.mtFactory = mtFactory = AuthorityFactoryFinder.getMathTransformFactory(hints);
-        }
-        return mtFactory;
     }
 
     /**
@@ -353,7 +327,14 @@ public class Database implements Localized {
     }
 
     /**
-     * Returns a table of the specified type.
+     * Returns a table of the specified type. The {@link Table#release()} method shall be
+     * invoked when the table is no longer needed. However invoking {@code Table.release()}
+     * is not strictly mandatory. It may be omitted if the table is not aimed to be reused.
+     * <p>
+     * If the returned table has setter methods, then this {@code getTable(Class)} method
+     * makes no garantees on the initial values of the returned table. Users shall either
+     * invoke every setter methods (recommanded approach), or invoke {@link Table#reset()}
+     * prior any use.
      *
      * @param  <T> The table class.
      * @param  type The table class.
@@ -361,20 +342,26 @@ public class Database implements Localized {
      * @throws NoSuchTableException if the specified type is unknown to this database.
      */
     public final <T extends Table> T getTable(final Class<T> type) throws NoSuchTableException {
+        TableReference table;
         synchronized (tables) {
-            T table = type.cast(tables.get(type));
+            table = tables.get(type);
             if (table == null) {
-                try {
-                    final Constructor<T> c = type.getConstructor(Database.class);
-                    c.setAccessible(true);
-                    table = c.newInstance(this);
-                } catch (Exception exception) { // Too many exeptions for enumerating them.
-                    throw new NoSuchTableException(Classes.getShortName(type), exception);
-                }
+                table = new TableReference(this, type);
                 tables.put(type, table);
             }
-            return table;
         }
+        return type.cast(table.get());
+    }
+
+    /**
+     * Releases the given table. This method is invoked by {@link Table#release()} only.
+     */
+    final void release(final Table table) {
+        final TableReference ref;
+        synchronized (tables) {
+            ref = tables.get(table.getClass());
+        }
+        ref.release(table);
     }
 
     /**

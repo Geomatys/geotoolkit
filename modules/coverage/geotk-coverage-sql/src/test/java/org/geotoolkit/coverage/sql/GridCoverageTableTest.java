@@ -44,7 +44,7 @@ import static org.geotoolkit.referencing.CRS.getHorizontalCRS;
  * @since 3.10 (derived from Seagis)
  */
 @Depend(LayerTableTest.class)
-public class GridCoverageTableTest extends CatalogTestBase {
+public final class GridCoverageTableTest extends CatalogTestBase {
     /**
      * The name of the coverage to be tested.
      */
@@ -59,6 +59,7 @@ public class GridCoverageTableTest extends CatalogTestBase {
     @Test
     public void testAvailability() throws SQLException {
         final GridCoverageTable table = getDatabase().getTable(GridCoverageTable.class);
+        table.reset();
         table.setLayer(LayerTableTest.TEMPERATURE);
         final SortedSet<Date> allTimes = table.getAvailableTimes();
         assertEquals(7, allTimes.size());
@@ -92,6 +93,7 @@ public class GridCoverageTableTest extends CatalogTestBase {
          */
         table.setTimeRange(LayerTableTest.START_TIME, LayerTableTest.END_TIME);
         assertEquals(allTimes, table.getAvailableTimes());
+        table.release();
     }
 
     /**
@@ -104,6 +106,7 @@ public class GridCoverageTableTest extends CatalogTestBase {
     @Test
     public void testSelect() throws SQLException {
         final GridCoverageTable table = getDatabase().getTable(GridCoverageTable.class);
+        table.reset();
         table.setLayer(LayerTableTest.TEMPERATURE);
         final GridCoverageReference entry = table.getEntry(SAMPLE_NAME);
         assertEquals(SAMPLE_NAME + ":1", entry.getName());
@@ -127,6 +130,7 @@ public class GridCoverageTableTest extends CatalogTestBase {
         assertEquals( +90, envelope.getMaximum(1), 0.0);
         assertEquals(6439, envelope.getMinimum(2), 0.0);
         assertEquals(6447, envelope.getMaximum(2), 0.0);
+        table.release();
     }
 
     /**
@@ -138,6 +142,7 @@ public class GridCoverageTableTest extends CatalogTestBase {
     @Test
     public void testList() throws SQLException {
         final GridCoverageTable table = getDatabase().getTable(GridCoverageTable.class);
+        table.reset();
         table.setLayer(LayerTableTest.TEMPERATURE);
         /*
          * Get the set of entries in the layer.
@@ -152,5 +157,6 @@ public class GridCoverageTableTest extends CatalogTestBase {
          * Should select the one which is in the middle of the requested range.
          */
         assertSame(entry, table.getEntry());
+        table.release();
     }
 }

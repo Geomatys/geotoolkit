@@ -37,11 +37,9 @@ import java.util.logging.Level;
 
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.ReferenceIdentifier;
-import org.opengis.referencing.crs.CRSAuthorityFactory;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransformFactory;
 
-import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.util.collection.WeakHashSet;
 import org.geotoolkit.internal.sql.table.Column;
 import org.geotoolkit.internal.sql.table.Database;
@@ -54,7 +52,6 @@ import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.referencing.factory.AbstractAuthorityFactory;
 import org.geotoolkit.referencing.factory.IdentifiedObjectFinder;
-import org.geotoolkit.referencing.factory.wkt.AuthorityFactoryProvider;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 import org.geotoolkit.resources.Errors;
 
@@ -72,14 +69,7 @@ import static java.lang.reflect.Array.getDouble;
  * @since 3.10 (derived from Seagis)
  * @module
  */
-@ThreadSafe(concurrent = true)
 final class GridGeometryTable extends SingletonTable<GridGeometryEntry> {
-    /**
-     * The authority factory connected to the PostGIS {@code "spatial_ref_sys"} table.
-     * Will be created when first needed.
-     */
-    private transient CRSAuthorityFactory crsFactory;
-
     /**
      * A set of CRS descriptions created up to date. Cached because we
      * will typically have many grid geometries using the same set of CRS.
@@ -104,18 +94,24 @@ final class GridGeometryTable extends SingletonTable<GridGeometryEntry> {
     }
 
     /**
-     * Returns the CRS authority factory backed by the PostGIS {@code "spatial_ref_sys"} table.
-     * Because each {@link Database} maintain only one instance of {@code GridGeometryTable}, a
-     * single {@link CRSAuthorityFactory} will be shared for all access to the same database.
+     * Creates a new instance having the same configuration than the given table.
+     * This is a copy constructor used for obtaining a new instance to be used
+     * concurrently with the original instance.
      *
-     * @throws FactoryException If the factory can not be created.
+     * @param table The table to use as a template.
      */
-    private synchronized CRSAuthorityFactory getAuthorityFactory() throws FactoryException {
-        if (crsFactory == null) {
-            final Database db = getDatabase();
-            crsFactory = new AuthorityFactoryProvider(db.hints).createFromPostGIS(db.getDataSource(true));
-        }
-        return crsFactory;
+    private GridGeometryTable(final GridGeometryTable table) {
+        super(table);
+        gridCRS = table.gridCRS;
+    }
+
+    /**
+     * Returns a copy of this table. This is a copy constructor used for obtaining
+     * a new instance to be used concurrently with the original instance.
+     */
+    @Override
+    protected synchronized GridGeometryTable clone() {
+        return new GridGeometryTable(this);
     }
 
     /**
@@ -127,7 +123,8 @@ final class GridGeometryTable extends SingletonTable<GridGeometryEntry> {
      * @throws FactoryException if an error occured while searching for the CRS.
      */
     public int getSRID(final CoordinateReferenceSystem crs) throws FactoryException {
-        final AbstractAuthorityFactory factory = (AbstractAuthorityFactory) getAuthorityFactory();
+        final SpatialDatabase database = (SpatialDatabase) getDatabase();
+        final AbstractAuthorityFactory factory = (AbstractAuthorityFactory) database.getCRSAuthorityFactory();
         final IdentifiedObjectFinder finder = factory.getIdentifiedObjectFinder(CoordinateReferenceSystem.class);
         final ReferenceIdentifier srid = AbstractIdentifiedObject.getIdentifier(finder.find(crs), Citations.POSTGIS);
         if (srid == null) {
@@ -175,7 +172,7 @@ final class GridGeometryTable extends SingletonTable<GridGeometryEntry> {
             if (candidate != srsEntry) {
                 srsEntry = candidate;
             } else try {
-                srsEntry.createSpatioTemporalCRS(database, getAuthorityFactory());
+                srsEntry.createSpatioTemporalCRS(database);
             } catch (FactoryException exception) {
                 gridCRS.remove(srsEntry);
                 final Column column;
@@ -188,7 +185,7 @@ final class GridGeometryTable extends SingletonTable<GridGeometryEntry> {
             }
         }
         final double[] altitudes = asDoubleArray(verticalOrdinates);
-        final MathTransformFactory mtFactory = getDatabase().getMathTransformFactory();
+        final MathTransformFactory mtFactory = database.getMathTransformFactory();
         final AffineTransform2D at = new AffineTransform2D(scaleX, shearY, shearX, scaleY, translateX, translateY);
         final Dimension size = new Dimension(width, height);
         final GridGeometryEntry entry;

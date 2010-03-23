@@ -29,7 +29,6 @@ import java.util.logging.Level;
 import java.util.logging.LogRecord;
 
 import org.geotoolkit.util.Utilities;
-import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.internal.sql.table.CatalogException;
 import org.geotoolkit.internal.sql.table.ConfigurationKey;
@@ -51,18 +50,17 @@ import org.geotoolkit.internal.sql.table.DuplicatedRecordException;
  * @since 3.10 (derived from Seagis)
  * @module
  */
-@ThreadSafe(concurrent = true)
 final class SeriesTable extends SingletonTable<SeriesEntry> {
     /**
-     * Connection to the format table. This connection will be etablished
-     * when first needed and may be shared by many series tables.
+     * Connection to the format table.
+     * Created when first needed.
      */
-    private volatile FormatTable formats;
+    private transient FormatTable formats;
 
     /**
      * The layer for which we want the series.
      */
-    private final ThreadLocal<String> layer = new ThreadLocal<String>();
+    private String layer;
 
     /**
      * Creates a series table.
@@ -81,30 +79,53 @@ final class SeriesTable extends SingletonTable<SeriesEntry> {
     }
 
     /**
+     * Creates a new instance having the same configuration than the given table.
+     * This is a copy constructor used for obtaining a new instance to be used
+     * concurrently with the original instance.
+     *
+     * @param table The table to use as a template.
+     */
+    private SeriesTable(final SeriesTable table) {
+        super(table);
+        this.layer = table.layer;
+    }
+
+    /**
+     * Returns a copy of this table. This is a copy constructor used for obtaining
+     * a new instance to be used concurrently with the original instance.
+     */
+    @Override
+    protected synchronized SeriesTable clone() {
+        return new SeriesTable(this);
+    }
+
+    /**
      * Returns the layer for the series to be returned by {@link #getEntries() getEntries()}.
      * The default value is {@code null}, which means that no filtering should be performed.
      */
-    public String getLayer() {
-        return layer.get();
+    public synchronized String getLayer() {
+        return layer;
     }
 
     /**
      * Sets the layer for the series to be returned. Next call to {@link #getEntries()}
      * will filters the series in order to return only the ones in this layer.
      */
-    public void setLayer(final String layer) throws CatalogException {
-        this.layer.set(layer);
-        fireStateChanged("layer");
+    public synchronized void setLayer(final String layer) {
+        if (!Utilities.equals(layer, this.layer)) {
+            this.layer = layer;
+            fireStateChanged("layer");
+        }
     }
 
     /**
      * Returns the {@link FormatTable} instance, creating it if needed.
+     * The {@link FormatTable#release()} method will never been invoked
+     * for the returned instance, but this is not an issue.
      */
     private FormatTable getFormatTable() throws CatalogException {
         FormatTable table = formats;
         if (table == null) {
-            // This is not a big deal if the following line is invoked twice,
-            // since getTable is synchronized and caches its returned values.
             formats = table = getDatabase().getTable(FormatTable.class);
         }
         return table;
@@ -358,5 +379,15 @@ final class SeriesTable extends SingletonTable<SeriesEntry> {
             }
         }
         return path.replace(File.separatorChar, '/').trim();
+    }
+
+    /**
+     * Resets this table to its initial state. Invoking this method is equivalent to
+     * invoking {@code setFoo(null)} on every setter methods.
+     */
+    @Override
+    public synchronized void reset() {
+        layer = null;
+        super.reset();
     }
 }

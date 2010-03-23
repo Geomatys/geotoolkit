@@ -25,7 +25,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import org.geotoolkit.util.Utilities;
-import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.internal.sql.table.Database;
 import org.geotoolkit.internal.sql.table.LocalCache;
 import org.geotoolkit.internal.sql.table.QueryType;
@@ -42,19 +41,18 @@ import org.geotoolkit.internal.sql.table.NoSuchTableException;
  * @since 3.10 (derived from Seagis)
  * @module
  */
-@ThreadSafe(concurrent = true)
 final class LayerTable extends SingletonTable<LayerEntry> {
     /**
      * Connection to the table of domains. Will be created when first needed. Will be shared
      * by all {@code LayerTable}, since it is independent of {@code LayerTable} settings.
      */
-    private volatile DomainOfLayerTable domains;
+    private transient DomainOfLayerTable domains;
 
     /**
      * Connection to the table of series. Will be created when first needed. Will be shared
      * by all {@code LayerTable}.
      */
-    private volatile SeriesTable series;
+    private transient SeriesTable series;
 
     /**
      * The names of all series found in the database.
@@ -76,6 +74,27 @@ final class LayerTable extends SingletonTable<LayerEntry> {
      */
     private LayerTable(final LayerQuery query) {
         super(query, query.byName);
+    }
+
+    /**
+     * Creates a new instance having the same configuration than the given table.
+     * This is a copy constructor used for obtaining a new instance to be used
+     * concurrently with the original instance.
+     *
+     * @param table The table to use as a template.
+     */
+    private LayerTable(final LayerTable table) {
+        super(table);
+        names = table.names;
+    }
+
+    /**
+     * Returns a copy of this table. This is a copy constructor used for obtaining
+     * a new instance to be used concurrently with the original instance.
+     */
+    @Override
+    protected synchronized LayerTable clone() {
+        return new LayerTable(this);
     }
 
     /**
@@ -121,12 +140,12 @@ final class LayerTable extends SingletonTable<LayerEntry> {
 
     /**
      * Returns the {@link DomainOfLayerTable} instance, creating it if needed.
+     * The {@link DomainOfLayerTable#release()} method will never been invoked
+     * for the returned instance, but this is not an issue.
      */
     final DomainOfLayerTable getDomainOfLayerTable() throws NoSuchTableException {
         DomainOfLayerTable table = domains;
         if (table == null) {
-            // This is not a big deal if the following line is invoked twice,
-            // since getTable is synchronized and caches its returned values.
             domains = table = getDatabase().getTable(DomainOfLayerTable.class);
         }
         return table;
@@ -134,12 +153,12 @@ final class LayerTable extends SingletonTable<LayerEntry> {
 
     /**
      * Returns the {@link SeriesTable} instance, creating it if needed.
+     * The {@link SeriesTable#release()} method will never been invoked
+     * for the returned instance, but this is not an issue.
      */
     final SeriesTable getSeriesTable() throws NoSuchTableException {
         SeriesTable table = series;
         if (table == null) {
-            // This is not a big deal if the following line is invoked twice,
-            // since getTable is synchronized and caches its returned values.
             series = table = getDatabase().getTable(SeriesTable.class);
         }
         return table;

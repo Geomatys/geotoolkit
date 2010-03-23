@@ -27,7 +27,6 @@ import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
-import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.util.Localized;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.NullArgumentException;
@@ -36,7 +35,26 @@ import org.geotoolkit.resources.Errors;
 
 
 /**
- * Base class for a table in a coverage {@linkplain Database database}.
+ * Base class for a table in a coverage {@linkplain Database database}. This class is not
+ * thread-safe. For usage in multi-threads environment, the copy constructor shall be used
+ * for creating a different instance of the {@code Table} subclass for each thread.
+ *
+ * {@section Synchronization}
+ * In principle, {@code Table} implementations don't need to be synchronized since they are
+ * not aimed to be used concurrently by different threads. If concurrent usage is desired,
+ * then each thread shall have its own instance. Nevertheless a few synchronization are still
+ * needed:
+ *
+ * <ul>
+ *   <li><p>If the implementation has setter methods, then those setter methods and the
+ *       corresponding setter methods shall be synchronized. This is necessary in order
+ *       to protect the {@link #clone()} method from concurrent changes, since the clone
+ *       method may be invoked from any thread.</p></li>
+ *
+ *   <li><p>JDBC commands shall be executed inside a {@code synchronized(getLock())} block.
+ *       This is necessary in order to avoid the disposer background thread to close the
+ *       JDBC statement while it still in ise.</p></li>
+ * </ul>
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @version 3.10
@@ -44,8 +62,7 @@ import org.geotoolkit.resources.Errors;
  * @since 3.09 (derived from Seagis)
  * @module
  */
-@ThreadSafe(concurrent = true)
-public class Table implements Localized {
+public abstract class Table implements Localized {
     /**
      * The query executed by this table.
      *
@@ -54,54 +71,16 @@ public class Table implements Localized {
     protected final Query query;
 
     /**
-     * Information about a query being executed.
-     * Those information can not be shared between different threads.
-     *
-     * @see #getStatement(QueryType)
-     * @see #getStatement(String)
+     * The query type for the current {@linkplain #statement}.
      */
-    private static final class Session {
-        /**
-         * The pool of prepared statements. All tables used in the same thread share the same
-         * {@code LocalCache} instance. However different threads use different instances.
-         * <p>
-         * All JDBC operations must be synchronized on this object, in order to prevent the
-         * background cleaner thread to close the statements before we finished to use them.
-         * <p>
-         * This field is provided only for convenience. It shall be the same reference than
-         * {@link Database#getLocalCache()} all the time.
-         */
-        final LocalCache cache;
-
-        /**
-         * The query type for the current {@linkplain #statement}.
-         */
-        QueryType type;
-
-        /**
-         * Incremented every time the {@link Table} configuration changed. This is compared
-         * with {@link LocalCache.Stmt#stamp} in order to determine if the statement needs
-         * to be set.
-         */
-        int modificationCount;
-
-        /**
-         * Creates a new instance.
-         */
-        Session(final LocalCache cache) {
-            this.cache = cache;
-            modificationCount = 1;
-        }
-    }
+    private QueryType type;
 
     /**
-     * Holds thread-local information about a query being executed.
+     * Incremented every time the {@link Table} configuration changed. This is compared
+     * with {@link LocalCache.Stmt#stamp} in order to determine if the statement needs
+     * to be set.
      */
-    private final ThreadLocal<Session> session = new ThreadLocal<Session>() {
-        @Override protected Session initialValue() {
-            return new Session(getDatabase().getLocalCache());
-        }
-    };
+    private int modificationCount = 1;
 
     /**
      * Creates a new table using the specified query. The query given in argument should be some
@@ -123,8 +102,17 @@ public class Table implements Localized {
      * @param table The table to use as a template.
      */
     protected Table(final Table table) {
+        assert Thread.holdsLock(table);
         query = table.query;
     }
+
+    /**
+     * Returns a copy of this table. Subclasses should invoke their copy-constructor here.
+     * Implementations should be synchronized since this method is typically invoked in a
+     * thread different than the one using this table instance.
+     */
+    @Override
+    protected abstract Table clone();
 
     /**
      * Returns the database that contains this table. This is the database
@@ -155,14 +143,15 @@ public class Table implements Localized {
     }
 
     /**
-     * Returns the lock to use for any call to a {@code getStatement(...)} method. Note that
-     * this lock will <strong>not</strong> block concurrent usage of {@code Table}. This is
-     * only a lock for preventing the connection to be closed before the query is finished.
+     * Returns the lock to use for any call to a {@code getStatement(...)} method. This lock is
+     * only a lock for preventing the connection to be closed before the query is finished.  It
+     * is <strong>not</strong> for providing thread-safety to {@code Table} instances - since the
+     * lock is thread-local, it is useless for that purpose.
      *
      * @return The lock to use in a {@code synchronized} statement.
      */
     protected final Object getLock() {
-        return session.get().cache;
+        return getDatabase().getLocalCache();
     }
 
     /**
@@ -200,13 +189,13 @@ public class Table implements Localized {
      * @throws SQLException if a SQL error occured while configuring the statement.
      */
     final LocalCache.Stmt getStatement(final String query) throws SQLException {
-        final Session s = session.get();
-        assert Thread.holdsLock(s.cache);
-        final LocalCache.Stmt ce = s.cache.prepareStatement(this, query);
-        if (s.modificationCount != ce.stamp) {
-            final QueryType type = s.type;
+        final LocalCache cache = getDatabase().getLocalCache();
+        assert Thread.holdsLock(cache);
+        final LocalCache.Stmt ce = cache.prepareStatement(this, query);
+        if (modificationCount != ce.stamp) {
+            final QueryType type = this.type;
             configure(type, ce.statement);
-            ce.stamp = s.modificationCount;
+            ce.stamp = modificationCount;
             final Level level = (type != null) ? type.getLoggingLevel() : Level.FINE;
             final Logger logger = getLogger();
             if (logger.isLoggable(level)) {
@@ -251,7 +240,7 @@ public class Table implements Localized {
             case DELETE:     sql = query.delete(type); break;
             case DELETE_ALL: sql = query.delete(type); break;
         }
-        session.get().type = type;
+        this.type = type;
         return getStatement(sql);
     }
 
@@ -312,7 +301,7 @@ public class Table implements Localized {
      */
     final Column getColumn(final int index) {
         if (index >= 1) {
-            final List<Column> columns = query.getColumns(session.get().type);
+            final List<Column> columns = query.getColumns(getQueryType());
             if (columns != null && index <= columns.size()) {
                 return columns.get(index - 1);
             }
@@ -326,7 +315,7 @@ public class Table implements Localized {
      * be null.
      */
     final QueryType getQueryType() {
-        return session.get().type;
+        return type;
     }
 
     /**
@@ -396,11 +385,11 @@ public class Table implements Localized {
      * Notifies that the state of this table changed. Subclasses should invoke this method every
      * time some {@code setXXX(...)} method has been invoked on this {@code Table} object.
      *
-     * @param property The name of the property that changed.
-     * @throws CatalogException If this table is not modifiable.
+     * @param property The name of the property that changed, or {@code null} if unknown.
      */
-    protected void fireStateChanged(final String property) throws CatalogException {
-        session.get().modificationCount++;
+    protected void fireStateChanged(final String property) {
+        assert Thread.holdsLock(this);
+        modificationCount++;
     }
 
     /**
@@ -476,5 +465,27 @@ public class Table implements Localized {
     public final Locale getLocale() {
         final Database database = query.database;
         return (database != null) ? database.getLocale() : null;
+    }
+
+    /**
+     * Resets this table to its initial state. This method shall be overriden by every
+     * {@code Table} subclasses having setter methods. The call to {@code super.reset()}
+     * in sub-class shall be last.
+     */
+    public synchronized void reset() {
+        fireStateChanged(null);
+    }
+
+    /**
+     * Marks this table as available for reuse. This method can be invoked after
+     * {@link Database#getTable(Class)} when this table is no longer needed. However
+     * invoking this method is not strictly necessary, since the table doesn't hold
+     * native resource.
+     */
+    public final void release() {
+        final Database database = query.database;
+        if (database != null) {
+            database.release(this);
+        }
     }
 }

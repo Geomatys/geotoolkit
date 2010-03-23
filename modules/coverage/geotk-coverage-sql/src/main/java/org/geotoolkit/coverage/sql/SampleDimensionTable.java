@@ -26,7 +26,6 @@ import java.text.ParseException;
 import javax.measure.unit.Unit;
 import javax.measure.unit.UnitFormat;
 
-import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.coverage.Category;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
@@ -45,18 +44,17 @@ import org.geotoolkit.internal.sql.table.IllegalRecordException;
  * components needed for creation of {@link GridCoverage2D}.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.09
+ * @version 3.10
  *
  * @since 3.09 (derived from Seagis)
  * @module
  */
-@ThreadSafe(concurrent = true)
 final class SampleDimensionTable extends Table {
     /**
      * Connection to the {@linkplain Category categories} table.
      * Will be created only when first needed.
      */
-    private CategoryTable categories;
+    private transient CategoryTable categories;
 
     /**
      * Creates a sample dimension table.
@@ -65,6 +63,26 @@ final class SampleDimensionTable extends Table {
      */
     public SampleDimensionTable(final Database database) {
         super(new SampleDimensionQuery(database));
+    }
+
+    /**
+     * Creates a new instance having the same configuration than the given table.
+     * This is a copy constructor used for obtaining a new instance to be used
+     * concurrently with the original instance.
+     *
+     * @param table The table to use as a template.
+     */
+    private SampleDimensionTable(final SampleDimensionTable table) {
+        super(table);
+    }
+
+    /**
+     * Returns a copy of this table. This is a copy constructor used for obtaining
+     * a new instance to be used concurrently with the original instance.
+     */
+    @Override
+    protected synchronized SampleDimensionTable clone() {
+        return new SampleDimensionTable(this);
     }
 
     /**

@@ -174,13 +174,10 @@ final class SpatialRefSysEntry {
      * at creation time) in order to have a chance to search for an existing entry in the
      * cache before to create the CRS.
      *
-     * @param  factory The factory used for creating the CRS.
-     * @param  databaseCRS {@link org.geotoolkit.internal.sql.table.SpatialDatabase#horizontalCRS}.
+     * @param  database The database.
      * @throws FactoryException if an error occured while creating the CRS.
      */
-    final void createSpatioTemporalCRS(final SpatialDatabase database, final CRSAuthorityFactory factory)
-            throws FactoryException
-    {
+    final void createSpatioTemporalCRS(final SpatialDatabase database) throws FactoryException {
         assert uninitialized() != 0 : this;
         databaseCRS = database.horizontalCRS;
         pixelInCell = database.pixelInCell;
@@ -188,6 +185,7 @@ final class SpatialRefSysEntry {
          * Get the CRS components (Horizontal, Vertical, Temporal) from the PostGIS SRID,
          * except the temporal component which was explicitly given at construction time.
          */
+        final CRSAuthorityFactory factory = database.getCRSAuthorityFactory();
         if (horizontalSRID != 0) {
             final CoordinateReferenceSystem crs =
                     factory.createCoordinateReferenceSystem(String.valueOf(horizontalSRID));

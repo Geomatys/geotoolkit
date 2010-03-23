@@ -29,6 +29,9 @@ import org.opengis.referencing.crs.SingleCRS;
 import org.opengis.referencing.crs.VerticalCRS;
 import org.opengis.referencing.crs.TemporalCRS;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.crs.CRSAuthorityFactory;
+import org.opengis.referencing.datum.PixelInCell;
+import org.opengis.referencing.operation.MathTransformFactory;
 
 import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.metadata.iso.citation.Citations;
@@ -39,8 +42,9 @@ import org.geotoolkit.referencing.crs.DefaultVerticalCRS;
 import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.factory.wkt.DirectPostgisFactory;
+import org.geotoolkit.referencing.factory.wkt.AuthorityFactoryProvider;
+import org.geotoolkit.factory.AuthorityFactoryFinder;
 import org.geotoolkit.resources.Errors;
-import org.opengis.referencing.datum.PixelInCell;
 
 
 /**
@@ -87,6 +91,17 @@ public class SpatialDatabase extends Database {
      * convention while the later is Java convention.
      */
     public final PixelInCell pixelInCell;
+
+    /**
+     * The authority factory connected to the PostGIS {@code "spatial_ref_sys"} table.
+     * Will be created when first needed.
+     */
+    private transient CRSAuthorityFactory crsFactory;
+
+    /**
+     * The math transform factory, created only when first needed.
+     */
+    private transient MathTransformFactory mtFactory;
 
     /**
      * Creates a new instance using the same configuration than the given instance.
@@ -191,5 +206,32 @@ public class SpatialDatabase extends Database {
             }
         }
         throw new FactoryException(Errors.format(Errors.Keys.UNDEFINED_PROPERTY_$1, "SRID"));
+    }
+
+    /**
+     * Returns the CRS authority factory backed by the PostGIS {@code "spatial_ref_sys"} table.
+     * The factory is determined by the hints given at construction time.
+     *
+     * @return The shared CRS authority factory.
+     * @throws FactoryException If the factory can not be created.
+     */
+    public final synchronized CRSAuthorityFactory getCRSAuthorityFactory() throws FactoryException {
+        if (crsFactory == null) {
+            crsFactory = new AuthorityFactoryProvider(hints).createFromPostGIS(getDataSource(true));
+        }
+        return crsFactory;
+    }
+
+    /**
+     * Returns the math transform factory.
+     * The factory is determined by the hints given at construction time.
+     *
+     * @return The shared math transform factory.
+     */
+    public final synchronized MathTransformFactory getMathTransformFactory() {
+        if (mtFactory == null) {
+            mtFactory = AuthorityFactoryFinder.getMathTransformFactory(hints);
+        }
+        return mtFactory;
     }
 }

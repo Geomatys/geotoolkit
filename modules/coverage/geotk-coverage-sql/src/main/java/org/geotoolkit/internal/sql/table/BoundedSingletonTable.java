@@ -145,7 +145,13 @@ public abstract class BoundedSingletonTable<E extends Entry> extends SingletonTa
         super(query, pkParam);
         this.byTimeRange = byTimeRange;
         this.bySpatialExtent = bySpatialExtent;
+        init();
+    }
 
+    /**
+     * Sets all spatio-temporal fields to their initial values.
+     */
+    private void init() {
         tMin = Long.MIN_VALUE;
         tMax = Long.MAX_VALUE;
         xMin = NEGATIVE_INFINITY;
@@ -340,9 +346,8 @@ public abstract class BoundedSingletonTable<E extends Entry> extends SingletonTa
      * @param  area The horizontal bounding box.
      * @return {@code true} if the bounding box changed as a result of this call, or
      *         {@code false} if the specified box is equals to the one already set.
-     * @throws CatalogException If an error occured while setting the envelope.
      */
-    public synchronized boolean setEnvelope2D(final Rectangle2D area) throws CatalogException {
+    public synchronized boolean setEnvelope2D(final Rectangle2D area) {
         boolean change;
         change  = (xMin != (xMin = (area != null) ? area.getMinX() : NEGATIVE_INFINITY));
         change |= (xMax != (xMax = (area != null) ? area.getMaxX() : POSITIVE_INFINITY));
@@ -377,9 +382,8 @@ public abstract class BoundedSingletonTable<E extends Entry> extends SingletonTa
      * @param  range The vertical range, or {@code null} for full coverage.
      * @return {@code true} if the vertical range changed as a result of this call, or
      *         {@code false} if the specified range is equals to the one already set.
-     * @throws CatalogException If an error occured while setting the envelope.
      */
-    public final boolean setVerticalRange(final NumberRange<?> range) throws CatalogException {
+    public final boolean setVerticalRange(final NumberRange<?> range) {
         final double minimum, maximum;
         if (range != null) {
             minimum = range.getMinimum(true);
@@ -398,9 +402,8 @@ public abstract class BoundedSingletonTable<E extends Entry> extends SingletonTa
      * @param  maximum The maximal <var>z</var> value, <strong>inclusive</strong>.
      * @return {@code true} if the vertical range changed as a result of this call, or
      *         {@code false} if the specified range is equals to the one already set.
-     * @throws CatalogException If an error occured while setting the envelope.
      */
-    public synchronized boolean setVerticalRange(final double minimum, final double maximum) throws CatalogException {
+    public synchronized boolean setVerticalRange(final double minimum, final double maximum) {
         boolean change;
         change  = (doubleToLongBits(zMin) != doubleToLongBits(zMin = minimum));
         change |= (doubleToLongBits(zMax) != doubleToLongBits(zMax = maximum));
@@ -434,9 +437,8 @@ public abstract class BoundedSingletonTable<E extends Entry> extends SingletonTa
      * @param  timeRange The time range.
      * @return {@code true} if the time range changed as a result of this call, or
      *         {@code false} if the specified range is equals to the one already set.
-     * @throws CatalogException If an error occured while setting the envelope.
      */
-    public final boolean setTimeRange(final DateRange timeRange) throws CatalogException {
+    public final boolean setTimeRange(final DateRange timeRange) {
         Date startTime, endTime;
         if (timeRange != null) {
             startTime = timeRange.getMinValue();
@@ -461,9 +463,8 @@ public abstract class BoundedSingletonTable<E extends Entry> extends SingletonTa
      * @param  endTime The end time, <strong>inclusive</strong>.
      * @return {@code true} if the time range changed as a result of this call, or
      *         {@code false} if the specified range is equals to the one already set.
-     * @throws CatalogException If an error occured while setting the envelope.
      */
-    public synchronized boolean setTimeRange(final Date startTime, final Date endTime) throws CatalogException {
+    public synchronized boolean setTimeRange(final Date startTime, final Date endTime) {
         boolean change;
         change  = (tMin != (tMin = (startTime != null) ? startTime.getTime() : Long.MIN_VALUE));
         change |= (tMax != (tMax = (  endTime != null) ?   endTime.getTime() : Long.MAX_VALUE));
@@ -495,9 +496,8 @@ public abstract class BoundedSingletonTable<E extends Entry> extends SingletonTa
      * @param  resolution The preferred geographic resolution, or {@code null} for best resolution.
      * @return {@code true} if the resolution changed as a result of this call, or
      *         {@code false} if the specified resolution is equals to the one already set.
-     * @throws CatalogException If an error occured while setting the envelope.
      */
-    public synchronized boolean setPreferredResolution(final Dimension2D resolution) throws CatalogException {
+    public synchronized boolean setPreferredResolution(final Dimension2D resolution) {
         float x,y;
         if (resolution != null) {
             x = (float) resolution.getWidth ();
@@ -600,8 +600,11 @@ public abstract class BoundedSingletonTable<E extends Entry> extends SingletonTa
         if (byTimeRange != null) {
             final int index = byTimeRange.indexOf(type);
             if (index != 0) {
-                long min = tMin;
-                long max = tMax;
+                long min, max;
+                synchronized (this) {
+                    min = tMin;
+                    max = tMax;
+                }
                 /*
                  * The default for minimum and maximum values are arbitrary, but we need to
                  * provide something. It seems that 'infinity' value doesn't work through JDBC.
@@ -622,13 +625,16 @@ public abstract class BoundedSingletonTable<E extends Entry> extends SingletonTa
         if (bySpatialExtent != null) {
             final int index = bySpatialExtent.indexOf(type);
             if (index != 0) {
-                final GeneralEnvelope envelope = new GeneralEnvelope(
-                        new double[] {
-                            xMin == NEGATIVE_INFINITY ? -DEFAULT_LIMIT : xMin,
-                            yMin == NEGATIVE_INFINITY ? -DEFAULT_LIMIT : yMin, zMin},
-                        new double[] {
-                            xMax == POSITIVE_INFINITY ? +DEFAULT_LIMIT : xMax,
-                            yMax == POSITIVE_INFINITY ? +DEFAULT_LIMIT : yMax, zMax});
+                final GeneralEnvelope envelope;
+                synchronized (this) {
+                    envelope = new GeneralEnvelope(
+                            new double[] {
+                                xMin == NEGATIVE_INFINITY ? -DEFAULT_LIMIT : xMin,
+                                yMin == NEGATIVE_INFINITY ? -DEFAULT_LIMIT : yMin, zMin},
+                            new double[] {
+                                xMax == POSITIVE_INFINITY ? +DEFAULT_LIMIT : xMax,
+                                yMax == POSITIVE_INFINITY ? +DEFAULT_LIMIT : yMax, zMax});
+                }
                 statement.setString(index, GeneralEnvelope.toPolygonString(envelope));
             }
         }
@@ -638,11 +644,21 @@ public abstract class BoundedSingletonTable<E extends Entry> extends SingletonTa
      * {@inheritDoc}
      */
     @Override
-    protected void fireStateChanged(final String property) throws CatalogException {
-        if (!property.equalsIgnoreCase("PreferredResolution")) {
+    protected void fireStateChanged(final String property) {
+        if (!"PreferredResolution".equalsIgnoreCase(property)) {
             envelope = null;
             trimmed  = false;
         }
         super.fireStateChanged(property);
+    }
+
+    /**
+     * Resets this table to its initial state. Invoking this method is equivalent to
+     * invoking {@code setFoo(null)} on every setter methods.
+     */
+    @Override
+    public synchronized void reset() {
+        init();
+        super.reset();
     }
 }

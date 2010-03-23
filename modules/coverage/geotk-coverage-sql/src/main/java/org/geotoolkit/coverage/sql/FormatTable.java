@@ -20,7 +20,6 @@ package org.geotoolkit.coverage.sql;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.internal.sql.table.Database;
 import org.geotoolkit.internal.sql.table.SingletonTable;
@@ -31,12 +30,11 @@ import org.geotoolkit.internal.sql.table.IllegalRecordException;
  * Connection to the table of image {@linkplain Format formats}.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.09
+ * @version 3.10
  *
  * @since 3.09 (derived from Seagis)
  * @module
  */
-@ThreadSafe(concurrent = true)
 final class FormatTable extends SingletonTable<FormatEntry> {
     /**
      * Creates a format table.
@@ -52,6 +50,26 @@ final class FormatTable extends SingletonTable<FormatEntry> {
      */
     private FormatTable(final FormatQuery query) {
         super(query, query.byName);
+    }
+
+    /**
+     * Creates a new instance having the same configuration than the given table.
+     * This is a copy constructor used for obtaining a new instance to be used
+     * concurrently with the original instance.
+     *
+     * @param table The table to use as a template.
+     */
+    private FormatTable(final FormatTable table) {
+        super(table);
+    }
+
+    /**
+     * Returns a copy of this table. This is a copy constructor used for obtaining
+     * a new instance to be used concurrently with the original instance.
+     */
+    @Override
+    protected synchronized FormatTable clone() {
+        return new FormatTable(this);
     }
 
     /**

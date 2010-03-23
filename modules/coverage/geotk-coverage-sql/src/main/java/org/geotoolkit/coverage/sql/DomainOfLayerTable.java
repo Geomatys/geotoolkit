@@ -22,7 +22,6 @@ import java.util.Calendar;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.util.DateRange;
 import org.geotoolkit.measure.Latitude;
 import org.geotoolkit.measure.Longitude;
@@ -46,7 +45,6 @@ import org.geotoolkit.internal.sql.table.SingletonTable;
  * @since 3.10 (derived from Seagis)
  * @module
  */
-@ThreadSafe(concurrent = true)
 final class DomainOfLayerTable extends SingletonTable<DomainOfLayerEntry> {
     /**
      * Creates a domain of layer table.
@@ -62,6 +60,26 @@ final class DomainOfLayerTable extends SingletonTable<DomainOfLayerEntry> {
      */
     private DomainOfLayerTable(final DomainOfLayerQuery query) {
         super(query, query.byLayer);
+    }
+
+    /**
+     * Creates a new instance having the same configuration than the given table.
+     * This is a copy constructor used for obtaining a new instance to be used
+     * concurrently with the original instance.
+     *
+     * @param table The table to use as a template.
+     */
+    private DomainOfLayerTable(final DomainOfLayerTable table) {
+        super(table);
+    }
+
+    /**
+     * Returns a copy of this table. This is a copy constructor used for obtaining
+     * a new instance to be used concurrently with the original instance.
+     */
+    @Override
+    protected synchronized DomainOfLayerTable clone() {
+        return new DomainOfLayerTable(this);
     }
 
     /**

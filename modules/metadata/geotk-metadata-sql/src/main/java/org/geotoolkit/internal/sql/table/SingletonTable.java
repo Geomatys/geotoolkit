@@ -24,7 +24,6 @@ import java.sql.PreparedStatement;
 import java.util.Set;
 import java.util.LinkedHashSet;
 
-import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.util.collection.Cache;
 import org.geotoolkit.internal.sql.TypeMapper;
 import org.geotoolkit.resources.Errors;
@@ -54,7 +53,6 @@ import org.geotoolkit.resources.Errors;
  * @since 3.09 (derived from Seagis)
  * @module
  */
-@ThreadSafe(concurrent = true)
 public abstract class SingletonTable<E extends Entry> extends Table {
     /**
      * The main parameters to use for the identification of an entry, or an empty array if none.

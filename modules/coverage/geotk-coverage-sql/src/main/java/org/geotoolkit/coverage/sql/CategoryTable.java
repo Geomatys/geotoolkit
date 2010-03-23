@@ -32,7 +32,6 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform1D;
 import org.opengis.referencing.operation.MathTransformFactory;
 
-import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.coverage.Category;
 import org.geotoolkit.referencing.operation.matrix.Matrix2;
@@ -45,6 +44,7 @@ import org.geotoolkit.internal.sql.table.QueryType;
 import org.geotoolkit.internal.sql.table.LocalCache;
 import org.geotoolkit.internal.sql.table.CatalogException;
 import org.geotoolkit.internal.sql.table.IllegalRecordException;
+import org.geotoolkit.internal.sql.table.SpatialDatabase;
 
 
 /**
@@ -53,12 +53,11 @@ import org.geotoolkit.internal.sql.table.IllegalRecordException;
  * required for creating a {@link org.geotoolkit.coverage.grid.GridCoverage2D}.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.09
+ * @version 3.10
  *
  * @since 3.09 (derived from Seagis)
  * @module
  */
-@ThreadSafe(concurrent = true)
 final class CategoryTable extends Table {
     /**
      * Maximum number of bands allowed in an image. This is an arbitrary number used
@@ -80,6 +79,26 @@ final class CategoryTable extends Table {
      */
     public CategoryTable(final Database database) {
         super(new CategoryQuery(database));
+    }
+
+    /**
+     * Creates a new instance having the same configuration than the given table.
+     * This is a copy constructor used for obtaining a new instance to be used
+     * concurrently with the original instance.
+     *
+     * @param table The table to use as a template.
+     */
+    private CategoryTable(final CategoryTable table) {
+        super(table);
+    }
+
+    /**
+     * Returns a copy of this table. This is a copy constructor used for obtaining
+     * a new instance to be used concurrently with the original instance.
+     */
+    @Override
+    protected synchronized CategoryTable clone() {
+        return new CategoryTable(this);
     }
 
     /**
@@ -156,7 +175,7 @@ final class CategoryTable extends Table {
                 } else {
                     // Quantitative category.
                     if (mtFactory == null) {
-                        mtFactory = getDatabase().getMathTransformFactory();
+                        mtFactory = ((SpatialDatabase) getDatabase()).getMathTransformFactory();
                     }
                     MathTransform tr;
                     try {

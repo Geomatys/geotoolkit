@@ -113,6 +113,7 @@ final class FormatEntry extends Entry {
         if (sampleDimensions == null) {
             final SampleDimensionTable  table = database.getTable(SampleDimensionTable.class);
             final GridSampleDimension[] bands = table.getSampleDimensions(identifier.toString());
+            table.release();
             for (int i=0; i<bands.length; i++) {
                 bands[i] = bands[i].geophysics(geophysics);
             }

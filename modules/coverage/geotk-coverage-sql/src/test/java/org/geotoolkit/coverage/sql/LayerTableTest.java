@@ -90,12 +90,12 @@ public final class LayerTableTest extends CatalogTestBase {
      * @throws SQLException If the test can't connect to the database.
      */
     @Test
-    @Ignore
     public void testGetNames() throws SQLException {
         final LayerTable table = getDatabase().getTable(LayerTable.class);
         final Set<String> names = table.getNames();
         assertTrue(names.contains(TEMPERATURE));
         assertTrue(names.contains(NETCDF));
+        table.release();
     }
 
     /**
@@ -123,6 +123,7 @@ public final class LayerTableTest extends CatalogTestBase {
         assertEquals(1, validRanges.size());
         assertEquals(-2.85, validRanges.get(0).getMinimum(), EPS);
         assertEquals(35.25, validRanges.get(0).getMaximum(), EPS);
+        table.release();
     }
 
     /**
@@ -141,6 +142,7 @@ public final class LayerTableTest extends CatalogTestBase {
         assertEquals(1, validRanges.size());
         assertEquals(-3.0, validRanges.get(0).getMinimum(true), EPS);
         assertEquals(40.0, validRanges.get(0).getMaximum(true), EPS);
+        table.release();
     }
 
     /**
@@ -161,5 +163,6 @@ public final class LayerTableTest extends CatalogTestBase {
         assertEquals( 1.90, validRanges.get(0).getMaximum(true), EPS);
         assertEquals(-1.91, validRanges.get(1).getMinimum(true), EPS);
         assertEquals( 1.90, validRanges.get(1).getMaximum(true), EPS);
+        table.release();
     }
 }

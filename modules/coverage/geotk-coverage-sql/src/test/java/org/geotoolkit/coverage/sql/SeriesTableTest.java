@@ -57,6 +57,7 @@ public final class SeriesTableTest extends CatalogTestBase {
     @Test
     public void testSelectAndList() throws SQLException {
         final SeriesTable table = getDatabase().getTable(SeriesTable.class);
+        table.reset();
         final SeriesEntry entry = table.getEntry(TEMPERATURE_ID);
         assertEquals("Expected the identifier that we requested.", TEMPERATURE_ID, entry.getIdentifier());
         assertSame("The entry should be cached.", entry, table.getEntry(TEMPERATURE_ID));
@@ -72,6 +73,7 @@ public final class SeriesTableTest extends CatalogTestBase {
             }
         }
         assertEquals("The set should contain the cached element.", 1, found);
+        table.release();
     }
 
     /**
@@ -89,6 +91,7 @@ public final class SeriesTableTest extends CatalogTestBase {
         assertNull("Wrong path",   table.find("World/SST/4-days", "png", FormatTableTest.TEMPERATURE));
         assertNull("Wrong suffix", table.find(TEMPERATURE_PATH,   "gif", FormatTableTest.TEMPERATURE));
         assertNull("Wrong format", table.find(TEMPERATURE_PATH,   "png", "Dummy"));
+        table.release();
     }
 
     /**
@@ -108,6 +111,7 @@ public final class SeriesTableTest extends CatalogTestBase {
         assertEquals("Should find the existing entry.", Integer.valueOf(id),
                 table.find(path, ext, FormatTableTest.TEMPERATURE));
         assertEquals("Should have deleted the entry.", 1, table.delete(id));
+        table.release();
     }
 
     /**
@@ -128,5 +132,7 @@ public final class SeriesTableTest extends CatalogTestBase {
         assertFalse(series.findOrCreate(TEMPERATURE_PATH, "png", FormatTableTest.TEMPERATURE) == TEMPERATURE_ID);
         assertEquals("Should have deleted the singleton series.", 1, series.deleteAll());
         assertEquals("Should have deleted the singleton layer.",  1, layers.delete(layer));
+        series.release();
+        layers.release();
     }
 }
