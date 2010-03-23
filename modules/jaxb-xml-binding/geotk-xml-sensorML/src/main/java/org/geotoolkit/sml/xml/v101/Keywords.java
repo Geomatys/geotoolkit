@@ -16,20 +16,13 @@
  */
 package org.geotoolkit.sml.xml.v101;
 
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
-import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import org.geotoolkit.sml.xml.AbstractKeywordList;
 import org.geotoolkit.sml.xml.AbstractKeywords;
 import org.geotoolkit.util.Utilities;
 
@@ -75,7 +68,7 @@ import org.geotoolkit.util.Utilities;
 public class Keywords implements AbstractKeywords {
 
     @XmlElement(name = "KeywordList")
-    private Keywords.KeywordList keywordList;
+    private KeywordList keywordList;
     @XmlAttribute(namespace = "http://www.opengis.net/gml")
     @XmlSchemaType(name = "anyURI")
     private String remoteSchema;
@@ -104,7 +97,7 @@ public class Keywords implements AbstractKeywords {
     /**
      *
      */
-    public Keywords(Keywords.KeywordList keywordList) {
+    public Keywords(KeywordList keywordList) {
         this.keywordList = keywordList;
     }
     
@@ -116,7 +109,7 @@ public class Keywords implements AbstractKeywords {
      *     {@link Keywords.KeywordList }
      *     
      */
-    public Keywords.KeywordList getKeywordList() {
+    public KeywordList getKeywordList() {
         return keywordList;
     }
 
@@ -128,7 +121,7 @@ public class Keywords implements AbstractKeywords {
      *     {@link Keywords.KeywordList }
      *     
      */
-    public void setKeywordList(Keywords.KeywordList value) {
+    public void setKeywordList(KeywordList value) {
         this.keywordList = value;
     }
 
@@ -365,141 +358,4 @@ public class Keywords implements AbstractKeywords {
         hash = 61 * hash + (this.title != null ? this.title.hashCode() : 0);
         return hash;
     }
-
-    /**
-     * <p>Java class for anonymous complex type.
-     * 
-     * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
-     * <pre>
-     * &lt;complexType>
-     *   &lt;complexContent>
-     *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-     *       &lt;sequence>
-     *         &lt;element name="keyword" type="{http://www.w3.org/2001/XMLSchema}token" maxOccurs="unbounded"/>
-     *       &lt;/sequence>
-     *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" />
-     *       &lt;attribute name="codeSpace" type="{http://www.w3.org/2001/XMLSchema}anyURI" />
-     *     &lt;/restriction>
-     *   &lt;/complexContent>
-     * &lt;/complexType>
-     * </pre>
-     * 
-     * 
-     */
-    @XmlAccessorType(XmlAccessType.FIELD)
-    @XmlType(name = "", propOrder = {
-        "keyword"
-    })
-    public static class KeywordList implements AbstractKeywordList {
-
-        @XmlElement(required = true)
-        @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-        @XmlSchemaType(name = "token")
-        private List<String> keyword;
-        @XmlAttribute
-        @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-        @XmlID
-        @XmlSchemaType(name = "ID")
-        private String id;
-        @XmlAttribute
-        @XmlSchemaType(name = "anyURI")
-        private URI codeSpace;
-
-        public KeywordList() {
-
-        }
-
-        public KeywordList(URI codeSpace, List<String> keyword) {
-            this.codeSpace = codeSpace;
-            this.keyword   = keyword;
-        }
-
-        /**
-         * Gets the value of the keyword property.
-         */
-        public List<String> getKeyword() {
-            if (keyword == null) {
-                keyword = new ArrayList<String>();
-            }
-            return this.keyword;
-        }
-
-        /**
-         * Gets the value of the id property.
-         * 
-         * @return
-         *     possible object is
-         *     {@link String }
-         *     
-         */
-        public String getId() {
-            return id;
-        }
-
-        /**
-         * Sets the value of the id property.
-         * 
-         * @param value
-         *     allowed object is
-         *     {@link String }
-         *     
-         */
-        public void setId(String value) {
-            this.id = value;
-        }
-
-        /**
-         * Gets the value of the codeSpace property.
-         * 
-         * @return
-         *     possible object is
-         *     {@link String }
-         *     
-         */
-        public URI getCodeSpace() {
-            return codeSpace;
-        }
-
-        /**
-         * Sets the value of the codeSpace property.
-         * 
-         * @param value
-         *     allowed object is
-         *     {@link String }
-         *     
-         */
-        public void setCodeSpace(URI value) {
-            this.codeSpace = value;
-        }
-
-        /**
-         * Verify if this entry is identical to specified object.
-         */
-        @Override
-        public boolean equals(final Object object) {
-            if (object == this) {
-                return true;
-            }
-
-            if (object instanceof KeywordList) {
-                final KeywordList that = (KeywordList) object;
-                return Utilities.equals(this.codeSpace, that.codeSpace) &&
-                       Utilities.equals(this.id,        that.id)        &&
-                       Utilities.equals(this.keyword,        that.keyword);
-            }
-            return false;
-        }
-
-        @Override
-        public int hashCode() {
-            int hash = 7;
-            hash = 43 * hash + (this.keyword != null ? this.keyword.hashCode() : 0);
-            hash = 43 * hash + (this.codeSpace != null ? this.codeSpace.hashCode() : 0);
-            hash = 43 * hash + (this.id != null ? this.id.hashCode() : 0);
-            return hash;
-        }
-
-    }
-
 }

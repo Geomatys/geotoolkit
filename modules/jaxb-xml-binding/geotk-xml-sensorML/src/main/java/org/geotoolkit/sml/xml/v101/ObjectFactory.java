@@ -104,8 +104,8 @@ public class ObjectFactory {
      * Create an instance of {@link Outputs.OutputList }
      * 
      */
-    public Outputs.OutputList createOutputsOutputList() {
-        return new Outputs.OutputList();
+    public OutputList createOutputList() {
+        return new OutputList();
     }
 
     /**
@@ -136,16 +136,16 @@ public class ObjectFactory {
      * Create an instance of {@link Components.ComponentList }
      * 
      */
-    public Components.ComponentList createComponentsComponentList() {
-        return new Components.ComponentList();
+    public ComponentList createComponentList() {
+        return new ComponentList();
     }
 
     /**
      * Create an instance of {@link Interfaces.InterfaceList }
      * 
      */
-    public Interfaces.InterfaceList createInterfacesInterfaceList() {
-        return new Interfaces.InterfaceList();
+    public InterfaceList createInterfaceList() {
+        return new InterfaceList();
     }
 
     /**
@@ -168,16 +168,16 @@ public class ObjectFactory {
      * Create an instance of {@link Parameters.ParameterList }
      * 
      */
-    public Parameters.ParameterList createParametersParameterList() {
-        return new Parameters.ParameterList();
+    public ParameterList createParameterList() {
+        return new ParameterList();
     }
 
     /**
      * Create an instance of {@link DataSourceType.DataDefinition }
      * 
      */
-    public DataSourceType.DataDefinition createDataSourceTypeDataDefinition() {
-        return new DataSourceType.DataDefinition();
+    public DataDefinition createDataDefinition() {
+        return new DataDefinition();
     }
 
     /**
@@ -216,8 +216,8 @@ public class ObjectFactory {
      * Create an instance of {@link Classification.ClassifierList.Classifier }
      * 
      */
-    public Classification.ClassifierList.Classifier createClassificationClassifierListClassifier() {
-        return new Classification.ClassifierList.Classifier();
+    public Classifier createClassifier() {
+        return new Classifier();
     }
 
     /**
@@ -248,8 +248,8 @@ public class ObjectFactory {
      * Create an instance of {@link Keywords.KeywordList }
      * 
      */
-    public Keywords.KeywordList createKeywordsKeywordList() {
-        return new Keywords.KeywordList();
+    public KeywordList createKeywordList() {
+        return new KeywordList();
     }
 
     /**
@@ -312,8 +312,8 @@ public class ObjectFactory {
      * Create an instance of {@link DataSourceType.Values }
      * 
      */
-    public DataSourceType.Values createDataSourceTypeValues() {
-        return new DataSourceType.Values();
+    public Values createValues() {
+        return new Values();
     }
 
     /**
@@ -328,8 +328,8 @@ public class ObjectFactory {
      * Create an instance of {@link Identification.IdentifierList.Identifier }
      * 
      */
-    public Identification.IdentifierList.Identifier createIdentificationIdentifierListIdentifier() {
-        return new Identification.IdentifierList.Identifier();
+    public Identifier createIdentifier() {
+        return new Identifier();
     }
 
     /**
@@ -424,8 +424,8 @@ public class ObjectFactory {
      * Create an instance of {@link ContactInfo.Phone }
      * 
      */
-    public ContactInfo.Phone createContactInfoPhone() {
-        return new ContactInfo.Phone();
+    public Phone createPhone() {
+        return new Phone();
     }
 
     /**
@@ -480,8 +480,8 @@ public class ObjectFactory {
      * Create an instance of {@link Classification.ClassifierList }
      * 
      */
-    public Classification.ClassifierList createClassificationClassifierList() {
-        return new Classification.ClassifierList();
+    public ClassifierList createClassifierList() {
+        return new ClassifierList();
     }
 
     /**
@@ -512,8 +512,8 @@ public class ObjectFactory {
      * Create an instance of {@link Connections.ConnectionList }
      * 
      */
-    public Connections.ConnectionList createConnectionsConnectionList() {
-        return new Connections.ConnectionList();
+    public ConnectionList createConnectionList() {
+        return new ConnectionList();
     }
 
     /**
@@ -544,8 +544,8 @@ public class ObjectFactory {
      * Create an instance of {@link DataSourceType.ObservationReference }
      * 
      */
-    public DataSourceType.ObservationReference createDataSourceTypeObservationReference() {
-        return new DataSourceType.ObservationReference();
+    public ObservationReference createDataSourceTypeObservationReference() {
+        return new ObservationReference();
     }
 
     /**
@@ -568,8 +568,8 @@ public class ObjectFactory {
      * Create an instance of {@link Inputs.InputList }
      * 
      */
-    public Inputs.InputList createInputsInputList() {
-        return new Inputs.InputList();
+    public InputList createInputList() {
+        return new InputList();
     }
 
     /**
@@ -728,8 +728,8 @@ public class ObjectFactory {
      * Create an instance of {@link Identification.IdentifierList }
      * 
      */
-    public Identification.IdentifierList createIdentificationIdentifierList() {
-        return new Identification.IdentifierList();
+    public IdentifierList createIdentifierList() {
+        return new IdentifierList();
     }
 
     /**
@@ -752,8 +752,8 @@ public class ObjectFactory {
      * Create an instance of {@link ContactInfo.Address }
      * 
      */
-    public ContactInfo.Address createContactInfoAddress() {
-        return new ContactInfo.Address();
+    public Address createAddress() {
+        return new Address();
     }
 
     /**
