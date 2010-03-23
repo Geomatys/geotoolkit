@@ -43,6 +43,7 @@ import org.opengis.feature.type.ComplexType;
 import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.feature.type.Name;
 import org.opengis.feature.type.PropertyDescriptor;
+import org.opengis.feature.type.PropertyType;
 import org.opengis.filter.Filter;
 import org.opengis.referencing.FactoryException;
 import org.opengis.util.InternationalString;
@@ -200,8 +201,12 @@ public class DefaultComplexType extends DefaultAttributeType<AttributeType> impl
         tablewriter.write("name\t min\t max\t nillable\t type\t CRS\t UserData\n");
         tablewriter.nextLine(TableWriter.SINGLE_HORIZONTAL_LINE);
 
-        for (PropertyDescriptor property : getDescriptors()) {
-            toString(tablewriter, property, 0, 0);
+        final Collection<PropertyDescriptor> descs = getDescriptors();
+        final int last = descs.size()-1;
+        int i=0;
+        for (PropertyDescriptor property :descs) {
+            toString(tablewriter, property, 0, 0, -1);
+            i++;
         }
         tablewriter.nextLine(TableWriter.DOUBLE_HORIZONTAL_LINE);
         try {
@@ -232,11 +237,15 @@ public class DefaultComplexType extends DefaultAttributeType<AttributeType> impl
         return sb.toString();
     }
 
-    private static void toString(TableWriter tablewriter, PropertyDescriptor property, int depth, int pos){
+    private static void toString(TableWriter tablewriter, PropertyDescriptor property, int depth, int pos, int startdepth){
 
         if(depth != 0){
             for(int i=0; i<depth-1;i++){
-                tablewriter.write("\u00A0");
+                if(i < startdepth-1){
+                    tablewriter.write("\u00A0\u00A0\u00A0");
+                }else{
+                    tablewriter.write("\u2502\u00A0\u00A0");
+                }
             }
             if(pos == 0){
                 tablewriter.write("\u251C\u2500\u2500");
@@ -255,7 +264,12 @@ public class DefaultComplexType extends DefaultAttributeType<AttributeType> impl
         tablewriter.write("\t");
         tablewriter.write(Boolean.toString(property.isNillable()));
         tablewriter.write("\t");
-        tablewriter.write(property.getType().getBinding().getSimpleName());
+        final PropertyType pt = property.getType();
+        if(pt instanceof ComplexType){
+            tablewriter.write("CX:" + ((ComplexType)pt).getName().getLocalPart() );
+        }else{
+            tablewriter.write(pt.getBinding().getSimpleName());
+        }
         tablewriter.write("\t");
 
         if(property instanceof GeometryDescriptor){
@@ -287,13 +301,15 @@ public class DefaultComplexType extends DefaultAttributeType<AttributeType> impl
             final Collection<PropertyDescriptor> descs = ct.getDescriptors();
             int i=0;
             int n=descs.size()-1;
+            int newDepth = startdepth+1;
+            if(pos == 1) newDepth++;
             for(PropertyDescriptor desc : descs){
                 if(i==n){
-                    toString(tablewriter, desc, depth+1, 1);
+                    toString(tablewriter, desc, depth+1, 1, newDepth);
                 }else if(i == 0){
-                    toString(tablewriter, desc, depth+1, 0);
+                    toString(tablewriter, desc, depth+1, 0, newDepth);
                 }else{
-                    toString(tablewriter, desc, depth+1, -1);
+                    toString(tablewriter, desc, depth+1, -1, newDepth);
                 }
                 i++;
             }
