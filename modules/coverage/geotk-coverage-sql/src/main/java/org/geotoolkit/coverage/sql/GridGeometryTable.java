@@ -110,7 +110,7 @@ final class GridGeometryTable extends SingletonTable<GridGeometryEntry> {
      * a new instance to be used concurrently with the original instance.
      */
     @Override
-    protected synchronized GridGeometryTable clone() {
+    protected GridGeometryTable clone() {
         return new GridGeometryTable(this);
     }
 

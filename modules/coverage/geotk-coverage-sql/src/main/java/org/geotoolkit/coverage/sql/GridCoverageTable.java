@@ -126,11 +126,6 @@ class GridCoverageTable extends BoundedSingletonTable<GridCoverageEntry> {
      */
     private GridCoverageTable(final GridCoverageTable table) {
         super(table);
-        layer               = table.layer;
-        comparator          = table.comparator;
-        availableTimes      = table.availableTimes;
-        availableElevations = table.availableElevations;
-        availableCentroids  = table.availableCentroids;
     }
 
     /**
@@ -138,7 +133,7 @@ class GridCoverageTable extends BoundedSingletonTable<GridCoverageEntry> {
      * a new instance to be used concurrently with the original instance.
      */
     @Override
-    protected synchronized GridCoverageTable clone() {
+    protected GridCoverageTable clone() {
         return new GridCoverageTable(this);
     }
 
@@ -148,12 +143,11 @@ class GridCoverageTable extends BoundedSingletonTable<GridCoverageEntry> {
      * @param  layer The layer name.
      * @throws SQLException if the layer can not be set to the given value.
      */
-    public final synchronized void setLayer(final String layer) throws SQLException {
+    public final void setLayer(final String layer) throws SQLException {
         ensureNonNull("layer", layer);
         if (!layer.equals(getLayer())) {
             final LayerTable table = getDatabase().getTable(LayerTable.class);
             this.layer = table.getEntry(layer);
-            table.release();
             fireStateChanged("Layer");
         }
     }
@@ -161,7 +155,7 @@ class GridCoverageTable extends BoundedSingletonTable<GridCoverageEntry> {
     /**
      * Returns the name of the current layer, or {@code null} if none.
      */
-    public final synchronized String getLayer() {
+    public final String getLayer() {
         final LayerEntry layer = this.layer;
         return (layer != null) ? layer.getName() : null;
     }
@@ -171,7 +165,7 @@ class GridCoverageTable extends BoundedSingletonTable<GridCoverageEntry> {
      *
      * @throws CatalogException if the layer is not set.
      */
-    final synchronized LayerEntry getLayerEntry() throws CatalogException {
+    final LayerEntry getLayerEntry() throws CatalogException {
         final LayerEntry layer = this.layer;
         if (layer == null) {
             throw new CatalogException(errors().getString(Errors.Keys.NO_LAYER_SPECIFIED));
@@ -200,8 +194,6 @@ class GridCoverageTable extends BoundedSingletonTable<GridCoverageEntry> {
 
     /**
      * Returns the {@link GridGeometryTable} instance, creating it if needed.
-     * The {@link GridGeometryTable#release()} method will never been invoked
-     * for the returned instance, but this is not an issue.
      */
     private GridGeometryTable getGridGeometryTable() throws NoSuchTableException {
         GridGeometryTable table = gridGeometryTable;
@@ -320,7 +312,7 @@ loop:   for (final GridCoverageEntry newEntry : entries) {
      * @return The set of dates.
      * @throws SQLException if an error occured while reading the database.
      */
-    public final synchronized SortedSet<Date> getAvailableTimes() throws SQLException {
+    public final SortedSet<Date> getAvailableTimes() throws SQLException {
         if (availableTimes == null) {
             getAvailableCentroids(); // Computes 'availableTimes' as a side effect.
         }
@@ -337,7 +329,7 @@ loop:   for (final GridCoverageEntry newEntry : entries) {
      * @return The set of altitudes. May be empty, but will never be null.
      * @throws SQLException if an error occured while reading the database.
      */
-    public final synchronized SortedSet<Number> getAvailableElevations() throws SQLException {
+    public final SortedSet<Number> getAvailableElevations() throws SQLException {
         if (availableElevations == null) {
             final SortedSet<Number> commons = new TreeSet<Number>();
             final SortedMap<Date, SortedSet<Number>> centroids = getAvailableCentroids();
@@ -371,7 +363,7 @@ loop:   for (final GridCoverageEntry newEntry : entries) {
      *         of altitudes for a given date.
      * @throws SQLException if an error occured while reading the database.
      */
-    final synchronized SortedMap<Date, SortedSet<Number>> getAvailableCentroids() throws SQLException {
+    final SortedMap<Date, SortedSet<Number>> getAvailableCentroids() throws SQLException {
         if (availableCentroids == null) {
             final NavigableMap<Date, List<Comparable<?>>> centroids =
                     new TreeMap<Date, List<Comparable<?>>>();
@@ -440,7 +432,7 @@ loop:   for (final GridCoverageEntry newEntry : entries) {
      *         was non-null or a new object otherwise.
      * @throws SQLException if an error occured while reading the database.
      */
-    public final synchronized RangeSet<Date> getAvailableTimeRanges(RangeSet<Date> addTo) throws SQLException {
+    public final RangeSet<Date> getAvailableTimeRanges(RangeSet<Date> addTo) throws SQLException {
         final GridCoverageQuery query = (GridCoverageQuery) super.query;
         final int startTimeIndex = indexOf(query.startTime);
         final int   endTimeIndex = indexOf(query.endTime);
@@ -532,7 +524,6 @@ loop:   for (final GridCoverageEntry newEntry : entries) {
         if (series == null) { // Should not happen, but be lenient if it happen anyway.
             final SeriesTable table = getDatabase().getTable(SeriesTable.class);
             series = table.getEntry(seriesID);
-            table.release();
         }
         /*
          * We need to include the altitude in the identifier (since requests for different
@@ -604,15 +595,5 @@ loop:   for (final GridCoverageEntry newEntry : entries) {
             availableCentroids  = null;
         }
         super.fireStateChanged(property);
-    }
-
-    /**
-     * Resets this table to its initial state. Invoking this method is equivalent to
-     * invoking {@code setFoo(null)} on every setter methods.
-     */
-    @Override
-    public synchronized void reset() {
-        layer = null;
-        super.reset();
     }
 }

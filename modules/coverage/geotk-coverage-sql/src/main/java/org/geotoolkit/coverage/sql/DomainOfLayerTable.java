@@ -78,7 +78,7 @@ final class DomainOfLayerTable extends SingletonTable<DomainOfLayerEntry> {
      * a new instance to be used concurrently with the original instance.
      */
     @Override
-    protected synchronized DomainOfLayerTable clone() {
+    protected DomainOfLayerTable clone() {
         return new DomainOfLayerTable(this);
     }
 

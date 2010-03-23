@@ -43,16 +43,19 @@ import org.geotoolkit.internal.sql.table.NoSuchTableException;
  */
 final class LayerTable extends SingletonTable<LayerEntry> {
     /**
-     * Connection to the table of domains. Will be created when first needed. Will be shared
-     * by all {@code LayerTable}, since it is independent of {@code LayerTable} settings.
+     * Connection to the table of domains. Will be created when first needed.
      */
-    private transient DomainOfLayerTable domains;
+    private transient volatile DomainOfLayerTable domains;
 
     /**
-     * Connection to the table of series. Will be created when first needed. Will be shared
-     * by all {@code LayerTable}.
+     * Connection to the table of series. Will be created when first needed.
      */
-    private transient SeriesTable series;
+    private transient volatile SeriesTable series;
+
+    /**
+     * A clone of this table used for fetching fallbacks. Will be created when first needed.
+     */
+    private transient volatile LayerTable fallbacks;
 
     /**
      * The names of all series found in the database.
@@ -85,7 +88,6 @@ final class LayerTable extends SingletonTable<LayerEntry> {
      */
     private LayerTable(final LayerTable table) {
         super(table);
-        names = table.names;
     }
 
     /**
@@ -93,7 +95,7 @@ final class LayerTable extends SingletonTable<LayerEntry> {
      * a new instance to be used concurrently with the original instance.
      */
     @Override
-    protected synchronized LayerTable clone() {
+    protected LayerTable clone() {
         return new LayerTable(this);
     }
 
@@ -103,7 +105,7 @@ final class LayerTable extends SingletonTable<LayerEntry> {
      * @return The list of laters.
      * @throws SQLException If an error occured while fetching the set.
      */
-    public synchronized Set<String> getNames() throws SQLException {
+    public Set<String> getNames() throws SQLException {
         Set<String> names = this.names;
         if (names == null) {
             final Set<LayerEntry> entries = getEntries();
@@ -139,32 +141,6 @@ final class LayerTable extends SingletonTable<LayerEntry> {
     }
 
     /**
-     * Returns the {@link DomainOfLayerTable} instance, creating it if needed.
-     * The {@link DomainOfLayerTable#release()} method will never been invoked
-     * for the returned instance, but this is not an issue.
-     */
-    final DomainOfLayerTable getDomainOfLayerTable() throws NoSuchTableException {
-        DomainOfLayerTable table = domains;
-        if (table == null) {
-            domains = table = getDatabase().getTable(DomainOfLayerTable.class);
-        }
-        return table;
-    }
-
-    /**
-     * Returns the {@link SeriesTable} instance, creating it if needed.
-     * The {@link SeriesTable#release()} method will never been invoked
-     * for the returned instance, but this is not an issue.
-     */
-    final SeriesTable getSeriesTable() throws NoSuchTableException {
-        SeriesTable table = series;
-        if (table == null) {
-            series = table = getDatabase().getTable(SeriesTable.class);
-        }
-        return table;
-    }
-
-    /**
      * Creates a new layer if none exist for the given name.
      *
      * @param  name The name of the layer.
@@ -191,5 +167,50 @@ final class LayerTable extends SingletonTable<LayerEntry> {
             }
         }
         return true;
+    }
+
+    /**
+     * Returns the {@link DomainOfLayerTable} instance, creating it if needed. This method is
+     * invoked only from {@link LayerEntry}, which is responsible for performing synchronization
+     * on the returned table. Note that because the returned instance is used in only one place,
+     * synchronization in that place is effective even if the {@code DomainOfLayerTable} methods
+     * are not synchronized.
+     */
+    final DomainOfLayerTable getDomainOfLayerTable() throws NoSuchTableException {
+        DomainOfLayerTable table = domains;
+        if (table == null) {
+            // Not a big deal if two instances are created concurrently.
+            domains = table = getDatabase().getTable(DomainOfLayerTable.class);
+        }
+        return table;
+    }
+
+    /**
+     * Returns the {@link SeriesTable} instance, creating it if needed.  This method is invoked
+     * only from {@link LayerEntry}, which is responsible for performing synchronization on the
+     * returned table. Note that because the returned instance is used in only one place,
+     * synchronization in that place is effective even if the {@code SeriesTable} methods are not
+     * synchronized.
+     */
+    final SeriesTable getSeriesTable() throws NoSuchTableException {
+        SeriesTable table = series;
+        if (table == null) {
+            // Not a big deal if two instances are created concurrently.
+            series = table = getDatabase().getTable(SeriesTable.class);
+        }
+        return table;
+    }
+
+    /**
+     * Returns a clone of this table used for fetching fallbacks. This is created for the
+     * same synchronization raison than the one discussed in {@link #getSeriesTable()}.
+     */
+    final LayerTable getLayerTable() {
+        LayerTable table = fallbacks;
+        if (table == null) {
+            // Not a big deal if two instances are created concurrently.
+            fallbacks = table = clone();
+        }
+        return table;
     }
 }

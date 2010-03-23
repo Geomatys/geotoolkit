@@ -23,6 +23,7 @@ import java.sql.SQLException;
 import java.sql.SQLNonTransientException;
 import javax.sql.DataSource;
 import java.io.PrintWriter;
+import java.lang.reflect.Constructor;
 
 import java.util.Map;
 import java.util.HashMap;
@@ -32,10 +33,12 @@ import java.util.Properties;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.util.Localized;
+import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.internal.sql.StatementPool;
 import org.geotoolkit.internal.sql.AuthenticatedDataSource;
@@ -173,6 +176,12 @@ public class Database implements Localized {
     };
 
     /**
+     * Incremented everytime a modification is applied in the configuration of a table.
+     * This is for internal use by {@link Table#fireStateChanged(String)} only.
+     */
+    final AtomicInteger modificationCount = new AtomicInteger();
+
+    /**
      * Lock for transactions performing write operations. The {@link Connection#commit} or
      * {@link Connection#rollback} method will be invoked when the lock count reach zero.
      *
@@ -182,11 +191,15 @@ public class Database implements Localized {
     private final ReentrantLock transactionLock = new ReentrantLock(true);
 
     /**
-     * The tables created up to date. Every access to this map
-     * will need to be synchronized on {@code tables}.
+     * Last table created for each category. Every time the {@link #getTable(Class)} method
+     * is invoked, the last returned table is stored in this map so it can be used as a
+     * template for the next table to create.
+     *
+     * {@section Synchronization note}
+     * Every access to this map shall be synchronized on {@code tables}.
      */
-    private final Map<Class<? extends Table>, TableReference> tables =
-            new HashMap<Class<? extends Table>, TableReference>();
+    private final Map<Class<? extends Table>, Table> tables =
+            new HashMap<Class<? extends Table>, Table>();
 
     /**
      * The properties given at construction time, or {@code null} if none.
@@ -327,14 +340,7 @@ public class Database implements Localized {
     }
 
     /**
-     * Returns a table of the specified type. The {@link Table#release()} method shall be
-     * invoked when the table is no longer needed. However invoking {@code Table.release()}
-     * is not strictly mandatory. It may be omitted if the table is not aimed to be reused.
-     * <p>
-     * If the returned table has setter methods, then this {@code getTable(Class)} method
-     * makes no garantees on the initial values of the returned table. Users shall either
-     * invoke every setter methods (recommanded approach), or invoke {@link Table#reset()}
-     * prior any use.
+     * Returns a table of the specified type.
      *
      * @param  <T> The table class.
      * @param  type The table class.
@@ -342,26 +348,20 @@ public class Database implements Localized {
      * @throws NoSuchTableException if the specified type is unknown to this database.
      */
     public final <T extends Table> T getTable(final Class<T> type) throws NoSuchTableException {
-        TableReference table;
         synchronized (tables) {
-            table = tables.get(type);
-            if (table == null) {
-                table = new TableReference(this, type);
-                tables.put(type, table);
+            Table table = tables.get(type);
+            if (table != null) {
+                table = table.clone();
+            } else try {
+                final Constructor<T> c = type.getConstructor(Database.class);
+                c.setAccessible(true);
+                table = c.newInstance(this);
+            } catch (Exception exception) { // Too many exeptions for enumerating them.
+                throw new NoSuchTableException(Classes.getShortName(type), exception);
             }
+            tables.put(type, table);
+            return type.cast(table);
         }
-        return type.cast(table.get());
-    }
-
-    /**
-     * Releases the given table. This method is invoked by {@link Table#release()} only.
-     */
-    final void release(final Table table) {
-        final TableReference ref;
-        synchronized (tables) {
-            ref = tables.get(table.getClass());
-        }
-        ref.release(table);
     }
 
     /**

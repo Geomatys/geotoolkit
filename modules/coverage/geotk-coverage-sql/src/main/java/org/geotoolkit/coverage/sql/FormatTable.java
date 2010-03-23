@@ -23,6 +23,7 @@ import java.sql.SQLException;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.internal.sql.table.Database;
 import org.geotoolkit.internal.sql.table.SingletonTable;
+import org.geotoolkit.internal.sql.table.NoSuchTableException;
 import org.geotoolkit.internal.sql.table.IllegalRecordException;
 
 
@@ -36,6 +37,12 @@ import org.geotoolkit.internal.sql.table.IllegalRecordException;
  * @module
  */
 final class FormatTable extends SingletonTable<FormatEntry> {
+    /**
+     * Connection to the sample dimensions table.
+     * Will be created only when first needed.
+     */
+    private transient volatile SampleDimensionTable sampleDimensions;
+
     /**
      * Creates a format table.
      *
@@ -68,7 +75,7 @@ final class FormatTable extends SingletonTable<FormatEntry> {
      * a new instance to be used concurrently with the original instance.
      */
     @Override
-    protected synchronized FormatTable clone() {
+    protected FormatTable clone() {
         return new FormatTable(this);
     }
 
@@ -98,6 +105,22 @@ final class FormatTable extends SingletonTable<FormatEntry> {
                     Errors.Keys.UNKNOWN_PARAMETER_$1, encoding),
                     this, results, encodingIndex, identifier);
         }
-        return new FormatEntry(getDatabase(), identifier, format, geophysics);
+        return new FormatEntry(this, identifier, format, geophysics);
+    }
+
+    /**
+     * Returns the {@link SampleDimensionTable} instance, creating it if needed. This method is
+     * invoked only from {@link FormatEntry}, which is responsible for performing synchronization
+     * on the returned table. Note that because the returned instance is used in only one place,
+     * synchronization in that place is effective even if the {@code SampleDimensionTable} methods
+     * are not synchronized.
+     */
+    final SampleDimensionTable getSampleDimensionTable() throws NoSuchTableException {
+        SampleDimensionTable table = sampleDimensions;
+        if (table == null) {
+            // Not a big deal if two instances are created concurrently.
+            sampleDimensions = table = getDatabase().getTable(SampleDimensionTable.class);
+        }
+        return table;
     }
 }

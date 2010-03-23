@@ -87,7 +87,6 @@ final class SeriesTable extends SingletonTable<SeriesEntry> {
      */
     private SeriesTable(final SeriesTable table) {
         super(table);
-        this.layer = table.layer;
     }
 
     /**
@@ -95,7 +94,7 @@ final class SeriesTable extends SingletonTable<SeriesEntry> {
      * a new instance to be used concurrently with the original instance.
      */
     @Override
-    protected synchronized SeriesTable clone() {
+    protected SeriesTable clone() {
         return new SeriesTable(this);
     }
 
@@ -103,7 +102,7 @@ final class SeriesTable extends SingletonTable<SeriesEntry> {
      * Returns the layer for the series to be returned by {@link #getEntries() getEntries()}.
      * The default value is {@code null}, which means that no filtering should be performed.
      */
-    public synchronized String getLayer() {
+    public String getLayer() {
         return layer;
     }
 
@@ -111,7 +110,7 @@ final class SeriesTable extends SingletonTable<SeriesEntry> {
      * Sets the layer for the series to be returned. Next call to {@link #getEntries()}
      * will filters the series in order to return only the ones in this layer.
      */
-    public synchronized void setLayer(final String layer) {
+    public void setLayer(final String layer) {
         if (!Utilities.equals(layer, this.layer)) {
             this.layer = layer;
             fireStateChanged("layer");
@@ -120,8 +119,6 @@ final class SeriesTable extends SingletonTable<SeriesEntry> {
 
     /**
      * Returns the {@link FormatTable} instance, creating it if needed.
-     * The {@link FormatTable#release()} method will never been invoked
-     * for the returned instance, but this is not an issue.
      */
     private FormatTable getFormatTable() throws CatalogException {
         FormatTable table = formats;
@@ -379,15 +376,5 @@ final class SeriesTable extends SingletonTable<SeriesEntry> {
             }
         }
         return path.replace(File.separatorChar, '/').trim();
-    }
-
-    /**
-     * Resets this table to its initial state. Invoking this method is equivalent to
-     * invoking {@code setFoo(null)} on every setter methods.
-     */
-    @Override
-    public synchronized void reset() {
-        layer = null;
-        super.reset();
     }
 }

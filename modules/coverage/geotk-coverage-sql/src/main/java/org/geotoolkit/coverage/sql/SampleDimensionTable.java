@@ -81,7 +81,7 @@ final class SampleDimensionTable extends Table {
      * a new instance to be used concurrently with the original instance.
      */
     @Override
-    protected synchronized SampleDimensionTable clone() {
+    protected SampleDimensionTable clone() {
         return new SampleDimensionTable(this);
     }
 

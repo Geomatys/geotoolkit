@@ -46,14 +46,9 @@ import org.geotoolkit.resources.Errors;
  * needed:
  *
  * <ul>
- *   <li><p>If the implementation has setter methods, then those setter methods and the
- *       corresponding setter methods shall be synchronized. This is necessary in order
- *       to protect the {@link #clone()} method from concurrent changes, since the clone
- *       method may be invoked from any thread.</p></li>
- *
  *   <li><p>JDBC commands shall be executed inside a {@code synchronized(getLock())} block.
  *       This is necessary in order to avoid the disposer background thread to close the
- *       JDBC statement while it still in ise.</p></li>
+ *       JDBC statement while it still in use.</p></li>
  * </ul>
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
@@ -97,19 +92,19 @@ public abstract class Table implements Localized {
     /**
      * Creates a new table connected to the same {@linkplain #getDatabase database} and using
      * the same {@linkplain #query} than the specified table. Subclass constructors should
-     * not modify the query, since it is shared.
+     * copy <strong>only the final fields</strong>, not the fields that may be modified by
+     * setter methods. This is because mutable fields may not be correctly published in a
+     * multi-thread context. In addition, subclass constructors shall not modify any shared
+     * object like {@link Query}.
      *
      * @param table The table to use as a template.
      */
     protected Table(final Table table) {
-        assert Thread.holdsLock(table);
         query = table.query;
     }
 
     /**
      * Returns a copy of this table. Subclasses should invoke their copy-constructor here.
-     * Implementations should be synchronized since this method is typically invoked in a
-     * thread different than the one using this table instance.
      */
     @Override
     protected abstract Table clone();
@@ -388,8 +383,12 @@ public abstract class Table implements Localized {
      * @param property The name of the property that changed, or {@code null} if unknown.
      */
     protected void fireStateChanged(final String property) {
-        assert Thread.holdsLock(this);
-        modificationCount++;
+        final Database database = query.database;
+        if (database != null) {
+            modificationCount = database.modificationCount.incrementAndGet();
+        } else {
+            modificationCount++;
+        }
     }
 
     /**
@@ -465,27 +464,5 @@ public abstract class Table implements Localized {
     public final Locale getLocale() {
         final Database database = query.database;
         return (database != null) ? database.getLocale() : null;
-    }
-
-    /**
-     * Resets this table to its initial state. This method shall be overriden by every
-     * {@code Table} subclasses having setter methods. The call to {@code super.reset()}
-     * in sub-class shall be last.
-     */
-    public synchronized void reset() {
-        fireStateChanged(null);
-    }
-
-    /**
-     * Marks this table as available for reuse. This method can be invoked after
-     * {@link Database#getTable(Class)} when this table is no longer needed. However
-     * invoking this method is not strictly necessary, since the table doesn't hold
-     * native resource.
-     */
-    public final void release() {
-        final Database database = query.database;
-        if (database != null) {
-            database.release(this);
-        }
     }
 }

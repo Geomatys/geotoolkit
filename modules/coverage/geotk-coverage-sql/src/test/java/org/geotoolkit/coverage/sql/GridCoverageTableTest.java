@@ -25,8 +25,11 @@ import java.util.SortedSet;
 
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.GeographicCRS;
+import org.opengis.referencing.crs.ProjectedCRS;
+import org.opengis.metadata.extent.GeographicBoundingBox;
 
 import org.geotoolkit.test.Depend;
+import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.internal.sql.table.CatalogTestBase;
 
@@ -51,6 +54,11 @@ public final class GridCoverageTableTest extends CatalogTestBase {
     public static final String SAMPLE_NAME = "198602";
 
     /**
+     * Small tolerance factor for comparison of floating point numbers.
+     */
+    private static final double EPS = 1E-8;
+
+    /**
      * Tests the {@link GridCoverageTable#getAvailableCentroids()} and derived methods
      * (e.g. {@link GridCoverageTable#getAvailableTimes()}).
      *
@@ -59,7 +67,6 @@ public final class GridCoverageTableTest extends CatalogTestBase {
     @Test
     public void testAvailability() throws SQLException {
         final GridCoverageTable table = getDatabase().getTable(GridCoverageTable.class);
-        table.reset();
         table.setLayer(LayerTableTest.TEMPERATURE);
         final SortedSet<Date> allTimes = table.getAvailableTimes();
         assertEquals(7, allTimes.size());
@@ -93,7 +100,6 @@ public final class GridCoverageTableTest extends CatalogTestBase {
          */
         table.setTimeRange(LayerTableTest.START_TIME, LayerTableTest.END_TIME);
         assertEquals(allTimes, table.getAvailableTimes());
-        table.release();
     }
 
     /**
@@ -106,7 +112,6 @@ public final class GridCoverageTableTest extends CatalogTestBase {
     @Test
     public void testSelect() throws SQLException {
         final GridCoverageTable table = getDatabase().getTable(GridCoverageTable.class);
-        table.reset();
         table.setLayer(LayerTableTest.TEMPERATURE);
         final GridCoverageReference entry = table.getEntry(SAMPLE_NAME);
         assertEquals(SAMPLE_NAME + ":1", entry.getName());
@@ -130,7 +135,6 @@ public final class GridCoverageTableTest extends CatalogTestBase {
         assertEquals( +90, envelope.getMaximum(1), 0.0);
         assertEquals(6439, envelope.getMinimum(2), 0.0);
         assertEquals(6447, envelope.getMaximum(2), 0.0);
-        table.release();
     }
 
     /**
@@ -142,7 +146,6 @@ public final class GridCoverageTableTest extends CatalogTestBase {
     @Test
     public void testList() throws SQLException {
         final GridCoverageTable table = getDatabase().getTable(GridCoverageTable.class);
-        table.reset();
         table.setLayer(LayerTableTest.TEMPERATURE);
         /*
          * Get the set of entries in the layer.
@@ -157,6 +160,83 @@ public final class GridCoverageTableTest extends CatalogTestBase {
          * Should select the one which is in the middle of the requested range.
          */
         assertSame(entry, table.getEntry());
-        table.release();
+    }
+
+    /**
+     * Tests the table for NetCDF images. They use a Mercator projection.
+     *
+     * @throws SQLException If the test can't connect to the database.
+     */
+    @Test
+    public void testNetCDF() throws SQLException {
+        final GridCoverageTable table = getDatabase().getTable(GridCoverageTable.class);
+        table.setLayer(LayerTableTest.NETCDF);
+        final Set<Date> availableTimes = table.getAvailableTimes();
+        assertEquals(3, availableTimes.size());
+        /*
+         * Tests a single entry.
+         */
+        final GridCoverageReference entry = table.getEntry();
+        assertEquals(1, entry.getSampleDimensions().length);
+        /*
+         * Tests the envelope, which may be projected.
+         */
+        final Envelope envelope = entry.getEnvelope();
+        assertTrue(getHorizontalCRS(envelope.getCoordinateReferenceSystem()) instanceof ProjectedCRS);
+        assertEquals(-2.00375E7, envelope.getMinimum(0), 100.0);
+        assertEquals( 2.00375E7, envelope.getMaximum(0), 100.0);
+        assertEquals(-1.38176E7, envelope.getMinimum(1), 100.0);
+        assertEquals( 1.38176E7, envelope.getMaximum(1), 100.0);
+        /*
+         * Tests the geographic envelope, which must be geographic.
+         */
+        final GeographicBoundingBox bbox = entry.getGeographicBoundingBox();
+        assertEquals(-180, bbox.getWestBoundLongitude(), EPS);
+        assertEquals(+180, bbox.getEastBoundLongitude(), EPS);
+        assertEquals( -77, bbox.getSouthBoundLatitude(), 0.1);
+        assertEquals( +77, bbox.getNorthBoundLatitude(), 0.1);
+    }
+
+    /**
+     * Tests the table for a NetCDF image with two bands.
+     *
+     * @throws SQLException If the test can't connect to the database.
+     */
+    @Test
+    public void testTwoBands() throws SQLException {
+        final GridCoverageTable table = getDatabase().getTable(GridCoverageTable.class);
+        table.setLayer(LayerTableTest.GEOSTROPHIC_CURRENT);
+        final GridCoverageReference entry = table.getEntry();
+        assertEquals(2, entry.getSampleDimensions().length);
+    }
+
+    /**
+     * Tests the request for the bounding box.
+     *
+     * @throws SQLException If the test can't connect to the database.
+     */
+    @Test
+    @Ignore
+    public void testBoundingBox() throws SQLException {
+        final GridCoverageTable table = getDatabase().getTable(GridCoverageTable.class);
+        table.setLayer(LayerTableTest.TEMPERATURE);
+        final GeneralEnvelope search = new GeneralEnvelope(table.getSpatioTemporalCRS());
+        search.setRange(0, -200, 200);
+        search.setRange(1, -100, 100);
+        search.setRange(2, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
+        table.setEnvelope(search);
+
+        Envelope envelope = table.getEnvelope();
+        assertEquals(-200, envelope.getMinimum(0), 0.0);
+        assertEquals(+200, envelope.getMaximum(0), 0.0);
+        assertEquals(-100, envelope.getMinimum(1), 0.0);
+        assertEquals(+100, envelope.getMaximum(1), 0.0);
+
+        table.trimEnvelope();
+        envelope = table.getEnvelope();
+        assertEquals(-180, envelope.getMinimum(0), 0.0);
+        assertEquals(+180, envelope.getMaximum(0), 0.0);
+        assertEquals( -90, envelope.getMinimum(1), 0.0);
+        assertEquals( +90, envelope.getMaximum(1), 0.0);
     }
 }

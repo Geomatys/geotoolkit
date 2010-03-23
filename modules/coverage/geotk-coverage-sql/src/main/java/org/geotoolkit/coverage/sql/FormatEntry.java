@@ -53,10 +53,10 @@ final class FormatEntry extends Entry {
     private static final long serialVersionUID = -8790032968708208057L;
 
     /**
-     * The database from which this entries has been created.
-     * Will be set to {@code null} when no longer needed.
+     * Provides indirectly a connection to the database.
+     * This is set to {@code null} when no longer needed.
      */
-    private transient Database database;
+    private transient FormatTable table;
 
     /**
      * The image format name as declared in the database. This value shall be a name
@@ -85,12 +85,11 @@ final class FormatEntry extends Entry {
      *
      * @param name       An identifier for this entry.
      * @param formatName Format name (i.e. the plugin to use).
-     * @param extension  Filename extension, excluding dot separator (example: {@code "png"}).
      * @param geophysics {@code true} if coverage to be read are already geophysics values.
      */
-    protected FormatEntry(final Database database, final Comparable<?> name, final String formatName, final boolean geophysics) {
+    protected FormatEntry(final FormatTable table, final Comparable<?> name, final String formatName, final boolean geophysics) {
         super(name, null);
-        this.database    = database;
+        this.table       = table;
         this.imageFormat = formatName.trim();
         this.geophysics  = geophysics;
     }
@@ -111,14 +110,17 @@ final class FormatEntry extends Entry {
      */
     public synchronized List<GridSampleDimension> getSampleDimensions() throws SQLException {
         if (sampleDimensions == null) {
-            final SampleDimensionTable  table = database.getTable(SampleDimensionTable.class);
-            final GridSampleDimension[] bands = table.getSampleDimensions(identifier.toString());
-            table.release();
+            final String id = identifier.toString();
+            final SampleDimensionTable sdTable = table.getSampleDimensionTable();
+            final GridSampleDimension[] bands;
+            synchronized (sdTable) {
+                bands = sdTable.getSampleDimensions(id);
+            }
             for (int i=0; i<bands.length; i++) {
                 bands[i] = bands[i].geophysics(geophysics);
             }
             sampleDimensions = UnmodifiableArrayList.wrap(bands);
-            database = null;
+            table = null;
         }
         return sampleDimensions;
     }

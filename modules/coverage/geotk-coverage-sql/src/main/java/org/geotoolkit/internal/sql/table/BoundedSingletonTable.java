@@ -177,18 +177,7 @@ public abstract class BoundedSingletonTable<E extends Entry> extends SingletonTa
         super(table);
         byTimeRange     = table.byTimeRange;
         bySpatialExtent = table.bySpatialExtent;
-        envelope        = table.envelope;
-        trimmed         = table.trimmed;
-        tMin            = table.tMin;
-        tMax            = table.tMax;
-        xMin            = table.xMin;
-        xMax            = table.xMax;
-        yMin            = table.yMin;
-        yMax            = table.yMax;
-        zMin            = table.zMin;
-        zMax            = table.zMax;
-        xResolution     = table.xResolution;
-        yResolution     = table.yResolution;
+        init();
     }
 
     /**
@@ -650,15 +639,5 @@ public abstract class BoundedSingletonTable<E extends Entry> extends SingletonTa
             trimmed  = false;
         }
         super.fireStateChanged(property);
-    }
-
-    /**
-     * Resets this table to its initial state. Invoking this method is equivalent to
-     * invoking {@code setFoo(null)} on every setter methods.
-     */
-    @Override
-    public synchronized void reset() {
-        init();
-        super.reset();
     }
 }

@@ -138,9 +138,12 @@ final class LayerEntry extends Entry implements Layer {
      */
     private synchronized DomainOfLayerEntry getDomain() throws SQLException {
         if (domain == null) {
+            final String name = getName();
             final DomainOfLayerTable domains = table.getDomainOfLayerTable();
             try {
-                domain = domains.getEntry(getName());
+                synchronized (domains) {
+                    domain = domains.getEntry(name);
+                }
             } catch (NoSuchRecordException exception) {
                 domain = DomainOfLayerEntry.NULL;
                 Logging.recoverableException(LayerEntry.class, "getDomain", exception);
@@ -177,9 +180,14 @@ final class LayerEntry extends Entry implements Layer {
      */
     final synchronized Map<Integer,SeriesEntry> getSeriesMap() throws SQLException {
         if (series == null) {
+            final String name = getName();
             final SeriesTable st = table.getSeriesTable();
-            st.setLayer(getName());
-            series = Collections.unmodifiableMap(st.getEntriesMap());
+            final Map<Integer,SeriesEntry> map;
+            synchronized (st) {
+                st.setLayer(name);
+                map = st.getEntriesMap();
+            }
+            series = Collections.unmodifiableMap(map);
             conditionalRelease();
         }
         return series;
@@ -196,11 +204,17 @@ final class LayerEntry extends Entry implements Layer {
      */
     @Override
     public synchronized LayerEntry getFallback() throws CoverageStoreException {
-        if (fallback instanceof String) try {
-            fallback = table.getEntry((String) fallback);
+        if (fallback instanceof String) {
+            final String name = (String) fallback;
+            final LayerTable fb = table.getLayerTable();
+            try {
+                synchronized (fb) {
+                    fallback = fb.getEntry(name);
+                }
+            } catch (SQLException e) {
+                throw new CoverageStoreException(e);
+            }
             conditionalRelease();
-        } catch (SQLException e) {
-            throw new CoverageStoreException(e);
         }
         return (LayerEntry) fallback;
     }

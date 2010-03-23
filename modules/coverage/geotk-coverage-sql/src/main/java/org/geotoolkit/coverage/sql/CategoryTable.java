@@ -97,7 +97,7 @@ final class CategoryTable extends Table {
      * a new instance to be used concurrently with the original instance.
      */
     @Override
-    protected synchronized CategoryTable clone() {
+    protected CategoryTable clone() {
         return new CategoryTable(this);
     }
 
