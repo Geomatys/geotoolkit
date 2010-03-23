@@ -31,7 +31,6 @@ import com.vividsolutions.jts.geom.Point;
 import org.geotoolkit.feature.AttributeDescriptorBuilder;
 import org.geotoolkit.feature.AttributeTypeBuilder;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
-import org.junit.Ignore;
 
 public class SimpleFeatureBuilderTest extends TestCase {
 

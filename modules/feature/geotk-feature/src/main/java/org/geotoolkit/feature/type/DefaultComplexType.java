@@ -16,6 +16,9 @@
  */
 package org.geotoolkit.feature.type;
 
+import com.vividsolutions.jts.geom.IntersectionMatrix;
+import com.vividsolutions.jts.geom.Point;
+import com.vividsolutions.jts.operation.relate.RelateOp;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.Collection;
@@ -34,6 +37,7 @@ import org.geotoolkit.util.collection.UnmodifiableArrayList;
 import org.geotoolkit.util.converter.Classes;
 
 import org.opengis.feature.Property;
+import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.AttributeType;
 import org.opengis.feature.type.ComplexType;
 import org.opengis.feature.type.GeometryDescriptor;
@@ -154,7 +158,7 @@ public class DefaultComplexType extends DefaultAttributeType<AttributeType> impl
         }
         if (o instanceof DefaultComplexType && super.equals(o)) {
             DefaultComplexType that = (DefaultComplexType) o;
-            return Utilities.equals(this.descriptorsList, that.descriptorsList);
+            return Utilities.deepEquals(this.descriptors, that.descriptors);
         }
         return false;
     }
@@ -278,7 +282,6 @@ public class DefaultComplexType extends DefaultAttributeType<AttributeType> impl
 
         tablewriter.write("\n");
 
-        System.out.println(">>> "+property);
         if(property.getType() instanceof ComplexType){
             final ComplexType ct = (ComplexType) property.getType();
             final Collection<PropertyDescriptor> descs = ct.getDescriptors();

@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.feature.type;
 
+import com.vividsolutions.jts.geom.Geometry;
 import java.util.Map;
 
 import org.geotoolkit.util.converter.Classes;
@@ -41,6 +42,9 @@ public class DefaultAttributeDescriptor<T extends AttributeType> extends Default
             final int max, final boolean isNillable, final Object defaultValue){
         super(type, name, min, max, isNillable);
 
+        if(defaultValue != null && !type.getBinding().isInstance(defaultValue)){
+           throw new IllegalArgumentException("Default value doesn't match");
+        }
         this.defaultValue = defaultValue;
     }
 
@@ -80,7 +84,15 @@ public class DefaultAttributeDescriptor<T extends AttributeType> extends Default
 
         final DefaultAttributeDescriptor d = (DefaultAttributeDescriptor) o;
 
-        return super.equals(o) && Utilities.deepEquals(defaultValue, d.defaultValue);
+        if(!super.equals(o)){
+            return false;
+        }
+
+        if(defaultValue instanceof Geometry && d.defaultValue instanceof Geometry){
+            return ((Geometry)defaultValue).equalsExact((Geometry) d.defaultValue);
+        }else{
+            return Utilities.deepEquals(defaultValue, d.defaultValue);
+        }
     }
 
     /**

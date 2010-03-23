@@ -27,7 +27,6 @@ import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 
-import java.io.IOException;
 import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -45,10 +44,7 @@ import java.util.Map;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 
 import org.opengis.coverage.grid.GridCoverage;
-import org.opengis.feature.Feature;
-import org.opengis.feature.FeatureVisitor;
 import org.opengis.feature.simple.SimpleFeature;
-import org.opengis.feature.simple.SimpleFeatureType;
 
 /**
  *
@@ -59,6 +55,8 @@ import org.opengis.feature.simple.SimpleFeatureType;
  * @module pending
  */
 public class FeatureUtilities {
+
+    private static final GeometryFactory GF = new GeometryFactory();
 
     protected FeatureUtilities(){}
 
@@ -121,32 +119,32 @@ public class FeatureUtilities {
             return new java.util.Date();
         }
 
-        final GeometryFactory fac = new GeometryFactory();
-        final Coordinate coordinate = new Coordinate(0, 0);
-        final Point point = fac.createPoint(coordinate);
+        final Coordinate crd = new Coordinate(0, 0);        
 
         if (type == Point.class) {
-            return point;
+            final Point pt = GF.createPoint(crd);
+            return pt;
         }
         if (type == MultiPoint.class) {
-            return fac.createMultiPoint(new Point[]{point});
+            final Point pt = GF.createPoint(crd);
+            return GF.createMultiPoint(new Point[]{pt});
         }
         if (type == LineString.class) {
-            return fac.createLineString(new Coordinate[]{coordinate, coordinate, coordinate, coordinate});
+            return GF.createLineString(new Coordinate[]{crd, crd, crd, crd});
         }
-        final LinearRing linearRing = fac.createLinearRing(new Coordinate[]{coordinate, coordinate, coordinate, coordinate});
+        final LinearRing linearRing = GF.createLinearRing(new Coordinate[]{crd, crd, crd, crd});
         if (type == LinearRing.class) {
             return linearRing;
         }
         if (type == MultiLineString.class) {
-            return fac.createMultiLineString(new LineString[]{linearRing});
+            return GF.createMultiLineString(new LineString[]{linearRing});
         }
-        final Polygon polygon = fac.createPolygon(linearRing, new LinearRing[0]);
+        final Polygon polygon = GF.createPolygon(linearRing, new LinearRing[0]);
         if (type == Polygon.class) {
             return polygon;
         }
         if (type == MultiPolygon.class) {
-            return fac.createMultiPolygon(new Polygon[]{polygon});
+            return GF.createMultiPolygon(new Polygon[]{polygon});
         }
 
         throw new IllegalArgumentException(type + " is not supported by this method");

@@ -114,5 +114,9 @@ public class TypesTest extends TestCase {
         
         FeatureValidationUtilities.assertOrderAssignable( test, test4 );
     }
-    
+
+    public void testComplexType(){
+        
+    }
+
 }

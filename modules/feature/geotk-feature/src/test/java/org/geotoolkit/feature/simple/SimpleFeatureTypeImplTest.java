@@ -17,6 +17,8 @@
 
 package org.geotoolkit.feature.simple;
 
+import com.vividsolutions.jts.geom.Point;
+
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -25,7 +27,6 @@ import junit.framework.TestCase;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.PropertyDescriptor;
 
-import com.vividsolutions.jts.geom.Point;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.type.DefaultFeatureTypeFactory;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
