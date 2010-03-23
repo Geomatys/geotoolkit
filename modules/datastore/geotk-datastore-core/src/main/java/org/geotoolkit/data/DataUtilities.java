@@ -32,7 +32,7 @@ import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.query.SortByComparator;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.feature.simple.SimpleFeatureTypeBuilder;
+import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.geometry.DefaultBoundingBox;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.geotoolkit.util.collection.CloseableIterator;
@@ -81,10 +81,10 @@ public class DataUtilities {
         if(type == null){
             //a collection with no defined type, make a generic abstract type
             //that is possible since feature collection may not always have a type.
-            SimpleFeatureTypeBuilder sftb = new SimpleFeatureTypeBuilder();
+            FeatureTypeBuilder sftb = new FeatureTypeBuilder();
             sftb.setName("null");
             sftb.setAbstract(true);
-            type = sftb.buildFeatureType();
+            type = sftb.buildSimpleFeatureType();
         }
 
         final MemoryDataStore ds = new MemoryDataStore(type, true);

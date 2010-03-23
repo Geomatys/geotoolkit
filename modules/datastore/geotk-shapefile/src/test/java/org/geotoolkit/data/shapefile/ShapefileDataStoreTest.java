@@ -43,7 +43,7 @@ import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
-import org.geotoolkit.feature.simple.SimpleFeatureTypeBuilder;
+import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.type.BasicFeatureTypes;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 
@@ -678,7 +678,7 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
     }
 
     private SimpleFeatureType createExampleSchema() {
-        SimpleFeatureTypeBuilder build = new SimpleFeatureTypeBuilder();
+        FeatureTypeBuilder build = new FeatureTypeBuilder();
         build.setName("junk");
         build.add("a", Point.class, DefaultGeographicCRS.WGS84);
         build.add("b", Byte.class);
@@ -693,7 +693,7 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
         build.add("k", BigDecimal.class);
         build.add("l", BigInteger.class);
 
-        return build.buildFeatureType();
+        return build.buildSimpleFeatureType();
     }
 
     private void make3D(Geometry g) {
@@ -724,10 +724,10 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
     private void runWriteReadTest(Geometry geom, boolean d3) throws Exception {
         // make features
 
-        SimpleFeatureTypeBuilder ftb = new SimpleFeatureTypeBuilder();
+        FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName("Junk");
         ftb.add("a", geom.getClass(), DefaultGeographicCRS.WGS84);
-        SimpleFeatureType type = ftb.buildFeatureType();
+        SimpleFeatureType type = ftb.buildSimpleFeatureType();
 
         Collection<SimpleFeature> features = new ArrayList<SimpleFeature>();
         SimpleFeatureBuilder build = new SimpleFeatureBuilder(type);

@@ -28,7 +28,7 @@ import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.opengis.feature.IllegalAttributeException;
-import org.geotoolkit.feature.simple.SimpleFeatureTypeBuilder;
+import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.filter.function.math.CeilFunction;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.geotoolkit.referencing.CRS;
@@ -139,13 +139,13 @@ public abstract class JDBCDataStoreAPITest extends JDBCTestSupport {
         // create a featureType and write it to PostGIS
         CoordinateReferenceSystem crs = CRS.decode("EPSG:4326");
 
-        SimpleFeatureTypeBuilder ftb = new SimpleFeatureTypeBuilder();
+        FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName(featureTypeName);
-        ftb.add(aname("id"), Integer.class,1,1,false,SimpleFeatureTypeBuilder.PRIMARY_KEY);
+        ftb.add(aname("id"), Integer.class,1,1,false,FeatureTypeBuilder.PRIMARY_KEY);
         ftb.add(aname("name"), String.class);
         ftb.add(aname("the_geom"), Point.class, crs);
 
-        SimpleFeatureType newFT = ftb.buildFeatureType();
+        SimpleFeatureType newFT = ftb.buildSimpleFeatureType();
         dataStore.createSchema(newFT.getName(),newFT);
 
         SimpleFeatureType newSchema = (SimpleFeatureType) dataStore.getFeatureType(featureTypeName);

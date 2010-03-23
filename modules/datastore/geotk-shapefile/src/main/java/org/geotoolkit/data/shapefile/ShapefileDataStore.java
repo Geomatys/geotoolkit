@@ -70,7 +70,7 @@ import org.geotoolkit.feature.AttributeDescriptorBuilder;
 import org.geotoolkit.feature.AttributeTypeBuilder;
 import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.feature.SchemaException;
-import org.geotoolkit.feature.simple.SimpleFeatureTypeBuilder;
+import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.type.BasicFeatureTypes;
 import org.geotoolkit.filter.visitor.FilterAttributeExtractor;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
@@ -581,7 +581,7 @@ public class ShapefileDataStore extends AbstractDataStore{
             parent = BasicFeatureTypes.LINE;
         }
 
-        final SimpleFeatureTypeBuilder builder = new SimpleFeatureTypeBuilder();
+        final FeatureTypeBuilder builder = new FeatureTypeBuilder();
         builder.addAll(types);
         builder.setDefaultGeometry(geomDescriptor.getLocalName());
 
@@ -597,7 +597,7 @@ public class ShapefileDataStore extends AbstractDataStore{
             builder.setSuperType(parent);
         }
 
-        return builder.buildFeatureType();
+        return builder.buildSimpleFeatureType();
     }
 
     /**

@@ -15,7 +15,7 @@ import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.query.QueryUtilities;
 import org.geotoolkit.feature.DefaultName;
-import org.geotoolkit.feature.simple.SimpleFeatureTypeBuilder;
+import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.style.DefaultStyleFactory;
 
@@ -84,9 +84,9 @@ public class MapLayerTest extends TestCase{
         }
 
         final Name name = new DefaultName("test");
-        SimpleFeatureTypeBuilder builder = new SimpleFeatureTypeBuilder();
+        FeatureTypeBuilder builder = new FeatureTypeBuilder();
         builder.setName(name);
-        SimpleFeatureType type = builder.buildFeatureType();
+        SimpleFeatureType type = builder.buildSimpleFeatureType();
 
         DataStore ds = new MemoryDataStore();
         ds.createSchema(name,type);

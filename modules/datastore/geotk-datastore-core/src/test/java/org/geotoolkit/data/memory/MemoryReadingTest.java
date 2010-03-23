@@ -30,7 +30,7 @@ import org.geotoolkit.data.DataStore;
 import org.geotoolkit.data.DataStoreException;
 import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.feature.DefaultName;
-import org.geotoolkit.feature.simple.SimpleFeatureTypeBuilder;
+import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.referencing.CRS;
 import org.opengis.feature.simple.SimpleFeature;
@@ -51,14 +51,14 @@ public class MemoryReadingTest extends AbstractReadingTests{
 
     public MemoryReadingTest() throws DataStoreException, NoSuchAuthorityCodeException, FactoryException{
         final GeometryFactory gf = new GeometryFactory();
-        final SimpleFeatureTypeBuilder builder = new SimpleFeatureTypeBuilder();
+        final FeatureTypeBuilder builder = new FeatureTypeBuilder();
 
         //first schema----------------------------------------------------------
         Name name = new DefaultName("http://test.com", "TestSchema1");
         builder.reset();
         builder.setName(name);
         builder.add("att1", String.class);
-        final SimpleFeatureType type1 = builder.buildFeatureType();
+        final SimpleFeatureType type1 = builder.buildSimpleFeatureType();
 
         names.add(name);
         expecteds.add(new ExpectedResult(name,type1,0,null));
@@ -72,7 +72,7 @@ public class MemoryReadingTest extends AbstractReadingTests{
         builder.add("string", String.class);
         builder.add("double", Double.class);
         builder.add("date", Date.class);
-        final SimpleFeatureType type2 = builder.buildFeatureType();
+        final SimpleFeatureType type2 = builder.buildSimpleFeatureType();
         store.createSchema(name,type2);
 
         //create a few features
@@ -109,7 +109,7 @@ public class MemoryReadingTest extends AbstractReadingTests{
         builder.setName(name);
         builder.add("geometry", Point.class, CRS.decode("EPSG:27582"));
         builder.add("string", String.class);
-        final SimpleFeatureType type3 = builder.buildFeatureType();
+        final SimpleFeatureType type3 = builder.buildSimpleFeatureType();
         store.createSchema(name,type3);
 
         //create a few features

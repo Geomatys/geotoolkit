@@ -62,7 +62,7 @@ import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.container.statefull.StatefullCoverageLayerJ2D;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
-import org.geotoolkit.feature.simple.SimpleFeatureTypeBuilder;
+import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.style.MutableStyle;
@@ -91,12 +91,12 @@ public class IsolineGraphicJ2D extends StatelessFeatureLayerJ2D {
         super(canvas, layer);
         this.extractor = extractor;
 
-        final SimpleFeatureTypeBuilder sftb = new SimpleFeatureTypeBuilder();
+        final FeatureTypeBuilder sftb = new FeatureTypeBuilder();
         sftb.setName("isoline");
         sftb.add("geometry", LineString.class, layer.getCollection().getFeatureType().getCoordinateReferenceSystem());
         sftb.add("value", Double.class);
         sftb.setDefaultGeometry("geometry");
-        this.featureBuilder = new SimpleFeatureBuilder(sftb.buildFeatureType());
+        this.featureBuilder = new SimpleFeatureBuilder(sftb.buildSimpleFeatureType());
     }
 
     public void setStep(int step) {

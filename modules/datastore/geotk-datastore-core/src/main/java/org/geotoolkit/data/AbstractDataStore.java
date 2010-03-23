@@ -25,7 +25,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.geotoolkit.data.memory.GenericEmptyFeatureIterator;
@@ -45,7 +44,7 @@ import org.geotoolkit.feature.AttributeDescriptorBuilder;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.feature.SchemaException;
-import org.geotoolkit.feature.simple.SimpleFeatureTypeBuilder;
+import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.util.logging.Logging;
 
 import org.opengis.feature.Feature;
@@ -568,7 +567,7 @@ public abstract class AbstractDataStore implements DataStore{
     }
 
     public static SimpleFeatureType ensureGMLNS(SimpleFeatureType type){
-        final SimpleFeatureTypeBuilder sftb = new SimpleFeatureTypeBuilder();
+        final FeatureTypeBuilder sftb = new FeatureTypeBuilder();
         final AttributeDescriptorBuilder adb = new AttributeDescriptorBuilder();
         sftb.setName(type.getName());
 
@@ -588,7 +587,7 @@ public abstract class AbstractDataStore implements DataStore{
 
         sftb.setDefaultGeometry(type.getGeometryDescriptor().getName());
 
-        return sftb.buildFeatureType();
+        return sftb.buildSimpleFeatureType();
     }
 
 }

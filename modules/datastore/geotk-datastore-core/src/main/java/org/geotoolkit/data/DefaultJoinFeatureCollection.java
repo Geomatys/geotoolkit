@@ -29,7 +29,7 @@ import org.geotoolkit.data.query.Source;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
-import org.geotoolkit.feature.simple.SimpleFeatureTypeBuilder;
+import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.util.collection.CloseableIterator;
 
 import org.opengis.feature.Feature;
@@ -88,7 +88,7 @@ public class DefaultJoinFeatureCollection extends AbstractFeatureCollection<Feat
             final FeatureType leftType = leftCollection.getFeatureType();
             final FeatureType rightType = rightCollection.getFeatureType();
 
-            final SimpleFeatureTypeBuilder sftb = new SimpleFeatureTypeBuilder();
+            final FeatureTypeBuilder sftb = new FeatureTypeBuilder();
             sftb.setName("combine");
 
             for(final PropertyDescriptor desc : leftType.getDescriptors()){
@@ -98,7 +98,7 @@ public class DefaultJoinFeatureCollection extends AbstractFeatureCollection<Feat
                 sftb.add((AttributeDescriptor) desc);
             }
 
-            type = sftb.buildFeatureType();
+            type = sftb.buildSimpleFeatureType();
         }
 
         return type;

@@ -33,7 +33,7 @@ import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
-import org.geotoolkit.feature.simple.SimpleFeatureTypeBuilder;
+import org.geotoolkit.feature.FeatureTypeBuilder;
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -77,7 +77,7 @@ public class SessionTest extends TestCase{
 
     @Before
     public void setUp() throws Exception {
-        final SimpleFeatureTypeBuilder builder = new SimpleFeatureTypeBuilder();
+        final FeatureTypeBuilder builder = new FeatureTypeBuilder();
 
         //create the schema
         final Name name = new DefaultName("http://test.com", "TestSchema1");
@@ -86,7 +86,7 @@ public class SessionTest extends TestCase{
         builder.add("string", String.class);
         builder.add("double", Double.class);
         builder.add("date", Date.class);
-        final SimpleFeatureType type = builder.buildFeatureType();
+        final SimpleFeatureType type = builder.buildSimpleFeatureType();
         store.createSchema(name,type);
         final QueryBuilder qb = new QueryBuilder(name);
 

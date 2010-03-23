@@ -32,7 +32,7 @@ import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.style.CachedSymbolizer;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRendererService;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
-import org.geotoolkit.feature.simple.SimpleFeatureTypeBuilder;
+import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessFinder;
@@ -123,12 +123,12 @@ public class CachedPatternSymbolizer extends CachedSymbolizer<PatternSymbolizer>
 
 
         //build the features ---------------------------------------------------
-        final SimpleFeatureTypeBuilder sftBuilder = new SimpleFeatureTypeBuilder();
+        final FeatureTypeBuilder sftBuilder = new FeatureTypeBuilder();
         final String geometryField = "geometry";
         sftBuilder.setName("DynamicFeature");
         sftBuilder.add(geometryField, Geometry.class, coverage.getCoordinateReferenceSystem());
         sftBuilder.setDefaultGeometry(geometryField);
-        final SimpleFeatureType sft = sftBuilder.buildFeatureType();
+        final SimpleFeatureType sft = sftBuilder.buildSimpleFeatureType();
 
         final SimpleFeatureBuilder sfBuilder = new SimpleFeatureBuilder(sft);
         int id = 0;

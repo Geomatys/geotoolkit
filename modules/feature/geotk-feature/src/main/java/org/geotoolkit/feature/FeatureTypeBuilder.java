@@ -175,6 +175,10 @@ public class FeatureTypeBuilder {
         reset();
     }
 
+    public FeatureTypeFactory getFeatureTypeFactory(){
+        return factory;
+    }
+
     /**
      * Initializes the builder with state from a pre-existing feature type.
      */
@@ -456,11 +460,19 @@ public class FeatureTypeBuilder {
             at = factory.createAttributeType(name, binding, false, false, null, null, null);
         }
 
+        add(at,name,crs,min,max,nillable,userData);
+    }
+
+    public void add(final AttributeType at, final Name name, final CoordinateReferenceSystem crs,
+            int min, int max, boolean nillable, Map<Object,Object> userData){
         Object defaultValue = null;
-        try {
-            defaultValue = FeatureUtilities.defaultValue(binding);
-        } catch (Exception e) {
-            //do nothing
+        if(!nillable){
+            //search for the best default value.
+            try {
+                defaultValue = FeatureUtilities.defaultValue(at.getBinding());
+            } catch (Exception e) {
+                //do nothing
+            }
         }
 
         final AttributeDescriptor desc;
@@ -606,14 +618,22 @@ public class FeatureTypeBuilder {
             }
         }
 
-        if(simple){
+        boolean isSimple = true;
+        for(PropertyDescriptor desc : properties){
+            if(!(desc instanceof AttributeDescriptor)){
+                isSimple = false;
+                break;
+            }
+        }
+
+        if(simple && !isSimple){
+            throw new IllegalArgumentException("Property descriptors are not all Attribut Descriptor. Can not create a simple type");
+        }
+
+        if(isSimple){
             final List<AttributeDescriptor> descs = new ArrayList<AttributeDescriptor>();
             for(PropertyDescriptor desc : properties){
-                if(desc instanceof AttributeDescriptor){
-                    descs.add((AttributeDescriptor)desc);
-                }else{
-                    throw new IllegalArgumentException("Property descriptors are not all Attribut Descriptor. Can not create a simple type");
-                }
+                descs.add((AttributeDescriptor)desc);
             }
             return factory.createSimpleFeatureType(
                     name, descs, defaultGeometry, isAbstract,
@@ -671,7 +691,12 @@ public class FeatureTypeBuilder {
             }
         }
 
-        return b.buildFeatureType();
+        if(original instanceof SimpleFeatureType){
+            return b.buildSimpleFeatureType();
+        }else{
+            return b.buildFeatureType();
+        }
+        
     }
 
 }

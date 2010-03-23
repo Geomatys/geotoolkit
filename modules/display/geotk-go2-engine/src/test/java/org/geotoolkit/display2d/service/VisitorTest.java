@@ -34,7 +34,7 @@ import org.geotoolkit.display2d.canvas.AbstractGraphicVisitor;
 import org.geotoolkit.display2d.primitive.ProjectedCoverage;
 import org.geotoolkit.display2d.primitive.ProjectedFeature;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
-import org.geotoolkit.feature.simple.SimpleFeatureTypeBuilder;
+import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
@@ -74,11 +74,11 @@ public class VisitorTest {
      public void intersectionTest() throws Exception {
          final MutableStyleFactory sf = new DefaultStyleFactory();
 
-         final SimpleFeatureTypeBuilder sftb = new SimpleFeatureTypeBuilder();
+         final FeatureTypeBuilder sftb = new FeatureTypeBuilder();
          sftb.setName("testingIntersect");
          sftb.add("geom", Polygon.class, DefaultGeographicCRS.WGS84);
          sftb.setDefaultGeometry("geom");
-         final SimpleFeatureType sft = sftb.buildFeatureType();
+         final SimpleFeatureType sft = sftb.buildSimpleFeatureType();
 
          final FeatureCollection collection = DataUtilities.collection("id", sft);
          final SimpleFeatureBuilder sfb = new SimpleFeatureBuilder(sft);

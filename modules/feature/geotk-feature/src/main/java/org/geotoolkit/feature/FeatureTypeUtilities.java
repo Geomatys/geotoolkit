@@ -30,8 +30,8 @@ import java.util.Map;
 import java.util.StringTokenizer;
 
 import org.geotoolkit.factory.FactoryRegistryException;
+import org.geotoolkit.factory.HintsPending;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
-import org.geotoolkit.feature.simple.SimpleFeatureTypeBuilder;
 import org.geotoolkit.feature.simple.DefaultSimpleFeatureType;
 import org.geotoolkit.filter.function.other.LengthFunction;
 import org.geotoolkit.geometry.jts.JTS;
@@ -44,9 +44,15 @@ import org.geotoolkit.filter.visitor.FilterAttributeExtractor;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.referencing.CRS;
 
+import org.opengis.feature.type.Name;
+import org.opengis.feature.type.PropertyDescriptor;
 import org.opengis.feature.type.GeometryType;
 import org.opengis.filter.expression.Expression;
-import org.opengis.referencing.ReferenceIdentifier;
+import org.opengis.filter.BinaryComparisonOperator;
+import org.opengis.filter.Filter;
+import org.opengis.filter.PropertyIsLessThan;
+import org.opengis.filter.PropertyIsLessThanOrEqualTo;
+import org.opengis.filter.expression.Literal;
 import org.opengis.feature.IllegalAttributeException;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
@@ -54,12 +60,8 @@ import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.AttributeType;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.GeometryDescriptor;
-import org.opengis.filter.BinaryComparisonOperator;
-import org.opengis.filter.Filter;
-import org.opengis.filter.PropertyIsLessThan;
-import org.opengis.filter.PropertyIsLessThanOrEqualTo;
-import org.opengis.filter.expression.Literal;
 import org.opengis.geometry.MismatchedDimensionException;
+import org.opengis.referencing.ReferenceIdentifier;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
@@ -72,9 +74,6 @@ import com.vividsolutions.jts.geom.MultiPoint;
 import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
-import org.geotoolkit.factory.HintsPending;
-import org.opengis.feature.type.Name;
-import org.opengis.feature.type.PropertyDescriptor;
 
 /**
  * Utility methods for working against the FeatureType interface.
@@ -301,11 +300,11 @@ public class FeatureTypeUtilities {
 
 
 
-        final SimpleFeatureTypeBuilder tb = new SimpleFeatureTypeBuilder();
+        final FeatureTypeBuilder tb = new FeatureTypeBuilder();
         tb.setName(new DefaultName(namespaceURI, typeName));
         tb.addAll(types);
 
-        SimpleFeatureType result = tb.buildFeatureType();
+        SimpleFeatureType result = tb.buildSimpleFeatureType();
 
         if (!crsSetted && result instanceof DefaultSimpleFeatureType) {
             ((DefaultSimpleFeatureType)result).setCoordinateReferenceSystem(override);
@@ -340,13 +339,13 @@ public class FeatureTypeUtilities {
             return featureType;
         }
 
-        final SimpleFeatureTypeBuilder tb = new SimpleFeatureTypeBuilder();
+        final FeatureTypeBuilder tb = new FeatureTypeBuilder();
         tb.setName(featureType.getName());
 
         for (int i = 0; i < properties.length; i++) {
             tb.add(featureType.getDescriptor(properties[i]));
         }
-        return tb.buildFeatureType();
+        return tb.buildSimpleFeatureType();
     }
 
     /**
@@ -423,7 +422,7 @@ public class FeatureTypeUtilities {
     public static SimpleFeatureType createType(final String namespace, final String typeName,
             final String typeSpec) throws SchemaException
     {
-        final SimpleFeatureTypeBuilder tb = new SimpleFeatureTypeBuilder();
+        final FeatureTypeBuilder tb = new FeatureTypeBuilder();
         tb.setName(new DefaultName(namespace, typeName));
 
         final String[] types = typeSpec.split(",");
@@ -444,7 +443,7 @@ public class FeatureTypeUtilities {
             }
         }
 
-        return tb.buildFeatureType();
+        return tb.buildSimpleFeatureType();
     }
 
 
@@ -701,7 +700,7 @@ public class FeatureTypeUtilities {
      */
     public static SimpleFeatureType transform(final SimpleFeatureType schema, final CoordinateReferenceSystem crs,
             boolean forceOnlyMissing) throws SchemaException{
-        final SimpleFeatureTypeBuilder sftb = new SimpleFeatureTypeBuilder();
+        final FeatureTypeBuilder sftb = new FeatureTypeBuilder();
         sftb.setName(schema.getName());
         sftb.setAbstract(schema.isAbstract());
 
@@ -732,7 +731,7 @@ public class FeatureTypeUtilities {
 
         sftb.setSuperType((SimpleFeatureType) schema.getSuper());
 
-        return sftb.buildFeatureType();
+        return sftb.buildSimpleFeatureType();
     }
 
     /**
@@ -796,7 +795,7 @@ public class FeatureTypeUtilities {
             final URI ns, final boolean isAbstract, final SimpleFeatureType[] superTypes,
             final AttributeDescriptor defaultGeometry) throws FactoryRegistryException, SchemaException{
 
-        final SimpleFeatureTypeBuilder tb = new SimpleFeatureTypeBuilder();
+        final FeatureTypeBuilder tb = new FeatureTypeBuilder();
         tb.setName(new DefaultName(ns.toString(), name));
         tb.setAbstract(isAbstract);
         tb.addAll(types);
@@ -825,7 +824,7 @@ public class FeatureTypeUtilities {
             //use the default super type
             tb.setSuperType(ABSTRACT_FEATURE_TYPE);
         }
-        return (SimpleFeatureType) tb.buildFeatureType();
+        return tb.buildSimpleFeatureType();
     }
 
     /**

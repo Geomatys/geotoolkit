@@ -53,7 +53,7 @@ import org.geotoolkit.feature.AttributeDescriptorBuilder;
 import org.geotoolkit.feature.AttributeTypeBuilder;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.FeatureTypeUtilities;
-import org.geotoolkit.feature.simple.SimpleFeatureTypeBuilder;
+import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.xml.XmlFeatureReader;
 import org.geotoolkit.feature.xml.jaxb.JAXBFeatureTypeReader;
 import org.geotoolkit.feature.xml.jaxp.JAXPStreamFeatureReader;
@@ -135,7 +135,7 @@ public class WFSDataStore extends AbstractDataStore{
                 continue;
             }
 
-            final SimpleFeatureTypeBuilder sftb = new SimpleFeatureTypeBuilder();
+            final FeatureTypeBuilder sftb = new FeatureTypeBuilder();
             sftb.setName(sft.getName());
 
             for(AttributeDescriptor desc : sft.getAttributeDescriptors()){
@@ -152,7 +152,7 @@ public class WFSDataStore extends AbstractDataStore{
                 }
             }
             sftb.setDefaultGeometry(sft.getGeometryDescriptor().getLocalName());
-            sft = sftb.buildFeatureType();
+            sft = sftb.buildSimpleFeatureType();
 
             CoordinateReferenceSystem val = sft.getGeometryDescriptor().getCoordinateReferenceSystem();
             if(val == null){

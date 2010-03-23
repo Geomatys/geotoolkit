@@ -24,7 +24,7 @@ import java.util.HashSet;
 import java.util.Map;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
-import org.geotoolkit.feature.simple.SimpleFeatureTypeBuilder;
+import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.filter.visitor.ListingPropertyVisitor;
 import org.geotoolkit.style.StyleConstants;
 import org.junit.AfterClass;
@@ -60,10 +60,10 @@ public class CategorizeTest {
 
         final FilterFactory ff = FactoryFinder.getFilterFactory(null);
 
-        final SimpleFeatureTypeBuilder sftb = new SimpleFeatureTypeBuilder();
+        final FeatureTypeBuilder sftb = new FeatureTypeBuilder();
         sftb.setName("test");
         sftb.add(attribut, Double.class);
-        final SimpleFeatureType sft = sftb.buildFeatureType();
+        final SimpleFeatureType sft = sftb.buildSimpleFeatureType();
 
         final SimpleFeatureBuilder sfb = new SimpleFeatureBuilder(sft);
         sfb.set(attribut, -5d);

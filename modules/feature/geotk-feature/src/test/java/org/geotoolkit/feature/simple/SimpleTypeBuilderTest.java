@@ -30,12 +30,13 @@ import org.opengis.feature.type.AttributeType;
 import org.opengis.feature.type.Schema;
 
 import com.vividsolutions.jts.geom.Point;
+import org.geotoolkit.feature.FeatureTypeBuilder;
 
 
 public class SimpleTypeBuilderTest extends TestCase {
 
     static final String URI = "gopher://localhost/test";
-    SimpleFeatureTypeBuilder builder;
+    FeatureTypeBuilder builder;
 
     @Override
     protected void setUp() throws Exception {
@@ -50,7 +51,7 @@ public class SimpleTypeBuilderTest extends TestCase {
                 typeFactory.createAttributeType(new DefaultName("test", "intType"), Integer.class, false, false, Collections.EMPTY_LIST, null, null);
         schema.put(new DefaultName("test", "intType"), intType);
 
-        builder = new SimpleFeatureTypeBuilder(new DefaultFeatureTypeFactory());
+        builder = new FeatureTypeBuilder(new DefaultFeatureTypeFactory());
         builder.setBindings(schema);
     }
 
@@ -59,7 +60,7 @@ public class SimpleTypeBuilderTest extends TestCase {
         builder.add(new DefaultName("point"), Point.class, DefaultGeographicCRS.WGS84);
         builder.add(new DefaultName("integer"), Integer.class);
 
-        SimpleFeatureType type = builder.buildFeatureType();
+        SimpleFeatureType type = builder.buildSimpleFeatureType();
         assertNotNull(type);
 
         assertEquals(2, type.getAttributeCount());
@@ -85,7 +86,7 @@ public class SimpleTypeBuilderTest extends TestCase {
 //        builder.crs(null).add("point", Point.class);
 //        builder.add(new DefaultName("point2"), Point.class, DefaultGeographicCRS.WGS84);
 //        builder.setDefaultGeometry("point");
-//        SimpleFeatureType type = builder.buildFeatureType();
+//        SimpleFeatureType type = builder.buildSimpleFeatureType();
 //        assertEquals(DefaultGeographicCRS.WGS84, type.getCoordinateReferenceSystem());
 //
 //        assertNull(type.getGeometryDescriptor().getType().getCoordinateReferenceSystem());

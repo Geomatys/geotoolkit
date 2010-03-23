@@ -21,7 +21,7 @@ import java.util.List;
 import junit.framework.TestCase;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.feature.simple.SimpleFeatureTypeBuilder;
+import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.junit.Test;
 import org.opengis.feature.simple.SimpleFeatureType;
@@ -57,7 +57,7 @@ public abstract class AbstractModelTests extends TestCase{
         final DataStore store = getDataStore();
         final List<Class> geometryBindings = getSupportedGeometryTypes();
         final List<Class> bindinds = getSupportedAttributTypes();
-        final SimpleFeatureTypeBuilder sftb = new SimpleFeatureTypeBuilder();
+        final FeatureTypeBuilder sftb = new FeatureTypeBuilder();
         final Session session = store.createSession(true);
         
 
@@ -72,7 +72,7 @@ public abstract class AbstractModelTests extends TestCase{
             for(int i=0; i<bindinds.size(); i++){
                 sftb.add("att"+i, bindinds.get(i));
             }            
-            final SimpleFeatureType sft = sftb.buildFeatureType();
+            final SimpleFeatureType sft = sftb.buildSimpleFeatureType();
 
             //add listeners
             SimpleListener storeListen = new SimpleListener();

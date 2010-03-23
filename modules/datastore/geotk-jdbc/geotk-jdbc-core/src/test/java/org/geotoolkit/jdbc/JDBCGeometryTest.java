@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.jdbc;
 
-import org.geotoolkit.feature.simple.SimpleFeatureTypeBuilder;
+import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.referencing.CRS;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -88,13 +88,13 @@ public abstract class JDBCGeometryTest extends JDBCTestSupport {
         // create a featureType and write it to PostGIS
         CoordinateReferenceSystem crs = CRS.decode("EPSG:4326");
 
-        SimpleFeatureTypeBuilder ftb = new SimpleFeatureTypeBuilder();
+        FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName(featureTypeName);
-        ftb.add(aname("id"), Integer.class,1,1,false,SimpleFeatureTypeBuilder.PRIMARY_KEY);
+        ftb.add(aname("id"), Integer.class,1,1,false,FeatureTypeBuilder.PRIMARY_KEY);
         ftb.add(aname("name"), String.class);
         ftb.add(aname("geom"), geomClass, crs);
 
-        SimpleFeatureType newFT = ftb.buildFeatureType();
+        SimpleFeatureType newFT = ftb.buildSimpleFeatureType();
         dataStore.createSchema(newFT.getName(), newFT);
 
         SimpleFeatureType newSchema = (SimpleFeatureType) dataStore.getFeatureType(featureTypeName);

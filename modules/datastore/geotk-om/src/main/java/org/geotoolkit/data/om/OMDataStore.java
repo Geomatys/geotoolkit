@@ -48,7 +48,7 @@ import org.geotoolkit.feature.AttributeTypeBuilder;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.simple.DefaultSimpleFeatureType;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
-import org.geotoolkit.feature.simple.SimpleFeatureTypeBuilder;
+import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.type.DefaultGeometryDescriptor;
 import org.geotoolkit.filter.identity.DefaultFeatureId;
 import org.geotoolkit.referencing.CRS;
@@ -122,7 +122,7 @@ public class OMDataStore extends AbstractDataStore {
     }
 
     private void initTypes() {
-        final SimpleFeatureTypeBuilder featureTypeBuilder = new SimpleFeatureTypeBuilder();
+        final FeatureTypeBuilder featureTypeBuilder = new FeatureTypeBuilder();
         final AttributeDescriptorBuilder attributeDescBuilder   = new AttributeDescriptorBuilder();
         final AttributeTypeBuilder attributeTypeBuilder   = new AttributeTypeBuilder();
 
@@ -176,7 +176,7 @@ public class OMDataStore extends AbstractDataStore {
 
         featureTypeBuilder.setDefaultGeometry(POSITION.getLocalPart());
 
-        types.put(SAMPLINGPOINT, featureTypeBuilder.buildFeatureType());
+        types.put(SAMPLINGPOINT, featureTypeBuilder.buildSimpleFeatureType());
     }
 
     /**

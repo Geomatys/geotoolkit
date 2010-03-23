@@ -27,7 +27,7 @@ import org.geotoolkit.factory.HintsPending;
 import org.geotoolkit.feature.SchemaException;
 import org.geotoolkit.feature.simple.DefaultSimpleFeature;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
-import org.geotoolkit.feature.simple.SimpleFeatureTypeBuilder;
+import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.util.logging.Logging;
 
 import org.opengis.feature.simple.SimpleFeature;
@@ -220,10 +220,10 @@ public abstract class DefaultSimpleFeatureReader implements FeatureReader<Simple
      * Create a FeatureType based on the attributs described in the attribut reader.
      */
     private static SimpleFeatureType createSchema(PropertyReader attributeReader) throws SchemaException {
-        final SimpleFeatureTypeBuilder b = new SimpleFeatureTypeBuilder();
+        final FeatureTypeBuilder b = new FeatureTypeBuilder();
         b.setName("noTypeName");
         b.addAll(getDescriptors(attributeReader));
-        return b.buildFeatureType();
+        return b.buildSimpleFeatureType();
     }
 
     /**

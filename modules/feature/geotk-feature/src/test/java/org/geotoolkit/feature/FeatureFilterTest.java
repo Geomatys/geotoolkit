@@ -26,7 +26,7 @@ import com.vividsolutions.jts.geom.MultiPoint;
 import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Point;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
-import org.geotoolkit.feature.simple.SimpleFeatureTypeBuilder;
+import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.filter.DefaultFilterFactory2;
 import org.geotoolkit.filter.accessor.Accessors;
 import org.geotoolkit.filter.accessor.PropertyAccessor;
@@ -59,13 +59,13 @@ public class FeatureFilterTest {
     @Test
     public void testRetrieve() {
 
-        final SimpleFeatureTypeBuilder sftb = new SimpleFeatureTypeBuilder();
+        final FeatureTypeBuilder sftb = new FeatureTypeBuilder();
         sftb.setName("testing");
         sftb.add(new DefaultName("http://test1.com", "att_string"), String.class);
         sftb.add(new DefaultName("http://test2.com", "att_string"), String.class);
         sftb.add(new DefaultName(null, "att_double"), String.class);
 
-        final SimpleFeatureType sft = sftb.buildFeatureType();
+        final SimpleFeatureType sft = sftb.buildSimpleFeatureType();
 
         //test a no namespace property
         PropertyAccessor accessor = Accessors.getAccessor(SimpleFeatureType.class, "att_double", AttributeDescriptor.class);
@@ -105,12 +105,12 @@ public class FeatureFilterTest {
         final Name att_3 = new DefaultName(null, "att_double");
 
 
-        final SimpleFeatureTypeBuilder sftb = new SimpleFeatureTypeBuilder();
+        final FeatureTypeBuilder sftb = new FeatureTypeBuilder();
         sftb.setName("testing");
         sftb.add(att_1, String.class);
         sftb.add(att_2, String.class);
         sftb.add(att_3, Double.class);
-        final SimpleFeatureType sft = sftb.buildFeatureType();
+        final SimpleFeatureType sft = sftb.buildSimpleFeatureType();
 
         PropertyName property = null;
         PropertyDescriptor desc = null;
@@ -170,12 +170,12 @@ public class FeatureFilterTest {
         final Name att_3 = new DefaultName(null, "att_double");
 
 
-        final SimpleFeatureTypeBuilder sftb = new SimpleFeatureTypeBuilder();
+        final FeatureTypeBuilder sftb = new FeatureTypeBuilder();
         sftb.setName("testing");
         sftb.add(att_1, String.class);
         sftb.add(att_2, String.class);
         sftb.add(att_3, Double.class);
-        final SimpleFeatureType sft = sftb.buildFeatureType();
+        final SimpleFeatureType sft = sftb.buildSimpleFeatureType();
 
         final SimpleFeatureBuilder sfb = new SimpleFeatureBuilder(sft);
         sfb.set(att_1, "str1");
@@ -284,7 +284,7 @@ public class FeatureFilterTest {
         final Name id = new DefaultName("http://cite.opengeospatial.org/gmlsf", "id");
 
 
-        final SimpleFeatureTypeBuilder sftb = new SimpleFeatureTypeBuilder();
+        final FeatureTypeBuilder sftb = new FeatureTypeBuilder();
         sftb.setName(new DefaultName("http://cite.opengeospatial.org/gmlsf", "AggregateGeoFeature"));
         sftb.add(description, String.class);
         sftb.add(name, String.class);
@@ -297,7 +297,7 @@ public class FeatureFilterTest {
         sftb.add(featureCode, String.class);
         sftb.add(id, String.class);
 
-        final SimpleFeatureType sft = sftb.buildFeatureType();
+        final SimpleFeatureType sft = sftb.buildSimpleFeatureType();
 
         /*********************************************************************************************
          *                            AggregateGeoFeature 1                                          *
@@ -339,7 +339,7 @@ public class FeatureFilterTest {
         sftb.add(featureRef, String.class);
         sftb.add(id, String.class);
 
-        final SimpleFeatureType entiteGeneriqueType = sftb.buildFeatureType();
+        final SimpleFeatureType entiteGeneriqueType = sftb.buildSimpleFeatureType();
 
         sfb = new SimpleFeatureBuilder(entiteGeneriqueType);
 

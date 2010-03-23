@@ -49,7 +49,7 @@ import org.geotoolkit.feature.AttributeTypeBuilder;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.simple.DefaultSimpleFeatureType;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
-import org.geotoolkit.feature.simple.SimpleFeatureTypeBuilder;
+import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.type.DefaultGeometryDescriptor;
 import org.geotoolkit.referencing.CRS;
 
@@ -177,7 +177,7 @@ public class SMLDataStore extends AbstractDataStore {
     }
 
     private void initTypes() {
-        final SimpleFeatureTypeBuilder featureTypeBuilder = new SimpleFeatureTypeBuilder();
+        final FeatureTypeBuilder featureTypeBuilder = new FeatureTypeBuilder();
         final AttributeDescriptorBuilder attributeDescBuilder = new AttributeDescriptorBuilder();
         final AttributeTypeBuilder attributeTypeBuilder = new AttributeTypeBuilder();
 
@@ -298,7 +298,7 @@ public class SMLDataStore extends AbstractDataStore {
         featureTypeBuilder.add(7, attInp);
         featureTypeBuilder.add(8, attOut);
 
-        final SimpleFeatureType componentType = featureTypeBuilder.buildFeatureType();
+        final SimpleFeatureType componentType = featureTypeBuilder.buildSimpleFeatureType();
         types.put(COMPONENT, componentType);
 
         // sml:producer
@@ -342,7 +342,7 @@ public class SMLDataStore extends AbstractDataStore {
         featureTypeBuilder.add(9, attProd);
         featureTypeBuilder.add(10, attCom);
 
-        final SimpleFeatureType systemType = featureTypeBuilder.buildFeatureType();
+        final SimpleFeatureType systemType = featureTypeBuilder.buildSimpleFeatureType();
         types.put(SYSTEM, systemType);
 
         /*
@@ -363,7 +363,7 @@ public class SMLDataStore extends AbstractDataStore {
         featureTypeBuilder.add(9, attProd);
         featureTypeBuilder.add(10, attCom);
 
-        final SimpleFeatureType processChainType = featureTypeBuilder.buildFeatureType();
+        final SimpleFeatureType processChainType = featureTypeBuilder.buildSimpleFeatureType();
         types.put(PROCESSCHAIN, processChainType);
 
         // sml:method
@@ -394,7 +394,7 @@ public class SMLDataStore extends AbstractDataStore {
         featureTypeBuilder.add(8, attOut);
         featureTypeBuilder.add(9, attMet);
 
-        final SimpleFeatureType processModelType = featureTypeBuilder.buildFeatureType();
+        final SimpleFeatureType processModelType = featureTypeBuilder.buildSimpleFeatureType();
         types.put(PROCESSMODEL, processModelType);
 
         // sml:characteristics
@@ -425,7 +425,7 @@ public class SMLDataStore extends AbstractDataStore {
         featureTypeBuilder.add(8, attOut);
         featureTypeBuilder.add(9, attChar);
 
-        final SimpleFeatureType dataSourceType = featureTypeBuilder.buildFeatureType();
+        final SimpleFeatureType dataSourceType = featureTypeBuilder.buildSimpleFeatureType();
         types.put(DATASOURCETYPE, dataSourceType);
     }
 

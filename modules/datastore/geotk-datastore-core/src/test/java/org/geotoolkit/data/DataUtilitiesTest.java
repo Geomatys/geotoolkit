@@ -23,7 +23,7 @@ import org.geotoolkit.data.iterator.CheckCloseFeatureIterator;
 import org.geotoolkit.data.memory.MemoryDataStore;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.feature.DefaultName;
-import org.geotoolkit.feature.simple.SimpleFeatureTypeBuilder;
+import org.geotoolkit.feature.FeatureTypeBuilder;
 
 import org.junit.Test;
 
@@ -46,24 +46,24 @@ public class DataUtilitiesTest extends TestCase{
     public DataUtilitiesTest() throws DataStoreException{
         store = new MemoryDataStore();
 
-        final SimpleFeatureTypeBuilder builder = new SimpleFeatureTypeBuilder();
+        final FeatureTypeBuilder builder = new FeatureTypeBuilder();
         name1 = new DefaultName("http://test.com", "type1");
         name2 = new DefaultName("http://test.com", "type2");
         name3 = new DefaultName("http://test.com", "type3");
         builder.reset();
         builder.setName(name1);
         builder.add("att_string", String.class);
-        SimpleFeatureType sft1 = builder.buildFeatureType();
+        SimpleFeatureType sft1 = builder.buildSimpleFeatureType();
 
         builder.reset();
         builder.setName(name2);
         builder.add("att_string", String.class);
-        SimpleFeatureType sft2 = builder.buildFeatureType();
+        SimpleFeatureType sft2 = builder.buildSimpleFeatureType();
 
         builder.reset();
         builder.setName(name3);
         builder.add("att_string", String.class);
-        SimpleFeatureType sft3 = builder.buildFeatureType();
+        SimpleFeatureType sft3 = builder.buildSimpleFeatureType();
 
         store.createSchema(sft1.getName(), sft1);
         store.createSchema(sft2.getName(), sft2);
@@ -97,10 +97,10 @@ public class DataUtilitiesTest extends TestCase{
      */
     @Test
     public void testCollectionId() throws Exception{
-        SimpleFeatureTypeBuilder sftb = new SimpleFeatureTypeBuilder();
+        FeatureTypeBuilder sftb = new FeatureTypeBuilder();
         sftb.setName("temp");
         sftb.add("att1", String.class);
-        FeatureType ft = sftb.buildFeatureType();
+        FeatureType ft = sftb.buildSimpleFeatureType();
 
         FeatureCollection col = DataUtilities.collection("myId", ft);
 

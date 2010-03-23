@@ -27,7 +27,7 @@ import java.util.Collections;
 import java.util.HashSet;
 
 import org.geotoolkit.data.AbstractDataStore;
-import org.geotoolkit.feature.simple.SimpleFeatureTypeBuilder;
+import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
@@ -40,7 +40,7 @@ import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
 
 import org.junit.Ignore;
-import static org.geotoolkit.feature.simple.SimpleFeatureTypeBuilder.*;
+import static org.geotoolkit.feature.FeatureTypeBuilder.*;
 
 
 @Ignore
@@ -88,7 +88,7 @@ public class TestData {
     }
     
     void createRoadData() throws Exception {
-        final SimpleFeatureTypeBuilder sftb = new SimpleFeatureTypeBuilder();
+        final FeatureTypeBuilder sftb = new FeatureTypeBuilder();
 
         sftb.reset();
         sftb.setName(namespace, ROAD);
@@ -96,7 +96,7 @@ public class TestData {
         sftb.add(new DefaultName(namespace, ROAD_GEOM),LineString.class,"EPSG:4326");
         sftb.add(new DefaultName(namespace, ROAD_NAME),String.class,0,1,true,null);
 
-        roadType = AbstractDataStore.ensureGMLNS(sftb.buildFeatureType());
+        roadType = AbstractDataStore.ensureGMLNS(sftb.buildSimpleFeatureType());
 
         gf = new GeometryFactory();
 
@@ -150,7 +150,7 @@ public class TestData {
     }
 
     void createRiverData() throws Exception {
-        final SimpleFeatureTypeBuilder sftb = new SimpleFeatureTypeBuilder();
+        final FeatureTypeBuilder sftb = new FeatureTypeBuilder();
 
         sftb.reset();
         sftb.setName(namespace, RIVER);
@@ -158,7 +158,7 @@ public class TestData {
         sftb.add(new DefaultName(namespace, RIVER_GEOM),MultiLineString.class,"EPSG:4326");
         sftb.add(new DefaultName(namespace, RIVER_RIVER),String.class,0,1,true,null);
         sftb.add(new DefaultName(namespace, RIVER_FLOW),Integer.class,0,1,true,null);
-        riverType = AbstractDataStore.ensureGMLNS(sftb.buildFeatureType());
+        riverType = AbstractDataStore.ensureGMLNS(sftb.buildSimpleFeatureType());
 
         gf = new GeometryFactory();
         riverFeatures = new SimpleFeature[2];

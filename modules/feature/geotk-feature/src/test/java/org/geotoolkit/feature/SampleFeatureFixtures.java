@@ -21,9 +21,8 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
 
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
-import org.geotoolkit.feature.simple.SimpleFeatureTypeBuilder;
-
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
@@ -193,7 +192,7 @@ public class SampleFeatureFixtures {
 //        tb.add(getChoiceGeomType());
 //        tb.setDefaultGeometry(getChoiceGeomType());
 //        
-//        return tb.buildFeatureType();
+//        return tb.buildSimpleFeatureType();
     }
 
     /**
@@ -203,7 +202,7 @@ public class SampleFeatureFixtures {
      * @throws SchemaException
      */
     public static SimpleFeatureType createTestType() throws SchemaException {
-        SimpleFeatureTypeBuilder tb = new SimpleFeatureTypeBuilder();
+        FeatureTypeBuilder tb = new FeatureTypeBuilder();
         tb.setName(new DefaultName("test"));
         
         tb.add(new DefaultName("testGeometry"), Point.class, DefaultGeographicCRS.WGS84);
@@ -218,7 +217,7 @@ public class SampleFeatureFixtures {
         tb.add(new DefaultName("testString"), String.class);
         
         tb.setDefaultGeometry("testGeometry");
-        return tb.buildFeatureType();
+        return tb.buildSimpleFeatureType();
         
     }
 }

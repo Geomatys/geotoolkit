@@ -76,7 +76,7 @@ import org.geotoolkit.feature.AttributeTypeBuilder;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
-import org.geotoolkit.feature.simple.SimpleFeatureTypeBuilder;
+import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.filter.capability.DefaultFilterCapabilities;
 import org.geotoolkit.filter.visitor.CapabilitiesFilterSplitter;
 import org.geotoolkit.filter.visitor.FilterAttributeExtractor;
@@ -238,7 +238,7 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
      * Builds the feature type from database metadata.
      */
     private SimpleFeatureType buildFeatureType(Name typeName) throws IOException {
-        final SimpleFeatureTypeBuilder tb = new SimpleFeatureTypeBuilder();
+        final FeatureTypeBuilder tb = new FeatureTypeBuilder();
         final AttributeDescriptorBuilder adb = new AttributeDescriptorBuilder();
         final AttributeTypeBuilder atb = new AttributeTypeBuilder();
 
@@ -376,6 +376,7 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
                         if(srid != null) adb.addUserData(JDBCDataStore.JDBC_NATIVE_SRID, srid);
                         adb.setName(ensureGMLNS(namespace,name));
                         adb.setType(atb.buildGeometryType());
+                        adb.findBestDefaultValue();
                         tb.add(adb.buildDescriptor());
                     } else {
                         //add the attribute
@@ -384,11 +385,12 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
                         atb.setBinding(binding);
                         adb.setName(attName);
                         adb.setType(atb.buildType());
+                        adb.findBestDefaultValue();
                         tb.add(adb.buildDescriptor());
                     }
                 }
 
-                return tb.buildFeatureType();
+                return tb.buildSimpleFeatureType();
             } finally {
                 closeSafe(columns);
             }
@@ -595,7 +597,7 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
         final String sql = querySQL.toString();
 
         //build the new feature type
-        final SimpleFeatureTypeBuilder sftb = new SimpleFeatureTypeBuilder();
+        final FeatureTypeBuilder sftb = new FeatureTypeBuilder();
         final AttributeDescriptorBuilder adb = new AttributeDescriptorBuilder();
         sftb.setName(getNamespaceURI(),"crossQuery");
 
@@ -609,7 +611,7 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
                 sftb.add(adb.buildDescriptor());
             }
         }
-        final SimpleFeatureType querySchema = sftb.buildFeatureType();
+        final SimpleFeatureType querySchema = sftb.buildSimpleFeatureType();
 
         final List<PrimaryKeyColumn> columns = new ArrayList<PrimaryKeyColumn>();
         for(PrimaryKey pkey : pkeys){
@@ -739,7 +741,7 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
         if(query.retrieveAllProperties()) {
             returnedSchema = querySchema = type;
         } else {
-            returnedSchema = SimpleFeatureTypeBuilder.retype(type, query.getPropertyNames());
+            returnedSchema = (SimpleFeatureType)FeatureTypeBuilder.retype(type, query.getPropertyNames());
             final FilterAttributeExtractor extractor = new FilterAttributeExtractor(type);
             postFilter.accept(extractor, null);
             final Name[] extraAttributes = extractor.getAttributeNames();
@@ -764,7 +766,7 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
              }
 
             final Name[] allAttributeArray = allAttributes.toArray(new Name[allAttributes.size()]);
-            querySchema = SimpleFeatureTypeBuilder.retype(type, allAttributeArray);
+            querySchema = (SimpleFeatureType)FeatureTypeBuilder.retype(type, allAttributeArray);
         }
 
         //grab connection

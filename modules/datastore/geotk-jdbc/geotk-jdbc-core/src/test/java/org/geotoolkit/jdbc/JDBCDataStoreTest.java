@@ -27,7 +27,6 @@ import java.util.HashSet;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.feature.simple.SimpleFeatureTypeBuilder;
 
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
@@ -43,9 +42,9 @@ import com.vividsolutions.jts.geom.Point;
 import org.geotoolkit.data.DataStoreException;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
-import org.geotoolkit.factory.HintsPending;
 import org.geotoolkit.feature.AttributeDescriptorBuilder;
 import org.geotoolkit.feature.AttributeTypeBuilder;
+import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 
@@ -73,14 +72,14 @@ public abstract class JDBCDataStoreTest extends JDBCTestSupport {
     }
 
     public void testCreateSchema() throws Exception {
-        SimpleFeatureTypeBuilder builder = new SimpleFeatureTypeBuilder();
+        FeatureTypeBuilder builder = new FeatureTypeBuilder();
         builder.setName(dataStore.getNamespaceURI(), tname("ft2"));
-        builder.add(aname("id"), Integer.class,1,1,false,SimpleFeatureTypeBuilder.PRIMARY_KEY);
+        builder.add(aname("id"), Integer.class,1,1,false,FeatureTypeBuilder.PRIMARY_KEY);
         builder.add(aname("geometry"), Geometry.class, CRS.decode("EPSG:4326"));
         builder.add(aname("intProperty"), Integer.class);
         builder.add(aname("dateProperty"), Date.class);
 
-        SimpleFeatureType featureType = builder.buildFeatureType();
+        SimpleFeatureType featureType = builder.buildSimpleFeatureType();
         dataStore.createSchema(featureType.getName(),featureType);
 
         SimpleFeatureType ft2 = (SimpleFeatureType) dataStore.getFeatureType(tname("ft2"));
@@ -122,7 +121,7 @@ public abstract class JDBCDataStoreTest extends JDBCTestSupport {
         final AttributeTypeBuilder atb = new AttributeTypeBuilder();
         final AttributeDescriptorBuilder adb = new AttributeDescriptorBuilder();
 
-        final SimpleFeatureTypeBuilder builder = new SimpleFeatureTypeBuilder();
+        final FeatureTypeBuilder builder = new FeatureTypeBuilder();
         builder.setName(dataStore.getNamespaceURI(), tname("ft2"));
         builder.add(aname("geometry"), Geometry.class, DefaultGeographicCRS.WGS84);
 
@@ -144,7 +143,7 @@ public abstract class JDBCDataStoreTest extends JDBCTestSupport {
         builder.add(adb.buildDescriptor());
 
         
-        SimpleFeatureType featureType = builder.buildFeatureType();
+        SimpleFeatureType featureType = builder.buildSimpleFeatureType();
         dataStore.createSchema(featureType.getName(), featureType);
         
         SimpleFeatureType ft2 = (SimpleFeatureType) dataStore.getFeatureType(tname("ft2"));

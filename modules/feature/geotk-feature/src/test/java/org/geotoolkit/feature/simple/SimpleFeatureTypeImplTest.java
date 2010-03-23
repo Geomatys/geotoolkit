@@ -28,6 +28,7 @@ import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.PropertyDescriptor;
 
 import org.geotoolkit.feature.DefaultName;
+import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.type.DefaultFeatureTypeFactory;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 
@@ -81,30 +82,30 @@ public class SimpleFeatureTypeImplTest extends TestCase {
      * @return a simple feature type with location before count
      */
     private SimpleFeatureType buildLocationCountType() {
-        SimpleFeatureTypeBuilder builder = buildPartialBuilder();
+        FeatureTypeBuilder builder = buildPartialBuilder();
         builder.add(new DefaultName("location"), Point.class, DefaultGeographicCRS.WGS84);
         builder.add(new DefaultName("count"), Integer.class);
-        return builder.buildFeatureType();
+        return builder.buildSimpleFeatureType();
     }
 
     /**
      * @return a simple feature type with count before location
      */
     private SimpleFeatureType buildCountLocationType() {
-        SimpleFeatureTypeBuilder builder = buildPartialBuilder();
+        FeatureTypeBuilder builder = buildPartialBuilder();
         builder.add(new DefaultName("count"), Integer.class);
         builder.add(new DefaultName("location"), Point.class, DefaultGeographicCRS.WGS84);
-        return builder.buildFeatureType();
+        return builder.buildSimpleFeatureType();
     }
 
     /**
      * @return a simple feature type builder that is ready for the addition of location and count
      *         properties
      */
-    private SimpleFeatureTypeBuilder buildPartialBuilder() {
+    private FeatureTypeBuilder buildPartialBuilder() {
         String uri = "http://example.org/things";
         DefaultFeatureTypeFactory typeFactory = new DefaultFeatureTypeFactory();
-        SimpleFeatureTypeBuilder builder = new SimpleFeatureTypeBuilder(typeFactory);
+        FeatureTypeBuilder builder = new FeatureTypeBuilder(typeFactory);
         builder.addBinding(typeFactory.createGeometryType(new DefaultName(uri, "description"),
                 String.class, null, false, false, Collections.EMPTY_LIST, null, null));
         builder.addBinding(typeFactory.createGeometryType(new DefaultName(uri, "location"),

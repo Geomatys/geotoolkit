@@ -23,7 +23,7 @@ import org.geotoolkit.feature.AttributeDescriptorBuilder;
 import org.geotoolkit.feature.AttributeTypeBuilder;
 import org.geotoolkit.feature.FeatureValidationUtilities;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
-import org.geotoolkit.feature.simple.SimpleFeatureTypeBuilder;
+import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.filter.FilterFactory;
@@ -35,10 +35,10 @@ public class TypesTest extends TestCase {
         FilterFactory fac = FactoryFinder.getFilterFactory(null);
 
         String attributeName = "string";
-        SimpleFeatureTypeBuilder builder = new SimpleFeatureTypeBuilder();
+        FeatureTypeBuilder builder = new FeatureTypeBuilder();
         builder.setName("test");
         builder.add(attributeName, String.class);
-        SimpleFeatureType featureType = builder.buildFeatureType();
+        SimpleFeatureType featureType = builder.buildSimpleFeatureType();
         
         SimpleFeature feature = SimpleFeatureBuilder.build(featureType, new Object[]{"Value"},
                 null);
@@ -55,7 +55,7 @@ public class TypesTest extends TestCase {
         PropertyIsEqualTo filter = fac.equals(fac.property("string"), fac
                 .literal("Value"));
 
-        final SimpleFeatureTypeBuilder builder = new SimpleFeatureTypeBuilder();
+        final FeatureTypeBuilder builder = new FeatureTypeBuilder();
 
         final AttributeTypeBuilder atb = new AttributeTypeBuilder();
         atb.setBinding(String.class);
@@ -67,7 +67,7 @@ public class TypesTest extends TestCase {
         builder.setName("test");
         builder.add(adb.buildDescriptor());
         
-        SimpleFeatureType featureType = builder.buildFeatureType();
+        SimpleFeatureType featureType = builder.buildSimpleFeatureType();
         
         SimpleFeature feature = SimpleFeatureBuilder.build(featureType, new Object[]{"Value"},
                 null);
@@ -77,30 +77,30 @@ public class TypesTest extends TestCase {
     }
     
     public void testAssertNamedAssignable(){
-        SimpleFeatureTypeBuilder builder = new SimpleFeatureTypeBuilder();
+        FeatureTypeBuilder builder = new FeatureTypeBuilder();
 
         builder.reset();
         builder.setName("Test");
         builder.add("name", String.class );
         builder.add("age", Double.class );
-        SimpleFeatureType test = builder.buildFeatureType();
+        SimpleFeatureType test = builder.buildSimpleFeatureType();
 
         builder.reset();
         builder.setName("Test");
         builder.add("age", Double.class );
         builder.add("name",String.class);
-        SimpleFeatureType test2 = builder.buildFeatureType();
+        SimpleFeatureType test2 = builder.buildSimpleFeatureType();
 
         builder.reset();
         builder.setName("Test");
         builder.add("name",String.class);
-        SimpleFeatureType test3 = builder.buildFeatureType();
+        SimpleFeatureType test3 = builder.buildSimpleFeatureType();
 
         builder.reset();
         builder.setName("Test");
         builder.add("name",String.class);
         builder.add("distance", Double.class );
-        SimpleFeatureType test4 = builder.buildFeatureType();
+        SimpleFeatureType test4 = builder.buildSimpleFeatureType();
      
         FeatureValidationUtilities.assertNameAssignable( test, test );
         FeatureValidationUtilities.assertNameAssignable( test, test2 );

@@ -16,6 +16,12 @@
  */
 package org.geotoolkit.feature;
 
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.GeometryCollection;
+import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.Point;
+
 import java.util.logging.Logger;
 
 import junit.framework.Test;
@@ -23,17 +29,11 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
-import org.geotoolkit.feature.simple.SimpleFeatureTypeBuilder;
+import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
-
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryCollection;
-import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.Point;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.opengis.feature.IllegalAttributeException;
 
 public class FeatureFlatTest extends TestCase {
@@ -96,7 +96,7 @@ public class FeatureFlatTest extends TestCase {
     public void testBogusCreation() throws Exception {
         final AttributeTypeBuilder atb = new AttributeTypeBuilder();
         final AttributeDescriptorBuilder adb = new AttributeDescriptorBuilder();
-        final SimpleFeatureTypeBuilder tb = new SimpleFeatureTypeBuilder();
+        final FeatureTypeBuilder tb = new FeatureTypeBuilder();
         tb.setName( "test1" );
 
         atb.reset();
@@ -115,7 +115,7 @@ public class FeatureFlatTest extends TestCase {
         adb.setType(atb.buildType());
         tb.add(adb.buildDescriptor());
         
-        SimpleFeatureType test = tb.buildFeatureType();
+        SimpleFeatureType test = tb.buildSimpleFeatureType();
 //        try {
 //            SimpleFeatureBuilder.build(test, (Object[])null, null);
 //            fail("no error");
@@ -139,14 +139,14 @@ public class FeatureFlatTest extends TestCase {
         g[3] = gf.createPoint(new Coordinate(10, 10));
 
         GeometryCollection gc = gf.createGeometryCollection(g);
-        SimpleFeatureTypeBuilder tb = new SimpleFeatureTypeBuilder();
+        FeatureTypeBuilder tb = new FeatureTypeBuilder();
         tb.setName( "bounds" );
         
         tb.add("p1", Point.class, DefaultGeographicCRS.WGS84);
         tb.add("p2", Point.class, DefaultGeographicCRS.WGS84);
         tb.add("p3", Point.class, DefaultGeographicCRS.WGS84);
         tb.add("p4", Point.class, DefaultGeographicCRS.WGS84);
-        SimpleFeatureType t = tb.buildFeatureType();
+        SimpleFeatureType t = tb.buildSimpleFeatureType();
         
         SimpleFeature f = SimpleFeatureBuilder.build(t, g, null);
         assertEquals(gc.getEnvelopeInternal(), f.getBounds());
@@ -281,10 +281,10 @@ public class FeatureFlatTest extends TestCase {
         assertTrue(!f1.equals(f2));
         assertTrue(!f1.equals(null));
         
-        SimpleFeatureTypeBuilder tb = new SimpleFeatureTypeBuilder();
+        FeatureTypeBuilder tb = new FeatureTypeBuilder();
         tb.setName( "different" );
         tb.add( "name", String.class );
-        SimpleFeatureType type = tb.buildFeatureType();
+        SimpleFeatureType type = tb.buildSimpleFeatureType();
         
         assertTrue(!f1.equals(SimpleFeatureBuilder.build(type, new Object[1], null)));
     }
@@ -302,11 +302,11 @@ public class FeatureFlatTest extends TestCase {
 //        assertTrue(geometry == testType.getDefaultGeometry());
 //        assertTrue(((Geometry)testFeature.getDefaultGeometry()).getEnvelopeInternal().equals(testFeature.getBounds()));
 //
-//        SimpleFeatureTypeBuilder tb = new SimpleFeatureTypeBuilder();
+//        FeatureTypeBuilder tb = new FeatureTypeBuilder();
 //        tb.setName( "different" );
 //        tb.add( "name", String.class );
 //        
-//        SimpleFeatureType another = tb.buildFeatureType(); 
+//        SimpleFeatureType another = tb.buildSimpleFeatureType();
 //        SimpleFeature f1 = SimpleFeatureBuilder.build(another, new Object[1], null);
 //            
 //        assertEquals(null, f1.getDefaultGeometry());

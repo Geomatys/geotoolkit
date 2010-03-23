@@ -41,7 +41,7 @@ import org.geotoolkit.data.session.Session;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
-import org.geotoolkit.feature.simple.SimpleFeatureTypeBuilder;
+import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.referencing.CRS;
 
 import org.junit.After;
@@ -93,7 +93,7 @@ public class MemoryDatastoreTest extends TestCase{
 
     @Test
     public void testSchemas() throws Exception {
-        final SimpleFeatureTypeBuilder builder = new SimpleFeatureTypeBuilder();
+        final FeatureTypeBuilder builder = new FeatureTypeBuilder();
         final MemoryDataStore store = new MemoryDataStore();
         Set<Name> names;
 
@@ -105,7 +105,7 @@ public class MemoryDatastoreTest extends TestCase{
         builder.reset();
         builder.setName(name);
         builder.add("att1", String.class);
-        final SimpleFeatureType type1 = builder.buildFeatureType();
+        final SimpleFeatureType type1 = builder.buildSimpleFeatureType();
 
         store.createSchema(name,type1);
 
@@ -131,7 +131,7 @@ public class MemoryDatastoreTest extends TestCase{
         builder.setName("http://test.com", "TestSchema1");
         builder.add("att1", String.class);
         builder.add("att2", Double.class);
-        SimpleFeatureType type2 = builder.buildFeatureType();
+        SimpleFeatureType type2 = builder.buildSimpleFeatureType();
 
         store.updateSchema(name, type2);
 
@@ -174,7 +174,7 @@ public class MemoryDatastoreTest extends TestCase{
 
     @Test
     public void testFeatures() throws Exception {
-        final SimpleFeatureTypeBuilder builder = new SimpleFeatureTypeBuilder();
+        final FeatureTypeBuilder builder = new FeatureTypeBuilder();
         final MemoryDataStore store = new MemoryDataStore();
 
         //create the schema
@@ -182,7 +182,7 @@ public class MemoryDatastoreTest extends TestCase{
         builder.reset();
         builder.setName(name);
         builder.add("att1", String.class);
-        final SimpleFeatureType type = builder.buildFeatureType();
+        final SimpleFeatureType type = builder.buildSimpleFeatureType();
         store.createSchema(name,type);
 
 
@@ -293,7 +293,7 @@ public class MemoryDatastoreTest extends TestCase{
 
     @Test
     public void testQuerySupport() throws Exception {
-        final SimpleFeatureTypeBuilder builder = new SimpleFeatureTypeBuilder();
+        final FeatureTypeBuilder builder = new FeatureTypeBuilder();
         final MemoryDataStore store = new MemoryDataStore();
 
         //create the schema
@@ -303,7 +303,7 @@ public class MemoryDatastoreTest extends TestCase{
         builder.add("string", String.class);
         builder.add("double", Double.class);
         builder.add("date", Date.class);
-        final SimpleFeatureType type = builder.buildFeatureType();
+        final SimpleFeatureType type = builder.buildSimpleFeatureType();
         store.createSchema(name,type);
         final QueryBuilder qb = new QueryBuilder(name);
 
@@ -581,7 +581,7 @@ public class MemoryDatastoreTest extends TestCase{
 
     @Test
     public void testQueryCRSReprojectSupport() throws Exception {
-        final SimpleFeatureTypeBuilder builder = new SimpleFeatureTypeBuilder();
+        final FeatureTypeBuilder builder = new FeatureTypeBuilder();
         final MemoryDataStore store = new MemoryDataStore();
         final GeometryFactory gf = new GeometryFactory();
 
@@ -591,7 +591,7 @@ public class MemoryDatastoreTest extends TestCase{
         builder.setName(name);
         builder.add("geometry", Point.class, CRS.decode("EPSG:27582"));
         builder.add("string", String.class);
-        final SimpleFeatureType type = builder.buildFeatureType();
+        final SimpleFeatureType type = builder.buildSimpleFeatureType();
         store.createSchema(name,type);
         final QueryBuilder qb = new QueryBuilder(name);
 
@@ -669,7 +669,7 @@ public class MemoryDatastoreTest extends TestCase{
 
     @Test
     public void testPreserveId() throws Exception{
-        final SimpleFeatureTypeBuilder builder = new SimpleFeatureTypeBuilder();
+        final FeatureTypeBuilder builder = new FeatureTypeBuilder();
         final MemoryDataStore store = new MemoryDataStore();
         Set<Name> names;
 
@@ -681,7 +681,7 @@ public class MemoryDatastoreTest extends TestCase{
         builder.reset();
         builder.setName(name);
         builder.add("att1", String.class);
-        final SimpleFeatureType type1 = builder.buildFeatureType();
+        final SimpleFeatureType type1 = builder.buildSimpleFeatureType();
 
         store.createSchema(name,type1);
 
@@ -715,7 +715,7 @@ public class MemoryDatastoreTest extends TestCase{
 
     @Test
     public void testCollectionAttributs() throws Exception{
-        final SimpleFeatureTypeBuilder builder = new SimpleFeatureTypeBuilder();
+        final FeatureTypeBuilder builder = new FeatureTypeBuilder();
         final MemoryDataStore store = new MemoryDataStore();
         Set<Name> names;
 
@@ -729,7 +729,7 @@ public class MemoryDatastoreTest extends TestCase{
         builder.add("ListAtt", List.class);
         builder.add("MapAtt", Map.class);
         builder.add("SetAtt", Set.class);
-        final SimpleFeatureType type1 = builder.buildFeatureType();
+        final SimpleFeatureType type1 = builder.buildSimpleFeatureType();
 
         store.createSchema(name,type1);
 
@@ -798,7 +798,7 @@ public class MemoryDatastoreTest extends TestCase{
 
     @Test
     public void testNoIteratorUnclosed() throws Exception{
-        final SimpleFeatureTypeBuilder builder = new SimpleFeatureTypeBuilder();
+        final FeatureTypeBuilder builder = new FeatureTypeBuilder();
         final MemoryDataStore store = new MemoryDataStore();
         Set<Name> names;
 
@@ -812,7 +812,7 @@ public class MemoryDatastoreTest extends TestCase{
         builder.add("ListAtt", List.class);
         builder.add("MapAtt", Map.class);
         builder.add("SetAtt", Set.class);
-        final SimpleFeatureType type1 = builder.buildFeatureType();
+        final SimpleFeatureType type1 = builder.buildSimpleFeatureType();
 
         store.createSchema(name,type1);
 

@@ -29,7 +29,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.namespace.QName;
 import org.geotoolkit.feature.DefaultName;
-import org.geotoolkit.feature.simple.SimpleFeatureTypeBuilder;
+import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.xml.Utils;
 import org.geotoolkit.feature.xml.XmlFeatureTypeReader;
 import org.geotoolkit.xml.MarshallerPool;
@@ -61,10 +61,10 @@ public class JAXBFeatureTypeReader implements XmlFeatureTypeReader {
         }
     }
 
-    private SimpleFeatureTypeBuilder builder;
+    private FeatureTypeBuilder builder;
 
     public JAXBFeatureTypeReader() throws JAXBException {
-         builder = new SimpleFeatureTypeBuilder();
+         builder = new FeatureTypeBuilder();
     }
 
      /**
@@ -215,6 +215,6 @@ public class JAXBFeatureTypeReader implements XmlFeatureTypeReader {
             }
         }
 
-        return builder.buildFeatureType();
+        return builder.buildSimpleFeatureType();
     }
 }

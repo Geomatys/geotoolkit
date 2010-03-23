@@ -27,7 +27,7 @@ import org.geotoolkit.data.memory.MemoryDataStore;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.feature.DefaultName;
-import org.geotoolkit.feature.simple.SimpleFeatureTypeBuilder;
+import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 
 import org.junit.Test;
@@ -56,7 +56,7 @@ public class QueryTest extends TestCase{
     private final Name name2;
 
     public QueryTest() throws Exception {
-        final SimpleFeatureTypeBuilder builder = new SimpleFeatureTypeBuilder();
+        final FeatureTypeBuilder builder = new FeatureTypeBuilder();
 
         //----------------------------------------------------------------------
         name1 = new DefaultName("http://type1.com", "Type1");
@@ -64,7 +64,7 @@ public class QueryTest extends TestCase{
         builder.setName(name1);
         builder.add(new DefaultName("http://type1.com", "att1"), String.class);
         builder.add(new DefaultName("http://type1.com", "att2"), Integer.class);
-        final SimpleFeatureType sft1 = builder.buildFeatureType();
+        final SimpleFeatureType sft1 = builder.buildSimpleFeatureType();
         store.createSchema(name1,sft1);
 
         FeatureWriter fw = store.getFeatureWriterAppend(name1);
@@ -98,7 +98,7 @@ public class QueryTest extends TestCase{
         builder.setName(name2);
         builder.add(new DefaultName("http://type2.com", "att3"), Integer.class);
         builder.add(new DefaultName("http://type2.com", "att4"), Double.class);
-        final SimpleFeatureType sft2 = builder.buildFeatureType();
+        final SimpleFeatureType sft2 = builder.buildSimpleFeatureType();
         store.createSchema(name2,sft2);
 
         fw = store.getFeatureWriterAppend(name2);

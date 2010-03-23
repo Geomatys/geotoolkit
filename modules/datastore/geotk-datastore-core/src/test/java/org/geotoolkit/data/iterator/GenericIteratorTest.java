@@ -46,7 +46,7 @@ import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.SchemaException;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
-import org.geotoolkit.feature.simple.SimpleFeatureTypeBuilder;
+import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 
@@ -85,20 +85,20 @@ public class GenericIteratorTest extends TestCase{
     private final String id3;
 
     public GenericIteratorTest() throws NoSuchAuthorityCodeException, FactoryException{
-        final SimpleFeatureTypeBuilder builder = new SimpleFeatureTypeBuilder();
+        final FeatureTypeBuilder builder = new FeatureTypeBuilder();
         name = new DefaultName("http://test.com", "TestSchema");
         builder.reset();
         builder.setName(name);
         builder.add("att_geom", Point.class, DefaultGeographicCRS.WGS84);
         builder.add("att_string", String.class);
         builder.add("att_double", Double.class);
-        originalType = builder.buildFeatureType();
+        originalType = builder.buildSimpleFeatureType();
 
         //build a reduced type for retype iterator
         builder.reset();
         builder.setName(name);
         builder.add("att_double", Double.class);
-        reducedType = builder.buildFeatureType();
+        reducedType = builder.buildSimpleFeatureType();
 
         //build a reprojected type for reproject iterator
         builder.reset();
@@ -106,7 +106,7 @@ public class GenericIteratorTest extends TestCase{
         builder.add("att_geom", Point.class, CRS.decode("EPSG:4326"));
         builder.add("att_string", String.class);
         builder.add("att_double", Double.class);
-        reprojectedType = builder.buildFeatureType();
+        reprojectedType = builder.buildSimpleFeatureType();
 
 
         collection = DataUtilities.collection("id", originalType);

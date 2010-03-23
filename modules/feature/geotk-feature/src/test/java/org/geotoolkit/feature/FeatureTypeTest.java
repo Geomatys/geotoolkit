@@ -18,8 +18,11 @@
  */
 package org.geotoolkit.feature;
 
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.GeometryFactory;
+
 import java.lang.reflect.Array;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -32,18 +35,12 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
-import org.geotoolkit.feature.simple.SimpleFeatureTypeBuilder;
 import org.geotoolkit.feature.type.BasicFeatureTypes;
+
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.FeatureType;
-
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryFactory;
-
-
 
 /**
  *
@@ -68,15 +65,15 @@ public class FeatureTypeTest extends DataTestCase {
   
   public void testAbstractType() throws Exception {
     
-    SimpleFeatureTypeBuilder tb = new SimpleFeatureTypeBuilder();
+    FeatureTypeBuilder tb = new FeatureTypeBuilder();
     tb.setName("http://www.nowhereinparticular.net", "AbstractThing");
     tb.setAbstract(true);
     
-    SimpleFeatureType abstractType = tb.buildFeatureType();
+    SimpleFeatureType abstractType = tb.buildSimpleFeatureType();
     tb.setName("http://www.nowhereinparticular.net","AbstractType2");
     tb.setSuperType(abstractType);
     tb.add( new DefaultName("X"), String.class );
-    SimpleFeatureType abstractType2 = tb.buildFeatureType();
+    SimpleFeatureType abstractType2 = tb.buildSimpleFeatureType();
     
     assertTrue(abstractType.isAbstract());
     assertTrue(abstractType2.isAbstract());
@@ -103,25 +100,25 @@ public class FeatureTypeTest extends DataTestCase {
   }
   
   public void testEquals() throws Exception {
-      SimpleFeatureTypeBuilder tb = new SimpleFeatureTypeBuilder();
+      FeatureTypeBuilder tb = new FeatureTypeBuilder();
       tb.setName(new DefaultName("http://www.nowhereinparticular.net", "Thing"));
       tb.add( new DefaultName("X"), String.class );
-      final SimpleFeatureType ft = tb.buildFeatureType();
+      final SimpleFeatureType ft = tb.buildSimpleFeatureType();
       
-      tb = new SimpleFeatureTypeBuilder();
+      tb = new FeatureTypeBuilder();
       tb.setName(new DefaultName("http://www.nowhereinparticular.net", "Thing") );
       tb.add( new DefaultName("X"), String.class );
       
-      SimpleFeatureType ft2 = tb.buildFeatureType();
+      SimpleFeatureType ft2 = tb.buildSimpleFeatureType();
       assertEquals(ft,ft2);
       
       tb.setName(new DefaultName("Thingee"));
-      assertTrue(! ft.equals(tb.buildFeatureType()));
+      assertTrue(! ft.equals(tb.buildSimpleFeatureType()));
       
       tb.copy(ft);
       tb.setName(new DefaultName("http://www.somewhereelse.net",tb.getName().getLocalPart()));
       
-      assertTrue(! ft.equals(tb.buildFeatureType()));
+      assertTrue(! ft.equals(tb.buildSimpleFeatureType()));
       assertTrue(! ft.equals(null));
   }
 
@@ -143,23 +140,23 @@ public class FeatureTypeTest extends DataTestCase {
     @SuppressWarnings("serial")
     public void testAncestors() throws Exception {
         String uri = "http://www.geotoolkit.org/example";
-        SimpleFeatureTypeBuilder tb;
+        FeatureTypeBuilder tb;
 
-        tb = new SimpleFeatureTypeBuilder();
+        tb = new FeatureTypeBuilder();
         tb.setName(new DefaultName(uri, "A"));
-        final SimpleFeatureType typeA = tb.buildFeatureType();
+        final SimpleFeatureType typeA = tb.buildSimpleFeatureType();
 
-        tb = new SimpleFeatureTypeBuilder();
+        tb = new FeatureTypeBuilder();
         tb.setName(new DefaultName(uri, "B"));
         tb.setSuperType(typeA);
         tb.add(new DefaultName("b"), String.class);
-        final SimpleFeatureType typeB = tb.buildFeatureType();
+        final SimpleFeatureType typeB = tb.buildSimpleFeatureType();
 
-        tb = new SimpleFeatureTypeBuilder();
+        tb = new FeatureTypeBuilder();
         tb.setName(new DefaultName(uri, "C"));
         tb.setSuperType(typeB);
         tb.add(new DefaultName("c"), Integer.class);
-        final SimpleFeatureType typeC = tb.buildFeatureType();
+        final SimpleFeatureType typeC = tb.buildSimpleFeatureType();
 
         // base type should have no ancestors
         assertEquals("Ancestors of Feature, nearest first", Collections.<FeatureType> emptyList(),

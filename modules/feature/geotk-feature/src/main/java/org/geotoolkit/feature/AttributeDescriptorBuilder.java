@@ -214,10 +214,12 @@ public class AttributeDescriptorBuilder {
         if(type == null){
             throw new IllegalStateException("you can not call this method before the type has been set.");
         }
-        try {
-            defaultValue = FeatureUtilities.defaultValue(type.getBinding());
-        } catch (Exception e) {
-            //do nothing
+        if(!isNillable){
+            try {
+                defaultValue = FeatureUtilities.defaultValue(type.getBinding());
+            } catch (Exception e) {
+                //do nothing
+            }
         }
     }
 
@@ -234,7 +236,7 @@ public class AttributeDescriptorBuilder {
         }
 
         if(defaultValue != null){
-            if(type.getBinding().isInstance(defaultValue)){
+            if(!type.getBinding().isInstance(defaultValue)){
                 throw new IllegalStateException("Default value class : "+defaultValue.getClass()
                         +" doesn't match type binding : "+ type.getBinding());
             }

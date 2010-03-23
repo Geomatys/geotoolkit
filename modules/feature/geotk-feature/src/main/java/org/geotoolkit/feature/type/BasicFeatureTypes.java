@@ -20,7 +20,7 @@ import java.util.Collections;
 import java.util.logging.Level;
 
 import org.geotoolkit.feature.DefaultName;
-import org.geotoolkit.feature.simple.SimpleFeatureTypeBuilder;
+import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.simple.DefaultSimpleFeatureType;
 
 import org.opengis.feature.simple.SimpleFeatureType;
@@ -90,18 +90,18 @@ public class BasicFeatureTypes {
                 Collections.EMPTY_LIST, null, null);
 
         try {
-            SimpleFeatureTypeBuilder build = new SimpleFeatureTypeBuilder();
+            FeatureTypeBuilder build = new FeatureTypeBuilder();
 
             //AttributeDescriptor[] types =  new AttributeDescriptor[] {};
 
             build.setName(DEFAULT_NAMESPACE,"pointFeature");
-            tmpPoint = build.buildFeatureType();
+            tmpPoint = build.buildSimpleFeatureType();
 
             build.setName(DEFAULT_NAMESPACE,"lineFeature");
-            tmpLine = build.buildFeatureType();
+            tmpLine = build.buildSimpleFeatureType();
 
             build.setName(DEFAULT_NAMESPACE,"polygonFeature");
-            tmpPolygon = build.buildFeatureType();
+            tmpPolygon = build.buildSimpleFeatureType();
         } catch (Exception ex) {
             org.geotoolkit.util.logging.Logging.getLogger("org.geotoolkit.feature.type.BasicFeatureTypes").log(
                     Level.SEVERE, "Error creating basic feature types", ex);

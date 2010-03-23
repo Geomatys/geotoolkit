@@ -30,6 +30,7 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
 import org.geotoolkit.feature.AttributeDescriptorBuilder;
 import org.geotoolkit.feature.AttributeTypeBuilder;
+import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 
 public class SimpleFeatureBuilderTest extends TestCase {
@@ -37,13 +38,13 @@ public class SimpleFeatureBuilderTest extends TestCase {
     SimpleFeatureBuilder builder;
 
     protected void setUp() throws Exception {
-        SimpleFeatureTypeBuilder typeBuilder = new SimpleFeatureTypeBuilder();
+        FeatureTypeBuilder typeBuilder = new FeatureTypeBuilder();
         typeBuilder.setName("test");
         typeBuilder.add("point", Point.class, DefaultGeographicCRS.WGS84);
         typeBuilder.add("integer", Integer.class);
         typeBuilder.add("float", Float.class);
 
-        SimpleFeatureType featureType = typeBuilder.buildFeatureType();
+        SimpleFeatureType featureType = typeBuilder.buildSimpleFeatureType();
 
         builder = new SimpleFeatureBuilder(featureType);
         builder.setValidating(true);
@@ -138,7 +139,7 @@ public class SimpleFeatureBuilderTest extends TestCase {
 
     public void testCreateFeatureWithLength() throws Exception {
 
-        final SimpleFeatureTypeBuilder builder = new SimpleFeatureTypeBuilder();
+        final FeatureTypeBuilder builder = new FeatureTypeBuilder();
 
         final AttributeTypeBuilder atb = new AttributeTypeBuilder();
         atb.setName("name");
@@ -151,7 +152,7 @@ public class SimpleFeatureBuilderTest extends TestCase {
         builder.setName("test");
         builder.add(adb.buildDescriptor());
         
-        SimpleFeatureType featureType = builder.buildFeatureType();
+        SimpleFeatureType featureType = builder.buildSimpleFeatureType();
         SimpleFeature feature = SimpleFeatureBuilder.build(featureType, new Object[]{"Val"}, "ID");
 
         assertNotNull(feature);
@@ -171,7 +172,7 @@ public class SimpleFeatureBuilderTest extends TestCase {
         String attributeName = "string";
         PropertyIsEqualTo filter = fac.equals(fac.property("string"), fac.literal("Value"));
 
-        SimpleFeatureTypeBuilder builder = new SimpleFeatureTypeBuilder();
+        FeatureTypeBuilder builder = new FeatureTypeBuilder();
 
         AttributeTypeBuilder atb = new AttributeTypeBuilder();
         atb.setBinding(String.class);
@@ -184,7 +185,7 @@ public class SimpleFeatureBuilderTest extends TestCase {
         builder.add(adb.buildDescriptor());
         
 
-        SimpleFeatureType featureType = builder.buildFeatureType();
+        SimpleFeatureType featureType = builder.buildSimpleFeatureType();
         SimpleFeature feature = SimpleFeatureBuilder.build(featureType, new Object[]{"Value"}, "ID");
 
         assertNotNull(feature);
