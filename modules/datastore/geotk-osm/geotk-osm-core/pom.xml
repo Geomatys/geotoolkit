@@ -53,6 +53,11 @@
   <!--     Dependency Management                                   -->
   <!-- =========================================================== -->
   <dependencies>
+      <dependency>
+          <groupId>org.geotoolkit.pending</groupId>
+          <artifactId>geotk-feature</artifactId>
+          <version>${project.version}</version>
+      </dependency>
   </dependencies>
 
 </project>
