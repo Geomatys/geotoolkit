@@ -12,6 +12,7 @@ import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.type.DefaultFeatureTypeFactory;
 import org.geotoolkit.util.SimpleInternationalString;
+import org.opengis.feature.type.ComplexType;
 
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.FeatureTypeFactory;
@@ -26,13 +27,14 @@ public final class OSMModelConstants {
 
     public static final String OSM_NAMESPACE = "http://openstreetmap.org";
 
-    public static final FeatureType TYPE_USER;
+    public static final ComplexType TYPE_USER;
+    public static final ComplexType TYPE_TAG;
+    public static final ComplexType TYPE_RELATION_MEMBER;
+    
     public static final FeatureType TYPE_IDENTIFIED;
     public static final FeatureType TYPE_NODE;
     public static final FeatureType TYPE_WAY;
     public static final FeatureType TYPE_RELATION;
-    public static final FeatureType TYPE_TAG;
-    public static final FeatureType TYPE_RELATION_MEMBER;
 
     static {
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
@@ -43,14 +45,14 @@ public final class OSMModelConstants {
         ftb.setName(OSM_NAMESPACE, "User");
         ftb.add(new DefaultName(OSM_NAMESPACE, "id"), Integer.class);
         ftb.add(new DefaultName(OSM_NAMESPACE, "name"), String.class);
-        TYPE_USER = ftb.buildFeatureType();
+        TYPE_USER = ftb.buildType();
 
         //------------------- TAG TYPE -----------------------------------------
         ftb.reset();
         ftb.setName(OSM_NAMESPACE, "Tag");
         ftb.add(new DefaultName(OSM_NAMESPACE, "k"), String.class);
         ftb.add(new DefaultName(OSM_NAMESPACE, "v"), String.class);
-        TYPE_TAG = ftb.buildFeatureType();
+        TYPE_TAG = ftb.buildType();
 
         //------------------- IDENTIFIED TYPE ----------------------------------
         ftb.reset();
@@ -94,7 +96,7 @@ public final class OSMModelConstants {
         ftb.setName(OSM_NAMESPACE, "Member");
         ftb.add(new DefaultName(OSM_NAMESPACE, "role"), String.class);
         ftb.add(TYPE_IDENTIFIED,new DefaultName(OSM_NAMESPACE, "ref"),null,1,1,false,null);
-        TYPE_RELATION_MEMBER = ftb.buildFeatureType();
+        TYPE_RELATION_MEMBER = ftb.buildType();
 
         //------------------- RELATION TYPE ------------------------------------
         ftb.reset();
