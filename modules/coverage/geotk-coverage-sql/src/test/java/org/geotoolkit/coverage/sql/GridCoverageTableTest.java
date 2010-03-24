@@ -216,14 +216,13 @@ public final class GridCoverageTableTest extends CatalogTestBase {
      * @throws SQLException If the test can't connect to the database.
      */
     @Test
-    @Ignore
     public void testBoundingBox() throws SQLException {
         final GridCoverageTable table = getDatabase().getTable(GridCoverageTable.class);
         table.setLayer(LayerTableTest.TEMPERATURE);
         final GeneralEnvelope search = new GeneralEnvelope(table.getSpatioTemporalCRS());
+        search.setToInfinite();
         search.setRange(0, -200, 200);
         search.setRange(1, -100, 100);
-        search.setRange(2, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
         table.setEnvelope(search);
 
         Envelope envelope = table.getEnvelope();
@@ -238,5 +237,7 @@ public final class GridCoverageTableTest extends CatalogTestBase {
         assertEquals(+180, envelope.getMaximum(0), 0.0);
         assertEquals( -90, envelope.getMinimum(1), 0.0);
         assertEquals( +90, envelope.getMaximum(1), 0.0);
+        assertEquals(6431, envelope.getMinimum(3), 0.0);
+        assertEquals(6487, envelope.getMaximum(3), 0.0);
     }
 }

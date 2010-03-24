@@ -64,9 +64,8 @@ public class FormatTableTest extends CatalogTestBase {
         /*
          * Check the sample dimensions.
          */
-        final List<GridSampleDimension> bands = entry.getSampleDimensions();
+        final List<GridSampleDimension> bands = entry.sampleDimensions;
         SampleDimensionTableTest.checkTemperatureDimension(bands.toArray(new GridSampleDimension[0]));
-        assertSame("Expected the cached instance.", bands, entry.getSampleDimensions());
         /*
          * Ask for every format, and ensure that our instance is in the list.
          */
@@ -90,10 +89,9 @@ public class FormatTableTest extends CatalogTestBase {
         /*
          * Check the sample dimensions.
          */
-        final List<GridSampleDimension> bands = entry.getSampleDimensions();
+        final List<GridSampleDimension> bands = entry.sampleDimensions;
         assertEquals(2, bands.size());
         assertFalse(bands.get(0).equals(bands.get(1)));
-        assertSame("Expected the cached instance.", bands, entry.getSampleDimensions());
         /*
          * Ask for every format, and ensure that our instance is in the list.
          */

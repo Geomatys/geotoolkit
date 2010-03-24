@@ -235,8 +235,7 @@ final class LayerEntry extends Entry implements Layer {
     }
 
     /**
-     * Returns the ranges of valid sample values for each band.
-     * The ranges are always expressed in <cite>geophysics</cite> values.
+     * Returns the ranges of valid <cite>geophysics</cite> values for each band.
      *
      * @return The range of valid sample values.
      * @throws CoverageStoreException If an error occured while computing the ranges.
@@ -250,19 +249,21 @@ final class LayerEntry extends Entry implements Layer {
                 final FormatEntry format = series.format;
                 if (format != null) {
                     final MeasurementRange<Double>[] candidates = format.getSampleValueRanges();
-                    if (ranges == null) {
-                        ranges = candidates;
-                    } else {
-                        final int length;
-                        if (candidates.length <= ranges.length) {
-                            length = candidates.length;
+                    if (candidates != null) {
+                        if (ranges == null) {
+                            ranges = candidates;
                         } else {
-                            length = ranges.length;
-                            ranges = Arrays.copyOf(ranges, candidates.length);
-                            System.arraycopy(candidates, length, ranges, length, candidates.length - length);
-                        }
-                        for (int i=0; i<length; i++) {
-                            ranges[i] = ranges[i].intersect(candidates[i]);
+                            final int length;
+                            if (candidates.length <= ranges.length) {
+                                length = candidates.length;
+                            } else {
+                                length = ranges.length;
+                                ranges = Arrays.copyOf(ranges, candidates.length);
+                                System.arraycopy(candidates, length, ranges, length, candidates.length - length);
+                            }
+                            for (int i=0; i<length; i++) {
+                                ranges[i] = ranges[i].intersect(candidates[i]);
+                            }
                         }
                     }
                 }

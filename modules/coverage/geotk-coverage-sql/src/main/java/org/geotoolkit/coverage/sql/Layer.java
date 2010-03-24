@@ -63,8 +63,7 @@ public interface Layer {
     DateRange getTimeRange() throws CoverageStoreException;
 
     /**
-     * Returns the ranges of valid sample values for each band.
-     * The ranges are always expressed in <cite>geophysics</cite> values.
+     * Returns the ranges of valid <cite>geophysics</cite> values for each band.
      *
      * @return The range of valid sample values.
      * @throws CoverageStoreException If an error occured while fetching the information.

@@ -17,20 +17,15 @@
  */
 package org.geotoolkit.internal.sql.table;
 
-import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.Properties;
 
 import org.postgresql.ds.PGSimpleDataSource;
 
+import org.geotoolkit.test.TestData;
 import org.geotoolkit.internal.io.Installation;
 
 import org.junit.*;
@@ -43,7 +38,7 @@ import static org.junit.Assume.*;
  * This test requires a connection to a PostgreSQL database.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.09
+ * @version 3.10
  *
  * @since 3.09 (derived from Seagis)
  */
@@ -54,19 +49,22 @@ public class CatalogTestBase {
     private static SpatialDatabase database;
 
     /**
+     * {@code true} if the {@code "rootDirectory"} property is defined.
+     */
+    private static boolean hasRootDirectory;
+
+    /**
      * Creates the database when first needed.
      *
      * @return The database.
      */
-    protected static synchronized Database getDatabase() {
+    protected static synchronized SpatialDatabase getDatabase() {
         if (database == null) {
             final File pf = new File(Installation.TESTS.directory(true), "coverage-sql.properties");
             assumeTrue(pf.isFile()); // All tests will be skipped if the above resources is not found.
-            final Properties properties = new Properties();
+            final Properties properties;
             try {
-                final InputStream in = new BufferedInputStream(new FileInputStream(pf));
-                properties.load(in);
-                in.close();
+                properties = TestData.readProperties(pf);
             } catch (IOException e) {
                 throw new AssertionError(e); // This will cause a JUnit test failure.
             }
@@ -74,6 +72,7 @@ public class CatalogTestBase {
             ds.setServerName(properties.getProperty("server"));
             ds.setDatabaseName(properties.getProperty("database"));
             database = new SpatialDatabase(ds, properties);
+            hasRootDirectory = properties.containsKey(ConfigurationKey.ROOT_DIRECTORY.key);
         }
         return database;
     }
@@ -93,6 +92,18 @@ public class CatalogTestBase {
     }
 
     /**
+     * Subclasses shall invoke this method if the remaining code in a method requires
+     * the image files. Typically, this method is invoked right before the first call
+     * to {@link org.geotoolkit.coverage.sql.GridCoverageEntry#read}.
+     *
+     * @since 3.10
+     */
+    protected static synchronized void requireImageData() {
+        assertNotNull("This method can be invoked only after getDatabase().", database);
+        assumeTrue(hasRootDirectory);
+    }
+
+    /**
      * Tests the database connection.
      *
      * @throws SQLException if an SQL error occured.
@@ -106,28 +117,5 @@ public class CatalogTestBase {
             assertFalse(connection.isClosed());
             assertSame(connection, cache.connection());
         }
-    }
-
-    /**
-     * Tries to executes the specified query statement and to read one row.
-     *
-     * @param  query the statement to test.
-     * @throws SQLException if an query error occured.
-     */
-    protected static void trySelectStatement(final String query) throws SQLException {
-        final Statement s = getDatabase().getLocalCache().connection().createStatement();
-        final ResultSet r = s.executeQuery(query);
-        if (r.next()) {
-            final ResultSetMetaData metadata = r.getMetaData();
-            final int num = metadata.getColumnCount();
-            for (int i=1; i<=num; i++) {
-                final String value = r.getString(i);
-                if (metadata.isNullable(i) == ResultSetMetaData.columnNoNulls) {
-                    assertNotNull(value);
-                }
-            }
-        }
-        r.close();
-        s.close();
     }
 }

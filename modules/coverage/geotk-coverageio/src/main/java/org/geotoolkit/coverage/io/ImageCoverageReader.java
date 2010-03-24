@@ -2,7 +2,7 @@
  *    Geotoolkit.org - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2009-2010, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2005-2010, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2009-2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
@@ -1047,6 +1047,31 @@ public class ImageCoverageReader extends GridCoverageReader {
 
     /**
      * {@inheritDoc}
+     *
+     * @see ImageReader#reset()
+     */
+    @Override
+    public void reset() throws CoverageStoreException {
+        final ImageReader reader = imageReader;
+        final boolean ownReader = (reader != input);
+        try {
+            close();
+        } catch (IOException e) {
+            throw new CoverageStoreException(e);
+        }
+        if (reader != null) {
+            if (ownReader) {
+                reader.reset();
+            } else {
+                imageReader = null;
+            }
+        }
+        super.reset();
+    }
+
+    /**
+     * Allows any resources held by this reader to be released. The result of calling any other
+     * method subsequent to a call to this method is undefined.
      * <p>
      * This method {@linkplain ImageReader#dispose() disposes} the {@linkplain #imageReader
      * image reader} if and only if it was not an instance provided explicitly by the user.
@@ -1054,19 +1079,19 @@ public class ImageCoverageReader extends GridCoverageReader {
      * @see ImageReader#dispose()
      */
     @Override
-    public void reset() throws CoverageStoreException {
+    public void dispose() throws CoverageStoreException {
         final ImageReader reader = imageReader;
-        final boolean disposeReader = (reader != null && reader != input);
+        final boolean ownReader = (reader != null && reader != input);
         try {
             close();
         } catch (IOException e) {
             throw new CoverageStoreException(e);
         }
-        if (disposeReader) {
+        if (ownReader) {
             reader.dispose();
         }
         imageReader = null;
         helper = null;
-        super.reset();
+        super.dispose();
     }
 }

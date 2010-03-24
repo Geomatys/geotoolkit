@@ -66,7 +66,11 @@ class GridCoverageTable extends BoundedSingletonTable<GridCoverageEntry> {
     private LayerEntry layer;
 
     /**
-     * Shared instance of a table of grid geometries. Will be created only when first needed.
+     * The table of grid geometries. Will be created only when first needed.
+     * <p>
+     * This field doesn't need to be declared {@code volatile} because it is not used
+     * outside this {@code GridCoverageTable}, so it is not expected to be accessed
+     * by other threads.
      */
     private transient GridGeometryTable gridGeometryTable;
 

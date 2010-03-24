@@ -53,6 +53,10 @@ final class SampleDimensionTable extends Table {
     /**
      * Connection to the {@linkplain Category categories} table.
      * Will be created only when first needed.
+     * <p>
+     * This field doesn't need to be declared {@code volatile} because it is not used
+     * outside this {@code SampleDimensionTable}, so it is not expected to be accessed
+     * by other threads.
      */
     private transient CategoryTable categories;
 

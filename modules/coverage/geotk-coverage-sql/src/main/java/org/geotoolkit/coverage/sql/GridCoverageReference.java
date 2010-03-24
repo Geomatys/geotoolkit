@@ -32,6 +32,8 @@ import org.geotoolkit.coverage.CoverageStack;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
+import org.geotoolkit.coverage.io.CoverageStoreException;
+import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.DateRange;
 
@@ -77,7 +79,7 @@ public interface GridCoverageReference extends CoverageStack.Element {
      * @return The input as an object of the given type.
      * @throws IOException If the input can not be represented as an object of the given type.
      */
-    <T> T getFile(final Class<T> type) throws IOException;
+    <T> T getFile(Class<T> type) throws IOException;
 
     /**
      * Returns the image format. The returned string should be one of the names recognized
@@ -185,18 +187,20 @@ public interface GridCoverageReference extends CoverageStack.Element {
     GridSampleDimension[] getSampleDimensions();
 
     /**
-     * Loads the data if needed and returns the coverage. This method returns always the geophysics
-     * version of data:
+     * Reads the data if needed and returns the coverage. This method is equivalent to invoking
+     * the {@link #read read} method, except that default parameters are used, typically reading
+     * the full coverage. If the coverage has already been read previously and has not yet been
+     * reclaimed by the garbage collector, then the existing coverage may be returned immediately.
+     * <p>
+     * This method returns always the geophysics version of data:
      *
      * <blockquote><code>
      * {@linkplain GridCoverage2D#view GridCoverage2D.view}({@linkplain org.geotoolkit.coverage.grid.ViewType#GEOPHYSICS});
      * </code></blockquote>
      *
-     * If the coverage has already been read previously and has not yet been reclaimed by the
-     * garbage collector, then the existing coverage is returned immediately.
-     *
      * @param  listeners Objects to inform about progress, or {@code null} if none.
      * @return The coverage.
+     *
      * @throws IOException if an error occured while reading the image.
      * @throws CancellationException if {@link #abort()} has been invoked during the reading process.
      */
@@ -204,9 +208,32 @@ public interface GridCoverageReference extends CoverageStack.Element {
     GridCoverage2D getCoverage(IIOListeners listeners) throws IOException, CancellationException;
 
     /**
-     * Abort the image reading. This method can be invoked from any thread. If {@link #getCoverage
-     * getCoverage(...)} was in progress at the time this method is invoked, then it will stop and
+     * Reads the data and returns the coverage. At the difference of
+     * {@link #getCoverage(IIOListeners)}, this method doesn't cache the returned coverage.
+     * <p>
+     * This method returns always the geophysics version of data:
+     *
+     * <blockquote><code>
+     * {@linkplain GridCoverage2D#view GridCoverage2D.view}({@linkplain org.geotoolkit.coverage.grid.ViewType#GEOPHYSICS});
+     * </code></blockquote>
+     *
+     * @param  param Optional parameters used to control the reading process, or {@code null}.
+     * @param  listeners Objects to inform about progress, or {@code null} if none.
+     * @return The coverage.
+     *
+     * @throws CoverageStoreException if an error occured while reading the image.
+     * @throws CancellationException if {@link #abort()} has been invoked during the reading process.
+     */
+    GridCoverage2D read(GridCoverageReadParam param, IIOListeners listeners)
+            throws CoverageStoreException, CancellationException;
+
+    /**
+     * Aborts the image reading. This method can be invoked from any thread. If {@link #read
+     * read(...)} was in progress at the time this method is invoked, then it will stop and
      * throw {@link CancellationException}.
+     * <p>
+     * Note that if more than one read was in progress concurrently, all of them will be
+     * aborted by the call to this method.
      */
     void abort();
 }

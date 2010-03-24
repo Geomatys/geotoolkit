@@ -21,9 +21,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import org.geotoolkit.resources.Errors;
+import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.internal.sql.table.Database;
 import org.geotoolkit.internal.sql.table.SingletonTable;
-import org.geotoolkit.internal.sql.table.NoSuchTableException;
 import org.geotoolkit.internal.sql.table.IllegalRecordException;
 
 
@@ -40,8 +40,12 @@ final class FormatTable extends SingletonTable<FormatEntry> {
     /**
      * Connection to the sample dimensions table.
      * Will be created only when first needed.
+     * <p>
+     * This field doesn't need to be declared {@code volatile} because it is not used
+     * outside this {@code FormatTable}, so it is not expected to be accessed by other
+     * threads.
      */
-    private transient volatile SampleDimensionTable sampleDimensions;
+    private transient SampleDimensionTable sampleDimensions;
 
     /**
      * Creates a format table.
@@ -105,22 +109,12 @@ final class FormatTable extends SingletonTable<FormatEntry> {
                     Errors.Keys.UNKNOWN_PARAMETER_$1, encoding),
                     this, results, encodingIndex, identifier);
         }
-        return new FormatEntry(this, identifier, format, geophysics);
-    }
-
-    /**
-     * Returns the {@link SampleDimensionTable} instance, creating it if needed. This method is
-     * invoked only from {@link FormatEntry}, which is responsible for performing synchronization
-     * on the returned table. Note that because the returned instance is used in only one place,
-     * synchronization in that place is effective even if the {@code SampleDimensionTable} methods
-     * are not synchronized.
-     */
-    final SampleDimensionTable getSampleDimensionTable() throws NoSuchTableException {
         SampleDimensionTable table = sampleDimensions;
         if (table == null) {
             // Not a big deal if two instances are created concurrently.
             sampleDimensions = table = getDatabase().getTable(SampleDimensionTable.class);
         }
-        return table;
+        final GridSampleDimension[] bands = table.getSampleDimensions(identifier.toString());
+        return new FormatEntry(identifier, format, bands, geophysics);
     }
 }

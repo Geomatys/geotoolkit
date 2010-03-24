@@ -221,7 +221,7 @@ public abstract class BoundedSingletonTable<E extends Entry> extends SingletonTa
      * @see #getTimeRange()
      * @see #trimEnvelope()
      */
-    public synchronized GeneralEnvelope getEnvelope() throws SQLException {
+    public GeneralEnvelope getEnvelope() throws SQLException {
         GeneralEnvelope envelope = this.envelope;
         if (envelope == null) {
             final SpatialDatabase database = (SpatialDatabase) getDatabase();
@@ -268,7 +268,7 @@ public abstract class BoundedSingletonTable<E extends Entry> extends SingletonTa
      * @throws CatalogException if an error occured during the transformation or
      *         the envelope can not be set.
      */
-    public synchronized boolean setEnvelope(Envelope envelope) throws CatalogException {
+    public boolean setEnvelope(Envelope envelope) throws CatalogException {
         if (envelope == null) {
             boolean changed;
             changed  = setEnvelope2D   (null);
@@ -325,7 +325,7 @@ public abstract class BoundedSingletonTable<E extends Entry> extends SingletonTa
      * @see #getEnvelope()
      * @see #trimEnvelope()
      */
-    public synchronized Rectangle2D getEnvelope2D() {
+    public Rectangle2D getEnvelope2D() {
         return XRectangle2D.createFromExtremums(xMin, yMin, xMax, yMax);
     }
 
@@ -336,7 +336,7 @@ public abstract class BoundedSingletonTable<E extends Entry> extends SingletonTa
      * @return {@code true} if the bounding box changed as a result of this call, or
      *         {@code false} if the specified box is equals to the one already set.
      */
-    public synchronized boolean setEnvelope2D(final Rectangle2D area) {
+    public boolean setEnvelope2D(final Rectangle2D area) {
         boolean change;
         change  = (xMin != (xMin = (area != null) ? area.getMinX() : NEGATIVE_INFINITY));
         change |= (xMax != (xMax = (area != null) ? area.getMaxX() : POSITIVE_INFINITY));
@@ -361,7 +361,7 @@ public abstract class BoundedSingletonTable<E extends Entry> extends SingletonTa
      * @see #getEnvelope()
      * @see #trimEnvelope()
      */
-    public synchronized NumberRange<Double> getVerticalRange() {
+    public NumberRange<Double> getVerticalRange() {
         return NumberRange.create(zMin, zMax);
     }
 
@@ -392,7 +392,7 @@ public abstract class BoundedSingletonTable<E extends Entry> extends SingletonTa
      * @return {@code true} if the vertical range changed as a result of this call, or
      *         {@code false} if the specified range is equals to the one already set.
      */
-    public synchronized boolean setVerticalRange(final double minimum, final double maximum) {
+    public boolean setVerticalRange(final double minimum, final double maximum) {
         boolean change;
         change  = (doubleToLongBits(zMin) != doubleToLongBits(zMin = minimum));
         change |= (doubleToLongBits(zMax) != doubleToLongBits(zMax = maximum));
@@ -415,7 +415,7 @@ public abstract class BoundedSingletonTable<E extends Entry> extends SingletonTa
      * @see #getEnvelope()
      * @see #trimEnvelope()
      */
-    public synchronized DateRange getTimeRange() {
+    public DateRange getTimeRange() {
         return new DateRange((tMin != Long.MIN_VALUE) ? new Date(tMin) : null,
                              (tMax != Long.MAX_VALUE) ? new Date(tMax) : null);
     }
@@ -453,7 +453,7 @@ public abstract class BoundedSingletonTable<E extends Entry> extends SingletonTa
      * @return {@code true} if the time range changed as a result of this call, or
      *         {@code false} if the specified range is equals to the one already set.
      */
-    public synchronized boolean setTimeRange(final Date startTime, final Date endTime) {
+    public boolean setTimeRange(final Date startTime, final Date endTime) {
         boolean change;
         change  = (tMin != (tMin = (startTime != null) ? startTime.getTime() : Long.MIN_VALUE));
         change |= (tMax != (tMax = (  endTime != null) ?   endTime.getTime() : Long.MAX_VALUE));
@@ -469,7 +469,7 @@ public abstract class BoundedSingletonTable<E extends Entry> extends SingletonTa
      *
      * @return The resolution, or {@code null} for the best resolution available.
      */
-    public synchronized Dimension2D getPreferredResolution() {
+    public Dimension2D getPreferredResolution() {
         if (xResolution > 0 || yResolution > 0) {
             return new FloatDimension2D(xResolution, yResolution);
         } else {
@@ -486,7 +486,7 @@ public abstract class BoundedSingletonTable<E extends Entry> extends SingletonTa
      * @return {@code true} if the resolution changed as a result of this call, or
      *         {@code false} if the specified resolution is equals to the one already set.
      */
-    public synchronized boolean setPreferredResolution(final Dimension2D resolution) {
+    public boolean setPreferredResolution(final Dimension2D resolution) {
         float x,y;
         if (resolution != null) {
             x = (float) resolution.getWidth ();
@@ -515,7 +515,7 @@ public abstract class BoundedSingletonTable<E extends Entry> extends SingletonTa
      *
      * @throws SQLException if an error occured while reading the database.
      */
-    public synchronized void trimEnvelope() throws SQLException {
+    public void trimEnvelope() throws SQLException {
         if (trimmed) {
             return;
         }
@@ -589,11 +589,8 @@ public abstract class BoundedSingletonTable<E extends Entry> extends SingletonTa
         if (byTimeRange != null) {
             final int index = byTimeRange.indexOf(type);
             if (index != 0) {
-                long min, max;
-                synchronized (this) {
-                    min = tMin;
-                    max = tMax;
-                }
+                long min = tMin;
+                long max = tMax;
                 /*
                  * The default for minimum and maximum values are arbitrary, but we need to
                  * provide something. It seems that 'infinity' value doesn't work through JDBC.
@@ -614,16 +611,13 @@ public abstract class BoundedSingletonTable<E extends Entry> extends SingletonTa
         if (bySpatialExtent != null) {
             final int index = bySpatialExtent.indexOf(type);
             if (index != 0) {
-                final GeneralEnvelope envelope;
-                synchronized (this) {
-                    envelope = new GeneralEnvelope(
-                            new double[] {
-                                xMin == NEGATIVE_INFINITY ? -DEFAULT_LIMIT : xMin,
-                                yMin == NEGATIVE_INFINITY ? -DEFAULT_LIMIT : yMin, zMin},
-                            new double[] {
-                                xMax == POSITIVE_INFINITY ? +DEFAULT_LIMIT : xMax,
-                                yMax == POSITIVE_INFINITY ? +DEFAULT_LIMIT : yMax, zMax});
-                }
+                final GeneralEnvelope envelope = new GeneralEnvelope(
+                        new double[] {
+                            xMin == NEGATIVE_INFINITY ? -DEFAULT_LIMIT : xMin,
+                            yMin == NEGATIVE_INFINITY ? -DEFAULT_LIMIT : yMin, zMin},
+                        new double[] {
+                            xMax == POSITIVE_INFINITY ? +DEFAULT_LIMIT : xMax,
+                            yMax == POSITIVE_INFINITY ? +DEFAULT_LIMIT : yMax, zMax});
                 statement.setString(index, GeneralEnvelope.toPolygonString(envelope));
             }
         }

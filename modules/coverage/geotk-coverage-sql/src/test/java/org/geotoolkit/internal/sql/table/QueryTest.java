@@ -17,6 +17,9 @@
  */
 package org.geotoolkit.internal.sql.table;
 
+import java.sql.Statement;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.ListIterator;
@@ -182,5 +185,28 @@ public final class QueryTest extends CatalogTestBase {
             expected = "SELECT \"format\" FROM \"coverages\".\"Categories\" WHERE (\"format\" = ?)";
             assertEquals(expected, actual);
         }
+    }
+
+    /**
+     * Tries to executes the specified query statement and to read one row.
+     *
+     * @param  query the statement to test.
+     * @throws SQLException if an query error occured.
+     */
+    private static void trySelectStatement(final String query) throws SQLException {
+        final Statement s = getDatabase().getLocalCache().connection().createStatement();
+        final ResultSet r = s.executeQuery(query);
+        if (r.next()) {
+            final ResultSetMetaData metadata = r.getMetaData();
+            final int num = metadata.getColumnCount();
+            for (int i=1; i<=num; i++) {
+                final String value = r.getString(i);
+                if (metadata.isNullable(i) == ResultSetMetaData.columnNoNulls) {
+                    assertNotNull(value);
+                }
+            }
+        }
+        r.close();
+        s.close();
     }
 }

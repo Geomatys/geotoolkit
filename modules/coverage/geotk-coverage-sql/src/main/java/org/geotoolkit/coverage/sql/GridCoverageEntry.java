@@ -20,6 +20,7 @@ package org.geotoolkit.coverage.sql;
 import java.awt.Dimension;
 import java.awt.geom.Dimension2D;
 import java.awt.geom.Rectangle2D;
+import javax.imageio.IIOException;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -30,6 +31,8 @@ import java.util.List;
 import java.util.Date;
 import java.util.Arrays;
 import java.util.concurrent.CancellationException;
+import java.lang.ref.Reference;
+import java.lang.ref.SoftReference;
 
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.extent.GeographicBoundingBox;
@@ -43,6 +46,9 @@ import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
+import org.geotoolkit.coverage.io.GridCoverageReadParam;
+import org.geotoolkit.coverage.io.GridCoverageStorePool;
+import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
 import org.geotoolkit.referencing.operation.transform.ProjectiveTransform;
 import org.geotoolkit.util.Utilities;
@@ -87,6 +93,20 @@ final class GridCoverageEntry extends Entry implements GridCoverageReference {
      * Image end time, exclusive.
      */
     private final long endTime;
+
+    /**
+     * The value returned by {@link #getCoverage}, cached for reuse.
+     */
+    private transient Reference<GridCoverage2D> cached;
+
+    /**
+     * The loader currently in use, or {@code null} if none. Note that more than one loader can be
+     * in use concurrently. The other loaders are {@linkplain GridCoverageLoader#nextInUse chained
+     * to the current loader}.
+     * <p>
+     * Access to this chained list shall be synchronized on {@code this}.
+     */
+    private transient GridCoverageLoader currentReader;
 
     /**
      * Creates an entry containing coverage information (but not yet the coverage itself).
@@ -301,12 +321,8 @@ final class GridCoverageEntry extends Entry implements GridCoverageReference {
      */
     @Override
     public GridSampleDimension[] getSampleDimensions() {
-        final List<GridSampleDimension> sd;
-        try {
-            sd = getIdentifier().series.format.getSampleDimensions();
-        } catch (SQLException e) {
-            // Returning 'null' is allowed by the method contract.
-            Logging.recoverableException(GridCoverageReference.class, "getSampleDimensions", e);
+        final List<GridSampleDimension> sd = getIdentifier().series.format.sampleDimensions;
+        if (sd == null) {
             return null;
         }
         final GridSampleDimension[] bands = sd.toArray(new GridSampleDimension[sd.size()]);
@@ -317,22 +333,99 @@ final class GridCoverageEntry extends Entry implements GridCoverageReference {
     }
 
     /**
-     * Loads the data and returns the coverage.
-     *
-     * @todo Not yet implemented.
+     * Loads the data if needed and returns the coverage.
+     * <p>
+     * This method is synchronized on {@link #identifier}, which is a totally arbitrary lock.
+     * We use that lock because we need something different than the lock used by {@link #abort}.
      */
     @Override
-    public GridCoverage2D getCoverage(IIOListeners listeners) throws IOException, CancellationException {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public GridCoverage2D getCoverage(final IIOListeners listeners)
+            throws IOException, CancellationException
+    {
+        GridCoverage2D coverage;
+        synchronized (identifier) { // See javadoc comment.
+            if (cached != null) {
+                coverage = cached.get();
+                if (coverage != null) {
+                    return coverage;
+                }
+                cached = null;
+            }
+            try {
+                coverage = read(null, listeners);
+            } catch (CoverageStoreException e) {
+                final Throwable cause = e.getCause();
+                if (cause instanceof IOException) {
+                    throw (IOException) cause;
+                }
+                throw new IIOException(Errors.format(Errors.Keys.CANT_READ_$1, getName()), e);
+            }
+            if (coverage != null) {
+                cached = new SoftReference<GridCoverage2D>(coverage);
+            }
+        }
+        return coverage;
     }
 
     /**
-     * Abort the image reading.
-     *
-     * @todo Not yet implemented.
+     * Reads the data and returns the coverage.
      */
     @Override
-    public void abort() {
+    public GridCoverage2D read(final GridCoverageReadParam param, final IIOListeners listeners)
+            throws CoverageStoreException, CancellationException
+    {
+        final GridCoverageIdentifier identifier = getIdentifier();
+        final int imageIndex = identifier.imageIndex - 1; // Convert from 1-based index.
+        if (imageIndex < 0) {
+            throw new CoverageStoreException(Errors.format(
+                    Errors.Keys.BAD_PARAMETER_$2, "imageIndex", imageIndex));
+        }
+        final GridCoverageStorePool pool = identifier.series.format.getCoverageLoaders();
+        final GridCoverageLoader reader = (GridCoverageLoader) pool.acquireReader();
+        reader.expectedSize = identifier.geometry.getImageSize();
+        /*
+         * Adds the reader to the list of readers currently in use.
+         * This list will be used by 'abort()' if needed.
+         */
+        synchronized (this) {
+            reader.nextInUse = currentReader;
+            currentReader = reader;
+        }
+        GridCoverage2D coverage;
+        try {
+            reader.setInput(this);
+            coverage = reader.read(imageIndex, param);
+        } finally {
+            /*
+             * Removes the reader from the list of readers currently in use. Note that our
+             * reader may not be anymore the head of the chained list, since new readers
+             * could have been added concurrently to that list.
+             */
+            reader.expectedSize = null;
+            synchronized (this) {
+                GridCoverageLoader p = currentReader;
+                if (p == reader) {
+                    currentReader = reader.nextInUse;
+                } else {
+                    while (p.nextInUse != reader) {
+                        p = p.nextInUse; // A NullPointerException here would be a bug in our algorithm.
+                    }
+                    p.nextInUse = reader.nextInUse;
+                }
+            }
+        }
+        pool.release(reader);
+        return coverage;
+    }
+
+    /**
+     * Aborts all image reading which are in progress.
+     */
+    @Override
+    public synchronized void abort() {
+        for (GridCoverageLoader reader=currentReader; reader!=null; reader=reader.nextInUse) {
+            reader.abort();
+        }
     }
 
     /**

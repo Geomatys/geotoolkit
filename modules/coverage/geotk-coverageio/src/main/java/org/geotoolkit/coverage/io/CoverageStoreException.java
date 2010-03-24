@@ -54,7 +54,7 @@ public class CoverageStoreException extends Exception {
      *
      * @param cause The cause for this exception.
      */
-    public CoverageStoreException(final Exception cause) {
+    public CoverageStoreException(final Throwable cause) {
         super(cause);
     }
 

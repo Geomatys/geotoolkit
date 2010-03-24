@@ -19,14 +19,10 @@ package org.geotoolkit.coverage.sql;
 
 import java.util.List;
 import java.util.Locale;
-import java.sql.SQLException;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
-import java.io.InvalidObjectException;
 
-import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.coverage.Category;
 import org.geotoolkit.coverage.GridSampleDimension;
+import org.geotoolkit.coverage.io.GridCoverageStorePool;
 import org.geotoolkit.gui.swing.tree.MutableTreeNode;
 import org.geotoolkit.gui.swing.tree.DefaultMutableTreeNode;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
@@ -34,7 +30,6 @@ import org.geotoolkit.util.Utilities;
 
 import org.geotoolkit.util.MeasurementRange;
 import org.geotoolkit.internal.sql.table.Entry;
-import org.geotoolkit.internal.sql.table.Database;
 
 
 /**
@@ -53,12 +48,6 @@ final class FormatEntry extends Entry {
     private static final long serialVersionUID = -8790032968708208057L;
 
     /**
-     * Provides indirectly a connection to the database.
-     * This is set to {@code null} when no longer needed.
-     */
-    private transient FormatTable table;
-
-    /**
      * The image format name as declared in the database. This value shall be a name
      * useable in calls to {@link javax.imageio.ImageIO#getImageReadersByFormatName}.
      * <p>
@@ -70,67 +59,58 @@ final class FormatEntry extends Entry {
     public final String imageFormat;
 
     /**
-     * The sample dimensions for coverages encoded with this format.
-     * This is computed by {@link #getSampleDimensions()} when first needed.
+     * The sample dimensions for coverages encoded with this format, or {@code null} if undefined.
+     * If non-null, then the list size is equals to the expected number of bands.
+     * <p>
+     * Each {@code SampleDimension} specifies how to convert pixel values to geophysics values,
+     * or conversely. Their type (geophysics or not) is format dependent. For example coverages
+     * read from PNG files will typically store their data as integer values (non-geophysics),
+     * while coverages read from ASCII files will often store their pixel values as real numbers
+     * (geophysics values).
+     *
+     * @see GridSampleDimension#geophysics(boolean)
      */
-    private List<GridSampleDimension> sampleDimensions;
+    public final List<GridSampleDimension> sampleDimensions;
 
     /**
-     * {@code true} if coverage to be read are already geophysics values.
+     * The pool of coverage loaders, to be created when first needed. We use a different pool
+     * instance for each format in order to reuse the same {@link javax.imageio.ImageReader}
+     * instance when a {@code coverageLoaders.acquireReader().read(...)} method is invoked.
      */
-    private final boolean geophysics;
+    private transient GridCoverageStorePool coverageLoaders;
 
     /**
      * Creates a new entry for this format.
      *
      * @param name       An identifier for this entry.
      * @param formatName Format name (i.e. the plugin to use).
+     * @param bands      Sample dimensions for coverages encoded with this format, or {@code null}.
      * @param geophysics {@code true} if coverage to be read are already geophysics values.
      */
-    protected FormatEntry(final FormatTable table, final Comparable<?> name, final String formatName, final boolean geophysics) {
+    protected FormatEntry(final Comparable<?> name, final String formatName,
+            final GridSampleDimension[] bands, final boolean geophysics)
+    {
         super(name, null);
-        this.table       = table;
         this.imageFormat = formatName.trim();
-        this.geophysics  = geophysics;
-    }
-
-    /**
-     * Returns the sample dimensions for coverages encoded with this format.
-     * The array length is equals to the expected number of bands.
-     * <p>
-     * The sample dimensions specify how to convert pixel values to geophysics values,
-     * or conversely. Their type (geophysics or not) is format depedent. For example
-     * coverages read from PNG files will typically store their data as integer values
-     * (<code>{@linkplain GridSampleDimension#geophysics geophysics}(false)</code>),
-     * while coverages read from ASCII files will often store their pixel values as real numbers
-     * (<code>{@linkplain GridSampleDimension#geophysics geophysics}(true)</code>).
-     *
-     * @return The sample dimensions.
-     * @throws SQLException if an error occured while reading the database.
-     */
-    public synchronized List<GridSampleDimension> getSampleDimensions() throws SQLException {
-        if (sampleDimensions == null) {
-            final String id = identifier.toString();
-            final SampleDimensionTable sdTable = table.getSampleDimensionTable();
-            final GridSampleDimension[] bands;
-            synchronized (sdTable) {
-                bands = sdTable.getSampleDimensions(id);
-            }
+        if (bands != null) {
             for (int i=0; i<bands.length; i++) {
                 bands[i] = bands[i].geophysics(geophysics);
             }
             sampleDimensions = UnmodifiableArrayList.wrap(bands);
-            table = null;
+        } else {
+            sampleDimensions = null;
         }
-        return sampleDimensions;
     }
 
     /**
      * Returns the ranges of valid sample values for each band in this format.
      * The range are always expressed in <cite>geophysics</cite> values.
      */
-    final MeasurementRange<Double>[] getSampleValueRanges() throws SQLException {
-        final List<GridSampleDimension> bands = getSampleDimensions();
+    final MeasurementRange<Double>[] getSampleValueRanges() {
+        final List<GridSampleDimension> bands = sampleDimensions;
+        if (bands == null) {
+            return null;
+        }
         @SuppressWarnings({"unchecked","rawtypes"})  // Generic array creation.
         final MeasurementRange<Double>[] ranges = new MeasurementRange[bands.size()];
         for (int i=0; i<ranges.length; i++) {
@@ -141,6 +121,18 @@ final class FormatEntry extends Entry {
     }
 
     /**
+     * Returns the pool of coverage loaders associated with this format.
+     *
+     * @return The pool of coverage loaders.
+     */
+    public synchronized GridCoverageStorePool getCoverageLoaders() {
+        if (coverageLoaders == null) {
+            coverageLoaders = new GridCoverageLoader.Pool(this);
+        }
+        return coverageLoaders;
+    }
+
+    /**
      * Returns a tree representation of this format, including
      * {@linkplain SampleDimension sample dimensions} and {@linkplain Category categories}.
      *
@@ -148,86 +140,19 @@ final class FormatEntry extends Entry {
      * @return The tree root.
      */
     public MutableTreeNode getTree(final Locale locale) {
-        final DefaultMutableTreeNode root = new TreeNode(this);
-        for (final GridSampleDimension band : sampleDimensions) {
-            final List<Category> categories = band.getCategories();
-            final int categoryCount = categories.size();
-            final DefaultMutableTreeNode node = new TreeNode(band, locale);
-            for (int j=0; j<categoryCount; j++) {
-                node.add(new TreeNode(categories.get(j), locale));
+        final DefaultMutableTreeNode root = new FormatTreeNode(this);
+        if (sampleDimensions != null) {
+            for (final GridSampleDimension band : sampleDimensions) {
+                final List<Category> categories = band.getCategories();
+                final int categoryCount = categories.size();
+                final DefaultMutableTreeNode node = new FormatTreeNode(band, locale);
+                for (int j=0; j<categoryCount; j++) {
+                    node.add(new FormatTreeNode(categories.get(j), locale));
+                }
+                root.add(node);
             }
-            root.add(node);
         }
         return root;
-    }
-
-    /**
-     * Node appearing as a tree structure of formats and their bands.
-     * This node redefines the method {@link #toString} to return a string
-     * formatted better than <code>{@link #getUserObject}.toString()</code>.
-     *
-     * @version $Id$
-     * @author Martin Desruisseaux
-     */
-    private static final class TreeNode extends DefaultMutableTreeNode {
-        /**
-         * For cross-version compatibility.
-         */
-        private static final long serialVersionUID = 9030373781984474394L;
-
-        /**
-         * The text returned by {@link #toString}.
-         */
-        private final String text;
-
-        /**
-         * Construct a node for the specified entries.
-         */
-        public TreeNode(final FormatEntry entry) {
-            super(entry);
-            text = entry.toString();
-        }
-
-        /**
-         * Construct a node for the specified list. The constructor does not
-         * scan the categories containes in the specified list.
-         */
-        public TreeNode(final GridSampleDimension band, final Locale locale) {
-            super(band);
-            text = band.getDescription().toString(locale);
-        }
-
-        /**
-         * Constructs a node for the specified category.
-         */
-        public TreeNode(final Category category, final Locale locale) {
-            super(category, false);
-            final StringBuilder buffer = new StringBuilder();
-            final NumberRange<?> range = category.geophysics(false).getRange();
-            buffer.append('[');  append(buffer, range.getMinValue());
-            buffer.append(".."); append(buffer, range.getMaxValue()); // Inclusive
-            buffer.append("] ").append(category.getName());
-            text = buffer.toString();
-        }
-
-        /**
-         * Add a whole number using at least 3 digits (for example 007).
-         */
-        private static void append(final StringBuilder buffer, final Comparable<?> value) {
-            final String number = String.valueOf(value);
-            for (int i=3-number.length(); --i>=0;) {
-                buffer.append('0');
-            }
-            buffer.append(number);
-        }
-
-        /**
-         * Returns the text of this node.
-         */
-        @Override
-        public String toString() {
-            return text;
-        }
     }
 
     /**
@@ -242,24 +167,8 @@ final class FormatEntry extends Entry {
         }
         if (super.equals(object)) {
             final FormatEntry that = (FormatEntry) object;
-            return Utilities.equals(this.imageFormat, that.imageFormat) &&
-                                    this.geophysics == that.geophysics;
+            return Utilities.equals(imageFormat, that.imageFormat);
         }
         return false;
-    }
-
-    /**
-     * Invoked before serialization in order to ensure that we will serialize the
-     * sample dimensions, not the database.
-     */
-    private void writeObject(final ObjectOutputStream out) throws IOException {
-        try {
-            getSampleDimensions();
-        } catch (Exception e) {
-            final InvalidObjectException ex = new InvalidObjectException(e.getLocalizedMessage());
-            ex.initCause(e);
-            throw ex;
-        }
-        out.defaultWriteObject();
     }
 }
