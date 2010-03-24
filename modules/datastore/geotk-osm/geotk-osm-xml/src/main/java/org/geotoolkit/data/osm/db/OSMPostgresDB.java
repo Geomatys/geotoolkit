@@ -33,6 +33,7 @@ import java.util.Set;
 import org.geotoolkit.data.osm.model.Member;
 import org.geotoolkit.data.osm.model.Node;
 import org.geotoolkit.data.osm.model.Relation;
+import org.geotoolkit.data.osm.model.Tag;
 import org.geotoolkit.data.osm.model.User;
 import org.geotoolkit.data.osm.model.Way;
 
@@ -315,7 +316,7 @@ public class OSMPostgresDB {
         return new int[]{wantedSize, nbTag, nbUser};
     }
 
-    public int insertNodeTag(Map<String,String> map, long entityId) throws SQLException{
+    public int insertNodeTag(List<Tag> map, long entityId) throws SQLException{
         final int wantedSize = map.size();
 
         if(wantedSize == 0) return 0;
@@ -323,10 +324,10 @@ public class OSMPostgresDB {
         final PreparedStatement stmt = nodeTagInsert.get(wantedSize);
 
         int i=1;
-        for(Map.Entry<String,String> entry : map.entrySet()){
+        for(Tag t : map){
             stmt.setLong(i++, entityId);
-            stmt.setString(i++, entry.getKey());
-            stmt.setString(i++, entry.getValue());
+            stmt.setString(i++, t.getK());
+            stmt.setString(i++, t.getV());
         }
 
         stmt.executeUpdate();
@@ -362,7 +363,7 @@ public class OSMPostgresDB {
         return new int[]{wantedSize, nbTag, nbMember,nbUser};
     }
 
-    public int insertWayTag(Map<String,String> map, long entityId) throws SQLException{
+    public int insertWayTag(List<Tag> map, long entityId) throws SQLException{
         final int wantedSize = map.size();
 
         if(wantedSize == 0) return 0;
@@ -370,10 +371,10 @@ public class OSMPostgresDB {
         final PreparedStatement stmt = wayTagInsert.get(wantedSize);
 
         int i=1;
-        for(Map.Entry<String,String> entry : map.entrySet()){
+        for(Tag t : map){
             stmt.setLong(i++, entityId);
-            stmt.setString(i++, entry.getKey());
-            stmt.setString(i++, entry.getValue());
+            stmt.setString(i++, t.getK());
+            stmt.setString(i++, t.getV());
         }
 
         stmt.executeUpdate();
@@ -426,7 +427,7 @@ public class OSMPostgresDB {
         return new int[]{wantedSize,nbTag,nbMember,nbUser};
     }
 
-    public int insertRelationTag(Map<String,String> map, long entityId) throws SQLException{
+    public int insertRelationTag(List<Tag> map, long entityId) throws SQLException{
         final int wantedSize = map.size();
 
         if(wantedSize == 0) return 0;
@@ -434,10 +435,10 @@ public class OSMPostgresDB {
         final PreparedStatement stmt = relationTagInsert.get(wantedSize);
 
         int i=1;
-        for(Map.Entry<String,String> entry : map.entrySet()){
+        for(Tag t : map){
             stmt.setLong(i++, entityId);
-            stmt.setString(i++, entry.getKey());
-            stmt.setString(i++, entry.getValue());
+            stmt.setString(i++, t.getK());
+            stmt.setString(i++, t.getV());
         }
 
         stmt.executeUpdate();
@@ -472,7 +473,7 @@ public class OSMPostgresDB {
         final PreparedStatement stmt = userInsert.get(1);
 
         stmt.setInt(1, user.getId());
-        stmt.setString(2, user.getName());
+        stmt.setString(2, user.getUserName());
 
         stmt.executeUpdate();
         commit();

@@ -22,9 +22,13 @@ import java.io.StringWriter;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
+
+import org.geotoolkit.feature.DefaultProperty;
 import org.geotoolkit.io.TableWriter;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
+
+import org.opengis.feature.Property;
+import org.opengis.feature.type.PropertyDescriptor;
 
 /**
  *
@@ -38,7 +42,7 @@ public class Relation extends IdentifiedElement{
     public Relation(List<Member> members,
             long id, int version, int changeset, User user,
             long timestamp, Map<String,String> tags) {
-        super(id,version,changeset,user,timestamp,tags);
+        super(OSMModelConstants.DESC_RELATION,id,version,changeset,user,timestamp,tags);
 
         if(members == null || members.isEmpty()){
             this.members = Collections.EMPTY_LIST;
@@ -70,8 +74,8 @@ public class Relation extends IdentifiedElement{
         tablewriter.write("TimeStamp\t"+getTimestamp()+"\n");
         tablewriter.write("version\t"+getVersion()+"\n");
         tablewriter.nextLine(TableWriter.SINGLE_HORIZONTAL_LINE);
-        for(Entry<String,String> entry : getTags().entrySet()){
-            tablewriter.write(entry.getKey()+"\t"+entry.getValue()+"\n");
+        for(Tag t : getTags()){
+            tablewriter.write(t.getK()+"\t"+t.getV()+"\n");
         }
         tablewriter.nextLine(TableWriter.DOUBLE_HORIZONTAL_LINE);
 
@@ -84,6 +88,31 @@ public class Relation extends IdentifiedElement{
         }
 
         return writer.getBuffer().toString();
+    }
+
+    @Override
+    protected Property[] getPropertiesInternal() {
+        final Property[] props = new Property[5 + members.size() + tags.size()];
+        props[0] = new DefaultProperty(id, getType().getDescriptor("id"));
+        props[1] = new DefaultProperty(version, getType().getDescriptor("version"));
+        props[2] = new DefaultProperty(changeset, getType().getDescriptor("changeset"));
+        props[3] = new DefaultProperty(user, getType().getDescriptor("user"));
+        props[4] = new DefaultProperty(timestamp, getType().getDescriptor("timestamp"));
+
+        int i=5;
+        final PropertyDescriptor tagDesc = getType().getDescriptor("tags");
+        for(Tag t : tags){
+            props[i] = new DefaultProperty(t, tagDesc);
+            i++;
+        }
+
+        final PropertyDescriptor memDesc = getType().getDescriptor("members");
+        for(Member m : members){
+            props[i] = new DefaultProperty(m, memDesc);
+            i++;
+        }
+
+        return props;
     }
 
 }

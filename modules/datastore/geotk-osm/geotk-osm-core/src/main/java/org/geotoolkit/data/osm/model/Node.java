@@ -20,8 +20,12 @@ package org.geotoolkit.data.osm.model;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.Map;
-import java.util.Map.Entry;
+
+import org.geotoolkit.feature.DefaultProperty;
 import org.geotoolkit.io.TableWriter;
+
+import org.opengis.feature.Property;
+import org.opengis.feature.type.PropertyDescriptor;
 
 /**
  *
@@ -36,7 +40,7 @@ public class Node extends IdentifiedElement{
     public Node(double lat, double lon,
             long id, int version, int changeset, User user,
             long timestamp, Map<String,String> tags) {
-        super(id,version,changeset,user,timestamp,tags);
+        super(OSMModelConstants.DESC_NODE,id,version,changeset,user,timestamp,tags);
         this.lat = lat;
         this.lon = lon;
     }
@@ -66,11 +70,11 @@ public class Node extends IdentifiedElement{
         tablewriter.write("TimeStamp\t"+getTimestamp()+"\n");
         tablewriter.write("version\t"+getVersion()+"\n");
         tablewriter.nextLine(TableWriter.SINGLE_HORIZONTAL_LINE);
-        for(Entry<String,String> entry : getTags().entrySet()){
-            tablewriter.write(entry.getKey()+"\t"+entry.getValue()+"\n");
+        for(Tag t : getTags()){
+            tablewriter.write(t.getK()+"\t"+t.getV()+"\n");
         }
         tablewriter.nextLine(TableWriter.DOUBLE_HORIZONTAL_LINE);
-        
+
         try {
             tablewriter.flush();
         } catch (IOException ex) {
@@ -79,6 +83,27 @@ public class Node extends IdentifiedElement{
         }
 
         return writer.getBuffer().toString();
+    }
+
+    // feature/attribut model --------------------------------------------------
+
+    @Override
+    protected Property[] getPropertiesInternal() {
+        final Property[] props = new Property[5 + tags.size()];
+        props[0] = new DefaultProperty(id, getType().getDescriptor("id"));
+        props[1] = new DefaultProperty(version, getType().getDescriptor("version"));
+        props[2] = new DefaultProperty(changeset, getType().getDescriptor("changeset"));
+        props[3] = new DefaultProperty(user, getType().getDescriptor("user"));
+        props[4] = new DefaultProperty(timestamp, getType().getDescriptor("timestamp"));
+
+        final PropertyDescriptor tagDesc = getType().getDescriptor("tags");
+        int i=5;
+        for(Tag t : tags){
+            props[i] = new DefaultProperty(t, tagDesc);
+            i++;
+        }
+
+        return props;
     }
 
 }

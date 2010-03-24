@@ -19,25 +19,32 @@ package org.geotoolkit.data.osm.model;
 
 import java.io.Serializable;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
+import org.geotoolkit.feature.AbstractFeature;
+import org.geotoolkit.filter.identity.DefaultFeatureId;
+import org.geotoolkit.util.collection.UnmodifiableArrayList;
+
+import org.opengis.feature.type.AttributeDescriptor;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public abstract class IdentifiedElement implements Serializable {
+public abstract class IdentifiedElement extends AbstractFeature implements Serializable {
 
-    private final long id;
-    private final int version;
-    private final int changeset;
-    private final User user;
-    private final long timestamp;
-    private final Map<String,String> tags;
+    protected final long id;
+    protected final int version;
+    protected final int changeset;
+    protected final User user;
+    protected final long timestamp;
+    protected final List<Tag> tags;
 
-    public IdentifiedElement(long id, int version, int changeset, User user,
+    public IdentifiedElement(AttributeDescriptor desc, long id, int version, int changeset, User user,
             long timestamp, Map<String,String> tags) {
+        super(desc,new DefaultFeatureId(String.valueOf(id)));
         this.id = id;
         this.version = version;
         this.changeset = changeset;
@@ -45,13 +52,15 @@ public abstract class IdentifiedElement implements Serializable {
         this.timestamp = timestamp;
 
         if(tags == null || tags.isEmpty()){
-            this.tags = Collections.EMPTY_MAP;
+            this.tags = Collections.EMPTY_LIST;
         }else{
-            if(tags instanceof HashMap){
-                this.tags = (Map<String, String>) ((HashMap)tags).clone();
-            }else{
-                this.tags = new HashMap(tags);
+            final Tag[] array = new Tag[tags.size()];
+            int i=0;
+            for(Map.Entry<String,String> entry : tags.entrySet()){
+                array[i] = new Tag(entry.getKey(), entry.getValue());
+                i++;
             }
+            this.tags = UnmodifiableArrayList.wrap(array);
         }
     }
 
@@ -75,7 +84,7 @@ public abstract class IdentifiedElement implements Serializable {
         return timestamp;
     }
 
-    public Map<String, String> getTags() {
+    public List<Tag> getTags() {
         return tags;
     }
 

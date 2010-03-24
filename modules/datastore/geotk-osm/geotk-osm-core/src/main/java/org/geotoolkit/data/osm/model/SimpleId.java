@@ -17,14 +17,29 @@
 
 package org.geotoolkit.data.osm.model;
 
+import org.opengis.filter.identity.Identifier;
+
 /**
  *
- * @author Johann sorel (Geomatys)
+ * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class ChangeSet {
+class SimpleId implements Identifier{
 
-    public ChangeSet(){
+    private final Object id;
+
+    public SimpleId(Object id){
+        this.id = id;
+    }
+
+    @Override
+    public Object getID() {
+        return id;
+    }
+
+    @Override
+    public boolean matches(Object object) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
 }

@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
@@ -63,7 +64,7 @@ public class OSMXMLReader{
     /**
      * Caches.
      */
-    private final Map<String,String> tags = new HashMap<String, String>();
+    private final Map<String,String> tags = new LinkedHashMap<String, String>();
     private final List<Member> members = new ArrayList<Member>();
     private final List<Long> nodes = new ArrayList<Long>();
     private final List<IdentifiedElement> transaction = new ArrayList<IdentifiedElement>();
