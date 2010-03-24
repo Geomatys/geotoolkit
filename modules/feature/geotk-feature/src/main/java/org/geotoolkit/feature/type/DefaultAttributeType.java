@@ -17,10 +17,13 @@
  */
 package org.geotoolkit.feature.type;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.geotoolkit.util.converter.Classes;
+
 import org.opengis.feature.type.AttributeType;
+import org.opengis.feature.type.ComplexType;
 import org.opengis.feature.type.Name;
 import org.opengis.filter.Filter;
 import org.opengis.util.InternationalString;
@@ -40,6 +43,14 @@ public class DefaultAttributeType<T extends AttributeType> extends DefaultProper
             final boolean isAbstract, final List<Filter> restrictions, final T superType,
             final InternationalString description){
         super(name, binding, isAbstract, restrictions, superType, description);
+
+//        TODO need the exact definition of a simple feature type to make this verification
+//        if(!(this instanceof ComplexType)){
+//            //only make this check if we are sure to be a simple attribut type
+//            if(Collection.class.isAssignableFrom(binding)){
+//                throw new IllegalArgumentException("Binding class is : "+ binding +" a Complex type should have been used.");
+//            }
+//        }
 
         this.identified = identified;
     }

@@ -26,12 +26,15 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.geotoolkit.factory.HintsPending;
 import org.geotoolkit.feature.simple.DefaultSimpleSchema;
 import org.geotoolkit.feature.type.BasicFeatureTypes;
 import org.geotoolkit.feature.type.DefaultFeatureTypeFactory;
 import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.util.converter.Classes;
+import org.opengis.feature.Property;
 
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
@@ -42,6 +45,7 @@ import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.feature.type.GeometryType;
 import org.opengis.feature.type.Name;
 import org.opengis.feature.type.PropertyDescriptor;
+import org.opengis.feature.type.PropertyType;
 import org.opengis.feature.type.Schema;
 import org.opengis.filter.Filter;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -451,11 +455,17 @@ public class FeatureTypeBuilder {
     public void add(final Name name, final Class binding, final CoordinateReferenceSystem crs,
             int min, int max, boolean nillable, Map<Object,Object> userData) {
 
-        final AttributeType at;
+        final PropertyType at;
         if(Geometry.class.isAssignableFrom(binding) ||
                 org.opengis.geometry.Geometry.class.isAssignableFrom(binding)){
             at = factory.createGeometryType(name, binding, crs, false, false, null, null, null);
-        }else{
+        }
+//TODO must check that we can allow collection as simple attribut types
+//        else if(Collection.class.isAssignableFrom(binding) ||
+//                org.opengis.geometry.Geometry.class.isAssignableFrom(binding)){
+//            throw new IllegalArgumentException("Binding class is : "+ binding +" this is a Complex type. Create a complex type using the factory");
+//        }
+        else{
             //non geometric field
             at = factory.createAttributeType(name, binding, false, false, null, null, null);
         }
@@ -463,7 +473,7 @@ public class FeatureTypeBuilder {
         add(at,name,crs,min,max,nillable,userData);
     }
 
-    public void add(final AttributeType at, final Name name, final CoordinateReferenceSystem crs,
+    public void add(final PropertyType at, final Name name, final CoordinateReferenceSystem crs,
             int min, int max, boolean nillable, Map<Object,Object> userData){
         Object defaultValue = null;
         if(!nillable){
@@ -475,11 +485,13 @@ public class FeatureTypeBuilder {
             }
         }
 
-        final AttributeDescriptor desc;
+        final PropertyDescriptor desc;
         if(at instanceof GeometryType){
             desc = factory.createGeometryDescriptor((GeometryType)at, name, min, max, nillable, defaultValue);
+        }else if(at instanceof AttributeType){
+            desc = factory.createAttributeDescriptor((AttributeType)at, name, min, max, nillable, defaultValue);
         }else{
-            desc = factory.createAttributeDescriptor(at, name, min, max, nillable, defaultValue);
+            throw new IllegalArgumentException("Property type is : "+ at.getClass() +" This type is not supported yet.");
         }
 
         if(userData != null){
@@ -618,9 +630,24 @@ public class FeatureTypeBuilder {
             }
         }
 
+        //verify if we have a simple feature type
         boolean isSimple = true;
         for(PropertyDescriptor desc : properties){
-            if(!(desc instanceof AttributeDescriptor)){
+            final Set<Class<?>> ints = Classes.getAllInterfaces(desc.getType().getClass());
+            boolean found = false;
+            for(Class<?> c : ints){
+                if(AttributeType.class.isAssignableFrom(c)){
+                    if(found){
+                        isSimple = false;
+                        break;
+                    }else{
+                        if(!(GeometryType.class.isAssignableFrom(c))){
+                            found = true;
+                        }
+                    }
+                }
+            }
+            if(!found){
                 isSimple = false;
                 break;
             }
