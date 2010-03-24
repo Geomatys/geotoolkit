@@ -204,8 +204,12 @@ public class DefaultComplexType extends DefaultAttributeType<AttributeType> impl
         final Collection<PropertyDescriptor> descs = getDescriptors();
         final int last = descs.size()-1;
         int i=0;
-        for (PropertyDescriptor property :descs) {
-            toString(tablewriter, property, 0, 0, -1);
+        for (PropertyDescriptor property : descs) {
+            if(i==last){                
+                toString(tablewriter, property, 1, 1, 1);
+            }else{                
+                toString(tablewriter, property, 1, 0, 1);
+            }
             i++;
         }
         tablewriter.nextLine(TableWriter.DOUBLE_HORIZONTAL_LINE);
@@ -239,9 +243,9 @@ public class DefaultComplexType extends DefaultAttributeType<AttributeType> impl
 
     private static void toString(TableWriter tablewriter, PropertyDescriptor property, int depth, int pos, int startdepth){
 
-        if(depth != 0){
-            for(int i=0; i<depth-1;i++){
-                if(i < startdepth-1){
+        if(depth > 1){
+            for(int i=1; i<depth-1;i++){
+                if(i < startdepth){
                     tablewriter.write("\u00A0\u00A0\u00A0");
                 }else{
                     tablewriter.write("\u2502\u00A0\u00A0");
@@ -301,15 +305,13 @@ public class DefaultComplexType extends DefaultAttributeType<AttributeType> impl
             final Collection<PropertyDescriptor> descs = ct.getDescriptors();
             int i=0;
             int n=descs.size()-1;
-            int newDepth = startdepth+1;
-            if(pos == 1) newDepth++;
             for(PropertyDescriptor desc : descs){
                 if(i==n){
-                    toString(tablewriter, desc, depth+1, 1, newDepth);
+                    toString(tablewriter, desc, depth+1, 1, startdepth +((pos == 1)? 1 : 0));
                 }else if(i == 0){
-                    toString(tablewriter, desc, depth+1, 0, newDepth);
+                    toString(tablewriter, desc, depth+1, 0, startdepth);
                 }else{
-                    toString(tablewriter, desc, depth+1, -1, newDepth);
+                    toString(tablewriter, desc, depth+1, -1, startdepth);
                 }
                 i++;
             }
