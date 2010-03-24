@@ -34,11 +34,11 @@ import org.geotoolkit.feature.type.BasicFeatureTypes;
 import org.geotoolkit.feature.type.DefaultFeatureTypeFactory;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.util.converter.Classes;
-import org.opengis.feature.Property;
 
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.AttributeType;
+import org.opengis.feature.type.ComplexType;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.FeatureTypeFactory;
 import org.opengis.feature.type.GeometryDescriptor;
@@ -214,7 +214,7 @@ public class FeatureTypeBuilder {
         restrictions.clear();
         properties.clear();
         isAbstract = false;
-        superType = BasicFeatureTypes.FEATURE;
+        superType = null;
     }
 
     public void setName(String localPart){
@@ -601,6 +601,10 @@ public class FeatureTypeBuilder {
     private FeatureType buildFeatureType(boolean simple) {
         GeometryDescriptor defaultGeometry = null;
 
+        if(superType == null){
+            superType = BasicFeatureTypes.FEATURE;
+        }
+
         //was a default geometry set?
         if (this.defaultGeometry != null) {
 
@@ -672,6 +676,10 @@ public class FeatureTypeBuilder {
         }
     }
 
+    public ComplexType buildType(){
+        return factory.createComplexType(name,properties,true,isAbstract,
+                restrictions,superType,description);
+    }
 
     /**
      * Decodes a srs, supplying a useful error message if there is a problem.
