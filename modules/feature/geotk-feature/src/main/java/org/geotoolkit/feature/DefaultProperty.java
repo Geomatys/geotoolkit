@@ -52,11 +52,11 @@ public class DefaultProperty<V extends Object, D extends PropertyDescriptor> imp
     protected V value;
 
 
-    protected DefaultProperty(final D descriptor) {
+    public DefaultProperty(final D descriptor) {
         this(null,descriptor);
     }
 
-    protected DefaultProperty(final V value, final D descriptor) {
+    public DefaultProperty(final V value, final D descriptor) {
         this.value = value;
         this.descriptor = descriptor;
 

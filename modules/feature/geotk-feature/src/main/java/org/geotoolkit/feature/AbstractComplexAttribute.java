@@ -17,17 +17,25 @@
  */
 package org.geotoolkit.feature;
 
+import java.io.IOException;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+import org.geotoolkit.feature.type.DefaultPropertyDescriptor;
+import org.geotoolkit.io.TableWriter;
 
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
+import org.geotoolkit.util.converter.Classes;
+import org.opengis.feature.Attribute;
 
 import org.opengis.feature.ComplexAttribute;
 import org.opengis.feature.Property;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.ComplexType;
 import org.opengis.feature.type.Name;
+import org.opengis.feature.type.PropertyDescriptor;
 import org.opengis.filter.identity.Identifier;
 
 /**
@@ -142,5 +150,117 @@ public abstract class AbstractComplexAttribute<I extends Identifier> extends Def
         }
         newValues.toArray(this.getPropertiesInternal());
     }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder(Classes.getShortClassName(this));
+        sb.append(" ");
+        sb.append(getName());
+        sb.append(" type=");
+        sb.append(getType().getName());
+
+        sb.append('\n');
+
+        //make a nice table to display
+        final StringWriter writer = new StringWriter();
+        final TableWriter tablewriter = new TableWriter(writer);
+        tablewriter.nextLine(TableWriter.DOUBLE_HORIZONTAL_LINE);
+        tablewriter.write("name\t value\n");
+        tablewriter.nextLine(TableWriter.SINGLE_HORIZONTAL_LINE);
+
+        final Collection<PropertyDescriptor> descs = getType().getDescriptors();
+        final int last = descs.size()-1;
+        int i=0;
+        for (PropertyDescriptor property : descs) {
+            if(i==last){
+                toString(tablewriter, property, this, 1, 1, 1);
+            }else{
+                toString(tablewriter, property, this, 1, 0, 1);
+            }
+            i++;
+        }
+        tablewriter.nextLine(TableWriter.DOUBLE_HORIZONTAL_LINE);
+        try {
+            tablewriter.flush();
+            writer.flush();
+        } catch (IOException ex) {
+            //will never happen is this case
+            ex.printStackTrace();
+        }
+        sb.append(writer.getBuffer().toString());
+
+        return sb.toString();
+    }
+
+    private void toString(TableWriter tablewriter, PropertyDescriptor desc, Object att, int depth, int pos, int startdepth){
+
+        final Collection<Property> values;
+        if(att instanceof ComplexAttribute){
+            values = ((ComplexAttribute)att).getProperties(desc.getName());
+        }else{
+            values = Collections.singleton((Property)att);
+        }
+
+        if(values.isEmpty())return;
+
+        if(depth > 1){
+            for(int i=1; i<depth-1;i++){
+                if(i < startdepth){
+                    tablewriter.write("\u00A0\u00A0\u00A0");
+                }else{
+                    tablewriter.write("\u2502\u00A0\u00A0");
+                }
+            }
+            if(pos == 0){
+                tablewriter.write("\u251C\u2500\u2500");
+            }else if(pos == 1){
+                tablewriter.write("\u2514\u2500\u2500");
+            }else{
+                tablewriter.write("\u251C\u2500\u2500");
+            }
+        }
+
+        for(Property p : values){
+            final Object value = p.getValue();
+
+            tablewriter.write(DefaultName.toJCRExtendedForm(desc.getName()));
+            tablewriter.write("\t");
+
+            if(desc.getType() instanceof ComplexType){
+                tablewriter.write("\n");
+
+                final ComplexAttribute ca = (ComplexAttribute) value;
+//                PropertyDescriptor td = new DefaultPropertyDescriptor(ca.getType(), ca.getName(), 0, 1, true);
+//                toString(tablewriter,td,ca,depth+1,pos,startdepth);
+//
+//                final Collection<PropertyDescriptor> descs = ca.getType().getDescriptors();
+//                for (PropertyDescriptor property : descs) {
+//                    toString(tablewriter, property, ca, depth+1,pos,startdepth);
+//                }
+
+
+                final ComplexType ct = (ComplexType) ca.getType();
+                final Collection<PropertyDescriptor> descs = ct.getDescriptors();
+                int i=0;
+                int n=descs.size()-1;
+                for(PropertyDescriptor sub : descs){
+                    if(i==n){
+                        toString(tablewriter, sub, value, depth+1, 1, startdepth +((pos == 1)? 1 : 0));
+                    }else if(i == 0){
+                        toString(tablewriter, sub, value, depth+1, 0, startdepth);
+                    }else{
+                        toString(tablewriter, sub, value, depth+1, -1, startdepth);
+                    }
+                    i++;
+                }
+            }else{
+                tablewriter.write((value == null)? "null" : value.toString());
+                tablewriter.write("\n");
+            }
+
+        }
+
+    }
+
 
 }
