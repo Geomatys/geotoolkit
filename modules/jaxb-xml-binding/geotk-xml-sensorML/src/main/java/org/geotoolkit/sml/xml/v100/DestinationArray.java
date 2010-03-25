@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import org.geotoolkit.util.Utilities;
 
 /**
  * <p>Java class for anonymous complex type.
@@ -61,5 +62,35 @@ public class DestinationArray {
      */
     public void setRef(String value) {
         this.ref = value;
+    }
+
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+
+        if (object instanceof DestinationArray) {
+            final DestinationArray that = (DestinationArray) object;
+            return Utilities.equals(this.ref, that.ref);
+
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 13 * hash + (this.ref != null ? this.ref.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("[DestinationArray]").append("\n");
+        if (ref != null) {
+            sb.append("ref: ").append(ref).append('\n');
+        }
+        return sb.toString();
     }
 }

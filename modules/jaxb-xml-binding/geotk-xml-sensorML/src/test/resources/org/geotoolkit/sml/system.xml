@@ -288,6 +288,12 @@
                             <source ref="piezometer/outputs/depth"/>
                             <destination ref="this/outputs/piezoMeasurements/depth"/>
                         </Link>
+                        <ArrayLink>
+                            <sourceArray ref="piezometer/outputs/depth"/>
+                            <destinationIndex ref="this/outputs/piezoMeasurements/depth"/>
+                            <destinationArray ref="this/outputs/piezoMeasurements/depth"/>
+                            <sourceIndex ref="this/outputs/piezoMeasurements/depth"/>
+                        </ArrayLink>
                     </connection>
                 </ConnectionList>
             </connections>

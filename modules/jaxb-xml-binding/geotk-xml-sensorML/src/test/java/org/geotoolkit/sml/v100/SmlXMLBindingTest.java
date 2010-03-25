@@ -102,8 +102,13 @@ import org.geotoolkit.gml.xml.v311.PointType;
 import org.geotoolkit.gml.xml.v311.TemporalCRSType;
 import org.geotoolkit.gml.xml.v311.TemporalCSRefType;
 import org.geotoolkit.gml.xml.v311.TemporalDatumRefType;
+import org.geotoolkit.sml.xml.v100.ArrayLink;
+import org.geotoolkit.sml.xml.v100.DestinationArray;
+import org.geotoolkit.sml.xml.v100.DestinationIndex;
 import org.geotoolkit.sml.xml.v100.LinkRef;
 import org.geotoolkit.sml.xml.v100.Member;
+import org.geotoolkit.sml.xml.v100.SourceArray;
+import org.geotoolkit.sml.xml.v100.SourceIndex;
 import org.geotoolkit.swe.xml.v100.BooleanType;
 import org.geotoolkit.swe.xml.v100.Category;
 import org.geotoolkit.swe.xml.v100.CoordinateType;
@@ -527,7 +532,23 @@ public class SmlXMLBindingTest {
 
         List<Connection> connecL = new ArrayList<Connection>();
         connecL.add(new Connection("inputTolevel", new Link(null, new LinkRef("this/inputs/level"), new LinkRef("piezometer/inputs/level"))));
-        connecL.add(new Connection("depthToOutput", new Link(null, new LinkRef("piezometer/outputs/depth"), new LinkRef("this/outputs/piezoMeasurements/depth"))));
+        Connection c2 = new Connection("depthToOutput", new Link(null, new LinkRef("piezometer/outputs/depth"), new LinkRef("this/outputs/piezoMeasurements/depth")));
+        ArrayLink alink = new ArrayLink();
+        SourceArray sa = new SourceArray();
+        sa.setRef("piezometer/outputs/depth");
+        alink.setSourceArray(sa);
+        SourceIndex si = new SourceIndex();
+        si.setRef("this/outputs/piezoMeasurements/depth");
+        alink.setSourceIndex(si);
+        DestinationArray da = new DestinationArray();
+        da.setRef("this/outputs/piezoMeasurements/depth");
+        alink.setDestinationArray(da);
+        DestinationIndex di = new DestinationIndex();
+        di.setRef("this/outputs/piezoMeasurements/depth");
+        alink.getDestinationIndex().add(di);
+
+        c2.setArrayLink(alink);
+        connecL.add(c2);
         ConnectionList connectionList = new ConnectionList(connecL);
         Connections connections = new Connections(connectionList);
         system.setConnections(connections);
@@ -617,6 +638,10 @@ public class SmlXMLBindingTest {
 
         assertEquals(resultProcess.getTemporalReferenceFrame(), system.getTemporalReferenceFrame());
 
+        assertEquals(resultProcess.getConnections().getConnectionList().getConnection().get(0), system.getConnections().getConnectionList().getConnection().get(0));
+        assertEquals(resultProcess.getConnections().getConnectionList().getConnection().get(1), system.getConnections().getConnectionList().getConnection().get(1));
+        assertEquals(resultProcess.getConnections().getConnectionList().getConnection(), system.getConnections().getConnectionList().getConnection());
+        assertEquals(resultProcess.getConnections().getConnectionList(), system.getConnections().getConnectionList());
         assertEquals(resultProcess.getConnections(), system.getConnections());
 
         assertEquals(resultProcess.getInterfaces(), system.getInterfaces());

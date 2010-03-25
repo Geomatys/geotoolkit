@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.sml.xml.AbstractConnectionList;
 import org.geotoolkit.util.Utilities;
 
 /**
@@ -48,7 +49,7 @@ import org.geotoolkit.util.Utilities;
 @XmlType(name = "", propOrder = {
     "connection"
 })
-public class ConnectionList {
+public class ConnectionList implements AbstractConnectionList {
 
     @XmlElement(required = true)
     private List<Connection> connection;
@@ -64,6 +65,7 @@ public class ConnectionList {
     /**
      * Gets the value of the connection property.
      */
+    @Override
     public List<Connection> getConnection() {
         if (connection == null) {
             connection = new ArrayList<Connection>();

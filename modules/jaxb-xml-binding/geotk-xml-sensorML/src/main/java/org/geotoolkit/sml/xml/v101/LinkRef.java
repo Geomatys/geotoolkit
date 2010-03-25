@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2008 - 2009, Geomatys
+ *    (C) 2008-2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -14,7 +14,9 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.sml.xml.v100;
+
+
+package org.geotoolkit.sml.xml.v101;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -23,36 +25,29 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.geotoolkit.util.Utilities;
-
+import org.geotoolkit.sml.xml.AbstractLinkRef;
 /**
- * <p>Java class for anonymous complex type.
  *
- * <p>The following schema fragment specifies the expected content contained within this class.
- *
- * <pre>
- * &lt;complexType>
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;attribute name="ref" type="{http://www.opengis.net/sensorML/1.0}linkRef" />
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
- * </pre>
- *
- *
+ * @author Guilhem Legal
  * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "")
-public class SourceArray {
+public class LinkRef implements AbstractLinkRef {
 
-    @XmlAttribute
+    @XmlAttribute(required = true)
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     private String ref;
 
+    public LinkRef() {
+    }
+
+    public LinkRef(String ref) {
+        this.ref = ref;
+    }
+
     /**
      * Gets the value of the ref property.
-     *
      */
     public String getRef() {
         return ref;
@@ -64,14 +59,15 @@ public class SourceArray {
     public void setRef(String value) {
         this.ref = value;
     }
-     @Override
+
+    @Override
     public boolean equals(final Object object) {
         if (object == this) {
             return true;
         }
 
-        if (object instanceof SourceArray) {
-            final SourceArray that = (SourceArray) object;
+        if (object instanceof LinkRef) {
+            final LinkRef that = (LinkRef) object;
             return Utilities.equals(this.ref, that.ref);
 
         }
@@ -87,7 +83,7 @@ public class SourceArray {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder("[SourceArray]").append("\n");
+        StringBuilder sb = new StringBuilder("[LinkRef]").append("\n");
         if (ref != null) {
             sb.append("ref: ").append(ref).append('\n');
         }

@@ -21,6 +21,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.sml.xml.AbstractSecurityConstraint;
 
 
 /**
@@ -48,19 +49,28 @@ import javax.xml.bind.annotation.XmlType;
     "security"
 })
 @XmlRootElement(name = "securityConstraint")
-public class SecurityConstraint {
+public class SecurityConstraint implements AbstractSecurityConstraint {
 
     @XmlElement(name = "Security", required = true)
-    protected Security security;
+    private Security security;
+
+        public SecurityConstraint() {
+
+    }
+
+    public SecurityConstraint(AbstractSecurityConstraint securityConstraint) {
+        if (securityConstraint.getSecurity() != null) {
+            this.security = new Security(securityConstraint.getSecurity());
+        }
+    }
+
 
     /**
      * Gets the value of the security property.
      * 
-     * @return
-     *     possible object is
-     *     {@link Security }
-     *     
+     * @return possible object is {@link Security }
      */
+    @Override
     public Security getSecurity() {
         return security;
     }
@@ -68,10 +78,7 @@ public class SecurityConstraint {
     /**
      * Sets the value of the security property.
      * 
-     * @param value
-     *     allowed object is
-     *     {@link Security }
-     *     
+     * @param value allowed object is {@link Security }
      */
     public void setSecurity(Security value) {
         this.security = value;

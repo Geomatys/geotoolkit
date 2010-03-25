@@ -62,6 +62,7 @@ public class SystemType extends AbstractComponentType implements System {
     /**
      * @return the components
      */
+    @Override
     public Components getComponents() {
         return components;
     }
@@ -69,6 +70,7 @@ public class SystemType extends AbstractComponentType implements System {
     /**
      * @param components the components to set
      */
+    @Override
     public void setComponents(AbstractComponents components) {
         this.components = new Components(components);
     }
@@ -76,6 +78,7 @@ public class SystemType extends AbstractComponentType implements System {
     /**
      * @return the positions
      */
+    @Override
     public Positions getPositions() {
         return positions;
     }
@@ -83,6 +86,7 @@ public class SystemType extends AbstractComponentType implements System {
     /**
      * @param positions the positions to set
      */
+    @Override
     public void setPositions(AbstractPositions positions) {
         this.positions = new Positions(positions);
     }
@@ -90,6 +94,7 @@ public class SystemType extends AbstractComponentType implements System {
     /**
      * @return the connections
      */
+    @Override
     public Connections getConnections() {
         return connections;
     }

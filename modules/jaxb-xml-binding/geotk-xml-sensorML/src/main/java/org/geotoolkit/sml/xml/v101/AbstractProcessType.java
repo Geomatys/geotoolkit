@@ -281,6 +281,14 @@ public abstract class AbstractProcessType extends AbstractSMLType implements Abs
     }
 
     /**
+     * Gets the value of the capabilities property.
+     *
+     */
+    public void setCapabilities(List<Capabilities> capabilities) {
+        this.capabilities = capabilities;
+    }
+
+    /**
      * Gets the value of the contact property.
      * 
      */
@@ -351,4 +359,20 @@ public abstract class AbstractProcessType extends AbstractSMLType implements Abs
         return this.history;
     }
 
+    /**
+     * Sets the value of the history property.
+     */
+    public void setHistory(List<History> history) {
+        this.history = history;
+    }
+
+    /**
+     * Sets the value of the history property.
+     */
+    public void setHistory(History history) {
+        if (this.history == null) {
+            this.history = new ArrayList<History>();
+        }
+        this.history.add(history);
+    }
 }

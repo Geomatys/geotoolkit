@@ -23,9 +23,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
-import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-
+import org.geotoolkit.sml.xml.AbstractLink;
 
 /**
  * <p>Java class for anonymous complex type.
@@ -71,12 +69,12 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
     "destination"
 })
 @XmlRootElement(name = "Link")
-public class Link {
+public class Link implements AbstractLink {
 
     @XmlElement(required = true)
-    private Link.Source source;
+    private LinkRef source;
     @XmlElement(required = true)
-    private Link.Destination destination;
+    private LinkRef destination;
     @XmlAttribute
     @XmlSchemaType(name = "anyURI")
     private String type;
@@ -85,7 +83,7 @@ public class Link {
 
     }
 
-    public Link(String type, Source source, Destination destination) {
+    public Link(String type, LinkRef source, LinkRef destination) {
         this.destination = destination;
         this.source      = source;
         this.type        = type;
@@ -99,7 +97,7 @@ public class Link {
      *     {@link Link.Source }
      *     
      */
-    public Link.Source getSource() {
+    public LinkRef getSource() {
         return source;
     }
 
@@ -111,7 +109,7 @@ public class Link {
      *     {@link Link.Source }
      *     
      */
-    public void setSource(Link.Source value) {
+    public void setSource(LinkRef value) {
         this.source = value;
     }
 
@@ -123,7 +121,7 @@ public class Link {
      *     {@link Link.Destination }
      *     
      */
-    public Link.Destination getDestination() {
+    public LinkRef getDestination() {
         return destination;
     }
 
@@ -135,7 +133,7 @@ public class Link {
      *     {@link Link.Destination }
      *     
      */
-    public void setDestination(Link.Destination value) {
+    public void setDestination(LinkRef value) {
         this.destination = value;
     }
 
@@ -162,125 +160,5 @@ public class Link {
     public void setType(String value) {
         this.type = value;
     }
-
-
-    /**
-     * <p>Java class for anonymous complex type.
-     * 
-     * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
-     * <pre>
-     * &lt;complexType>
-     *   &lt;complexContent>
-     *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-     *       &lt;attribute name="ref" use="required" type="{http://www.opengis.net/sensorML/1.0.1}linkRef" />
-     *     &lt;/restriction>
-     *   &lt;/complexContent>
-     * &lt;/complexType>
-     * </pre>
-     * 
-     * 
-     */
-    @XmlAccessorType(XmlAccessType.FIELD)
-    @XmlType(name = "")
-    public static class Destination {
-
-        @XmlAttribute(required = true)
-        @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-        private String ref;
-
-        public Destination() {
-
-        }
-
-        public Destination(String ref) {
-            this.ref = ref;
-        }
-        
-        /**
-         * Gets the value of the ref property.
-         * 
-         * @return
-         *     possible object is
-         *     {@link String }
-         *     
-         */
-        public String getRef() {
-            return ref;
-        }
-
-        /**
-         * Sets the value of the ref property.
-         * 
-         * @param value
-         *     allowed object is
-         *     {@link String }
-         *     
-         */
-        public void setRef(String value) {
-            this.ref = value;
-        }
-
-    }
-
-
-    /**
-     * <p>Java class for anonymous complex type.
-     * 
-     * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
-     * <pre>
-     * &lt;complexType>
-     *   &lt;complexContent>
-     *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-     *       &lt;attribute name="ref" use="required" type="{http://www.opengis.net/sensorML/1.0.1}linkRef" />
-     *     &lt;/restriction>
-     *   &lt;/complexContent>
-     * &lt;/complexType>
-     * </pre>
-     * 
-     * 
-     */
-    @XmlAccessorType(XmlAccessType.FIELD)
-    @XmlType(name = "")
-    public static class Source {
-
-        @XmlAttribute(required = true)
-        @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-        private String ref;
-
-        public Source() {
-
-        }
-
-        public Source(String ref) {
-            this.ref = ref;
-        }
-
-        /**
-         * Gets the value of the ref property.
-         * 
-         * @return
-         *     possible object is
-         *     {@link String }
-         *     
-         */
-        public String getRef() {
-            return ref;
-        }
-
-        /**
-         * Sets the value of the ref property.
-         * 
-         * @param value
-         *     allowed object is
-         *     {@link String }
-         *     
-         */
-        public void setRef(String value) {
-            this.ref = value;
-        }
-
-    }
-
+   
 }

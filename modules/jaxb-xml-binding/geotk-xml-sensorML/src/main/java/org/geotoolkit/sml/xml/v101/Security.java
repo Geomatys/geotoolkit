@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.datatype.XMLGregorianCalendar;
+import org.geotoolkit.sml.xml.AbstractSecurity;
 //import us.gov.ic.ism.v2.ClassificationType;
 
 
@@ -48,7 +49,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "")
 @XmlRootElement(name = "Security")
-public class Security {
+public class Security implements AbstractSecurity {
 
    /* @XmlAttribute(namespace = "urn:us:gov:ic:ism:v2")
     private ClassificationType classification;*/
@@ -87,6 +88,29 @@ public class Security {
     @XmlAttribute(namespace = "urn:us:gov:ic:ism:v2")
     private Boolean declassManualReview;
 
+    public Security() {
+
+    }
+
+    public Security(AbstractSecurity that) {
+        this.fgIsourceOpen         = that.getFGIsourceOpen();
+        this.sarIdentifier         = that.getSARIdentifier();
+        this.scIcontrols           = that.getSCIcontrols();
+        this.classificationReason  = that.getClassificationReason();
+        this.classifiedBy          = that.getClassifiedBy();
+        this.dateOfExemptedSource  = that.getDateOfExemptedSource();
+        this.declassDate           = that.getDeclassDate();
+        this.declassEvent          = that.getDeclassEvent();
+        this.declassException      = that.getDeclassException();
+        this.declassManualReview   = that.isDeclassManualReview();
+        this.derivedFrom           = that.getDerivedFrom();
+        this.disseminationControls = that.getDisseminationControls();
+        this.nonICmarkings         = that.getNonICmarkings();
+        this.ownerProducer         = that.getOwnerProducer();
+        this.releasableTo          = that.getReleasableTo();
+        this.typeOfExemptedSource  = that.getTypeOfExemptedSource();
+    }
+    
     /**
      * Gets the value of the classification property.
      * 

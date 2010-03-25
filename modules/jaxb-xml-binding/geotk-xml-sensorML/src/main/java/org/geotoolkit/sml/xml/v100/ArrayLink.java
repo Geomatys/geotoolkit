@@ -23,7 +23,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.util.Utilities;
-
+import org.geotoolkit.sml.xml.AbstractArrayLink;
 
 /**
  * <p>Java class for anonymous complex type.
@@ -96,7 +96,7 @@ import org.geotoolkit.util.Utilities;
     "connection"
 })
 @XmlRootElement(name = "ArrayLink")
-public class ArrayLink {
+public class ArrayLink implements AbstractArrayLink {
 
     private SourceArray sourceArray;
     private List<DestinationIndex> destinationIndex;
@@ -185,6 +185,17 @@ public class ArrayLink {
 
         }
         return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 79 * hash + (this.sourceArray != null ? this.sourceArray.hashCode() : 0);
+        hash = 79 * hash + (this.destinationIndex != null ? this.destinationIndex.hashCode() : 0);
+        hash = 79 * hash + (this.destinationArray != null ? this.destinationArray.hashCode() : 0);
+        hash = 79 * hash + (this.sourceIndex != null ? this.sourceIndex.hashCode() : 0);
+        hash = 79 * hash + (this.connection != null ? this.connection.hashCode() : 0);
+        return hash;
     }
 
     @Override

@@ -56,7 +56,7 @@ import org.geotoolkit.util.Utilities;
     "identification",
     "classification",
     "validTime",
-    //"securityConstraint",
+    "securityConstraint",
     "legalConstraint",
     "characteristics",
     "capabilities",
@@ -71,6 +71,7 @@ public abstract class AbstractProcessType extends AbstractSMLType implements Abs
     private List<Identification> identification;
     private List<Classification> classification;
     private ValidTime validTime;
+    private SecurityConstraint securityConstraint;
     private List<LegalConstraint> legalConstraint;
     private List<Characteristics> characteristics;
     private List<CapabilitiesSML> capabilities;
@@ -451,6 +452,23 @@ public abstract class AbstractProcessType extends AbstractSMLType implements Abs
         return this.history;
     }
 
+    /**
+     * Sets the value of the history property.
+     */
+    public void setHistory(List<History> history) {
+        this.history = history;
+    }
+
+    /**
+     * Sets the value of the history property.
+     */
+    public void setHistory(History history) {
+        if (this.history == null) {
+            this.history = new ArrayList<History>();
+        }
+        this.history.add(history);
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("[SensorML]").append("\n");
@@ -553,6 +571,21 @@ public abstract class AbstractProcessType extends AbstractSMLType implements Abs
         hash = 59 * hash + (this.documentation != null ? this.documentation.hashCode() : 0);
         hash = 59 * hash + (this.history != null ? this.history.hashCode() : 0);
         return hash;
+    }
+
+    /**
+     * @return the securityConstraint
+     */
+    @Override
+    public SecurityConstraint getSecurityConstraint() {
+        return securityConstraint;
+    }
+
+    /**
+     * @param securityConstraint the securityConstraint to set
+     */
+    public void setSecurityConstraint(SecurityConstraint securityConstraint) {
+        this.securityConstraint = securityConstraint;
     }
 
 }

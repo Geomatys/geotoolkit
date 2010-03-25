@@ -38,4 +38,6 @@ public interface AbstractProcess extends AbstractSML {
     public List<? extends AbstractContact> getContact();
 
     public List<? extends AbstractDocumentation> getDocumentation();
+
+    public AbstractSecurityConstraint getSecurityConstraint();
 }

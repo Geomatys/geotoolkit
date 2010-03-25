@@ -25,7 +25,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-
+import org.geotoolkit.sml.xml.AbstractArrayLink;
 
 /**
  * <p>Java class for anonymous complex type.
@@ -98,7 +98,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
     "connection"
 })
 @XmlRootElement(name = "ArrayLink")
-public class ArrayLink {
+public class ArrayLink implements AbstractArrayLink{
 
     private ArrayLink.SourceArray sourceArray;
     private List<ArrayLink.DestinationIndex> destinationIndex;

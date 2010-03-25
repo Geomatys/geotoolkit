@@ -23,7 +23,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.util.Utilities;
-
+import org.geotoolkit.sml.xml.AbstractLink;
 
 /**
  * <p>Java class for anonymous complex type.
@@ -69,7 +69,7 @@ import org.geotoolkit.util.Utilities;
     "destination"
 })
 @XmlRootElement(name = "Link")
-public class Link {
+public class Link implements AbstractLink {
 
     @XmlElement(required = true)
     private LinkRef source;

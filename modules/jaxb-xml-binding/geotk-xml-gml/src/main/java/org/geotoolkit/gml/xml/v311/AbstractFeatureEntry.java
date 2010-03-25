@@ -120,6 +120,23 @@ public abstract class AbstractFeatureEntry extends AbstractGMLEntry {
     }
 
     /**
+     * Get srs name list
+     */
+    public void setSrsName(List<String> srsName) {
+        this.srsName = srsName;
+    }
+
+    /**
+     * Get srs name list
+     */
+    public void getSrsName(String name){
+        if (srsName == null) {
+            srsName = new ArrayList<String>();
+        }
+        this.srsName.add(name);
+    }
+
+    /**
      * Verify if this entry is identical to the specified object.
      */
     @Override

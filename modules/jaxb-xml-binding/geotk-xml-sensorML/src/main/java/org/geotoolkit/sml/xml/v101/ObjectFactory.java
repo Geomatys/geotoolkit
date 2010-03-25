@@ -61,14 +61,6 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Link.Destination }
-     * 
-     */
-    public Link.Destination createLinkDestination() {
-        return new Link.Destination();
-    }
-
-    /**
      * Create an instance of {@link ProcessMethodType.Rules }
      * 
      */
@@ -720,8 +712,8 @@ public class ObjectFactory {
      * Create an instance of {@link Link.Source }
      * 
      */
-    public Link.Source createLinkSource() {
-        return new Link.Source();
+    public LinkRef createLinkRef() {
+        return new LinkRef();
     }
 
     /**

@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.geotoolkit.util.Utilities;
+import org.geotoolkit.sml.xml.AbstractConnection;
 
 
 /**
@@ -55,7 +56,7 @@ import org.geotoolkit.util.Utilities;
     "arrayLink"
 })
 @XmlRootElement(name = "connection")
-public class Connection {
+public class Connection implements AbstractConnection {
 
     @XmlElement(name = "Link")
     private Link link;
@@ -86,6 +87,7 @@ public class Connection {
     /**
      * Gets the value of the link property.
      */
+    @Override
     public Link getLink() {
         return link;
     }
@@ -100,6 +102,7 @@ public class Connection {
     /**
      * Gets the value of the arrayLink property.
      */
+    @Override
     public ArrayLink getArrayLink() {
         return arrayLink;
     }

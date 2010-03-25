@@ -449,6 +449,37 @@ public class SensorML extends AbstractSensorML {
         @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
         private String actuate;
 
+        public Member() {
+        }
+
+        public Member(AbstractProcessType process) {
+            ObjectFactory factory = new ObjectFactory();
+            if (process instanceof SystemType) {
+                this.process = factory.createSystem((SystemType) process);
+            } else if (process instanceof ComponentType) {
+                this.process = factory.createComponent((ComponentType) process);
+            } else if (process instanceof DataSourceType) {
+                this.process = factory.createDataSource((DataSourceType) process);
+            } else if (process instanceof ProcessChainType) {
+                this.process = factory.createProcessChain((ProcessChainType) process);
+            } else if (process instanceof ProcessModelType) {
+                this.process = factory.createProcessModel((ProcessModelType) process);
+            } else if (process instanceof ComponentArrayType) {
+                this.process = factory.createComponentArray((ComponentArrayType) process);
+            } else {
+                System.out.println("Unexpected AbstractProcessType:" + process);
+            }
+        }
+        public Member(SystemType system) {
+            ObjectFactory factory = new ObjectFactory();
+            this.process = factory.createSystem(system);
+        }
+
+        public Member(ComponentType compo) {
+            ObjectFactory factory = new ObjectFactory();
+            this.process = factory.createComponent(compo);
+        }
+        
         /**
          * Gets the value of the process property.
          * 
