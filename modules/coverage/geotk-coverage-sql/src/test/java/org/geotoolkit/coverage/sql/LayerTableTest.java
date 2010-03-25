@@ -85,14 +85,14 @@ public final class LayerTableTest extends CatalogTestBase {
     private static final double EPS = 1E-8;
 
     /**
-     * Tests the {@link LayerTableTest#getNames} method.
+     * Tests the {@link LayerTableTest#getIdentifiers()} method.
      *
      * @throws SQLException If the test can't connect to the database.
      */
     @Test
-    public void testGetNames() throws SQLException {
+    public void testGetIdentifiers() throws SQLException {
         final LayerTable table = getDatabase().getTable(LayerTable.class);
-        final Set<String> names = table.getNames();
+        final Set<String> names = table.getIdentifiers();
         assertTrue(names.contains(TEMPERATURE));
         assertTrue(names.contains(NETCDF));
     }

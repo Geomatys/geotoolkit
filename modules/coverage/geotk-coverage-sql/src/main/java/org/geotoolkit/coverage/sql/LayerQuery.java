@@ -54,7 +54,7 @@ final class LayerQuery extends Query {
     public LayerQuery(final Database database) {
         super(database, "Layers");
         final QueryType[] sl = {SELECT, LIST};
-        name     = addMandatoryColumn("name", SELECT, LIST, EXISTS, INSERT);
+        name     = addMandatoryColumn("name", SELECT, LIST, LIST_ID, EXISTS, INSERT);
         period   = addOptionalColumn ("period",      1, sl);
         fallback = addOptionalColumn ("fallback", null, sl);
         comments = addOptionalColumn ("comments", null, sl);

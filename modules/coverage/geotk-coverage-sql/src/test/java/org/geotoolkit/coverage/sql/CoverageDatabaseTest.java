@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.coverage.sql;
 
+import java.util.Set;
 import java.util.List;
 
 import org.geotoolkit.test.Depend;
@@ -66,8 +67,23 @@ public final class CoverageDatabaseTest extends CatalogTestBase {
      */
     @AfterClass
     public static synchronized void dispose() {
-        database.dispose();
-        database = null;
+        if (database != null) {
+            database.dispose();
+            database = null;
+        }
+    }
+
+    /**
+     * Tests {@link CoverageDatabase#getLayers()}.
+     *
+     * @throws CoverageStoreException If some data can not be read.
+     */
+    @Test
+    public void testGetLayers() throws CoverageStoreException {
+        final CoverageDatabase database = getCoverageDatabase();
+        final Set<String> names = now(database.getLayers());
+        assertTrue(names.contains(TEMPERATURE));
+        assertTrue(names.contains(NETCDF));
     }
 
     /**

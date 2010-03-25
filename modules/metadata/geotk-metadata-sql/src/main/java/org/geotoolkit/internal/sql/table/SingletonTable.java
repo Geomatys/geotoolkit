@@ -377,6 +377,28 @@ public abstract class SingletonTable<E extends Entry> extends Table {
     }
 
     /**
+     * Returns the names of all entries available in the database. This method is much
+     * more economical than {@link #getEntries()} when only the identifiers are wanted.
+     *
+     * @return The set of entry identifiers. May be empty, but never {@code null}.
+     * @throws SQLException if an error occured will reading from the database.
+     */
+    public Set<String> getIdentifiers() throws SQLException {
+        final Set<String> identifiers = new LinkedHashSet<String>();
+        synchronized (getLock()) {
+            final LocalCache.Stmt ce = getStatement(QueryType.LIST_ID);
+            final ResultSet results = ce.statement.executeQuery();
+            final int index = getPrimaryKeyColumn();
+            while (results.next()) {
+                identifiers.add(results.getString(index));
+            }
+            results.close();
+            ce.release();
+        }
+        return identifiers;
+    }
+
+    /**
      * Checks if an entry exists for the given name. This method do not attempt to create
      * the entry and doesn't check if the entry is valid.
      *

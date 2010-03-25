@@ -17,6 +17,9 @@
  */
 package org.geotoolkit.coverage.sql;
 
+import java.util.Date;
+import java.util.Set;
+import java.util.SortedSet;
 import java.util.Map;
 import java.util.List;
 import java.util.Arrays;
@@ -34,6 +37,7 @@ import org.geotoolkit.util.DateRange;
 import org.geotoolkit.util.MeasurementRange;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
 import org.geotoolkit.internal.sql.table.Entry;
+import org.geotoolkit.internal.sql.table.CatalogException;
 import org.geotoolkit.internal.sql.table.NoSuchRecordException;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 
@@ -92,7 +96,12 @@ final class LayerEntry extends Entry implements Layer {
      * Provides indirectly a connection to the database.
      * This is set to {@code null} when no longer needed.
      */
-    private transient LayerTable table;
+    private transient LayerTable layerTable;
+
+    /**
+     * Connection to the grid coverage table.
+     */
+    private transient GridCoverageTable gridCoverageTable;
 
     /**
      * Creates a new layer.
@@ -108,7 +117,7 @@ final class LayerEntry extends Entry implements Layer {
     {
         super(name, remarks);
         this.timeInterval = timeInterval;
-        this.table = table;
+        this.layerTable = table;
     }
 
     /**
@@ -126,9 +135,17 @@ final class LayerEntry extends Entry implements Layer {
      */
     private void conditionalRelease() {
         assert Thread.holdsLock(this);
-        if ((domain != null) && (series != null) && !(fallback instanceof String)) {
-            table = null;
+        if ((domain != null) && (series != null) && !(fallback instanceof String) && (gridCoverageTable != null)) {
+            layerTable = null;
         }
+    }
+
+    /**
+     * Resets the given table to the spatio-temporal extent of interest.
+     * This is a place-holder for future work.
+     */
+    private static void reset(final GridCoverageTable table) throws CatalogException {
+        table.setEnvelope(null);
     }
 
     /**
@@ -139,7 +156,7 @@ final class LayerEntry extends Entry implements Layer {
     private synchronized DomainOfLayerEntry getDomain() throws SQLException {
         if (domain == null) {
             final String name = getName();
-            final DomainOfLayerTable domains = table.getDomainOfLayerTable();
+            final DomainOfLayerTable domains = layerTable.getDomainOfLayerTable();
             try {
                 synchronized (domains) {
                     domain = domains.getEntry(name);
@@ -181,7 +198,7 @@ final class LayerEntry extends Entry implements Layer {
     final synchronized Map<Integer,SeriesEntry> getSeriesMap() throws SQLException {
         if (series == null) {
             final String name = getName();
-            final SeriesTable st = table.getSeriesTable();
+            final SeriesTable st = layerTable.getSeriesTable();
             final Map<Integer,SeriesEntry> map;
             synchronized (st) {
                 st.setLayer(name);
@@ -206,7 +223,7 @@ final class LayerEntry extends Entry implements Layer {
     public synchronized LayerEntry getFallback() throws CoverageStoreException {
         if (fallback instanceof String) {
             final String name = (String) fallback;
-            final LayerTable fb = table.getLayerTable();
+            final LayerTable fb = layerTable.getLayerTable();
             try {
                 synchronized (fb) {
                     fallback = fb.getEntry(name);
@@ -232,6 +249,40 @@ final class LayerEntry extends Entry implements Layer {
         } catch (SQLException e) {
             throw new CoverageStoreException(e);
         }
+    }
+
+    /**
+     * Returns the set of dates when a coverage is available.
+     */
+    @Override
+    public SortedSet<Date> getAvailableTimes() throws CoverageStoreException {
+        final GridCoverageTable data = gridCoverageTable;
+        if (data != null) try {
+            synchronized (data) {
+                reset(data);
+                return data.getAvailableTimes();
+            }
+        } catch (SQLException e) {
+            throw new CoverageStoreException(e);
+        }
+        return null;
+    }
+
+    /**
+     * Returns the set of altitudes where a coverage is available.
+     */
+    @Override
+    public SortedSet<Number> getAvailableElevations() throws CoverageStoreException {
+        final GridCoverageTable data = gridCoverageTable;
+        if (data != null) try {
+            synchronized (data) {
+                reset(data);
+                return data.getAvailableElevations();
+            }
+        } catch (SQLException e) {
+            throw new CoverageStoreException(e);
+        }
+        return null;
     }
 
     /**
@@ -303,6 +354,84 @@ final class LayerEntry extends Entry implements Layer {
             }
         }
         return null;
+    }
+
+    /**
+     * Returns a reference to a coverage for the given date and elevation.
+     */
+    @Override
+    public GridCoverageReference getCoverageReference(final Date time, final Number elevation)
+            throws CoverageStoreException
+    {
+        long delay = Math.round(timeInterval * (GridCoverageTable.MILLIS_IN_DAY / 2));
+        if (delay <= 0) {
+            delay = GridCoverageTable.MILLIS_IN_DAY / 2;
+        }
+        Date startTime, endTime;
+        if (time != null) {
+            final long t = time.getTime();
+            startTime = new Date(t - delay);
+            endTime = new Date(t + delay);
+        } else {
+            startTime = null;
+            endTime   = null;
+        }
+        final GridCoverageTable data = gridCoverageTable;
+        if (data != null) try {
+            synchronized (data) {
+                data.setTimeRange(startTime, endTime);
+                final double z = (elevation != null) ? elevation.doubleValue() : 0;
+                data.setVerticalRange(z, z); // TODO: choose a better range.
+                return data.getEntry();
+            }
+        } catch (SQLException exception) {
+            throw new CoverageStoreException(exception);
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Returns a reference to every coverages available in this layer.
+     * <p>
+     * <b>Implementation note:</b> this method casts {@code Set<GridCoverageEntry>} to
+     * {@code Set<GridCoverageReference>}. This is okay if the {@code Set} is a generic
+     * implementation like {@link java.util.LinkedHashSet} and this class does not keep
+     * any reference to the returned set (so no {@code Set<GridCoverageEntry>} view
+     * exist anymore).
+     */
+    @Override
+    @SuppressWarnings({"unchecked","rawtypes"})
+    public Set<GridCoverageReference> getCoverageReferences() throws CoverageStoreException {
+        final GridCoverageTable data = gridCoverageTable;
+        if (data != null) try {
+            synchronized (data) {
+                reset(data);
+                return (Set) data.getEntries(); // See implementation note above.
+            }
+        } catch (SQLException exception) {
+            throw new CoverageStoreException(exception);
+        } else {
+            return Collections.emptySet();
+        }
+    }
+
+    /**
+     * Returns a reference to a single "typical" coverages available in this layer.
+     */
+    @Override
+    public GridCoverageReference getCoverageReference() throws CoverageStoreException {
+        final GridCoverageTable data = gridCoverageTable;
+        if (data != null) try {
+            synchronized (data) {
+                reset(data);
+                return data.getEntry();
+            }
+        } catch (SQLException exception) {
+            throw new CoverageStoreException(exception);
+        } else {
+            return null;
+        }
     }
 
     /**

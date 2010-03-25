@@ -46,6 +46,7 @@ import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
+import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageStorePool;
 import org.geotoolkit.coverage.io.CoverageStoreException;
@@ -365,6 +366,25 @@ final class GridCoverageEntry extends Entry implements GridCoverageReference {
             }
         }
         return coverage;
+    }
+
+    /**
+     * Returns a pre-configured reader which can be used for loading the pixel values.
+     */
+    @Override
+    public GridCoverageReader getReader() throws CoverageStoreException {
+        final Object input;
+        try {
+            input = getInput();
+        } catch (URISyntaxException e) {
+            throw new CoverageStoreException(e.getLocalizedMessage(), e);
+        }
+        final GridCoverageIdentifier identifier = getIdentifier();
+        final GridCoverageLoader reader = new GridCoverageLoader(identifier.series.format);
+        reader.expectedSize = identifier.geometry.getImageSize();
+        reader.setInput(input);
+        reader.inputIsFinal = true;
+        return reader;
     }
 
     /**

@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.coverage.sql;
 
+import java.util.Set;
 import java.util.List;
 import java.util.Arrays;
 import java.util.Properties;
@@ -226,6 +227,37 @@ public class CoverageDatabase {
                 throw (CoverageStoreException) cause;
             }
             throw new CoverageStoreException(cause);
+        }
+    }
+
+    /**
+     * Returns the name of every layers is the database.
+     *
+     * @return The layer of the given name.
+     */
+    public Future<Set<String>> getLayers() {
+        return executor.submit(new GetLayers());
+    }
+
+    /**
+     * The task for {@link CoverageDatabase#getLayers()}. Declared as an explicit class
+     * rather than an inner class in order to have more helpful stack trace in case of failure.
+     */
+    private final class GetLayers implements Callable<Set<String>> {
+        /** Creates a new task. */
+        GetLayers() {
+        }
+
+        /** Executes the task in a background thread. */
+        @Override public Set<String> call() throws CoverageStoreException {
+            try {
+                final LayerTable table = layers.acquire();
+                final Set<String> names = table.getIdentifiers();
+                layers.release(table);
+                return names;
+            } catch (SQLException e) {
+                throw new CoverageStoreException(e);
+            }
         }
     }
 

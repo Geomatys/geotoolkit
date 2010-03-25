@@ -17,17 +17,22 @@
  */
 
 /**
- * A schema for storing coverages metadata in a SQL database.
- *
- * {@section Thread-safety}
- * Every classes made available in this package are thread-safe, and when possible concurrent.
- *
- * {@section Subclassing}
- * This package is not designed for subclassing, since the underlying implementation is
- * strictly internal and may change in any future version. Only the public API is stable.
+ * A schema for storing coverages metadata in a SQL database. The connection to the database
+ * is specified by a JDBC {@link javax.sql.DataSource} and a {@link java.util.Properties} map,
+ * which are given to the {@link org.geotoolkit.coverage.sql.CoverageDatabase} constructor.
+ * The properties map can contain the following optional entries:
+ * <p>
+ * <table>
+ *   <tr><td>{@code user}</td>          <td>The user name.</td></tr>
+ *   <tr><td>{@code password}</td>      <td>The password.</td></tr>
+ *   <tr><td>{@code schema}</td>        <td>The database schema to use.</td></tr>
+ *   <tr><td>{@code timezone}</td>      <td>The timezone for the dates in the database. Default is UTC.</td></tr>
+ *   <tr><td>{@code rootDirectory}</td> <td>The root directory of image files. Paths declared
+ *   in the database are relative to that directory.</td></tr>
+ * </table>
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.09
+ * @version 3.10
  *
  * @since 3.09 (derived from Seagis)
  * @module

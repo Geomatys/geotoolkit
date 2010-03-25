@@ -17,7 +17,10 @@
  */
 package org.geotoolkit.coverage.sql;
 
+import java.util.Date;
 import java.util.List;
+import java.util.Set;
+import java.util.SortedSet;
 
 import org.geotoolkit.util.DateRange;
 import org.geotoolkit.util.MeasurementRange;
@@ -63,6 +66,24 @@ public interface Layer {
     DateRange getTimeRange() throws CoverageStoreException;
 
     /**
+     * Returns the set of dates when a coverage is available.
+     *
+     * @return The set of dates, or {@code null} if unknown.
+     * @throws CoverageStoreException if an error occured while fetching the set.
+     */
+    SortedSet<Date> getAvailableTimes() throws CoverageStoreException;
+
+    /**
+     * Returns the set of altitudes where a coverage is available. If different coverages
+     * have different set of altitudes, then this method returns only the altitudes that
+     * are common to every coverages.
+     *
+     * @return The set of altitudes, or {@code null} if unknown.
+     * @throws CoverageStoreException if an error occured while fetching the set.
+     */
+    SortedSet<Number> getAvailableElevations() throws CoverageStoreException;
+
+    /**
      * Returns the ranges of valid <cite>geophysics</cite> values for each band.
      *
      * @return The range of valid sample values.
@@ -79,4 +100,33 @@ public interface Layer {
      * @throws CoverageStoreException if an error occured while fetching the resolution.
      */
     double[] getTypicalResolution() throws CoverageStoreException;
+
+    /**
+     * Returns a reference to a coverage for the given date and elevation.
+     *
+     * @param  time The date, or {@code null} if not applicable.
+     * @param  elevation The elevation, or {@code null} if not applicable.
+     * @return A reference to a coverage, or {@code null} if none.
+     * @throws CoverageStoreException if an error occured while querying the database.
+     */
+    GridCoverageReference getCoverageReference(Date time, Number elevation) throws CoverageStoreException;
+
+    /**
+     * Returns a reference to every coverages available in this layer.
+     * Note that coverages are not immediately loaded; only references are returned.
+     *
+     * @return The set of coverages in the layer.
+     * @throws CoverageStoreException if an error occured while querying the database.
+     */
+    Set<GridCoverageReference> getCoverageReferences() throws CoverageStoreException;
+
+    /**
+     * Returns a reference to a single "typical" coverages available in this layer.
+     * This method is especially useful for layer that are expected to contains only
+     * one coverage.
+     *
+     * @return A typical coverage in the layer, or {@code null} if none.
+     * @throws CoverageStoreException if an error occured while querying the database.
+     */
+    GridCoverageReference getCoverageReference() throws CoverageStoreException;
 }

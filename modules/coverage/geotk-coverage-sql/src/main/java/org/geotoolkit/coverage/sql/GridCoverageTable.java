@@ -58,7 +58,7 @@ class GridCoverageTable extends BoundedSingletonTable<GridCoverageEntry> {
     /**
      * Amount of milliseconds in a day.
      */
-    private static final long MILLIS_IN_DAY = 24*60*60*1000L;
+    static final long MILLIS_IN_DAY = 24*60*60*1000L;
 
     /**
      * The currently selected layer, or {@code null} if not yet set.

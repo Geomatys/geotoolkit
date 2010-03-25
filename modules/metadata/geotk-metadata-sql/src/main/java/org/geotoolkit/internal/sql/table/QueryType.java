@@ -24,7 +24,7 @@ import java.util.logging.Level;
  * The kind of query to be executed.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.09
+ * @version 3.10
  *
  * @since 3.09 (derived from Seagis)
  * @module
@@ -50,6 +50,12 @@ public enum QueryType {
      * {@link SingletonTable#getEntries()}.
      */
     LIST(false),
+
+    /**
+     * Every entries will be listed. This is the kind of query executed by
+     * {@link SingletonTable#getIdentifiers()}.
+     */
+    LIST_ID(false),
 
     /**
      * Selects spatio-temporal envelope in a set of entries. This is the kind of

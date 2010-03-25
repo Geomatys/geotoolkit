@@ -17,12 +17,15 @@
  */
 package org.geotoolkit.coverage.sql;
 
+import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
 
 import org.geotoolkit.test.Depend;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
+import org.geotoolkit.coverage.io.GridCoverageReader;
+import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.internal.sql.table.CatalogTestBase;
 
 import org.junit.*;
@@ -45,9 +48,10 @@ public final class GridCoverageLoaderTest extends CatalogTestBase {
      *
      * @throws SQLException If the test can't connect to the database.
      * @throws IOException If the image can not be read.
+     * @throws CoverageStoreException If a logical error occured.
      */
     @Test
-    public void testTemperature() throws SQLException, IOException {
+    public void testTemperature() throws SQLException, IOException, CoverageStoreException {
         final GridCoverageTable table = getDatabase().getTable(GridCoverageTable.class);
         table.setTimeRange(LayerTableTest.SUB_START_TIME, LayerTableTest.SUB_END_TIME);
         table.setLayer(LayerTableTest.TEMPERATURE);
@@ -64,5 +68,18 @@ public final class GridCoverageLoaderTest extends CatalogTestBase {
         final GridSampleDimension band = bands[0];
         assertSame("Should be geophysics.", band, band.geophysics(true));
         SampleDimensionTableTest.checkTemperatureDimension(band.geophysics(false));
+        /*
+         * Tests fetching the loader.
+         */
+        final GridCoverageReader reader = entry.getReader();
+        try {
+            reader.setInput(null);
+            fail("setInput should not be allowed.");
+        } catch (CoverageStoreException e) {
+            // This is the expected exception.
+        }
+        final File input = (File) reader.getInput();
+        assertEquals("198602.png", input.getName());
+        reader.dispose();
     }
 }

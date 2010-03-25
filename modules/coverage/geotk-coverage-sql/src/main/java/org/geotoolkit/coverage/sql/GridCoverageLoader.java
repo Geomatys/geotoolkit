@@ -68,6 +68,11 @@ final class GridCoverageLoader extends ImageCoverageReader {
     Dimension expectedSize;
 
     /**
+     * If {@code true}, the input is not allowed to be changed.
+     */
+    boolean inputIsFinal;
+
+    /**
      * For internal usage by {@link GridCoverageEntry} only.
      */
     transient GridCoverageLoader nextInUse;
@@ -87,6 +92,10 @@ final class GridCoverageLoader extends ImageCoverageReader {
      */
     @Override
     public void setInput(Object input) throws CoverageStoreException {
+        if (inputIsFinal) {
+            throw new CoverageStoreException(Errors.getResources(getLocale())
+                    .getString(Errors.Keys.UNSUPPORTED_OPERATION_$1, "setInput"));
+        }
         entry = null;
         if (input instanceof GridCoverageEntry) try {
             entry = (GridCoverageEntry) input;
