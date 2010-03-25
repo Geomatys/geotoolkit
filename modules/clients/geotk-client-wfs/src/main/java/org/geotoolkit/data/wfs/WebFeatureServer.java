@@ -62,13 +62,14 @@ public class WebFeatureServer implements Server{
     }
 
     /**
-     * @return URI : server URI
+     * {@inheritDoc}
      */
+    @Override
     public URI getURI(){
         try {
             return serverURL.toURI();
         } catch (URISyntaxException ex) {
-            Logger.getLogger(WebFeatureServer.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.WARNING, ex.getLocalizedMessage(), ex);
         }
         return null;
     }

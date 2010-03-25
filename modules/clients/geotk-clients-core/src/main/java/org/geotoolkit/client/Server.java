@@ -16,6 +16,8 @@
  */
 package org.geotoolkit.client;
 
+import java.net.URI;
+
 
 /**
  * Default interface for all server-side classes.
@@ -24,5 +26,9 @@ package org.geotoolkit.client;
  * @module pending
  */
 public interface Server {
-
+    /**
+     * Returns the server url as an {@link URI}, or {@code null} il the uri syntax
+     * is not respected.
+     */
+    URI getURI();
 }

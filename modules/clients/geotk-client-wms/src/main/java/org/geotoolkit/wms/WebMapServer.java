@@ -98,9 +98,9 @@ public class WebMapServer implements Server{
     }
 
     /**
-     * Returns the server url as an {@link URI}, or {@code null} il the uri syntax
-     * is not respected.
+     * {@inheritDoc}
      */
+    @Override
     public URI getURI(){
         try {
             return serverURL.toURI();
