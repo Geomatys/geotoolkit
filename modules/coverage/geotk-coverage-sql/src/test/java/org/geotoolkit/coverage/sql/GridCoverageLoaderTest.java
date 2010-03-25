@@ -60,14 +60,7 @@ public final class GridCoverageLoaderTest extends CatalogTestBase {
         requireImageData();
         final GridCoverage2D coverage = entry.getCoverage(null);
         assertSame("Coverage shall be cached.", coverage, entry.getCoverage(null));
-        /*
-         * Test the sample dimension.
-         */
-        final GridSampleDimension[] bands = coverage.getSampleDimensions();
-        assertEquals(1, bands.length);
-        final GridSampleDimension band = bands[0];
-        assertSame("Should be geophysics.", band, band.geophysics(true));
-        SampleDimensionTableTest.checkTemperatureDimension(band.geophysics(false));
+        checkTemperatureCoverage(coverage);
         /*
          * Tests fetching the loader.
          */
@@ -81,5 +74,16 @@ public final class GridCoverageLoaderTest extends CatalogTestBase {
         final File input = (File) reader.getInput();
         assertEquals("198602.png", input.getName());
         reader.dispose();
+    }
+
+    /**
+     * Checks the {@code GridCoverage2D} instance for the temperature sample data.
+     */
+    static void checkTemperatureCoverage(final GridCoverage2D coverage) {
+        final GridSampleDimension[] bands = coverage.getSampleDimensions();
+        assertEquals(1, bands.length);
+        final GridSampleDimension band = bands[0];
+        assertSame("Should be geophysics.", band, band.geophysics(true));
+        SampleDimensionTableTest.checkTemperatureDimension(band.geophysics(false));
     }
 }

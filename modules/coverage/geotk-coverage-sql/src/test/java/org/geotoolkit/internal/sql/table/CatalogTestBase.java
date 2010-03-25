@@ -18,10 +18,11 @@
 package org.geotoolkit.internal.sql.table;
 
 import java.io.File;
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Properties;
+import javax.sql.DataSource;
+import java.lang.reflect.Constructor;
 
 import org.postgresql.ds.PGSimpleDataSource;
 
@@ -59,20 +60,32 @@ public class CatalogTestBase {
      * @return The database.
      */
     protected static synchronized SpatialDatabase getDatabase() {
-        if (database == null) {
+        if (database == null) try {
             final File pf = new File(Installation.TESTS.directory(true), "coverage-sql.properties");
             assumeTrue(pf.isFile()); // All tests will be skipped if the above resources is not found.
             final Properties properties;
-            try {
-                properties = TestData.readProperties(pf);
-            } catch (IOException e) {
-                throw new AssertionError(e); // This will cause a JUnit test failure.
-            }
+            properties = TestData.readProperties(pf);
             final PGSimpleDataSource ds = new PGSimpleDataSource();
             ds.setServerName(properties.getProperty("server"));
             ds.setDatabaseName(properties.getProperty("database"));
-            database = new SpatialDatabase(ds, properties);
+            /*
+             * Use reflection for instantiating the database, because it is defined
+             * as a package-privated class.
+             */
+            if (true) {
+                final Class<? extends SpatialDatabase> databaseClass =
+                        Class.forName("org.geotoolkit.coverage.sql.TableFactory").asSubclass(SpatialDatabase.class);
+                final Constructor<? extends SpatialDatabase> c = databaseClass.getConstructor(DataSource.class, Properties.class);
+                c.setAccessible(true);
+                database = c.newInstance(ds, properties);
+            } else {
+                database = new SpatialDatabase(ds, properties);
+            }
             hasRootDirectory = properties.containsKey(ConfigurationKey.ROOT_DIRECTORY.key);
+        } catch (RuntimeException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new AssertionError(e); // This will cause a JUnit failure.
         }
         return database;
     }

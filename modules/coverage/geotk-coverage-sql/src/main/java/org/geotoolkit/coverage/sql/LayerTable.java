@@ -22,6 +22,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import org.geotoolkit.internal.sql.table.Database;
+import org.geotoolkit.internal.sql.table.TablePool;
 import org.geotoolkit.internal.sql.table.LocalCache;
 import org.geotoolkit.internal.sql.table.QueryType;
 import org.geotoolkit.internal.sql.table.SingletonTable;
@@ -52,6 +53,11 @@ final class LayerTable extends SingletonTable<LayerEntry> {
      * A clone of this table used for fetching fallbacks. Will be created when first needed.
      */
     private transient volatile LayerTable fallbacks;
+
+    /**
+     * Connection to the table of grid coverages. Will be created when first needed.
+     */
+    private transient volatile GridCoverageTable coverages;
 
     /**
      * Creates a layer table.
@@ -182,5 +188,30 @@ final class LayerTable extends SingletonTable<LayerEntry> {
             fallbacks = table = clone();
         }
         return table;
+    }
+
+    /**
+     * Returns the {@link GridCoverageTable} instance, creating it if needed. This method is
+     * invoked only from {@link LayerEntry}, which is responsible for performing synchronization
+     * on the returned table. Note that because the returned instance is used in only one place,
+     * synchronization in that place is effective even if the {@code GridCoverageTable} methods
+     * are not synchronized.
+     */
+    final GridCoverageTable getGridCoverageTable() throws NoSuchTableException {
+        GridCoverageTable table = coverages;
+        if (table == null) {
+            // Not a big deal if two instances are created concurrently.
+            coverages = table = getDatabase().getTable(GridCoverageTable.class);
+        }
+        return table;
+    }
+
+    /**
+     * Returns the pool of {@link GridCoverageTable}. At the opposite of the table returned by
+     * {@link #getGridCoverageTable()}, the tables in the pool can have their configuration
+     * changed.
+     */
+    final TablePool<GridCoverageTable> getTablePool() {
+        return ((TableFactory) getDatabase()).coverages;
     }
 }

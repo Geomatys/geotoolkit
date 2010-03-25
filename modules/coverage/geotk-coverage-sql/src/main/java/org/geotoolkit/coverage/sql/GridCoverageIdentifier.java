@@ -21,9 +21,11 @@ import java.io.File;
 import java.io.Serializable;
 import java.net.URI;
 import java.net.URISyntaxException;
+import org.geotoolkit.coverage.io.CoverageStoreException;
 
 import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.internal.sql.table.MultiColumnIdentifier;
+import org.geotoolkit.resources.Errors;
 
 
 /**
@@ -114,6 +116,21 @@ final class GridCoverageIdentifier extends MultiColumnIdentifier<GridCoverageIde
      */
     public URI uri() throws URISyntaxException {
         return series.uri(filename);
+    }
+
+    /**
+     * Returns the image index as a zero-based index.
+     *
+     * @return The zero-based image index.
+     * @throws CoverageStoreException If there is no image index specified.
+     */
+    public int getImageIndex() throws CoverageStoreException {
+        final int i = imageIndex - 1; // Convert from 1-based index.
+        if (i < 0) {
+            throw new CoverageStoreException(Errors.format(
+                    Errors.Keys.BAD_PARAMETER_$2, "imageIndex", i));
+        }
+        return i;
     }
 
     /**

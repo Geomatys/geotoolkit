@@ -17,9 +17,10 @@
  */
 package org.geotoolkit.coverage.sql;
 
+import java.util.Date;
 import java.util.Set;
+import java.util.SortedSet;
 import java.util.List;
-import java.util.Arrays;
 import java.util.Properties;
 import java.util.concurrent.Future;
 import java.util.concurrent.Callable;
@@ -39,9 +40,7 @@ import org.geotoolkit.util.NullArgumentException;
 import org.geotoolkit.image.io.IIOListeners;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.CoverageStoreException;
-import org.geotoolkit.internal.sql.table.Table;
-import org.geotoolkit.internal.sql.table.SpatialDatabase;
-import org.geotoolkit.internal.sql.table.NoSuchTableException;
+import org.geotoolkit.internal.sql.table.TablePool;
 import org.geotoolkit.resources.Errors;
 
 
@@ -92,7 +91,7 @@ public class CoverageDatabase {
     /**
      * The object which will manage the connections to the database.
      */
-    private volatile SpatialDatabase database;
+    private volatile TableFactory database;
 
     /**
      * The executor service to use for loading data in background. We force the usage of this
@@ -103,85 +102,22 @@ public class CoverageDatabase {
     private final ExecutorService executor;
 
     /**
-     * Pool of tables. The length of the array given to the constructor is the maximal
-     * number of tables to be cached.
-     */
-    private final class Pool<T extends Table> {
-        /** Kind of tables in the pool. */ private final Class<T> type;
-        /** Tables available for use.   */ private final T[] tables;
-        /** Number of valid entries.    */ private int count;
-
-        /**
-         * Creates a new pool of tables.
-         */
-        Pool(final Class<T> type, final T[] tables) {
-            this.type   = type;
-            this.tables = tables;
-        }
-
-        /**
-         * Returns a table from the pool if possible, or creates a new table if the pool is empty.
-         */
-        T acquire() throws NoSuchTableException {
-            synchronized (this) {
-                int n = count;
-                if (n != 0) {
-                    count = --n;
-                    final T table = tables[n];
-                    tables[n] = null;
-                    return table;
-                }
-            }
-            return database.getTable(type);
-        }
-
-        /**
-         * Returns the given table to the pool. The table is discarted if the pool is full.
-         */
-        synchronized void release(final T table) {
-            if (count != tables.length) {
-                tables[count++] = table;
-            }
-        }
-
-        /**
-         * Clears the pool. Used for flushing the cache.
-         */
-        synchronized void clear() {
-            Arrays.fill(tables, null);
-            count = 0;
-        }
-    }
-
-    /**
-     * Pool of layer tables.
-     */
-    private final Pool<LayerTable> layers;
-
-    /**
-     * Pool of grid coverage tables.
-     */
-    private final Pool<GridCoverageTable> coverages;
-
-    /**
      * Creates a new instance using the given data source.
      *
      * @param datasource The data source.
      * @param properties The configuration properties, or {@code null} if none.
      */
     public CoverageDatabase(final DataSource datasource, final Properties properties) {
-        this(new SpatialDatabase(datasource, properties));
+        this(new TableFactory(datasource, properties));
     }
 
     /**
      * Creates a new instance using the given database.
      */
-    CoverageDatabase(final SpatialDatabase db) {
-        database  = db;
-        layers    = new Pool<LayerTable>(LayerTable.class, new LayerTable[4]);
-        coverages = new Pool<GridCoverageTable>(GridCoverageTable.class, new GridCoverageTable[4]);
-        executor  = new ThreadPoolExecutor(0, MAXIMUM_THREADS, 1, TimeUnit.MINUTES,
-                    new ArrayBlockingQueue<Runnable>(MAXIMUM_TASKS, true));
+    CoverageDatabase(final TableFactory db) {
+        database = db;
+        executor = new ThreadPoolExecutor(0, MAXIMUM_THREADS, 1, TimeUnit.MINUTES,
+                   new ArrayBlockingQueue<Runnable>(MAXIMUM_TASKS, true));
     }
 
     /**
@@ -250,10 +186,11 @@ public class CoverageDatabase {
 
         /** Executes the task in a background thread. */
         @Override public Set<String> call() throws CoverageStoreException {
+            final TablePool<LayerTable> pool = database.layers;
             try {
-                final LayerTable table = layers.acquire();
+                final LayerTable table = pool.acquire();
                 final Set<String> names = table.getIdentifiers();
-                layers.release(table);
+                pool.release(table);
                 return names;
             } catch (SQLException e) {
                 throw new CoverageStoreException(e);
@@ -286,10 +223,11 @@ public class CoverageDatabase {
 
         /** Executes the task in a background thread. */
         @Override public Layer call() throws CoverageStoreException {
+            final TablePool<LayerTable> pool = database.layers;
             try {
-                final LayerTable table = layers.acquire();
+                final LayerTable table = pool.acquire();
                 final Layer layer = table.getEntry(name);
-                layers.release(table);
+                pool.release(table);
                 return layer;
             } catch (SQLException e) {
                 throw new CoverageStoreException(e);
@@ -298,16 +236,16 @@ public class CoverageDatabase {
     }
 
     /**
-     * Returns a time range encompassing all coverages in this layer, or {@code null} if none.
-     * This method is equivalent to the code below, except that more code are executed in the
-     * background thread:
+     * Returns a time range encompassing all coverages in this layer.
+     * This method is equivalent to the code below, except that more
+     * code are executed in the background thread:
      *
      * {@preformat java
      *     return now(getLayer(layer)).getTimeRange();
      * }
      *
      * @param  layer The layer for which the time range is desired.
-     * @return The time range encompassing all coverages, or {@code null}.
+     * @return The time range encompassing all coverages.
      *
      * @see Layer#getTimeRange()
      */
@@ -330,15 +268,108 @@ public class CoverageDatabase {
 
         /** Executes the task in a background thread. */
         @Override public DateRange call() throws CoverageStoreException {
+            final TablePool<LayerTable> pool = database.layers;
             final Layer entry;
             try {
-                final LayerTable table = layers.acquire();
+                final LayerTable table = pool.acquire();
                 entry = table.getEntry(layer);
-                layers.release(table);
+                pool.release(table);
             } catch (SQLException e) {
                 throw new CoverageStoreException(e);
             }
             return entry.getTimeRange();
+        }
+    }
+
+    /**
+     * Returns the set of dates when a coverage is available.
+     * This method is equivalent to the code below, except that
+     * more code are executed in the background thread:
+     *
+     * {@preformat java
+     *     return now(getLayer(layer)).getAvailableTimes();
+     * }
+     *
+     * @param  layer The layer for which the available times are desired.
+     * @return The set of dates.
+     *
+     * @see Layer#getAvailableTimes()
+     */
+    public Future<SortedSet<Date>> getAvailableTimes(final String layer) {
+        ensureNonNull("layer", layer);
+        return executor.submit(new GetAvailableTimes(layer));
+    }
+
+    /**
+     * The task for {@link CoverageDatabase#getAvailableTimes(String)}. Declared as an explicit class
+     * rather than an inner class in order to have more helpful stack trace in case of failure.
+     */
+    private final class GetAvailableTimes implements Callable<SortedSet<Date>> {
+        private final String layer;
+
+        /** Creates a new task. */
+        GetAvailableTimes(final String layer) {
+            this.layer = layer;
+        }
+
+        /** Executes the task in a background thread. */
+        @Override public SortedSet<Date> call() throws CoverageStoreException {
+            final TablePool<LayerTable> pool = database.layers;
+            final Layer entry;
+            try {
+                final LayerTable table = pool.acquire();
+                entry = table.getEntry(layer);
+                pool.release(table);
+            } catch (SQLException e) {
+                throw new CoverageStoreException(e);
+            }
+            return entry.getAvailableTimes();
+        }
+    }
+
+    /**
+     * Returns the set of altitudes where a coverage is available.
+     * This method is equivalent to the code below, except that
+     * more code are executed in the background thread:
+     *
+     * {@preformat java
+     *     return now(getLayer(layer)).getAvailableElevations();
+     * }
+     *
+     * @param  layer The layer for which the available elevations are desired.
+     * @return The set of altitudes.
+     *
+     * @see Layer#getAvailableElevations()
+     */
+    public Future<SortedSet<Number>> getAvailableElevations(final String layer) {
+        ensureNonNull("layer", layer);
+        return executor.submit(new GetAvailableElevations(layer));
+    }
+
+    /**
+     * The task for {@link CoverageDatabase#getAvailableElevations(String)}. Declared as an explicit
+     * class rather than an inner class in order to have more helpful stack trace in case of failure.
+     */
+    private final class GetAvailableElevations implements Callable<SortedSet<Number>> {
+        private final String layer;
+
+        /** Creates a new task. */
+        GetAvailableElevations(final String layer) {
+            this.layer = layer;
+        }
+
+        /** Executes the task in a background thread. */
+        @Override public SortedSet<Number> call() throws CoverageStoreException {
+            final TablePool<LayerTable> pool = database.layers;
+            final Layer entry;
+            try {
+                final LayerTable table = pool.acquire();
+                entry = table.getEntry(layer);
+                pool.release(table);
+            } catch (SQLException e) {
+                throw new CoverageStoreException(e);
+            }
+            return entry.getAvailableElevations();
         }
     }
 
@@ -375,11 +406,12 @@ public class CoverageDatabase {
 
         /** Executes the task in a background thread. */
         @Override public List<MeasurementRange<?>> call() throws CoverageStoreException {
+            final TablePool<LayerTable> pool = database.layers;
             final Layer entry;
             try {
-                final LayerTable table = layers.acquire();
+                final LayerTable table = pool.acquire();
                 entry = table.getEntry(layer);
-                layers.release(table);
+                pool.release(table);
             } catch (SQLException e) {
                 throw new CoverageStoreException(e);
             }
@@ -416,12 +448,13 @@ public class CoverageDatabase {
 
         /** Executes the task in a background thread. */
         @Override public GridCoverage2D call() throws CoverageStoreException {
+            final TablePool<GridCoverageTable> pool = database.coverages;
             final GridCoverageReference entry;
             try {
-                final GridCoverageTable table = coverages.acquire();
+                final GridCoverageTable table = pool.acquire();
                 request.configure(table);
                 entry = table.getEntry();
-                coverages.release(table);
+                pool.release(table);
             } catch (SQLException e) {
                 throw new CoverageStoreException(e);
             }
@@ -434,9 +467,7 @@ public class CoverageDatabase {
      * changed by some other way than through the {@code CoverageDatabase} API.
      */
     public void flush() {
-        database = new SpatialDatabase(database);
-        coverages.clear();
-        layers.clear();
+        database = new TableFactory(database);
     }
 
     /**

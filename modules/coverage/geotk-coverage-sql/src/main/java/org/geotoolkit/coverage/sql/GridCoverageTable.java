@@ -165,6 +165,17 @@ class GridCoverageTable extends BoundedSingletonTable<GridCoverageEntry> {
     }
 
     /**
+     * Sets the layer as an entry.
+     */
+    final void setLayerEntry(final LayerEntry layer) {
+        ensureNonNull("layer", layer);
+        if (!layer.equals(this.layer)) {
+            this.layer = layer;
+            fireStateChanged("Layer");
+        }
+    }
+
+    /**
      * Returns the layer for the coverages in this table.
      *
      * @throws CatalogException if the layer is not set.

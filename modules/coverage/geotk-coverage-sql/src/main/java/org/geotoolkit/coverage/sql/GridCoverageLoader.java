@@ -63,6 +63,12 @@ final class GridCoverageLoader extends ImageCoverageReader {
     private GridCoverageEntry entry;
 
     /**
+     * The index of the image to be read.
+     * It must be defined by the caller before to read an image.
+     */
+    int imageIndex;
+
+    /**
      * The expected image size. It must be defined by the caller before to read an image.
      */
     Dimension expectedSize;
@@ -85,6 +91,28 @@ final class GridCoverageLoader extends ImageCoverageReader {
         this.format     = format;
         seekForwardOnly = Boolean.TRUE;
         ignoreMetadata  = Boolean.TRUE;
+    }
+
+    /**
+     * Returns that the given image index is zero.
+     */
+    private void ensureValidIndex(final int index) {
+        if (index != 0) {
+            throw new IllegalArgumentException(Errors.getResources(getLocale())
+                    .getString(Errors.Keys.ILLEGAL_ARGUMENT_$2, "imageIndex", index));
+        }
+    }
+
+    /**
+     * Ensures that the input is set, and returns it for convenience.
+     */
+    private GridCoverageEntry ensureInputSet() {
+        final GridCoverageEntry entry = this.entry;
+        if (entry == null) {
+            throw new IllegalArgumentException(Errors.getResources(getLocale())
+                    .getString(Errors.Keys.NO_IMAGE_INPUT));
+        }
+        return entry;
     }
 
     /**
@@ -143,10 +171,7 @@ final class GridCoverageLoader extends ImageCoverageReader {
      */
     @Override
     public List<String> getCoverageNames() throws CoverageStoreException {
-        if (entry != null) {
-            return Collections.singletonList(entry.getName());
-        }
-        return super.getCoverageNames();
+        return Collections.singletonList(ensureInputSet().getName());
     }
 
     /**
@@ -154,12 +179,8 @@ final class GridCoverageLoader extends ImageCoverageReader {
      */
     @Override
     public GridGeometry2D getGridGeometry(int index) throws CoverageStoreException {
-        if (index == 0 && entry != null) {
-            return entry.getGridGeometry();
-        }
-        // Should not happen. But if it happen anyway, the
-        // super-class work should be a raisonable fallback.
-        return super.getGridGeometry(index);
+        ensureValidIndex(index);
+        return ensureInputSet().getGridGeometry();
     }
 
     /**
@@ -169,12 +190,8 @@ final class GridCoverageLoader extends ImageCoverageReader {
      */
     @Override
     public List<GridSampleDimension> getSampleDimensions(int index) throws CoverageStoreException {
-        if (index == 0) {
-            return format.sampleDimensions;
-        }
-        // Should not happen. But if it happen anyway, the
-        // super-class work should be a raisonable fallback.
-        return super.getSampleDimensions(index);
+        ensureValidIndex(index);
+        return format.sampleDimensions;
     }
 
     /**
@@ -183,9 +200,11 @@ final class GridCoverageLoader extends ImageCoverageReader {
      * would otherwise slip into the database or during the copy of the image to the disk.
      */
     @Override
-    public GridCoverage2D read(final int index, final GridCoverageReadParam param)
+    public GridCoverage2D read(int index, final GridCoverageReadParam param)
             throws CoverageStoreException
     {
+        ensureValidIndex(index);
+        index = imageIndex;
         final int expectedWidth  = expectedSize.width;
         final int expectedHeight = expectedSize.height;
         final int imageWidth, imageHeight;

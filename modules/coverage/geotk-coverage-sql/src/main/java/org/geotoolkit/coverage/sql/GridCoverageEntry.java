@@ -382,6 +382,7 @@ final class GridCoverageEntry extends Entry implements GridCoverageReference {
         final GridCoverageIdentifier identifier = getIdentifier();
         final GridCoverageLoader reader = new GridCoverageLoader(identifier.series.format);
         reader.expectedSize = identifier.geometry.getImageSize();
+        reader.imageIndex = identifier.getImageIndex();
         reader.setInput(input);
         reader.inputIsFinal = true;
         return reader;
@@ -395,14 +396,10 @@ final class GridCoverageEntry extends Entry implements GridCoverageReference {
             throws CoverageStoreException, CancellationException
     {
         final GridCoverageIdentifier identifier = getIdentifier();
-        final int imageIndex = identifier.imageIndex - 1; // Convert from 1-based index.
-        if (imageIndex < 0) {
-            throw new CoverageStoreException(Errors.format(
-                    Errors.Keys.BAD_PARAMETER_$2, "imageIndex", imageIndex));
-        }
         final GridCoverageStorePool pool = identifier.series.format.getCoverageLoaders();
         final GridCoverageLoader reader = (GridCoverageLoader) pool.acquireReader();
         reader.expectedSize = identifier.geometry.getImageSize();
+        reader.imageIndex = identifier.getImageIndex();
         /*
          * Adds the reader to the list of readers currently in use.
          * This list will be used by 'abort()' if needed.
@@ -414,7 +411,7 @@ final class GridCoverageEntry extends Entry implements GridCoverageReference {
         GridCoverage2D coverage;
         try {
             reader.setInput(this);
-            coverage = reader.read(imageIndex, param);
+            coverage = reader.read(0, param);
         } finally {
             /*
              * Removes the reader from the list of readers currently in use. Note that our
