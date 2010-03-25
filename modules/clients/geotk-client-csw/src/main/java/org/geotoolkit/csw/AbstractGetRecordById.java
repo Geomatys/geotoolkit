@@ -115,7 +115,7 @@ public abstract class AbstractGetRecordById extends AbstractRequest implements G
         requestParameters.put("ID",      id);
 
         if (elementSetName != null) {
-            requestParameters.put("ELEMENTSETNAME", elementSetName.toString());
+            requestParameters.put("ELEMENTSETNAME", elementSetName.value());
         }
         if (outputFormat != null) {
             requestParameters.put("OUTPUTFORMAT", outputFormat);

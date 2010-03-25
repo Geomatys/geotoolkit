@@ -45,8 +45,12 @@ public class CatalogServicesServer implements Server {
     private final CSWVersion version;
     private final URL serverURL;
 
-    public CatalogServicesServer(final URL serverURL, final CSWVersion version) {
-        this.version = version;
+    public CatalogServicesServer(final URL serverURL, final String version) {
+        if (version.equals("2.0.2")){
+            this.version = CSWVersion.v202;
+        } else {
+            throw new IllegalArgumentException("unkonwed version : "+ version);
+        }
         this.serverURL = serverURL;
     }
 

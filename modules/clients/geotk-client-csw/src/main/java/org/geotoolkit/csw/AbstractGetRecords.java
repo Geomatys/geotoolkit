@@ -262,7 +262,7 @@ public abstract class AbstractGetRecords extends AbstractRequest implements GetR
             requestParameters.put("OUTPUTSCHEMA", outputSchema);
         }
         if (resultType != null) {
-            requestParameters.put("RESULTTYPE", resultType.toString());
+            requestParameters.put("RESULTTYPE", resultType.value());
         }
         if (namespace != null) {
             requestParameters.put("NAMESPACE", namespace);
@@ -280,7 +280,7 @@ public abstract class AbstractGetRecords extends AbstractRequest implements GetR
             requestParameters.put("MAXRECORDS", maxRecords.toString());
         }
         if (elementSetName != null) {
-            requestParameters.put("ELEMENTSETNAME", elementSetName.toString());
+            requestParameters.put("ELEMENTSETNAME", elementSetName.value());
         }
         if (sortBy != null) {
             requestParameters.put("SORTBY", sortBy);
