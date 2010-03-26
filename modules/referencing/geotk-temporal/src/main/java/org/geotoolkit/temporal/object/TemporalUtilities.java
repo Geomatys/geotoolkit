@@ -46,7 +46,6 @@ import org.opengis.temporal.OrdinalEra;
 import org.opengis.temporal.OrdinalPosition;
 import org.opengis.temporal.TemporalCoordinate;
 import org.opengis.temporal.TemporalReferenceSystem;
-import org.opengis.util.InternationalString;
 
 
 import static org.geotoolkit.temporal.object.TemporalConstants.*;
@@ -106,6 +105,7 @@ public final class TemporalUtilities {
     private static final Map<String,TimeZone> TIME_ZONES = new UnSynchronizedCache<String, TimeZone>(50){
         @Override
         public TimeZone get(Object o) {
+            @SuppressWarnings("element-type-mismatch")
             TimeZone tz = super.get(o);
             if(tz == null){
                 tz = TimeZone.getTimeZone((String)o);
