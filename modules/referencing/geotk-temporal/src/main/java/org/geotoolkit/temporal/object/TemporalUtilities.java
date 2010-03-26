@@ -33,6 +33,7 @@ import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
 
 import org.geotoolkit.temporal.reference.DefaultTemporalCoordinateSystem;
+import org.geotoolkit.util.SimpleInternationalString;
 import org.geotoolkit.util.StringUtilities;
 import org.geotoolkit.util.collection.UnSynchronizedCache;
 import org.geotoolkit.util.logging.Logging;
@@ -45,6 +46,7 @@ import org.opengis.temporal.OrdinalEra;
 import org.opengis.temporal.OrdinalPosition;
 import org.opengis.temporal.TemporalCoordinate;
 import org.opengis.temporal.TemporalReferenceSystem;
+import org.opengis.util.InternationalString;
 
 
 import static org.geotoolkit.temporal.object.TemporalConstants.*;
@@ -286,6 +288,85 @@ public final class TemporalUtilities {
             throw new IllegalArgumentException("The period descritpion is malformed");
         }
         return time;
+    }
+
+    /**
+     * Returns a DefaultPeriodDuration instance parsed from a string that respect ISO8601 format
+     * ie: PnYnMnDTnHnMnS where n is an integer
+     * @TODO maybe should check by Pattern of string before and should throw an exception when it is bad format
+     *
+     * @param periodDuration
+     * @return duration in millisenconds represented by this string duration.
+     */
+    public static Duration getDurationFromString(String periodDuration) {
+
+        if(periodDuration == null) {
+            return null;
+        }
+
+        String nbYear = null, nbMonth = null, nbWeek = null, nbDay = null, nbHour = null, nbMin = null, nbSec = null;
+
+        // remove first char 'P'
+        periodDuration = periodDuration.substring(1);
+
+        // looking for the period years
+        if (periodDuration.indexOf('Y') != -1) {
+            nbYear = periodDuration.substring(0, periodDuration.indexOf('Y'));
+            periodDuration = periodDuration.substring(periodDuration.indexOf('Y') + 1);
+        }
+
+        //looking for the period months
+        if (periodDuration.indexOf('M') != -1
+                && (periodDuration.indexOf('T') == -1 || periodDuration.indexOf('T') > periodDuration.indexOf('M'))) {
+            nbMonth = periodDuration.substring(0, periodDuration.indexOf('M'));
+            periodDuration = periodDuration.substring(periodDuration.indexOf('M') + 1);
+        }
+
+        //looking for the period weeks
+        if (periodDuration.indexOf('W') != -1) {
+            nbWeek = periodDuration.substring(0, periodDuration.indexOf('W'));
+            periodDuration = periodDuration.substring(periodDuration.indexOf('W') + 1);
+        }
+
+        //looking for the period days
+        if (periodDuration.indexOf('D') != -1) {
+            nbDay = periodDuration.substring(0, periodDuration.indexOf('D'));
+            periodDuration = periodDuration.substring(periodDuration.indexOf('D') + 1);
+        }
+
+        //if the periodDuration is not over we pass to the hours by removing 'T'
+        if (periodDuration.indexOf('T') != -1) {
+            periodDuration = periodDuration.substring(1);
+        }
+
+        //looking for the period hours
+        if (periodDuration.indexOf('H') != -1) {
+            nbHour = periodDuration.substring(0, periodDuration.indexOf('H'));
+            periodDuration = periodDuration.substring(periodDuration.indexOf('H') + 1);
+        }
+
+        //looking for the period minutes
+        if (periodDuration.indexOf('M') != -1) {
+            nbMin = periodDuration.substring(0, periodDuration.indexOf('M'));
+            periodDuration = periodDuration.substring(periodDuration.indexOf('M') + 1);
+        }
+
+        //looking for the period seconds
+        if (periodDuration.indexOf('S') != -1) {
+            nbSec = periodDuration.substring(0, periodDuration.indexOf('S'));
+            periodDuration = periodDuration.substring(periodDuration.indexOf('S') + 1);
+        }
+
+        if (periodDuration.length() != 0) {
+            throw new IllegalArgumentException("The period descritpion is malformed, should not respect ISO8601 : " + periodDuration);
+        }
+        return new DefaultPeriodDuration(new SimpleInternationalString(nbYear),
+                new SimpleInternationalString(nbMonth),
+                new SimpleInternationalString(nbWeek),
+                new SimpleInternationalString(nbDay),
+                new SimpleInternationalString(nbHour),
+                new SimpleInternationalString(nbMin),
+                new SimpleInternationalString(nbSec));
     }
 
     /**
