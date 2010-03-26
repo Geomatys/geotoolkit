@@ -62,9 +62,7 @@ public interface FeatureCollection<F extends Feature> extends Collection<F> {
      * A session.commit() call must be done.
      * 
      * @return Session or null if not related to a session.
-     * @deprecated use getSource() instead
      */
-    @Deprecated
     Session getSession();
 
     /**

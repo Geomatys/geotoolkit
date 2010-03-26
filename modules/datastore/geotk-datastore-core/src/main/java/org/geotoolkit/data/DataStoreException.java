@@ -22,8 +22,11 @@ package org.geotoolkit.data;
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
+ * @deprecated must use directly DataStoreException from storage package.
+ * @todo remove this class after april 2010 release 
  */
-public class DataStoreException extends Exception{
+@Deprecated
+public class DataStoreException extends org.geotoolkit.storage.DataStoreException {
 
     public DataStoreException(){
         super();

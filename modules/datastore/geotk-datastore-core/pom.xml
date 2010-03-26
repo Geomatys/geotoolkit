@@ -39,6 +39,11 @@
   <!-- =========================================================== -->
   <dependencies>
     <dependency>
+      <groupId>org.geotoolkit</groupId>
+      <artifactId>geotk-storage</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
       <groupId>org.geotoolkit.pending</groupId>
       <artifactId>geotk-feature</artifactId>
       <version>${project.version}</version>
