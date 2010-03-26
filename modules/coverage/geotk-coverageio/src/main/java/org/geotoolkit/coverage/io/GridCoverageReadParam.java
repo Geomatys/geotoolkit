@@ -17,8 +17,6 @@
  */
 package org.geotoolkit.coverage.io;
 
-import javax.imageio.ImageReadParam;
-
 import org.opengis.geometry.Envelope;
 import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;

@@ -96,6 +96,7 @@ public class PackerSpecificMojo extends AbstractMojo {
                     "geotk-coverage-"          + VERSION + ".jar",
                     "geotk-coverageio-"        + VERSION + ".jar",
                     "geotk-coverageio-netcdf-" + VERSION + ".jar",
+                    "geotk-storage-"           + VERSION + ".jar",
                     "netcdf-*.jar",
                     "opendap-*.jar",
                     "bufrTables-*.jar",

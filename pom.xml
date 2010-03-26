@@ -487,6 +487,12 @@
               </packages>
             </group>
             <group>
+              <title>Feature and filter</title>
+              <packages>
+                org.geotoolkit.storage*
+              </packages>
+            </group>
+            <group>
               <title>Coverage and Raster</title>
               <packages>
                 org.geotoolkit.coverage*:org.geotoolkit.image*

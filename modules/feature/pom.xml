@@ -13,7 +13,7 @@
 
   <parent>
     <groupId>org.geotoolkit</groupId>
-    <artifactId>coverage</artifactId>
+    <artifactId>modules</artifactId>
     <version>SNAPSHOT</version>
   </parent>
 
@@ -22,12 +22,12 @@
   <!--     Module Description                                      -->
   <!-- =========================================================== -->
   <groupId>org.geotoolkit</groupId>
-  <artifactId>geotk-coverageio</artifactId>
-  <packaging>jar</packaging>
-  <name>Coverage I/O</name>
+  <artifactId>feature</artifactId>
+  <packaging>pom</packaging>
+  <name>Feature</name>
 
   <description>
-    Base classes for image and coverage I/O operations.
+    Projects group for feature and filter services.
   </description>
 
 
@@ -43,69 +43,42 @@
       <organizationUrl>http://www.geomatys.fr/</organizationUrl>
       <timezone>+1</timezone>
       <roles>
-        <role>Module Maintainer</role>
-        <role>Java Developer</role>
+        <role>Administrator</role>
       </roles>
     </developer>
-  </developers>
-
-  <contributors>
-    <contributor>
-      <name>Adrian Custer</name>
+    <developer>
+      <name>Johann Sorel</name>
+      <id>eclesia</id>
+      <email>johann.sorel@geomatys.com</email>
       <organization>Geomatys</organization>
       <organizationUrl>http://www.geomatys.fr/</organizationUrl>
       <timezone>+1</timezone>
       <roles>
-        <role>Documentation</role>
+        <role>Developer</role>
       </roles>
-    </contributor>
-    <contributor>
-      <name>Simone Giannecchini</name>
-      <email>simone.giannecchini@geo-solutions.it</email>
-      <organization>GeoSolutions</organization>
+    </developer>
+    <developer>
+      <name>Cédric Briançon</name>
+      <id>cedricbr</id>
+      <email>cedric.briancon@geomatys.fr</email>
+      <organization>Geomatys</organization>
+      <organizationUrl>http://www.geomatys.fr/</organizationUrl>
+      <timezone>+1</timezone>
       <roles>
-        <role>Documentation</role>
+        <role>Developer</role>
       </roles>
-    </contributor>
-  </contributors>
-
-
-  <!-- ==================================================== -->
-  <!--     Compilation                                      -->
-  <!--     Reuse some test files from the coverage module.  -->
-  <!-- ==================================================== -->
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>build-helper-maven-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>test-resources</id>
-            <goals>
-              <goal>add-test-resource</goal>
-            </goals>
-            <configuration>
-              <resources>
-                <resource>
-                  <directory>../geotk-coverage/src/test/resources</directory>
-                  <includes>
-                    <include>**/Contour.png</include>
-                  </includes>
-                </resource>
-              </resources>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-    </plugins>
-  </build>
+    </developer>
+  </developers>
 
 
   <!-- =========================================================== -->
-  <!--     Dependency Management                                   -->
+  <!--     Dependencies to be inherited by all modules.            -->
   <!-- =========================================================== -->
   <dependencies>
+    <dependency>
+      <groupId>org.opengis</groupId>
+      <artifactId>geoapi-pending</artifactId>
+    </dependency>
     <dependency>
       <groupId>org.geotoolkit</groupId>
       <artifactId>geotk-utility</artifactId>
@@ -121,16 +94,14 @@
       <artifactId>geotk-referencing</artifactId>
       <version>${project.version}</version>
     </dependency>
-    <dependency>
-      <groupId>org.geotoolkit</groupId>
-      <artifactId>geotk-coverage</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.geotoolkit</groupId>
-      <artifactId>geotk-storage</artifactId>
-      <version>${project.version}</version>
-    </dependency>
   </dependencies>
+
+
+  <!-- =========================================================== -->
+  <!--     Modules included in the build                           -->
+  <!-- =========================================================== -->
+  <modules>
+    <module>geotk-storage</module>
+  </modules>
 
 </project>

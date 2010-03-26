@@ -2,8 +2,8 @@
  *    Geotoolkit.org - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2010, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2010, Geomatys
+ *    (C) 2009-2010, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2009-2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -15,30 +15,28 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.coverage.io;
-
-import org.geotoolkit.storage.DataStoreException;
+package org.geotoolkit.storage;
 
 
 /**
- * Thrown when a {@link GridCoverageReader} operation failed.
+ * Throws when a {@link DataStore} can not complete a read or write operation.
  *
- * @author Martin Desruisseaux (Geomatys)
+ * @author Johann Sorel (Geomatys)
  * @version 3.10
  *
- * @since 3.09
+ * @since 3.10
  * @module
  */
-public class CoverageStoreException extends DataStoreException {
+public class DataStoreException extends Exception {
     /**
      * For cross-version compatibility.
      */
-    private static final long serialVersionUID = 782165122782532854L;
+    private static final long serialVersionUID = -1778987176103191950L;
 
     /**
      * Creates an exception with no cause and no details message.
      */
-    public CoverageStoreException() {
+    public DataStoreException() {
         super();
     }
 
@@ -47,7 +45,7 @@ public class CoverageStoreException extends DataStoreException {
      *
      * @param message The detail message.
      */
-    public CoverageStoreException(final String message) {
+    public DataStoreException(final String message) {
         super(message);
     }
 
@@ -56,7 +54,7 @@ public class CoverageStoreException extends DataStoreException {
      *
      * @param cause The cause for this exception.
      */
-    public CoverageStoreException(final Throwable cause) {
+    public DataStoreException(final Throwable cause) {
         super(cause);
     }
 
@@ -66,7 +64,7 @@ public class CoverageStoreException extends DataStoreException {
      * @param message The detail message.
      * @param cause The cause for this exception.
      */
-    public CoverageStoreException(final String message, final Exception cause) {
+    public DataStoreException(final String message, final Throwable cause) {
         super(message, cause);
     }
 }
