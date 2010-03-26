@@ -17,6 +17,9 @@
 package org.geotoolkit.csw;
 
 import org.geotoolkit.client.Request;
+import org.geotoolkit.csw.xml.v202.DeleteType;
+import org.geotoolkit.csw.xml.v202.InsertType;
+import org.geotoolkit.csw.xml.v202.UpdateType;
 
 
 /**
@@ -25,5 +28,15 @@ import org.geotoolkit.client.Request;
  * @module pending
  */
 public interface TransactionRequest extends Request {
+    DeleteType getDelete();
 
+    void setDelete(DeleteType delete);
+
+    InsertType getInsert();
+
+    void setInsert(InsertType insert);
+
+    UpdateType getUpdate();
+
+    void setUpdate(UpdateType update);
 }

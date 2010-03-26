@@ -18,11 +18,21 @@ package org.geotoolkit.csw;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.logging.Logger;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
 import org.geotoolkit.client.AbstractRequest;
+import org.geotoolkit.csw.xml.v202.DeleteType;
+import org.geotoolkit.csw.xml.v202.InsertType;
+import org.geotoolkit.csw.xml.v202.TransactionType;
+import org.geotoolkit.csw.xml.v202.UpdateType;
+import org.geotoolkit.ebrim.xml.EBRIMClassesContext;
 import org.geotoolkit.util.logging.Logging;
+import org.geotoolkit.xml.MarshallerPool;
 
 
 /**
@@ -43,6 +53,10 @@ public class AbstractTransaction extends AbstractRequest implements TransactionR
      */
     protected final String version;
 
+    private DeleteType delete = null;
+    private InsertType insert = null;
+    private UpdateType update = null;
+
     /**
      * Defines the server url and the service version for this kind of request.
      *
@@ -55,13 +69,83 @@ public class AbstractTransaction extends AbstractRequest implements TransactionR
     }
 
     @Override
+    public DeleteType getDelete() {
+        return delete;
+    }
+
+    @Override
+    public void setDelete(DeleteType delete) {
+        this.delete = delete;
+    }
+
+    @Override
+    public InsertType getInsert() {
+        return insert;
+    }
+
+    @Override
+    public void setInsert(InsertType insert) {
+        this.insert = insert;
+    }
+
+    @Override
+    public UpdateType getUpdate() {
+        return update;
+    }
+
+    @Override
+    public void setUpdate(UpdateType update) {
+        this.update = update;
+    }
+
+    /**
+     * The transaction CSW requests do not support the KVP encondig, regarding the standards.
+     * This method will always return an {@link UnsupportedOperationException}.
+     * Do not call it.
+     */
+    @Override
     public URL getURL() throws MalformedURLException {
         throw new UnsupportedOperationException("Transaction requests do not support KVP encoding.");
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public InputStream getSOAPResponse() throws IOException {
-        // TODO: implement me
-        throw new UnsupportedOperationException("Not supported yet.");
+        final URL url = new URL(serverURL);
+        final URLConnection conec = url.openConnection();
+
+        conec.setDoOutput(true);
+        conec.setRequestProperty("Content-Type", "text/xml");
+
+        final OutputStream stream = conec.getOutputStream();
+
+        MarshallerPool pool = null;
+        Marshaller marsh = null;
+        try {
+            pool = new MarshallerPool(EBRIMClassesContext.getAllClasses());
+            marsh = pool.acquireMarshaller();
+            final TransactionType transactXml;
+            if (delete != null) {
+                transactXml = new TransactionType("CSW", version, delete);
+            } else if (insert != null) {
+                transactXml = new TransactionType("CSW", version, insert);
+            } else if (update != null) {
+                transactXml = new TransactionType("CSW", version, update);
+            } else {
+                throw new IllegalArgumentException("The specified requests is not valid. " +
+                        "It does not contain any insert, delete or update request.");
+            }
+            marsh.marshal(transactXml, stream);
+        } catch (JAXBException ex) {
+            throw new IOException(ex);
+        } finally {
+            if (pool != null && marsh != null) {
+                pool.release(marsh);
+            }
+        }
+        stream.close();
+        return conec.getInputStream();
     }
 }
