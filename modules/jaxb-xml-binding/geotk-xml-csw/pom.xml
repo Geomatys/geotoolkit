@@ -69,6 +69,11 @@
     </dependency>
     <dependency>
       <groupId>org.geotoolkit.pending</groupId>
+      <artifactId>geotk-xml-feature-catalogue</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.geotoolkit.pending</groupId>
       <artifactId>geotk-xml-ogc</artifactId>
       <version>${project.version}</version>
     </dependency>
@@ -78,8 +83,22 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
+      <groupId>org.geotoolkit.pending</groupId>
+      <artifactId>geotk-xml-service</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.geotoolkit.pending</groupId>
+      <artifactId>geotk-xml-xsd</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
       <groupId>org.geotoolkit</groupId>
       <artifactId>geotk-utility</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.geotoolkit</groupId>
+      <artifactId>geotk-metadata-fra</artifactId>
     </dependency>
     <dependency>
       <groupId>org.geotoolkit</groupId>
