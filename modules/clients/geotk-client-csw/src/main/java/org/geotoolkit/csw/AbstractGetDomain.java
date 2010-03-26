@@ -18,11 +18,18 @@ package org.geotoolkit.csw;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.logging.Logger;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
 import org.geotoolkit.client.AbstractRequest;
+import org.geotoolkit.csw.xml.v202.GetDomainType;
+import org.geotoolkit.ebrim.xml.EBRIMClassesContext;
 import org.geotoolkit.util.logging.Logging;
+import org.geotoolkit.xml.MarshallerPool;
 
 
 /**
@@ -92,8 +99,34 @@ public abstract class AbstractGetDomain extends AbstractRequest implements GetDo
         return super.getURL();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public InputStream getSOAPResponse() throws IOException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        final URL url = new URL(serverURL);
+        final URLConnection conec = url.openConnection();
+
+        conec.setDoOutput(true);
+        conec.setRequestProperty("Content-Type", "text/xml");
+
+        final OutputStream stream = conec.getOutputStream();
+
+        MarshallerPool pool = null;
+        Marshaller marsh = null;
+        try {
+            pool = new MarshallerPool(EBRIMClassesContext.getAllClasses());
+            marsh = pool.acquireMarshaller();
+            final GetDomainType domainXml = new GetDomainType("CSW", version, propertyName, null);
+            marsh.marshal(domainXml, stream);
+        } catch (JAXBException ex) {
+            throw new IOException(ex);
+        } finally {
+            if (pool != null && marsh != null) {
+                pool.release(marsh);
+            }
+        }
+        stream.close();
+        return conec.getInputStream();
     }
 }

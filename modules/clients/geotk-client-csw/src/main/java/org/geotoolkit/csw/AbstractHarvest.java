@@ -18,11 +18,23 @@ package org.geotoolkit.csw;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.logging.Logger;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.Duration;
 import org.geotoolkit.client.AbstractRequest;
+import org.geotoolkit.csw.xml.v202.HarvestType;
+import org.geotoolkit.ebrim.xml.EBRIMClassesContext;
+import org.geotoolkit.temporal.object.DefaultPeriodDuration;
+import org.geotoolkit.temporal.object.TemporalUtilities;
 import org.geotoolkit.util.logging.Logging;
+import org.geotoolkit.xml.MarshallerPool;
 
 
 /**
@@ -152,9 +164,48 @@ public class AbstractHarvest extends AbstractRequest implements HarvestRequest {
         return super.getURL();
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public InputStream getSOAPResponse() throws IOException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        final URL url = new URL(serverURL);
+        final URLConnection conec = url.openConnection();
+
+        conec.setDoOutput(true);
+        conec.setRequestProperty("Content-Type", "text/xml");
+
+        final OutputStream stream = conec.getOutputStream();
+
+        MarshallerPool pool = null;
+        Marshaller marsh = null;
+        try {
+            pool = new MarshallerPool(EBRIMClassesContext.getAllClasses());
+            marsh = pool.acquireMarshaller();
+            final DefaultPeriodDuration periodDuration = (harvestInterval == null) ? null :
+                    (DefaultPeriodDuration) TemporalUtilities.getDurationFromString(harvestInterval);
+            final Duration duration = (periodDuration == null) ? null :
+                    DatatypeFactory.newInstance().newDuration(true,
+                        Integer.parseInt(periodDuration.getYears().toString()),
+                        Integer.parseInt(periodDuration.getMonths().toString()),
+                        Integer.parseInt(periodDuration.getDays().toString()),
+                        Integer.parseInt(periodDuration.getHours().toString()),
+                        Integer.parseInt(periodDuration.getMinutes().toString()),
+                        Integer.parseInt(periodDuration.getSeconds().toString()));
+            final HarvestType harvestXml = new HarvestType("CSW", version, source, resourceType,
+                    resourceFormat, responseHandler, duration);
+            marsh.marshal(harvestXml, stream);
+        } catch (DatatypeConfigurationException ex) {
+            throw new IOException(ex);
+        } catch (JAXBException ex) {
+            throw new IOException(ex);
+        } finally {
+            if (pool != null && marsh != null) {
+                pool.release(marsh);
+            }
+        }
+        stream.close();
+        return conec.getInputStream();
     }
 
 }
