@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2009, Geomatys
+ *    (C) 2009-2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -17,6 +17,8 @@
 
 package org.geotoolkit.data;
 
+import org.geotoolkit.util.collection.BackingStoreException;
+
 /**
  * Exception used in FeatureCollection, extends RuntimeException to
  * be useable in standard collection classes.
@@ -24,7 +26,7 @@ package org.geotoolkit.data;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class DataStoreRuntimeException extends RuntimeException{
+public class DataStoreRuntimeException extends BackingStoreException{
 
     public DataStoreRuntimeException(){
         super();
@@ -40,11 +42,6 @@ public class DataStoreRuntimeException extends RuntimeException{
 
     public DataStoreRuntimeException(Throwable th){
         super(th);
-    }
-
-    public DataStoreRuntimeException(Exception th){
-        super(th.getMessage());
-        initCause(th);
     }
 
 }
