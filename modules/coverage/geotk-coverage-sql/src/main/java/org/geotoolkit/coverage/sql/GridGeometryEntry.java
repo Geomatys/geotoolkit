@@ -20,6 +20,7 @@ package org.geotoolkit.coverage.sql;
 import java.util.Arrays;
 import java.awt.Shape;
 import java.awt.Dimension;
+import java.awt.Rectangle;
 import java.awt.geom.Point2D;
 import java.awt.geom.Dimension2D;
 import java.awt.geom.Rectangle2D;
@@ -254,11 +255,20 @@ final class GridGeometryEntry extends Entry {
     }
 
     /**
-     * Convenience method returning the two first dimension of the grid range.
+     * Convenience method returning the two first dimensions of the grid range.
      */
     public Dimension getImageSize() {
         final GridEnvelope gridRange = geometry.getGridRange();
         return new Dimension(gridRange.getSpan(0), gridRange.getSpan(1));
+    }
+
+    /**
+     * Convenience method returning the two first dimensions of the grid range.
+     */
+    public Rectangle getImageBounds() {
+        final GridEnvelope gridRange = geometry.getGridRange();
+        return new Rectangle(gridRange.getLow (0), gridRange.getLow (1),
+                             gridRange.getSpan(0), gridRange.getSpan(1));
     }
 
     /**

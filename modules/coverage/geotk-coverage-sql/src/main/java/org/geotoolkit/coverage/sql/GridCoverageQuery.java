@@ -44,12 +44,6 @@ final class GridCoverageQuery extends Query {
     final Column series, filename, index, startTime, endTime, spatialExtent;
 
     /**
-     * For insertion of new entries in the {@code Tiles} table only.
-     * Null otherwise.
-     */
-    final Column dx, dy;
-
-    /**
      * Parameter to appear after the {@code "FROM"} clause.
      */
     final Parameter byLayer, bySeries, byFilename, byIndex, byStartTime, byEndTime, byHorizontalExtent;
@@ -60,19 +54,7 @@ final class GridCoverageQuery extends Query {
      * @param database The database for which this query is created.
      */
     public GridCoverageQuery(final SpatialDatabase database) {
-        this(database, false);
-    }
-
-    /**
-     * Creates a new query for the specified database.
-     *
-     * @param database The database for which this query is created.
-     * @param tiles {@code true} if this query is for the {@code "Tiles"} table.
-     *        This is used for insertion of new entries only, not for reading.
-     *        In the later case, {@code TileQuery} is used instead.
-     */
-    GridCoverageQuery(final SpatialDatabase database, final boolean tiles) {
-        super(database, tiles ? "Tiles" : "GridCoverages");
+        super(database, "GridCoverages");
         final Column layer, horizontalExtent;
         layer            = addForeignerColumn("layer", "Series");
         series           = addMandatoryColumn("series",    SELECT, LIST, INSERT);
@@ -82,13 +64,6 @@ final class GridCoverageQuery extends Query {
         endTime          = addMandatoryColumn("endTime",   SELECT, LIST, INSERT, AVAILABLE_DATA, BOUNDING_BOX);
         spatialExtent    = addMandatoryColumn("extent",    SELECT, LIST, INSERT, AVAILABLE_DATA);
         horizontalExtent = addForeignerColumn("horizontalExtent", "GridGeometries", new QueryType[] {BOUNDING_BOX});
-        if (tiles) {
-            dx = addMandatoryColumn("dx", INSERT);
-            dy = addMandatoryColumn("dy", INSERT);
-        } else {
-            dx = null;
-            dy = null;
-        }
         startTime.setAggregateFunction("MIN", BOUNDING_BOX);
         endTime  .setAggregateFunction("MAX", BOUNDING_BOX);
         endTime  .setOrdering(Ordering.DESC, SELECT, LIST);

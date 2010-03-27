@@ -1,0 +1,242 @@
+/*
+ *    Geotoolkit.org - An Open Source Java GIS Toolkit
+ *    http://www.geotoolkit.org
+ *
+ *    (C) 2007-2010, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2007-2010, Geomatys
+ *
+ *    This library is free software; you can redistribute it and/or
+ *    modify it under the terms of the GNU Lesser General Public
+ *    License as published by the Free Software Foundation;
+ *    version 2.1 of the License.
+ *
+ *    This library is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *    Lesser General Public License for more details.
+ */
+package org.geotoolkit.coverage.sql;
+
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Calendar;
+import java.awt.Rectangle;
+import java.awt.geom.AffineTransform;
+import java.io.File;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.sql.Timestamp;
+import java.sql.ResultSet;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import javax.imageio.IIOException;
+import javax.imageio.spi.IIORegistry;
+import javax.imageio.spi.ImageReaderSpi;
+
+import org.geotoolkit.image.io.mosaic.Tile;
+import org.geotoolkit.image.io.mosaic.TileManager;
+import org.geotoolkit.image.io.mosaic.TileManagerFactory;
+import org.geotoolkit.util.XArrays;
+import org.geotoolkit.util.collection.Cache;
+import org.geotoolkit.internal.sql.table.Table;
+import org.geotoolkit.internal.sql.table.Database;
+import org.geotoolkit.internal.sql.table.LocalCache;
+import org.geotoolkit.internal.sql.table.SpatialDatabase;
+import org.geotoolkit.internal.sql.table.QueryType;
+import org.geotoolkit.resources.Errors;
+
+
+/**
+ * Connection to a table of {@linkplain Tiles tiles}.
+ *
+ * @author Martin Desruisseaux (Geomatys)
+ * @version 3.10
+ *
+ * @since 3.10 (derived from Seagis)
+ * @module
+ */
+final class TileTable extends Table {
+    /**
+     * The table of grid geometries. Will be created only when first needed.
+     * <p>
+     * This field doesn't need to be declared {@code volatile} because it is not used
+     * outside this {@code GridCoverageTable}, so it is not expected to be accessed
+     * by other threads.
+     */
+    private transient GridGeometryTable gridGeometryTable;
+
+    /**
+     * A cache of tile managers created up to date.
+     */
+    private final Cache<CoverageRequest,TileManager[]> cache;
+
+    /**
+     * Creates a tile table.
+     *
+     * {@section Implementation note}
+     * This constructor actually expects an instance of {@link SpatialDatabase},
+     * but we have to keep {@link Database} in the method signature because this
+     * constructor is fetched by reflection.
+     *
+     * @param database The connection to the database.
+     */
+    public TileTable(final Database database) {
+        super(new TileQuery((SpatialDatabase) database));
+        cache = new Cache<CoverageRequest,TileManager[]>();
+    }
+
+    /**
+     * Creates a new instance having the same configuration than the given table.
+     * This is a copy constructor used for obtaining a new instance to be used
+     * concurrently with the original instance.
+     *
+     * @param table The table to use as a template.
+     */
+    private TileTable(final TileTable table) {
+        super(table);
+        cache = table.cache;
+    }
+
+    /**
+     * Returns a copy of this table. This is a copy constructor used for obtaining
+     * a new instance to be used concurrently with the original instance.
+     */
+    @Override
+    protected TileTable clone() {
+        return new TileTable(this);
+    }
+
+    /**
+     * Returns the tile manager for the given layer and date range. This method usually returns a
+     * single tile manager, but more could be returned if the tiles can not fit all in the same
+     * instance.
+     *
+     * @param  layer     The layer.
+     * @param  startTime The start time, or {@code null} if none.
+     * @param  endTime   The end time, or {@code null} if none.
+     * @param  srid      The numeric identifier of the CRS.
+     * @return The tile managers for the given series and date range.
+     * @throws CatalogException if an inconsistent record is found in the database.
+     * @throws SQLException if an error occured while reading the database.
+     */
+    public TileManager[] getTiles(final LayerEntry layer, final Timestamp startTime,
+            final Timestamp endTime, final int srid) throws SQLException, IOException
+    {
+        final CoverageRequest request = new CoverageRequest(layer, startTime, endTime, srid);
+        TileManager[] managers = cache.peek(request);
+        if (managers == null) {
+            final Cache.Handler<TileManager[]> handler = cache.lock(request);
+            try {
+                managers = handler.peek();
+                if (managers == null) {
+                    final TileQuery query   = (TileQuery) this.query;
+                    final Calendar calendar = getCalendar();
+                    final List<Tile> tiles  = new ArrayList<Tile>();
+                    synchronized (getLock()) {
+                        final LocalCache.Stmt ce = getStatement(QueryType.LIST);
+                        final PreparedStatement statement = ce.statement;
+                        statement.setString   (indexOf(query.byLayer), layer.getName());
+                        statement.setTimestamp(indexOf(query.byStartTime), startTime, calendar);
+                        statement.setTimestamp(indexOf(query.byEndTime),   endTime,   calendar);
+                        statement.setInt      (indexOf(query.byHorizontalSRID), srid);
+                        final int seriesIndex   = indexOf(query.series);
+                        final int filenameIndex = indexOf(query.filename);
+                        final int indexIndex    = indexOf(query.index);
+                        final int extentIndex   = indexOf(query.spatialExtent);
+                        final int dxIndex       = indexOf(query.dx);
+                        final int dyIndex       = indexOf(query.dy);
+                        final ResultSet results = statement.executeQuery();
+                        SeriesEntry       series   = null;
+                        ImageReaderSpi    provider = null;
+                        GridGeometryEntry geometry = null;
+                        int lastSeriesID = 0;
+                        int lastExtentID = 0;
+                        while (results.next()) {
+                            final int    seriesID = results.getInt   (seriesIndex);
+                            final String filename = results.getString(filenameIndex);
+                            final int       index = results.getInt   (indexIndex);
+                            final int      extent = results.getInt   (extentIndex);
+                            final int          dx = results.getInt   (dxIndex); // '0' if null, which is fine.
+                            final int          dy = results.getInt   (dyIndex); // '0' if null, which is fine.
+                            /*
+                             * Gets the series, which usually never change for the whole mosaic (but this is not
+                             * mandatory - the real thing that can't change is the layer).  The series is needed
+                             * in order to build the absolute pathname from the relative one.
+                             */
+                            if (series == null || seriesID != lastSeriesID) {
+                                // Computes only if the series changed. Usually it doesn't change.
+                                series       = layer.getSeries(seriesID);
+                                provider     = getImageReaderSpi(series.format.imageFormat);
+                                lastSeriesID = seriesID;
+                            }
+                            Object input = series.file(filename);
+                            if (!((File) input).isAbsolute()) try {
+                                input = series.uri(filename);
+                            } catch (URISyntaxException e) {
+                                throw new IIOException(e.getLocalizedMessage(), e);
+                            }
+                            /*
+                             * Gets the geometry, which usually don't change often.  The same geometry can be shared
+                             * by all tiles at the same level, given that the only change is the (dx,dy) translation
+                             * term defined explicitly in the "Tiles" table. Doing so avoid the creation a thousands
+                             * of new "GridGeometries" entries.
+                             */
+                            if (geometry == null || extent != lastExtentID) {
+                                if (gridGeometryTable == null) {
+                                    gridGeometryTable = getDatabase().getTable(GridGeometryTable.class);
+                                }
+                                geometry = gridGeometryTable.getEntry(extent);
+                                lastExtentID = extent;
+                            }
+                            AffineTransform gridToCRS = geometry.gridToCRS;
+                            if (dx != 0 || dy != 0) {
+                                gridToCRS = new AffineTransform(gridToCRS);
+                                gridToCRS.translate(dx, dy);
+                            }
+                            final Rectangle bounds = geometry.getImageBounds();
+                            final Tile tile = new Tile(provider, input, (index != 0) ? index-1 : 0, bounds, gridToCRS);
+                            tiles.add(tile);
+                        }
+                        results.close();
+                    }
+                    if (!tiles.isEmpty()) {
+                        managers = TileManagerFactory.DEFAULT.create(tiles);
+                    }
+                }
+            } finally {
+                handler.putAndUnlock(managers);
+            }
+        }
+        return managers;
+    }
+
+    /**
+     * Returns an image reader for the specified name. The argument can be either a format
+     * name or a mime type.
+     */
+    private static ImageReaderSpi getImageReaderSpi(final String format) throws IIOException {
+        final IIORegistry registry = IIORegistry.getDefaultInstance();
+        Iterator<ImageReaderSpi> providers = registry.getServiceProviders(ImageReaderSpi.class, true);
+        while (providers.hasNext()) {
+            final ImageReaderSpi provider = providers.next();
+            if (XArrays.contains(provider.getFormatNames(), format)) {
+                return provider;
+            }
+        }
+        /*
+         * Tests for MIME type only if no provider was found for the format name. We do not merge
+         * the check for MIME type in the above loop because it has a cost (getMIMETypes() clones
+         * an array) and should not be needed for database registering their format by name. This
+         * check is performed mostly for compatibility purpose with policy in previous versions.
+         */
+        providers = registry.getServiceProviders(ImageReaderSpi.class, true);
+        while (providers.hasNext()) {
+            final ImageReaderSpi provider = providers.next();
+            if (XArrays.contains(provider.getMIMETypes(), format)) {
+                return provider;
+            }
+        }
+        throw new IIOException(Errors.format(Errors.Keys.NO_IMAGE_READER));
+    }
+}
