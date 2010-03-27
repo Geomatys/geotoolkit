@@ -22,6 +22,8 @@ import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Image;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -29,11 +31,13 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionAdapter;
 import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Point2D;
+import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.text.NumberFormat;
 import java.util.List;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -47,6 +51,7 @@ import javax.swing.SwingConstants;
 import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.geometry.DirectPosition2D;
+import org.geotoolkit.gui.swing.BorderCutter;
 import org.geotoolkit.gui.swing.go2.JMap2D;
 import org.geotoolkit.gui.swing.go2.Map2D;
 import org.geotoolkit.gui.swing.resource.IconBundle;
@@ -64,9 +69,9 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  */
 public class JCoordinateBar extends JToolBar {
 
-    private static final ImageIcon ICON_HINT = IconBundle.getInstance().getIcon("16_hint");
-    private static final ImageIcon ICON_TEMPORAL = IconBundle.getInstance().getIcon("16_temporal");
-    private static final ImageIcon ICON_ELEVATION = IconBundle.getInstance().getIcon("16_elevation");
+    private static final ImageIcon ICON_HINT = addHorizontalMargin(IconBundle.getInstance().getIcon("16_hint"),2);
+    private static final ImageIcon ICON_TEMPORAL = addHorizontalMargin(IconBundle.getInstance().getIcon("16_temporal"),2);
+    private static final ImageIcon ICON_ELEVATION = addHorizontalMargin(IconBundle.getInstance().getIcon("16_elevation"),2);
 
     private static final NumberFormat NUMBER_FORMAT = NumberFormat.getNumberInstance();
 
@@ -74,7 +79,7 @@ public class JCoordinateBar extends JToolBar {
     private Map2D map = null;
     private String error = MessageBundle.getString("map_control_coord_error");
 
-    private final JLabel guiHint = new JLabel(" ", ICON_HINT, SwingConstants.RIGHT);
+    private final JButton guiHint = new JButton(ICON_HINT);
     private final JScaleCombo guiCombo = new JScaleCombo();
     private final JTextField guiCoord = new JTextField();
     private final JCRSButton guiCRS = new JCRSButton();
@@ -103,7 +108,6 @@ public class JCoordinateBar extends JToolBar {
         paneTemp.add(BorderLayout.CENTER,guiTimeLine);
 
         paneElev.add(BorderLayout.CENTER,panenav);
-
 
         //the hints menu -------------------------------------------------------
         final JCheckBoxMenuItem guiAxis = new JCheckBoxMenuItem(MessageBundle.getString("map_xy_ratio"));
@@ -175,8 +179,8 @@ public class JCoordinateBar extends JToolBar {
         guiCoord.setEditable(false);
         guiCoord.setHorizontalAlignment(SwingConstants.CENTER);
 
-        guiPainting.setPreferredSize(new Dimension(80,guiPainting.getPreferredSize().height));
-        guiPainting.setString(MessageBundle.getString("map_painting"));
+        guiPainting.setPreferredSize(new Dimension(80,5));
+        guiPainting.setString("");
 
         guiTemporal.setToolTipText(MessageBundle.getString("map_temporal_slider"));
         guiTemporal.addActionListener(new ActionListener() {
@@ -201,28 +205,46 @@ public class JCoordinateBar extends JToolBar {
         paneElev.setVisible(false);
         guiTimeLine.setPreferredSize(new Dimension(100, 100));
 
+        int x = 1;
+
         GridBagConstraints constraints = new GridBagConstraints();
         constraints.fill = GridBagConstraints.BOTH;
         constraints.anchor = GridBagConstraints.WEST;
+        constraints.gridwidth = 1;
+        constraints.gridheight = GridBagConstraints.REMAINDER;
         constraints.weightx = 0.0;
         constraints.weighty = 1.0;
+        constraints.gridy = 0;
 
-        bottom.add(guiHint,constraints);
-        bottom.add(guiElevation);
-        bottom.add(guiTemporal);
-        bottom.add(guiPainting);
+        constraints.gridx = x++;
+        bottom.add(BorderCutter.cut(guiHint,false,false,false,true),constraints);
+        constraints.gridx = x++;
+        bottom.add(BorderCutter.cut(guiElevation,false,false,true,true),constraints);
+        constraints.gridx = x++;
+        bottom.add(BorderCutter.cut(guiTemporal,false,false,true,true),constraints);
+        constraints.gridx = x++;
+        constraints.gridx = x++;
+        bottom.add(BorderCutter.cut(guiCRS,false,false,true,false),constraints);
 
 
         constraints.fill = GridBagConstraints.BOTH;
         constraints.anchor = GridBagConstraints.EAST;
+        constraints.gridheight = GridBagConstraints.RELATIVE;
         constraints.weightx = 1.0;
+        constraints.weighty = 0.9;
+        constraints.gridx = x;
         bottom.add(guiCoord,constraints);
+        constraints.weighty = 0.1;
+        constraints.gridy = 1;
+        bottom.add(guiPainting,constraints);
+        constraints.gridy = 0;
+        x++;
 
+
+        constraints.gridheight = GridBagConstraints.REMAINDER;
         constraints.weightx = 0.5;
+        constraints.gridx = x++;
         bottom.add(guiCombo,constraints);
-
-        constraints.weightx = 0.0;
-        bottom.add(guiCRS,constraints);
 
         setMap(candidate);
     }
@@ -339,5 +361,12 @@ public class JCoordinateBar extends JToolBar {
         }
 
     }
-    
+
+    private static ImageIcon addHorizontalMargin(ImageIcon icon, int margin){
+        final Image img = icon.getImage();
+        BufferedImage buffer = new BufferedImage(img.getWidth(null)+2*margin,img.getHeight(null),BufferedImage.TYPE_INT_ARGB);
+        buffer.getGraphics().drawImage(img, margin, 0, null);
+        return new ImageIcon(buffer);
+    }
+
 }
