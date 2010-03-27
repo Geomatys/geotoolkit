@@ -97,6 +97,7 @@ final class FormatTable extends SingletonTable<FormatEntry> {
         final int encodingIndex = indexOf(query.encoding);
         final String format   = results.getString(indexOf(query.format));
         final String encoding = results.getString(encodingIndex);
+        final String comments = results.getString(indexOf(query.comments));
         final boolean geophysics;
         final String type = String.valueOf(encoding).toLowerCase();
         if (type.equals("geophysics")) {
@@ -115,6 +116,6 @@ final class FormatTable extends SingletonTable<FormatEntry> {
             sampleDimensions = table = getDatabase().getTable(SampleDimensionTable.class);
         }
         final GridSampleDimension[] bands = table.getSampleDimensions(identifier.toString());
-        return new FormatEntry(identifier, format, bands, geophysics);
+        return new FormatEntry(identifier, format, bands, geophysics, comments);
     }
 }

@@ -28,7 +28,8 @@ CREATE TYPE "PackMode" AS ENUM ('native', 'geophysics');
 CREATE TABLE "Formats" (
     "name"     character varying NOT NULL PRIMARY KEY,
     "plugin"   character varying NOT NULL,
-    "packMode" "PackMode"        NOT NULL DEFAULT 'native'
+    "packMode" "PackMode"        NOT NULL DEFAULT 'native',
+    "comments" character varying
 );
 
 ALTER TABLE "Formats" OWNER TO geoadmin;
@@ -43,6 +44,8 @@ COMMENT ON COLUMN "Formats"."plugin" IS
     'Name of the Java plugin to use for decoding the images.  Examples: PNG, JPEG, TIFF, NetCDF.';
 COMMENT ON COLUMN "Formats"."packMode" IS
     'Storage mode of image data: either "geophysics" or "native".';
+COMMENT ON COLUMN "Formats"."comments" IS
+    'Free text for comments.';
 
 
 

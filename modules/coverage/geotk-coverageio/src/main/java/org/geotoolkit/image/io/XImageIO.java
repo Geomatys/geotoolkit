@@ -21,8 +21,10 @@ import java.util.List;
 import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.io.File;
 import java.io.Closeable;
 import java.io.IOException;
+import java.io.FileNotFoundException;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.ImageWriter;
@@ -308,6 +310,32 @@ public final class XImageIO {
                     }
                 }
                 stream.close();
+            } else {
+                /*
+                 * The stream can not be created. It may be because the file doesn't exist.
+                 * Try to build a helpful error message.
+                 */
+                if (input instanceof File) {
+                    File file = (File) input;
+                    final File parent = file.getParentFile();
+                    int messageKey = Errors.Keys.FILE_DOES_NOT_EXIST_$1;
+                    if (parent != null && !parent.isDirectory()) {
+                        messageKey = Errors.Keys.NOT_A_DIRECTORY_$1;
+                        file = parent;
+                    }
+                    throw new FileNotFoundException(Errors.format(messageKey, file));
+                } else {
+                    final int messageKey;
+                    final Object argument;
+                    if (IOUtilities.canProcessAsPath(input)) {
+                        messageKey = Errors.Keys.CANT_READ_$1;
+                        argument = IOUtilities.name(input);
+                    } else {
+                        messageKey = Errors.Keys.UNKNOWN_TYPE_$1;
+                        argument = input.getClass();
+                    }
+                    throw new IOException(Errors.format(messageKey, argument));
+                }
             }
         }
         throw new UnsupportedImageFormatException(errorMessage(false, mode, name, hasFound));

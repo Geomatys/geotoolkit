@@ -40,7 +40,7 @@ final class FormatQuery extends Query {
     /**
      * Column to appear after the {@code "SELECT"} clause.
      */
-    final Column name, format, encoding;
+    final Column name, format, encoding, comments;
 
     /**
      * Parameter to appear after the {@code "FROM"} clause.
@@ -58,6 +58,7 @@ final class FormatQuery extends Query {
         name     = addMandatoryColumn("name",     usage);
         format   = addMandatoryColumn("plugin",   usage);
         encoding = addMandatoryColumn("packMode", usage);
+        comments = addOptionalColumn ("comments", null, usage);
         byName   = addParameter(name, SELECT);
         name.setOrdering(Ordering.ASC, LIST);
     }

@@ -88,9 +88,9 @@ final class FormatEntry extends Entry {
      * @param geophysics {@code true} if coverage to be read are already geophysics values.
      */
     protected FormatEntry(final Comparable<?> name, final String formatName,
-            final GridSampleDimension[] bands, final boolean geophysics)
+            final GridSampleDimension[] bands, final boolean geophysics, final String comments)
     {
-        super(name, null);
+        super(name, comments);
         this.imageFormat = formatName.trim();
         if (bands != null) {
             for (int i=0; i<bands.length; i++) {
