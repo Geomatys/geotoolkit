@@ -21,15 +21,14 @@
  * is specified by a JDBC {@link javax.sql.DataSource} and a {@link java.util.Properties} map,
  * which are given to the {@link org.geotoolkit.coverage.sql.CoverageDatabase} constructor.
  * The properties map can contain the following optional entries:
- * <p>
- * <table>
+ *
+ * <blockquote><table>
  *   <tr><td>{@code user}</td>          <td>The user name.</td></tr>
  *   <tr><td>{@code password}</td>      <td>The password.</td></tr>
- *   <tr><td>{@code schema}</td>        <td>The database schema to use.</td></tr>
+ *   <tr><td>{@code schema}</td>        <td>The database schema to use. The default is to use the PostgreSQL {@code "search_path"} variable.</td></tr>
  *   <tr><td>{@code timezone}</td>      <td>The timezone for the dates in the database. Default is UTC.</td></tr>
- *   <tr><td>{@code rootDirectory}</td> <td>The root directory of image files. Paths declared
- *   in the database are relative to that directory.</td></tr>
- * </table>
+ *   <tr><td>{@code rootDirectory}</td> <td>The root directory of image files. Paths declared in the database are relative to that directory.</td></tr>
+ * </table></blockquote>
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @version 3.10

@@ -33,6 +33,8 @@ import java.util.concurrent.CancellationException;
 import javax.sql.DataSource;
 import java.sql.SQLException;
 
+import org.opengis.referencing.operation.TransformException;
+
 import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.util.DateRange;
 import org.geotoolkit.util.MeasurementRange;
@@ -456,6 +458,8 @@ public class CoverageDatabase {
                 entry = table.getEntry();
                 pool.release(table);
             } catch (SQLException e) {
+                throw new CoverageStoreException(e);
+            } catch (TransformException e) {
                 throw new CoverageStoreException(e);
             }
             return entry.read(request, listeners);

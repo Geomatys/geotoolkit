@@ -1136,7 +1136,7 @@ scanNumber: while (++i < length) {
      * Returns a new envelope that encompass only some dimensions of this envelope.
      * This method copy this envelope's ordinates into a new envelope, beginning at
      * dimension {@code lower} and extending to dimension {@code upper-1}.
-     * Thus the dimension of the subenvelope is {@code upper-lower}.
+     * Thus the dimension of the sub-envelope is {@code upper-lower}.
      *
      * @param  lower The first dimension to copy, inclusive.
      * @param  upper The last  dimension to copy, exclusive.
@@ -1192,9 +1192,10 @@ scanNumber: while (++i < length) {
 
     /**
      * Returns a {@link Rectangle2D} with the same bounds as this {@code Envelope}.
+     * This envelope must be two-dimensional before this method is invoked.
      * This is a convenience method for interoperability with Java2D.
      *
-     * @return This envelope as a twp-dimensional rectangle.
+     * @return This envelope as a two-dimensional rectangle.
      * @throws IllegalStateException if this envelope is not two-dimensional.
      */
     public Rectangle2D toRectangle2D() throws IllegalStateException {

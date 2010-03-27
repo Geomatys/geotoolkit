@@ -261,12 +261,12 @@ public abstract class AbstractEnvelope implements Envelope {
      * Returns {@code true} if the specified object is an envelope of the same class
      * with equals coordinates and {@linkplain #getCoordinateReferenceSystem CRS}.
      *
+     * {@note This implementation requires that the provided <code>object</code> argument
+     * is of the same class than this envelope. We do not relax this rule since not every
+     * implementations in the Geotk code base follow the same contract.}
+     *
      * @param object The object to compare with this envelope.
      * @return {@code true} if the given object is equal to this envelope.
-     *
-     * @todo Current implementation requires that {@code object} is of the same class.
-     *       We can not relax this rule before we ensure that every implementations in
-     *       the Geotk code base follow the same contract.
      */
     @Override
     public boolean equals(final Object object) {

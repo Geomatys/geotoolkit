@@ -18,14 +18,15 @@
 package org.geotoolkit.coverage.sql;
 
 import java.sql.SQLException;
+
 import org.opengis.geometry.Envelope; // For javadoc
+import org.opengis.referencing.operation.TransformException;
 
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
-import org.geotoolkit.resources.Errors;
 
 
 /**
- * A request for data in a {@linkplain CoverageDatabase Coverage database}.
+ * A request for data in a {@linkplain CoverageDatabase Coverage Database}.
  * A request it typically created by calls to the following methods:
  * <p>
  * <ul>
@@ -71,29 +72,10 @@ public class CoverageQuery extends GridCoverageReadParam {
     }
 
     /**
-     * Unsupported operation, since the selection of source bands (if needed)
-     * is {@link CoverageDatabase} job.
-     */
-    @Override
-    public void setSourceBands(int... bands) throws IllegalArgumentException {
-        throw new UnsupportedOperationException(Errors.format(
-                Errors.Keys.UNSUPPORTED_OPERATION_$1, "setSourceBands"));
-    }
-
-    /**
-     * Unsupported operation.
-     */
-    @Override
-    public void setDestinationBands(int... bands) throws IllegalArgumentException {
-        throw new UnsupportedOperationException(Errors.format(
-                Errors.Keys.UNSUPPORTED_OPERATION_$1, "setDestinationBands"));
-    }
-
-    /**
      * Configures the given table using the information declared in this request.
      */
-    final void configure(final GridCoverageTable table) throws SQLException {
+    final void configure(final GridCoverageTable table) throws SQLException, TransformException {
         table.setLayer(layer);
-        table.setEnvelope(getEnvelope());
+        table.envelope.setEnvelope(getEnvelope());
     }
 }

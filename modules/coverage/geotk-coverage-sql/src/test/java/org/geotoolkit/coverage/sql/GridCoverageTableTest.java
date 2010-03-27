@@ -26,6 +26,7 @@ import java.util.SortedSet;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.GeographicCRS;
 import org.opengis.referencing.crs.ProjectedCRS;
+import org.opengis.referencing.operation.TransformException;
 import org.opengis.metadata.extent.GeographicBoundingBox;
 
 import org.geotoolkit.test.Depend;
@@ -90,7 +91,7 @@ public final class GridCoverageTableTest extends CatalogTestBase {
         /*
          * Reduce the time range and tests again available times.
          */
-        table.setTimeRange(LayerTableTest.SUB_START_TIME, LayerTableTest.SUB_END_TIME);
+        table.envelope.setTimeRange(LayerTableTest.SUB_START_TIME, LayerTableTest.SUB_END_TIME);
         final Set<Date> availableTimes = table.getAvailableTimes();
         assertEquals(3, availableTimes.size());
         assertTrue(allTimes.containsAll(availableTimes));
@@ -98,7 +99,7 @@ public final class GridCoverageTableTest extends CatalogTestBase {
         /*
          * Reset the full range and test again.
          */
-        table.setTimeRange(LayerTableTest.START_TIME, LayerTableTest.END_TIME);
+        table.envelope.setTimeRange(LayerTableTest.START_TIME, LayerTableTest.END_TIME);
         assertEquals(allTimes, table.getAvailableTimes());
     }
 
@@ -150,7 +151,7 @@ public final class GridCoverageTableTest extends CatalogTestBase {
         /*
          * Get the set of entries in the layer.
          */
-        table.setTimeRange(LayerTableTest.SUB_START_TIME, LayerTableTest.SUB_END_TIME);
+        table.envelope.setTimeRange(LayerTableTest.SUB_START_TIME, LayerTableTest.SUB_END_TIME);
         final Set<GridCoverageEntry> entries = table.getEntries();
         assertEquals(3, entries.size());
         final GridCoverageReference entry = table.getEntry(SAMPLE_NAME);
@@ -214,25 +215,26 @@ public final class GridCoverageTableTest extends CatalogTestBase {
      * Tests the request for the bounding box.
      *
      * @throws SQLException If the test can't connect to the database.
+     * @throws TransformException Should not happen.
      */
     @Test
-    public void testBoundingBox() throws SQLException {
+    public void testBoundingBox() throws SQLException, TransformException {
         final GridCoverageTable table = getDatabase().getTable(GridCoverageTable.class);
         table.setLayer(LayerTableTest.TEMPERATURE);
-        final GeneralEnvelope search = new GeneralEnvelope(table.getSpatioTemporalCRS());
+        final GeneralEnvelope search = new GeneralEnvelope(table.envelope.getCoordinateReferenceSystem());
         search.setToInfinite();
         search.setRange(0, -200, 200);
         search.setRange(1, -100, 100);
-        table.setEnvelope(search);
+        table.envelope.setEnvelope(search);
 
-        Envelope envelope = table.getEnvelope();
+        Envelope envelope = table.envelope;
         assertEquals(-200, envelope.getMinimum(0), 0.0);
         assertEquals(+200, envelope.getMaximum(0), 0.0);
         assertEquals(-100, envelope.getMinimum(1), 0.0);
         assertEquals(+100, envelope.getMaximum(1), 0.0);
 
         table.trimEnvelope();
-        envelope = table.getEnvelope();
+        envelope = table.envelope;
         assertEquals(-180, envelope.getMinimum(0), 0.0);
         assertEquals(+180, envelope.getMaximum(0), 0.0);
         assertEquals( -90, envelope.getMinimum(1), 0.0);

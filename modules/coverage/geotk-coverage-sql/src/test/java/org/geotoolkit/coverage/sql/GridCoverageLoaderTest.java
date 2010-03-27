@@ -53,7 +53,7 @@ public final class GridCoverageLoaderTest extends CatalogTestBase {
     @Test
     public void testTemperature() throws SQLException, IOException, CoverageStoreException {
         final GridCoverageTable table = getDatabase().getTable(GridCoverageTable.class);
-        table.setTimeRange(LayerTableTest.SUB_START_TIME, LayerTableTest.SUB_END_TIME);
+        table.envelope.setTimeRange(LayerTableTest.SUB_START_TIME, LayerTableTest.SUB_END_TIME);
         table.setLayer(LayerTableTest.TEMPERATURE);
         final GridCoverageReference entry = table.getEntry();
 

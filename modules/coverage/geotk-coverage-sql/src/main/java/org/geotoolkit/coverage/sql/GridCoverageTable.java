@@ -142,6 +142,19 @@ class GridCoverageTable extends BoundedSingletonTable<GridCoverageEntry> {
     }
 
     /**
+     * Invoked after constructor for initializing the {@link #envelope} field.
+     */
+    @Override
+    protected CoverageEnvelope createEnvelope() {
+        return new CoverageEnvelope((SpatialDatabase) getDatabase()) {
+            @Override void fireStateChanged(final String property) {
+                super.fireStateChanged(property);
+                GridCoverageTable.this.fireStateChanged(property);
+            }
+        };
+    }
+
+    /**
      * Sets the layer as a string.
      *
      * @param  layer The layer name.
@@ -227,7 +240,7 @@ class GridCoverageTable extends BoundedSingletonTable<GridCoverageEntry> {
      */
     @Override
     public final Set<GridCoverageEntry> getEntries() throws SQLException {
-        final Dimension2D resolution = getPreferredResolution();
+        final Dimension2D resolution = envelope.getPreferredResolution();
         final  Set<GridCoverageEntry> entries  = super.getEntries();
         final List<GridCoverageEntry> filtered = new ArrayList<GridCoverageEntry>(entries.size());
 loop:   for (final GridCoverageEntry newEntry : entries) {
@@ -279,7 +292,7 @@ loop:   for (final GridCoverageEntry newEntry : entries) {
             if (entries.hasNext()) {
                 Comparator<GridCoverageReference> comparator = this.comparator;
                 if (comparator == null) {
-                    comparator = new GridCoverageComparator(null, getEnvelope());
+                    comparator = new GridCoverageComparator(null, envelope);
                     this.comparator = comparator;
                 }
                 do {
@@ -549,7 +562,7 @@ loop:   for (final GridCoverageEntry newEntry : entries) {
         final GridCoverageQuery query = (GridCoverageQuery) super.query;
         final int extent = results.getInt(indexOf(query.spatialExtent));
         final GridGeometryEntry geometry = getGridGeometryTable().getEntry(extent);
-        final NumberRange<?> verticalRange = getVerticalRange();
+        final NumberRange<?> verticalRange = envelope.getVerticalRange();
         final double z = 0.5*(verticalRange.getMinimum() + verticalRange.getMaximum());
         return new GridCoverageIdentifier(series, filename, index,
                 geometry.indexOfNearestAltitude(z), geometry);
@@ -603,7 +616,7 @@ loop:   for (final GridCoverageEntry newEntry : entries) {
      */
     @Override
     protected void fireStateChanged(final String property) {
-        if (!"PreferredResolution".equalsIgnoreCase(property)) {
+        if (!"PreferredResolution".equals(property)) {
             comparator          = null;
             availableTimes      = null;
             availableElevations = null;

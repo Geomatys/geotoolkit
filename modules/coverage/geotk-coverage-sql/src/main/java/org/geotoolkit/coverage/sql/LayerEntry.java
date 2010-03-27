@@ -384,10 +384,11 @@ final class LayerEntry extends Entry implements Layer {
         final GridCoverageEntry entry;
         try {
             final GridCoverageTable data = pool.acquire();
+            final CoverageEnvelope envelope = data.envelope;
             data.setLayerEntry(this);
-            data.setEnvelope2D(null);
-            data.setVerticalRange(zmin, zmax);
-            data.setTimeRange(startTime, endTime);
+            envelope.setHorizontalRange(null);
+            envelope.setVerticalRange(zmin, zmax);
+            envelope.setTimeRange(startTime, endTime);
             entry = data.getEntry();
             pool.release(data);
         } catch (SQLException exception) {
