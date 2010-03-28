@@ -18,6 +18,7 @@
 package org.geotoolkit.coverage.sql;
 
 import java.util.Date;
+import java.awt.Dimension;
 import java.awt.geom.Dimension2D;
 import java.awt.geom.Rectangle2D;
 
@@ -37,9 +38,11 @@ import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.geometry.AbstractEnvelope;
 import org.geotoolkit.display.shape.XRectangle2D;
 import org.geotoolkit.display.shape.FloatDimension2D;
+import org.geotoolkit.display.shape.DoubleDimension2D;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.internal.sql.table.SpatialDatabase;
 import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
+import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.Utilities;
 
 import static java.lang.Double.doubleToLongBits;
@@ -85,7 +88,7 @@ public class CoverageEnvelope extends AbstractEnvelope implements Cloneable {
      * The database for which this extent is defined. This is used in order
      * to get the horizontal, vertical and temporal components of the CRS.
      */
-    private final SpatialDatabase database;
+    final SpatialDatabase database;
 
     /**
      * The envelope time component, in milliseconds since January 1st, 1970.
@@ -129,6 +132,25 @@ public class CoverageEnvelope extends AbstractEnvelope implements Cloneable {
         yMax = POSITIVE_INFINITY;
         zMin = NEGATIVE_INFINITY;
         zMax = POSITIVE_INFINITY;
+    }
+
+    /**
+     * Sets the spatio-temporal envelope and the resolution from an other
+     * {@code CoverageEnvelope} object. This method invokes the individual
+     * {@link #setHorizontalRange}, {@link #setVerticalRange} and {@link #setTimeRange}
+     * methods if possible, which are more efficient than {@link #setEnvelope}.
+     */
+    final void setAll(final CoverageEnvelope envelope) throws TransformException {
+        if (envelope != this) {
+            if (envelope == null || envelope.database != database) {
+                setEnvelope(envelope);
+            } else {
+                setHorizontalRange(envelope.getHorizontalRange());
+                setVerticalRange  (envelope.getVerticalRange());
+                setTimeRange      (envelope.getTimeRange());
+            }
+            setPreferredResolution(envelope != null ? envelope.getPreferredResolution() : null);
+        }
     }
 
     /**
@@ -403,32 +425,95 @@ public class CoverageEnvelope extends AbstractEnvelope implements Cloneable {
     }
 
     /**
-     * Sets the preferred in units of the {@linkplain #getHorizontalRange horizontal envelope}. This
-     * is only an approximative hint, since there is no garantee that an image will be read with
-     * that resolution. A null values means that the best available resolution should be used.
+     * Sets the preferred resolution in units of the {@linkplain #getHorizontalRange horizontal
+     * envelope}. This is only an approximative hint, since there is no garantee that an image
+     * will be read with that resolution. A null values means that the best available resolution
+     * should be used.
      *
      * @param  resolution The preferred geographic resolution, or {@code null} for best resolution.
      * @return {@code true} if the resolution changed as a result of this call, or
      *         {@code false} if the specified resolution is equals to the one already set.
      */
     public boolean setPreferredResolution(final Dimension2D resolution) {
-        float x,y;
+        float dx, dy;
         if (resolution != null) {
-            x = (float) resolution.getWidth ();
-            y = (float) resolution.getHeight();
-            if (!(x >= 0)) x = 0; // '!' for catching NaN
-            if (!(y >= 0)) y = 0;
+            dx = (float) resolution.getWidth ();
+            dy = (float) resolution.getHeight();
+            if (!(dx >= 0)) dx = 0; // '!' for catching NaN
+            if (!(dy >= 0)) dy = 0;
         } else {
-            x = 0;
-            y = 0;
+            dx = 0;
+            dy = 0;
         }
         boolean change;
-        change  = (xResolution != (xResolution = x));
-        change |= (yResolution != (yResolution = y));
+        change  = (xResolution != (xResolution = dx));
+        change |= (yResolution != (yResolution = dy));
         if (change) {
             fireStateChanged("PreferredResolution");
         }
         return change;
+    }
+
+    /**
+     * Returns the approximative size of the desired image, or {@code null} if unknown.
+     * This is computed from the {@linkplain #getHorizontalRange() horizontal range} and
+     * the {@linkplain #getPreferredResolution() preferred resolution}.
+     *
+     * @return The image size computed from the horizontal range and the resolution,
+     *         or {@code null} if the size can not be computed.
+     */
+    public Dimension getPreferredImageSize() {
+        final double width  = (xMax - xMin) / xResolution;
+        if (width >= 1 && width <= Integer.MAX_VALUE) {
+            final double height = (yMax - yMin) / yResolution;
+            if (height >= 1 && height <= Integer.MAX_VALUE) {
+                return new Dimension((int) Math.round(width), (int) Math.round(height));
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Sets the approximative size of the desired image. This is a convenience method which
+     * {@linkplain #setPreferredResolution set the preferred resolution} to a value computed
+     * from the {@linkplain #getHorizontalRange() horizontal range} and the given size.
+     * <p>
+     * The {@link #setHorizontalRange(Rectangle2D)} or {@link #setEnvelope(Envelope)} method
+     * must have been invoked with a finite envelope before this {@code setPreferredImageSize}
+     * method. The previous preferred resolution, if any, is discarted.
+     *
+     * @param  size The new preferred image size, or {@code null}.
+     * @return {@code true} if the resolution changed as a result of this call, or
+     *         {@code false} if the specified resolution is equals to the one computed
+     *         by this method.
+     * @throws IllegalStateException If the current {@linkplain #getHorizontalRange()
+     *         horizontal range} is not finite.
+     */
+    public boolean setPreferredImageSize(final Dimension size) throws IllegalStateException {
+        Dimension2D resolution = null;
+        if (size != null) {
+            double dx = size.width;
+            double dy = size.height;
+            if (!(dx > 0 && dy > 0)) {
+                throw new IllegalArgumentException(errors()
+                        .getString(Errors.Keys.ILLEGAL_ARGUMENT_$2, "size", size));
+            }
+            dx = (xMax - xMin) / dx;
+            dy = (yMax - yMin) / dy;
+            if (Double.isInfinite(dx) || Double.isInfinite(dy)) {
+                throw new IllegalStateException(errors()
+                        .getString(Errors.Keys.UNDEFINED_PROPERTY_$1, "envelope"));
+            }
+            resolution = new DoubleDimension2D(dx, dy);
+        }
+        return setPreferredResolution(resolution);
+    }
+
+    /**
+     * Returns the resource bundled for error messages.
+     */
+    final Errors errors() {
+        return Errors.getResources(database.getLocale());
     }
 
     /**

@@ -40,7 +40,7 @@ import org.geotoolkit.util.XArrays;
  * {@link ImageReader} instance is not yet know or available.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.07
+ * @version 3.10
  *
  * @since 2.1
  * @module
@@ -50,7 +50,7 @@ public class IIOListeners implements Serializable {
     /**
      * For compatibility with different versions.
      */
-    private static final long serialVersionUID = 6944397966242054247L;
+    private static final long serialVersionUID = 3747976429353858766L;
 
     /**
      * The listener categories for read operations.
@@ -70,14 +70,39 @@ public class IIOListeners implements Serializable {
     };
 
     /**
+     * The list of listeners, as a subclass which can copy its value from an other list of
+     * listeners. We can safely takes the array reference without cloning it because every
+     * methods modifying the list internally create a copy of the array and modify that copy.
+     */
+    private static final class List extends EventListenerList {
+        private static final long serialVersionUID = 3398556089737845953L;
+
+        final void setTo(final EventListenerList other) {
+            listenerList = other.getListenerList();
+        }
+    }
+
+    /**
      * List of listeners.
      */
-    private final EventListenerList listeners = new EventListenerList();
+    private final List listeners = new List();
 
     /**
      * Creates a new instance of {@code IIOListeners}.
      */
     public IIOListeners() {
+    }
+
+    /**
+     * Sets the list of listeners in this object to the same listeners than the given object.
+     * Any listeners previously hold by this {@code IIOListeners} are discarted.
+     *
+     * @param other The other object from which to copy the list of listeners.
+     *
+     * @since 3.10
+     */
+    public void setListeners(final IIOListeners other) {
+        listeners.setTo(other.listeners);
     }
 
     /**

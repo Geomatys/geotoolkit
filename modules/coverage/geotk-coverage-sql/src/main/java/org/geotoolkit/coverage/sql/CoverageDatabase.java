@@ -39,7 +39,6 @@ import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.util.DateRange;
 import org.geotoolkit.util.MeasurementRange;
 import org.geotoolkit.util.NullArgumentException;
-import org.geotoolkit.image.io.IIOListeners;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.internal.sql.table.TablePool;
@@ -93,7 +92,7 @@ public class CoverageDatabase {
     /**
      * The object which will manage the connections to the database.
      */
-    private volatile TableFactory database;
+    volatile TableFactory database;
 
     /**
      * The executor service to use for loading data in background. We force the usage of this
@@ -423,14 +422,17 @@ public class CoverageDatabase {
 
     /**
      * Reads the data of a two-dimensional slice and returns them as a coverage.
+     * Note that the returned two-dimensional slice is not garanteed to have exactly
+     * the {@linkplain CoverageQuery#getEnvelope() requested envelope}. Callers may
+     * need to check the geometry of the returned envelope and perform an additional
+     * resampling if needed.
      *
      * @param  request Parameters used to control the reading process.
-     * @param  listeners Objects to inform about progress, or {@code null} if none.
      * @return The coverage.
      */
-    public Future<GridCoverage2D> readSlice(final CoverageQuery request, final IIOListeners listeners) {
+    public Future<GridCoverage2D> readSlice(final CoverageQuery request) {
         ensureNonNull("request", request);
-        return executor.submit(new ReadSlice(request, listeners));
+        return executor.submit(new ReadSlice(request));
     }
 
     /**
@@ -439,13 +441,12 @@ public class CoverageDatabase {
      * of failure.
      */
     private final class ReadSlice implements Callable<GridCoverage2D> {
-        private final CoverageQuery request;
-        private final IIOListeners listeners;
+        /** The query. */
+        private final CoverageQuery query;
 
         /** Creates a new task. */
-        ReadSlice(final CoverageQuery request, final IIOListeners listeners) {
-            this.request   = request;
-            this.listeners = listeners;
+        ReadSlice(final CoverageQuery query) {
+            this.query = query;
         }
 
         /** Executes the task in a background thread. */
@@ -454,7 +455,8 @@ public class CoverageDatabase {
             final GridCoverageReference entry;
             try {
                 final GridCoverageTable table = pool.acquire();
-                request.configure(table);
+                table.setLayer(query.getLayer());
+                table.envelope.setAll(query.getEnvelope());
                 entry = table.getEntry();
                 pool.release(table);
             } catch (SQLException e) {
@@ -462,7 +464,7 @@ public class CoverageDatabase {
             } catch (TransformException e) {
                 throw new CoverageStoreException(e);
             }
-            return entry.read(request, listeners);
+            return entry.read(query.getReadParam(), query.listeners);
         }
     }
 

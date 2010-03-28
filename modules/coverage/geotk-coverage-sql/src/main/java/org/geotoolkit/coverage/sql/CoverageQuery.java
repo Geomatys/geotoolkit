@@ -17,23 +17,31 @@
  */
 package org.geotoolkit.coverage.sql;
 
-import java.sql.SQLException;
+import java.awt.geom.Dimension2D;
+import java.awt.geom.Rectangle2D;
 
-import org.opengis.geometry.Envelope; // For javadoc
 import org.opengis.referencing.operation.TransformException;
+import org.opengis.geometry.MismatchedReferenceSystemException;
 
+import org.geotoolkit.resources.Errors;
+import org.geotoolkit.image.io.IIOListeners;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 
 
 /**
  * A request for data in a {@linkplain CoverageDatabase Coverage Database}.
- * A request it typically created by calls to the following methods:
+ * A query contains the following components:
  * <p>
  * <ul>
- *   <li>{@link #setLayer(String)}</li>
- *   <li>{@link #setEnvelope(Envelope)}</li>
- *   <li>{@link #setResolution(double[])}</li>
+ *   <li>The name of the {@linkplain Layer layer} to be queried.</li>
+ *   <li>The {@linkplain CoverageEnvelope envelope of the coverage} to be queried.</li>
+ *   <li>The preferred resolution (actually part of the above-cited {@code CoverageEnvelope}).</li>
  * </ul>
+ * <p>
+ * Every getter methods defined in this class return a direct reference to the objects holds
+ * by {@code CoverageQuery} - the objects are not cloned. This approach makes easier to configure
+ * a query by modifying directly the returned objects. Setter methods are provided for completness,
+ * but typically don't need to be invoked.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.10
@@ -41,41 +49,141 @@ import org.geotoolkit.coverage.io.GridCoverageReadParam;
  * @since 3.10
  * @module
  */
-public class CoverageQuery extends GridCoverageReadParam {
+public class CoverageQuery {
     /**
-     * The layer to be requested.
+     * The name of the layer to be requested.
      */
     private String layer;
 
     /**
-     * Creates an initially empty request.
+     * The envelope of the region to be queried.
      */
-    public CoverageQuery() {
+    private final CoverageEnvelope envelope;
+
+    /**
+     * The listeners, or {@code null} if none.
+     */
+    IIOListeners listeners;
+
+    /**
+     * Creates a new query for the given database.
+     *
+     * @param database The database for which a query is created.
+     */
+    public CoverageQuery(final CoverageDatabase database) {
+        envelope = new CoverageEnvelope(database.database);
     }
 
     /**
-     * Returns the layer to be requested.
+     * Returns the name of the layer to be requested, or {@code null} if unspecified.
      *
-     * @return The layer to be requested.
+     * @return The name of the layer to be requested, or {@code null} if unspecified.
      */
     public String getLayer() {
         return layer;
     }
 
     /**
-     * Sets the layer to be requested.
+     * Sets the name of the layer to be requested.
      *
-     * @param layer The new layer to request.
+     * @param name The name of the new layer to request.
      */
-    public void setLayer(final String layer) {
-        this.layer = layer;
+    public void setLayer(final String name) {
+        layer = name;
     }
 
     /**
-     * Configures the given table using the information declared in this request.
+     * Returns the envelope of the coverage to be queried. This method returns a direct
+     * reference to the envelope holds by this class - any change to the returned envelope
+     * will affect directly this query.
+     * <p>
+     * <b>Example</b>: the following code defines the time for which a coverage is wanted:
+     *
+     * {@preformat java
+     *     Date startTime = ...;
+     *     Date endTime = ...;
+     *     query.getEnvelope().setTimeRange(startTime, endTime);
+     * }
+     *
+     * @return The envelope of the coverage to be queried (never {@code null}).
      */
-    final void configure(final GridCoverageTable table) throws SQLException, TransformException {
-        table.setLayer(layer);
-        table.envelope.setEnvelope(getEnvelope());
+    public CoverageEnvelope getEnvelope() {
+        return envelope;
+    }
+
+    /**
+     * Sets the envelope of the coverage to be queried. This method is provided for completness
+     * with the {@link #getEnvelope()} method, but usually don't need to be invoked since the
+     * object returne by {@code getEnvelope()} can be modified directly.
+     *
+     * @param newEnvelope The new envelope, or {@code null} for infinite bounds.
+     * @throws MismatchedReferenceSystemException If the given envelope uses an incompatible CRS.
+     */
+    public void setEnvelope(final CoverageEnvelope newEnvelope) throws MismatchedReferenceSystemException {
+        try {
+            envelope.setAll(newEnvelope);
+        } catch (TransformException e) {
+            throw new MismatchedReferenceSystemException(envelope.errors().getString(
+                    Errors.Keys.ILLEGAL_COORDINATE_REFERENCE_SYSTEM), e);
+        }
+    }
+
+    /**
+     * Returns the listeners to inform about read progress. This method returns a direct
+     * reference to the listener list holds by this class - any change to the returned
+     * list will affect directly this query.
+     * <p>
+     * <b>Example</b>: the following code registers a
+     * {@link javax.imageio.event.IIOReadProgressListener} which will be informed about the
+     * progress of any image file to be read:
+     *
+     * {@preformat java
+     *     query.getIIOListeners().addIIOReadProgressListener(myListener);
+     * }
+     *
+     * @return The list of listeners to inform about read progress (never {@code null}).
+     */
+    public IIOListeners getIIOListeners() {
+        if (listeners == null) {
+            listeners = new IIOListeners();
+        }
+        return listeners;
+    }
+
+    /**
+     * Sets the listeners to inform about read progress. This method is provided for completness
+     * with the {@link #getIIOListeners()} method, but usually don't need to be invoked since the
+     * object returne by {@code getIIOListeners()} can be modified directly.
+     *
+     * @param newListeners The new listeners, or {@code null} for none.
+     */
+    public void setIIOListeners(final IIOListeners newListeners) {
+        if (newListeners != null) {
+            getIIOListeners().setListeners(listeners);
+        } else {
+            listeners = null;
+        }
+    }
+
+    /**
+     * Returns the parameter to use with {@link org.geotoolkit.coverage.io.GridCoverageReader}.
+     *
+     * @return The parameters, or {@code null} for using the default parameters.
+     */
+    final GridCoverageReadParam getReadParam() {
+        GridCoverageReadParam param = null;
+        final Rectangle2D bounds = envelope.getHorizontalRange();
+        if (!Double.isInfinite(bounds.getWidth()) || !Double.isInfinite(bounds.getHeight())) {
+            param = new GridCoverageReadParam();
+            param.setEnvelope(bounds, envelope.database.horizontalCRS);
+        }
+        final Dimension2D resolution = envelope.getPreferredResolution();
+        if (resolution != null) {
+            if (param == null) {
+                param = new GridCoverageReadParam();
+            }
+            param.setResolution(resolution.getWidth(), resolution.getHeight());
+        }
+        return param;
     }
 }

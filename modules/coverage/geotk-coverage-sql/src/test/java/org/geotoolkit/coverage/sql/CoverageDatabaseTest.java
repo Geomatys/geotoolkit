@@ -170,10 +170,10 @@ public final class CoverageDatabaseTest extends CatalogTestBase {
     @Test
     public void testReadSlice() throws CoverageStoreException {
         final CoverageDatabase database = getCoverageDatabase();
-        final CoverageQuery query = new CoverageQuery();
+        final CoverageQuery query = new CoverageQuery(database);
         query.setLayer(TEMPERATURE);
         requireImageData();
-        final GridCoverage2D coverage = now(database.readSlice(query, null));
+        final GridCoverage2D coverage = now(database.readSlice(query));
         GridCoverageLoaderTest.checkTemperatureCoverage(coverage);
     }
 }

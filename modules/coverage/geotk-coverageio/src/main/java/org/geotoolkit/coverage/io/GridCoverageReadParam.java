@@ -17,12 +17,16 @@
  */
 package org.geotoolkit.coverage.io;
 
+import java.awt.geom.Rectangle2D;
+
 import org.opengis.geometry.Envelope;
 import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import org.geotoolkit.geometry.GeneralEnvelope;
+import org.geotoolkit.geometry.Envelope2D;
 import org.geotoolkit.resources.Errors;
+import org.geotoolkit.util.Cloneable;
 
 
 /**
@@ -52,7 +56,7 @@ public class GridCoverageReadParam {
     /**
      * The region to read from the stream, or {@code null} if unspecified.
      */
-    private GeneralEnvelope envelope;
+    private Envelope envelope;
 
     /**
      * The resolution, or {@code null} if unspecified.
@@ -113,6 +117,7 @@ public class GridCoverageReadParam {
      * @deprecated {@link GridCoverageReader} returns the coverage in its native CRS
      *             (or one of its native CRS) in all cases.
      */
+    @Deprecated
     public void setCoordinateReferenceSystem(final CoordinateReferenceSystem crs)
             throws MismatchedDimensionException
     {
@@ -136,6 +141,7 @@ public class GridCoverageReadParam {
     /**
      * Ensures that the given dimension is compatible with the CRS dimension, if any.
      */
+    @Deprecated
     private void ensureCompatibleDimension(final String name, final int dimension) {
         if (crs != null) {
             final int expected = crs.getCoordinateSystem().getDimension();
@@ -164,7 +170,11 @@ public class GridCoverageReadParam {
      * @return The region to read from the stream, or {@code null} if unspecified.
      */
     public Envelope getEnvelope() {
-        return (envelope != null) ? envelope.clone() : null;
+        Envelope env = envelope;
+        if (env instanceof Cloneable) {
+            env = (Envelope) ((Cloneable) env).clone();
+        }
+        return env;
     }
 
     /**
@@ -197,6 +207,35 @@ public class GridCoverageReadParam {
             this.envelope = new GeneralEnvelope(envelope);
         } else {
             this.envelope = null;
+        }
+    }
+
+    /**
+     * Sets the maximal extent of the region to read from the stream. This convenience method
+     * performs the same work than {@link #setEnvelope(Envelope)}, except that the envelope is
+     * created from the given rectangle and two-dimensional coordinate reference system.
+     *
+     * @param  bounds The region to read from the stream, or {@code null}.
+     * @param  crs The two-dimensional coordinate reference system of the region.
+     * @throws MismatchedDimensionException If dimension of the current
+     *         {@linkplain #getResolution() resolution} is different than 2.
+     *
+     * @since 3.10
+     */
+    public void setEnvelope(final Rectangle2D bounds, final CoordinateReferenceSystem crs)
+            throws MismatchedDimensionException
+    {
+        if (bounds != null) {
+            ensureCompatibleDimension("envelope", 2);
+            if (resolution != null) {
+                final int expected = resolution.length;
+                if (2 != expected) {
+                    throw dimensionMismatch("bounds", 2, expected);
+                }
+            }
+            envelope = new Envelope2D(crs, bounds);
+        } else {
+            envelope = null;
         }
     }
 
