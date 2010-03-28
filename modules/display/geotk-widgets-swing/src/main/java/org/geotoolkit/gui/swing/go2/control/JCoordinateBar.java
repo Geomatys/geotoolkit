@@ -24,6 +24,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.Insets;
+import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -43,6 +44,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JProgressBar;
+import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
@@ -110,35 +112,75 @@ public class JCoordinateBar extends JToolBar {
         paneElev.add(BorderLayout.CENTER,panenav);
 
         //the hints menu -------------------------------------------------------
-        final JCheckBoxMenuItem guiAxis = new JCheckBoxMenuItem(MessageBundle.getString("map_xy_ratio"));
-        guiAxis.setSelected(true);
+        final JCheckBoxMenuItem guiAxis = new JCheckBoxMenuItem(MessageBundle.getString("map_xy_ratio")){
+            @Override
+            public boolean isSelected() {
+                if(map == null) return false;
+                return map.getCanvas().getController().getAxisProportions() == 1;
+            }
+        };
         guiAxis.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent evt) {
                 if(map != null){
-                    map.getCanvas().getController().setAxisProportions((!guiAxis.isSelected()) ? Double.NaN : 1);
+                    double d = map.getCanvas().getController().getAxisProportions();
+                    map.getCanvas().getController().setAxisProportions((d == 1) ? Double.NaN : 1);
                 }
             }
         });
 
-        final JCheckBoxMenuItem guiStatefull = new JCheckBoxMenuItem(MessageBundle.getString("map_statefull"));
-        guiStatefull.setSelected(false);
+        final JCheckBoxMenuItem guiStatefull = new JCheckBoxMenuItem(MessageBundle.getString("map_statefull")){
+            @Override
+            public boolean isSelected() {
+                if(map != null && map instanceof JMap2D){
+                    return ((JMap2D)map).isStatefull();
+                }else{
+                    return false;
+                }
+            }
+        };
         guiStatefull.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent evt) {
                 if(map != null && map instanceof JMap2D){
-                    ((JMap2D)map).setStatefull(guiStatefull.isSelected());
+                    final JMap2D map2d = ((JMap2D)map);
+                    map2d.setStatefull(!map2d.isStatefull());
                 }
             }
         });
 
-        final JCheckBoxMenuItem guiStyleOrder = new JCheckBoxMenuItem(MessageBundle.getString("map_style_order"));
-        guiStyleOrder.setSelected(false);
+        final JCheckBoxMenuItem guiStyleOrder = new JCheckBoxMenuItem(MessageBundle.getString("map_style_order")){
+            @Override
+            public boolean isSelected() {
+                if(map == null) return false;
+                return GO2Hints.SYMBOL_RENDERING_PRIME.equals(map.getCanvas().getRenderingHint(GO2Hints.KEY_SYMBOL_RENDERING_ORDER));
+            }
+        };
         guiStyleOrder.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent evt) {
                 if(map != null){
-                    map.getCanvas().setRenderingHint(GO2Hints.KEY_SYMBOL_RENDERING_ORDER, guiStyleOrder.isSelected());
+                    final Object val = map.getCanvas().getRenderingHint(GO2Hints.KEY_SYMBOL_RENDERING_ORDER);
+                    map.getCanvas().setRenderingHint(GO2Hints.KEY_SYMBOL_RENDERING_ORDER, (GO2Hints.SYMBOL_RENDERING_PRIME.equals(val))?
+                        GO2Hints.SYMBOL_RENDERING_SECOND : GO2Hints.SYMBOL_RENDERING_PRIME);
+                }
+            }
+        });
+
+        final JCheckBoxMenuItem guiAntiAliasing = new JCheckBoxMenuItem(MessageBundle.getString("antialiasing")){
+            @Override
+            public boolean isSelected() {
+                if(map == null) return false;
+                return RenderingHints.VALUE_ANTIALIAS_ON.equals(map.getCanvas().getRenderingHint(RenderingHints.KEY_ANTIALIASING));
+            }
+        };
+        guiAntiAliasing.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent evt) {
+                if(map != null){
+                    final Object val = map.getCanvas().getRenderingHint(RenderingHints.KEY_ANTIALIASING);
+                    map.getCanvas().setRenderingHint(RenderingHints.KEY_ANTIALIASING, (RenderingHints.VALUE_ANTIALIAS_ON.equals(val))?
+                        RenderingHints.VALUE_ANTIALIAS_OFF : RenderingHints.VALUE_ANTIALIAS_ON);
                 }
             }
         });
@@ -147,6 +189,8 @@ public class JCoordinateBar extends JToolBar {
         guiHintMenu.add(guiAxis);
         guiHintMenu.add(guiStatefull);
         guiHintMenu.add(guiStyleOrder);
+        guiHintMenu.add(new JSeparator());
+        guiHintMenu.add(guiAntiAliasing);
 
         guiHint.setComponentPopupMenu(guiHintMenu);
         guiHint.addMouseListener(new MouseListener() {

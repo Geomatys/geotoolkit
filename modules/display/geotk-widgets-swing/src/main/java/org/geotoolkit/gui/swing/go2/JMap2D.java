@@ -46,6 +46,7 @@ public class JMap2D extends AbstractMap2D{
     
     private CanvasHandler handler;
     private final SwingVolatileGeoComponent geoComponent;
+    private boolean statefull = false;
 
     public JMap2D(){
         this(false);
@@ -97,10 +98,15 @@ public class JMap2D extends AbstractMap2D{
     }
 
     public void setStatefull(boolean stateFull){
+        this.statefull = stateFull;
         MapContext context = getContainer().getContext();
         ContextContainer2D container = new DefaultContextContainer2D(geoComponent.getCanvas(), stateFull);
         container.setContext(context);
         geoComponent.getCanvas().setContainer(container);
+    }
+
+    public boolean isStatefull(){
+        return statefull;
     }
 
     public ContextContainer2D getContainer(){
