@@ -23,7 +23,7 @@
   <!--     Module Description                                      -->
   <!-- =========================================================== -->
   <groupId>org.geotoolkit.pending</groupId>
-  <artifactId>geotk-geotiff</artifactId>
+  <artifactId>geotk-coverageio-dimap</artifactId>
   <packaging>jar</packaging>
   <name>Coverage Dimap</name>
 
@@ -60,6 +60,11 @@
   <!--     Dependency Management                                   -->
   <!-- =========================================================== -->
   <dependencies>
+      <dependency>
+          <groupId>org.geotoolkit</groupId>
+          <artifactId>geotk-coverageio</artifactId>
+          <version>${project.version}</version>
+      </dependency>
   </dependencies>
 
 </project>
