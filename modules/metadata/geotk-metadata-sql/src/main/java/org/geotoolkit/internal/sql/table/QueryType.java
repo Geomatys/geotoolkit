@@ -52,10 +52,15 @@ public enum QueryType {
     LIST(false),
 
     /**
-     * Every entries will be listed. This is the kind of query executed by
+     * List only the identifier of every entries. This is the kind of query executed by
      * {@link SingletonTable#getIdentifiers()}.
      */
     LIST_ID(false),
+
+    /**
+     * Count the entries.
+     */
+    COUNT(false),
 
     /**
      * Selects spatio-temporal envelope in a set of entries. This is the kind of

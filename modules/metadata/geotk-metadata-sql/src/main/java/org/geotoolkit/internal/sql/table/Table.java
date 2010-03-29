@@ -116,7 +116,7 @@ public abstract class Table implements Localized {
      * @return The database (never {@code null}).
      * @throws IllegalStateException If this table is not connected to a database.
      */
-    protected final Database getDatabase() throws IllegalStateException {
+    public final Database getDatabase() throws IllegalStateException {
         final Database database = query.database;
         if (database == null) {
             throw new IllegalStateException(errors().getString(Errors.Keys.NO_DATA_SOURCE));
@@ -183,7 +183,7 @@ public abstract class Table implements Localized {
      * @return The prepared statement.
      * @throws SQLException if a SQL error occured while configuring the statement.
      */
-    final LocalCache.Stmt getStatement(final String query) throws SQLException {
+    private final LocalCache.Stmt getStatement(final String query) throws SQLException {
         final LocalCache cache = getDatabase().getLocalCache();
         assert Thread.holdsLock(cache);
         final LocalCache.Stmt ce = cache.prepareStatement(this, query);
@@ -234,6 +234,29 @@ public abstract class Table implements Localized {
             case INSERT:     sql = query.insert(type); break;
             case DELETE:     sql = query.delete(type); break;
             case DELETE_ALL: sql = query.delete(type); break;
+        }
+        this.type = type;
+        return getStatement(sql);
+    }
+
+    /**
+     * Same as {@link #getStatement(QueryType)}, but with a column parameter which affect the
+     * SQL statement to be created. This apply only to queries performing aggregation, like
+     * {@link QueryType#COUNT}.
+     *
+     * @param  type The query type.
+     * @param  column The column on which to perform aggregation.
+     * @return The prepared statement.
+     * @throws SQLException if a SQL error occured while configuring the statement.
+     */
+    protected final LocalCache.Stmt getStatement(final QueryType type, final Column column)
+            throws SQLException
+    {
+        final String sql;
+        switch (type) {
+            case COUNT: sql = query.count(type, column); break;
+            default: throw new IllegalArgumentException(errors().getString(
+                    Errors.Keys.ILLEGAL_ARGUMENT_$2, "type", type));
         }
         this.type = type;
         return getStatement(sql);

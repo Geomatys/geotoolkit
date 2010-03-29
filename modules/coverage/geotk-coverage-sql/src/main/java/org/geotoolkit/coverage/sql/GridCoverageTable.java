@@ -66,6 +66,13 @@ class GridCoverageTable extends BoundedSingletonTable<GridCoverageEntry> {
     private LayerEntry layer;
 
     /**
+     * The currently selected series in the current layer, or {@code null} for auto-detect.
+     * This field is usually {@code null} since the public API works on layer as a whole.
+     * It is used only in a few cases where a caller needs to work on a specific series.
+     */
+    SeriesEntry userSeries;
+
+    /**
      * The table of grid geometries. Will be created only when first needed.
      * <p>
      * This field doesn't need to be declared {@code volatile} because it is not used
@@ -204,12 +211,15 @@ class GridCoverageTable extends BoundedSingletonTable<GridCoverageEntry> {
     /**
      * Returns the series for the current layer. The default implementation expects a layer
      * with only one series. The {@link WritableGridCoverageTable} will override this method
-     * with a more appropriate value.
+     * with a more appropriate value, or modify directly the {@link #userSeries} field.
      *
      * @return The series for the {@linkplain #getLayerEntry current layer}.
      * @throws SQLException if no series can be inferred from the current layer.
      */
-    SeriesEntry getSeries() throws SQLException {
+    private SeriesEntry getSeries() throws SQLException {
+        if (userSeries != null) {
+            return userSeries;
+        }
         final Iterator<SeriesEntry> iterator = getLayerEntry().getSeries().iterator();
         if (iterator.hasNext()) {
             final SeriesEntry series = iterator.next();
@@ -292,7 +302,7 @@ loop:   for (final GridCoverageEntry newEntry : entries) {
             if (entries.hasNext()) {
                 Comparator<GridCoverageReference> comparator = this.comparator;
                 if (comparator == null) {
-                    comparator = new GridCoverageComparator(null, envelope);
+                    comparator = new GridCoverageComparator(envelope);
                     this.comparator = comparator;
                 }
                 do {
@@ -609,6 +619,36 @@ loop:   for (final GridCoverageEntry newEntry : entries) {
                     (short) 1, (short) 0, null); // GridGeometryEntry to be computed by createEntry.
         }
         return identifier;
+    }
+
+    /**
+     * Returns the number of coverages for the {@linkplain #userSeries current series}.
+     * The keys of the returned map are the identifiers found for the current series.
+     * The values are the number of occurences.
+     *
+     * @param  groupByExtent {@code true} for grouping by extents.
+     * @return The number of records by identifier.
+     */
+    final Map<Integer,Integer> count(final boolean groupByExtent) throws SQLException {
+        final GridCoverageQuery query = (GridCoverageQuery) this.query;
+        final Map<Integer,Integer> count = new HashMap<Integer,Integer>();
+        synchronized (getLock()) {
+            final LocalCache.Stmt ce = getStatement(QueryType.COUNT,
+                    groupByExtent ? query.spatialExtent : query.series);
+            final PreparedStatement stmt = ce.statement;
+            final ResultSet results = stmt.executeQuery();
+            while (results.next()) {
+                final Integer k = results.getInt(1);
+                final int     c = results.getInt(2);
+                final Integer p = count.put(k, c);
+                if (p != null) {
+                    count.put(k, p+c); // Should not happen, but let be paranoiac.
+                }
+            }
+            results.close();
+            ce.release();
+        }
+        return count;
     }
 
     /**

@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
+import java.util.SortedSet;
 import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -105,7 +106,7 @@ public final class LayerTableTest extends CatalogTestBase {
      * @throws CoverageStoreException If an error occured while querying the layer.
      */
     @Test
-    public void testSelectAndList() throws SQLException, CoverageStoreException {
+    public void testTemperature() throws SQLException, CoverageStoreException {
         final LayerTable table = getDatabase().getTable(LayerTable.class);
         final LayerEntry entry = table.getEntry(TEMPERATURE);
         assertEquals(TEMPERATURE, entry.getName());
@@ -122,6 +123,22 @@ public final class LayerTableTest extends CatalogTestBase {
         assertEquals(1, validRanges.size());
         assertEquals(-2.85, validRanges.get(0).getMinimum(), EPS);
         assertEquals(35.25, validRanges.get(0).getMaximum(), EPS);
+
+        final double[] resolution = entry.getTypicalResolution();
+        assertEquals("X resolution (deg)",  0.087890625, resolution[0], EPS);
+        assertEquals("Y resolution (deg)",  0.087890625, resolution[1], EPS);
+        assertEquals("Z resolution (m)",    Double.NaN,  resolution[2], EPS);
+        assertEquals("T resolution (days)", 8,           resolution[3], EPS);
+
+        assertEquals("Coverage count", 7, entry.getCoverageCount());
+
+        final SortedSet<SeriesEntry> series = entry.getCountBySeries();
+        assertEquals("Expected exactly one format.", 1, series.size());
+        assertEquals("Coverage format", FormatTableTest.TEMPERATURE, series.first().format.identifier);
+
+        final SortedSet<String> names = entry.getImageFormats();
+        assertEquals("Expected exactly one format.", 1, names.size());
+        assertEquals("Coverage format", "PNG", names.first());
     }
 
     /**

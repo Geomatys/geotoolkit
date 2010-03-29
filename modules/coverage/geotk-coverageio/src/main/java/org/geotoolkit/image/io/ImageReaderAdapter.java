@@ -62,9 +62,18 @@ import org.geotoolkit.util.XArrays;
  * to the main reader.
  * <p>
  * The amount of methods declared in this class is large, but the only new methods are
- * {@link #createInput(String)} and {@linkplain #initialize()}. All other methods override
+ * {@link #createInput(String)} and {@link #initialize()}. All other methods override
  * existing methods declared in parent classes, mostly {@link ImageReader} and
  * {@link SpatialImageReader}.
+ * <p>
+ * Subclasses typically need to implement of override the following methods only:
+ * <p>
+ * <ul>
+ *   <li>{@link #initialize()} as a hook available for custom initialization.</li>
+ *   <li>{@link #createInput(String)} for defining how, given a "main" file,
+ *       to find the additional files (TFW, PRJ, DIM, <i>etc.</i>).</li>
+ *   <li>{@link #createMetadata(int)} for creating the {@link IIOMetadata} objects.</li>
+ * </ul>
  *
  * {@section Example}
  * The <cite>World File</cite> format is composed of a classical image file (usually with the

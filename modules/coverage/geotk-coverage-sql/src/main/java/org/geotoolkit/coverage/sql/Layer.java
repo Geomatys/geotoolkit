@@ -58,6 +58,14 @@ public interface Layer {
     Layer getFallback() throws CoverageStoreException;
 
     /**
+     * Returns the number of coverages in this layer.
+     *
+     * @return The number of coverages in this layer.
+     * @throws CoverageStoreException if an error occured while counting the coverages.
+     */
+    int getCoverageCount() throws CoverageStoreException;
+
+    /**
      * Returns a time range encompassing all coverages in this layer, or {@code null} if none.
      *
      * @return The time range encompassing all coverages, or {@code null}.
@@ -84,7 +92,9 @@ public interface Layer {
     SortedSet<Number> getAvailableElevations() throws CoverageStoreException;
 
     /**
-     * Returns the ranges of valid <cite>geophysics</cite> values for each band.
+     * Returns the ranges of valid <cite>geophysics</cite> values for each band. If some
+     * coverages found in this layer have different range of values, then this method
+     * returns the union of their ranges.
      *
      * @return The range of valid sample values.
      * @throws CoverageStoreException If an error occured while fetching the information.
@@ -92,9 +102,10 @@ public interface Layer {
     List<MeasurementRange<?>> getSampleValueRanges() throws CoverageStoreException;
 
     /**
-     * Returns the typical pixel resolution in this layer, or {@code null} if unknown.
+     * Returns the typical pixel resolution in this layer.
      * Values are in the unit of the main CRS used by the database (typically degrees
-     * of longitude and latitude).
+     * of longitude and latitude for the horizontal part, and days for the temporal part).
+     * Some elements of the returned array may be {@link Double#NaN NaN} if they are unnkown.
      *
      * @return The typical pixel resolution.
      * @throws CoverageStoreException if an error occured while fetching the resolution.
@@ -102,31 +113,40 @@ public interface Layer {
     double[] getTypicalResolution() throws CoverageStoreException;
 
     /**
-     * Returns a reference to a coverage for the given date and elevation.
+     * Returns the image format used by the coverages in this layer, sorted by decreasing frequency.
+     * The strings in the returned set shall be names known to the {@linkplain javax.imageio Java
+     * Image I/O} framework.
      *
-     * @param  time The date, or {@code null} if not applicable.
-     * @param  elevation The elevation, or {@code null} if not applicable.
-     * @return A reference to a coverage, or {@code null} if none.
+     * @return The image formats, with the most frequently used format first.
      * @throws CoverageStoreException if an error occured while querying the database.
      */
-    GridCoverageReference getCoverageReference(Date time, Number elevation) throws CoverageStoreException;
+    SortedSet<String> getImageFormats() throws CoverageStoreException;
 
     /**
-     * Returns a reference to every coverages available in this layer.
-     * Note that coverages are not immediately loaded; only references are returned.
+     * Returns a reference to every coverages available in this layer which intersect the
+     * given envelope. This method does not load immediately the coverages; it returns only
+     * <em>references</em> to the coverages.
+     * <p>
+     * If the given envelope is {@code null}, then this method returns the references to
+     * every coverages available in this layer regardless of their envelope.
      *
-     * @return The set of coverages in the layer.
+     * @param  envelope The envelope for filtering the coverages, or {@code null} for no filtering.
+     * @return The set of coverages in the layer which intersect the given envelope.
      * @throws CoverageStoreException if an error occured while querying the database.
      */
-    Set<GridCoverageReference> getCoverageReferences() throws CoverageStoreException;
+    Set<GridCoverageReference> getCoverageReferences(CoverageEnvelope envelope) throws CoverageStoreException;
 
     /**
-     * Returns a reference to a single "typical" coverages available in this layer.
-     * This method is especially useful for layer that are expected to contains only
-     * one coverage.
+     * Returns a reference to a coverage that intersect the given envelope. If more than one
+     * coverage intersect the given envelope, then this method will select the one which seem
+     * the most repesentative. The criterion for this selection is implementation-dependant
+     * and may change in future versions.
      *
-     * @return A typical coverage in the layer, or {@code null} if none.
+     * @param  envelope The envelope for filtering the coverages, or {@code null} for no
+     *         filtering. A {@code null} value is useful for layers that are expected to
+     *         contain only one coverage, but should be avoided otherwise.
+     * @return A reference to a coverage, or {@code null} if no coverage was found.
      * @throws CoverageStoreException if an error occured while querying the database.
      */
-    GridCoverageReference getCoverageReference() throws CoverageStoreException;
+    GridCoverageReference getCoverageReference(CoverageEnvelope envelope) throws CoverageStoreException;
 }

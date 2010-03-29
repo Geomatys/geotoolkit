@@ -17,17 +17,13 @@
  */
 package org.geotoolkit.coverage.sql;
 
+import java.util.Date;
 import java.util.Comparator;
 import java.awt.Dimension;
 
-import org.opengis.geometry.Envelope;
-import org.opengis.referencing.cs.AxisDirection;
-import org.opengis.referencing.cs.CoordinateSystem;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-
 import org.geotoolkit.util.DateRange;
+import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.display.shape.XRectangle2D;
-import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
 
 import static java.lang.Double.NaN;
 
@@ -65,11 +61,16 @@ import static java.lang.Double.NaN;
 @SuppressWarnings("serial")
 final class GridCoverageComparator extends XRectangle2D implements Comparator<GridCoverageReference> {
     /**
-     * The minimal and maximal values along the <var>z</var> and <var>t</var> dimensions.
-     * This is left to NaN if there is none. Those values shall not be modified anymore
-     * after construction.
+     * The minimal and maximal values along the <var>z</var> dimension.
+     * Those values shall not be modified anymore after construction.
      */
-    private double zmin, zmax, tmin, tmax;
+    private double zmin, zmax;
+
+    /**
+     * The minimal and maximal values along the <var>t</var> dimension.
+     * Those values shall not be modified anymore after construction.
+     */
+    private long tmin, tmax;
 
     /**
      * An estimation of the resolution. This is approximative (not really calculated from the
@@ -79,69 +80,44 @@ final class GridCoverageComparator extends XRectangle2D implements Comparator<Gr
     private double scaleX, scaleY;
 
     /**
-     * Creates a new instance for the given region of interest. Exactly one of the {@code entry}
-     * and {@code regionOfInterest} arguments shall be non-null.
+     * Creates a new instance for the given region of interest.
      *
-     * @param entry The entry for which to create a comparator, or {@code null}.
      * @param regionOfInterest The spatio-temporal coordinates of the requested region
-     *        in units of the database CRS, or {@code null}.
+     *        in units of the database CRS.
      */
-    GridCoverageComparator(final GridCoverageReference entry, final Envelope regionOfInterest) {
-        xmin = xmax = ymin = ymax = zmin = zmax = tmin = tmax = scaleX = scaleY = NaN;
-        int xDim = -1;
-        int yDim = -1;
-        int zDim = -1;
-        int tDim = -1;
-        final CoordinateReferenceSystem crs;
-        if (entry != null) {
-            crs = entry.getSpatioTemporalCRS(true);
-        } else {
-            crs = regionOfInterest.getCoordinateReferenceSystem();
-        }
-        final CoordinateSystem cs = crs.getCoordinateSystem();
-        for (int i=cs.getDimension(); --i>=0;) {
-            final AxisDirection orientation = cs.getAxis(i).getDirection().absolute();
-            if (orientation.equals(AxisDirection.EAST  )) xDim = i;
-            if (orientation.equals(AxisDirection.NORTH )) yDim = i;
-            if (orientation.equals(AxisDirection.UP    )) zDim = i;
-            if (orientation.equals(AxisDirection.FUTURE)) tDim = i;
-        }
-        if (entry != null) {
-            setRect(entry.getXYRange());
-            final GridGeometryEntry geometry = ((GridCoverageEntry) entry).getIdentifier().geometry;
-            final Dimension size = geometry.getImageSize();
-            if (xDim >= 0) scaleX = getWidth()  / size.width;
-            if (yDim >= 0) scaleY = getHeight() / size.height;
-            if (zDim >= 0) {
-                zmin = geometry.standardMinZ;
-                zmax = geometry.standardMaxZ;
-            }
-            if (tDim >= 0) {
-                final DefaultTemporalCRS temporalCRS = geometry.getTemporalCRS();
-                if (temporalCRS != null) {
-                    final DateRange timeRange = entry.getTimeRange();
-                    tmin = temporalCRS.toValue(timeRange.getMinValue());
-                    tmax = temporalCRS.toValue(timeRange.getMaxValue());
-                }
-            }
-        } else {
-            if (xDim >= 0) {
-                xmin = regionOfInterest.getMinimum(xDim);
-                xmax = regionOfInterest.getMaximum(xDim);
-            }
-            if (yDim >= 0) {
-                ymin = regionOfInterest.getMinimum(yDim);
-                ymax = regionOfInterest.getMaximum(yDim);
-            }
-            if (zDim >= 0) {
-                zmin = regionOfInterest.getMinimum(zDim);
-                zmax = regionOfInterest.getMaximum(zDim);
-            }
-            if (tDim >= 0) {
-                tmin = regionOfInterest.getMinimum(tDim);
-                tmax = regionOfInterest.getMaximum(tDim);
-            }
-        }
+    GridCoverageComparator(final CoverageEnvelope regionOfInterest) {
+        scaleX = scaleY = NaN;
+        setRect(regionOfInterest.getHorizontalRange());
+        final NumberRange<?> zRange = regionOfInterest.getVerticalRange();
+        zmin = zRange.getMinimum();
+        zmax = zRange.getMaximum();
+        setTimeRange(regionOfInterest.getTimeRange());
+        // scaleX and scaleY are not used by this instance.
+    }
+
+    /**
+     * Creates a new instance for the given entry.
+     *
+     * @param entry The entry for which to create a comparator.
+     */
+    private GridCoverageComparator(final GridCoverageReference entry) {
+        setRect(entry.getXYRange());
+        final GridGeometryEntry geometry = ((GridCoverageEntry) entry).getIdentifier().geometry;
+        final Dimension size = geometry.getImageSize();
+        scaleX = getWidth()  / size.width;
+        scaleY = getHeight() / size.height;
+        zmin = geometry.standardMinZ;
+        zmax = geometry.standardMaxZ;
+        setTimeRange(entry.getTimeRange());
+    }
+
+    /**
+     * Sets the date range of this entry. This is used by constructors only.
+     */
+    private void setTimeRange(final DateRange range) {
+        Date t;
+        tmin = ((t = range.getMinValue()) != null) ? t.getTime() : Long.MIN_VALUE;
+        tmax = ((t = range.getMaxValue()) != null) ? t.getTime() : Long.MAX_VALUE;
     }
 
     /**
@@ -153,9 +129,9 @@ final class GridCoverageComparator extends XRectangle2D implements Comparator<Gr
      */
     @Override
     public int compare(final GridCoverageReference entry1, final GridCoverageReference entry2) {
-        final GridCoverageComparator ev1 = new GridCoverageComparator(entry1, null);
-        final GridCoverageComparator ev2 = new GridCoverageComparator(entry2, null);
-        double t1, t2;
+        final GridCoverageComparator ev1 = new GridCoverageComparator(entry1);
+        final GridCoverageComparator ev2 = new GridCoverageComparator(entry2);
+        long t1, t2;
 
         t1 = ev1.uncoveredTime(this);
         t2 = ev2.uncoveredTime(this);
@@ -169,15 +145,15 @@ final class GridCoverageComparator extends XRectangle2D implements Comparator<Gr
 
         intersect(this, ev1, ev1);
         intersect(this, ev2, ev2);
-        t1 = ev1.area();
-        t2 = ev2.area();
-        if (t1 < t2) return +1;
-        if (t1 > t2) return -1;
+        double d1 = ev1.area();
+        double d2 = ev2.area();
+        if (d1 < d2) return +1;
+        if (d1 > d2) return -1;
 
-        t1 = ev1.resolution();
-        t2 = ev2.resolution();
-        if (t1 > t2) return +1;
-        if (t1 < t2) return -1;
+        d1 = ev1.resolution();
+        d2 = ev2.resolution();
+        if (d1 > d2) return +1;
+        if (d1 < d2) return -1;
 
         return 0;
     }
@@ -189,12 +165,12 @@ final class GridCoverageComparator extends XRectangle2D implements Comparator<Gr
      * que l'image ne couvre pas toute la plage demandée,   où qu'elle couvre aussi du temps
      * en dehors de la plage demandée.
      */
-    private double uncoveredTime(final GridCoverageComparator regionOfInterest) {
-        final double rmin = regionOfInterest.tmin;
-        final double rmax = regionOfInterest.tmax;
-        final double lower  = Math.max(tmin, rmin);
-        final double upper  = Math.min(tmax, rmax);
-        final double range  = Math.max(0, upper-lower); // Find intersection range.
+    private long uncoveredTime(final GridCoverageComparator regionOfInterest) {
+        final long rmin = regionOfInterest.tmin;
+        final long rmax = regionOfInterest.tmax;
+        final long lower  = Math.max(tmin, rmin);
+        final long upper  = Math.min(tmax, rmax);
+        final long range  = Math.max(0, upper-lower); // Find intersection range.
         return ((rmax-rmin) - range) +  // > 0 if image do not cover all requested range.
                ((tmax-tmin) - range);   // > 0 if image cover some part outside requested range.
     }
@@ -205,7 +181,7 @@ final class GridCoverageComparator extends XRectangle2D implements Comparator<Gr
      * dates demandée. Une valeur supérieure à 0 indique que le centre de l'image
      * est décalée.
      */
-    private double timeOffset(final GridCoverageComparator regionOfInterest) {
+    private long timeOffset(final GridCoverageComparator regionOfInterest) {
         return Math.abs((tmin - regionOfInterest.tmin) +
                         (tmax - regionOfInterest.tmax));
     }

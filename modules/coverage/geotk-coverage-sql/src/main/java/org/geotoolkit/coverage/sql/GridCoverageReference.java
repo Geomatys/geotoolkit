@@ -190,37 +190,13 @@ public interface GridCoverageReference extends CoverageStack.Element {
     GridSampleDimension[] getSampleDimensions();
 
     /**
-     * Returns a pre-configured reader which can be used for loading the pixel values.
-     * The {@linkplain GridCoverageReader#getInput()} of the returned reader is the
-     * {@linkplain #getFile(Class)} declared in this entry, and can not be changed.
-     * <p>
-     * This method gives to the user more control on the reading process. For example, it allows
-     * to {@linkplain GridCoverageReader#abort() abort} the reading process of that reader only,
-     * as opposed to the {@link #abort()} method defined in this interface. However if such control
-     * is not needed, consider using the {@link #getCoverage getCoverage} or {@link #read read}
-     * method instead since they may share resources (e.g. the underlying
-     * {@link javax.imageio.ImageReader}) more effectively.
-     * <p>
-     * It is the caller responsability to invoke {@link GridCoverageReader#dispose()}
-     * when the reader is no longer needed.
-     *
-     * @return A pre-configured reader for loading the pixel values.
-     * @throws CoverageStoreException If an error occured while creating the reader.
-     */
-    GridCoverageReader getReader() throws CoverageStoreException;
-
-    /**
      * Reads the data if needed and returns the coverage. This method is equivalent to invoking
      * the {@link #read read} method, except that default parameters are used, typically reading
      * the full coverage. If the coverage has already been read previously and has not yet been
      * reclaimed by the garbage collector, then the existing coverage may be returned immediately.
      * <p>
      * This method returns always the {@linkplain org.geotoolkit.coverage.grid.ViewType#GEOPHYSICS
-     * geophysics} version of data, like the pseudo-code below:
-     *
-     * {@preformat java
-     *     return GridCoverage2D.view(ViewType#GEOPHYSICS);
-     * }
+     * geophysics} {@linkplain GridCoverage2D#view view} of data.
      *
      * @param  listeners Objects to inform about progress, or {@code null} if none.
      * @return The coverage.
@@ -236,11 +212,7 @@ public interface GridCoverageReference extends CoverageStack.Element {
      * {@link #getCoverage(IIOListeners)}, this method doesn't cache the returned coverage.
      * <p>
      * This method returns always the {@linkplain org.geotoolkit.coverage.grid.ViewType#GEOPHYSICS
-     * geophysics} version of data, like the pseudo-code below:
-     *
-     * {@preformat java
-     *     return GridCoverage2D.view(ViewType#GEOPHYSICS);
-     * }
+     * geophysics} {@linkplain GridCoverage2D#view view} of data.
      *
      * @param  param Optional parameters used to control the reading process, or {@code null}.
      * @param  listeners Objects to inform about progress, or {@code null} if none.

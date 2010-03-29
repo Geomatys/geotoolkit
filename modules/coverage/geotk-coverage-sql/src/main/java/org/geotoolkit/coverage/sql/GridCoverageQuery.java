@@ -57,19 +57,19 @@ final class GridCoverageQuery extends Query {
         super(database, "GridCoverages");
         final Column layer, horizontalExtent;
         layer            = addForeignerColumn("layer", "Series");
-        series           = addMandatoryColumn("series",    SELECT, LIST, INSERT);
+        series           = addMandatoryColumn("series",    SELECT, LIST, INSERT, COUNT);
         filename         = addMandatoryColumn("filename",  SELECT, LIST, INSERT, EXISTS);
         index            = addOptionalColumn ("index", 1,  SELECT, LIST, INSERT);
         startTime        = addMandatoryColumn("startTime", SELECT, LIST, INSERT, AVAILABLE_DATA, BOUNDING_BOX);
         endTime          = addMandatoryColumn("endTime",   SELECT, LIST, INSERT, AVAILABLE_DATA, BOUNDING_BOX);
         spatialExtent    = addMandatoryColumn("extent",    SELECT, LIST, INSERT, AVAILABLE_DATA);
         horizontalExtent = addForeignerColumn("horizontalExtent", "GridGeometries", new QueryType[] {BOUNDING_BOX});
-        startTime.setAggregateFunction("MIN", BOUNDING_BOX);
-        endTime  .setAggregateFunction("MAX", BOUNDING_BOX);
+        startTime.setFunction("MIN", BOUNDING_BOX);
+        endTime  .setFunction("MAX", BOUNDING_BOX);
         endTime  .setOrdering(Ordering.DESC, SELECT, LIST);
 
         byLayer            = addParameter(layer,            LIST, AVAILABLE_DATA, BOUNDING_BOX);
-        bySeries           = addParameter(series,           SELECT, EXISTS, DELETE, DELETE_ALL);
+        bySeries           = addParameter(series,           SELECT, EXISTS, DELETE, DELETE_ALL, COUNT);
         byFilename         = addParameter(filename,         SELECT, EXISTS, DELETE);
         byIndex            = addParameter(index,            SELECT, EXISTS, DELETE);
         byStartTime        = addParameter(startTime,        LIST, AVAILABLE_DATA, BOUNDING_BOX, DELETE, DELETE_ALL);
@@ -77,7 +77,7 @@ final class GridCoverageQuery extends Query {
         byHorizontalExtent = addParameter(horizontalExtent, LIST, AVAILABLE_DATA, BOUNDING_BOX);
         byHorizontalExtent.setComparator("&&");
         byHorizontalExtent.setSearchValue("GeometryFromText(?," + database.horizontalSRID + ')', LIST, AVAILABLE_DATA, BOUNDING_BOX);
-        horizontalExtent  .setAggregateFunction("EXTENT", BOUNDING_BOX);
+        horizontalExtent  .setFunction("EXTENT", BOUNDING_BOX);
         byStartTime.setComparator("IS NULL OR <=");
         byEndTime  .setComparator("IS NULL OR >=");
     }

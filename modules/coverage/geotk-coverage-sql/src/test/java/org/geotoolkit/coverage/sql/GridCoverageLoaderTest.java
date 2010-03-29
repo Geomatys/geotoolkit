@@ -17,14 +17,12 @@
  */
 package org.geotoolkit.coverage.sql;
 
-import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
 
 import org.geotoolkit.test.Depend;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.internal.sql.table.CatalogTestBase;
 
@@ -61,19 +59,6 @@ public final class GridCoverageLoaderTest extends CatalogTestBase {
         final GridCoverage2D coverage = entry.getCoverage(null);
         assertSame("Coverage shall be cached.", coverage, entry.getCoverage(null));
         checkTemperatureCoverage(coverage);
-        /*
-         * Tests fetching the loader.
-         */
-        final GridCoverageReader reader = entry.getReader();
-        try {
-            reader.setInput(null);
-            fail("setInput should not be allowed.");
-        } catch (CoverageStoreException e) {
-            // This is the expected exception.
-        }
-        final File input = (File) reader.getInput();
-        assertEquals("198602.png", input.getName());
-        reader.dispose();
     }
 
     /**

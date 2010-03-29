@@ -112,15 +112,14 @@ public final class Column extends ColumnOrParameter {
     }
 
     /**
-     * Sets the function for this column when used in a query of the given type. The function
-     * shall be an <cite>aggregate functions</cite> like {@code "MIN"} or {@code "MAX"} to be
+     * Sets the function for this column when used in a query of the given type. The function is
      * used in the {@code SELECT} part of the SQL statement. This function is <strong>not</strong>
      * used in the {@code WHERE} part of the SQL statement.
      *
      * @param function The function to use with this column for the given types.
      * @param types The type of the queries for which to use the given function.
      */
-    public void setAggregateFunction(final String function, final QueryType... types) {
+    public void setFunction(final String function, final QueryType... types) {
         setFunction(0, function, types);
     }
 
@@ -148,6 +147,16 @@ public final class Column extends ColumnOrParameter {
      */
     public Ordering getOrdering(final QueryType type) {
         return (orderUsage != null && orderUsage.contains(type)) ? ordering.get(this) : null;
+    }
+
+    /**
+     * Formats the name of this column.
+     *
+     * @param buffer The buffer in which to write the name.
+     * @param quote  The database-dependent identifier quote.
+     */
+    final void appendName(final StringBuilder buffer, final String quote) {
+        buffer.append(quote).append(name).append(quote);
     }
 
     /**

@@ -328,7 +328,7 @@ public class Query {
             if (columnExists) {
                 final String function = column.getFunction(type);
                 appendFunctionPrefix(buffer, function);
-                buffer.append(quote).append(column.name).append(quote);
+                column.appendName(buffer, quote);
                 appendFunctionSuffix(buffer, function);
             } else {
                 // Don't put quote for number, boolean and null values.
@@ -349,7 +349,7 @@ public class Query {
              * column doesn't exist and has been replaced by a default value.
              */
             if (!columnExists) {
-                buffer.append(" AS ").append(quote).append(column.name).append(quote);
+                column.appendName(buffer.append(" AS "), quote);
             }
             separator = ", ";
             tables.put(table, null); // ForeignerKeys will be determined later.
@@ -504,10 +504,10 @@ scan:       while (!tables.isEmpty()) {
     {
         final String quote = metadata.getIdentifierQuoteString().trim();
         String separator = " ORDER BY ";
-        for (final Column c : ordering.keySet()) {
-            final Ordering ordering = c.getOrdering(type);
+        for (final Column column : ordering.keySet()) {
+            final Ordering ordering = column.getOrdering(type);
             if (ordering != null) {
-                buffer.append(separator).append(quote).append(c.name).append(quote);
+                column.appendName(buffer.append(separator), quote);
                 if (!ordering.equals(Ordering.ASC)) {
                     buffer.append(' ').append(ordering.name());
                 }
@@ -608,7 +608,7 @@ scan:       while (!tables.isEmpty()) {
                         // Safety check.
                         throw new IllegalStateException(String.valueOf(column));
                     }
-                    buffer.append(separator).append(quote).append(column.name).append(quote);
+                    column.appendName(buffer.append(separator), quote);
                     separator = ", ";
                 }
                 if (count == 0) {
@@ -656,6 +656,33 @@ scan:       while (!tables.isEmpty()) {
             }
         }
         return sql;
+    }
+
+    /**
+     * Creates the SQL statement for counting elements in a table. The query type is used
+     * only for determining the parameters - it is not used for the column values.
+     *
+     * @param  type The query type (typically {@link QueryType#COUNT}).
+     * @param  column The column to be counted.
+     * @return The SQL statement, or {@code null} if none.
+     * @throws SQLException if an error occured while reading the database.
+     *
+     * @since 3.10
+     */
+    public String count(final QueryType type, final Column column) throws SQLException {
+        final DatabaseMetaData metadata = getMetaData();
+        final String quote = metadata.getIdentifierQuoteString().trim();
+        final StringBuilder buffer = new StringBuilder("SELECT ");
+        column.appendName(buffer, quote);
+        column.appendName(buffer.append(", COUNT("), quote);
+        buffer.append(") FROM ");
+        if (!isIncludingChildTables()) {
+            buffer.append("ONLY ");
+        }
+        appendTable(buffer, quote);
+        appendParameters(buffer, type, metadata);
+        column.appendName(buffer.append(" GROUP BY "), quote);
+        return buffer.toString();
     }
 
     /**
