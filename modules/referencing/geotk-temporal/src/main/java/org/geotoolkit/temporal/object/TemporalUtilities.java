@@ -635,13 +635,23 @@ public final class TemporalUtilities {
             return cal.getTime();
 
         }else if(dashOccurences.length == 1) {
-            //date is like : 05-2050
-            final int month = parseInt(date.substring(0,dashOccurences[0])) -1;
-            final int year = parseInt(date.substring(dashOccurences[0]+1));
-            final Calendar cal = Calendar.getInstance();
-            cal.set(year,month,1,0,0,0);
-            cal.set(Calendar.MILLISECOND, 0);
-            return cal.getTime();
+            if (dashOccurences[0] == 2) {
+                //date is like : 05-2050
+                final int month = parseInt(date.substring(0, dashOccurences[0])) - 1;
+                final int year = parseInt(date.substring(dashOccurences[0] + 1));
+                final Calendar cal = Calendar.getInstance();
+                cal.set(year, month, 1, 0, 0, 0);
+                cal.set(Calendar.MILLISECOND, 0);
+                return cal.getTime();
+            } else {
+                //date is like : 2050-05
+                final int year = parseInt(date.substring(0, dashOccurences[0]));
+                final int month = parseInt(date.substring(dashOccurences[0] + 1)) -1;
+                final Calendar cal = Calendar.getInstance();
+                cal.set(year, month, 1, 0, 0, 0);
+                cal.set(Calendar.MILLISECOND, 0);
+                return cal.getTime();
+            }
 
         }else if(dashOccurences.length >= 2) {
             //if date is in format yyyy-mm-ddTHH:mm:ss
