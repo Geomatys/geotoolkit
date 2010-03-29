@@ -21,8 +21,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.wms.v111.GetMap111;
-import org.geotoolkit.wms.v130.GetMap130;
+import org.geotoolkit.wms.v111.GetFeatureInfo111;
+import org.geotoolkit.wms.v130.GetFeatureInfo130;
 import org.junit.Test;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
@@ -31,84 +31,100 @@ import static org.junit.Assert.*;
 
 
 /**
- * Testing class for GetMap requests, in version 1.1.1 and 1.3.0.
+ * Testing class for GetFeatureInfo requests, in version 1.1.1 and 1.3.0.
  *
  * @author Cédric Briançon (Geomatys)
  */
-public class GetMapTest {
-    public GetMapTest() {}
+public class GetFeatureInfoTest {
+    public GetFeatureInfoTest() {}
 
     /**
-     * Ensures the {@link GetMap111#getURL()} method returns a well-built url,
+     * Ensures the {@link GetFeatureInfo111#getURL()} method returns a well-built url,
      * with the parameters given.
      *
      * @throws NoSuchAuthorityCodeException
      * @throws FactoryException
      */
     @Test
-    public void testGetMap111() throws NoSuchAuthorityCodeException, FactoryException {
+    public void testGetFeatureInfo111() throws NoSuchAuthorityCodeException, FactoryException {
         final CoordinateReferenceSystem crs = CRS.decode("CRS:84");
         final GeneralEnvelope env = new GeneralEnvelope(crs);
         env.setRange(0, -180, 180);
         env.setRange(1, -90, 90);
-        final GetMap111 map111 = new GetMap111("http://test.com");
-        map111.setDimension(new Dimension(800, 600));
-        map111.setFormat("image/png");
-        map111.setLayers("test");
-        map111.setStyles("");
-        map111.setEnvelope(env);
+        final GetFeatureInfo111 featureInfo111 = new GetFeatureInfo111("http://test.com");
+        featureInfo111.setDimension(new Dimension(800, 600));
+        featureInfo111.setFormat("image/png");
+        featureInfo111.setLayers("test");
+        featureInfo111.setStyles("");
+        featureInfo111.setEnvelope(env);
+        featureInfo111.setInfoFormat("gml");
+        featureInfo111.setQueryLayers("test");
+        featureInfo111.setX(50);
+        featureInfo111.setY(40);
         final URL url;
         try {
-            url = map111.getURL();
+            url = featureInfo111.getURL();
         } catch (MalformedURLException ex) {
             fail(ex.getLocalizedMessage());
             return;
         }
         final String sUrl = url.toString();
         assertTrue(sUrl.startsWith("http://test.com?"));
-        assertTrue(sUrl.contains("BBOX=-180.0%2C-90.0%2C180.0%2C90.0"));
+        assertTrue(sUrl.contains("BBOX=-180.0,-90.0,180.0,90.0"));
         assertTrue(sUrl.contains("SRS=CRS:84"));
         assertTrue(sUrl.contains("FORMAT=image/png"));
         assertTrue(sUrl.contains("WIDTH=800"));
         assertTrue(sUrl.contains("HEIGHT=600"));
         assertTrue(sUrl.contains("LAYERS=test"));
         assertTrue(sUrl.contains("STYLES="));
+        assertTrue(sUrl.contains("INFO_FORMAT=gml"));
+        assertTrue(sUrl.contains("QUERY_LAYERS=test"));
+        assertTrue(sUrl.contains("X=50"));
+        assertTrue(sUrl.contains("Y=40"));
     }
 
     /**
-     * Ensures the {@link GetMap130#getURL()} method returns a well-built url,
+     * Ensures the {@link GetFeatureInfo130#getURL()} method returns a well-built url,
      * with the parameters given.
      *
      * @throws NoSuchAuthorityCodeException
      * @throws FactoryException
      */
     @Test
-    public void testGetMap130() throws NoSuchAuthorityCodeException, FactoryException {
+    public void testGetFeatureInfo130() throws NoSuchAuthorityCodeException, FactoryException {
         final CoordinateReferenceSystem crs = CRS.decode("CRS:84");
         final GeneralEnvelope env = new GeneralEnvelope(crs);
         env.setRange(0, -180, 180);
         env.setRange(1, -90, 90);
-        final GetMap130 map130 = new GetMap130("http://test.com");
-        map130.setDimension(new Dimension(800, 600));
-        map130.setFormat("image/png");
-        map130.setLayers("test");
-        map130.setStyles("");
-        map130.setEnvelope(env);
+        final GetFeatureInfo130 featureInfo130 = new GetFeatureInfo130("http://test.com");
+        featureInfo130.setDimension(new Dimension(800, 600));
+        featureInfo130.setFormat("image/png");
+        featureInfo130.setLayers("test");
+        featureInfo130.setStyles("");
+        featureInfo130.setEnvelope(env);
+        featureInfo130.setInfoFormat("gml");
+        featureInfo130.setQueryLayers("test");
+        featureInfo130.setI(50);
+        featureInfo130.setJ(40);
         final URL url;
         try {
-            url = map130.getURL();
+            url = featureInfo130.getURL();
         } catch (MalformedURLException ex) {
             fail(ex.getLocalizedMessage());
             return;
         }
         final String sUrl = url.toString();
         assertTrue(sUrl.startsWith("http://test.com?"));
-        assertTrue(sUrl.contains("BBOX=-180.0%2C-90.0%2C180.0%2C90.0"));
+        assertTrue(sUrl.contains("BBOX=-180.0,-90.0,180.0,90.0"));
         assertTrue(sUrl.contains("CRS=CRS:84"));
         assertTrue(sUrl.contains("FORMAT=image/png"));
         assertTrue(sUrl.contains("WIDTH=800"));
         assertTrue(sUrl.contains("HEIGHT=600"));
         assertTrue(sUrl.contains("LAYERS=test"));
         assertTrue(sUrl.contains("STYLES="));
+        assertTrue(sUrl.contains("INFO_FORMAT=gml"));
+        assertTrue(sUrl.contains("QUERY_LAYERS=test"));
+        assertTrue(sUrl.contains("I=50"));
+        assertTrue(sUrl.contains("J=40"));
     }
 }

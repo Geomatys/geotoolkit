@@ -35,6 +35,9 @@ import org.opengis.referencing.FactoryException;
  * @module pending
  */
 public class GetFeatureInfo130 extends AbstractGetFeatureInfo {
+    private Integer i = null;
+    private Integer j = null;
+
     /**
      * Defines the server url and its version.
      *
@@ -42,6 +45,22 @@ public class GetFeatureInfo130 extends AbstractGetFeatureInfo {
      */
     public GetFeatureInfo130(String serverURL){
         super(serverURL,"1.3.0");
+    }
+
+    public Integer getI() {
+        return i;
+    }
+
+    public Integer getJ() {
+        return j;
+    }
+
+    public void setI(Integer i) {
+        this.i = i;
+    }
+
+    public void setJ(Integer j) {
+        this.j = j;
     }
 
     /**
@@ -72,8 +91,14 @@ public class GetFeatureInfo130 extends AbstractGetFeatureInfo {
 
     @Override
     public URL getURL() throws MalformedURLException {
-        requestParameters.put("I", String.valueOf(x));
-        requestParameters.put("J", String.valueOf(y));
+        if (i == null) {
+            throw new IllegalArgumentException("I is not defined");
+        }
+        if (j == null) {
+            throw new IllegalArgumentException("J is not defined");
+        }
+        requestParameters.put("I", String.valueOf(i));
+        requestParameters.put("J", String.valueOf(j));
         return super.getURL();
     }
 }

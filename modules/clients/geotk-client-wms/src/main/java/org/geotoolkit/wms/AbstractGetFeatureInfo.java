@@ -31,23 +31,11 @@ import org.geotoolkit.util.StringUtilities;
  */
 public abstract class AbstractGetFeatureInfo extends AbstractGetMap implements GetFeatureInfoRequest {
 
-    protected int x;
-    protected int y;
     protected String infoFormat;
     protected String[] queryLayers;
 
     protected AbstractGetFeatureInfo(String serverURL, String version) {
         super(serverURL, version);
-    }
-
-    @Override
-    public int getX() {
-        return x;
-    }
-
-    @Override
-    public int getY() {
-        return y;
     }
 
     @Override
@@ -61,17 +49,7 @@ public abstract class AbstractGetFeatureInfo extends AbstractGetMap implements G
     }
 
     @Override
-    public void setX(int x) {
-        this.x = x;
-    }
-
-    @Override
-    public void setY(int y) {
-        this.y = y;
-    }
-
-    @Override
-    public void setQueryLayers(String[] layers) {
+    public void setQueryLayers(String... layers) {
         this.queryLayers = layers;
     }
 
@@ -80,13 +58,26 @@ public abstract class AbstractGetFeatureInfo extends AbstractGetMap implements G
         this.infoFormat = format;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public URL getURL() throws MalformedURLException {
+        if (infoFormat == null) {
+            throw new IllegalArgumentException("Info_Format is not defined");
+        }
+        if (queryLayers == null) {
+            throw new IllegalArgumentException("Query_Layers is not defined");
+        }
         requestParameters.put("INFO_FORMAT", infoFormat);
         requestParameters.put("QUERY_LAYERS", StringUtilities.toCommaSeparatedValues(queryLayers));
+
         return super.getURL();
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public InputStream getSOAPResponse() throws IOException {
         throw new UnsupportedOperationException("Not supported yet.");
