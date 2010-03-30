@@ -90,6 +90,19 @@ public abstract class AbstractGMLEntry implements AbstractGML, Serializable {
     /**
      *  Simple super constructor to initialise the entry name.
      */
+    public AbstractGMLEntry(AbstractGML a) {
+        if (a != null) {
+            this.description = a.getDescription();
+            this.descriptionReference = a.getDescriptionReference();
+            this.id = a.getId();
+            this.name = a.getName();
+            this.parameterName = a.getParameterName();
+        }
+    }
+
+    /**
+     *  Simple super constructor to initialise the entry name.
+     */
     public AbstractGMLEntry(String id) {
         this.id = id;
     }
@@ -184,7 +197,7 @@ public abstract class AbstractGMLEntry implements AbstractGML, Serializable {
             return Utilities.equals(this.description,          that.description)          &&
                    Utilities.equals(this.descriptionReference, that.descriptionReference) &&
                    Utilities.equals(this.id,                   that.id)                   &&
-                   Utilities.equals(this.name,                 that.name)                 &&
+                   Utilities.equals(this.getName(),            that.getName())                 &&
                    Utilities.equals(this.parameterName,        that.parameterName);
         }
         return false;

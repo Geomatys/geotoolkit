@@ -85,6 +85,26 @@ public class Documentation implements AbstractDocumentation {
 
     }
 
+    public Documentation(AbstractDocumentation doc) {
+        if (doc != null) {
+            this.actuate      = doc.getActuate();
+            this.arcrole      = doc.getArcrole();
+            this.href         = doc.getHref();
+            this.remoteSchema = doc.getRemoteSchema();
+            this.role         = doc.getRole();
+            this.show         = doc.getShow();
+            this.title        = doc.getTitle();
+            this.type         = doc.getType();
+            if (doc.getDocument() != null) {
+                this.document = new Document(doc.getDocument());
+            }
+            if (doc.getDocumentList() != null) {
+                this.documentList = new DocumentList(doc.getDocumentList());
+            }
+        }
+
+    }
+
     public Documentation(Document document) {
         this.document = document;
     }
@@ -175,11 +195,7 @@ public class Documentation implements AbstractDocumentation {
      *     
      */
     public String getType() {
-        if (type == null) {
-            return "simple";
-        } else {
-            return type;
-        }
+        return type;
     }
 
     /**

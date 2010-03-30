@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.sml.xml.AbstractClassification;
+import org.geotoolkit.sml.xml.AbstractClassifierList;
 import org.geotoolkit.util.Utilities;
 
 
@@ -108,6 +109,22 @@ public class Classification implements AbstractClassification {
         this.classifierList = cl;
     }
 
+    public Classification(AbstractClassification cl) {
+        if (cl !=  null) {
+            if (cl.getClassifierList() != null) {
+                this.classifierList = new ClassifierList(cl.getClassifierList());
+            }
+            this.actuate      = cl.getActuate();
+            this.arcrole      = cl.getArcrole();
+            this.href         = cl.getHref();
+            this.remoteSchema = cl.getRemoteSchema();
+            this.role         = cl.getRole();
+            this.show         = cl.getShow();
+            this.title        = cl.getTitle();
+            this.type         = cl.getType();
+        }
+    }
+    
     /**
      * Gets the value of the classifierList property.
      * 
@@ -165,11 +182,7 @@ public class Classification implements AbstractClassification {
      *     
      */
     public String getType() {
-        if (type == null) {
-            return "simple";
-        } else {
-            return type;
-        }
+        return type;
     }
 
     /**

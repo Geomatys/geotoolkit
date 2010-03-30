@@ -21,7 +21,7 @@ package org.geotoolkit.swe.xml;
  *
  * @author Mehdi Sidhoum (Geomatys).
  */
-public interface AbstractBoolean {
+public interface AbstractBoolean extends AbstractDataComponent {
 
     public java.lang.Boolean isValue();
 

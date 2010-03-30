@@ -24,10 +24,16 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.sml.xml.AbstractPresentationLayerProperty;
+import org.geotoolkit.swe.xml.AbstractDataRecord;
+import org.geotoolkit.swe.xml.DataRecord;
+import org.geotoolkit.swe.xml.SimpleDataRecord;
 import org.geotoolkit.swe.xml.v101.AbstractDataRecordEntry;
 import org.geotoolkit.swe.xml.v101.Category;
 import org.geotoolkit.swe.xml.v101.DataBlockDefinitionEntry;
+import org.geotoolkit.swe.xml.v101.DataRecordType;
 import org.geotoolkit.swe.xml.v101.DataStreamDefinitionType;
+import org.geotoolkit.swe.xml.v101.SimpleDataRecordEntry;
 
 
 
@@ -62,7 +68,7 @@ import org.geotoolkit.swe.xml.v101.DataStreamDefinitionType;
     "dataBlockDefinition",
     "dataStreamDefinition"
 })
-public class PresentationLayerPropertyType {
+public class PresentationLayerPropertyType implements AbstractPresentationLayerProperty{
 
     @XmlElementRef(name = "AbstractDataRecord", namespace = "http://www.opengis.net/swe/1.0.1", type = JAXBElement.class)
     private JAXBElement<? extends AbstractDataRecordEntry> abstractDataRecord;
@@ -93,6 +99,42 @@ public class PresentationLayerPropertyType {
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
     private String actuate;
 
+    public PresentationLayerPropertyType() {
+        
+    }
+    public PresentationLayerPropertyType(AbstractPresentationLayerProperty la) {
+        if (la != null) {
+            if (la.getDataBlockDefinition() != null) {
+                this.dataBlockDefinition = new DataBlockDefinitionEntry(la.getDataBlockDefinition());
+            }
+            if (la.getDataStreamDefinition() != null) {
+                this.dataStreamDefinition = new DataStreamDefinitionType(la.getDataStreamDefinition());
+            }
+            if (la.getCategory() != null) {
+                this.category = new Category(la.getCategory());
+            }
+            if (la.getDataRecord() != null) {
+                AbstractDataRecord record = la.getDataRecord();
+                org.geotoolkit.swe.xml.v101.ObjectFactory factory = new org.geotoolkit.swe.xml.v101.ObjectFactory();
+                if (record instanceof SimpleDataRecord) {
+                    abstractDataRecord = factory.createSimpleDataRecord(new SimpleDataRecordEntry((SimpleDataRecord)record));
+                } else if (record instanceof DataRecord) {
+                    abstractDataRecord = factory.createDataRecord(new DataRecordType((DataRecord)record));
+                } else {
+                    System.out.println("UNINPLEMENTED CASE:" + record);
+                }
+            }
+            this.actuate = la.getActuate();
+            this.arcrole = la.getArcrole();
+            this.href    = la.getHref();
+            this.remoteSchema = la.getRemoteSchema();
+            this.role         = la.getRole();
+            this.show         = la.getShow();
+            this.title        = la.getTitle();
+            this.type         = la.getType();
+        }
+    }
+
     /**
      * Gets the value of the abstractDataRecord property.
      * 
@@ -114,6 +156,13 @@ public class PresentationLayerPropertyType {
         return abstractDataRecord;
     }
 
+    public AbstractDataRecordEntry getDataRecord() {
+        if (abstractDataRecord != null) {
+            return abstractDataRecord.getValue();
+        }
+        return null;
+    }
+    
     /**
      * Sets the value of the abstractDataRecord property.
      * 
@@ -240,12 +289,8 @@ public class PresentationLayerPropertyType {
      *     
      */
     public String getType() {
-        if (type == null) {
-            return "simple";
-        } else {
-            return type;
-        }
-    }
+        return type;
+     }
 
     /**
      * Sets the value of the type property.

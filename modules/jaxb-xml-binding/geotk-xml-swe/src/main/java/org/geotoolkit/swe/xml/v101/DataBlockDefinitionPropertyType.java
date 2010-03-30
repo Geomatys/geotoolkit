@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2008 - 2009, Geomatys
+ *    (C) 2008 - 2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.swe.xml.DataBlockDefinitionProperty;
 
 
 /**
@@ -49,7 +50,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "DataBlockDefinitionPropertyType", propOrder = {
     "dataBlockDefinition"
 })
-public class DataBlockDefinitionPropertyType {
+public class DataBlockDefinitionPropertyType implements DataBlockDefinitionProperty {
 
     @XmlElement(name = "DataBlockDefinition")
     private DataBlockDefinitionEntry dataBlockDefinition;
@@ -73,6 +74,27 @@ public class DataBlockDefinitionPropertyType {
     private String show;
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
     private String actuate;
+
+    public DataBlockDefinitionPropertyType() {
+        
+    }
+
+    public DataBlockDefinitionPropertyType(DataBlockDefinitionProperty db) {
+        if (db != null) {
+            this.actuate = db.getActuate();
+            this.arcrole = db.getArcrole();
+            this.href    = db.getHref();
+            this.remoteSchema = db.getRemoteSchema();
+            this.role         = db.getRole();
+            this.show         = db.getShow();
+            this.title        = db.getTitle();
+            this.type         = db.getType();
+            if (db.getDataBlockDefinition() != null) {
+                this.dataBlockDefinition = new DataBlockDefinitionEntry(db.getDataBlockDefinition());
+            }
+        }
+
+    }
 
     /**
      * Gets the value of the dataBlockDefinition property.
@@ -106,11 +128,7 @@ public class DataBlockDefinitionPropertyType {
      * Gets the value of the type property.
     */
     public String getType() {
-        if (type == null) {
-            return "simple";
-        } else {
-            return type;
-        }
+        return type;
     }
 
     /**

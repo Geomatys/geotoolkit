@@ -45,7 +45,20 @@ public class BooleanType extends AbstractDataComponentEntry  implements Abstract
     public BooleanType() {
         
     }
-    
+
+    /**
+     * Build a new TimeType
+     */
+    public BooleanType(AbstractBoolean bool) {
+        super(bool);
+        if (bool != null) {
+            this.value  = bool.isValue();
+            this.axisID = bool.getAxisID();
+            this.referenceFrame = bool.getReferenceFrame();
+        }
+
+    }
+
     /**
      * Build a new TimeType
      */

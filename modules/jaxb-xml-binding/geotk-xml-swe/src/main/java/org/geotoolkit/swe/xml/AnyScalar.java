@@ -23,4 +23,23 @@ package org.geotoolkit.swe.xml;
  */
 public interface AnyScalar {
 
+    String getName();
+
+    AbstractDataComponent getValue();
+
+    String getRemoteSchema();
+
+    String getType();
+
+    String getHref();
+
+    String getRole();
+
+    String getArcrole();
+
+    String getTitle();
+
+    String getShow();;
+
+    String getActuate();
 }

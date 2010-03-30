@@ -27,7 +27,10 @@ import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import org.geotoolkit.swe.xml.AbstractDataRecord;
 import org.geotoolkit.swe.xml.DataComponentProperty;
+import org.geotoolkit.swe.xml.DataRecord;
+import org.geotoolkit.swe.xml.SimpleDataRecord;
 import org.geotoolkit.util.Utilities;
 
 
@@ -185,6 +188,61 @@ public class DataComponentPropertyType implements DataComponentProperty {
         this.quantityRange = quantityRange;
     }
 
+    public DataComponentPropertyType(DataComponentProperty d) {
+        if (d != null){
+            this.actuate = d.getActuate();
+            if (d.getBoolean() != null) {
+                this._boolean = new BooleanType(d.getBoolean());
+            }
+            if (d.getAbstractRecord() != null) {
+                ObjectFactory sweFactory = new ObjectFactory();
+                AbstractDataRecord record = d.getAbstractRecord();
+                if (record instanceof SimpleDataRecord) {
+                    record = new SimpleDataRecordType((SimpleDataRecord)record);
+                    this.abstractDataRecord = sweFactory.createSimpleDataRecord((SimpleDataRecordType) record);
+                } else if (record instanceof DataRecord) {
+                    record = new DataRecordType((DataRecord)record);
+                    this.abstractDataRecord = sweFactory.createDataRecord((DataRecordType) record);
+                } else {
+                    throw new IllegalArgumentException("this type is not yet handled in dataComponentPropertyType:" + record);
+                }
+            }
+
+            this.arcrole = d.getArcrole();
+            if (d.getCategory() != null) {
+                this.category = new Category(d.getCategory());
+            }
+            if (d.getCount() != null) {
+                this.count = new Count(d.getCount());
+            }
+            if (d.getCountRange() != null) {
+                this.countRange = new CountRange(d.getCountRange());
+            }
+            this.href = d.getHref();
+            this.name = d.getName();
+            if (d.getQuantity() != null) {
+                this.quantity = new QuantityType(d.getQuantity());
+            }
+            if (d.getQuantityRange() != null) {
+                this.quantityRange = new QuantityRange(d.getQuantityRange());
+            }
+            this.remoteSchema = d.getRemoteSchema();
+            this.role = d.getRole();
+            this.show = d.getShow();
+            if (d.getText() != null) {
+                this.text = new Text(d.getText());
+            }
+            if (d.getTime() != null) {
+                this.time = new TimeType(d.getTime());
+            }
+            if (d.getTimeRange() != null) {
+                this.timeRange = new TimeRange(d.getTimeRange());
+            }
+            this.title = d.getTitle();
+            this.type = d.getType();
+        }
+    }
+    
     public void setToHref() {
         if (abstractDataRecord != null) {
             this.href = abstractDataRecord.getValue().getId();
@@ -405,6 +463,13 @@ public class DataComponentPropertyType implements DataComponentProperty {
         return abstractDataRecord;
     }
 
+    public AbstractDataRecordType getAbstractRecord() {
+        if (abstractDataRecord != null) {
+            return abstractDataRecord.getValue();
+        }
+        return null;
+    }
+
     /**
      * Sets the value of the abstractDataRecord property.
      * 
@@ -488,11 +553,7 @@ public class DataComponentPropertyType implements DataComponentProperty {
      * Gets the value of the type property.
      */
     public String getType() {
-        if (type == null) {
-            return "simple";
-        } else {
-            return type;
-        }
+        return type;
     }
 
     /**

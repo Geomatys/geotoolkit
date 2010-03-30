@@ -50,6 +50,18 @@ public class QuantityType extends AbstractDataComponentEntry implements Quantity
     public QuantityType() {
         
     }
+
+    public QuantityType(Quantity q) {
+        super(q);
+        if (q != null) {
+            this.axisID = q.getAxisID();
+            this.referenceFrame = q.getReferenceFrame();
+            this.value = q.getValue();
+            if (q.getUom() != null) {
+                this.uom = new UomPropertyType(q.getUom());
+            }
+        }
+    }
     
     /**
      * Build a new QuantityType

@@ -181,7 +181,7 @@ public abstract class AbstractGetLegend extends AbstractRequest implements GetLe
     @Override
     public URL getURL() throws MalformedURLException {
         if(layer == null){
-            throw new IllegalArgumentException("Layers are not defined");
+            throw new IllegalArgumentException("Layer are not defined");
         }
 //        if(dimension == null){
 //            throw new IllegalArgumentException("Dimension is not defined");

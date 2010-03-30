@@ -24,7 +24,11 @@ import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.swe.xml.AbstractBinaryBlock;
 import org.geotoolkit.swe.xml.AbstractEncodingProperty;
+import org.geotoolkit.swe.xml.MultiplexedStreamFormat;
+import org.geotoolkit.swe.xml.TextBlock;
+import org.geotoolkit.swe.xml.XmlBlock;
 import org.geotoolkit.util.Utilities;
 
 /**
@@ -77,6 +81,32 @@ public class AbstractEncodingPropertyType implements AbstractEncodingProperty {
      */
     AbstractEncodingPropertyType() {
         
+    }
+
+    public AbstractEncodingPropertyType(AbstractEncodingProperty enc) {
+        if (enc != null) {
+            this.actuate = enc.getActuate();
+            this.arcrole = enc.getArcrole();
+            this.href    = enc.getHref();
+            this.remoteSchema = enc.getRemoteSchema();
+            this.role         = enc.getRole();
+            this.show         = enc.getShow();
+            this.title        = enc.getTitle();
+            this.type         = enc.getType();
+            if (enc.getEncoding() != null) {
+                if (enc.getEncoding() instanceof AbstractBinaryBlock)
+                throw new IllegalArgumentException("Binnary block are not handled");
+            
+            } else if (enc.getEncoding() instanceof MultiplexedStreamFormat){
+                this.encoding = sweFactory.createMultiplexedStreamFormat(new MultiplexedStreamFormatType((MultiplexedStreamFormat)enc.getEncoding()));
+            
+            } else if (enc.getEncoding() instanceof TextBlock) {
+                this.encoding = sweFactory.createTextBlock(new TextBlockEntry((TextBlock)enc.getEncoding()));
+            
+            } else if (enc.getEncoding() instanceof XmlBlock) {
+                this.encoding = sweFactory.createXMLBlock(new XMLBlockType((XmlBlock)enc.getEncoding()));
+            }
+        }
     }
     
     /**
@@ -132,7 +162,7 @@ public class AbstractEncodingPropertyType implements AbstractEncodingProperty {
     /**
      * Gets the value of the encoding property.
      */
-    public AbstractEncodingEntry getencoding() {
+    public AbstractEncodingEntry getEncoding() {
         if (encoding != null) {
             return encoding.getValue();
         } else if (hiddenEncoding != null) {
@@ -152,11 +182,7 @@ public class AbstractEncodingPropertyType implements AbstractEncodingProperty {
      * Gets the value of the type property.
      */
     public String getType() {
-        if (type == null) {
-            return "simple";
-        } else {
-            return type;
-        }
+        return type;
     }
 
     /**

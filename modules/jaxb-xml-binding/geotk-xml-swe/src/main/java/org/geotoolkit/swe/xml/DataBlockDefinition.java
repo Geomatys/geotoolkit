@@ -37,7 +37,7 @@ public interface DataBlockDefinition {
     @UML(identifier="components", obligation=MANDATORY, specification=UNSPECIFIED)
     Collection<? extends AbstractDataComponent> getComponents();
     
-    AbstractEncoding getEncoding();
+    AbstractEncodingProperty getEncoding();
     
     
     

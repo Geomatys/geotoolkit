@@ -81,6 +81,18 @@ public class QuantityType extends AbstractDataComponentType implements Quantity 
 
     }
 
+    public QuantityType(Quantity q) {
+        super(q);
+        if (q != null) {
+            this.axisID = q.getAxisID();
+            this.referenceFrame = q.getReferenceFrame();
+            this.value = q.getValue();
+            if (q.getUom() != null) {
+                this.uom = new UomPropertyType(q.getUom());
+            }
+        }
+    }
+    
     public QuantityType(URI definition, UomPropertyType uom, Double value) {
         super(definition);
         this.uom   = uom;

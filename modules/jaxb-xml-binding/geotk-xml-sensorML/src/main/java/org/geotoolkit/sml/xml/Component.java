@@ -23,4 +23,5 @@ package org.geotoolkit.sml.xml;
  */
 public interface Component extends AbstractComponent {
 
+    AbstractMethodProperty getMethod();
 }

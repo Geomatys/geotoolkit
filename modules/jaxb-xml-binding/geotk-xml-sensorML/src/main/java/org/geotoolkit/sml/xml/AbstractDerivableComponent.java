@@ -32,4 +32,10 @@ public interface AbstractDerivableComponent extends AbstractProcess {
     public void setPosition(AbstractPosition position);
 
     public AbstractSpatialReferenceFrame getSpatialReferenceFrame();
+
+    public AbstractInterfaces getInterfaces();
+
+    public AbstractTemporalReferenceFrame getTemporalReferenceFrame();
+
+    public AbstractTimePosition getTimePosition();
 }

@@ -20,6 +20,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.sml.xml.AbstractProcessModel;
 
 
 /**
@@ -48,10 +49,21 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "ProcessModelType", propOrder = {
     "method"
 })
-public class ProcessModelType extends AbstractPureProcessType {
+public class ProcessModelType extends AbstractPureProcessType implements AbstractProcessModel {
 
     @XmlElement(required = true)
     private MethodPropertyType method;
+
+    public ProcessModelType() {
+
+    }
+
+    public ProcessModelType(AbstractProcessModel pm) {
+        super(pm);
+        if (pm != null && pm.getMethod() != null) {
+            this.method = new MethodPropertyType(pm.getMethod());
+        }
+    }
 
     /**
      * Gets the value of the method property.

@@ -54,6 +54,15 @@ public class TimePropertyType implements AbstractTimeProperty {
     @XmlElement(name = "Time", required = true)
     private TimeType time;
 
+    public TimePropertyType() {
+
+    }
+
+    public TimePropertyType(AbstractTimeProperty tp) {
+        if (tp != null && tp.getTime() != null) {
+            this.time = new TimeType(tp.getTime());
+        }
+    }
     /**
      * Gets the value of the time property.
     */

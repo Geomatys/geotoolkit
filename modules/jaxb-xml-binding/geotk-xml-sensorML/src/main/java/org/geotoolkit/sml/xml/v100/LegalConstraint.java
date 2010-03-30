@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.sml.xml.AbstractLegalConstraint;
 import org.geotoolkit.util.Utilities;
 
 
@@ -53,7 +54,7 @@ import org.geotoolkit.util.Utilities;
     "rights"
 })
 @XmlRootElement(name = "legalConstraint")
-public class LegalConstraint {
+public class LegalConstraint implements AbstractLegalConstraint {
 
     @XmlElement(name = "Rights")
     private Rights rights;
@@ -217,11 +218,7 @@ public class LegalConstraint {
      * Gets the value of the type property.
      */
     public String getType() {
-        if (type == null) {
-            return "simple";
-        } else {
-            return type;
-        }
+        return type;
     }
 
     /**

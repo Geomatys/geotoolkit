@@ -25,4 +25,35 @@ public interface AbstractClassification {
 
     public AbstractClassifierList getClassifierList();
 
+    String getRemoteSchema();
+
+    void setRemoteSchema(String value);
+
+    String getType();
+
+    void setType(String value);
+
+    String getHref();
+
+    void setHref(String value) ;
+
+    String getRole();
+
+    void setRole(String value);
+
+    String getArcrole();
+
+    void setArcrole(String value);
+
+    String getTitle();
+
+    void setTitle(String value);
+
+    String getShow() ;
+
+    void setShow(String value);
+
+    String getActuate();
+
+    void setActuate(String value);
 }

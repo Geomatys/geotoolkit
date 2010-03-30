@@ -26,7 +26,13 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import org.geotoolkit.sml.xml.AbstractCapabilities;
+import org.geotoolkit.swe.xml.AbstractDataRecord;
+import org.geotoolkit.swe.xml.DataRecord;
+import org.geotoolkit.swe.xml.SimpleDataRecord;
+import org.geotoolkit.swe.xml.v101.SimpleDataRecordEntry;
 import org.geotoolkit.swe.xml.v101.AbstractDataRecordEntry;
+import org.geotoolkit.swe.xml.v101.DataRecordType;
 
 
 /**
@@ -56,7 +62,7 @@ import org.geotoolkit.swe.xml.v101.AbstractDataRecordEntry;
     "abstractDataRecord"
 })
 @XmlRootElement(name = "capabilities")
-public class Capabilities {
+public class Capabilities implements AbstractCapabilities {
 
     @XmlElementRef(name = "AbstractDataRecord", namespace = "http://www.opengis.net/swe/1.0.1", type = JAXBElement.class)
     private JAXBElement<? extends AbstractDataRecordEntry> abstractDataRecord;
@@ -85,12 +91,48 @@ public class Capabilities {
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
     private String actuate;
 
+    public Capabilities() {
+
+    }
+
+    public Capabilities(AbstractCapabilities capa) {
+        if (capa != null) {
+            if (capa.getDataRecord() != null) {
+                AbstractDataRecord record = capa.getDataRecord();
+                org.geotoolkit.swe.xml.v101.ObjectFactory factory = new org.geotoolkit.swe.xml.v101.ObjectFactory();
+                if (record instanceof SimpleDataRecord) {
+                    abstractDataRecord = factory.createSimpleDataRecord(new SimpleDataRecordEntry((SimpleDataRecord)record));
+                } else if (record instanceof DataRecord) {
+                    abstractDataRecord = factory.createDataRecord(new DataRecordType((DataRecord)record));
+                } else {
+                    System.out.println("UNINPLEMENTED CASE:" + record);
+                }
+            }
+            this.actuate = capa.getActuate();
+            this.arcrole = capa.getArcrole();
+            this.href    = capa.getHref();
+            this.name    = capa.getName();
+            this.remoteSchema = capa.getRemoteSchema();
+            this.role    = capa.getRole();
+            this.show    = capa.getShow();
+            this.title   = capa.getTitle();
+            this.type    = capa.getType();
+        }
+    }
+
     /**
      * Gets the value of the abstractDataRecord property.
      *     
      */
     public JAXBElement<? extends AbstractDataRecordEntry> getAbstractDataRecord() {
         return abstractDataRecord;
+    }
+
+    public AbstractDataRecordEntry getDataRecord() {
+        if (abstractDataRecord != null) {
+            return abstractDataRecord.getValue();
+        }
+        return null;
     }
 
     /**
@@ -138,12 +180,8 @@ public class Capabilities {
      * 
     */
     public String getType() {
-        if (type == null) {
-            return "simple";
-        } else {
-            return type;
-        }
-    }
+        return type;
+     }
 
     /**
      * Sets the value of the type property.

@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import org.geotoolkit.sml.xml.AbstractRights;
 import org.geotoolkit.util.Utilities;
 
 
@@ -57,7 +58,7 @@ import org.geotoolkit.util.Utilities;
     "documentation"
 })
 @XmlRootElement(name = "Rights")
-public class Rights {
+public class Rights implements AbstractRights {
 
     @XmlElement(required = true)
     private Documentation documentation;

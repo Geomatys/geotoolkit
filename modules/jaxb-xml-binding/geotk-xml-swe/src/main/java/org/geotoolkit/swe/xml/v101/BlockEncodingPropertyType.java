@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.swe.xml.BlockEncodingProperty;
 
 
 /**
@@ -55,7 +56,7 @@ import javax.xml.bind.annotation.XmlType;
     "textBlock",
     "xmlBlock"
 })
-public class BlockEncodingPropertyType {
+public class BlockEncodingPropertyType implements BlockEncodingProperty {
 
     @XmlElement(name = "StandardFormat")
     private StandardFormat standardFormat;
@@ -86,6 +87,35 @@ public class BlockEncodingPropertyType {
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
     private String actuate;
 
+    public BlockEncodingPropertyType() {
+
+    }
+
+    public BlockEncodingPropertyType(BlockEncodingProperty be) {
+        if (be != null) {
+            this.actuate      = be.getActuate();
+            this.arcrole      = be.getArcrole();
+            this.href         = be.getHref();
+            this.remoteSchema = be.getRemoteSchema();
+            this.role         = be.getRole();
+            this.show         = be.getShow();
+            this.title        = be.getTitle();
+            this.type         = be.getType();
+            if (be.getBinaryBlock() != null) {
+                this.binaryBlock = new BinaryBlock(be.getBinaryBlock());
+            }
+            if (be.getStandardFormat() != null) {
+                this.standardFormat = new StandardFormat(be.getStandardFormat());
+            }
+            if (be.getTextBlock() != null) {
+                this.textBlock = new TextBlockEntry(be.getTextBlock());
+            }
+            if (be.getXMLBlock() != null) {
+                this.xmlBlock = new XMLBlockType(be.getXMLBlock());
+            }
+        }
+    }
+    
     /**
      * Gets the value of the standardFormat property.
      * 
@@ -215,11 +245,7 @@ public class BlockEncodingPropertyType {
      *     
      */
     public String getType() {
-        if (type == null) {
-            return "simple";
-        } else {
-            return type;
-        }
+        return type;
     }
 
     /**

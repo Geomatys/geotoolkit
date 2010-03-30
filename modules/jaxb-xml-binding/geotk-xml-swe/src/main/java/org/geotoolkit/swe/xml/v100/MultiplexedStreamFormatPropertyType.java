@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.swe.xml.MultiplexedStreamFormatProperty;
 
 
 /**
@@ -49,7 +50,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "MultiplexedStreamFormatPropertyType", propOrder = {
     "multiplexedStreamFormat"
 })
-public class MultiplexedStreamFormatPropertyType {
+public class MultiplexedStreamFormatPropertyType implements MultiplexedStreamFormatProperty {
 
     @XmlElement(name = "MultiplexedStreamFormat")
     private MultiplexedStreamFormatType multiplexedStreamFormat;
@@ -131,11 +132,7 @@ public class MultiplexedStreamFormatPropertyType {
      *     
      */
     public String getType() {
-        if (type == null) {
-            return "simple";
-        } else {
-            return type;
-        }
+        return type;
     }
 
     /**

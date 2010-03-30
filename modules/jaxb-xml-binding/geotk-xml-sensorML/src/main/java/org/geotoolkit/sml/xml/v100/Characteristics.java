@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.sml.xml.AbstractCharacteristics;
 import org.geotoolkit.swe.xml.v100.AbstractDataRecordType;
 import org.geotoolkit.swe.xml.v100.DataRecordType;
 import org.geotoolkit.swe.xml.v100.SimpleDataRecordType;
@@ -57,7 +58,7 @@ import org.geotoolkit.util.Utilities;
     "abstractDataRecord"
 })
 @XmlRootElement(name = "characteristics")
-public class Characteristics {
+public class Characteristics implements AbstractCharacteristics {
 
     @XmlElementRef(name = "AbstractDataRecord", namespace = "http://www.opengis.net/swe/1.0", type = JAXBElement.class)
     private JAXBElement<? extends AbstractDataRecordType> abstractDataRecord;
@@ -94,6 +95,13 @@ public class Characteristics {
      */
     public JAXBElement<? extends AbstractDataRecordType> getAbstractDataRecord() {
         return abstractDataRecord;
+    }
+
+    public AbstractDataRecordType getDataRecord() {
+        if (abstractDataRecord != null) {
+            return abstractDataRecord.getValue();
+        }
+        return null;
     }
 
     /**
@@ -148,6 +156,10 @@ public class Characteristics {
      */
     public String getActuate() {
         return actuate;
+    }
+
+    public String getName() {
+        return null;
     }
 
     /**
@@ -231,12 +243,8 @@ public class Characteristics {
      * Gets the value of the type property.
      */
     public String getType() {
-        if (type == null) {
-            return "simple";
-        } else {
-            return type;
-        }
-    }
+        return type;
+     }
 
     /**
      * Sets the value of the type property.

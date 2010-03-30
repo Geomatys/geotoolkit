@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.swe.xml.Coordinate;
 import org.geotoolkit.swe.xml.Vector;
 import org.geotoolkit.util.Utilities;
 
@@ -67,6 +68,16 @@ public class VectorType extends AbstractVectorType implements Vector {
 
     public VectorType() {
 
+    }
+
+    public VectorType(Vector v) {
+        super(v);
+        if (v != null && v.getCoordinate() != null) {
+            this.coordinate = new ArrayList<CoordinateType>();
+            for (Coordinate c : v.getCoordinate()) {
+                this.coordinate.add(new CoordinateType(c));
+            }
+        }
     }
 
     public VectorType(URI referenceFrame, URI localFrame, List<CoordinateType> coordinate) {

@@ -29,6 +29,7 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import org.geotoolkit.swe.xml.AbstractAllowedTokens;
 
 
 /**
@@ -57,7 +58,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
     "valueList"
 })
 @XmlRootElement(name = "AllowedTokens")
-public class AllowedTokens {
+public class AllowedTokens implements AbstractAllowedTokens {
 
     @XmlElementRef(name = "valueList", namespace = "http://www.opengis.net/swe/1.0", type = JAXBElement.class)
     private List<JAXBElement<List<String>>> valueList;
@@ -67,6 +68,17 @@ public class AllowedTokens {
     @XmlSchemaType(name = "ID")
     private String id;
 
+    public AllowedTokens() {
+        
+    }
+    
+    public AllowedTokens(AbstractAllowedTokens tk) {
+        if (tk != null) {
+            this.id = tk.getId();
+            throw new IllegalArgumentException("The allowed Token are not yet convertible");
+        }
+    }
+    
     /**
      * Gets the value of the valueList property.
      */

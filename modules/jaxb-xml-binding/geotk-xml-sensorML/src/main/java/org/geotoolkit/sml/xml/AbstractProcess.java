@@ -39,5 +39,13 @@ public interface AbstractProcess extends AbstractSML {
 
     public List<? extends AbstractDocumentation> getDocumentation();
 
+    public List<? extends AbstractHistory> getHistory();
+
+    public List<? extends AbstractLegalConstraint> getLegalConstraint();
+
+    public List<? extends AbstractCapabilities> getCapabilities();
+
+    public List<? extends AbstractCharacteristics> getCharacteristics();
+
     public AbstractSecurityConstraint getSecurityConstraint();
 }

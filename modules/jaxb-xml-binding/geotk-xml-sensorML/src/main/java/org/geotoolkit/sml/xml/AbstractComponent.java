@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2008 - 2009, Geomatys
+ *    (C) 2008 - 2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -30,4 +30,8 @@ public interface AbstractComponent extends AbstractDerivableComponent {
     public AbstractOutputs getOutputs();
 
     public void setOutputs(AbstractOutputs outputs);
+
+    public AbstractParameters getParameters();
+
+    public void setParameters(AbstractParameters parameters);
 }

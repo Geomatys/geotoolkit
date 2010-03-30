@@ -324,11 +324,7 @@ public class Positions implements AbstractPositions {
      *     
      */
     public String getType() {
-        if (type == null) {
-            return "simple";
-        } else {
-            return type;
-        }
+        return type;
     }
 
     /**

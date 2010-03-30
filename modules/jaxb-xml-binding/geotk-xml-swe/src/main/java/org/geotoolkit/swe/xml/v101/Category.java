@@ -81,6 +81,25 @@ public class Category extends AbstractDataComponentEntry  implements AbstractCat
 
     }
 
+    public Category(AbstractCategory cat) {
+        super(cat);
+        if (cat != null) {
+            this.axisID    = cat.getAxisID();
+            if (cat.getCodeSpace() != null) {
+                this.codeSpace = new CodeSpacePropertyType(cat.getCodeSpace());
+            }
+            if (cat.getConstraint() != null) {
+                this.constraint = new AllowedTokensPropertyType(cat.getConstraint());
+            }
+            if (cat.getQuality() != null) {
+                this.quality = new QualityPropertyType(cat.getQuality());
+            }
+            this.value          = cat.getValue();
+            this.referenceFrame = cat.getReferenceFrame();
+        }
+    }
+
+
     public Category(String definition, String value) {
         super(definition);
         this.value = value;
@@ -189,6 +208,14 @@ public class Category extends AbstractDataComponentEntry  implements AbstractCat
     }
 
     /**
+     * @return the constraint
+     */
+    public AllowedTokensPropertyType getConstraint() {
+        return constraint;
+    }
+
+
+    /**
      * Verify if this entry is identical to specified object.
      */
     @Override
@@ -200,7 +227,7 @@ public class Category extends AbstractDataComponentEntry  implements AbstractCat
             final Category that = (Category) object;
 
             return Utilities.equals(this.axisID,           that.axisID)         &&
-                   Utilities.equals(this.constraint,       that.constraint)     &&
+                   Utilities.equals(this.getConstraint(), that.getConstraint())     &&
                    Utilities.equals(this.quality,          that.quality)        &&
                    Utilities.equals(this.referenceFrame,   that.referenceFrame) &&
                    Utilities.equals(this.codeSpace,        that.codeSpace)      &&
@@ -213,7 +240,7 @@ public class Category extends AbstractDataComponentEntry  implements AbstractCat
     public int hashCode() {
         int hash = 7;
         hash = 29 * hash + (this.codeSpace != null ? this.codeSpace.hashCode() : 0);
-        hash = 29 * hash + (this.constraint != null ? this.constraint.hashCode() : 0);
+        hash = 29 * hash + (this.getConstraint() != null ? this.getConstraint().hashCode() : 0);
         hash = 29 * hash + (this.quality != null ? this.quality.hashCode() : 0);
         hash = 29 * hash + (this.value != null ? this.value.hashCode() : 0);
         hash = 29 * hash + (this.referenceFrame != null ? this.referenceFrame.hashCode() : 0);

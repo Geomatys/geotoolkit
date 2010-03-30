@@ -116,6 +116,13 @@ public class Position implements AbstractPosition {
         return process;
     }
 
+    public AbstractProcessType getAbstractProcess() {
+        if (process != null) {
+            return process.getValue();
+        }
+        return null;
+    }
+
     /**
      * Sets the value of the process property.
      */
@@ -278,11 +285,7 @@ public class Position implements AbstractPosition {
      * Gets the value of the type property.
      */
     public String getType() {
-        if (type == null) {
-            return "simple";
-        } else {
-            return type;
-        }
+        return type;
     }
 
     /**

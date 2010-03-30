@@ -21,7 +21,7 @@ package org.geotoolkit.swe.xml;
  *
  * @author Mehdi Sidhoum (Geomatys).
  */
-public interface AbstractCategory {
+public interface AbstractCategory extends AbstractDataComponent {
 
     public AbstractCodeSpaceProperty getCodeSpace();
 
@@ -32,4 +32,6 @@ public interface AbstractCategory {
     public String getReferenceFrame();
 
     public String getAxisID();
+
+    public AbstractAllowedTokensProperty getConstraint();
 }

@@ -21,6 +21,7 @@ import java.util.Date;
 import org.geotoolkit.util.Utilities;
 import org.opengis.temporal.Instant;
 import org.opengis.temporal.Period;
+import org.opengis.temporal.Position;
 import org.opengis.temporal.RelativePosition;
 
 /**
@@ -72,6 +73,10 @@ public class DefaultPeriod extends DefaultTemporalGeometricPrimitive implements 
         this.begining = new DefaultInstant(new DefaultPosition(date));
     }
 
+    public void setBegining(Position pos) {
+        this.begining = new DefaultInstant(pos);
+    }
+
     /**
      * Links this period to the instant at which it ends.
      */
@@ -81,6 +86,10 @@ public class DefaultPeriod extends DefaultTemporalGeometricPrimitive implements 
 
     public void setEnding(Instant ending) {
         this.ending = ending;
+    }
+
+    public void setEnding(Position pos) {
+        this.ending = new DefaultInstant(pos);
     }
 
     public void setEnding(Date date) {

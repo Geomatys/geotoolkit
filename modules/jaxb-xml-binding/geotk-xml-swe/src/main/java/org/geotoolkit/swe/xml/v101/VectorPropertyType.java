@@ -81,6 +81,22 @@ public class VectorPropertyType implements AbstractVectorProperty {
 
     }
 
+    public VectorPropertyType(AbstractVectorProperty avp) {
+        if (avp != null) {
+            this.actuate = avp.getActuate();
+            this.arcrole = avp.getArcrole();
+            this.href    = avp.getHref();
+            this.remoteSchema = avp.getRemoteSchema();
+            this.role    = avp.getRole();
+            this.show    = avp.getShow();
+            this.title   = avp.getTitle();
+            this.type    = avp.getType();
+            if (avp.getVector() != null) {
+                this.vector = new VectorType(avp.getVector());
+            }
+        }
+    }
+
     public VectorPropertyType(VectorType vector) {
         this.vector = vector;
     }
@@ -142,11 +158,7 @@ public class VectorPropertyType implements AbstractVectorProperty {
      *     
      */
     public String getType() {
-        if (type == null) {
-            return "simple";
-        } else {
-            return type;
-        }
+        return type;
     }
 
     /**

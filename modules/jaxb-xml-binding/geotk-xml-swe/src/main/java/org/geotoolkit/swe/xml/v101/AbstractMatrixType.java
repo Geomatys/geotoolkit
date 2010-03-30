@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.swe.xml.AbstractMatrix;
 import org.geotoolkit.util.Utilities;
 
 
@@ -49,7 +50,7 @@ import org.geotoolkit.util.Utilities;
 @XmlSeeAlso({
     SquareMatrixType.class
 })
-public class AbstractMatrixType extends AbstractDataArrayEntry {
+public class AbstractMatrixType extends AbstractDataArrayEntry implements AbstractMatrix {
 
     @XmlAttribute
     @XmlSchemaType(name = "anyURI")
@@ -57,6 +58,18 @@ public class AbstractMatrixType extends AbstractDataArrayEntry {
     @XmlAttribute
     @XmlSchemaType(name = "anyURI")
     private String localFrame;
+
+    public AbstractMatrixType() {
+
+    }
+
+    public AbstractMatrixType(AbstractMatrix am) {
+        super(am);
+        if (am != null) {
+            this.localFrame = am.getLocalFrame();
+            this.referenceFrame = am.getReferenceFrame();
+        }
+    }
 
     /**
      * Gets the value of the referenceFrame property.

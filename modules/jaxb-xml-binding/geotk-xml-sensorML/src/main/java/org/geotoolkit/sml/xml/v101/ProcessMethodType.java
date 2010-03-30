@@ -31,6 +31,19 @@ import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.geotoolkit.gml.xml.v311.AbstractGMLEntry;
 import org.geotoolkit.gml.xml.v311.StringOrRefType;
+import org.geotoolkit.sml.xml.AbstractAlgorithm;
+import org.geotoolkit.sml.xml.AbstractCapabilities;
+import org.geotoolkit.sml.xml.AbstractCharacteristics;
+import org.geotoolkit.sml.xml.AbstractClassification;
+import org.geotoolkit.sml.xml.AbstractContact;
+import org.geotoolkit.sml.xml.AbstractDocumentation;
+import org.geotoolkit.sml.xml.AbstractHistory;
+import org.geotoolkit.sml.xml.AbstractIdentification;
+import org.geotoolkit.sml.xml.AbstractImplementation;
+import org.geotoolkit.sml.xml.AbstractKeywords;
+import org.geotoolkit.sml.xml.AbstractLegalConstraint;
+import org.geotoolkit.sml.xml.AbstractProcessMethod;
+import org.geotoolkit.sml.xml.AbstractRules;
 
 
 /**
@@ -172,7 +185,7 @@ import org.geotoolkit.gml.xml.v311.StringOrRefType;
     "algorithm",
     "implementation"
 })
-public class ProcessMethodType extends AbstractGMLEntry {
+public class ProcessMethodType extends AbstractGMLEntry implements AbstractProcessMethod {
 
     private List<Keywords> keywords;
     private List<Identification> identification;
@@ -190,27 +203,84 @@ public class ProcessMethodType extends AbstractGMLEntry {
     private ProcessMethodType.Algorithm algorithm;
     private List<ProcessMethodType.Implementation> implementation;
 
+    public ProcessMethodType() {
+
+    }
+
+    public ProcessMethodType(AbstractProcessMethod method) {
+        super(method);
+        if (method != null) {
+
+            if (method.getAlgorithm() != null) {
+                throw new IllegalArgumentException("Algorithm are not yet convertible");
+            }
+            if (method.getImplementation() != null) {
+                throw new IllegalArgumentException("Implementation are not yet convertible");
+            }
+            if (method.getRules() != null) {
+                throw new IllegalArgumentException("Rules are not yet convertible");
+            }
+            if (method.getCapabilities() != null) {
+                this.capabilities = new ArrayList<org.geotoolkit.sml.xml.v101.Capabilities>();
+                for (AbstractCapabilities oldCapa : method.getCapabilities()) {
+                    this.capabilities.add(new org.geotoolkit.sml.xml.v101.Capabilities(oldCapa));
+                }
+            }
+            if (method.getCharacteristics() != null) {
+                this.characteristics = new ArrayList<org.geotoolkit.sml.xml.v101.Characteristics>();
+                for (AbstractCharacteristics oldChar : method.getCharacteristics()) {
+                    this.characteristics.add(new org.geotoolkit.sml.xml.v101.Characteristics(oldChar));
+                }
+            }
+
+            if (method.getClassification() != null) {
+            this.classification = new ArrayList<org.geotoolkit.sml.xml.v101.Classification>();
+            for (AbstractClassification oldClass : method.getClassification()) {
+                this.classification.add(new org.geotoolkit.sml.xml.v101.Classification(oldClass));
+            }}
+
+            if (method.getContact() != null) {
+            this.contact = new ArrayList<org.geotoolkit.sml.xml.v101.Contact>();
+            for (AbstractContact oldContact : method.getContact()) {
+                this.contact.add(new org.geotoolkit.sml.xml.v101.Contact(oldContact));
+            }}
+            if (method.getDocumentation() != null) {
+            this.documentation = new ArrayList<org.geotoolkit.sml.xml.v101.Documentation>();
+            for (AbstractDocumentation oldDoc : method.getDocumentation()) {
+                this.documentation.add(new org.geotoolkit.sml.xml.v101.Documentation(oldDoc));
+            }}
+            if (method.getHistory() != null) {
+            this.history = new ArrayList<org.geotoolkit.sml.xml.v101.History>();
+            for (AbstractHistory oldhist : method.getHistory()) {
+                this.history.add(new org.geotoolkit.sml.xml.v101.History(oldhist));
+            }}
+            if (method.getIdentification() != null) {
+            this.identification = new ArrayList<org.geotoolkit.sml.xml.v101.Identification>();
+            for (AbstractIdentification oldIdent : method.getIdentification()) {
+                this.identification.add(new org.geotoolkit.sml.xml.v101.Identification(oldIdent));
+            }}
+            if (method.getKeywords() != null) {
+            this.keywords = new ArrayList<org.geotoolkit.sml.xml.v101.Keywords>();
+            for (AbstractKeywords oldKeyw : method.getKeywords()) {
+                this.keywords.add(new org.geotoolkit.sml.xml.v101.Keywords(oldKeyw));
+            }}
+            if (method.getLegalConstraint() != null) {
+            this.legalConstraint = new ArrayList<org.geotoolkit.sml.xml.v101.LegalConstraint>();
+            for (AbstractLegalConstraint oldcons : method.getLegalConstraint()) {
+                this.legalConstraint.add(new org.geotoolkit.sml.xml.v101.LegalConstraint(oldcons));
+            }}
+
+            if (method.getLegalConstraint() != null) {
+                this.securityConstraint = new org.geotoolkit.sml.xml.v101.SecurityConstraint(method.getSecurityConstraint());
+            }
+            if (method.getValidTime() != null) {
+                this.validTime = new ValidTime(method.getValidTime());
+            }
+        }
+    }
+    
     /**
      * Gets the value of the keywords property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the keywords property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getKeywords().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link Keywords }
-     * 
-     * 
      */
     public List<Keywords> getKeywords() {
         if (keywords == null) {
@@ -622,7 +692,7 @@ public class ProcessMethodType extends AbstractGMLEntry {
     @XmlType(name = "", propOrder = {
         "algorithmDefinition"
     })
-    public static class Algorithm {
+    public static class Algorithm implements AbstractAlgorithm {
 
         @XmlElement(name = "AlgorithmDefinition", required = true)
         private ProcessMethodType.Algorithm.AlgorithmDefinition algorithmDefinition;
@@ -851,11 +921,7 @@ public class ProcessMethodType extends AbstractGMLEntry {
                  *     
                  */
                 public String getType() {
-                    if (type == null) {
-                        return "simple";
-                    } else {
-                        return type;
-                    }
+                    return type;
                 }
 
                 /**
@@ -1079,7 +1145,7 @@ public class ProcessMethodType extends AbstractGMLEntry {
         "processChain",
         "implementationCode"
     })
-    public static class Implementation {
+    public static class Implementation implements AbstractImplementation {
 
         @XmlElement(name = "ProcessChain")
         private ProcessChainType processChain;
@@ -1187,11 +1253,7 @@ public class ProcessMethodType extends AbstractGMLEntry {
          *     
          */
         public String getType() {
-            if (type == null) {
-                return "simple";
-            } else {
-                return type;
-            }
+            return type;
         }
 
         /**
@@ -1968,11 +2030,7 @@ public class ProcessMethodType extends AbstractGMLEntry {
                  *     
                  */
                 public String getType() {
-                    if (type == null) {
-                        return "simple";
-                    } else {
-                        return type;
-                    }
+                    return type;
                 }
 
                 /**
@@ -2209,11 +2267,7 @@ public class ProcessMethodType extends AbstractGMLEntry {
                  *     
                  */
                 public String getType() {
-                    if (type == null) {
-                        return "simple";
-                    } else {
-                        return type;
-                    }
+                    return type;
                 }
 
                 /**
@@ -2413,7 +2467,7 @@ public class ProcessMethodType extends AbstractGMLEntry {
     @XmlType(name = "", propOrder = {
         "rulesDefinition"
     })
-    public static class Rules {
+    public static class Rules implements AbstractRules {
 
         @XmlElement(name = "RulesDefinition", required = true)
         private ProcessMethodType.Rules.RulesDefinition rulesDefinition;

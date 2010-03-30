@@ -31,12 +31,20 @@ import static org.junit.Assert.*;
 
 
 /**
+ * Testing class for GetMap requests, in version 1.1.1 and 1.3.0.
  *
  * @author Cédric Briançon (Geomatys)
  */
 public class GetMapTest {
     public GetMapTest() {}
 
+    /**
+     * Ensures the {@link GetMap111#getURL()} method returns a well-built url,
+     * with the parameters given.
+     *
+     * @throws NoSuchAuthorityCodeException
+     * @throws FactoryException
+     */
     @Test
     public void testGetMap111() throws NoSuchAuthorityCodeException, FactoryException {
         final CoordinateReferenceSystem crs = CRS.decode("CRS:84");
@@ -67,6 +75,13 @@ public class GetMapTest {
         assertTrue(sUrl.contains("STYLES="));
     }
 
+    /**
+     * Ensures the {@link GetMap130#getURL()} method returns a well-built url,
+     * with the parameters given.
+     *
+     * @throws NoSuchAuthorityCodeException
+     * @throws FactoryException
+     */
     @Test
     public void testGetMap130() throws NoSuchAuthorityCodeException, FactoryException {
         final CoordinateReferenceSystem crs = CRS.decode("CRS:84");

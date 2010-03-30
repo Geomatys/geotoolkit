@@ -98,32 +98,32 @@ import org.geotoolkit.sml.xml.AbstractArrayLink;
 @XmlRootElement(name = "ArrayLink")
 public class ArrayLink implements AbstractArrayLink {
 
-    private SourceArray sourceArray;
-    private List<DestinationIndex> destinationIndex;
-    private DestinationArray destinationArray;
-    private SourceIndex sourceIndex;
+    private LinkRef sourceArray;
+    private List<LinkRef> destinationIndex;
+    private LinkRef destinationArray;
+    private LinkRef sourceIndex;
     private List<Connection> connection;
 
     /**
      * Gets the value of the sourceArray property.
      */
-    public SourceArray getSourceArray() {
+    public LinkRef getSourceArray() {
         return sourceArray;
     }
 
     /**
      * Sets the value of the sourceArray property.
      */
-    public void setSourceArray(SourceArray value) {
+    public void setSourceArray(LinkRef value) {
         this.sourceArray = value;
     }
 
     /**
      * Gets the value of the destinationIndex property.
      */
-    public List<DestinationIndex> getDestinationIndex() {
+    public List<LinkRef> getDestinationIndex() {
         if (destinationIndex == null) {
-            destinationIndex = new ArrayList<DestinationIndex>();
+            destinationIndex = new ArrayList<LinkRef>();
         }
         return this.destinationIndex;
     }
@@ -131,21 +131,21 @@ public class ArrayLink implements AbstractArrayLink {
     /**
      * Gets the value of the destinationArray property.
      */
-    public DestinationArray getDestinationArray() {
+    public LinkRef getDestinationArray() {
         return destinationArray;
     }
 
     /**
      * Sets the value of the destinationArray property.
      */
-    public void setDestinationArray(DestinationArray value) {
+    public void setDestinationArray(LinkRef value) {
         this.destinationArray = value;
     }
 
     /**
      * Gets the value of the sourceIndex property.
      */
-    public SourceIndex getSourceIndex() {
+    public LinkRef getSourceIndex() {
         return sourceIndex;
     }
 
@@ -153,7 +153,7 @@ public class ArrayLink implements AbstractArrayLink {
      * Sets the value of the sourceIndex property.
      * 
      */
-    public void setSourceIndex(SourceIndex value) {
+    public void setSourceIndex(LinkRef value) {
         this.sourceIndex = value;
     }
 
@@ -209,7 +209,7 @@ public class ArrayLink implements AbstractArrayLink {
         }
         if (destinationIndex != null) {
             sb.append("destination index: ").append('\n');
-            for (DestinationIndex c : destinationIndex) {
+            for (LinkRef c : destinationIndex) {
                 sb.append(c).append('\n');
             }
         }

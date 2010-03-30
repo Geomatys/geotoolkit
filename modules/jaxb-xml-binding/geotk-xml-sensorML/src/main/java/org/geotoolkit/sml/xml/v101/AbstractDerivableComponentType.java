@@ -87,15 +87,43 @@ public abstract class AbstractDerivableComponentType extends AbstractProcessType
 
     @XmlElementRef(name = "interfaces", namespace = "http://www.opengis.net/sensorML/1.0", type = Interfaces.class)
     private Interfaces interfaces;
-    
+
+    public AbstractDerivableComponentType() {
+
+    }
+
+    public AbstractDerivableComponentType(AbstractDerivableComponent ad) {
+        super(ad);
+        if (ad != null) {
+            if (ad.getInterfaces() != null) {
+                this.interfaces = new Interfaces(ad.getInterfaces());
+            }
+            if (ad.getPosition() != null) {
+                this.position = new Position(ad.getPosition());
+            }
+            if (ad.getSMLLocation() != null) {
+                this.location = new Location(ad.getSMLLocation());
+            }
+            if (ad.getSpatialReferenceFrame() != null) {
+                this.spatialReferenceFrame = new SpatialReferenceFrame(ad.getSpatialReferenceFrame());
+            }
+            if (ad.getTemporalReferenceFrame() != null) {
+                this.temporalReferenceFrame = new TemporalReferenceFrame(ad.getTemporalReferenceFrame());
+            }
+            if (ad.getTimePosition() != null) {
+                this.timePosition = new TimePosition(ad.getTimePosition());
+            }
+        }
+    }
+
     public Location getSMLLocation() {
         return location;
     }
     
     public void setSMLLocation(AbstractLocation location) {
-        if (location instanceof Location)
-            this.location = (Location) location;
-        else throw new IllegalArgumentException("Bad version of the location object");
+        if (location != null) {
+            this.location = new Location(location);
+        }
     }
 
     /**
@@ -106,9 +134,9 @@ public abstract class AbstractDerivableComponentType extends AbstractProcessType
     }
     
     public void setPosition(AbstractPosition position) {
-        if (position instanceof Position)
-            this.position = (Position) position;
-        else throw new IllegalArgumentException("Bad version of the position object");
+        if (position != null) {
+            this.position = new Position(position);
+        }
     }
 
     /**

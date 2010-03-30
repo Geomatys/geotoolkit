@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.sml.xml.AbstractObservationReference;
 
 /**
  * <p>Java class for anonymous complex type.
@@ -43,7 +44,7 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "")
-public class ObservationReference {
+public class ObservationReference implements AbstractObservationReference {
 
     @XmlAttribute
     private List<String> nilReason;
@@ -177,11 +178,7 @@ public class ObservationReference {
      * Gets the value of the type property.
      */
     public String getType() {
-        if (type == null) {
-            return "simple";
-        } else {
-            return type;
-        }
+        return type;
     }
 
     /**

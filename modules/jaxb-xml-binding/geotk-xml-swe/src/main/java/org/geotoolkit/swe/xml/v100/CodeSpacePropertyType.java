@@ -78,6 +78,19 @@ public class CodeSpacePropertyType implements AbstractCodeSpaceProperty {
         this.href = href;
     }
 
+    public CodeSpacePropertyType(AbstractCodeSpaceProperty cs) {
+        if (cs != null) {
+            this.actuate      = cs.getActuate();
+            this.arcrole      = cs.getArcrole();
+            this.href         = cs.getHref();
+            this.remoteSchema = cs.getRemoteSchema();
+            this.role         = cs.getRole();
+            this.show         = cs.getShow();
+            this.title        = cs.getTitle();
+            this.type         = cs.getType();
+        }
+    }
+
     /**
      * Gets the value of the remoteSchema property.
      */
@@ -96,11 +109,7 @@ public class CodeSpacePropertyType implements AbstractCodeSpaceProperty {
      * Gets the value of the type property.
      */
     public String getType() {
-        if (type == null) {
-            return "simple";
-        } else {
-            return type;
-        }
+        return type;
     }
 
     /**

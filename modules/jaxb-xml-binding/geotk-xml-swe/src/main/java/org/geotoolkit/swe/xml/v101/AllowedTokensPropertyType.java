@@ -22,7 +22,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.swe.xml.AbstractAllowedTimesProperty;
+import org.geotoolkit.swe.xml.AbstractAllowedTokensProperty;
 import org.geotoolkit.util.Utilities;
 
 
@@ -51,7 +51,7 @@ import org.geotoolkit.util.Utilities;
 @XmlType(name = "AllowedTokensPropertyType", propOrder = {
     "allowedTokens"
 })
-public class AllowedTokensPropertyType implements AbstractAllowedTimesProperty {
+public class AllowedTokensPropertyType implements AbstractAllowedTokensProperty {
 
     @XmlElement(name = "AllowedTokens")
     private AllowedTokens allowedTokens;
@@ -75,6 +75,26 @@ public class AllowedTokensPropertyType implements AbstractAllowedTimesProperty {
     private String show;
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
     private String actuate;
+
+    public AllowedTokensPropertyType() {
+
+    }
+
+    public AllowedTokensPropertyType(AbstractAllowedTokensProperty at) {
+        if (at != null) {
+            this.actuate = at.getActuate();
+            this.arcrole = at.getArcrole();
+            this.href    = at.getHref();
+            this.remoteSchema = at.getRemoteSchema();
+            this.role         = at.getRole();
+            this.show         = at.getShow();
+            this.title        = at.getTitle();
+            this.type         = at.getType();
+            if (at.getAllowedTokens() != null) {
+                this.allowedTokens = new AllowedTokens(at.getAllowedTokens());
+            }
+        }
+    }
 
     /**
      * Gets the value of the allowedTokens property.
@@ -133,11 +153,7 @@ public class AllowedTokensPropertyType implements AbstractAllowedTimesProperty {
      *     
      */
     public String getType() {
-        if (type == null) {
-            return "simple";
-        } else {
-            return type;
-        }
+        return type;
     }
 
     /**

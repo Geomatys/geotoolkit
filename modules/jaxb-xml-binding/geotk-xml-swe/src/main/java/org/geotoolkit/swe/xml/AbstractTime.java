@@ -23,7 +23,7 @@ import java.util.List;
  *
  * @author Mehdi Sidhoum (Geomatys).
  */
-public interface AbstractTime {
+public interface AbstractTime extends AbstractDataComponent {
 
     public UomProperty getUom();
 

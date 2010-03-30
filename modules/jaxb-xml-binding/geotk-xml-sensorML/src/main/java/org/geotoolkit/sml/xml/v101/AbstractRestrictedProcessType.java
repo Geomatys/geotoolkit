@@ -20,6 +20,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.sml.xml.AbstractRestrictedProcess;
 
 
 /**
@@ -51,6 +52,13 @@ import javax.xml.bind.annotation.XmlType;
 @XmlSeeAlso({
     AbstractPureProcessType.class
 })
-public abstract class AbstractRestrictedProcessType extends AbstractProcessType {
+public abstract class AbstractRestrictedProcessType extends AbstractProcessType implements AbstractRestrictedProcess {
 
+    public AbstractRestrictedProcessType() {
+
+    }
+
+    public AbstractRestrictedProcessType(AbstractRestrictedProcess rp) {
+        super(rp);
+    }
 }

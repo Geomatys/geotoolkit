@@ -30,6 +30,7 @@ import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.geotoolkit.gml.xml.v311.StringOrRefType;
 import org.geotoolkit.sml.xml.AbstractDocument;
+import org.geotoolkit.sml.xml.AbstractOnlineResource;
 
 
 /**
@@ -89,6 +90,25 @@ public class Document implements AbstractDocument {
 
     public Document() {
 
+    }
+
+    public Document(AbstractDocument doc) {
+        if (doc != null) {
+            if (doc.getContact() != null) {
+                this.contact = new Contact(doc.getContact());
+            }
+            this.date        = doc.getDate();
+            this.description = doc.getDescription();
+            this.format      = doc.getFormat();
+            this.id          = doc.getId();
+            this.version     = doc.getVersion();
+            if (doc.getOnlineResource() != null) {
+                this.onlineResource = new ArrayList<OnlineResource>();
+                for (AbstractOnlineResource or : doc.getOnlineResource()) {
+                    this.onlineResource.add(new OnlineResource(or));
+                }
+            }
+        }
     }
 
     public Document(String description) {

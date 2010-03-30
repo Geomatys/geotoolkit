@@ -27,7 +27,10 @@ import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import org.geotoolkit.swe.xml.AbstractDataRecord;
 import org.geotoolkit.swe.xml.DataComponentProperty;
+import org.geotoolkit.swe.xml.DataRecord;
+import org.geotoolkit.swe.xml.SimpleDataRecord;
 import org.geotoolkit.util.Utilities;
 
 /**
@@ -156,6 +159,60 @@ public class DataComponentPropertyType implements DataComponentProperty {
         this.quantityRange = quantityRange;
     }
 
+    public DataComponentPropertyType(DataComponentProperty d) {
+        if (d != null){
+            this.actuate = d.getActuate();
+            if (d.getBoolean() != null) {
+                this._boolean = new BooleanType(d.getBoolean());
+            }
+            if (d.getAbstractRecord() != null) {
+                AbstractDataRecord record = d.getAbstractRecord();
+                if (record instanceof SimpleDataRecord) {
+                    record = new SimpleDataRecordEntry((SimpleDataRecord)record);
+                    this.abstractDataRecord = sweFactory.createSimpleDataRecord((SimpleDataRecordEntry) record);
+                } else if (record instanceof DataRecord) {
+                    record = new DataRecordType((DataRecord)record);
+                    this.abstractDataRecord = sweFactory.createDataRecord((DataRecordType) record);
+                } else {
+                    throw new IllegalArgumentException("this type is not yet handled in dataComponentPropertyType:" + record);
+                }
+            }
+
+            this.arcrole = d.getArcrole();
+            if (d.getCategory() != null) {
+                this.category = new Category(d.getCategory());
+            }
+            if (d.getCount() != null) {
+                this.count = new Count(d.getCount());
+            }
+            if (d.getCountRange() != null) {
+                this.countRange = new CountRange(d.getCountRange());
+            }
+            this.href = d.getHref();
+            this.name = d.getName();
+            if (d.getQuantity() != null) {
+                this.quantity = new QuantityType(d.getQuantity());
+            }
+            if (d.getQuantityRange() != null) {
+                this.quantityRange = new QuantityRange(d.getQuantityRange());
+            }
+            this.remoteSchema = d.getRemoteSchema();
+            this.role = d.getRole();
+            this.show = d.getShow();
+            if (d.getText() != null) {
+                this.text = new Text(d.getText());
+            }
+            if (d.getTime() != null) {
+                this.time = new TimeType(d.getTime());
+            }
+            if (d.getTimeRange() != null) {
+                this.timeRange = new TimeRange(d.getTimeRange());
+            }
+            this.title = d.getTitle();
+            this.type = d.getType();
+        }
+    }
+
     /**
      * 
      */
@@ -166,7 +223,7 @@ public class DataComponentPropertyType implements DataComponentProperty {
         }else if (component instanceof DataRecordType) {
             this.abstractDataRecord = sweFactory.createDataRecord((DataRecordType)component);
         } else {
-            throw new IllegalArgumentException("only SimpleDataRecord is allowed in dataComponentPropertyType");
+            throw new IllegalArgumentException("this type is not yet handled in dataComponentPropertyType:" + component);
         }
     }
     /**
@@ -205,11 +262,7 @@ public class DataComponentPropertyType implements DataComponentProperty {
      * Gets the value of the type property.
      */
     public String getType() {
-        if (type == null) {
-            return "simple";
-        } else {
-            return type;
-        }
+        return type;
     }
 
     /**
@@ -264,15 +317,15 @@ public class DataComponentPropertyType implements DataComponentProperty {
         }
 
         if (object instanceof DataComponentPropertyType) {
-            boolean time = false;
+            boolean eq = false;
             final DataComponentPropertyType that = (DataComponentPropertyType) object;
             if (this.abstractDataRecord != null && that.abstractDataRecord != null) {
-                time = Utilities.equals(this.abstractDataRecord.getValue(),that.abstractDataRecord.getValue());
+                eq = Utilities.equals(this.abstractDataRecord.getValue(),that.abstractDataRecord.getValue());
             } else {
-                time = (this.abstractDataRecord == null && that.abstractDataRecord == null);
+                eq = (this.abstractDataRecord == null && that.abstractDataRecord == null);
             }
 
-            return time                                                             &&
+            return eq                                                             &&
                    Utilities.equals(this.actuate,            that.actuate)          &&
                    Utilities.equals(this.arcrole,            that.arcrole)          &&
                    Utilities.equals(this.type,               that.type)             &&
@@ -281,15 +334,15 @@ public class DataComponentPropertyType implements DataComponentProperty {
                    Utilities.equals(this.show,               that.show)             &&
                    Utilities.equals(this.role,               that.role)             &&
                    Utilities.equals(this.title,              that.title)            &&
-                   Utilities.equals(this._boolean,     that._boolean)               &&
-                   Utilities.equals(this.category,     that.category)      &&
-                   Utilities.equals(this.count,        that.count)         &&
-                   Utilities.equals(this.countRange,   that.countRange)    &&
+                   Utilities.equals(this.getBoolean(), that.getBoolean())               &&
+                   Utilities.equals(this.getCategory(), that.getCategory())      &&
+                   Utilities.equals(this.getCount(), that.getCount())         &&
+                   Utilities.equals(this.getCountRange(), that.getCountRange())    &&
                    Utilities.equals(this.name,         that.name)          &&
-                   Utilities.equals(this.quantity,     that.quantity)      &&
-                   Utilities.equals(this.quantityRange,that.quantityRange) &&
-                   Utilities.equals(this.time,         that.time)          &&
-                   Utilities.equals(this.timeRange,    that.timeRange);
+                   Utilities.equals(this.getQuantity(), that.getQuantity())      &&
+                   Utilities.equals(this.getQuantityRange(), that.getQuantityRange()) &&
+                   Utilities.equals(this.getTime(), that.getTime())          &&
+                   Utilities.equals(this.getTimeRange(), that.getTimeRange());
         }
         return false;
     }
@@ -297,15 +350,15 @@ public class DataComponentPropertyType implements DataComponentProperty {
     @Override
     public int hashCode() {
         int hash = 3;
-        hash = 19 * hash + (this.count != null ? this.count.hashCode() : 0);
-        hash = 19 * hash + (this.quantity != null ? this.quantity.hashCode() : 0);
-        hash = 19 * hash + (this.time != null ? this.time.hashCode() : 0);
-        hash = 19 * hash + (this._boolean != null ? this._boolean.hashCode() : 0);
-        hash = 19 * hash + (this.category != null ? this.category.hashCode() : 0);
-        hash = 19 * hash + (this.text != null ? this.text.hashCode() : 0);
-        hash = 19 * hash + (this.quantityRange != null ? this.quantityRange.hashCode() : 0);
-        hash = 19 * hash + (this.countRange != null ? this.countRange.hashCode() : 0);
-        hash = 19 * hash + (this.timeRange != null ? this.timeRange.hashCode() : 0);
+        hash = 19 * hash + (this.getCount() != null ? this.getCount().hashCode() : 0);
+        hash = 19 * hash + (this.getQuantity() != null ? this.getQuantity().hashCode() : 0);
+        hash = 19 * hash + (this.getTime() != null ? this.getTime().hashCode() : 0);
+        hash = 19 * hash + (this.getBoolean() != null ? this.getBoolean().hashCode() : 0);
+        hash = 19 * hash + (this.getCategory() != null ? this.getCategory().hashCode() : 0);
+        hash = 19 * hash + (this.getText() != null ? this.getText().hashCode() : 0);
+        hash = 19 * hash + (this.getQuantityRange() != null ? this.getQuantityRange().hashCode() : 0);
+        hash = 19 * hash + (this.getCountRange() != null ? this.getCountRange().hashCode() : 0);
+        hash = 19 * hash + (this.getTimeRange() != null ? this.getTimeRange().hashCode() : 0);
         hash = 19 * hash + (this.abstractDataRecord != null ? this.abstractDataRecord.hashCode() : 0);
         hash = 19 * hash + (this.name != null ? this.name.hashCode() : 0);
         hash = 19 * hash + (this.remoteSchema != null ? this.remoteSchema.hashCode() : 0);
@@ -322,38 +375,38 @@ public class DataComponentPropertyType implements DataComponentProperty {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("[DataComponentPropertyType]").append("\n");
-        if (_boolean != null) {
-            sb.append("boolean: ").append(_boolean).append('\n');
+        if (getBoolean() != null) {
+            sb.append("boolean: ").append(getBoolean()).append('\n');
         }
         if (abstractDataRecord != null) {
             sb.append("data record: ").append(abstractDataRecord.getValue()).append('\n');
         }
-        if (category != null) {
-            sb.append("category: ").append(category).append('\n');
+        if (getCategory() != null) {
+            sb.append("category: ").append(getCategory()).append('\n');
         }
-        if (count != null) {
-            sb.append("count: ").append(count).append('\n');
+        if (getCount() != null) {
+            sb.append("count: ").append(getCount()).append('\n');
         }
-        if (countRange != null) {
-            sb.append("count range: ").append(countRange).append('\n');
+        if (getCountRange() != null) {
+            sb.append("count range: ").append(getCountRange()).append('\n');
         }
         if (name != null) {
             sb.append("name: ").append(name).append('\n');
         }
-        if (quantity != null) {
-            sb.append("quantity: ").append(quantity).append('\n');
+        if (getQuantity() != null) {
+            sb.append("quantity: ").append(getQuantity()).append('\n');
         }
-        if (quantityRange != null) {
-            sb.append("quantityRange: ").append(quantityRange).append('\n');
+        if (getQuantityRange() != null) {
+            sb.append("quantityRange: ").append(getQuantityRange()).append('\n');
         }
-        if (text != null) {
-            sb.append("text: ").append(text).append('\n');
+        if (getText() != null) {
+            sb.append("text: ").append(getText()).append('\n');
         }
-        if (time != null) {
-            sb.append("time: ").append(time).append('\n');
+        if (getTime() != null) {
+            sb.append("time: ").append(getTime()).append('\n');
         }
-        if (timeRange != null) {
-            sb.append("timeRange: ").append(timeRange).append('\n');
+        if (getTimeRange() != null) {
+            sb.append("timeRange: ").append(getTimeRange()).append('\n');
         }
         if (remoteSchema != null) {
             sb.append("remoteSchema: ").append(remoteSchema).append('\n');
@@ -436,6 +489,69 @@ public class DataComponentPropertyType implements DataComponentProperty {
      */
     public void setActuate(String actuate) {
         this.actuate = actuate;
+    }
+
+    /**
+     * @return the count
+     */
+    public Count getCount() {
+        return count;
+    }
+
+    /**
+     * @return the quantity
+     */
+    public QuantityType getQuantity() {
+        return quantity;
+    }
+
+    /**
+     * @return the time
+     */
+    public TimeType getTime() {
+        return time;
+    }
+
+    /**
+     * @return the _boolean
+     */
+    public BooleanType getBoolean() {
+        return _boolean;
+    }
+
+    /**
+     * @return the category
+     */
+    public Category getCategory() {
+        return category;
+    }
+
+    /**
+     * @return the text
+     */
+    public Text getText() {
+        return text;
+    }
+
+    /**
+     * @return the quantityRange
+     */
+    public QuantityRange getQuantityRange() {
+        return quantityRange;
+    }
+
+    /**
+     * @return the countRange
+     */
+    public CountRange getCountRange() {
+        return countRange;
+    }
+
+    /**
+     * @return the timeRange
+     */
+    public TimeRange getTimeRange() {
+        return timeRange;
     }
 }
 

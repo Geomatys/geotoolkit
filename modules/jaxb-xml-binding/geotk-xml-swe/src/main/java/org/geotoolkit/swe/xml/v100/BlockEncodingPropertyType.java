@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.swe.xml.v100;
 
-import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -25,6 +24,7 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.swe.xml.AbstractEncodingProperty;
+import org.geotoolkit.swe.xml.BlockEncodingProperty;
 
 
 /**
@@ -58,7 +58,7 @@ import org.geotoolkit.swe.xml.AbstractEncodingProperty;
     "textBlock",
     "xmlBlock"
 })
-public class BlockEncodingPropertyType implements AbstractEncodingProperty {
+public class BlockEncodingPropertyType implements BlockEncodingProperty, AbstractEncodingProperty {
 
     @XmlElement(name = "StandardFormat")
     private StandardFormat standardFormat;
@@ -197,11 +197,7 @@ public class BlockEncodingPropertyType implements AbstractEncodingProperty {
      * Gets the value of the type property.
      */
     public String getType() {
-        if (type == null) {
-            return "simple";
-        } else {
-            return type;
-        }
+        return type;
     }
 
     /**

@@ -22,6 +22,15 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.sml.xml.AbstractCapabilities;
+import org.geotoolkit.sml.xml.AbstractCharacteristics;
+import org.geotoolkit.sml.xml.AbstractClassification;
+import org.geotoolkit.sml.xml.AbstractContact;
+import org.geotoolkit.sml.xml.AbstractDocumentation;
+import org.geotoolkit.sml.xml.AbstractHistory;
+import org.geotoolkit.sml.xml.AbstractIdentification;
+import org.geotoolkit.sml.xml.AbstractKeywords;
+import org.geotoolkit.sml.xml.AbstractLegalConstraint;
 import org.geotoolkit.sml.xml.AbstractProcess;
 import org.geotoolkit.sml.xml.AbstractValidTime;
 
@@ -80,6 +89,81 @@ public abstract class AbstractProcessType extends AbstractSMLType implements Abs
     private List<Documentation> documentation;
     private List<History> history;
 
+    public AbstractProcessType() {
+
+    }
+
+    public AbstractProcessType(AbstractProcess pr) {
+        super(pr);
+        if (pr != null) {
+
+            //capabilities
+            this.capabilities = new ArrayList<Capabilities>();
+            for (AbstractCapabilities oldCapa : pr.getCapabilities()) {
+                this.capabilities.add(new Capabilities(oldCapa));
+            }
+
+            // characteristics
+            this.characteristics = new ArrayList<Characteristics>();
+            for (AbstractCharacteristics oldChar : pr.getCharacteristics()) {
+                this.characteristics.add(new Characteristics(oldChar));
+            }
+
+            // Classification
+            this.classification = new ArrayList<Classification>();
+            for (AbstractClassification oldClass : pr.getClassification()) {
+                this.classification.add(new Classification(oldClass));
+            }
+
+            // Contact
+            this.contact = new ArrayList<Contact>();
+            for (AbstractContact oldContact : pr.getContact()) {
+                this.contact.add(new Contact(oldContact));
+            }
+
+            // Contact
+            this.documentation = new ArrayList<Documentation>();
+            for (AbstractDocumentation oldDoc : pr.getDocumentation()) {
+                this.documentation.add(new Documentation(oldDoc));
+            }
+
+            // History
+            this.history = new ArrayList<History>();
+            for (AbstractHistory oldhist : pr.getHistory()) {
+                this.history.add(new History(oldhist));
+            }
+
+            // Identification
+            this.identification = new ArrayList<Identification>();
+            for (AbstractIdentification oldIdent : pr.getIdentification()) {
+                this.identification.add(new Identification(oldIdent));
+            }
+
+
+            // keywords
+            this.keywords = new ArrayList<Keywords>();
+            for (AbstractKeywords oldKeyw : pr.getKeywords()) {
+                this.keywords.add(new Keywords(oldKeyw));
+            }
+
+            // legal constraint
+            this.legalConstraint = new ArrayList<LegalConstraint>();
+            for (AbstractLegalConstraint oldcons : pr.getLegalConstraint()) {
+                this.legalConstraint.add(new LegalConstraint(oldcons));
+            }
+
+            // security constraint
+            if (pr.getSecurityConstraint() != null) {
+                this.securityConstraint = new SecurityConstraint(pr.getSecurityConstraint());
+            }
+            
+            // validTime
+            if (pr.getValidTime() != null) {
+                this.validTime = new ValidTime(pr.getValidTime());
+            }
+        }
+
+    }
     /**
      * Gets the value of the keywords property.
      * 

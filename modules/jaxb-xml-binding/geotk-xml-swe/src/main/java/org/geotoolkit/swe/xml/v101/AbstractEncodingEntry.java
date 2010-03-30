@@ -53,6 +53,12 @@ public class AbstractEncodingEntry implements AbstractEncoding {
      */
     AbstractEncodingEntry() {}
 
+    public AbstractEncodingEntry(AbstractEncoding enc) {
+        if (enc != null) {
+            this.id = enc.getId();
+        }
+    }
+
     /**
      *  An abstract encoding. used like super constructor
      */

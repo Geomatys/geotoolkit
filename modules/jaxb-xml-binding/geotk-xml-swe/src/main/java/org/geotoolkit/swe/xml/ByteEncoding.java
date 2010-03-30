@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.swe.xml.v101;
+package org.geotoolkit.swe.xml;
 
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlEnumValue;
@@ -22,31 +22,34 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for byteOrder.
+ * <p>Java class for byteEncoding.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * <p>
  * <pre>
- * &lt;simpleType name="byteOrder">
+ * &lt;simpleType name="byteEncoding">
  *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}token">
- *     &lt;enumeration value="bigEndian"/>
- *     &lt;enumeration value="littleEndian"/>
+ *     &lt;enumeration value="base64"/>
+ *     &lt;enumeration value="raw"/>
+ *     &lt;enumeration value="hex"/>
  *   &lt;/restriction>
  * &lt;/simpleType>
  * </pre>
  * 
  */
-@XmlType(name = "byteOrder")
+@XmlType(name = "byteEncoding")
 @XmlEnum
-public enum ByteOrder {
+public enum ByteEncoding {
 
-    @XmlEnumValue("bigEndian")
-    BIG_ENDIAN("bigEndian"),
-    @XmlEnumValue("littleEndian")
-    LITTLE_ENDIAN("littleEndian");
+    @XmlEnumValue("base64")
+    BASE_64("base64"),
+    @XmlEnumValue("raw")
+    RAW("raw"),
+    @XmlEnumValue("hex")
+    HEX("hex");
     private final String value;
 
-    ByteOrder(String v) {
+    ByteEncoding(String v) {
         value = v;
     }
 
@@ -54,8 +57,8 @@ public enum ByteOrder {
         return value;
     }
 
-    public static ByteOrder fromValue(String v) {
-        for (ByteOrder c: ByteOrder.values()) {
+    public static ByteEncoding fromValue(String v) {
+        for (ByteEncoding c: ByteEncoding.values()) {
             if (c.value.equals(v)) {
                 return c;
             }

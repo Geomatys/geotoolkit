@@ -157,7 +157,11 @@ public class JTSPointArray extends NotifyingArrayList<Position> implements Point
     public DirectPosition getDirectPosition(int column, DirectPosition dest) throws IndexOutOfBoundsException {
         DirectPosition position = (DirectPosition) get(column);
         if (dest == null) {
-            dest = new GeneralDirectPosition(position.getCoordinateReferenceSystem());
+            if (position.getCoordinateReferenceSystem() != null) {
+                dest = new GeneralDirectPosition(position.getCoordinateReferenceSystem());
+            } else {
+                dest = new GeneralDirectPosition(position.getDimension());
+            }
         }
         for (int i = 0; i < position.getDimension(); i++) {
             dest.setOrdinate(i, position.getOrdinate(i));

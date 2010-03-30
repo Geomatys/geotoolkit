@@ -76,6 +76,36 @@ public class PositionType extends AbstractVectorType implements Position {
 
     }
 
+    public PositionType(Position pos) {
+        super(pos);
+        if (pos != null) {
+            if (pos.getAcceleration() != null) {
+                this.acceleration = new VectorPropertyType(pos.getAcceleration());
+            }
+            if (pos.getAngularAcceleration() != null) {
+                this.angularAcceleration = new VectorOrSquareMatrixPropertyType(pos.getAngularAcceleration());
+            }
+            if (pos.getAngularVelocity() != null) {
+                this.angularVelocity = new VectorOrSquareMatrixPropertyType(pos.getAngularVelocity());
+            }
+            if (pos.getLocation() != null) {
+                this.location = new VectorPropertyType(pos.getLocation());
+            }
+            if (pos.getOrientation() != null) {
+                this.orientation = new VectorOrSquareMatrixPropertyType(pos.getOrientation());
+            }
+            if (pos.getState() != null) {
+                this.state = new VectorOrSquareMatrixPropertyType(pos.getState());
+            }
+            if (pos.getVelocity() != null) {
+                this.velocity = new VectorPropertyType(pos.getVelocity());
+            }
+            if (pos.getTime() != null) {
+                this.time = new TimePropertyType(pos.getTime());
+            }
+        }
+     }
+
     public PositionType(URI referenceFrame, URI localFrame,VectorPropertyType location) {
         super(referenceFrame, localFrame);
         this.location    = location;

@@ -32,7 +32,6 @@ import org.geotoolkit.sml.xml.v100.Keywords;
 import org.geotoolkit.sml.xml.v100.LegalConstraint;
 import org.geotoolkit.sml.xml.v100.Member;
 import org.geotoolkit.sml.xml.v100.SystemType;
-import org.geotoolkit.sml.xml.v100.ValidTime;
 import org.geotoolkit.swe.xml.Position;
 import org.geotoolkit.swe.xml.Quantity;
 import org.geotoolkit.swe.xml.SimpleDataRecord;
@@ -264,6 +263,7 @@ public class SmlFactory {
 
     public org.geotoolkit.sml.xml.v101.SensorML convertTo101(org.geotoolkit.sml.xml.v100.SensorML sensor) {
         List<org.geotoolkit.sml.xml.v101.SensorML.Member> newMembers = new ArrayList<org.geotoolkit.sml.xml.v101.SensorML.Member>();
+
         for (Member oldMember : sensor.getMember()) {
             final org.geotoolkit.sml.xml.v101.AbstractProcessType newProcess;
 
@@ -296,49 +296,49 @@ public class SmlFactory {
             //capabilities
             List<org.geotoolkit.sml.xml.v101.Capabilities> newCapabilities = new ArrayList<org.geotoolkit.sml.xml.v101.Capabilities>();
             for (CapabilitiesSML oldCapa : oldProcess.getCapabilities()) {
-                //TODO
+                newCapabilities.add(new org.geotoolkit.sml.xml.v101.Capabilities(oldCapa));
             }
             newProcess.setCapabilities(newCapabilities);
 
             // characteristics
             List<org.geotoolkit.sml.xml.v101.Characteristics> newCharacteristics = new ArrayList<org.geotoolkit.sml.xml.v101.Characteristics>();
             for (Characteristics oldChar : oldProcess.getCharacteristics()) {
-                // TODO
+                newCharacteristics.add(new org.geotoolkit.sml.xml.v101.Characteristics(oldChar));
             }
             newProcess.setCharacteristics(newCharacteristics);
 
             // Classification
             List<org.geotoolkit.sml.xml.v101.Classification> newClassification = new ArrayList<org.geotoolkit.sml.xml.v101.Classification>();
             for (Classification oldClass : oldProcess.getClassification()) {
-                // TODO
+                newClassification.add(new org.geotoolkit.sml.xml.v101.Classification(oldClass));
             }
             newProcess.setClassification(newClassification);
 
             // Contact
             List<org.geotoolkit.sml.xml.v101.Contact> newContact = new ArrayList<org.geotoolkit.sml.xml.v101.Contact>();
             for (Contact oldContact : oldProcess.getContact()) {
-                // TODO
+                newContact.add(new org.geotoolkit.sml.xml.v101.Contact(oldContact));
             }
             newProcess.setContact(newContact);
 
             // Contact
             List<org.geotoolkit.sml.xml.v101.Documentation> newDocumentation = new ArrayList<org.geotoolkit.sml.xml.v101.Documentation>();
             for (Documentation oldDoc : oldProcess.getDocumentation()) {
-                // TODO
+                newDocumentation.add(new org.geotoolkit.sml.xml.v101.Documentation(oldDoc));
             }
             newProcess.setDocumentation(newDocumentation);
 
             // History
-            List<org.geotoolkit.sml.xml.v101.History> newHystory = new ArrayList<org.geotoolkit.sml.xml.v101.History>();
+            List<org.geotoolkit.sml.xml.v101.History> newHistory = new ArrayList<org.geotoolkit.sml.xml.v101.History>();
             for (History oldhist : oldProcess.getHistory()) {
-                // TODO
+                newHistory.add(new org.geotoolkit.sml.xml.v101.History(oldhist));
             }
-            newProcess.setHistory(newHystory);
+            newProcess.setHistory(newHistory);
 
             // Identification
             List<org.geotoolkit.sml.xml.v101.Identification> newIdentification = new ArrayList<org.geotoolkit.sml.xml.v101.Identification>();
             for (Identification oldIdent : oldProcess.getIdentification()) {
-                // TODO
+                newIdentification.add(new org.geotoolkit.sml.xml.v101.Identification(oldIdent));
             }
             newProcess.setIdentification(newIdentification);
 
@@ -346,14 +346,14 @@ public class SmlFactory {
             // keywords
             List<org.geotoolkit.sml.xml.v101.Keywords> newKeywords = new ArrayList<org.geotoolkit.sml.xml.v101.Keywords>();
             for (Keywords oldKeyw : oldProcess.getKeywords()) {
-                // TODO
+                newKeywords.add(new org.geotoolkit.sml.xml.v101.Keywords(oldKeyw));
             }
             newProcess.setKeywords(newKeywords);
 
             // legal constraint
             List<org.geotoolkit.sml.xml.v101.LegalConstraint> newLegalConstraints = new ArrayList<org.geotoolkit.sml.xml.v101.LegalConstraint>();
             for (LegalConstraint oldcons : oldProcess.getLegalConstraint()) {
-                // TODO
+                newLegalConstraints.add(new org.geotoolkit.sml.xml.v101.LegalConstraint(oldcons));
             }
             newProcess.setLegalConstraint(newLegalConstraints);
 
@@ -363,7 +363,35 @@ public class SmlFactory {
             // validTime
             newProcess.setValidTime(oldProcess.getValidTime());
 
+            AbstractComponent newAbsComponent = (AbstractComponent) newProcess;
+            AbstractComponent oldAbsComponent = (AbstractComponent) oldProcess;
 
+            //Inputs
+            newAbsComponent.setInputs(oldAbsComponent.getInputs());
+
+            // outputs
+            newAbsComponent.setOutputs(oldAbsComponent.getOutputs());
+
+            // parameters
+            newAbsComponent.setParameters(oldAbsComponent.getParameters());
+
+            org.geotoolkit.sml.xml.v101.AbstractDerivableComponentType newDerComponent =  (org.geotoolkit.sml.xml.v101.AbstractDerivableComponentType) newProcess;
+            AbstractDerivableComponent oldDerComponent = (AbstractDerivableComponent) oldProcess;
+
+            // Position
+            newDerComponent.setPosition(oldDerComponent.getPosition());
+
+            newDerComponent.setSMLLocation(oldDerComponent.getSMLLocation());
+
+            newDerComponent.setInterfaces(new org.geotoolkit.sml.xml.v101.Interfaces(oldDerComponent.getInterfaces()));
+
+            newDerComponent.setSpatialReferenceFrame(new org.geotoolkit.sml.xml.v101.SpatialReferenceFrame(oldDerComponent.getSpatialReferenceFrame()));
+
+            newDerComponent.setTemporalReferenceFrame(new org.geotoolkit.sml.xml.v101.TemporalReferenceFrame(oldDerComponent.getTemporalReferenceFrame()));
+
+            newDerComponent.setTimePosition(new org.geotoolkit.sml.xml.v101.TimePosition(oldDerComponent.getTimePosition()));
+
+            
             if (oldMember.getRealProcess() instanceof System) {
                 SystemType oldSystem = (SystemType) oldMember.getRealProcess();
 
@@ -373,12 +401,19 @@ public class SmlFactory {
                 // positions
                 ((org.geotoolkit.sml.xml.v101.SystemType)newProcess).setPositions(oldSystem.getPositions());
 
-                // conenctions
+                // connections
+                org.geotoolkit.sml.xml.v101.Connections newConnections = new org.geotoolkit.sml.xml.v101.Connections(oldSystem.getConnections());
+                ((org.geotoolkit.sml.xml.v101.SystemType)newProcess).setConnections(newConnections);
+
             } else if (oldMember.getRealProcess() instanceof Component) {
                 ComponentType oldComponent = (ComponentType) oldMember.getRealProcess();
 
+                // method
+                org.geotoolkit.sml.xml.v101.MethodPropertyType newMethod = new org.geotoolkit.sml.xml.v101.MethodPropertyType(oldComponent.getMethod());
+                ((org.geotoolkit.sml.xml.v101.ComponentType)newProcess).setMethod(newMethod);
+
             } else {
-                throw new IllegalArgumentException("Other snesor type than system or component are not yet convertible");
+                throw new IllegalArgumentException("Other sensor type than system or component are not yet convertible");
             }
             newMembers.add(new org.geotoolkit.sml.xml.v101.SensorML.Member(newProcess));
         }

@@ -48,6 +48,17 @@ public class ComponentType extends AbstractComponentType implements Component {
 
     private MethodPropertyType method;
 
+    public ComponentType() {
+
+    }
+
+    public ComponentType(Component cp) {
+        super(cp);
+        if (cp != null && cp.getMethod() != null) {
+            this.method = new MethodPropertyType(cp.getMethod());
+        }
+    }
+
     /**
      * @return the method
      */

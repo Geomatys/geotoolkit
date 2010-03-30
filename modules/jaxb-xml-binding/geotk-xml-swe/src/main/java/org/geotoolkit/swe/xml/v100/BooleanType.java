@@ -78,6 +78,18 @@ public class BooleanType extends AbstractDataComponentType implements AbstractBo
     }
 
     /**
+     * Build a new TimeType
+     */
+    public BooleanType(AbstractBoolean bool) {
+        super(bool);
+        if (bool != null) {
+            this.value  = bool.isValue();
+            this.axisID = bool.getAxisID();
+            this.referenceFrame = bool.getReferenceFrame();
+        }
+
+    }
+    /**
      * Gets the value of the quality property.
      */
     public QualityPropertyType getQuality() {

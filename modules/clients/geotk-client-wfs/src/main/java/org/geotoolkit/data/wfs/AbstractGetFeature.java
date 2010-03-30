@@ -152,8 +152,6 @@ public abstract class AbstractGetFeature extends AbstractRequest implements GetF
                 sbNS.deleteCharAt(sbNS.length()-1);
             }
 
-            sbNS.append("}");
-
             requestParameters.put("TYPENAME",sbN.toString());
             requestParameters.put("NAMESPACE",sbNS.toString());
         }

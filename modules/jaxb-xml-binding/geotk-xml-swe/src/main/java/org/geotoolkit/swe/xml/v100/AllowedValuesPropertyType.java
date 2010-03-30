@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.swe.xml.AbstractAllowedValuesProperty;
 
 
 /**
@@ -49,7 +50,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "AllowedValuesPropertyType", propOrder = {
     "allowedValues"
 })
-public class AllowedValuesPropertyType {
+public class AllowedValuesPropertyType implements AbstractAllowedValuesProperty {
 
     @XmlElement(name = "AllowedValues")
     private AllowedValues allowedValues;
@@ -74,6 +75,26 @@ public class AllowedValuesPropertyType {
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
     private String actuate;
 
+    public AllowedValuesPropertyType() {
+
+    }
+
+    public AllowedValuesPropertyType(AbstractAllowedValuesProperty avp) {
+        if (avp != null) {
+            this.actuate = avp.getActuate();
+            if (avp.getAllowedValues() != null) {
+                this.allowedValues = new AllowedValues(avp.getAllowedValues());
+            }
+            this.arcrole = avp.getArcrole();
+            this.href    = avp.getHref();
+            this.remoteSchema = avp.getRemoteSchema();
+            this.role    = avp.getRole();
+            this.show    = avp.getShow();
+            this.title   = avp.getTitle();
+            this.type    = avp.getType();
+        }
+    }
+    
     /**
      * Gets the value of the allowedValues property.
      * 
@@ -131,11 +152,7 @@ public class AllowedValuesPropertyType {
      *     
      */
     public String getType() {
-        if (type == null) {
-            return "simple";
-        } else {
-            return type;
-        }
+        return type;
     }
 
     /**

@@ -14,11 +14,13 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
+
 package org.geotoolkit.sml.xml.v101;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.sml.xml.AbstractDataSource;
 
 
 /**
@@ -80,11 +82,30 @@ import javax.xml.bind.annotation.XmlType;
     "values",
     "observationReference"
 })
-public class DataSourceType extends AbstractProcessType {
+public class DataSourceType extends AbstractProcessType implements AbstractDataSource {
 
     private DataDefinition dataDefinition;
     private Values values;
     private ObservationReference observationReference;
+
+    public DataSourceType() {
+
+    }
+
+    public DataSourceType(AbstractDataSource ds) {
+        super(ds);
+        if (ds != null) {
+            if (ds.getDataDefinition() != null) {
+                this.dataDefinition = new DataDefinition(ds.getDataDefinition());
+            }
+            if (ds.getValues() != null) {
+                this.values = new Values(ds.getValues());
+            }
+            if  (ds.getObservationReference() != null) {
+                this.observationReference = new ObservationReference(ds.getObservationReference());
+            }
+        }
+    }
 
     /**
      * Gets the value of the dataDefinition property.

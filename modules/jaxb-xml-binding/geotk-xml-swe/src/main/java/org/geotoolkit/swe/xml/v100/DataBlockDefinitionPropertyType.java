@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.swe.xml.DataBlockDefinitionProperty;
 
 
 /**
@@ -49,7 +50,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "DataBlockDefinitionPropertyType", propOrder = {
     "dataBlockDefinition"
 })
-public class DataBlockDefinitionPropertyType {
+public class DataBlockDefinitionPropertyType implements DataBlockDefinitionProperty {
 
     @XmlElement(name = "DataBlockDefinition")
     private DataBlockDefinitionType dataBlockDefinition;
@@ -131,11 +132,7 @@ public class DataBlockDefinitionPropertyType {
      *     
      */
     public String getType() {
-        if (type == null) {
-            return "simple";
-        } else {
-            return type;
-        }
+        return type;
     }
 
     /**

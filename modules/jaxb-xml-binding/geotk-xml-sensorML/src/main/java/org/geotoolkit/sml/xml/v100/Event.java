@@ -28,6 +28,7 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.geotoolkit.gml.xml.v311.StringOrRefType;
+import org.geotoolkit.sml.xml.AbstractEvent;
 import org.geotoolkit.swe.xml.v100.DataComponentPropertyType;
 
 
@@ -68,7 +69,7 @@ import org.geotoolkit.swe.xml.v100.DataComponentPropertyType;
     "property"
 })
 @XmlRootElement(name = "Event")
-public class Event {
+public class Event implements AbstractEvent {
 
     private String date;
     @XmlElement(namespace = "http://www.opengis.net/gml")

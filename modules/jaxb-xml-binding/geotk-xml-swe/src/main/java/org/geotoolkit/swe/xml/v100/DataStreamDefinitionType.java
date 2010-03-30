@@ -27,6 +27,7 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import org.geotoolkit.swe.xml.DataStreamDefinition;
 
 
 /**
@@ -56,7 +57,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
     "streamComponent",
     "streamEncoding"
 })
-public class DataStreamDefinitionType {
+public class DataStreamDefinitionType implements DataStreamDefinition {
 
     @XmlElement(required = true)
     private List<DataBlockDefinitionPropertyType> streamComponent;

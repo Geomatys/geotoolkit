@@ -67,6 +67,13 @@ public abstract class AbstractDataRecordType extends AbstractDataComponentType i
     }
 
     /**
+     * super-constructor called by sub-classes.
+     */
+    public AbstractDataRecordType(final AbstractDataRecord record) {
+        super(record);
+    }
+
+    /**
      * Verify if this entry is identical to specified object.
      */
     @Override

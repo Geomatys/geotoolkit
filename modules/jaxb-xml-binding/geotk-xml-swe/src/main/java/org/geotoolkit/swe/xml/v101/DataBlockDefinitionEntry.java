@@ -16,8 +16,10 @@
  */
 package org.geotoolkit.swe.xml.v101;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -25,7 +27,7 @@ import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import org.geotoolkit.swe.xml.AbstractEncoding;
+import org.geotoolkit.swe.xml.AbstractDataComponent;
 import org.geotoolkit.swe.xml.DataBlockDefinition;
 import org.geotoolkit.util.Utilities;
 
@@ -64,6 +66,23 @@ import org.geotoolkit.util.Utilities;
      * constructeur utilisé par jaxB
      */
     DataBlockDefinitionEntry() {}
+
+    public DataBlockDefinitionEntry(DataBlockDefinition db) {
+        if (db != null) {
+            this.id = db.getId();
+            if (db.getEncoding() != null) {
+                this.encoding = new AbstractEncodingPropertyType(db.getEncoding());
+            }
+            if (db.getComponents() != null) {
+                List<AbstractDataComponentEntry> tmp = new ArrayList<AbstractDataComponentEntry>();
+                for (AbstractDataComponent c : db.getComponents()) {
+                    // TODO disociate types
+                    tmp.add(new AbstractDataComponentEntry(c));
+                }
+                this.components = tmp;
+            }
+        }
+    }
     
     /**
      * créé un nouveau resultat d'observation.
@@ -102,11 +121,8 @@ import org.geotoolkit.util.Utilities;
     /**
      * {@inheritDoc}
      */
-    public AbstractEncoding getEncoding() {
-        if (encoding != null) {
-            return encoding.getencoding();
-        }
-        return null;
+    public AbstractEncodingPropertyType getEncoding() {
+        return encoding;
     }
     
     /**

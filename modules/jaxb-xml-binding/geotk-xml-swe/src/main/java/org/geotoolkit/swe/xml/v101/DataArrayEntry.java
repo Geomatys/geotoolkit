@@ -113,7 +113,7 @@ public class DataArrayEntry extends AbstractDataArrayEntry implements DataArray 
      */
     public AbstractEncodingEntry getEncoding() {
         if (encoding != null) {
-            return encoding.getencoding();
+            return encoding.getEncoding();
         }
         return null;
     }

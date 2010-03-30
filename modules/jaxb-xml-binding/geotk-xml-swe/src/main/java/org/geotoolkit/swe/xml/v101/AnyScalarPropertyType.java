@@ -23,7 +23,12 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.swe.xml.AbstractBoolean;
+import org.geotoolkit.swe.xml.AbstractDataComponent;
+import org.geotoolkit.swe.xml.AbstractText;
+import org.geotoolkit.swe.xml.AbstractTime;
 import org.geotoolkit.swe.xml.AnyScalar;
+import org.geotoolkit.swe.xml.Quantity;
 import org.geotoolkit.util.Utilities;
 
 
@@ -102,6 +107,38 @@ public class AnyScalarPropertyType implements AnyScalar {
 
     }
 
+    public AnyScalarPropertyType(AnyScalar sc) {
+        if (sc != null) {
+            if (sc.getValue() != null) {
+                AbstractDataComponent component = sc.getValue();
+                if (component instanceof AbstractTime) {
+                    this.time = new TimeType((AbstractTime) component);
+
+                } else if (component instanceof Quantity) {
+                    this.quantity = new QuantityType((Quantity) component);
+
+                } else if (component instanceof AbstractBoolean) {
+                    this._boolean = new BooleanType((AbstractBoolean) component);
+
+                } else if (component instanceof AbstractText) {
+                    this.text = new Text((AbstractText) component);
+
+                } else {
+                    abstractDataComponent = new AbstractDataComponentEntry(component);
+                }
+            }
+            this.actuate = sc.getActuate();
+            this.arcrole = sc.getArcrole();
+            this.href    = sc.getHref();
+            this.name    = sc.getName();
+            this.remoteSchema = sc.getRemoteSchema();
+            this.role    = sc.getRole();
+            this.show    = sc.getShow();
+            this.title   = sc.getTitle();
+            this.type    = sc.getType();
+        }
+    }
+
     public AnyScalarPropertyType(String name, QuantityType quantity) {
         this.name     = name;
         this.quantity = quantity;
@@ -132,7 +169,7 @@ public class AnyScalarPropertyType implements AnyScalar {
     }
     
     /**
-     * surcharge le getName() de Entry
+     * Gets the value of name.
      */
     public String getName() {
         return this.name;
@@ -147,7 +184,7 @@ public class AnyScalarPropertyType implements AnyScalar {
     /**
      * Gets the value of the phenomenon property.
      */
-    public AbstractDataComponentEntry getComponent() {
+    public AbstractDataComponentEntry getValue() {
         if (abstractDataComponent != null) {
             return abstractDataComponent;
         } else if (time != null){
@@ -170,11 +207,7 @@ public class AnyScalarPropertyType implements AnyScalar {
      * Gets the value of the type property.
      */
     public String getType() {
-        if (type == null) {
-            return "simple";
-        } else {
-            return type;
-        }
+        return type;
     }
 
     /**

@@ -26,4 +26,8 @@ import java.util.List;
 public interface AbstractClassifierList {
 
     public List<? extends AbstractClassifier> getClassifier();
+
+    String getId();
+
+    void setId(String value);
 }

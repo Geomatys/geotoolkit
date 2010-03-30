@@ -25,7 +25,12 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import org.geotoolkit.swe.xml.AbstractBoolean;
+import org.geotoolkit.swe.xml.AbstractDataComponent;
+import org.geotoolkit.swe.xml.AbstractText;
+import org.geotoolkit.swe.xml.AbstractTime;
 import org.geotoolkit.swe.xml.AnyScalar;
+import org.geotoolkit.swe.xml.Quantity;
 import org.geotoolkit.util.Utilities;
 
 
@@ -133,8 +138,37 @@ public class AnyScalarPropertyType implements AnyScalar {
         this.text  = text;
     }
 
+    public AnyScalarPropertyType(AnyScalar sc) {
+        if (sc != null) {
+            if (sc.getValue() != null) {
+                AbstractDataComponent component = sc.getValue();
+                if (component instanceof AbstractTime) {
+                    this.time = new TimeType((AbstractTime) component);
+
+                } else if (component instanceof Quantity) {
+                    this.quantity = new QuantityType((Quantity) component);
+
+                } else if (component instanceof AbstractBoolean) {
+                    this._boolean = new BooleanType((AbstractBoolean) component);
+
+                } else if (component instanceof AbstractText) {
+                    this.text = new Text((AbstractText) component);
+
+                }
+            }
+            this.actuate = sc.getActuate();
+            this.arcrole = sc.getArcrole();
+            this.href    = sc.getHref();
+            this.name    = sc.getName();
+            this.remoteSchema = sc.getRemoteSchema();
+            this.role    = sc.getRole();
+            this.show    = sc.getShow();
+            this.title   = sc.getTitle();
+            this.type    = sc.getType();
+        }
+    }
+    
     public void setValue(Object obj) {
-        ObjectFactory factory = new ObjectFactory();
         if (obj instanceof JAXBElement) {
             obj = ((JAXBElement) obj).getValue();
         }
@@ -156,7 +190,7 @@ public class AnyScalarPropertyType implements AnyScalar {
 
     }
 
-    public Object getValue() {
+    public AbstractDataComponentType getValue() {
 
         if (count != null) {
             return count;
@@ -376,11 +410,7 @@ public class AnyScalarPropertyType implements AnyScalar {
      *     
      */
     public String getType() {
-        if (type == null) {
-            return "simple";
-        } else {
-            return type;
-        }
+        return type;
     }
 
     /**

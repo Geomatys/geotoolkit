@@ -70,6 +70,18 @@ public class Connection implements AbstractConnection {
 
     }
 
+    public Connection(AbstractConnection connection) {
+        if (connection != null) {
+            this.name      = connection.getName();
+            if (connection.getLink() != null) {
+                this.link      = new Link(connection.getLink());
+            }
+            if (connection.getArrayLink() != null) {
+                this.arrayLink = new ArrayLink(connection.getArrayLink());
+            }
+        }
+    }
+
     public Connection(String name, Link link) {
         this.name = name;
         this.link = link;

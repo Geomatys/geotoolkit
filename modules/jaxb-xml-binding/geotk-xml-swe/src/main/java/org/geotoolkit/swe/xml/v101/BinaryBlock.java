@@ -27,6 +27,12 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import org.geotoolkit.swe.xml.AbstractBinaryBlock;
+import org.geotoolkit.swe.xml.BinaryBlockMember;
+import org.geotoolkit.swe.xml.BinaryBlockMemberBlock;
+import org.geotoolkit.swe.xml.BinaryBlockMemberComponent;
+import org.geotoolkit.swe.xml.ByteEncoding;
+import org.geotoolkit.swe.xml.ByteOrder;
 import org.geotoolkit.util.Utilities;
 
 
@@ -96,7 +102,7 @@ import org.geotoolkit.util.Utilities;
     "member"
 })
 @XmlRootElement(name = "BinaryBlock")
-public class BinaryBlock extends AbstractEncodingEntry {
+public class BinaryBlock extends AbstractEncodingEntry  implements AbstractBinaryBlock {
 
     @XmlElement(required = true)
     private List<BinaryBlock.Member> member;
@@ -107,6 +113,25 @@ public class BinaryBlock extends AbstractEncodingEntry {
     private ByteEncoding byteEncoding;
     @XmlAttribute(required = true)
     private ByteOrder byteOrder;
+
+    public BinaryBlock() {
+
+    }
+
+    public BinaryBlock(AbstractBinaryBlock bb) {
+        super(bb);
+        if (bb != null) {
+            this.byteLength = bb.getByteLength();
+            if (bb.getMember() != null) {
+                this.member = new ArrayList<Member>();
+                for (BinaryBlockMember m : bb.getMember()) {
+                    this.member.add(new Member(m));
+                }
+            }
+            this.byteEncoding = bb.getByteEncoding();
+            this.byteOrder    = bb.getByteOrder();
+        }
+    }
 
     /**
      * Gets the value of the member property.
@@ -243,12 +268,28 @@ public class BinaryBlock extends AbstractEncodingEntry {
         "component",
         "block"
     })
-    public static class Member {
+    public static class Member implements BinaryBlockMember {
 
         @XmlElement(name = "Component")
         private BinaryBlock.Member.Component component;
         @XmlElement(name = "Block")
         private BinaryBlock.Member.Block block;
+
+        public Member() {
+
+        }
+
+        public Member(BinaryBlockMember m) {
+            if (m != null) {
+                if (m.getBlock() != null) {
+                    this.block = new Block(m.getBlock());
+                }
+                if (m.getComponent() != null) {
+                    this.component = new Component(m.getComponent());
+                }
+            }
+
+        }
 
         /**
          * Gets the value of the component property.
@@ -327,7 +368,7 @@ public class BinaryBlock extends AbstractEncodingEntry {
          */
         @XmlAccessorType(XmlAccessType.FIELD)
         @XmlType(name = "")
-        public static class Block {
+        public static class Block implements BinaryBlockMemberBlock {
 
             @XmlAttribute(required = true)
             @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
@@ -349,6 +390,21 @@ public class BinaryBlock extends AbstractEncodingEntry {
             @XmlSchemaType(name = "anyURI")
             private String compression;
 
+            public Block() {
+
+            }
+
+            public Block(BinaryBlockMemberBlock bl) {
+                if (bl != null) {
+                    this.byteLength         = bl.getByteLength();
+                    this.compression        = bl.getCompression();
+                    this.encryption         = bl.getEncryption();
+                    this.paddingBytesAfter  = bl.getPaddingBytesAfter();
+                    this.paddingBytesBefore = bl.getPaddingBytesBefore();
+                    this.ref                = bl.getRef();
+                }
+
+            }
             /**
              * Gets the value of the ref property.
              * 
@@ -504,7 +560,7 @@ public class BinaryBlock extends AbstractEncodingEntry {
          */
         @XmlAccessorType(XmlAccessType.FIELD)
         @XmlType(name = "")
-        public static class Component {
+        public static class Component implements BinaryBlockMemberComponent {
 
             @XmlAttribute(required = true)
             @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
@@ -528,6 +584,22 @@ public class BinaryBlock extends AbstractEncodingEntry {
             @XmlAttribute
             @XmlSchemaType(name = "anyURI")
             private String encryption;
+
+            public Component() {
+
+            }
+
+            public Component(BinaryBlockMemberComponent bc) {
+                if (bc != null) {
+                    this.bitLength         = bc.getBitLength();
+                    this.dataType          = bc.getDataType();
+                    this.encryption        = bc.getEncryption();
+                    this.paddingBitsAfter  = bc.getPaddingBitsAfter();
+                    this.paddingBitsBefore = bc.getPaddingBitsBefore();
+                    this.ref               = bc.getRef();
+                    this.significantBits   = bc.getSignificantBits();
+                }
+            }
 
             /**
              * Gets the value of the ref property.

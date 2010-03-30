@@ -27,6 +27,12 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import org.geotoolkit.swe.xml.AbstractBinaryBlock;
+import org.geotoolkit.swe.xml.BinaryBlockMember;
+import org.geotoolkit.swe.xml.BinaryBlockMemberBlock;
+import org.geotoolkit.swe.xml.BinaryBlockMemberComponent;
+import org.geotoolkit.swe.xml.ByteEncoding;
+import org.geotoolkit.swe.xml.ByteOrder;
 
 
 /**
@@ -95,7 +101,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
     "member"
 })
 @XmlRootElement(name = "BinaryBlock")
-public class BinaryBlock extends AbstractEncodingType {
+public class BinaryBlock extends AbstractEncodingType implements AbstractBinaryBlock{
 
     @XmlElement(required = true)
     private List<BinaryBlock.Member> member;
@@ -212,7 +218,7 @@ public class BinaryBlock extends AbstractEncodingType {
         "component",
         "block"
     })
-    public static class Member {
+    public static class Member implements BinaryBlockMember {
 
         @XmlElement(name = "Component")
         private BinaryBlock.Member.Component component;
@@ -272,7 +278,7 @@ public class BinaryBlock extends AbstractEncodingType {
          */
         @XmlAccessorType(XmlAccessType.FIELD)
         @XmlType(name = "")
-        public static class Block {
+        public static class Block implements BinaryBlockMemberBlock {
 
             @XmlAttribute(required = true)
             @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
@@ -474,7 +480,7 @@ public class BinaryBlock extends AbstractEncodingType {
          */
         @XmlAccessorType(XmlAccessType.FIELD)
         @XmlType(name = "")
-        public static class Component {
+        public static class Component implements BinaryBlockMemberComponent {
 
             @XmlAttribute(required = true)
             @XmlJavaTypeAdapter(CollapsedStringAdapter.class)

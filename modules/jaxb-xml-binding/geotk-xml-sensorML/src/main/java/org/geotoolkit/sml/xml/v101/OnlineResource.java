@@ -74,6 +74,19 @@ public class OnlineResource implements AbstractOnlineResource {
 
     }
 
+    public OnlineResource(AbstractOnlineResource or) {
+        if (or != null) {
+            this.actuate = or.getActuate();
+            this.arcrole = or.getArcrole();
+            this.href    = or.getHref();
+            this.remoteSchema = or.getRemoteSchema();
+            this.role = or.getRole();
+            this.show = or.getShow();
+            this.title = or.getTitle();
+            this.type = or.getType();
+        }
+    }
+
     public OnlineResource(String href) {
         this.href = href;
     }
@@ -111,12 +124,8 @@ public class OnlineResource implements AbstractOnlineResource {
      *     
      */
     public String getType() {
-        if (type == null) {
-            return "simple";
-        } else {
-            return type;
-        }
-    }
+        return type;
+     }
 
     /**
      * Sets the value of the type property.

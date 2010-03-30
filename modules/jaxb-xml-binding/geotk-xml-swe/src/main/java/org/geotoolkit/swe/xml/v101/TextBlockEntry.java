@@ -59,6 +59,15 @@ public class TextBlockEntry extends AbstractEncodingEntry implements TextBlock {
      * Constructeur utilisé par jaxB.
      */
     public TextBlockEntry() {}
+
+    public TextBlockEntry(TextBlock tb) {
+        super(tb);
+        if (tb != null) {
+            this.blockSeparator   = tb.getBlockSeparator();
+            this.decimalSeparator = tb.getDecimalSeparator();
+            this.tokenSeparator   = tb.getTokenSeparator();
+        }
+    }
     
     /**
      * Crée un nouveau encodage de texte.

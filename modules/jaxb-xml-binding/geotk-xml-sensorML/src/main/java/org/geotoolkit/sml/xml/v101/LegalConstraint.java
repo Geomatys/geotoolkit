@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.sml.xml.AbstractLegalConstraint;
 
 
 /**
@@ -51,7 +52,7 @@ import javax.xml.bind.annotation.XmlType;
     "rights"
 })
 @XmlRootElement(name = "legalConstraint")
-public class LegalConstraint {
+public class LegalConstraint implements AbstractLegalConstraint {
 
     @XmlElement(name = "Rights")
     private Rights rights;
@@ -78,6 +79,22 @@ public class LegalConstraint {
 
     public LegalConstraint() {
 
+    }
+
+    public LegalConstraint(AbstractLegalConstraint doc) {
+        if (doc != null) {
+            this.actuate      = doc.getActuate();
+            this.arcrole      = doc.getArcrole();
+            this.href         = doc.getHref();
+            this.remoteSchema = doc.getRemoteSchema();
+            this.role         = doc.getRole();
+            this.show         = doc.getShow();
+            this.title        = doc.getTitle();
+            this.type         = doc.getType();
+            if (doc.getRights() != null) {
+                this.rights = new Rights(doc.getRights());
+            }
+        }
     }
 
     public LegalConstraint(Rights rights) {
@@ -141,11 +158,7 @@ public class LegalConstraint {
      *     
      */
     public String getType() {
-        if (type == null) {
-            return "simple";
-        } else {
-            return type;
-        }
+        return type;
     }
 
     /**

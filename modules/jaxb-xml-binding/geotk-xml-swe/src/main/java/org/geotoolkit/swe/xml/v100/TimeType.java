@@ -87,6 +87,20 @@ public class TimeType extends AbstractDataComponentType implements AbstractTime 
         this.uom = uom;
     }
 
+    public TimeType(AbstractTime time) {
+        super(time);
+        if (time != null) {
+            if (time.getUom() != null) {
+                this.uom = new UomPropertyType(time.getUom());
+            }
+            this.referenceFrame = time.getReferenceFrame();
+            this.referenceTime  = time.getReferenceTime();
+            this.localFrame     = time.getLocalFrame();
+            this.value          = time.getValue();
+        }
+
+    }
+    
     /**
      * Gets the value of the uom property.
      */

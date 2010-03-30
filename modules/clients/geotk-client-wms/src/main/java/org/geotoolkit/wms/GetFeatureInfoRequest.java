@@ -20,17 +20,10 @@ package org.geotoolkit.wms;
 /**
  *
  * @author Johann Sorel (Geomatys)
+ * @author Cédric Briançon (Geomatys)
  * @module pending
  */
 public interface GetFeatureInfoRequest extends GetMapRequest {
-
-    int getX();
-
-    void setX(int x);
-
-    int getY();
-
-    void setY(int y);
 
     String getInfoFormat();
 
@@ -39,5 +32,27 @@ public interface GetFeatureInfoRequest extends GetMapRequest {
     String[] getQueryLayers();
 
     void setQueryLayers(String[] layers);
+
+    /**
+     * Returns the column index to request into an image, in pixels.
+     * It is represented by the X value in WMS 1.1.1 or I in WMS 1.3.0.
+     */
+    Integer getColumnIndex();
+
+    /**
+     * Sets the value for the column index to request into an image.
+     */
+    void setColumnIndex(Integer columnIndex);
+
+    /**
+     * Returns the raw index to request into an image, in pixels.
+     * It is represented by the Y value in WMS 1.1.1 or J in WMS 1.3.0.
+     */
+    Integer getRawIndex();
+
+    /**
+     * Sets the value for the column index to request into an image.
+     */
+    void setRawIndex(Integer rawIndex);
 
 }

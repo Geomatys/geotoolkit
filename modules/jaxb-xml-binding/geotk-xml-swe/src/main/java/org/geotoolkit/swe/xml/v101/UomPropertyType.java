@@ -97,6 +97,23 @@ public class UomPropertyType implements UomProperty {
 
     
     public UomPropertyType() {}
+
+    public UomPropertyType(UomProperty uom) {
+        if (uom != null) {
+            this.actuate   = uom.getActuate();
+            this.arcrole   = uom.getArcrole();
+            this.baseUnit  = uom.getBaseUnit();
+            this.code      = uom.getCode();
+            this.href      = uom.getHref();
+            //this.nilReason = uom.
+            this.remoteSchema = uom.getRemoteSchema();
+            this.role = uom.getRole();
+            this.show = uom.getShow();
+            this.title = uom.getTitle();
+            this.type  = uom.getType();
+            this.unitDefinition = uom.getUnitDefinition();
+        }
+    }
     
     public UomPropertyType(String code, String href) {
         this.code = code;

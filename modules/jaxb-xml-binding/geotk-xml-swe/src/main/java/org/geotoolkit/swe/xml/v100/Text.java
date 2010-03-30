@@ -52,6 +52,17 @@ public class Text extends AbstractDataComponentType implements AbstractText {
 
     private String value;
 
+    public Text() {
+
+    }
+
+    public Text(AbstractText tx) {
+        super(tx);
+        if (tx != null) {
+            this.value = tx.getValue();
+        }
+    }
+
     /**
      * Gets the value of the value property.
      */

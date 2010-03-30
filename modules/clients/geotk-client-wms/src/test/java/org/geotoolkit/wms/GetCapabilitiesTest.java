@@ -25,12 +25,17 @@ import static org.junit.Assert.*;
 
 
 /**
+ * Testing class for GetCapabilities requests, in version 1.1.1 and 1.3.0.
  *
  * @author Cédric Briançon (Geomatys)
  */
 public class GetCapabilitiesTest {
     public GetCapabilitiesTest() {}
 
+    /**
+     * Ensures the {@link GetCapabilities111#getURL()} method returns a well-built url,
+     * with the parameters given.
+     */
     @Test
     public void testGetCapabilities111() {
         final GetCapabilities111 caps111 = new GetCapabilities111("http://test.com");
@@ -45,6 +50,10 @@ public class GetCapabilitiesTest {
         assertEquals(expectedURL, url.toString());
     }
 
+    /**
+     * Ensures the {@link GetCapabilities130#getURL()} method returns a well-built url,
+     * with the parameters given.
+     */
     @Test
     public void testGetCapabilities130() {
         final GetCapabilities130 caps130 = new GetCapabilities130("http://test.com");

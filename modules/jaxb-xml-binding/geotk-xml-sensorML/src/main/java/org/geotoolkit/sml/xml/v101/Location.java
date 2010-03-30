@@ -26,6 +26,10 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.v311.AbstractCurveType;
+import org.geotoolkit.gml.xml.v311.CompositeCurveType;
+import org.geotoolkit.gml.xml.v311.CurveType;
+import org.geotoolkit.gml.xml.v311.LineStringType;
+import org.geotoolkit.gml.xml.v311.OrientableCurveType;
 import org.geotoolkit.gml.xml.v311.PointType;
 import org.geotoolkit.sml.xml.AbstractLocation;
 
@@ -89,6 +93,35 @@ public class Location implements AbstractLocation {
 
     }
 
+    public Location(AbstractLocation loc) {
+        if (loc != null) {
+            this.actuate = loc.getActuate();
+            this.arcrole = loc.getArcrole();
+            this.href    = loc.getHref();
+            this.remoteSchema = loc.getRemoteSchema();
+            this.role    = loc.getRole();
+            this.show    = loc.getShow();
+            this.title   = loc.getTitle();
+            this.type    = loc.getType();
+            this.point   = loc.getPoint();
+            if (loc.getCurve() != null) {
+                org.geotoolkit.gml.xml.v311.ObjectFactory f = new org.geotoolkit.gml.xml.v311.ObjectFactory();
+                AbstractCurveType curve = loc.getCurve();
+                if (curve instanceof CompositeCurveType) {
+                    this.abstractCurve = f.createCompositeCurve((CompositeCurveType) curve);
+                } else if (curve instanceof LineStringType) {
+                    this.abstractCurve = f.createLineString((LineStringType) curve);
+                } else if (curve instanceof CurveType) {
+                    this.abstractCurve = f.createCurve((CurveType) curve);
+                } else if (curve instanceof OrientableCurveType) {
+                    this.abstractCurve = f.createOrientableCurve((OrientableCurveType) curve);
+                } else  {
+                    this.abstractCurve = f.createAbstractCurve(curve);
+                }
+            }
+        }
+    }
+
     public Location(PointType point) {
         this.point = point;
     }
@@ -131,6 +164,13 @@ public class Location implements AbstractLocation {
      */
     public JAXBElement<? extends AbstractCurveType> getAbstractCurve() {
         return abstractCurve;
+    }
+
+    public AbstractCurveType getCurve() {
+        if (abstractCurve != null) {
+            return abstractCurve.getValue();
+        }
+        return null;
     }
 
     /**
@@ -182,12 +222,8 @@ public class Location implements AbstractLocation {
      *     
      */
     public String getType() {
-        if (type == null) {
-            return "simple";
-        } else {
-            return type;
-        }
-    }
+        return type;
+     }
 
     /**
      * Sets the value of the type property.

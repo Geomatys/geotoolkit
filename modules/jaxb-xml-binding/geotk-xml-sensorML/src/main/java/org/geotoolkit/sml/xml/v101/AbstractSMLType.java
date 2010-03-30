@@ -59,4 +59,11 @@ import org.geotoolkit.sml.xml.AbstractSML;
 })
 public abstract class AbstractSMLType extends AbstractFeatureEntry implements AbstractSML {
 
+    public AbstractSMLType() {
+        
+    }
+
+    public AbstractSMLType(AbstractSML sm) {
+        super(sm);
+    }
 }

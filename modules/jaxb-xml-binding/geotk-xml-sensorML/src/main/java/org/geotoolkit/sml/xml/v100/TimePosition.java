@@ -106,8 +106,15 @@ public class TimePosition implements AbstractTimePosition {
     /**
      * Gets the value of the process property.
      */
-    public JAXBElement<? extends AbstractProcessType> getProcess() {
+    public JAXBElement<? extends AbstractProcessType> getRealProcess() {
         return process;
+    }
+
+    public AbstractProcessType getProcess() {
+        if (process != null) {
+            return process.getValue();
+        }
+        return null;
     }
 
     /**
@@ -243,12 +250,8 @@ public class TimePosition implements AbstractTimePosition {
      * Gets the value of the type property.
      */
     public String getType() {
-        if (type == null) {
-            return "simple";
-        } else {
-            return type;
-        }
-    }
+        return type;
+     }
 
     /**
      * Sets the value of the type property.

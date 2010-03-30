@@ -31,8 +31,8 @@ import org.geotoolkit.util.StringUtilities;
  */
 public abstract class AbstractGetFeatureInfo extends AbstractGetMap implements GetFeatureInfoRequest {
 
-    protected int x;
-    protected int y;
+    protected Integer columnIndex;
+    protected Integer rawIndex;
     protected String infoFormat;
     protected String[] queryLayers;
 
@@ -40,14 +40,20 @@ public abstract class AbstractGetFeatureInfo extends AbstractGetMap implements G
         super(serverURL, version);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public int getX() {
-        return x;
+    public Integer getColumnIndex() {
+        return columnIndex;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public int getY() {
-        return y;
+    public Integer getRawIndex() {
+        return rawIndex;
     }
 
     @Override
@@ -60,18 +66,24 @@ public abstract class AbstractGetFeatureInfo extends AbstractGetMap implements G
         return queryLayers;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public void setX(int x) {
-        this.x = x;
+    public void setColumnIndex(Integer columnIndex) {
+        this.columnIndex = columnIndex;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setRawIndex(Integer rawIndex) {
+        this.rawIndex = rawIndex;
     }
 
     @Override
-    public void setY(int y) {
-        this.y = y;
-    }
-
-    @Override
-    public void setQueryLayers(String[] layers) {
+    public void setQueryLayers(String... layers) {
         this.queryLayers = layers;
     }
 
@@ -80,13 +92,26 @@ public abstract class AbstractGetFeatureInfo extends AbstractGetMap implements G
         this.infoFormat = format;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public URL getURL() throws MalformedURLException {
+        if (infoFormat == null) {
+            throw new IllegalArgumentException("Info_Format is not defined");
+        }
+        if (queryLayers == null) {
+            throw new IllegalArgumentException("Query_Layers is not defined");
+        }
         requestParameters.put("INFO_FORMAT", infoFormat);
         requestParameters.put("QUERY_LAYERS", StringUtilities.toCommaSeparatedValues(queryLayers));
+
         return super.getURL();
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public InputStream getSOAPResponse() throws IOException {
         throw new UnsupportedOperationException("Not supported yet.");
