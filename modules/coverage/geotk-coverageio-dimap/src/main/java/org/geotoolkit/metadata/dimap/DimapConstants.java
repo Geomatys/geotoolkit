@@ -24,6 +24,16 @@ package org.geotoolkit.metadata.dimap;
  */
 public final class DimapConstants {
 
+    public static final String RED = "red";
+    public static final String GREEN = "green";
+    public static final String BLUE = "blue";
+    public static final String ALPHA = "alpha";
+    
+
+    ////////////////////////////////////////////////////////////////////////////
+    // XML CONSTANTS ///////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
+
     public static final String TAG_DIMAP = "Dimap_Document";
 
     // Scene frame group -------------------------------------------------------
@@ -69,5 +79,20 @@ public final class DimapConstants {
     public static final String TAG_HORIZONTAL_CS_TYPE = "HORIZONTAL_CS_TYPE";
     public static final String TAG_HORIZONTAL_CS_NAME = "HORIZONTAL_CS_NAME";
 
+    // Image display information -----------------------------------------------
+    public static final String TAG_IMAGE_DISPLAY = "Image_Display";
+    public static final String TAG_BAND_DISPLAY_ORDER = "Band_Display_Order";
+    public static final String TAG_RED_CHANNEL = "RED_CHANNEL";
+    public static final String TAG_GREEN_CHANNEL = "GREEN_CHANNEL";
+    public static final String TAG_BLUE_CHANNEL = "BLUE_CHANNEL";
+    public static final String TAG_SPECIAL_VALUE = "Special_Value";
+    public static final String TAG_SPECIAL_VALUE_INDEX = "SPECIAL_VALUE_INDEX";
+    public static final String TAG_SPECIAL_VALUE_TEXT = "SPECIAL_VALUE_TEXT";
+    public static final String TAG_SPECIAL_VALUE_COLOR = "Special_Value_Color";
+    public static final String TAG_RED_LEVEL = "RED_LEVEL";
+    public static final String TAG_GREEN_LEVEL = "GREEN_LEVEL";
+    public static final String TAG_BLUE_LEVEL = "BLUE_LEVEL";
+
     private DimapConstants(){}
+
 }

@@ -16,50 +16,49 @@
  */
 package org.geotoolkit.image.io.plugin;
 
-import java.awt.Dimension;
-import java.awt.geom.NoninvertibleTransformException;
+import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.imageio.ImageReadParam;
 import javax.imageio.ImageReader;
 import javax.imageio.spi.IIORegistry;
 import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.spi.ServiceRegistry;
 import java.awt.geom.AffineTransform;
 import java.awt.Rectangle;
-import java.awt.geom.Point2D;
-import java.util.ArrayList;
+import java.awt.image.BufferedImage;
+import java.awt.image.Raster;
+import java.awt.image.renderable.ParameterBlock;
 import java.util.List;
-import javax.media.jai.Warp;
-import javax.media.jai.WarpAffine;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBElement;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
+import javax.media.jai.JAI;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.operation.TransformException;
 
+import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
+
+import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.image.io.ImageReaderAdapter;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
 import org.geotoolkit.image.io.metadata.ReferencingBuilder;
+import org.geotoolkit.image.io.metadata.SampleDimension;
+import org.geotoolkit.internal.image.io.DimensionAccessor;
 import org.geotoolkit.internal.image.io.GridDomainAccessor;
 import org.geotoolkit.internal.image.io.Formats;
 import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.lang.Configuration;
+import org.geotoolkit.metadata.dimap.DimapConstants;
 import org.geotoolkit.metadata.dimap.DimapParser;
-import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.referencing.operation.transform.WarpTransform2D;
 import org.geotoolkit.util.Version;
 import org.geotoolkit.util.logging.Logging;
-import org.opengis.referencing.operation.TransformException;
-import org.w3c.dom.Document;
-import org.xml.sax.SAXException;
 
 /**
  * Reader for the <cite>Dimap</cite> format. This reader wraps an other image reader
@@ -103,24 +102,127 @@ public class DimapImageReader extends ImageReaderAdapter {
         throw new IOException("Unexpected reader id : " + readerID +" allowed ids are 'main' and 'dim'.");
     }
 
+    private RenderedImage changeColorModel(RenderedImage image, boolean bufferedImage) throws IOException{
+        if(image == null) return image;
+
+        final SpatialMetadata metadata = getImageMetadata(0);
+        System.out.println(metadata);
+        final List<SampleDimension> dims = metadata.getListForType(SampleDimension.class);
+        Integer red = null;
+        Integer green = null;
+        Integer blue = null;
+        Integer alpha = null;
+
+        for(int i=0,n=dims.size(); i<n; i++){
+            final String color = dims.get(i).getDescriptor().toString();
+            if(color.contains(DimapConstants.RED)){
+                red = i+1;
+            }
+            if(color.contains(DimapConstants.GREEN)){
+                green = i+1;
+            }
+            if(color.contains(DimapConstants.BLUE)){
+                blue = i+1;
+            }
+            if(color.contains(DimapConstants.ALPHA)){
+                alpha = i+1;
+            }
+        }
+
+        final int[] indices;
+        if(alpha != null){
+            indices = new int[]{red,green,blue,alpha};
+        }else{
+            indices = new int[]{red,green,blue};
+        }
+
+        final ParameterBlock pb = new ParameterBlock();
+        pb.addSource(image);
+        pb.add(indices);
+        RenderedImage img = JAI.create("bandSelect",pb);
+
+        if(bufferedImage){
+            BufferedImage buffer = new BufferedImage(img.getWidth(), img.getHeight(), BufferedImage.TYPE_INT_ARGB);
+            buffer.createGraphics().drawRenderedImage(img, new AffineTransform());
+            return buffer;
+        }else{
+            return img;
+        }
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public BufferedImage read(final int imageIndex) throws IOException {
+        return (BufferedImage) changeColorModel(super.read(imageIndex),true);
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public BufferedImage read(final int imageIndex, final ImageReadParam param) throws IOException {
+        return (BufferedImage) changeColorModel(super.read(imageIndex,param),true);
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public RenderedImage readAsRenderedImage(int imageIndex, ImageReadParam param) throws IOException {
+        return changeColorModel(super.readAsRenderedImage(imageIndex, param),false);
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public BufferedImage readTile(final int imageIndex, int tileX, int tileY) throws IOException {
+        return (BufferedImage) changeColorModel(super.readTile(imageIndex, tileX, tileY),true);
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public Raster readRaster(final int imageIndex, final ImageReadParam param) throws IOException {
+        return super.readRaster(imageIndex, param);
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public Raster readTileRaster(final int imageIndex, int tileX, int tileY) throws IOException {
+        return super.readTileRaster(imageIndex, tileX, tileY);
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public BufferedImage readThumbnail(int imageIndex, int thumbnailIndex) throws IOException {
+        return super.readThumbnail(imageIndex,thumbnailIndex);
+    }
+
+
     @Override
     protected SpatialMetadata createMetadata(final int imageIndex) throws IOException {
         SpatialMetadata metadata = super.createMetadata(imageIndex);
         if (imageIndex >= 0) {
             AffineTransform gridToCRS = null;
             CoordinateReferenceSystem crs = null;
+            GridSampleDimension[] dims = null;
 
             final Object metaFile = createInput("dim");
             final Document doc;
             try {
                 doc = DimapParser.read(metaFile);
                 crs = DimapParser.readCRS(doc);
-                final Dimension dim = DimapParser.readRasterDimension(doc);
+                final int[] dim = DimapParser.readRasterDimension(doc);
                 gridToCRS = DimapParser.readGridToCRS(doc);
-
-                System.out.println(crs);
-                System.out.println(dim);
-                System.out.println(gridToCRS);
+                dims = DimapParser.readSampleDimensions(doc, "cn", dim[2]);
 
             } catch (ParserConfigurationException ex) {
                 Logger.getLogger(DimapImageReader.class.getName()).log(Level.SEVERE, null, ex);
@@ -149,6 +251,15 @@ public class DimapImageReader extends ImageReaderAdapter {
                     new ReferencingBuilder(metadata).setCoordinateReferenceSystem(crs);
                 }
             }
+
+            if(dims != null){
+                final DimensionAccessor accesor = new DimensionAccessor(metadata);
+                for(GridSampleDimension dim : dims){
+                    accesor.selectChild(accesor.appendChild());
+                    accesor.setAttribute("descriptor", dim.getDescription().toString());
+                }
+            }
+
         }
         return metadata;
     }

@@ -19,6 +19,7 @@ package org.geotoolkit.metadata.dimap;
 import java.awt.Dimension;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
+import java.awt.image.ColorModel;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -28,11 +29,14 @@ import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import javax.measure.unit.Unit;
 import javax.media.jai.Warp;
 import javax.media.jai.WarpAffine;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import org.geotoolkit.coverage.Category;
+import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
@@ -62,6 +66,11 @@ public final class DimapParser {
     private DimapParser() {
     }
 
+    /**
+     * Convinient method to aquiere a DOM document from an input.
+     * This is provided as a convinient method, any dom document may
+     * be used for all methods in the class.
+     */
     public static Document read(Object input) throws ParserConfigurationException, SAXException, IOException {
         final InputStream stream = toStream(input);
         // création d'une fabrique de documents
@@ -72,12 +81,30 @@ public final class DimapParser {
         return document;
     }
 
+    /**
+     * Read the Coordinate Reference System of the grid.
+     * Thoses informations are provided by the CoordinateReferenceSystem tag.
+     * 
+     * @param doc
+     * @return CoordinateReferenceSystem
+     * @throws NoSuchAuthorityCodeException
+     * @throws FactoryException
+     */
     public static CoordinateReferenceSystem readCRS(Document doc) throws NoSuchAuthorityCodeException, FactoryException{
         final Element ele = firstElement(doc.getDocumentElement(), TAG_CRS);
         final Element code = firstElement(ele, TAG_HORIZONTAL_CS_CODE);
         return CRS.decode(code.getTextContent());
     }
 
+    /**
+     * Read the Grid to CRS transform.
+     * Thoses informations are provided by the Geoposition tag.
+     *
+     * @param doc
+     * @return AffineTransform
+     * @throws FactoryException
+     * @throws TransformException
+     */
     public static AffineTransform readGridToCRS(Document doc) throws FactoryException, TransformException{
         final Element ele = firstElement(doc.getDocumentElement(), TAG_GEOPOSITION);
         final Element insert = firstElement(ele, TAG_GEOPOSITION_INSERT);
@@ -141,11 +168,55 @@ public final class DimapParser {
         
     }
 
-    public static Dimension readRasterDimension(Document doc){
+    /**
+     * Read the raster dimension from the document. This include number of rows,
+     * columns and bands.
+     * Thoses informations are provided by the Raster_dimensions tag.
+     * 
+     * @param doc
+     * @return int[] 0:rows, 1:cols, 2:bands
+     */
+    public static int[] readRasterDimension(Document doc){
         final Element ele = firstElement(doc.getDocumentElement(), TAG_RASTER_DIMENSIONS);
         final int rows = textValue(ele, TAG_NROWS, Integer.class);
         final int cols = textValue(ele, TAG_NCOLS, Integer.class);
-        return new Dimension(cols,rows);
+        final int bands = textValue(ele, TAG_NBANDS, Integer.class);
+        return new int[]{rows,cols,bands};
+    }
+
+    /**
+     * Read the coverage sample dimensions.
+     * Thoses informations are provided by the Image_display tag.
+     *
+     * @param doc
+     * @return GridSampleDimension
+     */
+    public static GridSampleDimension[] readSampleDimensions(Document doc, String coverageName,int nbbands){
+        final Element ele = firstElement(doc.getDocumentElement(), TAG_IMAGE_DISPLAY);
+        final Element displayOrder = firstElement(ele, TAG_BAND_DISPLAY_ORDER);
+        final int red = textValue(displayOrder, TAG_RED_CHANNEL, Integer.class);
+        final int green = textValue(displayOrder, TAG_GREEN_CHANNEL, Integer.class);
+        final int blue = textValue(displayOrder, TAG_BLUE_CHANNEL, Integer.class);
+
+        //todo not sure we should store color informations in the grid sample dimension
+        final GridSampleDimension[] dimensions = new GridSampleDimension[nbbands];
+        for(int i=1; i<=nbbands; i++){
+            String name = String.valueOf(i)+" ";
+            if(i == red){
+                name = name + RED;
+            }
+            if(i == green){
+                name = name + GREEN;
+            }
+            if(i == blue){
+                name = name + BLUE;
+            }
+            dimensions[i-1] = new GridSampleDimension(name);
+
+            //todo read the special values
+        }
+
+        return dimensions;
     }
 
     private static InputStream toStream(Object input) throws FileNotFoundException, IOException{
