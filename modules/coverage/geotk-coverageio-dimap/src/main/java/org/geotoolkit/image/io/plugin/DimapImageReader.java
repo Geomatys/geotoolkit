@@ -17,6 +17,11 @@
 package org.geotoolkit.image.io.plugin;
 
 import java.awt.image.RenderedImage;
+import java.awt.geom.AffineTransform;
+import java.awt.Rectangle;
+import java.awt.image.BufferedImage;
+import java.awt.image.Raster;
+import java.awt.image.renderable.ParameterBlock;
 import java.io.File;
 import java.io.IOException;
 import java.util.Locale;
@@ -27,12 +32,7 @@ import javax.imageio.ImageReader;
 import javax.imageio.spi.IIORegistry;
 import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.spi.ServiceRegistry;
-import java.awt.geom.AffineTransform;
-import java.awt.Rectangle;
-import java.awt.image.BufferedImage;
-import java.awt.image.Raster;
-import java.awt.image.renderable.ParameterBlock;
-import java.util.List;
+import javax.imageio.metadata.IIOMetadata;
 import javax.media.jai.JAI;
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -42,6 +42,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 
 import org.geotoolkit.coverage.GridSampleDimension;
@@ -49,13 +50,12 @@ import org.geotoolkit.image.io.ImageReaderAdapter;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
 import org.geotoolkit.image.io.metadata.ReferencingBuilder;
-import org.geotoolkit.image.io.metadata.SampleDimension;
 import org.geotoolkit.internal.image.io.DimensionAccessor;
 import org.geotoolkit.internal.image.io.GridDomainAccessor;
 import org.geotoolkit.internal.image.io.Formats;
 import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.lang.Configuration;
-import org.geotoolkit.metadata.dimap.DimapConstants;
+import org.geotoolkit.metadata.dimap.DimapMetadata;
 import org.geotoolkit.metadata.dimap.DimapParser;
 import org.geotoolkit.util.Version;
 import org.geotoolkit.util.logging.Logging;
@@ -105,40 +105,12 @@ public class DimapImageReader extends ImageReaderAdapter {
     private RenderedImage changeColorModel(RenderedImage image, boolean bufferedImage) throws IOException{
         if(image == null) return image;
 
-        final SpatialMetadata metadata = getImageMetadata(0);
-        System.out.println(metadata);
-        final List<SampleDimension> dims = metadata.getListForType(SampleDimension.class);
-        Integer red = null;
-        Integer green = null;
-        Integer blue = null;
-        Integer alpha = null;
-
-        for(int i=0,n=dims.size(); i<n; i++){
-            final String color = dims.get(i).getDescriptor().toString();
-            if(color.contains(DimapConstants.RED)){
-                red = i+1;
-            }
-            if(color.contains(DimapConstants.GREEN)){
-                green = i+1;
-            }
-            if(color.contains(DimapConstants.BLUE)){
-                blue = i+1;
-            }
-            if(color.contains(DimapConstants.ALPHA)){
-                alpha = i+1;
-            }
-        }
-
-        final int[] indices;
-        if(alpha != null){
-            indices = new int[]{red,green,blue,alpha};
-        }else{
-            indices = new int[]{red,green,blue};
-        }
+        final DimapMetadata metadata = (DimapMetadata) getImageMetadata(0);
+        final int[] colorMapping = DimapParser.readColorBandMapping((Element)metadata.getAsTree("dimap"));
 
         final ParameterBlock pb = new ParameterBlock();
         pb.addSource(image);
-        pb.add(indices);
+        pb.add(colorMapping);
         RenderedImage img = JAI.create("bandSelect",pb);
 
         if(bufferedImage){
@@ -209,25 +181,44 @@ public class DimapImageReader extends ImageReaderAdapter {
 
     @Override
     protected SpatialMetadata createMetadata(final int imageIndex) throws IOException {
-        SpatialMetadata metadata = super.createMetadata(imageIndex);
+
+        //parse the dimap metadata file
+        final Object metaFile = createInput("dim");
+        final Document doc;
+        try {
+            doc = DimapParser.read(metaFile);
+        } catch (ParserConfigurationException ex) {
+            throw new IOException(ex);
+        } catch (SAXException ex) {
+            throw new IOException(ex);
+        }
+        final Element dimapNode = doc.getDocumentElement();
+
+
+        SpatialMetadata metadata = null;
+        if (imageIndex >= 0) {
+            final IIOMetadata iometa = main.getImageMetadata(imageIndex);
+            if (iometa != null) {
+                metadata = new DimapMetadata(SpatialMetadataFormat.IMAGE, this, iometa, dimapNode);
+            }
+        } else {
+            final IIOMetadata iometa = main.getStreamMetadata();
+            if (iometa != null) {
+                metadata = new DimapMetadata(SpatialMetadataFormat.STREAM, this, iometa, dimapNode);
+            }
+        }
+
         if (imageIndex >= 0) {
             AffineTransform gridToCRS = null;
             CoordinateReferenceSystem crs = null;
             GridSampleDimension[] dims = null;
 
-            final Object metaFile = createInput("dim");
-            final Document doc;
             try {
-                doc = DimapParser.read(metaFile);
-                crs = DimapParser.readCRS(doc);
-                final int[] dim = DimapParser.readRasterDimension(doc);
-                gridToCRS = DimapParser.readGridToCRS(doc);
-                dims = DimapParser.readSampleDimensions(doc, "cn", dim[2]);
+                crs = DimapParser.readCRS(dimapNode);
+                final int[] dim = DimapParser.readRasterDimension(dimapNode);
+                gridToCRS = DimapParser.readGridToCRS(dimapNode);
+                dims = DimapParser.readSampleDimensions(dimapNode, "cn", dim[2]);
 
-            } catch (ParserConfigurationException ex) {
-                Logger.getLogger(DimapImageReader.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (SAXException ex) {
-                Logger.getLogger(DimapImageReader.class.getName()).log(Level.SEVERE, null, ex);
             } catch (FactoryException ex) {
                 Logger.getLogger(DimapImageReader.class.getName()).log(Level.SEVERE, null, ex);
             } catch (TransformException ex) {
@@ -239,7 +230,7 @@ public class DimapImageReader extends ImageReaderAdapter {
              */
             if (gridToCRS != null || crs != null) {
                 if (metadata == null) {
-                    metadata = new SpatialMetadata(SpatialMetadataFormat.IMAGE, this, null);
+                    metadata = new DimapMetadata(SpatialMetadataFormat.IMAGE, this, null,dimapNode);
                 }
                 if (gridToCRS != null) {
                     final int width  = getWidth (imageIndex);

@@ -16,10 +16,7 @@
  */
 package org.geotoolkit.metadata.dimap;
 
-import java.awt.Dimension;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Point2D;
-import java.awt.image.ColorModel;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -27,28 +24,19 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import javax.measure.unit.Unit;
-import javax.media.jai.Warp;
-import javax.media.jai.WarpAffine;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import org.geotoolkit.coverage.Category;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
-import org.geotoolkit.referencing.operation.transform.WarpTransform2D;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
+import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
 import static org.geotoolkit.metadata.dimap.DimapConstants.*;
@@ -90,8 +78,8 @@ public final class DimapParser {
      * @throws NoSuchAuthorityCodeException
      * @throws FactoryException
      */
-    public static CoordinateReferenceSystem readCRS(Document doc) throws NoSuchAuthorityCodeException, FactoryException{
-        final Element ele = firstElement(doc.getDocumentElement(), TAG_CRS);
+    public static CoordinateReferenceSystem readCRS(Element doc) throws NoSuchAuthorityCodeException, FactoryException{
+        final Element ele = firstElement(doc, TAG_CRS);
         final Element code = firstElement(ele, TAG_HORIZONTAL_CS_CODE);
         return CRS.decode(code.getTextContent());
     }
@@ -105,8 +93,8 @@ public final class DimapParser {
      * @throws FactoryException
      * @throws TransformException
      */
-    public static AffineTransform readGridToCRS(Document doc) throws FactoryException, TransformException{
-        final Element ele = firstElement(doc.getDocumentElement(), TAG_GEOPOSITION);
+    public static AffineTransform readGridToCRS(Element doc) throws FactoryException, TransformException{
+        final Element ele = firstElement(doc, TAG_GEOPOSITION);
         final Element insert = firstElement(ele, TAG_GEOPOSITION_INSERT);
         final Element points = firstElement(ele, TAG_GEOPOSITION_POINTS);
         final Element affine = firstElement(ele, TAG_GEOPOSITION_AFFINE);
@@ -176,8 +164,8 @@ public final class DimapParser {
      * @param doc
      * @return int[] 0:rows, 1:cols, 2:bands
      */
-    public static int[] readRasterDimension(Document doc){
-        final Element ele = firstElement(doc.getDocumentElement(), TAG_RASTER_DIMENSIONS);
+    public static int[] readRasterDimension(Element doc){
+        final Element ele = firstElement(doc, TAG_RASTER_DIMENSIONS);
         final int rows = textValue(ele, TAG_NROWS, Integer.class);
         final int cols = textValue(ele, TAG_NCOLS, Integer.class);
         final int bands = textValue(ele, TAG_NBANDS, Integer.class);
@@ -188,11 +176,29 @@ public final class DimapParser {
      * Read the coverage sample dimensions.
      * Thoses informations are provided by the Image_display tag.
      *
+     * @param parent
+     * @return GridSampleDimension
+     */
+    public static int[] readColorBandMapping(Element parent){
+        final Element ele = firstElement(parent, TAG_IMAGE_DISPLAY);
+        final Element displayOrder = firstElement(ele, TAG_BAND_DISPLAY_ORDER);
+        final int red = textValue(displayOrder, TAG_RED_CHANNEL, Integer.class);
+        final int green = textValue(displayOrder, TAG_GREEN_CHANNEL, Integer.class);
+        final int blue = textValue(displayOrder, TAG_BLUE_CHANNEL, Integer.class);
+
+        return new int[]{red,green,blue};
+    }
+
+    /**
+     * Read the coverage sample dimensions.
+     * Thoses informations are provided by the Image_display tag.
+     *
      * @param doc
      * @return GridSampleDimension
      */
-    public static GridSampleDimension[] readSampleDimensions(Document doc, String coverageName,int nbbands){
-        final Element ele = firstElement(doc.getDocumentElement(), TAG_IMAGE_DISPLAY);
+    @Deprecated
+    public static GridSampleDimension[] readSampleDimensions(Element doc, String coverageName,int nbbands){
+        final Element ele = firstElement(doc, TAG_IMAGE_DISPLAY);
         final Element displayOrder = firstElement(ele, TAG_BAND_DISPLAY_ORDER);
         final int red = textValue(displayOrder, TAG_RED_CHANNEL, Integer.class);
         final int green = textValue(displayOrder, TAG_GREEN_CHANNEL, Integer.class);
