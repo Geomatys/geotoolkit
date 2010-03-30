@@ -16,9 +16,13 @@
  */
 package org.geotoolkit.image.io.plugin;
 
+import java.awt.Dimension;
+import java.awt.geom.NoninvertibleTransformException;
 import java.io.File;
 import java.io.IOException;
 import java.util.Locale;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.imageio.ImageReader;
 import javax.imageio.spi.IIORegistry;
 import javax.imageio.spi.ImageReaderSpi;
@@ -34,6 +38,7 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.referencing.FactoryException;
@@ -47,13 +52,14 @@ import org.geotoolkit.internal.image.io.GridDomainAccessor;
 import org.geotoolkit.internal.image.io.Formats;
 import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.lang.Configuration;
-import org.geotoolkit.metadata.dimap.TDatasetFrame;
-import org.geotoolkit.metadata.dimap.TDimapDocument;
-import org.geotoolkit.metadata.dimap.TVertex;
+import org.geotoolkit.metadata.dimap.DimapParser;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.operation.transform.WarpTransform2D;
 import org.geotoolkit.util.Version;
 import org.geotoolkit.util.logging.Logging;
+import org.opengis.referencing.operation.TransformException;
+import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
 
 /**
  * Reader for the <cite>Dimap</cite> format. This reader wraps an other image reader
@@ -103,48 +109,29 @@ public class DimapImageReader extends ImageReaderAdapter {
         if (imageIndex >= 0) {
             AffineTransform gridToCRS = null;
             CoordinateReferenceSystem crs = null;
+
+            final Object metaFile = createInput("dim");
+            final Document doc;
             try {
-                final JAXBContext context = JAXBContext.newInstance(org.geotoolkit.metadata.dimap.ObjectFactory.class);
-                final File metaFile = (File) createInput("dim");
-                final Unmarshaller marshal = context.createUnmarshaller();
-                final Object obj = marshal.unmarshal(metaFile);
-                final JAXBElement ele = (JAXBElement) obj;
-                final TDimapDocument doc = (TDimapDocument) ele.getValue();
+                doc = DimapParser.read(metaFile);
+                crs = DimapParser.readCRS(doc);
+                final Dimension dim = DimapParser.readRasterDimension(doc);
+                gridToCRS = DimapParser.readGridToCRS(doc,dim);
 
-                crs = CRS.decode(doc.getCoordinateReferenceSystem().getHorizontalCS().getHORIZONTALCSCODE());
-                gridToCRS = new AffineTransform();
+                System.out.println(crs);
+                System.out.println(dim);
+                System.out.println(gridToCRS);
 
-//                final TDatasetFrame frame = doc.getDatasetFrame();
-//                final List<Point2D> sources = new ArrayList<Point2D>();
-//                final List<Point2D> dests = new ArrayList<Point2D>();
-//
-//                for(TVertex vertex : frame.getVertex()){
-//                    sources.add(new Point2D.Double(
-//                            vertex.getFRAMEX().getValue(),
-//                            vertex.getFRAMEY().getValue()));
-//                    dests.add(new Point2D.Double(
-//                            vertex.getFRAMELAT().getValue(),
-//                            vertex.getFRAMELON().getValue()));
-//                }
-//
-//                final WarpTransform2D trs = new WarpTransform2D(
-//                        sources.toArray(new Point2D[sources.size()]),
-//                        dests.toArray(new Point2D[dests.size()]), 1);
-//
-//                final Warp warp = trs.getWarp();
-//                if(warp instanceof WarpAffine){
-//                    WarpAffine wa = (WarpAffine) warp;
-//                    gridToCRS = wa.getTransform();
-//                }else{
-//                    throw new UnsupportedOperationException("not yet.");
-//                }
-
-            } catch (JAXBException ex) {
-                throw new IOException(ex);
+            } catch (ParserConfigurationException ex) {
+                Logger.getLogger(DimapImageReader.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (SAXException ex) {
+                Logger.getLogger(DimapImageReader.class.getName()).log(Level.SEVERE, null, ex);
             } catch (FactoryException ex) {
-                throw new IOException(ex);
+                Logger.getLogger(DimapImageReader.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (TransformException ex) {
+                Logger.getLogger(DimapImageReader.class.getName()).log(Level.SEVERE, null, ex);
             }
-
+            
             /*
              * If we have found metadata information in dimap file, complete metadata.
              */
