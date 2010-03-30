@@ -116,7 +116,7 @@ public class DimapImageReader extends ImageReaderAdapter {
                 doc = DimapParser.read(metaFile);
                 crs = DimapParser.readCRS(doc);
                 final Dimension dim = DimapParser.readRasterDimension(doc);
-                gridToCRS = DimapParser.readGridToCRS(doc,dim);
+                gridToCRS = DimapParser.readGridToCRS(doc);
 
                 System.out.println(crs);
                 System.out.println(dim);

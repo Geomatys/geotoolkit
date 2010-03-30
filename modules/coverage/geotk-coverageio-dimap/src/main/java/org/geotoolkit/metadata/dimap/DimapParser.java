@@ -78,7 +78,7 @@ public final class DimapParser {
         return CRS.decode(code.getTextContent());
     }
 
-    public static AffineTransform readGridToCRS(Document doc, Dimension rasterDimension) throws FactoryException, TransformException{
+    public static AffineTransform readGridToCRS(Document doc) throws FactoryException, TransformException{
         final Element ele = firstElement(doc.getDocumentElement(), TAG_GEOPOSITION);
         final Element insert = firstElement(ele, TAG_GEOPOSITION_INSERT);
         final Element points = firstElement(ele, TAG_GEOPOSITION_POINTS);
@@ -91,7 +91,7 @@ public final class DimapParser {
             final double uly = textValue(insert, TAG_ULYMAP, Double.class);
             final double xdim = textValue(insert, TAG_XDIM, Double.class);
             final double ydim = textValue(insert, TAG_YDIM, Double.class);
-            return new AffineTransform(xdim, 0, 0, -ydim, ulx, rasterDimension.height-uly);
+            return new AffineTransform(xdim, 0, 0, -ydim, ulx, uly);
         }else if(affine != null){
             // X (CRS) = X0 + X1 * X(Data) + X2 * Y(Data)
             // Y (CRS) = Y0 + Y1 * X(Data) + Y2 * Y(Data)
@@ -145,7 +145,7 @@ public final class DimapParser {
         final Element ele = firstElement(doc.getDocumentElement(), TAG_RASTER_DIMENSIONS);
         final int rows = textValue(ele, TAG_NROWS, Integer.class);
         final int cols = textValue(ele, TAG_NCOLS, Integer.class);
-        return new Dimension(rows, cols);
+        return new Dimension(cols,rows);
     }
 
     private static InputStream toStream(Object input) throws FileNotFoundException, IOException{
