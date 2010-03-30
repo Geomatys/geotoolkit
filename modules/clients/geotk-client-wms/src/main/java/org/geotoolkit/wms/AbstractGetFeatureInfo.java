@@ -31,11 +31,29 @@ import org.geotoolkit.util.StringUtilities;
  */
 public abstract class AbstractGetFeatureInfo extends AbstractGetMap implements GetFeatureInfoRequest {
 
+    protected Integer columnIndex;
+    protected Integer rawIndex;
     protected String infoFormat;
     protected String[] queryLayers;
 
     protected AbstractGetFeatureInfo(String serverURL, String version) {
         super(serverURL, version);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Integer getColumnIndex() {
+        return columnIndex;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Integer getRawIndex() {
+        return rawIndex;
     }
 
     @Override
@@ -46,6 +64,22 @@ public abstract class AbstractGetFeatureInfo extends AbstractGetMap implements G
     @Override
     public String[] getQueryLayers() {
         return queryLayers;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setColumnIndex(Integer columnIndex) {
+        this.columnIndex = columnIndex;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setRawIndex(Integer rawIndex) {
+        this.rawIndex = rawIndex;
     }
 
     @Override

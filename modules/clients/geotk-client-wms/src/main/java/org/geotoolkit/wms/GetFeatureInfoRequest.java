@@ -33,4 +33,26 @@ public interface GetFeatureInfoRequest extends GetMapRequest {
 
     void setQueryLayers(String[] layers);
 
+    /**
+     * Returns the column index to request into an image, in pixels.
+     * It is represented by the X value in WMS 1.1.1 or I in WMS 1.3.0.
+     */
+    Integer getColumnIndex();
+
+    /**
+     * Sets the value for the column index to request into an image.
+     */
+    void setColumnIndex(Integer columnIndex);
+
+    /**
+     * Returns the raw index to request into an image, in pixels.
+     * It is represented by the Y value in WMS 1.1.1 or J in WMS 1.3.0.
+     */
+    Integer getRawIndex();
+
+    /**
+     * Sets the value for the column index to request into an image.
+     */
+    void setRawIndex(Integer rawIndex);
+
 }

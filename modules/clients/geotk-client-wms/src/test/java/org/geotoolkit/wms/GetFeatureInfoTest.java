@@ -59,8 +59,8 @@ public class GetFeatureInfoTest {
         featureInfo111.setEnvelope(env);
         featureInfo111.setInfoFormat("gml");
         featureInfo111.setQueryLayers("test");
-        featureInfo111.setX(50);
-        featureInfo111.setY(40);
+        featureInfo111.setColumnIndex(50);
+        featureInfo111.setRawIndex(40);
         final URL url;
         try {
             url = featureInfo111.getURL();
@@ -104,8 +104,8 @@ public class GetFeatureInfoTest {
         featureInfo130.setEnvelope(env);
         featureInfo130.setInfoFormat("gml");
         featureInfo130.setQueryLayers("test");
-        featureInfo130.setI(50);
-        featureInfo130.setJ(40);
+        featureInfo130.setColumnIndex(50);
+        featureInfo130.setRawIndex(40);
         final URL url;
         try {
             url = featureInfo130.getURL();
