@@ -429,6 +429,8 @@ public class CoverageDatabase {
      *
      * @param  request Parameters used to control the reading process.
      * @return The coverage.
+     *
+     * @see LayerCoverageReader#readSlice
      */
     public Future<GridCoverage2D> readSlice(final CoverageQuery request) {
         ensureNonNull("request", request);
@@ -462,7 +464,8 @@ public class CoverageDatabase {
             } catch (SQLException e) {
                 throw new CoverageStoreException(e);
             } catch (TransformException e) {
-                throw new CoverageStoreException(e);
+                throw new CoverageStoreException(Errors.format(
+                        Errors.Keys.ILLEGAL_COORDINATE_REFERENCE_SYSTEM), e);
             }
             return entry.read(query.getReadParam(), query.listeners);
         }

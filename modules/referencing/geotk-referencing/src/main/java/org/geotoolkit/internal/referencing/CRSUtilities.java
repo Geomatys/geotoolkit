@@ -424,8 +424,8 @@ public final class CRSUtilities {
      *
      * @param transform The transform to apply.
      * @param origin The position where to compute the delta transform in the source CS.
-     * @param source The distance vector to be delta transformed
-     * @return       The result of the transformation.
+     * @param source The distance vector to be delta transformed.
+     * @return The result of the transformation.
      * @throws TransformException if the transformation failed.
      *
      * @since 2.3
@@ -445,8 +445,8 @@ public final class CRSUtilities {
             P1.setOrdinate(i, c-d);
             P2.setOrdinate(i, c+d);
         }
-        P1 = transform.transform(P1, (sourceDim==targetDim) ? P1 : null);
-        P2 = transform.transform(P2, (sourceDim==targetDim) ? P2 : null);
+        P1 = transform.transform(P1, (sourceDim == targetDim) ? P1 : null);
+        P2 = transform.transform(P2, (sourceDim == targetDim) ? P2 : null);
         for (int i=0; i<targetDim; i++) {
             P2.setOrdinate(i, P2.getOrdinate(i) - P1.getOrdinate(i));
         }

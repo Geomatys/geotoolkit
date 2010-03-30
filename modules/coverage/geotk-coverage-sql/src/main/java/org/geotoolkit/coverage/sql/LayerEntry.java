@@ -31,9 +31,13 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.InvalidObjectException;
 
-import org.opengis.referencing.cs.CoordinateSystem;
-import org.opengis.referencing.operation.TransformException;
+import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.geometry.MismatchedReferenceSystemException;
+import org.opengis.referencing.cs.CoordinateSystem;
+import org.opengis.referencing.datum.PixelInCell;
+import org.opengis.referencing.operation.Matrix;
+import org.opengis.referencing.operation.TransformException;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.DateRange;
@@ -47,6 +51,11 @@ import org.geotoolkit.internal.sql.table.SpatialDatabase;
 import org.geotoolkit.internal.sql.table.NoSuchRecordException;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.coverage.io.CoverageStoreException;
+import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
+import org.geotoolkit.coverage.grid.GeneralGridGeometry;
+import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
+import org.geotoolkit.referencing.operation.transform.LinearTransform;
+import org.geotoolkit.referencing.operation.transform.ProjectiveTransform;
 import org.geotoolkit.resources.Errors;
 
 
@@ -70,6 +79,8 @@ final class LayerEntry extends Entry implements Layer {
      * For example a layer of weekly <cite>Sea Surface Temperature</cite> (SST) coverages
      * may set this field to 7, while a layer of mounthly SST coverage may set this field
      * to 30. The value is only approximative.
+     *
+     * @todo We should compute it automatically instead.
      */
     final double timeInterval;
 
@@ -92,6 +103,12 @@ final class LayerEntry extends Entry implements Layer {
     private volatile FrequencySortedSet<SeriesEntry> countBySeries;
 
     /**
+     * How many coverages are found for each grid geometry, sorted by decreasing frequency.
+     * This is computed when first needed.
+     */
+    private volatile FrequencySortedSet<GridGeometryEntry> countByExtent;
+
+    /**
      * A fallback layer to be used if no image can be found for a given date in this layer.
      * May be {@code null} if there is no fallback.
      * <p>
@@ -110,13 +127,13 @@ final class LayerEntry extends Entry implements Layer {
      * The set of available dates. Will be computed by
      * {@link #getAvailableTimes()} when first needed.
      */
-    private transient volatile SortedSet<Date> availableTimes;
+    private volatile SortedSet<Date> availableTimes;
 
     /**
      * The set of available altitudes. Will be computed by
      * {@link #getAvailableElevations()} when first needed.
      */
-    private transient volatile SortedSet<Number> availableElevations;
+    private volatile SortedSet<Number> availableElevations;
 
     /**
      * Caches the value returned by {@link #getSampleValueRanges()}. Computed only when first
@@ -124,6 +141,12 @@ final class LayerEntry extends Entry implements Layer {
      * {@linkplain #series}.
      */
     private transient List<MeasurementRange<?>> sampleValueRanges;
+
+    /**
+     * The envelope for all coverages in this layer.
+     * Will be computed when first needed.
+     */
+    private volatile CoverageEnvelope coverageEnvelope;
 
     /**
      * The table which created this entry. This is used for fetching dependencies
@@ -304,28 +327,48 @@ final class LayerEntry extends Entry implements Layer {
     final FrequencySortedSet<SeriesEntry> getCountBySeries() throws SQLException {
         FrequencySortedSet<SeriesEntry> count = countBySeries;
         if (count == null) {
-            final Collection<SeriesEntry> allSeries = getSeries();
+            final Map<Integer,SeriesEntry> seriesMap = getSeriesMap();
             final GridCoverageTable data = getLayerTable().getGridCoverageTable();
             synchronized (data) {
                 count = countBySeries;
                 if (count == null) {
-                    count = new FrequencySortedSet<SeriesEntry>(true);
                     data.setLayerEntry(this);
-                    for (final SeriesEntry series : allSeries) {
-                        final Integer identifier = series.getIdentifier();
-                        final Map<Integer,Integer> countBySeries;
-                        data.userSeries = series;
-                        try {
-                            countBySeries = data.count(false); // Should get a singleton.
-                        } finally {
-                            data.userSeries = null;
-                        }
-                        final Integer n = countBySeries.get(identifier);
-                        if (n != null) {
-                            count.add(series, n);
+                    count = new FrequencySortedSet<SeriesEntry>(true);
+                    for (final SeriesEntry series : seriesMap.values()) {
+                        final Map<Integer,Integer> countMap = data.count(series, false);
+                        for (final Map.Entry<Integer,Integer> e : countMap.entrySet()) {
+                            count.add(seriesMap.get(e.getKey()), e.getValue());
                         }
                     }
                     countBySeries = count;
+                }
+            }
+        }
+        return count;
+    }
+
+    /**
+     * Returns the number of coverages for each extent. This method returns a direct
+     * reference to the internal set - <strong>do not modify!</strong>.
+     */
+    final FrequencySortedSet<GridGeometryEntry> getCountByExtent() throws SQLException {
+        FrequencySortedSet<GridGeometryEntry> count = countByExtent;
+        if (count == null) {
+            final Collection<SeriesEntry> allSeries = getSeries();
+            final GridCoverageTable data = getLayerTable().getGridCoverageTable();
+            synchronized (data) {
+                count = countByExtent;
+                if (count == null) {
+                    data.setLayerEntry(this);
+                    final GridGeometryTable geometries = data.getGridGeometryTable();
+                    count = new FrequencySortedSet<GridGeometryEntry>(true);
+                    for (final SeriesEntry series : allSeries) {
+                        final Map<Integer,Integer> countMap = data.count(series, true);
+                        for (final Map.Entry<Integer,Integer> e : countMap.entrySet()) {
+                            count.add(geometries.getEntry(e.getKey()), e.getValue());
+                        }
+                    }
+                    countByExtent = count;
                 }
             }
         }
@@ -503,6 +546,132 @@ final class LayerEntry extends Entry implements Layer {
     }
 
     /**
+     * Returns the grid geometries used by the coverages in this layer.
+     */
+    @Override
+    public SortedSet<GeneralGridGeometry> getGridGeometries() throws CoverageStoreException {
+        boolean hasCheckedTimeRange = false;
+        Date startTime = null, endTime = null;
+        final FrequencySortedSet<GridGeometryEntry> extents;
+        try {
+            extents = getCountByExtent();
+        } catch (SQLException e) {
+            throw new CoverageStoreException(e);
+        }
+        final int[] count = extents.frequencies();
+        final FrequencySortedSet<GeneralGridGeometry> geometries = new FrequencySortedSet<GeneralGridGeometry>();
+        int i = 0;
+        for (final GridGeometryEntry entry : extents) {
+            GeneralGridGeometry gg = entry.geometry;
+            final DefaultTemporalCRS temporalCRS = entry.getTemporalCRS();
+            if (temporalCRS != null) {
+                /*
+                 * If the geometry has a temporal component, we need to configure the grid
+                 * geometry in the time dimension ourself because the start time and end time
+                 * are layer-dependent. Fetch those start time and end time when first needed.
+                 */
+                if (!hasCheckedTimeRange) {
+                    hasCheckedTimeRange = true;
+                    final DateRange timeRange = getTimeRange();
+                    if (timeRange != null) {
+                        startTime = timeRange.getMinValue();
+                        endTime   = timeRange.getMaxValue();
+                    }
+                }
+                final double min = (startTime != null) ? temporalCRS.toValue(startTime) : Double.NEGATIVE_INFINITY;
+                final double max = (  endTime != null) ? temporalCRS.toValue(  endTime) : Double.POSITIVE_INFINITY;
+                if (!Double.isInfinite(min) || !Double.isInfinite(max)) {
+                    final double interval;
+                    if (!Double.isNaN(timeInterval)) {
+                        final long dt = Math.round(timeInterval * GridCoverageTable.MILLIS_IN_DAY);
+                        final long epoch = temporalCRS.getDatum().getOrigin().getTime();
+                        interval = temporalCRS.toValue(new Date(dt + epoch));
+                    } else {
+                        interval = (max - min) / getCoverageCount();
+                    }
+                    /*
+                     * Creates the new math transform with the same coefficients than the previous
+                     * one, except for the time dimension. The temporal "cell size" is the interval
+                     * computed above.
+                     */
+                    final PixelInCell anchor = entry.getPixelInCell();
+                    final Matrix gridToCRS = ((LinearTransform) gg.getGridToCRS(anchor)).getMatrix();
+                    final CoordinateReferenceSystem crs = gg.getCoordinateReferenceSystem();
+                    final CoordinateSystem cs = crs.getCoordinateSystem();
+                    final int dimension = cs.getDimension();
+                    final int timeDimension = dimension - 1;
+                    /*
+                     * The code below makes the following assumptions,
+                     * which are checked by the assert statements below:
+                     *
+                     *   1) The temporal dimension is the last dimension.
+                     *   2) The temporal dimension is at the same index in
+                     *      both the grid CRS and the "real world" CRS.
+                     */
+                    assert CRSUtilities.dimensionColinearWith(cs, temporalCRS.getCoordinateSystem()) == timeDimension : crs;
+                    assert gridToCRS.getElement(timeDimension, timeDimension) != 0 : gridToCRS;
+                    gridToCRS.setElement(timeDimension, timeDimension, interval);
+                    gridToCRS.setElement(timeDimension, dimension, min);
+                    GridEnvelope env = gg.getGridRange();
+                    final int[] lower = env.getLow ().getCoordinateValues();
+                    final int[] upper = env.getHigh().getCoordinateValues();
+                    lower[timeDimension] = 0;
+                    upper[timeDimension] = Math.max(((int) Math.round((max - min) / interval)) - 1, 0);
+                    env = new GeneralGridEnvelope(lower, upper, true);
+                    gg = new GeneralGridGeometry(env, anchor, ProjectiveTransform.create(gridToCRS), crs);
+                }
+            }
+            geometries.add(gg, count[i++]);
+        }
+        return geometries;
+    }
+
+    /**
+     * Returns the envelope of this layer, optionnaly centered at the given date and
+     * elevation. Callers are free to modify the returned instance befoer to pass it
+     * to the {@code getCoverageReference} methods.
+     */
+    @Override
+    public CoverageEnvelope getEnvelope(final Date time, final Number elevation) throws CoverageStoreException {
+        CoverageEnvelope envelope = coverageEnvelope;
+        if (envelope == null) try {
+            final GridCoverageTable table = layerTable.getGridCoverageTable();
+            synchronized (table) {
+                envelope = coverageEnvelope;
+                if (envelope == null) {
+                    table.setLayerEntry(this);
+                    table.trimEnvelope();
+                    envelope = table.envelope.clone();
+                    coverageEnvelope = envelope;
+                    table.envelope.setEnvelope(null);
+                }
+            }
+        } catch (SQLException e) {
+            throw new CoverageStoreException(e);
+        } catch (TransformException e) {
+            throw new CoverageStoreException(e); // Should not happen.
+        }
+        envelope = envelope.clone();
+        /*
+         * Now apply the optional user parameters.
+         */
+        if (time != null) {
+            long delay = Math.round(timeInterval * (GridCoverageTable.MILLIS_IN_DAY / 2));
+            if (delay <= 0) {
+                delay = GridCoverageTable.MILLIS_IN_DAY / 2;
+            }
+            final long t = time.getTime();
+            envelope.setTimeRange(new Date(t - delay), new Date(t + delay));
+        }
+        if (elevation != null) {
+            final double zmin = elevation.doubleValue();
+            final double zmax = zmin; // TODO: choose a better range.
+            envelope.setVerticalRange(zmin, zmax);
+        }
+        return envelope;
+    }
+
+    /**
      * Returns a reference to every coverages available in this layer which intersect the
      * given envelope.
      * <p>
@@ -546,6 +715,7 @@ final class LayerEntry extends Entry implements Layer {
         try {
             final TablePool<GridCoverageTable> pool = getLayerTable().getTablePool();
             final GridCoverageTable data = pool.acquire();
+            data.setLayerEntry(this);
             data.envelope.setAll(envelope);
             entry = data.getEntry();
             pool.release(data);
@@ -586,7 +756,10 @@ final class LayerEntry extends Entry implements Layer {
             getSeriesMap();
             getFallback();
             getCountBySeries();
+            getAvailableTimes();
+            getAvailableElevations();
             getTypicalResolution();
+            getEnvelope(null, null);
         } catch (Exception e) {
             final InvalidObjectException ex = new InvalidObjectException(e.getLocalizedMessage());
             ex.initCause(e);

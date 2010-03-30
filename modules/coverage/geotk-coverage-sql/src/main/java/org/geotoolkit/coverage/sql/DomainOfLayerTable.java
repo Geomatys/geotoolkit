@@ -25,11 +25,12 @@ import java.sql.SQLException;
 import org.geotoolkit.util.DateRange;
 import org.geotoolkit.measure.Latitude;
 import org.geotoolkit.measure.Longitude;
+import org.geotoolkit.geometry.Envelope2D;
 import org.geotoolkit.display.shape.DoubleDimension2D;
-import org.geotoolkit.metadata.iso.extent.DefaultGeographicBoundingBox;
 
 import org.geotoolkit.internal.sql.table.Database;
 import org.geotoolkit.internal.sql.table.SingletonTable;
+import org.geotoolkit.internal.sql.table.SpatialDatabase;
 
 
 /**
@@ -109,10 +110,9 @@ final class DomainOfLayerTable extends SingletonTable<DomainOfLayerEntry> {
         if (endTime != null) {
             endTime = new Date(endTime.getTime());
         }
-        final DefaultGeographicBoundingBox bbox = new DefaultGeographicBoundingBox(west, east, south, north);
-        bbox.freeze();
+        final Envelope2D bbox = new Envelope2D(((SpatialDatabase) getDatabase()).horizontalCRS, west, east, south, north);
         return new DomainOfLayerEntry(identifier,
-                (startTime!=null || endTime!=null) ? new DateRange(startTime, endTime) : null, bbox,
+                (startTime != null || endTime != null) ? new DateRange(startTime, endTime) : null, bbox,
                 (xResolution>0 || yResolution>0) ? new DoubleDimension2D(xResolution, yResolution) : null, null);
     }
 }

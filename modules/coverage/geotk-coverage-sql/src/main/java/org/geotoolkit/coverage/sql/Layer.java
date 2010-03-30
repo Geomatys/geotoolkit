@@ -24,6 +24,7 @@ import java.util.SortedSet;
 
 import org.geotoolkit.util.DateRange;
 import org.geotoolkit.util.MeasurementRange;
+import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 
 
@@ -113,14 +114,35 @@ public interface Layer {
     double[] getTypicalResolution() throws CoverageStoreException;
 
     /**
-     * Returns the image format used by the coverages in this layer, sorted by decreasing frequency.
-     * The strings in the returned set shall be names known to the {@linkplain javax.imageio Java
-     * Image I/O} framework.
+     * Returns the image format used by the coverages in this layer, sorted by decreasing frequency
+     * of use. The strings in the returned set shall be names known to the {@linkplain javax.imageio
+     * Java Image I/O} framework.
      *
      * @return The image formats, with the most frequently used format first.
      * @throws CoverageStoreException if an error occured while querying the database.
      */
     SortedSet<String> getImageFormats() throws CoverageStoreException;
+
+    /**
+     * Returns the grid geometries used by the coverages in this layer, sorted by decreasing
+     * frequency of use.
+     *
+     * @return The grid geometries, with the most frequently used geometry first.
+     * @throws CoverageStoreException if an error occured while querying the database.
+     */
+    SortedSet<GeneralGridGeometry> getGridGeometries() throws CoverageStoreException;
+
+    /**
+     * Returns the envelope of this layer, optionnaly centered at the given date and
+     * elevation. Callers are free to modify the returned instance befoer to pass it
+     * to the {@code getCoverageReference} methods.
+     *
+     * @param  time The central date, or {@code null}.
+     * @param  elevation The central elevation, or {@code null}.
+     * @return A default envelope instance.
+     * @throws CoverageStoreException if an error occured while querying the database.
+     */
+    CoverageEnvelope getEnvelope(Date time, Number elevation) throws CoverageStoreException;
 
     /**
      * Returns a reference to every coverages available in this layer which intersect the

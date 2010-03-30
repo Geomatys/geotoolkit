@@ -282,7 +282,7 @@ public class GridCoverageReadParam {
             }
             resolution = resolution.clone();
             for (final double r : resolution) {
-                if (!(r > 0)) {
+                if (!(r >= 0)) { // Accept 0 as well, meaning "best resolution available".
                     throw new IllegalArgumentException(Errors.format(
                             Errors.Keys.NOT_GREATER_THAN_ZERO_$1, r));
                 }

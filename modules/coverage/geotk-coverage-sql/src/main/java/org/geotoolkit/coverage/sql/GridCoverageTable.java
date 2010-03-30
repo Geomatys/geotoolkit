@@ -70,7 +70,7 @@ class GridCoverageTable extends BoundedSingletonTable<GridCoverageEntry> {
      * This field is usually {@code null} since the public API works on layer as a whole.
      * It is used only in a few cases where a caller needs to work on a specific series.
      */
-    SeriesEntry userSeries;
+    private SeriesEntry userSeries;
 
     /**
      * The table of grid geometries. Will be created only when first needed.
@@ -233,7 +233,7 @@ class GridCoverageTable extends BoundedSingletonTable<GridCoverageEntry> {
     /**
      * Returns the {@link GridGeometryTable} instance, creating it if needed.
      */
-    private GridGeometryTable getGridGeometryTable() throws NoSuchTableException {
+    final GridGeometryTable getGridGeometryTable() throws NoSuchTableException {
         GridGeometryTable table = gridGeometryTable;
         if (table == null) {
             gridGeometryTable = table = getDatabase().getTable(GridGeometryTable.class);
@@ -622,31 +622,36 @@ loop:   for (final GridCoverageEntry newEntry : entries) {
     }
 
     /**
-     * Returns the number of coverages for the {@linkplain #userSeries current series}.
-     * The keys of the returned map are the identifiers found for the current series.
-     * The values are the number of occurences.
+     * Returns the number of coverages for the given series. The keys of the returned map are
+     * the identifiers found for the current series. The values are the number of occurences.
      *
+     * @param  series The series for which to count
      * @param  groupByExtent {@code true} for grouping by extents.
      * @return The number of records by identifier.
      */
-    final Map<Integer,Integer> count(final boolean groupByExtent) throws SQLException {
+    final Map<Integer,Integer> count(final SeriesEntry series, final boolean groupByExtent) throws SQLException {
         final GridCoverageQuery query = (GridCoverageQuery) this.query;
         final Map<Integer,Integer> count = new HashMap<Integer,Integer>();
         synchronized (getLock()) {
-            final LocalCache.Stmt ce = getStatement(QueryType.COUNT,
-                    groupByExtent ? query.spatialExtent : query.series);
-            final PreparedStatement stmt = ce.statement;
-            final ResultSet results = stmt.executeQuery();
-            while (results.next()) {
-                final Integer k = results.getInt(1);
-                final int     c = results.getInt(2);
-                final Integer p = count.put(k, c);
-                if (p != null) {
-                    count.put(k, p+c); // Should not happen, but let be paranoiac.
+            userSeries = series;
+            try {
+                final LocalCache.Stmt ce = getStatement(QueryType.COUNT,
+                        groupByExtent ? query.spatialExtent : query.series);
+                final PreparedStatement stmt = ce.statement;
+                final ResultSet results = stmt.executeQuery();
+                while (results.next()) {
+                    final Integer k = results.getInt(1);
+                    final int     c = results.getInt(2);
+                    final Integer p = count.put(k, c);
+                    if (p != null) {
+                        count.put(k, p+c); // Should not happen, but let be paranoiac.
+                    }
                 }
+                results.close();
+                ce.release();
+            } finally {
+                userSeries = null;
             }
-            results.close();
-            ce.release();
         }
         return count;
     }

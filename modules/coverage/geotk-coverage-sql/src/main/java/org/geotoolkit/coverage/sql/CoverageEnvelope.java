@@ -154,6 +154,23 @@ public class CoverageEnvelope extends AbstractEnvelope implements Cloneable {
     }
 
     /**
+     * Sets this envelope to the intersection of this envelope with the given one.
+     */
+    final void intersect(CoverageEnvelope envelope) throws TransformException {
+        if (envelope.database != database) {
+            // Paranoiac safety - should not happen.
+            final CoverageEnvelope old = envelope;
+            envelope = clone();
+            envelope.setAll(old);
+        }
+        final Rectangle2D hr = getHorizontalRange();
+        Rectangle2D.intersect(hr, envelope.getHorizontalRange(), hr);
+        setHorizontalRange(hr);
+        setVerticalRange(Math.max(zMin, envelope.zMin), Math.min(zMax, envelope.zMax));
+        setTimeRange(new Date(Math.max(tMin, envelope.tMin)), new Date(Math.min(tMax, envelope.tMax)));
+    }
+
+    /**
      * Returns the spatio-temporal CRS of this envelope.
      */
     @Override
@@ -182,7 +199,8 @@ public class CoverageEnvelope extends AbstractEnvelope implements Cloneable {
      * the informations returned by {@link #getHorizontalRange()}, {@link #getVerticalRange()}
      * and {@link #getTimeRange()}.
      *
-     * @return The spatio-temporal envelope.
+     * @return The spatio-temporal envelope. This is a direct reference to the instance holds
+     *         by this class - <strong>do not modify!</strong>.
      *
      * @see #getHorizontalRange()
      * @see #getVerticalRange()
@@ -217,7 +235,7 @@ public class CoverageEnvelope extends AbstractEnvelope implements Cloneable {
             }
             this.envelope = envelope;
         }
-        return envelope.clone();
+        return envelope;
     }
 
     /**

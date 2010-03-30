@@ -19,10 +19,9 @@ package org.geotoolkit.coverage.sql;
 
 import java.awt.geom.Dimension2D;
 
-import org.opengis.metadata.extent.GeographicBoundingBox;
-
 import org.geotoolkit.util.DateRange;
 import org.geotoolkit.util.Utilities;
+import org.geotoolkit.geometry.Envelope2D;
 import org.geotoolkit.internal.sql.table.Entry;
 
 
@@ -52,12 +51,12 @@ final class DomainOfLayerEntry extends Entry {
     final DateRange timeRange;
 
     /**
-     * The geographic bounding box, or {@code null} if none.
+     * The envelope in units of the database horizontal CRS, or {@code null} if none.
      */
-    final GeographicBoundingBox bbox;
+    final Envelope2D bbox;
 
     /**
-     * The resolution, or {@code null} if none.
+     * The resolution in units of the database horizontal CRS, or {@code null} if none.
      */
     final Dimension2D resolution;
 
@@ -65,7 +64,7 @@ final class DomainOfLayerEntry extends Entry {
      * Creates a new entry with the specified values, which are <strong>not</strong> cloned.
      */
     DomainOfLayerEntry(final Comparable<?> name, final DateRange timeRange,
-                       final GeographicBoundingBox bbox, final Dimension2D resolution,
+                       final Envelope2D bbox, final Dimension2D resolution,
                        final String remarks)
     {
         super(name, remarks);

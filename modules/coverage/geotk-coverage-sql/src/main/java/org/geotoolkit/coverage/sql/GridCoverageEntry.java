@@ -57,6 +57,7 @@ import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.internal.sql.table.Entry;
 import org.geotoolkit.internal.sql.table.IllegalRecordException;
+import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.resources.Errors;
 
 
@@ -294,6 +295,17 @@ final class GridCoverageEntry extends Entry implements GridCoverageReference {
             final int dimension = crs.getCoordinateSystem().getDimension();
             final Matrix gridToCRS = geometry.getGridToCRS(dimension, identifier.zIndex);
             if (hasTime) {
+                /*
+                 * The code below makes the following assumptions,
+                 * which are checked by the assert statements below:
+                 *
+                 *   1) The temporal dimension is the last dimension.
+                 *   2) The temporal dimension is at the same index in
+                 *      both the grid CRS and the "real world" CRS.
+                 */
+                assert CRSUtilities.dimensionColinearWith(crs.getCoordinateSystem(),
+                        temporalCRS.getCoordinateSystem()) == dimension-1 : crs;
+                assert gridToCRS.getElement(dimension-1, dimension-1) != 0 : gridToCRS;
                 gridToCRS.setElement(dimension-1, dimension-1, max - min);
                 gridToCRS.setElement(dimension-1, dimension, min);
             }

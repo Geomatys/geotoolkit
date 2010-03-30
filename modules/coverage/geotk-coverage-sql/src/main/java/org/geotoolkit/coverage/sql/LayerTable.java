@@ -193,9 +193,7 @@ final class LayerTable extends SingletonTable<LayerEntry> {
     /**
      * Returns the {@link GridCoverageTable} instance, creating it if needed. This method is
      * invoked only from {@link LayerEntry}, which is responsible for performing synchronization
-     * on the returned table. Note that because the returned instance is used in only one place,
-     * synchronization in that place is effective even if the {@code GridCoverageTable} methods
-     * are not synchronized.
+     * on the returned table.
      */
     final GridCoverageTable getGridCoverageTable() throws NoSuchTableException {
         GridCoverageTable table = coverages;

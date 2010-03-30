@@ -104,7 +104,7 @@ public abstract class AbstractEnvelope implements Envelope {
         if (crs1 == null) {
             return crs2;
         } else {
-            if (crs2!=null && !crs1.equals(crs2)) {
+            if (crs2 != null && !crs1.equals(crs2)) {
                 throw new MismatchedReferenceSystemException(
                           Errors.format(Errors.Keys.MISMATCHED_COORDINATE_REFERENCE_SYSTEM));
             }
