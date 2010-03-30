@@ -59,6 +59,12 @@ public class SpatialReferenceFrame implements AbstractSpatialReferenceFrame {
 
     }
 
+    public SpatialReferenceFrame(AbstractSpatialReferenceFrame sr) {
+        if (sr != null) {
+            this.engineeringCRS = sr.getEngineeringCRS();
+        }
+    }
+
     public SpatialReferenceFrame(EngineeringCRSType engineeringCRS) {
         this.engineeringCRS = engineeringCRS;
     }

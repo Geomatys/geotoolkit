@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import org.geotoolkit.sml.xml.AbstractInterfaceDefinition;
 import org.geotoolkit.swe.xml.v100.Category;
 import org.geotoolkit.util.Utilities;
 
@@ -70,7 +71,7 @@ import org.geotoolkit.util.Utilities;
     "mechanicalLayer"
 })
 @XmlRootElement(name = "InterfaceDefinition")
-public class InterfaceDefinition {
+public class InterfaceDefinition implements AbstractInterfaceDefinition {
 
     private LayerPropertyType serviceLayer;
     private LayerPropertyType applicationLayer;

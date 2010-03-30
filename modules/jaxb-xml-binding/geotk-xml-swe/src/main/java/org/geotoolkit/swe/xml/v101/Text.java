@@ -57,6 +57,13 @@ public class Text extends AbstractDataComponentEntry implements AbstractText {
 
     }
 
+    public Text(AbstractText tx) {
+        super(tx);
+        if (tx != null) {
+            this.value = tx.getValue();
+        }
+    }
+
     public Text(String definition, String value) {
         super(definition);
         this.value = value;

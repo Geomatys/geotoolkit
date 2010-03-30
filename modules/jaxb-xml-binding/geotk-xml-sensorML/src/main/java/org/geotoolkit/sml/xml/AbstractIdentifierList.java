@@ -26,4 +26,8 @@ import java.util.List;
 public interface AbstractIdentifierList {
 
      public List<? extends AbstractIdentifier> getIdentifier();
+
+     public String getId();
+
+     void setId(String value);
 }

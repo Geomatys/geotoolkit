@@ -28,6 +28,7 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.geotoolkit.swe.xml.AbstractCount;
+import org.geotoolkit.swe.xml.AbstractQualityProperty;
 
 
 /**
@@ -72,6 +73,34 @@ public class Count extends AbstractDataComponentType implements AbstractCount {
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlSchemaType(name = "token")
     private String axisID;
+
+    /**
+     * Empty constructor used by JAXB.
+     */
+    public Count() {
+        
+    }
+    
+    public Count(AbstractCount q) {
+        super(q);
+        if (q != null) {
+            this.axisID         = q.getAxisID();
+            if (q.getConstraint() != null) {
+                this.constraint = new AllowedValuesPropertyType(q.getConstraint());
+            }
+            if (q.getQuality() != null) {
+                this.quality = new ArrayList<QualityPropertyType>();
+                for (AbstractQualityProperty qual : q.getQuality()) {
+                    this.quality.add(new QualityPropertyType(qual));
+                }
+            }
+            this.referenceFrame = q.getReferenceFrame();
+            if (q.getValue() != null) {
+                this.value = q.getValue().intValue();
+            }
+        }
+    }
+
 
     /**
      * Gets the value of the constraint property.

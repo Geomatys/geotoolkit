@@ -21,9 +21,11 @@ package org.geotoolkit.swe.xml;
  *
  * @author Mehdi Sidhoum (Geomatys).
  */
-public interface AbstractSquareMatrix {
+public interface AbstractSquareMatrix extends AbstractMatrix {
 
-    public AbstractQuantityProperty getElementType();
+    AbstractQuantityProperty getElementType();
 
-    public AbstractDataValueProperty getValues();
+    AbstractDataValueProperty getValues();
+
+    BlockEncodingProperty getEncoding();
 }

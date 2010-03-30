@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.sml.xml.AbstractDataDefinition;
 import org.geotoolkit.swe.xml.v101.DataBlockDefinitionEntry;
 import org.geotoolkit.swe.xml.v101.DataStreamDefinitionType;
 
@@ -51,7 +52,7 @@ import org.geotoolkit.swe.xml.v101.DataStreamDefinitionType;
     "dataBlockDefinition",
     "dataStreamDefinition"
 })
-public class DataDefinition {
+public class DataDefinition implements AbstractDataDefinition {
 
     @XmlElement(name = "DataBlockDefinition", namespace = "http://www.opengis.net/swe/1.0.1")
     private DataBlockDefinitionEntry dataBlockDefinition;
@@ -78,6 +79,28 @@ public class DataDefinition {
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
     private String actuate;
 
+    public DataDefinition() {
+
+    }
+
+    public DataDefinition(AbstractDataDefinition ddef) {
+        if (ddef != null) {
+            this.actuate      = ddef.getActuate();
+            this.arcrole      = ddef.getArcrole();
+            this.href         = ddef.getHref();
+            this.remoteSchema = ddef.getRemoteSchema();
+            this.role         = ddef.getRole();
+            this.show         = ddef.getShow();
+            this.title        = ddef.getTitle();
+            this.type         = ddef.getType();
+            if (ddef.getDataBlockDefinition() != null) {
+                this.dataBlockDefinition = new DataBlockDefinitionEntry(ddef.getDataBlockDefinition());
+            }
+            if (ddef.getDataStreamDefinition() != null) {
+                this.dataStreamDefinition = new DataStreamDefinitionType(ddef.getDataStreamDefinition());
+            }
+        }
+    }
     /**
      * Gets the value of the dataBlockDefinition property.
      *
@@ -159,12 +182,8 @@ public class DataDefinition {
      *
      */
     public String getType() {
-        if (type == null) {
-            return "simple";
-        } else {
-            return type;
-        }
-    }
+        return type;
+     }
 
     /**
      * Sets the value of the type property.

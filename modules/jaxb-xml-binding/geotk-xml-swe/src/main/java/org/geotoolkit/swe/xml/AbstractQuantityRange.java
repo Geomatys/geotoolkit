@@ -23,7 +23,7 @@ import java.util.List;
  *
  * @author Mehdi Sidhoum (Geomatys).
  */
-public interface AbstractQuantityRange {
+public interface AbstractQuantityRange extends AbstractDataComponent {
 
     public UomProperty getUom();
 
@@ -34,4 +34,6 @@ public interface AbstractQuantityRange {
     public String getReferenceFrame();
 
     public String getAxisID();
+
+    public AbstractAllowedValuesProperty getConstraint();
 }

@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2008 - 2009, Geomatys
+ *    (C) 2008 - 2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -29,6 +29,13 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.geotoolkit.gml.xml.v311.StringOrRefType;
+import org.geotoolkit.sml.xml.AbstractClassification;
+import org.geotoolkit.sml.xml.AbstractContact;
+import org.geotoolkit.sml.xml.AbstractDocumentation;
+import org.geotoolkit.sml.xml.AbstractEvent;
+import org.geotoolkit.sml.xml.AbstractIdentification;
+import org.geotoolkit.sml.xml.AbstractKeywords;
+import org.geotoolkit.swe.xml.DataComponentProperty;
 import org.geotoolkit.swe.xml.v101.DataComponentPropertyType;
 
 
@@ -69,7 +76,7 @@ import org.geotoolkit.swe.xml.v101.DataComponentPropertyType;
     "property"
 })
 @XmlRootElement(name = "Event")
-public class Event {
+public class Event implements AbstractEvent {
 
     private String date;
     @XmlElement(namespace = "http://www.opengis.net/gml")
@@ -85,6 +92,55 @@ public class Event {
     @XmlID
     @XmlSchemaType(name = "ID")
     private String id;
+
+    public Event() {
+
+    }
+
+    public Event(AbstractEvent event) {
+        if (event != null) {
+            if (event.getClassification() != null) {
+                this.classification = new ArrayList<Classification>();
+                for (AbstractClassification c : event.getClassification()) {
+                    this.classification.add(new Classification(c));
+                }
+            }
+            if (event.getContact() != null) {
+                this.contact = new ArrayList<Contact>();
+                for (AbstractContact c : event.getContact()) {
+                    this.contact.add(new Contact(c));
+                }
+            }
+            if (event.getDocumentation() != null) {
+                this.documentation = new ArrayList<Documentation>();
+                for (AbstractDocumentation c : event.getDocumentation()) {
+                    this.documentation.add(new Documentation(c));
+                }
+            }
+            if (event.getIdentification() != null) {
+                this.identification = new ArrayList<Identification>();
+                for (AbstractIdentification c : event.getIdentification()) {
+                    this.identification.add(new Identification(c));
+                }
+            }
+            if (event.getKeywords() != null) {
+                this.keywords = new ArrayList<Keywords>();
+                for (AbstractKeywords c : event.getKeywords()) {
+                    this.keywords.add(new Keywords(c));
+                }
+            }
+            if (event.getProperty() != null) {
+                this.property = new ArrayList<DataComponentPropertyType>();
+                for (DataComponentProperty c : event.getProperty()) {
+                    this.property.add(new DataComponentPropertyType(c));
+                }
+            }
+            this.date        = event.getDate();
+            this.id          = event.getId();
+            this.description = event.getDescription();
+        }
+
+    }
 
     /**
      * Gets the value of the date property.
@@ -137,24 +193,6 @@ public class Event {
     /**
      * Gets the value of the keywords property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the keywords property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getKeywords().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link Keywords }
-     * 
-     * 
      */
     public List<Keywords> getKeywords() {
         if (keywords == null) {
@@ -165,24 +203,6 @@ public class Event {
 
     /**
      * Gets the value of the identification property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the identification property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getIdentification().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link Identification }
-     * 
      * 
      */
     public List<Identification> getIdentification() {
@@ -195,24 +215,6 @@ public class Event {
     /**
      * Gets the value of the classification property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the classification property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getClassification().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link Classification }
-     * 
-     * 
      */
     public List<Classification> getClassification() {
         if (classification == null) {
@@ -223,25 +225,6 @@ public class Event {
 
     /**
      * Gets the value of the contact property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the contact property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getContact().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link Contact }
-     * 
-     * 
      */
     public List<Contact> getContact() {
         if (contact == null) {
@@ -252,25 +235,6 @@ public class Event {
 
     /**
      * Gets the value of the documentation property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the documentation property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getDocumentation().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link Documentation }
-     * 
-     * 
      */
     public List<Documentation> getDocumentation() {
         if (documentation == null) {
@@ -281,25 +245,6 @@ public class Event {
 
     /**
      * Gets the value of the property property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the property property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getProperty().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link DataComponentPropertyType }
-     * 
-     * 
      */
     public List<DataComponentPropertyType> getProperty() {
         if (property == null) {

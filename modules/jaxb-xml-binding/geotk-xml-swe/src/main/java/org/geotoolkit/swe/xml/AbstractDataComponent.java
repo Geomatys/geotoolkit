@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.swe.xml;
 
+import org.geotoolkit.gml.xml.AbstractGML;
 import org.opengis.annotation.UML;
 import static org.opengis.annotation.Specification.*;
 import static org.opengis.annotation.Obligation.*;
@@ -27,7 +28,7 @@ import static org.opengis.annotation.Obligation.*;
  * @module pending
  */
 @UML(identifier="AbstractDataComponent", specification=UNSPECIFIED)
-public interface AbstractDataComponent {
+public interface AbstractDataComponent extends AbstractGML {
     
     /**
      * Points to semantics information defining the precise nature of the component
@@ -40,5 +41,5 @@ public interface AbstractDataComponent {
      */
     @UML(identifier="fixed", obligation=OPTIONAL, specification=UNSPECIFIED )
     Boolean isFixed();
-    
+
 }

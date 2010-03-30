@@ -21,6 +21,7 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.swe.xml.AnyScalar;
 import org.geotoolkit.swe.xml.SimpleDataRecord;
 import org.geotoolkit.util.Utilities;
 
@@ -59,6 +60,17 @@ public class SimpleDataRecordType extends AbstractDataRecordType implements Simp
 
     public SimpleDataRecordType(List<AnyScalarPropertyType> field) {
         this.field = field;
+    }
+
+    public SimpleDataRecordType(SimpleDataRecord record) {
+        super(record);
+        if (record != null && record.getField() != null) {
+            this.field = new ArrayList<AnyScalarPropertyType>();
+            for (AnyScalar a : record.getField()) {
+                this.field.add(new AnyScalarPropertyType(a));
+            }
+        }
+
     }
 
     /**

@@ -47,4 +47,6 @@ public interface AbstractDataValueProperty {
     public String getActuate();
 
     public Map<QName, String> getOtherAttributes();
+
+    Integer getRecordCount();
 }

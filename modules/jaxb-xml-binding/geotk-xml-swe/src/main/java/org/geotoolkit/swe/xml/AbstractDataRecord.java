@@ -22,7 +22,7 @@ import static org.opengis.annotation.Specification.*;
 /**
  * Abstract type for Data record type.
  *
- * @author legal
+ * @author Guilhel Legal
  * @module pending
  */
 @UML(identifier="AbstractDataRecord", specification=UNSPECIFIED)

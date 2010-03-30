@@ -78,9 +78,11 @@ public abstract class AbstractDataArrayEntry extends AbstractDataComponentEntry 
     /**
      * Clone a new Abstract Data array.
      */
-    public AbstractDataArrayEntry(AbstractDataArrayEntry array) {
+    public AbstractDataArrayEntry(AbstractDataArray array) {
         super(array);
-        this.elementCount = new ElementCount(array.elementCount);
+        if (array != null) {
+            this.elementCount = new ElementCount(array.getElementCount());
+        }
     }
 
     /**

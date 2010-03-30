@@ -21,6 +21,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.namespace.QName;
+import org.geotoolkit.swe.xml.XmlBlock;
 
 
 /**
@@ -45,10 +46,21 @@ import javax.xml.namespace.QName;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "XMLBlockType")
-public class XMLBlockType extends AbstractEncodingEntry {
+public class XMLBlockType extends AbstractEncodingEntry implements XmlBlock{
 
     @XmlAttribute
     private QName xmlElement;
+
+    public XMLBlockType() {
+
+    }
+
+    public XMLBlockType(XmlBlock xm) {
+        super(xm);
+        if (xm != null) {
+            this.xmlElement = xm.getXmlElement();
+        }
+    }
 
     /**
      * Gets the value of the xmlElement property.

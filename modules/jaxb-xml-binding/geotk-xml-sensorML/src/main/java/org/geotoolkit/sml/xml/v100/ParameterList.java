@@ -26,6 +26,8 @@ import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import org.geotoolkit.sml.xml.AbstractParameterList;
+import org.geotoolkit.swe.xml.DataComponentProperty;
 import org.geotoolkit.swe.xml.v100.DataComponentPropertyType;
 import org.geotoolkit.util.Utilities;
 
@@ -54,7 +56,7 @@ import org.geotoolkit.util.Utilities;
 @XmlType(name = "", propOrder = {
     "parameter"
 })
-public class ParameterList {
+public class ParameterList implements AbstractParameterList {
 
     @XmlElement(required = true)
     private List<DataComponentPropertyType> parameter;
@@ -68,6 +70,18 @@ public class ParameterList {
 
     public ParameterList(List<DataComponentPropertyType> parameter) {
         this.parameter = parameter;
+    }
+
+    public ParameterList(AbstractParameterList paramList) {
+        if (paramList != null) {
+            this.id = paramList.getId();
+            if (paramList.getParameter() != null) {
+                this.parameter = new ArrayList<DataComponentPropertyType>();
+                for (DataComponentProperty p : paramList.getParameter()) {
+                    this.parameter.add(new DataComponentPropertyType(p));
+                }
+            }
+        }
     }
 
     /**

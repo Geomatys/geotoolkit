@@ -28,6 +28,8 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import org.geotoolkit.sml.xml.AbstractEventList;
+import org.geotoolkit.sml.xml.AbstractEventListMember;
 
 
 /**
@@ -68,7 +70,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
     "member"
 })
 @XmlRootElement(name = "EventList")
-public class EventList {
+public class EventList implements AbstractEventList {
 
     @XmlElement(required = true)
     private List<EventList.Member> member;
@@ -78,27 +80,24 @@ public class EventList {
     @XmlSchemaType(name = "ID")
     private String id;
 
+    public EventList() {
+
+    }
+
+    public EventList(AbstractEventList el) {
+        if (el != null) {
+            this.id = el.getId();
+            if (el.getMember() != null) {
+                this.member = new ArrayList<Member>();
+                for (AbstractEventListMember m : el.getMember()) {
+                    this.member.add(new Member(m));
+                }
+            }
+        }
+    }
+
     /**
      * Gets the value of the member property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the member property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getMember().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link EventList.Member }
-     * 
-     * 
      */
     public List<EventList.Member> getMember() {
         if (member == null) {
@@ -157,7 +156,7 @@ public class EventList {
     @XmlType(name = "", propOrder = {
         "event"
     })
-    public static class Member {
+    public static class Member implements AbstractEventListMember {
 
         @XmlElement(name = "Event")
         private Event event;
@@ -185,6 +184,27 @@ public class EventList {
         private String show;
         @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
         private String actuate;
+
+        public Member() {
+
+        }
+
+        public Member(AbstractEventListMember m) {
+            if (m != null) {
+                this.actuate = m.getActuate();
+                this.arcrole = m.getArcrole();
+                this.href    = m.getHref();
+                this.name    = m.getName();
+                this.remoteSchema = m.getRemoteSchema();
+                this.role = m.getRole();
+                this.show = m.getShow();
+                this.title = m.getTitle();
+                this.type = m.getType();
+                if (m.getEvent() != null) {
+                    this.event = new Event(m.getEvent());
+                }
+            }
+        }
 
         /**
          * Gets the value of the event property.
@@ -267,11 +287,7 @@ public class EventList {
          *     
          */
         public String getType() {
-            if (type == null) {
-                return "simple";
-            } else {
-                return type;
-            }
+            return type;
         }
 
         /**

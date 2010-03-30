@@ -114,6 +114,13 @@ public class Location implements AbstractLocation {
         return abstractCurve;
     }
 
+    public AbstractCurveType getCurve() {
+        if (abstractCurve != null) {
+            return abstractCurve.getValue();
+        }
+        return null;
+    }
+
     /**
      * Sets the value of the abstractCurve property.
      * 
@@ -234,11 +241,7 @@ public class Location implements AbstractLocation {
      * Gets the value of the type property.
      */
     public String getType() {
-        if (type == null) {
-            return "simple";
-        } else {
-            return type;
-        }
+        return type;
     }
 
     /**

@@ -21,6 +21,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.swe.xml.MultiplexedStreamFormat;
 
 
 /**
@@ -44,13 +45,24 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "MultiplexedStreamFormatType")
-public class MultiplexedStreamFormatType extends AbstractEncodingEntry {
+public class MultiplexedStreamFormatType extends AbstractEncodingEntry implements MultiplexedStreamFormat {
 
     @XmlAttribute(required = true)
     @XmlSchemaType(name = "anyURI")
     private String type;
     @XmlAttribute(required = true)
     private String version;
+
+    public MultiplexedStreamFormatType() {
+
+    }
+
+    public MultiplexedStreamFormatType(MultiplexedStreamFormat ms) {
+        if (ms != null) {
+            this.type = ms.getType();
+            this.version = ms.getVersion();
+        }
+    }
 
     /**
      * Gets the value of the type property.

@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.swe.xml.MultiplexedStreamFormatProperty;
 
 
 /**
@@ -49,7 +50,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "MultiplexedStreamFormatPropertyType", propOrder = {
     "multiplexedStreamFormat"
 })
-public class MultiplexedStreamFormatPropertyType {
+public class MultiplexedStreamFormatPropertyType implements MultiplexedStreamFormatProperty {
 
     @XmlElement(name = "MultiplexedStreamFormat")
     private MultiplexedStreamFormatType multiplexedStreamFormat;
@@ -74,6 +75,27 @@ public class MultiplexedStreamFormatPropertyType {
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
     private String actuate;
 
+    public MultiplexedStreamFormatPropertyType() {
+
+    }
+
+    public MultiplexedStreamFormatPropertyType(MultiplexedStreamFormatProperty ms) {
+        if (ms != null) {
+            this.actuate = ms.getActuate();
+            this.arcrole = ms.getArcrole();
+            this.href    = ms.getHref();
+            this.remoteSchema = ms.getRemoteSchema();
+            this.role    = ms.getRole();
+            this.show    = ms.getShow();
+            this.title   = ms.getTitle();
+            this.type    = ms.getType();
+            if (ms.getMultiplexedStreamFormat() != null) {
+                this.multiplexedStreamFormat = new MultiplexedStreamFormatType(ms.getMultiplexedStreamFormat());
+            }
+        }
+
+    }
+    
     /**
      * Gets the value of the multiplexedStreamFormat property.
      * 
@@ -131,11 +153,7 @@ public class MultiplexedStreamFormatPropertyType {
      *     
      */
     public String getType() {
-        if (type == null) {
-            return "simple";
-        } else {
-            return type;
-        }
+        return type;
     }
 
     /**

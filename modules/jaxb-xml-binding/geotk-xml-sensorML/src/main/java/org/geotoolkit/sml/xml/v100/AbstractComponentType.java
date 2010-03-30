@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.sml.xml.AbstractComponent;
 import org.geotoolkit.sml.xml.AbstractInputs;
 import org.geotoolkit.sml.xml.AbstractOutputs;
+import org.geotoolkit.sml.xml.AbstractParameters;
 import org.geotoolkit.util.Utilities;
 
 
@@ -114,6 +115,13 @@ public abstract class AbstractComponentType extends AbstractDerivableComponentTy
      */
     public void setParameters(Parameters parameters) {
         this.parameters = parameters;
+    }
+
+    /**
+     * @param parameters the parameters to set
+     */
+    public void setParameters(AbstractParameters parameters) {
+        this.parameters = new Parameters(parameters);
     }
 
     /**

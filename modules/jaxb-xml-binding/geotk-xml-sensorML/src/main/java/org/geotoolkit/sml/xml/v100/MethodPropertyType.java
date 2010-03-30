@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.sml.xml.AbstractMethodProperty;
 
 
 /**
@@ -50,7 +51,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "methodPropertyType", propOrder = {
     "processMethod"
 })
-public class MethodPropertyType {
+public class MethodPropertyType implements AbstractMethodProperty {
 
     @XmlElement(name = "ProcessMethod")
     private ProcessMethodType processMethod;
@@ -211,12 +212,8 @@ public class MethodPropertyType {
      * Gets the value of the type property.
      */
     public String getType() {
-        if (type == null) {
-            return "simple";
-        } else {
-            return type;
-        }
-    }
+        return type;
+     }
 
     /**
      * Sets the value of the type property.

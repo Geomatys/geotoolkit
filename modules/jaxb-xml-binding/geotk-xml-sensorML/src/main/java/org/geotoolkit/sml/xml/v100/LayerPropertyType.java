@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.sml.xml.AbstractLayerProperty;
 import org.geotoolkit.swe.xml.v100.Category;
 import org.geotoolkit.swe.xml.v100.AbstractDataRecordType;
 import org.geotoolkit.util.Utilities;
@@ -57,7 +58,7 @@ import org.geotoolkit.util.Utilities;
     "abstractDataRecord",
     "category"
 })
-public class LayerPropertyType {
+public class LayerPropertyType implements AbstractLayerProperty {
 
     @XmlElementRef(name = "AbstractDataRecord", namespace = "http://www.opengis.net/swe/1.0", type = JAXBElement.class)
     private JAXBElement<? extends AbstractDataRecordType> abstractDataRecord;
@@ -95,6 +96,16 @@ public class LayerPropertyType {
      */
     public JAXBElement<? extends AbstractDataRecordType> getAbstractDataRecord() {
         return abstractDataRecord;
+    }
+
+    /**
+     * Gets the value of the abstractDataRecord property.
+     */
+    public AbstractDataRecordType getDataRecord() {
+        if (abstractDataRecord != null) {
+            return abstractDataRecord.getValue();
+        }
+        return null;
     }
 
     /**
@@ -231,12 +242,8 @@ public class LayerPropertyType {
      * Gets the value of the type property.
      */
     public String getType() {
-        if (type == null) {
-            return "simple";
-        } else {
-            return type;
-        }
-    }
+        return type;
+     }
 
     /**
      * Sets the value of the type property.

@@ -23,7 +23,7 @@ import java.util.List;
  *
  * @author Mehdi Sidhoum (Geomatys).
  */
-public interface AbstractCount {
+public interface AbstractCount extends AbstractDataComponent {
 
     public List<? extends AbstractQualityProperty> getQuality();
 
@@ -32,4 +32,6 @@ public interface AbstractCount {
     public String getReferenceFrame();
 
     public String getAxisID();
+
+    public AbstractAllowedValuesProperty getConstraint();
 }

@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.sml.xml.AbstractParameters;
 import org.geotoolkit.util.Utilities;
 
 
@@ -64,7 +65,7 @@ import org.geotoolkit.util.Utilities;
     "parameterList"
 })
 @XmlRootElement(name = "parameters")
-public class Parameters {
+public class Parameters implements AbstractParameters {
 
     @XmlElement(name = "ParameterList")
     private ParameterList parameterList;
@@ -91,6 +92,22 @@ public class Parameters {
 
     }
 
+    public Parameters(AbstractParameters param) {
+        if (param != null) {
+            if (param.getParameterList() != null) {
+                this.parameterList = new ParameterList(param.getParameterList());
+            }
+            this.actuate = param.getActuate();
+            this.arcrole = param.getArcrole();
+            this.href    = param.getHref();
+            this.remoteSchema = param.getRemoteSchema();
+            this.role         = param.getRole();
+            this.show         = param.getShow();
+            this.title        = param.getTitle();
+            this.type         = param.getType();
+        }
+    }
+    
     public Parameters(ParameterList parameterList) {
         this.parameterList = parameterList;
     }
@@ -221,12 +238,8 @@ public class Parameters {
      * Gets the value of the type property.
      */
     public String getType() {
-        if (type == null) {
-            return "simple";
-        } else {
-            return type;
-        }
-    }
+        return type;
+     }
 
     /**
      * Sets the value of the type property.

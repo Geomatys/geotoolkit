@@ -26,6 +26,7 @@ import javax.xml.bind.annotation.XmlAnyAttribute;
 import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.namespace.QName;
+import org.geotoolkit.sml.xml.AbstractValues;
 import org.w3c.dom.Element;
 
 /**
@@ -49,7 +50,7 @@ import org.w3c.dom.Element;
 @XmlType(name = "", propOrder = {
     "any"
 })
-public class Values {
+public class Values implements AbstractValues {
 
     @XmlAnyElement
     private List<Element> any;

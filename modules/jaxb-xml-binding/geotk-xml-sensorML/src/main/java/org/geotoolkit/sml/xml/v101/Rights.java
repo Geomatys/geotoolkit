@@ -26,6 +26,7 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import org.geotoolkit.sml.xml.AbstractRights;
 
 
 /**
@@ -57,7 +58,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
     "documentation"
 })
 @XmlRootElement(name = "Rights")
-public class Rights {
+public class Rights implements AbstractRights{
 
     @XmlElement(required = true)
     private Documentation documentation;
@@ -75,6 +76,18 @@ public class Rights {
 
     public Rights() {
 
+    }
+
+    public Rights(AbstractRights r) {
+        if (r != null) {
+            this.copyRights = r.isCopyRights();
+            this.privacyAct = r.isPrivacyAct();
+            this.id         = r.getId();
+            this.intellectualPropertyRights = r.isIntellectualPropertyRights();
+            if (r.getDocumentation() != null) {
+                this.documentation = new Documentation(r.getDocumentation());
+            }
+        }
     }
 
     public Rights(Boolean copyRights, Boolean privacyAct, Documentation docu) {

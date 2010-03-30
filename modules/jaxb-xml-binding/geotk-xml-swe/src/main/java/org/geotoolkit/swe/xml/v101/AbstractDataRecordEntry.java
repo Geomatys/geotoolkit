@@ -31,22 +31,29 @@ import org.geotoolkit.swe.xml.AbstractDataRecord;
 public class AbstractDataRecordEntry extends AbstractDataComponentEntry implements AbstractDataRecord {
     
     /**
-     * constructeur utilisé par jaxB.
+     * constructor used by JAXB.
      */
     public AbstractDataRecordEntry() {}
             
     /**
-     * super-constructeur appellé par les sous-classes.
+     * super-constructor called by sub-classes.
      */
     public AbstractDataRecordEntry(final String id, final String definition, boolean fixed) {
         super(id, definition, fixed);
     }
 
     /**
-     * super-constructeur appellé par les sous-classes.
+     * super-constructor called by sub-classes.
      */
     public AbstractDataRecordEntry(final String definition) {
         super(definition);
+    }
+
+    /**
+     * super-constructor called by sub-classes.
+     */
+    public AbstractDataRecordEntry(final AbstractDataRecord record) {
+        super(record);
     }
     
 }

@@ -75,6 +75,14 @@ public class KeywordList implements AbstractKeywordList {
     public KeywordList() {
     }
 
+    public KeywordList(AbstractKeywordList kl) {
+        if (kl != null) {
+            this.codeSpace = kl.getCodeSpace();
+            this.id        = kl.getId();
+            this.keyword   = kl.getKeyword();
+        }
+    }
+
     public KeywordList(URI codeSpace, List<String> keyword) {
         this.codeSpace = codeSpace;
         this.keyword = keyword;

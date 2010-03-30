@@ -59,6 +59,25 @@ public class SystemType extends AbstractComponentType implements System {
     @XmlElement(required = true)
     private Connections connections;
 
+    public SystemType() {
+
+    }
+
+    public SystemType(System sy) {
+        super(sy);
+        if (sy != null) {
+            if (sy.getComponents() != null) {
+                this.components = new Components(sy.getComponents());
+            }
+            if (sy.getConnections() != null) {
+                this.connections = new Connections(sy.getConnections());
+            }
+            if (sy.getPositions() != null) {
+                this.positions = new Positions(sy.getPositions());
+            }
+        }
+    }
+
     /**
      * @return the components
      */

@@ -53,6 +53,20 @@ public class TimeType extends AbstractDataComponentEntry implements AbstractTime
     public TimeType() {
         
     }
+
+    public TimeType(AbstractTime time) {
+        super(time);
+        if (time != null) {
+            if (time.getUom() != null) {
+                this.uom = new UomPropertyType(time.getUom());
+            }
+            this.referenceFrame = time.getReferenceFrame();
+            this.referenceTime  = time.getReferenceTime();
+            this.localFrame     = time.getLocalFrame();
+            this.value          = time.getValue();
+        }
+
+    }
     
     /**
      * Build a new TimeType

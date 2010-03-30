@@ -26,6 +26,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import org.geotoolkit.sml.xml.AbstractInterface;
 import org.geotoolkit.util.Utilities;
 
 
@@ -56,7 +57,7 @@ import org.geotoolkit.util.Utilities;
     "interfaceDefinition"
 })
 @XmlRootElement(name = "interface")
-public class Interface {
+public class Interface implements AbstractInterface {
 
     @XmlElement(name = "InterfaceDefinition")
     private InterfaceDefinition interfaceDefinition;
@@ -231,11 +232,7 @@ public class Interface {
      * Gets the value of the type property.
      */
     public String getType() {
-        if (type == null) {
-            return "simple";
-        } else {
-            return type;
-        }
+        return type;
     }
 
     /**

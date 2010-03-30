@@ -27,6 +27,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import org.geotoolkit.sml.xml.AbstractEventList;
+import org.geotoolkit.sml.xml.AbstractEventListMember;
 
 
 /**
@@ -67,7 +69,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
     "member"
 })
 @XmlRootElement(name = "EventList")
-public class EventList {
+public class EventList implements AbstractEventList {
 
     @XmlElement(required = true)
     private List<EventList.Member> member;
@@ -126,7 +128,7 @@ public class EventList {
     @XmlType(name = "", propOrder = {
         "event"
     })
-    public static class Member {
+    public static class Member implements AbstractEventListMember {
 
         @XmlElement(name = "Event")
         private Event event;
@@ -292,11 +294,7 @@ public class EventList {
          * Gets the value of the type property.
          */
         public String getType() {
-            if (type == null) {
-                return "simple";
-            } else {
-                return type;
-            }
+            return type;
         }
 
         /**

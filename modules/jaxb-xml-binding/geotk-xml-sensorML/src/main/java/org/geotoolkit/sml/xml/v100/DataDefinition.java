@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.sml.xml.AbstractDataDefinition;
 import org.geotoolkit.swe.xml.v100.DataBlockDefinitionType;
 import org.geotoolkit.swe.xml.v100.DataStreamDefinitionType;
 
@@ -53,7 +54,7 @@ import org.geotoolkit.swe.xml.v100.DataStreamDefinitionType;
     "dataBlockDefinition",
     "dataStreamDefinition"
 })
-public class DataDefinition {
+public class DataDefinition implements AbstractDataDefinition {
 
     @XmlElement(name = "DataBlockDefinition", namespace = "http://www.opengis.net/swe/1.0")
     private DataBlockDefinitionType dataBlockDefinition;
@@ -219,11 +220,7 @@ public class DataDefinition {
      * Gets the value of the type property.
      */
     public String getType() {
-        if (type == null) {
-            return "simple";
-        } else {
-            return type;
-        }
+        return type;
     }
 
     /**

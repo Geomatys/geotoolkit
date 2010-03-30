@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.sml.xml.AbstractPresentationLayerProperty;
 import org.geotoolkit.swe.xml.v100.Category;
 import org.geotoolkit.swe.xml.v100.DataBlockDefinitionType;
 import org.geotoolkit.swe.xml.v100.DataStreamDefinitionType;
@@ -62,7 +63,7 @@ import org.geotoolkit.swe.xml.v100.AbstractDataRecordType;
     "dataBlockDefinition",
     "dataStreamDefinition"
 })
-public class PresentationLayerPropertyType {
+public class PresentationLayerPropertyType implements AbstractPresentationLayerProperty {
 
     @XmlElementRef(name = "AbstractDataRecord", namespace = "http://www.opengis.net/swe/1.0", type = JAXBElement.class)
     private JAXBElement<? extends AbstractDataRecordType> abstractDataRecord;
@@ -106,6 +107,16 @@ public class PresentationLayerPropertyType {
         return abstractDataRecord;
     }
 
+    /**
+     * Gets the value of the abstractDataRecord property.
+     */
+    public AbstractDataRecordType getDataRecord() {
+        if (abstractDataRecord != null) {
+            return abstractDataRecord.getValue();
+        }
+        return null;
+    }
+    
     /**
      * Sets the value of the abstractDataRecord property.
      */
@@ -268,12 +279,8 @@ public class PresentationLayerPropertyType {
      * Gets the value of the type property.
      */
     public String getType() {
-        if (type == null) {
-            return "simple";
-        } else {
-            return type;
-        }
-    }
+        return type;
+     }
 
     /**
      * Sets the value of the type property.

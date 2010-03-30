@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2008 - 2009, Geomatys
+ *    (C) 2008 - 2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -16,6 +16,9 @@
  */
 package org.geotoolkit.sml.xml;
 
+import java.net.URI;
+import org.geotoolkit.swe.xml.AbstractCodeSpaceProperty;
+
 /**
  *
  * @author Guilhem Legal
@@ -23,6 +26,12 @@ package org.geotoolkit.sml.xml;
  */
 public interface AbstractTerm {
 
-    public String getValue();
+    AbstractCodeSpaceProperty getCodeSpace();
+
+    String getValue();
+    
+    void setValue(String value);
+
+    URI getDefinition();
 
 }

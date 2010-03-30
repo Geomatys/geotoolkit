@@ -24,8 +24,14 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.sml.xml.AbstractLayerProperty;
+import org.geotoolkit.swe.xml.AbstractDataRecord;
+import org.geotoolkit.swe.xml.DataRecord;
+import org.geotoolkit.swe.xml.SimpleDataRecord;
 import org.geotoolkit.swe.xml.v101.AbstractDataRecordEntry;
 import org.geotoolkit.swe.xml.v101.Category;
+import org.geotoolkit.swe.xml.v101.DataRecordType;
+import org.geotoolkit.swe.xml.v101.SimpleDataRecordEntry;
 
 
 
@@ -56,7 +62,7 @@ import org.geotoolkit.swe.xml.v101.Category;
     "abstractDataRecord",
     "category"
 })
-public class LayerPropertyType {
+public class LayerPropertyType implements AbstractLayerProperty {
 
     @XmlElementRef(name = "AbstractDataRecord", namespace = "http://www.opengis.net/swe/1.0.1", type = JAXBElement.class)
     private JAXBElement<? extends AbstractDataRecordEntry> abstractDataRecord;
@@ -87,6 +93,33 @@ public class LayerPropertyType {
 
     }
 
+    public LayerPropertyType(AbstractLayerProperty la) {
+        if (la != null) {
+            if (la.getCategory() != null) {
+                this.category = new Category(la.getCategory());
+            }
+            if (la.getDataRecord() != null) {
+                AbstractDataRecord record = la.getDataRecord();
+                org.geotoolkit.swe.xml.v101.ObjectFactory factory = new org.geotoolkit.swe.xml.v101.ObjectFactory();
+                if (record instanceof SimpleDataRecord) {
+                    abstractDataRecord = factory.createSimpleDataRecord(new SimpleDataRecordEntry((SimpleDataRecord)record));
+                } else if (record instanceof DataRecord) {
+                    abstractDataRecord = factory.createDataRecord(new DataRecordType((DataRecord)record));
+                } else {
+                    System.out.println("UNINPLEMENTED CASE:" + record);
+                }
+            }
+            this.actuate = la.getActuate();
+            this.arcrole = la.getArcrole();
+            this.href    = la.getHref();
+            this.remoteSchema = la.getRemoteSchema();
+            this.role         = la.getRole();
+            this.show         = la.getShow();
+            this.title        = la.getTitle();
+            this.type         = la.getType();
+        }
+    }
+
     public LayerPropertyType(Category category) {
         this.category = category;
     }
@@ -110,6 +143,13 @@ public class LayerPropertyType {
      */
     public JAXBElement<? extends AbstractDataRecordEntry> getAbstractDataRecord() {
         return abstractDataRecord;
+    }
+
+    public AbstractDataRecordEntry getDataRecord() {
+        if (abstractDataRecord != null) {
+            return abstractDataRecord.getValue();
+        }
+        return null;
     }
 
     /**
@@ -190,12 +230,8 @@ public class LayerPropertyType {
      *     
      */
     public String getType() {
-        if (type == null) {
-            return "simple";
-        } else {
-            return type;
-        }
-    }
+        return type;
+     }
 
     /**
      * Sets the value of the type property.

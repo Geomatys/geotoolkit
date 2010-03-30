@@ -105,6 +105,10 @@ public class DataValuePropertyType implements AbstractDataValueProperty {
         return remoteSchema;
     }
 
+    public Integer getRecordCount() {
+        return null;
+    }
+
     /**
      * Sets the value of the remoteSchema property.
      * 
@@ -126,11 +130,7 @@ public class DataValuePropertyType implements AbstractDataValueProperty {
      *     
      */
     public String getType() {
-        if (type == null) {
-            return "simple";
-        } else {
-            return type;
-        }
+        return type;
     }
 
     /**

@@ -25,4 +25,21 @@ public interface AbstractEncodingProperty {
 
     public void setToHref();
 
+    AbstractEncoding getEncoding();
+
+    String getRemoteSchema();
+
+    String getType();
+
+    String getHref();
+
+    String getRole();
+
+    String getArcrole();
+
+    String getTitle();
+
+    String getShow();
+
+    String getActuate();
 }

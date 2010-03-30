@@ -16,6 +16,8 @@
  */
 package org.geotoolkit.swe.xml.v100;
 
+import java.util.Arrays;
+import java.util.Collection;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -25,6 +27,7 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import org.geotoolkit.swe.xml.DataBlockDefinition;
 
 
 /**
@@ -54,7 +57,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
     "components",
     "encoding"
 })
-public class DataBlockDefinitionType {
+public class DataBlockDefinitionType implements DataBlockDefinition {
 
     @XmlElement(required = true)
     private DataComponentPropertyType components;
@@ -69,7 +72,11 @@ public class DataBlockDefinitionType {
     /**
      * Gets the value of the components property.
      */
-    public DataComponentPropertyType getComponents() {
+    public Collection<? extends AbstractDataComponentType> getComponents() {
+        return Arrays.asList((AbstractDataComponentType)components.getValue());
+    }
+
+    public DataComponentPropertyType getRealComponent() {
         return components;
     }
 

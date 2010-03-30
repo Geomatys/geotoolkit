@@ -30,6 +30,10 @@ import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.geotoolkit.gml.xml.v311.StringOrRefType;
 import org.geotoolkit.gml.xml.v311.AbstractGMLEntry;
+import org.geotoolkit.sml.xml.AbstractAlgorithm;
+import org.geotoolkit.sml.xml.AbstractImplementation;
+import org.geotoolkit.sml.xml.AbstractProcessMethod;
+import org.geotoolkit.sml.xml.AbstractRules;
 
 
 /**
@@ -160,7 +164,7 @@ import org.geotoolkit.gml.xml.v311.AbstractGMLEntry;
     "identification",
     "classification",
     "validTime",
-   // "securityConstraint",
+    "securityConstraint",
     "legalConstraint",
     "characteristics",
     "capabilities",
@@ -171,12 +175,13 @@ import org.geotoolkit.gml.xml.v311.AbstractGMLEntry;
     "algorithm",
     "implementation"
 })
-public class ProcessMethodType extends AbstractGMLEntry {
+public class ProcessMethodType extends AbstractGMLEntry implements AbstractProcessMethod {
 
     private List<Keywords> keywords;
     private List<Identification> identification;
     private List<Classification> classification;
     private ValidTime validTime;
+    private SecurityConstraint securityConstraint;
     private List<LegalConstraint> legalConstraint;
     private List<Characteristics> characteristics;
     private List<CapabilitiesSML> capabilities;
@@ -330,6 +335,20 @@ public class ProcessMethodType extends AbstractGMLEntry {
         return this.implementation;
     }
 
+    /**
+     * @return the securityConstraint
+     */
+    public SecurityConstraint getSecurityConstraint() {
+        return securityConstraint;
+    }
+
+    /**
+     * @param securityConstraint the securityConstraint to set
+     */
+    public void setSecurityConstraint(SecurityConstraint securityConstraint) {
+        this.securityConstraint = securityConstraint;
+    }
+
 
     /**
      * <p>Java class for anonymous complex type.
@@ -376,7 +395,7 @@ public class ProcessMethodType extends AbstractGMLEntry {
     @XmlType(name = "", propOrder = {
         "algorithmDefinition"
     })
-    public static class Algorithm {
+    public static class Algorithm implements AbstractAlgorithm {
 
         @XmlElement(name = "AlgorithmDefinition", required = true)
         private ProcessMethodType.Algorithm.AlgorithmDefinition algorithmDefinition;
@@ -640,11 +659,7 @@ public class ProcessMethodType extends AbstractGMLEntry {
                  * Gets the value of the type property.
                  */
                 public String getType() {
-                    if (type == null) {
-                        return "simple";
-                    } else {
-                        return type;
-                    }
+                    return type;
                 }
 
                 /**
@@ -719,7 +734,7 @@ public class ProcessMethodType extends AbstractGMLEntry {
         "processChain",
         "implementationCode"
     })
-    public static class Implementation {
+    public static class Implementation implements AbstractImplementation {
 
         @XmlElement(name = "ProcessChain")
         private ProcessChainType processChain;
@@ -998,11 +1013,7 @@ public class ProcessMethodType extends AbstractGMLEntry {
          *     
          */
         public String getType() {
-            if (type == null) {
-                return "simple";
-            } else {
-                return type;
-            }
+            return type;
         }
 
         /**
@@ -1778,11 +1789,7 @@ public class ProcessMethodType extends AbstractGMLEntry {
                  *     
                  */
                 public String getType() {
-                    if (type == null) {
-                        return "simple";
-                    } else {
-                        return type;
-                    }
+                    return type;
                 }
 
                 /**
@@ -2046,11 +2053,7 @@ public class ProcessMethodType extends AbstractGMLEntry {
                  *     
                  */
                 public String getType() {
-                    if (type == null) {
-                        return "simple";
-                    } else {
-                        return type;
-                    }
+                    return type;
                 }
 
                 /**
@@ -2106,7 +2109,7 @@ public class ProcessMethodType extends AbstractGMLEntry {
     @XmlType(name = "", propOrder = {
         "rulesDefinition"
     })
-    public static class Rules {
+    public static class Rules implements AbstractRules {
 
         @XmlElement(name = "RulesDefinition", required = true)
         private ProcessMethodType.Rules.RulesDefinition rulesDefinition;

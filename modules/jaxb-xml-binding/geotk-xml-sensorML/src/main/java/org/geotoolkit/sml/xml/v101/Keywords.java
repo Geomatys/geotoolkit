@@ -94,6 +94,22 @@ public class Keywords implements AbstractKeywords {
 
     }
 
+    public Keywords(AbstractKeywords kw) {
+        if (kw != null) {
+            this.actuate = kw.getActuate();
+            this.arcrole = kw.getArcrole();
+            this.href    = kw.getHref();
+            if (kw.getKeywordList() != null) {
+                this.keywordList = new KeywordList(kw.getKeywordList());
+            }
+            this.remoteSchema = kw.getRemoteSchema();
+            this.role         = kw.getRole();
+            this.show         = kw.getShow();
+            this.title        = kw.getTitle();
+            this.type         = kw.getType();
+        }
+    }
+
     /**
      *
      */
@@ -158,12 +174,8 @@ public class Keywords implements AbstractKeywords {
      *     
      */
     public String getType() {
-        if (type == null) {
-            return "simple";
-        } else {
-            return type;
-        }
-    }
+        return type;
+     }
 
     /**
      * Sets the value of the type property.

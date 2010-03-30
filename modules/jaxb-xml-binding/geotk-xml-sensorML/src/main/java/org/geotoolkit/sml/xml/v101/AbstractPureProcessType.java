@@ -20,6 +20,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.sml.xml.AbstractPureProcess;
 
 
 /**
@@ -56,11 +57,30 @@ import javax.xml.bind.annotation.XmlType;
     ProcessChainType.class,
     ProcessModelType.class
 })
-public abstract class AbstractPureProcessType extends AbstractRestrictedProcessType {
+public abstract class AbstractPureProcessType extends AbstractRestrictedProcessType implements AbstractPureProcess {
 
     private Inputs inputs;
     private Outputs outputs;
     private Parameters parameters;
+
+    public AbstractPureProcessType() {
+
+    }
+
+    public AbstractPureProcessType(AbstractPureProcess pp) {
+        super(pp);
+        if (pp != null) {
+            if (pp.getInputs() != null) {
+                this.inputs = new Inputs(pp.getInputs());
+            }
+            if (pp.getOutputs() != null) {
+                this.outputs = new Outputs(pp.getOutputs());
+            }
+            if (pp.getParameters() != null) {
+                this.parameters = new Parameters(pp.getParameters());
+            }
+        }
+    }
 
     /**
      * Gets the value of the inputs property.

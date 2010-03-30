@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.v311.TemporalCRSType;
+import org.geotoolkit.sml.xml.AbstractTemporalReferenceFrame;
 import org.geotoolkit.util.Utilities;
 
 
@@ -50,7 +51,7 @@ import org.geotoolkit.util.Utilities;
     "temporalCRS"
 })
 @XmlRootElement(name = "temporalReferenceFrame")
-public class TemporalReferenceFrame {
+public class TemporalReferenceFrame implements AbstractTemporalReferenceFrame {
 
     @XmlElement(name = "TemporalCRS", namespace = "http://www.opengis.net/gml", required = true)
     private TemporalCRSType temporalCRS;

@@ -85,6 +85,24 @@ public class Category extends AbstractDataComponentType implements AbstractCateg
         super(definition);
         this.value = value;
     }
+
+    public Category(AbstractCategory cat) {
+        super(cat);
+        if (cat != null) {
+            this.axisID    = cat.getAxisID();
+            if (cat.getCodeSpace() != null) {
+                this.codeSpace = new CodeSpacePropertyType(cat.getCodeSpace());
+            }
+            if (cat.getConstraint() != null) {
+                this.constraint = new AllowedTokensPropertyType(cat.getConstraint());
+            }
+            if (cat.getQuality() != null) {
+                this.quality = new QualityPropertyType(cat.getQuality());
+            }
+            this.value          = cat.getValue();
+            this.referenceFrame = cat.getReferenceFrame();
+        }
+    }
     
     /**
      * Gets the value of the codeSpace property.

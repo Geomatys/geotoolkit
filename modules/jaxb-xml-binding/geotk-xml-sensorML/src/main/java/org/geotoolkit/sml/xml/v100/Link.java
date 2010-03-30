@@ -91,6 +91,7 @@ public class Link implements AbstractLink {
     /**
      * Gets the value of the source property.
      */
+    @Override
     public LinkRef getSource() {
         return source;
     }
@@ -105,6 +106,7 @@ public class Link implements AbstractLink {
     /**
      * Gets the value of the destination property.
      */
+    @Override
     public LinkRef getDestination() {
         return destination;
     }
@@ -119,6 +121,7 @@ public class Link implements AbstractLink {
     /**
      * Gets the value of the type property.
      */
+    @Override
     public String getType() {
         return type;
     }
@@ -126,6 +129,7 @@ public class Link implements AbstractLink {
     /**
      * Sets the value of the type property.
      */
+    @Override
     public void setType(String value) {
         this.type = value;
     }

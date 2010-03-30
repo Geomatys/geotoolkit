@@ -21,6 +21,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.sml.xml.AbstractObservationReference;
 
 /**
  * <p>Java class for anonymous complex type.
@@ -41,7 +42,7 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "")
-public class ObservationReference {
+public class ObservationReference implements AbstractObservationReference {
 
     @XmlAttribute(namespace = "http://www.opengis.net/gml")
     @XmlSchemaType(name = "anyURI")
@@ -63,6 +64,23 @@ public class ObservationReference {
     private String show;
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
     private String actuate;
+
+    public ObservationReference() {
+
+    }
+
+    public ObservationReference(AbstractObservationReference or) {
+        if (or != null) {
+            this.actuate = or.getActuate();
+            this.arcrole = or.getArcrole();
+            this.href    = or.getHref();
+            this.remoteSchema = or.getRemoteSchema();
+            this.role    = or.getRole();
+            this.show    = or.getShow();
+            this.title   = or.getTitle();
+            this.type    = or.getType();
+        }
+    }
 
     /**
      * Gets the value of the remoteSchema property.
@@ -97,11 +115,7 @@ public class ObservationReference {
      *
      */
     public String getType() {
-        if (type == null) {
-            return "simple";
-        } else {
-            return type;
-        }
+        return type;
     }
 
     /**

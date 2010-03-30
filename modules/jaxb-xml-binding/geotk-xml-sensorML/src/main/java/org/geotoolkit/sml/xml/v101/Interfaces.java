@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.sml.xml.AbstractInterfaces;
 import org.geotoolkit.util.Utilities;
 
 
@@ -63,7 +64,7 @@ import org.geotoolkit.util.Utilities;
     "interfaceList"
 })
 @XmlRootElement(name = "interfaces")
-public class Interfaces {
+public class Interfaces implements AbstractInterfaces {
 
     @XmlElement(name = "InterfaceList")
     private InterfaceList interfaceList;
@@ -90,6 +91,22 @@ public class Interfaces {
 
     public Interfaces() {
 
+    }
+
+    public Interfaces(AbstractInterfaces param) {
+        if (param != null) {
+            if (param.getInterfaceList() != null) {
+                this.interfaceList = new InterfaceList(param.getInterfaceList());
+            }
+            this.actuate = param.getActuate();
+            this.arcrole = param.getArcrole();
+            this.href    = param.getHref();
+            this.remoteSchema = param.getRemoteSchema();
+            this.role         = param.getRole();
+            this.show         = param.getShow();
+            this.title        = param.getTitle();
+            this.type         = param.getType();
+        }
     }
 
     public Interfaces(InterfaceList interfaceList) {
@@ -153,12 +170,8 @@ public class Interfaces {
      *     
      */
     public String getType() {
-        if (type == null) {
-            return "simple";
-        } else {
-            return type;
-        }
-    }
+        return type;
+     }
 
     /**
      * Sets the value of the type property.

@@ -27,6 +27,8 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import org.geotoolkit.swe.xml.DataBlockDefinitionProperty;
+import org.geotoolkit.swe.xml.DataStreamDefinition;
 
 
 /**
@@ -56,7 +58,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
     "streamComponent",
     "streamEncoding"
 })
-public class DataStreamDefinitionType {
+public class DataStreamDefinitionType implements DataStreamDefinition {
 
     @XmlElement(required = true)
     private List<DataBlockDefinitionPropertyType> streamComponent;
@@ -67,6 +69,26 @@ public class DataStreamDefinitionType {
     @XmlID
     @XmlSchemaType(name = "ID")
     private String id;
+
+    public DataStreamDefinitionType() {
+
+    }
+
+    public DataStreamDefinitionType(DataStreamDefinition da) {
+        if (da != null) {
+            this.id = da.getId();
+            if (da.getStreamEncoding() != null) {
+                this.streamEncoding = new MultiplexedStreamFormatPropertyType(da.getStreamEncoding());
+            }
+            if (da.getStreamComponent() != null) {
+                this.streamComponent = new ArrayList<DataBlockDefinitionPropertyType>();
+                for (DataBlockDefinitionProperty db : da.getStreamComponent()) {
+                    this.streamComponent.add(new DataBlockDefinitionPropertyType(db));
+                }
+            }
+            this.id = da.getId();
+        }
+    }
 
     /**
      * Gets the value of the streamComponent property.

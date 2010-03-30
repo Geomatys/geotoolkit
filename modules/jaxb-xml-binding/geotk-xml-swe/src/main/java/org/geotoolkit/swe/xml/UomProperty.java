@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.swe.xml;
 
+import org.geotoolkit.gml.xml.v311.BaseUnitType;
 import org.geotoolkit.gml.xml.v311.UnitDefinitionType;
 
 /**
@@ -27,6 +28,8 @@ public interface UomProperty {
 
     public UnitDefinitionType getUnitDefinition();
 
+    public BaseUnitType getBaseUnit();
+    
     public String getCode();
 
     public String getRemoteSchema();

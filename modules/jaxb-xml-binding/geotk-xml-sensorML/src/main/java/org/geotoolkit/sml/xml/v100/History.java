@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.sml.xml.AbstractHistory;
 
 
 /**
@@ -52,7 +53,7 @@ import javax.xml.bind.annotation.XmlType;
     "eventList"
 })
 @XmlRootElement(name = "history")
-public class History {
+public class History implements AbstractHistory {
 
     @XmlElement(name = "EventList")
     private EventList eventList;
@@ -201,12 +202,8 @@ public class History {
      * Gets the value of the type property.
      */
     public String getType() {
-        if (type == null) {
-            return "simple";
-        } else {
-            return type;
-        }
-    }
+        return type;
+     }
 
     /**
      * Sets the value of the type property.

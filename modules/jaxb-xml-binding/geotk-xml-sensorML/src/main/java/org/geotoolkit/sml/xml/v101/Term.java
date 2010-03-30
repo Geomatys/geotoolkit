@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.sml.xml.v101;
 
+import java.net.URI;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -67,21 +68,43 @@ public class Term implements AbstractTerm {
     private String value;
     @XmlAttribute
     @XmlSchemaType(name = "anyURI")
-    private String definition;
+    private URI definition;
 
     public Term() {
 
     }
 
+    public Term(AbstractTerm term) {
+        if (term != null) {
+            this.value      = term.getValue();
+            this.definition = term.getDefinition();
+            if (term.getCodeSpace() != null) {
+                this.codeSpace = new CodeSpacePropertyType(term.getCodeSpace());
+            }
+        }
+    }
+
+    public Term(String value, URI definition) {
+        this.codeSpace  = null;
+        this.definition = definition;
+        this.value      = value;
+    }
+
     public Term(String value, String definition) {
         this.codeSpace  = null;
+        this.definition = URI.create(definition);
+        this.value      = value;
+    }
+
+    public Term(CodeSpacePropertyType codeSpace, String value, URI definition) {
+        this.codeSpace  = codeSpace;
         this.definition = definition;
         this.value      = value;
     }
 
     public Term(CodeSpacePropertyType codeSpace, String value, String definition) {
         this.codeSpace  = codeSpace;
-        this.definition = definition;
+        this.definition = URI.create(definition);
         this.value      = value;
     }
     
@@ -141,7 +164,7 @@ public class Term implements AbstractTerm {
      *     {@link String }
      *     
      */
-    public String getDefinition() {
+    public URI getDefinition() {
         return definition;
     }
 
@@ -154,7 +177,7 @@ public class Term implements AbstractTerm {
      *     
      */
     public void setDefinition(String value) {
-        this.definition = value;
+        this.definition = URI.create(value);
     }
 
     @Override

@@ -19,6 +19,7 @@ package org.geotoolkit.sml.xml.v101;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.sml.xml.ComponentArray;
 
 
 /**
@@ -80,7 +81,13 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ComponentArrayType")
-public class ComponentArrayType extends AbstractDerivableComponentType {
+public class ComponentArrayType extends AbstractDerivableComponentType implements ComponentArray {
 
+    public ComponentArrayType() {
 
+    }
+
+    public ComponentArrayType(ComponentArray ca) {
+        super(ca);
+    }
 }

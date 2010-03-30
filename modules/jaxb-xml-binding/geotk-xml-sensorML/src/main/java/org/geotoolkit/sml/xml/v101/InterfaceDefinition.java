@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import org.geotoolkit.sml.xml.AbstractInterfaceDefinition;
 
 
 /**
@@ -69,7 +70,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
     "mechanicalLayer"
 })
 @XmlRootElement(name = "InterfaceDefinition")
-public class InterfaceDefinition {
+public class InterfaceDefinition implements AbstractInterfaceDefinition {
 
     private LayerPropertyType serviceLayer;
     private LayerPropertyType applicationLayer;
@@ -88,6 +89,42 @@ public class InterfaceDefinition {
 
     public InterfaceDefinition() {
 
+    }
+
+    public InterfaceDefinition(AbstractInterfaceDefinition in) {
+        if (in != null) {
+            if (in.getServiceLayer() != null) {
+                this.serviceLayer = new LayerPropertyType(in.getServiceLayer());
+            }
+            if (in.getApplicationLayer() != null) {
+                this.applicationLayer = new LayerPropertyType(in.getApplicationLayer());
+            }
+            if (in.getDataLinkLayer() != null) {
+                this.dataLinkLayer = new LayerPropertyType(in.getDataLinkLayer());
+            }
+            this.id = in.getId();
+            if (in.getMechanicalLayer() != null) {
+                this.mechanicalLayer = new LayerPropertyType(in.getMechanicalLayer());
+            }
+            if (in.getNetworkLayer() != null) {
+                this.networkLayer = new LayerPropertyType(in.getNetworkLayer());
+            }
+            if (in.getPhysicalLayer() != null) {
+                this.physicalLayer = new LayerPropertyType(in.getPhysicalLayer());
+            }
+            if (in.getPresentationLayer() != null) {
+                this.presentationLayer = new PresentationLayerPropertyType(in.getPresentationLayer());
+            }
+            if (in.getServiceLayer() != null) {
+                this.serviceLayer = new LayerPropertyType(in.getServiceLayer());
+            }
+            if (in.getSessionLayer() != null) {
+                this.sessionLayer = new LayerPropertyType(in.getSessionLayer());
+            }
+            if (in.getTransportLayer() != null) {
+                this.transportLayer = new LayerPropertyType(in.getTransportLayer());
+            }
+        }
     }
 
     public InterfaceDefinition(String id, LayerPropertyType applicationLayer, LayerPropertyType dataLinkLayer) {

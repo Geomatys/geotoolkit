@@ -17,6 +17,8 @@
 
 package org.geotoolkit.sml.xml;
 
+import java.util.List;
+
 /**
  *
  * @author Guilhem Legal
@@ -24,4 +26,13 @@ package org.geotoolkit.sml.xml;
  */
 public interface AbstractArrayLink {
 
+    AbstractLinkRef getSourceArray();
+
+    List<? extends AbstractLinkRef> getDestinationIndex();
+
+    AbstractLinkRef getDestinationArray() ;
+
+    AbstractLinkRef getSourceIndex();
+
+    List<?extends AbstractConnection> getConnection();
 }

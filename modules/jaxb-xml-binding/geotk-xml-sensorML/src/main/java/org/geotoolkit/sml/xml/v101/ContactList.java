@@ -83,6 +83,23 @@ public class ContactList implements AbstractContactList {
     @XmlSchemaType(name = "ID")
     private String id;
 
+    public ContactList() {
+
+    }
+
+    public ContactList(AbstractContactList cl) {
+        if (cl != null) {
+            this.id = cl.getId();
+            this.description = cl.getDescription();
+            if (cl.getMember() != null) {
+                this.member = new ArrayList<Member>();
+                for (AbstractContactListMember m : cl.getMember()) {
+                    this.member.add(new ContactList.Member(m));
+                }
+            }
+        }
+    }
+
     /**
      * Gets the value of the description property.
      * 
@@ -217,6 +234,28 @@ public class ContactList implements AbstractContactList {
         @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
         private String actuate;
 
+        public Member() {
+            
+        }
+
+        public Member(AbstractContactListMember member) {
+            if (member != null) {
+                this.actuate = member.getActuate();
+                this.arcrole = member.getArcrole();
+                this.href = member.getHref();
+                if (member.getPerson() != null) {
+                    this.person = new Person(member.getPerson());
+                }
+                this.remoteSchema = member.getRemoteSchema();
+                if (member.getResponsibleParty() != null) {
+                    this.responsibleParty = new ResponsibleParty(member.getResponsibleParty());
+                }
+                this.role = member.getRole();
+                this.show = member.getShow();
+                this.title = member.getTitle();
+                this.type = member.getType();
+            }
+        }
         /**
          * Gets the value of the person property.
          * 
@@ -298,12 +337,8 @@ public class ContactList implements AbstractContactList {
          *     
          */
         public String getType() {
-            if (type == null) {
-                return "simple";
-            } else {
-                return type;
-            }
-        }
+        return type;
+    }
 
         /**
          * Sets the value of the type property.

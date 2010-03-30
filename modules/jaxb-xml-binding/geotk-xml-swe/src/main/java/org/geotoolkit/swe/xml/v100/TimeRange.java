@@ -84,6 +84,25 @@ public class TimeRange extends AbstractDataComponentType implements AbstractTime
         this.value = value;
     }
 
+    public TimeRange(AbstractTimeRange q) {
+        super(q);
+        if (q != null) {
+           /* if (q.getConstraint() != null) {
+                this.constraint = new AllowedValuesPropertyType(q.getConstraint());
+            }*/
+            if (q.getQuality() != null) {
+                this.quality = new QualityPropertyType(q.getQuality());
+            }
+            this.referenceFrame = q.getReferenceFrame();
+            this.referenceTime  = q.getReferenceTime();
+            this.localFrame     = q.getLocalFrame();
+            this.value          = q.getValue();
+            if (q.getUom() != null) {
+                this.uom = new UomPropertyType(q.getUom());
+            }
+        }
+    }
+    
     /**
      * Gets the value of the uom property.
      */

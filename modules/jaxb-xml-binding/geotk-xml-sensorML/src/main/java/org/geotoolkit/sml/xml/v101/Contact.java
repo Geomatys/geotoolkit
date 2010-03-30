@@ -89,6 +89,28 @@ public class Contact implements AbstractContact {
 
     }
 
+    public Contact(AbstractContact contact) {
+        if (contact != null) {
+            this.actuate = contact.getActuate();
+            this.arcrole = contact.getArcrole();
+            if (contact.getContactList() != null) {
+                this.contactList = new ContactList(contact.getContactList());
+            }
+            this.href = contact.getHref();
+            if (contact.getPerson() != null) {
+                this.person = new Person(contact.getPerson());
+            }
+            this.remoteSchema = contact.getRemoteSchema();
+            if (contact.getResponsibleParty() != null) {
+                this.responsibleParty = new ResponsibleParty(contact.getResponsibleParty());
+            }
+            this.role = contact.getRole();
+            this.show = contact.getShow();
+            this.title = contact.getTitle();
+            this.type = contact.getType();
+        }
+    }
+
     public Contact(String role, ResponsibleParty responsibleParty) {
         this.role             = role;
         this.responsibleParty = responsibleParty;
@@ -198,13 +220,10 @@ public class Contact implements AbstractContact {
      *     {@link String }
      *     
      */
-    public String getType() {
-        if (type == null) {
-            return "simple";
-        } else {
-            return type;
-        }
-    }
+     public String getType() {
+        return type;
+     }
+
 
     /**
      * Sets the value of the type property.

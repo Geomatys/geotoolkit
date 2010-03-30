@@ -21,7 +21,7 @@ package org.geotoolkit.swe.xml;
  *
  * @author Mehdi Sidhoum (Geomatys).
  */
-public interface AbstractText {
+public interface AbstractText extends AbstractDataComponent {
 
     public String getValue();
 }

@@ -104,6 +104,22 @@ public class Identification implements AbstractIdentification {
 
     }
 
+    public Identification (AbstractIdentification ident) {
+        if (ident != null) {
+            this.actuate = ident.getActuate();
+            this.arcrole = ident.getArcrole();
+            this.href    = ident.getHref();
+            if (ident.getIdentifierList() != null) {
+                this.identifierList = new IdentifierList(ident.getIdentifierList());
+            }
+            this.remoteSchema = ident.getRemoteSchema();
+            this.role         = ident.getRole();
+            this.show         = ident.getShow();
+            this.title        = ident.getTitle();
+            this.type         = ident.getType();
+        }
+    }
+
     public Identification (IdentifierList identifierList) {
         this.identifierList = identifierList;
     }
@@ -165,12 +181,8 @@ public class Identification implements AbstractIdentification {
      *     
      */
     public String getType() {
-        if (type == null) {
-            return "simple";
-        } else {
-            return type;
-        }
-    }
+        return type;
+     }
 
     /**
      * Sets the value of the type property.

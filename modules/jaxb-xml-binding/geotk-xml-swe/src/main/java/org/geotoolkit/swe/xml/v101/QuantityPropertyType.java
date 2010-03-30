@@ -54,6 +54,16 @@ public class QuantityPropertyType implements AbstractQuantityProperty {
     @XmlElement(name = "Quantity", required = true)
     private QuantityType quantity;
 
+    public QuantityPropertyType() {
+
+    }
+
+    public QuantityPropertyType(AbstractQuantityProperty qp) {
+        if (qp != null && qp.getQuantity() != null) {
+            this.quantity = new QuantityType(qp.getQuantity());
+        }
+    }
+
     /**
      * Gets the value of the quantity property.
      */

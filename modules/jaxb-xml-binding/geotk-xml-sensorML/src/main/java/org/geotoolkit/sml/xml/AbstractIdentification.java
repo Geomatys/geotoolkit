@@ -24,4 +24,36 @@ package org.geotoolkit.sml.xml;
 public interface AbstractIdentification {
 
     public AbstractIdentifierList getIdentifierList();
+
+    public String getRemoteSchema();
+
+    void setRemoteSchema(String value);
+
+    String getType();
+
+    void setType(String value);
+
+    String getHref();
+
+    void setHref(String value);
+
+    String getRole();
+
+    void setRole(String value);
+
+    String getArcrole();
+
+    void setArcrole(String value);
+
+    String getTitle();
+
+    void setTitle(String value);
+
+    String getShow();
+
+    void setShow(String value);
+
+    String getActuate();
+
+    void setActuate(String value);
 }

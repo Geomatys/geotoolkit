@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.sml.xml.AbstractInterfaces;
 import org.geotoolkit.util.Utilities;
 
 
@@ -64,7 +65,7 @@ import org.geotoolkit.util.Utilities;
     "interfaceList"
 })
 @XmlRootElement(name = "interfaces")
-public class Interfaces {
+public class Interfaces implements AbstractInterfaces {
 
     @XmlElement(name = "InterfaceList")
     private InterfaceList interfaceList;
@@ -222,12 +223,8 @@ public class Interfaces {
      * Gets the value of the type property.
      */
     public String getType() {
-        if (type == null) {
-            return "simple";
-        } else {
-            return type;
-        }
-    }
+        return type;
+     }
 
     /**
      * Sets the value of the type property.

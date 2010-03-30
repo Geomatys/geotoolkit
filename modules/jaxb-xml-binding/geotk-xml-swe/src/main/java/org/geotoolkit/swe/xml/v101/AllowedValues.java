@@ -30,6 +30,7 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import org.geotoolkit.swe.xml.AbstractAllowedValues;
 import org.geotoolkit.util.Utilities;
 
 
@@ -68,7 +69,7 @@ import org.geotoolkit.util.Utilities;
     "intervalOrValueList"
 })
 @XmlRootElement(name = "AllowedValues")
-public class AllowedValues {
+public class AllowedValues implements AbstractAllowedValues {
 
     private Double min;
     private Double max;
@@ -82,6 +83,19 @@ public class AllowedValues {
     @XmlID
     @XmlSchemaType(name = "ID")
     private String id;
+
+    public AllowedValues() {
+
+    }
+
+    public AllowedValues(AbstractAllowedValues av) {
+        if (av != null) {
+            this.id = av.getId();
+            this.max = av.getMax();
+            this.min = av.getMin();
+            throw new IllegalArgumentException("AllowedValues are not yet convertible");
+        }
+    }
 
     /**
      * Gets the value of the min property.

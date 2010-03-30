@@ -63,6 +63,13 @@ public class Identifier implements AbstractIdentifier {
     public Identifier() {
     }
 
+    public Identifier(AbstractIdentifier id) {
+        if (id != null) {
+            this.name = id.getName();
+            this.term = new Term(id.getTerm());
+        }
+    }
+
     public Identifier(String name, Term term) {
         this.name = name;
         this.term = term;

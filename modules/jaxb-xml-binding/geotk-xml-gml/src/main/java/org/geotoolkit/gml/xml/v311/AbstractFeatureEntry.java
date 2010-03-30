@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.gml.xml.AbstractFeature;
 import org.geotoolkit.util.Utilities;
 
 
@@ -45,7 +46,7 @@ import org.geotoolkit.util.Utilities;
     AbstractFeatureCollectionType.class,
     BoundedFeatureType.class
 })
-public abstract class AbstractFeatureEntry extends AbstractGMLEntry {
+public abstract class AbstractFeatureEntry extends AbstractGMLEntry implements AbstractFeature {
 
     private List<String> srsName;
     @XmlElement
@@ -58,6 +59,15 @@ public abstract class AbstractFeatureEntry extends AbstractGMLEntry {
      *  Empty constructor used by JAXB.
      */
     public AbstractFeatureEntry() {}
+
+    public AbstractFeatureEntry(AbstractFeature af) {
+        super(af);
+        if (af != null) {
+            this.srsName   = af.getSrsName();
+            this.boundedBy = af.getBoundedBy();
+            this.location  = af.getLocation();
+        }
+    }
 
     /**
      * Build a new light "Feature"

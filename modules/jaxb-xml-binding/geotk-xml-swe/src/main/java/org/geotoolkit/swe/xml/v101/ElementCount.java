@@ -66,12 +66,14 @@ public class ElementCount implements AbstractElementCount {
     ElementCount() {
     }
 
-    /**
-     * Build a new Element count with only the value.
-     */
-    public ElementCount(ElementCount value) {
-        this.count = new Count(value.count);
-        this.ref = value.ref;
+    
+    public ElementCount(AbstractElementCount value) {
+        if (value != null) {
+            if (value.getCount() != null) {
+                this.count = new Count(value.getCount());
+            }
+            this.ref = value.getRef();
+        }
     }
 
     /**

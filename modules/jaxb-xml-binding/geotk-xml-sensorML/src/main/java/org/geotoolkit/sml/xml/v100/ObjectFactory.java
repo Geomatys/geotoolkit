@@ -392,15 +392,6 @@ public class ObjectFactory {
         return new Identification();
     }
 
-
-    /**
-     * Create an instance of {@link ArrayLink.SourceIndex }
-     * 
-     */
-    public SourceIndex createArrayLinkSourceIndex() {
-        return new SourceIndex();
-    }
-
     /**
      * Create an instance of {@link Capabilities }
      * 
@@ -415,14 +406,6 @@ public class ObjectFactory {
      */
     public ResponsibleParty createResponsibleParty() {
         return new ResponsibleParty();
-    }
-
-    /**
-     * Create an instance of {@link ArrayLink.DestinationIndex }
-     * 
-     */
-    public DestinationIndex createArrayLinkDestinationIndex() {
-        return new DestinationIndex();
     }
 
     /**
@@ -535,14 +518,6 @@ public class ObjectFactory {
      */
     public ProcessMethodType.Rules createProcessMethodTypeRules() {
         return new ProcessMethodType.Rules();
-    }
-
-    /**
-     * Create an instance of {@link ArrayLink.DestinationArray }
-     * 
-     */
-    public DestinationArray createArrayLinkDestinationArray() {
-        return new DestinationArray();
     }
 
     /**
@@ -666,6 +641,14 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link Link }
+     *
+     */
+    public LinkRef createLinkRef() {
+        return new LinkRef();
+    }
+
+    /**
      * Create an instance of {@link ProcessChainType }
      * 
      */
@@ -679,14 +662,6 @@ public class ObjectFactory {
      */
     public ClassifierList createClassifierList() {
         return new ClassifierList();
-    }
-
-    /**
-     * Create an instance of {@link ArrayLink.SourceArray }
-     * 
-     */
-    public SourceArray createArrayLinkSourceArray() {
-        return new SourceArray();
     }
 
     /**

@@ -26,6 +26,7 @@ import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import org.geotoolkit.sml.xml.AbstractInterfaceList;
 import org.geotoolkit.util.Utilities;
 
 /**
@@ -53,7 +54,7 @@ import org.geotoolkit.util.Utilities;
 @XmlType(name = "", propOrder = {
     "_interface"
 })
-public class InterfaceList {
+public class InterfaceList implements AbstractInterfaceList {
 
     @XmlElement(name = "interface", required = true)
     private List<Interface> _interface;

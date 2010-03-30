@@ -27,6 +27,7 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.geotoolkit.swe.xml.AbstractCount;
+import org.geotoolkit.swe.xml.AbstractQualityProperty;
 import org.geotoolkit.util.Utilities;
 
 
@@ -91,6 +92,26 @@ public class Count extends AbstractDataComponentEntry implements AbstractCount {
         this.referenceFrame = value.referenceFrame;
     }
 
+    public Count(AbstractCount q) {
+        super(q);
+        if (q != null) {
+            this.axisID         = q.getAxisID();
+            if (q.getConstraint() != null) {
+                this.constraint = new AllowedValuesPropertyType(q.getConstraint());
+            }
+            if (q.getQuality() != null && q.getQuality().size() > 0) {
+                this.quality = new ArrayList<QualityPropertyType>();
+                for (AbstractQualityProperty qual : q.getQuality()) {
+                    this.quality.add(new QualityPropertyType(qual));
+                }
+            }
+            this.referenceFrame = q.getReferenceFrame();
+            if (q.getValue() != null) {
+                this.value = q.getValue().intValue();
+            }
+        }
+    }
+
     /**
      * Build a new Count with only the value.
      */
@@ -133,6 +154,13 @@ public class Count extends AbstractDataComponentEntry implements AbstractCount {
         return axisID;
     }
 
+    /**
+     * @return the constraint
+     */
+    public AllowedValuesPropertyType getConstraint() {
+        return constraint;
+    }
+    
     /**
      * Verify that the object is identical to the specified object.
      */

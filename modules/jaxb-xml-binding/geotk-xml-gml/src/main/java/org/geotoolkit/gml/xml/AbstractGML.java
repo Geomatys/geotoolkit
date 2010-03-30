@@ -16,6 +16,9 @@
  */
 package org.geotoolkit.gml.xml;
 
+import org.geotoolkit.gml.xml.v311.CodeType;
+import org.geotoolkit.gml.xml.v311.ReferenceEntry;
+
 /**
  *
  * @author Guilhem Legal (Geomatys)
@@ -23,17 +26,19 @@ package org.geotoolkit.gml.xml;
  */
 public interface AbstractGML {
 
-    public String getId();
+    String getId();
 
-    public void setId(String id);
+    void setId(String id);
     
-    public String getDescription();
+    String getDescription();
 
-    public void setDescription(String description);
+    void setDescription(String description);
 
-    public String getName();
+    String getName();
 
-    public void setName(String name);
+    void setName(String name);
 
-    
+    ReferenceEntry getDescriptionReference();
+
+    CodeType getParameterName();
 }

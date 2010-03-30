@@ -69,6 +69,17 @@ public class Address implements AbstractAddress {
     public Address() {
     }
 
+    public Address(AbstractAddress ad) {
+        if (ad != null) {
+            this.administrativeArea    = ad.getAdministrativeArea();
+            this.city                  = ad.getCity();
+            this.country               = ad.getCountry();
+            this.deliveryPoint         = ad.getDeliveryPoint();
+            this.electronicMailAddress = ad.getElectronicMailAddress();
+            this.postalCode            = ad.getPostalCode();
+        }
+    }
+
     public Address(String deliveryPoint, String city, String administrativeArea, String postalCode, String country,
             String electronicMailAddress) {
         this.administrativeArea = administrativeArea;

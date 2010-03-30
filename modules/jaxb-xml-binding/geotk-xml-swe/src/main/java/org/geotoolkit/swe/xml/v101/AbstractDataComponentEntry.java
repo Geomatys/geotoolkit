@@ -20,11 +20,10 @@ import java.net.URI;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.gml.xml.v311.CodeType;
+import org.geotoolkit.gml.xml.v311.AbstractGMLEntry;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.swe.xml.AbstractDataComponent;
 /**
@@ -36,25 +35,7 @@ import org.geotoolkit.swe.xml.AbstractDataComponent;
 @XmlSeeAlso({AbstractDataRecordEntry.class, TimeType.class, BooleanType.class, QuantityType.class, Text.class})
 @XmlType(name="AbstractDataComponent")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class AbstractDataComponentEntry implements AbstractDataComponent {
-    
-    /**
-     * The identifier of the component (override from abstractGML Type).
-     */
-    @XmlAttribute(namespace="http://www.opengis.net/gml")
-    private String id;
-
-    /**
-     * (override from abstractGML Type).
-     */
-    @XmlElement(namespace="http://www.opengis.net/gml")
-    private String description;
-
-    /**
-     * (override from abstractGML Type).
-     */
-    @XmlElement(namespace="http://www.opengis.net/gml")
-    private CodeType parameterName;
+public class AbstractDataComponentEntry extends AbstractGMLEntry implements AbstractDataComponent {
     
     @XmlTransient //@XmlAttribute
     private boolean fixed;
@@ -70,10 +51,16 @@ public class AbstractDataComponentEntry implements AbstractDataComponent {
      */
     AbstractDataComponentEntry() {}
 
-    public AbstractDataComponentEntry(AbstractDataComponentEntry component) {
-        this.definition = component.definition;
-        this.fixed      = component.fixed;
-        this.id         = component.id;
+    public AbstractDataComponentEntry(AbstractDataComponent component) {
+        super(component);
+        if (component != null) {
+            if (component.getDefinition() instanceof String) {
+                this.definition = URI.create((String)component.getDefinition());
+            } else if (component.getDefinition() instanceof URI) {
+                this.definition = (URI) component.getDefinition();
+            }
+            this.fixed      = component.isFixed();
+        }
     }
 
     public AbstractDataComponentEntry(String definition) {
@@ -86,34 +73,24 @@ public class AbstractDataComponentEntry implements AbstractDataComponent {
      * a simple constructor used by the sub classes to initialize l'Entry.
      */
     public AbstractDataComponentEntry(String id, String definition, boolean fixed) {
-        this.id         = id;
+        super(id);
         if (definition != null) {
             this.definition = URI.create(definition);
         }
         this.fixed      = fixed;
     }
-    
-    /**
-     * Return the identifier of this data record.
-     */
-    public String getId() {
-        return id;
-    }
 
     /**
      * Return the identifier of this data record.
      */
+    @Override
     public String getName() {
-        return id;
+        if (super.getName() != null) {
+            return super.getName();
+        }
+        return super.getId();
     }
 
-    /**
-     * Set the identifier of this data record.
-     */
-    public void setId(String id) {
-        this.id = id;
-    }
-    
     /**
      * {@inheritDoc}
      */
@@ -130,7 +107,12 @@ public class AbstractDataComponentEntry implements AbstractDataComponent {
         return fixed;
     }
 
-    
+    /**
+     * @param definition the definition to set
+     */
+    public void setDefinition(String definition) {
+        this.definition = URI.create(definition);
+    }
     
     /**
      * Verify that this entry is identical to the specified object.
@@ -140,10 +122,9 @@ public class AbstractDataComponentEntry implements AbstractDataComponent {
         if (object == this) {
             return true;
         }
-        if (object instanceof AbstractDataComponentEntry) {
+        if (object instanceof AbstractDataComponentEntry && super.equals(object)) {
             final AbstractDataComponentEntry that = (AbstractDataComponentEntry) object;
-            return Utilities.equals(this.id,         that.id)         &&
-                   Utilities.equals(this.definition, that.definition) &&
+            return Utilities.equals(this.definition, that.definition) &&
                    Utilities.equals(this.fixed,      that.fixed);
         }
         return false;
@@ -151,12 +132,8 @@ public class AbstractDataComponentEntry implements AbstractDataComponent {
 
     @Override
     public int hashCode() {
-        if (id !=  null) {
-            return id.hashCode();
-        }
-
         int hash = 7;
-        hash = 97 * hash + (this.id != null ? this.id.hashCode() : 0);
+        hash = 97 * hash + super.hashCode();
         hash = 97 * hash + (this.fixed ? 1 : 0);
         hash = 97 * hash + (this.definition != null ? this.definition.hashCode() : 0);
         return hash;
@@ -164,10 +141,8 @@ public class AbstractDataComponentEntry implements AbstractDataComponent {
     
     @Override
     public String toString() {
-        StringBuilder s = new StringBuilder("[").append(this.getClass().getName()).append("]\n");
-        if (id != null) {
-            s.append("id =").append(id);
-        }
+        StringBuilder s = new StringBuilder(super.toString());
+       
         if (definition != null)
             s.append(" definition = ").append(definition);
         
@@ -175,39 +150,4 @@ public class AbstractDataComponentEntry implements AbstractDataComponent {
         return s.toString();
     }
 
-    /**
-     * @return the parameterName
-     */
-    public CodeType getParameterName() {
-        return parameterName;
-    }
-
-    /**
-     * @param parameterName the parameterName to set
-     */
-    public void setParameterName(CodeType parameterName) {
-        this.parameterName = parameterName;
-    }
-
-    /**
-     * @return the description
-     */
-    public String getDescription() {
-        return description;
-    }
-
-    /**
-     * @param description the description to set
-     */
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    /**
-     * @param definition the definition to set
-     */
-    public void setDefinition(String definition) {
-        this.definition = URI.create(definition);
-    }
-    
 }

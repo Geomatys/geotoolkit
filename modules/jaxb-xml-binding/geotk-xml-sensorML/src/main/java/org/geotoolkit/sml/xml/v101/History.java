@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.sml.xml.AbstractHistory;
 
 
 /**
@@ -51,7 +52,7 @@ import javax.xml.bind.annotation.XmlType;
     "eventList"
 })
 @XmlRootElement(name = "history")
-public class History {
+public class History implements AbstractHistory {
 
     @XmlElement(name = "EventList")
     private EventList eventList;
@@ -75,6 +76,26 @@ public class History {
     private String show;
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
     private String actuate;
+
+    public History() {
+
+    }
+
+    public History(AbstractHistory h) {
+        if (h != null) {
+            this.actuate = h.getActuate();
+            this.arcrole = h.getArcrole();
+            if (h.getEventList() != null) {
+                this.eventList = new EventList(h.getEventList());
+            }
+            this.href = h.getHref();
+            this.remoteSchema = h.getRemoteSchema();
+            this.role = h.getRole();
+            this.show = h.getShow();
+            this.title = h.getTitle();
+            this.type = h.getType();
+        }
+    }
 
     /**
      * Gets the value of the eventList property.
@@ -133,12 +154,8 @@ public class History {
      *     
      */
     public String getType() {
-        if (type == null) {
-            return "simple";
-        } else {
-            return type;
-        }
-    }
+        return type;
+     }
 
     /**
      * Sets the value of the type property.

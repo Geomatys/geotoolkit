@@ -25,4 +25,41 @@ public interface DataComponentProperty {
 
     public void setToHref();
 
+    String getName();
+
+    String getRemoteSchema();
+
+    String getType();
+
+    String getHref();
+
+    String getRole();
+
+    String getArcrole();
+
+    String getTitle();
+
+    String getShow();
+
+    String getActuate();
+
+    AbstractCount getCount();
+
+    Quantity getQuantity();
+
+    AbstractTime getTime();
+
+    AbstractBoolean getBoolean();
+
+    AbstractCategory getCategory();
+
+    AbstractText getText();
+    
+    AbstractQuantityRange getQuantityRange();
+
+    AbstractCountRange getCountRange();
+    
+    AbstractTimeRange getTimeRange();
+
+    AbstractDataRecord getAbstractRecord();
 }

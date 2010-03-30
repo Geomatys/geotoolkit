@@ -141,14 +141,6 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link ArrayLink.SourceArray }
-     * 
-     */
-    public ArrayLink.SourceArray createArrayLinkSourceArray() {
-        return new ArrayLink.SourceArray();
-    }
-
-    /**
      * Create an instance of {@link PresentationLayerPropertyType }
      * 
      */
@@ -178,14 +170,6 @@ public class ObjectFactory {
      */
     public Connection createConnection() {
         return new Connection();
-    }
-
-    /**
-     * Create an instance of {@link ArrayLink.DestinationArray }
-     * 
-     */
-    public ArrayLink.DestinationArray createArrayLinkDestinationArray() {
-        return new ArrayLink.DestinationArray();
     }
 
     /**
@@ -541,14 +525,6 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link ArrayLink.DestinationIndex }
-     * 
-     */
-    public ArrayLink.DestinationIndex createArrayLinkDestinationIndex() {
-        return new ArrayLink.DestinationIndex();
-    }
-
-    /**
      * Create an instance of {@link ContactList }
      * 
      */
@@ -797,14 +773,6 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link ArrayLink.SourceIndex }
-     * 
-     */
-    public ArrayLink.SourceIndex createArrayLinkSourceIndex() {
-        return new ArrayLink.SourceIndex();
-    }
-
-    /**
      * Create an instance of {@link ProcessMethodType.Algorithm.AlgorithmDefinition }
      * 
      */
@@ -830,7 +798,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Link }
-     * 
+     *
      */
     public Link createLink() {
         return new Link();

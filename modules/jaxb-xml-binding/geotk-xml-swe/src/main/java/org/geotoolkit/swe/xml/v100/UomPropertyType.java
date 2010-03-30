@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.gml.xml.v311.BaseUnitType;
 import org.geotoolkit.gml.xml.v311.UnitDefinitionType;
 import org.geotoolkit.swe.xml.UomProperty;
 import org.geotoolkit.util.Utilities;
@@ -92,6 +93,25 @@ public class UomPropertyType implements UomProperty {
         this.href = href;
     }
 
+    public UomPropertyType(UomProperty uom) {
+        if (uom != null) {
+            this.actuate   = uom.getActuate();
+            this.arcrole   = uom.getArcrole();
+            this.code      = uom.getCode();
+            this.href      = uom.getHref();
+            //this.nilReason = uom.
+            this.remoteSchema = uom.getRemoteSchema();
+            this.role = uom.getRole();
+            this.show = uom.getShow();
+            this.title = uom.getTitle();
+            this.type  = uom.getType();
+            org.geotoolkit.gml.xml.v311.ObjectFactory f = new org.geotoolkit.gml.xml.v311.ObjectFactory();
+            if (uom.getUnitDefinition() != null) {
+                this.unitDefinition = f.createUnitDefinition(uom.getUnitDefinition());
+            }
+        }
+    }
+
     /**
      * Defines a unit inline
      * 
@@ -107,6 +127,9 @@ public class UomPropertyType implements UomProperty {
         return (unitDefinition != null) ? unitDefinition.getValue() : null;
     }
 
+    public BaseUnitType getBaseUnit() {
+        return null;
+    }
     /**
      * Defines a unit inline
      * 
@@ -179,11 +202,7 @@ public class UomPropertyType implements UomProperty {
      *     
      */
     public String getType() {
-        if (type == null) {
-            return "simple";
-        } else {
-            return type;
-        }
+        return type;
     }
 
     /**

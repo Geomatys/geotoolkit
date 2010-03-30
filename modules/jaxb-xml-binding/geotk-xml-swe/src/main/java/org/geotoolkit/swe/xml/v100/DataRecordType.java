@@ -22,6 +22,8 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.swe.xml.DataComponentProperty;
+import org.geotoolkit.swe.xml.DataRecord;
 import org.geotoolkit.util.Utilities;
 
 
@@ -49,7 +51,7 @@ import org.geotoolkit.util.Utilities;
 @XmlType(name = "DataRecordType", propOrder = {
     "field"
 })
-public class DataRecordType extends AbstractDataRecordType {
+public class DataRecordType extends AbstractDataRecordType implements DataRecord {
 
     private List<DataComponentPropertyType> field;
 
@@ -60,6 +62,17 @@ public class DataRecordType extends AbstractDataRecordType {
     public DataRecordType(URI definition, List<DataComponentPropertyType> field) {
         super(definition);
         this.field = field;
+    }
+
+    public DataRecordType(DataRecord dr) {
+        super(dr);
+        if (dr != null && dr.getField() != null) {
+            this.field = new ArrayList<DataComponentPropertyType>();
+            for (DataComponentProperty d : dr.getField()) {
+                this.field.add(new DataComponentPropertyType(d));
+            }
+        }
+
     }
 
     /**

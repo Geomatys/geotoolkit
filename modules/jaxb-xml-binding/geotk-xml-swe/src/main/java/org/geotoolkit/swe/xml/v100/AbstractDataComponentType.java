@@ -82,6 +82,18 @@ public abstract class AbstractDataComponentType extends AbstractGMLEntry impleme
         this.definition = definition;
     }
 
+    public AbstractDataComponentType(AbstractDataComponent component) {
+        super(component);
+        if (component != null) {
+            if (component.getDefinition() instanceof String) {
+                this.definition = URI.create((String)component.getDefinition());
+            } else if (component.getDefinition() instanceof URI) {
+                this.definition = (URI) component.getDefinition();
+            }
+            this.fixed      = component.isFixed();
+        }
+    }
+    
     /**
      * Gets the value of the fixed property.
      */

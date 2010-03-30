@@ -48,7 +48,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "")
 @XmlRootElement(name = "TextBlock")
-public class TextBlock extends AbstractEncodingType {
+public class TextBlock extends AbstractEncodingType implements org.geotoolkit.swe.xml.TextBlock {
 
     @XmlAttribute(required = true)
     private String tokenSeparator;

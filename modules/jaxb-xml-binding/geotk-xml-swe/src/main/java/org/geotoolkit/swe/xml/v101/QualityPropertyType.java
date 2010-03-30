@@ -94,6 +94,35 @@ public class QualityPropertyType implements AbstractQualityProperty {
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
     private String actuate;
 
+    public QualityPropertyType() {
+
+    }
+
+    public QualityPropertyType(AbstractQualityProperty aq) {
+        if (aq != null) {
+            this.actuate = aq.getActuate();
+            this.arcrole = aq.getArcrole();
+            if (aq.getCategory() != null) {
+                this.category = new Category(aq.getCategory());
+            }
+            this.href = aq.getHref();
+            if (aq.getQuantity() != null) {
+                this.quantity = new QuantityType(aq.getQuantity());
+            }
+            if (aq.getQuantityRange() != null) {
+                this.quantityRange = new QuantityRange(aq.getQuantityRange());
+            }
+            this.remoteSchema = aq.getRemoteSchema();
+            this.role = aq.getRole();
+            this.show = aq.getShow();
+            if (aq.getText() != null) {
+                this.text = new Text(aq.getText());
+            }
+            this.title = aq.getTitle();
+            this.type = aq.getType();
+        }
+    }
+
     /**
      * Gets the value of the quantity property.
      * 
@@ -223,11 +252,7 @@ public class QualityPropertyType implements AbstractQualityProperty {
      *     
      */
     public String getType() {
-        if (type == null) {
-            return "simple";
-        } else {
-            return type;
-        }
+        return type;
     }
 
     /**
