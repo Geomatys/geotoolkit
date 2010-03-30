@@ -384,14 +384,6 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link TQUALITYPARAMETERCODE }
-     * 
-     */
-    public TQUALITYPARAMETERCODE createTQUALITYPARAMETERCODE() {
-        return new TQUALITYPARAMETERCODE();
-    }
-
-    /**
      * Create an instance of {@link TComponent }
      * 
      */
@@ -1987,14 +1979,6 @@ public class ObjectFactory {
         return new JAXBElement<TELLIPSOIDMAJORAXIS>(_ELLIPSOIDMAJORAXIS_QNAME, TELLIPSOIDMAJORAXIS.class, null, value);
     }
 
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link TQUALITYPARAMETERCODE }{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "", name = "QUALITY_PARAMETER_CODE")
-    public JAXBElement<TQUALITYPARAMETERCODE> createQUALITYPARAMETERCODE(TQUALITYPARAMETERCODE value) {
-        return new JAXBElement<TQUALITYPARAMETERCODE>(_QUALITYPARAMETERCODE_QNAME, TQUALITYPARAMETERCODE.class, null, value);
-    }
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link BigInteger }{@code >}}
