@@ -150,7 +150,7 @@ final class SampleDimensionTable extends Table {
                 }
             }
             results.close();
-            ce.release();
+            release(ce);
         }
         /*
          * At this point, we have successfully read every SampleDimension rows.

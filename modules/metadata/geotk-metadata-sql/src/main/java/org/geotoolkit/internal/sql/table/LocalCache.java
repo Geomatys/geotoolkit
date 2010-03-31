@@ -44,13 +44,13 @@ import org.geotoolkit.internal.sql.StatementEntry;
  *         LocalCache.Stmt ce = cache.prepareStatement(table, query);
  *         PreparedStatement statement = ce.statement;
  *         // Use the statement, but don't close it.
- *         ce.release();
+ *         release(ce);
  *     }
  * }
  *
- * Note that this is <strong>not</strong> the synchronization mechanism for concurrent
- * usage of {@link Table}. The synchronization on {@code this} is only for blocking the
- * cleaner thread; it has no impact on other threads.
+ * Note that this is <strong>not</strong> a synchronization mechanism for {@link Table}.
+ * The synchronization on {@code this} is only for blocking the cleaner thread; it has
+ * no impact on other threads.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.09
@@ -88,106 +88,38 @@ public interface LocalCache {
 
 
 
-
-    /**
-     * A (<var>table</var>, <var>SQL query</var>) tupple used as keys in {@link StatementPool}.
-     *
-     * @author Martin Desruisseaux (Geomatys)
-     * @version 3.09
-     *
-     * @since 3.09
-     * @module
-     */
-    static final class SQL {
-        /**
-         * The table which created the SQL query.
-         */
-        final Table table;
-
-        /**
-         * The SQL query used for the prepared statement.
-         */
-        final String sql;
-
-        /**
-         * Creates a new key.
-         *
-         * @param table The table which created the SQL query.
-         * @param sql The SQL query used for the prepared statement.
-         */
-        SQL(final Table table, final String sql) {
-            this.table = table;
-            this.sql   = sql;
-        }
-
-        /**
-         * Returns a hash code value for this key.
-         */
-        @Override
-        public int hashCode() {
-            return System.identityHashCode(table) ^ sql.hashCode();
-        }
-
-        /**
-         * Returns {@code true} if this key is equals to the given object.
-         *
-         * @param  other The object to compare with this key.
-         * @return {@code true} if the given object is equals to this key.
-         */
-        @Override
-        public boolean equals(final Object other) {
-            if (other instanceof SQL) {
-                final SQL that = (SQL) other;
-                return table == that.table && sql.equals(that.sql);
-            }
-            return false;
-        }
-    }
-
-
-
     /**
      * The {@link StatementEntry} implementation used in this module. Each instance of this
      * class shall be used in a single thread only. See the {@link LocalCache} javadoc for
      * more information.
      *
      * @author Martin Desruisseaux (Geomatys)
-     * @version 3.09
+     * @version 3.10
      *
      * @since 3.09
      * @module
      */
-    static final class Stmt extends StatementEntry {
+    public static final class Stmt extends StatementEntry {
         /**
          * The SQL query used for creating the statement.
          */
-        final SQL key;
+        final String sql;
 
         /**
          * A value used by {@link Table} in order to determine if the {@link #statement}
          * parameters need to be modified.
          */
-        int stamp;
+        int stamp = -1;
 
         /**
          * Constructs a metadata result for the specified statement.
          *
          * @param statement The prepared statement.
-         * @param key The SQL query used for creating the statement.
+         * @param sql The SQL query used for creating the statement.
          */
-        Stmt(final PreparedStatement statement, final SQL key) {
+        Stmt(final PreparedStatement statement, final String sql) {
             super(statement);
-            this.key = key;
-        }
-
-        /**
-         * Puts the statement back in the pool. Every call to this method shall be performed
-         * inside a synchronized block as documented in the {@link LocalCache} class javadoc.
-         *
-         * @throws SQLException if an error occured while releasing the statement.
-         */
-        public void release() throws SQLException {
-            key.table.getDatabase().release(this);
+            this.sql = sql;
         }
 
         /**
@@ -204,7 +136,7 @@ public interface LocalCache {
             if (className.startsWith("org.postgresql")) {
                 return statement.toString();
             }
-            return key.sql;
+            return sql;
         }
     }
 }

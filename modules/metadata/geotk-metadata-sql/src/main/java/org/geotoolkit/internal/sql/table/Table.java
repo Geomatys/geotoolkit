@@ -75,7 +75,7 @@ public abstract class Table implements Localized {
      * with {@link LocalCache.Stmt#stamp} in order to determine if the statement needs
      * to be set.
      */
-    private int modificationCount = 1;
+    private int modificationCount;
 
     /**
      * Creates a new table using the specified query. The query given in argument should be some
@@ -259,7 +259,23 @@ public abstract class Table implements Localized {
                     Errors.Keys.ILLEGAL_ARGUMENT_$2, "type", type));
         }
         this.type = type;
+        fireStateChanged(); // Because the column may be different on every call.
         return getStatement(sql);
+    }
+
+    /**
+     * Releases the given statement. This method shall be invoked after a
+     * {@link #getStatement(QueryType)} method call when the statement is
+     * not needed anymore.
+     *
+     * @param statement The statement to release.
+     * @throws SQLException If an error occured while releasing the statement.
+     */
+    protected final void release(final LocalCache.Stmt statement) throws SQLException {
+        final Database database = query.database;
+        if (database != null) {
+            database.release(statement);
+        }
     }
 
     /**
@@ -406,6 +422,14 @@ public abstract class Table implements Localized {
      * @param property The name of the property that changed, or {@code null} if unknown.
      */
     protected void fireStateChanged(final String property) {
+        fireStateChanged();
+    }
+
+    /**
+     * Implementation of {@link #fireStateChanged(String)} invoked directly when the state that
+     * changed is not a property stored by this {@code Table} instance.
+     */
+    private void fireStateChanged() {
         final Database database = query.database;
         if (database != null) {
             modificationCount = database.modificationCount.incrementAndGet();

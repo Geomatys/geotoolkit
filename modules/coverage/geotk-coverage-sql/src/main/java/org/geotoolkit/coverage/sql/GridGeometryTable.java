@@ -429,7 +429,7 @@ final class GridGeometryTable extends SingletonTable<GridGeometryEntry> {
                 foundStrictlyEquals = isStrictlyEquals;
             }
             results.close();
-            ce.release();
+            release(ce);
         }
         return id;
     }
@@ -497,7 +497,7 @@ final class GridGeometryTable extends SingletonTable<GridGeometryEntry> {
                         id = keys.getInt(query.identifier.name);
                     }
                     keys.close();
-                    ce.release();
+                    release(ce);
                 }
                 return id;
             } finally {

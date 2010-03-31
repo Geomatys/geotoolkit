@@ -94,12 +94,6 @@ class GridCoverageTable extends BoundedSingletonTable<GridCoverageEntry> {
     private transient SortedSet<Date> availableTimes;
 
     /**
-     * The set of available altitudes. Will be computed by
-     * {@link #getAvailableElevations} when first needed.
-     */
-    private transient SortedSet<Number> availableElevations;
-
-    /**
      * The set of available altitudes for each dates. Will be computed by
      * {@link #getAvailableCentroids} when first needed.
      */
@@ -368,27 +362,24 @@ loop:   for (final GridCoverageEntry newEntry : entries) {
      * @throws SQLException if an error occured while reading the database.
      */
     public final SortedSet<Number> getAvailableElevations() throws SQLException {
-        if (availableElevations == null) {
-            final SortedSet<Number> commons = new TreeSet<Number>();
-            final SortedMap<Date, SortedSet<Number>> centroids = getAvailableCentroids();
-            final Iterator<SortedSet<Number>> iterator = centroids.values().iterator();
-            if (iterator.hasNext()) {
-                commons.addAll(iterator.next());
-                while (iterator.hasNext()) {
-                    final SortedSet<Number> altitudes = iterator.next();
-                    for (final Iterator<Number> it=commons.iterator(); it.hasNext();) {
-                        if (!altitudes.contains(it.next())) {
-                            it.remove();
-                        }
-                    }
-                    if (commons.isEmpty()) {
-                        break; // No need to continue.
+        final SortedSet<Number> commons = new TreeSet<Number>();
+        final SortedMap<Date, SortedSet<Number>> centroids = getAvailableCentroids();
+        final Iterator<SortedSet<Number>> iterator = centroids.values().iterator();
+        if (iterator.hasNext()) {
+            commons.addAll(iterator.next());
+            while (iterator.hasNext()) {
+                final SortedSet<Number> altitudes = iterator.next();
+                for (final Iterator<Number> it=commons.iterator(); it.hasNext();) {
+                    if (!altitudes.contains(it.next())) {
+                        it.remove();
                     }
                 }
+                if (commons.isEmpty()) {
+                    break; // No need to continue.
+                }
             }
-            availableElevations = Collections.unmodifiableSortedSet(commons);
         }
-        return availableElevations;
+        return commons;
     }
 
     /**
@@ -449,7 +440,7 @@ loop:   for (final GridCoverageEntry newEntry : entries) {
                     }
                 }
                 results.close();
-                ce.release();
+                release(ce);
             }
             /*
              * Now get the altitudes for all dates. Note: 'availableTimes' must be
@@ -506,7 +497,7 @@ loop:   for (final GridCoverageEntry newEntry : entries) {
                 }
             }
             results.close();
-            ce.release();
+            release(ce);
         }
         return addTo;
     }
@@ -648,7 +639,7 @@ loop:   for (final GridCoverageEntry newEntry : entries) {
                     }
                 }
                 results.close();
-                ce.release();
+                release(ce);
             } finally {
                 userSeries = null;
             }
@@ -664,7 +655,6 @@ loop:   for (final GridCoverageEntry newEntry : entries) {
         if (!"PreferredResolution".equals(property)) {
             comparator          = null;
             availableTimes      = null;
-            availableElevations = null;
             availableCentroids  = null;
         }
         super.fireStateChanged(property);

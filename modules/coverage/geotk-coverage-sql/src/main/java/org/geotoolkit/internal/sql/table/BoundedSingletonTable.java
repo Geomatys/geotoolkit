@@ -181,7 +181,7 @@ public abstract class BoundedSingletonTable<E extends Entry> extends SingletonTa
                 }
             }
             results.close();
-            ce.release();
+            release(ce);
             fireStateChanged("Envelope");
         }
         trimmed = true;

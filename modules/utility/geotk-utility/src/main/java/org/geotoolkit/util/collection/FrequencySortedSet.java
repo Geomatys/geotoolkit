@@ -201,6 +201,7 @@ public class FrequencySortedSet<E> extends AbstractSet<E> implements SortedSet<E
      */
     @Override
     public void clear() {
+        frequencies = null;
         sorted = null;
         count.clear();
     }
@@ -297,6 +298,7 @@ public class FrequencySortedSet<E> extends AbstractSet<E> implements SortedSet<E
 
     /**
      * Returns the first element in this set.
+     * <p>
      * <ul>
      *   <li>For sets created with the default order, this is the less frequently added element.
      *       If more than one element were added with the same frequency, this is the first one
@@ -320,6 +322,7 @@ public class FrequencySortedSet<E> extends AbstractSet<E> implements SortedSet<E
 
     /**
      * Returns the last element in this set.
+     * <p>
      * <ul>
      *   <li>For sets created with the default order, this is the most frequently added element.
      *       If more than one element were added with the same frequency, this is the last one

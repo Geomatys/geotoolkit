@@ -22,30 +22,22 @@ import java.util.List;
 import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
-import java.util.SortedSet;
 import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
-import org.opengis.referencing.operation.Matrix;
-import org.opengis.referencing.datum.PixelInCell;
-
 import org.geotoolkit.test.Depend;
 import org.geotoolkit.util.MeasurementRange;
-import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.internal.sql.table.CatalogTestBase;
-import org.geotoolkit.referencing.operation.transform.LinearTransform;
 
 import org.junit.*;
 import static org.junit.Assert.*;
-import static java.lang.Double.NEGATIVE_INFINITY;
-import static java.lang.Double.POSITIVE_INFINITY;
 
 
 /**
- * Tests {@link SeriesTable}.
+ * Tests {@link LayerTable}.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.10
@@ -90,7 +82,7 @@ public final class LayerTableTest extends CatalogTestBase {
     /**
      * Tolerance factor for comparison of floating point numbers.
      */
-    private static final double EPS = 1E-8;
+    static final double EPS = 1E-8;
 
     /**
      * Tests the {@link LayerTableTest#getIdentifiers()} method.
@@ -124,63 +116,6 @@ public final class LayerTableTest extends CatalogTestBase {
         final Set<LayerEntry> entries = table.getEntries();
         assertFalse(entries.isEmpty());
         assertTrue(entries.contains(entry));
-        /*
-         * Tests the calculation of the range of sample values.
-         */
-        final List<MeasurementRange<?>> validRanges = entry.getSampleValueRanges();
-        assertNotNull(validRanges);
-        assertEquals(1, validRanges.size());
-        assertEquals(-2.85, validRanges.get(0).getMinimum(), EPS);
-        assertEquals(35.25, validRanges.get(0).getMaximum(), EPS);
-        /*
-         * Tests the calculation of typical resolution.
-         */
-        final double[] resolution = entry.getTypicalResolution();
-        assertEquals("X resolution (deg)",  0.087890625, resolution[0], EPS);
-        assertEquals("Y resolution (deg)",  0.087890625, resolution[1], EPS);
-        assertEquals("Z resolution (m)",    Double.NaN,  resolution[2], EPS);
-        assertEquals("T resolution (days)", 8,           resolution[3], EPS);
-        /*
-         * Tests the count of entries and the count of formats
-         * (the later is closely related to the former).
-         */
-        assertEquals("Coverage count", 7, entry.getCoverageCount());
-        final SortedSet<SeriesEntry> series = entry.getCountBySeries();
-        assertEquals("Expected exactly one format.", 1, series.size());
-        assertEquals("Coverage format", FormatTableTest.TEMPERATURE, series.first().format.identifier);
-
-        final SortedSet<String> names = entry.getImageFormats();
-        assertEquals("Expected exactly one format.", 1, names.size());
-        assertEquals("Coverage format", "PNG", names.first());
-        /*
-         * Tests the calculation of the grid geometry.
-         */
-        final SortedSet<GeneralGridGeometry> geometries = entry.getGridGeometries();
-        assertEquals("Expected exactly one grid geometry.", 1, geometries.size());
-        final GeneralGridGeometry geom = geometries.first();
-        assertArrayEquals("GridEnvelope check (lower)", new int[3],
-                geom.getGridRange().getLow().getCoordinateValues());
-        assertArrayEquals("GridEnvelope check (upper)", new int[] {4095, 2047, 6},
-                geom.getGridRange().getHigh().getCoordinateValues());
-        final Matrix matrix = ((LinearTransform) geom.getGridToCRS(PixelInCell.CELL_CORNER)).getMatrix();
-        assertEquals("X translation",   -180, matrix.getElement(0, 3), EPS);
-        assertEquals("Y translation",     90, matrix.getElement(1, 3), EPS);
-        assertEquals("T translation",   6431, matrix.getElement(2, 3), EPS);
-        assertEquals("X scale",  0.087890625, matrix.getElement(0, 0), EPS);
-        assertEquals("Y scale", -0.087890625, matrix.getElement(1, 1), EPS);
-        assertEquals("T scale",            8, matrix.getElement(2, 2), EPS);
-        /*
-         * Tests the envelope calculation.
-         */
-        final CoverageEnvelope envelope = entry.getEnvelope(SAMPLE_TIME, null);
-        assertEquals(-180,              envelope.getMinimum(0), 0.0);
-        assertEquals(+180,              envelope.getMaximum(0), 0.0);
-        assertEquals( -90,              envelope.getMinimum(1), 0.0);
-        assertEquals( +90,              envelope.getMaximum(1), 0.0);
-        assertEquals(NEGATIVE_INFINITY, envelope.getMinimum(2), 0.0);
-        assertEquals(POSITIVE_INFINITY, envelope.getMaximum(2), 0.0);
-        assertEquals(6439,              envelope.getMinimum(3), 0.0);
-        assertEquals(6447,              envelope.getMaximum(3), 0.0);
     }
 
     /**

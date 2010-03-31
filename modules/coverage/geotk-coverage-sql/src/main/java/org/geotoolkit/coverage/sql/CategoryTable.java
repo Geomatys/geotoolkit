@@ -227,7 +227,7 @@ final class CategoryTable extends Table {
                 categories.add(category);
             }
             results.close();
-            ce.release();
+            release(ce);
         }
         if (!categories.isEmpty()) {
             store(dimensions, bandOfPreviousCategory, categories);

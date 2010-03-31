@@ -137,7 +137,7 @@ final class LayerTable extends SingletonTable<LayerEntry> {
                 final PreparedStatement statement = ce.statement;
                 statement.setString(indexOf(query.name), name);
                 success = updateSingleton(statement);
-                ce.release();
+                release(ce);
             } finally {
                 transactionEnd(success);
             }

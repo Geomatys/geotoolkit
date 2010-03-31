@@ -319,7 +319,7 @@ public abstract class SingletonTable<E extends Entry> extends Table {
                         throw new NoSuchRecordException(this, results, getPrimaryKeyColumn(), identifier);
                     }
                     results.close();
-                    ce.release();
+                    release(ce);
                 }
             } finally {
                 handler.putAndUnlock(entry);
@@ -371,7 +371,7 @@ public abstract class SingletonTable<E extends Entry> extends Table {
                 }
             }
             results.close();
-            ce.release();
+            release(ce);
         }
         return entries;
     }
@@ -393,7 +393,7 @@ public abstract class SingletonTable<E extends Entry> extends Table {
                 identifiers.add(results.getString(index));
             }
             results.close();
-            ce.release();
+            release(ce);
         }
         return identifiers;
     }
@@ -421,7 +421,7 @@ public abstract class SingletonTable<E extends Entry> extends Table {
             final ResultSet results = statement.executeQuery();
             hasNext = results.next();
             results.close();
-            ce.release();
+            release(ce);
         }
         return hasNext;
     }
@@ -446,7 +446,7 @@ public abstract class SingletonTable<E extends Entry> extends Table {
                 final PreparedStatement statement = ce.statement;
                 setPrimaryKeyParameter(statement, identifier);
                 count = update(statement);
-                ce.release();
+                release(ce);
                 success = true;
             } finally {
                 transactionEnd(success);
@@ -474,7 +474,7 @@ public abstract class SingletonTable<E extends Entry> extends Table {
             try {
                 final LocalCache.Stmt ce = getStatement(QueryType.DELETE_ALL);
                 count = update(ce.statement);
-                ce.release();
+                release(ce);
                 success = true;
             } finally {
                 transactionEnd(success);

@@ -231,7 +231,7 @@ final class SeriesTable extends SingletonTable<SeriesEntry> {
                 id = nextID;
             }
             results.close();
-            ce.release();
+            release(ce);
         }
         return id;
     }
@@ -274,7 +274,7 @@ final class SeriesTable extends SingletonTable<SeriesEntry> {
                         id = keys.getInt(query.identifier.name);
                     }
                     keys.close();
-                    ce.release();
+                    release(ce);
                 }
                 return id;
             } finally {

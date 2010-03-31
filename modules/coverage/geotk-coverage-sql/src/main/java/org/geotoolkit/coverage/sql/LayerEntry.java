@@ -50,6 +50,7 @@ import org.geotoolkit.internal.sql.table.TablePool;
 import org.geotoolkit.internal.sql.table.SpatialDatabase;
 import org.geotoolkit.internal.sql.table.NoSuchRecordException;
 import org.geotoolkit.internal.referencing.CRSUtilities;
+import org.geotoolkit.internal.UnmodifiableArraySortedSet;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
@@ -405,6 +406,7 @@ final class LayerEntry extends Entry implements Layer {
                 if (available == null) {
                     data.setLayerEntry(this);
                     available = data.getAvailableTimes();
+                    available = new UnmodifiableArraySortedSet.Date(available);
                     availableTimes = available;
                 }
             }
@@ -427,6 +429,7 @@ final class LayerEntry extends Entry implements Layer {
                 if (available == null) {
                     data.setLayerEntry(this);
                     available = data.getAvailableElevations();
+                    available = new UnmodifiableArraySortedSet.Number(available);
                     availableElevations = available;
                 }
             }
