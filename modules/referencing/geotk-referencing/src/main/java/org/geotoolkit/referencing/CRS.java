@@ -25,7 +25,7 @@ import java.util.StringTokenizer;
 import java.util.NoSuchElementException;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.awt.geom.AffineTransform; // For javadoc
+import java.awt.geom.AffineTransform;
 import java.awt.RenderingHints;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -1768,6 +1768,42 @@ search:             if (DefaultCoordinateSystemAxis.isCompassDirection(axis.getD
         assert (destination == envelope) || XRectangle2D.equalsEpsilon(destination,
                 transform(operation, new GeneralEnvelope(envelope)).toRectangle2D()) : destination;
         return destination;
+    }
+
+    /**
+     * Transforms the given relative distance using the given transform. A relative distance
+     * vector is transformed without applying the translation components. However it needs to
+     * be computed at a particular location, given by the {@code origin} parameter in units
+     * of the source CRS.
+     *
+     * @param  transform The transformation to apply.
+     * @param  origin The position where to compute the delta transform in the source CRS.
+     * @param  vector The distance vector to be delta transformed.
+     * @return The result of the delta transformation.
+     * @throws TransformException if the transformation failed.
+     *
+     * @see AffineTransform#deltaTransform(Point2D, Point2D)
+     *
+     * @since 3.10 (derived from 2.3)
+     */
+    public static double[] deltaTransform(final MathTransform  transform,
+            final DirectPosition origin, final double... vector) throws TransformException
+    {
+        final int sourceDim = transform.getSourceDimensions();
+        final int targetDim = transform.getTargetDimensions();
+        final double[] coordinates = new double[2 * Math.max(sourceDim, targetDim)];
+        for (int i=0; i<sourceDim; i++) {
+            final double c = origin.getOrdinate(i);
+            final double d = vector[i] * 0.5;
+            coordinates[i] = c - d;
+            coordinates[i + sourceDim] = c + d;
+        }
+        transform.transform(coordinates, 0, coordinates, 0, 2);
+        final double[] result = new double[targetDim];
+        for (int i=0; i<targetDim; i++) {
+            result[i] = coordinates[i + targetDim] - coordinates[i];
+        }
+        return result;
     }
 
     /**

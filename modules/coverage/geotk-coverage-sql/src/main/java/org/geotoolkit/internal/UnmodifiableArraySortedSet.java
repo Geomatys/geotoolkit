@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.internal;
 
+import java.io.Serializable;
 import java.util.AbstractSet;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -38,7 +39,12 @@ import java.util.SortedSet;
  * @since 3.10
  * @module
  */
-public abstract class UnmodifiableArraySortedSet<E> extends AbstractSet<E> implements SortedSet<E> {
+public abstract class UnmodifiableArraySortedSet<E> extends AbstractSet<E> implements SortedSet<E>, Serializable {
+    /**
+     * For cross-version compatibility.
+     */
+    private static final long serialVersionUID = -6259677334686182111L;
+
     /**
      * The lower and upper bounds of the array.
      */
@@ -199,6 +205,11 @@ public abstract class UnmodifiableArraySortedSet<E> extends AbstractSet<E> imple
      */
     public static final class Number extends UnmodifiableArraySortedSet<java.lang.Number> {
         /**
+         * For cross-version compatibility.
+         */
+        private static final long serialVersionUID = -8037878367513806431L;
+
+        /**
          * The sorted array of values.
          */
         private final double[] values;
@@ -260,6 +271,11 @@ public abstract class UnmodifiableArraySortedSet<E> extends AbstractSet<E> imple
      * @module
      */
     public static final class Date extends UnmodifiableArraySortedSet<java.util.Date> {
+        /**
+         * For cross-version compatibility.
+         */
+        private static final long serialVersionUID = 6763321681710208337L;
+
         /**
          * The sorted array of times, in milliseconds since January 1st 1970.
          */

@@ -33,7 +33,6 @@ import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
-import java.awt.geom.Dimension2D;
 import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RectangularShape;
@@ -51,8 +50,10 @@ import org.opengis.coverage.grid.RectifiedGrid;
 import org.opengis.metadata.spatial.Georectified;
 import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.metadata.content.TransferFunctionType;
+import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
+import org.opengis.referencing.operation.CoordinateOperation;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;
 
@@ -65,8 +66,8 @@ import org.geotoolkit.coverage.grid.GridCoverageFactory;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.InvalidGridGeometryException;
-import org.geotoolkit.display.shape.DoubleDimension2D;
 import org.geotoolkit.display.shape.XRectangle2D;
+import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.image.io.NamedImageStore;
 import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.image.io.metadata.MetadataHelper;
@@ -752,16 +753,9 @@ public class ImageCoverageReader extends GridCoverageReader {
              */
             final Envelope envelope = param.getEnvelope();
             final double[] resolution = param.getResolution();
-            double sx=0, sy=0;
-            if (resolution != null) {
-                final int length = resolution.length;
-                if (gridGeometry.axisDimensionX < length) sx = resolution[gridGeometry.axisDimensionX];
-                if (gridGeometry.axisDimensionY < length) sy = resolution[gridGeometry.axisDimensionY];
-            }
-            final Dimension2D subsampling = (sx > 0 || sy > 0) ? new DoubleDimension2D(sx, sy) : null;
             final Rectangle imageBounds;
             try {
-                imageBounds = computeBounds(gridGeometry, envelope, subsampling, param.getCoordinateReferenceSystem());
+                imageBounds = computeBounds(gridGeometry, envelope, resolution, param.getCoordinateReferenceSystem());
             } catch (Exception e) { // There is many different exceptions thrown by the above.
                 throw new CoverageStoreException(formatErrorMessage(e), e);
             }
@@ -776,9 +770,9 @@ public class ImageCoverageReader extends GridCoverageReader {
             change = AffineTransform.getTranslateInstance(imageBounds.x, imageBounds.y);
             imageParam = imageReader.getDefaultReadParam();
             imageParam.setSourceRegion(imageBounds);
-            if (subsampling != null) {
-                sx = subsampling.getWidth();
-                sy = subsampling.getHeight();
+            if (resolution != null) {
+                final double sx = resolution[0]; // Really 0, not gridGeometry.axisDimensionX
+                final double sy = resolution[1]; // Really 1, not gridGeometry.axisDimensionY
                 imageParam.setSourceSubsampling((int) sx, (int) sy, 0, 0);
                 /*
                  * Conceptually we should invoke the following code now. However this implementation
@@ -874,8 +868,8 @@ public class ImageCoverageReader extends GridCoverageReader {
      *         can't be read because the region to read is empty.
      */
     private Rectangle computeBounds(final GridGeometry2D gridGeometry, Envelope envelope,
-            final Dimension2D resolution, final CoordinateReferenceSystem sourceCRS)
-            throws InvalidGridGeometryException, NoninvertibleTransformException, TransformException
+            final double[] resolution, final CoordinateReferenceSystem sourceCRS)
+            throws InvalidGridGeometryException, NoninvertibleTransformException, TransformException, FactoryException
     {
         final Rectangle gridRange = gridGeometry.getGridRange2D();
         final int width  = gridRange.width;
@@ -893,12 +887,24 @@ public class ImageCoverageReader extends GridCoverageReader {
             return null;
         }
         /*
-         * Check if the requested region (requestEnvelope) intersects the coverage region (shapeToRead).
+         * Transform the envelope if needed. We will remember the MathTransform because it will
+         * be needed for transforming the resolution later. Then, check if the requested region
+         * (requestEnvelope) intersects the coverage region (shapeToRead).
          */
         final CoordinateReferenceSystem targetCRS = gridGeometry.getCoordinateReferenceSystem2D();
+        MathTransform toTargetCRS = null;
+        if (sourceCRS != null && targetCRS != null && !CRS.equalsIgnoreMetadata(sourceCRS, targetCRS)) {
+            final CoordinateOperation op =
+                    CRS.getCoordinateOperationFactory(true).createOperation(sourceCRS, targetCRS);
+            toTargetCRS = op.getMathTransform();
+            if (toTargetCRS.isIdentity()) {
+                toTargetCRS = null;
+            } else if (envelope != null) {
+                envelope = CRS.transform(op, envelope);
+            }
+        }
         XRectangle2D requestRect = null;
         if (envelope != null) {
-            envelope = CRS.transform(envelope, targetCRS);
             requestRect = XRectangle2D.createFromExtremums(
                     envelope.getMinimum(0), envelope.getMinimum(1),
                     envelope.getMaximum(0), envelope.getMaximum(1));
@@ -941,14 +947,25 @@ public class ImageCoverageReader extends GridCoverageReader {
         final int xSubsampling;
         final int ySubsampling;
         if (resolution != null) {
-            if (sourceCRS != null) {
-                // TODO: We need to transform the resolution here.
+            /*
+             * Transform the resolution if needed. The code below assume that the target
+             * dimension (always 2) is smaller than the source dimension.
+             */
+            double[] transformed = resolution;
+            if (toTargetCRS != null) {
+                final double[] center = new double[toTargetCRS.getSourceDimensions()];
+                center[0] = imageRegion.getCenterX();
+                center[1] = imageRegion.getCenterY();
+                gridToCRS.transform(center, 0, center, 0, 1);
+                toTargetCRS.inverse().transform(center, 0, center, 0, 1);
+                transformed = CRS.deltaTransform(toTargetCRS, new GeneralDirectPosition(center), resolution);
             }
-            sx *= resolution.getWidth();
-            sy *= resolution.getHeight();
+            sx *= transformed[0];
+            sy *= transformed[1];
             xSubsampling = Math.max(1, Math.min(width /MIN_SIZE, (int) (sx + EPS)));
             ySubsampling = Math.max(1, Math.min(height/MIN_SIZE, (int) (sy + EPS)));
-            resolution.setSize(xSubsampling, ySubsampling);
+            resolution[0] = xSubsampling;
+            resolution[1] = ySubsampling;
         } else {
             xSubsampling = 1;
             ySubsampling = 1;

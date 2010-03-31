@@ -34,6 +34,7 @@ import static org.junit.Assert.*;
 import static org.geotoolkit.coverage.sql.LayerTableTest.*;
 import static org.geotoolkit.coverage.sql.CoverageDatabase.now;
 
+
 /**
  * Tests {@link CoverageDatabaseTest}.
  *

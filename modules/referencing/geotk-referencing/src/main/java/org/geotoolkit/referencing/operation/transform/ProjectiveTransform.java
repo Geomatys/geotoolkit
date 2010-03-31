@@ -24,8 +24,6 @@ import java.util.Arrays;
 import java.io.Serializable;
 import java.awt.geom.Point2D;
 import java.awt.geom.AffineTransform;
-import javax.vecmath.MismatchedSizeException;
-import javax.vecmath.SingularMatrixException;
 
 import org.opengis.geometry.DirectPosition;
 import org.opengis.parameter.ParameterValueGroup;
@@ -33,6 +31,7 @@ import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
+import org.geotoolkit.internal.referencing.MatrixUtilities;
 
 import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.parameter.MatrixParameters;
@@ -40,7 +39,6 @@ import org.geotoolkit.referencing.operation.provider.Affine;
 import org.geotoolkit.referencing.operation.matrix.XMatrix;
 import org.geotoolkit.referencing.operation.matrix.MatrixFactory;
 import org.geotoolkit.referencing.operation.matrix.GeneralMatrix;
-import org.geotoolkit.resources.Errors;
 
 import static org.geotoolkit.internal.referencing.MatrixUtilities.*;
 
@@ -94,8 +92,8 @@ import static org.geotoolkit.internal.referencing.MatrixUtilities.*;
  *   <li>{@link org.geotoolkit.referencing.operation.provider.LongitudeRotation}</li>
  * </ul>
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.08
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.10
  *
  * @see javax.media.jai.PerspectiveTransform
  * @see java.awt.geom.AffineTransform
@@ -617,17 +615,8 @@ public class ProjectiveTransform extends AbstractMathTransform implements Linear
             if (isIdentity()) {
                 inverse = this;
             } else {
-                final XMatrix matrix = MatrixFactory.create(numRow, numCol, elt);
-                try {
-                    matrix.invert();
-                } catch (SingularMatrixException exception) {
-                    throw new NoninvertibleTransformException(Errors.format(
-                            Errors.Keys.NONINVERTIBLE_TRANSFORM), exception);
-                } catch (MismatchedSizeException exception) {
-                    // This exception is thrown if the matrix is not square.
-                    throw new NoninvertibleTransformException(Errors.format(
-                            Errors.Keys.NONINVERTIBLE_TRANSFORM), exception);
-                }
+                Matrix matrix = MatrixFactory.create(numRow, numCol, elt);
+                matrix = MatrixUtilities.invert(matrix);
                 inverse = createInverse(matrix);
                 inverse.inverse = this;
             }

@@ -19,19 +19,22 @@ package org.geotoolkit.referencing;
 
 import java.util.Set;
 import java.awt.geom.Rectangle2D;
+import java.awt.geom.AffineTransform;
 
 import org.opengis.referencing.FactoryException;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.CoordinateOperation;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.TransformException;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.operation.OperationNotFoundException;
 
 import org.opengis.geometry.Envelope;
 
 import org.geotoolkit.test.Depend;
 import org.geotoolkit.test.crs.WKT;
 import org.geotoolkit.geometry.GeneralEnvelope;
+import org.geotoolkit.geometry.DirectPosition2D;
 import org.geotoolkit.display.shape.XRectangle2D;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
@@ -39,9 +42,9 @@ import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
 import org.geotoolkit.referencing.crs.DefaultVerticalCRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.referencing.crs.CoordinateReferenceSystemTest;
+import org.geotoolkit.referencing.operation.transform.ProjectiveTransform;
 
 import org.junit.*;
-import org.opengis.referencing.operation.OperationNotFoundException;
 import static org.junit.Assert.*;
 import static org.geotoolkit.test.Commons.decodeQuotes;
 
@@ -52,7 +55,7 @@ import static org.geotoolkit.test.Commons.decodeQuotes;
  *
  * @author Martin Desruisseaux (Geomatys)
  * @author Andrea Aime (OpenGeo)
- * @version 3.09
+ * @version 3.10
  *
  * @since 3.00
  */
@@ -391,5 +394,34 @@ public final class CRS_Test {
         assertEquals( 170, env2D.getMaximum(0), 0);
         assertEquals( -80, env2D.getMinimum(1), 0);
         assertEquals(  80, env2D.getMaximum(1), 0);
+    }
+
+    /**
+     * Tests {@link CRS#deltaTransform}
+     *
+     * @throws TransformException Should never happen.
+     */
+    @Test
+    public void testDeltaTransform() throws TransformException {
+        /*
+         * Computes the point to be used as a reference.
+         */
+        final AffineTransform at = new AffineTransform();
+        at.translate(-200, 300);
+        at.scale(4, 6);
+        at.rotate(1.5);
+        final double[] vector = new double[] {4, 7};
+        final double[] expected = new double[2];
+        at.deltaTransform(vector, 0, expected, 0, 1);
+        /*
+         * Computes the same delta using the CRS.deltaTransform(...) method.
+         */
+        final MathTransform tr = ProjectiveTransform.create(at);
+        final DirectPosition2D origin = new DirectPosition2D(80, -20);
+        final double[] result = CRS.deltaTransform(tr, origin, vector);
+        assertEquals(expected.length, result.length);
+        for (int i=0; i<expected.length; i++) {
+            assertEquals(expected[i], result[i], 1E-10);
+        }
     }
 }

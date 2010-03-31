@@ -32,9 +32,10 @@ import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptorGroup;
 
 import org.geotoolkit.lang.Immutable;
-import org.geotoolkit.resources.Errors;
 import org.geotoolkit.referencing.operation.provider.Affine;
 import org.geotoolkit.referencing.operation.matrix.GeneralMatrix;
+import org.geotoolkit.referencing.operation.matrix.MatrixFactory;
+import org.geotoolkit.referencing.operation.matrix.XMatrix;
 
 
 /**
@@ -50,7 +51,7 @@ import org.geotoolkit.referencing.operation.matrix.GeneralMatrix;
  * an {@link java.awt.geom.AffineTransform} for every 2D affine conversions.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.08
+ * @version 3.10
  *
  * @since 3.08
  * @module
@@ -77,7 +78,7 @@ final class CopyTransform extends AbstractMathTransform implements LinearTransfo
     /**
      * The inverse transform. Will be created only when first needed.
      */
-    private transient CopyTransform inverse;
+    private transient MathTransform inverse;
 
     /**
      * Creates a new transform.
@@ -375,32 +376,47 @@ final class CopyTransform extends AbstractMathTransform implements LinearTransfo
     @Override
     public synchronized MathTransform inverse() throws NoninvertibleTransformException {
         if (inverse == null) {
-            if (isIdentity()) {
-                inverse = this;
-            } else {
+            CopyTransform copyInverse = this;
+            if (!isIdentity()) {
+                final int srcDim = this.srcDim;
+                final int dstDim = indices.length;
                 final int[] reverse = new int[srcDim];
                 Arrays.fill(reverse, -1);
-                for (int i=indices.length; --i>=0;) {
+                for (int i=dstDim; --i>=0;) {
                     reverse[indices[i]] = i;
                 }
                 /*
-                 * Check if there is any unassigned dimension. Note: in a future
-                 * version, we could create a transform that assign the ordinate
-                 * values to NaN instead than throwing an exception.
+                 * Check if there is any unassigned dimension. In such case,
+                 * delegates to the generic ProjectiveTransform with a matrix
+                 * which set the missing values to NaN.
                  */
-                for (int i=reverse.length; --i>=0;) {
-                    if (reverse[i] < 0) {
-                        throw new NoninvertibleTransformException(Errors.format(
-                                Errors.Keys.NONINVERTIBLE_TRANSFORM));
+                for (int j=srcDim; --j>=0;) {
+                    if (reverse[j] < 0) {
+                        final XMatrix matrix = MatrixFactory.create(srcDim + 1, dstDim + 1);
+                        for (j=0; j<srcDim; j++) {
+                            if (j < dstDim) {
+                                matrix.setElement(j, j, 0);
+                            }
+                            final int i = reverse[j];
+                            if (i >= 0) {
+                                matrix.setElement(j, i, 1);
+                            } else {
+                                matrix.setElement(j, dstDim, Double.NaN);
+                            }
+                        }
+                        matrix.setElement(srcDim, dstDim, 1);
+                        return inverse = ProjectiveTransform.create(matrix);
                     }
                 }
-                if (Arrays.equals(reverse, indices)) {
-                    inverse = this;
-                } else {
-                    inverse = new CopyTransform(indices.length, reverse);
-                    inverse.inverse = this;
+                /*
+                 * At this point, we known that we can create the inverse transform.
+                 */
+                if (!Arrays.equals(reverse, indices)) {
+                    copyInverse = new CopyTransform(indices.length, reverse);
+                    copyInverse.inverse = this;
                 }
             }
+            inverse = copyInverse;
         }
         return inverse;
     }

@@ -37,7 +37,6 @@ import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.display.shape.DoubleDimension2D;
 import org.geotoolkit.util.collection.FrequencySortedSet;
-import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.image.io.IIOListeners;
 import org.geotoolkit.resources.Errors;
 
@@ -266,9 +265,8 @@ public class LayerCoverageReader extends GridCoverageReader {
                         for (int i=center.getDimension(); --i>=0;) {
                             center.setOrdinate(i, envelope.getMedian(i));
                         }
-                        resolution = CRSUtilities.deltaTransform(
-                                CRS.findMathTransform(crs, envelope.database.horizontalCRS, true),
-                                center, new GeneralDirectPosition(resolution)).getCoordinate();
+                        resolution = CRS.deltaTransform(CRS.findMathTransform(crs,
+                                envelope.database.horizontalCRS, true), center, resolution);
                     }
                     hr = new DoubleDimension2D(resolution[0], resolution[1]);
                 }

@@ -430,7 +430,10 @@ public final class CRSUtilities {
      * @throws TransformException if the transformation failed.
      *
      * @since 2.3
+     *
+     * @deprecated Moved to {@link CRS#deltaTransform(MathTransform, DirectPosition, double[])}
      */
+    @Deprecated
     public static DirectPosition deltaTransform(final MathTransform  transform,
                                                 final DirectPosition origin,
                                                 final DirectPosition vector)
@@ -467,7 +470,10 @@ public final class CRSUtilities {
      * @throws TransformException if the transformation failed.
      *
      * @see AffineTransform#deltaTransform(Point2D,Point2D)
+     *
+     * @deprecated Not used anymore.
      */
+    @Deprecated
     public static Point2D deltaTransform(final MathTransform2D transform,
                                          final Point2D         origin,
                                          final Point2D         source,

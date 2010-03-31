@@ -21,6 +21,7 @@ import java.awt.geom.AffineTransform;
 import org.opengis.referencing.operation.TransformException;
 import org.geotoolkit.referencing.operation.provider.Affine;
 import org.geotoolkit.referencing.operation.matrix.Matrix3;
+import org.geotoolkit.referencing.operation.matrix.MatrixFactory;
 
 import org.geotoolkit.test.Depend;
 import org.junit.*;
@@ -32,7 +33,7 @@ import org.junit.*;
  * use {@code ProjectiveTransform} as a reference, this time with NaN values.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.10
  *
  * @since 3.00
  */
@@ -134,5 +135,45 @@ public final class ProjectiveTransformTest extends TransformTestCase {
         reference.transform(source, 0, target, 0, source.length/2);
         verifyTransform(source, target);
         stress(source);
+    }
+
+    /**
+     * Tests using a non-square matrix.
+     *
+     * @throws TransformException should never happen.
+     */
+    @Test
+    public void testNonSquare() throws TransformException {
+        transform = new ProjectiveTransform(MatrixFactory.create(3, 5, new double[] {
+            2, 0, 0, 0, 8,
+            0, 0, 4, 0, 5,
+            0, 0, 0, 0, 1
+        }));
+        tolerance = 1E-12;
+        validate();
+
+        final int numPts    = 3;
+        final int sourceDim = 4;
+        final double[] source = new double[] {0,0,0,0 , 1,1,1,1 , 8,3,-7,5};
+        final double[] target = new double[] {8,5 , 10,9 , 24,-23};
+        final double[] result = new double[numPts * sourceDim];
+        transform.transform(source, 0, result, 0, numPts);
+        for (int i=0; i<target.length; i++) {
+            assertEquals("Direct transform", target[i], result[i], tolerance);
+        }
+        /*
+         * Inverse the transform (this is the interresting part of this test) and try again.
+         * The ordinates at index 1 and 3 (they are the index of columns were all elements
+         * are 0 in the above matrix) are expected to be NaN.
+         */
+        transform = transform.inverse();
+        transform.transform(target, 0, result, 0, numPts);
+        for (int i=0; i<source.length; i += sourceDim) {
+            source[i + 1] = Double.NaN;
+            source[i + 3] = Double.NaN;
+        }
+        for (int i=0; i<source.length; i++) {
+            assertEquals("Inverse transform", source[i], result[i], tolerance);
+        }
     }
 }
