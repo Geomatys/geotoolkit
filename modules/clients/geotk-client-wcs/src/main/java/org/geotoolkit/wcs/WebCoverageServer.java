@@ -95,7 +95,7 @@ public class WebCoverageServer implements Server {
 
     /**
      * Create a getCoverage request.
-     * @return GetCapabilitiesRequest : getCoverage request.
+     * @return GetCoverageRequest : getCoverage request.
      */
     public GetCoverageRequest createGetCoverage() {
 
