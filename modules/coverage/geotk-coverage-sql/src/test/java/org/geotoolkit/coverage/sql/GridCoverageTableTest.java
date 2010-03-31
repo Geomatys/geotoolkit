@@ -33,6 +33,7 @@ import org.geotoolkit.test.Depend;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.internal.sql.table.CatalogTestBase;
+import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -221,7 +222,7 @@ public final class GridCoverageTableTest extends CatalogTestBase {
     public void testBoundingBox() throws SQLException, TransformException {
         final GridCoverageTable table = getDatabase().getTable(GridCoverageTable.class);
         table.setLayer(LayerTableTest.TEMPERATURE);
-        final GeneralEnvelope search = new GeneralEnvelope(table.envelope.getCoordinateReferenceSystem());
+        GeneralEnvelope search = new GeneralEnvelope(table.envelope.getCoordinateReferenceSystem());
         search.setToInfinite();
         search.setRange(0, -200, 200);
         search.setRange(1, -100, 100);
@@ -239,6 +240,25 @@ public final class GridCoverageTableTest extends CatalogTestBase {
         assertEquals(+180, envelope.getMaximum(0), 0.0);
         assertEquals( -90, envelope.getMinimum(1), 0.0);
         assertEquals( +90, envelope.getMaximum(1), 0.0);
+        assertEquals(6431, envelope.getMinimum(3), 0.0);
+        assertEquals(6487, envelope.getMaximum(3), 0.0);
+
+        /*
+         * Following test intentionally define an two-dimensional envelope instead than the
+         * expected three-dimensional spatio-temporal envelope. The time ordinates should be
+         * left unchanged.
+         */
+        search = new GeneralEnvelope(DefaultGeographicCRS.WGS84);
+        search.setRange(0, -100, 120);
+        search.setRange(1,  -80,  60);
+        table.envelope.setEnvelope(search);
+
+        table.trimEnvelope();
+        envelope = table.envelope;
+        assertEquals(-100, envelope.getMinimum(0), 0.0);
+        assertEquals(+120, envelope.getMaximum(0), 0.0);
+        assertEquals( -80, envelope.getMinimum(1), 0.0);
+        assertEquals( +60, envelope.getMaximum(1), 0.0);
         assertEquals(6431, envelope.getMinimum(3), 0.0);
         assertEquals(6487, envelope.getMaximum(3), 0.0);
     }

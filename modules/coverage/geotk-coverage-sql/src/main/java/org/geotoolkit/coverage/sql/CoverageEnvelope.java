@@ -42,16 +42,14 @@ import org.geotoolkit.display.shape.DoubleDimension2D;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.internal.sql.table.SpatialDatabase;
 import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
+import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.Utilities;
 
 import static java.lang.Double.doubleToLongBits;
 import static java.lang.Double.NEGATIVE_INFINITY;
 import static java.lang.Double.POSITIVE_INFINITY;
-
-import static org.geotoolkit.referencing.CRS.transform;
-import static org.geotoolkit.referencing.CRS.equalsIgnoreMetadata;
-import static org.geotoolkit.referencing.CRS.getCoordinateOperationFactory;
 
 
 /**
@@ -242,6 +240,15 @@ public class CoverageEnvelope extends AbstractEnvelope implements Cloneable {
      * Sets the spatio-temporal envelope. The default implementation delegates to
      * {@link #setHorizontalRange(Rectangle2D)}, {@link #setVerticalRange(NumberRange)}
      * and {@link #setTimeRange(DateRange)}, applying a coordinate transformation if needed.
+     * <p>
+     * If the given envelope has more dimensions than this
+     * {@linkplain #getDimension() envelope dimension}, then the extra dimensions will be ignored.
+     * If the given envelope has less dimensions, then the {@code CoverageEnvelope} dimensions not
+     * present in the given envelope will be left unchanged.
+     * <p>
+     * <b>Example:</b> If the given envelope is two-dimensional and its CRS is horizontal,
+     * then only the {@link #setHorizontalRange(Rectangle2D)} method will be invoked on this
+     * {@code CoverageEnvelope} - the vertical and temporal ordinate values will be unchanged.
      *
      * @param  envelope The envelope, or {@code null} to reset to full coverage.
      * @return {@code true} if the envelope changed as a result of this call, or
@@ -256,20 +263,46 @@ public class CoverageEnvelope extends AbstractEnvelope implements Cloneable {
             changed |= setTimeRange(null);
             return changed;
         }
-        final CoordinateReferenceSystem sourceCRS = envelope.getCoordinateReferenceSystem();
-        final CoordinateReferenceSystem targetCRS = database.spatioTemporalCRS;
-        if (sourceCRS != null && !equalsIgnoreMetadata(sourceCRS, targetCRS)) {
-            final CoordinateOperationFactory factory = getCoordinateOperationFactory(true);
-            final CoordinateOperation userToStandard;
-            try {
-                userToStandard = factory.createOperation(sourceCRS, targetCRS);
-                envelope = transform(userToStandard, envelope);
-            } catch (FactoryException e) {
-                throw new TransformException(e.getLocalizedMessage(), e);
+        final SpatialDatabase database = this.database;
+        CoordinateReferenceSystem sourceCRS = envelope.getCoordinateReferenceSystem();
+        final boolean hasTemporalCRS = CRS.getTemporalCRS(sourceCRS) != null;
+        final boolean hasVerticalCRS = CRS.getVerticalCRS(sourceCRS) != null;
+        final CoordinateReferenceSystem targetCRS;
+        if (CRS.getHorizontalCRS(sourceCRS) != null) {
+            if (hasTemporalCRS) {
+                /*
+                 * Could also be a (HorizontalCRS + TemporalCRS) without VerticalCRS, but we don't
+                 * support this use case for now (unless that database has no vertical CRS). Using
+                 * the full spatio-temporal CRS will thrown an exception with a message saying that
+                 * the full envelope was expected.
+                 */
+                targetCRS = database.spatioTemporalCRS;
+            } else {
+                targetCRS = hasVerticalCRS ? database.spatialCRS : database.horizontalCRS;
+            }
+        } else {
+            if (hasTemporalCRS && hasVerticalCRS) {
+                /*
+                 * We don't support this use case for now. Use the full spatio-temporal CRS,
+                 * which will throw an exception saying that the full spatio-temporal envelope
+                 * was expected.
+                 */
+                targetCRS = database.spatioTemporalCRS;
+            } else {
+                targetCRS = hasTemporalCRS ? database.temporalCRS :
+                            hasVerticalCRS ? database.verticalCRS : database.horizontalCRS;
             }
         }
+        final CoordinateOperationFactory factory = CRS.getCoordinateOperationFactory(true);
+        try {
+            final CoordinateOperation userToStandard = factory.createOperation(sourceCRS, targetCRS);
+            envelope = CRS.transform(userToStandard, envelope);
+        } catch (FactoryException e) {
+            throw new TransformException(e.getLocalizedMessage(), e);
+        }
         boolean changed = false;
-        final CoordinateSystem cs = targetCRS.getCoordinateSystem();
+        sourceCRS = envelope.getCoordinateReferenceSystem();
+        final CoordinateSystem cs = sourceCRS.getCoordinateSystem();
         int dim = dimensionColinearWith(cs, database.horizontalCRS);
         if (dim >= 0) {
             changed |= setHorizontalRange(XRectangle2D.createFromExtremums(

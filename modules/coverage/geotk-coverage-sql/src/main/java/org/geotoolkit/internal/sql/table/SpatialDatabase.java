@@ -36,6 +36,7 @@ import org.opengis.referencing.operation.MathTransformFactory;
 import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.metadata.iso.extent.DefaultExtent;
+import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.referencing.crs.DefaultVerticalCRS;
@@ -81,6 +82,11 @@ public class SpatialDatabase extends Database {
     public final DefaultTemporalCRS temporalCRS;
 
     /**
+     * The horizontal and vertical CRS, without the temporal component.
+     */
+    public final CoordinateReferenceSystem spatialCRS;
+
+    /**
      * The complete CRS, including the vertical and temporal components if any.
      */
     public final CoordinateReferenceSystem spatioTemporalCRS;
@@ -111,12 +117,13 @@ public class SpatialDatabase extends Database {
      */
     public SpatialDatabase(final SpatialDatabase toCopy) {
         super(toCopy);
-        this.horizontalSRID    = toCopy.horizontalSRID;
-        this.horizontalCRS     = toCopy.horizontalCRS;
-        this.verticalCRS       = toCopy.verticalCRS;
-        this.temporalCRS       = toCopy.temporalCRS;
-        this.spatioTemporalCRS = toCopy.spatioTemporalCRS;
-        this.pixelInCell       = toCopy.pixelInCell;
+        horizontalSRID    = toCopy.horizontalSRID;
+        horizontalCRS     = toCopy.horizontalCRS;
+        verticalCRS       = toCopy.verticalCRS;
+        temporalCRS       = toCopy.temporalCRS;
+        spatialCRS        = toCopy.spatialCRS;
+        spatioTemporalCRS = toCopy.spatioTemporalCRS;
+        pixelInCell       = toCopy.pixelInCell;
     }
 
     /**
@@ -144,11 +151,11 @@ public class SpatialDatabase extends Database {
         this.horizontalCRS  = DefaultGeographicCRS.WGS84;
         this.verticalCRS    = DefaultVerticalCRS.ELLIPSOIDAL_HEIGHT;
         this.temporalCRS    = DefaultTemporalCRS.wrap(temporalCRS);
+        this.spatialCRS     = DefaultGeographicCRS.WGS84_3D;
         final Map<String,Object> id = new HashMap<String,Object>(4);
         id.put(CoordinateReferenceSystem.NAME_KEY, "WGS84");
         id.put(CoordinateReferenceSystem.DOMAIN_OF_VALIDITY_KEY, DefaultExtent.WORLD);
-        spatioTemporalCRS = new DefaultCompoundCRS(id,
-                DefaultGeographicCRS.WGS84_3D, temporalCRS);
+        spatioTemporalCRS = new DefaultCompoundCRS(id, spatialCRS, temporalCRS);
         pixelInCell = PixelInCell.CELL_CORNER;
     }
 
@@ -156,21 +163,25 @@ public class SpatialDatabase extends Database {
      * Creates a new instance using the provided data source, spatio-temporal CRS and configuration
      * properties.
      *
-     * @param  datasource The data source.
-     * @param  properties The configuration properties, or {@code null} if none.
-     * @param  spatioTemporalCRS The complete CRS, including the vertical and temporal components.
+     * @param  datasource  The data source.
+     * @param  properties  The configuration properties, or {@code null} if none.
+     * @param  spatialCRS  The spatial CRS, not including the temporal component.
+     * @param  temporalCRS The temporal CRS, or {@code null} if none.
      * @throws FactoryException If an error occured while fetching the SRID of the horizontal CRS.
      */
     public SpatialDatabase(final DataSource datasource, final Properties properties,
-            final CoordinateReferenceSystem spatioTemporalCRS) throws FactoryException
+            final CoordinateReferenceSystem spatialCRS, final TemporalCRS temporalCRS)
+            throws FactoryException
     {
         super(datasource, properties);
-        Table.ensureNonNull("spatioTemporalCRS", spatioTemporalCRS);
-        this.horizontalCRS     = CRS.getHorizontalCRS(spatioTemporalCRS);
-        this.verticalCRS       = CRS.getVerticalCRS(spatioTemporalCRS);
-        this.temporalCRS       = DefaultTemporalCRS.wrap(CRS.getTemporalCRS(spatioTemporalCRS));
-        this.spatioTemporalCRS = spatioTemporalCRS;
+        Table.ensureNonNull("spatialCRS", spatialCRS);
+        this.horizontalCRS     = CRS.getHorizontalCRS(spatialCRS);
+        this.verticalCRS       = CRS.getVerticalCRS(spatialCRS);
+        this.temporalCRS       = DefaultTemporalCRS.wrap(temporalCRS);
+        this.spatialCRS        = spatialCRS;
         this.pixelInCell       = PixelInCell.CELL_CORNER;
+        this.spatioTemporalCRS = (temporalCRS == null) ? spatialCRS : new DefaultCompoundCRS(
+                AbstractIdentifiedObject.getProperties(spatialCRS), spatialCRS, temporalCRS);
         /*
          * Try to get the PostGIS SRID from the horizontal CRS. First, search for an explicit
          * PostGIS code. If none are found, lookup for the EPSG code and convert that code to
