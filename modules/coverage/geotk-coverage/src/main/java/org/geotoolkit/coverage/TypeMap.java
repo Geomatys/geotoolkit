@@ -39,6 +39,7 @@ import org.geotoolkit.util.SimpleInternationalString;
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.Range;
 import org.geotoolkit.lang.Static;
+import org.geotoolkit.math.NumberSet;
 
 
 /**
@@ -48,7 +49,7 @@ import org.geotoolkit.lang.Static;
  * to {@link DataBuffer} types.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @version 3.10
  *
  * @since 2.1
  * @module
@@ -57,6 +58,7 @@ import org.geotoolkit.lang.Static;
 public final class TypeMap {
     /**
      * The mapping of {@link SampleDimensionType} to {@link DataBuffer} types.
+     * Must be sorted in increasing number of bits.
      */
     private static final TypeMap[] MAP = new TypeMap[SampleDimensionType.values().length];
     static {
@@ -273,6 +275,35 @@ public final class TypeMap {
     }
 
     /**
+     * Returns the sample dimension for the given number of bits. This method may return a
+     * type having more bits than the requested one. It may also return a signed type even
+     * if a unsigned type was requested, provided that the returned type is wide enough for
+     * holding all unsigned values expressed using the given number of bits.
+     *
+     * @param type The number type as one of {@link NumberSet#NATURAL NATURAL} for unsigned
+     *        integers, {@link NumberSet#INTEGER INTEGER} for signed integers, or
+     *        {@link NumberSet#REAL READ} for floating point values.
+     * @param numBits The number of bits.
+     * @return The sample dimension type for the given criterion, or {@code null} if none match.
+     *
+     * @since 3.10
+     */
+    public static SampleDimensionType getSampleDimensionType(final NumberSet type, final int numBits) {
+        final boolean real = type.ordinal() > NumberSet.INTEGER.ordinal();
+        final boolean signed = !type.equals(NumberSet.NATURAL);
+        for (final TypeMap candidate : MAP) {
+            if (candidate.size >= numBits && candidate.real == real) {
+                // If 'signed' doesn't match the requested one,
+                // accept anyway if we have at least one more bit.
+                if (candidate.signed == signed || (!signed && candidate.size != numBits)) {
+                    return candidate.code;
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
      * Returns the sample dimension type for the specified sample model and band number. If
      * the sample model use an undefined data type, then this method returns {@code null}.
      *
@@ -319,7 +350,7 @@ public final class TypeMap {
      */
     public static InternationalString getName(final SampleDimensionType type) {
         final int ordinal = type.ordinal();
-        if (ordinal>=0 && ordinal<MAP.length) {
+        if (ordinal >= 0 && ordinal < MAP.length) {
             return MAP[ordinal].name;
         }
         return new SimpleInternationalString(type.name());
@@ -341,7 +372,7 @@ public final class TypeMap {
     public static int getDataBufferType(final SampleDimensionType type) {
         if (type != null) {
             final int ordinal = type.ordinal();
-            if (ordinal>=0 && ordinal<MAP.length) {
+            if (ordinal >= 0 && ordinal < MAP.length) {
                 return MAP[ordinal].type;
             }
         }
@@ -389,7 +420,7 @@ public final class TypeMap {
     public static NumberRange<?> getRange(final SampleDimensionType type) {
         if (type != null) {
             final int ordinal = type.ordinal();
-            if (ordinal>=0 && ordinal<MAP.length) {
+            if (ordinal >= 0 && ordinal < MAP.length) {
                 return MAP[ordinal].range;
             }
         }
@@ -407,7 +438,7 @@ public final class TypeMap {
     public static NumberRange<?> getPositiveRange(final SampleDimensionType type) {
         if (type != null) {
             final int ordinal = type.ordinal();
-            if (ordinal>=0 && ordinal<MAP.length) {
+            if (ordinal >= 0 && ordinal < MAP.length) {
                 return MAP[ordinal].positiveRange;
             }
         }
@@ -421,7 +452,7 @@ public final class TypeMap {
     private static TypeMap map(final SampleDimensionType type) throws IllegalArgumentException {
         if (type != null) {
             final int ordinal = type.ordinal();
-            if (ordinal>=0 && ordinal<MAP.length) {
+            if (ordinal >= 0 && ordinal < MAP.length) {
                 final TypeMap map = MAP[ordinal];
                 if (map != null) {
                     return map;
