@@ -37,6 +37,7 @@ import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RectangularShape;
 import java.awt.image.RenderedImage;
+import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.ImageReadParam;
 import javax.imageio.spi.ImageReaderSpi;
@@ -356,14 +357,44 @@ public class ImageCoverageReader extends GridCoverageReader {
                      * different behavior.
                      */
                     if (newReader != input && newReader.getInput() == null) {
+                        Object imageInput = input;
+                        final ImageReaderSpi provider = newReader.getOriginatingProvider();
+                        if (provider != null) {
+                            boolean needStream = false;
+                            for (final Class<?> inputType : provider.getInputTypes()) {
+                                if (inputType.isInstance(imageInput)) {
+                                    needStream = false;
+                                    break;
+                                }
+                                if (inputType.isAssignableFrom(ImageInputStream.class)) {
+                                    needStream = true;
+                                    // Do not break - maybe the input type is accepted later.
+                                }
+                            }
+                            if (needStream) {
+                                imageInput = ImageIO.createImageInputStream(input);
+                                if (imageInput == null) {
+                                    final int messageKey;
+                                    final Object argument;
+                                    if (IOUtilities.canProcessAsPath(input)) {
+                                        messageKey = Errors.Keys.CANT_READ_$1;
+                                        argument = IOUtilities.name(input);
+                                    } else {
+                                        messageKey = Errors.Keys.UNKNOWN_TYPE_$1;
+                                        argument = input.getClass();
+                                    }
+                                    throw new IOException(Errors.format(messageKey, argument));
+                                }
+                            }
+                        }
                         if (seekForwardOnly != null) {
                             if (ignoreMetadata != null) {
-                                newReader.setInput(input, seekForwardOnly, ignoreMetadata);
+                                newReader.setInput(imageInput, seekForwardOnly, ignoreMetadata);
                             } else {
-                                newReader.setInput(input, seekForwardOnly);
+                                newReader.setInput(imageInput, seekForwardOnly);
                             }
                         } else {
-                            newReader.setInput(input);
+                            newReader.setInput(imageInput);
                         }
                     }
                 }

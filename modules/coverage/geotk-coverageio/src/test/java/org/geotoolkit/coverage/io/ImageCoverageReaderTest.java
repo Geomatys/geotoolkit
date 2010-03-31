@@ -21,6 +21,7 @@ import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
+import java.io.File;
 import java.io.IOException;
 import javax.imageio.spi.IIORegistry;
 import javax.imageio.spi.ImageReaderSpi;
@@ -41,6 +42,7 @@ import org.geotoolkit.image.io.plugin.TextMatrixImageReader;
 import org.geotoolkit.image.io.plugin.TextMatrixImageReaderTest;
 import org.geotoolkit.image.io.plugin.WorldFileImageReader;
 import org.geotoolkit.image.io.plugin.WorldFileImageReaderTest;
+import org.geotoolkit.image.SampleModels;
 
 
 /**
@@ -49,7 +51,7 @@ import org.geotoolkit.image.io.plugin.WorldFileImageReaderTest;
  * is the easiest one to debug.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.09
+ * @version 3.10
  *
  * @since 3.09
  */
@@ -224,5 +226,24 @@ public final class ImageCoverageReaderTest {
         assertEquals(Float.NaN, raster.getSampleFloat(4, 0, 0), EPS);
         assertEquals(25.454f,   raster.getSampleFloat(0, 4, 0), EPS);
         assertEquals(28.902f,   raster.getSampleFloat(4, 4, 0), EPS);
+    }
+
+    /**
+     * Reads an image twice, asking for different parts. The purpose of this test is to ensure
+     * that {@link ImageReader} are properly used (with the right input set) when recycled. For
+     * this test, we need an image reader which doesn't accept {@link File} object directly.
+     *
+     * @throws IOException If the text file can not be open (should not happen).
+     * @throws CoverageStoreException Should not happen.
+     */
+    @Test
+    public void readTwice() throws IOException, CoverageStoreException {
+        final ImageCoverageReader reader = new ImageCoverageReader();
+        final File file = TestData.file(SampleModels.class, "Contour.png");
+        reader.setInput(file);
+        assertNotNull(reader.read(0, null));
+        reader.reset();
+        reader.setInput(file);
+        assertNotNull(reader.read(0, null));
     }
 }

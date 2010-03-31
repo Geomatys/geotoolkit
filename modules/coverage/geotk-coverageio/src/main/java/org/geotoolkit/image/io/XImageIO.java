@@ -317,9 +317,9 @@ public final class XImageIO {
                  */
                 if (input instanceof File) {
                     File file = (File) input;
-                    final File parent = file.getParentFile();
                     int messageKey = Errors.Keys.FILE_DOES_NOT_EXIST_$1;
-                    if (parent != null && !parent.isDirectory()) {
+                    File parent;
+                    while ((parent = file.getParentFile()) != null && !parent.isDirectory()) {
                         messageKey = Errors.Keys.NOT_A_DIRECTORY_$1;
                         file = parent;
                     }
