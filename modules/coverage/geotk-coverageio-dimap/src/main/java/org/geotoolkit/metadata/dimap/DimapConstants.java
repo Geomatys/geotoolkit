@@ -17,9 +17,11 @@
 
 package org.geotoolkit.metadata.dimap;
 
-import org.opengis.coverage.SampleDimensionType;
+import org.geotoolkit.math.NumberSet;
 
 /**
+ * Dimap constants.
+ *
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
@@ -56,17 +58,24 @@ public final class DimapConstants {
      * Raster encoding possible types.
      */
     public static enum DataType{
-        BYTE,
-        SHORT,
-        LONG,
-        SBYTE,
-        SSHORT,
-        SLONG,
-        FLOAT,
-        DOUBLE;
-        
-        public SampleDimensionType getDimensionType(int nbits){
-            return SampleDimensionType.REAL_64BITS;
+        BYTE(NumberSet.NATURAL),
+        SHORT(NumberSet.NATURAL),
+        LONG(NumberSet.NATURAL),
+        SBYTE(NumberSet.INTEGER),
+        SSHORT(NumberSet.INTEGER),
+        SLONG(NumberSet.INTEGER),
+        FLOAT(NumberSet.REAL),
+        DOUBLE(NumberSet.REAL),
+        UNSIGNED(NumberSet.REAL);
+
+        private final NumberSet n;
+
+        private DataType(NumberSet n){
+            this.n = n;
+        }
+
+        public NumberSet getNumberSet(){
+            return n;
         }
         
     }
@@ -140,11 +149,20 @@ public final class DimapConstants {
     public static final String TAG_RED_LEVEL = "RED_LEVEL";
     public static final String TAG_GREEN_LEVEL = "GREEN_LEVEL";
     public static final String TAG_BLUE_LEVEL = "BLUE_LEVEL";
+    public static final String TAG_BAND_STATISTICS = "Band_Statistics";
+    public static final String TAG_STX_MIN = "STX_MIN";
+    public static final String TAG_STX_MAX = "STX_MAX";
+    public static final String TAG_STX_MEAN = "STX_MEAN";
+    public static final String TAG_STX_STDV = "STX_STDV";
+    public static final String TAG_STX_LIN_MIN = "STX_LIN_MIN";
+    public static final String TAG_STX_LIN_MAX = "STX_LIN_MAX";
+    public static final String TAG_BAND_INDEX = "BAND_INDEX";
+
 
     // Image interpretation information ----------------------------------------
     public static final String TAG_IMAGE_INTERPRETATION = "Image_Interpretation";
     public static final String TAG_SPECTRAL_BAND_INFO = "Spectral_Band_Info";
-    public static final String TAG_BAND_INDEX = "BAND_INDEX";
+    //public static final String TAG_BAND_INDEX = "BAND_INDEX";     //already declared
     public static final String TAG_BAND_DESCRIPTION = "BAND_DESCRIPTION";
     public static final String TAG_PHYSICAL_GAIN = "PHYSICAL_GAIN";
     public static final String TAG_PHYSICAL_BIAS = "PHYSICAL_BIAS";

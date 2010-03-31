@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.metadata.dimap;
 
+import java.awt.Color;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.io.File;
@@ -36,12 +37,14 @@ import javax.media.jai.WarpAffine;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import org.geotoolkit.coverage.Category;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.TypeMap;
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.operation.transform.LinearTransform1D;
 import org.geotoolkit.referencing.operation.transform.WarpTransform2D;
+import org.geotoolkit.util.NumberRange;
 import org.opengis.coverage.ColorInterpretation;
 import org.opengis.coverage.SampleDimensionType;
 import org.opengis.referencing.FactoryException;
@@ -210,15 +213,38 @@ public final class DimapParser {
      */
     public static GridSampleDimension[] readSampleDimensions(Element doc, String coverageName,int nbbands){
 
-
         // read raster encoding informations -----------------------------------
         final Element nodeEncoding = firstElement(doc, TAG_RASTER_ENCODING);
-        final int nbits = textValue(nodeEncoding, TAG_NBITS, Integer.class);
-        final int byteOrder = textValue(nodeEncoding, TAG_BYTEORDER, Integer.class);
-        final int dataType = textValue(nodeEncoding, TAG_DATA_TYPE, Integer.class);
-        final int skip = textValue(nodeEncoding, TAG_SKIP_BYTES, Integer.class);
-        final int layout = textValue(nodeEncoding, TAG_BANDS_LAYOUT, Integer.class);
-        
+        final int nbits         = textValue(nodeEncoding, TAG_NBITS, Integer.class);
+        final String byteOrder  = textValue(nodeEncoding, TAG_BYTEORDER, String.class);
+        final String dataType   = textValue(nodeEncoding, TAG_DATA_TYPE, String.class);
+        final Integer skip      = textValue(nodeEncoding, TAG_SKIP_BYTES, Integer.class);
+        final String layout     = textValue(nodeEncoding, TAG_BANDS_LAYOUT, String.class);
+        final SampleDimensionType dimensionType = TypeMap.getSampleDimensionType(DataType.valueOf(dataType).getNumberSet(),nbits);
+
+
+        // read special values -------------------------------------------------
+        final Element nodeDisplay   = firstElement(doc, TAG_IMAGE_DISPLAY);
+        final Element nodeBandOrder = firstElement(nodeDisplay, TAG_BAND_DISPLAY_ORDER);
+        final Integer red   = textValue(nodeBandOrder, TAG_RED_CHANNEL, Integer.class);
+        final Integer green = textValue(nodeBandOrder, TAG_GREEN_CHANNEL, Integer.class);
+        final Integer blue  = textValue(nodeBandOrder, TAG_BLUE_CHANNEL, Integer.class);
+
+
+        // read band statistics ------------------------------------------------
+        final NodeList nodeStats = nodeDisplay.getElementsByTagName(TAG_BAND_STATISTICS);
+        final Map<Integer,NumberRange> valueRanges = new HashMap<Integer, NumberRange>();
+        for(int i=0,n=nodeStats.getLength(); i<n ;i++){
+            final Element bandStat = (Element) nodeStats.item(i);
+            final double stxMin     = textValue(bandStat, TAG_STX_MIN, Double.class);
+            final double stxMax     = textValue(bandStat, TAG_STX_MAX, Double.class);
+            final double stxMean    = textValue(bandStat, TAG_STX_MEAN, Double.class);
+            final double stxStdv    = textValue(bandStat, TAG_STX_STDV, Double.class);
+            final double stxLinMin  = textValue(bandStat, TAG_STX_LIN_MIN, Double.class);
+            final double stxLinMax  = textValue(bandStat, TAG_STX_LIN_MAX, Double.class);
+            final int bandIndex     = textValue(bandStat, TAG_BAND_INDEX, Integer.class);
+            valueRanges.put(bandIndex, NumberRange.create(stxMin, stxMax));
+        }
 
         // read dimensions -----------------------------------------------------
         final Element nodeInterpretation = firstElement(doc, TAG_IMAGE_INTERPRETATION);
@@ -239,41 +265,42 @@ public final class DimapParser {
             - B is the bias (PHYSICAL_BIAS)
              */
 
-
-            final int bandIndex = textValue(spectre, TAG_BAND_INDEX, Integer.class);
-            final String bandDescription = textValue(spectre, TAG_BAND_DESCRIPTION, String.class);
+            final int bandIndex     = textValue(spectre, TAG_BAND_INDEX, Integer.class);
+            final String bandDesc   = textValue(spectre, TAG_BAND_DESCRIPTION, String.class);
             final String physicUnit = textValue(spectre, TAG_PHYSICAL_UNIT, String.class);
             final double physicGain = textValue(spectre, TAG_PHYSICAL_GAIN, Double.class);
             final double physicBias = textValue(spectre, TAG_PHYSICAL_BIAS, Double.class);
 
-            final Unit unit = Unit.valueOf(physicUnit);
+            Unit unit = null;
+            try{
+                Unit.valueOf(physicUnit.trim());
+            }catch(Exception ex){
+                //catch anything, this doesn't always throw parse exception
+                unit = Unit.ONE;
+            }
 
-//            final GridSampleDimension dim = new GridSampleDimension(
-//                    bandDescription,
-//                    SampleDimensionType.REAL_32BITS,
-//                    ColorInterpretation.UNDEFINED,
-//                    palette,
-//                    categories,
-//                    nodata,
-//                    min,
-//                    max,
-//                    1/physicGain,
-//                    physicBias,
-//                    unit);
-//            dimensions.put(bandIndex, dim);
+            //range is in geophysic values, can not use it, todo convert it.
+            final NumberRange range = valueRanges.get(bandIndex);
 
+            final Category[] cats = new Category[]{
+                new Category("vals", null, Integer.MIN_VALUE,Integer.MAX_VALUE,1/physicGain, physicBias)
+            };
+
+            final GridSampleDimension dim = new GridSampleDimension(bandDesc, cats, unit);
+            dimensions.put(bandIndex, dim);
         }
 
+        final GridSampleDimension[] dims = new GridSampleDimension[nbbands];
+        for(int i=0; i<nbbands; i++){
+            GridSampleDimension dim = dimensions.get(i+1);
+            if(dim == null){
+                //no information on this band, create an empty one
+                dim = new GridSampleDimension(String.valueOf(i+1));
+            }
+            dims[i] = dim;
+        }
 
-
-//        final Element ele = firstElement(doc, TAG_IMAGE_DISPLAY);
-//        final Element displayOrder = firstElement(nodeInterpretation, TAG_BAND_DISPLAY_ORDER);
-//        final int red = textValue(displayOrder, TAG_RED_CHANNEL, Integer.class);
-//        final int green = textValue(displayOrder, TAG_GREEN_CHANNEL, Integer.class);
-//        final int blue = textValue(displayOrder, TAG_BLUE_CHANNEL, Integer.class);
-
-
-        return dimensions.values().toArray(new GridSampleDimension[dimensions.size()]);
+        return dims;
     }
 
     private static InputStream toStream(Object input) throws FileNotFoundException, IOException{
