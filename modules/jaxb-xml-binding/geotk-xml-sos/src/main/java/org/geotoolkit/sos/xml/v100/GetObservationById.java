@@ -72,6 +72,25 @@ public class GetObservationById extends RequestBaseType {
     private String srsName;
 
     /**
+     * Empty constructor used by JAXB
+     */
+    GetObservationById() {}
+
+    /**
+     * Build a new full GetObservationById request
+     */
+    public GetObservationById(String version, String observationId, String responseFormat,
+                              QName resultModel, ResponseModeType responseMode, String srsName)
+    {
+        super(version);
+        this.observationId = observationId;
+        this.responseFormat = responseFormat;
+        this.resultModel = resultModel;
+        this.responseMode = responseMode;
+        this.srsName = srsName;
+    }
+
+    /**
      * Gets the value of the observationId property.
      */
     public String getObservationId() {
