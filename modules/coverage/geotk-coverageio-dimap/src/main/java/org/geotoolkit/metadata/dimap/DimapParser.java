@@ -17,6 +17,7 @@
 package org.geotoolkit.metadata.dimap;
 
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Point2D;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -24,12 +25,17 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+import javax.media.jai.Warp;
+import javax.media.jai.WarpAffine;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.referencing.operation.transform.WarpTransform2D;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -37,6 +43,7 @@ import org.opengis.referencing.operation.TransformException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import static org.geotoolkit.metadata.dimap.DimapConstants.*;
@@ -118,38 +125,32 @@ public final class DimapParser {
             final double y2 = textValue(affine, TAG_AFFINE_Y2, Double.class);
             return new AffineTransform(x0, y0, x1, y1, x2, y2);
         }else if(points != null){
-            throw new TransformException("points transform not supported yet.");
-//            final NodeList vertexes = ele.getElementsByTagName(TAG_VERTEX);
-//            final List<Point2D> sources = new ArrayList<Point2D>();
-//            final List<Point2D> dests = new ArrayList<Point2D>();
-//
-//            final double[] wgsCoord = new double[2];
-//            final double[] crsCoord = new double[2];
-//
-//            for(int i=0,n=vertexes.getLength();i<n;i++){
-//                final Element vertex = (Element) vertexes.item(i);
-//                wgsCoord[0] = textValue(vertex, TAG_FRAME_LON, Double.class);
-//                wgsCoord[1] = textValue(vertex, TAG_FRAME_LAT, Double.class);
-//                //trs.transform(wgsCoord, 0, crsCoord, 0, 1);
-//                crsCoord[0] = wgsCoord[0];
-//                crsCoord[1] = wgsCoord[1];
-//                final int row = textValue(vertex, TAG_FRAME_ROW, Integer.class);
-//                final int col = textValue(vertex, TAG_FRAME_COL, Integer.class);
-//                sources.add(new Point2D.Double(row,col));
-//                dests.add(new Point2D.Double(crsCoord[0],crsCoord[1]));
-//            }
-//
-//            final WarpTransform2D warptrs = new WarpTransform2D(
-//                    sources.toArray(new Point2D[sources.size()]),
-//                    dests.toArray(new Point2D[dests.size()]), 1);
-//
-//            final Warp warp = warptrs.getWarp();
-//            if(warp instanceof WarpAffine){
-//                WarpAffine wa = (WarpAffine) warp;
-//                return wa.getTransform();
-//            }else{
-//                throw new TransformException("Wrap transform is not affine.");
-//            }
+            //throw new TransformException("points transform not supported yet.");
+            final NodeList tiePoints = ele.getElementsByTagName(TAG_TIE_POINT);
+            final List<Point2D> sources = new ArrayList<Point2D>();
+            final List<Point2D> dests = new ArrayList<Point2D>();
+
+            for(int i=0,n=tiePoints.getLength();i<n;i++){
+                final Element vertex = (Element) tiePoints.item(i);
+                final double coordX = textValue(vertex, TAG_TIE_POINT_CRS_X, Double.class);
+                final double coordY = textValue(vertex, TAG_TIE_POINT_CRS_Y, Double.class);
+                final int dataY = textValue(vertex, TAG_TIE_POINT_DATA_X, Integer.class);
+                final int dataX = textValue(vertex, TAG_TIE_POINT_DATA_Y, Integer.class);
+                sources.add(new Point2D.Double(dataX,dataY));
+                dests.add(new Point2D.Double(coordX,coordY));
+            }
+
+            final WarpTransform2D warptrs = new WarpTransform2D(
+                    sources.toArray(new Point2D[sources.size()]),
+                    dests.toArray(new Point2D[dests.size()]), 1);
+
+            final Warp warp = warptrs.getWarp();
+            if(warp instanceof WarpAffine){
+                final WarpAffine wa = (WarpAffine) warp;
+                return wa.getTransform();
+            }else{
+                throw new TransformException("Wrap transform is not affine.");
+            }
         }else{
             throw new TransformException("Geopositioning type unknowned.");
         }
