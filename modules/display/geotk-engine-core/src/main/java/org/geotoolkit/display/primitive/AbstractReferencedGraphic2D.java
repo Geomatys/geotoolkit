@@ -33,6 +33,7 @@ import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.display.shape.XRectangle2D;
 import org.geotoolkit.referencing.crs.DefaultEngineeringCRS;
 import org.geotoolkit.display.canvas.ReferencedCanvas2D;
+import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.resources.Errors;
 
 
@@ -174,7 +175,7 @@ public abstract class AbstractReferencedGraphic2D extends AbstractReferencedGrap
     @Override
     protected void setEnvelope(final Envelope envelope) throws TransformException {
         synchronized (getTreeLock()) {
-            super.setEnvelope(envelope);
+            super.setEnvelope(CRS.transform(envelope, getCanvas().getObjectiveCRS2D()));
             displayBounds = XRectangle2D.INFINITY;
         }
     }

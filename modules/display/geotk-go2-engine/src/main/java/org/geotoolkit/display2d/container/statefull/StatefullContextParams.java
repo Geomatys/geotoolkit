@@ -37,6 +37,7 @@ import org.opengis.referencing.operation.MathTransform;
  */
 public class StatefullContextParams {
 
+    public RenderingContext2D context;
     public final ReferencedCanvas2D canvas;
     public final FeatureMapLayer layer;
     public final AffineTransform objectiveToDisplay = new AffineTransform(2,0,0,2,0,0);

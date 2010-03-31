@@ -20,8 +20,12 @@ package org.geotoolkit.map;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
+import org.geotoolkit.geometry.GeneralEnvelope;
+import org.geotoolkit.geometry.ImmutableEnvelope;
+import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.style.MutableStyle;
 import org.opengis.feature.type.Name;
 import org.opengis.geometry.Envelope;
@@ -33,6 +37,9 @@ import org.opengis.geometry.Envelope;
  * @module pending
  */
 final class DefaultCoverageMapLayer extends AbstractMapLayer implements CoverageMapLayer {
+
+    private static final ImmutableEnvelope INFINITE = new ImmutableEnvelope(DefaultGeographicCRS.WGS84, -180, 180, -90, 90);
+
 
     private final GridCoverageReader reader;
     private final Name coverageName;
@@ -68,10 +75,17 @@ final class DefaultCoverageMapLayer extends AbstractMapLayer implements Coverage
     @Override
     public Envelope getBounds() {        
         try {
-            return reader.getGridGeometry(0).getEnvelope();
+            final GeneralGridGeometry geom = reader.getGridGeometry(0);
+            if(geom == null){
+                Logger.getLogger(DefaultCoverageMapLayer.class.getName()).log(
+                        Level.WARNING, "Could not access envelope of layer "+ getCoverageName());
+                return INFINITE;
+            }else{
+                return geom.getEnvelope();
+            }
         } catch (CoverageStoreException ex) {
-            Logger.getLogger(DefaultCoverageMapLayer.class.getName()).log(Level.SEVERE, null, ex);
-            return null;
+            Logger.getLogger(DefaultCoverageMapLayer.class.getName()).log(Level.WARNING, null, ex);
+            return INFINITE;
         }
     }
 

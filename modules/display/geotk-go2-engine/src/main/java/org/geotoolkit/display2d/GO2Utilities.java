@@ -59,6 +59,12 @@ import javax.media.jai.JAI;
 import javax.media.jai.OperationDescriptor;
 import javax.media.jai.OperationRegistry;
 import javax.media.jai.registry.RIFRegistry;
+import org.geotoolkit.coverage.grid.GridCoverage2D;
+import org.geotoolkit.coverage.grid.ViewType;
+import org.geotoolkit.coverage.io.CoverageStoreException;
+import org.geotoolkit.coverage.io.GridCoverageReadParam;
+import org.geotoolkit.coverage.io.GridCoverageReader;
+import org.geotoolkit.coverage.processing.Operations;
 
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
@@ -91,6 +97,7 @@ import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 import org.geotoolkit.renderer.style.WellKnownMarkFactory;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.style.StyleConstants;
+import org.opengis.coverage.grid.GridCoverage;
 
 import org.opengis.feature.Feature;
 import org.opengis.feature.Property;
@@ -697,6 +704,40 @@ public final class GO2Utilities {
         }else{
             return null;
         }
+    }
+
+    ////////////////////////////////////////////////////////////////////////////
+    // rewrite coverage read param  ////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
+
+    public static GridCoverage reCalculate(GridCoverageReader reader, GridCoverageReadParam params,
+            RenderingContext2D context) throws CoverageStoreException, TransformException{
+        final CoordinateReferenceSystem sourceCRS = reader.getGridGeometry(0).getCoordinateReferenceSystem();
+        final CoordinateReferenceSystem targetCRS = params.getEnvelope().getCoordinateReferenceSystem();
+
+
+        if(!CRS.equalsIgnoreMetadata(sourceCRS, targetCRS)){
+            //projection is not the same, must reproject it
+            final GridCoverageReadParam newParams = new GridCoverageReadParam();
+            final double[] newRes = context.getResolution(targetCRS);
+            final Envelope newEnv= CRS.transform(params.getEnvelope(), targetCRS);
+
+            newParams.setEnvelope(newEnv);
+            newParams.setResolution(newRes);
+
+            GridCoverage2D cov = (GridCoverage2D) reader.read(0, newParams);
+            cov = (GridCoverage2D) Operations.DEFAULT.resample(cov.view(ViewType.NATIVE), targetCRS);
+            cov = cov.view(ViewType.RENDERED);
+
+            return cov;
+        }
+
+
+
+
+
+
+        return reader.read(0, params);
     }
 
     ////////////////////////////////////////////////////////////////////////////

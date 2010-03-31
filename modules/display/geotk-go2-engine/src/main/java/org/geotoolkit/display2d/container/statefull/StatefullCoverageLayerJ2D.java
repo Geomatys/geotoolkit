@@ -23,8 +23,9 @@ import java.util.Collection;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.geotoolkit.coverage.io.CoverageStoreException;
 
+import org.geotoolkit.coverage.grid.GeneralGridGeometry;
+import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.display.canvas.VisitFilter;
 import org.geotoolkit.display.canvas.ReferencedCanvas2D;
 import org.geotoolkit.display.exception.PortrayalException;
@@ -65,9 +66,17 @@ public class StatefullCoverageLayerJ2D extends AbstractLayerJ2D<CoverageMapLayer
         super(canvas, layer, true);
 
         try {
-            this.dataCRS = layer.getCoverageReader().getGridGeometry(0).getCoordinateReferenceSystem();
+            final GeneralGridGeometry ggg = layer.getCoverageReader().getGridGeometry(0);
+            if(ggg != null){
+                this.dataCRS = ggg.getCoordinateReferenceSystem();
+            }else{
+                Logger.getLogger(StatefullCoverageLayerJ2D.class.getName()).log(
+                        Level.WARNING, "Could not access envelope of layer "+layer.getName());
+                this.dataCRS = null;
+            }
+            
         } catch (CoverageStoreException ex) {
-            Logger.getLogger(StatefullCoverageLayerJ2D.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(StatefullCoverageLayerJ2D.class.getName()).log(Level.WARNING, null, ex);
         }
 
 
@@ -76,7 +85,7 @@ public class StatefullCoverageLayerJ2D extends AbstractLayerJ2D<CoverageMapLayer
     }
 
     private synchronized void updateCache(RenderingContext2D context){
-
+        params.context = context;
         boolean objectiveCleared = false;
 
         //clear objective cache is objective crs changed -----------------------
@@ -90,7 +99,7 @@ public class StatefullCoverageLayerJ2D extends AbstractLayerJ2D<CoverageMapLayer
                 params.dataToObjective = context.getMathTransform(dataCRS, objectiveCRS);
                 params.dataToObjectiveTransformer.setMathTransform(params.dataToObjective);
             } catch (FactoryException ex) {
-                ex.printStackTrace();
+                Logger.getLogger(StatefullCoverageLayerJ2D.class.getName()).log(Level.WARNING, null, ex);
             }
 
             projectedCoverage.clearObjectiveCache();

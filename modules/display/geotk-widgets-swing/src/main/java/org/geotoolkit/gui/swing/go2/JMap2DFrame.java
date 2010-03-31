@@ -75,11 +75,13 @@ import org.geotoolkit.gui.swing.propertyedit.filterproperty.JCQLPropertyPanel;
 import org.geotoolkit.gui.swing.propertyedit.styleproperty.JSimpleStylePanel;
 import org.geotoolkit.gui.swing.go2.decoration.JScaleBarDecoration;
 import org.geotoolkit.gui.swing.contexttree.JContextTree;
+import org.geotoolkit.gui.swing.contexttree.TreePopupItem;
 import org.geotoolkit.gui.swing.contexttree.menu.ContextPropertyItem;
 import org.geotoolkit.gui.swing.contexttree.menu.DeleteItem;
 import org.geotoolkit.gui.swing.contexttree.menu.LayerFeatureItem;
 import org.geotoolkit.gui.swing.contexttree.menu.LayerPropertyItem;
 import org.geotoolkit.gui.swing.contexttree.menu.SeparatorItem;
+import org.geotoolkit.gui.swing.contexttree.menu.ZoomToLayerItem;
 import org.geotoolkit.gui.swing.go2.decoration.JClassicNavigationDecoration;
 import org.geotoolkit.gui.swing.propertyedit.ClearSelectionAction;
 import org.geotoolkit.gui.swing.propertyedit.DeleteSelectionAction;
@@ -118,6 +120,10 @@ public class JMap2DFrame extends javax.swing.JFrame {
         guiMap.getCanvas().setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         guiMap.getCanvas().getController().setAutoRepaint(true);
 
+        for(TreePopupItem item : guiContextTree.controls()){
+            item.setMapView(guiMap);
+        }
+
         try{
             guiMap.getCanvas().setObjectiveCRS(context.getCoordinateReferenceSystem());
         }catch(Exception ex ){
@@ -145,28 +151,28 @@ public class JMap2DFrame extends javax.swing.JFrame {
 
 
 
-        GridTemplate gridTemplate = new DefaultGridTemplate(
-                        DefaultGeographicCRS.WGS84,
-                        new BasicStroke(2),
-                        Color.CYAN.darker(),
-
-                        new BasicStroke(1,BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 3, new float[]{5,5}, 0),
-                        Color.DARK_GRAY,
-
-                        new Font("serial", Font.BOLD, 14),
-                        Color.CYAN.darker(),
-                        0,
-                        Color.WHITE,
-
-                        new Font("serial", Font.ITALIC, 12),
-                        Color.DARK_GRAY,
-                        1,
-                        Color.WHITE);
+//        GridTemplate gridTemplate = new DefaultGridTemplate(
+//                        DefaultGeographicCRS.WGS84,
+//                        new BasicStroke(2),
+//                        Color.CYAN.darker(),
+//
+//                        new BasicStroke(1,BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 3, new float[]{5,5}, 0),
+//                        Color.DARK_GRAY,
+//
+//                        new Font("serial", Font.BOLD, 14),
+//                        Color.CYAN.darker(),
+//                        0,
+//                        Color.WHITE,
+//
+//                        new Font("serial", Font.ITALIC, 12),
+//                        Color.DARK_GRAY,
+//                        1,
+//                        Color.WHITE);
 
         BackgroundPainter bgWhite = new SolidColorPainter(Color.WHITE);
 
-        guiMap.getCanvas().setBackgroundPainter(BackgroundPainterGroup.wrap(bgWhite ,new GridPainter(gridTemplate)));
-        guiMap.getCanvas().getContainer().add(new GraphicGridJ2D(guiMap.getCanvas(), gridTemplate));
+//        guiMap.getCanvas().setBackgroundPainter(BackgroundPainterGroup.wrap(bgWhite ,new GridPainter(gridTemplate)));
+//        guiMap.getCanvas().getContainer().add(new GraphicGridJ2D(guiMap.getCanvas(), gridTemplate));
 
 
         guiMap.getCanvas().getController().setElevationRange(-50d, -50d, SI.METRE);
@@ -182,6 +188,7 @@ public class JMap2DFrame extends javax.swing.JFrame {
         item.actions().add(new DeleteSelectionAction());
 
         tree.controls().add(item);
+        tree.controls().add(new ZoomToLayerItem());
         tree.controls().add(new SeparatorItem());
         tree.controls().add(new DeleteItem());
         tree.controls().add(new SeparatorItem());
