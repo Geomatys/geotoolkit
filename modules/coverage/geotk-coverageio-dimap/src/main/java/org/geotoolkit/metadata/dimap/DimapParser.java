@@ -26,23 +26,31 @@ import java.io.InputStream;
 import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+import javax.measure.unit.Unit;
 import javax.media.jai.Warp;
 import javax.media.jai.WarpAffine;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import org.geotoolkit.coverage.GridSampleDimension;
+import org.geotoolkit.coverage.TypeMap;
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.referencing.operation.transform.LinearTransform1D;
 import org.geotoolkit.referencing.operation.transform.WarpTransform2D;
+import org.opengis.coverage.ColorInterpretation;
+import org.opengis.coverage.SampleDimensionType;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.operation.MathTransform1D;
 import org.opengis.referencing.operation.TransformException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
@@ -192,38 +200,80 @@ public final class DimapParser {
 
     /**
      * Read the coverage sample dimensions.
-     * Thoses informations are provided by the Image_display tag.
-     *
+     * Thoses informations are provided by dimap tags :
+     * - Image_Interpretation for description and sample to geophysic.
+     * - Image_display for special values.
+     * - Raster_Encoding for sample model bytes encoding
+     * 
      * @param doc
      * @return GridSampleDimension
      */
-    @Deprecated
     public static GridSampleDimension[] readSampleDimensions(Element doc, String coverageName,int nbbands){
-        final Element ele = firstElement(doc, TAG_IMAGE_DISPLAY);
-        final Element displayOrder = firstElement(ele, TAG_BAND_DISPLAY_ORDER);
-        final int red = textValue(displayOrder, TAG_RED_CHANNEL, Integer.class);
-        final int green = textValue(displayOrder, TAG_GREEN_CHANNEL, Integer.class);
-        final int blue = textValue(displayOrder, TAG_BLUE_CHANNEL, Integer.class);
 
-        //todo not sure we should store color informations in the grid sample dimension
-        final GridSampleDimension[] dimensions = new GridSampleDimension[nbbands];
-        for(int i=1; i<=nbbands; i++){
-            String name = String.valueOf(i)+" ";
-            if(i == red){
-                name = name + RED;
-            }
-            if(i == green){
-                name = name + GREEN;
-            }
-            if(i == blue){
-                name = name + BLUE;
-            }
-            dimensions[i-1] = new GridSampleDimension(name);
 
-            //todo read the special values
+        // read raster encoding informations -----------------------------------
+        final Element nodeEncoding = firstElement(doc, TAG_RASTER_ENCODING);
+        final int nbits = textValue(nodeEncoding, TAG_NBITS, Integer.class);
+        final int byteOrder = textValue(nodeEncoding, TAG_BYTEORDER, Integer.class);
+        final int dataType = textValue(nodeEncoding, TAG_DATA_TYPE, Integer.class);
+        final int skip = textValue(nodeEncoding, TAG_SKIP_BYTES, Integer.class);
+        final int layout = textValue(nodeEncoding, TAG_BANDS_LAYOUT, Integer.class);
+        
+
+        // read dimensions -----------------------------------------------------
+        final Element nodeInterpretation = firstElement(doc, TAG_IMAGE_INTERPRETATION);
+        final NodeList spectrals = nodeInterpretation.getElementsByTagName(TAG_SPECTRAL_BAND_INFO);
+        final Map<Integer,GridSampleDimension> dimensions = new HashMap<Integer, GridSampleDimension>();
+
+        for(int i=0,n=spectrals.getLength(); i<n ;i++){
+            final Element spectre = (Element) spectrals.item(i);
+
+            /*
+            This record provides the unit of the physical value resulting from data radiometric count
+            to physical measure conversion such as Illumination or height :
+            L = X/A + B
+
+            - L is the resulting physical value expressed in PHYSICAL_UNIT
+            - X is the radiometric value at a given pixel location as stored in the raster file (unitless).
+            - A is the gain (PHYSICAL_GAIN)
+            - B is the bias (PHYSICAL_BIAS)
+             */
+
+
+            final int bandIndex = textValue(spectre, TAG_BAND_INDEX, Integer.class);
+            final String bandDescription = textValue(spectre, TAG_BAND_DESCRIPTION, String.class);
+            final String physicUnit = textValue(spectre, TAG_PHYSICAL_UNIT, String.class);
+            final double physicGain = textValue(spectre, TAG_PHYSICAL_GAIN, Double.class);
+            final double physicBias = textValue(spectre, TAG_PHYSICAL_BIAS, Double.class);
+
+            final Unit unit = Unit.valueOf(physicUnit);
+
+//            final GridSampleDimension dim = new GridSampleDimension(
+//                    bandDescription,
+//                    SampleDimensionType.REAL_32BITS,
+//                    ColorInterpretation.UNDEFINED,
+//                    palette,
+//                    categories,
+//                    nodata,
+//                    min,
+//                    max,
+//                    1/physicGain,
+//                    physicBias,
+//                    unit);
+//            dimensions.put(bandIndex, dim);
+
         }
 
-        return dimensions;
+
+
+//        final Element ele = firstElement(doc, TAG_IMAGE_DISPLAY);
+//        final Element displayOrder = firstElement(nodeInterpretation, TAG_BAND_DISPLAY_ORDER);
+//        final int red = textValue(displayOrder, TAG_RED_CHANNEL, Integer.class);
+//        final int green = textValue(displayOrder, TAG_GREEN_CHANNEL, Integer.class);
+//        final int blue = textValue(displayOrder, TAG_BLUE_CHANNEL, Integer.class);
+
+
+        return dimensions.values().toArray(new GridSampleDimension[dimensions.size()]);
     }
 
     private static InputStream toStream(Object input) throws FileNotFoundException, IOException{

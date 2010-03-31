@@ -17,6 +17,8 @@
 
 package org.geotoolkit.metadata.dimap;
 
+import org.opengis.coverage.SampleDimensionType;
+
 /**
  *
  * @author Johann Sorel (Geomatys)
@@ -29,6 +31,45 @@ public final class DimapConstants {
     public static final String BLUE = "blue";
     public static final String ALPHA = "alpha";
     
+    /**
+     * Raster encoding possible byteOrder
+     */
+    public static enum ByteOrder{
+        I(java.nio.ByteOrder.LITTLE_ENDIAN),
+        INTEL(java.nio.ByteOrder.LITTLE_ENDIAN),
+        M(java.nio.ByteOrder.BIG_ENDIAN),
+        MOTOROLA(java.nio.ByteOrder.BIG_ENDIAN);
+
+        private final java.nio.ByteOrder bo;
+
+        private ByteOrder(java.nio.ByteOrder bo){
+            this.bo = bo;
+        }
+
+        public java.nio.ByteOrder getOrder(){
+            return bo;
+        }
+
+    }
+
+    /**
+     * Raster encoding possible types.
+     */
+    public static enum DataType{
+        BYTE,
+        SHORT,
+        LONG,
+        SBYTE,
+        SSHORT,
+        SLONG,
+        FLOAT,
+        DOUBLE;
+        
+        public SampleDimensionType getDimensionType(int nbits){
+            return SampleDimensionType.REAL_64BITS;
+        }
+        
+    }
 
     ////////////////////////////////////////////////////////////////////////////
     // XML CONSTANTS ///////////////////////////////////////////////////////////
@@ -71,6 +112,13 @@ public final class DimapConstants {
     public static final String TAG_NROWS = "NROWS";
     public static final String TAG_NBANDS = "NBANDS";
 
+    // raster encoding group ---------------------------------------------------
+    public static final String TAG_RASTER_ENCODING = "Raster_Encoding";
+    public static final String TAG_NBITS = "NBITS";
+    public static final String TAG_BYTEORDER = "BYTEORDER";
+    public static final String TAG_DATA_TYPE = "DATA_TYPE";
+    public static final String TAG_SKIP_BYTES = "SKIP_BYTES";
+    public static final String TAG_BANDS_LAYOUT = "BANDS_LAYOUT";
 
     // CRS tag group -----------------------------------------------------------
     public static final String TAG_CRS = "Coordinate_Reference_System";
@@ -92,6 +140,15 @@ public final class DimapConstants {
     public static final String TAG_RED_LEVEL = "RED_LEVEL";
     public static final String TAG_GREEN_LEVEL = "GREEN_LEVEL";
     public static final String TAG_BLUE_LEVEL = "BLUE_LEVEL";
+
+    // Image interpretation information ----------------------------------------
+    public static final String TAG_IMAGE_INTERPRETATION = "Image_Interpretation";
+    public static final String TAG_SPECTRAL_BAND_INFO = "Spectral_Band_Info";
+    public static final String TAG_BAND_INDEX = "BAND_INDEX";
+    public static final String TAG_BAND_DESCRIPTION = "BAND_DESCRIPTION";
+    public static final String TAG_PHYSICAL_GAIN = "PHYSICAL_GAIN";
+    public static final String TAG_PHYSICAL_BIAS = "PHYSICAL_BIAS";
+    public static final String TAG_PHYSICAL_UNIT = "PHYSICAL_UNIT";
 
     private DimapConstants(){}
 
