@@ -43,7 +43,6 @@ import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.internal.sql.table.SpatialDatabase;
 import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.Utilities;
 
@@ -296,7 +295,9 @@ public class CoverageEnvelope extends AbstractEnvelope implements Cloneable {
         final CoordinateOperationFactory factory = CRS.getCoordinateOperationFactory(true);
         try {
             final CoordinateOperation userToStandard = factory.createOperation(sourceCRS, targetCRS);
-            envelope = CRS.transform(userToStandard, envelope);
+            if (!userToStandard.getMathTransform().isIdentity()) {
+                envelope = CRS.transform(userToStandard, envelope);
+            }
         } catch (FactoryException e) {
             throw new TransformException(e.getLocalizedMessage(), e);
         }

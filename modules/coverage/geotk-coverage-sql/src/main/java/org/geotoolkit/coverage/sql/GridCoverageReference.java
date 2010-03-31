@@ -33,8 +33,6 @@ import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.io.CoverageStoreException;
-import org.geotoolkit.coverage.io.GridCoverageReadParam;
-import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.DateRange;
 
@@ -214,14 +212,15 @@ public interface GridCoverageReference extends CoverageStack.Element {
      * This method returns always the {@linkplain org.geotoolkit.coverage.grid.ViewType#GEOPHYSICS
      * geophysics} {@linkplain GridCoverage2D#view view} of data.
      *
-     * @param  param Optional parameters used to control the reading process, or {@code null}.
+     * @param  envelope The spatio-temporal envelope and the preferred resolution of the image
+     *         to be read, or {@code null} for the default.
      * @param  listeners Objects to inform about progress, or {@code null} if none.
      * @return The coverage.
      *
      * @throws CoverageStoreException if an error occured while reading the image.
      * @throws CancellationException if {@link #abort()} has been invoked during the reading process.
      */
-    GridCoverage2D read(GridCoverageReadParam param, IIOListeners listeners)
+    GridCoverage2D read(CoverageEnvelope envelope, IIOListeners listeners)
             throws CoverageStoreException, CancellationException;
 
     /**

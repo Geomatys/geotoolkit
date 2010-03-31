@@ -22,7 +22,6 @@ import java.util.Collections;
 import java.sql.SQLException;
 import java.awt.geom.Dimension2D;
 
-import org.opengis.geometry.Envelope;
 import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.operation.TransformException;
@@ -39,17 +38,27 @@ import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.display.shape.DoubleDimension2D;
 import org.geotoolkit.util.collection.FrequencySortedSet;
 import org.geotoolkit.internal.referencing.CRSUtilities;
+import org.geotoolkit.image.io.IIOListeners;
 import org.geotoolkit.resources.Errors;
 
 
 /**
- * A grid coverage reader for a layer. The {@linkplain #getInput input} of this reader are
- * instances of {@link Layer}. The {@link #read read} method actually reads two-dimensional
- * slices selected according the spatio-temporal envelope given to the
- * {@link GridCoverageReadParam} argument.
+ * A grid coverage reader for a layer. This project provides a way to read the data using only
+ * the {@link GridCoverageReader} API. Alternative ways to read the same data are:
+ * <p>
+ * <ul>
+ *   <li>{@link CoverageDatabase#readSlice(CoverageQuery)}</li>
+ *   <li>{@link GridCoverageReference#read(CoverageEnvelope, IIOListeners)</li>
+ * </ul>
+ * <p>
+ * The {@linkplain #getInput() input} of this reader shall be an instance of {@link Layer}.
+ * The {@link #read read} method actually reads two-dimensional slices selected according
+ * the spatio-temporal envelope given to the {@link GridCoverageReadParam} argument.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.10
+ *
+ * @see CoverageDatabase#createGridCoverageReader(String)
  *
  * @since 3.10
  * @module
@@ -57,9 +66,10 @@ import org.geotoolkit.resources.Errors;
 public class LayerCoverageReader extends GridCoverageReader {
     /**
      * A temporary object used for computing the value to be given to the
-     * {@link Layer#getCoverageReference(CoverageEnvelope)} method.
+     * {@link Layer#getCoverageReference(CoverageEnvelope)} method. Subclasses can use
+     * this field for computation purpose, but its content shall not be presumed stable.
      */
-    private final CoverageEnvelope envelope;
+    protected final CoverageEnvelope temporaryEnvelope;
 
     /**
      * The list of coverage names. This field is also used as a sentinal
@@ -85,8 +95,8 @@ public class LayerCoverageReader extends GridCoverageReader {
      *
      * @param database The database to used with this reader.
      */
-    public LayerCoverageReader(final CoverageDatabase database) {
-        envelope = new CoverageEnvelope(database.database);
+    protected LayerCoverageReader(final CoverageDatabase database) {
+        temporaryEnvelope = new CoverageEnvelope(database.database);
     }
 
     /**
@@ -237,9 +247,8 @@ public class LayerCoverageReader extends GridCoverageReader {
         final Layer layer = getInput();
         CoverageEnvelope envelope = null;
         if (param != null) {
-            envelope = this.envelope;
+            envelope = temporaryEnvelope;
             Dimension2D hr = null;
-            final Envelope userEnvelope = param.getEnvelope();
             /*
              * Transforms the envelope and the resolution (if any) from the user envelope CRS
              * to the database CRS. In the particular case of the resolution, we will transform
@@ -247,21 +256,19 @@ public class LayerCoverageReader extends GridCoverageReader {
              * the layer envelope.
              */
             try {
-                envelope.setEnvelope(userEnvelope); // Null allowed.
+                envelope.setEnvelope(param.getEnvelope()); // Null allowed.
                 double[] resolution = param.getResolution();
                 if (resolution != null && resolution.length >= 2) {
-                    if (userEnvelope != null) {
-                        final CoordinateReferenceSystem crs = userEnvelope.getCoordinateReferenceSystem();
-                        if (crs != null) {
-                            envelope.intersect(layer.getEnvelope(null, null));
-                            final GeneralDirectPosition center = new GeneralDirectPosition(crs);
-                            for (int i=center.getDimension(); --i>=0;) {
-                                center.setOrdinate(i, envelope.getMedian(i));
-                            }
-                            resolution = CRSUtilities.deltaTransform(
-                                    CRS.findMathTransform(crs, envelope.database.horizontalCRS, true),
-                                    center, new GeneralDirectPosition(resolution)).getCoordinate();
+                    final CoordinateReferenceSystem crs = param.getCoordinateReferenceSystem();
+                    if (crs != null) {
+                        envelope.intersect(layer.getEnvelope(null, null));
+                        final GeneralDirectPosition center = new GeneralDirectPosition(crs);
+                        for (int i=center.getDimension(); --i>=0;) {
+                            center.setOrdinate(i, envelope.getMedian(i));
                         }
+                        resolution = CRSUtilities.deltaTransform(
+                                CRS.findMathTransform(crs, envelope.database.horizontalCRS, true),
+                                center, new GeneralDirectPosition(resolution)).getCoordinate();
                     }
                     hr = new DoubleDimension2D(resolution[0], resolution[1]);
                 }
@@ -276,9 +283,10 @@ public class LayerCoverageReader extends GridCoverageReader {
         /*
          * Now process to the image reading.
          */
-        final GridCoverageReference ref = layer.getCoverageReference(envelope);
+        final GridCoverageEntry ref = (GridCoverageEntry) layer.getCoverageReference(envelope);
         if (ref != null) {
-            return ref.read(param, null);
+            final IIOListeners listeners = null; // TODO
+            return ref.read(param, listeners);
         }
         return null;
     }

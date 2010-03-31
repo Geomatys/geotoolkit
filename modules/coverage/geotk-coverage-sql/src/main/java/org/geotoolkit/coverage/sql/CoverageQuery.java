@@ -17,15 +17,11 @@
  */
 package org.geotoolkit.coverage.sql;
 
-import java.awt.geom.Dimension2D;
-import java.awt.geom.Rectangle2D;
-
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.geometry.MismatchedReferenceSystemException;
 
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.image.io.IIOListeners;
-import org.geotoolkit.coverage.io.GridCoverageReadParam;
 
 
 /**
@@ -36,6 +32,9 @@ import org.geotoolkit.coverage.io.GridCoverageReadParam;
  *   <li>The name of the {@linkplain Layer layer} to be queried.</li>
  *   <li>The {@linkplain CoverageEnvelope envelope of the coverage} to be queried.</li>
  *   <li>The preferred resolution (actually part of the above-cited {@code CoverageEnvelope}).</li>
+ *   <li>Optional listeners to inform about reading progress. Strictly speaking, this is not
+ *       part of a query. But the listeners are declared in this object anyway in order to
+ *       have all reading parameters in a single place.</li>
  * </ul>
  * <p>
  * Every getter methods defined in this class return a direct reference to the objects holds
@@ -45,6 +44,8 @@ import org.geotoolkit.coverage.io.GridCoverageReadParam;
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.10
+ *
+ * @see CoverageDatabase#readSlice(CoverageQuery)
  *
  * @since 3.10
  * @module
@@ -163,27 +164,5 @@ public class CoverageQuery {
         } else {
             listeners = null;
         }
-    }
-
-    /**
-     * Returns the parameter to use with {@link org.geotoolkit.coverage.io.GridCoverageReader}.
-     *
-     * @return The parameters, or {@code null} for using the default parameters.
-     */
-    final GridCoverageReadParam getReadParam() {
-        GridCoverageReadParam param = null;
-        final Rectangle2D bounds = envelope.getHorizontalRange();
-        if (!Double.isInfinite(bounds.getWidth()) || !Double.isInfinite(bounds.getHeight())) {
-            param = new GridCoverageReadParam();
-            param.setEnvelope(bounds, envelope.database.horizontalCRS);
-        }
-        final Dimension2D resolution = envelope.getPreferredResolution();
-        if (resolution != null) {
-            if (param == null) {
-                param = new GridCoverageReadParam();
-            }
-            param.setResolution(resolution.getWidth(), resolution.getHeight());
-        }
-        return param;
     }
 }

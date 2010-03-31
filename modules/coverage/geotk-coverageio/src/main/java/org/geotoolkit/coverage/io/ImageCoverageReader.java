@@ -761,7 +761,7 @@ public class ImageCoverageReader extends GridCoverageReader {
             final Dimension2D subsampling = (sx > 0 || sy > 0) ? new DoubleDimension2D(sx, sy) : null;
             final Rectangle imageBounds;
             try {
-                imageBounds = computeBounds(gridGeometry, envelope, subsampling);
+                imageBounds = computeBounds(gridGeometry, envelope, subsampling, param.getCoordinateReferenceSystem());
             } catch (Exception e) { // There is many different exceptions thrown by the above.
                 throw new CoverageStoreException(formatErrorMessage(e), e);
             }
@@ -868,10 +868,13 @@ public class ImageCoverageReader extends GridCoverageReader {
      *                      The CRS of this envelope doesn't need to be the coverage CRS.
      * @param resolution    On input, the requested resolution or {@code null}. On output
      *                      (if non-null), the subsampling to use for reading the image.
+     * @param sourceCRS     The CRS of the {@code resolution} parameter, or {@code null}.
+     *                      This is usually also the envelope CRS.
      * @return The region to be read in pixel coordinates, or {@code null} if the coverage
      *         can't be read because the region to read is empty.
      */
-    private Rectangle computeBounds(final GridGeometry2D gridGeometry, Envelope envelope, final Dimension2D resolution)
+    private Rectangle computeBounds(final GridGeometry2D gridGeometry, Envelope envelope,
+            final Dimension2D resolution, final CoordinateReferenceSystem sourceCRS)
             throws InvalidGridGeometryException, NoninvertibleTransformException, TransformException
     {
         final Rectangle gridRange = gridGeometry.getGridRange2D();
@@ -892,9 +895,10 @@ public class ImageCoverageReader extends GridCoverageReader {
         /*
          * Check if the requested region (requestEnvelope) intersects the coverage region (shapeToRead).
          */
+        final CoordinateReferenceSystem targetCRS = gridGeometry.getCoordinateReferenceSystem2D();
         XRectangle2D requestRect = null;
         if (envelope != null) {
-            envelope = CRS.transform(envelope, gridGeometry.getCoordinateReferenceSystem2D());
+            envelope = CRS.transform(envelope, targetCRS);
             requestRect = XRectangle2D.createFromExtremums(
                     envelope.getMinimum(0), envelope.getMinimum(1),
                     envelope.getMaximum(0), envelope.getMaximum(1));
@@ -937,6 +941,9 @@ public class ImageCoverageReader extends GridCoverageReader {
         final int xSubsampling;
         final int ySubsampling;
         if (resolution != null) {
+            if (sourceCRS != null) {
+                // TODO: We need to transform the resolution here.
+            }
             sx *= resolution.getWidth();
             sy *= resolution.getHeight();
             xSubsampling = Math.max(1, Math.min(width /MIN_SIZE, (int) (sx + EPS)));

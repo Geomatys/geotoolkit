@@ -40,6 +40,7 @@ import org.geotoolkit.util.DateRange;
 import org.geotoolkit.util.MeasurementRange;
 import org.geotoolkit.util.NullArgumentException;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
+import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.internal.sql.table.TablePool;
 import org.geotoolkit.resources.Errors;
@@ -453,12 +454,13 @@ public class CoverageDatabase {
 
         /** Executes the task in a background thread. */
         @Override public GridCoverage2D call() throws CoverageStoreException {
+            final CoverageEnvelope envelope = query.getEnvelope();
             final TablePool<GridCoverageTable> pool = database.coverages;
             final GridCoverageReference entry;
             try {
                 final GridCoverageTable table = pool.acquire();
                 table.setLayer(query.getLayer());
-                table.envelope.setAll(query.getEnvelope());
+                table.envelope.setAll(envelope);
                 entry = table.getEntry();
                 pool.release(table);
             } catch (SQLException e) {
@@ -467,8 +469,35 @@ public class CoverageDatabase {
                 throw new CoverageStoreException(Errors.format(
                         Errors.Keys.ILLEGAL_COORDINATE_REFERENCE_SYSTEM), e);
             }
-            return entry.read(query.getReadParam(), query.listeners);
+            return entry.read(envelope, query.listeners);
         }
+    }
+
+    /**
+     * Configures and returns a {@link GridCoverageReader} for the given layer. This provides an
+     * alternative way (as compared to {@link #readSlice readSlice}) for reading two-dimensional
+     * slices of coverage. This method is provided for interoperability with library which want
+     * to access to the data through the {@link GridCoverageReader} API only.
+     * <p>
+     * The default implementation is like below, omitting the check for {@code null} argument
+     * value:
+     *
+     * {@preformat java
+     *     LayerCoverageReader reader = new LayerCoverageReader(this);
+     *     reader.setInput(now(getLayer(layer)));
+     *     return reader;
+     * }
+     *
+     * @param  layer The name of the initial layer to be read by the returned reader, or {@code null}.
+     * @return A grid coverage reader using the given layer as input.
+     * @throws CoverageStoreException If an error occured while querying the database.
+     */
+    public LayerCoverageReader createGridCoverageReader(final String layer) throws CoverageStoreException {
+        final LayerCoverageReader reader = new LayerCoverageReader(this);
+        if (layer != null) {
+            reader.setInput(now(getLayer(layer)));
+        }
+        return reader;
     }
 
     /**

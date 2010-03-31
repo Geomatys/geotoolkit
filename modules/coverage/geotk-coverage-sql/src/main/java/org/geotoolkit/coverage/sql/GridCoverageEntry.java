@@ -364,7 +364,7 @@ final class GridCoverageEntry extends Entry implements GridCoverageReference {
                 cached = null;
             }
             try {
-                coverage = read(null, listeners);
+                coverage = read((GridCoverageReadParam) null, listeners);
             } catch (CoverageStoreException e) {
                 final Throwable cause = e.getCause();
                 if (cause instanceof IOException) {
@@ -380,10 +380,33 @@ final class GridCoverageEntry extends Entry implements GridCoverageReference {
     }
 
     /**
-     * Reads the data and returns the coverage.
+     * Reads the data in the given envelope and returns them as a coverage.
      */
     @Override
-    public GridCoverage2D read(final GridCoverageReadParam param, final IIOListeners listeners)
+    public GridCoverage2D read(final CoverageEnvelope envelope, final IIOListeners listeners)
+            throws CoverageStoreException, CancellationException
+    {
+        GridCoverageReadParam param = null;
+        final Rectangle2D bounds = envelope.getHorizontalRange();
+        if (!Double.isInfinite(bounds.getWidth()) || !Double.isInfinite(bounds.getHeight())) {
+            param = new GridCoverageReadParam();
+            param.setEnvelope(bounds, envelope.database.horizontalCRS);
+        }
+        final Dimension2D resolution = envelope.getPreferredResolution();
+        if (resolution != null) {
+            if (param == null) {
+                param = new GridCoverageReadParam();
+                param.setCoordinateReferenceSystem(envelope.database.horizontalCRS);
+            }
+            param.setResolution(resolution.getWidth(), resolution.getHeight());
+        }
+        return read(param, listeners);
+    }
+
+    /**
+     * Reads the data using the given parameters and returns them as a coverage.
+     */
+    final GridCoverage2D read(final GridCoverageReadParam param, final IIOListeners listeners)
             throws CoverageStoreException, CancellationException
     {
         final GridCoverageIdentifier identifier = getIdentifier();

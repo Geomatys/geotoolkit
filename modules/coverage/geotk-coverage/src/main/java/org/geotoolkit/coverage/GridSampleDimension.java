@@ -261,53 +261,99 @@ public class GridSampleDimension implements SampleDimension, Serializable {
      * informations into a set of {@link Category} objects. However, this constructor still less
      * general and provides less fine-grain control than the constructor expecting an array of
      * {@link Category} objects.
+     * <p>
+     * The table below lists the methods which will return the parameters given to this
+     * constructor, together with their default value (from heuristic rules).
+     * <p>
+     * <table border="1" cellspacing="0">
+     *   <tr bgcolor="lightblue">
+     *     <th nowrap>&nbsp;{@code Parameter}&nbsp;</th>
+     *     <th nowrap>&nbsp;Returned by&nbsp;</th>
+     *     <th nowrap>&nbsp;Default value&nbsp;</th>
+     *   </tr>
+     *   <tr>
+     *     <td nowrap>&nbsp;{@code description}&nbsp;</td>
+     *     <td nowrap>&nbsp;{@link #getDescription()}&nbsp;</td>
+     *     <td nowrap>&nbsp;The name of what looks like the "main" category.&nbsp;</td>
+     *   </tr>
+     *   <tr>
+     *     <td nowrap>&nbsp;{@code type}&nbsp;</td>
+     *     <td nowrap>&nbsp;{@link #getSampleDimensionType()}&nbsp;</td>
+     *     <td nowrap>&nbsp;Computed automatically from the {@code [minimum..maximum]} range.&nbsp;</td>
+     *   </tr>
+     *   <tr>
+     *     <td nowrap>&nbsp;{@code color}&nbsp;</td>
+     *     <td nowrap>&nbsp;{@link #getColorInterpretation()}&nbsp;</td>
+     *     <td nowrap>&nbsp;Usually {@link ColorInterpretation#PALETTE_INDEX}.&nbsp;</td>
+     *   </tr>
+     *   <tr>
+     *     <td nowrap>&nbsp;{@code palette}&nbsp;</td>
+     *     <td nowrap>&nbsp;{@link #getColorModel()}&nbsp;</td>
+     *     <td nowrap>&nbsp;Usually grayscale.&nbsp;</td>
+     *   </tr>
+     *   <tr>
+     *     <td nowrap>&nbsp;{@code categories}&nbsp;</td>
+     *     <td nowrap>&nbsp;{@link #getCategoryNames()}&nbsp;</td>
+     *     <td nowrap>&nbsp;No category.&nbsp;</td>
+     *   </tr>
+     *   <tr>
+     *     <td nowrap>&nbsp;{@code nodata}&nbsp;</td>
+     *     <td nowrap>&nbsp;{@link #getNoDataValues()}&nbsp;</td>
+     *     <td nowrap>&nbsp;No pad value.&nbsp;</td>
+     *   </tr>
+     *   <tr>
+     *     <td nowrap>&nbsp;{@code minimum}&nbsp;</td>
+     *     <td nowrap>&nbsp;{@link #getMinimumValue()}&nbsp;</td>
+     *     <td nowrap>&nbsp;</td>
+     *   </tr>
+     *   <tr>
+     *     <td nowrap>&nbsp;{@code maximum}&nbsp;</td>
+     *     <td nowrap>&nbsp;{@link #getMaximumValue()}&nbsp;</td>
+     *     <td nowrap>&nbsp;</td>
+     *   </tr>
+     *   <tr>
+     *     <td nowrap>&nbsp;{@code scale}&nbsp;</td>
+     *     <td nowrap>&nbsp;{@link #getScale()}&nbsp;</td>
+     *     <td nowrap>&nbsp;</td>
+     *   </tr>
+     *   <tr>
+     *     <td nowrap>&nbsp;{@code offset}&nbsp;</td>
+     *     <td nowrap>&nbsp;{@link #getOffset()}&nbsp;</td>
+     *     <td nowrap>&nbsp;</td>
+     *   <tr>
+     *     <td nowrap>&nbsp;{@code unit}&nbsp;</td>
+     *     <td nowrap>&nbsp;{@link #getUnits()}&nbsp;</td>
+     *     <td nowrap>&nbsp;</td>
+     *   </tr>
+     * </table>
      *
      * @param description
-     *          The sample dimension title or description, or {@code null} for the default
-     *          (the name of what looks like the "main" category). This is the value to be
-     *          returned by {@link #getDescription}.
+     *          The sample dimension title or description.
      * @param type
-     *          The grid value data type (which indicate the number of bits for the data type),
-     *          or {@code null} for computing it automatically from the range
-     *          {@code [minimum..maximum]}. This is the value to be returned by
-     *          {@link #getSampleDimensionType}.
+     *          The grid value data type (which indicate the number of bits for the data type).
      * @param color
-     *          The color interpretation, or {@code null} for a default value (usually
-     *          {@link ColorInterpretation#PALETTE_INDEX PALETTE_INDEX}). This is the
-     *          value to be returned by {@link #getColorInterpretation}.
+     *          The color interpretation.
      * @param palette
-     *          The color palette associated with the sample dimension, or {@code null} for a
-     *          default color palette (usually grayscale). If {@code categories} is non-null,
-     *          then both arrays usually have the same length. However, this constructor is
-     *          tolerant on this array length. This is the value to be returned (indirectly)
-     *          by {@link #getColorModel}.
+     *          The color palette associated with the sample dimension. If {@code categories} is
+     *          non-null, then both arrays usually have the same length. However, this constructor
+     *          is tolerant about the array length.
      * @param categories
-     *          A sequence of category names for the values contained in the
-     *          sample dimension, or {@code null} if none. This is the values
-     *          to be returned by {@link #getCategoryNames}.
+     *          A sequence of category names for the values contained in the sample dimension.
      * @param nodata
-     *          The values to indicate "no data", or {@code null} if none.
-     *          This is the values to be returned by {@link #getNoDataValues}.
+     *          The values to indicate "no data". The {@code [minimum..maximum]} range may or may
+     *          not includes the {@code nodata} values; the range will be adjusted as needed.
      * @param minimum
-     *          The lower value, inclusive. The {@code [minimum..maximum]} range may or may not
-     *          includes the {@code nodata} values; the range will be adjusted as needed. If
-     *          {@code categories} was non-null, then {@code minimum} is usually 0. This is the
-     *          value to be returned by {@link #getMinimumValue}.
+     *          The lower sample value, inclusive. If {@code categories} was non-null,
+     *          then {@code minimum} is usually 0.
      * @param maximum
-     *          The upper value, <strong>inclusive</strong> as well. The {@code [minimum..maximum]}
-     *          range may or may not includes the {@code nodata} values; the range will be adjusted
-     *          as needed. If {@code categories} was non-null, then {@code maximum} is usually
-     *          equals to {@code categories.length-1}. This is the value to be returned by
-     *          {@link #getMaximumValue}.
+     *          The upper sample value, <strong>inclusive</strong> as well. If {@code categories}
+     *          was non-null, then {@code maximum} is often equals to {@code categories.length-1}.
      * @param scale
      *          The value which is multiplied to grid values, or 1 if none.
-     *          This is the value to be returned by {@link #getScale}.
      * @param offset
-     *          The value to add to grid values, or 0 if none. This is the
-     *          value to be returned by {@link #getOffset}.
+     *          The value to add to grid values, or 0 if none.
      * @param unit
-     *          The unit information for this sample dimension, or {@code null} if none.
-     *          This is the value to be returned by {@link #getUnits}.
+     *          The unit information for this sample dimension.
      *
      * @throws IllegalArgumentException
      *           if the range {@code [minimum..maximum]} is not valid.

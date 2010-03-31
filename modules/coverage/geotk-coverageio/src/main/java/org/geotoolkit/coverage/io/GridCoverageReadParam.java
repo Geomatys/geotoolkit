@@ -22,10 +22,12 @@ import java.awt.geom.Rectangle2D;
 import org.opengis.geometry.Envelope;
 import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.geometry.MismatchedReferenceSystemException;
 
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.geometry.Envelope2D;
 import org.geotoolkit.resources.Errors;
+import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.util.Cloneable;
 
 
@@ -46,11 +48,9 @@ import org.geotoolkit.util.Cloneable;
  */
 public class GridCoverageReadParam {
     /**
-     * The coordinate reference system of the coverage to return, or {@code null} if unspecified.
-     * If the {@linkplain #envelope} is non-null, then it shall be the same CRS than the envelope
-     * CRS.
+     * The coordinate reference system of the envelope and resolution specified in this object,
+     * or {@code null} if unspecified.
      */
-    @Deprecated
     private CoordinateReferenceSystem crs;
 
     /**
@@ -92,73 +92,85 @@ public class GridCoverageReadParam {
     }
 
     /**
-     * Returns the CRS in which to resample the coverage, or {@code null} for
-     * returning the coverage in its native CRS.
-     *
-     * @return The CRS in which to resample the coverage, or {@code null}.
-     *
-     * @deprecated {@link GridCoverageReader} returns the coverage in its native CRS
-     *             (or one of its native CRS) in all cases.
+     * Ensures that the CRS of the given envelope (if non-null) is equals, ignoring metadata,
+     * to the given CRS.
      */
-    @Deprecated
+    private static void ensureCompatibleCRS(final Envelope envelope, final CoordinateReferenceSystem crs)
+            throws MismatchedReferenceSystemException
+    {
+        if (crs != null && envelope != null) {
+            final CoordinateReferenceSystem envelopeCRS = envelope.getCoordinateReferenceSystem();
+            if (envelopeCRS != null && !CRS.equalsIgnoreMetadata(crs, envelopeCRS)) {
+                throw new MismatchedReferenceSystemException(Errors.format(
+                        Errors.Keys.MISMATCHED_COORDINATE_REFERENCE_SYSTEM));
+            }
+        }
+    }
+
+    /**
+     * Ensures that the dimension of the given resolution array (if non-null)
+     * is compatible with the CRS dimension, if any.
+     */
+    private static void ensureCompatibleDimension(final double[] resolution,
+            final CoordinateReferenceSystem crs) throws MismatchedDimensionException
+    {
+        if (crs != null && resolution != null) {
+            final int dimension = resolution.length;
+            final int expected = crs.getCoordinateSystem().getDimension();
+            if (dimension != expected) {
+                throw new MismatchedDimensionException(Errors.format(
+                    Errors.Keys.MISMATCHED_DIMENSION_$2, dimension, expected));
+            }
+        }
+    }
+
+    /**
+     * Ensures that the dimension of the given resolution array (if non-null)
+     * is compatible with the dimension of the given envelope.
+     */
+    private static void ensureCompatibleDimension(final double[] resolution, final Envelope envelope)
+            throws MismatchedDimensionException
+    {
+        if (resolution != null && envelope != null) {
+            final int dimension = resolution.length;
+            final int expected = envelope.getDimension();
+            if (dimension != expected) {
+                throw new MismatchedDimensionException(Errors.format(
+                    Errors.Keys.MISMATCHED_DIMENSION_$2, dimension, expected));
+            }
+        }
+    }
+
+    /**
+     * Returns the CRS of the {@linkplain #getEnvelope() envelope} and {@link #getResolution()
+     * resolution} parameters, or {@code null} if unspecified.
+     *
+     * @return The CRS of the envelope and resolution parameters, or {@code null}.
+     */
     public CoordinateReferenceSystem getCoordinateReferenceSystem() {
+        if (crs == null && envelope != null) {
+            return envelope.getCoordinateReferenceSystem();
+        }
         return crs;
     }
 
     /**
-     * Sets the CRS in which to resample the coverage. A {@code null} value means that
-     * the coverage shall be returned in its native CRS.
+     * Sets the CRS of the {@linkplain #getEnvelope() envelope} and {@linkplain #getResolution()
+     * resolution} parameters. If the envelope parameter is already defined with a different
+     * CRS, then this method throws a {@link MismatchedReferenceSystemException}.
      *
-     * @param crs The new CRS in which to resample the coverage, or {@code null}.
-     * @throws MismatchedDimensionException If the dimension of the given CRS is
-     *         greater than the {@linkplain #getEnvelope() envelope} dimension
-     *         or the {@linkplain #getResolution() resolution} dimension.
-     *
-     * @deprecated {@link GridCoverageReader} returns the coverage in its native CRS
-     *             (or one of its native CRS) in all cases.
+     * @param  crs The new CRS for the envelope and resolution parameters.
+     * @throws MismatchedReferenceSystemException If the {@linkplain #getEnvelope() envelope}
+     *         parameter is already defined with a different CRS.
+     * @throws MismatchedDimensionException If the {@linkplain #getResolution() resolution}
+     *         parameter is already defined with a different dimension.
      */
-    @Deprecated
     public void setCoordinateReferenceSystem(final CoordinateReferenceSystem crs)
-            throws MismatchedDimensionException
+            throws MismatchedReferenceSystemException, MismatchedDimensionException
     {
-        if (crs != null) {
-            final int dimension = crs.getCoordinateSystem().getDimension();
-            final int expected;
-            if (envelope != null) {
-                expected = envelope.getDimension();
-            } else if (resolution != null) {
-                expected = resolution.length;
-            } else {
-                expected = dimension;
-            }
-            if (dimension > expected) {
-                throw dimensionMismatch("crs", dimension, expected);
-            }
-        }
+        ensureCompatibleCRS(envelope, crs);
+        ensureCompatibleDimension(resolution, crs);
         this.crs = crs;
-    }
-
-    /**
-     * Ensures that the given dimension is compatible with the CRS dimension, if any.
-     */
-    @Deprecated
-    private void ensureCompatibleDimension(final String name, final int dimension) {
-        if (crs != null) {
-            final int expected = crs.getCoordinateSystem().getDimension();
-            if (dimension < expected) {
-                throw dimensionMismatch(name, dimension, expected);
-            }
-        }
-    }
-
-    /**
-     * Returns the exception to throw for a dimension mismatch.
-     */
-    private static MismatchedDimensionException dimensionMismatch(
-            final String name, final int dimension, final int expected)
-    {
-        return new MismatchedDimensionException(Errors.format(
-                Errors.Keys.MISMATCHED_DIMENSION_$3, name, dimension, expected));
     }
 
     /**
@@ -171,8 +183,14 @@ public class GridCoverageReadParam {
      */
     public Envelope getEnvelope() {
         Envelope env = envelope;
-        if (env instanceof Cloneable) {
-            env = (Envelope) ((Cloneable) env).clone();
+        if (env != null) {
+            if (crs != null && env.getCoordinateReferenceSystem() == null) {
+                final GeneralEnvelope ge = new GeneralEnvelope(env);
+                ge.setCoordinateReferenceSystem(crs);
+                env = ge;
+            } else if (env instanceof Cloneable) {
+                env = (Envelope) ((Cloneable) env).clone();
+            }
         }
         return env;
     }
@@ -190,24 +208,22 @@ public class GridCoverageReadParam {
      * If the envelope is set to {@code null}, then {@code GridCoverageReader} will read
      * the full coverage extent in its native CRS.
      *
-     * @param envelope The region to read from the stream, or {@code null}.
+     * @param  envelope The region to read from the stream, or {@code null}.
+     * @throws MismatchedReferenceSystemException If the given CRS is not equal
+     *         (ignoring metadata) to the CRS defined by the last call to
+     *         {@link #setCoordinateReferenceSystem setCoordinateReferenceSystem}.
      * @throws MismatchedDimensionException If the dimension of the given envelope is not
      *         equal to the {@linkplain #getResolution() resolution} dimension.
      */
-    public void setEnvelope(final Envelope envelope) throws MismatchedDimensionException {
-        if (envelope != null) {
-            final int dimension = envelope.getDimension();
-            ensureCompatibleDimension("envelope", dimension);
-            if (resolution != null) {
-                final int expected = resolution.length;
-                if (dimension != expected) {
-                    throw dimensionMismatch("envelope", dimension, expected);
-                }
-            }
-            this.envelope = new GeneralEnvelope(envelope);
-        } else {
-            this.envelope = null;
+    public void setEnvelope(Envelope envelope)
+            throws MismatchedReferenceSystemException, MismatchedDimensionException
+    {
+        ensureCompatibleCRS(envelope, crs);
+        ensureCompatibleDimension(resolution, envelope);
+        if (envelope instanceof Cloneable) {
+            envelope = (Envelope) ((Cloneable) envelope).clone();
         }
+        this.envelope = envelope;
     }
 
     /**
@@ -217,26 +233,18 @@ public class GridCoverageReadParam {
      *
      * @param  bounds The region to read from the stream, or {@code null}.
      * @param  crs The two-dimensional coordinate reference system of the region.
+     * @throws MismatchedReferenceSystemException If the given CRS is not equal
+     *         (ignoring metadata) to the CRS defined by the last call to
+     *         {@link #setCoordinateReferenceSystem setCoordinateReferenceSystem}.
      * @throws MismatchedDimensionException If dimension of the current
      *         {@linkplain #getResolution() resolution} is different than 2.
      *
      * @since 3.10
      */
     public void setEnvelope(final Rectangle2D bounds, final CoordinateReferenceSystem crs)
-            throws MismatchedDimensionException
+            throws MismatchedReferenceSystemException, MismatchedDimensionException
     {
-        if (bounds != null) {
-            ensureCompatibleDimension("envelope", 2);
-            if (resolution != null) {
-                final int expected = resolution.length;
-                if (2 != expected) {
-                    throw dimensionMismatch("bounds", 2, expected);
-                }
-            }
-            envelope = new Envelope2D(crs, bounds);
-        } else {
-            envelope = null;
-        }
+        setEnvelope(bounds != null ? new Envelope2D(crs, bounds) : null);
     }
 
     /**
@@ -271,15 +279,9 @@ public class GridCoverageReadParam {
      *         equal to the {@linkplain #getEnvelope() envelope} dimension.
      */
     public void setResolution(double... resolution) throws MismatchedDimensionException {
+        ensureCompatibleDimension(resolution, crs);
+        ensureCompatibleDimension(resolution, envelope);
         if (resolution != null) {
-            final int dimension = resolution.length;
-            ensureCompatibleDimension("resolution", dimension);
-            if (envelope != null) {
-                final int expected = envelope.getDimension();
-                if (dimension != expected) {
-                    throw dimensionMismatch("resolution", dimension, expected);
-                }
-            }
             resolution = resolution.clone();
             for (final double r : resolution) {
                 if (!(r >= 0)) { // Accept 0 as well, meaning "best resolution available".

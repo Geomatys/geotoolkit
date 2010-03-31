@@ -418,21 +418,22 @@ public final class CRSUtilities {
     }
 
     /**
-     * Transforms the relative distance vector specified by {@code source} and stores
-     * the result in {@code dest}.  A relative distance vector is transformed without
-     * applying the translation components.
+     * Transforms the given relative distance using the given transform. A relative distance
+     * vector is transformed without applying the translation components. However it needs to
+     * be computed at a particular location, given by the {@code origin} parameter in units
+     * of the source CRS.
      *
-     * @param transform The transform to apply.
-     * @param origin The position where to compute the delta transform in the source CS.
-     * @param source The distance vector to be delta transformed.
-     * @return The result of the transformation.
+     * @param  transform The transformation to apply.
+     * @param  origin The position where to compute the delta transform in the source CRS.
+     * @param  vector The distance vector to be delta transformed.
+     * @return The result of the delta transformation.
      * @throws TransformException if the transformation failed.
      *
      * @since 2.3
      */
     public static DirectPosition deltaTransform(final MathTransform  transform,
                                                 final DirectPosition origin,
-                                                final DirectPosition source)
+                                                final DirectPosition vector)
             throws TransformException
     {
         final int sourceDim = transform.getSourceDimensions();
@@ -441,7 +442,7 @@ public final class CRSUtilities {
         DirectPosition P2 = new GeneralDirectPosition(sourceDim);
         for (int i=0; i<sourceDim; i++) {
             final double c = origin.getOrdinate(i);
-            final double d = source.getOrdinate(i) * 0.5;
+            final double d = vector.getOrdinate(i) * 0.5;
             P1.setOrdinate(i, c-d);
             P2.setOrdinate(i, c+d);
         }
