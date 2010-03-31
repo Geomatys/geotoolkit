@@ -40,7 +40,7 @@ public class GetRecordByIdTest {
     public void testGetRecordById202() {
         final GetRecordById202 getRecordById202 = new GetRecordById202("http://test.com");
         getRecordById202.setElementSetName(ElementSetType.FULL);
-        getRecordById202.setId("myid");
+        getRecordById202.setIds("myid");
         getRecordById202.setOutputFormat("xml");
         final URL url;
         try {

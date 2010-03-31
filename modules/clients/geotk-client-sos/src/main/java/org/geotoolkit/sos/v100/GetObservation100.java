@@ -14,31 +14,25 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.csw;
+package org.geotoolkit.sos.v100;
 
-import javax.xml.namespace.QName;
-import org.geotoolkit.client.Request;
+import org.geotoolkit.sos.AbstractGetObservation;
 
 
 /**
+ * Implementation for the GetObservation request version 1.0.0.
  *
  * @author Cédric Briançon (Geomatys)
  * @module pending
  */
-public interface DescribeRecordRequest extends Request {
-    String getNamespace();
+public class GetObservation100 extends AbstractGetObservation {
+    /**
+     * Defines the server url and its version.
+     *
+     * @param serverURL The url of the webservice.
+     */
+    public GetObservation100(final String serverURL){
+        super(serverURL, "1.0.0");
+    }
 
-    void setNamespace(String namespace);
-
-    String getOutputFormat();
-
-    void setOutputFormat(String outputFormat);
-
-    String getSchemaLanguage();
-
-    void setSchemaLanguage(String schemaLanguage);
-
-    QName[] getTypeNames();
-
-    void setTypeNames(QName[] typeNames);
 }

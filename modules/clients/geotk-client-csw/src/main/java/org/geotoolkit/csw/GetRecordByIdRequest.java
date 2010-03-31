@@ -30,9 +30,9 @@ public interface GetRecordByIdRequest extends Request {
 
     void setElementSetName(ElementSetType elementSetName);
 
-    String getId();
+    String[] getIds();
 
-    void setId(String id);
+    void setIds(String... ids);
 
     String getOutputFormat();
 

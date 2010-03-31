@@ -56,6 +56,9 @@ public abstract class AbstractDescribeSensor extends AbstractRequest implements 
         this.version = version;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getOutputFormat() {
         return outputFormat;
@@ -66,6 +69,9 @@ public abstract class AbstractDescribeSensor extends AbstractRequest implements 
         return sensorId;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setOutputFormat(String outputFormat) {
         this.outputFormat = outputFormat;
@@ -81,9 +87,17 @@ public abstract class AbstractDescribeSensor extends AbstractRequest implements 
      */
     @Override
     public URL getURL() throws MalformedURLException {
+        if (outputFormat == null) {
+            throw new IllegalArgumentException("The parameter \"outputFormat\" is not defined");
+        }
+        if (sensorId == null) {
+            throw new IllegalArgumentException("The parameter \"sensorId\" is not defined");
+        }
         requestParameters.put("SERVICE", "SOS");
         requestParameters.put("REQUEST", "GetCapabilities");
         requestParameters.put("VERSION", version);
+        requestParameters.put("OUTPUTFORMAT", outputFormat);
+        requestParameters.put("SENSORID", sensorId);
         return super.getURL();
     }
 

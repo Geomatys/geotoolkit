@@ -22,7 +22,7 @@ import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.logging.Logger;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
@@ -55,7 +55,7 @@ public abstract class AbstractDescribeRecord extends AbstractRequest implements 
     private String outputFormat = null;
     private String namespace = null;
     private String schemaLanguage = null;
-    private String typeName = null;
+    private QName[] typeNames = null;
 
     /**
      * Defines the server url and the service version for this kind of request.
@@ -84,8 +84,8 @@ public abstract class AbstractDescribeRecord extends AbstractRequest implements 
     }
 
     @Override
-    public String getTypeName() {
-        return typeName;
+    public QName[] getTypeNames() {
+        return typeNames;
     }
 
     @Override
@@ -104,8 +104,8 @@ public abstract class AbstractDescribeRecord extends AbstractRequest implements 
     }
 
     @Override
-    public void setTypeName(String typeName) {
-        this.typeName = typeName;
+    public void setTypeNames(QName... typeName) {
+        this.typeNames = typeName;
     }
 
     /**
@@ -126,8 +126,16 @@ public abstract class AbstractDescribeRecord extends AbstractRequest implements 
         if (schemaLanguage != null) {
             requestParameters.put("SCHEMALANGUAGE", schemaLanguage);
         }
-        if (typeName != null) {
-            requestParameters.put("TYPENAME", typeName);
+        if (typeNames != null) {
+            final StringBuilder sTypeNames = new StringBuilder();
+            for (int i=0; i<typeNames.length; i++) {
+                final QName q = typeNames[i];
+                sTypeNames.append(q.toString());
+                if (i < typeNames.length - 1) {
+                    sTypeNames.append(',');
+                }
+            }
+            requestParameters.put("TYPENAME", sTypeNames.toString());
         }
 
         return super.getURL();
@@ -152,7 +160,7 @@ public abstract class AbstractDescribeRecord extends AbstractRequest implements 
             pool = new MarshallerPool(EBRIMClassesContext.getAllClasses());
             marsh = pool.acquireMarshaller();
             final DescribeRecordType describeXml = new DescribeRecordType("CSW", version,
-                    Collections.singletonList(new QName(typeName)), outputFormat, schemaLanguage);
+                    Arrays.asList(typeNames), outputFormat, schemaLanguage);
             marsh.marshal(describeXml, stream);
         } catch (JAXBException ex) {
             throw new IOException(ex);

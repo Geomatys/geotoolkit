@@ -22,7 +22,7 @@ import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.logging.Logger;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
@@ -31,6 +31,7 @@ import org.geotoolkit.csw.xml.ElementSetType;
 import org.geotoolkit.csw.xml.v202.ElementSetNameType;
 import org.geotoolkit.csw.xml.v202.GetRecordByIdType;
 import org.geotoolkit.ebrim.xml.EBRIMClassesContext;
+import org.geotoolkit.util.StringUtilities;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.xml.MarshallerPool;
 
@@ -54,7 +55,7 @@ public abstract class AbstractGetRecordById extends AbstractRequest implements G
     protected final String version;
 
     private ElementSetType elementSetName = null;
-    private String id = null;
+    private String[] ids = null;
     private String outputFormat = null;
     private String outputSchema = null;
 
@@ -75,8 +76,8 @@ public abstract class AbstractGetRecordById extends AbstractRequest implements G
     }
 
     @Override
-    public String getId() {
-        return id;
+    public String[] getIds() {
+        return ids;
     }
 
     @Override
@@ -95,8 +96,8 @@ public abstract class AbstractGetRecordById extends AbstractRequest implements G
     }
 
     @Override
-    public void setId(String id) {
-        this.id = id;
+    public void setIds(String... ids) {
+        this.ids = ids;
     }
 
     @Override
@@ -114,14 +115,14 @@ public abstract class AbstractGetRecordById extends AbstractRequest implements G
      */
     @Override
     public URL getURL() throws MalformedURLException {
-        if (id == null) {
+        if (ids == null) {
             throw new IllegalArgumentException("The parameter \"ID\" is not defined");
         }
 
         requestParameters.put("SERVICE", "CSW");
         requestParameters.put("REQUEST", "GetRecords");
         requestParameters.put("VERSION", version);
-        requestParameters.put("ID",      id);
+        requestParameters.put("ID",      StringUtilities.toCommaSeparatedValues(ids));
 
         if (elementSetName != null) {
             requestParameters.put("ELEMENTSETNAME", elementSetName.value());
@@ -156,7 +157,7 @@ public abstract class AbstractGetRecordById extends AbstractRequest implements G
             marsh = pool.acquireMarshaller();
             final GetRecordByIdType recordByIdXml = new GetRecordByIdType("CSW", version,
                     new ElementSetNameType(elementSetName), outputFormat, outputSchema,
-                    Collections.singletonList(id));
+                    Arrays.asList(ids));
             marsh.marshal(recordByIdXml, stream);
         } catch (JAXBException ex) {
             throw new IOException(ex);
