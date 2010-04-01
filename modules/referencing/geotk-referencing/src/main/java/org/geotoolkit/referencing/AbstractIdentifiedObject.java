@@ -787,7 +787,7 @@ nextKey:for (final Map.Entry<String,?> entry : properties.entrySet()) {
      * interfaces (for example {@link NamedIdentifier}). In such cases, the identifier view has
      * precedence.
      *
-     * @param  authority The authority for the name to return.
+     * @param  authority The authority for the name to return, or {@code null} for any authority.
      * @return The object's name (either a {@linkplain ReferenceIdentifier#getCode code}
      *         or a {@linkplain GenericName#tip name tip}), or {@code null} if
      *         no name matching the specified authority was found.
@@ -806,7 +806,7 @@ nextKey:for (final Map.Entry<String,?> entry : properties.entrySet()) {
      * than {@link #getName(Citation)} on arbitrary implementations of GeoAPI interface.
      *
      * @param  info The object to get the name from.
-     * @param  authority The authority for the name to return.
+     * @param  authority The authority for the name to return, or {@code null} for any authority.
      * @return The object's name (either a {@linkplain ReferenceIdentifier#getCode code} or a
      *         {@linkplain GenericName#tip name tip}), or {@code null} if no name matching the
      *         specified authority was found.
@@ -825,7 +825,7 @@ nextKey:for (final Map.Entry<String,?> entry : properties.entrySet()) {
      * Returns an object's name according the given authority.
      *
      * @param  info The object to get the name from.
-     * @param  authority The authority for the name to return.
+     * @param  authority The authority for the name to return, or {@code null} for any authority.
      * @return The object's name (either a {@linkplain ReferenceIdentifier#getCode code} or a
      *         {@linkplain GenericName#tip name tip}), or {@code null} if no name matching the
      *         specified authority was found.

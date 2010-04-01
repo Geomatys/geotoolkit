@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.coverage.io;
 
+import java.util.Arrays;
 import java.awt.geom.Rectangle2D;
 
 import org.opengis.geometry.Envelope;
@@ -29,6 +30,7 @@ import org.geotoolkit.geometry.Envelope2D;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.util.Cloneable;
+import org.geotoolkit.util.converter.Classes;
 
 
 /**
@@ -382,5 +384,35 @@ public class GridCoverageReadParam {
             }
         }
         return bands;
+    }
+
+    /**
+     * Returns a string representation of this object for debugging purpose.
+     */
+    @Override
+    public String toString() {
+        final StringBuilder buffer = new StringBuilder(Classes.getShortClassName(this)).append('[');
+        String separator = "";
+        if (envelope != null) {
+            buffer.append("envelope=").append(envelope);
+            separator = ", ";
+        }
+        if (resolution != null) {
+            buffer.append(separator).append("resolution=").append(Arrays.toString(resolution));
+            separator = ", ";
+        }
+        final CoordinateReferenceSystem crs = getCoordinateReferenceSystem();
+        if (crs != null) {
+            buffer.append(separator).append("crs=\"").append(crs.getName().getCode()).append('"');
+            separator = ", ";
+        }
+        if (sourceBands != null) {
+            buffer.append(separator).append("sourceBands=").append(Arrays.toString(sourceBands));
+            separator = ", ";
+        }
+        if (destinationBands != null) {
+            buffer.append(separator).append("destinationBands=").append(Arrays.toString(destinationBands));
+        }
+        return buffer.append(']').toString();
     }
 }

@@ -272,7 +272,7 @@ public class LayerCoverageReader extends GridCoverageReader {
                 }
             } catch (TransformException e) {
                 throw new CoverageStoreException(errors().getString(
-                        Errors.Keys.ILLEGAL_COORDINATE_REFERENCE_SYSTEM, e));
+                        Errors.Keys.ILLEGAL_COORDINATE_REFERENCE_SYSTEM), e);
             } catch (FactoryException e) {
                 throw new CoverageStoreException(e);
             }
