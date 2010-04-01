@@ -45,7 +45,7 @@ import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.Localized;
 
-import static org.geotoolkit.util.Utilities.hashMapCapacity;
+import static org.geotoolkit.util.collection.XCollections.hashMapCapacity;
 
 
 /**

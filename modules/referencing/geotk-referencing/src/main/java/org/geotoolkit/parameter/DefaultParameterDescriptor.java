@@ -35,6 +35,7 @@ import org.opengis.parameter.ParameterDescriptor;
 
 import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.util.Utilities;
+import org.geotoolkit.util.collection.XCollections;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.referencing.NamedIdentifier;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
@@ -268,7 +269,7 @@ public class DefaultParameterDescriptor<T> extends AbstractParameterDescriptor
             }
         }
         if (validValues != null) {
-            final Set<T> valids = new HashSet<T>(Math.max(Utilities.hashMapCapacity(validValues.length), 8));
+            final Set<T> valids = new HashSet<T>(Math.max(XCollections.hashMapCapacity(validValues.length), 8));
             for (int i=0; i<validValues.length; i++) {
                 final T value = cached(validValues[i]);
                 AbstractParameter.ensureValidClass(valueClass, value);

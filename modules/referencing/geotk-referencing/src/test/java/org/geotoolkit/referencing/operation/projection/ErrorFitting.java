@@ -27,7 +27,7 @@ import org.geotoolkit.math.Plane;
 import org.geotoolkit.math.Statistics;
 
 import static org.opengis.test.Assert.*;
-import static org.geotoolkit.util.Utilities.hashMapCapacity;
+import static org.geotoolkit.util.collection.XCollections.hashMapCapacity;
 import static org.geotoolkit.referencing.operation.projection.Assertions.ERROR_SCALE;
 import static org.geotoolkit.referencing.operation.projection.UnitaryProjection.ITERATION_TOLERANCE;
 

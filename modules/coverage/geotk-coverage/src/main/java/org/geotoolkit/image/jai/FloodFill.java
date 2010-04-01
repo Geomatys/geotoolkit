@@ -34,8 +34,8 @@ import java.awt.image.WritableRenderedImage;
 import javax.media.jai.OpImage;
 import javax.media.jai.ImageLayout;
 
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.collection.IntegerList;
+import org.geotoolkit.util.collection.XCollections;
 import org.geotoolkit.internal.image.ColorUtilities;
 import org.geotoolkit.resources.Errors;
 
@@ -150,7 +150,7 @@ public abstract class FloodFill extends OpImage {
          * will depend on the transfer type.
          */
         final int transferType = image.getSampleModel().getTransferType();
-        final Set<SampleValues> oldSamples = new HashSet<SampleValues>(Utilities.hashMapCapacity(oldValues.length));
+        final Set<SampleValues> oldSamples = new HashSet<SampleValues>(XCollections.hashMapCapacity(oldValues.length));
         for (final double[] samples : oldValues) {
             oldSamples.add(SampleValues.getInstance(transferType, samples));
         }

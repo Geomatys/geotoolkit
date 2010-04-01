@@ -30,7 +30,6 @@ import java.lang.ref.Reference;
 import java.lang.ref.WeakReference;
 import java.lang.ref.SoftReference;
 
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.Disposable;
 import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.resources.Errors;
@@ -217,7 +216,7 @@ public class Cache<K,V> extends AbstractMap<K,V> {
             throw new IllegalArgumentException(Errors.format(
                     Errors.Keys.ILLEGAL_ARGUMENT_$2, "costLimit", costLimit));
         }
-        initialCapacity = Utilities.hashMapCapacity(initialCapacity);
+        initialCapacity = XCollections.hashMapCapacity(initialCapacity);
         this.map        = new ConcurrentHashMap<K,Object>(initialCapacity);
         this.costs      = new LinkedHashMap<K,Integer>((int) Math.min(initialCapacity, costLimit), 0.75f, true);
         this.costLimit  = costLimit;

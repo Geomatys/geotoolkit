@@ -17,16 +17,13 @@
  */
 package org.geotoolkit.util;
 
-import java.util.Set;
 import java.util.Queue;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.Collections;
-import java.util.AbstractQueue;
 import java.io.Serializable;
-import java.io.ObjectStreamException;
 
 import org.geotoolkit.lang.Static;
+import org.geotoolkit.util.collection.XCollections;
 
 
 /**
@@ -74,69 +71,6 @@ public final class Utilities {
      * (Josh Bloch, <cite>Effective Java</cite>).
      */
     private static final int PRIME_NUMBER = 31;
-
-    /**
-     * The singleton instance to be returned by {@link #emptyQueue}.
-     * This is not parameterized on intend.
-     */
-    @SuppressWarnings("rawtypes")
-    private static final Queue EMPTY_QUEUE = new EmptyQueue<Object>();
-
-    /**
-     * The class for the {@link #EMPTY_QUEUE} instance. Defined as a named class rather than
-     * anonymous in order to avoid serialization issue.
-     */
-    private static final class EmptyQueue<E> extends AbstractQueue<E> implements Serializable {
-        /** For cross-version compatibility. **/
-        private static final long serialVersionUID = -6147951199761870325L;
-
-        /** No effect on an queue which is already empty. */
-        @Override
-        public void clear() {
-        }
-
-        /** Returns {@code true} is all case. */
-        @Override
-        public boolean isEmpty() {
-            return true;
-        }
-
-        /** Returns the size, which is always 0. */
-        @Override
-        public int size() {
-            return 0;
-        }
-
-        /** Returns an empty iterator. */
-        @Override
-        public Iterator<E> iterator() {
-            final Set<E> empty = Collections.emptySet();
-            return empty.iterator();
-        }
-
-        /** Always returns {@code false} since this queue doesn't accept any element. */
-        @Override
-        public boolean offer(E e) {
-            return false;
-        }
-
-        /** Always returns {@code null} since this queue is always empty. */
-        @Override
-        public E poll() {
-            return null;
-        }
-
-        /** Always returns {@code null} since this queue is always empty. */
-        @Override
-        public E peek() {
-            return null;
-        }
-
-        /** Returns the singleton instance of deserialization. */
-        protected Object readResolve() throws ObjectStreamException {
-            return EMPTY_QUEUE;
-        }
-    }
 
     /**
      * Forbid object creation.
@@ -590,10 +524,12 @@ public final class Utilities {
      *
      * @see Collections#emptyList()
      * @see Collections#emptySet()
+     *
+     * @deprecated Moved to {@link XCollections}.
      */
-    @SuppressWarnings("unchecked")
+    @Deprecated
     public static <E> Queue<E> emptyQueue() {
-        return EMPTY_QUEUE;
+        return XCollections.emptyQueue();
     }
 
     /**
@@ -608,12 +544,11 @@ public final class Utilities {
      * @return The optimal initial capacity to be given to the hash map constructor.
      *
      * @since 3.00
+     *
+     * @deprecated Moved to {@link XCollections}.
      */
+    @Deprecated
     public static int hashMapCapacity(int elements) {
-        final int r = elements >>> 2;
-        if (elements != (r << 2)) {
-            elements++;
-        }
-        return elements + r;
+        return XCollections.hashMapCapacity(elements);
     }
 }

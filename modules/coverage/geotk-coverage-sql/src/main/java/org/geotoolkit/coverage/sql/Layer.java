@@ -84,8 +84,8 @@ public interface Layer {
 
     /**
      * Returns the set of altitudes where a coverage is available. If different coverages
-     * have different set of altitudes, then this method returns only the altitudes that
-     * are common to every coverages.
+     * have different set of altitudes, then this method returns the union of all altitudes
+     * set.
      *
      * @return The set of altitudes, or {@code null} if unknown.
      * @throws CoverageStoreException if an error occured while fetching the set.

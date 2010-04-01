@@ -25,9 +25,9 @@ import java.util.HashMap;
 import java.util.Collection;
 import java.util.concurrent.Callable;
 
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.internal.io.ObjectStream;
+import org.geotoolkit.util.collection.XCollections;
 
 
 /**
@@ -146,7 +146,7 @@ public abstract class ShareableTask<Input,Output> implements Callable<Output>, S
         for (final Map<K,V> output : outputs) {
             size += output.size();
         }
-        final Map<K,V> aggregate = new HashMap<K,V>(Utilities.hashMapCapacity(size));
+        final Map<K,V> aggregate = new HashMap<K,V>(XCollections.hashMapCapacity(size));
         for (final Map<K,V> output : outputs) {
             aggregate.putAll(output);
         }

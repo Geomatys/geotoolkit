@@ -32,7 +32,7 @@ import org.opengis.referencing.operation.CoordinateOperation;
 
 import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.referencing.operation.AbstractCoordinateOperation;
-import static org.geotoolkit.util.Utilities.hashMapCapacity;
+import static org.geotoolkit.util.collection.XCollections.hashMapCapacity;
 
 
 /**

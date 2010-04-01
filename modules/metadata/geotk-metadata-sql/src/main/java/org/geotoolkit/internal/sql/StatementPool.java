@@ -24,9 +24,9 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import javax.sql.DataSource;
 
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.internal.Threads;
 import org.geotoolkit.util.logging.Logging;
+import org.geotoolkit.util.collection.XCollections;
 
 
 /**
@@ -113,7 +113,7 @@ public class StatementPool<K,V extends StatementEntry> extends LinkedHashMap<K,V
      * @param dataSource The datasource to the database.
      */
     public StatementPool(final int capacity, final DataSource dataSource) {
-        super(Utilities.hashMapCapacity(capacity));
+        super(XCollections.hashMapCapacity(capacity));
         this.capacity   = capacity;
         this.dataSource = dataSource;
     }
@@ -125,7 +125,7 @@ public class StatementPool<K,V extends StatementEntry> extends LinkedHashMap<K,V
      * @param source The pool from which to copy the configuration.
      */
     public StatementPool(final StatementPool<K,V> source) {
-        super(Utilities.hashMapCapacity(source.capacity));
+        super(XCollections.hashMapCapacity(source.capacity));
         capacity   = source.capacity;
         dataSource = source.dataSource;
     }

@@ -43,6 +43,7 @@ import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.DateRange;
 import org.geotoolkit.util.MeasurementRange;
 import org.geotoolkit.util.logging.Logging;
+import org.geotoolkit.util.collection.XCollections;
 import org.geotoolkit.util.collection.FrequencySortedSet;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
 import org.geotoolkit.internal.sql.table.Entry;
@@ -560,6 +561,9 @@ final class LayerEntry extends Entry implements Layer {
             extents = getCountByExtent();
         } catch (SQLException e) {
             throw new CoverageStoreException(e);
+        }
+        if (extents == null) {
+            return XCollections.emptySortedSet();
         }
         final int[] count = extents.frequencies();
         final FrequencySortedSet<GeneralGridGeometry> geometries = new FrequencySortedSet<GeneralGridGeometry>();

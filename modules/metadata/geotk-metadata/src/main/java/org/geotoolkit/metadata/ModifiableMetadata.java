@@ -30,8 +30,8 @@ import org.opengis.util.CodeList;
 
 import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.logging.Logging;
+import org.geotoolkit.util.collection.XCollections;
 import org.geotoolkit.util.collection.CheckedArrayList;
 import org.geotoolkit.util.collection.CheckedHashSet;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
@@ -565,7 +565,7 @@ public abstract class ModifiableMetadata extends AbstractMetadata implements Clo
         }
 
         public MutableSet(Class<E> type, int capacity) {
-            super(type, Utilities.hashMapCapacity(capacity));
+            super(type, XCollections.hashMapCapacity(capacity));
         }
 
         @Override

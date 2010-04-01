@@ -29,6 +29,7 @@ import java.util.logging.Level;
 import java.util.logging.LogRecord;
 
 import org.geotoolkit.util.Utilities;
+import org.geotoolkit.util.collection.XCollections;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.internal.sql.table.CatalogException;
 import org.geotoolkit.internal.sql.table.ConfigurationKey;
@@ -173,7 +174,7 @@ final class SeriesTable extends SingletonTable<SeriesEntry> {
      */
     public Map<Integer,SeriesEntry> getEntriesMap() throws SQLException {
         final Set<SeriesEntry> entries = getEntries();
-        final Map<Integer,SeriesEntry> map = new HashMap<Integer,SeriesEntry>(Utilities.hashMapCapacity(entries.size()));
+        final Map<Integer,SeriesEntry> map = new HashMap<Integer,SeriesEntry>(XCollections.hashMapCapacity(entries.size()));
         for (final SeriesEntry entry : entries) {
             final Integer identifier = entry.getIdentifier();
             if (map.put(identifier, entry) != null) {

@@ -28,7 +28,7 @@ import java.lang.reflect.Modifier;
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.logging.Logging;
-import static org.geotoolkit.util.Utilities.hashMapCapacity;
+import static org.geotoolkit.util.collection.XCollections.hashMapCapacity;
 
 
 /**
