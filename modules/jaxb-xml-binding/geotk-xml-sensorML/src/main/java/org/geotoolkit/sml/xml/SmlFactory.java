@@ -261,7 +261,7 @@ public class SmlFactory {
         }
     }
 
-    public org.geotoolkit.sml.xml.v101.SensorML convertTo101(org.geotoolkit.sml.xml.v100.SensorML sensor) {
+    public static org.geotoolkit.sml.xml.v101.SensorML convertTo101(org.geotoolkit.sml.xml.v100.SensorML sensor) {
         List<org.geotoolkit.sml.xml.v101.SensorML.Member> newMembers = new ArrayList<org.geotoolkit.sml.xml.v101.SensorML.Member>();
 
         for (Member oldMember : sensor.getMember()) {
@@ -276,7 +276,7 @@ public class SmlFactory {
                 throw new IllegalArgumentException("Other sensor type than system or component are not yet convertible");
             }
 
-            AbstractProcessType oldProcess = (SystemType) oldMember.getRealProcess();
+            AbstractProcessType oldProcess = (AbstractProcessType) oldMember.getRealProcess();
 
             // id
             newProcess.setId(oldProcess.getId());
@@ -358,38 +358,60 @@ public class SmlFactory {
             newProcess.setLegalConstraint(newLegalConstraints);
 
             // security constraint
-            newProcess.setSecurityConstraint(new org.geotoolkit.sml.xml.v101.SecurityConstraint(oldProcess.getSecurityConstraint()));
+            if (oldProcess.getSecurityConstraint() != null) {
+                newProcess.setSecurityConstraint(new org.geotoolkit.sml.xml.v101.SecurityConstraint(oldProcess.getSecurityConstraint()));
+            }
 
             // validTime
-            newProcess.setValidTime(oldProcess.getValidTime());
+            if (oldProcess.getValidTime() != null) {
+                newProcess.setValidTime(oldProcess.getValidTime());
+            }
 
             AbstractComponent newAbsComponent = (AbstractComponent) newProcess;
             AbstractComponent oldAbsComponent = (AbstractComponent) oldProcess;
 
             //Inputs
-            newAbsComponent.setInputs(oldAbsComponent.getInputs());
+            if (oldAbsComponent.getInputs() != null) {
+                newAbsComponent.setInputs(oldAbsComponent.getInputs());
+            }
 
             // outputs
-            newAbsComponent.setOutputs(oldAbsComponent.getOutputs());
+            if (oldAbsComponent.getOutputs() != null) {
+                newAbsComponent.setOutputs(oldAbsComponent.getOutputs());
+            }
 
             // parameters
-            newAbsComponent.setParameters(oldAbsComponent.getParameters());
+            if (oldAbsComponent.getParameters() != null) {
+                newAbsComponent.setParameters(oldAbsComponent.getParameters());
+            }
 
             org.geotoolkit.sml.xml.v101.AbstractDerivableComponentType newDerComponent =  (org.geotoolkit.sml.xml.v101.AbstractDerivableComponentType) newProcess;
             AbstractDerivableComponent oldDerComponent = (AbstractDerivableComponent) oldProcess;
 
             // Position
-            newDerComponent.setPosition(oldDerComponent.getPosition());
+            if (oldDerComponent.getPosition() != null) {
+                newDerComponent.setPosition(oldDerComponent.getPosition());
+            }
 
-            newDerComponent.setSMLLocation(oldDerComponent.getSMLLocation());
+            if (oldDerComponent.getSMLLocation() != null) {
+                newDerComponent.setSMLLocation(oldDerComponent.getSMLLocation());
+            }
 
-            newDerComponent.setInterfaces(new org.geotoolkit.sml.xml.v101.Interfaces(oldDerComponent.getInterfaces()));
+            if (oldDerComponent.getInterfaces() != null) {
+                newDerComponent.setInterfaces(new org.geotoolkit.sml.xml.v101.Interfaces(oldDerComponent.getInterfaces()));
+            }
 
-            newDerComponent.setSpatialReferenceFrame(new org.geotoolkit.sml.xml.v101.SpatialReferenceFrame(oldDerComponent.getSpatialReferenceFrame()));
+            if (oldDerComponent.getSpatialReferenceFrame() != null) {
+                newDerComponent.setSpatialReferenceFrame(new org.geotoolkit.sml.xml.v101.SpatialReferenceFrame(oldDerComponent.getSpatialReferenceFrame()));
+            }
 
-            newDerComponent.setTemporalReferenceFrame(new org.geotoolkit.sml.xml.v101.TemporalReferenceFrame(oldDerComponent.getTemporalReferenceFrame()));
+            if (oldDerComponent.getTemporalReferenceFrame() != null) {
+                newDerComponent.setTemporalReferenceFrame(new org.geotoolkit.sml.xml.v101.TemporalReferenceFrame(oldDerComponent.getTemporalReferenceFrame()));
+            }
 
-            newDerComponent.setTimePosition(new org.geotoolkit.sml.xml.v101.TimePosition(oldDerComponent.getTimePosition()));
+            if (oldDerComponent.getTimePosition() != null) {
+                newDerComponent.setTimePosition(new org.geotoolkit.sml.xml.v101.TimePosition(oldDerComponent.getTimePosition()));
+            }
 
             
             if (oldMember.getRealProcess() instanceof System) {
@@ -409,8 +431,10 @@ public class SmlFactory {
                 ComponentType oldComponent = (ComponentType) oldMember.getRealProcess();
 
                 // method
-                org.geotoolkit.sml.xml.v101.MethodPropertyType newMethod = new org.geotoolkit.sml.xml.v101.MethodPropertyType(oldComponent.getMethod());
-                ((org.geotoolkit.sml.xml.v101.ComponentType)newProcess).setMethod(newMethod);
+                if (oldComponent.getMethod() != null) {
+                    org.geotoolkit.sml.xml.v101.MethodPropertyType newMethod = new org.geotoolkit.sml.xml.v101.MethodPropertyType(oldComponent.getMethod());
+                    ((org.geotoolkit.sml.xml.v101.ComponentType)newProcess).setMethod(newMethod);
+                }
 
             } else {
                 throw new IllegalArgumentException("Other sensor type than system or component are not yet convertible");

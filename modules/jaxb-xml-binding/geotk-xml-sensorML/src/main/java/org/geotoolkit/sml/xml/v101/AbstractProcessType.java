@@ -180,9 +180,7 @@ public abstract class AbstractProcessType extends AbstractSMLType implements Abs
      *
      */
     public void setKeywords(List<Keywords> keywords) {
-        if (keywords == null) {
-            this.keywords = keywords;
-        }
+        this.keywords = keywords;
     }
 
     /**
@@ -212,9 +210,7 @@ public abstract class AbstractProcessType extends AbstractSMLType implements Abs
      *
      */
     public void setIdentification(List<Identification> identification) {
-        if (identification == null) {
-            this.identification = identification;
-        }
+        this.identification = identification;
     }
 
     /**
@@ -244,9 +240,7 @@ public abstract class AbstractProcessType extends AbstractSMLType implements Abs
      *
      */
     public void setClassification(List<Classification> classification) {
-        if (classification == null) {
-            this.classification = classification;
-        }
+        this.classification = classification;
     }
 
     /**
@@ -273,7 +267,9 @@ public abstract class AbstractProcessType extends AbstractSMLType implements Abs
      * 
      */
     public void setValidTime(AbstractValidTime value) {
-        this.validTime = new ValidTime(value);
+        if (value != null) {
+            this.validTime = new ValidTime(value);
+        }
     }
 
     /**

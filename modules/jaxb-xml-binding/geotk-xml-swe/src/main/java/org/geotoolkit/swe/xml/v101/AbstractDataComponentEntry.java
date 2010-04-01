@@ -38,7 +38,7 @@ import org.geotoolkit.swe.xml.AbstractDataComponent;
 public class AbstractDataComponentEntry extends AbstractGMLEntry implements AbstractDataComponent {
     
     @XmlTransient //@XmlAttribute
-    private boolean fixed;
+    private Boolean fixed;
     
     /**
      * definition of the record.
@@ -72,7 +72,7 @@ public class AbstractDataComponentEntry extends AbstractGMLEntry implements Abst
     /**
      * a simple constructor used by the sub classes to initialize l'Entry.
      */
-    public AbstractDataComponentEntry(String id, String definition, boolean fixed) {
+    public AbstractDataComponentEntry(String id, String definition, Boolean fixed) {
         super(id);
         if (definition != null) {
             this.definition = URI.create(definition);

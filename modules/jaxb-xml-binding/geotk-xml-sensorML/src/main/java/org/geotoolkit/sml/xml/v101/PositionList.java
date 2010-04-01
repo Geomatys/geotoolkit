@@ -26,6 +26,7 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import org.geotoolkit.sml.xml.AbstractPosition;
 import org.geotoolkit.sml.xml.AbstractPositionList;
 
 /**
@@ -70,9 +71,18 @@ public class PositionList implements AbstractPositionList {
     }
 
     public PositionList(AbstractPositionList pos) {
-        this.id = pos.getId();
-        this.timePosition = (TimePosition) pos.getTimePosition();
-        this.position = (List<Position>) pos.getPosition();
+        if (pos != null) {
+            this.id = pos.getId();
+            if (pos.getTimePosition() != null) {
+                this.timePosition = new TimePosition(pos.getTimePosition());
+            }
+            if (pos.getPosition() != null) {
+                this.position = new ArrayList<Position>();
+                for (AbstractPosition ap :pos.getPosition()) {
+                    this.position.add(new Position(ap));
+                }
+            }
+        }
     }
 
     public PositionList(String id, List<Position> position) {

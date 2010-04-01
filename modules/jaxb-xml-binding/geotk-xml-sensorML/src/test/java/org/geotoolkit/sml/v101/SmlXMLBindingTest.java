@@ -345,6 +345,33 @@ public class SmlXMLBindingTest {
 
         assertEquals(resultProcess.getCharacteristics(), system.getCharacteristics());
 
+        assertEquals(resultProcess.getComponents().getComponentList().getComponent().size(), system.getComponents().getComponentList().getComponent().size());
+        for (int i = 0 ; i < system.getComponents().getComponentList().getComponent().size(); i++) {
+            ComponentPropertyType expCP = system.getComponents().getComponentList().getComponent().get(i);
+            ComponentPropertyType resCP = resultProcess.getComponents().getComponentList().getComponent().get(i);
+            assertEquals(expCP.getAbstractProcess().getBoundedBy(), resCP.getAbstractProcess().getBoundedBy());
+            assertEquals(expCP.getAbstractProcess().getDocumentation(), resCP.getAbstractProcess().getDocumentation());
+            assertEquals(expCP.getAbstractProcess().getDescription(), resCP.getAbstractProcess().getDescription());
+            assertEquals(expCP.getAbstractProcess().getHistory(), resCP.getAbstractProcess().getHistory());
+            assertEquals(expCP.getAbstractProcess().getId(), resCP.getAbstractProcess().getId());
+            assertEquals(expCP.getAbstractProcess().getIdentification(), resCP.getAbstractProcess().getIdentification());
+            assertEquals(expCP.getAbstractProcess().getKeywords(), resCP.getAbstractProcess().getKeywords());
+            assertEquals(expCP.getAbstractProcess().getLegalConstraint(), resCP.getAbstractProcess().getLegalConstraint());
+            assertEquals(expCP.getAbstractProcess().getLocation(), resCP.getAbstractProcess().getLocation());
+            assertEquals(expCP.getAbstractProcess().getContact(), resCP.getAbstractProcess().getContact());
+            assertEquals(expCP.getAbstractProcess().getName(), resCP.getAbstractProcess().getName());
+            assertEquals(expCP.getAbstractProcess().getParameterName(), resCP.getAbstractProcess().getParameterName());
+            assertEquals(expCP.getAbstractProcess().getSecurityConstraint(), resCP.getAbstractProcess().getSecurityConstraint());
+            assertEquals(expCP.getAbstractProcess().getSrsName(), resCP.getAbstractProcess().getSrsName());
+            assertEquals(expCP.getAbstractProcess().getValidTime(), resCP.getAbstractProcess().getValidTime());
+            assertEquals(expCP.getAbstractProcess().getClassification(), resCP.getAbstractProcess().getClassification());
+            assertEquals(expCP.getAbstractProcess().getCharacteristics(), resCP.getAbstractProcess().getCharacteristics());
+            assertEquals(expCP.getAbstractProcess().getCapabilities(), resCP.getAbstractProcess().getCapabilities());
+            assertEquals(expCP.getAbstractProcess(), resCP.getAbstractProcess());
+            assertEquals(expCP, resCP);
+        }
+        assertEquals(resultProcess.getComponents().getComponentList().getComponent(), system.getComponents().getComponentList().getComponent());
+        assertEquals(resultProcess.getComponents().getComponentList(), system.getComponents().getComponentList());
         assertEquals(resultProcess.getComponents(), system.getComponents());
 
         assertEquals(resultProcess.getPositions(), system.getPositions());

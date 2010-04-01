@@ -28,6 +28,7 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.geotoolkit.sml.xml.AbstractOutputList;
+import org.geotoolkit.sml.xml.IoComponent;
 import org.geotoolkit.util.Utilities;
 
 /**
@@ -72,8 +73,15 @@ public class OutputList implements AbstractOutputList {
     }
 
     public OutputList(AbstractOutputList outputList) {
-        this.output = (List<IoComponentPropertyType>) outputList.getOutput();
-        this.id = outputList.getId();
+        if (outputList != null) {
+            if (outputList.getOutput() != null) {
+                this.output = new ArrayList<IoComponentPropertyType>();
+                for (IoComponent io : outputList.getOutput()) {
+                    this.output.add(new IoComponentPropertyType(io));
+                }
+            }
+            this.id = outputList.getId();
+        }
     }
 
     /**

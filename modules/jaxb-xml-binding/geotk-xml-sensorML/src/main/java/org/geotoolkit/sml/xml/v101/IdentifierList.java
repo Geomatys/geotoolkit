@@ -84,8 +84,8 @@ public class IdentifierList implements AbstractIdentifierList {
             this.id = il.getId();
             if (il.getIdentifier() != null) {
                 this.identifier = new ArrayList<Identifier>();
-                for (AbstractIdentifier id : il.getIdentifier()) {
-                    this.identifier.add(new Identifier(id));
+                for (AbstractIdentifier iden : il.getIdentifier()) {
+                    this.identifier.add(new Identifier(iden));
                 }
             }
         }

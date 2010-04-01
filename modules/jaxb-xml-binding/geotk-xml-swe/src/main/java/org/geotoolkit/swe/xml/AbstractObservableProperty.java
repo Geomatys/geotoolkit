@@ -17,14 +17,11 @@
 
 package org.geotoolkit.swe.xml;
 
-import java.net.URI;
 
 /**
  *
  * @author Mehdi Sidhoum (Geomatys).
  */
-public interface AbstractObservableProperty {
+public interface AbstractObservableProperty extends AbstractDataComponent {
 
-    public URI getDefinition();
-    
 }

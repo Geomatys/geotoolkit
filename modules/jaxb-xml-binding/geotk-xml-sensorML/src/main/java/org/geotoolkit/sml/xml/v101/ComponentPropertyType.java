@@ -25,6 +25,13 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import org.geotoolkit.sml.xml.AbstractDataSource;
+import org.geotoolkit.sml.xml.AbstractProcess;
+import org.geotoolkit.sml.xml.AbstractProcessChain;
+import org.geotoolkit.sml.xml.AbstractProcessModel;
+import org.geotoolkit.sml.xml.Component;
+import org.geotoolkit.sml.xml.ComponentArray;
+import org.geotoolkit.sml.xml.System;
 import org.geotoolkit.sml.xml.ComponentProperty;
 import org.geotoolkit.util.Utilities;
 
@@ -87,6 +94,39 @@ public class ComponentPropertyType implements ComponentProperty {
 
     }
 
+    public ComponentPropertyType(ComponentProperty cp) {
+        if (cp != null) {
+            this.actuate       = cp.getActuate();
+            this.arcrole       = cp.getArcrole();
+            if (cp.getAbstractProcess() != null) {
+                ObjectFactory factory = new ObjectFactory();
+                AbstractProcess process = cp.getAbstractProcess();
+                if (process instanceof System) {
+                    this.process = factory.createSystem(new SystemType((System)process));
+                } else if (process instanceof Component) {
+                    this.process = factory.createComponent(new ComponentType((Component) process));
+                } else if (process instanceof AbstractDataSource) {
+                    this.process = factory.createDataSource( new DataSourceType((AbstractDataSource) process));
+                } else if (process instanceof AbstractProcessChain) {
+                    this.process = factory.createProcessChain(new ProcessChainType((AbstractProcessChain) process));
+                } else if (process instanceof AbstractProcessModel) {
+                    this.process = factory.createProcessModel(new ProcessModelType((AbstractProcessModel) process));
+                } else if (process instanceof ComponentArray) {
+                    this.process = factory.createComponentArray(new ComponentArrayType((ComponentArray) process));
+                } else {
+                    java.lang.System.out.println("Unexpected AbstractProcessType:" + process);
+                }
+            }
+            this.href          = cp.getHref();
+            this.remoteSchema  = cp.getRemoteSchema();
+            this.role          = cp.getRole();
+            this.show          = cp.getShow();
+            this.title         = cp.getTitle();
+            this.type          = cp.getType();
+            this.name          = cp.getName();
+        }
+    }
+
     public ComponentPropertyType(String href) {
         this.href = href;
     }
@@ -120,6 +160,12 @@ public class ComponentPropertyType implements ComponentProperty {
         return process;
     }
 
+    public AbstractProcessType getAbstractProcess() {
+        if (process != null) {
+            return process.getValue();
+        }
+        return null;
+    }
     /**
      * Sets the value of the process property.
      *
@@ -403,7 +449,7 @@ public class ComponentPropertyType implements ComponentProperty {
 
      @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder("[Components]").append("\n");
+        StringBuilder sb = new StringBuilder("[ComponentPropertyType]").append("\n");
         if (process != null) {
             sb.append("process: ").append(process.getValue()).append('\n');
         }

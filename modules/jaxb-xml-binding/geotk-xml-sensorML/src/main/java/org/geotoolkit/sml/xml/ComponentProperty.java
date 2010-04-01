@@ -16,8 +16,6 @@
  */
 package org.geotoolkit.sml.xml;
 
-import javax.xml.bind.JAXBElement;
-
 /**
  *
  * @author Guilhem Legal (Geomatys)
@@ -25,7 +23,7 @@ import javax.xml.bind.JAXBElement;
  */
 public interface ComponentProperty {
 
-    public JAXBElement<? extends AbstractProcess> getProcess();
+    public AbstractProcess getAbstractProcess();
 
     public String getName();
 

@@ -55,9 +55,9 @@ public interface IoComponent {
 
     public AbstractTimeRange getTimeRange();
 
-    public JAXBElement<? extends AbstractDataRecord> getAbstractDataRecord();
+    public AbstractDataRecord getDataRecord();
 
-    public JAXBElement<? extends AbstractDataArray> getAbstractDataArray();
+    public AbstractDataArray getDataArray();
 
     public AbstractObservableProperty getObservableProperty();
 

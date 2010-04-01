@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.sml.xml.AbstractComponentList;
+import org.geotoolkit.sml.xml.ComponentProperty;
 import org.geotoolkit.util.Utilities;
 
 /**
@@ -71,7 +72,12 @@ public class ComponentList implements AbstractComponentList {
     }
 
     public ComponentList(AbstractComponentList component) {
-        this.component = (List<ComponentPropertyType>) component.getComponent();
+        if (component != null) {
+            this.component = new ArrayList<ComponentPropertyType>();
+            for (ComponentProperty cp :component.getComponent()) {
+                this.component.add(new ComponentPropertyType(cp));
+            }
+        }
     }
 
     public ComponentList(List<ComponentPropertyType> component) {
