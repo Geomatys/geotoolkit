@@ -129,7 +129,7 @@ public class ProjectiveTransform extends AbstractMathTransform implements Linear
      * the serialization form in order to avoid rounding errors if a user asks for the inverse
      * of the inverse (i.e. the original transform) after deserialization.
      */
-    private ProjectiveTransform inverse;
+    AbstractMathTransform inverse;
 
     /**
      * Constructs a transform from the specified matrix.
@@ -617,8 +617,9 @@ public class ProjectiveTransform extends AbstractMathTransform implements Linear
             } else {
                 Matrix matrix = MatrixFactory.create(numRow, numCol, elt);
                 matrix = MatrixUtilities.invert(matrix);
-                inverse = createInverse(matrix);
-                inverse.inverse = this;
+                ProjectiveTransform inv = createInverse(matrix);
+                inv.inverse = this;
+                inverse = inv;
             }
         }
         return inverse;

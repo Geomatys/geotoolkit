@@ -405,7 +405,11 @@ final class CopyTransform extends AbstractMathTransform implements LinearTransfo
                             }
                         }
                         matrix.setElement(srcDim, dstDim, 1);
-                        return inverse = ProjectiveTransform.create(matrix);
+                        inverse = ProjectiveTransform.create(matrix);
+                        if (inverse instanceof ProjectiveTransform) {
+                            ((ProjectiveTransform) inverse).inverse = this;
+                        }
+                        return inverse;
                     }
                 }
                 /*
