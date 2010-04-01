@@ -59,6 +59,7 @@ import org.geotoolkit.display2d.style.raster.ShadedReliefOp;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.internal.coverage.CoverageUtilities;
 import org.geotoolkit.internal.image.ColorUtilities;
+import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.operation.transform.LinearTransform;
 import org.geotoolkit.resources.Errors;
@@ -70,6 +71,7 @@ import org.geotoolkit.util.converter.Classes;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.Function;
 import org.opengis.geometry.Envelope;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.style.ChannelSelection;
@@ -109,12 +111,10 @@ public class DefaultRasterSymbolizerRenderer extends AbstractSymbolizerRenderer<
     public void portray(final ProjectedCoverage projectedCoverage) throws PortrayalException{
 
         double[] resolution = renderingContext.getResolution();
-        final Envelope bounds = new GeneralEnvelope(renderingContext.getCanvasObjectiveBounds2D());
+        final Envelope bounds = new GeneralEnvelope(renderingContext.getCanvasObjectiveBounds());
         resolution = checkResolution(resolution,bounds);
         final GridCoverageReadParam param = new GridCoverageReadParam();
         
-        //System.out.println(bounds);
-
         param.setEnvelope(bounds);
         param.setResolution(resolution);
 
@@ -131,18 +131,21 @@ public class DefaultRasterSymbolizerRenderer extends AbstractSymbolizerRenderer<
             LOGGER.log(Level.WARNING, "Requested an area where no coverage where found.");
         }
 
-        if(!CRS.equalsIgnoreMetadata(dataCoverage.getCoordinateReferenceSystem(),renderingContext.getObjectiveCRS())){
-            dataCoverage = (GridCoverage2D) Operations.DEFAULT.resample(dataCoverage.view(ViewType.NATIVE), bounds.getCoordinateReferenceSystem());
-            dataCoverage = dataCoverage.view(ViewType.RENDERED);
+        try{
 
-            //todo : we should raise an ERROR exception, not just an info
-//            monitor.exceptionOccured(
-//                    new IllegalStateException("Coverage is not in the requested CRS, found : " +
-//                    "\n"+ dataCoverage.getCoordinateReferenceSystem() +
-//                    " was expecting \n : " + context.getObjectiveCRS()), Level.ERROR);
-            //todo : we should return here since the coverage is not in the good crs
-            //but for the moment postgrid return a crs not exactly the same, but pretty near
-            //return;
+            final CoordinateReferenceSystem candidate2D = CRSUtilities.getCRS2D(dataCoverage.getCoordinateReferenceSystem());
+            if(!CRS.equalsIgnoreMetadata(candidate2D,renderingContext.getObjectiveCRS2D()) ){
+
+                dataCoverage = (GridCoverage2D) Operations.DEFAULT.resample(dataCoverage.view(ViewType.NATIVE), renderingContext.getObjectiveCRS2D());
+                dataCoverage = dataCoverage.view(ViewType.RENDERED);
+            }
+        }catch(Exception ex){
+            //several kind of errors can happen here, we catch anything to avoid blocking the map component.
+            monitor.exceptionOccured(
+                new IllegalStateException("Coverage is not in the requested CRS, found : " +
+                "\n"+ dataCoverage.getCoordinateReferenceSystem() +
+                " was expecting \n : " + renderingContext.getObjectiveCRS()),Level.WARNING);
+            return;
         }
 
         //we must switch to objectiveCRS for grid coverage

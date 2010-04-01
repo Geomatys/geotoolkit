@@ -89,14 +89,16 @@ public class StatefullCoverageLayerJ2D extends AbstractLayerJ2D<CoverageMapLayer
         boolean objectiveCleared = false;
 
         //clear objective cache is objective crs changed -----------------------
-        final CoordinateReferenceSystem objectiveCRS = context.getObjectiveCRS();
-        if(objectiveCRS != lastObjectiveCRS){
+        //todo use only the 2D CRS, the transform parameters are only used for the border
+        //geometry if needed, the gridcoverageReader will handle itself the transform
+        final CoordinateReferenceSystem objectiveCRS2D = context.getObjectiveCRS2D();
+        if(objectiveCRS2D != lastObjectiveCRS){
             params.objectiveToDisplay.setToIdentity();
-            lastObjectiveCRS = objectiveCRS;
+            lastObjectiveCRS = objectiveCRS2D;
             objectiveCleared = true;
 
             try {
-                params.dataToObjective = context.getMathTransform(dataCRS, objectiveCRS);
+                params.dataToObjective = context.getMathTransform(dataCRS, objectiveCRS2D);
                 params.dataToObjectiveTransformer.setMathTransform(params.dataToObjective);
             } catch (FactoryException ex) {
                 Logger.getLogger(StatefullCoverageLayerJ2D.class.getName()).log(Level.WARNING, null, ex);

@@ -26,6 +26,7 @@ import java.awt.geom.Rectangle2D;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.measure.quantity.Length;
@@ -180,7 +181,7 @@ public final class DefaultRenderingContext2D implements RenderingContext2D{
     /**
      * Precalculated resolution, avoid graphics to recalculate it since
      */
-    private final double[] resolution = new double[2];
+    private double[] resolution;
 
     /**
      * Precalculated geographic scale, avoid graphics to recalculate it.
@@ -233,7 +234,8 @@ public final class DefaultRenderingContext2D implements RenderingContext2D{
         this.coeffs.clear();
         //set the Pixel coeff = 1
         this.coeffs.put(NonSI.PIXEL, 1f);
-        
+
+
         //calculate canvas shape/bounds values ---------------------------------
         this.canvasDisplayShape = canvasDisplayShape;
         final Rectangle2D canvasDisplayBounds = canvasDisplayShape.getBounds2D();
@@ -241,17 +243,26 @@ public final class DefaultRenderingContext2D implements RenderingContext2D{
         this.canvasObjectiveShape = canvasObjectiveShape;
         
         final Rectangle2D canvasObjectiveBounds = canvasObjectiveShape.getBounds2D();
-        this.resolution[0] = canvasObjectiveBounds.getWidth()/canvasDisplayBounds.getWidth();
-        this.resolution[1] = canvasObjectiveBounds.getHeight()/canvasDisplayBounds.getHeight();
-//        canvasObjectiveBounds.setRect(canvasObjectiveBounds.getX()-d0,
-//                                      canvasObjectiveBounds.getY()-d1,
-//                                      canvasObjectiveBounds.getWidth()+2*d0,
-//                                      canvasObjectiveBounds.getHeight()+2*d1);
+
+
+        //calculate the objective bbox with there temporal and elevation parameters ----
         this.canvasObjectiveBBox2D = new Envelope2D(objectiveCRS2D,canvasObjectiveBounds);
         try {
             this.canvasObjectiveBBox = GO2Utilities.combine(objectiveCRS, canvasObjectiveBounds, temporal, elevation);
         } catch (TransformException ex) {
             LOGGER.log(Level.SEVERE, null, ex);
+        }
+        this.objectiveCRS = canvasObjectiveBBox.getCoordinateReferenceSystem();
+
+
+        //calculate the resolution -----------------------------------------------
+        this.resolution = new double[canvasObjectiveBBox.getDimension()];
+        this.resolution[0] = canvasObjectiveBounds.getWidth()/canvasDisplayBounds.getWidth();
+        this.resolution[1] = canvasObjectiveBounds.getHeight()/canvasDisplayBounds.getHeight();
+        for(int i=2; i<resolution.length; i++){
+            //other dimension are likely to be the temporal and elevation one.
+            //we set a hug resolution to ensure that only one slice of data will be retrived.
+            resolution[i] = Double.MAX_VALUE;
         }
 
         //calculate painting shape/bounds values -------------------------------
@@ -270,7 +281,7 @@ public final class DefaultRenderingContext2D implements RenderingContext2D{
 
         geoScale = canvas.getController().getGeographicScale();
 
-        //set temporal and elevation range
+        //set temporal and elevation range------------------------------------------
         if(temporal != null){
             temporalRange[0] = temporal[0];
             temporalRange[1] = temporal[1];
@@ -312,8 +323,7 @@ public final class DefaultRenderingContext2D implements RenderingContext2D{
         this.canvasObjectiveShape = null;
         this.objectiveToDevice = null;
         this.objectiveToDisplay = null;
-        this.resolution[0] = 1;
-        this.resolution[1] = 1;
+        this.resolution = null;
         this.current = DISPLAY_TRS;
     }
 
@@ -517,10 +527,10 @@ public final class DefaultRenderingContext2D implements RenderingContext2D{
      */
     @Override
     public double[] getResolution(CoordinateReferenceSystem crs) {
-        if(CRS.equalsIgnoreMetadata(objectiveCRS2D, crs)){
+        if(CRS.equalsIgnoreMetadata(objectiveCRS, crs)){
             return getResolution();
         }else{
-            final double[] res = getResolution();
+            final double[] res = new double[crs.getCoordinateSystem().getDimension()];
 
             final Envelope env;
             try {
@@ -528,6 +538,11 @@ public final class DefaultRenderingContext2D implements RenderingContext2D{
                 final Rectangle2D canvasCRSBounds = new Rectangle2D.Double(0, 0, env.getSpan(0), env.getSpan(1));
                 res[0] = Math.abs(canvasCRSBounds.getWidth()/canvasDisplaybounds.getWidth());
                 res[1] = Math.abs(canvasCRSBounds.getHeight()/canvasDisplaybounds.getHeight());
+                for(int i=2; i<res.length; i++){
+                    //other dimension are likely to be the temporal and elevation one.
+                    //we set a hug resolution to ensure that only one slice of data will be retrived.
+                    res[i] = Double.MAX_VALUE;
+                }
             } catch (TransformException ex) {
                 LOGGER.log(Level.SEVERE, null, ex);
             } catch (IllegalArgumentException ex) {
@@ -661,6 +676,70 @@ public final class DefaultRenderingContext2D implements RenderingContext2D{
     @Override
     public RenderingHints getRenderingHints() {
         return renderingHints;
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder();
+        sb.append("========== Rendering Context 2D ==========\n");
+
+        sb.append("---------- Coordinate Reference Systems ----------\n");
+        sb.append("Objective CRS = \n");
+        sb.append(objectiveCRS).append("\n");
+        sb.append("Objective CRS 2D = \n");
+        sb.append(objectiveCRS2D).append("\n");
+        sb.append("Display CRS = \n");
+        sb.append(displayCRS).append("\n");
+        sb.append("Resolution = ");
+        for(double d : resolution){
+            sb.append(d).append("   ");
+        }
+        sb.append("\n");
+        sb.append("Geographic Scale = ");
+        sb.append(geoScale).append("\n");
+        sb.append("Temporal range = ");
+        sb.append(temporalRange[0]).append("  to  ").append(temporalRange[1]).append("\n");
+        sb.append("Elevation range = ");
+        sb.append(elevationRange[0]).append("  to  ").append(elevationRange[1]).append("\n");
+
+        sb.append("\n---------- Canvas Geometries ----------\n");
+        sb.append("Display Shape = \n");
+        sb.append(canvasDisplayShape).append("\n");
+        sb.append("Display Bounds = \n");
+        sb.append(canvasDisplaybounds).append("\n");
+        sb.append("Objective Shape = \n");
+        sb.append(canvasObjectiveShape).append("\n");
+        sb.append("Objective BBOX = \n");
+        sb.append(canvasObjectiveBBox).append("\n");
+        sb.append("Objective BBOX 2D = \n");
+        sb.append(canvasObjectiveBBox2D).append("\n");
+
+        sb.append("\n---------- Painting Geometries (dirty area) ----------\n");
+        sb.append("Display Shape = \n");
+        sb.append(paintingDisplayShape).append("\n");
+        sb.append("Display Bounds = \n");
+        sb.append(paintingDisplaybounds).append("\n");
+        sb.append("Objective Shape = \n");
+        sb.append(paintingObjectiveShape).append("\n");
+        sb.append("Objective BBOX = \n");
+        sb.append(paintingObjectiveBBox).append("\n");
+        sb.append("Objective BBOX 2D = \n");
+        sb.append(paintingObjectiveBBox2D).append("\n");
+
+        sb.append("\n---------- Transforms ----------\n");
+        sb.append("Objective to Display = \n");
+        sb.append(objectiveToDisplay).append("\n");
+        sb.append("Display to Objective = \n");
+        sb.append(displayToObjective).append("\n");
+
+        
+        sb.append("\n---------- Rendering Hints ----------\n");
+        for(Entry<Object,Object> entry : renderingHints.entrySet()){
+            sb.append(entry.getKey()).append("=").append(entry.getValue()).append("\n");
+        }
+
+        sb.append("========== Rendering Context 2D ==========\n");
+        return sb.toString();
     }
 
 }

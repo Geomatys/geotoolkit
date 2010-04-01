@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.geotoolkit.data.DataStoreException;
 import org.geotoolkit.data.FeatureCollection;
@@ -81,7 +82,9 @@ public class StatefullFeatureLayerJ2D extends StatelessFeatureLayerJ2D{
         boolean objectiveCleared = false;
 
         //clear objective cache is objective crs changed -----------------------
-        final CoordinateReferenceSystem objectiveCRS = context.getObjectiveCRS();
+        //we work against the 2D crs for features
+        //todo we should work against the ND crs when datastore will handle more than 2D.
+        final CoordinateReferenceSystem objectiveCRS = context.getObjectiveCRS2D();
         if(objectiveCRS != lastObjectiveCRS){
             //change the aff value to force it's refresh
             params.objectiveToDisplay.setTransform(2, 0, 0, 2, 0, 0);
@@ -92,7 +95,7 @@ public class StatefullFeatureLayerJ2D extends StatelessFeatureLayerJ2D{
                 params.dataToObjective = context.getMathTransform(dataCRS, objectiveCRS);
                 params.dataToObjectiveTransformer.setMathTransform(params.dataToObjective);
             } catch (FactoryException ex) {
-                ex.printStackTrace();
+                Logger.getLogger(StatefullFeatureLayerJ2D.class.getName()).log(Level.WARNING, null, ex);
             }
 
             for(StatefullProjectedFeature gra : cache.values()){
