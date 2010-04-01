@@ -18,10 +18,12 @@
 package org.geotoolkit.gui.swing.go2.control;
 
 import java.awt.BorderLayout;
-import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import javax.measure.unit.SI;
+import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
@@ -45,6 +47,7 @@ public class JMapElevationLine extends JPanel implements PropertyChangeListener{
 
     private final SpinnerNumberModel modelHaut;
     private final SpinnerNumberModel modelBas;
+    private final JButton reset;
     private final JNavigator<Double> guiNav = new JNavigator<Double>(new DoubleNavigatorModel());
     
     private volatile Map2D map = null;
@@ -67,6 +70,15 @@ public class JMapElevationLine extends JPanel implements PropertyChangeListener{
         modelBas.setMaximum(Double.POSITIVE_INFINITY);
         modelBas.setValue(Double.NEGATIVE_INFINITY);
 
+        reset = new JButton("reset");
+        reset.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(map == null) return;
+                map.getCanvas().getController().setElevationRange(null, null, SI.METRE);
+            }
+        });
+
         final JSpinner haut = new JSpinner(modelHaut);
         final JSpinner bas = new JSpinner(modelBas);
 
@@ -77,6 +89,8 @@ public class JMapElevationLine extends JPanel implements PropertyChangeListener{
 
                 Double vh = (Double) modelHaut.getValue();
                 Double vb = (Double) modelBas.getValue();
+                if(vh.isInfinite()) vh = null;
+                if(vb.isInfinite()) vb = null;
                 
                 map.getCanvas().getController().setElevationRange(vb, vh, SI.METRE);
 
@@ -92,6 +106,7 @@ public class JMapElevationLine extends JPanel implements PropertyChangeListener{
         north.add(bas);
         north.add(new JLabel("max"));
         north.add(haut);
+        north.add(reset);
 
         add(BorderLayout.NORTH,north);
         add(BorderLayout.CENTER,guiNav);

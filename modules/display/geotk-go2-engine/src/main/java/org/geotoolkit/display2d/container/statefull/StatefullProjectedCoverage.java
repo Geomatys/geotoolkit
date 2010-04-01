@@ -79,18 +79,6 @@ public class StatefullProjectedCoverage implements ProjectedCoverage {
                 handler.putAndUnlock(value);
             }
 
-//            try {
-//                value = handler.peek();
-//                if (value == null) {
-//                    value = (GridCoverage2D) GO2Utilities.reCalculate(layer.getCoverageReader(), param, params.context);
-//                    value = (GridCoverage2D) layer.getCoverageReader().read(0,param);
-//                }
-//            } catch(TransformException ex){
-//                throw new CoverageStoreException(ex);
-//            }finally {
-//                handler.putAndUnlock(value);
-//            }
-
         }
         return value;
     }
