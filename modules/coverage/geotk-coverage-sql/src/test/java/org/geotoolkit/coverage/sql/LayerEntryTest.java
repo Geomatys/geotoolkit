@@ -71,6 +71,7 @@ public final class LayerEntryTest extends CatalogTestBase {
         assertEquals(1, validRanges.size());
         assertEquals(-2.85, validRanges.get(0).getMinimum(), EPS);
         assertEquals(35.25, validRanges.get(0).getMaximum(), EPS);
+        assertSame("Shall be cached.", validRanges, entry.getSampleValueRanges());
     }
 
     /**
@@ -141,6 +142,7 @@ public final class LayerEntryTest extends CatalogTestBase {
         assertEquals("X scale",  0.087890625, matrix.getElement(0, 0), EPS);
         assertEquals("Y scale", -0.087890625, matrix.getElement(1, 1), EPS);
         assertEquals("T scale",            8, matrix.getElement(2, 2), EPS);
+        assertSame("Shall be cached.", geometries, entry.getGridGeometries());
     }
 
     /**
@@ -175,6 +177,7 @@ public final class LayerEntryTest extends CatalogTestBase {
         final SortedSet<Date> times = entry.getAvailableTimes();
         assertTrue(times.contains(SAMPLE_TIME));
         assertSame(times, times.subSet(START_TIME, END_TIME));
+        assertSame("Shall be cached.", times, entry.getAvailableTimes());
 
         final SortedSet<Date> sub = times.subSet(SUB_START_TIME, SUB_END_TIME);
         assertEquals(7, times.size());
@@ -200,6 +203,7 @@ public final class LayerEntryTest extends CatalogTestBase {
         entry = getDatabase().getTable(LayerTable.class).getEntry(NETCDF);
         final SortedSet<Number> elevations = entry.getAvailableElevations();
         checkCoriolisElevations(elevations);
+        assertSame("Shall be cached.", elevations, entry.getAvailableElevations());
     }
 
     /**

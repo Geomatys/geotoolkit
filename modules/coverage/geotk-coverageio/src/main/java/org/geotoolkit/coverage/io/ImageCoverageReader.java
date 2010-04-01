@@ -383,7 +383,7 @@ public class ImageCoverageReader extends GridCoverageReader {
                                         messageKey = Errors.Keys.UNKNOWN_TYPE_$1;
                                         argument = input.getClass();
                                     }
-                                    throw new IOException(Errors.format(messageKey, argument));
+                                    throw new IOException(Errors.getResources(locale).getString(messageKey, argument));
                                 }
                             }
                         }

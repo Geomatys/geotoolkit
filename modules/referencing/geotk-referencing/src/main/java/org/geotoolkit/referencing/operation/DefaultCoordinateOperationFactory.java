@@ -674,9 +674,6 @@ public class DefaultCoordinateOperationFactory extends AbstractCoordinateOperati
     {
         final TemporalDatum sourceDatum = sourceCRS.getDatum();
         final TemporalDatum targetDatum = targetCRS.getDatum();
-        if (!equalsIgnoreMetadata(sourceDatum, targetDatum)) {
-            throw new OperationNotFoundException(getErrorMessage(sourceDatum, targetDatum));
-        }
         /*
          * Compute the epoch shift.  The epoch is the time "0" in a particular coordinate
          * reference system. For example, the epoch for java.util.Date object is january 1,
@@ -701,10 +698,10 @@ public class DefaultCoordinateOperationFactory extends AbstractCoordinateOperati
          * Consequently, it is added to element (0,1).
          */
         final Matrix matrix = swapAndScaleAxis(sourceCS, targetCS);
-        final int translationColumn = matrix.getNumCol()-1;
+        final int translationColumn = matrix.getNumCol() - 1;
         if (translationColumn >= 0) { // Paranoiac check: should always be 1.
             final double translation = matrix.getElement(0, translationColumn);
-            matrix.setElement(0, translationColumn, translation+epochShift);
+            matrix.setElement(0, translationColumn, translation + epochShift);
         }
         return createFromAffineTransform(AXIS_CHANGES, sourceCRS, targetCRS, matrix);
     }

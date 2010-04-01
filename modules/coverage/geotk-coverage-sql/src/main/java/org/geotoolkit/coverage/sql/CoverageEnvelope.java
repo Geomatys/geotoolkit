@@ -299,7 +299,7 @@ public class CoverageEnvelope extends AbstractEnvelope implements Cloneable {
                 envelope = CRS.transform(userToStandard, envelope);
             }
         } catch (FactoryException e) {
-            throw new TransformException(e.getLocalizedMessage(), e);
+            throw new TransformException(Errors.format(Errors.Keys.CANT_TRANSFORM_ENVELOPE), e);
         }
         boolean changed = false;
         sourceCRS = envelope.getCoordinateReferenceSystem();

@@ -24,7 +24,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.Map;
 
-import org.opengis.util.InternationalString;
 import org.opengis.referencing.datum.TemporalDatum;
 
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
@@ -164,22 +163,6 @@ public class DefaultTemporalDatum extends AbstractDatum implements TemporalDatum
     @Override
     public Date getOrigin() {
         return new Date(origin);
-    }
-
-    /**
-     * Description of the point or points used to anchor the datum to the Earth.
-     */
-    @Override
-    public InternationalString getAnchorPoint() {
-        return super.getAnchorPoint();
-    }
-
-    /**
-     * The time after which this datum definition is valid.
-     */
-    @Override
-    public Date getRealizationEpoch() {
-        return super.getRealizationEpoch();
     }
 
     /**

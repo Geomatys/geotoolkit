@@ -26,6 +26,7 @@ import org.opengis.referencing.operation.CoordinateOperation;
 import org.opengis.referencing.operation.CoordinateOperationFactory;
 import org.opengis.referencing.operation.Conversion;
 import org.opengis.referencing.operation.MathTransform;
+import org.opengis.referencing.operation.MathTransform1D;
 import org.opengis.referencing.operation.SingleOperation;
 import org.opengis.referencing.operation.OperationNotFoundException;
 import org.opengis.referencing.operation.Projection;
@@ -36,9 +37,7 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
 import org.geotoolkit.referencing.ReferencingTestCase;
 import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
-import org.geotoolkit.referencing.crs.DefaultVerticalCRS;
-import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.geotoolkit.referencing.datum.DefaultTemporalDatum;
 import org.geotoolkit.referencing.operation.matrix.GeneralMatrix;
 import org.geotoolkit.referencing.operation.transform.LinearTransform;
 import org.geotoolkit.referencing.operation.transform.TransformTestCase;
@@ -46,6 +45,9 @@ import org.geotoolkit.referencing.operation.transform.AbstractMathTransform;
 
 import static org.geotoolkit.referencing.crs.DefaultGeographicCRS.WGS84;
 import static org.geotoolkit.referencing.crs.DefaultGeographicCRS.WGS84_3D;
+import static org.geotoolkit.referencing.crs.DefaultVerticalCRS.ELLIPSOIDAL_HEIGHT;
+import static org.geotoolkit.referencing.crs.DefaultTemporalCRS.MODIFIED_JULIAN;
+import static org.geotoolkit.referencing.crs.DefaultTemporalCRS.UNIX;
 import static org.geotoolkit.referencing.crs.DefaultEngineeringCRS.GENERIC_2D;
 import static org.geotoolkit.referencing.crs.DefaultEngineeringCRS.CARTESIAN_2D;
 import static org.geotoolkit.referencing.crs.DefaultEngineeringCRS.CARTESIAN_3D;
@@ -317,7 +319,7 @@ public class CoordinateOperationFactoryTest extends TransformTestCase {
      */
     @Test
     public void testDatumShift7Param() throws Exception {
-        final CoordinateReferenceSystem sourceCRS = DefaultGeographicCRS.WGS84;
+        final CoordinateReferenceSystem sourceCRS = WGS84;
         final CoordinateReferenceSystem targetCRS = crsFactory.createFromWKT(WKT.PROJCS_UTM_58S);
         CoordinateOperation operation = opFactory.createOperation(sourceCRS, targetCRS);
         assertSame(sourceCRS, operation.getSourceCRS());
@@ -426,6 +428,21 @@ public class CoordinateOperationFactoryTest extends TransformTestCase {
         final CoordinateReferenceSystem targetCRS = crsFactory.createFromWKT(WKT.VERTCS_HEIGHT);
         final CoordinateOperation op = opFactory.createOperation(sourceCRS, targetCRS);
         assertNull(op); // We should not reach this point.
+    }
+
+    /**
+     * Tests a conversion of the temporal axis. We convert 1899-12-31 from a CRS having its
+     * epoch at 1970-1-1 to an other CRS having its epoch at 1858-11-17, so the new value shall
+     * be approximatively 41 years after the new epoch. This conversion also implies a change of
+     * units from milliseconds to days.
+     *
+     * @throws Exception Should never happen.
+     */
+    @Test
+    public void testTemporalConversion() throws Exception {
+        MathTransform1D tr = (MathTransform1D) opFactory.createOperation(UNIX, MODIFIED_JULIAN).getMathTransform();
+        final long time = DefaultTemporalDatum.DUBLIN_JULIAN.getOrigin().getTime(); // December 31, 1899 at 12:00 UTC
+        assertEquals(15019.5, tr.transform(time / 1000.0), 1E-12);
     }
 
     /**
@@ -677,8 +694,8 @@ public class CoordinateOperationFactoryTest extends TransformTestCase {
         assumeTrue(ReferencingTestCase.isEpsgFactoryAvailable());
         final CoordinateReferenceSystem targetCRS = crsFactory.createFromWKT(WKT.PROJCS_MERCATOR);
         CoordinateReferenceSystem sourceCRS = targetCRS;
-        sourceCRS = new DefaultCompoundCRS("Mercator 3D", sourceCRS, DefaultVerticalCRS.ELLIPSOIDAL_HEIGHT);
-        sourceCRS = new DefaultCompoundCRS("Mercator 4D", sourceCRS, DefaultTemporalCRS.MODIFIED_JULIAN);
+        sourceCRS = new DefaultCompoundCRS("Mercator 3D", sourceCRS, ELLIPSOIDAL_HEIGHT);
+        sourceCRS = new DefaultCompoundCRS("Mercator 4D", sourceCRS, MODIFIED_JULIAN);
         final CoordinateOperation op = opFactory.createOperation(sourceCRS, targetCRS);
         transform = op.getMathTransform();
         assertSame(sourceCRS, op.getSourceCRS());
