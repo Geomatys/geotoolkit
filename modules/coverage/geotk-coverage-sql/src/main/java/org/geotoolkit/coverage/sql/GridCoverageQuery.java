@@ -62,7 +62,7 @@ final class GridCoverageQuery extends Query {
         index            = addOptionalColumn ("index", 1,  SELECT, LIST, INSERT);
         startTime        = addMandatoryColumn("startTime", SELECT, LIST, INSERT, AVAILABLE_DATA, BOUNDING_BOX);
         endTime          = addMandatoryColumn("endTime",   SELECT, LIST, INSERT, AVAILABLE_DATA, BOUNDING_BOX);
-        spatialExtent    = addMandatoryColumn("extent",    SELECT, LIST, INSERT, AVAILABLE_DATA);
+        spatialExtent    = addMandatoryColumn("extent",    SELECT, LIST, INSERT);
         horizontalExtent = addForeignerColumn("horizontalExtent", "GridGeometries", new QueryType[] {BOUNDING_BOX});
         startTime.setFunction("MIN", BOUNDING_BOX);
         endTime  .setFunction("MAX", BOUNDING_BOX);

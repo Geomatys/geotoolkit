@@ -23,6 +23,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+import java.util.Set;
 import java.util.SortedSet;
 
 
@@ -219,13 +220,14 @@ public abstract class UnmodifiableArraySortedSet<E> extends AbstractSet<E> imple
          *
          * @param numbers The set to copy.
          */
-        public Number(final SortedSet<java.lang.Number> numbers) {
+        public Number(final Set<? extends java.lang.Number> numbers) {
             super(0, numbers.size());
             values = new double[upper];
             int i = 0;
             for (final java.lang.Number e : numbers) {
                 values[i++] = e.doubleValue();
             }
+            Arrays.sort(values);
         }
 
         /**
@@ -286,13 +288,14 @@ public abstract class UnmodifiableArraySortedSet<E> extends AbstractSet<E> imple
          *
          * @param dates The set to copy.
          */
-        public Date(final SortedSet<java.util.Date> dates) {
+        public Date(final Set<? extends java.lang.Number> dates) {
             super(0, dates.size());
             times = new long[upper];
             int i = 0;
-            for (final java.util.Date e : dates) {
-                times[i++] = e.getTime();
+            for (final java.lang.Number e : dates) {
+                times[i++] = e.longValue();
             }
+            Arrays.sort(times);
         }
 
         /**

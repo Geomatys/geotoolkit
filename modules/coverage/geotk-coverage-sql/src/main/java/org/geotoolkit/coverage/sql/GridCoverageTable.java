@@ -26,6 +26,7 @@ import java.awt.geom.Dimension2D;
 
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.collection.RangeSet;
+import org.geotoolkit.util.collection.XCollections;
 import org.geotoolkit.internal.sql.table.Database;
 import org.geotoolkit.internal.sql.table.SpatialDatabase;
 import org.geotoolkit.internal.sql.table.BoundedSingletonTable;
@@ -34,6 +35,7 @@ import org.geotoolkit.internal.sql.table.NoSuchTableException;
 import org.geotoolkit.internal.sql.table.LocalCache;
 import org.geotoolkit.internal.sql.table.Parameter;
 import org.geotoolkit.internal.sql.table.QueryType;
+import org.geotoolkit.internal.UnmodifiableArraySortedSet;
 import org.geotoolkit.resources.Errors;
 
 
@@ -86,18 +88,6 @@ class GridCoverageTable extends BoundedSingletonTable<GridCoverageEntry> {
      * the spatio-temporal area of interest. Will be created only when first needed.
      */
     private transient Comparator<GridCoverageReference> comparator;
-
-    /**
-     * The set of available dates. Will be computed by
-     * {@link #getAvailableTimes} when first needed.
-     */
-    private transient SortedSet<Date> availableTimes;
-
-    /**
-     * The set of available altitudes for each dates. Will be computed by
-     * {@link #getAvailableCentroids} when first needed.
-     */
-    private transient SortedMap<Date, SortedSet<Number>> availableCentroids;
 
     /**
      * Constructs a new {@code GridCoverageTable}.
@@ -345,112 +335,39 @@ loop:   for (final GridCoverageEntry newEntry : entries) {
      * @throws SQLException if an error occured while reading the database.
      */
     public final SortedSet<Date> getAvailableTimes() throws SQLException {
-        if (availableTimes == null) {
-            getAvailableCentroids(); // Computes 'availableTimes' as a side effect.
-        }
-        return availableTimes;
-    }
-
-    /**
-     * Returns the set of altitudes where a coverage is available. Only the images in
-     * the currently {@linkplain #getEnvelope selected envelope} are considered.
-     * <p>
-     * If different images have different set of altitudes, then this method returns
-     * only the altitudes found in every images.
-     *
-     * @return The set of altitudes. May be empty, but will never be null.
-     * @throws SQLException if an error occured while reading the database.
-     */
-    public final SortedSet<Number> getAvailableElevations() throws SQLException {
-        final SortedSet<Number> commons = new TreeSet<Number>();
-        final SortedMap<Date, SortedSet<Number>> centroids = getAvailableCentroids();
-        final Iterator<SortedSet<Number>> iterator = centroids.values().iterator();
-        if (iterator.hasNext()) {
-            commons.addAll(iterator.next());
-            while (iterator.hasNext()) {
-                final SortedSet<Number> altitudes = iterator.next();
-                for (final Iterator<Number> it=commons.iterator(); it.hasNext();) {
-                    if (!altitudes.contains(it.next())) {
-                        it.remove();
-                    }
-                }
-                if (commons.isEmpty()) {
-                    break; // No need to continue.
-                }
-            }
-        }
-        return commons;
-    }
-
-    /**
-     * Returns the available altitudes for each dates. This method returns the "centroids",
-     * i.e. vertical ranges are replaced by the middle vertical points and temporal ranges are
-     * replaced by the middle time. This method considers only the vertical and temporal axis.
-     * The horizontal axes are omitted.
-     *
-     * @return An immutable collection of centroids. Keys are the dates, and values are the set
-     *         of altitudes for a given date.
-     * @throws SQLException if an error occured while reading the database.
-     */
-    final SortedMap<Date, SortedSet<Number>> getAvailableCentroids() throws SQLException {
-        if (availableCentroids == null) {
-            final NavigableMap<Date, List<Comparable<?>>> centroids =
-                    new TreeMap<Date, List<Comparable<?>>>();
-            final GridCoverageQuery query = (GridCoverageQuery) super.query;
-            final Calendar calendar = getCalendar();
-            synchronized (getLock()) {
-                final LocalCache.Stmt ce = getStatement(QueryType.AVAILABLE_DATA);
-                final int startTimeIndex = indexOf(query.startTime);
-                final int endTimeIndex   = indexOf(query.endTime);
-                final int extentIndex    = indexOf(query.spatialExtent);
-                final PreparedStatement statement = ce.statement;
-                final ResultSet results = statement.executeQuery();
-                while (results.next()) {
-                    final Date startTime = results.getTimestamp(startTimeIndex, calendar);
-                    final Date   endTime = results.getTimestamp(  endTimeIndex, calendar);
-                    final Date      time;
-                    if (startTime != null) {
-                        if (endTime != null) {
-                            time = new Date((startTime.getTime() + endTime.getTime()) / 2);
-                        } else {
-                            time = new Date(startTime.getTime());
-                        }
-                    } else if (endTime != null) {
-                        time = new Date(endTime.getTime());
+        final Set<Long> dates = new HashSet<Long>();
+        final GridCoverageQuery query = (GridCoverageQuery) super.query;
+        final Calendar calendar = getCalendar();
+        synchronized (getLock()) {
+            final LocalCache.Stmt ce = getStatement(QueryType.AVAILABLE_DATA);
+            final int startTimeIndex = indexOf(query.startTime);
+            final int endTimeIndex   = indexOf(query.endTime);
+            final PreparedStatement statement = ce.statement;
+            final ResultSet results = statement.executeQuery();
+            while (results.next()) {
+                final Date startTime = results.getTimestamp(startTimeIndex, calendar);
+                final Date   endTime = results.getTimestamp(  endTimeIndex, calendar);
+                final long      time;
+                if (startTime != null) {
+                    if (endTime != null) {
+                        time = (startTime.getTime() + endTime.getTime()) / 2;
                     } else {
-                        continue;
+                        time = startTime.getTime();
                     }
-                    final Comparable<?> extentID = results.getInt(extentIndex);
-                    /*
-                     * Now get the spatial extent identifiers. We do not extract the altitudes now,
-                     * because many records will typically use the same spatial extents. So we just
-                     * extract the identifiers for now, and will get the altitudes only once later.
-                     */
-                    List<Comparable<?>> extents = centroids.get(time);
-                    if (extents == null) {
-                        // We will usually have only one element.
-                        extents = Collections.<Comparable<?>>singletonList(extentID);
-                        centroids.put(time, extents);
-                    } else {
-                        if (extents.size() == 1) {
-                            extents = new ArrayList<Comparable<?>>(extents);
-                            centroids.put(time, extents);
-                        }
-                        extents.add(extentID);
-                    }
+                } else if (endTime != null) {
+                    time = endTime.getTime();
+                } else {
+                    continue;
                 }
-                results.close();
-                release(ce);
+                dates.add(time);
             }
-            /*
-             * Now get the altitudes for all dates. Note: 'availableTimes' must be
-             * determined before we wrap 'availableCentroids' in an unmodifiable map.
-             */
-            final NavigableMap<Date, SortedSet<Number>> c = getGridGeometryTable().identifiersToAltitudes(centroids);
-            availableTimes = Collections.unmodifiableSortedSet(c.navigableKeySet());
-            availableCentroids = Collections.unmodifiableSortedMap(c);
+            results.close();
+            release(ce);
         }
-        return availableCentroids;
+        if (dates.isEmpty()) {
+            return XCollections.emptySortedSet();
+        }
+        return new UnmodifiableArraySortedSet.Date(dates);
     }
 
     /**
@@ -653,9 +570,7 @@ loop:   for (final GridCoverageEntry newEntry : entries) {
     @Override
     protected void fireStateChanged(final String property) {
         if (!"PreferredResolution".equals(property)) {
-            comparator          = null;
-            availableTimes      = null;
-            availableCentroids  = null;
+            comparator = null;
         }
         super.fireStateChanged(property);
     }

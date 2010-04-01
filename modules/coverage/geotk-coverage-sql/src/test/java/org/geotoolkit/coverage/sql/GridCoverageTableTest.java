@@ -20,7 +20,6 @@ package org.geotoolkit.coverage.sql;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.Set;
-import java.util.SortedMap;
 import java.util.SortedSet;
 
 import org.opengis.geometry.Envelope;
@@ -61,8 +60,7 @@ public final class GridCoverageTableTest extends CatalogTestBase {
     private static final double EPS = 1E-8;
 
     /**
-     * Tests the {@link GridCoverageTable#getAvailableCentroids()} and derived methods
-     * (e.g. {@link GridCoverageTable#getAvailableTimes()}).
+     * Tests the {@link GridCoverageTable#getAvailableTimes()} method.
      *
      * @throws SQLException If the test can't connect to the database.
      */
@@ -75,20 +73,6 @@ public final class GridCoverageTableTest extends CatalogTestBase {
         assertTrue(allTimes.first().after (LayerTableTest.START_TIME));
         assertTrue(allTimes.last ().before(LayerTableTest.END_TIME));
         assertTrue(allTimes.contains(LayerTableTest.SAMPLE_TIME));
-        /*
-         * Test available centroids. This is related to the test of available
-         * times, since the times were derived from the centroids.
-         */
-        final SortedMap<Date, SortedSet<Number>> centroids = table.getAvailableCentroids();
-        assertEquals("Evailable times should be the key set.", allTimes, centroids.keySet());
-        final Set<Number> depths = centroids.get(LayerTableTest.SAMPLE_TIME);
-        assertNotNull("Expected an entry at the requested time.", depths);
-        assertTrue("Expected no elevation.", depths.isEmpty());
-        /*
-         * Tests the available elevations.
-         */
-        final Set<Number> elevations = table.getAvailableElevations();
-        assertTrue(elevations.isEmpty());
         /*
          * Reduce the time range and tests again available times.
          */

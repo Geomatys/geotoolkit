@@ -25,14 +25,6 @@ import java.sql.PreparedStatement;
 import java.awt.Dimension;
 import java.awt.geom.AffineTransform;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.NavigableMap;
-import java.util.SortedSet;
-import java.util.TreeSet;
 import java.util.logging.Level;
 
 import org.opengis.referencing.FactoryException;
@@ -251,95 +243,6 @@ final class GridGeometryTable extends SingletonTable<GridGeometryEntry> {
             }
         }
         return true;
-    }
-
-    /**
-     * For every values in the specified map, replaces the collection of {@link GridGeometryEntry}
-     * identifiers by a set of altitudes. On input, the values are usually {@code List<Integer>}.
-     * On output, all values will be {@code SortedSet<Number>}.
-     * <p>
-     * This method is for internal usage by {@link GridCoverageTable#getAvailableCentroids()} only.
-     *
-     * @param  centroids The date-extents map.
-     * @return The same reference than {@code centroids}, but casted as a date-altitudes map.
-     */
-    NavigableMap<Date,SortedSet<Number>> identifiersToAltitudes(final NavigableMap<Date,List<Comparable<?>>> centroids) throws SQLException {
-        /*
-         * For sharing instances of java.lang.Double created by this method. Useful since
-         * GridCoverageEntry instances at different dates usually still declare the same
-         * set of altitudes.
-         */
-        final Map<Number,Number> sharedNumbers = new HashMap<Number,Number>();
-        /*
-         * For sharing instances of SortedSet<Number>. This serves the same purpose than
-         * 'sharedNumbers', but applied to the whole Set instead than individual numbers.
-         */
-        final Map<SortedSet<Number>, SortedSet<Number>> sharedSet =
-                new HashMap<SortedSet<Number>, SortedSet<Number>>();
-        /*
-         * The results of conversions from List<Comparable<?>> to SortedSet<Number> found
-         * in previous execution of the loop. This is cached because we often have the same
-         * list of geographic extents at different dates, and we want to avoid querying the
-         * database many time for the same thing.
-         */
-        final Map<List<Comparable<?>>, SortedSet<Number>> altitudesMap =
-                new HashMap<List<Comparable<?>>, SortedSet<Number>>();
-        /*
-         * Now perform in-place the replacements of List<Comparable<?>> by SortedSet<Number>.
-         * The replacements are performed directly in entry values.
-         */
-        for (final Map.Entry<Date,List<Comparable<?>>> entry : centroids.entrySet()) {
-            final List<Comparable<?>> extents = entry.getValue();
-            SortedSet<Number> altitudes = altitudesMap.get(extents);
-            if (altitudes == null) {
-                altitudes = new TreeSet<Number>();
-                for (final Comparable<?> extent : extents) {
-                    final double[] ordinates = getEntry(extent).getVerticalOrdinates();
-                    if (ordinates != null) {
-                        for (int i=0; i<ordinates.length; i++) {
-                            final Number z = ordinates[i];
-                            Number shared = sharedNumbers.get(z);
-                            if (shared == null) {
-                                shared = z;
-                                sharedNumbers.put(shared, shared);
-                            }
-                            altitudes.add(shared);
-                        }
-                    }
-                }
-                /*
-                 * Replaces the altitudes set by shared instances, in order to reduce memory usage.
-                 * It is quite common to have many dates (if not all) associated with identical set
-                 * of altitudes values.
-                 */
-                altitudes = Collections.unmodifiableSortedSet(altitudes);
-                final SortedSet<Number> existing = sharedSet.get(altitudes);
-                if (existing != null) {
-                    altitudes = existing;
-                } else {
-                    sharedSet.put(altitudes, altitudes);
-                }
-                altitudesMap.put(extents, altitudes);
-            }
-            setValueUnsafe(entry, altitudes);
-        }
-        return unsafe(centroids);
-    }
-
-    /**
-     * Unsafe setting on a map entry. Used because we are changing the map type in-place.
-     */
-    @SuppressWarnings({"unchecked","rawtypes"})
-    private static void setValueUnsafe(final Map.Entry entry, final SortedSet<Number> altitudes) {
-        entry.setValue(altitudes);
-    }
-
-    /**
-     * Unsafe cast of a map. Used because we changed the map type in-place.
-     */
-    @SuppressWarnings({"unchecked","rawtypes"})
-    private static NavigableMap<Date,SortedSet<Number>> unsafe(final NavigableMap centroids) {
-        return centroids;
     }
 
     /**

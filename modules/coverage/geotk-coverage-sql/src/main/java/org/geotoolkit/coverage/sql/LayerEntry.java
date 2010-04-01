@@ -19,6 +19,7 @@ package org.geotoolkit.coverage.sql;
 
 import java.util.Date;
 import java.util.Set;
+import java.util.HashSet;
 import java.util.SortedSet;
 import java.util.Map;
 import java.util.List;
@@ -120,10 +121,11 @@ final class LayerEntry extends Entry implements Layer {
     private volatile Object fallback;
 
     /**
-     * The typical resolution along each axis of the database CRS.
-     * This is computed only when first needed.
+     * The typical resolution along each axis of the database CRS. This is computed only
+     * when first needed. This field doesn't need to be serialized since it can be computed
+     * from the {@linkplain #domain}.
      */
-    private volatile double[] resolution;
+    private volatile transient double[] resolution;
 
     /**
      * The set of available dates. Will be computed by
@@ -132,17 +134,24 @@ final class LayerEntry extends Entry implements Layer {
     private volatile SortedSet<Date> availableTimes;
 
     /**
-     * The set of available altitudes. Will be computed by
-     * {@link #getAvailableElevations()} when first needed.
+     * The set of available altitudes. Will be computed by {@link #getAvailableElevations()}
+     * when first needed. This field doesn't need to be serialized since it can be recomputed
+     * from the {@linkplain #countByExtent}.
      */
-    private volatile SortedSet<Number> availableElevations;
+    private volatile transient SortedSet<Number> availableElevations;
 
     /**
      * Caches the value returned by {@link #getSampleValueRanges()}. Computed only when first
      * needed. This field doesn't need to be serialized since it can be recomputed from the
      * {@linkplain #series}.
      */
-    private transient List<MeasurementRange<?>> sampleValueRanges;
+    private volatile transient List<MeasurementRange<?>> sampleValueRanges;
+
+    /**
+     * Caches the value returned by {@link #getGridGeometries()}. This field doesn't need
+     * to be serialized since it can be recomputed from the {@linkplain #countByExtent}.
+     */
+    private volatile transient SortedSet<GeneralGridGeometry> gridGeometries;
 
     /**
      * The envelope for all coverages in this layer.
@@ -407,7 +416,6 @@ final class LayerEntry extends Entry implements Layer {
                 if (available == null) {
                     data.setLayerEntry(this);
                     available = data.getAvailableTimes();
-                    available = new UnmodifiableArraySortedSet.Date(available);
                     availableTimes = available;
                 }
             }
@@ -423,19 +431,29 @@ final class LayerEntry extends Entry implements Layer {
     @Override
     public SortedSet<Number> getAvailableElevations() throws CoverageStoreException {
         SortedSet<Number> available = availableElevations;
-        if (available == null) try {
-            final GridCoverageTable data = getLayerTable().getGridCoverageTable();
-            synchronized (data) {
-                available = availableElevations;
-                if (available == null) {
-                    data.setLayerEntry(this);
-                    available = data.getAvailableElevations();
-                    available = new UnmodifiableArraySortedSet.Number(available);
-                    availableElevations = available;
+        if (available == null) {
+            final Set<GridGeometryEntry> count;
+            try {
+                count = getCountByExtent();
+            } catch (SQLException e) {
+                throw new CoverageStoreException(e);
+            }
+            available = XCollections.emptySortedSet();
+            if (count != null) {
+                final Set<Double> all = new HashSet<Double>();
+                for (final GridGeometryEntry entry : count) {
+                    final double[] ordinates = entry.getVerticalOrdinates();
+                    if (ordinates != null) {
+                        for (final double z : ordinates) {
+                            all.add(z);
+                        }
+                    }
+                }
+                if (!all.isEmpty()) {
+                    available = new UnmodifiableArraySortedSet.Number(all);
                 }
             }
-        } catch (SQLException e) {
-            throw new CoverageStoreException(e);
+            availableElevations = available;
         }
         return available;
     }
@@ -449,7 +467,7 @@ final class LayerEntry extends Entry implements Layer {
      * @throws CoverageStoreException If an error occured while computing the ranges.
      */
     @Override
-    public synchronized List<MeasurementRange<?>> getSampleValueRanges() throws CoverageStoreException {
+    public List<MeasurementRange<?>> getSampleValueRanges() throws CoverageStoreException {
         List<MeasurementRange<?>> sampleValueRanges = this.sampleValueRanges;
         if (sampleValueRanges == null) try {
             MeasurementRange<?>[] ranges = null;
@@ -554,83 +572,88 @@ final class LayerEntry extends Entry implements Layer {
      */
     @Override
     public SortedSet<GeneralGridGeometry> getGridGeometries() throws CoverageStoreException {
-        boolean hasCheckedTimeRange = false;
-        Date startTime = null, endTime = null;
-        final FrequencySortedSet<GridGeometryEntry> extents;
-        try {
-            extents = getCountByExtent();
-        } catch (SQLException e) {
-            throw new CoverageStoreException(e);
-        }
-        if (extents == null) {
-            return XCollections.emptySortedSet();
-        }
-        final int[] count = extents.frequencies();
-        final FrequencySortedSet<GeneralGridGeometry> geometries = new FrequencySortedSet<GeneralGridGeometry>();
-        int i = 0;
-        for (final GridGeometryEntry entry : extents) {
-            GeneralGridGeometry gg = entry.geometry;
-            final DefaultTemporalCRS temporalCRS = entry.getTemporalCRS();
-            if (temporalCRS != null) {
-                /*
-                 * If the geometry has a temporal component, we need to configure the grid
-                 * geometry in the time dimension ourself because the start time and end time
-                 * are layer-dependent. Fetch those start time and end time when first needed.
-                 */
-                if (!hasCheckedTimeRange) {
-                    hasCheckedTimeRange = true;
-                    final DateRange timeRange = getTimeRange();
-                    if (timeRange != null) {
-                        startTime = timeRange.getMinValue();
-                        endTime   = timeRange.getMaxValue();
-                    }
-                }
-                final double min = (startTime != null) ? temporalCRS.toValue(startTime) : Double.NEGATIVE_INFINITY;
-                final double max = (  endTime != null) ? temporalCRS.toValue(  endTime) : Double.POSITIVE_INFINITY;
-                if (!Double.isInfinite(min) || !Double.isInfinite(max)) {
-                    final double interval;
-                    if (!Double.isNaN(timeInterval)) {
-                        final long dt = Math.round(timeInterval * GridCoverageTable.MILLIS_IN_DAY);
-                        final long epoch = temporalCRS.getDatum().getOrigin().getTime();
-                        interval = temporalCRS.toValue(new Date(dt + epoch));
-                    } else {
-                        interval = (max - min) / getCoverageCount();
-                    }
-                    /*
-                     * Creates the new math transform with the same coefficients than the previous
-                     * one, except for the time dimension. The temporal "cell size" is the interval
-                     * computed above.
-                     */
-                    final PixelInCell anchor = entry.getPixelInCell();
-                    final Matrix gridToCRS = ((LinearTransform) gg.getGridToCRS(anchor)).getMatrix();
-                    final CoordinateReferenceSystem crs = gg.getCoordinateReferenceSystem();
-                    final CoordinateSystem cs = crs.getCoordinateSystem();
-                    final int dimension = cs.getDimension();
-                    final int timeDimension = dimension - 1;
-                    /*
-                     * The code below makes the following assumptions,
-                     * which are checked by the assert statements below:
-                     *
-                     *   1) The temporal dimension is the last dimension.
-                     *   2) The temporal dimension is at the same index in
-                     *      both the grid CRS and the "real world" CRS.
-                     */
-                    assert CRSUtilities.dimensionColinearWith(cs, temporalCRS.getCoordinateSystem()) == timeDimension : crs;
-                    assert gridToCRS.getElement(timeDimension, timeDimension) != 0 : gridToCRS;
-                    gridToCRS.setElement(timeDimension, timeDimension, interval);
-                    gridToCRS.setElement(timeDimension, dimension, min);
-                    GridEnvelope env = gg.getGridRange();
-                    final int[] lower = env.getLow ().getCoordinateValues();
-                    final int[] upper = env.getHigh().getCoordinateValues();
-                    lower[timeDimension] = 0;
-                    upper[timeDimension] = Math.max(((int) Math.round((max - min) / interval)) - 1, 0);
-                    env = new GeneralGridEnvelope(lower, upper, true);
-                    gg = new GeneralGridGeometry(env, anchor, ProjectiveTransform.create(gridToCRS), crs);
-                }
+        SortedSet<GeneralGridGeometry> gridGeometries = this.gridGeometries;
+        if (gridGeometries == null) {
+            boolean hasCheckedTimeRange = false;
+            Date startTime = null, endTime = null;
+            final FrequencySortedSet<GridGeometryEntry> extents;
+            try {
+                extents = getCountByExtent();
+            } catch (SQLException e) {
+                throw new CoverageStoreException(e);
             }
-            geometries.add(gg, count[i++]);
+            if (extents == null) {
+                return XCollections.emptySortedSet();
+            }
+            final int[] count = extents.frequencies();
+            final FrequencySortedSet<GeneralGridGeometry> geometries = new FrequencySortedSet<GeneralGridGeometry>();
+            int i = 0;
+            for (final GridGeometryEntry entry : extents) {
+                GeneralGridGeometry gg = entry.geometry;
+                final DefaultTemporalCRS temporalCRS = entry.getTemporalCRS();
+                if (temporalCRS != null) {
+                    /*
+                     * If the geometry has a temporal component, we need to configure the grid
+                     * geometry in the time dimension ourself because the start time and end time
+                     * are layer-dependent. Fetch those start time and end time when first needed.
+                     */
+                    if (!hasCheckedTimeRange) {
+                        hasCheckedTimeRange = true;
+                        final DateRange timeRange = getTimeRange();
+                        if (timeRange != null) {
+                            startTime = timeRange.getMinValue();
+                            endTime   = timeRange.getMaxValue();
+                        }
+                    }
+                    final double min = (startTime != null) ? temporalCRS.toValue(startTime) : Double.NEGATIVE_INFINITY;
+                    final double max = (  endTime != null) ? temporalCRS.toValue(  endTime) : Double.POSITIVE_INFINITY;
+                    if (!Double.isInfinite(min) || !Double.isInfinite(max)) {
+                        final double interval;
+                        if (!Double.isNaN(timeInterval)) {
+                            final long dt = Math.round(timeInterval * GridCoverageTable.MILLIS_IN_DAY);
+                            final long epoch = temporalCRS.getDatum().getOrigin().getTime();
+                            interval = temporalCRS.toValue(new Date(dt + epoch));
+                        } else {
+                            interval = (max - min) / getCoverageCount();
+                        }
+                        /*
+                         * Creates the new math transform with the same coefficients than the previous
+                         * one, except for the time dimension. The temporal "cell size" is the interval
+                         * computed above.
+                         */
+                        final PixelInCell anchor = entry.getPixelInCell();
+                        final Matrix gridToCRS = ((LinearTransform) gg.getGridToCRS(anchor)).getMatrix();
+                        final CoordinateReferenceSystem crs = gg.getCoordinateReferenceSystem();
+                        final CoordinateSystem cs = crs.getCoordinateSystem();
+                        final int dimension = cs.getDimension();
+                        final int timeDimension = dimension - 1;
+                        /*
+                         * The code below makes the following assumptions,
+                         * which are checked by the assert statements below:
+                         *
+                         *   1) The temporal dimension is the last dimension.
+                         *   2) The temporal dimension is at the same index in
+                         *      both the grid CRS and the "real world" CRS.
+                         */
+                        assert CRSUtilities.dimensionColinearWith(cs, temporalCRS.getCoordinateSystem()) == timeDimension : crs;
+                        assert gridToCRS.getElement(timeDimension, timeDimension) != 0 : gridToCRS;
+                        gridToCRS.setElement(timeDimension, timeDimension, interval);
+                        gridToCRS.setElement(timeDimension, dimension, min);
+                        GridEnvelope env = gg.getGridRange();
+                        final int[] lower = env.getLow ().getCoordinateValues();
+                        final int[] upper = env.getHigh().getCoordinateValues();
+                        lower[timeDimension] = 0;
+                        upper[timeDimension] = Math.max(((int) Math.round((max - min) / interval)) - 1, 0);
+                        env = new GeneralGridEnvelope(lower, upper, true);
+                        gg = new GeneralGridGeometry(env, anchor, ProjectiveTransform.create(gridToCRS), crs);
+                    }
+                }
+                geometries.add(gg, count[i++]);
+            }
+            gridGeometries = Collections.unmodifiableSortedSet(geometries);
+            this.gridGeometries = gridGeometries;
         }
-        return geometries;
+        return gridGeometries;
     }
 
     /**
@@ -764,8 +787,6 @@ final class LayerEntry extends Entry implements Layer {
             getFallback();
             getCountBySeries();
             getAvailableTimes();
-            getAvailableElevations();
-            getTypicalResolution();
             getEnvelope(null, null);
         } catch (Exception e) {
             final InvalidObjectException ex = new InvalidObjectException(e.getLocalizedMessage());
