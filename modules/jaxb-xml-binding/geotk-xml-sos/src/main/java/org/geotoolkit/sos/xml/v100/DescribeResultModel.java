@@ -58,8 +58,17 @@ public class DescribeResultModel extends RequestBaseType {
     /**
      * An empty constructor used by jaxB
      */
-     DescribeResultModel(){}
-     
+    DescribeResultModel() {}
+
+    public DescribeResultModel(QName resultName) {
+        this.resultName = resultName;
+    }
+
+    public DescribeResultModel(String version, QName resultName) {
+        super(version);
+        this.resultName = resultName;
+    }
+
     /**
      * Gets the value of the resultName property.
      * 
@@ -79,7 +88,7 @@ public class DescribeResultModel extends RequestBaseType {
         if (object instanceof DescribeResultModel && super.equals(object)) {
             final DescribeResultModel that = (DescribeResultModel) object;
             return Utilities.equals(this.resultName, that.resultName);
-        } 
+        }
         return false;
     }
 

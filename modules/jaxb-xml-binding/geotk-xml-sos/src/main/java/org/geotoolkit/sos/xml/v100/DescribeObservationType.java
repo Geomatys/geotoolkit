@@ -56,10 +56,19 @@ public class DescribeObservationType extends RequestBaseType {
     @XmlSchemaType(name = "anyURI")
     private String observedProperty;
     
-     /**
+    /**
      * An empty constructor used by jaxB
      */
      DescribeObservationType(){}
+
+    public DescribeObservationType(String observedProperty) {
+        this.observedProperty = observedProperty;
+    }
+
+    public DescribeObservationType(String version, String observedProperty) {
+        super(version);
+        this.observedProperty = observedProperty;
+    }
 
     /**
      * Gets the value of the observedProperty property.
