@@ -28,7 +28,7 @@ import org.geotoolkit.sos.xml.v100.ResponseModeType;
  * @author Cédric Briançon (Geomatys)
  * @module pending
  */
-interface GetObservationRequest extends Request {
+public interface GetObservationRequest extends Request {
 
     EventTime[] getEventTimes();
 

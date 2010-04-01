@@ -24,7 +24,7 @@ import org.geotoolkit.client.Request;
  * @author Cédric Briançon (Geomatys)
  * @module pending
  */
-interface DescribeObservationTypeRequest extends Request {
+public interface DescribeObservationTypeRequest extends Request {
 
     String getObservedProperty();
 

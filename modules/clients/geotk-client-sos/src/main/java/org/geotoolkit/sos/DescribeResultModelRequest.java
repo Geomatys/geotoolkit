@@ -25,7 +25,7 @@ import org.geotoolkit.client.Request;
  * @author Cédric Briançon (Geomatys)
  * @module pending
  */
-interface DescribeResultModelRequest extends Request {
+public interface DescribeResultModelRequest extends Request {
 
     QName getResultName();
 

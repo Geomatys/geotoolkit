@@ -25,7 +25,7 @@ import org.geotoolkit.sos.xml.v100.EventTime;
  * @author Cédric Briançon (Geomatys)
  * @module pending
  */
-interface GetResultRequest extends Request {
+public interface GetResultRequest extends Request {
     EventTime[] getEventTimes();
 
     String getObservationTemplateId();

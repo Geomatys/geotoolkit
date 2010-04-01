@@ -43,7 +43,7 @@ public abstract class AbstractDescribeResultModel extends AbstractRequest implem
      */
     protected final String version;
 
-    private QName observedProperty = null;
+    private QName resultName = null;
 
     /**
      * Defines the server url and the service version for this kind of request.
@@ -58,12 +58,12 @@ public abstract class AbstractDescribeResultModel extends AbstractRequest implem
 
     @Override
     public QName getResultName() {
-        return observedProperty;
+        return resultName;
     }
 
     @Override
     public void setResultName(QName observedProperty) {
-        this.observedProperty = observedProperty;
+        this.resultName = observedProperty;
     }
 
     @Override
@@ -97,7 +97,7 @@ public abstract class AbstractDescribeResultModel extends AbstractRequest implem
                                       "org.geotoolkit.sml.xml.v101");
             marsh = pool.acquireMarshaller();
             final DescribeResultModel descObsTypeXml =
-                    new DescribeResultModel(version, observedProperty);
+                    new DescribeResultModel(version, resultName);
             marsh.marshal(descObsTypeXml, stream);
         } catch (JAXBException ex) {
             throw new IOException(ex);

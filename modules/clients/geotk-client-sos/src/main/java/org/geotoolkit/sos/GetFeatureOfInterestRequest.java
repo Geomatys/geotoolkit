@@ -26,7 +26,7 @@ import org.geotoolkit.sos.xml.v100.GetFeatureOfInterest;
  * @author Cédric Briançon (Geomatys)
  * @module pending
  */
-interface GetFeatureOfInterestRequest extends Request {
+public interface GetFeatureOfInterestRequest extends Request {
     EventTime getEventTime();
 
     GetFeatureOfInterest.Location getLocation();

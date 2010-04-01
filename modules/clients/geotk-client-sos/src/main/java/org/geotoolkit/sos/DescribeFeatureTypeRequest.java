@@ -24,7 +24,7 @@ import org.geotoolkit.client.Request;
  * @author Cédric Briançon (Geomatys)
  * @module pending
  */
-interface DescribeFeatureTypeRequest extends Request {
+public interface DescribeFeatureTypeRequest extends Request {
 
     String getFeatureId();
 
