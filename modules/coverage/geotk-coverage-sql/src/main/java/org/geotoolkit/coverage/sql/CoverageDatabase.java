@@ -493,9 +493,10 @@ public class CoverageDatabase {
      * @throws CoverageStoreException If an error occured while querying the database.
      */
     public LayerCoverageReader createGridCoverageReader(final String layer) throws CoverageStoreException {
+        final Future<Layer> future = (layer != null) ? getLayer(layer) : null;
         final LayerCoverageReader reader = new LayerCoverageReader(this);
-        if (layer != null) {
-            reader.setInput(now(getLayer(layer)));
+        if (future != null) {
+            reader.setInput(now(future));
         }
         return reader;
     }

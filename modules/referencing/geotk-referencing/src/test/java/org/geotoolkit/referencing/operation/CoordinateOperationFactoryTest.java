@@ -22,10 +22,10 @@ import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CompoundCRS;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.GeographicCRS;
+import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.CoordinateOperation;
 import org.opengis.referencing.operation.CoordinateOperationFactory;
 import org.opengis.referencing.operation.Conversion;
-import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform1D;
 import org.opengis.referencing.operation.SingleOperation;
 import org.opengis.referencing.operation.OperationNotFoundException;
@@ -36,12 +36,15 @@ import org.geotoolkit.test.crs.WKT;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
 import org.geotoolkit.referencing.ReferencingTestCase;
+import org.geotoolkit.referencing.cs.DefaultCartesianCS;
+import org.geotoolkit.referencing.crs.DefaultDerivedCRS;
 import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
 import org.geotoolkit.referencing.datum.DefaultTemporalDatum;
 import org.geotoolkit.referencing.operation.matrix.GeneralMatrix;
 import org.geotoolkit.referencing.operation.transform.LinearTransform;
 import org.geotoolkit.referencing.operation.transform.TransformTestCase;
 import org.geotoolkit.referencing.operation.transform.AbstractMathTransform;
+import org.geotoolkit.referencing.operation.transform.ProjectiveTransform;
 
 import static org.geotoolkit.referencing.crs.DefaultGeographicCRS.WGS84;
 import static org.geotoolkit.referencing.crs.DefaultGeographicCRS.WGS84_3D;
@@ -387,7 +390,7 @@ public class CoordinateOperationFactoryTest extends TransformTestCase {
      * @throws Exception Should never happen.
      */
     @Test
-    public void testZIdentity() throws Exception {
+    public void testVerticalConversion_ellipsoidal() throws Exception {
         final CoordinateReferenceSystem sourceCRS = crsFactory.createFromWKT(WKT.VERTCS_Z);
         final CoordinateReferenceSystem targetCRS = crsFactory.createFromWKT(WKT.VERTCS_Z);
         final CoordinateOperation op = opFactory.createOperation(sourceCRS, targetCRS);
@@ -405,7 +408,7 @@ public class CoordinateOperationFactoryTest extends TransformTestCase {
      * @throws Exception Should never happen.
      */
     @Test
-    public void testHeightIdentity() throws Exception {
+    public void testVerticalConversion_height() throws Exception {
         final CoordinateReferenceSystem sourceCRS = crsFactory.createFromWKT(WKT.VERTCS_HEIGHT);
         final CoordinateReferenceSystem targetCRS = crsFactory.createFromWKT(WKT.VERTCS_HEIGHT);
         final CoordinateOperation op = opFactory.createOperation(sourceCRS, targetCRS);
@@ -423,7 +426,7 @@ public class CoordinateOperationFactoryTest extends TransformTestCase {
      * @throws Exception Should never happen.
      */
     @Test(expected = OperationNotFoundException.class)
-    public void testIncompatibleVertical() throws Exception {
+    public void testIncompatibleVerticalCRS() throws Exception {
         final CoordinateReferenceSystem sourceCRS = crsFactory.createFromWKT(WKT.VERTCS_Z);
         final CoordinateReferenceSystem targetCRS = crsFactory.createFromWKT(WKT.VERTCS_HEIGHT);
         final CoordinateOperation op = opFactory.createOperation(sourceCRS, targetCRS);
@@ -440,9 +443,10 @@ public class CoordinateOperationFactoryTest extends TransformTestCase {
      */
     @Test
     public void testTemporalConversion() throws Exception {
-        MathTransform1D tr = (MathTransform1D) opFactory.createOperation(UNIX, MODIFIED_JULIAN).getMathTransform();
+        transform = opFactory.createOperation(UNIX, MODIFIED_JULIAN).getMathTransform();
+        validate();
         final long time = DefaultTemporalDatum.DUBLIN_JULIAN.getOrigin().getTime(); // December 31, 1899 at 12:00 UTC
-        assertEquals(15019.5, tr.transform(time / 1000.0), 1E-12);
+        assertEquals(15019.5, ((MathTransform1D) transform).transform(time / 1000.0), 1E-12);
     }
 
     /**
@@ -450,29 +454,56 @@ public class CoordinateOperationFactoryTest extends TransformTestCase {
      * The converse part is the interresting one.
      *
      * @throws Exception Should never happen.
+     *
+     * @see #testGeographic2D_to_3D_withDatumShift()
      */
     @Test
-    public void testGeographic2D_3D() throws Exception {
-        MathTransform tr = opFactory.createOperation(WGS84_3D, WGS84).getMathTransform();
-        assertTrue(tr instanceof LinearTransform);
-        assertEquals(3, tr.getSourceDimensions());
-        assertEquals(2, tr.getTargetDimensions());
+    public void testGeographic2D_to_3D() throws Exception {
+        transform = opFactory.createOperation(WGS84_3D, WGS84).getMathTransform();
+        validate();
+        assertTrue(transform instanceof LinearTransform);
+        assertEquals(3, transform.getSourceDimensions());
+        assertEquals(2, transform.getTargetDimensions());
         assertEquals(new GeneralMatrix(3, 4, new double[] {
             1, 0, 0, 0,
             0, 1, 0, 0,
             0, 0, 0, 1
-        }), ((LinearTransform) tr).getMatrix());
+        }), ((LinearTransform) transform).getMatrix());
 
-        tr = opFactory.createOperation(WGS84, WGS84_3D).getMathTransform();
-        assertTrue(tr instanceof LinearTransform);
-        assertEquals(2, tr.getSourceDimensions());
-        assertEquals(3, tr.getTargetDimensions());
-        assertTrue(new GeneralMatrix(4, 3, new double[] {
+        transform = opFactory.createOperation(WGS84, WGS84_3D).getMathTransform();
+        validate();
+        assertTrue(transform instanceof LinearTransform);
+        assertEquals(2, transform.getSourceDimensions());
+        assertEquals(3, transform.getTargetDimensions());
+        assertEquals(new GeneralMatrix(4, 3, new double[] {
             1, 0, 0,
             0, 1, 0,
-            0, 0, Double.NaN,
+            0, 0, 0,
             0, 0, 1
-        }).equals(((LinearTransform) tr).getMatrix(), 0));
+        }), ((LinearTransform) transform).getMatrix());
+    }
+
+    /**
+     * Tests transformation from 3D to 4D Geographic CRS where the last dimension is time.
+     *
+     * @throws Exception Should never happen.
+     */
+    @Test
+    public void testGeographic3D_to_4D() throws Exception {
+        final CoordinateReferenceSystem sourceCRS = new DefaultCompoundCRS("Test3D", WGS84, UNIX);
+        final CoordinateReferenceSystem targetCRS = new DefaultCompoundCRS("Test4D", WGS84_3D, MODIFIED_JULIAN);
+        transform = opFactory.createOperation(sourceCRS, targetCRS).getMathTransform();
+        validate();
+        assertTrue(transform instanceof LinearTransform);
+        assertEquals(3, transform.getSourceDimensions());
+        assertEquals(4, transform.getTargetDimensions());
+        assertTrue(new GeneralMatrix(5, 4, new double[] {
+            1, 0, 0, 0,
+            0, 1, 0, 0,
+            0, 0, 0, 0,
+            0, 0, 1./(24*60*60), 40587,
+            0, 0, 0, 1
+        }).equals(((LinearTransform) transform).getMatrix(), 1E-12));
     }
 
     /**
@@ -547,7 +578,7 @@ public class CoordinateOperationFactoryTest extends TransformTestCase {
      * @throws Exception Should never happen.
      */
     @Test
-    public void test3D_to_2D() throws Exception {
+    public void testGeographic3D_to_2D() throws Exception {
         final CoordinateReferenceSystem sourceCRS = crsFactory.createFromWKT(NAD27_Z);
         final CoordinateReferenceSystem targetCRS = crsFactory.createFromWKT(WKT.GEOGCS_WGS84_DMHS);
         final CoordinateOperation op = opFactory.createOperation(sourceCRS, targetCRS);
@@ -568,12 +599,37 @@ public class CoordinateOperationFactoryTest extends TransformTestCase {
     }
 
     /**
+     * Tests transformation from 3D to 2D CRS where the last dimension of the 3D CRS is time.
+     * This test case reproduce a situation which have been observed in practice.
+     *
+     * @throws Exception Should never happen.
+     */
+    @Test
+    public void testGeoTemporal_to_Display() throws Exception {
+        final CoordinateReferenceSystem sourceCRS = new DefaultCompoundCRS("Test3D", WGS84, UNIX);
+        final CoordinateReferenceSystem targetCRS = new DefaultDerivedCRS("Display", WGS84,
+                ProjectiveTransform.create(new GeneralMatrix(3, 3, new double[]
+        {
+            12.889604810996564, 0, 482.74226804123714,
+            0, -12.889604810996564, 792.4484536082475,
+            0, 0, 1
+        })), DefaultCartesianCS.DISPLAY);
+        final CoordinateOperation op = opFactory.createOperation(sourceCRS, targetCRS);
+        transform = op.getMathTransform();
+        validate();
+        assertTrue(transform instanceof LinearTransform);
+        final Matrix m = ((LinearTransform) transform).getMatrix();
+        assertEquals(3, m.getNumRow());
+        assertEquals(4, m.getNumCol());
+    }
+
+    /**
      * Tests transformation from 3D to vertical CRS.
      *
      * @throws Exception Should never happen.
      */
     @Test
-    public void test3D_to_Z() throws Exception {
+    public void testGeographic3D_to_Vertical() throws Exception {
         final CoordinateReferenceSystem sourceCRS = crsFactory.createFromWKT(NAD27_Z);
         final CoordinateReferenceSystem targetCRS = crsFactory.createFromWKT(WKT.VERTCS_Z);
         final CoordinateOperation op = opFactory.createOperation(sourceCRS, targetCRS);
@@ -592,9 +648,11 @@ public class CoordinateOperationFactoryTest extends TransformTestCase {
      * Tests transformation from 2D to 3D with Z above the ellipsoid.
      *
      * @throws Exception Should never happen.
+     *
+     * @see #testGeographic2D_to_3D()
      */
     @Test
-    public void test2D_to_3D() throws Exception {
+    public void testGeographic2D_to_3D_withDatumShift() throws Exception {
         final CoordinateReferenceSystem sourceCRS = crsFactory.createFromWKT(WKT.GEOGCS_NAD27);
         final CoordinateReferenceSystem targetCRS = crsFactory.createFromWKT(WGS84_Z);
         final CoordinateOperation op = opFactory.createOperation(sourceCRS, targetCRS);
@@ -618,7 +676,7 @@ public class CoordinateOperationFactoryTest extends TransformTestCase {
      * @throws Exception Should never happen.
      */
     @Test(expected = OperationNotFoundException.class)
-    public void testHtoZ() throws Exception {
+    public void testGeographicCRS_HtoZ() throws Exception {
         final CoordinateReferenceSystem sourceCRS = crsFactory.createFromWKT(NAD27_H);
         final CoordinateReferenceSystem targetCRS = crsFactory.createFromWKT(NAD27_Z);
         final CoordinateOperation op = opFactory.createOperation(sourceCRS, targetCRS);
@@ -635,7 +693,7 @@ public class CoordinateOperationFactoryTest extends TransformTestCase {
      * @throws Exception Should never happen.
      */
     @Test(expected = OperationNotFoundException.class)
-    public void testHtoH() throws Exception {
+    public void testGeographicCRS_HtoH() throws Exception {
         final CoordinateReferenceSystem sourceCRS = crsFactory.createFromWKT(NAD27_H);
         final CoordinateReferenceSystem targetCRS = crsFactory.createFromWKT(WGS84_H);
         final CoordinateOperation op = opFactory.createOperation(sourceCRS, targetCRS);
@@ -652,7 +710,7 @@ public class CoordinateOperationFactoryTest extends TransformTestCase {
      * @throws Exception Should never happen.
      */
     @Test(expected = OperationNotFoundException.class)
-    public void test2DtoH() throws Exception {
+    public void testGeographic2DtoGeographic3D_withHeight() throws Exception {
         final CoordinateReferenceSystem sourceCRS = crsFactory.createFromWKT(WKT.GEOGCS_NAD27);
         final CoordinateReferenceSystem targetCRS = crsFactory.createFromWKT(WGS84_H);
         final CoordinateOperation op = opFactory.createOperation(sourceCRS, targetCRS);
@@ -669,7 +727,7 @@ public class CoordinateOperationFactoryTest extends TransformTestCase {
      * @throws Exception Should never happen.
      */
     @Test
-    public void test3D_to_H() throws Exception {
+    public void testGeographic3D_to_height() throws Exception {
         final CoordinateReferenceSystem sourceCRS = crsFactory.createFromWKT(NAD27_H);
         final CoordinateReferenceSystem targetCRS = crsFactory.createFromWKT(WKT.VERTCS_HEIGHT);
         final CoordinateOperation op = opFactory.createOperation(sourceCRS, targetCRS);
@@ -690,7 +748,7 @@ public class CoordinateOperationFactoryTest extends TransformTestCase {
      * @throws Exception Should never happen.
      */
     @Test
-    public void test4D_to_2D() throws Exception {
+    public void testProjected4D_to_2D() throws Exception {
         assumeTrue(ReferencingTestCase.isEpsgFactoryAvailable());
         final CoordinateReferenceSystem targetCRS = crsFactory.createFromWKT(WKT.PROJCS_MERCATOR);
         CoordinateReferenceSystem sourceCRS = targetCRS;
@@ -698,6 +756,7 @@ public class CoordinateOperationFactoryTest extends TransformTestCase {
         sourceCRS = new DefaultCompoundCRS("Mercator 4D", sourceCRS, MODIFIED_JULIAN);
         final CoordinateOperation op = opFactory.createOperation(sourceCRS, targetCRS);
         transform = op.getMathTransform();
+        validate();
         assertSame(sourceCRS, op.getSourceCRS());
         assertSame(targetCRS, op.getTargetCRS());
         assertFalse(transform.isIdentity());

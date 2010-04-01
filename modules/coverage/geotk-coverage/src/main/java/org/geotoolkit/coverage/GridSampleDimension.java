@@ -267,7 +267,7 @@ public class GridSampleDimension implements SampleDimension, Serializable {
      * <p>
      * <table border="1" cellspacing="0">
      *   <tr bgcolor="lightblue">
-     *     <th nowrap>&nbsp;{@code Parameter}&nbsp;</th>
+     *     <th nowrap>&nbsp;Parameter&nbsp;</th>
      *     <th nowrap>&nbsp;Returned by&nbsp;</th>
      *     <th nowrap>&nbsp;Default value&nbsp;</th>
      *   </tr>
