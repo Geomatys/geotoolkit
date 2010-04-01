@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.swe.xml.AbstractBinaryBlock;
+import org.geotoolkit.swe.xml.AbstractEncoding;
 import org.geotoolkit.swe.xml.AbstractEncodingProperty;
 import org.geotoolkit.swe.xml.MultiplexedStreamFormat;
 import org.geotoolkit.swe.xml.TextBlock;
@@ -108,6 +109,25 @@ public class AbstractEncodingPropertyType implements AbstractEncodingProperty {
             }
         }
     }
+
+    public AbstractEncodingPropertyType(AbstractEncoding enc) {
+        if (enc != null) {
+
+            if (enc instanceof AbstractBinaryBlock) {
+                throw new IllegalArgumentException("Binnary block are not handled");
+
+            } else if (enc instanceof MultiplexedStreamFormat){
+                this.encoding = sweFactory.createMultiplexedStreamFormat(new MultiplexedStreamFormatType((MultiplexedStreamFormat)enc));
+
+            } else if (enc instanceof TextBlock) {
+                this.encoding = sweFactory.createTextBlock(new TextBlockEntry((TextBlock)enc));
+
+            } else if (enc instanceof XmlBlock) {
+                this.encoding = sweFactory.createXMLBlock(new XMLBlockType((XmlBlock)enc));
+            }
+        }
+   }
+    
     
     /**
      * Build a new Abstract encoding Property.

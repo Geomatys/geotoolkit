@@ -151,9 +151,9 @@ public class SimpleDataRecordEntry extends AbstractDataRecordEntry implements Si
      */
     @Override
     public String toString() {
-        final StringBuilder buffer = new StringBuilder();
+        final StringBuilder buffer = new StringBuilder(super.toString());
         final String lineSeparator = System.getProperty("line.separator", "\n");
-        buffer.append('[').append(this.getClass().getSimpleName()).append("]:").append("blockId = ").append(blockId).append(lineSeparator);
+        buffer.append(lineSeparator).append("blockId = ").append(blockId).append(lineSeparator);
         appendTo(buffer, "", lineSeparator);
         return buffer.toString();
     }
@@ -163,13 +163,14 @@ public class SimpleDataRecordEntry extends AbstractDataRecordEntry implements Si
      */
     private void appendTo(final StringBuilder buffer, String margin, final String lineSeparator) {
         int fieldSize = 0;
-        if (field != null)
+        if (field != null) {
             fieldSize = field.size();
-        buffer.append("nb fields ").append(fieldSize).append(" :").append(lineSeparator);
-        int i = 0;
-        for (final AnyScalarPropertyType a : getField()) {
-            buffer.append(margin).append("field[").append(i).append(']').append(a.toString());
-            i++;
+            buffer.append("nb fields ").append(fieldSize).append(" :").append(lineSeparator);
+            int i = 0;
+            for (final AnyScalarPropertyType a : getField()) {
+                buffer.append(margin).append("field[").append(i).append(']').append(a.toString());
+                i++;
+            }
         }
     }
     

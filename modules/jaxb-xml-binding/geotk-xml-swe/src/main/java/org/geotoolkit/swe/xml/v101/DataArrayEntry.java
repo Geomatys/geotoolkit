@@ -76,8 +76,8 @@ public class DataArrayEntry extends AbstractDataArrayEntry implements DataArray 
             if (array.getPropertyElementType() != null) {
                 this.elementType = new DataComponentPropertyType(array.getPropertyElementType());
             }
-            if (array.getPropertyEncoding() != null) {
-                this.encoding = new AbstractEncodingPropertyType(array.getPropertyEncoding());
+            if (array.getEncoding() != null) {
+                this.encoding = new AbstractEncodingPropertyType(array.getEncoding());
             }
             this.values = array.getValues();
         }

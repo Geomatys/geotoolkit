@@ -21,7 +21,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlSeeAlso;
-import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.v311.AbstractGMLEntry;
 import org.geotoolkit.util.Utilities;
@@ -37,7 +36,7 @@ import org.geotoolkit.swe.xml.AbstractDataComponent;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class AbstractDataComponentEntry extends AbstractGMLEntry implements AbstractDataComponent {
     
-    @XmlTransient //@XmlAttribute
+    @XmlAttribute
     private Boolean fixed;
     
     /**
