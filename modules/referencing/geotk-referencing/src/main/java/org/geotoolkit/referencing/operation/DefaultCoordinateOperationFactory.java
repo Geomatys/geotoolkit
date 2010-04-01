@@ -571,7 +571,40 @@ public class DefaultCoordinateOperationFactory extends AbstractCoordinateOperati
                                     final PrimeMeridian targetPM)
             throws OperationNotFoundException
     {
-        final Matrix matrix = swapAndScaleAxis(sourceCS, targetCS);
+        /*
+         * Compute swapAndScaleAxis(sourceCS, targetCS) with a special case for the conversion
+         * from 2D to 3D Geographic CRS: we expect that the new dimension is the ellipsoidal
+         * height, so we create a Matrix which will "generate" the new ordinates with NaN value.
+         */
+        Matrix matrix = null;
+        if (sourceCS.getDimension() == 2 && targetCS.getDimension() == 3) {
+            for (int k=3; --k>=0;) {
+                if (AxisDirection.UP.equals(targetCS.getAxis(k).getDirection().absolute())) {
+                    final CoordinateSystemAxis axis0 = targetCS.getAxis(k != 0 ? 0 : 1);
+                    final CoordinateSystemAxis axis1 = targetCS.getAxis(k != 2 ? 2 : 1);
+                    final EllipsoidalCS step = new DefaultEllipsoidalCS("Step", axis0, axis1);
+                    final Matrix reduced = swapAndScaleAxis(sourceCS, step);
+                    assert reduced.getNumRow() == 3 && reduced.getNumCol() == 3 : reduced;
+                    matrix = MatrixFactory.create(4, 3);
+                    matrix.setElement(3, 2, 1);
+                    for (int jm=0,j=0; j<3; j++) {
+                        if (j == k) {
+                            matrix.setElement(j, j, 0);
+                            matrix.setElement(j, 2, Double.NaN);
+                        } else {
+                            for (int i=3; --i>=0;) {
+                                matrix.setElement(jm, i, reduced.getElement(j, i));
+                            }
+                            jm++;
+                        }
+                    }
+                    break;
+                }
+            }
+        }
+        if (matrix == null) {
+            matrix = swapAndScaleAxis(sourceCS, targetCS);
+        }
         for (int i=targetCS.getDimension(); --i>=0;) {
             final CoordinateSystemAxis axis = targetCS.getAxis(i);
             final AxisDirection direction = axis.getDirection();
@@ -1334,7 +1367,7 @@ search: for (int j=0; j<targets.size(); j++) {
                 } catch (OperationNotFoundException exception) {
                     // No operation path for this pair.
                     // Search for an other pair.
-                    if (cause==null || i==j) {
+                    if (cause == null || i == j) {
                         cause = exception;
                     }
                     continue;

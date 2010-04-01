@@ -25,6 +25,7 @@ import org.opengis.referencing.crs.GeographicCRS;
 import org.opengis.referencing.operation.CoordinateOperation;
 import org.opengis.referencing.operation.CoordinateOperationFactory;
 import org.opengis.referencing.operation.Conversion;
+import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.SingleOperation;
 import org.opengis.referencing.operation.OperationNotFoundException;
 import org.opengis.referencing.operation.Projection;
@@ -38,11 +39,13 @@ import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
 import org.geotoolkit.referencing.crs.DefaultVerticalCRS;
 import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.geotoolkit.referencing.operation.matrix.GeneralMatrix;
 import org.geotoolkit.referencing.operation.transform.LinearTransform;
 import org.geotoolkit.referencing.operation.transform.TransformTestCase;
 import org.geotoolkit.referencing.operation.transform.AbstractMathTransform;
 
 import static org.geotoolkit.referencing.crs.DefaultGeographicCRS.WGS84;
+import static org.geotoolkit.referencing.crs.DefaultGeographicCRS.WGS84_3D;
 import static org.geotoolkit.referencing.crs.DefaultEngineeringCRS.GENERIC_2D;
 import static org.geotoolkit.referencing.crs.DefaultEngineeringCRS.CARTESIAN_2D;
 import static org.geotoolkit.referencing.crs.DefaultEngineeringCRS.CARTESIAN_3D;
@@ -64,7 +67,7 @@ import static org.junit.Assume.*;
  * code below, causing transformation checks to fail as well.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.07
+ * @version 3.10
  *
  * @since 2.1
  */
@@ -423,6 +426,36 @@ public class CoordinateOperationFactoryTest extends TransformTestCase {
         final CoordinateReferenceSystem targetCRS = crsFactory.createFromWKT(WKT.VERTCS_HEIGHT);
         final CoordinateOperation op = opFactory.createOperation(sourceCRS, targetCRS);
         assertNull(op); // We should not reach this point.
+    }
+
+    /**
+     * Tests the conversion from a geographic CRS 3D to 2D and conversely.
+     * The converse part is the interresting one.
+     *
+     * @throws Exception Should never happen.
+     */
+    @Test
+    public void testGeographic2D_3D() throws Exception {
+        MathTransform tr = opFactory.createOperation(WGS84_3D, WGS84).getMathTransform();
+        assertTrue(tr instanceof LinearTransform);
+        assertEquals(3, tr.getSourceDimensions());
+        assertEquals(2, tr.getTargetDimensions());
+        assertEquals(new GeneralMatrix(3, 4, new double[] {
+            1, 0, 0, 0,
+            0, 1, 0, 0,
+            0, 0, 0, 1
+        }), ((LinearTransform) tr).getMatrix());
+
+        tr = opFactory.createOperation(WGS84, WGS84_3D).getMathTransform();
+        assertTrue(tr instanceof LinearTransform);
+        assertEquals(2, tr.getSourceDimensions());
+        assertEquals(3, tr.getTargetDimensions());
+        assertTrue(new GeneralMatrix(4, 3, new double[] {
+            1, 0, 0,
+            0, 1, 0,
+            0, 0, Double.NaN,
+            0, 0, 1
+        }).equals(((LinearTransform) tr).getMatrix(), 0));
     }
 
     /**
