@@ -302,14 +302,18 @@ public class DimapImageReader extends ImageReaderAdapter {
             if(input instanceof File){
                 final File file = (File) input;
                 final File parent = file.getParentFile();
-                final File candidate = new File(parent, "metadata.dim");
-                if (candidate.isFile()) {
-                    return candidate;
-                }else{
-                    throw new IOException("Could not find metadata file");
-                }
+
+                //search for metadata.dim
+                File candidate = new File(parent, "metadata.dim");
+                if(candidate.isFile()) return candidate;
+
+                //search for filename.dim
+                candidate = new File((String)IOUtilities.changeExtension(file, "dim"));
+                if(candidate.isFile()) return candidate;
+
+                return null;
             }else{
-                throw new IOException("Input must be of type file, found : " + input.getClass());
+                return null;
             }
         }
 
@@ -317,7 +321,8 @@ public class DimapImageReader extends ImageReaderAdapter {
         public boolean canDecodeInput(Object source) throws IOException {
             if (IOUtilities.canProcessAsPath(source)) {
                 source = IOUtilities.tryToFile(source);
-                searchMetadataFile(source);
+                File f = searchMetadataFile(source);
+                return (f != null);
             }
             return super.canDecodeInput(source);
         }
@@ -337,11 +342,7 @@ public class DimapImageReader extends ImageReaderAdapter {
                 try {
                     switch (index) {
                         case 0: provider = new TIFF(); break;
-                        case 1: provider = new JPEG(); break;
-                        case 2: provider = new PNG (); break;
-                        case 3: provider = new GIF (); break;
-                        case 4: provider = new BMP (); break;
-                        case 5: provider = new TXT (); break;
+                        //todo must add BIL format in the futur
                         default: return;
                     }
                 } catch (RuntimeException e) {
@@ -368,11 +369,7 @@ public class DimapImageReader extends ImageReaderAdapter {
                 final Class<? extends Spi> type;
                 switch (index) {
                     case 0: type = TIFF.class; break;
-                    case 1: type = JPEG.class; break;
-                    case 2: type = PNG .class; break;
-                    case 3: type = GIF .class; break;
-                    case 4: type = BMP .class; break;
-                    case 5: type = TXT .class; break;
+                    //todo must add BIL format in the futur
                     default: return;
                 }
                 final Spi provider = registry.getServiceProviderByClass(type);
@@ -384,9 +381,4 @@ public class DimapImageReader extends ImageReaderAdapter {
     }
 
     private static final class TIFF extends Spi {TIFF() {super("TIFF"  );}}
-    private static final class JPEG extends Spi {JPEG() {super("JPEG"  );}}
-    private static final class PNG  extends Spi { PNG() {super("PNG"   );}}
-    private static final class GIF  extends Spi { GIF() {super("GIF"   );}}
-    private static final class BMP  extends Spi { BMP() {super("BMP"   );}}
-    private static final class TXT  extends Spi { TXT() {super("matrix");}}
 }
