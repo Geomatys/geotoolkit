@@ -92,6 +92,7 @@
   <!--     Modules included in the build                           -->
   <!-- =========================================================== -->
   <modules>
+    <module>geotk-coverageio-dimap</module>
     <module>geotk-coverageio-pending</module>
     <module>geotk-coverageio-netcdf</module>
     <module>geotk-geotiff</module>
