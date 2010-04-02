@@ -65,9 +65,9 @@ import static org.geotoolkit.util.DomUtilities.*;
  * @module pending
  */
 @Static
-public final class DimapParser {
+public final class DimapAccessor {
 
-    private DimapParser() {
+    private DimapAccessor() {
     }
 
     /**

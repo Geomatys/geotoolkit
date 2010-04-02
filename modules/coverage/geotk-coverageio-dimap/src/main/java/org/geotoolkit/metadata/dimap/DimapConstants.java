@@ -27,11 +27,6 @@ import org.geotoolkit.math.NumberSet;
  * @module pending
  */
 public final class DimapConstants {
-
-    public static final String RED = "red";
-    public static final String GREEN = "green";
-    public static final String BLUE = "blue";
-    public static final String ALPHA = "alpha";
     
     /**
      * Raster encoding possible byteOrder

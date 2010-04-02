@@ -59,7 +59,8 @@ import org.geotoolkit.internal.image.io.Formats;
 import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.lang.Configuration;
 import org.geotoolkit.metadata.dimap.DimapMetadata;
-import org.geotoolkit.metadata.dimap.DimapParser;
+import org.geotoolkit.metadata.dimap.DimapAccessor;
+import org.geotoolkit.util.DomUtilities;
 import org.geotoolkit.util.Version;
 import org.geotoolkit.util.logging.Logging;
 
@@ -105,6 +106,9 @@ public class DimapImageReader extends ImageReaderAdapter {
         throw new IOException("Unexpected reader id : " + readerID +" allowed ids are 'main' and 'dim'.");
     }
 
+    /**
+     * Apply the band selection indexes provided in the dimap file.
+     */
     private RenderedImage changeColorModel(RenderedImage image, boolean bufferedImage) throws IOException{
         if(image == null) return image;
 
@@ -112,7 +116,7 @@ public class DimapImageReader extends ImageReaderAdapter {
         final DimapMetadata metadata = (DimapMetadata) getImageMetadata(0);
 
         //apply the band <-> color mapping -------------------------------------
-        final int[] colorMapping = DimapParser.readColorBandMapping((Element)metadata.getAsTree("dimap"));
+        final int[] colorMapping = DimapAccessor.readColorBandMapping((Element)metadata.getAsTree("dimap"));
         if(colorMapping == null){
             //we have no default styling
             return image;
@@ -208,7 +212,7 @@ public class DimapImageReader extends ImageReaderAdapter {
         final Object metaFile = createInput("dim");
         final Document doc;
         try {
-            doc = DimapParser.read(metaFile);
+            doc = DomUtilities.read(metaFile);
         } catch (ParserConfigurationException ex) {
             throw new IOException(ex);
         } catch (SAXException ex) {
@@ -236,10 +240,10 @@ public class DimapImageReader extends ImageReaderAdapter {
             GridSampleDimension[] dims = null;
 
             try {
-                crs = DimapParser.readCRS(dimapNode);
-                final int[] dim = DimapParser.readRasterDimension(dimapNode);
-                gridToCRS = DimapParser.readGridToCRS(dimapNode);
-                dims = DimapParser.readSampleDimensions(dimapNode, "cn", dim[2]);
+                crs = DimapAccessor.readCRS(dimapNode);
+                final int[] dim = DimapAccessor.readRasterDimension(dimapNode);
+                gridToCRS = DimapAccessor.readGridToCRS(dimapNode);
+                dims = DimapAccessor.readSampleDimensions(dimapNode, "cn", dim[2]);
 
             } catch (FactoryException ex) {
                 Logger.getLogger(DimapImageReader.class.getName()).log(Level.SEVERE, null, ex);
