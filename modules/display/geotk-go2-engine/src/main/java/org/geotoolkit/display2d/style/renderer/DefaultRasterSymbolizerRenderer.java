@@ -71,6 +71,7 @@ import org.geotoolkit.util.converter.Classes;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.Function;
 import org.opengis.geometry.Envelope;
+import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.TransformException;
@@ -161,7 +162,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractSymbolizerRenderer<
         renderingContext.switchToObjectiveCRS();
 
         final RenderedImage img = applyStyle(dataCoverage, symbol.getSource(), hints);
-        final MathTransform2D trs2D = dataCoverage.getGridGeometry().getGridToCRS2D();
+        final MathTransform2D trs2D = dataCoverage.getGridGeometry().getGridToCRS2D(PixelOrientation.UPPER_LEFT);
         if(trs2D instanceof AffineTransform){
             g2d.setComposite(symbol.getJ2DComposite());
             g2d.drawRenderedImage(img, (AffineTransform)trs2D);
