@@ -348,20 +348,25 @@ public class Database implements Localized {
      * @throws NoSuchTableException if the specified type is unknown to this database.
      */
     public final <T extends Table> T getTable(final Class<T> type) throws NoSuchTableException {
+        Table table;
         synchronized (tables) {
-            Table table = tables.get(type);
-            if (table != null) {
-                table = table.clone();
-            } else try {
-                final Constructor<T> c = type.getConstructor(Database.class);
-                c.setAccessible(true);
-                table = c.newInstance(this);
-            } catch (Exception exception) { // Too many exeptions for enumerating them.
-                throw new NoSuchTableException(Classes.getShortName(type), exception);
+            table = tables.get(type);
+            if (table != null && table.canReuse) {
+                table.canReuse = false;
+            } else {
+                if (table != null) {
+                    table = table.clone();
+                } else try {
+                    final Constructor<T> c = type.getConstructor(Database.class);
+                    c.setAccessible(true);
+                    table = c.newInstance(this);
+                } catch (Exception exception) { // Too many exeptions for enumerating them.
+                    throw new NoSuchTableException(Classes.getShortName(type), exception);
+                }
+                tables.put(type, table);
             }
-            tables.put(type, table);
-            return type.cast(table);
         }
+        return type.cast(table);
     }
 
     /**

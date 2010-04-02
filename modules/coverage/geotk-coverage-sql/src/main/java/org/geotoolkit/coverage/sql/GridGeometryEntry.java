@@ -310,7 +310,7 @@ final class GridGeometryEntry extends Entry {
      * Returns the coverage shape in coverage CRS (not database CRS). The returned shape is likely
      * (but not garanteed) to be an instance of {@link Rectangle2D}. It can be freely modified.
      */
-    public Shape getHorizontalEnvelope() {
+    private Shape getHorizontalEnvelope() {
         final GridEnvelope gridRange = geometry.getGridRange();
         Shape shape = new Rectangle2D.Double(
                 gridRange.getLow (0), gridRange.getLow (1),
@@ -322,7 +322,7 @@ final class GridGeometryEntry extends Entry {
     /**
      * Returns the coordinates (in coverage CRS) at the center of the image.
      */
-    public Point2D getHorizontalCenter() {
+    private Point2D getHorizontalCenter() {
         final GridEnvelope gridRange = geometry.getGridRange();
         Point2D center = new Point2D.Double(
                 gridRange.getLow(0) + 0.5*gridRange.getSpan(0),

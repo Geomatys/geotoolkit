@@ -22,11 +22,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import org.geotoolkit.internal.sql.table.Database;
-import org.geotoolkit.internal.sql.table.TablePool;
 import org.geotoolkit.internal.sql.table.LocalCache;
 import org.geotoolkit.internal.sql.table.QueryType;
 import org.geotoolkit.internal.sql.table.SingletonTable;
-import org.geotoolkit.internal.sql.table.NoSuchTableException;
 
 
 /**
@@ -39,26 +37,6 @@ import org.geotoolkit.internal.sql.table.NoSuchTableException;
  * @module
  */
 final class LayerTable extends SingletonTable<LayerEntry> {
-    /**
-     * Connection to the table of domains. Will be created when first needed.
-     */
-    private transient volatile DomainOfLayerTable domains;
-
-    /**
-     * Connection to the table of series. Will be created when first needed.
-     */
-    private transient volatile SeriesTable series;
-
-    /**
-     * A clone of this table used for fetching fallbacks. Will be created when first needed.
-     */
-    private transient volatile LayerTable fallbacks;
-
-    /**
-     * Connection to the table of grid coverages. Will be created when first needed.
-     */
-    private transient volatile GridCoverageTable coverages;
-
     /**
      * Creates a layer table.
      *
@@ -112,8 +90,7 @@ final class LayerTable extends SingletonTable<LayerEntry> {
         }
         final String fallback = results.getString(indexOf(query.fallback));
         final String comments = results.getString(indexOf(query.comments));
-        final LayerEntry entry = new LayerEntry(this, identifier, period, fallback, comments);
-        return entry;
+        return new LayerEntry(identifier, period, fallback, comments, (TableFactory) getDatabase());
     }
 
     /**
@@ -143,73 +120,5 @@ final class LayerTable extends SingletonTable<LayerEntry> {
             }
         }
         return true;
-    }
-
-    /**
-     * Returns the {@link DomainOfLayerTable} instance, creating it if needed. This method is
-     * invoked only from {@link LayerEntry}, which is responsible for performing synchronization
-     * on the returned table. Note that because the returned instance is used in only one place,
-     * synchronization in that place is effective even if the {@code DomainOfLayerTable} methods
-     * are not synchronized.
-     */
-    final DomainOfLayerTable getDomainOfLayerTable() throws NoSuchTableException {
-        DomainOfLayerTable table = domains;
-        if (table == null) {
-            // Not a big deal if two instances are created concurrently.
-            domains = table = getDatabase().getTable(DomainOfLayerTable.class);
-        }
-        return table;
-    }
-
-    /**
-     * Returns the {@link SeriesTable} instance, creating it if needed.  This method is invoked
-     * only from {@link LayerEntry}, which is responsible for performing synchronization on the
-     * returned table. Note that because the returned instance is used in only one place,
-     * synchronization in that place is effective even if the {@code SeriesTable} methods are not
-     * synchronized.
-     */
-    final SeriesTable getSeriesTable() throws NoSuchTableException {
-        SeriesTable table = series;
-        if (table == null) {
-            // Not a big deal if two instances are created concurrently.
-            series = table = getDatabase().getTable(SeriesTable.class);
-        }
-        return table;
-    }
-
-    /**
-     * Returns a clone of this table used for fetching fallbacks. This is created for the
-     * same synchronization raison than the one discussed in {@link #getSeriesTable()}.
-     */
-    final LayerTable getLayerTable() {
-        LayerTable table = fallbacks;
-        if (table == null) {
-            // Not a big deal if two instances are created concurrently.
-            fallbacks = table = clone();
-        }
-        return table;
-    }
-
-    /**
-     * Returns the {@link GridCoverageTable} instance, creating it if needed. This method is
-     * invoked only from {@link LayerEntry}, which is responsible for performing synchronization
-     * on the returned table.
-     */
-    final GridCoverageTable getGridCoverageTable() throws NoSuchTableException {
-        GridCoverageTable table = coverages;
-        if (table == null) {
-            // Not a big deal if two instances are created concurrently.
-            coverages = table = getDatabase().getTable(GridCoverageTable.class);
-        }
-        return table;
-    }
-
-    /**
-     * Returns the pool of {@link GridCoverageTable}. At the opposite of the table returned by
-     * {@link #getGridCoverageTable()}, the tables in the pool can have their configuration
-     * changed.
-     */
-    final TablePool<GridCoverageTable> getTablePool() {
-        return ((TableFactory) getDatabase()).coverages;
     }
 }

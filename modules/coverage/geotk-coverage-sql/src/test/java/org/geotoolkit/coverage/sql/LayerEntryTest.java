@@ -53,8 +53,11 @@ public final class LayerEntryTest extends CatalogTestBase {
     /**
      * Returns the later entry used for the test.
      */
-    private static LayerEntry getLayer() throws SQLException {
-        return getDatabase().getTable(LayerTable.class).getEntry(TEMPERATURE);
+    private static LayerEntry getLayer(final String name) throws SQLException {
+        final LayerTable table = getDatabase().getTable(LayerTable.class);
+        final LayerEntry entry = table.getEntry(name);
+        table.release();
+        return entry;
     }
 
     /**
@@ -65,7 +68,7 @@ public final class LayerEntryTest extends CatalogTestBase {
      */
     @Test
     public void testSampleValueRanges() throws SQLException, CoverageStoreException {
-        final LayerEntry entry = getLayer();
+        final LayerEntry entry = getLayer(TEMPERATURE);
         final List<MeasurementRange<?>> validRanges = entry.getSampleValueRanges();
         assertNotNull(validRanges);
         assertEquals(1, validRanges.size());
@@ -82,7 +85,7 @@ public final class LayerEntryTest extends CatalogTestBase {
      */
     @Test
     public void testTypicalResolution() throws SQLException, CoverageStoreException {
-        final LayerEntry entry = getLayer();
+        final LayerEntry entry = getLayer(TEMPERATURE);
         final double[] resolution = entry.getTypicalResolution();
         assertEquals("X resolution (deg)",  0.087890625, resolution[0], EPS);
         assertEquals("Y resolution (deg)",  0.087890625, resolution[1], EPS);
@@ -98,7 +101,7 @@ public final class LayerEntryTest extends CatalogTestBase {
      */
     @Test
     public void testCoverageCount() throws SQLException, CoverageStoreException {
-        final LayerEntry entry = getLayer();
+        final LayerEntry entry = getLayer(TEMPERATURE);
         assertEquals("Coverage count", 7, entry.getCoverageCount());
         final SortedSet<SeriesEntry> series = entry.getCountBySeries();
         assertEquals("Expected exactly one format.", 1, series.size());
@@ -113,7 +116,7 @@ public final class LayerEntryTest extends CatalogTestBase {
      */
     @Test
     public void testImageFormats() throws SQLException, CoverageStoreException {
-        final LayerEntry entry = getLayer();
+        final LayerEntry entry = getLayer(TEMPERATURE);
         final SortedSet<String> names = entry.getImageFormats();
         assertEquals("Expected exactly one format.", 1, names.size());
         assertEquals("Coverage format", "PNG", names.first());
@@ -127,7 +130,7 @@ public final class LayerEntryTest extends CatalogTestBase {
      */
     @Test
     public void testGridGeometries() throws SQLException, CoverageStoreException {
-        final LayerEntry entry = getLayer();
+        final LayerEntry entry = getLayer(TEMPERATURE);
         final SortedSet<GeneralGridGeometry> geometries = entry.getGridGeometries();
         assertEquals("Expected exactly one grid geometry.", 1, geometries.size());
         final GeneralGridGeometry geom = geometries.first();
@@ -153,7 +156,7 @@ public final class LayerEntryTest extends CatalogTestBase {
      */
     @Test
     public void testEnvelope() throws SQLException, CoverageStoreException {
-        final LayerEntry entry = getLayer();
+        final LayerEntry entry = getLayer(TEMPERATURE);
         final CoverageEnvelope envelope = entry.getEnvelope(SAMPLE_TIME, null);
         assertEquals(-180,              envelope.getMinimum(0), 0.0);
         assertEquals(+180,              envelope.getMaximum(0), 0.0);
@@ -173,7 +176,7 @@ public final class LayerEntryTest extends CatalogTestBase {
      */
     @Test
     public void testAvailableTimes() throws SQLException, CoverageStoreException {
-        final LayerEntry entry = getLayer();
+        final LayerEntry entry = getLayer(TEMPERATURE);
         final SortedSet<Date> times = entry.getAvailableTimes();
         assertTrue(times.contains(SAMPLE_TIME));
         assertSame(times, times.subSet(START_TIME, END_TIME));
@@ -197,10 +200,10 @@ public final class LayerEntryTest extends CatalogTestBase {
      */
     @Test
     public void testAvailableElevations() throws SQLException, CoverageStoreException {
-        LayerEntry entry = getLayer();
+        LayerEntry entry = getLayer(TEMPERATURE);
         assertTrue(entry.getAvailableElevations().isEmpty());
 
-        entry = getDatabase().getTable(LayerTable.class).getEntry(NETCDF);
+        entry = getLayer(NETCDF);
         final SortedSet<Number> elevations = entry.getAvailableElevations();
         checkCoriolisElevations(elevations);
         assertSame("Shall be cached.", elevations, entry.getAvailableElevations());

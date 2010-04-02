@@ -105,18 +105,13 @@ public class Category implements Serializable {
     }
 
     /**
-     * A transparent color for missing data.
-     */
-    private static final Color TRANSPARENT = new Color(0,0,0,0);
-
-    /**
      * A default category for "no data" values. This default qualitative category use
      * sample value 0, which is mapped to geophysics value {@link Float#NaN} for those who work
      * with floating point images. The rendering color default to a fully transparent color and
      * the name is "no data" localized to the requested locale.
      */
     public static final Category NODATA = new Category(
-            Vocabulary.formatInternational(Vocabulary.Keys.NODATA), TRANSPARENT, 0);
+            Vocabulary.formatInternational(Vocabulary.Keys.NODATA), new Color(0,0,0,0), 0);
 
     /**
      * A default category for the boolean "{@link Boolean#FALSE false}" value. This default

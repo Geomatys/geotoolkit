@@ -96,12 +96,12 @@ public interface GridCoverageReference extends CoverageStack.Element {
      * Returns the native Coordinate Reference System of the coverage.
      * The returned CRS may be up to 4-dimensional.
      *
-     * @param includeTime {@code true} if the returned CRS should include the time component,
-     *        or {@code false} for a spatial-only CRS.
+     * @param includeTime {@code true} if the returned CRS should include the time component
+     *        (if available), or {@code false} for a spatial-only CRS.
      *
      * @return The native CRS of the coverage.
      */
-    CoordinateReferenceSystem getSpatioTemporalCRS(boolean includeTime);
+    CoordinateReferenceSystem getCoordinateReferenceSystem(boolean includeTime);
 
     /**
      * Returns the geographic bounding box of the {@linkplain #getEnvelope coverage envelope}.
@@ -116,9 +116,9 @@ public interface GridCoverageReference extends CoverageStack.Element {
 
     /**
      * Returns the spatio-temporal envelope of the coverage. The CRS of the returned envelope
-     * is the {@linkplain #getSpatioTemporalCRS(boolean) spatio-temporal CRS} of this entry,
-     * which may vary on a coverage-by-coverage basis. If an envelope is some unified CRS is
-     * desired, consider using {@link #getXYRange()},  {@link #getZRange()} and
+     * is the {@linkplain #getCoordinateReferenceSystem(boolean) spatio-temporal CRS} of this
+     * entry, which may vary on a coverage-by-coverage basis. If an envelope is some unified
+     * CRS is desired, consider using {@link #getXYRange()}, {@link #getZRange()} and
      * {@link #getTimeRange()} instead.
      * <p>
      * This method is equivalent to the following call:

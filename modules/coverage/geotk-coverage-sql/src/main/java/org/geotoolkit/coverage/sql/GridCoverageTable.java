@@ -76,10 +76,6 @@ class GridCoverageTable extends BoundedSingletonTable<GridCoverageEntry> {
 
     /**
      * The table of grid geometries. Will be created only when first needed.
-     * <p>
-     * This field doesn't need to be declared {@code volatile} because it is not used
-     * outside this {@code GridCoverageTable}, so it is not expected to be accessed
-     * by other threads.
      */
     private transient GridGeometryTable gridGeometryTable;
 
@@ -107,7 +103,7 @@ class GridCoverageTable extends BoundedSingletonTable<GridCoverageEntry> {
      * Constructs a new {@code GridCoverageTable} from the specified query.
      */
     private GridCoverageTable(final GridCoverageQuery query) {
-        // Method createIdentifier(...) expect the parameter to be in exactly that order.
+        // Method createIdentifier(...) expect the parameters to be in exactly that order.
         super(query, new Parameter[] {query.bySeries, query.byFilename, query.byIndex},
                 query.byStartTime, query.byHorizontalExtent);
     }
@@ -156,6 +152,7 @@ class GridCoverageTable extends BoundedSingletonTable<GridCoverageEntry> {
         if (!layer.equals(getLayer())) {
             final LayerTable table = getDatabase().getTable(LayerTable.class);
             this.layer = table.getEntry(layer);
+            table.release();
             fireStateChanged("Layer");
         }
     }
@@ -215,7 +212,9 @@ class GridCoverageTable extends BoundedSingletonTable<GridCoverageEntry> {
     }
 
     /**
-     * Returns the {@link GridGeometryTable} instance, creating it if needed.
+     * Returns the {@link GridGeometryTable} instance, creating it if needed. This method is not
+     * private because it is also used by {@link LayerEntry#getCountByExtent()}, but this is okay
+     * if used in the same thread than this {@code GridCoverageTable} instance.
      */
     final GridGeometryTable getGridGeometryTable() throws NoSuchTableException {
         GridGeometryTable table = gridGeometryTable;
@@ -452,8 +451,9 @@ loop:   for (final GridCoverageEntry newEntry : entries) {
     {
         if (pkIndices.length != 3) {
             /*
-             * pkIndices.length should always be 3. If not, we have a bug.
-             * Invoking the super-class method will intentionally throw an exception.
+             * pkIndices.length should always be 3. If not, we have a bug. Invoking
+             * the super-class method will intentionally throw an exception (unless
+             * the length is 1, in which case the super-class can manage).
              */
             return super.createIdentifier(results, pkIndices);
         }
@@ -469,7 +469,9 @@ loop:   for (final GridCoverageEntry newEntry : entries) {
         SeriesEntry series = layer.getSeries(seriesID);
         if (series == null) { // Should not happen, but be lenient if it happen anyway.
             final SeriesTable table = getDatabase().getTable(SeriesTable.class);
+            table.setLayer(getLayer());
             series = table.getEntry(seriesID);
+            table.release();
         }
         /*
          * We need to include the altitude in the identifier (since requests for different

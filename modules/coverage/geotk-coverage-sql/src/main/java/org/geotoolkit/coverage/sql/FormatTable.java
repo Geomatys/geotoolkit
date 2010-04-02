@@ -24,6 +24,7 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.internal.sql.table.Database;
 import org.geotoolkit.internal.sql.table.SingletonTable;
+import org.geotoolkit.internal.sql.table.CatalogException;
 import org.geotoolkit.internal.sql.table.IllegalRecordException;
 
 
@@ -38,12 +39,7 @@ import org.geotoolkit.internal.sql.table.IllegalRecordException;
  */
 final class FormatTable extends SingletonTable<FormatEntry> {
     /**
-     * Connection to the sample dimensions table.
-     * Will be created only when first needed.
-     * <p>
-     * This field doesn't need to be declared {@code volatile} because it is not used
-     * outside this {@code FormatTable}, so it is not expected to be accessed by other
-     * threads.
+     * The sample dimensions table, created when first needed.
      */
     private transient SampleDimensionTable sampleDimensions;
 
@@ -84,6 +80,17 @@ final class FormatTable extends SingletonTable<FormatEntry> {
     }
 
     /**
+     * Returns the {@link SampleDimensionTable} instance, creating it if needed.
+     */
+    private SampleDimensionTable getSampleDimensionTable() throws CatalogException {
+        SampleDimensionTable table = sampleDimensions;
+        if (table == null) {
+            sampleDimensions = table = getDatabase().getTable(SampleDimensionTable.class);
+        }
+        return table;
+    }
+
+    /**
      * Creates a format from the current row in the specified result set.
      *
      * @param  results The result set to read.
@@ -110,12 +117,7 @@ final class FormatTable extends SingletonTable<FormatEntry> {
                     Errors.Keys.UNKNOWN_PARAMETER_$1, encoding),
                     this, results, encodingIndex, identifier);
         }
-        SampleDimensionTable table = sampleDimensions;
-        if (table == null) {
-            // Not a big deal if two instances are created concurrently.
-            sampleDimensions = table = getDatabase().getTable(SampleDimensionTable.class);
-        }
-        final GridSampleDimension[] bands = table.getSampleDimensions(identifier.toString());
+        final GridSampleDimension[] bands = getSampleDimensionTable().getSampleDimensions(identifier.toString());
         return new FormatEntry(identifier, format, bands, geophysics, comments);
     }
 }

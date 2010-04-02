@@ -35,6 +35,7 @@ import org.geotoolkit.internal.sql.table.Table;
 import org.geotoolkit.internal.sql.table.Database;
 import org.geotoolkit.internal.sql.table.QueryType;
 import org.geotoolkit.internal.sql.table.LocalCache;
+import org.geotoolkit.internal.sql.table.CatalogException;
 import org.geotoolkit.internal.sql.table.IllegalRecordException;
 
 
@@ -51,12 +52,7 @@ import org.geotoolkit.internal.sql.table.IllegalRecordException;
  */
 final class SampleDimensionTable extends Table {
     /**
-     * Connection to the {@linkplain Category categories} table.
-     * Will be created only when first needed.
-     * <p>
-     * This field doesn't need to be declared {@code volatile} because it is not used
-     * outside this {@code SampleDimensionTable}, so it is not expected to be accessed
-     * by other threads.
+     * The {@linkplain Category categories} table, created only when first needed.
      */
     private transient CategoryTable categories;
 
@@ -87,6 +83,17 @@ final class SampleDimensionTable extends Table {
     @Override
     protected SampleDimensionTable clone() {
         return new SampleDimensionTable(this);
+    }
+
+    /**
+     * Returns the {@link CategoryTable} instance, creating it if needed.
+     */
+    private CategoryTable getCategoryTable() throws CatalogException {
+        CategoryTable table = categories;
+        if (table == null) {
+            categories = table = getDatabase().getTable(CategoryTable.class);
+        }
+        return table;
     }
 
     /**
@@ -159,9 +166,7 @@ final class SampleDimensionTable extends Table {
          */
         final GridSampleDimension[] sampleDimensions = new GridSampleDimension[numSampleDimensions];
         if (numSampleDimensions != 0) {
-            if (categories == null) {
-                categories = getDatabase().getTable(CategoryTable.class);
-            }
+            final CategoryTable categories = getCategoryTable();
             final Map<Integer,Category[]> cat = categories.getCategories(format);
             for (int i=0; i<numSampleDimensions; i++) {
                 try {

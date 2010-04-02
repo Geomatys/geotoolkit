@@ -26,6 +26,14 @@ import org.geotoolkit.util.converter.Classes;
  * Pool of tables. The length of the array given to the constructor is the maximal
  * number of tables to be cached.
  *
+ * {@section Example}
+ * {@preformat java
+ *     TablePool<LayerTable> pool = ...
+ *     LayerTable table = pool.acquire();
+ *     LayerEntry entry = table.getEntry(id);
+ *     pool.release(table);
+ * }
+ *
  * @param  <T> The type of tables to be stored in the pool.
  *
  * @author Martin Desruisseaux (Geomatys)

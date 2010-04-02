@@ -78,6 +78,13 @@ public abstract class Table implements Localized {
     private int modificationCount;
 
     /**
+     * {@cdoe true} if this table is available for reuse.
+     *
+     * @see #release()
+     */
+    transient volatile boolean canReuse;
+
+    /**
      * Creates a new table using the specified query. The query given in argument should be some
      * subclass with {@code addFooColumn(...)} and {@code addParameter(...)} methods invoked in
      * its constructor.
@@ -431,11 +438,13 @@ public abstract class Table implements Localized {
      */
     private void fireStateChanged() {
         final Database database = query.database;
-        if (database != null) {
-            modificationCount = database.modificationCount.incrementAndGet();
-        } else {
-            modificationCount++;
-        }
+        do {
+            if (database != null) {
+                modificationCount = database.modificationCount.incrementAndGet();
+            } else {
+                modificationCount++;
+            }
+        } while (modificationCount == LocalCache.Stmt.UNINITIALIZED); // Paranoiac check.
     }
 
     /**
@@ -511,5 +520,22 @@ public abstract class Table implements Localized {
     public final Locale getLocale() {
         final Database database = query.database;
         return (database != null) ? database.getLocale() : null;
+    }
+
+    /**
+     * Marks this table as available for reuse. This method can be invoked after a call
+     * to {@link Database#getTable(Class)} when the caller is sure that he will not use
+     * this table anymore. Example:
+     *
+     * {@preformat java
+     *     Table table = Database.getTable(...);
+     *     // use the table
+     *     table.release();
+     * }
+     *
+     * In case of doubt, do not invoke this method.
+     */
+    public final void release() {
+        canReuse = true;
     }
 }

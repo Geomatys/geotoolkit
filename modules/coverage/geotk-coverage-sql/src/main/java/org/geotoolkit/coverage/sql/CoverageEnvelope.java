@@ -132,6 +132,16 @@ public class CoverageEnvelope extends AbstractEnvelope implements Cloneable {
     }
 
     /**
+     * Resets all envelope attributes to their initial state, which is an infinite envelope.
+     *
+     * @return {@code true} if this envelope changed as a result of this method call.
+     */
+    public boolean clear() {
+        // Line below really requires | operator, not ||.
+        return setHorizontalRange(null) | setVerticalRange(null) | setTimeRange(null) | setPreferredResolution(null);
+    }
+
+    /**
      * Sets the spatio-temporal envelope and the resolution from an other
      * {@code CoverageEnvelope} object. This method invokes the individual
      * {@link #setHorizontalRange}, {@link #setVerticalRange} and {@link #setTimeRange}
@@ -289,11 +299,9 @@ public class CoverageEnvelope extends AbstractEnvelope implements Cloneable {
      */
     public boolean setEnvelope(Envelope envelope) throws TransformException {
         if (envelope == null) {
-            boolean changed;
-            changed  = setHorizontalRange(null);
-            changed |= setVerticalRange(null);
-            changed |= setTimeRange(null);
-            return changed;
+            // Like clear() except that we don't touch to the resolution.
+            // Note: line below really requires the | operator, not ||.
+            return setHorizontalRange(null) | setVerticalRange(null) | setTimeRange(null);
         }
         CoordinateReferenceSystem sourceCRS = envelope.getCoordinateReferenceSystem();
         CoordinateReferenceSystem targetCRS = getCoordinateReferenceSystem(

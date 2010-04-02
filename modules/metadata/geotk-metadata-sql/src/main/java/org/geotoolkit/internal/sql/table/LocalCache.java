@@ -101,6 +101,12 @@ public interface LocalCache {
      */
     public static final class Stmt extends StatementEntry {
         /**
+         * Special value for {@link #stamp} meaning that the prepared statement
+         * has not yet been initialized.
+         */
+        static final int UNINITIALIZED = -1;
+
+        /**
          * The SQL query used for creating the statement.
          */
         final String sql;
@@ -109,7 +115,7 @@ public interface LocalCache {
          * A value used by {@link Table} in order to determine if the {@link #statement}
          * parameters need to be modified.
          */
-        int stamp = -1;
+        int stamp = UNINITIALIZED;
 
         /**
          * Constructs a metadata result for the specified statement.

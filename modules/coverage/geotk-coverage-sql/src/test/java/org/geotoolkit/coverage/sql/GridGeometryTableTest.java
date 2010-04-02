@@ -95,6 +95,7 @@ public final class GridGeometryTableTest extends CatalogTestBase {
         assertEquals("Shear Y",             0, gridToCRS.getShearY(),     0.0);
 
         assertSame("Expected cached entry.", entry, table.getEntry(CORIOLIS_ID));
+        table.release();
     }
 
     /**
@@ -117,6 +118,7 @@ public final class GridGeometryTableTest extends CatalogTestBase {
         depths[1] = 12.8; // Tries a non-existant altitude.
         assertNull("Wrong depth.", table.find(entry.getImageSize(),
                 entry.gridToCRS, entry.getHorizontalSRID(), depths, entry.getVerticalSRID()));
+        table.release();
     }
 
     /**
@@ -138,5 +140,6 @@ public final class GridGeometryTableTest extends CatalogTestBase {
                 table.find(entry.getImageSize(), entry.gridToCRS,
                 entry.getHorizontalSRID(), depths, entry.getVerticalSRID()));
         assertEquals("Should have deleted the entry.", 1, table.delete(id));
+        table.release();
     }
 }

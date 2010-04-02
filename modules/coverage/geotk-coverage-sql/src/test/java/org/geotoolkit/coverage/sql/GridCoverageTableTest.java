@@ -67,6 +67,7 @@ public final class GridCoverageTableTest extends CatalogTestBase {
     @Test
     public void testAvailability() throws SQLException {
         final GridCoverageTable table = getDatabase().getTable(GridCoverageTable.class);
+        table.envelope.clear();
         table.setLayer(LayerTableTest.TEMPERATURE);
         final SortedSet<Date> allTimes = table.getAvailableTimes();
         assertEquals(7, allTimes.size());
@@ -86,6 +87,7 @@ public final class GridCoverageTableTest extends CatalogTestBase {
          */
         table.envelope.setTimeRange(LayerTableTest.START_TIME, LayerTableTest.END_TIME);
         assertEquals(allTimes, table.getAvailableTimes());
+        table.release();
     }
 
     /**
@@ -98,6 +100,7 @@ public final class GridCoverageTableTest extends CatalogTestBase {
     @Test
     public void testSelect() throws SQLException {
         final GridCoverageTable table = getDatabase().getTable(GridCoverageTable.class);
+        table.envelope.clear();
         table.setLayer(LayerTableTest.TEMPERATURE);
         final GridCoverageReference entry = table.getEntry(SAMPLE_NAME);
         assertEquals(SAMPLE_NAME + ":1", entry.getName());
@@ -121,6 +124,7 @@ public final class GridCoverageTableTest extends CatalogTestBase {
         assertEquals( +90, envelope.getMaximum(1), 0.0);
         assertEquals(6439, envelope.getMinimum(2), 0.0);
         assertEquals(6447, envelope.getMaximum(2), 0.0);
+        table.release();
     }
 
     /**
@@ -132,6 +136,7 @@ public final class GridCoverageTableTest extends CatalogTestBase {
     @Test
     public void testList() throws SQLException {
         final GridCoverageTable table = getDatabase().getTable(GridCoverageTable.class);
+        table.envelope.clear();
         table.setLayer(LayerTableTest.TEMPERATURE);
         /*
          * Get the set of entries in the layer.
@@ -146,6 +151,7 @@ public final class GridCoverageTableTest extends CatalogTestBase {
          * Should select the one which is in the middle of the requested range.
          */
         assertSame(entry, table.getEntry());
+        table.release();
     }
 
     /**
@@ -156,6 +162,7 @@ public final class GridCoverageTableTest extends CatalogTestBase {
     @Test
     public void testNetCDF() throws SQLException {
         final GridCoverageTable table = getDatabase().getTable(GridCoverageTable.class);
+        table.envelope.clear();
         table.setLayer(LayerTableTest.NETCDF);
         final Set<Date> availableTimes = table.getAvailableTimes();
         assertEquals(3, availableTimes.size());
@@ -181,6 +188,7 @@ public final class GridCoverageTableTest extends CatalogTestBase {
         assertEquals(+180, bbox.getEastBoundLongitude(), EPS);
         assertEquals( -77, bbox.getSouthBoundLatitude(), 0.1);
         assertEquals( +77, bbox.getNorthBoundLatitude(), 0.1);
+        table.release();
     }
 
     /**
@@ -191,9 +199,11 @@ public final class GridCoverageTableTest extends CatalogTestBase {
     @Test
     public void testTwoBands() throws SQLException {
         final GridCoverageTable table = getDatabase().getTable(GridCoverageTable.class);
+        table.envelope.clear();
         table.setLayer(LayerTableTest.GEOSTROPHIC_CURRENT);
         final GridCoverageReference entry = table.getEntry();
         assertEquals(2, entry.getSampleDimensions().length);
+        table.release();
     }
 
     /**
@@ -205,6 +215,7 @@ public final class GridCoverageTableTest extends CatalogTestBase {
     @Test
     public void testBoundingBox() throws SQLException, TransformException {
         final GridCoverageTable table = getDatabase().getTable(GridCoverageTable.class);
+        table.envelope.clear();
         table.setLayer(LayerTableTest.TEMPERATURE);
         GeneralEnvelope search = new GeneralEnvelope(table.envelope.getCoordinateReferenceSystem());
         search.setToInfinite();
@@ -245,5 +256,6 @@ public final class GridCoverageTableTest extends CatalogTestBase {
         assertEquals( +60, envelope.getMaximum(1), 0.0);
         assertEquals(6431, envelope.getMinimum(3), 0.0);
         assertEquals(6487, envelope.getMaximum(3), 0.0);
+        table.release();
     }
 }

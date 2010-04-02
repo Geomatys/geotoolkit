@@ -95,6 +95,7 @@ public final class LayerTableTest extends CatalogTestBase {
         final Set<String> names = table.getIdentifiers();
         assertTrue(names.contains(TEMPERATURE));
         assertTrue(names.contains(NETCDF));
+        table.release();
     }
 
     /**
@@ -116,6 +117,7 @@ public final class LayerTableTest extends CatalogTestBase {
         final Set<LayerEntry> entries = table.getEntries();
         assertFalse(entries.isEmpty());
         assertTrue(entries.contains(entry));
+        table.release();
     }
 
     /**
@@ -134,6 +136,7 @@ public final class LayerTableTest extends CatalogTestBase {
         assertEquals(1, validRanges.size());
         assertEquals(-3.0, validRanges.get(0).getMinimum(true), EPS);
         assertEquals(40.0, validRanges.get(0).getMaximum(true), EPS);
+        table.release();
     }
 
     /**
@@ -154,5 +157,6 @@ public final class LayerTableTest extends CatalogTestBase {
         assertEquals( 1.90, validRanges.get(0).getMaximum(true), EPS);
         assertEquals(-1.91, validRanges.get(1).getMinimum(true), EPS);
         assertEquals( 1.90, validRanges.get(1).getMaximum(true), EPS);
+        table.release();
     }
 }

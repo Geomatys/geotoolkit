@@ -41,9 +41,10 @@ import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.collection.Cache;
 import org.geotoolkit.internal.sql.table.Table;
 import org.geotoolkit.internal.sql.table.Database;
+import org.geotoolkit.internal.sql.table.QueryType;
 import org.geotoolkit.internal.sql.table.LocalCache;
 import org.geotoolkit.internal.sql.table.SpatialDatabase;
-import org.geotoolkit.internal.sql.table.QueryType;
+import org.geotoolkit.internal.sql.table.CatalogException;
 import org.geotoolkit.resources.Errors;
 
 
@@ -59,15 +60,12 @@ import org.geotoolkit.resources.Errors;
 final class TileTable extends Table {
     /**
      * The table of grid geometries. Will be created only when first needed.
-     * <p>
-     * This field doesn't need to be declared {@code volatile} because it is not used
-     * outside this {@code GridCoverageTable}, so it is not expected to be accessed
-     * by other threads.
      */
     private transient GridGeometryTable gridGeometryTable;
 
     /**
-     * A cache of tile managers created up to date.
+     * A cache of tile managers created up to date. This cache is shared by all
+     * instances of {@link TileTable} created from the same {@link SpatialDatabase}.
      */
     private final Cache<CoverageRequest,TileManager[]> cache;
 
@@ -105,6 +103,17 @@ final class TileTable extends Table {
     @Override
     protected TileTable clone() {
         return new TileTable(this);
+    }
+
+    /**
+     * Returns the {@link GridGeometryTable} instance, creating it if needed.
+     */
+    private GridGeometryTable getGridGeometryTable() throws CatalogException {
+        GridGeometryTable table = gridGeometryTable;
+        if (table == null) {
+            gridGeometryTable = table = getDatabase().getTable(GridGeometryTable.class);
+        }
+        return table;
     }
 
     /**
@@ -183,10 +192,7 @@ final class TileTable extends Table {
                              * of new "GridGeometries" entries.
                              */
                             if (geometry == null || extent != lastExtentID) {
-                                if (gridGeometryTable == null) {
-                                    gridGeometryTable = getDatabase().getTable(GridGeometryTable.class);
-                                }
-                                geometry = gridGeometryTable.getEntry(extent);
+                                geometry = getGridGeometryTable().getEntry(extent);
                                 lastExtentID = extent;
                             }
                             AffineTransform gridToCRS = geometry.gridToCRS;

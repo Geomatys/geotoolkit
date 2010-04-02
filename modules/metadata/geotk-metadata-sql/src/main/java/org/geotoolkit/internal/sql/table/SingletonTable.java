@@ -67,12 +67,6 @@ public abstract class SingletonTable<E extends Entry> extends Table {
     private final Cache<Comparable<?>,E> cache;
 
     /**
-     * Returns {@code true} if the subclass overrides the
-     * {@link #createIdentifier(ResultSet, int[])} method.
-     */
-    private final boolean invokeCreateIdentifier;
-
-    /**
      * Creates a new table using the specified query. The optional {@code pkParam} argument
      * defines the parameters to use for looking an element by identifier. This is usually the
      * parameter for the value to search in the primary key column. This information is needed
@@ -87,7 +81,6 @@ public abstract class SingletonTable<E extends Entry> extends Table {
         super(query);
         this.pkParam = pkParam.clone();
         cache = new Cache<Comparable<?>,E>();
-        invokeCreateIdentifier = isOverriden("createIdentifier", ResultSet.class, int[].class);
     }
 
     /**
@@ -104,23 +97,6 @@ public abstract class SingletonTable<E extends Entry> extends Table {
         super(table);
         pkParam = table.pkParam;
         cache   = table.cache;
-        invokeCreateIdentifier = table.invokeCreateIdentifier;
-    }
-
-    /**
-     * Returns {@code true} if the given method has been overriden. This method does not assume
-     * that the method is public (otherwise we would have used a more efficient approach).
-     */
-    private boolean isOverriden(final String methodName, final Class<?>... parameterTypes) {
-        for (Class<?> c=getClass(); !c.equals(SingletonTable.class); c=c.getSuperclass()) {
-            try {
-                c.getDeclaredMethod(methodName, parameterTypes);
-                return true;
-            } catch (NoSuchMethodException e) {
-                // Ignore and check the super-class.
-            }
-        }
-        return false;
     }
 
     /**
@@ -228,6 +204,8 @@ public abstract class SingletonTable<E extends Entry> extends Table {
      * be overriden by subclasses using {@link MultiColumnIdentifier}. Other subclasses don't
      * need to override this method: a {@link String} or {@link Integer} identifier will be
      * used as needed.
+     * <p>
+     * This method is invoked by {@link #getEntries()} only. It should not be invoked otherwise.
      *
      * @param  results The result set.
      * @param  pkIndices The indices of the column to inspect (typically the primary keys).
@@ -237,6 +215,9 @@ public abstract class SingletonTable<E extends Entry> extends Table {
      * @since 3.10
      */
     protected Comparable<?> createIdentifier(ResultSet results, int[] pkIndices) throws SQLException {
+        if (pkIndices.length == 1) {
+            return null; // Special value to be handled by getEntries().
+        }
         results.close();
         throw new CatalogException(errors().getString(Errors.Keys.UNSUPPORTED_OPERATION_$1, getQueryType()));
     }
@@ -343,15 +324,18 @@ public abstract class SingletonTable<E extends Entry> extends Table {
             final int[] pkIndices = getPrimaryKeyColumns();
             final int pkIndex = getPrimaryKeyColumn(pkIndices);
             final ResultSet results = ce.statement.executeQuery();
-            final boolean isNumeric = !invokeCreateIdentifier && isNumeric(results, pkIndex);
+            Boolean isNumeric = null;
             while (results.next()) {
-                final Comparable<?> identifier;
-                if (invokeCreateIdentifier) {
-                    identifier = createIdentifier(results, pkIndices);
-                } else if (isNumeric) {
-                    identifier = results.getInt(pkIndex);
-                } else {
-                    identifier = results.getString(pkIndex);
+                Comparable<?> identifier = createIdentifier(results, pkIndices);
+                if (identifier == null) {
+                    if (isNumeric == null) {
+                        isNumeric = isNumeric(results, pkIndex);
+                    }
+                    if (isNumeric) {
+                        identifier = results.getInt(pkIndex);
+                    } else {
+                        identifier = results.getString(pkIndex);
+                    }
                 }
                 E entry = cache.peek(identifier);
                 if (entry == null) {

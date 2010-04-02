@@ -35,10 +35,6 @@ import org.geotoolkit.internal.sql.table.SpatialDatabase;
 
 /**
  * Connection to a table of domain of layers. For internal use by {@link LayerTable} only.
- * Defined as a separated table because while many layers entry may be created (and their
- * cache flushed), only one {@code DomainOfLayerTable} is enough, and we want to preserve
- * its cache. This is especially important since this table is actually a query that may
- * be costly.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @version 3.10

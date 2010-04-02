@@ -88,28 +88,40 @@ final class LayerEntry extends Entry implements Layer {
     final double timeInterval;
 
     /**
-     * The domain for this layer, or {@code null} if not yet computed.
-     * Will be computed only when first needed, and is part of serialized data.
+     * The domain for this layer, or {@code null} if not yet computed. Will be computed
+     * only when first needed, and is serialized because its computation recquires a
+     * connection to the database.
+     *
+     * @see #getDomain()
      */
     private volatile DomainOfLayerEntry domain;
 
     /**
-     * The series associated with their identifiers.
-     * This map will be created only when first needed.
+     * The series associated with their identifiers. This map will be created only when
+     * first needed. This field is not declared {@code volatile} because the method that
+     * compute it needs to be synchronized anyway.
+     *
+     * @see #getSeriesMap()
      */
-    private volatile Map<Integer,SeriesEntry> series;
+    private Map<Integer,SeriesEntry> series;
 
     /**
      * How many coverages are found in each series, sorted by decreasing frequency.
-     * This is computed when first needed.
+     * This is computed when first needed. This field is not declared {@code volatile}
+     * because the method that compute it needs to be synchronized anyway.
+     *
+     * @see #getCountBySeries()
      */
-    private volatile FrequencySortedSet<SeriesEntry> countBySeries;
+    private FrequencySortedSet<SeriesEntry> countBySeries;
 
     /**
      * How many coverages are found for each grid geometry, sorted by decreasing frequency.
-     * This is computed when first needed.
+     * This is computed when first needed. This field is not declared {@code volatile}
+     * because the method that compute it needs to be synchronized anyway.
+     *
+     * @see #getCountByExtent()
      */
-    private volatile FrequencySortedSet<GridGeometryEntry> countByExtent;
+    private FrequencySortedSet<GridGeometryEntry> countByExtent;
 
     /**
      * A fallback layer to be used if no image can be found for a given date in this layer.
@@ -117,72 +129,85 @@ final class LayerEntry extends Entry implements Layer {
      * <p>
      * Upon construction, this field contains only the layer name as a {@link String}.
      * This is converted to {@link LayerEntry} only when first needed.
+     *
+     * @see #getFallback()
      */
     private volatile Object fallback;
 
     /**
      * The typical resolution along each axis of the database CRS. This is computed only
-     * when first needed. This field doesn't need to be serialized since it can be computed
-     * from the {@linkplain #domain}.
+     * when first needed. This field is serialized because its computation requires an
+     * access to the database.
+     *
+     * @see #getTypicalResolution()
      */
-    private volatile transient double[] resolution;
+    private double[] resolution;
 
     /**
-     * The set of available dates. Will be computed by
-     * {@link #getAvailableTimes()} when first needed.
+     * The set of available dates. Will be computed by when first needed. This field
+     * is serialized because its computation requires a connection to the database.
+     *
+     * @see #getAvailableTimes()
      */
-    private volatile SortedSet<Date> availableTimes;
+    private SortedSet<Date> availableTimes;
 
     /**
-     * The set of available altitudes. Will be computed by {@link #getAvailableElevations()}
-     * when first needed. This field doesn't need to be serialized since it can be recomputed
-     * from the {@linkplain #countByExtent}.
+     * The set of available altitudes. Will be computed when first needed. This field doesn't
+     * need to be serialized since it can be recomputed from the {@linkplain #countByExtent},
+     * which is serialized.
+     *
+     * @see #getAvailableElevations()
      */
-    private volatile transient SortedSet<Number> availableElevations;
+    private transient SortedSet<Number> availableElevations;
 
     /**
      * Caches the value returned by {@link #getSampleValueRanges()}. Computed only when first
      * needed. This field doesn't need to be serialized since it can be recomputed from the
-     * {@linkplain #series}.
+     * {@linkplain #series} field, which is serialized.
+     *
+     * @see #getSampleValueRanges()
      */
-    private volatile transient List<MeasurementRange<?>> sampleValueRanges;
+    private transient List<MeasurementRange<?>> sampleValueRanges;
 
     /**
      * Caches the value returned by {@link #getGridGeometries()}. This field doesn't need
-     * to be serialized since it can be recomputed from the {@linkplain #countByExtent}.
+     * to be serialized since it can be recomputed from the {@linkplain #countByExtent},
+     * which is serialized.
+     *
+     * @see #getGridGeometries()
      */
-    private volatile transient SortedSet<GeneralGridGeometry> gridGeometries;
+    private transient SortedSet<GeneralGridGeometry> gridGeometries;
 
     /**
-     * The envelope for all coverages in this layer.
-     * Will be computed when first needed.
+     * The envelope for all coverages in this layer. Will be computed when first needed.
+     * This field is serialized because its computation requires a connection to the database.
+     *
+     * @see #getEnvelope(Date, Number)
      */
     private volatile CoverageEnvelope coverageEnvelope;
 
     /**
-     * The table which created this entry. This is used for fetching dependencies
-     * like {@link DomainOfLayerTable} or {@link SeriesTable}.
-     * <p>
+     * The factory for fetching table dependencies.
      * This field is not serialized. It will be {@code null} on deserialization, which
      * imply that the various {@code getCoverageReference} methods will not be available.
      */
-    private final transient LayerTable layerTable;
+    private final transient TableFactory tables;
 
     /**
      * Creates a new layer.
      *
-     * @param table        The table that created this entry.
      * @param name         The layer name.
      * @param timeInterval Typical time interval (in days) between images, or {@link Double#NaN} if unknown.
      * @param fallback     The layer on which to fallback, or {@code null} if none.
      * @param remarks      Optional remarks, or {@code null}.
+     * @param tables       The table factory.
      */
-    LayerEntry(final LayerTable table, final Comparable<?> name, final double timeInterval,
-            final String fallback, final String remarks)
+    LayerEntry(final Comparable<?> name, final double timeInterval, final String fallback,
+            final String remarks, final TableFactory tables)
     {
         super(name, remarks);
+        this.tables = tables;
         this.timeInterval = timeInterval;
-        this.layerTable = table;
     }
 
     /**
@@ -197,26 +222,27 @@ final class LayerEntry extends Entry implements Layer {
      * Returns the ressources bundle for error messages.
      */
     private Errors errors() {
-        return Errors.getResources(layerTable != null ? layerTable.getLocale() : null);
+        return Errors.getResources(tables != null ? tables.getLocale() : null);
     }
 
     /**
-     * Returns the layer table, or thrown an exception if there is none.
+     * Returns the table factory, or thrown an exception if there is none.
      * The exception may happen if this entry has been deserialized.
      *
-     * @return The layer table.
+     * @return The table factory.
      * @throws IllegalStateException If this entry is not connected to a database.
      */
-    private LayerTable getLayerTable() throws IllegalStateException {
-        final LayerTable table = layerTable;
-        if (table == null) {
+    private TableFactory getTableFactory() throws IllegalStateException {
+        if (tables == null) {
             throw new IllegalStateException(errors().getString(Errors.Keys.NO_DATA_SOURCE));
         }
-        return table;
+        return tables;
     }
 
     /**
-     * Returns the domain of this layer, or {@code null} if none.
+     * Returns the domain of this layer, or {@code null} if none. This is not a big deal if
+     * this method is executed twice concurrently, because {@code Table.getEntry(Comparable)}
+     * has its own synchronization lock on its shared cache.
      *
      * @throws SQLException If an error occured while fetching the domain.
      */
@@ -224,19 +250,15 @@ final class LayerEntry extends Entry implements Layer {
         DomainOfLayerEntry entry = domain;
         if (entry == null) {
             final String name = getName();
-            final DomainOfLayerTable domains = getLayerTable().getDomainOfLayerTable();
+            final DomainOfLayerTable domains = getTableFactory().getTable(DomainOfLayerTable.class);
             try {
-                synchronized (domains) {
-                    entry = domain;
-                    if (entry == null) {
-                        entry = domains.getEntry(name);
-                        domain = entry;
-                    }
-                }
+                entry = domains.getEntry(name);
             } catch (NoSuchRecordException exception) {
                 entry = DomainOfLayerEntry.NULL;
                 Logging.recoverableException(LayerEntry.class, "getDomain", exception);
             }
+            domains.release();
+            domain = entry;
         }
         return entry;
     }
@@ -266,19 +288,15 @@ final class LayerEntry extends Entry implements Layer {
      *
      * @throws SQLException If an error occured while fetching the series.
      */
-    private Map<Integer,SeriesEntry> getSeriesMap() throws SQLException {
+    private synchronized Map<Integer,SeriesEntry> getSeriesMap() throws SQLException {
         Map<Integer,SeriesEntry> map = series;
         if (map == null) {
             final String name = getName();
-            final SeriesTable st = getLayerTable().getSeriesTable();
-            synchronized (st) {
-                map = series;
-                if (map == null) {
-                    st.setLayer(name);
-                    map = Collections.unmodifiableMap(st.getEntriesMap());
-                    series = map;
-                }
-            }
+            final SeriesTable st = getTableFactory().getTable(SeriesTable.class);
+            st.setLayer(name);
+            map = Collections.unmodifiableMap(st.getEntriesMap());
+            st.release();
+            series = map;
         }
         return map;
     }
@@ -289,6 +307,11 @@ final class LayerEntry extends Entry implements Layer {
      * (SST) coverage because a location is masked by clouds, we may want to look in the mounthly
      * averaged SST coverage as a fallback.
      *
+     * {@section Synchronization note}
+     * This is not a big deal if this method is executed twice concurrently, because
+     * {@code Table.getEntry(Comparable)} has its own synchronization lock on their
+     * shared cache so we will get the same {@code LayerEntry} instance anyway.
+     *
      * @return The fallback layer, or {@code null} if none.
      * @throws CoverageStoreException If an error occured while fetching the fallback.
      */
@@ -296,19 +319,16 @@ final class LayerEntry extends Entry implements Layer {
     public LayerEntry getFallback() throws CoverageStoreException {
         Object fb = fallback;
         if (fb instanceof String) {
-            final String name = (String) fallback;
-            final LayerTable table = getLayerTable().getLayerTable();
+            final String name = (String) fb;
+            final TablePool<LayerTable> pool = getTableFactory().layers;
             try {
-                synchronized (table) {
-                    fb = fallback;
-                    if (fb == null) {
-                        fb = table.getEntry(name);
-                        fallback = fb;
-                    }
-                }
+                final LayerTable table = pool.acquire();
+                fb = table.getEntry(name);
+                pool.release(table);
             } catch (SQLException e) {
                 throw new CoverageStoreException(e);
             }
+            fallback = fb;
         }
         return (LayerEntry) fb;
     }
@@ -335,25 +355,23 @@ final class LayerEntry extends Entry implements Layer {
      * Returns the number of coverages in each series. This method returns a direct
      * reference to the internal set - <strong>do not modify!</strong>.
      */
-    final FrequencySortedSet<SeriesEntry> getCountBySeries() throws SQLException {
+    final synchronized FrequencySortedSet<SeriesEntry> getCountBySeries() throws SQLException {
         FrequencySortedSet<SeriesEntry> count = countBySeries;
         if (count == null) {
             final Map<Integer,SeriesEntry> seriesMap = getSeriesMap();
-            final GridCoverageTable data = getLayerTable().getGridCoverageTable();
-            synchronized (data) {
-                count = countBySeries;
-                if (count == null) {
-                    data.setLayerEntry(this);
-                    count = new FrequencySortedSet<SeriesEntry>(true);
-                    for (final SeriesEntry series : seriesMap.values()) {
-                        final Map<Integer,Integer> countMap = data.count(series, false);
-                        for (final Map.Entry<Integer,Integer> e : countMap.entrySet()) {
-                            count.add(seriesMap.get(e.getKey()), e.getValue());
-                        }
-                    }
-                    countBySeries = count;
+            final TablePool<GridCoverageTable> pool = getTableFactory().coverages;
+            final GridCoverageTable table = pool.acquire();
+            table.envelope.clear();
+            table.setLayerEntry(this);
+            count = new FrequencySortedSet<SeriesEntry>(true);
+            for (final SeriesEntry series : seriesMap.values()) {
+                final Map<Integer,Integer> countMap = table.count(series, false);
+                for (final Map.Entry<Integer,Integer> e : countMap.entrySet()) {
+                    count.add(seriesMap.get(e.getKey()), e.getValue());
                 }
             }
+            pool.release(table);
+            countBySeries = count;
         }
         return count;
     }
@@ -362,26 +380,24 @@ final class LayerEntry extends Entry implements Layer {
      * Returns the number of coverages for each extent. This method returns a direct
      * reference to the internal set - <strong>do not modify!</strong>.
      */
-    final FrequencySortedSet<GridGeometryEntry> getCountByExtent() throws SQLException {
+    final synchronized FrequencySortedSet<GridGeometryEntry> getCountByExtent() throws SQLException {
         FrequencySortedSet<GridGeometryEntry> count = countByExtent;
         if (count == null) {
             final Collection<SeriesEntry> allSeries = getSeries();
-            final GridCoverageTable data = getLayerTable().getGridCoverageTable();
-            synchronized (data) {
-                count = countByExtent;
-                if (count == null) {
-                    data.setLayerEntry(this);
-                    final GridGeometryTable geometries = data.getGridGeometryTable();
-                    count = new FrequencySortedSet<GridGeometryEntry>(true);
-                    for (final SeriesEntry series : allSeries) {
-                        final Map<Integer,Integer> countMap = data.count(series, true);
-                        for (final Map.Entry<Integer,Integer> e : countMap.entrySet()) {
-                            count.add(geometries.getEntry(e.getKey()), e.getValue());
-                        }
-                    }
-                    countByExtent = count;
+            final TablePool<GridCoverageTable> pool = getTableFactory().coverages;
+            final GridCoverageTable table = pool.acquire();
+            table.envelope.clear();
+            table.setLayerEntry(this);
+            final GridGeometryTable geometries = table.getGridGeometryTable();
+            count = new FrequencySortedSet<GridGeometryEntry>(true);
+            for (final SeriesEntry series : allSeries) {
+                final Map<Integer,Integer> countMap = table.count(series, true);
+                for (final Map.Entry<Integer,Integer> e : countMap.entrySet()) {
+                    count.add(geometries.getEntry(e.getKey()), e.getValue());
                 }
             }
+            pool.release(table);
+            countByExtent = count;
         }
         return count;
     }
@@ -407,18 +423,16 @@ final class LayerEntry extends Entry implements Layer {
      * Returns the set of dates when a coverage is available.
      */
     @Override
-    public SortedSet<Date> getAvailableTimes() throws CoverageStoreException {
+    public synchronized SortedSet<Date> getAvailableTimes() throws CoverageStoreException {
         SortedSet<Date> available = availableTimes;
         if (available == null) try {
-            final GridCoverageTable data = getLayerTable().getGridCoverageTable();
-            synchronized (data) {
-                available = availableTimes;
-                if (available == null) {
-                    data.setLayerEntry(this);
-                    available = data.getAvailableTimes();
-                    availableTimes = available;
-                }
-            }
+            final TablePool<GridCoverageTable> pool = getTableFactory().coverages;
+            final GridCoverageTable table = pool.acquire();
+            table.envelope.clear();
+            table.setLayerEntry(this);
+            available = table.getAvailableTimes();
+            pool.release(table);
+            availableTimes = available;
         } catch (SQLException e) {
             throw new CoverageStoreException(e);
         }
@@ -429,7 +443,7 @@ final class LayerEntry extends Entry implements Layer {
      * Returns the set of altitudes where a coverage is available.
      */
     @Override
-    public SortedSet<Number> getAvailableElevations() throws CoverageStoreException {
+    public synchronized SortedSet<Number> getAvailableElevations() throws CoverageStoreException {
         SortedSet<Number> available = availableElevations;
         if (available == null) {
             final Set<GridGeometryEntry> count;
@@ -467,7 +481,7 @@ final class LayerEntry extends Entry implements Layer {
      * @throws CoverageStoreException If an error occured while computing the ranges.
      */
     @Override
-    public List<MeasurementRange<?>> getSampleValueRanges() throws CoverageStoreException {
+    public synchronized List<MeasurementRange<?>> getSampleValueRanges() throws CoverageStoreException {
         List<MeasurementRange<?>> sampleValueRanges = this.sampleValueRanges;
         if (sampleValueRanges == null) try {
             MeasurementRange<?>[] ranges = null;
@@ -513,10 +527,10 @@ final class LayerEntry extends Entry implements Layer {
      * Some elements of the returned array may be {@link Double#NaN NaN} if they are unnkown.
      */
     @Override
-    public double[] getTypicalResolution() throws CoverageStoreException {
+    public synchronized double[] getTypicalResolution() throws CoverageStoreException {
         double[] resolution = this.resolution;
         if (resolution == null) {
-            final SpatialDatabase database = (SpatialDatabase) getLayerTable().getDatabase();
+            final SpatialDatabase database = getTableFactory();
             final CoordinateSystem cs = database.spatioTemporalCRS.getCoordinateSystem();
             final int xPos = CRSUtilities.dimensionColinearWith(cs, database.horizontalCRS.getCoordinateSystem());
             final int tPos = CRSUtilities.dimensionColinearWith(cs, database.temporalCRS  .getCoordinateSystem());
@@ -571,7 +585,7 @@ final class LayerEntry extends Entry implements Layer {
      * Returns the grid geometries used by the coverages in this layer.
      */
     @Override
-    public SortedSet<GeneralGridGeometry> getGridGeometries() throws CoverageStoreException {
+    public synchronized SortedSet<GeneralGridGeometry> getGridGeometries() throws CoverageStoreException {
         SortedSet<GeneralGridGeometry> gridGeometries = this.gridGeometries;
         if (gridGeometries == null) {
             boolean hasCheckedTimeRange = false;
@@ -664,22 +678,22 @@ final class LayerEntry extends Entry implements Layer {
     @Override
     public CoverageEnvelope getEnvelope(final Date time, final Number elevation) throws CoverageStoreException {
         CoverageEnvelope envelope = coverageEnvelope;
-        if (envelope == null) try {
-            final GridCoverageTable table = layerTable.getGridCoverageTable();
-            synchronized (table) {
+        if (envelope == null) {
+            synchronized (this) {
                 envelope = coverageEnvelope;
-                if (envelope == null) {
+                if (envelope == null) try {
+                    final TablePool<GridCoverageTable> pool = getTableFactory().coverages;
+                    final GridCoverageTable table = pool.acquire();
+                    table.envelope.clear();
                     table.setLayerEntry(this);
                     table.trimEnvelope();
                     envelope = table.envelope.clone();
+                    pool.release(table);
                     coverageEnvelope = envelope;
-                    table.envelope.setEnvelope(null);
+                } catch (SQLException e) {
+                    throw new CoverageStoreException(e);
                 }
             }
-        } catch (SQLException e) {
-            throw new CoverageStoreException(e);
-        } catch (TransformException e) {
-            throw new CoverageStoreException(e); // Should not happen.
         }
         envelope = envelope.clone();
         /*
@@ -718,11 +732,12 @@ final class LayerEntry extends Entry implements Layer {
     {
         final Set<GridCoverageEntry> entries;
         try {
-            final TablePool<GridCoverageTable> pool = getLayerTable().getTablePool();
-            final GridCoverageTable data = pool.acquire();
-            data.envelope.setAll(envelope);
-            entries = data.getEntries();
-            pool.release(data);
+            final TablePool<GridCoverageTable> pool = getTableFactory().coverages;
+            final GridCoverageTable table = pool.acquire();
+            table.setLayerEntry(this);
+            table.envelope.setAll(envelope);
+            entries = table.getEntries();
+            pool.release(table);
         } catch (SQLException exception) {
             throw new CoverageStoreException(exception);
         } catch (TransformException exception) {
@@ -743,12 +758,12 @@ final class LayerEntry extends Entry implements Layer {
     {
         final GridCoverageEntry entry;
         try {
-            final TablePool<GridCoverageTable> pool = getLayerTable().getTablePool();
-            final GridCoverageTable data = pool.acquire();
-            data.setLayerEntry(this);
-            data.envelope.setAll(envelope);
-            entry = data.getEntry();
-            pool.release(data);
+            final TablePool<GridCoverageTable> pool = getTableFactory().coverages;
+            final GridCoverageTable table = pool.acquire();
+            table.setLayerEntry(this);
+            table.envelope.setAll(envelope);
+            entry = table.getEntry();
+            pool.release(table);
         } catch (SQLException exception) {
             throw new CoverageStoreException(exception);
         } catch (TransformException exception) {
@@ -786,8 +801,10 @@ final class LayerEntry extends Entry implements Layer {
             getSeriesMap();
             getFallback();
             getCountBySeries();
+            getCountByExtent();
             getAvailableTimes();
             getEnvelope(null, null);
+            getTypicalResolution();
         } catch (Exception e) {
             final InvalidObjectException ex = new InvalidObjectException(e.getLocalizedMessage());
             ex.initCause(e);

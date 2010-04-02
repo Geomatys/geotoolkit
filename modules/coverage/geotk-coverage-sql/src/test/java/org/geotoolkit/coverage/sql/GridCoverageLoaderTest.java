@@ -56,6 +56,7 @@ public final class GridCoverageLoaderTest extends CatalogTestBase {
     @Test
     public void testTemperature() throws SQLException, IOException, CoverageStoreException {
         final GridCoverageTable table = getDatabase().getTable(GridCoverageTable.class);
+        table.envelope.clear();
         table.envelope.setTimeRange(LayerTableTest.SUB_START_TIME, LayerTableTest.SUB_END_TIME);
         table.setLayer(LayerTableTest.TEMPERATURE);
         final GridCoverageReference entry = table.getEntry();
@@ -68,6 +69,7 @@ public final class GridCoverageLoaderTest extends CatalogTestBase {
         final RenderedImage image = coverage.getRenderedImage();
         assertEquals(4096, image.getWidth());
         assertEquals(2048, image.getHeight());
+        table.release();
     }
 
     /**
@@ -95,6 +97,7 @@ public final class GridCoverageLoaderTest extends CatalogTestBase {
     @Test
     public void testNetCDF() throws SQLException, IOException, CoverageStoreException {
         final GridCoverageTable table = getDatabase().getTable(GridCoverageTable.class);
+        table.envelope.clear();
         table.setLayer(LayerTableTest.NETCDF);
         final GridCoverageReference entry = table.getEntry();
 
@@ -106,6 +109,7 @@ public final class GridCoverageLoaderTest extends CatalogTestBase {
         final RenderedImage image = coverage.getRenderedImage();
         assertEquals(720, image.getWidth());
         assertEquals(499, image.getHeight());
+        table.release();
     }
 
     /**

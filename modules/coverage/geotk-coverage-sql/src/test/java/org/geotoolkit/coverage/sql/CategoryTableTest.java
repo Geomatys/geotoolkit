@@ -47,6 +47,7 @@ public class CategoryTableTest extends CatalogTestBase {
         final Map<Integer,Category[]> map = table.getCategories(FormatTableTest.TEMPERATURE);
         assertEquals("The format should define only one band.", 1, map.size());
         checkTemperatureCategories(map.get(1));
+        table.release();
     }
 
     /**

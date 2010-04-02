@@ -199,7 +199,7 @@ final class GridCoverageEntry extends Entry implements GridCoverageReference {
      * The returned CRS may be up to 4-dimensional.
      */
     @Override
-    public CoordinateReferenceSystem getSpatioTemporalCRS(final boolean includeTime) {
+    public CoordinateReferenceSystem getCoordinateReferenceSystem(final boolean includeTime) {
         final GridGeometryEntry geometry = getIdentifier().geometry;
         return geometry.getSpatioTemporalCRS(includeTime);
     }
@@ -221,8 +221,8 @@ final class GridCoverageEntry extends Entry implements GridCoverageReference {
 
     /**
      * Returns the spatio-temporal envelope of the coverage. The CRS of the returned envelope
-     * is the {@linkplain #getSpatioTemporalCRS(boolean) spatio-temporal CRS} of this entry,
-     * which may vary on a coverage-by-coverage basis.
+     * is the {@linkplain #getCoordinateReferenceSystem(boolean) spatio-temporal CRS} of this
+     * entry, which may vary on a coverage-by-coverage basis.
      */
     @Override
     public Envelope getEnvelope() {

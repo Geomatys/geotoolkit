@@ -53,8 +53,7 @@ import org.geotoolkit.internal.sql.table.DuplicatedRecordException;
  */
 final class SeriesTable extends SingletonTable<SeriesEntry> {
     /**
-     * Connection to the format table.
-     * Created when first needed.
+     * The format table, created when first needed.
      */
     private transient FormatTable formats;
 
