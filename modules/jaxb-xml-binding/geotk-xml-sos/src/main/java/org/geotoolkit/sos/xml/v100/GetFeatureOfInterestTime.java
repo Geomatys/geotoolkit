@@ -57,6 +57,16 @@ public class GetFeatureOfInterestTime extends RequestBaseType {
     private String featureOfInterestId;
 
     /**
+     * An empty constructor used by jaxB
+     */
+    GetFeatureOfInterestTime() {}
+
+    public GetFeatureOfInterestTime(String version, String featureOfInterestId) {
+        super(version);
+        this.featureOfInterestId = featureOfInterestId;
+    }
+
+    /**
      * Gets the value of the featureOfInterestId property.
      */
     public String getFeatureOfInterestId() {

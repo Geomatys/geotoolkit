@@ -18,8 +18,6 @@ package org.geotoolkit.sos;
 
 import javax.xml.namespace.QName;
 import org.geotoolkit.client.Request;
-import org.geotoolkit.sos.xml.v100.EventTime;
-import org.geotoolkit.sos.xml.v100.GetObservation;
 import org.geotoolkit.sos.xml.v100.ResponseModeType;
 
 
@@ -28,43 +26,23 @@ import org.geotoolkit.sos.xml.v100.ResponseModeType;
  * @author Cédric Briançon (Geomatys)
  * @module pending
  */
-public interface GetObservationRequest extends Request {
+public interface GetObservationByIdRequest extends Request {
 
-    EventTime[] getEventTimes();
-
-    GetObservation.FeatureOfInterest getFeatureOfInterest();
-
-    String[] getObservedProperties();
-
-    String getOffering();
-
-    String[] getProcedures();
+    String getObservationId();
 
     String getResponseFormat();
 
     ResponseModeType getResponseMode();
 
-    GetObservation.Result getResult();
-
     QName getResultModel();
 
     String getSrsName();
 
-    void setEventTimes(EventTime... eventTimes);
-
-    void setFeatureOfInterest(GetObservation.FeatureOfInterest featureOfInterest);
-
-    void setObservedProperties(String... observedProperties);
-
-    void setOffering(String offering);
-
-    void setProcedures(String... procedures);
+    void setObservationId(String observationId);
 
     void setResponseFormat(String responseFormat);
 
     void setResponseMode(ResponseModeType responseMode);
-
-    void setResult(GetObservation.Result result);
 
     void setResultModel(QName resultModel);
 

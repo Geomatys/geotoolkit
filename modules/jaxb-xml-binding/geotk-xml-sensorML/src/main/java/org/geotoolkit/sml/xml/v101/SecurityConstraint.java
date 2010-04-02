@@ -59,7 +59,7 @@ public class SecurityConstraint implements AbstractSecurityConstraint {
     }
 
     public SecurityConstraint(AbstractSecurityConstraint securityConstraint) {
-        if (securityConstraint.getSecurity() != null) {
+        if (securityConstraint != null && securityConstraint.getSecurity() != null) {
             this.security = new Security(securityConstraint.getSecurity());
         }
     }

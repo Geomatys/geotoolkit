@@ -103,15 +103,19 @@ public class Outputs implements AbstractOutputs {
     }
 
     public Outputs(AbstractOutputs outputs) {
-        this.outputList    = new OutputList(outputs.getOutputList());
-        this.actuate      = outputs.getActuate();
-        this.arcrole      = outputs.getArcrole();
-        this.href         = outputs.getHref();
-        this.remoteSchema = outputs.getRemoteSchema();
-        this.role         = outputs.getRole();
-        this.show         = outputs.getShow();
-        this.title        = outputs.getTitle();
-        this.type         = outputs.getType();
+        if (outputs != null) {
+            if (outputs.getOutputList() != null) {
+                this.outputList    = new OutputList(outputs.getOutputList());
+            }
+            this.actuate      = outputs.getActuate();
+            this.arcrole      = outputs.getArcrole();
+            this.href         = outputs.getHref();
+            this.remoteSchema = outputs.getRemoteSchema();
+            this.role         = outputs.getRole();
+            this.show         = outputs.getShow();
+            this.title        = outputs.getTitle();
+            this.type         = outputs.getType();
+        }
 
     }
 

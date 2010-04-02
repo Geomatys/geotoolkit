@@ -89,7 +89,7 @@ public abstract class AbstractDataArrayEntry extends AbstractDataComponentEntry 
      * Build a new Abstract Data array with only the value.
      */
     public AbstractDataArrayEntry(String id, int count) {
-        super(id, null, false);
+        super(id, null, null);
         this.elementCount = new ElementCount(count);
     }
 

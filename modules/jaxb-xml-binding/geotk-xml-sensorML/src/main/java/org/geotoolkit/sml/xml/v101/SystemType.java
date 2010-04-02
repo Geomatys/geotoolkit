@@ -91,7 +91,9 @@ public class SystemType extends AbstractComponentType implements System {
      */
     @Override
     public void setComponents(AbstractComponents components) {
-        this.components = new Components(components);
+        if (components != null) {
+            this.components = new Components(components);
+        }
     }
 
     /**
@@ -107,7 +109,9 @@ public class SystemType extends AbstractComponentType implements System {
      */
     @Override
     public void setPositions(AbstractPositions positions) {
-        this.positions = new Positions(positions);
+        if (positions != null) {
+            this.positions = new Positions(positions);
+        }
     }
 
     /**

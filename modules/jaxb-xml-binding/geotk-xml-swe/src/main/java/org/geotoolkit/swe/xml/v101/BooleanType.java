@@ -63,7 +63,7 @@ public class BooleanType extends AbstractDataComponentEntry  implements Abstract
      * Build a new TimeType
      */
     public BooleanType(String definition, java.lang.Boolean value) {
-        super(null, definition, false);
+        super(null, definition, null);
         this.value = value;
         
     }

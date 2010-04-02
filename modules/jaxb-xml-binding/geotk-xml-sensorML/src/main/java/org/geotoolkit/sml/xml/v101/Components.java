@@ -114,15 +114,19 @@ public class Components implements AbstractComponents {
     }
 
     public Components(AbstractComponents components) {
-        this.actuate       = components.getActuate();
-        this.arcrole       = components.getArcrole();
-        this.componentList = new ComponentList(components.getComponentList());
-        this.href          = components.getHref();
-        this.remoteSchema  = components.getRemoteSchema();
-        this.role          = components.getRole();
-        this.show          = components.getShow();
-        this.title         = components.getTitle();
-        this.type          = components.getType();
+        if (components != null) {
+            this.actuate       = components.getActuate();
+            this.arcrole       = components.getArcrole();
+            if (components.getComponentList() != null) {
+                this.componentList = new ComponentList(components.getComponentList());
+            }
+            this.href          = components.getHref();
+            this.remoteSchema  = components.getRemoteSchema();
+            this.role          = components.getRole();
+            this.show          = components.getShow();
+            this.title         = components.getTitle();
+            this.type          = components.getType();
+        }
     }
 
     /**

@@ -18,7 +18,6 @@ package org.geotoolkit.csw;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Collections;
 import javax.xml.namespace.QName;
 import org.geotoolkit.csw.v202.DescribeRecord202;
 import org.junit.Test;

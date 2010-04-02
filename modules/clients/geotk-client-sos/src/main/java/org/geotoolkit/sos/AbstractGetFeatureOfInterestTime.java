@@ -25,25 +25,24 @@ import java.net.URLConnection;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import org.geotoolkit.client.AbstractRequest;
-import org.geotoolkit.sos.xml.v100.DescribeSensor;
+import org.geotoolkit.sos.xml.v100.GetFeatureOfInterestTime;
 import org.geotoolkit.xml.MarshallerPool;
 
 
 /**
- * Abstract implementation of {@link DescribeSensorRequest}, which defines the
- * parameters for a DescribeSensor request.
+ * Abstract implementation of {@link GetFeatureOfInterestTimeRequest}, which defines the
+ * parameters for a GetFeatureOfInterestTime request.
  *
  * @author Cédric Briançon (Geomatys)
  * @module pending
  */
-public abstract class AbstractDescribeSensor extends AbstractRequest implements DescribeSensorRequest {
+public abstract class AbstractGetFeatureOfInterestTime extends AbstractRequest implements GetFeatureOfInterestTimeRequest {
     /**
      * The version to use for this webservice request.
      */
     protected final String version;
 
-    private String outputFormat = null;
-    private String sensorId = null;
+    private String featureOfInterestId = null;
 
     /**
      * Defines the server url and the service version for this kind of request.
@@ -51,66 +50,33 @@ public abstract class AbstractDescribeSensor extends AbstractRequest implements 
      * @param serverURL The server url.
      * @param version The version of the request.
      */
-    protected AbstractDescribeSensor(final String serverURL, final String version) {
+    protected AbstractGetFeatureOfInterestTime(final String serverURL, final String version) {
         super(serverURL);
         this.version = version;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public String getOutputFormat() {
-        return outputFormat;
+    public String getFeatureOfInterestId() {
+        return featureOfInterestId;
     }
 
     @Override
-    public String getSensorId() {
-        return sensorId;
+    public void setFeatureOfInterestId(String featureOfInterestId) {
+        this.featureOfInterestId = featureOfInterestId;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void setOutputFormat(String outputFormat) {
-        this.outputFormat = outputFormat;
-    }
-
-    @Override
-    public void setSensorId(String sensorId) {
-        this.sensorId = sensorId;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
     @Override
     public URL getURL() throws MalformedURLException {
-        if (outputFormat == null) {
-            throw new IllegalArgumentException("The parameter \"outputFormat\" is not defined");
-        }
-        if (sensorId == null) {
-            throw new IllegalArgumentException("The parameter \"sensorId\" is not defined");
-        }
-        requestParameters.put("SERVICE", "SOS");
-        requestParameters.put("REQUEST", "GetCapabilities");
-        requestParameters.put("VERSION", version);
-        requestParameters.put("OUTPUTFORMAT", outputFormat);
-        requestParameters.put("SENSORID", sensorId);
-        return super.getURL();
+        throw new UnsupportedOperationException();
     }
 
     /**
-     * {@inheritDoc }
+     * {@inheritDoc}
      */
     @Override
     public InputStream getSOAPResponse() throws IOException {
-        if (outputFormat == null) {
-            throw new IllegalArgumentException("The parameter \"outputFormat\" is not defined");
-        }
-        if (sensorId == null) {
-            throw new IllegalArgumentException("The parameter \"sensorId\" is not defined");
+        if (featureOfInterestId == null) {
+            throw new IllegalArgumentException("The parameter \"featureOfInterestId\" is not defined");
         }
         final URL url = new URL(serverURL);
         final URLConnection conec = url.openConnection();
@@ -132,9 +98,9 @@ public abstract class AbstractDescribeSensor extends AbstractRequest implements 
                                       "org.geotoolkit.sml.xml.v100:" +
                                       "org.geotoolkit.sml.xml.v101");
             marsh = pool.acquireMarshaller();
-            final DescribeSensor descSensorXml = new DescribeSensor(version, "SOS",
-                    sensorId, outputFormat);
-            marsh.marshal(descSensorXml, stream);
+            final GetFeatureOfInterestTime featureOfInterestTimeXml =
+                    new GetFeatureOfInterestTime(version, featureOfInterestId);
+            marsh.marshal(featureOfInterestTimeXml, stream);
         } catch (JAXBException ex) {
             throw new IOException(ex);
         } finally {

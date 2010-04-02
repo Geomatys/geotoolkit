@@ -66,8 +66,10 @@ public class ValidTime implements AbstractValidTime {
     }
 
     public ValidTime(AbstractValidTime time) {
-        this.timeInstant = time.getTimeInstant();
-        this.timePeriod  = time.getTimePeriod();
+        if (time != null) {
+            this.timeInstant = time.getTimeInstant();
+            this.timePeriod  = time.getTimePeriod();
+        }
     }
 
     public ValidTime(TimeInstantType timeInstant) {

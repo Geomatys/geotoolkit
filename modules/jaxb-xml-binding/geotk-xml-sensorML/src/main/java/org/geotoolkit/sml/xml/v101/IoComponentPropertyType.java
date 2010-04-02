@@ -29,12 +29,17 @@ import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import org.geotoolkit.sml.xml.IoComponent;
+import org.geotoolkit.swe.xml.AbstractDataRecord;
+import org.geotoolkit.swe.xml.DataArray;
+import org.geotoolkit.swe.xml.DataRecord;
+import org.geotoolkit.swe.xml.SimpleDataRecord;
 import org.geotoolkit.swe.xml.v101.AbstractDataArrayEntry;
 import org.geotoolkit.swe.xml.v101.AbstractDataRecordEntry;
 import org.geotoolkit.swe.xml.v101.BooleanType;
 import org.geotoolkit.swe.xml.v101.Category;
 import org.geotoolkit.swe.xml.v101.Count;
 import org.geotoolkit.swe.xml.v101.CountRange;
+import org.geotoolkit.swe.xml.v101.DataArrayEntry;
 import org.geotoolkit.swe.xml.v101.DataRecordType;
 import org.geotoolkit.swe.xml.v101.ObservableProperty;
 import org.geotoolkit.swe.xml.v101.QuantityType;
@@ -141,6 +146,63 @@ public class IoComponentPropertyType implements IoComponent {
 
     public IoComponentPropertyType() {
 
+    }
+
+    public IoComponentPropertyType(IoComponent io) {
+        if (io != null) {
+            this.actuate      = io.getActuate();
+            this.arcrole      = io.getArcrole();
+            this.href         = io.getHref();
+            this.remoteSchema = io.getRemoteSchema();
+            this.role         = io.getRole();
+            this.show         = io.getShow();
+            this.title        = io.getTitle();
+            this.type         = io.getType();
+            this.name         = io.getName();
+            if (io.getBoolean() != null) {
+                this._boolean = new BooleanType(io.getBoolean());
+            }
+            if (io.getCategory() != null) {
+                this.category = new Category(io.getCategory());
+            }
+            if (io.getCount() != null) {
+                this.count = new Count(io.getCount());
+            }
+            if (io.getCountRange() != null) {
+                this.countRange = new CountRange(io.getCountRange());
+            }
+            if (io.getObservableProperty() != null) {
+                this.observableProperty = new ObservableProperty(io.getObservableProperty());
+            }
+            if (io.getQuantity() != null) {
+                this.quantity = new QuantityType(io.getQuantity());
+            }
+            if (io.getQuantityRange() != null) {
+                this.quantityRange = new QuantityRange(io.getQuantityRange());
+            }
+            if (io.getText() != null) {
+                this.text = new Text(io.getText());
+            }
+            if (io.getTime() != null) {
+                this.time = new TimeType(io.getTime());
+            }
+            if (io.getTimeRange() != null) {
+                this.timeRange = new TimeRange(io.getTimeRange());
+            }
+            if (io.getDataRecord() != null) {
+                AbstractDataRecord record = (AbstractDataRecord) io.getDataRecord();
+                if (record instanceof SimpleDataRecord) {
+                    abstractDataRecord = factory.createSimpleDataRecord(new SimpleDataRecordEntry((SimpleDataRecord)record));
+                } else if (record instanceof DataRecord) {
+                    abstractDataRecord = factory.createDataRecord(new DataRecordType((DataRecord)record));
+                } else {
+                    System.out.println("UNINPLEMENTED CASE:" + record);
+                }
+            }
+            if (io.getDataArray() instanceof DataArray) {
+                    abstractDataArray = factory.createDataArray(new DataArrayEntry((DataArray)io.getDataArray()));
+            }
+        }
     }
 
     public IoComponentPropertyType(String name, ObservableProperty observableProperty) {
@@ -400,6 +462,13 @@ public class IoComponentPropertyType implements IoComponent {
         return abstractDataRecord;
     }
 
+    public AbstractDataRecordEntry getDataRecord() {
+        if (abstractDataRecord != null) {
+            return abstractDataRecord.getValue();
+        }
+        return null;
+    }
+
     /**
      * Sets the value of the abstractDataRecord property.
      * 
@@ -434,6 +503,13 @@ public class IoComponentPropertyType implements IoComponent {
      */
     public JAXBElement<? extends AbstractDataArrayEntry> getAbstractDataArray() {
         return abstractDataArray;
+    }
+
+    public AbstractDataArrayEntry getDataArray() {
+        if (abstractDataArray != null) {
+            return abstractDataArray.getValue();
+        }
+        return null;
     }
 
     /**

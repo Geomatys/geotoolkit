@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2008 - 2009, Geomatys
+ *    (C) 2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -14,32 +14,25 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.sml.xml;
+package org.geotoolkit.sos.xml;
+
 
 /**
  *
- * @author Guilhem Legal (Geomatys)
+ * @author Cédric Briançon (Geomatys)
  * @module pending
  */
-public interface ComponentProperty {
+public enum SOSVersion {
+    v100("1.0.0");
 
-    public AbstractProcess getAbstractProcess();
+    private final String code;
 
-    public String getName();
+    SOSVersion(String code){
+        this.code = code;
+    }
 
-    public String getRemoteSchema();
+    public String getCode() {
+        return code;
+    }
 
-    public String getActuate();
-
-    public String getArcrole();
-
-    public String getHref();
-
-    public String getRole();
-
-    public String getShow();
-
-    public String getTitle();
-
-    public String getType();
 }

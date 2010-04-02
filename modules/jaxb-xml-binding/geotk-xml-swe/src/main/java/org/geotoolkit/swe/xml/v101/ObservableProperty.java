@@ -53,4 +53,8 @@ public class ObservableProperty extends AbstractDataComponentEntry implements Ab
         super(definition);
     }
 
+    public ObservableProperty(AbstractObservableProperty op) {
+        super(op);
+    }
+
 }

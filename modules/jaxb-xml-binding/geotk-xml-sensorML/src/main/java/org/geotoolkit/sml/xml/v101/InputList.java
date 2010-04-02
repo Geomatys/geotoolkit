@@ -28,6 +28,7 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.geotoolkit.sml.xml.AbstractInputList;
+import org.geotoolkit.sml.xml.IoComponent;
 import org.geotoolkit.util.Utilities;
 
 /**
@@ -72,8 +73,15 @@ public class InputList implements AbstractInputList {
     }
 
     public InputList(AbstractInputList inputList) {
-        this.input = (List<IoComponentPropertyType>) inputList.getInput();
-        this.id = inputList.getId();
+       if (inputList != null) {
+            if (inputList.getInput() != null) {
+                this.input = new ArrayList<IoComponentPropertyType>();
+                for (IoComponent io : inputList.getInput()) {
+                    this.input.add(new IoComponentPropertyType(io));
+                }
+            }
+            this.id = inputList.getId();
+        }
     }
 
     /**

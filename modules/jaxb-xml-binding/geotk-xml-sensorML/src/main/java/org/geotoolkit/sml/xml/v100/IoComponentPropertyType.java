@@ -377,6 +377,13 @@ public class IoComponentPropertyType implements IoComponent {
         return abstractDataRecord;
     }
 
+    public AbstractDataRecordType getDataRecord() {
+        if (abstractDataRecord != null) {
+            return abstractDataRecord.getValue();
+        }
+        return null;
+    }
+
     /**
      * Sets the value of the abstractDataRecord property.
      */
@@ -389,6 +396,13 @@ public class IoComponentPropertyType implements IoComponent {
      */
     public JAXBElement<? extends AbstractDataArrayType> getAbstractDataArray() {
         return abstractDataArray;
+    }
+
+    public AbstractDataArrayType getDataArray() {
+        if (abstractDataArray != null) {
+            return abstractDataArray.getValue();
+        }
+        return null;
     }
 
     /**

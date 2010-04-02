@@ -60,11 +60,20 @@ public class DescribeFeatureType extends RequestBaseType {
     @XmlSchemaType(name = "anyURI")
     private String featureId;
 
-     /**
+    /**
      * An empty constructor used by jaxB
      */
     DescribeFeatureType(){}
-    
+
+    public DescribeFeatureType(final String featureId) {
+        this.featureId = featureId;
+    }
+
+    public DescribeFeatureType(final String version, final String featureId) {
+        super(version);
+        this.featureId = featureId;
+    }
+
     /**
      * Gets the value of the featureId property.
      */

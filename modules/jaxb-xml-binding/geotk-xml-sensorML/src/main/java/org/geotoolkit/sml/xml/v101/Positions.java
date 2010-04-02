@@ -103,15 +103,19 @@ public class Positions implements AbstractPositions {
     }
     
     public Positions(AbstractPositions positions) {
-        this.actuate      = positions.getActuate();
-        this.arcrole      = positions.getArcrole();
-        this.href         = positions.getHref();
-        this.positionList = new PositionList(positions.getPositionList());
-        this.remoteSchema = positions.getRemoteSchema();
-        this.role         = positions.getRole();
-        this.show         = positions.getShow();
-        this.title        = positions.getTitle();
-        this.type         = positions.getType();
+        if (positions != null) {
+            this.actuate      = positions.getActuate();
+            this.arcrole      = positions.getArcrole();
+            this.href         = positions.getHref();
+            if (positions.getPositionList() != null) {
+                this.positionList = new PositionList(positions.getPositionList());
+            }
+            this.remoteSchema = positions.getRemoteSchema();
+            this.role         = positions.getRole();
+            this.show         = positions.getShow();
+            this.title        = positions.getTitle();
+            this.type         = positions.getType();
+        }
     }
 
     /**

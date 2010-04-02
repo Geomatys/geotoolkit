@@ -70,11 +70,17 @@ public class DataArrayEntry extends AbstractDataArrayEntry implements DataArray 
     /**
      * Clone a new data array.
      */
-    public DataArrayEntry(DataArrayEntry array) {
+    public DataArrayEntry(DataArray array) {
         super(array);
-        this.elementType = array.elementType;
-        this.encoding    = array.encoding;
-        this.values      = array.values;
+        if (array != null) {
+            if (array.getPropertyElementType() != null) {
+                this.elementType = new DataComponentPropertyType(array.getPropertyElementType());
+            }
+            if (array.getEncoding() != null) {
+                this.encoding = new AbstractEncodingPropertyType(array.getEncoding());
+            }
+            this.values = array.getValues();
+        }
 
     }
 
