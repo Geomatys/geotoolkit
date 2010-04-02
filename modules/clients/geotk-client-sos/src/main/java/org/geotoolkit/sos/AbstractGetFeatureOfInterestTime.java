@@ -75,6 +75,9 @@ public abstract class AbstractGetFeatureOfInterestTime extends AbstractRequest i
      */
     @Override
     public InputStream getSOAPResponse() throws IOException {
+        if (featureOfInterestId == null) {
+            throw new IllegalArgumentException("The parameter \"featureOfInterestId\" is not defined");
+        }
         final URL url = new URL(serverURL);
         final URLConnection conec = url.openConnection();
 

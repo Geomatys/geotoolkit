@@ -106,6 +106,12 @@ public abstract class AbstractDescribeSensor extends AbstractRequest implements 
      */
     @Override
     public InputStream getSOAPResponse() throws IOException {
+        if (outputFormat == null) {
+            throw new IllegalArgumentException("The parameter \"outputFormat\" is not defined");
+        }
+        if (sensorId == null) {
+            throw new IllegalArgumentException("The parameter \"sensorId\" is not defined");
+        }
         final URL url = new URL(serverURL);
         final URLConnection conec = url.openConnection();
 

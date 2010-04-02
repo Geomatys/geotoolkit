@@ -75,6 +75,9 @@ public abstract class AbstractDescribeFeatureType extends AbstractRequest implem
      */
     @Override
     public InputStream getSOAPResponse() throws IOException {
+        if (featureId == null) {
+            throw new IllegalArgumentException("The parameter \"featureId\" is not defined");
+        }
         final URL url = new URL(serverURL);
         final URLConnection conec = url.openConnection();
 

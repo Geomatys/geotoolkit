@@ -178,6 +178,15 @@ public abstract class AbstractGetObservation extends AbstractRequest implements 
      */
     @Override
     public InputStream getSOAPResponse() throws IOException {
+        if (offering == null) {
+            throw new IllegalArgumentException("offering is not defined");
+        }
+        if (observedProperties == null) {
+            throw new IllegalArgumentException("observedProperties is not defined");
+        }
+        if (responseFormat == null) {
+            throw new IllegalArgumentException("responseFormat is not defined");
+        }
         final URL url = new URL(serverURL);
         final URLConnection conec = url.openConnection();
 
@@ -199,7 +208,8 @@ public abstract class AbstractGetObservation extends AbstractRequest implements 
                                       "org.geotoolkit.sml.xml.v101");
             marsh = pool.acquireMarshaller();
             final GetObservation observXml = new GetObservation(version, offering,
-                    Arrays.asList(eventTimes), Arrays.asList(procedures),
+                    (eventTimes != null) ? Arrays.asList(eventTimes) : null,
+                    (procedures != null) ? Arrays.asList(procedures) : null,
                     Arrays.asList(observedProperties), featureOfInterest, result,
                     responseFormat, resultModel, responseMode, srsName);
             marsh.marshal(observXml, stream);

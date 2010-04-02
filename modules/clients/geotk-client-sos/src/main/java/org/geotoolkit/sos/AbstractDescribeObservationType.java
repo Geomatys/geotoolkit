@@ -75,6 +75,9 @@ public abstract class AbstractDescribeObservationType extends AbstractRequest im
      */
     @Override
     public InputStream getSOAPResponse() throws IOException {
+        if (observedProperty == null) {
+            throw new IllegalArgumentException("The parameter \"observedProperty\" is not defined");
+        }
         final URL url = new URL(serverURL);
         final URLConnection conec = url.openConnection();
 

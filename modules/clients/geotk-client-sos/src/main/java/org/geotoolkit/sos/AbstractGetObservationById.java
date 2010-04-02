@@ -121,6 +121,12 @@ public abstract class AbstractGetObservationById extends AbstractRequest impleme
      */
     @Override
     public InputStream getSOAPResponse() throws IOException {
+        if (observationId == null) {
+            throw new IllegalArgumentException("The parameter \"observationId\" is not defined");
+        }
+        if (responseFormat == null) {
+            throw new IllegalArgumentException("The parameter \"responseFormat\" is not defined");
+        }
         final URL url = new URL(serverURL);
         final URLConnection conec = url.openConnection();
 

@@ -88,6 +88,9 @@ public abstract class AbstractGetResult extends AbstractRequest implements GetRe
      */
     @Override
     public InputStream getSOAPResponse() throws IOException {
+        if (observationTemplateId == null) {
+            throw new IllegalArgumentException("The parameter \"observationTemplateId\" is not defined");
+        }
         final URL url = new URL(serverURL);
         final URLConnection conec = url.openConnection();
 
@@ -109,7 +112,7 @@ public abstract class AbstractGetResult extends AbstractRequest implements GetRe
                                       "org.geotoolkit.sml.xml.v101");
             marsh = pool.acquireMarshaller();
             final GetResult observXml = new GetResult(observationTemplateId,
-                    Arrays.asList(eventTimes), version);
+                    (eventTimes != null) ? Arrays.asList(eventTimes) : null, version);
             marsh.marshal(observXml, stream);
         } catch (JAXBException ex) {
             throw new IOException(ex);

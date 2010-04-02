@@ -76,6 +76,9 @@ public abstract class AbstractDescribeResultModel extends AbstractRequest implem
      */
     @Override
     public InputStream getSOAPResponse() throws IOException {
+        if (resultName == null) {
+            throw new IllegalArgumentException("The parameter \"resultName\" is not defined");
+        }
         final URL url = new URL(serverURL);
         final URLConnection conec = url.openConnection();
 
