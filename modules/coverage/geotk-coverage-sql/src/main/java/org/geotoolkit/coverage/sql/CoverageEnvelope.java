@@ -176,6 +176,39 @@ public class CoverageEnvelope extends AbstractEnvelope implements Cloneable {
     }
 
     /**
+     * Returns the CRS of this envelope containing only the requested dimensions. If an argument
+     * is {@code true}, then the returned CRS will contain the corresponding dimension if the
+     * database CRS has such dimension. If an argument is {@code false}, then the returned CRS
+     * is garanteed to not have the corresponding dimension. If all arguments are {@code false},
+     * then this method returns {@code null}.
+     *
+     * @param  horizontal {@code false} for excluding the horizontal component in the returned CRS.
+     * @param  vertical   {@code false} for excluding the vertical   component in the returned CRS.
+     * @param  temporal   {@code false} for excluding the temporal   component in the returned CRS.
+     * @return The envelope CRS excluding the components specified by {@code false} argument value,
+     *         or {@code null} if there is no CRS for the remaining components.
+     */
+    public CoordinateReferenceSystem getCoordinateReferenceSystem(
+            final boolean horizontal, final boolean vertical, final boolean temporal)
+    {
+        final CoordinateReferenceSystem crs;
+        if (horizontal) {
+            if (vertical) {
+                crs = temporal ? database.spatioTemporalCRS : database.spatialCRS;
+            } else {
+                crs = temporal ? database.horizTemporalCRS : database.horizontalCRS;
+            }
+        } else {
+            if (vertical) {
+                crs = temporal ? database.vertTemporalCRS : database.verticalCRS;
+            } else {
+                crs = temporal ? database.temporalCRS : null;
+            }
+        }
+        return crs;
+    }
+
+    /**
      * Returns the number of dimension in this envelope, which is usually 4.
      */
     @Override
@@ -262,35 +295,13 @@ public class CoverageEnvelope extends AbstractEnvelope implements Cloneable {
             changed |= setTimeRange(null);
             return changed;
         }
-        final SpatialDatabase database = this.database;
         CoordinateReferenceSystem sourceCRS = envelope.getCoordinateReferenceSystem();
-        final boolean hasTemporalCRS = CRS.getTemporalCRS(sourceCRS) != null;
-        final boolean hasVerticalCRS = CRS.getVerticalCRS(sourceCRS) != null;
-        final CoordinateReferenceSystem targetCRS;
-        if (CRS.getHorizontalCRS(sourceCRS) != null) {
-            if (hasTemporalCRS) {
-                /*
-                 * Could also be a (HorizontalCRS + TemporalCRS) without VerticalCRS, but we don't
-                 * support this use case for now (unless that database has no vertical CRS). Using
-                 * the full spatio-temporal CRS will thrown an exception with a message saying that
-                 * the full envelope was expected.
-                 */
-                targetCRS = database.spatioTemporalCRS;
-            } else {
-                targetCRS = hasVerticalCRS ? database.spatialCRS : database.horizontalCRS;
-            }
-        } else {
-            if (hasTemporalCRS && hasVerticalCRS) {
-                /*
-                 * We don't support this use case for now. Use the full spatio-temporal CRS,
-                 * which will throw an exception saying that the full spatio-temporal envelope
-                 * was expected.
-                 */
-                targetCRS = database.spatioTemporalCRS;
-            } else {
-                targetCRS = hasTemporalCRS ? database.temporalCRS :
-                            hasVerticalCRS ? database.verticalCRS : database.horizontalCRS;
-            }
+        CoordinateReferenceSystem targetCRS = getCoordinateReferenceSystem(
+                CRS.getHorizontalCRS(sourceCRS) != null,
+                CRS.getVerticalCRS  (sourceCRS) != null,
+                CRS.getTemporalCRS  (sourceCRS) != null);
+        if (targetCRS == null) {
+            return false;
         }
         final CoordinateOperationFactory factory = CRS.getCoordinateOperationFactory(true);
         try {

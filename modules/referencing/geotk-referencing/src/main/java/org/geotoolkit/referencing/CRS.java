@@ -1347,6 +1347,13 @@ search:             if (DefaultCoordinateSystemAxis.isCompassDirection(axis.getD
      * This method can handle the case where the envelope contains the North or South pole,
      * or when it cross the &plusmn;180&deg; longitude.
      *
+     * {@note If the envelope CRS is non-null, then the caller should ensure that the operation
+     * source CRS is the same than the envelope CRS. In case of mismatch, this method transforms
+     * the envelope to the operation source CRS before to apply the operation. This extra step
+     * may cause a lost of accuracy. In order to prevent this method from performing such
+     * pre-transformation (if not desired), callers can ensure that the envelope CRS is
+     * <code>null</code> before to call this method.}
+     *
      * @param  operation The operation to use. Source and target dimension must be 2.
      * @param  envelope Envelope to transform, or {@code null}. This envelope will not be modified.
      * @return The transformed envelope, or {@code null} if {@code envelope} was null.
@@ -1357,7 +1364,7 @@ search:             if (DefaultCoordinateSystemAxis.isCompassDirection(axis.getD
      * @category transform
      * @since 2.4
      */
-    public static GeneralEnvelope transform(final CoordinateOperation operation, final Envelope envelope)
+    public static GeneralEnvelope transform(final CoordinateOperation operation, Envelope envelope)
             throws TransformException
     {
         if (envelope == null) {
@@ -1367,8 +1374,23 @@ search:             if (DefaultCoordinateSystemAxis.isCompassDirection(axis.getD
         if (sourceCRS != null) {
             final CoordinateReferenceSystem crs = envelope.getCoordinateReferenceSystem();
             if (crs != null && !equalsIgnoreMetadata(crs, sourceCRS)) {
-                throw new MismatchedReferenceSystemException(
-                        Errors.format(Errors.Keys.MISMATCHED_COORDINATE_REFERENCE_SYSTEM));
+                /*
+                 * Argument-check: the envelope CRS seems inconsistent with the given operation.
+                 * However we need to push the check a little bit further, since 3D-GeographicCRS
+                 * are considered not equal to CompoundCRS[2D-GeographicCRS + ellipsoidal height].
+                 * Checking for identity MathTransform is a more powerfull (but more costly) check.
+                 * Since we have the MathTransform, perform an opportunist envelope transform if it
+                 * happen to be required.
+                 */
+                final MathTransform mt;
+                try {
+                    mt = findMathTransform(crs, sourceCRS, false);
+                } catch (FactoryException e) {
+                    throw new TransformException(Errors.format(Errors.Keys.CANT_TRANSFORM_ENVELOPE), e);
+                }
+                if (!mt.isIdentity()) {
+                    envelope = transform(mt, envelope);
+                }
             }
         }
         MathTransform mt = operation.getMathTransform();
