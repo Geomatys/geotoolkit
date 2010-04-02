@@ -111,6 +111,7 @@ import org.opengis.filter.Id;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.Literal;
 import org.opengis.geometry.Envelope;
+import org.opengis.referencing.crs.CRSFactory;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.GeographicCRS;
 import org.opengis.referencing.crs.TemporalCRS;
@@ -136,6 +137,7 @@ import org.opengis.style.Symbolizer;
 public final class GO2Utilities {
 
     private static final GeometryFactory JTS_FACTORY = new GeometryFactory();
+    private static final CRSFactory CRS_FACTORY = FactoryFinder.getCRSFactory(null);
 
     private static final Cache<Symbolizer,CachedSymbolizer> CACHE = new Cache<Symbolizer, CachedSymbolizer>(50,50,true);
 
@@ -508,7 +510,7 @@ public final class GO2Utilities {
      */
     public static GeneralEnvelope combine(CoordinateReferenceSystem crs, Rectangle2D bounds,
             Date[] temporal, Double[] elevation) throws TransformException{
-        CoordinateReferenceSystem crs2D = CRSUtilities.getCRS2D(crs);
+        final CoordinateReferenceSystem crs2D = CRSUtilities.getCRS2D(crs);
         TemporalCRS temporalDim = null;
         VerticalCRS verticalDim = null;
 
@@ -527,6 +529,8 @@ public final class GO2Utilities {
                 verticalDim = DefaultVerticalCRS.ELLIPSOIDAL_HEIGHT;
             }
         }
+
+
 
         final GeneralEnvelope env;
         if(temporalDim != null && verticalDim != null){

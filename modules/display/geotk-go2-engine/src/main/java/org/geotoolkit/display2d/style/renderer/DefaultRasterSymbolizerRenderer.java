@@ -129,22 +129,31 @@ public class DefaultRasterSymbolizerRenderer extends AbstractSymbolizerRenderer<
 
         if(dataCoverage == null){
             LOGGER.log(Level.WARNING, "Requested an area where no coverage where found.");
+            return;
         }
 
+        final CoordinateReferenceSystem coverageCRS = dataCoverage.getCoordinateReferenceSystem();
         try{
-
-            final CoordinateReferenceSystem candidate2D = CRSUtilities.getCRS2D(dataCoverage.getCoordinateReferenceSystem());
+            final CoordinateReferenceSystem candidate2D = CRSUtilities.getCRS2D(coverageCRS);
             if(!CRS.equalsIgnoreMetadata(candidate2D,renderingContext.getObjectiveCRS2D()) ){
 
                 dataCoverage = (GridCoverage2D) Operations.DEFAULT.resample(dataCoverage.view(ViewType.NATIVE), renderingContext.getObjectiveCRS2D());
-                dataCoverage = dataCoverage.view(ViewType.RENDERED);
+                
+                if(dataCoverage != null){
+                    dataCoverage = dataCoverage.view(ViewType.RENDERED);
+                }
             }
         }catch(Exception ex){
             //several kind of errors can happen here, we catch anything to avoid blocking the map component.
             monitor.exceptionOccured(
                 new IllegalStateException("Coverage is not in the requested CRS, found : " +
-                "\n"+ dataCoverage.getCoordinateReferenceSystem() +
+                "\n"+ coverageCRS +
                 " was expecting \n : " + renderingContext.getObjectiveCRS()),Level.WARNING);
+            return;
+        }
+
+        if(dataCoverage == null){
+            LOGGER.log(Level.WARNING, "Reprojected coverage is null.");
             return;
         }
 

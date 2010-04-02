@@ -17,14 +17,25 @@
  */
 package org.geotoolkit.map;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.CancellationException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.geotoolkit.coverage.GridSampleDimension;
+import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
+import org.geotoolkit.coverage.io.CoverageStoreException;
+import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.coverage.io.GridCoverageReader;
+import org.geotoolkit.coverage.io.ImageCoverageReader;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
+import org.opengis.coverage.grid.GridCoverage;
 
 import org.opengis.feature.Feature;
 import org.opengis.filter.FilterFactory;
@@ -76,9 +87,7 @@ public final class MapBuilder {
             throw new NullPointerException("Name can not be null");
         }
 
-        return null;
-
-//        return new DefaultCoverageMapLayer(new ImageCoverageReader(grid), style, new DefaultName(name) );
+        return new DefaultCoverageMapLayer(new SimpleCoverageReader(grid), style, new DefaultName(name) );
     }
 
     /**
@@ -112,6 +121,37 @@ public final class MapBuilder {
      */
     public static ElevationModel createElevationModel(final GridCoverageReader grid, Expression offset, Expression scale){
         return new DefaultElevationModel(grid, offset,scale);
+    }
+
+
+    private static class SimpleCoverageReader extends GridCoverageReader{
+
+        private final GridCoverage2D coverage;
+
+        public SimpleCoverageReader(GridCoverage2D coverage){
+            this.coverage = coverage;
+        }
+
+        @Override
+        public List<String> getCoverageNames() throws CoverageStoreException, CancellationException {
+            return Collections.emptyList();
+        }
+
+        @Override
+        public GeneralGridGeometry getGridGeometry(int i) throws CoverageStoreException, CancellationException {
+            return (GeneralGridGeometry) coverage.getGridGeometry();
+        }
+
+        @Override
+        public List<GridSampleDimension> getSampleDimensions(int i) throws CoverageStoreException, CancellationException {
+            return Collections.singletonList(coverage.getSampleDimension(i));
+        }
+
+        @Override
+        public GridCoverage read(int i, GridCoverageReadParam gcrp) throws CoverageStoreException, CancellationException {
+            return coverage;
+        }
+
     }
 
 }
