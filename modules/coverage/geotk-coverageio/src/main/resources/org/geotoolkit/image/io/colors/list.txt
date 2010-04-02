@@ -6,6 +6,7 @@ dem
 grayscale
 rainbow
 rainbow-c
+rainbow-t
 red-blue
 SeaWiFS
 white-cyan-red

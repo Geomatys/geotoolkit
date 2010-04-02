@@ -72,6 +72,7 @@ import org.geotoolkit.resources.IndexedResourceBundle;
  *    <tr><td><code>&nbsp;&nbsp;white-cyan-red&nbsp;&nbsp;</code></td><td><img src="doc-files/white-cyan-red.png"></td> <td>&nbsp;&nbsp;</td></tr>
  *    <tr><td><code>&nbsp;&nbsp;bell&nbsp;&nbsp;</code></td>          <td><img src="doc-files/bell.png"></td>           <td>&nbsp;&nbsp;</td></tr>
  *    <tr><td><code>&nbsp;&nbsp;rainbow&nbsp;&nbsp;</code></td>       <td><img src="doc-files/rainbow.png"></td>        <td>&nbsp;&nbsp;</td></tr>
+ *    <tr><td><code>&nbsp;&nbsp;rainbow-t&nbsp;&nbsp;</code></td>     <td><img src="doc-files/rainbow-t.png"></td>      <td>&nbsp;&nbsp;Sea Surface Temperature (IFREMER)</td></tr>
  *    <tr><td><code>&nbsp;&nbsp;rainbow-c&nbsp;&nbsp;</code></td>     <td><img src="doc-files/rainbow-c.png"></td>      <td>&nbsp;&nbsp;Chlorophyll-a concentration (Nasa)</td></tr>
  *    <tr><td><code>&nbsp;&nbsp;SeaWiFS&nbsp;&nbsp;</code></td>       <td><img src="doc-files/SeaWiFS.png"></td>        <td>&nbsp;&nbsp;Chlorophyll-a concentration (SeaWiFS)</td></tr>
  *    <tr><td><code>&nbsp;&nbsp;dem&nbsp;&nbsp;</code></td>           <td><img src="doc-files/dem.png"></td>            <td>&nbsp;&nbsp;Digital Elevation Model</td></tr>
