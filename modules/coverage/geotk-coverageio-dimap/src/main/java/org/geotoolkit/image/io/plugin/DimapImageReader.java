@@ -16,6 +16,8 @@
  */
 package org.geotoolkit.image.io.plugin;
 
+import java.awt.Color;
+import java.awt.Point;
 import java.awt.image.RenderedImage;
 import java.awt.geom.AffineTransform;
 import java.awt.Rectangle;
@@ -50,6 +52,7 @@ import org.geotoolkit.image.io.ImageReaderAdapter;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
 import org.geotoolkit.image.io.metadata.ReferencingBuilder;
+import org.geotoolkit.image.jai.FloodFill;
 import org.geotoolkit.internal.image.io.DimensionAccessor;
 import org.geotoolkit.internal.image.io.GridDomainAccessor;
 import org.geotoolkit.internal.image.io.Formats;
@@ -105,21 +108,40 @@ public class DimapImageReader extends ImageReaderAdapter {
     private RenderedImage changeColorModel(RenderedImage image, boolean bufferedImage) throws IOException{
         if(image == null) return image;
 
-        final DimapMetadata metadata = (DimapMetadata) getImageMetadata(0);
-        final int[] colorMapping = DimapParser.readColorBandMapping((Element)metadata.getAsTree("dimap"));
 
+        final DimapMetadata metadata = (DimapMetadata) getImageMetadata(0);
+
+        //apply the band <-> color mapping -------------------------------------
+        final int[] colorMapping = DimapParser.readColorBandMapping((Element)metadata.getAsTree("dimap"));
+        if(colorMapping == null){
+            //we have no default styling
+            return image;
+        }
+
+        // select the visible bands
         final ParameterBlock pb = new ParameterBlock();
         pb.addSource(image);
         pb.add(colorMapping);
-        RenderedImage img = JAI.create("bandSelect",pb);
+        image = JAI.create("bandSelect",pb);
 
-        if(bufferedImage){
-            BufferedImage buffer = new BufferedImage(img.getWidth(), img.getHeight(), BufferedImage.TYPE_INT_ARGB);
-            buffer.createGraphics().drawRenderedImage(img, new AffineTransform());
-            return buffer;
+        //ensure we have a bufferedImage for floodfill operation
+        final BufferedImage buffer;
+        if(image instanceof BufferedImage){
+            buffer = (BufferedImage) image;
         }else{
-            return img;
+            buffer = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_ARGB);
+            buffer.createGraphics().drawRenderedImage(image, new AffineTransform());
         }
+
+        //remove black borders
+        FloodFill.fill(buffer, new Color[]{Color.BLACK}, new Color(0f,0f,0f,0f),
+                new Point(0,0),
+                new Point(buffer.getWidth()-1,0),
+                new Point(buffer.getWidth()-1,buffer.getHeight()-1),
+                new Point(0,buffer.getHeight()-1)
+                );
+
+        return buffer;
     }
 
     /**

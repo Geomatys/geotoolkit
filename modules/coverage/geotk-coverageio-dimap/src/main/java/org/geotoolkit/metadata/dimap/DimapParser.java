@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.metadata.dimap;
 
-import java.awt.Color;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.io.File;
@@ -30,28 +29,27 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 import javax.measure.unit.Unit;
 import javax.media.jai.Warp;
 import javax.media.jai.WarpAffine;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+
 import org.geotoolkit.coverage.Category;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.TypeMap;
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.referencing.operation.transform.LinearTransform1D;
 import org.geotoolkit.referencing.operation.transform.WarpTransform2D;
 import org.geotoolkit.util.NumberRange;
-import org.opengis.coverage.ColorInterpretation;
+
 import org.opengis.coverage.SampleDimensionType;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.operation.MathTransform1D;
 import org.opengis.referencing.operation.TransformException;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -136,7 +134,8 @@ public final class DimapParser {
             final double y2 = textValue(affine, TAG_AFFINE_Y2, Double.class);
             return new AffineTransform(x0, y0, x1, y1, x2, y2);
         }else if(points != null){
-            //throw new TransformException("points transform not supported yet.");
+            // transformation in not accurate if the method has been defined.
+            // read the points and calculate an average transform from them.
             final NodeList tiePoints = ele.getElementsByTagName(TAG_TIE_POINT);
             final List<Point2D> sources = new ArrayList<Point2D>();
             final List<Point2D> dests = new ArrayList<Point2D>();
@@ -193,12 +192,16 @@ public final class DimapParser {
      */
     public static int[] readColorBandMapping(Element parent){
         final Element ele = firstElement(parent, TAG_IMAGE_DISPLAY);
+        if(ele == null) return null;
         final Element displayOrder = firstElement(ele, TAG_BAND_DISPLAY_ORDER);
+        if(displayOrder == null) return null;
+
+        //those parameters are mandatory
         final int red = textValue(displayOrder, TAG_RED_CHANNEL, Integer.class);
         final int green = textValue(displayOrder, TAG_GREEN_CHANNEL, Integer.class);
         final int blue = textValue(displayOrder, TAG_BLUE_CHANNEL, Integer.class);
 
-        return new int[]{red,green,blue};
+        return new int[]{red-1,green-1,blue-1};
     }
 
     /**
