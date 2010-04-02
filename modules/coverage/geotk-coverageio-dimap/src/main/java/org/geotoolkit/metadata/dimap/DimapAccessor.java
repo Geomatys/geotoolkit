@@ -18,13 +18,6 @@ package org.geotoolkit.metadata.dimap;
 
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -32,9 +25,6 @@ import java.util.Map;
 import javax.measure.unit.Unit;
 import javax.media.jai.Warp;
 import javax.media.jai.WarpAffine;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 
 import org.geotoolkit.coverage.Category;
 import org.geotoolkit.coverage.GridSampleDimension;
@@ -50,16 +40,14 @@ import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 
-import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
 
 import static org.geotoolkit.metadata.dimap.DimapConstants.*;
 import static org.geotoolkit.util.DomUtilities.*;
 
 /**
- * Utility class to parse dimap file.
+ * Utility class to access usable objects from a dimap file.
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
@@ -68,21 +56,6 @@ import static org.geotoolkit.util.DomUtilities.*;
 public final class DimapAccessor {
 
     private DimapAccessor() {
-    }
-
-    /**
-     * Convinient method to aquiere a DOM document from an input.
-     * This is provided as a convinient method, any dom document may
-     * be used for all methods in the class.
-     */
-    public static Document read(Object input) throws ParserConfigurationException, SAXException, IOException {
-        final InputStream stream = toStream(input);
-        // création d'une fabrique de documents
-        final DocumentBuilderFactory fabrique = DocumentBuilderFactory.newInstance();
-        final DocumentBuilder constructeur = fabrique.newDocumentBuilder();
-        final Document document = constructeur.parse(stream);
-        stream.close();
-        return document;
     }
 
     /**
@@ -304,23 +277,6 @@ public final class DimapAccessor {
         }
 
         return dims;
-    }
-
-    private static InputStream toStream(Object input) throws FileNotFoundException, IOException{
-
-        if(input instanceof InputStream){
-            return (InputStream) input;
-        }else if(input instanceof File){
-            return new FileInputStream((File)input);
-        }else if(input instanceof URI){
-            return ((URI)input).toURL().openStream();
-        }else if(input instanceof URL){
-            return ((URL)input).openStream();
-        }else if(input instanceof String){
-            return new URL((String)input).openStream();
-        }else{
-            throw new IOException("Can not handle inout type : " + input.getClass());
-        }
     }
 
 }
