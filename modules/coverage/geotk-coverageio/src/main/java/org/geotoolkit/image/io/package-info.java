@@ -85,6 +85,10 @@
  *   <li>{@link org.geotoolkit.image.io.plugin.WorldFileImageReader.Spi#registerDefaults(ServiceRegistry)}</li>
  *   <li>{@link org.geotoolkit.image.io.plugin.WorldFileImageWriter.Spi#registerDefaults(ServiceRegistry)}</li>
  * </ol>
+ * <ul>
+ *   <li><b>Alternative:</b> {@link org.geotoolkit.lang.Setup#initialize(boolean)} performs
+ *       (among other tasks) all the above tasks except 1.</li>
+ * </ul>
  * <p>
  * Those methods can be invoked more than once if the set of standard readers available (PNG, TIFF,
  * <i>etc.</i>) is changed. For example invoking {@code WorldFileImageReader.Spi.registerDefaults(...)}

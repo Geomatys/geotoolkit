@@ -15,6 +15,13 @@
     their classpath in order to take advantage of the embedded EPSG database. JavaDB is bundled
     in the Sun distribution of JDK.</P>
 
+    <H2>System initialization</H2>
+    <P ALIGN="justify">Geotk does not require explicit initialization and shutdown for most cases.
+    However a few services behave better when managed in an <cite>initialization - shutdown</cite>
+    cycle. The {@link org.geotoolkit.lang.Setup} class provides a central place for initialization
+    and shutdown, but developers can also gain more control by invoking themself the various methods
+    identified by the {@link org.geotoolkit.lang.Configuration} annotation.</P>
+
     <H2>Javadoc annotations</H2>
     <UL><LI><H3>Versions</H3>
     <P ALIGN="justify">The {@code @version} javadoc tag gives the last Geotk version when

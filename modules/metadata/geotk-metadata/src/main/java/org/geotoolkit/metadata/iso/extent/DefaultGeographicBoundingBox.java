@@ -584,7 +584,7 @@ public class DefaultGeographicBoundingBox extends AbstractGeographicExtent
             return Class.forName("org.geotoolkit.internal.referencing.BoundingBoxes").getMethod(name, arguments);
         } catch (ClassNotFoundException exception) {
             throw new UnsupportedOperationException(Errors.format(
-                    Errors.Keys.MISSING_MODULE_$1, "referencing"), exception);
+                    Errors.Keys.MISSING_MODULE_$1, "geotk-referencing"), exception);
         } catch (NoSuchMethodException exception) {
             // Should never happen if we didn't broke our BoundingBoxes helper class.
             throw new AssertionError(exception);

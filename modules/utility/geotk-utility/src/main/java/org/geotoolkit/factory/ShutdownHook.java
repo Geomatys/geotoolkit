@@ -39,14 +39,11 @@ final class ShutdownHook extends Thread {
      * The single shutdown hook instance.
      */
     static final ShutdownHook INSTANCE = new ShutdownHook();
-    static {
-        Runtime.getRuntime().addShutdownHook(INSTANCE);
-    }
 
     /**
      * The registries on which to dispose the factories on shutdown.
      */
-    private ServiceRegistry[] registries = new ServiceRegistry[0];
+    private ServiceRegistry[] registries;
 
     /**
      * Creates the singleton instance.
@@ -59,9 +56,16 @@ final class ShutdownHook extends Thread {
      * Adds the given registry to the list of registry to dispose on shutdown.
      */
     synchronized void register(final ServiceRegistry registry) {
-        final int n = registries.length;
-        registries = Arrays.copyOf(registries, n + 1);
-        registries[n] = registry;
+        ServiceRegistry[] registries = this.registries;
+        if (registries == null) {
+            Runtime.getRuntime().addShutdownHook(this);
+            registries = new ServiceRegistry[] {registry};
+        } else {
+            final int n = registries.length;
+            registries = Arrays.copyOf(registries, n + 1);
+            registries[n] = registry;
+        }
+        this.registries = registries;
     }
 
     /**
@@ -69,6 +73,11 @@ final class ShutdownHook extends Thread {
      */
     @Override
     public synchronized void run() {
+        final ServiceRegistry[] registries = this.registries;
+        if (registries == null) {
+            return;
+        }
+        this.registries = null;
         for (final ServiceRegistry registry : registries) {
             for (final Iterator<Class<?>> it=registry.getCategories(); it.hasNext();) {
                 final Class<?> category = it.next();

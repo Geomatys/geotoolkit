@@ -27,6 +27,10 @@ import java.lang.annotation.RetentionPolicy;
 /**
  * Annotates methods having a system-wide impact on the configuration of the Geotk library.
  * See "Use" javadoc link for a list of annotated methods.
+ * <p>
+ * Note that the {@link Setup} class provides a central place were global
+ * {@linkplain Setup#initialize(boolean) initialization} and
+ * {@linkplain Setup#shutdown() shutdown} can be performed.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.00

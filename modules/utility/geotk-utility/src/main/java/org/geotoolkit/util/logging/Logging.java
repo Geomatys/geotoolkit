@@ -473,6 +473,7 @@ search:     while (configs.hasMoreElements()) try {
      * @param level The desired logging level, or {@code null} to left it unchanged.
      *
      * @see <a href="http://java.sun.com/javase/6/docs/technotes/guides/logging/overview.html">Java Logging Overview</a>
+     * @see org.geotoolkit.lang.Setup
      */
     @Configuration
     public void forceMonolineConsoleOutput(final Level level) {

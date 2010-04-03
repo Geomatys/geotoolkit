@@ -40,6 +40,8 @@ import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.internal.image.jai.*;
 
+import static org.geotoolkit.internal.image.Setup.PRODUCT_NAME;
+
 
 /**
  * A set of static methods for managing JAI's {@linkplain OperationRegistry operation registry}.
@@ -80,19 +82,19 @@ public final class Registry {
         try {
             op = Combine.OPERATION_NAME;
             registry.registerDescriptor(new CombineDescriptor());
-            RIFRegistry.register(registry, op, "org.geotoolkit", new CombineCRIF());
+            RIFRegistry.register(registry, op, PRODUCT_NAME, new CombineCRIF());
 
             op = Hysteresis.OPERATION_NAME;
             registry.registerDescriptor(new HysteresisDescriptor());
-            RIFRegistry.register(registry, op, "org.geotoolkit", new HysteresisCRIF());
+            RIFRegistry.register(registry, op, PRODUCT_NAME, new HysteresisCRIF());
 
             op = NodataFilter.OPERATION_NAME;
             registry.registerDescriptor(new NodataFilterDescriptor());
-            RIFRegistry.register(registry, op, "org.geotoolkit", new NodataFilterCRIF());
+            RIFRegistry.register(registry, op, PRODUCT_NAME, new NodataFilterCRIF());
 
             op = SilhouetteMask.OPERATION_NAME;
             registry.registerDescriptor(new SilhouetteMaskDescriptor());
-            RIFRegistry.register(registry, op, "org.geotoolkit", new SilhouetteMaskCRIF());
+            RIFRegistry.register(registry, op, PRODUCT_NAME, new SilhouetteMaskCRIF());
 
             record  = Loggings.format(Level.CONFIG, Loggings.Keys.REGISTERED_JAI_OPERATIONS);
             op = null;
@@ -269,6 +271,7 @@ public final class Registry {
      * created but before it is made visible.
      *
      * @see org.geotoolkit.image.io
+     * @see org.geotoolkit.lang.Setup
      *
      * @since 3.00
      */

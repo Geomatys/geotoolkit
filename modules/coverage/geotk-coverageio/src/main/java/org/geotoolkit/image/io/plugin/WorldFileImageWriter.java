@@ -270,6 +270,7 @@ public class WorldFileImageWriter extends ImageWriterAdapter {
          *        the {@linkplain IIORegistry#getDefaultInstance() default registry}.
          *
          * @see org.geotoolkit.image.jai.Registry#setDefaultCodecPreferences()
+         * @see org.geotoolkit.lang.Setup
          */
         @Configuration
         public static void registerDefaults(ServiceRegistry registry) {
@@ -316,6 +317,8 @@ public class WorldFileImageWriter extends ImageWriterAdapter {
          *
          * @param registry The registry from which to unregister the formats, or {@code null}
          *        for the {@linkplain IIORegistry#getDefaultInstance() default registry}.
+         *
+         * @see org.geotoolkit.lang.Setup
          */
         @Configuration
         public static void unregisterDefaults(ServiceRegistry registry) {

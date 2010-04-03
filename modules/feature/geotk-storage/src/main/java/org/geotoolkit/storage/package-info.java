@@ -2,7 +2,7 @@
  *    Geotoolkit.org - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2008-2010, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2009-2010, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2009-2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
@@ -17,17 +17,12 @@
  */
 
 /**
- * Geotoolkit.org installer. This module setup the directory where Geotk stores some
- * data, and optionally download free data required for some functionnalities, for
- * example the NADCON grids required for more accurate datum shifts over the United
- * States.
+ * Place holder for future {@code DataStore} services.
  *
- * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @author Johann Sorel (Geomatys)
+ * @version 3.10
  *
- * @see org.geotoolkit.lang.Setup
- *
- * @since 3.00
+ * @since 3.10
  * @module
  */
-package org.geotoolkit.internal.setup;
+package org.geotoolkit.storage;

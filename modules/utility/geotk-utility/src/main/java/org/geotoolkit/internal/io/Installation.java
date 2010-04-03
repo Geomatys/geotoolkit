@@ -86,6 +86,18 @@ public enum Installation {
     private static final File DEFAULT_ROOT = root();
 
     /**
+     * Whatever we are allowed to check for system preferences. This can be set to {@code false}
+     * for avoiding the "<cite>can not flush sytem preferences in {@code /etc/.java/}</cite>"
+     * warning on Linux.
+     * <p>
+     * Note that this field applies only to read operations. Write operations
+     * (if any) will be performed exactly where requested.
+     *
+     * @since 3.10
+     */
+    public static volatile boolean allowSystemPreferences = true;
+
+    /**
      * Creates a new configuration key.
      *
      * @param node The preference node where to store the configuration value.
@@ -133,7 +145,12 @@ public enum Installation {
      * @return The preference value, or {@code null} if none.
      */
     public final String get(final boolean userSpecific) {
-        return (key != null) ? preference(userSpecific).get(key, null) : null;
+        if (key != null) {
+            if (userSpecific || allowSystemPreferences) {
+                return preference(userSpecific).get(key, null);
+            }
+        }
+        return null;
     }
 
     /**

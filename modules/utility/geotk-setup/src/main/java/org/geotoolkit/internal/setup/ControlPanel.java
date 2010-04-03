@@ -24,6 +24,7 @@ import java.awt.event.ActionListener;
 import java.util.Locale;
 
 import org.geotoolkit.resources.Vocabulary;
+import org.geotoolkit.internal.io.Installation;
 
 
 /**
@@ -40,7 +41,7 @@ public final class ControlPanel extends JPanel implements ActionListener {
     /**
      * Creates the panel.
      */
-    ControlPanel(final Vocabulary resources) {
+    private ControlPanel(final Vocabulary resources) {
         super(new BorderLayout());
         setBorder(BorderFactory.createEmptyBorder(12, 0, 12, 0));
         final DataPanel data = new DataPanel(resources);
@@ -78,6 +79,7 @@ public final class ControlPanel extends JPanel implements ActionListener {
      * @param locale The locale.
      */
     public static void show(final Locale locale) {
+        Installation.allowSystemPreferences = true;
         final Vocabulary resources = Vocabulary.getResources(locale);
         final JFrame frame = new JFrame(resources.getString(Vocabulary.Keys.INSTALLATION_$1, "Geotoolkit.org"));
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
