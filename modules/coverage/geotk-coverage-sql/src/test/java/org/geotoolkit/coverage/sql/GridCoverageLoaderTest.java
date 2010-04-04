@@ -154,11 +154,5 @@ public final class GridCoverageLoaderTest extends CatalogTestBase {
         final IndexColorModel cm = (IndexColorModel) image.getColorModel();
         assertEquals(65536, cm.getMapSize());
         assertEquals(16, cm.getPixelSize());
-
-        rendered.show(null);
-        try {
-            Thread.sleep(4000);
-        } catch (Exception e) {
-        }
     }
 }
