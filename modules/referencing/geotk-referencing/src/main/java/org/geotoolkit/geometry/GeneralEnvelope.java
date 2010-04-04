@@ -500,9 +500,9 @@ scanNumber: while (++i < length) {
      * This method performs two steps:
      *
      * <ol>
-     *   <li><p>First, it ensures that the envelope is contained in the {@linkplain CoordinateSystem
-     *   coordinate system} domain. Out of range ordinates are validated in a way that depends on
-     *   the {@linkplain CoordinateSystemAxis#getRangeMeaning range meaning}:
+     *   <li><p>Ensure that the envelope is contained in the {@linkplain CoordinateSystem
+     *   coordinate system} domain. If some ordinates are out of range, then there is a choice
+     *   depending on the {@linkplain CoordinateSystemAxis#getRangeMeaning range meaning}:
      *   <ul>
      *     <li>If {@linkplain RangeMeaning#EXACT EXACT} (typically <em>latitudes</em> ordinates),
      *     values greater than the {@linkplain CoordinateSystemAxis#getMaximumValue maximum value}
@@ -513,25 +513,23 @@ scanNumber: while (++i < length) {
      *     <li>If {@linkplain RangeMeaning#WRAPAROUND WRAPAROUND} (typically <em>longitudes</em>
      *     ordinates), a multiple of the range (e.g. 360° for longitudes) is added or subtracted.
      *     If a value stay out of range after this correction, then the ordinates are set to the
-     *     full [{@linkplain CoordinateSystemAxis#getMinimumValue minimum} ...
+     *     full [{@linkplain CoordinateSystemAxis#getMinimumValue minimum} &hellip;
      *     {@linkplain CoordinateSystemAxis#getMaximumValue maximum}] range.
-     *
-     *     <blockquote>
-     *     <b>Example:</b> [185° ... 190°] of longitude is equivalent to [-175° ... -170°]. But
-     *     [175° ... 185°] would be equivalent to [175° ... -175°], which is likely to mislead
-     *     most users of {@link Envelope} since the lower bounds is numerically greater than the
-     *     upper bounds. Reordering as [-175° ... 175°] would interchange the meaning of what is
-     *     "inside" and "outside" the envelope. So this implementation conservatively expands the
-     *     range to [-180° ... 180°] in order to ensure that the validated envelope fully contains
-     *     the original envelope.
-     *     </blockquote></li>
+     *     See the example below.</li>
      *   </ul>
      *   </p></li>
-     *   <li><p>Second and only if {@code crsDomain} is {@code true}, the envelope normalized in
-     *   the previous step is intersected with the CRS
-     *   {@linkplain CoordinateReferenceSystem#getDomainOfValidity domain of validity}, if any.
+     *   <li><p>If {@code crsDomain} is {@code true}, then the envelope from the previous step
+     *   is intersected with the CRS {@linkplain CoordinateReferenceSystem#getDomainOfValidity
+     *   domain of validity}, if any.
      *   </p></li>
      * </ol>
+     *
+     * <b>Example:</b> A longitude range of [185° &hellip; 190°] is equivalent to [-175° &hellip; -170°].
+     * But [175° &hellip; 185°] would be equivalent to [175° &hellip; -175°], which is likely to mislead
+     * <code>Envelope</code> users since the lower bounds is numerically greater than the upper bounds.
+     * Reordering as [-175° &hellip; 175°] would interchange the meaning of what is "inside" and "outside"
+     * the envelope. So this implementation conservatively expands the range to [-180° &hellip; 180°]
+     * in order to ensure that the validated envelope fully contains the original envelope.
      *
      * @param  crsDomain {@code true} if the envelope should be restricted to the CRS domain in
      *         addition of the CS domain.

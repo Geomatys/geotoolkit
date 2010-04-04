@@ -198,6 +198,26 @@ public class GridCoverageReadParam {
     }
 
     /**
+     * Returns the {@linkplain #getEnvelope() envelope}, ensuring that it is contained
+     * inside the coordinate system domain of validity.
+     */
+    final Envelope getValidEnvelope() {
+        Envelope env = getEnvelope();
+        if (env != null) {
+            final GeneralEnvelope ge;
+            if (env instanceof GeneralEnvelope && env != envelope) {
+                ge = (GeneralEnvelope) env;
+            } else {
+                ge = new GeneralEnvelope(env);
+            }
+            if (ge.normalize(false)) {
+                env = ge;
+            }
+        }
+        return env;
+    }
+
+    /**
      * Sets the maximal extent of the region to read from the stream. The actual envelope of
      * the coverage returned by {@link GridCoverageReader} may be smaller if the coverage
      * available in the stream does not fill completly the given envelope.

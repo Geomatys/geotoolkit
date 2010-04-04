@@ -782,7 +782,7 @@ public class ImageCoverageReader extends GridCoverageReader {
             /*
              * Convert geodetic envelope and resolution to pixel coordinates.
              */
-            final Envelope envelope = param.getEnvelope();
+            final Envelope envelope = param.getValidEnvelope();
             final double[] resolution = param.getResolution();
             final Rectangle imageBounds;
             try {
