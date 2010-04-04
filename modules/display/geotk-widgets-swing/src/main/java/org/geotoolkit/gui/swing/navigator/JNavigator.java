@@ -36,6 +36,9 @@ import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
+import static javax.swing.SwingConstants.*;
+import static java.awt.event.KeyEvent.*;
+
 /**
  *
  * @author Johann Sorel (Geomatys)
@@ -51,26 +54,8 @@ public class JNavigator extends JPanel implements
     private int orientation = SwingConstants.SOUTH;
 
     private final PropertyChangeListener listener = new PropertyChangeListener() {
-
         @Override
         public void propertyChange(PropertyChangeEvent pce) {
-
-//            if(model.getOrientation() != orientation){
-//                orientation = model.getOrientation();
-//                //change the order
-//                removeAll();
-//                if(orientation == SwingConstants.NORTH){
-//                    add(BorderLayout.NORTH,graduation);
-//                }else if(orientation == SwingConstants.SOUTH){
-//                    add(BorderLayout.SOUTH,graduation);
-//                }else if(orientation == SwingConstants.EAST){
-//                    add(BorderLayout.EAST,graduation);
-//                }else if(orientation == SwingConstants.WEST){
-//                    add(BorderLayout.WEST,graduation);
-//                }else{
-//                    throw new IllegalArgumentException("Orientation doesnt have a valid value :" + orientation);
-//                }
-//            }
             revalidate();
             repaint();
         }
@@ -114,7 +99,26 @@ public class JNavigator extends JPanel implements
     }
 
     public void setOrientation(int orientation) {
-        this.orientation = orientation;
+        
+        if(this.orientation != orientation){
+            this.orientation = orientation;
+            //change the order
+            removeAll();
+            if(orientation == NORTH){
+                add(BorderLayout.NORTH,graduation);
+            }else if(orientation == SOUTH){
+                add(BorderLayout.SOUTH,graduation);
+            }else if(orientation == EAST){
+                add(BorderLayout.EAST,graduation);
+            }else if(orientation == WEST){
+                add(BorderLayout.WEST,graduation);
+            }else{
+                throw new IllegalArgumentException("Orientation doesnt have a valid value :" + orientation);
+            }
+            revalidate();
+            repaint();
+        }
+
     }
 
     public int getOrientation() {
@@ -180,8 +184,16 @@ public class JNavigator extends JPanel implements
         newMouseX = e.getX();
         newMouseY = e.getY();
 
-        getModel().translate(lastMouseX-newMouseX);
-        
+        final double tr;
+        switch(orientation){
+            case NORTH : tr = lastMouseX-newMouseX; break;
+            case SOUTH : tr = lastMouseX-newMouseX; break;
+            case EAST : tr = lastMouseY-newMouseY; break;
+            default : tr = lastMouseY-newMouseY; break;
+        }
+        final double scale = getModel().getScale();
+        getModel().translate(-tr/scale);
+
         lastMouseX = newMouseX;
         lastMouseY = newMouseY;
     }
@@ -194,7 +206,8 @@ public class JNavigator extends JPanel implements
 
     @Override
     public void mouseWheelMoved(MouseWheelEvent e) {
-        final int x = e.getX();
+        final int x = getPosition(e);
+
         if (e.getWheelRotation() > 0) {
             getModel().scale(1.1d, x);
         } else {
@@ -208,19 +221,68 @@ public class JNavigator extends JPanel implements
 
     @Override
     public void keyPressed(KeyEvent e) {
-//        if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-//            getModel().setTranslation(getModel().getTranslation() + getModel().getScale()/20d);
-//        } else if (e.getKeyCode() == KeyEvent.VK_LEFT) {
-//            getModel().setTranslation(getModel().getTranslation() - getModel().getScale()/20d);
-//        } else if (e.getKeyCode() == KeyEvent.VK_UP) {
-//            getModel().setScale(getModel().getScale() * 0.9f);
-//        } else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
-//            getModel().setScale(getModel().getScale() * 1.1f);
-//        }
+        final int code = e.getKeyCode();
+        final int x = getPosition(null);
+        final double scale = getModel().getScale();
+
+        final int speed = 3;
+        switch(orientation){
+            case NORTH : 
+                switch(code){
+                    case VK_RIGHT : getModel().translate(-speed/scale);break;
+                    case VK_LEFT :  getModel().translate(speed/scale);break;
+                    case VK_UP :    getModel().scale(0.9d, x);break;
+                    case VK_DOWN : getModel().scale(1.1d, x);break;
+                } break;
+            case SOUTH : 
+                switch(code){
+                    case VK_RIGHT : getModel().translate(-speed/scale);break;
+                    case VK_LEFT :  getModel().translate(speed/scale);break;
+                    case VK_UP :    getModel().scale(1.1d, x);break;
+                    case VK_DOWN : getModel().scale(0.9d, x);break;
+                } break;
+            case EAST :
+                switch(code){
+                    case VK_RIGHT : getModel().scale(0.9d, x);break;
+                    case VK_LEFT :  getModel().scale(1.1d, x);break;
+                    case VK_UP :    getModel().translate(-speed/scale);break;
+                    case VK_DOWN : getModel().translate(speed/scale);break;
+                } break;
+            case WEST :
+                switch(code){
+                    case VK_RIGHT : getModel().scale(1.1d, x);break;
+                    case VK_LEFT :  getModel().scale(0.9d, x);break;
+                    case VK_UP :    getModel().translate(-speed/scale);break;
+                    case VK_DOWN : getModel().translate(speed/scale);break;
+                } break;
+        }
+
+
     }
 
     @Override
     public void keyReleased(KeyEvent e) {
+    }
+
+    /**
+     * used to define the scaling center.
+     */
+    private int getPosition(MouseEvent e){
+        if(e != null){
+            switch(orientation){
+                case NORTH : return e.getX();
+                case SOUTH : return e.getX();
+                case EAST : return e.getY();
+                default : return e.getY();
+            }
+        }else{
+            switch(orientation){
+                case NORTH : return getWidth()/2; 
+                case SOUTH : return getWidth()/2;
+                case EAST : return getHeight()/2;
+                default : return getHeight()/2;
+            }
+        }
     }
 
 }

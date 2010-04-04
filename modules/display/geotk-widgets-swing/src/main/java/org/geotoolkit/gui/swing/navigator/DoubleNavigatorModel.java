@@ -25,6 +25,7 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
 
 /**
  *
@@ -61,14 +62,19 @@ public class DoubleNavigatorModel implements NavigatorModel{
         return pt.getX();
     }
 
+    @Override
+    public double getScale() {
+        return dimToGraphic.getScaleX();
+    }
 
     @Override
     public void scale(double factor, double position) {
+        position = getDimensionValueAt(position);
         final AffineTransform newtrs = new AffineTransform(dimToGraphic);
-        final double tr = newtrs.getTranslateX();
-        newtrs.translate(-tr, 0);
+
+        newtrs.translate(+position, 0);
         newtrs.scale(factor, 1);
-        newtrs.translate(tr, 0);
+        newtrs.translate(-position, 0);
         setTransform(newtrs);
     }
 

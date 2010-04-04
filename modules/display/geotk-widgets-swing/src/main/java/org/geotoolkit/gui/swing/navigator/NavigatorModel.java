@@ -32,6 +32,8 @@ public interface NavigatorModel {
 
     double getDimensionValueAt(double candidate);
 
+    double getScale();
+
     void scale(double factor, double position);
 
     void translate(double tr);
