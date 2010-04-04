@@ -19,7 +19,6 @@ package org.geotoolkit.gui.swing.navigator;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
-import java.awt.Font;
 import java.awt.GradientPaint;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
@@ -27,14 +26,13 @@ import java.awt.RenderingHints;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.Locale;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class DateRenderer implements NavigatorRenderer<Double>{
+public class DateRenderer implements NavigatorRenderer{
 
     private Date centralDate = new Date();
     private GregorianCalendar centralGregorian = new GregorianCalendar();
@@ -50,7 +48,7 @@ public class DateRenderer implements NavigatorRenderer<Double>{
     private int limit1 = 0;
     private int limit2 = 0;
     private double zoom = 1f;
-    private NavigatorModel<Double> model = null;
+    private NavigatorModel model = null;
 
     public DateRenderer() {
         Ctop = Cbase.brighter();
@@ -64,28 +62,28 @@ public class DateRenderer implements NavigatorRenderer<Double>{
     }
 
     @Override
-    public void render(NavigatorModel<Double> model, Graphics2D g, Rectangle area) {
+    public void render(JNavigator model, Graphics2D g, Rectangle area) {
         Graphics2D g2 = (Graphics2D) g;
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-        height = area.height;
-        width = area.width;
-        limit1 = (int) (height * topHeight);
-        limit2 = height - (int) (height * lastHeight);
-        zoom = model.getScale();
-        this.model = model;
-
-        final Double d = model.getValueAt(width/2);
-        centralDate = new Date(d.longValue());
-        centralGregorian.setTime(centralDate);
-        System.out.println("--> " +centralDate);
-
-        System.out.println(model.getValueAt(0));
-        System.out.println(model.getValueAt(width));
-
-        paintYears(g2, height, width, limit1, limit2);
-        paintMonths(g2, height, width, limit1, limit2);
-        paintDays(g2, height, width, limit1, limit2);
+//        height = area.height;
+//        width = area.width;
+//        limit1 = (int) (height * topHeight);
+//        limit2 = height - (int) (height * lastHeight);
+//        zoom = model.getScale();
+//        this.model = model;
+//
+//        final Double d = model.getValueAt(width/2);
+//        centralDate = new Date(d.longValue());
+//        centralGregorian.setTime(centralDate);
+//        System.out.println("--> " +centralDate);
+//
+//        System.out.println(model.getValueAt(0));
+//        System.out.println(model.getValueAt(width));
+//
+//        paintYears(g2, height, width, limit1, limit2);
+//        paintMonths(g2, height, width, limit1, limit2);
+//        paintDays(g2, height, width, limit1, limit2);
 
     }
 
@@ -112,49 +110,49 @@ public class DateRenderer implements NavigatorRenderer<Double>{
         calendar.setTime(centralDate);
 
 
-        final Calendar from = new GregorianCalendar();
-        from.setTimeInMillis(model.getValueAt(0).longValue());
-        final Calendar to = new GregorianCalendar();
-        to.setTimeInMillis(model.getValueAt(width).longValue());
-
-        //draw the years
-        g2.setColor(Ccenter);
-        g2.setFont(new Font("Serif", Font.BOLD, 12));
-
-        for(int year=from.get(Calendar.YEAR),max=to.get(Calendar.YEAR); year<=max; year++){
-            calendar.set(year, 0, 1, 1, 1);
-            int x = (int) model.getPosition(Double.valueOf(calendar.getTimeInMillis()));
-            if(x<0)x=0;
-
-//            if (x >= 0) {
-                g2.setColor(Ccenter);
-                g2.drawLine(x, limit2 + 1, x, height);
-                paintString(g2, String.valueOf(calendar.get(Calendar.YEAR)), Ccenter, x + 5, height - 5);
-//            } else if ((pxYear + x) > 40) {
-//                paintString(g2, String.valueOf(calendar.get(Calendar.YEAR)), Ccenter, 5, height - 5);
-//            }
-        }
-
-
-//        int nbYears = (int) (((float) width / 2f) / pxYear) + 1;
+//        final Calendar from = new GregorianCalendar();
+//        from.setTimeInMillis(model.getValueAt(0).longValue());
+//        final Calendar to = new GregorianCalendar();
+//        to.setTimeInMillis(model.getValueAt(width).longValue());
 //
 //        //draw the years
 //        g2.setColor(Ccenter);
 //        g2.setFont(new Font("Serif", Font.BOLD, 12));
-//        calendar.set(centralGregorian.get(Calendar.YEAR), 0, 1, 1, 1);
-//        calendar.add(Calendar.YEAR, -nbYears);
 //
-//        for (int y = -nbYears; y <= nbYears; y++, calendar.add(Calendar.YEAR, 1)) {
+//        for(int year=from.get(Calendar.YEAR),max=to.get(Calendar.YEAR); year<=max; year++){
+//            calendar.set(year, 0, 1, 1, 1);
 //            int x = (int) model.getPosition(Double.valueOf(calendar.getTimeInMillis()));
+//            if(x<0)x=0;
 //
-//            if (x >= 0) {
+////            if (x >= 0) {
 //                g2.setColor(Ccenter);
 //                g2.drawLine(x, limit2 + 1, x, height);
 //                paintString(g2, String.valueOf(calendar.get(Calendar.YEAR)), Ccenter, x + 5, height - 5);
-//            } else if ((pxYear + x) > 40) {
-//                paintString(g2, String.valueOf(calendar.get(Calendar.YEAR)), Ccenter, 5, height - 5);
-//            }
+////            } else if ((pxYear + x) > 40) {
+////                paintString(g2, String.valueOf(calendar.get(Calendar.YEAR)), Ccenter, 5, height - 5);
+////            }
 //        }
+//
+//
+////        int nbYears = (int) (((float) width / 2f) / pxYear) + 1;
+////
+////        //draw the years
+////        g2.setColor(Ccenter);
+////        g2.setFont(new Font("Serif", Font.BOLD, 12));
+////        calendar.set(centralGregorian.get(Calendar.YEAR), 0, 1, 1, 1);
+////        calendar.add(Calendar.YEAR, -nbYears);
+////
+////        for (int y = -nbYears; y <= nbYears; y++, calendar.add(Calendar.YEAR, 1)) {
+////            int x = (int) model.getPosition(Double.valueOf(calendar.getTimeInMillis()));
+////
+////            if (x >= 0) {
+////                g2.setColor(Ccenter);
+////                g2.drawLine(x, limit2 + 1, x, height);
+////                paintString(g2, String.valueOf(calendar.get(Calendar.YEAR)), Ccenter, x + 5, height - 5);
+////            } else if ((pxYear + x) > 40) {
+////                paintString(g2, String.valueOf(calendar.get(Calendar.YEAR)), Ccenter, 5, height - 5);
+////            }
+////        }
     }
 
     private void paintMonths(Graphics2D g2, int height, int width, int limit1, int limit2) {
@@ -180,34 +178,34 @@ public class DateRenderer implements NavigatorRenderer<Double>{
         Calendar calendar = new GregorianCalendar();
         calendar.setTime(centralDate);
 
-        if (pxMonth > 28) {
-            int nbMonth = (int) (((float) width / 2f) / pxMonth) + 1;
-
-            //draw the months
-            g2.setColor(Ctop);
-            g2.setFont(new Font("Serif", Font.PLAIN, 12));
-            calendar.set(centralGregorian.get(Calendar.YEAR), centralGregorian.get(Calendar.MONTH) + 1, 1, 1, 1);
-            calendar.add(Calendar.MONTH, -nbMonth);
-
-            for (int y = -nbMonth; y <= nbMonth; y++, calendar.add(Calendar.MONTH, 1)) {
-                int x = (int) model.getPosition(Double.valueOf(calendar.getTimeInMillis()));
-
-                if (x >= 0) {
-                    g2.setColor(Ctop);
-                    g2.drawLine(x, limit1 + 1, x, limit2 - 1);
-
-                    if (pxMonth < 60) {
-                        paintString(g2, calendar.getDisplayName(Calendar.MONTH, Calendar.SHORT, Locale.getDefault()), Ctop, x + 5, limit2 - 5);
-                    } else if (pxMonth >= 60) {
-                        paintString(g2, calendar.getDisplayName(Calendar.MONTH, Calendar.LONG, Locale.getDefault()), Ctop, x + 5, limit2 - 5);
-                    }
-                } else if ((pxMonth + x) >= 60) {
-                    paintString(g2, calendar.getDisplayName(Calendar.MONTH, Calendar.LONG, Locale.getDefault()), Ctop, 5, limit2 - 5);
-                } else if ((pxMonth + x) > 30) {
-                    paintString(g2, calendar.getDisplayName(Calendar.MONTH, Calendar.SHORT, Locale.getDefault()), Ctop, 5, limit2 - 5);
-                }
-            }
-        }
+//        if (pxMonth > 28) {
+//            int nbMonth = (int) (((float) width / 2f) / pxMonth) + 1;
+//
+//            //draw the months
+//            g2.setColor(Ctop);
+//            g2.setFont(new Font("Serif", Font.PLAIN, 12));
+//            calendar.set(centralGregorian.get(Calendar.YEAR), centralGregorian.get(Calendar.MONTH) + 1, 1, 1, 1);
+//            calendar.add(Calendar.MONTH, -nbMonth);
+//
+//            for (int y = -nbMonth; y <= nbMonth; y++, calendar.add(Calendar.MONTH, 1)) {
+//                int x = (int) model.getPosition(Double.valueOf(calendar.getTimeInMillis()));
+//
+//                if (x >= 0) {
+//                    g2.setColor(Ctop);
+//                    g2.drawLine(x, limit1 + 1, x, limit2 - 1);
+//
+//                    if (pxMonth < 60) {
+//                        paintString(g2, calendar.getDisplayName(Calendar.MONTH, Calendar.SHORT, Locale.getDefault()), Ctop, x + 5, limit2 - 5);
+//                    } else if (pxMonth >= 60) {
+//                        paintString(g2, calendar.getDisplayName(Calendar.MONTH, Calendar.LONG, Locale.getDefault()), Ctop, x + 5, limit2 - 5);
+//                    }
+//                } else if ((pxMonth + x) >= 60) {
+//                    paintString(g2, calendar.getDisplayName(Calendar.MONTH, Calendar.LONG, Locale.getDefault()), Ctop, 5, limit2 - 5);
+//                } else if ((pxMonth + x) > 30) {
+//                    paintString(g2, calendar.getDisplayName(Calendar.MONTH, Calendar.SHORT, Locale.getDefault()), Ctop, 5, limit2 - 5);
+//                }
+//            }
+//        }
     }
 
     private void paintDays(Graphics2D g2, int height, int width, int limit1, int limit2) {
@@ -229,34 +227,34 @@ public class DateRenderer implements NavigatorRenderer<Double>{
         Calendar calendar = new GregorianCalendar();
         calendar.setTime(centralDate);
 
-        if (pxDay > 22) {
-            int nbDays = (int) (((float) width / 2f) / pxDay) + 1;
-
-            //draw the days
-            g2.setColor(Color.WHITE);
-            g2.setFont(new Font("Serif", Font.PLAIN, 12));
-            calendar.set(centralGregorian.get(Calendar.YEAR), centralGregorian.get(Calendar.MONTH), centralGregorian.get(Calendar.DAY_OF_MONTH), 1, 1);
-            calendar.add(Calendar.DAY_OF_MONTH, -nbDays);
-
-            for (int y = -nbDays; y <= nbDays; y++, calendar.add(Calendar.DAY_OF_MONTH, 1)) {
-                int x = (int) model.getPosition(Double.valueOf(calendar.getTimeInMillis()));
-
-                if (x >= 0) {
-                    g2.setColor(Color.WHITE);
-                    g2.drawLine(x, 0, x, limit1 - 1);
-
-                    if (pxDay < 60) {
-                        paintString(g2, String.valueOf(calendar.get(Calendar.DAY_OF_MONTH)), Color.WHITE, x + 5, limit1 - 5);
-                    } else if (pxDay >= 60) {
-                        paintString(g2, String.valueOf(calendar.get(Calendar.DAY_OF_MONTH)), Color.WHITE, x + 5, limit1 - 5);
-                    }
-                } else if ((pxDay + x) >= 60) {
-                    paintString(g2, String.valueOf(calendar.get(Calendar.DAY_OF_MONTH)), Color.WHITE, 5, limit1 - 5);
-                } else if ((pxDay + x) > 30) {
-                    paintString(g2, String.valueOf(calendar.get(Calendar.DAY_OF_MONTH)), Color.WHITE, 5, limit1 - 5);
-                }
-            }
-        }
+//        if (pxDay > 22) {
+//            int nbDays = (int) (((float) width / 2f) / pxDay) + 1;
+//
+//            //draw the days
+//            g2.setColor(Color.WHITE);
+//            g2.setFont(new Font("Serif", Font.PLAIN, 12));
+//            calendar.set(centralGregorian.get(Calendar.YEAR), centralGregorian.get(Calendar.MONTH), centralGregorian.get(Calendar.DAY_OF_MONTH), 1, 1);
+//            calendar.add(Calendar.DAY_OF_MONTH, -nbDays);
+//
+//            for (int y = -nbDays; y <= nbDays; y++, calendar.add(Calendar.DAY_OF_MONTH, 1)) {
+//                int x = (int) model.getPosition(Double.valueOf(calendar.getTimeInMillis()));
+//
+//                if (x >= 0) {
+//                    g2.setColor(Color.WHITE);
+//                    g2.drawLine(x, 0, x, limit1 - 1);
+//
+//                    if (pxDay < 60) {
+//                        paintString(g2, String.valueOf(calendar.get(Calendar.DAY_OF_MONTH)), Color.WHITE, x + 5, limit1 - 5);
+//                    } else if (pxDay >= 60) {
+//                        paintString(g2, String.valueOf(calendar.get(Calendar.DAY_OF_MONTH)), Color.WHITE, x + 5, limit1 - 5);
+//                    }
+//                } else if ((pxDay + x) >= 60) {
+//                    paintString(g2, String.valueOf(calendar.get(Calendar.DAY_OF_MONTH)), Color.WHITE, 5, limit1 - 5);
+//                } else if ((pxDay + x) > 30) {
+//                    paintString(g2, String.valueOf(calendar.get(Calendar.DAY_OF_MONTH)), Color.WHITE, 5, limit1 - 5);
+//                }
+//            }
+//        }
 
 
     }

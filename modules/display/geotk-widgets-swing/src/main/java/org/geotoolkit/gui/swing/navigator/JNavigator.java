@@ -41,10 +41,11 @@ import javax.swing.SwingConstants;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class JNavigator<T extends Comparable> extends JPanel implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener {
+public class JNavigator extends JPanel implements
+        MouseListener, MouseMotionListener, MouseWheelListener, KeyListener {
 
-    private final NavigatorModel<T> model;
-    private NavigatorRenderer<T> renderer;
+    private final NavigatorModel model = new DoubleNavigatorModel();
+    private NavigatorRenderer renderer;
     private final JComponent graduation = new JComponent(){};
 
     private int orientation = SwingConstants.SOUTH;
@@ -54,34 +55,31 @@ public class JNavigator<T extends Comparable> extends JPanel implements MouseLis
         @Override
         public void propertyChange(PropertyChangeEvent pce) {
 
-            if(model.getOrientation() != orientation){
-                orientation = model.getOrientation();
-                //change the order
-                removeAll();
-                if(orientation == SwingConstants.NORTH){
-                    add(BorderLayout.NORTH,graduation);
-                }else if(orientation == SwingConstants.SOUTH){
-                    add(BorderLayout.SOUTH,graduation);
-                }else if(orientation == SwingConstants.EAST){
-                    add(BorderLayout.EAST,graduation);
-                }else if(orientation == SwingConstants.WEST){
-                    add(BorderLayout.WEST,graduation);
-                }else{
-                    throw new IllegalArgumentException("Orientation doesnt have a valid value :" + orientation);
-                }
-            }
+//            if(model.getOrientation() != orientation){
+//                orientation = model.getOrientation();
+//                //change the order
+//                removeAll();
+//                if(orientation == SwingConstants.NORTH){
+//                    add(BorderLayout.NORTH,graduation);
+//                }else if(orientation == SwingConstants.SOUTH){
+//                    add(BorderLayout.SOUTH,graduation);
+//                }else if(orientation == SwingConstants.EAST){
+//                    add(BorderLayout.EAST,graduation);
+//                }else if(orientation == SwingConstants.WEST){
+//                    add(BorderLayout.WEST,graduation);
+//                }else{
+//                    throw new IllegalArgumentException("Orientation doesnt have a valid value :" + orientation);
+//                }
+//            }
             revalidate();
             repaint();
         }
     };
 
-    public JNavigator(NavigatorModel<T> model) {
+    public JNavigator() {
         super(new BorderLayout(0,0));
-        if(model == null){
-            throw new NullPointerException("Model can not be null.");
-        }
+        renderer = new DoubleRenderer();
 
-        this.model = model;
         model.addPropertyChangeListener(listener);
         this.graduation.setOpaque(false);
         add(BorderLayout.SOUTH,graduation);
@@ -97,15 +95,15 @@ public class JNavigator<T extends Comparable> extends JPanel implements MouseLis
 
     }
 
-    public NavigatorModel<T> getModel() {
+    public NavigatorModel getModel() {
         return model;
     }
 
-    public NavigatorRenderer<T> getModelRenderer() {
+    public NavigatorRenderer getModelRenderer() {
         return renderer;
     }
 
-    public void setModelRenderer(NavigatorRenderer<T> renderer) {
+    public void setModelRenderer(NavigatorRenderer renderer) {
         this.renderer = renderer;
 
         if(this.renderer != null){
@@ -116,11 +114,11 @@ public class JNavigator<T extends Comparable> extends JPanel implements MouseLis
     }
 
     public void setOrientation(int orientation) {
-        this.model.setOrientation(orientation);
+        this.orientation = orientation;
     }
 
     public int getOrientation() {
-        return this.model.getOrientation();
+        return orientation;
     }
 
     @Override
@@ -128,7 +126,7 @@ public class JNavigator<T extends Comparable> extends JPanel implements MouseLis
         super.paintComponent(grphcs);
         final Graphics2D g = (Graphics2D) grphcs;
         if(renderer != null){
-            renderer.render(model, g, new Rectangle(getWidth(), getHeight()));
+            renderer.render(this, g, new Rectangle(getWidth(), getHeight()));
         }
     }
 
@@ -182,8 +180,7 @@ public class JNavigator<T extends Comparable> extends JPanel implements MouseLis
         newMouseX = e.getX();
         newMouseY = e.getY();
 
-        double diff = getModel().getScale() * (lastMouseX-newMouseX);
-        getModel().setTranslation(getModel().getTranslation() + diff);
+        getModel().translate(lastMouseX-newMouseX);
         
         lastMouseX = newMouseX;
         lastMouseY = newMouseY;
@@ -197,13 +194,12 @@ public class JNavigator<T extends Comparable> extends JPanel implements MouseLis
 
     @Override
     public void mouseWheelMoved(MouseWheelEvent e) {
-        System.out.println("hereeee");
+        final int x = e.getX();
         if (e.getWheelRotation() > 0) {
-            getModel().setScale(getModel().getScale() * 1.1f);
+            getModel().scale(1.1d, x);
         } else {
-            getModel().setScale(getModel().getScale() * 0.9f);
+            getModel().scale(0.9d, x);
         }
-        System.out.println("scale :" + getModel().getScale());
     }
 
     @Override
@@ -212,15 +208,15 @@ public class JNavigator<T extends Comparable> extends JPanel implements MouseLis
 
     @Override
     public void keyPressed(KeyEvent e) {
-        if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-            getModel().setTranslation(getModel().getTranslation() + getModel().getScale()/20d);
-        } else if (e.getKeyCode() == KeyEvent.VK_LEFT) {
-            getModel().setTranslation(getModel().getTranslation() - getModel().getScale()/20d);
-        } else if (e.getKeyCode() == KeyEvent.VK_UP) {
-            getModel().setScale(getModel().getScale() * 0.9f);
-        } else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
-            getModel().setScale(getModel().getScale() * 1.1f);
-        }
+//        if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
+//            getModel().setTranslation(getModel().getTranslation() + getModel().getScale()/20d);
+//        } else if (e.getKeyCode() == KeyEvent.VK_LEFT) {
+//            getModel().setTranslation(getModel().getTranslation() - getModel().getScale()/20d);
+//        } else if (e.getKeyCode() == KeyEvent.VK_UP) {
+//            getModel().setScale(getModel().getScale() * 0.9f);
+//        } else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
+//            getModel().setScale(getModel().getScale() * 1.1f);
+//        }
     }
 
     @Override

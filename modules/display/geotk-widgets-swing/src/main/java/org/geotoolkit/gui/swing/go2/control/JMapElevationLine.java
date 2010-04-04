@@ -48,7 +48,7 @@ public class JMapElevationLine extends JPanel implements PropertyChangeListener{
     private final SpinnerNumberModel modelHaut;
     private final SpinnerNumberModel modelBas;
     private final JButton reset;
-    private final JNavigator<Double> guiNav = new JNavigator<Double>(new DoubleNavigatorModel());
+    private final JNavigator guiNav = new JNavigator();
     
     private volatile Map2D map = null;
 

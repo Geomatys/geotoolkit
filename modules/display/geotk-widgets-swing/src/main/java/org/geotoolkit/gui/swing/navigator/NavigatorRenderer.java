@@ -25,10 +25,10 @@ import java.awt.Rectangle;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public interface NavigatorRenderer<T extends Comparable> {
+public interface NavigatorRenderer {
 
     int getGraduationHeight();
 
-    void render(NavigatorModel<T> model, Graphics2D g, Rectangle area);
+    void render(JNavigator navigator, Graphics2D g, Rectangle area);
 
 }

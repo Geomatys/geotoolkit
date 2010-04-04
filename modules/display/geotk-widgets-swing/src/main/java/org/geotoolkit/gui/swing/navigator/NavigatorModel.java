@@ -24,27 +24,17 @@ import java.beans.PropertyChangeListener;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public interface NavigatorModel<T extends Comparable> {
+public interface NavigatorModel {
 
-    public static final String TRANSLATE_PROPERTY = "translate";
-    public static final String SCALE_PROPERTY = "scale";
-    public static final String ORIENTATION_PROPERTY = "orientation";
+    public static final String TRANSFORM_PROPERTY = "transform";
 
-    T getValueAt(double d);
+    double getGraphicValueAt(double d);
 
-    double getPosition(T candidate);
+    double getDimensionValueAt(double candidate);
 
-    void setScale(double scale);
+    void scale(double factor, double position);
 
-    double getScale();
-
-    void setTranslation(double tr);
-
-    double getTranslation();
-
-    void setOrientation(int orientation);
-
-    int getOrientation();
+    void translate(double tr);
 
     void addPropertyChangeListener(PropertyChangeListener listener);
 
