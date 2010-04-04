@@ -19,6 +19,7 @@ package org.geotoolkit.gui.swing.go2.control;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.MouseInfo;
@@ -34,8 +35,10 @@ import javax.swing.JPopupMenu;
 
 import org.geotoolkit.display.canvas.CanvasController2D;
 import org.geotoolkit.gui.swing.go2.Map2D;
+import org.geotoolkit.gui.swing.navigator.DateRenderer;
+import org.geotoolkit.gui.swing.navigator.JNavigator;
+import org.geotoolkit.gui.swing.navigator.JNavigatorBand;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
-import org.geotoolkit.gui.swing.timeline.JTimeLine;
 
 /**
  * Extension of a JTimeline displaying the temporal range
@@ -43,7 +46,7 @@ import org.geotoolkit.gui.swing.timeline.JTimeLine;
  *
  * @author Johann Sorel (Puzzle-GIS)
  */
-public class JMapTimeLine extends JTimeLine implements PropertyChangeListener{
+public class JMapTimeLine extends JNavigator implements PropertyChangeListener{
 
     private static final Color MAIN = new Color(0f,0.3f,0.6f,1f);
     private static final Color SECOND = new Color(0f,0.3f,0.6f,0.4f);
@@ -54,6 +57,7 @@ public class JMapTimeLine extends JTimeLine implements PropertyChangeListener{
 
 
     public JMapTimeLine(){
+        setModelRenderer(new DateRenderer());
 
         menu = new JPopupMenu(){
 
@@ -61,7 +65,7 @@ public class JMapTimeLine extends JTimeLine implements PropertyChangeListener{
             public void setVisible(boolean b) {
                 Point pt = MouseInfo.getPointerInfo().getLocation();
                 int x = pt.x - JMapTimeLine.this.getLocationOnScreen().x;
-                popupEdit = getDateAt(x);
+                popupEdit = new Date((long)getModel().getDimensionValueAt(x));
                 super.setVisible(b);
             }
 
@@ -227,6 +231,10 @@ public class JMapTimeLine extends JTimeLine implements PropertyChangeListener{
         });
 
         setComponentPopupMenu(menu);
+        AreaBand band = new AreaBand();
+        band.setComponentPopupMenu(menu);
+
+        addBand(band);
     }
 
     public Map2D getMap() {
@@ -243,59 +251,6 @@ public class JMapTimeLine extends JTimeLine implements PropertyChangeListener{
         }
         repaint();
     }
-
-    @Override
-    protected void paintComponent(Graphics g) {
-        super.paintComponent(g);
-
-        if(map == null) return;
-
-        final Date[] range = map.getCanvas().getController().getTemporalRange();
-
-        if(range == null) return;
-
-        if(range[0] == null && range[1] == null) return;
-
-        int start = -5;
-        int end = getWidth() +5;
-        int center = -5;
-
-        if(range[0] != null) start = getPosition(range[0]);
-        if(range[1] != null) end = getPosition(range[1]);
-        
-
-        //apply change if there are some
-        if(edit != null){
-            if(selected == 0){
-                start = getPosition(edit);
-            }else if(selected == 2){
-                end = getPosition(edit);
-            }else if(selected == 1){
-                long middleDate = (range[0].getTime() + range[1].getTime()) / 2l;
-                long step = edit.getTime() - middleDate;
-                start = getPosition(new Date(range[0].getTime() + step));
-                end = getPosition(new Date(range[1].getTime() + step));
-            }
-        }
-        
-        if(range[0] != null && range[1] != null){
-            center = (start+end)/2;
-        }
-
-
-        final Graphics2D g2d = (Graphics2D) g;
-        g2d.setColor(SECOND);
-        g2d.fillRect(start,0,end-start,getHeight());
-        
-        g2d.setColor(MAIN);
-        g2d.setStroke(new BasicStroke(LIMIT_WIDTH*2));
-        g2d.drawLine(start, 0, start, getHeight());
-        g2d.drawLine(end, 0, end, getHeight());
-
-        g2d.setStroke(new BasicStroke(LIMIT_WIDTH*4));
-        g2d.drawLine(center, 0, center, getHeight());
-    }
-
 
     //handle mouse event for dragging range ends -------------------------------
 
@@ -316,19 +271,22 @@ public class JMapTimeLine extends JTimeLine implements PropertyChangeListener{
                 final int x = e.getX();
 
                 if(range[0] != null){
-                    int pos = getPosition(range[0]);
+                    int pos = (int)getModel().getGraphicValueAt(range[0].getTime());
                     if( Math.abs(x-pos) < LIMIT_WIDTH ){
                         selected = 0;
                     }
                 }
                 if(range[1] != null){
-                    int pos = getPosition(range[1]);
+                    int pos = (int)getModel().getGraphicValueAt(range[1].getTime());
                     if( Math.abs(x-pos) < LIMIT_WIDTH ){
                         selected = 2;
                     }
                 }
                 if(range[0] != null && range[1] != null){
-                    int pos = (getPosition(range[0]) + getPosition(range[1])) /2;
+                    int pos = (int) ((
+                              getModel().getGraphicValueAt(range[0].getTime())
+                            + getModel().getGraphicValueAt(range[1].getTime())
+                            ) / 2);
                     if( Math.abs(x-pos) < LIMIT_WIDTH*2 ){
                         selected = 1;
                     }
@@ -371,7 +329,7 @@ public class JMapTimeLine extends JTimeLine implements PropertyChangeListener{
         
         if(selected >= 0){
             //drag one limit
-            edit = getDateAt(e.getX());
+            edit = new Date((long)getModel().getDimensionValueAt(e.getX()));
 
             //ensure we do not go over the other limit
             final Date[] range = map.getCanvas().getController().getTemporalRange();
@@ -395,6 +353,64 @@ public class JMapTimeLine extends JTimeLine implements PropertyChangeListener{
         }
     }
 
+    private class AreaBand extends JNavigatorBand{
 
+        public AreaBand(){
+            setPreferredSize(new Dimension(50, 50));
+        }
+
+        @Override
+        protected void paintComponent(Graphics g) {
+            super.paintComponent(g);
+
+            if(map == null) return;
+
+            final Date[] range = map.getCanvas().getController().getTemporalRange();
+
+            if(range == null) return;
+
+            if(range[0] == null && range[1] == null) return;
+
+            double start = -5;
+            double end = getWidth() +5;
+            double center = -5;
+
+            if(range[0] != null) start = getModel().getGraphicValueAt(range[0].getTime());
+            if(range[1] != null) end = getModel().getGraphicValueAt(range[1].getTime());
+
+
+            //apply change if there are some
+            if(edit != null){
+                if(selected == 0){
+                    start = getModel().getGraphicValueAt(edit.getTime());
+                }else if(selected == 2){
+                    end = getModel().getGraphicValueAt(edit.getTime());
+                }else if(selected == 1){
+                    long middleDate = (range[0].getTime() + range[1].getTime()) / 2l;
+                    long step = edit.getTime() - middleDate;
+                    start = getModel().getGraphicValueAt(range[0].getTime() + step);
+                    end = getModel().getGraphicValueAt(range[1].getTime() + step);
+                }
+            }
+
+            if(range[0] != null && range[1] != null){
+                center = (start+end)/2;
+            }
+
+
+            final Graphics2D g2d = (Graphics2D) g;
+            g2d.setColor(SECOND);
+            g2d.fillRect((int)start,0,(int)(end-start),getHeight());
+
+            g2d.setColor(MAIN);
+            g2d.setStroke(new BasicStroke(LIMIT_WIDTH*2));
+            g2d.drawLine((int)start, 0, (int)start, getHeight());
+            g2d.drawLine((int)end, 0, (int)end, getHeight());
+
+            g2d.setStroke(new BasicStroke(LIMIT_WIDTH*4));
+            g2d.drawLine((int)center, 0, (int)center, getHeight());
+        }
+
+    }
 
 }

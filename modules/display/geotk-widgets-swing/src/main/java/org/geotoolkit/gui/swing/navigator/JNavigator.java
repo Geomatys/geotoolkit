@@ -18,10 +18,12 @@
 package org.geotoolkit.gui.swing.navigator;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.GridLayout;
 import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -32,6 +34,11 @@ import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
@@ -50,6 +57,8 @@ public class JNavigator extends JPanel implements
     private final NavigatorModel model = new DoubleNavigatorModel();
     private NavigatorRenderer renderer;
     private final JComponent graduation = new JComponent(){};
+    private final JPanel bandsPan = new JPanel(new GridLayout(0, 1));
+    private final Set<JNavigatorBand> bands = new TreeSet<JNavigatorBand>();
 
     private int orientation = SwingConstants.SOUTH;
 
@@ -64,10 +73,13 @@ public class JNavigator extends JPanel implements
     public JNavigator() {
         super(new BorderLayout(0,0));
         renderer = new DoubleRenderer();
+        bandsPan.setOpaque(false);
+        setOpaque(false);
 
         model.addPropertyChangeListener(listener);
         this.graduation.setOpaque(false);
         add(BorderLayout.SOUTH,graduation);
+        add(BorderLayout.CENTER,bandsPan);
 
         addMouseListener(this);
         addMouseMotionListener(this);
@@ -78,6 +90,25 @@ public class JNavigator extends JPanel implements
         graduation.addMouseWheelListener(this);
         graduation.addKeyListener(this);
 
+    }
+
+    public void addBand(JNavigatorBand band){
+        band.setModel(getModel());
+        bands.add(band);
+        bandsPan.add(band);
+        bandsPan.revalidate();
+        bandsPan.repaint();
+        revalidate();
+        repaint();
+    }
+
+    public void removeBand(JNavigatorBand band){
+        bands.remove(band);
+        bandsPan.remove(band);
+        bandsPan.revalidate();
+        bandsPan.repaint();
+        revalidate();
+        repaint();
     }
 
     public NavigatorModel getModel() {
@@ -104,17 +135,29 @@ public class JNavigator extends JPanel implements
             this.orientation = orientation;
             //change the order
             removeAll();
+            bandsPan.removeAll();
             if(orientation == NORTH){
                 add(BorderLayout.NORTH,graduation);
+                bandsPan.setLayout(new GridLayout(0, 1));
             }else if(orientation == SOUTH){
                 add(BorderLayout.SOUTH,graduation);
+                bandsPan.setLayout(new GridLayout(0, 1));
             }else if(orientation == EAST){
                 add(BorderLayout.EAST,graduation);
+                bandsPan.setLayout(new GridLayout(1, 0));
             }else if(orientation == WEST){
                 add(BorderLayout.WEST,graduation);
+                bandsPan.setLayout(new GridLayout(1, 0));
             }else{
                 throw new IllegalArgumentException("Orientation doesnt have a valid value :" + orientation);
             }
+
+            add(BorderLayout.CENTER, bandsPan);
+            for(JNavigatorBand band : bands){
+                bandsPan.add(band);
+            }
+
+            bandsPan.revalidate();
             revalidate();
             repaint();
         }

@@ -24,7 +24,7 @@ import javax.swing.JComponent;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public abstract class JNavigatorBand<T extends Comparable> extends JComponent {
+public abstract class JNavigatorBand extends JComponent {
 
     private NavigatorModel model = null;
 

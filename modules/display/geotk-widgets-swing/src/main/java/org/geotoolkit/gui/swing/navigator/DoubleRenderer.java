@@ -114,34 +114,6 @@ public class DoubleRenderer implements NavigatorRenderer{
 
         }
 
-//        if(orientation == SwingConstants.NORTH){
-//
-//        }else if(orientation == SwingConstants.SOUTH){
-//            while(!tickIte.isDone()){
-//                tickIte.next();
-//                final String label = tickIte.currentLabel();
-//                final double d = tickIte.currentPosition();
-//                final int p = (int)model.getGraphicValueAt(d);
-//
-//                g.drawLine(p, 0, p,getGraduationHeight());
-//                g.drawString(label, p, area.height-2);
-//            }
-//
-//        }else if(orientation == SwingConstants.WEST){
-//            while(!tickIte.isDone()){
-//                tickIte.next();
-//                final String label = tickIte.currentLabel();
-//                final double d = tickIte.currentPosition();
-//                final int p = (int)model.getGraphicValueAt(d);
-//                g.drawLine(0, p, getGraduationHeight(), p);
-//                g.drawString(label, 2, p-2);
-//            }
-//
-//        }else if(orientation == SwingConstants.EAST){
-//
-//        }
-
-        g.dispose();
     }
 
 }

@@ -175,8 +175,6 @@ public class JMap2DFrame extends javax.swing.JFrame {
 //        guiMap.getCanvas().getContainer().add(new GraphicGridJ2D(guiMap.getCanvas(), gridTemplate));
 
 
-        guiMap.getCanvas().getController().setElevationRange(-50d, -50d, SI.METRE);
-
         setSize(1024,768);
         setLocationRelativeTo(null);             
     }
