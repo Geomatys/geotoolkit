@@ -19,12 +19,18 @@ package org.geotoolkit.display2d.service;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
+import java.awt.Color;
 
 import java.awt.Dimension;
+import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import org.geotoolkit.coverage.grid.GridCoverage2D;
+import org.geotoolkit.coverage.grid.GridCoverageFactory;
+import org.geotoolkit.coverage.io.GridCoverageReader;
 
 import org.geotoolkit.data.DataUtilities;
 import org.geotoolkit.data.FeatureCollection;
@@ -36,6 +42,7 @@ import org.geotoolkit.feature.simple.SimpleFeatureTypeBuilder;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
+import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.style.DefaultStyleFactory;
@@ -52,6 +59,7 @@ import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 
 import static org.junit.Assert.*;
+import org.opengis.referencing.operation.TransformException;
 
 /**
  * Testing portrayal service.
@@ -61,9 +69,11 @@ import static org.junit.Assert.*;
 public class PortrayalServiceTest {
 
     private static final GeometryFactory GF = new GeometryFactory();
+    private static final GridCoverageFactory GCF = new GridCoverageFactory();
     private static final MutableStyleFactory SF = new DefaultStyleFactory();
 
     private final List<FeatureCollection> featureColls = new ArrayList<FeatureCollection>();
+    private final List<GridCoverage2D> coverages = new ArrayList<GridCoverage2D>();
     private final List<Envelope> envelopes = new ArrayList<Envelope>();
     private final List<Date[]> dates = new ArrayList<Date[]>();
     private final List<Double[]> elevations = new ArrayList<Double[]>();
@@ -141,6 +151,30 @@ public class PortrayalServiceTest {
         elevations.add(new Double[]{-15d,   null});
         elevations.add(new Double[]{null,   null});
 
+
+        //create some coverageReaders ------------------------------------------
+
+        env = new GeneralEnvelope(CRS.decode("EPSG:32738"));
+        env.setRange(0,  695035,  795035);
+        env.setRange(1, 7545535, 7645535);
+        BufferedImage img = new BufferedImage(100, 100, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g = img.createGraphics();
+        g.setColor(Color.RED);
+        g.fill(new Rectangle(0, 0, 100, 100));
+        GridCoverage2D coverage = GCF.create("test1", img, env);
+        coverages.add(coverage);
+
+        env = new GeneralEnvelope(CRS.decode("EPSG:4326"));
+        env.setRange(0,  -10,  25);
+        env.setRange(1, -56, -21);
+        img = new BufferedImage(100, 100, BufferedImage.TYPE_INT_ARGB);
+        g = img.createGraphics();
+        g.setColor(Color.RED);
+        g.fill(new Rectangle(0, 0, 100, 100));
+        coverage = GCF.create("test2", img, env);
+        coverages.add(coverage);
+
+
     }
 
     @BeforeClass
@@ -181,34 +215,40 @@ public class PortrayalServiceTest {
 
     @Test
     public void testFeatureRendering() throws Exception{
-        
-        final StopOnErrorMonitor monitor = new StopOnErrorMonitor();
-
         for(FeatureCollection col : featureColls){
-            final MapContext context = MapBuilder.createContext(DefaultGeographicCRS.WGS84);
-            context.layers().add(MapBuilder.createFeatureLayer(col, SF.style(SF.pointSymbolizer())));
-            assertEquals(1, context.layers().size());
-
-            for(final Envelope env : envelopes){
-                for(Date[] drange : dates){
-                    for(Double[] erange : elevations){
-                        final Envelope cenv = GO2Utilities.combine(env, drange, erange);
-                        final BufferedImage img = DefaultPortrayalService.portray(
-                            new CanvasDef(new Dimension(800, 600), null),
-                            new SceneDef(context),
-                            new ViewDef(cenv,0,monitor));
-                        assertNull(monitor.getLastException());
-                        assertNotNull(img);
-                    }
-                }
-            }
-        }
-        
+            final MapLayer layer = MapBuilder.createFeatureLayer(col, SF.style(SF.pointSymbolizer()));
+            testRendering(layer);
+        }        
     }
 
     @Test
     public void testCoverageRendering() throws Exception{
+        for(GridCoverage2D col : coverages){
+            final MapLayer layer = MapBuilder.createCoverageLayer(col, SF.style(SF.rasterSymbolizer()), "cov");
+            testRendering(layer);
+        }
+    }
 
+    private void testRendering(MapLayer layer) throws TransformException, PortrayalException{
+        final StopOnErrorMonitor monitor = new StopOnErrorMonitor();
+
+        final MapContext context = MapBuilder.createContext(DefaultGeographicCRS.WGS84);
+        context.layers().add(layer);
+        assertEquals(1, context.layers().size());
+
+        for(final Envelope env : envelopes){
+            for(Date[] drange : dates){
+                for(Double[] erange : elevations){
+                    final Envelope cenv = GO2Utilities.combine(env, drange, erange);
+                    final BufferedImage img = DefaultPortrayalService.portray(
+                        new CanvasDef(new Dimension(800, 600), null),
+                        new SceneDef(context),
+                        new ViewDef(cenv,0,monitor));
+                    assertNull(monitor.getLastException());
+                    assertNotNull(img);
+                }
+            }
+        }
     }
 
 }
