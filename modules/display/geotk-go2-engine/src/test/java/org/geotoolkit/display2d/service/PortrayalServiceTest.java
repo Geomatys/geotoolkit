@@ -19,14 +19,19 @@ package org.geotoolkit.display2d.service;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
+
 import java.awt.Dimension;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+
 import org.geotoolkit.data.DataUtilities;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.display.exception.PortrayalException;
+import org.geotoolkit.display2d.GO2Utilities;
+import org.geotoolkit.display2d.Go2UtilitiesTest;
 import org.geotoolkit.feature.simple.SimpleFeatureTypeBuilder;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.map.MapBuilder;
@@ -35,15 +40,18 @@ import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyleFactory;
+
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.geometry.Envelope;
-import static org.junit.Assert.*;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
+
+import static org.junit.Assert.*;
 
 /**
  * Testing portrayal service.
@@ -57,6 +65,8 @@ public class PortrayalServiceTest {
     private final FeatureCollection col;
 
     private final List<Envelope> envelopes = new ArrayList<Envelope>();
+    private final List<Date[]> dates = new ArrayList<Date[]>();
+    private final List<Double[]> elevations = new ArrayList<Double[]>();
 
     public PortrayalServiceTest() throws Exception {
 
@@ -117,6 +127,18 @@ public class PortrayalServiceTest {
         env.setRange(1, -500000, 4600000);
         envelopes.add(env);
 
+        //create a serie of date ranges ----------------------------------------
+        dates.add(new Date[]{new Date(1000),new Date(15000)});
+        dates.add(new Date[]{null,          new Date(15000)});
+        dates.add(new Date[]{new Date(1000),null});
+        dates.add(new Date[]{null,          null});
+
+        //create a serie of elevation ranges -----------------------------------
+        elevations.add(new Double[]{-15d,   50d});
+        elevations.add(new Double[]{null,   50d});
+        elevations.add(new Double[]{-15d,   null});
+        elevations.add(new Double[]{null,   null});
+
     }
 
     @BeforeClass
@@ -162,12 +184,17 @@ public class PortrayalServiceTest {
 
         assertEquals(1, context.layers().size());
 
-        for(Envelope env : envelopes){
-            BufferedImage img = DefaultPortrayalService.portray(
-                new CanvasDef(new Dimension(800, 600), null),
-                new SceneDef(context),
-                new ViewDef(env));
-            assertNotNull(img);
+        for(final Envelope env : envelopes){
+            for(Date[] drange : dates){
+                for(Double[] erange : elevations){
+                    final Envelope cenv = GO2Utilities.combine(env, drange, erange);
+                    BufferedImage img = DefaultPortrayalService.portray(
+                        new CanvasDef(new Dimension(800, 600), null),
+                        new SceneDef(context),
+                        new ViewDef(cenv));
+                    assertNotNull(img);
+                }
+            }
         }
         
     }
