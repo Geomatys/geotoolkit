@@ -44,8 +44,7 @@ import org.geotoolkit.util.DateRange;
  * are extracted from the database.
  * <p>
  * The actual loading of pixel values occurs when {@link #getCoverage(IIOListeners)} is invoked
- * for the first time. Alternatively, users can invoke {@link #getReader()} in order to get more
- * control on the reading process.
+ * for the first time.
  * <p>
  * {@code GridCoverageReference} instances are immutable and thread-safe.
  *

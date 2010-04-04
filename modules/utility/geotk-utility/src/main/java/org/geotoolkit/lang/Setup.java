@@ -18,6 +18,7 @@
 package org.geotoolkit.lang;
 
 import java.util.Locale;
+import java.util.Properties;
 import java.util.ServiceLoader;
 import javax.imageio.spi.IIORegistry;
 import java.lang.reflect.InvocationTargetException;
@@ -26,21 +27,22 @@ import java.lang.reflect.UndeclaredThrowableException;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.internal.SetupService;
+import org.geotoolkit.internal.io.Installation;
 import org.geotoolkit.resources.Errors;
 
 
 /**
  * A central place where to perform initialisation and shutdown of all Geotk services.
  * Users are not required to perform explicit initialization and shutdown for most services
- * (except a few cases like <cite>World File readers</cite>), since services are automatically
+ * (except a few cases like <cite>World File Image Readers</cite>), since services are automatically
  * discovered when needed (using {@link ServiceLoader}) and disposed on JVM termination (using
- * {@linkplain Runtime#addShutdownHook shutdown hook}. However the above-cited mechanism is not
+ * {@linkplain Runtime#addShutdownHook shutdown hook}). However the above-cited mechanism is not
  * suffisient when an application is undeployed and re-deployed in a JEE environment without
- * restarting the JVM. For example the Geotk Image I/O plugins needs to be
- * {@linkplain IIORegistry#deregisterServiceProvider(Object) deregistered} during the
- * <cite>undeploy</cite> phase before they get 
+ * restarting the JVM. For example the {@linkplain org.geotoolkit.image.io.plugin Geotk Image I/O
+ * plugins} needs to be {@linkplain IIORegistry#deregisterServiceProvider(Object) deregistered}
+ * during the <cite>undeploy</cite> phase before they get
  * {@linkplain IIORegistry#registerServiceProvider(Object) registered} again during the
- * <cite>re-deploy</cite> phase. Explicit invocations of {@link #initialize(boolean)} and
+ * <cite>re-deploy</cite> phase. Explicit invocations of {@link #initialize(Properties)} and
  * {@link #shutdown()} methods can improve the system stability in such cases.
  * <p>
  * The amont of works performed by this class depends on the modules available in the classpath.
@@ -51,28 +53,28 @@ import org.geotoolkit.resources.Errors;
  * <table border="3" cellpadding="6">
  *   <tr bgcolor="lightblue">
  *     <th nowrap>Module</th>
- *     <th nowrap>Work done by {@link #initialize(boolean)}</th>
+ *     <th nowrap>Methods invoked by {@link #initialize(Properties)}</th>
  *     <th nowrap>Work done by {@link #shutdown()}</th>
  *   </tr><tr>
- *     <td>{@code geotk-utility}</td>
+ *     <td nowrap>{@code geotk-utility}</td>
  *     <td>
- *       Invoke {@link Logging#forceMonolineConsoleOutput Logging.forceMonolineConsoleOutput(null)}
- *       (only if {@code server} = {@code false}).
+ *       {@link Logging#forceMonolineConsoleOutput Logging.forceMonolineConsoleOutput(null)}
+ *       (unless {@code platform=server}).
  *     </td>
  *     <td>&nbsp;</td>
  *   </tr><tr>
- *     <td>{@code geotk-coverage}</td>
+ *     <td nowrap>{@code geotk-coverage}</td>
  *     <td>
- *       Invoke {@link org.geotoolkit.image.jai.Registry#setDefaultCodecPreferences()}.
+ *       {@link org.geotoolkit.image.jai.Registry#setDefaultCodecPreferences()}.
  *     </td>
  *     <td>
  *       Remove from the JAI {@link javax.media.jai.OperationRegistry} every
  *       plugins defined in any {@code org.geotoolkit} package.
  *     </td>
  *   </tr><tr>
- *     <td>{@code geotk-coverageio}</td>
+ *     <td nowrap>{@code geotk-coverageio}</td>
  *     <td>
- *       Invoke the {@code Spi.registerDefaults(null)} method for
+ *       {@code Spi.registerDefaults(null)} on
  *       {@link org.geotoolkit.image.io.plugin.WorldFileImageReader.Spi#registerDefaults WorldFileImageReader} and
  *       {@link org.geotoolkit.image.io.plugin.WorldFileImageWriter.Spi#registerDefaults WorldFileImageWriter}.
  *     </td>
@@ -80,16 +82,27 @@ import org.geotoolkit.resources.Errors;
  *       Remove from {@link IIORegistry} every plugins defined in any {@code org.geotoolkit} package.</li>
  *     </td>
  *   </tr><tr>
- *     <td>{@code geotk-coverageio-netcdf}</td>
+ *     <td nowrap>{@code geotk-coverageio-netcdf}</td>
  *     <td>
- *       Invoke {@link ucar.nc2.dataset.NetcdfDataset#initNetcdfFileCache(int,int,int)}
+ *       {@link ucar.nc2.dataset.NetcdfDataset#initNetcdfFileCache(int,int,int)}
  *       if no cache is already defined.
  *     </td>
  *     <td>
- *       Invoke {@link ucar.nc2.dataset.NetcdfDataset#shutdown()}.
+ *       {@link ucar.nc2.dataset.NetcdfDataset#shutdown()}.
  *     </td>
  *   </tr>
  * </table>
+ *
+ * {@section Note on system preferences}
+ * In current implementation, invoking {@link #initialize(Properties)}
+ * with a property entry {@code platform=server} also disable the usage of
+ * {@linkplain java.util.prefs.Preferences#systemRoot() system preferences}. This is a temporary
+ * workaround for the JDK 6 behavior on Unix system, which display "<cite>WARNING: Couldn't flush
+ * system prefs</cite>" if the {@code etc/.java} directory has not been created during the Java
+ * installation process.
+ * <p>
+ * This workaround may be removed in a future version if JDK 7 uses its new {@code java.nio.file}
+ * package for performing a better work with system preferences.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.10
@@ -102,7 +115,7 @@ public final class Setup {
      * The setup state.
      * <ul>
      *   <li>0: initial state.</li>
-     *   <li>1: {@link #initialize()} has been invoked.</li>
+     *   <li>1: {@link #initialize(Properties)} has been invoked.</li>
      *   <li>2: {@link #shutdown()} has been invoked.</li>
      * </ul>
      */
@@ -115,21 +128,61 @@ public final class Setup {
     }
 
     /**
+     * Returns the value for the given key in the given properties map, or the default value
+     * if none. The given properties map is allowed to be {@code null}.
+     */
+    private static String get(final Properties properties, final String key, final String def) {
+        return (properties != null) ? properties.getProperty(key, def) : def;
+    }
+
+    /**
      * Performs the initialisation of all Geotk services. This method is typically invoked only
-     * once. If it is invoked more than once and {@code #shutdown()} has not been invoked, then
+     * once. If it is invoked more than once and {@link #shutdown()} has not been invoked, then
      * every calls after the first method call are ignored.
+     * <p>
+     * The {@code properties} map allows some control on the initialization process. Current
+     * implementation recognizes the entries listed in the table below. Any entry not listed
+     * in this table are silently ignored.
+     * <p>
+     * <table border="1" cellspacing="0">
+     *   <tr bgcolor="lightblue">
+     *     <th nowrap>&nbsp;Key&nbsp;</th>
+     *     <th nowrap>&nbsp;Value&nbsp;</th>
+     *     <th nowrap>&nbsp;Default&nbsp;</th>
+     *     <th nowrap>&nbsp;Meaning&nbsp;</th>
+     *   </tr>
+     *   <tr>
+     *     <td nowrap>&nbsp;{@code platform}&nbsp;</td>
+     *     <td nowrap>&nbsp;{@code server}|{@code desktop}&nbsp;</td>
+     *     <td nowrap>&nbsp;{@code desktop}&nbsp;</td>
+     *     <td nowrap>&nbsp;Whatever the library is run for a desktop application or a server.&nbsp;</td>
+     *   </tr>
+     *   <tr>
+     *     <td nowrap>&nbsp;{@code force}&nbsp;</td>
+     *     <td nowrap>&nbsp;{@code true}|{@code false}&nbsp;</td>
+     *     <td nowrap>&nbsp;{@code false}&nbsp;</td>
+     *     <td nowrap>&nbsp;If {@code true}, attempt a re-initialization after a shutdown.&nbsp;</td>
+     *   </tr>
+     * </table>
      *
-     * @param server {@code true} if the initialisation is performed for execution on a server
-     *        rather than on a desktop.
+     * @param  properties Optional set of properties controlling the initialization process,
+     *         or {@code null}.
+     * @throws IllegalStateException If the Geotk library has been {@link #shutdown() shutdown}
+     *         and the given properties map doesn't contain a {@code force=true} entry.
      */
     @Configuration
-    public static synchronized void initialize(final boolean server) {
+    public static synchronized void initialize(final Properties properties) throws IllegalStateException {
         if (state == 1) {
             return;
         }
         final boolean reinit = (state == 2);
+        if (reinit && !Boolean.parseBoolean(get(properties, "force", "false"))) {
+            throw new IllegalStateException();
+        }
         state = 1;
-        if (!server) {
+        if ("server".equalsIgnoreCase(get(properties, "platform", "desktop"))) {
+            Installation.allowSystemPreferences = false;
+        } else {
             Logging.ALL.forceMonolineConsoleOutput(null);
         }
         /*
@@ -151,10 +204,10 @@ public final class Setup {
 
     /**
      * Shutdowns all Geotk services. This method can be safely invoked even if the
-     * {@link #initialize(boolean)} method has never been invoked.
+     * {@link #initialize(Properties)} method has never been invoked.
      * <p>
      * The Geotk library should not be used anymore after this method call. If nevertheless the
-     * {@link #initialize(boolean)} method is invoked again, then this {@code Setup} class will
+     * {@link #initialize(Properties)} method is invoked again, then this {@code Setup} class will
      * try to restart Geotk services on a <cite>best effort</cite> basis but without garantees.
      */
     @Configuration

@@ -47,7 +47,7 @@ import org.geotoolkit.resources.Errors;
  * <p>
  * <ul>
  *   <li>{@link CoverageDatabase#readSlice(CoverageQuery)}</li>
- *   <li>{@link GridCoverageReference#read(CoverageEnvelope, IIOListeners)</li>
+ *   <li>{@link GridCoverageReference#read(CoverageEnvelope, IIOListeners)}</li>
  * </ul>
  * <p>
  * The {@linkplain #getInput() input} of this reader shall be an instance of {@link Layer}.
