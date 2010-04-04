@@ -534,7 +534,8 @@ public final class GO2Utilities {
 
         final GeneralEnvelope env;
         if(temporalDim != null && verticalDim != null){
-            crs = new DefaultCompoundCRS("", crs2D, verticalDim, temporalDim);
+            crs = new DefaultCompoundCRS(crs2D.getName().getCode()+"/"+verticalDim.getName().getCode()+"/"+temporalDim.getName().getCode(),
+                    crs2D, verticalDim, temporalDim);
             env = new GeneralEnvelope(crs);
             env.setRange(0, bounds.getMinX(), bounds.getMaxX());
             env.setRange(1, bounds.getMinY(), bounds.getMaxY());
@@ -545,7 +546,8 @@ public final class GO2Utilities {
                     (temporal[0] != null) ? temporal[0].getTime() : Double.NEGATIVE_INFINITY,
                     (temporal[1] != null) ? temporal[1].getTime() : Double.POSITIVE_INFINITY);
         }else if(temporalDim != null){
-            crs = new DefaultCompoundCRS("", crs2D,  temporalDim);
+            crs = new DefaultCompoundCRS(crs2D.getName().getCode()+"/"+temporalDim.getName().getCode(),
+                    crs2D,  temporalDim);
             env = new GeneralEnvelope(crs);
             env.setRange(0, bounds.getMinX(), bounds.getMaxX());
             env.setRange(1, bounds.getMinY(), bounds.getMaxY());
@@ -553,7 +555,8 @@ public final class GO2Utilities {
                     (temporal[0] != null) ? temporal[0].getTime() : Double.NEGATIVE_INFINITY,
                     (temporal[1] != null) ? temporal[1].getTime() : Double.POSITIVE_INFINITY);
         }else if(verticalDim != null){
-            crs = new DefaultCompoundCRS("", crs2D, verticalDim);
+            crs = new DefaultCompoundCRS(crs2D.getName().getCode()+"/"+verticalDim.getName().getCode(),
+                    crs2D, verticalDim);
             env = new GeneralEnvelope(crs);
             env.setRange(0, bounds.getMinX(), bounds.getMaxX());
             env.setRange(1, bounds.getMinY(), bounds.getMaxY());

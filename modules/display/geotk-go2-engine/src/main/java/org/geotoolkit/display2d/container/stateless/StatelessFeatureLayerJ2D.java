@@ -676,7 +676,7 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
     private StatefullContextParams prepareContextParams(RenderingContext2D renderingContext,
             CoordinateReferenceSystem dataCRS, StatefullContextParams params) throws FactoryException{
         final CoordinateReferenceSystem displayCRS   = renderingContext.getDisplayCRS();
-        final CoordinateReferenceSystem objectiveCRS = renderingContext.getObjectiveCRS();
+        final CoordinateReferenceSystem objectiveCRS = renderingContext.getObjectiveCRS2D();
         final AffineTransform objtoDisp              = renderingContext.getObjectiveToDisplay();
 
         if(params == null){
