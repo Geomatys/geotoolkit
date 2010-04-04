@@ -29,9 +29,9 @@ import java.util.List;
 import org.geotoolkit.data.DataUtilities;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureWriter;
+import org.geotoolkit.display.canvas.control.StopOnErrorMonitor;
 import org.geotoolkit.display.exception.PortrayalException;
 import org.geotoolkit.display2d.GO2Utilities;
-import org.geotoolkit.display2d.Go2UtilitiesTest;
 import org.geotoolkit.feature.simple.SimpleFeatureTypeBuilder;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.map.MapBuilder;
@@ -62,8 +62,8 @@ public class PortrayalServiceTest {
 
     private static final GeometryFactory GF = new GeometryFactory();
     private static final MutableStyleFactory SF = new DefaultStyleFactory();
-    private final FeatureCollection col;
 
+    private final List<FeatureCollection> featureColls = new ArrayList<FeatureCollection>();
     private final List<Envelope> envelopes = new ArrayList<Envelope>();
     private final List<Date[]> dates = new ArrayList<Date[]>();
     private final List<Double[]> elevations = new ArrayList<Double[]>();
@@ -77,7 +77,7 @@ public class PortrayalServiceTest {
         sftb.add("att1", String.class);
         sftb.add("att2", Double.class);
         final SimpleFeatureType sft = sftb.buildFeatureType();
-        col = DataUtilities.collection("id", sft);
+        FeatureCollection col = DataUtilities.collection("id", sft);
 
         final FeatureWriter writer = col.getSession().getDataStore().getFeatureWriterAppend(sft.getName());
 
@@ -103,6 +103,8 @@ public class PortrayalServiceTest {
         writer.write();
 
         writer.close();
+
+        featureColls.add(col);
 
 
         //create a serie of envelopes for tests --------------------------------
@@ -179,30 +181,34 @@ public class PortrayalServiceTest {
 
     @Test
     public void testFeatureRendering() throws Exception{
-        final MapContext context = MapBuilder.createContext(DefaultGeographicCRS.WGS84);
-        context.layers().add(MapBuilder.createFeatureLayer(col, SF.style(SF.pointSymbolizer())));
+        
+        final StopOnErrorMonitor monitor = new StopOnErrorMonitor();
 
-        assertEquals(1, context.layers().size());
+        for(FeatureCollection col : featureColls){
+            final MapContext context = MapBuilder.createContext(DefaultGeographicCRS.WGS84);
+            context.layers().add(MapBuilder.createFeatureLayer(col, SF.style(SF.pointSymbolizer())));
+            assertEquals(1, context.layers().size());
 
-        for(final Envelope env : envelopes){
-            for(Date[] drange : dates){
-                for(Double[] erange : elevations){
-                    final Envelope cenv = GO2Utilities.combine(env, drange, erange);
-                    BufferedImage img = DefaultPortrayalService.portray(
-                        new CanvasDef(new Dimension(800, 600), null),
-                        new SceneDef(context),
-                        new ViewDef(cenv));
-                    assertNotNull(img);
+            for(final Envelope env : envelopes){
+                for(Date[] drange : dates){
+                    for(Double[] erange : elevations){
+                        final Envelope cenv = GO2Utilities.combine(env, drange, erange);
+                        final BufferedImage img = DefaultPortrayalService.portray(
+                            new CanvasDef(new Dimension(800, 600), null),
+                            new SceneDef(context),
+                            new ViewDef(cenv,0,monitor));
+                        assertNull(monitor.getLastException());
+                        assertNotNull(img);
+                    }
                 }
             }
         }
         
     }
 
-//    @Test
-//    public void testCoverageRendering() throws Exception{
-//
-//    }
+    @Test
+    public void testCoverageRendering() throws Exception{
 
+    }
 
 }
