@@ -23,7 +23,10 @@ import java.util.Collections;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import javax.imageio.ImageReader;
+import javax.imageio.ImageReadParam;
 import javax.imageio.spi.ImageReaderSpi;
+
+import org.opengis.referencing.cs.AxisDirection;
 
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
@@ -35,6 +38,8 @@ import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageStorePool;
 import org.geotoolkit.image.io.mosaic.MosaicImageReader;
+import org.geotoolkit.image.io.SpatialImageReadParam;
+import org.geotoolkit.image.io.DimensionSlice;
 import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.resources.Errors;
@@ -183,6 +188,24 @@ final class GridCoverageLoader extends ImageCoverageReader {
     public List<GridSampleDimension> getSampleDimensions(int index) throws CoverageStoreException {
         ensureValidIndex(index);
         return format.sampleDimensions;
+    }
+
+    /**
+     * Returns read parameters with the z-slice initialized, if needed.
+     */
+    @Override
+    protected ImageReadParam createImageReadParam() {
+        final int zIndex = ensureInputSet().getIdentifier().zIndex;
+        if (zIndex != 0) {
+            final ImageReadParam param = imageReader.getDefaultReadParam();
+            if (param instanceof SpatialImageReadParam) {
+                final DimensionSlice slice = ((SpatialImageReadParam) param).newDimensionSlice();
+                slice.addDimensionId(AxisDirection.UP, AxisDirection.DOWN);
+                slice.setSliceIndex(zIndex - 1);
+            }
+            return param;
+        }
+        return super.createImageReadParam();
     }
 
     /**

@@ -468,6 +468,34 @@ public class ImageCoverageReader extends GridCoverageReader {
     }
 
     /**
+     * Optionally returns the default Java I/O parameters to use for reading an image. This method
+     * is invoked by the {@link #read(int, GridCoverageReadParam)} method in order to get the Java
+     * parameter object to use for controlling the reading process. The default implementation
+     * returns {@code null}, which let the {@code read} method create the parameters as below:
+     *
+     * {@preformat java
+     *     ImageReadParam param = imageReader.getDefaultReadParam();
+     * }
+     *
+     * Subclasses can override this method in order to perform additional parameters setting.
+     * For example a subclass may want to
+     * {@linkplain org.geotoolkit.image.io.SpatialImageReadParam#setPaletteName set the color
+     * palette} according some information unknown to this base class. Note however that any
+     * {@linkplain ImageReadParam#setSourceRegion source region},
+     * {@linkplain ImageReadParam#setSourceSubsampling source subsampling} and
+     * {@linkplain ImageReadParam#setSourceBands source bands} settings may be overwritten
+     * by the {@code read} method, which perform its own computation.
+     *
+     * @return A default Java I/O parameters object to use for controlling the reading process,
+     *         or {@code null} if the default {@link #read read} implementation is suffisient.
+     *
+     * @since 3.10
+     */
+    protected ImageReadParam createImageReadParam() {
+        return null;
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override
@@ -769,10 +797,13 @@ public class ImageCoverageReader extends GridCoverageReader {
         GridGeometry2D gridGeometry = getGridGeometry(index);
         checkAbortState();
         final AffineTransform change; // The change in the 'gridToCRS' transform.
-        final ImageReadParam imageParam;
+        ImageReadParam imageParam = createImageReadParam();
         final int[] srcBands;
         final int[] dstBands;
         if (param != null) {
+            if (imageParam == null) {
+                imageParam = imageReader.getDefaultReadParam();
+            }
             srcBands = param.getSourceBands();
             dstBands = param.getDestinationBands();
             if (srcBands != null && dstBands != null && srcBands.length != dstBands.length) {
@@ -818,10 +849,9 @@ public class ImageCoverageReader extends GridCoverageReader {
             imageParam.setSourceBands(srcBands);
             imageParam.setDestinationBands(dstBands);
         } else {
-            imageParam = null;
-            srcBands   = null;
-            dstBands   = null;
-            change     = null;
+            srcBands = null;
+            dstBands = null;
+            change   = null;
         }
         /*
          * Read the image using the ImageReader.read(...) method.  We could have used
@@ -934,9 +964,8 @@ public class ImageCoverageReader extends GridCoverageReader {
                 envelope = CRS.transform(op, envelope);
             }
         }
-        XRectangle2D requestRect = null;
         if (envelope != null) {
-            requestRect = XRectangle2D.createFromExtremums(
+            final XRectangle2D requestRect = XRectangle2D.createFromExtremums(
                     envelope.getMinimum(0), envelope.getMinimum(1),
                     envelope.getMaximum(0), envelope.getMaximum(1));
             if (requestRect.isEmpty() || !XRectangle2D.intersectInclusive(requestRect, geodeticBounds)) {
@@ -944,21 +973,27 @@ public class ImageCoverageReader extends GridCoverageReader {
             }
             /*
              * If the requested envelope contains fully the coverage bounds, we can ignore it
-             * (we will read the full coverage). Otherwise if the coverage contains full the
+             * (we will read the full coverage). Otherwise if the coverage contains fully the
              * requested region, the requested region become the new bounds. Otherwise we need
              * to compute the intersection.
              */
             if (!requestRect.contains(geodeticBounds)) {
-                if (shapeToRead.contains(requestRect)) {
+                Rectangle2D.intersect(geodeticBounds, requestRect, requestRect);
+                if (shapeToRead == geodeticBounds || shapeToRead.contains(requestRect)) {
                     shapeToRead = geodeticBounds = requestRect;
                 } else {
+                    // Use Area only if 'shapeToRead' is something more complicated than a
+                    // Rectangle2D. Note that the above call to Rectangle2D.intersect(...)
+                    // is still necessary because 'requestRect' may had infinite values
+                    // before the call to Rectangle2D.intersect(...), and infinite values
+                    // are not handled well by Area.
                     final Area area = new Area(shapeToRead);
                     area.intersect(new Area(requestRect));
                     shapeToRead = area;
                     geodeticBounds = shapeToRead.getBounds2D();
-                    if (geodeticBounds.isEmpty()) {
-                        return null;
-                    }
+                }
+                if (geodeticBounds.isEmpty()) {
+                    return null;
                 }
             }
         }

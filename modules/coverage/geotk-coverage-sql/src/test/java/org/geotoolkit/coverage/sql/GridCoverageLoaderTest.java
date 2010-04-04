@@ -115,6 +115,7 @@ public final class GridCoverageLoaderTest extends CatalogTestBase {
     public void testNetCDF() throws SQLException, IOException, CoverageStoreException {
         final GridCoverageTable table = getDatabase().getTable(GridCoverageTable.class);
         table.envelope.clear();
+        table.envelope.setVerticalRange(100, 120);
         table.setLayer(LayerTableTest.NETCDF);
         final GridCoverageReference entry = table.getEntry();
 
