@@ -37,6 +37,7 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.Factory;
 import org.geotoolkit.factory.FactoryRegistryException;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
+import org.geotoolkit.referencing.factory.OptionalFactoryOperationException;
 import org.geotoolkit.util.collection.BackingStoreException;
 import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.util.Utilities;
@@ -65,7 +66,7 @@ import static org.geotoolkit.factory.AuthorityFactoryFinder.getCoordinateOperati
  * process from the super-class is used as a fallback.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.03
+ * @version 3.10
  *
  * @since 2.2
  * @module
@@ -440,12 +441,17 @@ public class AuthorityBackedFactory extends DefaultCoordinateOperationFactory {
      * Logs a warning when an object can't be created from the specified factory.
      */
     private static void log(final Exception exception, final AuthorityFactory factory) {
+        final boolean isOptional = (exception instanceof OptionalFactoryOperationException);
         final LogRecord record = Loggings.format(Level.WARNING,
                 Loggings.Keys.CANT_CREATE_COORDINATE_OPERATION_$1,
                 factory.getAuthority().getTitle());
         record.setSourceClassName(AuthorityBackedFactory.class.getName());
         record.setSourceMethodName("createFromDatabase");
-        record.setThrown(exception);
+        if (isOptional) {
+            record.setMessage(Loggings.format(record) + ' ' + exception.getLocalizedMessage());
+        } else {
+            record.setThrown(exception);
+        }
         record.setLoggerName(LOGGER.getName());
         LOGGER.log(record);
     }

@@ -35,6 +35,7 @@ import org.opengis.referencing.FactoryException;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Descriptions;
 import org.geotoolkit.io.ContentFormatException;
+import org.geotoolkit.referencing.factory.OptionalFactoryOperationException;
 
 import static java.nio.channels.Channels.newChannel;
 import static org.geotoolkit.internal.io.IOUtilities.*;
@@ -46,7 +47,7 @@ import static org.geotoolkit.internal.io.Installation.NADCON;
  * object used only at loading time and discarted once the transform is built.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.03
+ * @version 3.10
  *
  * @since 3.00
  * @module
@@ -160,11 +161,17 @@ abstract class NadconLoader extends GridLoader {
             loader.longitudeGridFile = longitudeGrid;
             loader.latitudeGridFile  = latitudeGrid;
             return loader;
-        } catch (IOException e) {
+        } catch (IOException cause) {
             String message = Errors.format(Errors.Keys.CANT_READ_$1, rx ? longitudeGrid : latitudeGrid);
             message = message + ' ' + Descriptions.format(Descriptions.Keys.DATA_NOT_INSTALLED_$3,
                     "NADCON", NADCON.directory(true), "geotk-setup");
-            throw new FactoryException(message, e);
+            final FactoryException ex;
+            if (cause instanceof FileNotFoundException) {
+                ex = new OptionalFactoryOperationException(message, cause);
+            } else {
+                ex = new FactoryException(message, cause);
+            }
+            throw ex;
         }
     }
 

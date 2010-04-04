@@ -20,6 +20,7 @@ package org.geotoolkit.coverage.sql;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.awt.image.RenderedImage;
+import java.awt.image.IndexColorModel;
 
 import org.opengis.referencing.crs.ProjectedCRS;
 
@@ -28,7 +29,9 @@ import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
+import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.io.CoverageStoreException;
+import org.geotoolkit.internal.image.ScaledColorSpace;
 import org.geotoolkit.internal.sql.table.CatalogTestBase;
 
 import org.junit.*;
@@ -80,11 +83,25 @@ public final class GridCoverageLoaderTest extends CatalogTestBase {
         assertTrue(CRS.equalsIgnoreMetadata(DefaultGeographicCRS.WGS84,
                 coverage.getCoordinateReferenceSystem2D()));
 
+        assertSame("The coverage shall be geophysics.", coverage, coverage.view(ViewType.GEOPHYSICS));
         final GridSampleDimension[] bands = coverage.getSampleDimensions();
-        assertEquals(1, bands.length);
+        assertEquals("Expected exactly one band.", 1, bands.length);
         final GridSampleDimension band = bands[0];
-        assertSame("Should be geophysics.", band, band.geophysics(true));
+        assertSame("The band shall be geophysics.", band, band.geophysics(true));
         SampleDimensionTableTest.checkTemperatureDimension(band.geophysics(false));
+
+        RenderedImage image = coverage.getRenderedImage();
+        assertTrue("Expected the Geotk ColorSpace for floating point values.",
+                image.getColorModel().getColorSpace() instanceof ScaledColorSpace);
+
+        final GridCoverage2D rendered = coverage.view(ViewType.RENDERED);
+        assertNotSame("Rendered view should not be the same than geophysics.", coverage, rendered);
+        image = rendered.getRenderedImage();
+        assertTrue("Rendered view shall use an IndexColorModel.",
+                image.getColorModel() instanceof IndexColorModel);
+        final IndexColorModel cm = (IndexColorModel) image.getColorModel();
+        assertEquals(256, cm.getMapSize());
+        assertEquals(8, cm.getPixelSize());
     }
 
     /**
@@ -119,9 +136,29 @@ public final class GridCoverageLoaderTest extends CatalogTestBase {
     static void checkCoriolisCoverage(final GridCoverage2D coverage) {
         assertTrue(coverage.getCoordinateReferenceSystem2D() instanceof ProjectedCRS);
 
+        assertSame("The coverage shall be geophysics.", coverage, coverage.view(ViewType.GEOPHYSICS));
         final GridSampleDimension[] bands = coverage.getSampleDimensions();
-        assertEquals(1, bands.length);
+        assertEquals("Expected exactly one band.", 1, bands.length);
         final GridSampleDimension band = bands[0];
-        assertSame("Should be geophysics.", band, band.geophysics(true));
+        assertSame("The band shall be geophysics.", band, band.geophysics(true));
+
+        RenderedImage image = coverage.getRenderedImage();
+        assertTrue("Expected the Geotk ColorSpace for floating point values.",
+                image.getColorModel().getColorSpace() instanceof ScaledColorSpace);
+
+        final GridCoverage2D rendered = coverage.view(ViewType.RENDERED);
+        assertNotSame("Rendered view should not be the same than geophysics.", coverage, rendered);
+        image = rendered.getRenderedImage();
+        assertTrue("Rendered view shall use an IndexColorModel.",
+                image.getColorModel() instanceof IndexColorModel);
+        final IndexColorModel cm = (IndexColorModel) image.getColorModel();
+        assertEquals(65536, cm.getMapSize());
+        assertEquals(16, cm.getPixelSize());
+
+        rendered.show(null);
+        try {
+            Thread.sleep(4000);
+        } catch (Exception e) {
+        }
     }
 }
