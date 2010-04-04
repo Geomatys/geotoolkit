@@ -41,6 +41,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.SwingConstants;
 
 import static javax.swing.SwingConstants.*;
@@ -74,7 +75,6 @@ public class JNavigator extends JPanel implements
         super(new BorderLayout(0,0));
         renderer = new DoubleRenderer();
         bandsPan.setOpaque(false);
-        setOpaque(false);
 
         model.addPropertyChangeListener(listener);
         this.graduation.setOpaque(false);
@@ -90,6 +90,12 @@ public class JNavigator extends JPanel implements
         graduation.addMouseWheelListener(this);
         graduation.addKeyListener(this);
 
+    }
+
+    @Override
+    public void setComponentPopupMenu(JPopupMenu popup) {
+        super.setComponentPopupMenu(popup);
+        graduation.setComponentPopupMenu(popup);
     }
 
     public void addBand(JNavigatorBand band){
