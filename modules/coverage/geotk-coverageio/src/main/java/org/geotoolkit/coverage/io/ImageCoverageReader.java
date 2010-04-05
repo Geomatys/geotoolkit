@@ -978,7 +978,7 @@ public class ImageCoverageReader extends GridCoverageReader {
              * to compute the intersection.
              */
             if (!requestRect.contains(geodeticBounds)) {
-                Rectangle2D.intersect(geodeticBounds, requestRect, requestRect);
+                requestRect.intersect(geodeticBounds);
                 if (shapeToRead == geodeticBounds || shapeToRead.contains(requestRect)) {
                     shapeToRead = geodeticBounds = requestRect;
                 } else {

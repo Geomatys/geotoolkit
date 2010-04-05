@@ -1197,6 +1197,11 @@ scanNumber: while (++i < length) {
      * @throws IllegalStateException if this envelope is not two-dimensional.
      */
     public Rectangle2D toRectangle2D() throws IllegalStateException {
+        /*
+         * NOTE: if the type created below is changed to something else than XRectangle2D, then we
+         *       must perform a usage search  because some client code cast the returned object to
+         *       XRectangle2D when this envelope is known to not be a subclass of GeneralEnvelope.
+         */
         if (ordinates.length == 4) {
             return XRectangle2D.createFromExtremums(ordinates[0], ordinates[1],
                                                     ordinates[2], ordinates[3]);

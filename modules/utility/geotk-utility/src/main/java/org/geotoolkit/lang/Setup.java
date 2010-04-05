@@ -167,7 +167,7 @@ public final class Setup {
      *
      * @param  properties Optional set of properties controlling the initialization process,
      *         or {@code null}.
-     * @throws IllegalStateException If the Geotk library has been {@link #shutdown() shutdown}
+     * @throws IllegalStateException If the Geotk library has been {@linkplain #shutdown() shutdown}
      *         and the given properties map doesn't contain a {@code force=true} entry.
      */
     @Configuration
@@ -206,9 +206,7 @@ public final class Setup {
      * Shutdowns all Geotk services. This method can be safely invoked even if the
      * {@link #initialize(Properties)} method has never been invoked.
      * <p>
-     * The Geotk library should not be used anymore after this method call. If nevertheless the
-     * {@link #initialize(Properties)} method is invoked again, then this {@code Setup} class will
-     * try to restart Geotk services on a <cite>best effort</cite> basis but without garantees.
+     * The Geotk library should not be used anymore after this method call.
      */
     @Configuration
     public static synchronized void shutdown() {

@@ -192,6 +192,39 @@ public final class GridCoverageTableTest extends CatalogTestBase {
     }
 
     /**
+     * Tests the table for the NetCDF entry with different elevation range.
+     *
+     * @throws SQLException If the test can't connect to the database.
+     */
+    @Test
+    public void testZRange() throws SQLException {
+        final GridCoverageTable table = getDatabase().getTable(GridCoverageTable.class);
+        table.envelope.clear();
+        table.setLayer(LayerTableTest.NETCDF);
+
+        GridCoverageEntry entry = table.getEntry();
+        assertEquals("Should not have a z index when the z-range is infinite.", 0, entry.getIdentifier().zIndex);
+
+        table.envelope.setVerticalRange(0, 0);
+        entry = table.getEntry();
+        assertEquals(1, entry.getIdentifier().zIndex);
+
+        table.envelope.setVerticalRange(2.5, 7.5);
+        entry = table.getEntry();
+        assertEquals(1, entry.getIdentifier().zIndex);
+
+        table.envelope.setVerticalRange(90, 110);
+        entry = table.getEntry();
+        assertEquals(9, entry.getIdentifier().zIndex);
+
+        table.envelope.setVerticalRange(2000, 2000);
+        entry = table.getEntry();
+        assertEquals(59, entry.getIdentifier().zIndex);
+
+        table.release();
+    }
+
+    /**
      * Tests the table for a NetCDF image with two bands.
      *
      * @throws SQLException If the test can't connect to the database.

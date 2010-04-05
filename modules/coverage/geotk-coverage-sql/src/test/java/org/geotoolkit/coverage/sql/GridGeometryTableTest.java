@@ -17,6 +17,8 @@
  */
 package org.geotoolkit.coverage.sql;
 
+import java.util.TreeSet;
+import java.util.SortedSet;
 import java.sql.SQLException;
 import java.awt.Dimension;
 import java.awt.geom.AffineTransform;
@@ -85,6 +87,11 @@ public final class GridGeometryTableTest extends CatalogTestBase {
         assertNotNull("Expected an array of depths.", depths);
         assertEquals("Test the second depth.", 10, depths[1], 0.0);
         assertEquals("Test finding depth index.", 9, entry.indexOfNearestAltitude(100));
+        final SortedSet<Number> ds = new TreeSet<Number>();
+        for (final double depth : depths) {
+            assertTrue(ds.add(depth));
+        }
+        checkCoriolisElevations(ds);
 
         final AffineTransform gridToCRS  = entry.gridToCRS;
         assertEquals("Scale X",      55659.75, gridToCRS.getScaleX(),     0.01);
@@ -141,5 +148,19 @@ public final class GridGeometryTableTest extends CatalogTestBase {
                 entry.getHorizontalSRID(), depths, entry.getVerticalSRID()));
         assertEquals("Should have deleted the entry.", 1, table.delete(id));
         table.release();
+    }
+
+    /**
+     * Ensures that the given elevations from the Coriolis layer are equal to the expected values.
+     */
+    static void checkCoriolisElevations(final SortedSet<Number> elevations) {
+        final Double[] expected = {
+            5d, 10d, 20d, 30d, 40d, 50d, 60d, 80d, 100d, 120d, 140d, 160d, 180d, 200d, 220d, 240d,
+            260d, 280d, 300d, 320d, 360d, 400d, 440d, 480d, 520d, 560d, 600d, 640d, 680d, 720d,
+            760d, 800d, 840d, 880d, 920d, 960d, 1000d, 1040d, 1080d, 1120d, 1160d, 1200d, 1240d,
+            1280d, 1320d, 1360d, 1400d, 1440d, 1480d, 1520d, 1560d, 1600d, 1650d, 1700d, 1750d,
+            1800d, 1850d, 1900d, 1950d
+        };
+        assertArrayEquals(expected, elevations.toArray(new Double[elevations.size()]));
     }
 }

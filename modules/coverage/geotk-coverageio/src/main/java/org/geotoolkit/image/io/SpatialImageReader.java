@@ -814,38 +814,57 @@ public abstract class SpatialImageReader extends ImageReader implements WarningP
      * {@link DataBuffer#TYPE_USHORT TYPE_USHORT} and
      * {@link DataBuffer#TYPE_FLOAT  TYPE_FLOAT}.
      *
-     * Other types may work, but developers are advised to override the {@code getImageTypee(...)}
+     * Other types may work, but developers are advised to override the {@code getImageType(...)}
      * method as well.
      * <p>
      * The default implementation returns {@link DataBuffer#TYPE_FLOAT TYPE_FLOAT} in every cases.
      *
-     * {@section The special case of negative integer sample values}
-     * If the {@linkplain SampleDimension#getValidSampleValues() range of sample values} contains
-     * negative values, then strictly speaking this method should return a signed type like
-     * {@link DataBuffer#TYPE_SHORT TYPE_SHORT} or {@link DataBuffer#TYPE_INT TYPE_INT}.
-     * If nevertheless this method return a unsigned integer type
+     * {@section Special case for negative integer values (<code>TYPE_SHORT</code>)}
+     * If the sample values are integers but the {@linkplain SampleDimension#getValidSampleValues()
+     * range of valid values} contains negative values, then strictly speaking this method should
+     * return a signed type ({@link DataBuffer#TYPE_SHORT TYPE_SHORT} or {@link DataBuffer#TYPE_INT
+     * TYPE_INT}). If nevertheless this method return a unsigned type
      * ({@link DataBuffer#TYPE_BYTE TYPE_BYTE} or {@link DataBuffer#TYPE_USHORT TYPE_USHORT}), then
      * the default {@link #getImageType(int, ImageReadParam, SampleConverter[]) getImageType(...)}
      * implementation will add an offset in order to fit all sample values in the range of strictly
-     * positive values. For example if range of sample value is [-23000 &hellip; +23000], then there
+     * positive values.
+     *
+     * <blockquote><table border="1"><tr><td>
+     * <b>Example:</b> if the range of sample values is [-23000 &hellip; +23000], then there
      * is a choice:
      *
-     * <ul>
-     *   <li><p>If this method returns {@link DataBuffer#TYPE_SHORT}, then the data will be
-     *       stored "as is" without transformation. However the {@linkplain IndexColorModel
-     *       index color model} will have the maximal length allowed by 16 bits integers, with
-     *       positive values in the [0 &hellip; {@value java.lang.Short#MAX_VALUE}] range and negative
-     *       values wrapped in the [{@value java.lang.Short#MIN_VALUE} &hellip; 65535] range in
-     *       two's complement binary form. The results is a color model consuming 256 kilobytes
-     *       in every cases. The space not used by the [-23000 &hellip; +23000] range (in the
-     *       above example) is lost.</p></li>
+     * <ol>
+     *   <li><p><b>Signed integers storage:</b> If this method returns {@link DataBuffer#TYPE_SHORT
+     *   TYPE_SHORT}, then the data will be stored "as is" without transformation. However the
+     *   {@linkplain IndexColorModel#getMapSize() size of the Index Color Model} will be the maximal
+     *   length allowed by 16 bits integers, which result in a Color Model consuming 256 kilobytes
+     *   of memory no matter how large is the range of values actually used.</p>
      *
-     *   <li><p>If this method returns {@link DataBuffer#TYPE_USHORT}, then the data will be
-     *       translated to the smallest strictly positive range that can holds the data
-     *       ([1 &hellip; 46000] for the above example). Value 0 is reserved for missing data.
-     *       The result is a smaller {@linkplain IndexColorModel index color model} than the
-     *       one used by untranslated data.</p></li>
-     * </ul>
+     *   <p>Positive values are stored in the [0 &hellip; {@value java.lang.Short#MAX_VALUE}] range
+     *   directly, while the negative values are converted in their two's complement binary form
+     *   before to be stored in the [{@value java.lang.Short#MIN_VALUE} &hellip; 65535] range. The
+     *   space not used by the [-23000 &hellip; +23000] range is lost.</p></li>
+     *
+     *   <li><p><b>Unsigned integers storage:</b> If this method returns {@link DataBuffer#TYPE_USHORT
+     *   TYPE_USHORT}, then the data will be translated to the smallest strictly positive range that
+     *   can holds the data ([1 &hellip; 46000] for the above example). The 0 value is reserved for
+     *   missing data. The result is a smaller {@linkplain IndexColorModel Index Color Model} than
+     *   the one used by untranslated data.</p></li>
+     * </ol>
+     * </td></tr></table></blockquote>
+     *
+     * Beware that signed integers (case 1 in the above example) used with {@link IndexColorModel}
+     * require explicit casts to the {@code short} type as in the example below. Using directly the
+     * {@link java.awt.image.Raster#getSample(int,int,int)} return value is not suffisient because
+     * the returned value would be unsigned no matter what this {@code getRawDataType(int)} method
+     * returned.
+     *
+     * {@preformat java
+     *     short value = (short) myRaster.getSample(x, y, b);
+     * }
+     *
+     * Given this gotcha and the fact that signed integers require large color palette, users are
+     * advised to prefer unsigned types if they can afford the offset applied on sample values.
      *
      * @param  imageIndex The index of the image to be queried.
      * @return The data type ({@link DataBuffer#TYPE_FLOAT} by default).

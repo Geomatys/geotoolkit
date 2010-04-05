@@ -38,8 +38,8 @@ import org.geotoolkit.util.converter.Classes;
  *       addition or substraction to perform.</li>
  * </ul>
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.10
  *
  * @since 1.2
  * @module
@@ -538,6 +538,8 @@ public class XRectangle2D extends Rectangle2D implements Serializable {
      * @param  rect The {@code Rectangle2D} to be intersected with this rectangle.
      * @return The largest {@code Rectangle2D} contained in both the specified
      *         rectangle and this one.
+     *
+     * @see #intersect(Rectangle2D)
      */
     @Override
     public Rectangle2D createIntersection(final Rectangle2D rect) {
@@ -602,6 +604,32 @@ public class XRectangle2D extends Rectangle2D implements Serializable {
         if ((t = rect.getMaxX()) > xmax) xmax = t;
         if ((t = rect.getMinY()) < ymin) ymin = t;
         if ((t = rect.getMaxY()) > ymax) ymax = t;
+    }
+
+    /**
+     * Intersects a {@link Rectangle2D} object with this rectangle. The resulting
+     * rectangle is the intersection of the two {@code Rectangle2D} objects.
+     * <p>
+     * Invoking this method is equivalent to invoking the following code, except
+     * that this method behaves correctly with infinite values.
+     *
+     * {@preformat java
+     *     Rectangle2D.intersect(this, rect, this);
+     * }
+     *
+     * @param rect The {@code Rectangle2D} to intersect with this rectangle.
+     *
+     * @see #intersect(Rectangle2D, Rectangle2D, Rectangle2D)
+     * @see #createIntersection(Rectangle2D)
+     *
+     * @since 3.10
+     */
+    public void intersect(final Rectangle2D rect) {
+        double t;
+        if ((t = rect.getMinX()) > xmin) xmin = t;
+        if ((t = rect.getMaxX()) < xmax) xmax = t;
+        if ((t = rect.getMinY()) > ymin) ymin = t;
+        if ((t = rect.getMaxY()) < ymax) ymax = t;
     }
 
     /**

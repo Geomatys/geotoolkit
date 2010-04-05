@@ -138,7 +138,7 @@ public final class CoverageDatabaseTest extends CatalogTestBase {
     public void testGetAvailableElevations() throws CoverageStoreException {
         final CoverageDatabase database = getCoverageDatabase();
         final SortedSet<Number> z = now(database.getAvailableElevations(NETCDF));
-        LayerEntryTest.checkCoriolisElevations(z);
+        GridGeometryTableTest.checkCoriolisElevations(z);
     }
 
     /**

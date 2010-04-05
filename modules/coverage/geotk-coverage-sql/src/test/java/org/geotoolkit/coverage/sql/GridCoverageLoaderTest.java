@@ -19,6 +19,7 @@ package org.geotoolkit.coverage.sql;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.awt.geom.Point2D;
 import java.awt.image.RenderedImage;
 import java.awt.image.IndexColorModel;
 
@@ -82,18 +83,24 @@ public final class GridCoverageLoaderTest extends CatalogTestBase {
     static void checkTemperatureCoverage(final GridCoverage2D coverage) {
         assertTrue(CRS.equalsIgnoreMetadata(DefaultGeographicCRS.WGS84,
                 coverage.getCoordinateReferenceSystem2D()));
-
+        /*
+         * Check the SampleDimensions.
+         */
         assertSame("The coverage shall be geophysics.", coverage, coverage.view(ViewType.GEOPHYSICS));
         final GridSampleDimension[] bands = coverage.getSampleDimensions();
         assertEquals("Expected exactly one band.", 1, bands.length);
         final GridSampleDimension band = bands[0];
         assertSame("The band shall be geophysics.", band, band.geophysics(true));
         SampleDimensionTableTest.checkTemperatureDimension(band.geophysics(false));
-
+        /*
+         * Check the ColorSpace, which should be a special instance for floating point values.
+         */
         RenderedImage image = coverage.getRenderedImage();
         assertTrue("Expected the Geotk ColorSpace for floating point values.",
                 image.getColorModel().getColorSpace() instanceof ScaledColorSpace);
-
+        /*
+         * Ensure that the rendered view is backed by an appropriate IndexColorModel.
+         */
         final GridCoverage2D rendered = coverage.view(ViewType.RENDERED);
         assertNotSame("Rendered view should not be the same than geophysics.", coverage, rendered);
         image = rendered.getRenderedImage();
@@ -102,6 +109,18 @@ public final class GridCoverageLoaderTest extends CatalogTestBase {
         final IndexColorModel cm = (IndexColorModel) image.getColorModel();
         assertEquals(256, cm.getMapSize());
         assertEquals(8, cm.getPixelSize());
+        /*
+         * Check the sample values at an an arbitrary position. Note that this is okay to use
+         * a large tolerance factor since the purpose is not to test the 'evaluate' accuracy,
+         * but rather to check that "geophysics" and "rendered" views are not confused. The
+         * actual value vary a bit for image of different resolution or slightly different date.
+         */
+        double[] buffer = null;
+        final Point2D pos = new Point2D.Double(-10, -20);
+        double value = (buffer = coverage.evaluate(pos, buffer))[0];
+        assertEquals("Geophysics value.", 23.7, value, 0.8);
+        value = (buffer = rendered.evaluate(pos, buffer))[0];
+        assertEquals("Rendered value.", 178, value, 5);
     }
 
     /**
@@ -112,7 +131,7 @@ public final class GridCoverageLoaderTest extends CatalogTestBase {
      * @throws CoverageStoreException If a logical error occured.
      */
     @Test
-    public void testNetCDF() throws SQLException, IOException, CoverageStoreException {
+    public void testCoriolis() throws SQLException, IOException, CoverageStoreException {
         final GridCoverageTable table = getDatabase().getTable(GridCoverageTable.class);
         table.envelope.clear();
         table.envelope.setVerticalRange(100, 120);
@@ -136,17 +155,23 @@ public final class GridCoverageLoaderTest extends CatalogTestBase {
      */
     static void checkCoriolisCoverage(final GridCoverage2D coverage) {
         assertTrue(coverage.getCoordinateReferenceSystem2D() instanceof ProjectedCRS);
-
+        /*
+         * Check the SampleDimensions.
+         */
         assertSame("The coverage shall be geophysics.", coverage, coverage.view(ViewType.GEOPHYSICS));
         final GridSampleDimension[] bands = coverage.getSampleDimensions();
         assertEquals("Expected exactly one band.", 1, bands.length);
         final GridSampleDimension band = bands[0];
         assertSame("The band shall be geophysics.", band, band.geophysics(true));
-
+        /*
+         * Check the ColorSpace, which should be a special instance for floating point values.
+         */
         RenderedImage image = coverage.getRenderedImage();
         assertTrue("Expected the Geotk ColorSpace for floating point values.",
                 image.getColorModel().getColorSpace() instanceof ScaledColorSpace);
-
+        /*
+         * Ensure that the rendered view is backed by an appropriate IndexColorModel.
+         */
         final GridCoverage2D rendered = coverage.view(ViewType.RENDERED);
         assertNotSame("Rendered view should not be the same than geophysics.", coverage, rendered);
         image = rendered.getRenderedImage();

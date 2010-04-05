@@ -170,9 +170,14 @@ public class CoverageEnvelope extends AbstractEnvelope implements Cloneable {
             envelope = clone();
             envelope.setAll(old);
         }
-        final Rectangle2D hr = getHorizontalRange();
-        Rectangle2D.intersect(hr, envelope.getHorizontalRange(), hr);
-        setHorizontalRange(hr);
+        final Rectangle2D thisRect = getHorizontalRange();
+        final Rectangle2D envRect = envelope.getHorizontalRange();
+        if (thisRect instanceof XRectangle2D) {
+            ((XRectangle2D) thisRect).intersect(envRect);
+        } else {
+            Rectangle2D.intersect(thisRect, envRect, thisRect);
+        }
+        setHorizontalRange(thisRect);
         setVerticalRange(Math.max(zMin, envelope.zMin), Math.min(zMax, envelope.zMax));
         setTimeRange(new Date(Math.max(tMin, envelope.tMin)), new Date(Math.min(tMax, envelope.tMax)));
     }
@@ -345,6 +350,7 @@ public class CoverageEnvelope extends AbstractEnvelope implements Cloneable {
 
     /**
      * Returns the horizontal bounding box of the elements to be read.
+     * The returned rectangle may contains infinite values.
      *
      * @return The horizontal bounding box of the elements to be read.
      *

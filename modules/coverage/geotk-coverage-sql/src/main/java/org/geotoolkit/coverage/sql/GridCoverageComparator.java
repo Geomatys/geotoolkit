@@ -143,8 +143,8 @@ final class GridCoverageComparator extends XRectangle2D implements Comparator<Gr
         if (t1 > t2) return +1;
         if (t1 < t2) return -1;
 
-        intersect(this, ev1, ev1);
-        intersect(this, ev2, ev2);
+        ev1.intersect(this);
+        ev2.intersect(this);
         double d1 = ev1.area();
         double d2 = ev2.area();
         if (d1 < d2) return +1;

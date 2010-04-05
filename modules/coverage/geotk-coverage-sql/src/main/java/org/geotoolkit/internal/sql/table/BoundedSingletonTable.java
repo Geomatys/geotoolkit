@@ -175,8 +175,8 @@ public abstract class BoundedSingletonTable<E extends Entry> extends SingletonTa
                     } catch (RuntimeException e) {
                         throw new IllegalRecordException(e, this, results, bboxColumn, null);
                     }
-                    final Rectangle2D region = ge.toRectangle2D();
-                    Rectangle2D.intersect(region, envelope.getHorizontalRange(), region);
+                    final XRectangle2D region = (XRectangle2D) ge.toRectangle2D();
+                    region.intersect(envelope.getHorizontalRange());
                     envelope.setHorizontalRange(region);
                 }
             }

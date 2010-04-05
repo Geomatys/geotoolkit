@@ -66,6 +66,7 @@ import org.geotoolkit.referencing.operation.transform.IdentityTransform;
 import org.geotoolkit.referencing.operation.transform.AbstractMathTransform;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.naming.DefaultNameSpace;
+import org.geotoolkit.referencing.crs.DefaultVerticalCRS;
 import org.geotoolkit.resources.Errors;
 
 
@@ -776,6 +777,14 @@ search:             if (DefaultCoordinateSystemAxis.isCompassDirection(axis.getD
                 if (candidate != null) {
                     return candidate;
                 }
+            }
+        }
+        if (crs instanceof GeographicCRS) {
+            final CoordinateSystem cs = crs.getCoordinateSystem();
+            if (cs.getDimension()  >= 3) {
+                assert CRSUtilities.dimensionColinearWith(cs,
+                        DefaultCoordinateSystemAxis.ELLIPSOIDAL_HEIGHT) >= 0 : cs;
+                return DefaultVerticalCRS.ELLIPSOIDAL_HEIGHT;
             }
         }
         return null;

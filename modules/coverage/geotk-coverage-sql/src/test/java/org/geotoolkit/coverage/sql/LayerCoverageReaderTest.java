@@ -19,6 +19,7 @@ package org.geotoolkit.coverage.sql;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.awt.geom.Rectangle2D;
 
 import org.geotoolkit.test.Depend;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
@@ -93,5 +94,32 @@ public final class LayerCoverageReaderTest extends CatalogTestBase {
         assertEquals(512, coverage.getRenderedImage().getWidth());
         assertEquals(256, coverage.getRenderedImage().getHeight());
         GridCoverageLoaderTest.checkTemperatureCoverage(coverage);
+    }
+
+    /**
+     * Tests loading an image of temperature data in Mercator CRS.
+     *
+     * @throws SQLException If the test can't connect to the database.
+     * @throws IOException If the image can not be read.
+     * @throws CoverageStoreException If a logical error occured.
+     */
+    @Test
+    public void testCoriolis() throws SQLException, IOException, CoverageStoreException {
+        final CoverageDatabase database = getCoverageDatabase();
+        final Layer layer = now(database.getLayer(LayerTableTest.NETCDF));
+        final LayerCoverageReader reader = new LayerCoverageReader(database);
+        reader.setInput(layer);
+
+        final CoverageEnvelope envelope = layer.getEnvelope(null, 100);
+        envelope.setHorizontalRange(new Rectangle2D.Double(-40, -40, 80, 80));
+
+        final GridCoverageReadParam param = new GridCoverageReadParam();
+        param.setEnvelope(envelope);
+
+        requireImageData();
+        final GridCoverage2D coverage = (GridCoverage2D) reader.read(0, param);
+        assertEquals(160, coverage.getRenderedImage().getWidth());
+        assertEquals(175, coverage.getRenderedImage().getHeight());
+        GridCoverageLoaderTest.checkCoriolisCoverage(coverage);
     }
 }
