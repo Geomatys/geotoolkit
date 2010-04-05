@@ -59,6 +59,7 @@ public abstract class NetcdfTestBase {
             throw new AssertionError(e); // Will cause a JUnit test failure.
         }
         final String directory = properties.getProperty("rootDirectory");
+        assumeNotNull(directory); // TODO: remove after we copied the files on the server.
         assertNotNull("Missing \"rootDirectory\" property.", directory);
         file = new File(directory, "World/Coriolis/OA_RTQCGL01_20070606_FLD_TEMP.nc");
         assertTrue("OA_RTQCGL01_20070606_FLD_TEMP.nc file not found.", file.isFile());
