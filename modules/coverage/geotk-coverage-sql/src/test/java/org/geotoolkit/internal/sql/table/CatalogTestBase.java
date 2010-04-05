@@ -63,8 +63,7 @@ public class CatalogTestBase {
         if (database == null) try {
             final File pf = new File(Installation.TESTS.directory(true), "coverage-sql.properties");
             assumeTrue(pf.isFile()); // All tests will be skipped if the above resources is not found.
-            final Properties properties;
-            properties = TestData.readProperties(pf);
+            final Properties properties = TestData.readProperties(pf);
             final PGSimpleDataSource ds = new PGSimpleDataSource();
             ds.setServerName(properties.getProperty("server"));
             ds.setDatabaseName(properties.getProperty("database"));
