@@ -336,7 +336,7 @@ public final class StringUtilities {
      * @return A string which contains values concatened with comma(s), or an empty
      *         string if the list is empty or {@code null}.
      */
-    public static String toCommaSeparatedValues(final List<String> values) {
+    public static String toCommaSeparatedValues(final List<?> values) {
         if (values == null || values.isEmpty()) {
             return "";
         }
