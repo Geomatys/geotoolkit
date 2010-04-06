@@ -15,28 +15,34 @@
  *    Lesser General Public License for more details.
  */
 
-package org.geotoolkit.data.osm.client.v060;
+package org.geotoolkit.data.osm.client;
 
-import org.geotoolkit.data.osm.client.AbstractGetChangeSet;
+import org.geotoolkit.client.Request;
 
 /**
+ * Request to get an osm element.
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class GetChangeSet060 extends AbstractGetChangeSet{
+public interface ReadElementRequest extends Request{
 
-    public GetChangeSet060(String serveruURL){
-        super(serveruURL,"/api/0.6/changeset/");
-    }
+    Class<?> getElementType();
 
-    @Override
-    protected String getSubPath() {
-        if(id <= 0){
-            throw new IllegalArgumentException("Changeset id has not been defined");
-        }
+    /**
+     * Set the type of element to read.
+     * @param clazz : Node, Way or Relation
+     */
+    void setElementType(Class<?> clazz);
 
-        return super.getSubPath() + id;
-    }
+    /**
+     * @param id of the requested element
+     */
+    void setId(long id);
+
+    /**
+     * @return id of the requested element
+     */
+    long getId();
 
 }

@@ -32,6 +32,7 @@ import org.geotoolkit.data.osm.client.v060.GetCapabilities060;
 import org.geotoolkit.data.osm.client.v060.GetChangeSet060;
 import org.geotoolkit.data.osm.client.v060.GetChangeSets060;
 import org.geotoolkit.data.osm.client.v060.GetData060;
+import org.geotoolkit.data.osm.client.v060.ReadElement060;
 import org.geotoolkit.data.osm.model.Api;
 import org.geotoolkit.data.osm.xml.OSMXMLReader;
 import org.geotoolkit.util.logging.Logging;
@@ -222,8 +223,13 @@ public class OpenStreetMapServer implements Server{
     /**
      * {@see <a href="http://wiki.openstreetmap.org/wiki/API_v0.6#Read:_GET_.2Fapi.2F0.6.2F.5Bnode.7Cway.7Crelation.5D.2F.23id">OSM API 0.6</a>}
      */
-    public Request createReadElement(){
-        throw new UnsupportedOperationException("Not implemented yet.");
+    public ReadElementRequest createReadElement(){
+        switch (version) {
+            case v060:
+                return new ReadElement060(serverURL.toString());
+            default:
+                throw new IllegalArgumentException("Version was not defined");
+        }
     }
 
     /**

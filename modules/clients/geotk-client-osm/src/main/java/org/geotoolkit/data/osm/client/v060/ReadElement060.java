@@ -17,17 +17,20 @@
 
 package org.geotoolkit.data.osm.client.v060;
 
-import org.geotoolkit.data.osm.client.AbstractGetChangeSet;
+import org.geotoolkit.data.osm.client.AbstractReadElement;
+import org.geotoolkit.data.osm.model.Node;
+import org.geotoolkit.data.osm.model.Relation;
+import org.geotoolkit.data.osm.model.Way;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class GetChangeSet060 extends AbstractGetChangeSet{
+public class ReadElement060 extends AbstractReadElement{
 
-    public GetChangeSet060(String serveruURL){
-        super(serveruURL,"/api/0.6/changeset/");
+    public ReadElement060(String serveruURL){
+        super(serveruURL,"/api/0.6/");
     }
 
     @Override
@@ -36,7 +39,18 @@ public class GetChangeSet060 extends AbstractGetChangeSet{
             throw new IllegalArgumentException("Changeset id has not been defined");
         }
 
-        return super.getSubPath() + id;
+        final String strType;
+        if(Node.class.equals(type)){
+            strType = "node";
+        }else if(Way.class.equals(type)){
+            strType = "way";
+        }else if(Relation.class.equals(type)){
+            strType = "relation";
+        }else{
+            throw new IllegalArgumentException("Type expected can be : Node,Way,Relation, found = " + type);
+        }
+
+        return super.getSubPath() + strType +"/"+id;
     }
 
 }

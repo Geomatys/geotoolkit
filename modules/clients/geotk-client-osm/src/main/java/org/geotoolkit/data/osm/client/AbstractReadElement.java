@@ -22,14 +22,15 @@ import java.io.InputStream;
 import org.geotoolkit.client.AbstractRequest;
 
 /**
- * Abstract implementation of {@link GetDataRequest}, which defines the
- * parameters for a get data request.
+ * Abstract implementation of {@link ReadElementRequest}, which defines the
+ * parameters for a get element request.
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public abstract class AbstractGetChangeSet extends AbstractRequest implements GetChangeSetRequest{
+public abstract class AbstractReadElement extends AbstractRequest implements ReadElementRequest{
 
+    protected Class type = null;
     protected long id = -1;
 
     /**
@@ -37,8 +38,24 @@ public abstract class AbstractGetChangeSet extends AbstractRequest implements Ge
      *
      * @param serverURL The server url.
      */
-    protected AbstractGetChangeSet(final String serverURL, String subpath){
+    protected AbstractReadElement(final String serverURL, String subpath){
         super(serverURL, subpath);
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public Class<?> getElementType() {
+        return type;
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public void setElementType(Class<?> clazz) {
+        this.type = clazz;
     }
 
     /**

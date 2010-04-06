@@ -39,7 +39,7 @@ import org.opengis.referencing.operation.TransformException;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class AbstractGetChangeSets extends AbstractRequest implements GetChangeSetsRequest{
+public abstract class AbstractGetChangeSets extends AbstractRequest implements GetChangeSetsRequest{
 
     private Envelope envelope = null;
     private long userId = -1;
@@ -201,10 +201,10 @@ public class AbstractGetChangeSets extends AbstractRequest implements GetChangeS
             throw new IllegalArgumentException("Both open and only closed parameters can not be set to True.");
         }
         if(onlyOpen){
-            requestParameters.put("open",null);
+            requestParameters.put("open",DONT_ENCODE_EQUAL);
         }
         if(onlyClosed){
-            requestParameters.put("closed",null);
+            requestParameters.put("closed",DONT_ENCODE_EQUAL);
         }
 
         return super.getURL();
