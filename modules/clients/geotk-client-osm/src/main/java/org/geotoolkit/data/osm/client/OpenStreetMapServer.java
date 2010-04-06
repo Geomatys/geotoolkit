@@ -35,6 +35,7 @@ import org.geotoolkit.data.osm.client.v060.GetData060;
 import org.geotoolkit.data.osm.client.v060.ReadElement060;
 import org.geotoolkit.data.osm.client.v060.ReadElementRelations060;
 import org.geotoolkit.data.osm.client.v060.ReadElements060;
+import org.geotoolkit.data.osm.client.v060.ReadNodeWays060;
 import org.geotoolkit.data.osm.model.Api;
 import org.geotoolkit.data.osm.xml.OSMXMLReader;
 import org.geotoolkit.util.logging.Logging;
@@ -296,8 +297,13 @@ public class OpenStreetMapServer implements Server{
     /**
      * {@see <a href="http://wiki.openstreetmap.org/wiki/API_v0.6#Ways_for_Node:_GET_.2Fapi.2F0.6.2Fnode.2F.23id.2Fways">OSM API 0.6</a>}
      */
-    public Request createRelatedWayElement(){
-        throw new UnsupportedOperationException("Not implemented yet.");
+    public ReadNodeWaysRequest createRelatedWayElement(){
+        switch (version) {
+            case v060:
+                return new ReadNodeWays060(serverURL.toString());
+            default:
+                throw new IllegalArgumentException("Version was not defined");
+        }
     }
 
     //GPS ----------------------------------------------------------------------

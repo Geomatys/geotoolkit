@@ -17,20 +17,17 @@
 
 package org.geotoolkit.data.osm.client.v060;
 
-import org.geotoolkit.data.osm.client.AbstractReadElementRelations;
-import org.geotoolkit.data.osm.model.Node;
-import org.geotoolkit.data.osm.model.Relation;
-import org.geotoolkit.data.osm.model.Way;
+import org.geotoolkit.data.osm.client.AbstractReadNodeWays;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class ReadElementRelations060 extends AbstractReadElementRelations{
+public class ReadNodeWays060 extends AbstractReadNodeWays{
 
-    public ReadElementRelations060(String serveruURL){
-        super(serveruURL,"/api/0.6/");
+    public ReadNodeWays060(String serveruURL){
+        super(serveruURL,"/api/0.6/node/");
     }
 
     @Override
@@ -38,19 +35,7 @@ public class ReadElementRelations060 extends AbstractReadElementRelations{
         if(id <= 0){
             throw new IllegalArgumentException("id has not been defined");
         }
-
-        final String strType;
-        if(Node.class.equals(type)){
-            strType = "node";
-        }else if(Way.class.equals(type)){
-            strType = "way";
-        }else if(Relation.class.equals(type)){
-            strType = "relation";
-        }else{
-            throw new IllegalArgumentException("Type expected can be : Node,Way,Relation, found = " + type);
-        }
-
-        return super.getSubPath() + strType +"/"+id+"/relations";
+        return super.getSubPath() + id+"/ways";
     }
 
 }
