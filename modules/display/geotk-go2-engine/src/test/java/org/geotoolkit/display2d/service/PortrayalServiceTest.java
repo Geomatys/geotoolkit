@@ -28,6 +28,7 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import org.geotoolkit.coverage.CoverageStack;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageFactory;
 import org.geotoolkit.coverage.io.GridCoverageReader;
@@ -44,19 +45,24 @@ import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
+import org.geotoolkit.referencing.crs.DefaultVerticalCRS;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyleFactory;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.opengis.coverage.Coverage;
 
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import static org.junit.Assert.*;
 import org.opengis.referencing.operation.TransformException;
@@ -77,6 +83,8 @@ public class PortrayalServiceTest {
     private final List<Envelope> envelopes = new ArrayList<Envelope>();
     private final List<Date[]> dates = new ArrayList<Date[]>();
     private final List<Double[]> elevations = new ArrayList<Double[]>();
+
+    private final Coverage coverage4D;
 
     public PortrayalServiceTest() throws Exception {
 
@@ -152,7 +160,7 @@ public class PortrayalServiceTest {
         elevations.add(new Double[]{null,   null});
 
 
-        //create some coverageReaders ------------------------------------------
+        //create some coverages ------------------------------------------------
 
         env = new GeneralEnvelope(CRS.decode("EPSG:32738"));
         env.setRange(0,  695035,  795035);
@@ -174,7 +182,28 @@ public class PortrayalServiceTest {
         coverage = GCF.create("test2", img, env);
         coverages.add(coverage);
 
+        //create some ND coverages ---------------------------------------------
+        CoordinateReferenceSystem crs = new DefaultCompoundCRS("4D crs",
+                    CRS.decode("EPSG:4326"),
+                    DefaultVerticalCRS.ELLIPSOIDAL_HEIGHT,
+                    DefaultTemporalCRS.JAVA);
 
+        List<Coverage> temps = new ArrayList<Coverage>();
+        for(int i=0; i<10; i++){
+            final List<Coverage> eles = new ArrayList<Coverage>();
+            for(int k=0;k<10;k++){
+                env = new GeneralEnvelope(crs);
+                env.setRange(0,  0,  10);
+                env.setRange(1, 0, 10);
+                env.setRange(2, k, k+1);
+                env.setRange(3, i, i+1);
+                img = new BufferedImage(100, 100, BufferedImage.TYPE_INT_ARGB);
+                coverage = GCF.create("2D", img, env);
+                eles.add(coverage);
+            }
+            temps.add(new CoverageStack("3D", eles));
+        }
+        coverage4D = new CoverageStack("4D", coverages);
     }
 
     @BeforeClass
@@ -227,6 +256,11 @@ public class PortrayalServiceTest {
             final MapLayer layer = MapBuilder.createCoverageLayer(col, SF.style(SF.rasterSymbolizer()), "cov");
             testRendering(layer);
         }
+    }
+
+    @Test
+    public void testCoverageNDRendering() throws Exception{
+        //todo
     }
 
     private void testRendering(MapLayer layer) throws TransformException, PortrayalException{
