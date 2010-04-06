@@ -39,6 +39,8 @@ public class ReadElement060 extends AbstractReadElement{
             throw new IllegalArgumentException("id has not been defined");
         }
 
+        final StringBuilder sb = new StringBuilder(super.getSubPath());
+
         final String strType;
         if(Node.class.equals(type)){
             strType = "node";
@@ -50,7 +52,16 @@ public class ReadElement060 extends AbstractReadElement{
             throw new IllegalArgumentException("Type expected can be : Node,Way,Relation, found = " + type);
         }
 
-        return super.getSubPath() + strType +"/"+id;
+        sb.append(strType);
+        sb.append('/');
+        sb.append(id);
+        
+        if(version > 0){
+            sb.append('/');
+            sb.append(version);
+        }
+
+        return sb.toString();
     }
 
 }

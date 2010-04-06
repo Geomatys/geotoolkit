@@ -32,6 +32,7 @@ public abstract class AbstractReadElement extends AbstractRequest implements Rea
 
     protected Class type = null;
     protected long id = -1;
+    protected int version = -1;
 
     /**
      * Defines the server url and the service version for this kind of request.
@@ -74,6 +75,25 @@ public abstract class AbstractReadElement extends AbstractRequest implements Rea
         return id;
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public int getVersion() {
+        return version;
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public void setVersion(int version) {
+        this.version = version;
+    }
+
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public InputStream getSOAPResponse() throws IOException {
         throw new UnsupportedOperationException("Not supported yet.");

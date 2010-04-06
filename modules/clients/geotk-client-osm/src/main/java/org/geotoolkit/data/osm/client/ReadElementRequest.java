@@ -45,4 +45,11 @@ public interface ReadElementRequest extends Request{
      */
     long getId();
 
+    /**
+     * @return requested version of the element, < 0 if no specified
+     */
+    int getVersion();
+
+    void setVersion(int version);
+
 }

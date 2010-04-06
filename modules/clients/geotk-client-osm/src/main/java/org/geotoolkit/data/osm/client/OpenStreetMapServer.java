@@ -226,6 +226,7 @@ public class OpenStreetMapServer implements Server{
 
     /**
      * {@see <a href="http://wiki.openstreetmap.org/wiki/API_v0.6#Read:_GET_.2Fapi.2F0.6.2F.5Bnode.7Cway.7Crelation.5D.2F.23id">OSM API 0.6</a>}
+     * {@see <a href="http://wiki.openstreetmap.org/wiki/API_v0.6#Version:_GET_.2Fapi.2F0.6.2F.5Bnode.7Cway.7Crelation.5D.2F.23id.2F.23version">OSM API 0.6</a>}
      */
     public ReadElementRequest createReadElement(){
         switch (version) {
@@ -278,13 +279,6 @@ public class OpenStreetMapServer implements Server{
      * {@see <a href="http://wiki.openstreetmap.org/wiki/API_v0.6#History:_GET_.2Fapi.2F0.6.2F.5Bnode.7Cway.7Crelation.5D.2F.23id.2Fhistory">OSM API 0.6</a>}
      */
     public Request createHistoryElement(){
-        throw new UnsupportedOperationException("Not implemented yet.");
-    }
-
-    /**
-     * {@see <a href="http://wiki.openstreetmap.org/wiki/API_v0.6#Version:_GET_.2Fapi.2F0.6.2F.5Bnode.7Cway.7Crelation.5D.2F.23id.2F.23version">OSM API 0.6</a>}
-     */
-    public Request createVersionElement(){
         throw new UnsupportedOperationException("Not implemented yet.");
     }
 
