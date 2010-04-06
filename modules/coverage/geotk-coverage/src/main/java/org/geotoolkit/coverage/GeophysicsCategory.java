@@ -91,6 +91,7 @@ final class GeophysicsCategory extends Category {
      */
     @Override
     public NumberRange<?> getRange() throws IllegalStateException {
+        NumberRange<?> range = this.range;
         if (range == null) try {
             final MathTransform1D tr = inverse.transform;
             final NumberRange<?>  r  = inverse.range;
@@ -109,8 +110,7 @@ final class GeophysicsCategory extends Category {
             }
             assert Double.doubleToLongBits(minimum) == Double.doubleToLongBits(minIncluded ? min : min2);
             assert Double.doubleToLongBits(maximum) == Double.doubleToLongBits(maxIncluded ? max : max2);
-            range = new Range(min, minIncluded, max, maxIncluded, min2, max2);
-
+            this.range = range = new Range(min, minIncluded, max, maxIncluded, min2, max2);
         } catch (TransformException cause) {
             throw new IllegalStateException(Errors.format(Errors.Keys.BAD_TRANSFORM_$1,
                     Classes.getClass(inverse.transform)), cause);

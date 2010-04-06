@@ -58,7 +58,7 @@ import org.geotoolkit.lang.Immutable;
  * Instances of {@link CategoryList} are immutable and thread-safe.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @version 3.11
  *
  * @since 1.2
  * @module
@@ -87,7 +87,7 @@ class CategoryList extends AbstractList<Category> implements MathTransform1D, Co
      * of every categories, excluding {@code NaN} values. This field will be computed
      * only when first requested.
      */
-    private transient NumberRange<?> range;
+    private transient volatile NumberRange<?> range;
 
     /**
      * List of {@link Category#minimum} values for each category in {@link #categories}.
@@ -132,6 +132,9 @@ class CategoryList extends AbstractList<Category> implements MathTransform1D, Co
     /**
      * The last used category. We assume that this category is the most likely
      * to be requested in the next {@code transform(...)} invocation.
+     * <p>
+     * This field is not declared {@code volatile} because we will never assign newly
+     * created objects to it. It will always be a reference to an existing category.
      */
     private transient Category last;
 
@@ -149,7 +152,7 @@ class CategoryList extends AbstractList<Category> implements MathTransform1D, Co
      *
      * @see #getName
      */
-    private transient InternationalString name;
+    private transient volatile InternationalString name;
 
     /**
      * Constructs a category list using the specified array of categories.
@@ -320,7 +323,7 @@ class CategoryList extends AbstractList<Category> implements MathTransform1D, Co
     /**
      * Compares two {@code double} values. This method is similar to
      * {@link Double#compare(double,double)} except that it also order
-     * NaN values.
+     * NaN values. Remind that NaN values are sorted last.
      */
     private static int compare(final double v1, final double v2) {
         if (Double.isNaN(v1) && Double.isNaN(v2)) {
@@ -504,11 +507,19 @@ class CategoryList extends AbstractList<Category> implements MathTransform1D, Co
     }
 
     /**
+     * Returns {@code true} if this list has negative sample values.
+     *
+     * @since 3.11
+     */
+    final boolean isSigned() {
+        return categories.length != 0 && categories[0].minimum < 0;
+    }
+
+    /**
      * Returns the range of values in this category list. This is the union of the range
      * of values of every categories, excluding {@code NaN} values. A {@link NumberRange}
-     * object give more informations than {@link org.opengis.CV_SampleDimension#getMinimum}
-     * and {@link org.opengis.CV_SampleDimension#getMaximum} since it contains also the
-     * type (integer, float, etc.) and inclusion/exclusion informations.
+     * object give more informations than a (minimum, maximum) tupple since it contains
+     * also the type (integer, float, etc.) and inclusion/exclusion informations.
      *
      * @return The range of values. May be {@code null} if this category list has no
      *         quantitative category.
@@ -518,8 +529,8 @@ class CategoryList extends AbstractList<Category> implements MathTransform1D, Co
      * @todo Returns an instance of {@link MeasurementRange} if we are a geophysics category list.
      */
     public final NumberRange<?> getRange() {
+        NumberRange<?> range = this.range;
         if (range == null) {
-            NumberRange<?> range = null;
             for (int i=0; i<categories.length; i++) {
                 final NumberRange<?> extent = categories[i].getRange();
                 if (!Double.isNaN(extent.getMinimum()) && !Double.isNaN(extent.getMaximum())) {
@@ -1117,7 +1128,7 @@ class CategoryList extends AbstractList<Category> implements MathTransform1D, Co
 
     /**
      * Transforms a raster. Only the current band in {@code iterator} will be transformed.
-     * The transformed value are write back in the {@code iterator}. If a different
+     * The transformed value are written back in the {@code iterator}. If a different
      * destination raster is wanted, a {@link org.geotoolkit.image.TransfertRectIter}
      * may be used.
      *

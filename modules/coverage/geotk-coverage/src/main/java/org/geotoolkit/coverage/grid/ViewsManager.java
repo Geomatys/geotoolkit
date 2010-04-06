@@ -73,8 +73,8 @@ import static java.lang.Double.doubleToRawLongBits;
  * views are associated with potentially big images, sharing them when possible is a big memory
  * and CPU saver.
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.11
  *
  * @since 2.5
  * @module
@@ -564,8 +564,15 @@ testLinear: for (int i=0; i<numBands; i++) {
                 assert XArrays.isSorted(sourceBreakpoints, false);
             }
             if (canRescale && scales!=null && (!conditional || isZeroExcluded(image, scales, offsets))) {
-                operation = "Rescale";
-                param = param.add(scales).add(offsets);
+                /*
+                 * TODO: JAI BUG? If the type is TYPE_USHORT, its look like that JAI interpret
+                 * 256 as 0 (and same for all value above 256). In order to check if this issue
+                 * still exists, see SampleTranscoderTest.testTypeUShort().
+                 */
+                if (sourceModel.getDataType() != DataBuffer.TYPE_USHORT) {
+                    operation = "Rescale";
+                    param = param.add(scales).add(offsets);
+                }
             } else if (canPiecewise && breakpoints!=null) {
 //                operation = "Piecewise";
 //                param = param.add(breakpoints);

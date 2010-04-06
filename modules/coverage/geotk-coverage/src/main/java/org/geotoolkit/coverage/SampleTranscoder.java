@@ -19,6 +19,7 @@ package org.geotoolkit.coverage;
 
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
+import java.awt.image.DataBuffer;
 import java.awt.image.RasterFormatException;
 import java.awt.image.RenderedImage;
 import java.awt.image.WritableRaster;
@@ -52,8 +53,8 @@ import org.geotoolkit.image.TransfertRectIter;
  * {@link java.awt.image.renderable.ContextualRenderedImageFactory}. The image
  * operation name is {@code "org.geotoolkit.SampleTranscode"}.
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.11
  *
  * @since 2.1
  * @module
@@ -73,6 +74,14 @@ final class SampleTranscoder extends PointOpImage {
     private final CategoryList[] categories;
 
     /**
+     * {@code true} if the buffer is of kind {@code TYPE_USHORT} and the sample values
+     * should be forced to signed integers.
+     *
+     * @since 3.11
+     */
+    private final boolean forceSigned;
+
+    /**
      * Constructs a new {@code SampleTranscoder}.
      *
      * @param image      The source image.
@@ -89,6 +98,16 @@ final class SampleTranscoder extends PointOpImage {
             // Should not happen, since SampleDimension$Descriptor has already checked it.
             throw new RasterFormatException(String.valueOf(categories.length));
         }
+        boolean forceSigned = false;
+        if (image.getSampleModel().getDataType() == DataBuffer.TYPE_USHORT) {
+            for (final CategoryList list : categories) {
+                if (list.isSigned()) {
+                    forceSigned = true;
+                    break;
+                }
+            }
+        }
+        this.forceSigned = forceSigned;
         permitInPlaceOperation();
     }
 
@@ -104,16 +123,9 @@ final class SampleTranscoder extends PointOpImage {
     /**
      * Computes one of the destination image tile.
      *
-     * @todo There is two optimisations we could do here:
-     *       <ul>
-     *         <li>If source and destination are the same raster, then a single
-     *             {@link WritableRectIter} object would be more efficient (the
-     *             hard work is to detect if source and destination are the same).</li>
-     *         <li>If the destination image is a single-banded, non-interleaved
-     *             sample model, we could apply the transform directly in the
-     *             {@link java.awt.image.DataBuffer}. We can even avoid to copy
-     *             sample value if source and destination raster are the same.</li>
-     *       </ul>
+     * @todo If the destination image is a single-banded, non-interleaved sample model, we could
+     *       apply the transform directly in the {@link java.awt.image.DataBuffer}. We can even
+     *       avoid to copy sample value if source and destination raster are the same.
      *
      * @param sources  An array of length 1 with source image.
      * @param dest     The destination tile.
@@ -126,18 +138,14 @@ final class SampleTranscoder extends PointOpImage {
     {
         final PlanarImage source = sources[0];
         final Rectangle bounds = destRect.intersection(source.getBounds());
-        if (!destRect.equals(bounds)) {
-            // TODO: Check if this case occurs sometime, and fill pixel values if it does.
-            //       If it happen to occurs, we will need to fix other Geotk operations
-            //       as well.
-            Logging.getLogger(SampleTranscoder.class).warning(
-                    "Bounds mismatch: " + destRect + " and " + bounds);
-        }
-        WritableRectIter iterator = RectIterFactory.createWritable(dest, bounds);
-        if (true) {
-            // TODO: Detect if source and destination rasters are the same. If they are
-            //       the same, we should skip this block. Iteration will then be faster.
-            iterator = TransfertRectIter.create(RectIterFactory.create(source, bounds), iterator);
+        assert destRect.equals(bounds) : destRect;
+        final WritableRectIter iterator;
+        if (forceSigned) {
+            iterator = new SignedRectIter(
+                    RectIterFactory.create(source, bounds),
+                    RectIterFactory.createWritable(dest, bounds));
+        } else {
+            iterator = TransfertRectIter.create(source, dest, bounds);
         }
         int band = 0;
         if (!iterator.finishedBands()) do {

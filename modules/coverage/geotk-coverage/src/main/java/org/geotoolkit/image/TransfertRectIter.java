@@ -45,13 +45,13 @@ import javax.media.jai.iterator.WritableRectIter;
  * pixel values from source to target rasters can skip the copy phase if the iterator is not
  * an instance of {@code TransfertRectIter}.
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.11
  *
  * @since 2.3
  * @module
  */
-public final class TransfertRectIter implements WritableRectIter {
+public class TransfertRectIter implements WritableRectIter {
     /**
      * The string for error message.
      *
@@ -60,19 +60,28 @@ public final class TransfertRectIter implements WritableRectIter {
     private static final String ERROR = "Size mismatch";
 
     /**
-     * The source.
+     * The iterator to use for reading from the source.
+     *
+     * @since 3.11
      */
-    private final RectIter src;
+    protected final RectIter src;
 
     /**
-     * The destination.
+     * The iterator to use for writing to the destination destination.
+     *
+     * @since 3.11
      */
-    private final WritableRectIter dst;
+    protected final WritableRectIter dst;
 
     /**
      * Constructs a {@code TransfertRectIter} object.
+     *
+     * @param src The iterator to use for reading from the source.
+     * @param dst The iterator to use for writing to the destination destination.
+     *
+     * @since 3.11
      */
-    private TransfertRectIter(final RectIter src, final WritableRectIter dst) {
+    protected TransfertRectIter(final RectIter src, final WritableRectIter dst) {
         this.src = src;
         this.dst = dst;
     }
@@ -101,7 +110,7 @@ public final class TransfertRectIter implements WritableRectIter {
      * @param  src The source image.
      * @param  dst The destination image.
      * @param  bounds The region of the images to iterate over.
-     * @return An iterator that read sample from {@code src} and write sample to {@code dst}.
+     * @return An iterator that read samples from {@code src} and write samples to {@code dst}.
      *         It will be an instance of {@code TransfertRectIter} if and only if the source
      *         and destination images are not the same.
      *
@@ -130,7 +139,7 @@ public final class TransfertRectIter implements WritableRectIter {
      * @param  src The source image.
      * @param  dst The destination raster.
      * @param  bounds The region of the image or raster to iterate over.
-     * @return An iterator that read sample from {@code src} and write sample to {@code dst}.
+     * @return An iterator that read samples from {@code src} and write samples to {@code dst}.
      *         It will be an instance of {@code TransfertRectIter} if and only if the source
      *         and destination rasters are not the same.
      *

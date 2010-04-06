@@ -72,7 +72,7 @@ import org.geotoolkit.referencing.operation.transform.LinearTransform1D;
  * All {@code Category} objects are immutable and thread-safe.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @version 3.11
  *
  * @see GridSampleDimension
  *
@@ -155,11 +155,11 @@ public class Category implements Serializable {
     final double maximum;
 
     /**
-     * The range of values {@code [minimum..maximum]}.
+     * The range of values <code>[minimum &hellip; maximum]</code>.
      * May be computed only when first requested, or may be
      * user-supplied (which is why it must be serialized).
      */
-    NumberRange<?> range;
+    volatile NumberRange<?> range;
 
     /**
      * The math transform from sample to geophysics values (never {@code null}).
@@ -435,7 +435,8 @@ public class Category implements Serializable {
     private Category(final CharSequence name, final int[] ARGB, final NumberRange<?> range,
             MathTransform1D sampleToGeophysics) throws IllegalArgumentException
     {
-        ensureNonNull("name", name);
+        ensureNonNull("name",  name);
+        ensureNonNull("range", range);
         Class<? extends Number> type = range.getElementClass();
         this.name      = SimpleInternationalString.wrap(name);
         this.ARGB      = ARGB;
@@ -702,6 +703,7 @@ public class Category implements Serializable {
      * @see GridSampleDimension#getMaximumValue()
      */
     public NumberRange<?> getRange() {
+        final NumberRange<?> range = this.range;
         assert range != null;
         return range;
     }
@@ -749,7 +751,8 @@ public class Category implements Serializable {
             return this;
         }
         // The range can be null only for GeophysicsCategory cases. Because
-        // the later override this method, the case below should never occurs.
+        // the later override this method, the assertion should never fails.
+        final NumberRange<?> range = this.range;
         assert range != null : this;
         final Category newCategory = new Category(name, newARGB, range, getSampleToGeophysics());
         newCategory.inverse.range = inverse.range; // Share a common instance.
@@ -853,8 +856,10 @@ public class Category implements Serializable {
             {
                 // Special test for 'range', since 'GeophysicsCategory'
                 // computes it only when first needed.
-                if (this.range!=null && that.range!=null) {
-                    if (!Utilities.equals(this.range, that.range)) {
+                final NumberRange<?> r1 = this.range;
+                final NumberRange<?> r2 = that.range;
+                if (r1 != null && r2 != null) {
+                    if (!Utilities.equals(r1, r2)) {
                         return false;
                     }
                     if (inverse instanceof GeophysicsCategory) {
