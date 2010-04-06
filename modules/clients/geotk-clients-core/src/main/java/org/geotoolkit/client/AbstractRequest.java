@@ -47,9 +47,20 @@ public abstract class AbstractRequest implements Request {
     private static final Logger LOGGER = Logging.getLogger(AbstractRequest.class);
 
     /**
+     * if this value is used for a parameter, only the parameter name will be
+     * added without '=' character appended.
+     */
+    protected static final String DONT_ENCODE_EQUAL = new String();
+
+    /**
      * The address of the web service.
      */
     protected final String serverURL;
+
+    /**
+     * Rest adress might use sub adress path for requests.
+     */
+    protected final String subPath;
 
     /**
      * Parameters of the request, for key-value-pair requests.
@@ -61,16 +72,17 @@ public abstract class AbstractRequest implements Request {
     }
 
     protected AbstractRequest(String serverURL, final String subPath) {
-
-        if(subPath != null){
-            if(serverURL.endsWith("/")){
-                serverURL = serverURL + subPath;
-            }else{
-                serverURL = serverURL + "/" + subPath;
-            }
-        }
-
         this.serverURL = serverURL;
+        this.subPath = subPath;
+    }
+
+    /**
+     * Child class may override this method to return different subpath on different
+     * parameter values.
+     * @return adress subpath
+     */
+    protected String getSubPath(){
+        return subPath;
     }
 
     /**
@@ -78,12 +90,23 @@ public abstract class AbstractRequest implements Request {
      */
     @Override
     public URL getURL() throws MalformedURLException {
+
+        String completeURL = this.serverURL;
+        final String subPath = getSubPath();
+        if(subPath != null){
+            if(completeURL.endsWith("/")){
+                completeURL = completeURL + subPath;
+            }else{
+                completeURL = completeURL + "/" + subPath;
+            }
+        }
+
         final StringBuilder sb = new StringBuilder();
         final List<String> keys = new ArrayList<String>(requestParameters.keySet());
 
-        sb.append(serverURL);
+        sb.append(completeURL);
 
-        if(!keys.isEmpty() && !serverURL.contains("?")){
+        if(!keys.isEmpty() && !completeURL.contains("?")){
             sb.append("?");
         }
 
@@ -95,8 +118,12 @@ public abstract class AbstractRequest implements Request {
 
             String key = keys.get(0);
             try {
-                sb.append(StringUtilities.convertSpacesForUrl(key)).append('=')
-                  .append(URLEncoder.encode(requestParameters.get(key), "UTF-8"));
+                sb.append(StringUtilities.convertSpacesForUrl(key));
+                final Object value = requestParameters.get(key);
+                if(DONT_ENCODE_EQUAL != value){
+                    sb.append('=');
+                    sb.append(URLEncoder.encode(requestParameters.get(key), "UTF-8"));
+                }
             } catch (UnsupportedEncodingException ex) {
                 // Should not occur.
                 LOGGER.log(Level.FINER, ex.getLocalizedMessage(), ex);
@@ -104,8 +131,13 @@ public abstract class AbstractRequest implements Request {
 
             for (int i = 1, n = keys.size(); i < n; i++) {
                 key = keys.get(i);
-                sb.append('&').append(StringUtilities.convertSpacesForUrl(key))
-                        .append('=').append(StringUtilities.convertSpacesForUrl(requestParameters.get(key)));
+                sb.append('&');
+                sb.append(StringUtilities.convertSpacesForUrl(key));
+                final Object value = requestParameters.get(key);
+                if(DONT_ENCODE_EQUAL != value){
+                    sb.append('=');
+                    sb.append(StringUtilities.convertSpacesForUrl(requestParameters.get(key)));
+                }
             }
         }
 
