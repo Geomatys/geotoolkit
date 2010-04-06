@@ -19,10 +19,13 @@ package org.geotoolkit.data.osm.client;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.stream.XMLStreamException;
+import org.geotoolkit.client.Request;
 
 import org.geotoolkit.client.Server;
 import org.geotoolkit.data.osm.client.v060.GetCapabilities060;
@@ -53,6 +56,17 @@ public class OpenStreetMapServer implements Server{
         this.serverURL = url;
         this.version = version;
     }
+
+    @Override
+    public URI getURI() {
+        try {
+            return serverURL.toURI();
+        } catch (URISyntaxException ex) {
+            Logger.getLogger(OpenStreetMapServer.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
+    }
+
 
     public Api getCapabilities(){
         if (capabilities != null) {
@@ -102,6 +116,11 @@ public class OpenStreetMapServer implements Server{
         return capabilities;
     }
 
+    // general queries ---------------------------------------------------------
+
+    /**
+     * {@see <a href="http://wiki.openstreetmap.org/wiki/API_v0.6#Capabilities:_GET_.2Fapi.2Fcapabilities">OSM API 0.6</a>}
+     */
     public GetCapabilitiesRequest createGetCapabilities(){
         switch (version) {
             case v060:
@@ -111,7 +130,10 @@ public class OpenStreetMapServer implements Server{
         }
     }
 
-    public GetDataRequest createGetData(){
+    /**
+     * {@see <a href="http://wiki.openstreetmap.org/wiki/API_v0.6#Retrieving_map_data_by_bounding_box:_GET_.2Fapi.2F0.6.2Fmap">OSM API 0.6</a>}
+     */
+    public GetDataRequest createGetData() {
         switch (version) {
             case v060:
                 return new GetData060(serverURL.toString());
@@ -119,5 +141,173 @@ public class OpenStreetMapServer implements Server{
                 throw new IllegalArgumentException("Version was not defined");
         }
     }
+
+    //changeset ----------------------------------------------------------------
+
+    /**
+     * {@see <a href="http://wiki.openstreetmap.org/wiki/API_v0.6#Create:_PUT_.2Fapi.2F0.6.2Fchangeset.2Fcreate">OSM API 0.6</a>}
+     */
+    public Request createGetChangeSet(){
+        throw new UnsupportedOperationException("Not implemented yet.");
+    }
+
+    /**
+     * {@see <a href="http://wiki.openstreetmap.org/wiki/API_v0.6#Query:_GET_.2Fapi.2F0.6.2Fchangesets">OSM API 0.6</a>}
+     */
+    public Request createGetChangeSets(){
+        throw new UnsupportedOperationException("Not implemented yet.");
+    }
+
+    /**
+     * {@see <a href="http://wiki.openstreetmap.org/wiki/API_v0.6#Update:_PUT_.2Fapi.2F0.6.2Fchangeset.2F.23id">OSM API 0.6</a>}
+     */
+    public Request createPutChangeSet(){
+        throw new UnsupportedOperationException("Not implemented yet.");
+    }
+
+    /**
+     * {@see <a href="http://wiki.openstreetmap.org/wiki/API_v0.6#Update:_PUT_.2Fapi.2F0.6.2Fchangeset.2F.23id">OSM API 0.6</a>}
+     */
+    public Request createUpdateChangeSet(){
+        throw new UnsupportedOperationException("Not implemented yet.");
+    }
+
+    /**
+     * {@see <a href="http://wiki.openstreetmap.org/wiki/API_v0.6#Close:_PUT_.2Fapi.2F0.6.2Fchangeset.2F.23id.2Fclose">OSM API 0.6</a>}
+     */
+    public Request createCloseChangeSet(){
+        throw new UnsupportedOperationException("Not implemented yet.");
+    }
+
+    /**
+     * {@see <a href="http://wiki.openstreetmap.org/wiki/API_v0.6#Download:_GET_.2Fapi.2F0.6.2Fchangeset.2F.23id.2Fdownload">OSM API 0.6</a>}
+     */
+    public Request createDownloadChangeSet(){
+        throw new UnsupportedOperationException("Not implemented yet.");
+    }
+
+    /**
+     * {@see <a href="http://wiki.openstreetmap.org/wiki/API_v0.6#Expand_Bounding_Box:_POST_.2Fapi.2F0.6.2Fchangeset.2F.23id.2Fexpand_bbox">OSM API 0.6</a>}
+     */
+    public Request createExpandChangeSet(){
+        throw new UnsupportedOperationException("Not implemented yet.");
+    }
+
+    /**
+     * {@see <a href="http://wiki.openstreetmap.org/wiki/API_v0.6#Diff_upload:_POST_.2Fapi.2F0.6.2Fchangeset.2F.23id.2Fupload">OSM API 0.6</a>}
+     */
+    public Request createUploadChangeSet(){
+        throw new UnsupportedOperationException("Not implemented yet.");
+    }
+
+    /**
+     * {@see <a href="http://wiki.openstreetmap.org/wiki/API_v0.6#Create:_PUT_.2Fapi.2F0.6.2F.5Bnode.7Cway.7Crelation.5D.2Fcreate">OSM API 0.6</a>}
+     */
+    public Request createCreateElement(){
+        throw new UnsupportedOperationException("Not implemented yet.");
+    }
+
+    /**
+     * {@see <a href="http://wiki.openstreetmap.org/wiki/API_v0.6#Read:_GET_.2Fapi.2F0.6.2F.5Bnode.7Cway.7Crelation.5D.2F.23id">OSM API 0.6</a>}
+     */
+    public Request createReadElement(){
+        throw new UnsupportedOperationException("Not implemented yet.");
+    }
+
+    /**
+     * {@see <a href="http://wiki.openstreetmap.org/wiki/API_v0.6#Multi_fetch:_GET_.2Fapi.2F0.6.2F.5Bnodes.7Cways.7Crelations.5D">OSM API 0.6</a>}
+     */
+    public Request createReadElements(){
+        throw new UnsupportedOperationException("Not implemented yet.");
+    }
+
+    /**
+     * {@see <a href="http://wiki.openstreetmap.org/wiki/API_v0.6#Full:_GET_.2Fapi.2F0.6.2F.5Bway.7Crelation.5D.2F.23id.2Ffull">OSM API 0.6</a>}
+     */
+    public Request createReadFullElement(){
+        throw new UnsupportedOperationException("Not implemented yet.");
+    }
+
+    /**
+     * {@see <a href="http://wiki.openstreetmap.org/wiki/API_v0.6#Update:_PUT_.2Fapi.2F0.6.2F.5Bnode.7Cway.7Crelation.5D.2F.23id">OSM API 0.6</a>}
+     */
+    public Request createUpdateElement(){
+        throw new UnsupportedOperationException("Not implemented yet.");
+    }
+
+    /**
+     * {@see <a href="http://wiki.openstreetmap.org/wiki/API_v0.6#Delete:_DELETE_.2Fapi.2F0.6.2F.5Bnode.7Cway.7Crelation.5D.2F.23id">OSM API 0.6</a>}
+     */
+    public Request createDeleteElement(){
+        throw new UnsupportedOperationException("Not implemented yet.");
+    }
+
+    /**
+     * {@see <a href="http://wiki.openstreetmap.org/wiki/API_v0.6#History:_GET_.2Fapi.2F0.6.2F.5Bnode.7Cway.7Crelation.5D.2F.23id.2Fhistory">OSM API 0.6</a>}
+     */
+    public Request createHistoryElement(){
+        throw new UnsupportedOperationException("Not implemented yet.");
+    }
+
+    /**
+     * {@see <a href="http://wiki.openstreetmap.org/wiki/API_v0.6#Version:_GET_.2Fapi.2F0.6.2F.5Bnode.7Cway.7Crelation.5D.2F.23id.2F.23version">OSM API 0.6</a>}
+     */
+    public Request createVersionElement(){
+        throw new UnsupportedOperationException("Not implemented yet.");
+    }
+
+    /**
+     * {@see <a href="http://wiki.openstreetmap.org/wiki/API_v0.6#Relations_for_Element:_GET_.2Fapi.2F0.6.2F.5Bnode.7Cway.7Crelation.5D.2F.23id.2Frelations">OSM API 0.6</a>}
+     */
+    public Request createRelatedRelationElement(){
+        throw new UnsupportedOperationException("Not implemented yet.");
+    }
+
+    /**
+     * {@see <a href="http://wiki.openstreetmap.org/wiki/API_v0.6#Ways_for_Node:_GET_.2Fapi.2F0.6.2Fnode.2F.23id.2Fways">OSM API 0.6</a>}
+     */
+    public Request createRelatedWayElement(){
+        throw new UnsupportedOperationException("Not implemented yet.");
+    }
+
+    //GPS ----------------------------------------------------------------------
+
+    /**
+     * {@see <a href="http://wiki.openstreetmap.org/wiki/API_v0.6#Retrieving_GPS_points">OSM API 0.6</a>}
+     */
+    public Request createGetTrackPoints(){
+        throw new UnsupportedOperationException("Not implemented yet.");
+    }
+
+    /**
+     * {@see <a href="http://wiki.openstreetmap.org/wiki/API_v0.6#Uploading_Traces">OSM API 0.6</a>}
+     */
+    public Request createUploadTrackPoints(){
+        throw new UnsupportedOperationException("Not implemented yet.");
+    }
+
+    /**
+     * {@see <a href="http://wiki.openstreetmap.org/wiki/API_v0.6#Downloading_Trace_Metadata">OSM API 0.6</a>}
+     */
+    public Request createGetTrackPointsMetaData(){
+        throw new UnsupportedOperationException("Not implemented yet.");
+    }
+
+    //User ---------------------------------------------------------------------
+
+    /**
+     * {@see <a href="http://wiki.openstreetmap.org/wiki/API_v0.6#Details">OSM API 0.6</a>}
+     */
+    public Request createGetUserMetaData(){
+        throw new UnsupportedOperationException("Not implemented yet.");
+    }
+
+    /**
+     * {@see <a href="http://wiki.openstreetmap.org/wiki/API_v0.6#Preferences">OSM API 0.6</a>}
+     */
+    public Request createGetUserPreference(){
+        throw new UnsupportedOperationException("Not implemented yet.");
+    }
+
 
 }
