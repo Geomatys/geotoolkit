@@ -17,40 +17,65 @@
 
 package org.geotoolkit.data.osm.client.v060;
 
-import org.geotoolkit.data.osm.client.AbstractReadElement;
+import java.net.MalformedURLException;
+import java.net.URL;
+
+import org.geotoolkit.data.osm.client.AbstractReadElements;
 import org.geotoolkit.data.osm.model.Node;
 import org.geotoolkit.data.osm.model.Relation;
 import org.geotoolkit.data.osm.model.Way;
+import org.geotoolkit.util.StringUtilities;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class ReadElement060 extends AbstractReadElement{
+public class ReadElements060 extends AbstractReadElements{
 
-    public ReadElement060(String serveruURL){
+    public ReadElements060(String serveruURL){
         super(serveruURL,"/api/0.6/");
     }
 
     @Override
     protected String getSubPath() {
-        if(id <= 0){
-            throw new IllegalArgumentException("id has not been defined");
-        }
 
         final String strType;
         if(Node.class.equals(type)){
-            strType = "node";
+            strType = "nodes";
         }else if(Way.class.equals(type)){
-            strType = "way";
+            strType = "ways";
         }else if(Relation.class.equals(type)){
-            strType = "relation";
+            strType = "relations";
         }else{
             throw new IllegalArgumentException("Type expected can be : Node,Way,Relation, found = " + type);
         }
 
-        return super.getSubPath() + strType +"/"+id;
+        return super.getSubPath() + strType;
+    }
+
+    @Override
+    public URL getURL() throws MalformedURLException {
+        if(ids == null || ids.isEmpty()){
+            throw new IllegalArgumentException("ids has not been defined or is empty");
+        }
+        requestParameters.clear();
+
+        final String strType;
+        if(Node.class.equals(type)){
+            strType = "nodes";
+        }else if(Way.class.equals(type)){
+            strType = "ways";
+        }else if(Relation.class.equals(type)){
+            strType = "relations";
+        }else{
+            throw new IllegalArgumentException("Type expected can be : Node,Way,Relation, found = " + type);
+        }
+
+        final String csv = StringUtilities.toCommaSeparatedValues(ids);
+        requestParameters.put(strType, csv);
+
+        return super.getURL();
     }
 
 }
