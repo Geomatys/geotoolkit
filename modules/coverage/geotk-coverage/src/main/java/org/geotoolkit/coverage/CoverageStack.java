@@ -65,6 +65,7 @@ import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.image.io.IIOListeners;
 import org.geotoolkit.image.io.IIOReadProgressAdapter;
 import org.geotoolkit.internal.referencing.CRSUtilities;
+import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.resources.Vocabulary;
@@ -79,40 +80,46 @@ import static org.geotoolkit.referencing.CRS.equalsIgnoreMetadata;
 
 
 /**
- * Wraps a stack of {@linkplain Coverage coverages} as an extra dimension. For example this class
- * can wraps an array of {@link GridCoverage2D} on the same geographic area, but where each
- * {@code GridCoverage2D} is for a different date. This {@code CoverageStack} manages the
- * two-dimensional coverages as if the whole set was a three-dimensional coverage.
+ * Creates a (<var>n</var>+1) dimensional coverage from a collection of <var>n</var> dimensional
+ * coverages. For example given a list of {@code Coverage2D} at elevations <var>z</var><sub>0</sub>,
+ * <var>z</var><sub>1</sub> &hellip; <var>z</var><sub>max</sub>, this class creates a new
+ * 3-dimensional coverages where the envelope is:
  * <p>
- * Each {@linkplain Element coverage element} in the stack usually covers the same
- * {@linkplain Coverage#getEnvelope geographic area}, but this is not a requirement. Elements are
- * not required to have the same {@linkplain CoordinateReferenceSystem coordinate reference system}
- * neither, but they are required to handle the transformation from this coverage CRS to their CRS.
+ * <ul>
+ *   <li>the union of all coverage envelopes in the two first dimensions,
+ *   <li>[<var>z</var><sub>0</sub> &hellip; <var>z</var><sub>max</sub>] in the third dimension.</li>
+ * </ul>
  * <p>
- * Coverage elements are often two-dimensional, but this is not a requirement. This stack will
- * simply append one dimension to the element CRS. Coverage elements may be themself backed by
- * instances of {@code CoverateStack}, thus allowing construction of coverages with four or more
- * dimensions.
+ * Collections of {@code CoverageStack}s can be given recursively to other {@code CoverageStack}
+ * for creating new coverages with higher dimensionality.
  * <p>
- * For documentation purpose, the new dimension added by {@code CoverageStack} is called
- * <var>z</var>. But this is only a naming convention - the new dimension can really be
- * anything, including time.
- * <p>
+ * <b>NOTE:</b> For documentation purpose, the new dimension handled by {@code CoverageStack}
+ * is named <var>z</var>. But this is only a naming convention - the new dimension can really
+ * be anything, including time.
+ *
+ * {@section Construction}
  * {@code GridCoverage2D} objects tend to be big. In order to keep memory usage raisonable, this
- * implementation doesn't requires all {@code GridCoverage} objects at once. Instead, it requires
+ * implementation doesn't requires all {@code GridCoverage2D} objects at once. Instead, it requires
  * an array of {@link Element} objects, which will load the coverage content only when first
- * needed. This {@code CoverageStack} implementation remember the last coverage elements used;
+ * needed.
+ * <p>
+ * Each element usually have the same {@linkplain Coverage#getEnvelope() envelope},
+ * but this is not a requirement. Elements are not required to share the same
+ * {@linkplain Coverage#getCoordinateReferenceSystem() Coordinate Reference System} neither,
+ * but they are required to handle the transformation from this coverage CRS to their CRS.
+ *
+ * {@section Usage}
+ * Each {@linkplain Element coverage element} is expected to extend over a range of <var>z</var>
+ * values. If an {@code evaluate(...)} method is invoked with a <var>z</var> value not falling in
+ * the middle of a coverage element, a linear interpolation is applied.
+ *
+ * {@section Caching}
+ * This {@code CoverageStack} implementation remember the last coverage elements used;
  * it will not trig new data loading as long as consecutive calls to {@code evaluate(...)}
  * methods require the same coverage elements. Apart from this very simple caching mechanism,
  * caching is the responsability of {@link Element} implementations. Note that this simple
  * caching mechanism is suffisient if {@code evaluate(...)} methods are invoked with increasing
  * <var>z</var> values.
- * <p>
- * All coverage element are expected to extend over a range of <var>z</var> values. If an
- * {@code evaluate(...)} method is invoked with a <var>z</var> value not falling in the middle
- * of a coverage element, a linear interpolation is applied.
- * <p>
- * {@code CoverageStack} implementation is thread-safe.
  *
  * @author Martin Desruisseaux (IRD)
  * @version 3.00
@@ -120,6 +127,7 @@ import static org.geotoolkit.referencing.CRS.equalsIgnoreMetadata;
  * @since 2.1
  * @module
  */
+@ThreadSafe
 public class CoverageStack extends AbstractCoverage {
     /**
      * For compatibility during cross-version serialization.
@@ -127,13 +135,15 @@ public class CoverageStack extends AbstractCoverage {
     private static final long serialVersionUID = -7100201963376146053L;
 
     /**
-     * An element in a {@linkplain CoverageStack coverage stack}. Each element is expected to
-     * extents over a range of <var>z</var> values (the new dimensions appended by the
-     * {@link CoverageStack} container). Implementations should be capable to return coverage
-     * {@linkplain #getZRange range of z-values} without loading the coverage data. If an
-     * expensive loading is required, it should be delayed until the {@link #getCoverage} method
-     * is invoked. If {@code getCoverage} is invoked more than once, caching (if desirable) is
-     * implementor's responsability.
+     * Reference to a single <var>n</var> dimensional coverage in a (<var>n</var>+1) dimensional
+     * {@linkplain CoverageStack coverage stack}. Each element is expected to extents over a range
+     * of <var>z</var> values in the dimension handled by the {@link CoverageStack} container.
+     * <p>
+     * {@code Element} implementations shall be able to provide their {@linkplain #getZRange()
+     * range of z-values} without loading the coverage data. If an expensive loading is required,
+     * it should be delayed until the {@link #getCoverage(IIOListeners)} method is invoked. If
+     * {@code getCoverage} is invoked more than once, caching (if desirable) is implementor's
+     * responsability.
      * <p>
      * All methods declare {@link IOException} in their {@code throws} clause in case I/O operations
      * are required. Subclasses of {@code IOException} include {@link javax.imageio.IIOException}
@@ -365,15 +375,17 @@ public class CoverageStack extends AbstractCoverage {
     private final GeneralEnvelope envelope;
 
     /**
-     * A direct position with {@link #zDimension} dimensions. will be created only
-     * when first needed.
+     * A direct position having one less dimension than this coverage dimensions.
+     * will be created only when first needed.
      */
     private transient GeneralDirectPosition reducedPosition;
 
     /**
-     * The dimension of the <var>z</var> ordinate (the last value in coordinate points).
-     * This is always the {@linkplain #getCoordinateReferenceSystem() coordinate reference
-     * system} dimension minus 1.
+     * The dimension of the <var>z</var> ordinate. This is typically the
+     * {@linkplain #getCoordinateReferenceSystem() Coordinate Reference System} dimension minus 1.
+     * <p>
+     * This field is named <cite>z dimension</cite> by convention only. The dimension doesn't
+     * need to be the vertical axis. It can be a temporal or any other kind of dimension.
      *
      * @since 2.3
      */
@@ -1194,9 +1206,11 @@ public class CoverageStack extends AbstractCoverage {
 
     /**
      * Returns a point with the same number of dimensions than the specified coverage.
-     * The number of dimensions must be {@link #zDimensions} or {@code zDimensions+1}.
+     * The number of dimensions must be equals to the dimension of this coverage, or
+     * the dimension of this coverage minus one.
      */
     private final DirectPosition reduce(DirectPosition coord, final Coverage coverage) {
+        assert Thread.holdsLock(this);
         final CoordinateReferenceSystem targetCRS = coverage.getCoordinateReferenceSystem();
         final int dimension = targetCRS.getCoordinateSystem().getDimension();
         if (dimension == zDimension) {

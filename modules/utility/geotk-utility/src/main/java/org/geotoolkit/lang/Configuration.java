@@ -29,8 +29,8 @@ import java.lang.annotation.RetentionPolicy;
  * See "Use" javadoc link for a list of annotated methods.
  * <p>
  * Note that the {@link Setup} class provides a central place were global
- * {@linkplain Setup#initialize(boolean) initialization} and
- * {@linkplain Setup#shutdown() shutdown} can be performed.
+ * {@linkplain Setup#initialize initialization} and {@linkplain Setup#shutdown shutdown}
+ * can be performed.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.00

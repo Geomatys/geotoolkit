@@ -81,8 +81,6 @@ public final class XCollections {
      *
      * @param elements The number of elements to be put into the hash map or hash set.
      * @return The optimal initial capacity to be given to the hash map constructor.
-     *
-     * @since 3.00
      */
     public static int hashMapCapacity(int elements) {
         final int r = elements >>> 2;
