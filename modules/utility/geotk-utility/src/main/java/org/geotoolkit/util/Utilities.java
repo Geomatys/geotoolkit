@@ -17,13 +17,10 @@
  */
 package org.geotoolkit.util;
 
-import java.util.Queue;
 import java.util.Arrays;
-import java.util.Collections;
 import java.io.Serializable;
 
 import org.geotoolkit.lang.Static;
-import org.geotoolkit.util.collection.XCollections;
 
 
 /**
@@ -514,41 +511,5 @@ public final class Utilities {
             return Arrays.toString((boolean[]) object);
         }
         return String.valueOf(object);
-    }
-
-    /**
-     * Returns a {@linkplain Queue queue} which is always empty and accepts no element.
-     *
-     * @param <E> The type of elements in the empty collection.
-     * @return An empty collection.
-     *
-     * @see Collections#emptyList()
-     * @see Collections#emptySet()
-     *
-     * @deprecated Moved to {@link XCollections}.
-     */
-    @Deprecated
-    public static <E> Queue<E> emptyQueue() {
-        return XCollections.emptyQueue();
-    }
-
-    /**
-     * Returns the capacity to be given to the {@link java.util.HashMap#HashMap(int) HashMap}
-     * constructor for holding the given number of elements. This method computes the capacity
-     * for the default <cite>load factor</cite>, which is 0.75.
-     * <p>
-     * The same calculation can be used for {@link java.util.LinkedHashMap} and
-     * {@link java.util.HashSet} as well, which are built on top of {@code HashMap}.
-     *
-     * @param elements The number of elements to be put into the hash map or hash set.
-     * @return The optimal initial capacity to be given to the hash map constructor.
-     *
-     * @since 3.00
-     *
-     * @deprecated Moved to {@link XCollections}.
-     */
-    @Deprecated
-    public static int hashMapCapacity(int elements) {
-        return XCollections.hashMapCapacity(elements);
     }
 }

@@ -21,8 +21,6 @@ import java.util.Map;
 import java.util.List;
 import java.util.Iterator;
 import java.util.Collections;
-import java.awt.geom.Point2D;
-import java.awt.geom.AffineTransform;
 import java.awt.RenderingHints;
 import javax.measure.unit.Unit;
 
@@ -31,7 +29,6 @@ import org.opengis.referencing.cs.*;
 import org.opengis.referencing.crs.*;
 import org.opengis.referencing.datum.*;
 import org.opengis.referencing.operation.*;
-import org.opengis.geometry.DirectPosition;
 
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.referencing.CRS;
@@ -39,7 +36,6 @@ import org.geotoolkit.referencing.cs.DefaultEllipsoidalCS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.referencing.datum.DefaultGeodeticDatum;
 import org.geotoolkit.referencing.datum.DefaultPrimeMeridian;
-import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.resources.Errors;
@@ -415,86 +411,5 @@ public final class CRSUtilities {
             }
         }
         return new DefaultGeographicCRS(crs.getName().getCode(), geoDatum, DefaultEllipsoidalCS.GEODETIC_2D);
-    }
-
-    /**
-     * Transforms the given relative distance using the given transform. A relative distance
-     * vector is transformed without applying the translation components. However it needs to
-     * be computed at a particular location, given by the {@code origin} parameter in units
-     * of the source CRS.
-     *
-     * @param  transform The transformation to apply.
-     * @param  origin The position where to compute the delta transform in the source CRS.
-     * @param  vector The distance vector to be delta transformed.
-     * @return The result of the delta transformation.
-     * @throws TransformException if the transformation failed.
-     *
-     * @since 2.3
-     *
-     * @deprecated Moved to {@link CRS#deltaTransform(MathTransform, DirectPosition, double[])}
-     */
-    @Deprecated
-    public static DirectPosition deltaTransform(final MathTransform  transform,
-                                                final DirectPosition origin,
-                                                final DirectPosition vector)
-            throws TransformException
-    {
-        final int sourceDim = transform.getSourceDimensions();
-        final int targetDim = transform.getTargetDimensions();
-        DirectPosition P1 = new GeneralDirectPosition(sourceDim);
-        DirectPosition P2 = new GeneralDirectPosition(sourceDim);
-        for (int i=0; i<sourceDim; i++) {
-            final double c = origin.getOrdinate(i);
-            final double d = vector.getOrdinate(i) * 0.5;
-            P1.setOrdinate(i, c-d);
-            P2.setOrdinate(i, c+d);
-        }
-        P1 = transform.transform(P1, (sourceDim == targetDim) ? P1 : null);
-        P2 = transform.transform(P2, (sourceDim == targetDim) ? P2 : null);
-        for (int i=0; i<targetDim; i++) {
-            P2.setOrdinate(i, P2.getOrdinate(i) - P1.getOrdinate(i));
-        }
-        return P2;
-    }
-
-    /**
-     * Transforms the relative distance vector specified by {@code source} and stores
-     * the result in {@code dest}.  A relative distance vector is transformed without
-     * applying the translation components.
-     *
-     * @param transform The transform to apply.
-     * @param origin The position where to compute the delta transform in the source CS.
-     * @param source The distance vector to be delta transformed
-     * @param dest   The resulting transformed distance vector, or {@code null}
-     * @return       The result of the transformation.
-     * @throws TransformException if the transformation failed.
-     *
-     * @see AffineTransform#deltaTransform(Point2D,Point2D)
-     *
-     * @deprecated Not used anymore.
-     */
-    @Deprecated
-    public static Point2D deltaTransform(final MathTransform2D transform,
-                                         final Point2D         origin,
-                                         final Point2D         source,
-                                               Point2D         dest)
-            throws TransformException
-    {
-        if (transform instanceof AffineTransform) {
-            return ((AffineTransform) transform).deltaTransform(source, dest);
-        }
-        final double ox = origin.getX();
-        final double oy = origin.getY();
-        final double dx = source.getX()*0.5;
-        final double dy = source.getY()*0.5;
-        Point2D P1 = new Point2D.Double(ox-dx, oy-dy);
-        Point2D P2 = new Point2D.Double(ox+dx, oy+dy);
-        P1 = transform.transform(P1, P1);
-        P2 = transform.transform(P2, P2);
-        if (dest == null) {
-            dest = P2;
-        }
-        dest.setLocation(P2.getX()-P1.getX(), P2.getY()-P1.getY());
-        return dest;
     }
 }
