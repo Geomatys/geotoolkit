@@ -29,6 +29,7 @@ import org.geotoolkit.client.Request;
 
 import org.geotoolkit.client.Server;
 import org.geotoolkit.data.osm.client.v060.GetCapabilities060;
+import org.geotoolkit.data.osm.client.v060.GetChangeSet060;
 import org.geotoolkit.data.osm.client.v060.GetData060;
 import org.geotoolkit.data.osm.model.Api;
 import org.geotoolkit.data.osm.xml.OSMXMLReader;
@@ -147,8 +148,13 @@ public class OpenStreetMapServer implements Server{
     /**
      * {@see <a href="http://wiki.openstreetmap.org/wiki/API_v0.6#Create:_PUT_.2Fapi.2F0.6.2Fchangeset.2Fcreate">OSM API 0.6</a>}
      */
-    public Request createGetChangeSet(){
-        throw new UnsupportedOperationException("Not implemented yet.");
+    public GetChangeSetRequest createGetChangeSet(){
+        switch (version) {
+            case v060:
+                return new GetChangeSet060(serverURL.toString());
+            default:
+                throw new IllegalArgumentException("Version was not defined");
+        }
     }
 
     /**
