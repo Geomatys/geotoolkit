@@ -125,7 +125,7 @@ public class ObservationOfferingEntry extends AbstractFeatureEntry {
         if (intendedApplication == null) {
             intendedApplication = new ArrayList<String>();
         }
-        return Collections.unmodifiableList(intendedApplication);
+        return intendedApplication;
     }
 
     /**
@@ -153,7 +153,7 @@ public class ObservationOfferingEntry extends AbstractFeatureEntry {
         if (procedure == null) {
             procedure = new ArrayList<ReferenceEntry>();
         }
-        return Collections.unmodifiableList(procedure);
+        return procedure;
     }
     
     
@@ -162,14 +162,14 @@ public class ObservationOfferingEntry extends AbstractFeatureEntry {
      */
     public List<PhenomenonEntry> getObservedProperty() {
         if (observedProperty == null){
-           return Collections.unmodifiableList(new ArrayList<PhenomenonEntry>());
+           return new ArrayList<PhenomenonEntry>();
 
         } else {
             List<PhenomenonEntry> result = new ArrayList<PhenomenonEntry>();
             for (PhenomenonPropertyType pp:observedProperty){
                 result.add(pp.getPhenomenon());
             }
-            return Collections.unmodifiableList(result);
+            return result;
         }
     }
     
@@ -178,10 +178,10 @@ public class ObservationOfferingEntry extends AbstractFeatureEntry {
      */
     public List<PhenomenonPropertyType> getRealObservedProperty() {
         if (observedProperty == null){
-           return Collections.unmodifiableList(new ArrayList<PhenomenonPropertyType>());
+           return new ArrayList<PhenomenonPropertyType>();
 
         } else {
-            return Collections.unmodifiableList(observedProperty);
+            return observedProperty;
         }
     }
 
@@ -193,7 +193,7 @@ public class ObservationOfferingEntry extends AbstractFeatureEntry {
         if (featureOfInterest == null){
             featureOfInterest = new ArrayList<ReferenceEntry>();
         }
-        return Collections.unmodifiableList(featureOfInterest);
+        return featureOfInterest;
     }
 
    
@@ -205,7 +205,7 @@ public class ObservationOfferingEntry extends AbstractFeatureEntry {
         if (responseFormat == null){
             responseFormat = new ArrayList<String>();
         }
-        return Collections.unmodifiableList(responseFormat);
+        return responseFormat;
     }
 
     /**
@@ -216,7 +216,7 @@ public class ObservationOfferingEntry extends AbstractFeatureEntry {
         if (resultModel == null){
             resultModel = new ArrayList<QName>();
         }
-        return Collections.unmodifiableList(resultModel);
+        return resultModel;
     }
 
     /**
@@ -227,7 +227,7 @@ public class ObservationOfferingEntry extends AbstractFeatureEntry {
        if (responseMode == null){
             responseMode = new ArrayList<ResponseModeType>();
         }
-       return Collections.unmodifiableList(responseMode);
+       return responseMode;
     }
     
     /**
