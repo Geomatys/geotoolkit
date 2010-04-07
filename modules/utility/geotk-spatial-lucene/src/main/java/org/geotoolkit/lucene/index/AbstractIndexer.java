@@ -199,11 +199,11 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
 
             final Term t          = new Term("id", identifier);
             final TermQuery query = new TermQuery(t);
-            LOGGER.info("Term query:" + query);
+            LOGGER.log(logLevel, "Term query:" + query);
 
 
             writer.deleteDocuments(query);
-            LOGGER.info("Metadata: " + identifier + " removed from the index");
+            LOGGER.log(logLevel, "Metadata: " + identifier + " removed from the index");
 
             writer.commit();
             writer.optimize();

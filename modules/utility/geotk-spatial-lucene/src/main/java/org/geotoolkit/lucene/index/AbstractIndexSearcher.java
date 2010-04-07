@@ -224,7 +224,7 @@ public abstract class AbstractIndexSearcher extends IndexLucene {
             //we look for a cached Query
             if (isCacheEnabled && cachedQueries.containsKey(spatialQuery)) {
                 results = cachedQueries.get(spatialQuery);
-                LOGGER.info("returning result from cache (" + results.size() + " matching documents)");
+                LOGGER.log(logLevel, "returning result from cache (" + results.size() + " matching documents)");
                 return results;
             }
 
@@ -256,7 +256,7 @@ public abstract class AbstractIndexSearcher extends IndexLucene {
             if (filter != null) {
                 f = filter.toString();
             }
-            LOGGER.info("Searching for: " + query.toString(field) + '\n' + SerialChainFilter.valueOf(operator) + '\n' + f + '\n' + sorted + '\n' + "max records: " + maxRecords);
+            LOGGER.log(logLevel, "Searching for: " + query.toString(field) + '\n' + SerialChainFilter.valueOf(operator) + '\n' + f + '\n' + sorted + '\n' + "max records: " + maxRecords);
 
             // simple query with an AND
             if (operator == SerialChainFilter.AND || (operator == SerialChainFilter.OR && filter == null)) {
@@ -335,7 +335,7 @@ public abstract class AbstractIndexSearcher extends IndexLucene {
             //we put the query in cache
             putInCache(spatialQuery, results);
             
-            LOGGER.info(results.size() + " total matching documents (" + (System.currentTimeMillis() - start) + "ms)");
+            LOGGER.log(logLevel, results.size() + " total matching documents (" + (System.currentTimeMillis() - start) + "ms)");
             return results;
         } catch (ParseException ex) {
             throw new SearchingException("Parse Exception while performing lucene request", ex);

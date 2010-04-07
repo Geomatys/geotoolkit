@@ -17,6 +17,7 @@
 package org.geotoolkit.lucene.index;
 
 import java.io.File;
+import java.util.logging.Level;
 
 import java.util.logging.Logger;
 import org.apache.lucene.analysis.Analyzer;
@@ -48,6 +49,8 @@ public abstract class IndexLucene {
      * This the File Directory if you would like to store the index in a File directory.
      */
     private File fileDirectory;
+
+    protected Level logLevel;
     
    /**
      * Creates a new Lucene Index.
@@ -96,6 +99,13 @@ public abstract class IndexLucene {
      */
     public void setFileDirectory(final File aFileDirectory) {
         fileDirectory = aFileDirectory;
+    }
+
+    /**
+     * @param logLevel the logLevel to set
+     */
+    public void setLogLevel(Level logLevel) {
+        this.logLevel = logLevel;
     }
 
 }
