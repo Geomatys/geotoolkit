@@ -43,6 +43,7 @@ import org.geotoolkit.data.osm.xml.OSMXMLReader;
 import org.geotoolkit.util.logging.Logging;
 
 /**
+ * Represent an open street map server.
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
@@ -180,6 +181,7 @@ public class OpenStreetMapServer implements Server{
      * {@see <a href="http://wiki.openstreetmap.org/wiki/API_v0.6#Update:_PUT_.2Fapi.2F0.6.2Fchangeset.2F.23id">OSM API 0.6</a>}
      */
     public Request createPutChangeSet(){
+        //todo need auhtentification system on server/request
         throw new UnsupportedOperationException("Not implemented yet.");
     }
 
@@ -187,6 +189,7 @@ public class OpenStreetMapServer implements Server{
      * {@see <a href="http://wiki.openstreetmap.org/wiki/API_v0.6#Update:_PUT_.2Fapi.2F0.6.2Fchangeset.2F.23id">OSM API 0.6</a>}
      */
     public Request createUpdateChangeSet(){
+        //todo need auhtentification system on server/request
         throw new UnsupportedOperationException("Not implemented yet.");
     }
 
@@ -194,6 +197,7 @@ public class OpenStreetMapServer implements Server{
      * {@see <a href="http://wiki.openstreetmap.org/wiki/API_v0.6#Close:_PUT_.2Fapi.2F0.6.2Fchangeset.2F.23id.2Fclose">OSM API 0.6</a>}
      */
     public Request createCloseChangeSet(){
+        //todo need auhtentification system on server/request
         throw new UnsupportedOperationException("Not implemented yet.");
     }
 
@@ -201,6 +205,7 @@ public class OpenStreetMapServer implements Server{
      * {@see <a href="http://wiki.openstreetmap.org/wiki/API_v0.6#Download:_GET_.2Fapi.2F0.6.2Fchangeset.2F.23id.2Fdownload">OSM API 0.6</a>}
      */
     public Request createDownloadChangeSet(){
+        //todo need auhtentification system on server/request
         throw new UnsupportedOperationException("Not implemented yet.");
     }
 
@@ -208,6 +213,7 @@ public class OpenStreetMapServer implements Server{
      * {@see <a href="http://wiki.openstreetmap.org/wiki/API_v0.6#Expand_Bounding_Box:_POST_.2Fapi.2F0.6.2Fchangeset.2F.23id.2Fexpand_bbox">OSM API 0.6</a>}
      */
     public Request createExpandChangeSet(){
+        //todo need auhtentification system on server/request
         throw new UnsupportedOperationException("Not implemented yet.");
     }
 
@@ -215,6 +221,7 @@ public class OpenStreetMapServer implements Server{
      * {@see <a href="http://wiki.openstreetmap.org/wiki/API_v0.6#Diff_upload:_POST_.2Fapi.2F0.6.2Fchangeset.2F.23id.2Fupload">OSM API 0.6</a>}
      */
     public Request createUploadChangeSet(){
+        //todo need auhtentification system on server/request
         throw new UnsupportedOperationException("Not implemented yet.");
     }
 
@@ -222,6 +229,7 @@ public class OpenStreetMapServer implements Server{
      * {@see <a href="http://wiki.openstreetmap.org/wiki/API_v0.6#Create:_PUT_.2Fapi.2F0.6.2F.5Bnode.7Cway.7Crelation.5D.2Fcreate">OSM API 0.6</a>}
      */
     public Request createCreateElement(){
+        //todo need auhtentification system on server/request
         throw new UnsupportedOperationException("Not implemented yet.");
     }
 
@@ -266,6 +274,7 @@ public class OpenStreetMapServer implements Server{
      * {@see <a href="http://wiki.openstreetmap.org/wiki/API_v0.6#Update:_PUT_.2Fapi.2F0.6.2F.5Bnode.7Cway.7Crelation.5D.2F.23id">OSM API 0.6</a>}
      */
     public Request createUpdateElement(){
+        //todo need auhtentification system on server/request
         throw new UnsupportedOperationException("Not implemented yet.");
     }
 
@@ -273,6 +282,7 @@ public class OpenStreetMapServer implements Server{
      * {@see <a href="http://wiki.openstreetmap.org/wiki/API_v0.6#Delete:_DELETE_.2Fapi.2F0.6.2F.5Bnode.7Cway.7Crelation.5D.2F.23id">OSM API 0.6</a>}
      */
     public Request createDeleteElement(){
+        //todo need auhtentification system on server/request
         throw new UnsupportedOperationException("Not implemented yet.");
     }
 
@@ -318,6 +328,7 @@ public class OpenStreetMapServer implements Server{
      * {@see <a href="http://wiki.openstreetmap.org/wiki/API_v0.6#Retrieving_GPS_points">OSM API 0.6</a>}
      */
     public Request createGetTrackPoints(){
+        //todo need GPX parser
         throw new UnsupportedOperationException("Not implemented yet.");
     }
 
@@ -325,6 +336,7 @@ public class OpenStreetMapServer implements Server{
      * {@see <a href="http://wiki.openstreetmap.org/wiki/API_v0.6#Uploading_Traces">OSM API 0.6</a>}
      */
     public Request createUploadTrackPoints(){
+        //todo need GPX parser
         throw new UnsupportedOperationException("Not implemented yet.");
     }
 
@@ -332,6 +344,7 @@ public class OpenStreetMapServer implements Server{
      * {@see <a href="http://wiki.openstreetmap.org/wiki/API_v0.6#Downloading_Trace_Metadata">OSM API 0.6</a>}
      */
     public Request createGetTrackPointsMetaData(){
+        //todo need GPX parser
         throw new UnsupportedOperationException("Not implemented yet.");
     }
 
@@ -341,6 +354,7 @@ public class OpenStreetMapServer implements Server{
      * {@see <a href="http://wiki.openstreetmap.org/wiki/API_v0.6#Details">OSM API 0.6</a>}
      */
     public Request createGetUserMetaData(){
+        //todo need auhtentification system on server/request
         throw new UnsupportedOperationException("Not implemented yet.");
     }
 
@@ -348,6 +362,7 @@ public class OpenStreetMapServer implements Server{
      * {@see <a href="http://wiki.openstreetmap.org/wiki/API_v0.6#Preferences">OSM API 0.6</a>}
      */
     public Request createGetUserPreference(){
+        //todo need auhtentification system on server/request
         throw new UnsupportedOperationException("Not implemented yet.");
     }
 
