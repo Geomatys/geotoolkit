@@ -521,7 +521,7 @@ public abstract class SpatialImageReader extends ImageReader implements WarningP
         final long floor, ceil;
         int dataType = (type != null) ? type.getSampleModel().getDataType() : getRawDataType(imageIndex);
         if (dataType == DataBuffer.TYPE_SHORT && parameters instanceof SpatialImageReadParam) {
-            if (((SpatialImageReadParam) parameters).isAllowedConversion(SampleConversionType.SHIFT_SIGNED_INTEGERS)) {
+            if (((SpatialImageReadParam) parameters).isConversionAllowed(SampleConversionType.SHIFT_SIGNED_INTEGERS)) {
                 dataType = DataBuffer.TYPE_USHORT;
             }
         }
@@ -852,7 +852,7 @@ public abstract class SpatialImageReader extends ImageReader implements WarningP
      *
      *   <li><p><b>Unsigned integers storage:</b> If this method returns {@link DataBuffer#TYPE_USHORT
      *   TYPE_USHORT}, then the data will be translated to the smallest strictly positive range that
-     *   can holds the data ([1 &hellip; 46000] for the above example). The 0 value is reserved for
+     *   can holds the data ([1 &hellip; 46001] for the above example). The 0 value is reserved for
      *   missing data. The result is a smaller {@linkplain IndexColorModel Index Color Model} than
      *   the one used by untranslated data.</p></li>
      * </ol>
@@ -865,7 +865,7 @@ public abstract class SpatialImageReader extends ImageReader implements WarningP
      * returned.
      *
      * {@preformat java
-     *     int value = (short) myRaster.getSample(x, y, b); // Intentional cast int → short → int.
+     *     int value = (short) myRaster.getSample(x, y, b); // Intentional casts int → short → int.
      * }
      *
      * Given this gotcha and the fact that signed integers require large color palette, users are

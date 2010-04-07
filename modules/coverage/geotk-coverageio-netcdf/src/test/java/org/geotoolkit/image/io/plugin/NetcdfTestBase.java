@@ -44,13 +44,16 @@ public abstract class NetcdfTestBase {
     }
 
     /**
-     * Returns the test file, which is optional. Current implementation reuse the configuration
-     * properties file which was actually created for the {@code geotk-coverage-sql} module.
+     * Returns the test file, which is optional.
+     * <p>
+     * A convenient way to define the {@code coverage-netcdf.properties} file is to
+     * create a symbolic link to {@code coverage-sql.properties}, in order to leverage
+     * the test file created for the {@code geotk-coverage-sql} module.
      *
      * @return The test file (never null).
      */
     public static File getTestFile() {
-        File file = new File(Installation.TESTS.directory(true), "coverage-sql.properties");
+        File file = new File(Installation.TESTS.directory(true), "coverage-netcdf.properties");
         assumeTrue(file.isFile()); // All tests will be skipped if the above resources is not found.
         final Properties properties;
         try {
@@ -59,7 +62,6 @@ public abstract class NetcdfTestBase {
             throw new AssertionError(e); // Will cause a JUnit test failure.
         }
         final String directory = properties.getProperty("rootDirectory");
-        assumeNotNull(directory); // TODO: remove after we copied the files on the server.
         assertNotNull("Missing \"rootDirectory\" property.", directory);
         file = new File(directory, "World/Coriolis/OA_RTQCGL01_20070606_FLD_TEMP.nc");
         assertTrue("OA_RTQCGL01_20070606_FLD_TEMP.nc file not found.", file.isFile());

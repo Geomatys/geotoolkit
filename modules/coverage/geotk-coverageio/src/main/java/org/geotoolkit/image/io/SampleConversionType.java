@@ -27,7 +27,7 @@ import java.awt.image.DataBuffer;
  * @version 3.11
  *
  * @see SampleConverter
- * @see SpatialImageReadParam#setAllowedConversion(SampleConversionType, boolean)
+ * @see SpatialImageReadParam#setConversionAllowed(SampleConversionType, boolean)
  *
  * @since 3.11
  * @module
@@ -37,7 +37,7 @@ public enum SampleConversionType {
      * Indicates that {@link SpatialImageReader} is allowed to apply an offset on signed integer
      * values in order to get unsigned integers. More specifically, if
      * {@link SpatialImageReader#getRawDataType(int)} returns {@link DataBuffer#TYPE_SHORT}
-     * and this conversion type {@linkplain SpatialImageReadParam#isAllowedConversion is allowed},
+     * and this conversion type {@linkplain SpatialImageReadParam#isConversionAllowed is allowed},
      * then {@code SpatialImageReader} will process as if the {@code getRawDataType(int)} method
      * returned {@link DataBuffer#TYPE_USHORT}. <em>Consequently, an offset will be added to every
      * sample values</em> in order to avoid negative values.

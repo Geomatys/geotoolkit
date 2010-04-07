@@ -394,14 +394,14 @@ public class SpatialImageReadParam extends ImageReadParam implements WarningProd
      * constructed {@code SpatialImageReadParam} instances return {@code false} for any given type
      * (i.e. {@link SpatialImageReader} will make its best effort for storing the sample values
      * with no change). However more efficient storage can be achieved if some changes are allowed
-     * on the sample values. See {@link #setAllowedConversion setAllowedConversion} for examples.
+     * on the sample values. See {@link #setConversionAllowed setConversionAllowed} for examples.
      *
      * @param  type The kind of conversion.
      * @return Whatever the given kind of conversion is allowed.
      *
      * @since 3.11
      */
-    public boolean isAllowedConversion(final SampleConversionType type) {
+    public boolean isConversionAllowed(final SampleConversionType type) {
         return (allowedConversions != null) && allowedConversions.contains(type);
     }
 
@@ -418,7 +418,7 @@ public class SpatialImageReadParam extends ImageReadParam implements WarningProd
      *
      * @since 3.11
      */
-    public void setAllowedConversion(final SampleConversionType type, final boolean allowed) {
+    public void setConversionAllowed(final SampleConversionType type, final boolean allowed) {
         if (allowed) {
             if (allowedConversions == null) {
                 allowedConversions = EnumSet.noneOf(SampleConversionType.class);

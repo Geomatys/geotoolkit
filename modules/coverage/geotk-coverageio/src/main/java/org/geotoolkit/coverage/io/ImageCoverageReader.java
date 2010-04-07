@@ -881,7 +881,7 @@ public class ImageCoverageReader extends GridCoverageReader {
             }
             if (imageParam instanceof SpatialImageReadParam) {
                 final SpatialImageReadParam sp = (SpatialImageReadParam) imageParam;
-                sp.setAllowedConversion(SampleConversionType.SHIFT_SIGNED_INTEGERS, true);
+                sp.setConversionAllowed(SampleConversionType.SHIFT_SIGNED_INTEGERS, true);
             }
         }
         final Map<?,?> properties = getProperties(index);
