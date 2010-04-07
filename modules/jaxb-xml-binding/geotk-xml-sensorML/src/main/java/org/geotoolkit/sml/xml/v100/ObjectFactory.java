@@ -436,8 +436,8 @@ public class ObjectFactory {
      * Create an instance of {@link EventList.Member }
      * 
      */
-    public EventList.Member createEventListMember() {
-        return new EventList.Member();
+    public EventListMember createEventListMember() {
+        return new EventListMember();
     }
 
     /**
