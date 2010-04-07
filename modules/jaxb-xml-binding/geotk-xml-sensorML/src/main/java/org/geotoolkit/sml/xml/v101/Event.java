@@ -37,6 +37,7 @@ import org.geotoolkit.sml.xml.AbstractIdentification;
 import org.geotoolkit.sml.xml.AbstractKeywords;
 import org.geotoolkit.swe.xml.DataComponentProperty;
 import org.geotoolkit.swe.xml.v101.DataComponentPropertyType;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -277,4 +278,94 @@ public class Event implements AbstractEvent {
         this.id = value;
     }
 
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("[Event]").append("\n");
+        if (id != null) {
+            sb.append("id: ").append(id).append('\n');
+        }
+        if (date != null) {
+            sb.append("date: ").append(date).append('\n');
+        }
+        if (description != null) {
+            sb.append("description: ").append(description).append('\n');
+        }
+        if (classification != null) {
+            sb.append("classification:").append('\n');
+            for (Classification k : classification) {
+                sb.append(k).append('\n');
+            }
+        }
+        if (contact != null) {
+            sb.append("contact:").append('\n');
+            for (Contact k : contact) {
+                sb.append(k).append('\n');
+            }
+        }
+        if (documentation != null) {
+            sb.append("documentation:").append('\n');
+            for (Documentation k : documentation) {
+                sb.append(k).append('\n');
+            }
+        }
+        if (identification != null) {
+            sb.append("identification:").append('\n');
+            for (Identification k : identification) {
+                sb.append(k).append('\n');
+            }
+        }
+        if (keywords != null) {
+            sb.append("keywords:").append('\n');
+            for (Keywords k : keywords) {
+                sb.append(k).append('\n');
+            }
+        }
+        if (property != null) {
+            sb.append("property:").append('\n');
+            for (DataComponentPropertyType k : property) {
+                sb.append(k).append('\n');
+            }
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Verify if this entry is identical to specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+
+        if (object instanceof Event) {
+            final Event that = (Event) object;
+
+            return Utilities.equals(this.classification, that.classification)
+                    && Utilities.equals(this.contact, that.contact)
+                    && Utilities.equals(this.date, that.date)
+                    && Utilities.equals(this.description, that.description)
+                    && Utilities.equals(this.documentation, that.documentation)
+                    && Utilities.equals(this.id, that.id)
+                    && Utilities.equals(this.identification, that.identification)
+                    && Utilities.equals(this.keywords, that.keywords)
+                    && Utilities.equals(this.property, that.property);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 53 * hash + (this.date != null ? this.date.hashCode() : 0);
+        hash = 53 * hash + (this.description != null ? this.description.hashCode() : 0);
+        hash = 53 * hash + (this.keywords != null ? this.keywords.hashCode() : 0);
+        hash = 53 * hash + (this.identification != null ? this.identification.hashCode() : 0);
+        hash = 53 * hash + (this.classification != null ? this.classification.hashCode() : 0);
+        hash = 53 * hash + (this.contact != null ? this.contact.hashCode() : 0);
+        hash = 53 * hash + (this.documentation != null ? this.documentation.hashCode() : 0);
+        hash = 53 * hash + (this.property != null ? this.property.hashCode() : 0);
+        hash = 53 * hash + (this.id != null ? this.id.hashCode() : 0);
+        return hash;
+    }
 }
