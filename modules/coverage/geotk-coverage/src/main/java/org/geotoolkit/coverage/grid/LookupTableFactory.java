@@ -81,7 +81,8 @@ final class LookupTableFactory {
     }
 
     /**
-     * Gets a lookup factory
+     * Gets a lookup factory for the given transform, or return {@code null} if the table
+     * would be too big.
      *
      * @param  sourceType The source data type. Should be one of {@link DataBuffer} constants.
      * @param  targetType The target data type. Should be one of {@link DataBuffer} constants.

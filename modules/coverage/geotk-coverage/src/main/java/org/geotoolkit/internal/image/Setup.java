@@ -19,6 +19,7 @@ package org.geotoolkit.internal.image;
 
 import java.util.List;
 import java.util.Iterator;
+import java.util.Properties;
 import javax.media.jai.JAI;
 import javax.media.jai.OperationRegistry;
 import javax.media.jai.registry.RIFRegistry;
@@ -33,7 +34,7 @@ import org.geotoolkit.internal.SetupService;
  * Performs initialization and shutdown of the {@code geotk-coverage} module.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.10
+ * @version 3.11
  *
  * @see org.geotoolkit.lang.Setup
  *
@@ -50,7 +51,7 @@ public final class Setup implements SetupService {
      * Set the ordering of image reader and writers.
      */
     @Override
-    public void initialize(final boolean reinit) {
+    public void initialize(final Properties properties, final boolean reinit) {
         Registry.setDefaultCodecPreferences();
         if (reinit) {
             Registry.registerGeotoolkitServices(JAI.getDefaultInstance().getOperationRegistry());

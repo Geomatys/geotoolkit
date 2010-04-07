@@ -17,6 +17,8 @@
  */
 package org.geotoolkit.internal.image.io;
 
+import java.util.Properties;
+import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.internal.SetupService;
 import ucar.nc2.dataset.NetcdfDataset;
 
@@ -25,7 +27,7 @@ import ucar.nc2.dataset.NetcdfDataset;
  * Performs initialization and shutdown of the {@code geotk-coverageio-netcdf} module.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.10
+ * @version 3.11
  *
  * @see org.geotoolkit.lang.Setup
  *
@@ -37,9 +39,20 @@ public final class SetupNetcdf implements SetupService {
      * Initializes the Netcdf cache, if it was not already initialized.
      */
     @Override
-    public void initialize(boolean reinit) {
-        if (NetcdfDataset.getNetcdfFileCache() == null) {
-            NetcdfDataset.initNetcdfFileCache(0, 10, 5*60);
+    public void initialize(final Properties properties, final boolean reinit) {
+        if (properties != null) {
+            final int n;
+            try {
+                n = Integer.parseInt(properties.getProperty("netcdfCacheLimit", "0"));
+            } catch (NumberFormatException e) {
+                Logging.unexpectedException(org.geotoolkit.lang.Setup.class, "initialize", e);
+                return;
+            }
+            if (n != 0) {
+                if (NetcdfDataset.getNetcdfFileCache() == null) {
+                    NetcdfDataset.initNetcdfFileCache(0, 10, 5*60);
+                }
+            }
         }
     }
 

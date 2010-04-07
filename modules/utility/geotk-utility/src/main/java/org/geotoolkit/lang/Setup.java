@@ -58,8 +58,8 @@ import org.geotoolkit.resources.Errors;
  *   </tr><tr>
  *     <td nowrap>{@code geotk-utility}</td>
  *     <td>
- *       {@link Logging#forceMonolineConsoleOutput Logging.forceMonolineConsoleOutput(null)}
- *       (unless {@code platform=server}).
+ *       {@link Logging#forceMonolineConsoleOutput Logging.forceMonolineConsoleOutput(null)}<br>
+ *       unless {@code platform=server}.
  *     </td>
  *     <td>&nbsp;</td>
  *   </tr><tr>
@@ -74,9 +74,9 @@ import org.geotoolkit.resources.Errors;
  *   </tr><tr>
  *     <td nowrap>{@code geotk-coverageio}</td>
  *     <td>
- *       {@code Spi.registerDefaults(null)} on
- *       {@link org.geotoolkit.image.io.plugin.WorldFileImageReader.Spi#registerDefaults WorldFileImageReader} and
- *       {@link org.geotoolkit.image.io.plugin.WorldFileImageWriter.Spi#registerDefaults WorldFileImageWriter}.
+ *      ({@link org.geotoolkit.image.io.plugin.WorldFileImageReader.Spi#registerDefaults WorldFileImageReader} |
+ *       {@link org.geotoolkit.image.io.plugin.WorldFileImageWriter.Spi#registerDefaults WorldFileImageWriter})
+ *       {@code .Spi.registerDefaults(null)}.
  *     </td>
  *     <td>
  *       Remove from {@link IIORegistry} every plugins defined in any {@code org.geotoolkit} package.</li>
@@ -84,8 +84,8 @@ import org.geotoolkit.resources.Errors;
  *   </tr><tr>
  *     <td nowrap>{@code geotk-coverageio-netcdf}</td>
  *     <td>
- *       {@link ucar.nc2.dataset.NetcdfDataset#initNetcdfFileCache(int,int,int)}
- *       if no cache is already defined.
+ *       {@link ucar.nc2.dataset.NetcdfDataset#initNetcdfFileCache(int,int,int)}<br>
+ *       unless a cache is already defined.
  *     </td>
  *     <td>
  *       {@link ucar.nc2.dataset.NetcdfDataset#shutdown()}.
@@ -105,7 +105,7 @@ import org.geotoolkit.resources.Errors;
  * package for performing a better work with system preferences.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.10
+ * @version 3.11
  *
  * @since 3.10
  * @module
@@ -147,7 +147,7 @@ public final class Setup {
      * <table border="1" cellspacing="0">
      *   <tr bgcolor="lightblue">
      *     <th nowrap>&nbsp;Key&nbsp;</th>
-     *     <th nowrap>&nbsp;Value&nbsp;</th>
+     *     <th nowrap>&nbsp;Valid values&nbsp;</th>
      *     <th nowrap>&nbsp;Default&nbsp;</th>
      *     <th nowrap>&nbsp;Meaning&nbsp;</th>
      *   </tr>
@@ -156,6 +156,12 @@ public final class Setup {
      *     <td nowrap>&nbsp;{@code server}|{@code desktop}&nbsp;</td>
      *     <td nowrap>&nbsp;{@code desktop}&nbsp;</td>
      *     <td nowrap>&nbsp;Whatever the library is run for a desktop application or a server.&nbsp;</td>
+     *   </tr>
+     *   <tr>
+     *     <td nowrap>&nbsp;{@code netcdfCacheLimit}&nbsp;</td>
+     *     <td nowrap>&nbsp;Positive integer&nbsp;</td>
+     *     <td nowrap>&nbsp;0&nbsp;</td>
+     *     <td nowrap>&nbsp;Maximum number of elements in the NetCDF cache (0 for no cache).&nbsp;</td>
      *   </tr>
      *   <tr>
      *     <td nowrap>&nbsp;{@code force}&nbsp;</td>
@@ -198,7 +204,7 @@ public final class Setup {
          * Now performs every module-specific initialization.
          */
         for (final SetupService service : ServiceLoader.load(SetupService.class)) {
-            service.initialize(reinit);
+            service.initialize(properties, reinit);
         }
     }
 
@@ -210,9 +216,11 @@ public final class Setup {
      */
     @Configuration
     public static synchronized void shutdown() {
-        state = 2;
-        for (final SetupService service : ServiceLoader.load(SetupService.class)) {
-            service.shutdown();
+        if (state != 2) {
+            state = 2;
+            for (final SetupService service : ServiceLoader.load(SetupService.class)) {
+                service.shutdown();
+            }
         }
     }
 

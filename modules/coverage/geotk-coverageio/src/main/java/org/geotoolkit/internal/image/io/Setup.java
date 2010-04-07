@@ -20,6 +20,7 @@ package org.geotoolkit.internal.image.io;
 import java.util.List;
 import java.util.Iterator;
 import java.util.ArrayList;
+import java.util.Properties;
 import javax.imageio.spi.IIORegistry;
 
 import org.geotoolkit.internal.SetupService;
@@ -31,7 +32,7 @@ import org.geotoolkit.image.io.plugin.WorldFileImageWriter;
  * Performs initialization and shutdown of the {@code geotk-coverageio} module.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.10
+ * @version 3.11
  *
  * @see org.geotoolkit.lang.Setup
  *
@@ -43,7 +44,7 @@ public final class Setup implements SetupService {
      * Registers the world-file readers and writers.
      */
     @Override
-    public void initialize(boolean reinit) {
+    public void initialize(final Properties properties, final boolean reinit) {
         final IIORegistry registry = IIORegistry.getDefaultInstance();
         WorldFileImageReader.Spi.registerDefaults(registry);
         WorldFileImageWriter.Spi.registerDefaults(registry);
