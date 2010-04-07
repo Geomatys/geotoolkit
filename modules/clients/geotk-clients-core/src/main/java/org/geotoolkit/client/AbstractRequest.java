@@ -95,9 +95,17 @@ public abstract class AbstractRequest implements Request {
         final String subPath = getSubPath();
         if(subPath != null){
             if(completeURL.endsWith("/")){
-                completeURL = completeURL + subPath;
+                if(subPath.startsWith("/")){
+                    completeURL = completeURL.substring(0,completeURL.length()-1) + subPath;
+                }else{
+                    completeURL = completeURL + subPath;
+                }
             }else{
-                completeURL = completeURL + "/" + subPath;
+                if(subPath.startsWith("/")){
+                    completeURL = completeURL + subPath;
+                }else{
+                    completeURL = completeURL + "/" + subPath;
+                }
             }
         }
 
