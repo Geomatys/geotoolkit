@@ -29,6 +29,9 @@ import org.opengis.feature.Property;
 import org.opengis.feature.type.PropertyDescriptor;
 
 /**
+ * OSM way element. a Way is composed of nodes and can represent "anything"
+ * exemple : a road, a building, city limits, ... the type can be defined by
+ * analyzing the different tags of the way.
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
@@ -50,6 +53,9 @@ public class Way extends IdentifiedElement{
         }
     }
 
+    /**
+     * @return Ordered List of node ids that compose this way.
+     */
     public List<Long> getNodesIds() {
         return nodes;
     }

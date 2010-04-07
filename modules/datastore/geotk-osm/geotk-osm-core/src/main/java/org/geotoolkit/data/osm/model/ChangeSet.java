@@ -18,9 +18,11 @@
 package org.geotoolkit.data.osm.model;
 
 /**
+ * OSM Changeset object.
  *
  * @author Johann sorel (Geomatys)
  * @module pending
+ * @todo complete with all properties
  */
 public class ChangeSet {
 

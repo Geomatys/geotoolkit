@@ -28,6 +28,10 @@ import org.opengis.feature.Property;
 import org.opengis.feature.type.PropertyDescriptor;
 
 /**
+ * OSM Node, nodes are the base element that compose ways and relations.
+ * Nodes are defined in 2D Lat/Long coordinates (in degrees).
+ * The corresponding Coordinate Reference System is EPSG:4326 or CRS:84 depending
+ * if you place latitude (EPSG:4326) or longitude (CRS:84) first.
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
@@ -45,10 +49,16 @@ public class Node extends IdentifiedElement{
         this.lon = lon;
     }
 
+    /**
+     * @return double : latitude in degree of this node
+     */
     public double getLatitude() {
         return lat;
     }
 
+    /**
+     * @return double : longitude in degree of this node
+     */
     public double getLongitude() {
         return lon;
     }

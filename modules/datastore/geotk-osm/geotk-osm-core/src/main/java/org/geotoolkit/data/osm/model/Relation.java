@@ -31,6 +31,9 @@ import org.opengis.feature.Property;
 import org.opengis.feature.type.PropertyDescriptor;
 
 /**
+ * OSM Relation, Open Street Map relations can define "anything".
+ * A building can be expressed by a relation with the border as a Way
+ * and nodes for entrance and emergency exits.
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
@@ -51,6 +54,9 @@ public class Relation extends IdentifiedElement{
         }
     }
 
+    /**
+     * @return List of this relation member, those are ordered.
+     */
     public List<Member> getMembers() {
         return members;
     }

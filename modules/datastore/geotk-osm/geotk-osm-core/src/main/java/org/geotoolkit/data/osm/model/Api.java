@@ -44,30 +44,51 @@ public class Api {
         this.timeout = timeout;
     }
 
+    /**
+     * @return double the maximum area in square degrees that can be queried by API calls
+     */
     public double getAreaMaximum() {
         return areaMaximum;
     }
 
+    /**
+     * @return maximum changeset number of elements that can be returned.
+     */
     public int getChangesetMaximum() {
         return changesetMaximum;
     }
 
+    /**
+     * @return server time out
+     */
     public int getTimeout() {
         return timeout;
     }
 
+    /**
+     * @return number of trace points per page returned for GPX queries.
+     */
     public int getTracePointsPerPage() {
         return tracePointsPerPage;
     }
 
+    /**
+     * @return maximum api version supported by this osm server.
+     */
     public String getVersionMaximum() {
         return versionMaximum;
     }
 
+    /**
+     * @return minimum api version supported by this osm server.
+     */
     public String getVersionMinimum() {
         return versionMinimum;
     }
 
+    /**
+     * @return number of points per way returned for way elements.
+     */
     public int getWayNodeMaximum() {
         return wayNodeMaximum;
     }

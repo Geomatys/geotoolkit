@@ -29,6 +29,9 @@ import org.geotoolkit.util.collection.UnmodifiableArrayList;
 import org.opengis.feature.type.AttributeDescriptor;
 
 /**
+ * Commun abstract class for OSM main model objects : Node, Way and Relation.
+ * Thoses share several properties like identifiers, versions, timestamp, user or tags.
+ * This classe extends Feature, which makes it usable anywhere is geotoolkit.
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
@@ -64,26 +67,50 @@ public abstract class IdentifiedElement extends AbstractFeature implements Seria
         }
     }
 
+    /**
+     * Identifier of the current osm element.
+     * @return element id
+     */
     public long getId() {
         return id;
     }
 
+    /**
+     * Current version of the osm element.
+     * @return version
+     */
     public int getVersion() {
         return version;
     }
 
+    /**
+     * The changeset identifier that contain the version of the element.
+     * @return changeset id
+     */
     public int getChangeset() {
         return changeset;
     }
 
+    /**
+     * Most
+     * @return User
+     */
     public User getUser() {
         return user;
     }
 
+    /**
+     * Time of the element creation or update if version is superior to 1.
+     * @return long in millisecond since 1 january 1970
+     */
     public long getTimestamp() {
         return timestamp;
     }
 
+    /**
+     * Get all tags related to this osm element.
+     * @return List of tags, never null but can be empty.
+     */
     public List<Tag> getTags() {
         return tags;
     }

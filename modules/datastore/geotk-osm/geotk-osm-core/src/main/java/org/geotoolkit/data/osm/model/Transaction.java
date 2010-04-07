@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * Diff files are composed of transactions.
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
@@ -44,14 +45,23 @@ public class Transaction {
         this.generator = generator;
     }
 
+    /**
+     * @return TransactionType
+     */
     public TransactionType getType(){
         return type;
     }
 
+    /**
+     * @return List if element affected by this transaction.
+     */
     public List<IdentifiedElement> getElements(){
         return elements;
     }
 
+    /**
+     * @return Name of the tool which generated this transaction.
+     */
     public String getGenerator() {
         return generator;
     }

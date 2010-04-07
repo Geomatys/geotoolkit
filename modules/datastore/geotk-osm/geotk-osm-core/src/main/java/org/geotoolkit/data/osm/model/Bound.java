@@ -30,6 +30,14 @@ public class Bound {
 
     private Bound(){};
 
+    /**
+     *
+     * @param xmin : minimum longitude
+     * @param xmax : maximum longitude
+     * @param ymin : minimum latitude
+     * @param ymax : maximum latitude
+     * @return Immutable envelope in WGS84 with the given extents.
+     */
     public static Envelope create(double xmin, double xmax, double ymin, double ymax){
         return new ImmutableEnvelope(DefaultGeographicCRS.WGS84, xmin, xmax, ymin, ymax);
     }

@@ -20,7 +20,8 @@ package org.geotoolkit.data.osm.model;
 import org.opengis.filter.identity.Identifier;
 
 /**
- *
+ * Simple Identifier for osm features.
+ * 
  * @author Johann Sorel (Geomatys)
  * @module pending
  */

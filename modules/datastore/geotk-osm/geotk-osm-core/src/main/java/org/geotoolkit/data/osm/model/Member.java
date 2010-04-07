@@ -20,6 +20,7 @@ package org.geotoolkit.data.osm.model;
 import java.io.Serializable;
 
 /**
+ * A Single Member of a relation.
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
@@ -40,14 +41,27 @@ public class Member implements Serializable {
         this.role = role;
     }
 
+    /**
+     * @return id of the referenced member.
+     */
     public long getReference() {
         return ref;
     }
 
+    /**
+     * A Member has a defined role in the relation, expressed by the string
+     * for exemple a way can have the role "Border" while a Node
+     * can have the role "Entrance" for a relation defining a parc.
+     * @return String
+     */
     public String getRole() {
         return role;
     }
 
+    /**
+     * Narrow the type of the relation member, which can be a node, way or relation.
+     * @return MemberType
+     */
     public MemberType getType() {
         return type;
     }

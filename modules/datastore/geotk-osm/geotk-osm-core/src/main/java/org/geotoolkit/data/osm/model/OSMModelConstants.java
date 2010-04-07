@@ -26,6 +26,7 @@ import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.FeatureTypeFactory;
 
 /**
+ * Global OSM constants, defines the namespace and Feature types.
  *
  * @author Johann Sorel (Geomatys)
  * @module pending

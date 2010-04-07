@@ -23,6 +23,10 @@ import org.opengis.feature.Property;
 import org.opengis.filter.identity.Identifier;
 
 /**
+ * OSM Tag. Every OSM element might have tags.
+ * A Tag is combinaison of a Key and a Value, both are String values.
+ * An element can only have one tag with the given key.
+ * If several values has to be added for the same tag, then they must separated with a ; .
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
@@ -38,10 +42,16 @@ public class Tag extends AbstractComplexAttribute<Identifier>{
         this.v = value;
     }
 
+    /**
+     * @return Tag key
+     */
     public String getK() {
         return k;
     }
 
+    /**
+     * @return tag value
+     */
     public String getV() {
         return v;
     }

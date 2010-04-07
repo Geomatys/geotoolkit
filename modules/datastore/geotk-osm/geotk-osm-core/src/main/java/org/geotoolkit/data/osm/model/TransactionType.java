@@ -18,6 +18,8 @@
 package org.geotoolkit.data.osm.model;
 
 /**
+ * Diff files are composed of transactions.
+ * the different kinds of transactions are expressed in this enum.
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
@@ -32,6 +34,9 @@ public enum TransactionType {
         this.tagName = tagName;
     }
 
+    /**
+     * @return XML tag associeted to this transaction.
+     */
     public String getTagName() {
         return tagName;
     }
