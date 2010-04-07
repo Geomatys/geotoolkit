@@ -86,7 +86,7 @@
  *   <li>{@link org.geotoolkit.image.io.plugin.WorldFileImageWriter.Spi#registerDefaults(ServiceRegistry)}</li>
  * </ol>
  * <ul>
- *   <li><b>Alternative:</b> {@link org.geotoolkit.lang.Setup#initialize(boolean)} performs
+ *   <li><b>Alternative:</b> {@link org.geotoolkit.lang.Setup#initialize(Properties)} performs
  *       (among other tasks) all the above tasks except 1.</li>
  * </ul>
  * <p>
@@ -113,7 +113,7 @@
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Antoine Hnawia (IRD)
- * @version 3.08
+ * @version 3.11
  *
  * @see org.geotoolkit.image.io.plugin
  *
@@ -122,4 +122,5 @@
  */
 package org.geotoolkit.image.io;
 
+import java.util.Properties;              // For javadoc
 import javax.imageio.spi.ServiceRegistry; // For javadoc

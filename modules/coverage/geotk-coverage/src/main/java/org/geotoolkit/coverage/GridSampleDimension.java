@@ -73,8 +73,8 @@ import org.geotoolkit.lang.Immutable;
  * grid coverage} storing their sample values as integers. This explain the "{@code Grid}" prefix
  * in the class name.
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.11
  *
  * @since 1.2
  * @module
@@ -1001,13 +1001,27 @@ public class GridSampleDimension implements SampleDimension, Serializable {
     }
 
     /**
+     * Returns {@code true} if the {@linkplain #getRange range} includes negative values. If
+     * this sample dimension does not declare any quantitative category, then this method
+     * returns {@code false}.
+     * <p>
+     * Some color models, especially {@link IndexColorModel}, support only unsigned integer.
+     * For such color models, any {@code SampleDimension} for which this method return
+     * {@code true} will require special handling.
+     *
+     * @return {@code true} if the {@linkplain #getRange range} includes negative values.
+     *
+     * @since 3.11
+     */
+    public boolean isRangeSigned() {
+        return (categories != null) && categories.isRangeSigned();
+    }
+
+    /**
      * Returns {@code true} if at least one value of {@code values} is
      * in the range {@code lower} inclusive to {@code upper} exclusive.
      */
-    private static boolean rangeContains(final double   lower,
-                                         final double   upper,
-                                         final double[] values)
-    {
+    private static boolean rangeContains(final double lower, final double upper, final double[] values) {
         if (values != null) {
             for (int i=0; i<values.length; i++) {
                 final double v = values[i];

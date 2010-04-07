@@ -101,7 +101,7 @@ final class SampleTranscoder extends PointOpImage {
         boolean forceSigned = false;
         if (image.getSampleModel().getDataType() == DataBuffer.TYPE_USHORT) {
             for (final CategoryList list : categories) {
-                if (list.isSigned()) {
+                if (list.isRangeSigned()) {
                     forceSigned = true;
                     break;
                 }

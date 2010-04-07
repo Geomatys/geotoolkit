@@ -113,7 +113,7 @@ import org.geotoolkit.internal.image.io.Warnings;
  * </ul>
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.08
+ * @version 3.11
  *
  * @see SpatialImageWriter
  *
@@ -519,7 +519,12 @@ public abstract class SpatialImageReader extends ImageReader implements WarningP
          */
         final boolean isFloat;
         final long floor, ceil;
-        final int dataType = (type != null) ? type.getSampleModel().getDataType() : getRawDataType(imageIndex);
+        int dataType = (type != null) ? type.getSampleModel().getDataType() : getRawDataType(imageIndex);
+        if (dataType == DataBuffer.TYPE_SHORT && parameters instanceof SpatialImageReadParam) {
+            if (((SpatialImageReadParam) parameters).isAllowedConversion(SampleConversionType.SHIFT_SIGNED_INTEGERS)) {
+                dataType = DataBuffer.TYPE_USHORT;
+            }
+        }
         switch (dataType) {
             case DataBuffer.TYPE_UNDEFINED: // Actually we don't really know what to do for this case...
             case DataBuffer.TYPE_DOUBLE:    // Fall through since we can treat this case as float.
@@ -828,8 +833,8 @@ public abstract class SpatialImageReader extends ImageReader implements WarningP
      * the default {@link #getImageType(int, ImageReadParam, SampleConverter[]) getImageType(...)}
      * implementation will add an offset in order to fit all sample values in the range of strictly
      * positive values.
-     *
-     * <blockquote><table border="1"><tr><td>
+     * <p>
+     * <table border="1" cellspacing="0" cellpadding="9"><tr><td>
      * <b>Example:</b> if the range of sample values is [-23000 &hellip; +23000], then there
      * is a choice:
      *
@@ -842,8 +847,8 @@ public abstract class SpatialImageReader extends ImageReader implements WarningP
      *
      *   <p>Positive values are stored in the [0 &hellip; {@value java.lang.Short#MAX_VALUE}] range
      *   directly, while the negative values are converted in their two's complement binary form
-     *   before to be stored in the [{@value java.lang.Short#MIN_VALUE} &hellip; 65535] range. The
-     *   space not used by the [-23000 &hellip; +23000] range is lost.</p></li>
+     *   before to be stored in the [32768 &hellip; 65535] range. The space not used by the
+     *   [-23000 &hellip; +23000] range is lost.</p></li>
      *
      *   <li><p><b>Unsigned integers storage:</b> If this method returns {@link DataBuffer#TYPE_USHORT
      *   TYPE_USHORT}, then the data will be translated to the smallest strictly positive range that
@@ -851,8 +856,8 @@ public abstract class SpatialImageReader extends ImageReader implements WarningP
      *   missing data. The result is a smaller {@linkplain IndexColorModel Index Color Model} than
      *   the one used by untranslated data.</p></li>
      * </ol>
-     * </td></tr></table></blockquote>
-     *
+     * </td></tr></table>
+     * <p>
      * Beware that signed integers (case 1 in the above example) used with {@link IndexColorModel}
      * require explicit casts to the {@code short} type as in the example below. Using directly the
      * {@link java.awt.image.Raster#getSample(int,int,int)} return value is not suffisient because
@@ -860,7 +865,7 @@ public abstract class SpatialImageReader extends ImageReader implements WarningP
      * returned.
      *
      * {@preformat java
-     *     short value = (short) myRaster.getSample(x, y, b);
+     *     int value = (short) myRaster.getSample(x, y, b); // Intentional cast int → short → int.
      * }
      *
      * Given this gotcha and the fact that signed integers require large color palette, users are
@@ -871,6 +876,7 @@ public abstract class SpatialImageReader extends ImageReader implements WarningP
      * @throws IOException If an error occurs reading the format information from the input source.
      *
      * @see #getImageType(int, ImageReadParam, SampleConverter[])
+     * @see SampleConversionType#SHIFT_SIGNED_INTEGERS
      */
     protected int getRawDataType(final int imageIndex) throws IOException {
         checkImageIndex(imageIndex);

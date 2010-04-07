@@ -20,6 +20,7 @@ package org.geotoolkit.image.io;
 import java.awt.Point;
 import java.util.Set;
 import java.util.Map;
+import java.util.EnumSet;
 import java.util.LinkedHashSet;
 import java.util.Locale;
 import java.util.logging.LogRecord;
@@ -28,12 +29,12 @@ import java.awt.image.IndexColorModel;
 import javax.imageio.IIOParam;
 import javax.imageio.ImageReader;
 import javax.imageio.ImageReadParam;
-import org.geotoolkit.internal.image.io.Warnings;
 
 import org.opengis.referencing.cs.AxisDirection;
 
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.IndexedResourceBundle;
+import org.geotoolkit.internal.image.io.Warnings;
 import org.geotoolkit.util.converter.Classes;
 
 
@@ -124,7 +125,7 @@ import org.geotoolkit.util.converter.Classes;
  * }
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.08
+ * @version 3.11
  *
  * @since 3.05 (derived from 2.4)
  * @module
@@ -156,6 +157,11 @@ public class SpatialImageReadParam extends ImageReadParam implements WarningProd
      * The band to display.
      */
     private int visibleBand;
+
+    /**
+     * The kind of sample conversions which are allowed, or {@code null} if none.
+     */
+    private Set<SampleConversionType> allowedConversions;
 
     /**
      * The image reader which created the parameters, or {@code null} if unknown.
@@ -381,6 +387,46 @@ public class SpatialImageReadParam extends ImageReadParam implements WarningProd
      */
     public void setPaletteName(final String palette) {
         this.palette = palette;
+    }
+
+    /**
+     * Returns {@code true} if the given kind of sample conversions is allowed. By default, newly
+     * constructed {@code SpatialImageReadParam} instances return {@code false} for any given type
+     * (i.e. {@link SpatialImageReader} will make its best effort for storing the sample values
+     * with no change). However more efficient storage can be achieved if some changes are allowed
+     * on the sample values. See {@link #setAllowedConversion setAllowedConversion} for examples.
+     *
+     * @param  type The kind of conversion.
+     * @return Whatever the given kind of conversion is allowed.
+     *
+     * @since 3.11
+     */
+    public boolean isAllowedConversion(final SampleConversionType type) {
+        return (allowedConversions != null) && allowedConversions.contains(type);
+    }
+
+    /**
+     * Sets whatever the given kind of sample conversions is allowed. By default, the {@code false}
+     * value is assigned to all conversion types (i.e. {@link SpatialImageReader} will make its best
+     * effort for storing the sample values with no change). However more efficient storage can be
+     * achieved if some changes are allowed on the sample values, for example
+     * {@linkplain SampleConversionType#SHIFT_SIGNED_INTEGERS adding an offset to signed integers}
+     * in order to ensure that all values are positive.
+     *
+     * @param type The kind of conversion.
+     * @param allowed Whatever the given kind of conversion is allowed.
+     *
+     * @since 3.11
+     */
+    public void setAllowedConversion(final SampleConversionType type, final boolean allowed) {
+        if (allowed) {
+            if (allowedConversions == null) {
+                allowedConversions = EnumSet.noneOf(SampleConversionType.class);
+            }
+            allowedConversions.add(type);
+        } else if (allowedConversions != null) {
+            allowedConversions.remove(type);
+        }
     }
 
     /**

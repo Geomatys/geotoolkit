@@ -507,12 +507,13 @@ class CategoryList extends AbstractList<Category> implements MathTransform1D, Co
     }
 
     /**
-     * Returns {@code true} if this list has negative sample values.
+     * Returns {@code true} if the {@linkplain #getRange range} includes negative values. If this
+     * list does not declare any quantitative category, then this method returns {@code false}.
      *
      * @since 3.11
      */
-    final boolean isSigned() {
-        return categories.length != 0 && categories[0].minimum < 0;
+    public final boolean isRangeSigned() {
+        return (categories.length != 0) && categories[0].minimum < 0;
     }
 
     /**

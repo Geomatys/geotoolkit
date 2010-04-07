@@ -79,6 +79,9 @@ public final class GridCoverageLoaderTest extends CatalogTestBase {
     /**
      * Checks the {@code GridCoverage2D} instance for the temperature sample data.
      * Doesn't check the image size, since it depends on the requested envelope.
+     * <p>
+     * <b>NOTE:</b> The sample values tested by this method are those of the coverage
+     * at the {@value LayerTableTest#SAMPLE_TIME} date.
      */
     static void checkTemperatureCoverage(final GridCoverage2D coverage) {
         assertTrue(CRS.equalsIgnoreMetadata(DefaultGeographicCRS.WGS84,
@@ -134,7 +137,7 @@ public final class GridCoverageLoaderTest extends CatalogTestBase {
     public void testCoriolis() throws SQLException, IOException, CoverageStoreException {
         final GridCoverageTable table = getDatabase().getTable(GridCoverageTable.class);
         table.envelope.clear();
-        table.envelope.setVerticalRange(100, 120);
+        table.envelope.setVerticalRange(100, 110);
         table.setLayer(LayerTableTest.NETCDF);
         final GridCoverageReference entry = table.getEntry();
 
@@ -152,6 +155,9 @@ public final class GridCoverageLoaderTest extends CatalogTestBase {
     /**
      * Checks the {@code GridCoverage2D} instance for the coriolis sample data.
      * Doesn't check the image size, since it depends on the requested envelope.
+     * <p>
+     * <b>NOTE:</b> The sample values tested by this method are those of the coverage
+     * at the 100 metres depth.
      */
     static void checkCoriolisCoverage(final GridCoverage2D coverage) {
         assertTrue(coverage.getCoordinateReferenceSystem2D() instanceof ProjectedCRS);
@@ -178,7 +184,20 @@ public final class GridCoverageLoaderTest extends CatalogTestBase {
         assertTrue("Rendered view shall use an IndexColorModel.",
                 image.getColorModel() instanceof IndexColorModel);
         final IndexColorModel cm = (IndexColorModel) image.getColorModel();
-        assertEquals(65536, cm.getMapSize());
+        assertEquals("Note: if the map size is 65536, it would mean that Geotk failed " +
+                "to convert signed integer values to unsigned integers.", 43002, cm.getMapSize());
         assertEquals(16, cm.getPixelSize());
+        /*
+         * Check the sample values at an an arbitrary position. Note that this is okay to use
+         * a large tolerance factor since the purpose is not to test the 'evaluate' accuracy,
+         * but rather to check that "geophysics" and "rendered" views are not confused. The
+         * actual value vary a bit for image of different resolution or slightly different date.
+         */
+        double[] buffer = null;
+        final Point2D pos = new Point2D.Double(-10, -20);
+        double value = (buffer = coverage.evaluate(pos, buffer))[0];
+        assertEquals("Geophysics value.", 16.76, value, 0.8);
+        value = (buffer = rendered.evaluate(pos, buffer))[0];
+        assertEquals("Rendered value.", 19762, value, 5);
     }
 }

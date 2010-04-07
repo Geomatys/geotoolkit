@@ -52,6 +52,8 @@ import org.geotoolkit.util.converter.Classes;
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.07
  *
+ * @see SampleConversionType
+ *
  * @since 2.4
  * @module
  */
