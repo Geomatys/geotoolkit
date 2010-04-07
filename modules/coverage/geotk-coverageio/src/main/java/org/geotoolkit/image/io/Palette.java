@@ -36,15 +36,17 @@ import org.geotoolkit.util.NullArgumentException;
  * A set of RGB colors created by a {@linkplain PaletteFactory palette factory} from
  * a {@linkplain #name}. A palette can creates a {@linkplain ColorModel color model}
  * (often {@linkplain IndexColorModel indexed}) or an {@linkplain ImageTypeSpecifier
- * image type specifier} from the RGB colors. The color model is retained by the palette
- * as a {@linkplain WeakReference weak reference} (<strong>not</strong> as a {@linkplain
- * java.lang.ref.SoftReference soft reference}) because it may consume up to 256 kilobytes.
- * The purpose of the weak reference is to share existing instances in order to reduce
- * memory usage; the purpose is not to provide caching.
+ * image type specifier} from the RGB colors.
+ *
+ * {@section Sharing <code>IndexColorModel</code> instances}
+ * The color model is retained by the palette as a {@linkplain WeakReference weak reference}
+ * (<strong>not</strong> as a {@linkplain java.lang.ref.SoftReference soft reference}) because
+ * it may consume up to 256 kilobytes. The purpose of the weak reference is to share existing
+ * instances in order to reduce memory usage; the purpose is not to provide caching.
  *
  * @author Martin Desruisseaux (IRD)
  * @author Antoine Hnawia (IRD)
- * @version 3.00
+ * @version 3.11
  *
  * @since 2.4
  * @module
@@ -174,26 +176,23 @@ public abstract class Palette {
     }
 
     /**
-     * Returns the image type specifier for this palette.
+     * Returns the image type specifier for this palette. The default implementation first check
+     * if the specified still in the cache. If not, then the {@link #createImageTypeSpecifier()}
+     * method is invoked and its result is stored in the cache for future reuse.
      *
      * @return  The image type specified for this palette.
      * @throws  FileNotFoundException If the RGB values need to be read from a file
      *          and this file (typically inferred from {@link #name}) is not found.
      * @throws  IOException  If an other kind of I/O error occured.
      */
-    public abstract ImageTypeSpecifier getImageTypeSpecifier() throws FileNotFoundException, IOException;
-
-    /**
-     * Returns the image type specifier from the cache, or {@code null}.
-     */
-    final ImageTypeSpecifier queryCache() {
+    public synchronized ImageTypeSpecifier getImageTypeSpecifier() throws FileNotFoundException, IOException {
         if (specifier != null) {
             final ImageTypeSpecifier candidate = specifier.get();
             if (candidate != null) {
                 return candidate;
             }
         }
-        if (samples!=null && colors!=null) {
+        if (samples != null && colors != null) {
             final ColorModel candidate = colors.get();
             if (candidate != null) {
                 final ImageTypeSpecifier its = new ImageTypeSpecifier(candidate, samples);
@@ -201,17 +200,25 @@ public abstract class Palette {
                 return its;
             }
         }
-        return null;
-    }
-
-    /**
-     * Puts the specified image specifier in the cache.
-     */
-    final void cache(final ImageTypeSpecifier its) {
+        final ImageTypeSpecifier its = createImageTypeSpecifier();
         samples   = its.getSampleModel();
         colors    = new PaletteDisposer.Reference(this, its.getColorModel());
         specifier = new WeakReference<ImageTypeSpecifier>(its);
+        return its;
     }
+
+    /**
+     * Creates a new image type specifier for this palette. This method is invoked by
+     * {@link #getImageTypeSpecifier()} when the specifier is not present in the cache.
+     *
+     * @return  The image type specified for this palette.
+     * @throws  FileNotFoundException If the RGB values need to be read from a file
+     *          and this file (typically inferred from {@link #name}) is not found.
+     * @throws  IOException  If an other kind of I/O error occured.
+     *
+     * @since 3.11
+     */
+    protected abstract ImageTypeSpecifier createImageTypeSpecifier() throws FileNotFoundException, IOException;
 
     /**
      * Returns the color palette as an image of the specified size.

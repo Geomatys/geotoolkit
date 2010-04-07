@@ -72,6 +72,7 @@ import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.image.io.NamedImageStore;
 import org.geotoolkit.image.io.SampleConversionType;
 import org.geotoolkit.image.io.SpatialImageReadParam;
+import org.geotoolkit.image.io.SpatialImageReader;
 import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.image.io.metadata.MetadataHelper;
 import org.geotoolkit.image.io.metadata.SampleDimension;
@@ -488,11 +489,25 @@ public class ImageCoverageReader extends GridCoverageReader {
      * {@linkplain ImageReadParam#setSourceBands source bands} settings may be overwritten
      * by the {@code read} method, which perform its own computation.
      *
+     * @param  index The index of the image to be queried.
      * @return A default Java I/O parameters object to use for controlling the reading process,
      *         or {@code null} if the default {@link #read read} implementation is suffisient.
+     * @throws IOException If an I/O operation was required and failed.
+     *
+     * @since 3.11
+     */
+    protected ImageReadParam createImageReadParam(int index) throws IOException {
+        return createImageReadParam();
+    }
+
+    /**
+     * @deprecated Refactored as {@link #createImageReadParam(int)}.
+     *
+     * @return {@code null}.
      *
      * @since 3.10
      */
+    @Deprecated
     protected ImageReadParam createImageReadParam() {
         return null;
     }
@@ -813,7 +828,12 @@ public class ImageCoverageReader extends GridCoverageReader {
         GridGeometry2D gridGeometry = getGridGeometry(index);
         checkAbortState();
         final AffineTransform change; // The change in the 'gridToCRS' transform.
-        ImageReadParam imageParam = createImageReadParam();
+        ImageReadParam imageParam;
+        try {
+            imageParam = createImageReadParam(index);
+        } catch (IOException e) {
+            throw new CoverageStoreException(formatErrorMessage(e), e);
+        }
         final int[] srcBands;
         final int[] dstBands;
         if (param != null) {
@@ -869,10 +889,11 @@ public class ImageCoverageReader extends GridCoverageReader {
             change   = null;
         }
         /*
-         * Read the image using the ImageReader.read(...) method.  We could have used
-         * ImageReader.readAsRenderedImage(...) instead in order to give the reader a
-         * chance to return a tiled image,  but experience with some formats suggests
-         * that it requires to keep the ImageReader with its input stream open.
+         * At this point, the standard parameters (source region, source bands) are set.
+         * The following is Geotk-specific. First, check if we should allow the image
+         * reader to add an offset to signed intergers in order to make them unsigned.
+         * We will allow such offset if the SampleDimensions declare unsigned range of
+         * sample values.
          */
         final GridSampleDimension[] bands = getSampleDimensions(index, srcBands, dstBands);
         if (!isRangeSigned(bands)) {
@@ -881,11 +902,32 @@ public class ImageCoverageReader extends GridCoverageReader {
             }
             if (imageParam instanceof SpatialImageReadParam) {
                 final SpatialImageReadParam sp = (SpatialImageReadParam) imageParam;
-                sp.setConversionAllowed(SampleConversionType.SHIFT_SIGNED_INTEGERS, true);
+                sp.setSampleConversionAllowed(SampleConversionType.SHIFT_SIGNED_INTEGERS, true);
             }
+        }
+        /*
+         * Next, if the image does not have its own color palette, provides a palette factory
+         * which will create the IndexColorModel (if needed) from the GridSampleDimension.
+         */
+        boolean usePaletteFactory = false;
+        if (bands != null && bands.length != 0 && imageReader instanceof SpatialImageReader) try {
+            if (!((SpatialImageReader) imageReader).hasColors(index)) {
+                if (imageParam == null) {
+                    imageParam = imageReader.getDefaultReadParam();
+                }
+                usePaletteFactory = (imageParam instanceof SpatialImageReadParam);
+            }
+        } catch (IOException e) {
+            throw new CoverageStoreException(formatErrorMessage(e), e);
         }
         final Map<?,?> properties = getProperties(index);
         checkAbortState();
+        /*
+         * Read the image using the ImageReader.read(...) method.  We could have used
+         * ImageReader.readAsRenderedImage(...) instead in order to give the reader a
+         * chance to return a tiled image,  but experience with some formats suggests
+         * that it requires to keep the ImageReader with its input stream open.
+         */
         final String name;
         final RenderedImage image;
         try {
@@ -894,15 +936,17 @@ public class ImageCoverageReader extends GridCoverageReader {
             } catch (BackingStoreException e) {
                 throw e.unwrapOrRethrow(IOException.class);
             }
-            /*
-             * Read the image using the ImageReader.read(...) method.  We could have used
-             * ImageReader.readAsRenderedImage(...) instead in order to give the reader a
-             * chance to return a tiled image,  but experience with some formats suggests
-             * that it requires to keep the ImageReader with its input stream open.
-             */
+            if (usePaletteFactory) {
+                SampleDimensionPalette.USE_BANDS.set(bands);
+                ((SpatialImageReadParam) imageParam).setPaletteFactory(SampleDimensionPalette.FACTORY);
+            }
             image = imageReader.read(index, imageParam);
         } catch (IOException e) {
             throw new CoverageStoreException(formatErrorMessage(e), e);
+        } finally {
+            if (usePaletteFactory) {
+                SampleDimensionPalette.USE_BANDS.remove();
+            }
         }
         /*
          * If the grid geometry changed as a result of subsampling or reading a smaller region,

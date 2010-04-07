@@ -87,7 +87,7 @@ import org.geotoolkit.util.XArrays;
  * fill the metadata information.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.07
+ * @version 3.11
  *
  * @see ImageWriterAdapter
  *
@@ -560,6 +560,23 @@ public abstract class ImageReaderAdapter extends SpatialImageReader {
             }
         }
         return null;
+    }
+
+    /**
+     * Returns {@code true} if the image at the given index has a color palette. The default
+     * implementation delegates to the {@linkplain #main} reader if it is an instance of
+     * {@link SpatialImageReader}, or returns {@code true} otherwise (on the assumption that
+     * the wrapped reader is for some standard format like PNG).
+     *
+     * @since 3.11
+     */
+    @Override
+    public boolean hasColors(final int imageIndex) throws IOException {
+        checkImageIndex(imageIndex);
+        if (main instanceof SpatialImageReader) {
+            return ((SpatialImageReader) main).hasColors(imageIndex);
+        }
+        return true;
     }
 
     /**

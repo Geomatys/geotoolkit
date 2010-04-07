@@ -33,7 +33,7 @@ import org.geotoolkit.internal.image.ScaledColorSpace;
  * {@link DataBuffer#TYPE_FLOAT}.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @version 3.11
  *
  * @since 2.4
  * @module
@@ -81,7 +81,7 @@ final class ContinuousPalette extends Palette {
      * to values in the range of this palette.
      */
     @Override
-    double getScale() {
+    final double getScale() {
         return maximum - minimum;
     }
 
@@ -90,7 +90,7 @@ final class ContinuousPalette extends Palette {
      * to values in the range of this palette.
      */
     @Override
-    double getOffset() {
+    final double getOffset() {
         return minimum;
     }
 
@@ -102,11 +102,7 @@ final class ContinuousPalette extends Palette {
      * @throws  IOException If an I/O operation was needed and failed.
      */
     @Override
-    public synchronized ImageTypeSpecifier getImageTypeSpecifier() throws IOException {
-        ImageTypeSpecifier its = queryCache();
-        if (its != null) {
-            return its;
-        }
+    protected ImageTypeSpecifier createImageTypeSpecifier() throws IOException {
         final ColorSpace colorSpace;
         if (minimum < maximum && !Float.isInfinite(minimum) && !Float.isInfinite(maximum)) {
             colorSpace = new ScaledColorSpace(numBands, visibleBand, minimum, maximum);
@@ -118,10 +114,8 @@ final class ContinuousPalette extends Palette {
         for (int i=numBands; --i>=0;) {
             bankIndices[i] = i;
         }
-        its = ImageTypeSpecifier.createBanded(colorSpace,
+        return ImageTypeSpecifier.createBanded(colorSpace,
                 bankIndices, bandOffsets, dataType, false, false);
-        cache(its);
-        return its;
     }
 
     /**
@@ -155,6 +149,6 @@ final class ContinuousPalette extends Palette {
      */
     @Override
     public String toString() {
-        return name + " [" + minimum + " ... " + maximum + ']';
+        return name + " [" + minimum + " \u2026 " + maximum + ']';
     }
 }

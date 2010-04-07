@@ -184,9 +184,10 @@ public final class GridCoverageLoaderTest extends CatalogTestBase {
         assertTrue("Rendered view shall use an IndexColorModel.",
                 image.getColorModel() instanceof IndexColorModel);
         final IndexColorModel cm = (IndexColorModel) image.getColorModel();
+        assertEquals("Color map size", 16, cm.getPixelSize());
         assertEquals("Note: if the map size is 65536, it would mean that Geotk failed " +
                 "to convert signed integer values to unsigned integers.", 43002, cm.getMapSize());
-        assertEquals(16, cm.getPixelSize());
+        assertEquals("Transparent pixel", 0, cm.getTransparentPixel());
         /*
          * Check the sample values at an an arbitrary position. Note that this is okay to use
          * a large tolerance factor since the purpose is not to test the 'evaluate' accuracy,

@@ -106,7 +106,7 @@ import org.geotoolkit.resources.IndexedResourceBundle;
  * }
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.05
+ * @version 3.11
  *
  * @since 1.2
  * @module
@@ -179,9 +179,14 @@ public class PaletteFactory {
     private transient ThreadLocal<Locale> warningLocales;
 
     /**
-     * The set of palettes already created.
+     * The set of palettes already created. The {@code getPalette} method implementations
+     * return {@linkplain WeakHashSet#unique unique} {@code Palette} instances in order to
+     * share existing {@link ColorModel} instances when possible. This is useful since the
+     * color models may be big (up to 256 kilobytes).
+     *
+     * @since 3.11
      */
-    private final WeakHashSet<Palette> palettes = WeakHashSet.newInstance(Palette.class);
+    protected final WeakHashSet<Palette> palettes = WeakHashSet.newInstance(Palette.class);
 
     /**
      * The set of palettes protected from garbage collection. We protect a palette as long as it

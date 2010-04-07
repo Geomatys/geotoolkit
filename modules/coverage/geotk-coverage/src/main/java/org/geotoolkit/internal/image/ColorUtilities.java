@@ -28,7 +28,6 @@ import static java.awt.image.DataBuffer.*;
 import org.geotoolkit.lang.Static;
 
 
-
 /**
  * A set of static methods for handling of colors informations. Some of those methods
  * are useful, but not really rigorous. This is why they do not appear in any "official"

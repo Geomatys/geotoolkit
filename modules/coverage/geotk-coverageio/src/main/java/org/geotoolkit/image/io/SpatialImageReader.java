@@ -361,11 +361,42 @@ public abstract class SpatialImageReader extends ImageReader implements WarningP
     }
 
     /**
+     * Returns {@code true} if the image at the given index has a color palette. Some formats like
+     * {@linkplain org.geotoolkit.image.io.plugin.RawImageReader RAW},
+     * {@linkplain org.geotoolkit.image.io.plugin.AsciiGridReader ASCII Grid} or
+     * {@linkplain org.geotoolkit.image.io.plugin.NetcdfImageReader NetCDF} don't store any color
+     * information with the pixel values, while other formats like PNG or JPEG (optionally wrapped
+     * in a {@linkplain org.geotoolkit.image.io.plugin.WorldFileImageReader World File reader})
+     * provide such color palette.
+     * <p>
+     * If this method returns {@code false}, no color information is included in the stream
+     * to be read and users can provide their own color palette with a call to the
+     * {@link SpatialImageReadParam#setPaletteName(String)} method. If this mehod returns
+     * {@code true}, then the image to be read already have its own color information and
+     * any call to the above-mentioned {@code setPaletteName} method are likely to be ignored.
+     * <p>
+     * The default implementation returns {@code false} in every cases. Subclasses shall override
+     * this method if the implemented image format may have a color palette.
+     *
+     * @param  imageIndex The index of the image to be queried.
+     * @return {@code true} if the image at the given index has a color palette.
+     * @throws IOException If an error occurs reading the information from the input source.
+     *
+     * @see SpatialImageReadParam#setPaletteName(String)
+     *
+     * @since 3.11
+     */
+    public boolean hasColors(final int imageIndex) throws IOException {
+        checkImageIndex(imageIndex);
+        return false;
+    }
+
+    /**
      * Returns a collection of {@link ImageTypeSpecifier} containing possible image types to which
      * the given image may be decoded. The default implementation returns a singleton containing
      * <code>{@link #getRawImageType(int) getRawImageType}(imageIndex)</code>.
      *
-     * @param  imageIndex The index of the image to be retrieved.
+     * @param  imageIndex The index of the image to be queried.
      * @return A set of suggested image types for decoding the current given image.
      * @throws IOException If an error occurs reading the format information from the input source.
      */
@@ -521,7 +552,8 @@ public abstract class SpatialImageReader extends ImageReader implements WarningP
         final long floor, ceil;
         int dataType = (type != null) ? type.getSampleModel().getDataType() : getRawDataType(imageIndex);
         if (dataType == DataBuffer.TYPE_SHORT && parameters instanceof SpatialImageReadParam) {
-            if (((SpatialImageReadParam) parameters).isConversionAllowed(SampleConversionType.SHIFT_SIGNED_INTEGERS)) {
+            final SpatialImageReadParam sp = (SpatialImageReadParam) parameters;
+            if (sp.isSampleConversionAllowed(SampleConversionType.SHIFT_SIGNED_INTEGERS)) {
                 dataType = DataBuffer.TYPE_USHORT;
             }
         }
@@ -759,7 +791,13 @@ public abstract class SpatialImageReader extends ImageReader implements WarningP
         if (visibleRange == null) {
             visibleRange = (allRanges != null) ? allRanges : NumberRange.create(floor, ceil);
         }
-        final PaletteFactory factory = PaletteFactory.getDefault();
+        PaletteFactory factory = null;
+        if (parameters instanceof SpatialImageReadParam) {
+            factory = ((SpatialImageReadParam) parameters).getPaletteFactory();
+        }
+        if (factory == null) {
+            factory = PaletteFactory.getDefault();
+        }
         factory.setWarningLocale(locale);
         final Palette palette;
         if (isFloat) {

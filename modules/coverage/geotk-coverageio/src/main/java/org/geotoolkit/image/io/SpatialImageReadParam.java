@@ -151,7 +151,12 @@ public class SpatialImageReadParam extends ImageReadParam implements WarningProd
     /**
      * The name of the color palette.
      */
-    private String palette;
+    private String paletteName;
+
+    /**
+     * The factory for creating a palette from the name.
+     */
+    private PaletteFactory paletteFactory;
 
     /**
      * The band to display.
@@ -366,9 +371,11 @@ public class SpatialImageReadParam extends ImageReadParam implements WarningProd
      * see the {@link PaletteFactory} class javadoc.
      *
      * @return The name of the color palette to apply, or {@code null} if none.
+     *
+     * @see SpatialImageReader#hasColors(int)
      */
     public String getPaletteName() {
-        return palette;
+        return paletteName;
     }
 
     /**
@@ -378,15 +385,65 @@ public class SpatialImageReadParam extends ImageReadParam implements WarningProd
      * {@linkplain PaletteFactory#getDefault default palette factory} for creating a
      * {@linkplain javax.imageio.ImageTypeSpecifier image type specifier}.
      * <p>
+     * <b>Note:</b> This method is useful with image formats that don't store any color information
+     * in the file. If the image format provides its own color palette (as in PNG of JPEG formats),
+     * then the palette name given to this method may be ignored. The
+     * {@link SpatialImageReader#hasColors(int)} method can be invoked in order to check if the
+     * image file provides its own color palette.
+     * <p>
      * For a table of available palette names in the default Geotk installation,
      * see the {@link PaletteFactory} class javadoc.
      *
      * @param palette The name of the color palette to apply.
      *
-     * @see PaletteFactory#getAvailableNames
+     * @see SpatialImageReader#hasColors(int)
+     * @see PaletteFactory#getAvailableNames()
      */
     public void setPaletteName(final String palette) {
-        this.palette = palette;
+        this.paletteName = palette;
+    }
+
+    /**
+     * Returns the palette factory to use for creating a color model from the
+     * {@linkplain #getPaletteName() palette name}. This method is invoked by
+     * the {@link SpatialImageReader#getImageType(int, ImageReadParam, SampleConverter[])
+     * SpatialImageReader.getImageType} method after it has determined the range of sample
+     * values from the {@linkplain SpatialImageReader#getImageMetadata(int) image metadata}.
+     * The returned factory may be used in various way, but the following pseudo-code can be
+     * considered typical:
+     *
+     * {@preformat
+     *     public ImageTypeSpecifier getImageType(int imageIndex, ImageReadParam param, ...) {
+     *         SpatialMetadata md = getImageMetadata(imageIndex);
+     *         // ... process metadata
+     *         return param.getPaletteFactory().getPalette(param.getPaletteName(),
+     *                 lower, upper, size, numBands, visibleBand);
+     *     }
+     * }
+     *
+     * @return The palette factory that the {@link SpatialImageReader#getImageType(int,
+     *         ImageReadParam, SampleConverter[]) SpatialImageReader.getImageType} method
+     *         shall use for creating a color model from the {@linkplain #getPaletteName()
+     *         palette name}, or {@code null} for the {@linkplain PaletteFactory#getDefault()
+     *         default factory}.
+     *
+     * @since 3.11
+     */
+    public PaletteFactory getPaletteFactory() {
+        return paletteFactory;
+    }
+
+    /**
+     * Sets the palette factory to use for creating a color model from the
+     * {@linkplain #getPaletteName() palette name}.
+     *
+     * @param factory The new factory, or {@code null} for the
+     *        {@linkplain PaletteFactory#getDefault() default factory}.
+     *
+     * @since 3.11
+     */
+    public void setPaletteFactory(final PaletteFactory factory) {
+        paletteFactory = factory;
     }
 
     /**
@@ -394,14 +451,14 @@ public class SpatialImageReadParam extends ImageReadParam implements WarningProd
      * constructed {@code SpatialImageReadParam} instances return {@code false} for any given type
      * (i.e. {@link SpatialImageReader} will make its best effort for storing the sample values
      * with no change). However more efficient storage can be achieved if some changes are allowed
-     * on the sample values. See {@link #setConversionAllowed setConversionAllowed} for examples.
+     * on the sample values. See {@link #setSampleConversionAllowed setSampleConversionAllowed} for examples.
      *
      * @param  type The kind of conversion.
      * @return Whatever the given kind of conversion is allowed.
      *
      * @since 3.11
      */
-    public boolean isConversionAllowed(final SampleConversionType type) {
+    public boolean isSampleConversionAllowed(final SampleConversionType type) {
         return (allowedConversions != null) && allowedConversions.contains(type);
     }
 
@@ -418,7 +475,7 @@ public class SpatialImageReadParam extends ImageReadParam implements WarningProd
      *
      * @since 3.11
      */
-    public void setConversionAllowed(final SampleConversionType type, final boolean allowed) {
+    public void setSampleConversionAllowed(final SampleConversionType type, final boolean allowed) {
         if (allowed) {
             if (allowedConversions == null) {
                 allowedConversions = EnumSet.noneOf(SampleConversionType.class);
@@ -501,8 +558,8 @@ public class SpatialImageReadParam extends ImageReadParam implements WarningProd
         final StringBuilder buffer = toStringBegining(this,
                 sourceRegion, destinationOffset,
                 sourceXSubsampling, sourceYSubsampling, sourceBands);
-        if (palette != null) {
-            buffer.append("palette=\"").append(palette).append('"');
+        if (paletteName != null) {
+            buffer.append("palette=\"").append(paletteName).append('"');
         }
         return toStringEnd(buffer, dimensionSlices != null ? dimensionSlices.identifiersMap : null);
     }

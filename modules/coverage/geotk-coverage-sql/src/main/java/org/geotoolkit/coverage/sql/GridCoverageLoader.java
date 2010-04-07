@@ -51,7 +51,7 @@ import org.geotoolkit.util.XArrays;
  * {@link GridSampleDimension}s are obtained from the database instead than from the file.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.10
+ * @version 3.11
  *
  * @since 3.10
  * @module
@@ -194,18 +194,20 @@ final class GridCoverageLoader extends ImageCoverageReader {
      * Returns read parameters with the z-slice initialized, if needed.
      */
     @Override
-    protected ImageReadParam createImageReadParam() {
+    protected ImageReadParam createImageReadParam(final int index) throws IOException {
+        ImageReadParam param = super.createImageReadParam(index);
         final int zIndex = ensureInputSet().getIdentifier().zIndex;
         if (zIndex != 0) {
-            final ImageReadParam param = imageReader.getDefaultReadParam();
+            if (param == null) {
+                param = imageReader.getDefaultReadParam();
+            }
             if (param instanceof SpatialImageReadParam) {
                 final DimensionSlice slice = ((SpatialImageReadParam) param).newDimensionSlice();
                 slice.addDimensionId(AxisDirection.UP, AxisDirection.DOWN);
                 slice.setSliceIndex(zIndex - 1);
             }
-            return param;
         }
-        return super.createImageReadParam();
+        return param;
     }
 
     /**

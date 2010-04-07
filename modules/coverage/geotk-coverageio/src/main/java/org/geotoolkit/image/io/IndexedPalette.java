@@ -18,6 +18,7 @@
 package org.geotoolkit.image.io;
 
 import java.awt.Color;
+import java.awt.color.ColorSpace;
 import java.awt.image.*;
 import java.io.IOException;
 import java.io.FileNotFoundException;
@@ -32,17 +33,13 @@ import org.geotoolkit.internal.image.ColorUtilities;
 /**
  * A set of RGB colors created by a {@linkplain PaletteFactory palette factory} from a name.
  * A palette can creates an {@linkplain IndexColorModel index color model} or an {@linkplain
- * ImageTypeSpecifier image type specifier} from the RGB colors. The color model is retained
- * by the palette as a {@linkplain WeakReference weak reference} (<strong>not</strong> as a
- * {@linkplain java.lang.ref.SoftReference soft reference}) because it may consume up to 256
- * kb. The purpose of the weak reference is to share existing instances in order to reduce
- * memory usage; the purpose is not to provide caching.
+ * ImageTypeSpecifier image type specifier} from the RGB colors.
  *
  * @author Antoine Hnawia (IRD)
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.11
  *
- * @since 2.4
+ * @since 3.11 (derived from 2.4)
  * @module
  */
 @Immutable
@@ -64,6 +61,8 @@ final class IndexedPalette extends Palette {
      * If this condition holds, then {@code Palette} will transpose negative values as positive
      * values in the range {@code 0x80000} to {@code 0xFFFF} inclusive. Be aware that such
      * approach consume the maximal amount of memory, i.e. 256 kilobytes for each color model.
+     *
+     * @see SpatialImageReader#getRawDataType(int)
      */
     protected final int lower;
 
@@ -129,7 +128,7 @@ final class IndexedPalette extends Palette {
      * to values in the range of this palette.
      */
     @Override
-    double getScale() {
+    final double getScale() {
         return upper - lower;
     }
 
@@ -138,7 +137,7 @@ final class IndexedPalette extends Palette {
      * to values in the range of this palette.
      */
     @Override
-    double getOffset() {
+    final double getOffset() {
         return lower;
     }
 
@@ -174,32 +173,48 @@ final class IndexedPalette extends Palette {
     }
 
     /**
-     * Returns the image type specifier for this palette. This method tries to reuse existing
+     * Tells if the given ARGB array contains only opaque gray colors, with values
+     * matching the index value.
+     *
+     * @param  ARGB The colors to be inspected.
+     * @return {@code true} if the palette is grayscale, {@code false} otherwise.
+     */
+    public static boolean isGrayPalette(final int[] ARGB) {
+        final boolean shift = (ARGB.length >= 0x100);
+        for (int i=0; i<ARGB.length; i++) {
+            int code = ARGB[i];
+            if ((code & 0xFF000000) != 0xFF000000) {
+                return false; // Non-opaque color.
+            }
+            int expected = i;
+            if (shift) {
+                expected >>>= 8;
+            }
+            if (((code       ) & 0xFF) != expected ||
+                ((code >>>  8) & 0xFF) != expected ||
+                ((code >>> 16) & 0xFF) != expected)
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Creates the image type specifier for this palette. This method tries to reuse existing
      * color model if possible, since it may consume a significant amount of memory.
      *
-     * @throws  FileNotFoundException If the RGB values need to be read from a file and this file
-     *          (typically inferred from {@linkplain #name name}) is not found.
-     * @throws  IOException  If an other find of I/O error occured.
-     * @throws  IIOException If an other kind of error prevent this method to complete.
+     * @throws IOException If the RGB values can not be read from the file.
      */
     @Override
-    public synchronized ImageTypeSpecifier getImageTypeSpecifier() throws IOException {
-        /*
-         * First checks the weak references.
-         */
-        ImageTypeSpecifier its = queryCache();
-        if (its != null) {
-            return its;
-        }
-        /*
-         * Nothing reacheable. Rebuild the specifier.
-         */
+    protected ImageTypeSpecifier createImageTypeSpecifier() throws IOException {
         final int[] ARGB = createARGB();
         final int bits = ColorUtilities.getBitCount(ARGB.length);
         final int type = (bits <= 8) ? DataBuffer.TYPE_BYTE : DataBuffer.TYPE_USHORT;
         final boolean packed = (bits==1 || bits==2 || bits==4);
         final boolean dense  = (packed || bits==8 || bits==16);
-        if (dense && (1 << bits) == ARGB.length && numBands == 1) {
+        final boolean isGray = isGrayPalette(ARGB);
+        if (!isGray && dense && (1 << bits) == ARGB.length && numBands == 1) {
             final byte[] A = new byte[ARGB.length];
             final byte[] R = new byte[ARGB.length];
             final byte[] G = new byte[ARGB.length];
@@ -211,26 +226,30 @@ final class IndexedPalette extends Palette {
                 R[i] = (byte) ((code >>>= 8) & 0xFF);
                 A[i] = (byte) ((code >>>= 8) & 0xFF);
             }
-            its = ImageTypeSpecifier.createIndexed(R,G,B,A, bits, type);
-        } else {
-            /*
-             * The "ImageTypeSpecifier.createIndexed(...)" method is too strict. The IndexColorModel
-             * constructor is more flexible. This block mimic the "ImageTypeSpecifier.createIndexed"
-             * work without the constraints imposed by "createIndexed". Being more flexible consume
-             * less memory for the color palette, since we don't force it to be 64 kb in the USHORT
-             * data type case.
-             */
-            final IndexColorModel colors = ColorUtilities.getIndexColorModel(ARGB, numBands, visibleBand);
-            final SampleModel samples;
-            if (packed) {
-                samples = new MultiPixelPackedSampleModel(type, 1, 1, bits);
-            } else {
-                samples = new PixelInterleavedSampleModel(type, 1, 1, 1, 1, new int[1]);
-            }
-            its = new ImageTypeSpecifier(colors, samples);
+            return ImageTypeSpecifier.createIndexed(R,G,B,A, bits, type);
         }
-        cache(its);
-        return its;
+        /*
+         * The "ImageTypeSpecifier.createIndexed(...)" method is too strict. The IndexColorModel
+         * constructor is more flexible. This block mimic the "ImageTypeSpecifier.createIndexed"
+         * work without the constraints imposed by "createIndexed". Being more flexible consume
+         * less memory for the color palette, since we don't force it to be 64 kb in the USHORT
+         * data type case.
+         */
+        final ColorModel cm;
+        final SampleModel sm;
+        if (isGray) {
+            final ColorSpace cs = ColorSpace.getInstance(ColorSpace.CS_GRAY);
+            cm = new ComponentColorModel(cs, new int[] {bits}, false, true, ColorModel.OPAQUE, type);
+            sm = cm.createCompatibleSampleModel(1, 1);
+        } else {
+            cm = ColorUtilities.getIndexColorModel(ARGB, numBands, visibleBand);
+            if (packed) {
+                sm = new MultiPixelPackedSampleModel(type, 1, 1, bits);
+            } else {
+                sm = new PixelInterleavedSampleModel(type, 1, 1, 1, 1, new int[1]);
+            }
+        }
+        return new ImageTypeSpecifier(cm, sm);
     }
 
     /**
@@ -263,6 +282,6 @@ final class IndexedPalette extends Palette {
      */
     @Override
     public String toString() {
-        return name + " [" + lower + "..." + (upper-1) + "] size=" + size;
+        return name + " [" + lower + " \u2026 " + (upper-1) + "] size=" + size;
     }
 }
