@@ -25,7 +25,7 @@
     <groupId>org.geotoolkit.pending</groupId>
     <artifactId>geotk-client-wcs</artifactId>
     <packaging>jar</packaging>
-    <name>Web Client WCS</name>
+    <name>Java Client WCS</name>
     <description>An OGC Web Coverage Service client implementation.</description>
     <licenses>
         <license>

@@ -24,7 +24,7 @@
   <groupId>org.geotoolkit.pending</groupId>
   <artifactId>clients</artifactId>
   <packaging>pom</packaging>
-  <name>Web Clients</name>
+  <name>Java Clients for Standard WebServices</name>
 
   <description>
     Projects group for pending web clients.

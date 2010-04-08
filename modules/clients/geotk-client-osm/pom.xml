@@ -24,7 +24,7 @@
   <groupId>org.geotoolkit.pending</groupId>
   <artifactId>geotk-client-osm</artifactId>
   <packaging>jar</packaging>
-  <name>Web Client OSM</name>
+  <name>Java Client OSM</name>
 
   <description>
     Open Street Map API Client.

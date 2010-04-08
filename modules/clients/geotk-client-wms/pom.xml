@@ -25,7 +25,7 @@
   <groupId>org.geotoolkit.pending</groupId>
   <artifactId>geotk-client-wms</artifactId>
   <packaging>jar</packaging>
-  <name>Web Client WMS</name>
+  <name>Java Client WMS</name>
 
   <description>
     An OGC Web Map Server client implementation that can be used directly or as 

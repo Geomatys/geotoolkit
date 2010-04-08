@@ -25,7 +25,7 @@
     <groupId>org.geotoolkit.pending</groupId>
     <artifactId>geotk-client-csw</artifactId>
     <packaging>jar</packaging>
-    <name>Web Client CSW</name>
+    <name>Java Client CSW</name>
     <description>An OGC Catalog Service Web client implementation.</description>
     <licenses>
         <license>

@@ -25,7 +25,7 @@
     <groupId>org.geotoolkit.pending</groupId>
     <artifactId>geotk-client-sos</artifactId>
     <packaging>jar</packaging>
-    <name>Web Client SOS</name>
+    <name>Java Client SOS</name>
     <description>An OGC Sensor Observation Service client implementation.</description>
     <licenses>
         <license>
