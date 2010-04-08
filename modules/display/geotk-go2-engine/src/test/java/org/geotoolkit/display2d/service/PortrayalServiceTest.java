@@ -31,7 +31,6 @@ import java.util.List;
 import org.geotoolkit.coverage.CoverageStack;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageFactory;
-import org.geotoolkit.coverage.io.GridCoverageReader;
 
 import org.geotoolkit.data.DataUtilities;
 import org.geotoolkit.data.FeatureCollection;
@@ -39,7 +38,7 @@ import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.display.canvas.control.StopOnErrorMonitor;
 import org.geotoolkit.display.exception.PortrayalException;
 import org.geotoolkit.display2d.GO2Utilities;
-import org.geotoolkit.feature.simple.SimpleFeatureTypeBuilder;
+import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
@@ -89,12 +88,12 @@ public class PortrayalServiceTest {
     public PortrayalServiceTest() throws Exception {
 
         // create the feature collection for tests -----------------------------
-        final SimpleFeatureTypeBuilder sftb = new SimpleFeatureTypeBuilder();
+        final FeatureTypeBuilder sftb = new FeatureTypeBuilder();
         sftb.setName("test");
         sftb.add("geom", Point.class, DefaultGeographicCRS.WGS84);
         sftb.add("att1", String.class);
         sftb.add("att2", Double.class);
-        final SimpleFeatureType sft = sftb.buildFeatureType();
+        final SimpleFeatureType sft = sftb.buildSimpleFeatureType();
         FeatureCollection col = DataUtilities.collection("id", sft);
 
         final FeatureWriter writer = col.getSession().getDataStore().getFeatureWriterAppend(sft.getName());

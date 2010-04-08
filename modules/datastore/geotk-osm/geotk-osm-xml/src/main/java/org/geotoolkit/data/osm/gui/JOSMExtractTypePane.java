@@ -39,10 +39,9 @@ import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.query.QueryUtilities;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.feature.simple.SimpleFeatureTypeBuilder;
+import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.referencing.CRS;
 import org.jdesktop.swingx.JXErrorPane;
-import org.opengis.feature.Feature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.PropertyDescriptor;
 import org.opengis.filter.FilterFactory;
@@ -97,12 +96,12 @@ public class JOSMExtractTypePane extends javax.swing.JPanel {
 
     private void processRailWay(DataStore store, Session session) throws DataStoreException{
         //create the new schema-------------------------------------------------
-        final SimpleFeatureTypeBuilder sftb = new SimpleFeatureTypeBuilder();
+        final FeatureTypeBuilder sftb = new FeatureTypeBuilder();
         sftb.setName("RailWay");
-        sftb.add("id", Long.class, 1,1,false, SimpleFeatureTypeBuilder.PRIMARY_KEY);
+        sftb.add("id", Long.class, 1,1,false, FeatureTypeBuilder.PRIMARY_KEY);
         sftb.add("geometry", LineString.class, EPSG_4326);
         sftb.add("type", String.class);
-        final SimpleFeatureType sft = sftb.buildFeatureType();
+        final SimpleFeatureType sft = sftb.buildSimpleFeatureType();
         store.createSchema(sft.getName(), sft);
         final SimpleFeatureType targetType = (SimpleFeatureType) store.getFeatureType("RailWay");
         //final SimpleFeatureType targetType = sft;
@@ -149,12 +148,12 @@ public class JOSMExtractTypePane extends javax.swing.JPanel {
 
     private void processNatural(DataStore store, Session session) throws DataStoreException{
         //create the new schema-------------------------------------------------
-        final SimpleFeatureTypeBuilder sftb = new SimpleFeatureTypeBuilder();
+        final FeatureTypeBuilder sftb = new FeatureTypeBuilder();
         sftb.setName("Natural");
-        sftb.add("id", Long.class, 1,1,false, SimpleFeatureTypeBuilder.PRIMARY_KEY);
+        sftb.add("id", Long.class, 1,1,false, FeatureTypeBuilder.PRIMARY_KEY);
         sftb.add("geometry", LineString.class, EPSG_4326);
         sftb.add("type", String.class);
-        final SimpleFeatureType sft = sftb.buildFeatureType();
+        final SimpleFeatureType sft = sftb.buildSimpleFeatureType();
         store.createSchema(sft.getName(), sft);
         final SimpleFeatureType targetType = (SimpleFeatureType) store.getFeatureType("Natural");
         //final SimpleFeatureType targetType = sft;
@@ -201,12 +200,12 @@ public class JOSMExtractTypePane extends javax.swing.JPanel {
 
     private void processBuilding(DataStore store, Session session) throws DataStoreException{
         //create the new schema-------------------------------------------------
-        final SimpleFeatureTypeBuilder sftb = new SimpleFeatureTypeBuilder();
+        final FeatureTypeBuilder sftb = new FeatureTypeBuilder();
         sftb.setName("Building");
-        sftb.add("id", Long.class, 1,1,false, SimpleFeatureTypeBuilder.PRIMARY_KEY);
+        sftb.add("id", Long.class, 1,1,false, FeatureTypeBuilder.PRIMARY_KEY);
         sftb.add("geometry", LineString.class, EPSG_4326);
         sftb.add("type", String.class);
-        final SimpleFeatureType sft = sftb.buildFeatureType();
+        final SimpleFeatureType sft = sftb.buildSimpleFeatureType();
         store.createSchema(sft.getName(), sft);
         final SimpleFeatureType targetType = (SimpleFeatureType) store.getFeatureType("Building");
         //final SimpleFeatureType targetType = sft;
@@ -253,12 +252,12 @@ public class JOSMExtractTypePane extends javax.swing.JPanel {
 
     private void processLanduse(DataStore store, Session session) throws DataStoreException{
         //create the new schema-------------------------------------------------
-        final SimpleFeatureTypeBuilder sftb = new SimpleFeatureTypeBuilder();
+        final FeatureTypeBuilder sftb = new FeatureTypeBuilder();
         sftb.setName("Landuse");
-        sftb.add("id", Long.class, 1,1,false, SimpleFeatureTypeBuilder.PRIMARY_KEY);
+        sftb.add("id", Long.class, 1,1,false, FeatureTypeBuilder.PRIMARY_KEY);
         sftb.add("geometry", LineString.class, EPSG_4326);
         sftb.add("type", String.class);
-        final SimpleFeatureType sft = sftb.buildFeatureType();
+        final SimpleFeatureType sft = sftb.buildSimpleFeatureType();
         store.createSchema(sft.getName(), sft);
         final SimpleFeatureType targetType = (SimpleFeatureType) store.getFeatureType("Landuse");
         //final SimpleFeatureType targetType = sft;
@@ -305,12 +304,12 @@ public class JOSMExtractTypePane extends javax.swing.JPanel {
 
     private void processLeisure(DataStore store, Session session) throws DataStoreException{
         //create the new schema-------------------------------------------------
-        final SimpleFeatureTypeBuilder sftb = new SimpleFeatureTypeBuilder();
+        final FeatureTypeBuilder sftb = new FeatureTypeBuilder();
         sftb.setName("Leisure");
-        sftb.add("id", Long.class, 1,1,false, SimpleFeatureTypeBuilder.PRIMARY_KEY);
+        sftb.add("id", Long.class, 1,1,false, FeatureTypeBuilder.PRIMARY_KEY);
         sftb.add("geometry", LineString.class, EPSG_4326);
         sftb.add("type", String.class);
-        final SimpleFeatureType sft = sftb.buildFeatureType();
+        final SimpleFeatureType sft = sftb.buildSimpleFeatureType();
         store.createSchema(sft.getName(), sft);
         final SimpleFeatureType targetType = (SimpleFeatureType) store.getFeatureType("Leisure");
         //final SimpleFeatureType targetType = sft;
@@ -357,12 +356,12 @@ public class JOSMExtractTypePane extends javax.swing.JPanel {
 
     private void processWaterWay(DataStore store, Session session) throws DataStoreException{
         //create the new schema-------------------------------------------------
-        final SimpleFeatureTypeBuilder sftb = new SimpleFeatureTypeBuilder();
+        final FeatureTypeBuilder sftb = new FeatureTypeBuilder();
         sftb.setName("Waterway");
-        sftb.add("id", Long.class, 1,1,false, SimpleFeatureTypeBuilder.PRIMARY_KEY);
+        sftb.add("id", Long.class, 1,1,false, FeatureTypeBuilder.PRIMARY_KEY);
         sftb.add("geometry", LineString.class, EPSG_4326);
         sftb.add("type", String.class);
-        final SimpleFeatureType sft = sftb.buildFeatureType();
+        final SimpleFeatureType sft = sftb.buildSimpleFeatureType();
         store.createSchema(sft.getName(), sft);
         final SimpleFeatureType targetType = (SimpleFeatureType) store.getFeatureType("Waterway");
         //final SimpleFeatureType targetType = sft;
@@ -409,12 +408,12 @@ public class JOSMExtractTypePane extends javax.swing.JPanel {
 
     private void processHighWay(DataStore store, Session session) throws DataStoreException{
         //create the new schema-------------------------------------------------
-        final SimpleFeatureTypeBuilder sftb = new SimpleFeatureTypeBuilder();
+        final FeatureTypeBuilder sftb = new FeatureTypeBuilder();
         sftb.setName("Highway");
-        sftb.add("id", Long.class, 1,1,false, SimpleFeatureTypeBuilder.PRIMARY_KEY);
+        sftb.add("id", Long.class, 1,1,false, FeatureTypeBuilder.PRIMARY_KEY);
         sftb.add("geometry", LineString.class, EPSG_4326);
         sftb.add("type", String.class);
-        final SimpleFeatureType sft = sftb.buildFeatureType();
+        final SimpleFeatureType sft = sftb.buildSimpleFeatureType();
         store.createSchema(sft.getName(), sft);
         final SimpleFeatureType targetType = (SimpleFeatureType) store.getFeatureType("Highway");
         //final SimpleFeatureType targetType = sft;
