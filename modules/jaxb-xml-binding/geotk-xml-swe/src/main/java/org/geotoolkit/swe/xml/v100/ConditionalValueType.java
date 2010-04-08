@@ -487,11 +487,7 @@ public class ConditionalValueType extends AbstractConditionalType {
          *     
          */
         public String getType() {
-            if (type == null) {
-                return "simple";
-            } else {
-                return type;
-            }
+            return type;
         }
 
         /**

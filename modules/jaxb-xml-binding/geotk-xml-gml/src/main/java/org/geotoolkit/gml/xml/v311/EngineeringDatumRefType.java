@@ -125,11 +125,7 @@ public class EngineeringDatumRefType {
      * 
      */
     public String getType() {
-        if (type == null) {
-            return "simple";
-        } else {
-            return type;
-        }
+        return type;
     }
 
     /**

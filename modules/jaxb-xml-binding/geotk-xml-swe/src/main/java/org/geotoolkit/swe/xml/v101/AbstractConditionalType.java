@@ -513,11 +513,7 @@ public class AbstractConditionalType extends AbstractDataRecordEntry {
          *     
          */
         public String getType() {
-            if (type == null) {
-                return "simple";
-            } else {
-                return type;
-            }
+            return type;
         }
 
         /**
