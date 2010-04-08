@@ -50,7 +50,7 @@ public abstract class IndexLucene {
      */
     private File fileDirectory;
 
-    protected Level logLevel;
+    protected Level logLevel = Level.INFO;
     
    /**
      * Creates a new Lucene Index.
