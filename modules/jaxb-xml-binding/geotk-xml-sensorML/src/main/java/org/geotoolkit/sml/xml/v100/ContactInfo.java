@@ -141,6 +141,17 @@ public class ContactInfo implements AbstractContactInfo {
         return this.onlineResource;
     }
 
+    public void setOnlineResource(OnlineResource or) {
+        if (onlineResource == null) {
+            onlineResource = new ArrayList<OnlineResource>();
+        }
+        this.onlineResource.add(or);
+    }
+
+    public void setOnlineResource(List<OnlineResource> or) {
+        this.onlineResource = or;
+    }
+
     /**
      * Gets the value of the hoursOfService property.
      */
