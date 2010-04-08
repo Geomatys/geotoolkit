@@ -732,55 +732,5 @@ public final class TemporalUtilities {
         }
     }
 
-    ////////////////////////////////////////////////////////////////////////////
-    // deprecated , @todo delete at next release ///////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////
-
-    /**
-     * this method creates a date from a string, support for many formats.
-     * @param date string to parse
-     * @return Date
-     * @deprecated use parseDateSafe(date,true) instead.
-     */
-    @Deprecated
-    public static Date createDate(String date) {
-        return parseDateSafe(date, true);
-    }
-
-    /**
-     * This method returns a number of occurences occ in the string s.
-     * @param s : String to search in
-     * @param occ : Occurence to search
-     * @return number of occurence
-     */
-    @Deprecated
-    public static int getOccurence(String s, char occ) {
-        return StringUtilities.getOccurence(s, occ);
-    }
-
-    /**
-     * This method returns a number of occurences occ in the string s.
-     *
-     * @param s : String to search in
-     * @param occ : Occurence to search
-     * @return number of occurence
-     */
-    @Deprecated
-    public static int getOccurence(String s, String occ) {
-        return StringUtilities.getOccurence(s, occ);
-    }
-
-    /**
-     * Search a string for all occurence of the char.
-     *
-     * @param s : String to search in
-     * @param occ : Occurence to search
-     * @return array of all occurence indexes
-     */
-    @Deprecated
-    public static int[] getIndexes(String s, char occ) {
-        return StringUtilities.getIndexes(s, occ);
-    }
-
 }
 

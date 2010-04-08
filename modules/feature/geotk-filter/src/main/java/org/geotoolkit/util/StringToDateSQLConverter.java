@@ -56,7 +56,7 @@ public class StringToDateSQLConverter implements ObjectConverter<String, Date>{
 
     @Override
     public Date convert(String s) throws NonconvertibleObjectException {
-        return new Date(TemporalUtilities.createDate(s).getTime());
+        return new Date(TemporalUtilities.parseDateSafe(s, true).getTime());
     }
 
 }

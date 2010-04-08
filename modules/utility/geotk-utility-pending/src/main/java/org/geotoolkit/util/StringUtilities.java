@@ -201,24 +201,6 @@ public final class StringUtilities {
 
     /**
      * This method returns a number of occurences occ in the string s.
-     * @param s : String to search in
-     * @param occ : Occurence to search
-     * @return number of occurence
-     *
-     * @deprecated Moved to {@link org.geotoolkit.util.Strings#count(String)}.
-     */
-    @Deprecated
-    public static int getOccurence(String s, char occ) {
-        int cnt = 0;
-        int pos = s.indexOf(occ);
-        for(; pos >= 0; pos = s.indexOf(occ, pos+1)){
-            cnt++;
-        }
-        return cnt;
-    }
-
-    /**
-     * This method returns a number of occurences occ in the string s.
      *
      * @param s : String to search in
      * @param occ : Occurence to search

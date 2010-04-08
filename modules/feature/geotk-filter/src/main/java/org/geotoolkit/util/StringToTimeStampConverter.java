@@ -57,7 +57,7 @@ public class StringToTimeStampConverter implements ObjectConverter<String, Times
 
     @Override
     public Timestamp convert(String s) throws NonconvertibleObjectException {
-        return new Timestamp(TemporalUtilities.createDate(s).getTime());
+        return new Timestamp(TemporalUtilities.parseDateSafe(s, true).getTime());
     }
 
 }

@@ -7,6 +7,7 @@ package org.geotoolkit.data.osm.xml;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.stream.XMLStreamException;
@@ -57,7 +58,7 @@ public class OSMXMLReaderTest {
     }
 
     @Test
-    public void testReading() throws FileNotFoundException, XMLStreamException, IOException {
+    public void testReading() throws FileNotFoundException, XMLStreamException, IOException, ParseException {
         File testFile = new File("src/test/resources/org/geotoolkit/test-data/osm/sampleOSM.osm");
         OSMXMLReader reader = new OSMXMLReader(testFile);
 
@@ -89,7 +90,7 @@ public class OSMXMLReaderTest {
         assertEquals(1, n1.getVersion());
         assertEquals(6871, n1.getUser().getId());
         assertEquals("smsm1", n1.getUser().getUserName());
-        assertEquals(TemporalUtilities.createDate("2008-12-17T01:18:42Z").getTime(), n1.getTimestamp());
+        assertEquals(TemporalUtilities.parseDate("2008-12-17T01:18:42Z").getTime(), n1.getTimestamp());
         assertEquals(51.5074089d, n1.getLatitude(), DELTA);
         assertEquals(-0.1080108d,n1.getLongitude(), DELTA);
         assertEquals(0, n1.getTags().size());
@@ -100,7 +101,7 @@ public class OSMXMLReaderTest {
         assertEquals(3, n2.getVersion());
         assertEquals(1697, n2.getUser().getId());
         assertEquals("nickb", n2.getUser().getUserName());
-        assertEquals(TemporalUtilities.createDate("2009-10-29T12:14:35Z").getTime(), n2.getTimestamp());
+        assertEquals(TemporalUtilities.parseDate("2009-10-29T12:14:35Z").getTime(), n2.getTimestamp());
         assertEquals(51.5075933d, n2.getLatitude(), DELTA);
         assertEquals(-0.1076186d,n2.getLongitude(), DELTA);
         assertEquals(2, n2.getTags().size());
@@ -115,7 +116,7 @@ public class OSMXMLReaderTest {
         assertEquals(3, way.getVersion());
         assertEquals(70, way.getUser().getId());
         assertEquals("Matt", way.getUser().getUserName());
-        assertEquals(TemporalUtilities.createDate("2009-05-31T13:39:15Z").getTime(), way.getTimestamp());
+        assertEquals(TemporalUtilities.parseDate("2009-05-31T13:39:15Z").getTime(), way.getTimestamp());
         assertEquals(2, way.getTags().size());
         assertEquals("access",way.getTags().get(0).getK());
         assertEquals("private",way.getTags().get(0).getV());
@@ -131,7 +132,7 @@ public class OSMXMLReaderTest {
         assertEquals(3, rel.getVersion());
         assertEquals(77, rel.getUser().getId());
         assertEquals("Georges", rel.getUser().getUserName());
-        assertEquals(TemporalUtilities.createDate("2009-05-31T13:39:15Z").getTime(), rel.getTimestamp());
+        assertEquals(TemporalUtilities.parseDate("2009-05-31T13:39:15Z").getTime(), rel.getTimestamp());
         assertEquals(1, rel.getTags().size());
         assertEquals("space",rel.getTags().get(0).getK());
         assertEquals("garden",rel.getTags().get(0).getV());
@@ -146,7 +147,7 @@ public class OSMXMLReaderTest {
     }
 
     @Test
-    public void testMoveTo() throws FileNotFoundException, XMLStreamException, IOException {
+    public void testMoveTo() throws FileNotFoundException, XMLStreamException, IOException, ParseException {
         File testFile = new File("src/test/resources/org/geotoolkit/test-data/osm/sampleOSM.osm");
         OSMXMLReader reader = new OSMXMLReader(testFile);
 
@@ -178,7 +179,7 @@ public class OSMXMLReaderTest {
         assertEquals(3, way.getVersion());
         assertEquals(70, way.getUser().getId());
         assertEquals("Matt", way.getUser().getUserName());
-        assertEquals(TemporalUtilities.createDate("2009-05-31T13:39:15Z").getTime(), way.getTimestamp());
+        assertEquals(TemporalUtilities.parseDate("2009-05-31T13:39:15Z").getTime(), way.getTimestamp());
         assertEquals(2, way.getTags().size());
         assertEquals("access",way.getTags().get(0).getK());
         assertEquals("private",way.getTags().get(0).getV());
@@ -194,7 +195,7 @@ public class OSMXMLReaderTest {
         assertEquals(3, rel.getVersion());
         assertEquals(77, rel.getUser().getId());
         assertEquals("Georges", rel.getUser().getUserName());
-        assertEquals(TemporalUtilities.createDate("2009-05-31T13:39:15Z").getTime(), rel.getTimestamp());
+        assertEquals(TemporalUtilities.parseDate("2009-05-31T13:39:15Z").getTime(), rel.getTimestamp());
         assertEquals(1, rel.getTags().size());
         assertEquals("space",rel.getTags().get(0).getK());
         assertEquals("garden",rel.getTags().get(0).getV());
@@ -209,7 +210,7 @@ public class OSMXMLReaderTest {
     }
 
     @Test
-    public void testReadingDiff() throws FileNotFoundException, XMLStreamException, IOException {
+    public void testReadingDiff() throws FileNotFoundException, XMLStreamException, IOException, ParseException {
         File testFile = new File("src/test/resources/org/geotoolkit/test-data/osm/diffOSM.osm");
         OSMXMLReader reader = new OSMXMLReader(testFile);
 
@@ -255,7 +256,7 @@ public class OSMXMLReaderTest {
         assertEquals(1, n1.getVersion());
         assertEquals(6871, n1.getUser().getId());
         assertEquals("smsm1", n1.getUser().getUserName());
-        assertEquals(TemporalUtilities.createDate("2008-12-17T01:18:42Z").getTime(), n1.getTimestamp());
+        assertEquals(TemporalUtilities.parseDate("2008-12-17T01:18:42Z").getTime(), n1.getTimestamp());
         assertEquals(51.5074089d, n1.getLatitude(), DELTA);
         assertEquals(-0.1080108d,n1.getLongitude(), DELTA);
         assertEquals(0, n1.getTags().size());
@@ -266,7 +267,7 @@ public class OSMXMLReaderTest {
         assertEquals(3, n2.getVersion());
         assertEquals(1697, n2.getUser().getId());
         assertEquals("nickb", n2.getUser().getUserName());
-        assertEquals(TemporalUtilities.createDate("2009-10-29T12:14:35Z").getTime(), n2.getTimestamp());
+        assertEquals(TemporalUtilities.parseDate("2009-10-29T12:14:35Z").getTime(), n2.getTimestamp());
         assertEquals(51.5075933d, n2.getLatitude(), DELTA);
         assertEquals(-0.1076186d,n2.getLongitude(), DELTA);
         assertEquals(2, n2.getTags().size());
@@ -281,7 +282,7 @@ public class OSMXMLReaderTest {
         assertEquals(3, way.getVersion());
         assertEquals(70, way.getUser().getId());
         assertEquals("Matt", way.getUser().getUserName());
-        assertEquals(TemporalUtilities.createDate("2009-05-31T13:39:15Z").getTime(), way.getTimestamp());
+        assertEquals(TemporalUtilities.parseDate("2009-05-31T13:39:15Z").getTime(), way.getTimestamp());
         assertEquals(2, way.getTags().size());
         assertEquals("access",way.getTags().get(0).getK());
         assertEquals("private",way.getTags().get(0).getV());
@@ -297,7 +298,7 @@ public class OSMXMLReaderTest {
         assertEquals(3, rel.getVersion());
         assertEquals(77, rel.getUser().getId());
         assertEquals("Georges", rel.getUser().getUserName());
-        assertEquals(TemporalUtilities.createDate("2009-05-31T13:39:15Z").getTime(), rel.getTimestamp());
+        assertEquals(TemporalUtilities.parseDate("2009-05-31T13:39:15Z").getTime(), rel.getTimestamp());
         assertEquals(1, rel.getTags().size());
         assertEquals("space",rel.getTags().get(0).getK());
         assertEquals("garden",rel.getTags().get(0).getV());

@@ -33,12 +33,12 @@ public class StringUtilitiesTest {
         int nb;
 
         str = "gredgfdgdfhdkljgfdhvndkvfduhnfjfiodj";
-        nb = StringUtilities.getOccurence(str, '-');
+        nb = Strings.count(str, '-');
         assertEquals(0, nb);
 
 
         str = "-gredgfdg-dfhdkljgfdh-vndkvfduhnfjf-iodj-";
-        nb = StringUtilities.getOccurence(str, '-');
+        nb = Strings.count(str, '-');
         assertEquals(5, nb);
 
         str = "gredgfdgdfhdkljgfdhvndkvfduhnfjfiodj";

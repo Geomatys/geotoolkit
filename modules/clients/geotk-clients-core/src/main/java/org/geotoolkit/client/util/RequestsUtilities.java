@@ -272,7 +272,7 @@ public final class RequestsUtilities {
 
         //parse temporal -------------------------------------------------------
         if (strTime != null) {
-            final Date date = TemporalUtilities.createDate(strTime);
+            final Date date = TemporalUtilities.parseDateSafe(strTime,true);
             final TemporalCRS tCRS = CRS.getTemporalCRS(crs);
             temporalCRS = (tCRS != null) ? tCRS : DefaultTemporalCRS.MODIFIED_JULIAN;
 
