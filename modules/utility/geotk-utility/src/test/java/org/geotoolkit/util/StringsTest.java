@@ -48,8 +48,9 @@ public final class StringsTest {
      */
     @Test
     public void testCount(){
-        assertEquals(0, count("gredgfdgdfhdkljgfdhvndkvfduhnfjfiodj",      '-'));
-        assertEquals(5, count("-gredgfdg-dfhdkljgfdh-vndkvfduhnfjf-iodj-", '-'));
+        assertEquals(0, count("An ordinary sentence.",   '-'));
+        assertEquals(4, count("- this one has -dashs--", '-'));
+        assertEquals(2, count("An ordinary sentence.",  "en"));
     }
 
     /**

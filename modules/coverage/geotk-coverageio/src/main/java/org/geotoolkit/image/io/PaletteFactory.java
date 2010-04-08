@@ -179,10 +179,22 @@ public class PaletteFactory {
     private transient ThreadLocal<Locale> warningLocales;
 
     /**
-     * The set of palettes already created. The {@code getPalette} method implementations
-     * return {@linkplain WeakHashSet#unique unique} {@code Palette} instances in order to
-     * share existing {@link ColorModel} instances when possible. This is useful since the
-     * color models may be big (up to 256 kilobytes).
+     * The set of palettes already created and not yet garbage-collected. The {@code getPalette}
+     * method implementations shall return {@linkplain WeakHashSet#unique unique} {@code Palette}
+     * instances as below:
+     *
+     * {@preformat java
+     *     public Palette getPalette(...) {
+     *         Palette palette = ...;
+     *         palette = palettes.unique(palette); // Ensure that the instance is unique.
+     *         return palette;
+     *     }
+     * }
+     *
+     * The purpose is to share existing {@link ColorModel} instances when possible, since they
+     * may be big (up to 256 kilobytes for an {@link IndexColorModel} with 16 bits integers).
+     * This mechanism works provided that {@link Palette#createImageTypeSpecifier()} lazily
+     * create the color model only when first invoked.
      *
      * @since 3.11
      */
@@ -276,7 +288,7 @@ public class PaletteFactory {
      *     META-INF/services/org.geotoolkit.image.io.PaletteFactory
      * }
      *
-     * Users should invoke {@link #getDefault} instead, which will returns a shared instance
+     * Users should invoke {@link #getDefault} instead, which will return a shared instance
      * of this class together with any custom factories found on the class path.
      *
      * @since 2.5

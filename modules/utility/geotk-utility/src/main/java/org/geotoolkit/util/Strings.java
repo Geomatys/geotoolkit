@@ -19,6 +19,7 @@ package org.geotoolkit.util;
 
 import java.util.Arrays;
 import org.geotoolkit.lang.Static;
+import org.geotoolkit.resources.Errors;
 
 
 /**
@@ -36,7 +37,7 @@ import org.geotoolkit.lang.Static;
  * explicitly documented as throwing a {@link NullPointerException}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.09
+ * @version 3.11
  *
  * @since 3.09 (derived from 3.00)
  * @module
@@ -91,6 +92,37 @@ public final class Strings {
             s = new String(blancs);
         }
         return s;
+    }
+
+    /**
+     * Returns the number of occurences of the {@code toSearch} string in the given {@code text}.
+     * The search is case-sensitive.
+     *
+     * @param  text String to search in, or {@code null}.
+     * @param  toSearch The string to search in the given {@code text}.
+     *         Must contain at least one character.
+     * @return The number of occurence of {@code toSearch} in {@code text},
+     *         or 0 if {@code text} was null or empty.
+     * @throws IllegalArgumentException If the {@code toSearch} array is null or empty.
+     *
+     * @since 3.11
+     */
+    public static int count(final String text, final String toSearch) {
+        final int length;
+        if (toSearch == null || (length = toSearch.length()) == 0) {
+            throw new IllegalArgumentException(Errors.format(
+                    Errors.Keys.ILLEGAL_ARGUMENT_$1, "toSearch"));
+        }
+        if (length == 1) {
+            return count(text, toSearch.charAt(0));
+        }
+        int n = 0;
+        if (text != null) {
+            for (int i=text.indexOf(toSearch); i>=0; i=text.indexOf(toSearch, i+length)) {
+                n++;
+            }
+        }
+        return n;
     }
 
     /**

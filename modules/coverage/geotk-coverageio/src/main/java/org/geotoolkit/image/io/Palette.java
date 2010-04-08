@@ -270,7 +270,10 @@ public abstract class Palette {
      * Shows the palette in a windows. This is mostly for debugging purpose.
      *
      * @throws IOException if the color values can't be read.
+     *
+     * @deprecated No replacement, but the work done by this class can easily be done by the user.
      */
+    @Deprecated
     @SuppressWarnings("deprecation")
     public void show() throws IOException {
         final JFrame frame = new JFrame(toString());
@@ -281,7 +284,8 @@ public abstract class Palette {
     }
 
     /**
-     * Returns a hash value for this palette.
+     * Returns a hash value for this palette. See {@link #equals(Object)} for information
+     * about which attributes can be used in the computation.
      */
     @Override
     public int hashCode() {
@@ -289,7 +293,10 @@ public abstract class Palette {
     }
 
     /**
-     * Compares this palette with the specified object for equality.
+     * Compares this palette with the specified object for equality. This method shall compare only
+     * the values given to the constructor. It shall not trig the {@link ColorModel} construction,
+     * because this {@code equals} method is used by {@link PaletteFactory#palettes} in order to
+     * check if an existing {@code Palette} instance can be reused.
      *
      * @param  object The object to compare with this palette for equality.
      * @return {@code true} if the given object is equal to this palette.

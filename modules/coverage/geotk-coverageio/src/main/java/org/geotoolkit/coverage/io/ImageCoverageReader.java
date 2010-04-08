@@ -937,7 +937,7 @@ public class ImageCoverageReader extends GridCoverageReader {
                 throw e.unwrapOrRethrow(IOException.class);
             }
             if (usePaletteFactory) {
-                SampleDimensionPalette.USE_BANDS.set(bands);
+                SampleDimensionPalette.BANDS.set(bands);
                 ((SpatialImageReadParam) imageParam).setPaletteFactory(SampleDimensionPalette.FACTORY);
             }
             image = imageReader.read(index, imageParam);
@@ -945,7 +945,7 @@ public class ImageCoverageReader extends GridCoverageReader {
             throw new CoverageStoreException(formatErrorMessage(e), e);
         } finally {
             if (usePaletteFactory) {
-                SampleDimensionPalette.USE_BANDS.remove();
+                SampleDimensionPalette.BANDS.remove();
             }
         }
         /*

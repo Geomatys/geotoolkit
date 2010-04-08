@@ -30,6 +30,18 @@ import org.geotoolkit.coverage.GridSampleDimension;
 
 /**
  * A palette which build its {@link IndexColorModel} from a {@link GridSampleDimension}.
+ * Instances of this class are created only by the {@link #FACTORY} singleton. The factory
+ * needs a {@link GridSampleDimension} argument, which is passed in the {@link #BANDS}
+ * static variable. This is ugly, but there is no API in the current {@link PaletteFactory}
+ * class for building a palette from a sample dimension.
+ *
+ * {@note The raison why <code>PaletteFactory</code> has no API for sample dimensions is that
+ *        <code>PaletteFactory</code> is all about creating palettes from files of RGB codes,
+ *        and intentionally avoid the coverage API since its package is about image I/O. On
+ *        the contrary, this <code>SampleDimensionPalette</code> does not read any file, so
+ *        it is a bit a departure compared to the usual factory. In addition, creating the
+ *        required <code>GridSampleDimension</code> objects require a bit of non-trivial code
+ *        (provided in <code>ImageCoverageReader</code>) which is out of scope of Image I/O.}
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.11
@@ -40,9 +52,27 @@ import org.geotoolkit.coverage.GridSampleDimension;
 @Immutable
 final class SampleDimensionPalette extends Palette {
     /**
-     * The singleton factory.
+     * The singleton factory. We override only the method which is known to be invoked by
+     * {@link org.geotoolkit.image.io.SpatialImageReader#getImageType}. However before to
+     * invoke any factory method, the {@link #BANDS} field must be set.
      */
-    static final PaletteFactory FACTORY = new Factory();
+    static final PaletteFactory FACTORY = new PaletteFactory() {
+        @Override
+        public Palette getPalette(final String name, final int lower, final int upper,
+                final int size, final int numBands, final int visibleBand)
+        {
+            final GridSampleDimension[] bands = BANDS.get();
+            final GridSampleDimension band = bands[Math.min(visibleBand, bands.length-1)];
+            Palette palette = new SampleDimensionPalette(this, name, band, numBands, visibleBand);
+            palette = palettes.unique(palette);
+            return palette;
+        }
+    };
+
+    /**
+     * Workaround for passing the bands argument to {@code FACTORY.getPalette(...)}.
+     */
+    static final ThreadLocal<GridSampleDimension[]> BANDS = new ThreadLocal<GridSampleDimension[]>();
 
     /**
      * The sample dimension to use for creating the color model.
@@ -100,41 +130,5 @@ final class SampleDimensionPalette extends Palette {
     @Override
     public String toString() {
         return "Palette[" + band.getDescription() + ']';
-    }
-
-    /**
-     * Workaround for passing the bands argument to {@link Factory#getPalette}.
-     */
-    static final ThreadLocal<GridSampleDimension[]> USE_BANDS = new ThreadLocal<GridSampleDimension[]>();
-
-    /**
-     * The factory for creating {@link SampleDimensionPalette} instances.
-     *
-     * @author Martin Desruisseaux (Geomatys)
-     * @version 3.11
-     *
-     * @since 3.11
-     * @module
-     */
-    private static final class Factory extends PaletteFactory {
-        /**
-         * Default constructor for the singleton only.
-         */
-        Factory() {
-        }
-
-        /**
-         * This is the method invoked by {@link org.geotoolkit.image.io.SpatialImageReader}.
-         */
-        @Override
-        public Palette getPalette(final String name, final int lower, final int upper, final int size,
-                                  final int numBands, final int visibleBand)
-        {
-            final GridSampleDimension[] bands = USE_BANDS.get();
-            final GridSampleDimension band = bands[Math.min(visibleBand, bands.length-1)];
-            Palette palette = new SampleDimensionPalette(this, name, band, numBands, visibleBand);
-            palette = palettes.unique(palette);
-            return palette;
-        }
     }
 }
