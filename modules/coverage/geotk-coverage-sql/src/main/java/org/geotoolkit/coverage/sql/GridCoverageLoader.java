@@ -250,7 +250,12 @@ final class GridCoverageLoader extends ImageCoverageReader {
      * Returns the name of the input.
      */
     private String getInputName() throws CoverageStoreException {
-        return IOUtilities.name(getInput());
+        final Object input = getInput();
+        if (IOUtilities.canProcessAsPath(input)) {
+            return IOUtilities.name(input);
+        } else {
+            return entry.toString();
+        }
     }
 
     /**

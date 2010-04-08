@@ -42,6 +42,7 @@ import org.opengis.referencing.operation.Matrix;
 
 import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.image.io.IIOListeners;
+import org.geotoolkit.image.io.mosaic.TileManager;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
@@ -67,7 +68,7 @@ import org.geotoolkit.resources.Errors;
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Sam Hiatt
- * @version 3.10
+ * @version 3.11
  *
  * @since 3.10 (derived from Seagis)
  * @module
@@ -96,6 +97,11 @@ final class GridCoverageEntry extends Entry implements GridCoverageReference {
     private final long endTime;
 
     /**
+     * If the image is tiled, the tiles. Otherwise {@code null}.
+     */
+    private final TileManager[] tiles;
+
+    /**
      * The value returned by {@link #getCoverage}, cached for reuse.
      */
     private transient Reference<GridCoverage2D> cached;
@@ -115,10 +121,12 @@ final class GridCoverageEntry extends Entry implements GridCoverageReference {
      * @param  identifier The identifier of this grid geometry.
      * @param  startTime  The coverage start time, or {@code null} if none.
      * @param  endTime    The coverage end time, or {@code null} if none.
+     * @param  tiles      If the image is tiled, the tiles. Otherwise {@code null}.
      * @param  comments   Optional remarks, or {@code null} if none.
      */
     protected GridCoverageEntry(final GridCoverageIdentifier identifier,
-            final Date startTime, final Date endTime, final String comments) throws SQLException
+            final Date startTime, final Date endTime,
+            final TileManager[] tiles, final String comments) throws SQLException
     {
         super(identifier, comments);
         this.startTime = (startTime != null) ? startTime.getTime() : Long.MIN_VALUE;
@@ -126,6 +134,7 @@ final class GridCoverageEntry extends Entry implements GridCoverageReference {
         if (identifier.geometry.isEmpty() || this.startTime > this.endTime) {
             throw new IllegalRecordException(Errors.format(Errors.Keys.EMPTY_ENVELOPE));
         }
+        this.tiles = tiles;
     }
 
     /**
@@ -178,6 +187,9 @@ final class GridCoverageEntry extends Entry implements GridCoverageReference {
      * exception is thrown.
      */
     final Object getInput() throws URISyntaxException {
+        if (tiles != null) {
+            return tiles;
+        }
         final GridCoverageIdentifier identifier = getIdentifier();
         final File file = identifier.file();
         if (file.isAbsolute()) {

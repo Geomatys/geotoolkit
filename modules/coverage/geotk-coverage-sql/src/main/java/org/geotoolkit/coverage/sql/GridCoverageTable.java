@@ -23,6 +23,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.PreparedStatement;
 import java.awt.geom.Dimension2D;
+import java.io.IOException;
 
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.collection.RangeSet;
@@ -36,6 +37,7 @@ import org.geotoolkit.internal.sql.table.LocalCache;
 import org.geotoolkit.internal.sql.table.Parameter;
 import org.geotoolkit.internal.sql.table.QueryType;
 import org.geotoolkit.internal.UnmodifiableArraySortedSet;
+import org.geotoolkit.image.io.mosaic.TileManager;
 import org.geotoolkit.resources.Errors;
 
 
@@ -51,7 +53,7 @@ import org.geotoolkit.resources.Errors;
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Sam Hiatt
- * @version 3.10
+ * @version 3.11
  *
  * @since 3.10 (derived from Seagis)
  * @module
@@ -78,6 +80,11 @@ class GridCoverageTable extends BoundedSingletonTable<GridCoverageEntry> {
      * The table of grid geometries. Will be created only when first needed.
      */
     private transient GridGeometryTable gridGeometryTable;
+
+    /**
+     * The table of tiles. Will be created only when first needed.
+     */
+    private transient TileTable tileTable;
 
     /**
      * Comparator for selecting the "best" image when more than one is available in
@@ -220,6 +227,17 @@ class GridCoverageTable extends BoundedSingletonTable<GridCoverageEntry> {
         GridGeometryTable table = gridGeometryTable;
         if (table == null) {
             gridGeometryTable = table = getDatabase().getTable(GridGeometryTable.class);
+        }
+        return table;
+    }
+
+    /**
+     * Returns the {@link TileTable} instance, creating it if needed.
+     */
+    private TileTable getTileTable() throws NoSuchTableException {
+        TileTable table = tileTable;
+        if (table == null) {
+            tileTable = table = getDatabase().getTable(TileTable.class);
         }
         return table;
     }
@@ -509,7 +527,21 @@ loop:   for (final GridCoverageEntry newEntry : entries) {
         if (id.geometry == null) {
             id.geometry = getGridGeometryTable().getEntry(results.getInt(indexOf(query.spatialExtent)));
         }
-        return new GridCoverageEntry(id, startTime, endTime, null);
+        /*
+         * If the layer is tiled, read the tiles.
+         */
+        final LayerEntry layer = getLayerEntry();
+        Boolean isTiled = layer.isTiled;
+        if (isTiled == null) {
+            layer.isTiled = isTiled = getTileTable().exists(layer);
+        }
+        TileManager[] managers = null;
+        if (isTiled) try {
+            managers = getTileTable().getTiles(layer, startTime, endTime, id.geometry.getHorizontalSRID());
+        } catch (IOException e) {
+            throw new CatalogException(e);
+        }
+        return new GridCoverageEntry(id, startTime, endTime, managers, null);
     }
 
     /**

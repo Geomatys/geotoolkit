@@ -774,28 +774,34 @@ public class ImageCoverageReader extends GridCoverageReader {
      * optional parameters. If parameters are not null, then this method returns only the
      * sample dimensions for supplied source bands list and returns them in the order
      * inferred from the destination bands list.
+     *
+     * @return The bands as a non-empty array, or {@code null}. This method is not allowed to
+     *         return an empty array, because {@link GridCoverageFactory} interprets that as
+     *         "no band" (as opposed to {@code null} which means "unspecified bands").
      */
     private GridSampleDimension[] getSampleDimensions(final int index, final int[] srcBands, final int[] dstBands)
             throws CoverageStoreException
     {
         final List<GridSampleDimension> bands = getSampleDimensions(index);
-        if (bands == null) {
-            return null;
+        if (bands != null) {
+            int bandCount = bands.size();
+            if (bandCount != 0) {
+                if (srcBands != null && srcBands.length < bandCount) bandCount = srcBands.length;
+                if (dstBands != null && dstBands.length < bandCount) bandCount = dstBands.length;
+                final GridSampleDimension[] selectedBands = new GridSampleDimension[bandCount];
+                /*
+                 * Searchs for 'GridSampleDimension' from the given source band index and
+                 * stores their reference at the position given by destination band index.
+                 */
+                for (int j=0; j<bandCount; j++) {
+                    final int srcBand = (srcBands != null) ? srcBands[j] : j;
+                    final int dstBand = (dstBands != null) ? dstBands[j] : j;
+                    selectedBands[dstBand] = bands.get(srcBand % bandCount);
+                }
+                return selectedBands;
+            }
         }
-        int bandCount = bands.size();
-        if (srcBands != null && srcBands.length < bandCount) bandCount = srcBands.length;
-        if (dstBands != null && dstBands.length < bandCount) bandCount = dstBands.length;
-        final GridSampleDimension[] selectedBands = new GridSampleDimension[bandCount];
-        /*
-         * Searchs for 'GridSampleDimension' from the given source band index and
-         * stores their reference at the position given by destination band index.
-         */
-        for (int j=0; j<bandCount; j++) {
-            final int srcBand = (srcBands != null) ? srcBands[j] : j;
-            final int dstBand = (dstBands != null) ? dstBands[j] : j;
-            selectedBands[dstBand] = bands.get(srcBand % bandCount);
-        }
-        return selectedBands;
+        return null;
     }
 
     /**
@@ -910,7 +916,7 @@ public class ImageCoverageReader extends GridCoverageReader {
          * which will create the IndexColorModel (if needed) from the GridSampleDimension.
          */
         boolean usePaletteFactory = false;
-        if (bands != null && bands.length != 0 && imageReader instanceof SpatialImageReader) try {
+        if (bands != null && imageReader instanceof SpatialImageReader) try {
             if (!((SpatialImageReader) imageReader).hasColors(index)) {
                 if (imageParam == null) {
                     imageParam = imageReader.getDefaultReadParam();

@@ -54,10 +54,11 @@ final class TileQuery extends Query {
     public TileQuery(final SpatialDatabase database) {
         super(database, "Tiles");
         final Column layer, startTime, endTime, horizontalSRID;
-        final QueryType[] none = {    };
-        final QueryType[] list = {LIST};
+        final QueryType[] none  = {    };
+        final QueryType[] list  = {LIST};
+        final QueryType[] lsex  = {LIST, EXISTS};
         layer          = addForeignerColumn("layer", "Series", none);
-        series         = addMandatoryColumn("series",          list);
+        series         = addMandatoryColumn("series",          lsex);
         filename       = addMandatoryColumn("filename",        list);
         index          = addOptionalColumn ("index", 1,        list);
         startTime      = addMandatoryColumn("startTime",       none);
@@ -65,9 +66,9 @@ final class TileQuery extends Query {
         spatialExtent  = addMandatoryColumn("extent",          list);
         dx             = addOptionalColumn ("dx", 0,           list);
         dy             = addOptionalColumn ("dy", 0,           list);
-        horizontalSRID = addForeignerColumn("GridGeometries", "horizontalSRID", none);
+        horizontalSRID = addForeignerColumn("horizontalSRID", "GridGeometries", none);
 
-        byLayer          = addParameter(layer,          list);
+        byLayer          = addParameter(layer,          lsex);
         byStartTime      = addParameter(startTime,      list);
         byEndTime        = addParameter(endTime,        list);
         byHorizontalSRID = addParameter(horizontalSRID, list);

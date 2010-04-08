@@ -17,10 +17,12 @@
  */
 package org.geotoolkit.coverage.sql;
 
-import java.sql.SQLException;
 import java.util.Date;
 import java.util.Set;
 import java.util.SortedSet;
+import java.io.IOException;
+import java.sql.SQLException;
+import java.net.URISyntaxException;
 
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.GeographicCRS;
@@ -31,6 +33,7 @@ import org.opengis.metadata.extent.GeographicBoundingBox;
 import org.geotoolkit.test.Depend;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.coverage.GridSampleDimension;
+import org.geotoolkit.image.io.mosaic.TileManager;
 import org.geotoolkit.internal.sql.table.CatalogTestBase;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 
@@ -43,7 +46,7 @@ import static org.geotoolkit.referencing.CRS.getHorizontalCRS;
  * Tests {@link GridCoverageTable}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.10
+ * @version 3.11
  *
  * @since 3.10 (derived from Seagis)
  */
@@ -103,6 +106,7 @@ public final class GridCoverageTableTest extends CatalogTestBase {
         table.envelope.clear();
         table.setLayer(LayerTableTest.TEMPERATURE);
         final GridCoverageReference entry = table.getEntry(SAMPLE_NAME);
+        assertEquals(Boolean.FALSE, table.getLayerEntry().isTiled);
         assertEquals(SAMPLE_NAME + ":1", entry.getName());
         assertSame(entry, table.getEntry(SAMPLE_NAME));
         /*
@@ -143,6 +147,7 @@ public final class GridCoverageTableTest extends CatalogTestBase {
          */
         table.envelope.setTimeRange(LayerTableTest.SUB_START_TIME, LayerTableTest.SUB_END_TIME);
         final Set<GridCoverageEntry> entries = table.getEntries();
+        assertEquals(Boolean.FALSE, table.getLayerEntry().isTiled);
         assertEquals(3, entries.size());
         final GridCoverageReference entry = table.getEntry(SAMPLE_NAME);
         assertTrue(entries.contains(entry));
@@ -170,6 +175,7 @@ public final class GridCoverageTableTest extends CatalogTestBase {
          * Tests a single entry.
          */
         final GridCoverageReference entry = table.getEntry();
+        assertEquals(Boolean.FALSE, table.getLayerEntry().isTiled);
         assertEquals(1, entry.getSampleDimensions().length);
         /*
          * Tests the envelope, which may be projected.
@@ -203,6 +209,7 @@ public final class GridCoverageTableTest extends CatalogTestBase {
         table.setLayer(LayerTableTest.NETCDF);
 
         GridCoverageEntry entry = table.getEntry();
+        assertEquals(Boolean.FALSE, table.getLayerEntry().isTiled);
         assertEquals("Should not have a z index when the z-range is infinite.", 0, entry.getIdentifier().zIndex);
 
         table.envelope.setVerticalRange(0, 0);
@@ -236,6 +243,29 @@ public final class GridCoverageTableTest extends CatalogTestBase {
         table.setLayer(LayerTableTest.GEOSTROPHIC_CURRENT);
         final GridCoverageReference entry = table.getEntry();
         assertEquals(2, entry.getSampleDimensions().length);
+        assertEquals(Boolean.FALSE, table.getLayerEntry().isTiled);
+        table.release();
+    }
+
+    /**
+     * Tests the request for a tiled image.
+     *
+     * @throws SQLException If the test can't connect to the database.
+     * @throws IOException Should not happen.
+     * @throws URISyntaxException Should never happen.
+     */
+    @Test
+    public void testTiles() throws SQLException, IOException, URISyntaxException {
+        final GridCoverageTable table = getDatabase().getTable(GridCoverageTable.class);
+        table.envelope.clear();
+        table.setLayer(LayerTableTest.BLUEMARBLE);
+        final GridCoverageEntry entry = table.getEntry();
+        assertEquals(Boolean.TRUE, table.getLayerEntry().isTiled);
+        final TileManager[] tiles = (TileManager[]) entry.getInput();
+        assertEquals("We would had only 1 TileManager if we had tiles for every levels. " +
+                "But since L1 is missing, this is normal that L11 is considered to have " +
+                "no common dominator with L10, L12 and L13.", 2, tiles.length);
+        assertTrue(tiles[0].getTiles().size() > tiles[1].getTiles().size());
         table.release();
     }
 

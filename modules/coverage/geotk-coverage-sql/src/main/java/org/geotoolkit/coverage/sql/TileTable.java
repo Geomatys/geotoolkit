@@ -18,9 +18,11 @@
 package org.geotoolkit.coverage.sql;
 
 import java.util.List;
+import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Calendar;
+import java.util.Comparator;
 import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.io.File;
@@ -39,6 +41,7 @@ import org.geotoolkit.image.io.mosaic.TileManager;
 import org.geotoolkit.image.io.mosaic.TileManagerFactory;
 import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.collection.Cache;
+import org.geotoolkit.util.collection.BackingStoreException;
 import org.geotoolkit.internal.sql.table.Table;
 import org.geotoolkit.internal.sql.table.Database;
 import org.geotoolkit.internal.sql.table.QueryType;
@@ -52,12 +55,12 @@ import org.geotoolkit.resources.Errors;
  * Connection to a table of {@linkplain Tiles tiles}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.10
+ * @version 3.11
  *
  * @since 3.10 (derived from Seagis)
  * @module
  */
-final class TileTable extends Table {
+final class TileTable extends Table implements Comparator<TileManager> {
     /**
      * The table of grid geometries. Will be created only when first needed.
      */
@@ -114,6 +117,27 @@ final class TileTable extends Table {
             gridGeometryTable = table = getDatabase().getTable(GridGeometryTable.class);
         }
         return table;
+    }
+
+    /**
+     * Returns {@code true} if at least one tile exists for the given layer.
+     *
+     * @param  layer The layer to test.
+     * @return {@code true} if a tile exists.
+     */
+    public boolean exists(final LayerEntry layer) throws SQLException {
+        final TileQuery query = (TileQuery) this.query;
+        final boolean exists;
+        synchronized (getLock()) {
+            final LocalCache.Stmt ce = getStatement(QueryType.EXISTS);
+            final PreparedStatement statement = ce.statement;
+            statement.setString(indexOf(query.byLayer), layer.getName());
+            final ResultSet results = statement.executeQuery();
+            exists = results.next();
+            results.close();
+            release(ce);
+        }
+        return exists;
     }
 
     /**
@@ -205,9 +229,19 @@ final class TileTable extends Table {
                             tiles.add(tile);
                         }
                         results.close();
+                        release(ce);
                     }
-                    if (!tiles.isEmpty()) {
+                    /*
+                     * Get the array of TileManager. The array should contains only one element.
+                     * But if we get more element, put the TileManager having the greatest amount
+                     * of tiles first because it is typically the one which will be used by the
+                     * GridCoverageLoader.
+                     */
+                    if (!tiles.isEmpty()) try {
                         managers = TileManagerFactory.DEFAULT.create(tiles);
+                        Arrays.sort(managers, this);
+                    } catch (BackingStoreException e) {
+                        throw e.unwrapOrRethrow(IOException.class);
                     }
                 }
             } finally {
@@ -215,6 +249,24 @@ final class TileTable extends Table {
             }
         }
         return managers;
+    }
+
+    /**
+     * The comparator used by the above {@link #getTiles} method for putting first the
+     * {@code TileManager} which have the greatest amount of tiles.
+     *
+     * @param  o1 The first tile manager to compare.
+     * @param  o2 The second tile manager to compare.
+     * @return A negative number if o1 has more times than o2.
+     * @throws BackingStoreException If an {@link IOException} occured.
+     */
+    @Override
+    public int compare(final TileManager o1, final TileManager o2) throws BackingStoreException {
+        try {
+            return o2.getTiles().size() - o1.getTiles().size();
+        } catch (IOException e) {
+            throw new BackingStoreException(e);
+        }
     }
 
     /**

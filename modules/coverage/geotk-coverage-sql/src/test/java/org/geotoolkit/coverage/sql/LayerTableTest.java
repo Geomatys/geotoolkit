@@ -62,6 +62,11 @@ public final class LayerTableTest extends CatalogTestBase {
     public static final String GEOSTROPHIC_CURRENT = "Mars (u,v)";
 
     /**
+     * The name of a tiled layer.
+     */
+    public static final String BLUEMARBLE = "BlueMarble";
+
+    /**
      * The start time, end time, and a sample time between them.
      */
     public static final Date START_TIME, SUB_START_TIME, SAMPLE_TIME, SUB_END_TIME, END_TIME;

@@ -17,6 +17,8 @@
  */
 package org.geotoolkit.coverage.sql;
 
+import java.awt.Dimension;
+import java.awt.Rectangle;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.awt.geom.Point2D;
@@ -200,5 +202,29 @@ public final class GridCoverageLoaderTest extends CatalogTestBase {
         assertEquals("Geophysics value.", 16.76, value, 0.8);
         value = (buffer = rendered.evaluate(pos, buffer))[0];
         assertEquals("Rendered value.", 19762, value, 5);
+    }
+
+    /**
+     * Tests loading a tiled image.
+     *
+     * @throws SQLException If the test can't connect to the database.
+     * @throws IOException If the image can not be read.
+     * @throws CoverageStoreException If a logical error occured.
+     */
+    @Test
+    public void testTiled() throws SQLException, IOException, CoverageStoreException {
+        final GridCoverageTable table = getDatabase().getTable(GridCoverageTable.class);
+        table.envelope.clear();
+        table.setLayer(LayerTableTest.BLUEMARBLE);
+        table.envelope.setHorizontalRange(new Rectangle(-100, -40, 200, 40));
+        table.envelope.setPreferredImageSize(new Dimension(100, 40));
+        final GridCoverageReference entry = table.getEntry();
+
+        requireImageData();
+        final GridCoverage2D coverage = entry.read(table.envelope, null);
+        final RenderedImage image = coverage.getRenderedImage();
+        assertEquals(100, image.getWidth());
+        assertEquals( 40, image.getHeight());
+        table.release();
     }
 }
