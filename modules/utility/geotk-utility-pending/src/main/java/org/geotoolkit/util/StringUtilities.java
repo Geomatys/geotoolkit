@@ -205,7 +205,10 @@ public final class StringUtilities {
      * @param s : String to search in
      * @param occ : Occurence to search
      * @return number of occurence
+     *
+     * @deprecated Moved to {@link org.geotoolkit.util.Strings#count(String, String)}.
      */
+    @Deprecated
     public static int getOccurence(String s, String occ) {
         int cnt = 0;
         int pos = s.indexOf(occ);
@@ -285,7 +288,10 @@ public final class StringUtilities {
      *
      * @param toSort
      * @return
+     *
+     * @deprecated Use {@link java.util.Collections#sort(List)} instead.
      */
+    @Deprecated
     public static List<String> sortStringList(List<String> toSort) {
         final int elements = toSort.size();
         for (int i = (elements - 1); i > 0; i--) {
