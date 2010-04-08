@@ -223,8 +223,10 @@ public final class GridCoverageLoaderTest extends CatalogTestBase {
         requireImageData();
         final GridCoverage2D coverage = entry.read(table.envelope, null);
         final RenderedImage image = coverage.getRenderedImage();
-        assertEquals(100, image.getWidth());
-        assertEquals( 40, image.getHeight());
+        // The image should be slightly larger than the requested side because
+        // MosaicImageReader should have selected a more efficient size.
+        assertEquals(134, image.getWidth());
+        assertEquals( 54, image.getHeight());
         table.release();
     }
 }

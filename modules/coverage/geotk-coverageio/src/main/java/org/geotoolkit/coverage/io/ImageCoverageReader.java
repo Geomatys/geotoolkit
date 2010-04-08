@@ -79,6 +79,7 @@ import org.geotoolkit.image.io.metadata.SampleDimension;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
 import org.geotoolkit.image.io.mosaic.MosaicImageReader;
+import org.geotoolkit.image.io.mosaic.MosaicImageReadParam;
 import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
@@ -896,10 +897,20 @@ public class ImageCoverageReader extends GridCoverageReader {
         }
         /*
          * At this point, the standard parameters (source region, source bands) are set.
-         * The following is Geotk-specific. First, check if we should allow the image
-         * reader to add an offset to signed intergers in order to make them unsigned.
-         * We will allow such offset if the SampleDimensions declare unsigned range of
-         * sample values.
+         * The following is Geotk-specific. First, allow MosaicImageReader to use a different
+         * resolution than the requested one. This is crucial from a performance point of view.
+         * Since the GridCoverageReader contract does not garantee that the grid geometry of the
+         * returned coverage is the requested geometry, we are allowed to do that.
+         */
+        if (imageParam instanceof MosaicImageReadParam) {
+            // Note: we don't create a new ImageReadParam if it is null
+            // since we would be reading the image at full resolution anyway.
+            ((MosaicImageReadParam) imageParam).setSubsamplingChangeAllowed(true);
+        }
+        /*
+         * Next, check if we should allow the image reader to add an offset to signed intergers
+         * in order to make them unsigned. We will allow such offset if the SampleDimensions
+         * declare unsigned range of sample values.
          */
         final GridSampleDimension[] bands = getSampleDimensions(index, srcBands, dstBands);
         if (!isRangeSigned(bands)) {
@@ -912,7 +923,7 @@ public class ImageCoverageReader extends GridCoverageReader {
             }
         }
         /*
-         * Next, if the image does not have its own color palette, provides a palette factory
+         * Finally, if the image does not have its own color palette, provides a palette factory
          * which will create the IndexColorModel (if needed) from the GridSampleDimension.
          */
         boolean usePaletteFactory = false;
