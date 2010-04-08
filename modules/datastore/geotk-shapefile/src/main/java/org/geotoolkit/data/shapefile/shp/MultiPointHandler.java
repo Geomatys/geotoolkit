@@ -23,7 +23,7 @@ import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.MultiPoint;
 import com.vividsolutions.jts.geom.impl.CoordinateArraySequence;
 
-import org.geotoolkit.data.DataStoreException;
+import org.geotoolkit.storage.DataStoreException;
 
 /**
  * 

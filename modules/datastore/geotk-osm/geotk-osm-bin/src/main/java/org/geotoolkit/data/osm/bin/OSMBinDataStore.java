@@ -24,7 +24,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.geotoolkit.data.AbstractDataStore;
-import org.geotoolkit.data.DataStoreException;
+import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.query.DefaultQueryCapabilities;

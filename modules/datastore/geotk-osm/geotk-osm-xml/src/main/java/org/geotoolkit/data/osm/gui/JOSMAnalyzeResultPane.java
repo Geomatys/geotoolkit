@@ -31,7 +31,7 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 
 import org.geotoolkit.data.DataStore;
-import org.geotoolkit.data.DataStoreException;
+import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.osm.xml.OSMXMLConstants;
 import org.geotoolkit.data.query.QueryBuilder;

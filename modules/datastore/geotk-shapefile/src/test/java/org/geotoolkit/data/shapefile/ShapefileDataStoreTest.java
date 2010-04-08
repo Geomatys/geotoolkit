@@ -32,7 +32,7 @@ import java.util.Map;
 
 import org.geotoolkit.ShapeTestData;
 import org.geotoolkit.data.DataStore;
-import org.geotoolkit.data.DataStoreException;
+import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.data.FeatureReader;

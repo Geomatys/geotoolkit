@@ -45,6 +45,7 @@ import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.feature.SchemaException;
 import org.geotoolkit.feature.FeatureTypeBuilder;
+import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.util.logging.Logging;
 
 import org.opengis.feature.Feature;

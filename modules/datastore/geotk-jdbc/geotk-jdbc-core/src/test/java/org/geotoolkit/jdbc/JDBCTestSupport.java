@@ -26,7 +26,7 @@ import javax.sql.DataSource;
 
 import junit.framework.TestCase;
 import junit.framework.TestResult;
-import org.geotoolkit.data.DataStoreException;
+import org.geotoolkit.storage.DataStoreException;
 
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;

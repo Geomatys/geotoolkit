@@ -25,7 +25,7 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import junit.framework.TestCase;
 
-import org.geotoolkit.data.DataStoreException;
+import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.data.DataUtilities;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;

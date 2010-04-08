@@ -30,6 +30,7 @@ import javax.imageio.spi.ServiceRegistry;
 import org.geotoolkit.factory.DynamicFactoryRegistry;
 import org.geotoolkit.factory.FactoryRegistry;
 import org.geotoolkit.internal.LazySet;
+import org.geotoolkit.storage.DataStoreException;
 
 /**
  * Enable programs to find all available datastore implementations.

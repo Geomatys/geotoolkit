@@ -17,6 +17,8 @@
 
 package org.geotoolkit.data;
 
+import org.geotoolkit.storage.DataStoreException;
+
 /**
  * Generator of Feature id for datastores.
  *

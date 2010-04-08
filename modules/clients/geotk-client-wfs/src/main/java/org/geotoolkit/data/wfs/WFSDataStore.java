@@ -39,7 +39,7 @@ import javax.xml.namespace.QName;
 import org.geotoolkit.client.Request;
 
 import org.geotoolkit.data.AbstractDataStore;
-import org.geotoolkit.data.DataStoreException;
+import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.data.DataUtilities;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureCollection;

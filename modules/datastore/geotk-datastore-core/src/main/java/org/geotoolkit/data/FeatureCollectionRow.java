@@ -17,6 +17,7 @@
 package org.geotoolkit.data;
 
 import java.util.Map;
+import org.geotoolkit.storage.DataStoreException;
 import org.opengis.feature.Feature;
 
 /**

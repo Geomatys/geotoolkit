@@ -21,6 +21,7 @@ import java.net.URL;
 import java.util.Collections;
 
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
+import org.geotoolkit.storage.DataStoreException;
 
 import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterValueGroup;

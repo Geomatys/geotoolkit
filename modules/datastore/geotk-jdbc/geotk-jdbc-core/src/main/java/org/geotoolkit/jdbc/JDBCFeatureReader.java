@@ -32,7 +32,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.geotoolkit.data.FeatureReader;
-import org.geotoolkit.data.DataStoreException;
+import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.data.DataStoreRuntimeException;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.simple.AbstractSimpleFeature;

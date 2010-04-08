@@ -17,7 +17,7 @@
 package org.geotoolkit.jdbc;
 
 import com.vividsolutions.jts.geom.Envelope;
-import org.geotoolkit.data.DataStoreException;
+import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.query.QueryBuilder;

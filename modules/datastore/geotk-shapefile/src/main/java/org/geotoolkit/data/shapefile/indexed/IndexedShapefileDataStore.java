@@ -39,7 +39,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.logging.Level;
 
-import org.geotoolkit.data.DataStoreException;
+import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.data.DefaultSimpleFeatureReader;
 import org.geotoolkit.data.FeatureIDReader;
 import org.geotoolkit.data.memory.GenericEmptyFeatureIterator;

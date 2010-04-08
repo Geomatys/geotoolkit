@@ -28,6 +28,7 @@ import org.geotoolkit.feature.SchemaException;
 import org.geotoolkit.feature.simple.DefaultSimpleFeature;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.feature.FeatureTypeBuilder;
+import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.util.logging.Logging;
 
 import org.opengis.feature.simple.SimpleFeature;

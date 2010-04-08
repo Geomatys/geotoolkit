@@ -22,7 +22,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.geotoolkit.data.DataStore;
-import org.geotoolkit.data.DataStoreException;
+import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.data.StorageContentEvent;
 import org.geotoolkit.data.StorageManagementEvent;
 import org.geotoolkit.data.StorageListener;

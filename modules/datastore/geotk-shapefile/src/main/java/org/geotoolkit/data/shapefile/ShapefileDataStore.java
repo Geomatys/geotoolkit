@@ -46,7 +46,7 @@ import java.util.logging.Level;
 
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.AbstractDataStore;
-import org.geotoolkit.data.DataStoreException;
+import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.data.DataStoreRuntimeException;
 import org.geotoolkit.data.DefaultFeatureIDReader;
 import org.geotoolkit.data.DefaultSimpleFeatureReader;

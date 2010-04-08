@@ -27,7 +27,7 @@ import javax.sql.DataSource;
 import com.vividsolutions.jts.geom.GeometryFactory;
 
 import org.geotoolkit.data.DataStore;
-import org.geotoolkit.data.DataStoreException;
+import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.data.jdbc.FilterToSQL;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.geotoolkit.jdbc.fid.PrimaryKey;

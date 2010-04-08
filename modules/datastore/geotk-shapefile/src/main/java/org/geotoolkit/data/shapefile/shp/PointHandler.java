@@ -20,7 +20,7 @@ import java.nio.ByteBuffer;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Point;
-import org.geotoolkit.data.DataStoreException;
+import org.geotoolkit.storage.DataStoreException;
 
 /**
  * Wrapper for a Shapefile point.

@@ -26,6 +26,7 @@ import org.geotoolkit.factory.Factory;
 import org.geotoolkit.metadata.iso.quality.DefaultConformanceResult;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.Parameters;
+import org.geotoolkit.storage.DataStoreException;
 
 import org.opengis.metadata.quality.ConformanceResult;
 import org.opengis.parameter.GeneralParameterDescriptor;

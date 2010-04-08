@@ -24,6 +24,7 @@ import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.Source;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.factory.Hints;
+import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.util.collection.CloseableIterator;
 
 import org.opengis.feature.Feature;

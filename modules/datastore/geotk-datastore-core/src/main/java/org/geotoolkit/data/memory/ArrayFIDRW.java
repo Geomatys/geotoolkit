@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.concurrent.atomic.AtomicLong;
 
-import org.geotoolkit.data.DataStoreException;
+import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.data.FeatureIDReader;
 
 /**

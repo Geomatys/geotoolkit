@@ -18,7 +18,7 @@ package org.geotoolkit.data.postgis;
 
 import java.io.IOException;
 
-import org.geotoolkit.data.DataStoreException;
+import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.jdbc.JDBCDataStore;
 import org.geotoolkit.jdbc.JDBCDataStoreFactory;
 import org.geotoolkit.jdbc.dialect.SQLDialect;

@@ -30,6 +30,7 @@ import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.feature.FeatureTypeBuilder;
+import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.util.collection.CloseableIterator;
 
 import org.opengis.feature.Feature;

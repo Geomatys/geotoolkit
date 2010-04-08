@@ -24,7 +24,7 @@ import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.logging.Level;
 
-import org.geotoolkit.data.DataStoreException;
+import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.data.DataStoreRuntimeException;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.shapefile.ShapefileDataStoreFactory;

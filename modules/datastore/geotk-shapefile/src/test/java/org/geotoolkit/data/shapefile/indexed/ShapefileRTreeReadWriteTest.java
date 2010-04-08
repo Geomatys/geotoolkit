@@ -23,7 +23,7 @@ import java.net.MalformedURLException;
 import junit.framework.AssertionFailedError;
 
 import org.geotoolkit.ShapeTestData;
-import org.geotoolkit.data.DataStoreException;
+import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.data.shapefile.AbstractTestCaseSupport;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;

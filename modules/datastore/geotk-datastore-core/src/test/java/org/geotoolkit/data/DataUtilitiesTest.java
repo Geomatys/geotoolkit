@@ -24,6 +24,7 @@ import org.geotoolkit.data.memory.MemoryDataStore;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.FeatureTypeBuilder;
+import org.geotoolkit.storage.DataStoreException;
 
 import org.junit.Test;
 

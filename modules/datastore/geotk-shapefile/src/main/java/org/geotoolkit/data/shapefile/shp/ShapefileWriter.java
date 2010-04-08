@@ -22,7 +22,7 @@ import java.nio.ByteOrder;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 
-import org.geotoolkit.data.DataStoreException;
+import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.resources.NIOUtilities;
 
 import com.vividsolutions.jts.geom.Envelope;

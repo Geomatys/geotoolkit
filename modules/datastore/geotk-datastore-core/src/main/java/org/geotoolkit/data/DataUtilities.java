@@ -35,6 +35,7 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.geometry.DefaultBoundingBox;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
+import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.util.collection.CloseableIterator;
 
 import org.opengis.feature.Feature;

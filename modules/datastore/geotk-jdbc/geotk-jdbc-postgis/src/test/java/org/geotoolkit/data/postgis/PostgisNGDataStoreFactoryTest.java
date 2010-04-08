@@ -32,7 +32,7 @@ import java.util.Properties;
 import org.geotoolkit.jdbc.JDBCDataStore;
 import org.geotoolkit.jdbc.JDBCTestSetup;
 import org.geotoolkit.jdbc.JDBCTestSupport;
-import org.geotoolkit.data.DataStoreException;
+import org.geotoolkit.storage.DataStoreException;
 
 
 public class PostgisNGDataStoreFactoryTest extends JDBCTestSupport {

@@ -26,7 +26,7 @@ import java.nio.channels.ReadableByteChannel;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.geotoolkit.data.DataStoreException;
+import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.data.shapefile.ShpFileType;
 import org.geotoolkit.data.shapefile.ShpFiles;
 import org.geotoolkit.resources.NIOUtilities;

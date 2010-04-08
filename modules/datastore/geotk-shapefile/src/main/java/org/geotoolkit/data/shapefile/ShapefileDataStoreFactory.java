@@ -24,7 +24,7 @@ import java.util.Set;
 import java.util.logging.Logger;
 
 import org.geotoolkit.data.DataStore;
-import org.geotoolkit.data.DataStoreException;
+import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.data.FileDataStoreFactory;
 import org.geotoolkit.metadata.iso.quality.DefaultConformanceResult;
 import org.geotoolkit.data.AbstractFileDataStoreFactory;

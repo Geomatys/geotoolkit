@@ -24,7 +24,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.geotoolkit.data.DataStoreException;
+import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.data.FeatureCollection;

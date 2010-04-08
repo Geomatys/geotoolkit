@@ -43,7 +43,7 @@ import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
 import org.geotoolkit.data.DataStore;
-import org.geotoolkit.data.DataStoreException;
+import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.data.DataStoreFinder;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.osm.model.Node;

@@ -19,6 +19,7 @@ package org.geotoolkit.data;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.util.collection.CloseableIterator;
 
 /**

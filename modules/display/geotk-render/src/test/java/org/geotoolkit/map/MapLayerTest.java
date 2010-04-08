@@ -8,7 +8,7 @@ package org.geotoolkit.map;
 import junit.framework.TestCase;
 
 import org.geotoolkit.data.DataStore;
-import org.geotoolkit.data.DataStoreException;
+import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.memory.MemoryDataStore;
 import org.geotoolkit.data.query.Query;

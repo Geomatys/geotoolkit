@@ -27,6 +27,7 @@ import org.geotoolkit.data.query.QueryUtilities;
 import org.geotoolkit.data.query.Selector;
 import org.geotoolkit.data.query.Source;
 import org.geotoolkit.data.session.Session;
+import org.geotoolkit.storage.DataStoreException;
 
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.AttributeDescriptor;

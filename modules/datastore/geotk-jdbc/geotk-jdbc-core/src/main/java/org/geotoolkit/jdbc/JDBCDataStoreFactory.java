@@ -24,7 +24,7 @@ import javax.sql.DataSource;
 import org.apache.commons.dbcp.BasicDataSource;
 
 import org.geotoolkit.data.DataStore;
-import org.geotoolkit.data.DataStoreException;
+import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.data.jdbc.datasource.DBCPDataSource;
 import org.geotoolkit.data.AbstractDataStoreFactory;
 import org.geotoolkit.factory.FactoryFinder;

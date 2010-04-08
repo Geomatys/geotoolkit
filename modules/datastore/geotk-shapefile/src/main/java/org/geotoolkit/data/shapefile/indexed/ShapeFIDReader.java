@@ -17,7 +17,7 @@
 package org.geotoolkit.data.shapefile.indexed;
 
 import java.io.IOException;
-import org.geotoolkit.data.DataStoreException;
+import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.data.FeatureIDReader;
 
 import org.opengis.feature.simple.SimpleFeatureType;

@@ -18,6 +18,7 @@ package org.geotoolkit.data;
 
 import java.io.IOException;
 import java.net.URL;
+import org.geotoolkit.storage.DataStoreException;
 
 /**
  * DataAccessFactory for working with formats based on a single URL.

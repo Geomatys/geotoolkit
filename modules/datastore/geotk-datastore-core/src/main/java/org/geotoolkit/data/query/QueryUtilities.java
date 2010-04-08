@@ -24,7 +24,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.geotoolkit.data.DataStoreException;
+import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.data.DataStoreJoinFeatureCollection;
 import org.geotoolkit.data.DefaultJoinFeatureCollection;
 import org.geotoolkit.data.DefaultSelectorFeatureCollection;

@@ -19,7 +19,7 @@ package org.geotoolkit.map;
 
 import java.util.logging.Level;
 
-import org.geotoolkit.data.DataStoreException;
+import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.display.shape.XRectangle2D;
