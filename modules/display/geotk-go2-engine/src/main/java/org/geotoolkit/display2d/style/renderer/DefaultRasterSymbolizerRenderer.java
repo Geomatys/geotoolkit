@@ -45,6 +45,7 @@ import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
+import org.geotoolkit.coverage.processing.CoverageProcessingException;
 import org.geotoolkit.coverage.processing.Operations;
 import org.geotoolkit.display.canvas.VisitFilter;
 import org.geotoolkit.display.exception.PortrayalException;
@@ -144,12 +145,17 @@ public class DefaultRasterSymbolizerRenderer extends AbstractSymbolizerRenderer<
                     dataCoverage = dataCoverage.view(ViewType.RENDERED);
                 }
             }
-        }catch(Exception ex){
+        } catch (CoverageProcessingException ex) {
+            monitor.exceptionOccured(ex, Level.WARNING);
+            return;
+        } catch(Exception ex){
             //several kind of errors can happen here, we catch anything to avoid blocking the map component.
             monitor.exceptionOccured(
                 new IllegalStateException("Coverage is not in the requested CRS, found : " +
                 "\n"+ coverageCRS +
-                " was expecting \n : " + renderingContext.getObjectiveCRS()),Level.WARNING);
+                " was expecting : \n" +
+                renderingContext.getObjectiveCRS() +
+                "\nOriginal Cause:"+ ex.getMessage(), ex), Level.WARNING);
             return;
         }
 
