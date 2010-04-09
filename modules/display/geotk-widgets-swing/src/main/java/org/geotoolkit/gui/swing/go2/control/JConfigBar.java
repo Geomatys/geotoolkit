@@ -30,7 +30,7 @@ import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 
 /**
- * JMap2DControlBar is a JPanel to handle Navigation decoration
+ * JMap2DControlBar is a JPanel to handle Navigation decoration and debugging panel
  *
  * @author johann sorel
  * @module pending
@@ -38,11 +38,14 @@ import org.geotoolkit.gui.swing.resource.MessageBundle;
 public class JConfigBar extends JToolBar {
 
     private static final ImageIcon ICON_CONFIG = IconBundle.getInstance().getIcon("16_map2d_optimize");
+    private static final ImageIcon ICON_DEBUG = IconBundle.getInstance().getIcon("16_deco_debug");
 
     private final ConfigAction ACTION_CONFIG = new ConfigAction();
+    private final DebugAction ACTION_DEBUG = new DebugAction();
 
     private Map2D map = null;
     private final JButton gui_config = buildButton(ICON_CONFIG, ACTION_CONFIG, MessageBundle.getString("map_config"));
+    private final JButton gui_debug = buildButton(ICON_DEBUG, ACTION_DEBUG, MessageBundle.getString("map_debug"));
     private final int largeur = 2;
 
     /**
@@ -63,6 +66,7 @@ public class JConfigBar extends JToolBar {
 
     private void init() {
         add(gui_config);
+        add(gui_debug);
     }
 
 
@@ -86,5 +90,6 @@ public class JConfigBar extends JToolBar {
     public void setMap(Map2D map2d) {
         map = map2d;
         ACTION_CONFIG.setMap(map);
+        ACTION_DEBUG.setMap(map);
     }
 }

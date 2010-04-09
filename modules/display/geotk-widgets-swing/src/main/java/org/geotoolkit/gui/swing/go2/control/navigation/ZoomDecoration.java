@@ -52,7 +52,10 @@ public class ZoomDecoration extends JComponent implements MapDecoration{
     private int lenght = 30;
     private Rectangle lastRect = new Rectangle(0,0,0,0);
 
-    public ZoomDecoration(){}
+    public ZoomDecoration(){
+        setOpaque(false);
+        setFocusable(false);
+    }
 
     public void setFill(boolean fill){
         this.fill = fill;
