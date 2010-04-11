@@ -54,6 +54,68 @@ public final class NetcdfImageReaderTest extends ImageReaderTestBase {
     }
 
     /**
+     * The first part of expected metadata (without the sample dimensions).
+     */
+    private static final String EXPECTED_METADATA =
+            SpatialMetadataFormat.FORMAT_NAME + '\n' +
+            "├───RectifiedGridDomain\n" +
+            "│   ├───origin=“-179.5 -77.0104751586914 5.0 0.0”\n" +
+            "│   ├───CoordinateReferenceSystem\n" +
+            "│   │   ├───name=“NetCDF:time depth latitude longitude”\n" +
+            "│   │   ├───type=“geographic”\n" +
+            "│   │   ├───Datum\n" +
+            "│   │   │   ├───name=“OGC:WGS84”\n" +
+            "│   │   │   ├───type=“geodetic”\n" +
+            "│   │   │   ├───Ellipsoid\n" +
+            "│   │   │   │   ├───name=“WGS84”\n" +
+            "│   │   │   │   ├───axisUnit=“m”\n" +
+            "│   │   │   │   ├───semiMajorAxis=“6378137.0”\n" +
+            "│   │   │   │   └───inverseFlattening=“298.257223563”\n" +
+            "│   │   │   └───PrimeMeridian\n" +
+            "│   │   │       ├───name=“Greenwich”\n" +
+            "│   │   │       ├───greenwichLongitude=“0.0”\n" +
+            "│   │   │       └───angularUnit=“deg”\n" +
+            "│   │   └───CoordinateSystem\n" +
+            "│   │       ├───name=“NetCDF:time depth latitude longitude”\n" +
+            "│   │       ├───type=“ellipsoidal”\n" +
+            "│   │       ├───dimension=“4”\n" +
+            "│   │       └───Axes\n" +
+            "│   │           ├───CoordinateSystemAxis\n" +
+            "│   │           │   ├───name=“NetCDF:longitude”\n" +
+            "│   │           │   ├───axisAbbrev=“λ”\n" +
+            "│   │           │   ├───direction=“east”\n" +
+            "│   │           │   ├───minimumValue=“-179.5”\n" +
+            "│   │           │   ├───maximumValue=“180.0”\n" +
+            "│   │           │   └───unit=“deg”\n" +
+            "│   │           ├───CoordinateSystemAxis\n" +
+            "│   │           │   ├───name=“NetCDF:latitude”\n" +
+            "│   │           │   ├───axisAbbrev=“φ”\n" +
+            "│   │           │   ├───direction=“north”\n" +
+            "│   │           │   ├───minimumValue=“-77.0104751586914”\n" +
+            "│   │           │   ├───maximumValue=“77.0104751586914”\n" +
+            "│   │           │   └───unit=“deg”\n" +
+            "│   │           ├───CoordinateSystemAxis\n" +
+            "│   │           │   ├───name=“NetCDF:depth”\n" +
+            "│   │           │   ├───axisAbbrev=“d”\n" +
+            "│   │           │   ├───direction=“down”\n" +
+            "│   │           │   ├───minimumValue=“5.0”\n" +
+            "│   │           │   ├───maximumValue=“1950.0”\n" +
+            "│   │           │   └───unit=“m”\n" +
+            "│   │           └───CoordinateSystemAxis\n" +
+            "│   │               ├───name=“NetCDF:time”\n" +
+            "│   │               ├───axisAbbrev=“t”\n" +
+            "│   │               ├───direction=“future”\n" +
+            "│   │               ├───minimumValue=“20975.0”\n" +
+            "│   │               ├───maximumValue=“20975.0”\n" +
+            "│   │               └───unit=“d”\n" +
+            "│   ├───OffsetVectors\n" +
+            "│   │   └───OffsetVector\n" +
+            "│   │       └───values=“0.5 0.0 0.0 0.0”\n" +
+            "│   └───Limits\n" +
+            "│       ├───low=“0 0 0 0”\n" +
+            "│       └───high=“719 498 58 0”\n";
+
+    /**
      * Tests the metadata.
      *
      * @throws IOException if an error occured while reading the file.
@@ -70,14 +132,54 @@ public final class NetcdfImageReaderTest extends ImageReaderTestBase {
         assertEquals(DataBuffer.TYPE_SHORT, reader.getRawDataType(0));
         final SpatialMetadata metadata = reader.getImageMetadata(0);
         assertNotNull(metadata);
-        if (false) assertMultilinesEquals(decodeQuotes(
-            SpatialMetadataFormat.FORMAT_NAME + '\n' +
+        assertMultilinesEquals(decodeQuotes(EXPECTED_METADATA +
             "└───ImageDescription\n" +
             "    └───Dimensions\n" +
             "        └───Dimension\n" +
-            "            ├───minValue=“-1.893”\n" +
-            "            ├───maxValue=“31.14”\n" +
-            "            └───fillSampleValues=“-9999.0”\n"), metadata.toString());
+            "            ├───units=“degree_Celsius”\n" +
+            "            ├───minValue=“-23000.0”\n" +
+            "            ├───maxValue=“20000.0”\n" +
+            "            ├───fillSampleValues=“32767.0”\n" +
+            "            ├───scaleFactor=“0.0010”\n" +
+            "            ├───offset=“20.0”\n" +
+            "            └───transferFunctionType=“linear”"), metadata.toString());
+        reader.dispose();
+    }
+
+    /**
+     * Tests the metadata with two named bands.
+     *
+     * @throws IOException if an error occured while reading the file.
+     */
+    @Test
+    public void testMetadataTwoBands() throws IOException {
+        final NetcdfImageReader reader = createImageReader();
+        reader.setBandNames(0, "temperature", "pct_variance");
+        assertEquals(  2, reader.getNumBands (0));
+        assertEquals(  4, reader.getDimension(0));
+        assertEquals(720, reader.getWidth    (0));
+        assertEquals(499, reader.getHeight   (0));
+        assertEquals(DataBuffer.TYPE_SHORT, reader.getRawDataType(0));
+        final SpatialMetadata metadata = reader.getImageMetadata(0);
+        assertNotNull(metadata);
+        assertMultilinesEquals(decodeQuotes(EXPECTED_METADATA +
+            "└───ImageDescription\n" +
+            "    └───Dimensions\n" +
+            "        ├───Dimension\n" +
+            "        │   ├───units=“degree_Celsius”\n" +
+            "        │   ├───minValue=“-23000.0”\n" +
+            "        │   ├───maxValue=“20000.0”\n" +
+            "        │   ├───fillSampleValues=“32767.0”\n" +
+            "        │   ├───scaleFactor=“0.0010”\n" +
+            "        │   ├───offset=“20.0”\n" +
+            "        │   └───transferFunctionType=“linear”\n" +
+            "        └───Dimension\n" +
+            "            ├───units=“percent”\n" +
+            "            ├───minValue=“0.0”\n" +
+            "            ├───maxValue=“100.0”\n" +
+            "            ├───fillSampleValues=“32767.0”\n" +
+            "            ├───scaleFactor=“0.01”\n" +
+            "            └───transferFunctionType=“linear”"), metadata.toString());
         reader.dispose();
     }
 

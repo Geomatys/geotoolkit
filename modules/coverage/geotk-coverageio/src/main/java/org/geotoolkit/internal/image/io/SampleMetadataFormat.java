@@ -136,7 +136,7 @@ public abstract class SampleMetadataFormat implements IIOMetadataFormat {
                     childNames = new LinkedHashSet<String>(XCollections.hashMapCapacity(length));
                 }
                 for (int i=0; i<length; i++) {
-                    childNames.add(addNode(attributes.item(i)));
+                    childNames.add(addNode(childs.item(i)));
                 }
                 element.childs = childNames.toArray(new String[childNames.size()]);
             }

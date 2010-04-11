@@ -110,7 +110,7 @@ public interface SampleDimension extends RangeDimension {
      * This method is equivalent to the code below (null checks omitted for simplicity):
      *
      * {@preformat java
-     *     return getValidSampleValues().getMinimum(true) * getScaleFactor() + getOffset();
+     *     return getValidSampleValues().getMaximum(true) * getScaleFactor() + getOffset();
      * }
      *
      * @return The maximal value that can be stored in the designated band, or {@code null}.

@@ -31,7 +31,7 @@ import javax.imageio.ImageWriter;
  * This class provides a mean to map image (or variable) names to image index for use with the
  * {@code ImageReader} or {@code ImageWriter} API.
  *
- * {@section Usage}
+ * {@section Common usage: names for images}
  * If the image names can not be known <i>a priori</i>, then the user needs to invoke
  * {@link #getImageNames()} and inspect the returned list. But if the user know in advance
  * the name of the images to be read, then a more efficient approach is to declare the names
@@ -48,8 +48,22 @@ import javax.imageio.ImageWriter;
  *
  * If no image exist for a given name, then an {@link ImageNameNotFoundException} will be thrown.
  *
+ * {@section Alternative usage: names for bands}
+ * In some cases, it is convenient to use the variable names for band indices rather than image
+ * indices. For example when reading <cite>geostrophic current</cite> data as a vector field,
+ * where the variable named <var>u</var> is the East-West component of the vectors and the
+ * variable named <var>v</var> is the North-South component, we may want to read those two
+ * components as two bands in the same image:
+ *
+ * {@preformat java
+ *     imageReader.setBandNames(0, "u", "v");
+ *     BufferedImage currents = imageReader.read(0); // Two-banded image.
+ * }
+ *
+ * Named bands, if any, have precedence over named images. By default there is no named band.
+ *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.08
+ * @version 3.11
  *
  * @since 3.08
  * @module
@@ -93,4 +107,31 @@ public interface NamedImageStore {
      *         writer, or if an I/O error occured while processing.
      */
     void setImageNames(String... imageNames) throws IOException;
+
+    /**
+     * Returns the names of the bands for the given image, or {@code null} if none.
+     * By default, this method returns {@code null} for every image index.
+     *
+     * @param  imageIndex Index of the image for which to get the band names.
+     * @return The variable names of the bands for the given image, or {@code null} if the bands
+     *         are unamed.
+     * @throws IOException if the image stream can not be read.
+     *
+     * @since 3.11
+     */
+    List<String> getBandNames(int imageIndex) throws IOException;
+
+    /**
+     * Sets the names of the bands for the given image, or {@code null} for removing any naming.
+     * See the class-javadoc for a usage example.
+     *
+     * @param  imageIndex Index of the image for which to set the band names.
+     * @param  bandNames The variable names of the bands for the given image,
+     *         or {@code null} for removing any naming.
+     * @throws IOException If the given names can not be assigned to this image reader or
+     *         writer, or if an I/O error occured while processing.
+     *
+     * @since 3.11
+     */
+    void setBandNames(int imageIndex, String... bandNames) throws IOException;
 }

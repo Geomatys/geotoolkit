@@ -55,6 +55,7 @@ import org.geotoolkit.referencing.adapters.NetcdfAxis;
 import org.geotoolkit.referencing.adapters.NetcdfCRS;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.resources.Errors;
+import org.geotoolkit.util.collection.UnmodifiableArrayList;
 
 
 /**
@@ -146,18 +147,21 @@ final class NetcdfMetadata extends SpatialMetadata {
      * @param reader The reader for which to assign the metadata.
      * @param variable The variable for which to read metadata.
      */
-    public NetcdfMetadata(final ImageReader reader, final VariableIF variable) {
+    public NetcdfMetadata(final ImageReader reader, final VariableIF... variables) {
         super(SpatialMetadataFormat.IMAGE, reader, null);
         nativeMetadataFormatName = NATIVE_FORMAT;
-        if (variable instanceof Enhancements) {
-            final List<CoordinateSystem> systems = ((Enhancements) variable).getCoordinateSystems();
-            if (systems != null && !systems.isEmpty()) {
-                CoordinateReferenceSystem crs = parseWKT(variable, "ESRI_pe_string");
-                setCoordinateSystem(systems.get(0), crs);
+        for (final VariableIF variable : variables) {
+            if (variable instanceof Enhancements) {
+                final List<CoordinateSystem> systems = ((Enhancements) variable).getCoordinateSystems();
+                if (systems != null && !systems.isEmpty()) {
+                    CoordinateReferenceSystem crs = parseWKT(variable, "ESRI_pe_string");
+                    setCoordinateSystem(systems.get(0), crs);
+                    break; // Infers the CRS only from the first variable having such CRS.
+                }
             }
         }
-        addSampleDimension(variable);
-        netcdf = variable;
+        addSampleDimension(variables);
+        netcdf = variables;
     }
 
     /**
@@ -319,6 +323,36 @@ final class NetcdfMetadata extends SpatialMetadata {
     }
 
     /**
+     * A unmodifiable list of attributes, together with the variable name.
+     * The name is returned by the {@link #toString()} method in order to
+     * get is displayed in the tree table in place of the enumeration of
+     * all attributes contained in this list.
+     */
+    @SuppressWarnings("serial")
+    private static final class AttributeList extends UnmodifiableArrayList<Attribute> {
+        /**
+         * The variable name.
+         */
+        private final String name;
+
+        /**
+         * Creates a new list for the given attributes and variable name.
+         */
+        AttributeList(final List<Attribute> attributes, final String name) {
+            super(attributes.toArray(new Attribute[attributes.size()]));
+            this.name = name;
+        }
+
+        /**
+         * Returns the value to be displayed in the "value" column of the tree table.
+         */
+        @Override
+        public String toString() {
+            return name;
+        }
+    }
+
+    /**
      * If the given format name is {@code "NetCDF"}, returns a "dynamic" metadata format
      * inferred from the actual content of the NetCDF file. Otherwise returns the usual
      * metadata format as defined in the super-class.
@@ -344,21 +378,25 @@ final class NetcdfMetadata extends SpatialMetadata {
             if (netcdf instanceof Node) {
                 return (Node) netcdf;
             }
-            final IIOMetadataNode node = new IIOMetadataNode(NATIVE_FORMAT);
-            if (netcdf instanceof VariableSimpleIF) {
-                final VariableSimpleIF var = (VariableSimpleIF) netcdf;
-                appendAttributes(var.getAttributes(), node);
-                node.setAttribute("data_type", String.valueOf(var.getDataType()));
-                if (var instanceof EnhanceScaleMissing) {
-                    final EnhanceScaleMissing eh = (EnhanceScaleMissing) netcdf;
-                    node.setAttribute(NetcdfVariable.VALID_MIN, String.valueOf(eh.getValidMin()));
-                    node.setAttribute(NetcdfVariable.VALID_MAX, String.valueOf(eh.getValidMax()));
+            final IIOMetadataNode root = new IIOMetadataNode(NATIVE_FORMAT);
+            if (netcdf instanceof VariableSimpleIF[]) {
+                for (final VariableSimpleIF var : (VariableSimpleIF[]) netcdf) {
+                    final IIOMetadataNode node = new IIOMetadataNode("Variable");
+                    node.setNodeValue(var.getName());
+                    appendAttributes(new AttributeList(var.getAttributes(), var.getName()), node);
+                    node.setAttribute("data_type", String.valueOf(var.getDataType()));
+                    if (var instanceof EnhanceScaleMissing) {
+                        final EnhanceScaleMissing eh = (EnhanceScaleMissing) var;
+                        node.setAttribute(NetcdfVariable.VALID_MIN, String.valueOf(eh.getValidMin()));
+                        node.setAttribute(NetcdfVariable.VALID_MAX, String.valueOf(eh.getValidMax()));
+                    }
+                    root.appendChild(node);
                 }
             } else {
-                buildTree(((NetcdfFile) netcdf).getRootGroup(), node);
+                buildTree(((NetcdfFile) netcdf).getRootGroup(), root);
             }
-            netcdf = node;
-            return node;
+            netcdf = root;
+            return root;
         }
         return super.getAsTree(formatName);
     }
@@ -370,7 +408,7 @@ final class NetcdfMetadata extends SpatialMetadata {
         for (final Attribute attribute : attributes) {
             node.setAttribute(attribute.getName(), attribute.getStringValue());
         }
-        node.setUserObject(attributes);
+        node.setUserObject(attributes); // Required by Format.getDataType(Node, int).
     }
 
     /**

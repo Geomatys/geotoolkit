@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.EnumSet;
+import java.util.HashMap;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.Locale;
@@ -68,6 +69,7 @@ import org.geotoolkit.referencing.adapters.NetcdfAxis;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.Version;
 import org.geotoolkit.util.XArrays;
+import org.geotoolkit.util.NullArgumentException;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
 import org.geotoolkit.util.logging.Logging;
 
@@ -96,7 +98,7 @@ import org.geotoolkit.util.logging.Logging;
  *
  * @author Martin Desruisseaux (Geomatys)
  * @author Antoine Hnawia (IRD)
- * @version 3.08
+ * @version 3.11
  *
  * @since 3.08 (derived from 2.4)
  * @module
@@ -155,6 +157,12 @@ public class NetcdfImageReader extends FileImageReader implements NamedImageStor
     private List<String> variableNames, selectedNames;
 
     /**
+     * The names of the {@linkplain Variable variables} to be assigned to bands,
+     * or {@code null} if none.
+     */
+    private Map<Integer,List<String>> bandNames;
+
+    /**
      * The image index of the current {@linkplain #variable variable}.
      */
     private int variableIndex;
@@ -195,7 +203,7 @@ public class NetcdfImageReader extends FileImageReader implements NamedImageStor
      * {@code variables.get(imageIndex)} where {@code variables} is the list returned by this
      * method.
      * <p>
-     * The sequence of variable to be read can be changed by a call to {@link #setImageNames}.
+     * The sequence of variable to be read can be changed by a call to {@link #setImageNames(String[]}.
      *
      * @return The names of the variables to be read.
      * @throws IOException if the NetCDF file can not be read.
@@ -218,15 +226,32 @@ public class NetcdfImageReader extends FileImageReader implements NamedImageStor
      *
      * @param variableNames The set of variables to be assigned to image index,
      *        or {@code null} for all variables declared in the NetCDF file.
+     * @throws IOException if the NetCDF file can not be read.
      */
     @Override
-    public void setImageNames(final String... variableNames) {
+    public void setImageNames(String... variableNames) throws IOException {
         if (variableNames != null) {
-            selectedNames = UnmodifiableArrayList.wrap(variableNames.clone());
+            variableNames = variableNames.clone();
+            ensureNonNull(variableNames);
+            selectedNames = UnmodifiableArrayList.wrap(variableNames);
         } else {
-            selectedNames = this.variableNames;
+            ensureFileOpen();
+            selectedNames = getVariableNames();
         }
         variable = null; // Will force a reload.
+    }
+
+    /**
+     * Ensures that the given array does not contain any null element.
+     */
+    private void ensureNonNull(final String[] names) {
+        for (int i=0; i<names.length; i++) {
+            final String name = names[i];
+            if (name == null) {
+                throw new NullArgumentException(errors().getString(
+                        Errors.Keys.NULL_ARGUMENT_$1, "names[" + i + ']'));
+            }
+        }
     }
 
     /**
@@ -244,11 +269,72 @@ public class NetcdfImageReader extends FileImageReader implements NamedImageStor
     }
 
     /**
+     * Returns the names of the bands for the given image, or {@code null} if none.
+     * By default, this method returns {@code null} for every image index.
+     *
+     * @param  imageIndex Index of the image for which to get the band names.
+     * @return The variable names of the bands for the given image, or {@code null} if the bands
+     *         are unamed.
+     * @throws IOException if the NetCDF file can not be read.
+     *
+     * @since 3.11
+     */
+    @Override
+    public List<String> getBandNames(final int imageIndex) throws IOException {
+        checkImageIndex(imageIndex);
+        if (bandNames != null) {
+            return bandNames.get(imageIndex);
+        }
+        return null;
+    }
+
+    /**
+     * Sets the names of the bands for the given image, or {@code null} for removing any naming.
+     * This method is useful for merging different variables as different bands in the image to
+     * be read, typically because each band is a vector component. See the {@link NamedImageStore}
+     * javadoc for an example.
+     *
+     * @param  imageIndex Index of the image for which to set the band names.
+     * @param  names The variable names of the bands for the given image,
+     *         or {@code null} for removing any naming.
+     * @throws IOException if the NetCDF file can not be read.
+     *
+     * @since 3.11
+     */
+    @Override
+    public void setBandNames(final int imageIndex, String... names) throws IOException {
+        checkImageIndex(imageIndex);
+        if (names == null) {
+            if (bandNames != null) {
+                bandNames.remove(imageIndex);
+            }
+        } else {
+            if (names.length == 0) {
+                throw new IllegalArgumentException(errors().getString(Errors.Keys.EMPTY_ARRAY));
+            }
+            if (bandNames == null) {
+                bandNames = new HashMap<Integer,List<String>>();
+            }
+            names = names.clone();
+            ensureNonNull(names);
+            bandNames.put(imageIndex, UnmodifiableArrayList.wrap(names));
+        }
+    }
+
+    /**
      * Returns the number of bands available for the image identified by the given index. The
-     * number of bands {@linkplain FileImageReader#getNumBands(int) is 1 by default}, except
-     * if the bands API has been {@linkplain DimensionSlice#setAPI assigned to a dimension}.
-     * In the later case, this method returns the {@linkplain VariableIF#getDimension(int)
-     * dimension} length of the {@linkplain #variable} identified by the given index.
+     * default implementation returns the value of the first of the following conditions which
+     * is hold:
+     * <p>
+     * <ol>
+     *   <li>If the bands at the give image index {@linkplain #setBandNames have been
+     *       assigned to variable names}, returns the number of assigned variables.</li>
+     *   <li>Otherwise if the bands API has been {@linkplain DimensionSlice#setAPI assigned to a
+     *       dimension}, return the {@linkplain VariableIF#getDimension(int) dimension} length of
+     *       the {@linkplain #variable} identified by the given image index.</li>
+     *   <li>Otherwise the {@linkplain FileImageReader#getNumBands(int) default number of bands}
+     *       is 1.</li>
+     * </ol>
      *
      * @param  imageIndex The image index.
      * @return The number of bands available.
@@ -256,6 +342,12 @@ public class NetcdfImageReader extends FileImageReader implements NamedImageStor
      */
     @Override
     public int getNumBands(final int imageIndex) throws IOException {
+        if (bandNames != null) {
+            final List<String> names = bandNames.get(imageIndex);
+            if (names != null) {
+                return names.size();
+            }
+        }
         if (zDimension != 0) {
             prepareVariable(imageIndex);
             final int rank = variable.getRank();
@@ -307,6 +399,11 @@ public class NetcdfImageReader extends FileImageReader implements NamedImageStor
     /**
      * Initializes the value of {@link #zDimension} if not already done, and returns its previous
      * value. The caller must reset {@code zDimension} to its previous value after he is done.
+     * <p>
+     * This method is invoked by any method expecting an {@link ImageReadParam} which invoke,
+     * directly or indirectly, the {@link #getNumBands(int)} method. It shall be restored to
+     * its previous state after the method call in order to let {@code getNumBands(int)} to
+     * have its normal default behavior (value computed without {@code ImageReadParam}).
      *
      * @param  param The parameters supplied by the user to the {@code read} method.
      * @param  rank The number of dimensions (the rank) in the {@linkplain #variable}.
@@ -320,7 +417,7 @@ public class NetcdfImageReader extends FileImageReader implements NamedImageStor
                 switch (++n) {
                     case X_DIMENSION:
                     case Y_DIMENSION: {
-                        throw new IllegalArgumentException(Errors.format(
+                        throw new IllegalArgumentException(errors().getString(
                                 Errors.Keys.BAD_PARAMETER_$2, "DimensionSlice(BANDS)", n-1));
                     }
                 }
@@ -454,17 +551,35 @@ public class NetcdfImageReader extends FileImageReader implements NamedImageStor
      */
     @Override
     protected SpatialMetadata createMetadata(final int imageIndex) throws IOException {
+        ensureFileOpen();
+        ensureMetadataLoaded();
+        /*
+         * For stream metadata, returns a tree built from the global attributes only.
+         */
         if (imageIndex < 0) {
-            // Stream metadata
-            ensureFileOpen();
-            ensureMetadataLoaded();
             return new NetcdfMetadata(this, dataset);
-        } else {
-            // Image metadata
-            prepareVariable(imageIndex);
-            ensureMetadataLoaded();
-            return new NetcdfMetadata(this, variable);
         }
+        /*
+         * For image metadata, returns a tree built from the variable attributes, where
+         * the variable is inferred from the image index. In the special case where the
+         * user assigned many variable to the same image index (where each variable is
+         * handled as a band), we need to build the variables list from the band names.
+         */
+        Variable[] variables = null;
+        if (bandNames != null) {
+            final List<String> names = bandNames.get(imageIndex);
+            if (names != null) {
+                variables = new Variable[names.size()];
+                for (int i=0; i<variables.length; i++) {
+                    variables[i] = findVariable(names.get(i));
+                }
+            }
+        }
+        if (variables == null) {
+            prepareVariable(imageIndex);
+            variables = new Variable[] {variable};
+        }
+        return new NetcdfMetadata(this, variables);
     }
 
     /**
@@ -485,9 +600,11 @@ public class NetcdfImageReader extends FileImageReader implements NamedImageStor
     }
 
     /**
-     * Returns an image type specifier for the image at the given index. See the
-     * {@linkplain FileImageReader#getImageType(int, ImageReadParam, SampleConverter[])
-     * super-class javadoc} for details.
+     * Returns an image type specifier for the image at the given index. This method delegates
+     * to the {@linkplain FileImageReader#getImageType(int, ImageReadParam, SampleConverter[])
+     * super-class method}, with some additional work for handling the
+     * {@linkplain SpatialImageReadParam#getDimensionSliceForAPI dimension assigned to the band
+     * API} if any.
      */
     @Override
     protected ImageTypeSpecifier getImageType(final int               imageIndex,
@@ -543,16 +660,15 @@ public class NetcdfImageReader extends FileImageReader implements NamedImageStor
             clearAbortRequest();
             final String inputURL;
             boolean useCache = true;
+            final Object input = this.input;
             switch (Protocol.getProtocol(input)) {
                 case DODS: {
                     inputURL = input.toString();
-                    if (variableNames == null) {
-                        final int s = inputURL.indexOf('?');
-                        if (s >= 0) {
-                            variableNames = UnmodifiableArrayList.wrap(new String[] {
-                                inputURL.substring(s + 1)
-                            });
-                        }
+                    final int s = inputURL.indexOf('?');
+                    if (s >= 0) {
+                        variableNames = UnmodifiableArrayList.wrap(new String[] {
+                            inputURL.substring(s + 1)
+                        });
                     }
                     break;
                 }
@@ -561,7 +677,7 @@ public class NetcdfImageReader extends FileImageReader implements NamedImageStor
                      * The NetCDF library accepts URL, so don't create a temporary file for them.
                      * Just convert the URL to a String and use that directly.
                      */
-                    if (input instanceof String || input instanceof URL || input instanceof URI) {
+                    if (input instanceof String || input instanceof URL || input instanceof URI || input instanceof File) {
                         inputURL = input.toString();
                     } else {
                         /*
@@ -580,46 +696,56 @@ public class NetcdfImageReader extends FileImageReader implements NamedImageStor
                 dataset = NetcdfDataset.openDataset(inputURL, ENHANCEMENTS, 0, this, null);
             }
             if (dataset == null) {
-                throw new FileNotFoundException(Errors.format(
+                throw new FileNotFoundException(errors().getString(
                         Errors.Keys.FILE_DOES_NOT_EXIST_$1, inputURL));
             }
-            if (variableNames == null) {
-                /*
-                 * Gets a list of every variables found in the NetcdfDataset and copies the names
-                 * in a filtered list which exclude every variable that are dimension of an other
-                 * variable. For example "longitude" may be a variable found in the NetcdfDataset,
-                 * but is declared only because it is needed as a dimension for the "temperature"
-                 * variable. The "longitude" variable is usually not of direct interest to the user
-                 * (the interresting variable is "temperature"), so we exclude it.
-                 */
-                final List<Variable> variables = dataset.getVariables();
-                final String[] filtered = new String[variables.size()];
-                int count = 0;
-                for (int i=0; i<filtered.length; i++) {
-                    final VariableIF candidate = variables.get(i);
-                    /*
-                     * - Images require at least 2 dimensions. They may have more dimensions,
-                     *   in which case a slice will be taken later.
-                     *
-                     * - Excludes axis. They are often already excluded by the first condition
-                     *   because axis are usually 1-dimensional, but some are 2-dimensional,
-                     *   e.g. a localization grid.
-                     *
-                     * - Excludes characters, strings and structures, which can not be easily
-                     *   mapped to an image type. In addition, 2-dimensional character arrays
-                     *   are often used for annotations and we don't wan't to confuse them
-                     *   with images.
-                     */
-                    if (candidate.getRank() >= 2 && !isAxis(candidate, variables) &&
-                            NetcdfVariable.VALID_TYPES.contains(candidate.getDataType()))
-                    {
-                        filtered[count++] = candidate.getName();
-                    }
-                }
-                variableNames = UnmodifiableArrayList.wrap(XArrays.resize(filtered, count));
+            if (selectedNames == null) {
+                selectedNames = getVariableNames();
             }
-            selectedNames = variableNames;
         }
+    }
+
+    /**
+     * Returns the name of all variables in the current NetCDF file. The {@link #ensureFileOpen()}
+     * method must have been invoked before this method (this is not verified).
+     */
+    private List<String> getVariableNames() {
+        if (variableNames == null) {
+            /*
+             * Gets a list of every variables found in the NetcdfDataset and copies the names
+             * in a filtered list which exclude every variable that are dimension of an other
+             * variable. For example "longitude" may be a variable found in the NetcdfDataset,
+             * but is declared only because it is needed as a dimension for the "temperature"
+             * variable. The "longitude" variable is usually not of direct interest to the user
+             * (the interresting variable is "temperature"), so we exclude it.
+             */
+            final List<Variable> variables = dataset.getVariables();
+            final String[] filtered = new String[variables.size()];
+            int count = 0;
+            for (int i=0; i<filtered.length; i++) {
+                final VariableIF candidate = variables.get(i);
+                /*
+                 * - Images require at least 2 dimensions. They may have more dimensions,
+                 *   in which case a slice will be taken later.
+                 *
+                 * - Excludes axis. They are often already excluded by the first condition
+                 *   because axis are usually 1-dimensional, but some are 2-dimensional,
+                 *   e.g. a localization grid.
+                 *
+                 * - Excludes characters, strings and structures, which can not be easily
+                 *   mapped to an image type. In addition, 2-dimensional character arrays
+                 *   are often used for annotations and we don't wan't to confuse them
+                 *   with images.
+                 */
+                if (candidate.getRank() >= 2 && !isAxis(candidate, variables) &&
+                        NetcdfVariable.VALID_TYPES.contains(candidate.getDataType()))
+                {
+                    filtered[count++] = candidate.getName();
+                }
+            }
+            variableNames = UnmodifiableArrayList.wrap(XArrays.resize(filtered, count));
+        }
+        return variableNames;
     }
 
     /**
@@ -651,7 +777,7 @@ public class NetcdfImageReader extends FileImageReader implements NamedImageStor
             final Variable candidate = findVariable(name);
             final int rank = candidate.getRank();
             if (rank < 2) {
-                throw new IIOException(Errors.format(Errors.Keys.NOT_TWO_DIMENSIONAL_$1, rank));
+                throw new IIOException(errors().getString(Errors.Keys.NOT_TWO_DIMENSIONAL_$1, rank));
             }
             variable      = candidate;
             variableIndex = imageIndex;
@@ -665,6 +791,9 @@ public class NetcdfImageReader extends FileImageReader implements NamedImageStor
      * {@link NetcdfDataset#findVariable(String)} except that the search
      * is case-insensitive and an exception is thrown if no variable has
      * been found for the given name.
+     * <p>
+     * Subclasses can override this method if they want this {@code NetcdfImageReader}
+     * to use a different variable for the given name.
      *
      * @param  name The name of the variable to search.
      * @return The variable for the given name.
@@ -694,7 +823,7 @@ public class NetcdfImageReader extends FileImageReader implements NamedImageStor
                 }
             }
         }
-        throw new IIOException(Errors.format(
+        throw new IIOException(errors().getString(
                 Errors.Keys.VARIABLE_NOT_FOUND_IN_FILE_$2, name, dataset.getLocation()));
     }
 
@@ -727,9 +856,23 @@ public class NetcdfImageReader extends FileImageReader implements NamedImageStor
         final int rank = variable.getRank();
         final int oldZ = initZDimension(param, rank);
         final int bandDimension = rank - zDimension;
-        final boolean  hasBands = (bandDimension >= 0 && bandDimension < rank);
-        final int   numSrcBands = hasBands ? variable.getDimension(bandDimension).getLength() : 1;
-        final int   numDstBands = (dstBands != null) ? dstBands.length : numSrcBands;
+        boolean hasBandDimension = (bandDimension >= 0 && bandDimension < rank);
+        /*
+         * Gets the number of source bands, in preference order (must be consistent with the
+         * getNumBands(int) method): from the explicit list of band names, from the zDimension,
+         * or 1. Then check that the number of source and target bands are consistent.
+         */
+        int numSrcBands = hasBandDimension ? variable.getDimension(bandDimension).getLength() : 1;
+        String[] srcBandNames = null; // Will be used later if non-null.
+        if (bandNames != null) {
+            final List<String> names = bandNames.get(imageIndex);
+            if (names != null) {
+                numSrcBands  = names.size();
+                srcBandNames = names.toArray(new String[numSrcBands]);
+                hasBandDimension = false;
+            }
+        }
+        final int numDstBands = (dstBands != null) ? dstBands.length : numSrcBands;
         checkReadParamBandSettings(param, numSrcBands, numDstBands);
         /*
          * Gets the destination image of appropriate size.
@@ -780,7 +923,9 @@ public class NetcdfImageReader extends FileImageReader implements NamedImageStor
         }
         final List<Range> sections = Arrays.asList(ranges);
         /*
-         * Reads the requested sub-region only.
+         * Reads the requested sub-region only. In the usual case, we read only the current
+         * variable. However if the setBandNames(...) method has been invoked, we may have
+         * many different variables to read, one for each band.
          */
         zDimension = oldZ;
         processImageStarted(imageIndex);
@@ -793,13 +938,26 @@ public class NetcdfImageReader extends FileImageReader implements NamedImageStor
         for (int zi=0; zi<numDstBands; zi++) {
             final int srcBand = (srcBands == null) ? zi : srcBands[zi];
             final int dstBand = (dstBands == null) ? zi : dstBands[zi];
+            Variable bandVariable = variable;
+            if (srcBandNames != null) {
+                final String name = srcBandNames[srcBand];
+                if (!name.equals(selectedNames.get(imageIndex))) {
+                    bandVariable = findVariable(name);
+                }
+            }
             final Array array;
             try {
-                if (hasBands) {
+                if (hasBandDimension) {
+                    /*
+                     * Update the Section instance with the index of the slice to read. This code
+                     * is executed only if the band API is used for one of the variable dimension,
+                     * and the bands are not different variables (i.e. srcBandNames == null). Note
+                     * that there is no need to update 'sections' directly since it wraps directly
+                     * the 'ranges' array.
+                     */
                     ranges[bandDimension] = new Range(srcBand, srcBand, 1);
-                    // No need to update 'sections' since it wraps directly the 'ranges' array.
                 }
-                array = variable.read(sections);
+                array = bandVariable.read(sections);
             } catch (InvalidRangeException e) {
                 throw netcdfFailure(e);
             }
@@ -854,7 +1012,7 @@ public class NetcdfImageReader extends FileImageReader implements NamedImageStor
      * Wraps a generic exception into a {@link IIOException}.
      */
     private IIOException netcdfFailure(final Exception e) throws IOException {
-        return new IIOException(Errors.format(Errors.Keys.CANT_READ_$1, dataset.getLocation()), e);
+        return new IIOException(errors().getString(Errors.Keys.CANT_READ_$1, dataset.getLocation()), e);
     }
 
     /**
@@ -877,6 +1035,13 @@ public class NetcdfImageReader extends FileImageReader implements NamedImageStor
     @Override
     public void setError(final String message) {
         lastError = message;
+    }
+
+    /**
+     * Returns the error resources bundle.
+     */
+    private Errors errors() {
+        return Errors.getResources(locale);
     }
 
     /**

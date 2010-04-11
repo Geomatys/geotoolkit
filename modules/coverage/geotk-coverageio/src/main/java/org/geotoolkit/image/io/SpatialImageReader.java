@@ -660,7 +660,7 @@ public abstract class SpatialImageReader extends ImageReader implements WarningP
                 if (numMetadataBands != 0) for (int i=0; i<numBands; i++) {
                     final int sourceBand = (sourceBands != null) ? sourceBands[i] : i;
                     if (sourceBand < 0 || sourceBand >= numMetadataBands) {
-                        Warnings.log(this, null, SpatialImageReader.class, "getRawImageType",
+                        Warnings.log(this, null, SpatialImageReader.class, "getImageType",
                                 indexOutOfBounds(sourceBand, 0, numMetadataBands));
                     }
                     final SampleDimension band = bands.get(Math.min(sourceBand, numMetadataBands-1));
@@ -681,7 +681,7 @@ public abstract class SpatialImageReader extends ImageReader implements WarningP
                             allRanges = (allRanges != null) ? allRanges.union(range) : range;
                         } else {
                             // Use range.getMin/MaxValue() because they may be integers rather than doubles.
-                            Warnings.log(this, null, SpatialImageReader.class, "getRawImageType",
+                            Warnings.log(this, null, SpatialImageReader.class, "getImageType",
                                     Errors.Keys.BAD_RANGE_$2, range.getMinValue(), range.getMaxValue());
                             continue;
                         }

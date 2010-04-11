@@ -309,16 +309,22 @@ public class ImageCoverageReader extends GridCoverageReader {
      * in which case it is used directly as the {@linkplain #imageReader image reader} wrapped
      * by this {@code ImageCoverageReader}.
      *
-     * {@section Overriding in subclasses}
-     * Subclasses wanting a different behavior should consider overriding the following
-     * methods before to override this {@code setInput(Object)} method:
+     * {@section Implementation note}
+     * This method ensures that the {@link #imageReader} field is set to a suitable
+     * {@link ImageReader} instance. This is done by invoking the following methods,
+     * which can be overriden by subclasses:
      * <p>
-     * <ul>
-     *   <li>{@link #canReuseImageReader(ImageReaderSpi, Object)} - for determining if the
-     *       current {@linkplain #imageReader image reader} can be reused.</li>
-     *   <li>{@link #createImageReader(Object)} - for creating a new
-     *       {@linkplain #imageReader image reader} for the given input.</li>
-     * </ul>
+     * <ol>
+     *   <li>If the current {@link #imageReader} is non-null, invoke
+     *       {@link #canReuseImageReader(ImageReaderSpi, Object)} for determining
+     *       if it can be reused for the new input.</li>
+     *   <li>If the current {@code imageReader} was null or if the above method call
+     *       returned {@code false}, invoke {@link #createImageReader(Object)} for creating
+     *       a new {@link ImageReader} instance for the given input.</li>
+     * </ol>
+     * <p>
+     * Then this method {@linkplain ImageReader#setInput(Object, boolean, boolean) sets the input}
+     * of the {@link #imageReader} instance, if it was not already done by the above method calls.
      */
     @Override
     public void setInput(final Object input) throws CoverageStoreException {
