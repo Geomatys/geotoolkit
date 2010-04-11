@@ -60,7 +60,12 @@ final class FormatEntry extends Entry {
 
     /**
      * The sample dimensions for coverages encoded with this format, or {@code null} if undefined.
-     * If non-null, then the list size is equals to the expected number of bands.
+     * If non-null, then the list is garanteed to be non-empty and the list size is equals to the
+     * expected number of bands.
+     * <p>
+     * Empty lists are not allowed because our Image I/O framework interprets that as "no bands",
+     * as opposed to "unknown bands" (which is what we mean in the particular case of our database
+     * schema).
      * <p>
      * Each {@code SampleDimension} specifies how to convert pixel values to geophysics values,
      * or conversely. Their type (geophysics or not) is format dependent. For example coverages

@@ -28,6 +28,8 @@ import org.postgresql.ds.PGSimpleDataSource;
 
 import org.geotoolkit.test.TestData;
 import org.geotoolkit.internal.io.Installation;
+import org.geotoolkit.coverage.grid.ViewType;
+import org.geotoolkit.coverage.grid.GridCoverage2D;
 
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -39,7 +41,7 @@ import static org.junit.Assume.*;
  * This test requires a connection to a PostgreSQL database.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.10
+ * @version 3.11
  *
  * @since 3.09 (derived from Seagis)
  */
@@ -128,6 +130,21 @@ public class CatalogTestBase {
             assertNotNull(connection);
             assertFalse(connection.isClosed());
             assertSame(connection, cache.connection());
+        }
+    }
+
+    /**
+     * Shows the given coverage for a few seconds.
+     * This is used for debugging purpose only.
+     *
+     * @param coverage The coverage to show.
+     */
+    protected static void show(final GridCoverage2D coverage) {
+        try {
+            coverage.view(ViewType.RENDERED).show();
+            Thread.sleep(8000);
+        } catch (InterruptedException e) {
+            throw new AssertionError(e);
         }
     }
 }

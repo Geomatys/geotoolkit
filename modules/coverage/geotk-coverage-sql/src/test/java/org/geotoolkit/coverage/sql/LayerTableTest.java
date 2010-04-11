@@ -23,7 +23,6 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
 import java.sql.SQLException;
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
@@ -40,38 +39,51 @@ import static org.junit.Assert.*;
  * Tests {@link LayerTable}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.10
+ * @version 3.11
  *
  * @since 3.10 (derived from Seagis)
  */
 @Depend(SeriesTableTest.class)
 public final class LayerTableTest extends CatalogTestBase {
     /**
-     * The name of the layer to be tested.
+     * The name of the simpliest layer to be tested. This layer contains only PNG images in
+     * WGS84, one image for each date. Consequently this is the simpliest layer we can test.
      */
     public static final String TEMPERATURE = "SST (World - 8 days)";
 
     /**
-     * The name of the NetCDF layer to be tested.
+     * The name of the NetCDF layer to be tested. Like {@link #TEMPERATURE}, there is
+     * one different file for each date. But at the difference of {@code TEMPERATURE},
+     * each files is a 3D grid which contain data at different depth. In addition, the
+     * horizontal CRS is the Mercator projection.
      */
     public static final String NETCDF = "Coriolis (temperature)";
 
     /**
      * The name of a NetCDF layer with two bands to be tested.
+     * Data are geostrophic currents, to be represented as arrow field.
+     * This layer don't provide image at different depths.
      */
     public static final String GEOSTROPHIC_CURRENT = "Mars (u,v)";
 
     /**
-     * The name of a tiled layer.
+     * The name of a tiled layer in WGS84 CRS, without time.
      */
     public static final String BLUEMARBLE = "BlueMarble";
 
     /**
      * The start time, end time, and a sample time between them.
+     * They are times for the {@value #TEMPERATURE} layer.
      */
     public static final Date START_TIME, SUB_START_TIME, SAMPLE_TIME, SUB_END_TIME, END_TIME;
+
+    /**
+     * Time for a sample image from the {@value #GEOSTROPHIC_CURRENT} layer.
+     * For this test, this is the sample at image index 3.
+     */
+    public static final Date GEOSTROPHIC_CURRENT_TIME;
     static {
-        final DateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.CANADA);
+        final SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.CANADA);
         format.setTimeZone(TimeZone.getTimeZone("UTC"));
         try {
             START_TIME     = format.parse("1986-01-01");
@@ -79,6 +91,9 @@ public final class LayerTableTest extends CatalogTestBase {
             SAMPLE_TIME    = format.parse("1986-01-13");
             SUB_END_TIME   = format.parse("1986-01-20");
             END_TIME       = format.parse("1986-02-26");
+
+            format.applyPattern("yyyy-MM-dd HH:mm:ss");
+            GEOSTROPHIC_CURRENT_TIME = format.parse("2007-05-22 00:22:30");
         } catch (ParseException e) {
             throw new ExceptionInInitializerError(e);
         }
@@ -104,8 +119,9 @@ public final class LayerTableTest extends CatalogTestBase {
     }
 
     /**
-     * Tests the {@link LayerTableTest#getEntry} and @link LayerTableTest#getEntries} methods.
-     * Also tests a few methods on the {@link LayerEntry} object.
+     * Tests the {@link LayerTableTest#getEntry} and @link LayerTableTest#getEntries} methods
+     * on the simpliest layer, which use WGS84 CRS. Also tests a few methods on the
+     * {@link LayerEntry} object.
      *
      * @throws SQLException If the test can't connect to the database.
      * @throws CoverageStoreException If an error occured while querying the layer.
@@ -126,7 +142,7 @@ public final class LayerTableTest extends CatalogTestBase {
     }
 
     /**
-     * Tests the layer for NetCDF images.
+     * Tests the layer for NetCDF images, which use the Mercator CRS and has depths.
      *
      * @throws SQLException If the test can't connect to the database.
      * @throws CoverageStoreException If an error occured while querying the layer.
@@ -151,7 +167,7 @@ public final class LayerTableTest extends CatalogTestBase {
      * @throws CoverageStoreException If an error occured while querying the layer.
      */
     @Test
-    public void testTwoBands() throws SQLException, CoverageStoreException {
+    public void testGeostrophicCurrent() throws SQLException, CoverageStoreException {
         final LayerTable table = getDatabase().getTable(LayerTable.class);
         final Layer entry = table.getEntry(GEOSTROPHIC_CURRENT);
 

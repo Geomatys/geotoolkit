@@ -46,7 +46,7 @@ import static org.junit.Assert.*;
  * to {@link GridCoverageEntry} methods.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.10
+ * @version 3.11
  *
  * @since 3.10 (derived from Seagis)
  */
@@ -60,7 +60,7 @@ public final class GridCoverageLoaderTest extends CatalogTestBase {
      * @throws CoverageStoreException If a logical error occured.
      */
     @Test
-    public void testTemperature() throws SQLException, IOException, CoverageStoreException {
+    public void testTemperature2D() throws SQLException, IOException, CoverageStoreException {
         final GridCoverageTable table = getDatabase().getTable(GridCoverageTable.class);
         table.envelope.clear();
         table.envelope.setTimeRange(LayerTableTest.SUB_START_TIME, LayerTableTest.SUB_END_TIME);
@@ -155,7 +155,7 @@ public final class GridCoverageLoaderTest extends CatalogTestBase {
     }
 
     /**
-     * Checks the {@code GridCoverage2D} instance for the coriolis sample data.
+     * Checks the {@code GridCoverage2D} instance for the Coriolis sample data.
      * Doesn't check the image size, since it depends on the requested envelope.
      * <p>
      * <b>NOTE:</b> The sample values tested by this method are those of the coverage
@@ -212,21 +212,72 @@ public final class GridCoverageLoaderTest extends CatalogTestBase {
      * @throws CoverageStoreException If a logical error occured.
      */
     @Test
-    public void testTiled() throws SQLException, IOException, CoverageStoreException {
+    public void testBluemarble() throws SQLException, IOException, CoverageStoreException {
         final GridCoverageTable table = getDatabase().getTable(GridCoverageTable.class);
         table.envelope.clear();
         table.setLayer(LayerTableTest.BLUEMARBLE);
-        table.envelope.setHorizontalRange(new Rectangle(-100, -40, 200, 40));
-        table.envelope.setPreferredImageSize(new Dimension(100, 40));
+        table.envelope.setHorizontalRange(new Rectangle(-100, -40, 200, 80));
+        table.envelope.setPreferredImageSize(new Dimension(100, 80));
         final GridCoverageReference entry = table.getEntry();
 
         requireImageData();
         final GridCoverage2D coverage = entry.read(table.envelope, null);
+        checkBluemarbleCoverage(coverage);
+
         final RenderedImage image = coverage.getRenderedImage();
         // The image should be slightly larger than the requested side because
         // MosaicImageReader should have selected a more efficient size.
         assertEquals(134, image.getWidth());
-        assertEquals( 54, image.getHeight());
+        assertEquals(107, image.getHeight());
         table.release();
+    }
+
+    /**
+     * Checks the {@code GridCoverage2D} instance for the Bluemarble sample data.
+     * Doesn't check the image size, since it depends on the requested envelope.
+     */
+    static void checkBluemarbleCoverage(final GridCoverage2D coverage) {
+        assertTrue(CRS.equalsIgnoreMetadata(DefaultGeographicCRS.WGS84,
+                coverage.getCoordinateReferenceSystem2D()));
+        /*
+         * Check the SampleDimensions.
+         */
+        assertSame("The coverage shall be rendered.", coverage, coverage.view(ViewType.RENDERED));
+        final GridSampleDimension[] bands = coverage.getSampleDimensions();
+        assertEquals("Expected RGB bands.", 3, bands.length);
+    }
+
+    /**
+     * Tests a layer which contain 2 bands.
+     *
+     * @throws SQLException If the test can't connect to the database.
+     * @throws IOException If the image can not be read.
+     * @throws CoverageStoreException If a logical error occured.
+     */
+    @Test
+    public void testMars2D() throws SQLException, IOException, CoverageStoreException {
+        final GridCoverageTable table = getDatabase().getTable(GridCoverageTable.class);
+        table.envelope.clear();
+        table.setLayer(LayerTableTest.GEOSTROPHIC_CURRENT);
+        final GridCoverageReference entry = table.getEntry();
+
+        requireImageData();
+        final GridCoverage2D coverage = entry.read(table.envelope, null);
+        checkMars2DCoverage(coverage);
+    }
+
+    /**
+     * Checks the {@code GridCoverage2D} instance for the Mars2D sample data.
+     * Doesn't check the image size, since it depends on the requested envelope.
+     */
+    static void checkMars2DCoverage(final GridCoverage2D coverage) {
+        assertTrue(CRS.equalsIgnoreMetadata(DefaultGeographicCRS.WGS84,
+                coverage.getCoordinateReferenceSystem2D()));
+        /*
+         * Check the SampleDimensions.
+         */
+        assertSame("The coverage shall be geophysics.", coverage, coverage.view(ViewType.GEOPHYSICS));
+        final GridSampleDimension[] bands = coverage.getSampleDimensions();
+        assertEquals("Expected 2 bands.", 2, bands.length);
     }
 }

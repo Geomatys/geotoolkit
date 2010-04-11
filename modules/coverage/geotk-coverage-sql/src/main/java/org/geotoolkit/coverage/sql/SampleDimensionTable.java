@@ -97,10 +97,12 @@ final class SampleDimensionTable extends Table {
     }
 
     /**
-     * Returns the sample dimensions for the given format.
+     * Returns the sample dimensions for the given format. If no sample dimensions are specified,
+     * return {@code null} (not an empty list). We are not allowed to return an empty list because
+     * our Image I/O framework interprets that as "no bands", as opposed to "unknown bands".
      *
      * @param  format The format name.
-     * @return The sample dimensions for the given format.
+     * @return The sample dimensions for the given format, or an empty array if none (never {@code null}).
      * @throws SQLException if an error occured while reading the database.
      */
     public GridSampleDimension[] getSampleDimensions(final String format) throws SQLException {
@@ -164,16 +166,17 @@ final class SampleDimensionTable extends Table {
          * Now read the categories, provided that there is at least one sample
          * dimension.
          */
+        if (numSampleDimensions == 0) {
+            return null;
+        }
         final GridSampleDimension[] sampleDimensions = new GridSampleDimension[numSampleDimensions];
-        if (numSampleDimensions != 0) {
-            final CategoryTable categories = getCategoryTable();
-            final Map<Integer,Category[]> cat = categories.getCategories(format);
-            for (int i=0; i<numSampleDimensions; i++) {
-                try {
-                    sampleDimensions[i] = new GridSampleDimension(names[i], cat.remove(i+1), units[i]);
-                } catch (IllegalArgumentException exception) {
-                    throw new IllegalRecordException(exception, categories, null, 0, format);
-                }
+        final CategoryTable categories = getCategoryTable();
+        final Map<Integer,Category[]> cat = categories.getCategories(format);
+        for (int i=0; i<numSampleDimensions; i++) {
+            try {
+                sampleDimensions[i] = new GridSampleDimension(names[i], cat.remove(i+1), units[i]);
+            } catch (IllegalArgumentException exception) {
+                throw new IllegalRecordException(exception, categories, null, 0, format);
             }
         }
         return sampleDimensions;

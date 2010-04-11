@@ -87,6 +87,8 @@ public final class CoverageDatabaseTest extends CatalogTestBase {
         final Set<String> names = now(database.getLayers());
         assertTrue(names.contains(TEMPERATURE));
         assertTrue(names.contains(NETCDF));
+        assertTrue(names.contains(GEOSTROPHIC_CURRENT));
+        assertTrue(names.contains(BLUEMARBLE));
     }
 
     /**

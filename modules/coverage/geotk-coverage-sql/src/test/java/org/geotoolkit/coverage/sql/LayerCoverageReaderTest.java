@@ -36,7 +36,7 @@ import static org.geotoolkit.coverage.sql.CoverageDatabase.now;
  * Tests {@link LayerCoverageReader}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.10
+ * @version 3.11
  *
  * @since 3.10 (derived from Seagis)
  */
@@ -121,5 +121,32 @@ public final class LayerCoverageReaderTest extends CatalogTestBase {
         assertEquals(160, coverage.getRenderedImage().getWidth());
         assertEquals(175, coverage.getRenderedImage().getHeight());
         GridCoverageLoaderTest.checkCoriolisCoverage(coverage);
+    }
+
+    /**
+     * Tests loading a tiled image.
+     *
+     * @throws SQLException If the test can't connect to the database.
+     * @throws IOException If the image can not be read.
+     * @throws CoverageStoreException If a logical error occured.
+     */
+    @Test
+    public void testBluemarble() throws SQLException, IOException, CoverageStoreException {
+        final CoverageDatabase database = getCoverageDatabase();
+        final Layer layer = now(database.getLayer(LayerTableTest.BLUEMARBLE));
+        final LayerCoverageReader reader = new LayerCoverageReader(database);
+        reader.setInput(layer);
+
+        final CoverageEnvelope envelope = layer.getEnvelope(null, 100);
+        envelope.setHorizontalRange(new Rectangle2D.Double(-40, -40, 80, 80));
+
+        final GridCoverageReadParam param = new GridCoverageReadParam();
+        param.setEnvelope(envelope);
+
+        requireImageData();
+        final GridCoverage2D coverage = (GridCoverage2D) reader.read(0, param);
+        assertEquals(640, coverage.getRenderedImage().getWidth());
+        assertEquals(640, coverage.getRenderedImage().getHeight());
+        GridCoverageLoaderTest.checkBluemarbleCoverage(coverage);
     }
 }

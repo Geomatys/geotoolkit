@@ -40,6 +40,7 @@ import org.geotoolkit.coverage.io.GridCoverageStorePool;
 import org.geotoolkit.image.io.mosaic.MosaicImageReader;
 import org.geotoolkit.image.io.SpatialImageReadParam;
 import org.geotoolkit.image.io.DimensionSlice;
+import org.geotoolkit.image.io.NamedImageStore;
 import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.resources.Errors;
@@ -116,19 +117,47 @@ final class GridCoverageLoader extends ImageCoverageReader {
     }
 
     /**
-     * Sets the input, which can be an {@link GridCoverageEntry} or a file.
+     * Sets the input, which must be a {@link GridCoverageEntry} using the image format
+     * given at construction time. In addition, if the image reader is an instance of
+     * {@link NamedImageStore}, then this method set the name of NetCDF (or similar format)
+     * variable to read as the names declared in the {@code SampleDimensions} table.
      */
     @Override
     public void setInput(Object input) throws CoverageStoreException {
-        entry = null;
-        if (input instanceof GridCoverageEntry) try {
-            entry = (GridCoverageEntry) input;
-            assert format.equals(entry.getIdentifier().series.format) : entry;
-            input = entry.getInput();
-        } catch (URISyntaxException e) {
-            throw new CoverageStoreException(e);
+        final GridCoverageEntry e = (GridCoverageEntry) input;
+        if (e != null) {
+            assert format.equals(e.getIdentifier().series.format) : e;
+            try {
+                input = e.getInput();
+            } catch (URISyntaxException ex) {
+                throw new CoverageStoreException(ex);
+            }
         }
         super.setInput(input);
+        entry = e; // Set the field only on success.
+        /*
+         * For the NetCDF format, set the names of the variables to read.
+         * The names declared in the SampleDimensions table.
+         */
+        if (imageReader instanceof NamedImageStore) {
+            String[] names = null;
+            String imageName = null;
+            final NamedImageStore store = (NamedImageStore) imageReader;
+            final List<GridSampleDimension> bands = format.sampleDimensions;
+            if (bands != null) {
+                names = new String[bands.size()];
+                for (int i=0; i<names.length; i++) {
+                    names[i] = bands.get(i).getDescription().toString();
+                }
+                imageName = names[0];
+            }
+            try {
+                store.setImageNames(imageName);
+                store.setBandNames(0, names);
+            } catch (IOException ex) {
+                throw new CoverageStoreException(ex);
+            }
+        }
     }
 
     /**
@@ -144,8 +173,8 @@ final class GridCoverageLoader extends ImageCoverageReader {
 
     /**
      * Creates an {@link ImageReader} that claim to be able to decode the given input.
-     * This method is invoked automatically by {@link #setInput(Object)} for creating
-     * a new {@linkplain #imageReader image reader}.
+     * This method is invoked automatically by {@link #setInput(Object)} for assigning
+     * a value to the {@link #imageReader} field.
      */
     @Override
     protected ImageReader createImageReader(final Object input) throws IOException {
@@ -183,6 +212,8 @@ final class GridCoverageLoader extends ImageCoverageReader {
      * Returns the sample dimensions for each band of the {@code GridCoverage} to be read.
      * This method returns the sample dimensions declared in the database rather then inferring
      * them from the image metadata.
+     * <p>
+     * If the sample dimensions are not known, then this method returns {@code null}.
      */
     @Override
     public List<GridSampleDimension> getSampleDimensions(int index) throws CoverageStoreException {
@@ -191,7 +222,17 @@ final class GridCoverageLoader extends ImageCoverageReader {
     }
 
     /**
-     * Returns read parameters with the z-slice initialized, if needed.
+     * Returns read parameters with the z-slice initialized, if needed. In addition, if the image
+     * reader is an instance of {@link NamedImageStore} (typically the NetCDF reader), sets the
+     * image index API to the temporal dimension. The later is consistent with:
+     * <p>
+     * <ul>
+     *   <li>The database schema, where the image index is specified together with the
+     *       date range in the {@code GridCoverages} table.</li>
+     *   <li>The work done by {@link #setInput(Object)} for the {@link NamedImageStore}
+     *       case, which sets the image reader has if it had only one image (before we
+     *       map the image index API to the temporal dimension).</li>
+     * </ul>
      */
     @Override
     protected ImageReadParam createImageReadParam(final int index) throws IOException {
@@ -205,6 +246,16 @@ final class GridCoverageLoader extends ImageCoverageReader {
                 final DimensionSlice slice = ((SpatialImageReadParam) param).newDimensionSlice();
                 slice.addDimensionId(AxisDirection.UP, AxisDirection.DOWN);
                 slice.setSliceIndex(zIndex - 1);
+            }
+        }
+        if (imageReader instanceof NamedImageStore) {
+            if (param == null) {
+                param = imageReader.getDefaultReadParam();
+            }
+            if (param instanceof SpatialImageReadParam) {
+                final DimensionSlice slice = ((SpatialImageReadParam) param).newDimensionSlice();
+                slice.addDimensionId(AxisDirection.FUTURE, AxisDirection.PAST);
+                slice.setAPI(DimensionSlice.API.IMAGES);
             }
         }
         return param;
