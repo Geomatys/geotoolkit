@@ -325,7 +325,7 @@ public class RawImageReader extends SpatialImageReader {
         for (int i=0; i<numDstBands; i++) {
             final int srcBand = (sourceBands      != null) ? sourceBands     [i] : i;
             final int dstBand = (destinationBands != null) ? destinationBands[i] : i;
-            final SampleConverter converter = converters[dstBand];
+            final SampleConverter converter = converters[i];
             /*
              * Computes the position for skipping all unwanted pixels in previous images, previous
              * bands and previous rows. The actual seek operation will be applied later.

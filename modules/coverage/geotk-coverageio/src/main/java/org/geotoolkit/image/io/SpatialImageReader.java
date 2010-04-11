@@ -111,6 +111,9 @@ import org.geotoolkit.internal.image.io.Warnings;
  *   <li><p>Provides {@link #getStreamMetadata()} and {@link #getImageMetadata(int)} default
  *     implementations, which return {@code null} as authorized by the specification.</p></li>
  * </ul>
+ * <p>
+ * See the {@link #getDestination(int, ImageReadParam, int, SampleConverter[])} method for an
+ * example of code using some of the services provided by this class.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @version 3.11
@@ -439,7 +442,13 @@ public abstract class SpatialImageReader extends ImageReader implements WarningP
 
     /**
      * Returns an image type specifier indicating the {@link SampleModel} and {@link ColorModel}
-     * to use for reading the image. The default implementation applies the following steps:
+     * to use for reading the image. In addition, this method also detects if some conversions
+     * (represented by {@link SampleConverter} instances) are required in order to store the
+     * sample values using the selected models. The conversions (if any) are keept as small as
+     * possible, but are sometime impossible to avoid for example because {@link IndexColorModel}
+     * does not allow negative sample values.
+     * <p>
+     * The default implementation applies the following steps:
      *
      * <ol>
      *   <li><p>The {@linkplain SampleDimension#getValidSampleValues() range of expected values}
@@ -498,6 +507,17 @@ public abstract class SpatialImageReader extends ImageReader implements WarningP
      *       supported by the {@linkplain IndexColorModel index color model}.</p></li>
      * </ol>
      *
+     * {@section Using the Sample Converters}
+     * If the {@code converters} argument is non-null, then this method will store the
+     * {@link SampleConverter} instances in the supplied array. The array length shall be equals
+     * to the number of {@linkplain ImageReadParam#getDestinationBands() destination bands}.
+     * <p>
+     * The converters shall be used by {@link #read(int,ImageReadParam) read} method
+     * implementations for converting the values read in the datafile to values acceptable
+     * by the {@linkplain ColorModel color model}. See the
+     * {@link #getDestination(int, ImageReadParam, int, SampleConverter[]) getDestination}
+     * method for code example.
+     *
      * {@section Overriding this method}
      * Subclasses can override this method for example if the color {@linkplain Palette palette}
      * and range of values should be computed in a different way. The example below creates an
@@ -520,11 +540,8 @@ public abstract class SpatialImageReader extends ImageReader implements WarningP
      *          {@link #getDefaultReadParam} instead of {@code null} since subclasses may
      *          override the later with default values suitable to a particular format.
      * @param converters
-     *          If non-null, an array where to store the converters created by this method. The length
-     *          of this array shall be equals to the number of target bands. The converters stored
-     *          by this method in this array shall be used by {@link #read(int,ImageReadParam) read}
-     *          method implementations for converting the values read in the datafile to values
-     *          acceptable for the underling {@linkplain ColorModel color model}.
+     *          If non-null, an array where to store the converters created by this method.
+     *          The length of this array shall be equals to the number of target bands.
      * @return
      *          The image type (never {@code null}).
      * @throws IOException
@@ -756,8 +773,8 @@ public abstract class SpatialImageReader extends ImageReader implements WarningP
                             converter = SampleConverter.IDENTITY;
                         }
                     }
-                    if (converters!=null && targetBand>=0 && targetBand<converters.length) {
-                        converters[targetBand] = converter;
+                    if (converters != null && i < converters.length) {
+                        converters[i] = converter;
                     }
                     if (targetBand == visibleBand) {
                         visibleConverter = converter;
@@ -956,9 +973,62 @@ public abstract class SpatialImageReader extends ImageReader implements WarningP
      * Returns the buffered image to which decoded pixel data should be written. The image
      * is determined by inspecting the supplied parameters if it is non-null, as described
      * in the {@linkplain #getDestination(ImageReadParam,Iterator,int,int) super-class method}.
+     * In addition, this method also detects if the sample values need to be converted before
+     * to be stored in the {@link BufferedImage}, for example because {@link IndexColorModel}
+     * does not support negative integers. The conversions (if any) are represented by
+     * {@link SampleConverter} objects, which are computed as documented in the
+     * {@link #getImageType getImageType} method.
+     *
+     * {@section Using the Sample Converters}
+     * If the {@code converters} argument is non-null, then this method will store the
+     * {@link SampleConverter} instances in the supplied array. The array length shall be equals
+     * to the number of {@linkplain ImageReadParam#getDestinationBands() destination bands}.
      * <p>
-     * Implementations of the {@link #read(int, ImageReadParam)} method should invoke this
-     * method instead of {@link #getDestination(ImageReadParam, Iterator, int, int)}.
+     * The converters shall be used by {@link #read(int,ImageReadParam) read} method
+     * implementations for converting the values read in the datafile to values acceptable
+     * by the {@linkplain ColorModel color model}.
+     * Example (omitting the {@linkplain ImageReadParam#setSourceSubsampling subsamplings}
+     * handling for simplicity):
+     *
+     * {@preformat java
+     *     public BufferedImage read(int imageIndex, ImageReadParam param) throws IOException {
+     *         final int[] srcBands, dstBands;
+     *         if (param != null) {
+     *             srcBands = param.getSourceBands();
+     *             dstBands = param.getDestinationBands();
+     *         } else {
+     *             srcBands = null;
+     *             dstBands = null;
+     *         }
+     *         final int numSrcBands = (srcBands != null) ? srcBands.length : ...; // Image-dependant
+     *         final int numDstBands = (dstBands != null) ? dstBands.length : numSrcBands;
+     *         checkReadParamBandSettings(param, numSrcBands, numDstBands);
+     *
+     *         final int width  = ...;  // Image-dependant
+     *         final int height = ...;  // Image-dependant
+     *         final SampleConverter[] converters = new SampleConverter[numDstBands];
+     *         final BufferedImage  image  = getDestination(imageIndex, param, width, height, converters);
+     *         final WritableRaster raster = image.getRaster();
+     *         final Rectangle   srcRegion = new Rectangle();
+     *         final Rectangle  destRegion = new Rectangle();
+     *         computeRegions(param, width, height, image, srcRegion, destRegion);
+     *         final int xmin = destRegion.x;
+     *         final int ymin = destRegion.y;
+     *         final int xmax = destRegion.width  + xmin;
+     *         final int ymax = destRegion.height + ymin;
+     *         for (int band=0; band < numDstBands; band++) {
+     *             final int srcBand = (srcBands == null) ? band : srcBands[band];
+     *             final int dstBand = (dstBands == null) ? band : dstBands[band];
+     *             final SampleConverter converter = converters[band];
+     *             for (int y=ymin; y<ymax; y++) {
+     *                 for (int x=xmin; x<xmax; x++) {
+     *                 float value = ...; // Image-dependant
+     *                 value = converter.convert(value);
+     *                 raster.setSample(x, y, dstBand, value);
+     *             }
+     *         }
+     *     }
+     * }
      *
      * @param  imageIndex The index of the image to be retrieved.
      * @param  parameters The parameter given to the {@code read} method.

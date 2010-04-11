@@ -342,7 +342,7 @@ public class TextMatrixImageReader extends TextImageReader {
          */
         final SampleConverter[] converters = new SampleConverter[numDstBands];
         final ImageTypeSpecifier type = getImageType(imageIndex, param, converters);
-        final SampleConverter converter = converters[dstBand];
+        final SampleConverter converter = converters[0];
         /*
          * If a direct mapping is possible, perform it. If a direct mapping is performed,
          * we will need to set the data array to null (and consequently force a new data

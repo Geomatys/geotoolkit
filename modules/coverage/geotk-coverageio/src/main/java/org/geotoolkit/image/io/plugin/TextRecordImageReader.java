@@ -616,7 +616,7 @@ public class TextRecordImageReader extends TextImageReader {
                     y = y / sourceYSubsampling + destinationYOffset;
                     for (int j=0; j<columns.length; j++) {
                         final int db = (dstBands != null ? dstBands[j] : j);
-                        raster.setSample(x, y, db, converters[db].convert(data[i+columns[j]]));
+                        raster.setSample(x, y, db, converters[j].convert(data[i+columns[j]]));
                     }
                 }
             }

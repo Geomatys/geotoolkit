@@ -615,7 +615,7 @@ readLine:   while (true) {
             final char[]              charBuffer = new char[48]; // Arbitrary length limit for a sample value.
             final ByteBuffer          buffer     = this.buffer;
             final ReadableByteChannel channel    = getChannel();
-            final SampleConverter     converter  = converters[dstBand];
+            final SampleConverter     converter  = converters[0];
             /*
              * Before to start reading, set the 'minIndex' in order to prevent new attempt
              * to read an image from this point.
