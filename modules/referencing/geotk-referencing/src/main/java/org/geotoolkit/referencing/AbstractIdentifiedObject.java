@@ -666,6 +666,7 @@ nextKey:for (final Map.Entry<String,?> entry : properties.entrySet()) {
      * @return An view of the identified object as an immutable map.
      */
     public static Map<String,?> getProperties(final IdentifiedObject info) {
+        ensureNonNull("info", info);
         return new Properties(info);
     }
 

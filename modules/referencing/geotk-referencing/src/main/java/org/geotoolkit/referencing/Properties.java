@@ -60,9 +60,8 @@ final class Properties extends AbstractMap<String,Object> {
     /**
      * Creates new properties from the specified identified object.
      */
-    public Properties(final IdentifiedObject info) {
+    Properties(final IdentifiedObject info) {
         this.info = info;
-        AbstractIdentifiedObject.ensureNonNull("info", info);
     }
 
     /**

@@ -112,7 +112,7 @@ import org.geotoolkit.internal.image.io.Warnings;
  *     implementations, which return {@code null} as authorized by the specification.</p></li>
  * </ul>
  * <p>
- * See the {@link #getDestination(int, ImageReadParam, int, SampleConverter[])} method for an
+ * See the {@link #getDestination(int, ImageReadParam, int, int, SampleConverter[])} method for an
  * example of code using some of the services provided by this class.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
@@ -515,7 +515,7 @@ public abstract class SpatialImageReader extends ImageReader implements WarningP
      * The converters shall be used by {@link #read(int,ImageReadParam) read} method
      * implementations for converting the values read in the datafile to values acceptable
      * by the {@linkplain ColorModel color model}. See the
-     * {@link #getDestination(int, ImageReadParam, int, SampleConverter[]) getDestination}
+     * {@link #getDestination(int, ImageReadParam, int, int, SampleConverter[]) getDestination}
      * method for code example.
      *
      * {@section Overriding this method}
@@ -1022,9 +1022,10 @@ public abstract class SpatialImageReader extends ImageReader implements WarningP
      *             final SampleConverter converter = converters[band];
      *             for (int y=ymin; y<ymax; y++) {
      *                 for (int x=xmin; x<xmax; x++) {
-     *                 float value = ...; // Image-dependant
-     *                 value = converter.convert(value);
-     *                 raster.setSample(x, y, dstBand, value);
+     *                     float value = ...; // Image-dependant
+     *                     value = converter.convert(value);
+     *                     raster.setSample(x, y, dstBand, value);
+     *                 }
      *             }
      *         }
      *     }

@@ -70,8 +70,8 @@ import static org.geotoolkit.referencing.operation.ProjectionAnalyzer.createLine
  * most of its work to one or many of {@code createOperationStep} methods. Subclasses can
  * override those methods in order to extend the factory capability to some more CRS.
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.01
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.10
  *
  * @since 1.2
  * @module

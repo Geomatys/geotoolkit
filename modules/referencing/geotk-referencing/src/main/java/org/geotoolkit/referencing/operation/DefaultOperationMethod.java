@@ -43,7 +43,6 @@ import org.geotoolkit.referencing.operation.transform.Parameterized;
 import org.geotoolkit.referencing.operation.transform.LinearTransform;
 import org.geotoolkit.referencing.operation.transform.ConcatenatedTransform;
 import org.geotoolkit.referencing.operation.transform.PassThroughTransform;
-import org.geotoolkit.util.NullArgumentException;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.io.wkt.Formatter;
@@ -119,17 +118,15 @@ public class DefaultOperationMethod extends AbstractIdentifiedObject implements 
      * ("Relax constraint on placement of this()/super() call in constructors").
      */
     private static Map<String,?> getProperties(final MathTransform transform) {
-        if (transform == null) {
-            throw new NullArgumentException("transform");
-        }
-        final Map<String,?> properties;
+        ensureNonNull("transform", transform);
         if (transform instanceof Parameterized) {
             final Parameterized mt = (Parameterized) transform;
-            properties = getProperties(mt.getParameterDescriptors(), null);
-        } else {
-            properties = Collections.singletonMap(NAME_KEY, Vocabulary.format(Vocabulary.Keys.UNKNOW));
+            final ParameterDescriptorGroup parameters = mt.getParameterDescriptors();
+            if (parameters != null) {
+                return getProperties(parameters, null);
+            }
         }
-        return properties;
+        return Collections.singletonMap(NAME_KEY, Vocabulary.format(Vocabulary.Keys.UNKNOW));
     }
 
     /**
