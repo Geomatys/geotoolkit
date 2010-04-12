@@ -140,7 +140,7 @@ public class FileUtilities {
                 }
             }
         } catch (IOException ex) {
-            LOGGER.severe("The resources for the package" + packagee + ", could not be obtained");
+            LOGGER.severe("The resources for the package" + packagee + ", could not be obtained.\nCause:" + ex.getMessage());
         }
 
         return result;
@@ -172,7 +172,7 @@ public class FileUtilities {
                 }
             }
         } catch (IOException ex) {
-            LOGGER.severe("The resources for the package" + packagee + ", could not be obtained");
+            LOGGER.severe("The resources for the package" + packagee + ", could not be obtained.\nCause:" + ex.getMessage());
         }
 
 
@@ -328,7 +328,7 @@ public class FileUtilities {
                 }
             }
         } catch (IOException ex) {
-            LOGGER.severe("The resources for the package" + packagee + ", could not be obtained");
+            LOGGER.severe("The resources for the package" + packagee + ", could not be obtained. \ncause:" + ex.getMessage());
         }
         return result;
     }
@@ -359,7 +359,7 @@ public class FileUtilities {
                     }
                 }
             } catch (IOException ex) {
-                LOGGER.severe("The resources for the package" + p + ", could not be obtained");
+                LOGGER.severe("The resources for the package" + p + ", could not be obtained.\n cause:" + ex.getMessage());
             }
         }
         return result;
