@@ -53,6 +53,11 @@ import static org.junit.Assert.*;
 @Depend(GridCoverageTableTest.class)
 public final class GridCoverageLoaderTest extends CatalogTestBase {
     /**
+     * Whatever we should show the image in images (for debugging purpose only).
+     */
+    private static final boolean SHOW = false;
+
+    /**
      * Tests loading an image of temperature data in WGS84 CRS.
      *
      * @throws SQLException If the test can't connect to the database.
@@ -76,6 +81,8 @@ public final class GridCoverageLoaderTest extends CatalogTestBase {
         assertEquals(4096, image.getWidth());
         assertEquals(2048, image.getHeight());
         table.release();
+
+        if (SHOW) show(coverage);
     }
 
     /**
@@ -152,6 +159,8 @@ public final class GridCoverageLoaderTest extends CatalogTestBase {
         assertEquals(720, image.getWidth());
         assertEquals(499, image.getHeight());
         table.release();
+
+        if (SHOW) show(coverage);
     }
 
     /**
@@ -230,6 +239,8 @@ public final class GridCoverageLoaderTest extends CatalogTestBase {
         assertEquals(134, image.getWidth());
         assertEquals(107, image.getHeight());
         table.release();
+
+        if (SHOW) show(coverage);
     }
 
     /**
@@ -264,6 +275,9 @@ public final class GridCoverageLoaderTest extends CatalogTestBase {
         requireImageData();
         final GridCoverage2D coverage = entry.read(table.envelope, null);
         checkMars2DCoverage(coverage);
+        table.release();
+
+        if (SHOW) show(coverage);
     }
 
     /**

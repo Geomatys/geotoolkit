@@ -97,8 +97,8 @@ final class NetcdfVariable {
     public final double scale, offset;
 
     /**
-     * The minimal and maximal valid values in geophysics units, or infinity if none.
-     * They are converted from the packed values if needed, as UCAR does.
+     * The minimal and maximal valid values in packed (not geophysics) units, or
+     * infinity if none. They are converted from the geophysics values if needed.
      */
     public final double minimum, maximum;
 
@@ -185,8 +185,8 @@ final class NetcdfVariable {
         scaleType  = widestType;
         widestType = dataType; // Reset before we scan the other attributes.
         /*
-         * Gets minimum and maximum. If a "valid_range" attribute is presents, it as precedence
-         * over "valid_min" and "valid_max" as specified in UCAR documentation.
+         * Gets minimum and maximum. If a "valid_range" attribute is present, it has precedence
+         * over "valid_min" and "valid_max" as specified in the UCAR documentation.
          */
         double minimum = Double.NaN;
         double maximum = Double.NaN;
@@ -210,7 +210,11 @@ final class NetcdfVariable {
         }
         rangeType  = widestType;
         widestType = dataType; // Reset before we scan the other attributes.
-        // Heuristic rule defined in UCAR documentation (see EnhanceScaleMissing interface)
+        /*
+         * Heuristic rule defined in UCAR documentation (see EnhanceScaleMissing interface):
+         * if the type of the range is equals to the type of the scale, and the type of the
+         * data is not wider, then assume that the minimum and maximum are geophysics values.
+         */
         if (rangeType.equals(scaleType) && rangeType.equals(widest(rangeType, dataType))) {
             final double offset = Double.isNaN(this.offset) ? 0 : this.offset;
             final double scale  = Double.isNaN(this.scale ) ? 1 : this.scale;

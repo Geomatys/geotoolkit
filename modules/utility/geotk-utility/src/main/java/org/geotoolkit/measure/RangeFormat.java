@@ -28,6 +28,7 @@ import java.text.DecimalFormatSymbols;
 import java.text.FieldPosition;
 import java.text.ParseException;
 import java.text.ParsePosition;
+import java.text.SimpleDateFormat;
 
 import javax.measure.unit.Unit;
 import javax.measure.unit.UnitFormat;
@@ -56,7 +57,7 @@ import org.geotoolkit.resources.Errors;
  * </ul>
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.06
+ * @version 3.11
  *
  * @see Range
  * @see DateRange
@@ -265,6 +266,65 @@ public class RangeFormat extends Format {
      */
     public void setSymbols(final RangeSymbols symbols) {
         this.symbols = symbols.clone();
+    }
+
+    /**
+     * Returns the pattern used by {@link #elementFormat} for formatting the minimum and
+     * maximum values. If the element format does not use pattern, returns {@code null}.
+     *
+     * @param  localized {@code true} for returning the localized pattern, or {@code false}
+     *         for the unlocalized one.
+     * @return The pattern, or {@code null} if the {@link #elementFormat} doesn't use pattern.
+     *
+     * @since 3.11
+     */
+    public String getElementPattern(final boolean localized) {
+        final Format format = elementFormat;
+        if (format instanceof DecimalFormat) {
+            final DecimalFormat df = (DecimalFormat) format;
+            return localized ? df.toLocalizedPattern() : df.toPattern();
+        }
+        if (format instanceof SimpleDateFormat) {
+            final SimpleDateFormat df = (SimpleDateFormat) format;
+            return localized ? df.toLocalizedPattern() : df.toPattern();
+        }
+        if (format instanceof AngleFormat) {
+            return ((AngleFormat) format).toPattern();
+        }
+        return null;
+    }
+
+    /**
+     * Sets the pattern to be used by {@link #elementFormat} for formatting the minimum and
+     * maximum values.
+     *
+     * @param  pattern The new pattern.
+     * @param  localized {@code true} if the given pattern is localized.
+     * @throws IllegalStateException If the {@link #elementFormat} does not use pattern.
+     *
+     * @since 3.11
+     */
+    public void setElementPattern(final String pattern, final boolean localized) {
+        final Format format = elementFormat;
+        if (format instanceof DecimalFormat) {
+            final DecimalFormat df = (DecimalFormat) format;
+            if (localized) {
+                df.applyLocalizedPattern(pattern);
+            } else {
+                df.applyPattern(pattern);
+            }
+        } else if (format instanceof SimpleDateFormat) {
+            final SimpleDateFormat df = (SimpleDateFormat) format;
+            if (localized) {
+                df.applyLocalizedPattern(pattern);
+            } else {
+                df.applyPattern(pattern);
+            }
+        } else if (format instanceof AngleFormat) {
+            ((AngleFormat) format).applyPattern(pattern);
+        } else {
+            throw new IllegalStateException();
+        }
     }
 
     /**

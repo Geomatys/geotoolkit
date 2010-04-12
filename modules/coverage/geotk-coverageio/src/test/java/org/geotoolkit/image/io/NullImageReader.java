@@ -27,7 +27,6 @@ import javax.imageio.ImageReadParam;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
 import org.geotoolkit.internal.image.io.DimensionAccessor;
-import org.geotoolkit.util.NumberRange;
 
 import static org.junit.Assert.*;
 
@@ -122,7 +121,7 @@ public class NullImageReader extends SpatialImageReader {
         final DimensionAccessor accessor = new DimensionAccessor(metadata);
         accessor.selectChild(accessor.appendChild());
         accessor.setValueRange(minimum * scale + offset, maximum * scale + offset);
-        accessor.setValidSampleValue(NumberRange.create(minimum, maximum));
+        accessor.setValidSampleValue(minimum, maximum);
         accessor.setFillSampleValues(padValue);
         return metadata;
     }

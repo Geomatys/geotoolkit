@@ -52,7 +52,7 @@ import org.geotoolkit.referencing.operation.transform.ProjectiveTransform;
  * Instances of ISO 19115-2 metadata are typically obtained from {@link SpatialMetadata} objects.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.09
+ * @version 3.11
  *
  * @since 3.07
  * @module
@@ -230,19 +230,26 @@ public class MetadataHelper implements Localized {
         Double maximum = dimension.getMaxValue();
         boolean isMinInclusive = true;
         boolean isMaxInclusive = true;
-        if (fillSampleValues != null) {
-            isMinInclusive = inclusive(minimum, fillSampleValues);
-            isMaxInclusive = inclusive(maximum, fillSampleValues);
+        if (!geophysics || fillSampleValues != null) {
+            Double sampleMin = minimum;
+            Double sampleMax = maximum;
+            Double n;
+            final double scale  = ((n = dimension.getScaleFactor()) != null) ? n : 1;
+            final double offset = ((n = dimension.getOffset())      != null) ? n : 0;
+            if (scale != 1 || offset != 0) {
+                if (sampleMin != null) sampleMin = (sampleMin - offset) / scale;
+                if (sampleMax != null) sampleMax = (sampleMax - offset) / scale;
+            }
+            if (fillSampleValues != null) {
+                isMinInclusive = inclusive(sampleMin, fillSampleValues);
+                isMaxInclusive = inclusive(sampleMax, fillSampleValues);
+            }
+            if (!geophysics) {
+                minimum = sampleMin;
+                maximum = sampleMax;
+            }
         }
         if (geophysics) {
-            Double n = dimension.getScaleFactor();
-            final double scale = (n != null) ? n : 1;
-            n = dimension.getOffset();
-            final double offset = (n != null) ? n : 0;
-            if (scale != 1 || offset != 0) {
-                if (minimum != null) minimum = minimum * scale + offset;
-                if (maximum != null) maximum = maximum * scale + offset;
-            }
             final Unit<?> units = dimension.getUnits();
             if (units != null) {
                 return MeasurementRange.createBestFit(minimum, isMinInclusive, maximum, isMaxInclusive, units);

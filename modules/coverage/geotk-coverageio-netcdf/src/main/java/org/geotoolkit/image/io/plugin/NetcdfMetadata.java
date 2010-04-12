@@ -68,7 +68,7 @@ import org.geotoolkit.util.collection.UnmodifiableArrayList;
  * would not know what to do with the extra coordinate systems anyway.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.09
+ * @version 3.11
  *
  * @since 3.08 (derived from 2.4)
  * @module
@@ -261,7 +261,11 @@ final class NetcdfMetadata extends SpatialMetadata {
             }
             accessor.selectChild(accessor.appendChild());
             accessor.setUnits(m.units);
-            accessor.setValueRange(m.minimum, m.maximum);
+            if (variable instanceof EnhanceScaleMissing) {
+                final EnhanceScaleMissing ev = (EnhanceScaleMissing) variable;
+                accessor.setValueRange(ev.getValidMin(), ev.getValidMax());
+            }
+            accessor.setValidSampleValue(m.minimum, m.maximum);
             accessor.setFillSampleValues(m.fillValues);
             accessor.setTransfertFunction(m.scale, m.offset, TransferFunctionType.LINEAR);
         }

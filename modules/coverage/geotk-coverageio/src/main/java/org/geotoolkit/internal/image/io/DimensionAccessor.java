@@ -39,7 +39,7 @@ import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.FORMAT_NAME
  * }
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.06
+ * @version 3.11
  *
  * @since 3.06
  * @module
@@ -89,6 +89,18 @@ public final class DimensionAccessor extends MetadataAccessor {
     public void setValueRange(final double minimum, final double maximum) {
         setAttribute("minValue", minimum);
         setAttribute("maxValue", maximum);
+    }
+
+    /**
+     * Sets the {@code "validSampleValues"} attribute to the given range. This is the range of
+     * values encoded in the file, before the transformation by the transfert function if there
+     * is one.
+     *
+     * @param minimum The minimal sample value, inclusive.
+     * @param maximum The maximal sample value, inclusive.
+     */
+    public void setValidSampleValue(final double minimum, final double maximum) {
+        setValidSampleValue(NumberRange.createBestFit(minimum, true, maximum, true));
     }
 
     /**

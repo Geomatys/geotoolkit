@@ -836,7 +836,9 @@ public class SpatialMetadata extends IIOMetadata implements WarningProducer {
             return format;
         }
         if (NumberRange.class.isAssignableFrom(type)) {
-            return new RangeFormat(Locale.CANADA);
+            final RangeFormat format = new RangeFormat(Locale.CANADA);
+            format.setElementPattern("0.######", false);
+            return format;
         }
         throw new IllegalArgumentException(String.valueOf(type));
     }

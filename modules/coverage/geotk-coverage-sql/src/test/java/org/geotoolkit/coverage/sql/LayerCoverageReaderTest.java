@@ -43,6 +43,11 @@ import static org.geotoolkit.coverage.sql.CoverageDatabase.now;
 @Depend(CoverageDatabaseTest.class)
 public final class LayerCoverageReaderTest extends CatalogTestBase {
     /**
+     * Whatever we should show the image in images (for debugging purpose only).
+     */
+    private static final boolean SHOW = false;
+
+    /**
      * The coverage database.
      */
     private static CoverageDatabase database;
@@ -94,6 +99,8 @@ public final class LayerCoverageReaderTest extends CatalogTestBase {
         assertEquals(512, coverage.getRenderedImage().getWidth());
         assertEquals(256, coverage.getRenderedImage().getHeight());
         GridCoverageLoaderTest.checkTemperatureCoverage(coverage);
+
+        if (SHOW) show(coverage);
     }
 
     /**
@@ -121,6 +128,8 @@ public final class LayerCoverageReaderTest extends CatalogTestBase {
         assertEquals(160, coverage.getRenderedImage().getWidth());
         assertEquals(175, coverage.getRenderedImage().getHeight());
         GridCoverageLoaderTest.checkCoriolisCoverage(coverage);
+
+        if (SHOW) show(coverage);
     }
 
     /**
@@ -148,5 +157,7 @@ public final class LayerCoverageReaderTest extends CatalogTestBase {
         assertEquals(640, coverage.getRenderedImage().getWidth());
         assertEquals(640, coverage.getRenderedImage().getHeight());
         GridCoverageLoaderTest.checkBluemarbleCoverage(coverage);
+
+        if (SHOW) show(coverage);
     }
 }

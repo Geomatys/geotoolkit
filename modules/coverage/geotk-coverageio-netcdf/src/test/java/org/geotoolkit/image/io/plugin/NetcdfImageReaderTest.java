@@ -37,7 +37,7 @@ import static org.geotoolkit.test.Commons.*;
  * Tests {@link NetcdfImageReader}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.08
+ * @version 3.11
  *
  * @since 3.08
  */
@@ -137,8 +137,9 @@ public final class NetcdfImageReaderTest extends ImageReaderTestBase {
             "    └───Dimensions\n" +
             "        └───Dimension\n" +
             "            ├───units=“degree_Celsius”\n" +
-            "            ├───minValue=“-23000.0”\n" +
-            "            ├───maxValue=“20000.0”\n" +
+            "            ├───minValue=“-3.0”\n" +
+            "            ├───maxValue=“40.0”\n" +
+            "            ├───validSampleValues=“[-23000 … 20000]”\n" +
             "            ├───fillSampleValues=“32767.0”\n" +
             "            ├───scaleFactor=“0.0010”\n" +
             "            ├───offset=“20.0”\n" +
@@ -167,8 +168,9 @@ public final class NetcdfImageReaderTest extends ImageReaderTestBase {
             "    └───Dimensions\n" +
             "        ├───Dimension\n" +
             "        │   ├───units=“degree_Celsius”\n" +
-            "        │   ├───minValue=“-23000.0”\n" +
-            "        │   ├───maxValue=“20000.0”\n" +
+            "        │   ├───minValue=“-3.0”\n" +
+            "        │   ├───maxValue=“40.0”\n" +
+            "        │   ├───validSampleValues=“[-23000 … 20000]”\n" +
             "        │   ├───fillSampleValues=“32767.0”\n" +
             "        │   ├───scaleFactor=“0.0010”\n" +
             "        │   ├───offset=“20.0”\n" +
@@ -176,7 +178,8 @@ public final class NetcdfImageReaderTest extends ImageReaderTestBase {
             "        └───Dimension\n" +
             "            ├───units=“percent”\n" +
             "            ├───minValue=“0.0”\n" +
-            "            ├───maxValue=“100.0”\n" +
+            "            ├───maxValue=“1.0”\n" +
+            "            ├───validSampleValues=“[0 … 100]”\n" +
             "            ├───fillSampleValues=“32767.0”\n" +
             "            ├───scaleFactor=“0.01”\n" +
             "            └───transferFunctionType=“linear”"), metadata.toString());
