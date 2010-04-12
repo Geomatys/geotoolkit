@@ -328,7 +328,7 @@ public class FileUtilities {
                 }
             }
         } catch (IOException ex) {
-            LOGGER.severe("The resources for the package" + packagee + ", could not be obtained. \ncause:" + ex.getMessage());
+            LOGGER.severe("The resources for the package " + packagee + ", could not be obtained. \ncause:" + ex.getMessage());
         }
         return result;
     }
@@ -353,13 +353,18 @@ public class FileUtilities {
                     final URL url = urls.nextElement();
                     try {
                         final URI uri = url.toURI();
-                        result.addAll(scan(uri, fileP, true));
+                        List<String> scanned = scan(uri, fileP, true);
+                        for (String s : scanned) {
+                            if (!result.contains(s)){
+                                result.add(s);
+                            }
+                        }
                     } catch (URISyntaxException e) {
                         LOGGER.severe("URL, " + url + "cannot be converted to a URI");
                     }
                 }
             } catch (IOException ex) {
-                LOGGER.severe("The resources for the package" + p + ", could not be obtained.\n cause:" + ex.getMessage());
+                LOGGER.log(Level.SEVERE, "The resources for the package" + p + ", could not be obtained.", ex);
             }
         }
         return result;
@@ -381,17 +386,25 @@ public class FileUtilities {
         if (scheme.equals("file")) {
             final File f = new File(u.getPath());
             if (f.isDirectory()) {
-                result.addAll(scanDirectory(f, filePackageName, directory));
+                List<String> scanned = scanDirectory(f, filePackageName, directory);
+                for (String s : scanned) {
+                    if (!result.contains(s)) {
+                        result.add(s);
+                    }
+                }
             } else if (!directory) {
-                LOGGER.info("added :" + f.getPath());
                 result.add(f.getPath());
             }
         } else if (scheme.equals("jar") || scheme.equals("zip")) {
             try {
-                final URI jarUri = URI.create(u.getSchemeSpecificPart());
-                String jarFile = jarUri.getPath();
-                jarFile = jarFile.substring(0, jarFile.indexOf('!'));
-                result.addAll(scanJar(new File(jarFile), filePackageName, directory));
+                String jarFile = u.getSchemeSpecificPart();
+                jarFile        = jarFile.substring(0, jarFile.indexOf('!'));
+                List<String> scanned = scanJar(new File(jarFile), filePackageName, directory);
+                for (String s : scanned) {
+                    if (!result.contains(s)) {
+                        result.add(s);
+                    }
+                }
 
             } catch (IllegalArgumentException ex) {
                 LOGGER.warning("unable to scan jar file: " + u.getSchemeSpecificPart() + "\n cause:" + ex.getMessage());
@@ -414,12 +427,21 @@ public class FileUtilities {
         for (File child : root.listFiles()) {
             if (child.isDirectory()) {
                 if (directory) {
-                    result.add(parent.replace('/', '.') + '.' + child.getName());
+                    String s = parent.replace('/', '.') + '.' + child.getName();
+                    if (!result.contains(s)) {
+                        result.add(s);
+                    }
                 }
-                result.addAll(scanDirectory(child, parent, directory));
+                List<String> scanned = scanDirectory(child, parent, directory);
+                for (String s : scanned) {
+                    if (!result.contains(s)) {
+                        result.add(s);
+                    }
+                }
             } else if (!directory) {
-                LOGGER.info("added :" + child.getPath());
-                result.add(child.getPath());
+                if (!result.contains(child.getPath())) {
+                    result.add(child.getPath());
+                }
             }
         }
         return result;
@@ -444,11 +466,15 @@ public class FileUtilities {
             if (e.isDirectory() && e.getName().startsWith(parent) && directory) {
                 String s = e.getName().replace('/', '.');
                 s = s.substring(0, s.length() - 1);
-                result.add(s);
+                if (!result.contains(s)) {
+                    result.add(s);
+                }
             } else if (!e.isDirectory() && e.getName().startsWith(parent) && !directory) {
                 String s = e.getName().replace('/', '.');
                 s = s.substring(0, s.length() - 1);
-                result.add(s);
+                if (!result.contains(s)) {
+                    result.add(s);
+                }
             }
         }
         return result;
