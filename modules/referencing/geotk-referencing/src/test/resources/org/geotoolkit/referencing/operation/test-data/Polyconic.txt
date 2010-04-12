@@ -1,0 +1,188 @@
+###############################################################################
+#
+#   Test points for the Polyconic Projection
+#
+#   (C) 2010, Open Source Geospatial Foundation (OSGeo)
+#
+#   The following test points were extracted from Table 19, p 132 of "Map Projections, a working manual"
+#   by John P.Snyder. (http://pubs.er.usgs.gov/usgspubs/pp/pp1395)
+#
+#
+#   Simon Reynard - Appril 2010
+#
+# -----------------------------------------------------------------------------
+#
+#   How to run this script:
+#
+#   cd org/geotoolkit/referencing/operation/test-data/
+#   java -ea org.geotoolkit.referencing.operation.ScriptRunner Polyconic.txt
+#
+#   A test is performed every time a "target pt" statement occurs. If the target point computed
+#   by Geotk is different from the target point declared in this script by an amount greater
+#   than the value specified in the last "tolerance" statement, then a failure is reported.
+#   If some test fail, "print" statements can be added in this script for debugging purpose:
+#
+#    print crs            (prints the source and target CRS, and the transform between them)
+#    print pts            (prints the source and target points, and their transformed points)
+#
+###############################################################################
+
+
+
+
+///////////////////////////////////////////////////////////
+//
+//     Geographic CRS
+//
+///////////////////////////////////////////////////////////
+
+set $ClarkeI = GEOGCS["ClarkeI",
+    DATUM["ClarkeI",
+    SPHEROID["ClarkeI", 6378206.400,294.97870]],
+    PRIMEM["Greenwich", 0.0],
+    UNIT["degree",0.017453292519943295],
+    AXIS["Longitude",EAST],
+    AXIS["Latitude",NORTH]]
+
+set $SPHERE = GEOGCS["Sphere",
+    DATUM["Sphere",
+    SPHEROID["Sphere", 6370997.0, 0]],
+    PRIMEM["Greenwich", 0.0],
+    UNIT["degree", 0.017453292519943295],
+    AXIS["Longitude",EAST],
+    AXIS["Latitude",NORTH]]
+
+
+
+
+///////////////////////////////////////////////////////////
+//
+//     Elliptical tests
+//
+///////////////////////////////////////////////////////////
+
+set $Polyconic1 = PROJCS["Polyconic", $ClarkeI,
+    PROJECTION["Polyconic"],
+    PARAMETER["central_meridian", 0.0],
+    PARAMETER["false_easting", 0.0],
+    PARAMETER["false_northing", 0.0],
+    UNIT["metre", 1.0],
+    AXIS["x", EAST],
+    AXIS["y", NORTH]]
+
+source crs = $ClarkeI
+target crs = $Polyconic1
+tolerance forward = (0.5, 0.5)
+tolerance inverse = (0.5, 0.5)
+
+source pt = (0.0, 50.0)
+target pt = (0.0, 5540628.0)
+
+source pt = (1.0, 50.0)
+target pt = (71696.0, 5541107.0)
+
+source pt = (2.0, 50.0)
+target pt = (143379.0, 5542545.0)
+
+source pt = (3.0, 50.0)
+target pt = (215037.0, 5544941.0)
+
+source pt = (1.0, 49.0)
+target pt = (73172.0, 5429890.0)
+
+source pt = (2.0, 48.0)
+target pt = (149239.0, 5320144.0)
+
+source pt = (3.0, 47.0)
+target pt = (228119.0, 5211397.0)
+
+source pt = (0.0, 45.0)
+target pt = (0.0, 4984727.0)
+
+source pt = (3.0, 45.0)
+target pt = (236493.0, 4989106.0)
+
+source pt = (0.0, 30.0)
+target pt = (0.0, 3319933.0)
+
+source pt = (1.0, 29.0)
+target pt = (97440.0, 3209506.0)
+
+source pt = (2.0, 28.0)
+target pt = (196719.0, 3099882.0)
+
+source pt = (3.0, 27.0)
+target pt = (297742.0, 2991002.0)
+
+source pt = (0.0, 23.0)
+target pt = (0.0, 2544390.0)
+
+source pt = (3.0, 23.0)
+target pt = (307551.0, 2547536.0)
+
+
+
+///////////////////////////////////////////////////////////
+//
+//     Spherical tests
+//
+///////////////////////////////////////////////////////////
+
+set $Polyconic2 = PROJCS["Polyconic", $SPHERE,
+    PROJECTION["Polyconic"],
+    PARAMETER["central_meridian", 0.0],
+    PARAMETER["false_easting", 0.0],
+    PARAMETER["false_northing", 0.0],
+    UNIT["metre", 1.0],
+    AXIS["x",EAST],
+    AXIS["y",NORTH]]
+
+source crs = $SPHERE
+target crs = $Polyconic2
+tolerance forward = (20000, 20000)
+tolerance inverse = (0.5, 0.5)
+
+source pt = (0.0, 50.0)
+target pt = (0.0, 5540628.0)
+
+source pt = (1.0, 50.0)
+target pt = (71696.0, 5541107.0)
+
+source pt = (2.0, 50.0)
+target pt = (143379.0, 5542545.0)
+
+source pt = (3.0, 50.0)
+target pt = (215037.0, 5544941.0)
+
+source pt = (1.0, 49.0)
+target pt = (73172.0, 5429890.0)
+
+source pt = (2.0, 48.0)
+target pt = (149239.0, 5320144.0)
+
+source pt = (3.0, 47.0)
+target pt = (228119.0, 5211397.0)
+
+source pt = (0.0, 45.0)
+target pt = (0.0, 4984727.0)
+
+source pt = (3.0, 45.0)
+target pt = (236493.0, 4989106.0)
+
+source pt = (0.0, 30.0)
+target pt = (0.0, 3319933.0)
+
+source pt = (1.0, 29.0)
+target pt = (97440.0, 3209506.0)
+
+source pt = (2.0, 28.0)
+target pt = (196719.0, 3099882.0)
+
+source pt = (3.0, 27.0)
+target pt = (297742.0, 2991002.0)
+
+source pt = (0.0, 23.0)
+target pt = (0.0, 2544390.0)
+
+source pt = (3.0, 23.0)
+target pt = (307551.0, 2547536.0)

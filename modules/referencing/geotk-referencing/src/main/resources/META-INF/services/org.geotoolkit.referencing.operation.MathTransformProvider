@@ -35,6 +35,7 @@ org.geotoolkit.referencing.operation.provider.PolarStereographic
 org.geotoolkit.referencing.operation.provider.PolarStereographic$VariantB
 org.geotoolkit.referencing.operation.provider.PolarStereographic$North
 org.geotoolkit.referencing.operation.provider.PolarStereographic$South
+org.geotoolkit.referencing.operation.provider.Polyconic
 org.geotoolkit.referencing.operation.provider.NewZealandMapGrid
 org.geotoolkit.referencing.operation.provider.Krovak
 org.geotoolkit.referencing.operation.provider.NADCON

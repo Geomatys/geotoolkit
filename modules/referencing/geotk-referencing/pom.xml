@@ -48,35 +48,32 @@
         <role>Java Developer</role>
       </roles>
     </developer>
-    <developer>
+  </developers>
+
+  <contributors>
+    <contributor>
       <name>Rueben Schulz</name>
-      <id>rschulz</id>
       <organization>University of British Columbia</organization>
       <roles>
         <role>Java developper</role>
         <role>Tester</role>
       </roles>
-    </developer>
-    <developer>
+    </contributor>
+    <contributor>
       <name>Jan Jezek</name>
-      <id>jezekjan</id>
       <organization>Help Service Remote Sensing</organization>
       <roles>
         <role>Java Developer</role>
       </roles>
-    </developer>
-    <developer>
+    </contributor>
+    <contributor>
       <name>Jody Garnett</name>
-      <id>jive</id>
       <email>jive@users.sourceforge.net</email>
       <organization>Refractions Research</organization>
       <roles>
         <role>Java Developer</role>
       </roles>
-    </developer>
-  </developers>
-
-  <contributors>
+    </contributor>
     <contributor>
       <name>Rémi Eve</name>
       <organization>
@@ -140,6 +137,15 @@
       <name>Larry Reeder</name>
       <roles>
         <role>Tester</role>
+      </roles>
+    </contributor>
+    <contributor>
+      <name>Simon Reynard</name>
+      <organization>Geomatys</organization>
+      <organizationUrl>http://www.geomatys.fr/</organizationUrl>
+      <timezone>+1</timezone>
+      <roles>
+        <role>Java Developer</role>
       </roles>
     </contributor>
   </contributors>

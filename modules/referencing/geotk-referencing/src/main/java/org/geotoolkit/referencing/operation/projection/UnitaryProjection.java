@@ -155,7 +155,7 @@ public abstract class UnitaryProjection extends AbstractMathTransform2D implemen
      * in the above-mentioned class, which has been renamed), and the modified value used in
      * {@link AlbersEqualArea}.
      */
-    private static final double EPSILON = 1E-7;
+    static final double EPSILON = 1E-7;
 
     /**
      * The pool of unitary projections created in this running JVM.
@@ -686,6 +686,16 @@ public abstract class UnitaryProjection extends AbstractMathTransform2D implemen
      * latitude (Snyder 14-15), where <var>s</var> and <var>c</var> are the sine and cosine of
      * the true scale latitude, and <var>e²</var> is the {@linkplain #excentricitySquared
      * eccentricity squared}.
+     * <p>
+     * Special cases:
+     * <ul>
+     *   <li>If <var>phi</var> is 0°, then this method returns 1.</li>
+     *   <li>If <var>phi</var> is ±90°, then this method returns 0 provided that we are
+     *       not in the spherical case (otherwise we get {@link Double#NaN}).</li>
+     * </ul>
+     *
+     * @param s The   sinus of the <var>phi</var> latitude in radians.
+     * @param c The cosinus of the <var>phi</var> latitude in radians.
      */
     final double msfn(final double s, final double c) {
         return c / sqrt(1.0 - (s*s) * excentricitySquared);

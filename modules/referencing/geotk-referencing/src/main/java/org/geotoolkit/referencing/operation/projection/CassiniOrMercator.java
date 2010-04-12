@@ -138,6 +138,11 @@ abstract class CassiniOrMercator extends UnitaryProjection {
      * Calculates the meridian distance. This is the distance along the central
      * meridian from the equator to {@code phi}. Accurate to &lt; 1E-5 metres
      * when used in conjuction with typical major axis values.
+     * <p>
+     * Special cases:
+     * <ul>
+     *   <li>If <var>phi</var> is 0°, then this method returns 0.</li>
+     * </ul>
      *
      * @param  phi latitude to calculate meridian distance for.
      * @param  sphi sin(phi).

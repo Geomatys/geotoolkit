@@ -23,6 +23,7 @@ import org.geotoolkit.test.TestData;
 import org.geotoolkit.referencing.operation.provider.NADCON;
 import org.geotoolkit.referencing.operation.projection.KrovakTest;
 import org.geotoolkit.referencing.operation.projection.MercatorTest;
+import org.geotoolkit.referencing.operation.projection.PolyconicTest;
 import org.geotoolkit.referencing.operation.projection.OrthographicTest;
 import org.geotoolkit.referencing.operation.projection.ObliqueMercatorTest;
 import org.geotoolkit.referencing.operation.projection.EquirectangularTest;
@@ -44,7 +45,7 @@ import org.junit.*;
  * @author Yann Cézard (IRD)
  * @author Rémi Eve (IRD)
  * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @version 3.11
  *
  * @since 2.1
  */
@@ -52,7 +53,7 @@ import org.junit.*;
     DefaultMathTransformFactoryTest.class, EquirectangularTest.class, MercatorTest.class,
     TransverseMercatorTest.class, ObliqueMercatorTest.class, LambertConformalTest.class,
     AlbersEqualAreaTest.class, OrthographicTest.class, ObliqueStereographicTest.class,
-    PolarStereographicTest.class, KrovakTest.class, NadconTransformTest.class
+    PolarStereographicTest.class, PolyconicTest.class, KrovakTest.class, NadconTransformTest.class
 })
 public final class ScriptTest {
     /**
@@ -211,6 +212,16 @@ public final class ScriptTest {
     @Test
     public void testOrthographic() throws Exception {
         runScript("Orthographic.txt");
+    }
+
+    /**
+     * Run {@code "Polyconic.txt"}.
+     *
+     * @throws Exception If a test failed.
+     */
+    @Test
+    public void testPolyconic() throws Exception {
+        runScript("Polyconic.txt");
     }
 
     /**
