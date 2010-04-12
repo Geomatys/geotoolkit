@@ -114,7 +114,7 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
             currentIndexDirectory = new File(configDirectory, serviceID + "index-" + System.currentTimeMillis());
             create = true;
         } else {
-            LOGGER.info("Index already created.");
+            LOGGER.log(logLevel, "Index already created.");
             deleteOldIndexDir(configDirectory, serviceID, currentIndexDirectory.getName());
             create = false;
         }

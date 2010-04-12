@@ -165,7 +165,7 @@ public abstract class AbstractIndexSearcher extends IndexLucene {
             final String metadataID = getMatchingID(searcher.doc(i));
             identifiers.add(i, metadataID);
         }
-        LOGGER.info(identifiers.size() + " records founded.");
+        LOGGER.log(logLevel,identifiers.size() + " records founded.");
     }
 
     /**
@@ -178,7 +178,7 @@ public abstract class AbstractIndexSearcher extends IndexLucene {
             initSearcher();
             initIdentifiersList();
             cachedQueries.clear();
-            LOGGER.info("refreshing index searcher");
+            LOGGER.log(logLevel, "refreshing index searcher");
         } catch (ParseException ex) {
             throw new IndexingException("Parse exception encountered during refreshing the index searcher", ex);
         } catch (SearchingException ex) {
@@ -230,7 +230,7 @@ public abstract class AbstractIndexSearcher extends IndexLucene {
 
             int maxRecords = searcher.maxDoc();
             if (maxRecords == 0) {
-                LOGGER.severe("The index seems to be empty.");
+                LOGGER.warning("The index seems to be empty.");
                 maxRecords = 1;
             }
 
@@ -369,7 +369,7 @@ public abstract class AbstractIndexSearcher extends IndexLucene {
             if (searcher != null)
                 searcher.close();
         } catch (IOException ex) {
-            LOGGER.info("IOException while closing the index searcher");
+            LOGGER.warning("IOException while closing the index searcher");
         }
     }
 }
