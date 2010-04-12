@@ -394,7 +394,7 @@ public class FileUtilities {
                 result.addAll(scanJar(new File(jarFile), filePackageName, directory));
 
             } catch (IllegalArgumentException ex) {
-                LOGGER.warning("unable to scan jar file: " + u.getSchemeSpecificPart());
+                LOGGER.warning("unable to scan jar file: " + u.getSchemeSpecificPart() + "\n cause:" + ex.getMessage());
             }
         }
         return result;
