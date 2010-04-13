@@ -20,6 +20,7 @@ import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.CoordinateSequence;
 import com.vividsolutions.jts.geom.CoordinateSequenceFactory;
 import com.vividsolutions.jts.geom.impl.CoordinateArraySequenceFactory;
+import java.util.Arrays;
 
 import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.referencing.operation.MathTransform;
@@ -65,6 +66,7 @@ public class DefaultCoordinateSequenceTransformer implements CoordinateSequenceT
      * {@inheritDoc}
      */
     @Override
+    @SuppressWarnings("fallthrough")
     public CoordinateSequence transform(final CoordinateSequence sequence, final MathTransform transform)
             throws TransformException {
         final int sourceDim = transform.getSourceDimensions();
@@ -77,11 +79,11 @@ public class DefaultCoordinateSequenceTransformer implements CoordinateSequenceT
         int it = 0; // Index in the target array.
 
         for (int i = 0; i < size; i++) {
-            switch (sourceDim) {
-                default: throw new MismatchedDimensionException();
-                case 3:  buffer[ib + 2] = sequence.getOrdinate(i, 2); // Fall through
-                case 2:  buffer[ib + 1] = sequence.getY(i); // Fall through
-                case 1:  buffer[ib] = sequence.getX(i); // Fall through
+            switch (sourceDim) { // Fall through in every cases.
+                default: Arrays.fill(buffer, ib + 3, ib + sourceDim, Double.NaN);
+                case 3:  buffer[ib + 2] = sequence.getOrdinate(i, 2);
+                case 2:  buffer[ib + 1] = sequence.getY(i);
+                case 1:  buffer[ib] = sequence.getX(i);
                 case 0:  break;
             }
 
