@@ -37,7 +37,6 @@ import java.lang.annotation.RetentionPolicy;
  *     <li>{@link org.geotoolkit.util.Characters}: Find subscript and superscript digit characters.</li>
  *     <li>{@link org.geotoolkit.util.converter.Classes}: Conversions between different kind of
  *         {@link java.lang.Number}.</li>
- *     <li>{@link org.geotoolkit.util.XCollections}: Additions to the {@link java.util.Collections} methods.</li>
  *   </ul>
  *   <li><p>Mathematics and units of measurement</p></li>
  *   <ul>
@@ -52,6 +51,7 @@ import java.lang.annotation.RetentionPolicy;
  *   </ul>
  *   <li><p>Structures (trees, collections, arrays, parameters)</p></li>
  *   <ul>
+ *     <li>{@link org.geotoolkit.util.collection.XCollections}: Additions to the {@link java.util.Collections} methods.</li>
  *     <li>{@link org.geotoolkit.util.Comparators}: Predefined comparators for comparing collections
  *         as a whole.</li>
  *     <li>{@link org.geotoolkit.util.Ranks}: Sorts elements in an array while remembering their ranks.</li>

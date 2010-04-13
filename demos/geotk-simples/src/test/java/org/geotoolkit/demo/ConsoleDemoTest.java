@@ -21,6 +21,7 @@ import java.io.*;
 import org.junit.*;
 import static org.junit.Assert.*;
 
+import org.geotoolkit.internal.io.Installation;
 import org.geotoolkit.demo.referencing.CoordinateConversion;
 
 
@@ -69,6 +70,7 @@ public class ConsoleDemoTest {
      */
     @Test
     public void testCoordinateConversion() throws Exception {
+        Installation.allowSystemPreferences = false; // For avoiding warning messages in stderr.
         CoordinateConversion.main(new String[0]);
     }
 }

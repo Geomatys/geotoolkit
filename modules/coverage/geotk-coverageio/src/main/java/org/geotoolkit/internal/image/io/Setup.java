@@ -48,6 +48,9 @@ public final class Setup implements SetupService {
         final IIORegistry registry = IIORegistry.getDefaultInstance();
         WorldFileImageReader.Spi.registerDefaults(registry);
         WorldFileImageWriter.Spi.registerDefaults(registry);
+        if (reinit) {
+            IIORegistry.getDefaultInstance().registerApplicationClasspathSpis();
+        }
     }
 
     /**

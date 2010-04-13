@@ -57,36 +57,37 @@ import org.geotoolkit.resources.Errors;
  *     <th nowrap>Work done by {@link #shutdown()}</th>
  *   </tr><tr>
  *     <td nowrap>{@code geotk-utility}</td>
- *     <td>
- *       {@link Logging#forceMonolineConsoleOutput Logging.forceMonolineConsoleOutput(null)}<br>
- *       unless {@code platform=server}.
- *     </td>
+ *     <td><ul>
+ *       <li>If {@code platform = "server"}:
+ *         <ul><li><code>{@linkplain Logging#forceMonolineConsoleOutput Logging.forceMonolineConsoleOutput}(null)</code></li></ul>
+ *       </li>
+ *     </ul></td>
  *     <td>&nbsp;</td>
  *   </tr><tr>
  *     <td nowrap>{@code geotk-coverage}</td>
- *     <td>
- *       {@link org.geotoolkit.image.jai.Registry#setDefaultCodecPreferences()}.
- *     </td>
+ *     <td><ul>
+ *       <li>{@link org.geotoolkit.image.jai.Registry#setDefaultCodecPreferences()}</li>
+ *     </ul></td>
  *     <td>
  *       Remove from the JAI {@link javax.media.jai.OperationRegistry} every
  *       plugins defined in any {@code org.geotoolkit} package.
  *     </td>
  *   </tr><tr>
  *     <td nowrap>{@code geotk-coverageio}</td>
- *     <td>
- *      ({@link org.geotoolkit.image.io.plugin.WorldFileImageReader.Spi#registerDefaults WorldFileImageReader} |
- *       {@link org.geotoolkit.image.io.plugin.WorldFileImageWriter.Spi#registerDefaults WorldFileImageWriter})
- *       {@code .Spi.registerDefaults(null)}.
- *     </td>
+ *     <td><ul>
+ *       <li><code>{@linkplain org.geotoolkit.image.io.plugin.WorldFileImageReader.Spi#registerDefaults WorldFileImageReader.Spi.registerDefaults}(null)</code></li>
+ *       <li><code>{@linkplain org.geotoolkit.image.io.plugin.WorldFileImageWriter.Spi#registerDefaults WorldFileImageWriter.Spi.registerDefaults}(null)</code></li>
+ *     </ul></td>
  *     <td>
  *       Remove from {@link IIORegistry} every plugins defined in any {@code org.geotoolkit} package.</li>
  *     </td>
  *   </tr><tr>
  *     <td nowrap>{@code geotk-coverageio-netcdf}</td>
- *     <td>
- *       {@link ucar.nc2.dataset.NetcdfDataset#initNetcdfFileCache(int,int,int)}<br>
- *       unless a cache is already defined.
- *     </td>
+ *     <td><ul>
+ *       <li>If {@code netcdfCacheLimit != 0}:
+ *         <ul><li>{@link ucar.nc2.dataset.NetcdfDataset#initNetcdfFileCache(int,int,int)}</li></ul>
+ *       </li>
+ *     </ul></td>
  *     <td>
  *       {@link ucar.nc2.dataset.NetcdfDataset#shutdown()}.
  *     </td>
@@ -110,6 +111,7 @@ import org.geotoolkit.resources.Errors;
  * @since 3.10
  * @module
  */
+@Static
 public final class Setup {
     /**
      * The setup state.
@@ -198,7 +200,6 @@ public final class Setup {
          */
         if (reinit) {
             FactoryFinder.scanForPlugins();
-            IIORegistry.getDefaultInstance().registerApplicationClasspathSpis();
         }
         /*
          * Now performs every module-specific initialization.
