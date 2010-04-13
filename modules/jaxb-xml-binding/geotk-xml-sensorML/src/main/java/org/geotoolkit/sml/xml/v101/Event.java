@@ -341,31 +341,33 @@ public class Event implements AbstractEvent {
         if (object instanceof Event) {
             final Event that = (Event) object;
 
-            return Utilities.equals(this.classification, that.classification)
-                    && Utilities.equals(this.contact, that.contact)
+            return Utilities.equals(this.getClassification(), that.getClassification())
+                    && Utilities.equals(this.getContact(), that.getContact())
                     && Utilities.equals(this.date, that.date)
                     && Utilities.equals(this.description, that.description)
-                    && Utilities.equals(this.documentation, that.documentation)
+                    && Utilities.equals(this.getDocumentation(), that.getDocumentation())
                     && Utilities.equals(this.id, that.id)
-                    && Utilities.equals(this.identification, that.identification)
-                    && Utilities.equals(this.keywords, that.keywords)
-                    && Utilities.equals(this.property, that.property);
+                    && Utilities.equals(this.getIdentification(), that.getIdentification())
+                    && Utilities.equals(this.getKeywords(), that.getKeywords())
+                    && Utilities.equals(this.getProperty(), that.getProperty());
         }
         return false;
     }
 
     @Override
     public int hashCode() {
-        int hash = 7;
-        hash = 53 * hash + (this.date != null ? this.date.hashCode() : 0);
-        hash = 53 * hash + (this.description != null ? this.description.hashCode() : 0);
-        hash = 53 * hash + (this.keywords != null ? this.keywords.hashCode() : 0);
-        hash = 53 * hash + (this.identification != null ? this.identification.hashCode() : 0);
-        hash = 53 * hash + (this.classification != null ? this.classification.hashCode() : 0);
-        hash = 53 * hash + (this.contact != null ? this.contact.hashCode() : 0);
-        hash = 53 * hash + (this.documentation != null ? this.documentation.hashCode() : 0);
-        hash = 53 * hash + (this.property != null ? this.property.hashCode() : 0);
-        hash = 53 * hash + (this.id != null ? this.id.hashCode() : 0);
+        int hash = 3;
+        hash = 67 * hash + (this.date != null ? this.date.hashCode() : 0);
+        hash = 67 * hash + this.getDescription().hashCode();
+        hash = 67 * hash + this.getKeywords().hashCode();
+        hash = 67 * hash + this.getIdentification().hashCode();
+        hash = 67 * hash + this.getClassification().hashCode();
+        hash = 67 * hash + this.getContact().hashCode();
+        hash = 67 * hash + this.getDocumentation().hashCode();
+        hash = 67 * hash + this.getProperty().hashCode();
+        hash = 67 * hash + (this.id != null ? this.id.hashCode() : 0);
         return hash;
     }
+
+    
 }
