@@ -397,12 +397,9 @@ public class FileUtilities {
             }
         } else if (scheme.equals("jar") || scheme.equals("zip")) {
             try {
-                String jarFile = u.getSchemeSpecificPart();
-                if (jarFile.indexOf(":/") != -1 && System.getProperty("os.name", "").startsWith("Windows")) {
-                    jarFile        = jarFile.substring(jarFile.indexOf(":/") + 2);
-                } else {
-                    jarFile        = jarFile.substring(jarFile.indexOf(":/") + 1);
-                }
+                String brut    = u.getSchemeSpecificPart();
+                URI uri        = URI.create(brut.replaceAll(" ", "%20"));
+                String jarFile = uri.getPath();
                 jarFile        = jarFile.substring(0, jarFile.indexOf('!'));
                 List<String> scanned = scanJar(new File(jarFile), filePackageName, directory);
                 for (String s : scanned) {
