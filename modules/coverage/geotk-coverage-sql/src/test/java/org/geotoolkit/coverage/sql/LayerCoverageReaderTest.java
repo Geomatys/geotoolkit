@@ -29,7 +29,6 @@ import org.geotoolkit.internal.sql.table.CatalogTestBase;
 
 import org.junit.*;
 import static org.junit.Assert.*;
-import static org.geotoolkit.coverage.sql.CoverageDatabase.now;
 
 
 /**
@@ -83,9 +82,10 @@ public final class LayerCoverageReaderTest extends CatalogTestBase {
     @Test
     public void testTemperature() throws SQLException, IOException, CoverageStoreException {
         final CoverageDatabase database = getCoverageDatabase();
-        final Layer layer = now(database.getLayer(LayerTableTest.TEMPERATURE));
-        final LayerCoverageReader reader = new LayerCoverageReader(database);
-        reader.setInput(layer);
+        final LayerCoverageReader reader = database.createGridCoverageReader(LayerTableTest.TEMPERATURE);
+
+        final Layer layer = reader.getInput();
+        assertEquals(LayerTableTest.TEMPERATURE, layer.getName());
 
         final CoverageEnvelope envelope = layer.getEnvelope(null, null);
         envelope.setTimeRange(LayerTableTest.SUB_START_TIME, LayerTableTest.SUB_END_TIME);
@@ -113,9 +113,10 @@ public final class LayerCoverageReaderTest extends CatalogTestBase {
     @Test
     public void testCoriolis() throws SQLException, IOException, CoverageStoreException {
         final CoverageDatabase database = getCoverageDatabase();
-        final Layer layer = now(database.getLayer(LayerTableTest.NETCDF));
-        final LayerCoverageReader reader = new LayerCoverageReader(database);
-        reader.setInput(layer);
+        final LayerCoverageReader reader = database.createGridCoverageReader(LayerTableTest.NETCDF);
+
+        final Layer layer = reader.getInput();
+        assertEquals(LayerTableTest.NETCDF, layer.getName());
 
         final CoverageEnvelope envelope = layer.getEnvelope(null, 100);
         envelope.setHorizontalRange(new Rectangle2D.Double(-40, -40, 80, 80));
@@ -142,9 +143,10 @@ public final class LayerCoverageReaderTest extends CatalogTestBase {
     @Test
     public void testBluemarble() throws SQLException, IOException, CoverageStoreException {
         final CoverageDatabase database = getCoverageDatabase();
-        final Layer layer = now(database.getLayer(LayerTableTest.BLUEMARBLE));
-        final LayerCoverageReader reader = new LayerCoverageReader(database);
-        reader.setInput(layer);
+        final LayerCoverageReader reader = database.createGridCoverageReader(LayerTableTest.BLUEMARBLE);
+
+        final Layer layer = reader.getInput();
+        assertEquals(LayerTableTest.BLUEMARBLE, layer.getName());
 
         final CoverageEnvelope envelope = layer.getEnvelope(null, 100);
         envelope.setHorizontalRange(new Rectangle2D.Double(-40, -40, 80, 80));

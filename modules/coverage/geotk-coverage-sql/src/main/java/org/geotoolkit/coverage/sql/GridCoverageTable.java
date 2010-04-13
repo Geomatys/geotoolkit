@@ -18,6 +18,7 @@
 package org.geotoolkit.coverage.sql;
 
 import java.util.*;
+import java.util.concurrent.Executor;
 import java.sql.Timestamp;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -246,14 +247,29 @@ class GridCoverageTable extends BoundedSingletonTable<GridCoverageEntry> {
      * Returns the two-dimensional coverages that intercept the
      * {@linkplain #getEnvelope current spatio-temporal envelope}.
      *
-     * @return List of coverages in the current envelope of interest.
+     * @param  entries The collection in which to add the entries.
      * @throws SQLException if an error occured while reading the database.
      */
     @Override
-    public final Set<GridCoverageEntry> getEntries() throws SQLException {
+    protected final void getEntries(final Collection<GridCoverageEntry> entries) throws SQLException {
+        super.getEntries(entries);
+        /*
+         * If the GridCoverageEntries collection is used (a special collection
+         * implementing Runnable), do not invoke filter(entries) since it will
+         * be invoked by the caller in an other thread.
+         */
+        if (!(entries instanceof Runnable)) {
+            filter(entries);
+        }
+    }
+
+    /**
+     * Filters the given collection of entries in order to retain only one entry when there
+     * is many having the same envelope but different resolution.
+     */
+    private void filter(final Collection<GridCoverageEntry> entries) {
         final Dimension2D resolution = envelope.getPreferredResolution();
-        final  Set<GridCoverageEntry> entries  = super.getEntries();
-        final List<GridCoverageEntry> filtered = new ArrayList<GridCoverageEntry>(entries.size());
+        final List<GridCoverageEntry> filtered = new ArrayList<GridCoverageEntry>(Math.max(4, entries.size()));
 loop:   for (final GridCoverageEntry newEntry : entries) {
             /*
              * If there is many entries with the same spatio-temporal envelope but different
@@ -282,8 +298,9 @@ loop:   for (final GridCoverageEntry newEntry : entries) {
             }
             filtered.add(newEntry);
         }
+        // If 'entries' is a GridCoverageEntries instance filled in
+        // a background thread, at this point the fill is completed.
         entries.retainAll(filtered);
-        return entries;
     }
 
     /**
@@ -292,11 +309,23 @@ loop:   for (final GridCoverageEntry newEntry : entries) {
      * if {@link #getEntries()} returns a set containing at least two elements), then a coverage
      * will be selected using the default {@link GridCoverageComparator}.
      *
+     * @param  executor An optional executor for running the SQL queries, or {@code null} if none.
      * @return A coverage intercepting the given envelope, or {@code null} if none.
      * @throws SQLException if an error occured while reading the database.
      */
-    public final GridCoverageEntry getEntry() throws SQLException {
-        final Iterator<GridCoverageEntry> entries = getEntries().iterator();
+    public final GridCoverageEntry select(final Executor executor) throws SQLException {
+        final Iterator<GridCoverageEntry> entries;
+        if (executor != null) {
+            final GridCoverageEntries candidates = new GridCoverageEntries(this);
+            executor.execute(candidates);
+            filter(candidates);
+            if (candidates.exception != null) {
+                throw candidates.exception;
+            }
+            entries = candidates.defaultIterator();
+        } else {
+            entries = getEntries().iterator();
+        }
         GridCoverageEntry best = null;
         if (entries.hasNext()) {
             best = entries.next();

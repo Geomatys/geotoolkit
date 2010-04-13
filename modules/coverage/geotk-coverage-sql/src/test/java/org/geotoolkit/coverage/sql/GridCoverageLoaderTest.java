@@ -70,7 +70,7 @@ public final class GridCoverageLoaderTest extends CatalogTestBase {
         table.envelope.clear();
         table.envelope.setTimeRange(LayerTableTest.SUB_START_TIME, LayerTableTest.SUB_END_TIME);
         table.setLayer(LayerTableTest.TEMPERATURE);
-        final GridCoverageReference entry = table.getEntry();
+        final GridCoverageReference entry = table.select(null);
 
         requireImageData();
         final GridCoverage2D coverage = entry.getCoverage(null);
@@ -148,7 +148,7 @@ public final class GridCoverageLoaderTest extends CatalogTestBase {
         table.envelope.clear();
         table.envelope.setVerticalRange(100, 110);
         table.setLayer(LayerTableTest.NETCDF);
-        final GridCoverageReference entry = table.getEntry();
+        final GridCoverageReference entry = table.select(null);
 
         requireImageData();
         final GridCoverage2D coverage = entry.getCoverage(null);
@@ -227,7 +227,7 @@ public final class GridCoverageLoaderTest extends CatalogTestBase {
         table.setLayer(LayerTableTest.BLUEMARBLE);
         table.envelope.setHorizontalRange(new Rectangle(-100, -40, 200, 80));
         table.envelope.setPreferredImageSize(new Dimension(100, 80));
-        final GridCoverageReference entry = table.getEntry();
+        final GridCoverageReference entry = table.select(null);
 
         requireImageData();
         final GridCoverage2D coverage = entry.read(table.envelope, null);
@@ -270,7 +270,7 @@ public final class GridCoverageLoaderTest extends CatalogTestBase {
         final GridCoverageTable table = getDatabase().getTable(GridCoverageTable.class);
         table.envelope.clear();
         table.setLayer(LayerTableTest.GEOSTROPHIC_CURRENT);
-        final GridCoverageReference entry = table.getEntry();
+        final GridCoverageReference entry = table.select(null);
 
         requireImageData();
         final GridCoverage2D coverage = entry.read(table.envelope, null);

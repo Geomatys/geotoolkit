@@ -19,6 +19,7 @@ package org.geotoolkit.coverage.sql;
 
 import java.util.List;
 import java.util.Collections;
+import java.util.concurrent.Future;
 import java.sql.SQLException;
 import java.awt.geom.Dimension2D;
 
@@ -37,6 +38,7 @@ import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.display.shape.DoubleDimension2D;
 import org.geotoolkit.util.collection.FrequencySortedSet;
+import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.image.io.IIOListeners;
 import org.geotoolkit.resources.Errors;
 
@@ -55,7 +57,7 @@ import org.geotoolkit.resources.Errors;
  * the spatio-temporal envelope given to the {@link GridCoverageReadParam} argument.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.10
+ * @version 3.11
  *
  * @see CoverageDatabase#createGridCoverageReader(String)
  *
@@ -64,6 +66,11 @@ import org.geotoolkit.resources.Errors;
  */
 public class LayerCoverageReader extends GridCoverageReader {
     /**
+     * The coverage database which created this {@code LayerCoverageReader}.
+     */
+    protected final CoverageDatabase database;
+
+    /**
      * A temporary object used for computing the value to be given to the
      * {@link Layer#getCoverageReference(CoverageEnvelope)} method. Subclasses can use
      * this field for computation purpose, but its content shall not be presumed stable.
@@ -71,8 +78,7 @@ public class LayerCoverageReader extends GridCoverageReader {
     protected final CoverageEnvelope temporaryEnvelope;
 
     /**
-     * The list of coverage names. This field is also used as a sentinal
-     * value for determining if the input is set.
+     * The list of coverage names, computed when first needed.
      */
     private List<String> names;
 
@@ -95,7 +101,20 @@ public class LayerCoverageReader extends GridCoverageReader {
      * @param database The database to used with this reader.
      */
     protected LayerCoverageReader(final CoverageDatabase database) {
+        this.database = database;
         temporaryEnvelope = new CoverageEnvelope(database.database);
+    }
+
+    /**
+     * Creates a new reader for the given database and initializes its layer to the given value.
+     *
+     * @throws CoverageStoreException Declared for compilation raison, but should never happen.
+     */
+    LayerCoverageReader(final CoverageDatabase database, final Future<Layer> layer)
+            throws CoverageStoreException
+    {
+        this(database);
+        super.setInput(layer);
     }
 
     /**
@@ -107,9 +126,11 @@ public class LayerCoverageReader extends GridCoverageReader {
 
     /**
      * Ensures that the input is set.
+     *
+     * @throws CoverageStoreException Declared for compilation raison, but should never happen.
      */
-    private void ensureInputSet() throws IllegalStateException {
-        if (names == null) {
+    private void ensureInputSet() throws CoverageStoreException, IllegalStateException {
+        if (super.getInput() == null) { // Use 'super' because we don't want to wait for Future.
             throw new IllegalStateException(errors().getString(Errors.Keys.NO_IMAGE_INPUT));
         }
     }
@@ -119,8 +140,9 @@ public class LayerCoverageReader extends GridCoverageReader {
      * this method implies a call to {@link #ensureInputSet()}.
      *
      * @param index The coverage index.
+     * @throws CoverageStoreException Declared for compilation raison, but should never happen.
      */
-    private void ensureValidIndex(final int index) throws IndexOutOfBoundsException {
+    private void ensureValidIndex(final int index) throws CoverageStoreException, IndexOutOfBoundsException {
         ensureInputSet();
         if (index != 0) {
             throw new IndexOutOfBoundsException(errors().getString(
@@ -133,30 +155,47 @@ public class LayerCoverageReader extends GridCoverageReader {
      */
     @Override
     public final Layer getInput() throws CoverageStoreException {
-        return (Layer) super.getInput();
+        Object input = super.getInput();
+        if (input instanceof Future<?>) {
+            input = CoverageDatabase.now((Future<?>) input);
+            super.setInput(input);
+        }
+        return (Layer) input;
     }
 
     /**
-     * Sets a new {@linkplain Layer layer} as input.
+     * Sets a new layer as input. The given input can be either a {@link Layer} instance,
+     * or the name of a layer as a {@link CharSequence}.
      *
-     * @param input The new input as a {@link Layer} instance.
-     * @throws ClassCastException If the given input is not of a legal type.
+     * @param input The new input as a {@link Layer} instance or a {@link CharSequence},
+     *        or {@code null} for removing any input previously set.
+     * @throws IllegalArgumentException If the given input is not of a legal type.
      */
     @Override
-    public void setInput(final Object input) throws CoverageStoreException {
-        final LayerEntry layer = (LayerEntry) input;
-        super.setInput(input);
-        names = Collections.singletonList(layer.getName());
-        gridGeometry = null;
+    public void setInput(Object input) throws CoverageStoreException {
+        if (input != null) {
+            if (input instanceof CharSequence) {
+                input = database.getLayer(input.toString());
+            } else if (!(input instanceof Layer)) {
+                throw new IllegalArgumentException(errors().getString(Errors.Keys.ILLEGAL_CLASS_$2,
+                        Classes.getClass(input), Layer.class));
+            }
+        }
+        names            = null;
+        gridGeometry     = null;
         sampleDimensions = null;
+        super.setInput(input);
     }
 
     /**
      * Returns the layer name.
      */
     @Override
-    public List<String> getCoverageNames() {
+    public List<String> getCoverageNames() throws CoverageStoreException {
         ensureInputSet();
+        if (names == null) {
+            names = Collections.singletonList(getInput().getName());
+        }
         return names;
     }
 
@@ -281,7 +320,12 @@ public class LayerCoverageReader extends GridCoverageReader {
         /*
          * Now process to the image reading.
          */
-        final GridCoverageEntry ref = (GridCoverageEntry) layer.getCoverageReference(envelope);
+        final GridCoverageEntry ref;
+        if (layer instanceof LayerEntry) {
+            ref = ((LayerEntry) layer).getCoverageReference(envelope, database.executor);
+        } else {
+            ref = (GridCoverageEntry) layer.getCoverageReference(envelope);
+        }
         if (ref != null) {
             final IIOListeners listeners = null; // TODO
             return ref.read(param, listeners);

@@ -168,7 +168,8 @@ final class GridCoverageLoader extends ImageCoverageReader {
     @Override
     protected boolean canReuseImageReader(final ImageReaderSpi provider, final Object input) throws IOException {
         assert (provider instanceof MosaicImageReader.Spi) || // The format name of this provider is "mosaic".
-                XArrays.containsIgnoreCase(provider.getFormatNames(), format.imageFormat) : format;
+                XArrays.containsIgnoreCase(provider.getFormatNames(), format.imageFormat) ||
+                XArrays.containsIgnoreCase(provider.getMIMETypes(),   format.imageFormat) : format;
         return true;
     }
 

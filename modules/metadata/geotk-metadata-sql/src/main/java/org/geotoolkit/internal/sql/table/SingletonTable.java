@@ -22,6 +22,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.PreparedStatement;
 import java.util.Set;
+import java.util.Collection;
 import java.util.LinkedHashSet;
 
 import org.geotoolkit.util.collection.Cache;
@@ -48,7 +49,7 @@ import org.geotoolkit.resources.Errors;
  * @param <E> The kind of entries to be created by this table.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.10
+ * @version 3.11
  *
  * @since 3.09 (derived from Seagis)
  * @module
@@ -310,15 +311,31 @@ public abstract class SingletonTable<E extends Entry> extends Table {
     }
 
     /**
-     * Returns all entries available in the database. The returned set may or may not be
-     * serializable or modifiable, at implementation choice. If allowed, modification in
-     * the returned set will not alter this table.
+     * Returns all entries available in the database.
      *
-     * @return The set of entries. May be empty, but neven {@code null}.
+     * @return The set of entries. May be empty, but never {@code null}.
      * @throws SQLException if an error occured will reading from the database.
      */
-    public Set<E> getEntries() throws SQLException {
+    public final Set<E> getEntries() throws SQLException {
         final Set<E> entries = new LinkedHashSet<E>();
+        getEntries(entries);
+        return entries;
+    }
+
+    /**
+     * Adds in the given collection all entries found in the database. This method is
+     * provided for subclasses wanting to add the entries in their own kind of collection.
+     * <p>
+     * This method uses only the {@link Collection#add(Object)} method. No other method
+     * shall be invoked, unless we modify the {@code GridCoverageEntries} implementation
+     * consequently.
+     *
+     * @param  entries The collection in which to add the entries.
+     * @throws SQLException if an error occured will reading from the database.
+     *
+     * @since 3.11
+     */
+    protected void getEntries(final Collection<E> entries) throws SQLException {
         synchronized (getLock()) {
             final LocalCache.Stmt ce = getStatement(QueryType.LIST);
             final int[] pkIndices = getPrimaryKeyColumns();
@@ -357,7 +374,6 @@ public abstract class SingletonTable<E extends Entry> extends Table {
             results.close();
             release(ce);
         }
-        return entries;
     }
 
     /**

@@ -70,7 +70,7 @@ import org.geotoolkit.resources.Errors;
  * more work executed concurrently.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.10
+ * @version 3.11
  *
  * @since 3.10
  * @module
@@ -101,7 +101,7 @@ public class CoverageDatabase {
      * connections, and we want to constraint the creation of those JDBC resources in only a
      * limited amount of threads.
      */
-    private final ExecutorService executor;
+    final ExecutorService executor;
 
     /**
      * Creates a new instance using the given data source.
@@ -461,7 +461,7 @@ public class CoverageDatabase {
                 final GridCoverageTable table = pool.acquire();
                 table.setLayer(query.getLayer());
                 table.envelope.setAll(envelope);
-                entry = table.getEntry();
+                entry = table.select(null);
                 pool.release(table);
             } catch (SQLException e) {
                 throw new CoverageStoreException(e);
@@ -478,15 +478,6 @@ public class CoverageDatabase {
      * alternative way (as compared to {@link #readSlice readSlice}) for reading two-dimensional
      * slices of coverage. This method is provided for interoperability with library which want
      * to access to the data through the {@link GridCoverageReader} API only.
-     * <p>
-     * The default implementation is like below, omitting the check for {@code null} argument
-     * value:
-     *
-     * {@preformat java
-     *     LayerCoverageReader reader = new LayerCoverageReader(this);
-     *     reader.setInput(now(getLayer(layer)));
-     *     return reader;
-     * }
      *
      * @param  layer The name of the initial layer to be read by the returned reader, or {@code null}.
      * @return A grid coverage reader using the given layer as input.
@@ -494,11 +485,7 @@ public class CoverageDatabase {
      */
     public LayerCoverageReader createGridCoverageReader(final String layer) throws CoverageStoreException {
         final Future<Layer> future = (layer != null) ? getLayer(layer) : null;
-        final LayerCoverageReader reader = new LayerCoverageReader(this);
-        if (future != null) {
-            reader.setInput(now(future));
-        }
-        return reader;
+        return new LayerCoverageReader(this, future);
     }
 
     /**

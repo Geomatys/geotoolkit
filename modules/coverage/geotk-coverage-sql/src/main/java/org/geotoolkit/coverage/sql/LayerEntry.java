@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.concurrent.Executor;
 import java.sql.SQLException;
 import java.awt.geom.Dimension2D;
 import java.io.IOException;
@@ -760,7 +761,17 @@ final class LayerEntry extends Entry implements Layer {
      * the most repesentative.
      */
     @Override
-    public GridCoverageReference getCoverageReference(final CoverageEnvelope envelope)
+    public final GridCoverageEntry getCoverageReference(final CoverageEnvelope envelope)
+            throws CoverageStoreException
+    {
+        return getCoverageReference(envelope, null);
+    }
+
+    /**
+     * Same as {@link #getCoverageReference(CoverageEnvelope)}, but using the given executor
+     * for the database queries.
+     */
+    GridCoverageEntry getCoverageReference(final CoverageEnvelope envelope, final Executor executor)
             throws CoverageStoreException
     {
         final GridCoverageEntry entry;
@@ -769,7 +780,7 @@ final class LayerEntry extends Entry implements Layer {
             final GridCoverageTable table = pool.acquire();
             table.setLayerEntry(this);
             table.envelope.setAll(envelope);
-            entry = table.getEntry();
+            entry = table.select(executor);
             pool.release(table);
         } catch (SQLException exception) {
             throw new CoverageStoreException(exception);
