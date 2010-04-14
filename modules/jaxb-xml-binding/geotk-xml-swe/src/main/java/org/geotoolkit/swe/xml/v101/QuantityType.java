@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.swe.xml.v101;
 
-import java.util.List;
+import java.net.URI;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -42,7 +42,7 @@ public class QuantityType extends AbstractDataComponentEntry implements Quantity
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     protected String axisID;
     @XmlAttribute
-    protected String referenceFrame;
+    protected URI referenceFrame;
 
     /**
      * A empty contructor used by JAXB
@@ -54,9 +54,9 @@ public class QuantityType extends AbstractDataComponentEntry implements Quantity
     public QuantityType(Quantity q) {
         super(q);
         if (q != null) {
-            this.axisID = q.getAxisID();
+            this.axisID         = q.getAxisID();
             this.referenceFrame = q.getReferenceFrame();
-            this.value = q.getValue();
+            this.value          = q.getValue();
             if (q.getUom() != null) {
                 this.uom = new UomPropertyType(q.getUom());
             }
@@ -115,7 +115,7 @@ public class QuantityType extends AbstractDataComponentEntry implements Quantity
     /**
      * Gets the value of the referenceFrame property.
      */
-    public String getReferenceFrame() {
+    public URI getReferenceFrame() {
         return referenceFrame;
     }
 

@@ -16,6 +16,8 @@
  */
 package org.geotoolkit.swe.xml;
 
+import java.net.URI;
+
 /**
  *
  * @author Guilhem Legal (Geomatys)
@@ -29,7 +31,7 @@ public interface Quantity  extends AbstractDataComponent {
 
     public Double getValue();
 
-    public String getReferenceFrame();
+    public URI getReferenceFrame();
 
     public String getAxisID();
 }

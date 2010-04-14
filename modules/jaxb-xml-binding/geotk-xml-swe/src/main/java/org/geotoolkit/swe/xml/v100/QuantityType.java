@@ -71,7 +71,7 @@ public class QuantityType extends AbstractDataComponentType implements Quantity 
     private Double value;
     @XmlAttribute
     @XmlSchemaType(name = "anyURI")
-    private String referenceFrame;
+    private URI referenceFrame;
     @XmlAttribute
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlSchemaType(name = "token")
@@ -162,14 +162,14 @@ public class QuantityType extends AbstractDataComponentType implements Quantity 
     /**
      * Gets the value of the referenceFrame property.
      */
-    public String getReferenceFrame() {
+    public URI getReferenceFrame() {
         return referenceFrame;
     }
 
     /**
      * Sets the value of the referenceFrame property.
      */
-    public void setReferenceFrame(String value) {
+    public void setReferenceFrame(URI value) {
         this.referenceFrame = value;
     }
 

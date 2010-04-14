@@ -299,7 +299,7 @@ public class Contact implements AbstractContact {
             sb.append("actuate: ").append(actuate).append('\n');
         }
         if (arcrole != null) {
-            sb.append("actuate: ").append(arcrole).append('\n');
+            sb.append("arcrole: ").append(arcrole).append('\n');
         }
         if (href != null) {
             sb.append("href: ").append(href).append('\n');
