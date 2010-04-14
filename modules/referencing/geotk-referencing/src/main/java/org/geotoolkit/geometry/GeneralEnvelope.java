@@ -40,6 +40,7 @@ import org.opengis.metadata.extent.GeographicBoundingBox;
 import org.opengis.metadata.spatial.PixelOrientation;
 
 import org.geotoolkit.resources.Errors;
+import org.geotoolkit.math.XMath;
 import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.Cloneable;
 import org.geotoolkit.util.Utilities;
@@ -78,7 +79,7 @@ import org.geotoolkit.metadata.iso.spatial.PixelTranslation;
  *
  * @author Martin Desruisseaux (IRD, Geometys)
  * @author Simone Giannecchini (Geosolutions)
- * @version 3.09
+ * @version 3.11
  *
  * @see Envelope2D
  * @see org.geotoolkit.geometry.jts.ReferencedEnvelope
@@ -256,6 +257,10 @@ public class GeneralEnvelope extends AbstractEnvelope implements Cloneable, Seri
      * <b>Note:</b> The convention is specified as a {@link PixelInCell} code instead than
      * the more detailled {@link PixelOrientation}, because the later is restricted to the
      * two-dimensional case while the former can be used for any number of dimensions.
+     * <p>
+     * <b>Note:</b> The envelope created by this constructor is subject to rounding errors.
+     * Consider invoking {@link #roundIfAlmostInteger(double, int)} after construction for
+     * fixing them.
      *
      * @param gridEnvelope The grid envelope in integer coordinates.
      * @param anchor       Whatever grid coordinates map to pixel center or pixel corner.
@@ -464,6 +469,14 @@ scanNumber: while (++i < length) {
     }
 
     /**
+     * Returns the number of dimensions.
+     */
+    @Override
+    public final int getDimension() {
+        return ordinates.length / 2;
+    }
+
+    /**
      * Returns the coordinate reference system in which the coordinates are given.
      *
      * @return The coordinate reference system, or {@code null}.
@@ -478,7 +491,7 @@ scanNumber: while (++i < length) {
      * Sets the coordinate reference system in which the coordinate are given.
      * This method <strong>does not</strong> reproject the envelope, and do not
      * check if the envelope is contained in the new domain of validity. The
-     * later can be enforced by a call to {@link #normalize}.
+     * later can be enforced by a call to {@link #reduceToDomain(boolean)}.
      * <p>
      * If the envelope coordinates need to be transformed to the new CRS, consider
      * using {@link CRS#transform(Envelope, CoordinateReferenceSystem)} instead.
@@ -531,14 +544,14 @@ scanNumber: while (++i < length) {
      * the envelope. So this implementation conservatively expands the range to [-180° &hellip; 180°]
      * in order to ensure that the validated envelope fully contains the original envelope.
      *
-     * @param  crsDomain {@code true} if the envelope should be restricted to the CRS domain in
-     *         addition of the CS domain.
+     * @param  useDomainOfCRS {@code true} if the envelope should be restricted to
+     *         the CRS <cite>domain of validity</cite> in addition to the CS domain.
      * @return {@code true} if this envelope has been modified, or {@code false} if no change
      *         was done.
      *
-     * @since 2.5
+     * @since 3.11 (derived from 2.5)
      */
-    public boolean normalize(final boolean crsDomain) {
+    public boolean reduceToDomain(final boolean useDomainOfCRS) {
         boolean changed = false;
         if (crs != null) {
             final int dimension = ordinates.length / 2;
@@ -569,7 +582,7 @@ scanNumber: while (++i < length) {
                     }
                 }
             }
-            if (crsDomain) {
+            if (useDomainOfCRS) {
                 final Envelope domain = CRS.getEnvelope(crs);
                 if (domain != null) {
                     final CoordinateReferenceSystem domainCRS = domain.getCoordinateReferenceSystem();
@@ -604,11 +617,60 @@ scanNumber: while (++i < length) {
     }
 
     /**
-     * Returns the number of dimensions.
+     * @deprecated This method has been renamed {@link #reduceToDomain(boolean)}.
+     *
+     * @param  crsDomain {@code true} if the envelope should be restricted to the CRS domain in
+     *         addition of the CS domain.
+     * @return {@code true} if this envelope has been modified, or {@code false} if no change
+     *         was done.
+     *
+     * @since 2.5
      */
-    @Override
-    public final int getDimension() {
-        return ordinates.length / 2;
+    @Deprecated
+    public boolean normalize(final boolean crsDomain) {
+        return reduceToDomain(crsDomain);
+    }
+
+    /**
+     * Fixes rounding errors up to a given tolerance level. For each value {@code ordinates[i]}
+     * at dimension <var>i</var>, this method multiplies the ordinate value by the given factor,
+     * then round the result only if the product is close to an integer value. The threashold is
+     * defined by the {@code maxULP} argument in ULP units (<cite>Unit in the Last Place</cite>).
+     * If and only if the product has been rounded, it is divided by the factor and stored in this
+     * envelope in place of the original ordinate.
+     * <p>
+     * The code below illustrates the work done on every ordinate values, omitting
+     * (for simplicity) the fact that {@code ordinate[i]} is left unchanged if
+     * {@code XMath.roundIfAlmostInteger} didn't rounded the product.
+     *
+     * {@preformat java
+     *     ordinates[i] = XMath.roundIfAlmostInteger(ordinates[i]*factor, maxULP) / factor;
+     * }
+     *
+     * This method is useful after envelope calculations subject to rounding errors, like the
+     * {@link #GeneralEnvelope(GridEnvelope, PixelInCell, MathTransform, CoordinateReferenceSystem)}
+     * constructor.
+     *
+     * @param factor The factor by which to multiply ordinates before rounding
+     *               and divide after rounding. A recommanded value is 360.
+     * @param maxULP The maximal change allowed in ULPs (Unit in the Last Place).
+     *
+     * @see XMath#roundIfAlmostInteger(double, int)
+     *
+     * @since 3.11
+     */
+    public void roundIfAlmostInteger(final double factor, final int maxULP) {
+        if (!(factor > 0)) {
+            throw new IllegalArgumentException(Errors.format(
+                    Errors.Keys.ILLEGAL_ARGUMENT_$2, "factor", factor));
+        }
+        for (int i=0; i<ordinates.length; i++) {
+            final double value = ordinates[i] * factor;
+            final double rounded = XMath.roundIfAlmostInteger(value, maxULP);
+            if (value != rounded) {
+                ordinates[i] = rounded / factor;
+            }
+        }
     }
 
     /**

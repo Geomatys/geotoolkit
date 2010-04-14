@@ -464,7 +464,7 @@ public final class CRS {
      * @return The envelope in terms of the specified CRS, or {@code null} if none.
      *
      * @see #getGeographicBoundingBox(CoordinateReferenceSystem)
-     * @see org.geotoolkit.geometry.GeneralEnvelope#normalize(boolean)
+     * @see org.geotoolkit.geometry.GeneralEnvelope#reduceToDomain(boolean)
      *
      * @category information
      * @since 2.2

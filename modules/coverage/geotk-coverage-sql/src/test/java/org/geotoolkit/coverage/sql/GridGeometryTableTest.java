@@ -38,7 +38,7 @@ import static org.junit.Assert.*;
  * Tests {@link GridGeometryTable}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.10
+ * @version 3.11
  *
  * @since 3.10 (derived from Seagis)
  */
@@ -48,6 +48,35 @@ public final class GridGeometryTableTest extends CatalogTestBase {
      * We use the Coriolis (IFREMER) layer.
      */
     public static final Integer CORIOLIS_ID = 200;
+
+    /**
+     * The identifier of the BlueMarble geometry.
+     * Used for testing envelope rounding.
+     */
+    public static final Integer BLUEMARBLE_ID = 333;
+
+    /**
+     * Gets the BlueMarble geometry and check its envelope.
+     *
+     * @throws SQLException If the test can't connect to the database.
+     * @throws TransformException Should not happen.
+     */
+    @Test
+    public void testEnvelope() throws SQLException, TransformException {
+        final GridGeometryTable table = getDatabase().getTable(GridGeometryTable.class);
+        final GridGeometryEntry entry = table.getEntry(BLUEMARBLE_ID);
+        assertEquals("horizontal SRID", 4326, entry.getHorizontalSRID());
+        final Envelope envelope = entry.geometry.getEnvelope();
+        /*
+         * Following assertions require an exact match (tolerance == 0), which should work if
+         * GeneralGridGeometry constructor invoked GeneralEnvelope.roundIfAlmostInteger(360, 16).
+         */
+        assertEquals(-180, envelope.getMinimum(0), 0);
+        assertEquals(+180, envelope.getMaximum(0), 0);
+        assertEquals( -90, envelope.getMinimum(1), 0);
+        assertEquals( +90, envelope.getMaximum(1), 0);
+        table.release();
+    }
 
     /**
      * Tests the {@link GridGeometryTable#getEntry}.

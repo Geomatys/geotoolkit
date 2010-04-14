@@ -128,7 +128,10 @@ INSERT INTO "GridGeometries" ("identifier", "width", "height", "scaleX", "scaleY
  (312,  480,  480, 0.375,  -0.375,  -180, 90),
  (311,  480,  480, 0.1875, -0.1875, -180, 90),
  (310,  480,  480, 0.125,  -0.125,  -180, 90),
- (300, 2880, 1440, 0.125,  -0.125,  -180, 90);
+ (300, 2880, 1440, 0.125,  -0.125,  -180, 90),
+ --- The following line describes the finest resolution that we
+ --- would had if every tiles were included in our test directory.
+ (333, 86400, 43200, 0.00416666666666667, -0.00416666666666667, -180, 90);
 
 INSERT INTO "GridCoverages" ("series", "filename", "extent") VALUES
  (300, 'BlueMarble', 300);

@@ -210,7 +210,7 @@ public class GridCoverageReadParam {
             } else {
                 ge = new GeneralEnvelope(env);
             }
-            if (ge.normalize(false)) {
+            if (ge.reduceToDomain(false)) {
                 env = ge;
             }
         }

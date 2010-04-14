@@ -26,6 +26,8 @@ import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
+import org.opengis.geometry.Envelope;
+
 import org.geotoolkit.test.Depend;
 import org.geotoolkit.util.MeasurementRange;
 import org.geotoolkit.coverage.io.CoverageStoreException;
@@ -138,6 +140,25 @@ public final class LayerTableTest extends CatalogTestBase {
         final Set<LayerEntry> entries = table.getEntries();
         assertFalse(entries.isEmpty());
         assertTrue(entries.contains(entry));
+        table.release();
+    }
+
+    /**
+     * Tests the layer for BlueMarble images, which are tiled.
+     *
+     * @throws SQLException If the test can't connect to the database.
+     * @throws CoverageStoreException If an error occured while querying the layer.
+     */
+    @Test
+    public void testBluemarble() throws SQLException, CoverageStoreException {
+        final LayerTable table = getDatabase().getTable(LayerTable.class);
+        final Layer entry = table.getEntry(BLUEMARBLE);
+
+        final Envelope envelope = entry.getEnvelope(null, null);
+        assertEquals(-180, envelope.getMinimum(0), EPS);
+        assertEquals(+180, envelope.getMaximum(0), EPS);
+        assertEquals( -90, envelope.getMinimum(1), EPS);
+        assertEquals( +90, envelope.getMaximum(1), EPS);
         table.release();
     }
 

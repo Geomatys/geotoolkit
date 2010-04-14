@@ -84,6 +84,13 @@ public class GeneralGridGeometry implements GridGeometry, Serializable {
     private static final long serialVersionUID = 124700383873732132L;
 
     /**
+     * Empirical tolerance factor while fixing rounding errors in envelope.
+     *
+     * @see org.geotoolkit.coverage.sql.GridGeometryTableTest#testEnvelope()
+     */
+    private static final int ULP_TOLERANCE = 16;
+
+    /**
      * A bitmask to specify the validity of the {@linkplain #getCoordinateReferenceSystem
      * coordinate reference system}. This is given as an argument to the {@link #isDefined}
      * method.
@@ -205,6 +212,7 @@ public class GeneralGridGeometry implements GridGeometry, Serializable {
             gridToCRS = other.getGridToCRS();
             if (gridRange!=null && gridToCRS!=null) {
                 envelope = new GeneralEnvelope(gridRange, PixelInCell.CELL_CENTER, gridToCRS, null);
+                envelope.roundIfAlmostInteger(360, ULP_TOLERANCE);
             } else {
                 envelope = null;
             }
@@ -278,8 +286,9 @@ public class GeneralGridGeometry implements GridGeometry, Serializable {
         if (PixelInCell.CELL_CORNER.equals(anchor)) {
             cornerToCRS = gridToCRS;
         }
-        if (gridRange!=null && gridToCRS!=null) {
+        if (gridRange != null && gridToCRS != null) {
             envelope = new GeneralEnvelope(gridRange, anchor, gridToCRS, crs);
+            envelope.roundIfAlmostInteger(360, ULP_TOLERANCE);
         } else if (crs != null) {
             envelope = new GeneralEnvelope(crs);
             envelope.setToNull();
