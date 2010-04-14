@@ -358,7 +358,7 @@ public class Event implements AbstractEvent {
     public int hashCode() {
         int hash = 3;
         hash = 67 * hash + (this.date != null ? this.date.hashCode() : 0);
-        hash = 67 * hash + this.getDescription().hashCode();
+        hash = 67 * hash + (this.description != null ? this.description.hashCode() : 0);
         hash = 67 * hash + this.getKeywords().hashCode();
         hash = 67 * hash + this.getIdentification().hashCode();
         hash = 67 * hash + this.getClassification().hashCode();
