@@ -4,7 +4,7 @@ EPSG pack
   needs to be updated for a new release of the EPSG database. This page describes the steps to
   follow.
 
-  [[1]] Download the latest SQL scripts for MySQL from {{{http://www.epsg.org}}}.
+  [[1]] Download the latest SQL scripts for MySQL from the {{{http://www.epsg.org}EPSG site}}.
 
   [[2]] Unzip in the directory of your choice (add the appropriate version number to the ZIP filename),
         and remember the path to that directory.

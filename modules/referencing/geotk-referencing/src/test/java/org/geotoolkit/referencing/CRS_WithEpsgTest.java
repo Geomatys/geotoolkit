@@ -69,7 +69,7 @@ public class CRS_WithEpsgTest extends ReferencingTestCase {
      *
      * @since 3.07
      */
-    public static final String EPSG_VERSION = "7.4";
+    public static final String EPSG_VERSION = "7.5.0.1";
 
     /**
      * Tests the (latitude, longitude) axis order for EPSG:4326.
