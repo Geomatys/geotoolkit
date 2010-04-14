@@ -91,7 +91,9 @@ Downloading Geotoolkit.org Binaries
 
     * {{{http://download.geotoolkit.org/}Monthly releases}}
 
-    * {{{http://hudson.geomatys.com/job/Geotoolkit/}Nightly builds (last 2 weeks)}}
+    * {{{http://hudson.geomatys.com/job/Geotoolkit/}Nightly builds}}
+
+    * {{{http://hudson.geomatys.com/job/Geotoolkit-pending/}Nightly builds of pending classes}}
 
   Serveral bundles are available, each one providing successively more functionality.
   The JAR files included in each bundle are listed below (see the
@@ -142,6 +144,8 @@ Downloading Geotoolkit.org Binaries
 |                                        | \u2022 swing-worker.jar            |                               |
 |                                        | \u2022 filters.jar                 |                               |
 |                                        | \u2022 jlfgr.jar                   |                               |
+*----------------------------------------+------------------------------------+-------------------------------+
+| <<<geotk-bundle-pending.pack.gz>>>     | <Pending modules and dependencies> | Undocumented                  |
 *----------------------------------------+------------------------------------+-------------------------------+
 
   Those files can be unpacked using the <<<unpack200>>> executable provided in the Java

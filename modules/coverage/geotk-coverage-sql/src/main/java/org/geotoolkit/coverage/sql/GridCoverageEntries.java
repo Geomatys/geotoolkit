@@ -25,9 +25,15 @@ import java.util.concurrent.CancellationException;
 
 /**
  * A temporary collection of {@link GridCoverageEntry} used in order to pipe the entries
- * from the thread querying the database to the thread processing them. This implementation
- * is designed for the way {@link SingletonTable#getEntries(Collection)} and
- * {@link GridCoverageTable#getEntry()} use it.
+ * from the thread querying the database to the thread processing them. The purpose of
+ * using different thread is not that much to paralellize the processing (while it is a
+ * nice bonus), but rather to ensure that the SQL queries are executed from one of the
+ * thread managed by {@link CoverageDatabase#executor}, while the rest of the processing
+ * can be executed from whatever the client thread is.
+ * <p>
+ * This implementation is tuned for the way {@link SingletonTable#getEntries(Collection)}
+ * and {@link GridCoverageTable#getEntry()} use it - we synchronize only the methods that
+ * are used by the above.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @version 3.11

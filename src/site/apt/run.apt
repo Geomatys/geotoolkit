@@ -1,0 +1,28 @@
+Running Geotoolkit.org
+
+  Geotk requires Java 6. No extension is required for the referencing and metadata
+  modules. However if the coverage module is also used, then Geotk requires also the
+  {{{https://jai.dev.java.net/binary-builds.html}Java Advanced Imaging}} library.
+  Note that this library is pre-installed on MacOS X.
+
+
+* EPSG database
+
+  While not mandatory, the referencing module works better with a connection to an
+  {{{http://www.epsg.org/}EPSG}} database. The database will be created automatically
+  if the <<<geotk-epsg.jar>>> file is available on the classpath, together with
+  <<one>> of the following dependencies:
+
+  * <<<derby.jar>>>
+
+  * <<<hdsldb.jar>>>
+
+  By default, the database is created in a <<<Geotoolkit.org>>> sub-directory in the user
+  application directory. This is always a sub-directory of the user home directory, but
+  the complete path is platform-dependent ("<Application Data>" on Windows, "<Library>"
+  on MacOS, the home directory on Linux). The directory can be changed by running the
+  graphical application provided in the {{{modules/utility/geotk-setup/index.html}geotk-setup}}
+  module.
+
+  The above-cited Setup application can also create the EPSG database on PostgreSQL,
+  using connection parameters which must be explicitly specified.
