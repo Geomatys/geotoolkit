@@ -49,6 +49,7 @@ import org.geotoolkit.referencing.factory.OrderedAxisAuthorityFactoryTest;
 
 import org.junit.*;
 import static org.junit.Assume.assumeTrue;
+import static org.geotoolkit.test.Commons.EPSG_VERSION;
 
 
 /**
@@ -63,14 +64,6 @@ import static org.junit.Assume.assumeTrue;
  */
 @Depend(CRS_Test.class)
 public class CRS_WithEpsgTest extends ReferencingTestCase {
-    /**
-     * The version of the EPSG database used. Please update this field if the version of
-     * the embedded EPSG database provided in the {@code "geotk-epsg"} module is updated.
-     *
-     * @since 3.07
-     */
-    public static final String EPSG_VERSION = "7.5.0.1";
-
     /**
      * Tests the (latitude, longitude) axis order for EPSG:4326.
      *

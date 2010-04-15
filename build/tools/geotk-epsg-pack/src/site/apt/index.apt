@@ -48,7 +48,8 @@ java -jar $GEOTK_HOME/target/binaries/geotk-epsg-pack-SNAPSHOT.jar compact $EPSG
 --------------------------------------------------------------------------------------------------------------
 
   [[8]] Upgrade the <<<VERSION>>> value defined in the <<<ThreadedEpsgFactory>>> class,
-        and the <<<EPSG_VERSION>>> value defined in the <<<CRS_WithEpsgTest>>> class.
+        and the <<<EPSG_VERSION>>> value defined in the <<<org.geotoolkit.test.Commons>>>
+        class (<<<geotk-test>>> module).
 
   [[9]] Clean and build.
 

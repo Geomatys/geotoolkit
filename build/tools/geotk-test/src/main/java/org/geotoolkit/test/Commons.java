@@ -33,13 +33,22 @@ import static org.junit.Assert.*;
 
 /**
  * Provides assertion methods in addition of the JUnit ones.
+ * Provides also shared constants.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.07
+ * @version 3.11
  *
  * @since 3.00
  */
 public final class Commons {
+    /**
+     * The version of the EPSG database used. Please update this field if the version of
+     * the embedded EPSG database provided in the {@code "geotk-epsg"} module is updated.
+     *
+     * @since 3.11
+     */
+    public static final String EPSG_VERSION = "7.5.0.1";
+
     /**
      * Do not allows instantiation of this class.
      */
