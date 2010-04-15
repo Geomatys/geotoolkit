@@ -434,7 +434,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
         try {
             final String query = adaptSQL(
                     "SELECT VERSION_NUMBER, VERSION_DATE FROM [Version History]" +
-                    " ORDER BY VERSION_DATE DESC");
+                    " ORDER BY VERSION_DATE DESC, VERSION_HISTORY_CODE DESC");
             final DatabaseMetaData metadata  = connection.getMetaData();
             final Statement        statement = connection.createStatement();
             final ResultSet        result    = statement.executeQuery(query);
