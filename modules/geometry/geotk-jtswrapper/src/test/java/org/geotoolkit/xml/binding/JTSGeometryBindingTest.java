@@ -56,6 +56,7 @@ import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.primitive.Ring;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import static org.junit.Assert.*;
+import static org.geotoolkit.test.Commons.EPSG_VERSION;
 
 
 /**
@@ -73,8 +74,6 @@ public class JTSGeometryBindingTest {
     private Marshaller m;
 
     private ObjectFactory factory;
-
-    private static final String EPSG_VERSION = "7.5.0.1";
 
     @BeforeClass
     public static void setUpClass() throws Exception {

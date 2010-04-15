@@ -260,6 +260,11 @@
         <version>${geotoolkit.version}</version>
       </dependency>
       <dependency>
+        <groupId>org.geotoolkit.project</groupId>
+        <artifactId>geotk-test</artifactId>
+        <version>${geotoolkit.version}</version>
+      </dependency>
+      <dependency>
         <groupId>org.geotoolkit</groupId>
         <artifactId>geotk-widgets-swing</artifactId>
         <version>${geotoolkit.version}</version>
