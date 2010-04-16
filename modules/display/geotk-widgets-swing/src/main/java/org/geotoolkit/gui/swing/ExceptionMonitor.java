@@ -64,8 +64,10 @@ import org.geotoolkit.internal.GraphicsUtilities;
  * <p align="center"><img src="doc-files/ExceptionMonitor.png"></p>
  * <p>&nbsp;</p>
  *
- * @author Martin Desruisseaux (MPO, IRD)
- * @version 3.00
+ * @author Martin Desruisseaux (MPO, IRD, Geomatys)
+ * @version 3.11
+ *
+ * @see org.jdesktop.swingx.JXErrorPane
  *
  * @since 1.0
  * @module
@@ -132,8 +134,8 @@ public final class ExceptionMonitor {
      * parent. <strong>Note:</strong> All methods in this class must be called in the
      * same thread as the <cite>Swing</cite> thread.
      *
-     * @author Martin Desruisseaux (IRD)
-     * @version 3.00
+     * @author Martin Desruisseaux (IRD, Geomatys)
+     * @version 3.11
      *
      * @since 2.0
      * @module
@@ -141,15 +143,14 @@ public final class ExceptionMonitor {
     @SuppressWarnings("serial")
     private static final class Pane extends JOptionPane implements ActionListener {
         /**
-         * Default width (in number of columns) of the component which displays
-         * the exception message or trace.
+         * Width (in pixels) of the dialog box when it also displays the trace.
          */
-        private static final int WIDTH = 80;
+        private static final int WIDTH = 600;
 
         /**
-         * Minimum height (in pixels) of the dialog box when it also displays the trace.
+         * Height (in pixels) of the dialog box when it also displays the trace.
          */
-        private static final int HEIGHT = 300;
+        private static final int HEIGHT = 400;
 
         /**
          * Displayed dialog box.  It will be a {@link JDialog} object or a
@@ -258,7 +259,7 @@ public final class ExceptionMonitor {
             }
             final JXLabel textArea = new JXLabel(message);
             textArea.setLineWrap(true);
-            textArea.setMaxLineSpan(500);
+            textArea.setMaxLineSpan(WIDTH);
             final JComponent messageBox = new JPanel(new BorderLayout());
             messageBox.add(textArea, BorderLayout.NORTH);
             final Pane pane = new Pane(owner, exception, messageBox, new AbstractButton[] {
@@ -285,10 +286,11 @@ public final class ExceptionMonitor {
             if (trace == null) {
                 JComponent traceComponent = null;
                 for (Throwable cause = exception; cause != null; cause = cause.getCause()) {
-                    final JTextArea text = new JTextArea(1, WIDTH);
+                    final JTextArea text = new JTextArea();
                     text.setTabSize(4);
                     text.setText(GraphicsUtilities.printStackTrace(cause));
                     text.setEditable(false);
+                    text.setCaretPosition(0);
                     final JScrollPane scroll = new JScrollPane(text);
                     if (traceComponent != null) {
                         if (!(traceComponent instanceof JTabbedPane)) {
@@ -324,13 +326,19 @@ public final class ExceptionMonitor {
             } else {
                 ((JInternalFrame) dialog).setResizable(traceVisible);
             }
+            int dx = dialog.getWidth();
+            int dy = dialog.getHeight();
             if (traceVisible) {
                 message.add(trace, BorderLayout.CENTER);
-                dialog.setSize(initialSize.width, HEIGHT);
+                dialog.setSize(WIDTH, HEIGHT);
             } else {
                 message.remove(trace);
                 dialog.setSize(initialSize);
             }
+            dx -= dialog.getWidth();
+            dy -= dialog.getHeight();
+            dialog.setLocation(Math.max(0, dialog.getX() + dx/2),
+                               Math.max(0, dialog.getY() + dy/2));
             dialog.validate();
         }
 

@@ -77,7 +77,7 @@
  * {@link org.geotoolkit.coverage.io.GridCoverageReader} API.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.10
+ * @version 3.11
  *
  * @since 3.09 (derived from Seagis)
  * @module

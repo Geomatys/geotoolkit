@@ -142,7 +142,7 @@ final class EPSGPanel extends JPanel implements ActionListener {
         url = new JComboBox(new String[] {
             ThreadedEpsgFactory.getDefaultURL(),
             "jdbc:derby:" + System.getProperty("user.home", "").replace(File.separatorChar, '/') + "/Referencing",
-            "jdbc:postgresql://localhost:5432/Referencing",
+            "jdbc:postgresql://host/database",
             "jdbc:odbc:EPSG"
         });
         url.setEditable(true);

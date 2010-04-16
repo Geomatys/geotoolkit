@@ -31,13 +31,19 @@ import org.geotoolkit.internal.io.Installation;
  * The main control panel.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.01
+ * @version 3.11
  *
  * @since 3.00
  * @module
  */
 @SuppressWarnings("serial")
 public final class ControlPanel extends JPanel implements ActionListener {
+    /**
+     * Non-null if the panel should be disposed on close, without
+     * call to {@link System#exit}. Otherwise the default is to exit.
+     */
+    private JInternalFrame disposeOnClose;
+
     /**
      * Creates the panel.
      */
@@ -70,11 +76,15 @@ public final class ControlPanel extends JPanel implements ActionListener {
      */
     @Override
     public void actionPerformed(ActionEvent event) {
-        System.exit(0);
+        if (disposeOnClose != null) {
+            disposeOnClose.dispose();
+        } else {
+            System.exit(0);
+        }
     }
 
     /**
-     * Displays the control panel.
+     * Displays the control panel as a standalone frame.
      *
      * @param locale The locale.
      */
@@ -86,6 +96,25 @@ public final class ControlPanel extends JPanel implements ActionListener {
         frame.add(new ControlPanel(resources));
         frame.pack();
         frame.setLocationRelativeTo(null);
+        frame.setVisible(true);
+    }
+
+    /**
+     * Displays the control panel as an internal frame.
+     *
+     * @param desktop The desktop in which to show the control panel.
+     *
+     * @since 3.11
+     */
+    public static void show(final JDesktopPane desktop) {
+        final Vocabulary resources = Vocabulary.getResources(desktop.getLocale());
+        final ControlPanel panel = new ControlPanel(resources);
+        final JInternalFrame frame = new JInternalFrame(resources.getString(
+                Vocabulary.Keys.INSTALLATION_$1, "Geotoolkit.org"), true, true);
+        desktop.add(frame);
+        panel.disposeOnClose = frame;
+        frame.add(panel);
+        frame.pack();
         frame.setVisible(true);
     }
 }

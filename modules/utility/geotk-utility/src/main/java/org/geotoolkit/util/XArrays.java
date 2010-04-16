@@ -33,7 +33,7 @@ import org.geotoolkit.lang.Static;
  * arrays and do not copy anything if the given array already has the requested length.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.07
+ * @version 3.11
  *
  * @see Arrays
  *
@@ -834,6 +834,23 @@ public final class XArrays {
                                    final boolean[] dst, final int dstOff, final int length)
     {
         return doInsert(src, srcOff, dst, dstOff, length);
+    }
+
+    /**
+     * Reverses the order of elements in the given array.
+     * This operation is performed in-place.
+     *
+     * @param entries The array in which to reverse the order of elements.
+     *
+     * @since 3.11
+     */
+    public static void reverse(final Object[] entries) {
+        for (int i=entries.length/2; --i >= 0;) {
+            final int j = (entries.length - 1) - i;
+            final Object tmp = entries[i];
+            entries[i] = entries[j];
+            entries[j] = tmp;
+        }
     }
 
     /**

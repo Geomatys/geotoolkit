@@ -350,6 +350,16 @@ public final class Vocabulary extends IndexedResourceBundle {
         public static final int DATUM_SHIFT = 58;
 
         /**
+         * day
+         */
+        public static final int DAY = 315;
+
+        /**
+         * days
+         */
+        public static final int DAYS = 316;
+
+        /**
          * Debug
          */
         public static final int DEBUG = 59;
@@ -368,6 +378,16 @@ public final class Vocabulary extends IndexedResourceBundle {
          * Default value
          */
         public static final int DEFAULT_VALUE = 62;
+
+        /**
+         * Define
+         */
+        public static final int DEFINE = 317;
+
+        /**
+         * Delete
+         */
+        public static final int DELETE = 318;
 
         /**
          * Depth
@@ -428,6 +448,11 @@ public final class Vocabulary extends IndexedResourceBundle {
          * Duplicated value
          */
         public static final int DUPLICATED_VALUE = 74;
+
+        /**
+         * Duration
+         */
+        public static final int DURATION = 319;
 
         /**
          * Earth gravitational model
@@ -683,6 +708,11 @@ public final class Vocabulary extends IndexedResourceBundle {
          * Height
          */
         public static final int HEIGHT = 124;
+
+        /**
+         * Help
+         */
+        public static final int HELP = 320;
 
         /**
          * Hide
@@ -1160,6 +1190,11 @@ public final class Vocabulary extends IndexedResourceBundle {
         public static final int PREDEFINED_KERNELS = 212;
 
         /**
+         * Preferences
+         */
+        public static final int PREFERENCES = 314;
+
+        /**
          * Preferred resolution
          */
         public static final int PREFERRED_RESOLUTION = 213;
@@ -1183,6 +1218,11 @@ public final class Vocabulary extends IndexedResourceBundle {
          * Properties
          */
         public static final int PROPERTIES = 217;
+
+        /**
+         * Quit
+         */
+        public static final int QUIT = 321;
 
         /**
          * Range
@@ -1598,6 +1638,11 @@ public final class Vocabulary extends IndexedResourceBundle {
          * Width
          */
         public static final int WIDTH = 295;
+
+        /**
+         * Wizards
+         */
+        public static final int WIZARDS = 322;
 
         /**
          * Yellow

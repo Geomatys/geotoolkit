@@ -72,6 +72,11 @@ public final class Wizards extends IndexedResourceBundle {
         public static final int ENOUGH_INFORMATION = 4;
 
         /**
+         * Geotoolkit.org web site
+         */
+        public static final int GEOTK_SITE = 15;
+
+        /**
          * Geotoolkit.org wizards
          */
         public static final int GEOTK_WIZARDS = 5;

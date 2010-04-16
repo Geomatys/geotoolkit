@@ -68,6 +68,7 @@
             </manifest>
             <manifestEntries>
               <SplashScreen-Image>splash.jpg</SplashScreen-Image>
+              <!-- Above image is also used in geotk-wizards-swing -->
             </manifestEntries>
           </archive>
         </configuration>
