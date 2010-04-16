@@ -55,6 +55,17 @@ public class StandardFormat extends AbstractEncodingType implements AbstractStan
     @XmlSchemaType(name = "token")
     private String mimeType;
 
+    public StandardFormat() {
+
+    }
+
+    public StandardFormat(AbstractStandardFormat as) {
+        super(as);
+        if (as != null) {
+            this.mimeType = as.getMimeType();
+        }
+    }
+    
     /**
      * Gets the value of the mimeType property.
      */

@@ -26,6 +26,9 @@ import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.sml.xml.AbstractCharacteristics;
+import org.geotoolkit.swe.xml.AbstractDataRecord;
+import org.geotoolkit.swe.xml.DataRecord;
+import org.geotoolkit.swe.xml.SimpleDataRecord;
 import org.geotoolkit.swe.xml.v100.AbstractDataRecordType;
 import org.geotoolkit.swe.xml.v100.DataRecordType;
 import org.geotoolkit.swe.xml.v100.SimpleDataRecordType;
@@ -88,6 +91,30 @@ public class Characteristics implements AbstractCharacteristics {
     public Characteristics(DataRecordType dataRecord) {
         org.geotoolkit.swe.xml.v100.ObjectFactory facto = new org.geotoolkit.swe.xml.v100.ObjectFactory();
         this.abstractDataRecord = facto.createDataRecord(dataRecord);
+    }
+
+     public Characteristics(AbstractCharacteristics capa) {
+        if (capa != null) {
+            if (capa.getDataRecord() != null) {
+                AbstractDataRecord record = capa.getDataRecord();
+                org.geotoolkit.swe.xml.v100.ObjectFactory factory = new org.geotoolkit.swe.xml.v100.ObjectFactory();
+                if (record instanceof SimpleDataRecord) {
+                    abstractDataRecord = factory.createSimpleDataRecord(new SimpleDataRecordType((SimpleDataRecord)record));
+                } else if (record instanceof DataRecord) {
+                    abstractDataRecord = factory.createDataRecord(new DataRecordType((DataRecord)record));
+                } else {
+                    System.out.println("UNINPLEMENTED CASE:" + record);
+                }
+            }
+            this.actuate = capa.getActuate();
+            this.arcrole = capa.getArcrole();
+            this.href    = capa.getHref();
+            this.remoteSchema = capa.getRemoteSchema();
+            this.role    = capa.getRole();
+            this.show    = capa.getShow();
+            this.title   = capa.getTitle();
+            this.type    = capa.getType();
+        }
     }
     
     /**

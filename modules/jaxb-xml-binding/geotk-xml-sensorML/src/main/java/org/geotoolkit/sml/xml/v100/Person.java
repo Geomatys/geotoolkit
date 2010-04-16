@@ -90,6 +90,22 @@ public class Person implements AbstractPerson {
     @XmlID
     private String id;
 
+    public Person() {
+
+    }
+
+    public Person(AbstractPerson person) {
+        if (person == null) {
+            this.affiliation = person.getAffiliation();
+            this.email       = person.getEmail();
+            this.id          = person.getId();
+            this.name        = person.getName();
+            this.phoneNumber = person.getPhoneNumber();
+            this.surname     = person.getSurname();
+            this.userID      = person.getUserID();
+        }
+    }
+    
     /**
      * Gets the value of the surname property.
      */

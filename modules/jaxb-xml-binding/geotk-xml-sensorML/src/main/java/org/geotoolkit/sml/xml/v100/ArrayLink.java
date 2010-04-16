@@ -24,6 +24,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.sml.xml.AbstractArrayLink;
+import org.geotoolkit.sml.xml.AbstractConnection;
+import org.geotoolkit.sml.xml.AbstractLinkRef;
 
 /**
  * <p>Java class for anonymous complex type.
@@ -104,6 +106,36 @@ public class ArrayLink implements AbstractArrayLink {
     private LinkRef sourceIndex;
     private List<Connection> connection;
 
+    public ArrayLink() {
+
+    }
+
+    public ArrayLink(AbstractArrayLink link) {
+        if (link != null) {
+            if (link.getSourceArray() != null) {
+                this.sourceArray = new LinkRef(link.getSourceArray().getRef());
+            }
+            if (link.getSourceIndex() != null) {
+                this.sourceIndex = new LinkRef(link.getSourceIndex().getRef());
+            }
+            if (link.getDestinationArray() != null) {
+                this.destinationArray = new LinkRef(link.getDestinationArray().getRef());
+            }
+            if (link.getDestinationIndex() != null) {
+                this.destinationIndex = new ArrayList<LinkRef>();
+                for (AbstractLinkRef ref : link.getDestinationIndex()) {
+                    this.destinationIndex.add(new LinkRef(ref.getRef()));
+                }
+            }
+            if (link.getConnection() != null) {
+                this.connection = new ArrayList<Connection>();
+                for (AbstractConnection c : link.getConnection()) {
+                    this.connection.add(new Connection(c));
+                }
+            }
+        }
+    }
+    
     /**
      * Gets the value of the sourceArray property.
      */

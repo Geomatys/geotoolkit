@@ -26,6 +26,7 @@ import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import org.geotoolkit.sml.xml.AbstractClassifier;
 import org.geotoolkit.sml.xml.AbstractClassifierList;
 import org.geotoolkit.util.Utilities;
 
@@ -82,6 +83,18 @@ public class ClassifierList implements AbstractClassifierList {
         this.id = id;
     }
 
+    public ClassifierList(AbstractClassifierList classList) {
+        if (classList != null) {
+            this.id = classList.getId();
+            if (classList.getClassifier() != null) {
+                this.classifier = new ArrayList<Classifier>();
+                for (AbstractClassifier cl : classList.getClassifier()) {
+                    this.classifier.add(new Classifier(cl));
+                }
+            }
+        }
+    }
+    
     /**
      * Gets the value of the classifier property.
      *

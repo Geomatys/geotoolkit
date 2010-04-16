@@ -83,6 +83,31 @@ public class DataValuePropertyType implements AbstractDataValueProperty {
     @XmlAnyAttribute
     private Map<QName, String> otherAttributes = new HashMap<QName, String>();
 
+    public DataValuePropertyType() {
+
+    }
+
+    public DataValuePropertyType(AbstractDataValueProperty dv) {
+        if (dv != null) {
+            this.actuate      = dv.getActuate();
+            this.arcrole      = dv.getArcrole();
+            this.href         = dv.getHref();
+            this.remoteSchema = dv.getRemoteSchema();
+            this.role         = dv.getRole();
+            this.show         = dv.getShow();
+            this.title        = dv.getTitle();
+            this.type         = dv.getType();
+            this.otherAttributes = dv.getOtherAttributes();
+            if (dv.getAny() != null) {
+                this.any = new ArrayList<Element>();
+                for (Element e :dv.getAny()) {
+                    this.any.add(e);
+                }
+            }
+
+        }
+    }
+    
     /**
      * Gets the value of the any property.
      */

@@ -20,6 +20,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.sml.xml.Component;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -48,6 +49,17 @@ public class ComponentType extends AbstractComponentType implements Component {
 
     private MethodPropertyType method;
 
+    public ComponentType() {
+
+    }
+
+    public ComponentType(Component cp) {
+        super(cp);
+        if (cp != null && cp.getMethod() != null) {
+            this.method = new MethodPropertyType(cp.getMethod());
+        }
+    }
+    
     /**
      * @return the method
      */
@@ -62,5 +74,35 @@ public class ComponentType extends AbstractComponentType implements Component {
         this.method = method;
     }
 
+    /**
+     * Verify if this entry is identical to specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+
+        if (object instanceof ComponentType && super.equals(object)) {
+            final ComponentType that = (ComponentType) object;
+            return Utilities.equals(this.method,     that.method);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 17 * hash + (this.method != null ? this.method.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder s = new StringBuilder(super.toString());
+        if (method != null)
+            s.append("method:").append(method).append('\n');
+        return s.toString();
+    }
 
 }

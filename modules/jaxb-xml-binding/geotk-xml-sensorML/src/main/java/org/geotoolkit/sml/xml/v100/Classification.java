@@ -106,6 +106,22 @@ public class Classification implements AbstractClassification {
     public Classification(ClassifierList cl) {
         this.classifierList = cl;
     }
+
+    public Classification(AbstractClassification cl) {
+        if (cl !=  null) {
+            if (cl.getClassifierList() != null) {
+                this.classifierList = new ClassifierList(cl.getClassifierList());
+            }
+            this.actuate      = cl.getActuate();
+            this.arcrole      = cl.getArcrole();
+            this.href         = cl.getHref();
+            this.remoteSchema = cl.getRemoteSchema();
+            this.role         = cl.getRole();
+            this.show         = cl.getShow();
+            this.title        = cl.getTitle();
+            this.type         = cl.getType();
+        }
+    }
     
     /**
      * Gets the value of the classifierList property.

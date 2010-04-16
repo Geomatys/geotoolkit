@@ -53,6 +53,17 @@ public class MultiplexedStreamFormatType extends AbstractEncodingType implements
     @XmlAttribute(required = true)
     private String version;
 
+    public MultiplexedStreamFormatType() {
+
+    }
+
+    public MultiplexedStreamFormatType(MultiplexedStreamFormat ms) {
+        if (ms != null) {
+            this.type = ms.getType();
+            this.version = ms.getVersion();
+        }
+    }
+    
     /**
      * Gets the value of the type property.
      * 

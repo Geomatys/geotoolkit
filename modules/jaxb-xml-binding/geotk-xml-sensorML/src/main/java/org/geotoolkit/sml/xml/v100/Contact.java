@@ -97,6 +97,28 @@ public class Contact implements AbstractContact {
         this.responsibleParty = responsibleParty;
     }
 
+    public Contact(AbstractContact contact) {
+        if (contact != null) {
+            this.actuate = contact.getActuate();
+            this.arcrole = contact.getArcrole();
+            if (contact.getContactList() != null) {
+                this.contactList = new ContactList(contact.getContactList());
+            }
+            this.href = contact.getHref();
+            if (contact.getPerson() != null) {
+                this.person = new Person(contact.getPerson());
+            }
+            this.remoteSchema = contact.getRemoteSchema();
+            if (contact.getResponsibleParty() != null) {
+                this.responsibleParty = new ResponsibleParty(contact.getResponsibleParty());
+            }
+            this.role = contact.getRole();
+            this.show = contact.getShow();
+            this.title = contact.getTitle();
+            this.type = contact.getType();
+        }
+    }
+    
     /**
      * Gets the value of the person property.
      */

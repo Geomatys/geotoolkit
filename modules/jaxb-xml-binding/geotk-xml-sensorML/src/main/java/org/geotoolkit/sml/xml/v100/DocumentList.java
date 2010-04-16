@@ -88,6 +88,19 @@ public class DocumentList implements AbstractDocumentList {
 
     }
 
+    public DocumentList(AbstractDocumentList dl) {
+        if (dl != null) {
+            this.description = dl.getDescription();
+            this.id          = dl.getId();
+            if (dl.getMember() != null) {
+                this.member = new ArrayList<Member>();
+                for (AbstractDocumentListMember m : dl.getMember()) {
+                    this.member.add(new Member(m));
+                }
+            }
+        }
+    }
+    
     /**
      * Gets the value of the description property.
      */
@@ -231,6 +244,27 @@ public class DocumentList implements AbstractDocumentList {
         @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
         private String type;
 
+        public Member() {
+
+        }
+
+        public Member(AbstractDocumentListMember m) {
+            if (m != null) {
+                this.actuate = m.getActuate();
+                this.arcrole = m.getArcrole();
+                if (m.getDocument() != null) {
+                    this.document = new Document(m.getDocument());
+                }
+                this.href = m.getHref();
+                this.name = m.getName();
+                this.remoteSchema = m.getRemoteSchema();
+                this.role = m.getRole();
+                this.show = m.getShow();
+                this.title = m.getTitle();
+                this.type = m.getType();
+            }
+        }
+        
         /**
          * Gets the value of the document property.
          */

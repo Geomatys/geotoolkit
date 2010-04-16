@@ -71,6 +71,23 @@ public abstract class AbstractDataArrayType extends AbstractDataComponentType im
     private ElementCount elementCount;
 
     /**
+     * Empty constructor used by JAXB.
+     */
+    AbstractDataArrayType() {
+
+    }
+
+    /**
+     * Clone a new Abstract Data array.
+     */
+    public AbstractDataArrayType(AbstractDataArray array) {
+        super(array);
+        if (array != null) {
+            this.elementCount = new ElementCount(array.getElementCount());
+        }
+    }
+
+    /**
      * Gets the value of the elementCount property.
      */
     public ElementCount getElementCount() {

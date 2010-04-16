@@ -96,6 +96,21 @@ public class Interfaces implements AbstractInterfaces {
         this.interfaceList = interfaceList;
     }
 
+    public Interfaces(AbstractInterfaces param) {
+        if (param != null) {
+            if (param.getInterfaceList() != null) {
+                this.interfaceList = new InterfaceList(param.getInterfaceList());
+            }
+            this.actuate = param.getActuate();
+            this.arcrole = param.getArcrole();
+            this.href    = param.getHref();
+            this.remoteSchema = param.getRemoteSchema();
+            this.role         = param.getRole();
+            this.show         = param.getShow();
+            this.title        = param.getTitle();
+            this.type         = param.getType();
+        }
+    }
     /**
      * Gets the value of the interfaceList property.
      */

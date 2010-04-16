@@ -33,6 +33,7 @@ import org.geotoolkit.sml.xml.AbstractKeywords;
 import org.geotoolkit.sml.xml.AbstractLegalConstraint;
 import org.geotoolkit.sml.xml.AbstractProcess;
 import org.geotoolkit.sml.xml.AbstractValidTime;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -188,10 +189,12 @@ public abstract class AbstractProcessType extends AbstractSMLType implements Abs
      *
      */
     public void setKeywords(Keywords keywords) {
-        if (this.keywords == null) {
-            this.keywords = new ArrayList<Keywords>();
+        if (keywords != null) {
+            if (this.keywords == null) {
+                this.keywords = new ArrayList<Keywords>();
+            }
+            this.keywords.add(keywords);
         }
-        this.keywords.add(keywords);
     }
 
     /**
@@ -218,10 +221,12 @@ public abstract class AbstractProcessType extends AbstractSMLType implements Abs
      *
      */
     public void setIdentification(Identification identification) {
-        if (this.identification == null) {
-            this.identification = new ArrayList<Identification>();
+        if (identification != null) {
+            if (this.identification == null) {
+                this.identification = new ArrayList<Identification>();
+            }
+            this.identification.add(identification);
         }
-        this.identification.add(identification);
     }
 
     /**
@@ -248,10 +253,12 @@ public abstract class AbstractProcessType extends AbstractSMLType implements Abs
      *
      */
     public void setClassification(Classification classification) {
-        if (this.classification == null) {
-            this.classification = new ArrayList<Classification>();
+        if (classification != null) {
+            if (this.classification == null) {
+                this.classification = new ArrayList<Classification>();
+            }
+            this.classification.add(classification);
         }
-        this.classification.add(classification);
     }
 
     /**
@@ -305,10 +312,12 @@ public abstract class AbstractProcessType extends AbstractSMLType implements Abs
      *
      */
     public void setLegalConstraint(LegalConstraint legalConstraint) {
-        if (this.legalConstraint == null) {
-            this.legalConstraint = new ArrayList<LegalConstraint>();
+        if (legalConstraint != null) {
+            if (this.legalConstraint == null) {
+                this.legalConstraint = new ArrayList<LegalConstraint>();
+            }
+            this.legalConstraint.add(legalConstraint);
         }
-        this.legalConstraint.add(legalConstraint);
     }
 
     /**
@@ -344,9 +353,12 @@ public abstract class AbstractProcessType extends AbstractSMLType implements Abs
      *
      */
     public void setCharacteristics(Characteristics characteristics) {
-        if (this.characteristics == null)
-            this.characteristics = new ArrayList<Characteristics>();
-        this.characteristics.add(characteristics);
+        if (characteristics != null) {
+            if (this.characteristics == null) {
+                this.characteristics = new ArrayList<Characteristics>();
+            }
+            this.characteristics.add(characteristics);
+        }
     }
     
     /**
@@ -384,10 +396,12 @@ public abstract class AbstractProcessType extends AbstractSMLType implements Abs
      *
      */
     public void SetContact(Contact contact) {
-        if (this.contact == null) {
-            this.contact = new ArrayList<Contact>();
+        if (contact != null) {
+            if (this.contact == null) {
+                this.contact = new ArrayList<Contact>();
+            }
+            this.contact.add(contact);
         }
-        this.contact.add(contact);
     }
 
     /**
@@ -414,10 +428,12 @@ public abstract class AbstractProcessType extends AbstractSMLType implements Abs
      *
      */
     public void setDocumention(Documentation documentation) {
-        if (this.documentation == null) {
-            this.documentation = new ArrayList<Documentation>();
+        if (documentation != null) {
+            if (this.documentation == null) {
+                this.documentation = new ArrayList<Documentation>();
+            }
+            this.documentation.add(documentation);
         }
-        this.documentation.add(documentation);
     }
 
     /**
@@ -450,9 +466,117 @@ public abstract class AbstractProcessType extends AbstractSMLType implements Abs
      * Sets the value of the history property.
      */
     public void setHistory(History history) {
-        if (this.history == null) {
-            this.history = new ArrayList<History>();
+        if (history != null) {
+            if (this.history == null) {
+                this.history = new ArrayList<History>();
+            }
+            this.history.add(history);
         }
-        this.history.add(history);
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("[").append(this.getClass().getSimpleName()).append("]\n");
+        if (keywords != null) {
+            sb.append("Keywords:").append('\n');
+            for (Keywords k : keywords) {
+                sb.append(k).append('\n');
+            }
+        }
+        if (identification != null) {
+            sb.append("Identification:").append('\n');
+            for (Identification k : identification) {
+                sb.append(k).append('\n');
+            }
+        }
+        if (classification != null) {
+            sb.append("Identification:").append('\n');
+            for (Classification k : classification) {
+                sb.append(k).append('\n');
+            }
+        }
+        if (validTime != null) {
+            sb.append("validTime:").append(validTime).append('\n');
+        }
+        if (legalConstraint != null) {
+            sb.append("legalConstraint:").append('\n');
+            for (LegalConstraint k : legalConstraint) {
+                sb.append(k).append('\n');
+            }
+        }
+        if (characteristics != null) {
+            sb.append("characteristics:").append('\n');
+            for (Characteristics k : characteristics) {
+                sb.append(k).append('\n');
+            }
+        }
+        if (capabilities != null) {
+            sb.append("capabilities:").append('\n');
+            for (Capabilities k : capabilities) {
+                sb.append(k).append('\n');
+            }
+        }
+        if (contact != null) {
+            sb.append("contact:").append('\n');
+            for (Contact k : contact) {
+                sb.append(k).append('\n');
+            }
+        }
+        if (documentation != null) {
+            sb.append("documentation:").append('\n');
+            for (Documentation k : documentation) {
+                sb.append(k).append('\n');
+            }
+        }
+        if (history != null) {
+            sb.append("history:").append('\n');
+            for (History k : history) {
+                sb.append(k).append('\n');
+            }
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Verify if this entry is identical to specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+
+        if (object instanceof AbstractProcessType && super.equals(object)) {
+            final AbstractProcessType that = (AbstractProcessType) object;
+            return Utilities.equals(this.capabilities,    that.capabilities)       &&
+                   Utilities.equals(this.characteristics, that.characteristics)    &&
+                   Utilities.equals(this.classification,  that.classification)     &&
+                   Utilities.equals(this.contact,         that.contact)            &&
+                   Utilities.equals(this.documentation,   that.documentation)      &&
+                   Utilities.equals(this.identification,  that.identification)     &&
+                   Utilities.equals(this.keywords,        that.keywords)           &&
+                   Utilities.equals(this.legalConstraint, that.legalConstraint)    &&
+                   Utilities.equals(this.securityConstraint, that.securityConstraint)    &&
+                   Utilities.equals(this.validTime,       that.validTime)          &&
+                   Utilities.equals(this.history,         that.history);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 17 * hash + (this.keywords != null ? this.keywords.hashCode() : 0);
+        hash = 17 * hash + (this.identification != null ? this.identification.hashCode() : 0);
+        hash = 17 * hash + (this.classification != null ? this.classification.hashCode() : 0);
+        hash = 17 * hash + (this.validTime != null ? this.validTime.hashCode() : 0);
+        hash = 17 * hash + (this.securityConstraint != null ? this.securityConstraint.hashCode() : 0);
+        hash = 17 * hash + (this.legalConstraint != null ? this.legalConstraint.hashCode() : 0);
+        hash = 17 * hash + (this.characteristics != null ? this.characteristics.hashCode() : 0);
+        hash = 17 * hash + (this.capabilities != null ? this.capabilities.hashCode() : 0);
+        hash = 17 * hash + (this.contact != null ? this.contact.hashCode() : 0);
+        hash = 17 * hash + (this.documentation != null ? this.documentation.hashCode() : 0);
+        hash = 17 * hash + (this.history != null ? this.history.hashCode() : 0);
+        return hash;
     }
 }

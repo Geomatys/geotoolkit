@@ -26,6 +26,7 @@ import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import org.geotoolkit.sml.xml.AbstractIdentifier;
 import org.geotoolkit.sml.xml.AbstractIdentifierList;
 import org.geotoolkit.util.Utilities;
 
@@ -80,6 +81,18 @@ public class IdentifierList implements AbstractIdentifierList {
     public IdentifierList(String id, List<Identifier> identifiers) {
         this.id = id;
         this.identifier = identifiers;
+    }
+
+    public IdentifierList(AbstractIdentifierList il) {
+        if (il != null) {
+            this.id = il.getId();
+            if (il.getIdentifier() != null) {
+                this.identifier = new ArrayList<Identifier>();
+                for (AbstractIdentifier iden : il.getIdentifier()) {
+                    this.identifier.add(new Identifier(iden));
+                }
+            }
+        }
     }
 
     /**

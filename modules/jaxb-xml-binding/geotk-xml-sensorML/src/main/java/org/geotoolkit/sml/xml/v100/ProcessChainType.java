@@ -20,6 +20,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.sml.xml.AbstractProcessChain;
 
 
 /**
@@ -50,13 +51,29 @@ import javax.xml.bind.annotation.XmlType;
     "components",
     "connections"
 })
-public class ProcessChainType extends AbstractPureProcessType {
+public class ProcessChainType extends AbstractPureProcessType implements AbstractProcessChain {
 
     @XmlElement(required = true)
     private Components components;
     @XmlElement(required = true)
     private Connections connections;
 
+    public ProcessChainType() {
+
+    }
+
+    public ProcessChainType(AbstractProcessChain pc) {
+        super(pc);
+        if (pc != null) {
+            if (pc.getComponents() != null) {
+                this.components = new Components(pc.getComponents());
+            }
+            if (pc.getConnections() != null) {
+                this.connections = new Connections(pc.getConnections());
+            }
+        }
+    }
+    
     /**
      * Gets the value of the components property.
      */

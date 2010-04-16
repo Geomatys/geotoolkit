@@ -64,6 +64,17 @@ public class AbstractEncodingType implements AbstractEncoding {
     private String id;
 
     /**
+     * constructor used by jaxB
+     */
+    AbstractEncodingType() {}
+
+    public AbstractEncodingType(AbstractEncoding enc) {
+        if (enc != null) {
+            this.id = enc.getId();
+        }
+    }
+    
+    /**
      * Gets the value of the id property.
      */
     public String getId() {

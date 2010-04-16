@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.sml.xml.AbstractContactInfo;
+import org.geotoolkit.sml.xml.AbstractOnlineResource;
 import org.geotoolkit.util.Utilities;
 
 
@@ -100,6 +101,25 @@ public class ContactInfo implements AbstractContactInfo {
     public ContactInfo(PhoneType phone, AddressType address) {
         this.address = address;
         this.phone   = phone;
+    }
+
+    public ContactInfo(AbstractContactInfo ci) {
+        if (ci != null) {
+            if (ci.getAddress() != null) {
+                this.address = new AddressType(ci.getAddress());
+            }
+            if (ci.getPhone() != null) {
+                this.phone = new PhoneType(ci.getPhone());
+            }
+            this.hoursOfService = ci.getHoursOfService();
+            this.contactInstructions = ci.getContactInstructions();
+            if (ci.getOnlineResource() != null) {
+                this.onlineResource = new ArrayList<OnlineResource>();
+                for (AbstractOnlineResource or : ci.getOnlineResource()) {
+                    this.onlineResource.add(new OnlineResource(or));
+                }
+            }
+        }
     }
 
     /**

@@ -28,7 +28,14 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import org.geotoolkit.sml.xml.AbstractDataSource;
 import org.geotoolkit.sml.xml.AbstractPosition;
+import org.geotoolkit.sml.xml.AbstractProcess;
+import org.geotoolkit.sml.xml.AbstractProcessChain;
+import org.geotoolkit.sml.xml.AbstractProcessModel;
+import org.geotoolkit.sml.xml.Component;
+import org.geotoolkit.sml.xml.System;
+import org.geotoolkit.sml.xml.ComponentArray;
 import org.geotoolkit.swe.xml.v100.PositionType;
 import org.geotoolkit.swe.xml.v100.VectorType;
 import org.geotoolkit.util.Utilities;
@@ -109,6 +116,45 @@ public class Position implements AbstractPosition {
         this.position = position;
     }
 
+    public Position(AbstractPosition pos) {
+        if (pos != null) {
+            this.actuate = pos.getActuate();
+            this.arcrole = pos.getArcrole();
+            this.href    = pos.getHref();
+            this.name    = pos.getName();
+            this.remoteSchema = pos.getRemoteSchema();
+            this.role    = pos.getRole();
+            this.show    = pos.getShow();
+            this.title   = pos.getTitle();
+            this.type    = pos.getType();
+            if (pos.getAbstractProcess() != null) {
+                ObjectFactory facto = new ObjectFactory();
+                AbstractProcess aProcess = pos.getAbstractProcess();
+                if (aProcess instanceof AbstractDataSource) {
+                    this.process = facto.createDataSource(new DataSourceType( (AbstractDataSource) aProcess));
+                } else if (aProcess instanceof AbstractProcessModel) {
+                    this.process = facto.createProcessModel(new ProcessModelType( (AbstractProcessModel) aProcess));
+                } else if (aProcess instanceof AbstractProcessChain) {
+                    this.process = facto.createProcessChain(new ProcessChainType( (AbstractProcessChain) aProcess));
+                } else if (aProcess instanceof System) {
+                    this.process = facto.createSystem(new SystemType((System)aProcess));
+                } else if (aProcess instanceof Component) {
+                    this.process = facto.createComponent(new ComponentType((Component) aProcess));
+                } else if (aProcess instanceof ComponentArray) {
+                    this.process = facto.createComponentArray(new ComponentArrayType((ComponentArray) aProcess));
+                } else {
+                    throw new IllegalArgumentException("unexepected process type:" + aProcess);
+                }
+            }
+            if (pos.getPosition() != null) {
+                this.position = new PositionType(pos.getPosition());
+            }
+            if (pos.getVector() != null) {
+                this.vector = new VectorType(pos.getVector());
+            }
+        }
+    }
+    
     /**
      * Gets the value of the process property.
      */

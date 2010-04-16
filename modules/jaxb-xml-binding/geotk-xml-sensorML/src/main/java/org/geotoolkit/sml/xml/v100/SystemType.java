@@ -20,8 +20,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.sml.xml.AbstractComponents;
-import org.geotoolkit.sml.xml.AbstractPositions;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.sml.xml.System;
 
@@ -59,6 +57,25 @@ public class SystemType extends AbstractComponentType implements System {
     @XmlElement(required = true)
     private Connections connections;
 
+    public SystemType() {
+
+    }
+    
+    public SystemType(System sy) {
+        super(sy);
+        if (sy != null) {
+            if (sy.getComponents() != null) {
+                this.components = new Components(sy.getComponents());
+            }
+            if (sy.getConnections() != null) {
+                this.connections = new Connections(sy.getConnections());
+            }
+            if (sy.getPositions() != null) {
+                this.positions = new Positions(sy.getPositions());
+            }
+        }
+    }
+     
     /**
      * @return the components
      */
@@ -70,9 +87,8 @@ public class SystemType extends AbstractComponentType implements System {
     /**
      * @param components the components to set
      */
-    @Override
-    public void setComponents(AbstractComponents components) {
-        this.components = new Components(components);
+    public void setComponents(Components components) {
+        this.components = components;
     }
 
     /**
@@ -93,9 +109,8 @@ public class SystemType extends AbstractComponentType implements System {
     /**
      * @param positions the positions to set
      */
-    @Override
-    public void setPositions(AbstractPositions positions) {
-        this.positions = new Positions(positions);
+    public void setPositions(Positions positions) {
+        this.positions = positions;
     }
 
     /**
@@ -154,4 +169,18 @@ public class SystemType extends AbstractComponentType implements System {
     }
 
 
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder(super.toString()).append("\n");
+        if (components != null) {
+            sb.append("components:").append(components).append('\n');
+        }
+        if (positions != null) {
+            sb.append("positions:").append(positions).append('\n');
+        }
+        if (connections != null) {
+            sb.append("connections:").append(connections).append('\n');
+        }
+        return sb.toString();
+     }
 }

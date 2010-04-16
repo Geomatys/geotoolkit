@@ -51,6 +51,17 @@ public class XMLBlockType  extends AbstractEncodingType implements XmlBlock {
     @XmlAttribute
     private QName xmlElement;
 
+    public XMLBlockType() {
+
+    }
+
+    public XMLBlockType(XmlBlock xm) {
+        super(xm);
+        if (xm != null) {
+            this.xmlElement = xm.getXmlElement();
+        }
+    }
+    
     /**
      * Gets the value of the xmlElement property.
      */

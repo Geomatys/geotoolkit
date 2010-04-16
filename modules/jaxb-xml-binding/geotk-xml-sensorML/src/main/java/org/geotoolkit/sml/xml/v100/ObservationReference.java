@@ -65,6 +65,23 @@ public class ObservationReference implements AbstractObservationReference {
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
     private String type;
 
+    public ObservationReference() {
+
+    }
+
+    public ObservationReference(AbstractObservationReference or) {
+        if (or != null) {
+            this.actuate = or.getActuate();
+            this.arcrole = or.getArcrole();
+            this.href    = or.getHref();
+            this.remoteSchema = or.getRemoteSchema();
+            this.role    = or.getRole();
+            this.show    = or.getShow();
+            this.title   = or.getTitle();
+            this.type    = or.getType();
+        }
+    }
+    
     /**
      * Gets the value of the nilReason property.
      */

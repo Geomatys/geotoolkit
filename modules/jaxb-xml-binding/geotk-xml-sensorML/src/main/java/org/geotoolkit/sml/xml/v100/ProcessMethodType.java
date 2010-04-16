@@ -31,7 +31,16 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.geotoolkit.gml.xml.v311.StringOrRefType;
 import org.geotoolkit.gml.xml.v311.AbstractGMLEntry;
 import org.geotoolkit.sml.xml.AbstractAlgorithm;
+import org.geotoolkit.sml.xml.AbstractCapabilities;
+import org.geotoolkit.sml.xml.AbstractCharacteristics;
+import org.geotoolkit.sml.xml.AbstractClassification;
+import org.geotoolkit.sml.xml.AbstractContact;
+import org.geotoolkit.sml.xml.AbstractDocumentation;
+import org.geotoolkit.sml.xml.AbstractHistory;
+import org.geotoolkit.sml.xml.AbstractIdentification;
 import org.geotoolkit.sml.xml.AbstractImplementation;
+import org.geotoolkit.sml.xml.AbstractKeywords;
+import org.geotoolkit.sml.xml.AbstractLegalConstraint;
 import org.geotoolkit.sml.xml.AbstractProcessMethod;
 import org.geotoolkit.sml.xml.AbstractRules;
 
@@ -192,6 +201,82 @@ public class ProcessMethodType extends AbstractGMLEntry implements AbstractProce
     private ProcessMethodType.Rules rules;
     private ProcessMethodType.Algorithm algorithm;
     private List<ProcessMethodType.Implementation> implementation;
+
+    public ProcessMethodType() {
+        
+    }
+    
+    public ProcessMethodType(AbstractProcessMethod method) {
+        super(method);
+        if (method != null) {
+
+            if (method.getAlgorithm() != null) {
+                throw new IllegalArgumentException("Algorithm are not yet convertible");
+            }
+            if (method.getImplementation() != null) {
+                throw new IllegalArgumentException("Implementation are not yet convertible");
+            }
+            if (method.getRules() != null) {
+                throw new IllegalArgumentException("Rules are not yet convertible");
+            }
+            if (method.getCapabilities() != null) {
+                this.capabilities = new ArrayList<org.geotoolkit.sml.xml.v100.CapabilitiesSML>();
+                for (AbstractCapabilities oldCapa : method.getCapabilities()) {
+                    this.capabilities.add(new org.geotoolkit.sml.xml.v100.CapabilitiesSML(oldCapa));
+                }
+            }
+            if (method.getCharacteristics() != null) {
+                this.characteristics = new ArrayList<org.geotoolkit.sml.xml.v100.Characteristics>();
+                for (AbstractCharacteristics oldChar : method.getCharacteristics()) {
+                    this.characteristics.add(new org.geotoolkit.sml.xml.v100.Characteristics(oldChar));
+                }
+            }
+
+            if (method.getClassification() != null) {
+            this.classification = new ArrayList<org.geotoolkit.sml.xml.v100.Classification>();
+            for (AbstractClassification oldClass : method.getClassification()) {
+                this.classification.add(new org.geotoolkit.sml.xml.v100.Classification(oldClass));
+            }}
+
+            if (method.getContact() != null) {
+            this.contact = new ArrayList<org.geotoolkit.sml.xml.v100.Contact>();
+            for (AbstractContact oldContact : method.getContact()) {
+                this.contact.add(new org.geotoolkit.sml.xml.v100.Contact(oldContact));
+            }}
+            if (method.getDocumentation() != null) {
+            this.documentation = new ArrayList<org.geotoolkit.sml.xml.v100.Documentation>();
+            for (AbstractDocumentation oldDoc : method.getDocumentation()) {
+                this.documentation.add(new org.geotoolkit.sml.xml.v100.Documentation(oldDoc));
+            }}
+            if (method.getHistory() != null) {
+            this.history = new ArrayList<org.geotoolkit.sml.xml.v100.History>();
+            for (AbstractHistory oldhist : method.getHistory()) {
+                this.history.add(new org.geotoolkit.sml.xml.v100.History(oldhist));
+            }}
+            if (method.getIdentification() != null) {
+            this.identification = new ArrayList<org.geotoolkit.sml.xml.v100.Identification>();
+            for (AbstractIdentification oldIdent : method.getIdentification()) {
+                this.identification.add(new org.geotoolkit.sml.xml.v100.Identification(oldIdent));
+            }}
+            if (method.getKeywords() != null) {
+            this.keywords = new ArrayList<org.geotoolkit.sml.xml.v100.Keywords>();
+            for (AbstractKeywords oldKeyw : method.getKeywords()) {
+                this.keywords.add(new org.geotoolkit.sml.xml.v100.Keywords(oldKeyw));
+            }}
+            if (method.getLegalConstraint() != null) {
+            this.legalConstraint = new ArrayList<org.geotoolkit.sml.xml.v100.LegalConstraint>();
+            for (AbstractLegalConstraint oldcons : method.getLegalConstraint()) {
+                this.legalConstraint.add(new org.geotoolkit.sml.xml.v100.LegalConstraint(oldcons));
+            }}
+
+            if (method.getLegalConstraint() != null) {
+                this.securityConstraint = new org.geotoolkit.sml.xml.v100.SecurityConstraint(method.getSecurityConstraint());
+            }
+            if (method.getValidTime() != null) {
+                this.validTime = new ValidTime(method.getValidTime());
+            }
+        }
+    }
 
     /**
      * Gets the value of the keywords property.

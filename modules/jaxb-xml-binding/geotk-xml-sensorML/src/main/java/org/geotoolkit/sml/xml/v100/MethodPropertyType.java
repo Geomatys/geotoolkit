@@ -24,7 +24,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.sml.xml.AbstractMethodProperty;
-
+import org.geotoolkit.util.Utilities;
 
 /**
  * <p>Java class for methodPropertyType complex type.
@@ -84,6 +84,22 @@ public class MethodPropertyType implements AbstractMethodProperty {
 
     public MethodPropertyType(ProcessMethodType processMethod) {
         this.processMethod = processMethod;
+    }
+
+    public MethodPropertyType(AbstractMethodProperty meth) {
+        if (meth != null) {
+            this.actuate = meth.getActuate();
+            this.arcrole = meth.getArcrole();
+            this.href    = meth.getHref();
+            if (meth.getProcessMethod() != null) {
+                this.processMethod = new ProcessMethodType(meth.getProcessMethod());
+            }
+            this.remoteSchema = meth.getRemoteSchema();
+            this.role         = meth.getRole();
+            this.show         = meth.getShow();
+            this.title        = meth.getTitle();
+            this.type         = meth.getType();
+        }
     }
 
     /**
@@ -222,4 +238,84 @@ public class MethodPropertyType implements AbstractMethodProperty {
         this.type = value;
     }
 
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("[MethodPropertyType]").append("\n");
+        if (processMethod != null) {
+            sb.append("processMethod: ").append(processMethod).append('\n');
+        }
+        if (nilReason != null) {
+            sb.append("nilReason:").append('\n');
+            for (String k : nilReason) {
+                sb.append("nilReason: ").append(k).append('\n');
+            }
+        }
+        if (remoteSchema != null) {
+            sb.append("remoteSchema: ").append(remoteSchema).append('\n');
+        }
+        if (actuate != null) {
+            sb.append("actuate: ").append(actuate).append('\n');
+        }
+        if (arcrole != null) {
+            sb.append("actuate: ").append(arcrole).append('\n');
+        }
+        if (href != null) {
+            sb.append("href: ").append(href).append('\n');
+        }
+        if (role != null) {
+            sb.append("role: ").append(role).append('\n');
+        }
+        if (show != null) {
+            sb.append("show: ").append(show).append('\n');
+        }
+        if (title != null) {
+            sb.append("title: ").append(title).append('\n');
+        }
+        if (type != null) {
+            sb.append("type: ").append(type).append('\n');
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Verify if this entry is identical to specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+
+        if (object instanceof MethodPropertyType) {
+            final MethodPropertyType that = (MethodPropertyType) object;
+
+            return Utilities.equals(this.actuate, that.actuate)
+                    && Utilities.equals(this.href, that.href)
+                    && Utilities.equals(this.processMethod, that.processMethod)
+                    && Utilities.equals(this.nilReason, that.nilReason)
+                    && Utilities.equals(this.remoteSchema, that.remoteSchema)
+                    && Utilities.equals(this.role, that.role)
+                    && Utilities.equals(this.show, that.show)
+                    && Utilities.equals(this.title, that.title)
+                    && Utilities.equals(this.type, that.type)
+                    && Utilities.equals(this.arcrole, that.arcrole);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 53 * hash + (this.processMethod != null ? this.processMethod.hashCode() : 0);
+        hash = 53 * hash + (this.nilReason != null ? this.nilReason.hashCode() : 0);
+        hash = 53 * hash + (this.remoteSchema != null ? this.remoteSchema.hashCode() : 0);
+        hash = 53 * hash + (this.actuate != null ? this.actuate.hashCode() : 0);
+        hash = 53 * hash + (this.arcrole != null ? this.arcrole.hashCode() : 0);
+        hash = 53 * hash + (this.href != null ? this.href.hashCode() : 0);
+        hash = 53 * hash + (this.role != null ? this.role.hashCode() : 0);
+        hash = 53 * hash + (this.show != null ? this.show.hashCode() : 0);
+        hash = 53 * hash + (this.title != null ? this.title.hashCode() : 0);
+        hash = 53 * hash + (this.type != null ? this.type.hashCode() : 0);
+        return hash;
+    }
 }

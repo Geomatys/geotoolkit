@@ -93,6 +93,34 @@ public class BlockEncodingPropertyType implements BlockEncodingProperty, Abstrac
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
     private String actuate;
 
+    public BlockEncodingPropertyType() {
+
+    }
+
+    public BlockEncodingPropertyType(BlockEncodingProperty be) {
+        if (be != null) {
+            this.actuate      = be.getActuate();
+            this.arcrole      = be.getArcrole();
+            this.href         = be.getHref();
+            this.remoteSchema = be.getRemoteSchema();
+            this.role         = be.getRole();
+            this.show         = be.getShow();
+            this.title        = be.getTitle();
+            this.type         = be.getType();
+            if (be.getBinaryBlock() != null) {
+                this.binaryBlock = new BinaryBlock(be.getBinaryBlock());
+            }
+            if (be.getStandardFormat() != null) {
+                this.standardFormat = new StandardFormat(be.getStandardFormat());
+            }
+            if (be.getTextBlock() != null) {
+                this.textBlock = new TextBlock(be.getTextBlock());
+            }
+            if (be.getXMLBlock() != null) {
+                this.xmlBlock = new XMLBlockType(be.getXMLBlock());
+            }
+        }
+    }
 
     public AbstractEncodingType getEncoding() {
         if (standardFormat != null)

@@ -28,11 +28,7 @@ public interface System extends AbstractComponent {
 
     AbstractComponents getComponents();
 
-    void setComponents(AbstractComponents components);
-
     AbstractPositions getPositions();
-
-    void setPositions(AbstractPositions positions);
 
     BoundingShapeEntry getBoundedBy();
 

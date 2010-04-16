@@ -61,6 +61,22 @@ public class ElementCount implements AbstractElementCount {
     private Object ref;
 
     /**
+     * Empty constructor used by JAXB.
+     */
+    ElementCount() {
+    }
+
+
+    public ElementCount(AbstractElementCount value) {
+        if (value != null) {
+            if (value.getCount() != null) {
+                this.count = new Count(value.getCount());
+            }
+            this.ref = value.getRef();
+        }
+    }
+    
+    /**
      * Gets the value of the count property.
      */
     public Count getCount() {

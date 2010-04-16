@@ -57,6 +57,17 @@ public class Values implements AbstractValues {
     @XmlAnyAttribute
     private Map<QName, String> otherAttributes = new HashMap<QName, String>();
 
+    public Values() {
+
+    }
+
+    public Values(AbstractValues v) {
+        if (v != null) {
+            this.any             = v.getAny();
+            this.otherAttributes = v.getOtherAttributes();
+        }
+    }
+    
     /**
      * Gets the value of the any property.
      *

@@ -58,6 +58,25 @@ public class SquareMatrixType extends AbstractMatrixType implements AbstractSqua
     private BlockEncodingPropertyType encoding;
     private DataValuePropertyType values;
 
+    public SquareMatrixType() {
+
+    }
+
+    public SquareMatrixType(AbstractSquareMatrix sm) {
+        super(sm);
+        if (sm != null) {
+            if (sm.getElementType() != null) {
+                this.elementType = new QuantityPropertyType(sm.getElementType());
+            }
+            if (sm.getValues() != null) {
+                this.values = new DataValuePropertyType(sm.getValues());
+            }
+            if (sm.getEncoding() != null) {
+                this.encoding = new BlockEncodingPropertyType(sm.getEncoding());
+            }
+        }
+    }
+    
     /**
      * Gets the value of the elementType property.
      * 

@@ -26,6 +26,7 @@ import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import org.geotoolkit.sml.xml.AbstractInterface;
 import org.geotoolkit.sml.xml.AbstractInterfaceList;
 import org.geotoolkit.util.Utilities;
 
@@ -72,6 +73,18 @@ public class InterfaceList implements AbstractInterfaceList {
         this.id = id;
     }
 
+    public InterfaceList(AbstractInterfaceList al) {
+        if (al != null) {
+            this.id = al.getId();
+            if (al.getInterface() != null) {
+                this._interface = new ArrayList<Interface>();
+                for (AbstractInterface i : al.getInterface()) {
+                    this._interface.add(new Interface(i));
+                }
+            }
+        }
+    }
+    
     /**
      * Gets the value of the interface property.
      */

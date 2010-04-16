@@ -83,6 +83,18 @@ public class Rights implements AbstractRights {
         this.documentation = docu;
     }
 
+    public Rights(AbstractRights r) {
+        if (r != null) {
+            this.copyRights = r.isCopyRights();
+            this.privacyAct = r.isPrivacyAct();
+            this.id         = r.getId();
+            this.intellectualPropertyRights = r.isIntellectualPropertyRights();
+            if (r.getDocumentation() != null) {
+                this.documentation = new Documentation(r.getDocumentation());
+            }
+        }
+    }
+    
     /**
      * Gets the value of the documentation property.
      */

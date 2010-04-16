@@ -77,6 +77,26 @@ public class History implements AbstractHistory {
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
     private String type;
 
+    public History() {
+
+    }
+
+    public History(AbstractHistory h) {
+        if (h != null) {
+            this.actuate = h.getActuate();
+            this.arcrole = h.getArcrole();
+            if (h.getEventList() != null) {
+                this.eventList = new EventList(h.getEventList());
+            }
+            this.href = h.getHref();
+            this.remoteSchema = h.getRemoteSchema();
+            this.role = h.getRole();
+            this.show = h.getShow();
+            this.title = h.getTitle();
+            this.type = h.getType();
+        }
+    }
+    
     /**
      * Gets the value of the eventList property.
      */

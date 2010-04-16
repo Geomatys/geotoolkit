@@ -87,6 +87,25 @@ public class DataSourceType extends AbstractProcessType implements AbstractDataS
     private Values values;
     private ObservationReference observationReference;
 
+    public DataSourceType() {
+
+    }
+
+    public DataSourceType(AbstractDataSource ds) {
+        super(ds);
+        if (ds != null) {
+            if (ds.getDataDefinition() != null) {
+                this.dataDefinition = new DataDefinition(ds.getDataDefinition());
+            }
+            if (ds.getValues() != null) {
+                this.values = new Values(ds.getValues());
+            }
+            if  (ds.getObservationReference() != null) {
+                this.observationReference = new ObservationReference(ds.getObservationReference());
+            }
+        }
+    }
+    
     /**
      * Gets the value of the dataDefinition property.
      */

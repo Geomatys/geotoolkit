@@ -71,6 +71,15 @@ public class Classifier implements AbstractClassifier {
         this.term = term;
     }
 
+    public Classifier(AbstractClassifier classifier) {
+        if (classifier != null) {
+            this.name = classifier.getName();
+            if (classifier.getTerm() != null) {
+                this.term = new Term(classifier.getTerm());
+            }
+        }
+    }
+
     /**
      * Gets the value of the term property.
      */

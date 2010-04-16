@@ -67,6 +67,7 @@ import org.geotoolkit.sml.xml.v100.Components;
 import org.geotoolkit.sml.xml.v100.OnlineResource;
 import org.geotoolkit.sml.xml.v100.Parameters;
 import java.io.InputStream;
+import java.io.StringReader;
 import java.io.StringWriter;
 import java.net.URI;
 import java.util.ArrayList;
@@ -105,6 +106,8 @@ import org.geotoolkit.gml.xml.v311.TemporalDatumRefType;
 import org.geotoolkit.sml.xml.v100.ArrayLink;
 import org.geotoolkit.sml.xml.v100.LinkRef;
 import org.geotoolkit.sml.xml.v100.Member;
+import org.geotoolkit.sml.xml.v100.MethodPropertyType;
+import org.geotoolkit.sml.xml.v100.ProcessMethodType;
 import org.geotoolkit.swe.xml.v100.BooleanType;
 import org.geotoolkit.swe.xml.v100.Category;
 import org.geotoolkit.swe.xml.v100.CoordinateType;
@@ -661,7 +664,7 @@ public class SmlXMLBindingTest {
     @Test
     public void marshallMarshalingTest() throws Exception {
         
-
+        ObjectFactory factory = new ObjectFactory();
 
         List<DataComponentPropertyType> fields = new ArrayList<DataComponentPropertyType>();
         TimeType time = new TimeType(URI.create("urn:x-ogc:def:phenomenon:observationTime"), new UomPropertyType(null, "urn:x-ogc:def:unit:ISO8601"));
@@ -686,5 +689,20 @@ public class SmlXMLBindingTest {
 
         String result = sw.toString();
         //System.out.println("result:" + result);
+
+
+        ComponentType component = new ComponentType();
+        ProcessMethodType process = new ProcessMethodType();
+        component.setMethod(new MethodPropertyType(process));
+        List<ComponentPropertyType> cpl = new ArrayList<ComponentPropertyType>();
+
+        ComponentList cl = new ComponentList(cpl);
+        sw = new StringWriter();
+        marshaller.marshal(factory.createComponent(component), sw);
+
+        result = sw.toString();
+        //System.out.println("result:" + result);
+
+
     }
 }

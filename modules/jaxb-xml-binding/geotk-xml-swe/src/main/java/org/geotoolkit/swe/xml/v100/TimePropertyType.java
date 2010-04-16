@@ -63,6 +63,12 @@ public class TimePropertyType implements AbstractTimeProperty {
         this.time = time;
     }
 
+    public TimePropertyType(AbstractTimeProperty tp) {
+        if (tp != null && tp.getTime() != null) {
+            this.time = new TimeType(tp.getTime());
+        }
+    }
+    
     /**
      * Gets the value of the time property.
      */

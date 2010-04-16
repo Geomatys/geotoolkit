@@ -79,6 +79,29 @@ public class DataDefinition implements AbstractDataDefinition {
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
     private String type;
 
+    public DataDefinition() {
+
+    }
+
+    public DataDefinition(AbstractDataDefinition ddef) {
+        if (ddef != null) {
+            this.actuate      = ddef.getActuate();
+            this.arcrole      = ddef.getArcrole();
+            this.href         = ddef.getHref();
+            this.remoteSchema = ddef.getRemoteSchema();
+            this.role         = ddef.getRole();
+            this.show         = ddef.getShow();
+            this.title        = ddef.getTitle();
+            this.type         = ddef.getType();
+            if (ddef.getDataBlockDefinition() != null) {
+                this.dataBlockDefinition = new DataBlockDefinitionType(ddef.getDataBlockDefinition());
+            }
+            if (ddef.getDataStreamDefinition() != null) {
+                this.dataStreamDefinition = new DataStreamDefinitionType(ddef.getDataStreamDefinition());
+            }
+        }
+    }
+    
     /**
      * Gets the value of the dataBlockDefinition property.
      *

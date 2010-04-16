@@ -69,6 +69,21 @@ public class CoordinateType implements Coordinate {
 
     }
 
+    public CoordinateType(Coordinate c) {
+        if (c != null) {
+            this.name = c.getName();
+            if (c.getCount() != null) {
+                this.count = new Count(c.getCount());
+            }
+            if (c.getQuantity() != null) {
+                this.quantity = new QuantityType(c.getQuantity());
+            }
+            if (c.getTime() != null) {
+                this.time = new TimeType(c.getTime());
+            }
+        }
+    }
+    
     public CoordinateType(String name, QuantityType quantity) {
         this.name     = name;
         this.quantity = quantity;

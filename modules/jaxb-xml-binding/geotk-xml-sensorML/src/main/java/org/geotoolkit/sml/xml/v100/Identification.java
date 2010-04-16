@@ -107,6 +107,21 @@ public class Identification implements AbstractIdentification {
         this.identifierList = identifierList;
     }
 
+    public Identification (AbstractIdentification ident) {
+        if (ident != null) {
+            this.actuate = ident.getActuate();
+            this.arcrole = ident.getArcrole();
+            this.href    = ident.getHref();
+            if (ident.getIdentifierList() != null) {
+                this.identifierList = new IdentifierList(ident.getIdentifierList());
+            }
+            this.remoteSchema = ident.getRemoteSchema();
+            this.role         = ident.getRole();
+            this.show         = ident.getShow();
+            this.title        = ident.getTitle();
+            this.type         = ident.getType();
+        }
+    }
     /**
      * Gets the value of the identifierList property.
      */

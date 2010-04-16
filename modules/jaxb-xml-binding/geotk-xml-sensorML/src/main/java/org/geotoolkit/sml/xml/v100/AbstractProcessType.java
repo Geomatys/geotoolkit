@@ -18,12 +18,22 @@ package org.geotoolkit.sml.xml.v100;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.v311.TimeInstantType;
 import org.geotoolkit.gml.xml.v311.TimePeriodType;
+import org.geotoolkit.sml.xml.AbstractCapabilities;
+import org.geotoolkit.sml.xml.AbstractCharacteristics;
+import org.geotoolkit.sml.xml.AbstractClassification;
+import org.geotoolkit.sml.xml.AbstractContact;
+import org.geotoolkit.sml.xml.AbstractDocumentation;
+import org.geotoolkit.sml.xml.AbstractHistory;
+import org.geotoolkit.sml.xml.AbstractIdentification;
+import org.geotoolkit.sml.xml.AbstractKeywords;
+import org.geotoolkit.sml.xml.AbstractLegalConstraint;
 import org.geotoolkit.sml.xml.AbstractProcess;
 import org.geotoolkit.sml.xml.AbstractValidTime;
 import org.geotoolkit.swe.xml.v100.DataRecordType;
@@ -79,6 +89,82 @@ public abstract class AbstractProcessType extends AbstractSMLType implements Abs
     private List<Documentation> documentation;
     private List<History> history;
 
+    public AbstractProcessType() {
+
+    }
+
+    public AbstractProcessType(AbstractProcess pr) {
+        super(pr);
+        if (pr != null) {
+
+            //capabilities
+            this.capabilities = new ArrayList<CapabilitiesSML>();
+            for (AbstractCapabilities oldCapa : pr.getCapabilities()) {
+                this.capabilities.add(new CapabilitiesSML(oldCapa));
+            }
+
+            // characteristics
+            this.characteristics = new ArrayList<Characteristics>();
+            for (AbstractCharacteristics oldChar : pr.getCharacteristics()) {
+                this.characteristics.add(new Characteristics(oldChar));
+            }
+
+            // Classification
+            this.classification = new ArrayList<Classification>();
+            for (AbstractClassification oldClass : pr.getClassification()) {
+                this.classification.add(new Classification(oldClass));
+            }
+
+            // Contact
+            this.contact = new ArrayList<Contact>();
+            for (AbstractContact oldContact : pr.getContact()) {
+                this.contact.add(new Contact(oldContact));
+            }
+
+            // Contact
+            this.documentation = new ArrayList<Documentation>();
+            for (AbstractDocumentation oldDoc : pr.getDocumentation()) {
+                this.documentation.add(new Documentation(oldDoc));
+            }
+
+            // History
+            this.history = new ArrayList<History>();
+            for (AbstractHistory oldhist : pr.getHistory()) {
+                this.history.add(new History(oldhist));
+            }
+
+            // Identification
+            this.identification = new ArrayList<Identification>();
+            for (AbstractIdentification oldIdent : pr.getIdentification()) {
+                this.identification.add(new Identification(oldIdent));
+            }
+
+
+            // keywords
+            this.keywords = new ArrayList<Keywords>();
+            for (AbstractKeywords oldKeyw : pr.getKeywords()) {
+                this.keywords.add(new Keywords(oldKeyw));
+            }
+
+            // legal constraint
+            this.legalConstraint = new ArrayList<LegalConstraint>();
+            for (AbstractLegalConstraint oldcons : pr.getLegalConstraint()) {
+                this.legalConstraint.add(new LegalConstraint(oldcons));
+            }
+
+            // security constraint
+            if (pr.getSecurityConstraint() != null) {
+                this.securityConstraint = new SecurityConstraint(pr.getSecurityConstraint());
+            }
+
+            // validTime
+            if (pr.getValidTime() != null) {
+                this.validTime = new ValidTime(pr.getValidTime());
+            }
+        }
+
+    }
+    
     /**
      * Gets the value of the keywords property.
      */
@@ -94,9 +180,7 @@ public abstract class AbstractProcessType extends AbstractSMLType implements Abs
      *
      */
     public void setKeywords(List<Keywords> keywords) {
-        if (keywords == null) {
-            this.keywords = keywords;
-        }
+        this.keywords = keywords;
     }
 
     /**
@@ -104,10 +188,12 @@ public abstract class AbstractProcessType extends AbstractSMLType implements Abs
      *
      */
     public void setKeywords(Keywords keywords) {
-        if (this.keywords == null) {
-            this.keywords = new ArrayList<Keywords>();
+        if (keywords != null) {
+            if (this.keywords == null) {
+                this.keywords = new ArrayList<Keywords>();
+            }
+            this.keywords.add(keywords);
         }
-        this.keywords.add(keywords);
     }
 
     /**
@@ -115,10 +201,12 @@ public abstract class AbstractProcessType extends AbstractSMLType implements Abs
      *
      */
     public void setKeywords(KeywordList keywords) {
-        if (this.keywords == null) {
-            this.keywords = new ArrayList<Keywords>();
+        if (keywords != null) {
+            if (this.keywords == null) {
+                this.keywords = new ArrayList<Keywords>();
+            }
+            this.keywords.add(new Keywords(keywords));
         }
-        this.keywords.add(new Keywords(keywords));
     }
 
     /**
@@ -137,9 +225,7 @@ public abstract class AbstractProcessType extends AbstractSMLType implements Abs
      *
      */
     public void setIdentification(List<Identification> identification) {
-        if (identification == null) {
-            this.identification = identification;
-        }
+        this.identification = identification;
     }
 
     /**
@@ -147,10 +233,12 @@ public abstract class AbstractProcessType extends AbstractSMLType implements Abs
      *
      */
     public void setIdentification(Identification identification) {
-        if (this.identification == null) {
-            this.identification = new ArrayList<Identification>();
+        if (identification != null) {
+            if (this.identification == null) {
+                this.identification = new ArrayList<Identification>();
+            }
+            this.identification.add(identification);
         }
-        this.identification.add(identification);
     }
 
     /**
@@ -158,10 +246,12 @@ public abstract class AbstractProcessType extends AbstractSMLType implements Abs
      *
      */
     public void setIdentification(IdentifierList identification) {
-        if (this.identification == null) {
-            this.identification = new ArrayList<Identification>();
+        if (identification != null) {
+            if (this.identification == null) {
+                this.identification = new ArrayList<Identification>();
+            }
+            this.identification.add(new Identification(identification));
         }
-        this.identification.add(new Identification(identification));
     }
 
 
@@ -180,9 +270,7 @@ public abstract class AbstractProcessType extends AbstractSMLType implements Abs
      *
      */
     public void setClassification(List<Classification> classification) {
-        if (classification == null) {
-            this.classification = classification;
-        }
+       this.classification = classification;
     }
 
     /**
@@ -190,10 +278,12 @@ public abstract class AbstractProcessType extends AbstractSMLType implements Abs
      *
      */
     public void setClassification(Classification classification) {
-        if (this.classification == null) {
-            this.classification = new ArrayList<Classification>();
+        if (classification != null) {
+            if (this.classification == null) {
+                this.classification = new ArrayList<Classification>();
+            }
+            this.classification.add(classification);
         }
-        this.classification.add(classification);
     }
 
     /**
@@ -201,10 +291,12 @@ public abstract class AbstractProcessType extends AbstractSMLType implements Abs
      *
      */
     public void setClassification(ClassifierList classification) {
-        if (this.classification == null) {
-            this.classification = new ArrayList<Classification>();
+        if (classification != null) {
+            if (this.classification == null) {
+                this.classification = new ArrayList<Classification>();
+            }
+            this.classification.add(new Classification(classification));
         }
-        this.classification.add(new Classification(classification));
     }
 
     /**
@@ -252,10 +344,12 @@ public abstract class AbstractProcessType extends AbstractSMLType implements Abs
      *
      */
     public void setLegalConstraint(LegalConstraint legalConstraint) {
-        if (this.legalConstraint == null) {
-            this.legalConstraint = new ArrayList<LegalConstraint>();
+        if (legalConstraint != null) {
+            if (this.legalConstraint == null) {
+                this.legalConstraint = new ArrayList<LegalConstraint>();
+            }
+            this.legalConstraint.add(legalConstraint);
         }
-        this.legalConstraint.add(legalConstraint);
     }
 
     /**
@@ -263,10 +357,12 @@ public abstract class AbstractProcessType extends AbstractSMLType implements Abs
      *
      */
     public void setLegalConstraint(Rights legalConstraint) {
-        if (this.legalConstraint == null) {
-            this.legalConstraint = new ArrayList<LegalConstraint>();
+        if (legalConstraint != null) {
+            if (this.legalConstraint == null) {
+                this.legalConstraint = new ArrayList<LegalConstraint>();
+            }
+            this.legalConstraint.add(new LegalConstraint(legalConstraint));
         }
-        this.legalConstraint.add(new LegalConstraint(legalConstraint));
     }
 
     /**
@@ -301,10 +397,12 @@ public abstract class AbstractProcessType extends AbstractSMLType implements Abs
      *
      */
     public void setCharacteristics(Characteristics characteristics) {
-        if (this.characteristics == null) {
-            this.characteristics = new ArrayList<Characteristics>();
+        if (characteristics != null) {
+            if (this.characteristics == null) {
+                this.characteristics = new ArrayList<Characteristics>();
+            }
+            this.characteristics.add(characteristics);
         }
-        this.characteristics.add(characteristics);
     }
 
     /**
@@ -312,10 +410,12 @@ public abstract class AbstractProcessType extends AbstractSMLType implements Abs
      *
      */
     public void setCharacteristics(DataRecordType characteristics) {
-        if (this.characteristics == null) {
-            this.characteristics = new ArrayList<Characteristics>();
+        if (characteristics != null) {
+            if (this.characteristics == null) {
+                this.characteristics = new ArrayList<Characteristics>();
+            }
+            this.characteristics.add(new Characteristics(characteristics));
         }
-        this.characteristics.add(new Characteristics(characteristics));
     }
 
     /**
@@ -334,10 +434,12 @@ public abstract class AbstractProcessType extends AbstractSMLType implements Abs
      *
      */
     public void setCapabilities(CapabilitiesSML capabilties) {
-        if (this.capabilities == null) {
-            this.capabilities = new ArrayList<CapabilitiesSML>();
+        if (capabilties != null) {
+            if (this.capabilities == null) {
+                this.capabilities = new ArrayList<CapabilitiesSML>();
+            }
+            this.capabilities.add(capabilties);
         }
-        this.capabilities.add(capabilties);
     }
 
     /**
@@ -345,10 +447,12 @@ public abstract class AbstractProcessType extends AbstractSMLType implements Abs
      *
      */
     public void setCapabilities(DataRecordType capabilties) {
-        if (this.capabilities == null) {
-            this.capabilities = new ArrayList<CapabilitiesSML>();
+        if (capabilties != null) {
+            if (this.capabilities == null) {
+                this.capabilities = new ArrayList<CapabilitiesSML>();
+            }
+            this.capabilities.add(new CapabilitiesSML(capabilties));
         }
-        this.capabilities.add(new CapabilitiesSML(capabilties));
     }
 
     /**
@@ -375,10 +479,12 @@ public abstract class AbstractProcessType extends AbstractSMLType implements Abs
      *
      */
     public void setContact(Contact contact) {
-        if (this.contact == null) {
-            this.contact = new ArrayList<Contact>();
+        if (contact != null) {
+            if (this.contact == null) {
+                this.contact = new ArrayList<Contact>();
+            }
+            this.contact.add(contact);
         }
-        this.contact.add(contact);
     }
 
     /**
@@ -386,10 +492,12 @@ public abstract class AbstractProcessType extends AbstractSMLType implements Abs
      *
      */
     public void setContact(ResponsibleParty contact) {
-        if (this.contact == null) {
-            this.contact = new ArrayList<Contact>();
+        if (contact != null) {
+            if (this.contact == null) {
+                this.contact = new ArrayList<Contact>();
+            }
+            this.contact.add(new Contact(contact));
         }
-        this.contact.add(new Contact(contact));
     }
 
     /**
@@ -416,10 +524,12 @@ public abstract class AbstractProcessType extends AbstractSMLType implements Abs
      *
      */
     public void setDocumentation(Documentation documentation) {
-        if (this.documentation == null) {
-            this.documentation = new ArrayList<Documentation>();
+        if (documentation != null) {
+            if (this.documentation == null) {
+                this.documentation = new ArrayList<Documentation>();
+            }
+            this.documentation.add(documentation);
         }
-        this.documentation.add(documentation);
     }
 
     /**
@@ -427,10 +537,12 @@ public abstract class AbstractProcessType extends AbstractSMLType implements Abs
      *
      */
     public void setDocumentation(Document documentation) {
-        if (this.documentation == null) {
-            this.documentation = new ArrayList<Documentation>();
+        if (documentation != null) {
+            if (this.documentation == null) {
+                this.documentation = new ArrayList<Documentation>();
+            }
+            this.documentation.add(new Documentation(documentation));
         }
-        this.documentation.add(new Documentation(documentation));
     }
 
     /**
@@ -463,15 +575,17 @@ public abstract class AbstractProcessType extends AbstractSMLType implements Abs
      * Sets the value of the history property.
      */
     public void setHistory(History history) {
-        if (this.history == null) {
-            this.history = new ArrayList<History>();
+        if (history != null) {
+            if (this.history == null) {
+                this.history = new ArrayList<History>();
+            }
+            this.history.add(history);
         }
-        this.history.add(history);
     }
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder("[SensorML]").append("\n");
+        StringBuilder sb = new StringBuilder("[").append(this.getClass().getSimpleName()).append("]\n");
         if (keywords != null) {
             sb.append("Keywords:").append('\n');
             for (Keywords k : keywords) {
@@ -552,6 +666,7 @@ public abstract class AbstractProcessType extends AbstractSMLType implements Abs
                    Utilities.equals(this.keywords,        that.keywords)           &&
                    Utilities.equals(this.legalConstraint, that.legalConstraint)    &&
                    Utilities.equals(this.validTime,       that.validTime)          &&
+                   Utilities.equals(this.securityConstraint, that.securityConstraint)    &&
                    Utilities.equals(this.history,         that.history);
         }
         return false;
@@ -564,6 +679,7 @@ public abstract class AbstractProcessType extends AbstractSMLType implements Abs
         hash = 59 * hash + (this.identification != null ? this.identification.hashCode() : 0);
         hash = 59 * hash + (this.classification != null ? this.classification.hashCode() : 0);
         hash = 59 * hash + (this.validTime != null ? this.validTime.hashCode() : 0);
+        hash = 59 * hash + (this.securityConstraint != null ? this.securityConstraint.hashCode() : 0);
         hash = 59 * hash + (this.legalConstraint != null ? this.legalConstraint.hashCode() : 0);
         hash = 59 * hash + (this.characteristics != null ? this.characteristics.hashCode() : 0);
         hash = 59 * hash + (this.capabilities != null ? this.capabilities.hashCode() : 0);

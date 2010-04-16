@@ -75,6 +75,13 @@ public class PhoneType implements AbstractPhone {
 
     }
 
+    public PhoneType(AbstractPhone phone) {
+        if (phone != null) {
+            this.facsimile = phone.getFacsimile();
+            this.voice     = phone.getVoice();
+        }
+    }
+
     /**
      * Gets the value of the voice property.
      */

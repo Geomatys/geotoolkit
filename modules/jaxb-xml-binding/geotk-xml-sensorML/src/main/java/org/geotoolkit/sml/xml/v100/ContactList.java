@@ -95,6 +95,18 @@ public class ContactList implements AbstractContactList {
         this.member.add(new Member(person));
     }
 
+    public ContactList(AbstractContactList cl) {
+        if (cl != null) {
+            this.id = cl.getId();
+            this.description = cl.getDescription();
+            if (cl.getMember() != null) {
+                this.member = new ArrayList<Member>();
+                for (AbstractContactListMember m : cl.getMember()) {
+                    this.member.add(new ContactList.Member(m));
+                }
+            }
+        }
+    }
     /**
      * Gets the value of the description property.
      */
@@ -217,6 +229,25 @@ public class ContactList implements AbstractContactList {
             this.responsibleParty = responsibleParty;
         }
 
+        public Member(AbstractContactListMember member) {
+            if (member != null) {
+                this.actuate = member.getActuate();
+                this.arcrole = member.getArcrole();
+                this.href = member.getHref();
+                if (member.getPerson() != null) {
+                    this.person = new Person(member.getPerson());
+                }
+                this.remoteSchema = member.getRemoteSchema();
+                if (member.getResponsibleParty() != null) {
+                    this.responsibleParty = new ResponsibleParty(member.getResponsibleParty());
+                }
+                this.role = member.getRole();
+                this.show = member.getShow();
+                this.title = member.getTitle();
+                this.type = member.getType();
+            }
+        }
+        
         /**
          * Gets the value of the person property.
          */

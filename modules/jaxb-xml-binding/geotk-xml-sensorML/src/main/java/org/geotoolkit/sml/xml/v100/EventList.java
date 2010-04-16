@@ -28,6 +28,7 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.geotoolkit.sml.xml.AbstractEventList;
+import org.geotoolkit.sml.xml.AbstractEventListMember;
 import org.geotoolkit.util.Utilities;
 
 
@@ -78,6 +79,22 @@ public class EventList implements AbstractEventList {
     @XmlID
     private String id;
 
+    public EventList() {
+
+    }
+
+    public EventList(AbstractEventList el) {
+        if (el != null) {
+            this.id = el.getId();
+            if (el.getMember() != null) {
+                this.member = new ArrayList<EventListMember>();
+                for (AbstractEventListMember m : el.getMember()) {
+                    this.member.add(new EventListMember(m));
+                }
+            }
+        }
+    }
+    
     /**
      * Gets the value of the member property.
      */

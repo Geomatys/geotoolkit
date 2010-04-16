@@ -92,6 +92,22 @@ public class Interface implements AbstractInterface {
         this.interfaceDefinition = definition;
     }
 
+    public Interface(AbstractInterface in) {
+        if (in != null) {
+            this.actuate = in.getActuate();
+            this.arcrole = in.getArcrole();
+            this.href    = in.getHref();
+            if (in.getInterfaceDefinition() != null) {
+                this.interfaceDefinition = new InterfaceDefinition(in.getInterfaceDefinition());
+            }
+            this.remoteSchema = in.getRemoteSchema();
+            this.role         = in.getRole();
+            this.show         = in.getShow();
+            this.title        = in.getTitle();
+            this.type         = in.getType();
+        }
+    }
+    
     /**
      * Gets the value of the interfaceDefinition property.
      */

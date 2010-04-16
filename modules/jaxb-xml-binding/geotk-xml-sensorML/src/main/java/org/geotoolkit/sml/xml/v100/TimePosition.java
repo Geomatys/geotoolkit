@@ -28,7 +28,14 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import org.geotoolkit.sml.xml.AbstractDataSource;
+import org.geotoolkit.sml.xml.AbstractProcess;
+import org.geotoolkit.sml.xml.AbstractProcessChain;
+import org.geotoolkit.sml.xml.AbstractProcessModel;
+import org.geotoolkit.sml.xml.Component;
+import org.geotoolkit.sml.xml.System;
 import org.geotoolkit.sml.xml.AbstractTimePosition;
+import org.geotoolkit.sml.xml.ComponentArray;
 import org.geotoolkit.swe.xml.v100.TimeType;
 
 
@@ -89,6 +96,46 @@ public class TimePosition implements AbstractTimePosition {
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
     private String type;
 
+    public TimePosition() {
+
+    }
+
+    public TimePosition(AbstractTimePosition tp) {
+        if (tp != null) {
+            this.actuate      = tp.getActuate();
+            this.arcrole      = tp.getArcrole();
+            this.href         = tp.getHref();
+            this.remoteSchema = tp.getRemoteSchema();
+            this.role         = tp.getRole();
+            this.show         = tp.getShow();
+            this.title        = tp.getTitle();
+            this.type         = tp.getType();
+            if (tp.getTime() != null) {
+                this.time         = new TimeType(tp.getTime());
+            }
+
+            if (tp.getProcess() != null) {
+                ObjectFactory facto = new ObjectFactory();
+                AbstractProcess aProcess = tp.getProcess();
+                if (aProcess instanceof AbstractDataSource) {
+                    this.process = facto.createDataSource(new DataSourceType( (AbstractDataSource) aProcess));
+                } else if (aProcess instanceof AbstractProcessModel) {
+                    this.process = facto.createProcessModel(new ProcessModelType( (AbstractProcessModel) aProcess));
+                } else if (aProcess instanceof AbstractProcessChain) {
+                    this.process = facto.createProcessChain(new ProcessChainType( (AbstractProcessChain) aProcess));
+                } else if (aProcess instanceof System) {
+                    this.process = facto.createSystem(new SystemType((System)aProcess));
+                } else if (aProcess instanceof Component) {
+                    this.process = facto.createComponent(new ComponentType((Component) aProcess));
+                } else if (aProcess instanceof ComponentArray) {
+                    this.process = facto.createComponentArray(new ComponentArrayType((ComponentArray) aProcess));
+                } else {
+                    throw new IllegalArgumentException("unexepected process type:" + aProcess);
+                }
+            }
+        }
+    }
+    
     /**
      * Gets the value of the time property.
      */

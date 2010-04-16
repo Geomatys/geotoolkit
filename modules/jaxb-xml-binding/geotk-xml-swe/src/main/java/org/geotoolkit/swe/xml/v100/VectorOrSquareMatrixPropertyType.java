@@ -63,6 +63,17 @@ public class VectorOrSquareMatrixPropertyType implements AbstractVectorOrSquareM
 
     }
 
+    public VectorOrSquareMatrixPropertyType(AbstractVectorOrSquareMatrixProperty av) {
+        if (av != null) {
+            if (av.getVector() != null) {
+                this.vector = new VectorType(av.getVector());
+            }
+            if (av.getSquareMatrix() != null) {
+                this.squareMatrix = new SquareMatrixType(av.getSquareMatrix());
+            }
+        }
+    }
+    
     public VectorOrSquareMatrixPropertyType(VectorType vector) {
         this.vector = vector;
     }

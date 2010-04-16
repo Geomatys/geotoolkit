@@ -72,6 +72,13 @@ public class Connections implements AbstractConnections {
     public Connections(ConnectionList connectionList) {
         this.connectionList = connectionList;
     }
+
+    public Connections(AbstractConnections connections) {
+        if (connections != null) {
+            this.connectionList = new ConnectionList(connections.getConnectionList());
+        }
+    }
+
     /**
      * Gets the value of the connectionList property.
      */

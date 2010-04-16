@@ -108,10 +108,12 @@ public class ComponentList implements AbstractComponentList {
      *
      */
     public void setComponent(ComponentPropertyType component) {
-        if (this.component == null) {
-            this.component = new ArrayList<ComponentPropertyType>();
+        if (component != null) {
+            if (this.component == null) {
+                this.component = new ArrayList<ComponentPropertyType>();
+            }
+            this.component.add(component);
         }
-        this.component.add(component);
     }
 
     /**
@@ -119,10 +121,12 @@ public class ComponentList implements AbstractComponentList {
      *
      */
     public void setComponent(ComponentType component) {
-        if (this.component == null) {
-            this.component = new ArrayList<ComponentPropertyType>();
+        if (component != null) {
+            if (this.component == null) {
+                this.component = new ArrayList<ComponentPropertyType>();
+            }
+            this.component.add(new ComponentPropertyType(component));
         }
-        this.component.add(new ComponentPropertyType(component));
     }
 
     @Override
@@ -151,8 +155,10 @@ public class ComponentList implements AbstractComponentList {
         StringBuilder sb = new StringBuilder("[ComponentList]").append("\n");
         if (component != null) {
             sb.append("component:").append('\n');
+            int i = 0;
             for (ComponentPropertyType k : component) {
-                sb.append("component: ").append(k).append('\n');
+                sb.append(i).append(":").append(k).append('\n');
+                i++;
             }
         }
         return sb.toString();

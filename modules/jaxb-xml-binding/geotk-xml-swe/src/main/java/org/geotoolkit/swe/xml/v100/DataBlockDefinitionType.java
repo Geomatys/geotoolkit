@@ -16,8 +16,10 @@
  */
 package org.geotoolkit.swe.xml.v100;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -27,6 +29,7 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import org.geotoolkit.swe.xml.AbstractDataComponent;
 import org.geotoolkit.swe.xml.DataBlockDefinition;
 
 
@@ -69,6 +72,24 @@ public class DataBlockDefinitionType implements DataBlockDefinition {
     @XmlSchemaType(name = "ID")
     private String id;
 
+    /**
+     * constructeur utilisé par jaxB
+     */
+    DataBlockDefinitionType() {}
+
+    public DataBlockDefinitionType(DataBlockDefinition db) {
+        if (db != null) {
+            throw new IllegalArgumentException("not supported yet");
+           /* this.id = db.getId();
+            if (db.getEncoding() != null) {
+                this.encoding = new BlockEncodingPropertyType(db.getEncoding());
+            }
+            if (db.getComponents() != null && db.getComponents().size() > 0) {
+                this.components = new DataComponentPropertyType(db.getComponents().iterator().next());
+            }*/
+        }
+    }
+    
     /**
      * Gets the value of the components property.
      */

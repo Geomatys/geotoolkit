@@ -75,6 +75,27 @@ public class MultiplexedStreamFormatPropertyType implements MultiplexedStreamFor
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
     private String actuate;
 
+    public MultiplexedStreamFormatPropertyType() {
+
+    }
+
+    public MultiplexedStreamFormatPropertyType(MultiplexedStreamFormatProperty ms) {
+        if (ms != null) {
+            this.actuate = ms.getActuate();
+            this.arcrole = ms.getArcrole();
+            this.href    = ms.getHref();
+            this.remoteSchema = ms.getRemoteSchema();
+            this.role    = ms.getRole();
+            this.show    = ms.getShow();
+            this.title   = ms.getTitle();
+            this.type    = ms.getType();
+            if (ms.getMultiplexedStreamFormat() != null) {
+                this.multiplexedStreamFormat = new MultiplexedStreamFormatType(ms.getMultiplexedStreamFormat());
+            }
+        }
+
+    }
+    
     /**
      * Gets the value of the multiplexedStreamFormat property.
      * 

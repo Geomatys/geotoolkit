@@ -81,6 +81,22 @@ public class LegalConstraint implements AbstractLegalConstraint {
 
     }
 
+    public LegalConstraint(AbstractLegalConstraint doc) {
+        if (doc != null) {
+            this.actuate      = doc.getActuate();
+            this.arcrole      = doc.getArcrole();
+            this.href         = doc.getHref();
+            this.remoteSchema = doc.getRemoteSchema();
+            this.role         = doc.getRole();
+            this.show         = doc.getShow();
+            this.title        = doc.getTitle();
+            this.type         = doc.getType();
+            if (doc.getRights() != null) {
+                this.rights = new Rights(doc.getRights());
+            }
+        }
+    }
+    
     public LegalConstraint(Rights rights) {
         this.rights = rights;
     }

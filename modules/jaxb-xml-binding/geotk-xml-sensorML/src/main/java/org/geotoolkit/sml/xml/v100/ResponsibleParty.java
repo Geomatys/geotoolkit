@@ -86,6 +86,18 @@ public class ResponsibleParty implements AbstractResponsibleParty {
         this.positionName     = positionName;
     }
 
+    public ResponsibleParty(AbstractResponsibleParty res) {
+        if (res != null) {
+            this.id               = res.getId();
+            this.individualName   = res.getIndividualName();
+            this.organizationName = res.getOrganizationName();
+            this.positionName     = res.getPositionName();
+            if (res.getContactInfo() != null) {
+                this.contactInfo  = new ContactInfo(res.getContactInfo());
+            }
+        }
+    }
+    
     /**
      * Gets the value of the individualName property.
      */

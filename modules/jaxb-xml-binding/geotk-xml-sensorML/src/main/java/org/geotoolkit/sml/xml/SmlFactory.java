@@ -418,10 +418,12 @@ public class SmlFactory {
                 SystemType oldSystem = (SystemType) oldMember.getRealProcess();
 
                 // components
-                ((org.geotoolkit.sml.xml.v101.SystemType)newProcess).setComponents(oldSystem.getComponents());
+                org.geotoolkit.sml.xml.v101.Components newComponents = new org.geotoolkit.sml.xml.v101.Components(oldSystem.getComponents());
+                ((org.geotoolkit.sml.xml.v101.SystemType)newProcess).setComponents(newComponents);
 
                 // positions
-                ((org.geotoolkit.sml.xml.v101.SystemType)newProcess).setPositions(oldSystem.getPositions());
+                org.geotoolkit.sml.xml.v101.Positions newPositions = new org.geotoolkit.sml.xml.v101.Positions(oldSystem.getPositions());
+                ((org.geotoolkit.sml.xml.v101.SystemType)newProcess).setPositions(newPositions);
 
                 // connections
                 org.geotoolkit.sml.xml.v101.Connections newConnections = new org.geotoolkit.sml.xml.v101.Connections(oldSystem.getConnections());

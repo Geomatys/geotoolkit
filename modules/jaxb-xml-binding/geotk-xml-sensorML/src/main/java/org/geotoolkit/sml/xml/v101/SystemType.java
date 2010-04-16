@@ -20,8 +20,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.sml.xml.AbstractComponents;
-import org.geotoolkit.sml.xml.AbstractPositions;
 import org.geotoolkit.sml.xml.System;
 import org.geotoolkit.util.Utilities;
 
@@ -89,10 +87,9 @@ public class SystemType extends AbstractComponentType implements System {
     /**
      * @param components the components to set
      */
-    @Override
-    public void setComponents(AbstractComponents components) {
+    public void setComponents(Components components) {
         if (components != null) {
-            this.components = new Components(components);
+            this.components = components;
         }
     }
 
@@ -107,10 +104,9 @@ public class SystemType extends AbstractComponentType implements System {
     /**
      * @param positions the positions to set
      */
-    @Override
-    public void setPositions(AbstractPositions positions) {
+    public void setPositions(Positions positions) {
         if (positions != null) {
-            this.positions = new Positions(positions);
+            this.positions = positions;
         }
     }
 

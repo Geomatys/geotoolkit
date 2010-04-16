@@ -76,6 +76,18 @@ public class KeywordList implements AbstractKeywordList {
         this.keyword = keyword;
     }
 
+    public KeywordList(AbstractKeywordList kl) {
+        if (kl != null) {
+            this.codeSpace = kl.getCodeSpace();
+            this.id        = kl.getId();
+            this.keyword   = new ArrayList<JAXBElement<String>>();
+            ObjectFactory fact = new ObjectFactory();
+            for (String s : kl.getKeyword()) {
+                this.keyword.add(fact.createKeywordsKeywordListKeyword(s));
+            }
+        }
+    }
+    
     /**
      * Gets the value of the keyword property.
      */

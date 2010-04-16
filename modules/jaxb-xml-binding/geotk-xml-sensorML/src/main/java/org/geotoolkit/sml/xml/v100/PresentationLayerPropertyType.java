@@ -26,10 +26,15 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.sml.xml.AbstractPresentationLayerProperty;
+import org.geotoolkit.swe.xml.AbstractDataRecord;
+import org.geotoolkit.swe.xml.DataRecord;
+import org.geotoolkit.swe.xml.SimpleDataRecord;
 import org.geotoolkit.swe.xml.v100.Category;
 import org.geotoolkit.swe.xml.v100.DataBlockDefinitionType;
 import org.geotoolkit.swe.xml.v100.DataStreamDefinitionType;
 import org.geotoolkit.swe.xml.v100.AbstractDataRecordType;
+import org.geotoolkit.swe.xml.v100.DataRecordType;
+import org.geotoolkit.swe.xml.v100.SimpleDataRecordType;
 
 
 /**
@@ -95,6 +100,39 @@ public class PresentationLayerPropertyType implements AbstractPresentationLayerP
     public PresentationLayerPropertyType() {
 
     }
+    public PresentationLayerPropertyType(AbstractPresentationLayerProperty la) {
+        if (la != null) {
+            if (la.getDataBlockDefinition() != null) {
+                this.dataBlockDefinition = new DataBlockDefinitionType(la.getDataBlockDefinition());
+            }
+            if (la.getDataStreamDefinition() != null) {
+                this.dataStreamDefinition = new DataStreamDefinitionType(la.getDataStreamDefinition());
+            }
+            if (la.getCategory() != null) {
+                this.category = new Category(la.getCategory());
+            }
+            if (la.getDataRecord() != null) {
+                AbstractDataRecord record = la.getDataRecord();
+                org.geotoolkit.swe.xml.v100.ObjectFactory factory = new org.geotoolkit.swe.xml.v100.ObjectFactory();
+                if (record instanceof SimpleDataRecord) {
+                    abstractDataRecord = factory.createSimpleDataRecord(new SimpleDataRecordType((SimpleDataRecord)record));
+                } else if (record instanceof DataRecord) {
+                    abstractDataRecord = factory.createDataRecord(new DataRecordType((DataRecord)record));
+                } else {
+                    System.out.println("UNINPLEMENTED CASE:" + record);
+                }
+            }
+            this.actuate = la.getActuate();
+            this.arcrole = la.getArcrole();
+            this.href    = la.getHref();
+            this.remoteSchema = la.getRemoteSchema();
+            this.role         = la.getRole();
+            this.show         = la.getShow();
+            this.title        = la.getTitle();
+            this.type         = la.getType();
+        }
+    }
+
 
     public PresentationLayerPropertyType(Category category) {
         this.category = category;

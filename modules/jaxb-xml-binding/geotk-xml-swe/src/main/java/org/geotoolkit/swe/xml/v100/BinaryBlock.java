@@ -113,6 +113,25 @@ public class BinaryBlock extends AbstractEncodingType implements AbstractBinaryB
     @XmlAttribute(required = true)
     private ByteOrder byteOrder;
 
+    public BinaryBlock() {
+
+    }
+
+    public BinaryBlock(AbstractBinaryBlock bb) {
+        super(bb);
+        if (bb != null) {
+            this.byteLength = bb.getByteLength();
+            if (bb.getMember() != null) {
+                this.member = new ArrayList<Member>();
+                for (BinaryBlockMember m : bb.getMember()) {
+                    this.member.add(new Member(m));
+                }
+            }
+            this.byteEncoding = bb.getByteEncoding();
+            this.byteOrder    = bb.getByteOrder();
+        }
+    }
+    
     /**
      * Gets the value of the member property.
      */
@@ -225,6 +244,22 @@ public class BinaryBlock extends AbstractEncodingType implements AbstractBinaryB
         @XmlElement(name = "Block")
         private BinaryBlock.Member.Block block;
 
+        public Member() {
+
+        }
+
+        public Member(BinaryBlockMember m) {
+            if (m != null) {
+                if (m.getBlock() != null) {
+                    this.block = new Block(m.getBlock());
+                }
+                if (m.getComponent() != null) {
+                    this.component = new Component(m.getComponent());
+                }
+            }
+
+        }
+        
         /**
          * Gets the value of the component property.
          */
@@ -300,6 +335,22 @@ public class BinaryBlock extends AbstractEncodingType implements AbstractBinaryB
             @XmlSchemaType(name = "anyURI")
             private String compression;
 
+            public Block() {
+
+            }
+
+            public Block(BinaryBlockMemberBlock bl) {
+                if (bl != null) {
+                    this.byteLength         = bl.getByteLength();
+                    this.compression        = bl.getCompression();
+                    this.encryption         = bl.getEncryption();
+                    this.paddingBytesAfter  = bl.getPaddingBytesAfter();
+                    this.paddingBytesBefore = bl.getPaddingBytesBefore();
+                    this.ref                = bl.getRef();
+                }
+
+            }
+            
             /**
              * Gets the value of the ref property.
              * 
@@ -505,6 +556,21 @@ public class BinaryBlock extends AbstractEncodingType implements AbstractBinaryB
             @XmlSchemaType(name = "anyURI")
             private String encryption;
 
+            public Component() {
+
+            }
+
+            public Component(BinaryBlockMemberComponent bc) {
+                if (bc != null) {
+                    this.bitLength         = bc.getBitLength();
+                    this.dataType          = bc.getDataType();
+                    this.encryption        = bc.getEncryption();
+                    this.paddingBitsAfter  = bc.getPaddingBitsAfter();
+                    this.paddingBitsBefore = bc.getPaddingBitsBefore();
+                    this.ref               = bc.getRef();
+                    this.significantBits   = bc.getSignificantBits();
+                }
+            }
             /**
              * Gets the value of the ref property.
              * 

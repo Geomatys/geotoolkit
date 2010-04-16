@@ -75,6 +75,26 @@ public class DataBlockDefinitionPropertyType implements DataBlockDefinitionPrope
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
     private String actuate;
 
+     public DataBlockDefinitionPropertyType() {
+
+    }
+
+    public DataBlockDefinitionPropertyType(DataBlockDefinitionProperty db) {
+        if (db != null) {
+            this.actuate = db.getActuate();
+            this.arcrole = db.getArcrole();
+            this.href    = db.getHref();
+            this.remoteSchema = db.getRemoteSchema();
+            this.role         = db.getRole();
+            this.show         = db.getShow();
+            this.title        = db.getTitle();
+            this.type         = db.getType();
+            if (db.getDataBlockDefinition() != null) {
+                this.dataBlockDefinition = new DataBlockDefinitionType(db.getDataBlockDefinition());
+            }
+        }
+
+    }
     /**
      * Gets the value of the dataBlockDefinition property.
      * 

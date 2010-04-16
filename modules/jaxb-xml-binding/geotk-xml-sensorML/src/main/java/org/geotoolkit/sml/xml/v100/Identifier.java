@@ -67,6 +67,13 @@ public class Identifier implements AbstractIdentifier {
         this.term = term;
     }
 
+    public Identifier(AbstractIdentifier id) {
+        if (id != null) {
+            this.name = id.getName();
+            this.term = new Term(id.getTerm());
+        }
+    }
+    
     /**
      * Gets the value of the term property.
      */

@@ -67,6 +67,14 @@ public abstract class AbstractVectorType extends AbstractDataRecordType implemen
 
     }
 
+    public AbstractVectorType(AbstractVector av) {
+        super(av);
+        if (av != null) {
+            this.localFrame = av.getLocalFrame();
+            this.referenceFrame = av.getReferenceFrame();
+        }
+    }
+    
     public AbstractVectorType(URI definition) {
         super(definition);
     }

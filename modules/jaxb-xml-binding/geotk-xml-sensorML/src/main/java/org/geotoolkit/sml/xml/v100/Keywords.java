@@ -100,6 +100,22 @@ public class Keywords implements AbstractKeywords {
         this.keywordList = keywordList;
     }
 
+    public Keywords(AbstractKeywords kw) {
+        if (kw != null) {
+            this.actuate = kw.getActuate();
+            this.arcrole = kw.getArcrole();
+            this.href    = kw.getHref();
+            if (kw.getKeywordList() != null) {
+                this.keywordList = new KeywordList(kw.getKeywordList());
+            }
+            this.remoteSchema = kw.getRemoteSchema();
+            this.role         = kw.getRole();
+            this.show         = kw.getShow();
+            this.title        = kw.getTitle();
+            this.type         = kw.getType();
+        }
+    }
+    
     /**
      * Gets the value of the keywordList property.
      */

@@ -88,6 +88,19 @@ public class Link implements AbstractLink {
         this.type        = type;
     }
 
+    public Link(AbstractLink link) {
+        if (link != null) {
+            this.type        = link.getType();
+            if (link.getSource() != null) {
+                this.source      = new LinkRef(link.getSource().getRef());
+            }
+            if (link.getDestination() != null) {
+                this.destination = new LinkRef(link.getDestination().getRef());
+            }
+        }
+
+    }
+    
     /**
      * Gets the value of the source property.
      */

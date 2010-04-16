@@ -79,6 +79,25 @@ public class EventListMember implements AbstractEventListMember {
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
     private String type;
 
+    public EventListMember() {
+    }
+
+    public EventListMember(AbstractEventListMember m) {
+        if (m != null) {
+            this.actuate = m.getActuate();
+            this.arcrole = m.getArcrole();
+            this.href = m.getHref();
+            this.name = m.getName();
+            this.remoteSchema = m.getRemoteSchema();
+            this.role = m.getRole();
+            this.show = m.getShow();
+            this.title = m.getTitle();
+            this.type = m.getType();
+            if (m.getEvent() != null) {
+                this.event = new Event(m.getEvent());
+            }
+        }
+    }
     /**
      * Gets the value of the event property.
      */

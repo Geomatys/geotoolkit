@@ -84,6 +84,17 @@ public class AddressType implements AbstractAddress {
 
     }
 
+     public AddressType(AbstractAddress ad) {
+        if (ad != null) {
+            this.administrativeArea    = ad.getAdministrativeArea();
+            this.city                  = ad.getCity();
+            this.country               = ad.getCountry();
+            this.deliveryPoint         = ad.getDeliveryPoint();
+            this.electronicMailAddress = ad.getElectronicMailAddress();
+            this.postalCode            = ad.getPostalCode();
+        }
+    }
+
     /**
      * Gets the value of the deliveryPoint property.
      *

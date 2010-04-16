@@ -26,8 +26,13 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.sml.xml.AbstractLayerProperty;
+import org.geotoolkit.swe.xml.AbstractDataRecord;
+import org.geotoolkit.swe.xml.DataRecord;
+import org.geotoolkit.swe.xml.SimpleDataRecord;
 import org.geotoolkit.swe.xml.v100.Category;
 import org.geotoolkit.swe.xml.v100.AbstractDataRecordType;
+import org.geotoolkit.swe.xml.v100.DataRecordType;
+import org.geotoolkit.swe.xml.v100.SimpleDataRecordType;
 import org.geotoolkit.util.Utilities;
 
 
@@ -91,6 +96,33 @@ public class LayerPropertyType implements AbstractLayerProperty {
         this.category = category;
     }
 
+    public LayerPropertyType(AbstractLayerProperty la) {
+        if (la != null) {
+            if (la.getCategory() != null) {
+                this.category = new Category(la.getCategory());
+            }
+            if (la.getDataRecord() != null) {
+                AbstractDataRecord record = la.getDataRecord();
+                org.geotoolkit.swe.xml.v100.ObjectFactory factory = new org.geotoolkit.swe.xml.v100.ObjectFactory();
+                if (record instanceof SimpleDataRecord) {
+                    abstractDataRecord = factory.createSimpleDataRecord(new SimpleDataRecordType((SimpleDataRecord)record));
+                } else if (record instanceof DataRecord) {
+                    abstractDataRecord = factory.createDataRecord(new DataRecordType((DataRecord)record));
+                } else {
+                    System.out.println("UNINPLEMENTED CASE:" + record);
+                }
+            }
+            this.actuate = la.getActuate();
+            this.arcrole = la.getArcrole();
+            this.href    = la.getHref();
+            this.remoteSchema = la.getRemoteSchema();
+            this.role         = la.getRole();
+            this.show         = la.getShow();
+            this.title        = la.getTitle();
+            this.type         = la.getType();
+        }
+    }
+    
     /**
      * Gets the value of the abstractDataRecord property.
      */

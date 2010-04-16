@@ -99,8 +99,7 @@ public class ComponentPropertyType implements ComponentProperty {
             if (cp.getAbstractProcess() != null) {
                 ObjectFactory factory = new ObjectFactory();
                 AbstractProcess process = cp.getAbstractProcess();
-                throw new IllegalArgumentException("not yet convertible");
-                /**if (process instanceof System) {
+                if (process instanceof System) {
                     this.process = factory.createSystem(new SystemType((System)process));
                 } else if (process instanceof Component) {
                     this.process = factory.createComponent(new ComponentType((Component) process));
@@ -114,7 +113,7 @@ public class ComponentPropertyType implements ComponentProperty {
                     this.process = factory.createComponentArray(new ComponentArrayType((ComponentArray) process));
                 } else {
                     java.lang.System.out.println("Unexpected AbstractProcessType:" + process);
-                }*/
+                }
             }
             this.href          = cp.getHref();
             this.remoteSchema  = cp.getRemoteSchema();
@@ -163,8 +162,30 @@ public class ComponentPropertyType implements ComponentProperty {
     /**
      * Sets the value of the process property.
      */
-    public void setProcess(JAXBElement<? extends AbstractProcessType> value) {
+    public void setJBProcess(JAXBElement<? extends AbstractProcessType> value) {
         this.process = ((JAXBElement<? extends AbstractProcessType>) value);
+    }
+
+    /**
+     * Sets the value of the process property.
+     */
+    public void setProcess(AbstractProcessType value) {
+        ObjectFactory factory = new ObjectFactory();
+        if (value instanceof System) {
+            this.process = factory.createSystem((SystemType) value);
+        } else if (value instanceof Component) {
+            this.process = factory.createComponent((ComponentType) value);
+        } else if (value instanceof AbstractDataSource) {
+            this.process = factory.createDataSource((DataSourceType) value);
+        } else if (value instanceof AbstractProcessChain) {
+            this.process = factory.createProcessChain((ProcessChainType) value);
+        } else if (value instanceof AbstractProcessModel) {
+            this.process = factory.createProcessModel((ProcessModelType) value);
+        } else if (value instanceof ComponentArray) {
+            this.process = factory.createComponentArray((ComponentArrayType) value);
+        } else {
+            java.lang.System.out.println("Unexpected AbstractProcessType:" + value);
+        }
     }
 
     /**

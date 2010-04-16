@@ -28,7 +28,13 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.geotoolkit.gml.xml.v311.StringOrRefType;
+import org.geotoolkit.sml.xml.AbstractClassification;
+import org.geotoolkit.sml.xml.AbstractContact;
+import org.geotoolkit.sml.xml.AbstractDocumentation;
 import org.geotoolkit.sml.xml.AbstractEvent;
+import org.geotoolkit.sml.xml.AbstractIdentification;
+import org.geotoolkit.sml.xml.AbstractKeywords;
+import org.geotoolkit.swe.xml.DataComponentProperty;
 import org.geotoolkit.swe.xml.v100.DataComponentPropertyType;
 import org.geotoolkit.util.Utilities;
 
@@ -86,6 +92,54 @@ public class Event implements AbstractEvent {
     @XmlID
     private String id;
 
+    public Event() {
+
+    }
+
+    public Event(AbstractEvent event) {
+        if (event != null) {
+            if (event.getClassification() != null) {
+                this.classification = new ArrayList<Classification>();
+                for (AbstractClassification c : event.getClassification()) {
+                    this.classification.add(new Classification(c));
+                }
+            }
+            if (event.getContact() != null) {
+                this.contact = new ArrayList<Contact>();
+                for (AbstractContact c : event.getContact()) {
+                    this.contact.add(new Contact(c));
+                }
+            }
+            if (event.getDocumentation() != null) {
+                this.documentation = new ArrayList<Documentation>();
+                for (AbstractDocumentation c : event.getDocumentation()) {
+                    this.documentation.add(new Documentation(c));
+                }
+            }
+            if (event.getIdentification() != null) {
+                this.identification = new ArrayList<Identification>();
+                for (AbstractIdentification c : event.getIdentification()) {
+                    this.identification.add(new Identification(c));
+                }
+            }
+            if (event.getKeywords() != null) {
+                this.keywords = new ArrayList<Keywords>();
+                for (AbstractKeywords c : event.getKeywords()) {
+                    this.keywords.add(new Keywords(c));
+                }
+            }
+            if (event.getProperty() != null) {
+                this.property = new ArrayList<DataComponentPropertyType>();
+                for (DataComponentProperty c : event.getProperty()) {
+                    this.property.add(new DataComponentPropertyType(c));
+                }
+            }
+            this.date        = event.getDate();
+            this.id          = event.getId();
+            this.description = event.getDescription();
+        }
+
+    }
     /**
      * Gets the value of the date property.
      */

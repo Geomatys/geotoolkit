@@ -58,6 +58,17 @@ public class TextBlock extends AbstractEncodingType implements org.geotoolkit.sw
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     private String decimalSeparator;
 
+    public TextBlock() {}
+
+    public TextBlock(org.geotoolkit.swe.xml.TextBlock tb) {
+        super(tb);
+        if (tb != null) {
+            this.blockSeparator   = tb.getBlockSeparator();
+            this.decimalSeparator = tb.getDecimalSeparator();
+            this.tokenSeparator   = tb.getTokenSeparator();
+        }
+    }
+
     /**
      * Gets the value of the tokenSeparator property.
      * 

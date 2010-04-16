@@ -96,6 +96,42 @@ public class InterfaceDefinition implements AbstractInterfaceDefinition {
         this.dataLinkLayer    = dataLinkLayer;
     }
 
+     public InterfaceDefinition(AbstractInterfaceDefinition in) {
+        if (in != null) {
+            if (in.getServiceLayer() != null) {
+                this.serviceLayer = new LayerPropertyType(in.getServiceLayer());
+            }
+            if (in.getApplicationLayer() != null) {
+                this.applicationLayer = new LayerPropertyType(in.getApplicationLayer());
+            }
+            if (in.getDataLinkLayer() != null) {
+                this.dataLinkLayer = new LayerPropertyType(in.getDataLinkLayer());
+            }
+            this.id = in.getId();
+            if (in.getMechanicalLayer() != null) {
+                this.mechanicalLayer = new LayerPropertyType(in.getMechanicalLayer());
+            }
+            if (in.getNetworkLayer() != null) {
+                this.networkLayer = new LayerPropertyType(in.getNetworkLayer());
+            }
+            if (in.getPhysicalLayer() != null) {
+                this.physicalLayer = new LayerPropertyType(in.getPhysicalLayer());
+            }
+            if (in.getPresentationLayer() != null) {
+                this.presentationLayer = new PresentationLayerPropertyType(in.getPresentationLayer());
+            }
+            if (in.getServiceLayer() != null) {
+                this.serviceLayer = new LayerPropertyType(in.getServiceLayer());
+            }
+            if (in.getSessionLayer() != null) {
+                this.sessionLayer = new LayerPropertyType(in.getSessionLayer());
+            }
+            if (in.getTransportLayer() != null) {
+                this.transportLayer = new LayerPropertyType(in.getTransportLayer());
+            }
+        }
+    }
+     
     /**
      * Gets the value of the serviceLayer property.
      */

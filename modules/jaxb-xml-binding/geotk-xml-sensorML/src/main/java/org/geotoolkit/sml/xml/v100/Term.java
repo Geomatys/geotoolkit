@@ -77,6 +77,16 @@ public class Term implements AbstractTerm {
         this.value      = value;
     }
 
+    public Term(AbstractTerm term) {
+        if (term != null) {
+            this.value      = term.getValue();
+            this.definition = term.getDefinition();
+            if (term.getCodeSpace() != null) {
+                this.codeSpace = new CodeSpacePropertyType(term.getCodeSpace());
+            }
+        }
+    }
+    
     public Term(CodeSpacePropertyType codeSpace, String value, URI definition) {
         this.codeSpace  = codeSpace;
         this.definition = definition;

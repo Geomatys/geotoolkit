@@ -93,6 +93,26 @@ public class Documentation implements AbstractDocumentation {
         this.documentList = documentList;
     }
 
+    public Documentation(AbstractDocumentation doc) {
+        if (doc != null) {
+            this.actuate      = doc.getActuate();
+            this.arcrole      = doc.getArcrole();
+            this.href         = doc.getHref();
+            this.remoteSchema = doc.getRemoteSchema();
+            this.role         = doc.getRole();
+            this.show         = doc.getShow();
+            this.title        = doc.getTitle();
+            this.type         = doc.getType();
+            if (doc.getDocument() != null) {
+                this.document = new Document(doc.getDocument());
+            }
+            if (doc.getDocumentList() != null) {
+                this.documentList = new DocumentList(doc.getDocumentList());
+            }
+        }
+
+    }
+
     /**
      * Gets the value of the document property.
      *     
