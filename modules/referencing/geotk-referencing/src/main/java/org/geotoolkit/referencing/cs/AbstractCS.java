@@ -316,7 +316,7 @@ public class AbstractCS extends AbstractIdentifiedObject implements CoordinateSy
      * Returns an affine transform between two coordinate systems. Only units and
      * axis order (e.g. transforming from
      * ({@linkplain AxisDirection#NORTH NORTH},{@linkplain AxisDirection#WEST WEST}) to
-     * ({@linkplain AxisDirection#EAST EAST},{@linkplain AxisDirection#NORTH NORTH}
+     * ({@linkplain AxisDirection#EAST EAST},{@linkplain AxisDirection#NORTH NORTH})
      * are taken in account.
      * <p>
      * <b>Example:</b> If coordinates in {@code sourceCS} are (<var>x</var>,<var>y</var>) pairs

@@ -37,7 +37,7 @@ import org.geotoolkit.util.logging.Logging;
  * shift over United States.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.10
+ * @version 3.11
  *
  * @since 3.00
  * @module
@@ -65,7 +65,15 @@ public enum Installation {
     /**
      * The EPSG database, or parameters required for a connection to a distant EPSG database.
      */
-    EPSG("org/geotoolkit/referencing/factory", "EPSG", "EPSG");
+    EPSG("org/geotoolkit/referencing/factory", "EPSG", "EPSG"),
+
+    /**
+     * The directory of the properties file which contains the parameters required for a
+     * connection to a distant Coverages database.
+     *
+     * @since 3.11
+     */
+    COVERAGES("org/geotoolkit/coverage/sql", "Database", "Coverages");
 
     /**
      * The preference node and key for storing the value of this configuration option.

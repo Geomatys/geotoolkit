@@ -108,6 +108,11 @@ public final class Descriptions extends IndexedResourceBundle {
         public static final int NON_CONFORM_PARAMETER_$2 = 13;
 
         /**
+         * Do not use a valuable password, since it will not be encrypted.
+         */
+        public static final int PASSWORD_NOT_ENCRYPTED = 14;
+
+        /**
          * Count:       {0}
          * Minimum:     {1}
          * Maximum:     {2}
@@ -120,7 +125,7 @@ public final class Descriptions extends IndexedResourceBundle {
         /**
          * Use {0,choice,0#the embedded|1#a specific} database.
          */
-        public static final int USE_EPSG_DATABASE_$1 = 8;
+        public static final int USE_EOS_DATABASE_$1 = 8;
 
         /**
          * Use "help" to show available commands.

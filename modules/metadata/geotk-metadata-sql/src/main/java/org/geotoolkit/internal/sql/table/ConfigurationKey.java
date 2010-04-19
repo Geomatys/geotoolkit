@@ -91,7 +91,7 @@ public enum ConfigurationKey {
      * The default value for this enum, which may be {@code null}. This default value is
      * used only if the user didn't specified explicitly a value in his property file.
      */
-    final String defaultValue;
+    public final String defaultValue;
 
     /**
      * Creates a new enum.

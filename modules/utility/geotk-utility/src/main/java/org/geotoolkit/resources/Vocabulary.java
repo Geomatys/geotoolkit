@@ -255,6 +255,11 @@ public final class Vocabulary extends IndexedResourceBundle {
         public static final int COMPONENT_COUNT_$1 = 39;
 
         /**
+         * Connection parameters
+         */
+        public static final int CONNECTION_PARAMETERS = 324;
+
+        /**
          * Conversion
          */
         public static final int CONVERSION = 40;
@@ -705,6 +710,11 @@ public final class Vocabulary extends IndexedResourceBundle {
         public static final int GRID = 123;
 
         /**
+         * Gridded data
+         */
+        public static final int GRIDDED_DATA = 323;
+
+        /**
          * Height
          */
         public static final int HEIGHT = 124;
@@ -765,7 +775,7 @@ public final class Vocabulary extends IndexedResourceBundle {
         public static final int IMAGE_CLASS_$1 = 133;
 
         /**
-         * {1} Image {0,choice,0#Reader|Writer} with World File
+         * {1} Image {0,choice,0#Reader|1#Writer} with World File
          */
         public static final int IMAGE_CODEC_WITH_WORLD_FILE_$2 = 309;
 
@@ -773,6 +783,11 @@ public final class Vocabulary extends IndexedResourceBundle {
          * Image list
          */
         public static final int IMAGE_LIST = 134;
+
+        /**
+         * Image root directory
+         */
+        public static final int IMAGE_ROOT_DIRECTORY = 325;
 
         /**
          * Image size
