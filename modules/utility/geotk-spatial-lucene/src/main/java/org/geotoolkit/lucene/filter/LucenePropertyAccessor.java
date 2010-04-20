@@ -35,13 +35,19 @@ import org.geotoolkit.geometry.jts.SRIDGenerator;
 
 /**
  * Simple accessor for lucene documents.
+ *
+ * This class is not thread safe.
  * 
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
 public class LucenePropertyAccessor implements PropertyAccessor {
 
-    private static final WKBReader READER = new WKBReader(new GeometryFactory());
+    private final WKBReader reader;
+
+    LucenePropertyAccessor() {
+        reader = new WKBReader(new GeometryFactory());
+    }
 
     /**
      * {@inheritDoc }
@@ -55,7 +61,7 @@ public class LucenePropertyAccessor implements PropertyAccessor {
      * {@inheritDoc }
      */
     @Override
-    public Object get(Object object, String xpath, Class target) throws IllegalArgumentException {
+    public synchronized Object get(Object object, String xpath, Class target) throws IllegalArgumentException {
         Document doc = (Document) object;
 
         if(xpath.equals(LuceneOGCFilter.GEOMETRY_FIELD_NAME)){
@@ -73,7 +79,7 @@ public class LucenePropertyAccessor implements PropertyAccessor {
             stream.read(new byte[5]);
             
             try {
-                final Geometry geom = READER.read(stream);
+                final Geometry geom = reader.read(stream);
                 geom.setSRID(srid);
                 return geom;
             } catch (IOException ex) {

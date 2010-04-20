@@ -30,7 +30,11 @@ import org.geotoolkit.filter.accessor.PropertyAccessorFactory;
  */
 public class LucenePropertyAccessorFactory implements PropertyAccessorFactory{
 
-    private static final PropertyAccessor ACCESSOR = new LucenePropertyAccessor();
+    private final PropertyAccessor accessor;
+
+    public LucenePropertyAccessorFactory() {
+        accessor = new LucenePropertyAccessor();
+    }
 
     /**
      * {@inheritDoc }
@@ -43,7 +47,7 @@ public class LucenePropertyAccessorFactory implements PropertyAccessorFactory{
         }
 
         //lucene doesnt need xpath, target class or hints
-        return ACCESSOR;
+        return accessor;
     }
 
 }
