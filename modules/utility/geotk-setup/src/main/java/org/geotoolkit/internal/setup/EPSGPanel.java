@@ -52,7 +52,7 @@ final class EPSGPanel extends DatabasePanel {
      * Creates the panel.
      */
     EPSGPanel(final Vocabulary resources, final DataPanel dataPanel, final JButton applyButton) {
-        super(resources, Installation.EPSG, true, getFields(resources), applyButton);
+        super(resources, Installation.EPSG, true, applyButton);
         applyButton.addActionListener(new ActionListener() {
             @Override public void actionPerformed(final ActionEvent event) {
                 dataPanel.refresh(DataPanel.EPSG);
@@ -61,10 +61,10 @@ final class EPSGPanel extends DatabasePanel {
     }
 
     /**
-     * Workaround for RFE #4093999 ("Relax constraint on placement of this()/super()
-     * call in constructors").
+     * Provides the database fields.
      */
-    private static Field[] getFields(final Vocabulary resources) {
+    @Override
+    Field[] getFields(final Vocabulary resources) {
         final JComboBox url = new JComboBox(new String[] {
             ThreadedEpsgFactory.getDefaultURL(),
             "jdbc:derby:" + System.getProperty("user.home", "").replace(File.separatorChar, '/') + "/Referencing",
@@ -89,7 +89,7 @@ final class EPSGPanel extends DatabasePanel {
     final EpsgInstaller installer() throws FactoryException {
         final Properties settings = getSettings();
         final EpsgInstaller install = new EpsgInstaller();
-        if (settings != null) {
+        if (!settings.isEmpty()) {
             install.setDatabase(settings.getProperty("URL"),
                                 settings.getProperty("user"),
                                 settings.getProperty("password"));

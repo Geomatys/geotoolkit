@@ -46,14 +46,14 @@ final class CoveragePanel extends DatabasePanel {
      * Creates the panel.
      */
     CoveragePanel(final Vocabulary resources, final JButton applyButton) {
-        super(resources, Installation.COVERAGES, false, getFields(resources), applyButton);
+        super(resources, Installation.COVERAGES, false, applyButton);
     }
 
     /**
-     * Workaround for RFE #4093999 ("Relax constraint on placement of this()/super()
-     * call in constructors").
+     * Provides the database fields.
      */
-    private static Field[] getFields(final Vocabulary resources) {
+    @Override
+    Field[] getFields(final Vocabulary resources) {
         final JComboBox url = new JComboBox(new String[] {
             "jdbc:postgresql://host/database",
             "jdbc:odbc:Coverages"

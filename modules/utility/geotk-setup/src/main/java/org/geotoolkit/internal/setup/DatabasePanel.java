@@ -40,6 +40,8 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.text.JTextComponent;
 
 import org.geotoolkit.internal.io.Installation;
@@ -91,13 +93,24 @@ abstract class DatabasePanel extends JPanel implements ActionListener {
 
     /**
      * Describes a field (URL, username, password, etc.).
+     *
+     * @author Martin Desruisseaux (Geomatys)
+     * @version 3.11
+     *
+     * @since 3.11
+     * @module
      */
-    static final class Field {
+    final class Field implements ActionListener, DocumentListener {
         final String     propertyKey;
         final JLabel     label;
         final JComponent component;
         final String     defaultValue;
+        private String   originalValue;
+        private boolean  isModified;
 
+        /**
+         * Creates a new {@code Field} instance with a laber created from the given property key.
+         */
         Field(final String propertyKey, final int resourceKey, final Vocabulary resources,
                 final JComponent component, final String defaultValue)
         {
@@ -105,8 +118,89 @@ abstract class DatabasePanel extends JPanel implements ActionListener {
             this.label        = new JLabel(resources.getLabel(resourceKey));
             this.component    = component;
             this.defaultValue = defaultValue;
+            if (component instanceof JComboBox) {
+                ((JComboBox) component).addActionListener(this);
+            } else {
+                ((JTextComponent) component).getDocument().addDocumentListener(this);
+            }
+            setOriginalValue(defaultValue);
         }
+
+        /**
+         * Sets the original value. This is used in order to detect if the
+         * value edited by the user is different and needs to be saved.
+         */
+        final void setOriginalValue(String value) {
+            if (value == null) {
+                value = "";
+            }
+            originalValue = value;
+            isModified = false;
+        }
+
+        /**
+         * Returns the {@linkplain #component} text. The component can be a field or a combo box.
+         */
+        final Object getText() {
+            final JComponent c = component;
+            if (c instanceof JComboBox) {
+                return ((JComboBox) c).getSelectedItem();
+            }
+            return ((JTextComponent) c).getText();
+        }
+
+        /**
+         * Sets the {@linkplain #component} text. The component can be a field or a combo box.
+         */
+        final void setText(final String value) {
+            final JComponent c = component;
+            if (c instanceof JComboBox) {
+                ((JComboBox) c).setSelectedItem(value);
+            } else {
+                ((JTextComponent) c).setText(value);
+            }
+        }
+
+        /**
+         * Invoked when the text changed. This method checks if the new user value is
+         * different than the original value, and update the "Apply" button state concequently.
+         */
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            Object value = getText();
+            if (value == null) {
+                value = "";
+            }
+            boolean mod = !value.equals(originalValue);
+            if (mod != isModified) {
+                isModified = mod;
+                if (mod) {
+                    modificationCount++;
+                } else {
+                    modificationCount--;
+                }
+                refresh();
+            }
+        }
+
+        @Override public void changedUpdate(DocumentEvent e) {actionPerformed(null);}
+        @Override public void  insertUpdate(DocumentEvent e) {actionPerformed(null);}
+        @Override public void  removeUpdate(DocumentEvent e) {actionPerformed(null);}
     }
+
+    /**
+     * The amount of fields having a value different than the default value.
+     */
+    int modificationCount;
+
+    /**
+     * {@code true} if the original file was defining the automatic mode.
+     * This field is always {@code false} if there is no radio buttons for
+     * the manual and automatic modes.
+     *
+     * @see #isAutomatic()
+     */
+    private boolean isOriginalAutomatic;
 
     /**
      * {@code true} if the combo box contains an URL for an explicit database.
@@ -114,8 +208,9 @@ abstract class DatabasePanel extends JPanel implements ActionListener {
     private boolean hasExplicitURL;
 
     /**
-     * The connection parameters as a map of properties, or {@code null} if the embedded
-     * database is used instead of an explicit one.
+     * The connection parameters as a map of properties, or {@code null} if they have not been
+     * loaded yet. If the embedded database is used instead of an explicit one, then this map
+     * is empty.
      * <p>
      * <strong>WARNING:</strong> contains the password. However it should not be a sensible
      * password since it will be written uncrypted in a clear text file.
@@ -132,7 +227,7 @@ abstract class DatabasePanel extends JPanel implements ActionListener {
      * @param fields The list of fields to provide.
      */
     DatabasePanel(final Vocabulary resources, final Installation installation,
-            final boolean hasAutoChoice, final Field[] fields, final JButton applyButton)
+            final boolean hasAutoChoice, final JButton applyButton)
     {
         super(new GridBagLayout());
         this.installation = installation;
@@ -165,7 +260,7 @@ abstract class DatabasePanel extends JPanel implements ActionListener {
          */
         c.fill = BOTH;
         c.gridwidth = 1;
-        this.fields = fields;
+        fields = getFields(resources);
         for (final Field field : fields) {
             c.gridy++;
             c.gridx=1; c.weightx=0; c.insets.left=30; add(field.label, c);
@@ -180,30 +275,62 @@ abstract class DatabasePanel extends JPanel implements ActionListener {
     }
 
     /**
+     * Shall be invoked by subclasses for providing the database fields. This is invoked by
+     * the constructor only. We can not let subclasses define their own static method because
+     * the {@link Field} constructor needs access to {@code this}.
+     */
+    abstract Field[] getFields(Vocabulary resources);
+
+    /**
+     * Returns {@code true} if this form has some fields which need to be saved.
+     */
+    final boolean hasModifications() {
+        if (settings == null) {
+            return false;
+        }
+        final boolean isAutomatic = isAutomatic();
+        if (isAutomatic != isOriginalAutomatic) {
+            return true;
+        }
+        return !isAutomatic && modificationCount != 0;
+    }
+
+    /**
+     * Returns {@code true} if the "automatic" button radio is selected. This method returns
+     * always {@code false} if there is no automatic/manual button radio.
+     */
+    private boolean isAutomatic() {
+        return isAutomatic != null && isAutomatic.isSelected();
+    }
+
+    /**
      * Invoked when the user change the "automatic" or "manual" mode. This method will enable
      * or disable the fields where are specified the connection parameters.
      */
     @Override
     public void actionPerformed(final ActionEvent event) {
-        final boolean manual = isManual == null || isManual.isSelected();
+        final boolean manual = !isAutomatic();
         for (final Field field : fields) {
             field.label.setEnabled(manual);
-            final JComponent c = field.component;
-            c.setEnabled(manual);
+            field.component.setEnabled(manual);
             final String value;
-            if (manual && settings != null) {
+            if (manual) {
                 value = settings.getProperty(field.propertyKey);
             } else {
                 value = field.defaultValue;
             }
-            if (c instanceof JComboBox) {
-                ((JComboBox) c).setSelectedItem(value);
-            } else {
-                ((JTextComponent) c).setText(value);
-            }
+            field.setText(value);
         }
         final JComboBox url = (JComboBox) fields[0].component;
         url.setSelectedIndex(manual || !hasExplicitURL ? 0 : 1);
+        refresh();
+    }
+
+    /**
+     * Refresh the state of the "Apply" button.
+     */
+    final void refresh() {
+        ((DatabasePanels) getParent().getParent()).refresh();
     }
 
     /**
@@ -223,7 +350,7 @@ abstract class DatabasePanel extends JPanel implements ActionListener {
 
     /**
      * If the properies file has not yet been read, reads it now.
-     * Then, return its content.
+     * Then, return its content (never {@code null}).
      */
     final Properties getSettings() {
         for (final ComponentListener listener : getComponentListeners()) {
@@ -242,8 +369,8 @@ abstract class DatabasePanel extends JPanel implements ActionListener {
     private void load() {
         final File configFile = new File(installation.directory(true), CONFIGURATION_FILE);
         boolean manual = false;
+        final Properties settings = new Properties();
         if (configFile.isFile()) {
-            settings = new Properties();
             try {
                 final InputStream in = new FileInputStream(configFile);
                 settings.load(in);
@@ -251,7 +378,6 @@ abstract class DatabasePanel extends JPanel implements ActionListener {
                 manual = true;
             } catch (IOException ex) {
                 error(Errors.Keys.CANT_READ_$1, ex);
-                settings = null;
                 return;
             }
             /*
@@ -268,10 +394,20 @@ abstract class DatabasePanel extends JPanel implements ActionListener {
                     hasExplicitURL = true;
                 }
             }
+            /*
+             * Remember the original values. This will be used in order to detect
+             * if a value has been edited, and consequently if we should enable or
+             * disable the "Apply" button.
+             */
+            for (final Field field : fields) {
+                field.setOriginalValue(settings.getProperty(field.propertyKey));
+            }
         }
+        this.settings = settings; // Set only on success.
         final JRadioButton mode = manual ? isManual : isAutomatic;
         if (mode != null) {
             mode.setSelected(true);
+            isOriginalAutomatic = !manual;
         }
         actionPerformed(null); // Refresh the fields.
     }
@@ -282,44 +418,59 @@ abstract class DatabasePanel extends JPanel implements ActionListener {
      * invoked every time the "Apply" button has been pushed.
      */
     private void save() {
-        final boolean manual = isManual == null || isManual.isSelected();
-        if (manual) {
-            if (settings == null) {
-                settings = new Properties();
+        if (!hasModifications()) {
+            // Does not save the file if there is no modification, in order to preserve the
+            // file date and time information. Also in order to preserve any manual edition
+            // that the user could have done in the file.
+            return;
+        }
+        final Properties settings = this.settings;
+        if (isAutomatic()) {
+            final File file = new File(installation.directory(true), CONFIGURATION_FILE);
+            file.delete();
+            settings.clear();
+            if (isAutomatic != null) {
+                isOriginalAutomatic = true;
+                // Shall stay 'false' if there is no automatic/manual radio buttons.
             }
+        } else {
             for (final Field field : fields) {
-                final Object value;
-                final JComponent c = field.component;
-                if (c instanceof JComboBox) {
-                    value = ((JComboBox) c).getSelectedItem();
-                } else {
-                    value = ((JTextComponent) c).getText();
-                }
-                setProperty(field.propertyKey, value);
+                setProperty(settings, field.propertyKey, field.getText());
             }
             if (!settings.isEmpty()) {
+                // Get the name to put in the property file comment line.
+                String name = installation.name();
+                for (final String id : DatabasePanels.CONNECTION_PANELS) {
+                    if (id.equalsIgnoreCase(name)) {
+                        name = id;
+                        break;
+                    }
+                }
                 try {
                     final File file = new File(installation.validDirectory(true), CONFIGURATION_FILE);
                     final FileOutputStream out = new FileOutputStream(file);
-                    settings.store(out, "Connection parameters to the " + installation.name() + " database");
+                    settings.store(out, "Connection parameters to the " + name + " database");
                     out.close();
                 } catch (IOException ex) {
                     error(Errors.Keys.CANT_WRITE_$1, ex);
+                    return;
                 }
-                return;
             }
+            isOriginalAutomatic = false;
         }
-        // Automatic mode.
-        settings = null;
-        final File file = new File(installation.directory(true), CONFIGURATION_FILE);
-        file.delete();
+        // Remember the new field values only on success.
+        for (final Field field : fields) {
+            field.setOriginalValue(settings.getProperty(field.propertyKey));
+        }
+        modificationCount = 0;
+        refresh();
     }
 
     /**
      * Adds the given (key, value) pair in the properties map,
      * providing that the value is not null and non-empty.
      */
-    private void setProperty(final String key, final Object value) {
+    private static void setProperty(final Properties settings, final String key, final Object value) {
         if (value != null) {
             final String text = value.toString().trim();
             if (text.length() != 0) {

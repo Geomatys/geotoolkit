@@ -905,12 +905,12 @@ public final class Vocabulary extends IndexedResourceBundle {
         public static final int LINE_$1 = 156;
 
         /**
-         * Loading...
+         * Loading…
          */
         public static final int LOADING = 157;
 
         /**
-         * Loading {0}...
+         * Loading {0}…
          */
         public static final int LOADING_$1 = 158;
 
@@ -1015,7 +1015,7 @@ public final class Vocabulary extends IndexedResourceBundle {
         public static final int MOLODENSKY_TRANSFORM = 177;
 
         /**
-         * ... {0} more...
+         * … {0} more…
          */
         public static final int MORE_$1 = 178;
 
@@ -1250,7 +1250,7 @@ public final class Vocabulary extends IndexedResourceBundle {
         public static final int REAL_NUMBER_$1 = 219;
 
         /**
-         * Area: x=[{0} .. {1}], y=[{2} .. {3}]
+         * Area: x=[{0} … {1}], y=[{2} … {3}]
          */
         public static final int RECTANGLE_$4 = 220;
 
@@ -1315,7 +1315,7 @@ public final class Vocabulary extends IndexedResourceBundle {
         public static final int SATURATION = 232;
 
         /**
-         * Saving {0}...
+         * Saving {0}…
          */
         public static final int SAVING_$1 = 233;
 
