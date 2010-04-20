@@ -171,10 +171,10 @@ public class DefaultController2D implements CanvasController2D{
      */
     @Override
     public Point2D getDisplayCenter(){
-        Rectangle bounds = canvas.getDisplayBounds().getBounds();
+        final Rectangle bounds = canvas.getDisplayBounds().getBounds();
         bounds.x = 0;
         bounds.y = 0;
-        Point2D center = new Point2D.Double(bounds.getCenterX(), bounds.getCenterY());
+        final Point2D center = new Point2D.Double(bounds.getCenterX(), bounds.getCenterY());
         return center;
     }
 
@@ -182,13 +182,12 @@ public class DefaultController2D implements CanvasController2D{
      * {@inheritDoc }
      */
     @Override
-    public DirectPosition getCenter(){
+    public DirectPosition getCenter() throws IllegalStateException {
         Point2D center = getDisplayCenter();
         try {
             center = canvas.objectiveToDisplay.inverseTransform(center, center);
         } catch (NoninvertibleTransformException ex) {
-            ex.printStackTrace();
-            //TODO : propager l'exception
+            throw new IllegalStateException(ex.getLocalizedMessage(), ex);
         }
         return new GeneralDirectPosition(center);
     }
@@ -197,15 +196,14 @@ public class DefaultController2D implements CanvasController2D{
      * {@inheritDoc }
      */
     @Override
-    public void setCenter(DirectPosition center)  {
+    public void setCenter(DirectPosition center) throws IllegalStateException {
         DirectPosition oldCenter = getCenter();
         double diffX = center.getOrdinate(0) - oldCenter.getOrdinate(0);
         double diffY = center.getOrdinate(1) - oldCenter.getOrdinate(1);
         try {
             translateObjective(diffX, diffY);
         } catch (NoninvertibleTransformException ex) {
-            //TODO should add the throw error in geoapi
-            LOGGER.log(Level.SEVERE, null, ex);
+            throw new IllegalStateException(ex.getLocalizedMessage(), ex);
         }
     }
 
@@ -646,18 +644,19 @@ public class DefaultController2D implements CanvasController2D{
      * {@inheritDoc }
      */
     @Override
-    public double getGeographicScale(){
+    public double getGeographicScale() throws IllegalStateException {
         final Point2D center = getDisplayCenter();
         final double[] P1 = new double[]{center.getX(),center.getY()};
         final double[] P2 = new double[]{P1[0],P1[1]+1};
 
+        final AffineTransform trs;
         try {
-            AffineTransform trs = canvas.objectiveToDisplay.createInverse();
-            trs.transform(P1, 0, P1, 0, 1);
-            trs.transform(P2, 0, P2, 0, 1);
-        } catch (Exception ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
+            trs = canvas.objectiveToDisplay.createInverse();
+        } catch (NoninvertibleTransformException ex) {
+            throw new IllegalStateException(ex.getLocalizedMessage(), ex);
         }
+        trs.transform(P1, 0, P1, 0, 1);
+        trs.transform(P2, 0, P2, 0, 1);
 
         final CoordinateReferenceSystem crs = canvas.getObjectiveCRS2D();
         final Unit unit = crs.getCoordinateSystem().getAxis(0).getUnit();
@@ -680,9 +679,8 @@ public class DefaultController2D implements CanvasController2D{
                 gc.setStartingPosition(pos1);
                 gc.setDestinationPosition(pos2);
                 distance = Math.abs(gc.getOrthodromicDistance());
-            }catch(Exception ex){
-                LOGGER.log(Level.WARNING, "Current map bounds is out of geodetic calculation, will return scale 1.0");
-                return 1;
+            }catch(TransformException ex){
+                throw new IllegalStateException(ex.getLocalizedMessage(), ex);
             }
         }
 

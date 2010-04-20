@@ -64,8 +64,11 @@ public interface CanvasController2D extends CanvasController{
      * Returns the center of the canvas in objective CRS.
      *
      * @return DirectPosition : center of the canvas
+     *
+     * @throws IllegalStateException if the affine transform used for conversion is in
+     *                               illegal state, non invertible.
      */
-    DirectPosition getCenter();
+    DirectPosition getCenter() throws IllegalStateException;
     
     void setAutoRepaint(boolean auto);
     
@@ -183,7 +186,14 @@ public interface CanvasController2D extends CanvasController{
      */
     void setGeographicScale(double scale);
 
-    double getGeographicScale();
+    /**
+     * Returns the geographic scale, in a ground unit manner, relation between map display size
+     * and real ground unit meters.
+     *
+     * @throws IllegalStateException If the affine transform used for conversion is in
+     *                               illegal state.
+     */
+    double getGeographicScale() throws IllegalStateException;
 
 
     //TODO need to handle this more correctly with a 4D BBox
