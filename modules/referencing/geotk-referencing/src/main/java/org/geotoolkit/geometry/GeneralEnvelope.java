@@ -461,9 +461,12 @@ scanNumber: while (++i < length) {
     private static void checkCoordinates(final double[] ordinates) throws IllegalArgumentException {
         final int dimension = ordinates.length / 2;
         for (int i=0; i<dimension; i++) {
-            if (ordinates[i] > ordinates[dimension+i]) { // We accept 'NaN' values.
-                throw new IllegalArgumentException(Errors.format(
-                        Errors.Keys.ILLEGAL_ENVELOPE_ORDINATE_$1, i));
+            final double min = ordinates[i];
+            final double max = ordinates[dimension+i];
+            if (min > max) { // We accept 'NaN' values.
+                String message = Errors.format(Errors.Keys.ILLEGAL_ENVELOPE_ORDINATE_$1, i);
+                message = message + ' ' + Errors.format(Errors.Keys.BAD_RANGE_$2, min, max);
+                throw new IllegalArgumentException(message);
             }
         }
     }

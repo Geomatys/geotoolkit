@@ -95,7 +95,7 @@ public final class Errors extends IndexedResourceBundle {
         public static final int BAD_ENTRY = 7;
 
         /**
-         * Illegal grid envelope [{1} .. {2}] for dimension {0}.
+         * Illegal grid envelope [{1} … {2}] for dimension {0}.
          */
         public static final int BAD_GRID_ENVELOPE_$3 = 8;
 
@@ -120,7 +120,7 @@ public final class Errors extends IndexedResourceBundle {
         public static final int BAD_PARAMETER_TYPE_$2 = 12;
 
         /**
-         * Range [{0} .. {1}] is not valid.
+         * Range [{0} … {1}] is not valid.
          */
         public static final int BAD_RANGE_$2 = 13;
 
@@ -480,7 +480,7 @@ public final class Errors extends IndexedResourceBundle {
         public static final int ILLEGAL_MATRIX_SIZE = 75;
 
         /**
-         * Parameter "{0}" occurs {1} time, while the expected range of occurences was [{2}..{3}].
+         * Parameter "{0}" occurs {1} time, while the expected range of occurences was [{2} … {3}].
          */
         public static final int ILLEGAL_OCCURS_FOR_PARAMETER_$4 = 76;
 
@@ -1010,7 +1010,7 @@ public final class Errors extends IndexedResourceBundle {
         public static final int PROJECTION_CHECK_FAILED_$4 = 169;
 
         /**
-         * Ranges [{0}..{1}] and [{2}..{3}] overlap.
+         * Ranges [{0} … {1}] and [{2} … {3}] overlap.
          */
         public static final int RANGE_OVERLAP_$4 = 170;
 
@@ -1287,7 +1287,7 @@ public final class Errors extends IndexedResourceBundle {
         public static final int VALUE_ALREADY_DEFINED_$1 = 214;
 
         /**
-         * Value {0} is out of range [{1}..{2}].
+         * Value {0} is out of range [{1} … {2}].
          */
         public static final int VALUE_OUT_OF_BOUNDS_$3 = 215;
 

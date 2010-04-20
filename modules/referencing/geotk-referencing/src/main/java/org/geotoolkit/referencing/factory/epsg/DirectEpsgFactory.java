@@ -113,7 +113,7 @@ import org.geotoolkit.lang.ThreadSafe;
  * @author Rueben Schulz (UBC)
  * @author Matthias Basler
  * @author Andrea Aime (TOPP)
- * @version 3.01
+ * @version 3.11
  *
  * @since 1.2
  * @module
@@ -1364,22 +1364,30 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
                     extent = new DefaultExtent();
                     extent.setDescription(new SimpleInternationalString(description));
                 }
-                final double ymin = result.getDouble(2);
-                if (!result.wasNull()) {
-                    final double ymax = result.getDouble(3);
-                    if (!result.wasNull()) {
-                        final double xmin = result.getDouble(4);
-                        if (!result.wasNull()) {
-                            final double xmax = result.getDouble(5);
-                            if (!result.wasNull()) {
-                                if (extent == null) {
-                                    extent = new DefaultExtent();
-                                }
-                                extent.setGeographicElements(Collections.singleton(
-                                        new DefaultGeographicBoundingBox(xmin, xmax, ymin, ymax)));
-                            }
-                        }
+                double ymin = result.getDouble(2); if (result.wasNull()) ymin = Double.NaN;
+                double ymax = result.getDouble(3); if (result.wasNull()) ymax = Double.NaN;
+                double xmin = result.getDouble(4); if (result.wasNull()) xmin = Double.NaN;
+                double xmax = result.getDouble(5); if (result.wasNull()) xmax = Double.NaN;
+                if (!Double.isNaN(ymin) || !Double.isNaN(ymax) || !Double.isNaN(xmin) || !Double.isNaN(xmax)) {
+                    /*
+                     * Some CRS like EPSG:4269 ("NAD83") use a longitude axis with positive
+                     * values increasing toward west (the opposite of the usual direction).
+                     * The extent is declared in units of such CRS. If we detect such case,
+                     * we need to reverse the sign (NOT to swap the min and max).
+                     */
+                    if (xmin > xmax) {
+                        xmin = -xmin;
+                        xmax = -xmax;
                     }
+                    if (ymin > ymax) {
+                        ymin = -ymin;
+                        ymax = -ymax;
+                    }
+                    if (extent == null) {
+                        extent = new DefaultExtent();
+                    }
+                    extent.setGeographicElements(Collections.singleton(
+                            new DefaultGeographicBoundingBox(xmin, xmax, ymin, ymax)));
                 }
                 if (extent != null) {
                     returnValue = ensureSingleton((Extent) extent.unmodifiable(), returnValue, code);

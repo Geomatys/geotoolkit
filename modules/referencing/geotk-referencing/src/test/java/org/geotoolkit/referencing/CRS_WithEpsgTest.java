@@ -23,6 +23,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+import org.opengis.geometry.Envelope;
 import org.opengis.metadata.citation.Citation;
 import org.opengis.referencing.AuthorityFactory;
 import org.opengis.referencing.FactoryException;
@@ -444,6 +445,15 @@ public class CRS_WithEpsgTest extends ReferencingTestCase {
         assertNotNull(crs);
         assertEquals("EPSG:4269", CRS.getDeclaredIdentifier(crs));
         assertSame(crs, factory.createObject("EPSG:4269"));
+        /*
+         * The domain of validity is declared in the EPSG:4269 CRS, which declare an x axis
+         * in the opposite direction than WGS84. We need to ensure that this particularity
+         * has been handled.
+         */
+        final Envelope envelope = CRS.getEnvelope(crs);
+        assertNotNull(envelope);
+        assertTrue(envelope.getMinimum(0) < envelope.getMaximum(0));
+        assertTrue(envelope.getMinimum(1) < envelope.getMaximum(1));
     }
 
     /**

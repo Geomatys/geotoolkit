@@ -39,6 +39,7 @@ import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.lang.ValueRange;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.resources.Errors;
+import org.geotoolkit.resources.Vocabulary;
 
 
 /**
@@ -49,7 +50,7 @@ import org.geotoolkit.resources.Errors;
  * @author Martin Desruisseaux (IRD)
  * @author Touraïvane (IRD)
  * @author Cédric Briançon (Geomatys)
- * @version 3.03
+ * @version 3.11
  *
  * @since 2.1
  * @module
@@ -250,11 +251,16 @@ public class DefaultGeographicBoundingBox extends AbstractGeographicExtent
      * @param eastBoundLongitude The maximal <var>x</var> value.
      * @param southBoundLatitude The minimal <var>y</var> value.
      * @param northBoundLatitude The maximal <var>y</var> value.
+     *
+     * @throws IllegalArgumentException If (<var>west bound</var> &gt; <var>east bound</var>)
+     *         or (<var>south bound</var> &gt; <var>north bound</var>). Note that
+     *         {@linkplain Double#NaN NaN} values are allowed.
      */
     public DefaultGeographicBoundingBox(final double westBoundLongitude,
                                         final double eastBoundLongitude,
                                         final double southBoundLatitude,
                                         final double northBoundLatitude)
+            throws IllegalArgumentException
     {
         super(true);
         setBounds(westBoundLongitude, eastBoundLongitude,
@@ -378,18 +384,42 @@ public class DefaultGeographicBoundingBox extends AbstractGeographicExtent
      * @param southBoundLatitude The minimal <var>y</var> value.
      * @param northBoundLatitude The maximal <var>y</var> value.
      *
+     * @throws IllegalArgumentException If (<var>west bound</var> &gt; <var>east bound</var>)
+     *         or (<var>south bound</var> &gt; <var>north bound</var>). Note that
+     *         {@linkplain Double#NaN NaN} values are allowed.
+     *
      * @since 2.5
      */
     public synchronized void setBounds(final double westBoundLongitude,
                                        final double eastBoundLongitude,
                                        final double southBoundLatitude,
                                        final double northBoundLatitude)
+            throws IllegalArgumentException
     {
         checkWritePermission();
-        this.westBoundLongitude = westBoundLongitude;
-        this.eastBoundLongitude = eastBoundLongitude;
-        this.southBoundLatitude = southBoundLatitude;
-        this.northBoundLatitude = northBoundLatitude;
+        final int propertyKey;
+        final double min, max;
+        if (westBoundLongitude > eastBoundLongitude) {
+            min = westBoundLongitude;
+            max = eastBoundLongitude;
+            propertyKey = Vocabulary.Keys.LONGITUDE;
+            // Exception will be thrown below.
+        } else if (southBoundLatitude > northBoundLatitude) {
+            min = southBoundLatitude;
+            max = northBoundLatitude;
+            propertyKey = Vocabulary.Keys.LATITUDE;
+            // Exception will be thrown below.
+        } else {
+            this.westBoundLongitude = westBoundLongitude;
+            this.eastBoundLongitude = eastBoundLongitude;
+            this.southBoundLatitude = southBoundLatitude;
+            this.northBoundLatitude = northBoundLatitude;
+            return;
+        }
+        String message = Vocabulary.format(propertyKey);
+        message = Errors.format(Errors.Keys.ILLEGAL_ARGUMENT_$1, message);
+        message = message + ' ' + Errors.format(Errors.Keys.BAD_RANGE_$2, min, max);
+        throw new IllegalArgumentException(message);
     }
 
     /**
