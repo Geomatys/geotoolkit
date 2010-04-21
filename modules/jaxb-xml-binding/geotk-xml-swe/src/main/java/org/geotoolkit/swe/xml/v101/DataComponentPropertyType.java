@@ -245,6 +245,67 @@ public class DataComponentPropertyType implements DataComponentProperty {
             abstractDataRecord       = null;
         }
     }
+
+    public void setValue(Object obj) {
+        ObjectFactory factory = new ObjectFactory();
+        if (obj instanceof JAXBElement) {
+            obj = ((JAXBElement) obj).getValue();
+        }
+        if (obj instanceof Count) {
+            count = (Count) obj;
+        } else if (obj instanceof QuantityType) {
+            quantity = (QuantityType) obj;
+        } else if (obj instanceof TimeType) {
+            time = (TimeType) obj;
+        } else if (obj instanceof BooleanType) {
+            _boolean = (BooleanType) obj;
+        } else if (obj instanceof Category) {
+            category = (Category) obj;
+        } else if (obj instanceof Text) {
+            text = (Text) obj;
+        } else if (obj instanceof QuantityRange) {
+            quantityRange = (QuantityRange) obj;
+        } else if (obj instanceof CountRange) {
+            countRange = (CountRange) obj;
+        } else if (obj instanceof TimeRange) {
+            timeRange = (TimeRange) obj;
+        } else if (obj instanceof SimpleDataRecordEntry) {
+            abstractDataRecord = factory.createSimpleDataRecord((SimpleDataRecordEntry) obj);
+        } else if (obj instanceof DataRecordType) {
+            abstractDataRecord = factory.createDataRecord((DataRecordType) obj);
+        } else {
+            System.out.println("UNINPLEMENTED CASE:" + obj.getClass().getName());
+        }
+
+    }
+
+    public Object getValue() {
+
+        if (count != null) {
+            return count;
+        } else if (quantity != null) {
+            return quantity;
+        } else if (time != null) {
+            return time;
+        } else if (_boolean != null) {
+            return _boolean;
+        } else if (category != null) {
+            return category;
+        } else if (text != null) {
+            return text;
+        } else if (countRange != null) {
+            return countRange;
+        } else if (quantityRange != null) {
+            return quantityRange;
+        } else if (timeRange != null) {
+            return timeRange;
+        } else if (abstractDataRecord != null) {
+            return abstractDataRecord.getValue();
+        } else {
+            return null;
+        }
+    }
+    
     /**
      * 
      */

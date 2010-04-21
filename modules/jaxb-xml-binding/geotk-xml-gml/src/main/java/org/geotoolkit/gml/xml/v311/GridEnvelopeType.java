@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.gml.xml.v311;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -28,7 +27,8 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * Provides grid coordinate values for the diametrically opposed corners of an envelope that bounds a section of grid. The value of a single coordinate is the number of offsets from the origin of the grid in the direction of a specific axis.
+ * Provides grid coordinate values for the diametrically opposed corners of an envelope that bounds a section of grid.
+ * The value of a single coordinate is the number of offsets from the origin of the grid in the direction of a specific axis.
  * 
  * <p>Java class for GridEnvelopeType complex type.
  * 
@@ -59,10 +59,10 @@ public class GridEnvelopeType {
 
     @XmlList
     @XmlElement(required = true)
-    private List<BigInteger> low;
+    private List<Integer> low;
     @XmlList
     @XmlElement(required = true)
-    private List<BigInteger> high;
+    private List<Integer> high;
 
     /**
      * Empty constructor used by JAXB
@@ -74,7 +74,7 @@ public class GridEnvelopeType {
     /**
      * Build a new Grid envelope
      */
-    public GridEnvelopeType(List<BigInteger> low, List<BigInteger> high){
+    public GridEnvelopeType(List<Integer> low, List<Integer> high){
         this.high = high;
         this.low  = low;
     }
@@ -82,9 +82,9 @@ public class GridEnvelopeType {
     /**
      * Gets the value of the low property.
      */
-    public List<BigInteger> getLow() {
+    public List<Integer> getLow() {
         if (low == null){
-            low = new ArrayList<BigInteger>();
+            low = new ArrayList<Integer>();
         }
         return Collections.unmodifiableList(low);
     }
@@ -92,9 +92,9 @@ public class GridEnvelopeType {
     /**
      * Gets the value of the high property.
      */
-    public List<BigInteger> getHigh() {
+    public List<Integer> getHigh() {
         if (high == null){
-            high = new ArrayList<BigInteger>();
+            high = new ArrayList<Integer>();
         }
         return Collections.unmodifiableList(high);
     }

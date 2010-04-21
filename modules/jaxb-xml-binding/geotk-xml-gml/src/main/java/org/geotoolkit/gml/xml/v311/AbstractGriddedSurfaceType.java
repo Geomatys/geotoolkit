@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.gml.xml.v311;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -83,14 +82,12 @@ import javax.xml.bind.annotation.XmlType;
     CylinderType.class,
     SphereType.class
 })
-public class AbstractGriddedSurfaceType
-    extends AbstractParametricCurveSurfaceType
-{
+public class AbstractGriddedSurfaceType extends AbstractParametricCurveSurfaceType {
 
     @XmlElement(required = true)
     protected List<AbstractGriddedSurfaceType.Row> row;
-    protected BigInteger rows;
-    protected BigInteger columns;
+    protected Integer rows;
+    protected Integer columns;
 
     /**
      * Gets the value of the row property.
@@ -126,10 +123,10 @@ public class AbstractGriddedSurfaceType
      * 
      * @return
      *     possible object is
-     *     {@link BigInteger }
+     *     {@link Integer }
      *     
      */
-    public BigInteger getRows() {
+    public Integer getRows() {
         return rows;
     }
 
@@ -138,10 +135,10 @@ public class AbstractGriddedSurfaceType
      * 
      * @param value
      *     allowed object is
-     *     {@link BigInteger }
+     *     {@link Integer }
      *     
      */
-    public void setRows(BigInteger value) {
+    public void setRows(Integer value) {
         this.rows = value;
     }
 
@@ -150,10 +147,10 @@ public class AbstractGriddedSurfaceType
      * 
      * @return
      *     possible object is
-     *     {@link BigInteger }
+     *     {@link Integer }
      *     
      */
-    public BigInteger getColumns() {
+    public Integer getColumns() {
         return columns;
     }
 
@@ -162,10 +159,10 @@ public class AbstractGriddedSurfaceType
      * 
      * @param value
      *     allowed object is
-     *     {@link BigInteger }
+     *     {@link Integer }
      *     
      */
-    public void setColumns(BigInteger value) {
+    public void setColumns(Integer value) {
         this.columns = value;
     }
 

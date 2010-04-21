@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.gml.xml.v311;
 
-import java.math.BigInteger;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -59,7 +58,7 @@ public class KnotType {
     protected double value;
     @XmlElement(required = true)
     @XmlSchemaType(name = "nonNegativeInteger")
-    protected BigInteger multiplicity;
+    protected Integer multiplicity;
     protected double weight;
 
     /**
@@ -83,10 +82,10 @@ public class KnotType {
      * 
      * @return
      *     possible object is
-     *     {@link BigInteger }
+     *     {@link Integer }
      *     
      */
-    public BigInteger getMultiplicity() {
+    public Integer getMultiplicity() {
         return multiplicity;
     }
 
@@ -95,10 +94,10 @@ public class KnotType {
      * 
      * @param value
      *     allowed object is
-     *     {@link BigInteger }
+     *     {@link Integer }
      *     
      */
-    public void setMultiplicity(BigInteger value) {
+    public void setMultiplicity(Integer value) {
         this.multiplicity = value;
     }
 

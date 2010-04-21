@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.gml.xml.v311;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -91,10 +90,10 @@ public class AffinePlacementType {
     protected List<VectorType> refDirection;
     @XmlElement(required = true)
     @XmlSchemaType(name = "positiveInteger")
-    protected BigInteger inDimension;
+    protected Integer inDimension;
     @XmlElement(required = true)
     @XmlSchemaType(name = "positiveInteger")
-    protected BigInteger outDimension;
+    protected Integer outDimension;
 
     /**
      * Gets the value of the location property.
@@ -154,10 +153,10 @@ public class AffinePlacementType {
      * 
      * @return
      *     possible object is
-     *     {@link BigInteger }
+     *     {@link Integer }
      *     
      */
-    public BigInteger getInDimension() {
+    public Integer getInDimension() {
         return inDimension;
     }
 
@@ -166,10 +165,10 @@ public class AffinePlacementType {
      * 
      * @param value
      *     allowed object is
-     *     {@link BigInteger }
+     *     {@link Integer }
      *     
      */
-    public void setInDimension(BigInteger value) {
+    public void setInDimension(Integer value) {
         this.inDimension = value;
     }
 
@@ -178,10 +177,10 @@ public class AffinePlacementType {
      * 
      * @return
      *     possible object is
-     *     {@link BigInteger }
+     *     {@link Integer }
      *     
      */
-    public BigInteger getOutDimension() {
+    public Integer getOutDimension() {
         return outDimension;
     }
 
@@ -190,10 +189,10 @@ public class AffinePlacementType {
      * 
      * @param value
      *     allowed object is
-     *     {@link BigInteger }
+     *     {@link Integer }
      *     
      */
-    public void setOutDimension(BigInteger value) {
+    public void setOutDimension(Integer value) {
         this.outDimension = value;
     }
 

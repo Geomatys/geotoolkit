@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.gml.xml.v311;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -85,7 +84,7 @@ public abstract class AbstractGeometryType extends AbstractGMLEntry implements G
     protected String srsName;
     @XmlAttribute
     @XmlSchemaType(name = "positiveInteger")
-    protected BigInteger srsDimension;
+    protected Integer srsDimension;
     @XmlAttribute
     protected List<String> axisLabels;
     @XmlAttribute
@@ -96,7 +95,7 @@ public abstract class AbstractGeometryType extends AbstractGMLEntry implements G
      */
     AbstractGeometryType(){}
 
-    public AbstractGeometryType(BigInteger srsDimension, String srsName, List<String> axisLabels, List<String> uomLabels){
+    public AbstractGeometryType(Integer srsDimension, String srsName, List<String> axisLabels, List<String> uomLabels){
         this.axisLabels   = axisLabels;
         this.srsDimension = srsDimension;
         this.srsName      = srsName;
@@ -165,10 +164,10 @@ public abstract class AbstractGeometryType extends AbstractGMLEntry implements G
      * 
      * @return
      *     possible object is
-     *     {@link BigInteger }
+     *     {@link Integer }
      *     
      */
-    public BigInteger getSrsDimension() {
+    public Integer getSrsDimension() {
         return srsDimension;
     }
 
@@ -177,10 +176,10 @@ public abstract class AbstractGeometryType extends AbstractGMLEntry implements G
      * 
      * @param value
      *     allowed object is
-     *     {@link BigInteger }
+     *     {@link Integer }
      *     
      */
-    public void setSrsDimension(BigInteger value) {
+    public void setSrsDimension(Integer value) {
         this.srsDimension = value;
     }
 
@@ -304,7 +303,7 @@ public abstract class AbstractGeometryType extends AbstractGMLEntry implements G
 
     @Override
     public int getCoordinateDimension() {
-        BigInteger bi = getSrsDimension();
+        Integer bi = getSrsDimension();
         if(bi == null){
             return 2;
         }else{

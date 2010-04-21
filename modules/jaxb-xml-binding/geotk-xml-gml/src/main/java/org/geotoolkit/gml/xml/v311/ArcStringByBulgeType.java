@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.gml.xml.v311;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.JAXBElement;
@@ -75,9 +74,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlSeeAlso({
     ArcByBulgeType.class
 })
-public class ArcStringByBulgeType
-    extends AbstractCurveSegmentType
-{
+public class ArcStringByBulgeType extends AbstractCurveSegmentType {
 
     @XmlElementRefs({
         @XmlElementRef(name = "pointProperty", namespace = "http://www.opengis.net/gml", type = JAXBElement.class),
@@ -94,7 +91,7 @@ public class ArcStringByBulgeType
     @XmlAttribute
     protected CurveInterpolationType interpolation;
     @XmlAttribute
-    protected BigInteger numArc;
+    protected Integer numArc;
 
     /**
      * Gets the value of the posOrPointPropertyOrPointRep property.
@@ -266,10 +263,10 @@ public class ArcStringByBulgeType
      * 
      * @return
      *     possible object is
-     *     {@link BigInteger }
+     *     {@link Integer }
      *     
      */
-    public BigInteger getNumArc() {
+    public Integer getNumArc() {
         return numArc;
     }
 
@@ -278,10 +275,10 @@ public class ArcStringByBulgeType
      * 
      * @param value
      *     allowed object is
-     *     {@link BigInteger }
+     *     {@link Integer }
      *     
      */
-    public void setNumArc(BigInteger value) {
+    public void setNumArc(Integer value) {
         this.numArc = value;
     }
 

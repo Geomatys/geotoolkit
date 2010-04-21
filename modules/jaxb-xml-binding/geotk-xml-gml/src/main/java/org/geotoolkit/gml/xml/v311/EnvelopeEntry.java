@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.gml.xml.v311;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -82,7 +81,7 @@ public class EnvelopeEntry {
     protected String srsName;
     @XmlAttribute
     @XmlSchemaType(name = "positiveInteger")
-    protected BigInteger srsDimension;
+    protected Integer srsDimension;
     @XmlAttribute
     protected List<String> axisLabels;
     @XmlAttribute
@@ -249,10 +248,10 @@ public class EnvelopeEntry {
      * 
      * @return
      *     possible object is
-     *     {@link BigInteger }
+     *     {@link Integer }
      *     
      */
-    public BigInteger getSrsDimension() {
+    public Integer getSrsDimension() {
         return srsDimension;
     }
 
@@ -261,10 +260,10 @@ public class EnvelopeEntry {
      * 
      * @param value
      *     allowed object is
-     *     {@link BigInteger }
+     *     {@link Integer }
      *     
      */
-    public void setSrsDimension(BigInteger value) {
+    public void setSrsDimension(Integer value) {
         this.srsDimension = value;
     }
 

@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.gml.xml.v311;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -237,7 +236,7 @@ public class DirectPositionType implements DirectPosition {
      * 
      * @return
      *     possible object is
-     *     {@link BigInteger }
+     *     {@link Integer }
      *     
      */
     public Integer getSrsDimension() {
@@ -249,7 +248,7 @@ public class DirectPositionType implements DirectPosition {
      * 
      * @param value
      *     allowed object is
-     *     {@link BigInteger }
+     *     {@link Integer }
      *     
      */
     public void setSrsDimension(Integer value) {

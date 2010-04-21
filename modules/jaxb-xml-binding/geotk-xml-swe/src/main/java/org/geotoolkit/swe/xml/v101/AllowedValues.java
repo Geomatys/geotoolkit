@@ -17,6 +17,7 @@
 package org.geotoolkit.swe.xml.v101;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -135,6 +136,64 @@ public class AllowedValues implements AbstractAllowedValues {
         return this.intervalOrValueList;
     }
 
+    public List<Double> getInterval() {
+        for (JAXBElement<List<Double>> jb : getIntervalOrValueList()) {
+            if (jb.getName().getLocalPart().equals("interval")) {
+                return jb.getValue();
+            }
+        }
+        return null;
+    }
+
+    public void setInterval(List<Double> interval) {
+        if (interval != null) {
+            if (this.intervalOrValueList == null) {
+                this.intervalOrValueList = new ArrayList<JAXBElement<List<Double>>>();
+            }
+            ObjectFactory factory = new ObjectFactory();
+            this.intervalOrValueList.add(factory.createAllowedValuesInterval(interval));
+        }
+    }
+
+    public void setInterval(Double interval) {
+        if (interval != null) {
+            if (this.intervalOrValueList == null) {
+                this.intervalOrValueList = new ArrayList<JAXBElement<List<Double>>>();
+            }
+            ObjectFactory factory = new ObjectFactory();
+            this.intervalOrValueList.add(factory.createAllowedValuesInterval(Arrays.asList(interval)));
+        }
+    }
+
+    public List<Double> getValueList() {
+        for (JAXBElement<List<Double>> jb : getIntervalOrValueList()) {
+            if (jb.getName().getLocalPart().equals("valueList")) {
+                return jb.getValue();
+            }
+        }
+        return null;
+    }
+
+    public void setValueList(List<Double> valueList) {
+        if (valueList != null) {
+            if (this.intervalOrValueList == null) {
+                this.intervalOrValueList = new ArrayList<JAXBElement<List<Double>>>();
+            }
+            ObjectFactory factory = new ObjectFactory();
+            this.intervalOrValueList.add(factory.createAllowedValuesValueList(valueList));
+        }
+    }
+
+    public void setValueList(Double valueList) {
+        if (valueList != null) {
+            if (this.intervalOrValueList == null) {
+                this.intervalOrValueList = new ArrayList<JAXBElement<List<Double>>>();
+            }
+            ObjectFactory factory = new ObjectFactory();
+            this.intervalOrValueList.add(factory.createAllowedValuesValueList(Arrays.asList(valueList)));
+        }
+    }
+    
     /**
      * Gets the value of the id property.
      */

@@ -17,7 +17,6 @@
 package org.geotoolkit.gml.xml.v311;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -65,9 +64,9 @@ public class TimeIntervalLengthType {
     protected String unit;
     @XmlAttribute
     @XmlSchemaType(name = "positiveInteger")
-    protected BigInteger radix;
+    protected Integer radix;
     @XmlAttribute
-    protected BigInteger factor;
+    protected Integer factor;
 
     /**
      * Gets the value of the value property.
@@ -122,10 +121,10 @@ public class TimeIntervalLengthType {
      * 
      * @return
      *     possible object is
-     *     {@link BigInteger }
+     *     {@link Integer }
      *     
      */
-    public BigInteger getRadix() {
+    public Integer getRadix() {
         return radix;
     }
 
@@ -134,10 +133,10 @@ public class TimeIntervalLengthType {
      * 
      * @param value
      *     allowed object is
-     *     {@link BigInteger }
+     *     {@link Integer }
      *     
      */
-    public void setRadix(BigInteger value) {
+    public void setRadix(Integer value) {
         this.radix = value;
     }
 
@@ -146,10 +145,10 @@ public class TimeIntervalLengthType {
      * 
      * @return
      *     possible object is
-     *     {@link BigInteger }
+     *     {@link Integer }
      *     
      */
-    public BigInteger getFactor() {
+    public Integer getFactor() {
         return factor;
     }
 
@@ -158,10 +157,10 @@ public class TimeIntervalLengthType {
      * 
      * @param value
      *     allowed object is
-     *     {@link BigInteger }
+     *     {@link Integer }
      *     
      */
-    public void setFactor(BigInteger value) {
+    public void setFactor(Integer value) {
         this.factor = value;
     }
 

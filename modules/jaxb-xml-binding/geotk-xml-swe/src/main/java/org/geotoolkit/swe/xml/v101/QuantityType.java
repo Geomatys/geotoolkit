@@ -17,6 +17,7 @@
 package org.geotoolkit.swe.xml.v101;
 
 import java.net.URI;
+import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -30,19 +31,21 @@ import org.geotoolkit.util.Utilities;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Quantity", propOrder = {
     "uom",
+    "constraint",
+    "quality",
     "value"
 })
 public class QuantityType extends AbstractDataComponentEntry implements Quantity {
 
-    protected UomPropertyType uom;
-    //protected AllowedValuesPropertyType constraint;
-    //protected List<QualityPropertyType> quality;
-    protected Double value;
+    private UomPropertyType uom;
+    private AllowedValuesPropertyType constraint;
+    private List<QualityPropertyType> quality;
+    private Double value;
     @XmlAttribute
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    protected String axisID;
+    private String axisID;
     @XmlAttribute
-    protected URI referenceFrame;
+    private URI referenceFrame;
 
     /**
      * A empty contructor used by JAXB
@@ -120,6 +123,34 @@ public class QuantityType extends AbstractDataComponentEntry implements Quantity
     }
 
     /**
+     * @return the constraint
+     */
+    public AllowedValuesPropertyType getConstraint() {
+        return constraint;
+    }
+
+    /**
+     * @param constraint the constraint to set
+     */
+    public void setConstraint(AllowedValuesPropertyType constraint) {
+        this.constraint = constraint;
+    }
+
+    /**
+     * @return the quality
+     */
+    public List<QualityPropertyType> getQuality() {
+        return quality;
+    }
+
+    /**
+     * @param quality the quality to set
+     */
+    public void setQuality(List<QualityPropertyType> quality) {
+        this.quality = quality;
+    }
+
+    /**
      * Verify if this entry is identical to the specified object.
      */
     @Override
@@ -132,6 +163,8 @@ public class QuantityType extends AbstractDataComponentEntry implements Quantity
         return Utilities.equals(this.axisID,     that.axisID)     &&
                Utilities.equals(this.referenceFrame, that.referenceFrame) &&
                Utilities.equals(this.uom,            that.uom)            &&
+               Utilities.equals(this.quality,        that.quality)        &&
+               Utilities.equals(this.constraint,     that.constraint)     &&
                Utilities.equals(this.value,          that.value);
         }
         return false;
@@ -140,12 +173,16 @@ public class QuantityType extends AbstractDataComponentEntry implements Quantity
     @Override
     public int hashCode() {
         int hash = 5;
-        hash = 23 * hash + (this.uom != null ? this.uom.hashCode() : 0);
-        hash = 23 * hash + (this.value != null ? this.value.hashCode() : 0);
-        hash = 23 * hash + (this.axisID != null ? this.axisID.hashCode() : 0);
-        hash = 23 * hash + (this.referenceFrame != null ? this.referenceFrame.hashCode() : 0);
+        hash = 79 * hash + (this.uom != null ? this.uom.hashCode() : 0);
+        hash = 79 * hash + (this.constraint != null ? this.constraint.hashCode() : 0);
+        hash = 79 * hash + (this.quality != null ? this.quality.hashCode() : 0);
+        hash = 79 * hash + (this.value != null ? this.value.hashCode() : 0);
+        hash = 79 * hash + (this.axisID != null ? this.axisID.hashCode() : 0);
+        hash = 79 * hash + (this.referenceFrame != null ? this.referenceFrame.hashCode() : 0);
         return hash;
     }
+
+    
     
     @Override
     public String toString() {
@@ -160,6 +197,15 @@ public class QuantityType extends AbstractDataComponentEntry implements Quantity
         
         if (uom != null) {
             s.append("uom: ").append(uom.toString());
+        }
+        if (quality != null) {
+            s.append("quality: ").append('\n');
+            for (QualityPropertyType qp: quality) {
+                s.append(qp).append('\n');
+            }
+        }
+        if (constraint != null) {
+            s.append("constraint: ").append(constraint.toString());
         }
         return s.toString();
     }

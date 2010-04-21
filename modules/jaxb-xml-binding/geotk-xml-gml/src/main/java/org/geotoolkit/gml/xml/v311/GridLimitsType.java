@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.gml.xml.v311;
 
-import java.math.BigInteger;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -69,7 +68,7 @@ public class GridLimitsType {
     /**
      * Build a new Grid limits
      */
-    public GridLimitsType(List<BigInteger> low, List<BigInteger> high){
+    public GridLimitsType(List<Integer> low, List<Integer> high){
         this.gridEnvelope = new GridEnvelopeType(low, high);
     }
     

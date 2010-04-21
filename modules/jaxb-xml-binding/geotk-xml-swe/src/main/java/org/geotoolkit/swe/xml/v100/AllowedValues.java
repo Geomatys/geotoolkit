@@ -17,6 +17,7 @@
 package org.geotoolkit.swe.xml.v100;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -95,7 +96,65 @@ public class AllowedValues implements AbstractAllowedValues {
             throw new IllegalArgumentException("AllowedValues are not yet convertible");
         }
     }
-    
+
+    public List<Double> getInterval() {
+        for (JAXBElement<List<Double>> jb : getIntervalOrValueList()) {
+            if (jb.getName().getLocalPart().equals("interval")) {
+                return jb.getValue();
+            }
+        }
+        return null;
+    }
+
+    public void setInterval(List<Double> interval) {
+        if (interval != null) {
+            if (this.intervalOrValueList == null) {
+                this.intervalOrValueList = new ArrayList<JAXBElement<List<Double>>>();
+            }
+            ObjectFactory factory = new ObjectFactory();
+            this.intervalOrValueList.add(factory.createAllowedValuesInterval(interval));
+        }
+    }
+
+    public void setInterval(Double interval) {
+        if (interval != null) {
+            if (this.intervalOrValueList == null) {
+                this.intervalOrValueList = new ArrayList<JAXBElement<List<Double>>>();
+            }
+            ObjectFactory factory = new ObjectFactory();
+            this.intervalOrValueList.add(factory.createAllowedValuesInterval(Arrays.asList(interval)));
+        }
+    }
+
+    public List<Double> getValueList() {
+        for (JAXBElement<List<Double>> jb : getIntervalOrValueList()) {
+            if (jb.getName().getLocalPart().equals("valueList")) {
+                return jb.getValue();
+            }
+        }
+        return null;
+    }
+
+    public void setValueList(List<Double> valueList) {
+        if (valueList != null) {
+            if (this.intervalOrValueList == null) {
+                this.intervalOrValueList = new ArrayList<JAXBElement<List<Double>>>();
+            }
+            ObjectFactory factory = new ObjectFactory();
+            this.intervalOrValueList.add(factory.createAllowedValuesValueList(valueList));
+        }
+    }
+
+    public void setValueList(Double valueList) {
+        if (valueList != null) {
+            if (this.intervalOrValueList == null) {
+                this.intervalOrValueList = new ArrayList<JAXBElement<List<Double>>>();
+            }
+            ObjectFactory factory = new ObjectFactory();
+            this.intervalOrValueList.add(factory.createAllowedValuesValueList(Arrays.asList(valueList)));
+        }
+    }
+
     /**
      * Gets the value of the min property.
      * 
@@ -146,26 +205,7 @@ public class AllowedValues implements AbstractAllowedValues {
 
     /**
      * Gets the value of the intervalOrValueList property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the intervalOrValueList property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getIntervalOrValueList().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
      * {@link JAXBElement }{@code <}{@link List }{@code <}{@link Double }{@code >}{@code >}
-     * {@link JAXBElement }{@code <}{@link List }{@code <}{@link Double }{@code >}{@code >}
-     * 
-     * 
      */
     public List<JAXBElement<List<Double>>> getIntervalOrValueList() {
         if (intervalOrValueList == null) {

@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.gml.xml.v311;
 
-import java.math.BigInteger;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -90,7 +89,7 @@ public class ArcByCenterPointType
     @XmlAttribute
     protected CurveInterpolationType interpolation;
     @XmlAttribute(required = true)
-    protected BigInteger numArc;
+    protected Integer numArc;
 
     /**
      * Gets the value of the pos property.
@@ -317,12 +316,12 @@ public class ArcByCenterPointType
      * 
      * @return
      *     possible object is
-     *     {@link BigInteger }
+     *     {@link Integer }
      *     
      */
-    public BigInteger getNumArc() {
+    public Integer getNumArc() {
         if (numArc == null) {
-            return new BigInteger("1");
+            return 1;
         } else {
             return numArc;
         }
@@ -333,10 +332,10 @@ public class ArcByCenterPointType
      * 
      * @param value
      *     allowed object is
-     *     {@link BigInteger }
+     *     {@link Integer }
      *     
      */
-    public void setNumArc(BigInteger value) {
+    public void setNumArc(Integer value) {
         this.numArc = value;
     }
 

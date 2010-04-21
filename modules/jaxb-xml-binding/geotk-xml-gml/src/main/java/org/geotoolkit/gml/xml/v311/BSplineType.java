@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.gml.xml.v311;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.JAXBElement;
@@ -91,7 +90,7 @@ public class BSplineType
     protected CoordinatesType coordinates;
     @XmlElement(required = true)
     @XmlSchemaType(name = "nonNegativeInteger")
-    protected BigInteger degree;
+    protected Integer degree;
     @XmlElement(required = true)
     protected List<KnotPropertyType> knot;
     @XmlAttribute
@@ -185,10 +184,10 @@ public class BSplineType
      * 
      * @return
      *     possible object is
-     *     {@link BigInteger }
+     *     {@link Integer }
      *     
      */
-    public BigInteger getDegree() {
+    public Integer getDegree() {
         return degree;
     }
 
@@ -197,10 +196,10 @@ public class BSplineType
      * 
      * @param value
      *     allowed object is
-     *     {@link BigInteger }
+     *     {@link Integer }
      *     
      */
-    public void setDegree(BigInteger value) {
+    public void setDegree(Integer value) {
         this.degree = value;
     }
 
