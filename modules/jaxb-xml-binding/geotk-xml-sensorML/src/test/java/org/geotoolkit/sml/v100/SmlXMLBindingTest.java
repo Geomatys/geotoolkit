@@ -17,7 +17,7 @@
 package org.geotoolkit.sml.v100;
 
 import org.geotoolkit.sml.xml.v100.Connection;
-import org.geotoolkit.sml.xml.v100.CapabilitiesSML;
+import org.geotoolkit.sml.xml.v100.Capabilities;
 import org.geotoolkit.sml.xml.v100.Identification;
 import org.geotoolkit.sml.xml.v100.ComponentPropertyType;
 import org.geotoolkit.sml.xml.v100.Outputs;
@@ -218,7 +218,7 @@ public class SmlXMLBindingTest {
         ValidTime vTime = new ValidTime(period);
         component.setValidTime(vTime);
 
-        CapabilitiesSML capabilities = new CapabilitiesSML();
+        Capabilities capabilities = new Capabilities();
         TimeRange timeRange = new TimeRange(Arrays.asList("1987-04-23", "now"));
         DataComponentPropertyType field = new DataComponentPropertyType("periodOfData", "urn:x-brgm:def:property:periodOfData", timeRange);
         DataRecordType record = new DataRecordType(URI.create("urn:x-brgm:def:property:periodOfData"), Arrays.asList(field));
@@ -404,7 +404,7 @@ public class SmlXMLBindingTest {
         Identification identification = new Identification(identifierList);
         system.setIdentification(identification);
 
-        CapabilitiesSML capabilities = new CapabilitiesSML();
+        Capabilities capabilities = new Capabilities();
         List<DataComponentPropertyType> fields = new ArrayList<DataComponentPropertyType>();
         QuantityType quantity = new QuantityType(URI.create("urn:x-ogc:def:property:temperature"), new UomPropertyType(null, "urn:ogc:unit:degree:celsius"), 0.1);
         DataComponentPropertyType field1 = new DataComponentPropertyType("resolution", "urn:x-ogc:def:property:resolution", quantity);

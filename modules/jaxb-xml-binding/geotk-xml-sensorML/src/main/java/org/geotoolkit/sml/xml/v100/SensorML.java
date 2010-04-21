@@ -90,7 +90,7 @@ public class SensorML extends AbstractSensorML {
     private SecurityConstraint securityConstraint;
     private List<LegalConstraint> legalConstraint;
     private List<Characteristics> characteristics;
-    private List<CapabilitiesSML> capabilities;
+    private List<Capabilities> capabilities;
     private List<Contact> contact;
     private List<Documentation> documentation;
     private List<History> history;
@@ -192,9 +192,9 @@ public class SensorML extends AbstractSensorML {
     /**
      * Gets the value of the capabilities property.
      */
-    public List<CapabilitiesSML> getCapabilities() {
+    public List<Capabilities> getCapabilities() {
         if (capabilities == null) {
-            capabilities = new ArrayList<CapabilitiesSML>();
+            capabilities = new ArrayList<Capabilities>();
         }
         return this.capabilities;
     }
@@ -336,7 +336,7 @@ public class SensorML extends AbstractSensorML {
         }
         if (capabilities != null) {
             sb.append("capabilities:").append('\n');
-            for (CapabilitiesSML k : capabilities) {
+            for (Capabilities k : capabilities) {
                 sb.append(k).append('\n');
             }
         }

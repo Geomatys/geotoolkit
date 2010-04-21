@@ -396,8 +396,8 @@ public class ObjectFactory {
      * Create an instance of {@link Capabilities }
      * 
      */
-    public CapabilitiesSML createCapabilitiesSML() {
-        return new CapabilitiesSML();
+    public Capabilities createCapabilitiesSML() {
+        return new Capabilities();
     }
 
     /**

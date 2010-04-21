@@ -20,7 +20,7 @@ package org.geotoolkit.sml.xml;
 import java.util.ArrayList;
 import java.util.List;
 import org.geotoolkit.sml.xml.v100.AbstractProcessType;
-import org.geotoolkit.sml.xml.v100.CapabilitiesSML;
+import org.geotoolkit.sml.xml.v100.Capabilities;
 import org.geotoolkit.sml.xml.v100.Characteristics;
 import org.geotoolkit.sml.xml.v100.Classification;
 import org.geotoolkit.sml.xml.v100.ComponentType;
@@ -295,7 +295,7 @@ public class SmlFactory {
 
             //capabilities
             List<org.geotoolkit.sml.xml.v101.Capabilities> newCapabilities = new ArrayList<org.geotoolkit.sml.xml.v101.Capabilities>();
-            for (CapabilitiesSML oldCapa : oldProcess.getCapabilities()) {
+            for (Capabilities oldCapa : oldProcess.getCapabilities()) {
                 newCapabilities.add(new org.geotoolkit.sml.xml.v101.Capabilities(oldCapa));
             }
             newProcess.setCapabilities(newCapabilities);

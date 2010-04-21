@@ -61,7 +61,7 @@ import org.geotoolkit.util.Utilities;
     "abstractDataRecord"
 })
 @XmlRootElement(name = "capabilities")
-public class CapabilitiesSML implements AbstractCapabilities {
+public class Capabilities implements AbstractCapabilities {
 
     @XmlElementRef(name = "AbstractDataRecord", namespace = "http://www.opengis.net/swe/1.0", type = JAXBElement.class)
     private JAXBElement<? extends AbstractDataRecordType> abstractDataRecord;
@@ -84,16 +84,16 @@ public class CapabilitiesSML implements AbstractCapabilities {
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
     private String type;
 
-    public CapabilitiesSML() {
+    public Capabilities() {
 
     }
 
-    public CapabilitiesSML(DataRecordType dataRecord) {
+    public Capabilities(DataRecordType dataRecord) {
         org.geotoolkit.swe.xml.v100.ObjectFactory facto = new org.geotoolkit.swe.xml.v100.ObjectFactory();
         this.abstractDataRecord = facto.createDataRecord(dataRecord);
     }
 
-    public CapabilitiesSML(AbstractCapabilities capa) {
+    public Capabilities(AbstractCapabilities capa) {
         if (capa != null) {
             if (capa.getDataRecord() != null) {
                 AbstractDataRecord record = capa.getDataRecord();
@@ -322,8 +322,8 @@ public class CapabilitiesSML implements AbstractCapabilities {
             return true;
         }
 
-        if (object instanceof CapabilitiesSML) {
-            final CapabilitiesSML that = (CapabilitiesSML) object;
+        if (object instanceof Capabilities) {
+            final Capabilities that = (Capabilities) object;
             boolean proc = false;
             if (this.abstractDataRecord != null && that.abstractDataRecord != null) {
                 proc = Utilities.equals(this.abstractDataRecord.getValue(), that.abstractDataRecord.getValue());

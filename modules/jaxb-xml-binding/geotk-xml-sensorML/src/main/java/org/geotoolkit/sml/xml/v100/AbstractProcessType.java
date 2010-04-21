@@ -84,7 +84,7 @@ public abstract class AbstractProcessType extends AbstractSMLType implements Abs
     private SecurityConstraint securityConstraint;
     private List<LegalConstraint> legalConstraint;
     private List<Characteristics> characteristics;
-    private List<CapabilitiesSML> capabilities;
+    private List<Capabilities> capabilities;
     private List<Contact> contact;
     private List<Documentation> documentation;
     private List<History> history;
@@ -98,9 +98,9 @@ public abstract class AbstractProcessType extends AbstractSMLType implements Abs
         if (pr != null) {
 
             //capabilities
-            this.capabilities = new ArrayList<CapabilitiesSML>();
+            this.capabilities = new ArrayList<Capabilities>();
             for (AbstractCapabilities oldCapa : pr.getCapabilities()) {
-                this.capabilities.add(new CapabilitiesSML(oldCapa));
+                this.capabilities.add(new Capabilities(oldCapa));
             }
 
             // characteristics
@@ -422,9 +422,9 @@ public abstract class AbstractProcessType extends AbstractSMLType implements Abs
      * Gets the value of the capabilities property.
      * 
      */
-    public List<CapabilitiesSML> getCapabilities() {
+    public List<Capabilities> getCapabilities() {
         if (capabilities == null) {
-            capabilities = new ArrayList<CapabilitiesSML>();
+            capabilities = new ArrayList<Capabilities>();
         }
         return this.capabilities;
     }
@@ -433,10 +433,10 @@ public abstract class AbstractProcessType extends AbstractSMLType implements Abs
      * Sets the value of the capabilities property.
      *
      */
-    public void setCapabilities(CapabilitiesSML capabilties) {
+    public void setCapabilities(Capabilities capabilties) {
         if (capabilties != null) {
             if (this.capabilities == null) {
-                this.capabilities = new ArrayList<CapabilitiesSML>();
+                this.capabilities = new ArrayList<Capabilities>();
             }
             this.capabilities.add(capabilties);
         }
@@ -449,9 +449,9 @@ public abstract class AbstractProcessType extends AbstractSMLType implements Abs
     public void setCapabilities(DataRecordType capabilties) {
         if (capabilties != null) {
             if (this.capabilities == null) {
-                this.capabilities = new ArrayList<CapabilitiesSML>();
+                this.capabilities = new ArrayList<Capabilities>();
             }
-            this.capabilities.add(new CapabilitiesSML(capabilties));
+            this.capabilities.add(new Capabilities(capabilties));
         }
     }
 
@@ -459,7 +459,7 @@ public abstract class AbstractProcessType extends AbstractSMLType implements Abs
      * Sets the value of the capabilities property.
      *
      */
-    public void setCapabilities(List<CapabilitiesSML> capabilities) {
+    public void setCapabilities(List<Capabilities> capabilities) {
         this.capabilities = capabilities;
     }
 
@@ -621,7 +621,7 @@ public abstract class AbstractProcessType extends AbstractSMLType implements Abs
         }
         if (capabilities != null) {
             sb.append("capabilities:").append('\n');
-            for (CapabilitiesSML k : capabilities) {
+            for (Capabilities k : capabilities) {
                 sb.append(k).append('\n');
             }
         }

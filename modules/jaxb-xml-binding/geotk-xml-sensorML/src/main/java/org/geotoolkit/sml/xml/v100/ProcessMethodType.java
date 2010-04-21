@@ -193,7 +193,7 @@ public class ProcessMethodType extends AbstractGMLEntry implements AbstractProce
     private SecurityConstraint securityConstraint;
     private List<LegalConstraint> legalConstraint;
     private List<Characteristics> characteristics;
-    private List<CapabilitiesSML> capabilities;
+    private List<Capabilities> capabilities;
     private List<Contact> contact;
     private List<Documentation> documentation;
     private List<History> history;
@@ -220,9 +220,9 @@ public class ProcessMethodType extends AbstractGMLEntry implements AbstractProce
                 throw new IllegalArgumentException("Rules are not yet convertible");
             }
             if (method.getCapabilities() != null) {
-                this.capabilities = new ArrayList<org.geotoolkit.sml.xml.v100.CapabilitiesSML>();
+                this.capabilities = new ArrayList<org.geotoolkit.sml.xml.v100.Capabilities>();
                 for (AbstractCapabilities oldCapa : method.getCapabilities()) {
-                    this.capabilities.add(new org.geotoolkit.sml.xml.v100.CapabilitiesSML(oldCapa));
+                    this.capabilities.add(new org.geotoolkit.sml.xml.v100.Capabilities(oldCapa));
                 }
             }
             if (method.getCharacteristics() != null) {
@@ -345,9 +345,9 @@ public class ProcessMethodType extends AbstractGMLEntry implements AbstractProce
     /**
      * Gets the value of the capabilities property.
      */
-    public List<CapabilitiesSML> getCapabilities() {
+    public List<Capabilities> getCapabilities() {
         if (capabilities == null) {
-            capabilities = new ArrayList<CapabilitiesSML>();
+            capabilities = new ArrayList<Capabilities>();
         }
         return this.capabilities;
     }
@@ -1182,7 +1182,7 @@ public class ProcessMethodType extends AbstractGMLEntry implements AbstractProce
             private ValidTime validTime;
             private List<LegalConstraint> legalConstraint;
             private List<Characteristics> characteristics;
-            private List<CapabilitiesSML> capabilities;
+            private List<Capabilities> capabilities;
             private List<Contact> contact;
             private List<Documentation> documentation;
             private List<History> history;
@@ -1413,9 +1413,9 @@ public class ProcessMethodType extends AbstractGMLEntry implements AbstractProce
              * 
              * 
              */
-            public List<CapabilitiesSML> getCapabilities() {
+            public List<Capabilities> getCapabilities() {
                 if (capabilities == null) {
-                    capabilities = new ArrayList<CapabilitiesSML>();
+                    capabilities = new ArrayList<Capabilities>();
                 }
                 return this.capabilities;
             }

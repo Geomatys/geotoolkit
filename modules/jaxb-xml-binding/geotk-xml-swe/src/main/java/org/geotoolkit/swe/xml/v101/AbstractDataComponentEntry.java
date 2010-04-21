@@ -132,11 +132,13 @@ public class AbstractDataComponentEntry extends AbstractGMLEntry implements Abst
     @Override
     public int hashCode() {
         int hash = 7;
-        hash = 97 * hash + super.hashCode();
-        hash = 97 * hash + (this.fixed ? 1 : 0);
-        hash = 97 * hash + (this.definition != null ? this.definition.hashCode() : 0);
+        hash = 53 * hash + super.hashCode();
+        hash = 53 * hash + (this.fixed != null ? this.fixed.hashCode() : 0);
+        hash = 53 * hash + (this.definition != null ? this.definition.hashCode() : 0);
         return hash;
     }
+
+    
     
     @Override
     public String toString() {
