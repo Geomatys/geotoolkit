@@ -111,7 +111,11 @@ public class TimeRange extends AbstractDataComponentEntry implements AbstractTim
     public QualityPropertyType getQuality() {
         return this.quality;
     }
-    
+
+    public void setQuality(QualityPropertyType quality) {
+        this.quality = quality;
+    }
+
     /**
      * Gets the value of the uom property.
      */

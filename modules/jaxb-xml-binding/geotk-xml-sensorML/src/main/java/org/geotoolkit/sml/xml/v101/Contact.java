@@ -89,6 +89,10 @@ public class Contact implements AbstractContact {
 
     }
 
+    public Contact(ResponsibleParty responsibleParty) {
+        this.responsibleParty = responsibleParty;
+    }
+    
     public Contact(AbstractContact contact) {
         if (contact != null) {
             this.actuate = contact.getActuate();

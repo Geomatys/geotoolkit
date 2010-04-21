@@ -122,6 +122,19 @@ public class CountRange extends AbstractDataComponentType implements AbstractCou
         return this.quality;
     }
 
+    public void setQuality(QualityPropertyType quality) {
+        if (quality != null) {
+            if (this.quality == null) {
+                this.quality = new ArrayList<QualityPropertyType>();
+            }
+            this.quality.add(quality);
+        }
+    }
+
+    public void setQuality(List<QualityPropertyType> quality) {
+        this.quality = quality;
+    }
+    
     /**
      * Gets the value of the value property.
      */
@@ -132,6 +145,25 @@ public class CountRange extends AbstractDataComponentType implements AbstractCou
         return this.value;
     }
 
+    /**
+     * Gets the value of the value property.
+     *
+     */
+    public void setValue(List<Integer> value) {
+        this.value = value;
+    }
+
+    /**
+     * Gets the value of the value property.
+     *
+     */
+    public void setValue(Integer value) {
+        if (this.value == null) {
+            this.value = new ArrayList<Integer>();
+        }
+        this.value.add(value);
+    }
+    
     /**
      * Gets the value of the referenceFrame property.
      */

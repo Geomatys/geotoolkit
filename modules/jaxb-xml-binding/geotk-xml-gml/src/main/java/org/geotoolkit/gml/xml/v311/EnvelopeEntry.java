@@ -168,25 +168,6 @@ public class EnvelopeEntry {
 
     /**
      * Deprecated with GML version 3.1. Use the explicit properties "lowerCorner" and "upperCorner" instead.Gets the value of the pos property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the pos property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getPos().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link DirectPositionType }
-     * 
-     * 
      */
     public List<DirectPositionType> getPos() {
         if (pos == null) {
@@ -269,25 +250,6 @@ public class EnvelopeEntry {
 
     /**
      * Gets the value of the axisLabels property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the axisLabels property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getAxisLabels().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link String }
-     * 
-     * 
      */
     public List<String> getAxisLabels() {
         if (axisLabels == null) {
@@ -296,27 +258,22 @@ public class EnvelopeEntry {
         return this.axisLabels;
     }
 
+    public void setAxisLabels(List<String> axisLabels) {
+        this.axisLabels = axisLabels;
+    }
+
+    public void setAxisLabels(String axisLabel) {
+        if (axisLabel != null) {
+            if (axisLabels == null) {
+                axisLabels = new ArrayList<String>();
+            }
+            this.axisLabels.add(axisLabel);
+        }
+    }
+
+
     /**
      * Gets the value of the uomLabels property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the uomLabels property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getUomLabels().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link String }
-     * 
-     * 
      */
     public List<String> getUomLabels() {
         if (uomLabels == null) {

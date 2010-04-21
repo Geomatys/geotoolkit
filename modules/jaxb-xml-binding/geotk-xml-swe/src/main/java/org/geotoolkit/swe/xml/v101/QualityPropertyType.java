@@ -411,6 +411,48 @@ public class QualityPropertyType implements AbstractQualityProperty {
         this.actuate = value;
     }
 
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("[QualityPropertyType]").append("\n");
+        if (category != null) {
+            sb.append("category: ").append(category).append('\n');
+        }
+        if (quantity != null) {
+            sb.append("quantity: ").append(quantity).append('\n');
+        }
+        if (quantityRange != null) {
+            sb.append("quantityRange: ").append(quantityRange).append('\n');
+        }
+        if (text != null) {
+            sb.append("text: ").append(text).append('\n');
+        }
+        if (remoteSchema != null) {
+            sb.append("remoteSchema: ").append(remoteSchema).append('\n');
+        }
+        if (actuate != null) {
+            sb.append("actuate: ").append(actuate).append('\n');
+        }
+        if (arcrole != null) {
+            sb.append("actuate: ").append(arcrole).append('\n');
+        }
+        if (href != null) {
+            sb.append("href: ").append(href).append('\n');
+        }
+        if (role != null) {
+            sb.append("role: ").append(role).append('\n');
+        }
+        if (show != null) {
+            sb.append("show: ").append(show).append('\n');
+        }
+        if (title != null) {
+            sb.append("title: ").append(title).append('\n');
+        }
+        if (type != null) {
+            sb.append("type: ").append(type).append('\n');
+        }
+        return sb.toString();
+    }
+    
     /**
      * Verify if this entry is identical to specified object.
      */

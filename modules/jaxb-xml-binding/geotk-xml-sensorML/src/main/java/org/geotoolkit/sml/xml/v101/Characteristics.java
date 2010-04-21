@@ -95,6 +95,11 @@ public class Characteristics implements AbstractCharacteristics {
     public Characteristics() {
 
     }
+
+    public Characteristics(DataRecordType dataRecord) {
+        org.geotoolkit.swe.xml.v101.ObjectFactory facto = new org.geotoolkit.swe.xml.v101.ObjectFactory();
+        this.abstractDataRecord = facto.createDataRecord(dataRecord);
+    }
     
     public Characteristics(AbstractCharacteristics capa) {
         if (capa != null) {

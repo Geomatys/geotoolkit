@@ -101,7 +101,7 @@ public class AllowedValues implements AbstractAllowedValues {
         for (JAXBElement<List<Double>> jb : getIntervalOrValueList()) {
             if (jb.getName().getLocalPart().equals("interval")) {
                 return jb.getValue();
-            }
+            } 
         }
         return null;
     }
@@ -122,10 +122,28 @@ public class AllowedValues implements AbstractAllowedValues {
                 this.intervalOrValueList = new ArrayList<JAXBElement<List<Double>>>();
             }
             ObjectFactory factory = new ObjectFactory();
-            this.intervalOrValueList.add(factory.createAllowedValuesInterval(Arrays.asList(interval)));
+            boolean found = false;
+            for (int i = 0; i< intervalOrValueList.size() && !found; i++) {
+                JAXBElement<List<Double>> jb = intervalOrValueList.get(i);
+                if (jb.getName().getLocalPart().equals("interval")) {
+                    List<Double> oldList = jb.getValue();
+                    intervalOrValueList.remove(i);
+                    List<Double> newList = new ArrayList<Double>();
+                    for (Double s : oldList) {
+                        newList.add(s);
+                    }
+                    newList.add(interval);
+                    intervalOrValueList.add(i, factory.createAllowedValuesInterval(newList));
+                    found = true;
+                }
+            }
+
+            if (!found) {
+                this.intervalOrValueList.add(factory.createAllowedValuesInterval(Arrays.asList(interval)));
+            } 
         }
     }
-
+    
     public List<Double> getValueList() {
         for (JAXBElement<List<Double>> jb : getIntervalOrValueList()) {
             if (jb.getName().getLocalPart().equals("valueList")) {
@@ -145,13 +163,31 @@ public class AllowedValues implements AbstractAllowedValues {
         }
     }
 
-    public void setValueList(Double valueList) {
-        if (valueList != null) {
+   public void setValueList(Double interval) {
+        if (interval != null) {
             if (this.intervalOrValueList == null) {
                 this.intervalOrValueList = new ArrayList<JAXBElement<List<Double>>>();
             }
             ObjectFactory factory = new ObjectFactory();
-            this.intervalOrValueList.add(factory.createAllowedValuesValueList(Arrays.asList(valueList)));
+            boolean found = false;
+            for (int i = 0; i< intervalOrValueList.size() && !found; i++) {
+                JAXBElement<List<Double>> jb = intervalOrValueList.get(i);
+                if (jb.getName().getLocalPart().equals("valueList")) {
+                    List<Double> oldList = jb.getValue();
+                    intervalOrValueList.remove(i);
+                    List<Double> newList = new ArrayList<Double>();
+                    for (Double s : oldList) {
+                        newList.add(s);
+                    }
+                    newList.add(interval);
+                    intervalOrValueList.add(i, factory.createAllowedValuesValueList(newList));
+                    found = true;
+                }
+            }
+
+            if (!found) {
+                this.intervalOrValueList.add(factory.createAllowedValuesValueList(Arrays.asList(interval)));
+            }
         }
     }
 

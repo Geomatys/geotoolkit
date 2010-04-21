@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.swe.xml.v101;
 
+import java.util.logging.Logger;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -273,8 +274,18 @@ public class DataComponentPropertyType implements DataComponentProperty {
             abstractDataRecord = factory.createSimpleDataRecord((SimpleDataRecordEntry) obj);
         } else if (obj instanceof DataRecordType) {
             abstractDataRecord = factory.createDataRecord((DataRecordType) obj);
-        } else {
-            System.out.println("UNINPLEMENTED CASE:" + obj.getClass().getName());
+        } else if (obj instanceof EnvelopeType) {
+            abstractDataRecord = factory.createEnvelope((EnvelopeType) obj);
+        } else if (obj instanceof ConditionalValueType) {
+            abstractDataRecord = factory.createConditionalValue((ConditionalValueType) obj);
+        } else if (obj instanceof GeoLocationArea) {
+            abstractDataRecord = factory.createGeoLocationArea((GeoLocationArea) obj);
+        } else if (obj instanceof PositionType) {
+            abstractDataRecord = factory.createPosition((PositionType) obj);
+        } else if (obj instanceof VectorType) {
+            abstractDataRecord = factory.createVector((VectorType) obj);
+        } else if (obj != null ){
+            Logger.getLogger("org.geotoolkit.swe.xml.v101").warning("Unimplemented case:" + obj.getClass().getName());
         }
 
     }

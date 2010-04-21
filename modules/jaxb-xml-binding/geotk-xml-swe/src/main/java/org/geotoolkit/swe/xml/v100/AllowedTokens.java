@@ -17,6 +17,7 @@
 package org.geotoolkit.swe.xml.v100;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -87,6 +88,38 @@ public class AllowedTokens implements AbstractAllowedTokens {
             valueList = new ArrayList<JAXBElement<List<String>>>();
         }
         return this.valueList;
+    }
+
+    public void setValueList(String value) {
+        if (value != null) {
+            if (valueList == null) {
+                valueList = new ArrayList<JAXBElement<List<String>>>();
+            }
+            ObjectFactory factory = new ObjectFactory();
+            if (valueList.size() == 0) {
+                valueList.add(factory.createAllowedTokensValueList(Arrays.asList(value)));
+            } else {
+                JAXBElement<List<String>> firstList = valueList.get(0);
+                List<String> oldList = firstList.getValue();
+                valueList.remove(0);
+                List<String> newList = new ArrayList<String>();
+                for (String s: oldList) {
+                    newList.add(s);
+                }
+                newList.add(value);
+                valueList.add(0, factory.createAllowedTokensValueList(newList));
+            }
+        }
+    }
+
+    public void setValueList(List<String> value) {
+        if (value != null) {
+            if (valueList == null) {
+                valueList = new ArrayList<JAXBElement<List<String>>>();
+            }
+            ObjectFactory factory = new ObjectFactory();
+            valueList.add(factory.createAllowedTokensValueList(value));
+        }
     }
 
     /**

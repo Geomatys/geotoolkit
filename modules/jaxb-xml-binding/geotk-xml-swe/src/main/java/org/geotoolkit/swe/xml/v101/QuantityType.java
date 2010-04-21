@@ -17,6 +17,7 @@
 package org.geotoolkit.swe.xml.v101;
 
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -149,6 +150,16 @@ public class QuantityType extends AbstractDataComponentEntry implements Quantity
     public void setQuality(List<QualityPropertyType> quality) {
         this.quality = quality;
     }
+
+    public void setQuality(QualityPropertyType quality) {
+        if (quality != null) {
+            if (this.quality == null) {
+                this.quality = new ArrayList<QualityPropertyType>();
+            }
+            this.quality.add(quality);
+        }
+    }
+
 
     /**
      * Verify if this entry is identical to the specified object.

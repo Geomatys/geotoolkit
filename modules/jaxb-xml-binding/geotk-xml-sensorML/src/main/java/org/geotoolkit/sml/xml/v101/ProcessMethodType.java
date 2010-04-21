@@ -31,6 +31,8 @@ import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.geotoolkit.gml.xml.v311.AbstractGMLEntry;
 import org.geotoolkit.gml.xml.v311.StringOrRefType;
+import org.geotoolkit.gml.xml.v311.TimeInstantType;
+import org.geotoolkit.gml.xml.v311.TimePeriodType;
 import org.geotoolkit.sml.xml.AbstractAlgorithm;
 import org.geotoolkit.sml.xml.AbstractCapabilities;
 import org.geotoolkit.sml.xml.AbstractCharacteristics;
@@ -44,6 +46,8 @@ import org.geotoolkit.sml.xml.AbstractKeywords;
 import org.geotoolkit.sml.xml.AbstractLegalConstraint;
 import org.geotoolkit.sml.xml.AbstractProcessMethod;
 import org.geotoolkit.sml.xml.AbstractRules;
+import org.geotoolkit.sml.xml.AbstractValidTime;
+import org.geotoolkit.swe.xml.v101.DataRecordType;
 
 
 /**
@@ -290,25 +294,28 @@ public class ProcessMethodType extends AbstractGMLEntry implements AbstractProce
     }
 
     /**
+     * Sets the value of the keywords property.
+     *
+     */
+    public void setKeywords(List<Keywords> keywords) {
+        this.keywords = keywords;
+    }
+
+    /**
+     * Sets the value of the keywords property.
+     *
+     */
+    public void setKeywords(Keywords keywords) {
+        if (keywords != null) {
+            if (this.keywords == null) {
+                this.keywords = new ArrayList<Keywords>();
+            }
+            this.keywords.add(keywords);
+        }
+    }
+    
+    /**
      * Gets the value of the identification property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the identification property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getIdentification().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link Identification }
-     * 
      * 
      */
     public List<Identification> getIdentification() {
@@ -319,26 +326,42 @@ public class ProcessMethodType extends AbstractGMLEntry implements AbstractProce
     }
 
     /**
+     * Sets the value of the keywords property.
+     *
+     */
+    public void setIdentification(List<Identification> identification) {
+        this.identification = identification;
+    }
+
+    /**
+     * Sets the value of the keywords property.
+     *
+     */
+    public void setIdentification(Identification identification) {
+        if (identification != null) {
+            if (this.identification == null) {
+                this.identification = new ArrayList<Identification>();
+            }
+            this.identification.add(identification);
+        }
+    }
+
+    /**
+     * Sets the value of the keywords property.
+     *
+     */
+    public void setIdentification(IdentifierList identification) {
+        if (identification != null) {
+            if (this.identification == null) {
+                this.identification = new ArrayList<Identification>();
+            }
+            this.identification.add(new Identification(identification));
+        }
+    }
+
+    
+    /**
      * Gets the value of the classification property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the classification property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getClassification().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link Classification }
-     * 
-     * 
      */
     public List<Classification> getClassification() {
         if (classification == null) {
@@ -347,6 +370,40 @@ public class ProcessMethodType extends AbstractGMLEntry implements AbstractProce
         return this.classification;
     }
 
+    /**
+     * Sets the value of the keywords property.
+     *
+     */
+    public void setClassification(List<Classification> classification) {
+       this.classification = classification;
+    }
+
+    /**
+     * Sets the value of the keywords property.
+     *
+     */
+    public void setClassification(Classification classification) {
+        if (classification != null) {
+            if (this.classification == null) {
+                this.classification = new ArrayList<Classification>();
+            }
+            this.classification.add(classification);
+        }
+    }
+
+    /**
+     * Sets the value of the keywords property.
+     *
+     */
+    public void setClassification(ClassifierList classification) {
+        if (classification != null) {
+            if (this.classification == null) {
+                this.classification = new ArrayList<Classification>();
+            }
+            this.classification.add(new Classification(classification));
+        }
+    }
+    
     /**
      * Gets the value of the validTime property.
      * 
@@ -359,16 +416,25 @@ public class ProcessMethodType extends AbstractGMLEntry implements AbstractProce
         return validTime;
     }
 
-    /**
+     /**
      * Sets the value of the validTime property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link ValidTime }
-     *     
      */
-    public void setValidTime(ValidTime value) {
-        this.validTime = value;
+    public void setValidTime(AbstractValidTime value) {
+        this.validTime = new ValidTime(value);
+    }
+
+     /**
+     * Sets the value of the validTime property.
+     */
+    public void setValidTime(TimePeriodType value) {
+        this.validTime = new ValidTime(value);
+    }
+
+     /**
+     * Sets the value of the validTime property.
+     */
+    public void setValidTime(TimeInstantType value) {
+        this.validTime = new ValidTime(value);
     }
 
     /**
@@ -397,25 +463,6 @@ public class ProcessMethodType extends AbstractGMLEntry implements AbstractProce
 
     /**
      * Gets the value of the legalConstraint property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the legalConstraint property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getLegalConstraint().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link LegalConstraint }
-     * 
-     * 
      */
     public List<LegalConstraint> getLegalConstraint() {
         if (legalConstraint == null) {
@@ -425,26 +472,41 @@ public class ProcessMethodType extends AbstractGMLEntry implements AbstractProce
     }
 
     /**
+     * Gets the value of the legalConstraint property.
+     *
+     */
+    public void setLegalConstraint(LegalConstraint legalConstraint) {
+        if (legalConstraint != null) {
+            if (this.legalConstraint == null) {
+                this.legalConstraint = new ArrayList<LegalConstraint>();
+            }
+            this.legalConstraint.add(legalConstraint);
+        }
+    }
+
+    /**
+     * Gets the value of the legalConstraint property.
+     *
+     */
+    public void setLegalConstraint(Rights legalConstraint) {
+        if (legalConstraint != null) {
+            if (this.legalConstraint == null) {
+                this.legalConstraint = new ArrayList<LegalConstraint>();
+            }
+            this.legalConstraint.add(new LegalConstraint(legalConstraint));
+        }
+    }
+
+    /**
+     * Gets the value of the legalConstraint property.
+     *
+     */
+    public void setLegalConstraint(List<LegalConstraint> legalConstraint) {
+        this.legalConstraint = legalConstraint;
+    }
+
+    /**
      * Gets the value of the characteristics property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the characteristics property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getCharacteristics().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link Characteristics }
-     * 
-     * 
      */
     public List<Characteristics> getCharacteristics() {
         if (characteristics == null) {
@@ -454,26 +516,41 @@ public class ProcessMethodType extends AbstractGMLEntry implements AbstractProce
     }
 
     /**
+     * Sets the value of the characteristics property.
+     *
+     */
+    public void setCharacteristics(List<Characteristics> characteristics) {
+        this.characteristics = characteristics;
+    }
+
+    /**
+     * Sets the value of the characteristics property.
+     *
+     */
+    public void setCharacteristics(Characteristics characteristics) {
+        if (characteristics != null) {
+            if (this.characteristics == null) {
+                this.characteristics = new ArrayList<Characteristics>();
+            }
+            this.characteristics.add(characteristics);
+        }
+    }
+
+    /**
+     * Sets the value of the characteristics property.
+     *
+     */
+    public void setCharacteristics(DataRecordType characteristics) {
+        if (characteristics != null) {
+            if (this.characteristics == null) {
+                this.characteristics = new ArrayList<Characteristics>();
+            }
+            this.characteristics.add(new Characteristics(characteristics));
+        }
+    }
+
+    /**
      * Gets the value of the capabilities property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the capabilities property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getCapabilities().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link Capabilities }
-     * 
-     * 
      */
     public List<Capabilities> getCapabilities() {
         if (capabilities == null) {
@@ -483,26 +560,41 @@ public class ProcessMethodType extends AbstractGMLEntry implements AbstractProce
     }
 
     /**
+     * Sets the value of the capabilities property.
+     *
+     */
+    public void setCapabilities(Capabilities capabilties) {
+        if (capabilties != null) {
+            if (this.capabilities == null) {
+                this.capabilities = new ArrayList<Capabilities>();
+            }
+            this.capabilities.add(capabilties);
+        }
+    }
+
+    /**
+     * Sets the value of the capabilities property.
+     *
+     */
+    public void setCapabilities(DataRecordType capabilties) {
+        if (capabilties != null) {
+            if (this.capabilities == null) {
+                this.capabilities = new ArrayList<Capabilities>();
+            }
+            this.capabilities.add(new Capabilities(capabilties));
+        }
+    }
+
+    /**
+     * Sets the value of the capabilities property.
+     *
+     */
+    public void setCapabilities(List<Capabilities> capabilities) {
+        this.capabilities = capabilities;
+    }
+    
+    /**
      * Gets the value of the contact property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the contact property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getContact().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link Contact }
-     * 
-     * 
      */
     public List<Contact> getContact() {
         if (contact == null) {
@@ -512,26 +604,41 @@ public class ProcessMethodType extends AbstractGMLEntry implements AbstractProce
     }
 
     /**
+     * Sets the value of the contact property.
+     *
+     */
+    public void setContact(Contact contact) {
+        if (contact != null) {
+            if (this.contact == null) {
+                this.contact = new ArrayList<Contact>();
+            }
+            this.contact.add(contact);
+        }
+    }
+
+    /**
+     * Sets the value of the contact property.
+     *
+     */
+    public void setContact(ResponsibleParty contact) {
+        if (contact != null) {
+            if (this.contact == null) {
+                this.contact = new ArrayList<Contact>();
+            }
+            this.contact.add(new Contact(contact));
+        }
+    }
+
+    /**
+     * sets the value of the contact property.
+     *
+     */
+    public void setContact(List<Contact> contact) {
+        this.contact = contact;
+    }
+    
+    /**
      * Gets the value of the documentation property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the documentation property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getDocumentation().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link Documentation }
-     * 
-     * 
      */
     public List<Documentation> getDocumentation() {
         if (documentation == null) {
@@ -541,26 +648,41 @@ public class ProcessMethodType extends AbstractGMLEntry implements AbstractProce
     }
 
     /**
+     * Sets the value of the contact property.
+     *
+     */
+    public void setDocumentation(Documentation documentation) {
+        if (documentation != null) {
+            if (this.documentation == null) {
+                this.documentation = new ArrayList<Documentation>();
+            }
+            this.documentation.add(documentation);
+        }
+    }
+
+    /**
+     * Sets the value of the contact property.
+     *
+     */
+    public void setDocumentation(Document documentation) {
+        if (documentation != null) {
+            if (this.documentation == null) {
+                this.documentation = new ArrayList<Documentation>();
+            }
+            this.documentation.add(new Documentation(documentation));
+        }
+    }
+
+    /**
+     * sets the value of the contact property.
+     *
+     */
+    public void setDocumentation(List<Documentation> documentation) {
+        this.documentation = documentation;
+    }
+    
+    /**
      * Gets the value of the history property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the history property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getHistory().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link History }
-     * 
-     * 
      */
     public List<History> getHistory() {
         if (history == null) {
@@ -569,6 +691,25 @@ public class ProcessMethodType extends AbstractGMLEntry implements AbstractProce
         return this.history;
     }
 
+     /**
+     * Sets the value of the history property.
+     */
+    public void setHistory(List<History> history) {
+        this.history = history;
+    }
+
+    /**
+     * Sets the value of the history property.
+     */
+    public void setHistory(History history) {
+        if (history != null) {
+            if (this.history == null) {
+                this.history = new ArrayList<History>();
+            }
+            this.history.add(history);
+        }
+    }
+    
     /**
      * Gets the value of the rules property.
      * 

@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.swe.xml.AbstractQualityProperty;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -410,4 +411,90 @@ public class QualityPropertyType implements AbstractQualityProperty {
         this.actuate = value;
     }
 
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("[QualityPropertyType]").append("\n");
+        if (category != null) {
+            sb.append("category: ").append(category).append('\n');
+        }
+        if (quantity != null) {
+            sb.append("quantity: ").append(quantity).append('\n');
+        }
+        if (quantityRange != null) {
+            sb.append("quantityRange: ").append(quantityRange).append('\n');
+        }
+        if (text != null) {
+            sb.append("text: ").append(text).append('\n');
+        }
+        if (remoteSchema != null) {
+            sb.append("remoteSchema: ").append(remoteSchema).append('\n');
+        }
+        if (actuate != null) {
+            sb.append("actuate: ").append(actuate).append('\n');
+        }
+        if (arcrole != null) {
+            sb.append("actuate: ").append(arcrole).append('\n');
+        }
+        if (href != null) {
+            sb.append("href: ").append(href).append('\n');
+        }
+        if (role != null) {
+            sb.append("role: ").append(role).append('\n');
+        }
+        if (show != null) {
+            sb.append("show: ").append(show).append('\n');
+        }
+        if (title != null) {
+            sb.append("title: ").append(title).append('\n');
+        }
+        if (type != null) {
+            sb.append("type: ").append(type).append('\n');
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Verify if this entry is identical to specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof QualityPropertyType) {
+            final QualityPropertyType that = (QualityPropertyType) object;
+
+            return Utilities.equals(this.category,           that.category)         &&
+                   Utilities.equals(this.quantity,           that.quantity)         &&
+                   Utilities.equals(this.quantityRange,      that.quantityRange)    &&
+                   Utilities.equals(this.text,               that.text)             &&
+                   Utilities.equals(this.actuate,            that.actuate)          &&
+                   Utilities.equals(this.arcrole,            that.arcrole)          &&
+                   Utilities.equals(this.type,               that.type)             &&
+                   Utilities.equals(this.href,               that.href)             &&
+                   Utilities.equals(this.remoteSchema,       that.remoteSchema)     &&
+                   Utilities.equals(this.show,               that.show)             &&
+                   Utilities.equals(this.role,               that.role)             &&
+                   Utilities.equals(this.title,              that.title);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 53 * hash + (this.quantity != null ? this.quantity.hashCode() : 0);
+        hash = 53 * hash + (this.quantityRange != null ? this.quantityRange.hashCode() : 0);
+        hash = 53 * hash + (this.category != null ? this.category.hashCode() : 0);
+        hash = 53 * hash + (this.text != null ? this.text.hashCode() : 0);
+        hash = 53 * hash + (this.remoteSchema != null ? this.remoteSchema.hashCode() : 0);
+        hash = 53 * hash + (this.type != null ? this.type.hashCode() : 0);
+        hash = 53 * hash + (this.href != null ? this.href.hashCode() : 0);
+        hash = 53 * hash + (this.role != null ? this.role.hashCode() : 0);
+        hash = 53 * hash + (this.arcrole != null ? this.arcrole.hashCode() : 0);
+        hash = 53 * hash + (this.title != null ? this.title.hashCode() : 0);
+        hash = 53 * hash + (this.show != null ? this.show.hashCode() : 0);
+        hash = 53 * hash + (this.actuate != null ? this.actuate.hashCode() : 0);
+        return hash;
+    }
 }

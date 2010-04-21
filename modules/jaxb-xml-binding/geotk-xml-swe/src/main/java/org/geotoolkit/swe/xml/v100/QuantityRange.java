@@ -152,6 +152,19 @@ public class QuantityRange extends AbstractDataComponentType implements Abstract
         return this.quality;
     }
 
+    public void setQuality(QualityPropertyType quality) {
+        if (quality != null) {
+            if (this.quality == null) {
+                this.quality = new ArrayList<QualityPropertyType>();
+            }
+            this.quality.add(quality);
+        }
+    }
+
+    public void setQuality(List<QualityPropertyType> quality) {
+        this.quality = quality;
+    }
+    
     /**
      * Gets the value of the value property.
      * 

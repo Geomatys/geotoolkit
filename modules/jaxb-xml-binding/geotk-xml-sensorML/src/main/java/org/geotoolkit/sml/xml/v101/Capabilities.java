@@ -95,6 +95,11 @@ public class Capabilities implements AbstractCapabilities {
 
     }
 
+    public Capabilities(DataRecordType dataRecord) {
+        org.geotoolkit.swe.xml.v101.ObjectFactory facto = new org.geotoolkit.swe.xml.v101.ObjectFactory();
+        this.abstractDataRecord = facto.createDataRecord(dataRecord);
+    }
+
     public Capabilities(AbstractCapabilities capa) {
         if (capa != null) {
             if (capa.getDataRecord() != null) {
