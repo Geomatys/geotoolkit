@@ -646,8 +646,8 @@ public class DefaultController2D implements CanvasController2D{
     @Override
     public double getGeographicScale() throws IllegalStateException {
         final Point2D center = getDisplayCenter();
-        final double[] P1 = new double[]{center.getX(),center.getY()};
-        final double[] P2 = new double[]{P1[0],P1[1]+1};
+        final double[] P1 = new double[]{center.getX(), center.getY()};
+        final double[] P2 = new double[]{P1[0], P1[1] + 1};
 
         final AffineTransform trs;
         try {
@@ -662,26 +662,55 @@ public class DefaultController2D implements CanvasController2D{
         final Unit unit = crs.getCoordinateSystem().getAxis(0).getUnit();
 
         final double distance;
-        if(unit.isCompatible(SI.METRE)){
+        if (unit.isCompatible(SI.METRE)) {
             final Point2D p1 = new Point2D.Double(P1[0], P1[1]);
             final Point2D p2 = new Point2D.Double(P2[0], P2[1]);
             final UnitConverter conv = unit.getConverterTo(SI.METRE);
             distance = conv.convert(p1.distance(p2));
-        }else{
-            try{
-                final GeodeticCalculator gc = new GeodeticCalculator(crs);
-                final GeneralDirectPosition pos1 = new GeneralDirectPosition(crs);
-                pos1.setOrdinate(0, P1[0]);
-                pos1.setOrdinate(1, P1[1]);
-                final GeneralDirectPosition pos2 = new GeneralDirectPosition(crs);
-                pos2.setOrdinate(0, P2[0]);
-                pos2.setOrdinate(1, P2[1]);
+        } else {
+            /*
+             * If the latitude ordinates (for example) are outside the +/-90°
+             * range, translate the points in order to bring them back in the
+             * domain of validity.
+             */
+            final CoordinateSystem cs = crs.getCoordinateSystem();
+            for (int i=cs.getDimension(); --i>=0;) {
+                final CoordinateSystemAxis axis = cs.getAxis(i);
+                double delta = P1[i] - axis.getMaximumValue();
+                if (delta > 0) {
+                    P1[i] -= delta;
+                    P2[i] -= delta;
+                }
+                delta = P2[i] - axis.getMaximumValue();
+                if (delta > 0) {
+                    P1[i] -= delta;
+                    P2[i] -= delta;
+                }
+                delta = axis.getMinimumValue() - P1[i];
+                if (delta > 0) {
+                    P1[i] += delta;
+                    P2[i] += delta;
+                }
+                delta = axis.getMinimumValue() - P2[i];
+                if (delta > 0) {
+                    P1[i] += delta;
+                    P2[i] += delta;
+                }
+            }
+            final GeodeticCalculator gc = new GeodeticCalculator(crs);
+            final GeneralDirectPosition pos1 = new GeneralDirectPosition(crs);
+            pos1.setOrdinate(0, P1[0]);
+            pos1.setOrdinate(1, P1[1]);
+            final GeneralDirectPosition pos2 = new GeneralDirectPosition(crs);
+            pos2.setOrdinate(0, P2[0]);
+            pos2.setOrdinate(1, P2[1]);
+            try {
                 gc.setStartingPosition(pos1);
                 gc.setDestinationPosition(pos2);
-                distance = Math.abs(gc.getOrthodromicDistance());
-            }catch(TransformException ex){
+            } catch (TransformException ex) {
                 throw new IllegalStateException(ex.getLocalizedMessage(), ex);
             }
+            distance = Math.abs(gc.getOrthodromicDistance());
         }
 
         final double displayToDevice = 1f / 72f * 0.0254f;
