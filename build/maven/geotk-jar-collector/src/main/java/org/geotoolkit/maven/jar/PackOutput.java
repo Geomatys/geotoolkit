@@ -36,7 +36,7 @@ import static java.util.jar.Pack200.Packer.*;
  * A JAR file to be created for output by {@link Packer}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.11
  *
  * @since 3.00
  */
@@ -59,11 +59,11 @@ final class PackOutput implements Closeable {
     private JarOutputStream out;
 
     /**
-     * The main class, or {@code null} if none. We will set this field to the main class
-     * of the last {@link PackInput} to be used by this {@code PackOutput}. This is on
+     * The manifest attribute value, or {@code null} if none. We will set this field to the
+     * value of the last {@link PackInput} to be used by this {@code PackOutput}. This is on
      * the assumption that the last input is the main one.
      */
-    private String mainClass;
+    private String mainClass, splashScreen;
 
     /**
      * The JAR to be used as inputs.
@@ -148,6 +148,9 @@ final class PackOutput implements Closeable {
             if (in.mainClass != null) {
                 mainClass = in.mainClass;
             }
+            if (in.splashScreen != null) {
+                splashScreen = in.splashScreen;
+            }
         }
     }
 
@@ -167,6 +170,9 @@ final class PackOutput implements Closeable {
         attributes.put(Attributes.Name.IMPLEMENTATION_URL,     "http://www.geotoolkit.org/");
         if (mainClass != null) {
             attributes.put(Attributes.Name.MAIN_CLASS, mainClass);
+        }
+        if (splashScreen != null) {
+            attributes.put(PackInput.SPLASH_SCREEN, splashScreen);
         }
         out = new JarOutputStream(new FileOutputStream(file), manifest);
         out.setLevel(1); // Use a cheap compression level since this JAR file is temporary.

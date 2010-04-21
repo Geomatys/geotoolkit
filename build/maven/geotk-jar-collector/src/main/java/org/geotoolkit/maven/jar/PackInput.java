@@ -30,7 +30,7 @@ import java.io.InputStream;
  * Those files will be open in read-only mode.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.08
+ * @version 3.11
  *
  * @since 3.00
  */
@@ -54,6 +54,11 @@ final class PackInput implements Closeable {
     public static final String SERVICES = META_INF + "services/";
 
     /**
+     * The attribute name in {@code MANIFEST.MF} files for splash screen.
+     */
+    static final Attributes.Name SPLASH_SCREEN = new Attributes.Name("SplashScreen-Image");
+
+    /**
      * The JAR file.
      */
     private JarFile file;
@@ -62,6 +67,11 @@ final class PackInput implements Closeable {
      * The main class obtained from the manifest, or {@code null} if none.
      */
     public final String mainClass;
+
+    /**
+     * The splash screen image obtained from the manifest, or {@code null} if none.
+     */
+    public final String splashScreen;
 
     /**
      * An enumeration over the entries. We are going to iterate only once.
@@ -85,11 +95,13 @@ final class PackInput implements Closeable {
         if (manifest != null) {
             final Attributes attributes = manifest.getMainAttributes();
             if (attributes != null) {
-                mainClass = attributes.getValue(Attributes.Name.MAIN_CLASS);
+                mainClass    = attributes.getValue(Attributes.Name.MAIN_CLASS);
+                splashScreen = attributes.getValue(SPLASH_SCREEN);
                 return;
             }
         }
-        mainClass = null;
+        mainClass    = null;
+        splashScreen = null;
     }
 
     /**
