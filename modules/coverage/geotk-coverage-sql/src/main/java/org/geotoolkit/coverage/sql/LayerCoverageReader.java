@@ -157,7 +157,7 @@ public class LayerCoverageReader extends GridCoverageReader {
     public final Layer getInput() throws CoverageStoreException {
         Object input = super.getInput();
         if (input instanceof Future<?>) {
-            input = CoverageDatabase.now((Future<?>) input);
+            input = ((FutureQuery<?>) input).result();
             super.setInput(input);
         }
         return (Layer) input;

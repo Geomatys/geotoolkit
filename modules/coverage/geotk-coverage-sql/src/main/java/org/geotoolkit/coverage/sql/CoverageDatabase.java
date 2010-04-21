@@ -25,7 +25,7 @@ import java.util.Properties;
 import java.util.concurrent.Future;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.ExecutorService;
+import java.util.concurrent.RunnableFuture;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ExecutionException;
@@ -51,23 +51,16 @@ import org.geotoolkit.resources.Errors;
  * The connection to the database is specified by a {@link DataSource}.
  * <p>
  * Every query methods in this class are executed in a background thread. In order to get the result
- * immediately, the {@link #now(Future)} convenience method can be used as in the example below:
+ * immediately, the {@link FutureQuery#result()} convenience method can be used as in the example below:
  *
  * {@preformat java
- *     import static org.geotoolkit.coverage.sql.CoverageDatabase.now;
- *
- *     class MyClass {
- *         private CoverageDatabase database = ...; // Specify your database here.
- *
- *         void myMethod() throws CoverageStoreException {
- *             Layer myLayer = now(database.getLayer("Temperature"));
- *             // Use the layer here...
- *         }
- *     }
+ *     CoverageDatabase database = ...; // Specify your database here.
+ *     Layer myLayer = database.getLayer("Temperature").result();
+ *     // Use the layer here...
  * }
  *
- * However it is better to invoke {@code now(Future)} as late as possible, in order to have
- * more work executed concurrently.
+ * However it is better to invoke {@code FutureQuery.result()} as late as possible,
+ * in order to have more work executed concurrently.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.11
@@ -101,7 +94,7 @@ public class CoverageDatabase {
      * connections, and we want to constraint the creation of those JDBC resources in only a
      * limited amount of threads.
      */
-    final ExecutorService executor;
+    final Executor executor;
 
     /**
      * Creates a new instance using the given data source.
@@ -118,8 +111,43 @@ public class CoverageDatabase {
      */
     CoverageDatabase(final TableFactory db) {
         database = db;
-        executor = new ThreadPoolExecutor(0, MAXIMUM_THREADS, 1, TimeUnit.MINUTES,
-                   new ArrayBlockingQueue<Runnable>(MAXIMUM_TASKS, true));
+        executor = new Executor();
+    }
+
+    /**
+     * The executor used by {@link CoverageDatabase}.
+     *
+     * @author Martin Desruisseaux (Geomatys)
+     * @version 3.11
+     *
+     * @since 3.11
+     * @module
+     */
+    private static final class Executor extends ThreadPoolExecutor {
+        /**
+         * Creates a new executor.
+         */
+        Executor() {
+            super(0, MAXIMUM_THREADS, 1, TimeUnit.MINUTES,
+                  new ArrayBlockingQueue<Runnable>(MAXIMUM_TASKS, true));
+        }
+
+        /**
+         * Returns the {@link FutureQueryTask} for the given callable task.
+         */
+        @Override
+        protected <T> RunnableFuture<T> newTaskFor(final Callable<T> task) {
+            return new FutureQueryTask<T>(task);
+        }
+
+        /**
+         * Executes the given task and casts the result to {@link FutureQuery},
+         * which is the expected type.
+         */
+        @Override
+        public <T> FutureQuery<T> submit(final Callable<T> task) {
+            return (FutureQuery<T>) super.submit(task);
+        }
     }
 
     /**
@@ -145,7 +173,10 @@ public class CoverageDatabase {
      * @return The result of the given task.
      * @throws CoverageStoreException If an error occured while executing the task.
      * @throws CancellationException if the computation was cancelled.
+     *
+     * @deprecated Replaced by {@link FutureQuery#result()}.
      */
+    @Deprecated
     public static <T> T now(final Future<T> task) throws CoverageStoreException, CancellationException {
         try {
             return task.get();
@@ -173,7 +204,7 @@ public class CoverageDatabase {
      *
      * @return The layer of the given name.
      */
-    public Future<Set<String>> getLayers() {
+    public FutureQuery<Set<String>> getLayers() {
         return executor.submit(new GetLayers());
     }
 
@@ -206,7 +237,7 @@ public class CoverageDatabase {
      * @param  name The layer name.
      * @return The layer of the given name.
      */
-    public Future<Layer> getLayer(final String name) {
+    public FutureQuery<Layer> getLayer(final String name) {
         ensureNonNull("name", name);
         return executor.submit(new GetLayer(name));
     }
@@ -243,7 +274,7 @@ public class CoverageDatabase {
      * code are executed in the background thread:
      *
      * {@preformat java
-     *     return now(getLayer(layer)).getTimeRange();
+     *     return getLayer(layer).result().getTimeRange();
      * }
      *
      * @param  layer The layer for which the time range is desired.
@@ -251,7 +282,7 @@ public class CoverageDatabase {
      *
      * @see Layer#getTimeRange()
      */
-    public Future<DateRange> getTimeRange(final String layer) {
+    public FutureQuery<DateRange> getTimeRange(final String layer) {
         ensureNonNull("layer", layer);
         return executor.submit(new GetTimeRange(layer));
     }
@@ -289,7 +320,7 @@ public class CoverageDatabase {
      * more code are executed in the background thread:
      *
      * {@preformat java
-     *     return now(getLayer(layer)).getAvailableTimes();
+     *     return getLayer(layer).result().getAvailableTimes();
      * }
      *
      * @param  layer The layer for which the available times are desired.
@@ -297,7 +328,7 @@ public class CoverageDatabase {
      *
      * @see Layer#getAvailableTimes()
      */
-    public Future<SortedSet<Date>> getAvailableTimes(final String layer) {
+    public FutureQuery<SortedSet<Date>> getAvailableTimes(final String layer) {
         ensureNonNull("layer", layer);
         return executor.submit(new GetAvailableTimes(layer));
     }
@@ -335,7 +366,7 @@ public class CoverageDatabase {
      * more code are executed in the background thread:
      *
      * {@preformat java
-     *     return now(getLayer(layer)).getAvailableElevations();
+     *     return getLayer(layer).result().getAvailableElevations();
      * }
      *
      * @param  layer The layer for which the available elevations are desired.
@@ -343,7 +374,7 @@ public class CoverageDatabase {
      *
      * @see Layer#getAvailableElevations()
      */
-    public Future<SortedSet<Number>> getAvailableElevations(final String layer) {
+    public FutureQuery<SortedSet<Number>> getAvailableElevations(final String layer) {
         ensureNonNull("layer", layer);
         return executor.submit(new GetAvailableElevations(layer));
     }
@@ -381,7 +412,7 @@ public class CoverageDatabase {
      * background thread:
      *
      * {@preformat java
-     *     return now(getLayer(layer)).getSampleValueRanges();
+     *     return getLayer(layer).result().getSampleValueRanges();
      * }
      *
      * @param  layer The layer for which the range of measurement values is desired.
@@ -389,7 +420,7 @@ public class CoverageDatabase {
      *
      * @see Layer#getSampleValueRanges()
      */
-    public Future<List<MeasurementRange<?>>> getSampleValueRanges(final String layer) {
+    public FutureQuery<List<MeasurementRange<?>>> getSampleValueRanges(final String layer) {
         ensureNonNull("layer", layer);
         return executor.submit(new GetSampleValueRanges(layer));
     }
@@ -433,7 +464,7 @@ public class CoverageDatabase {
      *
      * @see LayerCoverageReader#readSlice
      */
-    public Future<GridCoverage2D> readSlice(final CoverageQuery request) {
+    public FutureQuery<GridCoverage2D> readSlice(final CoverageQuery request) {
         ensureNonNull("request", request);
         return executor.submit(new ReadSlice(request));
     }
@@ -484,7 +515,7 @@ public class CoverageDatabase {
      * @throws CoverageStoreException If an error occured while querying the database.
      */
     public LayerCoverageReader createGridCoverageReader(final String layer) throws CoverageStoreException {
-        final Future<Layer> future = (layer != null) ? getLayer(layer) : null;
+        final FutureQuery<Layer> future = (layer != null) ? getLayer(layer) : null;
         return new LayerCoverageReader(this, future);
     }
 

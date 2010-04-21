@@ -32,7 +32,6 @@ import org.geotoolkit.internal.sql.table.CatalogTestBase;
 import org.junit.*;
 import static org.junit.Assert.*;
 import static org.geotoolkit.coverage.sql.LayerTableTest.*;
-import static org.geotoolkit.coverage.sql.CoverageDatabase.now;
 
 
 /**
@@ -84,7 +83,7 @@ public final class CoverageDatabaseTest extends CatalogTestBase {
     @Test
     public void testGetLayers() throws CoverageStoreException {
         final CoverageDatabase database = getCoverageDatabase();
-        final Set<String> names = now(database.getLayers());
+        final Set<String> names = database.getLayers().result();
         assertTrue(names.contains(TEMPERATURE));
         assertTrue(names.contains(NETCDF));
         assertTrue(names.contains(GEOSTROPHIC_CURRENT));
@@ -99,7 +98,7 @@ public final class CoverageDatabaseTest extends CatalogTestBase {
     @Test
     public void testGetLayer() throws CoverageStoreException {
         final CoverageDatabase database = getCoverageDatabase();
-        final Layer layer = now(database.getLayer(TEMPERATURE));
+        final Layer layer = database.getLayer(TEMPERATURE).result();
         assertEquals(TEMPERATURE, layer.getName());
     }
 
@@ -111,7 +110,7 @@ public final class CoverageDatabaseTest extends CatalogTestBase {
     @Test
     public void testGetTimeRange() throws CoverageStoreException {
         final CoverageDatabase database = getCoverageDatabase();
-        final DateRange range = now(database.getTimeRange(TEMPERATURE));
+        final DateRange range = database.getTimeRange(TEMPERATURE).result();
         assertEquals(START_TIME, range.getMinValue());
         assertEquals(END_TIME,   range.getMaxValue());
     }
@@ -124,7 +123,7 @@ public final class CoverageDatabaseTest extends CatalogTestBase {
     @Test
     public void testGetAvailableTimes() throws CoverageStoreException {
         final CoverageDatabase database = getCoverageDatabase();
-        final SortedSet<Date> allTimes = now(database.getAvailableTimes(TEMPERATURE));
+        final SortedSet<Date> allTimes = database.getAvailableTimes(TEMPERATURE).result();
         assertEquals(7, allTimes.size());
         assertTrue(allTimes.first().after (LayerTableTest.START_TIME));
         assertTrue(allTimes.last ().before(LayerTableTest.END_TIME));
@@ -139,7 +138,7 @@ public final class CoverageDatabaseTest extends CatalogTestBase {
     @Test
     public void testGetAvailableElevations() throws CoverageStoreException {
         final CoverageDatabase database = getCoverageDatabase();
-        final SortedSet<Number> z = now(database.getAvailableElevations(NETCDF));
+        final SortedSet<Number> z = database.getAvailableElevations(NETCDF).result();
         GridGeometryTableTest.checkCoriolisElevations(z);
     }
 
@@ -151,7 +150,7 @@ public final class CoverageDatabaseTest extends CatalogTestBase {
     @Test
     public void testGetSampleValueRanges() throws CoverageStoreException {
         final CoverageDatabase database = getCoverageDatabase();
-        final List<MeasurementRange<?>> ranges = now(database.getSampleValueRanges(TEMPERATURE));
+        final List<MeasurementRange<?>> ranges = database.getSampleValueRanges(TEMPERATURE).result();
         assertEquals("Expected only one band.", 1, ranges.size());
         final MeasurementRange<?> range = ranges.get(0);
         assertEquals(-2.85, range.getMinimum(), EPS);
@@ -169,7 +168,7 @@ public final class CoverageDatabaseTest extends CatalogTestBase {
         final CoverageQuery query = new CoverageQuery(database);
         query.setLayer(TEMPERATURE);
         requireImageData();
-        final GridCoverage2D coverage = now(database.readSlice(query));
+        final GridCoverage2D coverage = database.readSlice(query).result();
         GridCoverageLoaderTest.checkTemperatureCoverage(coverage);
     }
 }
