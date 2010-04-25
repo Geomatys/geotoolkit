@@ -65,6 +65,11 @@ public final class Widgets extends IndexedResourceBundle {
          * Remove selected elements
          */
         public static final int REMOVE_SELECTED_ELEMENTS = 3;
+
+        /**
+         * Select a directory
+         */
+        public static final int SELECT_DIRECTORY = 4;
     }
 
     /**

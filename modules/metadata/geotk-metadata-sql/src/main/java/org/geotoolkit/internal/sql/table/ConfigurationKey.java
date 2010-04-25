@@ -24,7 +24,7 @@ package org.geotoolkit.internal.sql.table;
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Rémi Eve (IRD)
- * @version 3.09
+ * @version 3.11
  *
  * @since 3.09 (derived from Seagis)
  * @module
@@ -32,6 +32,15 @@ package org.geotoolkit.internal.sql.table;
  * @see Database#getProperty
  */
 public enum ConfigurationKey {
+    /**
+     * The URL to the database. This is used only if no {@link javax.sql.DataSource}
+     * were explicitly specified. For simplicity, it should be the same key than the
+     * one used for the URL of the EPSG databases.
+     *
+     * @since 3.11
+     */
+    URL("URL", null),
+
     /**
      * Key for the local data directory root. The value may be {@code null} if data are
      * not accessible locally. In such case, data may be accessible remotely from the

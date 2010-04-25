@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.internal.setup;
 
+import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -53,11 +54,21 @@ final class EPSGPanel extends DatabasePanel {
      */
     EPSGPanel(final Vocabulary resources, final DataPanel dataPanel, final JButton applyButton) {
         super(resources, Installation.EPSG, true, applyButton);
-        applyButton.addActionListener(new ActionListener() {
+        final class Refresh implements ActionListener, Runnable {
+            /**
+             * Will refresh the state of the "Available data" panel later. We need to defer
+             * the refresh because the other ActionListeners must be executed first, because
+             * some of them write the property files that the DataPanel will need to read.
+             */
             @Override public void actionPerformed(final ActionEvent event) {
+                EventQueue.invokeLater(this);
+            }
+
+            @Override public void run() {
                 dataPanel.refresh(DataPanel.EPSG);
             }
-        });
+        }
+        applyButton.addActionListener(new Refresh());
     }
 
     /**

@@ -65,6 +65,11 @@ public final class Vocabulary extends IndexedResourceBundle {
         public static final int ADD = 2;
 
         /**
+         * Administrator
+         */
+        public static final int ADMINISTRATOR = 329;
+
+        /**
          * Affine transform
          */
         public static final int AFFINE_TRANSFORM = 3;
@@ -255,6 +260,16 @@ public final class Vocabulary extends IndexedResourceBundle {
         public static final int COMPONENT_COUNT_$1 = 39;
 
         /**
+         * Configure
+         */
+        public static final int CONFIGURE = 326;
+
+        /**
+         * Confirm
+         */
+        public static final int CONFIRM = 327;
+
+        /**
          * Connection parameters
          */
         public static final int CONNECTION_PARAMETERS = 324;
@@ -303,6 +318,11 @@ public final class Vocabulary extends IndexedResourceBundle {
          * Data
          */
         public static final int DATA = 48;
+
+        /**
+         * Database
+         */
+        public static final int DATABASE = 330;
 
         /**
          * Database engine
@@ -568,6 +588,11 @@ public final class Vocabulary extends IndexedResourceBundle {
          * File
          */
         public static final int FILE = 96;
+
+        /**
+         * {0} files
+         */
+        public static final int FILES_$1 = 331;
 
         /**
          * File {0}
@@ -1030,6 +1055,11 @@ public final class Vocabulary extends IndexedResourceBundle {
         public static final int NAME = 180;
 
         /**
+         * Navigate
+         */
+        public static final int NAVIGATE = 328;
+
+        /**
          * No data
          */
         public static final int NODATA = 181;
@@ -1200,6 +1230,11 @@ public final class Vocabulary extends IndexedResourceBundle {
         public static final int POINT_COUNT_IN_GRID_$3 = 211;
 
         /**
+         * Port
+         */
+        public static final int PORT = 332;
+
+        /**
          * Predefined kernels
          */
         public static final int PREDEFINED_KERNELS = 212;
@@ -1340,6 +1375,11 @@ public final class Vocabulary extends IndexedResourceBundle {
         public static final int SELECTED_COLORS = 237;
 
         /**
+         * Server
+         */
+        public static final int SERVER = 333;
+
+        /**
          * Service
          */
         public static final int SERVICE = 238;
@@ -1393,6 +1433,11 @@ public final class Vocabulary extends IndexedResourceBundle {
          * Southing
          */
         public static final int SOUTHING = 248;
+
+        /**
+         * Spatial objects
+         */
+        public static final int SPATIAL_OBJECTS = 334;
 
         /**
          * Spherical

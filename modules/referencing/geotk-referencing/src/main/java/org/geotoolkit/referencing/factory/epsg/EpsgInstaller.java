@@ -40,6 +40,7 @@ import org.geotoolkit.resources.Descriptions;
 import org.geotoolkit.internal.sql.DefaultDataSource;
 import org.geotoolkit.internal.sql.Dialect;
 import org.geotoolkit.internal.sql.HSQL;
+import org.geotoolkit.util.NullArgumentException;
 
 
 /**
@@ -64,7 +65,7 @@ import org.geotoolkit.internal.sql.HSQL;
  * {@linkplain java.util.concurrent.ExecutorService executor service}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.10
+ * @version 3.11
  *
  * @since 3.00
  * @module
@@ -110,6 +111,12 @@ public class EpsgInstaller implements Callable<EpsgInstaller.Result> {
      * The password for the database connection. Ignored if the {@linkplain #user} is {@code null}.
      */
     private String password;
+
+    /**
+     * A connection given explicitly by the caller, or {@code null} for using the
+     * above URL, user name and password instead.
+     */
+    private Connection userConnection;
 
     /**
      * Creates a new installer. By default, the scripts will be read from the {@code geotk-epsg.jar}
@@ -169,6 +176,7 @@ public class EpsgInstaller implements Callable<EpsgInstaller.Result> {
      */
     public synchronized void setDatabase(final String url) {
         databaseURL = url;
+        userConnection = null;
     }
 
     /**
@@ -183,6 +191,31 @@ public class EpsgInstaller implements Callable<EpsgInstaller.Result> {
         this.databaseURL = url;
         this.user        = user;
         this.password    = password;
+        userConnection = null;
+    }
+
+    /**
+     * Sets the connection to the database. This method is exclusive with the other
+     * {@code setMetadata} methods, in that invoking this method resets the database
+     * URL and user name to values fetched from the given connection.
+     * <p>
+     * It is the caller's responsability to close the given connection when it is
+     * no longer needed.
+     *
+     * @param  connection   The connection to use for installing the EPSG database.
+     * @throws SQLException If the given connection can not be used.
+     *
+     * @since 3.11
+     */
+    public synchronized void setDatabase(final Connection connection) throws SQLException {
+        if (connection == null) {
+            throw new NullArgumentException(Errors.format(Errors.Keys.NULL_ARGUMENT_$1, "connection"));
+        }
+        final DatabaseMetaData metadata = connection.getMetaData();
+        databaseURL    = metadata.getURL();
+        user           = metadata.getUserName();
+        password       = null;
+        userConnection = connection;
     }
 
     /**
@@ -328,7 +361,10 @@ public class EpsgInstaller implements Callable<EpsgInstaller.Result> {
         Exception failure;
         EpsgScriptRunner runner = null;
         try {
-            final Connection connection = getConnection(true);
+            Connection connection = userConnection;
+            if (connection == null) {
+                connection = getConnection(true);
+            }
             /*
              * Now execute the script using the given connection, either looking for scripts
              * in the given directory or looking for scripts embedded in the JAR file.
@@ -337,7 +373,9 @@ public class EpsgInstaller implements Callable<EpsgInstaller.Result> {
                 runner = new EpsgScriptRunner(connection);
                 return call(runner);
             } finally {
-                shutdown(connection, databaseURL);
+                if (connection != userConnection) {
+                    shutdown(connection, databaseURL);
+                }
             }
         } catch (SQLException e) {
             failure = e;
@@ -396,7 +434,7 @@ public class EpsgInstaller implements Callable<EpsgInstaller.Result> {
                 in.close();
             }
         }
-        runner.close();
+        runner.close(userConnection == null);
         return new Result(numRows, System.currentTimeMillis() - start);
     }
 

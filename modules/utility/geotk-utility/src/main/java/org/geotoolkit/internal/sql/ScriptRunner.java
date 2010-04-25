@@ -30,6 +30,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.FilenameFilter;
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -54,7 +55,7 @@ import org.geotoolkit.resources.Vocabulary;
  * is used at the end for every SQL statement.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.11
  *
  * @since 3.00
  * @module
@@ -74,6 +75,12 @@ public class ScriptRunner implements FilenameFilter {
      * The quote character for identifiers expected to be found in the SQL script.
      */
     public static final char IDENTIFIER_QUOTE = '"';
+
+    /**
+     * The character for escaping a portion of the SQL script. This is used by
+     * PostgreSQL for the definition of triggers.
+     */
+    private static final String ESCAPE = "$$";
 
     /**
      * The quote character for identifiers actually used in the database.
@@ -143,7 +150,7 @@ public class ScriptRunner implements FilenameFilter {
     /**
      * Creates a new runner which will execute the statements using the given connection.
      *
-     * @param connection The connection to the database.
+     * @param connection The connection to the database, or {@code null} if none.
      * @throws SQLException If an error occured while executing a SQL statement.
      */
     public ScriptRunner(final Connection connection) throws SQLException {
@@ -157,6 +164,18 @@ public class ScriptRunner implements FilenameFilter {
             identifierQuote = "\"";
             statement = null;
         }
+    }
+
+    /**
+     * Returns the connection.
+     *
+     * @return The connection, or {@code null} if none.
+     * @throws SQLException If the connection can not be obtained.
+     *
+     * @since 3.11
+     */
+    protected Connection getConnection() throws SQLException {
+        return (statement != null) ? statement.getConnection() : null;
     }
 
     /**
@@ -362,6 +381,27 @@ public class ScriptRunner implements FilenameFilter {
                 i++;
                 buffer.append('\n');
             }
+            /*
+             * If we find the "$$" string, copy verbatism (without any attempt to parse the
+             * lines) until the next occurence of "$$". This simple algorithm does not allow
+             * more than one block of "$$ ... $$" on the same line.
+             */
+            int escape = line.indexOf(ESCAPE);
+            if (escape >= 0) {
+                escape += ESCAPE.length();
+                while ((escape = line.indexOf(ESCAPE, escape)) < 0) {
+                    escape = 0;
+                    buffer.append(line).append('\n');
+                    line = in.readLine();
+                    if (line == null) {
+                        throw new EOFException();
+                    }
+                }
+                escape += ESCAPE.length();
+                buffer.append(line.substring(0, escape));
+                i = buffer.length(); // Will resume the parsing from that position.
+                line = line.substring(escape);
+            }
             buffer.append(line);
             int length = buffer.length();
 scanLine:   for (; i<length; i++) {
@@ -488,7 +528,18 @@ scanLine:   for (; i<length; i++) {
         if (statement == null) {
             return 0;
         }
-        final int count = statement.executeUpdate(currentSQL = sql.toString());
+        currentSQL = sql.toString();
+        final int count;
+        /*
+         * The scripts usually don't contain any SELECT statement. One exception is the creation
+         * of geometry columns in a PostGIS database, which use "SELECT AddGeometryColumn(...)".
+         */
+        if (currentSQL.startsWith("SELECT ")) {
+            statement.executeQuery(currentSQL).close();
+            count = 0;
+        } else {
+            count = statement.executeUpdate(currentSQL);
+        }
         currentSQL = null; // Clear on success only.
         return count;
     }
@@ -498,12 +549,18 @@ scanLine:   for (; i<length; i++) {
      * the connection given to the constructor; this connection still needs to be closed
      * explicitly by the caller.
      *
+     * @param  vacuum {@code true} for performing a database vacuum (PostgreSQL).
      * @throws SQLException If an error occured while closing the statement.
      */
-    public void close() throws SQLException {
+    public void close(final boolean vacuum) throws SQLException {
         if (statement != null) {
             switch (dialect) {
-                case POSTGRESQL: statement.executeUpdate("VACUUM FULL"); break;
+                case POSTGRESQL: {
+                    if (vacuum) {
+                        statement.executeUpdate("VACUUM FULL ANALYZE");
+                    }
+                    break;
+                }
             }
             statement.close();
         }

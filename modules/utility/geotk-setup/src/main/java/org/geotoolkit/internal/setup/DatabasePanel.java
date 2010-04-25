@@ -25,10 +25,8 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Properties;
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
@@ -64,11 +62,6 @@ import static java.awt.GridBagConstraints.*;
  */
 @SuppressWarnings("serial")
 abstract class DatabasePanel extends JPanel implements ActionListener {
-    /**
-     * The user configuration file.
-     */
-    private static final String CONFIGURATION_FILE = "DataSource.properties";
-
     /**
      * {@link Installation#EPSG} or {@link Installation#COVERAGES} depending on
      * the database we are configuring.
@@ -367,19 +360,17 @@ abstract class DatabasePanel extends JPanel implements ActionListener {
      * The values will be stored in the GUI fields. This method is invoked only once.
      */
     private void load() {
-        final File configFile = new File(installation.directory(true), CONFIGURATION_FILE);
-        boolean manual = false;
-        final Properties settings = new Properties();
-        if (configFile.isFile()) {
-            try {
-                final InputStream in = new FileInputStream(configFile);
-                settings.load(in);
-                in.close();
-                manual = true;
-            } catch (IOException ex) {
-                error(Errors.Keys.CANT_READ_$1, ex);
-                return;
-            }
+        Properties settings;
+        try {
+            settings = installation.getDataSource();
+        } catch (IOException ex) {
+            error(Errors.Keys.CANT_READ_$1, ex);
+            return;
+        }
+        final boolean manual = (settings != null);
+        if (!manual) {
+            settings = new Properties();
+        } else {
             /*
              * If there is an URL in the property file, add it at the begining
              * of the URL combo box.
@@ -426,7 +417,7 @@ abstract class DatabasePanel extends JPanel implements ActionListener {
         }
         final Properties settings = this.settings;
         if (isAutomatic()) {
-            final File file = new File(installation.directory(true), CONFIGURATION_FILE);
+            final File file = new File(installation.directory(true), Installation.DATASOURCE_FILE);
             file.delete();
             settings.clear();
             if (isAutomatic != null) {
@@ -447,7 +438,7 @@ abstract class DatabasePanel extends JPanel implements ActionListener {
                     }
                 }
                 try {
-                    final File file = new File(installation.validDirectory(true), CONFIGURATION_FILE);
+                    final File file = new File(installation.validDirectory(true), Installation.DATASOURCE_FILE);
                     final FileOutputStream out = new FileOutputStream(file);
                     settings.store(out, "Connection parameters to the " + name + " database");
                     out.close();
@@ -488,6 +479,6 @@ abstract class DatabasePanel extends JPanel implements ActionListener {
      */
     private void error(final int key, final IOException ex) {
         JOptionPane.showMessageDialog(this, ex.getLocalizedMessage(),
-                Errors.format(key, CONFIGURATION_FILE), JOptionPane.ERROR_MESSAGE);
+                Errors.format(key, Installation.DATASOURCE_FILE), JOptionPane.ERROR_MESSAGE);
     }
 }

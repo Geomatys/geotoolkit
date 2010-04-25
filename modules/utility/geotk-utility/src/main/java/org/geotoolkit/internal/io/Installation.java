@@ -19,7 +19,10 @@ package org.geotoolkit.internal.io;
 
 import java.net.URL;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
 import java.util.prefs.Preferences;
 
 import org.geotoolkit.internal.OS;
@@ -74,6 +77,13 @@ public enum Installation {
      * @since 3.11
      */
     COVERAGES("org/geotoolkit/coverage/sql", "Database", "Coverages");
+
+    /**
+     * The user configuration file for a connection to a JDBC database.
+     *
+     * @since 3.11
+     */
+    public static final String DATASOURCE_FILE = "DataSource.properties";
 
     /**
      * The preference node and key for storing the value of this configuration option.
@@ -292,5 +302,26 @@ public enum Installation {
         } else {
             return (uof != null);
         }
+    }
+
+    /**
+     * Returns the content of the {@value #DATASOURCE_FILE} file as a properties map,
+     * or {@code null} if the file does not exist.
+     *
+     * @return The content of the {@value #DATASOURCE_FILE} file, or {@code null}.
+     * @throws IOException If an error occured while reading the file.
+     *
+     * @since 3.11
+     */
+    public Properties getDataSource() throws IOException {
+        final File file = new File(directory(true), DATASOURCE_FILE);
+        if (file.isFile()) {
+            final InputStream in = new FileInputStream(file);
+            final Properties properties = new Properties();
+            properties.load(in);
+            in.close();
+            return properties;
+        }
+        return null;
     }
 }

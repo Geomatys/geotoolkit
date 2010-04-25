@@ -36,6 +36,7 @@ import org.geotoolkit.gui.swing.LoggingPanel;
 import org.geotoolkit.gui.swing.image.MosaicChooser;
 import org.geotoolkit.gui.swing.image.MosaicBuilderEditor;
 import org.geotoolkit.gui.swing.image.MultiColorChooser;
+import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.resources.Wizards;
 
 
@@ -45,7 +46,7 @@ import org.geotoolkit.resources.Wizards;
  *
  * @author Martin Desruisseaux (Geomatys)
  * @author Cédric Briançon (Geomatys)
- * @version 3.03
+ * @version 3.11
  *
  * @since 3.00
  * @module
@@ -59,27 +60,27 @@ public final class MosaicWizard extends AbstractWizard {
     /**
      * The ID of the chooser for the input mosaic, which is the first step in the wizard.
      */
-    static final String SELECT = "Select";
+    static final String SELECT = "SELECT";
 
     /**
      * The ID for the editor of the layout of the mosaic to create.
      */
-    static final String LAYOUT = "Layout";
+    static final String LAYOUT = "LAYOUT";
 
     /**
      * The ID for the panel selecting the colors to make transparent.
      */
-    static final String COLORS = "Colors";
+    static final String COLORS = "COLORS";
 
     /**
      * The ID for the panel asking confirmation.
      */
-    static final String CONFIRM = "Confirm";
+    static final String CONFIRM = "CONFIRM";
 
     /**
      * The last line displayed in the last panel.
      */
-    private static final String CONFIRM_LABEL = "ConfirmLabel";
+    private static final String CONFIRM_LABEL = "CONFIRM_LABEL";
 
     /**
      * {@code true} if the input mosaic changed.  This is set to {@code true} if the
@@ -104,7 +105,7 @@ public final class MosaicWizard extends AbstractWizard {
             Wizards.format(Wizards.Keys.SELECT_SOURCE_TILES),
             Wizards.format(Wizards.Keys.DEFINE_PYRAMID_TILING),
             Wizards.format(Wizards.Keys.REMOVE_OPAQUE_BORDER),
-            Wizards.format(Wizards.Keys.CONFIRM)
+            Vocabulary.format(Vocabulary.Keys.CONFIRM)
         });
     }
 
@@ -189,7 +190,7 @@ public final class MosaicWizard extends AbstractWizard {
             // -------------------------------------------------------------------
             component = new MultiColorChooser();
             addSetting(settings, COLORS, component);
-        } else {
+        } else if (id.equals(CONFIRM)) {
             // -------------------------------------------------------------------
             //     Panel 4:  Confirm
             // -------------------------------------------------------------------
@@ -207,6 +208,8 @@ public final class MosaicWizard extends AbstractWizard {
             component = panel;
             addSetting(settings, CONFIRM, logging);
             addSetting(settings, CONFIRM_LABEL, label);
+        } else {
+            throw new IllegalArgumentException(id); // Should never happen.
         }
         component.setPreferredSize(SIZE);
         component.setBorder(BorderFactory.createEmptyBorder(6, 15, 9, 15));
@@ -273,8 +276,4 @@ public final class MosaicWizard extends AbstractWizard {
         ((JXLabel) settings.get(CONFIRM_LABEL)).setText(resources.getMenuLabel(Wizards.Keys.CREATING_MOSAIC));
         return new MosaicCreator();
     }
-
-    // There is no main method on intend on this class.  We want
-    // to force usage of the Main method because we need a Frame
-    // to be created before the call to setDefaultCodecPreferences().
 }

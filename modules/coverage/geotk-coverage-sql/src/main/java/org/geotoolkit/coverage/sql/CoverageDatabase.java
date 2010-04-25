@@ -42,6 +42,8 @@ import org.geotoolkit.util.NullArgumentException;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.CoverageStoreException;
+import org.geotoolkit.internal.sql.DefaultDataSource;
+import org.geotoolkit.internal.sql.table.ConfigurationKey;
 import org.geotoolkit.internal.sql.table.TablePool;
 import org.geotoolkit.resources.Errors;
 
@@ -95,6 +97,19 @@ public class CoverageDatabase {
      * limited amount of threads.
      */
     final Executor executor;
+
+    /**
+     * Creates a new instance using the given properties. The properties shall contains at
+     * least an entry for the {@code "URL"} key. The value of this entry shall be a JDBC URL
+     * in the form of {@code "jdbc:postgresql://host/database"}.
+     *
+     * @param properties The configuration properties.
+     *
+     * @since 3.11
+     */
+    public CoverageDatabase(final Properties properties) {
+        this(new DefaultDataSource(properties.getProperty(ConfigurationKey.URL.key)), properties);
+    }
 
     /**
      * Creates a new instance using the given data source.

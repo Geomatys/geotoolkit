@@ -342,7 +342,7 @@ public class ThreadedEpsgFactory extends ThreadedAuthorityFactory implements CRS
         if (!file.isFile()) {
             file = new File(System.getProperty("user.home", "."), CONFIGURATION_FILE);
             if (!file.isFile()) {
-                file = new File(Installation.EPSG.directory(true), "DataSource.properties");
+                file = new File(Installation.EPSG.directory(true), Installation.DATASOURCE_FILE);
                 if (!file.isFile()) {
                     return null;
                 }

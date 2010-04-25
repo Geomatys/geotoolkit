@@ -182,11 +182,13 @@ public final class Strings {
      * @see StringBuilder#replace(int, int, String)
      */
     public static void replace(final StringBuilder buffer, final String search, final String replacement) {
-        final int length = search.length();
-        int i = buffer.length();
-        while ((i = buffer.lastIndexOf(search, i)) >= 0) {
-            buffer.replace(i, i+length, replacement);
-            i -= length;
+        if (!search.equals(replacement)) {
+            final int length = search.length();
+            int i = buffer.length();
+            while ((i = buffer.lastIndexOf(search, i)) >= 0) {
+                buffer.replace(i, i+length, replacement);
+                i -= length;
+            }
         }
     }
 

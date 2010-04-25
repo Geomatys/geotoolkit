@@ -29,16 +29,18 @@ import java.sql.SQLException;
 import java.sql.DatabaseMetaData;
 import javax.sql.DataSource;
 
+import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.converter.Classes;
+import org.geotoolkit.util.NullArgumentException;
 
 
 /**
  * A data source which get the connection from a {@link DriverManager}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.10
+ * @version 3.11
  *
  * @since 3.00
  * @module
@@ -68,6 +70,9 @@ public class DefaultDataSource implements DataSource {
      */
     public DefaultDataSource(final String url) {
         this.url = url;
+        if (url == null) {
+            throw new NullArgumentException(Errors.format(Errors.Keys.NULL_ARGUMENT_$1, "URL"));
+        }
     }
 
     /**

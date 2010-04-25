@@ -55,7 +55,7 @@ public class DataStoreException extends Exception {
      * @param cause The cause for this exception.
      */
     public DataStoreException(final Throwable cause) {
-        super(cause);
+        super((cause != null) ? cause.getLocalizedMessage() : null, cause);
     }
 
     /**

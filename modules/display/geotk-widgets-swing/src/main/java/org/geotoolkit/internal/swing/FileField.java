@@ -61,7 +61,7 @@ public class FileField extends JPanel implements ActionListener {
      * Builds a field for a directory, with a button for bringing the file chooser.
      *
      * @param locale The locale to use for creating the panel.
-     * @param label An optional label to put in from of the directory field, or {@code null}.
+     * @param label An optional label to put before the directory field, or {@code null}.
      * @param vertical {@code true} if the button should be on the bottom instead than on the right side.
      */
     public FileField(final Locale locale, final String label, final boolean vertical) {

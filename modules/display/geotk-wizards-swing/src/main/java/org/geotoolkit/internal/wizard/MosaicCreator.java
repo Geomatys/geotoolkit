@@ -18,6 +18,7 @@
 package org.geotoolkit.internal.wizard;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.util.Map;
 import java.util.logging.Level;
 import java.io.File;
@@ -98,7 +99,7 @@ final class MosaicCreator extends DeferredWizardResult implements IIOWriteProgre
             out.close();
         } catch (Exception exception) {
             progress.failed(exception.getLocalizedMessage(), false);
-            ExceptionMonitor.show(null, exception);
+            ExceptionMonitor.show((Component) settings.get(MosaicWizard.CONFIRM), exception);
             return;
         } finally {
             ((LoggingPanel) settings.get(MosaicWizard.CONFIRM)).dispose();

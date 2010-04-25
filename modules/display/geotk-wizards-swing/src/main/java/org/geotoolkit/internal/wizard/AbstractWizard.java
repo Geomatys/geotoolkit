@@ -18,6 +18,7 @@
 package org.geotoolkit.internal.wizard;
 
 import java.util.Map;
+import java.util.prefs.Preferences;
 import org.geotoolkit.resources.Errors;
 import org.netbeans.spi.wizard.WizardPanelProvider;
 
@@ -26,7 +27,7 @@ import org.netbeans.spi.wizard.WizardPanelProvider;
  * Base class of wizards provided in the {@link org.geotoolkit.internal.wizard} package.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.11
  *
  * @since 3.00
  * @module
@@ -51,5 +52,12 @@ public abstract class AbstractWizard extends WizardPanelProvider {
         if (settings.put(key, value) != null) {
             throw new AssertionError(Errors.format(Errors.Keys.DUPLICATED_VALUES_FOR_KEY_$1, key));
         }
+    }
+
+    /**
+     * Returns the preferences node.
+     */
+    static Preferences preferences() {
+        return Preferences.userRoot().node("/org/geotoolkit/gui/swing/wizard");
     }
 }

@@ -17,6 +17,9 @@
  */
 package org.geotoolkit.internal.wizard.frame;
 
+import java.util.Locale;
+import java.util.Properties;
+import java.io.IOException;
 import java.awt.Component;
 import java.awt.Desktop;
 import java.awt.Toolkit;
@@ -24,23 +27,31 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.net.URI;
+import javax.swing.JComponent;
 import javax.swing.JDesktopPane;
 import javax.swing.JFrame;
+import javax.swing.JInternalFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 
 import org.netbeans.api.wizard.WizardDisplayer;
 
 import org.geotoolkit.gui.swing.About;
 import org.geotoolkit.gui.swing.ExceptionMonitor;
+import org.geotoolkit.gui.swing.coverage.LayerList;
 import org.geotoolkit.lang.Setup;
 import org.geotoolkit.internal.SwingUtilities;
+import org.geotoolkit.internal.io.Installation;
 import org.geotoolkit.internal.setup.ControlPanel;
+import org.geotoolkit.internal.wizard.CoverageDatabaseWizard;
 import org.geotoolkit.internal.wizard.MosaicWizard;
+import org.geotoolkit.coverage.sql.CoverageDatabase;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.resources.Wizards;
+import org.geotoolkit.resources.Errors;
 
 
 /**
@@ -57,12 +68,18 @@ public final class Main extends JFrame implements ActionListener {
     /**
      * The button names, which will also be identifier for the action to launch.
      */
-    private static final String SETUP="SETUP", MOSAIC="MOSAIC", HOME="HOME", ABOUT="ABOUT", QUIT="QUIT";
+    private static final String COVERAGES="COVERAGES", COVERAGES_SCHEMA="COVERAGES_SCHEMA",
+            MOSAIC="MOSAIC", SETUP="SETUP", HOME="HOME", ABOUT="ABOUT", QUIT="QUIT";
 
     /**
      * The desktop pane, which fill completly the frame.
      */
     private final JDesktopPane desktop;
+
+    /**
+     * The coverage database, created when first needed.
+     */
+    private transient CoverageDatabase database;
 
     /**
      * Creates a new frame.
@@ -103,7 +120,21 @@ public final class Main extends JFrame implements ActionListener {
         menu.add(item);
         bar.add(menu);
 
+        menu = new JMenu(vocabulary.getString(Vocabulary.Keys.NAVIGATE));
+        item = new JMenuItem(vocabulary.getMenuLabel(Vocabulary.Keys.GRIDDED_DATA), KeyEvent.VK_G);
+        item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G, keyMask));
+        item.addActionListener(this);
+        item.setName(COVERAGES);
+        menu.add(item);
+        bar.add(menu);
+
         menu = new JMenu(vocabulary.getString(Vocabulary.Keys.WIZARDS));
+        item = new JMenuItem(resources.getMenuLabel(Wizards.Keys.COVERAGE_DATABASE_TITLE));
+        item.setToolTipText(resources.getString(Wizards.Keys.COVERAGE_DATABASE_DESC));
+        item.addActionListener(this);
+        item.setName(COVERAGES_SCHEMA);
+        menu.add(item);
+
         item = new JMenuItem(resources.getMenuLabel(Wizards.Keys.MOSAIC_TITLE), KeyEvent.VK_M);
         item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M, keyMask));
         item.setToolTipText(resources.getString(Wizards.Keys.MOSAIC_DESC));
@@ -147,6 +178,14 @@ public final class Main extends JFrame implements ActionListener {
             ControlPanel.show(desktop);
         } else if (QUIT.equals(action)) {
             System.exit(0);
+        } else if (COVERAGES.equals(action)) {
+            final CoverageDatabase database = getCoverageDatabase();
+            if (database != null) {
+                show(Vocabulary.Keys.GRIDDED_DATA, new LayerList(database));
+            }
+        } else if (COVERAGES_SCHEMA.equals(action)) {
+            final CoverageDatabaseWizard wizard = new CoverageDatabaseWizard();
+            WizardDisplayer.showWizard(wizard.createWizard());
         } else if (MOSAIC.equals(action)) {
             final MosaicWizard wizard = new MosaicWizard();
             WizardDisplayer.showWizard(wizard.createWizard());
@@ -155,6 +194,38 @@ public final class Main extends JFrame implements ActionListener {
         } catch (Exception ex) {
             ExceptionMonitor.show(desktop, ex);
         }
+    }
+
+    /**
+     * Shows the given component in an internal frame.
+     */
+    private void show(final int titleKey, final JComponent component) {
+        final Vocabulary resources = Vocabulary.getResources(getLocale());
+        final JInternalFrame frame = new JInternalFrame(resources.getString(titleKey), true, true, true, true);
+        frame.add(component);
+        desktop.add(frame);
+        frame.pack();
+        frame.setVisible(true);
+    }
+
+    /**
+     * Returns the {@link CoverageDatabase}, or {@code null} if none.
+     */
+    private CoverageDatabase getCoverageDatabase() {
+        if (database == null) try {
+            final Properties properties = Installation.COVERAGES.getDataSource();
+            if (properties != null) {
+                database = new CoverageDatabase(properties);
+            } else {
+                final Locale locale = getLocale();
+                JOptionPane.showInternalMessageDialog(desktop,
+                        Wizards.getResources(locale).getString(Wizards.Keys.UNSPECIFIED_COVERAGES_DATABASE),
+                        Errors.getResources(locale).getString(Errors.Keys.NO_DATA_SOURCE), JOptionPane.WARNING_MESSAGE);
+            }
+        } catch (IOException e) {
+            ExceptionMonitor.show(desktop, e);
+        }
+        return database;
     }
 
     /**

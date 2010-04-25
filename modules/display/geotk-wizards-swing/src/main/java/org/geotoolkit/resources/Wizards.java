@@ -52,14 +52,55 @@ public final class Wizards extends IndexedResourceBundle {
         public static final int CALCULATION_PROGESSING = 0;
 
         /**
-         * Confirm
+         * <html><blockquote>The database has been created. Check the connection parameters in the
+         * preferences menu. Make sure that the data file directory and the time zone are set to the
+         * proper values.</blockquote></html>
          */
-        public static final int CONFIRM = 1;
+        public static final int COVERAGE_DATABASE_CREATED = 23;
+
+        /**
+         * Creates the tables for the "coverages" schema in an initially empty database.
+         */
+        public static final int COVERAGE_DATABASE_DESC = 16;
+
+        /**
+         * <html><b>Notes:</b><ul><li>Roles shall be created only once for a given server. If a
+         * database has already been created on the "<code>{0}</code>" server with the same roles,
+         * uncheck the "<cite>Create roles</cite>" option.</li><li>A single EPSG database (<a
+         * href="http://www.epsg.org">http://www.epsg.org</a>) is suffisient and can be shared by
+         * different Coverages database. However having multiple copies is okay.</li></ul></html>
+         */
+        public static final int COVERAGE_DATABASE_NOTES_$1 = 24;
+
+        /**
+         * New coverage database
+         */
+        public static final int COVERAGE_DATABASE_TITLE = 1;
+
+        /**
+         * Copy the EPSG database
+         */
+        public static final int CREATE_EPSG = 20;
+
+        /**
+         * Create the "{0}" and "{1}" roles
+         */
+        public static final int CREATE_ROLES_$2 = 21;
 
         /**
          * Creating the mosaic
          */
         public static final int CREATING_MOSAIC = 2;
+
+        /**
+         * Creating the {0} schema.
+         */
+        public static final int CREATING_SCHEMA_$1 = 17;
+
+        /**
+         * A server and a database must be specified.
+         */
+        public static final int DATABASE_REQUIRED = 18;
 
         /**
          * Define pyramid tiling
@@ -103,6 +144,14 @@ public final class Wizards extends IndexedResourceBundle {
         public static final int NO_SELECTED_TILES = 9;
 
         /**
+         * <html>Specify the directory which contain the <code>lwpostgis.sql</code> and
+         * <code>spatial_ref_sys.sql</code> PostGIS files. If the database is hosted on a remote
+         * server, make sure that the files specified below are identical to the files on the
+         * server.</html>
+         */
+        public static final int POSTGIS_DIRECTORY = 19;
+
+        /**
          * Remove opaque border
          */
         public static final int REMOVE_OPAQUE_BORDER = 10;
@@ -122,6 +171,17 @@ public final class Wizards extends IndexedResourceBundle {
          * Geotoolkit.org Setup
          */
         public static final int SETUP_TITLE = 13;
+
+        /**
+         * Set as the default {0} database
+         */
+        public static final int SET_AS_DEFAULT_$1 = 22;
+
+        /**
+         * <html>Use the <cite>Preferences</cite> menu for specifying an existing database,<br>or use
+         * the <cite>New coverage database</cite> menu for creating a new database.</html>
+         */
+        public static final int UNSPECIFIED_COVERAGES_DATABASE = 25;
 
         /**
          * Writing the mosaic

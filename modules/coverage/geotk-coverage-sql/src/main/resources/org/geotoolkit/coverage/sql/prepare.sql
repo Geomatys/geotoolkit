@@ -27,11 +27,10 @@ COMMENT ON SCHEMA postgis IS 'PostGIS functions and type definitions';
 --- to apply before to run those scripts is to add the following line at the begining
 --- of each file:
 ---
----   SET search_path = postgis
+---   SET search_path = postgis;
 ---
 --- The intend is to create all PostGIS functions and tables in the "postgis" schema
 --- rather than the "public" schema. The files to execute are:
 ---
----   1) postgis.sql
----   2) postgis_comments.sql
----   3) spatial_ref_sys.sql
+---   1) lwpostgis.sql
+---   2) spatial_ref_sys.sql
