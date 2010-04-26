@@ -133,6 +133,7 @@ Downloading Geotoolkit.org Binaries
 |                                        | \u2022 geotk-epsg-javadb.jar       |                               |
 |                                        | \u2022 derby.jar                   |                               |
 |                                        | \u2022 derbyLocale_*.jar           |                               |
+|                                        | \u2022 postgresql.jar              |                               |
 *----------------------------------------+------------------------------------+-------------------------------+
 | <<<geotk-bundle.pack.gz>>>             | <All the storage pack plus:>       | \u2022 Java 6                 |
 |                                        | \u2022 geotk-setup.jar             | \u2022 Java Advanced Imaging  |

@@ -125,7 +125,8 @@ public class PackerSpecificMojo extends AbstractMojo {
                     "derbyLocale_pt_BR-*.jar",
                     "derbyLocale_ru-*.jar",
                     "derbyLocale_zh_CN-*.jar",
-                    "derbyLocale_zh_TW-*.jar"
+                    "derbyLocale_zh_TW-*.jar",
+                    "postgresql-*.jar"
             });
             packer.addPack(storage, all, new String[] {
                     "jlfgr-*.jar",
