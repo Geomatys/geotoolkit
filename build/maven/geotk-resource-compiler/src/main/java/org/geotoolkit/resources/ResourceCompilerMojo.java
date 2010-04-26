@@ -18,6 +18,7 @@
 package org.geotoolkit.resources;
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.util.List;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -25,19 +26,16 @@ import org.apache.maven.plugin.MojoExecutionException;
 
 /**
  * Compiles the international resources that are found in the module from which this mojo is invoked.
- * This mojo is invoked with <code>mvn org.geotoolkit.project:geotk-resource-compiler:compile</code>.
- * It wraps <code>IndexedResourceCompiler</code> in a Maven mojo for convenience, but the later
- * can also be invoked directly from the command line (without Maven).
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.03
+ * @version 3.11
  *
  * @since 3.00
  *
  * @goal compile
- * @phase process-sources
+ * @phase generate-resources
  */
-public class ResourceCompilerMojo extends AbstractMojo {
+public class ResourceCompilerMojo extends AbstractMojo implements FilenameFilter {
     /**
      * The source directories containing the sources to be compiled.
      *
@@ -48,12 +46,12 @@ public class ResourceCompilerMojo extends AbstractMojo {
     private List<String> compileSourceRoots;
 
     /**
-     * If <code>true</code>, the number assigned to resources will be renumeroted.
-     * If <code>false</code> (the default), the existing numbering is preserved.
+     * Directory containing the generated class files.
      *
-     * @parameter
+     * @parameter expression="${project.build.outputDirectory}"
+     * @required
      */
-    private boolean renumber;
+    private String outputDirectory;
 
     /**
      * Executes the mojo.
@@ -63,66 +61,47 @@ public class ResourceCompilerMojo extends AbstractMojo {
     @Override
     @SuppressWarnings({"unchecked","rawtypes"}) // Generic array creation.
     public void execute() throws MojoExecutionException {
-        final String[] arguments;
-        if (renumber) {
-            arguments = new String[] {
-                "--renumber"
-            };
-        } else {
-            arguments = new String[] {
-            };
-        }
+        int errors = 0;
+        final File target = new File(outputDirectory);
         for (final String sourceDirectory : compileSourceRoots) {
             File directory = new File(sourceDirectory);
-            if (!directory.getName().equals("java")) {
-                continue;
-            }
-            directory = directory.getParentFile();
-            final String module;
-            try {
-                module = directory.getParentFile().getParentFile().getName();
-            } catch (NullPointerException e) {
-                continue;
-            }
-            /*
-             * Selects the set of resources according the module to be processed.
-             */
-            final Class<? extends IndexedResourceBundle>[] resourcesToProcess;
-            if (module.equals("geotk-utility")) {
-                resourcesToProcess = new Class[] {
-                    org.geotoolkit.resources.Descriptions.class,
-                    org.geotoolkit.resources.Vocabulary  .class,
-                    org.geotoolkit.resources.Loggings    .class,
-                    org.geotoolkit.resources.Errors      .class
-                };
-            } else if (module.equals("geotk-widgets-swing")) {
-                resourcesToProcess = new Class[] {
-                    org.geotoolkit.resources.Widgets.class
-                };
-            } else if (module.equals("geotk-wizards-swing")) {
-                resourcesToProcess = new Class[] {
-                    org.geotoolkit.resources.Wizards.class
-                };
-            } else {
-                continue;
-            }
-            final IndexedResourceCompiler compiler = new Compiler(arguments, directory, resourcesToProcess);
-            try {
-                compiler.run();
-            } catch (ResourceCompilerException e) {
-                throw new MojoExecutionException("Failed to compile internationalized resources.");
+            if (directory.getName().equals("java")) {
+                final File[] resourcesToProcess = new File(sourceDirectory, "org/geotoolkit/resources").listFiles(this);
+                if (resourcesToProcess != null && resourcesToProcess.length != 0) {
+                    errors += new Compiler(directory, target, resourcesToProcess).run();
+                }
             }
         }
+        if (errors != 0) {
+            throw new ResourceCompilerException(String.valueOf(errors) + " errors in resources bundles.");
+        }
+    }
+
+    /**
+     * Returns {@code true} if the given file is the source code for a resources bundle.
+     * This method returns {@code true} if the given file is a Java source file and if a
+     * properties file of the same name exists.
+     *
+     * @param directory The directory.
+     * @param name The file name.
+     * @return {@code true} if the given file is a property file.
+     */
+    @Override
+    public final boolean accept(final File directory, String name) {
+        if (!name.endsWith(IndexedResourceCompiler.JAVA_EXT)) {
+            return false;
+        }
+        name = name.substring(0, name.length() - IndexedResourceCompiler.JAVA_EXT.length());
+        name = name + IndexedResourceCompiler.PROPERTIES_EXT;
+        return new File(directory, name).isFile();
     }
 
     /**
      * A resource compiler that delegates the messages to the Mojo logger.
      */
     private final class Compiler extends IndexedResourceCompiler {
-        public Compiler(final String[] arguments, final File mainDirectory,
-                final Class<? extends IndexedResourceBundle>[] resourcesToProcess)
-        {
-            super(arguments, mainDirectory, resourcesToProcess);
+        public Compiler(File sourceDirectory, File buildDirectory, File[] resourcesToProcess) {
+            super(sourceDirectory, buildDirectory, resourcesToProcess);
         }
 
         /**
@@ -139,11 +118,6 @@ public class ResourceCompilerMojo extends AbstractMojo {
         @Override
         protected void warning(final String message) {
             getLog().warn(message);
-        }
-
-        @Override
-        protected void exit(final int code) {
-            throw new ResourceCompilerException();
         }
     }
 }

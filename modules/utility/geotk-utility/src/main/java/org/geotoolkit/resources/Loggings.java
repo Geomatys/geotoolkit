@@ -302,48 +302,48 @@ public final class Loggings extends IndexedResourceBundle {
         /**
          * No column "{0}" has been found in table "{1}". Value "{2}" will be used instead.
          */
-        public static final int TABLE_COLUMN_NOT_FOUND_$3 = 59;
+        public static final int TABLE_COLUMN_NOT_FOUND_$3 = 49;
 
         /**
          * Temporary file "{0}" has been garbage-collected.
          */
-        public static final int TEMPORARY_FILE_GC_$1 = 57;
+        public static final int TEMPORARY_FILE_GC_$1 = 50;
 
         /**
          * Unavailable authority factory: {0}
          */
-        public static final int UNAVAILABLE_AUTHORITY_FACTORY_$1 = 49;
+        public static final int UNAVAILABLE_AUTHORITY_FACTORY_$1 = 51;
 
         /**
          * Attempt to recover from unexpected exception.
          */
-        public static final int UNEXPECTED_EXCEPTION = 50;
+        public static final int UNEXPECTED_EXCEPTION = 52;
 
         /**
          * Unexpected unit "{0}". Map scale may be inacurate.
          */
-        public static final int UNEXPECTED_UNIT_$1 = 51;
+        public static final int UNEXPECTED_UNIT_$1 = 53;
 
         /**
          * Ignoring unknow parameter: "{0}" = {1} {2}.
          */
-        public static final int UNKNOW_PARAMETER_$3 = 52;
+        public static final int UNKNOW_PARAMETER_$3 = 54;
 
         /**
          * Can't handle style of class {0}. Consequently, geometry "{1}" will ignore its style
          * information.
          */
-        public static final int UNKNOW_STYLE_$2 = 53;
+        public static final int UNKNOW_STYLE_$2 = 55;
 
         /**
          * Unrecognized scale type: "{0}". Default to linear.
          */
-        public static final int UNRECOGNIZED_SCALE_TYPE_$1 = 54;
+        public static final int UNRECOGNIZED_SCALE_TYPE_$1 = 56;
 
         /**
          * Update the cache for layer "{0}".
          */
-        public static final int UPDATE_RENDERER_CACHE_$1 = 55;
+        public static final int UPDATE_RENDERER_CACHE_$1 = 57;
 
         /**
          * Using "{0}" as a fallback.
@@ -353,7 +353,7 @@ public final class Loggings extends IndexedResourceBundle {
         /**
          * Using "{0}" as {1} factory.
          */
-        public static final int USING_FILE_AS_FACTORY_$2 = 56;
+        public static final int USING_FILE_AS_FACTORY_$2 = 59;
     }
 
     /**

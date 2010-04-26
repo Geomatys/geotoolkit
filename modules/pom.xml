@@ -68,10 +68,23 @@
 
   <!-- =========================================================== -->
   <!--     Build Configuration                                     -->
+  <!--         compile the UTF resources files,                    -->
   <!--         copies all JARs in a single directory.              -->
   <!-- =========================================================== -->
   <build>
     <plugins>
+      <plugin>
+        <groupId>org.geotoolkit.project</groupId>
+        <artifactId>geotk-resource-compiler</artifactId>
+        <version>${project.version}</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>compile</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
       <plugin>
         <groupId>org.geotoolkit.project</groupId>
         <artifactId>geotk-jar-collector</artifactId>

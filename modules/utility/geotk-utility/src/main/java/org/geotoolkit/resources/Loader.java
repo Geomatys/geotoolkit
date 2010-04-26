@@ -106,13 +106,14 @@ final class Loader extends ResourceBundle.Control {
          * are in the same package. Then check for file existence and instantiate the resource
          * bundle only if the file is found.
          */
-        String filename = toResourceName(toBundleName(classe.getSimpleName(), locale), EXTENSION);
+        final String classname = classe.getSimpleName();
+        String filename = toResourceName(toBundleName(classname, locale), EXTENSION);
         if (classe.getResource(filename) == null) {
             if (!Locale.ENGLISH.equals(locale)) {
                 return null;
             }
             // We have no explicit resources for English. We use the default one for that.
-            filename = toResourceName(classe.getSimpleName(), EXTENSION);
+            filename = toResourceName(classname, EXTENSION);
             if (classe.getResource(filename) == null) {
                 return null;
             }

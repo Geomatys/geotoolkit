@@ -20,59 +20,32 @@ package org.geotoolkit.resources;
 import java.io.*;
 import java.util.*;
 import java.text.MessageFormat;
-import java.lang.reflect.Field;
 import java.util.regex.Pattern;
-
-import org.geotoolkit.util.Strings;
-import org.geotoolkit.console.Option;
-import org.geotoolkit.console.CommandLine;
-import org.geotoolkit.io.ExpandedTabWriter;
 
 
 /**
- * Resource compiler runnable from the command line. {@code IndexedResourceCompiler} reads a
- * given list of {@code .properties} files and copies their content to {@code .utf} files using
- * UTF-8 encoding. It also checks for key validity and checks values for {@link MessageFormat}
+ * Reads a given list of {@code .properties} files and copies their content to {@code .utf} files
+ * using UTF-8 encoding. It also checks for key validity and checks values for {@link MessageFormat}
  * compatibility. Finally, it writes the key values in the Java source files.
- * <p>
- * This class must be run from the maven root of Geotk project. An error will be reported
- * if the expected directories are not found.
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.11
  *
  * @since 1.2
  */
-public class IndexedResourceCompiler extends CommandLine implements FilenameFilter, Comparator<Object> {
+public class IndexedResourceCompiler implements FilenameFilter, Comparator<Object> {
     /**
-     * Runs the compiler for Geotoolkit resources. This method can be copied and modified
-     * in a separated class if this compiler is to be used for an other set of resources.
-     *
-     * @param arguments Command-line arguments.
+     * Extension for java source files.
      */
-    public static void main(final String[] arguments) {
-        final File sourceDirectory = new File("modules/utility/geotk-utility/src/main");
-        @SuppressWarnings({"unchecked","rawtypes"}) // Generic array creation.
-        final Class<? extends IndexedResourceBundle>[] resourcesToProcess = new Class[] {
-            org.geotoolkit.resources.Descriptions.class,
-            org.geotoolkit.resources.Vocabulary  .class,
-            org.geotoolkit.resources.Loggings    .class,
-            org.geotoolkit.resources.Errors      .class
-        };
-        final IndexedResourceCompiler compiler =
-                new IndexedResourceCompiler(arguments, sourceDirectory, resourcesToProcess);
-        compiler.run();
-    }
+    static final String JAVA_EXT = ".java";
 
     /**
      * Extension for properties source files.
-     * Must be in the {@code ${sourceDirectory}/java} directory.
      */
-    private static final String PROPERTIES_EXT = ".properties";
+    static final String PROPERTIES_EXT = ".properties";
 
     /**
      * Extension for resource target files.
-     * Will be be in the {@code ${sourceDirectory}/resources} directory.
      */
     private static final String RESOURCES_EXT = ".utf";
 
@@ -98,17 +71,20 @@ public class IndexedResourceCompiler extends CommandLine implements FilenameFilt
     private static final String JAVA_ENCODING = "UTF-8";
 
     /**
-     * The {@code main} directory (according Maven standard directory layout) of the module to
-     * process. This directory should contains {@code java} and {@code resources} sub-directories,
-     * followed by the usual directories for Java packages.
+     * The source directory of the java and properties files.
      */
-    private final File mainDirectory;
+    private final File sourceDirectory;
+
+    /**
+     * The target directory where to write the UTF files.
+     */
+    private final File buildDirectory;
 
     /**
      * The resource bundle base class being processed.
-     * Example: <code>{@linkplain org.geotoolkit.resources.Vocabulary}.class}</code>.
+     * Example: {@code org/geotoolkit/resources/Vocabulary.java}.
      */
-    private Class<? extends IndexedResourceBundle> bundleClass;
+    private File bundleClass;
 
     /**
      * Integer IDs allocated to resource keys. This map will be shared for all languages
@@ -125,116 +101,70 @@ public class IndexedResourceCompiler extends CommandLine implements FilenameFilt
     /**
      * The resources bundle base classes.
      */
-    private final Class<? extends IndexedResourceBundle>[] resourcesToProcess;
+    private final File[] resourcesToProcess;
 
     /**
-     * {@code true} if the key values should be recomputed. The default
-     * is to preserve their values.
+     * Number of errors found.
      */
-    @Option
-    private boolean renumber;
+    private int errors;
 
     /**
      * Constructs a new {@code IndexedResourceCompiler}.
      *
-     * @param arguments
-     *          The command-line arguments.
-     * @param mainDirectory
-     *          The {@code main} directory (according Maven standard directory layout) of the module
-     *          to process. This directory should contains {@code java} and {@code resources}
-     *          sub-directories, followed by the usual directories for Java packages.
-     * @param  resourcesToProcess The resource bundle base classes
-     *         (e.g. <code>{@linkplain org.geotoolkit.resources.Vocabulary}.class}</code>).
+     * @param sourceDirectory The source directory.
+     * @param buildDirectory  The target directory where to write UTF files.
+     * @param resourcesToProcess The resource bundle base classes
+     *        (e.g. {@code org/geotoolkit/resources/Vocabulary.java}).
      */
-    public IndexedResourceCompiler(final String[] arguments, final File mainDirectory,
-            final Class<? extends IndexedResourceBundle>[] resourcesToProcess)
+    public IndexedResourceCompiler(final File sourceDirectory, final File buildDirectory,
+            final File[] resourcesToProcess)
     {
-        super(null, arguments);
-        this.mainDirectory = mainDirectory;
+        this.sourceDirectory    = sourceDirectory;
+        this.buildDirectory     = buildDirectory;
         this.resourcesToProcess = resourcesToProcess;
     }
 
     /**
      * Run the resource compiler.
      *
-     * @param action Should be null.
+     * @throws ResourceCompilerException If an error occured.
+     * @return The number of errors found.
      */
-    @Override
-    protected void unknownAction(final String action) {
-        if (action != null) {
-            super.unknownAction(action);
-        }
-        if (!mainDirectory.isDirectory()) {
-            warning(mainDirectory + " not found or is not a directory.");
-            exit(ILLEGAL_ARGUMENT_EXIT_CODE);
-            return;
+    public int run() throws ResourceCompilerException {
+        if (!sourceDirectory.isDirectory()) {
+            throw new ResourceCompilerException(sourceDirectory + " not found or is not a directory.");
         }
         for (int i=0; i<resourcesToProcess.length; i++) {
+            bundleClass = resourcesToProcess[i];
+            allocatedIDs.clear();
+            resources.clear();
             try {
-                setResourceBundle(resourcesToProcess[i]);
                 scanForResources();
             } catch (IOException exception) {
-                printException(exception);
-                exit(IO_EXCEPTION_EXIT_CODE);
-                return;
+                throw new ResourceCompilerException(exception);
             }
         }
-        out.flush();
+        return errors;
     }
 
     /**
-     * Sets the resource bundle to be processed.
-     * The following methods must be invoked before this one:
-     *
-     * <ul>
-     *   <li>{@link #initialize}</li>
-     * </ul>
-     *
-     * @param  bundleClass The resource bundle base class
-     *         (e.g. <code>{@linkplain org.geotoolkit.resources.Vocabulary}.class}</code>).
-     * @throws IOException If an I/O operation was required and failed.
+     * Returns the path of the given file relative to the given directory.
      */
-    private void setResourceBundle(final Class<? extends IndexedResourceBundle> bundleClass)
-            throws IOException
-    {
-        this.bundleClass = bundleClass;
-        allocatedIDs.clear();
-        resources.clear();
-        if (!renumber) try {
-            final String classname = bundleClass.getName() + '$' + KEYS_INNER_CLASS;
-            final Field[] fields = Class.forName(classname).getFields();
-            info("Loading " + classname);
-            /*
-             * Copies all fields into {@link #allocatedIDs} map.
-             */
-            Field.setAccessible(fields, true);
-            for (int i=fields.length; --i>=0;) {
-                final Field field = fields[i];
-                final String  key = field.getName();
-                try {
-                    final Object ID = field.get(null);
-                    if (ID instanceof Integer) {
-                        allocatedIDs.put((Integer)ID, key);
-                    }
-                } catch (IllegalAccessException exception) {
-                    final File source = new File(classname.replace('.','/') + ".class");
-                    warning(source, key, "Access denied", exception);
-                }
-            }
-        } catch (ClassNotFoundException exception) {
-            throw new FileNotFoundException(exception.toString());
+    private static final String relative(final File directory, final File file) throws IOException {
+        String path = file.getPath();
+        final String expected = directory.getPath();
+        if (!path.startsWith(expected)) {
+            throw new IOException(path + " is not relative to " + expected);
         }
+        path = path.substring(expected.length());
+        if (!path.startsWith(File.separator)) {
+            path = path.substring(File.separator.length());
+        }
+        return path;
     }
 
     /**
      * Scans the package of {@link #bundleClass} for its {@code .properties} files.
-     * The following methods must be invoked before this one:
-     *
-     * <ul>
-     *   <li>{@link #initialize}</li>
-     *   <li>{@link #setResourceBundle}</li>
-     * </ul>
-     *
      * The following methods are invoked by this method:
      *
      * <ul>
@@ -246,17 +176,14 @@ public class IndexedResourceCompiler extends CommandLine implements FilenameFilt
      * @throws IOException if an input/output operation failed.
      */
     private void scanForResources() throws IOException {
-        final String fullname    = bundleClass.getName();
-        final int    packageEnd  = fullname.lastIndexOf('.');
-        final String packageName = fullname.substring(0, packageEnd);
-        final String classname   = fullname.substring(packageEnd + 1);
-        final String packageDir  = packageName.replace('.', '/');
-        final File   srcDir      = new File(mainDirectory, "java/"      + packageDir);
-        final File   utfDir      = new File(mainDirectory, "resources/" + packageDir);
+        String classname = bundleClass.getName();
+        classname = classname.substring(0, classname.lastIndexOf('.'));
+        final File srcDir = bundleClass.getParentFile();
+        final File utfDir = new File(buildDirectory, relative(sourceDirectory, srcDir));
         if (!srcDir.isDirectory()) {
             throw new FileNotFoundException("\"" + srcDir + "\" is not a directory.");
         }
-        if (!utfDir.isDirectory()) {
+        if (utfDir.exists() && !utfDir.isDirectory()) {
             throw new FileNotFoundException("\"" + utfDir + "\" is not a directory.");
         }
         final File[] content = srcDir.listFiles(this);
@@ -463,12 +390,16 @@ search: for (int i=0; i<buffer.length(); i++) { // Length of 'buffer' will vary.
      * @throws IOException if an input/output operation failed.
      */
     private void writeUTF(final File file) throws IOException {
+        final File directory = file.getParentFile();
+        if (!directory.isDirectory() && !directory.mkdirs()) {
+            throw new IOException("Can't create the " + directory + " directory.");
+        }
         final int count = allocatedIDs.isEmpty() ? 0 : Collections.max(allocatedIDs.keySet()) + 1;
         final DataOutputStream out = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(file)));
         out.writeInt(count);
         for (int i=0; i<count; i++) {
             final String value = (String) resources.get(allocatedIDs.get(i));
-            out.writeUTF((value!=null) ? value : "");
+            out.writeUTF((value != null) ? value : "");
         }
         out.close();
     }
@@ -489,7 +420,7 @@ search: for (int i=0; i<buffer.length(); i++) { // Length of 'buffer' will vary.
         /*
          * Opens the source file for reading. We will copy a subset of its content in a buffer.
          */
-        final File file = new File(mainDirectory, "java/" + bundleClass.getName().replace('.', '/') + ".java");
+        final File file = bundleClass;
         if (!file.getParentFile().isDirectory()) {
             throw new FileNotFoundException("Parent directory not found for " + file);
         }
@@ -515,7 +446,7 @@ search: for (int i=0; i<buffer.length(); i++) { // Length of 'buffer' will vary.
          * Writes the constructor, then write keys values.
          * We stopped reading the file for now (will continue later).
          */
-        final String margin = Strings.spaces(8);
+        final String margin = "        "; // 8 spaces
         buffer.append(margin).append("private ").append(KEYS_INNER_CLASS).append("() {").append(lineSeparator)
               .append(margin).append('}').append(lineSeparator);
         final Map.Entry<?,?>[] entries = allocatedIDs.entrySet().toArray(new Map.Entry<?,?>[allocatedIDs.size()]);
@@ -573,7 +504,7 @@ search: for (int i=0; i<buffer.length(); i++) { // Length of 'buffer' will vary.
         /*
          * Now writes the results to disk, overwriting the original file.
          */
-        final Writer out = new ExpandedTabWriter(new OutputStreamWriter(new FileOutputStream(file), JAVA_ENCODING));
+        final Writer out = new OutputStreamWriter(new FileOutputStream(file), JAVA_ENCODING);
         out.write(buffer.toString());
         out.close();
     }
@@ -599,7 +530,7 @@ search: for (int i=0; i<buffer.length(); i++) { // Length of 'buffer' will vary.
      * @param message The message to log.
      */
     protected void info(final String message) {
-        out.println(message);
+        System.out.println(message);
     }
 
     /**
@@ -609,7 +540,7 @@ search: for (int i=0; i<buffer.length(); i++) { // Length of 'buffer' will vary.
      * @param message The message to log.
      */
     protected void warning(final String message) {
-        out.println(message);
+        System.out.println(message);
     }
 
     /**
@@ -642,5 +573,6 @@ search: for (int i=0; i<buffer.length(); i++) { // Length of 'buffer' will vary.
             buffer.append(": ").append(exception.getLocalizedMessage());
         }
         warning(buffer.toString());
+        errors++;
     }
 }

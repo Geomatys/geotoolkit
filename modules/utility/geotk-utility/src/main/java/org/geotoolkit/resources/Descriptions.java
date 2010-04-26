@@ -72,65 +72,65 @@ public final class Descriptions extends IndexedResourceBundle {
         /**
          * This result indicates if a datum shift method has been applied.
          */
-        public static final int CONFORMANCE_MEANS_DATUM_SHIFT = 10;
+        public static final int CONFORMANCE_MEANS_DATUM_SHIFT = 4;
 
         /**
          * This result indicates if the factory "{0}" is available for use.
          */
-        public static final int CONFORMANCE_MEANS_FACTORY_AVAILABLE_$1 = 11;
+        public static final int CONFORMANCE_MEANS_FACTORY_AVAILABLE_$1 = 5;
 
         /**
          * This result indicates if the parameters are valid.
          */
-        public static final int CONFORMANCE_MEANS_VALID_PARAMETERS = 12;
+        public static final int CONFORMANCE_MEANS_VALID_PARAMETERS = 6;
 
         /**
          * Are the {0} data installed? Some optional data can be downloaded and installed by running
          * the "{2}" module. The default directory for {0} data is "{1}", but {2} allows to change this
          * setting.
          */
-        public static final int DATA_NOT_INSTALLED_$3 = 4;
+        public static final int DATA_NOT_INSTALLED_$3 = 7;
 
         /**
          * {0} files have been read successfuly but {1} files can not be read. The failure causes are
          * reported below.
          */
-        public static final int ERROR_READING_SOME_FILES_$2 = 5;
+        public static final int ERROR_READING_SOME_FILES_$2 = 8;
 
         /**
          * Inserted {0} rows in {1} seconds.
          */
-        public static final int INSERTED_ROWS_$2 = 6;
+        public static final int INSERTED_ROWS_$2 = 9;
 
         /**
          * Parameter "{0}" is not conform. {1}
          */
-        public static final int NON_CONFORM_PARAMETER_$2 = 13;
+        public static final int NON_CONFORM_PARAMETER_$2 = 10;
 
         /**
          * Do not use a valuable password, since it will not be encrypted.
          */
-        public static final int PASSWORD_NOT_ENCRYPTED = 14;
+        public static final int PASSWORD_NOT_ENCRYPTED = 11;
 
         /**
-         * Count:       {0}
-         * Minimum:     {1}
-         * Maximum:     {2}
-         * Mean:        {3}
-         * RMS: {4}
-         * Standard deviation:  {5}
+         * Count:	{0}
+         * Minimum:	{1}
+         * Maximum:	{2}
+         * Mean:	{3}
+         * RMS:	{4}
+         * Standard deviation:	{5}
          */
-        public static final int STATISTICS_TO_STRING_$6 = 7;
+        public static final int STATISTICS_TO_STRING_$6 = 12;
 
         /**
          * Use {0,choice,0#the embedded|1#a specific} database.
          */
-        public static final int USE_EOS_DATABASE_$1 = 8;
+        public static final int USE_EOS_DATABASE_$1 = 13;
 
         /**
          * Use "help" to show available commands.
          */
-        public static final int USE_HELP_COMMAND = 9;
+        public static final int USE_HELP_COMMAND = 14;
     }
 
     /**

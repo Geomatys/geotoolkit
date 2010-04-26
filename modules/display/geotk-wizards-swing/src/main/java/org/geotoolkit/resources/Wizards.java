@@ -56,12 +56,12 @@ public final class Wizards extends IndexedResourceBundle {
          * preferences menu. Make sure that the data file directory and the time zone are set to the
          * proper values.</blockquote></html>
          */
-        public static final int COVERAGE_DATABASE_CREATED = 23;
+        public static final int COVERAGE_DATABASE_CREATED = 1;
 
         /**
          * Creates the tables for the "coverages" schema in an initially empty database.
          */
-        public static final int COVERAGE_DATABASE_DESC = 16;
+        public static final int COVERAGE_DATABASE_DESC = 2;
 
         /**
          * <html><b>Notes:</b><ul><li>Roles shall be created only once for a given server. If a
@@ -70,78 +70,78 @@ public final class Wizards extends IndexedResourceBundle {
          * href="http://www.epsg.org">http://www.epsg.org</a>) is suffisient and can be shared by
          * different Coverages database. However having multiple copies is okay.</li></ul></html>
          */
-        public static final int COVERAGE_DATABASE_NOTES_$1 = 24;
+        public static final int COVERAGE_DATABASE_NOTES_$1 = 3;
 
         /**
          * New coverage database
          */
-        public static final int COVERAGE_DATABASE_TITLE = 1;
+        public static final int COVERAGE_DATABASE_TITLE = 4;
 
         /**
          * Copy the EPSG database
          */
-        public static final int CREATE_EPSG = 20;
+        public static final int CREATE_EPSG = 5;
 
         /**
          * Create the "{0}" and "{1}" roles
          */
-        public static final int CREATE_ROLES_$2 = 21;
+        public static final int CREATE_ROLES_$2 = 6;
 
         /**
          * Creating the mosaic
          */
-        public static final int CREATING_MOSAIC = 2;
+        public static final int CREATING_MOSAIC = 7;
 
         /**
          * Creating the {0} schema.
          */
-        public static final int CREATING_SCHEMA_$1 = 17;
+        public static final int CREATING_SCHEMA_$1 = 8;
 
         /**
          * A server and a database must be specified.
          */
-        public static final int DATABASE_REQUIRED = 18;
+        public static final int DATABASE_REQUIRED = 9;
 
         /**
          * Define pyramid tiling
          */
-        public static final int DEFINE_PYRAMID_TILING = 3;
+        public static final int DEFINE_PYRAMID_TILING = 10;
 
         /**
          * The wizard has now enough informations for creating the mosaic. Press "Finish" to confirm.
          */
-        public static final int ENOUGH_INFORMATION = 4;
+        public static final int ENOUGH_INFORMATION = 11;
 
         /**
          * Geotoolkit.org web site
          */
-        public static final int GEOTK_SITE = 15;
+        public static final int GEOTK_SITE = 12;
 
         /**
          * Geotoolkit.org wizards
          */
-        public static final int GEOTK_WIZARDS = 5;
+        public static final int GEOTK_WIZARDS = 13;
 
         /**
          * The selected tiles can not make a single mosaic.
          */
-        public static final int INVALID_MOSAIC_LAYOUT = 6;
+        public static final int INVALID_MOSAIC_LAYOUT = 14;
 
         /**
          * Read a potentially big image (which may be splitted in many tiles at the same resolution)
          * and write a set of smaller tiles of given size and using different subsamplings.
          */
-        public static final int MOSAIC_DESC = 7;
+        public static final int MOSAIC_DESC = 15;
 
         /**
          * Mosaic generator
          */
-        public static final int MOSAIC_TITLE = 8;
+        public static final int MOSAIC_TITLE = 16;
 
         /**
          * At least one tile must be selected.
          */
-        public static final int NO_SELECTED_TILES = 9;
+        public static final int NO_SELECTED_TILES = 17;
 
         /**
          * <html>Specify the directory which contain the <code>lwpostgis.sql</code> and
@@ -149,44 +149,44 @@ public final class Wizards extends IndexedResourceBundle {
          * server, make sure that the files specified below are identical to the files on the
          * server.</html>
          */
-        public static final int POSTGIS_DIRECTORY = 19;
+        public static final int POSTGIS_DIRECTORY = 18;
 
         /**
          * Remove opaque border
          */
-        public static final int REMOVE_OPAQUE_BORDER = 10;
+        public static final int REMOVE_OPAQUE_BORDER = 19;
 
         /**
          * Select source tiles
          */
-        public static final int SELECT_SOURCE_TILES = 11;
+        public static final int SELECT_SOURCE_TILES = 20;
 
         /**
          * Select directories and install the NADCON and EPSG data. This setup is optional. If
          * executed, the setting will be remembered for all subsequent Geotoolkit.org usage.
          */
-        public static final int SETUP_DESC = 12;
+        public static final int SETUP_DESC = 21;
 
         /**
          * Geotoolkit.org Setup
          */
-        public static final int SETUP_TITLE = 13;
+        public static final int SETUP_TITLE = 22;
 
         /**
          * Set as the default {0} database
          */
-        public static final int SET_AS_DEFAULT_$1 = 22;
+        public static final int SET_AS_DEFAULT_$1 = 23;
 
         /**
          * <html>Use the <cite>Preferences</cite> menu for specifying an existing database,<br>or use
          * the <cite>New coverage database</cite> menu for creating a new database.</html>
          */
-        public static final int UNSPECIFIED_COVERAGES_DATABASE = 25;
+        public static final int UNSPECIFIED_COVERAGES_DATABASE = 24;
 
         /**
          * Writing the mosaic
          */
-        public static final int WRITING_MOSAIC = 14;
+        public static final int WRITING_MOSAIC = 25;
     }
 
     /**
