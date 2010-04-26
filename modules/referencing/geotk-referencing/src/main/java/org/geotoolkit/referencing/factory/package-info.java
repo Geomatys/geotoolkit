@@ -30,7 +30,7 @@
  *       {@link org.geotoolkit.referencing.factory.epsg.DirectEpsgFactory} uses a connection
  *       to an EPSG database, {@link org.geotoolkit.referencing.factory.wkt.DirectPostgisFactory}
  *       uses a connection to a PostGIS {@code "spatial_ref_sys"} table and
- *       {@link org.geotoolkit.referencing.factory.PropertyAuthorityFactory} uses static
+ *       {@link org.geotoolkit.referencing.factory.wkt.PropertyAuthorityFactory} uses static
  *       WKT strings in a property file.</p></li>
  *
  *   <li><p>Subclasses of {@link org.geotoolkit.referencing.factory.CachingAuthorityFactory}

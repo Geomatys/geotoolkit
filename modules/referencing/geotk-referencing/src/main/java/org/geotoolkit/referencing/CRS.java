@@ -370,14 +370,39 @@ public final class CRS {
      * Note that the code needs to mention the authority. Examples:
      * <p>
      * <ul>
-     *   <li>{@code EPSG:1234}</li>
-     *   <li>{@code AUTO:42001, ..., ..., ...}</li>
+     *   <li>{@code EPSG:4326}</li>
+     *   <li>{@code AUTO:42001,9001,0,30}</li>
      * </ul>
      * <p>
      * If there is more than one factory implementation for the same authority, then all additional
      * factories are {@linkplain org.geotoolkit.referencing.factory.FallbackAuthorityFactory fallbacks}
      * to be used only when the first acceptable factory failed to create the requested CRS object.
+     *
+     * {@section Common codes}
+     * A few commonly used codes are:
      * <p>
+     * <ul>
+     *   <li>Geographic CRS:
+     *   <ul>
+     *     <li>WGS 84 (2D only): EPSG:4326</li>
+     *     <li>WGS 84 with ellipsoidal height: EPSG:4979</li>
+     *   </ul></li>
+     *   <li>Simple projected CRS:
+     *   <ul>
+     *     <li>Mercator: 3395</li>
+     *   </ul></li>
+     *   <li>Universal Transverse Mercator (UTM) projections:
+     *   <ul>
+     *     <li>WGS 84 (northern hemisphere): EPSG:32600 + <var>zone</var></li>
+     *     <li>WGS 84 (southern hemisphere): EPSG:32700 + <var>zone</var></li>
+     *     <li>WGS 72 (northern hemisphere): EPSG:32200 + <var>zone</var></li>
+     *     <li>WGS 72 (southern hemisphere): EPSG:32300 + <var>zone</var></li>
+     *     <li>NAD 83 (northern hemisphere): EPSG:26900 + <var>zone</var> (zone 1 to 23 only)</li>
+     *     <li>NAD 27 (northern hemisphere): EPSG:26700 + <var>zone</var> (zone 1 to 22 only)</li>
+     *   </ul></li>
+     * </ul>
+     *
+     * {@section Caching}
      * CRS objects created by previous calls to this method are
      * {@linkplain org.geotoolkit.referencing.factory.CachingAuthorityFactory cached}
      * using {@linkplain java.lang.ref.WeakReference weak references}. Subsequent calls to this
@@ -390,7 +415,7 @@ public final class CRS {
      * @throws FactoryException if the CRS creation failed for an other reason.
      *
      * @see #getSupportedCodes(String)
-     * @see org.geotoolkit.referencing.factory.AllAuthoritiesFactory#createCoordinateReferenceSystem(String)
+     * @see org.geotoolkit.measure.Units#valueOfEPSG(int)
      *
      * @category factory
      */
@@ -407,6 +432,10 @@ public final class CRS {
      * as in <code>{@linkplain #decode(String) decode}(code)</code>. The {@code longitudeFirst}
      * argument is the value to be given to the {@link Hints#FORCE_LONGITUDE_FIRST_AXIS_ORDER
      * FORCE_LONGITUDE_FIRST_AXIS_ORDER} hint.
+     * <p>
+     * <b>Example:</b> by default, {@code CRS.decode("EPSG:4326")} returns a Geographic CRS with
+     * (<var>latitude</var>, <var>longitude</var>) axis order, while {@code CRS.decode("EPSG:4326", true)}
+     * returns the same CRS except for axis order, which is  (<var>longitude</var>, <var>latitude</var>).
      *
      * @param  code The Coordinate Reference System authority code.
      * @param  longitudeFirst {@code true} if axis order should be forced to
@@ -417,6 +446,7 @@ public final class CRS {
      * @throws FactoryException if the CRS creation failed for an other reason.
      *
      * @see Hints#FORCE_LONGITUDE_FIRST_AXIS_ORDER
+     * @see org.geotoolkit.referencing.factory.epsg.LongitudeFirstEpsgFactory
      *
      * @category factory
      * @since 2.3

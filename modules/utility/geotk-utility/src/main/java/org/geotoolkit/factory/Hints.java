@@ -303,6 +303,16 @@ public class Hints extends RenderingHints {
      * {@code "urn:ogc"} namespace. See {@link #FORCE_AXIS_ORDER_HONORING} for changing this
      * behavior.
      *
+     * {@note
+     * The documentation saids "<cite>longitude first</cite>" for simplicity, because the axes
+     * reordering apply mostly to geographic CRS (in contrast, most projected CRS already have
+     * (<var>x</var>, <var>y</var>) axis order, in which case this hint has no effect). However,
+     * what Geotk actually does is to force a <cite>right-handed</cite> coordinate system. This
+     * approach works for projected CRS as well as geographic CRS ("<cite>longitude first</cite>"
+     * is an inappropriate expression for projected CRS). It even works in cases like stereographic
+     * projections, where the axes names look like (<var>South along 180°</var>, <var>South along 90°E</var>).
+     * In such cases, aiming for "<cite>longitude first</cite>" would not make sense.}
+     *
      * @see AuthorityFactoryFinder#getCSAuthorityFactory(String, Hints)
      * @see AuthorityFactoryFinder#getCRSAuthorityFactory(String, Hints)
      * @see org.geotoolkit.referencing.factory.OrderedAxisAuthorityFactory

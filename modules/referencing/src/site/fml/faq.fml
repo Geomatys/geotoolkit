@@ -11,6 +11,48 @@
         <p>See the referencing section in the <a href="../../demos/index.html">demos</a> page.</p>
       </answer>
     </faq>
+    <faq id="AxisOrder">
+      <question>
+        What is the <cite>axis order issue</cite> and how is it adressed?
+      </question>
+      <answer>
+        <p>The axis order is specified by the authority (typically a national agency) defining the
+        <cite>Coordinate Reference System</cite> (CRS). The order depends on the CRS type and the country
+        defining the CRS. In the case of geographic CRS, the (<var>latitude</var>, <var>longitude</var>)
+        axis order is widely used by geographers and pilotes for centuries. However software developers
+        tend to consistently use the (<var>x</var>,<var>y</var>) order they are familiar with. Those
+        different practices resulted in contradictory definitions of axis order for almost every CRS
+        of find <code>GeographicCRS</code>, some <code>ProjectedCRS</code> in the South hemisphere
+        (South Africa, Australia, <i>etc.</i>) and some polar projections among others.</p>
+
+        <p>Recent OGC standards mandate the use of CRS with axis order as defined by the authority.
+        Oldest OGC standards used the (<var>x</var>,<var>y</var>) axis order instead, ignoring any
+        authority specification. Many softwares still use the old (<var>x</var>,<var>y</var>) axis
+        order, because it is easier to implement. Geotk supports both conventions.</p>
+
+        <p>By defauly, Geotk creates CRS with axis order <em>as defined by the authority</em>. Those CRS are created by calls to the
+        <code><a href="../../apidocs/org/geotoolkit/referencing/CRS.html#decode(java.lang.String)">CRS.decode(String)</a></code>
+        method. The actual axis order can be verified after the CRS creation with <code>System.out.println(crs)</code>.
+        See <a href="#AxisOrderInTransforms">here</a> for more information about the elements to look at.</p>
+
+        <p>If (<var>x</var>,<var>y</var>) axis order is wanted for compatibility with older OGC
+        specifications or other softwares, CRS forced to <cite>longitude first</cite> axis order can be created by call to the
+        <code><a href="../../apidocs/org/geotoolkit/referencing/CRS.html#decode(java.lang.String, boolean)">CRS.decode(String, true)</a></code>
+        method. Note that while the documentation said "<cite>longitude first</cite>" for simplicity,
+        the implementation actually try to build a <cite>right-handed</cite> coordinate system.</p>
+
+        <p>Note that the <a href="http://www.geoapi.org/snapshot/javadoc/org/opengis/referencing/doc-files/WKT.html"><cite>Well Known
+        Text</cite> (WKT) specification</a> is part of an older OGC standard. According that widely-used standard, CRS created by calls to the
+        <code><a href="../../apidocs/org/geotoolkit/referencing/CRS.html#parseWKT(java.lang.String)">CRS.parseWKT(String)</a></code>
+        method will have (<var>longitude</var>, <var>latitude</var>) or (<var>x</var>,<var>y</var>) axis order
+        by default if no <code>AXIS[...]</code> elements were explicitly specified in the WKT.</p>
+
+        <p>For any CRS identified by an EPSG code, the official axis order can be checked on the
+        <a href="http://www.epsg-registry.org">http://www.epsg-registry.org</a> web site: Click on
+        the "Retrieve by code" link and enter the numerical code. Then click on the "View" link on
+        the right side, and click on the "+" symbol of the left side of "Axes".</p>
+      </answer>
+    </faq>
   </part>
 
   <!-- ======================================================================================== -->
@@ -211,6 +253,25 @@ if (identifier != null) {
         between the supplied CRS and the CRS found in the database.</p>
       </answer>
     </faq>
+    <faq id="equalsIgnoreMetadata">
+      <question>
+        How can I determine if two CRS are "functionally" equal?
+      </question>
+      <answer>
+        <p>The three following Coordinate Reference Systems:</p>
+        <ul>
+          <li><code>DefaultGeographicCRS.WGS84</code></li>
+          <li><code>CRS.decode("CRS:84")</code></li>
+          <li><code>CRS.decode("EPSG:4326", true)</code></li>
+        </ul>
+        <p>are not considered <code>equals(Object)</code> to each other, even though they all
+        represent the same logical CRS. This is because they are associated to different metadata
+        (name, identifiers, scope, domain of validity, remarks). In order to test if two CRS are
+        functionally equivalent, use
+        <code><a href="../../apidocs/org/geotoolkit/referencing/CRS.html#equalsIgnoreMetadata(java.lang.Object, java.lang.Object)">equalsIgnoreMetadata(Object,
+        Object)</a></code>.</p>
+      </answer>
+    </faq>
     <faq id="hashCode">
       <question>
         Are CRS objects safe for use as keys in <code>HashMap</code>?
@@ -270,7 +331,7 @@ factory = FactoryFinder.getCoordinateOperationFactory(hints);</pre></blockquote>
       </answer>
     </faq>
 
-    <faq id="AxisOrder">
+    <faq id="AxisOrderInTransforms">
       <question>
         My transformed coordinates are totally wrong!
       </question>

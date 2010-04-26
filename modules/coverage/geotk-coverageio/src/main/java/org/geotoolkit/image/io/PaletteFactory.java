@@ -23,6 +23,7 @@ import java.net.URL;
 import java.nio.charset.Charset;
 import java.text.ParseException;
 import java.awt.Color;
+import java.awt.image.ColorModel;
 import java.awt.image.IndexColorModel;
 import javax.imageio.IIOException;
 

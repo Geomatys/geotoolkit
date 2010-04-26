@@ -33,13 +33,7 @@ import org.geotoolkit.lang.ThreadSafe;
  * An EPSG authority factory using (<var>longitude</var>, <var>latitude</var>) axis order.
  * This factory wraps a {@link ThreadedEpsgFactory} into an {@link OrderedAxisAuthorityFactory}
  * when first needed.
- *
- * {@note In theory implementing the <code>DatumAuthorityFactory</code> interface is useless
- *        here, since "axis order" doesn't make any sense for them. However if we do not
- *        register this class as a <code>DatumAuthorityFactory</code> as well, users will
- *        get a <code>NoSuchFactoryException</code> when asking for a factory with the
- *        <code>FORCE_LONGITUDE_FIRST_AXIS_ORDER</code> hint set.}
- *
+ * <p>
  * Users don't need to create explicitly an instance of this class. Instead, one can get
  * an instance using the following code:
  *
@@ -47,6 +41,22 @@ import org.geotoolkit.lang.ThreadSafe;
  *     Hints hints = new Hints(Hints.FORCE_LONGITUDE_FIRST_AXIS_ORDER, Boolean.TRUE);
  *     CRSAuthorityFactory factory = AuthorityFactoryFinder.getCRSAuthorityFactory("EPSG", hints);
  * }
+ *
+ * {@note In theory implementing the <code>DatumAuthorityFactory</code> interface is useless
+ *        here, since "axis order" doesn't make any sense for them. However if we do not
+ *        register this class as a <code>DatumAuthorityFactory</code> as well, users will
+ *        get a <code>NoSuchFactoryException</code> when asking for a factory with the
+ *        <code>FORCE_LONGITUDE_FIRST_AXIS_ORDER</code> hint set.}
+ *
+ * {@section To be more specific...}
+ * The name of this class contains "<cite>longitude first</cite>" for simplicity, because the axes
+ * reordering apply mostly to geographic CRS (in contrast, most projected CRS already have
+ * (<var>x</var>, <var>y</var>) axis order, in which case this class has no effect). However, what
+ * this implementation actually does is to force a <cite>right-handed</cite> coordinate system.
+ * This approach works for projected CRS as well as geographic CRS ("<cite>longitude first</cite>"
+ * is an inappropriate expression for projected CRS). It even works in cases like stereographic
+ * projections, where the axes names look like (<var>South along 180°</var>, <var>South along 90°E</var>).
+ * In such cases, aiming for "<cite>longitude first</cite>" would not make sense.
  *
  * @author Martin Desruisseaux (IRD)
  * @version 3.00

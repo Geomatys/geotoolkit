@@ -203,7 +203,7 @@ public class NetcdfImageReader extends FileImageReader implements NamedImageStor
      * {@code variables.get(imageIndex)} where {@code variables} is the list returned by this
      * method.
      * <p>
-     * The sequence of variable to be read can be changed by a call to {@link #setImageNames(String[]}.
+     * The sequence of variable to be read can be changed by a call to {@link #setImageNames(String[])}.
      *
      * @return The names of the variables to be read.
      * @throws IOException if the NetCDF file can not be read.

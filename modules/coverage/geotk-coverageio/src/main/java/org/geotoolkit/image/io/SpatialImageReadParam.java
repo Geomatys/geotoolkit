@@ -412,7 +412,7 @@ public class SpatialImageReadParam extends ImageReadParam implements WarningProd
      * The returned factory may be used in various way, but the following pseudo-code can be
      * considered typical:
      *
-     * {@preformat
+     * {@preformat java
      *     public ImageTypeSpecifier getImageType(int imageIndex, ImageReadParam param, ...) {
      *         SpatialMetadata md = getImageMetadata(imageIndex);
      *         // ... process metadata
