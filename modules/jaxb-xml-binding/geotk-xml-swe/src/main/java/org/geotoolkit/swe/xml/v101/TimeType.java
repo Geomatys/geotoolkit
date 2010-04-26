@@ -127,11 +127,19 @@ public class TimeType extends AbstractDataComponentEntry implements AbstractTime
         }
         if (object instanceof TimeType && super.equals(object)) {
             final TimeType that = (TimeType) object;
+
+            boolean valueEqorEmpty = Utilities.equals(this.value, that.value);
+            if (!valueEqorEmpty) {
+                if (this.value == null && (that.value != null && that.value.size() == 0) ||
+                    that.value == null && (this.value != null && this.value.size() == 0)) {
+                    valueEqorEmpty = true;
+                }
+            }
             return Utilities.equals(this.localFrame,     that.localFrame)     &&
                    Utilities.equals(this.referenceFrame, that.referenceFrame) &&
                    Utilities.equals(this.referenceTime,  that.referenceTime)  &&
                    Utilities.equals(this.uom,            that.uom)            &&
-                   Utilities.equals(this.getValue(),     that.getValue());
+                   valueEqorEmpty;
         } 
         return false;
     }

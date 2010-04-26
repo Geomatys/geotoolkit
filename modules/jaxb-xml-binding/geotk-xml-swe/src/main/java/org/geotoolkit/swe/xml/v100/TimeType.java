@@ -209,12 +209,20 @@ public class TimeType extends AbstractDataComponentType implements AbstractTime 
         if (object instanceof TimeType) {
             final TimeType that = (TimeType) object;
 
+            boolean valueEqorEmpty = Utilities.equals(this.value, that.value);
+            if (!valueEqorEmpty) {
+                if (this.value == null && (that.value != null && that.value.size() == 0) ||
+                    that.value == null && (this.value != null && this.value.size() == 0)) {
+                    valueEqorEmpty = true;
+                }
+            }
+
             return Utilities.equals(this.referenceTime, that.referenceTime)   &&
                    Utilities.equals(this.quality, that.quality) &&
                    Utilities.equals(this.localFrame, that.localFrame) &&
                    Utilities.equals(this.referenceFrame, that.referenceFrame) &&
                    Utilities.equals(this.uom, that.uom) &&
-                   Utilities.equals(this.getValue(), that.getValue()) &&
+                   valueEqorEmpty &&
                    Utilities.equals(this.constraint,  that.constraint);
         }
         return false;
