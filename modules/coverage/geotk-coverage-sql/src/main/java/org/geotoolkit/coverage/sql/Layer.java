@@ -29,7 +29,10 @@ import org.geotoolkit.coverage.io.CoverageStoreException;
 
 
 /**
- * A layer of grid coverages sharing common properties.
+ * A layer of grid coverages sharing common properties. Layers are created by the
+ * {@link CoverageDatabase#getLayer(String)} method. The list of layers available
+ * in a database can be displayed in a <cite>Swing</cite> widget using the
+ * {@link org.geotoolkit.gui.swing.coverage.LayerList} panel.
  * <p>
  * {@code Layer} instances are immutable and thread-safe.
  *

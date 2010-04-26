@@ -548,4 +548,13 @@ public class CoverageDatabase {
     public void dispose() {
         executor.shutdown();
     }
+
+    /**
+     * Invoked by the garbage collector when this database is not used anymore.
+     * The default implementation invokes {@link #dispose()}.
+     */
+    @Override
+    protected void finalize() {
+        dispose();
+    }
 }
