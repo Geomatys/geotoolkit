@@ -57,13 +57,16 @@ public class TimeType extends AbstractDataComponentEntry implements AbstractTime
     public TimeType(AbstractTime time) {
         super(time);
         if (time != null) {
-            if (time.getUom() != null) {
+           if (time.getUom() != null) {
                 this.uom = new UomPropertyType(time.getUom());
             }
             this.referenceFrame = time.getReferenceFrame();
             this.referenceTime  = time.getReferenceTime();
             this.localFrame     = time.getLocalFrame();
-            this.value          = time.getValue();
+            List<String> times  = time.getValue();
+            if (times.size() > 0) {
+                this.value      =  times;
+            }
         }
 
     }
@@ -90,6 +93,7 @@ public class TimeType extends AbstractDataComponentEntry implements AbstractTime
      * 
      */
     public List<String> getValue() {
+        System.out.println("laaaaaaaaaaaaaaaaaaaaaaaas");
         if (value == null) {
             value = new ArrayList<String>();
         }
