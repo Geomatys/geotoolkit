@@ -41,7 +41,7 @@ public class DoubleRenderer implements NavigatorRenderer{
 
     @Override
     public int getGraduationHeight() {
-        return 60;
+        return 20;
     }
 
     @Override
