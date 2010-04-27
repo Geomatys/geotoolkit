@@ -82,6 +82,7 @@ public class JMapElevationLine extends JNavigator implements PropertyChangeListe
     private volatile Map2D map = null;
 
     public JMapElevationLine(){
+        animation.setSpeedFactor(10);
         setModelRenderer(new DoubleRenderer());
         setOrientation(SwingConstants.WEST);
         getModel().scale(-1, 0);
@@ -112,7 +113,6 @@ public class JMapElevationLine extends JNavigator implements PropertyChangeListe
                 if(vb.isInfinite()) vb = null;
                 
                 map.getCanvas().getController().setElevationRange(vb, vh, SI.METRE);
-
             }
         };
 
@@ -320,8 +320,6 @@ public class JMapElevationLine extends JNavigator implements PropertyChangeListe
         band.addKeyListener(this);
 
         addBand(band);
-
-
     }
     
     public Map2D getMap() {
@@ -460,6 +458,7 @@ public class JMapElevationLine extends JNavigator implements PropertyChangeListe
                 
             }
 
+            repaint();
         }
     }
 

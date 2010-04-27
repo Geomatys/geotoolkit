@@ -59,6 +59,8 @@ public class JMapTimeLine extends JNavigator implements PropertyChangeListener{
         protected void update(Map2D map, double step) {
             final Date[] range = map.getCanvas().getController().getTemporalRange().clone();
 
+            step =  step * animation.getRefreshInterval();
+
             if(range[0] != null){
                 range[0] = new Date(range[0].getTime() + (long)step);
             }
@@ -74,8 +76,9 @@ public class JMapTimeLine extends JNavigator implements PropertyChangeListener{
 
     public JMapTimeLine(){
         setModelRenderer(new DateRenderer());
+        long now = System.currentTimeMillis();
+        getModel().translate(-now);
         getModel().scale(0.0000001d, 0);
-        getModel().translate(System.currentTimeMillis());
 
         menu = new JPopupMenu(){
 

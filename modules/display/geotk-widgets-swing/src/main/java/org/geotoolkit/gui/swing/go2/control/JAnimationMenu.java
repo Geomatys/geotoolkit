@@ -18,7 +18,6 @@
 package org.geotoolkit.gui.swing.go2.control;
 
 import java.awt.BorderLayout;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.lang.ref.WeakReference;
@@ -64,7 +63,7 @@ public abstract class JAnimationMenu extends JMenu{
                 if(map != null){
                     final Map2D mp = map.get();
                     if(mp != null){
-                        double step = (Double)factor.getValue() * (Integer)refresh.getValue();
+                        double step = (Double)factor.getValue();
                         if(backward.isSelected()){
                             step = -step;
                         }
@@ -119,6 +118,18 @@ public abstract class JAnimationMenu extends JMenu{
             }
         });
 
+    }
+
+    public void setSpeedFactor(double d){
+        factor.setValue(d);
+    }
+
+    public void setRefreshInterval(double d){
+        refresh.setValue(d);
+    }
+
+    public Integer getRefreshInterval(){
+        return (Integer)refresh.getValue();
     }
 
     protected abstract void update(Map2D map, double step);
