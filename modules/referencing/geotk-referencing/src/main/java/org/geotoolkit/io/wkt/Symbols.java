@@ -20,9 +20,9 @@ package org.geotoolkit.io.wkt;
 import java.util.Locale;
 import java.io.Serializable;
 import java.text.NumberFormat;
-import java.text.DecimalFormat;
 
 import org.geotoolkit.lang.Immutable;
+import org.geotoolkit.internal.StringUtilities;
 
 
 /**
@@ -169,13 +169,7 @@ public class Symbols implements Serializable {
          * rounding error for the 0 value. For semi-major and semi-minor axis, we
          * often want to avoid exponential notation as well.
          */
-        if (numberFormat instanceof DecimalFormat) {
-            final char decimalSeparator = ((DecimalFormat) numberFormat)
-                       .getDecimalFormatSymbols().getDecimalSeparator();
-            if (decimalSeparator == ',') {
-                separator = ';';
-            }
-        }
+        separator = StringUtilities.getSeparator(numberFormat);
     }
 
     /**

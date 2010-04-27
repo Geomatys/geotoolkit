@@ -71,6 +71,11 @@ public class IndexedResourceCompiler implements FilenameFilter, Comparator<Objec
     private static final String JAVA_ENCODING = "UTF-8";
 
     /**
+     * The Java modifiers applies on the key constans to be generated.
+     */
+    private static final String KEY_MODIFIERS = "public static final int ";
+
+    /**
      * The source directory of the java and properties files.
      */
     private final File sourceDirectory;
@@ -139,12 +144,42 @@ public class IndexedResourceCompiler implements FilenameFilter, Comparator<Objec
             allocatedIDs.clear();
             resources.clear();
             try {
+                loadKeyValues();
                 scanForResources();
             } catch (IOException exception) {
                 throw new ResourceCompilerException(exception);
             }
         }
         return errors;
+    }
+
+    /**
+     * Loads the existing key values from the source file. This is used in order to avoid
+     * the need to recompile the whole application when new entries are added.
+     *
+     * @throws IOException If an error occured while reading the source file.
+     */
+    private void loadKeyValues() throws IOException {
+        final BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(bundleClass), JAVA_ENCODING));
+        String line;
+        while ((line = in.readLine()) != null) {
+            if ((line = line.trim()).startsWith(KEY_MODIFIERS)) {
+                final int s = line.indexOf('=', KEY_MODIFIERS.length());
+                if (s >= 0) {
+                    final int c = line.indexOf(';', s);
+                    if (c >= 0) {
+                        final String key = line.substring(KEY_MODIFIERS.length(), s).trim();
+                        final Integer ID = Integer.valueOf(line.substring(s+1, c).trim());
+                        final String old = allocatedIDs.put(ID, key);
+                        if (old != null) {
+                            warning("Key " + ID + " is used by " + old + " and " + key);
+                            errors++;
+                        }
+                    }
+                }
+            }
+        }
+        in.close();
     }
 
     /**
@@ -475,8 +510,8 @@ search: for (int i=0; i<buffer.length(); i++) { // Length of 'buffer' will vary.
                 }
                 buffer.append(margin).append(" */").append(lineSeparator);
             }
-            buffer.append(margin).append("public static final int ")
-                  .append(key).append(" = ").append(ID).append(';').append(lineSeparator);
+            buffer.append(margin).append(KEY_MODIFIERS).append(key).append(" = ")
+                    .append(ID).append(';').append(lineSeparator);
         }
         /*
          * Continue reading the input file, skipping the old key values.

@@ -34,6 +34,7 @@ import java.io.ObjectOutputStream;
 import java.io.InvalidObjectException;
 
 import org.opengis.coverage.grid.GridEnvelope;
+import org.opengis.metadata.extent.GeographicBoundingBox;
 import org.opengis.geometry.MismatchedReferenceSystemException;
 import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.datum.PixelInCell;
@@ -60,6 +61,7 @@ import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
 import org.geotoolkit.referencing.operation.transform.LinearTransform;
 import org.geotoolkit.referencing.operation.transform.ProjectiveTransform;
+import org.geotoolkit.metadata.iso.extent.DefaultGeographicBoundingBox;
 import org.geotoolkit.resources.Errors;
 
 
@@ -67,7 +69,7 @@ import org.geotoolkit.resources.Errors;
  * A layer of {@linkplain GridCoverage grid coverages} sharing common properties.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.10
+ * @version 3.11
  *
  * @since 3.10 (derived from Seagis)
  * @module
@@ -193,6 +195,11 @@ final class LayerEntry extends Entry implements Layer {
      * @see #getEnvelope(Date, Number)
      */
     private volatile CoverageEnvelope coverageEnvelope;
+
+    /**
+     * The geographic bounding box. Will be computed when first needed.
+     */
+    private volatile GeographicBoundingBox boundingBox;
 
     /**
      * The factory for fetching table dependencies.
@@ -529,10 +536,11 @@ final class LayerEntry extends Entry implements Layer {
     }
 
     /**
-     * Returns the typical pixel resolution in this layer.
-     * Values are in the unit of the main CRS used by the database (typically degrees
-     * of longitude and latitude for the horizontal part, and days for the temporal part).
-     * Some elements of the returned array may be {@link Double#NaN NaN} if they are unnkown.
+     * Returns the typical pixel resolution in this layer. Values are in the unit of the
+     * {@linkplain CoverageDatabase#getCoordinateReferenceSystem() main CRS used by the database}
+     * (typically degrees of longitude and latitude for the horizontal part, and days for the
+     * temporal part). Some elements of the returned array may be {@link Double#NaN NaN} if they
+     * are unnkown.
      */
     @Override
     public synchronized double[] getTypicalResolution() throws CoverageStoreException {
@@ -679,8 +687,38 @@ final class LayerEntry extends Entry implements Layer {
     }
 
     /**
+     * Returns the geographic bounding box, or {@code null} if unknown. If the CRS used by
+     * the database is not geographic (for example if it is a projected CRS), then this method
+     * will transform the layer envelope to a geographic CRS.
+     */
+    @Override
+    public GeographicBoundingBox getGeographicBoundingBox() throws CoverageStoreException {
+        GeographicBoundingBox bbox = boundingBox;
+        if (bbox == null) { // Not a big deal if computed twice.
+            final CoverageEnvelope envelope = getEnvelope(null, null);
+            if (envelope != null) {
+                try {
+                    bbox = new DefaultGeographicBoundingBox(envelope);
+                } catch (TransformException e) {
+                    throw new CoverageStoreException(e);
+                }
+                ((DefaultGeographicBoundingBox) bbox).freeze();
+                boundingBox = bbox;
+            }
+        }
+        if (Double.isInfinite(bbox.getWestBoundLongitude()) &&
+            Double.isInfinite(bbox.getEastBoundLongitude()) &&
+            Double.isInfinite(bbox.getSouthBoundLatitude()) &&
+            Double.isInfinite(bbox.getNorthBoundLatitude()))
+        {
+            return null;
+        }
+        return bbox;
+    }
+
+    /**
      * Returns the envelope of this layer, optionnaly centered at the given date and
-     * elevation. Callers are free to modify the returned instance befoer to pass it
+     * elevation. Callers are free to modify the returned instance before to pass it
      * to the {@code getCoverageReference} methods.
      */
     @Override

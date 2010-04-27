@@ -28,6 +28,7 @@ import org.geotoolkit.gui.swing.tree.DefaultMutableTreeNode;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
 import org.geotoolkit.util.Utilities;
 
+import org.geotoolkit.math.XMath;
 import org.geotoolkit.util.MeasurementRange;
 import org.geotoolkit.internal.sql.table.Entry;
 
@@ -36,7 +37,7 @@ import org.geotoolkit.internal.sql.table.Entry;
  * Information about an image format.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.10
+ * @version 3.11
  *
  * @since 3.09 (derived from Seagis)
  * @module
@@ -46,6 +47,11 @@ final class FormatEntry extends Entry {
      * For cross-version compatibility.
      */
     private static final long serialVersionUID = -8790032968708208057L;
+
+    /**
+     * Tolerance in ULP (<cite>Units in Last Place</cite>) for rounding numbers.
+     */
+    private static final int ULP_TOLERANCE = 4;
 
     /**
      * The image format name as declared in the database. This value shall be a name
@@ -120,9 +126,26 @@ final class FormatEntry extends Entry {
         final MeasurementRange<Double>[] ranges = new MeasurementRange[bands.size()];
         for (int i=0; i<ranges.length; i++) {
             final GridSampleDimension band = bands.get(i).geophysics(true);
-            ranges[i] = MeasurementRange.create(band.getMinimumValue(), band.getMaximumValue(), band.getUnits());
+            ranges[i] = MeasurementRange.create(
+                    fixRoundingError(band.getMinimumValue()),
+                    fixRoundingError(band.getMaximumValue()),
+                    band.getUnits());
         }
         return ranges;
+    }
+
+    /**
+     * Work-around for rounding error. We perform the workaround here instead than at
+     * {@code GridSampleDimension} construction time because the minimal and maximal
+     * values are the result of a computation, not a stored value.
+     */
+    private static double fixRoundingError(double value) {
+        final double v = value * 360;
+        final double r = XMath.roundIfAlmostInteger(v, ULP_TOLERANCE);
+        if (r != v) {
+            value = r / 360;
+        }
+        return value;
     }
 
     /**

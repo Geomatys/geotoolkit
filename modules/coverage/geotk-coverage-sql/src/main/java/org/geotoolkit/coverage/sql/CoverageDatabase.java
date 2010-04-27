@@ -34,6 +34,7 @@ import javax.sql.DataSource;
 import java.sql.SQLException;
 
 import org.opengis.referencing.operation.TransformException;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.util.DateRange;
@@ -127,6 +128,19 @@ public class CoverageDatabase {
     CoverageDatabase(final TableFactory db) {
         database = db;
         executor = new Executor();
+    }
+
+    /**
+     * Returns the Coordinate Reference System used by the database for indexing the coverages
+     * envelopes. This is the "native" CRS in which this {@code CoverageDatabase} instance will
+     * transform the requested envelopes before to execute the queries.
+     *
+     * @return The "native" coordinate reference system.
+     *
+     * @since 3.11
+     */
+    public CoordinateReferenceSystem getCoordinateReferenceSystem() {
+        return database.spatioTemporalCRS;
     }
 
     /**

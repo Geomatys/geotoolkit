@@ -23,7 +23,7 @@ import org.geotoolkit.util.XArrays;
 
 /**
  * An implementation of {@link AbstractListModel} based on an array. The list content can be
- * specified by a call to the {@link #setElement(Object[])} method. The later method detects
+ * specified by a call to the {@link #setElements(Object[])} method. The later method detects
  * the changes in the array content and invokes a {@code fireXXX} method with the smallest
  * range of changes that it can compute.
  *
@@ -54,7 +54,7 @@ public final class ArrayListModel<E> extends AbstractListModel {
      *
      * @param newElements The new elements of this list, or {@code null} if none.
      */
-    public void setElement(E[] newElements) {
+    public void setElements(E[] newElements) {
         if (newElements != null && newElements.length == 0) {
             newElements = null;
         }
@@ -78,7 +78,7 @@ public final class ArrayListModel<E> extends AbstractListModel {
              * [lower ... upper] (inclusive) is now the range of lines to remove or to change.
              */
             if (upper >= lower) {
-                if (old.length == newElements.length) {
+                if (newElements != null && old.length == newElements.length) {
                     elements = newElements;
                     fireContentsChanged(this, lower, upper);
                     return;

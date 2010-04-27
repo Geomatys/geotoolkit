@@ -70,6 +70,11 @@ public final class Widgets extends IndexedResourceBundle {
          * Select a directory
          */
         public static final int SELECT_DIRECTORY = 4;
+
+        /**
+         * <html><i>from</i> {0}<br><i>to</i> {1}</html>
+         */
+        public static final int TIME_RANGE_$2 = 5;
     }
 
     /**

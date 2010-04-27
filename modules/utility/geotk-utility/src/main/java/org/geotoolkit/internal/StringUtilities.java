@@ -17,6 +17,9 @@
  */
 package org.geotoolkit.internal;
 
+import java.text.NumberFormat;
+import java.text.DecimalFormat;
+
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.util.Strings;
 
@@ -28,7 +31,7 @@ import org.geotoolkit.util.Strings;
  * tasks that do not really need such conversion.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.09
+ * @version 3.11
  *
  * @since 3.00
  * @module
@@ -175,5 +178,24 @@ public final class StringUtilities {
             }
         }
         return text.subSequence(offset, upper);
+    }
+
+    /**
+     * Returns the separator to use between numbers. Current implementation returns the coma
+     * character, unless the given number already use the coma as the decimal separator.
+     *
+     * @param  format The format used for formatting numbers.
+     * @return The character to use as a separator between numbers.
+     *
+     * @since 3.11
+     */
+    public static char getSeparator(final NumberFormat format) {
+        if (format instanceof DecimalFormat) {
+            final char c = ((DecimalFormat) format).getDecimalFormatSymbols().getDecimalSeparator();
+            if (c == ',') {
+                return ';';
+            }
+        }
+        return ',';
     }
 }

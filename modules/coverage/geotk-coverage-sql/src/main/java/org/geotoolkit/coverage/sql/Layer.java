@@ -22,6 +22,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
 
+import org.opengis.metadata.extent.GeographicBoundingBox;
+
 import org.geotoolkit.util.DateRange;
 import org.geotoolkit.util.MeasurementRange;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
@@ -37,7 +39,7 @@ import org.geotoolkit.coverage.io.CoverageStoreException;
  * {@code Layer} instances are immutable and thread-safe.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.10
+ * @version 3.11
  *
  * @since 3.10 (derived from Seagis)
  * @module
@@ -136,8 +138,21 @@ public interface Layer {
     SortedSet<GeneralGridGeometry> getGridGeometries() throws CoverageStoreException;
 
     /**
+     * Returns the geographic bounding box, or {@code null} if unknown. If the CRS used by
+     * the database is not geographic (for example if it is a projected CRS), then this method
+     * will transform the layer envelope to a geographic CRS.
+     *
+     * @return The layer geographic bounding box, or {@code null} if none.
+     * @throws CoverageStoreException if an error occured while querying the database
+     *         or while projecting the layer envelope.
+     *
+     * @since 3.11
+     */
+    GeographicBoundingBox getGeographicBoundingBox() throws CoverageStoreException;
+
+    /**
      * Returns the envelope of this layer, optionnaly centered at the given date and
-     * elevation. Callers are free to modify the returned instance befoer to pass it
+     * elevation. Callers are free to modify the returned instance before to pass it
      * to the {@code getCoverageReference} methods.
      *
      * @param  time The central date, or {@code null}.

@@ -100,6 +100,11 @@ public final class Vocabulary extends IndexedResourceBundle {
         public static final int ALTITUDE = 9;
 
         /**
+         * Altitudes
+         */
+        public static final int ALTITUDES = 336;
+
+        /**
          * Apply
          */
         public static final int APPLY = 10;
@@ -448,6 +453,11 @@ public final class Vocabulary extends IndexedResourceBundle {
          * Distance
          */
         public static final int DISTANCE = 79;
+
+        /**
+         * Domain
+         */
+        public static final int DOMAIN = 337;
 
         /**
          * Down
@@ -905,6 +915,11 @@ public final class Vocabulary extends IndexedResourceBundle {
         public static final int LATITUDE = 170;
 
         /**
+         * Layers
+         */
+        public static final int LAYERS = 339;
+
+        /**
          * Left
          */
         public static final int LEFT = 171;
@@ -1270,6 +1285,11 @@ public final class Vocabulary extends IndexedResourceBundle {
         public static final int PROPERTIES = 243;
 
         /**
+         * Properties of {0}
+         */
+        public static final int PROPERTIES_OF_$1 = 338;
+
+        /**
          * Quit
          */
         public static final int QUIT = 244;
@@ -1295,6 +1315,11 @@ public final class Vocabulary extends IndexedResourceBundle {
         public static final int RED = 248;
 
         /**
+         * Refresh
+         */
+        public static final int REFRESH = 335;
+
+        /**
          * Remove
          */
         public static final int REMOVE = 249;
@@ -1303,6 +1328,11 @@ public final class Vocabulary extends IndexedResourceBundle {
          * Reset
          */
         public static final int RESET = 250;
+
+        /**
+         * Resolution
+         */
+        public static final int RESOLUTION = 340;
 
         /**
          * Right

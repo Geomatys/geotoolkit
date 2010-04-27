@@ -27,6 +27,8 @@ import org.geotoolkit.io.X364;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.NullArgumentException;
+import org.geotoolkit.internal.StringUtilities;
+
 import static org.geotoolkit.io.X364.*;
 
 
@@ -222,14 +224,7 @@ public abstract class InteractiveConsole implements Runnable {
         numberFormat.setGroupingUsed(false);
         numberFormat.setMinimumFractionDigits(6);
         numberFormat.setMaximumFractionDigits(6);
-        if (numberFormat instanceof DecimalFormat) {
-            final char decimalSeparator = ((DecimalFormat) numberFormat)
-                        .getDecimalFormatSymbols().getDecimalSeparator();
-            if (decimalSeparator == ',') {
-                return ";";
-            }
-        }
-        return ",";
+        return String.valueOf(StringUtilities.getSeparator(numberFormat)).intern();
     }
 
     /**
