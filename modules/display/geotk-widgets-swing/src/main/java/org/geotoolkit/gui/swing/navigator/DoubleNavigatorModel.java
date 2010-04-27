@@ -25,7 +25,6 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
 
 /**
  *

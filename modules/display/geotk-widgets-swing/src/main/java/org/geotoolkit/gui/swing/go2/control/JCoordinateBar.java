@@ -89,7 +89,7 @@ public class JCoordinateBar extends JToolBar {
     
     private final JPanel paneTemp = new JPanel(new BorderLayout());
     private final JPanel paneElev = new JPanel(new BorderLayout());
-    private final JMapElevationLine panenav = new JMapElevationLine();
+    private final JMapElevationLine guiElevationLine = new JMapElevationLine();
     private final JMapTimeLine guiTimeLine = new JMapTimeLine();
 
     public JCoordinateBar() {
@@ -104,8 +104,7 @@ public class JCoordinateBar extends JToolBar {
         add(BorderLayout.CENTER,paneTemp);
 
         paneTemp.add(BorderLayout.CENTER,guiTimeLine);
-
-        paneElev.add(BorderLayout.CENTER,panenav);
+        paneElev.add(BorderLayout.CENTER,guiElevationLine);
 
         //the hints menu -------------------------------------------------------
         final JCheckBoxMenuItem guiAxis = new JCheckBoxMenuItem(MessageBundle.getString("map_xy_ratio")){
@@ -244,6 +243,7 @@ public class JCoordinateBar extends JToolBar {
         paneTemp.setVisible(false);
         paneElev.setVisible(false);
         guiTimeLine.setPreferredSize(new Dimension(100, 100));
+        guiElevationLine.setPreferredSize(new Dimension(100, 100));
 
         int x = 1;
 
@@ -296,7 +296,7 @@ public class JCoordinateBar extends JToolBar {
     public void setMap(Map2D map) {
         guiCombo.setMap(map);
         guiTimeLine.setMap(map);
-        panenav.setMap(map);
+        guiElevationLine.setMap(map);
         
         if(this.map != null){
 

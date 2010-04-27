@@ -18,6 +18,7 @@
 package org.geotoolkit.gui.swing.go2.control;
 
 import java.awt.BasicStroke;
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -25,13 +26,11 @@ import java.awt.Graphics2D;
 import java.awt.MouseInfo;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import javax.measure.unit.SI;
 import javax.swing.AbstractAction;
-import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
@@ -62,22 +61,21 @@ public class JMapElevationLine extends JNavigator implements PropertyChangeListe
 
     private final SpinnerNumberModel modelHaut;
     private final SpinnerNumberModel modelBas;
-    private final JButton reset;
 
     private final JPopupMenu menu;
     private final JAnimationMenu animation = new JAnimationMenu() {
         @Override
         protected void update(Map2D map, double step) {
-//            final Date[] range = map.getCanvas().getController().getTemporalRange().clone();
-//
-//            if(range[0] != null){
-//                range[0] = new Date(range[0].getTime() + (long)step);
-//            }
-//            if(range[1] != null){
-//                range[1] = new Date(range[1].getTime() + (long)step);
-//            }
-//
-//            map.getCanvas().getController().setTemporalRange(range[0], range[1]);
+            final Double[] range = map.getCanvas().getController().getElevationRange().clone();
+
+            if(range[0] != null){
+                range[0] = range[0] + step;
+            }
+            if(range[1] != null){
+                range[1] = range[1] + step;
+            }
+
+            map.getCanvas().getController().setElevationRange(range[0], range[1], null);
         }
     };
 
@@ -86,6 +84,7 @@ public class JMapElevationLine extends JNavigator implements PropertyChangeListe
     public JMapElevationLine(){
         setModelRenderer(new DoubleRenderer());
         setOrientation(SwingConstants.WEST);
+        getModel().scale(-1, 0);
 
         modelHaut = new SpinnerNumberModel();
         modelHaut.setStepSize(10);
@@ -98,15 +97,6 @@ public class JMapElevationLine extends JNavigator implements PropertyChangeListe
         modelBas.setMinimum(Double.NEGATIVE_INFINITY);
         modelBas.setMaximum(Double.POSITIVE_INFINITY);
         modelBas.setValue(Double.NEGATIVE_INFINITY);
-
-        reset = new JButton("reset");
-        reset.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if(map == null) return;
-                map.getCanvas().getController().setElevationRange(null, null, SI.METRE);
-            }
-        });
 
         final JSpinner haut = new JSpinner(modelHaut);
         final JSpinner bas = new JSpinner(modelBas);
@@ -129,23 +119,23 @@ public class JMapElevationLine extends JNavigator implements PropertyChangeListe
         modelBas.addChangeListener(lst);
         modelHaut.addChangeListener(lst);
 
-        final JPanel minPan = new JPanel();
-        minPan.add(new JLabel("min"));
-        minPan.add(bas);
+        final JPanel minPan = new JPanel(new BorderLayout());
+        minPan.add(BorderLayout.WEST, new JLabel("min"));
+        minPan.add(BorderLayout.CENTER, bas);
 
-        final JPanel maxPan = new JPanel();
-        maxPan.add(new JLabel("max"));
-        maxPan.add(haut);
-
-        
+        final JPanel maxPan = new JPanel(new BorderLayout());
+        maxPan.add(BorderLayout.WEST, new JLabel("max"));
+        maxPan.add(BorderLayout.CENTER, haut);
 
         menu = new JPopupMenu(){
 
             @Override
             public void setVisible(boolean b) {
-                Point pt = MouseInfo.getPointerInfo().getLocation();
-                int y = pt.y - JMapElevationLine.this.getLocationOnScreen().y;
-                popupEdit = getModel().getDimensionValueAt(y);
+                if(b){
+                    final Point pt = MouseInfo.getPointerInfo().getLocation();
+                    final int y = pt.y - JMapElevationLine.this.getLocationOnScreen().y;
+                    popupEdit = getModel().getDimensionValueAt(y);
+                }
                 super.setVisible(b);
             }
 
@@ -156,7 +146,7 @@ public class JMapElevationLine extends JNavigator implements PropertyChangeListe
         menu.addSeparator();
 
         menu.add(new JMenuItem(
-                new AbstractAction(MessageBundle.getString("map_move_temporal_center")) {
+                new AbstractAction(MessageBundle.getString("map_move_elevation_center")) {
                     @Override
                     public void actionPerformed(ActionEvent e) {
 
@@ -183,34 +173,7 @@ public class JMapElevationLine extends JNavigator implements PropertyChangeListe
             }
         });
         menu.add(new JMenuItem(
-                new AbstractAction(MessageBundle.getString("map_move_temporal_left")) {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        if(getMap() != null && popupEdit != null){
-                            final CanvasController2D controller = getMap().getCanvas().getController();
-                            final Double[] range = controller.getElevationRange();
-                            if(range == null){
-                                controller.setElevationRange(popupEdit, popupEdit, null);
-                            }else{
-                                controller.setElevationRange(popupEdit, range[1], null);
-                            }
-                            JMapElevationLine.this.repaint();
-                        }
-                    }
-            }){
-
-            @Override
-            public boolean isEnabled() {
-                if(getMap() != null){
-                    final CanvasController2D controller = getMap().getCanvas().getController();
-                    final Double[] range = controller.getElevationRange();
-                    return range == null || range[1] == null || (range[1] != null && range[1] > popupEdit);
-                }
-                return false;
-            }
-        });
-        menu.add(new JMenuItem(
-                new AbstractAction(MessageBundle.getString("map_move_temporal_right")) {
+                new AbstractAction(MessageBundle.getString("map_move_elevation_maximum")) {
                     @Override
                     public void actionPerformed(ActionEvent e) {
                         if(getMap() != null && popupEdit != null){
@@ -236,16 +199,44 @@ public class JMapElevationLine extends JNavigator implements PropertyChangeListe
                 return false;
             }
         });
-        
-        menu.addSeparator();
-        
         menu.add(new JMenuItem(
-                new AbstractAction(MessageBundle.getString("map_remove_temporal")) {
+                new AbstractAction(MessageBundle.getString("map_move_elevation_minimum")) {
                     @Override
                     public void actionPerformed(ActionEvent e) {
                         if(getMap() != null && popupEdit != null){
                             final CanvasController2D controller = getMap().getCanvas().getController();
-                            controller.setTemporalRange(null, null);
+                            final Double[] range = controller.getElevationRange();
+                            if(range == null){
+                                controller.setElevationRange(popupEdit, popupEdit, null);
+                            }else{
+                                controller.setElevationRange(popupEdit, range[1], null);
+                            }
+                            JMapElevationLine.this.repaint();
+                        }
+                    }
+            }){
+
+            @Override
+            public boolean isEnabled() {
+                if(getMap() != null){
+                    final CanvasController2D controller = getMap().getCanvas().getController();
+                    final Double[] range = controller.getElevationRange();
+                    return range == null || range[1] == null || (range[1] != null && range[1] > popupEdit);
+                }
+                return false;
+            }
+        });
+        
+        
+        menu.addSeparator();
+        
+        menu.add(new JMenuItem(
+                new AbstractAction(MessageBundle.getString("map_remove_elevation")) {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        if(getMap() != null && popupEdit != null){
+                            final CanvasController2D controller = getMap().getCanvas().getController();
+                            controller.setElevationRange(null, null, null);
                             JMapElevationLine.this.repaint();
                         }
                     }
@@ -261,15 +252,16 @@ public class JMapElevationLine extends JNavigator implements PropertyChangeListe
                 return false;
             }
         });
+        
         menu.add(new JMenuItem(
-                new AbstractAction(MessageBundle.getString("map_remove_temporal_left")) {
+                new AbstractAction(MessageBundle.getString("map_remove_elevation_maximum")) {
                     @Override
                     public void actionPerformed(ActionEvent e) {
                         if(getMap() != null && popupEdit != null){
                             final CanvasController2D controller = getMap().getCanvas().getController();
                             final Double[] range = controller.getElevationRange();
                             if(range != null){
-                                range[0] = null;
+                                range[1] = null;
                                 controller.setElevationRange(range[0], range[1], null);
                             }
                             JMapElevationLine.this.repaint();
@@ -288,14 +280,14 @@ public class JMapElevationLine extends JNavigator implements PropertyChangeListe
             }
         });
         menu.add(new JMenuItem(
-                new AbstractAction(MessageBundle.getString("map_remove_temporal_right")) {
+                new AbstractAction(MessageBundle.getString("map_remove_elevation_minimum")) {
                     @Override
                     public void actionPerformed(ActionEvent e) {
                         if(getMap() != null && popupEdit != null){
                             final CanvasController2D controller = getMap().getCanvas().getController();
                             final Double[] range = controller.getElevationRange();
                             if(range != null){
-                                range[1] = null;
+                                range[0] = null;
                                 controller.setElevationRange(range[0], range[1], null);
                             }
                             JMapElevationLine.this.repaint();
@@ -370,13 +362,13 @@ public class JMapElevationLine extends JNavigator implements PropertyChangeListe
 
                 if(range[0] != null){
                     int pos = (int)getModel().getGraphicValueAt(range[0]);
-                    if( Math.abs(y-pos) < LIMIT_WIDTH ){
+                    if( Math.abs(y-pos) < LIMIT_WIDTH*2 ){
                         selected = 0;
                     }
                 }
                 if(range[1] != null){
                     int pos = (int)getModel().getGraphicValueAt(range[1]);
-                    if( Math.abs(y-pos) < LIMIT_WIDTH ){
+                    if( Math.abs(y-pos) < LIMIT_WIDTH*2 ){
                         selected = 2;
                     }
                 }
@@ -385,7 +377,7 @@ public class JMapElevationLine extends JNavigator implements PropertyChangeListe
                               getModel().getGraphicValueAt(range[0])
                             + getModel().getGraphicValueAt(range[1])
                             ) / 2);
-                    if( Math.abs(y-pos) < LIMIT_WIDTH*2 ){
+                    if( Math.abs(y-pos) < LIMIT_WIDTH*4 ){
                         selected = 1;
                     }
                 }
@@ -489,8 +481,8 @@ public class JMapElevationLine extends JNavigator implements PropertyChangeListe
 
             if(range[0] == null && range[1] == null) return;
 
-            double start = -5;
-            double end = getHeight() +5;
+            double start = getHeight() +5;
+            double end = -5;
             double center = -5;
 
             if(range[0] != null) start = getModel().getGraphicValueAt(range[0]);
@@ -509,6 +501,12 @@ public class JMapElevationLine extends JNavigator implements PropertyChangeListe
                     start = getModel().getGraphicValueAt(range[0] + step);
                     end = getModel().getGraphicValueAt(range[1] + step);
                 }
+            }
+
+            if(start>end){
+                double n = start;
+                start = end;
+                end = n;
             }
 
             if(range[0] != null && range[1] != null){

@@ -17,12 +17,14 @@
 
 package org.geotoolkit.gui.swing.navigator;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.GradientPaint;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
-import javax.swing.SwingConstants;
+
 import org.geotoolkit.display.axis.Graduation;
 import org.geotoolkit.display.axis.NumberGraduation;
 import org.geotoolkit.display.axis.TickIterator;
@@ -36,8 +38,13 @@ import static javax.swing.SwingConstants.*;
  */
 public class DoubleRenderer implements NavigatorRenderer{
 
-    private static final Color first = new Color(1.0f, 1.0f, 1.0f, 1f);
-    private static final Color second = new Color(1.0f, 1.0f, 1.0f, 0.0f);
+    private final Color Cbase = Color.GRAY;
+    private final Color Ctop = Cbase.brighter();
+    private final Color Clast = Cbase.darker();
+
+    public DoubleRenderer(){
+
+    }
 
     @Override
     public int getGraduationHeight() {
@@ -66,8 +73,8 @@ public class DoubleRenderer implements NavigatorRenderer{
         }
 
         final GradientPaint mask = new GradientPaint(
-                sx, sy, first,
-                ex, ey, second);
+                sx, sy, Cbase,
+                ex, ey, Ctop);
         g.setPaint(mask);
         g.fill(area);
 
@@ -78,15 +85,15 @@ public class DoubleRenderer implements NavigatorRenderer{
         }
 
         //draw the graduations -------------------------------------------------
-        g.setColor(Color.BLACK);
+        final int spacing = 200;
 
         final NavigatorModel model = navigator.getModel();
-        final double start = model.getDimensionValueAt(-200);
-        final double end = model.getDimensionValueAt(extent);
+        final double start = model.getDimensionValueAt(-spacing);
+        final double end = model.getDimensionValueAt(extent+spacing);
 
         final RenderingHints tickHint = new RenderingHints(null);
-        tickHint.put(Graduation.VISUAL_AXIS_LENGTH, extent+200);
-        tickHint.put(Graduation.VISUAL_TICK_SPACING, 200);
+        tickHint.put(Graduation.VISUAL_AXIS_LENGTH, extent+spacing);
+        tickHint.put(Graduation.VISUAL_TICK_SPACING, spacing/2);
 
         final NumberGraduation graduationX = new NumberGraduation(null);
         graduationX.setRange(start, end, null);
@@ -97,17 +104,28 @@ public class DoubleRenderer implements NavigatorRenderer{
             tickIte.next();
             final String label = tickIte.currentLabel();
             final double d = tickIte.currentPosition();
-            final int p = (int)model.getGraphicValueAt(d);
+            int p = (int)model.getGraphicValueAt(d);
+
+
+            if(tickIte.isMajorTick()){
+                g.setStroke(new BasicStroke(2.5f));
+                g.setColor(Ctop);
+                g.setFont(new Font("Serif", Font.BOLD, 12));
+            }else{
+                g.setStroke(new BasicStroke(1f));
+                g.setColor(Ctop);
+                g.setFont(new Font("Serif", Font.PLAIN, 10));
+            }
 
             switch(orientation){
                 case NORTH : break;
                 case SOUTH :
-                    g.drawLine(p, 0, p,getGraduationHeight());
+                    g.drawLine(p, 0, p,area.height);
                     g.drawString(label, p, area.height-2);
                     break;
                 case EAST : break;
                 case WEST :
-                    g.drawLine(0, p, getGraduationHeight(), p);
+                    g.drawLine(0, p, area.width, p);
                     g.drawString(label, 2, p-2);
                     break;
             }

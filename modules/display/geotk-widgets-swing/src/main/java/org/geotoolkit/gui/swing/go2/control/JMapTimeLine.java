@@ -81,9 +81,11 @@ public class JMapTimeLine extends JNavigator implements PropertyChangeListener{
 
             @Override
             public void setVisible(boolean b) {
-                Point pt = MouseInfo.getPointerInfo().getLocation();
-                int x = pt.x - JMapTimeLine.this.getLocationOnScreen().x;
-                popupEdit = new Date((long)getModel().getDimensionValueAt(x));
+                if(b){
+                    final Point pt = MouseInfo.getPointerInfo().getLocation();
+                    final int x = pt.x - JMapTimeLine.this.getLocationOnScreen().x;
+                    popupEdit = new Date((long)getModel().getDimensionValueAt(x));
+                }
                 super.setVisible(b);
             }
 
@@ -300,13 +302,13 @@ public class JMapTimeLine extends JNavigator implements PropertyChangeListener{
 
                 if(range[0] != null){
                     int pos = (int)getModel().getGraphicValueAt(range[0].getTime());
-                    if( Math.abs(x-pos) < LIMIT_WIDTH ){
+                    if( Math.abs(x-pos) < LIMIT_WIDTH*2 ){
                         selected = 0;
                     }
                 }
                 if(range[1] != null){
                     int pos = (int)getModel().getGraphicValueAt(range[1].getTime());
-                    if( Math.abs(x-pos) < LIMIT_WIDTH ){
+                    if( Math.abs(x-pos) < LIMIT_WIDTH*2 ){
                         selected = 2;
                     }
                 }
@@ -315,7 +317,7 @@ public class JMapTimeLine extends JNavigator implements PropertyChangeListener{
                               getModel().getGraphicValueAt(range[0].getTime())
                             + getModel().getGraphicValueAt(range[1].getTime())
                             ) / 2);
-                    if( Math.abs(x-pos) < LIMIT_WIDTH*2 ){
+                    if( Math.abs(x-pos) < LIMIT_WIDTH*4 ){
                         selected = 1;
                     }
                 }
