@@ -93,7 +93,6 @@ public class TimeType extends AbstractDataComponentEntry implements AbstractTime
      * 
      */
     public List<String> getValue() {
-        System.out.println("laaaaaaaaaaaaaaaaaaaaaaaas");
         if (value == null) {
             value = new ArrayList<String>();
         }

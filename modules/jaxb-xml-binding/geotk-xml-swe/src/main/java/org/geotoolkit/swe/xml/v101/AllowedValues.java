@@ -137,7 +137,6 @@ public class AllowedValues implements AbstractAllowedValues {
     }
 
     public List<Double> getInterval() {
-        System.out.println("searching for interval");
         for (JAXBElement<List<Double>> jb : getIntervalOrValueList()) {
             if (jb.getName().getLocalPart().equals("interval")) {
                 return jb.getValue();
