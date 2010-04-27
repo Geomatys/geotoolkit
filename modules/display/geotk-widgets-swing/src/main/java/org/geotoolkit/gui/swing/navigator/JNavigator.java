@@ -89,6 +89,10 @@ public class JNavigator extends JPanel implements
         graduation.addMouseMotionListener(this);
         graduation.addMouseWheelListener(this);
         graduation.addKeyListener(this);
+        bandsPan.addMouseListener(this);
+        bandsPan.addMouseMotionListener(this);
+        bandsPan.addMouseWheelListener(this);
+        bandsPan.addKeyListener(this);
 
     }
 

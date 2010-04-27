@@ -23,7 +23,6 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Image;
-import java.awt.Insets;
 import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -40,7 +39,6 @@ import java.util.List;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JProgressBar;
@@ -91,7 +89,6 @@ public class JCoordinateBar extends JToolBar {
     
     private final JPanel paneTemp = new JPanel(new BorderLayout());
     private final JPanel paneElev = new JPanel(new BorderLayout());
-    private final JMapAnimatingPane guiAnimatingPane = new JMapAnimatingPane();
     private final JMapElevationLine panenav = new JMapElevationLine();
     private final JMapTimeLine guiTimeLine = new JMapTimeLine();
 
@@ -106,7 +103,6 @@ public class JCoordinateBar extends JToolBar {
         add(BorderLayout.SOUTH,bottom);
         add(BorderLayout.CENTER,paneTemp);
 
-        paneTemp.add(BorderLayout.WEST,guiAnimatingPane);
         paneTemp.add(BorderLayout.CENTER,guiTimeLine);
 
         paneElev.add(BorderLayout.CENTER,panenav);
@@ -300,7 +296,6 @@ public class JCoordinateBar extends JToolBar {
     public void setMap(Map2D map) {
         guiCombo.setMap(map);
         guiTimeLine.setMap(map);
-        guiAnimatingPane.setMap(map);
         panenav.setMap(map);
         
         if(this.map != null){

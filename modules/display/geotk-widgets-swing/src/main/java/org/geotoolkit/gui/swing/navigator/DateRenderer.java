@@ -62,7 +62,7 @@ public class DateRenderer implements NavigatorRenderer{
 
     @Override
     public int getGraduationHeight() {
-        return 100;
+        return 20;
     }
 
     @Override

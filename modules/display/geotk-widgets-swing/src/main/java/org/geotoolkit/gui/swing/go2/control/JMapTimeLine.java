@@ -45,6 +45,7 @@ import org.geotoolkit.gui.swing.resource.MessageBundle;
  * of the map envelope.
  *
  * @author Johann Sorel (Puzzle-GIS)
+ * @module pending
  */
 public class JMapTimeLine extends JNavigator implements PropertyChangeListener{
 
@@ -53,11 +54,28 @@ public class JMapTimeLine extends JNavigator implements PropertyChangeListener{
     private static final float LIMIT_WIDTH = 1.25f;
 
     private final JPopupMenu menu;
+    private final JAnimationMenu animation = new JAnimationMenu() {
+        @Override
+        protected void update(Map2D map, double step) {
+            final Date[] range = map.getCanvas().getController().getTemporalRange().clone();
+
+            if(range[0] != null){
+                range[0] = new Date(range[0].getTime() + (long)step);
+            }
+            if(range[1] != null){
+                range[1] = new Date(range[1].getTime() + (long)step);
+            }
+
+            map.getCanvas().getController().setTemporalRange(range[0], range[1]);
+        }
+    };
     private volatile Map2D map = null;
 
 
     public JMapTimeLine(){
         setModelRenderer(new DateRenderer());
+        getModel().scale(0.0000001d, 0);
+        getModel().translate(System.currentTimeMillis());
 
         menu = new JPopupMenu(){
 
@@ -70,6 +88,10 @@ public class JMapTimeLine extends JNavigator implements PropertyChangeListener{
             }
 
         };
+
+        menu.add(animation);
+
+        menu.addSeparator();
 
         menu.add(new JMenuItem(
                 new AbstractAction(MessageBundle.getString("map_move_temporal_center")) {
@@ -233,6 +255,10 @@ public class JMapTimeLine extends JNavigator implements PropertyChangeListener{
         setComponentPopupMenu(menu);
         AreaBand band = new AreaBand();
         band.setComponentPopupMenu(menu);
+        band.addMouseListener(this);
+        band.addMouseMotionListener(this);
+        band.addMouseWheelListener(this);
+        band.addKeyListener(this);
 
         addBand(band);
     }
@@ -246,6 +272,8 @@ public class JMapTimeLine extends JNavigator implements PropertyChangeListener{
             this.map.getCanvas().removePropertyChangeListener(this);
         }
         this.map = map;
+        animation.setMap(map);
+        
         if(map != null){
             this.map.getCanvas().addPropertyChangeListener(this);
         }
