@@ -49,7 +49,7 @@ import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.collection.XCollections;
 import org.geotoolkit.util.collection.FrequencySortedSet;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
-import org.geotoolkit.internal.sql.table.Entry;
+import org.geotoolkit.internal.sql.table.DefaultEntry;
 import org.geotoolkit.internal.sql.table.TablePool;
 import org.geotoolkit.internal.sql.table.SpatialDatabase;
 import org.geotoolkit.internal.sql.table.NoSuchRecordException;
@@ -74,7 +74,7 @@ import org.geotoolkit.resources.Errors;
  * @since 3.10 (derived from Seagis)
  * @module
  */
-final class LayerEntry extends Entry implements Layer {
+final class LayerEntry extends DefaultEntry implements Layer {
     /**
      * For cross-version compatibility.
      */

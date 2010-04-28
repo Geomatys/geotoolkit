@@ -22,7 +22,7 @@ import java.awt.geom.Dimension2D;
 import org.geotoolkit.util.DateRange;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.geometry.Envelope2D;
-import org.geotoolkit.internal.sql.table.Entry;
+import org.geotoolkit.internal.sql.table.DefaultEntry;
 
 
 /**
@@ -34,7 +34,7 @@ import org.geotoolkit.internal.sql.table.Entry;
  * @since 3.10 (derived from Seagis)
  * @module
  */
-final class DomainOfLayerEntry extends Entry {
+final class DomainOfLayerEntry extends DefaultEntry {
     /**
      * For cross-version compatibility.
      */

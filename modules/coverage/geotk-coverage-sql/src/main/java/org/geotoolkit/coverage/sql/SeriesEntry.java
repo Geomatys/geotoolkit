@@ -22,7 +22,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 import org.geotoolkit.util.Utilities;
-import org.geotoolkit.internal.sql.table.Entry;
+import org.geotoolkit.internal.sql.table.DefaultEntry;
 
 
 /**
@@ -45,7 +45,7 @@ import org.geotoolkit.internal.sql.table.Entry;
  * @since 3.10 (derived from Seagis)
  * @module
  */
-final class SeriesEntry extends Entry {
+final class SeriesEntry extends DefaultEntry {
     /**
      * For cross-version compatibility.
      */
@@ -176,6 +176,7 @@ final class SeriesEntry extends Entry {
     /**
      * Returns the identifier of this series.
      */
+    @Override
     public Integer getIdentifier() {
         return (Integer) identifier;
     }

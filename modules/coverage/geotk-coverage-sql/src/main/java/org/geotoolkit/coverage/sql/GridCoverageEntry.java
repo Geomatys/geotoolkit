@@ -56,7 +56,7 @@ import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.DateRange;
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.logging.Logging;
-import org.geotoolkit.internal.sql.table.Entry;
+import org.geotoolkit.internal.sql.table.DefaultEntry;
 import org.geotoolkit.internal.sql.table.IllegalRecordException;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.resources.Errors;
@@ -74,7 +74,7 @@ import org.geotoolkit.resources.Errors;
  * @module
  */
 @Immutable
-final class GridCoverageEntry extends Entry implements GridCoverageReference {
+final class GridCoverageEntry extends DefaultEntry implements GridCoverageReference {
     /**
      * For cross-version compatibility.
      */
@@ -140,7 +140,8 @@ final class GridCoverageEntry extends Entry implements GridCoverageReference {
     /**
      * Returns the identifier of this {@code GridCoverageReference}.
      */
-    final GridCoverageIdentifier getIdentifier() {
+    @Override
+    public final GridCoverageIdentifier getIdentifier() {
         return (GridCoverageIdentifier) identifier;
     }
 

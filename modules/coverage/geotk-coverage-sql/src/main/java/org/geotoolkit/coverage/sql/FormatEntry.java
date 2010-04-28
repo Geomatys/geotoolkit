@@ -30,7 +30,7 @@ import org.geotoolkit.util.Utilities;
 
 import org.geotoolkit.math.XMath;
 import org.geotoolkit.util.MeasurementRange;
-import org.geotoolkit.internal.sql.table.Entry;
+import org.geotoolkit.internal.sql.table.DefaultEntry;
 
 
 /**
@@ -42,7 +42,7 @@ import org.geotoolkit.internal.sql.table.Entry;
  * @since 3.09 (derived from Seagis)
  * @module
  */
-final class FormatEntry extends Entry {
+final class FormatEntry extends DefaultEntry {
     /**
      * For cross-version compatibility.
      */

@@ -38,7 +38,7 @@ import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.metadata.extent.GeographicBoundingBox;
 
 import org.geotoolkit.util.Utilities;
-import org.geotoolkit.internal.sql.table.Entry;
+import org.geotoolkit.internal.sql.table.DefaultEntry;
 import org.geotoolkit.geometry.AbstractEnvelope;
 import org.geotoolkit.display.shape.DoubleDimension2D;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
@@ -67,7 +67,7 @@ import org.geotoolkit.referencing.operation.matrix.XMatrix;
  * @since 3.10 (derived from Seagis)
  * @module
  */
-final class GridGeometryEntry extends Entry {
+final class GridGeometryEntry extends DefaultEntry {
     /**
      * For cross-version compatibility.
      */

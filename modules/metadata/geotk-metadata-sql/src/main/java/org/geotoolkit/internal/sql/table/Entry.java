@@ -17,101 +17,60 @@
  */
 package org.geotoolkit.internal.sql.table;
 
-import java.io.Serializable;
-
-import org.geotoolkit.lang.ThreadSafe;
-import org.geotoolkit.resources.Errors;
-import org.geotoolkit.util.NullArgumentException;
-import org.geotoolkit.util.Utilities;
-
 
 /**
- * Base class for entries created from a record in a table.
+ * Interface for entries created from a record in a table. They are the elements returned by
+ * {@link SingletonTable}. Each entry must have an identifier which is unique among all entries
+ * in a given table. However the identifier may not be unique among entries in different tables.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Guilhem Legal (Geomatys)
- * @version 3.09
+ * @version 3.11
  *
  * @since 3.09 (derived from Seagis)
  * @module
  */
-@ThreadSafe
-public class Entry implements Serializable {
+public interface Entry {
     /**
-     * For cross-version compatibility.
-     */
-    private static final long serialVersionUID = -7119518186999674633L;
-
-    /**
-     * The textual or numeric identifier for this entry. It is often (but not always) the primary
-     * key value in a database table. If the identifier is a {@link String}, then that name should
-     * be meaningful enough for inclusion in a graphical user interface.
-     * <p>
-     * This field is not allowed to be null.
-     */
-    public final Comparable<?> identifier;
-
-    /**
-     * A description of this entry, of {@code null} if none. If provided, the description should
-     * be suitable for use as "<cite>tooltip text</cite>" in a graphical user interface.
-     */
-    public final String description;
-
-    /**
-     * Creates an entry for the specified identifier and optional description.
+     * Returns the textual or numeric identifier for this entry. It is often (but not always) the
+     * primary key value in a database table. If the identifier is a {@link String}, then that name
+     * should be meaningful enough for inclusion in a graphical user interface.
      *
-     * @param identifier  The numeric identifier.
-     * @param description The description, or {@code null} if none.
+     * @return The identifier, which is not allowed to be null.
      */
-    protected Entry(final Comparable<?> identifier, final String description) {
-        if (identifier == null) {
-            throw new NullArgumentException(Errors.format(Errors.Keys.NULL_ARGUMENT_$1, "identifier"));
-        }
-        this.identifier  = identifier;
-        this.description = description;
-    }
+    Comparable<?> getIdentifier();
 
     /**
      * Returns a string representation of this entry. The returned string may be used in graphical
      * user interface, for example a <cite>Swing</cite> {@link javax.swing.JTree}. The current
      * implementation returns the entry {@linkplain #identifier}.
+     *
+     * @return A string representation of this entry suitable for use in GUI.
      */
     @Override
-    public final String toString() {
-        return String.valueOf(identifier);
-    }
+    String toString();
 
     /**
-     * Returns a hash code value for this entry. The current implementation computes the hash
-     * code from the {@linkplain #identifier}. Because entry identifiers should be unique, this
-     * is usually suffisient.
+     * Returns a hash code value for this entry. The implementation shall compute the hash
+     * code from the {@linkplain #getIdentifier() identifier} only. Because entry identifiers
+     * should be unique, this is usually suffisient.
+     *
+     * @return A hash code value computed from the identifier.
      */
     @Override
-    public final int hashCode() {
-        return identifier.hashCode() ^ (int) serialVersionUID;
-    }
+    int hashCode();
 
     /**
-     * Compares this entry with the specified object for equality. The default implementation
-     * compares the {@linkplain #getClass class}, {@linkplain #identifier} and {@linkplain
-     * #description}. If should be suffisient when every entries have a unique name, for
-     * example when the name is the primary key in a database table. Subclasses may compare
-     * other attributes as a safety when affordable, but should avoid any comparison that may
-     * force the loading of a large amount of data.
+     * Compares this entry with the specified object for equality. The implementation shall
+     * compares at least the {@linkplain #getClass class} and {@linkplain #getIdentifier()
+     * identifier}. If should be suffisient when every entries have a unique name, for example
+     * when the name is the primary key in a database table. Implementation may compare other
+     * attributes as a safety when affordable, but should avoid any comparison that may force
+     * the loading of a large amount of data.
      *
      * @param  object The object to compare with this entry.
      * @return {@code true} if the given object is equals to this entry.
      */
     @Override
-    public boolean equals(final Object object) {
-        if (object == this) {
-            return true;
-        }
-        if (object != null && object.getClass().equals(getClass())) {
-            final Entry that = (Entry) object;
-            return Utilities.equals(this.identifier,  that.identifier) &&
-                   Utilities.equals(this.description, that.description);
-        }
-        return false;
-    }
+    boolean equals(Object object);
 }
