@@ -201,4 +201,17 @@ public final class LayerTableTest extends CatalogTestBase {
         assertEquals( 1.90, validRanges.get(1).getMaximum(true), EPS);
         table.release();
     }
+
+    /**
+     * Tests the {@link LayerTable#searchFreeIdentifier(String)} method.
+     *
+     * @throws SQLException If the test can't connect to the database.
+     */
+    @Test
+    public void testSearchFreeIdentifier() throws SQLException {
+        final LayerTable table = getDatabase().getTable(LayerTable.class);
+        assertEquals("Non existant", table.searchFreeIdentifier("Non existant"));
+        assertEquals(TEMPERATURE + "-1", table.searchFreeIdentifier(TEMPERATURE));
+        table.release();
+    }
 }

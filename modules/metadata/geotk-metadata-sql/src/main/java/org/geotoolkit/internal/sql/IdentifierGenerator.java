@@ -56,7 +56,7 @@ import org.geotoolkit.lang.ThreadSafe;
  * @param <V> The type of values in the pool of prepared statements.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.03
+ * @version 3.11
  *
  * @since 3.03
  * @module
@@ -67,9 +67,12 @@ public abstract class IdentifierGenerator<K, V extends StatementEntry> {
      * The most straightforward implementation of {@link IdentifierGenerator}.
      * The keys are the table names, which imply that those name must not be
      * used for any other purpose in the pool.
+     * <p>
+     * <strong>Don't use tables of the same name in different schema</strong>, since the
+     * default implementation uses only the table name as keys in the statement pool map.
      *
      * @author Martin Desruisseaux (Geomatys)
-     * @version 3.03
+     * @version 3.11
      *
      * @since 3.03
      * @module
@@ -104,7 +107,7 @@ public abstract class IdentifierGenerator<K, V extends StatementEntry> {
          * Returns the table name unchanged, which is used directly as a key.
          */
         @Override
-        protected String key(final String table) {
+        protected String key(final String schema, final String table) {
             return table;
         }
 
@@ -112,7 +115,7 @@ public abstract class IdentifierGenerator<K, V extends StatementEntry> {
          * Wraps the given statement in a plain {@code StatementEntry} instance.
          */
         @Override
-        protected StatementEntry value(final PreparedStatement query) {
+        protected StatementEntry value(final String key, final PreparedStatement query) {
             return new StatementEntry(query);
         }
     }
@@ -169,31 +172,45 @@ public abstract class IdentifierGenerator<K, V extends StatementEntry> {
     }
 
     /**
+     * Creates a new generator using the same pool and the same {@link SQLBuilder} than the given
+     * generator, but for a different column. Because the two generators share the same resources,
+     * the shall be used only in the same thread.
+     *
+     * @param other The other generator from which to share the pool and the SQL builder.
+     * @param column The name of the identifier (primary key) column. If the name should be quoted,
+     *        then the quotes must be explicitly specified; this class will <strong>not</strong>
+     *        add the quotes by itself, because some applications really want unquoted identifiers.
+     */
+    protected IdentifierGenerator(final IdentifierGenerator<? super K, V> other, final String column) {
+        this(other.pool, column, other.buffer);
+    }
+
+    /**
      * Returns the key to use for fetching an entry for the given table in the {@code StatementPool}.
      *
+     * @param  schema The table schema, or {@code null} if none.
      * @param  table The table for which to get a {@code StatementEntry}.
      * @return The key to use.
      * @throws SQLException If a connection with the database was required and failed.
      */
-    protected abstract K key(final String table) throws SQLException;
+    protected abstract K key(final String schema, final String table) throws SQLException;
 
     /**
      * Creates a new {@code StatementEntry} for the given {@code PreparedStatement}.
      *
+     * @param  key   The key for which the statement has been prepared.
      * @param  query The prepared statement to be given to the entry.
      * @return The {@code StatementEntry} for the given statement.
      * @throws SQLException If an error occured while creating the entry.
      */
-    protected abstract V value(final PreparedStatement query) throws SQLException;
+    protected abstract V value(final K key, final PreparedStatement query) throws SQLException;
 
     /**
      * Searchs for an identifier in the given table. If the given proposal is already in use,
      * then this method will search for an identifier of the form {@code "proposal-n"} not in
      * use, where {@code "n"} is a number.
      *
-     * @param  schema The schema, or {@code null} if none. <strong>Don't use tables of the same
-     *         name in different schema</strong>, since this method use only the table name as
-     *         keys in the statement pool map.
+     * @param  schema The schema, or {@code null} if none.
      * @param  table The table where to search for an identifier. This table
      *         name should not be quoted; quotes will be added if needed.
      * @param  proposal The proposed identifier. It will be returned if not currently used.
@@ -202,10 +219,10 @@ public abstract class IdentifierGenerator<K, V extends StatementEntry> {
      */
     public final String identifier(final String schema, final String table, String proposal) throws SQLException {
         synchronized (pool) {
-            final K key = key(table);
+            final K key = key(schema, table);
             V entry = pool.remove(key);
             if (entry == null) {
-                entry = value(pool.connection().prepareStatement(buffer.clear().append("SELECT DISTINCT ")
+                entry = value(key, pool.connection().prepareStatement(buffer.clear().append("SELECT DISTINCT ")
                         .append(column).append(" FROM ").appendIdentifier(schema, table).append(" WHERE ")
                         .append(column).append(" LIKE ? ORDER BY ").append(column).toString()));
             }

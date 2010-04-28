@@ -31,7 +31,7 @@ import org.geotoolkit.internal.sql.table.SingletonTable;
  * Connection to a table of {@linkplain Layer layers}.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.10
+ * @version 3.11
  *
  * @since 3.10 (derived from Seagis)
  * @module
@@ -120,5 +120,17 @@ final class LayerTable extends SingletonTable<LayerEntry> {
             }
         }
         return true;
+    }
+
+    /**
+     * Searchs for a layer name not already in use. If the given string is not in use, then
+     * it is returned as-is. Otherwise this method appends a unused decimal number to the
+     * specified name.
+     *
+     * @since 3.11
+     */
+    @Override
+    public String searchFreeIdentifier(final String base) throws SQLException {
+        return super.searchFreeIdentifier(base);
     }
 }

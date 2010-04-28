@@ -68,6 +68,11 @@ public abstract class SingletonTable<E extends Entry> extends Table {
     private final Cache<Comparable<?>,E> cache;
 
     /**
+     * A generator of {@link String} identifiers, created when first needed.
+     */
+    private transient NameGenerator generator;
+
+    /**
      * Creates a new table using the specified query. The optional {@code pkParam} argument
      * defines the parameters to use for looking an element by identifier. This is usually the
      * parameter for the value to search in the primary key column. This information is needed
@@ -526,5 +531,30 @@ public abstract class SingletonTable<E extends Entry> extends Table {
             throw new IllegalUpdateException(getLocale(), count);
         }
         return count != 0;
+    }
+
+    /**
+     * Searchs for an identifier not already in use. If the given string is not in use, then
+     * it is returned as-is. Otherwise, this method appends a decimal number to the specified
+     * base and check if the resulting identifier is not in use. If it is, then the decimal
+     * number is incremented until a unused identifier is found.
+     * <p>
+     * This method is suitable for {@link String} identifiers. Numerical identifiers shall
+     * use an auto-increment field instead.
+     *
+     * @param  base The base for the identifier.
+     * @return A unused identifier.
+     * @throws SQLException if an error occured while reading the database.
+     *
+     * @since 3.11
+     */
+    protected String searchFreeIdentifier(final String base) throws SQLException {
+        if (generator == null) {
+            if (pkParam.length == 0) {
+                throw new UnsupportedOperationException();
+            }
+            generator = getDatabase().getIdentifierGenerator(pkParam[0].column.name);
+        }
+        return generator.identifier(query.schema, query.table, base);
     }
 }

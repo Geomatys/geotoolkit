@@ -43,7 +43,7 @@ import org.geotoolkit.resources.Errors;
  * A SQL query build from {@linkplain Column columns} and {@linkplain Parameter parameters}.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.09
+ * @version 3.11
  *
  * @since 3.09 (derived from Seagis)
  * @module
@@ -77,6 +77,14 @@ public class Query {
     final Database database;
 
     /**
+     * The name of the schema containing the table. This is the same value than
+     * {@link Database#schema}, unless explicitly specified at construction time.
+     *
+     * @since 3.11
+     */
+    protected final String schema;
+
+    /**
      * The name of the main table.
      */
     protected final String table;
@@ -108,14 +116,26 @@ public class Query {
     private final Map<QueryType,String> cachedSQL = new HashMap<QueryType,String>();
 
     /**
-     * Creates an initially empty query with a schema.
+     * Creates an initially empty query for a table in the default schema.
      *
      * @param database The database for which this query is created, or {@code null}.
      * @param table    The main table name.
      */
     protected Query(final Database database, final String table) {
+        this(database, table, null);
+    }
+
+    /**
+     * Creates an initially empty query for a table in the given schema.
+     *
+     * @param database The database for which this query is created, or {@code null}.
+     * @param schema   The schema containing the table, or {@code null} for the default.
+     * @param table    The main table name.
+     */
+    protected Query(final Database database, final String table, final String schema) {
         this.database = database;
         this.table    = table;
+        this.schema   = (schema == null && database != null) ? database.schema : schema;
     }
 
     /**
@@ -257,7 +277,7 @@ public class Query {
             throws SQLException
     {
         final Set<String> columns = new HashSet<String>();
-        final ResultSet results = metadata.getColumns(database.catalog, database.schema, table, null);
+        final ResultSet results = metadata.getColumns(database.catalog, schema, table, null);
         while (results.next()) {
             columns.add(results.getString("COLUMN_NAME"));
         }
@@ -367,7 +387,7 @@ public class Query {
          * the "JOIN ... ON" clauses.
          */
         final String catalog = database.catalog;
-        final String schema  = database.schema;
+        final String schema  = this.schema;
         if (tables.size() >= 2) {
             for (final Map.Entry<String,CrossReference> entry : tables.entrySet()) {
                 final String table = entry.getKey();
@@ -693,8 +713,8 @@ scan:       while (!tables.isEmpty()) {
         if (database.catalog != null) {
             buffer.append(quote).append(database.catalog).append(quote).append('.');
         }
-        if (database.schema != null) {
-            buffer.append(quote).append(database.schema).append(quote).append('.');
+        if (schema != null) {
+            buffer.append(quote).append(schema).append(quote).append('.');
         }
         buffer.append(quote).append(table).append(quote);
     }

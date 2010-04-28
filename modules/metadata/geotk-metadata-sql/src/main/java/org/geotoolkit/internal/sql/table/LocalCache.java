@@ -107,7 +107,8 @@ public interface LocalCache {
         static final int UNINITIALIZED = -1;
 
         /**
-         * The SQL query used for creating the statement.
+         * The SQL query used for creating the statement. They are used as keys in the
+         * {@link org.geotoolkit.internal.sql.StatementPool}, and sometime for logging.
          */
         final String sql;
 

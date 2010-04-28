@@ -54,7 +54,7 @@ import org.geotoolkit.internal.sql.AuthenticatedDataSource;
  * and to recycle those threads, because this class uses a new connection for each thread.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.10
+ * @version 3.11
  *
  * @since 3.09 (derived from Seagis)
  * @module
@@ -108,7 +108,7 @@ public class Database implements Localized {
      * which deferred the database query.
      *
      * @author Martin Desruisseaux (Geomatys)
-     * @version 3.09
+     * @version 3.11
      *
      * @since 3.09
      * @module
@@ -141,6 +141,15 @@ public class Database implements Localized {
          * The locale to use for formatting messages, or {@code null} for the system-default.
          */
         Locale locale;
+
+        /**
+         * Generators of named identifiers. Will be created only when first needed. The keys are
+         * the column names for which ID are generated. Note that the same instance can be used
+         * for different tables if the column name is the same.
+         *
+         * @since 3.11
+         */
+        Map<String,NameGenerator> generators;
 
         /**
          * Creates a new instance for the given data source.
@@ -466,6 +475,35 @@ public class Database implements Localized {
             throw new SQLNonTransientException(Errors.getResources(getLocale())
                     .getString(Errors.Keys.THREAD_DOESNT_HOLD_LOCK));
         }
+    }
+
+    /**
+     * Returns a {@link NameGenerator} for the given column name.
+     *
+     * @param  pk The name of the primary key column.
+     * @return An identifier generator for the given column.
+     * @throws SQLException If an error occured while creating the generator.
+     */
+    final NameGenerator getIdentifierGenerator(final String pk) throws SQLException {
+        final Session s = session.get();
+        Map<String, NameGenerator> generators = s.generators;
+        NameGenerator generator;
+        if (generators != null) {
+            generator = generators.get(pk);
+            if (generator != null) {
+                return generator;
+            }
+            generator = new NameGenerator(generators.values().iterator().next(), pk);
+        } else {
+            synchronized (s) {
+                generator = new NameGenerator(s, pk);
+            }
+            s.generators = generators = new HashMap<String, NameGenerator>(4);
+        }
+        if (generators.put(pk, generator) != null) {
+            throw new AssertionError(pk);
+        }
+        return generator;
     }
 
     /**
