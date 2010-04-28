@@ -61,9 +61,16 @@ public enum Installation {
     TESTS(null, null, "Tests"),
 
     /**
-     * The grid shift file location, used for datum shift like NADCOM.
+     * The grid shift file location for NADCON transform.
      */
-    NADCON("org/geotoolkit/referencing/operation/transform", "Grid location", "NADCON"),
+    NADCON("org/geotoolkit/referencing/operation/transform", "NADCON", "NADCON"),
+
+    /**
+     * The grid shift file location for RGF93 transform.
+     *
+     * @since 3.11
+     */
+    RGF93("org/geotoolkit/referencing/operation/transform", "RGF93", "RGF93"),
 
     /**
      * The EPSG database, or parameters required for a connection to a distant EPSG database.

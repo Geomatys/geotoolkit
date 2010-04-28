@@ -20,17 +20,17 @@
         <cite>Coordinate Reference System</cite> (CRS). The order depends on the CRS type and the country
         defining the CRS. In the case of geographic CRS, the (<var>latitude</var>, <var>longitude</var>)
         axis order is widely used by geographers and pilotes for centuries. However software developers
-        tend to consistently use the (<var>x</var>,<var>y</var>) order they are familiar with. Those
+        tend to consistently use the (<var>x</var>,<var>y</var>) order for every kind of CRS. Those
         different practices resulted in contradictory definitions of axis order for almost every CRS
-        of find <code>GeographicCRS</code>, some <code>ProjectedCRS</code> in the South hemisphere
-        (South Africa, Australia, <i>etc.</i>) and some polar projections among others.</p>
+        of kind <code>GeographicCRS</code>, for some <code>ProjectedCRS</code> in the South hemisphere
+        (South Africa, Australia, <i>etc.</i>) and for some polar projections among others.</p>
 
-        <p>Recent OGC standards mandate the use of CRS with axis order as defined by the authority.
+        <p>Recent OGC standards mandate the use of axis order as defined by the authority.
         Oldest OGC standards used the (<var>x</var>,<var>y</var>) axis order instead, ignoring any
         authority specification. Many softwares still use the old (<var>x</var>,<var>y</var>) axis
         order, because it is easier to implement. Geotk supports both conventions.</p>
 
-        <p>By defauly, Geotk creates CRS with axis order <em>as defined by the authority</em>. Those CRS are created by calls to the
+        <p>By default, Geotk creates CRS with axis order <em>as defined by the authority</em>. Those CRS are created by calls to the
         <code><a href="../../apidocs/org/geotoolkit/referencing/CRS.html#decode(java.lang.String)">CRS.decode(String)</a></code>
         method. The actual axis order can be verified after the CRS creation with <code>System.out.println(crs)</code>.
         See <a href="#AxisOrderInTransforms">here</a> for more information about the elements to look at.</p>
