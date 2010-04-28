@@ -31,7 +31,7 @@ import static org.junit.Assert.*;
  * Tests {@link SupportFiles}. This test uses the files available in the resources directory.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.10
+ * @version 3.11
  *
  * @since 3.10
  */
@@ -76,5 +76,20 @@ public final class SupportFilesTest {
         supportFile = SupportFiles.changeExtension(file, "tfw");
         assertTrue("Expected a File object.", supportFile instanceof File);
         assertEquals("matrix.tfw", ((File) supportFile).getName());
+    }
+
+    /**
+     * Tests for a {@code ".tif"} file. The file does not exist, but it should not be
+     * a concern for this test.
+     *
+     * @throws IOException Should not happen.
+     *
+     * @since 3.11
+     */
+    @Test
+    public void testMissingTIFF() throws IOException {
+        File file = TestData.file(TextMatrixImageReaderTest.class, "matrix.txt");
+        file = new File(file.getParentFile(), "imagery.tif");
+        assertEquals("imagery.tfw", ((File) SupportFiles.changeExtension(file, "tfw")).getName());
     }
 }

@@ -1114,7 +1114,7 @@ public class NetcdfImageReader extends FileImageReader implements NamedImageStor
         /**
          * Default list of file's extensions.
          */
-        private static final String[] SUFFIXES = new String[] {"nc", "cdf", "grib", "grb2"};
+        private static final String[] SUFFIXES = new String[] {"nc", "cdf", "grib", "grb", "grb1", "grb2"};
 
         /**
          * Constructs a default {@code NetcdfImageReader.Spi}. The fields are initialized as

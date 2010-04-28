@@ -35,7 +35,7 @@ import org.geotoolkit.io.ContentFormatException;
  * Those additional files have the {@code ".tfw"} or {@code ".prj"} suffixes.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.10
+ * @version 3.11
  *
  * @since 3.00
  * @module
@@ -158,6 +158,7 @@ attmpt: for (int caseNumber=0; ; caseNumber++) {
                         caseNumber += 2; // Skip the next 2 switch cases.
                         continue;
                     }
+                    caseNumber++;
                     // fall through
                 }
                 /*
