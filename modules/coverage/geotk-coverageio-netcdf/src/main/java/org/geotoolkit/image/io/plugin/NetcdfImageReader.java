@@ -96,6 +96,13 @@ import org.geotoolkit.util.logging.Logging;
  * The input can use the DODS protocol (as in "{@code dods://opendap.aviso.oceanobs.com/}"),
  * in order to connect to the specified DODS remote server.
  *
+ * {@section Support of related formats}
+ * This implementation uses the <a href="http://www.unidata.ucar.edu/software/netcdf-java/">UCAR
+ * NetCDF library</a> for reading data. Consequently, it can be used for reading other formats
+ * supported by that library. For a list of supported formats, see
+ * <a href="http://www.unidata.ucar.edu/software/netcdf-java/formats/FileTypes.html">file types
+ * and remote access protocols</a> on the NetCDF web site.
+ *
  * @author Martin Desruisseaux (Geomatys)
  * @author Antoine Hnawia (IRD)
  * @version 3.11
@@ -1107,7 +1114,7 @@ public class NetcdfImageReader extends FileImageReader implements NamedImageStor
         /**
          * Default list of file's extensions.
          */
-        private static final String[] SUFFIXES = new String[] {"nc", "cdf"};
+        private static final String[] SUFFIXES = new String[] {"nc", "cdf", "grib", "grb2"};
 
         /**
          * Constructs a default {@code NetcdfImageReader.Spi}. The fields are initialized as

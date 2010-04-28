@@ -322,8 +322,14 @@ public final class Units {
             return SI.KILOMETRE;
         } else if (equalsIgnorePlural(uom, "meter") || equalsIgnorePlural(uom, "metre")) {
             return SI.METRE;
+        } else if (equalsIgnorePlural(uom, "week")) {
+            return NonSI.WEEK;
         } else if (equalsIgnorePlural(uom, "day")) {
             return NonSI.DAY;
+        } else if (equalsIgnorePlural(uom, "hour")) {
+            return NonSI.HOUR;
+        } else if (equalsIgnorePlural(uom, "minute")) {
+            return NonSI.MINUTE;
         } else if (equalsIgnorePlural(uom, "second")) {
             return SI.SECOND;
         } else if (uom.equalsIgnoreCase("psu")) { // Pratical Salinity Scale
