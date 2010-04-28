@@ -244,7 +244,11 @@ public abstract class AbstractGetMap extends AbstractRequest implements GetMapRe
         requestParameters.put("WIDTH",      String.valueOf(dimension.width));
         requestParameters.put("HEIGHT",     String.valueOf(dimension.height));
         requestParameters.put("LAYERS",     StringUtilities.toCommaSeparatedValues(layers));
-        requestParameters.put("STYLES",     StringUtilities.toCommaSeparatedValues(styles));
+        if(styles != null && styles.length>0 && styles[0] != null){
+            requestParameters.put("STYLES",StringUtilities.toCommaSeparatedValues(styles));
+        }else{
+            requestParameters.put("STYLES","");
+        }
         requestParameters.put("TRANSPARENT", Boolean.toString(transparent).toUpperCase());
 
         if (sld != null) {
