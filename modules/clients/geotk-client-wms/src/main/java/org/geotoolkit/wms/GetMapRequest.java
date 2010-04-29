@@ -61,7 +61,7 @@ public interface GetMapRequest extends Request {
 
     void setSldBody(String sldBody);
     
-    boolean getTransparent();
+    boolean isTransparent();
 
     void setTransparent(boolean transparent);
 

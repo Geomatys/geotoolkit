@@ -48,7 +48,7 @@ public interface TransactionRequest extends Request {
      *     {@link String }
      *
      */
-    public String getLockId();
+    String getLockId();
 
     /**
      *
@@ -68,21 +68,21 @@ public interface TransactionRequest extends Request {
      *     {@link String }
      *
      */
-    public void setLockId(String value);
+    void setLockId(String value);
 
     /**
      * Gets the value of the insertOrUpdateOrDelete property.
      */
-    public List<TransactionElement> elements();
+    List<TransactionElement> elements();
 
     /**
      * Gets the value of the releaseAction property.
      */
-    public ReleaseAction getReleaseAction();
+    ReleaseAction getReleaseAction();
 
     /**
      * Sets the value of the releaseAction property.
      */
-    public void setReleaseAction(ReleaseAction value);
+    void setReleaseAction(ReleaseAction value);
 
 }

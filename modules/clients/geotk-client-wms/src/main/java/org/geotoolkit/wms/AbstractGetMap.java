@@ -50,7 +50,7 @@ public abstract class AbstractGetMap extends AbstractRequest implements GetMapRe
      * The version to use for this webservice request.
      */
     protected final String version;
-    protected final HashMap<String,String> dims = new HashMap<String, String>();
+    protected final Map<String,String> dims = new HashMap<String, String>();
     protected String format = "image/png";
     protected String exception = "application/vnd.ogc.se_inimage";
     protected String[] layers = null;
@@ -204,7 +204,7 @@ public abstract class AbstractGetMap extends AbstractRequest implements GetMapRe
      * {@inheritDoc }
      */
     @Override
-    public boolean getTransparent(){
+    public boolean isTransparent(){
         return transparent;
     }
 

@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2009, Geomatys
+ *    (C) 2009-2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -173,7 +173,7 @@ public class WMSMapLayer extends AbstractMapLayer implements DynamicMapLayer{
     }
 
     public GetMapRequest createGetMapRequest(){
-        GetMapRequest request = server.createGetMap();
+        final GetMapRequest request = server.createGetMap();
         request.setLayers(layers);
         return request;
     }
@@ -204,11 +204,10 @@ public class WMSMapLayer extends AbstractMapLayer implements DynamicMapLayer{
             try {
                 env = CRS.transform(env, replaceCRS);
             } catch (TransformException ex) {
-                Logger.getLogger(WMSMapLayer.class.getName()).log(Level.SEVERE, null, ex);
+                LOGGER.log(Level.WARNING, ex.getLocalizedMessage(), ex);
             }
         }
 
-        
 
         Shape rect = context2D.getCanvasDisplayBounds();
 
@@ -220,7 +219,7 @@ public class WMSMapLayer extends AbstractMapLayer implements DynamicMapLayer{
         try {
             return query(env, rect.getBounds().getSize());
         } catch (MalformedURLException ex) {
-            Logging.getLogger(WMSMapLayer.class).log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.WARNING, ex.getLocalizedMessage(), ex);
         }
 
         return null;
@@ -294,7 +293,7 @@ public class WMSMapLayer extends AbstractMapLayer implements DynamicMapLayer{
         final URL url = query(context, replace);
         final BufferedImage image;
 
-        System.out.println("[WMSMapLayer] : GETMAP request : " + url.toString());
+        LOGGER.info("[WMSMapLayer] : GETMAP request : " + url.toString());
 
         try {
             image = ImageIO.read(url);
@@ -316,7 +315,7 @@ public class WMSMapLayer extends AbstractMapLayer implements DynamicMapLayer{
                 Logger.getLogger(WMSMapLayer.class.getName()).log(Level.SEVERE, null, ex);
             }
 
-            GridCoverageFactory factory = CoverageFactoryFinder.getGridCoverageFactory(null);
+            final GridCoverageFactory factory = CoverageFactoryFinder.getGridCoverageFactory(null);
             GridCoverage2D dataCoverage = factory.create("Test", image, env);
 
             dataCoverage = (GridCoverage2D) Operations.DEFAULT.resample(
@@ -328,8 +327,8 @@ public class WMSMapLayer extends AbstractMapLayer implements DynamicMapLayer{
                 g2.drawRenderedImage(image, (AffineTransform)trs2D);
             }else if (trs2D instanceof LinearTransform) {
                 final LinearTransform lt = (LinearTransform) trs2D;
-                final int col = lt.getMatrix().getNumCol();
-                final int row = lt.getMatrix().getNumRow();
+                //final int col = lt.getMatrix().getNumCol();
+                //final int row = lt.getMatrix().getNumRow();
                 //TODO using only the first parameters of the linear transform
                 throw new PortrayalException("Could not render image, GridToCRS is a not an AffineTransform, found a " + trs2D.getClass());
             }else{
@@ -346,7 +345,7 @@ public class WMSMapLayer extends AbstractMapLayer implements DynamicMapLayer{
             //we center it because rotation parameter may have caused the image
             // to be larger than the canvas size, this is a normal behavior since
             // wms layer can not handle rotations.
-            Dimension dim = context2D.getCanvasDisplayBounds().getSize();
+            final Dimension dim = context2D.getCanvasDisplayBounds().getSize();
             if(image != null && dim != null){
                 double rotation = context2D.getCanvas().getController().getRotation();
                 g2.translate(dim.width/2, dim.height/2);
@@ -363,10 +362,10 @@ public class WMSMapLayer extends AbstractMapLayer implements DynamicMapLayer{
      */
     @Override
     public Image getLegend() throws PortrayalException {
-        GetLegendRequest request = server.creategetLegend();
+        final GetLegendRequest request = server.creategetLegend();
         request.setLayer(layers[0]);
 
-        BufferedImage buffer;
+        final BufferedImage buffer;
         try {
             buffer = ImageIO.read(request.getURL());
         } catch (IOException ex) {
@@ -385,7 +384,7 @@ public class WMSMapLayer extends AbstractMapLayer implements DynamicMapLayer{
     }
 
     public String getCombinedLayerNames(){
-        StringBuilder sb = new StringBuilder();
+        final StringBuilder sb = new StringBuilder();
         for(String str : layers){
             sb.append(str).append(',');
         }

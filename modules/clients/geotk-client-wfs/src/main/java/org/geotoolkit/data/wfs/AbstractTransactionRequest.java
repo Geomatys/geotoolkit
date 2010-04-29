@@ -103,7 +103,7 @@ public class AbstractTransactionRequest extends AbstractRequest implements Trans
         final OutputStream stream = conec.getOutputStream();
 
         //write the transaction xml content
-        JAXPStreamTransactionWriter jaxp = new JAXPStreamTransactionWriter();
+        final JAXPStreamTransactionWriter jaxp = new JAXPStreamTransactionWriter();
         try {
             System.out.println("--------------------------------------------");
             jaxp.write(debug, this);
@@ -112,7 +112,7 @@ public class AbstractTransactionRequest extends AbstractRequest implements Trans
             jaxp.write(stream, this);
             //todo write request in this
         } catch (Exception ex) {
-            throw (IOException)new IOException(ex.getMessage()).initCause(ex);
+            throw new IOException(ex);
         }
 
         return conec.getInputStream();

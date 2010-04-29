@@ -30,6 +30,7 @@ import javax.xml.namespace.QName;
 
 import org.geotoolkit.client.AbstractRequest;
 import org.geotoolkit.sld.xml.XMLUtilities;
+import org.geotoolkit.util.logging.Logging;
 
 import org.opengis.feature.type.Name;
 import org.opengis.filter.Filter;
@@ -43,7 +44,7 @@ import org.opengis.filter.Filter;
  * @module pending
  */
 public abstract class AbstractGetFeature extends AbstractRequest implements GetFeatureRequest{
-
+    protected static final Logger LOGGER = Logging.getLogger(AbstractGetFeature.class);
     protected final String version;
 
     private QName typeName = null;
@@ -101,7 +102,7 @@ public abstract class AbstractGetFeature extends AbstractRequest implements GetF
      */
     @Override
     public void setMaxFeatures(Integer max){
-        max = maxFeatures;
+        maxFeatures = max;
     }
 
     /**
@@ -163,19 +164,20 @@ public abstract class AbstractGetFeature extends AbstractRequest implements GetF
             try {
                 util.writeFilter(writer, filter, org.geotoolkit.sld.xml.Specification.Filter.V_1_1_0);
             } catch (JAXBException ex) {
-                Logger.getLogger(AbstractGetFeature.class.getName()).log(Level.SEVERE, null, ex);
+                LOGGER.log(Level.WARNING, ex.getLocalizedMessage(), ex);
             }
 
             final String strFilter = writer.toString();
             try {
                 writer.close();
             } catch (IOException ex) {
-                // Do nothing
+                LOGGER.log(Level.FINER, ex.getLocalizedMessage(), ex);
             }
             try {
                 requestParameters.put("FILTER", URLEncoder.encode(strFilter, "UTF-8"));
             } catch (UnsupportedEncodingException ex) {
                 // Should not occur.
+                LOGGER.log(Level.FINEST, ex.getLocalizedMessage(), ex);
             }
         }
 

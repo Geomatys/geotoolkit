@@ -83,7 +83,7 @@ public class WebFeatureServer implements Server{
             return capabilities;
         }
         //Thread to prevent infinite request on a server
-        Thread thread = new Thread() {
+        final Thread thread = new Thread() {
             @Override
             public void run() {
                 try {
@@ -99,7 +99,7 @@ public class WebFeatureServer implements Server{
             }
         };
         thread.start();
-        long start = System.currentTimeMillis();
+        final long start = System.currentTimeMillis();
         try {
             thread.join(10000);
         } catch (InterruptedException ex) {

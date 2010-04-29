@@ -108,7 +108,7 @@ public class JAXPStreamTransactionWriter {
 
     public Marshaller getMarshaller() throws JAXBException {
         if(marshaller == null){
-            JAXBContext context = JAXBContext.newInstance(org.geotoolkit.internal.jaxb.ObjectFactory.class);
+            final JAXBContext context = JAXBContext.newInstance(org.geotoolkit.internal.jaxb.ObjectFactory.class);
             marshaller = context.createMarshaller();
             marshaller.setProperty(marshaller.JAXB_FRAGMENT, Boolean.TRUE);
         }

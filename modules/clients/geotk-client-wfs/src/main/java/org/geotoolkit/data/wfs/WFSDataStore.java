@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2009, Geomatys
+ *    (C) 2009-2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -90,7 +90,6 @@ public class WFSDataStore extends AbstractDataStore{
 
     private final QueryCapabilities queryCapabilities = new DefaultQueryCapabilities(false);
     private final WebFeatureServer server;
-    private final WFSCapabilitiesType capabilities;
     private final List<Name> typeNames = new ArrayList<Name>();
     private final Map<Name,SimpleFeatureType> types = new HashMap<Name,SimpleFeatureType>();
     private final Map<Name,Envelope> bounds = new HashMap<Name, Envelope>();
@@ -103,7 +102,7 @@ public class WFSDataStore extends AbstractDataStore{
     public WFSDataStore(URI serverURI) throws MalformedURLException{
 
         this.server = new WebFeatureServer(serverURI.toURL(), "1.1.0");
-        this.capabilities = server.getCapabilities();
+        final WFSCapabilitiesType capabilities = server.getCapabilities();
 
         final FeatureTypeListType lst = capabilities.getFeatureTypeList();
         for(final FeatureTypeType ftt : lst.getFeatureType()){
@@ -111,8 +110,8 @@ public class WFSDataStore extends AbstractDataStore{
             //extract the name -------------------------------------------------
             QName typeName = ftt.getName();
             String prefix = typeName.getPrefix();
-            String uri = typeName.getNamespaceURI();
-            String localpart = typeName.getLocalPart();
+            final String uri = typeName.getNamespaceURI();
+            final String localpart = typeName.getLocalPart();
             if(prefix == null || prefix.isEmpty()){
                 prefix = "geotk" + NS_INC.incrementAndGet();
             }
@@ -154,7 +153,7 @@ public class WFSDataStore extends AbstractDataStore{
             sftb.setDefaultGeometry(sft.getGeometryDescriptor().getLocalName());
             sft = sftb.buildSimpleFeatureType();
 
-            CoordinateReferenceSystem val = sft.getGeometryDescriptor().getCoordinateReferenceSystem();
+            final CoordinateReferenceSystem val = sft.getGeometryDescriptor().getCoordinateReferenceSystem();
             if(val == null){
                 throw new IllegalArgumentException("CRS should not be null");
             }
@@ -202,7 +201,7 @@ public class WFSDataStore extends AbstractDataStore{
      */
     @Override
     public FeatureType getFeatureType(Name typeName) throws DataStoreException {
-        FeatureType ft = types.get(typeName);
+        final FeatureType ft = types.get(typeName);
 
         if(ft == null){
             throw new DataStoreException("Type : "+ typeName + " doesn't exist in this datastore.");
@@ -387,8 +386,8 @@ public class WFSDataStore extends AbstractDataStore{
         try {
             final JAXBFeatureTypeReader reader = new JAXBFeatureTypeReader();
             getLogger().log(Level.INFO, "[WFS Client] request type : " + request.getURL());
-            final List<FeatureType> types = reader.read(request.getURL().openStream());
-            return (SimpleFeatureType) types.get(0);
+            final List<FeatureType> featureTypes = reader.read(request.getURL().openStream());
+            return (SimpleFeatureType) featureTypes.get(0);
 
         } catch (MalformedURLException ex) {
             throw new IOException(ex);
@@ -424,7 +423,7 @@ public class WFSDataStore extends AbstractDataStore{
         }
 
         if(request.equals(lastRequest) && lastCollection != null){
-            FeatureCollection<SimpleFeature> col = lastCollection.get();
+            final FeatureCollection<SimpleFeature> col = lastCollection.get();
             if(col != null){
                 return col;
             }
