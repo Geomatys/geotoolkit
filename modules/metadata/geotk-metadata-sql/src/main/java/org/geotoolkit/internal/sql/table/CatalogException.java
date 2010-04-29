@@ -135,7 +135,7 @@ public class CatalogException extends SQLNonTransientException {
             throws SQLException
     {
         boolean noTable=true, noColumn=true;
-        if (results != null && column != 0) {
+        if (results != null && column != 0 && !results.isClosed()) {
             final ResultSetMetaData metadata = results.getMetaData();
             if (metadata != null) {
                 this.table  = metadata.getTableName (column);

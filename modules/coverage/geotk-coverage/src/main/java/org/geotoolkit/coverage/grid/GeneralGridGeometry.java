@@ -281,6 +281,14 @@ public class GeneralGridGeometry implements GridGeometry, Serializable {
                                final CoordinateReferenceSystem crs)
             throws MismatchedDimensionException, IllegalArgumentException
     {
+        if (gridToCRS != null) {
+            if (gridRange != null) {
+                ensureDimensionMatch("gridRange", gridRange.getDimension(), gridToCRS.getSourceDimensions());
+            }
+            if (crs != null) {
+                ensureDimensionMatch("crs", crs.getCoordinateSystem().getDimension(), gridToCRS.getTargetDimensions());
+            }
+        }
         this.gridRange = clone(gridRange);
         this.gridToCRS = PixelTranslation.translate(gridToCRS, anchor, PixelInCell.CELL_CENTER);
         if (PixelInCell.CELL_CORNER.equals(anchor)) {
@@ -325,6 +333,9 @@ public class GeneralGridGeometry implements GridGeometry, Serializable {
                                final Envelope      envelope)
             throws MismatchedDimensionException, IllegalArgumentException
     {
+        if (gridToCRS != null && envelope != null) {
+            ensureDimensionMatch("envelope", envelope.getDimension(), gridToCRS.getTargetDimensions());
+        }
         this.gridToCRS = PixelTranslation.translate(gridToCRS, anchor, PixelInCell.CELL_CENTER);
         if (PixelInCell.CELL_CORNER.equals(anchor)) {
             cornerToCRS = gridToCRS;
@@ -410,6 +421,23 @@ public class GeneralGridGeometry implements GridGeometry, Serializable {
             gridRange = (GridEnvelope) ((Cloneable) gridRange).clone();
         }
         return gridRange;
+    }
+
+    /**
+     * Ensures that the given dimension is equals to the expected value. If not, throw an
+     * exception.
+     *
+     * @param argument  The name of the argument being tested.
+     * @param dimension The dimension of the argument value.
+     * @param expected  The expected dimension.
+     */
+    static void ensureDimensionMatch(final String argument, final int dimension, final int expected)
+            throws MismatchedDimensionException
+    {
+        if (dimension != expected) {
+            throw new MismatchedDimensionException(Errors.format(
+                    Errors.Keys.MISMATCHED_DIMENSION_$3, argument, dimension, expected));
+        }
     }
 
     /**

@@ -539,9 +539,9 @@ public class GridGeometry2D extends GeneralGridGeometry {
      * search for all grid dimensions in the given grid envelope having a length greater than
      * 1 pixel. The corresponding CRS dimensions are inferred from the transform itself.
      *
+     * @param  gridToCRS The transform, or {@code null} if none.
      * @param  gridRange The grid envelope, or {@code null} if unknown.
-     * @param  transform The transform, or {@code null} if none.
-     * @param  axis An array of length 4 initialized to 0. This is the array where to store
+     * @param  dimensions An array of length 4 initialized to 0. This is the array where to store
      *         {@link #gridDimensionX}, {@link #gridDimensionY}, {@link #axisDimensionX} and
      *         {@link #axisDimensionY} values. This argument is actually a workaround for a
      *         Java language limitation (no multiple return values). If we could, we would
@@ -551,14 +551,18 @@ public class GridGeometry2D extends GeneralGridGeometry {
      *         if and only if {@code gridToCRS} was null..
      * @throws IllegalArgumentException if the 2D part is not separable.
      */
-    private static MathTransform2D getMathTransform2D(final MathTransform transform,
-                                                      final GridEnvelope gridRange,
-                                                      final int[] axis, final Hints hints)
+    private static MathTransform2D getMathTransform2D(final MathTransform gridToCRS,
+            final GridEnvelope gridRange, final int[] dimensions, final Hints hints)
             throws IllegalArgumentException
     {
-        if (transform==null || transform instanceof MathTransform2D) {
-            axis[1] = axis[3] = 1; // Identity: (0,1) --> (0,1)
-            return (MathTransform2D) transform;
+        if (gridToCRS != null) {
+            if (gridRange != null) {
+                ensureDimensionMatch("gridRange", gridRange.getDimension(), gridToCRS.getSourceDimensions());
+            }
+        }
+        if (gridToCRS == null || gridToCRS instanceof MathTransform2D) {
+            dimensions[1] = dimensions[3] = 1; // Identity: (0,1) --> (0,1)
+            return (MathTransform2D) gridToCRS;
         }
         /*
          * Finds the axis for the two dimensional parts. We infer them from the grid envelope.
@@ -576,27 +580,27 @@ public class GridGeometry2D extends GeneralGridGeometry {
             filter.addSourceDimensionRange(0, 2);
         }
         Exception cause = null;
-        int[] dimensions = filter.getSourceDimensions();
+        int[] srcDim = filter.getSourceDimensions();
         /*
          * Select a math transform that operate only on the two dimensions choosen above.
          * If such a math transform doesn't have exactly 2 output dimensions, then select
          * the same output dimensions than the input ones.
          */
         MathTransform candidate;
-        if (dimensions.length == 2) {
-            axis[0] = dimensions[0]; // gridDimensionX
-            axis[1] = dimensions[1]; // gridDimensionY
+        if (srcDim.length == 2) {
+            dimensions[0] = srcDim[0]; // gridDimensionX
+            dimensions[1] = srcDim[1]; // gridDimensionY
             try {
-                candidate = filter.separate(transform);
+                candidate = filter.separate(gridToCRS);
                 if (candidate.getTargetDimensions() != 2) {
                     filter.clear();
-                    filter.addSourceDimensions(dimensions);
-                    filter.addTargetDimensions(dimensions);
-                    candidate = filter.separate(transform);
+                    filter.addSourceDimensions(srcDim);
+                    filter.addTargetDimensions(srcDim);
+                    candidate = filter.separate(gridToCRS);
                 }
-                dimensions = filter.getTargetDimensions();
-                axis[2] = dimensions[0]; // axisDimensionX
-                axis[3] = dimensions[1]; // axisDimensionY
+                srcDim = filter.getTargetDimensions();
+                dimensions[2] = srcDim[0]; // axisDimensionX
+                dimensions[3] = srcDim[1]; // axisDimensionY
                 try {
                     return (MathTransform2D) candidate;
                 } catch (ClassCastException exception) {
