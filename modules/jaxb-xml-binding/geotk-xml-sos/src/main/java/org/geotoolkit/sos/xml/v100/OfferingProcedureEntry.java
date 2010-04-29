@@ -17,6 +17,7 @@
 package org.geotoolkit.sos.xml.v100;
 
 import org.geotoolkit.gml.xml.v311.ReferenceEntry;
+import org.geotoolkit.internal.sql.table.Entry;
 import org.geotoolkit.util.Utilities;
 
 /**
@@ -24,7 +25,7 @@ import org.geotoolkit.util.Utilities;
  * @author legal
  * @module pending
  */
-public class OfferingProcedureEntry {
+public class OfferingProcedureEntry implements Entry{
 
     /**
      * The offering identifier.
@@ -45,6 +46,13 @@ public class OfferingProcedureEntry {
     }
 
      public String getName() {
+        if (component != null) {
+            return component.getHref();
+        }
+        return null;
+    }
+
+     public String getIdentifier() {
         if (component != null) {
             return component.getHref();
         }

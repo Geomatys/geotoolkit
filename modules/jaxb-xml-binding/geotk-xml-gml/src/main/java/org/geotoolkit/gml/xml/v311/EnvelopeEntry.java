@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.util.Utilities;
+import org.geotoolkit.internal.sql.table.Entry;
 
 
 /**
@@ -68,7 +69,7 @@ import org.geotoolkit.util.Utilities;
 @XmlSeeAlso({
     EnvelopeWithTimePeriodType.class
 })
-public class EnvelopeEntry {
+public class EnvelopeEntry implements Entry {
 
     @XmlAttribute(namespace="http://www.opengis.net/gml")
     private String id;
@@ -115,6 +116,15 @@ public class EnvelopeEntry {
         return id;
     }
 
+    /**
+     * Ihnerited from Entry
+     *
+     * @return id
+     */
+    public Comparable<?> getIdentifier() {
+        return id;
+    }
+    
     public String getName() {
         return id;
     }

@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.sos.xml.v100;
 
+import org.geotoolkit.internal.sql.table.Entry;
 import org.geotoolkit.util.Utilities;
 
 /**
@@ -23,7 +24,7 @@ import org.geotoolkit.util.Utilities;
  * @author Guilhem Legal
  * @module pending
  */
-public class OfferingResponseModeEntry {
+public class OfferingResponseModeEntry implements Entry {
 
     /**
      * L'identifiant de l'offering.
@@ -44,6 +45,13 @@ public class OfferingResponseModeEntry {
     }
 
     public String getName() {
+        if (mode != null) {
+            return mode.value();
+        }
+        return null;
+    }
+
+    public String getIdentifier() {
         if (mode != null) {
             return mode.value();
         }

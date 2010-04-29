@@ -20,6 +20,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.internal.sql.table.Entry;
 import org.opengis.observation.Process;
 import org.geotoolkit.util.Utilities;
 
@@ -33,7 +34,7 @@ import org.geotoolkit.util.Utilities;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name="Process")
-public class ProcessEntry implements Process {
+public class ProcessEntry implements Process, Entry {
     /**
      * Pour compatibilités entre les enregistrements binaires de différentes versions.
      */
@@ -45,7 +46,7 @@ public class ProcessEntry implements Process {
     @XmlAttribute(required= true, namespace = "http://www.w3.org/1999/xlink")
     private String href;
     
-     /**
+    /**
      * Constructeur vide utilisé par JAXB.
      */
     private ProcessEntry(){}
@@ -74,6 +75,9 @@ public class ProcessEntry implements Process {
         return href;
     }
 
+    public String getIdentifier() {
+        return href;
+    }
     
      /**
      * Verifie si cette entree est identique a l'objet specifie.

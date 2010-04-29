@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.internal.sql.table.Entry;
 import org.geotoolkit.swe.xml.AbstractBoolean;
 import org.geotoolkit.swe.xml.AbstractDataComponent;
 import org.geotoolkit.swe.xml.AbstractText;
@@ -62,7 +63,7 @@ import org.geotoolkit.util.Utilities;
     "text",
     "name"
 })
-public class AnyScalarPropertyType implements AnyScalar {
+public class AnyScalarPropertyType implements AnyScalar, Entry {
 
     @XmlTransient
     private String idDataRecord;
@@ -174,6 +175,11 @@ public class AnyScalarPropertyType implements AnyScalar {
     public String getName() {
         return this.name;
     }
+
+     public String getIdentifier() {
+        return this.name;
+    }
+
     /** 
      * retourne l'identifiant du data record qui contient ce champ.
      */

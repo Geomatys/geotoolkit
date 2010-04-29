@@ -68,6 +68,10 @@
         <artifactId>geotk-utility</artifactId>
     </dependency>
     <dependency>
+        <groupId>org.geotoolkit</groupId>
+        <artifactId>geotk-metadata-sql</artifactId>
+    </dependency>
+    <dependency>
         <groupId>org.geotoolkit.pending</groupId>
         <artifactId>geotk-jtswrapper</artifactId>
         <version>${project.version}</version>

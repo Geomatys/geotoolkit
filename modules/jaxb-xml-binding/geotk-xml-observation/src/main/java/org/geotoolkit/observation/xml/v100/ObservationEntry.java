@@ -44,6 +44,7 @@ import org.geotoolkit.gml.xml.v311.FeaturePropertyType;
 import org.geotoolkit.gml.xml.v311.ReferenceEntry;
 import org.geotoolkit.gml.xml.v311.TimePeriodType;
 import org.geotoolkit.gml.xml.v311.TimePositionType;
+import org.geotoolkit.internal.sql.table.Entry;
 import org.geotoolkit.sampling.xml.v100.SamplingFeatureEntry;
 import org.geotoolkit.sampling.xml.v100.SamplingPointEntry;
 import org.geotoolkit.swe.xml.v101.AnyResultEntry;
@@ -82,7 +83,7 @@ import org.geotoolkit.util.logging.Logging;
 })
 @XmlRootElement(name = "Observation")
 @XmlSeeAlso({ MeasurementEntry.class})
-public class ObservationEntry implements Observation {
+public class ObservationEntry implements Observation, Entry {
     /**
      * Pour compatibilités entre les enregistrements binaires de différentes versions.
      */
@@ -354,6 +355,10 @@ public class ObservationEntry implements Observation {
     @Override
     public String getName() {
         return this.name;
+    }
+
+    public String getIdentifier() {
+        return name;
     }
     
     /**

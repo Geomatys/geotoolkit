@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.v311.UnitOfMeasureEntry;
 
 // GeotoolKit dependencies
+import org.geotoolkit.internal.sql.table.Entry;
 import org.geotoolkit.util.Utilities;
 import org.opengis.observation.Measure;
 
@@ -36,7 +37,7 @@ import org.opengis.observation.Measure;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Measure")
-public class MeasureEntry implements Measure{
+public class MeasureEntry implements Measure, Entry{
     
     /**
      * Le non de l'unité de mesure.
@@ -75,6 +76,10 @@ public class MeasureEntry implements Measure{
     }
 
     public String getName() {
+        return name;
+    }
+
+    public String getIdentifier() {
         return name;
     }
     

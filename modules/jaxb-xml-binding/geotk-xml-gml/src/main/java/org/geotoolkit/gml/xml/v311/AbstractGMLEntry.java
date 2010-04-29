@@ -26,6 +26,7 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.geotoolkit.gml.xml.AbstractGML;
+import org.geotoolkit.internal.sql.table.Entry;
 import org.geotoolkit.util.Utilities;
 
 
@@ -70,7 +71,7 @@ import org.geotoolkit.util.Utilities;
     AbstractGeometryType.class,
     AbstractFeatureEntry.class
 })
-public abstract class AbstractGMLEntry implements AbstractGML, Serializable {
+public abstract class AbstractGMLEntry implements AbstractGML, Serializable, Entry {
 
     //protected List<MetaDataPropertyType> metaDataProperty;
     private String description;
@@ -168,6 +169,10 @@ public abstract class AbstractGMLEntry implements AbstractGML, Serializable {
      */
     @Override
     public String getId() {
+        return id;
+    }
+
+    public String getIdentifier() {
         return id;
     }
 

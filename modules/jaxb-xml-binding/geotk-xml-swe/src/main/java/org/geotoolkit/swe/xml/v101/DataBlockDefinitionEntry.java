@@ -27,6 +27,7 @@ import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import org.geotoolkit.internal.sql.table.Entry;
 import org.geotoolkit.swe.xml.AbstractDataComponent;
 import org.geotoolkit.swe.xml.DataBlockDefinition;
 import org.geotoolkit.util.Utilities;
@@ -42,7 +43,7 @@ import org.geotoolkit.util.Utilities;
 @XmlType(name = "DataBlockDefinition", propOrder = {
     "components",
     "encoding"})
-    public class DataBlockDefinitionEntry implements DataBlockDefinition {
+    public class DataBlockDefinitionEntry implements DataBlockDefinition, Entry {
     
     /**
      * L'identifiant du resultat.
@@ -104,6 +105,10 @@ import org.geotoolkit.util.Utilities;
      * {@inheritDoc}
      */
     public String getId() {
+        return id;
+    }
+
+    public String getIdentifier() {
         return id;
     }
 

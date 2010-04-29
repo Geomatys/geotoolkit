@@ -20,6 +20,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.internal.sql.table.Entry;
 import org.geotoolkit.util.Utilities;
 import org.opengis.observation.BaseUnit;
 
@@ -32,7 +33,7 @@ import org.opengis.observation.BaseUnit;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "BaseUnit")
-public class UnitOfMeasureEntry implements BaseUnit {
+public class UnitOfMeasureEntry implements BaseUnit, Entry {
     /**
      * l'identifiant de l'unité ( exemple cm, és, ...)
      */
@@ -73,6 +74,10 @@ public class UnitOfMeasureEntry implements BaseUnit {
      * Retourne l'identifiant.
      */
     public String getId() {
+        return id;
+    }
+
+    public String getIdentifier() {
         return id;
     }
 

@@ -21,6 +21,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.v311.ReferenceEntry;
+import org.geotoolkit.internal.sql.table.Entry;
 import org.geotoolkit.swe.xml.AnyResult;
 import org.geotoolkit.util.Utilities;
 
@@ -35,7 +36,7 @@ import org.geotoolkit.util.Utilities;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Any")
-public class AnyResultEntry implements AnyResult {
+public class AnyResultEntry implements AnyResult, Entry {
     
     /**
      * The result identifier.
@@ -85,6 +86,10 @@ public class AnyResultEntry implements AnyResult {
      */
     @Override
     public String getId() {
+        return id;
+    }
+
+     public String getIdentifier() {
         return id;
     }
 

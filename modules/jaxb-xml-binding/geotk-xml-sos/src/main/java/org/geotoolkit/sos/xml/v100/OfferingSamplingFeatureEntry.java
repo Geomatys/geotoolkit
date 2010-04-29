@@ -17,6 +17,7 @@
 package org.geotoolkit.sos.xml.v100;
 
 import org.geotoolkit.gml.xml.v311.ReferenceEntry;
+import org.geotoolkit.internal.sql.table.Entry;
 import org.geotoolkit.util.Utilities;
 
 /**
@@ -24,7 +25,7 @@ import org.geotoolkit.util.Utilities;
  * @author Guilhem Legal
  * @module pending
  */
-public class OfferingSamplingFeatureEntry {
+public class OfferingSamplingFeatureEntry implements Entry{
 
     /**
      * The offering identifier.
@@ -44,7 +45,14 @@ public class OfferingSamplingFeatureEntry {
         this.component  = component;
     }
 
-     public String getName() {
+    public String getName() {
+        if (component != null) {
+            return component.getId();
+        }
+        return null;
+    }
+
+    public String getIdentifier() {
         if (component != null) {
             return component.getId();
         }

@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import org.geotoolkit.internal.sql.table.Entry;
 import org.geotoolkit.swe.xml.AbstractEncoding;
 import org.geotoolkit.util.Utilities;
 
@@ -38,7 +39,7 @@ import org.geotoolkit.util.Utilities;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlSeeAlso({TextBlockEntry.class})
 @XmlType(name="AbstractEncoding")
-public class AbstractEncodingEntry implements AbstractEncoding {
+public class AbstractEncodingEntry implements AbstractEncoding, Entry {
     
     /**
      * The encoding identifier.
@@ -67,6 +68,10 @@ public class AbstractEncodingEntry implements AbstractEncoding {
     }
     
     public String getId() {
+        return id;
+    }
+
+    public String getIdentifier() {
         return id;
     }
 

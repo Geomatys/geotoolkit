@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.sos.xml.v100;
 
+import org.geotoolkit.internal.sql.table.Entry;
 import org.geotoolkit.swe.xml.v101.PhenomenonEntry;
 import org.geotoolkit.util.Utilities;
 
@@ -24,7 +25,7 @@ import org.geotoolkit.util.Utilities;
  * @author Guilhem legal
  * @module pending
  */
-public class OfferingPhenomenonEntry {
+public class OfferingPhenomenonEntry implements Entry{
     
     /**
      * The offering identifier.
@@ -45,6 +46,13 @@ public class OfferingPhenomenonEntry {
     }
 
     public String getName() {
+        if (component != null) {
+            return component.getId();
+        }
+        return null;
+    }
+
+    public String getIdentifier() {
         if (component != null) {
             return component.getId();
         }

@@ -21,6 +21,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.v311.AbstractTimeGeometricPrimitiveType;
+import org.geotoolkit.internal.sql.table.Entry;
 import org.geotoolkit.metadata.iso.citation.DefaultResponsibleParty;
 import org.geotoolkit.util.Utilities;
 import org.opengis.metadata.citation.ResponsibleParty;
@@ -39,7 +40,7 @@ import org.opengis.util.GenericName;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "SurveyProcedure")
-public class SurveyProcedureEntry implements SurveyProcedure {
+public class SurveyProcedureEntry implements SurveyProcedure, Entry {
     
     
     /**
@@ -103,6 +104,10 @@ public class SurveyProcedureEntry implements SurveyProcedure {
         return name;
     }
 
+    public String getIdentifier() {
+        return name;
+    }
+    
     public ResponsibleParty getOperator() {
         return operator;
     }

@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.swe.xml.v101;
 
+import org.geotoolkit.internal.sql.table.Entry;
 import org.geotoolkit.util.Utilities;
 
 /**
@@ -25,7 +26,7 @@ import org.geotoolkit.util.Utilities;
  * @author Guilhem Legal
  * @module pending
  */
-public class ComponentEntry {
+public class ComponentEntry implements Entry{
     
     /**
      * L'identifiant du phénomène composé.
@@ -46,6 +47,12 @@ public class ComponentEntry {
     }
 
     public String getName() {
+        if (component != null)
+            return component.getId();
+        return null;
+    }
+
+    public String getIdentifier() {
         if (component != null)
             return component.getId();
         return null;
