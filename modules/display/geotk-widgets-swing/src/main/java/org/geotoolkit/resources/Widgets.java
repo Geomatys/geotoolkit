@@ -57,6 +57,18 @@ public final class Widgets extends IndexedResourceBundle {
         public static final int ADD_SELECTED_ELEMENTS = 1;
 
         /**
+         * Confirm delete
+         */
+        public static final int CONFIRM_DELETE = 6;
+
+        /**
+         * <html>Are you sure you want to delete "<cite>{0}</cite>"?<br> <strong>This action will
+         * remove all references to raster data in that layer.</strong><br> However, the raster files
+         * will not be deleted.</html>
+         */
+        public static final int CONFIRM_DELETE_LAYER_$1 = 7;
+
+        /**
          * Remove all
          */
         public static final int REMOVE_ALL = 2;

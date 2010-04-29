@@ -298,6 +298,92 @@ public class CoverageDatabase {
     }
 
     /**
+     * Adds a new layer of the given name, if it does not already exist. If a layer of the
+     * given name already exists, then this method does nothing and returns {@code false}.
+     *
+     * @param  name The name of the new layer.
+     * @return {@code true} if the layer has been added, of {@code false} if a layer of
+     *         the given name already exists.
+     *
+     * @since 3.11
+     */
+    public FutureQuery<Boolean> addLayer(final String name) {
+        ensureNonNull("name", name);
+        return executor.submit(new AddLayer(name));
+    }
+
+    /**
+     * The task for {@link CoverageDatabase#addLayer(String)}. Declared as an explicit class
+     * rather than an inner class in order to have more helpful stack trace in case of failure.
+     */
+    private final class AddLayer implements Callable<Boolean> {
+        private final String name;
+
+        /** Creates a new task. */
+        AddLayer(final String name) {
+            this.name = name;
+        }
+
+        /** Executes the task in a background thread. */
+        @Override public Boolean call() throws CoverageStoreException {
+            final TablePool<LayerTable> pool = database.layers;
+            try {
+                final LayerTable table = pool.acquire();
+                final Boolean added = table.createIfAbsent(name);
+                pool.release(table);
+                return added;
+            } catch (SQLException e) {
+                throw new CoverageStoreException(e);
+            }
+        }
+    }
+
+    /**
+     * Removes the layer of the given name, if it exist. If no layer of the
+     * given name exists, then this method does nothing and returns {@code false}.
+     * <p>
+     * <strong>This action removes all references to raster data declared in that layer</strong>,
+     * unless the foreigner key constraints in the database have been changed from their default
+     * values. Note that the raster files are never deleted by this method.
+     *
+     * @param  name The name of the layer to remove.
+     * @return {@code true} if the layer has been removed, of {@code false} if no layer of
+     *         the given name exists.
+     *
+     * @since 3.11
+     */
+    public FutureQuery<Boolean> removeLayer(final String name) {
+        ensureNonNull("name", name);
+        return executor.submit(new RemoveLayer(name));
+    }
+
+    /**
+     * The task for {@link CoverageDatabase#removeLayer(String)}. Declared as an explicit class
+     * rather than an inner class in order to have more helpful stack trace in case of failure.
+     */
+    private final class RemoveLayer implements Callable<Boolean> {
+        private final String name;
+
+        /** Creates a new task. */
+        RemoveLayer(final String name) {
+            this.name = name;
+        }
+
+        /** Executes the task in a background thread. */
+        @Override public Boolean call() throws CoverageStoreException {
+            final TablePool<LayerTable> pool = database.layers;
+            try {
+                final LayerTable table = pool.acquire();
+                final Boolean added = (table.delete(name) != 0);
+                pool.release(table);
+                return added;
+            } catch (SQLException e) {
+                throw new CoverageStoreException(e);
+            }
+        }
+    }
+
+    /**
      * Returns a time range encompassing all coverages in this layer.
      * This method is equivalent to the code below, except that more
      * code are executed in the background thread:

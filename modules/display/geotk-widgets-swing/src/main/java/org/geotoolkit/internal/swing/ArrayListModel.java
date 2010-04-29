@@ -91,7 +91,10 @@ public final class ArrayListModel<E> extends AbstractListModel {
         }
         elements = newElements;
         if (newElements != null) {
-            fireIntervalAdded(this, lower, lower + (newElements.length - 1) - keept);
+            final int upper = lower + (newElements.length - 1) - keept; // Inclusive
+            if (upper >= lower) {
+                fireIntervalAdded(this, lower, upper);
+            }
         }
     }
 

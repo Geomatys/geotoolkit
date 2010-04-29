@@ -1075,6 +1075,11 @@ public final class Vocabulary extends IndexedResourceBundle {
         public static final int NAVIGATE = 201;
 
         /**
+         * New layer
+         */
+        public static final int NEW_LAYER = 341;
+
+        /**
          * No data
          */
         public static final int NODATA = 202;
@@ -1333,6 +1338,11 @@ public final class Vocabulary extends IndexedResourceBundle {
          * Resolution
          */
         public static final int RESOLUTION = 340;
+
+        /**
+         * RGF93 transform
+         */
+        public static final int RGF93_TRANSFORM = 342;
 
         /**
          * Right

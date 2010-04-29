@@ -110,13 +110,13 @@ public final class Main extends JFrame implements ActionListener {
         item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, keyMask));
         item.setToolTipText(resources.getString(Wizards.Keys.SETUP_DESC));
         item.addActionListener(this);
-        item.setName(SETUP);
+        item.setActionCommand(SETUP);
         menu.add(item);
 
         item = new JMenuItem(vocabulary.getString(Vocabulary.Keys.QUIT), KeyEvent.VK_Q);
         item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, keyMask));
         item.addActionListener(this);
-        item.setName(QUIT);
+        item.setActionCommand(QUIT);
         menu.add(item);
         bar.add(menu);
 
@@ -124,7 +124,7 @@ public final class Main extends JFrame implements ActionListener {
         item = new JMenuItem(vocabulary.getMenuLabel(Vocabulary.Keys.GRIDDED_DATA), KeyEvent.VK_G);
         item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G, keyMask));
         item.addActionListener(this);
-        item.setName(COVERAGES);
+        item.setActionCommand(COVERAGES);
         menu.add(item);
         bar.add(menu);
 
@@ -132,14 +132,14 @@ public final class Main extends JFrame implements ActionListener {
         item = new JMenuItem(resources.getMenuLabel(Wizards.Keys.COVERAGE_DATABASE_TITLE));
         item.setToolTipText(resources.getString(Wizards.Keys.COVERAGE_DATABASE_DESC));
         item.addActionListener(this);
-        item.setName(COVERAGES_SCHEMA);
+        item.setActionCommand(COVERAGES_SCHEMA);
         menu.add(item);
 
         item = new JMenuItem(resources.getMenuLabel(Wizards.Keys.MOSAIC_TITLE), KeyEvent.VK_M);
         item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M, keyMask));
         item.setToolTipText(resources.getString(Wizards.Keys.MOSAIC_DESC));
         item.addActionListener(this);
-        item.setName(MOSAIC);
+        item.setActionCommand(MOSAIC);
         menu.add(item);
         bar.add(menu);
 
@@ -147,13 +147,13 @@ public final class Main extends JFrame implements ActionListener {
         item = new JMenuItem(vocabulary.getMenuLabel(Vocabulary.Keys.ABOUT), KeyEvent.VK_A);
         item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, keyMask));
         item.addActionListener(this);
-        item.setName(ABOUT);
+        item.setActionCommand(ABOUT);
         menu.add(item);
 
         if (Desktop.isDesktopSupported()) {
             item = new JMenuItem(resources.getString(Wizards.Keys.GEOTK_SITE));
             item.addActionListener(this);
-            item.setName(HOME);
+            item.setActionCommand(HOME);
             menu.add(item);
         }
         bar.add(menu);
@@ -170,7 +170,7 @@ public final class Main extends JFrame implements ActionListener {
      */
     @Override
     public void actionPerformed(final ActionEvent event) {
-        final String action = ((Component) event.getSource()).getName();
+        final String action = event.getActionCommand();
         if (ABOUT.equals(action)) {
             final About about = new About();
             about.showDialog(Main.this);

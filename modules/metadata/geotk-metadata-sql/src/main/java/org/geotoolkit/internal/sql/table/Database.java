@@ -430,8 +430,8 @@ public class Database implements Localized {
                 final Connection connection = sp.connection();
                 connection.setReadOnly(false);
                 connection.setAutoCommit(false);
-                success = true;
             }
+            success = true;
         } finally {
             if (!success) {
                 transactionLock.unlock();
