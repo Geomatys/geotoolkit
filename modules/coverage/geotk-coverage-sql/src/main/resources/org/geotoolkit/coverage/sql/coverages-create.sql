@@ -2,6 +2,10 @@
 -- A schema for a catalog of coverages.                                                         --
 --  (C) 2010, Open Source Geospatial Foundation (OSGeo)                                         --
 --  (C) 2010, Geomatys                                                                          --
+--                                                                                              --
+-- The "geoadmin", "geouser" and "coverages" words shall be used only for the roles and the     --
+-- schema names. They can be replaced by different roles or schema names with a simple search   --
+-- and replace.                                                                                 --
 --------------------------------------------------------------------------------------------------
 
 SET client_encoding = 'UTF8';

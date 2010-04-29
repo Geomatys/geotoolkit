@@ -21,12 +21,16 @@ import java.io.File;
 import java.io.InputStream;
 import java.io.IOException;
 import java.io.FileNotFoundException;
+import java.io.LineNumberReader;
+import java.io.StringReader;
 import java.sql.Connection;
+import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
 
 import org.opengis.referencing.FactoryException;
 
 import org.geotoolkit.util.Strings;
+import org.geotoolkit.internal.io.Host;
 import org.geotoolkit.coverage.sql.CoverageDatabase;
 import org.geotoolkit.referencing.factory.epsg.EpsgInstaller;
 
@@ -174,6 +178,18 @@ public class CoverageDatabaseInstaller extends ScriptRunner {
          */
         progress(80, "coverages");
         n += run("coverages-create.sql");
+        final DatabaseMetaData md = getConnection().getMetaData();
+        if (Dialect.POSTGRESQL.equals(dialect)) {
+            String database = new Host(md.getURL()).path;
+            if (database != null) {
+                final String quote = md.getIdentifierQuoteString();
+                final LineNumberReader reader = new LineNumberReader(new StringReader(
+                        "ALTER DATABASE " + quote + database + quote + " SET search_path=public, " + schema + ", postgis" + END_OF_STATEMENT + '\n' +
+                        "COMMENT ON DATABASE " + quote + database + quote + " IS 'Geotoolkit.org source of coverages.'" + END_OF_STATEMENT));
+                n = run(reader);
+                reader.close();
+            }
+        }
         progress(100, null);
         return n;
     }

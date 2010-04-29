@@ -30,10 +30,6 @@ import org.geotoolkit.util.logging.Logging;
  * or {@code URI}, like JDBC URL. It is used only for providing default values
  * in widgets.
  *
- * {@note This class is actually used by the <code>geotk-wizard-swing</code> module,
- *        but is nevertheless declared here because it could be used by more control
- *        panel widgets}.
- *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.11
  *
@@ -52,30 +48,41 @@ public final class Host {
     public Integer port;
 
     /**
+     * The path after the host, or {@code null} if none.
+     */
+    public String path;
+
+    /**
      * Creates a new {@code Host} for the given URL.
      *
      * @param url The URL, which may be {@code null}.
      */
     public Host(final String url) {
         if (url != null) {
+            int upper = 0;
             int lower = url.indexOf("://");
             if (lower >= 0) {
-                lower += 3;
-                final int upper = url.indexOf('/', lower);
-                String server = (upper >= 0) ? url.substring(lower, upper) : url.substring(lower).trim();
+                upper = url.indexOf('/', lower += 3);
+                String server = ((upper >= 0) ? url.substring(lower, upper++) : url.substring(lower)).trim();
                 lower = server.indexOf(':');
                 if (lower >= 0) {
-                    server = server.substring(0, lower).trim();
                     try {
                         port = Integer.valueOf(server.substring(lower+1));
                     } catch (NumberFormatException e) {
                         Logging.recoverableException(Host.class, "<init>", e);
-                        // Ignore, since this class is used only for providing
+                        // Ignore, since this class is used mostly for providing
                         // default values in widgets.
                     }
+                    server = server.substring(0, lower).trim();
                 }
                 if (server.length() != 0) {
                     host = server;
+                }
+            }
+            if (upper >= 0) {
+                String p = url.substring(upper).trim();
+                if (p.length() != 0) {
+                    path = p;
                 }
             }
         }
