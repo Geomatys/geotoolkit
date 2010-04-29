@@ -116,7 +116,7 @@ public class DimapImageReader extends ImageReaderAdapter {
         final DimapMetadata metadata = (DimapMetadata) getImageMetadata(0);
 
         //apply the band <-> color mapping -------------------------------------
-        final int[] colorMapping = DimapAccessor.readColorBandMapping((Element)metadata.getAsTree("dimap"));
+        final int[] colorMapping = DimapAccessor.readColorBandMapping((Element)metadata.getAsTree(DimapMetadata.NATIVE_FORMAT));
         if(colorMapping == null){
             //we have no default styling
             return image;

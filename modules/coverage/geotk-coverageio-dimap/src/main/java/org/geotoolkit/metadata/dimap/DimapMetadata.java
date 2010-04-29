@@ -22,6 +22,7 @@ import javax.imageio.ImageReader;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.metadata.IIOMetadataFormat;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
+import org.geotoolkit.internal.image.io.SampleMetadataFormat;
 import org.w3c.dom.Node;
 
 /**
@@ -32,30 +33,73 @@ import org.w3c.dom.Node;
  */
 public class DimapMetadata extends SpatialMetadata{
 
-    //todo, this can be a huge file, like 14Mb. store it as a dom tree can
-    //use plenty of memory.
+    public static final String NATIVE_FORMAT = DimapConstants.TAG_DIMAP;
+
+    /**
+     * The format inferred from the content of the Dimap file.
+     * Will be created only when first needed.
+     */
+    private IIOMetadataFormat nativeFormat;
+    
+
+    //todo, this can be a huge file, like 4Mb. store it as a dom tree can use plenty of memory.
     private final Node dimapTree;
 
     public DimapMetadata(IIOMetadataFormat format, Node dimapTree){
         super(format);
-
         this.dimapTree = dimapTree;
-        extraMetadataFormatNames = Arrays.copyOf(extraMetadataFormatNames, extraMetadataFormatNames.length+1);
-        extraMetadataFormatNames[extraMetadataFormatNames.length-1] = "dimap";
+        nativeMetadataFormatName = NATIVE_FORMAT;
     }
 
     public DimapMetadata(IIOMetadataFormat format, ImageReader reader, IIOMetadata fallback, Node dimapTree){
         super(format,reader,fallback);
-
         this.dimapTree = dimapTree;
         extraMetadataFormatNames = Arrays.copyOf(extraMetadataFormatNames, extraMetadataFormatNames.length+1);
-        extraMetadataFormatNames[extraMetadataFormatNames.length-1] = "dimap";
+        extraMetadataFormatNames[extraMetadataFormatNames.length-1] = NATIVE_FORMAT;
     }
 
     @Override
     public Node getAsTree(String formatName) throws IllegalArgumentException {
-        if(!formatName.equals("dimap")) return super.getAsTree(formatName);
+        if(!formatName.equals(NATIVE_FORMAT)) return super.getAsTree(formatName);
         return dimapTree;
+    }
+
+    /**
+     * If the given format name is {@code "Dimap"}, returns a "dynamic" metadata format
+     * inferred from the actual content of the Dimap file. Otherwise returns the usual
+     * metadata format as defined in the super-class.
+     */
+    @Override
+    public IIOMetadataFormat getMetadataFormat(final String formatName) {
+        if (NATIVE_FORMAT.equals(formatName)) {
+            if (nativeFormat == null) {
+                nativeFormat = new Format();
+            }
+            return nativeFormat;
+        }
+        return super.getMetadataFormat(formatName);
+    }
+
+    /**
+     * The metadata format for the encloding {@link DimapMetadata} instance.
+     */
+    private final class Format extends SampleMetadataFormat {
+        /**
+         * Creates a new instance.
+         */
+        Format() {
+            super(NATIVE_FORMAT);
+        }
+
+        /**
+         * Returns the metadata to use for inferring the format.
+         * This is invoked when first needed.
+         */
+        @Override
+        protected Node getDataRootNode() {
+            return getAsTree(NATIVE_FORMAT);
+        }
+
     }
 
 }
