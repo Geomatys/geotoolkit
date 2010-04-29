@@ -88,7 +88,8 @@ public class OpenStreetMapServer implements Server{
                 OSMXMLReader reader = null;
                 try {
                     URL url = createGetCapabilities().getURL();
-                    reader = new OSMXMLReader(url.openStream());
+                    reader = new OSMXMLReader();
+                    reader.setInput(url.openStream());
                     capabilities = (Api) reader.next();
                 } catch (Exception ex) {
                     capabilities = null;
@@ -101,7 +102,7 @@ public class OpenStreetMapServer implements Server{
                 } finally{
                     if(reader != null){
                         try {
-                            reader.close();
+                            reader.dispose();
                         } catch (IOException ex) {
                             LOGGER.log(Level.SEVERE, null, ex);
                         } catch (XMLStreamException ex) {

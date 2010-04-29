@@ -1,9 +1,21 @@
+/*
+ *    Geotoolkit - An Open Source Java GIS Toolkit
+ *    http://www.geotoolkit.org
+ *
+ *    (C) 2010, Geomatys
+ *
+ *    This library is free software; you can redistribute it and/or
+ *    modify it under the terms of the GNU Lesser General Public
+ *    License as published by the Free Software Foundation;
+ *    version 2.1 of the License.
+ *
+ *    This library is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *    Lesser General Public License for more details.
+ */
 package org.geotoolkit.data.osm.xml;
 
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -12,7 +24,6 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.xml.stream.XMLStreamException;
 import org.geotoolkit.data.osm.model.Api;
-import org.geotoolkit.data.osm.model.IdentifiedElement;
 import org.geotoolkit.data.osm.model.MemberType;
 import org.geotoolkit.data.osm.model.Node;
 import org.geotoolkit.data.osm.model.Relation;
@@ -60,7 +71,8 @@ public class OSMXMLReaderTest {
     @Test
     public void testReading() throws FileNotFoundException, XMLStreamException, IOException, ParseException {
         File testFile = new File("src/test/resources/org/geotoolkit/test-data/osm/sampleOSM.osm");
-        OSMXMLReader reader = new OSMXMLReader(testFile);
+        OSMXMLReader reader = new OSMXMLReader();
+        reader.setInput(testFile);
 
         //check that the bound is correctly read
         Envelope env = reader.getEnvelope();
@@ -75,7 +87,7 @@ public class OSMXMLReaderTest {
         while(reader.hasNext()){
             elements.add(reader.next());
         }
-        reader.close();
+        reader.dispose();
 
         //while raise an error if the order is wrong or if types doesnt match
         final Node n1 = (Node) elements.get(0);
@@ -149,7 +161,8 @@ public class OSMXMLReaderTest {
     @Test
     public void testMoveTo() throws FileNotFoundException, XMLStreamException, IOException, ParseException {
         File testFile = new File("src/test/resources/org/geotoolkit/test-data/osm/sampleOSM.osm");
-        OSMXMLReader reader = new OSMXMLReader(testFile);
+        OSMXMLReader reader = new OSMXMLReader();
+        reader.setInput(testFile);
 
         //check that the bound is correctly read
         Envelope env = reader.getEnvelope();
@@ -167,7 +180,7 @@ public class OSMXMLReaderTest {
         while(reader.hasNext()){
             elements.add(reader.next());
         }
-        reader.close();
+        reader.dispose();
 
         //while raise an error if the order is wrong or if types doesnt match
         final Way way = (Way) elements.get(0);
@@ -212,7 +225,8 @@ public class OSMXMLReaderTest {
     @Test
     public void testReadingDiff() throws FileNotFoundException, XMLStreamException, IOException, ParseException {
         File testFile = new File("src/test/resources/org/geotoolkit/test-data/osm/diffOSM.osm");
-        OSMXMLReader reader = new OSMXMLReader(testFile);
+        OSMXMLReader reader = new OSMXMLReader();
+        reader.setInput(testFile);
 
         //check that the bound is null
         Envelope env = reader.getEnvelope();
@@ -222,7 +236,7 @@ public class OSMXMLReaderTest {
         while(reader.hasNext()){
             elements.add(reader.next());
         }
-        reader.close();
+        reader.dispose();
 
         //while raise an error if the order is wrong or if types doesnt match
         final Transaction create = (Transaction) elements.get(0);
@@ -315,13 +329,14 @@ public class OSMXMLReaderTest {
     @Test
     public void testReadingCapabilities() throws FileNotFoundException, XMLStreamException, IOException {
         File testFile = new File("src/test/resources/org/geotoolkit/test-data/osm/capabilities.osm");
-        OSMXMLReader reader = new OSMXMLReader(testFile);
+        OSMXMLReader reader = new OSMXMLReader();
+        reader.setInput(testFile);
 
         final List<Object> elements = new ArrayList<Object>();
         while(reader.hasNext()){
             elements.add(reader.next());
         }
-        reader.close();
+        reader.dispose();
 
         assertEquals(1, elements.size());
 

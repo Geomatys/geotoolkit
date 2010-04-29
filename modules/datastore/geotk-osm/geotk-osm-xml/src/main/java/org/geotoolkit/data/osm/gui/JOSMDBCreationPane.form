@@ -23,7 +23,7 @@
                       <EmptySpace min="12" pref="12" max="12" attributes="0"/>
                       <Component id="jLabel12" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="guiCrash" pref="392" max="32767" attributes="0"/>
+                      <Component id="guiCrash" pref="396" max="32767" attributes="0"/>
                       <EmptySpace type="separate" max="-2" attributes="0"/>
                       <Component id="guiCreate" min="-2" max="-2" attributes="0"/>
                   </Group>
@@ -170,7 +170,7 @@
                       <Component id="jLabel10" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="guiUsers" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace pref="128" max="32767" attributes="0"/>
+                  <EmptySpace pref="144" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>

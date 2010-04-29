@@ -58,12 +58,17 @@
           <artifactId>geotk-osm-core</artifactId>
           <version>${project.version}</version>
       </dependency>
-
+      <dependency>
+          <groupId>org.geotoolkit.pending</groupId>
+          <artifactId>geotk-jaxp-core</artifactId>
+          <version>${project.version}</version>
+      </dependency>
       <dependency>
           <groupId>org.geotoolkit.pending</groupId>
           <artifactId>geotk-jdbc-postgis</artifactId>
           <version>${project.version}</version>
       </dependency>
+
       <dependency>
           <groupId>org.swinglabs</groupId>
           <artifactId>jxlayer</artifactId>

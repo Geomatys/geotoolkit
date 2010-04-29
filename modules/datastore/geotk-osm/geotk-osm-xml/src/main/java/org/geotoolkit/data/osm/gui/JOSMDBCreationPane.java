@@ -293,7 +293,7 @@ public class JOSMDBCreationPane extends javax.swing.JPanel {
                 }
             }
         }finally{
-            reader.close();
+            reader.dispose();
         }
 
         //insert the remaining if any
@@ -367,7 +367,8 @@ public class JOSMDBCreationPane extends javax.swing.JPanel {
         xmlif.setProperty(XMLInputFactory.IS_VALIDATING, Boolean.FALSE);
         xmlif.configureForSpeed();
 
-        reader = new OSMXMLReader(xmlif.createXMLStreamReader(f));
+        reader = new OSMXMLReader();
+        reader.setInput(xmlif.createXMLStreamReader(f));
 
         if(guiDropTable.isSelected()){
             dropTables();
