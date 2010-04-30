@@ -37,13 +37,11 @@ import javax.swing.WindowConstants;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import org.geotoolkit.gui.swing.misc.LoadingLockableUI;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.io.wkt.UnformattableObjectException;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.resources.Vocabulary;
 
-import org.jdesktop.swingx.JXBusyLabel;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.IdentifiedObject;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -74,17 +72,15 @@ public class JCRSChooser extends javax.swing.JDialog {
         super(parent, modal);
         initComponents();
 
-        final JXBusyLabel lbl = new JXBusyLabel();
+        final JLabel lbl = new JLabel(MessageBundle.getString("loading"));
         lbl.setHorizontalAlignment(SwingConstants.CENTER);
         lbl.setVerticalAlignment(SwingConstants.CENTER);
         lbl.setHorizontalTextPosition(SwingConstants.CENTER);
-        lbl.setBusyPainter(LoadingLockableUI.createDefaultBusyPainter());
         pan_list.add(BorderLayout.CENTER,lbl);
 
         new Thread(){
             @Override
             public void run() {
-                lbl.setBusy(true);
                 liste = new JCRSList();
 
                 liste.addListSelectionListener(new ListSelectionListener() {
@@ -106,7 +102,6 @@ public class JCRSChooser extends javax.swing.JDialog {
                     }
                 });
 
-                lbl.setBusy(false);
                 pan_list.removeAll();
                 pan_list.add(BorderLayout.CENTER, liste);
                 pan_list.revalidate();
@@ -183,6 +178,8 @@ public class JCRSChooser extends javax.swing.JDialog {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+
+
         jTabbedPane1 = new JTabbedPane();
         jPanel1 = new JPanel();
         jLabel1 = new JLabel();
@@ -195,9 +192,7 @@ public class JCRSChooser extends javax.swing.JDialog {
         but_fermer = new JButton();
 
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle("null");
-
-
+        setTitle(MessageBundle.getString("crschooser_title")); // NOI18N
         jLabel1.setText(MessageBundle.getString("crschooser_crs")); // NOI18N
         gui_jtf_crs.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
@@ -214,14 +209,13 @@ public class JCRSChooser extends javax.swing.JDialog {
 
         GroupLayout jPanel1Layout = new GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
-
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(Alignment.LEADING)
-                    .addComponent(pan_list, GroupLayout.DEFAULT_SIZE, 429, Short.MAX_VALUE)
-                    .addComponent(gui_jtf_crs, GroupLayout.DEFAULT_SIZE, 429, Short.MAX_VALUE)
+                    .addComponent(pan_list, GroupLayout.DEFAULT_SIZE, 433, Short.MAX_VALUE)
+                    .addComponent(gui_jtf_crs, GroupLayout.DEFAULT_SIZE, 433, Short.MAX_VALUE)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel1)
                         .addGap(21, 21, 21)))
@@ -235,11 +229,12 @@ public class JCRSChooser extends javax.swing.JDialog {
                 .addPreferredGap(ComponentPlacement.RELATED)
                 .addComponent(gui_jtf_crs, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(ComponentPlacement.RELATED)
-                .addComponent(pan_list, GroupLayout.DEFAULT_SIZE, 203, Short.MAX_VALUE)
+                .addComponent(pan_list, GroupLayout.DEFAULT_SIZE, 205, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
         jTabbedPane1.addTab(MessageBundle.getString("crschooser_list"), jPanel1); // NOI18N
+
         wktArea.setColumns(20);
         wktArea.setEditable(false);
         wktArea.setRows(5);
@@ -252,7 +247,7 @@ public class JCRSChooser extends javax.swing.JDialog {
             jPanel2Layout.createParallelGroup(Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, GroupLayout.DEFAULT_SIZE, 429, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, GroupLayout.DEFAULT_SIZE, 433, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
@@ -283,7 +278,7 @@ public class JCRSChooser extends javax.swing.JDialog {
         layout.setHorizontalGroup(
             layout.createParallelGroup(Alignment.LEADING)
             .addGroup(Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(341, Short.MAX_VALUE)
+                .addContainerGap(349, Short.MAX_VALUE)
                 .addComponent(but_valider)
                 .addPreferredGap(ComponentPlacement.RELATED)
                 .addComponent(but_fermer)
