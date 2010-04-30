@@ -26,7 +26,7 @@ import java.util.StringTokenizer;
  * Utility methods for building SQL statements.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.03
+ * @version 3.11
  *
  * @since 3.03
  * @module
@@ -153,6 +153,19 @@ public final class SQLBuilder {
     public SQLBuilder appendIdentifier(final String identifier) {
         buffer.append(quote).append(identifier).append(quote);
         return this;
+    }
+
+    /**
+     * Appends an identifier, with quotes only if the {@code quote} argument is {@code true}.
+     *
+     * @param  identifier The identifier to append.
+     * @param  quote {@code true} for adding quotes.
+     * @return This builder, for method call chaining.
+     *
+     * @since 3.11
+     */
+    public SQLBuilder appendIdentifier(final String identifier, final boolean quote) {
+        return quote ? appendIdentifier(identifier) : append(identifier);
     }
 
     /**

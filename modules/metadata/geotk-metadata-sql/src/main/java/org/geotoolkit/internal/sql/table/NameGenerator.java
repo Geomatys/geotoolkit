@@ -76,4 +76,12 @@ final class NameGenerator extends IdentifierGenerator<String, LocalCache.Stmt> {
     protected LocalCache.Stmt value(final String key, final PreparedStatement query) {
         return new LocalCache.Stmt(query, key);
     }
+
+    /**
+     * Returns {@code true} since the column name should be quoted.
+     */
+    @Override
+    protected boolean quoteColumn() {
+        return true;
+    }
 }

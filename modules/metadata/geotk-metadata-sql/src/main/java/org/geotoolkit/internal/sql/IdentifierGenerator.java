@@ -147,7 +147,7 @@ public abstract class IdentifierGenerator<K, V extends StatementEntry> {
      *
      * @param  pool The pool of prepared statements.
      * @param  column The name of the identifier (primary key) column. If the name should be quoted,
-     *         then the quotes must be explicitly specified; this class will <strong>not</strong>
+     *         then the {@link #quoteColumn()} method shall be overriden. This class does not
      *         add the quotes by itself, because some applications really want unquoted identifiers.
      * @throws SQLException If the connection to the database can not be etablished.
      */
@@ -160,7 +160,7 @@ public abstract class IdentifierGenerator<K, V extends StatementEntry> {
      *
      * @param pool The pool of prepared statements.
      * @param column The name of the identifier (primary key) column. If the name should be quoted,
-     *        then the quotes must be explicitly specified; this class will <strong>not</strong>
+     *        then the {@link #quoteColumn()} method shall be overriden. This class does not
      *        add the quotes by itself, because some applications really want unquoted identifiers.
      * @param buffer A helper object for building SQL statements, determined from database metadata.
      *        This is an opportunist argument to be given only if a buffer already exists.
@@ -178,7 +178,7 @@ public abstract class IdentifierGenerator<K, V extends StatementEntry> {
      *
      * @param other The other generator from which to share the pool and the SQL builder.
      * @param column The name of the identifier (primary key) column. If the name should be quoted,
-     *        then the quotes must be explicitly specified; this class will <strong>not</strong>
+     *        then the {@link #quoteColumn()} method shall be overriden. This class does not
      *        add the quotes by itself, because some applications really want unquoted identifiers.
      */
     protected IdentifierGenerator(final IdentifierGenerator<? super K, V> other, final String column) {
@@ -206,6 +206,18 @@ public abstract class IdentifierGenerator<K, V extends StatementEntry> {
     protected abstract V value(final K key, final PreparedStatement query) throws SQLException;
 
     /**
+     * Returns {@code true} if the column name should be quoted.
+     * The default value is {@code false}.
+     *
+     * @return {@code true} if the column name should be quoted.
+     *
+     * @since 3.11
+     */
+    protected boolean quoteColumn() {
+        return false;
+    }
+
+    /**
      * Searchs for an identifier in the given table. If the given proposal is already in use,
      * then this method will search for an identifier of the form {@code "proposal-n"} not in
      * use, where {@code "n"} is a number.
@@ -222,9 +234,10 @@ public abstract class IdentifierGenerator<K, V extends StatementEntry> {
             final K key = key(schema, table);
             V entry = pool.remove(key);
             if (entry == null) {
+                final boolean quote = quoteColumn();
                 entry = value(key, pool.connection().prepareStatement(buffer.clear().append("SELECT DISTINCT ")
-                        .append(column).append(" FROM ").appendIdentifier(schema, table).append(" WHERE ")
-                        .append(column).append(" LIKE ? ORDER BY ").append(column).toString()));
+                        .appendIdentifier(column, quote).append(" FROM ").appendIdentifier(schema, table).append(" WHERE ")
+                        .appendIdentifier(column, quote).append(" LIKE ? ORDER BY ").appendIdentifier(column, quote).toString()));
             }
             entry.statement.setString(1, buffer.clear().appendEscaped(proposal).append('%').toString());
             final ResultSet rs = entry.statement.executeQuery();
