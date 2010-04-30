@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.coverage.sql;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.Set;
 import java.util.SortedSet;
@@ -30,6 +31,8 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.CancellationException;
+import java.lang.ref.WeakReference;
+import java.lang.ref.Reference;
 import javax.sql.DataSource;
 import java.sql.SQLException;
 
@@ -43,6 +46,7 @@ import org.geotoolkit.util.NullArgumentException;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.CoverageStoreException;
+import org.geotoolkit.internal.io.Installation;
 import org.geotoolkit.internal.sql.DefaultDataSource;
 import org.geotoolkit.internal.sql.table.ConfigurationKey;
 import org.geotoolkit.internal.sql.table.TablePool;
@@ -87,6 +91,13 @@ public class CoverageDatabase {
     private static final int MAXIMUM_TASKS = 256;
 
     /**
+     * The default instance. Created only when first requested.
+     *
+     * @see #getDefaultInstance()
+     */
+    private static Reference<CoverageDatabase> instance;
+
+    /**
      * The object which will manage the connections to the database.
      */
     volatile TableFactory database;
@@ -128,6 +139,42 @@ public class CoverageDatabase {
     CoverageDatabase(final TableFactory db) {
         database = db;
         executor = new Executor();
+    }
+
+    /**
+     * Returns the default instance, or {@code null} if none. The default instance can be specified by
+     * the <a href="http://www.geotoolkit.org/modules/utility/geotk-setup/index.html">geotk-setup</a>
+     * module.
+     *
+     * @return The default instance, or {@code null} if none.
+     * @throws CoverageStoreException If an error occured while fetching the default instance.
+     *
+     * @since 3.11
+     */
+    public static synchronized CoverageDatabase getDefaultInstance() throws CoverageStoreException {
+        if (instance != null) {
+            final CoverageDatabase database = instance.get();
+            if (database != null) {
+                return database;
+            }
+            instance = null;
+        }
+        final Properties properties;
+        try {
+            properties = Installation.COVERAGES.getDataSource();
+        } catch (IOException e) {
+            throw new CoverageStoreException(e);
+        }
+        if (properties != null) {
+            final CoverageDatabase database = new CoverageDatabase(properties) {
+                @Override public void dispose() {
+                    // No op, because this instance may be shared.
+                }
+            };
+            instance = new WeakReference<CoverageDatabase>(database);
+            return database;
+        }
+        return null;
     }
 
     /**
@@ -649,12 +696,8 @@ public class CoverageDatabase {
         executor.shutdown();
     }
 
-    /**
-     * Invoked by the garbage collector when this database is not used anymore.
-     * The default implementation invokes {@link #dispose()}.
+    /*
+     * No need to override finalize(), because ThreadPoolExecutor already
+     * has a finalize() method which invoke its shutdown() method.
      */
-    @Override
-    protected void finalize() {
-        dispose();
-    }
 }

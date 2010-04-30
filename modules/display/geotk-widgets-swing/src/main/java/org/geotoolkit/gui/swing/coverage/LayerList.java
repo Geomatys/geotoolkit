@@ -24,6 +24,7 @@ import java.util.Locale;
 import java.util.Arrays;
 import java.util.ArrayList;
 import java.awt.Dimension;
+import java.awt.Component;
 import java.awt.EventQueue;
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
@@ -46,6 +47,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.BorderFactory;
+import javax.swing.SwingUtilities;
 import javax.swing.ListCellRenderer;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
@@ -70,9 +72,13 @@ import org.geotoolkit.measure.AngleFormat;
 import org.geotoolkit.measure.RangeFormat;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.sql.CoverageDatabase;
+import org.geotoolkit.coverage.sql.CoverageTableModel;
 import org.geotoolkit.coverage.sql.FutureQuery;
 import org.geotoolkit.coverage.sql.Layer;
+import org.geotoolkit.geometry.Envelope2D;
 import org.geotoolkit.gui.swing.ExceptionMonitor;
+import org.geotoolkit.gui.swing.referencing.CoordinateChooser;
+import org.geotoolkit.display.shape.DoubleDimension2D;
 import org.geotoolkit.internal.swing.ArrayListModel;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.resources.Widgets;
@@ -81,8 +87,24 @@ import org.geotoolkit.resources.Errors;
 
 /**
  * A widget displaying the {@linkplain CoverageDatabase#getLayers() list of layers} available
- * in a coverage database. In the lower part of the panel, a description of the selected layer
- * is displayed.
+ * in a coverage database. This component provides a panel which describes the selected layer.
+ * The descriptions include:
+ * <p>
+ * <ul>
+ *   <li>A <cite>domain</cite> tab with:<ul>
+ *     <li>The {@linkplain Layer#getGeographicBoundingBox() geographic bounding box}</li>
+ *     <li>The {@linkplain Layer#getTimeRange() time range}</li>
+ *     <li>The {@linkplain Layer#getTypicalResolution() typical resolution}</li>
+ *   </ul></li>
+ *   <li>A <cite>format</cite> tab with:<ul>
+ *     <li>The {@linkplain Layer#getImageFormats() image formats}</li>
+ *     <li>The {@linkplain Layer#getSampleValueRanges() range of sample values}</li>
+ *   </ul></li>
+ *   <li>A <cite>elevation</cite> tab with the available elevations.</li>
+ * </ul>
+ * <p>
+ * This panel provides also buttons for adding or removing layers, and a button for creating
+ * a new window listing the coverages in the selected layer.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.11
@@ -360,14 +382,14 @@ public class LayerList extends JPanel {
     private final class Listeners implements ListSelectionListener, ActionListener {
         /**
          * Invoked when a new layer has been selected. This method delegates to
-         * {@link LayerList#setSelectedLayer(String)} with the selected layer in
+         * {@link LayerList#setLayerProperties(String)} with the selected layer in
          * argument.
          */
         @Override
         public void valueChanged(final ListSelectionEvent event) {
             if (!event.getValueIsAdjusting()) {
-                final String layer = (String) layerList.getSelectedValue();
-                setSelectedLayer(layer);
+                final String layer = getSelectedLayer();
+                setLayerProperties(layer);
                 final boolean enabled = (layer != null);
                 removeButton.setEnabled(enabled);
                 coveragesButton.setEnabled(enabled);
@@ -385,8 +407,10 @@ public class LayerList extends JPanel {
                 addNewLayer();
             } else if (REMOVE.equals(action)) {
                 removeLayer();
+            } else if (COVERAGES.equals(action)) {
+                showCoverages();
             } else if (REFRESH.equals(action)) {
-                refresh();
+                refresh(true);
             } else if (BUSY.equals(action)) {
                 setBusy(true);
             }
@@ -394,12 +418,23 @@ public class LayerList extends JPanel {
     }
 
     /**
-     * Refreshes the list of layer names. This method shall be invoked if the
-     * database content changed. The refresh action will be run in a background thread.
+     * Refreshes the list of layer names. This method shall be invoked when the database content
+     * changed. The refresh action will be run in a background thread.
+     * <p>
+     * If the {@code clearCache} argument is {@code false}, then this method refreshes only the
+     * list of layers. If the {@code clearCache} argument is {@code true}, then this method also
+     * {@linkplain CoverageDatabase#flush() clears the database cache}. This will force new queries
+     * of layer domains and formats.
+     *
+     * @param clearCache {@code true} if this method should also clears the database cache.
      */
-    public void refresh() {
+    public void refresh(final boolean clearCache) {
+        final String selected = getSelectedLayer();
+        if (clearCache) {
+            database.flush();
+        }
         setLayerNames(database.getLayers());
-        setSelectedLayer((String) layerList.getSelectedValue());
+        setLayerProperties(selected);
     }
 
     /**
@@ -420,7 +455,7 @@ public class LayerList extends JPanel {
                     names = layerNames.toArray(new String[layerNames.size()]);
                     Arrays.sort(names, String.CASE_INSENSITIVE_ORDER);
                 } catch (CoverageStoreException ex) {
-                    ExceptionMonitor.show(LayerList.this, ex);
+                    exceptionOccured(ex);
                     return;
                 }
                 if (!EventQueue.isDispatchThread()) {
@@ -545,7 +580,7 @@ public class LayerList extends JPanel {
      * Shows or hides the busy labels. If the {@code busy} argument is {@code true}, then this
      * method shows the busy labels only if {@link JXBusyLabel#isBusy()} returns {@code true}.
      * <p>
-     * This method is invoked in the Swing thread if the {@link #setSelectedLayer(String)}
+     * This method is invoked in the Swing thread if the {@link #setLayerProperties(String)}
      * method appears to be busy for a little time.
      */
     final void setBusy(final boolean busy) {
@@ -570,12 +605,37 @@ public class LayerList extends JPanel {
     }
 
     /**
+     * Returns the name of the currently selected layer, or {@code null} if none.
+     *
+     * @return The currently selected layer, or {@code null}.
+     */
+    public String getSelectedLayer() {
+        return (String) layerList.getSelectedValue();
+    }
+
+    /**
+     * Sets the currently selected layer. Invoking this method will also refresh
+     * the content of the properties pane (layer domain, image formats, available
+     * elevations).
+     *
+     * @param layer The currently selected layer, or {@code null} for clearing the selection.
+     */
+    public void setSelectedLayer(final String layer) {
+        if (layer != null) {
+            layerList.setSelectedValue(layer, true);
+        } else {
+            layerList.clearSelection();
+        }
+        // setLayerProperties will be invoked indirectly by the event listener.
+    }
+
+    /**
      * Sets the layer to describe in the bottom panel.
      * This method does not change the selection in the list.
      *
      * @param layer The name of the layer to describe.
      */
-    private void setSelectedLayer(final String layer) {
+    private void setLayerProperties(final String layer) {
         if (layer == null) {
             setDomain(null, null, null, null, null);
             setFormat(null, null);
@@ -648,7 +708,7 @@ public class LayerList extends JPanel {
                     if (name == null) try {
                         init();
                     } catch (CoverageStoreException ex) {
-                        ExceptionMonitor.show(LayerList.this, ex);
+                        exceptionOccured(ex);
                         return;
                     }
                     if (!EventQueue.isDispatchThread()) {
@@ -685,12 +745,12 @@ public class LayerList extends JPanel {
                     final boolean exists;
                     try {
                         exists = result.result();
-                    } catch (CoverageStoreException e) {
-                        ExceptionMonitor.show(LayerList.this, e);
+                    } catch (CoverageStoreException ex) {
+                        exceptionOccured(ex);
                         return;
                     }
                     if (exists) {
-                        refresh();
+                        refresh(false);
                     } else {
                         JOptionPane.showMessageDialog(LayerList.this,
                                 "<html>" + Errors.format(Errors.Keys.VALUE_ALREADY_DEFINED_$1,
@@ -706,15 +766,16 @@ public class LayerList extends JPanel {
      * Popups a window for removing the currently selected layer.
      */
     private void removeLayer() {
-        final String layer = (String) layerList.getSelectedValue();
+        final String layer = getSelectedLayer();
         if (layer != null) {
             final Locale locale = getLocale();
             final Widgets resources = Widgets.getResources(locale);
             final Vocabulary vocabulary = Vocabulary.getResources(locale);
             final String remove = vocabulary.getString(Vocabulary.Keys.REMOVE);
             final String cancel = vocabulary.getString(Vocabulary.Keys.CANCEL);
-            if (0 == JOptionPane.showOptionDialog(this,
-                    resources.getString(Widgets.Keys.CONFIRM_DELETE_LAYER_$1, layer),
+            final JLabel confirm = new JLabel(resources.getString(Widgets.Keys.CONFIRM_DELETE_LAYER_$1, layer));
+            confirm.setPreferredSize(new Dimension(450, 80));
+            if (0 == JOptionPane.showOptionDialog(this, confirm,
                     resources.getString(Widgets.Keys.CONFIRM_DELETE), JOptionPane.OK_CANCEL_OPTION,
                     JOptionPane.WARNING_MESSAGE, null, new String[] {remove, cancel}, cancel))
             {
@@ -724,12 +785,75 @@ public class LayerList extends JPanel {
                         if (!EventQueue.isDispatchThread()) {
                             EventQueue.invokeLater(this);
                         } else {
-                            layerList.clearSelection();
-                            refresh();
+                            setSelectedLayer(null);
+                            refresh(false);
                         }
                     }
                 });
             }
         }
+    }
+
+    /**
+     * Creates a new window which will show the list of available coverages
+     * in the currently selected layer.
+     */
+    private void showCoverages() {
+        final String layerName = getSelectedLayer();
+        if (layerName != null) {
+            final GeographicBoundingBox bbox;
+            final DateRange dateRange;
+            final double[] resolution;
+            final Layer layer;
+            try {
+                layer      = database.getLayer(layerName).result();
+                bbox       = layer.getGeographicBoundingBox();
+                dateRange  = layer.getTimeRange();
+                resolution = layer.getTypicalResolution();
+            } catch (CoverageStoreException ex) {
+                exceptionOccured(ex);
+                return;
+            }
+            int hide = 0;
+            final CoordinateChooser domain;
+            if (dateRange != null) {
+                domain = new CoordinateChooser(dateRange.getMinValue(), dateRange.getMaxValue());
+            } else {
+                domain = new CoordinateChooser();
+                hide = CoordinateChooser.TIME_RANGE;
+            }
+            if (bbox != null) {
+                domain.setGeographicArea(new Envelope2D(bbox));
+            }
+            if (resolution != null && resolution.length >= 2) {
+                domain.setPreferredResolution(new DoubleDimension2D(resolution[0], resolution[1]));
+                domain.setPreferredResolution(null); // In order to keep the "best resolution" option selected.
+            } else {
+                hide |= CoordinateChooser.RESOLUTION;
+            }
+            domain.setSelectorVisible(hide, false);
+            final Locale locale = getLocale();
+            final Widgets resources = Widgets.getResources(locale);
+            if (domain.showDialog(SwingUtilities.getWindowAncestor(this),
+                    resources.getString(Widgets.Keys.DOMAIN_OF_ENTRIES)))
+            {
+                final CoverageList coverages = new CoverageList(new CoverageTableModel(locale));
+                coverages.setLayer(layer);
+                final Component frame = org.geotoolkit.internal.SwingUtilities.toFrame(this, coverages,
+                        resources.getString(Widgets.Keys.LAYER_ELEMENTS_$1, layerName), null);
+                frame.setVisible(true);
+            }
+        }
+    }
+
+    /**
+     * Invoked when an exception occured while querying the {@linkplain #database}.
+     * The default implementation reports the error in an {@link ExceptionMonitor}.
+     * Subclasses can override this method in order to report the error in a different way.
+     *
+     * @param ex The exception which occured.
+     */
+    protected void exceptionOccured(final CoverageStoreException ex) {
+        ExceptionMonitor.show(this, ex);
     }
 }

@@ -18,9 +18,6 @@
 package org.geotoolkit.internal.wizard.frame;
 
 import java.util.Locale;
-import java.util.Properties;
-import java.io.IOException;
-import java.awt.Component;
 import java.awt.Desktop;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -44,11 +41,11 @@ import org.geotoolkit.gui.swing.ExceptionMonitor;
 import org.geotoolkit.gui.swing.coverage.LayerList;
 import org.geotoolkit.lang.Setup;
 import org.geotoolkit.internal.SwingUtilities;
-import org.geotoolkit.internal.io.Installation;
 import org.geotoolkit.internal.setup.ControlPanel;
 import org.geotoolkit.internal.wizard.CoverageDatabaseWizard;
 import org.geotoolkit.internal.wizard.MosaicWizard;
 import org.geotoolkit.coverage.sql.CoverageDatabase;
+import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.resources.Wizards;
 import org.geotoolkit.resources.Errors;
@@ -75,11 +72,6 @@ public final class Main extends JFrame implements ActionListener {
      * The desktop pane, which fill completly the frame.
      */
     private final JDesktopPane desktop;
-
-    /**
-     * The coverage database, created when first needed.
-     */
-    private transient CoverageDatabase database;
 
     /**
      * Creates a new frame.
@@ -212,17 +204,16 @@ public final class Main extends JFrame implements ActionListener {
      * Returns the {@link CoverageDatabase}, or {@code null} if none.
      */
     private CoverageDatabase getCoverageDatabase() {
-        if (database == null) try {
-            final Properties properties = Installation.COVERAGES.getDataSource();
-            if (properties != null) {
-                database = new CoverageDatabase(properties);
-            } else {
+        CoverageDatabase database = null;
+        try {
+            database = CoverageDatabase.getDefaultInstance();
+            if (database == null) {
                 final Locale locale = getLocale();
                 JOptionPane.showInternalMessageDialog(desktop,
                         Wizards.getResources(locale).getString(Wizards.Keys.UNSPECIFIED_COVERAGES_DATABASE),
                         Errors.getResources(locale).getString(Errors.Keys.NO_DATA_SOURCE), JOptionPane.WARNING_MESSAGE);
             }
-        } catch (IOException e) {
+        } catch (CoverageStoreException e) {
             ExceptionMonitor.show(desktop, e);
         }
         return database;

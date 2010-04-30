@@ -22,12 +22,14 @@ import java.awt.geom.Rectangle2D;
 import org.opengis.geometry.Envelope;
 import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.geometry.MismatchedReferenceSystemException;
+import org.opengis.metadata.extent.GeographicBoundingBox;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.cs.AxisDirection;
 
 import org.geotoolkit.util.Cloneable;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.resources.Errors;
+import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 
 
 /**
@@ -41,8 +43,8 @@ import org.geotoolkit.resources.Errors;
  * This is not specific to this implementation; in Java2D too, the visual axis orientation depend
  * on the {@linkplain java.awt.Graphics2D#getTransform affine transform in the graphics context}.
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.09
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.11
  *
  * @see GeneralEnvelope
  * @see org.geotoolkit.geometry.jts.ReferencedEnvelope
@@ -87,6 +89,24 @@ public class Envelope2D extends Rectangle2D.Double implements Envelope, Cloneabl
                     Errors.Keys.NOT_TWO_DIMENSIONAL_$1, dimension));
         }
         setCoordinateReferenceSystem(envelope.getCoordinateReferenceSystem());
+    }
+
+    /**
+     * Constructs a new envelope with the same data than the specified
+     * geographic bounding box. The coordinate reference system is set
+     * to {@linkplain DefaultGeographicCRS#WGS84 WGS84}.
+     *
+     * @param box The bounding box to copy.
+     *
+     * @since 3.11
+     */
+    public Envelope2D(final GeographicBoundingBox box) {
+        AbstractEnvelope.ensureNonNull("box", box);
+        crs    = DefaultGeographicCRS.WGS84;
+        x      = box.getWestBoundLongitude();
+        y      = box.getSouthBoundLatitude();
+        width  = box.getEastBoundLongitude() - x;
+        height = box.getNorthBoundLatitude() - y;
     }
 
     /**
