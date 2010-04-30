@@ -37,7 +37,8 @@ import org.geotoolkit.lang.ThreadSafe;
  *
  * @author Martin Desruisseaux (IRD)
  * @author Touraïvane (IRD)
- * @version 3.04
+ * @author Guilhem Legal (Geomatys)
+ * @version 3.11
  *
  * @since 2.1
  * @module
@@ -50,11 +51,10 @@ import org.geotoolkit.lang.ThreadSafe;
 })
 @XmlRootElement(name = "DQ_ConformanceResult")
 public class DefaultConformanceResult extends AbstractResult implements ConformanceResult {
-
     /**
      * Serial number for compatibility with different versions.
      */
-    private static final long serialVersionUID = 6429932577869033286L;
+    private static final long serialVersionUID = -8746956498487963352L;
 
     /**
      * Citation of product specification or user requirement against which data is being evaluated.
@@ -68,12 +68,12 @@ public class DefaultConformanceResult extends AbstractResult implements Conforma
 
     /**
      * Indication of the conformance result.
-     *
-     * The fiels is directly annotated here, because the getter method is called {@link #pass()},
+     * <p>
+     * The field is directly annotated here, because the getter method is called {@link #pass()},
      * and JAXB does not recognize it. The method should have been called getPass() or isPass().
      */
     @XmlElement(name = "pass", required = true)
-    private boolean pass;
+    private Boolean pass;
 
     /**
      * Constructs an initially empty conformance result.
@@ -153,7 +153,7 @@ public class DefaultConformanceResult extends AbstractResult implements Conforma
      */
     @Override
     public synchronized boolean pass() {
-        return pass;
+        return (pass != null) && pass;
     }
 
     /**
