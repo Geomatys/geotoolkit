@@ -134,7 +134,7 @@ public abstract class StaxStreamReader {
      */
     private static final XMLStreamReader toReader(Object input)
             throws XMLStreamException{
-        final XMLInputFactory XMLfactory = XMLInputFactory.newFactory();
+        final XMLInputFactory XMLfactory = XMLInputFactory.newInstance();
         XMLfactory.setProperty("http://java.sun.com/xml/stream/properties/report-cdata-event", Boolean.FALSE);
 
         if(input instanceof InputStream){
