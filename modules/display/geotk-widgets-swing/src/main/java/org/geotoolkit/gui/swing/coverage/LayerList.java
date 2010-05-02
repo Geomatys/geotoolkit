@@ -72,6 +72,7 @@ import org.geotoolkit.measure.AngleFormat;
 import org.geotoolkit.measure.RangeFormat;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.sql.CoverageDatabase;
+import org.geotoolkit.coverage.sql.CoverageEnvelope;
 import org.geotoolkit.coverage.sql.CoverageTableModel;
 import org.geotoolkit.coverage.sql.FutureQuery;
 import org.geotoolkit.coverage.sql.Layer;
@@ -837,8 +838,25 @@ public class LayerList extends JPanel {
             if (domain.showDialog(SwingUtilities.getWindowAncestor(this),
                     resources.getString(Widgets.Keys.DOMAIN_OF_ENTRIES)))
             {
+                /*
+                 * Create the CoverageEnvelope from the user selection.
+                 * TODO: Current implementation assumes that the CoverageEnvelope CRS is WGS84.
+                 */
+                final CoverageEnvelope envelope;
+                try {
+                    envelope = layer.getEnvelope(null, null);
+                } catch (CoverageStoreException ex) {
+                    exceptionOccured(ex);
+                    return;
+                }
+                envelope.setHorizontalRange(domain.getGeographicArea());
+                envelope.setTimeRange(domain.getStartTime(), domain.getEndTime());
+                envelope.setPreferredResolution(domain.getPreferredResolution());
+                /*
+                 * Create the widget which will display the list of available coverages.
+                 */
                 final CoverageList coverages = new CoverageList(new CoverageTableModel(locale));
-                coverages.setLayer(layer);
+                coverages.setData(layer, envelope);
                 final Component frame = org.geotoolkit.internal.SwingUtilities.toFrame(this, coverages,
                         resources.getString(Widgets.Keys.LAYER_ELEMENTS_$1, layerName), null);
                 frame.setVisible(true);

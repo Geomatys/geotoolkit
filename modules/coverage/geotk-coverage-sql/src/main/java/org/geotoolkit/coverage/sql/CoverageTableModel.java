@@ -24,7 +24,6 @@ import java.util.HashSet;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Locale;
 import java.util.Date;
 import java.util.TimeZone;
@@ -68,8 +67,11 @@ import org.geotoolkit.coverage.io.CoverageStoreException;
 
 
 /**
- * A <cite>Swing</cite> {@linkplain TableModel table model} listing the coverages available in a
- * layer. This class also provides support for <cite>undo</cite>/<cite>redo</cite> operations,
+ * A <cite>Swing</cite> {@linkplain TableModel table model} listing coverages entries. An instance
+ * of {@code CoverageTableModel} typically contains the coverages available in a particular layer,
+ * but this is not required.
+ * <p>
+ * This class also provides support for <cite>undo</cite>/<cite>redo</cite> operations,
  * and can render the table cells in different colors according whatever the coverage file exists
  * (the name of missing files are written in red) and if the coverage has been previously visited.
  * <p>
@@ -77,7 +79,7 @@ import org.geotoolkit.coverage.io.CoverageStoreException;
  *
  * {@preformat java
  *     Layer layer = coverageDatabase.getLayer("MyLayer");
- *     CoverageTableModel model = new CoverageTableModel(layer);
+ *     CoverageTableModel model = new CoverageTableModel(layer.getCoverageReferences(null), null);
  *     JTable table = new JTable(model);
  *
  *     // Enable cell coloring (optional).
@@ -102,24 +104,11 @@ import org.geotoolkit.coverage.io.CoverageStoreException;
  * {@section Multi-threading}
  * Like most <cite>Swing</cite> class, this class shall not be assumed thread-safe. This class
  * is designed for usage from the <cite>event dispatcher</cite> thread, unless otherwise specified.
- * <p>
- * Because some {@link CoverageDatabase} operations may be slow, the following methods are
- * implemented in a special way: if they are invoked from any thread other than the
- * <cite>Swing</cite> thread, the lengtly operation will be performed in the current thread
- * until the state of this {@code CoverageTableModel} is about to be changed. The actual change
- * is then delegated to the event dispatched thread. This allow callers to invoke those methods
- * from a background thread.
- * <p>
- * <ul>
- *   <li>{@link #setLayer(Layer, CoverageEnvelope)}</li>
- *   <li>{@link #setCoverageReferences(Collection)}</li>
- *   <li>{@link #remove(GridCoverageReference[])}</li>
- *   <li>{@link #remove(int[])}</li>
- *   <li>{@link #fireTableChanged(TableModelEvent)}</li>
- * </ul>
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @version 3.11
+ *
+ * @see org.geotoolkit.gui.swing.coverage.CoverageList
  *
  * @since 3.11 (derived from Seagis)
  * @module
@@ -155,11 +144,6 @@ public class CoverageTableModel extends AbstractTableModel {
      * {@link #DURATION} constants.
      */
     private final String[] titles;
-
-    /**
-     * The layer shown by this table model.
-     */
-    private Layer layer;
 
     /**
      * The list of entries shown by this table model. The length of this array is the
@@ -237,27 +221,18 @@ public class CoverageTableModel extends AbstractTableModel {
     }
 
     /**
-     * Creates a new table model initialized to the content of the given layer. The initial
+     * Creates a new table model initialized to the content of the given collection. The initial
      * timezone for the date column is the {@linkplain TimeZone#getDefault() local timezone},
      * but this can be changed by a call to {@link #setTimeZone(TimeZone)} after construction.
      *
-     * @param  layer The layer to be initially shown, or {@code null} if none.
-     * @param  envelope The spatio-temporal extent to query, or {@code null} for the full coverage.
+     * @param  refs Refererences to the coverages to put in the list, or {@code null} if none.
      * @param  locale The locale for column titles and cell formatting, or
      *         {@code null} for the {@linkplain Locale#getDefault() default locale}.
-     * @throws CoverageStoreException If an error occured while fetching the coverage entries
-     *         from the given layer.
-     *
-     * @see #setLayer(Layer, CoverageEnvelope)
      */
-    public CoverageTableModel(final Layer layer, final CoverageEnvelope envelope, final Locale locale)
-            throws CoverageStoreException
-    {
+    public CoverageTableModel(final Collection<? extends GridCoverageReference> refs, final Locale locale) {
         this(locale);
-        if (layer != null) {
-            this.layer = layer;
-            final Collection<GridCoverageReference> entryList = layer.getCoverageReferences(envelope);
-            entries = entryList.toArray(new GridCoverageReference[entryList.size()]);
+        if (refs != null) {
+            entries = refs.toArray(new GridCoverageReference[refs.size()]);
             rewrapEntries();
             if (REVERSE_ORDER) {
                 XArrays.reverse(entries);
@@ -272,17 +247,14 @@ public class CoverageTableModel extends AbstractTableModel {
      * @param table The table model to copy.
      */
     public CoverageTableModel(final CoverageTableModel table) {
-        synchronized (table) {
-            layer        =                table.layer;
-            titles       =                table.titles; // No need to clone this one.
-            DAY          =                table.DAY;
-            DAYS         =                table.DAYS;
-            locale       =                table.locale;
-            numberFormat = (NumberFormat) table.numberFormat.clone();
-            dateFormat   =   (DateFormat) table.  dateFormat.clone();
-            timeFormat   =   (DateFormat) table.  timeFormat.clone();
-            entries      =                table.     entries.clone();
-        }
+        titles       =                table.titles; // No need to clone this one.
+        DAY          =                table.DAY;
+        DAYS         =                table.DAYS;
+        locale       =                table.locale;
+        numberFormat = (NumberFormat) table.numberFormat.clone();
+        dateFormat   =   (DateFormat) table.  dateFormat.clone();
+        timeFormat   =   (DateFormat) table.  timeFormat.clone();
+        entries      =                table.     entries.clone();
         rewrapEntries();
     }
 
@@ -304,52 +276,8 @@ public class CoverageTableModel extends AbstractTableModel {
     }
 
     /**
-     * Returns the layer for which this table model is listing the coverages.
-     * If the layer is unknown, then this method returns {@code null}.
-     *
-     * @return The current layer, or {@code null} if unknown.
-     */
-    public synchronized Layer getLayer() {
-        return layer;
-    }
-
-    /**
-     * Sets the content of this table model to the list of coverages in the given layer.
-     * Any coverage references previously listed will be removed from this table model.
-     *
-     * {@section Multi-threading}
-     * This method can be invoked from any thread. If the current thread is not the
-     * <cite>Swing</cite> one, then this method will perform as much work as possible
-     * in the current thread before to mutate the state of this table in the
-     * <cite>Swing</cite> thread.
-     *
-     * @param  layer The new layer, or {@code null} if none.
-     * @param  envelope The spatio-temporal extent to query, or {@code null} for the full coverage.
-     * @throws CoverageStoreException If an error occured while fetching the coverage entries
-     *         from the given layer.
-     */
-    public void setLayer(final Layer layer, final CoverageEnvelope envelope)
-            throws CoverageStoreException
-    {
-        final Collection<GridCoverageReference> entryList;
-        if (layer != null) {
-            entryList = layer.getCoverageReferences(envelope);
-        } else {
-            entryList = Collections.emptyList();
-        }
-        this.layer = layer;
-        setCoverageReferences(entryList);
-    }
-
-    /**
      * Sets the content of this table model to the given collection of coverage references.
      * Any coverage references previously listed will be removed from this table model.
-     *
-     * {@section Multi-threading}
-     * This method can be invoked from any thread. If the current thread is not the
-     * <cite>Swing</cite> one, then this method will perform as much work as possible
-     * in the current thread before to mutate the state of this table in the
-     * <cite>Swing</cite> thread.
      *
      * @param references The new collection of coverage references.
      */
@@ -358,54 +286,32 @@ public class CoverageTableModel extends AbstractTableModel {
         if (REVERSE_ORDER) {
             XArrays.reverse(newEntries);
         }
-        if (EventQueue.isDispatchThread()) {
-            setInSwingThread(newEntries);
-        } else {
-            EventQueue.invokeLater(new Runnable() {
-                @Override public void run() {
-                    setInSwingThread(newEntries);
+        final GridCoverageReference[] oldEntries = entries;
+        /*
+         * Get the list of CoverageProxy instances that existed before this method call.
+         * We will try to recycle existing instances in order to preserve the information
+         * about whatever the file exists, etc.
+         */
+        Map<GridCoverageReference,CoverageProxy> proxies = null;
+        for (GridCoverageReference entry : oldEntries) {
+            if (entry instanceof CoverageProxy) {
+                if (proxies == null) {
+                    proxies = new HashMap<GridCoverageReference,CoverageProxy>();
                 }
-            });
+                final CoverageProxy proxy = (CoverageProxy) entry;
+                final CoverageProxy old = proxies.put(proxy.reference, proxy);
+                assert old == null || old == proxy : proxy;
+            }
         }
-    }
-
-    /**
-     * Sets the content of this table model to the given collection of coverage references.
-     * This method shall be invoked only from the Swing thread.
-     *
-     * @param newEntries The new entries.
-     */
-    private void setInSwingThread(final GridCoverageReference[] newEntries) {
-        assert EventQueue.isDispatchThread();
-        final GridCoverageReference[] oldEntries;
-        synchronized (this) {
-            oldEntries = entries;
-            /*
-             * Get the list of CoverageProxy instances that existed before this method call.
-             * We will try to recycle existing instances in order to preserve the information
-             * about whatever the file exists, etc.
-             */
-            Map<GridCoverageReference,CoverageProxy> proxies = null;
-            for (GridCoverageReference entry : oldEntries) {
-                if (entry instanceof CoverageProxy) {
-                    if (proxies == null) {
-                        proxies = new HashMap<GridCoverageReference,CoverageProxy>();
-                    }
-                    final CoverageProxy proxy = (CoverageProxy) entry;
-                    final CoverageProxy old = proxies.put(proxy.reference, proxy);
-                    assert old == null || old == proxy : proxy;
+        if (proxies != null) {
+            for (int i=0; i<newEntries.length; i++) {
+                final CoverageProxy proxy = proxies.get(newEntries[i]);
+                if (proxy != null) {
+                    newEntries[i] = proxy;
                 }
             }
-            if (proxies != null) {
-                for (int i=0; i<newEntries.length; i++) {
-                    final CoverageProxy proxy = proxies.get(newEntries[i]);
-                    if (proxy != null) {
-                        newEntries[i] = proxy;
-                    }
-                }
-            }
-            entries = newEntries;
         }
+        entries = newEntries;
         fireTableDataChanged();
         commitEdit(oldEntries, newEntries, Vocabulary.Keys.DEFINE);
     }
@@ -431,7 +337,7 @@ public class CoverageTableModel extends AbstractTableModel {
      * @return The coverage references listed by this table model, or an empty array if none
      *         (never {@code null}).
      */
-    public synchronized GridCoverageReference[] getCoverageReferences() {
+    public GridCoverageReference[] getCoverageReferences() {
         final GridCoverageReference[] entries = this.entries;
         final GridCoverageReference[] out = new GridCoverageReference[entries.length];
         for (int i=0; i<out.length; i++) {
@@ -449,7 +355,7 @@ public class CoverageTableModel extends AbstractTableModel {
      * @param  row The index of the desired coverage reference.
      * @return The coverage reference at the given row.
      */
-    public synchronized GridCoverageReference getCoverageReferenceAt(final int row) {
+    public GridCoverageReference getCoverageReferenceAt(final int row) {
         GridCoverageReference entry = entries[row];
         if (!(entry instanceof CoverageProxy)) {
             entries[row] = entry = new CoverageProxy(entry);
@@ -465,7 +371,7 @@ public class CoverageTableModel extends AbstractTableModel {
      * @return The coverage names listed by this table model, or an empty array if none
      *         (never {@code null}).
      */
-    public synchronized String[] getCoverageNames() {
+    public String[] getCoverageNames() {
         final GridCoverageReference[] entries = this.entries;
         final String[] names = new String[entries.length];
         for (int i=0; i<names.length; i++) {
@@ -483,7 +389,7 @@ public class CoverageTableModel extends AbstractTableModel {
      * @return The coverage names at the given indices.
      *         The length of this array is equals to {@code rows.length}.
      */
-    public synchronized String[] getCoverageNames(final int... rows) {
+    public String[] getCoverageNames(final int... rows) {
         final GridCoverageReference[] entries = this.entries;
         final String[] names = new String[rows.length];
         for (int i=0; i<names.length; i++) {
@@ -504,7 +410,7 @@ public class CoverageTableModel extends AbstractTableModel {
      * @return Row indices of named coverages. The length of this array is equals to
      *         {@code names.length}. The array may contains -1 values for image not found.
      */
-    public synchronized int[] indexOf(final String... names) {
+    public int[] indexOf(final String... names) {
         /*
          * Get the indices (in the names array) of each name. A name
          * can have more than once indice if it appears many time.
@@ -549,15 +455,9 @@ public class CoverageTableModel extends AbstractTableModel {
     /**
      * Removes one or many rows from this table.
      *
-     * {@section Multi-threading}
-     * This method can be invoked from any thread. If the current thread is not the
-     * <cite>Swing</cite> one, then this method will perform as much work as possible
-     * in the current thread before to mutate the state of this table in the
-     * <cite>Swing</cite> thread.
-     *
      * @param rows The rows to remove.
      */
-    public synchronized void remove(final int... rows) {
+    public void remove(final int... rows) {
         final Set<GridCoverageReference> toRemoveSet;
         toRemoveSet = new HashSet<GridCoverageReference>(XCollections.hashMapCapacity(rows.length));
         for (int i=0; i<rows.length; i++) {
@@ -570,15 +470,8 @@ public class CoverageTableModel extends AbstractTableModel {
      * Removes one or many coverage references from this table. If a given coverage
      * reference is not found in this table, then that reference is ignored.
      *
-     * {@section Multi-threading}
-     * This method can be invoked from any thread. If the current thread is not the
-     * <cite>Swing</cite> one, then this method will perform as much work as possible
-     * in the current thread before to mutate the state of this table in the
-     * <cite>Swing</cite> thread.
-     *
      * @param toRemove The coverage references to remove.
      */
-    // No need to synchronize this one.
     public void remove(final GridCoverageReference... toRemove) {
         final Set<GridCoverageReference> toRemoveSet;
         toRemoveSet = new HashSet<GridCoverageReference>(XCollections.hashMapCapacity(toRemove.length));
@@ -595,39 +488,28 @@ public class CoverageTableModel extends AbstractTableModel {
      * @param toRemove The coverage references to remove.
      */
     private void remove(final Set<GridCoverageReference> toRemove) {
-        if (!EventQueue.isDispatchThread()) {
-            EventQueue.invokeLater(new Runnable() {
-                @Override public void run() {
-                    remove(toRemove);
-                }
-            });
-            return;
-        }
-        final GridCoverageReference[] oldEntries;
-        synchronized (this) {
-            oldEntries = entries;
-            GridCoverageReference[] entries = oldEntries;
-            int entriesLength = entries.length;
-            int upper = entriesLength;
-            for (int i=upper; --i>=-1;) {
-                if (i<0 || !toRemove.contains(unwrap(entries[i]))) {
-                    final int lower = i+1;
-                    if (upper != lower) {
-                        if (entries == oldEntries) {
-                            // Create a copy, so we don't modify the original array.
-                            entries = XArrays.remove(entries, lower, upper-lower);
-                        } else {
-                            // Work directly on the array only if we known that it is a copy.
-                            System.arraycopy(entries, upper, entries, lower, entriesLength-upper);
-                        }
-                        entriesLength -= upper - lower;
-                        fireTableRowsDeleted(lower, upper-1);
+        final GridCoverageReference[] oldEntries = entries;
+        GridCoverageReference[] entries = oldEntries;
+        int entriesLength = entries.length;
+        int upper = entriesLength;
+        for (int i=upper; --i>=-1;) {
+            if (i<0 || !toRemove.contains(unwrap(entries[i]))) {
+                final int lower = i+1;
+                if (upper != lower) {
+                    if (entries == oldEntries) {
+                        // Create a copy, so we don't modify the original array.
+                        entries = XArrays.remove(entries, lower, upper-lower);
+                    } else {
+                        // Work directly on the array only if we known that it is a copy.
+                        System.arraycopy(entries, upper, entries, lower, entriesLength-upper);
                     }
-                    upper=i;
+                    entriesLength -= upper - lower;
+                    fireTableRowsDeleted(lower, upper-1);
                 }
+                upper = i;
             }
-            this.entries = XArrays.resize(entries, entriesLength);
         }
+        this.entries = XArrays.resize(entries, entriesLength);
         commitEdit(oldEntries, this.entries, Vocabulary.Keys.DELETE);
     }
 
@@ -644,7 +526,7 @@ public class CoverageTableModel extends AbstractTableModel {
      * @param  rows The indices of the rows to copy in the transferable object.
      * @return Objet A copy of the specified rows as a transferable object.
      */
-    public synchronized Transferable copy(final int[] rows) {
+    public Transferable copy(final int[] rows) {
         if (fieldPosition == null) {
             fieldPosition = new FieldPosition(0);
         }
@@ -686,7 +568,7 @@ public class CoverageTableModel extends AbstractTableModel {
      * Returns the number of rows in the model.
      */
     @Override
-    public synchronized int getRowCount() {
+    public int getRowCount() {
         return entries.length;
     }
 
@@ -724,7 +606,7 @@ public class CoverageTableModel extends AbstractTableModel {
      * @return The cell value at the given location.
      */
     @Override
-    public synchronized Object getValueAt(final int row, final int column) {
+    public Object getValueAt(final int row, final int column) {
         GridCoverageReference entry = entries[row];
         if (!(entry instanceof CoverageProxy)) {
             entries[row] = entry = new CoverageProxy(entry);
@@ -769,7 +651,6 @@ public class CoverageTableModel extends AbstractTableModel {
      * Returns the string buffer to use for formatting purpose.
      */
     private final StringBuffer getBuffer() {
-        assert Thread.holdsLock(this);
         if (buffer == null) {
             buffer = new StringBuffer();
         }
@@ -795,7 +676,7 @@ public class CoverageTableModel extends AbstractTableModel {
      *
      * @return The timezone used for formatting dates.
      */
-    public synchronized TimeZone getTimeZone() {
+    public TimeZone getTimeZone() {
         return dateFormat.getTimeZone();
     }
 
@@ -804,7 +685,7 @@ public class CoverageTableModel extends AbstractTableModel {
      *
      * @param timezone The new timezone to use.
      */
-    public synchronized void setTimeZone(final TimeZone timezone) {
+    public void setTimeZone(final TimeZone timezone) {
         dateFormat.setTimeZone(timezone);
         if (entries.length != 0) {
             fireTableChanged(new TableModelEvent(this, 0, entries.length-1, DATE));
@@ -830,14 +711,12 @@ public class CoverageTableModel extends AbstractTableModel {
     }
 
     /**
-     * Invoked when an undoable action has been performed. This method
-     * can be invoked in the <cite>Swing</cite> thread only.
+     * Invoked when an undoable action has been performed.
      */
     private void commitEdit(final GridCoverageReference[] oldEntries,
                             final GridCoverageReference[] newEntries,
-                            final int key) // NO synchronized!
+                            final int key)
     {
-        assert EventQueue.isDispatchThread();
         final String name = Vocabulary.getResources(locale).getString(key).toLowerCase();
 
         @SuppressWarnings("serial")
@@ -845,18 +724,14 @@ public class CoverageTableModel extends AbstractTableModel {
             /** Undo the edit. */
             @Override public void undo() throws CannotUndoException {
                 super.undo();
-                synchronized (CoverageTableModel.this) {
-                    entries = oldEntries;
-                }
+                entries = oldEntries;
                 fireTableDataChanged();
             }
 
             /** Redo the edit. */
             @Override public void redo() throws CannotRedoException {
                 super.redo();
-                synchronized (CoverageTableModel.this) {
-                    entries = newEntries;
-                }
+                entries = newEntries;
                 fireTableDataChanged();
             }
 
@@ -883,34 +758,9 @@ public class CoverageTableModel extends AbstractTableModel {
     }
 
     /**
-     * Forwards the given notification event in the <cite>Swing</cite> thread to all
-     * {@code TableModelListeners}.
-     *
-     * {@section Multi-threading}
-     * This method can be invoked from any thread. If the current thread is not the
-     * <cite>Swing</cite> one, then this method delegates the event firing to the
-     * Swing thread.
-     *
-     * @param event The event to forward.
+     * Invoked when the row for the given reference has been updated.
      */
-    @Override
-    public void fireTableChanged(final TableModelEvent event) { // NO synchronized
-        if (EventQueue.isDispatchThread()) {
-            super.fireTableChanged(event);
-        } else {
-            EventQueue.invokeLater(new Runnable() {
-                @Override public void run() {
-                    CoverageTableModel.super.fireTableChanged(event);
-                }
-            });
-        }
-    }
-
-    /**
-     * Invoked when the row for the given reference has been updated. This method can be
-     * invoked from any thread; it doesn't need to be the <cite>Swing</cite> thread.
-     */
-    private synchronized void fireTableRowsUpdated(GridCoverageReference entry) {
+    final void fireTableRowsUpdated(GridCoverageReference entry) {
         entry = unwrap(entry);
         final GridCoverageReference[] entries = this.entries;
         for (int i=entries.length; --i>=0;) {
@@ -1006,13 +856,23 @@ public class CoverageTableModel extends AbstractTableModel {
         /**
          * Sets or clear the given flags. If this method changed the flag state,
          * then {@link #fireTableRowsUpdated} is invoked.
+         *
+         * {@section Multi-threading}
+         * This method may be invoked from any thread: either the Swing thread or the background
+         * thread created by {@link FileChecker}. Consequently this method must be thread-safe.
          */
         final synchronized void setFlag(byte f, final boolean set) {
             if (set) f |= flags;
             else f  = (byte) (flags & ~f);
             if (flags != f) {
                 flags = f;
-                fireTableRowsUpdated(reference);
+                if (EventQueue.isDispatchThread()) {
+                    fireTableRowsUpdated(reference);
+                } else EventQueue.invokeLater(new Runnable() {
+                    @Override public void run() {
+                        fireTableRowsUpdated(reference);
+                    }
+                });
             }
         }
     }
@@ -1044,7 +904,7 @@ public class CoverageTableModel extends AbstractTableModel {
         }
 
         /**
-         * Ajoute une entrée à la liste des images à vérifier.
+         * Adds an entry to the list of entries pending validity check.
          */
         public static synchronized void add(final CoverageProxy entry) {
             if (entry != null) {
@@ -1157,12 +1017,10 @@ public class CoverageTableModel extends AbstractTableModel {
                 if (model instanceof CoverageTableModel) {
                     final GridCoverageReference entry;
                     final CoverageTableModel imageTable = (CoverageTableModel) model;
-                    synchronized (imageTable) {
-                        if (value instanceof Date) {
-                            value = imageTable.format((Date) value);
-                        }
-                        entry = imageTable.entries[row];
+                    if (value instanceof Date) {
+                        value = imageTable.format((Date) value);
                     }
+                    entry = imageTable.entries[row];
                     if (entry instanceof CoverageProxy) {
                         final byte flags = ((CoverageProxy) entry).flags;
                         if ((flags & CoverageProxy.VIEWED     ) != 0) {foreground=Color.BLUE;}
