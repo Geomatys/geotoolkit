@@ -182,13 +182,9 @@ public class DefaultController2D implements CanvasController2D{
      * {@inheritDoc }
      */
     @Override
-    public DirectPosition getCenter() throws IllegalStateException {
+    public DirectPosition getCenter() throws NoninvertibleTransformException {
         Point2D center = getDisplayCenter();
-        try {
-            center = canvas.objectiveToDisplay.inverseTransform(center, center);
-        } catch (NoninvertibleTransformException ex) {
-            throw new IllegalStateException(ex.getLocalizedMessage(), ex);
-        }
+        center = canvas.objectiveToDisplay.inverseTransform(center, center);
         return new GeneralDirectPosition(center);
     }
 
@@ -197,10 +193,11 @@ public class DefaultController2D implements CanvasController2D{
      */
     @Override
     public void setCenter(DirectPosition center) throws IllegalStateException {
-        DirectPosition oldCenter = getCenter();
-        double diffX = center.getOrdinate(0) - oldCenter.getOrdinate(0);
-        double diffY = center.getOrdinate(1) - oldCenter.getOrdinate(1);
+        
         try {
+            DirectPosition oldCenter = getCenter();
+            double diffX = center.getOrdinate(0) - oldCenter.getOrdinate(0);
+            double diffY = center.getOrdinate(1) - oldCenter.getOrdinate(1);
             translateObjective(diffX, diffY);
         } catch (NoninvertibleTransformException ex) {
             throw new IllegalStateException(ex.getLocalizedMessage(), ex);
@@ -630,7 +627,7 @@ public class DefaultController2D implements CanvasController2D{
      * {@inheritDoc }
      */
     @Override
-    public void setGeographicScale(double scale){
+    public void setGeographicScale(double scale) throws TransformException{
         double currentScale = getGeographicScale();
         double factor = currentScale/scale;
         try {
@@ -644,7 +641,7 @@ public class DefaultController2D implements CanvasController2D{
      * {@inheritDoc }
      */
     @Override
-    public double getGeographicScale() throws IllegalStateException {
+    public double getGeographicScale() throws TransformException {
         final Point2D center = getDisplayCenter();
         final double[] P1 = new double[]{center.getX(), center.getY()};
         final double[] P2 = new double[]{P1[0], P1[1] + 1};
@@ -653,7 +650,7 @@ public class DefaultController2D implements CanvasController2D{
         try {
             trs = canvas.objectiveToDisplay.createInverse();
         } catch (NoninvertibleTransformException ex) {
-            throw new IllegalStateException(ex.getLocalizedMessage(), ex);
+            throw new TransformException(ex.getLocalizedMessage(), ex);
         }
         trs.transform(P1, 0, P1, 0, 1);
         trs.transform(P2, 0, P2, 0, 1);

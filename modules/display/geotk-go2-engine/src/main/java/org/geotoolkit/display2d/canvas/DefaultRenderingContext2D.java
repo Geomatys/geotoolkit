@@ -279,7 +279,13 @@ public final class DefaultRenderingContext2D implements RenderingContext2D{
             LOGGER.log(Level.SEVERE, null, ex);
         }
 
-        geoScale = canvas.getController().getGeographicScale();
+        try {
+            geoScale = canvas.getController().getGeographicScale();
+        } catch (TransformException ex) {
+            //could not calculate the geographic scale.
+            geoScale = 1;
+            LOGGER.log(Level.SEVERE, null, ex);
+        }
 
         //set temporal and elevation range------------------------------------------
         if(temporal != null){

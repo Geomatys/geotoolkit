@@ -22,9 +22,12 @@ import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.geom.Dimension2D;
+import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.text.NumberFormat;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.measure.unit.SI;
 
 import net.sf.jasperreports.engine.JRException;
@@ -110,13 +113,14 @@ public class ScaleBarRenderer implements JRRenderable{
         if(canvas instanceof ReferencedCanvas2D){
             ReferencedCanvas2D c2d = (ReferencedCanvas2D) canvas;
 
-            final double[] center = c2d.getController().getCenter().getCoordinate();
-            final Point2D centerPoint = new Point2D.Double(center[0], center[1]);
-
             try {
+                final double[] center = c2d.getController().getCenter().getCoordinate();
+                final Point2D centerPoint = new Point2D.Double(center[0], center[1]);
                 J2DScaleBarUtilities.paint(c2d.getObjectiveCRS(), c2d.getDisplayCRS(), centerPoint, g2d, area.x,area.y, template);
             } catch (PortrayalException ex) {
-                ex.printStackTrace();
+                Logger.getLogger(ScaleBarRenderer.class.getName()).log(Level.SEVERE, null, ex);
+            }catch (NoninvertibleTransformException ex) {
+                Logger.getLogger(ScaleBarRenderer.class.getName()).log(Level.SEVERE, null, ex);
             }
 
         }

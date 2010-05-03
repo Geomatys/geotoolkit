@@ -68,7 +68,7 @@ public interface CanvasController2D extends CanvasController{
      * @throws IllegalStateException if the affine transform used for conversion is in
      *                               illegal state, non invertible.
      */
-    DirectPosition getCenter() throws IllegalStateException;
+    DirectPosition getCenter() throws NoninvertibleTransformException;
     
     void setAutoRepaint(boolean auto);
     
@@ -184,7 +184,7 @@ public interface CanvasController2D extends CanvasController{
      * and real ground unit meters;
      * @param scale
      */
-    void setGeographicScale(double scale);
+    void setGeographicScale(double scale) throws TransformException;
 
     /**
      * Returns the geographic scale, in a ground unit manner, relation between map display size
@@ -193,7 +193,7 @@ public interface CanvasController2D extends CanvasController{
      * @throws IllegalStateException If the affine transform used for conversion is in
      *                               illegal state.
      */
-    double getGeographicScale() throws IllegalStateException;
+    double getGeographicScale() throws TransformException;
 
 
     //TODO need to handle this more correctly with a 4D BBox

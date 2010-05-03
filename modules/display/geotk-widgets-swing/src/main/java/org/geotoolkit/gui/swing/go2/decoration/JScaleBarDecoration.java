@@ -25,9 +25,12 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
+import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.text.NumberFormat;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
 import javax.swing.JComponent;
@@ -54,7 +57,7 @@ public class JScaleBarDecoration extends JComponent implements MapDecoration{
                             false, 5, NumberFormat.getNumberInstance(),
                             Color.BLACK, Color.BLACK, Color.WHITE,
                             3,true,false, new Font("Serial", Font.PLAIN, 12),true,
-                            SI.METRE);
+                            SI.KILOMETRE);
 
     private final Dimension scaleDimension = new Dimension(500, 40);
     private final BufferedImage buffer = new BufferedImage(scaleDimension.width, scaleDimension.height, BufferedImage.TYPE_INT_ARGB);
@@ -141,7 +144,13 @@ public class JScaleBarDecoration extends JComponent implements MapDecoration{
 
         final Graphics2D g2d = (Graphics2D) g;
 
-        final double[] center = map.getCanvas().getController().getCenter().getCoordinate();
+        final double[] center;
+        try {
+            center = map.getCanvas().getController().getCenter().getCoordinate();
+        } catch (NoninvertibleTransformException ex) {
+            Logger.getLogger(JScaleBarDecoration.class.getName()).log(Level.SEVERE, null, ex);
+            return;
+        }
         final Point2D centerPoint = new Point2D.Double(center[0], center[1]);
         final CoordinateReferenceSystem objCRS = map.getCanvas().getObjectiveCRS();
         final CoordinateReferenceSystem dispCRS = map.getCanvas().getDisplayCRS();
