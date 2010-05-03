@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.internal.sql.table;
 
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.SQLDataException;
 import java.sql.PreparedStatement;
@@ -52,7 +53,7 @@ import org.geotoolkit.resources.Errors;
  * </ul>
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.10
+ * @version 3.11
  *
  * @since 3.09 (derived from Seagis)
  * @module
@@ -154,6 +155,32 @@ public abstract class Table implements Localized {
      */
     protected final Object getLock() {
         return getDatabase().getLocalCache();
+    }
+
+    /**
+     * Returns the connection used by this table in this thread. The caller should
+     * <strong>not</strong> close the returned connection, since it may be shared by
+     * other tables. The connection will be closed automatically by {@link Database}.
+     * <p>
+     * This method must be invoked in a synchronized block as below. Note that the lock
+     * will not prevent concurrent usage of this table. This is just a lock for preventing
+     * the JDBC resources to be reclaimed while they are still in use.
+     *
+     * {@preformat java
+     *     synchronized(getLock()) {
+     *         // Perform all JDBC work here.
+     *     }
+     * }
+     *
+     * @return The connection.
+     * @throws SQLException If an exception occured while fetching the connection.
+     *
+     * @since 3.11
+     */
+    protected final Connection getConnection() throws SQLException {
+        final LocalCache lc = getDatabase().getLocalCache();
+        assert Thread.holdsLock(lc);
+        return lc.connection();
     }
 
     /**
