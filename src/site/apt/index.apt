@@ -29,22 +29,16 @@ The Geotoolkit.org library
 
 * News
 
-  Latest Geotoolkit.org monthly release is Geotk-3.10, released April 6, 2010.
+  Latest Geotoolkit.org monthly release is Geotk-3.11, released May 3, 2010.
   New features in this release are:
 
-  * A database schema and support classes for performing queries in a large set of rasters.
-    For those familiar with NetCDF, this is conceptually similar to NcML but using a database
-    instead than a XML file and working with any image format recognized by the Java Image I/O
-    framework.
+  * An installation wizard for the coverages database schema introduced in Geotk 3.10.
 
-  * Improved support of coordinate conversions between Coordinate Reference Systems (CRS)
-    having more than 2 dimensions.
+  * Support of Polyconic projection.
 
-  * EPSG database now supported on HSQL in addition of Derby database.
+  * Upgrate of EPSG database to version 7.5.
 
-  * (PENDING) Addition of CSW, WCS and SOS clients (in addition of WMS which was already there).
-
-  * (PENDING) Initial support of Dimap grid coverage format.
+  * (PENDING) Initial version of an OpenStreetMap data source.
 
 
 * License

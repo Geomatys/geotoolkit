@@ -474,7 +474,7 @@
             <link>http://download.java.net/media/java3d/javadoc/1.5.1</link>
             <link>http://www.unidata.ucar.edu/software/netcdf-java/v4.1/javadoc</link>
        <!-- <link>http://swinglabs.org/hudson/job/SwingX%20Continuous%20Build/javadoc</link> -->
-            <link>http://javadoc.geotoolkit.org/external/swingx/index.html</link>
+            <link>http://javadoc.geotoolkit.org/external/swingx</link>
             <link>http://jscience.org/api/</link>
             <link>http://www.geoapi.org/snapshot/pending</link>
           </links>
