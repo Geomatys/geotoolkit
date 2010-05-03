@@ -24,7 +24,6 @@ import java.lang.ref.WeakReference;
 import java.io.IOException;
 import java.io.FileNotFoundException;
 import javax.imageio.ImageTypeSpecifier;
-import javax.swing.JFrame;
 
 import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.util.Utilities;
@@ -264,23 +263,6 @@ public abstract class Palette {
             }
         }
         return image;
-    }
-
-    /**
-     * Shows the palette in a windows. This is mostly for debugging purpose.
-     *
-     * @throws IOException if the color values can't be read.
-     *
-     * @deprecated No replacement, but the work done by this class can easily be done by the user.
-     */
-    @Deprecated
-    @SuppressWarnings("deprecation")
-    public void show() throws IOException {
-        final JFrame frame = new JFrame(toString());
-        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        frame.add(new javax.media.jai.widget.ImageCanvas(getImage(new Dimension(256, 32))));
-        frame.pack();
-        frame.setVisible(true);
     }
 
     /**

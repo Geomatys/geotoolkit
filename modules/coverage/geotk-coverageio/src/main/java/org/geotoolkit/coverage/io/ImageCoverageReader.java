@@ -504,18 +504,6 @@ public class ImageCoverageReader extends GridCoverageReader {
      * @since 3.11
      */
     protected ImageReadParam createImageReadParam(int index) throws IOException {
-        return createImageReadParam();
-    }
-
-    /**
-     * @deprecated Refactored as {@link #createImageReadParam(int)}.
-     *
-     * @return {@code null}.
-     *
-     * @since 3.10
-     */
-    @Deprecated
-    protected ImageReadParam createImageReadParam() {
         return null;
     }
 

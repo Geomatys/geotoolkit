@@ -620,21 +620,6 @@ scanNumber: while (++i < length) {
     }
 
     /**
-     * @deprecated This method has been renamed {@link #reduceToDomain(boolean)}.
-     *
-     * @param  crsDomain {@code true} if the envelope should be restricted to the CRS domain in
-     *         addition of the CS domain.
-     * @return {@code true} if this envelope has been modified, or {@code false} if no change
-     *         was done.
-     *
-     * @since 2.5
-     */
-    @Deprecated
-    public boolean normalize(final boolean crsDomain) {
-        return reduceToDomain(crsDomain);
-    }
-
-    /**
      * Fixes rounding errors up to a given tolerance level. For each value {@code ordinates[i]}
      * at dimension <var>i</var>, this method multiplies the ordinate value by the given factor,
      * then round the result only if the product is close to an integer value. The threashold is

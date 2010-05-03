@@ -241,41 +241,6 @@ public class CoverageDatabase {
     }
 
     /**
-     * Convenience method which block until the result of the given task is available,
-     * or throw the appropriate exception otherwise.
-     *
-     * @param  <T>  The result type.
-     * @param  task The task for which the result is wanted now.
-     * @return The result of the given task.
-     * @throws CoverageStoreException If an error occured while executing the task.
-     * @throws CancellationException if the computation was cancelled.
-     *
-     * @deprecated Replaced by {@link FutureQuery#result()}.
-     */
-    @Deprecated
-    public static <T> T now(final Future<T> task) throws CoverageStoreException, CancellationException {
-        try {
-            return task.get();
-        } catch (InterruptedException e) {
-            final CancellationException ex = new CancellationException(e.getLocalizedMessage());
-            ex.initCause(e);
-            throw ex;
-        } catch (ExecutionException e) {
-            final Throwable cause = e.getCause();
-            if (cause instanceof Error) {
-                throw (Error) cause;
-            }
-            if (cause instanceof RuntimeException) {
-                throw (RuntimeException) cause;
-            }
-            if (cause instanceof CoverageStoreException) {
-                throw (CoverageStoreException) cause;
-            }
-            throw new CoverageStoreException(cause);
-        }
-    }
-
-    /**
      * Returns the name of every layers is the database.
      *
      * @return The layer of the given name.
