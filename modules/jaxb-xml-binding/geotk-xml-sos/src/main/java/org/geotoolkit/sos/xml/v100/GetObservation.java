@@ -307,8 +307,10 @@ public class GetObservation extends RequestBaseType {
             s.append(ss).append('\n');
         }
         s.append("eventTime:").append('\n');
-        for (EventTime ss:eventTime) {
-            s.append(ss.toString()).append('\n');
+        if (eventTime != null) {
+            for (EventTime ss:eventTime) {
+                s.append(ss.toString()).append('\n');
+            }
         }
         return s.toString();
     }
