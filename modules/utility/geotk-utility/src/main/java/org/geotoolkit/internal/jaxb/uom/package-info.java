@@ -19,7 +19,7 @@
 /**
  * JAXB adapters for <cite>unit of measure</cite> as specified in the ISO-19103
  * specifications. For example, a measure marshalled with JAXB will be formatted
- * like {@code <gco:Measure uom="pixel">220.0</gco:Measure>}.
+ * like {@code <gco:Measure uom="m">220.0</gco:Measure>}.
  * <p>
  * Contains also adapter for date and time, which are considered as measures
  * in a fixed unit.

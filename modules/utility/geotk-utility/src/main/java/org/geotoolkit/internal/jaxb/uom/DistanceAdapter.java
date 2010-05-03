@@ -17,7 +17,7 @@
  */
 package org.geotoolkit.internal.jaxb.uom;
 
-import javax.measure.unit.NonSI;
+import javax.measure.unit.SI;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 
@@ -55,7 +55,7 @@ public final class DistanceAdapter extends XmlAdapter<DistanceAdapter, Double> {
      * @param value The value.
      */
     private DistanceAdapter(final Double value) {
-        distance = new Measure(value, NonSI.PIXEL);
+        distance = new Measure(value, SI.METRE);
     }
 
     /**

@@ -69,7 +69,7 @@
           </gmd:dimensionName>
           <gmd:dimensionSize>830</gmd:dimensionSize>
           <gmd:resolution>
-            <gco:Measure uom="pixel">70.5</gco:Measure>
+            <gco:Measure uom="../uom/gmxUom.xsd#xpointer(//*[@gml:id='m'])">70.5</gco:Measure>
           </gmd:resolution>
         </gmd:MD_Dimension>
       </gmd:axisDimensionProperties>
