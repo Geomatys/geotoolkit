@@ -87,7 +87,7 @@ public class StaxStreamReaderTest {
 
     @Test
     public void testReadingFromStaxReader() throws Exception {
-        final XMLInputFactory XMLfactory = XMLInputFactory.newFactory();
+        final XMLInputFactory XMLfactory = XMLInputFactory.newInstance();
         final XMLStreamReader reader = XMLfactory.createXMLStreamReader(
                 StaxStreamReaderTest.class.getResourceAsStream("/org/geotoolkit/xml/sample.xml"));
 
