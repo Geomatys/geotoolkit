@@ -127,10 +127,12 @@ public abstract class AbstractRequest implements Request {
             String key = keys.get(0);
             try {
                 sb.append(StringUtilities.convertSpacesForUrl(key));
-                final Object value = requestParameters.get(key);
+                final String value = requestParameters.get(key);
                 if(DONT_ENCODE_EQUAL != value){
                     sb.append('=');
-                    sb.append(URLEncoder.encode(requestParameters.get(key), "UTF-8"));
+                    if(value != null){
+                        sb.append(URLEncoder.encode(value, "UTF-8"));
+                    }
                 }
             } catch (UnsupportedEncodingException ex) {
                 // Should not occur.

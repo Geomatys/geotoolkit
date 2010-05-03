@@ -19,10 +19,15 @@ package org.geotoolkit.wms.v130;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
+
+import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.wms.AbstractGetMap;
+
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.FactoryException;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.operation.TransformException;
 
 
 /**
@@ -57,8 +62,11 @@ public class GetMap130 extends AbstractGetMap {
         map.put("BBOX", sb.toString());
 
         try {
-            map.put("CRS", CRS.lookupIdentifier(env.getCoordinateReferenceSystem(), true));
+            CoordinateReferenceSystem crs2d = CRSUtilities.getCRS2D(env.getCoordinateReferenceSystem());
+            map.put("CRS", CRS.lookupIdentifier(crs2d, true));
         } catch (FactoryException ex) {
+            LOGGER.log(Level.SEVERE, null, ex);
+        } catch (TransformException ex) {
             LOGGER.log(Level.SEVERE, null, ex);
         }
 

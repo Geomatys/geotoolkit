@@ -226,7 +226,7 @@ public class JContextTree extends JScrollPane implements ContextListener {
                 final DefaultMutableTreeNode imgNode = new DefaultMutableTreeNode(img);
                 layerNode.add(imgNode);
             } catch (PortrayalException ex) {
-                Logger.getLogger(JContextTree.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(JContextTree.class.getName()).log(Level.WARNING, null, ex);
             }
 
         }else{
