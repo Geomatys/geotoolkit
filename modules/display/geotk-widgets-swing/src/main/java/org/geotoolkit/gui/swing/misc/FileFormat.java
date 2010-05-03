@@ -34,6 +34,7 @@ public enum FileFormat {
     ACCESS_DATABASE("filter_access", "mdb"),
     AUTOCAD_DWG("filter_dwg", "dwg"),
     COMMA_SEPARATED_VALUES("filter_csv", "csv"),
+    DIMAP("filter_dimap", "tif", "tiff"),
     ERDAS_IMAGE("filter_erdas_img", "img"),
     ERMAPPER_COMPRESSED_WAVELETS("filter_ecw", "ecw"),
     ESRI_SHAPEFILE("filter_shapefile", "shp"),
