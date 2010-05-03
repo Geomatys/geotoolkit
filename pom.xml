@@ -588,7 +588,7 @@
             <link>http://download.java.net/media/jai/javadoc/1.1.3/jai-apidocs</link>
             <link>http://download.java.net/media/jai-imageio/javadoc/1.1</link>
             <link>http://download.java.net/media/java3d/javadoc/1.5.1</link>
-            <link>http://swinglabs.org/hudson/job/SwingX%20Continuous%20Build/javadoc</link>
+            <link>http://javadoc.geotoolkit.org/external/swingx</link>
             <link>http://jscience.org/api/</link>
             <link>http://www.geoapi.org/snapshot/pending</link>
             <link>http://www.geotoolkit.org/apidocs</link>
