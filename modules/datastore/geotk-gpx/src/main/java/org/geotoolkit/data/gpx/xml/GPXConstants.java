@@ -53,15 +53,16 @@ public class GPXConstants {
     /**
      * Person tag.
      */
-    public static final String TAG_PERSON = "person";
-    public static final String TAG_PERSON_EMAIL = "email";
+    public static final String TAG_AUTHOR = "author";
+    public static final String TAG_AUTHOR_EMAIL = "email";
 
     /**
      * CopyRight tag.
      */
     public static final String TAG_COPYRIGHT = "copyright";
-    public static final String ATT_COPYRIGHT_YEAR = "year";
-    public static final String ATT_COPYRIGHT_LICENSe = "license";
+    public static final String TAG_COPYRIGHT_YEAR = "year";
+    public static final String TAG_COPYRIGHT_LICENSE = "license";
+    public static final String ATT_COPYRIGHT_AUTHOR = "author";
 
     /**
      * Bounds tag.
@@ -71,6 +72,13 @@ public class GPXConstants {
     public static final String ATT_BOUNDS_MINLON = "minlon";
     public static final String ATT_BOUNDS_MAXLAT = "maxlat";
     public static final String ATT_BOUNDS_MAXLON = "maxlon";
+
+    /**
+     * Link tag.
+     */
+    public static final String TAG_LINK_TEXT = "text";
+    public static final String TAG_LINK_TYPE = "type";
+    public static final String ATT_LINK_HREF = "href";
 
     /**
      * WPT tag.

@@ -27,20 +27,34 @@ import java.net.URI;
  */
 public class CopyRight {
 
-    private final int year;
+    private final String author;
+    private final Integer year;
     private final URI license;
 
-    public CopyRight(int year, URI license){
+    public CopyRight(String author, Integer year, URI license){
+        this.author = author;
         this.year = year;
         this.license = license;
     }
 
-    public int getYear() {
+    public String getAuthor() {
+        return author;
+    }
+
+    public Integer getYear() {
         return year;
     }
 
     public URI getLicense() {
         return license;
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("CopyRight(");
+        sb.append(author).append(',').append(year).append(',').append(license);
+        sb.append(')');
+        return sb.toString();
     }
 
 }

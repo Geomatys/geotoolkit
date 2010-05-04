@@ -49,4 +49,13 @@ public class Person {
         return link;
     }
 
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("Person(");
+        sb.append(name).append(',').append(email).append(',').append(link);
+        sb.append(')');
+        return sb.toString();
+    }
+
+
 }

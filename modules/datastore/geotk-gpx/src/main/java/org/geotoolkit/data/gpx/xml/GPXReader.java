@@ -19,15 +19,20 @@ package org.geotoolkit.data.gpx.xml;
 
 import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.xml.stream.XMLStreamException;
 import org.geotoolkit.data.gpx.model.Bound;
 import org.geotoolkit.data.gpx.model.CopyRight;
 
 import org.geotoolkit.data.gpx.model.MetaData;
 import org.geotoolkit.data.gpx.model.Person;
+import org.geotoolkit.temporal.object.TemporalUtilities;
 import org.geotoolkit.xml.StaxStreamReader;
 import org.opengis.geometry.Envelope;
 
@@ -131,10 +136,10 @@ public class GPXReader extends StaxStreamReader{
                 case START_ELEMENT:
                     final String localName = reader.getLocalName();
                     if(TAG_NAME.equalsIgnoreCase(localName)){
-                        name = reader.getText();
+                        name = reader.getElementText();
                     }else if(TAG_DESC.equalsIgnoreCase(localName)){
-                        desc = reader.getText();
-                    }else if(TAG_PERSON.equalsIgnoreCase(localName)){
+                        desc = reader.getElementText();
+                    }else if(TAG_AUTHOR.equalsIgnoreCase(localName)){
                         person = parsePerson();
                     }else if(TAG_COPYRIGHT.equalsIgnoreCase(localName)){
                         copyright = parseCopyRight();
@@ -143,7 +148,7 @@ public class GPXReader extends StaxStreamReader{
                     }else if(TAG_METADATA_TIME.equalsIgnoreCase(localName)){
                         time = parseTime();
                     }else if(TAG_METADATA_KEYWORDS.equalsIgnoreCase(localName)){
-                        keywords = reader.getText();
+                        keywords = reader.getElementText();
                     }else if(TAG_BOUNDS.equalsIgnoreCase(localName)){
                         env = parseBound();
                     }
@@ -169,20 +174,98 @@ public class GPXReader extends StaxStreamReader{
     }
 
     private CopyRight parseCopyRight() throws XMLStreamException {
-        //todo
-        toTagEnd(TAG_COPYRIGHT);
-        return null;
+        String author = null;
+        String year = null;
+        String uri = null;
+
+        for(int i=0,n=reader.getAttributeCount(); i<n;i++){
+            final String attName = reader.getAttributeLocalName(i);
+            if(ATT_COPYRIGHT_AUTHOR.equalsIgnoreCase(attName)){
+                author = reader.getAttributeValue(i);
+            }
+        }
+
+        while (reader.hasNext()) {
+            final int type = reader.next();
+
+            switch (type) {
+                case START_ELEMENT:
+                    final String localName = reader.getLocalName();
+                    if(TAG_COPYRIGHT_YEAR.equalsIgnoreCase(localName)){
+                        year = reader.getElementText();
+                    }else if(TAG_COPYRIGHT_LICENSE.equalsIgnoreCase(localName)){
+                        uri = reader.getElementText();
+                    }
+                    break;
+                case END_ELEMENT:
+                    if(TAG_COPYRIGHT.equalsIgnoreCase(reader.getLocalName())){
+                        try {
+                            //end of the copyright element
+                            return new CopyRight(author,
+                                    (year != null) ? Integer.valueOf(year) : null,
+                                    (uri != null) ? new URI(uri) : null);
+                        } catch (URISyntaxException ex) {
+                            throw new XMLStreamException(ex);
+                        }
+                    }
+                    break;
+            }
+        }
+
+        throw new XMLStreamException("Error in xml file, copyright tag without end.");
     }
 
     private Date parseTime() throws XMLStreamException {
-        //todo
+        final String str = reader.getElementText();
+        
+        try {
+            return TemporalUtilities.parseDate(str);
+        } catch (ParseException ex) {
+            Logger.getLogger(GPXReader.class.getName()).log(Level.WARNING, null, ex);
+        } catch (NullPointerException ex) {
+            Logger.getLogger(GPXReader.class.getName()).log(Level.WARNING, null, ex);
+        }
         return null;
     }
 
     private URI parseLink() throws XMLStreamException {
-        //todo
-        toTagEnd(TAG_PERSON);
-        return null;
+
+        String text = null;
+        String mime = null;
+
+        for(int i=0,n=reader.getAttributeCount(); i<n;i++){
+            final String attName = reader.getAttributeLocalName(i);
+            if(ATT_LINK_HREF.equalsIgnoreCase(attName)){
+                text = reader.getAttributeValue(i);
+            }
+        }
+
+        while (reader.hasNext()) {
+            final int type = reader.next();
+
+            switch (type) {
+                case START_ELEMENT:
+                    final String localName = reader.getLocalName();
+                    if(TAG_LINK_TEXT.equalsIgnoreCase(localName)){
+                        text = reader.getElementText();
+                    }else if(TAG_LINK_TYPE.equalsIgnoreCase(localName)){
+                        mime = reader.getElementText();
+                    }
+                    break;
+                case END_ELEMENT:
+                    if(TAG_LINK.equalsIgnoreCase(reader.getLocalName())){
+                        try {
+                            //end of the link element
+                            return new URI(text);
+                        } catch (URISyntaxException ex) {
+                            throw new XMLStreamException(ex);
+                        }
+                    }
+                    break;
+            }
+        }
+
+        throw new XMLStreamException("Error in xml file, link tag without end.");
     }
 
     private Person parsePerson() throws XMLStreamException {
@@ -190,20 +273,30 @@ public class GPXReader extends StaxStreamReader{
         String email = null;
         URI uri = null;
 
-        for(int i=0; i<reader.getAttributeCount();i++){
-            final String attName = reader.getAttributeLocalName(i);
-            if(TAG_NAME.equalsIgnoreCase(attName)){
-                name = reader.getText();
-            }else if(TAG_PERSON_EMAIL.equalsIgnoreCase(attName)){
-                email = reader.getText();
-            }else if(TAG_LINK.equalsIgnoreCase(attName)){
-                uri = parseLink();
+        while (reader.hasNext()) {
+            final int type = reader.next();
+
+            switch (type) {
+                case START_ELEMENT:
+                    final String localName = reader.getLocalName();
+                    if(TAG_NAME.equalsIgnoreCase(localName)){
+                        name = reader.getElementText();
+                    }else if(TAG_AUTHOR_EMAIL.equalsIgnoreCase(localName)){
+                        email = reader.getElementText();
+                    }else if(TAG_LINK.equalsIgnoreCase(localName)){
+                        uri = parseLink();
+                    }
+                    break;
+                case END_ELEMENT:
+                    if(TAG_AUTHOR.equalsIgnoreCase(reader.getLocalName())){
+                        //end of the author element
+                        return new Person(name,email,uri);
+                    }
+                    break;
             }
         }
 
-        toTagEnd(TAG_PERSON);
-
-        return new Person(name, email, uri);
+        throw new XMLStreamException("Error in xml file, person tag without end.");
     }
 
     private Envelope parseBound() throws XMLStreamException {
@@ -212,7 +305,7 @@ public class GPXReader extends StaxStreamReader{
         String ymin = null;
         String ymax = null;
 
-        for(int i=0; i<reader.getAttributeCount();i++){
+        for(int i=0,n=reader.getAttributeCount(); i<n;i++){
             final String attName = reader.getAttributeLocalName(i);
             if(ATT_BOUNDS_MINLON.equalsIgnoreCase(attName)){
                 xmin = reader.getAttributeValue(i);
