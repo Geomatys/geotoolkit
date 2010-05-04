@@ -144,8 +144,6 @@ public class WellKnownMarkFactory implements MarkFactory {
         
         CIRCLE = new java.awt.geom.Ellipse2D.Double(-.5, -.5, 1., 1.);
     }
-
-    
     
     @Override
     public Shape getShape(Graphics2D graphics, Expression symbolUrl, Feature feature) throws Exception {
@@ -153,47 +151,32 @@ public class WellKnownMarkFactory implements MarkFactory {
         if(symbolUrl == null)
             return null;
         
-        String wellKnownName = symbolUrl.evaluate(feature, String.class);
+        final String wellKnownName = symbolUrl.evaluate(feature, String.class);
         
         LOGGER.finer("fetching mark of name " + wellKnownName);
 
         if (wellKnownName.equalsIgnoreCase("cross")) {
             LOGGER.finer("returning cross");
             return CROSS;
-        }
-
-        if (wellKnownName.equalsIgnoreCase("circle")) {
+        }else if (wellKnownName.equalsIgnoreCase("circle")) {
             LOGGER.finer("returning circle");
             return CIRCLE;
-        }
-
-        if (wellKnownName.equalsIgnoreCase("triangle")) {
+        }else if (wellKnownName.equalsIgnoreCase("triangle")) {
             LOGGER.finer("returning triangle");
             return TRIANGLE;
-        }
-
-        if (wellKnownName.equalsIgnoreCase("X")) {
+        }else if (wellKnownName.equalsIgnoreCase("X")) {
             LOGGER.finer("returning X");
-
             return X;
-        }
-
-        if (wellKnownName.equalsIgnoreCase("star")) {
+        }else if (wellKnownName.equalsIgnoreCase("star")) {
             LOGGER.finer("returning star");
             return STAR;
-        }
-
-        if (wellKnownName.equalsIgnoreCase("arrow")) {
+        }else if (wellKnownName.equalsIgnoreCase("arrow")) {
             LOGGER.finer("returning arrow");
             return ARROW;
-        }
-        
-        if (wellKnownName.equalsIgnoreCase("hatch")) {
+        }else if (wellKnownName.equalsIgnoreCase("hatch")) {
             LOGGER.finer("returning hatch");
             return HATCH;
-        }
-        
-        if (wellKnownName.equalsIgnoreCase("square")) {
+        }else if (wellKnownName.equalsIgnoreCase("square")) {
             LOGGER.finer("returning square");
             return SQUARE;
         }

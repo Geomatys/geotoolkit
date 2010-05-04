@@ -3,7 +3,7 @@
  *    http://www.geotoolkit.org
  *
  *    (C) 2002 - 2008, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2008 - 2009, Geomatys
+ *    (C) 2008 - 2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -17,23 +17,15 @@
  */
 package org.geotoolkit.renderer.style;
 
+import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
-import java.net.URL;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.logging.Logger;
-
+import java.net.URI;
+import java.util.Collection;
 import javax.imageio.ImageIO;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
 
-import org.geotoolkit.util.logging.Logging;
-import org.opengis.feature.Feature;
-import org.opengis.filter.expression.Expression;
+import org.geotoolkit.util.collection.UnmodifiableArrayList;
 
 /**
  * External graphic factory accepting an Expression that can be evaluated to a
@@ -41,59 +33,54 @@ import org.opengis.filter.expression.Expression;
  * mime types supported by the current JDK.
  * 
  * @author Andrea Aime - TOPP
+ * @author Johann Sorel (Geomatys)
  * 
  * @module pending
  */
 public class ImageGraphicFactory implements ExternalGraphicFactory {
 
-    /** The logger for the rendering module. */
-    private static final Logger LOGGER = Logging.getLogger(ImageGraphicFactory.class);
-
     /** Current way to load images */
-    ImageLoader imageLoader = new ImageLoader();
+    private ImageLoader imageLoader = new ImageLoader();
 
     /** Holds the of graphic formats supported by the current jdk */
-    static Set<String> supportedGraphicFormats = new HashSet<String>(Arrays.asList(ImageIO
-            .getReaderMIMETypes()));
+    private static Collection<String> supportedGraphicFormats = UnmodifiableArrayList.wrap(ImageIO.getReaderMIMETypes());
 
-    public Icon getIcon(Feature feature, Expression url, String format, int size) throws Exception {
+    @Override
+    public BufferedImage getImage(URI location, String format, Float size, RenderingHints hints) throws Exception {
         // check we do support the format
         if (!supportedGraphicFormats.contains(format.toLowerCase()))
             return null;
 
         // evaluate the location as a URL
-        URL location = url.evaluate(feature, URL.class);
         if (location == null)
-            throw new IllegalArgumentException(
-                    "The provided expression cannot be evaluated to a URL");
+            throw new IllegalArgumentException("URI must not be null");
 
         // imageLoader is not thread safe
         BufferedImage image;
         synchronized (imageLoader) {
-            image = imageLoader.get(location, false);
+            image = imageLoader.get(location.toURL(), false);
         }
         
         // if scaling is needed, perform it
         if(size > 0 && image.getHeight() != size) {
-            double dsize = (double) size;
-
-            double scaleY = dsize / image.getHeight(); // >1 if you're magnifying
-            double scaleX =  scaleY; // keep aspect ratio!
-
-            AffineTransform scaleTx = AffineTransform.getScaleInstance(scaleX,scaleY);  
-            AffineTransformOp ato = new AffineTransformOp(scaleTx, AffineTransformOp.TYPE_BILINEAR);
+            final double dsize = (double) size;
+            final double scaleY = dsize / image.getHeight(); // >1 if you're magnifying
+            final double scaleX =  scaleY; // keep aspect ratio!
+            final AffineTransform scaleTx = AffineTransform.getScaleInstance(scaleX,scaleY);
+            final AffineTransformOp ato = new AffineTransformOp(scaleTx, AffineTransformOp.TYPE_BILINEAR);
             image = ato.filter(image, null);
         }
         
-        return new ImageIcon(image);
+        return image;
     }
     
     /**
      * Returs the set of mime types supported by this factory
-     * @return Set<String>
+     * @return Collection<String>
      */
-    public Set<String> getSupportedMimeTypes() {
-        return Collections.unmodifiableSet(supportedGraphicFormats);
+    @Override
+    public Collection<String> getSupportedMimeTypes() {
+        return supportedGraphicFormats;
     }
 
 }

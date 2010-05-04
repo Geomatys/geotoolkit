@@ -47,13 +47,13 @@ public class FontCache {
     private static final Logger LOGGER = org.geotoolkit.util.logging.Logging
             .getLogger("org.geotoolkit.renderer.style");
 
-    static FontCache defaultInstance;
+    private static FontCache defaultInstance;
 
     /** Set containing the font families known of this machine */
-    Set<String> fontFamilies = null;
+    private Set<String> fontFamilies = null;
 
     /** Fonts already loaded */
-    Map<String, Font> loadedFonts = new HashMap<String, Font>();
+    private Map<String, Font> loadedFonts = new HashMap<String, Font>();
 
     /**
      * Returns the default, system wide font cache
@@ -68,10 +68,8 @@ public class FontCache {
     public synchronized Font getFont(String requestedFont) {
         // make sure we load the known font families once
         if (fontFamilies == null) {
-            GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-            fontFamilies = new HashSet<String>();
-
-            fontFamilies.addAll(Arrays.asList(ge.getAvailableFontFamilyNames()));
+            final GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+            fontFamilies = new HashSet<String>(Arrays.asList(ge.getAvailableFontFamilyNames()));
 
             if (LOGGER.isLoggable(Level.FINEST)) {
                 LOGGER.finest("there are " + fontFamilies.size() + " fonts available");
@@ -79,7 +77,6 @@ public class FontCache {
         }
 
         // see if the font has already been loaded
-        java.awt.Font javaFont = null;
         if (LOGGER.isLoggable(Level.FINEST)) {
             LOGGER.finest("trying to load " + requestedFont);
         }
@@ -93,13 +90,13 @@ public class FontCache {
         }
 
         // if not, try to load from the java runtime or as an URL
+        final Font javaFont;
         if (fontFamilies.contains(requestedFont)) {
-            javaFont = new java.awt.Font(requestedFont, Font.PLAIN, 12);
+            javaFont = new Font(requestedFont, Font.PLAIN, 12);
         } else {
             if (LOGGER.isLoggable(Level.FINEST)) {
                 LOGGER.finest("not a system font");
             }
-            
             javaFont = loadFromUrl(requestedFont); 
         }
         
@@ -119,7 +116,7 @@ public class FontCache {
      * @param fontUrl
      * @return
      */
-    java.awt.Font loadFromUrl(String fontUrl) {
+    Font loadFromUrl(String fontUrl) {
         // may be its a file or url
         InputStream is = null;
 
@@ -160,7 +157,6 @@ public class FontCache {
             if (LOGGER.isLoggable(Level.INFO)) {
                 LOGGER.info("null input stream, could not load the font");
             }
-
             return null;
         }
 
@@ -169,19 +165,17 @@ public class FontCache {
         }
 
         try {
-            return java.awt.Font.createFont(java.awt.Font.TRUETYPE_FONT, is);
+            return Font.createFont(Font.TRUETYPE_FONT, is);
         } catch (FontFormatException ffe) {
             if (LOGGER.isLoggable(Level.INFO)) {
                 LOGGER.info("Font format error in SLDStyleFactory " + fontUrl + "\n" + ffe);
             }
-
             return null;
         } catch (IOException ioe) {
             // we'll ignore this for the moment
             if (LOGGER.isLoggable(Level.INFO)) {
                 LOGGER.info("IO error in SLDStyleFactory " + fontUrl + "\n" + ioe);
             }
-
             return null;
         }
     }

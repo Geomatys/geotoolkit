@@ -1,2 +1,2 @@
-org.geotoolkit.renderer.style.SVGGraphicFactory
 org.geotoolkit.renderer.style.ImageGraphicFactory
+org.geotoolkit.renderer.svg.SVGGraphicFactory

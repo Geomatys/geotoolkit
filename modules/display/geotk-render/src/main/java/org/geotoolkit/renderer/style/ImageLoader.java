@@ -97,7 +97,6 @@ class ImageLoader implements Runnable {
 
         if (interactive) {
             LOGGER.finest("fast return");
-
             return;
         } else {
             waiting = true;

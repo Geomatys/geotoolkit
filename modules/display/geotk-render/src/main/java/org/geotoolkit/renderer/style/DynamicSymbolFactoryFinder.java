@@ -17,6 +17,9 @@
  */
 package org.geotoolkit.renderer.style;
 
+import java.awt.RenderingHints;
+import java.awt.image.BufferedImage;
+import java.net.URI;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.logging.Logger;
@@ -37,17 +40,8 @@ import org.geotoolkit.factory.FactoryRegistry;
  * <li><code>META-INF/services/org.geotoolkit.renderer.style.ExternalGraphicFactory</code>
  * if the are {@link ExternalGraphicFactory} instances</li>
  * </ul>
- * 
  * </p>
  * 
- * <p>
- * The file should contain a single line which gives the full name of the
- * implementing class.
- * </p>
- * 
- * <p>
- * Example:<br/><code>org.geotoolkit.data.jdbc.DBCPDataSourceFactory</code>
- * </p>
  * @module pending
  */
 public final class DynamicSymbolFactoryFinder {
@@ -61,8 +55,21 @@ public final class DynamicSymbolFactoryFinder {
      */
     private static FactoryRegistry registry;
 
-    // Singleton pattern
     private DynamicSymbolFactoryFinder() {
+    }
+
+    /**
+     * @see org.geotoolkit.renderer.style.ExternalGraphicFactory#getImage(java.net.URI, java.lang.String, java.lang.Float, RenderingHints)
+     */
+    public static BufferedImage getImage(URI uri, String mime, Float size, RenderingHints hints) throws Exception{
+        final Iterator<ExternalGraphicFactory> ite = getExternalGraphicFactories();
+        while(ite.hasNext()){
+            final ExternalGraphicFactory factory = ite.next();
+            if(factory.getSupportedMimeTypes().contains(mime)){
+                return factory.getImage(uri, mime, size, hints);
+            }
+        }
+        return null;
     }
 
     /**

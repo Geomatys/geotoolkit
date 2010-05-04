@@ -3,7 +3,7 @@
  *    http://www.geotoolkit.org
  *
  *    (C) 2004 - 2008, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2008 - 2009, Geomatys
+ *    (C) 2008 - 2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -17,20 +17,19 @@
  */
 package org.geotoolkit.display2d.style;
 
-import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URI;
 import java.util.Collection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.Icon;
-import org.geotoolkit.renderer.svg.SvgUtils;
+
+import org.geotoolkit.renderer.style.DynamicSymbolFactoryFinder;
 
 import org.opengis.feature.Feature;
 import org.opengis.filter.expression.Function;
@@ -147,40 +146,14 @@ public class CachedExternal extends Cache<ExternalGraphic>{
         BufferedImage img = cachedImage;
 
         if(cachedImage == null && isSVG){
-            final Dimension dim;
-            if(size == null || size.isNaN()){
-                dim = new Dimension(12, 12);
-            }else{
-                dim = new Dimension( size.intValue(), size.intValue());
-            }
-
             final URI uri = styleElement.getOnlineResource().getLinkage();
-            InputStream stream = null;
-            try{
-                //try distant url
-                stream = uri.toURL().openStream();
-            }catch(Exception ex){
-                //try class loader
-                try{
-                    stream = CachedExternal.class.getResourceAsStream(uri.toString());
-                }catch(Exception e){
-                    Logger.getLogger(CachedExternal.class.getName()).log(Level.SEVERE, null, e);
-                }
-            }
 
-            if(stream != null){
+            if(uri != null){
                 try{
-                    BufferedImage buffer = (BufferedImage) SvgUtils.read(stream, dim, hints);
-                    buffer = recode(buffer, styleElement.getColorReplacements());
-                    return buffer;
+                    final BufferedImage buffer = DynamicSymbolFactoryFinder.getImage(uri, styleElement.getFormat(),size, hints);
+                    return recode(buffer, styleElement.getColorReplacements());
                 }catch (Exception ex){
                     Logger.getLogger(CachedExternal.class.getName()).log(Level.SEVERE, null, ex);
-                }finally{
-                    try {
-                        stream.close();
-                    } catch (IOException ex) {
-                        Logger.getLogger(CachedExternal.class.getName()).log(Level.SEVERE, null, ex);
-                    }
                 }
             }
 
@@ -201,8 +174,8 @@ public class CachedExternal extends Cache<ExternalGraphic>{
             final float aspect = (float)(cachedImage.getHeight()) / size.floatValue() ;
             final float maxwidth = cachedImage.getWidth() / aspect;
 
-            BufferedImage buffer = new BufferedImage( (int)(maxwidth+0.5f), (int)(size.floatValue()), BufferedImage.TYPE_INT_ARGB);
-            Graphics2D g2 = (Graphics2D) buffer.getGraphics();
+            final BufferedImage buffer = new BufferedImage( (int)(maxwidth+0.5f), (int)(size.floatValue()), BufferedImage.TYPE_INT_ARGB);
+            final Graphics2D g2 = (Graphics2D) buffer.getGraphics();
             if(hints != null) g2.setRenderingHints(hints);
             g2.drawImage(cachedImage, 0, 0,buffer.getWidth(), buffer.getHeight(), 0, 0, cachedImage.getWidth(), cachedImage.getHeight(),null);
             g2.dispose();
@@ -213,8 +186,8 @@ public class CachedExternal extends Cache<ExternalGraphic>{
             final float aspect = (float)(cachedImage.getHeight()) / coeff ;
             final float maxwidth = cachedImage.getWidth() / aspect;
 
-            BufferedImage buffer = new BufferedImage( (int)(maxwidth+0.5f), (int)(coeff), BufferedImage.TYPE_INT_ARGB);
-            Graphics2D g2 = (Graphics2D) buffer.getGraphics();
+            final BufferedImage buffer = new BufferedImage( (int)(maxwidth+0.5f), (int)(coeff), BufferedImage.TYPE_INT_ARGB);
+            final Graphics2D g2 = (Graphics2D) buffer.getGraphics();
             if(hints != null) g2.setRenderingHints(hints);
             g2.drawImage(cachedImage, 0, 0,buffer.getWidth(), buffer.getHeight(), 0, 0, cachedImage.getWidth(), cachedImage.getHeight(),null);
             g2.dispose();
