@@ -31,7 +31,7 @@ import org.geotoolkit.metadata.fra.FRA_IndirectReferenceSystem;
  * package documentation for more information about JAXB and interface.
  *
  * @author Guilhem Legal (Geomatys)
- * @version 3.00
+ * @version 3.12
  *
  * @since 3.00
  * @module
@@ -125,25 +125,5 @@ public final class FRA_ReferenceSystemAdapter extends ReferenceSystemAdapter imp
             return (FRA_IndirectReferenceSystem) metadata;
         }
         return null;
-    }
-
-    /**
-     * Sets the value for the {@link ReferenceSystem}.
-     * This method is called at unmarshalling-time by JAXB.
-     *
-     * @param metadata The unmarshalled metadata.
-     */
-    public void setDirectReferenceSystem(final ReferenceSystemMetadata metadata) {
-        this.metadata = metadata;
-    }
-
-    /**
-     * Sets the value for the {@link ReferenceSystem}.
-     * This method is called at unmarshalling-time by JAXB.
-     *
-     * @param metadata The unmarshalled metadata.
-     */
-    public void setIndirectReferenceSystem(final ReferenceSystemMetadata metadata) {
-        this.metadata = metadata;
     }
 }

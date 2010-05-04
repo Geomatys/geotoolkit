@@ -28,7 +28,7 @@ import org.geotoolkit.xml.Namespaces;
  * See package documentation for more information about JAXB and interface.
  *
  * @author Guilhem Legal (Geomatys)
- * @version 3.05
+ * @version 3.12
  *
  * @since 3.00
  * @module
@@ -78,6 +78,16 @@ public class ReferenceSystemAdapter extends MetadataAdapter<ReferenceSystemAdapt
     }
 
     /**
+     * Sets the value for the {@link ReferenceSystem}.
+     * This method is systematically called at unmarshalling-time by JAXB.
+     *
+     * @param metadata The unmarshalled metadata.
+     */
+    public void setElement(final ReferenceSystemMetadata metadata) {
+        this.metadata = metadata;
+    }
+
+    /**
      * A hook for the French profile.
      *
      * @return The metadata to be marshalled.
@@ -87,6 +97,16 @@ public class ReferenceSystemAdapter extends MetadataAdapter<ReferenceSystemAdapt
     @XmlElement(name = "FRA_DirectReferenceSystem", namespace = Namespaces.FRA)
     public ReferenceSystemMetadata getDirectReferenceSystem() {
         return null;
+    }
+
+    /**
+     * Sets the value for the {@link ReferenceSystem}.
+     * This method is called at unmarshalling-time by JAXB.
+     *
+     * @param metadata The unmarshalled metadata.
+     */
+    public void setDirectReferenceSystem(final ReferenceSystemMetadata metadata) {
+        this.metadata = metadata;
     }
 
     /**
@@ -103,11 +123,11 @@ public class ReferenceSystemAdapter extends MetadataAdapter<ReferenceSystemAdapt
 
     /**
      * Sets the value for the {@link ReferenceSystem}.
-     * This method is systematically called at unmarshalling-time by JAXB.
+     * This method is called at unmarshalling-time by JAXB.
      *
      * @param metadata The unmarshalled metadata.
      */
-    public void setElement(final ReferenceSystemMetadata metadata) {
+    public void setIndirectReferenceSystem(final ReferenceSystemMetadata metadata) {
         this.metadata = metadata;
     }
 }
