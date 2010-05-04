@@ -19,7 +19,7 @@ unpack200 --remove-pack-file geotk-bundle-SNAPSHOT.pack.gz geotk.jar
 java -Xmx1G -jar geotk.jar
 --------------------------
 
-  A window will appears with a menu. Select "<Wizards>", "<Mosaic generator>". Note that the
+  A window will appear with a menu. Select "<Wizards>", "<Mosaic generator>". Note that the
   "<File>", "<Preferences>" option can be safely ignored because the mosaic generator doesn't
   need this setup.
 

@@ -36,6 +36,7 @@ import java.text.DateFormat;
 import java.text.NumberFormat;
 import java.text.FieldPosition;
 
+import javax.swing.Box;
 import javax.swing.Timer;
 import javax.swing.JList;
 import javax.swing.JLabel;
@@ -108,7 +109,7 @@ import org.geotoolkit.resources.Errors;
  * a new window listing the coverages in the selected layer.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.11
+ * @version 3.12
  *
  * @since 3.11
  * @module
@@ -309,7 +310,7 @@ public class LayerList extends JPanel {
         addButton       = new JButton(resources.getString(Vocabulary.Keys.ADD));
         removeButton    = new JButton(resources.getString(Vocabulary.Keys.REMOVE));
         coveragesButton = new JButton(resources.getString(Vocabulary.Keys.IMAGE_LIST));
-        final JPanel buttonBar = new JPanel(new GridLayout(1, 3));
+
         refreshButton.setActionCommand(REFRESH);
         refreshButton.addActionListener(listeners);
         addButton.setActionCommand(ADD);
@@ -320,17 +321,22 @@ public class LayerList extends JPanel {
         coveragesButton.setActionCommand(COVERAGES);
         coveragesButton.addActionListener(listeners);
         coveragesButton.setEnabled(false);
+
+        final JPanel buttonBar = new JPanel(new GridLayout(1, 4));
         buttonBar.add(refreshButton);
         buttonBar.add(addButton);
         buttonBar.add(removeButton);
         buttonBar.add(coveragesButton);
-        coveragesButton .setEnabled(false);
-        buttonBar.setBorder(BorderFactory.createEmptyBorder(9, 15, 9, 15));
+        final Box b = Box.createHorizontalBox();
+        b.add(Box.createHorizontalGlue());
+        b.add(buttonBar);
+        b.add(Box.createHorizontalGlue());
+        b.setBorder(BorderFactory.createEmptyBorder(9, 15, 9, 15));
         /*
          * Put the components in this panel.
          */
         add(layerAndProps, BorderLayout.CENTER);
-        add(buttonBar, BorderLayout.AFTER_LAST_LINE);
+        add(b, BorderLayout.AFTER_LAST_LINE);
         setPreferredSize(new Dimension(WIDTH, HEIGHT));
     }
 
@@ -398,7 +404,7 @@ public class LayerList extends JPanel {
         }
 
         /**
-         * Invoked when the "Refresh" or "Add" button has been pressed.
+         * Invoked when one of the buttons ("Refresh", "Add", etc.) has been pressed.
          * This method delegates to the appropriate method in the encloding class.
          */
         @Override

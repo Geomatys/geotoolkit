@@ -1,14 +1,24 @@
 Swing wizards
 
-  This module provides wizards using the Swing framework. The following command-line launch
-  a menu which a choice of wizards (replace <<<SNAPSHOT>>> by the actual version number in
-  the JAR filename):
+  This module provides wizards using the Swing framework. The easiest way to use the wizards is to download the latest
+  version of <<<geotk-bundle.pack.gz>>> from {{{http://download.geotoolkit.org}http://download.geotoolkit.org}}, then
+  to execute the following commands (replace <<<SNAPSHOT>>> by the actual version number in the JAR filename):
 
-------------------------------------------
-java -jar geotk-wizards-swing-SNAPSHOT.jar
-------------------------------------------
+--------------------------------------------------------------------
+unpack200 --remove-pack-file geotk-bundle-SNAPSHOT.pack.gz geotk.jar
+--------------------------------------------------------------------
+
+  Execute:
+
+-------------------
+java -jar geotk.jar
+-------------------
 
   Available wizards are:
 
   * {{{MosaicWizard.html}Mosaic wizard}} for creating a mosaic and a pyramid of images from a
     single image or an other mosaic.
+
+  * {{{CoverageDatabaseInstaller.html}Coverage database installer}} for creating the schema
+    required by the {{{../../coverage/geotk-coverage-sql/index.html}coverage-sql module}} in
+    an initially empty PostgreSQL database.

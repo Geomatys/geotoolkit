@@ -27,7 +27,9 @@
  *
  * {@section Installation}
  * The current implementation requires the PostgreSQL database with the PostGIS extension.
- * An initially empty database can be created by running the SQL scripts available on the
+ * The easiest way to install the database is to run the
+ * <a href="{@docRoot}/../modules/display/geotk-wizards-swing/CoverageDatabaseInstaller.html">graphical wizard</a>.
+ * The database can also be created manually by running the SQL scripts available on the
  * <a href="http://hg.geotoolkit.org/geotoolkit/file/tip/modules/coverage/geotk-coverage-sql/src/main/resources/org/geotoolkit/coverage/sql">Mercurial
  * repository</a> in the following order:
  * <p>
@@ -77,7 +79,7 @@
  * {@link org.geotoolkit.coverage.io.GridCoverageReader} API.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.11
+ * @version 3.12
  *
  * @since 3.09 (derived from Seagis)
  * @module

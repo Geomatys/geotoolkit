@@ -1,0 +1,30 @@
+Installing the Coverage-SQL database
+
+* Installing and launching the wizard
+
+  Download the latest version of <<<geotk-bundle.pack.gz>>> from {{{http://download.geotoolkit.org}http://download.geotoolkit.org}}.
+  Open a command-line window and set the current directory to the directory where the Geotk bundle has
+  been saved. Uncompress the file using the command below (replace <<<SNAPSHOT>>> by the actual version
+  number), then execute:
+
+--------------------------------------------------------------------
+unpack200 --remove-pack-file geotk-bundle-SNAPSHOT.pack.gz geotk.jar
+java -jar geotk.jar
+--------------------------------------------------------------------
+
+  A window will appear with a menu. Select "<Wizards>", "<New coverage database>".
+
+* Prerequites
+
+  Before to go through the wizard, the user shall perform the following steps:
+
+  * Ensure that a PostgreSQL server with PostGIS extension is running.
+
+  * Ensure that the directory which contain the PostGIS <<<lwpostgis.sql>>> and
+    <<<spatial_ref_sys.sql>>> files is accessible from the computer running the
+    wizard (a read-only access is suffisient), or copy those files in a local
+    directory.
+
+  * Create an initially empty PostgreSQL database, preferably with Unicode encoding.
+    Do <<not>> create language and do not create the PostGIS objects in that database.
+    This will be performed by the wizard.

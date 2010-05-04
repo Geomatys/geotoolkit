@@ -27,12 +27,19 @@ import java.io.File;
 import java.io.IOException;
 import java.awt.Dimension;
 import java.awt.BorderLayout;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.image.RenderedImage;
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTable;
 import javax.swing.SwingWorker;
+import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableCellRenderer;
@@ -45,15 +52,16 @@ import org.geotoolkit.coverage.sql.GridCoverageReference;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.gui.swing.image.ImageFileProperties;
 import org.geotoolkit.gui.swing.ExceptionMonitor;
+import org.geotoolkit.resources.Vocabulary;
 
 
 /**
  * A list displaying the {@linkplain Layer#getCoverageReferences(CoverageEnvelope) set of
  * coverages} available in a given layer. This widget displays also the properties of the
- * selected file in the right side.
+ * selected file on the right side.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.11
+ * @version 3.12
  *
  * @see CoverageTableModel
  *
@@ -62,6 +70,11 @@ import org.geotoolkit.gui.swing.ExceptionMonitor;
  */
 @SuppressWarnings("serial")
 public class CoverageList extends JPanel {
+    /**
+     * Action commands.
+     */
+    private static final String ADD="ADD", REMOVE="REMOVE";
+
     /**
      * The list of coverages for the selected layer.
      */
@@ -83,6 +96,12 @@ public class CoverageList extends JPanel {
     private final ImageFileProperties properties;
 
     /**
+     * The button for removing entries. To be enabled only when at least
+     * one entry is selected.
+     */
+    private final JButton removeButton;
+
+    /**
      * Creates a new list with a default, initially empty, {@code CoverageTableModel}.
      */
     public CoverageList() {
@@ -97,7 +116,10 @@ public class CoverageList extends JPanel {
     public CoverageList(final CoverageTableModel coverages) {
         super(new BorderLayout());
         this.coverages = coverages;
+        final Locale locale = getLocale();
+        final Vocabulary resources = Vocabulary.getResources(locale);
         final Listeners listeners = new Listeners();
+
         final JTable table = new JTable(coverages);
         final TableCellRenderer renderer = new CoverageTableModel.CellRenderer();
         table.setDefaultRenderer(String.class, renderer);
@@ -109,23 +131,69 @@ public class CoverageList extends JPanel {
         final JSplitPane pane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, new JScrollPane(table), properties);
         pane.setOneTouchExpandable(true);
         pane.setContinuousLayout(true);
+        pane.setBorder(BorderFactory.createEmptyBorder(9, 9, 9, 9));
+        /*
+         * The buttons bar.
+         */
+        final JButton addButton;
+        addButton    = new JButton(resources.getString(Vocabulary.Keys.ADD));
+        removeButton = new JButton(resources.getString(Vocabulary.Keys.REMOVE));
+
+        addButton.setActionCommand(ADD);
+        addButton.addActionListener(listeners);
+        removeButton.setActionCommand(REMOVE);
+        removeButton.addActionListener(listeners);
+        removeButton.setEnabled(false);
+
+        final JPanel buttonBar = new JPanel(new GridLayout(1, 2));
+        buttonBar.add(addButton);
+        buttonBar.add(removeButton);
+        final Box b = Box.createHorizontalBox();
+        b.add(Box.createHorizontalGlue());
+        b.add(buttonBar);
+        b.add(Box.createHorizontalGlue());
+        b.setBorder(BorderFactory.createEmptyBorder(9, 15, 9, 15));
+        /*
+         * Put the components in this panel.
+         */
         add(BorderLayout.CENTER, pane);
+        add(b, BorderLayout.AFTER_LAST_LINE);
     }
 
     /**
      * Implement all listeners used by the {@link LayerList} class.
      */
-    private final class Listeners implements ListSelectionListener {
+    private final class Listeners implements ListSelectionListener, ActionListener {
         /**
-         * Invoked when a coverage has been selected.
+         * The last selected entry. Used in order to detect if the selection changed,
+         * in order to avoid unnecessary fetching of image properties.
+         */
+        private GridCoverageReference last;
+
+        /**
+         * Invoked when a coverage has been selected. This method enable the "remove"
+         * button if at least one entry is selected, then read the properties of the
+         * selected image in a background thread.
          */
         @Override
         public void valueChanged(final ListSelectionEvent event) {
-            final int coverageIndex = event.getFirstIndex();
-            if (coverageIndex < 0) {
+            if (event.getValueIsAdjusting()) {
                 return;
             }
+            final ListSelectionModel model = (ListSelectionModel) event.getSource();
+            final boolean isEmpty = model.isSelectionEmpty();
+            removeButton.setEnabled(!isEmpty);
+            if (isEmpty) {
+                properties.setImage((RenderedImage) null);
+                last = null;
+                return;
+            }
+            final int coverageIndex = model.getAnchorSelectionIndex();
             final GridCoverageReference reference = coverages.getCoverageReferenceAt(coverageIndex);
+            if (reference == last) {
+                return;
+            }
+            last = reference;
             final Object input;
             try {
                 final File file = reference.getFile(File.class);
@@ -152,6 +220,20 @@ public class CoverageList extends JPanel {
                 }
             };
             worker.execute();
+        }
+
+        /**
+         * Invoked when one of the buttons ("Remove", "Add", etc.) has been pressed.
+         * This method delegates to the appropriate method in the encloding class.
+         */
+        @Override
+        public void actionPerformed(final ActionEvent event) {
+            final String action = event.getActionCommand();
+            if (ADD.equals(action)) {
+//                addNewLayer();
+            } else if (REMOVE.equals(action)) {
+//                removeLayer();
+            }
         }
     }
 
