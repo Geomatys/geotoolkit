@@ -25,9 +25,8 @@ import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
-import org.apache.batik.transcoder.TranscoderException;
 import org.geotoolkit.display2d.ext.BackgroundTemplate;
-import org.geotoolkit.renderer.svg.SvgUtils;
+import org.geotoolkit.renderer.style.DynamicSymbolFactoryFinder;
 
 /**
  * Default north arrow template, immutable.
@@ -77,10 +76,8 @@ public class DefaultNorthArrowTemplate implements NorthArrowTemplate{
             buffer = null;
         }
         try {
-            buffer = SvgUtils.read(svgFile.openStream(), size);
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }catch (TranscoderException ex) {
+            buffer = DynamicSymbolFactoryFinder.getImage(svgFile.toURI(),"svg",(float)size.height,null);
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
 

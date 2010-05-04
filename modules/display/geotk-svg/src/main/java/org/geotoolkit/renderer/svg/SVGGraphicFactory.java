@@ -46,7 +46,7 @@ public class SVGGraphicFactory implements ExternalGraphicFactory {
     @Override
     public BufferedImage getImage(URI uri, String mime, Float size, RenderingHints hints) throws Exception {
         final Dimension dim;
-        if(size == null){
+        if(size == null || Float.isNaN(size)){
             dim = new Dimension(12, 12);
         }else{
             dim = new Dimension(size.intValue(), size.intValue());

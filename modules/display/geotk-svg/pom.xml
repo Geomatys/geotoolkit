@@ -23,15 +23,12 @@
   <!--     Module Description                                      -->
   <!-- =========================================================== -->
   <groupId>org.geotoolkit.pending</groupId>
-  <artifactId>geotk-render</artifactId>
+  <artifactId>geotk-svg</artifactId>
   <packaging>jar</packaging>
-  <name>Display map model</name>
+  <name>Display SVG utils</name>
 
   <description>
-    The render module contains a renderer built around the interface in
-    api and main. This is a first class geotoolkit module as creating a
-    visual representation of features is considered key to most geospatial
-    applications.
+    The svg module contains utility classes for SVG and an external image factory.
   </description>
 
   <licenses>
@@ -78,28 +75,12 @@
   <dependencies>
     <dependency>
       <groupId>org.geotoolkit.pending</groupId>
-      <artifactId>geotk-engine-core</artifactId>
+      <artifactId>geotk-render</artifactId>
       <version>${geotoolkit.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.geotoolkit.pending</groupId>
-      <artifactId>geotk-style</artifactId>
-      <version>${geotoolkit.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.geotoolkit.pending</groupId>
-      <artifactId>geotk-coverageio-pending</artifactId>
-      <version>${geotoolkit.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.geotoolkit.pending</groupId>
-      <artifactId>geotk-cql</artifactId>
-      <version>${geotoolkit.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.geotoolkit.pending</groupId>
-      <artifactId>geotk-datastore-core</artifactId>
-      <version>${geotoolkit.version}</version>
+      <groupId>org.apache.xmlgraphics</groupId>
+      <artifactId>batik-transcoder</artifactId>
     </dependency>
   </dependencies>
   

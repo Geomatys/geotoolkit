@@ -93,6 +93,7 @@
   <modules>
     <module>geotk-style</module>
     <module>geotk-render</module>
+    <module>geotk-svg</module>
     <module>geotk-engine-core</module>
     <module>geotk-go2-engine</module>
     <module>geotk-go2-chart</module>

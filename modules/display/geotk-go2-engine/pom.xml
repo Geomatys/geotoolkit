@@ -79,6 +79,13 @@
             <artifactId>geotk-render</artifactId>
             <version>${geotoolkit.version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>org.geotoolkit.pending</groupId>
+            <artifactId>geotk-svg</artifactId>
+            <version>${geotoolkit.version}</version>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>postgresql</groupId>
             <artifactId>postgresql</artifactId>
