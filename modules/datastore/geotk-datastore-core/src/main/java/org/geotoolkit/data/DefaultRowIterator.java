@@ -64,7 +64,7 @@ public class DefaultRowIterator implements CloseableIterator<FeatureCollectionRo
         try {
             row.getFeatures().put(selectorName, ite.next());
         } catch (DataStoreException ex) {
-            Logger.getLogger(DefaultRowIterator.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(DefaultRowIterator.class.getName()).log(Level.WARNING, null, ex);
         }
         return row;
     }

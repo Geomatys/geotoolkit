@@ -84,11 +84,11 @@ public class GeometryTestParser {
         try {
             doc = documentBuilder.parse(inputSource);
         } catch (SAXException e) {
-            LOGGER.log(Level.SEVERE,"", e);
+            LOGGER.log(Level.WARNING,"", e);
             throw new RuntimeException("", e);
 
         } catch (IOException e) {
-            LOGGER.log(Level.SEVERE,"", e);
+            LOGGER.log(Level.WARNING,"", e);
             throw new RuntimeException("", e);
 
         }
@@ -98,7 +98,7 @@ public class GeometryTestParser {
         try {
             test = processRootNode(element);
         } catch (ParseException e) {
-            LOGGER.log(Level.SEVERE,"", e);
+            LOGGER.log(Level.WARNING,"", e);
             throw new RuntimeException("", e);
 
         }

@@ -57,9 +57,9 @@ public class LineStringPosListType {
             try {
                 crs = CRS.decode(srsName);
             } catch (NoSuchAuthorityCodeException ex) {
-                Logger.getLogger(LineStringPosListType.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(LineStringPosListType.class.getName()).log(Level.WARNING, null, ex);
             } catch (FactoryException ex) {
-                Logger.getLogger(LineStringPosListType.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(LineStringPosListType.class.getName()).log(Level.WARNING, null, ex);
             }
         }
         JTSLineString result = new JTSLineString(crs);

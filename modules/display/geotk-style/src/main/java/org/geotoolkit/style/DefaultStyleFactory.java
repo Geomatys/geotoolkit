@@ -724,7 +724,7 @@ public class DefaultStyleFactory extends Factory implements MutableStyleFactory 
         URI uri = null;
         try { uri = url.toURI();
         } catch (URISyntaxException ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.WARNING, null, ex);
         }
 
         return new DefaultExternalGraphic(
@@ -738,7 +738,7 @@ public class DefaultStyleFactory extends Factory implements MutableStyleFactory 
         URI uri2 = null;
         try { uri2 = new URI(uri);
         } catch (URISyntaxException ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.WARNING, null, ex);
         }
 
         return new DefaultExternalGraphic(

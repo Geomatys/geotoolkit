@@ -209,7 +209,7 @@ public class JAXPEventFeatureWriter extends JAXPFeatureWriter {
 
             eventWriter.add(new EndElementEvent(rootName));
         } catch (XMLStreamException ex) {
-            LOGGER.log(Level.SEVERE, "XMl stream exception while writing the feature: " + ex.getMessage(), ex);
+            LOGGER.log(Level.WARNING, "XMl stream exception while writing the feature: " + ex.getMessage(), ex);
         }
     }
 
@@ -226,9 +226,9 @@ public class JAXPEventFeatureWriter extends JAXPFeatureWriter {
             writeFeatureCollection(fc, eventWriter);
 
         } catch (XMLStreamException ex) {
-            LOGGER.log(Level.SEVERE, "XMl stream exception while writing the feature: " + ex.getMessage(), ex);
+            LOGGER.log(Level.WARNING, "XMl stream exception while writing the feature: " + ex.getMessage(), ex);
         } catch (DataStoreException ex) {
-            LOGGER.log(Level.SEVERE, "DataStore exception exception while writing the feature: " + ex.getMessage(), ex);
+            LOGGER.log(Level.WARNING, "DataStore exception exception while writing the feature: " + ex.getMessage(), ex);
         }
     }
 
@@ -245,9 +245,9 @@ public class JAXPEventFeatureWriter extends JAXPFeatureWriter {
             writeFeatureCollection(fc, eventWriter);
 
         } catch (XMLStreamException ex) {
-            LOGGER.log(Level.SEVERE, "XMl stream exception while writing the feature: " + ex.getMessage(), ex);
+            LOGGER.log(Level.WARNING, "XMl stream exception while writing the feature: " + ex.getMessage(), ex);
         } catch (DataStoreException ex) {
-            LOGGER.log(Level.SEVERE, "DataStore exception exception while writing the feature: " + ex.getMessage(), ex);
+            LOGGER.log(Level.WARNING, "DataStore exception exception while writing the feature: " + ex.getMessage(), ex);
         }
     }
 
@@ -266,9 +266,9 @@ public class JAXPEventFeatureWriter extends JAXPFeatureWriter {
 
             return sw.toString();
         } catch (XMLStreamException ex) {
-            LOGGER.log(Level.SEVERE, "XMl stream exception while writing the feature: " + ex.getMessage(), ex);
+            LOGGER.log(Level.WARNING, "XMl stream exception while writing the feature: " + ex.getMessage(), ex);
         } catch (DataStoreException ex) {
-            LOGGER.log(Level.SEVERE, "DataStore exception exception while writing the feature: " + ex.getMessage(), ex);
+            LOGGER.log(Level.WARNING, "DataStore exception exception while writing the feature: " + ex.getMessage(), ex);
         }
         return null;
     }
@@ -326,7 +326,7 @@ public class JAXPEventFeatureWriter extends JAXPFeatureWriter {
             eventWriter.close();
             
         } catch (XMLStreamException ex) {
-            LOGGER.log(Level.SEVERE, "XMl stream exception while writing the feature: " + ex.getMessage(), ex);
+            LOGGER.log(Level.WARNING, "XMl stream exception while writing the feature: " + ex.getMessage(), ex);
         }
     }
 
@@ -337,7 +337,7 @@ public class JAXPEventFeatureWriter extends JAXPFeatureWriter {
                 try {
                     srsName = CRS.lookupIdentifier(Citations.URN_OGC, bounds.getCoordinateReferenceSystem(), true);
                 } catch (FactoryException ex) {
-                    LOGGER.log(Level.SEVERE, null, ex);
+                    LOGGER.log(Level.WARNING, null, ex);
                 }
             }
             QName bounded = new QName("http://www.opengis.net/gml", "boundedBy", "gml");

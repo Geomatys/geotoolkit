@@ -191,7 +191,7 @@ public final class XMLUtilities {
                 final URL url = online.getLinkage().toURL();
                 return unMarshaller.unmarshal(url);
             } catch (MalformedURLException ex) {
-                Logging.getLogger(XMLUtilities.class).log(Level.SEVERE, null, ex);
+                Logging.getLogger(XMLUtilities.class).log(Level.WARNING, null, ex);
                 return null;
             }
             

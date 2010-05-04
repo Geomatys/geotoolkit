@@ -374,7 +374,7 @@ public class FileSystemPageStore extends PageStore {
         try {
             ret = this.params.getFromCache(this.rootOffset);
         } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, e.getMessage(), e);
+            LOGGER.log(Level.WARNING, e.getMessage(), e);
         }
 
         return ret;

@@ -242,7 +242,7 @@ public class MultiThreadedRendering{
 //                            obj = gra.query(renderingContext);
 //                        } catch (PortrayalException ex) {
 //                            img = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
-//                            Logging.getLogger(MultiThreadedRendering.class).log(Level.SEVERE, null, ex);
+//                            Logging.getLogger(MultiThreadedRendering.class).log(Level.WARNING, null, ex);
 //                        }
 //
 //                        if(obj instanceof BufferedImage){
@@ -270,7 +270,7 @@ public class MultiThreadedRendering{
 //                            try {
 //                                buffer = ImageIO.read((URL) obj);
 //                            } catch (IOException ex) {
-//                                Logging.getLogger(MultiThreadedRendering.class).log(Level.SEVERE, null, ex);
+//                                Logging.getLogger(MultiThreadedRendering.class).log(Level.WARNING, null, ex);
 //                            }
 //                            img = buffer;
 //                        }else{

@@ -49,7 +49,7 @@ public class LinearLabelCandidateRenderer implements LabelCandidateRenderer<Line
         try {
             return new LinearCandidate(descriptor,descriptor.getGeometry().getDisplayShape());
         } catch (TransformException ex) {
-            Logger.getLogger(LinearLabelCandidateRenderer.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(LinearLabelCandidateRenderer.class.getName()).log(Level.WARNING, null, ex);
         }
 
         return null;

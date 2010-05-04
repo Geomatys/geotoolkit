@@ -74,9 +74,9 @@ public class WMSMapLayer extends AbstractMapLayer implements DynamicMapLayer{
         try {
             crs = CRS.decode("EPSG:4326");
         } catch (NoSuchAuthorityCodeException ex) {
-            Logger.getLogger(WMSMapLayer.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(WMSMapLayer.class.getName()).log(Level.WARNING, null, ex);
         } catch (FactoryException ex) {
-            Logger.getLogger(WMSMapLayer.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(WMSMapLayer.class.getName()).log(Level.WARNING, null, ex);
         }
         EPSG_4326 = crs;
     }
@@ -286,7 +286,7 @@ public class WMSMapLayer extends AbstractMapLayer implements DynamicMapLayer{
                     replace = DefaultGeographicCRS.WGS84;
                 }
             } catch (FactoryException ex) {
-                context.getMonitor().exceptionOccured(ex, Level.SEVERE);
+                context.getMonitor().exceptionOccured(ex, Level.WARNING);
             }
         }
 
@@ -312,7 +312,7 @@ public class WMSMapLayer extends AbstractMapLayer implements DynamicMapLayer{
             try {
                 env = CRS.transform(((RenderingContext2D)context).getCanvasObjectiveBounds(),replace);
             } catch (TransformException ex) {
-                Logger.getLogger(WMSMapLayer.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(WMSMapLayer.class.getName()).log(Level.WARNING, null, ex);
             }
 
             final GridCoverageFactory factory = CoverageFactoryFinder.getGridCoverageFactory(null);

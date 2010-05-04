@@ -219,7 +219,7 @@ public class JAXPStreamFeatureWriter extends JAXPFeatureWriter {
                         try {
                             marshaller.marshal(factory.buildAnyGeometry(isoGeometry), streamWriter);
                         } catch (JAXBException ex) {
-                            LOGGER.log(Level.SEVERE, "JAXB Exception while marshalling the iso geometry: " + ex.getMessage(), ex);
+                            LOGGER.log(Level.WARNING, "JAXB Exception while marshalling the iso geometry: " + ex.getMessage(), ex);
                         }
                         streamWriter.writeEndElement();
                     }
@@ -235,7 +235,7 @@ public class JAXPStreamFeatureWriter extends JAXPFeatureWriter {
             streamWriter.writeEndElement();
 
         } catch (XMLStreamException ex) {
-            LOGGER.log(Level.SEVERE, "XMl stream exception while writing the feature: " + ex.getMessage(), ex);
+            LOGGER.log(Level.WARNING, "XMl stream exception while writing the feature: " + ex.getMessage(), ex);
 
         }
     }
@@ -249,9 +249,9 @@ public class JAXPStreamFeatureWriter extends JAXPFeatureWriter {
             writeFeatureCollection(fc, streamWriter,false);
 
         } catch (XMLStreamException ex) {
-            LOGGER.log(Level.SEVERE, "XMl stream exception while writing the feature: " + ex.getMessage(), ex);
+            LOGGER.log(Level.WARNING, "XMl stream exception while writing the feature: " + ex.getMessage(), ex);
         } catch (DataStoreException ex) {
-            LOGGER.log(Level.SEVERE, "DataStore exception exception while writing the feature: " + ex.getMessage(), ex);
+            LOGGER.log(Level.WARNING, "DataStore exception exception while writing the feature: " + ex.getMessage(), ex);
         }
     }
 
@@ -264,9 +264,9 @@ public class JAXPStreamFeatureWriter extends JAXPFeatureWriter {
             writeFeatureCollection(fc, streamWriter,false);
 
         } catch (XMLStreamException ex) {
-            LOGGER.log(Level.SEVERE, "XMl stream exception while writing the feature: " + ex.getMessage(), ex);
+            LOGGER.log(Level.WARNING, "XMl stream exception while writing the feature: " + ex.getMessage(), ex);
         } catch (DataStoreException ex) {
-            LOGGER.log(Level.SEVERE, "DataStore exception exception while writing the feature: " + ex.getMessage(), ex);
+            LOGGER.log(Level.WARNING, "DataStore exception exception while writing the feature: " + ex.getMessage(), ex);
         }
     }
     
@@ -281,9 +281,9 @@ public class JAXPStreamFeatureWriter extends JAXPFeatureWriter {
             return sw.toString();
 
         } catch (XMLStreamException ex) {
-            LOGGER.log(Level.SEVERE, "XMl stream exception while writing the feature: " + ex.getMessage(), ex);
+            LOGGER.log(Level.WARNING, "XMl stream exception while writing the feature: " + ex.getMessage(), ex);
         } catch (DataStoreException ex) {
-            LOGGER.log(Level.SEVERE, "DataStore exception exception while writing the feature: " + ex.getMessage(), ex);
+            LOGGER.log(Level.WARNING, "DataStore exception exception while writing the feature: " + ex.getMessage(), ex);
         }
         return null;
     }
@@ -358,7 +358,7 @@ public class JAXPStreamFeatureWriter extends JAXPFeatureWriter {
             }
 
         } catch (XMLStreamException ex) {
-            LOGGER.log(Level.SEVERE, "XMl stream exception while writing the feature: " + ex.getMessage(), ex);
+            LOGGER.log(Level.WARNING, "XMl stream exception while writing the feature: " + ex.getMessage(), ex);
         }
     }
 
@@ -369,7 +369,7 @@ public class JAXPStreamFeatureWriter extends JAXPFeatureWriter {
                 try {
                     srsName = CRS.lookupIdentifier(Citations.URN_OGC, bounds.getCoordinateReferenceSystem(), true);
                 } catch (FactoryException ex) {
-                    LOGGER.log(Level.SEVERE, null, ex);
+                    LOGGER.log(Level.WARNING, null, ex);
                 }
             }
             streamWriter.writeStartElement("gml", "boundedBy", GML_NAMESPACE);

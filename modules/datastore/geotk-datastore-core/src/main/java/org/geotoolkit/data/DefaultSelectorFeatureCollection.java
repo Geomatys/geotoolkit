@@ -188,7 +188,7 @@ public class DefaultSelectorFeatureCollection extends AbstractFeatureCollection<
         try {
             return getSession().getDataStore().isWritable(query.getTypeName());
         } catch (DataStoreException ex) {
-            Logger.getLogger(DefaultSelectorFeatureCollection.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(DefaultSelectorFeatureCollection.class.getName()).log(Level.WARNING, null, ex);
             return false;
         }
     }

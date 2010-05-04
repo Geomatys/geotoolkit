@@ -156,7 +156,7 @@ public final class NIOUtilities {
         String message = "Error attempting to close a mapped byte buffer : " + buffer.getClass().getName()
                        + "\n JVM : " + System.getProperty("java.version")
                        + ' '         + System.getProperty("java.vendor");
-        Logging.getLogger("org.geotoolkit.io").log(Level.SEVERE, message, e);
+        Logging.getLogger("org.geotoolkit.io").log(Level.WARNING, message, e);
     }
 
     /**

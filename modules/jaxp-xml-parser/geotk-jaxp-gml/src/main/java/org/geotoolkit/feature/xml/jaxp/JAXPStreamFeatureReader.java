@@ -152,7 +152,7 @@ public class JAXPStreamFeatureReader extends JAXPFeatureReader {
                 }
             }
         } catch (XMLStreamException ex) {
-            LOGGER.log(Level.SEVERE, "XMl stream exception while reading the feature: " + ex.getMessage(), ex);
+            LOGGER.log(Level.WARNING, "XMl stream exception while reading the feature: " + ex.getMessage(), ex);
         }
         return null;
     }

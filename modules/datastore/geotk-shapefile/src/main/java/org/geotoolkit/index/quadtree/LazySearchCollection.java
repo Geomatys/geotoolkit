@@ -105,7 +105,7 @@ public class LazySearchCollection extends AbstractCollection<Data> implements
         try {
             tree.close();
         } catch (StoreException e) {
-            ShapefileDataStoreFactory.LOGGER.log(Level.SEVERE, "Error closing QuadTree", e);
+            ShapefileDataStoreFactory.LOGGER.log(Level.WARNING, "Error closing QuadTree", e);
         }
     }
 

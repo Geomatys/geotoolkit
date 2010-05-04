@@ -231,7 +231,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractSymbolizerRenderer<
         try {
             shape = projectedCoverage.getEnvelopeGeometry().getDisplayShape();
         } catch (TransformException ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.WARNING, null, ex);
             return false;
         }
 

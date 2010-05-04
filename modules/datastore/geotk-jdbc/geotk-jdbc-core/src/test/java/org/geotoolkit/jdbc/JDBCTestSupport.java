@@ -271,9 +271,9 @@ public abstract class JDBCTestSupport extends TestCase {
             }
 
         } catch (NoSuchAuthorityCodeException ex) {
-            Logger.getLogger(JDBCTestSupport.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(JDBCTestSupport.class.getName()).log(Level.WARNING, null, ex);
         } catch (FactoryException ex) {
-            Logger.getLogger(JDBCTestSupport.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(JDBCTestSupport.class.getName()).log(Level.WARNING, null, ex);
         }
 
     	return false;
@@ -336,7 +336,7 @@ public abstract class JDBCTestSupport extends TestCase {
             }
 
         } catch (Exception ex) {            
-            Logger.getLogger(JDBCTestSupport.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(JDBCTestSupport.class.getName()).log(Level.WARNING, null, ex);
             fail();
         } finally{
             if(reader != null){

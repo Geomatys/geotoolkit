@@ -209,7 +209,7 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
         try{
             features = ((FeatureCollection<SimpleFeature>)layer.getCollection()).subCollection(query);
         }catch(DataStoreException ex){
-            context.getMonitor().exceptionOccured(ex, Level.SEVERE);
+            context.getMonitor().exceptionOccured(ex, Level.WARNING);
             //can not continue this layer with this error
             return;
         }
@@ -228,7 +228,7 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
         try {
             params = prepareContextParams(context, dataCRS, null);
         } catch (FactoryException ex) {
-            monitor.exceptionOccured(ex, Level.SEVERE);
+            monitor.exceptionOccured(ex, Level.WARNING);
             return;
         }
 
@@ -318,7 +318,7 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
             try {
                 statefullIterator.close();
             } catch (IOException ex) {
-                getLogger().log(Level.SEVERE, null, ex);
+                getLogger().log(Level.WARNING, null, ex);
             }
         }
     }
@@ -340,7 +340,7 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
             try {
                 statefullIterator.close();
             } catch (IOException ex) {
-                getLogger().log(Level.SEVERE, null, ex);
+                getLogger().log(Level.WARNING, null, ex);
             }
             return;
         }
@@ -371,7 +371,7 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
                     try {
                         ite.close();
                     } catch (IOException ex) {
-                        getLogger().log(Level.SEVERE, null, ex);
+                        getLogger().log(Level.WARNING, null, ex);
                     }
                 }
             }
@@ -400,7 +400,7 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
                     try {
                         ite.close();
                     } catch (IOException ex) {
-                        getLogger().log(Level.SEVERE, null, ex);
+                        getLogger().log(Level.WARNING, null, ex);
                     }
                 }
             }
@@ -418,7 +418,7 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
         try{
             features = ((FeatureCollection<SimpleFeature>)layer.getCollection()).subCollection(query);
         }catch(DataStoreException ex){
-            renderingContext.getMonitor().exceptionOccured(ex, Level.SEVERE);
+            renderingContext.getMonitor().exceptionOccured(ex, Level.WARNING);
             //can not continue this layer with this error
             return graphics;
         }
@@ -564,7 +564,7 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
 
             }catch(Exception ex){
                 //we should not catch this but we must not block the canvas
-                monitor.exceptionOccured(ex, Level.SEVERE);
+                monitor.exceptionOccured(ex, Level.WARNING);
                 return null;
             }
 

@@ -92,9 +92,9 @@ public class MesureUtilities {
             return lenght;
 
         } catch (MismatchedDimensionException ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.WARNING, null, ex);
         } catch (TransformException ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.WARNING, null, ex);
         }
 
         return 0;
@@ -143,11 +143,11 @@ public class MesureUtilities {
             return area;
 
         } catch (FactoryException ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.WARNING, null, ex);
         } catch (MismatchedDimensionException ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.WARNING, null, ex);
         } catch (TransformException ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.WARNING, null, ex);
         } 
 
         return 0;        

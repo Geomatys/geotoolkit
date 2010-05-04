@@ -364,7 +364,7 @@ public class FileUtilities {
                     }
                 }
             } catch (IOException ex) {
-                LOGGER.log(Level.SEVERE, "The resources for the package" + p + ", could not be obtained.", ex);
+                LOGGER.log(Level.WARNING, "The resources for the package" + p + ", could not be obtained.", ex);
             }
         }
         return result;

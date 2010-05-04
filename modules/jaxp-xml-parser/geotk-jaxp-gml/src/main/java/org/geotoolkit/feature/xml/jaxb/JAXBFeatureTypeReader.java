@@ -57,7 +57,7 @@ public class JAXBFeatureTypeReader implements XmlFeatureTypeReader {
         try {
             marshallpool = new MarshallerPool(ObjectFactory.class);
         } catch (JAXBException ex) {
-            LOGGER.log(Level.SEVERE, "JAXB Exception while initalizing the marshaller pool", ex);
+            LOGGER.log(Level.WARNING, "JAXB Exception while initalizing the marshaller pool", ex);
         }
     }
 
@@ -77,7 +77,7 @@ public class JAXBFeatureTypeReader implements XmlFeatureTypeReader {
             Schema schema             = (Schema) unmarshaller.unmarshal(new StringReader(xml));
             return getAllFeatureTypeFromSchema(schema);
         } catch (JAXBException ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.WARNING, null, ex);
         }
         return null;
     }
@@ -92,7 +92,7 @@ public class JAXBFeatureTypeReader implements XmlFeatureTypeReader {
             Schema schema             = (Schema) unmarshaller.unmarshal(in);
             return getAllFeatureTypeFromSchema(schema);
         } catch (JAXBException ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.WARNING, null, ex);
         }
         return null;
     }
@@ -107,7 +107,7 @@ public class JAXBFeatureTypeReader implements XmlFeatureTypeReader {
             Schema schema             = (Schema) unmarshaller.unmarshal(reader);
             return getAllFeatureTypeFromSchema(schema);
         } catch (JAXBException ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.WARNING, null, ex);
         }
         return null;
     }
@@ -122,7 +122,7 @@ public class JAXBFeatureTypeReader implements XmlFeatureTypeReader {
             Schema schema             = (Schema) unmarshaller.unmarshal(new StringReader(xml));
             return getFeatureTypeFromSchema(schema, name);
         } catch (JAXBException ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.WARNING, null, ex);
         }
         return null;
     }
@@ -137,7 +137,7 @@ public class JAXBFeatureTypeReader implements XmlFeatureTypeReader {
             Schema schema             = (Schema) unmarshaller.unmarshal(in);
             return getFeatureTypeFromSchema(schema, name);
         } catch (JAXBException ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.WARNING, null, ex);
         }
         return null;
     }
@@ -152,7 +152,7 @@ public class JAXBFeatureTypeReader implements XmlFeatureTypeReader {
             Schema schema             = (Schema) unmarshaller.unmarshal(reader);
             return getFeatureTypeFromSchema(schema, name);
         } catch (JAXBException ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.WARNING, null, ex);
         }
         return null;
     }

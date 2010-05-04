@@ -51,7 +51,7 @@ public class CRSAction extends AbstractAction {
                 try {
                     map.getCanvas().setObjectiveCRS(chooser.getCRS());
                 } catch (TransformException ex) {
-                    LOGGER.log(Level.SEVERE, null, ex);
+                    LOGGER.log(Level.WARNING, null, ex);
                 }
             }
         }

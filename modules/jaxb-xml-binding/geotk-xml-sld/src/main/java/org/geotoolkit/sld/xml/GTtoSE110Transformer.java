@@ -640,7 +640,7 @@ public class GTtoSE110Transformer implements StyleVisitor{
                 try {
                     crs = CRS.decode(srid);
                 } catch (Exception ex) {
-                    Logger.getLogger(GTtoSE110Transformer.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(GTtoSE110Transformer.class.getName()).log(Level.WARNING, null, ex);
                     crs = null;
                 }
                 final AbstractGeometryType gt = GMLUtilities.getGMLFromISO(JTSUtils.toISO(jts, crs));
@@ -656,7 +656,7 @@ public class GTtoSE110Transformer implements StyleVisitor{
                 try {
                     ee.setSrsName(CRS.lookupIdentifier(genv.getCoordinateReferenceSystem(), true));
                 } catch (FactoryException ex) {
-                    Logger.getLogger(GTtoSE110Transformer.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(GTtoSE110Transformer.class.getName()).log(Level.WARNING, null, ex);
                 }
 
                 ee.setLowerCorner(new DirectPositionType(genv.getLowerCorner()));

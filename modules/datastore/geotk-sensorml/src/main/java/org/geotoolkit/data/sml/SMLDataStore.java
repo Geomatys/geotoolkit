@@ -494,7 +494,7 @@ public class SMLDataStore extends AbstractDataStore {
             result.close();
 
         } catch (SQLException ex) {
-            getLogger().log(Level.SEVERE, "SQL exception while reading sensorMLValues table", ex);
+            getLogger().log(Level.WARNING, "SQL exception while reading sensorMLValues table", ex);
         }
         return collection;
     }

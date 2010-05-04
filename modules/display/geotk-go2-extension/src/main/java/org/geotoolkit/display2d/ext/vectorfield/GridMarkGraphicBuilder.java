@@ -65,7 +65,7 @@ public class GridMarkGraphicBuilder implements GraphicBuilder<GraphicJ2D>{
 //            try {
 //                feature = layer.getFeatureSource().getFeatures().features().next();
 //            } catch (IOException ex) {
-//                LOGGER.log(Level.SEVERE, null, ex);
+//                LOGGER.log(Level.WARNING, null, ex);
 //            }
 //            
 //            GridCoverage2D coverage = (GridCoverage2D) feature.getProperty("grid").getValue();
@@ -74,7 +74,7 @@ public class GridMarkGraphicBuilder implements GraphicBuilder<GraphicJ2D>{
                 //get the default gridcoverage
                 coverage = (GridCoverage2D) coverageLayer.getCoverageReader().read(0,null);
             } catch (CoverageStoreException ex) {
-                LOGGER.log(Level.SEVERE, null, ex);
+                LOGGER.log(Level.WARNING, null, ex);
             }
             
             if(coverage != null){

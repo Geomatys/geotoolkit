@@ -56,7 +56,7 @@ public abstract class DefaultTemporalGeometricPrimitive extends DefaultTemporalP
                     try {
                         throw new Exception("the TM_TemporalPositions are not both associated with the same TM_ReferenceSystem !");
                     } catch (Exception ex) {
-                        LOGGER.log(Level.SEVERE, null, ex);
+                        LOGGER.log(Level.WARNING, null, ex);
                     }
                 }
             } else if (((Instant) this).getPosition().anyOther() != null) {
@@ -65,7 +65,7 @@ public abstract class DefaultTemporalGeometricPrimitive extends DefaultTemporalP
                     try {
                         throw new Exception("either of the two TM_TemporalPositions is indeterminate or is associated with a TM_OrdianlReferenceSystem !");
                     } catch (Exception ex) {
-                        LOGGER.log(Level.SEVERE, null, ex);
+                        LOGGER.log(Level.WARNING, null, ex);
                     }
                 }
             } else if (((Instant) other).getPosition().anyOther() != null) {
@@ -74,7 +74,7 @@ public abstract class DefaultTemporalGeometricPrimitive extends DefaultTemporalP
                     try {
                         throw new Exception("either of the two TM_TemporalPositions is indeterminate or is associated with a TM_OrdianlReferenceSystem !");
                     } catch (Exception ex) {
-                        LOGGER.log(Level.SEVERE, null, ex);
+                        LOGGER.log(Level.WARNING, null, ex);
                     }
                 }
             }

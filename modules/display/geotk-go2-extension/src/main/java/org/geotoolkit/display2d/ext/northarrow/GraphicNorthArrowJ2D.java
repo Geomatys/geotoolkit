@@ -108,7 +108,7 @@ public class GraphicNorthArrowJ2D extends PositionedGraphic2D{
         try {
             J2DNorthArrowUtilities.paint((float)context.getCanvas().getController().getRotation(),g2d, x,y, template);
         } catch (PortrayalException ex) {
-            context.getMonitor().exceptionOccured(ex, Level.SEVERE);
+            context.getMonitor().exceptionOccured(ex, Level.WARNING);
         }
 
     }

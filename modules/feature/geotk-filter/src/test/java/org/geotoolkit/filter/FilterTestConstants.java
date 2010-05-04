@@ -71,9 +71,9 @@ public class FilterTestConstants {
         try {
             crs = CRS.decode("EPSG:4326");
         } catch (NoSuchAuthorityCodeException ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.WARNING, null, ex);
         } catch (FactoryException ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.WARNING, null, ex);
         }
 
         final List<AttributeDescriptor> desc = new ArrayList<AttributeDescriptor>();

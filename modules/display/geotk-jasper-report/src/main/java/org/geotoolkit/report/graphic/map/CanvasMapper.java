@@ -68,11 +68,11 @@ public class CanvasMapper extends JRRendererMapper{
             }
 
         } catch (NoninvertibleTransformException ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.WARNING, null, ex);
         }catch (IOException ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.WARNING, null, ex);
         }catch (TransformException ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.WARNING, null, ex);
         }
         return canvas;
     }

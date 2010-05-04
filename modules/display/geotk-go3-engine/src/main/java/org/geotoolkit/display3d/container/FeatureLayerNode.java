@@ -327,7 +327,7 @@ public class FeatureLayerNode extends A3DGraphic implements LocationSensitiveGra
             }
 
         } catch (Exception ex) {
-            Logging.getLogger(FeatureLayerNode.class).log(Level.SEVERE, null, ex);
+            Logging.getLogger(FeatureLayerNode.class).log(Level.WARNING, null, ex);
         }
 
 

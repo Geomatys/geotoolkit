@@ -246,9 +246,9 @@ public class DimapImageReader extends ImageReaderAdapter {
                 dims = DimapAccessor.readSampleDimensions(dimapNode, "cn", dim[2]);
 
             } catch (FactoryException ex) {
-                Logger.getLogger(DimapImageReader.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(DimapImageReader.class.getName()).log(Level.WARNING, null, ex);
             } catch (TransformException ex) {
-                Logger.getLogger(DimapImageReader.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(DimapImageReader.class.getName()).log(Level.WARNING, null, ex);
             }
             
             /*

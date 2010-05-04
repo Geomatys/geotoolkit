@@ -87,7 +87,7 @@ public class JMap2D extends AbstractMap2D{
         try {
             canvas.setObjectiveCRS(DefaultGeographicCRS.WGS84);
         } catch (TransformException ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.WARNING, null, ex);
         }
                 
     }

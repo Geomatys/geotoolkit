@@ -90,7 +90,7 @@ public class DimRangeRenderer extends AbstractSymbolizerRenderer<CachedDimRangeS
             try {
                 bounds = CRS.transform(bounds, gridCRS);
             } catch (TransformException ex) {
-                Logging.getLogger(DimRangeRenderer.class).log(Level.SEVERE, null, ex);
+                Logging.getLogger(DimRangeRenderer.class).log(Level.WARNING, null, ex);
             }
 
             DirectPosition2D pos = new DirectPosition2D(renderingContext.getObjectiveCRS());
@@ -185,7 +185,7 @@ public class DimRangeRenderer extends AbstractSymbolizerRenderer<CachedDimRangeS
         try {
             shape = projectedCoverage.getEnvelopeGeometry().getDisplayShape();
         } catch (TransformException ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.WARNING, null, ex);
             return false;
         }
 

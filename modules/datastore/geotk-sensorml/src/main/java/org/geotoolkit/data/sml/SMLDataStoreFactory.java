@@ -130,7 +130,7 @@ public class SMLDataStoreFactory extends AbstractDataStoreFactory {
             SMLDataStore datastore = new SMLDataStore(connection);
             return datastore;
         } catch (SQLException ex) {
-            LOGGER.log(Level.SEVERE, "SQL Exception while creating ML datastore", ex);
+            LOGGER.log(Level.WARNING, "SQL Exception while creating ML datastore", ex);
         } catch (IOException ex) {
             throw new DataStoreException(ex);
         }

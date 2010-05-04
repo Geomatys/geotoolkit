@@ -96,7 +96,7 @@ public class LocationSensitiveUpdater extends Thread{
                 //we dont need to consume much cpu
                 sleep(100);
             } catch (InterruptedException ex) {
-                Logging.getLogger(LocationSensitiveUpdater.class).log(Level.SEVERE, null, ex);
+                Logging.getLogger(LocationSensitiveUpdater.class).log(Level.WARNING, null, ex);
             }
 
         }

@@ -104,7 +104,7 @@ public class BasicFeatureTypes {
             tmpPolygon = build.buildSimpleFeatureType();
         } catch (Exception ex) {
             org.geotoolkit.util.logging.Logging.getLogger("org.geotoolkit.feature.type.BasicFeatureTypes").log(
-                    Level.SEVERE, "Error creating basic feature types", ex);
+                    Level.WARNING, "Error creating basic feature types", ex);
         }
         POINT = tmpPoint;
         LINE = tmpLine;

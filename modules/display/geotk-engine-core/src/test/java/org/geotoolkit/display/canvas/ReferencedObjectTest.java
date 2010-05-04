@@ -307,7 +307,7 @@ public class ReferencedObjectTest {
 //         */
 //        final Logger logger = canvas.getLogger();
 //        final Level oldLevel = logger.getLevel();
-//        logger.setLevel(Level.SEVERE);
+//        logger.setLevel(Level.WARNING);
 //        canvas.objectiveToDisplay.setToScale(10, 10);
 //        assertTrue("The objective to display transform should be the identity transform.",
 //                   canvas.getObjectiveToDisplayTransform().isIdentity());

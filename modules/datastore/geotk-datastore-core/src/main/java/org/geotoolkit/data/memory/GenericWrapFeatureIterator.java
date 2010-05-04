@@ -72,7 +72,7 @@ public class GenericWrapFeatureIterator<F extends Feature> implements FeatureIte
             try {
                 ((Closeable) iterator).close();
             } catch (IOException ex) {
-                Logger.getLogger(GenericWrapFeatureIterator.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(GenericWrapFeatureIterator.class.getName()).log(Level.WARNING, null, ex);
             }
         }
     }

@@ -117,8 +117,7 @@ public abstract class AbstractReferencedGraphic extends AbstractGraphic implemen
             try {
                 setObjectiveCRS(newCRS);
             } catch (TransformException ex) {
-                ex.printStackTrace();
-                Logging.getLogger(AbstractReferencedGraphic.class).log(Level.SEVERE, null, ex);
+                Logging.getLogger(AbstractReferencedGraphic.class).log(Level.WARNING, null, ex);
             }
         }
         

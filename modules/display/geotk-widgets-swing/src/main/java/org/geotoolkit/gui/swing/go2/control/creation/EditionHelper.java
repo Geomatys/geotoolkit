@@ -141,7 +141,7 @@ public class EditionHelper {
             dispToObj = trs.createInverse();
         } catch (NoninvertibleTransformException ex) {
             dispToObj = new AffineTransform();
-            LOGGER.log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.WARNING, null, ex);
         }
         double[] crds = new double[]{x,y};
         dispToObj.transform(crds, 0, crds, 0, 1);
@@ -699,7 +699,7 @@ public class EditionHelper {
             try {
                 geom = JTS.transform(geom, CRS.findMathTransform(map.getCanvas().getObjectiveCRS(), dataCrs, true));
             } catch (Exception ex) {
-                LOGGER.log(Level.SEVERE, null, ex);
+                LOGGER.log(Level.WARNING, null, ex);
             }
 
             final List<AttributeDescriptor> lst = featureType.getAttributeDescriptors();

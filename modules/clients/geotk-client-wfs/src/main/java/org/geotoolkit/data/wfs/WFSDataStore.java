@@ -127,10 +127,10 @@ public class WFSDataStore extends AbstractDataStore{
                 crs = CRS.decode(ftt.getDefaultSRS(),true);
                 sft = requestType(typeName);                
             } catch (IOException ex) {
-                getLogger().log(Level.SEVERE, null, ex);
+                getLogger().log(Level.WARNING, null, ex);
                 continue;
             } catch (FactoryException ex) {
-                getLogger().log(Level.SEVERE, null, ex);
+                getLogger().log(Level.WARNING, null, ex);
                 continue;
             }
 
@@ -175,7 +175,7 @@ public class WFSDataStore extends AbstractDataStore{
                 }
                 bounds.put(name, env);
             } catch (FactoryException ex) {
-                getLogger().log(Level.SEVERE, null, ex);
+                getLogger().log(Level.WARNING, null, ex);
             }
 
         }

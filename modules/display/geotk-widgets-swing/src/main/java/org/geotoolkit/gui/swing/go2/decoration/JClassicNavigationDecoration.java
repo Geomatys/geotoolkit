@@ -333,7 +333,7 @@ public class JClassicNavigationDecoration extends JComponent implements MapDecor
             try {
                 map.getCanvas().getController().translateDisplay(0, getHeight() / 10);
             } catch (NoninvertibleTransformException ex) {
-                LOGGER.log(Level.SEVERE, null, ex);
+                LOGGER.log(Level.WARNING, null, ex);
             }
         }
     }
@@ -343,7 +343,7 @@ public class JClassicNavigationDecoration extends JComponent implements MapDecor
             try {
                 map.getCanvas().getController().translateDisplay(0, -getHeight() / 10);
             } catch (NoninvertibleTransformException ex) {
-                LOGGER.log(Level.SEVERE, null, ex);
+                LOGGER.log(Level.WARNING, null, ex);
             }
         }
     }
@@ -353,7 +353,7 @@ public class JClassicNavigationDecoration extends JComponent implements MapDecor
             try {
                 map.getCanvas().getController().translateDisplay(getWidth() / 10, 0);
             } catch (NoninvertibleTransformException ex) {
-                LOGGER.log(Level.SEVERE, null, ex);
+                LOGGER.log(Level.WARNING, null, ex);
             }
         }
     }
@@ -363,7 +363,7 @@ public class JClassicNavigationDecoration extends JComponent implements MapDecor
             try {
                 map.getCanvas().getController().translateDisplay(-getWidth() / 10, 0);
             } catch (NoninvertibleTransformException ex) {
-                LOGGER.log(Level.SEVERE, null, ex);
+                LOGGER.log(Level.WARNING, null, ex);
             }
         }
     }
@@ -374,7 +374,7 @@ public class JClassicNavigationDecoration extends JComponent implements MapDecor
             try {
                 map.getCanvas().getController().setRotation(d);
             } catch (NoninvertibleTransformException ex) {
-                LOGGER.log(Level.SEVERE, null, ex);
+                LOGGER.log(Level.WARNING, null, ex);
             }
 
         }

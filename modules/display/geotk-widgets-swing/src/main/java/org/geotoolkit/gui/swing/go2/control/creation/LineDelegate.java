@@ -333,7 +333,7 @@ public class LineDelegate extends AbstractEditionDelegate {
                             draggingAll = true;
                         }
                     } catch (NoninvertibleTransformException ex) {
-                        Logger.getLogger(MultiLineDelegate.class.getName()).log(Level.SEVERE, null, ex);
+                        Logger.getLogger(MultiLineDelegate.class.getName()).log(Level.WARNING, null, ex);
                     }
                     return;
                 }

@@ -63,7 +63,7 @@ public class GetFeatureInfo130 extends AbstractGetFeatureInfo {
         try {
             map.put("CRS", CRS.lookupIdentifier(env.getCoordinateReferenceSystem(), true));
         } catch (FactoryException ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.WARNING, null, ex);
         }
 
         encodeTimeAndElevation(env, map);

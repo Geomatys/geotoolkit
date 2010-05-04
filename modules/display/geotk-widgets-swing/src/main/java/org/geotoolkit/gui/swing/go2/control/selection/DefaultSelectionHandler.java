@@ -267,7 +267,7 @@ public class DefaultSelectionHandler implements CanvasHandler {
                                 }
                                 fi.close();
                             } catch (Exception ex) {
-                                LOGGER.log(Level.SEVERE, null, ex);
+                                LOGGER.log(Level.WARNING, null, ex);
                             }
 
                             Id selection = combine(fml.getSelectionFilter(), ids);

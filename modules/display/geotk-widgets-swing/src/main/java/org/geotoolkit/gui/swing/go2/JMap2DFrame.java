@@ -413,7 +413,7 @@ private void jButton3ActionPerformed(ActionEvent evt) {//GEN-FIRST:event_jButton
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (Exception ex) {
-            Logger.getLogger(JMap2DFrame.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(JMap2DFrame.class.getName()).log(Level.WARNING, null, ex);
         }
 
         java.awt.EventQueue.invokeLater(new Runnable() {

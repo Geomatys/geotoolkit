@@ -265,7 +265,7 @@ public class XMLUtilitiesTest extends TestCase{
         OnlineResource online = null;
         try { online = STYLE_FACTORY.onlineResource(new URI("http://geomayts.fr/anSLDFile.xml"));
         } catch (URISyntaxException ex) {
-            Logging.getLogger(XMLUtilitiesTest.class).log(Level.SEVERE, null, ex);
+            Logging.getLogger(XMLUtilitiesTest.class).log(Level.WARNING, null, ex);
         }
         SLDLibrary lib = SLD_FACTORY.createSLDLibrary(online);
         geoSLD.libraries().add(lib);

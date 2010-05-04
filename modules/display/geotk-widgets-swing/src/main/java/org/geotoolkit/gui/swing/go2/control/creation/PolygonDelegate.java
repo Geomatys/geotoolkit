@@ -351,7 +351,7 @@ public class PolygonDelegate extends AbstractEditionDelegate {
                             draggingAll = true;
                         }
                     } catch (NoninvertibleTransformException ex) {
-                        Logger.getLogger(MultiPolygonDelegate.class.getName()).log(Level.SEVERE, null, ex);
+                        Logger.getLogger(MultiPolygonDelegate.class.getName()).log(Level.WARNING, null, ex);
                     }
                     return;
                 }

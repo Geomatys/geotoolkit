@@ -252,9 +252,9 @@ public class DirectPositionType implements DirectPosition {
                     crs =  CRS.decode(srsName);
                 }
             } catch (NoSuchAuthorityCodeException ex) {
-                Logging.getLogger(DirectPositionType.class).log(Level.SEVERE, ex.getMessage());
+                Logging.getLogger(DirectPositionType.class).log(Level.WARNING, ex.getMessage());
             } catch (FactoryException ex) {
-                Logging.getLogger(DirectPositionType.class).log(Level.SEVERE, null, ex);
+                Logging.getLogger(DirectPositionType.class).log(Level.WARNING, null, ex);
             }
             cachedCRS.put(srsName, crs);
         }

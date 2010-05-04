@@ -142,7 +142,7 @@ public abstract class AbstractGeometryDecoration extends JPanel implements MapDe
             try {
                 paintGeometry(g2,context, projected);
             } catch (TransformException ex) {
-                LOGGER.log(Level.SEVERE, null, ex);
+                LOGGER.log(Level.WARNING, null, ex);
             }
         }
 

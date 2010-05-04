@@ -65,7 +65,7 @@ public class StatelessDynamicLayerJ2D extends AbstractLayerJ2D<DynamicMapLayer>{
             //we do not handle dynamic layers, the distant server does it
             layer.portray(renderingContext);
         } catch (PortrayalException ex) {
-            renderingContext.getMonitor().exceptionOccured(ex, Level.SEVERE);
+            renderingContext.getMonitor().exceptionOccured(ex, Level.WARNING);
         }
     }
         

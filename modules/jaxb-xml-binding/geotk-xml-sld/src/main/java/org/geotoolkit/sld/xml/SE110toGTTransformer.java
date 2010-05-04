@@ -202,7 +202,7 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
         try {
             uri = new URI(ort.getHref());
         } catch (URISyntaxException ex) {
-            Logging.getLogger(SLD110toGTTransformer.class).log(Level.SEVERE, null, ex);
+            Logging.getLogger(SLD110toGTTransformer.class).log(Level.WARNING, null, ex);
         }
 
         if (uri != null) {

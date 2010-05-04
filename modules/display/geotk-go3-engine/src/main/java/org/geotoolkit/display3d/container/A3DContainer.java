@@ -211,7 +211,7 @@ public final class A3DContainer implements Scene, GraphicsContainer<A3DGraphic> 
             contextNode.setTranslation(-translateX*scaling,0,-translateY*scaling);
 
         } catch (IOException ex) {
-            Logging.getLogger(A3DContainer.class).log(Level.SEVERE, null, ex);
+            Logging.getLogger(A3DContainer.class).log(Level.WARNING, null, ex);
         }
         scene.attachChild(contextNode);
     }

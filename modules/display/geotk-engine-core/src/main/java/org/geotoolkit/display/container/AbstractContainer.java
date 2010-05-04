@@ -441,7 +441,7 @@ public abstract class AbstractContainer implements GraphicsContainer<Graphic>{
             try {
                 updateObjectiveCRS((CoordinateReferenceSystem) evt.getNewValue());
             } catch (TransformException ex) {
-                Logging.getLogger(AbstractContainer.class).log(Level.SEVERE, null, ex);
+                Logging.getLogger(AbstractContainer.class).log(Level.WARNING, null, ex);
             }
         }
     }

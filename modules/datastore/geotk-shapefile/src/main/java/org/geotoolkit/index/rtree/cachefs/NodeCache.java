@@ -57,7 +57,7 @@ public class NodeCache extends LinkedHashMap {
             try {
                 ((FileSystemNode) eldest.getValue()).flush();
             } catch (Exception e) {
-                LOGGER.log(Level.SEVERE, e.getMessage(), e);
+                LOGGER.log(Level.WARNING, e.getMessage(), e);
             }
         }
 

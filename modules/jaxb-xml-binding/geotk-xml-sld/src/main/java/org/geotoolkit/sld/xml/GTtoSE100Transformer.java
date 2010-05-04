@@ -951,7 +951,7 @@ public class GTtoSE100Transformer implements StyleVisitor{
         try {
             ort.setHref(or.getLinkage().toURL().toString());
         } catch (MalformedURLException ex) {
-            Logging.getLogger(GTtoSE100Transformer.class).log(Level.SEVERE, null, ex);
+            Logging.getLogger(GTtoSE100Transformer.class).log(Level.WARNING, null, ex);
         }
         return ort;
     }

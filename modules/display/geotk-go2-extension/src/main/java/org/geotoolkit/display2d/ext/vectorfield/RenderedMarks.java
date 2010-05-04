@@ -323,14 +323,14 @@ public abstract class RenderedMarks extends AbstractGraphicJ2D {
             try {
                 objectiveToDisplay = context.getAffineTransform(context.getObjectiveCRS(), context.getDisplayCRS());
             } catch (FactoryException ex) {
-                Logging.getLogger(RenderedMarks.class).log(Level.SEVERE, null, ex);
+                Logging.getLogger(RenderedMarks.class).log(Level.WARNING, null, ex);
             }
                         
             MathTransform2D coverageToObjective = null;
             try {
                 coverageToObjective = (MathTransform2D) context.getMathTransform(getEnvelope().getCoordinateReferenceSystem(), context.getObjectiveCRS());
             } catch (FactoryException ex) {
-                Logging.getLogger(RenderedMarks.class).log(Level.SEVERE, null, ex);
+                Logging.getLogger(RenderedMarks.class).log(Level.WARNING, null, ex);
             }
             /*
              * If the transforms are not valids, compute them now. We will compute one affine
@@ -389,7 +389,7 @@ public abstract class RenderedMarks extends AbstractGraphicJ2D {
                     try { 
                         position = iterator.position();
                     } catch (TransformException ex) { 
-                        context.getMonitor().exceptionOccured(ex, Level.SEVERE);
+                        context.getMonitor().exceptionOccured(ex, Level.WARNING);
                         return;
                     }
                     
@@ -400,7 +400,7 @@ public abstract class RenderedMarks extends AbstractGraphicJ2D {
                     try { 
                         position = coverageToObjective.transform(position, position);
                     } catch (TransformException ex) { 
-                        context.getMonitor().exceptionOccured(ex, Level.SEVERE);
+                        context.getMonitor().exceptionOccured(ex, Level.WARNING);
                         return;
                     }
                     
@@ -422,7 +422,7 @@ public abstract class RenderedMarks extends AbstractGraphicJ2D {
                         try { 
                             geographicArea = coverageToObjective.createTransformedShape(geographicArea);
                         } catch (TransformException ex) { 
-                            context.getMonitor().exceptionOccured(ex, Level.SEVERE);
+                            context.getMonitor().exceptionOccured(ex, Level.WARNING);
                             return;
                         }
                         

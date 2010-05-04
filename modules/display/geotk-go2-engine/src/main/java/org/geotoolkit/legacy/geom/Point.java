@@ -345,9 +345,9 @@ public class Point extends Geometry {
         try{
             transformCandidate = getTransformationFromInternalCRS(coordinateSystem);
         }catch(OperationNotFoundException ope){
-            LOGGER.log(Level.SEVERE, ope.getLocalizedMessage());
+            LOGGER.log(Level.WARNING, ope.getLocalizedMessage());
         }catch(FactoryException ope){
-            LOGGER.log(Level.SEVERE, ope.getLocalizedMessage());
+            LOGGER.log(Level.WARNING, ope.getLocalizedMessage());
         }
 
         if (transformCandidate == null) {

@@ -58,7 +58,7 @@ public class PointLabelCandidateRenderer implements LabelCandidateRenderer<Point
         try {
             shape = label.getGeometry().getDisplayShape();
         } catch (TransformException ex) {
-            Logger.getLogger(PointLabelCandidateRenderer.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(PointLabelCandidateRenderer.class.getName()).log(Level.WARNING, null, ex);
         }
 
         if(shape == null) return null;

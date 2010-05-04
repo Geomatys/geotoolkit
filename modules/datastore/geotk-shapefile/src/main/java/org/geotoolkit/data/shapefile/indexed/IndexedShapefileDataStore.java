@@ -184,7 +184,7 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
             }
         } catch (IOException e) {
             this.treeType = IndexType.NONE;
-            ShapefileDataStoreFactory.LOGGER.log(Level.SEVERE, e
+            ShapefileDataStoreFactory.LOGGER.log(Level.WARNING, e
                     .getLocalizedMessage());
         }
         try {
@@ -192,7 +192,7 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
                 generateFidIndex();
             }
         } catch (IOException e) {
-            ShapefileDataStoreFactory.LOGGER.log(Level.SEVERE, e
+            ShapefileDataStoreFactory.LOGGER.log(Level.WARNING, e
                     .getLocalizedMessage());
         }
 

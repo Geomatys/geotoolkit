@@ -79,7 +79,7 @@ final class DefaultFeatureMapLayer extends AbstractFeatureMapLayer {
         try {
             env = collection.getEnvelope();
         } catch (DataStoreException e) {
-            LOGGER.log(Level.SEVERE, "Could not create referecenced envelope.",e);
+            LOGGER.log(Level.WARNING, "Could not create referecenced envelope.",e);
         }
 
         if(env == null){

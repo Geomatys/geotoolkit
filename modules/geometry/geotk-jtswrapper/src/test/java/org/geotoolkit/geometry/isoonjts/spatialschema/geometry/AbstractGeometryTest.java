@@ -72,7 +72,7 @@ public abstract class AbstractGeometryTest extends TestCase{
         try {
             crs = crsFact.createFromWKT(WGS84_WKT);
         } catch (FactoryException ex) {
-            Logging.getLogger(AbstractGeometryTest.class).log(Level.SEVERE, null, ex);
+            Logging.getLogger(AbstractGeometryTest.class).log(Level.WARNING, null, ex);
         }
         GEOMETRY_FACTORY = new JTSGeometryFactory(crs);
         PRIMITIVE_FACTORY = new JTSPrimitiveFactory(crs);

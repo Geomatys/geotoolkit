@@ -76,7 +76,7 @@ class AddDelta extends AbstractDelta{
         try {
             ft = session.getDataStore().getFeatureType(typeName);
         } catch (DataStoreException ex) {
-            Logger.getLogger(AddDelta.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(AddDelta.class.getName()).log(Level.WARNING, null, ex);
             ft = null;
         }
 

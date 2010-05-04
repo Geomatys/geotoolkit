@@ -44,9 +44,9 @@ public class ZoomToLayerItem extends AbstractTreePopupItem{
                 try {
                     map.getCanvas().getController().setVisibleArea(layer.getBounds());
                 } catch (NoninvertibleTransformException ex) {
-                    Logger.getLogger(ZoomToLayerItem.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(ZoomToLayerItem.class.getName()).log(Level.WARNING, null, ex);
                 } catch (TransformException ex) {
-                    Logger.getLogger(ZoomToLayerItem.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(ZoomToLayerItem.class.getName()).log(Level.WARNING, null, ex);
                 }
             }
         });

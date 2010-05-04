@@ -227,9 +227,9 @@ public class CanvasRenderer extends J2DCanvas implements JRRenderable{
         try {
             getController().setVisibleArea(renderer.getContext().getAreaOfInterest());
         } catch (NoninvertibleTransformException ex) {
-            Logging.getLogger(CanvasRenderer.class).log(Level.SEVERE, null, ex);
+            Logging.getLogger(CanvasRenderer.class).log(Level.WARNING, null, ex);
         } catch (TransformException ex) {
-            Logging.getLogger(CanvasRenderer.class).log(Level.SEVERE, null, ex);
+            Logging.getLogger(CanvasRenderer.class).log(Level.WARNING, null, ex);
         }
         
         g2d = (Graphics2D) g.create();

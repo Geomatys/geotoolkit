@@ -133,7 +133,7 @@ public class OMDataStoreFactory extends AbstractDataStoreFactory {
             OMDataStore datastore = new OMDataStore(connection);
             return datastore;
         } catch (SQLException ex) {
-            LOGGER.log(Level.SEVERE, "SQL Exception while creating O&M datastore for url:" + dburl, ex);
+            LOGGER.log(Level.WARNING, "SQL Exception while creating O&M datastore for url:" + dburl, ex);
         } catch (IOException ex) {
             throw new DataStoreException(ex);
         }

@@ -76,7 +76,7 @@ public class JAXPEventFeatureReader extends JAXPFeatureReader {
             XMLEventReader eventReader = XMLfactory.createXMLEventReader(new StringReader(xml));
             return read(eventReader);
         } catch (XMLStreamException ex) {
-            LOGGER.log(Level.SEVERE,"XMl stream initializing the event Reader: " + ex.getMessage(), ex);
+            LOGGER.log(Level.WARNING,"XMl stream initializing the event Reader: " + ex.getMessage(), ex);
         }
         return null;
     }
@@ -93,7 +93,7 @@ public class JAXPEventFeatureReader extends JAXPFeatureReader {
             XMLEventReader eventReader = XMLfactory.createXMLEventReader(in);
             return read(eventReader);
         } catch (XMLStreamException ex) {
-            LOGGER.log(Level.SEVERE,"XMl stream initializing the event Reader: " + ex.getMessage(), ex);
+            LOGGER.log(Level.WARNING,"XMl stream initializing the event Reader: " + ex.getMessage(), ex);
         }
         return null;
     }
@@ -110,7 +110,7 @@ public class JAXPEventFeatureReader extends JAXPFeatureReader {
             XMLEventReader eventReader = XMLfactory.createXMLEventReader(reader);
             return read(eventReader);
         } catch (XMLStreamException ex) {
-            LOGGER.log(Level.SEVERE,"XMl stream initializing the event Reader: " + ex.getMessage(), ex);
+            LOGGER.log(Level.WARNING,"XMl stream initializing the event Reader: " + ex.getMessage(), ex);
         }
         return null;
     }
@@ -152,7 +152,7 @@ public class JAXPEventFeatureReader extends JAXPFeatureReader {
                 }
             }
         } catch (XMLStreamException ex) {
-            LOGGER.log(Level.SEVERE, "XMl stream exception while reading the feature: " + ex.getMessage(), ex);
+            LOGGER.log(Level.WARNING, "XMl stream exception while reading the feature: " + ex.getMessage(), ex);
         } 
         return null;
     }
@@ -209,7 +209,7 @@ public class JAXPEventFeatureReader extends JAXPFeatureReader {
                             Geometry jtsGeom    = isoGeom.getJTSGeometry();
                             builder.set(geometryName, jtsGeom);
                         } catch (JAXBException ex) {
-                            LOGGER.log(Level.SEVERE, "JAXB exception while reading the feature geometry:" + ex.getMessage(), ex);
+                            LOGGER.log(Level.WARNING, "JAXB exception while reading the feature geometry:" + ex.getMessage(), ex);
                         }
                     }
 
@@ -226,7 +226,7 @@ public class JAXPEventFeatureReader extends JAXPFeatureReader {
 
 
         } catch (XMLStreamException ex) {
-            LOGGER.log(Level.SEVERE, "XMl stream exception while reading the feature: " + ex.getMessage(), ex);
+            LOGGER.log(Level.WARNING, "XMl stream exception while reading the feature: " + ex.getMessage(), ex);
         }
         return null;
     }
@@ -285,7 +285,7 @@ public class JAXPEventFeatureReader extends JAXPFeatureReader {
              return collection;
 
         } catch (XMLStreamException ex) {
-            LOGGER.log(Level.SEVERE, "XMl stream exception while reading the feature: " + ex.getMessage(), ex);
+            LOGGER.log(Level.WARNING, "XMl stream exception while reading the feature: " + ex.getMessage(), ex);
         }
         return null;
     }

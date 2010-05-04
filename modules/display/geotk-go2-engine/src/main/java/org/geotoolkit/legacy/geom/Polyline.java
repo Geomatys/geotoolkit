@@ -464,9 +464,9 @@ public class Polyline extends Geometry {
             try {
                 ct = getCoordinateTransformation(internalCS, crs);
             } catch (OperationNotFoundException ex) {
-                LOGGER.log(Level.SEVERE, null, ex);
+                LOGGER.log(Level.WARNING, null, ex);
             } catch (FactoryException ex) {
-                LOGGER.log(Level.SEVERE, null, ex);
+                LOGGER.log(Level.WARNING, null, ex);
             }
             
             lastCoordinateTransform = ct;

@@ -198,7 +198,7 @@ final class DefaultMapContext implements MapContext {
                 final Envelope newEnv = CRS.transform(area, crs);
                 setAreaOfInterest(newEnv);
             } catch (TransformException ex) {
-                LOGGER.log(Level.SEVERE, null, ex);
+                LOGGER.log(Level.WARNING, null, ex);
             }
 
         }
@@ -256,7 +256,7 @@ final class DefaultMapContext implements MapContext {
                     try {
                         env = new GeneralEnvelope(CRS.transform(env, crs));
                     } catch (TransformException e) {
-                        LOGGER.log(Level.SEVERE,
+                        LOGGER.log(Level.WARNING,
                                 "Data source and map context coordinate system differ, yet it was not possible to get a projected bounds estimate...",
                                 e);
                     }

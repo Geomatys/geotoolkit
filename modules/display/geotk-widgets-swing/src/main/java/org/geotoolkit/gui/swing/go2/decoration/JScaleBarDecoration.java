@@ -148,7 +148,7 @@ public class JScaleBarDecoration extends JComponent implements MapDecoration{
         try {
             center = map.getCanvas().getController().getCenter().getCoordinate();
         } catch (NoninvertibleTransformException ex) {
-            Logger.getLogger(JScaleBarDecoration.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(JScaleBarDecoration.class.getName()).log(Level.WARNING, null, ex);
             return;
         }
         final Point2D centerPoint = new Point2D.Double(center[0], center[1]);

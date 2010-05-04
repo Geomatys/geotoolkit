@@ -153,7 +153,7 @@ public class Tester {
         OnlineResource online = null;
         try { online = STYLE_FACTORY.onlineResource(new URI("http://geomayts.fr/anSLDFile.xml"));
         } catch (URISyntaxException ex) {
-            Logging.getLogger(Tester.class).log(Level.SEVERE, null, ex);
+            Logging.getLogger(Tester.class).log(Level.WARNING, null, ex);
         }
         SLDLibrary lib = SLD_FACTORY.createSLDLibrary(online);
         geoSLD.libraries().add(lib);

@@ -62,7 +62,7 @@ public class ContextNode extends A3DGraphic{
         try {
             this.attachChild(buildPlan(context.getBounds()));
         } catch (IOException ex) {
-            Logging.getLogger(ContextNode.class).log(Level.SEVERE, null, ex);
+            Logging.getLogger(ContextNode.class).log(Level.WARNING, null, ex);
         }
 
         for(final MapLayer layer : context.layers()){

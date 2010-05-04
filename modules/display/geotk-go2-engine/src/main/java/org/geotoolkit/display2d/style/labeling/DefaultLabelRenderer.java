@@ -107,7 +107,7 @@ public class DefaultLabelRenderer implements LabelRenderer{
         try {
             geom = label.getGeometry().getDisplayShape();
         } catch (TransformException ex) {
-            Logging.getLogger(DefaultLabelRenderer.class).log(Level.SEVERE, null, ex);
+            Logging.getLogger(DefaultLabelRenderer.class).log(Level.WARNING, null, ex);
             return;
         }
 
@@ -155,7 +155,7 @@ public class DefaultLabelRenderer implements LabelRenderer{
         try {
             geom = label.getGeometry().getDisplayShape();
         } catch (TransformException ex) {
-            Logging.getLogger(DefaultLabelRenderer.class).log(Level.SEVERE, null, ex);
+            Logging.getLogger(DefaultLabelRenderer.class).log(Level.WARNING, null, ex);
             return;
         }
 

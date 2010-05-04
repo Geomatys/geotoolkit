@@ -372,7 +372,7 @@ public class GeometrytoJTS {
         }else if(gml instanceof RingType){
             return toJTS((RingType)gml);
         }else{
-            Logging.getLogger(GeometrytoJTS.class).log(Level.SEVERE, "Unssupported geometry type : " + gml);
+            Logging.getLogger(GeometrytoJTS.class).log(Level.WARNING, "Unssupported geometry type : " + gml);
             return GF.createLinearRing(new Coordinate[]{new Coordinate(0, 0),new Coordinate(0, 0),
             new Coordinate(0, 0),new Coordinate(0, 0)});
         }

@@ -269,7 +269,7 @@ public class IsolineGraphicJ2D extends StatelessFeatureLayerJ2D {
             }
 
         } catch (DataStoreRuntimeException ex) {
-            Logger.getLogger(IsolineGraphicJ2D.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(IsolineGraphicJ2D.class.getName()).log(Level.WARNING, null, ex);
         }
 
     }

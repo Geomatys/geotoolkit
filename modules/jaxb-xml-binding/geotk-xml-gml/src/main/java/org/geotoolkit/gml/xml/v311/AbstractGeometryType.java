@@ -254,7 +254,7 @@ public abstract class AbstractGeometryType extends AbstractGMLEntry implements G
             try {
                 return CRS.decode(getSrsName());
             } catch (FactoryException ex) {
-                Logger.getLogger(AbstractGeometryType.class.getName()).log(Level.SEVERE, "Could not decode CRS which name is : " + srsName, ex);
+                Logger.getLogger(AbstractGeometryType.class.getName()).log(Level.WARNING, "Could not decode CRS which name is : " + srsName, ex);
             }
         }
 

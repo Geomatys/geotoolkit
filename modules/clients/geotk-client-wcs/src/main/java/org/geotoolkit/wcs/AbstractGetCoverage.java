@@ -218,7 +218,7 @@ public abstract class AbstractGetCoverage extends AbstractRequest implements Get
             try {
                 requestParameters.put("RESPONSECRS", CRS.lookupIdentifier(responseCRS, false));
             } catch (FactoryException ex) {
-                LOGGER.log(Level.SEVERE, null, ex);
+                LOGGER.log(Level.WARNING, null, ex);
             }
         }
         return super.getURL();
@@ -244,7 +244,7 @@ public abstract class AbstractGetCoverage extends AbstractRequest implements Get
         try {
             params.put("CRS", CRS.lookupIdentifier(envelope.getCoordinateReferenceSystem(), false));
         } catch (FactoryException ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.WARNING, null, ex);
         }
         return params;
     }

@@ -118,9 +118,9 @@ public class ScaleBarRenderer implements JRRenderable{
                 final Point2D centerPoint = new Point2D.Double(center[0], center[1]);
                 J2DScaleBarUtilities.paint(c2d.getObjectiveCRS(), c2d.getDisplayCRS(), centerPoint, g2d, area.x,area.y, template);
             } catch (PortrayalException ex) {
-                Logger.getLogger(ScaleBarRenderer.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(ScaleBarRenderer.class.getName()).log(Level.WARNING, null, ex);
             }catch (NoninvertibleTransformException ex) {
-                Logger.getLogger(ScaleBarRenderer.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(ScaleBarRenderer.class.getName()).log(Level.WARNING, null, ex);
             }
 
         }

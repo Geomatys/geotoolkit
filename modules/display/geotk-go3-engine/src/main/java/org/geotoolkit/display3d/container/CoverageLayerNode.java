@@ -86,7 +86,7 @@ public class CoverageLayerNode extends A3DGraphic{
         try {
             env = CRS.transform(env, canvas.getObjectiveCRS());
         } catch (TransformException ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.WARNING, null, ex);
         }
 
         final Quad back = new Quad("quadPlan",env.getSpan(0), env.getSpan(1));
@@ -112,11 +112,11 @@ public class CoverageLayerNode extends A3DGraphic{
 //            box.setRenderState(ms);
 
         } catch (FactoryException ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.WARNING, null, ex);
         } catch (TransformException ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.WARNING, null, ex);
         } catch (IOException ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.WARNING, null, ex);
         }
 
         return back;
@@ -154,7 +154,7 @@ public class CoverageLayerNode extends A3DGraphic{
             try {
                 sleep(5000);
             } catch (InterruptedException ex) {
-                LOGGER.log(Level.SEVERE, null, ex);
+                LOGGER.log(Level.WARNING, null, ex);
             }
 
             final Mesh mesh = buildQuad();

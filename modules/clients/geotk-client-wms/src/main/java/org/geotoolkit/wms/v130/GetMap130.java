@@ -65,9 +65,9 @@ public class GetMap130 extends AbstractGetMap {
             CoordinateReferenceSystem crs2d = CRSUtilities.getCRS2D(env.getCoordinateReferenceSystem());
             map.put("CRS", CRS.lookupIdentifier(crs2d, true));
         } catch (FactoryException ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.WARNING, null, ex);
         } catch (TransformException ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.WARNING, null, ex);
         }
 
         encodeTimeAndElevation(env, map);

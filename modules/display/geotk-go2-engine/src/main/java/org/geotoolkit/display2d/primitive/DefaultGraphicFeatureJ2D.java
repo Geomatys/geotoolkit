@@ -106,7 +106,7 @@ public class DefaultGraphicFeatureJ2D extends AbstractGraphicJ2D implements Proj
         try {
             return getCompleteFeature(getFeatureId());
         } catch (DataStoreException ex) {
-            Logging.getLogger(DefaultGraphicFeatureJ2D.class).log(Level.SEVERE, null, ex);
+            Logging.getLogger(DefaultGraphicFeatureJ2D.class).log(Level.WARNING, null, ex);
         }
 
         //worst case, return the partial feature

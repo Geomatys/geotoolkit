@@ -567,7 +567,7 @@ public final class DecorationXMLParser {
                     el.setTextContent(CRS.lookupIdentifier(gridTemplate.getCRS(), true));
                     deco.appendChild(el);
                 } catch (FactoryException ex) {
-                    Logger.getLogger(DecorationXMLParser.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(DecorationXMLParser.class.getName()).log(Level.WARNING, null, ex);
                 }
                 
                 final Element main = document.createElement(TAG_MAIN);

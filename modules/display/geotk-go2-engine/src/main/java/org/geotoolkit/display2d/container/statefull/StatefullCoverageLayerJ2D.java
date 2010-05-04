@@ -174,7 +174,7 @@ public class StatefullCoverageLayerJ2D extends AbstractLayerJ2D<CoverageMapLayer
                 try {
                     GO2Utilities.portray(projectedCoverage, symbol, context);
                 } catch (PortrayalException ex) {
-                    context.getMonitor().exceptionOccured(ex, Level.SEVERE);
+                    context.getMonitor().exceptionOccured(ex, Level.WARNING);
                 }
             }
         }

@@ -64,7 +64,7 @@ public class JScaleCombo extends JComboBox {
                 repaint();
                 addItemListener(action);
             } catch (TransformException ex) {
-                Logger.getLogger(JScaleCombo.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(JScaleCombo.class.getName()).log(Level.WARNING, null, ex);
             }
             
         }
@@ -80,7 +80,7 @@ public class JScaleCombo extends JComboBox {
                 try {
                     map.getCanvas().getController().setGeographicScale(((Number) getSelectedItem()).doubleValue());
                 } catch (TransformException ex) {
-                    Logger.getLogger(JScaleCombo.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(JScaleCombo.class.getName()).log(Level.WARNING, null, ex);
                 }
             }
         }

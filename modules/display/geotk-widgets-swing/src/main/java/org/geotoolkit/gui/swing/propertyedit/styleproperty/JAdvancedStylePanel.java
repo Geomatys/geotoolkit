@@ -124,9 +124,9 @@ public class JAdvancedStylePanel<T extends Object> extends StyleElementEditor<T>
             try {
                 val = (StyleElementEditor) clazz.newInstance();
             } catch (InstantiationException ex) {
-                Logger.getLogger(JAdvancedStylePanel.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(JAdvancedStylePanel.class.getName()).log(Level.WARNING, null, ex);
             } catch (IllegalAccessException ex) {
-                Logger.getLogger(JAdvancedStylePanel.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(JAdvancedStylePanel.class.getName()).log(Level.WARNING, null, ex);
             }
             guiPanels.put(clazz, val);
         }

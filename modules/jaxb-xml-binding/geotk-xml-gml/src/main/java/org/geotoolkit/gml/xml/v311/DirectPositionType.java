@@ -167,7 +167,7 @@ public class DirectPositionType implements DirectPosition {
                 try {
                     this.srsName = CRS.lookupIdentifier(crs, true);
                 } catch (FactoryException ex) {
-                    Logging.getLogger(DirectPositionType.class).log(Level.SEVERE, null, ex);
+                    Logging.getLogger(DirectPositionType.class).log(Level.WARNING, null, ex);
                 }
             }
             this.srsDimension = position.getDimension();
@@ -282,9 +282,9 @@ public class DirectPositionType implements DirectPosition {
             try {
                 return CRS.decode(srsName);
             } catch (NoSuchAuthorityCodeException ex) {
-                Logging.getLogger(DirectPositionType.class).log(Level.SEVERE, null, ex);
+                Logging.getLogger(DirectPositionType.class).log(Level.WARNING, null, ex);
             } catch (FactoryException ex) {
-                Logging.getLogger(DirectPositionType.class).log(Level.SEVERE, null, ex);
+                Logging.getLogger(DirectPositionType.class).log(Level.WARNING, null, ex);
             }
         }
         return null;

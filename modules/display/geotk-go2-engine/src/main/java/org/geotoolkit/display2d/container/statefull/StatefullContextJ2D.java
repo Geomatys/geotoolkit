@@ -122,7 +122,7 @@ public class StatefullContextJ2D extends AbstractGraphicJ2D{
             //for exemple for postgrid coverage not yet loaded or huge vector bases like Open Street Map
             //setEnvelope(context.getBounds());
         } catch (TransformException ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.WARNING, null, ex);
         }
         parseContext(this.context);
         this.context.addContextListener(contextListener);

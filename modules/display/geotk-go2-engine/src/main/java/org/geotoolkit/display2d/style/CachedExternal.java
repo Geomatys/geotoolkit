@@ -153,7 +153,7 @@ public class CachedExternal extends Cache<ExternalGraphic>{
                     final BufferedImage buffer = DynamicSymbolFactoryFinder.getImage(uri, styleElement.getFormat(),size, hints);
                     return recode(buffer, styleElement.getColorReplacements());
                 }catch (Exception ex){
-                    Logger.getLogger(CachedExternal.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(CachedExternal.class.getName()).log(Level.WARNING, null, ex);
                 }
             }
 

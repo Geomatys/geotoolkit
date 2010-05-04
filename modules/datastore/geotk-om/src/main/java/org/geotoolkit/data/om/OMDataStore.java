@@ -302,7 +302,7 @@ public class OMDataStore extends AbstractDataStore {
                                 try {
                                     crsIdentifier = CRS.lookupIdentifier(featureType.getCoordinateReferenceSystem(), true);
                                 } catch (FactoryException ex) {
-                                    LOGGER.log(Level.SEVERE, null, ex);
+                                    LOGGER.log(Level.WARNING, null, ex);
                                 }
                             }
                             if (identifier != null) {
@@ -324,7 +324,7 @@ public class OMDataStore extends AbstractDataStore {
                     }
                 }
             } catch (SQLException ex) {
-                LOGGER.log(Level.SEVERE, writeSamplingPoint.toString(), ex);
+                LOGGER.log(Level.WARNING, writeSamplingPoint.toString(), ex);
             }
         } else {
             throw new DataStoreException("there is no such featureType: " + groupName);
@@ -342,7 +342,7 @@ public class OMDataStore extends AbstractDataStore {
                 return new DefaultFeatureId(identifier);
             }
         } catch (SQLException ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.WARNING, null, ex);
         }
         return null;
     }

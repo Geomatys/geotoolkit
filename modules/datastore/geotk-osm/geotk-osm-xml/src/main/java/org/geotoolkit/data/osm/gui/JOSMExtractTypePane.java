@@ -63,9 +63,9 @@ public class JOSMExtractTypePane extends javax.swing.JPanel {
         try {
             EPSG_4326 = CRS.decode("EPSG:4326");
         } catch (NoSuchAuthorityCodeException ex) {
-            Logger.getLogger(JOSMExtractTypePane.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(JOSMExtractTypePane.class.getName()).log(Level.WARNING, null, ex);
         } catch (FactoryException ex) {
-            Logger.getLogger(JOSMExtractTypePane.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(JOSMExtractTypePane.class.getName()).log(Level.WARNING, null, ex);
         }
     }
 

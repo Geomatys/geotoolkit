@@ -157,10 +157,10 @@ public class DefaultBBox extends AbstractBinarySpatialOperator<PropertyName,Defa
 
             } catch (FactoryException ex) {
                 //should not append if we have a srid
-                Logger.getLogger(DefaultBBox.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(DefaultBBox.class.getName()).log(Level.WARNING, null, ex);
                 return false;
             } catch (TransformException ex) {
-                Logger.getLogger(DefaultBBox.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(DefaultBBox.class.getName()).log(Level.WARNING, null, ex);
                 return false;
             }
             

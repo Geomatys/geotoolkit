@@ -133,7 +133,7 @@ public class JavaScriptFunction extends AbstractFunction {
         try {
             return compiled.eval(bindings);
         } catch (ScriptException ex) {
-            Logger.getLogger(JavaScriptFunction.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(JavaScriptFunction.class.getName()).log(Level.WARNING, null, ex);
         }
 
         return "";

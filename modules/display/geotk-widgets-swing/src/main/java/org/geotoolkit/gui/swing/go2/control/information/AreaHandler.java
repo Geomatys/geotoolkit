@@ -136,7 +136,7 @@ public class AreaHandler implements CanvasHandler {
                     coords.add(new Coordinate(crds[0], crds[1]));
                     updateGeometry();
                 } catch (NoninvertibleTransformException ex) {
-                    LOGGER.log(Level.SEVERE, null, ex);
+                    LOGGER.log(Level.WARNING, null, ex);
                 }
 
             } else if (mousebutton == MouseEvent.BUTTON3) {

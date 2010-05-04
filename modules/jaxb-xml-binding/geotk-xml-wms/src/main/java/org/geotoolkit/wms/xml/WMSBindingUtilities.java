@@ -100,7 +100,7 @@ import org.xml.sax.InputSource;
                 final URL url = online.getLinkage().toURL();
                 return unMarshaller.unmarshal(url);
             } catch (MalformedURLException ex) {
-                Logging.getLogger(WMSBindingUtilities.class).log(Level.SEVERE, null, ex);
+                Logging.getLogger(WMSBindingUtilities.class).log(Level.WARNING, null, ex);
                 return null;
             }
 

@@ -214,7 +214,7 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
             LOGGER.log(Level.SEVERE, ex.getMessage(), ex);
         } catch (IOException ex) {
             LOGGER.severe("IOException while indexing document: " + ex.getMessage());
-            LOGGER.log(Level.SEVERE, ex.getMessage(), ex);
+            LOGGER.log(Level.WARNING, ex.getMessage(), ex);
         }
     }
 

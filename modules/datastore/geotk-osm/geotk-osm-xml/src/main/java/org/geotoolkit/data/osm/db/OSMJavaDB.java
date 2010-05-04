@@ -235,11 +235,11 @@ public class OSMJavaDB {
                         rs.close();
                     }
                 } catch (SQLException ex) {
-                    Logger.getLogger(OSMJavaDB.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(OSMJavaDB.class.getName()).log(Level.WARNING, null, ex);
                 } catch (IOException ex) {
-                    Logger.getLogger(OSMJavaDB.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(OSMJavaDB.class.getName()).log(Level.WARNING, null, ex);
                 } catch (ClassNotFoundException ex) {
-                    Logger.getLogger(OSMJavaDB.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(OSMJavaDB.class.getName()).log(Level.WARNING, null, ex);
                 }
             }
         }

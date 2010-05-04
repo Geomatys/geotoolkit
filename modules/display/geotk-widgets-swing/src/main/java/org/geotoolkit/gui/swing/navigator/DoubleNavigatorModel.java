@@ -56,7 +56,7 @@ public class DoubleNavigatorModel implements NavigatorModel{
             pt = dimToGraphic.inverseTransform(new Point2D.Double(candidate, 0), null);
         } catch (NoninvertibleTransformException ex) {
             //shoult not happen
-            Logger.getLogger(DoubleNavigatorModel.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(DoubleNavigatorModel.class.getName()).log(Level.WARNING, null, ex);
         }
         return pt.getX();
     }

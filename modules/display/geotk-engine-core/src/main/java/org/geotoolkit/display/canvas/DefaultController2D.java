@@ -486,7 +486,7 @@ public class DefaultController2D implements CanvasController2D{
             Shape shp = getTransform().createInverse().createTransformedShape(dipsEnv);
             setVisibleArea(shp.getBounds2D());
         } catch (NoninvertibleTransformException ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.WARNING, null, ex);
         }
 
     }
@@ -633,7 +633,7 @@ public class DefaultController2D implements CanvasController2D{
         try {
             scale(factor);
         } catch (NoninvertibleTransformException ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.WARNING, null, ex);
         }
     }
 

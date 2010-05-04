@@ -60,9 +60,9 @@ public class ZoomAllAction extends AbstractAction {
             try {
                 map.getCanvas().getController().setVisibleArea(rect);
             } catch (IllegalArgumentException ex) {
-                LOGGER.log(Level.SEVERE, null, ex);
+                LOGGER.log(Level.WARNING, null, ex);
             } catch (NoninvertibleTransformException ex) {
-                LOGGER.log(Level.SEVERE, null, ex);
+                LOGGER.log(Level.WARNING, null, ex);
             } 
         }
     }

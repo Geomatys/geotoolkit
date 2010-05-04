@@ -161,7 +161,7 @@ public class StatefullFeatureLayerJ2D extends StatelessFeatureLayerJ2D{
         try{
             features = ((FeatureCollection<SimpleFeature>)layer.getCollection()).subCollection(query);
         }catch(DataStoreException ex){
-            context.getMonitor().exceptionOccured(ex, Level.SEVERE);
+            context.getMonitor().exceptionOccured(ex, Level.WARNING);
             //can not continue this layer with this error
             return;
         }
@@ -211,7 +211,7 @@ public class StatefullFeatureLayerJ2D extends StatelessFeatureLayerJ2D{
         try{
             features = ((FeatureCollection<SimpleFeature>)layer.getCollection()).subCollection(query);
         }catch(DataStoreException ex){
-            context.getMonitor().exceptionOccured(ex, Level.SEVERE);
+            context.getMonitor().exceptionOccured(ex, Level.WARNING);
             //can not continue this layer with this error
             return graphics;
         }

@@ -127,7 +127,7 @@ public abstract class J2DCanvas extends ReferencedCanvas2D{
         try { 
             canvasObjectShape = getObjectiveBounds();
         } catch (TransformException ex) {
-            monitor.exceptionOccured(ex, Level.SEVERE);
+            monitor.exceptionOccured(ex, Level.WARNING);
             //we can not continue with this kind of error
             // nothing can be redered with this shape
             return null;
@@ -143,7 +143,7 @@ public abstract class J2DCanvas extends ReferencedCanvas2D{
                 AffineTransform dispToObj = objToDisp.createInverse();
                 paintingObjectiveShape = dispToObj.createTransformedShape(paintingDisplayShape);
             } catch (NoninvertibleTransformException ex) {
-                monitor.exceptionOccured(ex, Level.SEVERE);
+                monitor.exceptionOccured(ex, Level.WARNING);
                 //we can not continue with this kind of error
                 // nothing can be redered with this shape
                 return null;
@@ -191,7 +191,7 @@ public abstract class J2DCanvas extends ReferencedCanvas2D{
             try { 
                 labelRenderer.portrayLabels();
             } catch (TransformException ex) { 
-                monitor.exceptionOccured(ex, Level.SEVERE);
+                monitor.exceptionOccured(ex, Level.WARNING);
             }
         }
         
@@ -222,7 +222,7 @@ public abstract class J2DCanvas extends ReferencedCanvas2D{
             try {
                 dispToObj.invert();
             } catch (NoninvertibleTransformException ex) {
-                Logging.getLogger(J2DCanvas.class).log(Level.SEVERE, null, ex);
+                Logging.getLogger(J2DCanvas.class).log(Level.WARNING, null, ex);
             }
 
             final Shape objectiveShape = dispToObj.createTransformedShape(displayShape);

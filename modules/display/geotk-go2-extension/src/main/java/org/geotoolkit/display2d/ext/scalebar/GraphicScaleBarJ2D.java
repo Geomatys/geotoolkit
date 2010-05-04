@@ -76,7 +76,7 @@ public class GraphicScaleBarJ2D extends PositionedGraphic2D{
         try {
             center = context.getCanvas().getController().getCenter().getCoordinate();
         } catch (NoninvertibleTransformException ex) {
-            Logger.getLogger(GraphicScaleBarJ2D.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(GraphicScaleBarJ2D.class.getName()).log(Level.WARNING, null, ex);
             return;
         }
         final Point2D centerPoint = new Point2D.Double(center[0], center[1]);

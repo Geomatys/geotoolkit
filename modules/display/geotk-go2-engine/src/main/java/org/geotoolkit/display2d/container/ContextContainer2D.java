@@ -173,9 +173,9 @@ public abstract  class ContextContainer2D extends AbstractContainer2D{
             }
 
         } catch (IOException ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.WARNING, null, ex);
         } catch (TransformException ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.WARNING, null, ex);
         }
 
         return XRectangle2D.INFINITY;
@@ -215,9 +215,9 @@ public abstract  class ContextContainer2D extends AbstractContainer2D{
             }
 
         } catch (IOException ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.WARNING, null, ex);
         } catch (TransformException ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.WARNING, null, ex);
         }
 
         GeneralEnvelope genv = new GeneralEnvelope(crs);

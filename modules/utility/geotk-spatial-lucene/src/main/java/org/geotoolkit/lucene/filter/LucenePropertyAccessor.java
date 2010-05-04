@@ -83,9 +83,9 @@ public class LucenePropertyAccessor implements PropertyAccessor {
                 geom.setSRID(srid);
                 return geom;
             } catch (IOException ex) {
-                Logger.getLogger(LucenePropertyAccessor.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(LucenePropertyAccessor.class.getName()).log(Level.WARNING, null, ex);
             } catch (ParseException ex) {
-                Logger.getLogger(LucenePropertyAccessor.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(LucenePropertyAccessor.class.getName()).log(Level.WARNING, null, ex);
             }
         }
 

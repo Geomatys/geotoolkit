@@ -71,7 +71,7 @@ public class OpenStreetMapServer implements Server{
         try {
             return serverURL.toURI();
         } catch (URISyntaxException ex) {
-            Logger.getLogger(OpenStreetMapServer.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.WARNING, null, ex);
             return null;
         }
     }
@@ -94,19 +94,19 @@ public class OpenStreetMapServer implements Server{
                 } catch (Exception ex) {
                     capabilities = null;
                     try {
-                        LOGGER.log(Level.SEVERE, "Wrong URL, the server doesn't answer : " +
+                        LOGGER.log(Level.WARNING, "Wrong URL, the server doesn't answer : " +
                                 createGetCapabilities().getURL().toString(), ex);
                     } catch (MalformedURLException ex1) {
-                        LOGGER.log(Level.SEVERE, "Malformed URL, the server doesn't answer. ", ex1);
+                        LOGGER.log(Level.WARNING, "Malformed URL, the server doesn't answer. ", ex1);
                     }
                 } finally{
                     if(reader != null){
                         try {
                             reader.dispose();
                         } catch (IOException ex) {
-                            LOGGER.log(Level.SEVERE, null, ex);
+                            LOGGER.log(Level.WARNING, null, ex);
                         } catch (XMLStreamException ex) {
-                            LOGGER.log(Level.SEVERE, null, ex);
+                            LOGGER.log(Level.WARNING, null, ex);
                         }
                     }
                 }
@@ -117,10 +117,10 @@ public class OpenStreetMapServer implements Server{
         try {
             thread.join(10000);
         } catch (InterruptedException ex) {
-            LOGGER.log(Level.SEVERE, "The thread to obtain Capabilities doesn't answer.", ex);
+            LOGGER.log(Level.WARNING, "The thread to obtain Capabilities doesn't answer.", ex);
         }
         if ((System.currentTimeMillis() - start) > 10000) {
-            LOGGER.log(Level.SEVERE, "TimeOut error, the server takes too much time to answer. ");
+            LOGGER.log(Level.WARNING, "TimeOut error, the server takes too much time to answer. ");
         }
 
         return capabilities;

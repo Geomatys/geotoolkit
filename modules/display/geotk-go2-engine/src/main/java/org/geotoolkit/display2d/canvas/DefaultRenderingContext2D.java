@@ -225,7 +225,7 @@ public final class DefaultRenderingContext2D implements RenderingContext2D{
         try {
             this.displayToObjective = (AffineTransform2D) objToDisp.inverse();
         } catch (NoninvertibleTransformException ex) {
-            Logging.getLogger(DefaultRenderingContext2D.class).log(Level.SEVERE, null, ex);
+            Logging.getLogger(DefaultRenderingContext2D.class).log(Level.WARNING, null, ex);
         }
         this.monitor = monitor;
         
@@ -250,7 +250,7 @@ public final class DefaultRenderingContext2D implements RenderingContext2D{
         try {
             this.canvasObjectiveBBox = GO2Utilities.combine(objectiveCRS, canvasObjectiveBounds, temporal, elevation);
         } catch (TransformException ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.WARNING, null, ex);
         }
         this.objectiveCRS = canvasObjectiveBBox.getCoordinateReferenceSystem();
 
@@ -276,7 +276,7 @@ public final class DefaultRenderingContext2D implements RenderingContext2D{
         try {
             this.paintingObjectiveBBox = GO2Utilities.combine(objectiveCRS, paintingObjectiveBounds, temporal, elevation);
         } catch (TransformException ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.WARNING, null, ex);
         }
 
         try {
@@ -284,7 +284,7 @@ public final class DefaultRenderingContext2D implements RenderingContext2D{
         } catch (TransformException ex) {
             //could not calculate the geographic scale.
             geoScale = 1;
-            LOGGER.log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.WARNING, null, ex);
         }
 
         //set temporal and elevation range------------------------------------------
@@ -483,9 +483,9 @@ public final class DefaultRenderingContext2D implements RenderingContext2D{
                     labelRenderer = (LabelRenderer) candidate.newInstance();
                     labelRenderer.setRenderingContext(this);
                 } catch (InstantiationException ex) {
-                    LOGGER.log(Level.SEVERE, null, ex);
+                    LOGGER.log(Level.WARNING, null, ex);
                 } catch (IllegalAccessException ex) {
-                    LOGGER.log(Level.SEVERE, null, ex);
+                    LOGGER.log(Level.WARNING, null, ex);
                 }
             }else{
                 labelRenderer = new DecimationLabelRenderer();
@@ -550,11 +550,11 @@ public final class DefaultRenderingContext2D implements RenderingContext2D{
                     res[i] = Double.MAX_VALUE;
                 }
             } catch (TransformException ex) {
-                LOGGER.log(Level.SEVERE, null, ex);
+                LOGGER.log(Level.WARNING, null, ex);
             } catch (IllegalArgumentException ex) {
-                LOGGER.log(Level.SEVERE, null, ex);
+                LOGGER.log(Level.WARNING, null, ex);
             } catch (Exception ex) {
-                LOGGER.log(Level.SEVERE, null, ex);
+                LOGGER.log(Level.WARNING, null, ex);
             }
             
             return res;

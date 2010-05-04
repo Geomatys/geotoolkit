@@ -96,7 +96,7 @@ public class WFSBindingUtilities {
                 final URL url = online.getLinkage().toURL();
                 return unMarshaller.unmarshal(url);
             } catch (MalformedURLException ex) {
-                Logging.getLogger(WFSBindingUtilities.class).log(Level.SEVERE, null, ex);
+                Logging.getLogger(WFSBindingUtilities.class).log(Level.WARNING, null, ex);
                 return null;
             }
 

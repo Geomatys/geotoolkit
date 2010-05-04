@@ -45,7 +45,7 @@ public class CoordinateReferenceSystemAdapter  extends XmlAdapter<String, Coordi
 
                 }
             } catch (FactoryException ex) {
-                Logging.getLogger(DirectPositionType.class).log(Level.SEVERE, null, ex);
+                Logging.getLogger(DirectPositionType.class).log(Level.WARNING, null, ex);
             }
         }
         return srsName;
