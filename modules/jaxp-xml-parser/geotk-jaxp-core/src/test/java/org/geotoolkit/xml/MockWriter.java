@@ -27,12 +27,14 @@ import javax.xml.stream.XMLStreamException;
 public class MockWriter extends StaxStreamWriter{
 
     public void write() throws XMLStreamException{
+        final String namespace = "http://www.sample.net/person";
+        writer.setPrefix("prs", namespace);
+        writer.setDefaultNamespace(namespace);
+
         writer.writeStartDocument("UTF-8", "1.0");
-        writer.setDefaultNamespace("http://www.sample.net/person");
-            writer.writeStartElement("Person");
-                writer.writeStartElement("Name");
-                writer.writeCharacters("Jean-Pierre");
-                writer.writeEndElement();
+            writer.writeStartElement(namespace, "Person");
+                writer.writeDefaultNamespace(namespace);            
+                writeSimpleTag(namespace, "Name", "Jean-Pierre");
             writer.writeEndElement();
         writer.writeEndDocument();
     }

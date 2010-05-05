@@ -101,6 +101,22 @@ public abstract class StaxStreamWriter {
     }
 
     /**
+     * Write a new tag with the text corresponding to the given value.
+     * The tag won't be written if the value is null.
+     * @param namespace : namespace of the wanted tag
+     * @param localName : local name of the wanted tag
+     * @param value : text value to write
+     * @throws XMLStreamException
+     */
+    protected void writeSimpleTag(String namespace, String localName, Object value) throws XMLStreamException{
+        if(value != null){
+            writer.writeStartElement(namespace, localName);
+            writer.writeCharacters(value.toString());
+            writer.writeEndElement();
+        }
+    }
+
+    /**
      * Creates a new XMLStreamWriter.
      * @param output
      * @return XMLStreamWriter
