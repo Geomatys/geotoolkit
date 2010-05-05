@@ -67,11 +67,11 @@
  *     env.setTimeRange(...);       // Convenience method for setting the temporal dimension.
  *     query.setEnvelope(env);      // As a matter of principle, but actually not necessary.
  *     query.setLayer("My Layer");
- *     Future<GridCoverage2D> fc = db.readSlice(query);
+ *     FutureQuery<GridCoverage2D> fc = db.readSlice(query);
  *
  *     // Do some other work here while the coverage is loaded in background.
  *
- *     GridCoverage2D coverage = CoverageDatabase.now(fc);
+ *     GridCoverage2D coverage = fc.result();
  * }
  *
  * It is also possible to get a {@link org.geotoolkit.coverage.sql.LayerCoverageReader}

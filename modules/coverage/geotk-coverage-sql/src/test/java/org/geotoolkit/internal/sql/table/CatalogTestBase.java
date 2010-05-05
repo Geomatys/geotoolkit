@@ -18,7 +18,6 @@
 package org.geotoolkit.internal.sql.table;
 
 import java.io.File;
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Properties;
 import javax.sql.DataSource;
@@ -41,7 +40,7 @@ import static org.junit.Assume.*;
  * This test requires a connection to a PostgreSQL database.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.11
+ * @version 3.12
  *
  * @since 3.09 (derived from Seagis)
  */
@@ -52,9 +51,15 @@ public class CatalogTestBase {
     private static SpatialDatabase database;
 
     /**
-     * {@code true} if the {@code "rootDirectory"} property is defined.
+     * The {@code "rootDirectory"} property, or {@code null} if undefined.
      */
-    private static boolean hasRootDirectory;
+    private static String rootDirectory;
+
+    /**
+     * For subclass constructors only.
+     */
+    protected CatalogTestBase() {
+    }
 
     /**
      * Creates the database when first needed.
@@ -82,7 +87,7 @@ public class CatalogTestBase {
             } else {
                 database = new SpatialDatabase(ds, properties);
             }
-            hasRootDirectory = properties.containsKey(ConfigurationKey.ROOT_DIRECTORY.key);
+            rootDirectory = properties.getProperty(ConfigurationKey.ROOT_DIRECTORY.key);
         } catch (RuntimeException e) {
             throw e;
         } catch (Exception e) {
@@ -114,23 +119,23 @@ public class CatalogTestBase {
      */
     protected static synchronized void requireImageData() {
         assertNotNull("This method can be invoked only after getDatabase().", database);
-        assumeTrue(hasRootDirectory);
+        assumeNotNull(rootDirectory);
     }
 
     /**
-     * Tests the database connection.
+     * Returns the path to the given image. This method can be invoked only if
+     * {@link #requireImageData()} has been successfully invoked.
      *
-     * @throws SQLException if an SQL error occured.
+     * @param  path The path to the image, relative to the data root directory.
+     * @return The absolute path to the image.
+     *
+     * @since 3.12
      */
-    @Test
-    public void testConnection() throws SQLException {
-        final LocalCache cache = getDatabase().getLocalCache();
-        synchronized (cache) {
-            final Connection connection = cache.connection();
-            assertNotNull(connection);
-            assertFalse(connection.isClosed());
-            assertSame(connection, cache.connection());
-        }
+    protected static synchronized File toImageFile(final String path) {
+        assertNotNull("requireImageData() must be invoked first.", rootDirectory);
+        final File file = new File(rootDirectory, path);
+        assertTrue("Not a file: " + file, file.isFile());
+        return file;
     }
 
     /**

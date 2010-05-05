@@ -38,7 +38,7 @@ import org.geotoolkit.io.ContentFormatException;
  * Utility methods related to I/O operations.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.08
+ * @version 3.12
  *
  * @since 3.00
  * @module
@@ -184,6 +184,21 @@ public final class IOUtilities {
             final URL url = (URL) path;
             if (url.getProtocol().equalsIgnoreCase("file")) {
                 path = toFile(url, null);
+            }
+        } else if (path instanceof URI) {
+            final URI uri = (URI) path;
+            final String scheme = uri.getScheme();
+            if (scheme != null && scheme.equalsIgnoreCase("file")) try {
+                path = new File(uri);
+            } catch (IllegalArgumentException cause) {
+                /*
+                 * Typically because the URI contains a fragment (for example a query part)
+                 * that can not be represented as a File. We consider that as an error
+                 * because the scheme pretended that we had a file URI.
+                 */
+                IOException e = new FileNotFoundException(Errors.format(Errors.Keys.ILLEGAL_ARGUMENT_$2, "URI", path));
+                e.initCause(cause);
+                throw e;
             }
         }
         return path;

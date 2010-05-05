@@ -46,7 +46,7 @@ import static org.geotoolkit.referencing.CRS.getHorizontalCRS;
  * Tests {@link GridCoverageTable}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.11
+ * @version 3.12
  *
  * @since 3.10 (derived from Seagis)
  */
@@ -106,7 +106,7 @@ public final class GridCoverageTableTest extends CatalogTestBase {
         table.envelope.clear();
         table.setLayer(LayerTableTest.TEMPERATURE);
         final GridCoverageReference entry = table.getEntry(SAMPLE_NAME);
-        assertEquals(Boolean.FALSE, table.getLayerEntry().isTiled);
+        assertEquals(Boolean.FALSE, table.getLayerEntry(true).isTiled);
         assertEquals(SAMPLE_NAME + ":1", entry.getName());
         assertSame(entry, table.getEntry(SAMPLE_NAME));
         /*
@@ -147,7 +147,7 @@ public final class GridCoverageTableTest extends CatalogTestBase {
          */
         table.envelope.setTimeRange(LayerTableTest.SUB_START_TIME, LayerTableTest.SUB_END_TIME);
         final Set<GridCoverageEntry> entries = table.getEntries();
-        assertEquals(Boolean.FALSE, table.getLayerEntry().isTiled);
+        assertEquals(Boolean.FALSE, table.getLayerEntry(true).isTiled);
         assertEquals(3, entries.size());
         final GridCoverageReference entry = table.getEntry(SAMPLE_NAME);
         assertTrue(entries.contains(entry));
@@ -175,7 +175,7 @@ public final class GridCoverageTableTest extends CatalogTestBase {
          * Tests a single entry.
          */
         final GridCoverageReference entry = table.select(null);
-        assertEquals(Boolean.FALSE, table.getLayerEntry().isTiled);
+        assertEquals(Boolean.FALSE, table.getLayerEntry(true).isTiled);
         assertEquals(1, entry.getSampleDimensions().length);
         /*
          * Tests the envelope, which may be projected.
@@ -209,7 +209,7 @@ public final class GridCoverageTableTest extends CatalogTestBase {
         table.setLayer(LayerTableTest.NETCDF);
 
         GridCoverageEntry entry = table.select(null);
-        assertEquals(Boolean.FALSE, table.getLayerEntry().isTiled);
+        assertEquals(Boolean.FALSE, table.getLayerEntry(true).isTiled);
         assertEquals("Should not have a z index when the z-range is infinite.", 0, entry.getIdentifier().zIndex);
 
         table.envelope.setVerticalRange(0, 0);
@@ -243,7 +243,7 @@ public final class GridCoverageTableTest extends CatalogTestBase {
         table.setLayer(LayerTableTest.GEOSTROPHIC_CURRENT);
         final GridCoverageReference entry = table.select(null);
         assertEquals(2, entry.getSampleDimensions().length);
-        assertEquals(Boolean.FALSE, table.getLayerEntry().isTiled);
+        assertEquals(Boolean.FALSE, table.getLayerEntry(true).isTiled);
         table.release();
     }
 
@@ -260,7 +260,7 @@ public final class GridCoverageTableTest extends CatalogTestBase {
         table.envelope.clear();
         table.setLayer(LayerTableTest.BLUEMARBLE);
         final GridCoverageEntry entry = table.select(null);
-        assertEquals(Boolean.TRUE, table.getLayerEntry().isTiled);
+        assertEquals(Boolean.TRUE, table.getLayerEntry(true).isTiled);
         final TileManager[] tiles = (TileManager[]) entry.getInput();
         assertEquals("We would had only 1 TileManager if we had tiles for every levels. " +
                 "But since L1 is missing, this is normal that L11 is considered to have " +

@@ -17,6 +17,8 @@
  */
 package org.geotoolkit.util.converter;
 
+import org.geotoolkit.resources.Errors;
+
 
 /**
  * An abstract class for simple {@linkplain ObjectConverter Object Converters}. The default
@@ -29,7 +31,7 @@ package org.geotoolkit.util.converter;
  * @param <T> The base type of converted objects.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.01
+ * @version 3.12
  *
  * @since 3.00
  * @module
@@ -72,6 +74,25 @@ public abstract class SimpleConverter<S,T> implements ObjectConverter<S,T> {
     @Override
     public boolean isOrderReversing() {
         return false;
+    }
+
+    /**
+     * Formats an error message for a value that can't be converted.
+     *
+     * @param  name  The parameter name.
+     * @param  value The parameter value.
+     * @param  cause The cause for the failure, or {@code null} if none.
+     * @return The error message.
+     */
+    static String formatErrorMessage(final String name, final Object value, final Exception cause) {
+        String message = Errors.format(Errors.Keys.ILLEGAL_ARGUMENT_$2, name, value);
+        if (cause != null) {
+            final String cm = cause.getLocalizedMessage();
+            if (cm != null) {
+                message = message + System.getProperty("line.separator", "\n") + cm;
+            }
+        }
+        return message;
     }
 
     /**

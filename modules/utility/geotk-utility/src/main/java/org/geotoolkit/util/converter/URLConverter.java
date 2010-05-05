@@ -23,7 +23,6 @@ import java.net.URISyntaxException;
 import java.net.URL;
 
 import org.geotoolkit.lang.Immutable;
-import org.geotoolkit.resources.Errors;
 
 
 /**
@@ -95,7 +94,7 @@ abstract class URLConverter<T> extends SimpleConverter<URL,T> implements Seriali
      * Converter from {@link java.net.URL} to {@link java.io.File}.
      *
      * @author Martin Desruisseaux (Geomatys)
-     * @version 3.01
+     * @version 3.12
      *
      * @since 3.01
      */
@@ -116,11 +115,13 @@ abstract class URLConverter<T> extends SimpleConverter<URL,T> implements Seriali
             if (source == null) {
                 return null;
             }
-            if (source.getProtocol().equalsIgnoreCase("file")) {
-                return new java.io.File(source.getPath());
+            try {
+                return new java.io.File(source.toURI());
+            } catch (URISyntaxException e) { // TODO: multi-catch
+                throw new NonconvertibleObjectException(formatErrorMessage("URL", source, e), e);
+            } catch (IllegalArgumentException e) {
+                throw new NonconvertibleObjectException(formatErrorMessage("URL", source, e), e);
             }
-            throw new NonconvertibleObjectException(Errors.format(
-                    Errors.Keys.ILLEGAL_ARGUMENT_$2, "URL", source));
         }
 
         /** Returns the singleton instance on deserialization. */
@@ -134,7 +135,7 @@ abstract class URLConverter<T> extends SimpleConverter<URL,T> implements Seriali
      * Converter from {@link java.net.URL} to {@link java.net.URI}.
      *
      * @author Martin Desruisseaux (Geomatys)
-     * @version 3.01
+     * @version 3.12
      *
      * @since 3.01
      */
@@ -158,7 +159,7 @@ abstract class URLConverter<T> extends SimpleConverter<URL,T> implements Seriali
             try {
                 return source.toURI();
             } catch (URISyntaxException e) {
-                throw new NonconvertibleObjectException(e);
+                throw new NonconvertibleObjectException(formatErrorMessage("URL", source, e), e);
             }
         }
 

@@ -67,7 +67,7 @@ import org.geotoolkit.coverage.io.CoverageStoreException;
 
 
 /**
- * A <cite>Swing</cite> {@linkplain TableModel table model} listing coverages entries. An instance
+ * A <cite>Swing</cite> {@linkplain TableModel Table Model} listing coverages entries. An instance
  * of {@code CoverageTableModel} typically contains the coverages available in a particular layer,
  * but this is not required.
  * <p>

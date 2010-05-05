@@ -1070,7 +1070,12 @@ public final class Errors extends IndexedResourceBundle {
         public static final int TOO_MANY_OCCURENCES_$2 = 202;
 
         /**
-         * Format "{0}" is unknown.
+         * Undefined format.
+         */
+        public static final int UNDEFINED_FORMAT = 250;
+
+        /**
+         * Format "{0}" is undefined.
          */
         public static final int UNDEFINED_FORMAT_$1 = 203;
 

@@ -23,7 +23,6 @@ import java.net.MalformedURLException;
 import java.net.URI;
 
 import org.geotoolkit.lang.Immutable;
-import org.geotoolkit.resources.Errors;
 
 
 /**
@@ -95,7 +94,7 @@ abstract class URIConverter<T> extends SimpleConverter<URI,T> implements Seriali
      * Converter from {@link java.net.URI} to {@link java.io.File}.
      *
      * @author Martin Desruisseaux (Geomatys)
-     * @version 3.01
+     * @version 3.12
      *
      * @since 3.01
      */
@@ -116,12 +115,11 @@ abstract class URIConverter<T> extends SimpleConverter<URI,T> implements Seriali
             if (source == null) {
                 return null;
             }
-            final java.lang.String scheme = source.getScheme();
-            if (scheme != null && scheme.equalsIgnoreCase("file")) {
-                return new java.io.File(source.getPath());
+            try {
+                return new java.io.File(source);
+            } catch (IllegalArgumentException e) {
+                throw new NonconvertibleObjectException(formatErrorMessage("URI", source, e), e);
             }
-            throw new NonconvertibleObjectException(Errors.format(
-                    Errors.Keys.ILLEGAL_ARGUMENT_$2, "URI", source));
         }
 
         /** Returns the singleton instance on deserialization. */
@@ -135,7 +133,7 @@ abstract class URIConverter<T> extends SimpleConverter<URI,T> implements Seriali
      * Converter from {@link java.net.URI} to {@link java.net.URL}.
      *
      * @author Martin Desruisseaux (Geomatys)
-     * @version 3.01
+     * @version 3.12
      *
      * @since 3.01
      */
@@ -159,7 +157,7 @@ abstract class URIConverter<T> extends SimpleConverter<URI,T> implements Seriali
             try {
                 return source.toURL();
             } catch (MalformedURLException e) {
-                throw new NonconvertibleObjectException(e);
+                throw new NonconvertibleObjectException(formatErrorMessage("URI", source, e), e);
             }
         }
 

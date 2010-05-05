@@ -25,7 +25,6 @@ import java.net.URL;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.io.*; // We use a lot of those imports.
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Collection;
 import javax.imageio.ImageIO;
@@ -660,39 +659,27 @@ public class Tile implements Comparable<Tile>, Serializable {
     }
 
     /**
-     * Returns an image reader provider inferred from the given input,
-     * or {@code null} if none can be found without ambiguity.
+     * Returns an image reader provider inferred from the given input, or {@code null} if none.
+     * If more than one provider is is suitable for the given suffix, the first provider found
+     * is returned.
      */
     static ImageReaderSpi getImageReaderSpi(final Object input) {
-        ImageReaderSpi provider = null;
         final String path = getInputName(input);
         if (path != null) {
-            final int split = path.indexOf('.', path.lastIndexOf('/') + 1);
-            if (split >= 0) {
+            final int split = path.lastIndexOf('.');
+            if (split > path.lastIndexOf('/')) {
                 final String suffix = path.substring(split + 1).trim();
-                String[] suffixes = null;
                 final Iterator<ImageReaderSpi> it = IIORegistry.getDefaultInstance()
                         .getServiceProviders(ImageReaderSpi.class, true);
                 while (it.hasNext()) {
                     final ImageReaderSpi candidate = it.next();
-                    final String[] candidateSuffixes = candidate.getFileSuffixes();
-                    if (XArrays.containsIgnoreCase(candidateSuffixes, suffix)) {
-                        if (provider != null) {
-                            if (Arrays.equals(candidateSuffixes, suffixes)) {
-                                // E.g. we may have both CLIB and JSE version of PNG reader.
-                                continue;
-                            }
-                            // We have an ambiguity - Returns null so we don't make a choice.
-                            return null;
-                        }
-                        provider = candidate;
-                        suffixes = candidateSuffixes;
-                        // Continue the search for making sure that we don't have an ambiguity.
+                    if (XArrays.containsIgnoreCase(candidate.getFileSuffixes(), suffix)) {
+                        return candidate;
                     }
                 }
             }
         }
-        return provider;
+        return null;
     }
 
     /**

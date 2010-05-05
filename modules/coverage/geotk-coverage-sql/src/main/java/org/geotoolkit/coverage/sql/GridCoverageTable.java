@@ -54,7 +54,7 @@ import org.geotoolkit.resources.Errors;
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Sam Hiatt
- * @version 3.11
+ * @version 3.12
  *
  * @since 3.10 (derived from Seagis)
  * @module
@@ -73,9 +73,11 @@ class GridCoverageTable extends BoundedSingletonTable<GridCoverageEntry> {
     /**
      * The currently selected series in the current layer, or {@code null} for auto-detect.
      * This field is usually {@code null} since the public API works on layer as a whole.
-     * It is used only in a few cases where a caller needs to work on a specific series.
+     * It is used only in a few cases where a caller needs to work on a specific series,
+     * and by {@link WritableGridCoverageTable} which need to associate new entries to a
+     * specific series.
      */
-    private SeriesEntry userSeries;
+    SeriesEntry specificSeries;
 
     /**
      * The table of grid geometries. Will be created only when first needed.
@@ -110,7 +112,7 @@ class GridCoverageTable extends BoundedSingletonTable<GridCoverageEntry> {
     /**
      * Constructs a new {@code GridCoverageTable} from the specified query.
      */
-    private GridCoverageTable(final GridCoverageQuery query) {
+    GridCoverageTable(final GridCoverageQuery query) {
         // Method createIdentifier(...) expect the parameters to be in exactly that order.
         super(query, new Parameter[] {query.bySeries, query.byFilename, query.byIndex},
                 query.byStartTime, query.byHorizontalExtent);
@@ -123,7 +125,7 @@ class GridCoverageTable extends BoundedSingletonTable<GridCoverageEntry> {
      *
      * @param table The table to use as a template.
      */
-    private GridCoverageTable(final GridCoverageTable table) {
+    GridCoverageTable(final GridCoverageTable table) {
         super(table);
     }
 
@@ -187,29 +189,30 @@ class GridCoverageTable extends BoundedSingletonTable<GridCoverageEntry> {
     /**
      * Returns the layer for the coverages in this table.
      *
-     * @throws CatalogException if the layer is not set.
+     * @param  required If {@code true}, then the layer is required to be non-null.
+     * @throws CatalogException if the layer is not set and {@code required} is {@code true}.
      */
-    final LayerEntry getLayerEntry() throws CatalogException {
+    final LayerEntry getLayerEntry(final boolean required) throws CatalogException {
         final LayerEntry layer = this.layer;
-        if (layer == null) {
+        if (layer == null && required) {
             throw new CatalogException(errors().getString(Errors.Keys.NO_LAYER_SPECIFIED));
         }
         return layer;
     }
 
     /**
-     * Returns the series for the current layer. The default implementation expects a layer
-     * with only one series. The {@link WritableGridCoverageTable} will override this method
-     * with a more appropriate value, or modify directly the {@link #userSeries} field.
+     * Returns the currently selected series. If {@link #setSeries(SeriesEntry)} has been invoked,
+     * the given series is returned. Otherwise if the current layer contains exactly one series,
+     * then that series is returned since there is no ambiguity. Otherwise an exception is thrown.
      *
-     * @return The series for the {@linkplain #getLayerEntry current layer}.
+     * @return The series for the {@linkplain #getLayerEntry() current layer}.
      * @throws SQLException if no series can be inferred from the current layer.
      */
     private SeriesEntry getSeries() throws SQLException {
-        if (userSeries != null) {
-            return userSeries;
+        if (specificSeries != null) {
+            return specificSeries;
         }
-        final Iterator<SeriesEntry> iterator = getLayerEntry().getSeries().iterator();
+        final Iterator<SeriesEntry> iterator = getLayerEntry(true).getSeries().iterator();
         if (iterator.hasNext()) {
             final SeriesEntry series = iterator.next();
             if (!iterator.hasNext()) {
@@ -477,12 +480,12 @@ loop:   for (final GridCoverageEntry newEntry : entries) {
         final GridCoverageQuery query = (GridCoverageQuery) super.query;
         int index = query.byLayer.indexOf(type);
         if (index != 0) {
-            statement.setString(index, getLayerEntry().getName());
+            statement.setString(index, getLayerEntry(true).getName());
         }
         index = query.bySeries.indexOf(type);
         if (index != 0) {
             final SeriesEntry series = getSeries();
-            assert getLayerEntry().getSeries().contains(series) : series;
+            assert getLayerEntry(true).getSeries().contains(series) : series;
             statement.setInt(index, series.getIdentifier());
         }
     }
@@ -512,7 +515,7 @@ loop:   for (final GridCoverageEntry newEntry : entries) {
          * from the layer HashMap. If not, we will query the SeriesTable as a fallback, but there
          * is probably a bug (so it is not worth to keep a reference to the series table).
          */
-        final LayerEntry layer = getLayerEntry();
+        final LayerEntry layer = getLayerEntry(true);
         SeriesEntry series = layer.getSeries(seriesID);
         if (series == null) { // Should not happen, but be lenient if it happen anyway.
             final SeriesTable table = getDatabase().getTable(SeriesTable.class);
@@ -559,7 +562,7 @@ loop:   for (final GridCoverageEntry newEntry : entries) {
         /*
          * If the layer is tiled, read the tiles.
          */
-        final LayerEntry layer = getLayerEntry();
+        final LayerEntry layer = getLayerEntry(true);
         Boolean isTiled = layer.isTiled;
         if (isTiled == null) {
             layer.isTiled = isTiled = getTileTable().exists(layer);
@@ -604,7 +607,8 @@ loop:   for (final GridCoverageEntry newEntry : entries) {
         final GridCoverageQuery query = (GridCoverageQuery) this.query;
         final Map<Integer,Integer> count = new HashMap<Integer,Integer>();
         synchronized (getLock()) {
-            userSeries = series;
+            final SeriesEntry oldSeries = specificSeries;
+            specificSeries = series;
             try {
                 final LocalCache.Stmt ce = getStatement(QueryType.COUNT,
                         groupByExtent ? query.spatialExtent : query.series);
@@ -621,7 +625,7 @@ loop:   for (final GridCoverageEntry newEntry : entries) {
                 results.close();
                 release(ce);
             } finally {
-                userSeries = null;
+                specificSeries = oldSeries;
             }
         }
         return count;

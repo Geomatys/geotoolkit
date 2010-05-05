@@ -32,7 +32,7 @@ import static org.geotoolkit.internal.sql.table.QueryType.*;
  * Entries <strong>must</strong> be sorted by date (either start or end time).
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.10
+ * @version 3.12
  *
  * @since 3.10 (derived from Seagis)
  * @module
@@ -42,6 +42,12 @@ final class GridCoverageQuery extends Query {
      * Column to appear after the {@code "SELECT"} clause.
      */
     final Column series, filename, index, startTime, endTime, spatialExtent;
+
+    /**
+     * For insertion of new entries in the {@code Tiles} table only.
+     * Null otherwise.
+     */
+    final Column dx, dy;
 
     /**
      * Parameter to appear after the {@code "FROM"} clause.
@@ -54,7 +60,19 @@ final class GridCoverageQuery extends Query {
      * @param database The database for which this query is created.
      */
     public GridCoverageQuery(final SpatialDatabase database) {
-        super(database, "GridCoverages");
+        this(database, false);
+    }
+
+    /**
+     * Creates a new query for the specified database.
+     *
+     * @param database The database for which this query is created.
+     * @param tiles {@code true} if this query is for the {@code "Tiles"} table.
+     *        This is used for insertion of new entries only, not for reading.
+     *        In the later case, {@code TileQuery} is used instead.
+     */
+    GridCoverageQuery(final SpatialDatabase database, final boolean tiles) {
+        super(database, tiles ? "Tiles" : "GridCoverages");
         final Column layer, horizontalExtent;
         layer            = addForeignerColumn("layer", "Series");
         series           = addMandatoryColumn("series",    SELECT, LIST, INSERT, COUNT);
@@ -67,6 +85,13 @@ final class GridCoverageQuery extends Query {
         startTime.setFunction("MIN", BOUNDING_BOX);
         endTime  .setFunction("MAX", BOUNDING_BOX);
         endTime  .setOrdering(Ordering.DESC, SELECT, LIST);
+        if (tiles) {
+            dx = addMandatoryColumn("dx", INSERT);
+            dy = addMandatoryColumn("dy", INSERT);
+        } else {
+            dx = null;
+            dy = null;
+        }
 
         byLayer            = addParameter(layer,            LIST, AVAILABLE_DATA, BOUNDING_BOX);
         bySeries           = addParameter(series,           SELECT, EXISTS, DELETE, DELETE_ALL, COUNT);
