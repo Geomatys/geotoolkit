@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import org.geotoolkit.feature.DefaultComplexAttribute;
 
 import org.geotoolkit.feature.DefaultFeature;
 import org.geotoolkit.feature.DefaultName;
@@ -35,6 +36,7 @@ import org.geotoolkit.feature.DefaultProperty;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.filter.identity.DefaultFeatureId;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.opengis.feature.ComplexAttribute;
 
 import org.opengis.feature.Feature;
 import org.opengis.feature.Property;
@@ -150,6 +152,8 @@ public final class GPXModelConstants {
         //<extensions> extensionsType </extensions> [0..1] ?
         ftb.reset();
         ftb.setName(GPX_NAMESPACE, "TrackSegment");
+        ftb.add(new DefaultName(GPX_NAMESPACE, "index"),        Integer.class,1,1,false,null);
+        ftb.add(new DefaultName(GPX_NAMESPACE, "geometry"),     LineString.class,GPX_CRS,1,1,false,null);
         ftb.add(TYPE_WAYPOINT,new DefaultName(GPX_NAMESPACE, "trkpt"),null,0,Integer.MAX_VALUE,true,null);
         TYPE_TRACK_SEGMENT = ftb.buildType();
 
@@ -225,9 +229,8 @@ public final class GPXModelConstants {
         return DefaultFeature.create(properties, TYPE_WAYPOINT, new DefaultFeatureId(String.valueOf(index)));
     }
 
-    public static Feature createRoute(int index, String name,
-            String cmt, String desc, String src, List<URI> links, Integer number,
-            String type, List<Feature> wayPoints) {
+    public static Feature createRoute(int index, String name, String cmt, String desc,
+            String src, List<URI> links, Integer number, String type, List<Feature> wayPoints) {
 
         final Collection<Property> properties = new ArrayList<Property>();
 
@@ -257,9 +260,71 @@ public final class GPXModelConstants {
             }
         }
         final LineString geom = GF.createLineString(coords.toArray(new Coordinate[coords.size()]));
-        properties.add(new DefaultProperty(geom,    TYPE_ROUTE.getDescriptor("geometry")));
+        properties.add(new DefaultProperty(geom, TYPE_ROUTE.getDescriptor("geometry")));
 
         return DefaultFeature.create(properties, TYPE_ROUTE, new DefaultFeatureId(String.valueOf(index)));
+    }
+
+    public static ComplexAttribute createTrackSegment(int index, List<Feature> wayPoints) {
+
+        final Collection<Property> properties = new ArrayList<Property>();
+
+        properties.add(new DefaultProperty(index, TYPE_TRACK_SEGMENT.getDescriptor("index")));
+
+        final List<Coordinate> coords = new ArrayList<Coordinate>();
+        if(wayPoints != null && !wayPoints.isEmpty()){
+            final PropertyDescriptor ptDesc = TYPE_TRACK_SEGMENT.getDescriptor("trkpt");
+            for(Feature pt : wayPoints){
+                properties.add(new DefaultProperty(pt, ptDesc));
+                coords.add( ((Point)pt.getProperty("geometry").getValue()).getCoordinate());
+            }
+        }
+        final LineString geom = GF.createLineString(coords.toArray(new Coordinate[coords.size()]));
+        properties.add(new DefaultProperty(geom, TYPE_TRACK_SEGMENT.getDescriptor("geometry")));
+
+        return new DefaultComplexAttribute(properties, DESC_TRACK_SEGMENT, new DefaultFeatureId(String.valueOf(index)));
+    }
+
+    public static Feature createTrack(int index, String name, String cmt, String desc,
+            String src, List<URI> links, Integer number, String type, List<ComplexAttribute> segments) {
+
+        final Collection<Property> properties = new ArrayList<Property>();
+
+        properties.add(new DefaultProperty(index,       TYPE_TRACK.getDescriptor("index")));
+
+        if(name != null)        properties.add(new DefaultProperty(name,        TYPE_TRACK.getDescriptor("name")));
+        if(cmt != null)         properties.add(new DefaultProperty(cmt,         TYPE_TRACK.getDescriptor("cmt")));
+        if(desc != null)        properties.add(new DefaultProperty(desc,        TYPE_TRACK.getDescriptor("desc")));
+        if(src != null)         properties.add(new DefaultProperty(src,         TYPE_TRACK.getDescriptor("src")));
+
+        if(links != null && !links.isEmpty()){
+            final PropertyDescriptor linkDesc = TYPE_TRACK.getDescriptor("link");
+            for(URI uri : links){
+                properties.add(new DefaultProperty(uri, linkDesc));
+            }
+        }
+
+        if(number != null)      properties.add(new DefaultProperty(number,      TYPE_TRACK.getDescriptor("number")));
+        if(type != null)        properties.add(new DefaultProperty(type,        TYPE_TRACK.getDescriptor("type")));
+
+        final List<LineString> strings = new ArrayList<LineString>();
+        if(segments != null && !segments.isEmpty()){
+            final PropertyDescriptor ptDesc = TYPE_TRACK.getDescriptor("trkseg");
+            for(ComplexAttribute seg : segments){
+                properties.add(new DefaultProperty(seg, ptDesc));
+                final Property prop = seg.getProperty("geometry");
+                if(prop != null){
+                    final Object obj = prop.getValue();
+                    if(obj != null){
+                        strings.add((LineString) obj);
+                    }
+                }
+            }
+        }
+        final MultiLineString geom = GF.createMultiLineString(strings.toArray(new LineString[strings.size()]));
+        properties.add(new DefaultProperty(geom, TYPE_TRACK.getDescriptor("geometry")));
+
+        return DefaultFeature.create(properties, TYPE_TRACK, new DefaultFeatureId(String.valueOf(index)));
     }
 
 }

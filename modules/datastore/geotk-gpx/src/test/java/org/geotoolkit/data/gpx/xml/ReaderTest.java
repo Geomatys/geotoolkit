@@ -17,12 +17,9 @@
 
 package org.geotoolkit.data.gpx.xml;
 
-import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
-import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import org.geotoolkit.data.gpx.model.Bound;
 import org.geotoolkit.data.gpx.model.MetaData;
@@ -32,6 +29,7 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.opengis.feature.ComplexAttribute;
 import org.opengis.feature.Feature;
 import org.opengis.feature.Property;
 import static org.junit.Assert.*;
@@ -185,6 +183,70 @@ public class ReaderTest {
         assertFalse(reader.hasNext());
     }
 
+    /**
+     * Test track tag parsing.
+     */
+    @Test
+    public void testTrackRead() throws Exception{
+
+        final GPXReader reader = new GPXReader();
+        reader.setInput(ReaderTest.class.getResource(
+                "/org/geotoolkit/gpx/sample_track.xml"));
+
+        final MetaData data = reader.getMetadata();
+
+        assertNull(data.getName());
+        assertNull(data.getDescription());
+        assertNull(data.getTime());
+        assertNull(data.getKeywords());
+        assertEquals(Bound.create(-20, 30, 10, 40), data.getBounds());
+        assertNull(data.getPerson());
+        assertNull(data.getCopyRight());
+        assertEquals(0, data.getLinks().size());
+
+        Feature f = reader.next();
+        assertEquals("track name",          f.getProperty("name").getValue());
+        assertEquals("track comment",       f.getProperty("cmt").getValue());
+        assertEquals("track description",   f.getProperty("desc").getValue());
+        assertEquals("track source",        f.getProperty("src").getValue());
+        assertEquals("track type",          f.getProperty("type").getValue());
+        assertEquals(7,                     f.getProperty("number").getValue());
+
+        List<Property> links = new ArrayList<Property>(f.getProperties("link"));
+        assertEquals(3,links.size());
+        assertEquals("http://track-adress1.org", links.get(0).getValue().toString());
+        assertEquals("http://track-adress2.org", links.get(1).getValue().toString());
+        assertEquals("http://track-adress3.org", links.get(2).getValue().toString());
+
+        List<Property> segments = new ArrayList<Property>(f.getProperties("trkseg"));
+        assertEquals(2,segments.size());
+        ComplexAttribute seg1 = (ComplexAttribute) segments.get(0).getValue();
+        ComplexAttribute seg2 = (ComplexAttribute) segments.get(1).getValue();
+        List<Property> points = new ArrayList<Property>(seg1.getProperties("trkpt"));
+        assertEquals(3, points.size());
+        checkPoint((Feature) points.get(0).getValue(), 0);
+        checkPoint((Feature) points.get(1).getValue(), 1);
+        checkPoint((Feature) points.get(2).getValue(), 2);
+        points = new ArrayList<Property>(seg2.getProperties("trkpt"));
+        assertEquals(0, points.size());
+
+        f = reader.next();
+        assertEquals(null,                  f.getProperty("name"));
+        assertEquals(null,                  f.getProperty("cmt"));
+        assertEquals(null,                  f.getProperty("desc"));
+        assertEquals(null,                  f.getProperty("src"));
+        assertEquals(null,                  f.getProperty("type"));
+        assertEquals(null,                  f.getProperty("number"));
+
+        links = new ArrayList<Property>(f.getProperties("link"));
+        assertEquals(0,links.size());
+
+        segments = new ArrayList<Property>(f.getProperties("trkseg"));
+        assertEquals(0,segments.size());
+
+        assertFalse(reader.hasNext());
+    }
+
     private void checkPoint(Feature f, int num) throws Exception{
         if(num == 0){
             assertEquals(0,                     f.getProperty("index").getValue());
@@ -267,7 +329,5 @@ public class ReaderTest {
             fail("unexpected point number :" + num);
         }
     }
-
-
 
 }

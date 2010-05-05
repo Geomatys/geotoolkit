@@ -38,6 +38,7 @@ import org.geotoolkit.data.gpx.model.MetaData;
 import org.geotoolkit.data.gpx.model.Person;
 import org.geotoolkit.temporal.object.TemporalUtilities;
 import org.geotoolkit.xml.StaxStreamReader;
+import org.opengis.feature.ComplexAttribute;
 import org.opengis.feature.Feature;
 import org.opengis.geometry.Envelope;
 
@@ -57,6 +58,7 @@ public class GPXReader extends StaxStreamReader{
     private Feature current;
     private int wayPointInc = 0;
     private int routeInc = 0;
+    private int trackInc = 0;
 
     @Override
     public void setInput(Object input) throws IOException, XMLStreamException {
@@ -95,6 +97,7 @@ public class GPXReader extends StaxStreamReader{
         current = null;
         wayPointInc = 0;
         routeInc = 0;
+        trackInc = 0;
     }
 
     public boolean hasNext() throws XMLStreamException{
@@ -134,6 +137,9 @@ public class GPXReader extends StaxStreamReader{
                     break;
                 }else if(TAG_RTE.equalsIgnoreCase(localName)){
                     current = parseRoute(routeInc++);
+                    break;
+                }else if(TAG_TRK.equalsIgnoreCase(localName)){
+                    current = parseTrack(trackInc++);
                     break;
                 }
             }
@@ -507,6 +513,83 @@ public class GPXReader extends StaxStreamReader{
         throw new XMLStreamException("Error in xml file, "+TAG_RTE+" tag without end.");
     }
 
+    private ComplexAttribute parseTrackSegment(int index) throws XMLStreamException{
 
+        int ptInc = 0;
+        List<Feature> wayPoints = null;
+
+        while (reader.hasNext()) {
+            final int eventType = reader.next();
+
+            switch (eventType) {
+                case START_ELEMENT:
+                    final String localName = reader.getLocalName();
+                    if(TAG_TRK_SEG_PT.equalsIgnoreCase(localName)){
+                        if(wayPoints == null) wayPoints = new ArrayList<Feature>();
+                        wayPoints.add(parseWayPoint(ptInc++));
+                    }
+                    break;
+                case END_ELEMENT:
+                    if(TAG_TRK_SEG.equalsIgnoreCase(reader.getLocalName())){
+                        //end of the track segment element
+                        return GPXModelConstants.createTrackSegment(index, wayPoints);
+                    }
+                    break;
+            }
+        }
+
+        throw new XMLStreamException("Error in xml file, "+TAG_TRK_SEG+" tag without end.");
+    }
+
+    private Feature parseTrack(int index) throws XMLStreamException{
+
+        int segInc = 0;
+        String name = null;
+        String cmt = null;
+        String desc = null;
+        String src = null;
+        List<URI> links = null;
+        String type = null;
+        Integer number = null;
+        List<ComplexAttribute> segments = null;
+
+        while (reader.hasNext()) {
+            final int eventType = reader.next();
+
+            switch (eventType) {
+                case START_ELEMENT:
+                    final String localName = reader.getLocalName();
+                    if(TAG_TRK_SEG.equalsIgnoreCase(localName)){
+                        if(segments == null) segments = new ArrayList<ComplexAttribute>();
+                        segments.add(parseTrackSegment(segInc++));
+                    }else if(TAG_NAME.equalsIgnoreCase(localName)){
+                        name = reader.getElementText();
+                    }else if(TAG_CMT.equalsIgnoreCase(localName)){
+                        cmt = reader.getElementText();
+                    }else if(TAG_DESC.equalsIgnoreCase(localName)){
+                        desc = reader.getElementText();
+                    }else if(TAG_SRC.equalsIgnoreCase(localName)){
+                        src = reader.getElementText();
+                    }else if(TAG_LINK.equalsIgnoreCase(localName)){
+                        if(links == null) links = new ArrayList<URI>();
+                        links.add(parseLink());
+                    }else if(TAG_NUMBER.equalsIgnoreCase(localName)){
+                        number = Integer.valueOf(reader.getElementText());
+                    }else if(TAG_TYPE.equalsIgnoreCase(localName)){
+                        type = reader.getElementText();
+                    }
+                    break;
+                case END_ELEMENT:
+                    if(TAG_TRK.equalsIgnoreCase(reader.getLocalName())){
+                        //end of the track element
+                        return GPXModelConstants.createTrack(index, name, cmt,
+                                desc, src, links, number, type, segments);
+                    }
+                    break;
+            }
+        }
+
+        throw new XMLStreamException("Error in xml file, "+TAG_RTE+" tag without end.");
+    }
 
 }
