@@ -30,7 +30,8 @@ import static org.junit.Assert.*;
 
 /**
  *
- * @author sorel
+ * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class StaxStreamReaderTest {
 
