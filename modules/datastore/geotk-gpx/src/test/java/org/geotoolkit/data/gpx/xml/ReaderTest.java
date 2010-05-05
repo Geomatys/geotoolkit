@@ -20,6 +20,7 @@ package org.geotoolkit.data.gpx.xml;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -96,7 +97,7 @@ public class ReaderTest {
     }
 
     /**
-     * Test metadata tag parsing.
+     * Test way point tag parsing.
      */
     @Test
     public void testWayPointRead() throws Exception{
@@ -117,90 +118,156 @@ public class ReaderTest {
         assertEquals(0, data.getLinks().size());
 
         Feature f = reader.next();
-        assertEquals(0,                     f.getProperty("index").getValue());
-        assertEquals(15.0,                  ((Point)f.getProperty("geometry").getValue()).getX(), DELTA);
-        assertEquals(10.0,                  ((Point)f.getProperty("geometry").getValue()).getY(), DELTA);
-        assertEquals(140.0,                 f.getProperty("ele").getValue());
-        assertEquals(TemporalUtilities.parseDate("2010-01-10"),f.getProperty("time").getValue());
-        assertEquals(35.0,                  f.getProperty("magvar").getValue());
-        assertEquals(112.32,                f.getProperty("geoidheight").getValue());
-        assertEquals("first point",         f.getProperty("name").getValue());
-        assertEquals("first comment",       f.getProperty("cmt").getValue());
-        assertEquals("first description",   f.getProperty("desc").getValue());
-        assertEquals("first source",        f.getProperty("src").getValue());
-        assertEquals("first sym",           f.getProperty("sym").getValue());
-        assertEquals("first type",          f.getProperty("type").getValue());
-        assertEquals("first fix",           f.getProperty("fix").getValue());
-        assertEquals(11,                    f.getProperty("sat").getValue());
-        assertEquals(15.15,                 f.getProperty("hdop").getValue());
-        assertEquals(14.14,                 f.getProperty("vdop").getValue());
-        assertEquals(13.13,                 f.getProperty("pdop").getValue());
-        assertEquals(55.55,                 f.getProperty("ageofdgpsdata").getValue());
-        assertEquals(256,                   f.getProperty("dgpsid").getValue());
+        checkPoint(f, 0);
+        f = reader.next();
+        checkPoint(f, 1);
+        f = reader.next();
+        checkPoint(f, 2);
+        assertFalse(reader.hasNext());
+
+    }
+
+    /**
+     * Test route tag parsing.
+     */
+    @Test
+    public void testRouteRead() throws Exception{
+
+        final GPXReader reader = new GPXReader();
+        reader.setInput(ReaderTest.class.getResource(
+                "/org/geotoolkit/gpx/sample_route.xml"));
+
+        final MetaData data = reader.getMetadata();
+
+        assertNull(data.getName());
+        assertNull(data.getDescription());
+        assertNull(data.getTime());
+        assertNull(data.getKeywords());
+        assertEquals(Bound.create(-20, 30, 10, 40), data.getBounds());
+        assertNull(data.getPerson());
+        assertNull(data.getCopyRight());
+        assertEquals(0, data.getLinks().size());
+
+        Feature f = reader.next();
+        assertEquals("route name",          f.getProperty("name").getValue());
+        assertEquals("route comment",       f.getProperty("cmt").getValue());
+        assertEquals("route description",   f.getProperty("desc").getValue());
+        assertEquals("route source",        f.getProperty("src").getValue());
+        assertEquals("route type",          f.getProperty("type").getValue());
+        assertEquals(7,                     f.getProperty("number").getValue());
 
         List<Property> links = new ArrayList<Property>(f.getProperties("link"));
         assertEquals(3,links.size());
-        assertEquals("http://first-adress1.org", links.get(0).getValue().toString());
-        assertEquals("http://first-adress2.org", links.get(1).getValue().toString());
-        assertEquals("http://first-adress3.org", links.get(2).getValue().toString());
+        assertEquals("http://route-adress1.org", links.get(0).getValue().toString());
+        assertEquals("http://route-adress2.org", links.get(1).getValue().toString());
+        assertEquals("http://route-adress3.org", links.get(2).getValue().toString());
+
+        List<Property> points = new ArrayList<Property>(f.getProperties("rtept"));
+        assertEquals(3,points.size());
+        checkPoint((Feature) points.get(0).getValue(), 0);
+        checkPoint((Feature) points.get(1).getValue(), 1);
+        checkPoint((Feature) points.get(2).getValue(), 2);
 
         f = reader.next();
-        assertEquals(1,                     f.getProperty("index").getValue());
-        assertEquals(25.0,                  ((Point)f.getProperty("geometry").getValue()).getX(), DELTA);
-        assertEquals(20.0,                  ((Point)f.getProperty("geometry").getValue()).getY(), DELTA);
-        assertEquals(null,                  f.getProperty("ele"));
-        assertEquals(null,                  f.getProperty("time"));
-        assertEquals(null,                  f.getProperty("magvar"));
-        assertEquals(null,                  f.getProperty("geoidheight"));
         assertEquals(null,                  f.getProperty("name"));
         assertEquals(null,                  f.getProperty("cmt"));
         assertEquals(null,                  f.getProperty("desc"));
         assertEquals(null,                  f.getProperty("src"));
-        assertEquals(null,                  f.getProperty("sym"));
         assertEquals(null,                  f.getProperty("type"));
-        assertEquals(null,                  f.getProperty("fix"));
-        assertEquals(null,                  f.getProperty("sat"));
-        assertEquals(null,                  f.getProperty("hdop"));
-        assertEquals(null,                  f.getProperty("vdop"));
-        assertEquals(null,                  f.getProperty("pdop"));
-        assertEquals(null,                  f.getProperty("ageofdgpsdata"));
-        assertEquals(null,                  f.getProperty("dgpsid"));
+        assertEquals(null,                  f.getProperty("number"));
 
         links = new ArrayList<Property>(f.getProperties("link"));
         assertEquals(0,links.size());
-        
 
-        f = reader.next();
-        assertEquals(2,                     f.getProperty("index").getValue());
-        assertEquals(35.0,                  ((Point)f.getProperty("geometry").getValue()).getX(), DELTA);
-        assertEquals(30.0,                  ((Point)f.getProperty("geometry").getValue()).getY(), DELTA);
-        assertEquals(150.0,                 f.getProperty("ele").getValue());
-        assertEquals(TemporalUtilities.parseDate("2010-01-30"),f.getProperty("time").getValue());
-        assertEquals(25.0,                  f.getProperty("magvar").getValue());
-        assertEquals(142.32,                f.getProperty("geoidheight").getValue());
-        assertEquals("third point",         f.getProperty("name").getValue());
-        assertEquals("third comment",       f.getProperty("cmt").getValue());
-        assertEquals("third description",   f.getProperty("desc").getValue());
-        assertEquals("third source",        f.getProperty("src").getValue());
-        assertEquals("third sym",           f.getProperty("sym").getValue());
-        assertEquals("third type",          f.getProperty("type").getValue());
-        assertEquals("third fix",           f.getProperty("fix").getValue());
-        assertEquals(35,                    f.getProperty("sat").getValue());
-        assertEquals(35.15,                 f.getProperty("hdop").getValue());
-        assertEquals(34.14,                 f.getProperty("vdop").getValue());
-        assertEquals(33.13,                 f.getProperty("pdop").getValue());
-        assertEquals(85.55,                 f.getProperty("ageofdgpsdata").getValue());
-        assertEquals(456,                   f.getProperty("dgpsid").getValue());
-
-        links = new ArrayList<Property>(f.getProperties("link"));
-        assertEquals(2,links.size());
-        assertEquals("http://third-adress1.org", links.get(0).getValue().toString());
-        assertEquals("http://third-adress2.org", links.get(1).getValue().toString());
-
+        points = new ArrayList<Property>(f.getProperties("rtept"));
+        assertEquals(0,points.size());
 
         assertFalse(reader.hasNext());
-
     }
+
+    private void checkPoint(Feature f, int num) throws Exception{
+        if(num == 0){
+            assertEquals(0,                     f.getProperty("index").getValue());
+            assertEquals(15.0,                  ((Point)f.getProperty("geometry").getValue()).getX(), DELTA);
+            assertEquals(10.0,                  ((Point)f.getProperty("geometry").getValue()).getY(), DELTA);
+            assertEquals(140.0,                 f.getProperty("ele").getValue());
+            assertEquals(TemporalUtilities.parseDate("2010-01-10"),f.getProperty("time").getValue());
+            assertEquals(35.0,                  f.getProperty("magvar").getValue());
+            assertEquals(112.32,                f.getProperty("geoidheight").getValue());
+            assertEquals("first point",         f.getProperty("name").getValue());
+            assertEquals("first comment",       f.getProperty("cmt").getValue());
+            assertEquals("first description",   f.getProperty("desc").getValue());
+            assertEquals("first source",        f.getProperty("src").getValue());
+            assertEquals("first sym",           f.getProperty("sym").getValue());
+            assertEquals("first type",          f.getProperty("type").getValue());
+            assertEquals("first fix",           f.getProperty("fix").getValue());
+            assertEquals(11,                    f.getProperty("sat").getValue());
+            assertEquals(15.15,                 f.getProperty("hdop").getValue());
+            assertEquals(14.14,                 f.getProperty("vdop").getValue());
+            assertEquals(13.13,                 f.getProperty("pdop").getValue());
+            assertEquals(55.55,                 f.getProperty("ageofdgpsdata").getValue());
+            assertEquals(256,                   f.getProperty("dgpsid").getValue());
+
+            final List<Property> links = new ArrayList<Property>(f.getProperties("link"));
+            assertEquals(3,links.size());
+            assertEquals("http://first-adress1.org", links.get(0).getValue().toString());
+            assertEquals("http://first-adress2.org", links.get(1).getValue().toString());
+            assertEquals("http://first-adress3.org", links.get(2).getValue().toString());
+        }else if(num == 1){
+            assertEquals(1,                     f.getProperty("index").getValue());
+            assertEquals(25.0,                  ((Point)f.getProperty("geometry").getValue()).getX(), DELTA);
+            assertEquals(20.0,                  ((Point)f.getProperty("geometry").getValue()).getY(), DELTA);
+            assertEquals(null,                  f.getProperty("ele"));
+            assertEquals(null,                  f.getProperty("time"));
+            assertEquals(null,                  f.getProperty("magvar"));
+            assertEquals(null,                  f.getProperty("geoidheight"));
+            assertEquals(null,                  f.getProperty("name"));
+            assertEquals(null,                  f.getProperty("cmt"));
+            assertEquals(null,                  f.getProperty("desc"));
+            assertEquals(null,                  f.getProperty("src"));
+            assertEquals(null,                  f.getProperty("sym"));
+            assertEquals(null,                  f.getProperty("type"));
+            assertEquals(null,                  f.getProperty("fix"));
+            assertEquals(null,                  f.getProperty("sat"));
+            assertEquals(null,                  f.getProperty("hdop"));
+            assertEquals(null,                  f.getProperty("vdop"));
+            assertEquals(null,                  f.getProperty("pdop"));
+            assertEquals(null,                  f.getProperty("ageofdgpsdata"));
+            assertEquals(null,                  f.getProperty("dgpsid"));
+
+            final List<Property> links = new ArrayList<Property>(f.getProperties("link"));
+            assertEquals(0,links.size());
+        }else if(num == 2){
+            assertEquals(2,                     f.getProperty("index").getValue());
+            assertEquals(35.0,                  ((Point)f.getProperty("geometry").getValue()).getX(), DELTA);
+            assertEquals(30.0,                  ((Point)f.getProperty("geometry").getValue()).getY(), DELTA);
+            assertEquals(150.0,                 f.getProperty("ele").getValue());
+            assertEquals(TemporalUtilities.parseDate("2010-01-30"),f.getProperty("time").getValue());
+            assertEquals(25.0,                  f.getProperty("magvar").getValue());
+            assertEquals(142.32,                f.getProperty("geoidheight").getValue());
+            assertEquals("third point",         f.getProperty("name").getValue());
+            assertEquals("third comment",       f.getProperty("cmt").getValue());
+            assertEquals("third description",   f.getProperty("desc").getValue());
+            assertEquals("third source",        f.getProperty("src").getValue());
+            assertEquals("third sym",           f.getProperty("sym").getValue());
+            assertEquals("third type",          f.getProperty("type").getValue());
+            assertEquals("third fix",           f.getProperty("fix").getValue());
+            assertEquals(35,                    f.getProperty("sat").getValue());
+            assertEquals(35.15,                 f.getProperty("hdop").getValue());
+            assertEquals(34.14,                 f.getProperty("vdop").getValue());
+            assertEquals(33.13,                 f.getProperty("pdop").getValue());
+            assertEquals(85.55,                 f.getProperty("ageofdgpsdata").getValue());
+            assertEquals(456,                   f.getProperty("dgpsid").getValue());
+
+            final List<Property> links = new ArrayList<Property>(f.getProperties("link"));
+            assertEquals(2,links.size());
+            assertEquals("http://third-adress1.org", links.get(0).getValue().toString());
+            assertEquals("http://third-adress2.org", links.get(1).getValue().toString());
+        }else{
+            fail("unexpected point number :" + num);
+        }
+    }
+
 
 
 }

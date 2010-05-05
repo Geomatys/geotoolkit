@@ -56,6 +56,7 @@ public class GPXReader extends StaxStreamReader{
     private MetaData metadata;    
     private Feature current;
     private int wayPointInc = 0;
+    private int routeInc = 0;
 
     @Override
     public void setInput(Object input) throws IOException, XMLStreamException {
@@ -85,6 +86,15 @@ public class GPXReader extends StaxStreamReader{
 
     public MetaData getMetadata() {
         return metadata;
+    }
+
+    @Override
+    public void reset() throws IOException, XMLStreamException {
+        super.reset();
+        metadata = null;
+        current = null;
+        wayPointInc = 0;
+        routeInc = 0;
     }
 
     public boolean hasNext() throws XMLStreamException{
@@ -121,6 +131,9 @@ public class GPXReader extends StaxStreamReader{
                 final String localName = reader.getLocalName();
                 if(TAG_WPT.equalsIgnoreCase(localName)){
                     current = parseWayPoint(wayPointInc++);
+                    break;
+                }else if(TAG_RTE.equalsIgnoreCase(localName)){
+                    current = parseRoute(routeInc++);
                     break;
                 }
             }
@@ -442,5 +455,58 @@ public class GPXReader extends StaxStreamReader{
 
         throw new XMLStreamException("Error in xml file, "+tagName+" tag without end.");
     }
+
+    private Feature parseRoute(int index) throws XMLStreamException{
+
+        int ptInc = 0;
+        String name = null;
+        String cmt = null;
+        String desc = null;
+        String src = null;
+        List<URI> links = null;
+        String type = null;
+        Integer number = null;
+        List<Feature> wayPoints = null;
+
+        while (reader.hasNext()) {
+            final int eventType = reader.next();
+
+            switch (eventType) {
+                case START_ELEMENT:
+                    final String localName = reader.getLocalName();
+                    if(TAG_RTE_RTEPT.equalsIgnoreCase(localName)){
+                        if(wayPoints == null) wayPoints = new ArrayList<Feature>();
+                        wayPoints.add(parseWayPoint(ptInc++));
+                    }else if(TAG_NAME.equalsIgnoreCase(localName)){
+                        name = reader.getElementText();
+                    }else if(TAG_CMT.equalsIgnoreCase(localName)){
+                        cmt = reader.getElementText();
+                    }else if(TAG_DESC.equalsIgnoreCase(localName)){
+                        desc = reader.getElementText();
+                    }else if(TAG_SRC.equalsIgnoreCase(localName)){
+                        src = reader.getElementText();
+                    }else if(TAG_LINK.equalsIgnoreCase(localName)){
+                        if(links == null) links = new ArrayList<URI>();
+                        links.add(parseLink());
+                    }else if(TAG_NUMBER.equalsIgnoreCase(localName)){
+                        number = Integer.valueOf(reader.getElementText());
+                    }else if(TAG_TYPE.equalsIgnoreCase(localName)){
+                        type = reader.getElementText();
+                    }
+                    break;
+                case END_ELEMENT:
+                    if(TAG_RTE.equalsIgnoreCase(reader.getLocalName())){
+                        //end of the way point element
+                        return GPXModelConstants.createRoute(index, name, cmt,
+                                desc, src, links, number, type, wayPoints);
+                    }
+                    break;
+            }
+        }
+
+        throw new XMLStreamException("Error in xml file, "+TAG_RTE+" tag without end.");
+    }
+
+
 
 }

@@ -17,6 +17,8 @@
 
 package org.geotoolkit.data.gpx.model;
 
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.MultiLineString;
 import com.vividsolutions.jts.geom.Point;
@@ -50,6 +52,8 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * @module pending
  */
 public final class GPXModelConstants {
+
+    private static final GeometryFactory GF = new GeometryFactory();
 
     public static final CoordinateReferenceSystem GPX_CRS = DefaultGeographicCRS.WGS84;
 
@@ -219,6 +223,43 @@ public final class GPXModelConstants {
         if(dgpsid != null)      properties.add(new DefaultProperty(dgpsid,      TYPE_WAYPOINT.getDescriptor("dgpsid")));
 
         return DefaultFeature.create(properties, TYPE_WAYPOINT, new DefaultFeatureId(String.valueOf(index)));
+    }
+
+    public static Feature createRoute(int index, String name,
+            String cmt, String desc, String src, List<URI> links, Integer number,
+            String type, List<Feature> wayPoints) {
+
+        final Collection<Property> properties = new ArrayList<Property>();
+
+        properties.add(new DefaultProperty(index,       TYPE_ROUTE.getDescriptor("index")));
+
+        if(name != null)        properties.add(new DefaultProperty(name,        TYPE_ROUTE.getDescriptor("name")));
+        if(cmt != null)         properties.add(new DefaultProperty(cmt,         TYPE_ROUTE.getDescriptor("cmt")));
+        if(desc != null)        properties.add(new DefaultProperty(desc,        TYPE_ROUTE.getDescriptor("desc")));
+        if(src != null)         properties.add(new DefaultProperty(src,         TYPE_ROUTE.getDescriptor("src")));
+
+        if(links != null && !links.isEmpty()){
+            final PropertyDescriptor linkDesc = TYPE_ROUTE.getDescriptor("link");
+            for(URI uri : links){
+                properties.add(new DefaultProperty(uri, linkDesc));
+            }
+        }
+
+        if(number != null)      properties.add(new DefaultProperty(number,      TYPE_ROUTE.getDescriptor("number")));
+        if(type != null)        properties.add(new DefaultProperty(type,        TYPE_ROUTE.getDescriptor("type")));
+
+        final List<Coordinate> coords = new ArrayList<Coordinate>();
+        if(wayPoints != null && !wayPoints.isEmpty()){
+            final PropertyDescriptor ptDesc = TYPE_ROUTE.getDescriptor("rtept");
+            for(Feature pt : wayPoints){
+                properties.add(new DefaultProperty(pt, ptDesc));
+                coords.add( ((Point)pt.getProperty("geometry").getValue()).getCoordinate());
+            }
+        }
+        final LineString geom = GF.createLineString(coords.toArray(new Coordinate[coords.size()]));
+        properties.add(new DefaultProperty(geom,    TYPE_ROUTE.getDescriptor("geometry")));
+
+        return DefaultFeature.create(properties, TYPE_ROUTE, new DefaultFeatureId(String.valueOf(index)));
     }
 
 }
