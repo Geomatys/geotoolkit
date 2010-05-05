@@ -112,7 +112,7 @@ public class GPXReader extends StaxStreamReader{
             }
             
             if(type == START_ELEMENT) {
-                final String localName = reader.getLocalName();                
+                final String localName = reader.getLocalName();
             }
         }
 

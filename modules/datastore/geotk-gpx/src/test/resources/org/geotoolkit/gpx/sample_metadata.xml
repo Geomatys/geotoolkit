@@ -16,7 +16,7 @@
             <email>jean.pierre@test.com</email>
             <link href="http://someone-site.org"/>
         </author>
-        <copyright>
+        <copyright author="gnu">
             <year>2010</year>
             <license>http://www.gnu.org/licenses/lgpl-3.0-standalone.html</license>
         </copyright>
@@ -30,8 +30,8 @@
         </link>
         <time>2010-03-01</time>
         <keywords>sample,metadata</keywords>
-        <bounds minlat="37.95708231" minlon="-121.31511221" maxlat="38.70501034" maxlon="-119.92696955"/>
-        <extensions> extensionsType </extensions>
+        <bounds minlat="10" minlon="-20" maxlat="40" maxlon="30"/>
+        <extensions/>
     </metadata>
 
 </gpx>
