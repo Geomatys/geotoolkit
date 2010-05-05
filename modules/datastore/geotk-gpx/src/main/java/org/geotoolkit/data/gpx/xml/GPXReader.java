@@ -17,6 +17,9 @@
 
 package org.geotoolkit.data.gpx.xml;
 
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.Point;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -29,11 +32,13 @@ import java.util.logging.Logger;
 import javax.xml.stream.XMLStreamException;
 import org.geotoolkit.data.gpx.model.Bound;
 import org.geotoolkit.data.gpx.model.CopyRight;
+import org.geotoolkit.data.gpx.model.GPXModelConstants;
 
 import org.geotoolkit.data.gpx.model.MetaData;
 import org.geotoolkit.data.gpx.model.Person;
 import org.geotoolkit.temporal.object.TemporalUtilities;
 import org.geotoolkit.xml.StaxStreamReader;
+import org.opengis.feature.Feature;
 import org.opengis.geometry.Envelope;
 
 import static javax.xml.stream.XMLStreamReader.*;
@@ -47,9 +52,10 @@ import static org.geotoolkit.data.gpx.xml.GPXConstants.*;
  */
 public class GPXReader extends StaxStreamReader{
 
-    private MetaData metadata;
-    
-    private Object current;
+    private final GeometryFactory gf = new GeometryFactory();
+    private MetaData metadata;    
+    private Feature current;
+    private int wayPointInc = 0;
 
     @Override
     public void setInput(Object input) throws IOException, XMLStreamException {
@@ -91,9 +97,9 @@ public class GPXReader extends StaxStreamReader{
      * @return GPX WayPoint, Route or track
      * @throws XMLStreamException
      */
-    public Object next() throws XMLStreamException{
+    public Feature next() throws XMLStreamException{
         read();
-        final Object ele = current;
+        final Feature ele = current;
         current = null;
         return ele;
     }
@@ -113,6 +119,10 @@ public class GPXReader extends StaxStreamReader{
             
             if(type == START_ELEMENT) {
                 final String localName = reader.getLocalName();
+                if(TAG_WPT.equalsIgnoreCase(localName)){
+                    current = parseWayPoint(wayPointInc++);
+                    break;
+                }
             }
         }
 
@@ -329,6 +339,108 @@ public class GPXReader extends StaxStreamReader{
                 Double.parseDouble(xmax),
                 Double.parseDouble(ymin),
                 Double.parseDouble(ymax));
+    }
+
+    private Feature parseWayPoint(int index) throws XMLStreamException{
+        //way points might be located in different tag names : wpt, rtept and trkpt
+        //we kind the current tag name to know when we reach the end.
+        final String tagName = reader.getLocalName();
+
+        Point geometry = null;
+        Double ele = null;
+        Date time = null;
+        Double magvar = null;
+        Double geoidheight = null;
+        String name = null;
+        String cmt = null;
+        String desc = null;
+        String src = null;
+        List<URI> links = null;
+        String sym = null;
+        String type = null;
+        String fix = null;
+        Integer sat = null;
+        Double hdop = null;
+        Double vdop = null;
+        Double pdop = null;
+        Double ageofdgpsdata = null;
+        Integer dgpsid = null;
+
+        String lat = null;
+        String lon = null;
+
+        for(int i=0,n=reader.getAttributeCount(); i<n;i++){
+            final String attName = reader.getAttributeLocalName(i);
+            if(ATT_WPT_LAT.equalsIgnoreCase(attName)){
+                lat = reader.getAttributeValue(i);
+            }else if(ATT_WPT_LON.equalsIgnoreCase(attName)){
+                lon = reader.getAttributeValue(i);
+            }
+        }
+
+        if(lat == null || lon == null){
+            throw new XMLStreamException("Error in xml file, way point lat/lon not defined correctly");
+        }else{
+            geometry = gf.createPoint(new Coordinate(Double.parseDouble(lon), Double.parseDouble(lat)));
+        }
+
+        while (reader.hasNext()) {
+            final int eventType = reader.next();
+
+            switch (eventType) {
+                case START_ELEMENT:
+                    final String localName = reader.getLocalName();
+                    if(TAG_WPT_ELE.equalsIgnoreCase(localName)){
+                        ele = Double.valueOf(reader.getElementText());
+                    }else if(TAG_WPT_TIME.equalsIgnoreCase(localName)){
+                        time = TemporalUtilities.parseDateSafe(reader.getElementText(),false);
+                    }else if(TAG_WPT_MAGVAR.equalsIgnoreCase(localName)){
+                        magvar = Double.valueOf(reader.getElementText());
+                    }else if(TAG_WPT_GEOIHEIGHT.equalsIgnoreCase(localName)){
+                        geoidheight = Double.valueOf(reader.getElementText());
+                    }else if(TAG_NAME.equalsIgnoreCase(localName)){
+                        name = reader.getElementText();
+                    }else if(TAG_CMT.equalsIgnoreCase(localName)){
+                        cmt = reader.getElementText();
+                    }else if(TAG_DESC.equalsIgnoreCase(localName)){
+                        desc = reader.getElementText();
+                    }else if(TAG_SRC.equalsIgnoreCase(localName)){
+                        src = reader.getElementText();
+                    }else if(TAG_LINK.equalsIgnoreCase(localName)){
+                        if(links == null) links = new ArrayList<URI>();
+                        links.add(parseLink());
+                    }else if(TAG_WPT_SYM.equalsIgnoreCase(localName)){
+                        sym = reader.getElementText();
+                    }else if(TAG_TYPE.equalsIgnoreCase(localName)){
+                        type = reader.getElementText();
+                    }else if(TAG_WPT_FIX.equalsIgnoreCase(localName)){
+                        fix = reader.getElementText();
+                    }else if(TAG_WPT_SAT.equalsIgnoreCase(localName)){
+                        sat = Integer.valueOf(reader.getElementText());
+                    }else if(TAG_WPT_HDOP.equalsIgnoreCase(localName)){
+                        hdop = Double.valueOf(reader.getElementText());
+                    }else if(TAG_WPT_PDOP.equalsIgnoreCase(localName)){
+                        pdop = Double.valueOf(reader.getElementText());
+                    }else if(TAG_WPT_VDOP.equalsIgnoreCase(localName)){
+                        vdop = Double.valueOf(reader.getElementText());
+                    }else if(TAG_WPT_AGEOFGPSDATA.equalsIgnoreCase(localName)){
+                        ageofdgpsdata = Double.valueOf(reader.getElementText());
+                    }else if(TAG_WPT_DGPSID.equalsIgnoreCase(localName)){
+                        dgpsid = Integer.valueOf(reader.getElementText());
+                    }
+                    break;
+                case END_ELEMENT:
+                    if(tagName.equalsIgnoreCase(reader.getLocalName())){
+                        //end of the way point element
+                        return GPXModelConstants.createWayPoint(index, geometry, ele,
+                                time, magvar, geoidheight, name, cmt, desc, src, links,
+                                sym, type, fix, sat, hdop, vdop, pdop, ageofdgpsdata, dgpsid);
+                    }
+                    break;
+            }
+        }
+
+        throw new XMLStreamException("Error in xml file, "+tagName+" tag without end.");
     }
 
 }
