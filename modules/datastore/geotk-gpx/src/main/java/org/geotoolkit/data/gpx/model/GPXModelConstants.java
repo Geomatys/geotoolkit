@@ -35,6 +35,7 @@ import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.DefaultProperty;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.filter.identity.DefaultFeatureId;
+import org.geotoolkit.geometry.ImmutableEnvelope;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.opengis.feature.ComplexAttribute;
 
@@ -45,6 +46,7 @@ import org.opengis.feature.type.ComplexType;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.FeatureTypeFactory;
 import org.opengis.feature.type.PropertyDescriptor;
+import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
@@ -188,6 +190,18 @@ public final class GPXModelConstants {
     }
 
     private GPXModelConstants(){}
+
+    /**
+     *
+     * @param xmin : minimum longitude
+     * @param xmax : maximum longitude
+     * @param ymin : minimum latitude
+     * @param ymax : maximum latitude
+     * @return Immutable envelope in WGS84 with the given extents.
+     */
+    public static Envelope create(double xmin, double xmax, double ymin, double ymax){
+        return new ImmutableEnvelope(DefaultGeographicCRS.WGS84, xmin, xmax, ymin, ymax);
+    }
 
     public static Feature createWayPoint(int index, Point geometry, Double ele, Date time,
             Double magvar, Double geoidheight, String name, String cmt, String desc,

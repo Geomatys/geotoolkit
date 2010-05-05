@@ -20,6 +20,7 @@ package org.geotoolkit.data.gpx.xml;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
+
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -30,14 +31,14 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.stream.XMLStreamException;
-import org.geotoolkit.data.gpx.model.Bound;
+
 import org.geotoolkit.data.gpx.model.CopyRight;
 import org.geotoolkit.data.gpx.model.GPXModelConstants;
-
 import org.geotoolkit.data.gpx.model.MetaData;
 import org.geotoolkit.data.gpx.model.Person;
 import org.geotoolkit.temporal.object.TemporalUtilities;
 import org.geotoolkit.xml.StaxStreamReader;
+
 import org.opengis.feature.ComplexAttribute;
 import org.opengis.feature.Feature;
 import org.opengis.geometry.Envelope;
@@ -353,7 +354,7 @@ public class GPXReader extends StaxStreamReader{
 
         toTagEnd(TAG_BOUNDS);
 
-        return Bound.create(
+        return GPXModelConstants.create(
                 Double.parseDouble(xmin),
                 Double.parseDouble(xmax),
                 Double.parseDouble(ymin),
