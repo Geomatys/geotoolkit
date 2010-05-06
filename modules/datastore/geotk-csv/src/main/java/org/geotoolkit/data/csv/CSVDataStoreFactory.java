@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2009, Geomatys
+ *    (C) 2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -17,11 +17,12 @@
 
 package org.geotoolkit.data.csv;
 
-import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.util.Set;
 import org.geotoolkit.data.AbstractFileDataStoreFactory;
 import org.geotoolkit.data.DataStore;
+import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.storage.DataStoreException;
@@ -75,8 +76,11 @@ public class CSVDataStoreFactory extends AbstractFileDataStoreFactory {
             dot = path.length();
         }
         final String name = path.substring(slash, dot);
-        
-        return new CSVDataStore(new File(url.toString()), namespace, name, separator);
+        try {
+            return new CSVDataStore(IOUtilities.toFile(url, null), namespace, name, separator);
+        } catch (IOException ex) {
+            throw new DataStoreException(ex);
+        }
     }
 
     @Override
