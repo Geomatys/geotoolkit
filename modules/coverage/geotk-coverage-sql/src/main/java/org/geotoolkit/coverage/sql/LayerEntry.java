@@ -69,7 +69,7 @@ import org.geotoolkit.resources.Errors;
  * A layer of {@linkplain GridCoverage grid coverages} sharing common properties.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.11
+ * @version 3.12
  *
  * @since 3.10 (derived from Seagis)
  * @module
@@ -202,11 +202,14 @@ final class LayerEntry extends DefaultEntry implements Layer {
     private volatile GeographicBoundingBox boundingBox;
 
     /**
-     * The factory for fetching table dependencies.
+     * The {@link TableFactory} or the {@link CoverageDatabase} for fetching table dependencies.
      * This field is not serialized. It will be {@code null} on deserialization, which
      * imply that the various {@code getCoverageReference} methods will not be available.
+     *
+     * @see #getTableFactory()
+     * @see #setCoverageDatabase(CoverageDatabase)
      */
-    private final transient TableFactory tables;
+    private transient Object tables;
 
     /**
      * Creates a new layer.
@@ -226,6 +229,15 @@ final class LayerEntry extends DefaultEntry implements Layer {
     }
 
     /**
+     * Replaces the {@link #tables} dependency by a dependency toward the database.
+     * This will give us an access to the listeners.
+     */
+    final void setCoverageDatabase(final CoverageDatabase database) {
+        assert (tables == database) || (tables instanceof TableFactory);
+        tables = database;
+    }
+
+    /**
      * Returns the name of this layer.
      */
     @Override
@@ -237,7 +249,13 @@ final class LayerEntry extends DefaultEntry implements Layer {
      * Returns the ressources bundle for error messages.
      */
     private Errors errors() {
-        return Errors.getResources(tables != null ? tables.getLocale() : null);
+        final TableFactory tb;
+        if (tables instanceof CoverageDatabase) {
+            tb = ((CoverageDatabase) tables).database;
+        } else {
+            tb = (TableFactory) tables;
+        }
+        return Errors.getResources(tb != null ? tb.getLocale() : null);
     }
 
     /**
@@ -248,10 +266,16 @@ final class LayerEntry extends DefaultEntry implements Layer {
      * @throws IllegalStateException If this entry is not connected to a database.
      */
     private TableFactory getTableFactory() throws IllegalStateException {
-        if (tables == null) {
+        final TableFactory tb;
+        if (tables instanceof CoverageDatabase) {
+            tb = ((CoverageDatabase) tables).database;
+        } else {
+            tb = (TableFactory) tables;
+        }
+        if (tb == null) {
             throw new IllegalStateException(errors().getString(Errors.Keys.NO_DATA_SOURCE));
         }
-        return tables;
+        return tb;
     }
 
     /**
@@ -827,6 +851,23 @@ final class LayerEntry extends DefaultEntry implements Layer {
                     .getString(Errors.Keys.ILLEGAL_COORDINATE_REFERENCE_SYSTEM, exception));
         }
         return entry;
+    }
+
+    /**
+     * Adds new coverage references in the database.
+     */
+    @Override
+    public void addCoverageReferences(final Collection<?> files, final CoverageDatabaseListener listener)
+            throws CoverageStoreException
+    {
+        try {
+            final WritableGridCoverageTable table = getTableFactory().getTable(WritableGridCoverageTable.class);
+            table.setLayerEntry(this);
+            table.addEntries(files, 0);
+            table.release();
+        } catch (Exception exception) { // Too many exceptions for enumerating all of them.
+            throw new CoverageStoreException(exception);
+        }
     }
 
     /**

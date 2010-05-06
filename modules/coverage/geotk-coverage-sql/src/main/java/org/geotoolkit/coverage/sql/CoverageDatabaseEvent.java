@@ -22,7 +22,12 @@ import java.util.EventObject;
 
 /**
  * The event delivered when the content of a {@linkplain CoverageDatabase Coverage Database}
- * is about to change, or after the content has been changed.
+ * changes. The change can be the addition of entries or the removal of an existing entries,
+ * as determined by the sign of {@link #getNumEntryChange()}.
+ * <p>
+ * Events can be delivered twice: <em>before</em> and <em>after</em> the change, in order
+ * to allow {@linkplain CoverageDatabaseListener listeners} to veto the change before it
+ * occurs or to update some internal representation once the change is completed.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.12

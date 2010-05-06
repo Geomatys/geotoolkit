@@ -24,8 +24,9 @@ import java.lang.reflect.Modifier;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
-import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.resources.Errors;
+import org.geotoolkit.util.logging.Logging;
+import org.geotoolkit.util.converter.Classes;
 
 
 /**
@@ -237,7 +238,7 @@ public class DynamicFactoryRegistry extends FactoryRegistry {
                 // We already tried this factory before and failed.
                 continue;
             }
-            if (!isAssignableTo(implementationType, types)) {
+            if (!Classes.isAssignableTo(implementationType, types)) {
                 continue;
             }
             if (filter!=null && !filter.filter(factory)) {
@@ -279,21 +280,6 @@ public class DynamicFactoryRegistry extends FactoryRegistry {
          */
         initCause(notFound);
         throw notFound;
-    }
-
-    /**
-     * Returns {@code true} if the specified implementation is one of the specified types.
-     */
-    private static boolean isAssignableTo(final Class<?> implementation, final Class<?>[] types) {
-        if (types == null) {
-            return true;
-        }
-        for (final Class<?> type : types) {
-            if (type.isAssignableFrom(implementation)) {
-                return true;
-            }
-        }
-        return false;
     }
 
     /**

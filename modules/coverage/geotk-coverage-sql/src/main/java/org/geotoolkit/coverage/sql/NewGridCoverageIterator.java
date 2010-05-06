@@ -17,20 +17,24 @@
  */
 package org.geotoolkit.coverage.sql;
 
-import java.awt.Point;
 import java.util.Map;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
+import javax.imageio.IIOException;
+import javax.imageio.spi.ImageReaderSpi;
+import javax.imageio.stream.ImageInputStream;
 
 import org.opengis.referencing.FactoryException;
 
+import org.geotoolkit.resources.Errors;
+import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.image.io.mosaic.Tile;
-import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.internal.sql.table.SpatialDatabase;
 import org.geotoolkit.util.collection.BackingStoreException;
+import org.geotoolkit.util.converter.Classes;
 
 
 /**
@@ -79,11 +83,16 @@ final class NewGridCoverageIterator implements Iterator<NewGridCoverageReference
     private NewGridCoverageReference next;
 
     /**
-     * The image reader to use. Will be created when first needed. May never be created if every
-     * inputs (the keys in the {@link #inputToAdd} iterator) are {@link ImageReader} or {@link Tile}
-     * instances.
+     * The image reader inferred from the information declared in the {@link SeriesEntry}.
+     * Will be created when first needed.
      */
-    private ImageReader reader;
+    private ImageReader seriesReader;
+
+    /**
+     * The legal input types of the {@link #seriesReader}, or {@code null}.
+     * This is created when {@link #seriesReader} is initialized.
+     */
+    private Class<?>[] readerInputTypes;
 
     /**
      * Creates an iterator for the specified files.
@@ -106,22 +115,6 @@ final class NewGridCoverageIterator implements Iterator<NewGridCoverageReference
         do {
             next = createEntry(input);
         } while (next == null && (input = nextInput()) != null);
-    }
-
-    /**
-     * Returns the unique image reader. The reader is created the first time
-     * this method is invoked, and reused for every subsequent invocations.
-     * If no reader can be inferred because the {@linkplain #series} is not
-     * specified, then this method returns {@code null}.
-     */
-    private ImageReader getImageReader() throws IOException {
-        if (reader == null && series != null) {
-            final Iterator<ImageReader> it = ImageIO.getImageReadersByFormatName(series.format.imageFormat);
-            if (it.hasNext()) {
-                reader = it.next();
-            }
-        }
-        return reader;
     }
 
     /**
@@ -152,18 +145,38 @@ final class NewGridCoverageIterator implements Iterator<NewGridCoverageReference
         final ImageReader reader;
         if (input instanceof ImageReader) {
             reader = (ImageReader) input;
+            input = reader.getInput();
+        } else if (series == null) {
+            reader = XImageIO.getReaderBySuffix(input, true, false);
         } else {
-            input = IOUtilities.tryToFile(input);
-            reader = getImageReader();
-            if (reader != null) {
-                reader.setInput(input);
-            } else {
-                // Let the Tile constructor figure out the provider by itself.
-                final Tile tile = new Tile(null, input, imageIndex, new Point(0,0), null);
-                return new NewGridCoverageReference(database, tile);
+            /*
+             * If we are adding into a specific series, use the reader of that series.
+             * We must set the input outself, as required by the NewGridCoverageReference
+             * constructor.
+             */
+            if (seriesReader == null) {
+                final String format = series.format.imageFormat;
+                final Iterator<ImageReader> it = ImageIO.getImageReadersByFormatName(format);
+                if (it.hasNext()) {
+                    seriesReader = it.next();
+                } else {
+                    throw new IIOException(Errors.format(Errors.Keys.UNKNOWN_IMAGE_FORMAT_$1, format));
+                }
+                final ImageReaderSpi spi = seriesReader.getOriginatingProvider();
+                if (spi != null) {
+                    readerInputTypes = spi.getInputTypes();
+                }
             }
+            reader = seriesReader;
+            Object imageInput = input;
+            if (!Classes.isAssignableTo(input.getClass(), readerInputTypes)) {
+                if (Classes.isAssignableTo(ImageInputStream.class, readerInputTypes)) {
+                    imageInput = ImageIO.createImageInputStream(input);
+                }
+            }
+            reader.setInput(imageInput, true, false);
         }
-        return new NewGridCoverageReference(database, reader, imageIndex);
+        return new NewGridCoverageReference(database, reader, input, imageIndex);
     }
 
     /**
@@ -240,8 +253,8 @@ final class NewGridCoverageIterator implements Iterator<NewGridCoverageReference
         if (series != null) {
             buffer.append("series=\"").append(series).append("\", ");
         }
-        if (reader != null) {
-            buffer.append("reader=").append(reader.getClass().getSimpleName()).append(", ");
+        if (seriesReader != null) {
+            buffer.append("reader=").append(seriesReader.getClass().getSimpleName()).append(", ");
         }
         return buffer.append("imageIndex=").append(imageIndex).append(']').toString();
     }

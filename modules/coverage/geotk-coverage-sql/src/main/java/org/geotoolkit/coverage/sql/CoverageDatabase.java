@@ -22,15 +22,16 @@ import java.util.Date;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.List;
+import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Properties;
-import java.util.concurrent.Future;
+import java.util.logging.Level;
+import java.util.logging.LogRecord;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.RunnableFuture;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.CancellationException;
 import java.lang.ref.WeakReference;
 import java.lang.ref.Reference;
 import javax.sql.DataSource;
@@ -43,6 +44,7 @@ import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.util.DateRange;
 import org.geotoolkit.util.MeasurementRange;
 import org.geotoolkit.util.NullArgumentException;
+import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.CoverageStoreException;
@@ -70,7 +72,7 @@ import org.geotoolkit.resources.Errors;
  * in order to have more work executed concurrently.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.11
+ * @version 3.12
  *
  * @since 3.10
  * @module
@@ -111,6 +113,19 @@ public class CoverageDatabase {
     final Executor executor;
 
     /**
+     * The listener list.
+     */
+    private final List<CoverageDatabaseListener> listeners;
+
+    /**
+     * The listeners as an array, or {@code null} if it need to be recomputed.
+     * A new array will be created everytime the listener list is changed. We
+     * iterate over an array instead than over the list in order to avoid to
+     * hold the synchronization lock during the iteration.
+     */
+    private volatile CoverageDatabaseListener[] listenerArray;
+
+    /**
      * Creates a new instance using the given properties. The properties shall contains at
      * least an entry for the {@code "URL"} key. The value of this entry shall be a JDBC URL
      * in the form of {@code "jdbc:postgresql://host/database"}.
@@ -137,8 +152,9 @@ public class CoverageDatabase {
      * Creates a new instance using the given database.
      */
     CoverageDatabase(final TableFactory db) {
-        database = db;
-        executor = new Executor();
+        database  = db;
+        executor  = new Executor();
+        listeners = new ArrayList<CoverageDatabaseListener>(4);
     }
 
     /**
@@ -261,14 +277,15 @@ public class CoverageDatabase {
         /** Executes the task in a background thread. */
         @Override public Set<String> call() throws CoverageStoreException {
             final TablePool<LayerTable> pool = database.layers;
+            final Set<String> names;
             try {
                 final LayerTable table = pool.acquire();
-                final Set<String> names = table.getIdentifiers();
+                names = table.getIdentifiers();
                 pool.release(table);
-                return names;
             } catch (SQLException e) {
                 throw new CoverageStoreException(e);
             }
+            return names;
         }
     }
 
@@ -298,14 +315,16 @@ public class CoverageDatabase {
         /** Executes the task in a background thread. */
         @Override public Layer call() throws CoverageStoreException {
             final TablePool<LayerTable> pool = database.layers;
+            final LayerEntry layer;
             try {
                 final LayerTable table = pool.acquire();
-                final Layer layer = table.getEntry(name);
+                layer = table.getEntry(name);
                 pool.release(table);
-                return layer;
             } catch (SQLException e) {
                 throw new CoverageStoreException(e);
             }
+            layer.setCoverageDatabase(CoverageDatabase.this);
+            return layer;
         }
     }
 
@@ -338,15 +357,18 @@ public class CoverageDatabase {
 
         /** Executes the task in a background thread. */
         @Override public Boolean call() throws CoverageStoreException {
+            fireChange(null, true, +1, name);
             final TablePool<LayerTable> pool = database.layers;
+            boolean added;
             try {
                 final LayerTable table = pool.acquire();
-                final Boolean added = table.createIfAbsent(name);
+                added = table.createIfAbsent(name);
                 pool.release(table);
-                return added;
             } catch (SQLException e) {
                 throw new CoverageStoreException(e);
             }
+            fireChange(null, false, added ? 1 : 0, name);
+            return added;
         }
     }
 
@@ -383,15 +405,18 @@ public class CoverageDatabase {
 
         /** Executes the task in a background thread. */
         @Override public Boolean call() throws CoverageStoreException {
+            fireChange(null, true, -1, name);
             final TablePool<LayerTable> pool = database.layers;
+            int removed;
             try {
                 final LayerTable table = pool.acquire();
-                final Boolean added = (table.delete(name) != 0);
+                removed = table.delete(name);
                 pool.release(table);
-                return added;
             } catch (SQLException e) {
                 throw new CoverageStoreException(e);
             }
+            fireChange(null, false, -removed, name);
+            return (removed != 0);
         }
     }
 
@@ -644,6 +669,128 @@ public class CoverageDatabase {
     public LayerCoverageReader createGridCoverageReader(final String layer) throws CoverageStoreException {
         final FutureQuery<Layer> future = (layer != null) ? getLayer(layer) : null;
         return new LayerCoverageReader(this, future);
+    }
+
+    /**
+     * Adds the given object to the list of objects to notify about changes in database content.
+     *
+     * @param listener The new listener to add.
+     *
+     * @since 3.12
+     */
+    public void addListener(final CoverageDatabaseListener listener) {
+        if (listener != null) {
+            synchronized (listeners) {
+                if (!listeners.contains(listener)) {
+                    if (listeners.add(listener)) {
+                        listenerArray = null;
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Removes the given object from the list of objects to notify about changes in database
+     * content. This method does nothing if the given object is not a member of the listener
+     * list.
+     *
+     * @param listener The listener to remove.
+     *
+     * @since 3.12
+     */
+    public void removeListener(final CoverageDatabaseListener listener) {
+        synchronized (listeners) {
+            if (listeners.remove(listener)) {
+                listenerArray = null;
+            }
+        }
+    }
+
+    /**
+     * Returns all listeners to notify about changes in database constent, or an empty array
+     * if none. This method returns a direct reference to the internal array; <strong>do not
+     * modify</strong>.
+     *
+     * @since 3.12
+     */
+    private CoverageDatabaseListener[] getInternalListeners() {
+        CoverageDatabaseListener[] array = listenerArray;
+        if (array == null) {
+            synchronized (listeners) {
+                array = listenerArray;
+                if (array == null) {
+                    array = listeners.toArray(new CoverageDatabaseListener[listeners.size()]);
+                    listenerArray = array;
+                }
+            }
+        }
+        return array;
+    }
+
+    /**
+     * Returns all listeners to notify about changes in database constent, or an empty array
+     * if none.
+     *
+     * @return All registered listeners, or an empty array if none.
+     *
+     * @since 3.12
+     */
+    public CoverageDatabaseListener[] getListeners() {
+        return getInternalListeners().clone();
+    }
+
+    /**
+     * Notifies every listener that a value is about to change, or have already changed.
+     * The method to be invoked is determined from the type of the {@code value} argument,
+     * which can be {@link String} (for layers) or {@link NewGridCoverageReference}.
+     *
+     * @param additionalListener An optional supplemental listener to inform, or {@code null}.
+     * @param isBefore           {@code true} if the event is invoked before the change,
+     *                           or {@code false} if the event occurs after the change.
+     * @param numEntryChange     Number of entries added, or a negative number if entries removed.
+     * @param value              The entry which is added or removed.
+     * @throws DatabaseVetoException if {@code isBefore} is {@code true} and a listener vetos
+     *         against the change.
+     */
+    final void fireChange(final CoverageDatabaseListener additionalListener,
+            final boolean isBefore, final int numEntryChange, final Object value)
+            throws DatabaseVetoException
+    {
+        CoverageDatabaseListener[] listeners = getInternalListeners();
+        if (additionalListener != null) {
+            final int length = listeners.length;
+            listeners = Arrays.copyOf(listeners, length + 1);
+            listeners[length] = additionalListener;
+        }
+        if (listeners.length != 0) {
+            final CoverageDatabaseEvent event = new CoverageDatabaseEvent(this, isBefore, numEntryChange);
+            for (final CoverageDatabaseListener listener : listeners) {
+                try {
+                    if (value instanceof NewGridCoverageReference) {
+                        listener.coverageChange(event, (NewGridCoverageReference) value);
+                    } else {
+                        listener.layerChange(event, (String) value);
+                    }
+                } catch (DatabaseVetoException veto) {
+                    if (isBefore) {
+                        throw veto;
+                    }
+                    final String method;
+                    if (value instanceof NewGridCoverageReference) {
+                        method = "coverageChange";
+                    } else {
+                        method = "layerChange";
+                    }
+                    final LogRecord record = new LogRecord(Level.WARNING,
+                            Errors.getResources(database.getLocale()).getString(Errors.Keys.VETO_TOO_LATE));
+                    record.setSourceClassName(CoverageDatabaseListener.class.getName());
+                    record.setSourceMethodName(method);
+                    record.setThrown(veto);
+                    Logging.log(CoverageDatabaseListener.class, record);
+                }
+            }
+        }
     }
 
     /**

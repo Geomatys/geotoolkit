@@ -21,6 +21,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
+import java.util.Collection;
 
 import org.opengis.metadata.extent.GeographicBoundingBox;
 
@@ -39,7 +40,7 @@ import org.geotoolkit.coverage.io.CoverageStoreException;
  * {@code Layer} instances are immutable and thread-safe.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.11
+ * @version 3.12
  *
  * @since 3.10 (derived from Seagis)
  * @module
@@ -189,4 +190,36 @@ public interface Layer {
      * @throws CoverageStoreException if an error occured while querying the database.
      */
     GridCoverageReference getCoverageReference(CoverageEnvelope envelope) throws CoverageStoreException;
+
+    /**
+     * Adds new coverage references in the database. The new references are given by a collection
+     * of inputs. Each input can be any of the following instances:
+     * <p>
+     * <ul>
+     *   <li>{@link java.io.File}, {@link java.net.URL}, {@link java.net.URI} or
+     *       {@link String} instances.</li>
+     *
+     *   <li>{@link javax.imageio.ImageReader} instances with their
+     *       {@linkplain javax.imageio.ImageReader#getInput() input} set and
+     *       {@linkplain javax.imageio.ImageReader#getImageMetadata image metadata} conform to the Geotk
+     *       {@linkplain org.geotoolkit.image.io.metadata.SpatialMetadata spatial metadata} format.</li>
+     *
+     *   <li>{@link org.geotoolkit.image.io.mosaic.Tile} instances, which will be added to the
+     *       {@code "GridCoverages"} table (not to the {@code "Tiles"} table).</li>
+     * </ul>
+     * <p>
+     * This method will typically read only the required metadata rather than the full image.
+     *
+     * @param  files The image inputs.
+     * @param  listener An optional listener to be notified when new references are added.
+     *         The listener can modify the values declared in {@link NewGridCoverageReference}
+     *         before they are written in the database.
+     * @throws DatabaseVetoException If a {@linkplain CoverageDatabaseListener listener}
+     *         vetos against the operation.
+     * @throws CoverageStoreException If an error occured while accessing the database.
+     *
+     * @since 3.12
+     */
+    void addCoverageReferences(Collection<?> files, CoverageDatabaseListener listener)
+            throws DatabaseVetoException, CoverageStoreException;
 }

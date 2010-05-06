@@ -1307,6 +1307,11 @@ public final class Errors extends IndexedResourceBundle {
         public static final int VARIABLE_NOT_FOUND_IN_FILE_$2 = 248;
 
         /**
+         * A veto has been ignored because it has been applied too late.
+         */
+        public static final int VETO_TOO_LATE = 251;
+
+        /**
          * Value {1} is outside the domain of coverage "{0}".
          */
         public static final int ZVALUE_OUTSIDE_COVERAGE_$2 = 249;

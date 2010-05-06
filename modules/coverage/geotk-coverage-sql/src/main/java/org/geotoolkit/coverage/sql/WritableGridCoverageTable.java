@@ -253,7 +253,7 @@ final class WritableGridCoverageTable extends GridCoverageTable {
                     final SeriesTable table = getDatabase().getTable(SeriesTable.class);
                     table.setLayer(getLayer());
                     final String path = (entry.path != null) ? entry.path.getPath() : "";
-                    final int id = table.findOrCreate(path, entry.extension, entry.getFormatName(true));
+                    final int id = table.findOrCreate(path, entry.extension, entry.format);
                     specificSeries = table.getEntry(id);
                     table.release();
                 }

@@ -51,9 +51,12 @@ import org.geotoolkit.resources.Errors;
 /**
  * A structure which contain the information to be added in the {@linkplain CoverageDatabase
  * Coverage Database} for a new coverage reference. The information provided in this class
- * match closely the layout of the coverage database. Instances of this class are created
- * by {@link Layer#addCoverageReferences(Collection, CoverageDatabaseListener)} and can be
- * freely modified before the insertion in the database actually occurs.
+ * match closely the layout of the coverage database.
+ * <p>
+ * Instances of this class are created by {@link Layer#addCoverageReferences(Collection,
+ * CoverageDatabaseListener)} and dispatched to {@link CoverageDatabaseListener}s. The
+ * listeners can modify the field values {@linkplain CoverageDatabaseEvent#isBefore() before}
+ * the insertion in the database occurs.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @version 3.12
@@ -72,42 +75,50 @@ public final class NewGridCoverageReference {
     SeriesEntry series;
 
     /**
-     * Contains most informations like image reader provider, input, image index and image bounds.
-     * This field is not allowed to be {@code null}.
-     */
-    private final Tile tile;
-
-    /**
      * The path to the coverage file (not including the filename), or {@code null} if the filename
-     * has no parent directory. This is the first part of the input file, which is splitted in its
-     * "{@linkplain #path}/{@linkplain #filename}.{@linkplain #extension}" components.
+     * has no parent directory.
+     * <p>
+     * The full path to the input file is
+     * "{@linkplain #path}/{@linkplain #filename}.{@linkplain #extension}".
+     *
+     * @see #getFile()
      */
     public final File path;
 
     /**
      * The filename, not including the {@linkplain #path} and {@linkplain #extension}.
-     * This is part of the input file, which is splitted in its
-     * "{@linkplain #path}/{@linkplain #filename}.{@linkplain #extension}" components.
+     *
+     * @see #getFile()
      */
     public final String filename;
 
     /**
      * The filename extension (not including the leading dot), or {@code null} if none.
-     * This is part of the input file, which is splitted in its
-     * "{@linkplain #path}/{@linkplain #filename}.{@linkplain #extension}" components.
      */
     public final String extension;
 
     /**
+     * The name of the image format. It shall be one of the primary key values in the
+     * {@code "Formats"} table. Note that this is not necessarly the same name than the
+     * {@linkplain ImageReaderSpi#getFormatNames() image format name}.
+     */
+    public String format;
+
+    /**
+     * The image reader provider.
+     */
+    private final ImageReaderSpi spi;
+
+    /**
      * The image bounds. The rectangle {@linkplain Rectangle#width width} and
      * {@linkplain Rectangle#height height} must be set to the image size. The
-     * rectangle ({@linkplain#x x},{@linkplain#y y}) origin is usually (0,0),
+     * ({@linkplain Rectangle#x x},{@linkplain Rectangle#y y}) origin is usually (0,0),
      * but different value are allowed. For example the origin can be set to
      * the {@linkplain Tile#getLocation location of a tile} in tiled images.
      * <p>
      * If the (x,y) origin is different than (0,0), then it will be interpreted as the
-     * translation to apply on the grid before to apply the <cite>grid to CRS</cite>
-     * transform at reading time.
+     * translation to apply on the grid before to apply the {@link #gridToCRS} transform
+     * at reading time.
      * <p>
      * This field is never {@code null}. However users can modify it before the
      * new entry is inserted in the database.
@@ -118,7 +129,7 @@ public final class NewGridCoverageReference {
      * The <cite>grid to CRS</cite> transform, which maps always the pixel
      * {@linkplain PixelOrientation#UPPER_LEFT upper left} corner.
      * <p>
-     * If {@link #imageBounds} has a (x,y) origin different than (0,0), then the (x,y)
+     * If {@link #imageBounds} has an origin different than (0,0), then the (x,y)
      * translation shall be applied before the {@code gridToCRS} transform.
      * <p>
      * This field is never {@code null}. However users can modify it before the
@@ -128,14 +139,16 @@ public final class NewGridCoverageReference {
 
     /**
      * The horizontal CRS identifier. This shall be the value of a primary key
-     * in the {@code "spatial_ref_sys"} PostGIS table.
+     * in the {@code "spatial_ref_sys"} PostGIS table. The value may be 0 if this
+     * class found no information about the horizontal SRID.
      */
     public int horizontalSRID;
 
     /**
      * The vertical CRS identifier, ignored if {@link #verticalValues} is {@code null}.
      * When not ignored, this shall be the value of a primary key in the
-     * {@code "spatial_ref_sys"} PostGIS table.
+     * {@code "spatial_ref_sys"} PostGIS table. The value may be 0 if this
+     * class found no information about the vertical SRID.
      */
     public int verticalSRID;
 
@@ -160,45 +173,50 @@ public final class NewGridCoverageReference {
     NewGridCoverageReference(final SpatialDatabase database, final Tile tile)
             throws IOException, FactoryException
     {
-        this(database, tile, tile.getImageReader());
+        this(database, tile.getImageReader(), tile.getInput(), tile.getImageIndex(), tile);
     }
 
     /**
-     * Creates en entry for the given reader.
+     * Creates en entry for the given reader. The {@linkplain ImageReader#setInput(Object)
+     * reader input must be set} by the caller before to invoke this constructor.
      *
-     * @param  database The database where the new entry will be added.
-     * @param  reader The image reader.
+     * @param  database   The database where the new entry will be added.
+     * @param  reader     The image reader with its input set.
+     * @param  input      The original input. May not be the same than {@link ImageReader#getInput()}
+     *                    because the later may have been transformed in an image input stream.
      * @param  imageIndex Index of the image to read.
      * @throws IOException if an error occured while reading the image.
      */
     NewGridCoverageReference(final SpatialDatabase database, final ImageReader reader,
-            final int imageIndex) throws IOException, FactoryException
+            final Object input, final int imageIndex) throws IOException, FactoryException
     {
-        this(database, new Tile(reader.getOriginatingProvider(), reader.getInput(), imageIndex,
-             new Rectangle(reader.getWidth(imageIndex), reader.getHeight(imageIndex))), reader);
+        this(database, reader, input, imageIndex, null);
     }
 
     /**
-     * Creates en entry for the given reader.
+     * Creates en entry for the given tile or reader. The reader argument is mandatory
+     * and must have its {@linkplain ImageReader#setInput(Object) input set}. The tile
+     * argument is optional.
      *
-     * @param  database The database where the new entry will be added.
-     * @param  tile Information about the image to be inserted.
-     * @param  reader The image reader, or {@code null}.
-     * @param  helper The metadata helper, or {@code null} for creating it automatically.
+     * @param  database   The database where the new entry will be added.
+     * @param  reader     The image reader with its input set.
+     * @param  input      The original input. May not be the same than {@link ImageReader#getInput()}
+     *                    because the later may have been transformed in an image input stream.
+     * @param  imageIndex Index of the image to read.
+     * @param  tile       The tile for which a reference is created, or {@code null} if none.
      * @throws IOException if an error occured while reading the image.
      */
-    private NewGridCoverageReference(final SpatialDatabase database,
-            final Tile tile, final ImageReader reader) throws IOException, FactoryException
+    private NewGridCoverageReference(final SpatialDatabase database, final ImageReader reader,
+            Object input, final int imageIndex, final Tile tile) throws IOException, FactoryException
     {
-        this.tile = tile;
         /*
          * Get the input, which must be an instance of File.
          * Split that input file into the path components.
          */
-        Object input = IOUtilities.tryToFile(tile.getInput());
+        input = IOUtilities.tryToFile(input);
         if (!(input instanceof File)) {
-            throw new IIOException(Errors.format(Errors.Keys.UNKNOWN_TYPE_$1,
-                    Classes.getShortClassName(input)));
+            throw new IIOException(Errors.format(Errors.Keys.ILLEGAL_CLASS_$2,
+                    Classes.getShortClassName(input), File.class));
         }
         final File inputFile = (File) input;
         path = inputFile.getParentFile();
@@ -212,26 +230,53 @@ public final class NewGridCoverageReference {
             extension = null;
         }
         /*
-         * Get the metadata, preferrably from the Tile object (especially the gridToCRS transform),
-         * then from the SpatialMetadata (CRS, etc.).
+         * Get the metadata. We usually need the image metadata. However some formats may
+         * store their information only in stream metadata, so we will fallback on stream
+         * metadata if there is no image metadata.
          */
+        spi = reader.getOriginatingProvider();
+        if (spi != null) {
+            format = getFormatName(spi);
+        }
         SpatialMetadata metadata = null;
-        if (reader != null) {
-            final IIOMetadata candidate = reader.getImageMetadata(tile.getImageIndex());
+        if (true) {
+            IIOMetadata candidate = reader.getImageMetadata(imageIndex);
             if (candidate instanceof SpatialMetadata) {
                 metadata = (SpatialMetadata) candidate;
+            } else {
+                candidate = reader.getStreamMetadata();
+                if (candidate instanceof SpatialMetadata) {
+                    metadata = (SpatialMetadata) candidate;
+                }
             }
         }
-        imageBounds = tile.getRegion();
-        AffineTransform gridToCRS = tile.getGridToCRS();
+        /*
+         * Get the geolocalization from the image, then complete with the tile information if
+         * there is a Tile object. We avoid invoking Tile.getRegion() because it may create a
+         * new ImageReader for fetching the image size. We will rather use the ImageReader that
+         * we already have.
+         */
+        imageBounds = new Rectangle(reader.getWidth(imageIndex), reader.getHeight(imageIndex));
+        AffineTransform gridToCRS = null;
+        if (tile != null) {
+            imageBounds.setLocation(tile.getLocation());
+            gridToCRS = tile.getGridToCRS();
+        }
         if (gridToCRS != null) {
+            // Tile.getGridToCRS() returns an immutable AffineTransform.
+            // We want to allow modifications.
             gridToCRS = new AffineTransform(gridToCRS);
         } else if (metadata != null) {
             final MetadataHelper helper = new MetadataHelper(
                     (reader instanceof SpatialImageReader) ? (SpatialImageReader) reader : null);
             gridToCRS = helper.getAffineTransform(metadata.getInstanceForType(RectifiedGrid.class), null);
+        } else {
+            gridToCRS = new AffineTransform();
         }
         this.gridToCRS = gridToCRS;
+        /*
+         * Get the CRS, then try to infer the horizontal and vertical SRID from it.
+         */
         if (metadata != null) {
             final CoordinateReferenceSystem crs = metadata.getInstanceForType(CoordinateReferenceSystem.class);
             if (crs != null) {
@@ -255,14 +300,12 @@ public final class NewGridCoverageReference {
         /*
          * Close the reader but do not dispose it, since it may be used for the next entry.
          */
-        if (reader != null) {
-            input = reader.getInput();
-            reader.reset();
-            if (input instanceof Closeable) {
-                ((Closeable) input).close();
-            } else if (input instanceof ImageInputStream) {
-                ((ImageInputStream) input).close();
-            }
+        input = reader.getInput();
+        reader.reset();
+        if (input instanceof Closeable) {
+            ((Closeable) input).close();
+        } else if (input instanceof ImageInputStream) {
+            ((ImageInputStream) input).close();
         }
     }
 
@@ -308,7 +351,6 @@ public final class NewGridCoverageReference {
         series = null;
         int mimeMatching = 0; // Greater the number, better is the matching of MIME type.
         int pathMatching = 0; // Greater the number, better is the matching of the file path.
-        final ImageReaderSpi spi = tile.getImageReaderSpi();
         final String extension = (this.extension != null) ? this.extension : "";
         for (final SeriesEntry candidate : candidates) {
             /*
@@ -373,25 +415,21 @@ public final class NewGridCoverageReference {
     }
 
     /**
-     * Returns the format name. The default implementation select the longuest name,
+     * Returns the format name. Current implementation selects the longuest name,
      * on the assumption that it is the most explicit name.
      *
-     * @param  upper {@code true} for the upper-case flavor (if available).
+     * @param  spi The image reader provider.
      * @return The format name (never {@code null} and never empty).
      * @throws IOException if the format can not be obtained.
      */
-    protected String getFormatName(final boolean upper) throws IOException {
+    private static String getFormatName(final ImageReaderSpi spi) throws IOException {
         String format = "";
-        final ImageReaderSpi spi = tile.getImageReaderSpi();
         String[] formats = spi.getFormatNames();
         if (formats != null) {
             for (final String candidate : formats) {
                 final int d = candidate.length() - format.length();
                 if (d >= 0) {
                     if (d == 0) {
-                        if (!upper) {
-                            continue;
-                        }
                         int na=0, nb=0;
                         for (int i=candidate.length(); --i>=0;) {
                             if (Character.isUpperCase(candidate.charAt(i))) na++;
@@ -423,15 +461,46 @@ public final class NewGridCoverageReference {
     }
 
     /**
+     * Returns the path to the coverage file as
+     * "{@linkplain #path}/{@linkplain #filename}.{@linkplain #extension}".
+     *
+     * @return The path to the image file, or {@code null} if {@link #filename} is null.
+     */
+    public File getFile() {
+        String name = filename;
+        if (name == null) {
+            return null;
+        }
+        if (extension != null) {
+            name = name + '.' + extension;
+        }
+        return new File(path, name);
+    }
+
+    /**
      * Returns a string representation for debugging purpose.
      */
     @Override
     public String toString() {
-        final StringBuilder buffer = new StringBuilder();
-        buffer.append(tile);
-        if (series != null) {
-            buffer.append(" in ").append(series);
+        final StringBuilder buffer = new StringBuilder(Classes.getShortClassName(this)).append('[');
+        boolean isNext = false;
+fill:   for (int i=0; ;i++) {
+            final String label;
+            final Object value;
+            switch (i) {
+                case 0: label="series"; value=series;    break;
+                case 1: label="format"; value=format;    break;
+                case 2: label="file";   value=getFile(); break;
+                default: break fill;
+            }
+            if (value != null) {
+                if (isNext) {
+                    buffer.append(", ");
+                }
+                buffer.append(label).append('=').append(value);
+                isNext = true;
+            }
         }
-        return buffer.toString();
+        return buffer.append(']').toString();
     }
 }

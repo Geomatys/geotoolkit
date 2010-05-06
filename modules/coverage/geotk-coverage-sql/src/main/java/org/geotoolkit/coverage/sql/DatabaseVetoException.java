@@ -2,8 +2,8 @@
  *    Geotoolkit.org - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2009-2010, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2009-2010, Geomatys
+ *    (C) 2010, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -15,28 +15,32 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.storage;
+package org.geotoolkit.coverage.sql;
+
+import org.geotoolkit.coverage.io.CoverageStoreException;
 
 
 /**
- * Throws when a {@link DataStore} can not completed a read or write operation.
+ * Thrown when a proposed change in the content of a {@linkplain CoverageDatabase Coverage Database}
+ * is not allowed. This exception can be thrown by {@linkplain CoverageDatabaseListener listeners}
+ * associated with any {@code CoverageDatabase} instance.
  *
- * @author Johann Sorel (Geomatys)
- * @version 3.10
+ * @author Martin Desruisseaux (Geomatys)
+ * @version 3.12
  *
- * @since 3.10
+ * @since 3.12
  * @module
  */
-public class DataStoreException extends Exception {
+public class DatabaseVetoException extends CoverageStoreException {
     /**
      * For cross-version compatibility.
      */
-    private static final long serialVersionUID = -1778987176103191950L;
+    private static final long serialVersionUID = -8529860269259521319L;
 
     /**
      * Creates an exception with no cause and no details message.
      */
-    public DataStoreException() {
+    public DatabaseVetoException() {
         super();
     }
 
@@ -45,7 +49,7 @@ public class DataStoreException extends Exception {
      *
      * @param message The detail message.
      */
-    public DataStoreException(final String message) {
+    public DatabaseVetoException(final String message) {
         super(message);
     }
 
@@ -54,8 +58,8 @@ public class DataStoreException extends Exception {
      *
      * @param cause The cause for this exception.
      */
-    public DataStoreException(final Throwable cause) {
-        super((cause != null) ? cause.getLocalizedMessage() : null, cause);
+    public DatabaseVetoException(final Throwable cause) {
+        super(cause);
     }
 
     /**
@@ -64,7 +68,7 @@ public class DataStoreException extends Exception {
      * @param message The detail message.
      * @param cause The cause for this exception.
      */
-    public DataStoreException(final String message, final Throwable cause) {
+    public DatabaseVetoException(final String message, final Exception cause) {
         super(message, cause);
     }
 }

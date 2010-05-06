@@ -49,6 +49,7 @@ import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.internal.image.io.Formats;
 import org.geotoolkit.util.NullArgumentException;
 import org.geotoolkit.util.XArrays;
+import org.geotoolkit.util.converter.Classes;
 
 
 /**
@@ -713,14 +714,7 @@ public abstract class ImageWriterAdapter extends SpatialImageWriter {
                     main.getExtraStreamMetadataFormatNames(), ImageReaderAdapter.Spi.EXTRA_METADATA);
             extraImageMetadataFormatClassNames  = XArrays.concatenate(
                     main.getExtraImageMetadataFormatNames(), ImageReaderAdapter.Spi.EXTRA_METADATA);
-            boolean acceptStream = false;
-            for (final Class<?> type : main.getOutputTypes()) {
-                if (type.isAssignableFrom(ImageOutputStream.class)) {
-                    acceptStream = true;
-                    break;
-                }
-            }
-            this.acceptStream = acceptStream;
+            acceptStream = Classes.isAssignableTo(ImageOutputStream.class, main.getOutputTypes());
         }
 
         /**

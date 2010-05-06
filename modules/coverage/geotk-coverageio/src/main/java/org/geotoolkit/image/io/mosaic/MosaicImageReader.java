@@ -1567,15 +1567,7 @@ public class MosaicImageReader extends ImageReader implements Disposable {
          */
         @Override
         public boolean canDecodeInput(final Object source) throws IOException {
-            if (source != null) {
-                final Class<?> type = source.getClass();
-                for (final Class<?> inputType : inputTypes) {
-                    if (inputType.isAssignableFrom(type)) {
-                        return true;
-                    }
-                }
-            }
-            return false;
+            return (source != null) && Classes.isAssignableTo(source.getClass(), inputTypes);
         }
 
         /**

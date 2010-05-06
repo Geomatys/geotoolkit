@@ -46,7 +46,7 @@ import org.geotoolkit.resources.Errors;
  * </ul>
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.09
+ * @version 3.12
  *
  * @since 2.5
  * @module
@@ -1173,6 +1173,40 @@ compare:for (int i=0; i<c1.length; i++) {
      */
     public static String getShortClassName(final Object object) {
         return getShortName(getClass(object));
+    }
+
+    /**
+     * Returns {@code true} if the given type is assignable to one of the given allowed types.
+     * More specifically, if at least one {@code allowedTypes[i]} element exists for which
+     * <code>allowedTypes[i].{@linkplain Class#isAssignableFrom(Class) isAssignableFrom}(type)</code>
+     * returns {@code true}, then this method returns {@code true}.
+     * <p>
+     * Special cases:
+     * <ul>
+     *   <li>If {@code type} is null, then this method returns {@code false}.</li>
+     *   <li>If {@code allowedTypes} is null, then this method returns {@code true}.
+     *       This is to be interpreted as "no restriction on the allowed types".</li>
+     *   <li>Any null element in the {@code allowedTypes} array are silently ignored.</li>
+     * </ul>
+     *
+     * @param  type The type to be tested, or {@code null}.
+     * @param  allowedTypes The allowed types.
+     * @return {@code true} if the given type is assignable to one of the allowed types.
+     *
+     * @since 3.12
+     */
+    public static boolean isAssignableTo(final Class<?> type, final Class<?>... allowedTypes) {
+        if (type != null) {
+            if (allowedTypes == null) {
+                return true;
+            }
+            for (final Class<?> candidate : allowedTypes) {
+                if (candidate != null && candidate.isAssignableFrom(type)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     /**
