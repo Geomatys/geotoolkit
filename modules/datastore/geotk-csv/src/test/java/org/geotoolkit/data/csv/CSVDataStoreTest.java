@@ -23,7 +23,10 @@ import java.net.URL;
 import org.geotoolkit.data.AbstractFileDataStoreFactory;
 import org.geotoolkit.data.DataStore;
 import org.geotoolkit.data.DataStoreFinder;
+import org.geotoolkit.data.FeatureReader;
+import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.FileDataStoreFactory;
+import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
@@ -34,6 +37,7 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.opengis.feature.Feature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.Name;
@@ -69,7 +73,7 @@ public class CSVDataStoreTest {
     public void testCreate() throws Exception{
 
         File f = File.createTempFile("test", ".csv");
-        f.deleteOnExit();
+        //f.deleteOnExit();
 
         final DataStore ds = DataStoreFinder.getDataStore(AbstractFileDataStoreFactory.URLP.getName().getCode(),
                 f.toURL());
@@ -81,8 +85,9 @@ public class CSVDataStoreTest {
         ftb.add("doubleProp", Double.class);
         ftb.add("stringProp", String.class);
         ftb.add("geometryProp", Geometry.class, DefaultGeographicCRS.WGS84);
-        final SimpleFeatureType sft = ftb.buildSimpleFeatureType();
+        SimpleFeatureType sft = ftb.buildSimpleFeatureType();
         ds.createSchema(sft.getName(), sft);
+        Name name = ds.getNames().iterator().next();
 
         assertEquals(1, ds.getNames().size());
 
@@ -93,6 +98,27 @@ public class CSVDataStoreTest {
                 assertNotNull(td);
                 assertEquals(td.getType().getBinding(), desc.getType().getBinding());
             }
+        }
+
+        FeatureWriter fw = ds.getFeatureWriterAppend(name);
+        try{
+            Feature feature = fw.next();
+            fw.write();
+            feature = fw.next();
+            fw.write();
+            feature = fw.next();
+            fw.write();
+        }finally{
+            fw.close();
+        }
+
+        FeatureReader reader = ds.getFeatureReader(QueryBuilder.all(name));
+        try{
+            while(reader.hasNext()){
+                System.out.println(reader.next());
+            }
+        }finally{
+            reader.close();
         }
     }
 

@@ -18,12 +18,16 @@
 package org.geotoolkit.data.csv;
 
 import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.io.ParseException;
+import com.vividsolutions.jts.io.WKTReader;
+import com.vividsolutions.jts.io.WKTWriter;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
+import java.net.MalformedURLException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -35,16 +39,28 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.logging.Level;
 
 import org.geotoolkit.data.AbstractDataStore;
+import org.geotoolkit.data.AbstractFeatureWriterAppend;
+import org.geotoolkit.data.DataStoreRuntimeException;
+import org.geotoolkit.data.DataUtilities;
+import org.geotoolkit.data.DefaultSimpleFeatureReader;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryCapabilities;
 import org.geotoolkit.feature.FeatureTypeBuilder;
+import org.geotoolkit.feature.FeatureUtilities;
+import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
+import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.storage.DataStoreException;
+import org.geotoolkit.util.Converters;
+import org.geotoolkit.util.StringUtilities;
 
 import org.opengis.feature.Feature;
+import org.opengis.feature.Property;
+import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.feature.type.Name;
@@ -64,6 +80,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 public class CSVDataStore extends AbstractDataStore{
 
     private final ReadWriteLock RWLock = new ReentrantReadWriteLock();
+    private final ReadWriteLock TempLock = new ReentrantReadWriteLock();
 
     private final File file;
     private final String namespace;
@@ -90,6 +107,10 @@ public class CSVDataStore extends AbstractDataStore{
         }finally{
             RWLock.readLock().unlock();
         }
+    }
+
+    private File createWriteFile() throws MalformedURLException{
+        return (File) IOUtilities.changeExtension(file, "wcsv");
     }
 
     private SimpleFeatureType readType() throws DataStoreException{
@@ -159,7 +180,7 @@ public class CSVDataStore extends AbstractDataStore{
         }
     }
 
-    private void writeType(SimpleFeatureType type) throws DataStoreException {
+    private String createHeader(SimpleFeatureType type) throws DataStoreException{
         final StringBuilder sb = new StringBuilder();
         boolean first = true;
         for(PropertyDescriptor desc : type.getDescriptors()){
@@ -191,6 +212,11 @@ public class CSVDataStore extends AbstractDataStore{
 
             sb.append(')');
         }
+        return sb.toString();
+    }
+
+    private void writeType(SimpleFeatureType type) throws DataStoreException {
+        
 
         Writer output = null;
         try {
@@ -198,7 +224,7 @@ public class CSVDataStore extends AbstractDataStore{
                 file.createNewFile();
             }
             output = new BufferedWriter(new FileWriter(file));
-            output.write(sb.toString());
+            output.write(createHeader(type));
         } catch (IOException ex) {
             throw new DataStoreException(ex);
         }finally{
@@ -212,7 +238,6 @@ public class CSVDataStore extends AbstractDataStore{
             }
         }
     }
-
 
     @Override
     public Set<Name> getNames() throws DataStoreException {
@@ -274,14 +299,15 @@ public class CSVDataStore extends AbstractDataStore{
 
     @Override
     public FeatureReader getFeatureReader(Query query) throws DataStoreException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        final FeatureReader fr = new CSVFeatureReader();
+        return handleRemaining(fr, query);
     }
 
     @Override
     public FeatureWriter getFeatureWriter(Name typeName, Filter filter) throws DataStoreException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        final FeatureWriter fw = new CSVFeatureWriter();
+        return handleRemaining(fw, filter);
     }
-
 
     ////////////////////////////////////////////////////////////////////////////
     // FALLTHROUGHT OR NOT IMPLEMENTED /////////////////////////////////////////
@@ -305,6 +331,194 @@ public class CSVDataStore extends AbstractDataStore{
     @Override
     public void removeFeatures(Name groupName, Filter filter) throws DataStoreException {
         handleRemoveWithFeatureWriter(groupName, filter);
+    }
+
+    private class CSVFeatureReader implements FeatureReader<FeatureType, Feature>{
+
+        private final WKTReader reader = new WKTReader();
+        private final Scanner scanner;
+        protected final SimpleFeatureBuilder sfb;
+        protected SimpleFeature current = null;
+        protected int inc = 0;
+
+        private CSVFeatureReader() throws DataStoreException{
+            RWLock.readLock().lock();
+            sfb = new SimpleFeatureBuilder(featureType);
+
+            try {
+                scanner = new Scanner(file);
+                //skip the type line
+                scanner.nextLine();
+            } catch (FileNotFoundException ex) {
+                throw new DataStoreException(ex);
+            }
+        }
+
+        @Override
+        public FeatureType getFeatureType() {
+            return featureType;
+        }
+
+        @Override
+        public SimpleFeature next() throws DataStoreRuntimeException {
+            read();
+            final SimpleFeature ob = current;
+            current = null;
+            if(ob == null){
+                throw new DataStoreRuntimeException("No more records.");
+            }
+            return ob;
+        }
+
+        @Override
+        public boolean hasNext() throws DataStoreRuntimeException {
+            read();
+            return current != null;
+        }
+
+        private void read() throws DataStoreRuntimeException{
+            if(current != null) return;
+            if(scanner.hasNextLine()){
+                final String line = scanner.nextLine();
+                final List<String> fields = StringUtilities.toStringList(line, separator);
+                sfb.reset();
+                final List<AttributeDescriptor> atts = featureType.getAttributeDescriptors();
+                for(int i=0,n=atts.size() ; i<n; i++){
+                    final AttributeDescriptor att = atts.get(i);
+                    final Object value;
+                    if(att instanceof GeometryDescriptor){
+                        if(fields.get(i).trim().isEmpty()){
+                            value = null;
+                        }else{
+                            try {
+                                value = reader.read(fields.get(i));
+                            } catch (ParseException ex) {
+                                throw new DataStoreRuntimeException(ex);
+                            }
+                        }
+                    }else{
+                        value = Converters.convert(fields.get(i), att.getType().getBinding());
+                    }
+                    sfb.set(att.getName(), value);
+                }
+                current = sfb.buildFeature(Integer.toString(inc++));
+            }
+        }
+
+        @Override
+        public void close() {
+            RWLock.readLock().unlock();
+            scanner.close();
+        }
+
+        @Override
+        public void remove() {
+            throw new DataStoreRuntimeException("Not supported on reader.");
+        }
+
+    }
+
+    private class CSVFeatureWriter extends CSVFeatureReader implements FeatureWriter<FeatureType, Feature>{
+
+        private final WKTWriter wktWriter = new WKTWriter(2);
+        private final Writer writer;
+        private final File writeFile;
+
+        private CSVFeatureWriter() throws DataStoreException{
+            super();
+            TempLock.writeLock().lock();
+
+            try{
+                writeFile = createWriteFile();
+                if (!writeFile.exists()) {
+                    writeFile.createNewFile();
+                }
+                writer = new BufferedWriter(new FileWriter(writeFile));
+                final String firstLine = createHeader(featureType);
+                writer.write(firstLine);
+                writer.write('\n');
+                writer.flush();
+            }catch(IOException ex){
+                throw new DataStoreException(ex);
+            }
+        }
+
+        @Override
+        public SimpleFeature next() throws DataStoreRuntimeException {
+            try{
+                write();
+                super.next();
+            }catch(DataStoreRuntimeException ex){
+                //we reach append mode
+                sfb.reset();
+                current = sfb.buildFeature(Integer.toString(inc++));
+                for(Property prop : current.getProperties()){
+                    try{prop.setValue(FeatureUtilities.defaultValue(prop.getType().getBinding()));
+                    }catch(IllegalArgumentException e){ /*ignore this error*/}
+                }
+
+            }
+            return current;
+        }
+
+        @Override
+        public void write() throws DataStoreRuntimeException {
+            if(current == null) return;
+
+            final StringBuilder sb = new StringBuilder();
+            final List<AttributeDescriptor> atts = featureType.getAttributeDescriptors();
+            for(int i=0,n=atts.size() ; i<n; i++){
+                final AttributeDescriptor att = atts.get(i);
+                final Object value = current.getAttribute(att.getName());
+
+                final String str;
+                if(value == null){
+                    str = "";
+                }else if(att instanceof GeometryDescriptor){
+                    if(value != null){
+                        str = wktWriter.write((Geometry) value);
+                    }else{
+                        str = "";
+                    }
+                }else{
+                    str = Converters.convert(value, String.class);
+                }
+                sb.append(str).append(separator);
+            }
+            sb.setLength(sb.length()-1); //remove the last separator
+            sb.append('\n');
+
+            try {
+                System.out.println(sb.toString());
+                writer.write(sb.toString());
+                writer.flush();
+            } catch (IOException ex) {
+                throw new DataStoreRuntimeException(ex);
+            }
+        }
+
+        @Override
+        public void close() {
+
+            try {
+                writer.flush();
+                writer.close();
+            } catch (IOException ex) {
+                throw new DataStoreRuntimeException(ex);
+            }
+
+            //close read iterator
+            super.close();
+            
+            //flip files
+            RWLock.writeLock().lock();
+            file.delete();
+            writeFile.renameTo(file);
+            RWLock.writeLock().unlock();
+
+            TempLock.writeLock().unlock();
+        }
+
     }
 
 }
