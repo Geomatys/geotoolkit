@@ -100,5 +100,4 @@ public class CSVDataStoreFactory extends AbstractFileDataStoreFactory {
         return (names.isEmpty()) ? null : names.iterator().next().getLocalPart();
     }
 
-
 }

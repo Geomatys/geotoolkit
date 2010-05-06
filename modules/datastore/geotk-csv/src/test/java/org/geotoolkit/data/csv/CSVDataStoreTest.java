@@ -19,19 +19,14 @@ package org.geotoolkit.data.csv;
 
 import com.vividsolutions.jts.geom.Geometry;
 import java.io.File;
-import java.net.URL;
 import org.geotoolkit.data.AbstractFileDataStoreFactory;
 import org.geotoolkit.data.DataStore;
 import org.geotoolkit.data.DataStoreFinder;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureWriter;
-import org.geotoolkit.data.FileDataStoreFactory;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.feature.FeatureTypeBuilder;
-import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
-import org.geotoolkit.storage.DataStoreException;
-import org.geotoolkit.test.TestData;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -46,7 +41,8 @@ import static org.junit.Assert.*;
 
 /**
  *
- * @author sorel
+ * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class CSVDataStoreTest {
 
@@ -73,7 +69,7 @@ public class CSVDataStoreTest {
     public void testCreate() throws Exception{
 
         File f = File.createTempFile("test", ".csv");
-        //f.deleteOnExit();
+        f.deleteOnExit();
 
         final DataStore ds = DataStoreFinder.getDataStore(AbstractFileDataStoreFactory.URLP.getName().getCode(),
                 f.toURL());
@@ -113,13 +109,17 @@ public class CSVDataStoreTest {
         }
 
         FeatureReader reader = ds.getFeatureReader(QueryBuilder.all(name));
+        int number = 0;
         try{
             while(reader.hasNext()){
-                System.out.println(reader.next());
+                number++;
+                reader.next();
             }
         }finally{
             reader.close();
         }
+
+        assertEquals(3, number);
     }
 
 }

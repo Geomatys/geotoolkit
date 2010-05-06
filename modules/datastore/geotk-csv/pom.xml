@@ -73,6 +73,14 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>org.geotoolkit.pending</groupId>
+            <artifactId>geotk-datastore-core</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+            <classifier>tests</classifier>
+        </dependency>
+
+        <dependency>
             <groupId>postgresql</groupId>
             <artifactId>postgresql</artifactId>
             <scope>test</scope>
@@ -101,3 +109,4 @@
         </plugins>
     </build>
 </project>
+

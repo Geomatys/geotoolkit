@@ -39,10 +39,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.logging.Level;
 
 import org.geotoolkit.data.AbstractDataStore;
-import org.geotoolkit.data.AbstractFeatureWriterAppend;
 import org.geotoolkit.data.DataStoreRuntimeException;
-import org.geotoolkit.data.DataUtilities;
-import org.geotoolkit.data.DefaultSimpleFeatureReader;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.query.Query;
@@ -83,8 +80,8 @@ public class CSVDataStore extends AbstractDataStore{
     private final ReadWriteLock TempLock = new ReentrantReadWriteLock();
 
     private final File file;
-    private final String namespace;
-    private final String name;
+    private String namespace;
+    private String name;
     private final char separator;
 
     private SimpleFeatureType featureType;
@@ -217,13 +214,14 @@ public class CSVDataStore extends AbstractDataStore{
 
     private void writeType(SimpleFeatureType type) throws DataStoreException {
         
-
         Writer output = null;
         try {
             if(!file.exists()){
                 file.createNewFile();
             }
             output = new BufferedWriter(new FileWriter(file));
+            namespace = type.getName().getNamespaceURI();
+            name = type.getName().getLocalPart();
             output.write(createHeader(type));
         } catch (IOException ex) {
             throw new DataStoreException(ex);
@@ -267,11 +265,16 @@ public class CSVDataStore extends AbstractDataStore{
         }finally{
             RWLock.writeLock().unlock();
         }
+
+        checkExist();
+        fireSchemaAdded(typeName, featureType);
     }
 
     @Override
     public void deleteSchema(Name typeName) throws DataStoreException {
         typeCheck(typeName); //raise error is type doesnt exist
+
+        final SimpleFeatureType oldSchema = featureType;
 
         try{
             RWLock.writeLock().lock();
@@ -282,6 +285,7 @@ public class CSVDataStore extends AbstractDataStore{
         }finally{
             RWLock.writeLock().unlock();
         }
+        fireSchemaDeleted(typeName, oldSchema);
     }
 
     @Override
@@ -299,12 +303,14 @@ public class CSVDataStore extends AbstractDataStore{
 
     @Override
     public FeatureReader getFeatureReader(Query query) throws DataStoreException {
+        typeCheck(query.getTypeName()); //raise error is type doesnt exist
         final FeatureReader fr = new CSVFeatureReader();
         return handleRemaining(fr, query);
     }
 
     @Override
     public FeatureWriter getFeatureWriter(Name typeName, Filter filter) throws DataStoreException {
+        typeCheck(typeName); //raise error is type doesnt exist
         final FeatureWriter fw = new CSVFeatureWriter();
         return handleRemaining(fw, filter);
     }
@@ -423,6 +429,8 @@ public class CSVDataStore extends AbstractDataStore{
         private final WKTWriter wktWriter = new WKTWriter(2);
         private final Writer writer;
         private final File writeFile;
+        private SimpleFeature edited = null;
+        private SimpleFeature lastWritten = null;
 
         private CSVFeatureWriter() throws DataStoreException{
             super();
@@ -447,29 +455,30 @@ public class CSVDataStore extends AbstractDataStore{
         public SimpleFeature next() throws DataStoreRuntimeException {
             try{
                 write();
-                super.next();
+                edited = super.next();
             }catch(DataStoreRuntimeException ex){
                 //we reach append mode
                 sfb.reset();
-                current = sfb.buildFeature(Integer.toString(inc++));
-                for(Property prop : current.getProperties()){
+                edited = sfb.buildFeature(Integer.toString(inc++));
+                for(Property prop : edited.getProperties()){
                     try{prop.setValue(FeatureUtilities.defaultValue(prop.getType().getBinding()));
                     }catch(IllegalArgumentException e){ /*ignore this error*/}
                 }
 
             }
-            return current;
+            return edited;
         }
 
         @Override
         public void write() throws DataStoreRuntimeException {
-            if(current == null) return;
+            if(edited == null || lastWritten == edited) return;
+            lastWritten = edited;
 
             final StringBuilder sb = new StringBuilder();
             final List<AttributeDescriptor> atts = featureType.getAttributeDescriptors();
             for(int i=0,n=atts.size() ; i<n; i++){
                 final AttributeDescriptor att = atts.get(i);
-                final Object value = current.getAttribute(att.getName());
+                final Object value = edited.getAttribute(att.getName());
 
                 final String str;
                 if(value == null){
@@ -489,7 +498,6 @@ public class CSVDataStore extends AbstractDataStore{
             sb.append('\n');
 
             try {
-                System.out.println(sb.toString());
                 writer.write(sb.toString());
                 writer.flush();
             } catch (IOException ex) {
