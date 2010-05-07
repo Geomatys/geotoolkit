@@ -157,35 +157,46 @@ final class WritableGridCoverageTable extends GridCoverageTable {
      * <ul>
      *   <li>{@link File}, {@link URL}, {@link URI} or {@link String} instances.</li>
      *
-     *   <li>{@link ImageReader} instances with the {@linkplain ImageReader#getInput() input}
-     *       set and {@linkplain ImageReader#getImageMetadata metadata} conform to the Geotk
-     *       {@linkplain SpatialMetadata spatial metadata}.</li>
-     *
      *   <li>{@link Tile} instances, which will be added in the {@code "GridCoverages"} table
      *       like any other kind of input processed by this method. For adding tiles in the
      *       {@code "Tiles"} table, use the {@link #addTiles(Collection)} method instead.</li>
+     *
+     *   <li>{@link ImageReader} instances with the {@linkplain ImageReader#getInput() input}
+     *       set and {@linkplain ImageReader#getImageMetadata metadata} conform to the Geotk
+     *       {@linkplain SpatialMetadata spatial metadata}. The reader input shall be one of
+     *       the above-cited instances. If this is not possible (for example because a
+     *       {@link javax.imageio.stream.ImageInputStream} is required), consider wrapping
+     *       the {@link javax.imageio.spi.ImageReaderSpi} and the input in a {@link Tile}
+     *       instance.</li>
      * </ul>
      * <p>
      * This method will typically not read the full image, but only the required metadata.
      *
-     * @param  inputs The image inputs.
-     * @param  imageIndex The index of the image to insert in the database. This argument is ignored
-     *         for {@link Tile} inputs, because they provide their own {@link Tile#getImageIndex()}
-     *         method.
+     * @param  inputs     The image inputs.
+     * @param  imageIndex The index of the image to insert in the database. This argument is
+     *                    ignored for {@link Tile} inputs, because they provide their own
+     *                    {@link Tile#getImageIndex()} method.
+     * @param  listeners  The object which hold the {@link CoverageDatabaseListener}s. While this
+     *                    argument is of kind {@link CoverageDatabase}, only the listeners are of
+     *                    interest to this method.
+     * @param  controller An optional controller to invoke before the listeners, or {@code null}.
      * @return The number of images inserted.
      * @throws SQLException If an error occured while querying the database.
      * @throws IOException If an I/O operation was required and failed.
      */
-    public int addEntries(final Collection<?> inputs, final int imageIndex)
-            throws SQLException, IOException, FactoryException
+    public int addEntries(final Collection<?>              inputs,
+                          final int                        imageIndex,
+                          final CoverageDatabase           listeners,
+                          final CoverageDatabaseController controller)
+            throws SQLException, IOException, FactoryException, DatabaseVetoException
     {
         int count = 0;
         final Iterator<?> it = inputs.iterator();
         if (it.hasNext()) {
             final Object next = it.next();
             boolean success = false;
-            final NewGridCoverageIterator iterator =
-                    new NewGridCoverageIterator((SpatialDatabase) getDatabase(), null, imageIndex, it, next);
+            final NewGridCoverageIterator iterator = new NewGridCoverageIterator(listeners,
+                    controller, (SpatialDatabase) getDatabase(), null, imageIndex, it, next);
             final SeriesEntry oldSeries = specificSeries;
             synchronized (getLock()) {
                 transactionBegin();
@@ -207,8 +218,8 @@ final class WritableGridCoverageTable extends GridCoverageTable {
      *
      * @return The number of images inserted.
      */
-    private int addEntries(final Iterator<NewGridCoverageReference> entries)
-            throws SQLException, IOException, FactoryException
+    private int addEntries(final NewGridCoverageIterator entries)
+            throws SQLException, IOException, FactoryException, DatabaseVetoException
     {
         int count = 0;
         final GridCoverageQuery query     = (GridCoverageQuery) this.query;
@@ -237,27 +248,33 @@ final class WritableGridCoverageTable extends GridCoverageTable {
                 throw exception.unwrapOrRethrow(IOException.class);
             }
             /*
-             * If we are scanning new files for a specific series, get that series.
-             * Otherwise try to guess it from the path name and file extension.
+             * If no destination series were explicitly specified, and if we are allowed to
+             * "guess" the series, perform the guess now. We do that before to notify the
+             * controller because the guess performed here depends only on information that
+             * the controller can not modify.
              */
-            specificSeries = entry.series;
-            if (specificSeries == null) {
-                if (lenientSeries) {
-                    final LayerEntry layer = getLayerEntry(true);
-                    final Collection<SeriesEntry> candidates = layer.getSeries();
-                    if (!candidates.isEmpty()) {
-                        specificSeries = entry.choose(candidates);
-                    }
-                }
-                if (specificSeries == null) {
-                    final SeriesTable table = getDatabase().getTable(SeriesTable.class);
-                    table.setLayer(getLayer());
-                    final String path = (entry.path != null) ? entry.path.getPath() : "";
-                    final int id = table.findOrCreate(path, entry.extension, entry.format);
-                    specificSeries = table.getEntry(id);
-                    table.release();
+            if (entry.series == null && lenientSeries) {
+                final LayerEntry layer = getLayerEntry(true);
+                final Collection<SeriesEntry> candidates = layer.getSeries();
+                if (!candidates.isEmpty()) {
+                    entry.selectSeries(candidates);
                 }
             }
+            /*
+             * Notifies the controller (if any), then the listeners (if any) after the
+             * NewGridCoverageReference entry has been fully initialized. The controller
+             * may change the values. Then create the series if it does not exists.
+             */
+            entries.fireCoverageAdding(true, entry);
+            if (entry.series == null) {
+                final SeriesTable table = getDatabase().getTable(SeriesTable.class);
+                table.setLayer(getLayer());
+                final String path = (entry.path != null) ? entry.path.getPath() : "";
+                final int id = table.findOrCreate(path, entry.extension, entry.format);
+                entry.series = table.getEntry(id);
+                table.release();
+            }
+            specificSeries = entry.series;
             /*
              * Gets the metadata of interest. The metadata should contains at least the image
              * envelope and CRS. If it doesn't, then we will use the table envelope as a fall
@@ -301,6 +318,10 @@ final class WritableGridCoverageTable extends GridCoverageTable {
                 statement.setTimestamp(byEndTime,   new Timestamp(endTime  .getTime()), calendar);
                 if (updateSingleton(statement)) count++;
             }
+            /*
+             * Notifies the listeners that the entries have been added.
+             */
+            entries.fireCoverageAdding(false, entry);
         }
         gridTable.release();
         return count;
@@ -310,17 +331,25 @@ final class WritableGridCoverageTable extends GridCoverageTable {
      * Adds the specified tiles in the {@code "Tiles"} table.
      *
      * @param  tiles The tiles to insert.
+     * @param  listeners The object which hold the {@link CoverageDatabaseListener}s. While this
+     *         argument is of kind {@link CoverageDatabase}, only the listeners are of interest
+     *         to this method.
+     * @param  controller An optional controller to invoke before the listeners, or {@code null}.
      * @throws SQLException If an error occured while querying the database.
      * @throws IOException If an I/O operation was required and failed.
      */
-    public void addTiles(final Collection<Tile> tiles) throws SQLException, IOException, FactoryException {
+    public void addTiles(final Collection<Tile>           tiles,
+                         final CoverageDatabase           listeners,
+                         final CoverageDatabaseController controller)
+            throws SQLException, IOException, FactoryException, DatabaseVetoException
+    {
         if (tilesTable == null) {
             // Uses the special GridCoverageQuery constructor for insertions in "Tiles" table.
             tilesTable = new WritableGridCoverageTable(new GridCoverageQuery((SpatialDatabase) getDatabase(), true));
         }
         tilesTable.setLayer(getLayer());
         tilesTable.specificSeries = specificSeries;
-        tilesTable.addEntries(tiles, 0);
+        tilesTable.addEntries(tiles, 0, listeners, controller);
     }
 
     /**
@@ -331,11 +360,18 @@ final class WritableGridCoverageTable extends GridCoverageTable {
      * @param  includeSubdirectories If {@code true}, then sub-directories will be included
      *         in the scan. New series may be created if subdirectories are found.
      * @param  policy The action to take for existing entries.
+     * @param  listeners The object which hold the {@link CoverageDatabaseListener}s. While this
+     *         argument is of kind {@link CoverageDatabase}, only the listeners are of interest
+     *         to this method.
+     * @param  controller An optional controller to invoke before the listeners, or {@code null}.
      * @return The number of images inserted.
      * @throws SQLException If an error occured while querying the database.
      * @throws IOException If an I/O operation was required and failed.
      */
-    public int updateLayer(final boolean includeSubdirectories, final UpdatePolicy policy)
+    public int updateLayer(final boolean                    includeSubdirectories,
+                           final UpdatePolicy               policy,
+                           final CoverageDatabase           listeners,
+                           final CoverageDatabaseController controller)
             throws SQLException, IOException, FactoryException, CoverageStoreException
     {
         final boolean replaceExisting = !UpdatePolicy.SKIP_EXISTING.equals(policy);
@@ -427,7 +463,8 @@ final class WritableGridCoverageTable extends GridCoverageTable {
                 it.remove();
                 final int imageIndex = 0; // TODO: Do we have a better value to provide?
                 final NewGridCoverageIterator iterator = new NewGridCoverageIterator(
-                        (SpatialDatabase) getDatabase(), specificSeries, imageIndex, it, next);
+                        listeners, controller, (SpatialDatabase) getDatabase(),
+                        specificSeries, imageIndex, it, next);
                 count += addEntries(iterator);
             }
             success = true; // Must be the very last line in the try block.

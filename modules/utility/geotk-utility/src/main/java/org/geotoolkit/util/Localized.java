@@ -31,9 +31,11 @@ import java.util.Locale;
  */
 public interface Localized {
     /**
-     * Returns the locale of the implemented service.
+     * Returns the locale of the implemented service. Some implementations may return
+     * {@code null} if no locale is explicitly defined. In such case, the locale to use
+     * is typically the {@linkplain Locale#getDefault() default} locale.
      *
-     * @return The locale.
+     * @return The locale, or {@code null} if not explicitly defined.
      */
     Locale getLocale();
 }

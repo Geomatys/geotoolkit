@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.coverage.sql;
 
+import java.awt.Rectangle;
 import java.sql.SQLException;
 import java.util.Collections;
 
@@ -81,12 +82,35 @@ public final class WritableGridCoverageTableTest extends CatalogTestBase {
      * @throws Exception If a SQL, I/O or referencing error occured.
      */
     @Test
-    @Ignore
     public void testGeostrophicCurrent2D() throws Exception {
         final WritableGridCoverageTable table = getDatabase().getTable(WritableGridCoverageTable.class);
-        table.setLayer(TEMPORARY_LAYER);
+        final CoverageDatabase database = new CoverageDatabase((TableFactory) getDatabase());
+        final CoverageDatabaseController controller = new CoverageDatabaseController() {
+            /**
+             * Checks the parameter values before their insertion in the database.
+             *
+             * Forces also the format to one of the pre-defined ones, since we don't
+             * want to test the creation of new entries in the format table.
+             */
+            @Override
+            public void coverageAdding(CoverageDatabaseEvent event, NewGridCoverageReference reference) {
+                assertEquals("Iroise",                reference.path.getName());
+                assertEquals("champs.r3_23-05-2007",  reference.filename);
+                assertEquals("nc",                    reference.extension);
+                assertEquals("NetCDF",                reference.format);
+                assertEquals(new Rectangle(273, 423), reference.imageBounds);
+                assertEquals("TODO", 0,               reference.horizontalSRID);
+                assertEquals(0,                       reference.verticalSRID);
+                assertNull  (                         reference.verticalValues);
+                assertNull  ("TODO",                  reference.dateRanges);
+
+                reference.format = "Mars (u,v)";
+                reference.horizontalSRID = 4326; // TODO: need to auto-detect.
+            }
+        };
         requireImageData();
-        table.addEntries(Collections.singleton(toImageFile(GEOSTROPHIC_CURRENT_FILE)), 0);
+        table.setLayer(TEMPORARY_LAYER);
+        table.addEntries(Collections.singleton(toImageFile(GEOSTROPHIC_CURRENT_FILE)), 0, database, controller);
         table.release();
     }
 }

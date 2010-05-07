@@ -199,27 +199,31 @@ public interface Layer {
      *   <li>{@link java.io.File}, {@link java.net.URL}, {@link java.net.URI} or
      *       {@link String} instances.</li>
      *
+     *   <li>{@link org.geotoolkit.image.io.mosaic.Tile} instances, which will be added to the
+     *       {@code "GridCoverages"} table (not to the {@code "Tiles"} table).</li>
+     *
      *   <li>{@link javax.imageio.ImageReader} instances with their
      *       {@linkplain javax.imageio.ImageReader#getInput() input} set and
      *       {@linkplain javax.imageio.ImageReader#getImageMetadata image metadata} conform to the Geotk
-     *       {@linkplain org.geotoolkit.image.io.metadata.SpatialMetadata spatial metadata} format.</li>
-     *
-     *   <li>{@link org.geotoolkit.image.io.mosaic.Tile} instances, which will be added to the
-     *       {@code "GridCoverages"} table (not to the {@code "Tiles"} table).</li>
+     *       {@linkplain org.geotoolkit.image.io.metadata.SpatialMetadata spatial metadata} format. The
+     *       reader input shall be one of the above-cited instances. If this is not possible (for example
+     *       because a {@link javax.imageio.stream.ImageInputStream} is required), consider wrapping
+     *       the {@link javax.imageio.spi.ImageReaderSpi} and the input in a
+     *       {@link org.geotoolkit.image.io.mosaic.Tile} instance.</li>
      * </ul>
      * <p>
      * This method will typically read only the required metadata rather than the full image.
      *
      * @param  files The image inputs.
-     * @param  listener An optional listener to be notified when new references are added.
-     *         The listener can modify the values declared in {@link NewGridCoverageReference}
+     * @param  controller An optional controller to be notified when new references are added.
+     *         The controller can modify the values declared in {@link NewGridCoverageReference}
      *         before they are written in the database.
      * @throws DatabaseVetoException If a {@linkplain CoverageDatabaseListener listener}
-     *         vetos against the operation.
+     *         vetoed against the operation.
      * @throws CoverageStoreException If an error occured while accessing the database.
      *
      * @since 3.12
      */
-    void addCoverageReferences(Collection<?> files, CoverageDatabaseListener listener)
+    void addCoverageReferences(Collection<?> files, CoverageDatabaseController controller)
             throws DatabaseVetoException, CoverageStoreException;
 }

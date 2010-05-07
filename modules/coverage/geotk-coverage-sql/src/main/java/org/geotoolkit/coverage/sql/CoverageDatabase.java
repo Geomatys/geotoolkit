@@ -18,11 +18,11 @@
 package org.geotoolkit.coverage.sql;
 
 import java.io.IOException;
+import java.util.Locale;
 import java.util.Date;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.List;
-import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Properties;
 import java.util.logging.Level;
@@ -41,6 +41,7 @@ import org.opengis.referencing.operation.TransformException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import org.geotoolkit.lang.ThreadSafe;
+import org.geotoolkit.util.Localized;
 import org.geotoolkit.util.DateRange;
 import org.geotoolkit.util.MeasurementRange;
 import org.geotoolkit.util.NullArgumentException;
@@ -78,7 +79,7 @@ import org.geotoolkit.resources.Errors;
  * @module
  */
 @ThreadSafe(concurrent = true)
-public class CoverageDatabase {
+public class CoverageDatabase implements Localized {
     /**
      * Maximal amount of concurrent threads which can be running. It is better to not use
      * a too high value, since each threads will hold a connection to the database.
@@ -251,7 +252,7 @@ public class CoverageDatabase {
      */
     private void ensureNonNull(final String name, final Object value) {
         if (value == null) {
-            throw new NullArgumentException(Errors.getResources(database.getLocale())
+            throw new NullArgumentException(Errors.getResources(getLocale())
                     .getString(Errors.Keys.NULL_ARGUMENT_$1, name));
         }
     }
@@ -357,7 +358,7 @@ public class CoverageDatabase {
 
         /** Executes the task in a background thread. */
         @Override public Boolean call() throws CoverageStoreException {
-            fireChange(null, true, +1, name);
+            fireChange(true, +1, name);
             final TablePool<LayerTable> pool = database.layers;
             boolean added;
             try {
@@ -367,7 +368,7 @@ public class CoverageDatabase {
             } catch (SQLException e) {
                 throw new CoverageStoreException(e);
             }
-            fireChange(null, false, added ? 1 : 0, name);
+            fireChange(false, added ? 1 : 0, name);
             return added;
         }
     }
@@ -405,7 +406,7 @@ public class CoverageDatabase {
 
         /** Executes the task in a background thread. */
         @Override public Boolean call() throws CoverageStoreException {
-            fireChange(null, true, -1, name);
+            fireChange(true, -1, name);
             final TablePool<LayerTable> pool = database.layers;
             int removed;
             try {
@@ -415,7 +416,7 @@ public class CoverageDatabase {
             } catch (SQLException e) {
                 throw new CoverageStoreException(e);
             }
-            fireChange(null, false, -removed, name);
+            fireChange(false, -removed, name);
             return (removed != 0);
         }
     }
@@ -745,32 +746,25 @@ public class CoverageDatabase {
      * The method to be invoked is determined from the type of the {@code value} argument,
      * which can be {@link String} (for layers) or {@link NewGridCoverageReference}.
      *
-     * @param additionalListener An optional supplemental listener to inform, or {@code null}.
-     * @param isBefore           {@code true} if the event is invoked before the change,
-     *                           or {@code false} if the event occurs after the change.
-     * @param numEntryChange     Number of entries added, or a negative number if entries removed.
-     * @param value              The entry which is added or removed.
-     * @throws DatabaseVetoException if {@code isBefore} is {@code true} and a listener vetos
+     * @param  isBefore       {@code true} if the event is invoked before the change,
+     *                        or {@code false} if the event occurs after the change.
+     * @param  numEntryChange Number of entries added, or a negative number if entries removed.
+     * @param  value          The entry which is added or removed.
+     * @throws DatabaseVetoException if {@code isBefore} is {@code true} and a listener vetoed
      *         against the change.
      */
-    final void fireChange(final CoverageDatabaseListener additionalListener,
-            final boolean isBefore, final int numEntryChange, final Object value)
+    final void fireChange(final boolean isBefore, final int numEntryChange, final Object value)
             throws DatabaseVetoException
     {
-        CoverageDatabaseListener[] listeners = getInternalListeners();
-        if (additionalListener != null) {
-            final int length = listeners.length;
-            listeners = Arrays.copyOf(listeners, length + 1);
-            listeners[length] = additionalListener;
-        }
+        final CoverageDatabaseListener[] listeners = getInternalListeners();
         if (listeners.length != 0) {
             final CoverageDatabaseEvent event = new CoverageDatabaseEvent(this, isBefore, numEntryChange);
             for (final CoverageDatabaseListener listener : listeners) {
                 try {
                     if (value instanceof NewGridCoverageReference) {
-                        listener.coverageChange(event, (NewGridCoverageReference) value);
+                        listener.coverageAdding(event, (NewGridCoverageReference) value);
                     } else {
-                        listener.layerChange(event, (String) value);
+                        listener.layerListChange(event, (String) value);
                     }
                 } catch (DatabaseVetoException veto) {
                     if (isBefore) {
@@ -778,12 +772,12 @@ public class CoverageDatabase {
                     }
                     final String method;
                     if (value instanceof NewGridCoverageReference) {
-                        method = "coverageChange";
+                        method = "coverageAdding";
                     } else {
-                        method = "layerChange";
+                        method = "layerListChange";
                     }
                     final LogRecord record = new LogRecord(Level.WARNING,
-                            Errors.getResources(database.getLocale()).getString(Errors.Keys.VETO_TOO_LATE));
+                            Errors.getResources(getLocale()).getString(Errors.Keys.VETO_TOO_LATE));
                     record.setSourceClassName(CoverageDatabaseListener.class.getName());
                     record.setSourceMethodName(method);
                     record.setThrown(veto);
@@ -791,6 +785,16 @@ public class CoverageDatabase {
                 }
             }
         }
+    }
+
+    /**
+     * Returns the locale used for formatting logging and error messages.
+     *
+     * @return The locale, or {@code null} for the {@linkplain Locale#getDefault() default} locale.
+     */
+    @Override
+    public Locale getLocale() {
+        return database.getLocale();
     }
 
     /**

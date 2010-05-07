@@ -50,6 +50,18 @@ import org.geotoolkit.util.converter.Classes;
  */
 final class NewGridCoverageIterator implements Iterator<NewGridCoverageReference> {
     /**
+     * The object which contains the listeners. While we are keeping a reference to the
+     * full {@link CoverageDatabase} objects, only the listeners are of interest to this
+     * iterator.
+     */
+    private final CoverageDatabase listeners;
+
+    /**
+     * An optional controller to invoke before the listeners, or {@code null} if none.
+     */
+    private final CoverageDatabaseController controller;
+
+    /**
      * The database where new entries will be added.
      */
     private final SpatialDatabase database;
@@ -97,17 +109,27 @@ final class NewGridCoverageIterator implements Iterator<NewGridCoverageReference
     /**
      * Creates an iterator for the specified files.
      *
-     * @param  database   The database where new entries will be added.
+     * @param  listeners  The object which hold the {@link CoverageDatabaseListener}s. While this
+     *                    argument is of kind {@link CoverageDatabase}, only the listeners are of
+     *                    interest to this class.
+     * @param  controller An optional controller to invoke before the listeners, or {@code null}.
+     * @param  database   The database where new entries will be added. This is mandatory.
      * @param  series     The series in which the images will be added, or {@code null} if unknown.
      * @param  imageIndex Index of images to read. Ignored if the inputs are {@link Tile} instances.
      * @param  inputToAdd The files to read. Iteration shall be at the second element.
      * @param  input      The first element from the given iterator.
      * @throws IOException if an I/O operation was required and failed.
      */
-    NewGridCoverageIterator(final SpatialDatabase database, final SeriesEntry series,
-            final int imageIndex, final Iterator<?> inputToAdd, Object input)
-            throws IOException, FactoryException
+    NewGridCoverageIterator(final CoverageDatabase           listeners,
+                            final CoverageDatabaseController controller,
+                            final SpatialDatabase            database,
+                            final SeriesEntry                series,
+                            final int                        imageIndex,
+                            final Iterator<?>                inputToAdd,
+                            Object input) throws IOException, FactoryException
     {
+        this.listeners  = listeners;
+        this.controller = controller;
         this.database   = database;
         this.series     = series;
         this.imageIndex = imageIndex;
@@ -233,6 +255,27 @@ final class NewGridCoverageIterator implements Iterator<NewGridCoverageReference
             }
         }
         return null;
+    }
+
+    /**
+     * Invoked by {@link WritableGridCoverageTable} after a {@link NewGridCoverageReference}
+     * element has been fully constructed.
+     *
+     * @param  isBefore {@code true} if the event is invoked before the change,
+     *                  or {@code false} if the event occurs after the change.
+     * @param  value    The entry which is added.
+     * @throws DatabaseVetoException if {@code isBefore} is {@code true} and a listener vetoed
+     *         against the change.
+     */
+    final void fireCoverageAdding(final boolean isBefore, final NewGridCoverageReference value)
+            throws DatabaseVetoException
+    {
+        if (isBefore && controller != null) {
+            controller.coverageAdding(new CoverageDatabaseEvent(listeners, isBefore, 1), value);
+        }
+        if (listeners != null) {
+            listeners.fireChange(isBefore, 1, value);
+        }
     }
 
     /**

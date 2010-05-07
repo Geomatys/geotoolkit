@@ -41,7 +41,7 @@ public interface FutureQuery<V> extends Future<V> {
      *
      * @return The result of the given task.
      * @throws DatabaseVetoException If a {@linkplain CoverageDatabaseListener listener}
-     *         vetos against the operation.
+     *         vetoed against the operation.
      * @throws CoverageStoreException If an error occured while executing the task.
      * @throws CancellationException if the computation was cancelled.
      */

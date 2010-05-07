@@ -24,7 +24,11 @@ import java.util.EventListener;
  * A listener notified when a {@linkplain Layer Layer} or a {@linkplain GridCoverageReference
  * Grid Coverage Reference} is about to be added or removed. Whatever the listener is invoked
  * <em>before</em> or <em>after</em> the change, and whatever the change is a <em>add</em> or
- * <em>remove</em> operation) is described by the {@link CoverageDatabaseEvent} argument.
+ * <em>remove</em> operation, is described by the {@link CoverageDatabaseEvent} argument.
+ * <p>
+ * This listener is also a {@linkplain CoverageDatabaseController controller}: in some cases
+ * like when a coverage is about to be added in the database, implementations can modify the
+ * values to be added.
  * <p>
  * Listeners can veto the change when they are invoked {@linkplain CoverageDatabaseEvent#isBefore()
  * before} the change.
@@ -35,10 +39,10 @@ import java.util.EventListener;
  * @see CoverageDatabase#addListener(CoverageDatabaseListener)
  * @see CoverageDatabase#removeListener(CoverageDatabaseListener)
  *
- * @since 3.12 (derived from Seagis)
+ * @since 3.12
  * @module
  */
-public interface CoverageDatabaseListener extends EventListener {
+public interface CoverageDatabaseListener extends EventListener, CoverageDatabaseController {
     /**
      * Invoked before or after a {@linkplain Layer Layer} is added or removed.
      * Implementations can veto the change if this method is invoked
@@ -50,7 +54,7 @@ public interface CoverageDatabaseListener extends EventListener {
      *         will be logged at the {@link java.util.logging.Level#WARNING WARNING} level and
      *         otherwise ignored if it is thrown after the change.
      */
-    void layerChange(CoverageDatabaseEvent event, String name) throws DatabaseVetoException;
+    void layerListChange(CoverageDatabaseEvent event, String name) throws DatabaseVetoException;
     // The method name is consistent with java.beans.PropertyChangeListener.propertyChange(...)
 
     /**
@@ -63,11 +67,11 @@ public interface CoverageDatabaseListener extends EventListener {
      * before} the new entry is added to the database, and ignored if the changes are applied after.
      *
      * @param  event The kind of event.
-     * @param  reference Information about the coverage reference.
+     * @param  reference Information about the coverage reference to be added.
      * @throws DatabaseVetoException if the recipient vetos against the change. This exception
      *         will be logged at the {@link java.util.logging.Level#WARNING WARNING} level and
      *         otherwise ignored if it is thrown after the change.
      */
-    void coverageChange(CoverageDatabaseEvent event, NewGridCoverageReference reference) throws DatabaseVetoException;
-    // The method name is consistent with java.beans.PropertyChangeListener.propertyChange(...)
+    @Override
+    void coverageAdding(CoverageDatabaseEvent event, NewGridCoverageReference reference) throws DatabaseVetoException;
 }

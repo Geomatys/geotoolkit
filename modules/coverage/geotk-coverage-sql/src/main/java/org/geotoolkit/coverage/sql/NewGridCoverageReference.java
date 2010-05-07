@@ -42,7 +42,6 @@ import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.image.io.SpatialImageReader;
 import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.internal.sql.table.SpatialDatabase;
-import org.geotoolkit.internal.sql.table.CatalogException;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.factory.AbstractAuthorityFactory;
 import org.geotoolkit.resources.Errors;
@@ -54,7 +53,7 @@ import org.geotoolkit.resources.Errors;
  * match closely the layout of the coverage database.
  * <p>
  * Instances of this class are created by {@link Layer#addCoverageReferences(Collection,
- * CoverageDatabaseListener)} and dispatched to {@link CoverageDatabaseListener}s. The
+ * CoverageDatabaseController)} and dispatched to {@link CoverageDatabaseListener}s. The
  * listeners can modify the field values {@linkplain CoverageDatabaseEvent#isBefore() before}
  * the insertion in the database occurs.
  *
@@ -337,18 +336,19 @@ public final class NewGridCoverageReference {
     }
 
     /**
-     * Returns the most appropriate series in which to insert the coverage.
+     * Selects the most appropriate series in which to insert the coverage.
      * This is heuristic rules used when no series was explicitly defined.
      * <p>
      * Note: if {@link #extension} is {@code null} (not the same as an empty string),
      * it is interpreted as "any extension".
+     * <p>
+     * Note: {@link WritableGridCoverageTable} assumes that this method uses only
+     * informations that {@link CoverageDatabaseController} can not change.
      *
      * @param  candidates The series to consider.
-     * @return The series that seems the best match.
-     * @throws CatalogException if there is ambiguity between series.
+     * @return The series that seems the best match, or {@code null} if none were found.
      */
-    final SeriesEntry choose(final Collection<SeriesEntry> candidates) throws CatalogException {
-        series = null;
+    final void selectSeries(final Collection<SeriesEntry> candidates) {
         int mimeMatching = 0; // Greater the number, better is the matching of MIME type.
         int pathMatching = 0; // Greater the number, better is the matching of the file path.
         final String extension = (this.extension != null) ? this.extension : "";
@@ -408,10 +408,6 @@ public final class NewGridCoverageReference {
                 series = candidate;
             }
         }
-        if (series == null) {
-            throw new CatalogException(Errors.format(Errors.Keys.NO_SERIES_SPECIFIED));
-        }
-        return series;
     }
 
     /**

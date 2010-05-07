@@ -36,6 +36,7 @@ import java.io.InvalidObjectException;
 import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.metadata.extent.GeographicBoundingBox;
 import org.opengis.geometry.MismatchedReferenceSystemException;
+import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.Matrix;
@@ -238,24 +239,15 @@ final class LayerEntry extends DefaultEntry implements Layer {
     }
 
     /**
-     * Returns the name of this layer.
+     * Returns the {@link CoverageDatabase} associated with this entry,
+     * or {@code null} if none.
      */
-    @Override
-    public String getName() {
-        return identifier.toString();
-    }
-
-    /**
-     * Returns the ressources bundle for error messages.
-     */
-    private Errors errors() {
-        final TableFactory tb;
+    private CoverageDatabase getCoverageDatabase() {
+        final Object tables = this.tables;
         if (tables instanceof CoverageDatabase) {
-            tb = ((CoverageDatabase) tables).database;
-        } else {
-            tb = (TableFactory) tables;
+            return (CoverageDatabase) tables;
         }
-        return Errors.getResources(tb != null ? tb.getLocale() : null);
+        return null;
     }
 
     /**
@@ -267,6 +259,7 @@ final class LayerEntry extends DefaultEntry implements Layer {
      */
     private TableFactory getTableFactory() throws IllegalStateException {
         final TableFactory tb;
+        final Object tables = this.tables;
         if (tables instanceof CoverageDatabase) {
             tb = ((CoverageDatabase) tables).database;
         } else {
@@ -276,6 +269,28 @@ final class LayerEntry extends DefaultEntry implements Layer {
             throw new IllegalStateException(errors().getString(Errors.Keys.NO_DATA_SOURCE));
         }
         return tb;
+    }
+
+    /**
+     * Returns the ressources bundle for error messages.
+     */
+    private Errors errors() {
+        final TableFactory tb;
+        final Object tables = this.tables;
+        if (tables instanceof CoverageDatabase) {
+            tb = ((CoverageDatabase) tables).database;
+        } else {
+            tb = (TableFactory) tables;
+        }
+        return Errors.getResources(tb != null ? tb.getLocale() : null);
+    }
+
+    /**
+     * Returns the name of this layer.
+     */
+    @Override
+    public String getName() {
+        return identifier.toString();
     }
 
     /**
@@ -857,15 +872,19 @@ final class LayerEntry extends DefaultEntry implements Layer {
      * Adds new coverage references in the database.
      */
     @Override
-    public void addCoverageReferences(final Collection<?> files, final CoverageDatabaseListener listener)
+    public void addCoverageReferences(final Collection<?> files, final CoverageDatabaseController controller)
             throws CoverageStoreException
     {
         try {
             final WritableGridCoverageTable table = getTableFactory().getTable(WritableGridCoverageTable.class);
             table.setLayerEntry(this);
-            table.addEntries(files, 0);
+            table.addEntries(files, 0, getCoverageDatabase(), controller);
             table.release();
-        } catch (Exception exception) { // Too many exceptions for enumerating all of them.
+        } catch (SQLException exception) { // TODO: multi-catch
+            throw new CoverageStoreException(exception);
+        } catch (IOException exception) {
+            throw new CoverageStoreException(exception);
+        } catch (FactoryException exception) {
             throw new CoverageStoreException(exception);
         }
     }

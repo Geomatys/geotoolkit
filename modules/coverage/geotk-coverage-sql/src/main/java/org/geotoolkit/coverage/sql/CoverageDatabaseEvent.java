@@ -34,7 +34,7 @@ import java.util.EventObject;
  *
  * @see CoverageDatabaseListener
  *
- * @since 3.12 (derived from Seagis)
+ * @since 3.12
  * @module
  */
 public class CoverageDatabaseEvent extends EventObject {
