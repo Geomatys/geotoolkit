@@ -25,19 +25,15 @@ import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.xml.stream.XMLStreamException;
+
 import org.geotoolkit.data.DataStoreRuntimeException;
-import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.gpx.model.CopyRight;
 import org.geotoolkit.data.gpx.model.MetaData;
 import org.geotoolkit.data.gpx.model.Person;
-import org.geotoolkit.util.Converters;
 import org.geotoolkit.xml.StaxStreamWriter;
-import org.opengis.feature.ComplexAttribute;
 
+import org.opengis.feature.ComplexAttribute;
 import org.opengis.feature.Feature;
 import org.opengis.feature.Property;
 import org.opengis.geometry.Envelope;
@@ -64,12 +60,16 @@ public class GPXWriter extends StaxStreamWriter{
         writer.writeEndDocument();
     }
 
-    public void write(MetaData metadata, Collection<? extends Feature> wayPoints,
-            Collection<? extends Feature> routes, Collection<? extends Feature> tracks) throws XMLStreamException{
-
+    public void writeGPXTag() throws XMLStreamException{
         writer.setDefaultNamespace(GPX_NAMESPACE);
         writer.writeStartElement(GPX_NAMESPACE, TAG_GPX);
         writer.writeDefaultNamespace(GPX_NAMESPACE);
+    }
+
+    public void write(MetaData metadata, Collection<? extends Feature> wayPoints,
+            Collection<? extends Feature> routes, Collection<? extends Feature> tracks) throws XMLStreamException{
+
+        writeGPXTag();
 
         if(metadata != null){
             write(metadata);
