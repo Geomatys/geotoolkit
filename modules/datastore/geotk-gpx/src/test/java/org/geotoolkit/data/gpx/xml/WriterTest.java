@@ -21,9 +21,11 @@ import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import java.io.File;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 import org.geotoolkit.data.DataUtilities;
 import org.geotoolkit.data.FeatureCollection;
 
@@ -37,6 +39,7 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.opengis.feature.ComplexAttribute;
 import org.opengis.feature.Feature;
 import static org.junit.Assert.*;
 
@@ -96,50 +99,80 @@ public class WriterTest {
     }
 
     @Test
-    public void testWritingPoints() throws Exception{
+    public void testWritingFeatures() throws Exception{
 
         final File f = new File("output.xml");
         if(f.exists())f.delete();
         final GPXWriter writer = new GPXWriter();
         writer.setOutput(f);
 
+        //way points -----------------------------------------------------------
         Feature point1 = GPXModelConstants.createWayPoint(0, GF.createPoint(new Coordinate(-10, 10)),
                 15.6, new Date(), 31.7, 45.1, "fds", "fdrt", "ffe", "aaz",
                 Collections.singletonList(new URI("http://test.com")),
                 "fdsg", "klj", "yy", 12, 45.2, 16.7, 14.3, 78.9, 6);
-        Feature point2 = GPXModelConstants.createWayPoint(0, GF.createPoint(new Coordinate(-15, 15)),
+        Feature point2 = GPXModelConstants.createWayPoint(1, GF.createPoint(new Coordinate(-15, 15)),
                 15.6, new Date(), 31.7, 45.1, "fds", "fdrt", "ffe", "aaz",
                 Collections.singletonList(new URI("http://test.com")),
                 "fdsg", "klj", "yy", 12, 45.2, 16.7, 14.3, 78.9, 6);
-        Feature point3 = GPXModelConstants.createWayPoint(0, GF.createPoint(new Coordinate(-20, 20)),
+        Feature point3 = GPXModelConstants.createWayPoint(2, GF.createPoint(new Coordinate(-20, 20)),
                 15.6, new Date(), 31.7, 45.1, "fds", "fdrt", "ffe", "aaz",
                 Collections.singletonList(new URI("http://test.com")),
                 "fdsg", "klj", "yy", 12, 45.2, 16.7, 14.3, 78.9, 6);
 
-        FeatureCollection wayPoints = DataUtilities.collection("id", point1.getType());
+        final List<Feature> wayPoints = new ArrayList<Feature>();
         wayPoints.add(point1);
         wayPoints.add(point2);
         wayPoints.add(point3);
 
+        //routes ---------------------------------------------------------------
+        final Feature route1 = GPXModelConstants.createRoute(0, "tt", "cc", "des", "src",
+                Collections.singletonList(new URI("http://test.com")), 15, "test", wayPoints);
+        final Feature route2 = GPXModelConstants.createRoute(1, "tt2", "cc2", "des2", "src2",
+                Collections.singletonList(new URI("http://test2.com")), 15, "test2", wayPoints);
+
+        final List<Feature> routes = new ArrayList<Feature>();
+        routes.add(route1);
+        routes.add(route2);
+
+        //tracks ---------------------------------------------------------------
+        final List<ComplexAttribute> segments = new ArrayList<ComplexAttribute>();
+        segments.add(GPXModelConstants.createTrackSegment(0, wayPoints));
+        segments.add(GPXModelConstants.createTrackSegment(1, wayPoints));
+        segments.add(GPXModelConstants.createTrackSegment(2, wayPoints));
+
+        final Feature track1 = GPXModelConstants.createTrack(0, "tc", "cc", "des", "src",
+                Collections.singletonList(new URI("http://test4.com")), 15, "test", segments);
+        final Feature track2 = GPXModelConstants.createTrack(1, "tc2", "cc2", "des2", "src2",
+                Collections.singletonList(new URI("http://test5.com")), 15, "test2", segments);
+
+        final List<Feature> tracks = new ArrayList<Feature>();
+        tracks.add(track1);
+        tracks.add(track2);
+
 
         writer.writeStartDocument();
-        writer.write(null, wayPoints, null, null);
+        writer.write(null, wayPoints, routes, tracks);
         writer.writeEndDocument();
         writer.dispose();
 
         final GPXReader reader = new GPXReader();
         reader.setInput(f);
 
-        System.out.println(reader.next());
-
-        assertEquals(point1, reader.next());
-        assertEquals(point2, reader.next());
-        assertEquals(point3, reader.next());
+        //testing on toString since JTS geometry always fail on equals method.
+        assertEquals(point1.toString(), reader.next().toString());
+        assertEquals(point2.toString(), reader.next().toString());
+        assertEquals(point3.toString(), reader.next().toString());
+        assertEquals(route1.toString(), reader.next().toString());
+        assertEquals(route2.toString(), reader.next().toString());
+        assertEquals(track1.toString(), reader.next().toString());
+        assertEquals(track2.toString(), reader.next().toString());
         assertFalse(reader.hasNext());
         
         reader.dispose();
 
         if(f.exists())f.delete();
     }
+
 
 }

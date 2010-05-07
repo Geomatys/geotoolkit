@@ -18,10 +18,15 @@
 package org.geotoolkit.data.gpx.xml;
 
 import com.vividsolutions.jts.geom.Point;
+import java.io.Closeable;
+import java.io.IOException;
 import java.net.URI;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
+import java.util.Iterator;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.xml.stream.XMLStreamException;
 import org.geotoolkit.data.DataStoreRuntimeException;
 import org.geotoolkit.data.FeatureCollection;
@@ -29,6 +34,7 @@ import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.gpx.model.CopyRight;
 import org.geotoolkit.data.gpx.model.MetaData;
 import org.geotoolkit.data.gpx.model.Person;
+import org.geotoolkit.util.Converters;
 import org.geotoolkit.xml.StaxStreamWriter;
 import org.opengis.feature.ComplexAttribute;
 
@@ -58,8 +64,8 @@ public class GPXWriter extends StaxStreamWriter{
         writer.writeEndDocument();
     }
 
-    public void write(MetaData metadata, FeatureCollection<Feature> wayPoints,
-            FeatureCollection<Feature> routes, FeatureCollection<Feature> tracks) throws XMLStreamException{
+    public void write(MetaData metadata, Collection<? extends Feature> wayPoints,
+            Collection<? extends Feature> routes, Collection<? extends Feature> tracks) throws XMLStreamException{
 
         writer.setDefaultNamespace(GPX_NAMESPACE);
         writer.writeStartElement(GPX_NAMESPACE, TAG_GPX);
@@ -70,7 +76,7 @@ public class GPXWriter extends StaxStreamWriter{
         }
 
         if(wayPoints != null){
-            final FeatureIterator ite = wayPoints.iterator();
+            final Iterator<? extends Feature> ite = wayPoints.iterator();
             try{
                 while(ite.hasNext()){
                     writeWayPoint(ite.next(), TAG_WPT);
@@ -78,12 +84,17 @@ public class GPXWriter extends StaxStreamWriter{
             }catch(DataStoreRuntimeException ex){
                 throw new XMLStreamException(ex);
             }finally{
-                ite.close();
+                if(ite instanceof Closeable){
+                    try { ((Closeable) ite).close();
+                    } catch (IOException ex) {
+                        throw new XMLStreamException(ex);
+                    }
+                }
             }
         }
 
         if(routes != null){
-            final FeatureIterator ite = routes.iterator();
+            final Iterator<? extends Feature> ite = routes.iterator();
             try{
                 while(ite.hasNext()){
                     writeRoute(ite.next());
@@ -91,12 +102,17 @@ public class GPXWriter extends StaxStreamWriter{
             }catch(DataStoreRuntimeException ex){
                 throw new XMLStreamException(ex);
             }finally{
-                ite.close();
+                if(ite instanceof Closeable){
+                    try { ((Closeable) ite).close();
+                    } catch (IOException ex) {
+                        throw new XMLStreamException(ex);
+                    }
+                }
             }
         }
 
         if(tracks != null){
-            final FeatureIterator ite = tracks.iterator();
+            final Iterator<? extends Feature> ite = tracks.iterator();
             try{
                 while(ite.hasNext()){
                     writeTrack(ite.next());
@@ -104,7 +120,12 @@ public class GPXWriter extends StaxStreamWriter{
             }catch(DataStoreRuntimeException ex){
                 throw new XMLStreamException(ex);
             }finally{
-                ite.close();
+                if(ite instanceof Closeable){
+                    try { ((Closeable) ite).close();
+                    } catch (IOException ex) {
+                        throw new XMLStreamException(ex);
+                    }
+                }
             }
         }
 
@@ -186,7 +207,7 @@ public class GPXWriter extends StaxStreamWriter{
     public void writeTrack(Feature feature) throws XMLStreamException{
         if(feature == null) return;
 
-        writer.writeStartElement(GPX_NAMESPACE, TAG_RTE);
+        writer.writeStartElement(GPX_NAMESPACE, TAG_TRK);
 
         writeProperty(TAG_NAME,             feature.getProperty(TAG_NAME));
         writeProperty(TAG_CMT,              feature.getProperty(TAG_CMT));
@@ -270,7 +291,13 @@ public class GPXWriter extends StaxStreamWriter{
 
     public void writeProperty(String tagName,Property prop) throws XMLStreamException{
         if(prop == null) return;
-        writeSimpleTag(GPX_NAMESPACE, tagName, prop.getValue());
+
+        Object val = prop.getValue();
+        if(val instanceof Date){
+            val = sdf.format(val);
+        }
+
+        writeSimpleTag(GPX_NAMESPACE, tagName, val);
     }
 
 }
