@@ -17,10 +17,15 @@
 
 package org.geotoolkit.data.gpx.xml;
 
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.GeometryFactory;
 import java.io.File;
 import java.net.URI;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
+import org.geotoolkit.data.DataUtilities;
+import org.geotoolkit.data.FeatureCollection;
 
 import org.geotoolkit.data.gpx.model.CopyRight;
 import org.geotoolkit.data.gpx.model.GPXModelConstants;
@@ -32,6 +37,7 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.opengis.feature.Feature;
 import static org.junit.Assert.*;
 
 /**
@@ -40,6 +46,8 @@ import static org.junit.Assert.*;
  * @moduel pending
  */
 public class WriterTest {
+
+    private static final GeometryFactory GF = new GeometryFactory();
 
     public WriterTest() {
     }
@@ -77,6 +85,59 @@ public class WriterTest {
         writer.write(metaData, null, null, null);
         writer.writeEndDocument();
         writer.dispose();
+
+        final GPXReader reader = new GPXReader();
+        reader.setInput(f);
+
+        assertEquals(metaData, reader.getMetadata());
+        reader.dispose();
+
+        if(f.exists())f.delete();
+    }
+
+    @Test
+    public void testWritingPoints() throws Exception{
+
+        final File f = new File("output.xml");
+        if(f.exists())f.delete();
+        final GPXWriter writer = new GPXWriter();
+        writer.setOutput(f);
+
+        Feature point1 = GPXModelConstants.createWayPoint(0, GF.createPoint(new Coordinate(-10, 10)),
+                15.6, new Date(), 31.7, 45.1, "fds", "fdrt", "ffe", "aaz",
+                Collections.singletonList(new URI("http://test.com")),
+                "fdsg", "klj", "yy", 12, 45.2, 16.7, 14.3, 78.9, 6);
+        Feature point2 = GPXModelConstants.createWayPoint(0, GF.createPoint(new Coordinate(-15, 15)),
+                15.6, new Date(), 31.7, 45.1, "fds", "fdrt", "ffe", "aaz",
+                Collections.singletonList(new URI("http://test.com")),
+                "fdsg", "klj", "yy", 12, 45.2, 16.7, 14.3, 78.9, 6);
+        Feature point3 = GPXModelConstants.createWayPoint(0, GF.createPoint(new Coordinate(-20, 20)),
+                15.6, new Date(), 31.7, 45.1, "fds", "fdrt", "ffe", "aaz",
+                Collections.singletonList(new URI("http://test.com")),
+                "fdsg", "klj", "yy", 12, 45.2, 16.7, 14.3, 78.9, 6);
+
+        FeatureCollection wayPoints = DataUtilities.collection("id", point1.getType());
+        wayPoints.add(point1);
+        wayPoints.add(point2);
+        wayPoints.add(point3);
+
+
+        writer.writeStartDocument();
+        writer.write(null, wayPoints, null, null);
+        writer.writeEndDocument();
+        writer.dispose();
+
+        final GPXReader reader = new GPXReader();
+        reader.setInput(f);
+
+        System.out.println(reader.next());
+
+        assertEquals(point1, reader.next());
+        assertEquals(point2, reader.next());
+        assertEquals(point3, reader.next());
+        assertFalse(reader.hasNext());
+        
+        reader.dispose();
 
         if(f.exists())f.delete();
     }

@@ -20,10 +20,12 @@ package org.geotoolkit.data.gpx.model;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.net.URI;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import org.geotoolkit.io.TableWriter;
+import org.geotoolkit.util.Utilities;
 import org.opengis.geometry.Envelope;
 
 /**
@@ -147,6 +149,57 @@ public class MetaData {
         }
 
         return writer.getBuffer().toString();
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 59 * hash + (this.name != null ? this.name.hashCode() : 0);
+        hash = 59 * hash + (this.description != null ? this.description.hashCode() : 0);
+        hash = 59 * hash + (this.person != null ? this.person.hashCode() : 0);
+        hash = 59 * hash + (this.copyRight != null ? this.copyRight.hashCode() : 0);
+        hash = 59 * hash + (this.time != null ? this.time.hashCode() : 0);
+        hash = 59 * hash + (this.keywords != null ? this.keywords.hashCode() : 0);
+        hash = 59 * hash + (this.bounds != null ? this.bounds.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final MetaData other = (MetaData) obj;
+        if ((this.name == null) ? (other.name != null) : !this.name.equals(other.name)) {
+            return false;
+        }
+        if ((this.description == null) ? (other.description != null) : !this.description.equals(other.description)) {
+            return false;
+        }
+        if (this.person != other.person && (this.person == null || !this.person.equals(other.person))) {
+            return false;
+        }
+        if (this.copyRight != other.copyRight && (this.copyRight == null || !this.copyRight.equals(other.copyRight))) {
+            return false;
+        }
+
+        if(!Utilities.equals(this.links, other.links)){
+            return false;
+        }
+        
+        if (this.time != other.time && (this.time == null || !this.time.equals(other.time))) {
+            return false;
+        }
+        if ((this.keywords == null) ? (other.keywords != null) : !this.keywords.equals(other.keywords)) {
+            return false;
+        }
+        if (this.bounds != other.bounds && (this.bounds == null || !this.bounds.equals(other.bounds))) {
+            return false;
+        }
+        return true;
     }
 
 }

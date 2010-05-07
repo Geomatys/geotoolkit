@@ -18,6 +18,7 @@
 package org.geotoolkit.data.gpx.model;
 
 import java.net.URI;
+import org.geotoolkit.util.Utilities;
 
 /**
  * GPX person model
@@ -57,5 +58,34 @@ public class Person {
         return sb.toString();
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Person other = (Person) obj;
+        if ((this.name == null) ? (other.name != null) : !this.name.equals(other.name)) {
+            return false;
+        }
+        if ((this.email == null) ? (other.email != null) : !this.email.equals(other.email)) {
+            return false;
+        }
+        if (this.link != other.link && (this.link == null || !this.link.equals(other.link))) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 97 * hash + (this.name != null ? this.name.hashCode() : 0);
+        hash = 97 * hash + (this.email != null ? this.email.hashCode() : 0);
+        hash = 97 * hash + (this.link != null ? this.link.hashCode() : 0);
+        return hash;
+    }
 
 }

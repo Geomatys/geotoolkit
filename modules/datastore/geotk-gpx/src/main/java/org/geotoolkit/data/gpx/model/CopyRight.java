@@ -57,4 +57,36 @@ public class CopyRight {
         return sb.toString();
     }
 
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 59 * hash + (this.author != null ? this.author.hashCode() : 0);
+        hash = 59 * hash + (this.year != null ? this.year.hashCode() : 0);
+        hash = 59 * hash + (this.license != null ? this.license.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final CopyRight other = (CopyRight) obj;
+        if ((this.author == null) ? (other.author != null) : !this.author.equals(other.author)) {
+            return false;
+        }
+        if (this.year != other.year && (this.year == null || !this.year.equals(other.year))) {
+            return false;
+        }
+        if (this.license != other.license && (this.license == null || !this.license.equals(other.license))) {
+            return false;
+        }
+        return true;
+    }
+
+
+
 }
