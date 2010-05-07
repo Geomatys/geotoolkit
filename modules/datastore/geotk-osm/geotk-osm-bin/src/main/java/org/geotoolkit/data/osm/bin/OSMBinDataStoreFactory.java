@@ -17,8 +17,6 @@
 
 package org.geotoolkit.data.osm.bin;
 
-import java.net.URL;
-
 import org.geotoolkit.data.AbstractFileDataStoreFactory;
 import org.geotoolkit.data.DataStore;
 import org.geotoolkit.storage.DataStoreException;
@@ -41,14 +39,6 @@ public class OSMBinDataStoreFactory extends AbstractFileDataStoreFactory{
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
             new DefaultParameterDescriptorGroup("OSMBinParameters",
                 new GeneralParameterDescriptor[]{URLP,NAMESPACE});
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public String getTypeName(URL url) throws DataStoreException {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
 
     /**
      * {@inheritDoc }

@@ -19,14 +19,14 @@ package org.geotoolkit.data.csv;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.Set;
+
 import org.geotoolkit.data.AbstractFileDataStoreFactory;
 import org.geotoolkit.data.DataStore;
 import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.storage.DataStoreException;
-import org.opengis.feature.type.Name;
+
 import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
@@ -91,13 +91,6 @@ public class CSVDataStoreFactory extends AbstractFileDataStoreFactory {
     @Override
     public String[] getFileExtensions() {
         return new String[] {".csv"};
-    }
-
-    @Override
-    public String getTypeName(URL url) throws DataStoreException {
-        final DataStore ds = createDataStore(url);
-        final Set<Name> names = ds.getNames(); // should be exactly one
-        return (names.isEmpty()) ? null : names.iterator().next().getLocalPart();
     }
 
 }

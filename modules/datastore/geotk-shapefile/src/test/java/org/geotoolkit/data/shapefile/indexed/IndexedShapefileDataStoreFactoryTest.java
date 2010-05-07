@@ -181,11 +181,4 @@ public class IndexedShapefileDataStoreFactoryTest extends AbstractTestCaseSuppor
         testDataStore(IndexType.QIX, true, (IndexedShapefileDataStore) ds);
     }
 
-    /*
-     * Test method for
-     * 'org.geotoolkit.data.shapefile.indexed.IndexedShapefileDataStoreFactory.getTypeName(URL)'
-     */
-    public void testGetTypeName() throws IOException,DataStoreException {
-        factory.getTypeName(ShapeTestData.url(IndexedShapefileDataStoreTest.STATE_POP));
-    }
 }

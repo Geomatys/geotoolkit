@@ -170,7 +170,7 @@ public class CSVDataStore extends AbstractDataStore{
               return ftb.buildSimpleFeatureType();
 
           }else{
-              throw new DataStoreException("File doesnt contain a first line describing the schema.");
+              return null;
           }
         }finally {
           scanner.close();

@@ -3,7 +3,7 @@
  *    http://www.geotoolkit.org
  *
  *    (C) 2002-2008, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2009, Geomatys
+ *    (C) 2009-2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -20,12 +20,12 @@ package org.geotoolkit.data.shapefile;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.Charset;
-import java.util.Set;
 import java.util.logging.Logger;
 
 import org.geotoolkit.data.DataStore;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.data.FileDataStoreFactory;
+import org.geotoolkit.data.shapefile.indexed.IndexedShapefileDataStore;
 import org.geotoolkit.metadata.iso.quality.DefaultConformanceResult;
 import org.geotoolkit.data.AbstractFileDataStoreFactory;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
@@ -34,9 +34,7 @@ import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.data.shapefile.indexed.IndexType;
 
 import com.vividsolutions.jts.geom.Geometry;
-import org.geotoolkit.data.shapefile.indexed.IndexedShapefileDataStore;
 
-import org.opengis.feature.type.Name;
 import org.opengis.metadata.quality.ConformanceResult;
 import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
@@ -147,16 +145,6 @@ public class ShapefileDataStoreFactory extends AbstractFileDataStoreFactory impl
     @Override
     public String[] getFileExtensions() {
         return new String[] {".shp"};
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public String getTypeName(URL url) throws DataStoreException {
-        final DataStore ds = createDataStore(url);
-        final Set<Name> names = ds.getNames(); // should be exactly one
-        return (names.isEmpty()) ? null : names.iterator().next().getLocalPart();
     }
 
     /**

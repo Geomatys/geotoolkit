@@ -16,18 +16,18 @@
  */
 package org.geotoolkit.data;
 
-import java.io.IOException;
 import java.net.URL;
 import org.geotoolkit.storage.DataStoreException;
 
 /**
- * DataAccessFactory for working with formats based on a single URL.
+ * FileDataStoreFactory for working with formats based on a single URL.
  * <p>
- * This interface provides a mechanism of discovery for DataAccessFactories
+ * This interface provides a mechanism of discovery for DataStoreFactories
  * which support singular files.
  * </p>
  *
  * @author dzwiers
+ * @author Johann Sorel (Geomatys)
  * @module pending
  */
 public interface FileDataStoreFactory extends DataStoreFactory {
@@ -58,22 +58,10 @@ public interface FileDataStoreFactory extends DataStoreFactory {
      * <p>
      * @param url The data location for the
      *
-     * @return Returns an FileDataStore created from the data source provided.
+     * @return Returns a DataStore created from the data source provided.
      *
-     * @throws IOException
+     * @throws DataStoreException
      */
     public DataStore createDataStore(URL url) throws DataStoreException;
 
-    /**
-     * The typeName represented by the provided url.
-     *
-     * @param url The location of the datum to parse into features
-     *
-     * @return Returns the typename of the datum specified (on occasion this
-     *         may involve starting the parse as well to get the FeatureType
-     *         -- may not be instantanious).
-     *
-     * @throws IOException
-     */
-    public String getTypeName(URL url) throws DataStoreException;
 }
