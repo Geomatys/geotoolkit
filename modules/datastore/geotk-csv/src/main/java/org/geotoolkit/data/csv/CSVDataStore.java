@@ -249,6 +249,7 @@ public class CSVDataStore extends AbstractDataStore{
 
     @Override
     public void createSchema(Name typeName, FeatureType featureType) throws DataStoreException {
+        checkExist();
         if(this.featureType != null){
             throw new DataStoreException("Can only have one feature type in CSV dataStore.");
         }
