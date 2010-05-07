@@ -19,16 +19,20 @@ package org.geotoolkit.data.gpx.xml;
 
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
+
 import java.util.ArrayList;
 import java.util.List;
+
 import org.geotoolkit.data.gpx.model.GPXModelConstants;
 import org.geotoolkit.data.gpx.model.MetaData;
 import org.geotoolkit.temporal.object.TemporalUtilities;
+
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
 import org.opengis.feature.ComplexAttribute;
 import org.opengis.feature.Feature;
 import org.opengis.feature.Property;
@@ -78,7 +82,7 @@ public class ReaderTest {
         assertEquals("sample gpx test file", data.getDescription());
         assertEquals(TemporalUtilities.parseDate("2010-03-01"), data.getTime());
         assertEquals("sample,metadata", data.getKeywords());
-        assertEquals(GPXModelConstants.create(-20, 30, 10, 40), data.getBounds());
+        assertEquals(GPXModelConstants.createEnvelope(-20, 30, 10, 40), data.getBounds());
 
         assertEquals("Jean-Pierre", data.getPerson().getName());
         assertEquals("jean.pierre@test.com", data.getPerson().getEmail());
@@ -110,7 +114,7 @@ public class ReaderTest {
         assertNull(data.getDescription());
         assertNull(data.getTime());
         assertNull(data.getKeywords());
-        assertEquals(GPXModelConstants.create(-20, 30, 10, 40), data.getBounds());
+        assertEquals(GPXModelConstants.createEnvelope(-20, 30, 10, 40), data.getBounds());
         assertNull(data.getPerson());
         assertNull(data.getCopyRight());
         assertEquals(0, data.getLinks().size());
@@ -141,7 +145,7 @@ public class ReaderTest {
         assertNull(data.getDescription());
         assertNull(data.getTime());
         assertNull(data.getKeywords());
-        assertEquals(GPXModelConstants.create(-20, 30, 10, 40), data.getBounds());
+        assertEquals(GPXModelConstants.createEnvelope(-20, 30, 10, 40), data.getBounds());
         assertNull(data.getPerson());
         assertNull(data.getCopyRight());
         assertEquals(0, data.getLinks().size());
@@ -199,7 +203,7 @@ public class ReaderTest {
         assertNull(data.getDescription());
         assertNull(data.getTime());
         assertNull(data.getKeywords());
-        assertEquals(GPXModelConstants.create(-20, 30, 10, 40), data.getBounds());
+        assertEquals(GPXModelConstants.createEnvelope(-20, 30, 10, 40), data.getBounds());
         assertNull(data.getPerson());
         assertNull(data.getCopyRight());
         assertEquals(0, data.getLinks().size());

@@ -20,10 +20,10 @@ package org.geotoolkit.data.gpx.model;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.net.URI;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+
 import org.geotoolkit.io.TableWriter;
 import org.geotoolkit.util.Utilities;
 import org.opengis.geometry.Envelope;

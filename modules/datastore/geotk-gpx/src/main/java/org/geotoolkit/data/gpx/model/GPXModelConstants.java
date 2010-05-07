@@ -28,8 +28,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
-import org.geotoolkit.feature.DefaultComplexAttribute;
 
+import org.geotoolkit.feature.DefaultComplexAttribute;
 import org.geotoolkit.feature.DefaultFeature;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.DefaultProperty;
@@ -37,8 +37,8 @@ import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.filter.identity.DefaultFeatureId;
 import org.geotoolkit.geometry.ImmutableEnvelope;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
-import org.opengis.feature.ComplexAttribute;
 
+import org.opengis.feature.ComplexAttribute;
 import org.opengis.feature.Feature;
 import org.opengis.feature.Property;
 import org.opengis.feature.type.AttributeDescriptor;
@@ -65,6 +65,7 @@ public final class GPXModelConstants {
     public static final String GPX_NAMESPACE = "http://www.topografix.com/GPX/1/1";
     public static final String GPX_GEOMETRY = "geometry";
 
+    public static final FeatureType TYPE_GPX_ENTITY;
     public static final FeatureType TYPE_WAYPOINT;
     public static final FeatureType TYPE_TRACK;
     public static final FeatureType TYPE_ROUTE;
@@ -78,6 +79,14 @@ public final class GPXModelConstants {
     static {
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         final FeatureTypeFactory ftf = ftb.getFeatureTypeFactory();
+
+        //-------------------- GENERIC GPX ENTITY ------------------------------
+        ftb.reset();
+        ftb.setName(GPX_NAMESPACE, "GPXEntity");
+        ftb.setAbstract(true);
+        ftb.add(new DefaultName(GPX_NAMESPACE, "index"),      Integer.class,1,1,false,null);
+        ftb.add(new DefaultName(GPX_NAMESPACE, GPX_GEOMETRY), Point.class,GPX_CRS,1,1,false,null);
+        TYPE_GPX_ENTITY = ftb.buildFeatureType();
 
         //------------------- WAY POINT TYPE -----------------------------------
         //lat="latitudeType [1] ?"
@@ -103,6 +112,7 @@ public final class GPXModelConstants {
         //<extensions> extensionsType </extensions> [0..1] ?
         ftb.reset();
         ftb.setName(GPX_NAMESPACE, "WayPoint");
+        ftb.setSuperType(TYPE_GPX_ENTITY);
         ftb.add(new DefaultName(GPX_NAMESPACE, "index"),        Integer.class,1,1,false,null);
         ftb.add(new DefaultName(GPX_NAMESPACE, GPX_GEOMETRY),     Point.class,GPX_CRS,1,1,false,null);
         ftb.add(new DefaultName(GPX_NAMESPACE, TAG_WPT_ELE),    Double.class,0,1,true,null);
@@ -138,6 +148,7 @@ public final class GPXModelConstants {
         //<rtept> wptType </rtept> [0..*] ?
         ftb.reset();
         ftb.setName(GPX_NAMESPACE, "Route");
+        ftb.setSuperType(TYPE_GPX_ENTITY);
         ftb.add(new DefaultName(GPX_NAMESPACE, "index"),        Integer.class,1,1,false,null);
         ftb.add(new DefaultName(GPX_NAMESPACE, GPX_GEOMETRY),     LineString.class,GPX_CRS,1,1,false,null);
         ftb.add(new DefaultName(GPX_NAMESPACE, TAG_NAME),      String.class,0,1,true,null);
@@ -173,6 +184,7 @@ public final class GPXModelConstants {
         //<trkseg> trksegType </trkseg> [0..*] ?
         ftb.reset();
         ftb.setName(GPX_NAMESPACE, "Track");
+        ftb.setSuperType(TYPE_GPX_ENTITY);
         ftb.add(new DefaultName(GPX_NAMESPACE, "index"),        Integer.class,1,1,false,null);
         ftb.add(new DefaultName(GPX_NAMESPACE, GPX_GEOMETRY),     MultiLineString.class,GPX_CRS,1,1,false,null);
         ftb.add(new DefaultName(GPX_NAMESPACE, TAG_NAME),         String.class,0,1,true,null);
@@ -201,7 +213,7 @@ public final class GPXModelConstants {
      * @param ymax : maximum latitude
      * @return Immutable envelope in WGS84 with the given extents.
      */
-    public static Envelope create(double xmin, double xmax, double ymin, double ymax){
+    public static Envelope createEnvelope(double xmin, double xmax, double ymin, double ymax){
         return new ImmutableEnvelope(DefaultGeographicCRS.WGS84, xmin, xmax, ymin, ymax);
     }
 

@@ -354,7 +354,7 @@ public class GPXReader extends StaxStreamReader{
 
         toTagEnd(TAG_BOUNDS);
 
-        return GPXModelConstants.create(
+        return GPXModelConstants.createEnvelope(
                 Double.parseDouble(xmin),
                 Double.parseDouble(xmax),
                 Double.parseDouble(ymin),
@@ -590,7 +590,7 @@ public class GPXReader extends StaxStreamReader{
             }
         }
 
-        throw new XMLStreamException("Error in xml file, "+TAG_RTE+" tag without end.");
+        throw new XMLStreamException("Error in xml file, "+TAG_TRK+" tag without end.");
     }
 
 }

@@ -19,6 +19,7 @@ package org.geotoolkit.data.gpx.xml;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
+
 import java.io.File;
 import java.net.URI;
 import java.util.ArrayList;
@@ -26,8 +27,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import org.geotoolkit.data.DataUtilities;
-import org.geotoolkit.data.FeatureCollection;
 
 import org.geotoolkit.data.gpx.model.CopyRight;
 import org.geotoolkit.data.gpx.model.GPXModelConstants;
@@ -82,7 +81,7 @@ public class WriterTest {
                 new Person("Jean-Pierre", "jean-pierre@test.com", new URI("http://son-site.com")),
                 new CopyRight("GNU", 2010, new URI("http://gnu.org")),
                 Arrays.asList(new URI("http://adress1.org"),new URI("http://adress2.org")),
-                new Date(), "test,sample", GPXModelConstants.create(-10, 20, -30, 40));
+                new Date(), "test,sample", GPXModelConstants.createEnvelope(-10, 20, -30, 40));
 
         writer.writeStartDocument();
         writer.write(metaData, null, null, null);

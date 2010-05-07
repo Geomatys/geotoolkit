@@ -18,7 +18,6 @@
 package org.geotoolkit.data.gpx.model;
 
 import java.net.URI;
-import org.geotoolkit.util.Utilities;
 
 /**
  * GPX person model
