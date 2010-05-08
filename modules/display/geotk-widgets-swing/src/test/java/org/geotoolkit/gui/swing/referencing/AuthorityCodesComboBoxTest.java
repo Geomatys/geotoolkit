@@ -17,6 +17,9 @@
  */
 package org.geotoolkit.gui.swing.referencing;
 
+import org.opengis.referencing.crs.CRSAuthorityFactory;
+import org.opengis.referencing.crs.GeographicCRS;
+import org.opengis.referencing.crs.ProjectedCRS;
 import org.opengis.referencing.FactoryException;
 
 import org.geotoolkit.test.gui.SwingBase;
@@ -28,7 +31,7 @@ import org.geotoolkit.factory.FactoryNotFoundException;
  * Tests the {@link AuthorityCodesComboBox}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.02
+ * @version 3.12
  *
  * @since 3.02
  */
@@ -46,9 +49,11 @@ public final class AuthorityCodesComboBoxTest extends SwingBase<AuthorityCodesCo
      * @throws FactoryException Should never happen.
      */
     @Override
+    @SuppressWarnings("unchecked")
     protected AuthorityCodesComboBox create() throws FactoryException {
         try {
-            return new AuthorityCodesComboBox(AuthorityFactoryFinder.getCRSAuthorityFactory("EPSG", null));
+            final CRSAuthorityFactory factory = AuthorityFactoryFinder.getCRSAuthorityFactory("EPSG", null);
+            return new AuthorityCodesComboBox(factory, ProjectedCRS.class, GeographicCRS.class);
         } catch (FactoryNotFoundException e) {
             /*
              * This happen if the JDBC driver (typically Derby) required for accessing

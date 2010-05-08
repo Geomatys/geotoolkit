@@ -21,12 +21,15 @@ import java.util.List;
 import java.util.Locale;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import javax.swing.Box;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JButton;
@@ -58,8 +61,8 @@ import org.geotoolkit.gui.swing.IconFactory;
  * provides a search button (for filtering the CRS name that contain the specified keywords)
  * and a info button displaying the CRS {@linkplain PropertiesSheet properties sheet}.
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.12
  *
  * @since 2.3
  * @module
@@ -74,12 +77,7 @@ public class AuthorityCodesComboBox extends JComponent {
     /**
      * The list of authority codes, as a combo box model.
      */
-    private final CodeList codeList;
-
-    /**
-     * The type of CRS object to includes in the list.
-     */
-    private Class<? extends CoordinateReferenceSystem> type;
+    private final AuthorityCodeList codeList;
 
     /**
      * The list of CRS objects.
@@ -163,6 +161,7 @@ public class AuthorityCodesComboBox extends JComponent {
      * @param  factory The authority factory responsible for creating objects from a list of codes.
      * @throws FactoryException if the factory can't provide CRS codes.
      */
+    @SuppressWarnings("unchecked")
     public AuthorityCodesComboBox(final AuthorityFactory factory) throws FactoryException {
         this(factory, CoordinateReferenceSystem.class);
     }
@@ -171,29 +170,29 @@ public class AuthorityCodesComboBox extends JComponent {
      * Creates a CRS chooser backed by the specified authority factory.
      *
      * @param  factory The authority factory responsible for creating objects from a list of codes.
-     * @param  type The type of CRS object to includes in the list.
+     * @param  types The types of CRS object to includes in the list.
      * @throws FactoryException if the factory can't provide CRS codes.
      */
     public AuthorityCodesComboBox(final AuthorityFactory factory,
-            final Class<? extends CoordinateReferenceSystem> type) throws FactoryException
+            Class<? extends CoordinateReferenceSystem>... types) throws FactoryException
     {
         this.factory = factory;
-        this.type    = type;
-        final Locale locale = SwingUtilities.getLocale(this);
+        final Locale locale = getLocale();
         final Vocabulary resources = Vocabulary.getResources(locale);
 
         setLayout(new BorderLayout());
         cards        = new CardLayout();
         searchOrList = new JPanel(cards);
-        codeList     = new CodeList(factory, type);
+        codeList     = new AuthorityCodeList(locale, factory, types);
         list         = new JComboBox(codeList);
-        list.setPrototypeDisplayValue("Unknown datum based upon the Average Terrestrial System 1977 ellipsoid");
         search       = new JTextField();
         search.addActionListener(new ActionListener() {
             @Override public void actionPerformed(final ActionEvent event) {
                 search(false);
             }
         });
+        list.setRenderer(new AuthorityCodeRenderer(list.getRenderer()));
+        list.setPrototypeDisplayValue(new AuthorityCode());
         searchOrList.add(list,   "List");
         searchOrList.add(search, "Search");
         add(searchOrList, BorderLayout.CENTER);
@@ -212,7 +211,6 @@ public class AuthorityCodesComboBox extends JComponent {
                 showProperties();
             }
         });
-        add(button, BorderLayout.WEST);
         showProperties = button;
         /*
          * Adds the "Search" button.
@@ -226,7 +224,13 @@ public class AuthorityCodesComboBox extends JComponent {
                 search(true);
             }
         });
-        add(button, BorderLayout.EAST);
+        /*
+         * Add the two buttons after the combo box.
+         */
+        final Box box = Box.createHorizontalBox();
+        box.add(button);
+        box.add(showProperties);
+        add(box, BorderLayout.LINE_END);
     }
 
     /**
@@ -235,8 +239,7 @@ public class AuthorityCodesComboBox extends JComponent {
      * @return The current authority name.
      */
     public String getAuthority() {
-        final Locale locale = SwingUtilities.getLocale(this);
-        return factory.getAuthority().getTitle().toString(locale);
+        return factory.getAuthority().getTitle().toString(getLocale());
     }
 
     /**
@@ -245,7 +248,7 @@ public class AuthorityCodesComboBox extends JComponent {
      * @return The code of the currently selected object.
      */
     public String getSelectedCode() {
-        final Code code = (Code) list.getModel().getSelectedItem();
+        final AuthorityCode code = (AuthorityCode) list.getModel().getSelectedItem();
         return (code != null) ? code.code : null;
     }
 
@@ -323,25 +326,39 @@ public class AuthorityCodesComboBox extends JComponent {
      */
     public void filter(String keywords) {
         ComboBoxModel model = codeList;
-        if (keywords != null) {
-            final Locale locale = SwingUtilities.getLocale(this);
-            keywords = keywords.toLowerCase(locale).trim();
-            final String[] tokens = keywords.split("\\s+");
-            if (tokens.length != 0) {
-                final DefaultComboBoxModel filtered;
-                model = filtered = new DefaultComboBoxModel();
-                final int size = codeList.getSize();
-        scan:   for (int i=0; i<size; i++) {
-                    final Code code = codeList.getElementAt(i);
-                    final String name = code.toString().toLowerCase(locale);
-                    for (int j=0; j<tokens.length; j++) {
-                        if (name.indexOf(tokens[j]) < 0) {
-                            continue scan;
-                        }
-                    }
+        if (keywords != null && ((keywords = keywords.trim()).length()) != 0) {
+            /*
+             * Quotes the keywords, except the spaces. Set the 'if' value to
+             * 'false' if the user already provided a regular expression.
+             */
+            if (true) {
+                final StringBuilder buffer = new StringBuilder(".*");
+                for (final String token : keywords.split("\\s+")) {
+                    buffer.append(Pattern.quote(token)).append(".*");
+                }
+                keywords = buffer.toString();
+            }
+            Matcher matcher = null;
+            final DefaultComboBoxModel filtered = new DefaultComboBoxModel();
+            final int size = codeList.getSize();
+            for (int i=0; i<size; i++) {
+                final AuthorityCode code = codeList.getElementAt(i);
+                final String name = code.toString();
+                if (matcher == null) {
+                    matcher = Pattern.compile(keywords, Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE).matcher(name);
+                } else {
+                    matcher.reset(name);
+                }
+                if (matcher.matches()) {
                     filtered.addElement(code);
+                } else {
+                    matcher.reset(code.code);
+                    if (matcher.matches()) {
+                        filtered.addElement(code);
+                    }
                 }
             }
+            model = filtered;
         }
         list.setModel(model);
     }

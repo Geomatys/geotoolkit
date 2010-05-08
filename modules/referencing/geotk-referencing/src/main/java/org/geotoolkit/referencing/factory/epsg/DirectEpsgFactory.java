@@ -193,8 +193,10 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
                 "COORD_REF_SYS_CODE",
                 "COORD_REF_SYS_NAME",
                 "COORD_REF_SYS_KIND",
-                new Class<?>[] { ProjectedCRS.class, GeographicCRS.class, GeocentricCRS.class},
-                new String[]   {"projected",       "geographic",        "geocentric"}),
+                new Class<?>[] { ProjectedCRS.class, GeographicCRS.class, GeocentricCRS.class,
+                                 VerticalCRS.class,  CompoundCRS.class,   EngineeringCRS.class},
+                new String[]   {"projected",        "geographic",        "geocentric",
+                                "vertical",         "compound",          "engineering"}),
 
         new TableInfo(CoordinateSystem.class,
                 "[Coordinate System]",
@@ -203,7 +205,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
                 "COORD_SYS_TYPE",
                 new Class<?>[] { CartesianCS.class, EllipsoidalCS.class, SphericalCS.class, VerticalCS.class},
                 new String[]   {"Cartesian",       "ellipsoidal",       "spherical",       "vertical"}),
-
+                               //Really upper-case C.
         new TableInfo(CoordinateSystemAxis.class,
                 "[Coordinate Axis] AS CA INNER JOIN [Coordinate Axis Name] AS CAN" +
                                  " ON CA.COORD_AXIS_NAME_CODE=CAN.COORD_AXIS_NAME_CODE",
@@ -560,8 +562,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
             return candidate;
         }
         Set<String> result = Collections.emptySet();
-        for (int i=0; i<TABLES_INFO.length; i++) {
-            final TableInfo table = TABLES_INFO[i];
+        for (final TableInfo table : TABLES_INFO) {
             /*
              * We test 'isAssignableFrom' in the two ways, which may seems strange but
              * intends to catch the following use cases:
@@ -584,7 +585,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
                  * type computed by AuthorityCodes itself.
                  */
                 final AuthorityCodes codes;
-                codes = new AuthorityCodes(connection, TABLES_INFO[i], type, this);
+                codes = new AuthorityCodes(connection, table, type, this);
                 reference = authorityCodes.get(codes.type);
                 candidate = (reference != null) ? reference.get() : null;
                 if (candidate == null) {

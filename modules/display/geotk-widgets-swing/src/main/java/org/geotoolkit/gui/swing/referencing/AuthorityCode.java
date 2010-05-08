@@ -17,8 +17,10 @@
  */
 package org.geotoolkit.gui.swing.referencing;
 
+import java.util.Locale;
 import org.opengis.referencing.AuthorityFactory;
 import org.opengis.referencing.FactoryException;
+import org.geotoolkit.util.converter.Classes;
 
 
 /**
@@ -31,7 +33,7 @@ import org.opengis.referencing.FactoryException;
  * @since 2.3
  * @module
  */
-final class Code {
+final class AuthorityCode {
     /**
      * The sequential index.
      */
@@ -56,30 +58,61 @@ final class Code {
     private AuthorityFactory factory;
 
     /**
+     * Before {@link #toString()} is invoked, this is the locale in which to render the
+     * name. After {@code toString()}, this is a {@code null} on success, or any non-null
+     * value on failure.
+     */
+    private Object state;
+
+    /**
+     * Creates a temporary code with a prototype value.
+     */
+    AuthorityCode() {
+        index = 0;
+        code  = "00000000";
+        name  = "Unknown datum based upon the Average Terrestrial System 1977 ellipsoid";
+    }
+
+    /**
      * Creates a code from the specified value.
      *
      * @param factory The authority factory.
      * @param code The authority code.
      */
-    public Code(final AuthorityFactory factory, final String code, final int index) {
+    AuthorityCode(final AuthorityFactory factory, final String code, final int index, final Locale locale) {
         this.factory = factory;
         this.code    = code;
         this.index   = index;
+        this.state   = locale;
     }
 
     /**
      * Returns the name for this code.
-     *
-     * @todo Maybe we should use the widget Locale when invoking InternationalString.toString(...).
      */
     @Override
     public String toString() {
-        if (name == null) try {
-            name = factory.getDescriptionText(code).toString();
-        } catch (FactoryException e) {
-            name = code + " - " + e.getLocalizedMessage();
+        String name = this.name;
+        if (name == null) {
+            try {
+                name = factory.getDescriptionText(code).toString((Locale) state);
+                state = null;
+            } catch (FactoryException e) {
+                name = e.getLocalizedMessage();
+                if (name == null) {
+                    name = Classes.getShortClassName(e);
+                }
+                state = Boolean.FALSE;
+            }
+            factory = null;
+            this.name = name;
         }
-        factory = null;
         return name;
+    }
+
+    /**
+     * Returns {@code true} if the call to the {@link #toString()} method failed.
+     */
+    boolean failure() {
+        return state != null;
     }
 }

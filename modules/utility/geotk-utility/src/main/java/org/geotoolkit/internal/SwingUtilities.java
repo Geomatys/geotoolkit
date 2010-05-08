@@ -453,22 +453,6 @@ public final class SwingUtilities {
     }
 
     /**
-     * Returns the locale for the specified component, or a default one if the component
-     * is not yet part of a container hierarchy.
-     *
-     * @param  component The component for which to get the locale.
-     * @return locale The locale from the given component.
-     */
-    public static Locale getLocale(final Component component) {
-        if (component != null) try {
-            return component.getLocale();
-        } catch (IllegalComponentStateException ignore) {
-            // Ignore. Will returns de default locale below.
-        }
-        return JComponent.getDefaultLocale();
-    }
-
-    /**
      * Causes runnable to have its run method called in the dispatch thread of
      * the event queue. This will happen after all pending events are processed.
      * The call blocks until this has happened.
