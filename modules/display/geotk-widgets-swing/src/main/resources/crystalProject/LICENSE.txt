@@ -1,0 +1,2 @@
+The icons in this directory are imported from the Crystal project
+(http://www.everaldo.com/crystal/), under LGPL license.

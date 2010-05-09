@@ -214,7 +214,7 @@ public class AuthorityCodesComboBox extends JComponent {
         size = new Dimension(24, 20);
         final IconFactory icons = IconFactory.DEFAULT;
         String label = resources.getString(Vocabulary.Keys.INFORMATIONS);
-        button = icons.getButton("toolbarButtonGraphics/general/Information16.gif", label, label);
+        button = icons.getButton("crystalProject/16/actions/info.png", label, label);
         button.setFocusable(false);
         button.setPreferredSize(size);
         button.addActionListener(new ActionListener() {
@@ -227,7 +227,7 @@ public class AuthorityCodesComboBox extends JComponent {
          * Adds the "Search" button.
          */
         label = resources.getString(Vocabulary.Keys.SEARCH);
-        button = icons.getButton("toolbarButtonGraphics/general/Find16.gif", label, label);
+        button = icons.getButton("crystalProject/16/actions/find.png", label, label);
         button.setFocusable(false);
         button.setPreferredSize(size);
         button.addActionListener(new ActionListener() {
