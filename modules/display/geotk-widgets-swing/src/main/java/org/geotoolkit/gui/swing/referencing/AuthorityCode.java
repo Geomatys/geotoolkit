@@ -66,11 +66,14 @@ final class AuthorityCode {
 
     /**
      * Creates a temporary code with a prototype value.
+     *
+     * {@note An example of long name found in the EPSG database is:
+     * "Unknown datum based upon the Average Terrestrial System 1977 ellipsoid".}
      */
     AuthorityCode() {
         index = 0;
         code  = "00000000";
-        name  = "Unknown datum based upon the Average Terrestrial System 1977 ellipsoid";
+        name  = "00000000";
     }
 
     /**

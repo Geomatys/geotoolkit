@@ -17,12 +17,14 @@
  */
 package org.geotoolkit.io;
 
+import org.geotoolkit.util.Strings;
+
 
 /**
  * Escape codes from ANSI X3.64 standard (aka ECMA-48 and ISO/IEC 6429).
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.12
  *
  * @see <a href="http://en.wikipedia.org/wiki/ANSI_escape_code">ANSI escape codes</a>
  *
@@ -126,6 +128,73 @@ public enum X364 {
             sequence = START + code + END;
         }
         return sequence;
+    }
+
+    /**
+     * Replaces escape codes in the given string by HTML {@code <font>} instructions.
+     * If no HTML instruction is associated to the given escape code, then the escape
+     * sequence is removed.
+     *
+     * @param  text The text with X3.64 sequences.
+     * @return The text with HTML {@code <font>} instructions.
+     *
+     * @since 3.12
+     */
+    public static String toHTML(final String text) {
+        final StringBuilder buffer = new StringBuilder(text);
+        Strings.replace(buffer, "&", "&amp;");
+        Strings.replace(buffer, "<", "&lt;");
+        Strings.replace(buffer, ">", "&gt;");
+        boolean fontApplied = false;
+        StringBuilder tmp = null;
+        for (int i=buffer.indexOf(START); i>=0; i=buffer.indexOf(START, i)) {
+            int lower  = i + START.length();
+            int upper  = lower;
+            int length = buffer.length();
+            while (upper < length) {
+                if (buffer.charAt(upper++) == END) {
+                    break;
+                }
+            }
+            final int code;
+            try {
+                code = Integer.parseInt(buffer.substring(lower, upper-1));
+            } catch (NumberFormatException e) {
+                buffer.delete(i, upper);
+                continue;
+            }
+            final String color;
+            switch (code) {
+                case 31: color="red";     break;
+                case 32: color="green";   break;
+                case 33: color="olive";   break; // "yellow" is too bright.
+                case 34: color="blue";    break;
+                case 35: color="magenta"; break;
+                case 36: color="teal";    break; // "cyan" is not in HTML 4, while "teal" is.
+                case 37: color="gray";    break;
+                case 39: // Fall through
+                case 0:  color=null; break;
+                default: {
+                    buffer.delete(i, upper);
+                    continue;
+                }
+            }
+            if (tmp == null) {
+                tmp = new StringBuilder();
+            }
+            if (fontApplied) {
+                tmp.append("</font>");
+                fontApplied = false;
+            }
+            if (color != null) {
+                tmp.append("<font color=\"").append(color).append("\">");
+                fontApplied = true;
+            }
+            buffer.replace(i, upper, tmp.toString());
+            tmp.setLength(0);
+        }
+        final String result = buffer.toString();
+        return result.equals(text) ? text : result;
     }
 
     /**

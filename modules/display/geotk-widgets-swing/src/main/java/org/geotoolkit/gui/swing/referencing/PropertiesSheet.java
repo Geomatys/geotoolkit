@@ -17,26 +17,47 @@
  */
 package org.geotoolkit.gui.swing.referencing;
 
+import java.util.Locale;
 import java.awt.BorderLayout;
+import java.awt.GridBagLayout;
+import java.awt.GridBagConstraints;
+import javax.swing.BorderFactory;
+import javax.swing.Box;
 import javax.swing.JComponent;
+import javax.swing.JEditorPane;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
-import javax.swing.JTextArea;
+import javax.swing.JTextField;
 
+import org.jdesktop.swingx.JXLabel;
+
+import org.opengis.util.InternationalString;
+import org.opengis.metadata.citation.Citation;
 import org.opengis.referencing.IdentifiedObject;
+import org.opengis.referencing.ReferenceIdentifier;
 
+import org.geotoolkit.io.X364;
+import org.geotoolkit.io.wkt.Colors;
+import org.geotoolkit.io.wkt.WKTFormat;
 import org.geotoolkit.resources.Vocabulary;
-import org.geotoolkit.util.converter.Classes;
-import org.geotoolkit.io.wkt.UnformattableObjectException;
+import org.geotoolkit.util.Strings;
+import org.geotoolkit.internal.StringUtilities;
 
 
 /**
- * Display informations about a CRS object. Current implementation only display the
- * <cite>Well Known Text</cite> (WKT). We may provide more informations in a future
- * version.
+ * Displays informations about an {@linkplain IdentifiedObject Identified Object}.
+ * This widget displays the following tabs:
+ * <p>
+ * <ul>
+ *   <li>An information tab with the object {@linkplain IdentifiedObject#getName() name} and
+ *       {@linkplain IdentifiedObject#getIdentifiers() identifiers}.</li>
+ *   <li>A <cite>Well Known Text</cite> (WKT) tab.</li>
+ * </ul>
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.12
  *
  * @since 2.3
  * @module
@@ -44,25 +65,99 @@ import org.geotoolkit.io.wkt.UnformattableObjectException;
 @SuppressWarnings("serial")
 public class PropertiesSheet extends JComponent {
     /**
-     * Provides different view of the CRS object (properties, WKT, etc.).
+     * The object name, identifier.
      */
-    private final JTabbedPane tabs;
+    private final JTextField name, authority, identifier, type;
+
+    /**
+     * The remarks.
+     */
+    private final JXLabel remarks;
 
     /**
      * The <cite>Well Known Text</cite> area.
      */
-    private final JTextArea wktArea;
+    private final JEditorPane wktArea;
+
+    /**
+     * The formatter to use for formatting WKT objects.
+     */
+    private final WKTFormat formatter;
 
     /**
      * Creates a new, initially empty, property sheet.
      */
     public PropertiesSheet() {
-        tabs    = new JTabbedPane();
-        wktArea = new JTextArea();
+        final Vocabulary resources = Vocabulary.getResources(getLocale());
+        final JPanel info = new JPanel(new GridBagLayout());
+        final GridBagConstraints c = new GridBagConstraints();
+        c.gridy=0; c.fill=GridBagConstraints.HORIZONTAL;
+        name       = addField(info, resources.getLabel(Vocabulary.Keys.NAME),       c);
+        authority  = addField(info, resources.getLabel(Vocabulary.Keys.AUTHORITY),  c);
+        identifier = addField(info, resources.getLabel(Vocabulary.Keys.IDENTIFIER), c);
+        type       = addField(info, resources.getLabel(Vocabulary.Keys.TYPE),       c);
+        info.setBorder(BorderFactory.createTitledBorder(resources.getString(Vocabulary.Keys.IDENTIFICATION)));
+        info.setOpaque(false);
+
+        remarks = new JXLabel();
+        remarks.setLineWrap(true);
+        remarks.setVerticalAlignment(JLabel.TOP);
+        remarks.setBorder(BorderFactory.createEmptyBorder(0, 18, 0, 0));
+        final Box rem = Box.createVerticalBox();
+        rem.add(remarks);
+        rem.setBorder(BorderFactory.createTitledBorder(resources.getString(Vocabulary.Keys.REMARKS)));
+
+        final JPanel general = new JPanel(new BorderLayout(0, 6));
+        general.add(info, BorderLayout.BEFORE_FIRST_LINE);
+        general.add(rem,  BorderLayout.CENTER);
+        general.setBorder(BorderFactory.createEmptyBorder(6, 6, 6, 6));
+        general.setOpaque(false);
+        /*
+         * Build the WKT tab.
+         */
+        wktArea = new JEditorPane();
         wktArea.setEditable(false);
+        wktArea.setContentType("text/html");
+        formatter = new WKTFormat();
+        formatter.setColors(Colors.DEFAULT);
+        /*
+         * Add the tabs.
+         */
+        final JTabbedPane tabs = new JTabbedPane();
+        tabs.addTab(resources.getString(Vocabulary.Keys.GENERAL), general);
         tabs.addTab("WKT", new JScrollPane(wktArea));
         setLayout(new BorderLayout());
         add(tabs, BorderLayout.CENTER);
+    }
+
+    /**
+     * Adds a field with the given label in front of it.
+     */
+    private static JTextField addField(final JPanel panel, final String text, final GridBagConstraints c) {
+        final JLabel label = new JLabel(text);
+        final JTextField value = new JTextField();
+        value.setEditable(false);
+        label.setLabelFor(value);
+        c.gridx=0; c.weightx=0; c.insets.left=18; c.insets.right=3; panel.add(label, c);
+        c.gridx++; c.weightx=1; c.insets.left= 0; c.insets.right=0; panel.add(value, c);
+        c.gridy++;
+        return value;
+    }
+
+    /**
+     * Gets the name of the GeoAPI interface implemented by the given object, or
+     * {@code null} if none. This is used for providing a value to {@link #type}.
+     */
+    private static String getTypeName(Class<?> classe) {
+        while (classe != null) {
+            for (final Class<?> inter : classe.getInterfaces()) {
+                if (IdentifiedObject.class.isAssignableFrom(inter)) {
+                    return StringUtilities.makeSentence(inter.getSimpleName());
+                }
+            }
+            classe = classe.getSuperclass();
+        }
+        return null;
     }
 
     /**
@@ -71,23 +166,69 @@ public class PropertiesSheet extends JComponent {
      * @param item The object to display info about.
      */
     public void setIdentifiedObject(final IdentifiedObject item) {
-        String text;
-        try {
-            text = item.toWKT();
-        } catch (UnsupportedOperationException e) {
-            text = e.getLocalizedMessage();
-            if (text == null) {
-                text = Classes.getShortClassName(e);
-            }
-            final String lineSeparator = System.getProperty("line.separator", "\n");
-            if (e instanceof UnformattableObjectException) {
-                text = Vocabulary.format(Vocabulary.Keys.WARNING) + ": " + text +
-                        lineSeparator + lineSeparator + item + lineSeparator;
-            } else {
-                text = Vocabulary.format(Vocabulary.Keys.ERROR) + ": " + text + lineSeparator;
+        final Locale locale = getLocale();
+        final ReferenceIdentifier oid = item.getName();
+        name.setText(oid.getCode());
+        final Citation authorityCitation = oid.getAuthority();
+        String authorityText = null;
+        if (authorityCitation != null) {
+            final InternationalString title = authorityCitation.getTitle();
+            if (title != null) {
+                authorityText = title.toString(locale);
             }
         }
-        wktArea.setText(text);
+        authority.setText(authorityText);
+        final StringBuilder buffer = new StringBuilder();
+        for (final ReferenceIdentifier id : item.getIdentifiers()) {
+            if (buffer.length() != 0) {
+                buffer.append(", ");
+            }
+            final String codespace = id.getCodeSpace();
+            if (codespace != null) {
+                buffer.append(codespace).append(':');
+            }
+            buffer.append(id.getCode());
+        }
+        identifier.setText(buffer.toString());
+        type.setText(getTypeName(item.getClass()));
+        InternationalString i18n = item.getRemarks();
+        remarks.setText(i18n != null ? i18n.toString(locale) : null);
+        /*
+         * Set the Well Known Text (WKT) panel using the following steps:
+         *
+         *  1) Write the warning if there is one.
+         *  2) Replace the X3.64 escape sequences by HTML colors.
+         *  3) Turn quoted WKT names ("foo") in italic characters.
+         */
+        buffer.setLength(0);
+        buffer.append("<html>");
+        final String text    = formatter.format(item);
+        final String warning = formatter.getWarning();
+        if (warning != null) {
+            buffer.append("<p><b>").append(Vocabulary.getResources(locale).getString(Vocabulary.Keys.WARNING))
+                    .append(":</b> ").append(warning).append("</p><hr>\n");
+        }
+        buffer.append("<pre>");
+        // '\u001A' is the SUBSTITUTE character. We use it as a temporary replacement for avoiding
+        // confusion between WKT quotes and HTML quotes while we search for text to make italic.
+        makeItalic(X364.toHTML(text.replace('"', '\u001A')), buffer, '\u001A');
+        wktArea.setText(buffer.append("</pre></html>").toString());
+    }
+
+    /**
+     * Copies the given text in the given buffer, while putting the quoted text in italic.
+     * The quote character is given by the {@code quote} argument and will be replaced by
+     * the usual {@code "} character.
+     */
+    private static void makeItalic(final String text, final StringBuilder buffer, final char quote) {
+        boolean isQuoting = false;
+        int last = 0;
+        for (int i=text.indexOf(quote); i>=0; i=text.indexOf(quote, last)) {
+            buffer.append(text.substring(last, i)).append(isQuoting ? "</cite>\"" : "\"<cite>");
+            isQuoting = !isQuoting;
+            last = i+1;
+        }
+        buffer.append(text.substring(last));
     }
 
     /**
@@ -95,7 +236,22 @@ public class PropertiesSheet extends JComponent {
      *
      * @param message The error message.
      */
-    public void setErrorMessage(final String message) {
-        wktArea.setText(Vocabulary.format(Vocabulary.Keys.ERROR_$1, message));
+    public void setErrorMessage(String message) {
+        name      .setText(null);
+        authority .setText(null);
+        identifier.setText(null);
+        type      .setText(null);
+        remarks   .setText(null);
+        final StringBuilder buffer = new StringBuilder(message);
+        Strings.replace(buffer, "&", "&amp;");
+        Strings.replace(buffer, "<", "&lt;");
+        Strings.replace(buffer, ">", "&gt;");
+        message = buffer.toString();
+        buffer.setLength(0);
+        buffer.append("<html><p><b>")
+              .append(Vocabulary.getResources(getLocale()).getString(Vocabulary.Keys.ERROR))
+              .append(":</b> ");
+        makeItalic(message, buffer, '"');
+        wktArea.setText(buffer.append("</p></html>").toString());
     }
 }

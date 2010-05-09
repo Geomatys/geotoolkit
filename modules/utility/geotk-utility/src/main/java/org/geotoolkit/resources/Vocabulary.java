@@ -625,6 +625,11 @@ public final class Vocabulary extends IndexedResourceBundle {
         public static final int FUTURE = 112;
 
         /**
+         * General
+         */
+        public static final int GENERAL = 344;
+
+        /**
          * Generic cartesian 2D
          */
         public static final int GENERIC_CARTESIAN_2D = 113;
@@ -783,6 +788,11 @@ public final class Vocabulary extends IndexedResourceBundle {
          * Hue
          */
         public static final int HUE = 144;
+
+        /**
+         * Identification
+         */
+        public static final int IDENTIFICATION = 343;
 
         /**
          * Identifier
@@ -1323,6 +1333,11 @@ public final class Vocabulary extends IndexedResourceBundle {
          * Refresh
          */
         public static final int REFRESH = 335;
+
+        /**
+         * Remarks
+         */
+        public static final int REMARKS = 345;
 
         /**
          * Remove

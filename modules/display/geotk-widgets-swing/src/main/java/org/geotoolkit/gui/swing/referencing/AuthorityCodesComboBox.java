@@ -27,11 +27,13 @@ import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.Box;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JLabel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
@@ -39,6 +41,8 @@ import javax.swing.JTextField;
 import javax.swing.ComboBoxModel;
 import javax.swing.JInternalFrame;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.ListCellRenderer;
+import javax.swing.SwingWorker;
 
 import org.opengis.referencing.AuthorityFactory;
 import org.opengis.referencing.FactoryException;
@@ -47,9 +51,10 @@ import org.opengis.referencing.crs.CRSAuthorityFactory;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import org.geotoolkit.util.converter.Classes;
-import org.geotoolkit.internal.SwingUtilities;
-import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.internal.Citations;
+import org.geotoolkit.internal.SwingUtilities;
+import org.geotoolkit.internal.swing.FastComboBox;
+import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
 import org.geotoolkit.factory.FactoryRegistryException;
 import org.geotoolkit.referencing.factory.FallbackAuthorityFactory;
@@ -184,15 +189,21 @@ public class AuthorityCodesComboBox extends JComponent {
         cards        = new CardLayout();
         searchOrList = new JPanel(cards);
         codeList     = new AuthorityCodeList(locale, factory, types);
-        list         = new JComboBox(codeList);
+        list         = new FastComboBox(codeList);
         search       = new JTextField();
         search.addActionListener(new ActionListener() {
             @Override public void actionPerformed(final ActionEvent event) {
                 search(false);
             }
         });
-        list.setRenderer(new AuthorityCodeRenderer(list.getRenderer()));
+        final ListCellRenderer renderer = list.getRenderer();
+        if (renderer instanceof JLabel) { // This is the case of typical Swing implementations.
+            list.setRenderer(new AuthorityCodeRenderer(renderer));
+        }
         list.setPrototypeDisplayValue(new AuthorityCode());
+        Dimension size = list.getPreferredSize();
+        size.width = 400; // Example of text to hold: "Unknown datum based upon the Average Terrestrial System 1977 ellipsoid"
+        list.setPreferredSize(size);
         searchOrList.add(list,   "List");
         searchOrList.add(search, "Search");
         add(searchOrList, BorderLayout.CENTER);
@@ -200,7 +211,7 @@ public class AuthorityCodesComboBox extends JComponent {
          * Adds the "Info" button.
          */
         JButton button;
-        final Dimension size = new Dimension(24, 20);
+        size = new Dimension(24, 20);
         final IconFactory icons = IconFactory.DEFAULT;
         String label = resources.getString(Vocabulary.Keys.INFORMATIONS);
         button = icons.getButton("toolbarButtonGraphics/general/Information16.gif", label, label);
@@ -234,7 +245,12 @@ public class AuthorityCodesComboBox extends JComponent {
     }
 
     /**
-     * Returns the authority name. Useful for providing a window title for example.
+     * Returns the authority name. This is useful for example in order to provide a window title.
+     *
+     * {@section Multi-threading}
+     * This method can be safely invoked from any thread - not necessarly the <cite>Swing</cite>
+     * thread. This is assuming that the {@linkplain AuthorityFactory Authority Factory} provided
+     * at construction time is thread-safe, but this is the case of all Geotk implementations.
      *
      * @return The current authority name.
      */
@@ -245,15 +261,43 @@ public class AuthorityCodesComboBox extends JComponent {
     /**
      * Returns the code for the selected object, or {@code null} if none.
      *
+     * {@section Multi-threading}
+     * This method can be safely invoked from any thread - not necessarly the <cite>Swing</cite>
+     * thread. This is a requirement for allowing {@link #getSelectedItem()} to be safely invoked
+     * from a background thread.
+     *
      * @return The code of the currently selected object.
      */
     public String getSelectedCode() {
-        final AuthorityCode code = (AuthorityCode) list.getModel().getSelectedItem();
+        final AuthorityCode code;
+        if (EventQueue.isDispatchThread()) {
+            code = (AuthorityCode) list.getModel().getSelectedItem();
+        } else {
+            final class Delegate implements Runnable {
+                Object code;
+
+                @Override public void run() {
+                    code = list.getModel().getSelectedItem();
+                }
+            }
+            final Delegate del = new Delegate();
+            SwingUtilities.invokeAndWait(del);
+            code = (AuthorityCode) del.code;
+        }
         return (code != null) ? code.code : null;
     }
 
     /**
-     * Returns the selected object, usually as a {@link CoordinateReferenceSystem}.
+     * Returns the selected object, usually as a {@link CoordinateReferenceSystem}. The default
+     * implementation {@linkplain AuthorityFactory#createObject(String) creates the object}
+     * identified by the value returned by {@link #getSelectedCode()}. Subclasses can override
+     * any of the {@code getSelectedCode()} or {@code getSelectedItem()} methods if different
+     * objects should be created.
+     *
+     * {@section Multi-threading}
+     * This method can be safely invoked from any thread - not necessarly the <cite>Swing</cite>
+     * thread. This is assuming that the {@linkplain AuthorityFactory Authority Factory} provided
+     * at construction time is thread-safe, but this is the case of all Geotk implementations.
      *
      * @return The currently selected object.
      * @throws FactoryException if the factory can't create the selected object.
@@ -264,38 +308,78 @@ public class AuthorityCodesComboBox extends JComponent {
     }
 
     /**
-     * Display information about the currently selected item in a separated window.
-     * The default implementation show the <cite>Well Know Text</cite>.
+     * Displays information about the currently selected item in a separated window.
+     * This method is invoked automatically when the user press the "Info" button.
+     * <p>
+     * The default implementation invokes {@link #getSelectedItem()} in a background thread,
+     * then shows general information and the object <cite>Well Know Text</cite> in a
+     * {@link PropertiesSheet}.
      */
     public void showProperties() {
-        if (properties == null) {
-            properties = new PropertiesSheet();
-        }
-        IdentifiedObject item;
-        try {
-            item = getSelectedItem();
-        } catch (FactoryException e) {
-            String message = e.getLocalizedMessage();
-            if (message == null) {
-                message = Classes.getShortClassName(e);
+        new SwingWorker<IdentifiedObject,Object>() {
+            private String title, message;
+
+            /**
+             * Creates the IdentifiedObject in a background thread.
+             */
+            @Override protected IdentifiedObject doInBackground() {
+                IdentifiedObject item = null;
+                try {
+                    item = getSelectedItem();
+                    title = item.getName().getCode();
+                } catch (FactoryException e) {
+                    message = e.getLocalizedMessage();
+                    if (message == null) {
+                        message = Classes.getShortClassName(e);
+                    }
+                }
+                return item;
             }
-            properties.setErrorMessage(message);
-            return;
-        }
-        final String title = item.getName().getCode();
-        if (propertiesWindow == null) {
-            propertiesWindow = SwingUtilities.toFrame(this, properties, title, null);
-            if (propertiesWindow instanceof JFrame) {
-                ((JFrame) propertiesWindow).setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-            } else if (propertiesWindow instanceof JInternalFrame) {
-                ((JInternalFrame) propertiesWindow).setDefaultCloseOperation(JInternalFrame.HIDE_ON_CLOSE);
+
+            /**
+             * Invoked after the IdentifiedObject creation has been completed.
+             * Creates the PropertiesSheet if not already done, updates it and
+             * makes it visible.
+             */
+            @Override protected void done() {
+                IdentifiedObject item = null;
+                try {
+                    item = get();
+                } catch (Exception e) {
+                    message = e.toString();
+                }
+                if (title == null) {
+                    title = String.valueOf(list.getModel().getSelectedItem());
+                }
+                if (properties == null) {
+                    properties = new PropertiesSheet();
+                }
+                if (propertiesWindow == null) {
+                    propertiesWindow = SwingUtilities.toFrame(AuthorityCodesComboBox.this, properties, title, null);
+                    if (propertiesWindow instanceof JFrame) {
+                        ((JFrame) propertiesWindow).setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+                    } else if (propertiesWindow instanceof JInternalFrame) {
+                        ((JInternalFrame) propertiesWindow).setDefaultCloseOperation(JInternalFrame.HIDE_ON_CLOSE);
+                    }
+                    propertiesWindow.setSize(600, 500);
+                    list.addActionListener(new ActionListener() {
+                        @Override public void actionPerformed(final ActionEvent event) {
+                            if (propertiesWindow.isVisible()) {
+                                showProperties();
+                            }
+                        }
+                    });
+                } else {
+                    SwingUtilities.setTitle(propertiesWindow, title);
+                }
+                if (item != null) {
+                    properties.setIdentifiedObject(item);
+                } else {
+                    properties.setErrorMessage(message);
+                }
+                propertiesWindow.setVisible(true);
             }
-            propertiesWindow.setSize(600, 500);
-        } else {
-            SwingUtilities.setTitle(propertiesWindow, title);
-        }
-        properties.setIdentifiedObject(item);
-        propertiesWindow.setVisible(true);
+        }.execute();
     }
 
     /**
@@ -311,6 +395,9 @@ public class AuthorityCodesComboBox extends JComponent {
             component = list;
             name = "List";
             filter(search.getText());
+            if (propertiesWindow != null && propertiesWindow.isVisible()) {
+                showProperties();
+            }
         }
         showProperties.setEnabled(!enable);
         cards.show(searchOrList, name);

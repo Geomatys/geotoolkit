@@ -17,17 +17,20 @@
  */
 package org.geotoolkit.gui.swing.referencing;
 
+import java.util.Set;
+import java.util.Arrays;
 import java.util.List;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.Locale;
-import javax.swing.ComboBoxModel;
+import java.util.concurrent.ExecutionException;
+import javax.swing.SwingWorker;
 import javax.swing.AbstractListModel;
 
 import org.opengis.referencing.AuthorityFactory;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.IdentifiedObject;
+
+import org.geotoolkit.util.logging.Logging;
+import org.geotoolkit.internal.swing.FastComboBox;
 
 
 /**
@@ -43,35 +46,11 @@ import org.opengis.referencing.IdentifiedObject;
  * @module
  */
 @SuppressWarnings("serial") // Actually not serializable because AuthorityCode is not.
-final class AuthorityCodeList extends AbstractListModel implements ComboBoxModel {
-    /**
-     * The authority factory, or {@code null} if disposed. The disposal occurs after
-     * the first iteration has been completed. All other iterations will use the
-     * {@link #extracted} cached values.
-     */
-    private AuthorityFactory factory;
-
-    /**
-     * The collection of authority codes, or {@code null} if disposed. The disposal
-     * occurs after the first iteration has been completed. All other iterations will
-     * use the {@link #extracted} cached values.
-     */
-    private List<Collection<String>> codes;
-
-    /**
-     * An iterator over the codes, or {@code null} if not yet created or disposed.
-     */
-    private Iterator<String> iterator;
-
+final class AuthorityCodeList extends AbstractListModel implements FastComboBox.Model {
     /**
      * The authority codes as {@link AuthorityCode} objects.
      */
-    private final List<AuthorityCode> extracted = new ArrayList<AuthorityCode>();
-
-    /**
-     * The locale for formatting the code descriptions.
-     */
-    private final Locale locale;
+    private AuthorityCode[] codes;
 
     /**
      * The selected item, or {@code null} if none.
@@ -79,8 +58,7 @@ final class AuthorityCodeList extends AbstractListModel implements ComboBoxModel
     private AuthorityCode selected;
 
     /**
-     * The number of elements in this list. This count may be incomplete if there
-     * is some remaining elements in the {@link #codes} list.
+     * The number of elements in this list.
      */
     private int size;
 
@@ -95,58 +73,99 @@ final class AuthorityCodeList extends AbstractListModel implements ComboBoxModel
     public AuthorityCodeList(final Locale locale, final AuthorityFactory factory,
             final Class<? extends IdentifiedObject>... types) throws FactoryException
     {
-        this.locale = locale;
-        this.factory = factory;
-        codes = new ArrayList<Collection<String>>(types.length);
-        for (final Class<? extends IdentifiedObject> type : types) {
-            codes.add(factory.getAuthorityCodes(type));
+        /**
+         * Information needed for refreshing the list of authority codes
+         * while we load them in a background thread.
+         */
+        final class Step {
+            final AuthorityCode[] codes;
+            final int size;
+
+            Step(final AuthorityCode[] codes, final int size) {
+                this.codes = codes;
+                this.size  = size;
+            }
         }
+        new SwingWorker<Step,Step>() {
+            /**
+             * Gets the authority code in a background thread. Note that the iterator
+             * returned by factory.getAuthorityCode(type) may be backed by a JCBC ResultSet.
+             */
+            @Override
+            protected Step doInBackground() throws FactoryException {
+                int count = 0;
+                AuthorityCode[] codes = new AuthorityCode[256];
+                for (final Class<? extends IdentifiedObject> type : types) {
+                    final Set<String> ic = factory.getAuthorityCodes(type);
+                    // Don't invoke 'ic.size()' because it may be costly.
+                    for (final String code : ic) {
+                        if (count == codes.length) {
+                            codes = Arrays.copyOf(codes, count*2);
+                        }
+                        codes[count] = new AuthorityCode(factory, code, count, locale);
+                        if ((++count & 0xFF) == 0) { // Report progress.
+                            publish(new Step(codes, count));
+                        }
+                    }
+                }
+                return new Step(codes, count);
+            }
+
+            /**
+             * Invoked in the Swing thread when new codes have been added in the list
+             * by the background thread.
+             */
+            private void process(final Step step) {
+                final int lower = AuthorityCodeList.this.size;
+                final int upper = step.size - 1;
+                AuthorityCodeList.this.codes = step.codes;
+                AuthorityCodeList.this.size  = step.size;
+                fireIntervalAdded(AuthorityCodeList.this, lower, upper);
+            }
+
+            /**
+             * Invoked in the Swing thread when new codes have been added in the list
+             * by the background thread. Only the last element from the chunk is used,
+             * on the assumption that it is the most recent.
+             */
+            @Override
+            protected void process(final List<Step> chunk) {
+                process(chunk.get(chunk.size() - 1));
+            }
+
+            /**
+             * Invoked in the Swing thread when the background thread finished its work.
+             * If case of failure, the list will be incomplete but the combox box will
+             * otherwise works as expected.
+             */
+            @Override
+            protected void done() {
+                try {
+                    process(get());
+                } catch (InterruptedException e) {
+                    // Probably a cancelation, so stop the process.
+                    Logging.recoverableException(AuthorityCodeList.class, "<init>", e);
+                } catch (ExecutionException e) {
+                    Logging.unexpectedException(AuthorityCodeList.class, "<init>", e.getCause());
+                }
+            }
+        }.execute();
     }
 
     /**
-     * Returns the length of the list. If list of extracted codes is complete, we return
-     * the length of that list. Otherwise we need to compute the length of each pending
-     * collection.
+     * Returns the length of the list.
      */
     @Override
     public int getSize() {
-        int n = size;
-        if (codes != null) {
-            for (final Collection<String> ci : codes) {
-                n += ci.size();
-            }
-        }
-        return n;
+        return size;
     }
 
     /**
-     * Returns the value at the specified index. This method will extract only the minimal
-     * amount of elements from the {@link #codes} collection when first needed, and caches
-     * the extracted elements for future reuse.
+     * Returns the value at the specified index.
      */
     @Override
     public AuthorityCode getElementAt(final int index) {
-        if (codes != null) {
-            int n;
-            while (index >= (n = extracted.size())) {
-                if (iterator == null) {
-                    iterator = codes.get(0).iterator();
-                }
-                if (iterator.hasNext()) {
-                    extracted.add(new AuthorityCode(factory, iterator.next(), n, locale));
-                } else {
-                    size = n;
-                    iterator = null;
-                    codes.remove(0);
-                    if (codes.isEmpty()) {
-                        codes   = null;
-                        factory = null;
-                        break;
-                    }
-                }
-            }
-        }
-        return (index >= 0 && index < extracted.size()) ? extracted.get(index) : null;
+        return (index >= 0 && index < size) ? codes[index] : null;
     }
 
     /**
@@ -165,5 +184,13 @@ final class AuthorityCodeList extends AbstractListModel implements ComboBoxModel
         selected = (AuthorityCode) code;
         int index = selected.index;
         fireContentsChanged(this, index, index);
+    }
+
+    /**
+     * Returns the index of the currently selected element, or -1 if none.
+     */
+    @Override
+    public int getSelectedIndex() {
+        return (selected != null) ? selected.index : -1;
     }
 }

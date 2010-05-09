@@ -17,8 +17,13 @@
  */
 package org.geotoolkit.gui.swing.referencing;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Graphics;
+import javax.swing.BorderFactory;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.ListCellRenderer;
 
@@ -35,19 +40,44 @@ import javax.swing.ListCellRenderer;
  * @module
  */
 @SuppressWarnings("serial")
-final class AuthorityCodeRenderer implements ListCellRenderer {
+final class AuthorityCodeRenderer extends JComponent implements ListCellRenderer {
     /**
      * The original renderer.
      */
     private final ListCellRenderer renderer;
 
     /**
-     * Creates a new renderer.
+     * The component which display the name.
+     */
+    private JLabel name;
+
+    /**
+     * The component used for rendering the code.
+     */
+    private final JLabel code;
+
+    /**
+     * The authority code selected for rendering.
+     */
+    private AuthorityCode selected;
+
+    /**
+     * Creates a new renderer wrapping the given original renderer.
+     * The original renderer <strong>must</strong> be an instance of {@link JLabel},
+     * otherwise don't use this {@code AuthorityCodeRenderer} class.
      *
      * @param original The original renderer.
      */
     AuthorityCodeRenderer(final ListCellRenderer renderer) {
         this.renderer = renderer;
+        code = new JLabel("00000000", JLabel.TRAILING);
+        code.setBorder(BorderFactory.createEmptyBorder(0, 6, 0, 15));
+        code.setPreferredSize(code.getPreferredSize()); // Freeze the size.
+        code.setForeground(Color.GRAY);
+        setLayout(new BorderLayout());
+        add(name = (JLabel) renderer, BorderLayout.CENTER);
+        add(code, BorderLayout.LINE_END);
+        setOpaque(true);
     }
 
     /**
@@ -59,10 +89,30 @@ final class AuthorityCodeRenderer implements ListCellRenderer {
     public Component getListCellRendererComponent(final JList list, final Object value,
             final int index, final boolean isSelected, final boolean cellHasFocus)
     {
-        final Component c = renderer.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-        if ((value instanceof AuthorityCode) && ((AuthorityCode) value).failure()) {
-            c.setForeground(Color.RED);
+        selected = (AuthorityCode) value;
+        final String id = (selected != null) ? selected.code : null;
+        final Component c = renderer.getListCellRendererComponent(list, id, index, isSelected, cellHasFocus);
+        if (c != name) { // Does not occur in typical Swing implementations, but checked anyway for safety.
+            remove(name);
+            add(name = (JLabel) c, BorderLayout.CENTER);
         }
-        return c;
+        code.setBackground(c.getBackground());
+        code.setText(id);
+        return this;
+    }
+
+    /**
+     * Before to paint the component, set the real text that we want to render.
+     * We do that in order to invoke {@link AuthorityCode#toString()} as late as possible.
+     */
+    @Override
+    public void paint(final Graphics g) {
+        if (selected != null) {
+            name.setText(selected.toString());
+            if (selected.failure()) {
+                name.setForeground(Color.RED);
+            }
+        }
+        super.paint(g);
     }
 }
