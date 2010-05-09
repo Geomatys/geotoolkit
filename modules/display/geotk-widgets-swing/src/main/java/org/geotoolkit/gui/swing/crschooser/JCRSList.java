@@ -150,7 +150,7 @@ public class JCRSList extends JComponent{
     private void filter(String keywords) {
         ListModel model = codeList;
         if (keywords != null) {
-            final Locale locale = SwingUtilities.getLocale(this);
+            final Locale locale = Locale.getDefault();
             keywords = keywords.toLowerCase(locale).trim();
             final String[] tokens = keywords.split("\\s+");
             if (tokens.length != 0) {
