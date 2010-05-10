@@ -18,14 +18,15 @@
 package org.geotoolkit.data.memory;
 
 import java.util.List;
-import java.util.ListIterator;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.data.FeatureIDReader;
 
 /**
- *
+ * Generic Feature ID generator.
+ * Will create an id with base + number.
+ * 
  * @author Johann Sorel (Geomatys)
  * @module pending
  */

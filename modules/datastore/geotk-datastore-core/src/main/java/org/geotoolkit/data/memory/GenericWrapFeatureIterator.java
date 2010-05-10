@@ -28,6 +28,7 @@ import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.DataStoreRuntimeException;
+import org.geotoolkit.util.converter.Classes;
 
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.FeatureType;
@@ -91,6 +92,16 @@ public class GenericWrapFeatureIterator<F extends Feature> implements FeatureIte
     @Override
     public void remove() {
         iterator.remove();
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder(Classes.getShortClassName(this));
+        sb.append('\n');
+        String subIterator = "\u2514\u2500\u2500" + iterator.toString(); //move text to the right
+        subIterator = subIterator.replaceAll("\n", "\n\u00A0\u00A0\u00A0"); //move text to the right
+        sb.append(subIterator);
+        return sb.toString();
     }
 
     /**

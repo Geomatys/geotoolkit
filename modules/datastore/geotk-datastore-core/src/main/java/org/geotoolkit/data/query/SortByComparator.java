@@ -16,7 +16,11 @@
  */
 package org.geotoolkit.data.query;
 
+import java.util.Arrays;
 import java.util.Comparator;
+import org.geotoolkit.util.StringUtilities;
+import org.geotoolkit.util.Strings;
+import org.geotoolkit.util.converter.Classes;
 
 import org.opengis.feature.Feature;
 import org.opengis.filter.expression.PropertyName;
@@ -65,5 +69,15 @@ public class SortByComparator implements Comparator<Feature> {
 
         return 0;
     }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder(Classes.getShortClassName(this));
+        sb.append(' ');
+        sb.append(StringUtilities.toCommaSeparatedValues(Arrays.asList(orders)));
+        return sb.toString();
+    }
+
+
 
 }

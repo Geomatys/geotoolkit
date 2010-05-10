@@ -44,6 +44,7 @@ import org.geotoolkit.feature.SchemaException;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.filter.identity.DefaultFeatureId;
 import org.geotoolkit.util.Converters;
+import org.geotoolkit.util.converter.Classes;
 
 import org.opengis.feature.Feature;
 import org.opengis.feature.Property;
@@ -446,6 +447,16 @@ public class MemoryDataStore extends AbstractDataStore{
         @Override
         public boolean hasNext() {
             return reader.hasNext();
+        }
+
+        @Override
+        public String toString() {
+            final StringBuilder sb = new StringBuilder(Classes.getShortClassName(this));
+            sb.append('\n');
+            String subIterator = "\u2514\u2500\u2500" + reader.toString(); //move text to the right
+            subIterator = subIterator.replaceAll("\n", "\n\u00A0\u00A0\u00A0"); //move text to the right
+            sb.append(subIterator);
+            return sb.toString();
         }
 
     }

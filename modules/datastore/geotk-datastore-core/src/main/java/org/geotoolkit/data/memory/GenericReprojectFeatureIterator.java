@@ -28,6 +28,7 @@ import org.geotoolkit.feature.SchemaException;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.geometry.jts.GeometryCoordinateSequenceTransformer;
 import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.util.converter.Classes;
 
 import org.opengis.feature.Feature;
 import org.opengis.feature.simple.SimpleFeature;
@@ -81,6 +82,16 @@ public abstract class GenericReprojectFeatureIterator<F extends Feature, R exten
     @Override
     public boolean hasNext() throws DataStoreRuntimeException {
         return iterator.hasNext();
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder(Classes.getShortClassName(this));
+        sb.append('\n');
+        String subIterator = "\u2514\u2500\u2500" + iterator.toString(); //move text to the right
+        subIterator = subIterator.replaceAll("\n", "\n\u00A0\u00A0\u00A0"); //move text to the right
+        sb.append(subIterator);
+        return sb.toString();
     }
 
     /**

@@ -25,6 +25,7 @@ import org.geotoolkit.data.DataStoreRuntimeException;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.memory.mapping.DefaultFeatureMapper;
 import org.geotoolkit.data.memory.mapping.FeatureMapper;
+import org.geotoolkit.util.converter.Classes;
 
 import org.opengis.feature.Feature;
 import org.opengis.feature.simple.SimpleFeatureType;
@@ -71,4 +72,13 @@ public class GenericMappingFeatureIterator<F extends Feature> implements Feature
         throw new DataStoreRuntimeException("Not writable.");
     }
 
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder(Classes.getShortClassName(this));
+        sb.append('\n');
+        String subIterator = "\u2514\u2500\u2500" + ite.toString(); //move text to the right
+        subIterator = subIterator.replaceAll("\n", "\n\u00A0\u00A0\u00A0"); //move text to the right
+        sb.append(subIterator);
+        return sb.toString();
+    }
 }

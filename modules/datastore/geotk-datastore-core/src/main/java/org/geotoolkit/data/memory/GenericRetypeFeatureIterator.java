@@ -121,6 +121,16 @@ public abstract class GenericRetypeFeatureIterator<F extends Feature, R extends 
         return iterator.hasNext();
     }
 
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder(Classes.getShortClassName(this));
+        sb.append('\n');
+        String subIterator = "\u2514\u2500\u2500" + iterator.toString(); //move text to the right
+        subIterator = subIterator.replaceAll("\n", "\n\u00A0\u00A0\u00A0"); //move text to the right
+        sb.append(subIterator);
+        return sb.toString();
+    }
+
     /**
      * Wrap a FeatureReader with a new featuretype.
      *

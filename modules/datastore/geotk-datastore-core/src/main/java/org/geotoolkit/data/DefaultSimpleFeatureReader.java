@@ -29,6 +29,7 @@ import org.geotoolkit.feature.simple.DefaultSimpleFeature;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.storage.DataStoreException;
+import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.logging.Logging;
 
 import org.opengis.feature.simple.SimpleFeature;
@@ -215,6 +216,19 @@ public abstract class DefaultSimpleFeatureReader implements FeatureReader<Simple
         } catch (IOException ex) {
             throw new DataStoreRuntimeException(ex);
         }
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder(Classes.getShortClassName(this));
+        sb.append('\n');
+        String strFidReader = "\u251C\u2500\u2500" + fidReader.toString(); //move text to the right
+        strFidReader = strFidReader.replaceAll("\n", "\n\u00A0\u00A0\u00A0"); //move text to the right
+        sb.append(strFidReader);
+        String strAttReader = "\u2514\u2500\u2500" + attributeReader.toString(); //move text to the right
+        strAttReader = strAttReader.replaceAll("\n", "\n\u00A0\u00A0\u00A0"); //move text to the right
+        sb.append('\n').append(strAttReader);
+        return sb.toString();
     }
 
     /**
