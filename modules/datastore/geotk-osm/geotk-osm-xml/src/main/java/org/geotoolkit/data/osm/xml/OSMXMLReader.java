@@ -195,23 +195,10 @@ public class OSMXMLReader extends StaxStreamReader{
     }
 
     private Envelope parseBound() throws XMLStreamException {
-        String xmin = null;
-        String xmax = null;
-        String ymin = null;
-        String ymax = null;
-
-        for(int i=0; i<reader.getAttributeCount();i++){
-            final String attName = reader.getAttributeLocalName(i);
-            if(ATT_BOUNDS_MINLON.equalsIgnoreCase(attName)){
-                xmin = reader.getAttributeValue(i);
-            }else if(ATT_BOUNDS_MAXLON.equalsIgnoreCase(attName)){
-                xmax = reader.getAttributeValue(i);
-            }else if(ATT_BOUNDS_MINLAT.equalsIgnoreCase(attName)){
-                ymin = reader.getAttributeValue(i);
-            }else if(ATT_BOUNDS_MAXLAT.equalsIgnoreCase(attName)){
-                ymax = reader.getAttributeValue(i);
-            }
-        }
+        final String xmin = reader.getAttributeValue(null, ATT_BOUNDS_MINLON);
+        final String xmax = reader.getAttributeValue(null, ATT_BOUNDS_MAXLON);
+        final String ymin = reader.getAttributeValue(null, ATT_BOUNDS_MINLAT);
+        final String ymax = reader.getAttributeValue(null, ATT_BOUNDS_MAXLAT);
 
         if(xmin == null || xmax == null || ymin == null || ymax == null){
             throw new XMLStreamException("Error in xml file, osm bounds not defined correctly");
@@ -235,31 +222,31 @@ public class OSMXMLReader extends StaxStreamReader{
      * @throws XMLStreamException
      */
     private boolean parseIdentifiedAttributs() throws XMLStreamException{
-        for(int i=0; i<reader.getAttributeCount();i++){
-            final String attName = reader.getAttributeLocalName(i);
-            if(ATT_CHANGESET.equalsIgnoreCase(attName)){
-                changeset = Integer.parseInt(reader.getAttributeValue(i));
-            }else if(ATT_ID.equalsIgnoreCase(attName)){
-                id = Long.parseLong(reader.getAttributeValue(i));
 
-                //check if we are in search mode
-                if(moveToId > 0 && id != moveToId) return false;
+        final String strChangeset = reader.getAttributeValue(null, ATT_CHANGESET);
+        final String strID = reader.getAttributeValue(null, ATT_ID);
+        final String strTimestamp = reader.getAttributeValue(null, ATT_TIMESTAMP);
+        final String strUID = reader.getAttributeValue(null, ATT_UID);
+        user = reader.getAttributeValue(null, ATT_USER);
+        final String strVersion = reader.getAttributeValue(null, ATT_VERSION);
 
-            }else if(ATT_TIMESTAMP.equalsIgnoreCase(attName)){
-                timestamp = toDateLong(reader.getAttributeValue(i));
-            }else if(ATT_UID.equalsIgnoreCase(attName)){
-                uid = Integer.parseInt(reader.getAttributeValue(i));
-            }else if(ATT_USER.equalsIgnoreCase(attName)){
-                user = reader.getAttributeValue(i);
-            }else if(ATT_VERSION.equalsIgnoreCase(attName)){
-                version = Integer.parseInt(reader.getAttributeValue(i));
-            }
+        id = Long.parseLong(strID);
+        //check if we are in search mode
+        if(moveToId > 0 && id != moveToId) return false;
+        if(id < 0) throw new XMLStreamException("Error in xml file, entity with no id");
+
+        changeset = Integer.parseInt(strChangeset);
+        if(changeset < 0)   throw new XMLStreamException("Error in xml file, change set is null");
+
+        timestamp = toDateLong(strTimestamp);
+        if(timestamp < 0)   throw new XMLStreamException("Error in xml file, timestamp is null");
+
+        if(strUID != null){
+            uid = Integer.parseInt(strUID);
         }
 
-        if(changeset < 0)   throw new XMLStreamException("Error in xml file, change set is null");
-        if(timestamp < 0)   throw new XMLStreamException("Error in xml file, timestamp is null");
+        version = Integer.parseInt(strVersion);
         if(version < 0)     throw new XMLStreamException("Error in xml file, version is null");
-        if(id < 0)          throw new XMLStreamException("Error in xml file, entity with no id");
 
         return true;
     }
@@ -267,23 +254,14 @@ public class OSMXMLReader extends StaxStreamReader{
     private Node parseNode() throws XMLStreamException {
         resetCache();
 
-        String lat = null;
-        String lon = null;
-
         if(!parseIdentifiedAttributs()){
             //we dont want this entity
             toTagEnd(TAG_NODE);
             return null;
         }
 
-        for(int i=0; i<reader.getAttributeCount();i++){
-            final String attName = reader.getAttributeLocalName(i);
-            if(ATT_NODE_LAT.equalsIgnoreCase(attName)){
-                lat = reader.getAttributeValue(i);
-            }else if(ATT_NODE_LON.equalsIgnoreCase(attName)){
-                lon = reader.getAttributeValue(i);
-            }
-        }
+        final String lat = reader.getAttributeValue(null, ATT_NODE_LAT);
+        final String lon = reader.getAttributeValue(null, ATT_NODE_LON);
 
         if(lat == null || lon == null){
             throw new XMLStreamException("Error in xml file, osm node lat/lon not defined correctly");
@@ -492,17 +470,8 @@ public class OSMXMLReader extends StaxStreamReader{
 
 
     private void parseTag(Map<String,String> tags) throws XMLStreamException{
-        String key = null;
-        String value = null;
-
-        for(int i=0; i<reader.getAttributeCount();i++){
-            final String attName = reader.getAttributeLocalName(i);
-            if(ATT_TAG_KEY.equalsIgnoreCase(attName)){
-                key = reader.getAttributeValue(i);
-            }else if(ATT_TAG_VALUE.equalsIgnoreCase(attName)){
-                value = reader.getAttributeValue(i);
-            }
-        }
+        final String key = reader.getAttributeValue(null, ATT_TAG_KEY);
+        final String value = reader.getAttributeValue(null, ATT_TAG_VALUE);
 
         if(key == null || value == null){
             throw new XMLStreamException("Error in xml file, tag has no proper key value pair.");
@@ -515,14 +484,7 @@ public class OSMXMLReader extends StaxStreamReader{
     }
 
     private Long parseWayNode() throws XMLStreamException{
-        String ref = null;
-
-        for(int i=0; i<reader.getAttributeCount();i++){
-            final String attName = reader.getAttributeLocalName(i);
-            if(ATT_WAYND_REF.equalsIgnoreCase(attName)){
-                ref = reader.getAttributeValue(i);
-            }
-        }
+        final String ref = reader.getAttributeValue(null, ATT_WAYND_REF);
 
         if(ref == null){
             throw new XMLStreamException("Error in xml file, way node has no reference attribut.");
@@ -533,20 +495,9 @@ public class OSMXMLReader extends StaxStreamReader{
     }
 
     private Member parseRelationMember() throws XMLStreamException{
-        String ref = null;
-        String role = null;
-        String type = null;
-
-        for(int i=0; i<reader.getAttributeCount();i++){
-            final String attName = reader.getAttributeLocalName(i);
-            if(ATT_RELMB_REF.equalsIgnoreCase(attName)){
-                ref = reader.getAttributeValue(i);
-            }else if(ATT_RELMB_ROLE.equalsIgnoreCase(attName)){
-                role = reader.getAttributeValue(i);
-            }else if(ATT_RELMB_TYPE.equalsIgnoreCase(attName)){
-                type = reader.getAttributeValue(i);
-            }
-        }
+        final String ref = reader.getAttributeValue(null, ATT_RELMB_REF);
+        final String role = reader.getAttributeValue(null, ATT_RELMB_ROLE);
+        final String type = reader.getAttributeValue(null, ATT_RELMB_TYPE);
 
         if(ref == null){
             throw new XMLStreamException("Error in xml file, relation member node has no reference attribut.");
