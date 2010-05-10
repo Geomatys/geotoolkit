@@ -32,6 +32,7 @@ import org.geotoolkit.data.osm.client.v060.GetCapabilities060;
 import org.geotoolkit.data.osm.client.v060.GetChangeSet060;
 import org.geotoolkit.data.osm.client.v060.GetChangeSets060;
 import org.geotoolkit.data.osm.client.v060.GetData060;
+import org.geotoolkit.data.osm.client.v060.GetGPSTrace060;
 import org.geotoolkit.data.osm.client.v060.ReadElement060;
 import org.geotoolkit.data.osm.client.v060.ReadElementFull060;
 import org.geotoolkit.data.osm.client.v060.ReadElementHistory060;
@@ -328,9 +329,13 @@ public class OpenStreetMapServer implements Server{
     /**
      * {@see <a href="http://wiki.openstreetmap.org/wiki/API_v0.6#Retrieving_GPS_points">OSM API 0.6</a>}
      */
-    public Request createGetTrackPoints(){
-        //todo need GPX parser
-        throw new UnsupportedOperationException("Not implemented yet.");
+    public GetGPSTraceRequest createGetTrackPoints(){
+        switch (version) {
+            case v060:
+                return new GetGPSTrace060(serverURL.toString());
+            default:
+                throw new IllegalArgumentException("Version was not defined");
+        }
     }
 
     /**
