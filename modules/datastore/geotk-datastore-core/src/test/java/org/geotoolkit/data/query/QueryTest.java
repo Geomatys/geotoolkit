@@ -355,6 +355,7 @@ public class QueryTest extends TestCase{
         assertEquals(f.getProperty("att4").getValue(), 40d);
 
         assertFalse(ite.hasNext());
+        ite.close();
     }
 
     /**
@@ -416,7 +417,7 @@ public class QueryTest extends TestCase{
         assertEquals(f.getProperty("att4").getValue(), null);
 
         assertFalse(ite.hasNext());
-
+        ite.close();
     }
 
     /**
