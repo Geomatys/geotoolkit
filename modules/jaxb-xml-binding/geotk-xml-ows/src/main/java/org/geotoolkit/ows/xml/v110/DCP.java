@@ -50,7 +50,7 @@ import org.geotoolkit.util.Utilities;
     "http"
 })
 @XmlRootElement(name = "DCP")
-public class DCP extends AbstractDCP {
+public class DCP implements AbstractDCP {
 
     @XmlElement(name = "HTTP")
     private HTTP http;

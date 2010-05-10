@@ -20,11 +20,11 @@ import java.util.List;
 
 /**
  *
- * @author legal
+ * @author Guilhem Legal (Geomatys)
  * @module pending
  */
-public abstract class AbstractHTTP {
+public interface AbstractHTTP {
     
-    public abstract List<? extends AbstractOnlineResourceType> getGetOrPost();
+    List<? extends AbstractOnlineResourceType> getGetOrPost();
 
 }

@@ -59,7 +59,7 @@ import org.geotoolkit.util.Utilities;
 @XmlSeeAlso({
     RequestMethodType.class
 })
-public class OnlineResourceType extends AbstractOnlineResourceType {
+public class OnlineResourceType implements AbstractOnlineResourceType {
 
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
     private String type;

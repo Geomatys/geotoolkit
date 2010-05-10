@@ -24,8 +24,8 @@ import java.util.List;
  * @author Guilhem Legal
  * @module pending
  */
-public abstract class AbstractOperation {
+public interface AbstractOperation {
     
-    public abstract List<? extends AbstractDCP> getDCP();
+    List<? extends AbstractDCP> getDCP();
 
 }

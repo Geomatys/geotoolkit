@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.ows.xml.AbstractTelephone;
 import org.geotoolkit.util.Utilities;
 
 
@@ -54,7 +55,7 @@ import org.geotoolkit.util.Utilities;
     "voice",
     "facsimile"
 })
-public class TelephoneType {
+public class TelephoneType implements AbstractTelephone {
 
     @XmlElement(name = "Voice")
     private List<String> voice;

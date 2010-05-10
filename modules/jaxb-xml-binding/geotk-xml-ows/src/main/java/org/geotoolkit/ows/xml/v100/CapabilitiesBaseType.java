@@ -21,6 +21,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.ows.xml.AbstractCapabilitiesBase;
 import org.geotoolkit.util.Utilities;
 
 
@@ -64,7 +65,7 @@ import org.geotoolkit.util.Utilities;
     "serviceProvider",
     "operationsMetadata"
 })
-public class CapabilitiesBaseType {
+public class CapabilitiesBaseType implements AbstractCapabilitiesBase {
 
     @XmlElement(name = "ServiceIdentification")
     private ServiceIdentification serviceIdentification;

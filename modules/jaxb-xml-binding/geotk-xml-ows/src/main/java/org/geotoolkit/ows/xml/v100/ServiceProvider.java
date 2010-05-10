@@ -21,6 +21,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.ows.xml.AbstractServiceProvider;
 import org.geotoolkit.util.Utilities;
 
 
@@ -53,7 +54,7 @@ import org.geotoolkit.util.Utilities;
     "serviceContact"
 })
 @XmlRootElement(name = "ServiceProvider")
-public class ServiceProvider {
+public class ServiceProvider implements AbstractServiceProvider {
 
     @XmlElement(name = "ProviderName", required = true)
     private String providerName;

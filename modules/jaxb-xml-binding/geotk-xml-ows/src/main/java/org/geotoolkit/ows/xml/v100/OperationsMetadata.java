@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.inspire.xml.MultiLingualCapabilities;
+import org.geotoolkit.ows.xml.AbstractOperationsMetadata;
 import org.geotoolkit.util.Utilities;
 
 
@@ -59,7 +60,7 @@ import org.geotoolkit.util.Utilities;
     "extendedCapabilities"
 })
 @XmlRootElement(name = "OperationsMetadata")
-public class OperationsMetadata {
+public class OperationsMetadata implements AbstractOperationsMetadata {
 
     @XmlElement(name = "Operation", required = true)
     private List<Operation> operation;

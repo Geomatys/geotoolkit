@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.ows.xml.AbstractAddress;
 import org.geotoolkit.util.Utilities;
 
 
@@ -61,7 +62,7 @@ import org.geotoolkit.util.Utilities;
     "country",
     "electronicMailAddress"
 })
-public class AddressType {
+public class AddressType implements AbstractAddress {
 
     @XmlElement(name = "DeliveryPoint")
     private List<String> deliveryPoint;

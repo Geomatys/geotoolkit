@@ -21,8 +21,10 @@ package org.geotoolkit.ows.xml;
  * @author legal
  * @module pending
  */
-public abstract class AbstractOnlineResourceType {
+public interface AbstractOnlineResourceType {
     
-    public abstract void setHref(String href);
+    void setHref(String href);
+
+    String getHref();
 
 }

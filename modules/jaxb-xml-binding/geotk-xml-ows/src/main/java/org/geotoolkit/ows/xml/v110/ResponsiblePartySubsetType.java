@@ -20,6 +20,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.ows.xml.AbstractResponsiblePartySubset;
 import org.geotoolkit.util.Utilities;
 
 
@@ -55,7 +56,7 @@ import org.geotoolkit.util.Utilities;
     "contactInfo",
     "role"
 })
-public class ResponsiblePartySubsetType {
+public class ResponsiblePartySubsetType implements AbstractResponsiblePartySubset {
 
     @XmlElement(name = "IndividualName")
     private String individualName;

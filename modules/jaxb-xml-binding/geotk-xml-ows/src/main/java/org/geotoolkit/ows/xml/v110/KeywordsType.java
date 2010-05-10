@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.ows.xml.AbstractKeywords;
 import org.geotoolkit.util.Utilities;
 
 
@@ -54,7 +55,7 @@ import org.geotoolkit.util.Utilities;
     "keyword",
     "type"
 })
-public class KeywordsType {
+public class KeywordsType implements AbstractKeywords {
 
     @XmlElement(name = "Keyword", required = true)
     private List<LanguageStringType> keyword;
@@ -94,6 +95,18 @@ public class KeywordsType {
             keyword = new ArrayList<LanguageStringType>();
         }
         return Collections.unmodifiableList(keyword);
+    }
+
+    public List<String> getKeywordList() {
+        List<String> keywordList = new ArrayList<String>();
+        if (keyword == null) {
+            keyword = new ArrayList<LanguageStringType>();
+        } else {
+            for (LanguageStringType ls : keyword) {
+                keywordList.add(ls.getValue());
+            }
+        }
+        return keywordList;
     }
 
     /**

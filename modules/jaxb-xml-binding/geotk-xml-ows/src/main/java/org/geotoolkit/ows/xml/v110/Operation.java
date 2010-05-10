@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -63,7 +62,7 @@ import org.geotoolkit.util.Utilities;
     "metadata"
 })
 @XmlRootElement(name = "Operation")
-public class Operation extends AbstractOperation {
+public class Operation implements AbstractOperation {
 
     @XmlElement(name = "DCP", required = true)
     private List<DCP> dcp;

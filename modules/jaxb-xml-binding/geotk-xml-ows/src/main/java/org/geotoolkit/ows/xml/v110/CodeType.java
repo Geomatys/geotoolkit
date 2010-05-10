@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
+import org.geotoolkit.ows.xml.AbstractCodeType;
 import org.geotoolkit.util.Utilities;
 
 
@@ -49,7 +50,7 @@ import org.geotoolkit.util.Utilities;
 @XmlType(name = "CodeType", propOrder = {
     "value"
 })
-public class CodeType {
+public class CodeType implements AbstractCodeType {
 
     @XmlValue
     private String value;

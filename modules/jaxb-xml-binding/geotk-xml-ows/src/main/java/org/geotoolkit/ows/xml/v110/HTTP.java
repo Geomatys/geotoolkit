@@ -55,7 +55,7 @@ import org.geotoolkit.util.Utilities;
     "getOrPost"
 })
 @XmlRootElement(name = "HTTP")
-public class HTTP extends AbstractHTTP {
+public class HTTP implements AbstractHTTP {
 
     @XmlElementRefs({
         @XmlElementRef(name = "Get", namespace = "http://www.opengis.net/ows/1.1", type = JAXBElement.class),

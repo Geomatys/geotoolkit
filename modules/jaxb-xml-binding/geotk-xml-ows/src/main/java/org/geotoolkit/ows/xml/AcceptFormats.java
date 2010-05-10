@@ -25,6 +25,6 @@ import java.util.List;
  */
 public interface AcceptFormats {
 
-    public List<String> getOutputFormat();
+    List<String> getOutputFormat();
 
 }

@@ -61,7 +61,7 @@ import org.geotoolkit.util.Utilities;
     "metadata"
 })
 @XmlRootElement(name = "Operation")
-public class Operation extends AbstractOperation {
+public class Operation implements AbstractOperation {
 
     @XmlElement(name = "DCP", required = true)
     private List<DCP> dcp;

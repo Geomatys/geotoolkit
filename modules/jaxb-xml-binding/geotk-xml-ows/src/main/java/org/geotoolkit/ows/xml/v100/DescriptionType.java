@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.ows.xml.AbstractDescription;
 import org.geotoolkit.util.Utilities;
 
 
@@ -62,7 +63,7 @@ import org.geotoolkit.util.Utilities;
     IdentificationType.class,
     ServiceIdentification.class
 })
-public class DescriptionType {
+public class DescriptionType implements AbstractDescription {
 
     @XmlElement(name = "Title")
     private String title;
@@ -104,10 +105,18 @@ public class DescriptionType {
         return title;
     }
 
+    public String getFirstTitle() {
+        return title;
+    }
+
     /**
      * Gets the value of the abstract property.
      */
     public String getAbstract() {
+        return _abstract;
+    }
+
+     public String getFirstAbstract() {
         return _abstract;
     }
 
