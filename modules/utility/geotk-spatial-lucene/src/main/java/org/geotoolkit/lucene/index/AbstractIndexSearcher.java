@@ -107,7 +107,7 @@ public abstract class AbstractIndexSearcher extends IndexLucene {
             if (configDir != null && configDir.exists() && configDir.isDirectory()) {
                 for (File indexDirectory : configDir.listFiles(new IndexDirectoryFilter(serviceID))) {
                     String suffix = indexDirectory.getName();
-                    suffix = suffix.substring(suffix.indexOf('-') + 1);
+                    suffix = suffix.substring(suffix.lastIndexOf('-') + 1);
                     try {
                         long currentTime = Long.parseLong(suffix);
                         if (currentTime > maxTime) {
