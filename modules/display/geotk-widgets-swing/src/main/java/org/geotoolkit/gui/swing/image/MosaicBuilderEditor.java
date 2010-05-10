@@ -79,13 +79,13 @@ import static org.geotoolkit.gui.swing.image.MosaicChooser.OUTPUT_DIRECTORY;
  * }
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.02
+ * @version 3.12
  *
  * @since 3.00
  * @module
  */
 @SuppressWarnings("serial")
-public class MosaicBuilderEditor extends JPanel implements MosaicPerformanceGraph.Delayed, Dialog {
+public class MosaicBuilderEditor extends JComponent implements MosaicPerformanceGraph.Delayed, Dialog {
     /**
      * The default tile size. If {@link MosaicBuilder} can not suggest a tile size,
      * we will use the size specified by the WMTS (<cite>Web Map Tile Service</cite>)

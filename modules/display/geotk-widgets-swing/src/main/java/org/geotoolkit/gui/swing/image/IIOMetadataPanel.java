@@ -86,7 +86,7 @@ import org.geotoolkit.internal.swing.ComboBoxRenderer;
  * </td></tr></table>
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.09
+ * @version 3.12
  *
  * @see MetadataTreeTable
  *
@@ -94,7 +94,7 @@ import org.geotoolkit.internal.swing.ComboBoxRenderer;
  * @module
  */
 @SuppressWarnings("serial")
-public class IIOMetadataPanel extends JPanel {
+public class IIOMetadataPanel extends JComponent {
     /**
      * The choices of metadata format. Typical choices are
      * {@value org.geotoolkit.image.io.metadata.SpatialMetadataFormat#FORMAT_NAME} and
@@ -122,7 +122,7 @@ public class IIOMetadataPanel extends JPanel {
      * {@code addXXXMetadataFormat} methods should be invoked in order to display a content.
      */
     public IIOMetadataPanel() {
-        super(new BorderLayout());
+        setLayout(new BorderLayout());
         // If the preferred width is modified, consider updating the
         // preferred column width in IIOMetadataTreeTable constructor.
         setPreferredSize(new Dimension(500, 400));
@@ -148,6 +148,7 @@ public class IIOMetadataPanel extends JPanel {
             c.gridx=1; c.weightx=1; c.fill=GridBagConstraints.BOTH;
             controls.add(formats, c);
             add(controls, BorderLayout.NORTH);
+            controls.setOpaque(false);
         }
         /*
          * Add the section for metadata properties.
@@ -164,6 +165,7 @@ public class IIOMetadataPanel extends JPanel {
             c.gridy=0; ci.top=3; ci.bottom=0; properties.add(label(resources, Vocabulary.Keys.DESCRIPTION,  description), c);
             c.gridy++; ci.top=0; ci.bottom=3; properties.add(label(resources, Vocabulary.Keys.VALID_VALUES, validValues), c);
             add(properties, BorderLayout.SOUTH);
+            properties.setOpaque(false);
         }
         /*
          * Plug the listeners.

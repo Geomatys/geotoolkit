@@ -29,9 +29,9 @@ import java.text.NumberFormat;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 
-import javax.swing.JPanel;
 import javax.swing.JLabel;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.MutableComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.BorderFactory;
@@ -59,13 +59,13 @@ import static java.awt.GridBagConstraints.*;
  * {@link DecimalFormat}, {@link SimpleDateFormat} or {@link AngleFormat}.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @version 3.12
  *
  * @since 2.0
  * @module
  */
 @SuppressWarnings("serial")
-public class FormatChooser extends JPanel implements Dialog {
+public class FormatChooser extends JComponent implements Dialog {
     /**
      * The maximum number of items to keep in the history list.
      */
@@ -126,7 +126,7 @@ public class FormatChooser extends JPanel implements Dialog {
      * @throws IllegalArgumentException if the format is invalid.
      */
     public FormatChooser(final Format format) throws IllegalArgumentException {
-        super(new GridBagLayout());
+        setLayout(new GridBagLayout());
         final String[] patterns = getPatterns(format);
         if (patterns != null) {
             final MutableComboBoxModel model = (MutableComboBoxModel) choices.getModel();

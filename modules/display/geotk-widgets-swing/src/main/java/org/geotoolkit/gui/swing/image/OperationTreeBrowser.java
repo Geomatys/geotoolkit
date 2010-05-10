@@ -22,6 +22,7 @@ import java.util.Locale;
 import javax.swing.Icon;
 import javax.swing.JTree;
 import javax.swing.JPanel;
+import javax.swing.JComponent;
 import javax.swing.JSplitPane;
 import javax.swing.JScrollPane;
 import javax.swing.BorderFactory;
@@ -90,7 +91,7 @@ import org.geotoolkit.resources.Vocabulary;
  *
  * @author Martin Desruisseaux (IRD)
  * @author Lionel Flahaut (IRD)
- * @version 3.00
+ * @version 3.12
  *
  * @see ImageProperties
  * @see ParameterEditor
@@ -100,7 +101,7 @@ import org.geotoolkit.resources.Vocabulary;
  * @module
  */
 @SuppressWarnings("serial")
-public class OperationTreeBrowser extends JPanel implements Dialog {
+public class OperationTreeBrowser extends JComponent implements Dialog {
     /**
      * Key for {@link PropertySource}.
      */
@@ -158,7 +159,7 @@ public class OperationTreeBrowser extends JPanel implements Dialog {
      * @param model The tree model built from the rendering chain to browse.
      */
     private OperationTreeBrowser(final TreeModel model) {
-        super(new BorderLayout());
+        setLayout(new BorderLayout());
         final Listeners listeners = new Listeners();
         final JTree tree = new JTree(model);
         tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);

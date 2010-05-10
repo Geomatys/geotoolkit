@@ -43,7 +43,7 @@ import static java.awt.GridBagConstraints.*;
  * @module
  */
 @SuppressWarnings("serial")
-final class DirectoryPanel extends JPanel {
+final class DirectoryPanel extends JComponent {
     /**
      * An item in the list of directories that can be setup.
      */

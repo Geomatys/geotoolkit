@@ -24,7 +24,6 @@ import java.util.TimeZone;
 import java.util.Calendar;
 import java.util.EventListener;
 
-import java.awt.Insets;
 import java.awt.Component;
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
@@ -88,13 +87,13 @@ import org.geotoolkit.gui.swing.Dialog;
  * </td></tr></table>
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @version 3.12
  *
  * @since 2.3
  * @module
  */
 @SuppressWarnings("serial")
-public class CoordinateChooser extends JPanel implements Dialog {
+public class CoordinateChooser extends JComponent implements Dialog {
     /**
      * An enumeration constant for showing or hidding the geographic area selector.
      * Used as argument for {@link #isSelectorVisible} and {@link #setSelectorVisible}.
@@ -247,7 +246,7 @@ public class CoordinateChooser extends JPanel implements Dialog {
      * @param maxTime the maximal date allowed.
      */
     public CoordinateChooser(final Date minTime, final Date maxTime) {
-        super(new GridBagLayout());
+        setLayout(new GridBagLayout());
         final Locale locale = getDefaultLocale();
         final int timeField = Calendar.DAY_OF_YEAR;
         final Vocabulary resources = Vocabulary.getResources(locale);
@@ -335,25 +334,25 @@ public class CoordinateChooser extends JPanel implements Dialog {
     }
 
     /**
-     * Retourne un panneau avec une bordure titrée.
+     * Creates a panel with a titled border.
      */
     private static JPanel getPanel(final String title) {
-        final JPanel panel=new JPanel(new GridBagLayout());
+        final JPanel panel = new JPanel(new GridBagLayout());
         panel.setBorder(BorderFactory.createCompoundBorder(
                         BorderFactory.createTitledBorder(title),
                         BorderFactory.createEmptyBorder(6,6,6,6)));
+        panel.setOpaque(false);
         return panel;
     }
 
     /**
-     * Définit la largeur (en nombre de colonnes) d'un champ.
-     * Eventuellement, cette méthode peut aussi redéfinir le format.
+     * Sets the width of the given field, in amount of columns.
+     * As a side effect, this method set also the format.
      */
     private static void setup(final JSpinner spinner, final int width, final Format format) {
-        final JFormattedTextField field=((JSpinner.DefaultEditor)spinner.getEditor()).getTextField();
-        field.setMargin(new Insets(/*top*/0, /*left*/6, /*bottom*/0, /*right*/3));
+        final JFormattedTextField field = ((JSpinner.DefaultEditor) spinner.getEditor()).getTextField();
         field.setColumns(width);
-        if (format!=null) {
+        if (format != null) {
             ((InternationalFormatter)field.getFormatter()).setFormat(format);
         }
     }

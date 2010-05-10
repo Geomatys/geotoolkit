@@ -115,7 +115,7 @@ import org.geotoolkit.resources.Errors;
  * @module
  */
 @SuppressWarnings("serial")
-public class LayerList extends JPanel {
+public class LayerList extends JComponent {
     /**
      * The default width and height.
      */
@@ -215,7 +215,7 @@ public class LayerList extends JPanel {
      * @param database The database for which to display the list of available layers.
      */
     public LayerList(final CoverageDatabase database) {
-        super(new BorderLayout());
+        setLayout(new BorderLayout());
         this.database = database;
         final Listeners listeners = new Listeners();
         timer = new Timer(200, listeners);
@@ -259,11 +259,11 @@ public class LayerList extends JPanel {
         north = new JLabel((String) null, JLabel.CENTER);
         south = new JLabel((String) null, JLabel.CENTER);
         geographicPanel = new JPanel(new GridLayout(3, 3));
-        geographicPanel.add(new JPanel()); geographicPanel.add(north);
-        geographicPanel.add(new JPanel()); geographicPanel.add(west);
-        geographicPanel.add(new JPanel()); geographicPanel.add(east);
-        geographicPanel.add(new JPanel()); geographicPanel.add(south);
-        geographicPanel.add(new JPanel());
+        geographicPanel.add(filler()); geographicPanel.add(north);
+        geographicPanel.add(filler()); geographicPanel.add(west);
+        geographicPanel.add(filler()); geographicPanel.add(east);
+        geographicPanel.add(filler()); geographicPanel.add(south);
+        geographicPanel.add(filler());
         geographicPanel.setVisible(false);
         geographicPanel.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createTitledBorder(resources.getString(Vocabulary.Keys.GEOGRAPHIC_COORDINATES)),
@@ -366,6 +366,7 @@ public class LayerList extends JPanel {
         c.insets.left = c.insets.right = 6;
         c.gridx=0; c.gridy=0; c.insets.top = 12;
         for (final JComponent component : components) {
+            component.setOpaque(false);
             pane.add(component, c);
             c.gridy++;
         }
@@ -373,14 +374,25 @@ public class LayerList extends JPanel {
          * Wrap the JXBusyLabel in a JPanel in order to fill the empty
          * space even when the label is invisible.
          */
-        final JPanel filler = new JPanel();
+        final JComponent filler = filler();
+        filler.setOpaque(false);
         filler.add(busyLabel);
         c.insets.top = 0;
         c.weighty = 1;
         c.fill    = GridBagConstraints.NONE;
         c.anchor  = GridBagConstraints.CENTER;
         pane.add(filler, c);
+        pane.setOpaque(false);
         return pane;
+    }
+
+    /**
+     * Returns a component used only for filling space.
+     */
+    private static JComponent filler() {
+        final JPanel filler = new JPanel(false);
+        filler.setOpaque(false);
+        return filler;
     }
 
     /**

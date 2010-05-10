@@ -294,6 +294,7 @@ public final class ExceptionMonitor {
                     final JScrollPane scroll = new JScrollPane(text);
                     if (traceComponent != null) {
                         if (!(traceComponent instanceof JTabbedPane)) {
+                            traceComponent.setOpaque(false);
                             String classname = Classes.getShortClassName(exception);
                             JTabbedPane tabs = new JTabbedPane(JTabbedPane.TOP, JTabbedPane.SCROLL_TAB_LAYOUT);
                             tabs.addTab(classname, traceComponent);

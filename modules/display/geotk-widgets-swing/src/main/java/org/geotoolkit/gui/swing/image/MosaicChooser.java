@@ -75,13 +75,13 @@ import org.geotoolkit.gui.swing.ExceptionMonitor;
  * }
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.08
+ * @version 3.12
  *
  * @since 3.00
  * @module
  */
 @SuppressWarnings("serial")
-public class MosaicChooser extends JPanel implements Dialog {
+public class MosaicChooser extends JComponent implements Dialog {
     /**
      * The preference name for the format of tiles to be read.
      */
@@ -148,7 +148,7 @@ public class MosaicChooser extends JPanel implements Dialog {
      * Creates a new tiles chooser.
      */
     public MosaicChooser() {
-        super(new BorderLayout());
+        setLayout(new BorderLayout());
         final Vocabulary resources = Vocabulary.getResources(null);
         final MosaicPanel mosaic = this.mosaic = new MosaicPanel();
         final MosaicTableModel tiles = this.tiles = new MosaicTableModel();

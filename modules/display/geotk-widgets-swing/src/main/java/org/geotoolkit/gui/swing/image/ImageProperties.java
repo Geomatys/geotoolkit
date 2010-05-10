@@ -92,7 +92,7 @@ import static java.awt.GridBagConstraints.*;
  * emitted from any thread - it doesn't need to be the <cite>Swing</cite> thread.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.09
+ * @version 3.12
  *
  * @see ImageFileProperties
  * @see OperationTreeBrowser
@@ -101,7 +101,7 @@ import static java.awt.GridBagConstraints.*;
  * @module
  */
 @SuppressWarnings("serial")
-public class ImageProperties extends JPanel implements Dialog {
+public class ImageProperties extends JComponent implements Dialog {
     /**
      * Index in the {@link #descriptions} array for the text area of the operation name,
      * version and description. If the image is not an instance of {@link OperationNode},
@@ -174,15 +174,15 @@ public class ImageProperties extends JPanel implements Dialog {
      * be invoked in order to set the properties source.
      */
     public ImageProperties() {
-        this((JPanel) null);
+        this((JComponent) null);
     }
 
     /**
      * Creates a new instance with the given panel as an additional "metadata" tab.
      * This is used for the {@link ImageFileProperties} constructor only.
      */
-    ImageProperties(final JPanel metadata) {
-        super(new BorderLayout());
+    ImageProperties(final JComponent metadata) {
+        setLayout(new BorderLayout());
         final Vocabulary resources = Vocabulary.getResources(getLocale());
         tabs           = new JTabbedPane();
         colorRamp      = new ColorRamp();
@@ -248,6 +248,7 @@ public class ImageProperties extends JPanel implements Dialog {
                 case COLOR_RAMP: {
                     c.anchor=CENTER; insets.right=6;
                     description = colorRamp;
+                    description.setOpaque(false);
                     break;
                 }
                 default: {
@@ -255,6 +256,7 @@ public class ImageProperties extends JPanel implements Dialog {
                     break;
                 }
             }
+            info.setOpaque(false);
             info.add(description, c);
             label.setLabelFor(description);
             c.anchor=WEST; insets.right=0;
@@ -273,6 +275,7 @@ public class ImageProperties extends JPanel implements Dialog {
             samples = new ImageSampleValues();
             tabs.addTab(resources.getString(Vocabulary.Keys.PIXELS), samples);
         } else {
+            metadata.setOpaque(false);
             properties = null;
             samples    = null;
             tabs.addTab(resources.getString(Vocabulary.Keys.METADATA), metadata);

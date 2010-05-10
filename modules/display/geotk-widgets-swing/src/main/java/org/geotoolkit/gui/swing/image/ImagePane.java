@@ -35,8 +35,8 @@ import java.util.Locale;
 import java.util.concurrent.Future;
 import java.util.concurrent.ExecutionException;
 import javax.swing.BorderFactory;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.SwingWorker;
 
@@ -256,18 +256,18 @@ public class ImagePane extends ZoomPane {
      * This panel paints a translucide background below the progress bar.
      *
      * @author Martin Desruisseaux (Geomatys)
-     * @version 3.07
+     * @version 3.12
      *
      * @since 3.07
      * @module
      */
-    private static final class ProgressPane extends JPanel {
+    private static final class ProgressPane extends JComponent {
         /** The progress label. */ final JLabel label;
         /** The progress bar.   */ final JProgressBar bar;
 
         /** Creates a new panel with a label initialized to a default value from the given locale. */
         ProgressPane(final Locale locale) {
-            super(new GridLayout(2, 1, 0, 3));
+            setLayout(new GridLayout(2, 1, 0, 3));
             label = new JLabel(getDefaultProgressLabel(locale), JLabel.CENTER);
             bar   = new JProgressBar();
             setOpaque(false);

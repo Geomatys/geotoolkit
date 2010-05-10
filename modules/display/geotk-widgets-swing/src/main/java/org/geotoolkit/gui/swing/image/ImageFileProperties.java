@@ -38,6 +38,7 @@ import java.awt.EventQueue;
 import java.awt.Dimension;
 import javax.swing.JList;
 import javax.swing.JComponent;
+import javax.swing.JScrollPane;
 import javax.swing.JFileChooser;
 import javax.swing.SwingWorker;
 import javax.swing.DefaultListModel;
@@ -167,7 +168,9 @@ public class ImageFileProperties extends ImageProperties implements PropertyChan
         warningsTab = tabs.getTabCount();
         warnings = new DefaultListModel();
         final Vocabulary resources = Vocabulary.getResources(getLocale());
-        tabs.addTab(resources.getString(Vocabulary.Keys.WARNING), new JList(warnings));
+        final JComponent list = new JScrollPane(new JList(warnings));
+        list.setOpaque(false);
+        tabs.addTab(resources.getString(Vocabulary.Keys.WARNING), list);
         tabs.setEnabledAt(warningsTab, false);
     }
 

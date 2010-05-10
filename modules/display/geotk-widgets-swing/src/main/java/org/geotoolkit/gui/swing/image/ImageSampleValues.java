@@ -30,6 +30,7 @@ import javax.swing.JPanel;
 import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.JSpinner;
+import javax.swing.JComponent;
 import javax.swing.JScrollPane;
 import javax.swing.BorderFactory;
 import javax.swing.SpinnerNumberModel;
@@ -60,7 +61,7 @@ import org.geotoolkit.internal.SwingUtilities;
  * @module
  */
 @SuppressWarnings("serial")
-public class ImageSampleValues extends JPanel {
+public class ImageSampleValues extends JComponent {
     /**
      * The table which contains sample values.
      */
@@ -207,7 +208,7 @@ public class ImageSampleValues extends JPanel {
      * Creates a new table without initial image to display.
      */
     public ImageSampleValues() {
-        super(new GridBagLayout());
+        setLayout(new GridBagLayout());
 
         // Prepares the component showing comments (not yet used).
         comments = new JLabel();

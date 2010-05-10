@@ -78,13 +78,13 @@ import org.geotoolkit.gui.swing.image.RegisteredOperationBrowser;
  * If none of the above information is available, then {@link Version#GEOTOOLKIT} is used.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.09
+ * @version 3.12
  *
  * @since 2.0
  * @module
  */
 @SuppressWarnings("serial")
-public class About extends JPanel implements Dialog {
+public class About extends JComponent implements Dialog {
     /**
      * The amount of bytes in one "unit of memory" to be displayed.
      */
@@ -152,7 +152,7 @@ public class About extends JPanel implements Dialog {
     private About(final Object logo, final Attributes attributes,
                   ClassLoader loader, final ThreadGroup tasks)
     {
-        super(new GridBagLayout());
+        setLayout(new GridBagLayout());
         final Locale locale = getDefaultLocale();
         resources = Vocabulary.getResources(locale);
         if (loader == null) {
@@ -270,6 +270,7 @@ public class About extends JPanel implements Dialog {
             pane.add(totalMemoryLabel, c);
             c.gridy++; c.insets.bottom=12;
             pane.add(percentUsedLabel, c);
+            pane.setOpaque(false);
             tabs.addTab(resources.getString(Vocabulary.Keys.SYSTEM), pane);
         }
         /*
@@ -282,6 +283,7 @@ public class About extends JPanel implements Dialog {
             pane.add(new JLabel(resources.getString(Vocabulary.Keys.RUNNING_TASKS)), BorderLayout.NORTH);
             pane.add(new JScrollPane(list), BorderLayout.CENTER);
             pane.setBorder(BorderFactory.createEmptyBorder(9,9,9,9));
+            pane.setOpaque(false);
             tabs.addTab(resources.getString(Vocabulary.Keys.TASKS), pane);
         } else {
             updater = null;
@@ -372,6 +374,7 @@ public class About extends JPanel implements Dialog {
         component.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createEmptyBorder(3,3,3,3), component.getBorder()));
         component.setPreferredSize(new Dimension(200, 200));
+        component.setOpaque(false);
         return component;
     }
 

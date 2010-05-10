@@ -40,13 +40,13 @@ import org.geotoolkit.resources.Descriptions;
  * All of them share the same "apply" button.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.11
+ * @version 3.12
  *
  * @since 3.11 (derived from 3.00)
  * @module
  */
 @SuppressWarnings("serial")
-final class DatabasePanels extends JPanel implements ActionListener {
+final class DatabasePanels extends JComponent implements ActionListener {
     /**
      * The identifiers used with {@link CardLayout} for identifying the panels
      * showing connection parameters.
@@ -60,7 +60,7 @@ final class DatabasePanels extends JPanel implements ActionListener {
      * The panel which will contains the {@link DatabasePanel} instances.
      * This panel use a {@link CardLayout}.
      */
-    private final JPanel connectionPanels;
+    private final JComponent connectionPanels;
 
     /**
      * The "Apply" button used in the panels for database connections.
@@ -71,12 +71,13 @@ final class DatabasePanels extends JPanel implements ActionListener {
      * Creates the panels.
      */
     DatabasePanels(final Vocabulary resources, final DataPanel dataPanel) {
-        super(new BorderLayout());
+        setLayout(new BorderLayout());
         applyButton = new JButton(resources.getString(Vocabulary.Keys.APPLY));
         applyButton.setEnabled(false);
         final EPSGPanel epsgPanel = new EPSGPanel(resources, dataPanel, applyButton);
         dataPanel.epsgPanel = epsgPanel;
         connectionPanels = new JPanel(new CardLayout());
+        connectionPanels.setOpaque(false);
         final String[] databaseNames = new String[CONNECTION_PANELS.length];
         for (int i=0; i<CONNECTION_PANELS.length; i++) {
             databaseNames[i] = resources.getString(Vocabulary.Keys.DATA_BASE_$1, CONNECTION_PANELS[i]);
@@ -92,13 +93,16 @@ final class DatabasePanels extends JPanel implements ActionListener {
          * Creates the combo box for selecting which one of the above panels to show.
          */
         final JComboBox databaseChoices = new JComboBox(databaseNames);
-        databaseChoices.setBorder(BorderFactory.createEmptyBorder(0, 60, 0, 60));
         databaseChoices.addActionListener(this);
+        final Box choicePanel = Box.createHorizontalBox();
+        choicePanel.add(databaseChoices);
+        choicePanel.setBorder(BorderFactory.createEmptyBorder(0, 60, 0, 60));
         /*
          * Creates a warning message saying that the password is not encrypted,
          * and creates the "Apply" button.
          */
         final JPanel messagePanel = new JPanel(new BorderLayout());
+        messagePanel.setOpaque(false);
         final JLabel message = new JLabel(Descriptions.getResources(resources.getLocale())
                 .getString(Descriptions.Keys.PASSWORD_NOT_ENCRYPTED));
         message.setForeground(Color.RED);
@@ -112,7 +116,7 @@ final class DatabasePanels extends JPanel implements ActionListener {
          * CardLayout. So we add an other listener here for forcing the file loading of the EPSG
          * panel, which is expected to be the first panel visible on the top of the cards.
          */
-        add(databaseChoices,  BorderLayout.BEFORE_FIRST_LINE);
+        add(choicePanel,      BorderLayout.BEFORE_FIRST_LINE);
         add(connectionPanels, BorderLayout.CENTER);
         add(messagePanel,     BorderLayout.AFTER_LAST_LINE);
         addComponentListener(new ComponentAdapter() {

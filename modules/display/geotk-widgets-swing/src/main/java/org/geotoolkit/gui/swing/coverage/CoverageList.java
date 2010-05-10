@@ -34,6 +34,7 @@ import java.awt.image.RenderedImage;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
@@ -69,7 +70,7 @@ import org.geotoolkit.resources.Vocabulary;
  * @module
  */
 @SuppressWarnings("serial")
-public class CoverageList extends JPanel {
+public class CoverageList extends JComponent {
     /**
      * Action commands.
      */
@@ -114,7 +115,7 @@ public class CoverageList extends JPanel {
      * @param coverages The table model which contain the coverage entries to list.
      */
     public CoverageList(final CoverageTableModel coverages) {
-        super(new BorderLayout());
+        setLayout(new BorderLayout());
         this.coverages = coverages;
         final Locale locale = getLocale();
         final Vocabulary resources = Vocabulary.getResources(locale);
@@ -146,6 +147,7 @@ public class CoverageList extends JPanel {
         removeButton.setEnabled(false);
 
         final JPanel buttonBar = new JPanel(new GridLayout(1, 2));
+        buttonBar.setOpaque(false);
         buttonBar.add(addButton);
         buttonBar.add(removeButton);
         final Box b = Box.createHorizontalBox();

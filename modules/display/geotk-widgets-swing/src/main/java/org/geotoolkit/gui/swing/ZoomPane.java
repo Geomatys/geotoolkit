@@ -1948,8 +1948,7 @@ public abstract class ZoomPane extends JComponent implements DeformableViewer {
                 add(scrollbarY, c);
             }
             if (scrollbarX != null && scrollbarY != null) {
-                final JComponent corner = new JPanel();
-                corner.setOpaque(true);
+                final JComponent corner = new JPanel(false);
                 c.gridx = 1; c.weightx = 0;
                 c.gridy = 1; c.weighty = 0;
                 c.fill = BOTH;

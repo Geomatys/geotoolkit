@@ -77,7 +77,7 @@ import static java.awt.GridBagConstraints.*;
  * </ul>
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @version 3.12
  *
  * @see org.geotoolkit.gui.swing.image.KernelEditor
  * @see org.geotoolkit.gui.swing.image.ImageProperties
@@ -89,7 +89,7 @@ import static java.awt.GridBagConstraints.*;
  * @todo This class do not yet support the edition of parameter value.
  */
 @SuppressWarnings("serial")
-public class ParameterEditor extends JPanel {
+public class ParameterEditor extends JComponent {
     /** Key for {@link String} node.    */  private static final String STRING  = "String";
     /** Key for {@link Boolean} node.   */  private static final String BOOLEAN = "Boolean";
     /** Key for {@link Number} node.    */  private static final String NUMBER  = "Number";
@@ -153,7 +153,7 @@ public class ParameterEditor extends JPanel {
      * Constructs an initially empty parameter editor.
      */
     public ParameterEditor() {
-        super(new BorderLayout());
+        setLayout(new BorderLayout());
         description.setBorder(
                 BorderFactory.createCompoundBorder(description.getBorder(),
                 BorderFactory.createCompoundBorder(
@@ -629,7 +629,7 @@ public class ParameterEditor extends JPanel {
      *       the minimum and maximum values first since spinner needs bounds.
      */
     @SuppressWarnings("serial")
-    private static final class Singleton extends JPanel implements Editor {
+    private static final class Singleton extends JComponent implements Editor {
         /**
          * The data type.
          */
@@ -649,7 +649,7 @@ public class ParameterEditor extends JPanel {
          * Construct an editor for value using the specified format.
          */
         public Singleton(final Format format) {
-            super(new GridBagLayout());
+            setLayout(new GridBagLayout());
             if (format != null) {
                 field = new JFormattedTextField(format);
             } else {

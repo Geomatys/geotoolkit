@@ -23,8 +23,8 @@ import java.awt.GridBagLayout;
 import java.util.Locale;
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 import javax.swing.JSpinner;
+import javax.swing.JComponent;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -40,7 +40,7 @@ import org.geotoolkit.resources.Vocabulary;
  * @since 3.00
  * @module
  */
-public class SizeFields extends JPanel implements ChangeListener {
+public class SizeFields extends JComponent implements ChangeListener {
     /**
      * For cross-version compatibility.
      */
@@ -70,7 +70,7 @@ public class SizeFields extends JPanel implements ChangeListener {
      * @param minSize The minimal size allowed.
      */
     public SizeFields(final Locale locale, final Dimension size, final Dimension minSize) {
-        super(new GridBagLayout());
+        setLayout(new GridBagLayout());
         width  = new JSpinner((new SpinnerNumberModel(size.width,  minSize.width,  null, 1)));
         height = new JSpinner((new SpinnerNumberModel(size.height, minSize.height, null, 1)));
         final Vocabulary resources = Vocabulary.getResources(locale);

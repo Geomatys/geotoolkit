@@ -19,6 +19,7 @@ package org.geotoolkit.gui.swing;
 
 import javax.swing.JTable;
 import javax.swing.JPanel;
+import javax.swing.JComponent;
 import javax.swing.JScrollPane;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
@@ -70,13 +71,13 @@ import org.geotoolkit.internal.SwingUtilities;
  * the logger messages to a higher level than the logger level.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.02
+ * @version 3.12
  *
  * @since 2.0
  * @module
  */
 @SuppressWarnings("serial")
-public class LoggingPanel extends JPanel implements Disposable {
+public class LoggingPanel extends JComponent implements Disposable {
     /**
      * Enumeration class for columns to be shown in a {@link LoggingPanel}.
      *
@@ -152,7 +153,7 @@ public class LoggingPanel extends JPanel implements Disposable {
      * }
      */
     public LoggingPanel() {
-        super(new BorderLayout());
+        setLayout(new BorderLayout());
         messageFont = Font.decode("Monospaced");
         model = new LoggingTableModel();
         table = new JXTable(model);

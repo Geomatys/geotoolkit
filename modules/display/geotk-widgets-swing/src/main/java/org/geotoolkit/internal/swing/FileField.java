@@ -23,9 +23,9 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.Locale;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import org.geotoolkit.resources.Vocabulary;
@@ -41,7 +41,7 @@ import org.geotoolkit.resources.Vocabulary;
  * @since 3.00
  * @module
  */
-public class FileField extends JPanel implements ActionListener {
+public class FileField extends JComponent implements ActionListener {
     /**
      * For cross-version compatibility.
      */
@@ -65,7 +65,7 @@ public class FileField extends JPanel implements ActionListener {
      * @param vertical {@code true} if the button should be on the bottom instead than on the right side.
      */
     public FileField(final Locale locale, final String label, final boolean vertical) {
-        super(new BorderLayout());
+        setLayout(new BorderLayout());
         if (label != null) {
             add(new JLabel(label), vertical ? BorderLayout.BEFORE_FIRST_LINE : BorderLayout.BEFORE_LINE_BEGINS);
         }

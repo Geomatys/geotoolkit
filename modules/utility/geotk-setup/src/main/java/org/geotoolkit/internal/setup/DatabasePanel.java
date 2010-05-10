@@ -36,7 +36,6 @@ import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -61,7 +60,7 @@ import static java.awt.GridBagConstraints.*;
  * @module
  */
 @SuppressWarnings("serial")
-abstract class DatabasePanel extends JPanel implements ActionListener {
+abstract class DatabasePanel extends JComponent implements ActionListener {
     /**
      * {@link Installation#EPSG} or {@link Installation#COVERAGES} depending on
      * the database we are configuring.
@@ -222,7 +221,7 @@ abstract class DatabasePanel extends JPanel implements ActionListener {
     DatabasePanel(final Vocabulary resources, final Installation installation,
             final boolean hasAutoChoice, final JButton applyButton)
     {
-        super(new GridBagLayout());
+        setLayout(new GridBagLayout());
         this.installation = installation;
         setBorder(BorderFactory.createEmptyBorder(12, 12, 6, 12));
         /*

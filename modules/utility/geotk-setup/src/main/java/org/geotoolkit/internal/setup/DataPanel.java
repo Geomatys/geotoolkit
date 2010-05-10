@@ -50,7 +50,7 @@ import org.geotoolkit.internal.io.Installation;
  * @module
  */
 @SuppressWarnings("serial")
-final class DataPanel extends JPanel {
+final class DataPanel extends JComponent {
     /**
      * Index of items to reports. The {@code COUNT} field is the total number of items.
      */

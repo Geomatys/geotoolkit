@@ -260,12 +260,10 @@ public final class MosaicImageViewer extends JPanel implements ChangeListener {
      * @throws IOException If an I/O operation was required and failed.
      */
     protected JComponent createControlPanel() throws IOException {
-        final JPanel panel = new JPanel();
-        panel.setLayout(new BorderLayout());
+        final JPanel panel = new JPanel(new BorderLayout());
         panel.add(this, BorderLayout.CENTER);
 
-        final JPanel subsamplings = new JPanel();
-        subsamplings.setLayout(new GridLayout(3,3));
+        final JPanel subsamplings = new JPanel(new GridLayout(3,3));
         subsamplings.add(new JLabel());
         subsamplings.add(new JLabel("Requested", JLabel.CENTER));
         subsamplings.add(new JLabel("Actual", JLabel.CENTER));
@@ -293,12 +291,12 @@ public final class MosaicImageViewer extends JPanel implements ChangeListener {
         options.setBorder(BorderFactory.createTitledBorder("Options"));
         panel.add(options, BorderLayout.EAST);
 
-        final JPanel controls = new JPanel();
-        controls.setLayout(new BorderLayout());
+        final JPanel controls = new JPanel(new BorderLayout());
         controls.add(subsamplings, BorderLayout.WEST);
         controls.add(options, BorderLayout.EAST);
         controls.setBorder(BorderFactory.createEmptyBorder(6, 9, 9, 9));
         panel.add(controls, BorderLayout.SOUTH);
+        panel.setOpaque(false);
 
         final JTabbedPane tabs = new JTabbedPane();
         tabs.addTab("Image", panel);

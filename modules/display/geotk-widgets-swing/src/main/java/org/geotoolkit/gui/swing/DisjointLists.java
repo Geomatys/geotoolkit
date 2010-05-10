@@ -27,8 +27,8 @@ import java.awt.event.ActionListener;
 import java.awt.IllegalComponentStateException;
 
 import javax.swing.JList;
-import javax.swing.JPanel;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JScrollPane;
 import javax.swing.AbstractListModel;
 
@@ -58,7 +58,7 @@ import static java.awt.GridBagConstraints.*;
  * @module
  */
 @SuppressWarnings("serial")
-public class DisjointLists extends JPanel implements Dialog {
+public class DisjointLists extends JComponent implements Dialog {
     /**
      * The list model. Each {@link DisjointLists} object will use two instances
      * of this class.  Both instances share the same list of elements, but have
@@ -316,7 +316,7 @@ public class DisjointLists extends JPanel implements Dialog {
      * Constructs a new, initially empty, list.
      */
     public DisjointLists() {
-        super(new GridBagLayout());
+        setLayout(new GridBagLayout());
         /*
          * Setup lists
          */

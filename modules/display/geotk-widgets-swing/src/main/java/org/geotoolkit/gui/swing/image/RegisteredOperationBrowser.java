@@ -32,7 +32,7 @@ import javax.swing.Icon;
 import javax.swing.Box;
 import javax.swing.JTree;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
+import javax.swing.JComponent;
 import javax.swing.JScrollPane;
 import javax.swing.BorderFactory;
 import javax.swing.tree.TreePath;
@@ -88,13 +88,13 @@ import org.geotoolkit.util.logging.Logging;
  * </td></tr></table>
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @version 3.12
  *
  * @since 2.3
  * @module
  */
 @SuppressWarnings("serial")
-public class RegisteredOperationBrowser extends JPanel {
+public class RegisteredOperationBrowser extends JComponent {
     /**
      * The text area for operation's description.
      */
@@ -127,7 +127,7 @@ public class RegisteredOperationBrowser extends JPanel {
      * @param model The tree model built by one of {@link #getTree} methods.
      */
     private RegisteredOperationBrowser(final TreeModel model) {
-        super(new BorderLayout());
+        setLayout(new BorderLayout());
         final JTree tree = new JTree(model);
         tree.setBorder(BorderFactory.createEmptyBorder(6, 6, 0, 0));
         add(new JScrollPane(tree), BorderLayout.CENTER);
@@ -382,9 +382,9 @@ public class RegisteredOperationBrowser extends JPanel {
             closed = getDefaultClosedIcon();
             if (operation == null) {
                 final IconFactory icons = IconFactory.DEFAULT;
-                operation      = icons.getIcon("toolbarButtonGraphics/general/Information16.gif");
+                operation      = icons.getIcon("crystalProject/16/apps/background.png");
                 parameter      = icons.getIcon("toolbarButtonGraphics/general/Preferences16.gif");
-                implementation = icons.getIcon("toolbarButtonGraphics/general/About16.gif");
+                implementation = icons.getIcon("crystalProject/16/actions/run.png");
             }
         }
 

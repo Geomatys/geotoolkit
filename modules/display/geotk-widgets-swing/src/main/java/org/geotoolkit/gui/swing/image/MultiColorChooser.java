@@ -32,6 +32,7 @@ import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.JPanel;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JSplitPane;
 import javax.swing.JScrollPane;
 import javax.swing.JColorChooser;
@@ -56,13 +57,13 @@ import org.geotoolkit.resources.Vocabulary;
  * object.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.12
  *
  * @since 3.00
  * @module
  */
 @SuppressWarnings("serial")
-public class MultiColorChooser extends JPanel implements Dialog {
+public class MultiColorChooser extends JComponent implements Dialog {
     /**
      * The table of colors.
      */
@@ -72,7 +73,7 @@ public class MultiColorChooser extends JPanel implements Dialog {
      * Creates a new, initially empty, list of colors.
      */
     public MultiColorChooser() {
-        super(new BorderLayout());
+        setLayout(new BorderLayout());
         final Locale locale = getLocale();
         final Vocabulary resources = Vocabulary.getResources(locale);
         /*
