@@ -68,7 +68,7 @@ public abstract class AbstractGetCapabilities extends AbstractRequest implements
      * {@inheritDoc }
      */
     @Override
-    public InputStream getSOAPResponse() throws IOException {
+    public InputStream getResponseStream() throws IOException {
         final URL url = new URL(serverURL);
         final URLConnection conec = url.openConnection();
 

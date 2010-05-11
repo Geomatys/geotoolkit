@@ -120,7 +120,7 @@ public abstract class AbstractGetObservationById extends AbstractRequest impleme
      * {@inheritDoc}
      */
     @Override
-    public InputStream getSOAPResponse() throws IOException {
+    public InputStream getResponseStream() throws IOException {
         if (observationId == null) {
             throw new IllegalArgumentException("The parameter \"observationId\" is not defined");
         }

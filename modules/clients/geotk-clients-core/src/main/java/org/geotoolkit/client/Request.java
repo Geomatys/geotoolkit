@@ -44,5 +44,5 @@ public interface Request {
      *
      * @throws IOException if an exception occurs while getting the output stream.
      */
-    InputStream getSOAPResponse() throws IOException;
+    InputStream getResponseStream() throws IOException;
 }

@@ -328,7 +328,7 @@ public abstract class AbstractGetMap extends AbstractRequest implements GetMapRe
     }
 
     @Override
-    public InputStream getSOAPResponse() throws IOException {
+    public InputStream getResponseStream() throws IOException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

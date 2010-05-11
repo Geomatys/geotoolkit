@@ -158,7 +158,7 @@ public abstract class AbstractRequest implements Request {
      * {@inheritDoc }
      */
     @Override
-    public abstract InputStream getSOAPResponse() throws IOException;
+    public abstract InputStream getResponseStream() throws IOException;
 
     /**
      * {@inheritDoc }

@@ -87,7 +87,7 @@ public abstract class AbstractGetResult extends AbstractRequest implements GetRe
      * {@inheritDoc}
      */
     @Override
-    public InputStream getSOAPResponse() throws IOException {
+    public InputStream getResponseStream() throws IOException {
         if (observationTemplateId == null) {
             throw new IllegalArgumentException("The parameter \"observationTemplateId\" is not defined");
         }

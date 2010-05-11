@@ -177,7 +177,7 @@ public abstract class AbstractGetObservation extends AbstractRequest implements 
      * {@inheritDoc }
      */
     @Override
-    public InputStream getSOAPResponse() throws IOException {
+    public InputStream getResponseStream() throws IOException {
         if (offering == null) {
             throw new IllegalArgumentException("offering is not defined");
         }

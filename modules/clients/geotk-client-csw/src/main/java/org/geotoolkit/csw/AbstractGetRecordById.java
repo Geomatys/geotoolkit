@@ -141,7 +141,7 @@ public abstract class AbstractGetRecordById extends AbstractRequest implements G
      * {@inheritDoc}
      */
     @Override
-    public InputStream getSOAPResponse() throws IOException {
+    public InputStream getResponseStream() throws IOException {
         final URL url = new URL(serverURL);
         final URLConnection conec = url.openConnection();
 

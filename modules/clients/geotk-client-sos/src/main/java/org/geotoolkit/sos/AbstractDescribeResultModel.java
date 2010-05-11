@@ -75,7 +75,7 @@ public abstract class AbstractDescribeResultModel extends AbstractRequest implem
      * {@inheritDoc}
      */
     @Override
-    public InputStream getSOAPResponse() throws IOException {
+    public InputStream getResponseStream() throws IOException {
         if (resultName == null) {
             throw new IllegalArgumentException("The parameter \"resultName\" is not defined");
         }

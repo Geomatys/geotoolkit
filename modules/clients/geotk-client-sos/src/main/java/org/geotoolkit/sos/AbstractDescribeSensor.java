@@ -105,7 +105,7 @@ public abstract class AbstractDescribeSensor extends AbstractRequest implements 
      * {@inheritDoc }
      */
     @Override
-    public InputStream getSOAPResponse() throws IOException {
+    public InputStream getResponseStream() throws IOException {
         if (outputFormat == null) {
             throw new IllegalArgumentException("The parameter \"outputFormat\" is not defined");
         }

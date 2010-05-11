@@ -74,7 +74,7 @@ public abstract class AbstractDescribeObservationType extends AbstractRequest im
      * {@inheritDoc}
      */
     @Override
-    public InputStream getSOAPResponse() throws IOException {
+    public InputStream getResponseStream() throws IOException {
         if (observedProperty == null) {
             throw new IllegalArgumentException("The parameter \"observedProperty\" is not defined");
         }

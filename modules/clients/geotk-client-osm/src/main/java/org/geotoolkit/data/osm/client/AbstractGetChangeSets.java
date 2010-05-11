@@ -212,7 +212,7 @@ public abstract class AbstractGetChangeSets extends AbstractRequest implements G
     }
 
     @Override
-    public InputStream getSOAPResponse() throws IOException {
+    public InputStream getResponseStream() throws IOException {
         final URL url = getURL();
         final URLConnection conec = url.openConnection();
         return conec.getInputStream();

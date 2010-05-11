@@ -199,7 +199,7 @@ public abstract class AbstractGetFeature extends AbstractRequest implements GetF
     }
 
     @Override
-    public InputStream getSOAPResponse() throws IOException {
+    public InputStream getResponseStream() throws IOException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

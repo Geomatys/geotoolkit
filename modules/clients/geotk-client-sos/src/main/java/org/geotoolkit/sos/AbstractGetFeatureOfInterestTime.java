@@ -74,7 +74,7 @@ public abstract class AbstractGetFeatureOfInterestTime extends AbstractRequest i
      * {@inheritDoc}
      */
     @Override
-    public InputStream getSOAPResponse() throws IOException {
+    public InputStream getResponseStream() throws IOException {
         if (featureOfInterestId == null) {
             throw new IllegalArgumentException("The parameter \"featureOfInterestId\" is not defined");
         }

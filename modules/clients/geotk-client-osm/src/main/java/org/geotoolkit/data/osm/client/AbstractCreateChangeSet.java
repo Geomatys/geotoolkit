@@ -57,7 +57,7 @@ public abstract class AbstractCreateChangeSet extends AbstractRequest implements
     }
 
     @Override
-    public InputStream getSOAPResponse() throws IOException {
+    public InputStream getResponseStream() throws IOException {
         final URL url = getURL();
         final URLConnection conec = url.openConnection();
 

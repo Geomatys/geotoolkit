@@ -75,7 +75,7 @@ public abstract class AbstractReadElementHistory extends AbstractRequest impleme
     }
 
     @Override
-    public InputStream getSOAPResponse() throws IOException {
+    public InputStream getResponseStream() throws IOException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

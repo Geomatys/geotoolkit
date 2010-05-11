@@ -60,7 +60,7 @@ public abstract class AbstractGetChangeSet extends AbstractRequest implements Ge
     }
 
     @Override
-    public InputStream getSOAPResponse() throws IOException {
+    public InputStream getResponseStream() throws IOException {
         final URL url = getURL();
         final URLConnection conec = url.openConnection();
         return conec.getInputStream();

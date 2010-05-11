@@ -95,7 +95,7 @@ public abstract class AbstractReadElement extends AbstractRequest implements Rea
      * {@inheritDoc }
      */
     @Override
-    public InputStream getSOAPResponse() throws IOException {
+    public InputStream getResponseStream() throws IOException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

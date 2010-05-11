@@ -74,7 +74,7 @@ public abstract class AbstractDescribeFeatureType extends AbstractRequest implem
      * {@inheritDoc}
      */
     @Override
-    public InputStream getSOAPResponse() throws IOException {
+    public InputStream getResponseStream() throws IOException {
         if (featureId == null) {
             throw new IllegalArgumentException("The parameter \"featureId\" is not defined");
         }

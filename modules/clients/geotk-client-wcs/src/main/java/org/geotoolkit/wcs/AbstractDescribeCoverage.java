@@ -64,7 +64,7 @@ public abstract class AbstractDescribeCoverage extends AbstractRequest implement
     }
 
     @Override
-    public InputStream getSOAPResponse() throws IOException {
+    public InputStream getResponseStream() throws IOException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

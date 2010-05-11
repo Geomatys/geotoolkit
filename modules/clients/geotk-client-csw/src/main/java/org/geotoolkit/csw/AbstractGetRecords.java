@@ -310,7 +310,7 @@ public abstract class AbstractGetRecords extends AbstractRequest implements GetR
      * {@inheritDoc}
      */
     @Override
-    public InputStream getSOAPResponse() throws IOException {
+    public InputStream getResponseStream() throws IOException {
         final URL url = new URL(serverURL);
         final URLConnection conec = url.openConnection();
 

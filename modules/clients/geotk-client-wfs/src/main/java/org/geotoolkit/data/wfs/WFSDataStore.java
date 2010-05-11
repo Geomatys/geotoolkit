@@ -315,7 +315,7 @@ public class WFSDataStore extends AbstractDataStore{
         request.elements().add(insert);
 
         try {
-            final InputStream response = request.getSOAPResponse();
+            final InputStream response = request.getResponseStream();
             response.close();
         } catch (IOException ex) {
             throw new DataStoreException(ex);
@@ -345,7 +345,7 @@ public class WFSDataStore extends AbstractDataStore{
         request.elements().add(update);
 
         try {
-            final InputStream response = request.getSOAPResponse();
+            final InputStream response = request.getResponseStream();
             response.close();
         } catch (IOException ex) {
             throw new DataStoreException(ex);
@@ -368,7 +368,7 @@ public class WFSDataStore extends AbstractDataStore{
         request.elements().add(delete);
 
         try {
-            final InputStream response = request.getSOAPResponse();
+            final InputStream response = request.getResponseStream();
             response.close();
         } catch (IOException ex) {
             throw new DataStoreException(ex);

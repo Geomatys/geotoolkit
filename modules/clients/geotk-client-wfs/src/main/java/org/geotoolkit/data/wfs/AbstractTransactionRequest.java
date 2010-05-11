@@ -91,7 +91,7 @@ public class AbstractTransactionRequest extends AbstractRequest implements Trans
      * {@inheritDoc }
      */
     @Override
-    public InputStream getSOAPResponse() throws IOException {
+    public InputStream getResponseStream() throws IOException {
 
         final URL url = new URL(serverURL);
         final URLConnection conec = url.openConnection();
