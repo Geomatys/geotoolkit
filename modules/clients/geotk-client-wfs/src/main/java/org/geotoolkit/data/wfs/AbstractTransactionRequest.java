@@ -105,10 +105,8 @@ public class AbstractTransactionRequest extends AbstractRequest implements Trans
         //write the transaction xml content
         final JAXPStreamTransactionWriter jaxp = new JAXPStreamTransactionWriter();
         try {
-            System.out.println("--------------------------------------------");
             jaxp.write(debug, this);
             debug.flush();
-            System.out.println("-----------------------------------------------");
             jaxp.write(stream, this);
             //todo write request in this
         } catch (Exception ex) {
