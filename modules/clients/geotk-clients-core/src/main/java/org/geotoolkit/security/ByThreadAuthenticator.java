@@ -36,6 +36,12 @@ public class ByThreadAuthenticator extends Authenticator{
 
     @Override
     protected PasswordAuthentication getPasswordAuthentication() {
+        final PasswordAuthentication pa = LOCALS.get();
+        if(pa != null){
+            return pa;
+        }
+
+        //no registered password for this thread.
         return super.getPasswordAuthentication();
     }
 

@@ -18,23 +18,26 @@
 package org.geotoolkit.data.osm.client;
 
 import org.geotoolkit.client.Request;
+import org.geotoolkit.data.osm.model.ChangeSet;
 
 /**
- * Request to get a changeset informations.
+ * Request to open a new changeset.
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public interface GetChangeSetRequest extends Request{
+public interface CreateChangeSetRequest extends Request{
 
     /**
-     * @param id of the requested changeset
+     * Base parameters of the newly created chageset.
+     * @param cs : ChangeSet
      */
-    void setChangeSetID(long id);
+    void setChangeSet(ChangeSet cs);
 
     /**
-     * @return id of the requested changeset
+     * Base parameters of the newly created chageset.
+     * @return ChangeSet
      */
-    long getChangeSetID();
+    ChangeSet getChangeSet();
 
 }

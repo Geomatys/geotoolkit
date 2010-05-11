@@ -20,21 +20,21 @@ package org.geotoolkit.data.osm.client;
 import org.geotoolkit.client.Request;
 
 /**
- * Request to get a changeset informations.
+ * Request to close a changeset.
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public interface GetChangeSetRequest extends Request{
+public interface CloseChangeSetRequest extends Request{
 
     /**
-     * @param id of the requested changeset
+     * @param id of the requested changeset to close
      */
-    void setChangeSetID(long id);
+    void setChangeSetID(int id);
 
     /**
      * @return id of the requested changeset
      */
-    long getChangeSetID();
+    int getChangeSetID();
 
 }

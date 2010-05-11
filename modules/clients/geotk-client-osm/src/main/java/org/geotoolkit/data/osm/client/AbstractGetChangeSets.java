@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.Date;
 
 import org.geotoolkit.client.AbstractRequest;
@@ -212,7 +213,9 @@ public abstract class AbstractGetChangeSets extends AbstractRequest implements G
 
     @Override
     public InputStream getSOAPResponse() throws IOException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        final URL url = getURL();
+        final URLConnection conec = url.openConnection();
+        return conec.getInputStream();
     }
 
 }

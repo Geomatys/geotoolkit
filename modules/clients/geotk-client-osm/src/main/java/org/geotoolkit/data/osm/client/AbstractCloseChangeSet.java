@@ -14,56 +14,49 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
+
 package org.geotoolkit.data.osm.client;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
-
 import org.geotoolkit.client.AbstractRequest;
 
 /**
- * Abstract implementation of {@link GetDataRequest}, which defines the
- * parameters for a get data request.
+ * Abstract implementation of {@link CloseChangeSetRequest}, which defines the
+ * parameters for a close change set request.
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public abstract class AbstractGetChangeSet extends AbstractRequest implements GetChangeSetRequest{
+public abstract class AbstractCloseChangeSet extends AbstractRequest implements CloseChangeSetRequest{
 
-    protected long id = -1;
+    protected int id = -1;
 
-    /**
-     * Defines the server url and the service version for this kind of request.
-     *
-     * @param serverURL The server url.
-     */
-    protected AbstractGetChangeSet(final String serverURL, String subpath){
-        super(serverURL, subpath);
+    public AbstractCloseChangeSet(String serverURL, String subPath){
+        super(serverURL, subPath);
     }
 
-    /**
-     * {@inheritDoc }
-     */
     @Override
-    public void setChangeSetID(long id) {
-        this.id = id;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public long getChangeSetID() {
+    public int getChangeSetID() {
         return id;
+    }
+
+    @Override
+    public void setChangeSetID(int id) {
+        this.id = id;
     }
 
     @Override
     public InputStream getSOAPResponse() throws IOException {
         final URL url = getURL();
         final URLConnection conec = url.openConnection();
+        final HttpURLConnection ht = (HttpURLConnection) conec;
+        ht.setRequestMethod("PUT");
+
         return conec.getInputStream();
     }
-
+    
 }

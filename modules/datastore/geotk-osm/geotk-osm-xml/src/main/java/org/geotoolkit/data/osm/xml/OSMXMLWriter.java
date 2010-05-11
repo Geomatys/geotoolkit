@@ -50,7 +50,7 @@ public class OSMXMLWriter extends StaxStreamWriter{
     }
 
     public void writeOSMTag() throws XMLStreamException{
-        writer.writeStartElement(null, TAG_OSM);
+        writer.writeStartElement(TAG_OSM);
     }
 
     public void writeChangeSet(ChangeSet cs) throws XMLStreamException{

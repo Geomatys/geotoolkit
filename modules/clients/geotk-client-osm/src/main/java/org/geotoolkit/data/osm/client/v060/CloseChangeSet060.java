@@ -15,26 +15,26 @@
  *    Lesser General Public License for more details.
  */
 
-package org.geotoolkit.data.osm.client;
+package org.geotoolkit.data.osm.client.v060;
 
-import org.geotoolkit.client.Request;
+import org.geotoolkit.data.osm.client.AbstractCloseChangeSet;
 
 /**
- * Request to get a changeset informations.
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public interface GetChangeSetRequest extends Request{
+public class CloseChangeSet060 extends AbstractCloseChangeSet{
 
-    /**
-     * @param id of the requested changeset
-     */
-    void setChangeSetID(long id);
+    public CloseChangeSet060(String serverURL){
+        super(serverURL,"api/0.6/changeset/create");
+    }
 
-    /**
-     * @return id of the requested changeset
-     */
-    long getChangeSetID();
+    @Override
+    protected String getSubPath() {
+        return new StringBuilder("/api/0.6/changeset/").append(id).append("/close").toString();
+    }
+
+
 
 }

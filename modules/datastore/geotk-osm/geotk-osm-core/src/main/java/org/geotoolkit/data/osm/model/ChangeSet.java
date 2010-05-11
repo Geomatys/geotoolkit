@@ -44,7 +44,7 @@ public class ChangeSet {
 
     public ChangeSet(Integer id, User user, Long timestamp, Boolean open, Envelope env, Map<String,String> tags) {
         this.id = id;
-        this.user = user;
+        this.user = (user == null) ? User.NONE : user;
         this.timestamp = timestamp;
         this.open = open;
         this.env = env;
