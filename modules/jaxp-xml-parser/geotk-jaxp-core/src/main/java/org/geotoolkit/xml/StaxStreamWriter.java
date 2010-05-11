@@ -48,6 +48,13 @@ public abstract class StaxStreamWriter {
     }
 
     /**
+     * Acces the underlying stax writer.
+     */
+    public XMLStreamWriter getWriter(){
+        return writer;
+    }
+
+    /**
      * close potentiel previous stream and cache if there are some.
      * This way the writer can be reused for a different output later.
      */

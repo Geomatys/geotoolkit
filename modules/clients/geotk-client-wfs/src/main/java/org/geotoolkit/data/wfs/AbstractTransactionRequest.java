@@ -99,14 +99,11 @@ public class AbstractTransactionRequest extends AbstractRequest implements Trans
         conec.setDoOutput(true);
         conec.setRequestProperty("Content-Type", "text/xml");
 
-        final OutputStream debug = System.out;
         final OutputStream stream = conec.getOutputStream();
 
         //write the transaction xml content
         final JAXPStreamTransactionWriter jaxp = new JAXPStreamTransactionWriter();
         try {
-            jaxp.write(debug, this);
-            debug.flush();
             jaxp.write(stream, this);
             //todo write request in this
         } catch (Exception ex) {
