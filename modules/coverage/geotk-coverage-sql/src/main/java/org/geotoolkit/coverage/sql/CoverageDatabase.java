@@ -37,8 +37,10 @@ import java.lang.ref.Reference;
 import javax.sql.DataSource;
 import java.sql.SQLException;
 
+import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.crs.CRSAuthorityFactory;
 
 import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.util.Localized;
@@ -192,6 +194,21 @@ public class CoverageDatabase implements Localized {
             return database;
         }
         return null;
+    }
+
+    /**
+     * Returns the CRS authority factory used by this database. This factory is typically backed
+     * by the PostGIS {@code "spatial_ref_sys"} table - this is usually <strong>not</strong> the
+     * standard EPSG factory used by default in the Geotk library. In particular, axis order are
+     * often different.
+     *
+     * @return The CRS authority factory used by this database.
+     * @throws FactoryException If the factory can not be created.
+     *
+     * @since 3.12
+     */
+    public CRSAuthorityFactory getCRSAuthorityFactory() throws FactoryException {
+        return database.getCRSAuthorityFactory();
     }
 
     /**

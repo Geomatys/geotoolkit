@@ -308,7 +308,7 @@ public class LayerList extends JComponent {
         final JButton refreshButton, addButton;
         refreshButton   = new JButton(resources.getString(Vocabulary.Keys.REFRESH));
         addButton       = new JButton(resources.getString(Vocabulary.Keys.ADD));
-        removeButton    = new JButton(resources.getString(Vocabulary.Keys.REMOVE));
+        removeButton    = new JButton(resources.getString(Vocabulary.Keys.DELETE));
         coveragesButton = new JButton(resources.getString(Vocabulary.Keys.IMAGE_LIST));
 
         refreshButton.setActionCommand(REFRESH);

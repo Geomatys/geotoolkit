@@ -57,6 +57,11 @@ public final class Widgets extends IndexedResourceBundle {
         public static final int ADD_SELECTED_ELEMENTS = 1;
 
         /**
+         * Confirm data addition
+         */
+        public static final int CONFIRM_ADD_DATA = 10;
+
+        /**
          * Confirm delete
          */
         public static final int CONFIRM_DELETE = 6;

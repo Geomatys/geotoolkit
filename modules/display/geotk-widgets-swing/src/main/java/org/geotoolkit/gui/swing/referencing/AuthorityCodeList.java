@@ -29,6 +29,7 @@ import org.opengis.referencing.AuthorityFactory;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.IdentifiedObject;
 
+import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.internal.swing.FastComboBox;
 
@@ -58,34 +59,40 @@ final class AuthorityCodeList extends AbstractListModel implements FastComboBox.
     private AuthorityCode selected;
 
     /**
+     * The code of the selected element. This is used when the selected element may
+     * not yet be built by the background thread. Otherwise this is {@code null}.
+     */
+    private transient String selectedCode;
+
+    /**
      * The number of elements in this list.
      */
     private int size;
+
+    /**
+     * Information needed for refreshing the list of authority codes
+     * while we load them in a background thread.
+     */
+    private static final class Step {
+        final AuthorityCode[] codes;
+        final int size;
+
+        Step(final AuthorityCode[] codes, final int size) {
+            this.codes = codes;
+            this.size  = size;
+        }
+    }
 
     /**
      * Creates a list for the given codes.
      *
      * @param The locale for formatting the code descriptions.
      * @param factory The factory to use for fetching the codes.
-     * @param type Base classes of CRS objects to extract. Must have at least one element.
-     * @param dimension Dimension of CRS objects, or 0 if no restriction.
+     * @param type Base classes of CRS objects to extract.
      */
     public AuthorityCodeList(final Locale locale, final AuthorityFactory factory,
-            final Class<? extends IdentifiedObject>... types) throws FactoryException
+            final Class<? extends IdentifiedObject>... types)
     {
-        /**
-         * Information needed for refreshing the list of authority codes
-         * while we load them in a background thread.
-         */
-        final class Step {
-            final AuthorityCode[] codes;
-            final int size;
-
-            Step(final AuthorityCode[] codes, final int size) {
-                this.codes = codes;
-                this.size  = size;
-            }
-        }
         new SwingWorker<Step,Step>() {
             /**
              * Gets the authority code in a background thread. Note that the iterator
@@ -148,6 +155,7 @@ final class AuthorityCodeList extends AbstractListModel implements FastComboBox.
                 } catch (ExecutionException e) {
                     Logging.unexpectedException(AuthorityCodeList.class, "<init>", e.getCause());
                 }
+                setSelectedCode(selectedCode);
             }
         }.execute();
     }
@@ -181,9 +189,33 @@ final class AuthorityCodeList extends AbstractListModel implements FastComboBox.
      */
     @Override
     public void setSelectedItem(final Object code) {
-        selected = (AuthorityCode) code;
-        int index = selected.index;
-        fireContentsChanged(this, index, index);
+        if (!Utilities.equals(code, selected)) {
+            selected = (AuthorityCode) code;
+            selectedCode = null;
+            final int index = (selected != null) ? selected.index : -1;
+            fireContentsChanged(this, index, index);
+        }
+    }
+
+    /**
+     * Sets the selected item to the {@code AuthorityCode} element inferred from
+     * the given code. This method does nothing if the given code is null.
+     */
+    void setSelectedCode(final String code) {
+        if (code != null) {
+            final AuthorityCode[] codes = this.codes;
+            final int size = this.size;
+            for (int i=0; i<size; i++) {
+                final AuthorityCode candidate = codes[i];
+                if (code.equals(candidate.code)) {
+                    setSelectedItem(candidate);
+                    return;
+                }
+            }
+        }
+        // If the SwingWorker thread is still running, we will search
+        // for the code when the worker will have finished its job.
+        selectedCode = code;
     }
 
     /**

@@ -51,9 +51,10 @@ public final class AuthorityCodesComboBoxTest extends SwingBase<AuthorityCodesCo
     @Override
     @SuppressWarnings("unchecked")
     protected AuthorityCodesComboBox create() throws FactoryException {
+        AuthorityCodesComboBox chooser;
         try {
             final CRSAuthorityFactory factory = AuthorityFactoryFinder.getCRSAuthorityFactory("EPSG", null);
-            return new AuthorityCodesComboBox(factory, ProjectedCRS.class, GeographicCRS.class);
+            chooser = new AuthorityCodesComboBox(factory, ProjectedCRS.class, GeographicCRS.class);
         } catch (FactoryNotFoundException e) {
             /*
              * This happen if the JDBC driver (typically Derby) required for accessing
@@ -61,5 +62,7 @@ public final class AuthorityCodesComboBoxTest extends SwingBase<AuthorityCodesCo
              */
             return null;
         }
+        chooser.setSelectedCode("4326");
+        return chooser;
     }
 }

@@ -29,8 +29,11 @@ import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.stream.ImageInputStream;
 
+import org.opengis.metadata.citation.Citation;
 import org.opengis.coverage.grid.RectifiedGrid;
 import org.opengis.referencing.FactoryException;
+import org.opengis.referencing.IdentifiedObject;
+import org.opengis.referencing.ReferenceIdentifier;
 import org.opengis.referencing.crs.CRSAuthorityFactory;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
@@ -42,7 +45,9 @@ import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.image.io.SpatialImageReader;
 import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.internal.sql.table.SpatialDatabase;
+import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.referencing.factory.AbstractAuthorityFactory;
 import org.geotoolkit.resources.Errors;
 
@@ -66,6 +71,18 @@ import org.geotoolkit.resources.Errors;
  * @module
  */
 public final class NewGridCoverageReference {
+    /**
+     * The authorities of {@link #horizontalSRID} and {@link #verticalSRID} codes, in preference
+     * order. The SRID should be the primary keys in the {@code "spatial_ref_sys"} table. If we
+     * failed to determine the primary key, we will rely on the observation that the primary key
+     * values are often the EPSG codes (but not necessarly). We shall declare here only the
+     * authority which are known to use numerical codes.
+     */
+    private static final Citation[] AUTHORITIES = {
+        Citations.POSTGIS,
+        Citations.EPSG
+    };
+
     /**
      * The series in which the images will be added, or {@code null} if unknown.
      * This field may be set explicitly by {@link WritableGridCoverageIterator},
@@ -324,12 +341,22 @@ public final class NewGridCoverageReference {
             throws FactoryException
     {
         if (crsFactory instanceof AbstractAuthorityFactory) {
-            final String id = ((AbstractAuthorityFactory) crsFactory)
-                    .getIdentifiedObjectFinder(crs.getClass()).findIdentifier(crs);
-            if (id != null) try {
-                return Integer.valueOf(id);
-            } catch (NumberFormatException e) {
-                throw new FactoryException(e);
+            IdentifiedObject identifiedCRS = ((AbstractAuthorityFactory) crsFactory)
+                    .getIdentifiedObjectFinder(crs.getClass()).find(crs);
+            if (identifiedCRS == null) {
+                identifiedCRS = crs;
+            }
+            ReferenceIdentifier id = null;
+            for (final Citation authority : AUTHORITIES) {
+                id = AbstractIdentifiedObject.getIdentifier(identifiedCRS, authority);
+                if (id != null) {
+                    final String code = id.getCode();
+                    if (id != null) try {
+                        return Integer.valueOf(code);
+                    } catch (NumberFormatException e) {
+                        throw new FactoryException(Errors.format(Errors.Keys.UNPARSABLE_NUMBER_$1, id), e);
+                    }
+                }
             }
         }
         return CRS.lookupEpsgCode(crs, true);

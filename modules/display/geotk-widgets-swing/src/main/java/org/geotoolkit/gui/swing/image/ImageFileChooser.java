@@ -381,7 +381,14 @@ skip:   while (it.hasNext()) {
     public File[] getSelectedFiles() {
         final FileFilter filter = listFileFilter;
         if (filter == null || !filter.equals(getFileFilter())) {
-            return super.getSelectedFiles();
+            File[] files = super.getSelectedFiles();
+            if (files == null || files.length == 0) {
+                final File file = getSelectedFile();
+                if (file != null) {
+                    files = new File[] {file};
+                }
+            }
+            return files;
         }
         /*
          * At this point, the selected files (usually only 1) are actually text files

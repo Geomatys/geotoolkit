@@ -123,9 +123,8 @@ public class AuthorityCodesComboBox extends JComponent {
      * Creates a CRS chooser backed by the EPSG authority factory.
      *
      * @throws FactoryRegistryException if no EPSG authority factory has been found.
-     * @throws FactoryException if the factory can't provide CRS codes.
      */
-    public AuthorityCodesComboBox() throws FactoryRegistryException, FactoryException {
+    public AuthorityCodesComboBox() throws FactoryRegistryException {
         this("EPSG");
     }
 
@@ -134,13 +133,10 @@ public class AuthorityCodesComboBox extends JComponent {
      *
      * @param  authority The authority identifier (e.g. {@code "EPSG"}).
      * @throws FactoryRegistryException if no authority factory has been found.
-     * @throws FactoryException if the factory can't provide CRS codes.
      *
      * @since 2.4
      */
-    public AuthorityCodesComboBox(final String authority)
-            throws FactoryRegistryException, FactoryException
-    {
+    public AuthorityCodesComboBox(final String authority) throws FactoryRegistryException {
         this(FallbackAuthorityFactory.create(CRSAuthorityFactory.class,
              filter(AuthorityFactoryFinder.getCRSAuthorityFactories(null), authority)));
     }
@@ -164,10 +160,9 @@ public class AuthorityCodesComboBox extends JComponent {
      * Creates a CRS chooser backed by the specified authority factory.
      *
      * @param  factory The authority factory responsible for creating objects from a list of codes.
-     * @throws FactoryException if the factory can't provide CRS codes.
      */
     @SuppressWarnings("unchecked")
-    public AuthorityCodesComboBox(final AuthorityFactory factory) throws FactoryException {
+    public AuthorityCodesComboBox(final AuthorityFactory factory) {
         this(factory, CoordinateReferenceSystem.class);
     }
 
@@ -176,10 +171,9 @@ public class AuthorityCodesComboBox extends JComponent {
      *
      * @param  factory The authority factory responsible for creating objects from a list of codes.
      * @param  types The types of CRS object to includes in the list.
-     * @throws FactoryException if the factory can't provide CRS codes.
      */
     public AuthorityCodesComboBox(final AuthorityFactory factory,
-            Class<? extends CoordinateReferenceSystem>... types) throws FactoryException
+            final Class<? extends CoordinateReferenceSystem>... types)
     {
         this.factory = factory;
         final Locale locale = getLocale();
@@ -208,7 +202,7 @@ public class AuthorityCodesComboBox extends JComponent {
         searchOrList.add(search, "Search");
         add(searchOrList, BorderLayout.CENTER);
         /*
-         * Adds the "Info" button.
+         * Add the "Info" button.
          */
         JButton button;
         size = new Dimension(24, 20);
@@ -219,12 +213,12 @@ public class AuthorityCodesComboBox extends JComponent {
         button.setPreferredSize(size);
         button.addActionListener(new ActionListener() {
             @Override public void actionPerformed(final ActionEvent event) {
-                showProperties();
+                showProperties(true);
             }
         });
         showProperties = button;
         /*
-         * Adds the "Search" button.
+         * Add the "Search" button.
          */
         label = resources.getString(Vocabulary.Keys.SEARCH);
         button = icons.getButton("crystalProject/16/actions/find.png", label, label);
@@ -270,6 +264,7 @@ public class AuthorityCodesComboBox extends JComponent {
      */
     public String getSelectedCode() {
         final AuthorityCode code;
+        final JComboBox list = this.list;
         if (EventQueue.isDispatchThread()) {
             code = (AuthorityCode) list.getModel().getSelectedItem();
         } else {
@@ -285,6 +280,34 @@ public class AuthorityCodesComboBox extends JComponent {
             code = (AuthorityCode) del.code;
         }
         return (code != null) ? code.code : null;
+    }
+
+    /**
+     * Sets the selected object to the one having the given code. If the given object is
+     * {@code null}, then this method clears the selection.
+     *
+     * @param code The authority code of the object to set as the selected index, or {@code null}.
+     *
+     * @since 3.12
+     */
+    public void setSelectedCode(final String code) {
+        if (code == null) {
+            list.setSelectedItem(null);
+        } else {
+            final ComboBoxModel model = list.getModel();
+            if (model instanceof AuthorityCodeList) {
+                ((AuthorityCodeList) model).setSelectedCode(code);
+            } else {
+                final int size = model.getSize();
+                for (int i=0; i<size; i++) {
+                    final AuthorityCode c = (AuthorityCode) model.getElementAt(i);
+                    if (code.equals(c.code)) {
+                        model.setSelectedItem(c);
+                        break;
+                    }
+                }
+            }
+        }
     }
 
     /**
@@ -314,8 +337,11 @@ public class AuthorityCodesComboBox extends JComponent {
      * The default implementation invokes {@link #getSelectedItem()} in a background thread,
      * then shows general information and the object <cite>Well Know Text</cite> in a
      * {@link PropertiesSheet}.
+     *
+     * @param visible {@code true} for invoking {@link JComponent#setVisible(boolean)}
+     *        inconditionally. In some L&F, this bring the focus on the window.
      */
-    public void showProperties() {
+    final void showProperties(final boolean visible) {
         new SwingWorker<IdentifiedObject,Object>() {
             private String title, message;
 
@@ -365,7 +391,7 @@ public class AuthorityCodesComboBox extends JComponent {
                     list.addActionListener(new ActionListener() {
                         @Override public void actionPerformed(final ActionEvent event) {
                             if (propertiesWindow.isVisible()) {
-                                showProperties();
+                                showProperties(false);
                             }
                         }
                     });
@@ -377,7 +403,9 @@ public class AuthorityCodesComboBox extends JComponent {
                 } else {
                     properties.setErrorMessage(message);
                 }
-                propertiesWindow.setVisible(true);
+                if (visible || !propertiesWindow.isVisible()) {
+                    propertiesWindow.setVisible(true);
+                }
             }
         }.execute();
     }
@@ -396,7 +424,7 @@ public class AuthorityCodesComboBox extends JComponent {
             name = "List";
             filter(search.getText());
             if (propertiesWindow != null && propertiesWindow.isVisible()) {
-                showProperties();
+                showProperties(false);
             }
         }
         showProperties.setEnabled(!enable);

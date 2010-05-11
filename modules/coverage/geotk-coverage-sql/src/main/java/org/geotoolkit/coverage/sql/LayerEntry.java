@@ -242,7 +242,8 @@ final class LayerEntry extends DefaultEntry implements Layer {
      * Returns the {@link CoverageDatabase} associated with this entry,
      * or {@code null} if none.
      */
-    private CoverageDatabase getCoverageDatabase() {
+    @Override
+    public CoverageDatabase getCoverageDatabase() {
         final Object tables = this.tables;
         if (tables instanceof CoverageDatabase) {
             return (CoverageDatabase) tables;

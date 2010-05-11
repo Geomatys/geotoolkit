@@ -22,14 +22,18 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics;
 import javax.swing.BorderFactory;
-import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JPanel;
 import javax.swing.ListCellRenderer;
 
 
 /**
  * Renderer for an authority code in a {@link javax.swing.JComboBox}.
+ *
+ * {@note Don't extends <code>JComponent</code> - we need <code>JPanel</code> otherwise the
+ * value given to <code>ComboBoxModel.setSelectedItem(Object)</code> does not appear in the
+ * combo box. My guess is that a UI is required for allowing the event to be propagated.}
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.12
@@ -40,7 +44,7 @@ import javax.swing.ListCellRenderer;
  * @module
  */
 @SuppressWarnings("serial")
-final class AuthorityCodeRenderer extends JComponent implements ListCellRenderer {
+final class AuthorityCodeRenderer extends JPanel implements ListCellRenderer {
     /**
      * The original renderer.
      */
@@ -69,15 +73,14 @@ final class AuthorityCodeRenderer extends JComponent implements ListCellRenderer
      * @param original The original renderer.
      */
     AuthorityCodeRenderer(final ListCellRenderer renderer) {
+        super(new BorderLayout());
         this.renderer = renderer;
         code = new JLabel("00000000", JLabel.TRAILING);
         code.setBorder(BorderFactory.createEmptyBorder(0, 6, 0, 15));
         code.setPreferredSize(code.getPreferredSize()); // Freeze the size.
         code.setForeground(Color.GRAY);
-        setLayout(new BorderLayout());
         add(name = (JLabel) renderer, BorderLayout.CENTER);
         add(code, BorderLayout.LINE_END);
-        setOpaque(true);
     }
 
     /**

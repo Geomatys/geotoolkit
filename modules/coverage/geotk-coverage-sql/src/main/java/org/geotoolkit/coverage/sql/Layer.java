@@ -65,6 +65,17 @@ public interface Layer {
     Layer getFallback() throws CoverageStoreException;
 
     /**
+     * Returns the database which created this layer, or {@code null} if unknown.
+     * The returned value is never null except when this {@code Layer} is the result
+     * of a deserialization.
+     *
+     * @return The database which created this layer, or {@code null} if unknown.
+     *
+     * @since 3.12
+     */
+    CoverageDatabase getCoverageDatabase();
+
+    /**
      * Returns the number of coverages in this layer.
      *
      * @return The number of coverages in this layer.

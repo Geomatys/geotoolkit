@@ -525,7 +525,7 @@ public abstract class CommandLine implements Runnable {
      * {@preformat java
      *     public static void main(String[] arguments) {
      *         CommandLine cmd = new MyCommands(arguments);
-     *         cmd.version();
+     *         cmd.run();
      *     }
      * }
      */

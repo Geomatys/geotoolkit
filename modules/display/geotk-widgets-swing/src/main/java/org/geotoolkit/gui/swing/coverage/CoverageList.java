@@ -20,6 +20,8 @@ package org.geotoolkit.gui.swing.coverage;
 import java.util.Set;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Arrays;
+import java.util.SortedSet;
 import java.util.Collections;
 import java.util.concurrent.ExecutionException;
 import java.net.URL;
@@ -45,15 +47,21 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableCellRenderer;
 
+import org.opengis.referencing.FactoryException;
+import org.opengis.referencing.crs.CRSAuthorityFactory;
+
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.coverage.sql.Layer;
 import org.geotoolkit.coverage.sql.CoverageTableModel;
 import org.geotoolkit.coverage.sql.CoverageEnvelope;
+import org.geotoolkit.coverage.sql.CoverageDatabase;
 import org.geotoolkit.coverage.sql.GridCoverageReference;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.gui.swing.image.ImageFileProperties;
+import org.geotoolkit.gui.swing.image.ImageFileChooser;
 import org.geotoolkit.gui.swing.ExceptionMonitor;
 import org.geotoolkit.resources.Vocabulary;
+import org.geotoolkit.factory.AuthorityFactoryFinder;
 
 
 /**
@@ -95,6 +103,11 @@ public class CoverageList extends JComponent {
      * The properties of the selected image.
      */
     private final ImageFileProperties properties;
+
+    /**
+     * The panel for adding new files. Will be created only when first needed.
+     */
+    private NewGridCoverageDetails addController;
 
     /**
      * The button for removing entries. To be enabled only when at least
@@ -232,9 +245,9 @@ public class CoverageList extends JComponent {
         public void actionPerformed(final ActionEvent event) {
             final String action = event.getActionCommand();
             if (ADD.equals(action)) {
-//                addNewLayer();
+                addNewCoverage();
             } else if (REMOVE.equals(action)) {
-//                removeLayer();
+                removeCoverage();
             }
         }
     }
@@ -336,6 +349,47 @@ public class CoverageList extends JComponent {
         }
         firePropertyChange("layer", layer, oldLayer);
         firePropertyChange("envelope", envelope, oldEnvelope);
+    }
+
+    /**
+     * Invoked when the user pressed the "Add" button. This method shows a file chooser.
+     * If the user confirms, then the {@link NewGridCoverageDetails} window will be show
+     * for each file to append to the database.
+     */
+    final void addNewCoverage() {
+        final Layer layer = getLayer();
+        if (layer != null) try {
+            final SortedSet<String> formats = layer.getImageFormats();
+            final ImageFileChooser chooser = new ImageFileChooser(formats.isEmpty() ? "png" : formats.first(), true);
+            if (chooser.showOpenDialog(this) == ImageFileChooser.APPROVE_OPTION) {
+                final File[] files = chooser.getSelectedFiles();
+                if (files != null && files.length != 0) {
+                    if (addController == null) {
+                        CRSAuthorityFactory factory = null;
+                        final CoverageDatabase database = layer.getCoverageDatabase();
+                        if (database != null) try {
+                            factory = database.getCRSAuthorityFactory();
+                        } catch (FactoryException e) {
+                            ExceptionMonitor.show(this, e);
+                        }
+                        if (factory == null) {
+                            factory = AuthorityFactoryFinder.getCRSAuthorityFactory("EPSG", null);
+                        }
+                        addController = new NewGridCoverageDetails(this, factory);
+                    }
+                    layer.addCoverageReferences(Arrays.asList(files), addController);
+                }
+            }
+        } catch (CoverageStoreException e) {
+            ExceptionMonitor.show(this, e);
+        }
+    }
+
+    /**
+     * Invoked when the user pressed the "Remove" button.
+     */
+    final void removeCoverage() {
+        // TODO
     }
 
     /**
