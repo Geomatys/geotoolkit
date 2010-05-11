@@ -204,16 +204,9 @@ public class GPXReader extends StaxStreamReader{
     }
 
     private CopyRight parseCopyRight() throws XMLStreamException {
-        String author = null;
+        final String author = reader.getAttributeValue(null, ATT_COPYRIGHT_AUTHOR);
         String year = null;
         String uri = null;
-
-        for(int i=0,n=reader.getAttributeCount(); i<n;i++){
-            final String attName = reader.getAttributeLocalName(i);
-            if(ATT_COPYRIGHT_AUTHOR.equalsIgnoreCase(attName)){
-                author = reader.getAttributeValue(i);
-            }
-        }
 
         while (reader.hasNext()) {
             final int type = reader.next();
@@ -260,15 +253,8 @@ public class GPXReader extends StaxStreamReader{
 
     private URI parseLink() throws XMLStreamException {
 
-        String text = null;
+        String text = reader.getAttributeValue(null, ATT_LINK_HREF);
         String mime = null;
-
-        for(int i=0,n=reader.getAttributeCount(); i<n;i++){
-            final String attName = reader.getAttributeLocalName(i);
-            if(ATT_LINK_HREF.equalsIgnoreCase(attName)){
-                text = reader.getAttributeValue(i);
-            }
-        }
 
         while (reader.hasNext()) {
             final int type = reader.next();
@@ -330,23 +316,10 @@ public class GPXReader extends StaxStreamReader{
     }
 
     private Envelope parseBound() throws XMLStreamException {
-        String xmin = null;
-        String xmax = null;
-        String ymin = null;
-        String ymax = null;
-
-        for(int i=0,n=reader.getAttributeCount(); i<n;i++){
-            final String attName = reader.getAttributeLocalName(i);
-            if(ATT_BOUNDS_MINLON.equalsIgnoreCase(attName)){
-                xmin = reader.getAttributeValue(i);
-            }else if(ATT_BOUNDS_MAXLON.equalsIgnoreCase(attName)){
-                xmax = reader.getAttributeValue(i);
-            }else if(ATT_BOUNDS_MINLAT.equalsIgnoreCase(attName)){
-                ymin = reader.getAttributeValue(i);
-            }else if(ATT_BOUNDS_MAXLAT.equalsIgnoreCase(attName)){
-                ymax = reader.getAttributeValue(i);
-            }
-        }
+        final String xmin = reader.getAttributeValue(null, ATT_BOUNDS_MINLON);
+        final String xmax = reader.getAttributeValue(null, ATT_BOUNDS_MAXLON);
+        final String ymin = reader.getAttributeValue(null, ATT_BOUNDS_MINLAT);
+        final String ymax = reader.getAttributeValue(null, ATT_BOUNDS_MAXLAT);
 
         if(xmin == null || xmax == null || ymin == null || ymax == null){
             throw new XMLStreamException("Error in xml file, metadata bounds not defined correctly");
@@ -386,17 +359,8 @@ public class GPXReader extends StaxStreamReader{
         Double ageofdgpsdata = null;
         Integer dgpsid = null;
 
-        String lat = null;
-        String lon = null;
-
-        for(int i=0,n=reader.getAttributeCount(); i<n;i++){
-            final String attName = reader.getAttributeLocalName(i);
-            if(ATT_WPT_LAT.equalsIgnoreCase(attName)){
-                lat = reader.getAttributeValue(i);
-            }else if(ATT_WPT_LON.equalsIgnoreCase(attName)){
-                lon = reader.getAttributeValue(i);
-            }
-        }
+        final String lat = reader.getAttributeValue(null, ATT_WPT_LAT);
+        final String lon = reader.getAttributeValue(null, ATT_WPT_LON);
 
         if(lat == null || lon == null){
             throw new XMLStreamException("Error in xml file, way point lat/lon not defined correctly");

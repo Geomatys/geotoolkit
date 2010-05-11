@@ -228,7 +228,7 @@ public class GPXWriter extends StaxStreamWriter{
         if(feature == null) return;
         writer.writeStartElement(GPX_NAMESPACE, TAG_TRK_SEG);
 
-        for(Property prop : feature.getProperties(TAG_TRK_SEG_PT)){
+        for(final Property prop : feature.getProperties(TAG_TRK_SEG_PT)){
             writeWayPoint((Feature) prop.getValue(),TAG_TRK_SEG_PT);
         }
 
