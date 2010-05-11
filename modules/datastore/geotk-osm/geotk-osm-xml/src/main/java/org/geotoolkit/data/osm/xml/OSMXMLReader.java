@@ -358,9 +358,56 @@ public class OSMXMLReader extends StaxStreamReader{
     }
 
     private ChangeSet parseChangeSet() throws XMLStreamException {
-        //todo, we need this ?
-        toTagEnd(TAG_CHANGESET);
-        return new ChangeSet();
+        resetCache();
+
+        final String strID = reader.getAttributeValue(null, ATT_ID);
+        final String strUser = reader.getAttributeValue(null, ATT_USER);
+        final String strUID = reader.getAttributeValue(null, ATT_UID);
+        final String strTime = reader.getAttributeValue(null, ATT_CHANGESET_CREATEDAT);
+        final String strOpen = reader.getAttributeValue(null, ATT_CHANGESET_OPEN);
+        final String strMinLon = reader.getAttributeValue(null, ATT_CHANGESET_MINLON);
+        final String strMinLat = reader.getAttributeValue(null, ATT_CHANGESET_MINLAT);
+        final String strMaxLon = reader.getAttributeValue(null, ATT_CHANGESET_MAXLON);
+        final String strMaxLat = reader.getAttributeValue(null, ATT_CHANGESET_MAXLAT);
+
+        final Envelope env;
+        if(strMinLon != null && strMinLat != null && strMaxLat != null && strMaxLon != null){
+            env = Bound.create(
+                    Double.parseDouble(strMinLon),
+                    Double.parseDouble(strMaxLon),
+                    Double.parseDouble(strMinLat),
+                    Double.parseDouble(strMaxLat));
+        }else{
+            env = null;
+        }
+
+
+        while (reader.hasNext()) {
+            final int type = reader.next();
+
+            switch (type) {
+                case START_ELEMENT:
+                    final String localName = reader.getLocalName();
+                    if(TAG_TAG.equalsIgnoreCase(localName)){
+                        parseTag(tags);
+                    }
+                    break;
+                case END_ELEMENT:
+                    if(TAG_CHANGESET.equalsIgnoreCase(reader.getLocalName())){
+                        //end of the changeset element
+                        return new ChangeSet(
+                                (strID!=null) ? Integer.parseInt(strID) : null,
+                                (strUID!=null) ? User.create(Integer.parseInt(strUID),strUser) : User.NONE,
+                                (strTime!=null) ? toDateLong(strTime) : null,
+                                (strOpen!=null) ? Boolean.valueOf(strOpen) : null,
+                                env,
+                                tags);
+                    }
+                    break;
+            }
+        }
+
+        throw new XMLStreamException("Error in xml file, chageset tag without end.");
     }
 
     private Transaction parseTransaction(TransactionType tt) throws XMLStreamException {
