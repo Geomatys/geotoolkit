@@ -25,11 +25,14 @@ import org.geotoolkit.util.XInteger;
 import org.geotoolkit.util.collection.UnSynchronizedCache;
 
 /**
- * Fast parser for date that match the pattern : 
- * yyyy-MM-dd'T'HH:mm:ss'Z'
- * yyyy-MM-dd'T'HH:mm:ss.SSS'Z'
+ * Fast parser for date that match the pattern :
+ * yyyy-MM-dd
+ * yyyy-MM-dd'T'HH:mm:ss
  * yyyy-MM-dd'T'HH:mm:ssZ
+ * yyyy-MM-dd'T'HH:mm:ss'Z'
+ * yyyy-MM-dd'T'HH:mm:ss.SSS
  * yyyy-MM-dd'T'HH:mm:ss.SSSZ
+ * yyyy-MM-dd'T'HH:mm:ss.SSS'Z'
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
@@ -60,65 +63,80 @@ public class FastDateParser {
 
     private void parse(String date) {
         int index1, index2;
+        final TimeZone tz;
+        final int year;
+        final int month;
+        final int day;
+        final int hour;
+        final int min;
+        final int sec;
+        final int mil;
 
         index1 = date.indexOf('-');
-        final int year = XInteger.parseIntUnsigned(date, 0, index1);
+        year = XInteger.parseIntUnsigned(date, 0, index1);
         index1++;
 
         index2 = date.indexOf('-', index1);
-        final int month = XInteger.parseIntUnsigned(date, index1, index2);
+        month = XInteger.parseIntUnsigned(date, index1, index2);
         index2++;
 
-        index1 = date.indexOf('T', index2);
-        final int day = XInteger.parseIntUnsigned(date, index2, index1);
-        index1++;
+        if((index1 = date.indexOf('T', index2)) < 0){
+            //date is like yyyy-MM-dd
+            tz = TimeZone.getDefault();
+            day = XInteger.parseIntUnsigned(date, index2, date.length());
+            hour = 0;
+            min = 0;
+            sec = 0;
+            mil = 0;
+        }else{
+            day = XInteger.parseIntUnsigned(date, index2, index1);
+            index1++;
 
-        index2 = date.indexOf(':', index1);
-        final int hour = XInteger.parseIntUnsigned(date, index1, index2);
-        index2++;
-
-        index1 = date.indexOf(':', index2);
-        final int min = XInteger.parseIntUnsigned(date, index2, index1);
-        index1++;
-
-        final TimeZone tz;
-        final int mil;
-        final int sec;
-        index2 = date.indexOf('.',index1);
-        if(index2 > 0){
-            //we have milliseconds
-            sec = XInteger.parseIntUnsigned(date, index1, index2);
+            index2 = date.indexOf(':', index1);
+            hour = XInteger.parseIntUnsigned(date, index1, index2);
             index2++;
 
-            if((index1 = date.indexOf('Z', index2)) > 0){ //search a Z, GMT+0
-                tz = GMT0;
-            }else if((index1 = date.indexOf('+', index2)) > 0){ //search a +, GMT+XXXX
-                tz = TIME_ZONES.get("GMT"+date.substring(index1, date.length()));
-            }else if((index1 = date.indexOf('-', index2)) > 0){ //search a -, GMT-XXXX
-                tz = TIME_ZONES.get("GMT"+date.substring(index1, date.length()));
-            }else{
-                //no Z == local time zone
-                tz = TimeZone.getDefault();
-                index1 = date.length();
-            }
-            mil = XInteger.parseIntUnsigned(date, index2, index1);
-        }else{
+            index1 = date.indexOf(':', index2);
+            min = XInteger.parseIntUnsigned(date, index2, index1);
+            index1++;
 
-            if((index2 = date.indexOf('Z', index1)) > 0){ //search a Z, GMT+0
-                tz = GMT0;
-            }else if((index2 = date.indexOf('+', index1)) > 0){ //search a +, GMT+XXXX
-                tz = TIME_ZONES.get("GMT"+date.substring(index2, date.length()));
-            }else if((index2 = date.indexOf('-', index1)) > 0){ //search a -, GMT-XXXX
-                tz = TIME_ZONES.get("GMT"+date.substring(index2, date.length()));
+            index2 = date.indexOf('.',index1);
+            if(index2 > 0){
+                //we have milliseconds
+                sec = XInteger.parseIntUnsigned(date, index1, index2);
+                index2++;
+
+                if((index1 = date.indexOf('Z', index2)) > 0){ //search a Z, GMT+0
+                    tz = GMT0;
+                }else if((index1 = date.indexOf('+', index2)) > 0){ //search a +, GMT+XXXX
+                    tz = TIME_ZONES.get("GMT"+date.substring(index1, date.length()));
+                }else if((index1 = date.indexOf('-', index2)) > 0){ //search a -, GMT-XXXX
+                    tz = TIME_ZONES.get("GMT"+date.substring(index1, date.length()));
+                }else{
+                    //no Z == local time zone
+                    tz = TimeZone.getDefault();
+                    index1 = date.length();
+                }
+                mil = XInteger.parseIntUnsigned(date, index2, index1);
             }else{
-                //no Z == local time zone
-                tz = TimeZone.getDefault();
-                index2 = date.length();
+
+                if((index2 = date.indexOf('Z', index1)) > 0){ //search a Z, GMT+0
+                    tz = GMT0;
+                }else if((index2 = date.indexOf('+', index1)) > 0){ //search a +, GMT+XXXX
+                    tz = TIME_ZONES.get("GMT"+date.substring(index2, date.length()));
+                }else if((index2 = date.indexOf('-', index1)) > 0){ //search a -, GMT-XXXX
+                    tz = TIME_ZONES.get("GMT"+date.substring(index2, date.length()));
+                }else{
+                    //no Z == local time zone
+                    tz = TimeZone.getDefault();
+                    index2 = date.length();
+                }
+
+                sec = XInteger.parseIntUnsigned(date, index1, index2);
+                mil = 0;
             }
-            
-            sec = XInteger.parseIntUnsigned(date, index1, index2);
-            mil = 0;
         }
+        
 
         calendar.setTimeZone(tz);
         calendar.set(Calendar.YEAR, year);
