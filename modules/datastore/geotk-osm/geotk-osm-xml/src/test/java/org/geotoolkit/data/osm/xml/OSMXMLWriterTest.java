@@ -102,6 +102,7 @@ public class OSMXMLWriterTest {
     @Test
     public void testTransactionWrite() throws Exception {
         final File file = File.createTempFile("osmTransaction", ".xml");
+        file.deleteOnExit();
 
         final List<IdentifiedElement> created = new ArrayList<IdentifiedElement>();
         created.add( new Node(45.3, 12.1, -1, 465, 789, User.NONE, new Date().getTime(), Collections.singletonMap("tagKey", "tagValue")) );

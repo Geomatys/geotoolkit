@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLConnection;
 
 import org.geotoolkit.client.AbstractRequest;
 import org.geotoolkit.referencing.CRS;
@@ -91,7 +92,8 @@ public abstract class AbstractGetData extends AbstractRequest implements GetData
 
     @Override
     public InputStream getResponseStream() throws IOException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        final URLConnection conec = getURL().openConnection();
+        return conec.getInputStream();
     }
 
 }

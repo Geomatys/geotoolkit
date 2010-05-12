@@ -41,6 +41,7 @@ import org.geotoolkit.data.osm.client.v060.ReadElementHistory060;
 import org.geotoolkit.data.osm.client.v060.ReadElementRelations060;
 import org.geotoolkit.data.osm.client.v060.ReadElements060;
 import org.geotoolkit.data.osm.client.v060.ReadNodeWays060;
+import org.geotoolkit.data.osm.client.v060.Upload060;
 import org.geotoolkit.data.osm.model.Api;
 import org.geotoolkit.data.osm.xml.OSMXMLReader;
 import org.geotoolkit.util.logging.Logging;
@@ -232,9 +233,13 @@ public class OpenStreetMapServer implements Server{
     /**
      * {@see <a href="http://wiki.openstreetmap.org/wiki/API_v0.6#Diff_upload:_POST_.2Fapi.2F0.6.2Fchangeset.2F.23id.2Fupload">OSM API 0.6</a>}
      */
-    public Request createUploadChangeSet(){
-        //todo need auhtentification system on server/request
-        throw new UnsupportedOperationException("Not implemented yet.");
+    public UploadRequest createUploadChangeSet(){
+        switch (version) {
+            case v060:
+                return new Upload060(serverURL.toString());
+            default:
+                throw new IllegalArgumentException("Version was not defined");
+        }
     }
 
     /**
