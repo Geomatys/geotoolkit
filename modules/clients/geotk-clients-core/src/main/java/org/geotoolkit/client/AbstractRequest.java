@@ -18,16 +18,20 @@ package org.geotoolkit.client;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.geotoolkit.io.TableWriter;
 import org.geotoolkit.util.StringUtilities;
 import org.geotoolkit.util.logging.Logging;
 
@@ -158,7 +162,10 @@ public abstract class AbstractRequest implements Request {
      * {@inheritDoc }
      */
     @Override
-    public abstract InputStream getResponseStream() throws IOException;
+    public InputStream getResponseStream() throws IOException{
+        final URLConnection cnx = getURL().openConnection();
+        return openRichException(cnx);
+    }
 
     /**
      * {@inheritDoc }
@@ -174,4 +181,34 @@ public abstract class AbstractRequest implements Request {
             return false;
         }
     }
+
+    protected InputStream openRichException(URLConnection cnx) throws IOException{
+        try{
+            return cnx.getInputStream();
+        }catch(IOException ex){
+            final StringWriter writer = new StringWriter();
+            final TableWriter tablewriter = new TableWriter(writer);
+
+            tablewriter.nextLine(TableWriter.DOUBLE_HORIZONTAL_LINE);
+
+            for(Entry<String,List<String>> entry : cnx.getHeaderFields().entrySet()){
+                tablewriter.write((entry.getKey()!= null)? entry.getKey() : "null");
+                tablewriter.write("\t");
+                tablewriter.write(StringUtilities.toCommaSeparatedValues(entry.getValue()));
+                tablewriter.write("\n");
+            }
+            tablewriter.nextLine(TableWriter.DOUBLE_HORIZONTAL_LINE);
+
+            try {
+                tablewriter.flush();
+            } catch (IOException e) {
+                //will never happen is this case
+                e.printStackTrace();
+            }
+
+            throw new IOException("\n"+writer.toString(), ex);
+        }
+
+    }
+
 }

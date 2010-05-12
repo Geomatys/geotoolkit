@@ -51,12 +51,10 @@ public abstract class AbstractCloseChangeSet extends AbstractRequest implements 
 
     @Override
     public InputStream getResponseStream() throws IOException {
-        final URL url = getURL();
-        final URLConnection conec = url.openConnection();
+        final URLConnection conec = getURL().openConnection();
         final HttpURLConnection ht = (HttpURLConnection) conec;
         ht.setRequestMethod("PUT");
-
-        return conec.getInputStream();
+        return openRichException(conec);
     }
     
 }

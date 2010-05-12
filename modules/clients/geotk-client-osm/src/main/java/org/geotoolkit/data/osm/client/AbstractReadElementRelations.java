@@ -74,9 +74,4 @@ public abstract class AbstractReadElementRelations extends AbstractRequest imple
         return id;
     }
 
-    @Override
-    public InputStream getResponseStream() throws IOException {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
 }

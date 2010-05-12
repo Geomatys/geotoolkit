@@ -90,10 +90,4 @@ public abstract class AbstractGetData extends AbstractRequest implements GetData
         return super.getURL();
     }
 
-    @Override
-    public InputStream getResponseStream() throws IOException {
-        final URLConnection conec = getURL().openConnection();
-        return conec.getInputStream();
-    }
-
 }

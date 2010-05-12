@@ -107,9 +107,4 @@ public abstract class AbstractGetGPSTrace extends AbstractRequest implements Get
         return super.getURL();
     }
 
-    @Override
-    public InputStream getResponseStream() throws IOException {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
 }

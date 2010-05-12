@@ -57,9 +57,4 @@ public abstract class AbstractReadNodeWays extends AbstractRequest implements Re
         return id;
     }
 
-    @Override
-    public InputStream getResponseStream() throws IOException {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
 }

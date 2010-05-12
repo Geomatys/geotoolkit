@@ -82,16 +82,7 @@ public abstract class AbstractCreateChangeSet extends AbstractRequest implements
             stream.close();
         }
 
-        try{
-            return conec.getInputStream();
-        }catch(IOException ex){
-            for(Entry<String,List<String>> entry : conec.getHeaderFields().entrySet()){
-                System.out.println(entry.getKey() + " : ");
-                System.out.println(StringUtilities.toCommaSeparatedValues(entry.getValue()));
-            }
-            throw ex;
-        }
-        
+        return openRichException(conec);
     }
 
 }

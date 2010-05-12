@@ -74,9 +74,4 @@ public abstract class AbstractReadElementHistory extends AbstractRequest impleme
         return id;
     }
 
-    @Override
-    public InputStream getResponseStream() throws IOException {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
 }

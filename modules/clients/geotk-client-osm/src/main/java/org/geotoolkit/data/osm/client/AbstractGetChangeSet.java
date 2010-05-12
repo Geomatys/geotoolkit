@@ -59,11 +59,4 @@ public abstract class AbstractGetChangeSet extends AbstractRequest implements Ge
         return id;
     }
 
-    @Override
-    public InputStream getResponseStream() throws IOException {
-        final URL url = getURL();
-        final URLConnection conec = url.openConnection();
-        return conec.getInputStream();
-    }
-
 }

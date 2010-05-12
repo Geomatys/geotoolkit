@@ -211,11 +211,4 @@ public abstract class AbstractGetChangeSets extends AbstractRequest implements G
         return super.getURL();
     }
 
-    @Override
-    public InputStream getResponseStream() throws IOException {
-        final URL url = getURL();
-        final URLConnection conec = url.openConnection();
-        return conec.getInputStream();
-    }
-
 }

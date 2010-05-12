@@ -91,12 +91,4 @@ public abstract class AbstractReadElement extends AbstractRequest implements Rea
         this.version = version;
     }
 
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public InputStream getResponseStream() throws IOException {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
 }

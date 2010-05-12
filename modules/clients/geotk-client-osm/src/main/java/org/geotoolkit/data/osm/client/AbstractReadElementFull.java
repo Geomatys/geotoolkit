@@ -74,9 +74,4 @@ public abstract class AbstractReadElementFull extends AbstractRequest implements
         return id;
     }
 
-    @Override
-    public InputStream getResponseStream() throws IOException {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
 }

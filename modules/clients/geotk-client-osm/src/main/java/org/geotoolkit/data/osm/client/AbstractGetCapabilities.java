@@ -49,9 +49,4 @@ public abstract class AbstractGetCapabilities extends AbstractRequest implements
         return super.getURL();
     }
 
-    @Override
-    public InputStream getResponseStream() throws IOException {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
 }
