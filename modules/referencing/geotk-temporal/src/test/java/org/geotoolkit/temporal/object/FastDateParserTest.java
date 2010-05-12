@@ -60,7 +60,7 @@ public class FastDateParserTest {
         final FastDateParser fdp = new FastDateParser();
 
         String str;
-        final Calendar date = Calendar.getInstance();
+        Calendar calendar = Calendar.getInstance();
         int year = 1995;
         int month = 10; //starts at 0
         int day = 23;
@@ -69,29 +69,60 @@ public class FastDateParserTest {
         int sec = 36;
         int mil = 512;
 
+
+        //test 'Z' for GMT+0 ---------------------------------------------------
+
         str = "1995-11-23T16:41:36Z";
 
-        date.setTime(fdp.parseToDate(str));
-        date.setTimeZone(TimeZone.getTimeZone("GMT+0"));
-        assertEquals(year,  date.get(YEAR));
-        assertEquals(month, date.get(MONTH));
-        assertEquals(day,   date.get(DAY_OF_MONTH));
-        assertEquals(hour,  date.get(HOUR_OF_DAY));
-        assertEquals(min,   date.get(MINUTE));
-        assertEquals(sec,   date.get(SECOND));
-        assertEquals(0,     date.get(MILLISECOND));
+        calendar = fdp.getCalendar(str);
+        assertEquals(TimeZone.getTimeZone("GMT+0"), calendar.getTimeZone());
+        assertEquals(year,  calendar.get(YEAR));
+        assertEquals(month, calendar.get(MONTH));
+        assertEquals(day,   calendar.get(DAY_OF_MONTH));
+        assertEquals(hour,  calendar.get(HOUR_OF_DAY));
+        assertEquals(min,   calendar.get(MINUTE));
+        assertEquals(sec,   calendar.get(SECOND));
+        assertEquals(0,     calendar.get(MILLISECOND));
 
         str = "1995-11-23T16:41:36.512Z";
 
-        date.setTime(fdp.parseToDate(str));
-        date.setTimeZone(TimeZone.getTimeZone("GMT+0"));
-        assertEquals(year,  date.get(YEAR));
-        assertEquals(month, date.get(MONTH));
-        assertEquals(day,   date.get(DAY_OF_MONTH));
-        assertEquals(hour,  date.get(HOUR_OF_DAY));
-        assertEquals(min,   date.get(MINUTE));
-        assertEquals(sec,   date.get(SECOND));
-        assertEquals(mil,   date.get(MILLISECOND));
+        calendar = fdp.getCalendar(str);
+        assertEquals(TimeZone.getTimeZone("GMT+0"), calendar.getTimeZone());
+        assertEquals(year,  calendar.get(YEAR));
+        assertEquals(month, calendar.get(MONTH));
+        assertEquals(day,   calendar.get(DAY_OF_MONTH));
+        assertEquals(hour,  calendar.get(HOUR_OF_DAY));
+        assertEquals(min,   calendar.get(MINUTE));
+        assertEquals(sec,   calendar.get(SECOND));
+        assertEquals(mil,   calendar.get(MILLISECOND));
+
+        //test Z for GMT+2 -----------------------------------------------------
+
+        str = "1995-11-23T16:41:36+2";
+
+        calendar = fdp.getCalendar(str);
+        assertEquals(TimeZone.getTimeZone("GMT+2"), calendar.getTimeZone());
+        assertEquals(year,  calendar.get(YEAR));
+        assertEquals(month, calendar.get(MONTH));
+        assertEquals(day,   calendar.get(DAY_OF_MONTH));
+        assertEquals(hour,  calendar.get(HOUR_OF_DAY));
+        assertEquals(min,   calendar.get(MINUTE));
+        assertEquals(sec,   calendar.get(SECOND));
+        assertEquals(0,     calendar.get(MILLISECOND));
+
+        str = "1995-11-23T16:41:36.512+2";
+
+        calendar = fdp.getCalendar(str);
+        assertEquals(TimeZone.getTimeZone("GMT+2"), calendar.getTimeZone());
+        assertEquals(year,  calendar.get(YEAR));
+        assertEquals(month, calendar.get(MONTH));
+        assertEquals(day,   calendar.get(DAY_OF_MONTH));
+        assertEquals(hour,  calendar.get(HOUR_OF_DAY));
+        assertEquals(min,   calendar.get(MINUTE));
+        assertEquals(sec,   calendar.get(SECOND));
+        assertEquals(mil,   calendar.get(MILLISECOND));
+
+
     }
 
 

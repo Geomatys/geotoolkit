@@ -18,25 +18,42 @@ package org.geotoolkit.temporal.object;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Map;
 import java.util.TimeZone;
 
 import org.geotoolkit.util.XInteger;
+import org.geotoolkit.util.collection.UnSynchronizedCache;
 
 /**
  * Fast parser for date that match the pattern : 
  * yyyy-MM-dd'T'HH:mm:ss'Z'
  * yyyy-MM-dd'T'HH:mm:ss.SSS'Z'
+ * yyyy-MM-dd'T'HH:mm:ssZ
+ * yyyy-MM-dd'T'HH:mm:ss.SSSZ
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
 public class FastDateParser {
 
-    private static final TimeZone TIME_ZONE = TimeZone.getTimeZone("GMT+0");
+    private static final TimeZone GMT0 = TimeZone.getTimeZone("GMT+0");
     private final Calendar calendar = Calendar.getInstance();
 
+    private final Map<String,TimeZone> TIME_ZONES = new UnSynchronizedCache<String, TimeZone>(10){
+        @Override
+        public TimeZone get(Object o) {
+            @SuppressWarnings("element-type-mismatch")
+            TimeZone tz = super.get(o);
+            if(tz == null){
+                tz = TimeZone.getTimeZone((String)o);
+                put((String)o, tz);
+            }
+            return tz;
+        }
+    };
+
     public FastDateParser() {
-        calendar.setTimeZone(TIME_ZONE);
+        calendar.setTimeZone(GMT0);
         calendar.set(0, 0, 1, 0, 0, 0);
         calendar.set(Calendar.MILLISECOND, 0);
     }
@@ -64,6 +81,7 @@ public class FastDateParser {
         final int min = XInteger.parseIntUnsigned(date, index2, index1);
         index1++;
 
+        final TimeZone tz;
         final int mil;
         final int sec;
         index2 = date.indexOf('.',index1);
@@ -72,14 +90,37 @@ public class FastDateParser {
             sec = XInteger.parseIntUnsigned(date, index1, index2);
             index2++;
 
-            index1 = date.indexOf('Z', index2);
+            if((index1 = date.indexOf('Z', index2)) > 0){ //search a Z, GMT+0
+                tz = GMT0;
+            }else if((index1 = date.indexOf('+', index2)) > 0){ //search a +, GMT+XXXX
+                tz = TIME_ZONES.get("GMT"+date.substring(index1, date.length()));
+            }else if((index1 = date.indexOf('-', index2)) > 0){ //search a -, GMT-XXXX
+                tz = TIME_ZONES.get("GMT"+date.substring(index1, date.length()));
+            }else{
+                //no Z == local time zone
+                tz = TimeZone.getDefault();
+                index1 = date.length();
+            }
             mil = XInteger.parseIntUnsigned(date, index2, index1);
         }else{
-            index2 = date.indexOf('Z', index1);
+
+            if((index2 = date.indexOf('Z', index1)) > 0){ //search a Z, GMT+0
+                tz = GMT0;
+            }else if((index2 = date.indexOf('+', index1)) > 0){ //search a +, GMT+XXXX
+                tz = TIME_ZONES.get("GMT"+date.substring(index2, date.length()));
+            }else if((index2 = date.indexOf('-', index1)) > 0){ //search a -, GMT-XXXX
+                tz = TIME_ZONES.get("GMT"+date.substring(index2, date.length()));
+            }else{
+                //no Z == local time zone
+                tz = TimeZone.getDefault();
+                index2 = date.length();
+            }
+            
             sec = XInteger.parseIntUnsigned(date, index1, index2);
             mil = 0;
         }
 
+        calendar.setTimeZone(tz);
         calendar.set(Calendar.YEAR, year);
         calendar.set(Calendar.MONTH, month - 1);
         calendar.set(Calendar.DAY_OF_MONTH, day);
@@ -87,6 +128,17 @@ public class FastDateParser {
         calendar.set(Calendar.MINUTE, min);
         calendar.set(Calendar.SECOND, sec);
         calendar.set(Calendar.MILLISECOND, mil);
+    }
+
+    /**
+     * 
+     * @param str : String to parse
+     * @return the calendar used by this parser : this calendar
+     * will be reused if another parser call is done.
+     */
+    public Calendar getCalendar(String str) {
+        parse(str);
+        return calendar;
     }
 
     public Date parseToDate(String str) {
