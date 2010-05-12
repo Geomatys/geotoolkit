@@ -45,7 +45,7 @@ import static org.geotoolkit.data.osm.xml.OSMXMLConstants.*;
  */
 public class OSMXMLWriter extends StaxStreamWriter{
 
-    private final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+    private final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 
     public void writeStartDocument() throws XMLStreamException{
         writer.writeStartDocument("UTF-8", "1.0");

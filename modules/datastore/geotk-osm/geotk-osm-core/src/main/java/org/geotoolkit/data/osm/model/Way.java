@@ -20,6 +20,7 @@ package org.geotoolkit.data.osm.model;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import org.geotoolkit.feature.DefaultProperty;
@@ -76,7 +77,7 @@ public class Way extends IdentifiedElement{
         tablewriter.write("ID\t"+getId()+"\n");
         tablewriter.write("ChangeSet\t"+getChangeset()+"\n");
         tablewriter.write("User\t"+getUser()+"\n");
-        tablewriter.write("TimeStamp\t"+getTimestamp()+"\n");
+        tablewriter.write("TimeStamp\t"+new Date(getTimestamp())+"\n");
         tablewriter.write("version\t"+getVersion()+"\n");
         tablewriter.nextLine(TableWriter.SINGLE_HORIZONTAL_LINE);
         for(Tag t : getTags()){

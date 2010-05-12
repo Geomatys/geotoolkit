@@ -20,6 +20,7 @@ package org.geotoolkit.data.osm.model;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import org.geotoolkit.io.TableWriter;
@@ -101,7 +102,7 @@ public class ChangeSet {
         tablewriter.write("ID\t"+getId()+"\n");
         tablewriter.write("User\t"+getUser()+"\n");
         tablewriter.write("Open\t"+getOpen()+"\n");
-        tablewriter.write("Created at\t"+getTimestamp()+"\n");
+        tablewriter.write("Created at\t"+new Date(getTimestamp())+"\n");
         tablewriter.write("Envelope\t"+getEnv()+"\n");
         tablewriter.nextLine(TableWriter.SINGLE_HORIZONTAL_LINE);
         for(Tag t : getTags()){

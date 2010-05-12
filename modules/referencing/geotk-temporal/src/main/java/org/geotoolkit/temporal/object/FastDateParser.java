@@ -23,7 +23,9 @@ import java.util.TimeZone;
 import org.geotoolkit.util.XInteger;
 
 /**
- * Fast parser for date that match the pattern yyyy-MM-dd'T'HH:mm:ssZ
+ * Fast parser for date that match the pattern : 
+ * yyyy-MM-dd'T'HH:mm:ss'Z'
+ * yyyy-MM-dd'T'HH:mm:ss.SSS'Z'
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
@@ -62,8 +64,21 @@ public class FastDateParser {
         final int min = XInteger.parseIntUnsigned(date, index2, index1);
         index1++;
 
-        index2 = date.indexOf('Z', index1);
-        final int sec = XInteger.parseIntUnsigned(date, index1, index2);
+        final int mil;
+        final int sec;
+        index2 = date.indexOf('.',index1);
+        if(index2 > 0){
+            //we have milliseconds
+            sec = XInteger.parseIntUnsigned(date, index1, index2);
+            index2++;
+
+            index1 = date.indexOf('Z', index2);
+            mil = XInteger.parseIntUnsigned(date, index2, index1);
+        }else{
+            index2 = date.indexOf('Z', index1);
+            sec = XInteger.parseIntUnsigned(date, index1, index2);
+            mil = 0;
+        }
 
         calendar.set(Calendar.YEAR, year);
         calendar.set(Calendar.MONTH, month - 1);
@@ -71,6 +86,7 @@ public class FastDateParser {
         calendar.set(Calendar.HOUR_OF_DAY, hour);
         calendar.set(Calendar.MINUTE, min);
         calendar.set(Calendar.SECOND, sec);
+        calendar.set(Calendar.MILLISECOND, mil);
     }
 
     public Date parseToDate(String str) {

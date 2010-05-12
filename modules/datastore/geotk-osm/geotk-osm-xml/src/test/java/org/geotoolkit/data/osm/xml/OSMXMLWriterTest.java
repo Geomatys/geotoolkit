@@ -19,6 +19,7 @@ package org.geotoolkit.data.osm.xml;
 
 import java.io.File;
 import java.util.Collections;
+import java.util.Date;
 import org.geotoolkit.data.osm.model.Bound;
 import org.geotoolkit.data.osm.model.ChangeSet;
 import org.geotoolkit.data.osm.model.User;
@@ -60,8 +61,9 @@ public class OSMXMLWriterTest {
     @Test
     public void testChangeSetWrite() throws Exception {
         final File file = File.createTempFile("osmwrite", ".xml");
+        final Date date = new Date();
 
-        ChangeSet cs = new ChangeSet(13, User.create(23, "jean"), 123465l, Boolean.TRUE, 
+        ChangeSet cs = new ChangeSet(13, User.create(23, "jean"), date.getTime(), Boolean.TRUE,
                 Bound.create(10, 30, 5, 45),
                 Collections.singletonMap("created_by", "geotoolkit"));
 
@@ -80,6 +82,9 @@ public class OSMXMLWriterTest {
 
         assertTrue(ob instanceof ChangeSet);
         ChangeSet csRead = (ChangeSet) ob;
+
+        System.out.println(cs);
+        System.out.println(csRead);
     }
 
 }
