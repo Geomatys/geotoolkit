@@ -115,4 +115,46 @@ public abstract class IdentifiedElement extends AbstractFeature implements Seria
         return tags;
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final IdentifiedElement other = (IdentifiedElement) obj;
+        if (this.id != other.id) {
+            return false;
+        }
+        if (this.version != other.version) {
+            return false;
+        }
+        if (this.changeset != other.changeset) {
+            return false;
+        }
+        if (this.user != other.user && (this.user == null || !this.user.equals(other.user))) {
+            return false;
+        }
+        if (this.timestamp != other.timestamp) {
+            return false;
+        }
+        if (this.tags != other.tags && (this.tags == null || !this.tags.equals(other.tags))) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 19 * hash + (int) (this.id ^ (this.id >>> 32));
+        hash = 19 * hash + this.version;
+        hash = 19 * hash + this.changeset;
+        hash = 19 * hash + (this.user != null ? this.user.hashCode() : 0);
+        hash = 19 * hash + (int) (this.timestamp ^ (this.timestamp >>> 32));
+        hash = 19 * hash + (this.tags != null ? this.tags.hashCode() : 0);
+        return hash;
+    }
+
 }

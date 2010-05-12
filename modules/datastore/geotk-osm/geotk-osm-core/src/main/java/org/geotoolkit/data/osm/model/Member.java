@@ -77,6 +77,34 @@ public class Member implements Serializable {
         return sb.toString();
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Member other = (Member) obj;
+        if (this.ref != other.ref) {
+            return false;
+        }
+        if (this.type != other.type && (this.type == null || !this.type.equals(other.type))) {
+            return false;
+        }
+        if ((this.role == null) ? (other.role != null) : !this.role.equals(other.role)) {
+            return false;
+        }
+        return true;
+    }
 
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 31 * hash + (int) (this.ref ^ (this.ref >>> 32));
+        hash = 31 * hash + (this.type != null ? this.type.hashCode() : 0);
+        hash = 31 * hash + (this.role != null ? this.role.hashCode() : 0);
+        return hash;
+    }
 
 }

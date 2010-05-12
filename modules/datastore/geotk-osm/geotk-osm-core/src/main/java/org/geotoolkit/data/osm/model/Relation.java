@@ -63,6 +63,31 @@ public class Relation extends IdentifiedElement{
     }
 
     @Override
+    protected Property[] getPropertiesInternal() {
+        final Property[] props = new Property[5 + members.size() + tags.size()];
+        props[0] = new DefaultProperty(id, getType().getDescriptor("id"));
+        props[1] = new DefaultProperty(version, getType().getDescriptor("version"));
+        props[2] = new DefaultProperty(changeset, getType().getDescriptor("changeset"));
+        props[3] = new DefaultProperty(user, getType().getDescriptor("user"));
+        props[4] = new DefaultProperty(timestamp, getType().getDescriptor("timestamp"));
+
+        int i=5;
+        final PropertyDescriptor tagDesc = getType().getDescriptor("tags");
+        for(Tag t : tags){
+            props[i] = new DefaultProperty(t, tagDesc);
+            i++;
+        }
+
+        final PropertyDescriptor memDesc = getType().getDescriptor("members");
+        for(Member m : members){
+            props[i] = new DefaultProperty(m, memDesc);
+            i++;
+        }
+
+        return props;
+    }
+
+    @Override
     public String toString() {
         final StringWriter writer = new StringWriter();
         final TableWriter tablewriter = new TableWriter(writer);
@@ -98,28 +123,25 @@ public class Relation extends IdentifiedElement{
     }
 
     @Override
-    protected Property[] getPropertiesInternal() {
-        final Property[] props = new Property[5 + members.size() + tags.size()];
-        props[0] = new DefaultProperty(id, getType().getDescriptor("id"));
-        props[1] = new DefaultProperty(version, getType().getDescriptor("version"));
-        props[2] = new DefaultProperty(changeset, getType().getDescriptor("changeset"));
-        props[3] = new DefaultProperty(user, getType().getDescriptor("user"));
-        props[4] = new DefaultProperty(timestamp, getType().getDescriptor("timestamp"));
-
-        int i=5;
-        final PropertyDescriptor tagDesc = getType().getDescriptor("tags");
-        for(Tag t : tags){
-            props[i] = new DefaultProperty(t, tagDesc);
-            i++;
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
         }
-
-        final PropertyDescriptor memDesc = getType().getDescriptor("members");
-        for(Member m : members){
-            props[i] = new DefaultProperty(m, memDesc);
-            i++;
+        if (getClass() != obj.getClass()) {
+            return false;
         }
+        final Relation other = (Relation) obj;
+        if (this.members != other.members && (this.members == null || !this.members.equals(other.members))) {
+            return false;
+        }
+        return super.equals(obj);
+    }
 
-        return props;
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 97 * hash + (this.members != null ? this.members.hashCode() : 0);
+        return hash + super.hashCode();
     }
 
 }

@@ -120,4 +120,45 @@ public class ChangeSet {
         return writer.getBuffer().toString();
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final ChangeSet other = (ChangeSet) obj;
+        if (this.id != other.id && (this.id == null || !this.id.equals(other.id))) {
+            return false;
+        }
+        if (this.user != other.user && (this.user == null || !this.user.equals(other.user))) {
+            return false;
+        }
+        if (this.timestamp != other.timestamp && (this.timestamp == null || !this.timestamp.equals(other.timestamp))) {
+            return false;
+        }
+        if (this.open != other.open && (this.open == null || !this.open.equals(other.open))) {
+            return false;
+        }
+        if (this.env != other.env && (this.env == null || !this.env.equals(other.env))) {
+            return false;
+        }
+        if (this.tags != other.tags && (this.tags == null || !this.tags.equals(other.tags))) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 19 * hash + (this.id != null ? this.id.hashCode() : 0);
+        hash = 19 * hash + (this.user != null ? this.user.hashCode() : 0);
+        hash = 19 * hash + (this.timestamp != null ? this.timestamp.hashCode() : 0);
+        hash = 19 * hash + (this.open != null ? this.open.hashCode() : 0);
+        hash = 19 * hash + (this.env != null ? this.env.hashCode() : 0);
+        return hash;
+    }
+
 }

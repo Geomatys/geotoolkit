@@ -66,4 +66,37 @@ public class Tag extends AbstractComplexAttribute<Identifier>{
         return props;
     }
 
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("Tag[");
+        sb.append(k).append(',').append(v).append(']');
+        return sb.toString();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Tag other = (Tag) obj;
+        if ((this.k == null) ? (other.k != null) : !this.k.equals(other.k)) {
+            return false;
+        }
+        if ((this.v == null) ? (other.v != null) : !this.v.equals(other.v)) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 97 * hash + (this.k != null ? this.k.hashCode() : 0);
+        hash = 97 * hash + (this.v != null ? this.v.hashCode() : 0);
+        return hash;
+    }
+
 }

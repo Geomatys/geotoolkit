@@ -62,12 +62,12 @@ public class OSMXMLReader extends StaxStreamReader{
     private final List<Member> members = new ArrayList<Member>();
     private final List<Long> nodes = new ArrayList<Long>();
     private final List<IdentifiedElement> transaction = new ArrayList<IdentifiedElement>();
-    private long id = -1;
-    private int version = -1;
-    private int changeset = -1;
+    private long id = Long.MIN_VALUE;
+    private int version = Integer.MIN_VALUE;
+    private int changeset = Integer.MIN_VALUE;
     private String user = null;
     private int uid = User.USER_ID_NONE;
-    private long timestamp = -1;
+    private long timestamp = Long.MIN_VALUE;
 
     private Object current;
 
@@ -142,12 +142,12 @@ public class OSMXMLReader extends StaxStreamReader{
         members.clear();
         tags.clear();
         nodes.clear();
-        id = -1;
-        version = -1;
-        changeset = -1;
+        id = Long.MIN_VALUE;
+        version = Integer.MIN_VALUE;
+        changeset = Integer.MIN_VALUE;
         user = null;
         uid = User.USER_ID_NONE;
-        timestamp = -1;
+        timestamp = Long.MIN_VALUE;
     }
 
     private void read() throws XMLStreamException{
@@ -233,20 +233,20 @@ public class OSMXMLReader extends StaxStreamReader{
         id = Long.parseLong(strID);
         //check if we are in search mode
         if(moveToId > 0 && id != moveToId) return false;
-        if(id < 0) throw new XMLStreamException("Error in xml file, entity with no id");
+        if(id == Long.MIN_VALUE) throw new XMLStreamException("Error in xml file, entity with no id");
 
         changeset = Integer.parseInt(strChangeset);
-        if(changeset < 0)   throw new XMLStreamException("Error in xml file, change set is null");
+        if(changeset == Integer.MIN_VALUE)   throw new XMLStreamException("Error in xml file, change set is null");
 
         timestamp = toDateLong(strTimestamp);
-        if(timestamp < 0)   throw new XMLStreamException("Error in xml file, timestamp is null");
+        if(timestamp == Long.MIN_VALUE)   throw new XMLStreamException("Error in xml file, timestamp is null");
 
         if(strUID != null){
             uid = Integer.parseInt(strUID);
         }
 
         version = Integer.parseInt(strVersion);
-        if(version < 0)     throw new XMLStreamException("Error in xml file, version is null");
+        if(version == Integer.MIN_VALUE)     throw new XMLStreamException("Error in xml file, version is null");
 
         return true;
     }

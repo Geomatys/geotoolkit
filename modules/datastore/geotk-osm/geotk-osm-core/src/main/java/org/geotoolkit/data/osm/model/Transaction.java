@@ -82,5 +82,39 @@ public class Transaction {
         }
         return sb.toString();
     }
-    
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Transaction other = (Transaction) obj;
+        if (this.elements != other.elements && (this.elements == null || !this.elements.equals(other.elements))) {
+            return false;
+        }
+        if (this.type != other.type && (this.type == null || !this.type.equals(other.type))) {
+            return false;
+        }
+        if ((this.version == null) ? (other.version != null) : !this.version.equals(other.version)) {
+            return false;
+        }
+        if ((this.generator == null) ? (other.generator != null) : !this.generator.equals(other.generator)) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 17 * hash + (this.elements != null ? this.elements.hashCode() : 0);
+        hash = 17 * hash + (this.type != null ? this.type.hashCode() : 0);
+        hash = 17 * hash + (this.version != null ? this.version.hashCode() : 0);
+        hash = 17 * hash + (this.generator != null ? this.generator.hashCode() : 0);
+        return hash;
+    }
+
 }

@@ -62,6 +62,31 @@ public class Way extends IdentifiedElement{
     }
 
     @Override
+    protected Property[] getPropertiesInternal() {
+        final Property[] props = new Property[5 + nodes.size() + tags.size()];
+        props[0] = new DefaultProperty(id, getType().getDescriptor("id"));
+        props[1] = new DefaultProperty(version, getType().getDescriptor("version"));
+        props[2] = new DefaultProperty(changeset, getType().getDescriptor("changeset"));
+        props[3] = new DefaultProperty(user, getType().getDescriptor("user"));
+        props[4] = new DefaultProperty(timestamp, getType().getDescriptor("timestamp"));
+
+        int i=5;
+        final PropertyDescriptor tagDesc = getType().getDescriptor("tags");
+        for(Tag t : tags){
+            props[i] = new DefaultProperty(t, tagDesc);
+            i++;
+        }
+
+        final PropertyDescriptor nodeDesc = getType().getDescriptor("nodes");
+        for(Long l : nodes){
+            props[i] = new DefaultProperty(l, nodeDesc);
+            i++;
+        }
+
+        return props;
+    }
+
+    @Override
     public String toString() {
         final StringWriter writer = new StringWriter();
         final TableWriter tablewriter = new TableWriter(writer);
@@ -97,28 +122,25 @@ public class Way extends IdentifiedElement{
     }
 
     @Override
-    protected Property[] getPropertiesInternal() {
-        final Property[] props = new Property[5 + nodes.size() + tags.size()];
-        props[0] = new DefaultProperty(id, getType().getDescriptor("id"));
-        props[1] = new DefaultProperty(version, getType().getDescriptor("version"));
-        props[2] = new DefaultProperty(changeset, getType().getDescriptor("changeset"));
-        props[3] = new DefaultProperty(user, getType().getDescriptor("user"));
-        props[4] = new DefaultProperty(timestamp, getType().getDescriptor("timestamp"));
+    public int hashCode() {
+        int hash = 7;
+        hash = 97 * hash + (this.nodes != null ? this.nodes.hashCode() : 0);
+        return hash + super.hashCode();
+    }
 
-        int i=5;
-        final PropertyDescriptor tagDesc = getType().getDescriptor("tags");
-        for(Tag t : tags){
-            props[i] = new DefaultProperty(t, tagDesc);
-            i++;
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
         }
-
-        final PropertyDescriptor nodeDesc = getType().getDescriptor("nodes");
-        for(Long l : nodes){
-            props[i] = new DefaultProperty(l, nodeDesc);
-            i++;
+        if (getClass() != obj.getClass()) {
+            return false;
         }
-
-        return props;
+        final Way other = (Way) obj;
+        if (this.nodes != other.nodes && (this.nodes == null || !this.nodes.equals(other.nodes))) {
+            return false;
+        }
+        return super.equals(obj);
     }
 
 }

@@ -64,6 +64,27 @@ public class Node extends IdentifiedElement{
         return lon;
     }
 
+    // feature/attribut model --------------------------------------------------
+
+    @Override
+    protected Property[] getPropertiesInternal() {
+        final Property[] props = new Property[5 + tags.size()];
+        props[0] = new DefaultProperty(id, getType().getDescriptor("id"));
+        props[1] = new DefaultProperty(version, getType().getDescriptor("version"));
+        props[2] = new DefaultProperty(changeset, getType().getDescriptor("changeset"));
+        props[3] = new DefaultProperty(user, getType().getDescriptor("user"));
+        props[4] = new DefaultProperty(timestamp, getType().getDescriptor("timestamp"));
+
+        final PropertyDescriptor tagDesc = getType().getDescriptor("tags");
+        int i=5;
+        for(Tag t : tags){
+            props[i] = new DefaultProperty(t, tagDesc);
+            i++;
+        }
+
+        return props;
+    }
+
     @Override
     public String toString() {
         final StringWriter writer = new StringWriter();
@@ -96,25 +117,30 @@ public class Node extends IdentifiedElement{
         return writer.getBuffer().toString();
     }
 
-    // feature/attribut model --------------------------------------------------
-
     @Override
-    protected Property[] getPropertiesInternal() {
-        final Property[] props = new Property[5 + tags.size()];
-        props[0] = new DefaultProperty(id, getType().getDescriptor("id"));
-        props[1] = new DefaultProperty(version, getType().getDescriptor("version"));
-        props[2] = new DefaultProperty(changeset, getType().getDescriptor("changeset"));
-        props[3] = new DefaultProperty(user, getType().getDescriptor("user"));
-        props[4] = new DefaultProperty(timestamp, getType().getDescriptor("timestamp"));
-
-        final PropertyDescriptor tagDesc = getType().getDescriptor("tags");
-        int i=5;
-        for(Tag t : tags){
-            props[i] = new DefaultProperty(t, tagDesc);
-            i++;
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
         }
-
-        return props;
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Node other = (Node) obj;
+        if (this.lat != other.lat) {
+            return false;
+        }
+        if (this.lon != other.lon) {
+            return false;
+        }
+        return super.equals(obj);
     }
 
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 67 * hash + (int) (Double.doubleToLongBits(this.lat) ^ (Double.doubleToLongBits(this.lat) >>> 32));
+        hash = 67 * hash + (int) (Double.doubleToLongBits(this.lon) ^ (Double.doubleToLongBits(this.lon) >>> 32));
+        return hash + super.hashCode();
+    }
+    
 }
