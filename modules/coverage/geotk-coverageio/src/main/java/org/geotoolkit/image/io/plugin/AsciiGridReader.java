@@ -920,7 +920,7 @@ loop:       for (int y=0; /* stop condition inside */; y++) {
         /**
          * The format names for the default {@link AsciiGridReader} configuration.
          */
-        static final String[] NAMES = {"ascii-grid"};
+        static final String[] NAMES = {"ASCII-Grid", "ascii-grid"};
 
         /**
          * The file suffixes. This replace the {@link TextImageReader.Spi#SUFFIXES} declared

@@ -131,6 +131,10 @@ public class WorldFileImageWriter extends ImageWriterAdapter {
         if ("main".equalsIgnoreCase(writerID)) {
             return super.createOutput(writerID);
         }
+        final ImageWriterSpi spi = originatingProvider;
+        if ((spi instanceof Spi) && ((Spi) spi).exclude(writerID)) {
+            return null;
+        }
         final Object output = this.output;
         if ("tfw".equalsIgnoreCase(writerID)) {
             writerID = SupportFiles.toSuffixTFW(output);
@@ -197,7 +201,7 @@ public class WorldFileImageWriter extends ImageWriterAdapter {
      * users must invoke {@link #registerDefaults(ServiceRegistry)} explicitly.
      *
      * @author Martin Desruisseaux (Geomatys)
-     * @version 3.08
+     * @version 3.12
      *
      * @see WorldFileImageReader.Spi
      *
@@ -242,6 +246,21 @@ public class WorldFileImageWriter extends ImageWriterAdapter {
         }
 
         /**
+         * Returns {@code true} if the given type of file should be excluded. The {@code writerID}
+         * argument is either {@code "tfw"} or {@code "prj"}. If this method returns {@code true}
+         * for the given ID, no attempt to write the corresponding file will be made.
+         * <p>
+         * This is useful for excluding attempts to write the TFW file when the information
+         * is already provided in the main writer, as for example in the ASCII-Grid format.
+         *
+         * @param  writerID Identifier of the writer for which an output is needed.
+         * @return {@code true} if no attempt to write the corresponding file should be made.
+         */
+        boolean exclude(final String writerID) {
+            return false;
+        }
+
+        /**
          * Creates a new <cite>World File</cite> writer. The {@code extension} argument
          * is forwarded to the {@linkplain #main main} provider with no change.
          *
@@ -263,8 +282,9 @@ public class WorldFileImageWriter extends ImageWriterAdapter {
          * the <a href="../package-summary.html#package_description">package description</a>
          * for more information.
          * <p>
-         * The current implementation registers plugins for the TIFF, JPEG, PNG, GIF, BMP
-         * and matrix formats, but this list can be augmented in any future Geotk version.
+         * The current implementation registers plugins for the TIFF, JPEG, PNG, GIF, BMP,
+         * matrix and ASCII-Grid ({@code ".prj"} file only) formats, but this list can be
+         * augmented in any future Geotk version.
          *
          * @param registry The registry where to register the formats, or {@code null} for
          *        the {@linkplain IIORegistry#getDefaultInstance() default registry}.
@@ -287,6 +307,7 @@ public class WorldFileImageWriter extends ImageWriterAdapter {
                         case 3: provider = new GIF (); break;
                         case 4: provider = new BMP (); break;
                         case 5: provider = new TXT (); break;
+                        case 6: provider = new ASC (); break;
                         default: return;
                     }
                 } catch (RuntimeException e) {
@@ -334,6 +355,7 @@ public class WorldFileImageWriter extends ImageWriterAdapter {
                     case 3: type = GIF .class; break;
                     case 4: type = BMP .class; break;
                     case 5: type = TXT .class; break;
+                    case 6: type = ASC .class; break;
                     default: return;
                 }
                 final Spi provider = registry.getServiceProviderByClass(type);
@@ -348,10 +370,15 @@ public class WorldFileImageWriter extends ImageWriterAdapter {
      * Providers for common formats. Each provider needs to be a different class because
      * {@link ServiceRegistry} allows the registration of only one instance of each class.
      */
-    private static final class TIFF extends Spi {TIFF() {super("TIFF"  );}}
-    private static final class JPEG extends Spi {JPEG() {super("JPEG"  );}}
-    private static final class PNG  extends Spi { PNG() {super("PNG"   );}}
-    private static final class GIF  extends Spi { GIF() {super("GIF"   );}}
-    private static final class BMP  extends Spi { BMP() {super("BMP"   );}}
-    private static final class TXT  extends Spi { TXT() {super("matrix");}}
+    private static final class TIFF extends Spi {TIFF() {super("TIFF"      );}}
+    private static final class JPEG extends Spi {JPEG() {super("JPEG"      );}}
+    private static final class PNG  extends Spi { PNG() {super("PNG"       );}}
+    private static final class GIF  extends Spi { GIF() {super("GIF"       );}}
+    private static final class BMP  extends Spi { BMP() {super("BMP"       );}}
+    private static final class TXT  extends Spi { TXT() {super("matrix"    );}}
+    private static final class ASC  extends Spi { ASC() {super("ASCII-Grid");}
+        @Override boolean exclude(final String readerID) {
+            return "tfw".equalsIgnoreCase(readerID);
+        }
+    }
 }

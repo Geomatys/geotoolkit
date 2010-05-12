@@ -156,6 +156,10 @@ public class WorldFileImageReader extends ImageReaderAdapter {
         if ("main".equalsIgnoreCase(readerID)) {
             return super.createInput(readerID);
         }
+        final ImageReaderSpi spi = originatingProvider;
+        if ((spi instanceof Spi) && ((Spi) spi).exclude(readerID)) {
+            return null;
+        }
         return SupportFiles.changeExtension(input, readerID);
     }
 
@@ -259,7 +263,7 @@ public class WorldFileImageReader extends ImageReaderAdapter {
      * users must invoke {@link #registerDefaults(ServiceRegistry)} explicitly.
      *
      * @author Martin Desruisseaux (Geomatys)
-     * @version 3.08
+     * @version 3.12
      *
      * @see WorldFileImageWriter.Spi
      *
@@ -304,6 +308,21 @@ public class WorldFileImageReader extends ImageReaderAdapter {
         }
 
         /**
+         * Returns {@code true} if the given type of file should be excluded. The {@code readerID}
+         * argument is either {@code "tfw"} or {@code "prj"}. If this method returns {@code true}
+         * for the given ID, no attempt to read the corresponding file will be made.
+         * <p>
+         * This is useful for excluding attempts to read the TFW file when the information
+         * is already provided in the main reader, as for example in the ASCII-Grid format.
+         *
+         * @param  readerID Identifier of the reader for which an input is needed.
+         * @return {@code true} if no attempt to read the corresponding file should be made.
+         */
+        boolean exclude(final String readerID) {
+            return false;
+        }
+
+        /**
          * Checks if the TFW or PRJ file exists for the given input. If we can not determine
          * the file existence, conservatively returns {@code false}. This happen typically if
          * the input is a URL. By returning {@code false} in the later case, we prevent the
@@ -311,10 +330,12 @@ public class WorldFileImageReader extends ImageReaderAdapter {
          * {@link IOException} when the reader will attempt to open a connection for the
          * PRJ or TFW URLs.
          */
-        private static boolean exists(final Object input, final String readerID) throws IOException {
-            final Object derived = SupportFiles.changeExtension(input, readerID);
-            if (derived instanceof File) {
-                return ((File) derived).isFile();
+        private boolean exists(final Object input, final String readerID) throws IOException {
+            if (!exclude(readerID)) {
+                final Object derived = SupportFiles.changeExtension(input, readerID);
+                if (derived instanceof File) {
+                    return ((File) derived).isFile();
+                }
             }
             return false;
         }
@@ -362,8 +383,9 @@ public class WorldFileImageReader extends ImageReaderAdapter {
          * the <a href="../package-summary.html#package_description">package description</a>
          * for more information.
          * <p>
-         * The current implementation registers plugins for the TIFF, JPEG, PNG, GIF, BMP
-         * and matrix formats, but this list can be augmented in any future Geotk version.
+         * The current implementation registers plugins for the TIFF, JPEG, PNG, GIF, BMP,
+         * matrix and ASCII-Grid ({@code ".prj"} file only) formats, but this list can be
+         * augmented in any future Geotk version.
          *
          * @param registry The registry where to register the formats, or {@code null} for
          *        the {@linkplain IIORegistry#getDefaultInstance() default registry}.
@@ -380,12 +402,14 @@ public class WorldFileImageReader extends ImageReaderAdapter {
                 final Spi provider;
                 try {
                     switch (index) {
-                        case 0: provider = new TIFF(); break;
-                        case 1: provider = new JPEG(); break;
-                        case 2: provider = new PNG (); break;
-                        case 3: provider = new GIF (); break;
-                        case 4: provider = new BMP (); break;
-                        case 5: provider = new TXT (); break;
+                        case 0: provider = new TIFF   (); break;
+                        case 1: provider = new JPEG   (); break;
+                        case 2: provider = new PNG    (); break;
+                        case 3: provider = new GIF    (); break;
+                        case 4: provider = new BMP    (); break;
+                        case 5: provider = new TXT    (); break;
+                        case 6: provider = new ASC    (); break;
+                        case 7: provider = new Records(); break;
                         default: return;
                     }
                 } catch (RuntimeException e) {
@@ -419,12 +443,14 @@ public class WorldFileImageReader extends ImageReaderAdapter {
             for (int index=0; ;index++) {
                 final Class<? extends Spi> type;
                 switch (index) {
-                    case 0: type = TIFF.class; break;
-                    case 1: type = JPEG.class; break;
-                    case 2: type = PNG .class; break;
-                    case 3: type = GIF .class; break;
-                    case 4: type = BMP .class; break;
-                    case 5: type = TXT .class; break;
+                    case 0: type = TIFF   .class; break;
+                    case 1: type = JPEG   .class; break;
+                    case 2: type = PNG    .class; break;
+                    case 3: type = GIF    .class; break;
+                    case 4: type = BMP    .class; break;
+                    case 5: type = TXT    .class; break;
+                    case 6: type = ASC    .class; break;
+                    case 7: type = Records.class; break;
                     default: return;
                 }
                 final Spi provider = registry.getServiceProviderByClass(type);
@@ -439,10 +465,20 @@ public class WorldFileImageReader extends ImageReaderAdapter {
      * Providers for common formats. Each provider needs to be a different class because
      * {@link ServiceRegistry} allows the registration of only one instance of each class.
      */
-    private static final class TIFF extends Spi {TIFF() {super("TIFF"  );}}
-    private static final class JPEG extends Spi {JPEG() {super("JPEG"  );}}
-    private static final class PNG  extends Spi { PNG() {super("PNG"   );}}
-    private static final class GIF  extends Spi { GIF() {super("GIF"   );}}
-    private static final class BMP  extends Spi { BMP() {super("BMP"   );}}
-    private static final class TXT  extends Spi { TXT() {super("matrix");}}
+    private static final class TIFF extends Spi {TIFF() {super("TIFF"      );}}
+    private static final class JPEG extends Spi {JPEG() {super("JPEG"      );}}
+    private static final class PNG  extends Spi { PNG() {super("PNG"       );}}
+    private static final class GIF  extends Spi { GIF() {super("GIF"       );}}
+    private static final class BMP  extends Spi { BMP() {super("BMP"       );}}
+    private static final class TXT  extends Spi { TXT() {super("matrix"    );}}
+    private static final class ASC  extends Spi { ASC() {super("ASCII-Grid");}
+        @Override boolean exclude(final String readerID) {
+            return "tfw".equalsIgnoreCase(readerID);
+        }
+    }
+    private static final class Records extends Spi {Records() {super("records");}
+        @Override boolean exclude(final String readerID) {
+            return "tfw".equalsIgnoreCase(readerID);
+        }
+    }
 }

@@ -87,7 +87,7 @@ import org.geotoolkit.util.XArrays;
  * fill the metadata information.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.11
+ * @version 3.12
  *
  * @see ImageWriterAdapter
  *
@@ -120,7 +120,7 @@ public abstract class ImageReaderAdapter extends SpatialImageReader {
      * @throws IOException If an error occured while creating the {@linkplain #main} reader.
      */
     protected ImageReaderAdapter(final Spi provider) throws IOException {
-        this(provider, provider.createReaderInstance());
+        this(provider, provider.main.createReaderInstance());
     }
 
     /**
@@ -543,19 +543,33 @@ public abstract class ImageReaderAdapter extends SpatialImageReader {
      * Creates a new stream or image metadata. This method is invoked by the public
      * {@link #getStreamMetadata()} and {@link #getImageMetadata(int)} methods. The
      * default implementation delegates to the corresponding method of the
-     * {@linkplain #main} reader, then wraps the result in a {@link SpatialMetadata}
-     * object if it is not-null. Otherwise this method returns {@code null}.
+     * {@linkplain #main} reader. Then there is a choice:
+     * <p>
+     * <ul>
+     *   <li>If the metadata is null or already an instance of {@link SpatialMetadata},
+     *       returns it unchanged.</li>
+     *   <li>Otherwise wraps the result in a new {@link SpatialMetadata}, which will
+     *       delegate the request for any metadata format other than
+     *       {@value org.geotoolkit.image.io.metadata.SpatialMetadataFormat#FORMAT_NAME}
+     *       to the wrapped format.</li>
+     * </ul>
      */
     @Override
     protected SpatialMetadata createMetadata(final int imageIndex) throws IOException {
         if (imageIndex >= 0) {
             final IIOMetadata metadata = main.getImageMetadata(imageIndex);
             if (metadata != null) {
+                if (metadata instanceof SpatialMetadata) {
+                    return (SpatialMetadata) metadata;
+                }
                 return new SpatialMetadata(SpatialMetadataFormat.IMAGE, this, metadata);
             }
         } else {
             final IIOMetadata metadata = main.getStreamMetadata();
             if (metadata != null) {
+                if (metadata instanceof SpatialMetadata) {
+                    return (SpatialMetadata) metadata;
+                }
                 return new SpatialMetadata(SpatialMetadataFormat.STREAM, this, metadata);
             }
         }

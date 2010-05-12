@@ -41,7 +41,7 @@ import static org.geotoolkit.test.Commons.*;
  * Tests {@link WorldFileImageReader}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.10
+ * @version 3.12
  *
  * @since 3.07
  */
@@ -59,7 +59,7 @@ public final class WorldFileImageReaderTest extends TextImageReaderTestBase {
     }
 
     /**
-     * Tests the metadata of the {@link "grid.asc"} file.
+     * Tests the metadata of the {@link "matrix.txt"} file.
      *
      * @throws IOException if an error occured while reading the file.
      */
@@ -72,6 +72,12 @@ public final class WorldFileImageReaderTest extends TextImageReaderTestBase {
         final SpatialMetadata metadata = reader.getImageMetadata(0);
         assertNotNull(metadata);
         assertMultilinesEquals(decodeQuotes(SpatialMetadataFormat.FORMAT_NAME + '\n' +
+                "├───ImageDescription\n" +
+                "│   └───Dimensions\n" +
+                "│       └───Dimension\n" +
+                "│           ├───minValue=“-1.893”\n" +
+                "│           ├───maxValue=“31.14”\n" +
+                "│           └───fillSampleValues=“-9999.0”\n" +
                 "├───RectifiedGridDomain\n" +
                 "│   ├───origin=“-10000.0 21000.0”\n" +
                 "│   ├───OffsetVectors\n" +

@@ -84,7 +84,7 @@ import org.geotoolkit.util.converter.Classes;
  * the {@link SpatialMetadata} object given to the {@link #write(IIOImage)} method in this class.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.08
+ * @version 3.12
  *
  * @see ImageReaderAdapter
  *
@@ -117,7 +117,7 @@ public abstract class ImageWriterAdapter extends SpatialImageWriter {
      * @throws IOException If an error occured while creating the {@linkplain #main} writer.
      */
     protected ImageWriterAdapter(final Spi provider) throws IOException {
-        this(provider, provider.createWriterInstance());
+        this(provider, provider.main.createWriterInstance());
     }
 
     /**
