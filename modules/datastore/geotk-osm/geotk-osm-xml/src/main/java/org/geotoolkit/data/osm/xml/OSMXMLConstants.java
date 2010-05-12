@@ -29,8 +29,11 @@ public class OSMXMLConstants {
      * Main OSM xml tag.
      */
     public static final String TAG_OSM = "osm";
-    public static final String ATT_OSM_VERSION = "version";
-    public static final String ATT_OSM_GENERATOR = "generator";
+
+    /**
+     * Main OSM xml tag.
+     */
+    public static final String TAG_OSM_CHANGE = "osmChange";
 
     /**
      * Identified objects attributs.

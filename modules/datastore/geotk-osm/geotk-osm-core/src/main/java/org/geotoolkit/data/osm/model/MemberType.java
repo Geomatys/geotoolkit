@@ -24,29 +24,35 @@ package org.geotoolkit.data.osm.model;
  * @module pending
  */
 public enum MemberType {
-	BOUND('B'),
-	NODE('N'),
-	WAY('W'),
-	RELATION('R');
+	BOUND('B',"bound"),
+	NODE('N',"node"),
+	WAY('W',"way"),
+	RELATION('R',"relation");
 
     final char c;
+    final String att;
 
-    private MemberType(char c){
+    private MemberType(char c,String tag){
         this.c = c;
+        this.att = tag;
     }
 
     public char charValue(){
         return c;
     }
 
+    public String getAttributValue(){
+        return att;
+    }
+
     public static MemberType valueOfIgnoreCase(String str) {
-        if("bound".equalsIgnoreCase(str)){
+        if(BOUND.att.equalsIgnoreCase(str)){
             return BOUND;
-        }else if("node".equalsIgnoreCase(str)){
+        }else if(NODE.att.equalsIgnoreCase(str)){
             return NODE;
-        }else if("way".equalsIgnoreCase(str)){
+        }else if(WAY.att.equalsIgnoreCase(str)){
             return WAY;
-        }else if("relation".equalsIgnoreCase(str)){
+        }else if(RELATION.att.equalsIgnoreCase(str)){
             return RELATION;
         }
 

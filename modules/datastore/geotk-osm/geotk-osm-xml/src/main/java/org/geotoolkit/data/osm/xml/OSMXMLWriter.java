@@ -23,8 +23,14 @@ import java.util.List;
 import javax.xml.stream.XMLStreamException;
 
 import org.geotoolkit.data.osm.model.ChangeSet;
+import org.geotoolkit.data.osm.model.IdentifiedElement;
+import org.geotoolkit.data.osm.model.Member;
+import org.geotoolkit.data.osm.model.Node;
+import org.geotoolkit.data.osm.model.Relation;
 import org.geotoolkit.data.osm.model.Tag;
+import org.geotoolkit.data.osm.model.Transaction;
 import org.geotoolkit.data.osm.model.User;
+import org.geotoolkit.data.osm.model.Way;
 import org.geotoolkit.xml.StaxStreamWriter;
 import org.opengis.geometry.Envelope;
 
@@ -51,6 +57,17 @@ public class OSMXMLWriter extends StaxStreamWriter{
 
     public void writeOSMTag() throws XMLStreamException{
         writer.writeStartElement(TAG_OSM);
+    }
+
+    public void writeOSMChangeTag(String version, String generator) throws XMLStreamException{
+        writer.writeStartElement(TAG_OSM_CHANGE);
+        if(version != null){
+            writer.writeAttribute(ATT_VERSION, version);
+        }
+
+        if(generator != null){
+            writer.writeAttribute(ATT_GENERATOR, generator);
+        }
     }
 
     public void writeChangeSet(ChangeSet cs) throws XMLStreamException{
@@ -89,6 +106,105 @@ public class OSMXMLWriter extends StaxStreamWriter{
         writeTags(cs.getTags());
         writer.writeEndElement();
     }
+
+    public void writeTransaction(Transaction transaction) throws XMLStreamException{
+        if(transaction == null) return;
+
+        writer.writeStartElement(transaction.getType().getTagName());
+
+        final String version = transaction.getVersion();
+        final String generator = transaction.getGenerator();
+        if(version != null){
+            writer.writeAttribute(ATT_VERSION, version);
+        }
+        if(generator != null){
+            writer.writeAttribute(ATT_GENERATOR, generator);
+        }
+
+        for(final IdentifiedElement ele : transaction.getElements()){
+            writeElement(ele);
+        }
+
+        writer.writeEndElement();
+    }
+
+    public void writeElement(IdentifiedElement element) throws XMLStreamException{
+        if(element instanceof Node){
+            writeNode((Node) element);
+        }else if(element instanceof Way){
+            writeWay((Way) element);
+        }else if(element instanceof Relation){
+            writeRelation((Relation) element);
+        }
+    }
+
+    private void writeCommunAttributs(IdentifiedElement element) throws XMLStreamException{
+        final int changeset = element.getChangeset();
+        if(changeset > 0){
+            writer.writeAttribute(ATT_CHANGESET, Integer.toString(changeset));
+        }
+
+        writer.writeAttribute(ATT_ID, Long.toString(element.getId()));
+        writer.writeAttribute(ATT_TIMESTAMP, sdf.format(new Date(element.getTimestamp())));
+
+        final User user = element.getUser();
+        if(user != null && user != User.NONE){
+            writer.writeAttribute(ATT_UID, Integer.toString(user.getId()));
+            final String name = user.getUserName();
+            if(name != null){
+                writer.writeAttribute(ATT_USER,name);
+            }
+        }
+
+        final int version = element.getVersion();
+        if(version > 0){
+            writer.writeAttribute(ATT_VERSION, Integer.toString(version));
+        }
+    }
+
+    public void writeNode(Node element) throws XMLStreamException{
+        writer.writeStartElement(TAG_NODE);
+        writer.writeAttribute(ATT_NODE_LAT, Double.toString(element.getLatitude()));
+        writer.writeAttribute(ATT_NODE_LON, Double.toString(element.getLongitude()));
+        writeCommunAttributs(element);
+        writeTags(element.getTags());
+        writer.writeEndElement();
+    }
+
+    public void writeWay(Way element) throws XMLStreamException{
+        writer.writeStartElement(TAG_WAY);
+        writeCommunAttributs(element);
+        writeWayNodes(element.getNodesIds());
+        writeTags(element.getTags());
+        writer.writeEndElement();
+    }
+
+    private void writeWayNodes(List<Long> nodes) throws XMLStreamException{
+        for(Long ref : nodes){
+            writer.writeStartElement(TAG_WAYND);
+            writer.writeAttribute(ATT_WAYND_REF, Long.toString(ref));
+            writer.writeEndElement();
+        }
+    }
+
+    public void writeRelation(Relation element) throws XMLStreamException{
+        writer.writeStartElement(TAG_REL);
+        writeCommunAttributs(element);
+        writeRelationMembers(element.getMembers());
+        writeTags(element.getTags());
+        writer.writeEndElement();
+    }
+
+    private void writeRelationMembers(List<Member> members) throws XMLStreamException{
+        for(Member m : members){
+            writer.writeStartElement(TAG_RELMB);
+            writer.writeAttribute(ATT_RELMB_REF, Long.toString(m.getReference()));
+            writer.writeAttribute(ATT_RELMB_ROLE, m.getRole());
+            writer.writeAttribute(ATT_RELMB_TYPE, m.getType().getAttributValue());
+            writer.writeEndElement();
+        }
+    }
+
 
     public void writeTags(List<Tag> tags) throws XMLStreamException{
         if(tags == null || tags.isEmpty()) return;

@@ -80,7 +80,6 @@ public class OSMXMLWriterTest {
 
         assertTrue(ob instanceof ChangeSet);
         ChangeSet csRead = (ChangeSet) ob;
-
     }
 
 }
