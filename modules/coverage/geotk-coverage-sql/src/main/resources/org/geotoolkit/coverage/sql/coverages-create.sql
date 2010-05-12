@@ -58,10 +58,9 @@ COMMENT ON COLUMN "Formats"."comments" IS
 -- Fills the "Formats" table with a few pre-defined records.                                    --
 --------------------------------------------------------------------------------------------------
 
-INSERT INTO "Formats" ("name", "plugin", "packMode")
-  VALUES ('PNG', 'PNG', 'native');
-INSERT INTO "Formats" ("name", "plugin", "packMode")
-  VALUES ('TIFF', 'TIFF', 'native');
+INSERT INTO "Formats" ("name", "plugin", "packMode") VALUES
+  ('PNG',  'PNG',  'native'),
+  ('TIFF', 'TIFF', 'native');
 
 
 

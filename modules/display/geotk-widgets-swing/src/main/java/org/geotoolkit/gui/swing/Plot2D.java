@@ -208,9 +208,9 @@ public class Plot2D extends ZoomPane {
      * Those default colors may change in future Geotk versions. For safety, users are
      * encouraged to specify the desired color explicitly when adding a series to a plot.
      */
-    protected static final List<Color> DEFAULT_COLORS = UnmodifiableArrayList.wrap(new Color[] {
+    protected static final List<Color> DEFAULT_COLORS = UnmodifiableArrayList.wrap(
         Color.RED, Color.BLUE, Color.GREEN, Color.ORANGE, Color.CYAN, Color.MAGENTA
-    });
+    );
 
     /**
      * The color to use for drawing grid lines, or {@code null} if the grid should not be drawn.

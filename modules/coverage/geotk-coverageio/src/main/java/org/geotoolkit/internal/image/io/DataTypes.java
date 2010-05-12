@@ -44,9 +44,9 @@ public final class DataTypes {
     /**
      * Enumeration of valid coordinate reference system types.
      */
-    public static final List<String> CRS_TYPES = UnmodifiableArrayList.wrap(new String[] {
+    public static final List<String> CRS_TYPES = UnmodifiableArrayList.wrap(
         "geographic", "projected"
-    });
+    );
 
     /**
      * The interfaces associated to the {@link #CRS_TYPES} enumeration.
@@ -60,9 +60,9 @@ public final class DataTypes {
     /**
      * Enumeration of valid coordinate system types.
      */
-    public static final List<String> CS_TYPES = UnmodifiableArrayList.wrap(new String[] {
+    public static final List<String> CS_TYPES = UnmodifiableArrayList.wrap(
         "ellipsoidal", "cartesian"
-    });
+    );
 
     /**
      * The interfaces associated to the {@link #CS_TYPES} enumeration.
@@ -76,9 +76,9 @@ public final class DataTypes {
     /**
      * Enumeration of valid datum types.
      */
-    public static final List<String> DATUM_TYPES = UnmodifiableArrayList.wrap(new String[] {
+    public static final List<String> DATUM_TYPES = UnmodifiableArrayList.wrap(
         "geodetic", "vertical", "temporal", "image", "engineering"
-    });
+    );
 
     /**
      * The interfaces associated to the {@link #DATUM_TYPES} enumeration.
