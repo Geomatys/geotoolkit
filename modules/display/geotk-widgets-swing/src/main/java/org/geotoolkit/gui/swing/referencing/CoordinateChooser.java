@@ -63,7 +63,7 @@ import org.geotoolkit.measure.AngleFormat;
 
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
-import org.geotoolkit.internal.SwingUtilities;
+import org.geotoolkit.internal.swing.SwingUtilities;
 import org.geotoolkit.display.shape.DoubleDimension2D;
 import org.geotoolkit.gui.swing.Dialog;
 

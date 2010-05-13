@@ -27,6 +27,7 @@ import java.io.Serializable;
 import java.awt.*;
 import java.awt.geom.*;
 import java.awt.event.*;
+import java.awt.Window;
 import javax.swing.*;
 import javax.swing.plaf.ComponentUI;
 import javax.swing.event.ChangeEvent;

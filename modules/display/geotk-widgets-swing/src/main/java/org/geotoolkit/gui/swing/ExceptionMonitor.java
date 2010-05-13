@@ -49,8 +49,8 @@ import org.geotoolkit.lang.Static;
 import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.util.converter.Classes;
-import org.geotoolkit.internal.SwingUtilities;
 import org.geotoolkit.internal.GraphicsUtilities;
+import org.geotoolkit.internal.swing.SwingUtilities;
 
 
 /**

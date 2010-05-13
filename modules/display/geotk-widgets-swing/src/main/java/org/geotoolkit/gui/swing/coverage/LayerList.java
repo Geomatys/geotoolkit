@@ -24,7 +24,6 @@ import java.util.Locale;
 import java.util.Arrays;
 import java.util.ArrayList;
 import java.awt.Dimension;
-import java.awt.Component;
 import java.awt.EventQueue;
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
@@ -78,6 +77,8 @@ import org.geotoolkit.coverage.sql.CoverageTableModel;
 import org.geotoolkit.coverage.sql.FutureQuery;
 import org.geotoolkit.coverage.sql.Layer;
 import org.geotoolkit.geometry.Envelope2D;
+import org.geotoolkit.gui.swing.Window;
+import org.geotoolkit.gui.swing.WindowCreator;
 import org.geotoolkit.gui.swing.ExceptionMonitor;
 import org.geotoolkit.gui.swing.referencing.CoordinateChooser;
 import org.geotoolkit.display.shape.DoubleDimension2D;
@@ -115,7 +116,7 @@ import org.geotoolkit.resources.Errors;
  * @module
  */
 @SuppressWarnings("serial")
-public class LayerList extends JComponent {
+public class LayerList extends WindowCreator {
     /**
      * The default width and height.
      */
@@ -875,8 +876,8 @@ public class LayerList extends JComponent {
                  */
                 final CoverageList coverages = new CoverageList(new CoverageTableModel(locale));
                 coverages.setData(layer, envelope);
-                final Component frame = org.geotoolkit.internal.SwingUtilities.toFrame(this, coverages,
-                        resources.getString(Widgets.Keys.LAYER_ELEMENTS_$1, layerName), null);
+                final Window frame = getWindowHandler().createWindow(LayerList.this, coverages,
+                        resources.getString(Widgets.Keys.LAYER_ELEMENTS_$1, layerName));
                 frame.setVisible(true);
             }
         }

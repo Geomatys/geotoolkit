@@ -19,6 +19,7 @@ package org.geotoolkit.gui.swing;
 
 import java.util.Locale;
 import java.awt.*;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -30,7 +31,7 @@ import org.opengis.util.ProgressListener;
 import org.opengis.util.InternationalString;
 
 import org.geotoolkit.resources.Vocabulary;
-import org.geotoolkit.internal.SwingUtilities;
+import org.geotoolkit.internal.swing.SwingUtilities;
 import org.geotoolkit.util.SimpleInternationalString;
 import org.geotoolkit.util.Disposable;
 

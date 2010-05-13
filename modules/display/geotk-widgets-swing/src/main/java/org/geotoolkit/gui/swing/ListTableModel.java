@@ -28,7 +28,7 @@ import java.lang.reflect.Array;
 import javax.swing.table.AbstractTableModel;
 
 import org.geotoolkit.util.XArrays;
-import org.geotoolkit.internal.SwingUtilities;
+import org.geotoolkit.internal.swing.SwingUtilities;
 
 
 /**

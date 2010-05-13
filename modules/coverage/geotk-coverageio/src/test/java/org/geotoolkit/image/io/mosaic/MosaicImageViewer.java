@@ -33,7 +33,6 @@ import java.util.logging.Level;
 import java.util.Collection;
 import javax.imageio.ImageIO;
 
-import org.geotoolkit.internal.SwingUtilities;
 import org.geotoolkit.internal.GraphicsUtilities;
 import org.geotoolkit.util.logging.Logging;
 
@@ -397,7 +396,7 @@ public final class MosaicImageViewer extends JPanel implements ChangeListener {
             System.out.println("Unsupported type: " + tiles.getClass());
             return;
         }
-        SwingUtilities.setLookAndFeel(MosaicImageViewer.class, "main");
+        GraphicsUtilities.setLookAndFeel(MosaicImageViewer.class, "main");
         final MosaicImageViewer viewer = new MosaicImageViewer(manager);
         viewer.showInFrame();
     }

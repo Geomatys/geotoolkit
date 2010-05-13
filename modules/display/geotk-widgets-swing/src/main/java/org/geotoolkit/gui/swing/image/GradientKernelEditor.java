@@ -30,7 +30,7 @@ import javax.media.jai.operator.GradientMagnitudeDescriptor;
 
 import org.geotoolkit.gui.swing.Dialog;
 import org.geotoolkit.resources.Vocabulary;
-import org.geotoolkit.internal.SwingUtilities;
+import org.geotoolkit.internal.swing.SwingUtilities;
 
 import static java.awt.GridBagConstraints.*;
 

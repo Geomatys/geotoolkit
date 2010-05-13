@@ -52,7 +52,7 @@ import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.gui.swing.image.KernelEditor;
-import org.geotoolkit.internal.SwingUtilities;
+import org.geotoolkit.internal.swing.SwingUtilities;
 import org.geotoolkit.internal.image.Adapters;
 import org.geotoolkit.resources.Vocabulary;
 

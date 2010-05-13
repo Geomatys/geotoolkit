@@ -40,7 +40,7 @@ import org.geotoolkit.gui.swing.About;
 import org.geotoolkit.gui.swing.ExceptionMonitor;
 import org.geotoolkit.gui.swing.coverage.LayerList;
 import org.geotoolkit.lang.Setup;
-import org.geotoolkit.internal.SwingUtilities;
+import org.geotoolkit.internal.GraphicsUtilities;
 import org.geotoolkit.internal.setup.ControlPanel;
 import org.geotoolkit.internal.wizard.CoverageDatabaseWizard;
 import org.geotoolkit.internal.wizard.MosaicWizard;
@@ -225,7 +225,7 @@ public final class Main extends JFrame implements ActionListener {
      * @param args The command line arguments.
      */
     public static void main(final String[] args) {
-        SwingUtilities.setLookAndFeel(Main.class, "<init>");
+        GraphicsUtilities.setLookAndFeel(Main.class, "<init>");
         final JFrame frame = new Main();
         // The line below should be after the Frame creation.
         // See the javadoc in 'setDefaultCodecPreferences()'.

@@ -53,7 +53,7 @@ import org.geotoolkit.image.io.mosaic.TileManager;
 import org.geotoolkit.image.io.mosaic.MosaicBuilder;
 import org.geotoolkit.gui.swing.Dialog;
 import org.geotoolkit.gui.swing.ListTableModel;
-import org.geotoolkit.internal.SwingUtilities;
+import org.geotoolkit.internal.swing.SwingUtilities;
 import org.geotoolkit.internal.swing.FileField;
 import org.geotoolkit.internal.swing.SizeFields;
 import org.geotoolkit.internal.swing.table.LabeledRenderer;

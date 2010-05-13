@@ -18,7 +18,7 @@
 package org.geotoolkit.internal.setup;
 
 import org.geotoolkit.console.CommandLine;
-import org.geotoolkit.internal.SwingUtilities;
+import org.geotoolkit.internal.GraphicsUtilities;
 
 
 /**
@@ -45,7 +45,7 @@ public final class Main extends CommandLine {
      */
     @Override
     protected void unknownAction(final String action) {
-        SwingUtilities.setLookAndFeel(Main.class, "run");
+        GraphicsUtilities.setLookAndFeel(Main.class, "run");
         ControlPanel.show(locale);
     }
 

@@ -51,7 +51,7 @@ import javax.media.jai.LookupTableJAI;
 import javax.media.jai.KernelJAI;
 
 import org.geotoolkit.util.converter.Classes;
-import org.geotoolkit.internal.SwingUtilities;
+import org.geotoolkit.internal.swing.SwingUtilities;
 import org.geotoolkit.gui.swing.Dialog;
 import org.geotoolkit.gui.swing.IconFactory;
 import org.geotoolkit.gui.swing.ParameterEditor;

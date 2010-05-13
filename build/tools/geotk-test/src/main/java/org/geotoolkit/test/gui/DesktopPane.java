@@ -17,34 +17,23 @@
  */
 package org.geotoolkit.test.gui;
 
-import javax.swing.JFrame;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JComponent;
-import javax.swing.JOptionPane;
-import javax.swing.JFileChooser;
-import javax.swing.JDesktopPane;
-import javax.swing.JInternalFrame;
-import javax.swing.AbstractAction;
-import javax.swing.JRadioButtonMenuItem;
-import javax.swing.SwingUtilities;
-import javax.swing.ButtonGroup;
-import javax.swing.UIManager;
-import javax.swing.event.InternalFrameEvent;
-import javax.swing.event.InternalFrameAdapter;
+import java.io.File;
+import java.io.IOException;
+import javax.imageio.ImageIO;
+import java.util.Locale;
+import java.util.prefs.Preferences;
 import java.util.concurrent.CountDownLatch;
-import java.beans.PropertyVetoException;
+import java.awt.Desktop;
+import java.awt.Component;
+import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.image.BufferedImage;
-import java.awt.Graphics2D;
-import java.awt.Desktop;
-import java.io.File;
-import java.io.IOException;
-import javax.imageio.ImageIO;
-import java.util.prefs.Preferences;
-import java.util.Locale;
+import java.beans.PropertyVetoException;
+import javax.swing.*;
+import javax.swing.event.InternalFrameEvent;
+import javax.swing.event.InternalFrameAdapter;
 
 import static org.junit.Assert.*;
 
@@ -53,7 +42,7 @@ import static org.junit.Assert.*;
  * The desktop pane where to put the widgets to be tested.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.05
+ * @version 3.12
  *
  * @since 3.05
  */
@@ -175,6 +164,15 @@ final class DesktopPane extends JDesktopPane {
             });
             menuBar.add(menu);
         }
+        if (true) {
+            final JMenu menu = new JMenu("Windows");
+            menu.add(new AbstractAction("List") {
+                @Override public void actionPerformed(final ActionEvent event) {
+                    listWindows();
+                }
+            });
+            menuBar.add(menu);
+        }
         final JFrame frame = new JFrame("Geotoolkit.org widget tests");
         frame.addWindowListener(new WindowAdapter() {
             @Override public void windowClosed(final WindowEvent event) {
@@ -251,6 +249,29 @@ final class DesktopPane extends JDesktopPane {
         add(frame);
         frame.setSelected(true);
         System.out.println("Showing " + title);
+    }
+
+    /**
+     * List windows known to this desktop.
+     */
+    private void listWindows() {
+        final Component[] components = getComponents();
+        final String[] titles = new String[components.length];
+        for (int i=0; i<components.length; i++) {
+            Component c = components[i];
+            String title = String.valueOf(c.getName());
+            if (c instanceof JInternalFrame) {
+                final JInternalFrame ci = (JInternalFrame) c;
+                title = String.valueOf(ci.getTitle());
+                c = ci.getRootPane().getComponent(0);
+            }
+            titles[i] = title + " : " + c.getClass().getSimpleName();
+        }
+        final JInternalFrame frame = new JInternalFrame("Windows", true, true, true, true);
+        frame.add(new JScrollPane(new JList(titles)));
+        frame.pack();
+        frame.setVisible(true);
+        add(frame);
     }
 
     /**

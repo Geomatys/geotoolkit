@@ -58,7 +58,7 @@ import org.jdesktop.swingx.JXTitledSeparator;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import org.geotoolkit.gui.swing.Dialog;
-import org.geotoolkit.internal.SwingUtilities;
+import org.geotoolkit.internal.swing.SwingUtilities;
 import org.geotoolkit.util.Strings;
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.converter.Classes;

@@ -36,7 +36,7 @@ import org.geotoolkit.math.VectorPair;
 import org.geotoolkit.math.Statistics;
 import org.geotoolkit.gui.swing.Dialog;
 import org.geotoolkit.gui.swing.Plot2D;
-import org.geotoolkit.internal.SwingUtilities;
+import org.geotoolkit.internal.swing.SwingUtilities;
 import org.geotoolkit.image.io.mosaic.TileManager;
 import org.geotoolkit.image.io.mosaic.MosaicProfiler;
 import org.geotoolkit.display.axis.NumberGraduation;

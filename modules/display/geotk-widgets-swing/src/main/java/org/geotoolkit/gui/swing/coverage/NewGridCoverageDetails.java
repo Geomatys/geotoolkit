@@ -41,7 +41,7 @@ import org.geotoolkit.coverage.sql.NewGridCoverageReference;
 import org.geotoolkit.coverage.sql.CoverageDatabaseController;
 import org.geotoolkit.gui.swing.Dialog;
 import org.geotoolkit.gui.swing.referencing.AuthorityCodesComboBox;
-import org.geotoolkit.internal.SwingUtilities;
+import org.geotoolkit.internal.swing.SwingUtilities;
 
 
 /**

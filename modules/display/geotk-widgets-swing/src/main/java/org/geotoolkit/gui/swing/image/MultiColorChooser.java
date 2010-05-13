@@ -41,7 +41,7 @@ import javax.swing.colorchooser.ColorSelectionModel;
 
 import org.geotoolkit.gui.swing.Dialog;
 import org.geotoolkit.gui.swing.ListTableModel;
-import org.geotoolkit.internal.SwingUtilities;
+import org.geotoolkit.internal.swing.SwingUtilities;
 import org.geotoolkit.internal.swing.table.LabeledRenderer;
 import org.geotoolkit.util.collection.IntegerList;
 import org.geotoolkit.resources.Vocabulary;

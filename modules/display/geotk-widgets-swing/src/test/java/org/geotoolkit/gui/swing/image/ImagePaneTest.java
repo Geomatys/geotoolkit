@@ -23,7 +23,7 @@ import javax.swing.JComponent;
 
 import org.geotoolkit.test.TestData;
 import org.geotoolkit.test.gui.SwingBase;
-import org.geotoolkit.internal.SwingUtilities;
+import org.geotoolkit.internal.swing.SwingUtilities;
 
 
 /**

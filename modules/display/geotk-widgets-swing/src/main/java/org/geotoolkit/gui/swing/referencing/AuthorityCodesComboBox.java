@@ -25,13 +25,13 @@ import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import javax.swing.Box;
-import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JLabel;
 import javax.swing.JButton;
@@ -39,7 +39,6 @@ import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JTextField;
 import javax.swing.ComboBoxModel;
-import javax.swing.JInternalFrame;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ListCellRenderer;
 import javax.swing.SwingWorker;
@@ -52,13 +51,15 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.internal.Citations;
-import org.geotoolkit.internal.SwingUtilities;
+import org.geotoolkit.internal.swing.SwingUtilities;
 import org.geotoolkit.internal.swing.FastComboBox;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
 import org.geotoolkit.factory.FactoryRegistryException;
 import org.geotoolkit.referencing.factory.FallbackAuthorityFactory;
 import org.geotoolkit.gui.swing.IconFactory;
+import org.geotoolkit.gui.swing.Window;
+import org.geotoolkit.gui.swing.WindowCreator;
 
 
 /**
@@ -73,7 +74,7 @@ import org.geotoolkit.gui.swing.IconFactory;
  * @module
  */
 @SuppressWarnings("serial")
-public class AuthorityCodesComboBox extends JComponent {
+public class AuthorityCodesComboBox extends WindowCreator {
     /**
      * The authority factory responsible for creating objects from a list of codes.
      */
@@ -117,7 +118,7 @@ public class AuthorityCodesComboBox extends JComponent {
     /**
      * The window that contains {@link #properties}.
      */
-    private Component propertiesWindow;
+    private Window propertiesWindow;
 
     /**
      * Creates a CRS chooser backed by the EPSG authority factory.
@@ -381,22 +382,29 @@ public class AuthorityCodesComboBox extends JComponent {
                     properties = new PropertiesSheet();
                 }
                 if (propertiesWindow == null) {
-                    propertiesWindow = SwingUtilities.toFrame(AuthorityCodesComboBox.this, properties, title, null);
-                    if (propertiesWindow instanceof JFrame) {
-                        ((JFrame) propertiesWindow).setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-                    } else if (propertiesWindow instanceof JInternalFrame) {
-                        ((JInternalFrame) propertiesWindow).setDefaultCloseOperation(JInternalFrame.HIDE_ON_CLOSE);
-                    }
-                    propertiesWindow.setSize(600, 500);
-                    list.addActionListener(new ActionListener() {
+                    final Window window = getWindowHandler().createWindow(AuthorityCodesComboBox.this, properties, title);
+                    final class Listener extends WindowAdapter implements ActionListener {
+                        /** Invoked when the user selected a different CRS. */
                         @Override public void actionPerformed(final ActionEvent event) {
-                            if (propertiesWindow.isVisible()) {
+                            if (window.isVisible()) {
                                 showProperties(false);
                             }
                         }
-                    });
+
+                        /** Invoked when the window which contains {@code AuthorityComboBox} has been closed. */
+                        @Override public void windowClosed(final WindowEvent event) {
+                            SwingUtilities.removeWindowListener(AuthorityCodesComboBox.this, this);
+                            window.dispose();
+                        }
+                    }
+                    final Listener listener = new Listener();
+                    SwingUtilities.addWindowListener(AuthorityCodesComboBox.this, listener);
+                    list.addActionListener(listener);
+                    window.setDefaultCloseOperation(Window.HIDE_ON_CLOSE);
+                    window.setSize(600, 500);
+                    propertiesWindow = window;
                 } else {
-                    SwingUtilities.setTitle(propertiesWindow, title);
+                    propertiesWindow.setTitle(title);
                 }
                 if (item != null) {
                     properties.setIdentifiedObject(item);

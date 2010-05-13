@@ -56,7 +56,7 @@ import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.internal.image.io.Formats;
-import org.geotoolkit.internal.SwingUtilities;
+import org.geotoolkit.internal.swing.SwingUtilities;
 import org.geotoolkit.resources.Vocabulary;
 
 

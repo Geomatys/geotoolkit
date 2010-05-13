@@ -56,7 +56,7 @@ import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.internal.Threads;
 import org.geotoolkit.internal.DaemonThread;
-import org.geotoolkit.internal.SwingUtilities;
+import org.geotoolkit.internal.swing.SwingUtilities;
 import org.geotoolkit.gui.swing.image.RegisteredOperationBrowser;
 
 

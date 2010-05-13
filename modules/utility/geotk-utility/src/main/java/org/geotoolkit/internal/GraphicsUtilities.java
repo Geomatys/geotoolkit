@@ -27,9 +27,11 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.UIManager;
 
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.io.ExpandedTabWriter;
+import org.geotoolkit.util.logging.Logging;
 
 
 /**
@@ -39,7 +41,7 @@ import org.geotoolkit.io.ExpandedTabWriter;
  * module toward the GUI one, especially since the extracted methods are not Swing specific.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @version 3.12
  *
  * @since 2.0
  * @module
@@ -130,5 +132,25 @@ public final class GraphicsUtilities {
         final StringWriter writer = new StringWriter();
         exception.printStackTrace(new PrintWriter(new ExpandedTabWriter(writer, TAB_WIDTH)));
         return writer.toString();
+    }
+
+    /**
+     * Sets the Swing Look and Feel to the default value used in Geotk. This method exists
+     * in order to have a central place where this setting can be performed, so we can change
+     * the setting in a consistent fashion for the whole library.
+     *
+     * @param caller The class calling this method. Used only for logging purpose.
+     * @param method The method invoking this one.  Used only for logging purpose.
+     */
+    public static void setLookAndFeel(final Class<?> caller, final String method) {
+        /*
+         * MacOS come with a default L&F which is different than in standard JDK.
+         * Leave it unchanged.
+         */
+        if (!OS.MAC_OS.equals(OS.current())) try {
+            UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
+        } catch (Exception e) {
+            Logging.recoverableException(caller, method, e);
+        }
     }
 }

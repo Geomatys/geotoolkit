@@ -41,7 +41,7 @@ import org.geotoolkit.image.io.mosaic.TileManager;
 import org.geotoolkit.image.io.mosaic.TileManagerFactory;
 import org.geotoolkit.gui.swing.ListTableModel;
 import org.geotoolkit.resources.Vocabulary;
-import org.geotoolkit.internal.SwingUtilities;
+import org.geotoolkit.internal.swing.SwingUtilities;
 
 
 /**

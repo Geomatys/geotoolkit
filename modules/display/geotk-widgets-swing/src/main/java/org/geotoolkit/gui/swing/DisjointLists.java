@@ -41,7 +41,7 @@ import java.util.Locale;
 
 import org.geotoolkit.util.XArrays;
 import org.geotoolkit.resources.Widgets;
-import org.geotoolkit.internal.SwingUtilities;
+import org.geotoolkit.internal.swing.SwingUtilities;
 
 import static java.awt.GridBagConstraints.*;
 

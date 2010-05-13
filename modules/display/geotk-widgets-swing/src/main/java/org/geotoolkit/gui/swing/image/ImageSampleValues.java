@@ -44,7 +44,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.resources.Vocabulary;
-import org.geotoolkit.internal.SwingUtilities;
+import org.geotoolkit.internal.swing.SwingUtilities;
 
 
 /**

@@ -15,7 +15,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.internal;
+package org.geotoolkit.internal.swing;
 
 import java.awt.*;
 import javax.swing.*;
@@ -23,7 +23,6 @@ import java.util.Arrays;
 import java.util.Locale;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowListener;
-import javax.swing.event.InternalFrameListener;
 import javax.swing.table.TableColumn;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellRenderer;
@@ -33,7 +32,6 @@ import java.lang.reflect.UndeclaredThrowableException;
 
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.resources.Vocabulary;
-import org.geotoolkit.util.logging.Logging;
 
 
 /**
@@ -49,9 +47,9 @@ import org.geotoolkit.util.logging.Logging;
  * </ul>
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.05
+ * @version 3.12
  *
- * @since 2.0
+ * @since 3.12 (derived from 2.0)
  * @module
  */
 @Static
@@ -63,123 +61,11 @@ public final class SwingUtilities {
     }
 
     /**
-     * Sets the Swing Look and Feel to the default value used in Geotk. This method exists
-     * in order to have a central place where this setting can be performed, so we can change
-     * the setting in a consistent fashion for the whole library.
-     *
-     * @param caller The class calling this method. Used only for logging purpose.
-     * @param method The method invoking this one.  Used only for logging purpose.
-     */
-    public static void setLookAndFeel(final Class<?> caller, final String method) {
-        /*
-         * MacOS come with a default L&F which is different than in standard JDK.
-         * Leave it unchanged.
-         */
-        if (!OS.MAC_OS.equals(OS.current())) try {
-            UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
-        } catch (Exception e) {
-            Logging.recoverableException(caller, method, e);
-        }
-    }
-
-    /**
-     * Inserts a Swing component into a frame. The kind of frame depends on the owner:
-     * <p>
-     * <ul>
-     *   <li>If {@code owner} or one of its parent is a {@link JDesktopPane},
-     *       then {@code panel} is added into a {@link JInternalFrame}.</li>
-     *   <li>If {@code owner} or one of its parent is a {@link Frame} or a {@link Dialog},
-     *       then {@code panel} is added into a {@link JDialog}.</li>
-     *   <li>Otherwise, {@code panel} is added into a {@link JFrame}.</li>
-     * </ul>
-     *
-     * @param  owner The frame's owner, or {@code null} if none.
-     * @param  panel The panel to insert into a frame.
-     * @param  title The frame's title.
-     * @param  listener A listener to receives frame events.  If non-null, then this listener will
-     *         be registered to whatever kind of frame this method will constructs. In the special
-     *         case where this method constructs an {@linkplain JInternalFrame internal frame} and
-     *         the {@code listener} is not an instance of {@link InternalFrameListener}, then this
-     *         method will wrap the {@code listener} into an {@code InternalFrameListener}.
-     * @return The frame. This frame is not initially visible. The method
-     *         {@code Component.setVisible(true)} must be invoked in order to show the frame.
-     */
-    public static Component toFrame(Component owner, final JComponent panel,
-            final String title, final WindowListener listener)
-    {
-        Window window = null;
-        while (owner != null) {
-            if (owner == panel) {
-                throw new IllegalArgumentException();
-            }
-            // NOTE: All 'addFooListener(...)' below ignore null argument. No need to check ourself.
-            if (owner instanceof JDesktopPane) {
-                final JInternalFrame frame = new JInternalFrame(title, true, true, true, true);
-                frame.setDefaultCloseOperation(JInternalFrame.DISPOSE_ON_CLOSE);
-                frame.addInternalFrameListener(InternalWindowListener.wrap(listener));
-                ((JDesktopPane) owner).add(frame);
-                frame.add(panel);
-                frame.pack();
-                return frame;
-            }
-            if (owner instanceof Frame) {
-                final JDialog dialog = new JDialog((Frame) owner, title);
-                dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-                window = dialog;
-                break;
-            }
-            if (owner instanceof Dialog) {
-                final JDialog dialog = new JDialog((Dialog) owner, title);
-                dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-                window = dialog;
-                break;
-            }
-            owner = owner.getParent();
-        }
-        if (window == null) {
-            final JFrame frame = new JFrame(title);
-            frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-            window = frame;
-        }
-        window.addWindowListener(listener);
-        window.add(panel);
-        window.pack();
-        window.setLocationRelativeTo(owner);
-        return window;
-    }
-
-    /**
-     * Sets the title of the parent frame or internal frame of the specified component.
-     *
-     * @param component The component for which to set the title.
-     * @param title The title to set.
-     */
-    public static void setTitle(Component component, final String title) {
-        while (component != null) {
-            if (component instanceof JInternalFrame) {
-                ((JInternalFrame) component).setTitle(title);
-                return;
-            }
-            if (component instanceof Frame) {
-                ((Frame) component).setTitle(title);
-                return;
-            }
-            if (component instanceof Dialog) {
-                ((Dialog) component).setTitle(title);
-                return;
-            }
-            component = component.getParent();
-        }
-    }
-
-    /**
      * Shows the given component in a {@link JFrame}.
      * This is used (indirectly) mostly for debugging purpose.
      *
      * @param  panel The panel to show.
      * @param  title The frame title.
-     *
-     * @since 3.05
      */
     public static void show(final JComponent panel, final String title) {
         final JFrame frame = new JFrame(title);
@@ -449,6 +335,57 @@ public final class SwingUtilities {
             } else {
                 list.removeRange(lower, upper);
             }
+        }
+    }
+
+    /**
+     * Adds the given listener to the first window ancestor found in the hierarchy.
+     * If an {@link JInternalFrame} is found in the hierarchy, it the listener will
+     * be wrapped in an adapter before to be given to that internal frame.
+     *
+     * @param component The component for which to search for a window ancestor.
+     * @param listener  The listener to register.
+     */
+    public static void addWindowListener(Component component, final WindowListener listener) {
+        while (component != null) {
+            if (component instanceof org.geotoolkit.gui.swing.Window) {
+                ((org.geotoolkit.gui.swing.Window) component).addWindowListener(listener);
+                break;
+            }
+            if (component instanceof Window) {
+                ((Window) component).addWindowListener(listener);
+                break;
+            }
+            if (component instanceof JInternalFrame) {
+                ((JInternalFrame) component).addInternalFrameListener(InternalWindowListener.wrap(listener));
+                break;
+            }
+            component = component.getParent();
+        }
+    }
+
+    /**
+     * Removes the given listener from the first window ancestor found in the hierarchy.
+     * This method is the converse of {@code addWindowListener(listener, component)}.
+     *
+     * @param component The component for which to search for a window ancestor.
+     * @param listener  The listener to unregister.
+     */
+    public static void removeWindowListener(Component component, final WindowListener listener) {
+        while (component != null) {
+            if (component instanceof org.geotoolkit.gui.swing.Window) {
+                ((org.geotoolkit.gui.swing.Window) component).removeWindowListener(listener);
+                break;
+            }
+            if (component instanceof Window) {
+                ((Window) component).removeWindowListener(listener);
+                break;
+            }
+            if (component instanceof JInternalFrame) {
+                InternalWindowListener.removeWindowListener((JInternalFrame) component, listener);
+                break;
+            }
+            component = component.getParent();
         }
     }
 

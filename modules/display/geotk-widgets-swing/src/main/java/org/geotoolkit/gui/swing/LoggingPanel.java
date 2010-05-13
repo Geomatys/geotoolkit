@@ -50,7 +50,6 @@ import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.Disposable;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.resources.Vocabulary;
-import org.geotoolkit.internal.SwingUtilities;
 
 
 /**
@@ -423,7 +422,8 @@ public class LoggingPanel extends JComponent implements Disposable {
      */
     public Component show(final Component owner) {
         final String title = Vocabulary.format(Vocabulary.Keys.EVENT_LOGGER);
-        final Component frame = SwingUtilities.toFrame(owner, this, title, new WindowAdapter() {
+        final Window frame = WindowCreator.Handler.DEFAULT.createWindow(owner, this, title);
+        frame.addWindowListener(new WindowAdapter() {
             @Override public void windowClosed(WindowEvent event) {
                 dispose();
             }
@@ -431,7 +431,7 @@ public class LoggingPanel extends JComponent implements Disposable {
         frame.setSize(750, 300);
         frame.setVisible(true);
         doLayout();
-        return frame;
+        return (Component) frame;
     }
 
     /**

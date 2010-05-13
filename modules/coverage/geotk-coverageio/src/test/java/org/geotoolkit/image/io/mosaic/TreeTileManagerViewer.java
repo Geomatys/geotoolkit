@@ -25,7 +25,6 @@ import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 
 import org.geotoolkit.gui.swing.tree.TreeNode;
-import org.geotoolkit.internal.SwingUtilities;
 import org.geotoolkit.internal.GraphicsUtilities;
 
 
@@ -253,7 +252,7 @@ final class TreeTileManagerViewer extends JPanel implements TreeSelectionListene
         } else {
             manager = (TreeTileManager) tiles;
         }
-        SwingUtilities.setLookAndFeel(MosaicImageViewer.class, "main");
+        GraphicsUtilities.setLookAndFeel(MosaicImageViewer.class, "main");
         final TreeTileManagerViewer viewer = new TreeTileManagerViewer(manager);
         viewer.showInFrame();
     }
