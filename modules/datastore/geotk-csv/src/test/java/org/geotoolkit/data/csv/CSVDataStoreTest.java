@@ -25,6 +25,8 @@ import org.geotoolkit.data.DataStoreFinder;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.query.QueryBuilder;
+import org.geotoolkit.factory.Hints;
+import org.geotoolkit.factory.HintsPending;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.junit.After;
@@ -120,6 +122,24 @@ public class CSVDataStoreTest {
         }
 
         assertEquals(3, number);
+
+
+        //test with hint
+        QueryBuilder qb = new QueryBuilder(name);
+        qb.setHints(new Hints(HintsPending.FEATURE_DETACHED, Boolean.FALSE));
+        reader = ds.getFeatureReader(qb.buildQuery());
+        number = 0;
+        try{
+            while(reader.hasNext()){
+                number++;
+                reader.next();
+            }
+        }finally{
+            reader.close();
+        }
+
+        assertEquals(3, number);
+
     }
 
 }

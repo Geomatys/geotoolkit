@@ -49,8 +49,11 @@ import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryCapabilities;
 import org.geotoolkit.data.query.QueryUtilities;
+import org.geotoolkit.factory.Hints;
+import org.geotoolkit.factory.HintsPending;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.FeatureUtilities;
+import org.geotoolkit.feature.simple.DefaultSimpleFeature;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.referencing.CRS;
@@ -259,6 +262,7 @@ public class CSVDataStore extends AbstractDataStore{
                         cnt++;
                     }
                 }
+                return cnt;
             } catch (IOException ex) {
                 throw new DataStoreException(ex);
             } finally {
@@ -344,7 +348,11 @@ public class CSVDataStore extends AbstractDataStore{
     @Override
     public FeatureReader getFeatureReader(Query query) throws DataStoreException {
         typeCheck(query.getTypeName()); //raise error is type doesnt exist
-        final FeatureReader fr = new CSVFeatureReader();
+
+        final Hints hints = query.getHints();
+        final Boolean detached = (hints == null) ? null : (Boolean) hints.get(HintsPending.FEATURE_DETACHED);
+
+        final FeatureReader fr = new CSVFeatureReader(detached != null && !detached);
         return handleRemaining(fr, query);
     }
 
@@ -384,12 +392,18 @@ public class CSVDataStore extends AbstractDataStore{
         private final WKTReader reader = new WKTReader();
         private final Scanner scanner;
         protected final SimpleFeatureBuilder sfb;
+        protected final DefaultSimpleFeature reuse;
         protected SimpleFeature current = null;
         protected int inc = 0;
 
-        private CSVFeatureReader() throws DataStoreException{
+        private CSVFeatureReader(boolean reuseFeature) throws DataStoreException{
             RWLock.readLock().lock();
             sfb = new SimpleFeatureBuilder(featureType);
+            if(reuseFeature){
+                reuse = new DefaultSimpleFeature(new Object[featureType.getAttributeCount()], featureType, null, false);
+            }else{
+                reuse = null;
+            }
 
             try {
                 scanner = new Scanner(file);
@@ -427,7 +441,11 @@ public class CSVDataStore extends AbstractDataStore{
             if(scanner.hasNextLine()){
                 final String line = scanner.nextLine();
                 final List<String> fields = StringUtilities.toStringList(line, separator);
-                sfb.reset();
+
+                if(reuse == null){
+                    sfb.reset();
+                }
+
                 final List<AttributeDescriptor> atts = featureType.getAttributeDescriptors();
                 for(int i=0,n=atts.size() ; i<n; i++){
                     final AttributeDescriptor att = atts.get(i);
@@ -445,9 +463,20 @@ public class CSVDataStore extends AbstractDataStore{
                     }else{
                         value = Converters.convert(fields.get(i), att.getType().getBinding());
                     }
-                    sfb.set(att.getName(), value);
+
+                    if(reuse == null){
+                        sfb.set(att.getName(), value);
+                    }else{
+                        reuse.setAttribute(att.getName(), value);
+                    }
                 }
-                current = sfb.buildFeature(Integer.toString(inc++));
+
+                if(reuse == null){
+                    current = sfb.buildFeature(Integer.toString(inc++));
+                }else{
+                    reuse.setId(Integer.toString(inc++));
+                    current = reuse;
+                }
             }
         }
 
@@ -473,7 +502,7 @@ public class CSVDataStore extends AbstractDataStore{
         private SimpleFeature lastWritten = null;
 
         private CSVFeatureWriter() throws DataStoreException{
-            super();
+            super(false);
             TempLock.writeLock().lock();
 
             try{
