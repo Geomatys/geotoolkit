@@ -398,7 +398,7 @@ public class FeatureTypeBuilder {
      * @param binding The class the attribute is bound to.
      */
     public void add(final Name name, final Class binding) {
-        add(name,binding,0,1,true,null);
+        add(name,binding,1,1,true,null);
     }
 
     public void add(final Name name, final Class binding, int min, int max,
@@ -449,7 +449,7 @@ public class FeatureTypeBuilder {
      * @param crs The crs of of the geometry, can not be <code>null</code>.
      */
     public void add(final Name name, final Class binding, final CoordinateReferenceSystem crs) {
-        add(name,binding,crs,0,1,true,null);
+        add(name,binding,crs,1,1,true,null);
     }
 
     public void add(final Name name, final Class binding, final CoordinateReferenceSystem crs,
@@ -637,6 +637,15 @@ public class FeatureTypeBuilder {
         //verify if we have a simple feature type
         boolean isSimple = true;
         for(PropertyDescriptor desc : properties){
+            //to be simple property must have min = 1 and max 1
+            if(desc.getMinOccurs() != 1 || desc.getMaxOccurs() != 1){
+                if(simple){
+                    throw new IllegalArgumentException("Property "+desc.getName()+"must have min = 1 and max = 1");
+                }
+                isSimple = false;
+            }
+
+            //to be simple property must be an attribut
             final Set<Class<?>> ints = Classes.getAllInterfaces(desc.getType().getClass());
             boolean found = false;
             for(Class<?> c : ints){

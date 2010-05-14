@@ -330,13 +330,12 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
                         binding = Object.class;
                     }
 
+                    adb.setMinOccurs(1);
                     //nullability
                     if ( MD_NOT_NULL.equalsIgnoreCase( columns.getString(MD_IS_NULLABLE) ) ) {
                         adb.setNillable(false);
-                        adb.setMinOccurs(0);
                     }else{
                         adb.setNillable(true);
-                        adb.setMinOccurs(0);
                     }
 
                     //primary key never null, min one

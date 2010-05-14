@@ -54,14 +54,14 @@ public abstract class JDBCGeometrylessTest extends JDBCTestSupport {
         FeatureTypeBuilder sftb = new FeatureTypeBuilder();
         sftb.setName(dataStore.getNamespaceURI(), PERSON);
         sftb.add(new DefaultName(dataStore.getNamespaceURI(), ID), Integer.class,1,1,false, FeatureTypeBuilder.PRIMARY_KEY);
-        sftb.add(new DefaultName(dataStore.getNamespaceURI(), NAME), String.class,0,1,true,null);
-        sftb.add(new DefaultName(dataStore.getNamespaceURI(), AGE), Integer.class,0,1,true,null);
+        sftb.add(new DefaultName(dataStore.getNamespaceURI(), NAME), String.class,1,1,true,null);
+        sftb.add(new DefaultName(dataStore.getNamespaceURI(), AGE), Integer.class,1,1,true,null);
         personSchema = sftb.buildSimpleFeatureType();
         
         sftb.reset();
         sftb.setName(dataStore.getNamespaceURI(), ZIPCODE);
         sftb.add(new DefaultName(dataStore.getNamespaceURI(), ID), Integer.class,1,1,false, FeatureTypeBuilder.PRIMARY_KEY);
-        sftb.add(new DefaultName(dataStore.getNamespaceURI(), CODE), String.class,0,1,true,null);
+        sftb.add(new DefaultName(dataStore.getNamespaceURI(), CODE), String.class,1,1,true,null);
         zipCodeSchema = sftb.buildSimpleFeatureType();
     }
 

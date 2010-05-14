@@ -113,10 +113,10 @@ public abstract class JDBCDataStoreAPITest extends JDBCTestSupport {
             assertAttributesEqual(expectedAttribute,actualAttribute);
         }
 
-        // make sure the geometry is nillable and has minOccurrs to 0
+        // make sure the geometry is nillable and has minOccurrs to 1
         AttributeDescriptor dg = actual.getGeometryDescriptor();
         assertTrue(dg.isNillable());
-        assertEquals(0, dg.getMinOccurs());
+        assertEquals(1, dg.getMinOccurs());
 
         //assertEquals(expected, actual);
     }

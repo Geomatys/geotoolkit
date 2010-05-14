@@ -42,9 +42,9 @@ public class DefaultProperty<V extends Object, D extends PropertyDescriptor> imp
     protected final D descriptor;
 
     /**
-     * user data
+     * user data (lazy creation)
      */
-    protected final Map<Object, Object> userData = new HashMap<Object, Object>();
+    protected Map<Object, Object> userData = null;
 
     /**
      * content of the property
@@ -119,6 +119,9 @@ public class DefaultProperty<V extends Object, D extends PropertyDescriptor> imp
      */
     @Override
     public Map<Object, Object> getUserData() {
+        if(userData == null){
+            userData = new HashMap<Object, Object>(1);
+        }
         return userData;
     }
 
