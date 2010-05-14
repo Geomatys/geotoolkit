@@ -32,12 +32,14 @@ import org.geotoolkit.data.osm.client.v060.CloseChangeSet060;
 import org.geotoolkit.data.osm.client.v060.CreateChangeSet060;
 import org.geotoolkit.data.osm.client.v060.ChangeElement060;
 import org.geotoolkit.data.osm.client.v060.DownloadChangeSet060;
+import org.geotoolkit.data.osm.client.v060.DownloadGPSTraceData060;
+import org.geotoolkit.data.osm.client.v060.DownloadGPSTraceDetails060;
 import org.geotoolkit.data.osm.client.v060.ExpandChangeSet060;
 import org.geotoolkit.data.osm.client.v060.GetCapabilities060;
 import org.geotoolkit.data.osm.client.v060.GetChangeSet060;
 import org.geotoolkit.data.osm.client.v060.GetChangeSets060;
 import org.geotoolkit.data.osm.client.v060.GetData060;
-import org.geotoolkit.data.osm.client.v060.GetGPSTrace060;
+import org.geotoolkit.data.osm.client.v060.GetGPSTraces060;
 import org.geotoolkit.data.osm.client.v060.ReadElement060;
 import org.geotoolkit.data.osm.client.v060.ReadElementFull060;
 import org.geotoolkit.data.osm.client.v060.ReadElementHistory060;
@@ -371,10 +373,10 @@ public class OpenStreetMapServer implements Server{
     /**
      * {@see <a href="http://wiki.openstreetmap.org/wiki/API_v0.6#Retrieving_GPS_points">OSM API 0.6</a>}
      */
-    public GetGPSTraceRequest createGetTrackPoints(){
+    public GetGPSTraceRequest createGetGPSTraces(){
         switch (version) {
             case v060:
-                return new GetGPSTrace060(serverURL.toString());
+                return new GetGPSTraces060(serverURL.toString());
             default:
                 throw new IllegalArgumentException("Version was not defined");
         }
@@ -383,7 +385,7 @@ public class OpenStreetMapServer implements Server{
     /**
      * {@see <a href="http://wiki.openstreetmap.org/wiki/API_v0.6#Uploading_Traces">OSM API 0.6</a>}
      */
-    public Request createUploadTrackPoints(){
+    public Request createUploadGPSTrace(){
         //todo need GPX parser
         throw new UnsupportedOperationException("Not implemented yet.");
     }
@@ -391,9 +393,25 @@ public class OpenStreetMapServer implements Server{
     /**
      * {@see <a href="http://wiki.openstreetmap.org/wiki/API_v0.6#Downloading_Trace_Metadata">OSM API 0.6</a>}
      */
-    public Request createGetTrackPointsMetaData(){
-        //todo need GPX parser
-        throw new UnsupportedOperationException("Not implemented yet.");
+    public DownloadGPSTraceDetail createDownloadGPSTraceDetails(){
+        switch (version) {
+            case v060:
+                return new DownloadGPSTraceDetails060(serverURL.toString());
+            default:
+                throw new IllegalArgumentException("Version was not defined");
+        }
+    }
+
+    /**
+     * {@see <a href="http://wiki.openstreetmap.org/wiki/API_v0.6#Downloading_Trace_Metadata">OSM API 0.6</a>}
+     */
+    public DownloadGPSTraceData createDownloadGPSTraceData(){
+        switch (version) {
+            case v060:
+                return new DownloadGPSTraceData060(serverURL.toString());
+            default:
+                throw new IllegalArgumentException("Version was not defined");
+        }
     }
 
     //User ---------------------------------------------------------------------

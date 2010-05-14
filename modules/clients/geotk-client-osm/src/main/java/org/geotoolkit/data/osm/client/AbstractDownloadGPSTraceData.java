@@ -15,19 +15,33 @@
  *    Lesser General Public License for more details.
  */
 
-package org.geotoolkit.data.osm.client.v060;
+package org.geotoolkit.data.osm.client;
 
-import org.geotoolkit.data.osm.client.AbstractGetGPSTrace;
+import org.geotoolkit.client.AbstractRequest;
 
 /**
+ * Abstract implementation of {@link DownloadGPSData}, which defines the
+ * parameters for to download a GPS data request.
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class GetGPSTrace060 extends AbstractGetGPSTrace{
+public abstract class AbstractDownloadGPSTraceData extends AbstractRequest implements DownloadGPSTraceData{
 
-    public GetGPSTrace060(String serverURL){
-        super(serverURL,"api/0.6/trackpoints?");
+    protected int id = -1;
+
+    public AbstractDownloadGPSTraceData(String serverURL, String subPath){
+        super(serverURL, subPath);
     }
 
+    @Override
+    public int getTraceID() {
+        return id;
+    }
+
+    @Override
+    public void setTraceID(int id) {
+        this.id = id;
+    }
+    
 }

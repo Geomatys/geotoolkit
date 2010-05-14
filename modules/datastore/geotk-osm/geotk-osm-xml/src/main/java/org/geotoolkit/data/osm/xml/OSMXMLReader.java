@@ -27,6 +27,7 @@ import javax.xml.stream.XMLStreamException;
 import org.geotoolkit.data.osm.model.Api;
 import org.geotoolkit.data.osm.model.Bound;
 import org.geotoolkit.data.osm.model.ChangeSet;
+import org.geotoolkit.data.osm.model.GPXFileMetadata;
 import org.geotoolkit.data.osm.model.IdentifiedElement;
 import org.geotoolkit.data.osm.model.Member;
 import org.geotoolkit.data.osm.model.MemberType;
@@ -37,6 +38,7 @@ import org.geotoolkit.data.osm.model.TransactionType;
 import org.geotoolkit.data.osm.model.User;
 import org.geotoolkit.data.osm.model.Way;
 import org.geotoolkit.temporal.object.FastDateParser;
+import org.geotoolkit.temporal.object.TemporalUtilities;
 import org.geotoolkit.xml.StaxStreamReader;
 
 import org.opengis.geometry.Envelope;
@@ -96,6 +98,7 @@ public class OSMXMLReader extends StaxStreamReader{
                             || TAG_CREATE.equalsIgnoreCase(typeName)
                             || TAG_DELETE.equalsIgnoreCase(typeName)
                             || TAG_CHANGESET.equalsIgnoreCase(typeName)
+                            || TAG_GPX.equalsIgnoreCase(typeName)
                             || TAG_API.equalsIgnoreCase(typeName)){
                         //there is no bounds tag
                         break searchLoop;
@@ -128,7 +131,8 @@ public class OSMXMLReader extends StaxStreamReader{
 
     /**
      *
-     * @return IdentifiedElement (Way,node,Relation) or Transaction (in case of daily update files)
+     * @return IdentifiedElement (Way,node,Relation), Transaction (in case of daily update files)
+     * or GPXFileMetadata
      * @throws XMLStreamException
      */
     public Object next() throws XMLStreamException{
@@ -182,6 +186,8 @@ public class OSMXMLReader extends StaxStreamReader{
                     current = parseChangeSet();
                 }else if(localName.equalsIgnoreCase(TAG_API)){
                     current = parseAPI();
+                }else if(localName.equalsIgnoreCase(TAG_GPX)){
+                    current = parseGPX();
                 }else{
                     System.out.println("Unexpected tag : " + localName);
                 }
@@ -513,6 +519,25 @@ public class OSMXMLReader extends StaxStreamReader{
         }
 
         throw new XMLStreamException("Error in xml file, modify tag without end.");
+    }
+
+    private GPXFileMetadata parseGPX() throws XMLStreamException{
+        final String id = reader.getAttributeValue(null, ATT_ID);
+        final String name = reader.getAttributeValue(null, ATT_GPX_NAME);
+        final String lat = reader.getAttributeValue(null, ATT_GPX_LAT);
+        final String lon = reader.getAttributeValue(null, ATT_GPX_LON);
+        final String user = reader.getAttributeValue(null, ATT_USER);
+        final String time = reader.getAttributeValue(null, ATT_TIMESTAMP);
+        final String publik = reader.getAttributeValue(null, ATT_GPX_PUBLIC);
+        final String pending = reader.getAttributeValue(null, ATT_GPX_PENDING);
+        toTagEnd(TAG_GPX);
+
+        return new GPXFileMetadata(Long.parseLong(id),name, user, 
+                Boolean.parseBoolean(publik), Boolean.parseBoolean(pending),
+                TemporalUtilities.parseDateSafe(time,false),
+                Double.parseDouble(lat),
+                Double.parseDouble(lon));
+
     }
 
 

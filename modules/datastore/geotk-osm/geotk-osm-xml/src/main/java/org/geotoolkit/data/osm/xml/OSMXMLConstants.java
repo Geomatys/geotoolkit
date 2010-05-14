@@ -130,6 +130,16 @@ public class OSMXMLConstants {
      */
     public static final String TAG_CREATE = "create";
 
+    /**
+     * GPX file metadata tag.
+     */
+    public static final String TAG_GPX = "gpx_file";
+    public static final String ATT_GPX_NAME = "name";
+    public static final String ATT_GPX_LAT = "lat";
+    public static final String ATT_GPX_LON = "lon";
+    public static final String ATT_GPX_PUBLIC = "public";
+    public static final String ATT_GPX_PENDING = "pending";
+
     private OSMXMLConstants(){};
 
 }
