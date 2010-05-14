@@ -82,7 +82,7 @@ import org.geotoolkit.resources.Errors;
  *
  * @author Martin Desruisseaux (Geomatys)
  * @author Cédric Briançon (Geomatys)
- * @version 3.01
+ * @version 3.12
  *
  * @since 2.5
  * @module
@@ -204,6 +204,12 @@ public abstract class CommandLine implements Runnable {
      * The command used for launching the application.
      */
     private final String command;
+
+    /**
+     * Do not cause a failure if mandatory options are missing. This is a
+     * special case which occurs only if the action is "help" or "version".
+     */
+    transient boolean ignoreMandatoryOption;
 
     /**
      * {@code true} if the {@link #version} method is invoked recursively from {@link InteractiveConsole}.
@@ -408,8 +414,10 @@ public abstract class CommandLine implements Runnable {
                     continue;
                 }
                 if (text == null && option.mandatory() && status == null) {
-                    status = new IllegalArgumentException(error(
-                            Errors.Keys.MISSING_PARAMETER_$1, name));
+                    if (!ignoreMandatoryOption) {
+                        status = new IllegalArgumentException(error(
+                                Errors.Keys.MISSING_PARAMETER_$1, name));
+                    }
                     continue;
                 }
                 if (type.isAssignableFrom(String.class)) {
@@ -515,7 +523,7 @@ public abstract class CommandLine implements Runnable {
     }
 
     /**
-     * Runs the command line. The default implementation search for a no-argument method annotated
+     * Runs the command line. The default implementation searchs for a no-argument method annotated
      * with {@link Action} and having a name matching the first argument which is not an option.
      * If no action is given or if it was not recognized, then {@link #unknownAction(String)}
      * method is invoked.
@@ -531,6 +539,24 @@ public abstract class CommandLine implements Runnable {
      */
     @Override
     public void run() {
+        /*
+         * Special case performed before to parse the arguments, because we want
+         * those actions to work even if mandatory parameters are not provided.
+         */
+        if (arguments == null || arguments.length == 0) {
+            ignoreMandatoryOption = true;
+        } else if (arguments.length == 1) {
+            final String action = arguments[0];
+            if (action != null) {
+                if (action.equalsIgnoreCase("help") || action.equalsIgnoreCase("version")) {
+                    ignoreMandatoryOption = true;
+                }
+            }
+        }
+        /*
+         * General case: parses the options (throwing an exception if some argument are
+         * invalid, or if a mandatory argument is missing), then execute the action.
+         */
         initialize();
         if (arguments == null || arguments.length == 0) {
             unknownAction(null);

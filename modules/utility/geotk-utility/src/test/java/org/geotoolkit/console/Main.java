@@ -24,7 +24,7 @@ import java.io.*;
  * A pseudo-main class for testing purpose.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.12
  *
  * @since 3.00
  */
@@ -35,7 +35,7 @@ final class Main extends CommandLine {
     @Option
     boolean flag;
 
-    @Option
+    @Option(mandatory = true)
     int integer;
 
     @Option
@@ -48,9 +48,9 @@ final class Main extends CommandLine {
     String dummy;
 
     /**
-     * Where error messages are sent.
+     * Where standard and error messages are sent.
      */
-    final StringBuffer error;
+    final StringBuffer messages;
 
     /**
      * Creates the main class for the given command-line arguments.
@@ -60,7 +60,8 @@ final class Main extends CommandLine {
     public Main(String[] args) {
         super(null, args);
         final StringWriter buffer = new StringWriter();
-        error = buffer.getBuffer();
+        messages = buffer.getBuffer();
+        out = new PrintWriter(buffer); // Redirect the standard stream.
         err = new PrintWriter(buffer); // Redirect the error stream.
     }
 

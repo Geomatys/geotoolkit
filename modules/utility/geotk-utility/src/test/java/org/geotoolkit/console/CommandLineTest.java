@@ -26,7 +26,7 @@ import static org.junit.Assert.*;
  * Tests {@link CommandLine}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.12
  *
  * @since 3.00
  */
@@ -101,13 +101,45 @@ public final class CommandLineTest {
             "--integer", "15",
             "--dummy",   "org/geotoolkit/Main.java"
         });
-        assertEquals(0, main.error.length());
+        assertEquals(0, main.messages.length());
         try {
             main.run();
             fail("Expected an exception");
         } catch (IllegalStateException e) {
             // This is the expected exception.
         }
-        assertTrue(main.error.indexOf("--dummy") >= 0);
+        assertTrue(main.messages.indexOf("--dummy") >= 0);
+    }
+
+    /**
+     * Tests with a missing mandatory argument.
+     */
+    @Test
+    public void testMissingMandatory() {
+        final Main main = new Main(new String[] {
+            "--string",  "Hello world",
+            "--file",    "org/geotoolkit/Main.java"
+        });
+        assertEquals(0, main.messages.length());
+        try {
+            main.run();
+            fail("Expected an exception");
+        } catch (IllegalStateException e) {
+            // This is the expected exception.
+        }
+        assertTrue(main.messages.indexOf("--integer") >= 0);
+    }
+
+    /**
+     * Tests the "version" action. Note that the mandatory parameter is missing,
+     * but the "version" action should be a special case ignoring that fact.
+     */
+    @Test
+    public void testHelp() {
+        final Main main = new Main(new String[] {
+            "version"
+        });
+        main.run();
+        assertTrue(main.messages.length() != 0);
     }
 }
