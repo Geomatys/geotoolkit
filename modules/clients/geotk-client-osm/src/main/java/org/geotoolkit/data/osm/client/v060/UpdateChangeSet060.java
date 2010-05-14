@@ -17,22 +17,22 @@
 
 package org.geotoolkit.data.osm.client.v060;
 
-import org.geotoolkit.data.osm.client.AbstractCloseChangeSet;
+import org.geotoolkit.data.osm.client.AbstractUpdateChangeSet;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class CloseChangeSet060 extends AbstractCloseChangeSet{
+public class UpdateChangeSet060 extends AbstractUpdateChangeSet{
 
-    public CloseChangeSet060(String serverURL){
+    public UpdateChangeSet060(String serverURL){
         super(serverURL,"");
     }
 
     @Override
     protected String getSubPath() {
-        return new StringBuilder("/api/0.6/changeset/").append(id).append("/close").toString();
+        return new StringBuilder("/api/0.6/changeset/").append(id).toString();
     }
 
 }

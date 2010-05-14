@@ -19,6 +19,7 @@ package org.geotoolkit.data.osm.model;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -36,6 +37,19 @@ import org.opengis.geometry.Envelope;
  */
 public class ChangeSet {
 
+    private static final List<Tag> toList(Map<String,String> tags){
+        final List<Tag> lstTag;
+        if(tags == null || tags.isEmpty()){
+            lstTag = Collections.EMPTY_LIST;
+        }else{
+            lstTag = new ArrayList<Tag>();
+            for(Map.Entry<String,String> entry : tags.entrySet()){
+                lstTag.add(new Tag(entry.getKey(), entry.getValue()));
+            }
+        }
+        return lstTag;
+    }
+
     private final Integer id;
     private final User user;
     private final Long timestamp;
@@ -44,6 +58,10 @@ public class ChangeSet {
     private final List<Tag> tags;
 
     public ChangeSet(Integer id, User user, Long timestamp, Boolean open, Envelope env, Map<String,String> tags) {
+        this(id,user,timestamp,open,env,toList(tags));
+    }
+
+    public ChangeSet(Integer id, User user, Long timestamp, Boolean open, Envelope env, List<Tag> tags) {
         this.id = id;
         this.user = (user == null) ? User.NONE : user;
         this.timestamp = timestamp;
@@ -53,13 +71,7 @@ public class ChangeSet {
         if(tags == null || tags.isEmpty()){
             this.tags = Collections.EMPTY_LIST;
         }else{
-            final Tag[] array = new Tag[tags.size()];
-            int i=0;
-            for(Map.Entry<String,String> entry : tags.entrySet()){
-                array[i] = new Tag(entry.getKey(), entry.getValue());
-                i++;
-            }
-            this.tags = UnmodifiableArrayList.wrap(array);
+            this.tags = UnmodifiableArrayList.wrap(tags.toArray(new Tag[tags.size()]));
         }
     }
 

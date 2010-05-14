@@ -41,6 +41,7 @@ import org.geotoolkit.data.osm.client.v060.ReadElementHistory060;
 import org.geotoolkit.data.osm.client.v060.ReadElementRelations060;
 import org.geotoolkit.data.osm.client.v060.ReadElements060;
 import org.geotoolkit.data.osm.client.v060.ReadNodeWays060;
+import org.geotoolkit.data.osm.client.v060.UpdateChangeSet060;
 import org.geotoolkit.data.osm.client.v060.Upload060;
 import org.geotoolkit.data.osm.model.Api;
 import org.geotoolkit.data.osm.xml.OSMXMLReader;
@@ -79,7 +80,6 @@ public class OpenStreetMapServer implements Server{
             return null;
         }
     }
-
 
     public Api getCapabilities(){
         if (capabilities != null) {
@@ -197,9 +197,13 @@ public class OpenStreetMapServer implements Server{
     /**
      * {@see <a href="http://wiki.openstreetmap.org/wiki/API_v0.6#Update:_PUT_.2Fapi.2F0.6.2Fchangeset.2F.23id">OSM API 0.6</a>}
      */
-    public Request createUpdateChangeSet(){
-        //todo need auhtentification system on server/request
-        throw new UnsupportedOperationException("Not implemented yet.");
+    public UpdateChangeSetRequest createUpdateChangeSet(){
+        switch (version) {
+            case v060:
+                return new UpdateChangeSet060(serverURL.toString());
+            default:
+                throw new IllegalArgumentException("Version was not defined");
+        }
     }
 
     /**
