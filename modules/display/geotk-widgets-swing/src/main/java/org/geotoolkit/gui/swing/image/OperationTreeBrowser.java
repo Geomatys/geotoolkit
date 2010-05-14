@@ -19,6 +19,7 @@ package org.geotoolkit.gui.swing.image;
 
 import java.util.List;
 import java.util.Locale;
+import java.text.ParseException;
 import javax.swing.Icon;
 import javax.swing.JTree;
 import javax.swing.JPanel;
@@ -464,6 +465,17 @@ public class OperationTreeBrowser extends JComponent implements Dialog {
     }
 
     /**
+     * Forces the current values to be taken from the editable fields and set them as the
+     * current values. The default implementation does nothing since there is no editable
+     * fields in this widget.
+     *
+     * @since 3.12
+     */
+    @Override
+    public void commitEdit() throws ParseException {
+    }
+
+    /**
      * {@inheritDoc}
      *
      * @param  title The dialog box title, or {@code null} for a default title.
@@ -473,7 +485,7 @@ public class OperationTreeBrowser extends JComponent implements Dialog {
         if (title == null) {
             title = Vocabulary.getResources(getLocale()).getString(Vocabulary.Keys.OPERATIONS);
         }
-        return SwingUtilities.showOptionDialog(owner, this, title);
+        return SwingUtilities.showDialog(owner, this, title);
     }
 
     /**

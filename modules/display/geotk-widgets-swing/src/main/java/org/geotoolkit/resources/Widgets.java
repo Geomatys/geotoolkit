@@ -79,6 +79,13 @@ public final class Widgets extends IndexedResourceBundle {
         public static final int DOMAIN_OF_ENTRIES = 8;
 
         /**
+         * You can restrict the amount of images to be listed by specifying a smaller geographic area
+         * or time range, or a larger resolution. Leave the values unchanged for listing every images
+         * available in the layer.
+         */
+        public static final int EXPLAIN_DOMAIN_OF_ENTRIES = 11;
+
+        /**
          * Elements of layer {0}
          */
         public static final int LAYER_ELEMENTS_$1 = 9;

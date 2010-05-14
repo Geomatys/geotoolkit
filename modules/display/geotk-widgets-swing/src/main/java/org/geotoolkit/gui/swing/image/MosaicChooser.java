@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 import java.util.prefs.Preferences;
+import java.text.ParseException;
 
 import javax.swing.*;
 import java.awt.Dimension;
@@ -559,9 +560,18 @@ public class MosaicChooser extends JComponent implements Dialog {
 
     /**
      * {@inheritDoc}
+     *
+     * @since 3.12
+     */
+    @Override
+    public void commitEdit() throws ParseException {
+    }
+
+    /**
+     * {@inheritDoc}
      */
     @Override
     public boolean showDialog(final Component owner, final String title) {
-        return SwingUtilities.showOptionDialog(owner, this, title);
+        return SwingUtilities.showDialog(owner, this, title);
     }
 }

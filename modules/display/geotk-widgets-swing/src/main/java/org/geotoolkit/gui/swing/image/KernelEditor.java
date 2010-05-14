@@ -53,6 +53,7 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.Arrays;
 import java.util.Locale;
+import java.text.ParseException;
 
 import org.geotoolkit.util.XArrays;
 import org.geotoolkit.gui.swing.Dialog;
@@ -927,9 +928,18 @@ public class KernelEditor extends JComponent implements Dialog {
 
     /**
      * {@inheritDoc}
+     *
+     * @since 3.12
+     */
+    @Override
+    public void commitEdit() throws ParseException {
+    }
+
+    /**
+     * {@inheritDoc}
      */
     @Override
     public boolean showDialog(final Component owner, final String title) {
-        return SwingUtilities.showOptionDialog(owner, this, title);
+        return SwingUtilities.showDialog(owner, this, title);
     }
 }

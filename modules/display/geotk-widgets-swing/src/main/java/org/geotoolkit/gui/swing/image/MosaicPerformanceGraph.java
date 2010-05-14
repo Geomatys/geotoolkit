@@ -30,6 +30,7 @@ import javax.swing.SwingWorker;
 import javax.swing.JProgressBar;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.text.ParseException;
 
 import org.geotoolkit.math.Vector;
 import org.geotoolkit.math.VectorPair;
@@ -555,10 +556,21 @@ public class MosaicPerformanceGraph extends Plot2D implements Dialog {
     }
 
     /**
+     * Forces the current values to be taken from the editable fields and set them as the
+     * current values. The default implementation does nothing since there is no editable
+     * fields in this widget.
+     *
+     * @since 3.12
+     */
+    @Override
+    public void commitEdit() throws ParseException {
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override
     public boolean showDialog(final Component owner, final String title) {
-        return SwingUtilities.showOptionDialog(owner, this, title);
+        return SwingUtilities.showDialog(owner, this, title);
     }
 }

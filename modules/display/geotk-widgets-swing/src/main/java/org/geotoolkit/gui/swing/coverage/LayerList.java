@@ -47,7 +47,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.BorderFactory;
-import javax.swing.SwingUtilities;
 import javax.swing.ListCellRenderer;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
@@ -854,9 +853,7 @@ public class LayerList extends WindowCreator {
             domain.setSelectorVisible(hide, false);
             final Locale locale = getLocale();
             final Widgets resources = Widgets.getResources(locale);
-            if (domain.showDialog(SwingUtilities.getWindowAncestor(this),
-                    resources.getString(Widgets.Keys.DOMAIN_OF_ENTRIES)))
-            {
+            if (domain.showDialog(this, resources.getString(Widgets.Keys.DOMAIN_OF_ENTRIES))) {
                 /*
                  * Create the CoverageEnvelope from the user selection.
                  * TODO: Current implementation assumes that the CoverageEnvelope CRS is WGS84.

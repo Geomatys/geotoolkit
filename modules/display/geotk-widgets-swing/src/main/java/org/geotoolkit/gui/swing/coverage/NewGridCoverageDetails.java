@@ -25,6 +25,7 @@ import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.JComponent;
+import java.text.ParseException;
 
 import org.jdesktop.swingx.JXTitledSeparator;
 
@@ -33,6 +34,7 @@ import org.opengis.referencing.crs.ProjectedCRS;
 import org.opengis.referencing.crs.GeographicCRS;
 import org.opengis.referencing.crs.CRSAuthorityFactory;
 
+import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Widgets;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.coverage.sql.CoverageDatabaseEvent;
@@ -80,6 +82,11 @@ final class NewGridCoverageDetails extends JComponent implements Dialog, Coverag
      * The combo box for vertical CRS.
      */
     private final AuthorityCodesComboBox verticalCRS;
+
+    /**
+     * The coverage reference in process of being edited, or {@code null} if none.
+     */
+    private transient NewGridCoverageReference reference;
 
     /**
      * Creates a new panel.
@@ -145,6 +152,7 @@ final class NewGridCoverageDetails extends JComponent implements Dialog, Coverag
             throws DatabaseVetoException
     {
         if (event.isBefore() && event.getNumEntryChange() > 0) {
+            this.reference = reference;
             filename.setText(reference.getFile().getPath());
             format  .setText(reference.format);
             if (reference.horizontalSRID != 0) {
@@ -162,13 +170,39 @@ final class NewGridCoverageDetails extends JComponent implements Dialog, Coverag
     }
 
     /**
+     * Parse the selected authority code from the given combo box.
+     */
+    private int getSelectedCode(final AuthorityCodesComboBox choices) throws ParseException {
+        String code = choices.getSelectedCode();
+        if (code != null && (code = code.trim()).length() != 0) try {
+            return Integer.parseInt(code);
+        } catch (NumberFormatException e) {
+            final ParseException ex = new ParseException(Errors.getResources(getLocale())
+                    .getString(Errors.Keys.UNPARSABLE_NUMBER_$1, code), 0);
+            ex.initCause(e);
+            throw ex;
+        }
+        return 0;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void commitEdit() throws ParseException {
+        final NewGridCoverageReference reference = this.reference;
+        if (reference != null) {
+            reference.format = format.getText();
+            reference.horizontalSRID = getSelectedCode(horizontalCRS);
+            reference.verticalSRID   = getSelectedCode(verticalCRS);
+        }
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override
     public boolean showDialog(final Component owner, final String title) {
-        while (SwingUtilities.showOptionDialog(owner, this, title)) {
-            return true;
-        }
-        return false;
+        return SwingUtilities.showDialog(owner, this, title);
     }
 }

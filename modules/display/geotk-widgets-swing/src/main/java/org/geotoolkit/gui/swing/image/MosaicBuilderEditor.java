@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Collections;
 import java.util.prefs.Preferences;
+import java.text.ParseException;
 import java.awt.Insets;
 import java.awt.Rectangle;
 import java.awt.Dimension;
@@ -660,9 +661,18 @@ public class MosaicBuilderEditor extends JComponent implements MosaicPerformance
 
     /**
      * {@inheritDoc}
+     *
+     * @since 3.12
+     */
+    @Override
+    public void commitEdit() throws ParseException {
+    }
+
+    /**
+     * {@inheritDoc}
      */
     @Override
     public boolean showDialog(final Component owner, final String title) {
-        return SwingUtilities.showOptionDialog(owner, this, title);
+        return SwingUtilities.showDialog(owner, this, title);
     }
 }

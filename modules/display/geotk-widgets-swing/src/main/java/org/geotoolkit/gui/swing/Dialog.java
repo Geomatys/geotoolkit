@@ -18,13 +18,14 @@
 package org.geotoolkit.gui.swing;
 
 import java.awt.Component;
+import java.text.ParseException;
 
 
 /**
  * Interface for widgets that can be used as a dialog box.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.12
  *
  * @since 3.00
  * @module
@@ -46,4 +47,21 @@ public interface Dialog {
      *         (e.g. pressing "<cite>Cancel</cite>" or closing the dialog box from the title bar).
      */
     boolean showDialog(Component owner, String title);
+
+    /**
+     * Forces the current value to be taken from the editable fields and set them as the
+     * current values. If this operation fails for at least one field, this method will
+     * set the focus on the offending field before to throw the exception.
+     * <p>
+     * This method is typically invoked after {@link #showDialog(Component, String)}
+     * returned {@code true} and before to read the values from the dialog widget.
+     *
+     * @throws ParseException If at least one values couldn't be commited.
+     *
+     * @see javax.swing.JFormattedTextField#commitEdit()
+     * @see javax.swing.JSpinner#commitEdit()
+     *
+     * @since 3.12
+     */
+    void commitEdit() throws ParseException;
 }

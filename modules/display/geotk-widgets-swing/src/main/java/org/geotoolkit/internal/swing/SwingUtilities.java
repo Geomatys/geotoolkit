@@ -29,6 +29,7 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.DefaultTableCellRenderer;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.UndeclaredThrowableException;
+import org.geotoolkit.gui.swing.WindowCreator;
 
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.resources.Vocabulary;
@@ -74,6 +75,26 @@ public final class SwingUtilities {
         frame.pack();
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
+    }
+
+    /**
+     * Brings up a "Ok/Cancel" dialog with no icon, using the installed window handler.
+     * In the default configuration, this will result in a call to the
+     * {@link #showOptionDialog(Component, Object, String) method just below.
+     *
+     * @param  owner  The parent component. Dialog will apears on top of this owner.
+     * @param  dialog The dialog content to show.
+     * @param  title  The title string for the dialog.
+     * @return {@code true} if user clicked "Ok", {@code false} otherwise.
+     */
+    public static boolean showDialog(final Component owner, final Component dialog, final String title) {
+        final WindowCreator.Handler handler;
+        if (owner instanceof WindowCreator) {
+            handler = ((WindowCreator) owner).getWindowHandler();
+        } else {
+            handler = WindowCreator.getDefaultWindowHandler();
+        }
+        return handler.showDialog(owner, dialog, title);
     }
 
     /**

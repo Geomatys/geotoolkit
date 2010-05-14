@@ -588,6 +588,17 @@ public class About extends JComponent implements Dialog {
     }
 
     /**
+     * Forces the current values to be taken from the editable fields and set them as the
+     * current values. The default implementation does nothing since there is no editable
+     * fields in this widget.
+     *
+     * @since 3.12
+     */
+    @Override
+    public void commitEdit() throws ParseException {
+    }
+
+    /**
      * Popups the dialog box and waits for the user. This method always invoke {@link #start}
      * before showing the dialog, and {@link #stop} after disposing it.
      *

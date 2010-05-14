@@ -195,8 +195,13 @@ public final class Main extends JFrame implements ActionListener {
         final Vocabulary resources = Vocabulary.getResources(getLocale());
         final JInternalFrame frame = new JInternalFrame(resources.getString(titleKey), true, true, true, true);
         frame.add(component);
-        desktop.add(frame);
         frame.pack();
+        final int x = (desktop.getWidth()  - frame.getWidth())  / 2;
+        final int y = (desktop.getHeight() - frame.getHeight()) / 2;
+        if (x >= 0 && y >= 0) {
+            frame.setLocation(x, y);
+        }
+        desktop.add(frame);
         frame.setVisible(true);
     }
 

@@ -36,7 +36,6 @@ import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JLabel;
 import javax.swing.JComboBox;
-import javax.swing.JOptionPane;
 import javax.swing.ButtonGroup;
 import javax.swing.JRadioButton;
 import javax.swing.BorderFactory;
@@ -620,11 +619,9 @@ public class CoordinateChooser extends JComponent implements Dialog {
     }
 
     /**
-     * Commits the currently edited values. If commit fails, focus will be set on the offending
-     * field.
-     *
-     * @throws ParseException If at least one of currently edited value couldn't be commited.
+     * {@inheritDoc}
      */
+    @Override
     public void commitEdit() throws ParseException {
         JSpinner focus=null;
         try {
@@ -645,26 +642,6 @@ public class CoordinateChooser extends JComponent implements Dialog {
             focus.requestFocus();
             throw exception;
         }
-    }
-
-    /**
-     * Prend en compte les valeurs des champs édités par l'utilisateur.
-     * Si les entrés ne sont pas valide, affiche un message d'erreur en
-     * utilisant la fenêtre parente {@code owner} spécifiée.
-     *
-     * @param  owner Fenêtre dans laquelle faire apparaître d'eventuels messages d'erreur.
-     * @return {@code true} si la prise en compte des paramètres à réussie.
-     */
-    private boolean commitEdit(final Component owner) {
-        try {
-            commitEdit();
-        } catch (ParseException exception) {
-            SwingUtilities.showMessageDialog(owner, exception.getLocalizedMessage(),
-                    Errors.getResources(getLocale()).getString(Errors.Keys.BAD_ENTRY),
-                    JOptionPane.ERROR_MESSAGE);
-            return false;
-        }
-        return true;
     }
 
     /**
@@ -756,11 +733,6 @@ public class CoordinateChooser extends JComponent implements Dialog {
      */
     @Override
     public boolean showDialog(final Component owner, final String title) {
-        while (SwingUtilities.showOptionDialog(owner, this, title)) {
-            if (commitEdit(owner)) {
-                return true;
-            }
-        }
-        return false;
+        return SwingUtilities.showDialog(owner, this, title);
     }
 }

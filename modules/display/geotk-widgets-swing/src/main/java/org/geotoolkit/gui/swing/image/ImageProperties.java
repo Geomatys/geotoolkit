@@ -19,6 +19,7 @@ package org.geotoolkit.gui.swing.image;
 
 import java.util.Locale;
 import java.util.ResourceBundle;
+import java.text.ParseException;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTable;
@@ -937,6 +938,17 @@ public class ImageProperties extends JComponent implements Dialog {
     }
 
     /**
+     * Forces the current values to be taken from the editable fields and set them as the
+     * current values. The default implementation does nothing since there is no editable
+     * fields in this widget.
+     *
+     * @since 3.12
+     */
+    @Override
+    public void commitEdit() throws ParseException {
+    }
+
+    /**
      * {@inheritDoc}
      *
      * @param  title The dialog box title, or {@code null} for a default title.
@@ -948,7 +960,7 @@ public class ImageProperties extends JComponent implements Dialog {
         if (title == null) {
             title = Vocabulary.getResources(getLocale()).getString(Vocabulary.Keys.PROPERTIES);
         }
-        return SwingUtilities.showOptionDialog(owner, this, title);
+        return SwingUtilities.showDialog(owner, this, title);
     }
 
     /**

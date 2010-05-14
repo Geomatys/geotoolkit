@@ -38,6 +38,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Arrays;
 import java.util.Locale;
+import java.text.ParseException;
 
 import org.geotoolkit.util.XArrays;
 import org.geotoolkit.resources.Widgets;
@@ -514,10 +515,19 @@ public class DisjointLists extends JComponent implements Dialog {
     /**
      * {@inheritDoc}
      *
+     * @since 3.12
+     */
+    @Override
+    public void commitEdit() throws ParseException {
+    }
+
+    /**
+     * {@inheritDoc}
+     *
      * @since 2.2
      */
     @Override
     public boolean showDialog(final Component owner, final String title) {
-        return SwingUtilities.showOptionDialog(owner, this, title);
+        return SwingUtilities.showDialog(owner, this, title);
     }
 }

@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.gui.swing;
 
+import java.text.ParseException;
 import java.awt.Component;
 import java.awt.event.WindowListener;
 
@@ -25,9 +26,13 @@ import javax.swing.JDialog;
 import javax.swing.JComponent;
 import javax.swing.JDesktopPane;
 import javax.swing.JInternalFrame;
+import javax.swing.JOptionPane;
+import javax.swing.UIManager;
 
 import org.geotoolkit.lang.Configuration;
 import org.geotoolkit.internal.swing.InternalWindowListener;
+import org.geotoolkit.internal.swing.SwingUtilities;
+import org.geotoolkit.resources.Errors;
 
 
 /**
@@ -192,6 +197,18 @@ public abstract class WindowCreator extends JComponent {
          * @return The new window.
          */
         Window createWindow(Component owner, Component content, String title);
+
+        /**
+         * Shows the given content in a modal dialog with "<cite>Ok</cite>" and "<cite>Cancel</cite>"
+         * buttons, and wait for the user to close the dialog.
+         *
+         * @param  owner   The {@link WindowCreator} which need to display a dialog window.
+         * @param  content The content to put in the dialog wondow.
+         * @param  title   The dialog title.
+         * @return {@code true} if the user clicked on the "<cite>Ok</cite>" button, or
+         *         {@code false} otherwise.
+         */
+        boolean showDialog(Component owner, Component content, String title);
     }
 
     /**
@@ -199,6 +216,10 @@ public abstract class WindowCreator extends JComponent {
      * This is the type of {@link Handler#DEFAULT}.
      */
     private static final class DefaultHandler implements Handler {
+        /**
+         * Creates a {@link JDialog}, {@link JFrame} or {@link JInternalFrame} depending on
+         * the {@code owner} ancestor.
+         */
         @Override
         public Window createWindow(final Component owner, final Component content, final String title) {
             java.awt.Window window = null;
@@ -227,6 +248,35 @@ public abstract class WindowCreator extends JComponent {
             window.setLocationRelativeTo(owner);
             ((Window) window).setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
             return (Window) window;
+        }
+
+        /**
+         * Shows a dialog box as a {@link JDialog} or {@link JInternalFrame} depending on
+         * the {@code owner} ancestor.
+         */
+        @Override
+        public boolean showDialog(Component owner, final Component content, final String title) {
+            // Workaround for the Mac L&F, where the internal dialog box has no border
+            // and can not be moved. We will use a native dialog window instead.
+            if (UIManager.getLookAndFeel().getName().equalsIgnoreCase("Mac OS X")) {
+                if (!(owner instanceof java.awt.Window)) {
+                    owner = javax.swing.SwingUtilities.getWindowAncestor(owner);
+                }
+            }
+            while (SwingUtilities.showOptionDialog(owner, content, title)) {
+                if (!(content instanceof org.geotoolkit.gui.swing.Dialog)) {
+                    return true;
+                }
+                try {
+                    ((org.geotoolkit.gui.swing.Dialog) content).commitEdit();
+                    return true;
+                } catch (ParseException exception) {
+                    SwingUtilities.showMessageDialog(owner, exception.getLocalizedMessage(),
+                            Errors.getResources(content.getLocale()).getString(Errors.Keys.BAD_ENTRY),
+                            JOptionPane.ERROR_MESSAGE);
+                }
+            }
+            return false;
         }
     }
 

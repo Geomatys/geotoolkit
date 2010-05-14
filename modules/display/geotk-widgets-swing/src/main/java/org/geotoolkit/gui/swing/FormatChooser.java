@@ -28,6 +28,7 @@ import java.text.DateFormat;
 import java.text.NumberFormat;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+import java.text.ParseException;
 
 import javax.swing.JLabel;
 import javax.swing.JComboBox;
@@ -455,11 +456,20 @@ public class FormatChooser extends JComponent implements Dialog {
 
     /**
      * {@inheritDoc}
+     *
+     * @since 3.12
+     */
+    @Override
+    public void commitEdit() throws ParseException {
+    }
+
+    /**
+     * {@inheritDoc}
      */
     @Override
     public boolean showDialog(final Component owner, final String title) {
         final String old = getPattern();
-        while (SwingUtilities.showOptionDialog(owner, this, title)) {
+        while (SwingUtilities.showDialog(owner, this, title)) {
             if (applyPattern(true)) {
                 return true;
             }

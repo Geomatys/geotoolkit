@@ -17,6 +17,9 @@
  */
 package org.geotoolkit.gui.swing.image;
 
+import java.util.Locale;
+import java.text.ParseException;
+
 import java.awt.Font;
 import java.awt.Color;
 import java.awt.Component;
@@ -27,7 +30,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.IndexColorModel;
 
-import java.util.Locale;
 import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.JPanel;
@@ -308,9 +310,18 @@ public class MultiColorChooser extends JComponent implements Dialog {
 
     /**
      * {@inheritDoc}
+     *
+     * @since 3.12
+     */
+    @Override
+    public void commitEdit() throws ParseException {
+    }
+
+    /**
+     * {@inheritDoc}
      */
     @Override
     public boolean showDialog(final Component owner, final String title) {
-        return SwingUtilities.showOptionDialog(owner, this, title);
+        return SwingUtilities.showDialog(owner, this, title);
     }
 }

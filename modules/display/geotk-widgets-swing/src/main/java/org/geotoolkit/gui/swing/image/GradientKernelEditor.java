@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.gui.swing.image;
 
+import java.text.ParseException;
 import javax.swing.JLabel;
 import javax.swing.JComponent;
 import javax.swing.BorderFactory;
@@ -307,9 +308,18 @@ public class GradientKernelEditor extends JComponent implements Dialog {
 
     /**
      * {@inheritDoc}
+     *
+     * @since 3.12
+     */
+    @Override
+    public void commitEdit() throws ParseException {
+    }
+
+    /**
+     * {@inheritDoc}
      */
     @Override
     public boolean showDialog(final Component owner, final String title) {
-        return SwingUtilities.showOptionDialog(owner, this, title);
+        return SwingUtilities.showDialog(owner, this, title);
     }
 }
