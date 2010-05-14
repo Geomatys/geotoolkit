@@ -31,6 +31,7 @@ import org.geotoolkit.client.Server;
 import org.geotoolkit.data.osm.client.v060.CloseChangeSet060;
 import org.geotoolkit.data.osm.client.v060.CreateChangeSet060;
 import org.geotoolkit.data.osm.client.v060.DownloadChangeSet060;
+import org.geotoolkit.data.osm.client.v060.ExpandChangeSet060;
 import org.geotoolkit.data.osm.client.v060.GetCapabilities060;
 import org.geotoolkit.data.osm.client.v060.GetChangeSet060;
 import org.geotoolkit.data.osm.client.v060.GetChangeSets060;
@@ -234,9 +235,13 @@ public class OpenStreetMapServer implements Server{
     /**
      * {@see <a href="http://wiki.openstreetmap.org/wiki/API_v0.6#Expand_Bounding_Box:_POST_.2Fapi.2F0.6.2Fchangeset.2F.23id.2Fexpand_bbox">OSM API 0.6</a>}
      */
-    public Request createExpandChangeSet(){
-        //todo need auhtentification system on server/request
-        throw new UnsupportedOperationException("Not implemented yet.");
+    public ExpandChangeSetRequest createExpandChangeSet(){
+        switch (version) {
+            case v060:
+                return new ExpandChangeSet060(serverURL.toString());
+            default:
+                throw new IllegalArgumentException("Version was not defined");
+        }
     }
 
     /**
