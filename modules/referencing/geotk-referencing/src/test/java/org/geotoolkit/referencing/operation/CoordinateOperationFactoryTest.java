@@ -81,11 +81,12 @@ public class CoordinateOperationFactoryTest extends TransformTestCase {
      * WKT of compound CRS to be tested.
      */
     private static final String
-            WGS84_Z = "COMPD_CS[\"WGS84 + Z\"," + WKT.GEOGCS_WGS84_DMHS + ',' + WKT.VERTCS_Z      + ']',
-            NAD27_Z = "COMPD_CS[\"NAD27 + Z\"," + WKT.GEOGCS_NAD27      + ',' + WKT.VERTCS_Z      + ']',
-            Z_NAD27 = "COMPD_CS[\"Z + NAD27\"," + WKT.VERTCS_Z          + ',' + WKT.GEOGCS_NAD27  + ']',
-            WGS84_H = "COMPD_CS[\"WGS84 + H\"," + WKT.GEOGCS_WGS84_DMHS + ',' + WKT.VERTCS_HEIGHT + ']',
-            NAD27_H = "COMPD_CS[\"NAD27 + Z\"," + WKT.GEOGCS_NAD27      + ',' + WKT.VERTCS_HEIGHT + ']';
+            WGS84_Z    = "COMPD_CS[\"WGS84 + Z\","   + WKT.GEOGCS_WGS84_DMHS + ',' + WKT.VERTCS_Z      + ']',
+            NAD27_Z    = "COMPD_CS[\"NAD27 + Z\","   + WKT.GEOGCS_NAD27      + ',' + WKT.VERTCS_Z      + ']',
+            Z_NAD27    = "COMPD_CS[\"Z + NAD27\","   + WKT.VERTCS_Z          + ',' + WKT.GEOGCS_NAD27  + ']',
+            WGS84_H    = "COMPD_CS[\"WGS84 + H\","   + WKT.GEOGCS_WGS84_DMHS + ',' + WKT.VERTCS_HEIGHT + ']',
+            NAD27_H    = "COMPD_CS[\"NAD27 + Z\","   + WKT.GEOGCS_NAD27      + ',' + WKT.VERTCS_HEIGHT + ']',
+            MERCATOR_Z = "COMPD_CS[\"Mercator + Z\","+ WKT.PROJCS_MERCATOR   + ',' + WKT.VERTCS_Z      + ']';
 
     /**
      * The hints used for fetching the factories.
@@ -668,6 +669,23 @@ public class CoordinateOperationFactoryTest extends TransformTestCase {
                                  0.001654978796746043, 0.0012755944235822696, 66.4042236590758);
         assertTransformEquals2_3(5,                    8,
                                  5.001262960018587,    8.001271733843957,    100.27929787896574);
+    }
+
+    /**
+     * Tests transformation from 2D-Geographic to 3D-Projected.
+     *
+     * @throws Exception Should never happen.
+     */
+    @Test
+    public void testGeographic2D_to_Projected3D() throws Exception {
+        final CoordinateReferenceSystem sourceCRS = WGS84;
+        final CoordinateReferenceSystem targetCRS = crsFactory.createFromWKT(MERCATOR_Z);
+        final CoordinateOperation op = opFactory.createOperation(sourceCRS, targetCRS);
+        transform = op.getMathTransform();
+        assertSame   (sourceCRS, op.getSourceCRS());
+        assertNotSame(targetCRS, op.getTargetCRS());
+        assertFalse(transform.isIdentity());
+        validate();
     }
 
     /**
