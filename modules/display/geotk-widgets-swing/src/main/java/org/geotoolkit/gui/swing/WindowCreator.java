@@ -82,7 +82,7 @@ public abstract class WindowCreator extends JComponent {
 
     /**
      * Sets the new handler for creating windows. A {@code null} value resets the
-     * {@link #getDefaultWindowHandler() default handler}.
+     * {@linkplain #getDefaultWindowHandler() default handler}.
      *
      * @param handler The new window handler, or {@code null} for the default one.
      */

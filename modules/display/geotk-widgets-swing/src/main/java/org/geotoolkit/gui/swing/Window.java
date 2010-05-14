@@ -27,12 +27,12 @@ import javax.swing.WindowConstants;
 
 /**
  * Interfaces for windows created by {@link WindowCreator}. This interface is typically implemented
- * by {@link JDialog} {@link JFrame} or {@link JInternalFrame} subclasses, but users can provide other
+ * by {@link JDialog}, {@link JFrame} or {@link JInternalFrame} subclasses, but users can provide other
  * implementation. For example an application developed on top of the <cite>NetBeans platform</cite>
  * may need to provide their own implementation for better integration with their platform.
  * <p>
  * Instances of {@code Window} are created by
- * {@link org.geotoolkit.gui.swing.WindowCreator.Handler#createWindow(WindowCreator, Component, String)}.
+ * {@link org.geotoolkit.gui.swing.WindowCreator.Handler#createWindow(Component, Component, String)}.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.12
@@ -124,7 +124,7 @@ public interface Window extends WindowConstants {
      * @return The operation that will occur when the user closes the window,
      *         as one of the {@link WindowConstants}.
      *
-     * @see java.awt.Window#getDefaultCloseOperation()
+     * @see JFrame#getDefaultCloseOperation()
      * @see JInternalFrame#getDefaultCloseOperation()
      */
     int getDefaultCloseOperation();
@@ -140,7 +140,7 @@ public interface Window extends WindowConstants {
      * @param operation The operation that will occur when the user closes the window,
      *        as one of the {@link WindowConstants}.
      *
-     * @see java.awt.Window#setDefaultCloseOperation(int)
+     * @see JFrame#setDefaultCloseOperation(int)
      * @see JInternalFrame#setDefaultCloseOperation(int)
      */
     void setDefaultCloseOperation(int operation);
