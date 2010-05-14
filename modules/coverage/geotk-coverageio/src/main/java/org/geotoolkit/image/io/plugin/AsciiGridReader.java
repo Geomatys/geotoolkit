@@ -64,7 +64,8 @@ import org.geotoolkit.resources.Errors;
 /**
  * Reader for the ASCII Grid format. As the "ASCII" name implies, the data files are read in
  * US-ASCII character encoding no matter what the {@link Spi#charset} value is. In addition,
- * the US locale is enforced no matter what the {@link Spi#locale} value is.
+ * the US locale is enforced no matter what the {@link Spi#locale} value is, with a tolerance
+ * for the decimal separator character which can be either {@code '.'} or {@code ','}.
  * <p>
  * ASCII grid files contains a header before the actual data. The header contains (<var>key</var>
  * <var>value</var>) pairs, one pair per line and using the space as the separator between key and
@@ -156,7 +157,7 @@ import org.geotoolkit.resources.Errors;
  * {@code BYTE}, {@code SHORT}, {@code USHORT}, {@code INT}, {@code FLOAT} or {@code DOUBLE}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.08
+ * @version 3.12
  *
  * @see <a href="http://daac.ornl.gov/MODIS/ASCII_Grid_Format_Description.html">ASCII Grid Format Description</a>
  * @see <a href="http://en.wikipedia.org/wiki/ESRI_grid">ESRI Grid on Wikipedia</a>
@@ -245,6 +246,19 @@ public class AsciiGridReader extends TextImageReader {
     }
 
     /**
+     * Parses the given string as a double value. Before to parse, this method replaces the
+     * {@code ','} character by {@code '.'} in order to take in account the ASCII-Grid format
+     * created by localized version of ESRI softwares.
+     *
+     * @param  value The value to parse.
+     * @return The value as a {@code double}.
+     * @throws NumberFormatException If the given string can not be parsed as a {@code double}.
+     */
+    private static double parseDouble(final String value) throws NumberFormatException {
+        return Double.parseDouble(value.replace(',', '.'));
+    }
+
+    /**
      * Reads the header, if it was not already read. If successful, then all the instance
      * variables declared in this class should be assigned to their final value.
      *
@@ -262,30 +276,30 @@ public class AsciiGridReader extends TextImageReader {
                 height = Integer.parseInt(ensureDefined(key = "NROWS", header.remove(key)));
                 String value = header.remove(key = "CELLSIZE");
                 if (value != null) {
-                    scaleX = scaleY = Double.parseDouble(value);
+                    scaleX = scaleY = parseDouble(value);
                 } else {
                     // If missing, declare that CELLSIZE is missing since DX and DY are not standard.
-                    scaleX = Double.parseDouble(ensureDefined("CELLSIZE", header.remove(key = "DX")));
-                    scaleY = Double.parseDouble(ensureDefined("CELLSIZE", header.remove(key = "DY")));
+                    scaleX = parseDouble(ensureDefined("CELLSIZE", header.remove(key = "DX")));
+                    scaleY = parseDouble(ensureDefined("CELLSIZE", header.remove(key = "DY")));
                 }
                 value = header.remove(key = "NODATA_VALUE");
-                fillValue = (value != null) ? Double.parseDouble(value) : super.getPadValue(0);
+                fillValue = (value != null) ? parseDouble(value) : super.getPadValue(0);
                 value = header.remove(key = "MIN_VALUE");
-                minValue = (value != null) ? Double.parseDouble(value) : Double.NEGATIVE_INFINITY;
+                minValue = (value != null) ? parseDouble(value) : Double.NEGATIVE_INFINITY;
                 value = header.remove(key = "MAX_VALUE");
-                maxValue = (value != null) ? Double.parseDouble(value) : Double.POSITIVE_INFINITY;
+                maxValue = (value != null) ? parseDouble(value) : Double.POSITIVE_INFINITY;
                 value = header.remove(key = "XLLCENTER");
                 if (value == null) {
                     value = header.remove(key = "XLLCORNER");
                     xCenter = false;
                 }
-                xll = Double.parseDouble(ensureDefined(key, value));
+                xll = parseDouble(ensureDefined(key, value));
                 value = header.remove(key = "YLLCENTER");
                 if (value == null) {
                     value = header.remove(key = "YLLCORNER");
                     yCenter = false;
                 }
-                yll = Double.parseDouble(ensureDefined(key, value));
+                yll = parseDouble(ensureDefined(key, value));
             } catch (NumberFormatException cause) {
                 final IIOException ex = new IIOException(Warnings.message(
                         this, Errors.Keys.UNPARSABLE_NUMBER_$1, key));
@@ -657,13 +671,14 @@ loop:       for (int y=0; /* stop condition inside */; y++) {
                             }
                             buffer.flip();
                         }
-                        final char c = (char) (buffer.get() & 0xFF);
+                        char c = (char) (buffer.get() & 0xFF);
                         if (c > ' ') {
                             if (nChar >= charBuffer.length) {
                                 throw new IIOException(Warnings.message(this,
                                         Errors.Keys.BAD_PARAMETER_$2, "cell(" + x + ',' + y + ')',
                                         String.valueOf(charBuffer)));
                             }
+                            if (c == ',') c = '.';
                             charBuffer[nChar++] = c;
                         } else if (nChar != 0) {
                             break;
