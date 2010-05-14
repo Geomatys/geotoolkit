@@ -21,11 +21,15 @@ import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.io.ParseException;
 import com.vividsolutions.jts.io.WKTReader;
 import com.vividsolutions.jts.io.WKTWriter;
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Reader;
 import java.io.Writer;
 import java.net.MalformedURLException;
 import java.util.Collection;
@@ -44,6 +48,7 @@ import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryCapabilities;
+import org.geotoolkit.data.query.QueryUtilities;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
@@ -235,6 +240,40 @@ public class CSVDataStore extends AbstractDataStore{
                 }
             }
         }
+    }
+
+    @Override
+    public long getCount(Query query) throws DataStoreException {
+        if(QueryUtilities.queryAll(query)) {
+            //ni filter or start index, just count number of line avoid reading features.
+            RWLock.readLock().lock();
+
+            BufferedReader reader = null;
+            try {
+                reader = new BufferedReader(new FileReader(file));
+                long cnt = -1; //avoid counting the header line
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    if(!line.isEmpty()){
+                        //avoid potential last empty lines
+                        cnt++;
+                    }
+                }
+            } catch (IOException ex) {
+                throw new DataStoreException(ex);
+            } finally {
+                RWLock.readLock().unlock();
+                if(reader != null){
+                    try {
+                        reader.close();
+                    } catch (IOException ex) {
+                        java.util.logging.Logger.getLogger(CSVDataStore.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+            }
+        }
+
+        return super.getCount(query);
     }
 
     @Override
