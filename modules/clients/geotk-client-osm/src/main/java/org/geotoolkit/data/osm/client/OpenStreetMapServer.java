@@ -30,7 +30,7 @@ import org.geotoolkit.client.Request;
 import org.geotoolkit.client.Server;
 import org.geotoolkit.data.osm.client.v060.CloseChangeSet060;
 import org.geotoolkit.data.osm.client.v060.CreateChangeSet060;
-import org.geotoolkit.data.osm.client.v060.CreateElement060;
+import org.geotoolkit.data.osm.client.v060.ChangeElement060;
 import org.geotoolkit.data.osm.client.v060.DownloadChangeSet060;
 import org.geotoolkit.data.osm.client.v060.ExpandChangeSet060;
 import org.geotoolkit.data.osm.client.v060.GetCapabilities060;
@@ -260,10 +260,10 @@ public class OpenStreetMapServer implements Server{
     /**
      * {@see <a href="http://wiki.openstreetmap.org/wiki/API_v0.6#Create:_PUT_.2Fapi.2F0.6.2F.5Bnode.7Cway.7Crelation.5D.2Fcreate">OSM API 0.6</a>}
      */
-    public CreateElementRequest createCreateElement(){
+    public ChangeElementRequest createCreateElement(){
         switch (version) {
             case v060:
-                return new CreateElement060(serverURL.toString());
+                return new ChangeElement060(serverURL.toString(),ChangeElementRequest.Type.CREATE);
             default:
                 throw new IllegalArgumentException("Version was not defined");
         }
@@ -309,17 +309,25 @@ public class OpenStreetMapServer implements Server{
     /**
      * {@see <a href="http://wiki.openstreetmap.org/wiki/API_v0.6#Update:_PUT_.2Fapi.2F0.6.2F.5Bnode.7Cway.7Crelation.5D.2F.23id">OSM API 0.6</a>}
      */
-    public Request createUpdateElement(){
-        //todo need auhtentification system on server/request
-        throw new UnsupportedOperationException("Not implemented yet.");
+    public ChangeElementRequest createUpdateElement(){
+        switch (version) {
+            case v060:
+                return new ChangeElement060(serverURL.toString(),ChangeElementRequest.Type.UPDATE);
+            default:
+                throw new IllegalArgumentException("Version was not defined");
+        }
     }
 
     /**
      * {@see <a href="http://wiki.openstreetmap.org/wiki/API_v0.6#Delete:_DELETE_.2Fapi.2F0.6.2F.5Bnode.7Cway.7Crelation.5D.2F.23id">OSM API 0.6</a>}
      */
-    public Request createDeleteElement(){
-        //todo need auhtentification system on server/request
-        throw new UnsupportedOperationException("Not implemented yet.");
+    public ChangeElementRequest createDeleteElement(){
+        switch (version) {
+            case v060:
+                return new ChangeElement060(serverURL.toString(),ChangeElementRequest.Type.DELETE);
+            default:
+                throw new IllegalArgumentException("Version was not defined");
+        }
     }
 
     /**

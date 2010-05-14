@@ -26,7 +26,19 @@ import org.geotoolkit.data.osm.model.IdentifiedElement;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public interface CreateElementRequest extends Request{
+public interface ChangeElementRequest extends Request{
+
+    public static enum Type{
+        CREATE,
+        UPDATE,
+        DELETE
+    };
+
+    /**
+     * 
+     * @return the request type : Create/Update/Delete
+     */
+    Type getType();
 
     /**
      * @param element : Node/Way/Relation to create

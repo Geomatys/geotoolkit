@@ -29,20 +29,27 @@ import org.geotoolkit.data.osm.model.IdentifiedElement;
 import org.geotoolkit.data.osm.xml.OSMXMLWriter;
 
 /**
- * Abstract implementation of {@link CreateElementRequest}, which defines the
- * parameters for a create element request.
+ * Abstract implementation of {@link ChangeElementRequest}, which defines the
+ * parameters for a change element request. the change may be Create/Update/Delete.
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public abstract class AbstractCreateElement extends AbstractRequest implements CreateElementRequest{
+public abstract class AbstractChangeElement extends AbstractRequest implements ChangeElementRequest{
 
+    protected final Type type;
     protected IdentifiedElement element = null;
 
-    public AbstractCreateElement(String serverURL, String subPath){
+    public AbstractChangeElement(String serverURL, String subPath, Type type){
         super(serverURL, subPath);
+        this.type = type;
     }
 
+    @Override
+    public Type getType() {
+        return type;
+    }
+    
     @Override
     public IdentifiedElement getElement() {
         return element;
@@ -59,7 +66,11 @@ public abstract class AbstractCreateElement extends AbstractRequest implements C
         final URLConnection conec = url.openConnection();
 
         final HttpURLConnection ht = (HttpURLConnection) conec;
-        ht.setRequestMethod("PUT");
+        switch(type){
+            case CREATE : ht.setRequestMethod("PUT");break;
+            case UPDATE : ht.setRequestMethod("PUT");break;
+            case DELETE : ht.setRequestMethod("DELETE");break;
+        }
 
         conec.setDoOutput(true);
         conec.setRequestProperty("Content-Type", "text/xml");

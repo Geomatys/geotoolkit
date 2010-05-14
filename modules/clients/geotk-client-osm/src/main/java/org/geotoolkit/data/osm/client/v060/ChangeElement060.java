@@ -17,7 +17,7 @@
 
 package org.geotoolkit.data.osm.client.v060;
 
-import org.geotoolkit.data.osm.client.AbstractCreateElement;
+import org.geotoolkit.data.osm.client.AbstractChangeElement;
 import org.geotoolkit.data.osm.model.Node;
 import org.geotoolkit.data.osm.model.Relation;
 import org.geotoolkit.data.osm.model.Way;
@@ -27,10 +27,10 @@ import org.geotoolkit.data.osm.model.Way;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class CreateElement060 extends AbstractCreateElement{
+public class ChangeElement060 extends AbstractChangeElement{
 
-    public CreateElement060(String serverURL){
-        super(serverURL,"");
+    public ChangeElement060(String serverURL, Type type){
+        super(serverURL,"",type);
     }
 
     @Override
@@ -45,7 +45,13 @@ public class CreateElement060 extends AbstractCreateElement{
         }else{
             throw new IllegalArgumentException("Unexpected type (allowed types are Node/Way/Relation) : " + element);
         }
-        sb.append("/create");
+
+        switch(type){
+            case CREATE : sb.append("/create");break;
+            case UPDATE : sb.append('/').append(element.getId());break;
+            case DELETE : sb.append('/').append(element.getId());break;
+        }
+
         return sb.toString();
     }
 
