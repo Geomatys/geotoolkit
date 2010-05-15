@@ -36,6 +36,7 @@ import javax.imageio.spi.ImageReaderWriterSpi;
 import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.ImageOutputStream;
 import java.awt.image.RenderedImage;
+import org.geotoolkit.image.io.plugin.WorldFileImageReader;
 
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.util.XArrays;
@@ -274,6 +275,16 @@ public final class XImageIO {
         boolean hasFound = false;
         while (it.hasNext()) {
             final ImageReaderSpi spi = it.next();
+            if (Boolean.TRUE.equals(ignoreMetadata)) {
+                /*
+                 * If the caller is not interrested in metadata, avoid the WorldFileImageReader.Spi
+                 * wrapper in order to avoid the cost of reading the TFW/PRJ files.  We will rather
+                 * use directly the wrapped reader, which should be somewhere next in the iteration.
+                 */
+                if (spi instanceof WorldFileImageReader.Spi) {
+                    continue;
+                }
+            }
             if (input == null || spi.canDecodeInput(input)) {
                 return createReaderInstance(spi, input, seekForwardOnly, ignoreMetadata);
             }

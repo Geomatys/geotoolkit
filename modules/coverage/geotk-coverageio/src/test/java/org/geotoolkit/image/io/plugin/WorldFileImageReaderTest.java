@@ -145,18 +145,25 @@ public final class WorldFileImageReaderTest extends TextImageReaderTestBase {
             assertNotNull(ImageIO.read(file));
             /*
              * When using the XImageIO methods, the WorldFileImageReader plugin
-             * should be selected in the input is a file except if there is no
+             * should be selected if the input is a file except if there is no
              * PGW (or TFW) and no PRJ file. This is the case of A2.png.
              */
-            ImageReader reader = XImageIO.getReaderBySuffix(file, true, true);
+            ImageReader reader = XImageIO.getReaderBySuffix(file, true, null);
             assertFalse(reader instanceof WorldFileImageReader);
             reader.dispose();
             /*
              * Test again, but now using a file which have a TFW file.
              */
             file = TestData.file(this, "matrix.txt");
-            reader = XImageIO.getReaderByFormatName("matrix", file, true, true);
+            reader = XImageIO.getReaderByFormatName("matrix", file, true, null);
             assertTrue(reader instanceof WorldFileImageReader);
+            reader.dispose();
+            /*
+             * Test again, but now ignoring metadata. XImageIO should avoid
+             * the usage of WorldFileImageReader.
+             */
+            reader = XImageIO.getReaderByFormatName("matrix", file, true, true);
+            assertFalse(reader instanceof WorldFileImageReader);
             reader.dispose();
             /*
              * If the input is a stream, then the standard reader should be selected.

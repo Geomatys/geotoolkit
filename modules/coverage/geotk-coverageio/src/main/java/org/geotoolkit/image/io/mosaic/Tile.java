@@ -45,6 +45,7 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.internal.image.io.Formats;
 import org.geotoolkit.internal.image.io.SupportFiles;
+import org.geotoolkit.image.io.plugin.WorldFileImageReader;
 
 import static java.lang.Math.min;
 import static java.lang.Math.max;
@@ -661,9 +662,11 @@ public class Tile implements Comparable<Tile>, Serializable {
     /**
      * Returns an image reader provider inferred from the given input, or {@code null} if none.
      * If more than one provider is is suitable for the given suffix, the first provider found
-     * is returned.
+     * is returned, except for World File image readers which are returned only if the wrapped
+     * Spi is not found (because we don't need the metadata provided by the TFW files).
      */
     static ImageReaderSpi getImageReaderSpi(final Object input) {
+        ImageReaderSpi fallback = null;
         final String path = getInputName(input);
         if (path != null) {
             final int split = path.lastIndexOf('.');
@@ -674,12 +677,17 @@ public class Tile implements Comparable<Tile>, Serializable {
                 while (it.hasNext()) {
                     final ImageReaderSpi candidate = it.next();
                     if (XArrays.containsIgnoreCase(candidate.getFileSuffixes(), suffix)) {
-                        return candidate;
+                        if (!(candidate instanceof WorldFileImageReader.Spi)) {
+                            return candidate;
+                        }
+                        if (fallback == null) {
+                            fallback = candidate;
+                        }
                     }
                 }
             }
         }
-        return null;
+        return fallback;
     }
 
     /**
