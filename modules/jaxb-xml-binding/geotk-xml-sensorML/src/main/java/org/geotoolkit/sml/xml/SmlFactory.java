@@ -443,7 +443,7 @@ public class SmlFactory {
             }
             newMembers.add(new org.geotoolkit.sml.xml.v101.SensorML.Member(newProcess));
         }
-        org.geotoolkit.sml.xml.v101.SensorML result = new org.geotoolkit.sml.xml.v101.SensorML(sensor.getVersion(), newMembers);
+        org.geotoolkit.sml.xml.v101.SensorML result = new org.geotoolkit.sml.xml.v101.SensorML("1.0.1", newMembers);
         return result;
     }
 }
