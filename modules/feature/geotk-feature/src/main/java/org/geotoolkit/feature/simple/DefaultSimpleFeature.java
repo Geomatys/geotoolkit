@@ -69,14 +69,6 @@ public final class DefaultSimpleFeature extends AbstractSimpleFeature {
      */
     private final boolean validating;
 
-    /**
-     * Fast construction of a new feature. The object takes owneship of the provided value array,
-     * do not modify after calling the constructor
-     * @param values
-     * @param featureType
-     * @param id
-     * @param validating
-     */
     public DefaultSimpleFeature(SimpleFeatureType featureType, FeatureId id, Object[] values, boolean validating){
         this(featureType, id, toProperties(featureType,values), validating);
     }
@@ -100,6 +92,31 @@ public final class DefaultSimpleFeature extends AbstractSimpleFeature {
             validate();
         }
     }
+
+    public DefaultSimpleFeature(AttributeDescriptor desc, FeatureId id, Object[] values, boolean validating){
+        this(desc, id, toProperties((SimpleFeatureType) desc.getType(),values), validating);
+    }
+
+    public DefaultSimpleFeature(AttributeDescriptor desc, FeatureId id, List<Property> properties, boolean validating){
+        super(desc,id);
+        this.value = properties;
+        this.validating = validating;
+
+        // in the most common case reuse the map cached in the feature type
+        if (desc.getType() instanceof DefaultSimpleFeatureType) {
+            index = ((DefaultSimpleFeatureType) desc.getType()).index;
+        } else {
+            // if we're not lucky, rebuild the index completely...
+            // TODO: create a separate cache for this case?
+            this.index = DefaultSimpleFeatureType.buildIndex((SimpleFeatureType) desc.getType());
+        }
+
+        // if we're self validating, do validation right now
+        if (validating) {
+            validate();
+        }
+    }
+
 
     @Override
     protected boolean isValidating() {

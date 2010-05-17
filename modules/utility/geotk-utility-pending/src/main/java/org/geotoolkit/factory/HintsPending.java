@@ -77,6 +77,12 @@ public final class HintsPending extends Hints {
      */
     public static final Key PROPERTY_IS_IDENTIFIER = new Key(Boolean.class);
 
+    /**
+     * Used to identify a PropertyDescriptor if the underlying property is
+     * dynamicly calculated. thoses properties can not be changed.
+     */
+    public static final Key PROPERTY_IS_CALCULATED = new Key(Boolean.class);
+
     private HintsPending(){}
 
 }

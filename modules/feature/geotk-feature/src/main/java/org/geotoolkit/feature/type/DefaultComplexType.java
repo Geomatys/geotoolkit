@@ -16,9 +16,6 @@
  */
 package org.geotoolkit.feature.type;
 
-import com.vividsolutions.jts.geom.IntersectionMatrix;
-import com.vividsolutions.jts.geom.Point;
-import com.vividsolutions.jts.operation.relate.RelateOp;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.Collection;
@@ -26,18 +23,15 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.io.TableWriter;
 import org.geotoolkit.referencing.CRS;
-
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
 import org.geotoolkit.util.converter.Classes;
 
 import org.opengis.feature.Property;
-import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.AttributeType;
 import org.opengis.feature.type.ComplexType;
 import org.opengis.feature.type.GeometryDescriptor;

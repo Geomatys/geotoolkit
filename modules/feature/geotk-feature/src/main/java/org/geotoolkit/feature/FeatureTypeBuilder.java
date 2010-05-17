@@ -638,12 +638,12 @@ public class FeatureTypeBuilder {
         boolean isSimple = true;
         for(PropertyDescriptor desc : properties){
             //to be simple property must have min = 1 and max 1
-//            if(desc.getMinOccurs() != 1 || desc.getMaxOccurs() != 1){
-//                if(simple){
-//                    throw new IllegalArgumentException("Property "+desc.getName()+"must have min = 1 and max = 1");
-//                }
-//                isSimple = false;
-//            }
+            if(desc.getMinOccurs() != 1 || desc.getMaxOccurs() != 1){
+                if(simple){
+                    throw new IllegalArgumentException("Property "+desc.getName()+"must have min = 1 and max = 1");
+                }
+                isSimple = false;
+            }
 
             //to be simple property must be an attribut
             final Set<Class<?>> ints = Classes.getAllInterfaces(desc.getType().getClass());
