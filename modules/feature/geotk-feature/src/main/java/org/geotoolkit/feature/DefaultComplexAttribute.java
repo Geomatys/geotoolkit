@@ -17,10 +17,10 @@
  */
 package org.geotoolkit.feature;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 import org.geotoolkit.feature.type.DefaultAttributeDescriptor;
-import org.geotoolkit.util.collection.UnmodifiableArrayList;
 
 import org.opengis.feature.Property;
 import org.opengis.feature.type.AttributeDescriptor;
@@ -33,7 +33,7 @@ import org.opengis.filter.identity.Identifier;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class DefaultComplexAttribute<I extends Identifier> extends AbstractComplexAttribute<I> {
+public class DefaultComplexAttribute<I extends Identifier> extends AbstractComplexAttribute<Collection<Property>,I> {
 
     public static DefaultComplexAttribute<Identifier> create(
             Collection<? extends Property> properties, ComplexType type, Identifier id) {
@@ -43,19 +43,10 @@ public class DefaultComplexAttribute<I extends Identifier> extends AbstractCompl
                 id);
     }
 
-    private final Property[] properties;
-
     public DefaultComplexAttribute(Collection<? extends Property> properties, AttributeDescriptor descriptor, I id) {
         super(descriptor, id );
-
-        //store the properties as an array and wrap it with an immutable list.
-        this.properties = properties.toArray(new Property[properties.size()]);
-        this.value = UnmodifiableArrayList.wrap(this.properties);
-    }
-
-    @Override
-    protected Property[] getPropertiesInternal() {
-        return properties;
+        value = new ArrayList<Property>();
+        value.addAll(properties);
     }
 
 }

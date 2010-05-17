@@ -398,7 +398,7 @@ public class JDBCFeatureReader implements  FeatureReader<SimpleFeatureType, Simp
         /**
          * name index
          */
-        final HashMap<String, Integer> index;
+        final HashMap<Object, Integer> index;
         /**
          * user data
          */
@@ -426,7 +426,7 @@ public class JDBCFeatureReader implements  FeatureReader<SimpleFeatureType, Simp
             dirty = new boolean[values.length];
 
             //set up name lookup
-            index = new HashMap<String, Integer>();
+            index = new HashMap<Object, Integer>();
 
             loop:
             for (int i = 0; i < count; i++) {
@@ -435,6 +435,8 @@ public class JDBCFeatureReader implements  FeatureReader<SimpleFeatureType, Simp
                 final String localpart = md.getColumnName(i + 1);
                 final Name name = featureType.getDescriptor(localpart).getName();
                 final int attIndex = i;
+                index.put(name, attIndex);
+                index.put(new DefaultName(name.getLocalPart()), attIndex);
                 index.put(name.getLocalPart(), attIndex);
                 index.put(DefaultName.toJCRExtendedForm(name), attIndex);
                 index.put(DefaultName.toExtendedForm(name), attIndex);
@@ -613,7 +615,7 @@ public class JDBCFeatureReader implements  FeatureReader<SimpleFeatureType, Simp
         }
 
         @Override
-        protected Map<String, Integer> getIndex() {
+        protected Map<Object, Integer> getIndex() {
             return index;
         }
 

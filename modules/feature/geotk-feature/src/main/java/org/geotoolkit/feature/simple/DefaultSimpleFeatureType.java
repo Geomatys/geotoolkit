@@ -45,7 +45,7 @@ public class DefaultSimpleFeatureType extends DefaultFeatureType implements Simp
 
     private final AttributeType[] types;
     private final List<AttributeType> typesList;
-    final Map<String, Integer> index;
+    final Map<Object, Integer> index;
 
     public DefaultSimpleFeatureType(final Name name, final List<AttributeDescriptor> schema,
             final GeometryDescriptor defaultGeometry, final boolean isAbstract,
@@ -188,16 +188,18 @@ public class DefaultSimpleFeatureType extends DefaultFeatureType implements Simp
      * @param featureType
      * @return
      */
-    static Map<String, Integer> buildIndex(final SimpleFeatureType featureType) {
+    static Map<Object, Integer> buildIndex(final SimpleFeatureType featureType) {
 
         // build an index of attribute name to index
-        final Map<String, Integer> index = new HashMap<String, Integer>();
+        final Map<Object, Integer> index = new HashMap<Object, Integer>();
 
         final List<AttributeDescriptor> descs = featureType.getAttributeDescriptors();
         final int n = descs.size();
         //must iterate backward to make first attribut with same local part first
         for(int i=n-1; i>=0; i--){
             final AttributeDescriptor ad = descs.get(i);
+            index.put(ad.getName(), i);
+            index.put(new DefaultName(ad.getName().getLocalPart()), i);
             //must add possible string combinaison
             index.put(ad.getName().getLocalPart(), i);
             index.put(DefaultName.toJCRExtendedForm(ad.getName()), i);

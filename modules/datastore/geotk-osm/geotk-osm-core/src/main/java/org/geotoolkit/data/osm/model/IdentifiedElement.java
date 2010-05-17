@@ -18,6 +18,7 @@
 package org.geotoolkit.data.osm.model;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -25,6 +26,7 @@ import java.util.Map;
 import org.geotoolkit.feature.AbstractFeature;
 import org.geotoolkit.filter.identity.DefaultFeatureId;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
+import org.opengis.feature.Property;
 
 import org.opengis.feature.type.AttributeDescriptor;
 
@@ -36,7 +38,7 @@ import org.opengis.feature.type.AttributeDescriptor;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public abstract class IdentifiedElement extends AbstractFeature implements Serializable {
+public abstract class IdentifiedElement extends AbstractFeature<Collection<Property>> implements Serializable {
 
     protected final long id;
     protected final int version;

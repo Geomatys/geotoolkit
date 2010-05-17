@@ -16,6 +16,8 @@
  */
 package org.geotoolkit.data.osm.model;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import org.geotoolkit.feature.AbstractComplexAttribute;
 import org.geotoolkit.feature.DefaultProperty;
 
@@ -28,7 +30,7 @@ import org.opengis.filter.identity.Identifier;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class User extends AbstractComplexAttribute<Identifier> {
+public class User extends AbstractComplexAttribute<Collection<Property>,Identifier> {
 
     /**
      * No user id.
@@ -87,16 +89,15 @@ public class User extends AbstractComplexAttribute<Identifier> {
         return new User(userId, userName);
     }
 
-    // feature/attribut model --------------------------------------------------
-
     @Override
-    protected Property[] getPropertiesInternal() {
-        final Property[] props = new Property[2];
-        props[0] = new DefaultProperty(id, getType().getDescriptor("id"));
-        props[1] = new DefaultProperty(name, getType().getDescriptor("name"));
+    public Collection<Property> getProperties() {
+        final Collection<Property> props = new ArrayList<Property>();
+        props.add(new DefaultProperty(id, getType().getDescriptor("id")));
+        props.add(new DefaultProperty(name, getType().getDescriptor("name")));
         return props;
     }
 
+    // feature/attribut model --------------------------------------------------
 
     @Override
     public String toString() {

@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.feature;
 
+import java.util.Collection;
 import java.util.Iterator;
 
 import org.geotoolkit.geometry.DefaultBoundingBox;
@@ -42,7 +43,7 @@ import org.opengis.geometry.BoundingBox;
  * TODO : Make this class thread safe or not ?
  * @module pending
  */
-public abstract class AbstractFeature extends AbstractComplexAttribute<FeatureId> implements Feature {
+public abstract class AbstractFeature<C extends Collection<Property>> extends AbstractComplexAttribute<C,FeatureId> implements Feature {
 
     /**
      * Default geometry attribute

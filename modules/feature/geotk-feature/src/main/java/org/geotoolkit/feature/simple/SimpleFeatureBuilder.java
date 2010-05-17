@@ -141,7 +141,7 @@ public class SimpleFeatureBuilder {
     /** the feature factory */
     private final FeatureFactory factory;
     /** the attribute name to index index */
-    private final Map<String, Integer> index;
+    private final Map<Object, Integer> index;
     /** the values */
     //List<Object> values;
     private Object[] values;

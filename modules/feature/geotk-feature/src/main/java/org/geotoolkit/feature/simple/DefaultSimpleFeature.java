@@ -49,7 +49,7 @@ public final class DefaultSimpleFeature extends AbstractSimpleFeature {
     /**
      * The attribute name -> position index
      */
-    private final Map<String, Integer> index;
+    private final Map<Object, Integer> index;
     /**
      * Wheter this feature is self validating or not
      */
@@ -231,7 +231,7 @@ public final class DefaultSimpleFeature extends AbstractSimpleFeature {
     }
 
     @Override
-    protected Map<String, Integer> getIndex() {
+    protected Map<Object, Integer> getIndex() {
         return index;
     }
 

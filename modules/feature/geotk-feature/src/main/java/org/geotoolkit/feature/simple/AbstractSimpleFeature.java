@@ -60,7 +60,7 @@ public abstract class AbstractSimpleFeature implements SimpleFeature{
 
     protected abstract boolean isValidating();
 
-    protected abstract Map<String,Integer> getIndex();
+    protected abstract Map<Object,Integer> getIndex();
 
     protected abstract Object[] getValues();
 
@@ -107,7 +107,11 @@ public abstract class AbstractSimpleFeature implements SimpleFeature{
 
     @Override
     public void setAttribute(Name name, Object value) {
-        setAttribute(DefaultName.toExtendedForm(name), value);
+        final Integer idx = getIndex().get(name);
+        if (idx == null) {
+            throw new SimpleIllegalAttributeException("Unknown attribute " + name);
+        }
+        setAttribute(idx, value);
     }
 
     @Override
@@ -135,12 +139,17 @@ public abstract class AbstractSimpleFeature implements SimpleFeature{
 
     @Override
     public Object getAttribute(Name name) {
-        return getAttribute(DefaultName.toExtendedForm(name));
+        final Integer idx = getIndex().get(name);
+        if (idx != null) {
+            return getAttribute(idx);
+        } else {
+            return null;
+        }
     }
 
     @Override
     public Object getAttribute(String name) {
-        Integer idx = getIndex().get(name);
+        final Integer idx = getIndex().get(name);
         if (idx != null) {
             return getAttribute(idx);
         } else {
@@ -155,7 +164,7 @@ public abstract class AbstractSimpleFeature implements SimpleFeature{
 
     @Override
     public Object getDefaultGeometry() {
-        final Map<String,Integer> index = getIndex();
+        final Map<Object,Integer> index = getIndex();
 
         // should be specified in the index as the default key (null)
         final Integer indexGeom = index.get(null);
@@ -166,7 +175,7 @@ public abstract class AbstractSimpleFeature implements SimpleFeature{
         if (defaultGeometry == null) {
             final GeometryDescriptor geometryDescriptor = getFeatureType().getGeometryDescriptor();
             if (geometryDescriptor != null) {
-                final Integer defaultGeomIndex = index.get(DefaultName.toExtendedForm(geometryDescriptor.getName()));
+                final Integer defaultGeomIndex = index.get(geometryDescriptor.getName());
                 defaultGeometry = getAttribute(defaultGeomIndex.intValue());
             }
         }
@@ -250,12 +259,30 @@ public abstract class AbstractSimpleFeature implements SimpleFeature{
 
     @Override
     public Collection<Property> getProperties(Name name) {
-        return getProperties(DefaultName.toExtendedForm(name));
+        final Integer idx = getIndex().get(name);
+        if (idx != null) {
+            // cast temporarily to a plain collection to avoid type problems with generics
+            Collection c = Collections.singleton(new Attribute(idx));
+            return c;
+        } else {
+            return Collections.emptyList();
+        }
     }
 
     @Override
     public Property getProperty(Name name) {
-        return getProperty(DefaultName.toExtendedForm(name));
+        final Integer idx = getIndex().get(name);
+        if (idx == null) {
+            return null;
+        } else {
+            final int index = idx;
+            AttributeDescriptor descriptor = getFeatureType().getDescriptor(index);
+            if (descriptor instanceof GeometryDescriptor) {
+                return new GeometryAttribut(index);
+            } else {
+                return new Attribute(index);
+            }
+        }
     }
 
     @Override

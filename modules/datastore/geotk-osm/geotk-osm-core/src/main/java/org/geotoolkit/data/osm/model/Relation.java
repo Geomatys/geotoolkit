@@ -19,6 +19,8 @@ package org.geotoolkit.data.osm.model;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -63,25 +65,22 @@ public class Relation extends IdentifiedElement{
     }
 
     @Override
-    protected Property[] getPropertiesInternal() {
-        final Property[] props = new Property[5 + members.size() + tags.size()];
-        props[0] = new DefaultProperty(id, getType().getDescriptor("id"));
-        props[1] = new DefaultProperty(version, getType().getDescriptor("version"));
-        props[2] = new DefaultProperty(changeset, getType().getDescriptor("changeset"));
-        props[3] = new DefaultProperty(user, getType().getDescriptor("user"));
-        props[4] = new DefaultProperty(timestamp, getType().getDescriptor("timestamp"));
+    public Collection<Property> getProperties() {
+        final Collection<Property> props = new ArrayList<Property>();
+        props.add(new DefaultProperty(id, getType().getDescriptor("id")));
+        props.add(new DefaultProperty(version, getType().getDescriptor("version")));
+        props.add(new DefaultProperty(changeset, getType().getDescriptor("changeset")));
+        props.add(new DefaultProperty(user, getType().getDescriptor("user")));
+        props.add(new DefaultProperty(timestamp, getType().getDescriptor("timestamp")));
 
-        int i=5;
         final PropertyDescriptor tagDesc = getType().getDescriptor("tags");
-        for(Tag t : tags){
-            props[i] = new DefaultProperty(t, tagDesc);
-            i++;
+        for(final Tag t : tags){
+            props.add(new DefaultProperty(t, tagDesc));
         }
 
         final PropertyDescriptor memDesc = getType().getDescriptor("members");
-        for(Member m : members){
-            props[i] = new DefaultProperty(m, memDesc);
-            i++;
+        for(final Member m : members){
+            props.add(new DefaultProperty(m, memDesc));
         }
 
         return props;

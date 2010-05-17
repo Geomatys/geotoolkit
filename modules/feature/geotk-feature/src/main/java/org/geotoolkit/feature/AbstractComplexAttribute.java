@@ -23,12 +23,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import org.geotoolkit.feature.type.DefaultPropertyDescriptor;
-import org.geotoolkit.io.TableWriter;
 
-import org.geotoolkit.util.collection.UnmodifiableArrayList;
+import org.geotoolkit.io.TableWriter;
 import org.geotoolkit.util.converter.Classes;
-import org.opengis.feature.Attribute;
 
 import org.opengis.feature.ComplexAttribute;
 import org.opengis.feature.Property;
@@ -44,14 +41,12 @@ import org.opengis.filter.identity.Identifier;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public abstract class AbstractComplexAttribute<I extends Identifier> extends DefaultAttribute<Collection<Property>,AttributeDescriptor,I>
+public abstract class AbstractComplexAttribute<V extends Collection<Property>,I extends Identifier> extends DefaultAttribute<V,AttributeDescriptor,I>
         implements ComplexAttribute {
 
     protected AbstractComplexAttribute(AttributeDescriptor descriptor, I id) {
         super( null , descriptor, id );
     }
-
-    protected abstract Property[] getPropertiesInternal();
 
     /**
      * {@inheritDoc }
@@ -65,10 +60,7 @@ public abstract class AbstractComplexAttribute<I extends Identifier> extends Def
      * {@inheritDoc }
      */
     @Override
-    public Collection<Property> getProperties() {
-        if(value == null){
-            value = UnmodifiableArrayList.wrap(getPropertiesInternal());
-        }
+    public V getProperties() {
     	return value;
     }
 
@@ -79,7 +71,7 @@ public abstract class AbstractComplexAttribute<I extends Identifier> extends Def
     public Collection<Property> getProperties(Name name) {
         //we size it to 1, in most of the cases there is always a single property for a name.
         final List<Property> matches = new ArrayList<Property>(1);
-        for(Property prop : getPropertiesInternal()){
+        for(Property prop : getProperties()){
             if(prop.getName().equals(name)){
                 matches.add(prop);
             }
@@ -94,7 +86,7 @@ public abstract class AbstractComplexAttribute<I extends Identifier> extends Def
     public Collection<Property> getProperties(String name) {
         //we size it to 1, in most of the cases there is always a single property for a name.
         final List<Property> matches = new ArrayList<Property>(1);
-        for(Property prop : getPropertiesInternal()){
+        for(Property prop : getProperties()){
             if(prop.getName().getLocalPart().equals(name)){
                 matches.add(prop);
             }
@@ -108,7 +100,7 @@ public abstract class AbstractComplexAttribute<I extends Identifier> extends Def
     @Override
     public Property getProperty(Name name) {
         //TODO find a faster way, hashmap ?
-        for(Property prop : getPropertiesInternal()){
+        for(Property prop : getProperties()){
             if(prop.getName().equals(name)){
                 return prop;
             }
@@ -122,7 +114,7 @@ public abstract class AbstractComplexAttribute<I extends Identifier> extends Def
     @Override
     public Property getProperty(String name) {
         //TODO find a faster way, hashmap ?
-        for(Property prop : getPropertiesInternal()){
+        for(Property prop : getProperties()){
             if(prop.getName().getLocalPart().equals(name)){
                 return prop;
             }
@@ -144,11 +136,13 @@ public abstract class AbstractComplexAttribute<I extends Identifier> extends Def
      */
     @Override
     public void setValue(Collection<Property> newValues) {
-        if(this.getPropertiesInternal().length != newValues.size()){
+        if(this.getProperties().size() != newValues.size()){
             throw new IllegalArgumentException("Expected size of the collection is " 
-                    + this.getPropertiesInternal().length +" but the provided size is " +newValues.size());
+                    + this.getProperties().size() +" but the provided size is " +newValues.size());
         }
-        newValues.toArray(this.getPropertiesInternal());
+        Collection<Property> props = getProperties();
+        props.clear();
+        props.addAll(newValues);
     }
 
     @Override

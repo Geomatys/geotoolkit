@@ -17,10 +17,10 @@
  */
 package org.geotoolkit.feature;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 import org.geotoolkit.feature.type.DefaultAttributeDescriptor;
-import org.geotoolkit.util.collection.UnmodifiableArrayList;
 
 import org.opengis.feature.Property;
 import org.opengis.feature.type.AttributeDescriptor;
@@ -39,9 +39,7 @@ import org.opengis.filter.identity.FeatureId;
  * TODO : Make this class thread safe or not ?
  * @module pending
  */
-public class DefaultFeature extends AbstractFeature {
-
-    private final Property[] properties;
+public class DefaultFeature extends AbstractFeature<Collection<Property>> {
 
     /**
      * Create a Feature with the following content.
@@ -64,17 +62,10 @@ public class DefaultFeature extends AbstractFeature {
      * @param desc Nested descriptor
      * @param id Feature ID
      */
-    public DefaultFeature(Collection<Property> properties, AttributeDescriptor desc, FeatureId id) {
+    public DefaultFeature(Collection<? extends Property> properties, AttributeDescriptor desc, FeatureId id) {
         super(desc, id);
-
-        //store the properties as an array and wrap it with an immutable list.
-        this.properties = properties.toArray(new Property[properties.size()]);
-        this.value = UnmodifiableArrayList.wrap(this.properties);
-    }
-
-    @Override
-    protected Property[] getPropertiesInternal() {
-        return properties;
+        value = new ArrayList<Property>();
+        value.addAll(properties);
     }
 
 }
