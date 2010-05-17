@@ -400,7 +400,7 @@ public class CSVDataStore extends AbstractDataStore{
             RWLock.readLock().lock();
             sfb = new SimpleFeatureBuilder(featureType);
             if(reuseFeature){
-                reuse = new DefaultSimpleFeature(new Object[featureType.getAttributeCount()], featureType, null, false);
+                reuse = new DefaultSimpleFeature(featureType, null, new Object[featureType.getAttributeCount()], false);
             }else{
                 reuse = null;
             }

@@ -74,6 +74,7 @@ public class JDBCUpdateFeatureWriter extends JDBCFeatureReader implements
         return last;
     }
     
+    @Override
     public void remove() throws DataStoreRuntimeException {
         try {
             dataStore.delete(featureType, last.getID(), st.getConnection());
@@ -84,21 +85,22 @@ public class JDBCUpdateFeatureWriter extends JDBCFeatureReader implements
         }
     }
 
+    @Override
     public void write() throws DataStoreRuntimeException {
         try {
             //figure out what the fid is
-            PrimaryKey key = dataStore.getPrimaryKey(featureType);
-            String fid = PrimaryKey.encodeFID(key, rs);
+            final PrimaryKey key = dataStore.getPrimaryKey(featureType);
+            final String fid = PrimaryKey.encodeFID(key, rs);
 
-            Id filter = dataStore.getFilterFactory()
+            final Id filter = dataStore.getFilterFactory()
                                  .id(Collections.singleton(dataStore.getFilterFactory()
                                                                     .featureId(fid)));
 
             //figure out which attributes changed
-            List<AttributeDescriptor> changed = new ArrayList<AttributeDescriptor>();
-            List<Object> values = new ArrayList<Object>();
+            final List<AttributeDescriptor> changed = new ArrayList<AttributeDescriptor>();
+            final List<Object> values = new ArrayList<Object>();
 
-            for (AttributeDescriptor att : featureType.getAttributeDescriptors()) {
+            for (final AttributeDescriptor att : featureType.getAttributeDescriptors()) {
                 if (last.isDirrty(att.getLocalName())) {
                     changed.add(att);
                     values.add(last.getAttribute(att.getLocalName()));

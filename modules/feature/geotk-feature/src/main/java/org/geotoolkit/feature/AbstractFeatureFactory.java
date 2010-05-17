@@ -131,7 +131,7 @@ public abstract class AbstractFeatureFactory implements FeatureFactory {
         if (type.isAbstract()) {
             throw new IllegalArgumentException("Cannot create an feature of an abstract FeatureType " + type.getTypeName());
         }
-        return new DefaultSimpleFeature(array, type, FF.featureId(id), validating);
+        return new DefaultSimpleFeature(type, FF.featureId(id), array, validating);
     }
 
     /**

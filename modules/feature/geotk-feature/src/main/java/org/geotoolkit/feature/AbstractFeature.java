@@ -107,11 +107,11 @@ public abstract class AbstractFeature<C extends Collection<Property>> extends Ab
         synchronized (this) {
             if (defaultGeometry == null) {
                 //look it up from the type
-                if (((FeatureType) getType()).getGeometryDescriptor() == null) {
+                if (getType().getGeometryDescriptor() == null) {
                     return null;
                 }
 
-                GeometryType geometryType = (GeometryType) getType().getGeometryDescriptor().getType();
+                final GeometryType geometryType = getType().getGeometryDescriptor().getType();
 
                 if (geometryType != null) {
                     for (Iterator itr = getValue().iterator(); itr.hasNext();) {

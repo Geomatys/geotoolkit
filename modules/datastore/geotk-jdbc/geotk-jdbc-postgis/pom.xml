@@ -36,10 +36,10 @@
   <!-- =========================================================== -->
   <developers>
     <developer>
-      <name>Justin Deoliveira</name>
-      <id>jdeolive</id>
-      <email>jdeolive@users.sourceforge.net</email>
-      <organization>TOPP</organization>
+      <name>Johann Sorel</name>
+      <id>eclesia</id>
+      <email>johann.sorel@geomatys.com</email>
+      <organization>Geomatys</organization>
       <roles>
         <role>Module Maintainer</role>
         <role>Java Developer</role>

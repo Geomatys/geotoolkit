@@ -18,14 +18,20 @@
 package org.geotoolkit.feature.simple;
 
 import com.vividsolutions.jts.geom.Geometry;
+import java.util.ArrayList;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.geotoolkit.feature.DefaultAttribute;
+import org.geotoolkit.feature.DefaultGeometryAttribute;
+
 import org.geotoolkit.filter.identity.DefaultFeatureId;
 
+import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.feature.type.AttributeDescriptor;
+import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.filter.identity.FeatureId;
 
 /**
@@ -38,14 +44,22 @@ import org.opengis.filter.identity.FeatureId;
  */
 public final class DefaultSimpleFeature extends AbstractSimpleFeature {
 
-    private String id;
-    private FeatureId featureId;
+    private static List<Property> toProperties(SimpleFeatureType sft, Object[] values){
+        final int n = sft.getAttributeCount();
+        final List<Property> properties = new ArrayList<Property>(n);
+        for(int i=0; i<n; i++){
+            final AttributeDescriptor desc = sft.getDescriptor(i);
+            if(desc instanceof GeometryDescriptor){
+                properties.add(new DefaultGeometryAttribute(values[i], (GeometryDescriptor) desc, null));
+            }else{
+                properties.add(new DefaultAttribute(values[i], desc, null));
+            }
+        }
+        return properties;
+    }
 
-    private final SimpleFeatureType featureType;
-    /**
-     * The actual values held by this feature
-     */
-    private final Object[] values;
+    private String strID;
+
     /**
      * The attribute name -> position index
      */
@@ -54,24 +68,6 @@ public final class DefaultSimpleFeature extends AbstractSimpleFeature {
      * Wheter this feature is self validating or not
      */
     private final boolean validating;
-    /**
-     * The set of user data attached to the feature (lazily created)
-     */
-    private Map<Object, Object> userData;
-    /**
-     * The set of user data attached to each attribute (lazily created)
-     */
-    private Map<Object, Object>[] attributeUserData;
-
-    /**
-     * Builds a new feature based on the provided values and feature type
-     * @param values
-     * @param featureType
-     * @param id
-     */
-    public DefaultSimpleFeature(final List<Object> values, final SimpleFeatureType featureType, final FeatureId id) {
-        this(values.toArray(), featureType, id, false);
-    }
 
     /**
      * Fast construction of a new feature. The object takes owneship of the provided value array,
@@ -81,11 +77,13 @@ public final class DefaultSimpleFeature extends AbstractSimpleFeature {
      * @param id
      * @param validating
      */
-    public DefaultSimpleFeature(final Object[] values, final SimpleFeatureType featureType, final FeatureId id,
-            final boolean validating){
-        this.featureId = id;
-        this.featureType = featureType;
-        this.values = values;
+    public DefaultSimpleFeature(SimpleFeatureType featureType, FeatureId id, Object[] values, boolean validating){
+        this(featureType, id, toProperties(featureType,values), validating);
+    }
+
+    public DefaultSimpleFeature(SimpleFeatureType featureType, FeatureId id, List<Property> properties, boolean validating){
+        super(featureType,id);
+        this.value = properties;
         this.validating = validating;
 
         // in the most common case reuse the map cached in the feature type
@@ -103,13 +101,14 @@ public final class DefaultSimpleFeature extends AbstractSimpleFeature {
         }
     }
 
-    /**
-     * Used by builder to copy more efficiently all values
-     * @return Object[] of all values
-     */
     @Override
-    protected Object[] getValues() {
-        return values;
+    protected boolean isValidating() {
+        return validating;
+    }
+
+    @Override
+    protected Map<Object, Integer> getIndex() {
+        return index;
     }
 
     /**
@@ -117,34 +116,15 @@ public final class DefaultSimpleFeature extends AbstractSimpleFeature {
      */
     @Override
     public FeatureId getIdentifier() {
-        if(featureId == null){
-            featureId = new DefaultFeatureId(id);
+        if(id == null){
+            id = new DefaultFeatureId(strID);
         }
-        return featureId;
+        return id;
     }
 
     public void setId(String id){
-        this.id = id;
-        this.featureId = null;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public SimpleFeatureType getType() {
-        return featureType;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public Map<Object, Object> getUserData() {
-        if (userData == null) {
-            userData = new HashMap<Object, Object>();
-        }
-        return userData;
+        this.strID = id;
+        this.id = null;
     }
 
     /**
@@ -154,7 +134,7 @@ public final class DefaultSimpleFeature extends AbstractSimpleFeature {
      */
     @Override
     public int hashCode() {
-        return featureId.hashCode() * featureType.hashCode();
+        return getIdentifier().hashCode() * getType().hashCode();
     }
 
     /**
@@ -179,39 +159,40 @@ public final class DefaultSimpleFeature extends AbstractSimpleFeature {
             return false;
         }
 
-        DefaultSimpleFeature feat = (DefaultSimpleFeature) obj;
+        final DefaultSimpleFeature feat = (DefaultSimpleFeature) obj;
 
         // this check shouldn't exist, by contract,
         //all features should have an ID.
-        if (featureId == null) {
+        if (getIdentifier() == null) {
             if (feat.getIdentifier() != null) {
                 return false;
             }
         }
 
-        if (!featureId.equals(feat.getIdentifier())) {
+        if (!getIdentifier().equals(feat.getIdentifier())) {
             return false;
         }
 
-        if (!feat.getFeatureType().equals(featureType)) {
+        if (!feat.getFeatureType().equals(getFeatureType())) {
             return false;
         }
 
-        for (int i = 0, ii = values.length; i < ii; i++) {
+        final List<Property> properties = getProperties();
+        for (int i=0, n=properties.size(); i<n; i++) {
             Object otherAtt = feat.getAttribute(i);
 
-            if (values[i] == null) {
+            if (getProperties().get(i).getValue() == null) {
                 if (otherAtt != null) {
                     return false;
                 }
             } else {
-                if (!values[i].equals(otherAtt)) {
-                    if (values[i] instanceof Geometry && otherAtt instanceof Geometry) {
+                if (!properties.get(i).getValue().equals(otherAtt)) {
+                    if (properties.get(i).getValue() instanceof Geometry && otherAtt instanceof Geometry) {
                         // we need to special case Geometry
                         // as JTS is broken Geometry.equals( Object )
                         // and Geometry.equals( Geometry ) are different
                         // (We should fold this knowledge into AttributeType...)
-                        if (!((Geometry) values[i]).equals(
+                        if (!((Geometry) properties.get(i).getValue()).equals(
                                 (Geometry) otherAtt)) {
                             return false;
                         }
@@ -223,24 +204,6 @@ public final class DefaultSimpleFeature extends AbstractSimpleFeature {
         }
 
         return true;
-    }
-
-    @Override
-    protected boolean isValidating() {
-        return validating;
-    }
-
-    @Override
-    protected Map<Object, Integer> getIndex() {
-        return index;
-    }
-
-    @Override
-    protected Map<Object, Object>[] getAttributUserData() {
-        if(attributeUserData == null){
-            attributeUserData = new HashMap[values.length];
-        }
-        return attributeUserData;
     }
 
 }

@@ -136,11 +136,11 @@ public abstract class AbstractComplexAttribute<V extends Collection<Property>,I 
      */
     @Override
     public void setValue(Collection<Property> newValues) {
-        if(this.getProperties().size() != newValues.size()){
+        final Collection<Property> props = getProperties();
+        if(props.size() != newValues.size()){
             throw new IllegalArgumentException("Expected size of the collection is " 
                     + this.getProperties().size() +" but the provided size is " +newValues.size());
         }
-        Collection<Property> props = getProperties();
         props.clear();
         props.addAll(newValues);
     }

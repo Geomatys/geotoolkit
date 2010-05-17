@@ -24,8 +24,8 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.AbstractList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.logging.Level;
@@ -34,17 +34,19 @@ import java.util.logging.Logger;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.data.DataStoreRuntimeException;
+import org.geotoolkit.feature.DefaultAttribute;
+import org.geotoolkit.feature.DefaultGeometryAttribute;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.simple.AbstractSimpleFeature;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.HintsPending;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.filter.identity.DefaultFeatureId;
-import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.geotoolkit.jdbc.fid.PrimaryKey;
 import org.geotoolkit.util.Converters;
 import org.geotoolkit.util.logging.Logging;
 
+import org.opengis.feature.Property;
 import org.opengis.feature.FeatureFactory;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
@@ -52,11 +54,11 @@ import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.feature.type.Name;
 import org.opengis.filter.identity.FeatureId;
-import org.opengis.geometry.BoundingBox;
 
 import com.vividsolutions.jts.geom.CoordinateSequenceFactory;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
+import org.opengis.filter.identity.Identifier;
 
 
 /**
@@ -376,16 +378,6 @@ public class JDBCFeatureReader implements  FeatureReader<SimpleFeatureType, Simp
         final PrimaryKey key;
 
         /**
-         * updated values
-         * */
-        final Object[] values;
-
-        /**
-         * fid
-         */
-        FeatureId fid;
-
-        /**
          * dirty flags
          */
         final boolean[] dirty;
@@ -399,17 +391,9 @@ public class JDBCFeatureReader implements  FeatureReader<SimpleFeatureType, Simp
          * name index
          */
         final HashMap<Object, Integer> index;
-        /**
-         * user data
-         */
-        final HashMap<Object, Object> userData = new HashMap<Object, Object>();
-
-        /**
-         * The set of user data attached to each attribute (lazily created)
-         */
-        private Map<Object, Object>[] attributeUserData;
 
         ResultSetFeature(final ResultSet rs, final Connection cx) throws SQLException, DataStoreException {
+            super(featureType,null);
             this.rs = rs;
             this.cx = cx;
 
@@ -418,19 +402,16 @@ public class JDBCFeatureReader implements  FeatureReader<SimpleFeatureType, Simp
 
             //get the primary key
             key = dataStore.getPrimaryKey(featureType);
-            int count = md.getColumnCount();
+            final int count = md.getColumnCount();
             columnNames = new String[count];
 
             //set up values
-            values = new Object[count];
-            dirty = new boolean[values.length];
+            dirty = new boolean[count];
 
             //set up name lookup
             index = new HashMap<Object, Integer>();
 
-            loop:
             for (int i = 0; i < count; i++) {
-
                 //must store all possible name writing combinaison
                 final String localpart = md.getColumnName(i + 1);
                 final Name name = featureType.getDescriptor(localpart).getName();
@@ -441,19 +422,51 @@ public class JDBCFeatureReader implements  FeatureReader<SimpleFeatureType, Simp
                 index.put(DefaultName.toJCRExtendedForm(name), attIndex);
                 index.put(DefaultName.toExtendedForm(name), attIndex);
             }
-        }
 
-        public void init(final String fid) {
-            // mark as new according to the fid
-            newFeature = fid == null;
+            value = new AbstractList<Property>() {
 
-            //clear values
-            for (int i = 0; i < values.length; i++) {
-                values[i] = null;
-                dirty[i] = false;
-            }
+                final Property[] cache = new Property[count];
 
-            this.fid = SimpleFeatureBuilder.createDefaultFeatureIdentifier(fid);
+                @Override
+                public Property get(final int i) {
+                    Property prop = cache[i];
+                    if(prop == null){
+                        final AttributeDescriptor desc = featureType.getDescriptor(i);
+                        final Object value = getAttributeInternal( i, mapToResultSetIndex(i) );
+                        if(desc instanceof GeometryDescriptor){
+                            prop = new DefaultGeometryAttribute(value, (GeometryDescriptor) desc, null){
+                                @Override
+                                public void setValue(Object newValue) throws IllegalArgumentException, IllegalStateException {
+                                    super.setValue(newValue);
+                                    dirty[i] = true;
+                                }
+                            };
+                        }else{
+                            prop = new DefaultAttribute<Object,AttributeDescriptor,Identifier>(value, desc, null){
+                                @Override
+                                public void setValue(Object newValue) throws IllegalArgumentException, IllegalStateException {
+                                    super.setValue(newValue);
+                                    dirty[i] = true;
+                                }
+                            };
+                        }
+                        cache[i] = prop;
+                    }
+                    return prop;
+                }
+
+                @Override
+                public Property set(int index, Property element) {
+                    cache[index] = element;
+                    return element;
+                }
+
+                @Override
+                public int size() {
+                    return count;
+                }
+            };
+
         }
 
         public void init() throws SQLException, IOException {
@@ -464,33 +477,21 @@ public class JDBCFeatureReader implements  FeatureReader<SimpleFeatureType, Simp
             init(featureType.getTypeName() + "." + PrimaryKey.encodeFID( key, rs ));
         }
 
-        @Override
-        public SimpleFeatureType getType() {
-            return featureType;
-        }
+        public void init(final String strId) {
+            // mark as new according to the fid
+            newFeature = strId == null;
 
-        @Override
-        public FeatureId getIdentifier() {
-        	return fid;
+            //clear values
+            for (int i=0; i<dirty.length; i++) {
+                value.set(i, null);
+                dirty[i] = false;
+            }
+
+            this.id = SimpleFeatureBuilder.createDefaultFeatureIdentifier(strId);
         }
 
         public void setID(final String id) {
-            fid = new DefaultFeatureId(id);
-        }
-
-        @Override
-        public Object getAttribute(final String name) {
-            return getAttribute(index.get(name));
-        }
-
-        @Override
-        public Object getAttribute(final Name name) {
-            return getAttribute(DefaultName.toExtendedForm(name));
-        }
-
-        @Override
-        public Object getAttribute(final int index) throws IndexOutOfBoundsException {
-            return getAttributeInternal( index, mapToResultSetIndex(index) );
+            this.id = new DefaultFeatureId(id);
         }
 
         private int mapToResultSetIndex(final int index) {
@@ -499,10 +500,10 @@ public class JDBCFeatureReader implements  FeatureReader<SimpleFeatureType, Simp
         }
 
         private Object getAttributeInternal(final int index, final int rsindex) {
-            if (!newFeature && values[index] == null && !dirty[index]) {
+            if (!newFeature && !dirty[index]) {
                 synchronized (this) {
                     try {
-                        if (!newFeature && values[index] == null && !dirty[index]) {
+                        if (!newFeature && !dirty[index]) {
                             //load the value from the result set, check the case
                             // in which its a geometry, this case the dialect needs
                             // to read it
@@ -511,56 +512,24 @@ public class JDBCFeatureReader implements  FeatureReader<SimpleFeatureType, Simp
                             if (att instanceof GeometryDescriptor) {
                                 GeometryDescriptor gatt = (GeometryDescriptor) att;
                                 try {
-                                    values[index] = dataStore.getDialect().decodeGeometryValue(
+                                    return dataStore.getDialect().decodeGeometryValue(
                                             gatt, rs, rsindex, dataStore.getGeometryFactory(), st.getConnection());
                                 } catch (IOException ex) {
                                     throw  new RuntimeException(ex);
                                 }
                             } else {
-                                values[index] = rs.getObject(rsindex);
+                                return rs.getObject(rsindex);
                             }
                         }
                      } catch (SQLException e) {
                          //do not throw exception because of insert mode
                          //TODO: set a flag for insert vs update
                          //throw new RuntimeException( e );
-                         values[index] = null;
+                         return null;
                      }
                 }
             }
-            return values[index];
-        }
-
-        @Override
-        public void setAttribute(String name, Object value) {
-            dataStore.getLogger().fine("Setting " + name + " to " + value);
-
-            final int i = index.get(name);
-            setAttribute(i, value);
-        }
-
-        @Override
-        public void setAttribute(Name name, Object value) {
-            setAttribute(DefaultName.toExtendedForm(name), value);
-        }
-
-        @Override
-        public void setAttribute(int index, Object value) throws IndexOutOfBoundsException {
-            dataStore.getLogger().fine("Setting " + index + " to " + value);
-            values[index] = value;
-            dirty[index] = true;
-        }
-
-        @Override
-        public void setAttributes(final List<Object> values) {
-            for (int i = 0; i < values.size(); i++) {
-                setAttribute(i, values.get(i));
-            }
-        }
-
-        @Override
-        public int getAttributeCount() {
-            return values.length;
+            return null;
         }
 
         public boolean isDirty(final int index) {
@@ -577,34 +546,6 @@ public class JDBCFeatureReader implements  FeatureReader<SimpleFeatureType, Simp
             columnNames=null;
         }
 
-
-        @Override
-        public Object getDefaultGeometry() {
-            final GeometryDescriptor geomDesc = featureType.getGeometryDescriptor();
-            return getAttribute(geomDesc.getName());
-        }
-
-        @Override
-        public void setDefaultGeometry(Object defaultGeometry) {
-            final GeometryDescriptor descriptor = featureType.getGeometryDescriptor();
-            setAttribute(descriptor.getName(), defaultGeometry );
-        }
-
-        @Override
-        public BoundingBox getBounds() {
-            final Object obj = getDefaultGeometry();
-            if (obj instanceof Geometry) {
-                final Geometry geometry = (Geometry) obj;
-                return new JTSEnvelope2D(geometry.getEnvelopeInternal(), featureType.getCoordinateReferenceSystem());
-            }
-            return new JTSEnvelope2D(featureType.getCoordinateReferenceSystem());
-        }
-
-        @Override
-        public Map<Object, Object> getUserData() {
-            return userData;
-        }
-
         @Override
         public void validate() {
         }
@@ -619,18 +560,6 @@ public class JDBCFeatureReader implements  FeatureReader<SimpleFeatureType, Simp
             return index;
         }
 
-        @Override
-        protected Object[] getValues() {
-            return values;
-        }
-
-        @Override
-        protected Map<Object, Object>[] getAttributUserData() {
-            if(attributeUserData == null){
-                attributeUserData = new HashMap[values.length];
-            }
-            return attributeUserData;
-        }
     }
 
 }

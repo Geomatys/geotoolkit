@@ -90,6 +90,7 @@ public abstract class JDBCFeatureCollectionTest extends JDBCTestSupport {
         FilterFactory ff = dataStore.getFilterFactory();
         Filter f = ff.equals(ff.property(aname("intProperty")), ff.literal(1));
 
+        assertEquals(3, collection.size());
         FeatureCollection<SimpleFeature> sub = collection.subCollection(QueryBuilder.filtered(collection.getFeatureType().getName(), f));
         assertNotNull(sub);
 

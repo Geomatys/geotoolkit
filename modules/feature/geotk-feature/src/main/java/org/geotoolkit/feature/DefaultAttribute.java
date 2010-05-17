@@ -43,7 +43,7 @@ public class DefaultAttribute<V extends Object, D extends AttributeDescriptor, I
     /**
      * id of the attribute.
      */
-    protected final I id;
+    protected I id;
 
     /**
      * Static constructor for the most commun use of Attribute classes type.
@@ -74,7 +74,6 @@ public class DefaultAttribute<V extends Object, D extends AttributeDescriptor, I
     public DefaultAttribute(final V content, final D descriptor, final I id) {
         super(content, descriptor);
         this.id = id;
-        FeatureValidationUtilities.validate(this, getValue());
     }
 
     /**

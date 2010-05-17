@@ -210,7 +210,7 @@ public abstract class GenericRetypeFeatureIterator<F extends Feature, R extends 
             this.mask = mask;
             types = typeAttributes((SimpleFeatureType)reader.getFeatureType(), (SimpleFeatureType)mask);
 
-            feature = new DefaultSimpleFeature(new Object[types.length], (SimpleFeatureType) mask, null, false);
+            feature = new DefaultSimpleFeature((SimpleFeatureType) mask, null,new Object[types.length], false);
         }
 
         @Override

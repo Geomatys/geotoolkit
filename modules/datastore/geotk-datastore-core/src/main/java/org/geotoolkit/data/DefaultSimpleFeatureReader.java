@@ -307,7 +307,7 @@ public abstract class DefaultSimpleFeatureReader implements FeatureReader<Simple
             SimpleFeatureType schema) throws SchemaException{
             super(attributeReader,fidReader,schema);
 
-            feature = new DefaultSimpleFeature(new Object[schema.getAttributeCount()], schema, null, false);
+            feature = new DefaultSimpleFeature(schema, null,new Object[schema.getAttributeCount()], false);
         }
 
         @Override
