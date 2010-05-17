@@ -77,11 +77,13 @@ public class SMLDataStore extends AbstractDataStore {
 
     private final Connection connection;
 
-    private final static Name SYSTEM         = new DefaultName("http://www.opengis.net/sml/1.0", "System");
-    private final static Name COMPONENT      = new DefaultName("http://www.opengis.net/sml/1.0", "Component");
-    private final static Name PROCESSCHAIN   = new DefaultName("http://www.opengis.net/sml/1.0", "ProcessChain");
-    private final static Name PROCESSMODEL   = new DefaultName("http://www.opengis.net/sml/1.0", "ProcessModel");
-    private final static Name DATASOURCETYPE = new DefaultName("http://www.opengis.net/sml/1.0", "DataSourceType");
+    private static final String SML_NAMESPACE = "http://www.opengis.net/sml/1.0";
+
+    private final static Name SYSTEM         = new DefaultName(SML_NAMESPACE, "System");
+    private final static Name COMPONENT      = new DefaultName(SML_NAMESPACE, "Component");
+    private final static Name PROCESSCHAIN   = new DefaultName(SML_NAMESPACE, "ProcessChain");
+    private final static Name PROCESSMODEL   = new DefaultName(SML_NAMESPACE, "ProcessModel");
+    private final static Name DATASOURCETYPE = new DefaultName(SML_NAMESPACE, "DataSourceType");
 
     private static final String pathDescription        = "SensorML:SensorML:member:description";
     private static final String pathName               = "SensorML:SensorML:member:name";
@@ -114,31 +116,31 @@ public class SMLDataStore extends AbstractDataStore {
     /*
      * Shared attributes
      */
-    private static final Name DESC        = new DefaultName("http://www.opengis.net/gml",     "description");
-    private static final Name NAME        = new DefaultName("http://www.opengis.net/gml",     "name");
-    private static final Name KEYWORDS    = new DefaultName("http://www.opengis.net/sml/1.0", "keywords");
-    private static final Name LOCATION    = new DefaultName("http://www.opengis.net/sml/1.0", "location");
-    private static final Name PHENOMENONS = new DefaultName("http://www.opengis.net/sml/1.0", "phenomenons");
-    private static final Name SMLTYPE     = new DefaultName("http://www.opengis.net/sml/1.0", "smltype");
-    private static final Name SMLREF      = new DefaultName("http://www.opengis.net/sml/1.0", "smlref");
-    private static final Name INPUTS      = new DefaultName("http://www.opengis.net/sml/1.0", "inputs");
-    private static final Name OUTPUTS     = new DefaultName("http://www.opengis.net/sml/1.0", "outputs");
+    private static final Name DESC        = new DefaultName(GML_NAMESPACE, "description");
+    private static final Name NAME        = new DefaultName(GML_NAMESPACE, "name");
+    private static final Name KEYWORDS    = new DefaultName(SML_NAMESPACE, "keywords");
+    private static final Name LOCATION    = new DefaultName(SML_NAMESPACE, "location");
+    private static final Name PHENOMENONS = new DefaultName(SML_NAMESPACE, "phenomenons");
+    private static final Name SMLTYPE     = new DefaultName(SML_NAMESPACE, "smltype");
+    private static final Name SMLREF      = new DefaultName(SML_NAMESPACE, "smlref");
+    private static final Name INPUTS      = new DefaultName(SML_NAMESPACE, "inputs");
+    private static final Name OUTPUTS     = new DefaultName(SML_NAMESPACE, "outputs");
 
     /*
      * attribute for sml:System or sml:ProcessChain
      */
-    private static final Name PRODUCER    = new DefaultName("http://www.opengis.net/sml/1.0", "producer");
-    private static final Name COMPONENTS  = new DefaultName("http://www.opengis.net/sml/1.0", "components");
+    private static final Name PRODUCER    = new DefaultName(SML_NAMESPACE, "producer");
+    private static final Name COMPONENTS  = new DefaultName(SML_NAMESPACE, "components");
 
     /*
      * attribute for sml:ProccessModel
      */
-    private static final Name METHOD      = new DefaultName("http://www.opengis.net/sml/1.0", "method");
+    private static final Name METHOD      = new DefaultName(SML_NAMESPACE, "method");
 
     /*
      * attribute for sml:DatasourceType
      */
-    private static final Name CHARACTERISTICS = new DefaultName("http://www.opengis.net/sml/1.0", "characteristics");
+    private static final Name CHARACTERISTICS = new DefaultName(SML_NAMESPACE, "characteristics");
 
     private static final GeometryFactory GF = new GeometryFactory();
 
@@ -286,7 +288,7 @@ public class SMLDataStore extends AbstractDataStore {
          * Feature type sml:Component
          */
         featureTypeBuilder.reset();
-        featureTypeBuilder.setName(new DefaultName("http://www.opengis.net/sml/1.0", "Component"));
+        featureTypeBuilder.setName(new DefaultName(SML_NAMESPACE, "Component"));
         featureTypeBuilder.add(0, attDescription);
         featureTypeBuilder.add(1, attName);
         featureTypeBuilder.add(2, attkey);
@@ -328,7 +330,7 @@ public class SMLDataStore extends AbstractDataStore {
          * Feature type sml:System
          */
         featureTypeBuilder.reset();
-        featureTypeBuilder.setName(new DefaultName("http://www.opengis.net/sml/1.0", "System"));
+        featureTypeBuilder.setName(new DefaultName(SML_NAMESPACE, "System"));
         featureTypeBuilder.add(0, attDescription);
         featureTypeBuilder.add(1, attName);
         featureTypeBuilder.add(2, attkey);
@@ -349,7 +351,7 @@ public class SMLDataStore extends AbstractDataStore {
          * Feature type sml:ProcessChain
          */
         featureTypeBuilder.reset();
-        featureTypeBuilder.setName(new DefaultName("http://www.opengis.net/sml/1.0", "ProcessChain"));
+        featureTypeBuilder.setName(new DefaultName(SML_NAMESPACE, "ProcessChain"));
         featureTypeBuilder.add(0, attDescription);
         featureTypeBuilder.add(1, attName);
         featureTypeBuilder.add(2, attkey);
@@ -381,7 +383,7 @@ public class SMLDataStore extends AbstractDataStore {
          * Feature type sml:ProcessModel
          */
         featureTypeBuilder.reset();
-        featureTypeBuilder.setName(new DefaultName("http://www.opengis.net/sml/1.0", "ProcessModel"));
+        featureTypeBuilder.setName(new DefaultName(SML_NAMESPACE, "ProcessModel"));
         featureTypeBuilder.add(0, attDescription);
         featureTypeBuilder.add(1, attName);
         featureTypeBuilder.add(2, attkey);
@@ -412,7 +414,7 @@ public class SMLDataStore extends AbstractDataStore {
          * Feature type sml:DataSourceType
          */
         featureTypeBuilder.reset();
-        featureTypeBuilder.setName(new DefaultName("http://www.opengis.net/sml/1.0", "DataSourceType"));
+        featureTypeBuilder.setName(new DefaultName(SML_NAMESPACE, "DataSourceType"));
         featureTypeBuilder.add(0, attDescription);
         featureTypeBuilder.add(1, attName);
         featureTypeBuilder.add(2, attkey);
