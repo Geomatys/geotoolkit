@@ -22,6 +22,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
+import java.io.StringReader;
 import java.net.URI;
 import java.net.URL;
 import javax.xml.stream.XMLInputFactory;
@@ -106,6 +107,8 @@ public abstract class StaxStreamReader {
         }else if(input instanceof URI){
             sourceStream = ((URI)input).toURL().openStream();
             input = sourceStream;
+        }else if(input instanceof String){
+            input = new StringReader((String) input);
         }
 
         reader = toReader(input);
