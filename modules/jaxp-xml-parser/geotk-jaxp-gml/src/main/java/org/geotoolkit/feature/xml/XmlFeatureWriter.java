@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2009, Geomatys
+ *    (C) 2009-2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -16,64 +16,27 @@
  */
 package org.geotoolkit.feature.xml;
 
-import java.io.Writer;
-import java.io.OutputStream;
-import org.geotoolkit.data.FeatureCollection;
-import org.opengis.feature.simple.SimpleFeature;
+import java.io.IOException;
+import javax.xml.stream.XMLStreamException;
+import org.geotoolkit.storage.DataStoreException;
 
 /**
- * A interface to serialize feature in XML.
+ * A interface to serialize feature or featureCollection in XML.
  *
  * @module pending
  * @author Guilhem Legal (Geomatys)
+ * @author Johann Sorel (Geomatys)
  */
 public interface XmlFeatureWriter {
 
     /**
-     * Return an XML representation of the specified feature.
+     * Write an XML representation of the specified feature collection or feature
+     * into the output.
      *
-     * @param feature The feature to marshall.
-     * @return An XML string representing the feature.
+     * @param candidate Feature or FeatureCollection to write
+     * @param output where to write the candidate
      */
-    String write(SimpleFeature feature);
-
-    /**
-     * Write an XML representation of the specified feature into the Writer.
-     *
-     * @param feature The feature to marshall.
-     */
-    void write(SimpleFeature feature, Writer writer);
-
-
-    /**
-     * Write an XML representation of the specified feature into the Stream.
-     *
-     * @param feature The feature to marshall.
-     */
-    void write(SimpleFeature feature, OutputStream stream);
-    
-    /**
-     * Return an XML representation of the specified feature collection.
-     *
-     * @param feature The feature collection to marshall.
-     * @return An XML string representing the feature collection.
-     */
-    String write(FeatureCollection featureCollection);
-
-    /**
-     * Write an XML representation of the specified feature collection into the Writer.
-     *
-     * @param feature The feature to marshall.
-     */
-    void write(FeatureCollection collection, Writer writer);
-
-
-    /**
-     * Write an XML representation of the specified feature collection into the Stream.
-     *
-     * @param feature The feature to marshall.
-     */
-    void write(FeatureCollection collection, OutputStream stream);
+    void write(Object candidate, Object output) throws IOException, XMLStreamException, DataStoreException;
 
     /**
      * Free the resources.

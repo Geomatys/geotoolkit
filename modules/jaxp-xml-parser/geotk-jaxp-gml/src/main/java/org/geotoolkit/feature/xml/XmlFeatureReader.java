@@ -17,9 +17,9 @@
 
 package org.geotoolkit.feature.xml;
 
-import java.io.InputStream;
-import java.io.Reader;
+import java.io.IOException;
 import java.util.Map;
+import javax.xml.stream.XMLStreamException;
 import org.opengis.feature.type.FeatureType;
 
 /**
@@ -31,32 +31,13 @@ import org.opengis.feature.type.FeatureType;
 public interface XmlFeatureReader {
 
     /**
-     * Read a feature or featureCollection from the specified String XML representation.
+     * Read a feature or featureCollection from the specified String XML source.
      *
      * @param xml An Xml representation of the feature/feature collection.
      *
      * @return A SimpleFeature / featureCollection or {@code null}
      */
-    public Object read(String xml);
-
-    /**
-     * Read a feature or featureCollection from the specified XML stream.
-     *
-     * @param xml An Xml representation of the feature/feature collection.
-     *
-     * @return A SimpleFeature / featureCollection or {@code null}
-     */
-    public Object read(InputStream in);
-
-    /**
-     * Read a feature or featureCollection from the specified XML reader.
-     *
-     * @param xml An Xml representation of the feature/feature collection.
-     *
-     * @return A SimpleFeature / featureCollection or {@code null}
-     */
-    public Object read(Reader reader);
-
+    public Object read(Object xml) throws IOException, XMLStreamException;
 
     /**
      * Extract the mapping between namespaces and prefix from an xml document;

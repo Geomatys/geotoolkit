@@ -36,6 +36,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.logging.Level;
 import javax.xml.bind.JAXBException;
 import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamException;
 import org.geotoolkit.client.Request;
 
 import org.geotoolkit.data.AbstractDataStore;
@@ -458,6 +459,8 @@ public class WFSDataStore extends AbstractDataStore{
             }
 
         } catch (JAXBException ex) {
+            throw new IOException(ex);
+        }catch (XMLStreamException ex) {
             throw new IOException(ex);
         }finally{
             if(reader != null){

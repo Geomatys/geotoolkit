@@ -23,6 +23,8 @@ import com.sun.xml.internal.stream.events.EndElementEvent;
 import com.sun.xml.internal.stream.events.NamespaceImpl;
 import com.sun.xml.internal.stream.events.StartDocumentEvent;
 import com.sun.xml.internal.stream.events.StartElementEvent;
+import java.io.IOException;
+
 import java.io.OutputStream;
 import java.io.StringWriter;
 import java.io.Writer;
@@ -32,6 +34,7 @@ import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventWriter;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
+
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
@@ -40,6 +43,7 @@ import org.geotoolkit.geometry.isoonjts.JTSUtils;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.xml.Namespaces;
+
 import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.type.FeatureType;
@@ -62,10 +66,14 @@ public class JAXPEventFeatureWriter extends JAXPFeatureWriter {
          super();
     }
 
+    @Override
+    public void write(Object candidate, Object output) throws IOException, XMLStreamException, DataStoreException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
     /**
      * {@inheritDoc }
      */
-    @Override
     public String write(SimpleFeature feature) {
         if (feature != null) {
             try {
@@ -94,7 +102,6 @@ public class JAXPEventFeatureWriter extends JAXPFeatureWriter {
     /**
      * {@inheritDoc }
      */
-    @Override
     public void write(SimpleFeature feature, Writer writer) {
         if (feature != null) {
             try {
@@ -119,7 +126,6 @@ public class JAXPEventFeatureWriter extends JAXPFeatureWriter {
     /**
      * {@inheritDoc }
      */
-    @Override
     public void write(SimpleFeature feature, OutputStream out) {
         if (feature != null) {
             try {
@@ -216,7 +222,6 @@ public class JAXPEventFeatureWriter extends JAXPFeatureWriter {
     /**
      * {@inheritDoc }
      */
-    @Override
     public void write(FeatureCollection fc, Writer writer) {
         try {
 
@@ -235,7 +240,6 @@ public class JAXPEventFeatureWriter extends JAXPFeatureWriter {
     /**
      * {@inheritDoc }
      */
-    @Override
     public void write(FeatureCollection fc, OutputStream out) {
         try {
 
@@ -254,7 +258,6 @@ public class JAXPEventFeatureWriter extends JAXPFeatureWriter {
     /**
      * {@inheritDoc }
      */
-    @Override
     public String write(FeatureCollection featureCollection) {
         try {
 
@@ -368,4 +371,5 @@ public class JAXPEventFeatureWriter extends JAXPFeatureWriter {
             eventWriter.add(new EndElementEvent(bounded));
         }
     }
+
 }

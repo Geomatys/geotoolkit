@@ -17,11 +17,14 @@
 package org.geotoolkit.feature;
 
 import com.vividsolutions.jts.geom.Geometry;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.simple.DefaultSimpleFeature;
+import org.geotoolkit.feature.type.DefaultAttributeDescriptor;
 
 import org.opengis.feature.Association;
 import org.opengis.feature.Attribute;
@@ -127,7 +130,13 @@ public abstract class AbstractFeatureFactory implements FeatureFactory {
      */
     @Override
     public Feature createFeature(Collection<Property> value, AttributeDescriptor descriptor, String id) {
-        return new DefaultFeature(value, descriptor, FF.featureId(id));
+        if(descriptor.getType() instanceof SimpleFeatureType){
+            //in case we try to create a simple Feature with this method.
+            final List<Property> properties = new ArrayList<Property>(value);
+            return new DefaultSimpleFeature(descriptor, FF.featureId(id), properties, validating);
+        }else{
+            return new DefaultFeature(value, descriptor, FF.featureId(id));
+        }
     }
 
     /**
@@ -135,7 +144,7 @@ public abstract class AbstractFeatureFactory implements FeatureFactory {
      */
     @Override
     public Feature createFeature(Collection<Property> value, FeatureType type, String id) {
-        return DefaultFeature.create(value, type, FF.featureId(id));
+        return createFeature(value,new DefaultAttributeDescriptor( type, type.getName(), 1, 1, true, null),id);
     }
 
     /**

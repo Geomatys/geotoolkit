@@ -295,55 +295,65 @@ public class MemoryDataStore extends AbstractDataStore{
      */
     @Override
     public List<FeatureId> addFeatures(Name groupName, Collection<? extends Feature> collection) throws DataStoreException {
-        final MemoryFeatureWriter writer = (MemoryFeatureWriter)getFeatureWriterAppend(groupName);
-        final PropertyDescriptor[] descs = writer.properties.getPropertyDescriptors();
+        typeCheck(groupName);
+        final Group grp = groups.get(groupName);
 
-        final List<FeatureId> ids = new ArrayList<FeatureId>();
+        if(grp instanceof ComplexGroup){
+            final ComplexGroup cg = (ComplexGroup) grp;
+            cg.features.addAll(collection);
+            return null;
+        }else{
+            final MemoryFeatureWriter writer = (MemoryFeatureWriter)getFeatureWriterAppend(groupName);
+            final PropertyDescriptor[] descs = writer.properties.getPropertyDescriptors();
 
-        final Iterator<? extends Feature> ite = collection.iterator();
-        try{
-            while(ite.hasNext()){
-                final Feature f = ite.next();
-                final Feature candidate = writer.next();
-                for(Property property : f.getProperties()){
-                    candidate.getProperty(property.getName()).setValue(property.getValue());
+            final List<FeatureId> ids = new ArrayList<FeatureId>();
+
+            final Iterator<? extends Feature> ite = collection.iterator();
+            try{
+                while(ite.hasNext()){
+                    final Feature f = ite.next();
+                    final Feature candidate = writer.next();
+                    for(Property property : f.getProperties()){
+                        candidate.getProperty(property.getName()).setValue(property.getValue());
+                    }
+
+                    //we are in append mode
+                    final Object[] vals = new Object[writer.properties.getPropertyCount()+1];
+
+                    //use the original id if possible
+                    vals[0] = f.getIdentifier().getID();
+                    if(vals[0] == null || vals[0].toString().isEmpty() || containId(writer.grp.datas, vals[0].toString())){
+                        vals[0] = writer.modified.getIdentifier();
+                    }
+
+                    for(int i=0; i<descs.length; i++){
+                        vals[i+1] = Converters.convert(
+                                writer.modified.getProperty(descs[i].getName()).getValue(),
+                                descs[i].getType().getBinding());
+                    }
+                    writer.grp.datas.add(vals);
+
+                    //fire add event
+                    fireFeaturesAdded(writer.grp.type.getName());
+
+                    ids.add(new DefaultFeatureId(vals[0].toString()));
+                }
+            }finally{
+                //todo must close safely both iterator
+                if(ite instanceof Closeable){
+                    try {
+                        ((Closeable) ite).close();
+                    } catch (IOException ex) {
+                        throw new DataStoreException(ex);
+                    }
                 }
 
-                //we are in append mode
-                final Object[] vals = new Object[writer.properties.getPropertyCount()+1];
-
-                //use the original id if possible
-                vals[0] = f.getIdentifier().getID();
-                if(vals[0] == null || vals[0].toString().isEmpty() || containId(writer.grp.datas, vals[0].toString())){
-                    vals[0] = writer.modified.getIdentifier();
-                }
-
-                for(int i=0; i<descs.length; i++){
-                    vals[i+1] = Converters.convert(
-                            writer.modified.getProperty(descs[i].getName()).getValue(),
-                            descs[i].getType().getBinding());
-                }
-                writer.grp.datas.add(vals);
-
-                //fire add event
-                fireFeaturesAdded(writer.grp.type.getName());
-
-                ids.add(new DefaultFeatureId(vals[0].toString()));
+                writer.close();
             }
-        }finally{
-            //todo must close safely both iterator
-            if(ite instanceof Closeable){
-                try {
-                    ((Closeable) ite).close();
-                } catch (IOException ex) {
-                    throw new DataStoreException(ex);
-                }
-            }
 
-            writer.close();
+            return ids;
         }
 
-        return ids;
     }
 
     /**

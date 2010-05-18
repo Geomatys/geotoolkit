@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2009, Geomatys
+ *    (C) 2009-2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -24,15 +24,18 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
+
 import org.geotoolkit.feature.xml.XmlFeatureWriter;
 import org.geotoolkit.xml.MarshallerPool;
 import org.geotoolkit.internal.jaxb.ObjectFactory;
+import org.geotoolkit.xml.StaxStreamWriter;
 
 /**
  *
  * @author Guilhem Legal (Geomatys)
+ * @author Johann Sorel (Geomatys)
  */
-public abstract class JAXPFeatureWriter implements XmlFeatureWriter {
+public abstract class JAXPFeatureWriter extends StaxStreamWriter implements XmlFeatureWriter {
 
     protected static final Logger LOGGER = Logger.getLogger("org.geotoolkit.feature.xml.jaxp");
 

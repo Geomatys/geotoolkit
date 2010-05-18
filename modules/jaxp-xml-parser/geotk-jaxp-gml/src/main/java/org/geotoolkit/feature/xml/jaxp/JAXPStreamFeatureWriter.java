@@ -17,17 +17,15 @@
 
 package org.geotoolkit.feature.xml.jaxp;
 
-import java.io.OutputStream;
-import java.io.StringWriter;
-import java.io.Writer;
+import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import javax.xml.bind.JAXBException;
-import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
+
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
@@ -36,8 +34,9 @@ import org.geotoolkit.geometry.isoonjts.JTSUtils;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.xml.Namespaces;
+
+import org.opengis.feature.Feature;
 import org.opengis.feature.Property;
-import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.GeometryType;
 import org.opengis.feature.type.Name;
@@ -64,67 +63,17 @@ public class JAXPStreamFeatureWriter extends JAXPFeatureWriter {
         super(schemaLocations);
     }
 
-     @Override
-    public void write(SimpleFeature sf, Writer writer) {
-        try {
-            XMLOutputFactory outputFactory = XMLOutputFactory.newInstance();
-            XMLStreamWriter streamWriter = outputFactory.createXMLStreamWriter(writer);
-
-            // the XML header
-            streamWriter.writeStartDocument("UTF-8", "1.0");
-
-            writeFeature(sf, streamWriter, true);
-
-            streamWriter.flush();
-            streamWriter.close();
-
-        } catch (XMLStreamException ex) {
-            LOGGER.severe("XMl stream exception while writing the feature: " + ex.getMessage());
-        }
-    }
-
     @Override
-    public void write(SimpleFeature sf, OutputStream out) {
-        try {
-            XMLOutputFactory outputFactory = XMLOutputFactory.newInstance();
-            XMLStreamWriter streamWriter = outputFactory.createXMLStreamWriter(out);
-
-            // the XML header
-            streamWriter.writeStartDocument("UTF-8", "1.0");
-
-            writeFeature(sf, streamWriter, true);
-
-            streamWriter.flush();
-            streamWriter.close();
-
-        } catch (XMLStreamException ex) {
-            LOGGER.severe("XMl stream exception while writing the feature: " + ex.getMessage());
+    public void write(Object candidate, Object output) throws IOException, XMLStreamException, DataStoreException{
+        setOutput(output);
+        if(candidate instanceof Feature){
+            writeFeature((Feature) candidate,writer, true);
+        }else if(candidate instanceof FeatureCollection){
+            writeFeatureCollection((FeatureCollection) candidate,writer,false);
         }
     }
-
-    @Override
-    public String write(SimpleFeature feature) {
-        try {
-            XMLOutputFactory outputFactory = XMLOutputFactory.newInstance();
-            StringWriter sw = new StringWriter();
-            XMLStreamWriter streamWriter = outputFactory.createXMLStreamWriter(sw);
-
-            // the XML header
-            streamWriter.writeStartDocument("UTF-8", "1.0");
-
-            writeFeature(feature, streamWriter, true);
-            
-            streamWriter.flush();
-            streamWriter.close();
-            return sw.toString();
-
-        } catch (XMLStreamException ex) {
-            LOGGER.severe("XMl stream exception while writing the feature: " + ex.getMessage());
-        }
-        return null;
-    }
-
-    private void writeFeature(SimpleFeature feature, XMLStreamWriter streamWriter, boolean root) {
+    
+    private void writeFeature(Feature feature, XMLStreamWriter streamWriter, boolean root) {
         try {
 
             //the root element of the xml document (type of the feature)
@@ -134,7 +83,7 @@ public class JAXPStreamFeatureWriter extends JAXPFeatureWriter {
             if (namespace != null) {
                 Prefix prefix = getPrefix(namespace);
                 streamWriter.writeStartElement(prefix.prefix, localPart, namespace);
-                streamWriter.writeAttribute("gml", GML_NAMESPACE, "id", feature.getID());
+                streamWriter.writeAttribute("gml", GML_NAMESPACE, "id", feature.getIdentifier().getID());
                 if (prefix.unknow && !root) {
                     streamWriter.writeNamespace(prefix.prefix, namespace);
                 }
@@ -146,9 +95,9 @@ public class JAXPStreamFeatureWriter extends JAXPFeatureWriter {
                 }
             } else {
                 streamWriter.writeStartElement(localPart);
-                streamWriter.writeAttribute("gml", GML_NAMESPACE, "id", feature.getID());
+                streamWriter.writeAttribute("gml", GML_NAMESPACE, "id", feature.getIdentifier().getID());
             }
-            
+
 
 
             //the simple nodes (attributes of the feature)
@@ -185,7 +134,7 @@ public class JAXPStreamFeatureWriter extends JAXPFeatureWriter {
                 } else if (!(a.getType() instanceof GeometryType)) {
                     String value = Utils.getStringValue(a.getValue());
                     if (value != null || (value == null && !a.isNillable())) {
-                        
+
                         String namespaceProperty = a.getName().getNamespaceURI();
                         String nameProperty      = a.getName().getLocalPart();
                         if ((nameProperty.equals("name") || nameProperty.equals("description")) && !GML_NAMESPACE.equals(namespaceProperty)) {
@@ -205,17 +154,17 @@ public class JAXPStreamFeatureWriter extends JAXPFeatureWriter {
 
                 // we add the geometry
                 } else {
-                    
+
                     if (a.getValue() != null) {
                         Name geometryName        = a.getName();
                         String namespaceProperty = geometryName.getNamespaceURI();
-                    
+
                         if (namespaceProperty != null) {
                             streamWriter.writeStartElement(geometryName.getNamespaceURI(), geometryName.getLocalPart());
                         } else {
                             streamWriter.writeStartElement(geometryName.getLocalPart());
                         }
-                        Geometry isoGeometry = JTSUtils.toISO((com.vividsolutions.jts.geom.Geometry) a.getValue(), feature.getFeatureType().getCoordinateReferenceSystem());
+                        Geometry isoGeometry = JTSUtils.toISO((com.vividsolutions.jts.geom.Geometry) a.getValue(), feature.getType().getCoordinateReferenceSystem());
                         try {
                             marshaller.marshal(factory.buildAnyGeometry(isoGeometry), streamWriter);
                         } catch (JAXBException ex) {
@@ -226,66 +175,12 @@ public class JAXPStreamFeatureWriter extends JAXPFeatureWriter {
                 }
             }
 
-            
-            if (feature.getDefaultGeometry() != null) {
-
-                
-            }
-
             streamWriter.writeEndElement();
 
         } catch (XMLStreamException ex) {
             LOGGER.log(Level.WARNING, "XMl stream exception while writing the feature: " + ex.getMessage(), ex);
 
         }
-    }
-
-    @Override
-    public void write(FeatureCollection fc, Writer writer) {
-        try {
-            XMLOutputFactory outputFactory = XMLOutputFactory.newInstance();
-            XMLStreamWriter streamWriter    = outputFactory.createXMLStreamWriter(writer);
-
-            writeFeatureCollection(fc, streamWriter,false);
-
-        } catch (XMLStreamException ex) {
-            LOGGER.log(Level.WARNING, "XMl stream exception while writing the feature: " + ex.getMessage(), ex);
-        } catch (DataStoreException ex) {
-            LOGGER.log(Level.WARNING, "DataStore exception exception while writing the feature: " + ex.getMessage(), ex);
-        }
-    }
-
-    @Override
-    public void write(FeatureCollection fc, OutputStream out) {
-        try {
-            XMLOutputFactory outputFactory = XMLOutputFactory.newInstance();
-            XMLStreamWriter streamWriter    = outputFactory.createXMLStreamWriter(out);
-
-            writeFeatureCollection(fc, streamWriter,false);
-
-        } catch (XMLStreamException ex) {
-            LOGGER.log(Level.WARNING, "XMl stream exception while writing the feature: " + ex.getMessage(), ex);
-        } catch (DataStoreException ex) {
-            LOGGER.log(Level.WARNING, "DataStore exception exception while writing the feature: " + ex.getMessage(), ex);
-        }
-    }
-    
-    @Override
-    public String write(FeatureCollection featureCollection) {
-        try {
-            XMLOutputFactory outputFactory = XMLOutputFactory.newInstance();
-            StringWriter sw                = new StringWriter();
-            XMLStreamWriter streamWriter   = outputFactory.createXMLStreamWriter(sw);
-
-            writeFeatureCollection(featureCollection, streamWriter,false);
-            return sw.toString();
-
-        } catch (XMLStreamException ex) {
-            LOGGER.log(Level.WARNING, "XMl stream exception while writing the feature: " + ex.getMessage(), ex);
-        } catch (DataStoreException ex) {
-            LOGGER.log(Level.WARNING, "DataStore exception exception while writing the feature: " + ex.getMessage(), ex);
-        }
-        return null;
     }
 
     /**
@@ -333,7 +228,7 @@ public class JAXPStreamFeatureWriter extends JAXPFeatureWriter {
             FeatureIterator iterator = featureCollection.iterator();
             try {
                 while (iterator.hasNext()) {
-                    final SimpleFeature f = (SimpleFeature) iterator.next();
+                    final Feature f = iterator.next();
 
                     streamWriter.writeStartElement("gml", "featureMember", GML_NAMESPACE);
                     writeFeature(f, streamWriter, false);

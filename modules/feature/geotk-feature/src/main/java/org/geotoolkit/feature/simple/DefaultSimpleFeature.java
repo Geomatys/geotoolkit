@@ -18,13 +18,13 @@
 package org.geotoolkit.feature.simple;
 
 import com.vividsolutions.jts.geom.Geometry;
-import java.util.ArrayList;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
 import org.geotoolkit.feature.DefaultAttribute;
 import org.geotoolkit.feature.DefaultGeometryAttribute;
-
 import org.geotoolkit.filter.identity.DefaultFeatureId;
 
 import org.opengis.feature.Property;

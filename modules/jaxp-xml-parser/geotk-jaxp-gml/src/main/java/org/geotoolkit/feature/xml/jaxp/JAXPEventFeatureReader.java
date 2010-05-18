@@ -64,10 +64,23 @@ public class JAXPEventFeatureReader extends JAXPFeatureReader {
     public JAXPEventFeatureReader(List<FeatureType> featureTypes) throws JAXBException {
         super(featureTypes);
     }
+
     /**
      * {@inheritDoc }
      */
     @Override
+    public Object read(Object xml)  {
+        if(xml instanceof String){
+            return read((String)xml);
+        }else if(xml instanceof InputStream){
+            return read((InputStream)xml);
+        }else if(xml instanceof Reader){
+            return read((Reader)xml);
+        }else{
+            return null;
+        }
+    }
+
     public Object read(String xml)  {
         try {
             XMLInputFactory XMLfactory = XMLInputFactory.newInstance();
@@ -81,10 +94,6 @@ public class JAXPEventFeatureReader extends JAXPFeatureReader {
         return null;
     }
 
-    /**
-     * {@inheritDoc }
-     */
-    @Override
     public Object read(InputStream in) {
         try {
             XMLInputFactory XMLfactory = XMLInputFactory.newInstance();
@@ -98,10 +107,6 @@ public class JAXPEventFeatureReader extends JAXPFeatureReader {
         return null;
     }
 
-    /**
-     * {@inheritDoc }
-     */
-    @Override
     public Object read(Reader reader) {
         try {
             XMLInputFactory XMLfactory = XMLInputFactory.newInstance();
@@ -114,7 +119,6 @@ public class JAXPEventFeatureReader extends JAXPFeatureReader {
         }
         return null;
     }
-
 
     /**
      * Start to read An object from the XML datasource.
