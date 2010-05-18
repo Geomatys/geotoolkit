@@ -61,7 +61,7 @@ public class Utils {
      */
     public static Name getNameFromQname(QName qname) {
         Name name;
-        if (qname.getNamespaceURI() == null || "".equals(qname.getNamespaceURI())) {
+        if (qname.getNamespaceURI() == null || qname.getNamespaceURI().isEmpty()) {
             name = new DefaultName(qname.getLocalPart());
         } else {
             name = new DefaultName(qname);

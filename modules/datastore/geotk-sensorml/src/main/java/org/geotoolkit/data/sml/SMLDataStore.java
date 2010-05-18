@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2009, Geomatys
+ *    (C) 2009-2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -31,31 +31,31 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Set;
-import java.util.logging.Level;
 
 import org.geotoolkit.data.AbstractDataStore;
+import org.geotoolkit.data.DataStoreRuntimeException;
 import org.geotoolkit.storage.DataStoreException;
-import org.geotoolkit.data.DataUtilities;
 import org.geotoolkit.data.FeatureReader;
-import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureWriter;
-import org.geotoolkit.data.memory.GenericWrapFeatureIterator;
 import org.geotoolkit.data.query.DefaultQueryCapabilities;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryCapabilities;
+import org.geotoolkit.factory.FactoryFinder;
+import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.AttributeDescriptorBuilder;
 import org.geotoolkit.feature.AttributeTypeBuilder;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.simple.DefaultSimpleFeatureType;
-import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.feature.FeatureTypeBuilder;
+import org.geotoolkit.feature.LenientFeatureFactory;
 import org.geotoolkit.feature.type.DefaultGeometryDescriptor;
 import org.geotoolkit.referencing.CRS;
 
 import org.opengis.feature.Feature;
-import org.opengis.feature.simple.SimpleFeature;
-import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.feature.FeatureFactory;
+import org.opengis.feature.Property;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.Name;
@@ -69,21 +69,27 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 /**
  *
  * @author Guilhem Legal (Geomatys)
+ * @author Johann Sorel (Geomatys)
  * @module pending
  */
 public class SMLDataStore extends AbstractDataStore {
 
-    private final Map<Name,SimpleFeatureType> types = new HashMap<Name, SimpleFeatureType>();
+    /** the feature factory */
+    private static final FeatureFactory FF = FactoryFinder.getFeatureFactory(
+                        new Hints(Hints.FEATURE_FACTORY,LenientFeatureFactory.class));
+    private static final GeometryFactory GF = new GeometryFactory();
+
+    private final Map<Name,FeatureType> types = new HashMap<Name, FeatureType>();
 
     private final Connection connection;
 
     private static final String SML_NAMESPACE = "http://www.opengis.net/sml/1.0";
 
-    private final static Name SYSTEM         = new DefaultName(SML_NAMESPACE, "System");
-    private final static Name COMPONENT      = new DefaultName(SML_NAMESPACE, "Component");
-    private final static Name PROCESSCHAIN   = new DefaultName(SML_NAMESPACE, "ProcessChain");
-    private final static Name PROCESSMODEL   = new DefaultName(SML_NAMESPACE, "ProcessModel");
-    private final static Name DATASOURCETYPE = new DefaultName(SML_NAMESPACE, "DataSourceType");
+    private final static Name SML_TN_SYSTEM         = new DefaultName(SML_NAMESPACE, "System");
+    private final static Name SML_TN_COMPONENT      = new DefaultName(SML_NAMESPACE, "Component");
+    private final static Name SML_TN_PROCESSCHAIN   = new DefaultName(SML_NAMESPACE, "ProcessChain");
+    private final static Name SML_TN_PROCESSMODEL   = new DefaultName(SML_NAMESPACE, "ProcessModel");
+    private final static Name SML_TN_DATASOURCETYPE = new DefaultName(SML_NAMESPACE, "DataSourceType");
 
     private static final String pathDescription        = "SensorML:SensorML:member:description";
     private static final String pathName               = "SensorML:SensorML:member:name";
@@ -106,76 +112,45 @@ public class SMLDataStore extends AbstractDataStore {
     private static final String pathCRS                = "SensorML:SensorML:member:location:pos:srsName";
     private static final String pathSmlRef             = "SensorML:SensorML:member:documentation:onlineResource:href";
 
-    private PreparedStatement getAllFormId;
-    private PreparedStatement getTextValue;
-    private PreparedStatement getTextValue2;
-    private PreparedStatement getSMLType;
-    private PreparedStatement getContactRole;
-    private PreparedStatement getContactName;
+    private static final String SQL_ALL_FORM_ID = "SELECT \"identifier\" FROM \"Storage\".\"Forms\" WHERE \"catalog\"='SMLC'";
+    private static final String SQL_TEXT_VALUE = "SELECT \"value\" FROM \"Storage\".\"TextValues\" WHERE \"path\"=? AND \"form\"=?";
+    private static final String SQL_TEXT_VALUE_2 = "SELECT \"value\" FROM \"Storage\".\"TextValues\" WHERE \"path\"=? AND \"form\"=?";
+    private static final String SQL_SML_TYPE = "SELECT \"type\" FROM \"Storage\".\"Values\" WHERE \"path\"='SensorML:SensorML:member' AND \"form\"=?";
+    private static final String SQL_CONTACT_ROLE = "SELECT \"id_value\"  FROM \"Storage\".\"TextValues\" " +
+                                                "WHERE \"path\"='SensorML:SensorML:member:contact:role' " +
+                                                    "AND \"value\"='urn:x-ogc:def:role:producer' " +
+                                                    "AND \"form\"=? ";
+    private static final String SQL_CONTACT_NAME = "SELECT \"value\" FROM \"Storage\".\"TextValues\" WHERE \"id_value\"=? AND \"form\"=?";
 
-    /*
-     * Shared attributes
-     */
-    private static final Name DESC        = new DefaultName(GML_NAMESPACE, "description");
-    private static final Name NAME        = new DefaultName(GML_NAMESPACE, "name");
-    private static final Name KEYWORDS    = new DefaultName(SML_NAMESPACE, "keywords");
-    private static final Name LOCATION    = new DefaultName(SML_NAMESPACE, "location");
-    private static final Name PHENOMENONS = new DefaultName(SML_NAMESPACE, "phenomenons");
-    private static final Name SMLTYPE     = new DefaultName(SML_NAMESPACE, "smltype");
-    private static final Name SMLREF      = new DefaultName(SML_NAMESPACE, "smlref");
-    private static final Name INPUTS      = new DefaultName(SML_NAMESPACE, "inputs");
-    private static final Name OUTPUTS     = new DefaultName(SML_NAMESPACE, "outputs");
 
-    /*
-     * attribute for sml:System or sml:ProcessChain
-     */
-    private static final Name PRODUCER    = new DefaultName(SML_NAMESPACE, "producer");
-    private static final Name COMPONENTS  = new DefaultName(SML_NAMESPACE, "components");
+    // Shared attributes
+    private static final Name ATT_DESC        = new DefaultName(GML_NAMESPACE, "description");
+    private static final Name ATT_NAME        = new DefaultName(GML_NAMESPACE, "name");
+    private static final Name ATT_KEYWORDS    = new DefaultName(SML_NAMESPACE, "keywords");
+    private static final Name ATT_LOCATION    = new DefaultName(SML_NAMESPACE, "location");
+    private static final Name ATT_PHENOMENONS = new DefaultName(SML_NAMESPACE, "phenomenons");
+    private static final Name ATT_SMLTYPE     = new DefaultName(SML_NAMESPACE, "smltype");
+    private static final Name ATT_SMLREF      = new DefaultName(SML_NAMESPACE, "smlref");
+    private static final Name ATT_INPUTS      = new DefaultName(SML_NAMESPACE, "inputs");
+    private static final Name ATT_OUTPUTS     = new DefaultName(SML_NAMESPACE, "outputs");
+    // attribute for sml:System or sml:ProcessChain
+    private static final Name ATT_PRODUCER = new DefaultName(SML_NAMESPACE, "producer");
+    private static final Name ATT_COMPONENTS = new DefaultName(SML_NAMESPACE, "components");
+    // attribute for sml:ProccessModel
+    private static final Name ATT_METHOD = new DefaultName(SML_NAMESPACE, "method");
+    // attribute for sml:DatasourceType
+    private static final Name ATT_CHARACTERISTICS = new DefaultName(SML_NAMESPACE, "characteristics");
 
-    /*
-     * attribute for sml:ProccessModel
-     */
-    private static final Name METHOD      = new DefaultName(SML_NAMESPACE, "method");
-
-    /*
-     * attribute for sml:DatasourceType
-     */
-    private static final Name CHARACTERISTICS = new DefaultName(SML_NAMESPACE, "characteristics");
-
-    private static final GeometryFactory GF = new GeometryFactory();
 
     private final QueryCapabilities capabilities = new DefaultQueryCapabilities(false);
-    private CoordinateReferenceSystem defaultCRS;
     
     public SMLDataStore(Connection connection) {
-        this.connection = connection;
-        try {
-            defaultCRS = CRS.decode("EPSG:27582");
-
-        } catch (NoSuchAuthorityCodeException ex) {
-            getLogger().log(Level.WARNING, null, ex);
-        } catch (FactoryException ex) {
-            getLogger().log(Level.WARNING, null, ex);
-        }
-        
+        this.connection = connection;        
         initTypes();
-        initStatement();
     }
 
-    private void initStatement() {
-        try {
-            getTextValue   = connection.prepareStatement("SELECT \"value\"      FROM \"Storage\".\"TextValues\" WHERE \"path\"=? AND \"form\"=?");
-            getTextValue2  = connection.prepareStatement("SELECT \"value\"      FROM \"Storage\".\"TextValues\" WHERE \"path\"=? AND \"form\"=?");
-            getSMLType     = connection.prepareStatement("SELECT \"type\"       FROM \"Storage\".\"Values\"     WHERE \"path\"='SensorML:SensorML:member' AND \"form\"=?");
-            getAllFormId   = connection.prepareStatement("SELECT \"identifier\" FROM \"Storage\".\"Forms\"      WHERE \"catalog\"='SMLC'");
-            getContactRole = connection.prepareStatement("SELECT \"id_value\"  FROM \"Storage\".\"TextValues\" WHERE \"path\"='SensorML:SensorML:member:contact:role'" +
-                                                         "                                                      AND   \"value\"='urn:x-ogc:def:role:producer'"          +
-                                                         "                                                      AND   \"form\"=?");
-            getContactName = connection.prepareStatement("SELECT \"value\"      FROM \"Storage\".\"TextValues\" WHERE \"id_value\"=? AND \"form\"=?");
-            
-        } catch (SQLException ex) {
-           getLogger().severe("SQL Exception while initializing the prepared statement for SensorML database:" + ex.getMessage());
-        }
+    public Connection getConnection() {
+        return connection;
     }
 
     private void initTypes() {
@@ -187,9 +162,9 @@ public class SMLDataStore extends AbstractDataStore {
         attributeTypeBuilder.reset();
         attributeTypeBuilder.setBinding(String.class);
         attributeDescBuilder.reset();
-        attributeDescBuilder.setName(DESC);
+        attributeDescBuilder.setName(ATT_DESC);
         attributeDescBuilder.setMaxOccurs(1);
-        attributeDescBuilder.setMinOccurs(0);
+        attributeDescBuilder.setMinOccurs(1);
         attributeDescBuilder.setNillable(true);
         attributeDescBuilder.setType(attributeTypeBuilder.buildType());
         final AttributeDescriptor attDescription = attributeDescBuilder.buildDescriptor();
@@ -199,7 +174,7 @@ public class SMLDataStore extends AbstractDataStore {
         attributeTypeBuilder.reset();
         attributeTypeBuilder.setBinding(String.class);
         attributeDescBuilder.reset();
-        attributeDescBuilder.setName(NAME);
+        attributeDescBuilder.setName(ATT_NAME);
         attributeDescBuilder.setMaxOccurs(1);
         attributeDescBuilder.setMinOccurs(1);
         attributeDescBuilder.setNillable(false);
@@ -210,7 +185,7 @@ public class SMLDataStore extends AbstractDataStore {
         attributeTypeBuilder.reset();
         attributeTypeBuilder.setBinding(List.class);
         attributeDescBuilder.reset();
-        attributeDescBuilder.setName(KEYWORDS);
+        attributeDescBuilder.setName(ATT_KEYWORDS);
         attributeDescBuilder.setMaxOccurs(Integer.MAX_VALUE);
         attributeDescBuilder.setMinOccurs(0);
         attributeDescBuilder.setNillable(true);
@@ -221,7 +196,7 @@ public class SMLDataStore extends AbstractDataStore {
         attributeTypeBuilder.reset();
         attributeTypeBuilder.setBinding(Point.class);
         attributeDescBuilder.reset();
-        attributeDescBuilder.setName(LOCATION);
+        attributeDescBuilder.setName(ATT_LOCATION);
         attributeDescBuilder.setMaxOccurs(1);
         attributeDescBuilder.setMinOccurs(1);
         attributeDescBuilder.setNillable(false);
@@ -232,7 +207,7 @@ public class SMLDataStore extends AbstractDataStore {
         attributeTypeBuilder.reset();
         attributeTypeBuilder.setBinding(List.class);
         attributeDescBuilder.reset();
-        attributeDescBuilder.setName(PHENOMENONS);
+        attributeDescBuilder.setName(ATT_PHENOMENONS);
         attributeDescBuilder.setMaxOccurs(Integer.MAX_VALUE);
         attributeDescBuilder.setMinOccurs(0);
         attributeDescBuilder.setNillable(true);
@@ -243,7 +218,7 @@ public class SMLDataStore extends AbstractDataStore {
         attributeTypeBuilder.reset();
         attributeTypeBuilder.setBinding(String.class);
         attributeDescBuilder.reset();
-        attributeDescBuilder.setName(SMLTYPE);
+        attributeDescBuilder.setName(ATT_SMLTYPE);
         attributeDescBuilder.setMaxOccurs(1);
         attributeDescBuilder.setMinOccurs(1);
         attributeDescBuilder.setNillable(true);
@@ -254,7 +229,7 @@ public class SMLDataStore extends AbstractDataStore {
         attributeTypeBuilder.reset();
         attributeTypeBuilder.setBinding(String.class);
         attributeDescBuilder.reset();
-        attributeDescBuilder.setName(SMLREF);
+        attributeDescBuilder.setName(ATT_SMLREF);
         attributeDescBuilder.setMaxOccurs(1);
         attributeDescBuilder.setMinOccurs(1);
         attributeDescBuilder.setNillable(true);
@@ -265,7 +240,7 @@ public class SMLDataStore extends AbstractDataStore {
         attributeTypeBuilder.reset();
         attributeTypeBuilder.setBinding(Map.class);
         attributeDescBuilder.reset();
-        attributeDescBuilder.setName(INPUTS);
+        attributeDescBuilder.setName(ATT_INPUTS);
         attributeDescBuilder.setMaxOccurs(Integer.MAX_VALUE);
         attributeDescBuilder.setMinOccurs(0);
         attributeDescBuilder.setNillable(true);
@@ -276,7 +251,7 @@ public class SMLDataStore extends AbstractDataStore {
         attributeTypeBuilder.reset();
         attributeTypeBuilder.setBinding(Map.class);
         attributeDescBuilder.reset();
-        attributeDescBuilder.setName(OUTPUTS);
+        attributeDescBuilder.setName(ATT_OUTPUTS);
         attributeDescBuilder.setMaxOccurs(Integer.MAX_VALUE);
         attributeDescBuilder.setMinOccurs(0);
         attributeDescBuilder.setNillable(true);
@@ -288,26 +263,26 @@ public class SMLDataStore extends AbstractDataStore {
          * Feature type sml:Component
          */
         featureTypeBuilder.reset();
-        featureTypeBuilder.setName(new DefaultName(SML_NAMESPACE, "Component"));
+        featureTypeBuilder.setName(SML_TN_COMPONENT);
         featureTypeBuilder.add(0, attDescription);
         featureTypeBuilder.add(1, attName);
         featureTypeBuilder.add(2, attkey);
         featureTypeBuilder.add(3, attLocation);
-        featureTypeBuilder.setDefaultGeometry(LOCATION.getLocalPart());
+        featureTypeBuilder.setDefaultGeometry(ATT_LOCATION.getLocalPart());
         featureTypeBuilder.add(4, attPhen);
         featureTypeBuilder.add(5, attSmt);
         featureTypeBuilder.add(6, attSmr);
         featureTypeBuilder.add(7, attInp);
         featureTypeBuilder.add(8, attOut);
 
-        final SimpleFeatureType componentType = featureTypeBuilder.buildSimpleFeatureType();
-        types.put(COMPONENT, componentType);
+        final FeatureType componentType = featureTypeBuilder.buildFeatureType();
+        types.put(SML_TN_COMPONENT, componentType);
 
         // sml:producer
         attributeTypeBuilder.reset();
         attributeTypeBuilder.setBinding(Map.class);
         attributeDescBuilder.reset();
-        attributeDescBuilder.setName(PRODUCER);
+        attributeDescBuilder.setName(ATT_PRODUCER);
         attributeDescBuilder.setMaxOccurs(Integer.MAX_VALUE);
         attributeDescBuilder.setMinOccurs(0);
         attributeDescBuilder.setNillable(true);
@@ -318,7 +293,7 @@ public class SMLDataStore extends AbstractDataStore {
         attributeTypeBuilder.reset();
         attributeTypeBuilder.setBinding(Map.class);
         attributeDescBuilder.reset();
-        attributeDescBuilder.setName(COMPONENTS);
+        attributeDescBuilder.setName(ATT_COMPONENTS);
         attributeDescBuilder.setMaxOccurs(Integer.MAX_VALUE);
         attributeDescBuilder.setMinOccurs(0);
         attributeDescBuilder.setNillable(true);
@@ -330,12 +305,12 @@ public class SMLDataStore extends AbstractDataStore {
          * Feature type sml:System
          */
         featureTypeBuilder.reset();
-        featureTypeBuilder.setName(new DefaultName(SML_NAMESPACE, "System"));
+        featureTypeBuilder.setName(SML_TN_SYSTEM);
         featureTypeBuilder.add(0, attDescription);
         featureTypeBuilder.add(1, attName);
         featureTypeBuilder.add(2, attkey);
         featureTypeBuilder.add(3, attLocation);
-        featureTypeBuilder.setDefaultGeometry(LOCATION.getLocalPart());
+        featureTypeBuilder.setDefaultGeometry(ATT_LOCATION.getLocalPart());
         featureTypeBuilder.add(4, attPhen);
         featureTypeBuilder.add(5, attSmt);
         featureTypeBuilder.add(6, attSmr);
@@ -344,19 +319,19 @@ public class SMLDataStore extends AbstractDataStore {
         featureTypeBuilder.add(9, attProd);
         featureTypeBuilder.add(10, attCom);
 
-        final SimpleFeatureType systemType = featureTypeBuilder.buildSimpleFeatureType();
-        types.put(SYSTEM, systemType);
+        final FeatureType systemType = featureTypeBuilder.buildFeatureType();
+        types.put(SML_TN_SYSTEM, systemType);
 
         /*
          * Feature type sml:ProcessChain
          */
         featureTypeBuilder.reset();
-        featureTypeBuilder.setName(new DefaultName(SML_NAMESPACE, "ProcessChain"));
+        featureTypeBuilder.setName(SML_TN_PROCESSCHAIN);
         featureTypeBuilder.add(0, attDescription);
         featureTypeBuilder.add(1, attName);
         featureTypeBuilder.add(2, attkey);
         featureTypeBuilder.add(3, attLocation);
-        featureTypeBuilder.setDefaultGeometry(LOCATION.getLocalPart());
+        featureTypeBuilder.setDefaultGeometry(ATT_LOCATION.getLocalPart());
         featureTypeBuilder.add(4, attPhen);
         featureTypeBuilder.add(5, attSmt);
         featureTypeBuilder.add(6, attSmr);
@@ -365,14 +340,14 @@ public class SMLDataStore extends AbstractDataStore {
         featureTypeBuilder.add(9, attProd);
         featureTypeBuilder.add(10, attCom);
 
-        final SimpleFeatureType processChainType = featureTypeBuilder.buildSimpleFeatureType();
-        types.put(PROCESSCHAIN, processChainType);
+        final FeatureType processChainType = featureTypeBuilder.buildFeatureType();
+        types.put(SML_TN_PROCESSCHAIN, processChainType);
 
         // sml:method
         attributeTypeBuilder.reset();
         attributeTypeBuilder.setBinding(String.class);
         attributeDescBuilder.reset();
-        attributeDescBuilder.setName(METHOD);
+        attributeDescBuilder.setName(ATT_METHOD);
         attributeDescBuilder.setMaxOccurs(Integer.MAX_VALUE);
         attributeDescBuilder.setMinOccurs(0);
         attributeDescBuilder.setNillable(true);
@@ -383,12 +358,12 @@ public class SMLDataStore extends AbstractDataStore {
          * Feature type sml:ProcessModel
          */
         featureTypeBuilder.reset();
-        featureTypeBuilder.setName(new DefaultName(SML_NAMESPACE, "ProcessModel"));
+        featureTypeBuilder.setName(SML_TN_PROCESSMODEL);
         featureTypeBuilder.add(0, attDescription);
         featureTypeBuilder.add(1, attName);
         featureTypeBuilder.add(2, attkey);
         featureTypeBuilder.add(3, attLocation);
-        featureTypeBuilder.setDefaultGeometry(LOCATION.getLocalPart());
+        featureTypeBuilder.setDefaultGeometry(ATT_LOCATION.getLocalPart());
         featureTypeBuilder.add(4, attPhen);
         featureTypeBuilder.add(5, attSmt);
         featureTypeBuilder.add(6, attSmr);
@@ -396,14 +371,14 @@ public class SMLDataStore extends AbstractDataStore {
         featureTypeBuilder.add(8, attOut);
         featureTypeBuilder.add(9, attMet);
 
-        final SimpleFeatureType processModelType = featureTypeBuilder.buildSimpleFeatureType();
-        types.put(PROCESSMODEL, processModelType);
+        final FeatureType processModelType = featureTypeBuilder.buildFeatureType();
+        types.put(SML_TN_PROCESSMODEL, processModelType);
 
         // sml:characteristics
         attributeTypeBuilder.reset();
         attributeTypeBuilder.setBinding(Map.class);
         attributeDescBuilder.reset();
-        attributeDescBuilder.setName(CHARACTERISTICS);
+        attributeDescBuilder.setName(ATT_CHARACTERISTICS);
         attributeDescBuilder.setMaxOccurs(Integer.MAX_VALUE);
         attributeDescBuilder.setMinOccurs(0);
         attributeDescBuilder.setNillable(true);
@@ -414,12 +389,12 @@ public class SMLDataStore extends AbstractDataStore {
          * Feature type sml:DataSourceType
          */
         featureTypeBuilder.reset();
-        featureTypeBuilder.setName(new DefaultName(SML_NAMESPACE, "DataSourceType"));
+        featureTypeBuilder.setName(SML_TN_DATASOURCETYPE);
         featureTypeBuilder.add(0, attDescription);
         featureTypeBuilder.add(1, attName);
         featureTypeBuilder.add(2, attkey);
         featureTypeBuilder.add(3, attLocation);
-        featureTypeBuilder.setDefaultGeometry(LOCATION.getLocalPart());
+        featureTypeBuilder.setDefaultGeometry(ATT_LOCATION.getLocalPart());
         featureTypeBuilder.add(4, attPhen);
         featureTypeBuilder.add(5, attSmt);
         featureTypeBuilder.add(6, attSmr);
@@ -427,335 +402,31 @@ public class SMLDataStore extends AbstractDataStore {
         featureTypeBuilder.add(8, attOut);
         featureTypeBuilder.add(9, attChar);
 
-        final SimpleFeatureType dataSourceType = featureTypeBuilder.buildSimpleFeatureType();
-        types.put(DATASOURCETYPE, dataSourceType);
+        final FeatureType dataSourceType = featureTypeBuilder.buildFeatureType();
+        types.put(SML_TN_DATASOURCETYPE, dataSourceType);
     }
 
     /**
      * {@inheritDoc }
      */
     @Override
-    public FeatureReader<SimpleFeatureType, SimpleFeature> getFeatureReader(Query query) throws DataStoreException {
+    public FeatureReader<FeatureType, Feature> getFeatureReader(Query query) throws DataStoreException {
+        final FeatureType ft = getFeatureType(query.getTypeName()); //raise an error if type does not exist.
+
         try {
-            final Name name = query.getTypeName();
-            final SimpleFeatureType sft = types.get(name);
-            final FeatureCollection<SimpleFeature> collection = getFeatureCollection(sft, name.getLocalPart());
-            FeatureReader fr = GenericWrapFeatureIterator.wrapToReader(collection.iterator(), sft);
-            fr = handleRemaining(fr, query);
-            return fr;
-        } catch (IOException ex) {
+            final FeatureReader fr = new SMLFeatureReader(ft);
+            return handleRemaining(fr, query);
+        } catch (SQLException ex) {
             throw new DataStoreException(ex);
         }
     }
     
-    private FeatureCollection<SimpleFeature> getFeatureCollection(SimpleFeatureType sft, String typeName) throws IOException {
-
-        final FeatureCollection<SimpleFeature> collection = DataUtilities.collection(typeName + "-collection", sft);
-        SimpleFeatureBuilder builder = new SimpleFeatureBuilder(sft);
-
-        try {
-            ResultSet result = getAllFormId.executeQuery();
-
-            boolean firstCRS = true;
-            while (result.next()) {
-                int formID = result.getInt(1);
-                SimpleFeature feature = buildFeature(builder, formID, typeName);
-                if (feature != null) {
-                    collection.add(feature);
-
-                    if (firstCRS) {
-                        getTextValue.setString(1, pathCRS);
-                        getTextValue.setInt(2, formID);
-                        ResultSet resultCRS = getTextValue.executeQuery();
-                        if (resultCRS.next()) {
-                            String srsName = resultCRS.getString(1);
-
-                            if (srsName.startsWith("urn:ogc:crs:")) {
-                                srsName = "urn:ogc:def:crs:" + srsName.substring(12);
-                            }
-                            CoordinateReferenceSystem crs;
-                            try {
-                                crs = CRS.decode(srsName);
-                                if (sft instanceof DefaultSimpleFeatureType) {
-                                    ((DefaultSimpleFeatureType)sft).setCoordinateReferenceSystem(crs);
-                                }
-                                if (sft.getGeometryDescriptor() instanceof DefaultGeometryDescriptor) {
-                                    ((DefaultGeometryDescriptor)sft.getGeometryDescriptor()).setCoordinateReferenceSystem(crs);
-                                }
-                                firstCRS = false;
-                            } catch (NoSuchAuthorityCodeException ex) {
-                                throw new IOException(ex);
-                            } catch (FactoryException ex) {
-                                throw new IOException(ex);
-                            }
-                        }
-                    }
-                }
-
-            }
-            result.close();
-
-        } catch (SQLException ex) {
-            getLogger().log(Level.WARNING, "SQL exception while reading sensorMLValues table", ex);
-        }
-        return collection;
-    }
-
-
-    /**
-     * Build a simpleFeature
-     *
-     * @param builder
-     * @param formID
-     * @param typeName
-     * @return
-     * @throws SQLException
-     */
-    private SimpleFeature buildFeature(SimpleFeatureBuilder builder, int formID, String typeName) throws SQLException {
-        builder.reset();
-
-        /*
-         * we filter on the type
-         *
-         */
-        getSMLType.setInt(1, formID);
-        ResultSet result2 = getSMLType.executeQuery();
-        String type = null;
-        if (result2.next()) {
-            type = result2.getString(1);
-            builder.set(SMLTYPE, type);
-        }
-        result2.close();
-        if (!type.equals(typeName)) {
-            return null;
-        }
-
-        /*
-         * GML : DESCRIPTION
-         */
-        getTextValue.setString(1, pathDescription);
-        getTextValue.setInt(2, formID);
-        result2 = getTextValue.executeQuery();
-        if (result2.next()) {
-            builder.set(DESC, result2.getString(1));
-        }
-        result2.close();
-
-        /*
-         * GML : NAME
-         */
-        getTextValue.setString(1, pathName);
-        getTextValue.setInt(2, formID);
-        result2 = getTextValue.executeQuery();
-        if (result2.next()) {
-            builder.set(NAME, result2.getString(1));
-        }
-        result2.close();
-
-        /*
-         * SML : KEYWORDS (multiple)
-         */
-        getTextValue.setString(1, pathKeywords);
-        getTextValue.setInt(2, formID);
-        result2 = getTextValue.executeQuery();
-        List<String> keywords = new ArrayList<String>();
-        while (result2.next()) {
-            keywords.add(result2.getString(1));
-        }
-        result2.close();
-        builder.set(KEYWORDS, keywords);
-
-        /*
-         *  SML : REF
-         */
-        getTextValue.setString(1, pathSmlRef);
-        getTextValue.setInt(2, formID);
-        result2 = getTextValue.executeQuery();
-        if (result2.next()) {
-            builder.set(SMLREF, result2.getString(1));
-        }
-        result2.close();
-
-
-        /*
-         * SML : INPUTS (multiple map)
-         */
-        getTextValue.setString(1, pathInputsDef);
-        getTextValue.setInt(2, formID);
-        result2 = getTextValue.executeQuery();
-        getTextValue2.setString(1, pathInputsNam);
-        getTextValue2.setInt(2, formID);
-        ResultSet result3 = getTextValue2.executeQuery();
-        Map<String, String> inputs = new HashMap<String, String>();
-        while (result2.next() && result3.next()) {
-            inputs.put(result3.getString(1), result2.getString(1));
-        }
-        result2.close();
-        result3.close();
-        builder.set(INPUTS, inputs);
-
-        /*
-         * SML : OUTPUTS (multiple map)
-         */
-        getTextValue.setString(1, pathOutputsDef);
-        getTextValue.setInt(2, formID);
-        result2 = getTextValue.executeQuery();
-        getTextValue2.setString(1, pathOutputsNam);
-        getTextValue2.setInt(2, formID);
-        result3 = getTextValue2.executeQuery();
-        Map<String, String> outputs = new HashMap<String, String>();
-        while (result2.next() && result3.next()) {
-            outputs.put(result3.getString(1), result2.getString(1));
-        }
-        result2.close();
-        result3.close();
-        builder.set(OUTPUTS, outputs);
-
-        /*
-         * SML : LOCATION (geometric)
-         */
-        getTextValue.setString(1, pathLocation);
-        getTextValue.setInt(2, formID);
-        result2 = getTextValue.executeQuery();
-        if (result2.next()) {
-            String location = result2.getString(1);
-            try {
-                double x = Double.parseDouble(location.substring(0, location.indexOf(" ")));
-                double y = Double.parseDouble(location.substring(location.indexOf(" ") + 1));
-                Coordinate coord = new Coordinate(x, y);
-                builder.set(LOCATION, GF.createPoint(coord));
-            } catch (NumberFormatException ex) {
-                getLogger().warning("unable to extract the point coordinate from the text value:" + location);
-            }
-        }
-        result2.close();
-
-        if (typeName.equals("Component")) {
-
-            /*
-             * SML : PHENOMENONS
-             */
-            getTextValue.setString(1, pathPhenomenonsCompo);
-            getTextValue.setInt(2, formID);
-            result2 = getTextValue.executeQuery();
-            List<String> phenomenons = new ArrayList<String>();
-            if (result2.next()) {
-                phenomenons.add(result2.getString(1));
-            }
-            result2.close();
-            builder.set(PHENOMENONS, phenomenons);
-
-        } else if (typeName.equals("System") || typeName.equals("ProcessChain")) {
-
-            /*
-             * SML : PHENOMENONS (multiple)
-             */
-            getTextValue.setString(1, pathPhenomenonsSystem);
-            getTextValue.setInt(2, formID);
-            result2 = getTextValue.executeQuery();
-            List<String> phenomenons = new ArrayList<String>();
-            while (result2.next()) {
-                phenomenons.add(result2.getString(1));
-            }
-            result2.close();
-            builder.set(PHENOMENONS, phenomenons);
-
-            
-            /*
-             * TODO SML : PRODUCER
-             *
-             */
-             Map<String, String> producers = new HashMap<String, String>();
-             getContactRole.setInt(1, formID);
-             List<String> contacts = new ArrayList<String>();
-             result2 = getContactRole.executeQuery();
-             while (result2.next()) {
-                 String completePath = result2.getString(1);
-                 contacts.add(completePath.substring(0, completePath.lastIndexOf(':')));
-             }
-             result2.close();
-             for (String contactPath : contacts) {
-                 getContactName.setString(1, contactPath + ":organizationName.1");
-                 getContactName.setInt(2, formID);
-                 result2 = getContactName.executeQuery();
-                 String orgName = null;
-                 if (result2.next()) {
-                     orgName = result2.getString(1);
-                 }
-                 getContactName.setString(1, contactPath + ":individualName.1");
-                 getContactName.setInt(2, formID);
-                 result2 = getContactName.executeQuery();
-                 String indName = null;
-                 if (result2.next()) {
-                     indName = result2.getString(1);
-                 }
-                 producers.put(orgName, indName);
-             }
-             result2.close();
-             builder.set(PRODUCER, producers);
-
-
-            /*
-             * SML : COMPONENT (multiple map)
-             */
-            getTextValue.setString(1, pathComponentsRef);
-            getTextValue.setInt(2, formID);
-            result2 = getTextValue.executeQuery();
-            getTextValue2.setString(1, pathComponentsNam);
-            getTextValue2.setInt(2, formID);
-            result3 = getTextValue2.executeQuery();
-            Map<String, String> components = new HashMap<String, String>();
-            while (result2.next() && result3.next()) {
-                components.put(result3.getString(1), result2.getString(1));
-            }
-            result2.close();
-            result3.close();
-            if (components.size() == 0) {
-                components = null;
-            }
-            builder.set(COMPONENTS, components);
-
-        } else if (typeName.equals("ProcessModel")) {
-            // TODO method
-        } else if (typeName.equals("DataSourceType")) {
-
-            /*
-             * SML : CHARACTERISTIC (multiple map)
-             */
-            getTextValue.setString(1, pathCharacteristicsVal);
-            getTextValue.setInt(2, formID);
-            result2 = getTextValue.executeQuery();
-            getTextValue2.setString(1, pathCharacteristicsNam);
-            getTextValue2.setInt(2, formID);
-            result3 = getTextValue2.executeQuery();
-            Map<String, String> characteristics = new HashMap<String, String>();
-            while (result2.next() && result3.next()) {
-                characteristics.put(result3.getString(1), result2.getString(1));
-            }
-            result2.close();
-            result3.close();
-            builder.set(CHARACTERISTICS, characteristics);
-        }
-        return builder.buildFeature(formID + ""); // TODO id
-    }
-
-
     /**
      * {@inheritDoc }
      */
     @Override
     public void dispose() {
         super.dispose();
-        try {
-            getAllFormId.close();
-            getTextValue.close();
-            getTextValue2.close();
-            getSMLType.close();
-            connection.close();
-        } catch (SQLException ex) {
-            getLogger().info("SQL Exception while closing SML datastore");
-        }
-
     }
 
     /**
@@ -764,30 +435,6 @@ public class SMLDataStore extends AbstractDataStore {
     @Override
     public Set<Name> getNames() throws DataStoreException {
         return types.keySet();
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public void createSchema(Name typeName, FeatureType featureType) throws DataStoreException {
-        types.put(typeName, (SimpleFeatureType) featureType);
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public void updateSchema(Name typeName, FeatureType featureType) throws DataStoreException {
-        types.put(typeName, (SimpleFeatureType) featureType);
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public void deleteSchema(Name typeName) throws DataStoreException {
-        types.remove(typeName);
     }
 
     /**
@@ -806,12 +453,40 @@ public class SMLDataStore extends AbstractDataStore {
         return capabilities;
     }
 
+    ////////////////////////////////////////////////////////////////////////////
+    // No supported stuffs /////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public void createSchema(Name typeName, FeatureType featureType) throws DataStoreException {
+        throw new DataStoreException("Not Supported.");
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public void updateSchema(Name typeName, FeatureType featureType) throws DataStoreException {
+        throw new DataStoreException("Not Supported.");
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public void deleteSchema(Name typeName) throws DataStoreException {
+        throw new DataStoreException("Not Supported.");
+    }
+
     /**
      * {@inheritDoc }
      */
     @Override
     public FeatureWriter getFeatureWriter(Name typeName, Filter filter) throws DataStoreException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        throw new DataStoreException("Not supported.");
     }
 
     /**
@@ -819,7 +494,7 @@ public class SMLDataStore extends AbstractDataStore {
      */
     @Override
     public List<FeatureId> addFeatures(Name groupName, Collection<? extends Feature> newFeatures) throws DataStoreException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        throw new DataStoreException("Not supported.");
     }
 
     /**
@@ -827,7 +502,7 @@ public class SMLDataStore extends AbstractDataStore {
      */
     @Override
     public void updateFeatures(Name groupName, Filter filter, Map<? extends PropertyDescriptor, ? extends Object> values) throws DataStoreException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        throw new DataStoreException("Not supported.");
     }
 
     /**
@@ -835,7 +510,362 @@ public class SMLDataStore extends AbstractDataStore {
      */
     @Override
     public void removeFeatures(Name groupName, Filter filter) throws DataStoreException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        throw new DataStoreException("Not supported.");
+    }
+
+    
+    ////////////////////////////////////////////////////////////////////////////
+    // Feature Reader //////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
+
+    private class SMLFeatureReader implements FeatureReader<FeatureType, Feature>{
+
+        private final FeatureType type;
+        private Feature current = null;
+
+        private final Connection cnx = getConnection();
+        private final PreparedStatement stmtAllFormId;
+        private final PreparedStatement stmtTextValue;
+        private final PreparedStatement stmtSMLType;
+        private final PreparedStatement stmtTextValue2;
+        private final PreparedStatement stmtContactRole;
+        private final PreparedStatement stmtContactName;
+        private final ResultSet result;
+        private boolean firstCRS = true;
+
+        public SMLFeatureReader(FeatureType type) throws SQLException{
+            this.type = type;
+            stmtAllFormId = cnx.prepareStatement(SQL_ALL_FORM_ID);
+            stmtTextValue = cnx.prepareStatement(SQL_TEXT_VALUE);
+            stmtSMLType = cnx.prepareStatement(SQL_SML_TYPE);
+            stmtTextValue2 = cnx.prepareStatement(SQL_TEXT_VALUE_2);
+            stmtContactRole = cnx.prepareStatement(SQL_CONTACT_ROLE);
+            stmtContactName = cnx.prepareStatement(SQL_CONTACT_NAME);
+            result = stmtAllFormId.executeQuery();
+        }
+
+        @Override
+        public FeatureType getFeatureType() {
+            return type;
+        }
+
+        @Override
+        public Feature next() throws DataStoreRuntimeException {
+            try {
+                read();
+            } catch (IOException ex) {
+                throw new DataStoreRuntimeException(ex);
+            } catch (SQLException ex) {
+                throw new DataStoreRuntimeException(ex);
+            }
+            final Feature f = current;
+            if(f == null){
+                throw new NoSuchElementException("No more feature.");
+            }
+            current = null;
+            return f;
+        }
+
+        @Override
+        public boolean hasNext() throws DataStoreRuntimeException {
+            try {
+                read();
+            } catch (IOException ex) {
+                throw new DataStoreRuntimeException(ex);
+            } catch (SQLException ex) {
+                throw new DataStoreRuntimeException(ex);
+            }
+            return current != null;
+        }
+
+        @Override
+        public void close() {
+            try {
+                result.close();
+                stmtAllFormId.close();
+                stmtTextValue.close();
+                stmtSMLType.close();
+                stmtTextValue2.close();
+                stmtContactRole.close();
+                stmtContactName.close();
+            } catch (SQLException ex) {
+                getLogger().info("SQL Exception while closing SML datastore");
+            }
+        }
+
+        @Override
+        public void remove() {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+        private void read() throws IOException, SQLException{
+            if(current != null) return;
+
+            //find a feature
+            int formID = -1;
+            while(result.next() && current == null){
+                formID = result.getInt(1);
+                current = readFeature(formID, type.getName());
+            }
+
+            //configure the CRS if its the first feature
+            if (firstCRS && current != null) {
+                stmtTextValue.setString(1, pathCRS);
+                stmtTextValue.setInt(2, formID);
+                final ResultSet resultCRS = stmtTextValue.executeQuery();
+                if (resultCRS.next()) {
+                    String srsName = resultCRS.getString(1);
+
+                    if (srsName.startsWith("urn:ogc:crs:")) {
+                        srsName = "urn:ogc:def:crs:" + srsName.substring(12);
+                    }
+                    try {
+                        final CoordinateReferenceSystem crs = CRS.decode(srsName);
+                        if (type instanceof DefaultSimpleFeatureType) {
+                            ((DefaultSimpleFeatureType)type).setCoordinateReferenceSystem(crs);
+                        }
+                        if (type.getGeometryDescriptor() instanceof DefaultGeometryDescriptor) {
+                            ((DefaultGeometryDescriptor)type.getGeometryDescriptor()).setCoordinateReferenceSystem(crs);
+                        }
+                        firstCRS = false;
+                    } catch (NoSuchAuthorityCodeException ex) {
+                        throw new IOException(ex);
+                    } catch (FactoryException ex) {
+                        throw new IOException(ex);
+                    }
+                }
+            }
+        }
+
+        private Feature readFeature(int formID, Name typeName) throws SQLException{
+            final Collection<Property> props = new ArrayList<Property>();
+
+            /*
+             * we filter on the type
+             */
+            stmtSMLType.setInt(1, formID);
+            ResultSet rset = stmtSMLType.executeQuery();
+            String tn = null;
+            if (rset.next()) {
+                tn = rset.getString(1);
+                props.add(FF.createAttribute(type, (AttributeDescriptor) type.getDescriptor(ATT_SMLTYPE), null));
+            }
+            rset.close();
+            if (!tn.equals(typeName.getLocalPart())) {
+                return null;
+            }
+
+            /*
+             * GML : DESCRIPTION
+             */
+            stmtTextValue.setString(1, pathDescription);
+            stmtTextValue.setInt(2, formID);
+            rset = stmtTextValue.executeQuery();
+            if (rset.next()) {
+                props.add(FF.createAttribute(rset.getString(1), (AttributeDescriptor) type.getDescriptor(ATT_DESC), null));
+            }
+            rset.close();
+
+            /*
+             * GML : NAME
+             */
+            stmtTextValue.setString(1, pathName);
+            stmtTextValue.setInt(2, formID);
+            rset = stmtTextValue.executeQuery();
+            if (rset.next()) {
+                props.add(FF.createAttribute(rset.getString(1), (AttributeDescriptor) type.getDescriptor(ATT_NAME), null));
+            }
+            rset.close();
+
+            /*
+             * SML : KEYWORDS (multiple)
+             */
+            stmtTextValue.setString(1, pathKeywords);
+            stmtTextValue.setInt(2, formID);
+            rset = stmtTextValue.executeQuery();
+            final List<String> keywords = new ArrayList<String>();
+            while (rset.next()) {
+                keywords.add(rset.getString(1));
+            }
+            rset.close();
+            props.add(FF.createAttribute(keywords, (AttributeDescriptor) type.getDescriptor(ATT_KEYWORDS), null));
+
+            /*
+             *  SML : REF
+             */
+            stmtTextValue.setString(1, pathSmlRef);
+            stmtTextValue.setInt(2, formID);
+            rset = stmtTextValue.executeQuery();
+            if (rset.next()) {
+                props.add(FF.createAttribute(rset.getString(1), (AttributeDescriptor) type.getDescriptor(ATT_SMLREF), null));
+            }
+            rset.close();
+
+
+            /*
+             * SML : INPUTS (multiple map)
+             */
+            stmtTextValue.setString(1, pathInputsDef);
+            stmtTextValue.setInt(2, formID);
+            rset = stmtTextValue.executeQuery();
+            stmtTextValue2.setString(1, pathInputsNam);
+            stmtTextValue2.setInt(2, formID);
+            ResultSet result3 = stmtTextValue2.executeQuery();
+            Map<String, String> inputs = new HashMap<String, String>();
+            while (rset.next() && result3.next()) {
+                inputs.put(result3.getString(1), rset.getString(1));
+            }
+            rset.close();
+            result3.close();
+            props.add(FF.createAttribute(inputs, (AttributeDescriptor) type.getDescriptor(ATT_INPUTS), null));
+
+            /*
+             * SML : OUTPUTS (multiple map)
+             */
+            stmtTextValue.setString(1, pathOutputsDef);
+            stmtTextValue.setInt(2, formID);
+            rset = stmtTextValue.executeQuery();
+            stmtTextValue2.setString(1, pathOutputsNam);
+            stmtTextValue2.setInt(2, formID);
+            result3 = stmtTextValue2.executeQuery();
+            Map<String, String> outputs = new HashMap<String, String>();
+            while (rset.next() && result3.next()) {
+                outputs.put(result3.getString(1), rset.getString(1));
+            }
+            rset.close();
+            result3.close();
+            props.add(FF.createAttribute(outputs, (AttributeDescriptor) type.getDescriptor(ATT_OUTPUTS), null));
+
+            /*
+             * SML : LOCATION (geometric)
+             */
+            stmtTextValue.setString(1, pathLocation);
+            stmtTextValue.setInt(2, formID);
+            rset = stmtTextValue.executeQuery();
+            if (rset.next()) {
+                final String location = rset.getString(1);
+                try {
+                    final int pos = location.indexOf(" ");
+                    final double x = Double.parseDouble(location.substring(0, pos));
+                    final double y = Double.parseDouble(location.substring(pos+1));
+                    final Coordinate coord = new Coordinate(x, y);
+                    props.add(FF.createAttribute(GF.createPoint(coord),
+                            (AttributeDescriptor)type.getDescriptor(ATT_LOCATION), null));
+                } catch (NumberFormatException ex) {
+                    getLogger().warning("unable to extract the point coordinate from the text value:" + location);
+                }
+            }
+            rset.close();
+
+            if (typeName.equals(SML_TN_COMPONENT)) {
+
+                /*
+                 * SML : PHENOMENONS
+                 */
+                stmtTextValue.setString(1, pathPhenomenonsCompo);
+                stmtTextValue.setInt(2, formID);
+                rset = stmtTextValue.executeQuery();
+                final List<String> phenomenons = new ArrayList<String>();
+                if (rset.next()) {
+                    phenomenons.add(rset.getString(1));
+                }
+                rset.close();
+                props.add(FF.createAttribute(phenomenons, (AttributeDescriptor) type.getDescriptor(ATT_PHENOMENONS), null));
+
+            } else if (typeName.equals(SML_TN_SYSTEM) || typeName.equals(SML_TN_PROCESSCHAIN)) {
+
+                /*
+                 * SML : PHENOMENONS (multiple)
+                 */
+                stmtTextValue.setString(1, pathPhenomenonsSystem);
+                stmtTextValue.setInt(2, formID);
+                rset = stmtTextValue.executeQuery();
+                List<String> phenomenons = new ArrayList<String>();
+                while (rset.next()) {
+                    phenomenons.add(rset.getString(1));
+                }
+                rset.close();
+                props.add(FF.createAttribute(phenomenons, (AttributeDescriptor) type.getDescriptor(ATT_PHENOMENONS), null));
+
+
+                /*
+                 * TODO SML : PRODUCER
+                 */
+                 final Map<String, String> producers = new HashMap<String, String>();
+                 stmtContactRole.setInt(1, formID);
+                 final List<String> contacts = new ArrayList<String>();
+                 rset = stmtContactRole.executeQuery();
+                 while (rset.next()) {
+                     final String completePath = rset.getString(1);
+                     contacts.add(completePath.substring(0, completePath.lastIndexOf(':')));
+                 }
+                 rset.close();
+                 for (String contactPath : contacts) {
+                     stmtContactName.setString(1, contactPath + ":organizationName.1");
+                     stmtContactName.setInt(2, formID);
+                     rset = stmtContactName.executeQuery();
+                     String orgName = null;
+                     if (rset.next()) {
+                         orgName = rset.getString(1);
+                     }
+                     stmtContactName.setString(1, contactPath + ":individualName.1");
+                     stmtContactName.setInt(2, formID);
+                     rset = stmtContactName.executeQuery();
+                     String indName = null;
+                     if (rset.next()) {
+                         indName = rset.getString(1);
+                     }
+                     producers.put(orgName, indName);
+                 }
+                 rset.close();
+                 props.add(FF.createAttribute(producers, (AttributeDescriptor) type.getDescriptor(ATT_PRODUCER), null));
+
+
+                /*
+                 * SML : COMPONENT (multiple map)
+                 */
+                stmtTextValue.setString(1, pathComponentsRef);
+                stmtTextValue.setInt(2, formID);
+                rset = stmtTextValue.executeQuery();
+                stmtTextValue2.setString(1, pathComponentsNam);
+                stmtTextValue2.setInt(2, formID);
+                result3 = stmtTextValue2.executeQuery();
+                Map<String, String> components = new HashMap<String, String>();
+                while (rset.next() && result3.next()) {
+                    components.put(result3.getString(1), rset.getString(1));
+                }
+                rset.close();
+                result3.close();
+                if (components.size() == 0) {
+                    components = null;
+                }
+                props.add(FF.createAttribute(components, (AttributeDescriptor) type.getDescriptor(ATT_COMPONENTS), null));
+
+            } else if (typeName.equals(SML_TN_PROCESSMODEL)) {
+                // TODO method
+            } else if (typeName.equals(SML_TN_DATASOURCETYPE)) {
+
+                /*
+                 * SML : CHARACTERISTIC (multiple map)
+                 */
+                stmtTextValue.setString(1, pathCharacteristicsVal);
+                stmtTextValue.setInt(2, formID);
+                rset = stmtTextValue.executeQuery();
+                stmtTextValue2.setString(1, pathCharacteristicsNam);
+                stmtTextValue2.setInt(2, formID);
+                result3 = stmtTextValue2.executeQuery();
+                final Map<String, String> characteristics = new HashMap<String, String>();
+                while (rset.next() && result3.next()) {
+                    characteristics.put(result3.getString(1), rset.getString(1));
+                }
+                rset.close();
+                result3.close();
+                props.add(FF.createAttribute(characteristics, (AttributeDescriptor) type.getDescriptor(ATT_CHARACTERISTICS), null));
+            }
+
+            return FF.createFeature(props, type, ""+formID);
+        }
+
     }
 
 }

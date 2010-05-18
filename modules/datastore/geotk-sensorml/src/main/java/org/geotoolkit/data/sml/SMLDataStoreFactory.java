@@ -23,14 +23,15 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import org.geotoolkit.data.AbstractDataStoreFactory;
 import org.geotoolkit.data.DataStore;
 import org.geotoolkit.storage.DataStoreException;
-
 import org.geotoolkit.internal.sql.DefaultDataSource;
 import org.geotoolkit.metadata.iso.quality.DefaultConformanceResult;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
+
 import org.opengis.metadata.quality.ConformanceResult;
 import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
@@ -142,7 +143,6 @@ public class SMLDataStoreFactory extends AbstractDataStoreFactory {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-
     private String getJDBCUrl(final ParameterValueGroup params) throws IOException {
         final String type  = (String) params.parameter(SGBDTYPE.getName().toString()).getValue();
         if (type.equals("derby")) {
@@ -156,7 +156,6 @@ public class SMLDataStoreFactory extends AbstractDataStoreFactory {
         }
     }
    
-
     @Override
     public ConformanceResult availability() {
         DefaultConformanceResult result =  new DefaultConformanceResult();
