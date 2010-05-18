@@ -77,7 +77,11 @@ public abstract class AbstractFeatureFactory implements FeatureFactory {
      */
     @Override
     public Attribute createAttribute(Object value, AttributeDescriptor descriptor, String id) {
-        return new DefaultAttribute(value, descriptor, FF.gmlObjectId(id));
+        if(id != null && !id.isEmpty()){
+            return new DefaultAttribute(value, descriptor, FF.gmlObjectId(id));
+        }else{
+            return new DefaultAttribute(value, descriptor, null);
+        }
     }
 
     /**
@@ -86,8 +90,11 @@ public abstract class AbstractFeatureFactory implements FeatureFactory {
     @Override
     public GeometryAttribute createGeometryAttribute(
             Object value, GeometryDescriptor descriptor, String id, CoordinateReferenceSystem crs) {
-
-        return new DefaultGeometryAttribute((Geometry)value,descriptor, FF.gmlObjectId(id));
+        if(id != null && !id.isEmpty()){
+            return new DefaultGeometryAttribute((Geometry)value,descriptor, FF.gmlObjectId(id));
+        }else{
+            return new DefaultGeometryAttribute((Geometry)value,descriptor, null);
+        }
     }
 
     /**
@@ -96,7 +103,11 @@ public abstract class AbstractFeatureFactory implements FeatureFactory {
     @Override
     public ComplexAttribute createComplexAttribute(
             Collection<Property> value, AttributeDescriptor descriptor, String id) {
-        return new DefaultComplexAttribute(value, descriptor, FF.gmlObjectId(id));
+        if(id != null && !id.isEmpty()){
+            return new DefaultComplexAttribute(value, descriptor, FF.gmlObjectId(id));
+        }else{
+            return new DefaultComplexAttribute(value, descriptor, null);
+        }
     }
 
     /**
@@ -104,7 +115,11 @@ public abstract class AbstractFeatureFactory implements FeatureFactory {
      */
     @Override
     public ComplexAttribute createComplexAttribute(Collection<Property> value, ComplexType type, String id) {
-        return DefaultComplexAttribute.create(value, type, FF.gmlObjectId(id));
+        if(id != null && !id.isEmpty()){
+            return DefaultComplexAttribute.create(value, type, FF.gmlObjectId(id));
+        }else{
+            return DefaultComplexAttribute.create(value, type, null);
+        }
     }
 
     /**
