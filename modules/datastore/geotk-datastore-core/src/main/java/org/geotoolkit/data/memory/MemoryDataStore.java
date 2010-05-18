@@ -63,31 +63,82 @@ import org.opengis.filter.identity.FeatureId;
  */
 public class MemoryDataStore extends AbstractDataStore{
 
+    private static interface Group{
+        FeatureType getFeatureType();
+        Iterator<Feature> createIterator();
+        ArrayPropertyRW createPropertyReader();
+        ArrayFIDRW createFIDReader();
+    }
+
     /**
-     * a type and it's datas.
+     * A simple type and it's datas.
      */
-    private static class Group{
-        final FeatureType type;
+    private static class SimpleGroup implements Group{
+        final SimpleFeatureType type;
         final List<Object[]> datas;
         private final String base;
         private final AtomicLong inc = new AtomicLong();
 
-        public Group(FeatureType type) {
+        public SimpleGroup(SimpleFeatureType type) {
             this.type = type;
             this.datas = new ArrayList<Object[]>();
             this.base = type.getName().getLocalPart()+".";
         }
 
+        @Override
         public ArrayPropertyRW createPropertyReader(){
             final Collection<PropertyDescriptor> props = type.getDescriptors();
             final PropertyDescriptor[] arr = props.toArray(new PropertyDescriptor[props.size()]);
             return new ArrayPropertyRW(arr, 1, datas);
         }
 
+        @Override
         public ArrayFIDRW createFIDReader(){
             return new ArrayFIDRW(0, datas , base, inc);
         }
 
+        @Override
+        public SimpleFeatureType getFeatureType() {
+            return type;
+        }
+
+        @Override
+        public Iterator<Feature> createIterator() {
+            return null;
+        }
+
+    }
+
+    /**
+     * A complexe type and it's datas.
+     */
+    private static class ComplexGroup implements Group{
+        final FeatureType type;
+        final List<Feature> features;
+
+        ComplexGroup(FeatureType type){
+            this.type = type;
+            features = new ArrayList<Feature>();
+        }
+        @Override
+        public FeatureType getFeatureType() {
+            return type;
+        }
+
+        @Override
+        public Iterator<Feature> createIterator() {
+            return features.iterator();
+        }
+
+        @Override
+        public ArrayPropertyRW createPropertyReader() {
+            return null;
+        }
+
+        @Override
+        public ArrayFIDRW createFIDReader() {
+            return null;
+        }
     }
 
     private final QueryCapabilities capabilities = new DefaultQueryCapabilities(false);
@@ -109,7 +160,11 @@ public class MemoryDataStore extends AbstractDataStore{
     public MemoryDataStore(FeatureType type, boolean singleTypeLock){
         this.singleTypeLock = singleTypeLock;
         Name name = type.getName();
-        groups.put(name, new Group(type));
+        if(type instanceof SimpleFeatureType){
+            groups.put(name, new SimpleGroup((SimpleFeatureType) type));
+        }else{
+            groups.put(name, new ComplexGroup(type));
+        }
     }
 
     /**
@@ -134,8 +189,7 @@ public class MemoryDataStore extends AbstractDataStore{
             throw new DataStoreException("Schema "+ name +" doesnt exist in this datastore.");
         }
 
-        FeatureType type = grp.type;
-        return type;
+        return grp.getFeatureType();
     }
 
     /**
@@ -157,7 +211,11 @@ public class MemoryDataStore extends AbstractDataStore{
             throw new IllegalArgumentException("FeatureType with name : " + featureType.getName() + " already exist.");
         }
 
-        groups.put(name, new Group(featureType));
+        if(featureType instanceof SimpleFeatureType){
+            groups.put(name, new SimpleGroup((SimpleFeatureType) featureType));
+        }else{
+            groups.put(name, new ComplexGroup(featureType));
+        }
 
         //clear name cache
         nameCache = null;
@@ -189,9 +247,12 @@ public class MemoryDataStore extends AbstractDataStore{
             throw new IllegalArgumentException("No featureType for name : " + typeName);
         }
 
-        final FeatureType type = grp.type;
-        groups.put(typeName, new Group(featureType));
-
+        final FeatureType type = grp.getFeatureType();
+        if(featureType instanceof SimpleFeatureType){
+            groups.put(typeName, new SimpleGroup((SimpleFeatureType) featureType));
+        }else{
+            groups.put(typeName, new ComplexGroup(featureType));
+        }
 
         //clear name cache
         nameCache = null;
@@ -218,7 +279,7 @@ public class MemoryDataStore extends AbstractDataStore{
         nameCache = null;
 
         //fire event
-        fireSchemaDeleted(typeName, grp.type);
+        fireSchemaDeleted(typeName, grp.getFeatureType());
     }
 
     /**
@@ -312,12 +373,18 @@ public class MemoryDataStore extends AbstractDataStore{
             throw new DataStoreException("No featureType for name : " + query.getTypeName());
         }
 
-        final DefaultSimpleFeatureReader reader;
-        try {
-            reader = DefaultSimpleFeatureReader.create(grp.createPropertyReader(), grp.createFIDReader(), (SimpleFeatureType) grp.type, query.getHints());
-        } catch (SchemaException ex) {
-            throw new DataStoreException(ex);
-        }
+        final FeatureReader reader;
+        final Iterator<Feature> ite = grp.createIterator();
+        if(ite != null){
+            reader = GenericWrapFeatureIterator.wrapToReader(ite, grp.getFeatureType());
+        }else{
+            try {
+                reader = DefaultSimpleFeatureReader.create(grp.createPropertyReader(),
+                        grp.createFIDReader(), (SimpleFeatureType) grp.getFeatureType(), query.getHints());
+            } catch (SchemaException ex) {
+                throw new DataStoreException(ex);
+            }
+        }        
 
         //fall back on generic parameter handling.
         //todo we should handle at least spatial filter here by using a quadtree.
@@ -331,11 +398,19 @@ public class MemoryDataStore extends AbstractDataStore{
     public FeatureWriter getFeatureWriter(Name typeName, Filter filter) throws DataStoreException {
         final FeatureType type = getFeatureType(typeName);
         final FeatureWriter writer;
-        try {
-            writer = new MemoryFeatureWriter(typeName);
-        } catch (SchemaException ex) {
-            throw new DataStoreException(ex);
+
+        final Group grp = groups.get(type.getName());
+        final Iterator<Feature> ite = grp.createIterator();
+        if(ite != null){
+            writer = GenericWrapFeatureIterator.wrapToWriter(ite, type);
+        }else{
+            try {
+                writer = new MemoryFeatureWriter((SimpleGroup) groups.get(type.getName()));
+            } catch (SchemaException ex) {
+                throw new DataStoreException(ex);
+            }
         }
+        
         return handleRemaining(writer, filter);
     }
 
@@ -357,7 +432,7 @@ public class MemoryDataStore extends AbstractDataStore{
 
     private class MemoryFeatureWriter<T extends FeatureType, F extends Feature> implements FeatureWriter<T,F>{
 
-        private final Group grp;
+        private final SimpleGroup grp;
         private final DefaultSimpleFeatureReader reader;
         private final ArrayFIDRW ids;
         private final ArrayPropertyRW properties;
@@ -365,8 +440,8 @@ public class MemoryDataStore extends AbstractDataStore{
         private F currentFeature = null;
         private F modified = null;
 
-        MemoryFeatureWriter(Name name) throws SchemaException{
-            this.grp = groups.get(name);
+        MemoryFeatureWriter(SimpleGroup group) throws SchemaException{
+            this.grp = group;
             this.ids = grp.createFIDReader();
             this.properties = grp.createPropertyReader();
             reader = DefaultSimpleFeatureReader.create(
@@ -426,7 +501,7 @@ public class MemoryDataStore extends AbstractDataStore{
 
         @Override
         public T getFeatureType() {
-            return (T) grp.type;
+            return (T) grp.getFeatureType();
         }
 
         @Override

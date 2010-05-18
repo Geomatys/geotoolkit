@@ -191,16 +191,16 @@ public class FeatureTypeUtilities {
     /**
      * Remove properties that are used for generating the primary key.
      */
-    public static SimpleFeatureType excludePrimaryKeyFields(SimpleFeatureType sft) throws SchemaException{
+    public static FeatureType excludePrimaryKeyFields(FeatureType ft) throws SchemaException{
         final List<Name> pkeys = new ArrayList<Name>();
-        for(AttributeDescriptor desc : sft.getAttributeDescriptors()){
+        for(PropertyDescriptor desc : ft.getDescriptors()){
             if(!isPartOfPrimaryKey(desc)) pkeys.add(desc.getName());
         }
 
         if(pkeys.isEmpty()){
-            return sft;
+            return ft;
         }else{
-            return createSubType(sft, pkeys.toArray(new Name[pkeys.size()]));
+            return createSubType(ft, pkeys.toArray(new Name[pkeys.size()]));
         }
 
     }
@@ -217,9 +217,8 @@ public class FeatureTypeUtilities {
      *
      * @throws SchemaException
      */
-    public static SimpleFeatureType createSubType(final SimpleFeatureType featureType,
-            final Name[] properties, final CoordinateReferenceSystem override) throws SchemaException
-    {
+    public static FeatureType createSubType(final FeatureType featureType,
+            final Name[] properties, final CoordinateReferenceSystem override) throws SchemaException{
         URI namespaceURI = null;
         if (featureType.getName().getNamespaceURI() != null) {
             try {
@@ -229,11 +228,10 @@ public class FeatureTypeUtilities {
             }
         }
 
-        return createSubType(featureType, properties, override, featureType.getTypeName(), namespaceURI);
-
+        return createSubType(featureType, properties, override, featureType.getName().getLocalPart(), namespaceURI);
     }
 
-    public static SimpleFeatureType createSubType(final SimpleFeatureType featureType,
+    public static FeatureType createSubType(final FeatureType featureType,
             Name[] properties, final CoordinateReferenceSystem override, String typeName, URI namespace)
             throws SchemaException {
 
@@ -241,32 +239,47 @@ public class FeatureTypeUtilities {
             return featureType;
         }
 
+        final int propCount = featureType.getDescriptors().size();
+
         if (properties == null) {
-            properties = new Name[featureType.getAttributeCount()];
-            for (int i = 0; i < properties.length; i++) {
-                properties[i] = featureType.getDescriptor(i).getName();
+            properties = new Name[propCount];
+            int i=0;
+            for(PropertyDescriptor desc : featureType.getDescriptors()) {
+                properties[i] = desc.getName();
+                i++;
             }
         }
 
         final String namespaceURI = namespace != null ? namespace.toString() : null;
-        boolean same = featureType.getAttributeCount() == properties.length &&
-                featureType.getTypeName().equals(typeName) &&
+        boolean same = (propCount == properties.length) &&
+                featureType.getName().getLocalPart().equals(typeName) &&
                 Utilities.equals(featureType.getName().getNamespaceURI(), namespaceURI);
 
 
-        for (int i = 0; (i < featureType.getAttributeCount()) && same; i++) {
-            final AttributeDescriptor type = featureType.getDescriptor(i);
-            same = type.getName().equals(properties[i]) && (((override != null) && type instanceof GeometryDescriptor)
-                    ? assertEquals(override, ((GeometryDescriptor) type).getCoordinateReferenceSystem())
-                    : true);
+        int i=0;
+        if(same){
+            for(PropertyDescriptor desc : featureType.getDescriptors()){
+                same = desc.getName().equals(properties[i]) && (((override != null) && desc instanceof GeometryDescriptor)
+                        ? assertEquals(override, ((GeometryDescriptor) desc).getCoordinateReferenceSystem())
+                        : true);
+                if(!same)break;
+                i++;
+            }
         }
+
         if (same) {
             return featureType;
         }
 
-        final AttributeDescriptor[] types = new AttributeDescriptor[properties.length];
+
+        final FeatureTypeBuilder tb = new FeatureTypeBuilder();
+        final AttributeTypeBuilder ab = new AttributeTypeBuilder();
+        final AttributeDescriptorBuilder adb = new AttributeDescriptorBuilder();
+
+        final PropertyDescriptor[] types = new AttributeDescriptor[properties.length];
         boolean crsSetted = false;
-        for (int i = 0; i < properties.length; i++) {
+
+        for (i=0; i<properties.length; i++) {
             types[i] = featureType.getDescriptor(properties[i]);
 
             if (types[i] == null) {
@@ -274,21 +287,19 @@ public class FeatureTypeUtilities {
                         " for feature type :\n"+ featureType.toString());
             }
             if ((override != null) && types[i] instanceof GeometryDescriptor) {
-
-                final AttributeTypeBuilder ab = new AttributeTypeBuilder();
-                ab.copy(types[i].getType());
+                ab.reset();
+                ab.copy((AttributeType) types[i].getType());
                 ab.setCRS(override);
                 crsSetted = true;
-                final AttributeDescriptorBuilder adb = new AttributeDescriptorBuilder();
-                adb.copy(types[i]);
+                adb.reset();
+                adb.copy((AttributeDescriptor) types[i]);
                 adb.setType(ab.buildGeometryType());
-
                 types[i] = adb.buildDescriptor();
             }
         }
 
         if (typeName == null) {
-            typeName = featureType.getTypeName();
+            typeName = featureType.getName().getLocalPart();
         }
         if (namespace == null && featureType.getName().getNamespaceURI() != null) {
             try {
@@ -300,11 +311,10 @@ public class FeatureTypeUtilities {
 
 
 
-        final FeatureTypeBuilder tb = new FeatureTypeBuilder();
         tb.setName(new DefaultName(namespaceURI, typeName));
         tb.addAll(types);
 
-        SimpleFeatureType result = tb.buildSimpleFeatureType();
+        FeatureType result = tb.buildFeatureType();
 
         if (!crsSetted && result instanceof DefaultSimpleFeatureType) {
             ((DefaultSimpleFeatureType)result).setCoordinateReferenceSystem(override);
@@ -322,17 +332,22 @@ public class FeatureTypeUtilities {
      *
      * @throws SchemaException DOCUMENT ME!
      */
-    public static SimpleFeatureType createSubType(final SimpleFeatureType featureType,
-            final Name[] properties) throws SchemaException
-    {
+    public static FeatureType createSubType(final FeatureType featureType,
+            final Name[] properties) throws SchemaException{
         if (properties == null) {
             return featureType;
         }
 
-        boolean same = featureType.getAttributeCount() == properties.length;
+        final int size = featureType.getDescriptors().size();
+        boolean same = (size == properties.length);
 
-        for (int i = 0; (i < featureType.getAttributeCount()) && same; i++) {
-            same = featureType.getDescriptor(i).getName().equals(properties[i]);
+        if(same){
+            int i=0;
+            for(PropertyDescriptor desc : featureType.getDescriptors()){
+                same = desc.getName().equals(properties[i]);
+                if(!same) break;
+                i++;
+            }
         }
 
         if (same) {
@@ -342,10 +357,10 @@ public class FeatureTypeUtilities {
         final FeatureTypeBuilder tb = new FeatureTypeBuilder();
         tb.setName(featureType.getName());
 
-        for (int i = 0; i < properties.length; i++) {
+        for (int i=0; i<properties.length; i++) {
             tb.add(featureType.getDescriptor(properties[i]));
         }
-        return tb.buildSimpleFeatureType();
+        return tb.buildFeatureType();
     }
 
     /**

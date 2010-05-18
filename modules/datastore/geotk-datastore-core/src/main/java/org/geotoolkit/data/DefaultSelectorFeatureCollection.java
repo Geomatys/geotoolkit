@@ -38,7 +38,6 @@ import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.util.collection.CloseableIterator;
 
 import org.opengis.feature.Feature;
-import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.filter.Filter;
@@ -91,11 +90,11 @@ public class DefaultSelectorFeatureCollection extends AbstractFeatureCollection<
     public FeatureType getFeatureType() throws DataStoreRuntimeException{
         try {
             FeatureType ft = getSession().getDataStore().getFeatureType(query.getTypeName());
-            ft = FeatureTypeUtilities.createSubType((SimpleFeatureType) ft, query.getPropertyNames(), query.getCoordinateSystemReproject());
+            ft = FeatureTypeUtilities.createSubType(ft, query.getPropertyNames(), query.getCoordinateSystemReproject());
 
             final Boolean hide = (Boolean) query.getHints().get(HintsPending.FEATURE_HIDE_ID_PROPERTY);
             if(hide != null && hide){
-                ft = FeatureTypeUtilities.excludePrimaryKeyFields((SimpleFeatureType) ft);
+                ft = FeatureTypeUtilities.excludePrimaryKeyFields(ft);
             }
 
             return ft;

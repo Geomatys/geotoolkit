@@ -18,10 +18,11 @@
 package org.geotoolkit.filter.visitor;
 
 import org.geotoolkit.feature.DefaultName;
-import org.opengis.feature.simple.SimpleFeatureType;
-import org.opengis.feature.type.AttributeDescriptor;
+
+import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.feature.type.Name;
+import org.opengis.feature.type.PropertyDescriptor;
 import org.opengis.filter.And;
 import org.opengis.filter.ExcludeFilter;
 import org.opengis.filter.FilterVisitor;
@@ -65,71 +66,88 @@ import org.opengis.filter.spatial.Within;
  */
 public class IsValidSpatialFilterVisitor implements FilterVisitor,ExpressionVisitor {
 
-    private final SimpleFeatureType ft;
+    private final FeatureType ft;
 
-    public IsValidSpatialFilterVisitor(SimpleFeatureType ft) {
+    public IsValidSpatialFilterVisitor(FeatureType ft) {
         this.ft = ft;
     }
+
+    @Override
     public Object visitNullFilter(Object o) {
         return true;
     }
 
+    @Override
     public Object visit(ExcludeFilter ef, Object o) {
         return true;
     }
 
+    @Override
     public Object visit(IncludeFilter i, Object o) {
         return true;
     }
 
+    @Override
     public Object visit(And and, Object o) {
         return true;
     }
 
+    @Override
     public Object visit(Id id, Object o) {
         return true;
     }
 
+    @Override
     public Object visit(Not not, Object o) {
         return true;
     }
 
+    @Override
     public Object visit(Or or, Object o) {
         return true;
     }
 
+    @Override
     public Object visit(PropertyIsBetween pib, Object o) {
         return true;
     }
 
+    @Override
     public Object visit(PropertyIsEqualTo piet, Object o) {
         return true;
     }
 
+    @Override
     public Object visit(PropertyIsNotEqualTo pinet, Object o) {
         return true;
     }
 
+    @Override
     public Object visit(PropertyIsGreaterThan pigt, Object o) {
         return true;
     }
 
+    @Override
     public Object visit(PropertyIsGreaterThanOrEqualTo pgt, Object o) {
         return true;
     }
 
+    @Override
     public Object visit(PropertyIsLessThan pilt, Object o) {
         return true;
     }
 
+    @Override
     public Object visit(PropertyIsLessThanOrEqualTo plt, Object o) {
         return true;
     }
 
+    @Override
     public Object visit(PropertyIsLike pil, Object o) {
         return true;
     }
 
+    @Override
     public Object visit(PropertyIsNull pin, Object o) {
         return true;
     }
@@ -144,6 +162,7 @@ public class IsValidSpatialFilterVisitor implements FilterVisitor,ExpressionVisi
         }
     }
 
+    @Override
     public Object visit(BBOX bbox, Object o) {
         if (bbox.getExpression1() instanceof PropertyName) {
             PropertyName pt = (PropertyName) bbox.getExpression1();
@@ -151,140 +170,158 @@ public class IsValidSpatialFilterVisitor implements FilterVisitor,ExpressionVisi
             if (pt.getPropertyName().equals("")) return true;
             
             Name name = getNameFromString(pt.getPropertyName());
-            AttributeDescriptor desc = ft.getDescriptor(name);
+            PropertyDescriptor desc = ft.getDescriptor(name);
             return desc instanceof GeometryDescriptor;
         }
         return true;
     }
 
+    @Override
     public Object visit(Beyond beyond, Object o) {
         if (beyond.getExpression1() instanceof PropertyName) {
             PropertyName pt = (PropertyName) beyond.getExpression1();
             Name name = getNameFromString(pt.getPropertyName());
-            AttributeDescriptor desc = ft.getDescriptor(name);
+            PropertyDescriptor desc = ft.getDescriptor(name);
             return desc instanceof GeometryDescriptor;
         }
         return true;
     }
 
+    @Override
     public Object visit(Contains cntns, Object o) {
         if (cntns.getExpression1() instanceof PropertyName) {
             PropertyName pt = (PropertyName) cntns.getExpression1();
             Name name = getNameFromString(pt.getPropertyName());
-            AttributeDescriptor desc = ft.getDescriptor(name);
+            PropertyDescriptor desc = ft.getDescriptor(name);
             return desc instanceof GeometryDescriptor;
         }
         return true;
     }
 
+    @Override
     public Object visit(Crosses crs, Object o) {
         if (crs.getExpression1() instanceof PropertyName) {
             PropertyName pt = (PropertyName) crs.getExpression1();
             Name name = getNameFromString(pt.getPropertyName());
-            AttributeDescriptor desc = ft.getDescriptor(name);
+            PropertyDescriptor desc = ft.getDescriptor(name);
             return desc instanceof GeometryDescriptor;
         }
         return true;
     }
 
+    @Override
     public Object visit(Disjoint dsjnt, Object o) {
         if (dsjnt.getExpression1() instanceof PropertyName) {
             PropertyName pt = (PropertyName) dsjnt.getExpression1();
             Name name = getNameFromString(pt.getPropertyName());
-            AttributeDescriptor desc = ft.getDescriptor(name);
+            PropertyDescriptor desc = ft.getDescriptor(name);
             return desc instanceof GeometryDescriptor;
         }
         return true;
     }
 
+    @Override
     public Object visit(DWithin dw, Object o) {
         if (dw.getExpression1() instanceof PropertyName) {
             PropertyName pt = (PropertyName) dw.getExpression1();
             Name name = getNameFromString(pt.getPropertyName());
-            AttributeDescriptor desc = ft.getDescriptor(name);
+            PropertyDescriptor desc = ft.getDescriptor(name);
             return desc instanceof GeometryDescriptor;
         }
         return true;
     }
 
+    @Override
     public Object visit(Equals equals, Object o) {
         if (equals.getExpression1() instanceof PropertyName) {
             PropertyName pt = (PropertyName) equals.getExpression1();
             Name name = getNameFromString(pt.getPropertyName());
-            AttributeDescriptor desc = ft.getDescriptor(name);
+            PropertyDescriptor desc = ft.getDescriptor(name);
             return desc instanceof GeometryDescriptor;
         }
         return true;
     }
 
+    @Override
     public Object visit(Intersects i, Object o) {
         if (i.getExpression1() instanceof PropertyName) {
             PropertyName pt = (PropertyName) i.getExpression1();
             Name name = getNameFromString(pt.getPropertyName());
-            AttributeDescriptor desc = ft.getDescriptor(name);
+            PropertyDescriptor desc = ft.getDescriptor(name);
             return desc instanceof GeometryDescriptor;
         }
         return true;
     }
 
+    @Override
     public Object visit(Overlaps ovrlps, Object o) {
         if (ovrlps.getExpression1() instanceof PropertyName) {
             PropertyName pt = (PropertyName) ovrlps.getExpression1();
             Name name = getNameFromString(pt.getPropertyName());
-            AttributeDescriptor desc = ft.getDescriptor(name);
+            PropertyDescriptor desc = ft.getDescriptor(name);
             return desc instanceof GeometryDescriptor;
         }
         return true;
     }
 
+    @Override
     public Object visit(Touches tchs, Object o) {
         if (tchs.getExpression1() instanceof PropertyName) {
             PropertyName pt = (PropertyName) tchs.getExpression1();
             Name name = getNameFromString(pt.getPropertyName());
-            AttributeDescriptor desc = ft.getDescriptor(name);
+            PropertyDescriptor desc = ft.getDescriptor(name);
             return desc instanceof GeometryDescriptor;
         }
         return true;
     }
 
+    @Override
     public Object visit(Within within, Object o) {
         if (within.getExpression1() instanceof PropertyName) {
             PropertyName pt = (PropertyName) within.getExpression1();
             Name name = getNameFromString(pt.getPropertyName());
-            AttributeDescriptor desc = ft.getDescriptor(name);
+            PropertyDescriptor desc = ft.getDescriptor(name);
             return desc instanceof GeometryDescriptor;
         }
         return true;
     }
 
+    @Override
     public Object visit(NilExpression ne, Object o) {
         return true;
     }
 
+    @Override
     public Object visit(Add add, Object o) {
         return true;
     }
 
+    @Override
     public Object visit(Divide divide, Object o) {
         return true;
     }
 
+    @Override
     public Object visit(Function fnctn, Object o) {
         return true;
     }
 
+    @Override
     public Object visit(Literal ltrl, Object o) {
         return true;
     }
 
+    @Override
     public Object visit(Multiply mltpl, Object o) {
         return true;
     }
 
+    @Override
     public Object visit(PropertyName pn, Object o) {
         return true;
     }
 
+    @Override
     public Object visit(Subtract sbtrct, Object o) {
         return true;
     }

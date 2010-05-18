@@ -357,7 +357,7 @@ public class ShapefileDataStore extends AbstractDataStore{
             && (filterAttnames.length == 0 || (filterAttnames.length == 1 && filterAttnames[0].getLocalPart()
                         .equals(defaultGeomName.getLocalPart())))) {
             try {
-                final SimpleFeatureType newSchema = FeatureTypeUtilities.createSubType(
+                final SimpleFeatureType newSchema = (SimpleFeatureType) FeatureTypeUtilities.createSubType(
                         schema, propertyNames);
 
                 FeatureReader reader = createFeatureReader(typeName,getAttributesReader(false), newSchema,hints);
@@ -375,7 +375,7 @@ public class ShapefileDataStore extends AbstractDataStore{
              try {
                 final SimpleFeatureType newSchema;
                 if (propertyNames != null) {
-                    newSchema = FeatureTypeUtilities.createSubType(schema, propertyNames);
+                    newSchema = (SimpleFeatureType) FeatureTypeUtilities.createSubType(schema, propertyNames);
                 } else {
                     newSchema = schema;
                 }

@@ -49,7 +49,6 @@ import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.util.logging.Logging;
 
 import org.opengis.feature.Feature;
-import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.Name;
@@ -413,7 +412,7 @@ public abstract class AbstractDataStore implements DataStore{
         FeatureType mask = original;
         if(properties != null){
             try {
-                mask = FeatureTypeUtilities.createSubType((SimpleFeatureType) mask, properties);
+                mask = FeatureTypeUtilities.createSubType(mask, properties);
             } catch (SchemaException ex) {
                 throw new DataStoreException(ex);
             }
@@ -421,7 +420,7 @@ public abstract class AbstractDataStore implements DataStore{
         if(hide != null && hide){
             try {
                 //remove primary key properties
-                mask = FeatureTypeUtilities.excludePrimaryKeyFields((SimpleFeatureType) mask);
+                mask = FeatureTypeUtilities.excludePrimaryKeyFields(mask);
             } catch (SchemaException ex) {
                 throw new DataStoreException(ex);
             }
@@ -567,28 +566,28 @@ public abstract class AbstractDataStore implements DataStore{
         }
     }
 
-    public static SimpleFeatureType ensureGMLNS(SimpleFeatureType type){
-        final FeatureTypeBuilder sftb = new FeatureTypeBuilder();
+    public static FeatureType ensureGMLNS(FeatureType type){
+        final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         final AttributeDescriptorBuilder adb = new AttributeDescriptorBuilder();
-        sftb.setName(type.getName());
+        ftb.setName(type.getName());
 
-        for(AttributeDescriptor desc : type.getAttributeDescriptors()){
+        for(PropertyDescriptor desc : type.getDescriptors()){
             adb.reset();
-            adb.copy(desc);
+            adb.copy((AttributeDescriptor) desc);
             if(desc.getName().getLocalPart().equals(GML_NAME)){
                 adb.setName(GML_NAMESPACE, GML_NAME);
-                sftb.add(adb.buildDescriptor());
+                ftb.add(adb.buildDescriptor());
             }else if(desc.getName().getLocalPart().equals(GML_DESCRIPTION)){
                 adb.setName(GML_NAMESPACE, GML_DESCRIPTION);
-                sftb.add(adb.buildDescriptor());
+                ftb.add(adb.buildDescriptor());
             }else{
-                sftb.add(desc);
+                ftb.add(desc);
             }
         }
 
-        sftb.setDefaultGeometry(type.getGeometryDescriptor().getName());
+        ftb.setDefaultGeometry(type.getGeometryDescriptor().getName());
 
-        return sftb.buildSimpleFeatureType();
+        return ftb.buildFeatureType();
     }
 
 }

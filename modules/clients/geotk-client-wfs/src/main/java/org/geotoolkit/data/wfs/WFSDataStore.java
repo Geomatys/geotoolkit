@@ -400,7 +400,7 @@ public class WFSDataStore extends AbstractDataStore{
     private FeatureCollection<SimpleFeature> requestFeature(QName typeName, Query query) throws IOException {
         final Name name = new DefaultName(typeName);
         SimpleFeatureType sft = types.get(name);
-        sft = FeatureTypeUtilities.createSubType(sft, query.getPropertyNames());
+        sft = (SimpleFeatureType) FeatureTypeUtilities.createSubType(sft, query.getPropertyNames());
 
         final GetFeatureRequest request = server.createGetFeature();
         request.setTypeName(typeName);

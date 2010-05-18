@@ -259,14 +259,14 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
                     && (propertyNames.length == 1) && propertyNames[0]
                     .equals(defaultGeomName))) {
                 readDbf = false;
-                newSchema = FeatureTypeUtilities.createSubType(getFeatureType(), propertyNames);
+                newSchema = (SimpleFeatureType) FeatureTypeUtilities.createSubType(getFeatureType(), propertyNames);
             } else if ((query.getPropertyNames() != null)
                     && (propertyNames.length == 0)) {
                 readDbf = false;
                 readGeometry = false;
-                newSchema = FeatureTypeUtilities.createSubType(getFeatureType(), propertyNames);
+                newSchema = (SimpleFeatureType) FeatureTypeUtilities.createSubType(getFeatureType(), propertyNames);
             } else if (query.getPropertyNames() != null) {
-                newSchema = FeatureTypeUtilities.createSubType(getFeatureType(), propertyNames, newSchema.getCoordinateReferenceSystem());
+                newSchema = (SimpleFeatureType) FeatureTypeUtilities.createSubType(getFeatureType(), propertyNames, newSchema.getCoordinateReferenceSystem());
             }
 
             FeatureReader<SimpleFeatureType,SimpleFeature> reader = createFeatureReader(typeName, getAttributesReader(readDbf,
