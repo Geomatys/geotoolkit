@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2009, Geomatys
+ *    (C) 2009-2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -26,6 +26,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -43,19 +44,25 @@ import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.query.DefaultQueryCapabilities;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryCapabilities;
+import org.geotoolkit.factory.FactoryFinder;
+import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.AttributeDescriptorBuilder;
 import org.geotoolkit.feature.AttributeTypeBuilder;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.simple.DefaultSimpleFeatureType;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.feature.FeatureTypeBuilder;
+import org.geotoolkit.feature.LenientFeatureFactory;
 import org.geotoolkit.feature.type.DefaultGeometryDescriptor;
 import org.geotoolkit.filter.identity.DefaultFeatureId;
 import org.geotoolkit.referencing.CRS;
 
 import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureFactory;
+import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.Name;
 import org.opengis.feature.type.PropertyDescriptor;
@@ -68,57 +75,44 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 /**
  *
  * @author Guilhem Legal (Geomatys)
+ * @author Johann Sorel (Geomatys)
  * @module pending
  */
 public class OMDataStore extends AbstractDataStore {
+    /** the feature factory */
+    private static final FeatureFactory FF = FactoryFinder.getFeatureFactory(
+                        new Hints(Hints.FEATURE_FACTORY,LenientFeatureFactory.class));
+    private static final GeometryFactory GF = new GeometryFactory();
 
-    private Logger LOGGER = Logger.getLogger("org.geotoolkit.data.om");
-    
-    private final static Name SAMPLINGPOINT = new DefaultName("http://www.opengis.net/sampling/1.0", "SamplingPoint");
+    private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.data.om");
 
-    private final Map<Name, SimpleFeatureType> types = new HashMap<Name,SimpleFeatureType>();
+    private static final String OM_NAMESPACE = "http://www.opengis.net/sampling/1.0";
+    private static final Name OM_TN_SAMPLINGPOINT = new DefaultName(OM_NAMESPACE, "SamplingPoint");
+
+    protected static final Name ATT_DESC     = new DefaultName(GML_NAMESPACE, "description");
+    protected static final Name ATT_NAME     = new DefaultName(GML_NAMESPACE, "name");
+    protected static final Name ATT_SAMPLED  = new DefaultName(OM_NAMESPACE, "sampledFeature");
+    protected static final Name ATT_POSITION = new DefaultName(OM_NAMESPACE, "position");
+
+    private static final QueryCapabilities capabilities = new DefaultQueryCapabilities(false);
+
+    private final Map<Name, FeatureType> types = new HashMap<Name,FeatureType>();
 
     private final Connection connection;
 
-    private PreparedStatement getAllSamplingPoint;
+    private static final String SQL_ALL_SAMPLING_POINT = "SELECT * FROM \"observation\".\"sampling_points\"";
+    private static final String SQL_WRITE_SAMPLING_POINT = "INSERT INTO \"observation\".\"sampling_points\" VALUES(?,?,?,?,?,?,?,?,?)";
+    private static final String SQL_GET_LAST_ID = "SELECT COUNT(*) FROM \"observation\".\"sampling_points\"";
 
-    private PreparedStatement writeSamplingPoint;
-
-    private PreparedStatement getLastIndentifier;
-
-    protected static final Name DESC     = new DefaultName("http://www.opengis.net/gml", "description");
-    protected static final Name NAME     = new DefaultName("http://www.opengis.net/gml", "name");
-    protected static final Name SAMPLED  = new DefaultName("http://www.opengis.net/sampling/1.0", "sampledFeature");
-    protected static final Name POSITION = new DefaultName("http://www.opengis.net/sampling/1.0", "position");
-
-    private static final GeometryFactory GF = new GeometryFactory();
-
-    private final QueryCapabilities capabilities = new DefaultQueryCapabilities(false);
-    private CoordinateReferenceSystem defaultCRS;
 
     public OMDataStore(Connection connection) {
         super();
         this.connection = connection;
-        try {
-            defaultCRS = CRS.decode("EPSG:27582");
-            
-        } catch (NoSuchAuthorityCodeException ex) {
-            getLogger().log(Level.WARNING, null, ex);
-        } catch (FactoryException ex) {
-            getLogger().log(Level.WARNING, null, ex);
-        }
         initTypes();
-        initStatement();
     }
 
-    private void initStatement() {
-        try {
-            getAllSamplingPoint = connection.prepareStatement("SELECT * FROM \"observation\".\"sampling_points\"");
-            writeSamplingPoint  = connection.prepareStatement("INSERT INTO \"observation\".\"sampling_points\" VALUES(?,?,?,?,?,?,?,?,?)");
-            getLastIndentifier  = connection.prepareStatement("SELECT COUNT(*) FROM \"observation\".\"sampling_points\"");
-        } catch (SQLException ex) {
-           getLogger().severe("SQL Exception while requesting the O&M database:" + ex.getMessage());
-        }
+    private Connection getConnection(){
+        return connection;
     }
 
     private void initTypes() {
@@ -126,15 +120,15 @@ public class OMDataStore extends AbstractDataStore {
         final AttributeDescriptorBuilder attributeDescBuilder   = new AttributeDescriptorBuilder();
         final AttributeTypeBuilder attributeTypeBuilder   = new AttributeTypeBuilder();
 
-        featureTypeBuilder.setName(SAMPLINGPOINT);
+        featureTypeBuilder.setName(OM_TN_SAMPLINGPOINT);
         
         // gml:description
         attributeTypeBuilder.reset();
         attributeTypeBuilder.setBinding(String.class);
         attributeDescBuilder.reset();
-        attributeDescBuilder.setName(DESC);
+        attributeDescBuilder.setName(ATT_DESC);
         attributeDescBuilder.setMaxOccurs(1);
-        attributeDescBuilder.setMinOccurs(0);
+        attributeDescBuilder.setMinOccurs(1);
         attributeDescBuilder.setNillable(true);
         attributeDescBuilder.setType(attributeTypeBuilder.buildType());
         featureTypeBuilder.add(attributeDescBuilder.buildDescriptor());
@@ -143,7 +137,7 @@ public class OMDataStore extends AbstractDataStore {
         attributeTypeBuilder.reset();
         attributeTypeBuilder.setBinding(String.class);
         attributeDescBuilder.reset();
-        attributeDescBuilder.setName(NAME);
+        attributeDescBuilder.setName(ATT_NAME);
         attributeDescBuilder.setMaxOccurs(Integer.MAX_VALUE);
         attributeDescBuilder.setMinOccurs(1);
         attributeDescBuilder.setNillable(false);
@@ -156,7 +150,7 @@ public class OMDataStore extends AbstractDataStore {
         attributeTypeBuilder.reset();
         attributeTypeBuilder.setBinding(String.class);
         attributeDescBuilder.reset();
-        attributeDescBuilder.setName(SAMPLED);
+        attributeDescBuilder.setName(ATT_SAMPLED);
         attributeDescBuilder.setMaxOccurs(Integer.MAX_VALUE);
         attributeDescBuilder.setMinOccurs(1);
         attributeDescBuilder.setNillable(true);
@@ -167,26 +161,25 @@ public class OMDataStore extends AbstractDataStore {
         attributeTypeBuilder.reset();
         attributeTypeBuilder.setBinding(Point.class);
         attributeDescBuilder.reset();
-        attributeDescBuilder.setName(POSITION);
+        attributeDescBuilder.setName(ATT_POSITION);
         attributeDescBuilder.setMaxOccurs(1);
         attributeDescBuilder.setMinOccurs(1);
         attributeDescBuilder.setNillable(false);
         attributeDescBuilder.setType(attributeTypeBuilder.buildGeometryType());
         featureTypeBuilder.add(attributeDescBuilder.buildDescriptor());
 
-        featureTypeBuilder.setDefaultGeometry(POSITION.getLocalPart());
+        featureTypeBuilder.setDefaultGeometry(ATT_POSITION.getLocalPart());
 
-        types.put(SAMPLINGPOINT, featureTypeBuilder.buildSimpleFeatureType());
+        types.put(OM_TN_SAMPLINGPOINT, featureTypeBuilder.buildFeatureType());
     }
 
     /**
      * {@inheritDoc }
      */
     @Override
-    public FeatureReader<SimpleFeatureType, SimpleFeature> getFeatureReader(Query query) throws DataStoreException {
+    public FeatureReader<FeatureType, Feature> getFeatureReader(Query query) throws DataStoreException {
+        final FeatureType sft = getFeatureType(query.getTypeName());
         try {
-            final Name name = query.getTypeName();
-            final SimpleFeatureType sft = types.get(name);
             return handleRemaining(new OMReader(sft), query);
         } catch (SQLException ex) {
             throw new DataStoreException(ex);
@@ -200,12 +193,10 @@ public class OMDataStore extends AbstractDataStore {
     public void dispose() {
         super.dispose();
         try {
-            getAllSamplingPoint.close();
             connection.close();
         } catch (SQLException ex) {
             getLogger().info("SQL Exception while closing O&M datastore");
         }
-
     }
 
     /**
@@ -228,31 +219,8 @@ public class OMDataStore extends AbstractDataStore {
      * {@inheritDoc }
      */
     @Override
-    public void createSchema(Name typeName, FeatureType featureType) throws DataStoreException {
-        types.put(typeName, (SimpleFeatureType) featureType);
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public void updateSchema(Name typeName, FeatureType featureType) throws DataStoreException {
-        types.put(typeName, (SimpleFeatureType) featureType);
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public void deleteSchema(Name typeName) throws DataStoreException {
-        types.remove(typeName);
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
     public FeatureType getFeatureType(Name typeName) throws DataStoreException {
+        typeCheck(typeName);
         return types.get(typeName);
     }
 
@@ -277,69 +245,67 @@ public class OMDataStore extends AbstractDataStore {
      */
     @Override
     public List<FeatureId> addFeatures(Name groupName, Collection<? extends Feature> newFeatures) throws DataStoreException {
-        List<FeatureId> result = new ArrayList<FeatureId>();
-        FeatureType featureType = types.get(groupName);
-        if (featureType != null) {
-            try {
-                for (Feature feature : newFeatures) {
-                    if (feature instanceof SimpleFeature) {
-                        SimpleFeature simpleFeature = (SimpleFeature) feature;
+        final FeatureType featureType = getFeatureType(groupName); //raise an error if type doesn't exist
+        final List<FeatureId> result = new ArrayList<FeatureId>();
 
-                        FeatureId identifier = simpleFeature.getIdentifier();
-                        if (identifier == null || identifier.getID().equals("")) {
-                            identifier = getNewFeatureId();
-                        }
-                        writeSamplingPoint.setString(1, identifier.getID());
-                        writeSamplingPoint.setString(2, (String)simpleFeature.getAttribute(OMDataStore.DESC));
-                        writeSamplingPoint.setString(3, (String)simpleFeature.getAttribute(OMDataStore.NAME));
-                        writeSamplingPoint.setString(4, (String)simpleFeature.getAttribute(OMDataStore.SAMPLED));
-                        writeSamplingPoint.setNull(5, java.sql.Types.VARCHAR);
-                        Object geometry = simpleFeature.getDefaultGeometry();
-                        if (geometry instanceof Point) {
-                            Point pt = (Point) geometry;
-                            String crsIdentifier = null;
-                            if (featureType.getCoordinateReferenceSystem() != null) {
-                                try {
-                                    crsIdentifier = CRS.lookupIdentifier(featureType.getCoordinateReferenceSystem(), true);
-                                } catch (FactoryException ex) {
-                                    LOGGER.log(Level.WARNING, null, ex);
-                                }
-                            }
-                            if (identifier != null) {
-                                writeSamplingPoint.setString(6, crsIdentifier);
-                            } else {
-                                writeSamplingPoint.setNull(6, java.sql.Types.VARCHAR);
-                            }
-                            writeSamplingPoint.setInt(7, 2);
-                            writeSamplingPoint.setDouble(8, pt.getX());
-                            writeSamplingPoint.setDouble(9, pt.getY());
-                        } else {
-                            writeSamplingPoint.setNull(6, java.sql.Types.VARCHAR);
-                            writeSamplingPoint.setNull(7, java.sql.Types.INTEGER);
-                            writeSamplingPoint.setNull(8, java.sql.Types.DOUBLE);
-                            writeSamplingPoint.setNull(9, java.sql.Types.DOUBLE);
-                        }
-                        writeSamplingPoint.executeUpdate();
-                        result.add(identifier);
-                    }
+        try {
+            for(final Feature feature : newFeatures) {
+                FeatureId identifier = feature.getIdentifier();
+                if (identifier == null || identifier.getID().isEmpty()) {
+                    identifier = getNewFeatureId();
                 }
-            } catch (SQLException ex) {
-                LOGGER.log(Level.WARNING, writeSamplingPoint.toString(), ex);
+
+                final Connection cnx = getConnection();
+                final PreparedStatement stmtWrite = cnx.prepareStatement(SQL_WRITE_SAMPLING_POINT);
+
+                stmtWrite.setString(1, identifier.getID());
+                stmtWrite.setString(2, (String)feature.getProperty(ATT_DESC).getValue());
+                stmtWrite.setString(3, (String)feature.getProperty(ATT_NAME).getValue());
+                stmtWrite.setString(4, (String)feature.getProperty(ATT_SAMPLED).getValue());
+                stmtWrite.setNull(5, java.sql.Types.VARCHAR);
+                final Object geometry = feature.getDefaultGeometryProperty().getValue();
+                if (geometry instanceof Point) {
+                    final Point pt = (Point) geometry;
+                    String crsIdentifier = null;
+                    if (featureType.getCoordinateReferenceSystem() != null) {
+                        try {
+                            crsIdentifier = CRS.lookupIdentifier(featureType.getCoordinateReferenceSystem(), true);
+                        } catch (FactoryException ex) {
+                            LOGGER.log(Level.WARNING, null, ex);
+                        }
+                    }
+                    if (identifier != null) {
+                        stmtWrite.setString(6, crsIdentifier);
+                    } else {
+                        stmtWrite.setNull(6, Types.VARCHAR);
+                    }
+                    stmtWrite.setInt(7, 2);
+                    stmtWrite.setDouble(8, pt.getX());
+                    stmtWrite.setDouble(9, pt.getY());
+                } else {
+                    stmtWrite.setNull(6, Types.VARCHAR);
+                    stmtWrite.setNull(7, Types.INTEGER);
+                    stmtWrite.setNull(8, Types.DOUBLE);
+                    stmtWrite.setNull(9, Types.DOUBLE);
+                }
+                stmtWrite.executeUpdate();
+                result.add(identifier);
             }
-        } else {
-            throw new DataStoreException("there is no such featureType: " + groupName);
+        } catch (SQLException ex) {
+            LOGGER.log(Level.WARNING, SQL_WRITE_SAMPLING_POINT.toString(), ex);
         }
+
         return result;
     }
 
     public FeatureId getNewFeatureId() {
-        String identifier = "sampling-point-";
         try {
-            ResultSet result = getLastIndentifier.executeQuery();
+            final Connection cnx = getConnection();
+            final PreparedStatement stmtLastId = cnx.prepareStatement(SQL_GET_LAST_ID);
+            final ResultSet result = stmtLastId.executeQuery();
             if (result.next()) {
-                int nb = result.getInt(1) + 1;
-                identifier = identifier + nb;
-                return new DefaultFeatureId(identifier);
+                final int nb = result.getInt(1) + 1;
+                return new DefaultFeatureId("sampling-point-"+nb);
             }
         } catch (SQLException ex) {
             LOGGER.log(Level.WARNING, null, ex);
@@ -347,12 +313,41 @@ public class OMDataStore extends AbstractDataStore {
         return null;
     }
 
+    
+    ////////////////////////////////////////////////////////////////////////////
+    // No supported stuffs /////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public void createSchema(Name typeName, FeatureType featureType) throws DataStoreException {
+        throw new DataStoreException("Not Supported.");
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public void updateSchema(Name typeName, FeatureType featureType) throws DataStoreException {
+        throw new DataStoreException("Not Supported.");
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public void deleteSchema(Name typeName) throws DataStoreException {
+        throw new DataStoreException("Not Supported.");
+    }
+
     /**
      * {@inheritDoc }
      */
     @Override
     public void updateFeatures(Name groupName, Filter filter, Map<? extends PropertyDescriptor, ? extends Object> values) throws DataStoreException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        throw new DataStoreException("Not supported.");
     }
 
     /**
@@ -360,21 +355,26 @@ public class OMDataStore extends AbstractDataStore {
      */
     @Override
     public void removeFeatures(Name groupName, Filter filter) throws DataStoreException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        throw new DataStoreException("Not supported.");
     }
+
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Feature Reader //////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
 
     private class OMReader implements FeatureReader{
 
         private boolean firstCRS = true;
-        private final SimpleFeatureType type;
-        private final SimpleFeatureBuilder builder;
+        private final FeatureType type;
         private final ResultSet result;
-        private SimpleFeature next = null;
+        private Feature current = null;
 
-        private OMReader(SimpleFeatureType type) throws SQLException{
+        private OMReader(FeatureType type) throws SQLException{
             this.type = type;
-            builder = new SimpleFeatureBuilder(type);
-            result = getAllSamplingPoint.executeQuery();
+            final Connection cnx = getConnection();
+            final PreparedStatement stmtAll = cnx.prepareStatement(SQL_ALL_SAMPLING_POINT);
+            result = stmtAll.executeQuery();
         }
 
         @Override
@@ -385,32 +385,31 @@ public class OMDataStore extends AbstractDataStore {
         @Override
         public Feature next() throws DataStoreRuntimeException {
             try {
-                getNext();
+                read();
             } catch (Exception ex) {
                 throw new DataStoreRuntimeException(ex);
             }
-            SimpleFeature candidate = next;
-            next = null;
+            Feature candidate = current;
+            current = null;
             return candidate;
         }
 
         @Override
         public boolean hasNext() throws DataStoreRuntimeException {
             try {
-                getNext();
+                read();
             } catch (Exception ex) {
                 throw new DataStoreRuntimeException(ex);
             }
-            return next != null;
+            return current != null;
         }
 
-        private void getNext() throws Exception{
-            if(next != null) return;
+        private void read() throws Exception{
+            if(current != null) return;
 
             if(!result.next()){
                 return;
             }
-
 
             if (firstCRS) {
                 try {
@@ -428,17 +427,19 @@ public class OMDataStore extends AbstractDataStore {
                     throw new IOException(ex);
                 }
             }
-            builder.reset();
-            String id = result.getString("id");
-            builder.set(DESC, result.getString("description"));
-            builder.set(NAME, result.getString("name"));
-            builder.set(SAMPLED, result.getString("sampled_feature"));
 
-            double x         = result.getDouble("x_value");
-            double y         = result.getDouble("y_value");
-            Coordinate coord = new Coordinate(x, y);
-            builder.set(POSITION, GF.createPoint(coord));
-            next = builder.buildFeature(id);
+            final Collection<Property> props = new ArrayList<Property>();
+            final String id = result.getString("id");
+            final double x = result.getDouble("x_value");
+            final double y = result.getDouble("y_value");
+            final Coordinate coord = new Coordinate(x, y);
+
+            props.add(FF.createAttribute(result.getString("description"), (AttributeDescriptor) type.getDescriptor(ATT_DESC), null));
+            props.add(FF.createAttribute(result.getString("name"), (AttributeDescriptor) type.getDescriptor(ATT_NAME), null));
+            props.add(FF.createAttribute(result.getString("sampled_feature"), (AttributeDescriptor) type.getDescriptor(ATT_SAMPLED), null));
+            props.add(FF.createAttribute(GF.createPoint(coord), (AttributeDescriptor) type.getDescriptor(ATT_POSITION), null));
+
+            current = FF.createFeature(props, type, id);
         }
 
         @Override
