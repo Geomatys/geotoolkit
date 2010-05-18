@@ -20,13 +20,16 @@ package org.geotoolkit.feature.xml.jaxp;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
@@ -37,21 +40,22 @@ import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.LenientFeatureFactory;
-import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.feature.xml.Utils;
+import org.geotoolkit.feature.xml.XmlFeatureReader;
 import org.geotoolkit.feature.xml.jaxb.JAXBEventHandler;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.JTSGeometry;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.aggregate.JTSMultiCurve;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.geotoolkit.internal.jaxb.LineStringPosListType;
+import org.geotoolkit.internal.jaxb.ObjectFactory;
 import org.geotoolkit.internal.jaxb.PolygonType;
 import org.geotoolkit.util.Converters;
+import org.geotoolkit.xml.MarshallerPool;
+import org.geotoolkit.xml.StaxStreamReader;
 
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureFactory;
 import org.opengis.feature.Property;
-import org.opengis.feature.simple.SimpleFeature;
-import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.GeometryDescriptor;
@@ -66,17 +70,46 @@ import static javax.xml.stream.events.XMLEvent.*;
  * @author Guilhem Legal (Geomatys)
  * @author Johann Sorel (Geomatys)
  */
-public class JAXPStreamFeatureReader extends JAXPFeatureReader {
+public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeatureReader {
 
     private static final FeatureFactory FF = FactoryFinder.getFeatureFactory(
             new Hints(Hints.FEATURE_FACTORY,LenientFeatureFactory.class));
 
+    protected static final Logger LOGGER = Logger.getLogger("org.geotoolkit.feature.xml.jaxp");
+    private static MarshallerPool marshallpool;
+
+    static {
+        try {
+            marshallpool = new MarshallerPool(ObjectFactory.class);
+        } catch (JAXBException ex) {
+            LOGGER.log(Level.SEVERE, "JAXB Exception while initalizing the marshaller pool", ex);
+        }
+    }
+    protected List<FeatureType> featureTypes;
+    protected final Unmarshaller unmarshaller;
+
     public JAXPStreamFeatureReader(FeatureType featureType) throws JAXBException {
-        super(featureType);
+        this.featureTypes = Arrays.asList(featureType);
+        this.unmarshaller = marshallpool.acquireUnmarshaller();
+
     }
 
     public JAXPStreamFeatureReader(List<FeatureType> featureTypes) throws JAXBException {
-        super(featureTypes);
+        this.featureTypes = featureTypes;
+        this.unmarshaller = marshallpool.acquireUnmarshaller();
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public void setFeatureType(FeatureType featureType) {
+        this.featureTypes = Arrays.asList(featureType);
+    }
+
+    @Override
+    public void dispose() {
+        marshallpool.release(unmarshaller);
     }
 
     @Override

@@ -22,7 +22,9 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
@@ -30,10 +32,14 @@ import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.feature.xml.Utils;
+import org.geotoolkit.feature.xml.XmlFeatureWriter;
 import org.geotoolkit.geometry.isoonjts.JTSUtils;
+import org.geotoolkit.internal.jaxb.ObjectFactory;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.xml.MarshallerPool;
 import org.geotoolkit.xml.Namespaces;
+import org.geotoolkit.xml.StaxStreamWriter;
 
 import org.opengis.feature.Feature;
 import org.opengis.feature.Property;
@@ -48,7 +54,29 @@ import org.opengis.referencing.FactoryException;
  *
  * @author Guilhem Legal (Geomatys)
  */
-public class JAXPStreamFeatureWriter extends JAXPFeatureWriter {
+public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeatureWriter {
+
+    protected static final Logger LOGGER = Logger.getLogger("org.geotoolkit.feature.xml.jaxp");
+
+    protected String schemaLocation;
+
+    private static MarshallerPool pool;
+    static {
+        try {
+            Map<String, String> properties = new HashMap<String, String>();
+            properties.put(Marshaller.JAXB_FRAGMENT, "true");
+            properties.put(Marshaller.JAXB_FORMATTED_OUTPUT, "false");
+            pool = new MarshallerPool(properties, ObjectFactory.class);
+        } catch (JAXBException ex) {
+            LOGGER.log(Level.SEVERE, "JAXB Exception while initalizing the marshaller pool", ex);
+        }
+    }
+
+    protected static ObjectFactory factory = new ObjectFactory();
+
+    protected final Marshaller marshaller;
+
+    public static final String GML_NAMESPACE = "http://www.opengis.net/gml";
 
     private int lastUnknowPrefix = 0;
 
@@ -56,11 +84,27 @@ public class JAXPStreamFeatureWriter extends JAXPFeatureWriter {
 
 
     public JAXPStreamFeatureWriter() throws JAXBException {
-        super();
+         marshaller = pool.acquireMarshaller();
+         marshaller.setProperty(Marshaller.JAXB_FRAGMENT, true);
+         marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, false);
     }
 
     public JAXPStreamFeatureWriter(Map<String, String> schemaLocations) throws JAXBException {
-        super(schemaLocations);
+         marshaller = pool.acquireMarshaller();
+         marshaller.setProperty(Marshaller.JAXB_FRAGMENT, true);
+         marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, false);
+         if (schemaLocations != null && schemaLocations.size() > 0) {
+             schemaLocation = "";
+             for (String s : schemaLocations.keySet()) {
+                 schemaLocation = schemaLocation + s + " " + schemaLocations.get(s) + " ";
+             }
+             schemaLocation = schemaLocation.substring(0, schemaLocation.length() - 1);
+         }
+    }
+
+    @Override
+    public void dispose() {
+        pool.release(marshaller);
     }
 
     @Override
