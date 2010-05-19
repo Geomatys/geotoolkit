@@ -94,7 +94,8 @@ public class AllowedValues implements AbstractAllowedValues {
             this.id = av.getId();
             this.max = av.getMax();
             this.min = av.getMin();
-            throw new IllegalArgumentException("AllowedValues are not yet convertible");
+            this.setInterval(av.getInterval());
+            this.setValueList(av.getValueList());
         }
     }
 

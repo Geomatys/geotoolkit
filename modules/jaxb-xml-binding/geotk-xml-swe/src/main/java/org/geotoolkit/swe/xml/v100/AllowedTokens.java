@@ -76,7 +76,11 @@ public class AllowedTokens implements AbstractAllowedTokens {
     public AllowedTokens(AbstractAllowedTokens tk) {
         if (tk != null) {
             this.id = tk.getId();
-            throw new IllegalArgumentException("The allowed Token are not yet convertible");
+            valueList = new ArrayList<JAXBElement<List<String>>>();
+            ObjectFactory facto = new ObjectFactory();
+            for (JAXBElement<List<String>> jbList : tk.getValueList()) {
+                this.valueList.add(facto.createAllowedTokensValueList(jbList.getValue()));
+            }
         }
     }
     

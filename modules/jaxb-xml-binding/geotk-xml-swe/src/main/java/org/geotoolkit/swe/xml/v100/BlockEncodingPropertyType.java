@@ -23,7 +23,9 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.swe.xml.AbstractBinaryBlock;
 import org.geotoolkit.swe.xml.AbstractEncodingProperty;
+import org.geotoolkit.swe.xml.AbstractStandardFormat;
 import org.geotoolkit.swe.xml.BlockEncodingProperty;
 
 
@@ -118,6 +120,28 @@ public class BlockEncodingPropertyType implements BlockEncodingProperty, Abstrac
             }
             if (be.getXMLBlock() != null) {
                 this.xmlBlock = new XMLBlockType(be.getXMLBlock());
+            }
+        }
+    }
+
+    public BlockEncodingPropertyType(AbstractEncodingProperty be) {
+        if (be != null) {
+            this.actuate      = be.getActuate();
+            this.arcrole      = be.getArcrole();
+            this.href         = be.getHref();
+            this.remoteSchema = be.getRemoteSchema();
+            this.role         = be.getRole();
+            this.show         = be.getShow();
+            this.title        = be.getTitle();
+            this.type         = be.getType();
+            if (be.getEncoding() instanceof AbstractBinaryBlock) {
+                this.binaryBlock = new BinaryBlock((AbstractBinaryBlock)be.getEncoding());
+            } else if (be.getEncoding() instanceof AbstractStandardFormat) {
+                this.standardFormat = new StandardFormat((AbstractStandardFormat)be.getEncoding());
+            } else if (be.getEncoding() instanceof org.geotoolkit.swe.xml.TextBlock) {
+                this.textBlock = new TextBlock((org.geotoolkit.swe.xml.TextBlock)be.getEncoding());
+            } else if (be.getEncoding() instanceof org.geotoolkit.swe.xml.XmlBlock) {
+                this.xmlBlock = new XMLBlockType((org.geotoolkit.swe.xml.XmlBlock)be.getEncoding());
             }
         }
     }

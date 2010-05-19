@@ -79,14 +79,13 @@ public class DataBlockDefinitionType implements DataBlockDefinition {
 
     public DataBlockDefinitionType(DataBlockDefinition db) {
         if (db != null) {
-            throw new IllegalArgumentException("not supported yet");
-           /* this.id = db.getId();
+            this.id = db.getId();
             if (db.getEncoding() != null) {
                 this.encoding = new BlockEncodingPropertyType(db.getEncoding());
             }
             if (db.getComponents() != null && db.getComponents().size() > 0) {
                 this.components = new DataComponentPropertyType(db.getComponents().iterator().next());
-            }*/
+            }
         }
     }
     

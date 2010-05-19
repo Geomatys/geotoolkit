@@ -136,6 +136,14 @@ public class AbstractEncodingPropertyType implements AbstractEncodingProperty {
         
         if (encoding instanceof TextBlockEntry) {
             this.encoding = sweFactory.createTextBlock((TextBlockEntry)encoding);
+        } else if (encoding instanceof MultiplexedStreamFormatType) {
+            this.encoding = sweFactory.createMultiplexedStreamFormat((MultiplexedStreamFormatType) encoding);
+
+        } else if (encoding instanceof TextBlockEntry) {
+            this.encoding = sweFactory.createTextBlock((TextBlockEntry) encoding);
+
+        } else if (encoding instanceof XMLBlockType) {
+            this.encoding = sweFactory.createXMLBlock((XMLBlockType) encoding);
         } else {
             throw new IllegalArgumentException("only TextBlock are allowed");
         }
@@ -150,7 +158,16 @@ public class AbstractEncodingPropertyType implements AbstractEncodingProperty {
         this.arcrole        = clone.arcrole;
         if (clone.encoding != null) {
             if (clone.encoding.getValue() instanceof TextBlockEntry) {
-                this.encoding = sweFactory.createTextBlock((TextBlockEntry)clone.encoding.getValue());
+                this.encoding = sweFactory.createTextBlock((TextBlockEntry) clone.encoding.getValue());
+
+            } else if (encoding.getValue() instanceof MultiplexedStreamFormatType) {
+                this.encoding = sweFactory.createMultiplexedStreamFormat((MultiplexedStreamFormatType) encoding.getValue());
+
+            } else if (encoding.getValue() instanceof TextBlockEntry) {
+                this.encoding = sweFactory.createTextBlock((TextBlockEntry) encoding.getValue());
+
+            } else if (encoding.getValue() instanceof XMLBlockType) {
+                this.encoding = sweFactory.createXMLBlock((XMLBlockType) encoding.getValue());
             } else {
                 throw new IllegalArgumentException("only TextBlock are allowed");
             }

@@ -17,6 +17,8 @@
 
 package org.geotoolkit.swe.xml;
 
+import java.util.List;
+
 /**
  *
  * @author Guilhem Legal (Geomatys)
@@ -34,4 +36,8 @@ public interface AbstractAllowedValues {
     String getId();
 
     void setId(String value);
+
+    List<Double> getInterval();
+
+    List<Double> getValueList();
 }

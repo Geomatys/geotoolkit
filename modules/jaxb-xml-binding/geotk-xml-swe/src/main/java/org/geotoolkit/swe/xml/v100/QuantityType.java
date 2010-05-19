@@ -106,7 +106,7 @@ public class QuantityType extends AbstractDataComponentType implements Quantity 
         this.value  = value;
     }
 
-  
+
     /**
      * Gets the value of the uom property.
      */

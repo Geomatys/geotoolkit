@@ -16,6 +16,9 @@
  */
 package org.geotoolkit.swe.xml;
 
+import java.util.List;
+import javax.xml.bind.JAXBElement;
+
 /**
  *
  * @author Guilhem Legal (Geomatys)
@@ -23,4 +26,6 @@ package org.geotoolkit.swe.xml;
 public interface AbstractAllowedTokens {
 
     String getId();
+
+     List<JAXBElement<List<String>>> getValueList();
 }

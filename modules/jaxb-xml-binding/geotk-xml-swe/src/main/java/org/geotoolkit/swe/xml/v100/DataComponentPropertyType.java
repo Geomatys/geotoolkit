@@ -28,9 +28,19 @@ import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import org.geotoolkit.swe.xml.AbstractBoolean;
+import org.geotoolkit.swe.xml.AbstractCategory;
+import org.geotoolkit.swe.xml.AbstractCount;
+import org.geotoolkit.swe.xml.AbstractCountRange;
+import org.geotoolkit.swe.xml.AbstractDataComponent;
 import org.geotoolkit.swe.xml.AbstractDataRecord;
+import org.geotoolkit.swe.xml.AbstractQuantityRange;
+import org.geotoolkit.swe.xml.AbstractText;
+import org.geotoolkit.swe.xml.AbstractTime;
+import org.geotoolkit.swe.xml.AbstractTimeRange;
 import org.geotoolkit.swe.xml.DataComponentProperty;
 import org.geotoolkit.swe.xml.DataRecord;
+import org.geotoolkit.swe.xml.Quantity;
 import org.geotoolkit.swe.xml.SimpleDataRecord;
 import org.geotoolkit.util.Utilities;
 
@@ -241,6 +251,53 @@ public class DataComponentPropertyType implements DataComponentProperty {
             }
             this.title = d.getTitle();
             this.type = d.getType();
+        }
+    }
+
+    public DataComponentPropertyType(AbstractDataComponent d) {
+        if (d != null){
+            if (d instanceof AbstractBoolean) {
+                this._boolean = new BooleanType((AbstractBoolean)d);
+            }
+            if (d instanceof AbstractDataRecord) {
+                ObjectFactory sweFactory = new ObjectFactory();
+                AbstractDataRecord record = (AbstractDataRecord) d;
+                if (record instanceof SimpleDataRecord) {
+                    record = new SimpleDataRecordType((SimpleDataRecord)record);
+                    this.abstractDataRecord = sweFactory.createSimpleDataRecord((SimpleDataRecordType) record);
+                } else if (record instanceof DataRecord) {
+                    record = new DataRecordType((DataRecord)record);
+                    this.abstractDataRecord = sweFactory.createDataRecord((DataRecordType) record);
+                } else {
+                    throw new IllegalArgumentException("this type is not yet handled in dataComponentPropertyType:" + record);
+                }
+            }
+
+            if (d instanceof AbstractCategory) {
+                this.category = new Category((AbstractCategory) d);
+            }
+            if (d instanceof AbstractCount) {
+                this.count = new Count((AbstractCount) d);
+            }
+            if (d instanceof AbstractCountRange) {
+                this.countRange = new CountRange((AbstractCountRange) d);
+            }
+            this.name = d.getName();
+            if (d instanceof Quantity) {
+                this.quantity = new QuantityType((Quantity) d);
+            }
+            if (d instanceof QuantityRange) {
+                this.quantityRange = new QuantityRange((AbstractQuantityRange) d);
+            }
+            if (d instanceof  AbstractText) {
+                this.text = new Text((AbstractText) d);
+            }
+            if (d instanceof  AbstractTime) {
+                this.time = new TimeType((AbstractTime) d);
+            }
+            if (d instanceof AbstractTimeRange) {
+                this.timeRange = new TimeRange((AbstractTimeRange)d);
+            }
         }
     }
     
