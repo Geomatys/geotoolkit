@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<xsd:schema elementFormDefault="qualified" 
+    targetNamespace="http://www.opengis.net/gml"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:gml="http://www.opengis.net/gml"
+    xmlns:wfs="http://www.opengis.net/wfs">
+
+    <xsd:import schemaLocation="http://schemas.opengis.net/gml/3.1.1/base/gml.xsd" namespace="http://www.opengis.net/gml"/>
+    <xsd:element name="TestComplex" type="gml:TestComplexType" />
+    <xsd:complexType name="TestComplexType">
+        <xsd:complexContent>
+            <xsd:extension base="gml:_Feature" >
+                <xsd:sequence>
+                    <xsd:element name="ID"                  maxOccurs="1" minOccurs="1" nillable="true" type="xsd:integer"/>
+                    <xsd:element name="attString"           maxOccurs="1" minOccurs="1" nillable="true" type="xsd:string"/>
+                    <xsd:element name="attShort"            maxOccurs="1" minOccurs="1" nillable="true" type="xsd:short"/>
+                    <xsd:element name="attInteger"          maxOccurs="1" minOccurs="1" nillable="true" type="xsd:integer"/>
+                    <xsd:element name="attLong"             maxOccurs="1" minOccurs="0" nillable="true" type="xsd:long"/>
+                    <xsd:element name="attDouble"           maxOccurs="1" minOccurs="0" nillable="true" type="xsd:double"/>
+                    <xsd:element name="attDecimal"          maxOccurs="1" minOccurs="0" nillable="true" type="xsd:decimal"/>
+                    <xsd:element name="attDate"             maxOccurs="unbounded" minOccurs="1" nillable="true" type="xsd:date"/>
+                    <xsd:element name="attDateTime"         maxOccurs="unbounded" minOccurs="1" nillable="true" type="xsd:dateTime"/>
+                    <xsd:element name="attBoolean"          maxOccurs="unbounded" minOccurs="1" nillable="true" type="xsd:boolean"/>
+                    <xsd:element name="geomPoint"           maxOccurs="unbounded" minOccurs="0" nillable="true" type="gml:Point"/>
+                    <xsd:element name="geomMultiPoint"      maxOccurs="unbounded" minOccurs="0" nillable="true" type="gml:MultiPoint"/>
+                    <xsd:element name="geomLine"            maxOccurs="unbounded" minOccurs="0" nillable="true" type="gml:Curve"/>
+                    <xsd:element name="geomMultiLine"       maxOccurs="unbounded" minOccurs="1" nillable="true" type="gml:CompositeCurve"/>
+                    <xsd:element name="geomPolygon"         maxOccurs="unbounded" minOccurs="1" nillable="true" type="gml:Polygon"/>
+                    <xsd:element name="geomMultiPolygon"    maxOccurs="unbounded" minOccurs="1" nillable="true" type="gml:MultiGeometry"/>
+                    <xsd:element name="geomMultiGeometry"   maxOccurs="unbounded" minOccurs="1" nillable="true" type="gml:MultiGeometry"/>
+                    <xsd:element name="geomAnyGeometry"     maxOccurs="unbounded" minOccurs="1" nillable="true" type="gml:GeometryPropertyType"/>
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+</xsd:schema>

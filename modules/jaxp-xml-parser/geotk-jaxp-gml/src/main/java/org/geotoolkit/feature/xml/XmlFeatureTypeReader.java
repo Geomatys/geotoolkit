@@ -20,6 +20,7 @@ package org.geotoolkit.feature.xml;
 import java.io.InputStream;
 import java.io.Reader;
 import java.util.List;
+import javax.xml.bind.JAXBException;
 import org.opengis.feature.type.FeatureType;
 
 /**
@@ -37,7 +38,7 @@ public interface XmlFeatureTypeReader {
      *
      * @return A Feature type or {@code null}
      */
-    public List<FeatureType> read(String xml);
+    public List<FeatureType> read(String xml) throws JAXBException;
 
     /**
      * Read a list feature type from the specified XML (XSD) stream.
@@ -46,7 +47,7 @@ public interface XmlFeatureTypeReader {
      *
      * @return A Feature type or {@code null}
      */
-    public List<FeatureType> read(InputStream in);
+    public List<FeatureType> read(InputStream in) throws JAXBException;
 
     /**
      * Read a feature type from the specified XML  (XSD) reader.
@@ -55,7 +56,7 @@ public interface XmlFeatureTypeReader {
      *
      * @return A Feature type or {@code null}
      */
-    public List<FeatureType> read(Reader reader);
+    public List<FeatureType> read(Reader reader) throws JAXBException;
 
     /**
      * Read a feature type from the specified XML  (XSD) reader.
@@ -64,7 +65,7 @@ public interface XmlFeatureTypeReader {
      *
      * @return A Feature type or {@code null}
      */
-    public FeatureType read(String xml, String name);
+    public FeatureType read(String xml, String name) throws JAXBException;
 
     /**
      * Read a feature type from the specified XML (XSD) stream.
@@ -73,7 +74,7 @@ public interface XmlFeatureTypeReader {
      *
      * @return A Feature type or {@code null}
      */
-    public FeatureType read(InputStream in, String name);
+    public FeatureType read(InputStream in, String name) throws JAXBException;
 
     /**
      * Read a feature type from the specified XML  (XSD) reader.
@@ -82,5 +83,5 @@ public interface XmlFeatureTypeReader {
      *
      * @return A Feature type or {@code null}
      */
-    public FeatureType read(Reader reader, String name);
+    public FeatureType read(Reader reader, String name) throws JAXBException;
 }

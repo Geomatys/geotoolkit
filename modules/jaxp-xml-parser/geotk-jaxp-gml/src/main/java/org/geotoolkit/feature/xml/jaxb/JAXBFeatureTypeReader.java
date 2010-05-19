@@ -50,6 +50,8 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 /**
  *
  * @author Guilhem Legal (Geomatys)
+ * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class JAXBFeatureTypeReader implements XmlFeatureTypeReader {
 
@@ -64,109 +66,84 @@ public class JAXBFeatureTypeReader implements XmlFeatureTypeReader {
         }
     }
 
-    private FeatureTypeBuilder builder;
+    private final FeatureTypeBuilder builder = new FeatureTypeBuilder();
 
     public JAXBFeatureTypeReader() throws JAXBException {
-         builder = new FeatureTypeBuilder();
     }
 
      /**
      * {@inheritDoc }
      */
     @Override
-    public List<FeatureType> read(String xml) {
-        try {
-            Unmarshaller unmarshaller = marshallpool.acquireUnmarshaller();
-            Schema schema             = (Schema) unmarshaller.unmarshal(new StringReader(xml));
-            return getAllFeatureTypeFromSchema(schema);
-        } catch (JAXBException ex) {
-            LOGGER.log(Level.WARNING, null, ex);
-        }
-        return null;
+    public List<FeatureType> read(String xml) throws JAXBException {
+        builder.reset();
+        final Unmarshaller unmarshaller = marshallpool.acquireUnmarshaller();
+        final Schema schema             = (Schema) unmarshaller.unmarshal(new StringReader(xml));
+        return getAllFeatureTypeFromSchema(schema);
     }
 
      /**
      * {@inheritDoc }
      */
     @Override
-    public List<FeatureType> read(InputStream in) {
-        try {
-            Unmarshaller unmarshaller = marshallpool.acquireUnmarshaller();
-            Schema schema             = (Schema) unmarshaller.unmarshal(in);
-            return getAllFeatureTypeFromSchema(schema);
-        } catch (JAXBException ex) {
-            LOGGER.log(Level.WARNING, null, ex);
-        }
-        return null;
+    public List<FeatureType> read(InputStream in) throws JAXBException {
+        builder.reset();
+        final Unmarshaller unmarshaller = marshallpool.acquireUnmarshaller();
+        final Schema schema             = (Schema) unmarshaller.unmarshal(in);
+        return getAllFeatureTypeFromSchema(schema);
     }
 
      /**
      * {@inheritDoc }
      */
     @Override
-    public List<FeatureType> read(Reader reader) {
-        try {
-            Unmarshaller unmarshaller = marshallpool.acquireUnmarshaller();
-            Schema schema             = (Schema) unmarshaller.unmarshal(reader);
-            return getAllFeatureTypeFromSchema(schema);
-        } catch (JAXBException ex) {
-            LOGGER.log(Level.WARNING, null, ex);
-        }
-        return null;
+    public List<FeatureType> read(Reader reader) throws JAXBException {
+        builder.reset();
+        final Unmarshaller unmarshaller = marshallpool.acquireUnmarshaller();
+        final Schema schema             = (Schema) unmarshaller.unmarshal(reader);
+        return getAllFeatureTypeFromSchema(schema);
     }
 
      /**
      * {@inheritDoc }
      */
     @Override
-    public FeatureType read(String xml, String name) {
-        try {
-            Unmarshaller unmarshaller = marshallpool.acquireUnmarshaller();
-            Schema schema             = (Schema) unmarshaller.unmarshal(new StringReader(xml));
-            return getFeatureTypeFromSchema(schema, name);
-        } catch (JAXBException ex) {
-            LOGGER.log(Level.WARNING, null, ex);
-        }
-        return null;
+    public FeatureType read(String xml, String name) throws JAXBException {
+        builder.reset();
+        final Unmarshaller unmarshaller = marshallpool.acquireUnmarshaller();
+        final Schema schema             = (Schema) unmarshaller.unmarshal(new StringReader(xml));
+        return getFeatureTypeFromSchema(schema, name);
     }
 
      /**
      * {@inheritDoc }
      */
     @Override
-    public FeatureType read(InputStream in, String name) {
-        try {
-            Unmarshaller unmarshaller = marshallpool.acquireUnmarshaller();
-            Schema schema             = (Schema) unmarshaller.unmarshal(in);
-            return getFeatureTypeFromSchema(schema, name);
-        } catch (JAXBException ex) {
-            LOGGER.log(Level.WARNING, null, ex);
-        }
-        return null;
+    public FeatureType read(InputStream in, String name) throws JAXBException {
+        builder.reset();
+        final Unmarshaller unmarshaller = marshallpool.acquireUnmarshaller();
+        final Schema schema             = (Schema) unmarshaller.unmarshal(in);
+        return getFeatureTypeFromSchema(schema, name);
     }
 
      /**
      * {@inheritDoc }
      */
     @Override
-    public FeatureType read(Reader reader, String name) {
-        try {
-            Unmarshaller unmarshaller = marshallpool.acquireUnmarshaller();
-            Schema schema             = (Schema) unmarshaller.unmarshal(reader);
-            return getFeatureTypeFromSchema(schema, name);
-        } catch (JAXBException ex) {
-            LOGGER.log(Level.WARNING, null, ex);
-        }
-        return null;
+    public FeatureType read(Reader reader, String name) throws JAXBException {
+        builder.reset();
+        final Unmarshaller unmarshaller = marshallpool.acquireUnmarshaller();
+        final Schema schema             = (Schema) unmarshaller.unmarshal(reader);
+        return getFeatureTypeFromSchema(schema, name);
     }
 
 
     private List<FeatureType> getAllFeatureTypeFromSchema(Schema schema) {
-        List<FeatureType> result = new ArrayList<FeatureType>();
+        final List<FeatureType> result = new ArrayList<FeatureType>();
         for (TopLevelElement element : schema.getElements()) {
-            QName typeName           = element.getType();
+            final QName typeName = element.getType();
             builder.setName(new DefaultName(typeName.getNamespaceURI(), element.getName()));
-            TopLevelComplexType type = schema.getComplexTypeByName(typeName.getLocalPart());
+            final TopLevelComplexType type = schema.getComplexTypeByName(typeName.getLocalPart());
             result.add(getFeatureTypeFromSchema(type, typeName.getNamespaceURI()));
         }
         return result;
@@ -174,12 +151,12 @@ public class JAXBFeatureTypeReader implements XmlFeatureTypeReader {
     
     
     private FeatureType getFeatureTypeFromSchema(Schema schema, String name) {
-        TopLevelElement element = schema.getElementByName(name);
+        final TopLevelElement element = schema.getElementByName(name);
         if (element != null) {
-            QName typeName           = element.getType();
+            final QName typeName = element.getType();
             if (typeName != null) {
                 builder.setName(new DefaultName(typeName.getNamespaceURI(), name));
-                TopLevelComplexType type = schema.getComplexTypeByName(typeName.getLocalPart());
+                final TopLevelComplexType type = schema.getComplexTypeByName(typeName.getLocalPart());
                 return getFeatureTypeFromSchema(type, typeName.getNamespaceURI());
             } else {
                 LOGGER.warning("the element:" + name + " has no type");
@@ -190,28 +167,36 @@ public class JAXBFeatureTypeReader implements XmlFeatureTypeReader {
     
     private FeatureType getFeatureTypeFromSchema(TopLevelComplexType type, String namespace) {
         if (type != null) {
-            ComplexContent content = type.getComplexContent();
+            final ComplexContent content = type.getComplexContent();
             if (content != null) {
-                ExtensionType ext = content.getExtension();
+                final ExtensionType ext = content.getExtension();
                 if (ext != null) {
                     // TODO handle base
-                    ExplicitGroup sequence = ext.getSequence();
+                    final ExplicitGroup sequence = ext.getSequence();
                     if (sequence != null) {
-                        List<Element> elements = sequence.getElements();
-                        for (Element attributeElement : elements) {
-                            QName elementType  = attributeElement.getType();
-                            String elementName = attributeElement.getName();
-                            //System.out.println("adding:" + elementName + " type:" + Utils.getTypeFromQName(elementType));
+                        for (Element attributeElement : sequence.getElements()) {
+                            final QName elementType  = attributeElement.getType();
+                            final String elementName = attributeElement.getName();
+                            final Integer minAtt = attributeElement.getMinOccurs();
+                            final String maxxAtt = attributeElement.getMaxOccurs();
+                            final boolean nillable = attributeElement.isNillable();
+                            final int min = (minAtt==null)? 1 : minAtt;
+                            final int max;
+                            if(maxxAtt == null){
+                                max = 1;
+                            }else if(maxxAtt.equalsIgnoreCase("unbounded")){
+                                max = Integer.MAX_VALUE;
+                            }else{
+                                max = Integer.parseInt(maxxAtt);
+                            }
                             CoordinateReferenceSystem crs = null;
 
                             final Class c = Utils.getTypeFromQName(elementType);
                             if(Geometry.class.isAssignableFrom(c) || org.opengis.geometry.Geometry.class.isAssignableFrom(c)){
-                                builder.add(new DefaultName(namespace, elementName), c, crs);
+                                builder.add(new DefaultName(namespace, elementName), c, crs, min, max, nillable, null);
                             }else{
-                                builder.add(new DefaultName(namespace, elementName), c);
+                                builder.add(new DefaultName(namespace, elementName), c, min, max, nillable, null);
                             }
-
-                            
                         }
                     }
                 }
