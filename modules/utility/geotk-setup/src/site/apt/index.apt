@@ -18,13 +18,13 @@ Geotoolkit.org installer
   interface provided by this module. To launch the application, run the following command from a
   directory which contain at least the following JAR files (omitting version numbers):
 
-  * <<<geotk-setup.jar>>>
+    * <<<geotk-setup.jar>>>
 
-  * <<<geotk-referencing.jar>>>
+    * <<<geotk-referencing.jar>>>
 
-  * <<<geotk-epsg.jar>>>
+    * <<<geotk-epsg.jar>>>
 
-  * One or many of <<<derby.jar>>>, <<<hsqldb.jar>>> and <<<postgresql.jar>>>
+    * One or many of <<<derby.jar>>>, <<<hsqldb.jar>>> and <<<postgresql.jar>>>
 
 
 +----------------------------------------

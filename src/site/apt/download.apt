@@ -28,7 +28,7 @@ Downloading Geotoolkit.org Binaries
       the Log4J framework.
 
     * Developers can reuse the same JAR files accross many projects, thus reducing the
-      duplication. For example many independant projects could use the <<<jsr-275.jar>>> file.
+      duplication. For example many independant projects could use the <<<geoapi.jar>>> file.
 
     * Maven downloads the JAR files automatically, including the source code in some IDE.
       Snapshots are checked daily for updates.

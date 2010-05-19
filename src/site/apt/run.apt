@@ -13,9 +13,9 @@ Running Geotoolkit.org
   if the <<<geotk-epsg.jar>>> file is available on the classpath, together with
   <<one>> of the following dependencies:
 
-  * <<<derby.jar>>>
+    * <<<derby.jar>>>
 
-  * <<<hdsldb.jar>>>
+    * <<<hdsldb.jar>>>
 
   By default, the database is created in a <<<Geotoolkit.org>>> sub-directory in the user
   application directory. This is always a sub-directory of the user home directory, but
