@@ -54,7 +54,7 @@ final class MultiBandsIndexColorModel extends IndexColorModel {
     /**
      * The visible band.
      */
-    private final int visibleBand;
+    final int visibleBand;
 
     /**
      * Constructs an index color model with the specified properties.

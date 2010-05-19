@@ -1186,10 +1186,11 @@ public abstract class AbstractCoverage extends PropertySourceImpl implements Cov
         }
 
         /**
-         * Invoked when the user dispose the window.
+         * Invoked when the user closes the window.
          */
         @Override
         public void windowClosing(WindowEvent e) {
+            frame.removeWindowListener(this);
             frame.dispose();
         }
     }

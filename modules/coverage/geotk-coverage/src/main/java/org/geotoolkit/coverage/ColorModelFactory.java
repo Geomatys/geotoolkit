@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.coverage;
 
+import java.awt.Color;
 import java.util.Map;
 import java.util.Arrays;
 import java.awt.Transparency;
@@ -37,8 +38,8 @@ import org.geotoolkit.util.collection.WeakValueHashMap;
  * This factory provides only one public static method: {@link #getColorModel}.  Instances
  * of {@link ColorModel} are shared among all callers in the running virtual machine.
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.12
  *
  * @since 2.1
  * @module
@@ -160,15 +161,19 @@ final class ColorModelFactory {
                 }
             }
         }
+        /*
+         * If the requested type is any type not supported by IndexColorModel,
+         * fallback on a generic (but very slow!) color model.
+         */
         if (type != DataBuffer.TYPE_BYTE && type != DataBuffer.TYPE_USHORT) {
-            // If the requested type is any type not supported by IndexColorModel,
-            // fallback on a generic (but very slow!) color model.
             final int  transparency = Transparency.OPAQUE;
             final ColorSpace colors = new ScaledColorSpace(numBands, visibleBand, minimum, maximum);
             return new ComponentColorModel(colors, false, false, transparency, type);
         }
+        /*
+         * If there is no category, constructs a gray scale palette.
+         */
         if (numBands == 1 && categoryCount == 0) {
-            // Constructs a gray scale palette.
             final ColorSpace cs = ColorSpace.getInstance(ColorSpace.CS_GRAY);
             final int[] nBits = {
                 DataBuffer.getDataTypeSize(type)
@@ -183,15 +188,36 @@ final class ColorModelFactory {
         final int[]  ARGB = new int[mapSize];
         /*
          * Interpolates the colors in the color palette. Colors that do not fall
-         * in the range of a category will be set to a transparent color.
+         * in the range of a category will be set to a transparent color. The first
          */
+        int transparent = -1;
         for (int i=0; i<categoryCount; i++) {
             final Category category = categories[i];
-            ColorUtilities.expand(category.getColors(), ARGB,
+            final Color[] colors = category.getColors();
+            if (transparent < 0 && isTransparent(colors)) {
+                transparent = (int) category.minimum;
+                if (transparent != category.minimum) {
+                    // Search an other value if we dont have an integer.
+                    transparent = -1;
+                }
+            }
+            ColorUtilities.expand(colors, ARGB,
                                   (int) Math.round(category.minimum),
                                   (int) Math.round(category.maximum) + 1);
         }
-        return ColorUtilities.getIndexColorModel(ARGB, numBands, visibleBand);
+        return ColorUtilities.getIndexColorModel(ARGB, numBands, visibleBand, transparent);
+    }
+
+    /**
+     * Returns {@code true} if the given array of colors contains only transparent colors.
+     */
+    private static boolean isTransparent(final Color[] colors) {
+        for (final Color color : colors) {
+            if (color.getAlpha() != 0) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**

@@ -242,7 +242,7 @@ final class IndexedPalette extends Palette {
             cm = new ComponentColorModel(cs, new int[] {bits}, false, true, ColorModel.OPAQUE, type);
             sm = cm.createCompatibleSampleModel(1, 1);
         } else {
-            cm = ColorUtilities.getIndexColorModel(ARGB, numBands, visibleBand);
+            cm = ColorUtilities.getIndexColorModel(ARGB, numBands, visibleBand, -1);
             if (packed) {
                 sm = new MultiPixelPackedSampleModel(type, 1, 1, bits);
             } else {

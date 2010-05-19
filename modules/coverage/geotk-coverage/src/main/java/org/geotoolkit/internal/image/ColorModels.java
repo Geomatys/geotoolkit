@@ -106,6 +106,13 @@ public final class ColorModels<T extends ColorModel> {
                         }
                     }
                 }
+                if (cm1 instanceof MultiBandsIndexColorModel) {
+                    final MultiBandsIndexColorModel micm1 = (MultiBandsIndexColorModel) cm1;
+                    final MultiBandsIndexColorModel micm2 = (MultiBandsIndexColorModel) cm2;
+                    if (micm1.numBands != micm2.numBands || micm1.visibleBand != micm2.visibleBand) {
+                        return false;
+                    }
+                }
             }
             return true;
         }

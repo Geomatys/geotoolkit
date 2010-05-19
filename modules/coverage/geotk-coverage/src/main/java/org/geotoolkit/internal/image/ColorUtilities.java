@@ -213,47 +213,35 @@ public final class ColorUtilities {
      * @return An index color model for the specified array.
      */
     public static IndexColorModel getIndexColorModel(final int[] ARGB) {
-        return getIndexColorModel(ARGB, 1, 0);
+        return getIndexColorModel(ARGB, 1, 0, -1);
     }
 
     /**
      * Returns a tolerant index color model for the specified ARGB code. This color model accept
      * image with the specified number of bands.
+     * <p>
+     * This methods caches previously created instances using weak references, because index
+     * color model may be big (up to 256 kb).
      *
      * @param  ARGB        An array of ARGB values.
      * @param  numBands    The number of bands.
      * @param  visibleBand The band to display.
+     * @param  transparent The transparent pixel, or -1 for auto-detection.
      * @return An index color model for the specified array.
-     *
-     * @todo Considerer caching previously created instances using weak references. Index color
-     *       model may be big (up to 256 kb), so it may be worth to cache big instances. NOTE:
-     *       IndexColorModel inherits a equals(Object) implementation from ColorModel, but do
-     *       not override it, so the definition is incomplete.
      */
     public static IndexColorModel getIndexColorModel(final int[] ARGB,
-            final int numBands, final int visibleBand)
+            final int numBands, final int visibleBand, int transparent)
     {
-        boolean hasAlpha = false;
-        int  transparent = -1;
+        // No needs to scan the ARGB values in search of a transparent pixel;
+        // the IndexColorModel constructor does that for us.
         final int length = ARGB.length;
-        for (int i=0; i<length; i++) {
-            final int alpha = (ARGB[i] & 0xFF000000);
-            if (alpha != 0xFF000000) {
-                if (alpha == 0x00000000 && transparent < 0) {
-                    transparent = i;
-                    continue;
-                }
-                hasAlpha = true;
-                break;
-            }
-        }
         final int bits = getBitCount(length);
         final int type = getTransferType(length);
         final IndexColorModel cm;
         if (numBands == 1) {
-            cm = new IndexColorModel(bits, length, ARGB, 0, hasAlpha, transparent, type);
+            cm = new IndexColorModel(bits, length, ARGB, 0, true, transparent, type);
         } else {
-            cm = new MultiBandsIndexColorModel(bits, length, ARGB, 0, hasAlpha, transparent,
+            cm = new MultiBandsIndexColorModel(bits, length, ARGB, 0, true, transparent,
                                                type, numBands, visibleBand);
         }
         return ColorModels.unique(cm);

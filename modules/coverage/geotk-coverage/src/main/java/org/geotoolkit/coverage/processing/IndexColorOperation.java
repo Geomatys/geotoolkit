@@ -138,7 +138,7 @@ public abstract class IndexColorOperation extends Operation2D {
              * image operator.
              */
             if (colorChanged && (i == visibleBand)) {
-                model = ColorUtilities.getIndexColorModel(ARGB, bands.length, visibleBand);
+                model = ColorUtilities.getIndexColorModel(ARGB, bands.length, visibleBand, -1);
             }
         }
         if (!bandChanged) {

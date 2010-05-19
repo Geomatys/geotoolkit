@@ -210,7 +210,7 @@ final class BandSelector2D extends GridCoverage2D {
                 final IndexColorModel indexed = (IndexColorModel) colors;
                 final int[] ARGB = new int[indexed.getMapSize()];
                 indexed.getRGBs(ARGB);
-                colors = ColorUtilities.getIndexColorModel(ARGB, targetBands.length, visibleTargetBand);
+                colors = ColorUtilities.getIndexColorModel(ARGB, targetBands.length, visibleTargetBand, -1);
             } else {
                 colors = targetBands[visibleTargetBand]
                       .getColorModel(visibleTargetBand, targetBands.length);
