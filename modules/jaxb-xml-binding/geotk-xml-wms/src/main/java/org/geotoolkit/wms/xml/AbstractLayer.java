@@ -28,7 +28,11 @@ import javax.xml.bind.annotation.XmlTransient;
  */
 @XmlTransient
 public abstract class AbstractLayer {
-    
+    /**
+     * Gets the abstract value for this layer.
+     */
+    public abstract String getAbstract();
+
     /**
      * Get all Dimensions (TIME,ELEVATION,...) from a specific layer.
      * 
@@ -60,4 +64,9 @@ public abstract class AbstractLayer {
      * Get the layer name.
      */
     public abstract String getName();
+
+    /**
+     * Gets the title for this layer.
+     */
+    public abstract String getTitle();
 }

@@ -258,6 +258,7 @@ public class Layer extends AbstractLayer {
     /**
      * Gets the value of the title property.
      */
+    @Override
     public String getTitle() {
         return title;
     }
@@ -265,6 +266,7 @@ public class Layer extends AbstractLayer {
     /**
      * Gets the value of the abstract property.
      */
+    @Override
     public String getAbstract() {
         return _abstract;
     }
