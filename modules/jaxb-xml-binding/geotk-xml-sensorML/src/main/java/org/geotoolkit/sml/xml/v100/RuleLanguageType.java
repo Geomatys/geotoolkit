@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.sml.xml.AbstractRuleLanguage;
 
 
 /**
@@ -44,7 +45,7 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ruleLanguageType")
-public class RuleLanguageType {
+public class RuleLanguageType implements AbstractRuleLanguage {
 
     @XmlAttribute
     private List<String> nilReason;
@@ -64,6 +65,24 @@ public class RuleLanguageType {
     private String title;
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
     private String type;
+
+    public RuleLanguageType() {
+
+    }
+
+    public RuleLanguageType(AbstractRuleLanguage rl) {
+        if (rl != null) {
+            this.actuate   = rl.getActuate();
+            this.arcrole   = rl.getArcrole();
+            this.href      = rl.getHref();
+            this.nilReason = rl.getNilReason();
+            this.role      = rl.getRole();
+            this.show      = rl.getShow();
+            this.title     = rl.getTitle();
+            this.type      = rl.getType();
+            this.remoteSchema = rl.getRemoteSchema();
+        }
+    }
 
     /**
      * Gets the value of the nilReason property.

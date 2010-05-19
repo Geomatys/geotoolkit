@@ -23,11 +23,9 @@ import java.util.List;
  *
  * @author Guilhem Legal (Geomatys)
  */
-public interface AbstractImplementation {
+public interface AbstractMathML {
 
-    AbstractProcessChain getProcessChain();
-
-    AbstractImplementationCode getImplementationCode();
+    Object getAny();
 
     List<String> getNilReason();
 

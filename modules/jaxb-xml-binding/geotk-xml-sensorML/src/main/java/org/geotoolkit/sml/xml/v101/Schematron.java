@@ -20,6 +20,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.sml.xml.AbstractSchematron;
 
 
 /**
@@ -46,11 +47,21 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "", propOrder = {
     "any"
 })
-public class Schematron extends RuleLanguageType {
+public class Schematron extends RuleLanguageType implements AbstractSchematron {
 
     @XmlAnyElement(lax = true)
     private Object any;
 
+    public Schematron() {
+
+    }
+
+    public Schematron(AbstractSchematron rn) {
+        if (rn != null && rn.getAny() != null) {
+            this.any = rn.getAny();
+        }
+    }
+    
     /**
      * Gets the value of the any property.
      * 

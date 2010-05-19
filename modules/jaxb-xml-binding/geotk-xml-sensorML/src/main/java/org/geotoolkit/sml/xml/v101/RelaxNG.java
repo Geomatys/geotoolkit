@@ -20,6 +20,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.sml.xml.AbstractRelaxNG;
 
 
 /**
@@ -46,11 +47,21 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "", propOrder = {
     "any"
 })
-public class RelaxNG extends RuleLanguageType {
+public class RelaxNG extends RuleLanguageType implements AbstractRelaxNG {
 
     @XmlAnyElement(lax = true)
     private Object any;
 
+    public RelaxNG() {
+
+    }
+
+    public RelaxNG(AbstractRelaxNG rn) {
+        if (rn != null && rn.getAny() != null) {
+            this.any = rn.getAny();
+        }
+    }
+    
     /**
      * Gets the value of the any property.
      * 

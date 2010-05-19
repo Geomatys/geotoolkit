@@ -19,8 +19,9 @@ package org.geotoolkit.sml.xml;
 
 /**
  *
- * @author Guilhem Legal
+ * @author Guilhem Legal (geomatys)
  */
 public interface AbstractAlgorithm {
 
+     AbstractAlgorithmDefinition getAlgorithmDefinition();
 }

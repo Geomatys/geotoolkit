@@ -23,11 +23,7 @@ import java.util.List;
  *
  * @author Guilhem Legal (Geomatys)
  */
-public interface AbstractImplementation {
-
-    AbstractProcessChain getProcessChain();
-
-    AbstractImplementationCode getImplementationCode();
+public interface AbstractRuleLanguage {
 
     List<String> getNilReason();
 

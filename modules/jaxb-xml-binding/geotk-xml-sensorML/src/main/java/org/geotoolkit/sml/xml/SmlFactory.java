@@ -25,12 +25,15 @@ import org.geotoolkit.sml.xml.v100.Characteristics;
 import org.geotoolkit.sml.xml.v100.Classification;
 import org.geotoolkit.sml.xml.v100.ComponentType;
 import org.geotoolkit.sml.xml.v100.Contact;
+import org.geotoolkit.sml.xml.v100.DataSourceType;
 import org.geotoolkit.sml.xml.v100.Documentation;
 import org.geotoolkit.sml.xml.v100.History;
 import org.geotoolkit.sml.xml.v100.Identification;
 import org.geotoolkit.sml.xml.v100.Keywords;
 import org.geotoolkit.sml.xml.v100.LegalConstraint;
 import org.geotoolkit.sml.xml.v100.Member;
+import org.geotoolkit.sml.xml.v100.ProcessChainType;
+import org.geotoolkit.sml.xml.v100.ProcessModelType;
 import org.geotoolkit.sml.xml.v100.SystemType;
 import org.geotoolkit.swe.xml.Position;
 import org.geotoolkit.swe.xml.Quantity;
@@ -272,8 +275,18 @@ public class SmlFactory {
 
             } else if (oldMember.getRealProcess() instanceof Component) {
                 newProcess = new org.geotoolkit.sml.xml.v101.ComponentType();
+
+            } else if (oldMember.getRealProcess() instanceof AbstractDataSource) {
+                newProcess = new org.geotoolkit.sml.xml.v101.DataSourceType();
+                
+            } else if (oldMember.getRealProcess() instanceof AbstractProcessModel) {
+                newProcess = new org.geotoolkit.sml.xml.v101.ProcessModelType();
+
+            } else if (oldMember.getRealProcess() instanceof ComponentArray) {
+                newProcess = new org.geotoolkit.sml.xml.v101.ComponentArrayType();
+
             } else {
-                throw new IllegalArgumentException("Other sensor type than system or component are not yet convertible");
+                throw new IllegalArgumentException("Other sensor type than system, component, processModel, processChain, componentArray or datasource are not yet convertible");
             }
 
             AbstractProcessType oldProcess = (AbstractProcessType) oldMember.getRealProcess();
@@ -367,79 +380,145 @@ public class SmlFactory {
                 newProcess.setValidTime(oldProcess.getValidTime());
             }
 
-            AbstractComponent newAbsComponent = (AbstractComponent) newProcess;
-            AbstractComponent oldAbsComponent = (AbstractComponent) oldProcess;
+            if (oldProcess instanceof AbstractComponent) {
+                AbstractComponent newAbsComponent = (AbstractComponent) newProcess;
+                AbstractComponent oldAbsComponent = (AbstractComponent) oldProcess;
 
-            //Inputs
-            if (oldAbsComponent.getInputs() != null) {
-                newAbsComponent.setInputs(oldAbsComponent.getInputs());
+                //Inputs
+                if (oldAbsComponent.getInputs() != null) {
+                    newAbsComponent.setInputs(oldAbsComponent.getInputs());
+                }
+
+                // outputs
+                if (oldAbsComponent.getOutputs() != null) {
+                    newAbsComponent.setOutputs(oldAbsComponent.getOutputs());
+                }
+
+                // parameters
+                if (oldAbsComponent.getParameters() != null) {
+                    newAbsComponent.setParameters(oldAbsComponent.getParameters());
+                }
             }
 
-            // outputs
-            if (oldAbsComponent.getOutputs() != null) {
-                newAbsComponent.setOutputs(oldAbsComponent.getOutputs());
+            if (oldProcess instanceof AbstractDerivableComponent) {
+                org.geotoolkit.sml.xml.v101.AbstractDerivableComponentType newDerComponent =  (org.geotoolkit.sml.xml.v101.AbstractDerivableComponentType) newProcess;
+                AbstractDerivableComponent oldDerComponent = (AbstractDerivableComponent) oldProcess;
+
+                // Position
+                if (oldDerComponent.getPosition() != null) {
+                    newDerComponent.setPosition(oldDerComponent.getPosition());
+                }
+
+                if (oldDerComponent.getSMLLocation() != null) {
+                    newDerComponent.setSMLLocation(oldDerComponent.getSMLLocation());
+                }
+
+                if (oldDerComponent.getInterfaces() != null) {
+                    newDerComponent.setInterfaces(new org.geotoolkit.sml.xml.v101.Interfaces(oldDerComponent.getInterfaces()));
+                }
+
+                if (oldDerComponent.getSpatialReferenceFrame() != null) {
+                    newDerComponent.setSpatialReferenceFrame(new org.geotoolkit.sml.xml.v101.SpatialReferenceFrame(oldDerComponent.getSpatialReferenceFrame()));
+                }
+
+                if (oldDerComponent.getTemporalReferenceFrame() != null) {
+                    newDerComponent.setTemporalReferenceFrame(new org.geotoolkit.sml.xml.v101.TemporalReferenceFrame(oldDerComponent.getTemporalReferenceFrame()));
+                }
+
+                if (oldDerComponent.getTimePosition() != null) {
+                    newDerComponent.setTimePosition(new org.geotoolkit.sml.xml.v101.TimePosition(oldDerComponent.getTimePosition()));
+                }
             }
 
-            // parameters
-            if (oldAbsComponent.getParameters() != null) {
-                newAbsComponent.setParameters(oldAbsComponent.getParameters());
+            if (oldProcess instanceof AbstractPureProcess) {
+                org.geotoolkit.sml.xml.v101.AbstractPureProcessType newAbsPuProc = (org.geotoolkit.sml.xml.v101.AbstractPureProcessType) newProcess;
+                AbstractPureProcess oldAbsPuProc = (AbstractPureProcess) oldProcess;
+
+                //Inputs
+                if (oldAbsPuProc.getInputs() != null) {
+                    newAbsPuProc.setInputs(new org.geotoolkit.sml.xml.v101.Inputs(oldAbsPuProc.getInputs()));
+                }
+
+                // outputs
+                if (oldAbsPuProc.getOutputs() != null) {
+                    newAbsPuProc.setOutputs(new org.geotoolkit.sml.xml.v101.Outputs(oldAbsPuProc.getOutputs()));
+                }
+
+                // parameters
+                if (oldAbsPuProc.getParameters() != null) {
+                    newAbsPuProc.setParameters(new org.geotoolkit.sml.xml.v101.Parameters(oldAbsPuProc.getParameters()));
+                }
             }
-
-            org.geotoolkit.sml.xml.v101.AbstractDerivableComponentType newDerComponent =  (org.geotoolkit.sml.xml.v101.AbstractDerivableComponentType) newProcess;
-            AbstractDerivableComponent oldDerComponent = (AbstractDerivableComponent) oldProcess;
-
-            // Position
-            if (oldDerComponent.getPosition() != null) {
-                newDerComponent.setPosition(oldDerComponent.getPosition());
-            }
-
-            if (oldDerComponent.getSMLLocation() != null) {
-                newDerComponent.setSMLLocation(oldDerComponent.getSMLLocation());
-            }
-
-            if (oldDerComponent.getInterfaces() != null) {
-                newDerComponent.setInterfaces(new org.geotoolkit.sml.xml.v101.Interfaces(oldDerComponent.getInterfaces()));
-            }
-
-            if (oldDerComponent.getSpatialReferenceFrame() != null) {
-                newDerComponent.setSpatialReferenceFrame(new org.geotoolkit.sml.xml.v101.SpatialReferenceFrame(oldDerComponent.getSpatialReferenceFrame()));
-            }
-
-            if (oldDerComponent.getTemporalReferenceFrame() != null) {
-                newDerComponent.setTemporalReferenceFrame(new org.geotoolkit.sml.xml.v101.TemporalReferenceFrame(oldDerComponent.getTemporalReferenceFrame()));
-            }
-
-            if (oldDerComponent.getTimePosition() != null) {
-                newDerComponent.setTimePosition(new org.geotoolkit.sml.xml.v101.TimePosition(oldDerComponent.getTimePosition()));
-            }
-
             
             if (oldMember.getRealProcess() instanceof System) {
                 SystemType oldSystem = (SystemType) oldMember.getRealProcess();
-
+                org.geotoolkit.sml.xml.v101.SystemType newSystem = (org.geotoolkit.sml.xml.v101.SystemType) newProcess;
+                
                 // components
-                org.geotoolkit.sml.xml.v101.Components newComponents = new org.geotoolkit.sml.xml.v101.Components(oldSystem.getComponents());
-                ((org.geotoolkit.sml.xml.v101.SystemType)newProcess).setComponents(newComponents);
+                if (oldSystem.getComponents() != null) {
+                    newSystem.setComponents(new org.geotoolkit.sml.xml.v101.Components(oldSystem.getComponents()));
+                }
 
                 // positions
-                org.geotoolkit.sml.xml.v101.Positions newPositions = new org.geotoolkit.sml.xml.v101.Positions(oldSystem.getPositions());
-                ((org.geotoolkit.sml.xml.v101.SystemType)newProcess).setPositions(newPositions);
+                if (oldSystem.getPositions() != null) {
+                    newSystem.setPositions(new org.geotoolkit.sml.xml.v101.Positions(oldSystem.getPositions()));
+                }
 
                 // connections
-                org.geotoolkit.sml.xml.v101.Connections newConnections = new org.geotoolkit.sml.xml.v101.Connections(oldSystem.getConnections());
-                ((org.geotoolkit.sml.xml.v101.SystemType)newProcess).setConnections(newConnections);
+                if (oldSystem.getConnections() != null) {
+                    newSystem.setConnections(new org.geotoolkit.sml.xml.v101.Connections(oldSystem.getConnections()));
+                }
 
             } else if (oldMember.getRealProcess() instanceof Component) {
                 ComponentType oldComponent = (ComponentType) oldMember.getRealProcess();
+                org.geotoolkit.sml.xml.v101.ComponentType newCompo = (org.geotoolkit.sml.xml.v101.ComponentType) newProcess;
 
                 // method
                 if (oldComponent.getMethod() != null) {
-                    org.geotoolkit.sml.xml.v101.MethodPropertyType newMethod = new org.geotoolkit.sml.xml.v101.MethodPropertyType(oldComponent.getMethod());
-                    ((org.geotoolkit.sml.xml.v101.ComponentType)newProcess).setMethod(newMethod);
+                    newCompo.setMethod(new org.geotoolkit.sml.xml.v101.MethodPropertyType(oldComponent.getMethod()));
                 }
 
+            } else if (oldMember.getRealProcess() instanceof AbstractDataSource) {
+                DataSourceType oldDataSource = (DataSourceType) oldMember.getRealProcess();
+                org.geotoolkit.sml.xml.v101.DataSourceType newDataSource = (org.geotoolkit.sml.xml.v101.DataSourceType) newProcess;
+
+                if (oldDataSource.getDataDefinition() != null) {
+                    newDataSource.setDataDefinition(new org.geotoolkit.sml.xml.v101.DataDefinition(oldDataSource.getDataDefinition()));
+                }
+                if (oldDataSource.getValues() != null) {
+                    newDataSource.setValues(new org.geotoolkit.sml.xml.v101.Values(oldDataSource.getValues()));
+                }
+                if (oldDataSource.getObservationReference() != null) {
+                    newDataSource.setObservationReference(new org.geotoolkit.sml.xml.v101.ObservationReference(oldDataSource.getObservationReference()));
+                }
+
+            } else if (oldMember.getRealProcess() instanceof AbstractProcessModel) {
+                ProcessModelType oldProcessModel = (ProcessModelType) oldMember.getRealProcess();
+                org.geotoolkit.sml.xml.v101.ProcessModelType newProcessModel = (org.geotoolkit.sml.xml.v101.ProcessModelType) newProcess;
+
+                if (oldProcessModel.getMethod() != null) {
+                    newProcessModel.setMethod(new org.geotoolkit.sml.xml.v101.MethodPropertyType(oldProcessModel.getMethod()));
+                }
+                
+
+            } else if (oldMember.getRealProcess() instanceof AbstractProcessChain) {
+                ProcessChainType oldProcessChain = (ProcessChainType) oldMember.getRealProcess();
+                org.geotoolkit.sml.xml.v101.ProcessChainType newProcessChain = (org.geotoolkit.sml.xml.v101.ProcessChainType) newProcess;
+
+                 // components
+                if (oldProcessChain.getComponents() != null) {
+                    newProcessChain.setComponents(new org.geotoolkit.sml.xml.v101.Components(oldProcessChain.getComponents()));
+                }
+
+                // connections
+                if (oldProcessChain.getConnections() != null) {
+                    newProcessChain.setConnections(new org.geotoolkit.sml.xml.v101.Connections(oldProcessChain.getConnections()));
+                }
+
+            } else if (oldMember.getRealProcess() instanceof ComponentArray) {
+                // nothing to do
             } else {
-                throw new IllegalArgumentException("Other sensor type than system or component are not yet convertible");
+                throw new IllegalArgumentException("Other sensor type than system ,component, processModel, processChain, componentArray or datasource are not yet convertible");
             }
             newMembers.add(new org.geotoolkit.sml.xml.v101.SensorML.Member(newProcess));
         }

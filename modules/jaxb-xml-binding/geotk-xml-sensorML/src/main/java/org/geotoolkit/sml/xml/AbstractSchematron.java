@@ -17,33 +17,11 @@
 
 package org.geotoolkit.sml.xml;
 
-import java.util.List;
-
 /**
  *
  * @author Guilhem Legal (Geomatys)
  */
-public interface AbstractImplementation {
+public interface AbstractSchematron {
 
-    AbstractProcessChain getProcessChain();
-
-    AbstractImplementationCode getImplementationCode();
-
-    List<String> getNilReason();
-
-    String getRemoteSchema();
-
-    String getActuate();
-
-    String getArcrole();
-
-    String getHref();
-
-    String getRole();
-
-    String getShow();
-
-    String getTitle();
-
-    String getType();
+    Object getAny();
 }

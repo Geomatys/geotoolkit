@@ -16,12 +16,15 @@
  */
 package org.geotoolkit.sml.xml.v101;
 
+import java.util.ArrayList;
+import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.sml.xml.AbstractRuleLanguage;
 
 
 /**
@@ -48,7 +51,7 @@ import javax.xml.bind.annotation.XmlType;
     RelaxNG.class,
     Schematron.class
 })
-public class RuleLanguageType {
+public class RuleLanguageType implements AbstractRuleLanguage {
 
     @XmlAttribute(namespace = "http://www.opengis.net/gml")
     @XmlSchemaType(name = "anyURI")
@@ -70,6 +73,27 @@ public class RuleLanguageType {
     private String show;
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
     private String actuate;
+
+    public RuleLanguageType() {
+
+    }
+
+    public RuleLanguageType(AbstractRuleLanguage rl) {
+        if (rl != null) {
+            this.actuate   = rl.getActuate();
+            this.arcrole   = rl.getArcrole();
+            this.href      = rl.getHref();
+            this.role      = rl.getRole();
+            this.show      = rl.getShow();
+            this.title     = rl.getTitle();
+            this.type      = rl.getType();
+            this.remoteSchema = rl.getRemoteSchema();
+        }
+    }
+
+    public List<String> getNilReason() {
+        return new ArrayList<String>();
+    }
 
     /**
      * Gets the value of the remoteSchema property.

@@ -17,33 +17,15 @@
 
 package org.geotoolkit.sml.xml;
 
-import java.util.List;
+import org.geotoolkit.gml.xml.v311.StringOrRefType;
 
 /**
  *
  * @author Guilhem Legal (Geomatys)
  */
-public interface AbstractImplementation {
+public interface AbstractRulesDefinition {
 
-    AbstractProcessChain getProcessChain();
+    StringOrRefType getDescription();
 
-    AbstractImplementationCode getImplementationCode();
-
-    List<String> getNilReason();
-
-    String getRemoteSchema();
-
-    String getActuate();
-
-    String getArcrole();
-
-    String getHref();
-
-    String getRole();
-
-    String getShow();
-
-    String getTitle();
-
-    String getType();
+    AbstractRuleLanguage getRuleLanguage();
 }

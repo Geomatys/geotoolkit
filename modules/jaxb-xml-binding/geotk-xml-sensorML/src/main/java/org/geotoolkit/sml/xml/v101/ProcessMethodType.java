@@ -34,6 +34,8 @@ import org.geotoolkit.gml.xml.v311.StringOrRefType;
 import org.geotoolkit.gml.xml.v311.TimeInstantType;
 import org.geotoolkit.gml.xml.v311.TimePeriodType;
 import org.geotoolkit.sml.xml.AbstractAlgorithm;
+import org.geotoolkit.sml.xml.AbstractAlgorithmDefinition;
+import org.geotoolkit.sml.xml.AbstractBinaryRef;
 import org.geotoolkit.sml.xml.AbstractCapabilities;
 import org.geotoolkit.sml.xml.AbstractCharacteristics;
 import org.geotoolkit.sml.xml.AbstractClassification;
@@ -42,10 +44,16 @@ import org.geotoolkit.sml.xml.AbstractDocumentation;
 import org.geotoolkit.sml.xml.AbstractHistory;
 import org.geotoolkit.sml.xml.AbstractIdentification;
 import org.geotoolkit.sml.xml.AbstractImplementation;
+import org.geotoolkit.sml.xml.AbstractImplementationCode;
 import org.geotoolkit.sml.xml.AbstractKeywords;
 import org.geotoolkit.sml.xml.AbstractLegalConstraint;
+import org.geotoolkit.sml.xml.AbstractMathML;
 import org.geotoolkit.sml.xml.AbstractProcessMethod;
+import org.geotoolkit.sml.xml.AbstractRelaxNG;
 import org.geotoolkit.sml.xml.AbstractRules;
+import org.geotoolkit.sml.xml.AbstractRulesDefinition;
+import org.geotoolkit.sml.xml.AbstractSchematron;
+import org.geotoolkit.sml.xml.AbstractSourceRef;
 import org.geotoolkit.sml.xml.AbstractValidTime;
 import org.geotoolkit.swe.xml.v101.DataRecordType;
 
@@ -216,66 +224,76 @@ public class ProcessMethodType extends AbstractGMLEntry implements AbstractProce
         if (method != null) {
 
             if (method.getAlgorithm() != null) {
-                throw new IllegalArgumentException("Algorithm are not yet convertible");
+                this.algorithm = new Algorithm(method.getAlgorithm());
             }
             if (method.getImplementation() != null) {
-                throw new IllegalArgumentException("Implementation are not yet convertible");
+                this.implementation = new ArrayList<Implementation>();
+                for (AbstractImplementation oldImp : method.getImplementation()) {
+                    this.implementation.add(new Implementation(oldImp));
+                }
             }
             if (method.getRules() != null) {
-                throw new IllegalArgumentException("Rules are not yet convertible");
+                this.rules = new Rules(method.getRules());
             }
             if (method.getCapabilities() != null) {
-                this.capabilities = new ArrayList<org.geotoolkit.sml.xml.v101.Capabilities>();
+                this.capabilities = new ArrayList<Capabilities>();
                 for (AbstractCapabilities oldCapa : method.getCapabilities()) {
-                    this.capabilities.add(new org.geotoolkit.sml.xml.v101.Capabilities(oldCapa));
+                    this.capabilities.add(new Capabilities(oldCapa));
                 }
             }
             if (method.getCharacteristics() != null) {
-                this.characteristics = new ArrayList<org.geotoolkit.sml.xml.v101.Characteristics>();
+                this.characteristics = new ArrayList<Characteristics>();
                 for (AbstractCharacteristics oldChar : method.getCharacteristics()) {
-                    this.characteristics.add(new org.geotoolkit.sml.xml.v101.Characteristics(oldChar));
+                    this.characteristics.add(new Characteristics(oldChar));
                 }
             }
 
             if (method.getClassification() != null) {
-            this.classification = new ArrayList<org.geotoolkit.sml.xml.v101.Classification>();
-            for (AbstractClassification oldClass : method.getClassification()) {
-                this.classification.add(new org.geotoolkit.sml.xml.v101.Classification(oldClass));
-            }}
+                this.classification = new ArrayList<Classification>();
+                for (AbstractClassification oldClass : method.getClassification()) {
+                    this.classification.add(new Classification(oldClass));
+                }
+            }
 
             if (method.getContact() != null) {
-            this.contact = new ArrayList<org.geotoolkit.sml.xml.v101.Contact>();
-            for (AbstractContact oldContact : method.getContact()) {
-                this.contact.add(new org.geotoolkit.sml.xml.v101.Contact(oldContact));
-            }}
+                this.contact = new ArrayList<Contact>();
+                for (AbstractContact oldContact : method.getContact()) {
+                    this.contact.add(new Contact(oldContact));
+                }
+            }
             if (method.getDocumentation() != null) {
-            this.documentation = new ArrayList<org.geotoolkit.sml.xml.v101.Documentation>();
-            for (AbstractDocumentation oldDoc : method.getDocumentation()) {
-                this.documentation.add(new org.geotoolkit.sml.xml.v101.Documentation(oldDoc));
-            }}
+                this.documentation = new ArrayList<Documentation>();
+                for (AbstractDocumentation oldDoc : method.getDocumentation()) {
+                    this.documentation.add(new Documentation(oldDoc));
+                }
+            }
             if (method.getHistory() != null) {
-            this.history = new ArrayList<org.geotoolkit.sml.xml.v101.History>();
-            for (AbstractHistory oldhist : method.getHistory()) {
-                this.history.add(new org.geotoolkit.sml.xml.v101.History(oldhist));
-            }}
+                this.history = new ArrayList<History>();
+                for (AbstractHistory oldhist : method.getHistory()) {
+                    this.history.add(new History(oldhist));
+                }
+            }
             if (method.getIdentification() != null) {
-            this.identification = new ArrayList<org.geotoolkit.sml.xml.v101.Identification>();
-            for (AbstractIdentification oldIdent : method.getIdentification()) {
-                this.identification.add(new org.geotoolkit.sml.xml.v101.Identification(oldIdent));
-            }}
+                this.identification = new ArrayList<Identification>();
+                for (AbstractIdentification oldIdent : method.getIdentification()) {
+                    this.identification.add(new Identification(oldIdent));
+                }
+            }
             if (method.getKeywords() != null) {
-            this.keywords = new ArrayList<org.geotoolkit.sml.xml.v101.Keywords>();
-            for (AbstractKeywords oldKeyw : method.getKeywords()) {
-                this.keywords.add(new org.geotoolkit.sml.xml.v101.Keywords(oldKeyw));
-            }}
+                this.keywords = new ArrayList<Keywords>();
+                for (AbstractKeywords oldKeyw : method.getKeywords()) {
+                    this.keywords.add(new Keywords(oldKeyw));
+                }
+            }
             if (method.getLegalConstraint() != null) {
-            this.legalConstraint = new ArrayList<org.geotoolkit.sml.xml.v101.LegalConstraint>();
-            for (AbstractLegalConstraint oldcons : method.getLegalConstraint()) {
-                this.legalConstraint.add(new org.geotoolkit.sml.xml.v101.LegalConstraint(oldcons));
-            }}
+                this.legalConstraint = new ArrayList<LegalConstraint>();
+                for (AbstractLegalConstraint oldcons : method.getLegalConstraint()) {
+                    this.legalConstraint.add(new LegalConstraint(oldcons));
+                }
+            }
 
             if (method.getLegalConstraint() != null) {
-                this.securityConstraint = new org.geotoolkit.sml.xml.v101.SecurityConstraint(method.getSecurityConstraint());
+                this.securityConstraint = new SecurityConstraint(method.getSecurityConstraint());
             }
             if (method.getValidTime() != null) {
                 this.validTime = new ValidTime(method.getValidTime());
@@ -760,21 +778,6 @@ public class ProcessMethodType extends AbstractGMLEntry implements AbstractProce
 
     /**
      * Gets the value of the implementation property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the implementation property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getImplementation().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link ProcessMethodType.Implementation }
      * 
@@ -838,6 +841,16 @@ public class ProcessMethodType extends AbstractGMLEntry implements AbstractProce
         @XmlElement(name = "AlgorithmDefinition", required = true)
         private ProcessMethodType.Algorithm.AlgorithmDefinition algorithmDefinition;
 
+        public Algorithm() {
+
+        }
+
+        public Algorithm(AbstractAlgorithm algo) {
+            if (algo != null && algo.getAlgorithmDefinition() != null) {
+                this.algorithmDefinition = new AlgorithmDefinition(algo.getAlgorithmDefinition());
+            }
+        }
+        
         /**
          * Gets the value of the algorithmDefinition property.
          * 
@@ -899,12 +912,25 @@ public class ProcessMethodType extends AbstractGMLEntry implements AbstractProce
             "description",
             "mathML"
         })
-        public static class AlgorithmDefinition {
+        public static class AlgorithmDefinition implements AbstractAlgorithmDefinition {
 
             @XmlElement(namespace = "http://www.opengis.net/gml")
             private StringOrRefType description;
             private ProcessMethodType.Algorithm.AlgorithmDefinition.MathML mathML;
 
+            public AlgorithmDefinition() {
+
+            }
+
+            public AlgorithmDefinition(AbstractAlgorithmDefinition ald) {
+                if (ald != null) {
+                    this.description = ald.getDescription();
+                    if (ald.getMathML() != null) {
+                        this.mathML = new MathML(ald.getMathML());
+                    }
+                }
+            }
+            
             /**
              * Textual description of the algorithm
              * 
@@ -978,7 +1004,7 @@ public class ProcessMethodType extends AbstractGMLEntry implements AbstractProce
             @XmlType(name = "", propOrder = {
                 "any"
             })
-            public static class MathML {
+            public static class MathML implements AbstractMathML {
 
                 @XmlAnyElement(lax = true)
                 private Object any;
@@ -1002,6 +1028,24 @@ public class ProcessMethodType extends AbstractGMLEntry implements AbstractProce
                 private String show;
                 @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
                 private String actuate;
+
+                public MathML() {
+
+                }
+
+                public MathML(AbstractMathML mat) {
+                    if (mat != null) {
+                        this.actuate   = mat.getActuate();
+                        this.remoteSchema = mat.getRemoteSchema();
+                        this.any       = mat.getAny();
+                        this.arcrole   = mat.getArcrole();
+                        this.href      = mat.getHref();
+                        this.role      = mat.getRole();
+                        this.show      = mat.getShow();
+                        this.title     = mat.getTitle();
+                        this.type      = mat.getType();
+                    }
+                }
 
                 /**
                  * Gets the value of the any property.
@@ -1029,6 +1073,10 @@ public class ProcessMethodType extends AbstractGMLEntry implements AbstractProce
                     this.any = value;
                 }
 
+                public List<String> getNilReason() {
+                    return new ArrayList<String>();
+                }
+                
                 /**
                  * Gets the value of the remoteSchema property.
                  * 
@@ -1313,6 +1361,33 @@ public class ProcessMethodType extends AbstractGMLEntry implements AbstractProce
         @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
         private String actuate;
 
+        public Implementation() {
+
+        }
+
+        public Implementation(AbstractImplementation imp) {
+            if (imp != null) {
+                this.actuate   = imp.getActuate();
+                this.arcrole   = imp.getArcrole();
+                this.href      = imp.getHref();
+                this.role      = imp.getRole();
+                this.show      = imp.getShow();
+                this.title     = imp.getTitle();
+                this.type      = imp.getType();
+                this.remoteSchema = imp.getRemoteSchema();
+                if (imp.getProcessChain() != null) {
+                    this.processChain = new ProcessChainType(imp.getProcessChain());
+                }
+                if (imp.getImplementationCode() != null) {
+                    this.implementationCode = new ImplementationCode(imp.getImplementationCode());
+                }
+            }
+        }
+
+        public List<String> getNilReason() {
+            return new ArrayList<String>();
+        }
+        
         /**
          * Gets the value of the processChain property.
          * 
@@ -1612,7 +1687,7 @@ public class ProcessMethodType extends AbstractGMLEntry implements AbstractProce
             "sourceRef",
             "binaryRef"
         })
-        public static class ImplementationCode {
+        public static class ImplementationCode implements AbstractImplementationCode {
 
             @XmlElement(namespace = "http://www.opengis.net/gml")
             private StringOrRefType description;
@@ -1642,6 +1717,79 @@ public class ProcessMethodType extends AbstractGMLEntry implements AbstractProce
             @XmlSchemaType(name = "token")
             private String version;
 
+            public ImplementationCode() {
+
+            }
+
+            public ImplementationCode(AbstractImplementationCode ic) {
+                if (ic != null) {
+                    this.description = ic.getDescription();
+                    this.framework   = ic.getFramework();
+                    this.language    = ic.getLanguage();
+                    this.version     = ic.getVersion();
+                    if (ic.getBinaryRef() != null) {
+                        this.binaryRef = new BinaryRef(ic.getBinaryRef());
+                    }
+                    if (ic.getCapabilities() != null) {
+                        this.capabilities = new ArrayList<Capabilities>();
+                        for (AbstractCapabilities abCap : ic.getCapabilities()) {
+                            this.capabilities.add(new Capabilities(abCap));
+                        }
+                    }
+                    if (ic.getCharacteristics() != null) {
+                        this.characteristics = new ArrayList<Characteristics>();
+                        for (AbstractCharacteristics abCap : ic.getCharacteristics()) {
+                            this.characteristics.add(new Characteristics(abCap));
+                        }
+                    }
+                    if (ic.getClassification() != null) {
+                        this.classification = new ArrayList<Classification>();
+                        for (AbstractClassification abCap : ic.getClassification()) {
+                            this.classification.add(new Classification(abCap));
+                        }
+                    }
+                    if (ic.getContact() != null) {
+                        this.contact = new ArrayList<Contact>();
+                        for (AbstractContact abCap : ic.getContact()) {
+                            this.contact.add(new Contact(abCap));
+                        }
+                    }
+                    if (ic.getDocumentation() != null) {
+                        this.documentation = new ArrayList<Documentation>();
+                        for (AbstractDocumentation abCap : ic.getDocumentation()) {
+                            this.documentation.add(new Documentation(abCap));
+                        }
+                    }
+                    if (ic.getHistory() != null) {
+                        this.history = new ArrayList<History>();
+                        for (AbstractHistory abCap : ic.getHistory()) {
+                            this.history.add(new History(abCap));
+                        }
+                    }
+                    if (ic.getIdentification() != null) {
+                        this.identification = new ArrayList<Identification>();
+                        for (AbstractIdentification abCap : ic.getIdentification()) {
+                            this.identification.add(new Identification(abCap));
+                        }
+                    }
+                    if (ic.getKeywords() != null) {
+                        this.keywords = new ArrayList<Keywords>();
+                        for (AbstractKeywords abCap : ic.getKeywords()) {
+                            this.keywords.add(new Keywords(abCap));
+                        }
+                    }
+                    if (ic.getLegalConstraint() != null) {
+                        this.legalConstraint = new ArrayList<LegalConstraint>();
+                        for (AbstractLegalConstraint abCap : ic.getLegalConstraint()) {
+                            this.legalConstraint.add(new LegalConstraint(abCap));
+                        }
+                    }
+                    if (ic.getSourceRef() != null) {
+                        this.sourceRef = new SourceRef(ic.getSourceRef());
+                    }
+                }
+            }
+            
             /**
              * Textual description of the algorithm
              * 
@@ -2115,7 +2263,7 @@ public class ProcessMethodType extends AbstractGMLEntry implements AbstractProce
              */
             @XmlAccessorType(XmlAccessType.FIELD)
             @XmlType(name = "")
-            public static class BinaryRef {
+            public static class BinaryRef implements AbstractBinaryRef {
 
                 @XmlAttribute(namespace = "http://www.opengis.net/gml")
                 @XmlSchemaType(name = "anyURI")
@@ -2138,6 +2286,27 @@ public class ProcessMethodType extends AbstractGMLEntry implements AbstractProce
                 @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
                 private String actuate;
 
+                public BinaryRef() {
+
+                }
+
+                public BinaryRef(AbstractBinaryRef mat) {
+                    if (mat != null) {
+                        this.actuate   = mat.getActuate();
+                        this.arcrole   = mat.getArcrole();
+                        this.href      = mat.getHref();
+                        this.role      = mat.getRole();
+                        this.show      = mat.getShow();
+                        this.title     = mat.getTitle();
+                        this.type      = mat.getType();
+                        this.remoteSchema = mat.getRemoteSchema();
+                    }
+                }
+
+                public List<String> getNilReason() {
+                    return new ArrayList<String>();
+                }
+                
                 /**
                  * Gets the value of the remoteSchema property.
                  * 
@@ -2352,7 +2521,7 @@ public class ProcessMethodType extends AbstractGMLEntry implements AbstractProce
              */
             @XmlAccessorType(XmlAccessType.FIELD)
             @XmlType(name = "")
-            public static class SourceRef {
+            public static class SourceRef implements AbstractSourceRef {
 
                 @XmlAttribute(namespace = "http://www.opengis.net/gml")
                 @XmlSchemaType(name = "anyURI")
@@ -2375,6 +2544,27 @@ public class ProcessMethodType extends AbstractGMLEntry implements AbstractProce
                 @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
                 private String actuate;
 
+
+                public SourceRef() {
+
+                }
+
+                public SourceRef(AbstractSourceRef mat) {
+                    if (mat != null) {
+                        this.actuate   = mat.getActuate();
+                        this.arcrole   = mat.getArcrole();
+                        this.href      = mat.getHref();
+                        this.role      = mat.getRole();
+                        this.show      = mat.getShow();
+                        this.title     = mat.getTitle();
+                        this.type      = mat.getType();
+                        this.remoteSchema = mat.getRemoteSchema();
+                    }
+                }
+
+                public List<String> getNilReason() {
+                    return new ArrayList<String>();
+                }
                 /**
                  * Gets the value of the remoteSchema property.
                  * 
@@ -2613,6 +2803,16 @@ public class ProcessMethodType extends AbstractGMLEntry implements AbstractProce
         @XmlElement(name = "RulesDefinition", required = true)
         private ProcessMethodType.Rules.RulesDefinition rulesDefinition;
 
+        public Rules() {
+
+        }
+
+        public Rules(AbstractRules ar) {
+            if (ar != null && ar.getRulesDefinition() != null) {
+                this.rulesDefinition = new RulesDefinition(ar.getRulesDefinition());
+            }
+        }
+        
         /**
          * Gets the value of the rulesDefinition property.
          * 
@@ -2663,13 +2863,33 @@ public class ProcessMethodType extends AbstractGMLEntry implements AbstractProce
             "description",
             "ruleLanguage"
         })
-        public static class RulesDefinition {
+        public static class RulesDefinition implements AbstractRulesDefinition {
 
             @XmlElement(namespace = "http://www.opengis.net/gml")
             private StringOrRefType description;
             @XmlElementRef(name = "ruleLanguage", namespace = "http://www.opengis.net/sensorML/1.0.1", type = JAXBElement.class)
             private JAXBElement<? extends RuleLanguageType> ruleLanguage;
 
+            public RulesDefinition() {
+
+            }
+
+            public RulesDefinition(AbstractRulesDefinition rd) {
+                if (rd != null) {
+                    this.description = rd.getDescription();
+                    if (rd.getRuleLanguage() != null) {
+                        ObjectFactory fact = new ObjectFactory();
+                        if (rd.getRuleLanguage() instanceof Schematron) {
+                            this.ruleLanguage = fact.createSchematron(new Schematron((AbstractSchematron)rd.getRuleLanguage()));
+                        } else if (rd.getRuleLanguage() instanceof RelaxNG) {
+                            this.ruleLanguage = fact.createRelaxNG(new RelaxNG((AbstractRelaxNG)rd.getRuleLanguage()));
+                        } else {
+                            this.ruleLanguage = fact.createRuleLanguage(new RuleLanguageType(rd.getRuleLanguage()));
+                        }
+                    }
+                }
+            }
+            
             /**
              * Textual description of the i/o structure
              * 
@@ -2694,6 +2914,25 @@ public class ProcessMethodType extends AbstractGMLEntry implements AbstractProce
                 this.description = value;
             }
 
+            public RuleLanguageType getRuleLanguage() {
+                if (ruleLanguage != null) {
+                    return ruleLanguage.getValue();
+                }
+                return null;
+            }
+
+            public void setRuleLanguage(RuleLanguageType value) {
+                ObjectFactory fact = new ObjectFactory();
+                if (value instanceof Schematron) {
+                    this.ruleLanguage = fact.createSchematron((Schematron)value);
+                } else if (value instanceof RelaxNG) {
+                    this.ruleLanguage = fact.createRelaxNG((RelaxNG)value);
+                } else if (value instanceof RuleLanguageType) {
+                    this.ruleLanguage = fact.createRuleLanguage((RuleLanguageType)value);
+                }
+            }
+
+
             /**
              * Gets the value of the ruleLanguage property.
              * 
@@ -2704,7 +2943,7 @@ public class ProcessMethodType extends AbstractGMLEntry implements AbstractProce
              *     {@link JAXBElement }{@code <}{@link RuleLanguageType }{@code >}
              *     
              */
-            public JAXBElement<? extends RuleLanguageType> getRuleLanguage() {
+            public JAXBElement<? extends RuleLanguageType> getJbRuleLanguage() {
                 return ruleLanguage;
             }
 
@@ -2718,7 +2957,7 @@ public class ProcessMethodType extends AbstractGMLEntry implements AbstractProce
              *     {@link JAXBElement }{@code <}{@link RuleLanguageType }{@code >}
              *     
              */
-            public void setRuleLanguage(JAXBElement<? extends RuleLanguageType> value) {
+            public void setJbRuleLanguage(JAXBElement<? extends RuleLanguageType> value) {
                 this.ruleLanguage = ((JAXBElement<? extends RuleLanguageType> ) value);
             }
 
