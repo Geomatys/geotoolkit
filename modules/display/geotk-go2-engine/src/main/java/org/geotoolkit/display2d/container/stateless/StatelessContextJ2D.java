@@ -81,12 +81,16 @@ public class StatelessContextJ2D extends AbstractGraphicJ2D{
                 for(int i=0,n=layers.size(); i<n; i++){
                     final MapLayer layer = layers.get(i);
                     final GraphicJ2D gra = layerGraphics.get(layer);
-                    gra.setZOrderHint(i);
+                    if(gra != null){
+                        gra.setZOrderHint(i);
+                    }
                 }
             }else if(CollectionChangeEvent.ITEM_REMOVED == type){
                 for(final MapLayer layer : event.getItems()){
                     final GraphicJ2D gra = layerGraphics.get(layer);
-                    gra.dispose();
+                    if(gra != null){
+                        gra.dispose();
+                    }
                     //remove the graphic
                     layerGraphics.remove(layer);
                 }
@@ -95,7 +99,9 @@ public class StatelessContextJ2D extends AbstractGraphicJ2D{
                 for(int i=0,n=layers.size(); i<n; i++){
                     final MapLayer layer = layers.get(i);
                     final GraphicJ2D gra = layerGraphics.get(layer);
-                    gra.setZOrderHint(i);
+                    if(gra != null){
+                        gra.setZOrderHint(i);
+                    }
                 }
             }else if(CollectionChangeEvent.ITEM_CHANGED == type){
             }

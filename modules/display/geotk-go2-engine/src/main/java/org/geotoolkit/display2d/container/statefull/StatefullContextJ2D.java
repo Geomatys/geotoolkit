@@ -17,21 +17,21 @@
  */
 package org.geotoolkit.display2d.container.statefull;
 
-import org.geotoolkit.display.canvas.VisitFilter;
-import org.geotoolkit.display.primitive.*;
+
 import java.beans.PropertyChangeEvent;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.display.canvas.ReferencedCanvas2D;
+import org.geotoolkit.display.canvas.RenderingContext;
+import org.geotoolkit.display.canvas.VisitFilter;
+import org.geotoolkit.display.primitive.SearchArea;
+import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.display2d.container.MultiThreadedRendering;
 import org.geotoolkit.display2d.container.stateless.StatelessDynamicLayerJ2D;
-import org.geotoolkit.display.canvas.RenderingContext;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.primitive.AbstractGraphicJ2D;
 import org.geotoolkit.display2d.primitive.GraphicJ2D;
@@ -43,8 +43,8 @@ import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.style.CollectionChangeEvent;
-
 import org.geotoolkit.util.logging.Logging;
+
 import org.opengis.display.primitive.Graphic;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.operation.TransformException;
@@ -81,12 +81,16 @@ public class StatefullContextJ2D extends AbstractGraphicJ2D{
                 for(int i=0,n=layers.size(); i<n; i++){
                     final MapLayer layer = layers.get(i);
                     final GraphicJ2D gra = layerGraphics.get(layer);
-                    gra.setZOrderHint(i);
+                    if(gra != null){
+                        gra.setZOrderHint(i);
+                    }
                 }
             }else if(CollectionChangeEvent.ITEM_REMOVED == type){
                 for(final MapLayer layer : event.getItems()){
                     final GraphicJ2D gra = layerGraphics.get(layer);
-                    gra.dispose();
+                    if(gra != null){
+                        gra.dispose();
+                    }
                     //remove the graphic
                     layerGraphics.remove(layer);
                 }
@@ -95,7 +99,9 @@ public class StatefullContextJ2D extends AbstractGraphicJ2D{
                 for(int i=0,n=layers.size(); i<n; i++){
                     final MapLayer layer = layers.get(i);
                     final GraphicJ2D gra = layerGraphics.get(layer);
-                    gra.setZOrderHint(i);
+                    if(gra != null){
+                        gra.setZOrderHint(i);
+                    }
                 }
             }else if(CollectionChangeEvent.ITEM_CHANGED == type){
             }
