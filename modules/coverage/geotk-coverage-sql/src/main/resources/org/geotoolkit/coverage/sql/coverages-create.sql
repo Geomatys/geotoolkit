@@ -27,7 +27,18 @@ SET search_path = coverages, postgis;
 -- Dependencies: (none)                                                                         --
 --------------------------------------------------------------------------------------------------
 
-CREATE TYPE "PackMode" AS ENUM ('native', 'geophysics');
+CREATE TYPE "PackMode" AS ENUM ('native', 'packed', 'geophysics', 'photographic');
+COMMENT ON TYPE "PackMode" IS
+'Indicates the relationship between the coefficients declared in the "Categories" table and the sample values in the file for a given format:
+
+''native'' means that the "Categories" table describes precisely the transfer function to be used when scaling a physical value for a given element. Those values will overwrite any values found in the image metadata.
+
+''packed'' is similar to ''native'', except that the image metadata will be checked. If negative values exist according image metadata while the "Categories" table declares only ranges of positive values, then the sample values will be shifted to a range of positive values during the reading process. The result is a more compact color model.
+
+''geophysics'' means that the sample values are already geophysics values. The inverse of the transfer function need to be applied in order to produce the packed image.
+
+''photographics'' means that the sample values have no other meaning than visual colors.';
+
 
 CREATE TABLE "Formats" (
     "name"     character varying NOT NULL PRIMARY KEY,
@@ -59,8 +70,8 @@ COMMENT ON COLUMN "Formats"."comments" IS
 --------------------------------------------------------------------------------------------------
 
 INSERT INTO "Formats" ("name", "plugin", "packMode") VALUES
-  ('PNG',  'PNG',  'native'),
-  ('TIFF', 'TIFF', 'native');
+  ('PNG',  'PNG',  'photographic'),
+  ('TIFF', 'TIFF', 'photographic');
 
 
 

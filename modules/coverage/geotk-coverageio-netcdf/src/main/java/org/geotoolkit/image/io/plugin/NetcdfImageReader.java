@@ -355,7 +355,7 @@ public class NetcdfImageReader extends FileImageReader implements NamedImageStor
                 return names.size();
             }
         }
-        if (zDimension != 0) {
+        if (zDimension > 0) {
             prepareVariable(imageIndex);
             final int rank = variable.getRank();
             final int bandDimension = rank - zDimension;

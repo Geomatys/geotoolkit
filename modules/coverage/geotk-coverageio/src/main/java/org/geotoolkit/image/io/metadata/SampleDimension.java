@@ -48,7 +48,7 @@ import org.geotoolkit.util.NumberRange;
  * @since 3.06
  * @module
  */
-public interface SampleDimension extends RangeDimension {
+public interface SampleDimension extends RangeDimension, SampleDomain {
     /**
      * The range of valid sample values in the band, not including {@linkplain #getFillSampleValues()
      * fill sample values}. This is the range of values <em>as they are stored in the image file</em>,
@@ -73,6 +73,7 @@ public interface SampleDimension extends RangeDimension {
      * @see #getMaxValue()
      * @see #getUnits()
      */
+    @Override
     NumberRange<?> getValidSampleValues();
 
     /**
@@ -83,6 +84,7 @@ public interface SampleDimension extends RangeDimension {
      *
      * @return The sample values used for filling the cells that do not have any physical value.
      */
+    @Override
     double[] getFillSampleValues();
 
     /**

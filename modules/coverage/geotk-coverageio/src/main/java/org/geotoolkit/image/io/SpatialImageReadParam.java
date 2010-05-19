@@ -22,6 +22,7 @@ import java.util.Set;
 import java.util.Map;
 import java.util.EnumSet;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Locale;
 import java.util.logging.LogRecord;
 import java.awt.Rectangle;
@@ -34,7 +35,9 @@ import org.opengis.referencing.cs.AxisDirection;
 
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.IndexedResourceBundle;
+import org.geotoolkit.image.io.metadata.SampleDomain;
 import org.geotoolkit.internal.image.io.Warnings;
+import org.geotoolkit.util.collection.UnmodifiableArrayList;
 import org.geotoolkit.util.converter.Classes;
 
 
@@ -125,7 +128,7 @@ import org.geotoolkit.util.converter.Classes;
  * }
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.11
+ * @version 3.12
  *
  * @since 3.05 (derived from 2.4)
  * @module
@@ -162,6 +165,14 @@ public class SpatialImageReadParam extends ImageReadParam implements WarningProd
      * The band to display.
      */
     private int visibleBand;
+
+    /**
+     * The range of valid values and the fill values for each band to be read,
+     * or {@code null} if unspecified.
+     *
+     * @since 3.12
+     */
+    private List<SampleDomain> sampleDomains;
 
     /**
      * The kind of sample conversions which are allowed, or {@code null} if none.
@@ -364,7 +375,7 @@ public class SpatialImageReadParam extends ImageReadParam implements WarningProd
 
     /**
      * Returns the name of the color palette to apply when creating an
-     * {@linkplain java.awt.image.IndexColorModel index color model}.
+     * {@linkplain IndexColorModel index color model}.
      * This is the name specified by the last call to {@link #setPaletteName(String)}.
      * <p>
      * For a table of available palette names in the default Geotk installation,
@@ -444,6 +455,56 @@ public class SpatialImageReadParam extends ImageReadParam implements WarningProd
      */
     public void setPaletteFactory(final PaletteFactory factory) {
         paletteFactory = factory;
+    }
+
+    /**
+     * Returns the range of valid values together with the fill values, or {@code null} if
+     * unspecified. If non-null, then {@link SpatialImageReader} will use this information
+     * for creating the image color model as documented in the {@link #getPaletteFactory()}
+     * method.
+     * <p>
+     * This property is typically {@code null}, either because the color model is specified
+     * by the image format, or because the range of valid values is extracted from the
+     * {@linkplain SpatialImageReader#getImageMetadata(int) image metadata}.
+     * <p>
+     * If non-null, then the size of this list shall be equals to the number of
+     * {@linkplain #getSourceBands() source bands}. The {@code SampleDomain} at
+     * index <var>i</var> is for the band at index {@code sourceBands[i]} in the
+     * stream.
+     *
+     * @return The range of valid values and the fill values for each band to be read,
+     *         or {@code null} if unspecified.
+     *
+     * @since 3.12
+     */
+    public List<SampleDomain> getSampleDomains() {
+        return sampleDomains;
+    }
+
+    /**
+     * Sets the range of valid values and fill values to use for creating a color model. It is
+     * typically not necessary to set this property, since those information are extracted from
+     * the {@linkplain SpatialImageReader#getImageMetadata(int) image metadata} by default.
+     * However it may be useful to set the range and the fill values explicitly if the image
+     * to be read is known to have missing or incomplete metadata. This is the case for example
+     * of NetCDF files not conform to the <a href="http://www.cfconventions.org">CF conventions</a>.
+     * <p>
+     * If this method is invoked with a non-null value, then the size of the given list
+     * shall be equals to the number of {@linkplain #getSourceBands() source bands}. The
+     * {@code SampleDomain} at index <var>i</var> is for the band at index {@code sourceBands[i]}
+     * in the stream. The range and fill values in the given {@code SampleDomain}s while have
+     * precedence over any value declared in the image metadata.
+     *
+     * @param domains The range of valid values and the fill values for each band to be read,
+     *        or {@code null} for letting the reader infers them from the image metadata.
+     *
+     * @since 3.12
+     */
+    public void setSampleDomains(List<SampleDomain> domains) {
+        if (domains != null && !(domains instanceof UnmodifiableArrayList<?>)) {
+            domains = UnmodifiableArrayList.wrap(domains.toArray(new SampleDomain[domains.size()]));
+        }
+        sampleDomains = domains;
     }
 
     /**

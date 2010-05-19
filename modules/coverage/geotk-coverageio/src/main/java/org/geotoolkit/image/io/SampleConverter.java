@@ -44,10 +44,13 @@ import org.geotoolkit.util.converter.Classes;
  * There is no scaling because this class is not for <cite>samples to geophysics values</cite>
  * conversions (except the replacement of pad values by {@link Double#NaN NaN}). This class is
  * about the minimal changes needed in order to comply to the contraints of a target
- * {@linkplain java.awt.image.ColorModel color model}, e.g. for working around negative numbers.
+ * {@linkplain java.awt.image.ColorModel color model}, for example in order to workaround
+ * the fact that {@link java.awt.image.IndexColorModel} does not accept negative numbers.
  * <p>
- * Sample converters work on {@code int}, {@code float} or {@code double} primitive types,
- * which match the primitive types expected by the {@link Raster} API.
+ * {@code SampleConverter}s are typically created and used by the {@link SpatialImageReader}
+ * class and subclasses. They are created (directly or indirectly) by the
+ * {@link SpatialImageReader#getImageType getImageType} method and used by the
+ * {@link SpatialImageReader#read read} method.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.07

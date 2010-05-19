@@ -22,9 +22,11 @@ import java.util.Locale;
 
 import org.geotoolkit.coverage.Category;
 import org.geotoolkit.coverage.GridSampleDimension;
+import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.io.GridCoverageStorePool;
 import org.geotoolkit.gui.swing.tree.MutableTreeNode;
 import org.geotoolkit.gui.swing.tree.DefaultMutableTreeNode;
+import org.geotoolkit.image.io.metadata.SampleDomain;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
 import org.geotoolkit.util.Utilities;
 
@@ -37,7 +39,7 @@ import org.geotoolkit.internal.sql.table.DefaultEntry;
  * Information about an image format.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.11
+ * @version 3.12
  *
  * @since 3.09 (derived from Seagis)
  * @module
@@ -84,6 +86,22 @@ final class FormatEntry extends DefaultEntry {
     public final List<GridSampleDimension> sampleDimensions;
 
     /**
+     * The range of valid sample values and the fill values for each sample dimension.
+     */
+    public final List<SampleDomain> sampleDomains;
+
+    /**
+     * The name of the color palette, or {@code null} if unspecified.
+     */
+    public final String paletteName;
+
+    /**
+     * {@code GEOPHYSICS} if coverage to be read contains already geophysics values, or
+     * {@code
+     */
+    public final ViewType viewType;
+
+    /**
      * The pool of coverage loaders, to be created when first needed. We use a different pool
      * instance for each format in order to reuse the same {@link javax.imageio.ImageReader}
      * instance when a {@code coverageLoaders.acquireReader().read(...)} method is invoked.
@@ -93,24 +111,32 @@ final class FormatEntry extends DefaultEntry {
     /**
      * Creates a new entry for this format.
      *
-     * @param name       An identifier for this entry.
-     * @param formatName Format name (i.e. the plugin to use).
-     * @param bands      Sample dimensions for coverages encoded with this format, or {@code null}.
-     * @param geophysics {@code true} if coverage to be read are already geophysics values.
+     * @param name        An identifier for this entry.
+     * @param formatName  Format name (i.e. the plugin to use).
+     * @param paletteName The name of the color palette, or {@code null} if unspecified.
+     * @param bands       Sample dimensions for coverages encoded with this format, or {@code null}.
      */
-    protected FormatEntry(final Comparable<?> name, final String formatName,
-            final GridSampleDimension[] bands, final boolean geophysics, final String comments)
+    protected FormatEntry(final Comparable<?> name, final String formatName, final String paletteName,
+            final GridSampleDimension[] bands, final ViewType viewType, final String comments)
     {
         super(name, comments);
         this.imageFormat = formatName.trim();
         if (bands != null) {
+            final boolean geophysics = ViewType.GEOPHYSICS.equals(viewType);
+            final SampleDomain[] domains = new SampleDomain[bands.length];
             for (int i=0; i<bands.length; i++) {
-                bands[i] = bands[i].geophysics(geophysics);
+                final GridSampleDimension band = bands[i];
+                domains[i] = new FormatSampleDomain(band);
+                bands  [i] = band.geophysics(geophysics);
             }
             sampleDimensions = UnmodifiableArrayList.wrap(bands);
+            sampleDomains    = UnmodifiableArrayList.wrap(domains);
         } else {
             sampleDimensions = null;
+            sampleDomains    = null;
         }
+        this.paletteName = paletteName;
+        this.viewType    = viewType;
     }
 
     /**

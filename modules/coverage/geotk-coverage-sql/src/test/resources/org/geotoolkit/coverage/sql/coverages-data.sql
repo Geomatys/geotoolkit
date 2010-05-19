@@ -88,7 +88,7 @@ INSERT INTO "GridCoverages" ("series", "filename", "index", "startTime", "endTim
 -- Coriolis data from IFREMER                                                                   --
 --------------------------------------------------------------------------------------------------
 INSERT INTO "Formats" ("name", "plugin", "packMode") VALUES
- ('Coriolis (temperature)', 'NetCDF', 'native');
+ ('Coriolis (temperature)', 'NetCDF', 'packed');
 
 INSERT INTO "SampleDimensions" ("format", "name", "units") VALUES
  ('Coriolis (temperature)', 'Temperature', '°C');

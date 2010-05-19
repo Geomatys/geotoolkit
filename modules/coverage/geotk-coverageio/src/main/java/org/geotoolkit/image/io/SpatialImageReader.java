@@ -50,7 +50,10 @@ import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.image.io.metadata.SampleDimension;
 import org.geotoolkit.image.io.metadata.MetadataHelper;
+import org.geotoolkit.image.io.metadata.SampleDomain;
 import org.geotoolkit.internal.image.io.Warnings;
+
+import static org.geotoolkit.image.io.SampleConversionType.*;
 
 
 /**
@@ -510,7 +513,8 @@ public abstract class SpatialImageReader extends ImageReader implements WarningP
      * {@section Using the Sample Converters}
      * If the {@code converters} argument is non-null, then this method will store the
      * {@link SampleConverter} instances in the supplied array. The array length shall be equals
-     * to the number of {@linkplain ImageReadParam#getDestinationBands() destination bands}.
+     * to the number of {@linkplain ImageReadParam#getSourceBands() source} and
+     * {@linkplain ImageReadParam#getDestinationBands() destination bands}.
      * <p>
      * The converters shall be used by {@link #read(int,ImageReadParam) read} method
      * implementations for converting the values read in the datafile to values acceptable
@@ -551,12 +555,113 @@ public abstract class SpatialImageReader extends ImageReader implements WarningP
      * @see #collapseNoDataValues
      * @see #getDestination(int, ImageReadParam, int, int, SampleConverter[])
      */
+    @SuppressWarnings("fallthrough")
     protected ImageTypeSpecifier getImageType(final int               imageIndex,
                                               final ImageReadParam    parameters,
                                               final SampleConverter[] converters)
             throws IOException
     {
-        ImageTypeSpecifier type = (parameters != null) ? parameters.getDestinationType() : null;
+        /*
+         * Extracts all informations we will need from the user-supplied parameters, if any.
+         * Note: the number of bands in the target image (as requested by the caller)
+         * may be different than the number of bands in the source image (on disk).
+         */
+        final ImageTypeSpecifier userType;
+        final String paletteName;
+        final int[]  sourceBands;
+        final int[]  targetBands;
+        final int    visibleBand;
+        final int    numBands;
+        if (parameters != null) {
+            sourceBands = parameters.getSourceBands();
+            targetBands = parameters.getDestinationBands();
+            userType    = parameters.getDestinationType();
+        } else {
+            sourceBands = null;
+            targetBands = null;
+            userType    = null;
+        }
+        if (sourceBands != null) {
+            numBands = sourceBands.length; // == targetBands.length (assuming valid ImageReadParam).
+        } else if (targetBands != null) {
+            numBands = targetBands.length;
+        } else {
+            numBands = getNumBands(imageIndex);
+        }
+        List<? extends SampleDomain> bands = null;
+        if (parameters instanceof SpatialImageReadParam) {
+            final SpatialImageReadParam geoparam = (SpatialImageReadParam) parameters;
+            paletteName = geoparam.getNonNullPaletteName();
+            visibleBand = geoparam.getVisibleBand();
+            bands       = geoparam.getSampleDomains();
+        } else {
+            paletteName = SpatialImageReadParam.DEFAULT_PALETTE_NAME;
+            visibleBand = 0;
+        }
+        /*
+         * Gets the band metadata. If the user specified explicitly a SampleDomain in the
+         * parameters, this is all the information we need - so we can avoid the cost of
+         * querying IIOMetadata. Otherwise we will need to extract the image IIOMetadata.
+         */
+        boolean convertBandIndices = false;
+        if (bands == null) {
+            final SpatialMetadata metadata;
+            final boolean oldIgnore = ignoreMetadata;
+            try {
+                ignoreMetadata = false;
+                metadata = getImageMetadata(imageIndex);
+            } finally {
+                ignoreMetadata = oldIgnore;
+            }
+            if (metadata != null) {
+                final List<SampleDimension> sd = metadata.getListForType(SampleDimension.class);
+                if (sd != null && !sd.isEmpty()) {
+                    convertBandIndices = (sourceBands != null);
+                    bands = sd;
+                }
+            }
+        }
+        /*
+         * Gets the data type, and check if we should replace it by an other type. Type
+         * replacements are allowed only if the appropriate SampleConversionType enum is set.
+         */
+        boolean replaceFillValues = false;
+        int dataType = (userType != null) ? userType.getSampleModel().getDataType() : getRawDataType(imageIndex);
+        if (userType == null && parameters instanceof SpatialImageReadParam) {
+            final SpatialImageReadParam geoparam = (SpatialImageReadParam) parameters;
+            switch (dataType) {
+                case DataBuffer.TYPE_SHORT: {
+                    if (geoparam.isSampleConversionAllowed(SHIFT_SIGNED_INTEGERS)) {
+                        dataType = DataBuffer.TYPE_USHORT;
+                    }
+                    // Fall through
+                }
+                case DataBuffer.TYPE_USHORT:
+                case DataBuffer.TYPE_INT:
+                case DataBuffer.TYPE_BYTE: {
+                    if (bands == null || !geoparam.isSampleConversionAllowed(STORE_AS_FLOATS)) {
+                        break;
+                    }
+                    boolean hasFillValues = false;
+                    for (final SampleDomain domain : bands) {
+                        final double[] fillValues = domain.getFillSampleValues();
+                        if (fillValues != null && fillValues.length != 0) {
+                            hasFillValues = true;
+                            break;
+                        }
+                    }
+                    if (!hasFillValues) {
+                        break;
+                    }
+                    dataType = DataBuffer.TYPE_FLOAT;
+                    // Fall through
+                }
+                case DataBuffer.TYPE_FLOAT:
+                case DataBuffer.TYPE_DOUBLE: {
+                    replaceFillValues = geoparam.isSampleConversionAllowed(REPLACE_FILL_VALUES);
+                }
+            }
+        }
         /*
          * Gets the minimal and maximal values allowed for the target image type.
          * Note that this is meanless for floating point types, so the values in
@@ -567,13 +672,6 @@ public abstract class SpatialImageReader extends ImageReader implements WarningP
          */
         final boolean isFloat;
         final long floor, ceil;
-        int dataType = (type != null) ? type.getSampleModel().getDataType() : getRawDataType(imageIndex);
-        if (dataType == DataBuffer.TYPE_SHORT && parameters instanceof SpatialImageReadParam) {
-            final SpatialImageReadParam sp = (SpatialImageReadParam) parameters;
-            if (sp.isSampleConversionAllowed(SampleConversionType.SHIFT_SIGNED_INTEGERS)) {
-                dataType = DataBuffer.TYPE_USHORT;
-            }
-        }
         switch (dataType) {
             case DataBuffer.TYPE_UNDEFINED: // Actually we don't really know what to do for this case...
             case DataBuffer.TYPE_DOUBLE:    // Fall through since we can treat this case as float.
@@ -603,38 +701,6 @@ public abstract class SpatialImageReader extends ImageReader implements WarningP
             }
         }
         /*
-         * Extracts all informations we will need from the user-supplied parameters, if any.
-         */
-        final String paletteName;
-        final int[]  sourceBands;
-        final int[]  targetBands;
-        final int    visibleBand;
-        if (parameters != null) {
-            sourceBands = parameters.getSourceBands();
-            targetBands = parameters.getDestinationBands();
-        } else {
-            sourceBands = null;
-            targetBands = null;
-        }
-        if (parameters instanceof SpatialImageReadParam) {
-            final SpatialImageReadParam geoparam = (SpatialImageReadParam) parameters;
-            paletteName = geoparam.getNonNullPaletteName();
-            visibleBand = geoparam.getVisibleBand();
-        } else {
-            paletteName = SpatialImageReadParam.DEFAULT_PALETTE_NAME;
-            visibleBand = 0;
-        }
-        // Note: the number of bands in the target image (as requested by the caller)
-        // may be different than the number of bands in the source image (on disk).
-        final int numBands;
-        if (sourceBands != null) {
-            numBands = sourceBands.length; // == targetBands.length (assuming valid ImageReadParam).
-        } else if (targetBands != null) {
-            numBands = targetBands.length;
-        } else {
-            numBands = getNumBands(imageIndex);
-        }
-        /*
          * Computes a range of values for all bands, as the union in order to make sure that
          * we can stores every sample values. Also creates SampleConverters in the process.
          * The later is an opportunist action since we gather most of the needed information
@@ -644,142 +710,140 @@ public abstract class SpatialImageReader extends ImageReader implements WarningP
         NumberRange<?>  visibleRange     = null;
         SampleConverter visibleConverter = SampleConverter.IDENTITY;
         double          maximumFillValue = 0; // Only in the visible band, and must be positive.
-        final SpatialMetadata metadata;
-        final boolean oldIgnore = ignoreMetadata;
-        try {
-            ignoreMetadata = false;
-            metadata = getImageMetadata(imageIndex);
-        } finally {
-            ignoreMetadata = oldIgnore;
-        }
-        if (metadata != null) {
-            final MetadataHelper helper = new MetadataHelper(this);
-            final List<SampleDimension> bands = metadata.getListForType(SampleDimension.class);
-            if (bands != null) {
-                final int numMetadataBands = bands.size();
-                if (numMetadataBands != 0) for (int i=0; i<numBands; i++) {
-                    final int sourceBand = (sourceBands != null) ? sourceBands[i] : i;
-                    if (sourceBand < 0 || sourceBand >= numMetadataBands) {
+        if (bands != null) {
+            MetadataHelper helper = null;              // To be created only if needed.
+            final int numMetadataBands = bands.size(); // Never 0 - check was performed above.
+            for (int i=0; i<numBands; i++) {
+                final int bandIndex = convertBandIndices ? sourceBands[i] : i;
+                if (bandIndex < 0 || bandIndex >= numMetadataBands) {
+                    Warnings.log(this, null, SpatialImageReader.class, "getImageType",
+                            indexOutOfBounds(bandIndex, 0, numMetadataBands));
+                }
+                final SampleDomain band = bands.get(Math.min(bandIndex, numMetadataBands-1));
+                final double[] fillValues = band.getFillSampleValues();
+                final NumberRange<?> range;
+                if (band instanceof SampleDimension) {
+                    if (helper == null) {
+                        helper = new MetadataHelper(this);
+                    }
+                    range = helper.getValidSampleValues((SampleDimension) band, fillValues);
+                } else {
+                    range = band.getValidSampleValues();
+                }
+                double minimum, maximum;
+                if (range != null) {
+                    minimum = range.getMinimum();
+                    maximum = range.getMaximum();
+                    if (!isFloat) {
+                        // If the metadata do not contain any information about the range,
+                        // treat as if we use the maximal range allowed by the data type.
+                        if (minimum == Double.NEGATIVE_INFINITY) minimum = floor;
+                        if (maximum == Double.POSITIVE_INFINITY) maximum = ceil;
+                    }
+                    final double extent = maximum - minimum;
+                    if (extent >= 0 && (isFloat || extent <= (ceil - floor))) {
+                        allRanges = (allRanges != null) ? allRanges.union(range) : range;
+                    } else {
+                        // Use range.getMin/MaxValue() because they may be integers rather than doubles.
                         Warnings.log(this, null, SpatialImageReader.class, "getImageType",
-                                indexOutOfBounds(sourceBand, 0, numMetadataBands));
+                                Errors.Keys.BAD_RANGE_$2, range.getMinValue(), range.getMaxValue());
+                        continue;
                     }
-                    final SampleDimension band = bands.get(Math.min(sourceBand, numMetadataBands-1));
-                    final double[] nodataValues = band.getFillSampleValues();
-                    final NumberRange<?> range = helper.getValidSampleValues(band, nodataValues);
-                    double minimum, maximum;
-                    if (range != null) {
-                        minimum = range.getMinimum();
-                        maximum = range.getMaximum();
-                        if (!isFloat) {
-                            // If the metadata do not contain any information about the range,
-                            // treat as if we use the maximal range allowed by the data type.
-                            if (minimum == Double.NEGATIVE_INFINITY) minimum = floor;
-                            if (maximum == Double.POSITIVE_INFINITY) maximum = ceil;
+                } else {
+                    minimum = Double.NaN;
+                    maximum = Double.NaN;
+                }
+                final int targetBand = (targetBands != null) ? targetBands[i] : i;
+                /*
+                 * For floating point types, replaces no-data values by NaN because the floating
+                 * point numbers are typically used for geophysics data, so the raster is likely
+                 * to be a "geophysics" view for GridCoverage2D. All other values are stored "as
+                 * is" without any offset.
+                 *
+                 * For integer types, if the range of values from the source data file fits into
+                 * the range of values allowed by the destination raster, we will use an identity
+                 * converter. If the only required conversion is a shift from negative to positive
+                 * values, creates an offset converter with no-data values collapsed to 0.
+                 */
+                final SampleConverter converter;
+                if (isFloat) {
+                    converter = replaceFillValues ?
+                            SampleConverter.createPadValuesMask(fillValues) : SampleConverter.IDENTITY;
+                } else {
+                    final boolean isZeroValid = (minimum <= 0 && maximum >= 0);
+                    boolean collapsePadValues = false;
+                    if (fillValues != null && fillValues.length != 0) {
+                        final double[] sorted = fillValues.clone();
+                        Arrays.sort(sorted);
+                        double minFill = sorted[0];
+                        double maxFill = minFill;
+                        int indexMax = sorted.length;
+                        while (--indexMax!=0 && Double.isNaN(maxFill = sorted[indexMax]));
+                        assert minFill <= maxFill || Double.isNaN(minFill) : maxFill;
+                        if (targetBand == visibleBand && maxFill > maximumFillValue) {
+                            maximumFillValue = maxFill;
                         }
-                        final double extent = maximum - minimum;
-                        if (extent >= 0 && (isFloat || extent <= (ceil - floor))) {
-                            allRanges = (allRanges != null) ? allRanges.union(range) : range;
-                        } else {
-                            // Use range.getMin/MaxValue() because they may be integers rather than doubles.
-                            Warnings.log(this, null, SpatialImageReader.class, "getImageType",
-                                    Errors.Keys.BAD_RANGE_$2, range.getMinValue(), range.getMaxValue());
-                            continue;
-                        }
-                    } else {
-                        minimum = Double.NaN;
-                        maximum = Double.NaN;
-                    }
-                    final int targetBand = (targetBands != null) ? targetBands[i] : i;
-                    /*
-                     * For floating point types, replaces no-data values by NaN because the floating
-                     * point numbers are typically used for geophysics data, so the raster is likely
-                     * to be a "geophysics" view for GridCoverage2D. All other values are stored "as
-                     * is" without any offset.
-                     *
-                     * For integer types, if the range of values from the source data file fits into
-                     * the range of values allowed by the destination raster, we will use an identity
-                     * converter. If the only required conversion is a shift from negative to positive
-                     * values, creates an offset converter with no-data values collapsed to 0.
-                     */
-                    final SampleConverter converter;
-                    if (isFloat) {
-                        converter = SampleConverter.createPadValuesMask(nodataValues);
-                    } else {
-                        final boolean isZeroValid = (minimum <= 0 && maximum >= 0);
-                        boolean collapsePadValues = false;
-                        if (nodataValues != null && nodataValues.length != 0) {
-                            final double[] sorted = nodataValues.clone();
-                            Arrays.sort(sorted);
-                            double minFill = sorted[0];
-                            double maxFill = minFill;
-                            int indexMax = sorted.length;
-                            while (--indexMax!=0 && Double.isNaN(maxFill = sorted[indexMax]));
-                            assert minFill <= maxFill || Double.isNaN(minFill) : maxFill;
-                            if (targetBand == visibleBand && maxFill > maximumFillValue) {
-                                maximumFillValue = maxFill;
-                            }
-                            if (minFill < floor || maxFill > ceil) {
-                                // At least one fill value is outside the range of acceptable values.
-                                collapsePadValues = true;
-                            } else if (minimum >= 0) {
-                                /*
-                                 * Arbitrary optimization of memory usage:  if there is a "large" empty
-                                 * space between the range of valid values and a no-data value, then we
-                                 * may (at subclass implementors choice) collapse the no-data values to
-                                 * zero in order to avoid wasting the empty space.  Note that we do not
-                                 * perform this collapse if the valid range contains negative values
-                                 * because it would not save any memory. We do not check the no-data
-                                 * values between 0 and 'minimum' for the same reason.
-                                 */
-                                int k = Arrays.binarySearch(sorted, maximum);
-                                if (k >= 0) k++; // We want the first element greater than maximum.
-                                else k = ~k; // Really ~ operator, not -
-                                if (k <= indexMax) {
-                                    double unusedSpace = Math.max(sorted[k] - maximum - 1, 0);
-                                    while (++k <= indexMax) {
-                                        final double delta = sorted[k] - sorted[k-1] - 1;
-                                        if (delta > 0) {
-                                            unusedSpace += delta;
-                                        }
-                                    }
-                                    final int unused = (int) Math.min(Math.round(unusedSpace), Integer.MAX_VALUE);
-                                    collapsePadValues = collapseNoDataValues(isZeroValid, sorted, unused);
-                                    // We invoked 'collapseNoDataValues' inconditionnaly even if
-                                    // 'unused' is zero because the user may decide on the basis
-                                    // of other criterions, like 'isZeroValid'.
-                                }
-                            }
-                        }
-                        if (minimum < floor || maximum > ceil) {
-                            // The range of valid values is outside the range allowed by raw data type.
-                            converter = SampleConverter.createOffset(Math.ceil(1 - minimum), nodataValues);
-                        } else if (collapsePadValues) {
-                            if (isZeroValid) {
-                                // We need to collapse the no-data values to 0, but it causes a clash
-                                // with the range of valid values. So we also shift the later.
-                                converter = SampleConverter.createOffset(Math.ceil(1 - minimum), nodataValues);
-                            } else {
-                                // We need to collapse the no-data values and there is no clash.
-                                converter = SampleConverter.createPadValuesMask(nodataValues);
-                            }
-                        } else {
+                        if (minFill < floor || maxFill > ceil) {
+                            // At least one fill value is outside the range of acceptable values.
+                            collapsePadValues = true;
+                        } else if (minimum >= 0) {
                             /*
-                             * Do NOT take 'nodataValues' in account if there is no need to collapse
-                             * them. This is not the converter's job to transform "packed" values to
-                             * "geophysics" values. We just want them to fit in the IndexColorModel,
-                             * and they already fit. So the identity converter is appropriate even
-                             * in presence of pad values.
+                             * Arbitrary optimization of memory usage:  if there is a "large" empty
+                             * space between the range of valid values and a no-data value, then we
+                             * may (at subclass implementors choice) collapse the no-data values to
+                             * zero in order to avoid wasting the empty space.  Note that we do not
+                             * perform this collapse if the valid range contains negative values
+                             * because it would not save any memory. We do not check the no-data
+                             * values between 0 and 'minimum' for the same reason.
                              */
-                            converter = SampleConverter.IDENTITY;
+                            int k = Arrays.binarySearch(sorted, maximum);
+                            if (k >= 0) k++; // We want the first element greater than maximum.
+                            else k = ~k; // Really ~ operator, not -
+                            if (k <= indexMax) {
+                                double unusedSpace = Math.max(sorted[k] - maximum - 1, 0);
+                                while (++k <= indexMax) {
+                                    final double delta = sorted[k] - sorted[k-1] - 1;
+                                    if (delta > 0) {
+                                        unusedSpace += delta;
+                                    }
+                                }
+                                final int unused = (int) Math.min(Math.round(unusedSpace), Integer.MAX_VALUE);
+                                collapsePadValues = collapseNoDataValues(isZeroValid, sorted, unused);
+                                // We invoked 'collapseNoDataValues' inconditionnaly even if
+                                // 'unused' is zero because the user may decide on the basis
+                                // of other criterions, like 'isZeroValid'.
+                            }
                         }
                     }
-                    if (converters != null && i < converters.length) {
-                        converters[i] = converter;
+                    if (minimum < floor || maximum > ceil) {
+                        // The range of valid values is outside the range allowed by raw data type.
+                        converter = SampleConverter.createOffset(Math.ceil(1 - minimum), fillValues);
+                    } else if (collapsePadValues) {
+                        if (isZeroValid) {
+                            // We need to collapse the no-data values to 0, but it causes a clash
+                            // with the range of valid values. So we also shift the later.
+                            converter = SampleConverter.createOffset(Math.ceil(1 - minimum), fillValues);
+                        } else {
+                            // We need to collapse the no-data values and there is no clash.
+                            converter = SampleConverter.createPadValuesMask(fillValues);
+                        }
+                    } else {
+                        /*
+                         * Do NOT take 'fillValues' in account if there is no need to collapse
+                         * them. This is not the converter's job to transform "packed" values to
+                         * "geophysics" values. We just want them to fit in the IndexColorModel,
+                         * and they already fit. So the identity converter is appropriate even
+                         * in presence of pad values.
+                         */
+                        converter = SampleConverter.IDENTITY;
                     }
-                    if (targetBand == visibleBand) {
-                        visibleConverter = converter;
-                        visibleRange = range;
-                    }
+                }
+                if (converters != null && i < converters.length) {
+                    converters[i] = converter;
+                }
+                if (targetBand == visibleBand) {
+                    visibleConverter = converter;
+                    visibleRange = range;
                 }
             }
         }
@@ -795,8 +859,8 @@ public abstract class SpatialImageReader extends ImageReader implements WarningP
                 }
             }
         }
-        if (type != null) {
-            return type;
+        if (userType != null) {
+            return userType;
         }
         /*
          * Creates a color palette suitable for the range of values in the visible band.
@@ -982,7 +1046,8 @@ public abstract class SpatialImageReader extends ImageReader implements WarningP
      * {@section Using the Sample Converters}
      * If the {@code converters} argument is non-null, then this method will store the
      * {@link SampleConverter} instances in the supplied array. The array length shall be equals
-     * to the number of {@linkplain ImageReadParam#getDestinationBands() destination bands}.
+     * to the number of {@linkplain ImageReadParam#getSourceBands() source} and
+     * {@linkplain ImageReadParam#getDestinationBands() destination bands}.
      * <p>
      * The converters shall be used by {@link #read(int,ImageReadParam) read} method
      * implementations for converting the values read in the datafile to values acceptable

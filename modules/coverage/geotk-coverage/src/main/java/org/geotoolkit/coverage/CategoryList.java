@@ -447,8 +447,7 @@ class CategoryList extends AbstractList<Category> implements MathTransform1D, Co
      * @return {@code true} if all categories are in the specified type.
      */
     static boolean isGeophysics(final Category[] categories, final boolean geo) {
-        for (int i=0; i<categories.length; i++) {
-            final Category category = categories[i];
+        for (final Category category : categories) {
             if (category.geophysics(geo) != category) {
                 return false;
             }
@@ -532,8 +531,8 @@ class CategoryList extends AbstractList<Category> implements MathTransform1D, Co
     public final NumberRange<?> getRange() {
         NumberRange<?> range = this.range;
         if (range == null) {
-            for (int i=0; i<categories.length; i++) {
-                final NumberRange<?> extent = categories[i].getRange();
+            for (final Category category : categories) {
+                final NumberRange<?> extent = category.getRange();
                 if (!Double.isNaN(extent.getMinimum()) && !Double.isNaN(extent.getMaximum())) {
                     if (range != null) {
                         range = range.union(extent);

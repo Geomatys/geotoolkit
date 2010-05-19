@@ -33,7 +33,7 @@ import static org.junit.Assert.*;
  * Tests {@link SampleDimensionTable}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.09
+ * @version 3.12
  *
  * @since 3.09 (derived from Seagis)
  */
@@ -47,7 +47,9 @@ public class SampleDimensionTableTest extends CatalogTestBase {
     @Test
     public void testSelect() throws SQLException {
         final SampleDimensionTable table = getDatabase().getTable(SampleDimensionTable.class);
-        checkTemperatureDimension(table.getSampleDimensions(FormatTableTest.TEMPERATURE));
+        final CategoryEntry entry = table.getSampleDimensions(FormatTableTest.TEMPERATURE);
+        assertEquals("rainbow", entry.paletteName);
+        checkTemperatureDimension(entry.sampleDimensions);
         table.release();
     }
 

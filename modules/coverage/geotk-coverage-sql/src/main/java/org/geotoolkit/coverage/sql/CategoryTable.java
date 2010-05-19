@@ -53,7 +53,7 @@ import org.geotoolkit.internal.sql.table.SpatialDatabase;
  * required for creating a {@link org.geotoolkit.coverage.grid.GridCoverage2D}.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.10
+ * @version 3.12
  *
  * @since 3.09 (derived from Seagis)
  * @module
@@ -108,7 +108,9 @@ final class CategoryTable extends Table {
      * @return The categories for each sample dimension in the given format.
      * @throws SQLException if an error occured while reading the database.
      */
-    public Map<Integer,Category[]> getCategories(final String format) throws SQLException {
+    public CategoryEntry getCategories(final String format) throws SQLException {
+        int paletteRange = 0;
+        String paletteName = null;
         final CategoryQuery query = (CategoryQuery) this.query;
         final List<Category> categories = new ArrayList<Category>();
         final Map<Integer,Category[]> dimensions = new HashMap<Integer,Category[]>();
@@ -155,6 +157,11 @@ final class CategoryTable extends Table {
                                 palettes.setWarningLocale(getLocale());
                             }
                             colors = palettes.getColors(colorID);
+                            final int range = upper - lower;
+                            if (paletteName == null || range > paletteRange) {
+                                paletteName = colorID;
+                                paletteRange = range;
+                            }
                          }
                     } catch (Exception exception) { // Includes IOException and NumberFormatException
                         throw new IllegalRecordException(exception, this, results, colorsIndex, name);
@@ -232,7 +239,7 @@ final class CategoryTable extends Table {
         if (!categories.isEmpty()) {
             store(dimensions, bandOfPreviousCategory, categories);
         }
-        return dimensions;
+        return new CategoryEntry(dimensions, paletteName);
     }
 
     /**

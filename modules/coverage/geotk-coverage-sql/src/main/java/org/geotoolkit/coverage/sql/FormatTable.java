@@ -21,6 +21,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import org.geotoolkit.resources.Errors;
+import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.internal.sql.table.Database;
 import org.geotoolkit.internal.sql.table.SingletonTable;
@@ -32,7 +33,7 @@ import org.geotoolkit.internal.sql.table.IllegalRecordException;
  * Connection to the table of image {@linkplain Format formats}.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.10
+ * @version 3.12
  *
  * @since 3.09 (derived from Seagis)
  * @module
@@ -105,19 +106,29 @@ final class FormatTable extends SingletonTable<FormatEntry> {
         final String format   = results.getString(indexOf(query.format));
         final String encoding = results.getString(encodingIndex);
         final String comments = results.getString(indexOf(query.comments));
-        final boolean geophysics;
+        final ViewType viewType;
         final String type = String.valueOf(encoding).toLowerCase();
-        if (type.equals("geophysics")) {
-            geophysics = true;
-        } else if (type.equals("packed") || type.equals("rendered") || type.equals("native")) {
-            geophysics = false;
+        if (type.equals("photographic")) { // TODO: use switch on Strings with Java 7.
+            viewType = ViewType.PHOTOGRAPHIC;
+        } else if (type.equals("geophysics")) {
+            viewType = ViewType.GEOPHYSICS;
+        } else if (type.equals("native")) {
+            viewType = ViewType.NATIVE;
+        } else if (type.equals("packed")) {
+            viewType = ViewType.PACKED;
         } else {
             // Following constructor will close the ResultSet.
             throw new IllegalRecordException(errors().getString(
                     Errors.Keys.UNKNOWN_PARAMETER_$1, encoding),
                     this, results, encodingIndex, identifier);
         }
-        final GridSampleDimension[] bands = getSampleDimensionTable().getSampleDimensions(identifier.toString());
-        return new FormatEntry(identifier, format, bands, geophysics, comments);
+        final CategoryEntry entry = getSampleDimensionTable().getSampleDimensions(identifier.toString());
+        GridSampleDimension[] sampleDimensions = null;
+        String paletteName = null;
+        if (entry != null) {
+            sampleDimensions = entry.sampleDimensions;
+            paletteName = entry.paletteName;
+        }
+        return new FormatEntry(identifier, format, paletteName, sampleDimensions, viewType, comments);
     }
 }

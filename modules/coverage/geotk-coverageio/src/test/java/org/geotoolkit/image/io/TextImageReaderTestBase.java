@@ -35,7 +35,7 @@ import static org.junit.Assert.*;
  * The base class for {@link TextImageReader} tests.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.08
+ * @version 3.12
  *
  * @since 3.06
  */
@@ -84,7 +84,9 @@ public abstract class TextImageReaderTestBase extends ImageReaderTestBase {
     @Test
     public void testReadFile() throws IOException {
         final SpatialImageReader reader = createImageReader();
-        final BufferedImage image = reader.read(0);
+        final SpatialImageReadParam param = reader.getDefaultReadParam();
+        param.setSampleConversionAllowed(SampleConversionType.REPLACE_FILL_VALUES, true);
+        final BufferedImage image = reader.read(0, param);
         reader.dispose();
         assertEquals(20, image.getWidth());
         assertEquals(42, image.getHeight());
@@ -112,6 +114,7 @@ public abstract class TextImageReaderTestBase extends ImageReaderTestBase {
     public void testSubRegion() throws IOException {
         final SpatialImageReader reader = createImageReader();
         final SpatialImageReadParam param = reader.getDefaultReadParam();
+        param.setSampleConversionAllowed(SampleConversionType.REPLACE_FILL_VALUES, true);
         param.setSourceRegion(new Rectangle(5, 10, 10, 20));
         param.setSourceSubsampling(2, 3, 1, 2);
         final BufferedImage image = reader.read(0, param);
@@ -135,6 +138,7 @@ public abstract class TextImageReaderTestBase extends ImageReaderTestBase {
     public void testByteType() throws IOException {
         final SpatialImageReader reader = createImageReader();
         final SpatialImageReadParam param = reader.getDefaultReadParam();
+        param.setSampleConversionAllowed(SampleConversionType.REPLACE_FILL_VALUES, true);
         final byte[] RGB = new byte[256];
         for (int i=0; i<RGB.length; i++) {
             RGB[i] = (byte) i;
@@ -145,7 +149,8 @@ public abstract class TextImageReaderTestBase extends ImageReaderTestBase {
          * 'original' is the one with floating point value, to be used only for comparison.
          */
         final BufferedImage image = reader.read(0, param);
-        final BufferedImage original = reader.read(0);
+        param.setDestinationType(null);
+        final BufferedImage original = reader.read(0, param);
         reader.dispose();
         assertEquals(IndexColorModel.class, image.getColorModel().getClass());
         assertEquals(DataBuffer.TYPE_BYTE,  image   .getSampleModel().getDataType());

@@ -32,14 +32,15 @@ import static org.junit.Assert.*;
  * Tests {@link SpatialImageReader}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.06
+ * @version 3.12
  *
  * @since 3.06 (derived from 2.5)
  */
 public final class SpatialImageReaderTest {
     /**
      * Tests {@link DataBuffer#TYPE_FLOAT}. The converter should be the identity one
-     * except for pad values which should be replaced by NaN.
+     * except for pad values which should be replaced by NaN, provided that this
+     * replacement is allowed.
      *
      * @throws IOException If an I/O operation was required and failed.
      */
@@ -50,24 +51,38 @@ public final class SpatialImageReaderTest {
         final float padValue = -9999;
         final SampleConverter[] converters = new SampleConverter[1];
         final SpatialImageReader reader = new NullImageReader(DataBuffer.TYPE_FLOAT, minimum, maximum, padValue);
-        final ImageTypeSpecifier specifier = reader.getImageType(0, null, converters);
-        final SampleConverter    converter = converters[0];
+        boolean replacePadValues = false;
+        do {
+            SpatialImageReadParam param = null;
+            if (replacePadValues) {
+                param = reader.getDefaultReadParam();
+                param.setSampleConversionAllowed(SampleConversionType.REPLACE_FILL_VALUES, true);
+            }
+            final ImageTypeSpecifier specifier = reader.getImageType(0, param, converters);
+            final SampleConverter    converter = converters[0];
 
-        // Tests the converter
-        assertNotNull(converter);
-        assertEquals (0.0,     converter.getOffset(),      0.0);
-        assertEquals (minimum, converter.convert(minimum), 0f);
-        assertEquals (maximum, converter.convert(maximum), 0f);
-        assertTrue   (Float.isNaN(converter.convert(padValue)));
+            // Tests the converter
+            assertNotNull(converter);
+            assertEquals (0.0,     converter.getOffset(),      0.0);
+            assertEquals (minimum, converter.convert(minimum), 0f);
+            assertEquals (maximum, converter.convert(maximum), 0f);
+            if (param == null) {
+                assertEquals("The converter should preserve pad values, unless instructed otherwise.",
+                        padValue, converter.convert(padValue), 0f);
+            } else {
+                assertTrue("The converter should have replaced fill values by NaN.",
+                        Float.isNaN(converter.convert(padValue)));
+            }
 
-        // Tests the sample model
-        final SampleModel sm = specifier.getSampleModel();
-        assertNotNull(sm);
-        assertEquals(DataBuffer.TYPE_FLOAT, sm.getDataType());
+            // Tests the sample model
+            final SampleModel sm = specifier.getSampleModel();
+            assertNotNull(sm);
+            assertEquals(DataBuffer.TYPE_FLOAT, sm.getDataType());
 
-        // Tests the color model
-        final ColorModel cm = specifier.getColorModel();
-        assertFalse(cm instanceof IndexColorModel);
+            // Tests the color model
+            final ColorModel cm = specifier.getColorModel();
+            assertFalse(cm instanceof IndexColorModel);
+        } while ((replacePadValues = !replacePadValues) == true);
     }
 
     /**

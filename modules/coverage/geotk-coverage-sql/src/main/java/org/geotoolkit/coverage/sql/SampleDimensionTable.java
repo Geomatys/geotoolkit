@@ -45,7 +45,7 @@ import org.geotoolkit.internal.sql.table.IllegalRecordException;
  * components needed for creation of {@link GridCoverage2D}.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.10
+ * @version 3.12
  *
  * @since 3.09 (derived from Seagis)
  * @module
@@ -102,10 +102,10 @@ final class SampleDimensionTable extends Table {
      * our Image I/O framework interprets that as "no bands", as opposed to "unknown bands".
      *
      * @param  format The format name.
-     * @return The sample dimensions for the given format, or an empty array if none (never {@code null}).
+     * @return An entry containing the sample dimensions for the given format, or {@code null} if none.
      * @throws SQLException if an error occured while reading the database.
      */
-    public GridSampleDimension[] getSampleDimensions(final String format) throws SQLException {
+    public CategoryEntry getSampleDimensions(final String format) throws SQLException {
         final SampleDimensionQuery query = (SampleDimensionQuery) super.query;
         String[]  names = new String [8];
         Unit<?>[] units = new Unit<?>[8];
@@ -171,7 +171,8 @@ final class SampleDimensionTable extends Table {
         }
         final GridSampleDimension[] sampleDimensions = new GridSampleDimension[numSampleDimensions];
         final CategoryTable categories = getCategoryTable();
-        final Map<Integer,Category[]> cat = categories.getCategories(format);
+        final CategoryEntry entry = categories.getCategories(format);
+        final Map<Integer,Category[]> cat = entry.categories;
         for (int i=0; i<numSampleDimensions; i++) {
             try {
                 sampleDimensions[i] = new GridSampleDimension(names[i], cat.remove(i+1), units[i]);
@@ -179,6 +180,7 @@ final class SampleDimensionTable extends Table {
                 throw new IllegalRecordException(exception, categories, null, 0, format);
             }
         }
-        return sampleDimensions;
+        entry.sampleDimensions = sampleDimensions;
+        return entry;
     }
 }

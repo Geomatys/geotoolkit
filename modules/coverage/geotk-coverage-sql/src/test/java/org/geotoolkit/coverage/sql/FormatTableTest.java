@@ -33,7 +33,7 @@ import static org.junit.Assert.*;
  * Tests {@link FormatTable}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.09
+ * @version 3.12
  *
  * @since 3.09 (derived from Seagis)
  */
@@ -61,6 +61,7 @@ public class FormatTableTest extends CatalogTestBase {
         assertEquals("Unexpected format read from the database.", TEMPERATURE, entry.identifier);
         assertSame("Expected the cached instance.", entry, table.getEntry(TEMPERATURE));
         assertEquals("Wrong image format.", "PNG", entry.imageFormat);
+        assertEquals("Wrong color palette.", "rainbow", entry.paletteName);
         /*
          * Check the sample dimensions.
          */
@@ -87,6 +88,7 @@ public class FormatTableTest extends CatalogTestBase {
         assertEquals("Unexpected format read from the database.", CURRENT, entry.identifier);
         assertSame("Expected the cached instance.", entry, table.getEntry(CURRENT));
         assertEquals("Wrong image format.", "NetCDF", entry.imageFormat);
+        assertEquals("Wrong color palette.", "white-cyan-red", entry.paletteName);
         /*
          * Check the sample dimensions.
          */

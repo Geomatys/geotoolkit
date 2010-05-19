@@ -31,7 +31,7 @@ import static org.junit.Assert.*;
  * Tests {@link CategoryTable}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.09
+ * @version 3.12
  *
  * @since 3.09 (derived from Seagis)
  */
@@ -44,7 +44,9 @@ public class CategoryTableTest extends CatalogTestBase {
     @Test
     public void testSelect() throws SQLException {
         final CategoryTable table = getDatabase().getTable(CategoryTable.class);
-        final Map<Integer,Category[]> map = table.getCategories(FormatTableTest.TEMPERATURE);
+        final CategoryEntry entry = table.getCategories(FormatTableTest.TEMPERATURE);
+        assertEquals("rainbow", entry.paletteName);
+        final Map<Integer,Category[]> map = entry.categories;
         assertEquals("The format should define only one band.", 1, map.size());
         checkTemperatureCategories(map.get(1));
         table.release();

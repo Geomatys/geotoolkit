@@ -41,6 +41,7 @@ import org.geotoolkit.image.io.mosaic.MosaicImageReader;
 import org.geotoolkit.image.io.SpatialImageReadParam;
 import org.geotoolkit.image.io.DimensionSlice;
 import org.geotoolkit.image.io.NamedImageStore;
+import org.geotoolkit.image.io.SampleConversionType;
 import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.resources.Errors;
@@ -52,7 +53,7 @@ import org.geotoolkit.util.XArrays;
  * {@link GridSampleDimension}s are obtained from the database instead than from the file.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.11
+ * @version 3.12
  *
  * @since 3.10
  * @module
@@ -238,12 +239,9 @@ final class GridCoverageLoader extends ImageCoverageReader {
      */
     @Override
     protected ImageReadParam createImageReadParam(final int index) throws IOException {
-        ImageReadParam param = super.createImageReadParam(index);
+        final ImageReadParam param = super.createImageReadParam(index);
         final int zIndex = ensureInputSet().getIdentifier().zIndex;
         if (zIndex != 0) {
-            if (param == null) {
-                param = imageReader.getDefaultReadParam();
-            }
             if (param instanceof SpatialImageReadParam) {
                 final DimensionSlice slice = ((SpatialImageReadParam) param).newDimensionSlice();
                 slice.addDimensionId(AxisDirection.UP, AxisDirection.DOWN);
@@ -251,13 +249,38 @@ final class GridCoverageLoader extends ImageCoverageReader {
             }
         }
         if (imageReader instanceof NamedImageStore) {
-            if (param == null) {
-                param = imageReader.getDefaultReadParam();
-            }
             if (param instanceof SpatialImageReadParam) {
                 final DimensionSlice slice = ((SpatialImageReadParam) param).newDimensionSlice();
                 slice.addDimensionId(AxisDirection.FUTURE, AxisDirection.PAST);
                 slice.setAPI(DimensionSlice.API.IMAGES);
+            }
+        }
+        /*
+         * Sets the palette name as a safety, but this is actually not used by geotk-coverage-sql
+         * because SampleDimensionPalette.createImageTypeSpecifier() will use the information
+         * declared in the GridSampleDimensions.
+         *
+         * If the sample values are already geophysics, enable the conversion from integer type
+         * to floating point type in order to allow the image reader to replace fill values by
+         * NaN during the read process.
+         *
+         * Otherwise, if the format is declared "native" (i.e. it should describe precisely
+         * how the sample values are stored on disk, without offset of negative values), then
+         * overwrite the image metadata with the database values. This allow correct results
+         * when the image metadata are incomplete or inaccurate.
+         */
+        if (param instanceof SpatialImageReadParam) {
+            final SpatialImageReadParam sp = (SpatialImageReadParam) param;
+            sp.setPaletteName(format.paletteName);
+            switch (format.viewType) {
+                case GEOPHYSICS: {
+                    sp.setSampleConversionAllowed(SampleConversionType.STORE_AS_FLOATS, true);
+                    break;
+                }
+                case NATIVE: {
+                    sp.setSampleDomains(format.sampleDomains);
+                    break;
+                }
             }
         }
         return param;

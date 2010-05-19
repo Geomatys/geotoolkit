@@ -122,7 +122,7 @@ import org.geotoolkit.referencing.operation.transform.ConcatenatedTransform;
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Johann Sorel (Geomatys)
- * @version 3.11
+ * @version 3.12
  *
  * @since 3.09 (derived from 2.2)
  * @module
@@ -478,16 +478,12 @@ public class ImageCoverageReader extends GridCoverageReader {
     }
 
     /**
-     * Optionally returns the default Java I/O parameters to use for reading an image. This method
-     * is invoked by the {@link #read(int, GridCoverageReadParam)} method in order to get the Java
-     * parameter object to use for controlling the reading process. The default implementation
-     * returns {@code null}, which let the {@code read} method create the parameters as below:
-     *
-     * {@preformat java
-     *     ImageReadParam param = imageReader.getDefaultReadParam();
-     * }
-     *
-     * Subclasses can override this method in order to perform additional parameters setting.
+     * Returns the default Java I/O parameters to use for reading an image. This method
+     * is invoked by the {@link #read(int, GridCoverageReadParam)} method in order to get
+     * the Java parameter object to use for controlling the reading process.
+     * <p>
+     * The default implementation returns {@link ImageReader#getDefaultReadParam()}.
+     * Subclasses can override this method in order to perform additional parameter settings.
      * For example a subclass may want to {@linkplain SpatialImageReadParam#setPaletteName set
      * the color palette} according some information unknown to this base class. Note however
      * that any
@@ -497,14 +493,15 @@ public class ImageCoverageReader extends GridCoverageReader {
      * by the {@code read} method, which perform its own computation.
      *
      * @param  index The index of the image to be queried.
-     * @return A default Java I/O parameters object to use for controlling the reading process,
-     *         or {@code null} if the default {@link #read read} implementation is suffisient.
+     * @return A default Java I/O parameters object to use for controlling the reading process.
      * @throws IOException If an I/O operation was required and failed.
+     *
+     * @see #read(int, GridCoverageReadParam)
      *
      * @since 3.11
      */
     protected ImageReadParam createImageReadParam(int index) throws IOException {
-        return null;
+        return imageReader.getDefaultReadParam();
     }
 
     /**
@@ -814,7 +811,36 @@ public class ImageCoverageReader extends GridCoverageReader {
     }
 
     /**
-     * Reads the grid coverage. The default implementation creates a grid coverage using the
+     * Converts geodetic parameters to image parameters, reads the image and wraps it in a grid
+     * coverage. First, this method creates an initially empty block of image parameters by invoking
+     * the {@link #createImageReadParam(int)} method, or {@link ImageReader#getDefaultReadParam()}
+     * if the former method returned {@code null}. The image parameter
+     * {@linkplain ImageReadParam#setSourceRegion source region},
+     * {@linkplain ImageReadParam#setSourceSubsampling source subsampling} and
+     * {@linkplain ImageReadParam#setSourceBands source bands} are computed from the
+     * parameter given to this {@code read} method. Then, the following image parameters
+     * are set (if the image parameter class allows such settings):
+     *
+     * <ul>
+     *   <li><p><code>{@linkplain SpatialImageReadParam#setSampleConversionAllowed
+     *       setSampleConversionAllowed}({@linkplain SampleConversionType#REPLACE_FILL_VALUES
+     *       REPLACE_FILL_VALUES}, true)</code> in order to allow the replacement of
+     *       fill values by {@link Float#NaN NaN}.</p></li>
+     *
+     *   <li><p><code>{@linkplain SpatialImageReadParam#setSampleConversionAllowed
+     *       setSampleConversionAllowed}({@linkplain SampleConversionType#SHIFT_SIGNED_INTEGERS
+     *       SHIFT_SIGNED_INTEGERS}, true)</code> if the sample dimensions declare an unsigned
+     *       range of sample values.</p></li>
+     *
+     *   <li><p><code>{@linkplain MosaicImageReadParam#setSubsamplingChangeAllowed
+     *       setSubsamplingChangeAllowed}(true)</code> in order to allow {@link MosaicImageReader}
+     *       to use a different resolution than the requested one. This is crucial from a
+     *       performance point of view. Since the {@code GridCoverageReader} contract does not
+     *       garantee that the grid geometry of the returned coverage is the requested geometry,
+     *       we are allowed to do that.</p></li>
+     * </ul>
+     *
+     * Finally, the image is read and wrapped in a {@link GridCoverage2D} using the
      * information provided by {@link #getGridGeometry(int)} and {@link #getSampleDimensions(int)}.
      */
     @Override
@@ -829,7 +855,7 @@ public class ImageCoverageReader extends GridCoverageReader {
         GridGeometry2D gridGeometry = getGridGeometry(index);
         checkAbortState();
         final AffineTransform change; // The change in the 'gridToCRS' transform.
-        ImageReadParam imageParam;
+        final ImageReadParam imageParam;
         try {
             imageParam = createImageReadParam(index);
         } catch (IOException e) {
@@ -864,9 +890,6 @@ public class ImageCoverageReader extends GridCoverageReader {
              * transform.
              */
             change = AffineTransform.getTranslateInstance(imageBounds.x, imageBounds.y);
-            if (imageParam == null) {
-                imageParam = imageReader.getDefaultReadParam();
-            }
             imageParam.setSourceRegion(imageBounds);
             if (resolution != null) {
                 final double sx = resolution[0]; // Really 0, not gridGeometry.axisDimensionX
@@ -906,30 +929,23 @@ public class ImageCoverageReader extends GridCoverageReader {
          * in order to make them unsigned. We will allow such offset if the SampleDimensions
          * declare unsigned range of sample values.
          */
+        boolean usePaletteFactory = false;
         final GridSampleDimension[] bands = getSampleDimensions(index, srcBands, dstBands);
-        if (!isRangeSigned(bands)) {
-            if (imageParam == null) {
-                imageParam = imageReader.getDefaultReadParam();
-            }
-            if (imageParam instanceof SpatialImageReadParam) {
-                final SpatialImageReadParam sp = (SpatialImageReadParam) imageParam;
+        if (imageParam instanceof SpatialImageReadParam) {
+            final SpatialImageReadParam sp = (SpatialImageReadParam) imageParam;
+            if (!isRangeSigned(bands)) {
                 sp.setSampleConversionAllowed(SampleConversionType.SHIFT_SIGNED_INTEGERS, true);
             }
-        }
-        /*
-         * Finally, if the image does not have its own color palette, provides a palette factory
-         * which will create the IndexColorModel (if needed) from the GridSampleDimension.
-         */
-        boolean usePaletteFactory = false;
-        if (bands != null && imageReader instanceof SpatialImageReader) try {
-            if (!((SpatialImageReader) imageReader).hasColors(index)) {
-                if (imageParam == null) {
-                    imageParam = imageReader.getDefaultReadParam();
-                }
-                usePaletteFactory = (imageParam instanceof SpatialImageReadParam);
+            sp.setSampleConversionAllowed(SampleConversionType.REPLACE_FILL_VALUES, true);
+            /*
+             * Finally, if the image does not have its own color palette, provides a palette factory
+             * which will create the IndexColorModel (if needed) from the GridSampleDimension.
+             */
+            if (bands != null && imageReader instanceof SpatialImageReader) try {
+                usePaletteFactory = !((SpatialImageReader) imageReader).hasColors(index);
+            } catch (IOException e) {
+                throw new CoverageStoreException(formatErrorMessage(e), e);
             }
-        } catch (IOException e) {
-            throw new CoverageStoreException(formatErrorMessage(e), e);
         }
         final Map<?,?> properties = getProperties(index);
         checkAbortState();
