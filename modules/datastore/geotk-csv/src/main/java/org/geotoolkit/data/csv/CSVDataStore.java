@@ -24,12 +24,10 @@ import com.vividsolutions.jts.io.WKTWriter;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.Reader;
 import java.io.Writer;
 import java.net.MalformedURLException;
 import java.util.Collection;
@@ -543,31 +541,26 @@ public class CSVDataStore extends AbstractDataStore{
             if(edited == null || lastWritten == edited) return;
             lastWritten = edited;
 
-            final StringBuilder sb = new StringBuilder();
             final List<AttributeDescriptor> atts = featureType.getAttributeDescriptors();
-            for(int i=0,n=atts.size() ; i<n; i++){
-                final AttributeDescriptor att = atts.get(i);
-                final Object value = edited.getAttribute(att.getName());
+            try {
+                for(int i=0,n=atts.size() ; i<n; i++){
+                    final AttributeDescriptor att = atts.get(i);
+                    final Object value = edited.getAttribute(att.getName());
 
-                final String str;
-                if(value == null){
-                    str = "";
-                }else if(att instanceof GeometryDescriptor){
-                    if(value != null){
+                    final String str;
+                    if(value == null){
+                        str = "";
+                    }else if(att instanceof GeometryDescriptor){
                         str = wktWriter.write((Geometry) value);
                     }else{
-                        str = "";
+                        str = Converters.convert(value, String.class);
                     }
-                }else{
-                    str = Converters.convert(value, String.class);
+                    writer.append(str);
+                    if (i != n-1) {
+                        writer.append(separator);
+                    }
                 }
-                sb.append(str).append(separator);
-            }
-            sb.setLength(sb.length()-1); //remove the last separator
-            sb.append('\n');
-
-            try {
-                writer.write(sb.toString());
+                writer.append('\n');
                 writer.flush();
             } catch (IOException ex) {
                 throw new DataStoreRuntimeException(ex);
