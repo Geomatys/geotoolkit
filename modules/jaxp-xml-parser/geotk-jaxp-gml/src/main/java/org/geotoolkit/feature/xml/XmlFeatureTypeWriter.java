@@ -20,6 +20,7 @@ package org.geotoolkit.feature.xml;
 import java.io.OutputStream;
 import java.io.Writer;
 import java.util.List;
+import javax.xml.bind.JAXBException;
 import org.geotoolkit.xsd.xml.v2001.Schema;
 import org.opengis.feature.type.FeatureType;
 
@@ -37,14 +38,14 @@ public interface XmlFeatureTypeWriter {
      * @param feature The featureType to marshall.
      * @return An XML string representing the featureType.
      */
-    String write(FeatureType feature);
+    String write(FeatureType feature) throws JAXBException;
 
     /**
      * Write an XML representation of the specified featureType into the Writer.
      *
      * @param feature The featureType to marshall.
      */
-    void write(FeatureType feature, Writer writer);
+    void write(FeatureType feature, Writer writer) throws JAXBException;
 
 
     /**
@@ -52,7 +53,7 @@ public interface XmlFeatureTypeWriter {
      *
      * @param feature The featureType to marshall.
      */
-    void write(FeatureType feature, OutputStream stream);
+    void write(FeatureType feature, OutputStream stream) throws JAXBException;
 
     /**
      * Create an xsd schema from a list of feature type.

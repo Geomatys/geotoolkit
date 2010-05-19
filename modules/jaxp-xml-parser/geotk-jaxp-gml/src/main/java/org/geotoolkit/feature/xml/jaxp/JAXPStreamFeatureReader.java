@@ -22,7 +22,7 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
@@ -213,7 +213,7 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
     }
 
     private Feature readFeature(String id, FeatureType featureType) throws XMLStreamException {
-        final Map<Name,Property> properties = new HashMap<Name,Property>();
+        final Map<Name,Property> properties = new LinkedHashMap<Name, Property>();
 
         while (reader.hasNext()) {
             int event = reader.next();
@@ -273,7 +273,7 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
                     final Object previous = (prevProp == null) ? null : prevProp.getValue();
 
                     if (previous == null && nameAttribute != null) {
-                        final Map<String, Object> map = new HashMap<String, Object>();
+                        final Map<String, Object> map = new LinkedHashMap<String, Object>();
                         map.put(nameAttribute, content);
                         properties.put(propName, FF.createAttribute(map, (AttributeDescriptor)pdesc, null));
 
@@ -371,7 +371,7 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
             XMLfactory.setProperty("http://java.sun.com/xml/stream/properties/report-cdata-event", Boolean.TRUE);
 
             final XMLStreamReader streamReader = XMLfactory.createXMLStreamReader(new StringReader(xml));
-            final Map<String, String> namespaceMapping = new HashMap<String, String>();
+            final Map<String, String> namespaceMapping = new LinkedHashMap<String, String>();
             while (streamReader.hasNext()) {
                 int event = streamReader.next();
                 if (event == START_ELEMENT) {

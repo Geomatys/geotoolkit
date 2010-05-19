@@ -18,6 +18,7 @@
 package org.geotoolkit.feature.xml.jaxb;
 
 import com.vividsolutions.jts.geom.Geometry;
+
 import java.io.InputStream;
 import java.io.Reader;
 import java.io.StringReader;
@@ -28,6 +29,7 @@ import java.util.logging.Logger;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.namespace.QName;
+
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.xml.Utils;
@@ -41,6 +43,7 @@ import org.geotoolkit.xsd.xml.v2001.ObjectFactory;
 import org.geotoolkit.xsd.xml.v2001.Schema;
 import org.geotoolkit.xsd.xml.v2001.TopLevelComplexType;
 import org.geotoolkit.xsd.xml.v2001.TopLevelElement;
+
 import org.opengis.feature.type.FeatureType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
@@ -215,6 +218,6 @@ public class JAXBFeatureTypeReader implements XmlFeatureTypeReader {
             }
         }
 
-        return builder.buildSimpleFeatureType();
+        return builder.buildFeatureType();
     }
 }

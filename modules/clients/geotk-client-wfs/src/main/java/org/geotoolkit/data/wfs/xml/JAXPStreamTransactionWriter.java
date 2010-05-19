@@ -18,6 +18,7 @@
 package org.geotoolkit.data.wfs.xml;
 
 import com.vividsolutions.jts.geom.Geometry;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Map.Entry;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -120,7 +121,7 @@ public class JAXPStreamTransactionWriter {
 
 
     public void write(OutputStream out, TransactionRequest request) 
-            throws XMLStreamException, FactoryException, JAXBException, DataStoreException{
+            throws XMLStreamException, FactoryException, JAXBException, DataStoreException, IOException{
         final XMLOutputFactory outputFactory = XMLOutputFactory.newInstance();
         final XMLStreamWriter streamWriter = outputFactory.createXMLStreamWriter(out);
 
@@ -145,7 +146,7 @@ public class JAXPStreamTransactionWriter {
     }
 
     private void write(XMLStreamWriter writer, TransactionRequest request) 
-            throws XMLStreamException, FactoryException, JAXBException, DataStoreException{
+            throws XMLStreamException, FactoryException, JAXBException, DataStoreException, IOException{
         writer.writeStartElement(WFS_PREFIX, TAG_TRANSACTION, WFS_NAMESPACE);
         writer.writeAttribute(PROP_SERVICE, "WFS");
         writer.writeAttribute(PROP_VERSION, "1.1.0");
@@ -213,7 +214,7 @@ public class JAXPStreamTransactionWriter {
 //     </xsd:restriction>
 //  </xsd:simpleType>
     private void write(XMLStreamWriter writer, Insert element)
-            throws XMLStreamException, FactoryException, JAXBException, DataStoreException{
+            throws XMLStreamException, FactoryException, JAXBException, DataStoreException, IOException{
         writer.writeStartElement(WFS_PREFIX, TAG_INSERT, WFS_NAMESPACE);
 
         //write id gen----------------------------------------------------------
@@ -244,7 +245,8 @@ public class JAXPStreamTransactionWriter {
         //write features--------------------------------------------------------
         final FeatureCollection col = element.getFeatures();
         final JAXPStreamFeatureWriter fw = new JAXPStreamFeatureWriter();
-        fw.writeFeatureCollection(col,writer,true);
+        fw.setOutput(writer);
+        fw.writeFeatureCollection(col,true);
         
         writer.writeEndElement();
     }

@@ -128,7 +128,7 @@ public class OMDataStore extends AbstractDataStore {
         attributeDescBuilder.reset();
         attributeDescBuilder.setName(ATT_DESC);
         attributeDescBuilder.setMaxOccurs(1);
-        attributeDescBuilder.setMinOccurs(1);
+        attributeDescBuilder.setMinOccurs(0);
         attributeDescBuilder.setNillable(true);
         attributeDescBuilder.setType(attributeTypeBuilder.buildType());
         featureTypeBuilder.add(attributeDescBuilder.buildDescriptor());

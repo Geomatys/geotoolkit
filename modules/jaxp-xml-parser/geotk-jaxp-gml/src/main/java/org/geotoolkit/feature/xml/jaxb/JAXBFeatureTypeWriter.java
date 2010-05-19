@@ -22,12 +22,13 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.util.List;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.namespace.QName;
+
 import org.geotoolkit.feature.xml.Utils;
 import org.geotoolkit.feature.xml.XmlFeatureTypeWriter;
+import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.xml.MarshallerPool;
 import org.geotoolkit.xsd.xml.v2001.ComplexContent;
 import org.geotoolkit.xsd.xml.v2001.ExplicitGroup;
@@ -38,23 +39,24 @@ import org.geotoolkit.xsd.xml.v2001.ObjectFactory;
 import org.geotoolkit.xsd.xml.v2001.Schema;
 import org.geotoolkit.xsd.xml.v2001.TopLevelComplexType;
 import org.geotoolkit.xsd.xml.v2001.TopLevelElement;
+
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.PropertyDescriptor;
 
 /**
  *
  * @author Guilhem Legal (Geomatys)
+ * @author Johann Sorel (Geomatys)
  */
 public class JAXBFeatureTypeWriter implements XmlFeatureTypeWriter {
-
-    private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.feature.xml.jaxp");
 
     private static MarshallerPool marshallpool;
     static {
         try {
             marshallpool = new MarshallerPool(ObjectFactory.class);
         } catch (JAXBException ex) {
-            LOGGER.log(Level.SEVERE, "JAXB Exception while initalizing the marshaller pool", ex);
+            Logging.getLogger("org.geotoolkit.feature.xml.jaxp")
+                .log(Level.SEVERE, "JAXB Exception while initalizing the marshaller pool", ex);
         }
     }
 
@@ -70,36 +72,31 @@ public class JAXBFeatureTypeWriter implements XmlFeatureTypeWriter {
      * {@inheritDoc }
      */
     @Override
-    public String write(FeatureType feature) {
-        Schema schema         = getSchemaFromFeatureType(feature);
+    public String write(FeatureType feature) throws JAXBException {
+        final Schema schema = getSchemaFromFeatureType(feature);
         Marshaller marshaller = null;
         try {
             marshaller = marshallpool.acquireMarshaller();
             StringWriter sw = new StringWriter();
             marshaller.marshal(schema, sw);
             return sw.toString();
-        } catch (JAXBException ex) {
-            LOGGER.severe("JAXB exception while marshalling the schema");
         } finally {
             if (marshaller != null) {
                 marshallpool.release(marshaller);
             }
         }
-        return null;
     }
 
      /**
      * {@inheritDoc }
      */
     @Override
-    public void write(FeatureType feature, Writer writer) {
-        Schema schema         = getSchemaFromFeatureType(feature);
+    public void write(FeatureType feature, Writer writer) throws JAXBException {
+        final Schema schema = getSchemaFromFeatureType(feature);
         Marshaller marshaller = null;
         try {
             marshaller = marshallpool.acquireMarshaller();
             marshaller.marshal(schema, writer);
-        } catch (JAXBException ex) {
-            LOGGER.severe("JAXB exception while marshalling the schema");
         } finally {
             if (marshaller != null) {
                 marshallpool.release(marshaller);
@@ -111,14 +108,12 @@ public class JAXBFeatureTypeWriter implements XmlFeatureTypeWriter {
      * {@inheritDoc }
      */
     @Override
-    public void write(FeatureType feature, OutputStream stream) {
-        Schema schema         = getSchemaFromFeatureType(feature);
+    public void write(FeatureType feature, OutputStream stream) throws JAXBException {
+        final Schema schema = getSchemaFromFeatureType(feature);
         Marshaller marshaller = null;
         try {
             marshaller = marshallpool.acquireMarshaller();
             marshaller.marshal(schema, stream);
-        } catch (JAXBException ex) {
-            LOGGER.severe("JAXB exception while marshalling the schema");
         } finally {
             if (marshaller != null) {
                 marshallpool.release(marshaller);
@@ -139,10 +134,10 @@ public class JAXBFeatureTypeWriter implements XmlFeatureTypeWriter {
                 typeNamespace = featureTypes.get(i).getName().getNamespaceURI();
                 i++;
             }
-            Schema schema        = new Schema(FormChoice.QUALIFIED, typeNamespace);
+            final Schema schema = new Schema(FormChoice.QUALIFIED, typeNamespace);
             schema.addImport(gmlImport);
             for (FeatureType ftype : featureTypes) {
-                schema = getSchemaFromFeatureType(ftype, schema);
+                fillSchemaWithFeatureType(ftype, schema);
             }
             return schema;
         }
@@ -155,44 +150,44 @@ public class JAXBFeatureTypeWriter implements XmlFeatureTypeWriter {
     @Override
     public Schema getSchemaFromFeatureType(FeatureType featureType) {
         if (featureType != null) {
-            String typeNamespace = featureType.getName().getNamespaceURI();
-            Schema schema        = new Schema(FormChoice.QUALIFIED, typeNamespace);
+            final String typeNamespace = featureType.getName().getNamespaceURI();
+            final Schema schema = new Schema(FormChoice.QUALIFIED, typeNamespace);
             schema.addImport(gmlImport);
-            schema               = getSchemaFromFeatureType(featureType, schema);
+            fillSchemaWithFeatureType(featureType, schema);
             return schema;
         }
         return null;
     }
 
-    private Schema getSchemaFromFeatureType(FeatureType featureType, Schema schema) {
+    private void fillSchemaWithFeatureType(FeatureType featureType, Schema schema) {
         
-        String typeNamespace    = featureType.getName().getNamespaceURI();
-        String elementName      = featureType.getName().getLocalPart();
-        String typeName         = elementName + "Type";
-        TopLevelElement element = new TopLevelElement(elementName, new QName(typeNamespace, typeName));
+        final String typeNamespace    = featureType.getName().getNamespaceURI();
+        final String elementName      = featureType.getName().getLocalPart();
+        final String typeName         = elementName + "Type";
+        final TopLevelElement element = new TopLevelElement(elementName, new QName(typeNamespace, typeName));
         schema.addElement(element);
 
-        ExplicitGroup sequence  = new ExplicitGroup();
+        final ExplicitGroup sequence  = new ExplicitGroup();
         // we put the geom at the end (why it comme first ??)
         TopLevelElement geomElement = null;
         String geomName             = null;
-        PropertyDescriptor geomDesc = featureType.getGeometryDescriptor();
+        final PropertyDescriptor geomDesc = featureType.getGeometryDescriptor();
         if (geomDesc != null) {
             geomName = geomDesc.getName().getLocalPart();
         }
         
         for (PropertyDescriptor pdesc : featureType.getDescriptors()) {
-            String name   = pdesc.getName().getLocalPart();
-            QName type    = Utils.getQNameFromType(pdesc.getType().getBinding());
-            int minOccurs = pdesc.getMinOccurs();
-            int maxOccurs = pdesc.getMaxOccurs();
+            final String name   = pdesc.getName().getLocalPart();
+            final QName type    = Utils.getQNameFromType(pdesc.getType().getBinding());
+            final int minOccurs = pdesc.getMinOccurs();
+            final int maxOccurs = pdesc.getMaxOccurs();
             String maxOcc;
             if (maxOccurs == Integer.MAX_VALUE) {
                 maxOcc = "unbounded";
             } else {
-                maxOcc = maxOccurs + "";
+                maxOcc = Integer.toString(maxOccurs);
             }
-            TopLevelElement localElement = new TopLevelElement(name, type, minOccurs, maxOcc);
+            final TopLevelElement localElement = new TopLevelElement(name, type, minOccurs, maxOcc);
             if (!name.equals(geomName)) {
                 sequence.addElement(localElement);
             } else {
@@ -202,11 +197,10 @@ public class JAXBFeatureTypeWriter implements XmlFeatureTypeWriter {
         if (geomElement != null) {
             sequence.addElement(geomElement);
         }
-        ExtensionType extension = new ExtensionType(featureName, sequence);
-        ComplexContent content  = new ComplexContent(extension);
-        TopLevelComplexType complexType = new TopLevelComplexType(typeName, content);
+        final ExtensionType extension = new ExtensionType(featureName, sequence);
+        final ComplexContent content  = new ComplexContent(extension);
+        final TopLevelComplexType complexType = new TopLevelComplexType(typeName, content);
         schema.addComplexType(complexType);
-        return schema;
     }
 
 }

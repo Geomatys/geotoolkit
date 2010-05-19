@@ -28,12 +28,14 @@ import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 import java.math.BigDecimal;
+import java.rmi.UnexpectedException;
 import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.namespace.QName;
 import javax.xml.stream.events.XMLEvent;
@@ -243,22 +245,16 @@ public class Utils {
         if (obj instanceof String) {
             return (String) obj;
         } else if (obj instanceof Timestamp) {
-            String tValue  =((Timestamp) obj).toString();
+            final String tValue  =((Timestamp) obj).toString();
             return tValue.replace(" ", "T");
-
         } else if (obj instanceof java.sql.Date) {
-            String dValue  = dateFormatter.format((java.sql.Date) obj);
-            return dValue + 'Z';
-
+            return dateFormatter.format((java.sql.Date) obj) +'Z';
         } else if (obj instanceof java.util.Date) {
-            String dValue  = dateFormatter.format((java.util.Date) obj);
-            return dValue;
-
+            return dateFormatter.format((java.util.Date) obj);
         } else if (obj instanceof Number || obj instanceof Boolean) {
-            return obj + "";
-
+            return obj.toString();
         } else if (obj != null) {
-            LOGGER.warning("unexpected type:" + obj.getClass());
+            LOGGER.log(Level.WARNING, "Unhandled type :" + obj.getClass(),new IllegalArgumentException());
         }
         return null;
     }

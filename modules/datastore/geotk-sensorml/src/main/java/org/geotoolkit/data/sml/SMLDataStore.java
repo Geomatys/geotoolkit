@@ -164,7 +164,7 @@ public class SMLDataStore extends AbstractDataStore {
         attributeDescBuilder.reset();
         attributeDescBuilder.setName(ATT_DESC);
         attributeDescBuilder.setMaxOccurs(1);
-        attributeDescBuilder.setMinOccurs(1);
+        attributeDescBuilder.setMinOccurs(0);
         attributeDescBuilder.setNillable(true);
         attributeDescBuilder.setType(attributeTypeBuilder.buildType());
         final AttributeDescriptor attDescription = attributeDescBuilder.buildDescriptor();
@@ -648,7 +648,7 @@ public class SMLDataStore extends AbstractDataStore {
             String tn = null;
             if (rset.next()) {
                 tn = rset.getString(1);
-                props.add(FF.createAttribute(type, (AttributeDescriptor) type.getDescriptor(ATT_SMLTYPE), null));
+                props.add(FF.createAttribute(tn, (AttributeDescriptor) type.getDescriptor(ATT_SMLTYPE), null));
             }
             rset.close();
             if (!tn.equals(typeName.getLocalPart())) {
