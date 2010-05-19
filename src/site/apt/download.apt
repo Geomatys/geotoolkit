@@ -71,7 +71,7 @@ Downloading Geotoolkit.org Binaries
   <repository>
      <id>geotoolkit</id>
      <name>Geotk repository</name>
-     <url>http://maven.geotoolkit.org/repository</url>
+     <url>http://maven.geotoolkit.org</url>
   </repository>
 </repositories>
 -----------------------------------------------------------------------------------
