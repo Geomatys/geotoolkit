@@ -17,34 +17,44 @@
 
 package org.geotoolkit.feature.xml;
 
+import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryCollection;
+import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LineString;
+import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.MultiLineString;
 import com.vividsolutions.jts.geom.MultiPoint;
+import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
 import javax.xml.bind.JAXBException;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.stream.XMLStreamException;
 
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.FeatureTypeBuilder;
+import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.feature.xml.jaxb.JAXBFeatureTypeReader;
 import org.geotoolkit.feature.xml.jaxb.JAXBFeatureTypeWriter;
+import org.geotoolkit.feature.xml.jaxp.JAXPStreamFeatureReader;
+import org.geotoolkit.feature.xml.jaxp.JAXPStreamFeatureWriter;
+import org.geotoolkit.storage.DataStoreException;
 
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.opengis.feature.simple.SimpleFeature;
 
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.simple.SimpleFeatureType;
@@ -61,6 +71,8 @@ import org.xml.sax.SAXException;
 public class XmlFeatureTest {
 
     private final SimpleFeatureType simpleType;
+    private final SimpleFeature simpleFeature1;
+
     private final FeatureType complexType;
 
     public XmlFeatureTest() {
@@ -109,6 +121,40 @@ public class XmlFeatureTest {
         ftb.add(new DefaultName(GML_NAMESPACE,"geomAnyGeometry"),      Geometry.class,          1,Integer.MAX_VALUE,true,null);
         complexType = ftb.buildFeatureType();
 
+
+        final GeometryFactory GF = new GeometryFactory();
+        final SimpleFeatureBuilder sfb = new SimpleFeatureBuilder(simpleType);
+
+        final Point pt = GF.createPoint(new Coordinate(45, 56));
+        final MultiPoint mpt = GF.createMultiPoint(new Coordinate[]{new Coordinate(12, 31), new Coordinate(89, 78)});
+        final LineString line = GF.createLineString(new Coordinate[]{new Coordinate(12, 31), new Coordinate(89, 78), new Coordinate(11, 39)});
+        final MultiLineString mline = GF.createMultiLineString(new LineString[]{line,line,line});
+        final LinearRing ring = GF.createLinearRing(new Coordinate[]{new Coordinate(12, 31), new Coordinate(89, 78), new Coordinate(41, 36),new Coordinate(12, 31)});
+        final Polygon poly = GF.createPolygon(ring, new LinearRing[0]);
+        final MultiPolygon mpoly = GF.createMultiPolygon(new Polygon[]{poly,poly});
+
+        int i=0;
+        sfb.reset();
+        sfb.set(i++, 36);
+        sfb.set(i++, "stringValue");
+        sfb.set(i++, 12);
+        sfb.set(i++, 24);
+        sfb.set(i++, 48);
+        sfb.set(i++, 96.12);
+        sfb.set(i++, new BigDecimal(456789.123));
+        sfb.set(i++, new Date(3600000));
+        sfb.set(i++, new Timestamp(3600000));
+        sfb.set(i++, Boolean.TRUE);
+        sfb.set(i++, pt);
+        sfb.set(i++, mpt);
+        sfb.set(i++, line);
+        sfb.set(i++, mline);
+        sfb.set(i++, poly);
+        sfb.set(i++, mpoly);
+        sfb.set(i++, mpt);
+        sfb.set(i++, pt);
+        simpleFeature1 = sfb.buildFeature("id-156");
+
     }
 
     @BeforeClass
@@ -128,7 +174,71 @@ public class XmlFeatureTest {
     }
 
     @Test
-    public void testReadSimpleFeature() throws JAXBException {
+    public void testReadSimpleFeatureType() throws JAXBException {
+        final XmlFeatureTypeReader reader = new JAXBFeatureTypeReader();
+        final List<FeatureType> types = reader.read(XmlFeatureTest.class
+                .getResourceAsStream("/org/geotoolkit/feature/xml/SimpleType.xsd"));
+
+        assertEquals(1, types.size());
+        assertEquals(simpleType, types.get(0));
     }
+
+    @Test
+    public void testReadComplexFeatureType() throws JAXBException {
+        final XmlFeatureTypeReader reader = new JAXBFeatureTypeReader();
+        final List<FeatureType> types = reader.read(XmlFeatureTest.class
+                .getResourceAsStream("/org/geotoolkit/feature/xml/ComplexType.xsd"));
+
+        assertEquals(1, types.size());
+        assertEquals(complexType, types.get(0));
+    }
+
+    @Test
+    public void testWriteSimpleFeatureType() throws JAXBException, IOException, ParserConfigurationException, SAXException{
+        final File temp = File.createTempFile("gml", ".xml");
+        temp.deleteOnExit();
+        final XmlFeatureTypeWriter writer = new JAXBFeatureTypeWriter();
+        writer.write(simpleType, new FileOutputStream(temp));
+
+        DomCompare.compare(XmlFeatureTest.class
+                .getResourceAsStream("/org/geotoolkit/feature/xml/SimpleType.xsd"), temp);
+    }
+
+    @Test
+    public void testWriteComplexFeatureType() throws JAXBException, IOException, ParserConfigurationException, SAXException{
+        final File temp = File.createTempFile("gml", ".xml");
+        temp.deleteOnExit();
+        final XmlFeatureTypeWriter writer = new JAXBFeatureTypeWriter();
+        writer.write(complexType, new FileOutputStream(temp));
+
+        DomCompare.compare(XmlFeatureTest.class
+                .getResourceAsStream("/org/geotoolkit/feature/xml/ComplexType.xsd"), temp);
+    }
+
+//    @Test
+//    public void testReadSimpleFeature() throws JAXBException, IOException, XMLStreamException{
+//        final XmlFeatureReader reader = new JAXPStreamFeatureReader(simpleType);
+//        final Object obj = reader.read(XmlFeatureTest.class
+//                .getResourceAsStream("/org/geotoolkit/feature/xml/SimpleFeature.xml"));
+//        reader.dispose();
+//
+//        assertTrue(obj instanceof SimpleFeature);
+//
+//        SimpleFeature result = (SimpleFeature) obj;
+//        assertEquals(simpleFeature1.toString()+"\n"+result.toString()+"\n",simpleFeature1, result);
+//    }
+//
+//    @Test
+//    public void testWriteSimpleFeature() throws JAXBException, IOException, XMLStreamException,
+//            DataStoreException, ParserConfigurationException, SAXException{
+//        final File temp = File.createTempFile("gml", ".xml");
+//        //temp.deleteOnExit();
+//        final XmlFeatureWriter writer = new JAXPStreamFeatureWriter();
+//        writer.write(simpleFeature1, temp);
+//        writer.dispose();
+//
+//        DomCompare.compare(XmlFeatureTest.class
+//                .getResourceAsStream("/org/geotoolkit/feature/xml/SimpleFeature.xml"), temp);
+//    }
 
 }

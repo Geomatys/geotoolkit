@@ -126,7 +126,7 @@ public class DomUtilities {
         }else if(input instanceof String){
             return new URL((String)input).openStream();
         }else{
-            throw new IOException("Can not handle inout type : " + input.getClass());
+            throw new IOException("Can not handle input type : " + ((input!=null)?input.getClass() : input));
         }
     }
 
