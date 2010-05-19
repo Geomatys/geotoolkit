@@ -24,9 +24,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URL;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import org.geotoolkit.util.converter.ConverterRegistry;
+import org.geotoolkit.util.converter.NonconvertibleObjectException;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -85,12 +89,25 @@ public class DomUtilities {
      * @param clazz : wished value class
      * @return T or null if no node with tagname was found or convertion to given class failed.
      */
-    public static <T> T textValue(Element parent, String tagName, Class<T> clazz){
+    public static <T> T textValue(Element parent, String tagName, Class<T> clazz) throws NonconvertibleObjectException{
         final Element ele = firstElement(parent, tagName);
         if(ele == null) return null;
         final String text = ele.getTextContent();
         if(text == null) return null;
-        return Converters.convert(text, clazz);
+        return ConverterRegistry.system().converter(String.class, clazz).convert(text);
+    }
+
+    /**
+     * Same as {@link DomUtilities#textValue(org.w3c.dom.Element, java.lang.String, java.lang.Class) }
+     * but dont throw any exception.
+     */
+    public static <T> T textValueSafe(Element parent, String tagName, Class<T> clazz) {
+        try {
+            return textValue(parent, tagName, clazz);
+        } catch (NonconvertibleObjectException ex) {
+            Logger.getLogger(DomUtilities.class.getName()).log(Level.WARNING, null, ex);
+            return null;
+        }
     }
 
     /**

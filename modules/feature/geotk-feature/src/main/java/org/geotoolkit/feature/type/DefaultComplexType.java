@@ -40,6 +40,7 @@ import org.opengis.feature.type.PropertyDescriptor;
 import org.opengis.feature.type.PropertyType;
 import org.opengis.filter.Filter;
 import org.opengis.referencing.FactoryException;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.InternationalString;
 
 
@@ -272,10 +273,13 @@ public class DefaultComplexType extends DefaultAttributeType<AttributeType> impl
 
         if(property instanceof GeometryDescriptor){
             final GeometryDescriptor desc = (GeometryDescriptor) property;
-            try {
-                tablewriter.write(String.valueOf(CRS.lookupIdentifier(desc.getCoordinateReferenceSystem(), true)));
-            } catch (FactoryException ex) {
-                tablewriter.write("Error getting identifier");
+            final CoordinateReferenceSystem crs = desc.getCoordinateReferenceSystem();
+            if(crs != null){
+                try {
+                    tablewriter.write(String.valueOf(CRS.lookupIdentifier(crs, true)));
+                } catch (FactoryException ex) {
+                    tablewriter.write("Error getting identifier");
+                }
             }
         }else{
             tablewriter.write("");
