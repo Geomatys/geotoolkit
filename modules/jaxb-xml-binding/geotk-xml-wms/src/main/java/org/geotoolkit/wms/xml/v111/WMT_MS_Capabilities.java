@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.wms.xml.v111;
 
+import java.util.logging.Logger;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -127,7 +128,7 @@ public class WMT_MS_Capabilities extends AbstractWMSCapabilities {
      */
     public AbstractLayer getLayerFromName(String name) {
         for( Layer layer : getCapability().getLayer().getLayer()){
-            if(layer.getName().equals(name)){
+            if(layer != null && layer.getName()!=null && layer.getName().equals(name)){
                 return (AbstractLayer) layer; 
             }
         }        
