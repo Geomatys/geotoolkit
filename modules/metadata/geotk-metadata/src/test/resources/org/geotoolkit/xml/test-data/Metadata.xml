@@ -67,13 +67,17 @@
           <gmd:dimensionName>
             <gmd:MD_DimensionNameTypeCode codeList="http://www.tc211.org/ISO19139/resources/codeList.xml#column" codeListValue="column"/>
           </gmd:dimensionName>
-          <gmd:dimensionSize>830</gmd:dimensionSize>
+          <gmd:dimensionSize>
+            <gco:Integer>830</gco:Integer>
+          </gmd:dimensionSize>
           <gmd:resolution>
             <gco:Measure uom="../uom/gmxUom.xsd#xpointer(//*[@gml:id='m'])">70.5</gco:Measure>
           </gmd:resolution>
         </gmd:MD_Dimension>
       </gmd:axisDimensionProperties>
-      <gmd:transformationParameterAvailability>false</gmd:transformationParameterAvailability>
+      <gmd:transformationParameterAvailability>
+        <gco:Boolean>false</gco:Boolean>
+      </gmd:transformationParameterAvailability>
     </gmd:MD_GridSpatialRepresentation>
   </gmd:spatialRepresentationInfo>
   <gmd:identificationInfo>
@@ -246,7 +250,9 @@
               <gmd:explanation>
                 <gco:CharacterString>conformance to the WMS standard</gco:CharacterString>
               </gmd:explanation>
-              <gmd:pass>true</gmd:pass>
+              <gmd:pass>
+                <gco:Boolean>true</gco:Boolean>
+              </gmd:pass>
             </gmd:DQ_ConformanceResult>
           </gmd:result>
         </gmd:DQ_CompletenessCommission>

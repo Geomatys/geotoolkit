@@ -65,7 +65,9 @@
     @XmlJavaTypeAdapter(TopologyLevelAdapter.class),
 
     // Primitive type handling
-    @XmlJavaTypeAdapter(DoubleAdapter.class),  @XmlJavaTypeAdapter(type=double.class,  value=DoubleAdapter.class)
+    @XmlJavaTypeAdapter(DoubleAdapter.class),  @XmlJavaTypeAdapter(type=double.class,  value=DoubleAdapter.class),
+    @XmlJavaTypeAdapter(IntegerAdapter.class), @XmlJavaTypeAdapter(type=int.class,     value=IntegerAdapter.class),
+    @XmlJavaTypeAdapter(BooleanAdapter.class), @XmlJavaTypeAdapter(type=boolean.class, value=BooleanAdapter.class)
 })
 package org.geotoolkit.metadata.iso.spatial;
 
@@ -80,5 +82,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapters;
 import org.geotoolkit.xml.Namespaces;
 import org.geotoolkit.internal.jaxb.code.*;
 import org.geotoolkit.internal.jaxb.metadata.*;
+import org.geotoolkit.internal.jaxb.primitive.BooleanAdapter;
 import org.geotoolkit.internal.jaxb.primitive.DoubleAdapter;
+import org.geotoolkit.internal.jaxb.primitive.IntegerAdapter;
 import org.geotoolkit.internal.jaxb.text.AnchoredInternationalStringAdapter;

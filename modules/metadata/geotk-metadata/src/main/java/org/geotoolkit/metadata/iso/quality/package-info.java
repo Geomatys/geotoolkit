@@ -66,7 +66,10 @@
     @XmlJavaTypeAdapter(ScopeCodeAdapter.class),
     @XmlJavaTypeAdapter(ScopeDescriptionAdapter.class),
     @XmlJavaTypeAdapter(ScopeDescriptionAdapter.class),
-    @XmlJavaTypeAdapter(UnitAdapter.class)
+    @XmlJavaTypeAdapter(UnitAdapter.class),
+
+    // Primitive type handling
+    @XmlJavaTypeAdapter(BooleanAdapter.class), @XmlJavaTypeAdapter(type=boolean.class, value=BooleanAdapter.class)
 })
 package org.geotoolkit.metadata.iso.quality;
 
@@ -84,6 +87,7 @@ import org.geotoolkit.internal.jaxb.uom.DateAdapter;
 import org.geotoolkit.internal.jaxb.uom.UnitAdapter;
 import org.geotoolkit.internal.jaxb.code.EvaluationMethodTypeAdapter;
 import org.geotoolkit.internal.jaxb.code.ScopeCodeAdapter;
+import org.geotoolkit.internal.jaxb.primitive.BooleanAdapter;
 import org.geotoolkit.internal.jaxb.text.AnchoredInternationalStringAdapter;
 import org.geotoolkit.internal.jaxb.text.AnchoredStringAdapter;
 import org.geotoolkit.internal.jaxb.text.RecordTypeAdapter;

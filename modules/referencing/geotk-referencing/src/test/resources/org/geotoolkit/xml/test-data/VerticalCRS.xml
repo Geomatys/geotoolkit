@@ -27,9 +27,9 @@
           <gmd:code>
             <gco:CharacterString>World Geodetic System 84</gco:CharacterString>
           </gmd:code>
-          <gmd:codespace>
+          <gmd:codeSpace>
             <gco:CharacterString>EPSG</gco:CharacterString>
-          </gmd:codespace>
+          </gmd:codeSpace>
           <gmd:authority>
             <gmd:CI_Citation>
               <gmd:title>

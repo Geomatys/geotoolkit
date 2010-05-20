@@ -67,7 +67,7 @@ public class DefaultReferenceIdentifier implements ReferenceIdentifier, Serializ
     /**
      * For cross-version compatibility.
      */
-    private static final long serialVersionUID = -7515516481965979199L;
+    private static final long serialVersionUID = 2004263079254434562L;
 
     /**
      * Identifier code or name, optionally from a controlled list or pattern defined by a code space.
@@ -86,7 +86,7 @@ public class DefaultReferenceIdentifier implements ReferenceIdentifier, Serializ
      */
     @XmlElement(required = true, namespace = Namespaces.GMD)
     @XmlJavaTypeAdapter(AnchoredStringAdapter.class)
-    final String codespace;
+    final String codeSpace;
 
     /**
      * Organization or party responsible for definition and maintenance of the code space or code.
@@ -119,7 +119,7 @@ public class DefaultReferenceIdentifier implements ReferenceIdentifier, Serializ
      */
     private DefaultReferenceIdentifier() {
         code      = null;
-        codespace = null;
+        codeSpace = null;
         authority = null;
         version   = null;
         remarks   = null;
@@ -135,7 +135,7 @@ public class DefaultReferenceIdentifier implements ReferenceIdentifier, Serializ
     public DefaultReferenceIdentifier(final ReferenceIdentifier identifier) {
         ensureNonNull("identifier", identifier);
         code      = identifier.getCode();
-        codespace = identifier.getCodeSpace();
+        codeSpace = identifier.getCodeSpace();
         authority = identifier.getAuthority();
         version   = identifier.getVersion();
         if (identifier instanceof DefaultReferenceIdentifier) {
@@ -152,15 +152,15 @@ public class DefaultReferenceIdentifier implements ReferenceIdentifier, Serializ
      * @param authority
      *          Organization or party responsible for definition and maintenance of the code
      *          space or code.
-     * @param codespace
+     * @param codeSpace
      *          Name or identifier of the person or organization responsible for namespace.
      *          This is often an abreviation of the authority name.
      * @param code
      *          Identifier code or name, optionally from a controlled list or pattern defined by
      *          a code space. The code can not be null.
      */
-    public DefaultReferenceIdentifier(final Citation authority, final String codespace, final String code) {
-        this(authority, codespace, code, null, null);
+    public DefaultReferenceIdentifier(final Citation authority, final String codeSpace, final String code) {
+        this(authority, codeSpace, code, null, null);
     }
 
     /**
@@ -170,7 +170,7 @@ public class DefaultReferenceIdentifier implements ReferenceIdentifier, Serializ
      * @param authority
      *          Organization or party responsible for definition and maintenance of the code
      *          space or code.
-     * @param codespace
+     * @param codeSpace
      *          Name or identifier of the person or organization responsible for namespace.
      *          This is often an abreviation of the authority name.
      * @param code
@@ -182,12 +182,12 @@ public class DefaultReferenceIdentifier implements ReferenceIdentifier, Serializ
      * @param remarks
      *          Comments on or information about this identifier, or {@code null} if none.
      */
-    public DefaultReferenceIdentifier(final Citation authority, final String codespace, final String code,
+    public DefaultReferenceIdentifier(final Citation authority, final String codeSpace, final String code,
             final String version, final InternationalString remarks)
     {
         ensureNonNull("code", code);
         this.code      = code;
-        this.codespace = codespace;
+        this.codeSpace = codeSpace;
         this.authority = authority;
         this.version   = version;
         this.remarks   = remarks;
@@ -262,7 +262,7 @@ public class DefaultReferenceIdentifier implements ReferenceIdentifier, Serializ
     {
         ensureNonNull("properties", properties);
         Object code      = null;
-        Object codespace = null;
+        Object codeSpace = null;
         Object version   = null;
         Object authority = null;
         Object remarks   = null;
@@ -302,7 +302,7 @@ public class DefaultReferenceIdentifier implements ReferenceIdentifier, Serializ
                 }
                 case -1108676807: {
                     if (key.equals(CODESPACE_KEY)) {
-                        codespace = value;
+                        codeSpace = value;
                         continue;
                     }
                     break;
@@ -366,8 +366,8 @@ public class DefaultReferenceIdentifier implements ReferenceIdentifier, Serializ
          * Completes the code space if it was not explicitly set. We take the first
          * identifier if there is any, otherwise we take the shortest title.
          */
-        if (codespace == null && authority instanceof Citation) {
-            codespace = getCodeSpace((Citation) authority);
+        if (codeSpace == null && authority instanceof Citation) {
+            codeSpace = getCodeSpace((Citation) authority);
         }
         /*
          * Stores the definitive reference to the attributes. Note that casts are performed only
@@ -377,7 +377,7 @@ public class DefaultReferenceIdentifier implements ReferenceIdentifier, Serializ
         try {
             key=      CODE_KEY; this.code      = (String)              (value = code);
             key=   VERSION_KEY; this.version   = (String)              (value = version);
-            key= CODESPACE_KEY; this.codespace = (String)              (value = codespace);
+            key= CODESPACE_KEY; this.codeSpace = (String)              (value = codeSpace);
             key= AUTHORITY_KEY; this.authority = (Citation)            (value = authority);
             key=   REMARKS_KEY; this.remarks   = (InternationalString) (value = remarks);
         } catch (ClassCastException exception) {
@@ -429,7 +429,7 @@ public class DefaultReferenceIdentifier implements ReferenceIdentifier, Serializ
     }
 
     /**
-     * Tries to get a codespace from the specified authority. This method scans first
+     * Tries to get a code space from the specified authority. This method scans first
      * through the identifier, then through the titles if no suitable identifier were found.
      */
     private static String getCodeSpace(final Citation authority) {
@@ -482,14 +482,14 @@ public class DefaultReferenceIdentifier implements ReferenceIdentifier, Serializ
     /**
      * Name or identifier of the person or organization responsible for namespace.
      *
-     * @return The codespace, or {@code null} if not available.
+     * @return The code space, or {@code null} if not available.
      *
      * @see NamedIdentifier#head
      * @see NamedIdentifier#scope
      */
     @Override
     public String getCodeSpace() {
-        return codespace;
+        return codeSpace;
     }
 
     /**
@@ -548,8 +548,8 @@ public class DefaultReferenceIdentifier implements ReferenceIdentifier, Serializ
         if (code != null) {
             hash ^= code.hashCode();
         }
-        if (codespace != null) {
-            hash = hash*31 + codespace.hashCode();
+        if (codeSpace != null) {
+            hash = hash*31 + codeSpace.hashCode();
         }
         return hash;
     }
@@ -568,7 +568,7 @@ public class DefaultReferenceIdentifier implements ReferenceIdentifier, Serializ
         if (object!=null && object.getClass().equals(getClass())) {
             final DefaultReferenceIdentifier that = (DefaultReferenceIdentifier) object;
             return Utilities.equals(code,      that.code)      &&
-                   Utilities.equals(codespace, that.codespace) &&
+                   Utilities.equals(codeSpace, that.codeSpace) &&
                    Utilities.equals(authority, that.authority) &&
                    Utilities.equals(version,   that.version)   &&
                    Utilities.equals(remarks,   that.remarks);
@@ -581,6 +581,6 @@ public class DefaultReferenceIdentifier implements ReferenceIdentifier, Serializ
      */
     @Override
     public String toString() {
-        return ReferenceSystemMetadata.toString("IDENTIFIER", authority, codespace, code);
+        return ReferenceSystemMetadata.toString("IDENTIFIER", authority, codeSpace, code);
     }
 }

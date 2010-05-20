@@ -223,8 +223,8 @@ public class NamedIdentifier extends DefaultReferenceIdentifier implements Gener
             return factory.createLocalName(null, code);
         }
         final CharSequence title;
-        if (codespace != null) {
-            title = codespace;
+        if (codeSpace != null) {
+            title = codeSpace;
         } else {
             title = getShortestTitle(authority);
         }
