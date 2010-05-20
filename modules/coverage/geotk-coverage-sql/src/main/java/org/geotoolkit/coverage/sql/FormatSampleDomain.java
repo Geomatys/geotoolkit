@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.coverage.sql;
 
+import java.util.List;
 import java.util.Arrays;
 
 import org.geotoolkit.util.NumberRange;
@@ -58,14 +59,17 @@ final class FormatSampleDomain implements SampleDomain {
          * becauce we want to exclude the qualitative categories (i.e. the fill values).
          */
         NumberRange<?> range = null;
-        for (final Category category : dimension.getCategories()) {
-            if (category.isQuantitative()) {
-                final NumberRange<?> extent = category.getRange();
-                if (!Double.isNaN(extent.getMinimum()) && !Double.isNaN(extent.getMaximum())) {
-                    if (range != null) {
-                        range = range.union(extent);
-                    } else {
-                        range = extent;
+        final List<Category> categories = dimension.getCategories();
+        if (categories != null) {
+            for (final Category category : categories) {
+                if (category.isQuantitative()) {
+                    final NumberRange<?> extent = category.getRange();
+                    if (!Double.isNaN(extent.getMinimum()) && !Double.isNaN(extent.getMaximum())) {
+                        if (range != null) {
+                            range = range.union(extent);
+                        } else {
+                            range = extent;
+                        }
                     }
                 }
             }

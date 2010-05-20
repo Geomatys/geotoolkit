@@ -820,26 +820,26 @@ public class ImageCoverageReader extends GridCoverageReader {
      * {@linkplain ImageReadParam#setSourceBands source bands} are computed from the
      * parameter given to this {@code read} method. Then, the following image parameters
      * are set (if the image parameter class allows such settings):
-     *
+     * <p>
      * <ul>
-     *   <li><p><code>{@linkplain SpatialImageReadParam#setSampleConversionAllowed
+     *   <li><code>{@linkplain SpatialImageReadParam#setSampleConversionAllowed
      *       setSampleConversionAllowed}({@linkplain SampleConversionType#REPLACE_FILL_VALUES
      *       REPLACE_FILL_VALUES}, true)</code> in order to allow the replacement of
-     *       fill values by {@link Float#NaN NaN}.</p></li>
+     *       fill values by {@link Float#NaN NaN}.</li>
      *
-     *   <li><p><code>{@linkplain SpatialImageReadParam#setSampleConversionAllowed
+     *   <li><code>{@linkplain SpatialImageReadParam#setSampleConversionAllowed
      *       setSampleConversionAllowed}({@linkplain SampleConversionType#SHIFT_SIGNED_INTEGERS
      *       SHIFT_SIGNED_INTEGERS}, true)</code> if the sample dimensions declare an unsigned
-     *       range of sample values.</p></li>
+     *       range of sample values.</li>
      *
-     *   <li><p><code>{@linkplain MosaicImageReadParam#setSubsamplingChangeAllowed
+     *   <li><code>{@linkplain MosaicImageReadParam#setSubsamplingChangeAllowed
      *       setSubsamplingChangeAllowed}(true)</code> in order to allow {@link MosaicImageReader}
      *       to use a different resolution than the requested one. This is crucial from a
      *       performance point of view. Since the {@code GridCoverageReader} contract does not
      *       garantee that the grid geometry of the returned coverage is the requested geometry,
-     *       we are allowed to do that.</p></li>
+     *       we are allowed to do that.</li>
      * </ul>
-     *
+     * <p>
      * Finally, the image is read and wrapped in a {@link GridCoverage2D} using the
      * information provided by {@link #getGridGeometry(int)} and {@link #getSampleDimensions(int)}.
      */
