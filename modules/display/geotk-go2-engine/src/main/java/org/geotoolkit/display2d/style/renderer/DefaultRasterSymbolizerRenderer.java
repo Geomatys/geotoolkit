@@ -396,7 +396,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractSymbolizerRenderer<
          * operation, which merely propagates its first source along the operation chain
          * unmodified (except for the ColorModel given in the layout in this case).
          */
-        final ColorModel model = ColorUtilities.getIndexColorModel(ARGB, 1, visibleBand);
+        final ColorModel model = ColorUtilities.getIndexColorModel(ARGB, 1, visibleBand, -1);
         final ImageLayout layout = new ImageLayout().setColorModel(model);
         return new NullOpImage(image, layout, null, OpImage.OP_COMPUTE_BOUND);
     }

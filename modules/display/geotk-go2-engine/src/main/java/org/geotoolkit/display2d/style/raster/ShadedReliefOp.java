@@ -69,7 +69,7 @@ public class ShadedReliefOp extends AreaOpImage{
 //            ARGB[i] = black | (alpha << 24);
         }
 
-        SHADOW_MODEL = ColorUtilities.getIndexColorModel(ARGB, 1, 1);
+        SHADOW_MODEL = ColorUtilities.getIndexColorModel(ARGB, 1, 1, -1);
     }
 
     public ShadedReliefOp(RenderedImage source, ImageLayout layout, Map configuration, BorderExtender extender){
