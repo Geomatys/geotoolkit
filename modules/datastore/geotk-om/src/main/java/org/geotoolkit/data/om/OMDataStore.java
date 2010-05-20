@@ -46,11 +46,8 @@ import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryCapabilities;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.feature.AttributeDescriptorBuilder;
-import org.geotoolkit.feature.AttributeTypeBuilder;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.simple.DefaultSimpleFeatureType;
-import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.LenientFeatureFactory;
 import org.geotoolkit.feature.type.DefaultGeometryDescriptor;
@@ -60,8 +57,6 @@ import org.geotoolkit.referencing.CRS;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureFactory;
 import org.opengis.feature.Property;
-import org.opengis.feature.simple.SimpleFeature;
-import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.Name;
@@ -117,59 +112,12 @@ public class OMDataStore extends AbstractDataStore {
 
     private void initTypes() {
         final FeatureTypeBuilder featureTypeBuilder = new FeatureTypeBuilder();
-        final AttributeDescriptorBuilder attributeDescBuilder   = new AttributeDescriptorBuilder();
-        final AttributeTypeBuilder attributeTypeBuilder   = new AttributeTypeBuilder();
-
         featureTypeBuilder.setName(OM_TN_SAMPLINGPOINT);
-        
-        // gml:description
-        attributeTypeBuilder.reset();
-        attributeTypeBuilder.setBinding(String.class);
-        attributeDescBuilder.reset();
-        attributeDescBuilder.setName(ATT_DESC);
-        attributeDescBuilder.setMaxOccurs(1);
-        attributeDescBuilder.setMinOccurs(0);
-        attributeDescBuilder.setNillable(true);
-        attributeDescBuilder.setType(attributeTypeBuilder.buildType());
-        featureTypeBuilder.add(attributeDescBuilder.buildDescriptor());
-
-        // gml:name
-        attributeTypeBuilder.reset();
-        attributeTypeBuilder.setBinding(String.class);
-        attributeDescBuilder.reset();
-        attributeDescBuilder.setName(ATT_NAME);
-        attributeDescBuilder.setMaxOccurs(Integer.MAX_VALUE);
-        attributeDescBuilder.setMinOccurs(1);
-        attributeDescBuilder.setNillable(false);
-        attributeDescBuilder.setType(attributeTypeBuilder.buildType());
-        featureTypeBuilder.add(attributeDescBuilder.buildDescriptor());
-
-        // To see BoundedBy
-
-        // sa:sampledFeature href?
-        attributeTypeBuilder.reset();
-        attributeTypeBuilder.setBinding(String.class);
-        attributeDescBuilder.reset();
-        attributeDescBuilder.setName(ATT_SAMPLED);
-        attributeDescBuilder.setMaxOccurs(Integer.MAX_VALUE);
-        attributeDescBuilder.setMinOccurs(1);
-        attributeDescBuilder.setNillable(true);
-        attributeDescBuilder.setType(attributeTypeBuilder.buildType());
-        featureTypeBuilder.add(attributeDescBuilder.buildDescriptor());
-
-        // sa:Position
-        attributeTypeBuilder.reset();
-        attributeTypeBuilder.setBinding(Point.class);
-        attributeDescBuilder.reset();
-        attributeDescBuilder.setName(ATT_POSITION);
-        attributeDescBuilder.setMaxOccurs(1);
-        attributeDescBuilder.setMinOccurs(1);
-        attributeDescBuilder.setNillable(false);
-        attributeDescBuilder.setType(attributeTypeBuilder.buildGeometryType());
-        featureTypeBuilder.add(attributeDescBuilder.buildDescriptor());
-
-        featureTypeBuilder.setDefaultGeometry(ATT_POSITION.getLocalPart());
-
+        featureTypeBuilder.add(ATT_DESC,String.class,0,1,true,null);
+        featureTypeBuilder.add(ATT_NAME,String.class,1,Integer.MAX_VALUE,false,null);
+        featureTypeBuilder.add(ATT_SAMPLED,String.class,1,Integer.MAX_VALUE,true,null);
+        featureTypeBuilder.add(ATT_POSITION,Point.class,1,1,false,null);
+        featureTypeBuilder.setDefaultGeometry(ATT_POSITION);
         types.put(OM_TN_SAMPLINGPOINT, featureTypeBuilder.buildFeatureType());
     }
 
