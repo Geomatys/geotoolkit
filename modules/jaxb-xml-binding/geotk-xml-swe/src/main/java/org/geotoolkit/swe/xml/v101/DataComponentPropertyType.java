@@ -28,10 +28,16 @@ import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import org.geotoolkit.swe.xml.AbstractConditionalValue;
+import org.geotoolkit.swe.xml.AbstractDataArray;
 import org.geotoolkit.swe.xml.AbstractDataRecord;
+import org.geotoolkit.swe.xml.AbstractEnvelope;
+import org.geotoolkit.swe.xml.AbstractGeoLocationArea;
 import org.geotoolkit.swe.xml.DataComponentProperty;
 import org.geotoolkit.swe.xml.DataRecord;
+import org.geotoolkit.swe.xml.Position;
 import org.geotoolkit.swe.xml.SimpleDataRecord;
+import org.geotoolkit.swe.xml.Vector;
 import org.geotoolkit.util.Utilities;
 
 /**
@@ -174,6 +180,22 @@ public class DataComponentPropertyType implements DataComponentProperty {
                 } else if (record instanceof DataRecord) {
                     record = new DataRecordType((DataRecord)record);
                     this.abstractDataRecord = sweFactory.createDataRecord((DataRecordType) record);
+                } else if (record instanceof AbstractEnvelope) {
+                    record = new EnvelopeType((AbstractEnvelope)record);
+                    this.abstractDataRecord = sweFactory.createEnvelope((EnvelopeType) record);
+                } else if (record instanceof AbstractGeoLocationArea) {
+                    record = new GeoLocationArea((AbstractGeoLocationArea)record);
+                    this.abstractDataRecord = sweFactory.createGeoLocationArea((GeoLocationArea) record);
+                } else if (record instanceof Vector) {
+                    record = new VectorType((Vector)record);
+                    this.abstractDataRecord = sweFactory.createVector((VectorType) record);
+                } else if (record instanceof Position) {
+                    record = new PositionType((Position)record);
+                    this.abstractDataRecord = sweFactory.createPosition((PositionType) record);
+                } else if (record instanceof AbstractConditionalValue) {
+                    record = new ConditionalValueType((AbstractConditionalValue)record);
+                    this.abstractDataRecord = sweFactory.createConditionalValue((ConditionalValueType) record);
+
                 } else {
                     throw new IllegalArgumentException("this type is not yet handled in dataComponentPropertyType:" + record);
                 }
@@ -624,6 +646,10 @@ public class DataComponentPropertyType implements DataComponentProperty {
      */
     public TimeRange getTimeRange() {
         return timeRange;
+    }
+
+    public AbstractDataArray getAbstractArray() {
+        return null;
     }
 }
 

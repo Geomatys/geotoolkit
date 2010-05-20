@@ -20,6 +20,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.swe.xml.AbstractCategoryProperty;
 
 
 /**
@@ -48,10 +49,20 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "CategoryPropertyType", propOrder = {
     "category"
 })
-public class CategoryPropertyType {
+public class CategoryPropertyType implements AbstractCategoryProperty {
 
     @XmlElement(name = "Category", required = true)
     private Category category;
+
+    public CategoryPropertyType() {
+
+    }
+
+    public CategoryPropertyType(AbstractCategoryProperty cat) {
+        if (cat != null && cat.getCategory() != null) {
+            this.category = new Category(cat.getCategory());
+        }
+    }
 
     /**
      * Gets the value of the category property.

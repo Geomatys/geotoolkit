@@ -57,6 +57,25 @@ public class DataArrayType extends AbstractDataArrayType implements DataArray {
     private BlockEncodingPropertyType encoding;
     private DataValuePropertyType values;
 
+    public DataArrayType() {
+
+    }
+
+    public DataArrayType(DataArray ar) {
+        super(ar);
+        if (ar != null) {
+            if (ar.getPropertyEncoding() != null) {
+                this.encoding = new BlockEncodingPropertyType(ar.getPropertyEncoding());
+            }
+            if (ar.getPropertyElementType() != null) {
+                this.elementType = new DataComponentPropertyType(ar.getPropertyElementType());
+            }
+            if (ar.getValues() != null) {
+                this.values = new DataValuePropertyType(ar.getDataValues());
+            }
+        }
+    }
+
     /**
      * Gets the value of the elementType property.
      */

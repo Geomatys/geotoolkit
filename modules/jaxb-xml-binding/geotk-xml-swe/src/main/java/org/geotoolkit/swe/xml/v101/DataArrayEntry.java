@@ -21,6 +21,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.swe.xml.AbstractDataValueProperty;
 import org.geotoolkit.swe.xml.DataArray;
 import org.geotoolkit.util.Utilities;
 
@@ -144,6 +145,10 @@ public class DataArrayEntry extends AbstractDataArrayEntry implements DataArray 
      */
     public void setValues(String values) {
         this.values = values;
+    }
+
+    public AbstractDataValueProperty getDataValues() {
+        return null;
     }
     
     /**

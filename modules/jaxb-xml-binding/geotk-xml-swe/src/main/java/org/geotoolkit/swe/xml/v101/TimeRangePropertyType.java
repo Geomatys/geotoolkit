@@ -20,6 +20,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.swe.xml.AbstractTimeRangeProperty;
 
 
 /**
@@ -48,10 +49,20 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "TimeRangePropertyType", propOrder = {
     "timeRange"
 })
-public class TimeRangePropertyType {
+public class TimeRangePropertyType implements AbstractTimeRangeProperty {
 
     @XmlElement(name = "TimeRange", required = true)
     private TimeRange timeRange;
+
+    public TimeRangePropertyType() {
+
+    }
+
+    public TimeRangePropertyType(AbstractTimeRangeProperty tr) {
+        if (tr != null && tr.getTimeRange() != null) {
+            this.timeRange = new TimeRange(tr.getTimeRange());
+        }
+    }
 
     /**
      * Gets the value of the timeRange property.

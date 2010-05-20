@@ -20,6 +20,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.swe.xml.AbstractCurve;
 
 
 /**
@@ -49,12 +50,31 @@ import javax.xml.bind.annotation.XmlType;
     "encoding",
     "values"
 })
-public class CurveType extends AbstractDataArrayType {
+public class CurveType extends AbstractDataArrayType implements AbstractCurve {
 
     @XmlElement(required = true)
     private SimpleDataRecordPropertyType elementType;
     private BlockEncodingPropertyType encoding;
     private DataValuePropertyType values;
+
+    public CurveType() {
+
+    }
+
+    public CurveType(AbstractCurve cu) {
+        super(cu);
+        if (cu != null) {
+            if (cu.getElementType() != null) {
+                this.elementType = new SimpleDataRecordPropertyType(cu.getElementType());
+            }
+            if (cu.getEncoding() != null) {
+                this.encoding = new BlockEncodingPropertyType(cu.getEncoding());
+            }
+            if (cu.getValues() != null) {
+                this.values = new DataValuePropertyType(cu.getValues());
+            }
+        }
+    }
 
     /**
      * Gets the value of the elementType property.

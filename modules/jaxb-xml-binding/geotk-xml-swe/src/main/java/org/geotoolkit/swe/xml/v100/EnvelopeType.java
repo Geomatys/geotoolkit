@@ -20,6 +20,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.swe.xml.AbstractEnvelope;
 
 
 /**
@@ -50,7 +51,7 @@ import javax.xml.bind.annotation.XmlType;
     "lowerCorner",
     "upperCorner"
 })
-public class EnvelopeType extends AbstractVectorType {
+public class EnvelopeType extends AbstractVectorType implements AbstractEnvelope {
 
     private TimeRangePropertyType time;
     @XmlElement(required = true)
@@ -58,6 +59,25 @@ public class EnvelopeType extends AbstractVectorType {
     @XmlElement(required = true)
     private VectorPropertyType upperCorner;
 
+    public EnvelopeType() {
+
+    }
+
+    public EnvelopeType(AbstractEnvelope env) {
+        super(env);
+        if (env != null) {
+            if (env.getTime() != null) {
+                this.time = new TimeRangePropertyType(env.getTime());
+            }
+            if (env.getLowerCorner() != null) {
+                this.lowerCorner = new VectorPropertyType(env.getLowerCorner());
+            }
+            if (env.getUpperCorner() != null) {
+                this.upperCorner = new VectorPropertyType(env.getUpperCorner());
+            }
+        }
+    }
+    
     /**
      * Gets the value of the time property.
      * 

@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.swe.xml.AbstractEnvelopeProperty;
 
 
 /**
@@ -49,7 +50,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "EnvelopePropertyType", propOrder = {
     "envelope"
 })
-public class EnvelopePropertyType {
+public class EnvelopePropertyType implements AbstractEnvelopeProperty {
 
     @XmlElement(name = "Envelope")
     private EnvelopeType envelope;
@@ -73,6 +74,26 @@ public class EnvelopePropertyType {
     private String show;
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
     private String actuate;
+
+    public EnvelopePropertyType() {
+
+    }
+
+    public EnvelopePropertyType(AbstractEnvelopeProperty env) {
+        if (env != null) {
+            this.actuate = env.getActuate();
+            this.arcrole = env.getArcrole();
+            this.href    = env.getHref();
+            this.remoteSchema = env.getRemoteSchema();
+            this.role    = env.getRole();
+            this.show    = env.getShow();
+            this.title   = env.getTitle();
+            this.type    = env.getType();
+            if (env.getEnvelope() != null) {
+                this.envelope = new EnvelopeType(env.getEnvelope());
+            }
+        }
+    }
 
     /**
      * Gets the value of the envelope property.

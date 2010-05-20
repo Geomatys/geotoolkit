@@ -30,18 +30,29 @@ import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.geotoolkit.swe.xml.AbstractBoolean;
 import org.geotoolkit.swe.xml.AbstractCategory;
+import org.geotoolkit.swe.xml.AbstractConditionalData;
+import org.geotoolkit.swe.xml.AbstractConditionalValue;
 import org.geotoolkit.swe.xml.AbstractCount;
 import org.geotoolkit.swe.xml.AbstractCountRange;
+import org.geotoolkit.swe.xml.AbstractCurve;
+import org.geotoolkit.swe.xml.AbstractDataArray;
 import org.geotoolkit.swe.xml.AbstractDataComponent;
 import org.geotoolkit.swe.xml.AbstractDataRecord;
+import org.geotoolkit.swe.xml.AbstractEnvelope;
+import org.geotoolkit.swe.xml.AbstractGeoLocationArea;
+import org.geotoolkit.swe.xml.AbstractNormalizedCurve;
 import org.geotoolkit.swe.xml.AbstractQuantityRange;
+import org.geotoolkit.swe.xml.AbstractSquareMatrix;
 import org.geotoolkit.swe.xml.AbstractText;
 import org.geotoolkit.swe.xml.AbstractTime;
 import org.geotoolkit.swe.xml.AbstractTimeRange;
+import org.geotoolkit.swe.xml.DataArray;
 import org.geotoolkit.swe.xml.DataComponentProperty;
 import org.geotoolkit.swe.xml.DataRecord;
+import org.geotoolkit.swe.xml.Position;
 import org.geotoolkit.swe.xml.Quantity;
 import org.geotoolkit.swe.xml.SimpleDataRecord;
+import org.geotoolkit.swe.xml.Vector;
 import org.geotoolkit.util.Utilities;
 
 
@@ -214,11 +225,49 @@ public class DataComponentPropertyType implements DataComponentProperty {
                 } else if (record instanceof DataRecord) {
                     record = new DataRecordType((DataRecord)record);
                     this.abstractDataRecord = sweFactory.createDataRecord((DataRecordType) record);
+                } else if (record instanceof AbstractEnvelope) {
+                    record = new EnvelopeType((AbstractEnvelope)record);
+                    this.abstractDataRecord = sweFactory.createEnvelope((EnvelopeType) record);
+                } else if (record instanceof AbstractGeoLocationArea) {
+                    record = new GeoLocationArea((AbstractGeoLocationArea)record);
+                    this.abstractDataRecord = sweFactory.createGeoLocationArea((GeoLocationArea) record);
+                } else if (record instanceof AbstractNormalizedCurve) {
+                    record = new NormalizedCurveType((AbstractNormalizedCurve)record);
+                    this.abstractDataRecord = sweFactory.createNormalizedCurve((NormalizedCurveType) record);
+                } else if (record instanceof Vector) {
+                    record = new VectorType((Vector)record);
+                    this.abstractDataRecord = sweFactory.createVector((VectorType) record);
+                } else if (record instanceof Position) {
+                    record = new PositionType((Position)record);
+                    this.abstractDataRecord = sweFactory.createPosition((PositionType) record);
+                } else if (record instanceof AbstractConditionalData) {
+                    record = new ConditionalDataType((AbstractConditionalData)record);
+                    this.abstractDataRecord = sweFactory.createConditionalData((ConditionalDataType) record);
+                } else if (record instanceof AbstractConditionalValue) {
+                    record = new ConditionalValueType((AbstractConditionalValue)record);
+                    this.abstractDataRecord = sweFactory.createConditionalValue((ConditionalValueType) record);
+
                 } else {
                     throw new IllegalArgumentException("this type is not yet handled in dataComponentPropertyType:" + record);
                 }
             }
 
+            if (d.getAbstractArray() != null) {
+                ObjectFactory sweFactory = new ObjectFactory();
+                AbstractDataArray array = d.getAbstractArray();
+                if (array instanceof AbstractCurve) {
+                    array = new CurveType((AbstractCurve) array);
+                    this.abstractDataArray = sweFactory.createCurve((CurveType) array);
+                } else if (array instanceof DataArray) {
+                    array = new DataArrayType((DataArray) array);
+                    this.abstractDataArray = sweFactory.createDataArray((DataArrayType) array);
+                } else if (array instanceof AbstractSquareMatrix) {
+                    array = new SquareMatrixType((AbstractSquareMatrix) array);
+                    this.abstractDataArray = sweFactory.createSquareMatrix((SquareMatrixType) array);
+                } else {
+                    throw new IllegalArgumentException("this type is not yet handled in dataComponentPropertyType:" + array);
+                }
+            }
             this.arcrole = d.getArcrole();
             if (d.getCategory() != null) {
                 this.category = new Category(d.getCategory());
@@ -587,6 +636,13 @@ public class DataComponentPropertyType implements DataComponentProperty {
      */
     public void setAbstractDataArray(JAXBElement<? extends AbstractDataArrayType> value) {
         this.abstractDataArray = ((JAXBElement<? extends AbstractDataArrayType> ) value);
+    }
+
+    public AbstractDataArrayType getAbstractArray() {
+        if (abstractDataArray != null) {
+            return abstractDataArray.getValue();
+        }
+        return null;
     }
 
     /**

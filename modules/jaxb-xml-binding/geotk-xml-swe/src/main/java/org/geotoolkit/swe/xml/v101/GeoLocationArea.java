@@ -22,6 +22,8 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.swe.xml.AbstractEnvelopeProperty;
+import org.geotoolkit.swe.xml.AbstractGeoLocationArea;
 
 
 /**
@@ -48,10 +50,24 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "", propOrder = {
     "member"
 })
-public class GeoLocationArea extends AbstractVectorType {
+public class GeoLocationArea extends AbstractVectorType implements AbstractGeoLocationArea {
 
     @XmlElement(required = true)
     private List<EnvelopePropertyType> member;
+
+    public GeoLocationArea() {
+
+    }
+
+    public GeoLocationArea(AbstractGeoLocationArea gla) {
+        super(gla);
+        if (gla != null && gla.getMember() != null) {
+            this.member = new ArrayList<EnvelopePropertyType>();
+            for (AbstractEnvelopeProperty env : gla.getMember()) {
+                this.member.add(new EnvelopePropertyType(env));
+            }
+        }
+    }
 
     /**
      * Gets the value of the member property.

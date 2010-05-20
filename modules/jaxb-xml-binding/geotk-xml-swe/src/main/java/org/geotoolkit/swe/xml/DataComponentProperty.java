@@ -62,4 +62,6 @@ public interface DataComponentProperty {
     AbstractTimeRange getTimeRange();
 
     AbstractDataRecord getAbstractRecord();
+
+    AbstractDataArray getAbstractArray();
 }

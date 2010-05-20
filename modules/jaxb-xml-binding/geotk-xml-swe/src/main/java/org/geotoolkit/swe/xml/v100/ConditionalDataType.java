@@ -26,6 +26,8 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import org.geotoolkit.swe.xml.AbstractCase;
+import org.geotoolkit.swe.xml.AbstractConditionalData;
 
 
 /**
@@ -64,10 +66,24 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 @XmlType(name = "ConditionalDataType", propOrder = {
     "_case"
 })
-public class ConditionalDataType extends AbstractDataRecordType {
+public class ConditionalDataType extends AbstractDataRecordType implements AbstractConditionalData {
 
     @XmlElement(name = "case", required = true)
     private List<ConditionalDataType.Case> _case;
+
+    public ConditionalDataType() {
+
+    }
+
+    public ConditionalDataType(AbstractConditionalData da) {
+        super(da);
+        if (da != null && da.getCase() != null) {
+            this._case = new ArrayList<Case>();
+            for (AbstractCase ac : da.getCase()) {
+                this._case.add(new Case(ac));
+            }
+        }
+    }
 
     /**
      * Gets the value of the case property.
@@ -105,7 +121,7 @@ public class ConditionalDataType extends AbstractDataRecordType {
     @XmlType(name = "", propOrder = {
         "conditionalValue"
     })
-    public static class Case {
+    public static class Case implements AbstractCase {
 
         @XmlElement(name = "ConditionalValue")
         private ConditionalValueType conditionalValue;
@@ -133,6 +149,27 @@ public class ConditionalDataType extends AbstractDataRecordType {
         private String show;
         @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
         private String actuate;
+
+        public Case() {
+
+        }
+
+        public Case(AbstractCase ac) {
+            if (ac != null)  {
+                this.actuate = ac.getActuate();
+                this.arcrole = ac.getArcrole();
+                this.href = ac.getHref();
+                this.remoteSchema = ac.getRemoteSchema();
+                this.role = ac.getRole();
+                this.show = ac.getShow();
+                this.title = ac.getTitle();
+                this.type = ac.getType();
+                this.name = ac.getName();
+                if (ac.getConditionalValue() != null) {
+                    this.conditionalValue = new ConditionalValueType(ac.getConditionalValue());
+                }
+            }
+        }
 
         /**
          * Gets the value of the conditionalValue property.

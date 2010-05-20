@@ -29,6 +29,19 @@ import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import org.geotoolkit.swe.xml.AbstractCondition;
+import org.geotoolkit.swe.xml.AbstractConditional;
+import org.geotoolkit.swe.xml.AbstractConditionalValue;
+import org.geotoolkit.swe.xml.AbstractDataArray;
+import org.geotoolkit.swe.xml.AbstractDataRecord;
+import org.geotoolkit.swe.xml.AbstractEnvelope;
+import org.geotoolkit.swe.xml.AbstractGeoLocationArea;
+import org.geotoolkit.swe.xml.AbstractSquareMatrix;
+import org.geotoolkit.swe.xml.DataArray;
+import org.geotoolkit.swe.xml.DataRecord;
+import org.geotoolkit.swe.xml.Position;
+import org.geotoolkit.swe.xml.SimpleDataRecord;
+import org.geotoolkit.swe.xml.Vector;
 
 
 /**
@@ -68,11 +81,25 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 @XmlSeeAlso({
     ConditionalValueType.class
 })
-public class AbstractConditionalType extends AbstractDataRecordEntry {
+public class AbstractConditionalType extends AbstractDataRecordEntry implements AbstractConditional {
 
     @XmlElement(required = true)
     private List<AbstractConditionalType.Condition> condition;
 
+    public AbstractConditionalType() {
+
+    }
+
+    public AbstractConditionalType(AbstractConditional ac) {
+        super(ac);
+        if (ac != null && ac.getCondition() != null) {
+            this.condition = new ArrayList<Condition>();
+            for (AbstractCondition cond : ac.getCondition()) {
+                this.condition.add(new Condition(cond));
+            }
+        }
+    }
+    
     /**
      * Gets the value of the condition property.
      * 
@@ -119,7 +146,7 @@ public class AbstractConditionalType extends AbstractDataRecordEntry {
         "abstractDataRecord",
         "abstractDataArray"
     })
-    public static class Condition {
+    public static class Condition implements AbstractCondition {
 
         @XmlElement(name = "Count")
         private Count count;
@@ -128,7 +155,7 @@ public class AbstractConditionalType extends AbstractDataRecordEntry {
         @XmlElement(name = "Time")
         private TimeType time;
         @XmlElement(name = "Boolean")
-        private Boolean _boolean;
+        private BooleanType _boolean;
         @XmlElement(name = "Category")
         private Category category;
         @XmlElement(name = "Text")
@@ -167,6 +194,95 @@ public class AbstractConditionalType extends AbstractDataRecordEntry {
         private String show;
         @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
         private String actuate;
+
+        public Condition() {
+
+        }
+        
+        public Condition(AbstractCondition d) {
+             if (d != null){
+                this.actuate = d.getActuate();
+                if (d.getBoolean() != null) {
+                    this._boolean = new BooleanType(d.getBoolean());
+                }
+                if (d.getAbstractDataRecord() != null) {
+                    ObjectFactory sweFactory = new ObjectFactory();
+                    AbstractDataRecord record = d.getAbstractDataRecord();
+                    if (record instanceof SimpleDataRecord) {
+                        record = new SimpleDataRecordEntry((SimpleDataRecord)record);
+                        this.abstractDataRecord = sweFactory.createSimpleDataRecord((SimpleDataRecordEntry) record);
+                    } else if (record instanceof DataRecord) {
+                        record = new DataRecordType((DataRecord)record);
+                        this.abstractDataRecord = sweFactory.createDataRecord((DataRecordType) record);
+                    } else if (record instanceof AbstractEnvelope) {
+                        record = new EnvelopeType((AbstractEnvelope)record);
+                        this.abstractDataRecord = sweFactory.createEnvelope((EnvelopeType) record);
+                    } else if (record instanceof AbstractGeoLocationArea) {
+                        record = new GeoLocationArea((AbstractGeoLocationArea)record);
+                        this.abstractDataRecord = sweFactory.createGeoLocationArea((GeoLocationArea) record);
+                    } else if (record instanceof Vector) {
+                        record = new VectorType((Vector)record);
+                        this.abstractDataRecord = sweFactory.createVector((VectorType) record);
+                    } else if (record instanceof Position) {
+                        record = new PositionType((Position)record);
+                        this.abstractDataRecord = sweFactory.createPosition((PositionType) record);
+                    } else if (record instanceof AbstractConditionalValue) {
+                        record = new ConditionalValueType((AbstractConditionalValue)record);
+                        this.abstractDataRecord = sweFactory.createConditionalValue((ConditionalValueType) record);
+
+                    } else {
+                        throw new IllegalArgumentException("this type is not yet handled in dataComponentPropertyType:" + record);
+                    }
+                }
+
+                if (d.getAbstractDataArray() != null) {
+                    ObjectFactory sweFactory = new ObjectFactory();
+                    AbstractDataArray array = d.getAbstractDataArray();
+                   if (array instanceof DataArray) {
+                        array = new DataArrayEntry((DataArray)array);
+                        this.abstractDataArray = sweFactory.createDataArray((DataArrayEntry) array);
+                    } else if (array instanceof AbstractSquareMatrix) {
+                        array = new SquareMatrixType((AbstractSquareMatrix)array);
+                        this.abstractDataArray = sweFactory.createSquareMatrix((SquareMatrixType) array);
+                    } else {
+                        throw new IllegalArgumentException("this type is not yet handled in dataComponentPropertyType:" + array);
+                    }
+                }
+
+                this.arcrole = d.getArcrole();
+                if (d.getCategory() != null) {
+                    this.category = new Category(d.getCategory());
+                }
+                if (d.getCount() != null) {
+                    this.count = new Count(d.getCount());
+                }
+                if (d.getCountRange() != null) {
+                    this.countRange = new CountRange(d.getCountRange());
+                }
+                this.href = d.getHref();
+                this.name = d.getName();
+                if (d.getQuantity() != null) {
+                    this.quantity = new QuantityType(d.getQuantity());
+                }
+                if (d.getQuantityRange() != null) {
+                    this.quantityRange = new QuantityRange(d.getQuantityRange());
+                }
+                this.remoteSchema = d.getRemoteSchema();
+                this.role = d.getRole();
+                this.show = d.getShow();
+                if (d.getText() != null) {
+                    this.text = new Text(d.getText());
+                }
+                if (d.getTime() != null) {
+                    this.time = new TimeType(d.getTime());
+                }
+                if (d.getTimeRange() != null) {
+                    this.timeRange = new TimeRange(d.getTimeRange());
+                }
+                this.title = d.getTitle();
+                this.type = d.getType();
+            }
+        }
 
         /**
          * Gets the value of the count property.
@@ -248,7 +364,7 @@ public class AbstractConditionalType extends AbstractDataRecordEntry {
          *     {@link Boolean }
          *     
          */
-        public Boolean getBoolean() {
+        public BooleanType getBoolean() {
             return _boolean;
         }
 
@@ -260,7 +376,7 @@ public class AbstractConditionalType extends AbstractDataRecordEntry {
          *     {@link Boolean }
          *     
          */
-        public void setBoolean(Boolean value) {
+        public void setBoolean(BooleanType value) {
             this._boolean = value;
         }
 
@@ -401,10 +517,17 @@ public class AbstractConditionalType extends AbstractDataRecordEntry {
          *     {@link JAXBElement }{@code <}{@link DataRecordType }{@code >}
          *     
          */
-        public JAXBElement<? extends AbstractDataRecordEntry> getAbstractDataRecord() {
+        public JAXBElement<? extends AbstractDataRecordEntry> getJbAbstractDataRecord() {
             return abstractDataRecord;
         }
 
+        public AbstractDataRecordEntry getAbstractDataRecord() {
+            if (abstractDataRecord != null) {
+                return abstractDataRecord.getValue();
+            }
+            return null;
+        }
+        
         /**
          * Sets the value of the abstractDataRecord property.
          * 
@@ -437,10 +560,17 @@ public class AbstractConditionalType extends AbstractDataRecordEntry {
          *     {@link JAXBElement }{@code <}{@link AbstractDataArrayType }{@code >}
          *     
          */
-        public JAXBElement<? extends AbstractDataArrayEntry> getAbstractDataArray() {
+        public JAXBElement<? extends AbstractDataArrayEntry> getJbAbstractDataArray() {
             return abstractDataArray;
         }
 
+        public AbstractDataArrayEntry getAbstractDataArray() {
+            if (abstractDataArray != null) {
+                return abstractDataArray.getValue();
+            }
+            return null;
+        }
+        
         /**
          * Sets the value of the abstractDataArray property.
          * 

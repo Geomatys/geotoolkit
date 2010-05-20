@@ -20,6 +20,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.swe.xml.AbstractNormalizedCurve;
 
 
 /**
@@ -58,7 +59,7 @@ import javax.xml.bind.annotation.XmlType;
     "extrapolationMethod",
     "function"
 })
-public class NormalizedCurveType  extends AbstractDataRecordType {
+public class NormalizedCurveType  extends AbstractDataRecordType implements AbstractNormalizedCurve{
 
     private QuantityPropertyType inputGain;
     private QuantityPropertyType inputBias;
@@ -68,6 +69,38 @@ public class NormalizedCurveType  extends AbstractDataRecordType {
     private CategoryPropertyType extrapolationMethod;
     @XmlElement(required = true)
     private CurvePropertyType function;
+
+    public NormalizedCurveType() {
+
+    }
+
+    public NormalizedCurveType(AbstractNormalizedCurve nc) {
+        super(nc);
+        if (nc != null) {
+            if (nc.getInputGain() != null) {
+                this.inputGain = new QuantityPropertyType(nc.getInputGain());
+            }
+            if (nc.getInputBias() != null) {
+                this.inputBias = new QuantityPropertyType(nc.getInputBias());
+            }
+            if (nc.getOutputGain() != null) {
+                this.outputGain = new QuantityPropertyType(nc.getOutputGain());
+            }
+            if (nc.getOutputBias() != null) {
+                this.outputBias = new QuantityPropertyType(nc.getOutputBias());
+            }
+            if (nc.getExtrapolationMethod() != null) {
+                this.extrapolationMethod = new CategoryPropertyType(nc.getExtrapolationMethod());
+            }
+            if (nc.getInterpolationMethod() != null) {
+                this.interpolationMethod = new CategoryPropertyType(nc.getInterpolationMethod());
+            }
+            if (nc.getFunction() != null) {
+                this.function = new CurvePropertyType(nc.getFunction());
+            }
+        }
+
+    }
 
     /**
      * Gets the value of the inputGain property.

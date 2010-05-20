@@ -20,6 +20,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.swe.xml.AbstractCurveProperty;
 
 
 /**
@@ -48,10 +49,20 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "CurvePropertyType", propOrder = {
     "curve"
 })
-public class CurvePropertyType {
+public class CurvePropertyType implements AbstractCurveProperty {
 
     @XmlElement(name = "Curve", required = true)
     private CurveType curve;
+
+    public CurvePropertyType() {
+
+    }
+
+    public CurvePropertyType(AbstractCurveProperty cp) {
+        if (cp != null && cp.getCurve() != null) {
+            this.curve = new CurveType(cp.getCurve());
+        }
+    }
 
     /**
      * Gets the value of the curve property.

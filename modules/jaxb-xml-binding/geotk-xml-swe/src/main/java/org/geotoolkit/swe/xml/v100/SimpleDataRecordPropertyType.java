@@ -20,6 +20,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.swe.xml.SimpleDataRecordProperty;
 
 
 /**
@@ -48,10 +49,20 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "SimpleDataRecordPropertyType", propOrder = {
     "simpleDataRecord"
 })
-public class SimpleDataRecordPropertyType {
+public class SimpleDataRecordPropertyType implements SimpleDataRecordProperty {
 
     @XmlElement(name = "SimpleDataRecord", required = true)
     private SimpleDataRecordType simpleDataRecord;
+
+    public SimpleDataRecordPropertyType() {
+
+    }
+
+    public SimpleDataRecordPropertyType(SimpleDataRecordProperty sd) {
+       if (sd != null && sd.getSimpleDataRecord() != null) {
+           this.simpleDataRecord = new SimpleDataRecordType(sd.getSimpleDataRecord());
+       }
+    }
 
     /**
      * Gets the value of the simpleDataRecord property.

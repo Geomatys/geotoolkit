@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2008 - 2009, Geomatys
+ *    (C) 2008 - 2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -14,22 +14,26 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
+
 package org.geotoolkit.swe.xml;
 
 /**
  *
- * @author Guilhem Legal (Geomatys).
- * @module pending
+ * @author Guilhem Legal
  */
-public interface DataArray extends AbstractDataArray {
+public interface AbstractNormalizedCurve extends AbstractDataRecord {
 
-    public String getValues();
+    AbstractQuantityProperty getInputGain();
 
-    public AbstractDataValueProperty getDataValues();
+    AbstractQuantityProperty getInputBias();
 
-    public AbstractEncoding getEncoding();
+    AbstractQuantityProperty getOutputGain();
 
-    public DataComponentProperty getPropertyElementType();
+    AbstractQuantityProperty getOutputBias();
 
-    public AbstractEncodingProperty getPropertyEncoding();
+    AbstractCategoryProperty getInterpolationMethod();
+
+    AbstractCategoryProperty getExtrapolationMethod();
+
+    AbstractCurveProperty getFunction();
 }
