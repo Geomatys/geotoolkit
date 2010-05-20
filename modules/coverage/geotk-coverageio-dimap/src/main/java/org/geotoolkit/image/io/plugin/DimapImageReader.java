@@ -284,6 +284,8 @@ public class DimapImageReader extends ImageReaderAdapter {
     public static class Spi extends ImageReaderAdapter.Spi {
         public Spi(final ImageReaderSpi main) {
             super(main);
+            names           = new String[] {"dimap"};
+            MIMETypes       = new String[] {"image/x-dimap"};
             pluginClassName = "org.geotoolkit.image.io.plugin.DimapImageReader";
             vendorName      = "Geotoolkit.org";
             version         = Version.GEOTOOLKIT.toString();
