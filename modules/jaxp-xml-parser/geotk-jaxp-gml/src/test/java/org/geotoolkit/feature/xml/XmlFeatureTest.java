@@ -47,6 +47,7 @@ import org.geotoolkit.feature.xml.jaxb.JAXBFeatureTypeReader;
 import org.geotoolkit.feature.xml.jaxb.JAXBFeatureTypeWriter;
 import org.geotoolkit.feature.xml.jaxp.JAXPStreamFeatureReader;
 import org.geotoolkit.feature.xml.jaxp.JAXPStreamFeatureWriter;
+import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.storage.DataStoreException;
 
 import org.junit.After;
@@ -54,10 +55,13 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.opengis.feature.simple.SimpleFeature;
 
+import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.referencing.FactoryException;
+import org.opengis.referencing.NoSuchAuthorityCodeException;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import static org.junit.Assert.*;
 import static org.geotoolkit.data.AbstractDataStore.*;
@@ -75,7 +79,9 @@ public class XmlFeatureTest {
 
     private final FeatureType complexType;
 
-    public XmlFeatureTest() {
+    public XmlFeatureTest() throws NoSuchAuthorityCodeException, FactoryException {
+        final CoordinateReferenceSystem crs = CRS.decode("EPSG:4326");
+
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName(GML_NAMESPACE,"TestSimple");
         ftb.add(new DefaultName(GML_NAMESPACE,"ID"),                   Integer.class);
@@ -88,14 +94,15 @@ public class XmlFeatureTest {
         ftb.add(new DefaultName(GML_NAMESPACE,"attDate"),              Date.class);
         ftb.add(new DefaultName(GML_NAMESPACE,"attDateTime"),          Timestamp.class);
         ftb.add(new DefaultName(GML_NAMESPACE,"attBoolean"),           Boolean.class);
-        ftb.add(new DefaultName(GML_NAMESPACE,"geomPoint"),            Point.class);
-        ftb.add(new DefaultName(GML_NAMESPACE,"geomMultiPoint"),       MultiPoint.class);
-        ftb.add(new DefaultName(GML_NAMESPACE,"geomLine"),             LineString.class);
-        ftb.add(new DefaultName(GML_NAMESPACE,"geomMultiLine"),        MultiLineString.class);
-        ftb.add(new DefaultName(GML_NAMESPACE,"geomPolygon"),          Polygon.class);
-        ftb.add(new DefaultName(GML_NAMESPACE,"geomMultiPolygon"),     GeometryCollection.class); //multipolygon does not exist in gml
-        ftb.add(new DefaultName(GML_NAMESPACE,"geomMultiGeometry"),    GeometryCollection.class);
-        ftb.add(new DefaultName(GML_NAMESPACE,"geomAnyGeometry"),      Geometry.class);
+        ftb.add(new DefaultName(GML_NAMESPACE,"geomPoint"),            Point.class, crs);
+        ftb.add(new DefaultName(GML_NAMESPACE,"geomMultiPoint"),       MultiPoint.class, crs);
+        ftb.add(new DefaultName(GML_NAMESPACE,"geomLine"),             LineString.class, crs);
+        ftb.add(new DefaultName(GML_NAMESPACE,"geomMultiLine"),        MultiLineString.class, crs);
+        ftb.add(new DefaultName(GML_NAMESPACE,"geomPolygon"),          Polygon.class, crs);
+        //multipolygon does not exist in gml
+        ftb.add(new DefaultName(GML_NAMESPACE,"geomMultiPolygon"),     GeometryCollection.class, crs);
+        ftb.add(new DefaultName(GML_NAMESPACE,"geomMultiGeometry"),    GeometryCollection.class, crs);
+        ftb.add(new DefaultName(GML_NAMESPACE,"geomAnyGeometry"),      Geometry.class, crs);
         simpleType = ftb.buildSimpleFeatureType();
 
         ftb.reset();
@@ -110,15 +117,15 @@ public class XmlFeatureTest {
         ftb.add(new DefaultName(GML_NAMESPACE,"attDate"),              Date.class,              1,Integer.MAX_VALUE,true,null);
         ftb.add(new DefaultName(GML_NAMESPACE,"attDateTime"),          Timestamp.class,         1,Integer.MAX_VALUE,true,null);
         ftb.add(new DefaultName(GML_NAMESPACE,"attBoolean"),           Boolean.class,           1,Integer.MAX_VALUE,true,null);
-        ftb.add(new DefaultName(GML_NAMESPACE,"geomPoint"),            Point.class,             0,Integer.MAX_VALUE,true,null);
-        ftb.add(new DefaultName(GML_NAMESPACE,"geomMultiPoint"),       MultiPoint.class,        0,Integer.MAX_VALUE,true,null);
-        ftb.add(new DefaultName(GML_NAMESPACE,"geomLine"),             LineString.class,        0,Integer.MAX_VALUE,true,null);
-        ftb.add(new DefaultName(GML_NAMESPACE,"geomMultiLine"),        MultiLineString.class,   1,Integer.MAX_VALUE,true,null);
-        ftb.add(new DefaultName(GML_NAMESPACE,"geomPolygon"),          Polygon.class,           1,Integer.MAX_VALUE,true,null);
+        ftb.add(new DefaultName(GML_NAMESPACE,"geomPoint"),            Point.class,             crs,0,Integer.MAX_VALUE,true,null);
+        ftb.add(new DefaultName(GML_NAMESPACE,"geomMultiPoint"),       MultiPoint.class,        crs,0,Integer.MAX_VALUE,true,null);
+        ftb.add(new DefaultName(GML_NAMESPACE,"geomLine"),             LineString.class,        crs,0,Integer.MAX_VALUE,true,null);
+        ftb.add(new DefaultName(GML_NAMESPACE,"geomMultiLine"),        MultiLineString.class,   crs,1,Integer.MAX_VALUE,true,null);
+        ftb.add(new DefaultName(GML_NAMESPACE,"geomPolygon"),          Polygon.class,           crs,1,Integer.MAX_VALUE,true,null);
         //multipolygon does not exist in gml
-        ftb.add(new DefaultName(GML_NAMESPACE,"geomMultiPolygon"),     GeometryCollection.class,1,Integer.MAX_VALUE,true,null);
-        ftb.add(new DefaultName(GML_NAMESPACE,"geomMultiGeometry"),    GeometryCollection.class,1,Integer.MAX_VALUE,true,null);
-        ftb.add(new DefaultName(GML_NAMESPACE,"geomAnyGeometry"),      Geometry.class,          1,Integer.MAX_VALUE,true,null);
+        ftb.add(new DefaultName(GML_NAMESPACE,"geomMultiPolygon"),     GeometryCollection.class,crs,1,Integer.MAX_VALUE,true,null);
+        ftb.add(new DefaultName(GML_NAMESPACE,"geomMultiGeometry"),    GeometryCollection.class,crs,1,Integer.MAX_VALUE,true,null);
+        ftb.add(new DefaultName(GML_NAMESPACE,"geomAnyGeometry"),      Geometry.class,          crs,1,Integer.MAX_VALUE,true,null);
         complexType = ftb.buildFeatureType();
 
 
@@ -127,11 +134,14 @@ public class XmlFeatureTest {
 
         final Point pt = GF.createPoint(new Coordinate(45, 56));
         final MultiPoint mpt = GF.createMultiPoint(new Coordinate[]{new Coordinate(12, 31), new Coordinate(89, 78)});
-        final LineString line = GF.createLineString(new Coordinate[]{new Coordinate(12, 31), new Coordinate(89, 78), new Coordinate(11, 39)});
-        final MultiLineString mline = GF.createMultiLineString(new LineString[]{line,line,line});
-        final LinearRing ring = GF.createLinearRing(new Coordinate[]{new Coordinate(12, 31), new Coordinate(89, 78), new Coordinate(41, 36),new Coordinate(12, 31)});
-        final Polygon poly = GF.createPolygon(ring, new LinearRing[0]);
-        final MultiPolygon mpoly = GF.createMultiPolygon(new Polygon[]{poly,poly});
+        final LineString line1 = GF.createLineString(new Coordinate[]{new Coordinate(12, 31), new Coordinate(88, 77), new Coordinate(10, 38)});
+        final LineString line2 = GF.createLineString(new Coordinate[]{new Coordinate(13, 32), new Coordinate(89, 78), new Coordinate(11, 39)});
+        final MultiLineString mline = GF.createMultiLineString(new LineString[]{line1,line2});
+        final LinearRing ring1 = GF.createLinearRing(new Coordinate[]{new Coordinate(11, 30), new Coordinate(88, 77), new Coordinate(40, 35),new Coordinate(11, 30)});
+        final Polygon poly1 = GF.createPolygon(ring1, new LinearRing[0]);
+        final LinearRing ring2 = GF.createLinearRing(new Coordinate[]{new Coordinate(12, 31), new Coordinate(89, 78), new Coordinate(41, 36),new Coordinate(12, 31)});
+        final Polygon poly2 = GF.createPolygon(ring2, new LinearRing[0]);
+        final MultiPolygon mpoly = GF.createMultiPolygon(new Polygon[]{poly1,poly2});
 
         int i=0;
         sfb.reset();
@@ -141,15 +151,15 @@ public class XmlFeatureTest {
         sfb.set(i++, 24);
         sfb.set(i++, 48);
         sfb.set(i++, 96.12);
-        sfb.set(i++, new BigDecimal(456789.123));
-        sfb.set(i++, new Date(3600000));
-        sfb.set(i++, new Timestamp(3600000));
+        sfb.set(i++, new BigDecimal(456789));
+        sfb.set(i++, new Date(3600000*23));
+        sfb.set(i++, new Timestamp(3600000*23));
         sfb.set(i++, Boolean.TRUE);
         sfb.set(i++, pt);
         sfb.set(i++, mpt);
-        sfb.set(i++, line);
+        sfb.set(i++, line1);
         sfb.set(i++, mline);
-        sfb.set(i++, poly);
+        sfb.set(i++, poly1);
         sfb.set(i++, mpoly);
         sfb.set(i++, mpt);
         sfb.set(i++, pt);
@@ -215,30 +225,30 @@ public class XmlFeatureTest {
                 .getResourceAsStream("/org/geotoolkit/feature/xml/ComplexType.xsd"), temp);
     }
 
-//    @Test
-//    public void testReadSimpleFeature() throws JAXBException, IOException, XMLStreamException{
-//        final XmlFeatureReader reader = new JAXPStreamFeatureReader(simpleType);
-//        final Object obj = reader.read(XmlFeatureTest.class
-//                .getResourceAsStream("/org/geotoolkit/feature/xml/SimpleFeature.xml"));
-//        reader.dispose();
-//
-//        assertTrue(obj instanceof SimpleFeature);
-//
-//        SimpleFeature result = (SimpleFeature) obj;
-//        assertEquals(simpleFeature1.toString()+"\n"+result.toString()+"\n",simpleFeature1, result);
-//    }
-//
-//    @Test
-//    public void testWriteSimpleFeature() throws JAXBException, IOException, XMLStreamException,
-//            DataStoreException, ParserConfigurationException, SAXException{
-//        final File temp = File.createTempFile("gml", ".xml");
-//        //temp.deleteOnExit();
-//        final XmlFeatureWriter writer = new JAXPStreamFeatureWriter();
-//        writer.write(simpleFeature1, temp);
-//        writer.dispose();
-//
-//        DomCompare.compare(XmlFeatureTest.class
-//                .getResourceAsStream("/org/geotoolkit/feature/xml/SimpleFeature.xml"), temp);
-//    }
+    @Test
+    public void testReadSimpleFeature() throws JAXBException, IOException, XMLStreamException{
+        final XmlFeatureReader reader = new JAXPStreamFeatureReader(simpleType);
+        final Object obj = reader.read(XmlFeatureTest.class
+                .getResourceAsStream("/org/geotoolkit/feature/xml/SimpleFeature.xml"));
+        reader.dispose();
+
+        assertTrue(obj instanceof SimpleFeature);
+
+        SimpleFeature result = (SimpleFeature) obj;
+        assertEquals(simpleFeature1.toString()+"\n"+result.toString()+"\n",simpleFeature1, result);
+    }
+
+    @Test
+    public void testWriteSimpleFeature() throws JAXBException, IOException, XMLStreamException,
+            DataStoreException, ParserConfigurationException, SAXException{
+        final File temp = File.createTempFile("gml", ".xml");
+        //temp.deleteOnExit();
+        final XmlFeatureWriter writer = new JAXPStreamFeatureWriter();
+        writer.write(simpleFeature1, temp);
+        writer.dispose();
+
+        DomCompare.compare(XmlFeatureTest.class
+                .getResourceAsStream("/org/geotoolkit/feature/xml/SimpleFeature.xml"), temp);
+    }
 
 }

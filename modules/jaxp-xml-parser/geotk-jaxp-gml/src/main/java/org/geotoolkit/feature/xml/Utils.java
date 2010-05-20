@@ -40,6 +40,7 @@ import java.util.logging.Logger;
 import javax.xml.namespace.QName;
 import javax.xml.stream.events.XMLEvent;
 import org.geotoolkit.feature.DefaultName;
+import org.geotoolkit.util.Converters;
 import org.opengis.feature.type.Name;
 
 /**
