@@ -42,6 +42,7 @@ import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.geotoolkit.display2d.style.renderer.AbstractSymbolizerRenderer;
 import org.geotoolkit.geometry.DirectPosition2D;
 import org.geotoolkit.geometry.GeneralEnvelope;
+import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.operation.transform.LinearTransform;
 import org.geotoolkit.util.MeasurementRange;
@@ -80,56 +81,57 @@ public class DimRangeRenderer extends AbstractSymbolizerRenderer<CachedDimRangeS
     public void portray(ProjectedCoverage projectedCoverage) throws PortrayalException {
 
         double[] resolution = renderingContext.getResolution();
-
-        final CoordinateReferenceSystem gridCRS = projectedCoverage.getCoverageLayer().getBounds().getCoordinateReferenceSystem();
-
-        Envelope bounds = new GeneralEnvelope(renderingContext.getCanvasObjectiveBounds());
-        //bounds.setCoordinateReferenceSystem(context.getObjectiveCRS());
-
-        if(!gridCRS.equals(bounds.getCoordinateReferenceSystem())){
-            try {
-                bounds = CRS.transform(bounds, gridCRS);
-            } catch (TransformException ex) {
-                Logging.getLogger(DimRangeRenderer.class).log(Level.WARNING, null, ex);
-            }
-
-            DirectPosition2D pos = new DirectPosition2D(renderingContext.getObjectiveCRS());
-            pos.x = resolution[0];
-            pos.y = resolution[1];
-
-            try{
-                MathTransform trs = renderingContext.getMathTransform(renderingContext.getObjectiveCRS(), gridCRS);
-                DirectPosition pos2 = trs.transform(pos, null);
-                resolution[0] = pos2.getOrdinate(0);
-                resolution[1] = pos2.getOrdinate(1);
-            }catch(Exception ex){
-                throw new PortrayalException(ex);
-            }
-
-        }
-
+        final Envelope bounds = new GeneralEnvelope(renderingContext.getCanvasObjectiveBounds());
+        resolution = checkResolution(resolution,bounds);
         final GridCoverageReadParam param = new GridCoverageReadParam();
+
         param.setEnvelope(bounds);
         param.setResolution(resolution);
 
         GridCoverage2D dataCoverage;
+        GridCoverage2D elevationCoverage;
         try {
             dataCoverage = projectedCoverage.getCoverage(param);
+            elevationCoverage = projectedCoverage.getElevationCoverage(param);
         } catch (CoverageStoreException ex) {
             throw new PortrayalException(ex);
         }
 
-        if(!CRS.equalsIgnoreMetadata(dataCoverage.getCoordinateReferenceSystem2D(), renderingContext.getObjectiveCRS())){
-            //coverage is not in objective crs, resample it
-            try{
-                //we resample the native view of the coverage only, the style will be applied later.
-                dataCoverage = (GridCoverage2D) Operations.DEFAULT.resample(
-                        dataCoverage.view(ViewType.NATIVE),
-                        renderingContext.getObjectiveCRS());
-            }catch(Exception ex){
-                System.out.println("ERROR resample in raster symbolizer renderer: " + ex.getMessage());
-            }
+        if(dataCoverage == null){
+            LOGGER.log(Level.WARNING, "Requested an area where no coverage where found.");
+            return;
         }
+
+        final CoordinateReferenceSystem coverageCRS = dataCoverage.getCoordinateReferenceSystem();
+        try{
+            final CoordinateReferenceSystem candidate2D = CRSUtilities.getCRS2D(coverageCRS);
+            if(!CRS.equalsIgnoreMetadata(candidate2D,renderingContext.getObjectiveCRS2D()) ){
+
+                dataCoverage = (GridCoverage2D) Operations.DEFAULT.resample(dataCoverage.view(ViewType.NATIVE), renderingContext.getObjectiveCRS2D());
+
+                if(dataCoverage != null){
+                    dataCoverage = dataCoverage.view(ViewType.RENDERED);
+                }
+            }
+        } catch (CoverageProcessingException ex) {
+            monitor.exceptionOccured(ex, Level.WARNING);
+            return;
+        } catch(Exception ex){
+            //several kind of errors can happen here, we catch anything to avoid blocking the map component.
+            monitor.exceptionOccured(
+                new IllegalStateException("Coverage is not in the requested CRS, found : " +
+                "\n"+ coverageCRS +
+                " was expecting : \n" +
+                renderingContext.getObjectiveCRS() +
+                "\nOriginal Cause:"+ ex.getMessage(), ex), Level.WARNING);
+            return;
+        }
+
+        if(dataCoverage == null){
+            LOGGER.log(Level.WARNING, "Reprojected coverage is null.");
+            return;
+        }
+
 
         final Graphics2D g2 = renderingContext.getGraphics();
 
@@ -169,7 +171,6 @@ public class DimRangeRenderer extends AbstractSymbolizerRenderer<CachedDimRangeS
         }else{
             throw new PortrayalException("Could not render image, GridToCRS is a not an AffineTransform, found a " + trs2D.getClass() );
         }
-
 
         renderingContext.switchToDisplayCRS();
     }
