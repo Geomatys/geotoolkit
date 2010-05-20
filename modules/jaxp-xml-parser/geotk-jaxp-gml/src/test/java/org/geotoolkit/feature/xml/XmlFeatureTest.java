@@ -34,8 +34,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 import javax.xml.bind.JAXBException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
@@ -132,16 +134,26 @@ public class XmlFeatureTest {
         final GeometryFactory GF = new GeometryFactory();
         final SimpleFeatureBuilder sfb = new SimpleFeatureBuilder(simpleType);
 
-        final Point pt = GF.createPoint(new Coordinate(45, 56));
-        final MultiPoint mpt = GF.createMultiPoint(new Coordinate[]{new Coordinate(12, 31), new Coordinate(89, 78)});
-        final LineString line1 = GF.createLineString(new Coordinate[]{new Coordinate(12, 31), new Coordinate(88, 77), new Coordinate(10, 38)});
-        final LineString line2 = GF.createLineString(new Coordinate[]{new Coordinate(13, 32), new Coordinate(89, 78), new Coordinate(11, 39)});
+        final Point pt = GF.createPoint(new Coordinate(5, 10));
+        final MultiPoint mpt = GF.createMultiPoint(new Coordinate[]{new Coordinate(5, 10), new Coordinate(15, 20)});
+        final LineString line1 = GF.createLineString(new Coordinate[]{new Coordinate(10, 10), new Coordinate(20, 20), new Coordinate(30, 30)});
+        final LineString line2 = GF.createLineString(new Coordinate[]{new Coordinate(11, 11), new Coordinate(21, 21), new Coordinate(31, 31)});
         final MultiLineString mline = GF.createMultiLineString(new LineString[]{line1,line2});
-        final LinearRing ring1 = GF.createLinearRing(new Coordinate[]{new Coordinate(11, 30), new Coordinate(88, 77), new Coordinate(40, 35),new Coordinate(11, 30)});
+        final LinearRing ring1 = GF.createLinearRing(new Coordinate[]{new Coordinate(0, 0), new Coordinate(10, 0), new Coordinate(10, 10),new Coordinate(0, 0)});
         final Polygon poly1 = GF.createPolygon(ring1, new LinearRing[0]);
-        final LinearRing ring2 = GF.createLinearRing(new Coordinate[]{new Coordinate(12, 31), new Coordinate(89, 78), new Coordinate(41, 36),new Coordinate(12, 31)});
+        final LinearRing ring2 = GF.createLinearRing(new Coordinate[]{new Coordinate(1, 1), new Coordinate(11, 1), new Coordinate(11, 11),new Coordinate(1, 1)});
         final Polygon poly2 = GF.createPolygon(ring2, new LinearRing[0]);
         final MultiPolygon mpoly = GF.createMultiPolygon(new Polygon[]{poly1,poly2});
+
+        final Calendar calendar = Calendar.getInstance();
+        calendar.setTimeZone(TimeZone.getTimeZone("GMT+0"));
+        calendar.set(Calendar.YEAR, 2005);
+        calendar.set(Calendar.MONTH, 7);
+        calendar.set(Calendar.DAY_OF_MONTH, 21);
+        calendar.set(Calendar.HOUR_OF_DAY, 15);
+        calendar.set(Calendar.MINUTE, 43);
+        calendar.set(Calendar.SECOND, 12);
+        calendar.set(Calendar.MILLISECOND, 52);
 
         int i=0;
         sfb.reset();
@@ -152,8 +164,8 @@ public class XmlFeatureTest {
         sfb.set(i++, 48);
         sfb.set(i++, 96.12);
         sfb.set(i++, new BigDecimal(456789));
-        sfb.set(i++, new Date(3600000*23));
-        sfb.set(i++, new Timestamp(3600000*23));
+        sfb.set(i++, calendar.getTime());
+        sfb.set(i++, new Timestamp(calendar.getTimeInMillis()));
         sfb.set(i++, Boolean.TRUE);
         sfb.set(i++, pt);
         sfb.set(i++, mpt);

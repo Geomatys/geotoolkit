@@ -28,19 +28,18 @@ import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 import java.math.BigDecimal;
-import java.rmi.UnexpectedException;
 import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.namespace.QName;
 import javax.xml.stream.events.XMLEvent;
 import org.geotoolkit.feature.DefaultName;
-import org.geotoolkit.util.Converters;
 import org.opengis.feature.type.Name;
 
 /**
@@ -52,7 +51,10 @@ public class Utils {
 
     private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.feature.xml");
 
-    private static DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
+    private static final DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+    static{
+        dateFormatter.setTimeZone(TimeZone.getTimeZone("GMT+0"));
+    }
 
     private Utils() {}
 
@@ -246,10 +248,9 @@ public class Utils {
         if (obj instanceof String) {
             return (String) obj;
         } else if (obj instanceof Timestamp) {
-            final String tValue  =((Timestamp) obj).toString();
-            return tValue.replace(" ", "T");
+            return dateFormatter.format(new Date(((Timestamp)obj).getTime()));
         } else if (obj instanceof java.sql.Date) {
-            return dateFormatter.format((java.sql.Date) obj) +'Z';
+            return dateFormatter.format((java.sql.Date) obj);
         } else if (obj instanceof java.util.Date) {
             return dateFormatter.format((java.util.Date) obj);
         } else if (obj instanceof Number || obj instanceof Boolean) {

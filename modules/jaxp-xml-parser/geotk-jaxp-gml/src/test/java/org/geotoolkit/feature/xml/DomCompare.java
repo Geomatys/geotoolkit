@@ -19,12 +19,18 @@
 package org.geotoolkit.feature.xml;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import javax.xml.parsers.ParserConfigurationException;
 import org.geotoolkit.util.DomUtilities;
+import org.w3c.dom.CDATASection;
+import org.w3c.dom.Comment;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.w3c.dom.ProcessingInstruction;
+import org.w3c.dom.Text;
 import org.xml.sax.SAXException;
 
 import static org.junit.Assert.*;
@@ -86,18 +92,44 @@ public class DomCompare {
             }
         }
 
-        
 
-        //check text value
-        assertEquals(errorMessage,expected.getTextContent().trim(), result.getTextContent().trim());
+        //check text value for types :
+        //TEXT_NODE, CDATA_SECTION_NODE, COMMENT_NODE, PROCESSING_INSTRUCTION_NODE
+
+        if(expected instanceof Text || expected instanceof CDATASection
+                || expected instanceof Comment || expected instanceof ProcessingInstruction){
+            assertEquals(errorMessage,expected.getTextContent().trim(), result.getTextContent().trim());
+        }
 
         //check child nodes recursivly
-        final NodeList expectedChilds = expected.getChildNodes();
-        final NodeList resultChilds = result.getChildNodes();
-        assertEquals(errorMessage, expectedChilds.getLength(), resultChilds.getLength());
-        for(int i=0,n=expectedChilds.getLength();i<n;i++){
-            compareNode(expectedChilds.item(i), resultChilds.item(i));
+        final List<Node> expectedChilds = removeEmptyTextElements(expected.getChildNodes());
+        final List<Node> resultChilds = removeEmptyTextElements(result.getChildNodes());
+        assertEquals(errorMessage, expectedChilds.size(), resultChilds.size());
+        for(int i=0,n=expectedChilds.size();i<n;i++){
+            compareNode(expectedChilds.get(i), resultChilds.get(i));
         }
+    }
+
+    private static List<Node> removeEmptyTextElements(NodeList lst){
+        final List<Node> nodes = new ArrayList<Node>();
+        if(lst != null){
+            for(int i=0,n=lst.getLength();i<n;i++){
+                final Node no = lst.item(i);
+                if(no instanceof Text){
+                    final Text t = (Text) no;
+                    final String value = t.getWholeText();
+                    for(char c : value.toCharArray()){
+                        if(c != '\n' && c != ' '){
+                            nodes.add(no);
+                            continue;
+                        }
+                    }
+                    continue;
+                }
+                nodes.add(no);
+            }
+        }
+        return nodes;
     }
 
     private static String errorMessage(Node expected, Node result){
@@ -115,8 +147,14 @@ public class DomCompare {
             return;
         }
         sb.append(node.getNamespaceURI()).append(':').append(node.getNodeName());
-        sb.append('=').append(node.getTextContent());
-        sb.append('[');
+        sb.append('(');
+        if(node.getChildNodes() != null){
+            sb.append(" nbChild=").append(node.getChildNodes().getLength());
+        }
+        if(node.getAttributes() != null){
+            sb.append(" nbAtt=").append(node.getAttributes().getLength());
+        }
+        sb.append(") [");
         NamedNodeMap atts = node.getAttributes();
         if(atts != null){
             for(int i=0;i<atts.getLength();i++){

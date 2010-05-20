@@ -209,7 +209,7 @@ public final class DefaultSimpleFeature extends AbstractSimpleFeature {
                         // as JTS is broken Geometry.equals( Object )
                         // and Geometry.equals( Geometry ) are different
                         // (We should fold this knowledge into AttributeType...)
-                        if (!((Geometry) properties.get(i).getValue()).equals(
+                        if (!((Geometry) properties.get(i).getValue()).equalsExact(
                                 (Geometry) otherAtt)) {
                             return false;
                         }

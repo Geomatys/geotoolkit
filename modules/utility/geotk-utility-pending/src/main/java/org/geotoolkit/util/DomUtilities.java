@@ -54,9 +54,8 @@ public class DomUtilities {
      */
     public static Document read(Object input) throws ParserConfigurationException, SAXException, IOException {
         final InputStream stream = toStream(input);
-        // création d'une fabrique de documents
-        final DocumentBuilderFactory fabrique = DocumentBuilderFactory.newInstance();
-        final DocumentBuilder constructeur = fabrique.newDocumentBuilder();
+        final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        final DocumentBuilder constructeur = factory.newDocumentBuilder();
         final Document document = constructeur.parse(stream);
         stream.close();
         return document;

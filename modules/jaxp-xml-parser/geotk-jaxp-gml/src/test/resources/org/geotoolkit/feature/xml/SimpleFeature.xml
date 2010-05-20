@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <gml:TestSimple xmlns:gml="http://www.opengis.net/gml" gml:id="id-156">
     <gml:ID>36</gml:ID>
     <gml:attString>stringValue</gml:attString>
@@ -6,69 +7,103 @@
     <gml:attLong>48</gml:attLong>
     <gml:attDouble>96.12</gml:attDouble>
     <gml:attDecimal>456789</gml:attDecimal>
-    <gml:attDate>1970-01-02</gml:attDate>
-    <gml:attDateTime>1970-01-02T00:00:00.000</gml:attDateTime>
+    <gml:attDate>2005-08-21T15:43:12.052Z</gml:attDate>
+    <gml:attDateTime>2005-08-21T15:43:12.052Z</gml:attDateTime>
     <gml:attBoolean>true</gml:attBoolean>
 
     <gml:geomPoint>
         <gml:Point xmlns:wfs="http://www.opengis.net/wfs" srsName="urn:ogc:def:crs:epsg:7.5.0.1:4326">
-            <gml:pos>45.0 56.0</gml:pos>
+            <gml:pos>5.0 10.0</gml:pos>
         </gml:Point>
     </gml:geomPoint>
 
     <gml:geomMultiPoint>
         <gml:MultiPoint xmlns:wfs="http://www.opengis.net/wfs" srsName="urn:ogc:def:crs:epsg:7.5.0.1:4326">
-            <gml:pointMember><gml:Point srsName="urn:ogc:def:crs:epsg:7.5.0.1:4326"><gml:pos>12.0 31.0</gml:pos></gml:Point></gml:pointMember><gml:pointMember><gml:Point srsName="urn:ogc:def:crs:epsg:7.5.0.1:4326"><gml:pos>89.0 78.0</gml:pos></gml:Point></gml:pointMember>
+            <gml:pointMember>
+                <gml:Point srsName="urn:ogc:def:crs:epsg:7.5.0.1:4326">
+                    <gml:pos>5.0 10.0</gml:pos>
+                </gml:Point>
+            </gml:pointMember>
+            <gml:pointMember>
+                <gml:Point srsName="urn:ogc:def:crs:epsg:7.5.0.1:4326">
+                    <gml:pos>15.0 20.0</gml:pos>
+                </gml:Point>
+            </gml:pointMember>
         </gml:MultiPoint>
     </gml:geomMultiPoint>
 
     <gml:geomLine>
         <gml:LineString xmlns:wfs="http://www.opengis.net/wfs" srsName="urn:ogc:def:crs:epsg:7.5.0.1:4326">
-            <gml:posList>12.0 31.0 88.0 77.0 10.0 38.0</gml:posList>
+            <gml:posList>10.0 10.0 20.0 20.0 30.0 30.0</gml:posList>
         </gml:LineString>
     </gml:geomLine>
 
     <gml:geomMultiLine>
         <gml:MultiCurve xmlns:wfs="http://www.opengis.net/wfs" srsName="urn:ogc:def:crs:epsg:7.5.0.1:4326">
-            <gml:curveMember><gml:LineString srsName="urn:ogc:def:crs:epsg:7.5.0.1:4326">
-                <gml:posList>12.0 31.0 88.0 77.0 10.0 38.0</gml:posList></gml:LineString>
+            <gml:curveMember>
+                <gml:LineString srsName="urn:ogc:def:crs:epsg:7.5.0.1:4326">
+                    <gml:posList>10.0 10.0 20.0 20.0 30.0 30.0</gml:posList>
+                </gml:LineString>
             </gml:curveMember>
             <gml:curveMember>
-                <gml:LineString srsName="urn:ogc:def:crs:epsg:7.5.0.1:4326"><gml:posList>13.0 32.0 89.0 78.0 11.0 39.0</gml:posList></gml:LineString>
+                <gml:LineString srsName="urn:ogc:def:crs:epsg:7.5.0.1:4326">
+                    <gml:posList>11.0 11.0 21.0 21.0 31.0 31.0</gml:posList>
+                </gml:LineString>
             </gml:curveMember>
         </gml:MultiCurve>
     </gml:geomMultiLine>
 
     <gml:geomPolygon>
         <gml:Polygon xmlns:wfs="http://www.opengis.net/wfs" srsName="urn:ogc:def:crs:epsg:7.5.0.1:4326">
-            <gml:exterior><gml:LinearRing><gml:posList>11.0 30.0 88.0 77.0 40.0 35.0 11.0 30.0</gml:posList></gml:LinearRing></gml:exterior>
+            <gml:exterior>
+                <gml:LinearRing>
+                    <gml:posList>0.0 0.0 10.0 0.0 10.0 10.0 0.0 0.0</gml:posList>
+                </gml:LinearRing>
+            </gml:exterior>
         </gml:Polygon>
     </gml:geomPolygon>
 
     <gml:geomMultiPolygon>
         <gml:MultiSurface xmlns:wfs="http://www.opengis.net/wfs" srsName="urn:ogc:def:crs:epsg:7.5.0.1:4326">
             <gml:surfaceMember>
-                <gml:Polygon srsName="urn:ogc:def:crs:epsg:7.5.0.1:4326"><gml:exterior><gml:LinearRing><gml:posList>11.0 30.0 88.0 77.0 40.0 35.0 11.0 30.0</gml:posList></gml:LinearRing></gml:exterior></gml:Polygon>
+                <gml:Polygon srsName="urn:ogc:def:crs:epsg:7.5.0.1:4326">
+                    <gml:exterior>
+                        <gml:LinearRing>
+                            <gml:posList>0.0 0.0 10.0 0.0 10.0 10.0 0.0 0.0</gml:posList>
+                        </gml:LinearRing>
+                    </gml:exterior>
+                </gml:Polygon>
             </gml:surfaceMember>
             <gml:surfaceMember>
-                <gml:Polygon srsName="urn:ogc:def:crs:epsg:7.5.0.1:4326"><gml:exterior><gml:LinearRing><gml:posList>12.0 31.0 89.0 78.0 41.0 36.0 12.0 31.0</gml:posList></gml:LinearRing></gml:exterior></gml:Polygon></gml:surfaceMember>
+                <gml:Polygon srsName="urn:ogc:def:crs:epsg:7.5.0.1:4326">
+                    <gml:exterior>
+                        <gml:LinearRing>
+                            <gml:posList>1.0 1.0 11.0 1.0 11.0 11.0 1.0 1.0</gml:posList>
+                        </gml:LinearRing>
+                    </gml:exterior>
+                </gml:Polygon>
+            </gml:surfaceMember>
         </gml:MultiSurface>
     </gml:geomMultiPolygon>
 
     <gml:geomMultiGeometry>
         <gml:MultiPoint xmlns:wfs="http://www.opengis.net/wfs" srsName="urn:ogc:def:crs:epsg:7.5.0.1:4326">
             <gml:pointMember>
-                <gml:Point srsName="urn:ogc:def:crs:epsg:7.5.0.1:4326"><gml:pos>12.0 31.0</gml:pos></gml:Point>
+                <gml:Point srsName="urn:ogc:def:crs:epsg:7.5.0.1:4326">
+                    <gml:pos>5.0 10.0</gml:pos>
+                </gml:Point>
             </gml:pointMember>
             <gml:pointMember>
-                <gml:Point srsName="urn:ogc:def:crs:epsg:7.5.0.1:4326"><gml:pos>89.0 78.0</gml:pos></gml:Point>
+                <gml:Point srsName="urn:ogc:def:crs:epsg:7.5.0.1:4326">
+                    <gml:pos>15.0 20.0</gml:pos>
+                </gml:Point>
             </gml:pointMember>
         </gml:MultiPoint>
     </gml:geomMultiGeometry>
 
     <gml:geomAnyGeometry>
         <gml:Point xmlns:wfs="http://www.opengis.net/wfs" srsName="urn:ogc:def:crs:epsg:7.5.0.1:4326">
-            <gml:pos>45.0 56.0</gml:pos>
+            <gml:pos>5.0 10.0</gml:pos>
         </gml:Point>
     </gml:geomAnyGeometry>
 
