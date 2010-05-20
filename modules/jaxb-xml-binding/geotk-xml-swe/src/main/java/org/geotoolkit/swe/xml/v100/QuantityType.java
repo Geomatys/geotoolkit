@@ -27,6 +27,7 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import org.geotoolkit.swe.xml.AbstractQualityProperty;
 import org.geotoolkit.swe.xml.Quantity;
 import org.geotoolkit.util.Utilities;
 
@@ -89,6 +90,15 @@ public class QuantityType extends AbstractDataComponentType implements Quantity 
             this.value = q.getValue();
             if (q.getUom() != null) {
                 this.uom = new UomPropertyType(q.getUom());
+            }
+            if (q.getConstraint() != null) {
+                this.constraint = new AllowedValuesPropertyType(q.getConstraint());
+            }
+            if (q.getQuality() != null) {
+                this.quality = new ArrayList<QualityPropertyType>();
+                for (AbstractQualityProperty qual : q.getQuality()) {
+                    this.quality.add(new QualityPropertyType(qual));
+                }
             }
         }
     }

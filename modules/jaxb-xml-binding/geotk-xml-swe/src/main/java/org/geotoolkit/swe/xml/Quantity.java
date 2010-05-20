@@ -17,6 +17,7 @@
 package org.geotoolkit.swe.xml;
 
 import java.net.URI;
+import java.util.List;
 
 /**
  *
@@ -25,13 +26,17 @@ import java.net.URI;
  */
 public interface Quantity  extends AbstractDataComponent {
 
-    public void setAxisID(String value);
+    void setAxisID(String value);
 
-    public UomProperty getUom();
+    UomProperty getUom();
 
-    public Double getValue();
+    Double getValue();
 
-    public URI getReferenceFrame();
+    URI getReferenceFrame();
 
-    public String getAxisID();
+    String getAxisID();
+
+    AbstractAllowedValuesProperty getConstraint();
+
+    List<? extends AbstractQualityProperty> getQuality();
 }

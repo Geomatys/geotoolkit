@@ -102,6 +102,7 @@ public class Interface implements AbstractInterface {
             this.show         = in.getShow();
             this.title        = in.getTitle();
             this.type         = in.getType();
+            this.name         = in.getName();
         }
     }
 
