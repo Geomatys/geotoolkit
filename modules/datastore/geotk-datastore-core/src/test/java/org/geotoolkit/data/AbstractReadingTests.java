@@ -409,9 +409,7 @@ public abstract class AbstractReadingTests{
                 Comparable last = null;
                 while(reader.hasNext()){
                     final Feature f = reader.next();
-                    System.out.println(">>>>"+f);
                     final Comparable current = (Comparable) f.getProperty(desc.getName()).getValue();
-                    System.out.println(">--"+desc.getName()+"---"+current +"    "+last);
 
                     if(current != null){
                         if(last != null){

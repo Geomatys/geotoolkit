@@ -44,12 +44,11 @@ import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryCapabilities;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.feature.AttributeDescriptorBuilder;
-import org.geotoolkit.feature.AttributeTypeBuilder;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.simple.DefaultSimpleFeatureType;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.LenientFeatureFactory;
+import org.geotoolkit.feature.type.DefaultFeatureTypeFactory;
 import org.geotoolkit.feature.type.DefaultGeometryDescriptor;
 import org.geotoolkit.referencing.CRS;
 
@@ -58,6 +57,7 @@ import org.opengis.feature.FeatureFactory;
 import org.opengis.feature.Property;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.FeatureType;
+import org.opengis.feature.type.FeatureTypeFactory;
 import org.opengis.feature.type.Name;
 import org.opengis.feature.type.PropertyDescriptor;
 import org.opengis.filter.Filter;
@@ -74,9 +74,9 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  */
 public class SMLDataStore extends AbstractDataStore {
 
-    /** the feature factory */
     private static final FeatureFactory FF = FactoryFinder.getFeatureFactory(
                         new Hints(Hints.FEATURE_FACTORY,LenientFeatureFactory.class));
+    private static final FeatureTypeFactory FTF = new DefaultFeatureTypeFactory();
     private static final GeometryFactory GF = new GeometryFactory();
 
     private final Map<Name,FeatureType> types = new HashMap<Name, FeatureType>();
@@ -84,7 +84,6 @@ public class SMLDataStore extends AbstractDataStore {
     private final Connection connection;
 
     private static final String SML_NAMESPACE = "http://www.opengis.net/sml/1.0";
-
     private final static Name SML_TN_SYSTEM         = new DefaultName(SML_NAMESPACE, "System");
     private final static Name SML_TN_COMPONENT      = new DefaultName(SML_NAMESPACE, "Component");
     private final static Name SML_TN_PROCESSCHAIN   = new DefaultName(SML_NAMESPACE, "ProcessChain");
@@ -155,255 +154,87 @@ public class SMLDataStore extends AbstractDataStore {
 
     private void initTypes() {
         final FeatureTypeBuilder featureTypeBuilder = new FeatureTypeBuilder();
-        final AttributeDescriptorBuilder attributeDescBuilder = new AttributeDescriptorBuilder();
-        final AttributeTypeBuilder attributeTypeBuilder = new AttributeTypeBuilder();
 
-        // gml:description
-        attributeTypeBuilder.reset();
-        attributeTypeBuilder.setBinding(String.class);
-        attributeDescBuilder.reset();
-        attributeDescBuilder.setName(ATT_DESC);
-        attributeDescBuilder.setMaxOccurs(1);
-        attributeDescBuilder.setMinOccurs(0);
-        attributeDescBuilder.setNillable(true);
-        attributeDescBuilder.setType(attributeTypeBuilder.buildType());
-        final AttributeDescriptor attDescription = attributeDescBuilder.buildDescriptor();
-        
-
-        // gml:name
-        attributeTypeBuilder.reset();
-        attributeTypeBuilder.setBinding(String.class);
-        attributeDescBuilder.reset();
-        attributeDescBuilder.setName(ATT_NAME);
-        attributeDescBuilder.setMaxOccurs(1);
-        attributeDescBuilder.setMinOccurs(1);
-        attributeDescBuilder.setNillable(false);
-        attributeDescBuilder.setType(attributeTypeBuilder.buildType());
-        final AttributeDescriptor attName = attributeDescBuilder.buildDescriptor();
-        
-        // sml:keywords
-        attributeTypeBuilder.reset();
-        attributeTypeBuilder.setBinding(List.class);
-        attributeDescBuilder.reset();
-        attributeDescBuilder.setName(ATT_KEYWORDS);
-        attributeDescBuilder.setMaxOccurs(Integer.MAX_VALUE);
-        attributeDescBuilder.setMinOccurs(0);
-        attributeDescBuilder.setNillable(true);
-        attributeDescBuilder.setType(attributeTypeBuilder.buildType());
-        final AttributeDescriptor attkey = attributeDescBuilder.buildDescriptor();
-
-        // sml:location
-        attributeTypeBuilder.reset();
-        attributeTypeBuilder.setBinding(Point.class);
-        attributeDescBuilder.reset();
-        attributeDescBuilder.setName(ATT_LOCATION);
-        attributeDescBuilder.setMaxOccurs(1);
-        attributeDescBuilder.setMinOccurs(1);
-        attributeDescBuilder.setNillable(false);
-        attributeDescBuilder.setType(attributeTypeBuilder.buildGeometryType());
-        final AttributeDescriptor attLocation = attributeDescBuilder.buildDescriptor();
-
-        // sml:phenomenons
-        attributeTypeBuilder.reset();
-        attributeTypeBuilder.setBinding(List.class);
-        attributeDescBuilder.reset();
-        attributeDescBuilder.setName(ATT_PHENOMENONS);
-        attributeDescBuilder.setMaxOccurs(Integer.MAX_VALUE);
-        attributeDescBuilder.setMinOccurs(0);
-        attributeDescBuilder.setNillable(true);
-        attributeDescBuilder.setType(attributeTypeBuilder.buildType());
-        final AttributeDescriptor attPhen = attributeDescBuilder.buildDescriptor();
-
-        // sml:smltype
-        attributeTypeBuilder.reset();
-        attributeTypeBuilder.setBinding(String.class);
-        attributeDescBuilder.reset();
-        attributeDescBuilder.setName(ATT_SMLTYPE);
-        attributeDescBuilder.setMaxOccurs(1);
-        attributeDescBuilder.setMinOccurs(1);
-        attributeDescBuilder.setNillable(true);
-        attributeDescBuilder.setType(attributeTypeBuilder.buildType());
-        final AttributeDescriptor attSmt = attributeDescBuilder.buildDescriptor();
-
-        // sml:smlref
-        attributeTypeBuilder.reset();
-        attributeTypeBuilder.setBinding(String.class);
-        attributeDescBuilder.reset();
-        attributeDescBuilder.setName(ATT_SMLREF);
-        attributeDescBuilder.setMaxOccurs(1);
-        attributeDescBuilder.setMinOccurs(1);
-        attributeDescBuilder.setNillable(true);
-        attributeDescBuilder.setType(attributeTypeBuilder.buildType());
-        final AttributeDescriptor attSmr = attributeDescBuilder.buildDescriptor();
-
-        // sml:inputs
-        attributeTypeBuilder.reset();
-        attributeTypeBuilder.setBinding(Map.class);
-        attributeDescBuilder.reset();
-        attributeDescBuilder.setName(ATT_INPUTS);
-        attributeDescBuilder.setMaxOccurs(Integer.MAX_VALUE);
-        attributeDescBuilder.setMinOccurs(0);
-        attributeDescBuilder.setNillable(true);
-        attributeDescBuilder.setType(attributeTypeBuilder.buildType());
-        final AttributeDescriptor attInp = attributeDescBuilder.buildDescriptor();
-
-        // sml:outputs
-        attributeTypeBuilder.reset();
-        attributeTypeBuilder.setBinding(Map.class);
-        attributeDescBuilder.reset();
-        attributeDescBuilder.setName(ATT_OUTPUTS);
-        attributeDescBuilder.setMaxOccurs(Integer.MAX_VALUE);
-        attributeDescBuilder.setMinOccurs(0);
-        attributeDescBuilder.setNillable(true);
-        attributeDescBuilder.setType(attributeTypeBuilder.buildType());
-        final AttributeDescriptor attOut = attributeDescBuilder.buildDescriptor();
-
-
-        /*
-         * Feature type sml:Component
-         */
-        featureTypeBuilder.reset();
-        featureTypeBuilder.setName(SML_TN_COMPONENT);
-        featureTypeBuilder.add(0, attDescription);
-        featureTypeBuilder.add(1, attName);
-        featureTypeBuilder.add(2, attkey);
-        featureTypeBuilder.add(3, attLocation);
-        featureTypeBuilder.setDefaultGeometry(ATT_LOCATION.getLocalPart());
-        featureTypeBuilder.add(4, attPhen);
-        featureTypeBuilder.add(5, attSmt);
-        featureTypeBuilder.add(6, attSmr);
-        featureTypeBuilder.add(7, attInp);
-        featureTypeBuilder.add(8, attOut);
-
-        final FeatureType componentType = featureTypeBuilder.buildFeatureType();
-        types.put(SML_TN_COMPONENT, componentType);
-
-        // sml:producer
-        attributeTypeBuilder.reset();
-        attributeTypeBuilder.setBinding(Map.class);
-        attributeDescBuilder.reset();
-        attributeDescBuilder.setName(ATT_PRODUCER);
-        attributeDescBuilder.setMaxOccurs(Integer.MAX_VALUE);
-        attributeDescBuilder.setMinOccurs(0);
-        attributeDescBuilder.setNillable(true);
-        attributeDescBuilder.setType(attributeTypeBuilder.buildType());
-        final AttributeDescriptor attProd = attributeDescBuilder.buildDescriptor();
-
-        // sml:component
-        attributeTypeBuilder.reset();
-        attributeTypeBuilder.setBinding(Map.class);
-        attributeDescBuilder.reset();
-        attributeDescBuilder.setName(ATT_COMPONENTS);
-        attributeDescBuilder.setMaxOccurs(Integer.MAX_VALUE);
-        attributeDescBuilder.setMinOccurs(0);
-        attributeDescBuilder.setNillable(true);
-        attributeDescBuilder.setType(attributeTypeBuilder.buildType());
-        final AttributeDescriptor attCom = attributeDescBuilder.buildDescriptor();
-
-
-        /*
-         * Feature type sml:System
-         */
+        // Feature type sml:System
         featureTypeBuilder.reset();
         featureTypeBuilder.setName(SML_TN_SYSTEM);
-        featureTypeBuilder.add(0, attDescription);
-        featureTypeBuilder.add(1, attName);
-        featureTypeBuilder.add(2, attkey);
-        featureTypeBuilder.add(3, attLocation);
+        featureTypeBuilder.add(ATT_DESC,        String.class, 0, 1, true, null);
+        featureTypeBuilder.add(ATT_NAME,        String.class, 1, 1, false, null);
+        featureTypeBuilder.add(ATT_KEYWORDS,    List.class, 0, Integer.MAX_VALUE, true, null);
+        featureTypeBuilder.add(ATT_LOCATION,    Point.class, 1, 1, false, null);
+        featureTypeBuilder.add(ATT_PHENOMENONS, List.class, 0, Integer.MAX_VALUE, true, null);
+        featureTypeBuilder.add(ATT_SMLTYPE,     String.class, 1, 1, true, null);
+        featureTypeBuilder.add(ATT_SMLREF,      String.class, 1, 1, true, null);
+        featureTypeBuilder.add(ATT_INPUTS,      Map.class, 0, Integer.MAX_VALUE, true, null);
+        featureTypeBuilder.add(ATT_OUTPUTS,     Map.class, 0, Integer.MAX_VALUE, true, null);
+        featureTypeBuilder.add(ATT_PRODUCER,    Map.class, 0, Integer.MAX_VALUE, true, null);
+        featureTypeBuilder.add(ATT_COMPONENTS,  Map.class, 0, Integer.MAX_VALUE, true, null);
         featureTypeBuilder.setDefaultGeometry(ATT_LOCATION.getLocalPart());
-        featureTypeBuilder.add(4, attPhen);
-        featureTypeBuilder.add(5, attSmt);
-        featureTypeBuilder.add(6, attSmr);
-        featureTypeBuilder.add(7, attInp);
-        featureTypeBuilder.add(8, attOut);
-        featureTypeBuilder.add(9, attProd);
-        featureTypeBuilder.add(10, attCom);
+        types.put(SML_TN_SYSTEM, featureTypeBuilder.buildFeatureType());
 
-        final FeatureType systemType = featureTypeBuilder.buildFeatureType();
-        types.put(SML_TN_SYSTEM, systemType);
+        // Feature type sml:Component
+        featureTypeBuilder.reset();
+        featureTypeBuilder.setName(SML_TN_COMPONENT);
+        featureTypeBuilder.add(ATT_DESC,        String.class, 0, 1, true, null);
+        featureTypeBuilder.add(ATT_NAME,        String.class, 1, 1, false, null);
+        featureTypeBuilder.add(ATT_KEYWORDS,    List.class, 0, Integer.MAX_VALUE, true, null);
+        featureTypeBuilder.add(ATT_LOCATION,    Point.class, 1, 1, false, null);
+        featureTypeBuilder.add(ATT_PHENOMENONS, List.class, 0, Integer.MAX_VALUE, true, null);
+        featureTypeBuilder.add(ATT_SMLTYPE,     String.class, 1, 1, true, null);
+        featureTypeBuilder.add(ATT_SMLREF,      String.class, 1, 1, true, null);
+        featureTypeBuilder.add(ATT_INPUTS,      Map.class, 0, Integer.MAX_VALUE, true, null);
+        featureTypeBuilder.add(ATT_OUTPUTS,     Map.class, 0, Integer.MAX_VALUE, true, null);
+        featureTypeBuilder.setDefaultGeometry(ATT_LOCATION.getLocalPart());
+        types.put(SML_TN_COMPONENT, featureTypeBuilder.buildFeatureType());
 
-        /*
-         * Feature type sml:ProcessChain
-         */
+        // Feature type sml:ProcessChain
         featureTypeBuilder.reset();
         featureTypeBuilder.setName(SML_TN_PROCESSCHAIN);
-        featureTypeBuilder.add(0, attDescription);
-        featureTypeBuilder.add(1, attName);
-        featureTypeBuilder.add(2, attkey);
-        featureTypeBuilder.add(3, attLocation);
+        featureTypeBuilder.add(ATT_DESC,        String.class, 0, 1, true, null);
+        featureTypeBuilder.add(ATT_NAME,        String.class, 1, 1, false, null);
+        featureTypeBuilder.add(ATT_KEYWORDS,    List.class, 0, Integer.MAX_VALUE, true, null);
+        featureTypeBuilder.add(ATT_LOCATION,    Point.class, 1, 1, false, null);
+        featureTypeBuilder.add(ATT_PHENOMENONS, List.class, 0, Integer.MAX_VALUE, true, null);
+        featureTypeBuilder.add(ATT_SMLTYPE,     String.class, 1, 1, true, null);
+        featureTypeBuilder.add(ATT_SMLREF,      String.class, 1, 1, true, null);
+        featureTypeBuilder.add(ATT_INPUTS,      Map.class, 0, Integer.MAX_VALUE, true, null);
+        featureTypeBuilder.add(ATT_OUTPUTS,     Map.class, 0, Integer.MAX_VALUE, true, null);
+        featureTypeBuilder.add(ATT_PRODUCER,    Map.class, 0, Integer.MAX_VALUE, true, null);
+        featureTypeBuilder.add(ATT_COMPONENTS,  Map.class, 0, Integer.MAX_VALUE, true, null);
         featureTypeBuilder.setDefaultGeometry(ATT_LOCATION.getLocalPart());
-        featureTypeBuilder.add(4, attPhen);
-        featureTypeBuilder.add(5, attSmt);
-        featureTypeBuilder.add(6, attSmr);
-        featureTypeBuilder.add(7, attInp);
-        featureTypeBuilder.add(8, attOut);
-        featureTypeBuilder.add(9, attProd);
-        featureTypeBuilder.add(10, attCom);
+        types.put(SML_TN_PROCESSCHAIN, featureTypeBuilder.buildFeatureType());
 
-        final FeatureType processChainType = featureTypeBuilder.buildFeatureType();
-        types.put(SML_TN_PROCESSCHAIN, processChainType);
-
-        // sml:method
-        attributeTypeBuilder.reset();
-        attributeTypeBuilder.setBinding(String.class);
-        attributeDescBuilder.reset();
-        attributeDescBuilder.setName(ATT_METHOD);
-        attributeDescBuilder.setMaxOccurs(Integer.MAX_VALUE);
-        attributeDescBuilder.setMinOccurs(0);
-        attributeDescBuilder.setNillable(true);
-        attributeDescBuilder.setType(attributeTypeBuilder.buildType());
-        final AttributeDescriptor attMet = attributeDescBuilder.buildDescriptor();
-
-         /*
-         * Feature type sml:ProcessModel
-         */
+        // Feature type sml:ProcessModel
         featureTypeBuilder.reset();
         featureTypeBuilder.setName(SML_TN_PROCESSMODEL);
-        featureTypeBuilder.add(0, attDescription);
-        featureTypeBuilder.add(1, attName);
-        featureTypeBuilder.add(2, attkey);
-        featureTypeBuilder.add(3, attLocation);
+        featureTypeBuilder.add(ATT_DESC,        String.class, 0, 1, true, null);
+        featureTypeBuilder.add(ATT_NAME,        String.class, 1, 1, false, null);
+        featureTypeBuilder.add(ATT_KEYWORDS,    List.class, 0, Integer.MAX_VALUE, true, null);
+        featureTypeBuilder.add(ATT_LOCATION,    Point.class, 1, 1, false, null);
+        featureTypeBuilder.add(ATT_PHENOMENONS, List.class, 0, Integer.MAX_VALUE, true, null);
+        featureTypeBuilder.add(ATT_SMLTYPE,     String.class, 1, 1, true, null);
+        featureTypeBuilder.add(ATT_SMLREF,      String.class, 1, 1, true, null);
+        featureTypeBuilder.add(ATT_INPUTS,      Map.class, 0, Integer.MAX_VALUE, true, null);
+        featureTypeBuilder.add(ATT_OUTPUTS,     Map.class, 0, Integer.MAX_VALUE, true, null);
+        featureTypeBuilder.add(ATT_METHOD,      String.class, 0, Integer.MAX_VALUE, true, null);
         featureTypeBuilder.setDefaultGeometry(ATT_LOCATION.getLocalPart());
-        featureTypeBuilder.add(4, attPhen);
-        featureTypeBuilder.add(5, attSmt);
-        featureTypeBuilder.add(6, attSmr);
-        featureTypeBuilder.add(7, attInp);
-        featureTypeBuilder.add(8, attOut);
-        featureTypeBuilder.add(9, attMet);
+        types.put(SML_TN_PROCESSMODEL, featureTypeBuilder.buildFeatureType());
 
-        final FeatureType processModelType = featureTypeBuilder.buildFeatureType();
-        types.put(SML_TN_PROCESSMODEL, processModelType);
-
-        // sml:characteristics
-        attributeTypeBuilder.reset();
-        attributeTypeBuilder.setBinding(Map.class);
-        attributeDescBuilder.reset();
-        attributeDescBuilder.setName(ATT_CHARACTERISTICS);
-        attributeDescBuilder.setMaxOccurs(Integer.MAX_VALUE);
-        attributeDescBuilder.setMinOccurs(0);
-        attributeDescBuilder.setNillable(true);
-        attributeDescBuilder.setType(attributeTypeBuilder.buildType());
-        final AttributeDescriptor attChar = attributeDescBuilder.buildDescriptor();
-
-         /*
-         * Feature type sml:DataSourceType
-         */
+        // Feature type sml:DataSourceType
         featureTypeBuilder.reset();
         featureTypeBuilder.setName(SML_TN_DATASOURCETYPE);
-        featureTypeBuilder.add(0, attDescription);
-        featureTypeBuilder.add(1, attName);
-        featureTypeBuilder.add(2, attkey);
-        featureTypeBuilder.add(3, attLocation);
+        featureTypeBuilder.add(ATT_DESC,        String.class, 0, 1, true, null);
+        featureTypeBuilder.add(ATT_NAME,        String.class, 1, 1, false, null);
+        featureTypeBuilder.add(ATT_KEYWORDS,    List.class, 0, Integer.MAX_VALUE, true, null);
+        featureTypeBuilder.add(ATT_LOCATION,    Point.class, 1, 1, false, null);
+        featureTypeBuilder.add(ATT_PHENOMENONS, List.class, 0, Integer.MAX_VALUE, true, null);
+        featureTypeBuilder.add(ATT_SMLTYPE,     String.class, 1, 1, true, null);
+        featureTypeBuilder.add(ATT_SMLREF,      String.class, 1, 1, true, null);
+        featureTypeBuilder.add(ATT_INPUTS,      Map.class, 0, Integer.MAX_VALUE, true, null);
+        featureTypeBuilder.add(ATT_OUTPUTS,     Map.class, 0, Integer.MAX_VALUE, true, null);
+        featureTypeBuilder.add(ATT_CHARACTERISTICS,Map.class, 0, Integer.MAX_VALUE, true, null);
         featureTypeBuilder.setDefaultGeometry(ATT_LOCATION.getLocalPart());
-        featureTypeBuilder.add(4, attPhen);
-        featureTypeBuilder.add(5, attSmt);
-        featureTypeBuilder.add(6, attSmr);
-        featureTypeBuilder.add(7, attInp);
-        featureTypeBuilder.add(8, attOut);
-        featureTypeBuilder.add(9, attChar);
-
-        final FeatureType dataSourceType = featureTypeBuilder.buildFeatureType();
-        types.put(SML_TN_DATASOURCETYPE, dataSourceType);
+        types.put(SML_TN_DATASOURCETYPE, featureTypeBuilder.buildFeatureType());
     }
 
     /**
@@ -442,6 +273,7 @@ public class SMLDataStore extends AbstractDataStore {
      */
     @Override
     public FeatureType getFeatureType(Name typeName) throws DataStoreException {
+        typeCheck(typeName);
         return types.get(typeName);
     }
 

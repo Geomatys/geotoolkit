@@ -16,10 +16,8 @@
  */
 
 import com.vividsolutions.jts.geom.Point;
-import java.io.File;
-import java.io.IOException;
+
 import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -37,15 +35,9 @@ import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.internal.sql.DefaultDataSource;
 import org.geotoolkit.internal.sql.ScriptRunner;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.storage.DataStoreException;
-import org.geotoolkit.util.FileUtilities;
 
 import org.opengis.feature.type.Name;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import static org.junit.Assert.*;
 
 /**
  *

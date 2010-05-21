@@ -39,6 +39,7 @@ import org.opengis.feature.FeatureFactory;
 import org.opengis.feature.GeometryAttribute;
 import org.opengis.feature.Property;
 import org.opengis.feature.type.FeatureType;
+import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
@@ -171,7 +172,8 @@ public abstract class GenericReprojectFeatureIterator<F extends Feature, R exten
      */
     public static <T extends FeatureType, F extends Feature> FeatureReader<T, F> wrap(
             FeatureReader<T, F> reader, CoordinateReferenceSystem crs) throws FactoryException, SchemaException {
-        if (reader.getFeatureType().getGeometryDescriptor() != null) {
+        final GeometryDescriptor desc = reader.getFeatureType().getGeometryDescriptor();
+        if (desc != null && desc.getCoordinateReferenceSystem() != null) {
             return new GenericReprojectFeatureReader(reader, crs);
         } else {
             return reader;
