@@ -17,6 +17,7 @@
 
 package org.geotoolkit.util;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -123,7 +124,13 @@ public class DomUtilities {
         }else if(input instanceof URL){
             return ((URL)input).openStream();
         }else if(input instanceof String){
-            return new URL((String)input).openStream();
+            try{
+                //try to open it as a path
+                return new URL((String)input).openStream();
+            }catch(Exception ex){
+                //consider it's the document itself
+                return new ByteArrayInputStream(input.toString().getBytes());
+            }
         }else{
             throw new IOException("Can not handle input type : " + ((input!=null)?input.getClass() : input));
         }
