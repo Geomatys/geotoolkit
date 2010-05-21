@@ -16,7 +16,7 @@
  */
 
 
-package org.geotoolkit.feature.xml;
+package org.geotoolkit.xml;
 
 import java.io.IOException;
 import java.util.ArrayList;
