@@ -69,6 +69,10 @@ public abstract class AbstractComplexAttribute<V extends Collection<Property>,I 
      */
     @Override
     public Collection<Property> getProperties(Name name) {
+        if(name.getNamespaceURI() == null){
+            return getProperties(name.getLocalPart());
+        }
+
         //we size it to 1, in most of the cases there is always a single property for a name.
         final List<Property> matches = new ArrayList<Property>(1);
         for(Property prop : getProperties()){
@@ -99,6 +103,9 @@ public abstract class AbstractComplexAttribute<V extends Collection<Property>,I 
      */
     @Override
     public Property getProperty(Name name) {
+        if(name.getNamespaceURI() == null){
+            return getProperty(name.getLocalPart());
+        }
         //TODO find a faster way, hashmap ?
         for(Property prop : getProperties()){
             if(prop.getName().equals(name)){

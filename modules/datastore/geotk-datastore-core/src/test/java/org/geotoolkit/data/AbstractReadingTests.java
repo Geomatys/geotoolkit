@@ -17,6 +17,7 @@
 
 package org.geotoolkit.data;
 
+import com.vividsolutions.jts.geom.Geometry;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -24,7 +25,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import junit.framework.TestCase;
+
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.session.Session;
@@ -32,7 +33,11 @@ import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.storage.DataStoreException;
+import org.junit.After;
+import org.junit.Before;
+
 import org.junit.Test;
+
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.GeometryDescriptor;
@@ -45,14 +50,17 @@ import org.opengis.filter.sort.SortOrder;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
+import static org.junit.Assert.*;
+
 /**
  * Generic reading tests for datastore.
  * Tests schemas names and readers with queries.
  *
  * @author Johann Sorel (Geomatys)
  */
-public abstract class AbstractReadingTests extends TestCase{
+public abstract class AbstractReadingTests{
 
+    protected static final double DELTA = 0.000000001d;
     private static final FilterFactory FF = FactoryFinder.getFilterFactory(null);
 
     public static class ExpectedResult{
@@ -68,6 +76,14 @@ public abstract class AbstractReadingTests extends TestCase{
         public FeatureType type;
         public int size;
         public Envelope env;
+    }
+
+    @Before
+    public void setUp() {
+    }
+
+    @After
+    public void tearDown() {
     }
 
     protected abstract DataStore getDataStore();
@@ -209,10 +225,10 @@ public abstract class AbstractReadingTests extends TestCase{
 
         assertNotNull(res);
 
-        assertEquals(res.getMinimum(0), candidate.env.getMinimum(0));
-        assertEquals(res.getMinimum(1), candidate.env.getMinimum(1));
-        assertEquals(res.getMaximum(0), candidate.env.getMaximum(0));
-        assertEquals(res.getMaximum(1), candidate.env.getMaximum(1));
+        assertEquals(res.getMinimum(0), candidate.env.getMinimum(0), DELTA);
+        assertEquals(res.getMinimum(1), candidate.env.getMinimum(1), DELTA);
+        assertEquals(res.getMaximum(0), candidate.env.getMaximum(0), DELTA);
+        assertEquals(res.getMaximum(1), candidate.env.getMaximum(1), DELTA);
 
         //todo make generic bounds tests
     }
@@ -345,7 +361,7 @@ public abstract class AbstractReadingTests extends TestCase{
         for(final PropertyDescriptor desc : properties){
             final Class clazz = desc.getType().getBinding();
 
-            if(!Comparable.class.isAssignableFrom(clazz)){
+            if(!Comparable.class.isAssignableFrom(clazz) || Geometry.class.isAssignableFrom(clazz)){
                 //can not make a sort by on this attribut.
                 continue;
             }
@@ -393,7 +409,9 @@ public abstract class AbstractReadingTests extends TestCase{
                 Comparable last = null;
                 while(reader.hasNext()){
                     final Feature f = reader.next();
+                    System.out.println(">>>>"+f);
                     final Comparable current = (Comparable) f.getProperty(desc.getName()).getValue();
+                    System.out.println(">--"+desc.getName()+"---"+current +"    "+last);
 
                     if(current != null){
                         if(last != null){

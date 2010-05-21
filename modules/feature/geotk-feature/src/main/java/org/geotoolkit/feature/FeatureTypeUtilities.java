@@ -699,7 +699,7 @@ public class FeatureTypeUtilities {
      * @return {@link SimpleFeatureType}
      * @throws SchemaException
      */
-    public static SimpleFeatureType transform(final SimpleFeatureType schema, final CoordinateReferenceSystem crs)
+    public static FeatureType transform(final FeatureType schema, final CoordinateReferenceSystem crs)
             throws SchemaException{
         return transform(schema, crs, false);
     }
@@ -713,14 +713,13 @@ public class FeatureTypeUtilities {
      * @return {@link SimpleFeatureType}
      * @throws SchemaException
      */
-    public static SimpleFeatureType transform(final SimpleFeatureType schema, final CoordinateReferenceSystem crs,
+    public static FeatureType transform(final FeatureType schema, final CoordinateReferenceSystem crs,
             boolean forceOnlyMissing) throws SchemaException{
-        final FeatureTypeBuilder sftb = new FeatureTypeBuilder();
-        sftb.setName(schema.getName());
-        sftb.setAbstract(schema.isAbstract());
+        final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
+        ftb.setName(schema.getName());
+        ftb.setAbstract(schema.isAbstract());
 
-        for (int i=0,n= schema.getAttributeCount(); i<n; i++) {
-            final AttributeDescriptor attributeType = schema.getDescriptor(i);
+        for(PropertyDescriptor attributeType : schema.getDescriptors()){
             if (attributeType instanceof GeometryDescriptor) {
                 final GeometryDescriptor geometryType = (GeometryDescriptor) attributeType;
 
@@ -735,18 +734,18 @@ public class FeatureTypeUtilities {
                 adb.copy(geometryType);
                 adb.setType(tb.buildGeometryType());
 
-                sftb.add(adb.buildDescriptor());
+                ftb.add(adb.buildDescriptor());
             } else {
-                sftb.add(attributeType);
+                ftb.add(attributeType);
             }
         }
+
         if (schema.getGeometryDescriptor() != null) {
-            sftb.setDefaultGeometry(schema.getGeometryDescriptor().getLocalName());
+            ftb.setDefaultGeometry(schema.getGeometryDescriptor().getLocalName());
         }
 
-        sftb.setSuperType((SimpleFeatureType) schema.getSuper());
-
-        return sftb.buildSimpleFeatureType();
+        ftb.setSuperType(schema.getSuper());
+        return ftb.buildFeatureType();
     }
 
     /**

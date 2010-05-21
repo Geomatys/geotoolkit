@@ -15,6 +15,7 @@
  *    Lesser General Public License for more details.
  */
 
+import com.vividsolutions.jts.geom.Point;
 import java.io.File;
 import java.io.IOException;
 import java.sql.Connection;
@@ -32,13 +33,19 @@ import org.geotoolkit.data.DataStoreFinder;
 import org.geotoolkit.data.om.OMDataStoreFactory;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.FeatureTypeBuilder;
+import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.internal.sql.DefaultDataSource;
 import org.geotoolkit.internal.sql.ScriptRunner;
+import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.storage.DataStoreException;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
+import org.geotoolkit.util.FileUtilities;
 
 import org.opengis.feature.type.Name;
+
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 /**
  *
@@ -51,39 +58,71 @@ public class OMDataStoreTest extends AbstractReadingTests{
     private static DataStore store;
     private static Set<Name> names = new HashSet<Name>();
     private static List<ExpectedResult> expecteds = new ArrayList<ExpectedResult>();
+    static{
+        try{
+            final String url = "jdbc:derby:memory:TestOM;create=true";
+            ds = new DefaultDataSource(url);
 
-    @BeforeClass
-    public static void setUpClass() throws Exception {
-        final String url = "jdbc:derby:memory:TestOM;create=true";
-        ds = new DefaultDataSource(url);
+            Connection con = ds.getConnection();
 
-        Connection con = ds.getConnection();
+            final ScriptRunner exec = new ScriptRunner(con);
+            exec.run(OMDataStoreTest.class.getResourceAsStream("org/geotoolkit/sql/structure-observations.sql"));
+            exec.run(OMDataStoreTest.class.getResourceAsStream("org/geotoolkit/sql/sos-data.sql"));
 
-        final ScriptRunner exec = new ScriptRunner(con);
-        exec.run(OMDataStoreTest.class.getResourceAsStream("org/geotoolkit/sql/structure-observations.sql"));
-        exec.run(OMDataStoreTest.class.getResourceAsStream("org/geotoolkit/sql/sos-data.sql"));
+            final Map params = new HashMap<String, Object>();
+            params.put("dbtype", "OM");
+            params.put(OMDataStoreFactory.SGBDTYPE.getName().toString(), "derby");
+            params.put(OMDataStoreFactory.DERBYURL.getName().toString(), url);
 
-        final Map params = new HashMap<String, Object>();
-        params.put("dbtype", "OM");
-        params.put(OMDataStoreFactory.SGBDTYPE.getName().toString(), "derby");
-        params.put(OMDataStoreFactory.DERBYURL.getName().toString(), url);
+            store = DataStoreFinder.getDataStore(params);
 
-        store = DataStoreFinder.getDataStore(params);
+            final String nsOM = "http://www.opengis.net/sampling/1.0";
+            final String nsGML = "http://www.opengis.net/gml";
+            final Name name = new DefaultName(nsOM, "SamplingPoint");
+            names.add(name);
 
-        final String ns = "http://www.opengis.net/sampling/1.0";
-        names.add(new DefaultName(ns, "SamplingPoint"));
+            final FeatureTypeBuilder featureTypeBuilder = new FeatureTypeBuilder();
+            featureTypeBuilder.setName(name);
+            featureTypeBuilder.add(new DefaultName(nsGML, "description"),String.class,0,1,true,null);
+            featureTypeBuilder.add(new DefaultName(nsGML, "name"),String.class,1,Integer.MAX_VALUE,false,null);
+            featureTypeBuilder.add(new DefaultName(nsOM, "sampledFeature"),String.class,1,Integer.MAX_VALUE,true,null);
+            featureTypeBuilder.add(new DefaultName(nsOM, "position"),Point.class,1,1,false,null);
+            featureTypeBuilder.setDefaultGeometry(new DefaultName(nsOM, "position"));
+
+            int size = 2;
+            GeneralEnvelope env = new GeneralEnvelope(CRS.decode("EPSG:27582"));
+            env.setRange(0, 65400, 65400);
+            env.setRange(1, 1731368, 1731368);
+
+            final ExpectedResult res = new ExpectedResult(name,
+                    featureTypeBuilder.buildFeatureType(), size, env);
+            expecteds.add(res);
+
+        }catch(Exception ex){
+            ex.printStackTrace();
+        }
     }
 
-    @AfterClass
-    public static void tearDownClass() throws Exception {
-        if (ds != null) {
-            ds.shutdown();
-        }
-        File dlog = new File("derby.log");
-        if (dlog.exists()) {
-            dlog.delete();
-        }
-    }
+//    @Override
+//    public void tearDown() {
+//        try{
+//            if (ds != null) {
+//                ds.shutdown();
+//            }
+//
+//            File fdb = new File("TestOM");
+//            if(fdb.exists()){
+//                FileUtilities.deleteDirectory(fdb);
+//            }
+//
+//            File dlog = new File("derby.log");
+//            if (dlog.exists()) {
+//                dlog.delete();
+//            }
+//        }catch(Exception ex){
+//            ex.printStackTrace();
+//        }
+//    }
 
     @Override
     protected DataStore getDataStore() {

@@ -34,17 +34,27 @@ import java.net.URI;
 import java.net.URL;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import org.geotoolkit.factory.FactoryFinder;
+import org.geotoolkit.factory.Hints;
 
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 
 import org.opengis.coverage.grid.GridCoverage;
+import org.opengis.feature.Attribute;
+import org.opengis.feature.ComplexAttribute;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureFactory;
+import org.opengis.feature.GeometryAttribute;
+import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeature;
+import org.opengis.filter.identity.Identifier;
 
 /**
  *
@@ -55,6 +65,9 @@ import org.opengis.feature.simple.SimpleFeature;
  * @module pending
  */
 public class FeatureUtilities {
+
+    protected static final FeatureFactory FF = FactoryFinder
+            .getFeatureFactory(new Hints(Hints.FEATURE_FACTORY, LenientFeatureFactory.class));
 
     private static final GeometryFactory GF = new GeometryFactory();
 
@@ -255,6 +268,52 @@ public class FeatureUtilities {
         //
         // And good luck getting Cloneable to work
         throw new SimpleIllegalAttributeException("Do not know how to deep copy " + type.getName());
+    }
+
+    public static Feature copy(Feature feature){
+        if(feature instanceof SimpleFeature){
+            return SimpleFeatureBuilder.copy((SimpleFeature) feature);
+        }
+
+        final Collection<Property> properties = feature.getProperties();
+        final Collection<Property> copies = new ArrayList<Property>();
+        for(Property prop : properties){
+            copies.add(copy(prop));
+        }
+        return FF.createFeature(copies, feature.getDescriptor(), feature.getIdentifier().getID());
+    }
+
+    public static Property copy(Property property){
+
+        final Property copy;
+        if(property instanceof GeometryAttribute){
+            final GeometryAttribute ga = (GeometryAttribute) property;
+            final Identifier id = ga.getIdentifier();
+            if(id != null){
+                 copy = FF.createGeometryAttribute(property.getValue(), ga.getDescriptor(),
+                    ga.getIdentifier().getID().toString(), null);
+            }else{
+                copy = FF.createGeometryAttribute(property.getValue(), ga.getDescriptor(), null, null);
+            }
+            
+        }else if(property instanceof Attribute){
+            final Attribute ga = (Attribute) property;
+            final Identifier id = ga.getIdentifier();
+            if(id != null){
+                 copy = FF.createAttribute(property.getValue(), ga.getDescriptor(),
+                    ga.getIdentifier().getID().toString());
+            }else{
+                 copy = FF.createAttribute(property.getValue(), ga.getDescriptor(), null);
+            }
+           
+        }else if(property instanceof ComplexAttribute){
+            throw new IllegalArgumentException("Not yet supported : "+ property.getClass());
+        }else{
+            throw new IllegalArgumentException("Unexpected type : "+ property.getClass());
+        }
+
+        //must copy user data
+        return copy;
     }
 
 }

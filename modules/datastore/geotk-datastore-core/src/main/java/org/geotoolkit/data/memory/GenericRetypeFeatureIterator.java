@@ -18,20 +18,26 @@
 
 package org.geotoolkit.data.memory;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.DataStoreRuntimeException;
+import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.HintsPending;
+import org.geotoolkit.feature.LenientFeatureFactory;
 import org.geotoolkit.feature.simple.DefaultSimpleFeature;
-import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.util.converter.Classes;
 
 import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureFactory;
+import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
-import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.FeatureType;
+import org.opengis.feature.type.PropertyDescriptor;
 
 /**
  * Supports on the fly retyping of  FeatureIterator contents.
@@ -43,6 +49,9 @@ import org.opengis.feature.type.FeatureType;
  */
 public abstract class GenericRetypeFeatureIterator<F extends Feature, R extends FeatureIterator<F>>
         implements FeatureIterator<F> {
+
+    protected static final FeatureFactory FF = FactoryFinder
+            .getFeatureFactory(new Hints(Hints.FEATURE_FACTORY, LenientFeatureFactory.class));
 
     protected final R iterator;
 
@@ -70,27 +79,28 @@ public abstract class GenericRetypeFeatureIterator<F extends Feature, R extends 
      *
      * @throws IllegalArgumentException if unable to provide a mapping
      */
-    protected AttributeDescriptor[] typeAttributes(
-            final SimpleFeatureType original, final SimpleFeatureType target) {
+    protected PropertyDescriptor[] typeAttributes(final FeatureType original, final FeatureType target) {
 
         if (target.equals(original)) {
             throw new IllegalArgumentException("FeatureReader already produces contents with the correct schema");
         }
 
-        if (target.getAttributeCount() > original.getAttributeCount()) {
+        final Collection<PropertyDescriptor> originalDesc = original.getDescriptors();
+        final Collection<PropertyDescriptor> targetDesc = target.getDescriptors();
+
+        if (targetDesc.size() > originalDesc.size()) {
             throw new IllegalArgumentException("Unable to retype  FeatureReader (original does not cover requested type)");
         }
 
 
-        final AttributeDescriptor[] types = new AttributeDescriptor[target.getAttributeCount()];
+        final PropertyDescriptor[] types = new PropertyDescriptor[targetDesc.size()];
 
-        for (int i=0; i<target.getAttributeCount(); i++) {
-            final AttributeDescriptor attrib = target.getDescriptor(i);
-            final String xpath = attrib.getLocalName();
-
+        int i=0;
+        for (PropertyDescriptor attrib : targetDesc) {
+            final String xpath = attrib.getName().getLocalPart();
             types[i] = attrib;
 
-            final AttributeDescriptor check = original.getDescriptor(xpath);
+            final PropertyDescriptor check = original.getDescriptor(xpath);
             final Class<?> targetBinding = attrib.getType().getBinding();
             final Class<?> checkBinding = check.getType().getBinding();
             if (!targetBinding.isAssignableFrom(checkBinding)) {
@@ -99,7 +109,7 @@ public abstract class GenericRetypeFeatureIterator<F extends Feature, R extends 
                         " as " + Classes.getShortName(checkBinding) +
                         " cannot be assigned to " + Classes.getShortName(targetBinding));
             }
-            
+            i++;
         }
 
         return types;
@@ -144,32 +154,25 @@ public abstract class GenericRetypeFeatureIterator<F extends Feature, R extends 
         /**
          * The descriptors we are going to from the original reader
          */
-        private final AttributeDescriptor[] types;
-        /**
-         * Creates retyped features
-         */
-        private final SimpleFeatureBuilder builder;
+        private final PropertyDescriptor[] types;
+
         protected final T mask;
 
         private GenericSeparateRetypeFeatureReader(R reader, T mask){
             super(reader);
             this.mask = mask;
-            types = typeAttributes((SimpleFeatureType)reader.getFeatureType(), (SimpleFeatureType)mask);
-            builder = new SimpleFeatureBuilder((SimpleFeatureType) mask);
+            types = typeAttributes(reader.getFeatureType(), mask);
         }
 
         @Override
         public F next() throws DataStoreRuntimeException {
-            final SimpleFeature next = (SimpleFeature) iterator.next();
-            final String id = next.getID();
+            final Feature next = iterator.next();
 
-            String xpath;
-            for (int i = 0; i < types.length; i++) {
-                xpath = types[i].getLocalName();
-                builder.add(next.getAttribute(xpath));
+            final Collection<Property> properties = new ArrayList<Property>();
+            for(final PropertyDescriptor prop : types){
+                properties.addAll(next.getProperties(prop.getName()));
             }
-
-            return (F) builder.buildFeature(id);
+            return (F) FF.createFeature(properties, mask, next.getIdentifier().getID());
         }
 
         @Override
@@ -196,7 +199,7 @@ public abstract class GenericRetypeFeatureIterator<F extends Feature, R extends 
         /**
          * The descriptors we are going to from the original reader
          */
-        private final AttributeDescriptor[] types;
+        private final PropertyDescriptor[] types;
 
         private final DefaultSimpleFeature feature;
 
@@ -208,7 +211,7 @@ public abstract class GenericRetypeFeatureIterator<F extends Feature, R extends 
         private GenericReuseRetypeFeatureReader(R reader, T mask){
             super(reader);
             this.mask = mask;
-            types = typeAttributes((SimpleFeatureType)reader.getFeatureType(), (SimpleFeatureType)mask);
+            types = typeAttributes(reader.getFeatureType(), (SimpleFeatureType)mask);
 
             feature = new DefaultSimpleFeature((SimpleFeatureType) mask, null,new Object[types.length], false);
         }
@@ -219,7 +222,7 @@ public abstract class GenericRetypeFeatureIterator<F extends Feature, R extends 
             feature.setId(next.getID());
 
             for (int i = 0; i < types.length; i++) {
-                feature.setAttribute(i, next.getAttribute(types[i].getLocalName()));
+                feature.setAttribute(i, next.getAttribute(types[i].getName()));
             }
             
             return (F) feature;
@@ -248,7 +251,7 @@ public abstract class GenericRetypeFeatureIterator<F extends Feature, R extends 
         }
 
         final Boolean detached = (hints == null) ? null : (Boolean) hints.get(HintsPending.FEATURE_DETACHED);
-        if(detached == null || detached){
+        if(detached == null || detached || !(mask instanceof SimpleFeatureType)){
             //default behavior, make separate features
             return new GenericSeparateRetypeFeatureReader(reader,mask);
         }else{

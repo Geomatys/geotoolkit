@@ -173,7 +173,7 @@ public class DataUtilities {
             while(iterator.hasNext()){
                 final Feature f = iterator.next();
                 final BoundingBox bbox = f.getBounds();
-                if(!bbox.isEmpty()){
+                if(bbox != null){
                     if(env != null){
                         env.include(bbox);
                     }else{

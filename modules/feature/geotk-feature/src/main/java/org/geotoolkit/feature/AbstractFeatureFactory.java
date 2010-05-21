@@ -80,6 +80,10 @@ public abstract class AbstractFeatureFactory implements FeatureFactory {
      */
     @Override
     public Attribute createAttribute(Object value, AttributeDescriptor descriptor, String id) {
+        if(descriptor instanceof GeometryDescriptor){
+            return createGeometryAttribute(value, (GeometryDescriptor) descriptor, id, null);
+        }
+
         if(id != null && !id.isEmpty()){
             return new DefaultAttribute(value, descriptor, FF.gmlObjectId(id));
         }else{

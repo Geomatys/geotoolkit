@@ -17,7 +17,6 @@
 
 package org.geotoolkit.feature.simple;
 
-import com.vividsolutions.jts.geom.Geometry;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.ArrayList;
@@ -32,7 +31,6 @@ import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.FeatureValidationUtilities;
 import org.geotoolkit.feature.SimpleIllegalAttributeException;
 import org.geotoolkit.feature.type.DefaultAttributeDescriptor;
-import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.geotoolkit.io.TableWriter;
 import org.geotoolkit.util.Converters;
 
@@ -47,7 +45,6 @@ import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.feature.type.Name;
 import org.opengis.feature.type.PropertyDescriptor;
 import org.opengis.filter.identity.FeatureId;
-import org.opengis.geometry.BoundingBox;
 
 /**
  * Abstract simple feature class, will delegate most Feature methods
@@ -201,27 +198,6 @@ public abstract class AbstractSimpleFeature extends AbstractFeature<List<Propert
     }
 
     //feature methods ----------------------------------------------------------
-
-    @Override
-    public BoundingBox getBounds() {
-        //TODO: cache this value
-        final JTSEnvelope2D bounds = new JTSEnvelope2D(getFeatureType().getCoordinateReferenceSystem());
-        for (final Property prop : getProperties()) {
-            final Object o = prop.getValue();
-            if (o instanceof Geometry) {
-                final Geometry g = (Geometry) o;
-                //TODO: check userData for crs... and ensure its of the same
-                // crs as the feature type
-                if (bounds.isNull()) {
-                    bounds.init(g.getEnvelopeInternal());
-                } else {
-                    bounds.expandToInclude(g.getEnvelopeInternal());
-                }
-            }
-        }
-
-        return bounds;
-    }
 
     @Override
     public GeometryAttribute getDefaultGeometryProperty() {

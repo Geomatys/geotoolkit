@@ -58,8 +58,8 @@ INSERT INTO "observation"."references" ("id_reference", "actuate", "arcrole", "h
 
 INSERT INTO "observation"."Distributions" ("name", "scale", "offset", "log") VALUES ('normale', 1, 0, 0);
 
-INSERT INTO "observation"."sampling_points" ("id", "description", "name", "sampled_feature", "point_id", "point_srsname", "point_srsdimension", "x_value", "y_value") VALUES ('station-001', 'Point d''eau BSSS', '10972X0137-PONT' , 'urn:-sandre:object:bdrhf:123X', 'STATION-LOCALISATION', 'urn:ogc:def:crs:EPSG:27582', 2, 65400, 1731368);
-INSERT INTO "observation"."sampling_points" ("id", "description", "name", "sampled_feature", "point_id", "point_srsname", "point_srsdimension", "x_value", "y_value") VALUES ('station-002', 'Point d''eau BSSS', '10972X0137-PLOUF', 'urn:-sandre:object:bdrhf:123X', 'STATION-LOCALISATION', 'urn:ogc:def:crs:EPSG:27582', 2, 65400, 1731368);
+INSERT INTO "observation"."sampling_points" ("id", "description", "name", "sampled_feature", "point_id", "point_srsname", "point_srsdimension", "x_value", "y_value") VALUES ('station-001', 'Point d''eau BSSA', '10972X0137-PONT' , 'urn:-sandre:object:bdrhf:124X', 'STATION-LOCALISATION', 'urn:ogc:def:crs:EPSG:27582', 2, 65400, 1731368);
+INSERT INTO "observation"."sampling_points" ("id", "description", "name", "sampled_feature", "point_id", "point_srsname", "point_srsdimension", "x_value", "y_value") VALUES ('station-002', 'Point d''eau BSSB', '10972X0137-PLOUF', 'urn:-sandre:object:bdrhf:125X', 'STATION-LOCALISATION', 'urn:ogc:def:crs:EPSG:27582', 2, 65400, 1731368);
 
 INSERT INTO "sos"."envelopes" ("id", "srs_name", "lower_corner_x", "lower_corner_y", "upper_corner_x", "upper_corner_y") VALUES ('bound-1', 'urn:ogc:def:crs:EPSG:6.8:4283', -30.711, 134.196, -30.702, 134.205);
 

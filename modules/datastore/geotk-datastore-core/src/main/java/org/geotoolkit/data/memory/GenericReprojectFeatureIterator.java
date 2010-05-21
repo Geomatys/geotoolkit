@@ -19,20 +19,25 @@
 package org.geotoolkit.data.memory;
 
 import com.vividsolutions.jts.geom.Geometry;
+import java.util.ArrayList;
+import java.util.Collection;
 
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.DataStoreRuntimeException;
+import org.geotoolkit.factory.FactoryFinder;
+import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.FeatureTypeUtilities;
+import org.geotoolkit.feature.LenientFeatureFactory;
 import org.geotoolkit.feature.SchemaException;
-import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.geometry.jts.GeometryCoordinateSequenceTransformer;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.util.converter.Classes;
 
 import org.opengis.feature.Feature;
-import org.opengis.feature.simple.SimpleFeature;
-import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.feature.FeatureFactory;
+import org.opengis.feature.GeometryAttribute;
+import org.opengis.feature.Property;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -47,6 +52,9 @@ import org.opengis.referencing.operation.TransformException;
  */
 public abstract class GenericReprojectFeatureIterator<F extends Feature, R extends FeatureIterator<F>>
         implements FeatureIterator<F> {
+
+    protected static final FeatureFactory FF = FactoryFinder
+            .getFeatureFactory(new Hints(Hints.FEATURE_FACTORY, LenientFeatureFactory.class));
 
     protected final R iterator;
 
@@ -104,7 +112,7 @@ public abstract class GenericReprojectFeatureIterator<F extends Feature, R exten
     private static final class GenericReprojectFeatureReader<T extends FeatureType, F extends Feature, R extends FeatureReader<T,F>>
             extends GenericReprojectFeatureIterator<F,R> implements FeatureReader<T,F>{
 
-        private final SimpleFeatureType schema;
+        private final FeatureType schema;
         private final GeometryCoordinateSequenceTransformer transformer = new GeometryCoordinateSequenceTransformer();
 
         private GenericReprojectFeatureReader(R reader, CoordinateReferenceSystem crs) throws FactoryException, SchemaException{
@@ -114,7 +122,7 @@ public abstract class GenericReprojectFeatureIterator<F extends Feature, R exten
                 throw new NullPointerException("CRS can not be null.");
             }
 
-            final SimpleFeatureType type = (SimpleFeatureType) reader.getFeatureType();
+            final FeatureType type = reader.getFeatureType();
             final CoordinateReferenceSystem original = type.getGeometryDescriptor().getCoordinateReferenceSystem();
 
             if (crs.equals(original)) {
@@ -128,21 +136,23 @@ public abstract class GenericReprojectFeatureIterator<F extends Feature, R exten
 
         @Override
         public F next() throws DataStoreRuntimeException {
-
-            SimpleFeature next = (SimpleFeature) iterator.next();
-            Object[] attributes = next.getAttributes().toArray();
-
-            try {
-                for (int i = 0; i < attributes.length; i++) {
-                    if (attributes[i] instanceof Geometry) {
-                        attributes[i] = transformer.transform((Geometry) attributes[i]);
+            final Feature next = iterator.next();
+            
+            final Collection<Property> properties = new ArrayList<Property>();
+            for(Property prop : next.getProperties()){
+                if(prop instanceof GeometryAttribute){
+                    Object value = prop.getValue();
+                    if(value != null){
+                        try {
+                            prop.setValue(transformer.transform((Geometry) value));
+                        } catch (TransformException e) {
+                            throw new DataStoreRuntimeException("A transformation exception occurred while reprojecting data on the fly", e);
+                        }
                     }
                 }
-            } catch (TransformException e) {
-                throw new DataStoreRuntimeException("A transformation exception occurred while reprojecting data on the fly", e);
+                properties.add(prop);
             }
-
-            return (F) SimpleFeatureBuilder.build(schema, attributes, next.getID());
+            return (F) FF.createFeature(properties, schema, next.getIdentifier().getID());
         }
 
         @Override

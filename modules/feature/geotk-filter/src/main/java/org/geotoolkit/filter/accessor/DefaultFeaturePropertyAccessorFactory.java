@@ -266,7 +266,12 @@ public class DefaultFeaturePropertyAccessorFactory implements PropertyAccessorFa
             }
 
             if (object instanceof Feature) {
-                return ((Feature) object).getProperty(name).getValue();
+                final Property prop = ((Feature) object).getProperty(name);
+                if(prop == null){
+                    return null;
+                }else{
+                    return prop.getValue();
+                }
             }
 
             if (object instanceof FeatureType) {

@@ -20,6 +20,8 @@ package org.geotoolkit.data.iterator;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -43,18 +45,24 @@ import org.geotoolkit.data.memory.GenericWrapFeatureIterator;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.factory.FactoryFinder;
+import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.SchemaException;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.feature.FeatureTypeBuilder;
+import org.geotoolkit.feature.LenientFeatureFactory;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 
 import org.junit.Test;
 
 import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureFactory;
+import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.feature.type.AttributeDescriptor;
+import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.Name;
 import org.opengis.feature.type.PropertyDescriptor;
 import org.opengis.filter.Filter;
@@ -71,11 +79,15 @@ import org.opengis.referencing.NoSuchAuthorityCodeException;
  */
 public class GenericIteratorTest extends TestCase{
 
+    protected static final FeatureFactory AF = FactoryFinder
+            .getFeatureFactory(new Hints(Hints.FEATURE_FACTORY, LenientFeatureFactory.class));
+
     private static final double DELTA = 0.000001d;
     private static final FilterFactory FF = FactoryFinder.getFilterFactory(null);
     private static final GeometryFactory GF = new GeometryFactory();
 
     private final FeatureCollection<SimpleFeature> collection;
+    private final FeatureCollection<Feature> collectionComplex;
     private final Name name;
     private final SimpleFeatureType originalType;
     private final SimpleFeatureType reducedType;
@@ -83,6 +95,8 @@ public class GenericIteratorTest extends TestCase{
     private final String id1;
     private final String id2;
     private final String id3;
+    private final String cid1;
+    private final String cid2;
 
     public GenericIteratorTest() throws NoSuchAuthorityCodeException, FactoryException{
         final FeatureTypeBuilder builder = new FeatureTypeBuilder();
@@ -131,6 +145,27 @@ public class GenericIteratorTest extends TestCase{
         sf.setAttribute("att_double", 2d);
         collection.add(sf);
         id3 = name.getLocalPart()+"."+2;
+
+        builder.reset();
+        builder.setName(name);
+        builder.add("att_string", String.class,0,1,false,null);
+        builder.add("att_double", Double.class,0,1,false,null);
+        FeatureType ct = builder.buildFeatureType();
+
+        collectionComplex = DataUtilities.collection("cid", ct);
+
+        cid1 = "complex-1";
+        cid2 = "complex-2";
+        Collection<Property> props = new ArrayList<Property>();
+        props.add(AF.createAttribute("aaaa", (AttributeDescriptor) ct.getDescriptor("att_string"), null));
+        props.add(AF.createAttribute(12, (AttributeDescriptor) ct.getDescriptor("att_double"), null));
+        collectionComplex.add(AF.createFeature(props, ct, cid1));
+
+        props = new ArrayList<Property>();
+        props.add(AF.createAttribute("bbbb", (AttributeDescriptor) ct.getDescriptor("att_string"), null));
+        props.add(AF.createAttribute(7, (AttributeDescriptor) ct.getDescriptor("att_double"), null));
+        collectionComplex.add(AF.createFeature(props, ct, cid2));
+
     }
 
     private void testIterationOnNext(FeatureIterator ite, int size){
@@ -447,6 +482,80 @@ public class GenericIteratorTest extends TestCase{
         //check has next do not iterate
         ite = GenericSortByFeatureIterator.wrap(collection.iterator(), sorts);
         testIterationOnNext(ite, 3);
+
+        //check sub iterator is properly closed
+        CheckCloseFeatureIterator checkIte = new CheckCloseFeatureIterator(collection.iterator());
+        assertFalse(checkIte.isClosed());
+        ite = GenericSortByFeatureIterator.wrap(checkIte, sorts);
+        while(ite.hasNext()) ite.next();
+        ite.close();
+        assertTrue(checkIte.isClosed());
+    }
+
+    @Test
+    public void testSortByIteratorOnComplex(){
+
+        //test string sort -----------------------------------------------------
+        SortBy[] sorts = new SortBy[]{
+            FF.sort("att_string", SortOrder.DESCENDING)
+        };
+
+        FeatureIterator ite = GenericSortByFeatureIterator.wrap(collectionComplex.iterator(), sorts);
+        assertEquals(2, DataUtilities.calculateCount(ite));
+
+        ite = GenericSortByFeatureIterator.wrap(collectionComplex.iterator(), sorts);
+        assertEquals(ite.next().getIdentifier().getID(),cid2);
+        assertEquals(ite.next().getIdentifier().getID(),cid1);
+
+        try{
+            ite.next();
+            fail("Should have raise a no such element exception.");
+        }catch(NoSuchElementException ex){
+            //ok
+        }
+
+        //test string sort -----------------------------------------------------
+        sorts = new SortBy[]{
+            FF.sort("att_double", SortOrder.DESCENDING)
+        };
+
+        ite = GenericSortByFeatureIterator.wrap(collectionComplex.iterator(), sorts);
+        assertEquals(2, DataUtilities.calculateCount(ite));
+
+        ite = GenericSortByFeatureIterator.wrap(collectionComplex.iterator(), sorts);
+        assertEquals(ite.next().getIdentifier().getID(),cid1);
+        assertEquals(ite.next().getIdentifier().getID(),cid2);
+
+        try{
+            ite.next();
+            fail("Should have raise a no such element exception.");
+        }catch(NoSuchElementException ex){
+            //ok
+        }
+
+        //test double sort -----------------------------------------------------
+        sorts = new SortBy[]{
+            FF.sort("att_double", SortOrder.ASCENDING)
+        };
+
+        ite = GenericSortByFeatureIterator.wrap(collectionComplex.iterator(), sorts);
+        assertEquals(2, DataUtilities.calculateCount(ite));
+
+        ite = GenericSortByFeatureIterator.wrap(collectionComplex.iterator(), sorts);
+        assertEquals(ite.next().getIdentifier().getID(),cid2);
+        assertEquals(ite.next().getIdentifier().getID(),cid1);
+
+        try{
+            ite.next();
+            fail("Should have raise a no such element exception.");
+        }catch(NoSuchElementException ex){
+            //ok
+        }
+
+
+        //check has next do not iterate
+        ite = GenericSortByFeatureIterator.wrap(collectionComplex.iterator(), sorts);
+        testIterationOnNext(ite, 2);
 
         //check sub iterator is properly closed
         CheckCloseFeatureIterator checkIte = new CheckCloseFeatureIterator(collection.iterator());

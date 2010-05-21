@@ -83,11 +83,15 @@ public abstract class AbstractFeature<C extends Collection<Property>> extends Ab
     public BoundingBox getBounds() {
 
         if(bounds == null){
-            bounds = new DefaultBoundingBox(getType().getCoordinateReferenceSystem());
             for (Iterator itr = getValue().iterator(); itr.hasNext();) {
                 Property property = (Property) itr.next();
                 if (property instanceof GeometryAttribute) {
-                    bounds.include(((GeometryAttribute) property).getBounds());
+                    final GeometryAttribute ga = (GeometryAttribute) property;
+                    if(bounds == null){
+                        bounds = new DefaultBoundingBox(ga.getBounds());
+                    }else{
+                        bounds.include(ga.getBounds());
+                    }
                 }
             }
         }

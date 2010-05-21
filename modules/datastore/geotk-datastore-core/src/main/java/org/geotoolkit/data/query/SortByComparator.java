@@ -19,7 +19,6 @@ package org.geotoolkit.data.query;
 import java.util.Arrays;
 import java.util.Comparator;
 import org.geotoolkit.util.StringUtilities;
-import org.geotoolkit.util.Strings;
 import org.geotoolkit.util.converter.Classes;
 
 import org.opengis.feature.Feature;
@@ -54,6 +53,12 @@ public class SortByComparator implements Comparator<Feature> {
             final PropertyName property = order.getPropertyName();
             final Comparable o1 = (Comparable) property.evaluate(f1);
             final Comparable o2 = (Comparable) property.evaluate(f2);
+
+            if(o1 == null){
+                return -1;
+            }else if(o2 == null){
+                return 1;
+            }
 
             final int result;
             if (order.getSortOrder() == SortOrder.ASCENDING) {
