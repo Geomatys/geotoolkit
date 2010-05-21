@@ -116,6 +116,7 @@
     <module>geotk-xml-wps</module>
     <module>geotk-xml-xacml</module>
     <module>geotk-xml-xsd</module>
+    <module>geotk-xml-natSDI</module>
   </modules>
 
 </project>
