@@ -24,7 +24,6 @@ import javax.xml.bind.Marshaller;
 
 //Junit dependencies
 import javax.xml.bind.Unmarshaller;
-import org.geotoolkit.gml.xml.v311.ObjectFactory;
 import org.geotoolkit.naturesdi.NATSDI_DataIdentification;
 import org.geotoolkit.naturesdi.NATSDI_SpeciesInformation;
 import org.geotoolkit.xml.MarshallerPool;
@@ -39,7 +38,6 @@ import static org.junit.Assert.*;
 public class NatureSDIXMLBindingTest {
 
     private MarshallerPool pool;
-    private static ObjectFactory FACTORY = new ObjectFactory();
 
     @Before
     public void setUp() throws JAXBException {
