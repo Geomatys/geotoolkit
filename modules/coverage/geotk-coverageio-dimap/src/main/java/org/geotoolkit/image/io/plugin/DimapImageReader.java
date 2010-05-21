@@ -114,6 +114,9 @@ public class DimapImageReader extends ImageReaderAdapter {
 
 
         final DimapMetadata metadata = (DimapMetadata) getImageMetadata(0);
+        if(metadata == null){
+            throw new IOException("Coverage has no metadata (*.dim) file associated.");
+        }
 
         //apply the band <-> color mapping -------------------------------------
         final int[] colorMapping = DimapAccessor.readColorBandMapping((Element)metadata.getAsTree(DimapMetadata.NATIVE_FORMAT));
