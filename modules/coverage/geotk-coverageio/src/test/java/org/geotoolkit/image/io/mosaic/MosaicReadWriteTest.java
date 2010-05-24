@@ -49,12 +49,9 @@ import static org.junit.Assert.*;
  * which should have added an alpha channel.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.01
+ * @version 3.12
  *
  * @since 3.01
- *
- * @todo The test for the checksum fails since Java 1.6.0_18, while it worked on Java 1.6.0_17.
- *       We need to investigate why.
  */
 public final class MosaicReadWriteTest {
     /**
@@ -63,17 +60,23 @@ public final class MosaicReadWriteTest {
     private static final int S = 90;
 
     /**
-     * Checksum of input files.
+     * Checksum of input files. Many checksums may be declared for the same
+     * image because the sample model changed in different Java version:
+     * <p>
+     * <ol>
+     *   <li>Java 6 update 17 and before</li>
+     *   <li>Java 6 update 18 and after</li>
+     * </ol>
      */
-    private static final long[] TILE_CHECKSUMS = {
-        3489461482L,  // A1
-        3282954537L,  // B1
-        3175519999L,  // C1
-         504243661L,  // D1
-         546121330L,  // A2
-        3926870361L,  // B2
-         963864334L,  // C2
-         919637760L   // D2
+    private static final long[][] TILE_CHECKSUMS = {
+        {3489461482L, 3995241366L},  // A1
+        {3282954537L, 3034917950L},  // B1
+        {3175519999L, 4097683706L},  // C1
+        { 504243661L, 2349894252L},  // D1
+        { 546121330L, 2654069663L},  // A2
+        {3926870361L, 4125865354L},  // B2
+        { 963864334L, 3858155692L},  // C2
+        { 919637760L, 1047037325L}   // D2
     };
 
     /**
@@ -128,6 +131,22 @@ public final class MosaicReadWriteTest {
     }
 
     /**
+     * Ensures that a checksum value is equals to any of the expected value.
+     *
+     * @param name     Name of the image to be checked.
+     * @param expected The expected checksum values.
+     * @param actual   The actual checksum value.
+     */
+    private static void assertEqualsAny(final String name, final long[] expected, final long actual) {
+        for (final long e : expected) {
+            if (e == actual) {
+                return;
+            }
+        }
+        fail(name + " has unexpected image checksum: " + actual);
+    }
+
+    /**
      * Performs a checksum on the input tiles. This is not yet the mosaic.
      * If this test fails, then all other tests in the file are likely to
      * fail as well.
@@ -146,7 +165,7 @@ public final class MosaicReadWriteTest {
             assertEquals(name, S, image.getHeight());
             assertEquals(3, image.getSampleModel().getNumBands());
             assertEquals(Transparency.OPAQUE, image.getColorModel().getTransparency());
-//          assertEquals(name, TILE_CHECKSUMS[i++], Commons.checksum(image));
+            assertEqualsAny(name, TILE_CHECKSUMS[i++], Commons.checksum(image));
         }
     }
 
@@ -182,7 +201,7 @@ public final class MosaicReadWriteTest {
                 assertEquals(S, image.getHeight());
                 assertEquals(3, image.getSampleModel().getNumBands());
                 assertEquals(Transparency.OPAQUE, image.getColorModel().getTransparency());
-//              assertEquals(TILE_CHECKSUMS[i++], Commons.checksum(image));
+                assertEqualsAny("Tile("+x+','+y+')', TILE_CHECKSUMS[i++], Commons.checksum(image));
             }
         }
         /*
@@ -247,10 +266,19 @@ public final class MosaicReadWriteTest {
             "L1_A2.png",  "L1_B2.png",  "L1_C2.png",  "L1_D2.png",
             "L2_A1.png",  "L2_B1.png",  "L3_A1.png",  "L3_B1.png"
         };
-        final long[] checksums = {
-            3823973597L,  1268989087L,    90746832L,  3244609990L,
-            3803928042L,  1195337429L,  3165544981L,  2981893502L,
-            1536584446L,  1796661935L,  2442125326L,  1672159374L
+        final long[][] checksums = {
+            {3823973597L, 4171709854L},
+            {1268989087L, 3973907355L},
+            {  90746832L, 4072319012L},
+            {3244609990L,  161414722L},
+            {3803928042L, 3436002999L},
+            {1195337429L,    4167432L},
+            {3165544981L, 3079689620L},
+            {2981893502L, 2387513289L},
+            {1536584446L, 3113480928L},
+            {1796661935L, 1246616471L},
+            {2442125326L, 1852799903L},
+            {1672159374L,   89694022L}
         };
         int i=0;
         final ImageReader reader = ImageIO.getImageReadersByFormatName("png").next();
@@ -264,7 +292,7 @@ public final class MosaicReadWriteTest {
             in.close();
             assertEquals(3, image.getSampleModel().getNumBands());
             assertEquals(Transparency.OPAQUE, image.getColorModel().getTransparency());
-//          assertEquals(filename, checksums[i++], Commons.checksum(image));
+            assertEqualsAny(filename, checksums[i++], Commons.checksum(image));
         }
         reader.dispose();
     }

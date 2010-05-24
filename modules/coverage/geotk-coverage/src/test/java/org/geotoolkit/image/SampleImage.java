@@ -44,7 +44,12 @@ import static org.junit.Assume.*;
  */
 public enum SampleImage {
     /**
-     * A RGB image having a rotation.
+     * A RGB image having a rotation. Checksum values are for:
+     * <p>
+     * <ol>
+     *   <li>Java 6 update 17 and before</li>
+     *   <li>Java 6 update 18 and after</li>
+     * </ol>
      */
     RGB_ROTATED("MODIS.png", PixelInterleavedSampleModel.class, 3650654124L, 4050219331L),
 
