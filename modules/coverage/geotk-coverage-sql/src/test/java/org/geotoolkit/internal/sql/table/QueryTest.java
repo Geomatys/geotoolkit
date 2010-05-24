@@ -194,7 +194,9 @@ public final class QueryTest extends CatalogTestBase {
      * @throws SQLException if an query error occured.
      */
     private static void trySelectStatement(final String query) throws SQLException {
-        final Statement s = getDatabase().getLocalCache().connection().createStatement();
+        final LocalCache lc = getDatabase().getLocalCache();
+        assertTrue("Lock is required.", Thread.holdsLock(lc));
+        final Statement s = lc.connection().createStatement();
         final ResultSet r = s.executeQuery(query);
         if (r.next()) {
             final ResultSetMetaData metadata = r.getMetaData();

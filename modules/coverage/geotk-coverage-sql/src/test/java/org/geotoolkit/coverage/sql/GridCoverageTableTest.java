@@ -155,7 +155,7 @@ public final class GridCoverageTableTest extends CatalogTestBase {
          * Test the selection of an "appropriate" entry.
          * Should select the one which is in the middle of the requested range.
          */
-        assertSame(entry, table.select(null));
+        assertSame(entry, table.getEntry());
         table.release();
     }
 
@@ -174,7 +174,7 @@ public final class GridCoverageTableTest extends CatalogTestBase {
         /*
          * Tests a single entry.
          */
-        final GridCoverageReference entry = table.select(null);
+        final GridCoverageReference entry = table.getEntry();
         assertEquals(Boolean.FALSE, table.getLayerEntry(true).isTiled);
         assertEquals(1, entry.getSampleDimensions().length);
         /*
@@ -208,24 +208,24 @@ public final class GridCoverageTableTest extends CatalogTestBase {
         table.envelope.clear();
         table.setLayer(LayerTableTest.NETCDF);
 
-        GridCoverageEntry entry = table.select(null);
+        GridCoverageEntry entry = table.getEntry();
         assertEquals(Boolean.FALSE, table.getLayerEntry(true).isTiled);
         assertEquals("Should not have a z index when the z-range is infinite.", 0, entry.getIdentifier().zIndex);
 
         table.envelope.setVerticalRange(0, 0);
-        entry = table.select(null);
+        entry = table.getEntry();
         assertEquals(1, entry.getIdentifier().zIndex);
 
         table.envelope.setVerticalRange(2.5, 7.5);
-        entry = table.select(null);
+        entry = table.getEntry();
         assertEquals(1, entry.getIdentifier().zIndex);
 
         table.envelope.setVerticalRange(90, 110);
-        entry = table.select(null);
+        entry = table.getEntry();
         assertEquals(9, entry.getIdentifier().zIndex);
 
         table.envelope.setVerticalRange(2000, 2000);
-        entry = table.select(null);
+        entry = table.getEntry();
         assertEquals(59, entry.getIdentifier().zIndex);
 
         table.release();
@@ -241,7 +241,7 @@ public final class GridCoverageTableTest extends CatalogTestBase {
         final GridCoverageTable table = getDatabase().getTable(GridCoverageTable.class);
         table.envelope.clear();
         table.setLayer(LayerTableTest.GEOSTROPHIC_CURRENT);
-        final GridCoverageReference entry = table.select(null);
+        final GridCoverageReference entry = table.getEntry();
         assertEquals(2, entry.getSampleDimensions().length);
         assertEquals(Boolean.FALSE, table.getLayerEntry(true).isTiled);
         table.release();
@@ -259,7 +259,7 @@ public final class GridCoverageTableTest extends CatalogTestBase {
         final GridCoverageTable table = getDatabase().getTable(GridCoverageTable.class);
         table.envelope.clear();
         table.setLayer(LayerTableTest.BLUEMARBLE);
-        final GridCoverageEntry entry = table.select(null);
+        final GridCoverageEntry entry = table.getEntry();
         assertEquals(Boolean.TRUE, table.getLayerEntry(true).isTiled);
         final TileManager[] tiles = (TileManager[]) entry.getInput();
         assertEquals("We would had only 1 TileManager if we had tiles for every levels. " +

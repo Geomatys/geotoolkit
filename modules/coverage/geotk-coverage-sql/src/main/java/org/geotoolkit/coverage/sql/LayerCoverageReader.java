@@ -320,12 +320,7 @@ public class LayerCoverageReader extends GridCoverageReader {
         /*
          * Now process to the image reading.
          */
-        final GridCoverageEntry ref;
-        if (layer instanceof LayerEntry) {
-            ref = ((LayerEntry) layer).getCoverageReference(envelope, database.executor);
-        } else {
-            ref = (GridCoverageEntry) layer.getCoverageReference(envelope);
-        }
+        final GridCoverageEntry ref = (GridCoverageEntry) layer.getCoverageReference(envelope);
         if (ref != null) {
             final IIOListeners listeners = null; // TODO
             return ref.read(param, listeners);

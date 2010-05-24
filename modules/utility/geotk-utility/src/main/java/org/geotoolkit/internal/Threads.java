@@ -142,7 +142,7 @@ public final class Threads extends AtomicInteger implements ThreadFactory {
      */
     @Override
     public Thread newThread(final Runnable task) {
-        final String name = (daemon ? "PooledDaemon-" : "PooledThread-") + incrementAndGet();
+        final String name = "Geotk pooled " + (daemon ? "daemon" : "thread") + ' ' + incrementAndGet();
         final Thread thread = new Thread(RESOURCE_DISPOSERS, task, name);
         thread.setPriority(Thread.NORM_PRIORITY + 1);
         thread.setDaemon(daemon);

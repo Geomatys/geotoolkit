@@ -86,7 +86,7 @@ public class CoverageDatabase implements Localized {
      * Maximal amount of concurrent threads which can be running. It is better to not use
      * a too high value, since each threads will hold a connection to the database.
      */
-    private static final int MAXIMUM_THREADS = 8;
+    private static final int MAXIMUM_THREADS = 4;
 
     /**
      * Maximal amount of tasks which may be pending in the queue. If a greater amount of
@@ -108,12 +108,11 @@ public class CoverageDatabase implements Localized {
     volatile TableFactory database;
 
     /**
-     * The executor service to use for loading data in background. We force the usage of this
-     * executor because the current {@code org.geotoolkit.coverage.sql} uses thread-local JDBC
-     * connections, and we want to constraint the creation of those JDBC resources in only a
-     * limited amount of threads.
+     * The executor service to use for loading data in background. Concurrency is only one raison
+     * for our usage of executor here. The other raison is to limit the amount of JDBC resources
+     * to be allocated, since we use a different connection for different thread.
      */
-    final Executor executor;
+    private final Executor executor;
 
     /**
      * The listener list.
@@ -662,7 +661,7 @@ public class CoverageDatabase implements Localized {
                 final GridCoverageTable table = pool.acquire();
                 table.setLayer(query.getLayer());
                 table.envelope.setAll(envelope);
-                entry = table.select(null);
+                entry = table.getEntry();
                 pool.release(table);
             } catch (SQLException e) {
                 throw new CoverageStoreException(e);

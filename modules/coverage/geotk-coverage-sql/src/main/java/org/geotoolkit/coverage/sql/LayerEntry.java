@@ -26,7 +26,6 @@ import java.util.List;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.concurrent.Executor;
 import java.sql.SQLException;
 import java.awt.geom.Dimension2D;
 import java.io.IOException;
@@ -842,23 +841,13 @@ final class LayerEntry extends DefaultEntry implements Layer {
     public final GridCoverageEntry getCoverageReference(final CoverageEnvelope envelope)
             throws CoverageStoreException
     {
-        return getCoverageReference(envelope, null);
-    }
-
-    /**
-     * Same as {@link #getCoverageReference(CoverageEnvelope)}, but using the given executor
-     * for the database queries.
-     */
-    GridCoverageEntry getCoverageReference(final CoverageEnvelope envelope, final Executor executor)
-            throws CoverageStoreException
-    {
         final GridCoverageEntry entry;
         try {
             final TablePool<GridCoverageTable> pool = getTableFactory().coverages;
             final GridCoverageTable table = pool.acquire();
             table.setLayerEntry(this);
             table.envelope.setAll(envelope);
-            entry = table.select(executor);
+            entry = table.getEntry();
             pool.release(table);
         } catch (SQLException exception) {
             throw new CoverageStoreException(exception);

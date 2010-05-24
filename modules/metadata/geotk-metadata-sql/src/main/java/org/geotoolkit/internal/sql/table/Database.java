@@ -22,15 +22,17 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.SQLNonTransientException;
 import javax.sql.DataSource;
-import java.io.PrintWriter;
 import java.lang.reflect.Constructor;
 
 import java.util.Map;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Iterator;
 import java.util.Locale;
 import java.util.TimeZone;
 import java.util.Properties;
 import java.util.Calendar;
+import java.util.ConcurrentModificationException;
 import java.util.GregorianCalendar;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -51,10 +53,10 @@ import org.geotoolkit.internal.sql.AuthenticatedDataSource;
  * {@section Concurrency}
  * This class is thread-safe and concurrent. However it is recommanded to access it only from a
  * limited number of threads (for example from a {@link java.util.concurrent.ThreadPoolExecutor})
- * and to recycle those threads, because this class uses a new connection for each thread.
+ * and to recycle those threads, because this class may use a new connection for each thread.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.11
+ * @version 3.12
  *
  * @since 3.09 (derived from Seagis)
  * @module
@@ -88,12 +90,30 @@ public class Database implements Localized {
     private final TimeZone timezone;
 
     /**
+     * The locale to use for formatting messages, or {@code null} for the system-default.
+     */
+    private volatile Locale locale;
+
+    /**
      * The hints to use for fetching factories. Shall be considered read-only.
      */
     final Hints hints;
 
     /**
-     * Provides information for SQL statements being executed.
+     * The {@code Session} instance used for each thread. Threads are identified by their
+     * {@linkplain Thread#getId() ID}. New values are created by {@link #getLocalCache()}
+     * if no existing values can be used. Values are removed by {@link Session#monitorExit}
+     * after some delay (may be 2 seconds) of inactivity.
+     *
+     * {@note In a previous version, we used a single <code>ThreadLocal</code> instance.
+     *        We switched to a map because this allow us to reuse an available session
+     *        for a different thread, and because it allows us to know the set of all
+     *        active sessions.}
+     */
+    private final Map<Long,Session> sessions = new LinkedHashMap<Long,Session>();
+
+    /**
+     * Holds thread-local information for SQL statements being executed.
      * Those information can not be shared between different threads.
      * <p>
      * This class opportunistically extends {@code StatementPool}, which duplicates the work of
@@ -108,7 +128,7 @@ public class Database implements Localized {
      * which deferred the database query.
      *
      * @author Martin Desruisseaux (Geomatys)
-     * @version 3.11
+     * @version 3.12
      *
      * @since 3.09
      * @module
@@ -118,16 +138,17 @@ public class Database implements Localized {
             implements LocalCache
     {
         /**
-         * If non-null, SQL {@code INSERT}, {@code UPDATE} or {@code DELETE} statements will
-         * not be executed but will rather be printed to this stream. This is used for testing
-         * and debugging purpose only.
-         * <p>
-         * This field is thread-local because only one thread can write at a given time.
-         * If two different threads want to write, one thread will block the other thanks
-         * to the {@link #transactionLock}, but we may want to set its "update simulator"
-         * status while we are waiting for the lock to become available.
+         * The {@linkplain Thread#getId() ID} of the thread which is using this {@code Session},
+         * or {@code null} if this {@code Session} is available for reuse by any thread.
          */
-        PrintWriter updateSimulator;
+        private Long threadID;
+
+        /**
+         * A copy of the {@link Database#sessions} references, used for synchronization purpose.
+         * We don't take a reference to the encloding {@link Database} because we don't need it,
+         * so we give more chances to GC to collect it.
+         */
+        private final Map<Long,Session> sessions;
 
         /**
          * The calendar to use for reading and writing dates in a database. This calendar
@@ -136,11 +157,6 @@ public class Database implements Localized {
          * @see Database#getCalendar()
          */
         Calendar calendar;
-
-        /**
-         * The locale to use for formatting messages, or {@code null} for the system-default.
-         */
-        Locale locale;
 
         /**
          * Generators of named identifiers. Will be created only when first needed. The keys are
@@ -155,8 +171,9 @@ public class Database implements Localized {
          * Creates a new instance for the given data source.
          * We will cache a maximum of 8 prepared statements.
          */
-        Session(final DataSource source) {
+        Session(final DataSource source, final Map<Long,Session> sessions) {
             super(8, source);
+            this.sessions = sessions;
         }
 
         /**
@@ -172,16 +189,36 @@ public class Database implements Localized {
             }
             return value;
         }
-    }
 
-    /**
-     * Holds thread-local information for SQL statements being executed.
-     */
-    private final ThreadLocal<Session> session = new ThreadLocal<Session>() {
-        @Override protected Session initialValue() {
-            return new Session(source);
+        /**
+         * Invoked in a backround thread when the user thread exits its outer {@code synchronized}
+         * statement. This method declares that this object is available for reuse. If all JDBC
+         * resources have been closed, we will let the garbage collector collects this object.
+         */
+        @Override
+        protected void monitorExit(final boolean closed) {
+            super.monitorExit(closed);
+            synchronized (sessions) {
+                if (closed) {
+                    final Session old = sessions.remove(threadID);
+                    assert old == null || old == this : old;
+                }
+                threadID = null; // Declare this Session as available for reuse.
+            }
         }
-    };
+
+        /**
+         * Returns a string representation for debugging purpose.
+         */
+        @Override
+        public String toString() {
+            final StringBuilder buffer = new StringBuilder("Session[");
+            if (threadID != null) {
+                buffer.append("threadID=").append(threadID);
+            }
+            return buffer.append(']').toString();
+        }
+    }
 
     /**
      * Incremented everytime a modification is applied in the configuration of a table.
@@ -272,18 +309,17 @@ public class Database implements Localized {
      */
     @Override
     public final Locale getLocale() {
-        return session.get().locale;
+        return locale;
     }
 
     /**
-     * Sets the locale to use for formatting messages. The given locale applies only
-     * to the {@linkplain Thread#currentThread() current thread}.
+     * Sets the locale to use for formatting messages.
      *
      * @param locale The new locale for message formatting, or {@code null} for the
      *        {@linkplain Locale#getDefault() system default}.
      */
     public final void setLocale(final Locale locale) {
-        session.get().locale = locale;
+        this.locale = locale;
     }
 
     /**
@@ -308,7 +344,8 @@ public class Database implements Localized {
      * because it may be a totally different and incompatible calendar for our purpose.
      */
     final Calendar getCalendar() {
-        final Session s = session.get();
+        final Session s = getLocalCache();
+        assert Thread.holdsLock(s);
         Calendar calendar = s.calendar;
         if (calendar == null) {
             s.calendar = calendar = new GregorianCalendar(timezone, Locale.CANADA);
@@ -332,9 +369,43 @@ public class Database implements Localized {
      * Returns the {@link LocalCache} instance for the current thread. This is the interface to
      * use for getting the JDBC connection and prepared statements. See the {@link LocalCache}
      * javadoc for usage examples.
+     *
+     * @see Table#release()
      */
-    final LocalCache getLocalCache() {
-        return session.get();
+    final Session getLocalCache() {
+        Session session;
+        final Long threadID = Thread.currentThread().getId();
+        synchronized (sessions) {
+            session = sessions.get(threadID);
+            if (session != null) {
+                if (session.threadID == null) {
+                    session.threadID = threadID;
+                } else {
+                    assert threadID.equals(session.threadID) : session;
+                }
+            } else {
+                /*
+                 * Search for an existing Session instance which is available for reuse.
+                 * If none is found, we will create a new one.
+                 */
+                for (final Iterator<Session> it=sessions.values().iterator(); it.hasNext();) {
+                    final Session candidate = it.next();
+                    if (candidate.threadID == null) {
+                        session = candidate;
+                        it.remove();
+                        break;
+                    }
+                }
+                if (session == null) {
+                    session = new Session(source, sessions);
+                }
+                if (sessions.put(threadID, session) != null) {
+                    throw new ConcurrentModificationException(); // Should never happen.
+                }
+                session.threadID = threadID;
+            }
+        }
+        return session;
     }
 
     /**
@@ -342,7 +413,7 @@ public class Database implements Localized {
      * {@link LocalCache.Stmt#release()} only. The later is the API to use.
      */
     final void release(final LocalCache.Stmt entry) throws SQLException {
-        final LocalCache.Stmt old = session.get().put(entry.sql, entry);
+        final LocalCache.Stmt old = getLocalCache().put(entry.sql, entry);
         if (old != null) {
             old.statement.close();
         }
@@ -376,27 +447,6 @@ public class Database implements Localized {
             }
         }
         return type.cast(table);
-    }
-
-    /**
-     * If non-null, SQL {@code INSERT}, {@code UPDATE} or {@code DELETE} statements will not be
-     * executed but will rather be printed to this stream. This is used for testing and debugging
-     * purpose only.
-     *
-     * @param out Where to print SQL statements which would perform changes in the database content.
-     */
-    final void setUpdateSimulator(final PrintWriter out) {
-        session.get().updateSimulator = out;
-    }
-
-    /**
-     * Returns the value set by the last call to {@link #setUpdateSimulator},
-     * or {@code null} if none.
-     *
-     * @return Where to print SQL statements which would perform changes in the database content.
-     */
-    final PrintWriter getUpdateSimulator() {
-        return session.get().updateSimulator;
     }
 
     /**
@@ -485,7 +535,7 @@ public class Database implements Localized {
      * @throws SQLException If an error occured while creating the generator.
      */
     final NameGenerator getIdentifierGenerator(final String pk) throws SQLException {
-        final Session s = session.get();
+        final Session s = getLocalCache();
         Map<String, NameGenerator> generators = s.generators;
         NameGenerator generator;
         if (generators != null) {
@@ -507,14 +557,17 @@ public class Database implements Localized {
     }
 
     /**
-     * Closes the connection used by the current thread and restore the attributes to their
-     * initial state. This method affect the current thread only; other threads (if any) are
-     * not affected.
+     * Closes all connections and restores the attributes to their initial state.
      *
      * @throws SQLException If an error occured while closing the connection.
      */
     public void reset() throws SQLException {
-        session.get().close();
-        session.remove();
+        synchronized (sessions) {
+            for (final Session session : sessions.values()) {
+                session.close();
+            }
+            sessions.clear();
+        }
+        locale = null;
     }
 }

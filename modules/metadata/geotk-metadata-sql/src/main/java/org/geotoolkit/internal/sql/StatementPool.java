@@ -75,7 +75,7 @@ import org.geotoolkit.util.collection.XCollections;
  * @param <V> The type of values.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.03
+ * @version 3.12
  *
  * @since 3.03
  * @module
@@ -217,7 +217,8 @@ public class StatementPool<K,V extends StatementEntry> extends LinkedHashMap<K,V
 
     /**
      * Executed in a background thread for closing statements after their expiration time.
-     * A new thread must be created every time the first statement is put in an empty map.
+     * This task will be given to the executor every time the first statement is put in an
+     * empty map.
      * <p>
      * This method is public as an implementation side-effect but should never been invoked
      * directly.
@@ -229,7 +230,17 @@ public class StatementPool<K,V extends StatementEntry> extends LinkedHashMap<K,V
          * milliseconds (this occurs when MetadataSource has just been created).
          */
         long waitTime = TIMEOUT;
-sleep:  do {
+sleep:  while (true) {
+            /*
+             * Call user code. The call needs to be protected against unexpected exceptions,
+             * otherwise some JDBC resources could be left unclosed if this thread die. Note
+             * that monitorExit(boolean) uses assertions, so we need to catch Throwable.
+             */
+            try {
+                monitorExit(false);
+            } catch (Throwable e) {
+                Logging.unexpectedException(Logging.getLogger(StatementPool.class), getClass(), "monitorExit", e);
+            }
             /*
              * Increase the wait time by an arbitrary amount in order to
              * increase the chances to close many statements in one pass.
@@ -256,7 +267,7 @@ sleep:  do {
             // We have closed every statements. Terminate the thread.
             // A new one will be created later if new statements are created.
             break;
-        } while (true);
+        }
         /*
          * No more prepared statements. Close the connection.
          */
@@ -267,6 +278,35 @@ sleep:  do {
         } catch (SQLException e) {
             Logging.recoverableException(Logging.getLogger(StatementPool.class), Connection.class, "close", e);
         }
+        monitorExit(true);
+    }
+
+    /**
+     * Invoked in a backround thread when the user thread exits its {@code synchronized} statement.
+     * If there is many nested {@code synchronized} statements, then this method is invoked only
+     * after the outer one.
+     * <p>
+     * Assuming that this {@code StatementPool} is used in the way documented in the class javadoc:
+     *
+     * {@preformat java
+     *     synchronized (pool) {
+     *         StatementEntry entry = pool.remove(key);
+     *         // etc...
+     *     }
+     * }
+     *
+     * Then subclasses can overload this method in order to be informed when the above work is
+     * finished. Note that this method may not be invoked immediately after the work completion.
+     * It may be invoked with a delay up to {@value #TIMEOUT} milliseconds (or a bit more).
+     *
+     * @param closed {@code true} if this method is invoked after the connection has been closed.
+     *        In such case, this {@code HashMap} is garanteed to be empty.
+     *
+     * @since 3.12
+     */
+    protected void monitorExit(final boolean closed) {
+        assert Thread.holdsLock(this);
+        assert !closed || isEmpty();
     }
 
     /**

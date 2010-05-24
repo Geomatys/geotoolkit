@@ -17,12 +17,10 @@
  */
 package org.geotoolkit.internal.sql.table;
 
-import java.io.PrintWriter;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.PreparedStatement;
 import java.util.Set;
-import java.util.Collection;
 import java.util.LinkedHashSet;
 
 import org.geotoolkit.util.collection.Cache;
@@ -321,26 +319,8 @@ public abstract class SingletonTable<E extends Entry> extends Table {
      * @return The set of entries. May be empty, but never {@code null}.
      * @throws SQLException if an error occured will reading from the database.
      */
-    public final Set<E> getEntries() throws SQLException {
+    public Set<E> getEntries() throws SQLException {
         final Set<E> entries = new LinkedHashSet<E>();
-        getEntries(entries);
-        return entries;
-    }
-
-    /**
-     * Adds in the given collection all entries found in the database. This method is
-     * provided for subclasses wanting to add the entries in their own kind of collection.
-     * <p>
-     * This method uses only the {@link Collection#add(Object)} method. No other method
-     * shall be invoked, unless we modify the {@code GridCoverageEntries} implementation
-     * consequently.
-     *
-     * @param  entries The collection in which to add the entries.
-     * @throws SQLException if an error occured will reading from the database.
-     *
-     * @since 3.11
-     */
-    protected void getEntries(final Collection<E> entries) throws SQLException {
         synchronized (getLock()) {
             final LocalCache.Stmt ce = getStatement(QueryType.LIST);
             final int[] pkIndices = getPrimaryKeyColumns();
@@ -379,6 +359,7 @@ public abstract class SingletonTable<E extends Entry> extends Table {
             results.close();
             release(ce);
         }
+        return entries;
     }
 
     /**
@@ -492,9 +473,6 @@ public abstract class SingletonTable<E extends Entry> extends Table {
 
     /**
      * Executes the specified SQL {@code INSERT}, {@code UPDATE} or {@code DELETE} statement.
-     * As a special case, this method does not execute the statement during testing and debugging
-     * phases. In the later case, this method rather prints the statement to the stream specified
-     * to {@link Database#setUpdateSimulator}.
      *
      * @param  statement The statement to execute.
      * @return The number of elements updated.
@@ -503,13 +481,7 @@ public abstract class SingletonTable<E extends Entry> extends Table {
     private int update(final PreparedStatement statement) throws SQLException {
         final Database database = getDatabase();
         database.ensureOngoingTransaction();
-        final PrintWriter out = database.getUpdateSimulator();
-        if (out != null) {
-            out.println(statement);
-            return 0;
-        } else {
-            return statement.executeUpdate();
-        }
+        return statement.executeUpdate();
     }
 
     /**
