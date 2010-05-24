@@ -110,7 +110,8 @@ public class MolodenskyTransform extends AbstractMathTransform implements Serial
     final double dx, dy, dz;
 
     /**
-     * Semi-major (<var>a</var>) semi-minor (<var>b/<var>) radius in meters.
+     * Semi-major (<var>a</var>) semi-minor (<var>b/<var>) axes length of the source ellipsoid,
+     * in metres.
      */
     final double a, b;
 
@@ -156,6 +157,8 @@ public class MolodenskyTransform extends AbstractMathTransform implements Serial
 
     /**
      * Constructs a Molodensky transform from the specified parameters.
+     * This constructor is for subclasses only; client code should use
+     * the {@link #create create} static method instead.
      *
      * @param abridged {@code true} for the abridged formula, or {@code false} for the complete one.
      * @param sa       The source semi-major axis length in meters.

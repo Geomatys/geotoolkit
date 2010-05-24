@@ -763,7 +763,7 @@ final class PropertyAccessor {
      * @param newValues
      *          The argument to convert. It must be an array of length 1.
      *          The content of this array will be modified in-place.
-     * @param targetType
+     * @param elementType
      *          The type required by the setter method.
      * @param converter
      *          The last converter used, or {@code null} if none. This converter is provided only
@@ -803,8 +803,9 @@ final class PropertyAccessor {
                     // Other cases: let the collection unchanged. It is likely to
                     // cause an exception later. The message should be appropriate.
                 }
-                assert elementType.equals(Classes.primitiveToWrapper(targetType));
-                targetType = elementType;
+                // Getter type (targetType) shall be the same than the setter type (elementType).
+                assert elementType.equals(Classes.primitiveToWrapper(targetType)) : elementType;
+                targetType = elementType; // Ensure that we use primitive wrapper.
             } else {
                 /*
                  * We expect a collection. Collections are handled in one of the two ways below:
