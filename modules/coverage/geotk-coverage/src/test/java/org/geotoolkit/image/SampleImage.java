@@ -38,7 +38,7 @@ import static org.junit.Assume.*;
  * Enumeration of sample data that can be loaded by {@link ImageTestCase#loadSampleImage}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.03
+ * @version 3.12
  *
  * @since 3.00
  */
@@ -46,7 +46,7 @@ public enum SampleImage {
     /**
      * A RGB image having a rotation.
      */
-    RGB_ROTATED("MODIS.png", PixelInterleavedSampleModel.class, 3650654124L),
+    RGB_ROTATED("MODIS.png", PixelInterleavedSampleModel.class, 3650654124L, 4050219331L),
 
     /**
      * Sea Surface Temperature (SST) using indexed color model.
@@ -82,9 +82,10 @@ public enum SampleImage {
     private final Class<? extends SampleModel> model;
 
     /**
-     * The expected checksum.
+     * The expected checksum. The values found in practice may vary according the
+     * Java version or the platform.
      */
-    private final long checksum;
+    private final long[] checksum;
 
     /**
      * The loaded image, cached for reuse.
@@ -97,7 +98,7 @@ public enum SampleImage {
      * @param filename The filename of the image to be loaded.
      * @param checksum The expected checksum.
      */
-    private SampleImage(final String filename, final Class<? extends SampleModel> model, final long checksum) {
+    private SampleImage(final String filename, final Class<? extends SampleModel> model, final long... checksum) {
         this.filename = filename;
         this.model    = model;
         this.checksum = checksum;
@@ -117,14 +118,25 @@ public enum SampleImage {
         BufferedImage image;
         if (cache != null) {
             image = cache.get();
-            if (image != null && Commons.checksum(image) == checksum) {
-                return image;
+            if (image != null) {
+                final long c = Commons.checksum(image);
+                for (final long expected : checksum) {
+                    if (c == expected) {
+                        return image;
+                    }
+                }
             }
         }
         image = ImageIO.read(TestData.url(SampleImage.class, filename));
         assumeTrue(model.isInstance(image.getSampleModel()));
-        assertEquals(filename, checksum, Commons.checksum(image));
-        cache = new SoftReference<BufferedImage>(image);
+        final long c = Commons.checksum(image);
+        for (final long expected : checksum) {
+            if (c == expected) {
+                cache = new SoftReference<BufferedImage>(image);
+                return image;
+            }
+        }
+        fail("Image " + filename + " as invalid checksum: " + c);
         return image;
     }
 }

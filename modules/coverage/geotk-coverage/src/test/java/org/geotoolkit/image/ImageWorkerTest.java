@@ -257,13 +257,13 @@ public final class ImageWorkerTest extends ImageTestCase {
         worker.setImage(original);
         worker.mask(binarize, new double[] {255,128,64});
         assertNotSame(original, image = worker.image);
-        assertChecksumEquals(3974692828L);
+        assertChecksumEquals(3974692828L, 3148611825L);
         view("mask(binarize,orange)");
 
         worker.setImage(original);
         worker.maskBackground(new double[][] {{0,0,0}}, new double[] {64,128,255});
         assertNotSame(original, image = worker.image);
-        assertChecksumEquals(346825169L);
+        assertChecksumEquals(346825169L, 1447818957L);
         view("maskBackground(black,blue)");
 
         worker.setImage(original);

@@ -48,7 +48,7 @@ import static org.junit.Assert.*;
  * Base class for tests applied on images.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.12
  *
  * @since 3.00
  */
@@ -108,8 +108,12 @@ public abstract class ImageTestCase {
      *
      * @param expected The expected checksum value.
      */
-    protected final synchronized void assertChecksumEquals(final long expected) {
-        assertEquals(expected, Commons.checksum(image));
+    protected final synchronized void assertChecksumEquals(final long... expected) {
+        final long c = Commons.checksum(image);
+        for (final long e : expected) {
+            if (e == c) return;
+        }
+        fail("Unexpected image checksum: " + c);
     }
 
     /**

@@ -72,7 +72,7 @@ public final class MaskTest extends ImageTestCase {
         final double[] blueColor = new double[] {64, 64, 255};
         parameters = new ParameterBlockJAI(Mask.OPERATION_NAME);
         image = JAI.create(Mask.OPERATION_NAME, parameters.addSource(image).addSource(mask).set(blueColor, 0));
-        assertChecksumEquals(2300860193L);
+        assertChecksumEquals(2300860193L, 3418587197L);
         view("testOnRGB");
     }
 

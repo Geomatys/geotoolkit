@@ -21,9 +21,8 @@ import java.awt.Color;
 import java.awt.Point;
 import java.awt.image.WritableRenderedImage;
 import javax.media.jai.JAI;
-import javax.media.jai.ParameterBlockJAI;
-import javax.media.jai.RegistryElementDescriptor;
 import javax.media.jai.TiledImage;
+import javax.media.jai.RegistryElementDescriptor;
 import javax.media.jai.registry.RenderedRegistryMode;
 
 import org.geotoolkit.image.SampleImage;
@@ -123,17 +122,17 @@ public class FloodFillTest extends ImageTestCase {
         WritableRenderedImage image;
         loadSampleImage(SampleImage.RGB_ROTATED);
         this.image = image = copyImage();
-        assertChecksumEquals(3650654124L);
+        assertChecksumEquals(3650654124L, 4050219331L);
         /*
          * Replaces the black color of the upper-left corner.
          */
         FloodFill.fill(image, new Color[] {Color.BLACK}, Color.BLUE, new Point(0, 0));
-        assertChecksumEquals(2215625664L);
+        assertChecksumEquals(2215625664L, 1196099012L);
         /*
          * Do the same for the other corner.
          */
         FloodFill.fill(image, new Color[] {Color.BLACK}, Color.CYAN, new Point(259, 299));
-        assertChecksumEquals(3983761906L);
+        assertChecksumEquals(3983761906L, 2415208678L);
         view("fill(RGB - untiled)");
         /*
          * Same test on a tiles image.
@@ -141,7 +140,7 @@ public class FloodFillTest extends ImageTestCase {
         loadSampleImage(SampleImage.RGB_ROTATED);
         this.image = image = new TiledImage(this.image, 50, 50);
         FloodFill.fill(image, new Color[] {Color.BLACK}, Color.BLUE, new Point(0, 0), new Point(259, 299));
-        assertChecksumEquals(1202618797L);
+        assertChecksumEquals(1202618797L, 2266942802L);
         view("fill(CONTOUR - tiled)");
     }
 }
