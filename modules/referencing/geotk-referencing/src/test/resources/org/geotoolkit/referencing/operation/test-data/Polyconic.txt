@@ -2,13 +2,17 @@
 #
 #   Test points for the Polyconic Projection
 #
-#   (C) 2010, Open Source Geospatial Foundation (OSGeo)
+#   (C) 2009-2010, Open Source Geospatial Foundation (OSGeo)
 #
-#   The following test points were extracted from Table 19, p 132 of "Map Projections, a working manual"
-#   by John P.Snyder. (http://pubs.er.usgs.gov/usgspubs/pp/pp1395)
+#   The following test points (except the Brazil section) were extracted from
+#   Table 19, p 132 of "Map Projections, a working manual" by John P.Snyder.
+#   (http://pubs.er.usgs.gov/usgspubs/pp/pp1395)
+#
+#   The Brazil section was calculated by Andrea Aime with libproj4 utility "cs2cs".
 #
 #
 #   Simon Reynard - Appril 2010
+#   Andrea Aime - December 2009
 #
 # -----------------------------------------------------------------------------
 #
@@ -38,7 +42,7 @@
 
 set $ClarkeI = GEOGCS["ClarkeI",
     DATUM["ClarkeI",
-    SPHEROID["ClarkeI", 6378206.400,294.97870]],
+    SPHEROID["ClarkeI", 6378206.400, 294.97870]],
     PRIMEM["Greenwich", 0.0],
     UNIT["degree",0.017453292519943295],
     AXIS["Longitude",EAST],
@@ -73,7 +77,7 @@ set $Polyconic1 = PROJCS["Polyconic", $ClarkeI,
 source crs = $ClarkeI
 target crs = $Polyconic1
 tolerance forward = (0.5, 0.5)
-tolerance inverse = (0.5, 0.5)
+tolerance inverse = (1E-5, 1E-5)
 
 source pt = (0.0, 50.0)
 target pt = (0.0, 5540628.0)
@@ -186,3 +190,60 @@ target pt = (0.0, 2544390.0)
 
 source pt = (3.0, 23.0)
 target pt = (307551.0, 2547536.0)
+
+
+
+///////////////////////////////////////////////////////////
+//
+//     Brazilian Polyconic
+//
+///////////////////////////////////////////////////////////
+
+set $SAD69 = GEOGCS["SAD69",
+    DATUM["South American Datum 1969",
+    SPHEROID["GRS 1967 Modified", 6378160.0, 298.25],
+    TOWGS84[-66.87, 4.37, -38.52, 0.0, 0.0, 0.0, 0.0]],
+    PRIMEM["Greenwich", 0.0],
+    UNIT["degree", 0.017453292519943295],
+    AXIS["Geodetic latitude", NORTH],
+    AXIS["Geodetic longitude", EAST]]
+
+set $Brazil = PROJCS["SAD69 / Brazil Polyconic", $SAD69,
+    PROJECTION["American Polyconic"],
+    PARAMETER["latitude_of_origin", 0.0],
+    PARAMETER["central_meridian", -54.0],
+    PARAMETER["false_easting", 5000000.0],
+    PARAMETER["false_northing", 10000000.0],
+    UNIT["m", 1.0],
+    AXIS["Easting", EAST],
+    AXIS["Northing", NORTH]]
+
+source crs = $SAD69
+target crs = $Brazil
+tolerance forward = (1E-2, 1E-2)
+tolerance inverse = (1E-7, 1E-7)
+
+source pt = (-8, -36)
+target pt = (6983754.10, 9071970.97)
+
+source pt = (3, -61)
+target pt = (4221826.84, 10334214.86)
+
+source pt = (-8, -72)
+target pt = (3016245.90, 9071970.97)
+
+source pt = (-10, -52)
+target pt = (5219278.18, 8893476.78)
+
+source pt = (-31, -52)
+target pt = (5190998.93, 6567296.83)
+
+// some points out of Brazil
+source pt = (3, -72)
+target pt = (2999059.83, 10348176.94)
+
+source pt = (-31, -73)
+target pt = (3194221.58, 6414430.59)
+
+source pt = (-32, -36)
+target pt = (6693036.87, 6316881.31)
