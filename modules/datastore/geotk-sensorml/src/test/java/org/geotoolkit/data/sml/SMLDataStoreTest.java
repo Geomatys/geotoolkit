@@ -204,6 +204,7 @@ public class SMLDataStoreTest extends AbstractReadingTests{
 
             //Component
             //unvalide test, a feature has a null geometry even while the type define
+            //todo must be fixed somehow later
             //a non-null property for it.
 //            size = 1;
 //            env = new GeneralEnvelope(CRS.decode("EPSG:27582"));

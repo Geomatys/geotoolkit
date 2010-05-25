@@ -145,80 +145,77 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
         //write properties in the type order
         for(final PropertyDescriptor desc : type.getDescriptors()){
             final Collection<Property> props = feature.getProperties(desc.getName());
+            for (Property a : props) {
 
-        }
-
-        //the simple nodes (attributes of the feature)
-        for (Property a : feature.getProperties()) {
-
-            if (a.getValue() instanceof Collection && !(a.getType() instanceof GeometryType)) {
-                String namespaceProperty = a.getName().getNamespaceURI();
-                for (Object value : (Collection)a.getValue()) {
-                    if (namespaceProperty != null) {
-                        writer.writeStartElement(namespaceProperty, a.getName().getLocalPart());
-                    } else {
-                        writer.writeStartElement(a.getName().getLocalPart());
-                    }
-                    writer.writeCharacters(Utils.getStringValue(value));
-                    writer.writeEndElement();
-                }
-
-            } else if (a.getValue() instanceof Map && !(a.getType() instanceof GeometryType)) {
-                String namespaceProperty = a.getName().getNamespaceURI();
-                Map map = (Map)a.getValue();
-                for (Object key : map.keySet()) {
-                    if (namespaceProperty != null) {
-                        writer.writeStartElement(namespaceProperty, a.getName().getLocalPart());
-                    } else {
-                        writer.writeStartElement(a.getName().getLocalPart());
-                    }
-                    if (key != null) {
-                        writer.writeAttribute("name", (String)key);
-                    }
-                    writer.writeCharacters(Utils.getStringValue(map.get(key)));
-                    writer.writeEndElement();
-                }
-
-            } else if (!(a.getType() instanceof GeometryType)) {
-                String value = Utils.getStringValue(a.getValue());
-                if (value != null || (value == null && !a.isNillable())) {
-
+                if (a.getValue() instanceof Collection && !(a.getType() instanceof GeometryType)) {
                     String namespaceProperty = a.getName().getNamespaceURI();
-                    String nameProperty      = a.getName().getLocalPart();
-                    if ((nameProperty.equals("name") || nameProperty.equals("description")) && !GML_NAMESPACE.equals(namespaceProperty)) {
-                        namespaceProperty = GML_NAMESPACE;
-                        LOGGER.warning("the property name and description of a feature must have the GML namespace");
+                    for (Object value : (Collection)a.getValue()) {
+                        if (namespaceProperty != null) {
+                            writer.writeStartElement(namespaceProperty, a.getName().getLocalPart());
+                        } else {
+                            writer.writeStartElement(a.getName().getLocalPart());
+                        }
+                        writer.writeCharacters(Utils.getStringValue(value));
+                        writer.writeEndElement();
                     }
-                    if (namespaceProperty != null) {
-                        writer.writeStartElement(namespaceProperty, nameProperty);
-                    } else {
-                        writer.writeStartElement(nameProperty);
-                    }
-                    if (value != null) {
-                        writer.writeCharacters(value);
-                    }
-                    writer.writeEndElement();
-                }
 
-            // we add the geometry
-            } else {
-
-                if (a.getValue() != null) {
-                    Name geometryName        = a.getName();
-                    String namespaceProperty = geometryName.getNamespaceURI();
-
-                    if (namespaceProperty != null) {
-                        writer.writeStartElement(geometryName.getNamespaceURI(), geometryName.getLocalPart());
-                    } else {
-                        writer.writeStartElement(geometryName.getLocalPart());
+                } else if (a.getValue() instanceof Map && !(a.getType() instanceof GeometryType)) {
+                    String namespaceProperty = a.getName().getNamespaceURI();
+                    Map map = (Map)a.getValue();
+                    for (Object key : map.keySet()) {
+                        if (namespaceProperty != null) {
+                            writer.writeStartElement(namespaceProperty, a.getName().getLocalPart());
+                        } else {
+                            writer.writeStartElement(a.getName().getLocalPart());
+                        }
+                        if (key != null) {
+                            writer.writeAttribute("name", (String)key);
+                        }
+                        writer.writeCharacters(Utils.getStringValue(map.get(key)));
+                        writer.writeEndElement();
                     }
-                    Geometry isoGeometry = JTSUtils.toISO((com.vividsolutions.jts.geom.Geometry) a.getValue(), feature.getType().getCoordinateReferenceSystem());
-                    try {
-                        marshaller.marshal(factory.buildAnyGeometry(isoGeometry), writer);
-                    } catch (JAXBException ex) {
-                        LOGGER.log(Level.WARNING, "JAXB Exception while marshalling the iso geometry: " + ex.getMessage(), ex);
+
+                } else if (!(a.getType() instanceof GeometryType)) {
+                    String value = Utils.getStringValue(a.getValue());
+                    if (value != null || (value == null && !a.isNillable())) {
+
+                        String namespaceProperty = a.getName().getNamespaceURI();
+                        String nameProperty      = a.getName().getLocalPart();
+                        if ((nameProperty.equals("name") || nameProperty.equals("description")) && !GML_NAMESPACE.equals(namespaceProperty)) {
+                            namespaceProperty = GML_NAMESPACE;
+                            LOGGER.warning("the property name and description of a feature must have the GML namespace");
+                        }
+                        if (namespaceProperty != null) {
+                            writer.writeStartElement(namespaceProperty, nameProperty);
+                        } else {
+                            writer.writeStartElement(nameProperty);
+                        }
+                        if (value != null) {
+                            writer.writeCharacters(value);
+                        }
+                        writer.writeEndElement();
                     }
-                    writer.writeEndElement();
+
+                // we add the geometry
+                } else {
+
+                    if (a.getValue() != null) {
+                        Name geometryName        = a.getName();
+                        String namespaceProperty = geometryName.getNamespaceURI();
+
+                        if (namespaceProperty != null) {
+                            writer.writeStartElement(geometryName.getNamespaceURI(), geometryName.getLocalPart());
+                        } else {
+                            writer.writeStartElement(geometryName.getLocalPart());
+                        }
+                        Geometry isoGeometry = JTSUtils.toISO((com.vividsolutions.jts.geom.Geometry) a.getValue(), feature.getType().getCoordinateReferenceSystem());
+                        try {
+                            marshaller.marshal(factory.buildAnyGeometry(isoGeometry), writer);
+                        } catch (JAXBException ex) {
+                            LOGGER.log(Level.WARNING, "JAXB Exception while marshalling the iso geometry: " + ex.getMessage(), ex);
+                        }
+                        writer.writeEndElement();
+                    }
                 }
             }
         }
@@ -299,6 +296,9 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
 
     private void writeBounds(Envelope bounds, XMLStreamWriter streamWriter) throws XMLStreamException {
         if (bounds != null) {
+
+            System.out.println("BOUNDS : " + bounds +"   " + bounds.getCoordinateReferenceSystem());
+
             String srsName = null;
             if (bounds.getCoordinateReferenceSystem() != null) {
                 try {

@@ -45,11 +45,10 @@ import org.geotoolkit.data.query.QueryCapabilities;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.DefaultName;
-import org.geotoolkit.feature.simple.DefaultSimpleFeatureType;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.LenientFeatureFactory;
 import org.geotoolkit.feature.type.DefaultFeatureTypeFactory;
-import org.geotoolkit.feature.type.DefaultGeometryDescriptor;
+import org.geotoolkit.geometry.jts.SRIDGenerator;
 import org.geotoolkit.referencing.CRS;
 
 import org.opengis.feature.Feature;
@@ -169,7 +168,7 @@ public class SMLDataStore extends AbstractDataStore {
         featureTypeBuilder.add(ATT_OUTPUTS,     Map.class, 0, Integer.MAX_VALUE, true, null);
         featureTypeBuilder.add(ATT_PRODUCER,    Map.class, 0, Integer.MAX_VALUE, true, null);
         featureTypeBuilder.add(ATT_COMPONENTS,  Map.class, 0, Integer.MAX_VALUE, true, null);
-        featureTypeBuilder.setDefaultGeometry(ATT_LOCATION.getLocalPart());
+        featureTypeBuilder.setDefaultGeometry(ATT_LOCATION);
         types.put(SML_TN_SYSTEM, featureTypeBuilder.buildFeatureType());
 
         // Feature type sml:Component
@@ -184,7 +183,7 @@ public class SMLDataStore extends AbstractDataStore {
         featureTypeBuilder.add(ATT_SMLREF,      String.class, 1, 1, true, null);
         featureTypeBuilder.add(ATT_INPUTS,      Map.class, 0, Integer.MAX_VALUE, true, null);
         featureTypeBuilder.add(ATT_OUTPUTS,     Map.class, 0, Integer.MAX_VALUE, true, null);
-        featureTypeBuilder.setDefaultGeometry(ATT_LOCATION.getLocalPart());
+        featureTypeBuilder.setDefaultGeometry(ATT_LOCATION);
         types.put(SML_TN_COMPONENT, featureTypeBuilder.buildFeatureType());
 
         // Feature type sml:ProcessChain
@@ -201,7 +200,7 @@ public class SMLDataStore extends AbstractDataStore {
         featureTypeBuilder.add(ATT_OUTPUTS,     Map.class, 0, Integer.MAX_VALUE, true, null);
         featureTypeBuilder.add(ATT_PRODUCER,    Map.class, 0, Integer.MAX_VALUE, true, null);
         featureTypeBuilder.add(ATT_COMPONENTS,  Map.class, 0, Integer.MAX_VALUE, true, null);
-        featureTypeBuilder.setDefaultGeometry(ATT_LOCATION.getLocalPart());
+        featureTypeBuilder.setDefaultGeometry(ATT_LOCATION);
         types.put(SML_TN_PROCESSCHAIN, featureTypeBuilder.buildFeatureType());
 
         // Feature type sml:ProcessModel
@@ -217,7 +216,7 @@ public class SMLDataStore extends AbstractDataStore {
         featureTypeBuilder.add(ATT_INPUTS,      Map.class, 0, Integer.MAX_VALUE, true, null);
         featureTypeBuilder.add(ATT_OUTPUTS,     Map.class, 0, Integer.MAX_VALUE, true, null);
         featureTypeBuilder.add(ATT_METHOD,      String.class, 0, Integer.MAX_VALUE, true, null);
-        featureTypeBuilder.setDefaultGeometry(ATT_LOCATION.getLocalPart());
+        featureTypeBuilder.setDefaultGeometry(ATT_LOCATION);
         types.put(SML_TN_PROCESSMODEL, featureTypeBuilder.buildFeatureType());
 
         // Feature type sml:DataSourceType
@@ -233,7 +232,7 @@ public class SMLDataStore extends AbstractDataStore {
         featureTypeBuilder.add(ATT_INPUTS,      Map.class, 0, Integer.MAX_VALUE, true, null);
         featureTypeBuilder.add(ATT_OUTPUTS,     Map.class, 0, Integer.MAX_VALUE, true, null);
         featureTypeBuilder.add(ATT_CHARACTERISTICS,Map.class, 0, Integer.MAX_VALUE, true, null);
-        featureTypeBuilder.setDefaultGeometry(ATT_LOCATION.getLocalPart());
+        featureTypeBuilder.setDefaultGeometry(ATT_LOCATION);
         types.put(SML_TN_DATASOURCETYPE, featureTypeBuilder.buildFeatureType());
     }
 
@@ -363,7 +362,6 @@ public class SMLDataStore extends AbstractDataStore {
         private final PreparedStatement stmtContactRole;
         private final PreparedStatement stmtContactName;
         private final ResultSet result;
-        private boolean firstCRS = true;
 
         public SMLFeatureReader(FeatureType type) throws SQLException{
             this.type = type;
@@ -440,33 +438,6 @@ public class SMLDataStore extends AbstractDataStore {
                 current = readFeature(formID, type.getName());
             }
 
-            //configure the CRS if its the first feature
-            if (firstCRS && current != null) {
-                stmtTextValue.setString(1, pathCRS);
-                stmtTextValue.setInt(2, formID);
-                final ResultSet resultCRS = stmtTextValue.executeQuery();
-                if (resultCRS.next()) {
-                    String srsName = resultCRS.getString(1);
-
-                    if (srsName.startsWith("urn:ogc:crs:")) {
-                        srsName = "urn:ogc:def:crs:" + srsName.substring(12);
-                    }
-                    try {
-                        final CoordinateReferenceSystem crs = CRS.decode(srsName);
-                        if (type instanceof DefaultSimpleFeatureType) {
-                            ((DefaultSimpleFeatureType)type).setCoordinateReferenceSystem(crs);
-                        }
-                        if (type.getGeometryDescriptor() instanceof DefaultGeometryDescriptor) {
-                            ((DefaultGeometryDescriptor)type.getGeometryDescriptor()).setCoordinateReferenceSystem(crs);
-                        }
-                        firstCRS = false;
-                    } catch (NoSuchAuthorityCodeException ex) {
-                        throw new IOException(ex);
-                    } catch (FactoryException ex) {
-                        throw new IOException(ex);
-                    }
-                }
-            }
         }
 
         private Feature readFeature(int formID, Name typeName) throws SQLException{
@@ -571,6 +542,28 @@ public class SMLDataStore extends AbstractDataStore {
             /*
              * SML : LOCATION (geometric)
              */
+
+            int crsID = -1;
+            //read the feature crs
+            stmtTextValue.setString(1, pathCRS);
+            stmtTextValue.setInt(2, formID);
+            final ResultSet resultCRS = stmtTextValue.executeQuery();
+            if (resultCRS.next()) {
+                String srsName = resultCRS.getString(1);
+
+                if (srsName.startsWith("urn:ogc:crs:")) {
+                    srsName = "urn:ogc:def:crs:" + srsName.substring(12);
+                }
+                try {
+                    final CoordinateReferenceSystem crs = CRS.decode(srsName);
+                    crsID = SRIDGenerator.toSRID(crs, SRIDGenerator.Version.V1);
+                } catch (NoSuchAuthorityCodeException ex) {
+                    throw new SQLException(ex);
+                } catch (FactoryException ex) {
+                    throw new SQLException(ex);
+                }
+            }
+
             stmtTextValue.setString(1, pathLocation);
             stmtTextValue.setInt(2, formID);
             rset = stmtTextValue.executeQuery();
@@ -581,8 +574,9 @@ public class SMLDataStore extends AbstractDataStore {
                     final double x = Double.parseDouble(location.substring(0, pos));
                     final double y = Double.parseDouble(location.substring(pos+1));
                     final Coordinate coord = new Coordinate(x, y);
-                    props.add(FF.createAttribute(GF.createPoint(coord),
-                            (AttributeDescriptor)type.getDescriptor(ATT_LOCATION), null));
+                    final Point pt = GF.createPoint(coord);
+                    pt.setSRID(crsID);
+                    props.add(FF.createAttribute(pt,(AttributeDescriptor)type.getDescriptor(ATT_LOCATION), null));
                 } catch (NumberFormatException ex) {
                     getLogger().warning("unable to extract the point coordinate from the text value:" + location);
                 }

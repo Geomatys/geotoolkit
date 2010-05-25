@@ -16,6 +16,8 @@
  */
 package org.geotoolkit.feature;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.geotoolkit.util.Utilities;
 
@@ -24,6 +26,8 @@ import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.feature.type.GeometryType;
 import org.opengis.filter.identity.Identifier;
 import org.opengis.geometry.BoundingBox;
+import org.opengis.referencing.FactoryException;
+import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import com.vividsolutions.jts.geom.Geometry;
@@ -31,6 +35,8 @@ import com.vividsolutions.jts.geom.GeometryCollection;
 import com.vividsolutions.jts.geom.MultiLineString;
 import com.vividsolutions.jts.geom.MultiPoint;
 import com.vividsolutions.jts.geom.MultiPolygon;
+import org.geotoolkit.geometry.jts.SRIDGenerator;
+import org.geotoolkit.referencing.CRS;
 
 
 /**
@@ -92,7 +98,28 @@ public class DefaultGeometryAttribute extends DefaultAttribute<Object,GeometryDe
     @Override
     public synchronized BoundingBox getBounds() {
         if (bounds == null) {
-            final JTSEnvelope2D bbox = new JTSEnvelope2D(getType().getCoordinateReferenceSystem());
+            //get the type crs if defined
+            CoordinateReferenceSystem crs = getType().getCoordinateReferenceSystem();
+
+            if(crs == null){
+                //the type does not define the crs, then the object value might define it
+                if(value instanceof Geometry){
+                    final int srid = ((Geometry)value).getSRID();
+                    if(srid != -1){
+                        try {
+                            crs = CRS.decode(SRIDGenerator.toSRS(srid, SRIDGenerator.Version.V1));
+                        } catch (NoSuchAuthorityCodeException ex) {
+                            Logger.getLogger(DefaultGeometryAttribute.class.getName()).log(Level.WARNING, null, ex);
+                        } catch (FactoryException ex) {
+                            Logger.getLogger(DefaultGeometryAttribute.class.getName()).log(Level.WARNING, null, ex);
+                        }
+                    }
+                }else if(value instanceof org.opengis.geometry.Geometry){
+                    crs = ((org.opengis.geometry.Geometry)value).getCoordinateReferenceSystem();
+                }
+            }
+
+            final JTSEnvelope2D bbox = new JTSEnvelope2D(crs);
             final Geometry geom = (Geometry) value;
             if (geom != null) {
                 bbox.expandToInclude(geom.getEnvelopeInternal());
