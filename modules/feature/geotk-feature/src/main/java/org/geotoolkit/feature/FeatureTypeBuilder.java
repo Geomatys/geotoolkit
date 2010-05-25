@@ -215,6 +215,7 @@ public class FeatureTypeBuilder {
         properties.clear();
         isAbstract = false;
         superType = null;
+        defaultGeometry = null;
     }
 
     public void setName(String localPart){

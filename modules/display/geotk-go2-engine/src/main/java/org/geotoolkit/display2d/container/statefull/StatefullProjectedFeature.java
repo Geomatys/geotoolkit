@@ -29,7 +29,7 @@ import org.geotoolkit.display2d.primitive.ProjectedGeometry;
 import org.geotoolkit.map.FeatureMapLayer;
 
 import org.opengis.display.primitive.Graphic;
-import org.opengis.feature.simple.SimpleFeature;
+import org.opengis.feature.Feature;
 import org.opengis.filter.identity.FeatureId;
 
 /**
@@ -46,19 +46,19 @@ public class StatefullProjectedFeature implements ProjectedFeature,Graphic {
 
     private final StatefullContextParams params;
     private final Map<String,StatefullProjectedGeometry> geometries = new HashMap<String,StatefullProjectedGeometry>();
-    private SimpleFeature feature;
+    private Feature feature;
 
 
     public StatefullProjectedFeature(StatefullContextParams params){
         this(params,null);
     }
 
-    public StatefullProjectedFeature(StatefullContextParams params, SimpleFeature feature){
+    public StatefullProjectedFeature(StatefullContextParams params, Feature feature){
         this.params = params;
         this.feature = feature;
     }
 
-    public void setFeature(SimpleFeature feature) {
+    public void setFeature(Feature feature) {
         //we dont test if it is the same feature or not, even
         //if it's the same feature, it might have change so we clear the cache anyway.
         clearDataCache();
@@ -105,7 +105,7 @@ public class StatefullProjectedFeature implements ProjectedFeature,Graphic {
     }
 
     @Override
-    public SimpleFeature getFeature(){
+    public Feature getFeature(){
         return feature;
     }
 

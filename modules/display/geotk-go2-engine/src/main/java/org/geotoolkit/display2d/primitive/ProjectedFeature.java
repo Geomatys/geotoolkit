@@ -18,11 +18,10 @@
 package org.geotoolkit.display2d.primitive;
 
 import org.geotoolkit.display.canvas.ReferencedCanvas2D;
-import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.map.FeatureMapLayer;
 
 import org.opengis.display.primitive.Graphic;
-import org.opengis.feature.simple.SimpleFeature;
+import org.opengis.feature.Feature;
 import org.opengis.filter.identity.FeatureId;
 
 /**
@@ -51,9 +50,9 @@ public interface ProjectedFeature extends Graphic {
     /**
      * Get the feature itself.
      *
-     * @return SimpleFeature
+     * @return Feature
      */
-    SimpleFeature getFeature();
+    Feature getFeature();
 
     /**
      * Get a Projected geometry for rendering purpose.

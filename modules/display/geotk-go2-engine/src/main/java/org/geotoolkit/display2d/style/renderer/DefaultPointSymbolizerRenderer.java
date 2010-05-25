@@ -22,7 +22,6 @@ import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.MultiPoint;
 import com.vividsolutions.jts.geom.Point;
 
-import java.awt.RenderingHints;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
@@ -42,7 +41,6 @@ import org.geotoolkit.display2d.primitive.ProjectedGeometry;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 
 import org.opengis.feature.Feature;
-import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.operation.TransformException;
 
@@ -256,7 +254,7 @@ public class DefaultPointSymbolizerRenderer extends AbstractSymbolizerRenderer<C
 
         final Shape mask = search.getDisplayShape();
 
-        final SimpleFeature feature = projectedFeature.getFeature();
+        final Feature feature = projectedFeature.getFeature();
 
         //test if the symbol is visible on this feature
         if(!(symbol.isVisible(feature))) return false;

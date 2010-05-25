@@ -44,7 +44,7 @@ import org.geotoolkit.display2d.style.renderer.SymbolizerRenderer;
 import org.geotoolkit.map.FeatureMapLayer;
 
 import org.opengis.display.primitive.Graphic;
-import org.opengis.feature.simple.SimpleFeature;
+import org.opengis.feature.Feature;
 import org.opengis.feature.type.Name;
 import org.opengis.filter.Filter;
 import org.opengis.referencing.FactoryException;
@@ -131,7 +131,7 @@ public class StatefullFeatureLayerJ2D extends StatelessFeatureLayerJ2D{
     }
 
     @Override
-    protected RenderingIterator getIterator(FeatureCollection<SimpleFeature> features, 
+    protected RenderingIterator getIterator(FeatureCollection<? extends Feature> features,
             RenderingContext2D renderingContext, StatefullContextParams params){
         updateCache(renderingContext);
         return new StatefullGraphicIterator(features.iterator());
@@ -157,9 +157,9 @@ public class StatefullFeatureLayerJ2D extends StatelessFeatureLayerJ2D{
 
         if(monitor.stopRequested()) return;
 
-        final FeatureCollection<SimpleFeature> features;
+        final FeatureCollection<? extends Feature> features;
         try{
-            features = ((FeatureCollection<SimpleFeature>)layer.getCollection()).subCollection(query);
+            features = layer.getCollection().subCollection(query);
         }catch(DataStoreException ex){
             context.getMonitor().exceptionOccured(ex, Level.WARNING);
             //can not continue this layer with this error
@@ -207,9 +207,9 @@ public class StatefullFeatureLayerJ2D extends StatelessFeatureLayerJ2D{
         }
 
 
-        final FeatureCollection<SimpleFeature> features;
+        final FeatureCollection<? extends Feature> features;
         try{
-            features = ((FeatureCollection<SimpleFeature>)layer.getCollection()).subCollection(query);
+            features = layer.getCollection().subCollection(query);
         }catch(DataStoreException ex){
             context.getMonitor().exceptionOccured(ex, Level.WARNING);
             //can not continue this layer with this error
@@ -224,13 +224,13 @@ public class StatefullFeatureLayerJ2D extends StatelessFeatureLayerJ2D{
         final StatefullCachedRule preparedRenderers = new StatefullCachedRule(rules, context);
 
         // read & paint in the same thread
-        final FeatureIterator<SimpleFeature> iterator = features.iterator();
+        final FeatureIterator<? extends Feature> iterator = features.iterator();
         try{
             while(iterator.hasNext()){
-                final SimpleFeature feature = iterator.next();
+                final Feature feature = iterator.next();
 
                 //search in the cache
-                final String id = feature.getID();
+                final String id = feature.getIdentifier().getID();
                 StatefullProjectedFeature projectedFeature = cache.get(id);
 
                 if(projectedFeature == null){
@@ -282,9 +282,9 @@ public class StatefullFeatureLayerJ2D extends StatelessFeatureLayerJ2D{
 
     private class StatefullGraphicIterator implements RenderingIterator{
 
-        private final FeatureIterator<SimpleFeature> ite;
+        private final FeatureIterator<? extends Feature> ite;
 
-        public StatefullGraphicIterator(FeatureIterator<SimpleFeature> ite) {
+        public StatefullGraphicIterator(FeatureIterator<? extends Feature> ite) {
             this.ite = ite;
         }
 
@@ -296,8 +296,8 @@ public class StatefullFeatureLayerJ2D extends StatelessFeatureLayerJ2D{
         @Override
         public ProjectedFeature next() {
             //search in the cache
-            final SimpleFeature feature = ite.next();
-            final String id = feature.getID();
+            final Feature feature = ite.next();
+            final String id = feature.getIdentifier().getID();
             StatefullProjectedFeature graphic = cache.get(id);
 
             if(graphic == null){

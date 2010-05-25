@@ -3,7 +3,7 @@
  *    http://www.geotoolkit.org
  *
  *    (C) 2004 - 2008, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2008 - 2009, Geomatys
+ *    (C) 2008 - 2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -20,16 +20,14 @@ package org.geotoolkit.display2d.primitive;
 import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.geom.Rectangle2D;
-import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
-import org.geotoolkit.storage.DataStoreException;
 
+import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.query.QueryBuilder;
-
 import org.geotoolkit.display.canvas.ReferencedCanvas2D;
 import org.geotoolkit.display.canvas.VisitFilter;
 import org.geotoolkit.display.canvas.RenderingContext;
@@ -45,8 +43,6 @@ import org.geotoolkit.util.logging.Logging;
 
 import org.opengis.display.primitive.Graphic;
 import org.opengis.feature.Feature;
-import org.opengis.feature.simple.SimpleFeature;
-import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.filter.Filter;
 import org.opengis.filter.identity.FeatureId;
 import org.opengis.geometry.Geometry;
@@ -78,19 +74,19 @@ public class DefaultGraphicFeatureJ2D extends AbstractGraphicJ2D implements Proj
     private Geometry objectiveGeometryISO = null;
     private Geometry displayGeometryISO = null;
 
-    private SimpleFeature feature = null;
+    private Feature feature = null;
     private Rectangle dispBounds = null;
     private boolean isObjectiveCalculated = false;
     private boolean isDisplayCalculated = false;
 
     
-    public DefaultGraphicFeatureJ2D(ReferencedCanvas2D canvas, FeatureMapLayer layer, SimpleFeature feature){
+    public DefaultGraphicFeatureJ2D(ReferencedCanvas2D canvas, FeatureMapLayer layer, Feature feature){
         super(canvas,feature.getType().getCoordinateReferenceSystem());
         this.layer = layer;
         initFeature(feature);
     }
     
-    public void initFeature(SimpleFeature feature){
+    public void initFeature(Feature feature){
         this.feature = feature;
         this.defaultGeom = GO2Utilities.getGeometry(feature, "");
         objectiveGeometry = null;
@@ -102,7 +98,7 @@ public class DefaultGraphicFeatureJ2D extends AbstractGraphicJ2D implements Proj
     }
 
     @Override
-    public SimpleFeature getFeature(){
+    public Feature getFeature(){
         try {
             return getCompleteFeature(getFeatureId());
         } catch (DataStoreException ex) {
@@ -221,12 +217,12 @@ public class DefaultGraphicFeatureJ2D extends AbstractGraphicJ2D implements Proj
         return dispBounds;
     }
 
-    private SimpleFeature getCompleteFeature(FeatureId id)throws DataStoreException{
+    private Feature getCompleteFeature(FeatureId id)throws DataStoreException{
 
         if(layer != null){
             Filter filter = FILTER_FACTORY.id(Collections.singleton(id));
 
-            SimpleFeature feature = null;
+            Feature feature = null;
 
             final FeatureCollection<? extends Feature> collection =
                     layer.getCollection().subCollection(
@@ -235,7 +231,7 @@ public class DefaultGraphicFeatureJ2D extends AbstractGraphicJ2D implements Proj
             if(!collection.isEmpty()){
                 final FeatureIterator<? extends Feature> ite = collection.iterator();
                 if(ite.hasNext()){
-                    feature = (SimpleFeature) ite.next();
+                    feature = ite.next();
                 }
                 ite.close();
             }

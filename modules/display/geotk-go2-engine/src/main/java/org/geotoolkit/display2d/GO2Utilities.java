@@ -988,7 +988,7 @@ public final class GO2Utilities {
         return validRules;
     }
 
-    public static List<Rule> getValidRules(final Style style, final double scale, SimpleFeatureType type) {
+    public static List<Rule> getValidRules(final Style style, final double scale, FeatureType type) {
         final List<Rule> validRules = new ArrayList<Rule>();
 
         final List<? extends FeatureTypeStyle> ftss = style.featureTypeStyles();
@@ -1056,7 +1056,7 @@ public final class GO2Utilities {
         return validRules;
     }
 
-    public static CachedRule[] getValidCachedRules(final Style style, final double scale, SimpleFeatureType type) {
+    public static CachedRule[] getValidCachedRules(final Style style, final double scale, FeatureType type) {
         final List<CachedRule> validRules = new ArrayList<CachedRule>();
 
         final List<? extends FeatureTypeStyle> ftss = style.featureTypeStyles();

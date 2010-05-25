@@ -251,7 +251,7 @@ public abstract class GenericRetypeFeatureIterator<F extends Feature, R extends 
         }
 
         final Boolean detached = (hints == null) ? null : (Boolean) hints.get(HintsPending.FEATURE_DETACHED);
-        if(detached == null || detached || !(mask instanceof SimpleFeatureType)){
+        if(detached == null || detached || !(reader.getFeatureType() instanceof SimpleFeatureType)){
             //default behavior, make separate features
             return new GenericSeparateRetypeFeatureReader(reader,mask);
         }else{

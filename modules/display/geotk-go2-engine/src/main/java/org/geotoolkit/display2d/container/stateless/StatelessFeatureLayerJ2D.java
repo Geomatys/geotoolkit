@@ -69,8 +69,6 @@ import org.geotoolkit.style.StyleUtilities;
 
 import org.opengis.display.primitive.Graphic;
 import org.opengis.feature.Feature;
-import org.opengis.feature.simple.SimpleFeature;
-import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.Name;
 import org.opengis.filter.Filter;
@@ -117,7 +115,7 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
             paintVectorLayer(builder, renderingContext);
         }
 
-        final SimpleFeatureType sft = (SimpleFeatureType) layer.getCollection().getFeatureType();
+        final FeatureType sft = layer.getCollection().getFeatureType();
         final CachedRule[] rules;
 
         final Style style;
@@ -205,9 +203,9 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
 
         if(monitor.stopRequested()) return;
         
-        final FeatureCollection<SimpleFeature> features;
+        final FeatureCollection<Feature> features;
         try{
-            features = ((FeatureCollection<SimpleFeature>)layer.getCollection()).subCollection(query);
+            features = ((FeatureCollection<Feature>)layer.getCollection()).subCollection(query);
         }catch(DataStoreException ex){
             context.getMonitor().exceptionOccured(ex, Level.WARNING);
             //can not continue this layer with this error
@@ -252,10 +250,10 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
   
     }
 
-    protected RenderingIterator getIterator(FeatureCollection<SimpleFeature> features, 
+    protected RenderingIterator getIterator(FeatureCollection<? extends Feature> features,
             RenderingContext2D renderingContext, StatefullContextParams params){
         final Hints iteHints = new Hints(HintsPending.FEATURE_DETACHED, Boolean.FALSE);
-        final FeatureIterator<SimpleFeature> iterator = features.iterator(iteHints);
+        final FeatureIterator<? extends Feature> iterator = features.iterator(iteHints);
         final StatefullProjectedFeature projectedFeature = new StatefullProjectedFeature(params);
         return new GraphicIterator(iterator, projectedFeature);
     }
@@ -268,7 +266,7 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
      * @param params 
      * @throws PortrayalException
      */
-    protected final void renderByFeatureOrder(FeatureCollection<SimpleFeature> features,
+    protected final void renderByFeatureOrder(FeatureCollection<? extends Feature> features,
             RenderingContext2D context, StatefullCachedRule renderers, StatefullContextParams params)
             throws PortrayalException{
         final CanvasMonitor monitor = context.getMonitor();
@@ -326,7 +324,7 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
     /**
      * render by symbol order.
      */
-    protected final void renderBySymbolOrder(FeatureCollection<SimpleFeature> features,
+    protected final void renderBySymbolOrder(FeatureCollection<? extends Feature> features,
             RenderingContext2D context, StatefullCachedRule renderers, StatefullContextParams params)
             throws PortrayalException {
         final CanvasMonitor monitor = context.getMonitor();
@@ -414,9 +412,9 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
 
         final Query query = prepareQuery(renderingContext, layer, rules);
 
-        final FeatureCollection<SimpleFeature> features;
+        final FeatureCollection<Feature> features;
         try{
-            features = ((FeatureCollection<SimpleFeature>)layer.getCollection()).subCollection(query);
+            features = ((FeatureCollection<Feature>)layer.getCollection()).subCollection(query);
         }catch(DataStoreException ex){
             renderingContext.getMonitor().exceptionOccured(ex, Level.WARNING);
             //can not continue this layer with this error
@@ -437,7 +435,7 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
 
 
         // iterate and find the first graphic that hit the given point
-        final FeatureIterator<SimpleFeature> iterator;
+        final FeatureIterator<Feature> iterator;
         try{
             iterator = features.iterator();
         }catch(DataStoreRuntimeException ex){
@@ -451,7 +449,7 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
         final StatefullProjectedFeature projectedFeature = new StatefullProjectedFeature(params);
         try{
             while(iterator.hasNext()){
-                SimpleFeature feature = iterator.next();
+                Feature feature = iterator.next();
                 projectedFeature.setFeature(feature);
 
                 boolean painted = false;
@@ -529,7 +527,7 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
 
     protected static Query prepareQuery(RenderingContext2D renderingContext, FeatureMapLayer layer, CachedRule[] rules){
 
-        final FeatureCollection<SimpleFeature> fs                = (FeatureCollection<SimpleFeature>) layer.getCollection();
+        final FeatureCollection<? extends Feature> fs            = layer.getCollection();
         final FeatureType schema                                 = fs.getFeatureType();
         final String geomAttName                                 = schema.getGeometryDescriptor().getLocalName();
         BoundingBox bbox                                         = renderingContext.getPaintingObjectiveBounds2D();
@@ -697,10 +695,10 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
 
     protected static class GraphicIterator implements RenderingIterator{
 
-        private final FeatureIterator<SimpleFeature> ite;
+        private final FeatureIterator<? extends Feature> ite;
         private final StatefullProjectedFeature projected;
 
-        public GraphicIterator(FeatureIterator<SimpleFeature> ite, StatefullProjectedFeature projected) {
+        public GraphicIterator(FeatureIterator<? extends Feature> ite, StatefullProjectedFeature projected) {
             this.ite = ite;
             this.projected = projected;
         }

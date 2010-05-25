@@ -18,7 +18,6 @@
 package org.geotoolkit.display2d.style.renderer;
 
 import java.awt.Image;
-import java.awt.RenderingHints;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
@@ -46,7 +45,6 @@ import org.geotoolkit.display2d.style.j2d.DefaultPathWalker;
 import org.geotoolkit.display2d.style.j2d.PathWalker;
 
 import org.opengis.feature.Feature;
-import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.geometry.Geometry;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.operation.TransformException;
@@ -197,7 +195,7 @@ public class DefaultPolygonSymbolizerRenderer extends AbstractSymbolizerRenderer
 
         final Shape mask = search.getDisplayShape();
 
-        final SimpleFeature feature = projectedFeature.getFeature();
+        final Feature feature = projectedFeature.getFeature();
 
         //test if the symbol is visible on this feature
         if(!symbol.isVisible(feature)) return false;

@@ -17,6 +17,8 @@
 
 package org.geotoolkit.data.osm.model;
 
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.GeometryFactory;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.ArrayList;
@@ -25,6 +27,7 @@ import java.util.Date;
 import java.util.Map;
 
 import org.geotoolkit.feature.DefaultProperty;
+import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry.JTSGeometryFactory;
 import org.geotoolkit.io.TableWriter;
 
 import org.opengis.feature.Property;
@@ -40,6 +43,8 @@ import org.opengis.feature.type.PropertyDescriptor;
  * @module pending
  */
 public class Node extends IdentifiedElement{
+
+    private static final GeometryFactory GF = new GeometryFactory();
 
     private final double lat;
     private final double lon;
@@ -76,6 +81,7 @@ public class Node extends IdentifiedElement{
         props.add(new DefaultProperty(changeset, getType().getDescriptor("changeset")));
         props.add(new DefaultProperty(user, getType().getDescriptor("user")));
         props.add(new DefaultProperty(timestamp, getType().getDescriptor("timestamp")));
+        props.add(new DefaultProperty(GF.createPoint(new Coordinate(lon, lat)), getType().getDescriptor("point")));
 
         final PropertyDescriptor tagDesc = getType().getDescriptor("tags");
         for(final Tag t : tags){

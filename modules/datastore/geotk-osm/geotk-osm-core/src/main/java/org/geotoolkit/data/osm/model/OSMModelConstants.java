@@ -17,8 +17,10 @@
 
 package org.geotoolkit.data.osm.model;
 
+import com.vividsolutions.jts.geom.Point;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.FeatureTypeBuilder;
+import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.ComplexType;
@@ -90,6 +92,8 @@ public final class OSMModelConstants {
         ftb.add(TYPE_USER,new DefaultName(OSM_NAMESPACE, "user"),null,1,1,false,null);
         ftb.add(new DefaultName(OSM_NAMESPACE, "timestamp"), Integer.class);
         ftb.add(TYPE_TAG,new DefaultName(OSM_NAMESPACE, "tags"),null,0,Integer.MAX_VALUE,true,null);
+        ftb.add(new DefaultName(OSM_NAMESPACE, "point"), Point.class, DefaultGeographicCRS.WGS84,1,1,false,null);
+        ftb.setDefaultGeometry("point");
         TYPE_NODE = ftb.buildFeatureType();
         
 
