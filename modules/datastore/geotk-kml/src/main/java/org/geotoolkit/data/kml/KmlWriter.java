@@ -20,6 +20,7 @@ import org.geotoolkit.data.model.kml.AbstractOverlay;
 import org.geotoolkit.data.model.kml.AbstractStyleSelector;
 import org.geotoolkit.data.model.kml.AbstractSubStyle;
 import org.geotoolkit.data.model.kml.AbstractView;
+import org.geotoolkit.data.model.kml.Alias;
 import org.geotoolkit.data.model.kml.AltitudeMode;
 import org.geotoolkit.data.model.kml.Angle180;
 import org.geotoolkit.data.model.kml.Angle360;
@@ -867,20 +868,71 @@ public class KmlWriter extends StaxStreamWriter {
         writer.writeEndElement();
     }
 
-    private void writeLocation(Location location){
-
+    private void writeLocation(Location location) throws XMLStreamException{
+        writer.writeStartElement(URI_KML, TAG_LOCATION);
+        this.writeCommonAbstractObject(location);
+        if (location.getLongitude() != null){
+            this.writeLongitude(location.getLongitude());
+        }
+        if (location.getLatitude() != null){
+            this.writeLatitude(location.getLatitude());
+        }
+        if (isFiniteNumber(location.getAltitude())){
+            this.writeAltitude(location.getAltitude());
+        }
+        writer.writeEndElement();
     }
 
-    private void writeOrientation(Orientation orientation){
-
+    private void writeOrientation(Orientation orientation) throws XMLStreamException{
+        writer.writeStartElement(URI_KML, TAG_ORIENTATION);
+        this.writeCommonAbstractObject(orientation);
+        if (orientation.getHeading() != null){
+            this.writeHeading(orientation.getHeading());
+        }
+        if (orientation.getTilt() != null){
+            this.writeTilt(orientation.getTilt());
+        }
+        if (orientation.getRoll() != null){
+            this.writeRoll(orientation.getRoll());
+        }
+        writer.writeEndElement();
     }
 
-    private void writeScale(Scale scale){
-
+    private void writeScale(Scale scale) throws XMLStreamException{
+        writer.writeStartElement(URI_KML, TAG_SCALE);
+        if (isFiniteNumber(scale.getX())){
+            this.writeX(scale.getX());
+        }
+        if (isFiniteNumber(scale.getY())){
+            this.writeY(scale.getY());
+        }
+        if (isFiniteNumber(scale.getZ())){
+            this.writeZ(scale.getZ());
+        }
+        writer.writeEndElement();
     }
 
-    private void writeResourceMap(ResourceMap resourceMap){
+    private void writeResourceMap(ResourceMap resourceMap) throws XMLStreamException{
+        writer.writeStartElement(URI_KML, TAG_RESOURCE_MAP);
+        this.writeCommonAbstractObject(resourceMap);
+        if (resourceMap.getAliases() != null){
+            for (Alias alias : resourceMap.getAliases()){
+                this.writeAlias(alias);
+            }
+        }
+        writer.writeEndElement();
+    }
 
+    private void writeAlias(Alias alias) throws XMLStreamException{
+        writer.writeStartElement(URI_KML, TAG_ALIAS);
+        this.writeCommonAbstractObject(alias);
+        if (alias.getTargetHref() != null){
+            this.writeTargetHref(alias.getTargetHref());
+        }
+        if (alias.getSourceHref() != null){
+            this.writeSourceHref(alias.getSourceHref());
+        }
+        writer.writeEndElement();
     }
 
     private void writePolygon(Polygon polygon) throws XMLStreamException{
@@ -1134,6 +1186,18 @@ public class KmlWriter extends StaxStreamWriter {
         writer.writeEndElement();
     }
 
+    private void writeTargetHref(String targetHref) throws XMLStreamException {
+        writer.writeStartElement(URI_KML, TAG_TARGET_HREF);
+        writer.writeCharacters(targetHref);
+        writer.writeEndElement();
+    }
+
+    private void writeSourceHref(String sourceHref) throws XMLStreamException {
+        writer.writeStartElement(URI_KML, TAG_SOURCE_HREF);
+        writer.writeCharacters(sourceHref);
+        writer.writeEndElement();
+    }
+
     private void writeColor(Color color) throws XMLStreamException{
         writer.writeStartElement(URI_KML, TAG_COLOR);
         writer.writeCharacters(color.getColor());
@@ -1224,6 +1288,24 @@ public class KmlWriter extends StaxStreamWriter {
         writer.writeEndElement();
     }
 
+    private void writeX(double x) throws XMLStreamException{
+        writer.writeStartElement(URI_KML, TAG_X);
+        writer.writeCharacters(Double.toString(x));
+        writer.writeEndElement();
+    }
+
+    private void writeY(double y) throws XMLStreamException{
+        writer.writeStartElement(URI_KML, TAG_Y);
+        writer.writeCharacters(Double.toString(y));
+        writer.writeEndElement();
+    }
+
+    private void writeZ(double z) throws XMLStreamException{
+        writer.writeStartElement(URI_KML, TAG_Z);
+        writer.writeCharacters(Double.toString(z));
+        writer.writeEndElement();
+    }
+
     private void writeRefreshInterval(double refreshInterval) throws XMLStreamException {
         writer.writeStartElement(URI_KML, TAG_REFRESH_INTERVAL);
         writer.writeCharacters(Double.toString(refreshInterval));
@@ -1299,6 +1381,12 @@ public class KmlWriter extends StaxStreamWriter {
     private void writeWest(Angle180 west) throws XMLStreamException{
         writer.writeStartElement(URI_KML, TAG_WEST);
         writer.writeCharacters(Double.toString(west.getAngle()));
+        writer.writeEndElement();
+    }
+
+    private void writeRoll(Angle180 roll) throws XMLStreamException{
+        writer.writeStartElement(URI_KML, TAG_ROLL);
+        writer.writeCharacters(Double.toString(roll.getAngle()));
         writer.writeEndElement();
     }
 
