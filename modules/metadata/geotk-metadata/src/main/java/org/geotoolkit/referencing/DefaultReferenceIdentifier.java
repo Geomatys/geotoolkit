@@ -105,6 +105,7 @@ public class DefaultReferenceIdentifier implements ReferenceIdentifier, Serializ
      *
      * @see #getVersion
      */
+    @XmlElement(namespace = Namespaces.GMD)
     private final String version;
 
     /**
