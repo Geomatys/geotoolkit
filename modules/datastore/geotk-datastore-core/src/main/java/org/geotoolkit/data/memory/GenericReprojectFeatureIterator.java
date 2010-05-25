@@ -21,6 +21,7 @@ package org.geotoolkit.data.memory;
 import com.vividsolutions.jts.geom.Geometry;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.logging.Level;
 
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.FeatureReader;
@@ -31,8 +32,10 @@ import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.feature.LenientFeatureFactory;
 import org.geotoolkit.feature.SchemaException;
 import org.geotoolkit.geometry.jts.GeometryCoordinateSequenceTransformer;
+import org.geotoolkit.geometry.jts.SRIDGenerator;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.util.converter.Classes;
+import org.geotoolkit.util.logging.Logging;
 
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureFactory;
@@ -41,6 +44,7 @@ import org.opengis.feature.Property;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.referencing.FactoryException;
+import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 
@@ -114,24 +118,34 @@ public abstract class GenericReprojectFeatureIterator<F extends Feature, R exten
             extends GenericReprojectFeatureIterator<F,R> implements FeatureReader<T,F>{
 
         private final FeatureType schema;
-        private final GeometryCoordinateSequenceTransformer transformer = new GeometryCoordinateSequenceTransformer();
+        private final CoordinateReferenceSystem targetCRS;
+        private final GeometryCoordinateSequenceTransformer transformer;
 
-        private GenericReprojectFeatureReader(R reader, CoordinateReferenceSystem crs) throws FactoryException, SchemaException{
+        private GenericReprojectFeatureReader(R reader, CoordinateReferenceSystem targetCRS) throws FactoryException, SchemaException{
             super(reader);
 
-            if (crs == null) {
+            if (targetCRS == null) {
                 throw new NullPointerException("CRS can not be null.");
             }
 
             final FeatureType type = reader.getFeatureType();
+            this.targetCRS = targetCRS;
             final CoordinateReferenceSystem original = type.getGeometryDescriptor().getCoordinateReferenceSystem();
 
-            if (crs.equals(original)) {
-                throw new IllegalArgumentException("CoordinateSystem " + crs + " already used (check before using wrapper)");
+            if (targetCRS.equals(original)) {
+                throw new IllegalArgumentException("CoordinateSystem " + targetCRS + " already used (check before using wrapper)");
             }
 
-            this.schema = FeatureTypeUtilities.transform(type, crs);
-            transformer.setMathTransform(CRS.findMathTransform(original, crs, true));
+            this.schema = FeatureTypeUtilities.transform(type, targetCRS);
+
+            if(original != null){
+                //the crs is defined on the feature type
+                transformer = new GeometryCoordinateSequenceTransformer();
+                transformer.setMathTransform(CRS.findMathTransform(original, targetCRS, true));
+            }else{
+                transformer = null;
+            }
+            
         }
 
 
@@ -144,11 +158,51 @@ public abstract class GenericReprojectFeatureIterator<F extends Feature, R exten
                 if(prop instanceof GeometryAttribute){
                     Object value = prop.getValue();
                     if(value != null){
-                        try {
-                            prop.setValue(transformer.transform((Geometry) value));
-                        } catch (TransformException e) {
-                            throw new DataStoreRuntimeException("A transformation exception occurred while reprojecting data on the fly", e);
+                        //create a new property with the projected type
+                        prop = FF.createGeometryAttribute(value, (GeometryDescriptor)
+                                schema.getDescriptor(prop.getDescriptor().getName()), null, null);
+
+                        if(transformer != null){
+                            //the transform applies to all feature
+                            try {
+                                prop.setValue(transformer.transform((Geometry) value));
+                            } catch (TransformException e) {
+                                throw new DataStoreRuntimeException("A transformation exception occurred while reprojecting data on the fly", e);
+                            }
+                        }else{
+                            //each feature has a different CRS.
+                            final CoordinateReferenceSystem original;
+                            if(value instanceof Geometry){
+                                final int srid = ((Geometry)value).getSRID();
+                                try {
+                                    original = CRS.decode(SRIDGenerator.toSRS(srid, SRIDGenerator.Version.V1));
+                                } catch (NoSuchAuthorityCodeException ex) {
+                                    throw new DataStoreRuntimeException("An exception occurred while reprojecting data on the fly", ex);
+                                } catch (FactoryException ex) {
+                                    throw new DataStoreRuntimeException("An exception occurred while reprojecting data on the fly", ex);
+                                }
+                            }else if(value instanceof org.opengis.geometry.Geometry){
+                                original = ((org.opengis.geometry.Geometry)value).getCoordinateReferenceSystem();
+                            }else{
+                                original = null;
+                            }
+
+                            if(original != null){
+                                try {
+                                    final GeometryCoordinateSequenceTransformer transformer = new GeometryCoordinateSequenceTransformer();
+                                    transformer.setMathTransform(CRS.findMathTransform(original, targetCRS, true));
+                                    Geometry geom = transformer.transform((Geometry) value);
+                                    geom.setSRID(SRIDGenerator.toSRID(targetCRS, SRIDGenerator.Version.V1));
+                                    prop.setValue(geom);
+                                } catch (Exception e) {
+                                    throw new DataStoreRuntimeException("An exception occurred while reprojecting data on the fly", e);
+                                }
+                            }else{
+                                Logging.getLogger(GenericReprojectFeatureIterator.class).log(
+                                        Level.WARNING, "A feature in type :"+getFeatureType().getName() +" has no crs.");
+                            }
                         }
+                        
                     }
                 }
                 properties.add(prop);
@@ -173,7 +227,7 @@ public abstract class GenericReprojectFeatureIterator<F extends Feature, R exten
     public static <T extends FeatureType, F extends Feature> FeatureReader<T, F> wrap(
             FeatureReader<T, F> reader, CoordinateReferenceSystem crs) throws FactoryException, SchemaException {
         final GeometryDescriptor desc = reader.getFeatureType().getGeometryDescriptor();
-        if (desc != null && desc.getCoordinateReferenceSystem() != null) {
+        if (desc != null) {
             return new GenericReprojectFeatureReader(reader, crs);
         } else {
             return reader;

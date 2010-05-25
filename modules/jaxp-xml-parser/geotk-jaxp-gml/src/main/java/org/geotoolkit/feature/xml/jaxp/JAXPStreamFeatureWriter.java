@@ -297,8 +297,6 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
     private void writeBounds(Envelope bounds, XMLStreamWriter streamWriter) throws XMLStreamException {
         if (bounds != null) {
 
-            System.out.println("BOUNDS : " + bounds +"   " + bounds.getCoordinateReferenceSystem());
-
             String srsName = null;
             if (bounds.getCoordinateReferenceSystem() != null) {
                 try {

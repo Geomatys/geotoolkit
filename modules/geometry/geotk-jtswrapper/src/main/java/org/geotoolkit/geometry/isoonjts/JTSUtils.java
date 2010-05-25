@@ -22,6 +22,8 @@ import com.vividsolutions.jts.geom.GeometryCollection;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.isoonjts.spatialschema.JTSPositionFactory;
@@ -35,6 +37,10 @@ import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry.JTSLineS
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry.JTSPolygon;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.JTSCurve;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.JTSPrimitiveFactory;
+import org.geotoolkit.geometry.jts.SRIDGenerator;
+import org.geotoolkit.referencing.CRS;
+import org.opengis.referencing.FactoryException;
+import org.opengis.referencing.NoSuchAuthorityCodeException;
 
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.cs.AxisDirection;
@@ -77,10 +83,25 @@ public final class JTSUtils {
      * Creates a 19107 primitive geometry from the given JTS geometry.
      */
     public static Geometry toISO(final com.vividsolutions.jts.geom.Geometry jtsGeom,
-            final CoordinateReferenceSystem crs) {
+            CoordinateReferenceSystem crs) {
 
         if (jtsGeom == null) {
             return null;
+        }
+
+        if(crs == null){
+            //try to extract the crs from the srid
+            final int srid = jtsGeom.getSRID();
+            if(srid != 0){
+                final String strCRS = SRIDGenerator.toSRS(srid, SRIDGenerator.Version.V1);
+                try {
+                    crs = CRS.decode(strCRS);
+                } catch (NoSuchAuthorityCodeException ex) {
+                    Logger.getLogger(JTSUtils.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (FactoryException ex) {
+                    Logger.getLogger(JTSUtils.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
         }
 
         //TODO use factory finder when primitive factory and geometry factory are ready.
