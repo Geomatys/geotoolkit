@@ -62,13 +62,31 @@ public class CatalogTestBase {
     }
 
     /**
+     * Returns the file which should contain the configuration parameters.
+     * This method does not test is the file exist.
+     */
+    private static File getConfigurationFile() {
+        return new File(Installation.TESTS.directory(true), "coverage-sql.properties");
+    }
+
+    /**
+     * Returns {@code true} if the connection parameters are found,
+     * in which case the test is presumed executable.
+     *
+     * @return {@code true} if the test is presumed executable.
+     */
+    protected static boolean canTest() {
+        return getConfigurationFile().isFile();
+    }
+
+    /**
      * Creates the database when first needed.
      *
      * @return The database.
      */
     protected static synchronized SpatialDatabase getDatabase() {
         if (database == null) try {
-            final File pf = new File(Installation.TESTS.directory(true), "coverage-sql.properties");
+            final File pf = getConfigurationFile();
             assumeTrue(pf.isFile()); // All tests will be skipped if the above resources is not found.
             final Properties properties = TestData.readProperties(pf);
             final PGSimpleDataSource ds = new PGSimpleDataSource();

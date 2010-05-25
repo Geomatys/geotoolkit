@@ -49,15 +49,23 @@ public final class WritableGridCoverageTableTest extends CatalogTestBase {
     private static final String TEMPORARY_LAYER = "Temporary";
 
     /**
+     * {@code true} if {@link #createTemporaryLayer()} has created a temporary layer.
+     */
+    private boolean layerCreated;
+
+    /**
      * Creates a new temporary layer in which to insert the new images.
      *
      * @throws SQLException If an error occured while creating the temporary layer.
      */
     @Before
     public void createTemporaryLayer() throws SQLException {
-        final LayerTable table = getDatabase().getTable(LayerTable.class);
-        assertTrue(table.createIfAbsent(TEMPORARY_LAYER));
-        table.release();
+        if (canTest()) {
+            final LayerTable table = getDatabase().getTable(LayerTable.class);
+            assertTrue(table.createIfAbsent(TEMPORARY_LAYER));
+            table.release();
+            layerCreated = true;
+        }
     }
 
     /**
@@ -67,9 +75,11 @@ public final class WritableGridCoverageTableTest extends CatalogTestBase {
      */
     @After
     public void deleteTemporaryLayer() throws SQLException {
-        final LayerTable table = getDatabase().getTable(LayerTable.class);
-        assertEquals(1, table.delete(TEMPORARY_LAYER));
-        table.release();
+        if (layerCreated) {
+            final LayerTable table = getDatabase().getTable(LayerTable.class);
+            assertEquals(1, table.delete(TEMPORARY_LAYER));
+            table.release();
+        }
     }
 
     /**
