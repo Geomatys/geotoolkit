@@ -59,6 +59,11 @@
             <artifactId>geotk-utility-pending</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.geotoolkit.pending</groupId>
+            <artifactId>geotk-jaxp-core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 
         <dependency>
             <groupId>org.geotoolkit.project</groupId>
@@ -75,12 +80,20 @@
         <dependency>
             <groupId>postgresql</groupId>
             <artifactId>postgresql</artifactId>
+            <version>8.4-701.jdbc4</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.derby</groupId>
             <artifactId>derby</artifactId>
+            <version>10.5.3.0_1</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <artifactId>wstx-asl</artifactId>
+            <groupId>org.codehaus.woodstox</groupId>
+            <type>jar</type>
+            <version>3.2.1</version>
         </dependency>
     </dependencies>
 
@@ -101,3 +114,4 @@
         </plugins>
     </build>
 </project>
+

@@ -1,0 +1,2 @@
+<?xml version='1.0' encoding='UTF-8'?><kml><Placemark xmlns="http://www.opengis.net/kml/2.2"><name>Simple placemark</name><visibility>1</visibility><open>0</open><description>Attached to the ground. Intelligently places itself
+       at the height of the underlying terrain.</description><Point><extrude>0</extrude><coordinates>-122.0822035425683,37.42228990140251,0.0</coordinates></Point></Placemark></kml>
