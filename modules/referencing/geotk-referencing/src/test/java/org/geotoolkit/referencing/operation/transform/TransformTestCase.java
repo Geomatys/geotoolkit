@@ -19,10 +19,12 @@ package org.geotoolkit.referencing.operation.transform;
 
 import java.util.Random;
 import java.io.PrintStream;
+import java.awt.geom.Point2D;
 import javax.measure.unit.Unit;
 
 import org.opengis.referencing.crs.CRSFactory;
 import org.opengis.referencing.datum.DatumFactory;
+import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform1D;
 import org.opengis.referencing.operation.MathTransform2D;
@@ -55,7 +57,7 @@ import org.opengis.test.Validators;
  * the convenience methods defined in GeoAPI and adds a few {@code asserts} statements.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.00
+ * @version 3.12
  *
  * @since 2.0
  */
@@ -369,6 +371,49 @@ public abstract class TransformTestCase extends org.opengis.test.referencing.Tra
                 assertEquals(name, e.getValue(), a.getValue());
             }
         }
+    }
+
+    /**
+     * Computes the derivative at the given point, and compares the matrix values with
+     * estimations computed from the four corners of a square around the given point.
+     * The transform is assumed two-dimensional.
+     *
+     * @param  point The point where to compute the derivative, in radians.
+     * @param  delta The distance between 2 points to use for computing derivatives, in
+     *         units of the source CRS. It should be a small value, for example 1 metre.
+     * @throws TransformException If the derivative can not be computed,
+     *         or a point can not be projected.
+     *
+     * @since 3.12
+     */
+    protected final void checkDerivative2D(final Point2D point, final double delta)
+            throws TransformException
+    {
+        final MathTransform2D transform = (MathTransform2D) this.transform;
+        final Matrix matrix = transform.derivative(point);
+        assertEquals(2, matrix.getNumRow());
+        assertEquals(2, matrix.getNumCol());
+
+        final double x = point.getX();
+        final double y = point.getY();
+        final Point2D.Double P1 = new Point2D.Double();
+        final Point2D.Double P2 = new Point2D.Double();
+
+        // First, test the horizontal component of the derivative.
+        P1.x = x - delta/2; P1.y = y;
+        P2.x = x + delta/2; P2.y = y;
+        assertSame(P1, transform.transform(P1, P1));
+        assertSame(P2, transform.transform(P2, P2));
+        assertEquals("scaleX", (P2.x - P1.x) / delta, matrix.getElement(0, 0), tolerance);
+        assertEquals("shearY", (P2.y - P1.y) / delta, matrix.getElement(1, 0), tolerance);
+
+        // Next, test the vertical component of the derivative.
+        P1.x = x; P1.y = y - delta/2;
+        P2.x = x; P2.y = y + delta/2;
+        assertSame(P1, transform.transform(P1, P1));
+        assertSame(P2, transform.transform(P2, P2));
+        assertEquals("shearX", (P2.x - P1.x) / delta, matrix.getElement(0, 1), tolerance);
+        assertEquals("scaleY", (P2.y - P1.y) / delta, matrix.getElement(1, 1), tolerance);
     }
 
     /**

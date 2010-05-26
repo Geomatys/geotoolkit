@@ -17,6 +17,8 @@
  */
 package org.geotoolkit.referencing.operation.projection;
 
+import java.awt.geom.Point2D;
+
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.operation.TransformException;
@@ -35,7 +37,8 @@ import static org.geotoolkit.referencing.operation.projection.UnitaryProjectionT
  * Tests the {@link Mercator} class.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.03
+ * @author Simon Reynard (Geomatys)
+ * @version 3.12
  *
  * @since 3.00
  */
@@ -158,6 +161,25 @@ public final class MercatorTest extends ProjectionTestCase {
     }
 
     /**
+     * Creates a projection and derivates a few points.
+     *
+     * @throws TransformException Should never happen.
+     */
+    @Test
+    public void testDerivative() throws TransformException {
+        tolerance = 1E-9;
+        transform = create(false);
+        assertTrue(isSpherical());
+        validate();
+
+        final double delta = toRadians(1.0 / 60) / 1852; // Approximatively one metre.
+        final Point2D.Double point = new Point2D.Double();
+        checkDerivative2D(point, delta);
+        point.x = toRadians(15); point.y = toRadians( 30); checkDerivative2D(point, delta);
+        point.x = toRadians(10); point.y = toRadians(-60); checkDerivative2D(point, delta);
+    }
+
+    /**
      * Tests the estimation of error. We expect an error close to zero everywhere,
      * even at poles.
      *
@@ -214,6 +236,16 @@ public final class MercatorTest extends ProjectionTestCase {
         tolerance = 2000;
         assertTrue(isSpherical());
         verifyTransform(point, expected);
+        /*
+         * Checks the derivative. Note that at the difference of testDerivative(),
+         * the units are now degrees instead than radians.
+         */
+        tolerance = 1E-3; // Scale magnitude will be about 110861.
+        final double delta = (1.0 / 60) / 1852; // Approximatively one metre.
+        final Point2D.Double pt = new Point2D.Double();
+        checkDerivative2D(pt, delta);
+        pt.x = 15; pt.y =  30; checkDerivative2D(pt, delta);
+        pt.x = 10; pt.y = -60; checkDerivative2D(pt, delta);
     }
 
     /**
@@ -247,6 +279,16 @@ public final class MercatorTest extends ProjectionTestCase {
         tolerance = 12000;
         assertTrue(isSpherical());
         verifyTransform(point, expected);
+        /*
+         * Checks the derivative. Note that at the difference of testDerivative(),
+         * the units are now degrees instead than radians.
+         */
+        tolerance = 1E-3; // Scale magnitude will be about 82634.
+        final double delta = (1.0 / 60) / 1852; // Approximatively one metre.
+        final Point2D.Double pt = new Point2D.Double();
+        checkDerivative2D(pt, delta);
+        pt.x = 15; pt.y =  30; checkDerivative2D(pt, delta);
+        pt.x = 10; pt.y = -60; checkDerivative2D(pt, delta);
     }
 
     /**

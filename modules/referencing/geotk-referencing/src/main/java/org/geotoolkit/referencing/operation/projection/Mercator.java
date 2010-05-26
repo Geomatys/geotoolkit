@@ -21,21 +21,24 @@
  */
 package org.geotoolkit.referencing.operation.projection;
 
-import static java.lang.Math.*;
-import static java.lang.Double.*;
+import java.awt.geom.Point2D;
 import java.awt.geom.AffineTransform;
 
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptorGroup;
+import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.TransformException;
 
 import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.internal.referencing.Identifiers;
+import org.geotoolkit.referencing.operation.matrix.Matrix2;
 import org.geotoolkit.referencing.operation.provider.Mercator1SP;
 import org.geotoolkit.referencing.operation.provider.Mercator2SP;
 import org.geotoolkit.referencing.operation.provider.PseudoMercator;
 
+import static java.lang.Math.*;
+import static java.lang.Double.*;
 import static org.geotoolkit.referencing.operation.projection.UnitaryProjection.Parameters.ensureLatitudeInRange;
 
 
@@ -81,7 +84,8 @@ import static org.geotoolkit.referencing.operation.projection.UnitaryProjection.
  * @author André Gosselin (MPO)
  * @author Martin Desruisseaux (MPO, IRD, Geomatys)
  * @author Rueben Schulz (UBC)
- * @version 3.03
+ * @author Simon Reynard (Geomatys)
+ * @version 3.12
  *
  * @see TransverseMercator
  * @see ObliqueMercator
@@ -411,6 +415,21 @@ public class Mercator extends UnitaryProjection {
             super.inverseTransform(srcPts, srcOff, dstPts, dstOff);
             return Assertions.checkInverseTransform(dstPts, dstOff, lambda, phi);
         }
+    }
+
+    /**
+     * Gets the derivative of this transform at a point.
+     * The current implementation uses the spherical formulas.
+     *
+     * @param  point The coordinate point where to evaluate the derivative.
+     * @return The derivative at the specified point as a 2&times;2 matrix.
+     * @throws ProjectionException if the derivative can't be evaluated at the specified point.
+     *
+     * @since 3.12
+     */
+    @Override
+    public Matrix derivative(final Point2D point) throws ProjectionException {
+        return new Matrix2(1, 0, 0, 1/cos(point.getY()));
     }
 
     /**
