@@ -20,6 +20,7 @@ package org.geotoolkit.lucene.index;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.CoordinateSequence;
 import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.GeometryCollection;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.Polygon;
@@ -256,9 +257,43 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
         return WKBUtils.toWKBwithSRID(polygon);
     }
 
+    protected Polygon getPolygon(double minx, double maxx, double miny, double maxy, int srid){
+        final Coordinate[] crds = new Coordinate[]{
+        new Coordinate(0, 0),
+        new Coordinate(0, 0),
+        new Coordinate(0, 0),
+        new Coordinate(0, 0),
+        new Coordinate(0, 0)};
+
+        final CoordinateSequence pts = new CoordinateArraySequence(crds);
+        final LinearRing rg          = new LinearRing(pts, GF);
+        final Polygon poly           = new Polygon(rg, new LinearRing[0],GF);
+        crds[0].x = minx;
+        crds[0].y = miny;
+        crds[1].x = minx;
+        crds[1].y = maxy;
+        crds[2].x = maxx;
+        crds[2].y = maxy;
+        crds[3].x = maxx;
+        crds[3].y = miny;
+        crds[4].x = minx;
+        crds[4].y = miny;
+        poly.setSRID(srid);
+        return poly;
+    }
+
 
     protected void addBoundingBox(Document doc, double minx, double maxx, double miny, double maxy, int srid) {
         addGeometry(doc, toBytes(minx, maxx, miny, maxy,srid));
+    }
+
+    protected void addMultipleBoundingBox(Document doc, List<Double> minx, List<Double> maxx, List<Double> miny, List<Double> maxy, int srid) {
+        Polygon[] polygons = new Polygon[minx.size()];
+        for (int i = 0; i < minx.size(); i++) {
+            polygons[i] = getPolygon(minx.get(i), maxx.get(i), miny.get(i), maxy.get(i),srid);
+        }
+        GeometryCollection geom = GF.createGeometryCollection(polygons);
+        addGeometry(doc, geom);
     }
 
     public static void addGeometry(Document doc, Geometry geom) {
