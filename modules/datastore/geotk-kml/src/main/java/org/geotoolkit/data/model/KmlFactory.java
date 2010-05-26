@@ -3,6 +3,7 @@ package org.geotoolkit.data.model;
 import java.util.List;
 import org.geotoolkit.data.model.atom.AtomPersonConstruct;
 import org.geotoolkit.data.model.atom.AtomLink;
+import org.geotoolkit.data.model.kml.AbstractContainer;
 import org.geotoolkit.data.model.kml.AbstractFeature;
 import org.geotoolkit.data.model.kml.AbstractGeometry;
 import org.geotoolkit.data.model.kml.AbstractObject;
@@ -19,11 +20,14 @@ import org.geotoolkit.data.model.kml.BalloonStyle;
 import org.geotoolkit.data.model.kml.BasicLink;
 import org.geotoolkit.data.model.kml.Boundary;
 import org.geotoolkit.data.model.kml.Camera;
+import org.geotoolkit.data.model.kml.Change;
 import org.geotoolkit.data.model.kml.Color;
 import org.geotoolkit.data.model.kml.ColorMode;
 import org.geotoolkit.data.model.kml.Coordinate;
 import org.geotoolkit.data.model.kml.Coordinates;
+import org.geotoolkit.data.model.kml.Create;
 import org.geotoolkit.data.model.kml.Data;
+import org.geotoolkit.data.model.kml.Delete;
 import org.geotoolkit.data.model.kml.DisplayMode;
 import org.geotoolkit.data.model.kml.Document;
 import org.geotoolkit.data.model.kml.ExtendedData;
@@ -68,12 +72,14 @@ import org.geotoolkit.data.model.kml.ScreenOverlay;
 import org.geotoolkit.data.model.kml.Shape;
 import org.geotoolkit.data.model.kml.SimpleData;
 import org.geotoolkit.data.model.kml.SimpleField;
+import org.geotoolkit.data.model.kml.Snippet;
 import org.geotoolkit.data.model.kml.Style;
 import org.geotoolkit.data.model.kml.StyleMap;
 import org.geotoolkit.data.model.kml.StyleState;
 import org.geotoolkit.data.model.kml.TimeSpan;
 import org.geotoolkit.data.model.kml.TimeStamp;
 import org.geotoolkit.data.model.kml.Units;
+import org.geotoolkit.data.model.kml.Update;
 import org.geotoolkit.data.model.kml.Vec2;
 import org.geotoolkit.data.model.kml.ViewRefreshMode;
 import org.geotoolkit.data.model.kml.ViewVolume;
@@ -122,6 +128,8 @@ public interface KmlFactory {
             Angle360 heading, Anglepos180 tilt, Angle180 roll,
             List<SimpleType> cameraSimpleExtensions, List<AbstractObject> cameraObjectExtensions);
 
+    public Change createChange(List<AbstractObject> objects);
+
     public Color createColor(String color) throws KmlException;
 
     public Coordinate createCoordinate(String listCoordinates);
@@ -130,8 +138,12 @@ public interface KmlFactory {
 
     public Coordinates createCoordinates(List<Coordinate> coordinates);
 
+    public Create createCreate(List<AbstractContainer> containers);
+
     public Data createData(List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
             String displayName, String value, List<Object> dataExtensions);
+
+    public Delete createDelete(List<AbstractFeature> features);
 
     public Document createDocument(List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
             String name, boolean visibility, boolean open, AtomPersonConstruct author, AtomLink link,
@@ -276,6 +288,11 @@ public interface KmlFactory {
             List<SimpleType> multiGeometrySimpleExtensions,
             List<AbstractObject> multiGeometryObjectExtensions);
 
+    public NetworkLinkControl createNetworkLinkControl(double minRefreshPeriod,
+            double maxSessionLength, String cookie, String message, String linkName, String linkDescription,
+            Snippet linkSnippet, String expire, Update update, AbstractView view,
+            List<SimpleType> networkLinkControlSimpleExtensions, List<AbstractObject> networkLinkControlObjectExtensions);
+
     public Orientation createOrientation(List<SimpleType> objectSimpleExtensions,
             IdAttributes idAttributes,
             Angle360 heading, Anglepos180 tilt, Angle180 roll,
@@ -381,6 +398,8 @@ public interface KmlFactory {
 
     public SimpleField createSimpleField(String displayName, String type, String name);
 
+    public Snippet createSnippet(int maxLines, String content);
+
     public Style createStyle(List<SimpleType> objectSimpleExtensions,
             IdAttributes idAttributes,
             List<SimpleType> abstractStyleSelectorSimpleExtensions,
@@ -401,6 +420,10 @@ public interface KmlFactory {
     public TimeStamp createTimeStamp(List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
             List<SimpleType> abstractTimePrimitiveSimpleExtensions, List<AbstractObject> abstractTimePrimitiveObjectExtensions,
             String when, List<SimpleType> timeStampSimpleExtensions, List<AbstractObject> timeStampObjectExtensions);
+
+    public Update createUpdate(List<Create> creates,
+            List<Delete> deletes, List<Change> changes,
+            List<Object> updateOpExtensions, List<Object> updateExtensions);
 
     public Vec2 createVec2(double x, double y, Units xUnit, Units yUnit);
 }

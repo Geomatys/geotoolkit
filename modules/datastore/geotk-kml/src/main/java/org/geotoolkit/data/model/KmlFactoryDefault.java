@@ -7,6 +7,7 @@ import org.geotoolkit.data.model.atom.AtomLink;
 import org.geotoolkit.data.model.atom.AtomLinkDefault;
 import org.geotoolkit.data.model.atom.AtomPersonConstruct;
 import org.geotoolkit.data.model.atom.AtomPersonConstructDefault;
+import org.geotoolkit.data.model.kml.AbstractContainer;
 import org.geotoolkit.data.model.kml.AbstractFeature;
 import org.geotoolkit.data.model.kml.AbstractGeometry;
 import org.geotoolkit.data.model.kml.AbstractObject;
@@ -32,6 +33,8 @@ import org.geotoolkit.data.model.kml.Boundary;
 import org.geotoolkit.data.model.kml.BoundaryDefault;
 import org.geotoolkit.data.model.kml.Camera;
 import org.geotoolkit.data.model.kml.CameraDefault;
+import org.geotoolkit.data.model.kml.Change;
+import org.geotoolkit.data.model.kml.ChangeDefault;
 import org.geotoolkit.data.model.kml.Color;
 import org.geotoolkit.data.model.kml.ColorDefault;
 import org.geotoolkit.data.model.kml.ColorMode;
@@ -39,8 +42,12 @@ import org.geotoolkit.data.model.kml.Coordinate;
 import org.geotoolkit.data.model.kml.CoordinateDefault;
 import org.geotoolkit.data.model.kml.Coordinates;
 import org.geotoolkit.data.model.kml.CoordinatesDefault;
+import org.geotoolkit.data.model.kml.Create;
+import org.geotoolkit.data.model.kml.CreateDefault;
 import org.geotoolkit.data.model.kml.Data;
 import org.geotoolkit.data.model.kml.DataDefault;
+import org.geotoolkit.data.model.kml.Delete;
+import org.geotoolkit.data.model.kml.DeleteDefault;
 import org.geotoolkit.data.model.kml.DisplayMode;
 import org.geotoolkit.data.model.kml.Document;
 import org.geotoolkit.data.model.kml.DocumentDefault;
@@ -89,6 +96,7 @@ import org.geotoolkit.data.model.kml.ModelDefault;
 import org.geotoolkit.data.model.kml.MultiGeometry;
 import org.geotoolkit.data.model.kml.MultiGeometryDefault;
 import org.geotoolkit.data.model.kml.NetworkLinkControl;
+import org.geotoolkit.data.model.kml.NetworkLinkControlDefault;
 import org.geotoolkit.data.model.kml.Orientation;
 import org.geotoolkit.data.model.kml.OrientationDefault;
 import org.geotoolkit.data.model.kml.Pair;
@@ -121,6 +129,8 @@ import org.geotoolkit.data.model.kml.SimpleData;
 import org.geotoolkit.data.model.kml.SimpleDataDefault;
 import org.geotoolkit.data.model.kml.SimpleField;
 import org.geotoolkit.data.model.kml.SimpleFieldDefault;
+import org.geotoolkit.data.model.kml.Snippet;
+import org.geotoolkit.data.model.kml.SnippetDefault;
 import org.geotoolkit.data.model.kml.Style;
 import org.geotoolkit.data.model.kml.StyleDefault;
 import org.geotoolkit.data.model.kml.StyleMap;
@@ -131,6 +141,8 @@ import org.geotoolkit.data.model.kml.TimeSpanDefault;
 import org.geotoolkit.data.model.kml.TimeStamp;
 import org.geotoolkit.data.model.kml.TimeStampDefault;
 import org.geotoolkit.data.model.kml.Units;
+import org.geotoolkit.data.model.kml.Update;
+import org.geotoolkit.data.model.kml.UpdateDefault;
 import org.geotoolkit.data.model.kml.Vec2;
 import org.geotoolkit.data.model.kml.Vec2Default;
 import org.geotoolkit.data.model.kml.ViewRefreshMode;
@@ -228,6 +240,11 @@ public class KmlFactoryDefault implements KmlFactory{
     }
 
     @Override
+    public Change createChange(List<AbstractObject> objects){
+        return new ChangeDefault(objects);
+    }
+
+    @Override
     public Color createColor(String color) throws KmlException{
         return new ColorDefault(color);
     }
@@ -253,10 +270,20 @@ public class KmlFactoryDefault implements KmlFactory{
     }
 
     @Override
+    public Create createCreate(List<AbstractContainer> containers){
+        return new CreateDefault(containers);
+    }
+
+    @Override
     public Data createData(List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
             String displayName, String value, List<Object> dataExtensions){
         return new DataDefault(objectSimpleExtensions, idAttributes,
                 displayName, value, dataExtensions);
+    }
+
+    @Override
+    public Delete createDelete(List<AbstractFeature> features){
+        return new DeleteDefault(features);
     }
 
     @Override
@@ -524,6 +551,17 @@ public class KmlFactoryDefault implements KmlFactory{
     }
 
     @Override
+    public NetworkLinkControl createNetworkLinkControl(double minRefreshPeriod,
+            double maxSessionLength, String cookie, String message, String linkName, String linkDescription,
+            Snippet linkSnippet, String expire, Update update, AbstractView view,
+            List<SimpleType> networkLinkControlSimpleExtensions, List<AbstractObject> networkLinkControlObjectExtensions){
+        return new NetworkLinkControlDefault(minRefreshPeriod, maxSessionLength,
+                cookie, message, linkName, linkDescription, linkSnippet,
+                expire, update, view,
+                networkLinkControlSimpleExtensions, networkLinkControlObjectExtensions);
+    }
+
+    @Override
     public Orientation createOrientation(List<SimpleType> objectSimpleExtensions,
             IdAttributes idAttributes,
             Angle360 heading, Anglepos180 tilt, Angle180 roll,
@@ -712,6 +750,11 @@ public class KmlFactoryDefault implements KmlFactory{
     }
 
     @Override
+    public Snippet createSnippet(int maxLines, String content){
+        return new SnippetDefault(maxLines, content);
+    }
+
+    @Override
     public Style createStyle(List<SimpleType> objectSimpleExtensions,
             IdAttributes idAttributes,
             List<SimpleType> abstractStyleSelectorSimpleExtensions,
@@ -751,6 +794,13 @@ public class KmlFactoryDefault implements KmlFactory{
         return new TimeStampDefault(objectSimpleExtensions, idAttributes,
                 abstractTimePrimitiveSimpleExtensions, abstractTimePrimitiveObjectExtensions,
                 when, timeStampSimpleExtensions, timeStampObjectExtensions);
+    }
+
+    @Override
+    public Update createUpdate(List<Create> creates,
+            List<Delete> deletes, List<Change> changes,
+            List<Object> updateOpExtensions, List<Object> updateExtensions){
+        return new UpdateDefault(creates, deletes, changes, updateOpExtensions, updateExtensions);
     }
 
     @Override
