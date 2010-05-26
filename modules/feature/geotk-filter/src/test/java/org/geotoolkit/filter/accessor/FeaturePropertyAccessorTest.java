@@ -57,9 +57,9 @@ public class FeaturePropertyAccessorTest {
         assertEquals(att, FEATURE_1.getAttribute("testString"));
 
         //test a geometry name with accents-------------------------------------
-        accessor = Accessors.getAccessor(Feature.class, "sf:attribut.Géométrie", null);
+        accessor = Accessors.getAccessor(Feature.class, "attribut.Géométrie", null);
         assertNotNull(accessor);
-        att = accessor.get(FEATURE_1, "sf:attribut.Géométrie", null);
+        att = accessor.get(FEATURE_1, "attribut.Géométrie", null);
         assertEquals(att, "POINT(45,32)");
         assertEquals(att, FEATURE_1.getAttribute("attribut.Géométrie"));
 

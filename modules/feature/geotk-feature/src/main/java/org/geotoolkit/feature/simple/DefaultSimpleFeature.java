@@ -139,9 +139,23 @@ public final class DefaultSimpleFeature extends AbstractSimpleFeature {
         return id;
     }
 
+    public void setIdentifier(FeatureId fid){
+        this.id = fid;
+        this.strID = fid.getID();
+    }
+
     public void setId(String id){
         this.strID = id;
         this.id = null;
+    }
+
+    @Override
+    public String getID() {
+        if(strID != null){
+            return strID;
+        }else{
+            return id.getID();
+        }
     }
 
     /**

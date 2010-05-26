@@ -18,9 +18,11 @@ package org.geotoolkit.feature.type;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -61,35 +63,41 @@ public class DefaultComplexType extends DefaultAttributeType<AttributeType> impl
     protected final List<PropertyDescriptor> descriptorsList;
 
     /**
-     * Map to locate properties by name.
+     * Map to locate properties by name or string.
      */
-    private final Map<Name, PropertyDescriptor> propertyMap;
+    private final Map<Object, PropertyDescriptor> propertyMap;
 
     public DefaultComplexType(final Name name, final Collection<PropertyDescriptor> properties,
             final boolean identified, final boolean isAbstract, final List<Filter> restrictions,
             final AttributeType superType, final InternationalString description){
         super(name, Collection.class, identified, isAbstract, restrictions, superType, description);
 
-        final Map<Name, PropertyDescriptor> localPropertyMap;
 
         if (properties == null) {
             this.descriptors = new PropertyDescriptor[0];
-            localPropertyMap = Collections.emptyMap();
+            this.propertyMap = Collections.emptyMap();
         } else {
             this.descriptors = properties.toArray(new PropertyDescriptor[properties.size()]);
 
-            localPropertyMap = new HashMap<Name, PropertyDescriptor>();
-            for (PropertyDescriptor pd : properties) {
+            //preserve order, in cas that several property has the same localpart
+            //the first one must be returned by getDescriptor(String name)
+            this.propertyMap = new HashMap<Object, PropertyDescriptor>();
+            final PropertyDescriptor[] array = properties.toArray(new PropertyDescriptor[properties.size()]);
+            for(int i=array.length-1 ;i>=0;i--){
+                PropertyDescriptor pd = array[i];
                 if (pd == null) {
                     // descriptor entry may be null if a request was made for a property that does not exist
                     throw new NullPointerException("PropertyDescriptor is null - did you request a property that does not exist?");
                 }
-                localPropertyMap.put(pd.getName(), pd);
+                final Name pn = pd.getName();
+                this.propertyMap.put(pn, pd);
+                this.propertyMap.put(pn.getLocalPart(), pd);
+                this.propertyMap.put(DefaultName.toExtendedForm(pn), pd);
+                this.propertyMap.put(DefaultName.toJCRExtendedForm(pn), pd);
             }
 
         }
         this.descriptorsList = UnmodifiableArrayList.wrap(this.descriptors);
-        this.propertyMap = Collections.unmodifiableMap(localPropertyMap);
     }
 
     /**
@@ -126,12 +134,7 @@ public class DefaultComplexType extends DefaultAttributeType<AttributeType> impl
     @Override
     public PropertyDescriptor getDescriptor(final String name) {
         // this method should be deprecated
-        for (Name propertyName: propertyMap.keySet()) {
-            if (propertyName.getLocalPart().equals(name)) {
-                return propertyMap.get(propertyName);
-            }
-        }
-        return null;
+        return propertyMap.get(name);
     }
 
     /**

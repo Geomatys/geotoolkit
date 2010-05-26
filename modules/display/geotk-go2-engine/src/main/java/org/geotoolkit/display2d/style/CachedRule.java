@@ -18,6 +18,7 @@
 package org.geotoolkit.display2d.style;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.geotoolkit.filter.visitor.ListingPropertyVisitor;
@@ -42,13 +43,24 @@ public class CachedRule extends Cache<Rule>{
     public CachedRule(Rule source){
         super(source);
 
-        List<CachedSymbolizer> cacheds = new ArrayList<CachedSymbolizer>();
-
-        for(Symbolizer symbol : source.symbolizers()){
-            cacheds.add(GO2Utilities.getCached(symbol));
+        final List<? extends Symbolizer> ruleSymbols = source.symbolizers();
+        final CachedSymbolizer[] array = new CachedSymbolizer[ruleSymbols.size()];
+        int i=0;
+        for(Symbolizer symbol : ruleSymbols){
+            final CachedSymbolizer cs = GO2Utilities.getCached(symbol);
+            if(cs != null){
+                array[i] = cs;
+                i++;
+            }
         }
 
-        symbols = cacheds.toArray(new CachedSymbolizer[cacheds.size()]);
+        if(i == array.length){
+            //we found a cached symbol for each symbol
+            this.symbols = array;
+        }else{
+            //we could not find a cache for each symbol, we must resize our array.
+            this.symbols = Arrays.copyOf(array, i);
+        }
     }
 
     /**

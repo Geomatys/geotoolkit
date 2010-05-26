@@ -97,8 +97,12 @@ public class DefaultAttribute<V extends Object, D extends AttributeDescriptor, I
      */
     @Override
     public void setValue(Object newValue) throws IllegalArgumentException, IllegalStateException {
-        newValue = checkType(newValue);
         super.setValue(newValue);
+
+        //todo, do we perform a validation here ? seems to cost time when reusing features
+        //this should be leaved to the user concern, by calling validate on the feature is necessary
+        //newValue = checkType(newValue);
+        //super.setValue(newValue);
     }
 
     /**

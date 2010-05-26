@@ -65,7 +65,25 @@ public class JTSGeometryJ2D implements Shape, Cloneable {
      */
     public void setGeometry(Geometry g) {
         this.geometry = g;
-        this.iterator = null;
+
+        //change iterator only if necessary
+        if(iterator != null && geometry != null){
+            if (this.geometry.isEmpty() && iterator instanceof JTSEmptyIterator) {
+                //nothing to do
+            }else if (this.geometry instanceof Point && iterator instanceof JTSPointIterator) {
+                ((JTSPointIterator)iterator).setGeometry((Point)geometry);
+            } else if (this.geometry instanceof Polygon && iterator instanceof JTSPolygonIterator) {
+                ((JTSPolygonIterator)iterator).setGeometry((Polygon)geometry);
+            } else if (this.geometry instanceof LineString && iterator instanceof JTSLineIterator) {
+                ((JTSLineIterator)iterator).setGeometry((LineString)geometry);
+            } else if (this.geometry instanceof GeometryCollection && iterator instanceof JTSGeomCollectionIterator) {
+                ((JTSGeomCollectionIterator)iterator).setGeometry((GeometryCollection)geometry);
+            }else{
+                //iterator does not match the new geometry type
+                iterator = null;
+            }
+        }
+
     }
 
     /**
@@ -147,7 +165,7 @@ public class JTSGeometryJ2D implements Shape, Cloneable {
 
         if(iterator == null){
             if (this.geometry.isEmpty()) {
-                iterator = new JTSEmptyIterator();
+                iterator = JTSEmptyIterator.INSTANCE;
             }else if (this.geometry instanceof Point) {
                 iterator = new JTSPointIterator((Point) geometry, at);
             } else if (this.geometry instanceof Polygon) {

@@ -33,7 +33,7 @@ import java.awt.geom.AffineTransform;
 public final  class JTSPolygonIterator extends JTSGeometryIterator<Polygon> {
 
     /** The rings describing the polygon geometry */
-    private final LineString[] rings;
+    private LineString[] rings;
 
     /** The current ring during iteration */
     private int currentRing = 0;
@@ -55,14 +55,21 @@ public final  class JTSPolygonIterator extends JTSGeometryIterator<Polygon> {
      */
     public JTSPolygonIterator(Polygon p, AffineTransform trs) {
         super(p,trs);
-        int numInteriorRings = p.getNumInteriorRing();
-        rings = new LineString[numInteriorRings + 1];
-        rings[0] = p.getExteriorRing();
+        setGeometry(p);
+    }
 
-        for (int i = 0; i < numInteriorRings; i++) {
-            rings[i + 1] = p.getInteriorRingN(i);
+    @Override
+    public void setGeometry(Polygon geom) {
+        this.geometry = geom;
+        if(geom != null){
+            int numInteriorRings = geom.getNumInteriorRing();
+            rings = new LineString[numInteriorRings + 1];
+            rings[0] = geom.getExteriorRing();
+
+            for (int i = 0; i < numInteriorRings; i++) {
+                rings[i + 1] = geom.getInteriorRingN(i);
+            }
         }
-
         reset();
     }
 

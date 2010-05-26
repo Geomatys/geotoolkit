@@ -28,7 +28,9 @@ import com.vividsolutions.jts.geom.Geometry;
  */
 public class JTSEmptyIterator extends JTSGeometryIterator<Geometry> {
 
-    public JTSEmptyIterator() {
+    public static final JTSEmptyIterator INSTANCE = new JTSEmptyIterator();
+
+    private JTSEmptyIterator() {
         super(null,null);
     }
 

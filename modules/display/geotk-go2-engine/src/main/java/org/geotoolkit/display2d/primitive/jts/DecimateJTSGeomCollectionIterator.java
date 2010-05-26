@@ -17,7 +17,6 @@
  */
 package org.geotoolkit.display2d.primitive.jts;
 
-import java.awt.geom.PathIterator;
 import java.awt.geom.AffineTransform;
 
 import com.vividsolutions.jts.geom.Geometry;
@@ -51,22 +50,21 @@ public final class DecimateJTSGeomCollectionIterator extends JTSGeomCollectionIt
      * @return the specific iterator for the geometry passed.
      */
     @Override
-    protected JTSGeometryIterator getIterator(Geometry candidate) {
-        JTSGeometryIterator iterator = null;
+    protected void prepareIterator(Geometry candidate) {
 
         if (candidate.isEmpty()) {
-            iterator = new JTSEmptyIterator();
+            currentIterator = JTSEmptyIterator.INSTANCE;
         }else if (candidate instanceof Point) {
-            iterator = new JTSPointIterator((Point)candidate, transform);
+            currentIterator = new JTSPointIterator((Point)candidate, transform);
         } else if (candidate instanceof Polygon) {
-            iterator = new JTSPolygonIterator((Polygon)candidate, transform);
+            currentIterator = new JTSPolygonIterator((Polygon)candidate, transform);
         } else if (candidate instanceof LineString) {
-            iterator = new DecimateJTSLineIterator((LineString)candidate, transform,resolution);
+            currentIterator = new DecimateJTSLineIterator((LineString)candidate, transform,resolution);
         } else if (candidate instanceof GeometryCollection) {
-            iterator = new DecimateJTSGeomCollectionIterator((GeometryCollection)candidate,transform,resolution);
+            currentIterator = new DecimateJTSGeomCollectionIterator((GeometryCollection)candidate,transform,resolution);
+        }else{
+            currentIterator = JTSEmptyIterator.INSTANCE;
         }
-
-        return iterator;
     }
     
 }

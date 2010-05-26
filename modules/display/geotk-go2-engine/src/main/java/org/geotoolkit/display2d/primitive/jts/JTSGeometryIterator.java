@@ -34,11 +34,19 @@ public abstract class JTSGeometryIterator<T extends Geometry> implements PathIte
 
     protected double[] dcoords = new double[2];
     protected AffineTransform transform;
-    protected final T geometry;
+    protected T geometry;
+
+    protected JTSGeometryIterator(AffineTransform trs){
+        this(null,trs);
+    }
 
     protected JTSGeometryIterator(T geometry, AffineTransform trs){
-        this.geometry = geometry;
         this.transform = (trs == null) ? IDENTITY : trs;
+        this.geometry = geometry;
+    }
+
+    public void setGeometry(T geom){
+        this.geometry = geom;
     }
 
     /**

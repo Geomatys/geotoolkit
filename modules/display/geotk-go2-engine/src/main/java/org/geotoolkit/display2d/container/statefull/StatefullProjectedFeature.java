@@ -19,7 +19,7 @@ package org.geotoolkit.display2d.container.statefull;
 
 import com.vividsolutions.jts.geom.Geometry;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.geotoolkit.display.canvas.ReferencedCanvas2D;
@@ -45,7 +45,8 @@ public class StatefullProjectedFeature implements ProjectedFeature,Graphic {
     private static final String DEFAULT_GEOM = "";
 
     private final StatefullContextParams params;
-    private final Map<String,StatefullProjectedGeometry> geometries = new HashMap<String,StatefullProjectedGeometry>();
+    private final Map<String,StatefullProjectedGeometry> geometries = 
+            new LinkedHashMap<String,StatefullProjectedGeometry>(); //linked hashmap is faster than hashmap on iteration.
     private Feature feature;
 
 

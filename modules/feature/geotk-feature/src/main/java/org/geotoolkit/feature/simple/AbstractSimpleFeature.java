@@ -26,13 +26,11 @@ import java.util.List;
 import java.util.Map;
 
 import org.geotoolkit.feature.AbstractFeature;
-import org.geotoolkit.feature.DefaultGeometryAttribute;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.FeatureValidationUtilities;
 import org.geotoolkit.feature.SimpleIllegalAttributeException;
 import org.geotoolkit.feature.type.DefaultAttributeDescriptor;
 import org.geotoolkit.io.TableWriter;
-import org.geotoolkit.util.Converters;
 
 import org.opengis.feature.GeometryAttribute;
 import org.opengis.feature.IllegalAttributeException;
@@ -43,7 +41,6 @@ import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.feature.type.Name;
-import org.opengis.feature.type.PropertyDescriptor;
 import org.opengis.filter.identity.FeatureId;
 
 /**
@@ -119,15 +116,13 @@ public abstract class AbstractSimpleFeature extends AbstractFeature<List<Propert
     public void setAttribute(int index, Object value) throws IndexOutOfBoundsException {
         final Property prop = getProperties().get(index);
 
-        // first do conversion
-        final PropertyDescriptor desc = prop.getDescriptor();
-        final Object converted = Converters.convert(value, desc.getType().getBinding());
         // if necessary, validation too
         if (isValidating()) {
-            FeatureValidationUtilities.validate((AttributeDescriptor)desc, converted);
+            FeatureValidationUtilities.validate((AttributeDescriptor)prop.getDescriptor(), value);
         }
-        // finally set the value into the feature
-        prop.setValue(converted);
+
+        //the type must match, we don't test, user must know what he is doing or must validate feature.
+        prop.setValue(value);
     }
 
     @Override
@@ -182,6 +177,7 @@ public abstract class AbstractSimpleFeature extends AbstractFeature<List<Propert
             final GeometryDescriptor geometryDescriptor = getFeatureType().getGeometryDescriptor();
             if (geometryDescriptor != null) {
                 final Integer defaultGeomIndex = index.get(geometryDescriptor.getName());
+                index.put(null, defaultGeomIndex);
                 return getAttribute(defaultGeomIndex.intValue());
             }
         }
@@ -201,13 +197,23 @@ public abstract class AbstractSimpleFeature extends AbstractFeature<List<Propert
 
     @Override
     public GeometryAttribute getDefaultGeometryProperty() {
-        final GeometryDescriptor geometryDescriptor = getFeatureType().getGeometryDescriptor();
-        GeometryAttribute geometryAttribute = null;
-        if (geometryDescriptor != null) {
-            Object defaultGeometry = getDefaultGeometry();
-            geometryAttribute = new DefaultGeometryAttribute(defaultGeometry, geometryDescriptor, null);
+        final Map<Object,Integer> index = getIndex();
+
+        // should be specified in the index as the default key (null)
+        final Integer indexGeom = index.get(null);
+
+        if(indexGeom != null){
+            return (GeometryAttribute) getValue().get(indexGeom);
+        }else{
+            final GeometryDescriptor geometryDescriptor = getFeatureType().getGeometryDescriptor();
+            if (geometryDescriptor != null) {
+                final Integer defaultGeomIndex = index.get(geometryDescriptor.getName());
+                index.put(null, defaultGeomIndex);
+                return (GeometryAttribute) getValue().get(defaultGeomIndex.intValue());
+            }
         }
-        return geometryAttribute;
+
+        return null;
     }
 
     @Override

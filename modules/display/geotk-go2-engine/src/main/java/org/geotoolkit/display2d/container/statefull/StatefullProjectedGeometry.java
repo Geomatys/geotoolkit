@@ -22,6 +22,7 @@ import java.awt.Shape;
 
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.primitive.ProjectedGeometry;
+import org.geotoolkit.display2d.primitive.jts.JTSGeometryJ2D;
 import org.geotoolkit.geometry.isoonjts.JTSUtils;
 
 import org.opengis.geometry.Geometry;
@@ -53,7 +54,7 @@ public class StatefullProjectedGeometry implements ProjectedGeometry {
     //Geometry in display CRS
     private com.vividsolutions.jts.geom.Geometry    displayGeometryJTS = null;
     private Geometry                                displayGeometryISO = null;
-    private Shape                                   displayShape = null;
+    private JTSGeometryJ2D                          displayShape = new JTSGeometryJ2D(null);
 
     public StatefullProjectedGeometry(StatefullContextParams params, com.vividsolutions.jts.geom.Geometry geom){
         this.params = params;
@@ -95,7 +96,7 @@ public class StatefullProjectedGeometry implements ProjectedGeometry {
     public void clearDisplayCache(){
         displayGeometryISO = null;
         displayGeometryJTS = null;
-        displayShape = null;
+        displayShape.setGeometry(null);
     }
 
     private com.vividsolutions.jts.geom.Geometry getGeometryJTS(){
@@ -140,9 +141,10 @@ public class StatefullProjectedGeometry implements ProjectedGeometry {
      */
     @Override
     public Shape getDisplayShape() throws TransformException{
-        if(displayShape == null){
-            displayShape = GO2Utilities.toJava2D(getDisplayGeometryJTS());
-//            displayShape = GO2Utilities.toJava2D(getDisplayGeometryJTS(),params.resolutionDisplay);
+        if(displayShape.getGeometry() == null){
+            displayShape.setGeometry(getDisplayGeometryJTS());
+            //displayShape = GO2Utilities.toJava2D(getDisplayGeometryJTS());
+            //displayShape = GO2Utilities.toJava2D(getDisplayGeometryJTS(),params.resolutionDisplay);
         }
         return displayShape;
     }

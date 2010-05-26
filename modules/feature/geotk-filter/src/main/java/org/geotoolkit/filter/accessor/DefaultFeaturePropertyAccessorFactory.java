@@ -259,23 +259,16 @@ public class DefaultFeaturePropertyAccessorFactory implements PropertyAccessorFa
         @Override
         public Object get(Object object, String xpath, Class target) {
             xpath = stripPrefix(xpath);
-            final Name name = DefaultName.valueOf(xpath);
-
-            if(object instanceof SimpleFeature){
-                return ((SimpleFeature) object).getAttribute(name);
-            }
 
             if (object instanceof Feature) {
-                final Property prop = ((Feature) object).getProperty(name);
+                final Property prop = ((Feature) object).getProperty(xpath);
                 if(prop == null){
                     return null;
                 }else{
                     return prop.getValue();
                 }
-            }
-
-            if (object instanceof FeatureType) {
-                return ((FeatureType) object).getDescriptor(name);
+            }else if(object instanceof FeatureType) {
+                return ((FeatureType) object).getDescriptor(xpath);
             }
 
             return null;

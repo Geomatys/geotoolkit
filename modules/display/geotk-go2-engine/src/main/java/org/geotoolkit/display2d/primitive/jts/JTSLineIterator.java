@@ -31,10 +31,10 @@ import java.awt.geom.AffineTransform;
  */
 public final class JTSLineIterator extends JTSGeometryIterator<LineString> {
 
-    private final CoordinateSequence coordinates;
-    private final int coordinateCount;
+    private CoordinateSequence coordinates;
+    private int coordinateCount;
     /** True if the line is a ring */
-    private final boolean isClosed;
+    private boolean isClosed;
 
     private int currentCoord = 0;
     private boolean done = false;
@@ -47,9 +47,17 @@ public final class JTSLineIterator extends JTSGeometryIterator<LineString> {
      */
     public JTSLineIterator(LineString ls, AffineTransform trs) {
         super(ls,trs);
-        coordinates = ls.getCoordinateSequence();
-        coordinateCount = coordinates.size();
-        isClosed = ls instanceof LinearRing;
+        setGeometry(ls);
+    }
+
+    @Override
+    public void setGeometry(LineString geom) {
+        super.setGeometry(geom);
+        if(geom != null){
+            coordinates = geom.getCoordinateSequence();
+            coordinateCount = coordinates.size();
+            isClosed = geom instanceof LinearRing;
+        }
     }
 
     /**

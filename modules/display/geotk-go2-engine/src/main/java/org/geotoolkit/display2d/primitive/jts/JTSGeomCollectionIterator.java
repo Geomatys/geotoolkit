@@ -48,9 +48,9 @@ public class JTSGeomCollectionIterator extends JTSGeometryIterator<GeometryColle
     public void reset(){
         currentGeom = 0;
         done = false;
-        currentIterator = (geometry.isEmpty()) ?
-            new JTSEmptyIterator() :
-            getIterator(geometry.getGeometryN(0));
+        if(geometry != null){
+            prepareIterator(geometry.getGeometryN(0));
+        }
     }
 
     /**
@@ -60,22 +60,48 @@ public class JTSGeomCollectionIterator extends JTSGeometryIterator<GeometryColle
      *
      * @return the specific iterator for the geometry passed.
      */
-    protected JTSGeometryIterator getIterator(Geometry candidate) {
-        JTSGeometryIterator iterator = null;
+    protected void prepareIterator(Geometry candidate) {
 
+        //try to reuse the previous iterator.
         if (candidate.isEmpty()) {
-            iterator = new JTSEmptyIterator();
-        }else if (candidate instanceof Point) {
-            iterator = new JTSPointIterator((Point)candidate, transform);
-        } else if (candidate instanceof Polygon) {
-            iterator = new JTSPolygonIterator((Polygon)candidate, transform);
-        } else if (candidate instanceof LineString) {
-            iterator = new JTSLineIterator((LineString)candidate, transform);
-        } else if (candidate instanceof GeometryCollection) {
-            iterator = new JTSGeomCollectionIterator((GeometryCollection)candidate,transform);
-        }
+            if(currentIterator instanceof JTSEmptyIterator){
+                //nothing to do
+            }else{
+                currentIterator = JTSEmptyIterator.INSTANCE;
+            }
 
-        return iterator;
+        }else if (candidate instanceof Point) {
+            if(currentIterator instanceof JTSPointIterator){
+                ((JTSPointIterator)currentIterator).setGeometry((Point)candidate);
+            }else{
+                currentIterator = new JTSPointIterator((Point)candidate, transform);
+            }
+
+        } else if (candidate instanceof Polygon) {
+            if(currentIterator instanceof JTSPolygonIterator){
+                ((JTSPolygonIterator)currentIterator).setGeometry((Polygon)candidate);
+            }else{
+                currentIterator = new JTSPolygonIterator((Polygon)candidate, transform);
+            }
+
+        } else if (candidate instanceof LineString) {
+            if(currentIterator instanceof JTSLineIterator){
+                ((JTSLineIterator)currentIterator).setGeometry((LineString)candidate);
+            }else{
+                currentIterator = new JTSLineIterator((LineString)candidate, transform);
+            }
+
+        } else if (candidate instanceof GeometryCollection) {
+            if(currentIterator instanceof JTSGeomCollectionIterator){
+                ((JTSGeomCollectionIterator)currentIterator).setGeometry((GeometryCollection)candidate);
+            }else{
+                currentIterator = new JTSGeomCollectionIterator((GeometryCollection)candidate, transform);
+            }
+
+        }else{
+            currentIterator = JTSEmptyIterator.INSTANCE;
+        }
+            
     }
 
     /**
@@ -123,7 +149,7 @@ public class JTSGeomCollectionIterator extends JTSGeometryIterator<GeometryColle
         if (currentIterator.isDone()) {
             if (currentGeom < (geometry.getNumGeometries() - 1)) {
                 currentGeom++;
-                currentIterator = getIterator(geometry.getGeometryN(currentGeom));
+                prepareIterator(geometry.getGeometryN(currentGeom));
             } else {
                 done = true;
             }

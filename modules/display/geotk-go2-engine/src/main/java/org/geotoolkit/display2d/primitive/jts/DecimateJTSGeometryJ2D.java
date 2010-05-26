@@ -17,19 +17,12 @@
  */
 package org.geotoolkit.display2d.primitive.jts;
 
-import java.awt.Rectangle;
-import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.PathIterator;
-import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
 
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryCollection;
 import com.vividsolutions.jts.geom.LineString;
-import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 
@@ -64,7 +57,7 @@ public class DecimateJTSGeometryJ2D extends JTSGeometryJ2D {
 
         if(iterator == null){
             if (this.geometry.isEmpty()) {
-                iterator = new JTSEmptyIterator();
+                iterator = JTSEmptyIterator.INSTANCE;
             }else if (this.geometry instanceof Point) {
                 iterator = new JTSPointIterator((Point) geometry, at);
             } else if (this.geometry instanceof Polygon) {
