@@ -1,6 +1,8 @@
 package org.geotoolkit.data.model;
 
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.geotoolkit.data.model.atom.AtomLink;
 import org.geotoolkit.data.model.atom.AtomLinkDefault;
 import org.geotoolkit.data.model.atom.AtomPersonConstruct;
@@ -754,5 +756,87 @@ public class KmlFactoryDefault implements KmlFactory{
     @Override
     public Vec2 createVec2(double x, double y, Units xUnit, Units yUnit){
         return new Vec2Default(x, y, xUnit, yUnit);
+    }
+
+    /*
+     *
+     * Utilities to initialize default values.
+     */
+
+    public static Color createColor(int flag){
+        Color color = null;
+        try {
+            if (flag == 0) {
+                color = new ColorDefault("ff000000");
+            } else if (flag == 1) {
+                color = new ColorDefault("ffffffff");
+            }
+        } catch (KmlException ex) {
+                Logger.getLogger(KmlFactoryDefault.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return color;
+    }
+
+    public static Angle180 createAngle180(String flag){
+        Angle180 angle = null;
+        try {
+            if ("max".equals(flag)) {
+                angle = new Angle180Default(180.0);
+            } else if ("zero".equals(flag)) {
+                angle = new Angle180Default(0.0);
+            } else if ("min".equals(flag)) {
+                angle = new Angle180Default(-180.0);
+            }
+
+        } catch (KmlException ex) {
+            Logger.getLogger(KmlFactoryDefault.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return angle;
+    }
+    
+    public static Anglepos180 createAnglepos180(String flag){
+        Anglepos180 angle = null;
+        try {
+            if ("zero".equals(flag)) {
+                angle = new Anglepos180Default(0.0);
+            }
+        } catch (KmlException ex) {
+            Logger.getLogger(KmlFactoryDefault.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return angle;
+    }
+
+    public static Angle360 createAngle360(String flag){
+        Angle360 angle = null;
+        try {
+            if ("max".equals(flag)) {
+                angle = new Angle360Default(360.0);
+            } else if ("zero".equals(flag)) {
+                angle = new Angle360Default(0.0);
+            } else if ("min".equals(flag)) {
+                angle = new Angle360Default(-360.0);
+            }
+
+        } catch (KmlException ex) {
+            Logger.getLogger(KmlFactoryDefault.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return angle;
+    }
+
+    public static Angle90 createAngle90(String flag){
+        Angle90 angle = null;
+        try {
+            if ("max".equals(flag)) {
+                angle = new Angle90Default(90.0);
+            } else if ("zero".equals(flag)) {
+                angle = new Angle90Default(0.0);
+            } else if ("min".equals(flag)) {
+                angle = new Angle90Default(-90.0);
+            }
+
+        } catch (KmlException ex) {
+            Logger.getLogger(KmlFactoryDefault.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return angle;
     }
 }

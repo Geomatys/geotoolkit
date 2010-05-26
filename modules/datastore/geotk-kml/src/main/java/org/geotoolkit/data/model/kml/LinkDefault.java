@@ -33,6 +33,7 @@ public class LinkDefault extends AbstractObjectDefault implements Link {
         this.refreshMode = refreshMode;
         this.refreshInterval = refreshInterval;
         this.viewRefreshMode = viewRefreshMode;
+        this.viewRefreshTime = viewRefreshTime;
         this.viewBoundScale = viewBoundScale;
         this.viewFormat = viewFormat;
         this.httpQuery = httpQuery;

@@ -1,7 +1,18 @@
 package org.geotoolkit.data.model;
 
+import org.geotoolkit.data.model.kml.AltitudeMode;
+import org.geotoolkit.data.model.kml.Angle180;
 import org.geotoolkit.data.model.kml.Angle360;
+import org.geotoolkit.data.model.kml.Angle90;
+import org.geotoolkit.data.model.kml.Anglepos180;
+import org.geotoolkit.data.model.kml.Color;
 import org.geotoolkit.data.model.kml.ColorMode;
+import org.geotoolkit.data.model.kml.DisplayMode;
+import org.geotoolkit.data.model.kml.ListItem;
+import org.geotoolkit.data.model.kml.RefreshMode;
+import org.geotoolkit.data.model.kml.StyleState;
+import org.geotoolkit.data.model.kml.Units;
+import org.geotoolkit.data.model.kml.ViewRefreshMode;
 
 /**
  *
@@ -176,4 +187,68 @@ public final class ModelConstants {
     public static final String ATT_Y = "y";
     public static final String ATT_XUNITS = "xunits";
     public static final String ATT_YUNITS = "yunits";
+
+    /*
+     * VALEURS PAR DEFAUT
+     */
+
+    // FLAGS FOR ANGLES AND COLORS DEFAULT VALUES
+    private static final String ANGLE_MAX = "max";
+    private static final String ANGLE_MIN = "min";
+    private static final String ANGLE_ZERO = "zero";
+    private static final int OPAQUE_BLACK = 0;
+    private static final int OPAQUE_WHITE = 1;
+
+    // ANGLES AND COLORS DEFAULT VALUES
+    public static final Color DEF_BG_COLOR = KmlFactoryDefault.createColor(OPAQUE_WHITE);
+    public static final Color DEF_COLOR = KmlFactoryDefault.createColor(OPAQUE_WHITE);
+    public static final Angle180 DEF_EAST = KmlFactoryDefault.createAngle180(ANGLE_MAX);
+    public static final Angle360 DEF_HEADING = KmlFactoryDefault.createAngle360(ANGLE_ZERO);
+    public static final Angle90 DEF_LATITUDE = KmlFactoryDefault.createAngle90(ANGLE_ZERO);
+    public static final Angle180 DEF_LONGITUDE = KmlFactoryDefault.createAngle180(ANGLE_ZERO);
+    public static final Angle180 DEF_NORTH = KmlFactoryDefault.createAngle180(ANGLE_MAX);
+    public static final Angle180 DEF_ROLL = KmlFactoryDefault.createAngle180(ANGLE_ZERO);
+    public static final Angle180 DEF_ROTATION = KmlFactoryDefault.createAngle180(ANGLE_ZERO);
+    public static final Angle180 DEF_SOUTH = KmlFactoryDefault.createAngle180(ANGLE_MIN);
+    public static final Color DEF_TEXT_COLOR = KmlFactoryDefault.createColor(OPAQUE_BLACK);
+    public static final Anglepos180 DEF_TILT = KmlFactoryDefault.createAnglepos180(ANGLE_ZERO);
+    public static final Angle180 DEF_WEST = KmlFactoryDefault.createAngle180(ANGLE_MIN);
+
+    // OTHER DEFAULT VALUES
+    public static final double DEF_ALTITUDE = 0.0;
+    public static final AltitudeMode DEF_ALTITUDE_MODE = AltitudeMode.CLAMP_TO_GROUND;
+    public static final ColorMode DEF_COLOR_MODE = ColorMode.NORMAL;
+    public static final DisplayMode DEF_DISPLAY_MODE = DisplayMode.DEFAULT;
+    public static final int DEF_DRAW_ORDER = 0;
+    public static final boolean DEF_EXTRUDE = false;
+    public static final boolean DEF_FILL = true;
+    public static final ListItem DEF_LIST_ITEM = ListItem.CHECK;
+    public static final double DEF_MAX_ALTITUDE = 0.0;
+    public static final double DEF_MAX_FADE_EXTENT = 0.0;
+    public static final double DEF_MAX_LOD_PIXELS = -1.0;
+    public static final int DEF_MAX_SNIPPET_LINES = 2;
+    public static final double DEF_MIN_ALTITUDE = 0.0;
+    public static final double DEF_MIN_FADE_EXTENT = 0.0;
+    public static final double DEF_MIN_LOD_PIXELS = 0.0;
+    public static final boolean DEF_OPEN = false;
+    public static final boolean DEF_OUTLINE = true;
+    public static final double DEF_RANGE = 0.0;
+    public static final RefreshMode DEF_REFRESH_MODE = RefreshMode.ON_CHANGE;
+    public static final double DEF_REFRESH_INTERVAL = 4.0;
+    public static final double DEF_SCALE = 1.0;
+    public static final StyleState DEF_STYLE_STATE = StyleState.NORMAL;
+    public static final boolean DEF_TESSELLATE = false;
+    public static final double DEF_VEC2_X = 1.0;
+    public static final double DEF_VEC2_Y = 1.0;
+    public static final Units DEF_VEC2_XUNIT = Units.FRACTION;
+    public static final Units DEF_VEC2_YUNIT = Units.FRACTION;
+    public static final double DEF_VIEW_BOUND_SCALE = 1.0;
+    public static final ViewRefreshMode DEF_VIEW_REFRESH_MODE = ViewRefreshMode.NEVER;
+    public static final double DEF_VIEW_REFRESH_TIME = 4.0;
+    public static final boolean DEF_VISIBILITY = true;
+    public static final double DEF_WIDTH = 1.0;
+    public static final double DEF_X = 1.0;
+    public static final double DEF_Y = 1.0;
+    public static final double DEF_Z = 1.0;
+
 }

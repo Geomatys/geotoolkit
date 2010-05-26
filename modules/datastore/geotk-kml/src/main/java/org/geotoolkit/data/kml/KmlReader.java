@@ -106,50 +106,50 @@ public class KmlReader extends StaxStreamReader {
     private KmlFactory kmlFactory;
 
     
-    public static final double DEF_ALTITUDE = 0.0;
-    public static final AltitudeMode DEF_ALTITUDE_MODE = AltitudeMode.CLAMP_TO_GROUND;
-    public static Color DEF_BG_COLOR;
-    public static Color DEF_COLOR;
-    public static final ColorMode DEF_COLOR_MODE = ColorMode.NORMAL;
-    public static final DisplayMode DEF_DISPLAY_MODE = DisplayMode.DEFAULT;
-    public static final int DEF_DRAW_ORDER = 0;
-    public static Angle180 DEF_EAST;
-    public static final boolean DEF_EXTRUDE = false;
-    public static final boolean DEF_FILL = true;
-    public static Angle360 DEF_HEADING;
-    public static Angle90 DEF_LATITUDE;
-    public static final ListItem DEF_LIST_ITEM = ListItem.CHECK;
-    public static Angle180 DEF_LONGITUDE;
-    public static final double DEF_MAX_ALTITUDE = 0.0;
-    public static final double DEF_MAX_FADE_EXTENT = 0.0;
-    public static final double DEF_MAX_LOD_PIXELS = -1.0;
-    public static final int DEF_MAX_SNIPPET_LINES = 2;
-    public static final double DEF_MIN_ALTITUDE = 0.0;
-    public static final double DEF_MIN_FADE_EXTENT = 0.0;
-    public static final double DEF_MIN_LOD_PIXELS = 0.0;
-    public static Angle180 DEF_NORTH;
-    public static final boolean DEF_OPEN = false;
-    public static final boolean DEF_OUTLINE = true;
-    public static final double DEF_RANGE = 0.0;
-    public static final RefreshMode DEF_REFRESH_MODE = RefreshMode.ON_CHANGE;
-    public static final double DEF_REFRESH_INTERVAL = 4.0;
-    public static Angle180 DEF_ROLL;
-    public static Angle180 DEF_ROTATION;
-    public static final double DEF_SCALE = 1.0;
-    public static Angle180 DEF_SOUTH;
-    public static final StyleState DEF_STYLE_STATE = StyleState.NORMAL;
-    public static final boolean DEF_TESSELLATE = false;
-    public static Anglepos180 DEF_TILT;
-    public static Color DEF_TEXT_COLOR;
-    public static final double DEF_VIEW_BOUND_SCALE = 1.0;
-    public static final ViewRefreshMode DEF_VIEW_REFRESH_MODE = ViewRefreshMode.NEVER;
-    public static final double DEF_VIEW_REFRESH_TIME = 4.0;
-    public static final boolean DEF_VISIBILITY = true;
-    public static Angle180 DEF_WEST;
-    public static final double DEF_WIDTH = 1.0;
-    public static final double DEF_X = 1.0;
-    public static final double DEF_Y = 1.0;
-    public static final double DEF_Z = 1.0;
+//    public static final double DEF_ALTITUDE = 0.0;
+//    public static final AltitudeMode DEF_ALTITUDE_MODE = AltitudeMode.CLAMP_TO_GROUND;
+//    public static Color DEF_BG_COLOR;
+//    public static Color DEF_COLOR;
+//    public static final ColorMode DEF_COLOR_MODE = ColorMode.NORMAL;
+//    public static final DisplayMode DEF_DISPLAY_MODE = DisplayMode.DEFAULT;
+//    public static final int DEF_DRAW_ORDER = 0;
+//    public static Angle180 DEF_EAST;
+//    public static final boolean DEF_EXTRUDE = false;
+//    public static final boolean DEF_FILL = true;
+//    public static Angle360 DEF_HEADING;
+//    public static Angle90 DEF_LATITUDE;
+//    public static final ListItem DEF_LIST_ITEM = ListItem.CHECK;
+//    public static Angle180 DEF_LONGITUDE;
+//    public static final double DEF_MAX_ALTITUDE = 0.0;
+//    public static final double DEF_MAX_FADE_EXTENT = 0.0;
+//    public static final double DEF_MAX_LOD_PIXELS = -1.0;
+//    public static final int DEF_MAX_SNIPPET_LINES = 2;
+//    public static final double DEF_MIN_ALTITUDE = 0.0;
+//    public static final double DEF_MIN_FADE_EXTENT = 0.0;
+//    public static final double DEF_MIN_LOD_PIXELS = 0.0;
+//    public static Angle180 DEF_NORTH;
+//    public static final boolean DEF_OPEN = false;
+//    public static final boolean DEF_OUTLINE = true;
+//    public static final double DEF_RANGE = 0.0;
+//    public static final RefreshMode DEF_REFRESH_MODE = RefreshMode.ON_CHANGE;
+//    public static final double DEF_REFRESH_INTERVAL = 4.0;
+//    public static Angle180 DEF_ROLL;
+//    public static Angle180 DEF_ROTATION;
+//    public static final double DEF_SCALE = 1.0;
+//    public static Angle180 DEF_SOUTH;
+//    public static final StyleState DEF_STYLE_STATE = StyleState.NORMAL;
+//    public static final boolean DEF_TESSELLATE = false;
+//    public static Anglepos180 DEF_TILT;
+//    public static Color DEF_TEXT_COLOR;
+//    public static final double DEF_VIEW_BOUND_SCALE = 1.0;
+//    public static final ViewRefreshMode DEF_VIEW_REFRESH_MODE = ViewRefreshMode.NEVER;
+//    public static final double DEF_VIEW_REFRESH_TIME = 4.0;
+//    public static final boolean DEF_VISIBILITY = true;
+//    public static Angle180 DEF_WEST;
+//    public static final double DEF_WIDTH = 1.0;
+//    public static final double DEF_X = 1.0;
+//    public static final double DEF_Y = 1.0;
+//    public static final double DEF_Z = 1.0;
 
     public KmlReader(File file) {
         super();
@@ -202,19 +202,19 @@ public class KmlReader extends StaxStreamReader {
     }
 
     private void initDefaults() throws KmlException {
-        DEF_BG_COLOR = this.kmlFactory.createColor("ffffffff");
-        DEF_COLOR = this.kmlFactory.createColor("ffffffff");
-        DEF_EAST = this.kmlFactory.createAngle180(180.0);
-        DEF_HEADING = this.kmlFactory.createAngle360(0.0);
-        DEF_LATITUDE = this.kmlFactory.createAngle90(0.0);
-        DEF_LONGITUDE = this.kmlFactory.createAngle180(0.0);
-        DEF_NORTH = this.kmlFactory.createAngle180(180.0);
-        DEF_ROLL = this.kmlFactory.createAngle180(0.0);
-        DEF_ROTATION = this.kmlFactory.createAngle180(0.0);
-        DEF_SOUTH = this.kmlFactory.createAngle180(-180.0);
-        DEF_TEXT_COLOR = this.kmlFactory.createColor("ff000000");
-        DEF_TILT = this.kmlFactory.createAnglepos180(0.0);
-        DEF_WEST = this.kmlFactory.createAngle180(-180.0);
+//        DEF_BG_COLOR = this.kmlFactory.createColor("ffffffff");
+//        DEF_COLOR = this.kmlFactory.createColor("ffffffff");
+//        DEF_EAST = this.kmlFactory.createAngle180(180.0);
+//        DEF_HEADING = this.kmlFactory.createAngle360(0.0);
+//        DEF_LATITUDE = this.kmlFactory.createAngle90(0.0);
+//        DEF_LONGITUDE = this.kmlFactory.createAngle180(0.0);
+//        DEF_NORTH = this.kmlFactory.createAngle180(180.0);
+//        DEF_ROLL = this.kmlFactory.createAngle180(0.0);
+//        DEF_ROTATION = this.kmlFactory.createAngle180(0.0);
+//        DEF_SOUTH = this.kmlFactory.createAngle180(-180.0);
+//        DEF_TEXT_COLOR = this.kmlFactory.createColor("ff000000");
+//        DEF_TILT = this.kmlFactory.createAnglepos180(0.0);
+//        DEF_WEST = this.kmlFactory.createAngle180(-180.0);
     }
 
     public Kml read() {
@@ -1353,7 +1353,7 @@ public class KmlReader extends StaxStreamReader {
         String httpQuery = null;
         List<SimpleType> linkSimpleExtensions = null;
         List<AbstractObject> linkObjectExtensions = null;
-
+        
         boucle:
         while (reader.hasNext()) {
 
@@ -2460,24 +2460,20 @@ public class KmlReader extends StaxStreamReader {
                     + "It's propably <hotSpot>, <rotationXY>, <size>, <overlayXY> or <screenXY> according to KML 2.2 specification.");
         }
 
-        double x;
+        double x = DEF_VEC2_X;
         String sx = reader.getAttributeValue(null, ATT_X);
         if (sx != null) {
             x = Double.parseDouble(sx);
-        } else {
-            x = 1.0;
         }
 
-        double y = 1.0;
+        double y = DEF_VEC2_Y;
         String sy = reader.getAttributeValue(null, ATT_Y);
         if (sy != null) {
             y = Double.parseDouble(sy);
-        } else {
-            y = 1.0;
         }
 
-        Units xUnit = Units.transform(reader.getAttributeValue(null, ATT_XUNITS), Units.FRACTION);
-        Units yUnit = Units.transform(reader.getAttributeValue(null, ATT_YUNITS), Units.FRACTION);
+        Units xUnit = Units.transform(reader.getAttributeValue(null, ATT_XUNITS), DEF_VEC2_XUNIT);
+        Units yUnit = Units.transform(reader.getAttributeValue(null, ATT_YUNITS), DEF_VEC2_YUNIT);
 
         boucle:
         while (reader.hasNext()) {

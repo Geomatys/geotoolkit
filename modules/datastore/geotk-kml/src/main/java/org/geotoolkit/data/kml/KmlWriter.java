@@ -1242,63 +1242,75 @@ public class KmlWriter extends StaxStreamWriter {
     }
 
     private void writeExtrude(boolean extrude) throws XMLStreamException{
-        writer.writeStartElement(URI_KML, TAG_EXTRUDE);
-        if(extrude){
-            writer.writeCharacters(SimpleType.BOOLEAN_TRUE);
-        } else {
-            writer.writeCharacters(SimpleType.BOOLEAN_FALSE);
+        if (DEF_EXTRUDE != extrude){
+            writer.writeStartElement(URI_KML, TAG_EXTRUDE);
+            if(extrude){
+                writer.writeCharacters(SimpleType.BOOLEAN_TRUE);
+            } else {
+                writer.writeCharacters(SimpleType.BOOLEAN_FALSE);
+            }
+            writer.writeEndElement();
         }
-        writer.writeEndElement();
     }
 
     private void writeVisibility(boolean visibility) throws XMLStreamException{
-        writer.writeStartElement(URI_KML, TAG_VISIBILITY);
-        if(visibility){
-            writer.writeCharacters(SimpleType.BOOLEAN_TRUE);
-        } else {
-            writer.writeCharacters(SimpleType.BOOLEAN_FALSE);
+        if (DEF_VISIBILITY != visibility){
+            writer.writeStartElement(URI_KML, TAG_VISIBILITY);
+            if(visibility){
+                writer.writeCharacters(SimpleType.BOOLEAN_TRUE);
+            } else {
+                writer.writeCharacters(SimpleType.BOOLEAN_FALSE);
+            }
+            writer.writeEndElement();
         }
-        writer.writeEndElement();
     }
 
     private void writeOpen(boolean open) throws XMLStreamException{
-        writer.writeStartElement(URI_KML, TAG_OPEN);
-        if(open){
-            writer.writeCharacters(SimpleType.BOOLEAN_TRUE);
-        } else {
-            writer.writeCharacters(SimpleType.BOOLEAN_FALSE);
+        if (DEF_OPEN != open){
+            writer.writeStartElement(URI_KML, TAG_OPEN);
+            if(open){
+                writer.writeCharacters(SimpleType.BOOLEAN_TRUE);
+            } else {
+                writer.writeCharacters(SimpleType.BOOLEAN_FALSE);
+            }
+            writer.writeEndElement();
         }
-        writer.writeEndElement();
     }
 
     private void writeFill(boolean fill) throws XMLStreamException{
-        writer.writeStartElement(URI_KML, TAG_FILL);
-        if(fill){
-            writer.writeCharacters(SimpleType.BOOLEAN_TRUE);
-        } else {
-            writer.writeCharacters(SimpleType.BOOLEAN_FALSE);
+        if (DEF_FILL != fill){
+            writer.writeStartElement(URI_KML, TAG_FILL);
+            if(fill){
+                writer.writeCharacters(SimpleType.BOOLEAN_TRUE);
+            } else {
+                writer.writeCharacters(SimpleType.BOOLEAN_FALSE);
+            }
+            writer.writeEndElement();
         }
-        writer.writeEndElement();
     }
 
     private void writeOutline(boolean outline) throws XMLStreamException{
-        writer.writeStartElement(URI_KML, TAG_OUTLINE);
-        if(outline){
-            writer.writeCharacters(SimpleType.BOOLEAN_TRUE);
-        } else {
-            writer.writeCharacters(SimpleType.BOOLEAN_FALSE);
+        if (DEF_OUTLINE != outline){
+            writer.writeStartElement(URI_KML, TAG_OUTLINE);
+            if(outline){
+                writer.writeCharacters(SimpleType.BOOLEAN_TRUE);
+            } else {
+                writer.writeCharacters(SimpleType.BOOLEAN_FALSE);
+            }
+            writer.writeEndElement();
         }
-        writer.writeEndElement();
     }
 
     private void writeTessellate(boolean tessellate) throws XMLStreamException{
-        writer.writeStartElement(URI_KML, TAG_TESSELLATE);
-        if(tessellate){
-            writer.writeCharacters(SimpleType.BOOLEAN_TRUE);
-        } else {
-            writer.writeCharacters(SimpleType.BOOLEAN_FALSE);
+        if (DEF_TESSELLATE != tessellate){
+            writer.writeStartElement(URI_KML, TAG_TESSELLATE);
+            if(tessellate){
+                writer.writeCharacters(SimpleType.BOOLEAN_TRUE);
+            } else {
+                writer.writeCharacters(SimpleType.BOOLEAN_FALSE);
+            }
+            writer.writeEndElement();
         }
-        writer.writeEndElement();
     }
 
     private void writeAddress(String address) throws XMLStreamException{
@@ -1404,244 +1416,320 @@ public class KmlWriter extends StaxStreamWriter {
     }
 
     private void writeColor(Color color) throws XMLStreamException{
-        writer.writeStartElement(URI_KML, TAG_COLOR);
-        writer.writeCharacters(color.getColor());
-        writer.writeEndElement();
+        if (DEF_COLOR != color){
+            writer.writeStartElement(URI_KML, TAG_COLOR);
+            writer.writeCharacters(color.getColor());
+            writer.writeEndElement();
+        }
     }
 
     private void writeBgColor(Color color) throws XMLStreamException{
-        writer.writeStartElement(URI_KML, TAG_BG_COLOR);
-        writer.writeCharacters(color.getColor());
-        writer.writeEndElement();
+        if (DEF_BG_COLOR != color){
+            writer.writeStartElement(URI_KML, TAG_BG_COLOR);
+            writer.writeCharacters(color.getColor());
+            writer.writeEndElement();
+        }
     }
 
     private void writeTextColor(Color color) throws XMLStreamException{
-        writer.writeStartElement(URI_KML, TAG_TEXT_COLOR);
-        writer.writeCharacters(color.getColor());
-        writer.writeEndElement();
+        if(DEF_TEXT_COLOR != color){
+            writer.writeStartElement(URI_KML, TAG_TEXT_COLOR);
+            writer.writeCharacters(color.getColor());
+            writer.writeEndElement();
+        }
     }
 
     private void writeColorMode(ColorMode colorMode) throws XMLStreamException{
-        writer.writeStartElement(URI_KML, TAG_COLOR_MODE);
-        writer.writeCharacters(colorMode.getColorMode());
-        writer.writeEndElement();
+        if(DEF_COLOR_MODE != colorMode){
+            writer.writeStartElement(URI_KML, TAG_COLOR_MODE);
+            writer.writeCharacters(colorMode.getColorMode());
+            writer.writeEndElement();
+        }
     }
 
     private void writeAltitudeMode(AltitudeMode altitudeMode) throws XMLStreamException{
-        writer.writeStartElement(URI_KML, TAG_ALTITUDE_MODE);
-        writer.writeCharacters(altitudeMode.getAltitudeMode());
-        writer.writeEndElement();
+        if(DEF_ALTITUDE_MODE != altitudeMode){
+            writer.writeStartElement(URI_KML, TAG_ALTITUDE_MODE);
+            writer.writeCharacters(altitudeMode.getAltitudeMode());
+            writer.writeEndElement();
+        }
     }
 
     private void writeDisplayMode(DisplayMode displayMode) throws XMLStreamException{
-        writer.writeStartElement(URI_KML, TAG_ALTITUDE_MODE);
-        writer.writeCharacters(displayMode.getDisplayMode());
-        writer.writeEndElement();
+        if (DEF_DISPLAY_MODE != displayMode){
+            writer.writeStartElement(URI_KML, TAG_ALTITUDE_MODE);
+            writer.writeCharacters(displayMode.getDisplayMode());
+            writer.writeEndElement();
+        }
     }
 
     private void writeKey(StyleState styleState) throws XMLStreamException{
-        writer.writeStartElement(URI_KML, TAG_KEY);
-        writer.writeCharacters(styleState.getStyleState());
-        writer.writeEndElement();
+        if (DEF_STYLE_STATE != styleState){
+            writer.writeStartElement(URI_KML, TAG_KEY);
+            writer.writeCharacters(styleState.getStyleState());
+            writer.writeEndElement();
+        }
     }
 
     private void writeRefreshMode(RefreshMode refreshMode) throws XMLStreamException {
-        writer.writeStartElement(URI_KML, TAG_REFRESH_MODE);
-        writer.writeCharacters(refreshMode.getRefreshMode());
-        writer.writeEndElement();
+        if (DEF_REFRESH_MODE != refreshMode){
+            writer.writeStartElement(URI_KML, TAG_REFRESH_MODE);
+            writer.writeCharacters(refreshMode.getRefreshMode());
+            writer.writeEndElement();
+        }
     }
 
     private void writeViewRefreshMode(ViewRefreshMode viewRefreshMode) throws XMLStreamException {
-        writer.writeStartElement(URI_KML, TAG_VIEW_REFRESH_MODE);
-        writer.writeCharacters(viewRefreshMode.getViewRefreshMode());
-        writer.writeEndElement();
+        if (DEF_VIEW_REFRESH_MODE != viewRefreshMode){
+            writer.writeStartElement(URI_KML, TAG_VIEW_REFRESH_MODE);
+            writer.writeCharacters(viewRefreshMode.getViewRefreshMode());
+            writer.writeEndElement();
+        }
     }
 
     private void writeListItem(ListItem listItem) throws XMLStreamException{
-        writer.writeStartElement(URI_KML, TAG_LIST_ITEM);
-        writer.writeCharacters(listItem.getItem());
-        writer.writeEndElement();
+        if (DEF_LIST_ITEM != listItem){
+            writer.writeStartElement(URI_KML, TAG_LIST_ITEM);
+            writer.writeCharacters(listItem.getItem());
+            writer.writeEndElement();
+        }
     }
 
     private void writeScale(double scale) throws XMLStreamException{
-        writer.writeStartElement(URI_KML, TAG_SCALE);
-        writer.writeCharacters(Double.toString(scale));
-        writer.writeEndElement();
+        if(DEF_SCALE != scale){
+            writer.writeStartElement(URI_KML, TAG_SCALE);
+            writer.writeCharacters(Double.toString(scale));
+            writer.writeEndElement();
+        }
     }
 
     private void writeWidth(double width) throws XMLStreamException{
-        writer.writeStartElement(URI_KML, TAG_WIDTH);
-        writer.writeCharacters(Double.toString(width));
-        writer.writeEndElement();
+        if(DEF_WIDTH != width){
+            writer.writeStartElement(URI_KML, TAG_WIDTH);
+            writer.writeCharacters(Double.toString(width));
+            writer.writeEndElement();
+        }
     }
 
     private void writeAltitude(double altitude) throws XMLStreamException{
-        writer.writeStartElement(URI_KML, TAG_ALTITUDE);
-        writer.writeCharacters(Double.toString(altitude));
-        writer.writeEndElement();
+        if (DEF_ALTITUDE != altitude){
+            writer.writeStartElement(URI_KML, TAG_ALTITUDE);
+            writer.writeCharacters(Double.toString(altitude));
+            writer.writeEndElement();
+        }
     }
 
     private void writeRange(double range) throws XMLStreamException{
-        writer.writeStartElement(URI_KML, TAG_RANGE);
-        writer.writeCharacters(Double.toString(range));
-        writer.writeEndElement();
+        if (DEF_RANGE != range){
+            writer.writeStartElement(URI_KML, TAG_RANGE);
+            writer.writeCharacters(Double.toString(range));
+            writer.writeEndElement();
+        }
     }
 
     private void writeDrawOrder(double drawOrder) throws XMLStreamException{
-        writer.writeStartElement(URI_KML, TAG_DRAW_ORDER);
-        writer.writeCharacters(Double.toString(drawOrder));
-        writer.writeEndElement();
+        if (DEF_DRAW_ORDER != drawOrder){
+            writer.writeStartElement(URI_KML, TAG_DRAW_ORDER);
+            writer.writeCharacters(Double.toString(drawOrder));
+            writer.writeEndElement();
+        }
     }
 
     private void writeX(double x) throws XMLStreamException{
-        writer.writeStartElement(URI_KML, TAG_X);
-        writer.writeCharacters(Double.toString(x));
-        writer.writeEndElement();
+        if (DEF_X != x){
+            writer.writeStartElement(URI_KML, TAG_X);
+            writer.writeCharacters(Double.toString(x));
+            writer.writeEndElement();
+        }
     }
 
     private void writeY(double y) throws XMLStreamException{
-        writer.writeStartElement(URI_KML, TAG_Y);
-        writer.writeCharacters(Double.toString(y));
-        writer.writeEndElement();
+        if (DEF_Y != y){
+            writer.writeStartElement(URI_KML, TAG_Y);
+            writer.writeCharacters(Double.toString(y));
+            writer.writeEndElement();
+        }
     }
 
     private void writeZ(double z) throws XMLStreamException{
-        writer.writeStartElement(URI_KML, TAG_Z);
-        writer.writeCharacters(Double.toString(z));
-        writer.writeEndElement();
+        if (DEF_Z != z){
+            writer.writeStartElement(URI_KML, TAG_Z);
+            writer.writeCharacters(Double.toString(z));
+            writer.writeEndElement();
+        }
     }
 
     private void writeMinAltitude(double minAltitude) throws XMLStreamException{
-        writer.writeStartElement(URI_KML, TAG_MIN_ALTITUDE);
-        writer.writeCharacters(Double.toString(minAltitude));
-        writer.writeEndElement();
+        if(DEF_MIN_ALTITUDE != minAltitude){
+            writer.writeStartElement(URI_KML, TAG_MIN_ALTITUDE);
+            writer.writeCharacters(Double.toString(minAltitude));
+            writer.writeEndElement();
+        }
     }
 
     private void writeMaxAltitude(double maxAltitude) throws XMLStreamException{
-        writer.writeStartElement(URI_KML, TAG_MAX_ALTITUDE);
-        writer.writeCharacters(Double.toString(maxAltitude));
-        writer.writeEndElement();
+        if (DEF_MAX_ALTITUDE != maxAltitude){
+            writer.writeStartElement(URI_KML, TAG_MAX_ALTITUDE);
+            writer.writeCharacters(Double.toString(maxAltitude));
+            writer.writeEndElement();
+        }
     }
 
     private void writeMinLodPixels(double pixels) throws XMLStreamException{
-        writer.writeStartElement(URI_KML, TAG_MIN_LOD_PIXELS);
-        writer.writeCharacters(Double.toString(pixels));
-        writer.writeEndElement();
+        if (DEF_MIN_LOD_PIXELS != pixels){
+            writer.writeStartElement(URI_KML, TAG_MIN_LOD_PIXELS);
+            writer.writeCharacters(Double.toString(pixels));
+            writer.writeEndElement();
+        }
     }
 
     private void writeMaxLodPixels(double pixels) throws XMLStreamException{
-        writer.writeStartElement(URI_KML, TAG_MAX_LOD_PIXELS);
-        writer.writeCharacters(Double.toString(pixels));
-        writer.writeEndElement();
+        if (DEF_MAX_LOD_PIXELS != pixels){
+            writer.writeStartElement(URI_KML, TAG_MAX_LOD_PIXELS);
+            writer.writeCharacters(Double.toString(pixels));
+            writer.writeEndElement();
+        }
     }
 
-    private void writeMinFadeExtent(double fadeEXtent) throws XMLStreamException{
-        writer.writeStartElement(URI_KML, TAG_MIN_FADE_EXTENT);
-        writer.writeCharacters(Double.toString(fadeEXtent));
-        writer.writeEndElement();
+    private void writeMinFadeExtent(double fadeExtent) throws XMLStreamException{
+        if (DEF_MIN_FADE_EXTENT != fadeExtent){
+            writer.writeStartElement(URI_KML, TAG_MIN_FADE_EXTENT);
+            writer.writeCharacters(Double.toString(fadeExtent));
+            writer.writeEndElement();
+        }
     }
 
-    private void writeMaxFadeExtent(double fadeEXtent) throws XMLStreamException{
-        writer.writeStartElement(URI_KML, TAG_MAX_FADE_EXTENT);
-        writer.writeCharacters(Double.toString(fadeEXtent));
-        writer.writeEndElement();
+    private void writeMaxFadeExtent(double fadeExtent) throws XMLStreamException{
+        if (DEF_MAX_FADE_EXTENT != fadeExtent){
+            writer.writeStartElement(URI_KML, TAG_MAX_FADE_EXTENT);
+            writer.writeCharacters(Double.toString(fadeExtent));
+            writer.writeEndElement();
+        }
     }
 
     private void writeRefreshInterval(double refreshInterval) throws XMLStreamException {
-        writer.writeStartElement(URI_KML, TAG_REFRESH_INTERVAL);
-        writer.writeCharacters(Double.toString(refreshInterval));
-        writer.writeEndElement();
+        if(DEF_REFRESH_INTERVAL != refreshInterval){
+            writer.writeStartElement(URI_KML, TAG_REFRESH_INTERVAL);
+            writer.writeCharacters(Double.toString(refreshInterval));
+            writer.writeEndElement();
+        }
     }
 
     private void writeViewRefreshTime(double viewRefreshTime) throws XMLStreamException {
-        writer.writeStartElement(URI_KML, TAG_VIEW_REFRESH_TIME);
-        writer.writeCharacters(Double.toString(viewRefreshTime));
-        writer.writeEndElement();
+        if(DEF_VIEW_REFRESH_TIME != viewRefreshTime){
+            writer.writeStartElement(URI_KML, TAG_VIEW_REFRESH_TIME);
+            writer.writeCharacters(Double.toString(viewRefreshTime));
+            writer.writeEndElement();
+        }
     }
 
     private void writeViewBoundScale(double viewBoundScale) throws XMLStreamException {
-        writer.writeStartElement(URI_KML, TAG_VIEW_BOUND_SCALE);
-        writer.writeCharacters(Double.toString(viewBoundScale));
-        writer.writeEndElement();
+        if (DEF_VIEW_BOUND_SCALE != viewBoundScale){
+            writer.writeStartElement(URI_KML, TAG_VIEW_BOUND_SCALE);
+            writer.writeCharacters(Double.toString(viewBoundScale));
+            writer.writeEndElement();
+        }
     }
 
     private void writeMaxSnippetLines(int msl) throws XMLStreamException{
-        writer.writeStartElement(URI_KML, TAG_MAX_SNIPPET_LINES);
-        writer.writeCharacters(Integer.toString(msl));
-        writer.writeEndElement();
+        if (DEF_MAX_SNIPPET_LINES != msl){
+            writer.writeStartElement(URI_KML, TAG_MAX_SNIPPET_LINES);
+            writer.writeCharacters(Integer.toString(msl));
+            writer.writeEndElement();
+        }
     }
 
     private void writeHeading(Angle360 heading) throws XMLStreamException{
-        writer.writeStartElement(URI_KML, TAG_HEADING);
-        writer.writeCharacters(Double.toString(heading.getAngle()));
-        writer.writeEndElement();
+        if (!DEF_HEADING.equals(heading)){
+            writer.writeStartElement(URI_KML, TAG_HEADING);
+            writer.writeCharacters(Double.toString(heading.getAngle()));
+            writer.writeEndElement();
+        }
     }
 
     private void writeLongitude(Angle180 longitude) throws XMLStreamException{
-        writer.writeStartElement(URI_KML, TAG_LONGITUDE);
-        writer.writeCharacters(Double.toString(longitude.getAngle()));
-        writer.writeEndElement();
+        if (!DEF_LONGITUDE.equals(longitude)){
+            writer.writeStartElement(URI_KML, TAG_LONGITUDE);
+            writer.writeCharacters(Double.toString(longitude.getAngle()));
+            writer.writeEndElement();
+        }
     }
 
     private void writeLatitude(Angle90 latitude) throws XMLStreamException{
-        writer.writeStartElement(URI_KML, TAG_LATITUDE);
-        writer.writeCharacters(Double.toString(latitude.getAngle()));
-        writer.writeEndElement();
+        if (!DEF_LATITUDE.equals(latitude)){
+            writer.writeStartElement(URI_KML, TAG_LATITUDE);
+            writer.writeCharacters(Double.toString(latitude.getAngle()));
+            writer.writeEndElement();
+        }
     }
 
     private void writeTilt(Anglepos180 tilt) throws XMLStreamException{
-        writer.writeStartElement(URI_KML, TAG_TILT);
-        writer.writeCharacters(Double.toString(tilt.getAngle()));
-        writer.writeEndElement();
+        if (!DEF_TILT.equals(tilt)){
+            writer.writeStartElement(URI_KML, TAG_TILT);
+            writer.writeCharacters(Double.toString(tilt.getAngle()));
+            writer.writeEndElement();
+        }
     }
 
     private void writeRotation(Angle180 rotation) throws XMLStreamException{
-        writer.writeStartElement(URI_KML, TAG_ROTATION);
-        writer.writeCharacters(Double.toString(rotation.getAngle()));
-        writer.writeEndElement();
+        if (!DEF_ROTATION.equals(rotation)){
+            writer.writeStartElement(URI_KML, TAG_ROTATION);
+            writer.writeCharacters(Double.toString(rotation.getAngle()));
+            writer.writeEndElement();
+        }
     }
 
     private void writeNorth(Angle180 north) throws XMLStreamException{
-        writer.writeStartElement(URI_KML, TAG_NORTH);
-        writer.writeCharacters(Double.toString(north.getAngle()));
-        writer.writeEndElement();
+        if (!DEF_NORTH.equals(north)){
+            writer.writeStartElement(URI_KML, TAG_NORTH);
+            writer.writeCharacters(Double.toString(north.getAngle()));
+            writer.writeEndElement();
+        }
     }
 
     private void writeSouth(Angle180 south) throws XMLStreamException{
-        writer.writeStartElement(URI_KML, TAG_SOUTH);
-        writer.writeCharacters(Double.toString(south.getAngle()));
-        writer.writeEndElement();
+        if (!DEF_SOUTH.equals(south)){
+            writer.writeStartElement(URI_KML, TAG_SOUTH);
+            writer.writeCharacters(Double.toString(south.getAngle()));
+            writer.writeEndElement();
+        }
     }
 
     private void writeEast(Angle180 east) throws XMLStreamException{
-        writer.writeStartElement(URI_KML, TAG_EAST);
-        writer.writeCharacters(Double.toString(east.getAngle()));
-        writer.writeEndElement();
+        if (!DEF_EAST.equals(east)){
+            writer.writeStartElement(URI_KML, TAG_EAST);
+            writer.writeCharacters(Double.toString(east.getAngle()));
+            writer.writeEndElement();
+        }
     }
 
     private void writeWest(Angle180 west) throws XMLStreamException{
-        writer.writeStartElement(URI_KML, TAG_WEST);
-        writer.writeCharacters(Double.toString(west.getAngle()));
-        writer.writeEndElement();
+        if (!DEF_WEST.equals(west)){
+            writer.writeStartElement(URI_KML, TAG_WEST);
+            writer.writeCharacters(Double.toString(west.getAngle()));
+            writer.writeEndElement();
+        }
     }
 
     private void writeRoll(Angle180 roll) throws XMLStreamException{
-        writer.writeStartElement(URI_KML, TAG_ROLL);
-        writer.writeCharacters(Double.toString(roll.getAngle()));
-        writer.writeEndElement();
+        if(!DEF_ROLL.equals(roll)){
+            writer.writeStartElement(URI_KML, TAG_ROLL);
+            writer.writeCharacters(Double.toString(roll.getAngle()));
+            writer.writeEndElement();
+        }
     }
 
     private void writeVec2(Vec2 vec2) throws XMLStreamException{
-        if (isFiniteNumber(vec2.getX())){
+        if (isFiniteNumber(vec2.getX()) && DEF_VEC2_X != vec2.getX()){
             writer.writeAttribute(ATT_X, Double.toString(vec2.getX()));
         }
-        if (isFiniteNumber(vec2.getY())){
+        if (isFiniteNumber(vec2.getY()) && DEF_VEC2_Y != vec2.getY()){
             writer.writeAttribute(ATT_Y, Double.toString(vec2.getY()));
         }
-        if (vec2.getXUnits() != null){
+        if (vec2.getXUnits() != null && !DEF_VEC2_XUNIT.equals(vec2.getXUnits())){
             writer.writeAttribute(ATT_XUNITS, vec2.getXUnits().getUnit());
         }
-        if (vec2.getYUnits() != null){
+        if (vec2.getYUnits() != null && !DEF_VEC2_YUNIT.equals(vec2.getYUnits())){
             writer.writeAttribute(ATT_YUNITS, vec2.getYUnits().getUnit());
         }
     }
