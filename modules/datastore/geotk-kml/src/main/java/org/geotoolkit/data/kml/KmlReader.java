@@ -341,8 +341,6 @@ public class KmlReader extends StaxStreamReader {
                             view = this.readAbstractView(eName);
                         } else if (isAbstractTimePrimitive(eName)) {
                             timePrimitive = this.readAbstractTimePrimitive(eName);
-                        } else if (TAG_STYLE_URL.equals(eName)) {
-                            styleUrl = reader.getElementText();
                         } else if (isAbstractStyleSelector(eName)) {
                             styleSelector.add(this.readAbstractStyleSelector(eName));
                         } else if (TAG_REGION.equals(eName)) {

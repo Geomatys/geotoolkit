@@ -116,10 +116,8 @@ public class App {
         
         //featuresTests();
         
-        File input = new File("/home/samuel/netbeans/geotoolkit-kml/modules/datastore/geotk-kml/src/main/java/org/geotoolkit/data/kml/" +
-                "input3.xml");
-        File output = new File("/home/samuel/netbeans/geotoolkit-kml/modules/datastore/geotk-kml/src/main/java/org/geotoolkit/data/kml/" +
-                "output2.xml");
+        File input = new File("/home/samuel/Documents/doc_kml/exemples/region.kml");
+        File output = new File("/home/samuel/Documents/doc_kml/exemples/output.kml");
         KmlReader reader = new KmlReader(input);
         Kml kml = reader.read();
         //System.out.println(kml);

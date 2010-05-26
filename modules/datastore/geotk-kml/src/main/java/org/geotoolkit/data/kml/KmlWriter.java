@@ -10,6 +10,8 @@ import javax.xml.stream.XMLEventFactory;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
+import org.geotoolkit.data.model.atom.AtomLink;
+import org.geotoolkit.data.model.atom.AtomPersonConstruct;
 import org.geotoolkit.data.model.kml.AbstractColorStyle;
 import org.geotoolkit.data.model.kml.AbstractContainer;
 import org.geotoolkit.data.model.kml.AbstractFeature;
@@ -19,6 +21,7 @@ import org.geotoolkit.data.model.kml.AbstractObject;
 import org.geotoolkit.data.model.kml.AbstractOverlay;
 import org.geotoolkit.data.model.kml.AbstractStyleSelector;
 import org.geotoolkit.data.model.kml.AbstractSubStyle;
+import org.geotoolkit.data.model.kml.AbstractTimePrimitive;
 import org.geotoolkit.data.model.kml.AbstractView;
 import org.geotoolkit.data.model.kml.Alias;
 import org.geotoolkit.data.model.kml.AltitudeMode;
@@ -34,8 +37,10 @@ import org.geotoolkit.data.model.kml.Color;
 import org.geotoolkit.data.model.kml.ColorMode;
 import org.geotoolkit.data.model.kml.Coordinate;
 import org.geotoolkit.data.model.kml.Coordinates;
+import org.geotoolkit.data.model.kml.Data;
 import org.geotoolkit.data.model.kml.DisplayMode;
 import org.geotoolkit.data.model.kml.Document;
+import org.geotoolkit.data.model.kml.ExtendedData;
 import org.geotoolkit.data.model.kml.Folder;
 import org.geotoolkit.data.model.kml.GroundOverlay;
 import org.geotoolkit.data.model.kml.IconStyle;
@@ -44,6 +49,7 @@ import org.geotoolkit.data.model.kml.ItemIcon;
 import org.geotoolkit.data.model.kml.ItemIconState;
 import org.geotoolkit.data.model.kml.Kml;
 import org.geotoolkit.data.model.kml.LabelStyle;
+import org.geotoolkit.data.model.kml.LatLonAltBox;
 import org.geotoolkit.data.model.kml.LatLonBox;
 import org.geotoolkit.data.model.kml.LineString;
 import org.geotoolkit.data.model.kml.LineStyle;
@@ -52,6 +58,7 @@ import org.geotoolkit.data.model.kml.Link;
 import org.geotoolkit.data.model.kml.ListItem;
 import org.geotoolkit.data.model.kml.ListStyle;
 import org.geotoolkit.data.model.kml.Location;
+import org.geotoolkit.data.model.kml.Lod;
 import org.geotoolkit.data.model.kml.LookAt;
 import org.geotoolkit.data.model.kml.Model;
 import org.geotoolkit.data.model.kml.MultiGeometry;
@@ -63,15 +70,21 @@ import org.geotoolkit.data.model.kml.Point;
 import org.geotoolkit.data.model.kml.PolyStyle;
 import org.geotoolkit.data.model.kml.Polygon;
 import org.geotoolkit.data.model.kml.RefreshMode;
+import org.geotoolkit.data.model.kml.Region;
 import org.geotoolkit.data.model.kml.ResourceMap;
 import org.geotoolkit.data.model.kml.Scale;
 import org.geotoolkit.data.model.kml.Schema;
+import org.geotoolkit.data.model.kml.SchemaData;
 import org.geotoolkit.data.model.kml.ScreenOverlay;
+import org.geotoolkit.data.model.kml.SimpleData;
 import org.geotoolkit.data.model.kml.Style;
 import org.geotoolkit.data.model.kml.StyleMap;
 import org.geotoolkit.data.model.kml.StyleState;
+import org.geotoolkit.data.model.kml.TimeSpan;
+import org.geotoolkit.data.model.kml.TimeStamp;
 import org.geotoolkit.data.model.kml.Vec2;
 import org.geotoolkit.data.model.kml.ViewRefreshMode;
+import org.geotoolkit.data.model.xal.AddressDetails;
 import org.geotoolkit.data.model.xsd.SimpleType;
 import org.geotoolkit.xml.StaxStreamWriter;
 import static org.geotoolkit.data.model.ModelConstants.*;
@@ -180,18 +193,18 @@ public class KmlWriter extends StaxStreamWriter {
         }
         this.writeVisibility(abstractFeature.getVisibility());
         this.writeOpen(abstractFeature.getOpen());
-//        if (abstractFeature.getAuthor() != null){
-//            this.writeAuthor(abstractFeature.getAuthor(), streamWriter);
-//        }
-//        if (abstractFeature.getLink() != null){
-//            this.writeLink(abstractFeature.getLink(), streamWriter);
-//        }
+        if (abstractFeature.getAuthor() != null){
+            this.writeAtomPersonConstruct(abstractFeature.getAuthor());
+        }
+        if (abstractFeature.getAtomLink() != null){
+            this.writeAtomLink(abstractFeature.getAtomLink());
+        }
         if (abstractFeature.getAddress() != null){
             this.writeAddress(abstractFeature.getAddress());
         }
-//        if (abstractFeature.getAddressDetails() != null){
-//            this.writeAddresDetails(abstractFeature.getAddressDetails(), streamWriter);
-//        }
+        if (abstractFeature.getAddressDetails() != null){
+            this.writeXalAddresDetails(abstractFeature.getAddressDetails());
+        }
         if (abstractFeature.getPhoneNumber() != null){
             this.writePhoneNumber(abstractFeature.getPhoneNumber());
         }
@@ -204,9 +217,9 @@ public class KmlWriter extends StaxStreamWriter {
         if (abstractFeature.getView() != null){
             this.writeAbstractView(abstractFeature.getView());
         }
-//        if (abstractFeature.getTimePrimitive() != null){
-//            this.writeTimePrimitive(abstractFeature.getTimePrimitive(), streamWriter);
-//        }
+        if (abstractFeature.getTimePrimitive() != null){
+            this.writeAbstractTimePrimitive(abstractFeature.getTimePrimitive());
+        }
         if (abstractFeature.getStyleUrl() != null){
             this.writeStyleUrl(abstractFeature.getStyleUrl());
         }
@@ -215,12 +228,164 @@ public class KmlWriter extends StaxStreamWriter {
                 this.writeAbstractStyleSelector(abstractStyleSelector);
             }
         }
+        if (abstractFeature.getRegion() != null){
+            this.writeRegion(abstractFeature.getRegion());
+        }
+        if (abstractFeature.getExtendedData() != null){
+            this.writeExtendedData(abstractFeature.getExtendedData());
+        }
         if (abstractFeature.getAbstractFeatureSimpleExtensions() != null){
             this.writeSimpleExtensions(abstractFeature.getAbstractFeatureSimpleExtensions());
         }
         if (abstractFeature.getAbstractFeatureObjectExtensions() != null){
             this.writeObjectExtensions(abstractFeature.getAbstractFeatureObjectExtensions());
         }
+    }
+
+    private void writeExtendedData(ExtendedData extendedData) throws XMLStreamException{
+        writer.writeStartElement(URI_KML, TAG_EXTENDED_DATA);
+        if (extendedData.getDatas() != null){
+            for (Data data : extendedData.getDatas()){
+                this.writeData(data);
+            }
+        }
+        if (extendedData.getSchemaData() != null){
+            for (SchemaData schemaData : extendedData.getSchemaData()){
+                this.writeSchemaData(schemaData);
+            }
+        }
+        if (extendedData.getAnyOtherElements() != null){
+
+        }
+        writer.writeEndElement();
+    }
+
+    private void writeSchemaData(SchemaData schemaData) throws XMLStreamException{
+        writer.writeStartElement(URI_KML, TAG_SCHEMA_DATA);
+        this.writeCommonAbstractObject(schemaData);
+        if (schemaData.getSimpleDatas() != null){
+            for (SimpleData simpleData : schemaData.getSimpleDatas()){
+                this.writeSimpleData(simpleData);
+            }
+        }
+        writer.writeEndElement();
+    }
+
+    private void writeSimpleData(SimpleData simpleData) throws XMLStreamException{
+        writer.writeStartElement(URI_KML, TAG_SIMPLE_DATA);
+        writer.writeAttribute(ATT_NAME, simpleData.getName());
+        writer.writeCharacters(simpleData.getContent());
+        writer.writeEndElement();
+    }
+
+    private void writeData(Data data) throws XMLStreamException{
+        writer.writeStartElement(URI_KML, TAG_DATA);
+        this.writeCommonAbstractObject(data);
+        if (data.getDisplayName() != null){
+            this.writeDisplayName(data.getDisplayName());
+        }
+        if (data.getValue() != null){
+            this.writeValue(data.getValue());
+        }
+        if (data.getDataExtensions() != null){
+
+        }
+        writer.writeEndElement();
+    }
+
+    private void writeRegion(Region region) throws XMLStreamException{
+        writer.writeStartElement(URI_KML,TAG_REGION);
+        this.writeCommonAbstractObject(region);
+        if(region.getLatLonAltBox() != null){
+            this.writeLatLonAltBox(region.getLatLonAltBox());
+        }
+        if(region.getLod() != null){
+            this.writeLod(region.getLod());
+        }
+        writer.writeEndElement();
+    }
+
+    private void writeLod(Lod lod) throws XMLStreamException{
+        writer.writeStartElement(URI_KML,TAG_LOD);
+        this.writeCommonAbstractObject(lod);
+        if (isFiniteNumber(lod.getMinLodPixels())){
+            this.writeMinLodPixels(lod.getMinLodPixels());
+        }
+        if (isFiniteNumber(lod.getMaxLodPixels())){
+            this.writeMaxLodPixels(lod.getMaxLodPixels());
+        }
+        if (isFiniteNumber(lod.getMinFadeExtent())){
+            this.writeMinFadeExtent(lod.getMinFadeExtent());
+        }
+        if (isFiniteNumber(lod.getMaxFadeExtent())){
+            this.writeMaxFadeExtent(lod.getMaxFadeExtent());
+        }
+        writer.writeEndElement();
+    }
+
+    private void writeLatLonAltBox(LatLonAltBox latLonAltBox) throws XMLStreamException{
+        writer.writeStartElement(URI_KML, TAG_LAT_LON_ALT_BOX);
+        this.writeCommonAbstractLatLonBox(latLonAltBox);
+        if (isFiniteNumber(latLonAltBox.getMinAltitude())){
+            this.writeMinAltitude(latLonAltBox.getMinAltitude());
+        }
+        if (isFiniteNumber(latLonAltBox.getMaxAltitude())){
+            this.writeMaxAltitude(latLonAltBox.getMaxAltitude());
+        }
+        writer.writeEndElement();
+    }
+
+    private void writeAtomPersonConstruct(AtomPersonConstruct person){
+
+    }
+
+    private void writeAtomLink(AtomLink link){
+
+    }
+
+    private void writeXalAddresDetails(AddressDetails details){
+
+    }
+
+    private void writeAbstractTimePrimitive(AbstractTimePrimitive abstractTimePrimitive) throws XMLStreamException{
+        if (abstractTimePrimitive instanceof TimeSpan){
+            this.writeTimeSpan((TimeSpan) abstractTimePrimitive);
+        } else if (abstractTimePrimitive instanceof TimeStamp){
+            this.writeTimeStamp((TimeStamp) abstractTimePrimitive);
+        }
+    }
+
+    private void writeTimeSpan(TimeSpan timeSpan) throws XMLStreamException{
+        writer.writeEmptyElement(URI_KML, TAG_TIME_SPAN);
+        this.writeCommonAbstractTimePrimitive(timeSpan);
+        if (timeSpan.getBegin() != null){
+            this.writeBegin(timeSpan.getBegin());
+        }
+        if (timeSpan.getEnd() != null){
+            this.writeEnd(timeSpan.getEnd());
+        }
+        if (timeSpan.getTimeSpanSimpleExtensions() != null){
+            this.writeSimpleExtensions(timeSpan.getTimeSpanSimpleExtensions());
+        }
+        if (timeSpan.getTimeSpanObjectExtensions() != null){
+            this.writeObjectExtensions(timeSpan.getTimeSpanObjectExtensions());
+        }
+        writer.writeEndElement();
+    }
+
+    private void writeTimeStamp(TimeStamp timeStamp) throws XMLStreamException{
+        writer.writeEmptyElement(URI_KML, TAG_TIME_STAMP);
+        this.writeCommonAbstractTimePrimitive(timeStamp);
+        if (timeStamp.getWhen() != null){
+            this.writeWhen(timeStamp.getWhen());
+        }
+        if (timeStamp.getTimeStampSimpleExtensions() != null){
+            this.writeSimpleExtensions(timeStamp.getTimeStampSimpleExtensions());
+        }
+        if (timeStamp.getTimeStampObjectExtensions() != null){
+            this.writeObjectExtensions(timeStamp.getTimeStampObjectExtensions());
+        }
+        writer.writeEndElement();
     }
 
     private void writeAbstractView(AbstractView abstractView) throws XMLStreamException{
@@ -272,6 +437,16 @@ public class KmlWriter extends StaxStreamWriter {
         }
         if (abstractView.getAbstractViewObjectExtensions() != null){
             this.writeObjectExtensions(abstractView.getAbstractViewObjectExtensions());
+        }
+    }
+
+     private void writeCommonAbstractTimePrimitive(AbstractTimePrimitive abstractTimePrimitive) throws XMLStreamException{
+        this.writeCommonAbstractObject(abstractTimePrimitive);
+        if (abstractTimePrimitive.getAbstractTimePrimitiveSimpleExtensions() != null){
+            this.writeSimpleExtensions(abstractTimePrimitive.getAbstractTimePrimitiveSimpleExtensions());
+        }
+        if (abstractTimePrimitive.getAbstractTimePrimitiveObjectExtensions() != null){
+            this.writeObjectExtensions(abstractTimePrimitive.getAbstractTimePrimitiveObjectExtensions());
         }
     }
 
@@ -1198,6 +1373,36 @@ public class KmlWriter extends StaxStreamWriter {
         writer.writeEndElement();
     }
 
+    private void writeBegin(String begin) throws XMLStreamException {
+        writer.writeStartElement(URI_KML, TAG_BEGIN);
+        writer.writeCharacters(begin);
+        writer.writeEndElement();
+    }
+
+    private void writeEnd(String end) throws XMLStreamException {
+        writer.writeStartElement(URI_KML, TAG_END);
+        writer.writeCharacters(end);
+        writer.writeEndElement();
+    }
+
+    private void writeWhen(String when) throws XMLStreamException {
+        writer.writeStartElement(URI_KML, TAG_WHEN);
+        writer.writeCharacters(when);
+        writer.writeEndElement();
+    }
+
+    private void writeDisplayName(String displayName) throws XMLStreamException {
+        writer.writeStartElement(URI_KML, TAG_DISPLAY_NAME);
+        writer.writeCharacters(displayName);
+        writer.writeEndElement();
+    }
+
+    private void writeValue(String value) throws XMLStreamException {
+        writer.writeStartElement(URI_KML, TAG_VALUE);
+        writer.writeCharacters(value);
+        writer.writeEndElement();
+    }
+
     private void writeColor(Color color) throws XMLStreamException{
         writer.writeStartElement(URI_KML, TAG_COLOR);
         writer.writeCharacters(color.getColor());
@@ -1303,6 +1508,42 @@ public class KmlWriter extends StaxStreamWriter {
     private void writeZ(double z) throws XMLStreamException{
         writer.writeStartElement(URI_KML, TAG_Z);
         writer.writeCharacters(Double.toString(z));
+        writer.writeEndElement();
+    }
+
+    private void writeMinAltitude(double minAltitude) throws XMLStreamException{
+        writer.writeStartElement(URI_KML, TAG_MIN_ALTITUDE);
+        writer.writeCharacters(Double.toString(minAltitude));
+        writer.writeEndElement();
+    }
+
+    private void writeMaxAltitude(double maxAltitude) throws XMLStreamException{
+        writer.writeStartElement(URI_KML, TAG_MAX_ALTITUDE);
+        writer.writeCharacters(Double.toString(maxAltitude));
+        writer.writeEndElement();
+    }
+
+    private void writeMinLodPixels(double pixels) throws XMLStreamException{
+        writer.writeStartElement(URI_KML, TAG_MIN_LOD_PIXELS);
+        writer.writeCharacters(Double.toString(pixels));
+        writer.writeEndElement();
+    }
+
+    private void writeMaxLodPixels(double pixels) throws XMLStreamException{
+        writer.writeStartElement(URI_KML, TAG_MAX_LOD_PIXELS);
+        writer.writeCharacters(Double.toString(pixels));
+        writer.writeEndElement();
+    }
+
+    private void writeMinFadeExtent(double fadeEXtent) throws XMLStreamException{
+        writer.writeStartElement(URI_KML, TAG_MIN_FADE_EXTENT);
+        writer.writeCharacters(Double.toString(fadeEXtent));
+        writer.writeEndElement();
+    }
+
+    private void writeMaxFadeExtent(double fadeEXtent) throws XMLStreamException{
+        writer.writeStartElement(URI_KML, TAG_MAX_FADE_EXTENT);
+        writer.writeCharacters(Double.toString(fadeEXtent));
         writer.writeEndElement();
     }
 
