@@ -22,8 +22,17 @@ import org.geotoolkit.client.Request;
 /**
  *
  * @author Olivier Terral (Geomatys)
+ * @author Cédric Briançon (Geomatys)
  * @module pending
  */
 public interface GetCapabilitiesRequest extends Request {
+    /**
+     * Returns the upate sequence string.
+     */
+    String getUpdateSequence();
 
+    /**
+     * Sets the update sequence for the GetCapabilities response.
+     */
+    void setUpdateSequence(String sequence);
 }
