@@ -69,7 +69,9 @@ public interface CanvasController2D extends CanvasController{
      *                               illegal state, non invertible.
      */
     DirectPosition getCenter() throws NoninvertibleTransformException;
-    
+
+    Envelope getVisibleArea() throws TransformException;
+
     void setAutoRepaint(boolean auto);
     
     boolean isAutoRepaint();

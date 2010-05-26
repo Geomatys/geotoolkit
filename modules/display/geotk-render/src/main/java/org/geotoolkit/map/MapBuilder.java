@@ -3,7 +3,7 @@
  *    http://www.geotoolkit.org
  *
  *    (C) 2003 - 2008, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2008 - 2009, Geomatys
+ *    (C) 2008 - 2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -20,8 +20,7 @@ package org.geotoolkit.map;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CancellationException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
@@ -30,13 +29,13 @@ import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.coverage.io.GridCoverageReader;
-import org.geotoolkit.coverage.io.ImageCoverageReader;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.feature.DefaultName;
+import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
-import org.opengis.coverage.grid.GridCoverage;
 
+import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.feature.Feature;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.expression.Expression;
@@ -54,7 +53,16 @@ public final class MapBuilder {
     private MapBuilder(){}
 
     /**
-     * Create a Default Mapcontext object.
+     * Create a Default Mapcontext object using coordinate reference system : CRS:84.
+     */
+    public static MapContext createContext(){
+        return createContext(DefaultGeographicCRS.WGS84);
+    }
+
+    /**
+     * Create a Default Mapcontext object with the given coordinate reference system.
+     * The crs is not used for renderering, it is only used when calling the getEnvelope
+     * method.
      */
     public static MapContext createContext(final CoordinateReferenceSystem crs){
         return new DefaultMapContext(crs);

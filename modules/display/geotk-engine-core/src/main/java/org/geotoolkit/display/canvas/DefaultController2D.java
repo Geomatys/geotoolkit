@@ -31,6 +31,7 @@ import javax.measure.converter.UnitConverter;
 import javax.measure.quantity.Length;
 import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
+import org.geotoolkit.geometry.Envelope2D;
 
 import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.internal.referencing.CRSUtilities;
@@ -705,7 +706,11 @@ public class DefaultController2D implements CanvasController2D{
                 gc.setStartingPosition(pos1);
                 gc.setDestinationPosition(pos2);
             } catch (TransformException ex) {
-                throw new IllegalStateException(ex.getLocalizedMessage(), ex);
+                throw new TransformException(ex.getLocalizedMessage(), ex);
+            } catch (IllegalArgumentException ex) {
+                //might happen when changing projection and moving the area.
+                //the coordinate can be out of the crs area, which causes this exception
+                throw new TransformException(ex.getLocalizedMessage(), ex);
             }
             distance = Math.abs(gc.getOrthodromicDistance());
         }
@@ -740,6 +745,14 @@ public class DefaultController2D implements CanvasController2D{
         }else{
             return new Date((long)d);
         }
+    }
+
+    @Override
+    public Envelope getVisibleArea() throws TransformException {
+        final CoordinateReferenceSystem objectiveCRS2D = canvas.getObjectiveCRS2D();
+        final Shape canvasObjectiveShape = canvas.getObjectiveBounds();
+        final Rectangle2D canvasObjectiveBounds = canvasObjectiveShape.getBounds2D();
+        return new Envelope2D(objectiveCRS2D,canvasObjectiveBounds);
     }
 
 }
