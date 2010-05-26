@@ -97,8 +97,8 @@ import org.geotoolkit.lang.ThreadSafe;
  * <cite>longitude first axis order</cite> because the axis order can be user-supplied. The
  * (<var>longitude</var>, <var>latitude</var>) order just appears to be the default one.
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.12
  *
  * @see Hints#FORCE_LONGITUDE_FIRST_AXIS_ORDER
  * @see Hints#FORCE_STANDARD_AXIS_UNITS
@@ -306,9 +306,9 @@ public class OrderedAxisAuthorityFactory extends TransformedAuthorityFactory
      * Returns the rank for the specified axis. Any axis that were not specified
      * at construction time will ordered after all known axis.
      */
-    private final int rank(final CoordinateSystemAxis axis) {
-        int c = axis.getDirection().absolute().ordinal();
-        c = (c>=0 && c<directionRanks.length) ? directionRanks[c] : directionRanks.length;
+    private final int rank(final AxisDirection axis) {
+        int c = axis.absolute().ordinal();
+        c = (c >= 0 && c < directionRanks.length) ? directionRanks[c] : directionRanks.length;
         return c;
     }
 
@@ -332,7 +332,19 @@ public class OrderedAxisAuthorityFactory extends TransformedAuthorityFactory
      */
     @Override
     public int compare(final CoordinateSystemAxis axis1, final CoordinateSystemAxis axis2) {
-        return rank(axis1) - rank(axis2);
+        final AxisDirection dir1 = axis1.getDirection();
+        final AxisDirection dir2 = axis2.getDirection();
+        final int rank = rank(dir1);
+        int c = rank - rank(dir2);
+        if (c == 0 && rank == directionRanks.length) {
+            // Both axes are not in the list of known directions.
+            // We may have a more complex direction like "South along 90°E".
+            final double angle = DefaultCoordinateSystemAxis.getAngle(dir1, dir2);
+            if (angle > 0) return -1; // Right handed coordinate system
+            if (angle < 0) return +1; // Left handed coordinate system
+            // Otherwise leave unchanged.
+        }
+        return c;
     }
 
     /**

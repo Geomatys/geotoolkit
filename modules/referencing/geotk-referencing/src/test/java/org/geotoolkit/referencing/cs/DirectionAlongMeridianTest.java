@@ -86,6 +86,7 @@ public final class DirectionAlongMeridianTest extends ReferencingTestCase {
         assertOrdered("North along  90 deg East",   "North along   0 deg");
         assertOrdered("North along  75 deg West",   "North along 165 deg West");
         assertOrdered("South along  90 deg West",   "South along   0 deg");
+        assertOrdered("South along  90 deg East",   "South along 180 deg");
         assertOrdered("South along 180 deg",        "South along  90 deg West");
         assertOrdered("North along 130 deg West",   "North along 140 deg East");
     }

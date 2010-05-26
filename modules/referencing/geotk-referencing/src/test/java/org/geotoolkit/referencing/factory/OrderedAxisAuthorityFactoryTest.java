@@ -56,9 +56,9 @@ import static org.junit.Assume.assumeTrue;
  * Tests the usage of {@link OrderedAxisAuthorityFactory} with the help of the
  * EPSG database. Any EPSG plugin should fit.
  *
- * @author Martin Desruisseaux (IRD)
+ * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Jody Garnett (Refractions)
- * @version 3.00
+ * @version 3.12
  *
  * @since 3.00
  */
@@ -343,6 +343,32 @@ public final class OrderedAxisAuthorityFactoryTest extends ReferencingTestCase {
 
         final CoordinateReferenceSystem standard = CRS.decode("EPSG:4326", false);
         final CoordinateReferenceSystem modified = CRS.decode("EPSG:4326", true );
+        assertEquals("Expected a left-handed CS.",  -90, getAngle(standard), EPS);
+        assertEquals("Expected a right-handed CS.", +90, getAngle(modified), EPS);
+        final MathTransform transform = CRS.findMathTransform(standard, modified);
+        assertTrue(transform instanceof LinearTransform);
+        final Matrix matrix = ((LinearTransform) transform).getMatrix();
+        assertEquals(new GeneralMatrix(new double[][] {
+            { 0,  1,  0},
+            { 1,  0,  0},
+            { 0,  0,  1}}), new GeneralMatrix(matrix));
+    }
+
+    /**
+     * Tests the creation of EPSG:32661 CRS with different axis order. The axis order declared in
+     * the database is "South along 180°" and "South along 90°E". When "xy" axis order is forced,
+     * it should be reverse axis order.
+     *
+     * @throws FactoryException Should not happen.
+     *
+     * @since 3.12
+     */
+    @Test
+    public void testPolarProjection() throws FactoryException {
+        assumeTrue(isEpsgFactoryAvailable());
+
+        final CoordinateReferenceSystem standard = CRS.decode("EPSG:32661", false);
+        final CoordinateReferenceSystem modified = CRS.decode("EPSG:32661", true );
         assertEquals("Expected a left-handed CS.",  -90, getAngle(standard), EPS);
         assertEquals("Expected a right-handed CS.", +90, getAngle(modified), EPS);
         final MathTransform transform = CRS.findMathTransform(standard, modified);
