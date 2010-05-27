@@ -25,14 +25,12 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import org.geotoolkit.feature.DefaultProperty;
 
 import org.geotoolkit.io.TableWriter;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
 
 import org.opengis.feature.Property;
 import org.opengis.feature.type.AttributeDescriptor;
-import org.opengis.feature.type.PropertyDescriptor;
 
 /**
  * OSM Relation, Open Street Map relations can define "anything".
@@ -74,14 +72,14 @@ public class Relation extends IdentifiedElement{
         props.add(FF.createAttribute(user, (AttributeDescriptor) getType().getDescriptor("user"),null));
         props.add(FF.createAttribute(timestamp, (AttributeDescriptor) getType().getDescriptor("timestamp"),null));
 
-        final PropertyDescriptor tagDesc = getType().getDescriptor("tags");
+        final AttributeDescriptor tagDesc = (AttributeDescriptor) getType().getDescriptor("tags");
         for(final Tag t : tags){
-            props.add(new DefaultProperty(t, tagDesc));
+            props.add(FF.createAttribute(t, tagDesc, null));
         }
 
-        final PropertyDescriptor memDesc = getType().getDescriptor("members");
+        final AttributeDescriptor memDesc = (AttributeDescriptor) getType().getDescriptor("members");
         for(final Member m : members){
-            props.add(new DefaultProperty(m, memDesc));
+            props.add(FF.createAttribute(m, memDesc, null));
         }
 
         return props;

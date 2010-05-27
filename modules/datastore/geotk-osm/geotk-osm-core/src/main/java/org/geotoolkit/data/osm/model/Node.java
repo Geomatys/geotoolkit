@@ -26,14 +26,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Map;
-import org.geotoolkit.feature.DefaultProperty;
 
 import org.geotoolkit.io.TableWriter;
 
 import org.opengis.feature.Property;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.GeometryDescriptor;
-import org.opengis.feature.type.PropertyDescriptor;
 
 /**
  * OSM Node, nodes are the base element that compose ways and relations.
@@ -84,12 +82,12 @@ public class Node extends IdentifiedElement{
         props.add(FF.createAttribute(user, (AttributeDescriptor) getType().getDescriptor("user"),null));
         props.add(FF.createAttribute(timestamp, (AttributeDescriptor) getType().getDescriptor("timestamp"),null));
         props.add(FF.createGeometryAttribute(GF.createPoint(new Coordinate(lon, lat)), (GeometryDescriptor)getType().getDescriptor("point"),null,null));
-
-        final PropertyDescriptor tagDesc = getType().getDescriptor("tags");
+        
+        final AttributeDescriptor tagDesc = (AttributeDescriptor) getType().getDescriptor("tags");
         for(final Tag t : tags){
-            props.add(new DefaultProperty(t, tagDesc));
+            props.add(FF.createAttribute(t, tagDesc,null));
         }
-
+        
         return props;
     }
 

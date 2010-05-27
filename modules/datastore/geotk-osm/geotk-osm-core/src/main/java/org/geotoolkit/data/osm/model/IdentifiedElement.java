@@ -22,11 +22,12 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import org.geotoolkit.factory.FactoryFinder;
 
+import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.feature.AbstractFeature;
 import org.geotoolkit.filter.identity.DefaultFeatureId;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
+
 import org.opengis.feature.FeatureFactory;
 import org.opengis.feature.Property;
 

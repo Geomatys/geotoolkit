@@ -25,12 +25,12 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import org.geotoolkit.feature.DefaultProperty;
+
 import org.geotoolkit.io.TableWriter;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
+
 import org.opengis.feature.Property;
 import org.opengis.feature.type.AttributeDescriptor;
-import org.opengis.feature.type.PropertyDescriptor;
 
 /**
  * OSM way element. a Way is composed of nodes and can represent "anything"
@@ -73,14 +73,14 @@ public class Way extends IdentifiedElement{
         props.add(FF.createAttribute(user, (AttributeDescriptor) getType().getDescriptor("user"),null));
         props.add(FF.createAttribute(timestamp, (AttributeDescriptor) getType().getDescriptor("timestamp"),null));
 
-        final PropertyDescriptor tagDesc = getType().getDescriptor("tags");
+        final AttributeDescriptor tagDesc = (AttributeDescriptor) getType().getDescriptor("tags");
         for(final Tag t : tags){
-            props.add(new DefaultProperty(t, tagDesc));
+            props.add(FF.createAttribute(t, tagDesc,null));
         }
 
-        final PropertyDescriptor nodeDesc = getType().getDescriptor("nodes");
+        final AttributeDescriptor nodeDesc = (AttributeDescriptor) getType().getDescriptor("nodes");
         for(final Long l : nodes){
-            props.add(new DefaultProperty(l, nodeDesc));
+            props.add(FF.createAttribute(l, nodeDesc, null));
         }
         return props;
     }
