@@ -419,7 +419,7 @@ public class Mercator extends UnitaryProjection {
 
     /**
      * Gets the derivative of this transform at a point.
-     * The current implementation uses the spherical formulas.
+     * The current implementation is derived from the spherical formulas.
      *
      * @param  point The coordinate point where to evaluate the derivative.
      * @return The derivative at the specified point as a 2&times;2 matrix.

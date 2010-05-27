@@ -78,7 +78,7 @@ public class CoverageDatabaseEvent extends EventObject {
 
     /**
      * Returns whetever this event is occuring before the change is actually applied in the
-     * database. {@linkplain DatabaseCoverageListener Listeners} can veto the change before
+     * database. {@linkplain CoverageDatabaseListener Listeners} can veto the change before
      * it is applied, but can not veto the change after it has been applied.
      *
      * @return {@code true} if the event occurs before the change, or

@@ -42,12 +42,6 @@ import org.geotoolkit.lang.ThreadSafe;
  *     CRSAuthorityFactory factory = AuthorityFactoryFinder.getCRSAuthorityFactory("EPSG", hints);
  * }
  *
- * {@note In theory implementing the <code>DatumAuthorityFactory</code> interface is useless
- *        here, since "axis order" doesn't make any sense for them. However if we do not
- *        register this class as a <code>DatumAuthorityFactory</code> as well, users will
- *        get a <code>NoSuchFactoryException</code> when asking for a factory with the
- *        <code>FORCE_LONGITUDE_FIRST_AXIS_ORDER</code> hint set.}
- *
  * {@section To be more specific...}
  * The name of this class contains "<cite>longitude first</cite>" for simplicity, because the axes
  * reordering apply mostly to geographic CRS (in contrast, most projected CRS already have
@@ -57,6 +51,10 @@ import org.geotoolkit.lang.ThreadSafe;
  * is an inappropriate expression for projected CRS). It even works in cases like stereographic
  * projections, where the axes names look like (<var>South along 180°</var>, <var>South along 90°E</var>).
  * In such cases, aiming for "<cite>longitude first</cite>" would not make sense.
+ *
+ * {@note This class implements also the <code>DatumAuthorityFactory</code> interface as a matter
+ *        of principle, in order to have a single class implementing all factories. However this
+ *        is in theory useless since "axis order" doesn't make any sense for datum.}
  *
  * @author Martin Desruisseaux (IRD)
  * @version 3.00

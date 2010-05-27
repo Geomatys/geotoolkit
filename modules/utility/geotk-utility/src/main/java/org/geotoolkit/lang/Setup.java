@@ -58,7 +58,7 @@ import org.geotoolkit.resources.Errors;
  *   </tr><tr>
  *     <td nowrap>{@code geotk-utility}</td>
  *     <td><ul>
- *       <li>If {@code platform = "server"}:
+ *       <li>If {@code platform != "server"}:
  *         <ul><li><code>{@linkplain Logging#forceMonolineConsoleOutput Logging.forceMonolineConsoleOutput}(null)</code></li></ul>
  *       </li>
  *     </ul></td>

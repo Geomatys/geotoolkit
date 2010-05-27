@@ -37,13 +37,11 @@ import org.geotoolkit.lang.ThreadSafe;
 
 /**
  * An authority factory which delegates all the work to an other factory, and reorder the axis in
- * some pre-determined order. This factory is mostly used by application expecting geographic
- * coordinates in (<var>longitude</var>, <var>latitude</var>) order, while most geographic CRS
- * specified in the <A HREF="http://www.epsg.org">EPSG database</A> use the opposite axis order.
- * <p>
- * It is better to avoid this class if you can. This class exists primarily for compatibility with
- * external data or applications that assume (<var>longitude</var>, <var>latitude</var>) axis order
- * no matter what the EPSG database said, for example Shapefiles.
+ * some pre-determined order. This factory exists primarily for compatibility with external data
+ * (for example Shapefiles) or applications (for example old WMS specifications) expecting
+ * geographic coordinates in (<var>longitude</var>, <var>latitude</var>) order, while most
+ * geographic CRS specified in the <A HREF="http://www.epsg.org">EPSG database</A> use the
+ * opposite axis order.
  * <p>
  * The axis order can be specified at construction time as an array of {@linkplain AxisDirection
  * axis directions}. If no such array is explicitly specified, then the default order is:
@@ -67,8 +65,8 @@ import org.geotoolkit.lang.ThreadSafe;
  *
  * This means that, for example, axis with East or West direction will be placed before any
  * axis with North or South direction. Axis directions not specified in the table (for example
- * {@link AxisDirection#OTHER OTHER}) will be ordered last. This is somewhat equivalent to the
- * ordering of {@link Double#NaN NaN} values in an array of {@code double}.
+ * {@link AxisDirection#OTHER OTHER}) will be ordered last, as a <cite>right-handed</cite>
+ * coordinate system if possible.
  * <p>
  * <strong>Notes:</strong>
  * <ul>
@@ -79,8 +77,12 @@ import org.geotoolkit.lang.ThreadSafe;
  *   <li>The actual axis ordering is determined by the {@link #compare compare} method
  *       implementation. Subclasses may override this method if the want to provide a more
  *       sophesticated axis ordering.</li>
+ *   <li>This class is named <cite>ordered axis authority factory</cite> instead of something like
+ *       <cite>longitude first axis order</cite> because the axis order can be user-supplied. The
+ *       (<var>longitude</var>, <var>latitude</var>) order just appears to be the default one.</li>
  * </ul>
- * <p>
+ *
+ * {@section Getting an instance}
  * For some authority factories, an instance of this class can be obtained by passing a
  * {@link Hints#FORCE_LONGITUDE_FIRST_AXIS_ORDER FORCE_LONGITUDE_FIRST_AXIS_ORDER} hint
  * to the <code>{@linkplain AuthorityFactoryFinder#getCRSAuthorityFactory
@@ -92,10 +94,6 @@ import org.geotoolkit.lang.ThreadSafe;
  *     CRSAuthorityFactory factory = FactoryFinder.getCRSAuthorityFactory("EPSG", hints);
  *     CoordinateReferenceSystem crs = factory.createCoordinateReferenceSystem("EPSG:4326");
  * }
- *
- * This class is named <cite>ordered axis authority factory</cite> instead of something like
- * <cite>longitude first axis order</cite> because the axis order can be user-supplied. The
- * (<var>longitude</var>, <var>latitude</var>) order just appears to be the default one.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @version 3.12
@@ -315,12 +313,15 @@ public class OrderedAxisAuthorityFactory extends TransformedAuthorityFactory
     /**
      * Compares two axis for order. This method is invoked automatically by the
      * {@link #replace(CoordinateSystem) replace} method for ordering the axis in a
-     * coordinate system. The default implementation orders the axis according their
+     * coordinate system.
+     * <p>
+     * The default implementation orders the axis according their
      * {@linkplain CoordinateSystemAxis#getDirection direction}, using the direction
      * table given at {@linkplain #OrderedAxisAuthorityFactory(AbstractAuthorityFactory,
-     * Hints, AxisDirection[]) construction time} (see also the class description).
-     * Subclasses may override this method if they want to define a more sophesticated
-     * axis ordering.
+     * Hints, AxisDirection[]) construction time} (see also the class description) first,
+     * or in an order forming a <cite>right-handed</cite> coordinate system if the axis
+     * direction was not specified at construction time. Subclasses can override this
+     * method if they want to define an other axis ordering.
      *
      * @param  axis1 The first axis to compare.
      * @param  axis2 The second axis to compare.
