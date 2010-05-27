@@ -19,18 +19,20 @@ package org.geotoolkit.data.osm.model;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
+
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Map;
-
 import org.geotoolkit.feature.DefaultProperty;
-import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry.JTSGeometryFactory;
+
 import org.geotoolkit.io.TableWriter;
 
 import org.opengis.feature.Property;
+import org.opengis.feature.type.AttributeDescriptor;
+import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.feature.type.PropertyDescriptor;
 
 /**
@@ -76,12 +78,12 @@ public class Node extends IdentifiedElement{
     @Override
     public Collection<Property> getProperties() {
         final Collection<Property> props = new ArrayList<Property>();
-        props.add(new DefaultProperty(id, getType().getDescriptor("id")));
-        props.add(new DefaultProperty(version, getType().getDescriptor("version")));
-        props.add(new DefaultProperty(changeset, getType().getDescriptor("changeset")));
-        props.add(new DefaultProperty(user, getType().getDescriptor("user")));
-        props.add(new DefaultProperty(timestamp, getType().getDescriptor("timestamp")));
-        props.add(new DefaultProperty(GF.createPoint(new Coordinate(lon, lat)), getType().getDescriptor("point")));
+        props.add(FF.createAttribute(id, (AttributeDescriptor) getType().getDescriptor("id"),null));
+        props.add(FF.createAttribute(version, (AttributeDescriptor) getType().getDescriptor("version"),null));
+        props.add(FF.createAttribute(changeset, (AttributeDescriptor) getType().getDescriptor("changeset"),null));
+        props.add(FF.createAttribute(user, (AttributeDescriptor) getType().getDescriptor("user"),null));
+        props.add(FF.createAttribute(timestamp, (AttributeDescriptor) getType().getDescriptor("timestamp"),null));
+        props.add(FF.createGeometryAttribute(GF.createPoint(new Coordinate(lon, lat)), (GeometryDescriptor)getType().getDescriptor("point"),null,null));
 
         final PropertyDescriptor tagDesc = getType().getDescriptor("tags");
         for(final Tag t : tags){

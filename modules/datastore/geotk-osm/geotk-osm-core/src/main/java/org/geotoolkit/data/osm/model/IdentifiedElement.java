@@ -22,10 +22,12 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import org.geotoolkit.factory.FactoryFinder;
 
 import org.geotoolkit.feature.AbstractFeature;
 import org.geotoolkit.filter.identity.DefaultFeatureId;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
+import org.opengis.feature.FeatureFactory;
 import org.opengis.feature.Property;
 
 import org.opengis.feature.type.AttributeDescriptor;
@@ -39,6 +41,8 @@ import org.opengis.feature.type.AttributeDescriptor;
  * @module pending
  */
 public abstract class IdentifiedElement extends AbstractFeature<Collection<Property>> implements Serializable {
+
+    static final FeatureFactory FF = FactoryFinder.getFeatureFactory(null);
 
     protected final long id;
     protected final int version;

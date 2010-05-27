@@ -37,7 +37,7 @@ import org.opengis.geometry.Envelope;
  */
 public class ChangeSet {
 
-    private static final List<Tag> toList(Map<String,String> tags){
+    private static List<Tag> toList(Map<String,String> tags){
         final List<Tag> lstTag;
         if(tags == null || tags.isEmpty()){
             lstTag = Collections.EMPTY_LIST;
