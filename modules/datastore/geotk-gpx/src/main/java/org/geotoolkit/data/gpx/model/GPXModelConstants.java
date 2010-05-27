@@ -29,23 +29,23 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
-import org.geotoolkit.feature.DefaultComplexAttribute;
-import org.geotoolkit.feature.DefaultFeature;
+import org.geotoolkit.factory.FactoryFinder;
+import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.DefaultName;
-import org.geotoolkit.feature.DefaultProperty;
 import org.geotoolkit.feature.FeatureTypeBuilder;
-import org.geotoolkit.filter.identity.DefaultFeatureId;
+import org.geotoolkit.feature.LenientFeatureFactory;
 import org.geotoolkit.geometry.ImmutableEnvelope;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 
 import org.opengis.feature.ComplexAttribute;
 import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureFactory;
 import org.opengis.feature.Property;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.ComplexType;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.FeatureTypeFactory;
-import org.opengis.feature.type.PropertyDescriptor;
+import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
@@ -59,6 +59,8 @@ import static org.geotoolkit.data.gpx.xml.GPXConstants.*;
  */
 public final class GPXModelConstants {
 
+    private static final FeatureFactory FF = FactoryFinder.getFeatureFactory(
+            new Hints(Hints.FEATURE_FACTORY, LenientFeatureFactory.class));
     private static final GeometryFactory GF = new GeometryFactory();
 
     public static final CoordinateReferenceSystem GPX_CRS = DefaultGeographicCRS.WGS84;
@@ -225,36 +227,36 @@ public final class GPXModelConstants {
 
         final Collection<Property> properties = new ArrayList<Property>();
 
-        properties.add(new DefaultProperty(index,       TYPE_WAYPOINT.getDescriptor("index")));
-        properties.add(new DefaultProperty(geometry,    TYPE_WAYPOINT.getDescriptor(GPX_GEOMETRY)));
+        properties.add(FF.createAttribute(index, (AttributeDescriptor) TYPE_WAYPOINT.getDescriptor("index"), null));
+        properties.add(FF.createGeometryAttribute(geometry, (GeometryDescriptor) TYPE_WAYPOINT.getDescriptor(GPX_GEOMETRY), null, null));
 
-        if(ele != null)         properties.add(new DefaultProperty(ele,         TYPE_WAYPOINT.getDescriptor(TAG_WPT_ELE)));
-        if(time != null)        properties.add(new DefaultProperty(time,        TYPE_WAYPOINT.getDescriptor(TAG_WPT_TIME)));
-        if(magvar != null)      properties.add(new DefaultProperty(magvar,      TYPE_WAYPOINT.getDescriptor(TAG_WPT_MAGVAR)));
-        if(geoidheight != null) properties.add(new DefaultProperty(geoidheight, TYPE_WAYPOINT.getDescriptor(TAG_WPT_GEOIHEIGHT)));
-        if(name != null)        properties.add(new DefaultProperty(name,        TYPE_WAYPOINT.getDescriptor(TAG_NAME)));
-        if(cmt != null)         properties.add(new DefaultProperty(cmt,         TYPE_WAYPOINT.getDescriptor(TAG_CMT)));
-        if(desc != null)        properties.add(new DefaultProperty(desc,        TYPE_WAYPOINT.getDescriptor(TAG_DESC)));
-        if(src != null)         properties.add(new DefaultProperty(src,         TYPE_WAYPOINT.getDescriptor(TAG_SRC)));
+        if(ele != null)         properties.add(FF.createAttribute(ele,         (AttributeDescriptor)TYPE_WAYPOINT.getDescriptor(TAG_WPT_ELE), null));
+        if(time != null)        properties.add(FF.createAttribute(time,        (AttributeDescriptor)TYPE_WAYPOINT.getDescriptor(TAG_WPT_TIME), null));
+        if(magvar != null)      properties.add(FF.createAttribute(magvar,      (AttributeDescriptor)TYPE_WAYPOINT.getDescriptor(TAG_WPT_MAGVAR), null));
+        if(geoidheight != null) properties.add(FF.createAttribute(geoidheight, (AttributeDescriptor)TYPE_WAYPOINT.getDescriptor(TAG_WPT_GEOIHEIGHT), null));
+        if(name != null)        properties.add(FF.createAttribute(name,        (AttributeDescriptor)TYPE_WAYPOINT.getDescriptor(TAG_NAME), null));
+        if(cmt != null)         properties.add(FF.createAttribute(cmt,         (AttributeDescriptor)TYPE_WAYPOINT.getDescriptor(TAG_CMT), null));
+        if(desc != null)        properties.add(FF.createAttribute(desc,        (AttributeDescriptor)TYPE_WAYPOINT.getDescriptor(TAG_DESC), null));
+        if(src != null)         properties.add(FF.createAttribute(src,         (AttributeDescriptor)TYPE_WAYPOINT.getDescriptor(TAG_SRC), null));
 
         if(links != null && !links.isEmpty()){
-            final PropertyDescriptor linkDesc = TYPE_WAYPOINT.getDescriptor(TAG_LINK);
+            final AttributeDescriptor linkDesc = (AttributeDescriptor) TYPE_WAYPOINT.getDescriptor(TAG_LINK);
             for(URI uri : links){
-                properties.add(new DefaultProperty(uri, linkDesc));
+                properties.add(FF.createAttribute(uri, linkDesc,null));
             }
         }
 
-        if(sym != null)         properties.add(new DefaultProperty(sym,         TYPE_WAYPOINT.getDescriptor(TAG_WPT_SYM)));
-        if(type != null)        properties.add(new DefaultProperty(type,        TYPE_WAYPOINT.getDescriptor(TAG_TYPE)));
-        if(fix != null)         properties.add(new DefaultProperty(fix,         TYPE_WAYPOINT.getDescriptor(TAG_WPT_FIX)));
-        if(sat != null)         properties.add(new DefaultProperty(sat,         TYPE_WAYPOINT.getDescriptor(TAG_WPT_SAT)));
-        if(hdop != null)        properties.add(new DefaultProperty(hdop,        TYPE_WAYPOINT.getDescriptor(TAG_WPT_HDOP)));
-        if(vdop != null)        properties.add(new DefaultProperty(vdop,        TYPE_WAYPOINT.getDescriptor(TAG_WPT_VDOP)));
-        if(pdop != null)        properties.add(new DefaultProperty(pdop,        TYPE_WAYPOINT.getDescriptor(TAG_WPT_PDOP)));
-        if(ageofdgpsdata!=null) properties.add(new DefaultProperty(ageofdgpsdata,TYPE_WAYPOINT.getDescriptor(TAG_WPT_AGEOFGPSDATA)));
-        if(dgpsid != null)      properties.add(new DefaultProperty(dgpsid,      TYPE_WAYPOINT.getDescriptor(TAG_WPT_DGPSID)));
+        if(sym != null)         properties.add(FF.createAttribute(sym,         (AttributeDescriptor)TYPE_WAYPOINT.getDescriptor(TAG_WPT_SYM), null));
+        if(type != null)        properties.add(FF.createAttribute(type,        (AttributeDescriptor)TYPE_WAYPOINT.getDescriptor(TAG_TYPE), null));
+        if(fix != null)         properties.add(FF.createAttribute(fix,         (AttributeDescriptor)TYPE_WAYPOINT.getDescriptor(TAG_WPT_FIX), null));
+        if(sat != null)         properties.add(FF.createAttribute(sat,         (AttributeDescriptor)TYPE_WAYPOINT.getDescriptor(TAG_WPT_SAT), null));
+        if(hdop != null)        properties.add(FF.createAttribute(hdop,        (AttributeDescriptor)TYPE_WAYPOINT.getDescriptor(TAG_WPT_HDOP), null));
+        if(vdop != null)        properties.add(FF.createAttribute(vdop,        (AttributeDescriptor)TYPE_WAYPOINT.getDescriptor(TAG_WPT_VDOP), null));
+        if(pdop != null)        properties.add(FF.createAttribute(pdop,        (AttributeDescriptor)TYPE_WAYPOINT.getDescriptor(TAG_WPT_PDOP), null));
+        if(ageofdgpsdata!=null) properties.add(FF.createAttribute(ageofdgpsdata,(AttributeDescriptor)TYPE_WAYPOINT.getDescriptor(TAG_WPT_AGEOFGPSDATA), null));
+        if(dgpsid != null)      properties.add(FF.createAttribute(dgpsid,      (AttributeDescriptor)TYPE_WAYPOINT.getDescriptor(TAG_WPT_DGPSID), null));
 
-        return DefaultFeature.create(properties, TYPE_WAYPOINT, new DefaultFeatureId(String.valueOf(index)));
+        return FF.createFeature(properties, TYPE_WAYPOINT, Integer.toString(index));
     }
 
     public static Feature createRoute(int index, String name, String cmt, String desc,
@@ -262,55 +264,55 @@ public final class GPXModelConstants {
 
         final Collection<Property> properties = new ArrayList<Property>();
 
-        properties.add(new DefaultProperty(index,       TYPE_ROUTE.getDescriptor("index")));
+        properties.add(FF.createAttribute(index, (AttributeDescriptor) TYPE_ROUTE.getDescriptor("index"), null));
 
-        if(name != null)        properties.add(new DefaultProperty(name,        TYPE_ROUTE.getDescriptor(TAG_NAME)));
-        if(cmt != null)         properties.add(new DefaultProperty(cmt,         TYPE_ROUTE.getDescriptor(TAG_CMT)));
-        if(desc != null)        properties.add(new DefaultProperty(desc,        TYPE_ROUTE.getDescriptor(TAG_DESC)));
-        if(src != null)         properties.add(new DefaultProperty(src,         TYPE_ROUTE.getDescriptor(TAG_SRC)));
+        if(name != null)        properties.add(FF.createAttribute(name, (AttributeDescriptor) TYPE_ROUTE.getDescriptor(TAG_NAME), null));
+        if(cmt != null)         properties.add(FF.createAttribute(cmt, (AttributeDescriptor) TYPE_ROUTE.getDescriptor(TAG_CMT), null));
+        if(desc != null)        properties.add(FF.createAttribute(desc, (AttributeDescriptor) TYPE_ROUTE.getDescriptor(TAG_DESC), null));
+        if(src != null)         properties.add(FF.createAttribute(src, (AttributeDescriptor) TYPE_ROUTE.getDescriptor(TAG_SRC), null));
 
         if(links != null && !links.isEmpty()){
-            final PropertyDescriptor linkDesc = TYPE_ROUTE.getDescriptor(TAG_LINK);
+            final AttributeDescriptor linkDesc = (AttributeDescriptor) TYPE_WAYPOINT.getDescriptor(TAG_LINK);
             for(URI uri : links){
-                properties.add(new DefaultProperty(uri, linkDesc));
+                properties.add(FF.createAttribute(uri, linkDesc,null));
             }
         }
 
-        if(number != null)      properties.add(new DefaultProperty(number,      TYPE_ROUTE.getDescriptor(TAG_NUMBER)));
-        if(type != null)        properties.add(new DefaultProperty(type,        TYPE_ROUTE.getDescriptor(TAG_TYPE)));
+        if(number != null)      properties.add(FF.createAttribute(number, (AttributeDescriptor) TYPE_ROUTE.getDescriptor(TAG_NUMBER), null));
+        if(type != null)        properties.add(FF.createAttribute(type, (AttributeDescriptor) TYPE_ROUTE.getDescriptor(TAG_TYPE), null));
 
         final List<Coordinate> coords = new ArrayList<Coordinate>();
         if(wayPoints != null && !wayPoints.isEmpty()){
-            final PropertyDescriptor ptDesc = TYPE_ROUTE.getDescriptor(TAG_RTE_RTEPT);
+            final AttributeDescriptor ptDesc = (AttributeDescriptor) TYPE_ROUTE.getDescriptor(TAG_RTE_RTEPT);
             for(Feature pt : wayPoints){
-                properties.add(new DefaultProperty(pt, ptDesc));
+                properties.add(FF.createAttribute(pt, ptDesc,null));
                 coords.add( ((Point)pt.getProperty(GPX_GEOMETRY).getValue()).getCoordinate());
             }
         }
         final LineString geom = GF.createLineString(coords.toArray(new Coordinate[coords.size()]));
-        properties.add(new DefaultProperty(geom, TYPE_ROUTE.getDescriptor(GPX_GEOMETRY)));
+        properties.add(FF.createGeometryAttribute(geom, (GeometryDescriptor) TYPE_ROUTE.getDescriptor(GPX_GEOMETRY), null, null));
 
-        return DefaultFeature.create(properties, TYPE_ROUTE, new DefaultFeatureId(String.valueOf(index)));
+        return FF.createFeature(properties, TYPE_ROUTE, Integer.toString(index));
     }
 
     public static ComplexAttribute createTrackSegment(int index, List<Feature> wayPoints) {
 
         final Collection<Property> properties = new ArrayList<Property>();
 
-        properties.add(new DefaultProperty(index, TYPE_TRACK_SEGMENT.getDescriptor("index")));
+        properties.add(FF.createAttribute(index, (AttributeDescriptor) TYPE_TRACK_SEGMENT.getDescriptor("index"), null));
 
         final List<Coordinate> coords = new ArrayList<Coordinate>();
         if(wayPoints != null && !wayPoints.isEmpty()){
-            final PropertyDescriptor ptDesc = TYPE_TRACK_SEGMENT.getDescriptor(TAG_TRK_SEG_PT);
+            final AttributeDescriptor ptDesc = (AttributeDescriptor) TYPE_TRACK_SEGMENT.getDescriptor(TAG_TRK_SEG_PT);
             for(Feature pt : wayPoints){
-                properties.add(new DefaultProperty(pt, ptDesc));
+                properties.add(FF.createAttribute(pt, ptDesc, null));
                 coords.add( ((Point)pt.getProperty(GPX_GEOMETRY).getValue()).getCoordinate());
             }
         }
         final LineString geom = GF.createLineString(coords.toArray(new Coordinate[coords.size()]));
-        properties.add(new DefaultProperty(geom, TYPE_TRACK_SEGMENT.getDescriptor(GPX_GEOMETRY)));
+        properties.add(FF.createGeometryAttribute(geom, (GeometryDescriptor) TYPE_TRACK_SEGMENT.getDescriptor(GPX_GEOMETRY), null, null));
 
-        return new DefaultComplexAttribute(properties, DESC_TRACK_SEGMENT, new DefaultFeatureId(String.valueOf(index)));
+        return FF.createComplexAttribute(properties, DESC_TRACK_SEGMENT, Integer.toString(index));
     }
 
     public static Feature createTrack(int index, String name, String cmt, String desc,
@@ -318,28 +320,28 @@ public final class GPXModelConstants {
 
         final Collection<Property> properties = new ArrayList<Property>();
 
-        properties.add(new DefaultProperty(index,       TYPE_TRACK.getDescriptor("index")));
+        properties.add(FF.createAttribute(index, (AttributeDescriptor) TYPE_TRACK.getDescriptor("index"), null));
 
-        if(name != null)        properties.add(new DefaultProperty(name,        TYPE_TRACK.getDescriptor(TAG_NAME)));
-        if(cmt != null)         properties.add(new DefaultProperty(cmt,         TYPE_TRACK.getDescriptor(TAG_CMT)));
-        if(desc != null)        properties.add(new DefaultProperty(desc,        TYPE_TRACK.getDescriptor(TAG_DESC)));
-        if(src != null)         properties.add(new DefaultProperty(src,         TYPE_TRACK.getDescriptor(TAG_SRC)));
+        if(name != null)        properties.add(FF.createAttribute(name, (AttributeDescriptor) TYPE_TRACK.getDescriptor(TAG_NAME), null));
+        if(cmt != null)         properties.add(FF.createAttribute(cmt, (AttributeDescriptor) TYPE_TRACK.getDescriptor(TAG_CMT), null));
+        if(desc != null)        properties.add(FF.createAttribute(desc, (AttributeDescriptor) TYPE_TRACK.getDescriptor(TAG_DESC), null));
+        if(src != null)         properties.add(FF.createAttribute(src, (AttributeDescriptor) TYPE_TRACK.getDescriptor(TAG_SRC), null));
 
         if(links != null && !links.isEmpty()){
-            final PropertyDescriptor linkDesc = TYPE_TRACK.getDescriptor(TAG_LINK);
+            final AttributeDescriptor linkDesc = (AttributeDescriptor) TYPE_WAYPOINT.getDescriptor(TAG_LINK);
             for(URI uri : links){
-                properties.add(new DefaultProperty(uri, linkDesc));
+                properties.add(FF.createAttribute(uri, linkDesc,null));
             }
         }
 
-        if(number != null)      properties.add(new DefaultProperty(number,      TYPE_TRACK.getDescriptor(TAG_NUMBER)));
-        if(type != null)        properties.add(new DefaultProperty(type,        TYPE_TRACK.getDescriptor(TAG_TYPE)));
+        if(number != null)      properties.add(FF.createAttribute(number, (AttributeDescriptor) TYPE_TRACK.getDescriptor(TAG_NUMBER), null));
+        if(type != null)        properties.add(FF.createAttribute(type, (AttributeDescriptor) TYPE_TRACK.getDescriptor(TAG_TYPE), null));
 
         final List<LineString> strings = new ArrayList<LineString>();
         if(segments != null && !segments.isEmpty()){
-            final PropertyDescriptor ptDesc = TYPE_TRACK.getDescriptor(TAG_TRK_SEG);
+            final AttributeDescriptor ptDesc = (AttributeDescriptor) TYPE_TRACK.getDescriptor(TAG_TRK_SEG);
             for(ComplexAttribute seg : segments){
-                properties.add(new DefaultProperty(seg, ptDesc));
+                properties.add(FF.createAttribute(seg, ptDesc, null));
                 final Property prop = seg.getProperty(GPX_GEOMETRY);
                 if(prop != null){
                     final Object obj = prop.getValue();
@@ -350,9 +352,9 @@ public final class GPXModelConstants {
             }
         }
         final MultiLineString geom = GF.createMultiLineString(strings.toArray(new LineString[strings.size()]));
-        properties.add(new DefaultProperty(geom, TYPE_TRACK.getDescriptor(GPX_GEOMETRY)));
+        properties.add(FF.createGeometryAttribute(geom, (GeometryDescriptor) TYPE_TRACK.getDescriptor(GPX_GEOMETRY), null, null));
 
-        return DefaultFeature.create(properties, TYPE_TRACK, new DefaultFeatureId(String.valueOf(index)));
+        return FF.createFeature(properties, TYPE_TRACK, Integer.toString(index));
     }
 
 }

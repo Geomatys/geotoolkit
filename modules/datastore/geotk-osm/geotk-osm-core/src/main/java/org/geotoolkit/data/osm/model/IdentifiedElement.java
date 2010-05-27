@@ -24,7 +24,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.geotoolkit.factory.FactoryFinder;
+import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.AbstractFeature;
+import org.geotoolkit.feature.LenientFeatureFactory;
 import org.geotoolkit.filter.identity.DefaultFeatureId;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
 
@@ -43,7 +45,8 @@ import org.opengis.feature.type.AttributeDescriptor;
  */
 public abstract class IdentifiedElement extends AbstractFeature<Collection<Property>> implements Serializable {
 
-    static final FeatureFactory FF = FactoryFinder.getFeatureFactory(null);
+    static final FeatureFactory FF = FactoryFinder.getFeatureFactory(
+            new Hints(Hints.FEATURE_FACTORY, LenientFeatureFactory.class));
 
     protected final long id;
     protected final int version;
