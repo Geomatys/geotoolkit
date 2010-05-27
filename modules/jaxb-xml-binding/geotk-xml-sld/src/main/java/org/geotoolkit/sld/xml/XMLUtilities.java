@@ -26,11 +26,13 @@ import java.net.URL;
 import java.util.Map;
 import java.util.logging.Level;
 
-import javax.xml.bind.JAXBContext;
+// JAXB dependencies
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
+
+// JAXP dependencies
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLEventWriter;
 import javax.xml.stream.XMLStreamReader;
@@ -38,6 +40,7 @@ import javax.xml.stream.XMLStreamWriter;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 
+// Geotoolkit dependencies
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.ogc.xml.v110.PropertyNameType;
@@ -49,6 +52,9 @@ import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.util.logging.Logging;
+import org.geotoolkit.xml.MarshallerPool;
+
+// GeoAPI dependencies
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory2;
 import org.opengis.filter.expression.PropertyName;
@@ -59,6 +65,7 @@ import org.opengis.sld.StyledLayerDescriptor;
 import org.opengis.style.FeatureTypeStyle;
 import org.opengis.style.Rule;
 import org.opengis.style.Style;
+
 import org.w3c.dom.Node;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
@@ -71,12 +78,12 @@ import org.xml.sax.InputSource;
  */
 public final class XMLUtilities {
 
-    private static final NamespacePrefixMapperImpl SLD_NAMESPACE = new NamespacePrefixMapperImpl("http://www.opengis.net/sld");
-    private static final NamespacePrefixMapperImpl SE_NAMESPACE = new NamespacePrefixMapperImpl("http://www.opengis.net/se");
-    private static final NamespacePrefixMapperImpl OGC_NAMESPACE = new NamespacePrefixMapperImpl("http://www.opengis.net/ogc");
+    //private static final NamespacePrefixMapperImpl SLD_NAMESPACE = new NamespacePrefixMapperImpl("http://www.opengis.net/sld");
+    //private static final NamespacePrefixMapperImpl SE_NAMESPACE = new NamespacePrefixMapperImpl("http://www.opengis.net/se");
+    //private static final NamespacePrefixMapperImpl OGC_NAMESPACE = new NamespacePrefixMapperImpl("http://www.opengis.net/ogc");
 
-    private static final JAXBContext CONTEXT_100;
-    private static final JAXBContext CONTEXT_110;
+    private static final MarshallerPool POOL_100;
+    private static final MarshallerPool POOL_110;
 
     private final FilterFactory2 filterFactory;
     private final MutableStyleFactory styleFactory;
@@ -92,21 +99,21 @@ public final class XMLUtilities {
     private GTtoSLD110Transformer transformerXMLv110 = null;
     
     static{
-        JAXBContext temp = null;
+        MarshallerPool temp = null;
         try{
-            temp = JAXBContext.newInstance(org.geotoolkit.sld.xml.v100.StyledLayerDescriptor.class);
+            temp = new MarshallerPool(org.geotoolkit.sld.xml.v100.StyledLayerDescriptor.class);
         }catch(JAXBException ex){
             throw new RuntimeException("Could not load jaxbcontext for sld 100.",ex);
         }
-        CONTEXT_100 = temp;
-        
+        POOL_100 = temp;
+
         temp = null;
         try{
-            temp = JAXBContext.newInstance(org.geotoolkit.sld.xml.v110.StyledLayerDescriptor.class);
+            temp = new MarshallerPool(org.geotoolkit.sld.xml.v110.StyledLayerDescriptor.class);
         }catch(JAXBException ex){
             throw new RuntimeException("Could not load jaxbcontext for sld 110.",ex);
         }
-        CONTEXT_110 = temp;
+        POOL_110 = temp;
     }
 
     public XMLUtilities() {
@@ -124,12 +131,12 @@ public final class XMLUtilities {
         this.sldFactory = sldFactory;
     }
 
-    public static JAXBContext getJaxbContext100() {
-        return CONTEXT_100;
+    public static MarshallerPool getJaxbContext100() {
+        return POOL_100;
     }
 
-    public static JAXBContext getJaxbContext110() {
-        return CONTEXT_110;
+    public static MarshallerPool getJaxbContext110() {
+        return POOL_110;
     }
 
     public SLD100toGTTransformer getTransformer100(){
@@ -216,16 +223,24 @@ public final class XMLUtilities {
         if (transformerGTv100 == null) {
             transformerGTv100 = new SLD100toGTTransformer(filterFactory, styleFactory, sldFactory);
         }
-        final Unmarshaller unMarshaller = CONTEXT_100.createUnmarshaller();
-        return unmarshall(source, unMarshaller);
+        final Unmarshaller unMarshaller = POOL_100.acquireUnmarshaller();
+        try {
+            return unmarshall(source, unMarshaller);
+        } finally {
+            POOL_100.release(unMarshaller);
+        }
     }
     
     private Object unmarshallV110(final Object source) throws JAXBException{
         if (transformerGTv110 == null) {
             transformerGTv110 = new SLD110toGTTransformer(filterFactory, styleFactory, sldFactory);
         }
-        final Unmarshaller unMarshaller = CONTEXT_110.createUnmarshaller();
-        return unmarshall(source, unMarshaller);
+        final Unmarshaller unMarshaller = POOL_110.acquireUnmarshaller();
+        try {
+            return unmarshall(source, unMarshaller);
+        } finally {
+            POOL_110.release(unMarshaller);
+        }
     }
     
     private void marshall(final Object target, final Object jaxbElement, 
@@ -251,14 +266,14 @@ public final class XMLUtilities {
         }
     }
     
-    private void marshallV100(final Object target, final Object jaxElement, 
-            final NamespacePrefixMapperImpl namespace) throws JAXBException {
-        final JAXBContext jaxbContext = JAXBContext.newInstance(org.geotoolkit.sld.xml.v100.StyledLayerDescriptor.class);
-        final Marshaller marshaller = jaxbContext.createMarshaller();
-        marshaller.setProperty("com.sun.xml.internal.bind.namespacePrefixMapper",namespace);
-        marshaller.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
-        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-        marshall(target, jaxElement, marshaller);
+    private void marshallV100(final Object target, final Object jaxElement) throws JAXBException {
+        final Marshaller marshaller = POOL_100.acquireMarshaller();
+        try {
+            marshall(target, jaxElement, marshaller);
+        } finally {
+            POOL_100.release(marshaller);
+        }
+
     }
     
     /**
@@ -269,24 +284,23 @@ public final class XMLUtilities {
      * @param isformatted
      * @throws javax.xml.bind.JAXBException
      */
-    private void marshallV100(final Object target, final Object jaxElement, 
-            final NamespacePrefixMapperImpl namespace, boolean isformatted) throws JAXBException {
-        final JAXBContext jaxbContext = JAXBContext.newInstance(org.geotoolkit.sld.xml.v100.StyledLayerDescriptor.class);
-        final Marshaller marshaller = jaxbContext.createMarshaller();
-        marshaller.setProperty("com.sun.xml.internal.bind.namespacePrefixMapper",namespace);
-        marshaller.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
+    private void marshallV100(final Object target, final Object jaxElement, boolean isformatted) throws JAXBException {
+        final Marshaller marshaller = POOL_100.acquireMarshaller();
         marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, isformatted);
-        marshall(target, jaxElement, marshaller);
+        try {
+            marshall(target, jaxElement, marshaller);
+        } finally {
+            POOL_100.release(marshaller);
+        }
     }
     
-    private void marshallV110(final Object target, final Object jaxElement, 
-            final NamespacePrefixMapperImpl namespace) throws JAXBException {
-        final JAXBContext jaxbContext = JAXBContext.newInstance(org.geotoolkit.sld.xml.v110.StyledLayerDescriptor.class);
-        final Marshaller marshaller = jaxbContext.createMarshaller();
-        marshaller.setProperty("com.sun.xml.internal.bind.namespacePrefixMapper",namespace);
-        marshaller.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
-        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-        marshall(target, jaxElement, marshaller);
+    private void marshallV110(final Object target, final Object jaxElement) throws JAXBException {
+        final Marshaller marshaller = POOL_110.acquireMarshaller();
+        try {
+            marshall(target, jaxElement, marshaller);
+        } finally {
+            POOL_110.release(marshaller);
+        }
     }
     
     
@@ -343,11 +357,11 @@ public final class XMLUtilities {
         switch(version){
             case V_1_0_0 :
                 jax = getTransformerXMLv100().visit(sld, null);
-                marshallV100(target,jax,SLD_NAMESPACE);
+                marshallV100(target,jax);
                 break;
             case V_1_1_0 :
                 jax = getTransformerXMLv110().visit(sld, null);
-                marshallV110(target,jax,SLD_NAMESPACE);
+                marshallV110(target,jax);
                 break;
             default :
                 throw new IllegalArgumentException("Unable to write object, specified version is not supported");
@@ -371,11 +385,11 @@ public final class XMLUtilities {
         switch(version){
             case V_1_0_0 :
                 jax = getTransformerXMLv100().visit(sld, null);
-                marshallV100(target,jax,SLD_NAMESPACE, isformatted);
+                marshallV100(target,jax, isformatted);
                 break;
             case V_1_1_0 :
                 jax = getTransformerXMLv110().visit(sld, null);
-                marshallV110(target,jax,SLD_NAMESPACE);
+                marshallV110(target,jax);
                 break;
             default :
                 throw new IllegalArgumentException("Unable to write object, specified version is not supported");
@@ -435,11 +449,11 @@ public final class XMLUtilities {
         switch(version){
             case V_1_0_0 :
                 jax = getTransformerXMLv100().visit(style, null);
-                marshallV100(target,jax,SLD_NAMESPACE);
+                marshallV100(target,jax);
                 break;
             case V_1_1_0 :
                 jax = getTransformerXMLv110().visit(style, null);
-                marshallV110(target,jax,SLD_NAMESPACE);
+                marshallV110(target,jax);
                 break;
             default :
                 throw new IllegalArgumentException("Unable to write object, specified version is not supported");
@@ -501,7 +515,7 @@ public final class XMLUtilities {
         switch(version){
             case SLD_1_0_0 :
                 org.geotoolkit.sld.xml.v100.FeatureTypeStyle jaxfts = getTransformerXMLv100().visit(fts, null);
-                marshallV100(target,jaxfts,SLD_NAMESPACE);
+                marshallV100(target,jaxfts);
                 break;
             case V_1_1_0 :
                 jax = getTransformerXMLv110().visit(fts, null);
@@ -510,7 +524,7 @@ public final class XMLUtilities {
                 }else if(jax instanceof org.geotoolkit.se.xml.v110.CoverageStyleType){
                     jax = factorySEv110.createCoverageStyle( (org.geotoolkit.se.xml.v110.CoverageStyleType) jax);
                 }
-                marshallV110(target,jax,SE_NAMESPACE);
+                marshallV110(target,jax);
                 break;
             default :
                 throw new IllegalArgumentException("Unable to write object, specified version is not supported");
@@ -572,14 +586,14 @@ public final class XMLUtilities {
         switch(version){
             case SLD_1_0_0 :
                 final org.geotoolkit.sld.xml.v100.Rule jaxRule = getTransformerXMLv100().visit(rule, null);
-                marshallV100(target,jaxRule,SLD_NAMESPACE);
+                marshallV100(target,jaxRule);
                 break;
             case V_1_1_0 :
                 jax = getTransformerXMLv110().visit(rule, null);
                 if(jax instanceof org.geotoolkit.se.xml.v110.RuleType){
                     jax = factorySEv110.createRule( (org.geotoolkit.se.xml.v110.RuleType) jax);
                 }
-                marshallV110(target,jax,SE_NAMESPACE);
+                marshallV110(target,jax);
                 break;
             default :
                 throw new IllegalArgumentException("Unable to write object, specified version is not supported");
@@ -679,14 +693,14 @@ public final class XMLUtilities {
                 if(jax instanceof org.geotoolkit.ogc.xml.v100.FilterType){
                     jax = factoryOGCv100.createFilter( (org.geotoolkit.ogc.xml.v100.FilterType) jax);
                 }
-                marshallV100(target, jax, OGC_NAMESPACE);
+                marshallV100(target, jax);
                 break;
             case V_1_1_0 :
                 jax = getTransformerXMLv110().visit(filter);
                 if(jax instanceof org.geotoolkit.ogc.xml.v110.FilterType){
                     jax = factoryOGCv110.createFilter( (org.geotoolkit.ogc.xml.v110.FilterType) jax);
                 }
-                marshallV110(target,jax,OGC_NAMESPACE);
+                marshallV110(target,jax);
                 break;
             default :
                 throw new IllegalArgumentException("Unable to write object, specified version is not supported");

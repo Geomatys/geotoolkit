@@ -303,10 +303,14 @@ public class JAXPStreamTransactionWriter {
         final Filter filter = element.getFilter();
         if(filter != null){
             final XMLUtilities util = new XMLUtilities();
-            final Marshaller marshaller = XMLUtilities.getJaxbContext110().createMarshaller();
+            final Marshaller marshaller = XMLUtilities.getJaxbContext110().acquireMarshaller();
             marshaller.setProperty(marshaller.JAXB_FRAGMENT, Boolean.TRUE);
             final Object jaxbelement = util.getTransformerXMLv110().visit(filter);
-            marshaller.marshal(jaxbelement, writer);
+            try {
+                marshaller.marshal(jaxbelement, writer);
+            } finally {
+                 XMLUtilities.getJaxbContext110().release(marshaller);
+            }
             writer.flush();
         }
 
@@ -378,10 +382,14 @@ public class JAXPStreamTransactionWriter {
 
         //write filter ---------------------------------------------------------
         final XMLUtilities util = new XMLUtilities();
-        final Marshaller marshaller = util.getJaxbContext110().createMarshaller();
+        final Marshaller marshaller = util.getJaxbContext110().acquireMarshaller();
         marshaller.setProperty(marshaller.JAXB_FRAGMENT, Boolean.TRUE);
         final Object jaxbelement = util.getTransformerXMLv110().visit(element.getFilter());
-        marshaller.marshal(jaxbelement, writer);
+        try {
+            marshaller.marshal(jaxbelement, writer);
+        } finally {
+            util.getJaxbContext110().release(marshaller);
+        }
             
         writer.writeEndElement();
     }
