@@ -21,8 +21,6 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Iterator;
 import javax.measure.unit.NonSI;
-import javax.swing.JOptionPane;
-import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
@@ -41,8 +39,8 @@ import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.sld.xml.GTtoSE100Transformer;
-import org.geotoolkit.sld.xml.NamespacePrefixMapperImpl;
 import org.geotoolkit.sld.xml.SE100toGTTransformer;
+import org.geotoolkit.xml.MarshallerPool;
 
 import org.junit.Test;
 import org.opengis.filter.FilterFactory2;
@@ -78,10 +76,7 @@ public class SEforSLD100Test extends TestCase{
     }
 
 
-    private static final NamespacePrefixMapperImpl SLD_NAMESPACE = new NamespacePrefixMapperImpl("http://www.opengis.net/sld");
-    
-    private static Unmarshaller UNMARSHALLER = null;
-    private static Marshaller MARSHALLER = null;
+    private static MarshallerPool POOL;
     private static SE100toGTTransformer TRANSFORMER_GT = null;
     private static GTtoSE100Transformer TRANSFORMER_OGC = null;
     
@@ -114,14 +109,8 @@ public class SEforSLD100Test extends TestCase{
     
     static{
         try {
-            JAXBContext jaxbContext = JAXBContext.newInstance(org.geotoolkit.sld.xml.v100.StyledLayerDescriptor.class);
-            UNMARSHALLER = jaxbContext.createUnmarshaller();
-            MARSHALLER = jaxbContext.createMarshaller();
-            MARSHALLER.setProperty("com.sun.xml.internal.bind.namespacePrefixMapper",SLD_NAMESPACE);
-            MARSHALLER.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
-            MARSHALLER.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+            POOL = new MarshallerPool(org.geotoolkit.sld.xml.v100.StyledLayerDescriptor.class);
         } catch (JAXBException ex) {ex.printStackTrace();}
-        assertNotNull(UNMARSHALLER);
         
         TRANSFORMER_GT = new SE100toGTTransformer(FILTER_FACTORY, STYLE_FACTORY);
         assertNotNull(TRANSFORMER_GT);
@@ -177,21 +166,18 @@ public class SEforSLD100Test extends TestCase{
     
     }
     
-    private Object unMarshall(File testFile) throws JAXBException{
-        return UNMARSHALLER.unmarshal(testFile);
-    }
-    
-    
-    
     ////////////////////////////////////////////////////////////////////////////
     // JAXB TEST MARSHELLING AND UNMARSHELLING FOR STYLE ORDERING //////////////
     ////////////////////////////////////////////////////////////////////////////
 
     @Test
     public void testStyle() throws JAXBException{
-        
+
+        final Unmarshaller UNMARSHALLER = POOL.acquireUnmarshaller();
+        final Marshaller MARSHALLER     = POOL.acquireMarshaller();
+
         //Read test
-        Object obj = unMarshall(FILE_SE_STYLE);
+        Object obj = UNMARSHALLER.unmarshal(FILE_SE_STYLE);
         assertNotNull(obj);
         
         UserStyle jax = (UserStyle) obj;
@@ -218,14 +204,19 @@ public class SEforSLD100Test extends TestCase{
         assertEquals(pvt.getFeatureTypeStyle().size(), 3);
         
         MARSHALLER.marshal(pvt, TEST_FILE_SE_STYLE);
-        
+
+        POOL.release(MARSHALLER);
+        POOL.release(UNMARSHALLER);
     }
 
     @Test
     public void testFTS() throws JAXBException{
+
+        final Unmarshaller UNMARSHALLER = POOL.acquireUnmarshaller();
+        final Marshaller MARSHALLER     = POOL.acquireMarshaller();
         
         //Read test
-        Object obj = unMarshall(FILE_SE_FTS);
+        Object obj = UNMARSHALLER.unmarshal(FILE_SE_FTS);
         assertNotNull(obj);
         
         FeatureTypeStyle jax = (FeatureTypeStyle) obj;
@@ -270,13 +261,18 @@ public class SEforSLD100Test extends TestCase{
         
         MARSHALLER.marshal(pvt, TEST_FILE_SE_FTS);
         
+        POOL.release(MARSHALLER);
+        POOL.release(UNMARSHALLER);
     }
 
     @Test
     public void testRule() throws JAXBException{
-        
+
+        final Unmarshaller UNMARSHALLER = POOL.acquireUnmarshaller();
+        final Marshaller MARSHALLER     = POOL.acquireMarshaller();
+
         //Read test
-        Object obj = unMarshall(FILE_SE_RULE);
+        Object obj = UNMARSHALLER.unmarshal(FILE_SE_RULE);
         assertNotNull(obj);
         
         Rule jax = (Rule) obj;
@@ -310,7 +306,9 @@ public class SEforSLD100Test extends TestCase{
         assertEquals(pvt.getSymbolizer().size(), 3);
         
         MARSHALLER.marshal(pvt, TEST_FILE_SE_RULE);
-        
+
+        POOL.release(MARSHALLER);
+        POOL.release(UNMARSHALLER);
     }
     
     
@@ -320,9 +318,12 @@ public class SEforSLD100Test extends TestCase{
 
     @Test
     public void testPointSymbolizer() throws JAXBException{
-        
+
+        final Unmarshaller UNMARSHALLER = POOL.acquireUnmarshaller();
+        final Marshaller MARSHALLER     = POOL.acquireMarshaller();
+
         //Read test
-        Object obj = unMarshall(FILE_SE_SYMBOL_POINT);
+        Object obj = UNMARSHALLER.unmarshal(FILE_SE_SYMBOL_POINT);
         assertNotNull(obj);
         
         JAXBElement<org.geotoolkit.sld.xml.v100.PointSymbolizer> jax = (JAXBElement<org.geotoolkit.sld.xml.v100.PointSymbolizer>) obj;
@@ -364,14 +365,19 @@ public class SEforSLD100Test extends TestCase{
         assertEquals(pvt.getValue().getGeometry().getPropertyName().getContent(), "");
         
         MARSHALLER.marshal(pvt, TEST_FILE_SE_SYMBOL_POINT);
-        
+
+        POOL.release(MARSHALLER);
+        POOL.release(UNMARSHALLER);
     }
 
     @Test
     public void testLineSymbolizer() throws JAXBException{
-        
+
+        final Unmarshaller UNMARSHALLER = POOL.acquireUnmarshaller();
+        final Marshaller MARSHALLER     = POOL.acquireMarshaller();
+
         //Read test
-        Object obj = unMarshall(FILE_SE_SYMBOL_LINE);
+        Object obj = UNMARSHALLER.unmarshal(FILE_SE_SYMBOL_LINE);
         assertNotNull(obj);
 
         JAXBElement<org.geotoolkit.sld.xml.v100.LineSymbolizer> jax = (JAXBElement<org.geotoolkit.sld.xml.v100.LineSymbolizer>) obj;
@@ -397,14 +403,19 @@ public class SEforSLD100Test extends TestCase{
         assertNotNull(pvt.getValue().getStroke());
         
         MARSHALLER.marshal(pvt, TEST_FILE_SE_SYMBOL_LINE);
-        
+
+        POOL.release(MARSHALLER);
+        POOL.release(UNMARSHALLER);
     }
 
     @Test
     public void testPolygonSymbolizer() throws JAXBException{
-        
+
+        final Unmarshaller UNMARSHALLER = POOL.acquireUnmarshaller();
+        final Marshaller MARSHALLER     = POOL.acquireMarshaller();
+
         //Read test
-        Object obj = unMarshall(FILE_SE_SYMBOL_POLYGON);
+        Object obj = UNMARSHALLER.unmarshal(FILE_SE_SYMBOL_POLYGON);
         assertNotNull(obj);
         
         JAXBElement<org.geotoolkit.sld.xml.v100.PolygonSymbolizer> jax = (JAXBElement<org.geotoolkit.sld.xml.v100.PolygonSymbolizer>) obj;
@@ -435,13 +446,18 @@ public class SEforSLD100Test extends TestCase{
         
         MARSHALLER.marshal(pvt, TEST_FILE_SE_SYMBOL_POLYGON);
         
+        POOL.release(MARSHALLER);
+        POOL.release(UNMARSHALLER);
     }
 
     @Test
     public void testTextSymbolizer() throws JAXBException{
-        
+
+        final Unmarshaller UNMARSHALLER = POOL.acquireUnmarshaller();
+        final Marshaller MARSHALLER     = POOL.acquireMarshaller();
+
         //Read test
-        Object obj = unMarshall(FILE_SE_SYMBOL_TEXT);
+        Object obj = UNMARSHALLER.unmarshal(FILE_SE_SYMBOL_TEXT);
         assertNotNull(obj);
         
         JAXBElement<org.geotoolkit.sld.xml.v100.TextSymbolizer> jax = (JAXBElement<org.geotoolkit.sld.xml.v100.TextSymbolizer>) obj;
@@ -474,14 +490,19 @@ public class SEforSLD100Test extends TestCase{
         assertNotNull(pvt.getValue().getFill());
         
         MARSHALLER.marshal(pvt, TEST_FILE_SE_SYMBOL_TEXT);
-        
+
+        POOL.release(MARSHALLER);
+        POOL.release(UNMARSHALLER);
     }
 
     @Test
     public void testRasterSymbolizer() throws JAXBException{
-        
+
+        final Unmarshaller UNMARSHALLER = POOL.acquireUnmarshaller();
+        final Marshaller MARSHALLER     = POOL.acquireMarshaller();
+
         //Read test
-        Object obj = unMarshall(FILE_SE_SYMBOL_RASTER);
+        Object obj = UNMARSHALLER.unmarshal(FILE_SE_SYMBOL_RASTER);
         assertNotNull(obj);
         
         JAXBElement<org.geotoolkit.sld.xml.v100.RasterSymbolizer> jax = (JAXBElement<org.geotoolkit.sld.xml.v100.RasterSymbolizer>) obj;
@@ -553,7 +574,9 @@ public class SEforSLD100Test extends TestCase{
         assertEquals(rs.getShadedRelief().getReliefFactor().doubleValue(), 5d);
         
         MARSHALLER.marshal(pvt, TEST_FILE_SE_SYMBOL_RASTER);
-        
+
+        POOL.release(MARSHALLER);
+        POOL.release(UNMARSHALLER);
     }
     
 }

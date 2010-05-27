@@ -44,7 +44,7 @@ import org.geotoolkit.ogc.xml.v100.UnaryLogicOpType;
 import org.geotoolkit.sld.xml.v100.ParameterValueType;
 import org.geotoolkit.sld.xml.GTtoSE100Transformer;
 import org.geotoolkit.sld.xml.SEJAXBStatics;
-import org.geotoolkit.sld.xml.NamespacePrefixMapperImpl;
+import org.geotoolkit.xml.MarshallerPool;
 import org.junit.Test;
 import org.opengis.filter.And;
 import org.opengis.filter.BinaryComparisonOperator;
@@ -82,10 +82,7 @@ public class OGCforSLD100Test extends TestCase{
         FILTER_FACTORY = (FilterFactory2) FactoryFinder.getFilterFactory(hints);
     }
 
-    private static final NamespacePrefixMapperImpl SLD_NAMESPACE = new NamespacePrefixMapperImpl("http://www.opengis.net/sld");
-    
-    private static Unmarshaller UNMARSHALLER = null;
-    private static Marshaller MARSHALLER = null;
+    private static MarshallerPool POOL;
     private static OGC100toGTTransformer TRANSFORMER_GT = null;
     private static GTtoSE100Transformer TRANSFORMER_OGC = null;
     
@@ -162,14 +159,8 @@ public class OGCforSLD100Test extends TestCase{
     
     static {
         try {
-            JAXBContext jaxbContext = JAXBContext.newInstance(org.geotoolkit.sld.xml.v100.StyledLayerDescriptor.class);
-            UNMARSHALLER = jaxbContext.createUnmarshaller();
-            MARSHALLER = jaxbContext.createMarshaller();
-            MARSHALLER.setProperty("com.sun.xml.internal.bind.namespacePrefixMapper",SLD_NAMESPACE);
-            MARSHALLER.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
-            MARSHALLER.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+            POOL = new MarshallerPool(org.geotoolkit.sld.xml.v100.StyledLayerDescriptor.class);
         } catch (JAXBException ex) {ex.printStackTrace();}
-        assertNotNull(UNMARSHALLER);
         
         TRANSFORMER_GT = new OGC100toGTTransformer(FILTER_FACTORY);
         assertNotNull(TRANSFORMER_GT);
@@ -317,21 +308,18 @@ public class OGCforSLD100Test extends TestCase{
     
     }
     
-    private Object unMarshall(File testFile) throws JAXBException{
-        return UNMARSHALLER.unmarshal(testFile);
-    }
-    
-    
-    
     ////////////////////////////////////////////////////////////////////////////
     // JAXB TEST MARSHELLING AND UNMARSHELLING FOR EXPRESSION //////////////////
     ////////////////////////////////////////////////////////////////////////////
 
     @Test
     public void testExpAdd() throws JAXBException{
+
+        final Unmarshaller UNMARSHALLER = POOL.acquireUnmarshaller();
+        final Marshaller MARSHALLER     = POOL.acquireMarshaller();
         
         //Read test
-        Object obj = unMarshall(FILE_EXP_ADD);
+        Object obj = UNMARSHALLER.unmarshal(FILE_EXP_ADD);
         assertNotNull(obj);
         
         JAXBElement<BinaryOperatorType> jax = (JAXBElement<BinaryOperatorType>) obj;
@@ -360,13 +348,19 @@ public class OGCforSLD100Test extends TestCase{
         JAXBElement<LiteralType> ele2 = (JAXBElement<LiteralType>) jax.getValue().getExpression().get(1);
         
         MARSHALLER.marshal(jax, TEST_FILE_EXP_ADD);
+
+        POOL.release(MARSHALLER);
+        POOL.release(UNMARSHALLER);
     }
 
     @Test
     public void testExpDiv() throws JAXBException{
+
+        final Unmarshaller UNMARSHALLER = POOL.acquireUnmarshaller();
+        final Marshaller MARSHALLER     = POOL.acquireMarshaller();
         
         //Read test
-        Object obj = unMarshall(FILE_EXP_DIV);
+        Object obj = UNMARSHALLER.unmarshal(FILE_EXP_DIV);
         assertNotNull(obj);
         
         JAXBElement<BinaryOperatorType> jax = (JAXBElement<BinaryOperatorType>) obj;
@@ -395,13 +389,19 @@ public class OGCforSLD100Test extends TestCase{
         JAXBElement<LiteralType> ele2 = (JAXBElement<LiteralType>) jax.getValue().getExpression().get(1);
         
         MARSHALLER.marshal(jax, TEST_FILE_EXP_DIV);
+
+        POOL.release(MARSHALLER);
+        POOL.release(UNMARSHALLER);
     }
 
     @Test
     public void testExpLiteral() throws JAXBException{
+
+        final Unmarshaller UNMARSHALLER = POOL.acquireUnmarshaller();
+        final Marshaller MARSHALLER     = POOL.acquireMarshaller();
         
         //Read test
-        Object obj = unMarshall(FILE_EXP_LITERAL);
+        Object obj = UNMARSHALLER.unmarshal(FILE_EXP_LITERAL);
         assertNotNull(obj);
         
         JAXBElement<LiteralType> jax = (JAXBElement<LiteralType>) obj;
@@ -422,13 +422,19 @@ public class OGCforSLD100Test extends TestCase{
         assertEquals(Float.valueOf(str), valueF);
         
         MARSHALLER.marshal(jax, TEST_FILE_EXP_LITERAL);
+        POOL.release(MARSHALLER);
+        POOL.release(UNMARSHALLER);
+
     }
 
     @Test
     public void testExpMul() throws JAXBException{
+
+        final Unmarshaller UNMARSHALLER = POOL.acquireUnmarshaller();
+        final Marshaller MARSHALLER     = POOL.acquireMarshaller();
         
         //Read test
-        Object obj = unMarshall(FILE_EXP_MUL);
+        Object obj = UNMARSHALLER.unmarshal(FILE_EXP_MUL);
         assertNotNull(obj);
         
         JAXBElement<BinaryOperatorType> jax = (JAXBElement<BinaryOperatorType>) obj;
@@ -457,13 +463,19 @@ public class OGCforSLD100Test extends TestCase{
         JAXBElement<LiteralType> ele2 = (JAXBElement<LiteralType>) jax.getValue().getExpression().get(1);
         
         MARSHALLER.marshal(jax, TEST_FILE_EXP_MUL);
+
+        POOL.release(MARSHALLER);
+        POOL.release(UNMARSHALLER);
     }
 
     @Test
     public void testExpPropertyName() throws JAXBException{
+
+        final Unmarshaller UNMARSHALLER = POOL.acquireUnmarshaller();
+        final Marshaller MARSHALLER     = POOL.acquireMarshaller();
         
         //Read test
-        Object obj = unMarshall(FILE_EXP_PROPERTYNAME);
+        Object obj = UNMARSHALLER.unmarshal(FILE_EXP_PROPERTYNAME);
         assertNotNull(obj);
         
         JAXBElement<PropertyNameType> jax = (JAXBElement<PropertyNameType>) obj;
@@ -484,13 +496,19 @@ public class OGCforSLD100Test extends TestCase{
         assertEquals(str, valueStr);
         
         MARSHALLER.marshal(jax, TEST_FILE_EXP_PROPERTYNAME);
+
+        POOL.release(MARSHALLER);
+        POOL.release(UNMARSHALLER);
     }
 
     @Test
     public void testExpSub() throws JAXBException{
+
+        final Unmarshaller UNMARSHALLER = POOL.acquireUnmarshaller();
+        final Marshaller MARSHALLER     = POOL.acquireMarshaller();
         
         //Read test
-        Object obj = unMarshall(FILE_EXP_SUB);
+        Object obj = UNMARSHALLER.unmarshal(FILE_EXP_SUB);
         assertNotNull(obj);
         
         JAXBElement<BinaryOperatorType> jax = (JAXBElement<BinaryOperatorType>) obj;
@@ -519,6 +537,9 @@ public class OGCforSLD100Test extends TestCase{
         JAXBElement<LiteralType> ele2 = (JAXBElement<LiteralType>) jax.getValue().getExpression().get(1);
         
         MARSHALLER.marshal(jax, TEST_FILE_EXP_SUB);
+
+        POOL.release(MARSHALLER);
+        POOL.release(UNMARSHALLER);
     }
     
     
@@ -529,9 +550,12 @@ public class OGCforSLD100Test extends TestCase{
 
     @Test
     public void testFilterComparisonPropertyIsBetween() throws JAXBException{
+
+        final Unmarshaller UNMARSHALLER = POOL.acquireUnmarshaller();
+        final Marshaller MARSHALLER     = POOL.acquireMarshaller();
         
         //Read test
-        Object obj = unMarshall(FILE_FIL_COMP_ISBETWEEN);
+        Object obj = UNMARSHALLER.unmarshal(FILE_FIL_COMP_ISBETWEEN);
         assertNotNull(obj);
         
         JAXBElement<? extends FilterType> jaxfilter = (JAXBElement<? extends FilterType>) obj;
@@ -564,13 +588,19 @@ public class OGCforSLD100Test extends TestCase{
         assertEquals(up.getContent().get(0).toString().trim(), "457" );
                 
         MARSHALLER.marshal(ft.getComparisonOps(), TEST_FILE_FIL_COMP_ISBETWEEN);
+
+        POOL.release(MARSHALLER);
+        POOL.release(UNMARSHALLER);
     }
 
     @Test
     public void testFilterComparisonPropertyIsEqualTo() throws JAXBException{
+
+        final Unmarshaller UNMARSHALLER = POOL.acquireUnmarshaller();
+        final Marshaller MARSHALLER     = POOL.acquireMarshaller();
         
         //Read test
-        Object obj = unMarshall(FILE_FIL_COMP_ISEQUAL);
+        Object obj = UNMARSHALLER.unmarshal(FILE_FIL_COMP_ISEQUAL);
         assertNotNull(obj);
         
         JAXBElement<? extends FilterType> jaxfilter = (JAXBElement<? extends FilterType>) obj;
@@ -599,14 +629,20 @@ public class OGCforSLD100Test extends TestCase{
         assertEquals(rg.getContent().get(0).toString().trim(), valueFStr );
                 
         MARSHALLER.marshal(ft.getComparisonOps(), TEST_FILE_FIL_COMP_ISEQUAL);
+
+        POOL.release(MARSHALLER);
+        POOL.release(UNMARSHALLER);
         
     }
 
     @Test
     public void testFilterComparisonPropertyIsGreaterThan() throws JAXBException{
+
+        final Unmarshaller UNMARSHALLER = POOL.acquireUnmarshaller();
+        final Marshaller MARSHALLER     = POOL.acquireMarshaller();
         
         //Read test
-        Object obj = unMarshall(FILE_FIL_COMP_ISGREATER);
+        Object obj = UNMARSHALLER.unmarshal(FILE_FIL_COMP_ISGREATER);
         assertNotNull(obj);
         
         JAXBElement<? extends FilterType> jaxfilter = (JAXBElement<? extends FilterType>) obj;
@@ -635,14 +671,20 @@ public class OGCforSLD100Test extends TestCase{
         assertEquals(rg.getContent().get(0).toString().trim(), valueFStr );
                 
         MARSHALLER.marshal(ft.getComparisonOps(), TEST_FILE_FIL_COMP_ISGREATER);
+
+        POOL.release(MARSHALLER);
+        POOL.release(UNMARSHALLER);
         
     }
 
     @Test
     public void testFilterComparisonPropertyIsGreaterThanOrEqual() throws JAXBException{
+
+        final Unmarshaller UNMARSHALLER = POOL.acquireUnmarshaller();
+        final Marshaller MARSHALLER     = POOL.acquireMarshaller();
         
         //Read test
-        Object obj = unMarshall(FILE_FIL_COMP_ISGREATEROREQUAL);
+        Object obj = UNMARSHALLER.unmarshal(FILE_FIL_COMP_ISGREATEROREQUAL);
         assertNotNull(obj);
         
         JAXBElement<? extends FilterType> jaxfilter = (JAXBElement<? extends FilterType>) obj;
@@ -671,13 +713,19 @@ public class OGCforSLD100Test extends TestCase{
         assertEquals(rg.getContent().get(0).toString().trim(), valueFStr );
                 
         MARSHALLER.marshal(ft.getComparisonOps(), TEST_FILE_FIL_COMP_ISGREATEROREQUAL);
+
+        POOL.release(MARSHALLER);
+        POOL.release(UNMARSHALLER);
     }
 
     @Test
     public void testFilterComparisonPropertyIsLessThan() throws JAXBException{
+
+        final Unmarshaller UNMARSHALLER = POOL.acquireUnmarshaller();
+        final Marshaller MARSHALLER     = POOL.acquireMarshaller();
         
         //Read test
-        Object obj = unMarshall(FILE_FIL_COMP_ISLESS);
+        Object obj = UNMARSHALLER.unmarshal(FILE_FIL_COMP_ISLESS);
         assertNotNull(obj);
         
         JAXBElement<? extends FilterType> jaxfilter = (JAXBElement<? extends FilterType>) obj;
@@ -706,13 +754,19 @@ public class OGCforSLD100Test extends TestCase{
         assertEquals(rg.getContent().get(0).toString().trim(), valueFStr );
                 
         MARSHALLER.marshal(ft.getComparisonOps(), TEST_FILE_FIL_COMP_ISLESS);
+
+        POOL.release(MARSHALLER);
+        POOL.release(UNMARSHALLER);
     }
 
     @Test
     public void testFilterComparisonPropertyIsLessThanOrEqual() throws JAXBException{
+
+        final Unmarshaller UNMARSHALLER = POOL.acquireUnmarshaller();
+        final Marshaller MARSHALLER     = POOL.acquireMarshaller();
         
         //Read test
-        Object obj = unMarshall(FILE_FIL_COMP_ISLESSOREQUAL);
+        Object obj = UNMARSHALLER.unmarshal(FILE_FIL_COMP_ISLESSOREQUAL);
         assertNotNull(obj);
         
         JAXBElement<? extends FilterType> jaxfilter = (JAXBElement<? extends FilterType>) obj;
@@ -741,13 +795,19 @@ public class OGCforSLD100Test extends TestCase{
         assertEquals(rg.getContent().get(0).toString().trim(), valueFStr );
                 
         MARSHALLER.marshal(ft.getComparisonOps(), TEST_FILE_FIL_COMP_ISLESSOREQUAL);
+        POOL.release(MARSHALLER);
+        POOL.release(UNMARSHALLER);
+
     }
 
     @Test
     public void testFilterComparisonPropertyIsLike() throws JAXBException{
+
+        final Unmarshaller UNMARSHALLER = POOL.acquireUnmarshaller();
+        final Marshaller MARSHALLER     = POOL.acquireMarshaller();
         
         //Read test
-        Object obj = unMarshall(FILE_FIL_COMP_ISLIKE);
+        Object obj = UNMARSHALLER.unmarshal(FILE_FIL_COMP_ISLIKE);
         assertNotNull(obj);
         
         JAXBElement<? extends FilterType> jaxfilter = (JAXBElement<? extends FilterType>) obj;
@@ -788,14 +848,20 @@ public class OGCforSLD100Test extends TestCase{
         assertEquals( wi , "*");
                 
         MARSHALLER.marshal(ft.getComparisonOps(), TEST_FILE_FIL_COMP_ISLIKE);
+
+        POOL.release(MARSHALLER);
+        POOL.release(UNMARSHALLER);
         
     }
 
     @Test
     public void testFilterComparisonPropertyIsNotEqualTo() throws JAXBException{
+
+        final Unmarshaller UNMARSHALLER = POOL.acquireUnmarshaller();
+        final Marshaller MARSHALLER     = POOL.acquireMarshaller();
         
         //Read test
-        Object obj = unMarshall(FILE_FIL_COMP_ISNOTEQUAL);
+        Object obj = UNMARSHALLER.unmarshal(FILE_FIL_COMP_ISNOTEQUAL);
         assertNotNull(obj);
         
         JAXBElement<? extends FilterType> jaxfilter = (JAXBElement<? extends FilterType>) obj;
@@ -824,14 +890,20 @@ public class OGCforSLD100Test extends TestCase{
         assertEquals(rg.getContent().get(0).toString().trim(), valueFStr );
                 
         MARSHALLER.marshal(ft.getComparisonOps(), TEST_FILE_FIL_COMP_ISNOTEQUAL);
+
+        POOL.release(MARSHALLER);
+        POOL.release(UNMARSHALLER);
         
     }
 
     @Test
     public void testFilterComparisonPropertyIsNull() throws JAXBException{
-        
+
+        final Unmarshaller UNMARSHALLER = POOL.acquireUnmarshaller();
+        final Marshaller MARSHALLER     = POOL.acquireMarshaller();
+
         //Read test
-        Object obj = unMarshall(FILE_FIL_COMP_ISNULL);
+        Object obj = UNMARSHALLER.unmarshal(FILE_FIL_COMP_ISNULL);
         assertNotNull(obj);
         
         JAXBElement<? extends FilterType> jaxfilter = (JAXBElement<? extends FilterType>) obj;
@@ -856,6 +928,9 @@ public class OGCforSLD100Test extends TestCase{
         assertEquals(pnt.getContent(), valueStr);
                 
         MARSHALLER.marshal(ft.getComparisonOps(), TEST_FILE_FIL_COMP_ISNULL);
+
+        POOL.release(MARSHALLER);
+        POOL.release(UNMARSHALLER);
         
     }
     
@@ -867,9 +942,12 @@ public class OGCforSLD100Test extends TestCase{
 
     @Test
     public void testFilterLogicalAnd() throws JAXBException{
-       
+
+        final Unmarshaller UNMARSHALLER = POOL.acquireUnmarshaller();
+        final Marshaller MARSHALLER     = POOL.acquireMarshaller();
+
         //Read test
-        Object obj = unMarshall(FILE_FIL_LOG_AND);
+        Object obj = UNMARSHALLER.unmarshal(FILE_FIL_LOG_AND);
         assertNotNull(obj);
         
         JAXBElement<? extends FilterType> jaxfilter = (JAXBElement<? extends FilterType>) obj;
@@ -916,14 +994,20 @@ public class OGCforSLD100Test extends TestCase{
         
                 
         MARSHALLER.marshal(ft.getLogicOps(), TEST_FILE_FIL_LOG_AND);
+
+        POOL.release(MARSHALLER);
+        POOL.release(UNMARSHALLER);
         
     }
 
     @Test
     public void testFilterLogicalOr() throws JAXBException{
+
+        final Unmarshaller UNMARSHALLER = POOL.acquireUnmarshaller();
+        final Marshaller MARSHALLER     = POOL.acquireMarshaller();
         
         //Read test
-        Object obj = unMarshall(FILE_FIL_LOG_OR);
+        Object obj = UNMARSHALLER.unmarshal(FILE_FIL_LOG_OR);
         assertNotNull(obj);
         
         JAXBElement<? extends FilterType> jaxfilter = (JAXBElement<? extends FilterType>) obj;
@@ -970,14 +1054,20 @@ public class OGCforSLD100Test extends TestCase{
         
                 
         MARSHALLER.marshal(ft.getLogicOps(), TEST_FILE_FIL_LOG_OR);
+
+        POOL.release(MARSHALLER);
+        POOL.release(UNMARSHALLER);
         
     }
 
     @Test
     public void testFilterLogicalNot() throws JAXBException{
-     
+
+        final Unmarshaller UNMARSHALLER = POOL.acquireUnmarshaller();
+        final Marshaller MARSHALLER     = POOL.acquireMarshaller();
+        
         //Read test
-        Object obj = unMarshall(FILE_FIL_LOG_NOT);
+        Object obj = UNMARSHALLER.unmarshal(FILE_FIL_LOG_NOT);
         assertNotNull(obj);
         
         JAXBElement<? extends FilterType> jaxfilter = (JAXBElement<? extends FilterType>) obj;
@@ -1011,7 +1101,9 @@ public class OGCforSLD100Test extends TestCase{
         assertEquals(rg.getContent().get(0).toString().trim(), valueFStr );
          
         MARSHALLER.marshal(ft.getLogicOps(), TEST_FILE_FIL_LOG_NOT);
-        
+
+        POOL.release(MARSHALLER);
+        POOL.release(UNMARSHALLER);
     }
     
     

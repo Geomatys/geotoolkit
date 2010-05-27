@@ -78,10 +78,6 @@ import org.xml.sax.InputSource;
  */
 public final class XMLUtilities {
 
-    //private static final NamespacePrefixMapperImpl SLD_NAMESPACE = new NamespacePrefixMapperImpl("http://www.opengis.net/sld");
-    //private static final NamespacePrefixMapperImpl SE_NAMESPACE = new NamespacePrefixMapperImpl("http://www.opengis.net/se");
-    //private static final NamespacePrefixMapperImpl OGC_NAMESPACE = new NamespacePrefixMapperImpl("http://www.opengis.net/ogc");
-
     private static final MarshallerPool POOL_100;
     private static final MarshallerPool POOL_110;
 

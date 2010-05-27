@@ -17,7 +17,7 @@
 package org.geotoolkit.sld.xml;
 
 import java.io.File;
-import javax.xml.bind.JAXBContext;
+
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
@@ -25,6 +25,7 @@ import javax.xml.bind.Unmarshaller;
 import org.geotoolkit.sld.MutableStyledLayerDescriptor;
 import org.geotoolkit.sld.MutableSLDFactory;
 import org.geotoolkit.style.MutableStyleFactory;
+import org.geotoolkit.xml.MarshallerPool;
 
 import org.opengis.filter.FilterFactory2;
 import org.opengis.referencing.FactoryException;
@@ -38,12 +39,31 @@ import org.opengis.sld.StyledLayerDescriptor;
  */
 public class JAXBSLDUtilities {
 
-    private static final NamespacePrefixMapperImpl SLD_NAMESPACE = new NamespacePrefixMapperImpl("http://www.opengis.net/sld");
-
     private final FilterFactory2 filterFactory;
     private final MutableStyleFactory styleFactory;
     private final MutableSLDFactory sldFactory;
 
+    private static final MarshallerPool POOL_100;
+    private static final MarshallerPool POOL_110;
+
+    static{
+        MarshallerPool temp = null;
+        try{
+            temp = new MarshallerPool(org.geotoolkit.sld.xml.v100.StyledLayerDescriptor.class);
+        }catch(JAXBException ex){
+            throw new RuntimeException("Could not load jaxbcontext for sld 100.",ex);
+        }
+        POOL_100 = temp;
+
+        temp = null;
+        try{
+            temp = new MarshallerPool(org.geotoolkit.sld.xml.v110.StyledLayerDescriptor.class);
+        }catch(JAXBException ex){
+            throw new RuntimeException("Could not load jaxbcontext for sld 110.",ex);
+        }
+        POOL_110 = temp;
+    }
+    
     public JAXBSLDUtilities(FilterFactory2 filterFactory, MutableStyleFactory styleFactory, MutableSLDFactory sldFactory) {
         this.filterFactory = filterFactory;
         this.styleFactory = styleFactory;
@@ -63,9 +83,12 @@ public class JAXBSLDUtilities {
         org.geotoolkit.sld.xml.v100.StyledLayerDescriptor sld = null;
         
         try {
-            JAXBContext jaxbContext = JAXBContext.newInstance(org.geotoolkit.sld.xml.v100.StyledLayerDescriptor.class);
-            final Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-            sld = ( org.geotoolkit.sld.xml.v100.StyledLayerDescriptor) unmarshaller.unmarshal(sldFile);
+            final Unmarshaller unmarshaller = POOL_100.acquireUnmarshaller();
+            try {
+                sld = ( org.geotoolkit.sld.xml.v100.StyledLayerDescriptor) unmarshaller.unmarshal(sldFile);
+            } finally {
+                POOL_100.release(unmarshaller);
+            }
         } catch (JAXBException ex) {
             ex.printStackTrace();
         }
@@ -76,12 +99,12 @@ public class JAXBSLDUtilities {
     public File marshallV100( org.geotoolkit.sld.xml.v100.StyledLayerDescriptor sld, File sldFile) {
         
         try {
-            final JAXBContext context = JAXBContext.newInstance( org.geotoolkit.sld.xml.v100.StyledLayerDescriptor.class);
-            final Marshaller marshaller = context.createMarshaller();
-            marshaller.setProperty("com.sun.xml.internal.bind.namespacePrefixMapper",SLD_NAMESPACE);
-            marshaller.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
-            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-            marshaller.marshal(sld, sldFile);
+            final Marshaller marshaller = POOL_100.acquireMarshaller();
+            try {
+                marshaller.marshal(sld, sldFile);
+            } finally {
+                POOL_100.release(marshaller);
+            }
         } catch (JAXBException ex) {
             ex.printStackTrace();
         }
@@ -102,9 +125,12 @@ public class JAXBSLDUtilities {
         org.geotoolkit.sld.xml.v110.StyledLayerDescriptor sld = null;
         
         try {
-            JAXBContext jaxbContext = JAXBContext.newInstance(org.geotoolkit.sld.xml.v110.StyledLayerDescriptor.class);
-            final Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-            sld = (org.geotoolkit.sld.xml.v110.StyledLayerDescriptor) unmarshaller.unmarshal(sldFile);
+            final Unmarshaller unmarshaller = POOL_110.acquireUnmarshaller();
+            try {
+                sld = (org.geotoolkit.sld.xml.v110.StyledLayerDescriptor) unmarshaller.unmarshal(sldFile);
+            } finally {
+                POOL_110.release(unmarshaller);
+            }
         } catch (JAXBException ex) {
             ex.printStackTrace();
         }
@@ -115,12 +141,12 @@ public class JAXBSLDUtilities {
     public File marshallV110(org.geotoolkit.sld.xml.v110.StyledLayerDescriptor sld, File sldFile) {
         
         try {
-            final JAXBContext context = JAXBContext.newInstance(org.geotoolkit.sld.xml.v110.StyledLayerDescriptor.class);
-            final Marshaller marshaller = context.createMarshaller();
-            marshaller.setProperty("com.sun.xml.internal.bind.namespacePrefixMapper",SLD_NAMESPACE);
-            marshaller.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
-            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-            marshaller.marshal(sld, sldFile);
+            final Marshaller marshaller = POOL_110.acquireMarshaller();
+            try {
+                marshaller.marshal(sld, sldFile);
+            } finally {
+                POOL_110.release(marshaller);
+            }
         } catch (JAXBException ex) {
             ex.printStackTrace();
         }

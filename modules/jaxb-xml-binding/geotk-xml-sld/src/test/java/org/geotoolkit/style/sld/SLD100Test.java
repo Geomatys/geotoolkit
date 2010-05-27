@@ -20,7 +20,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.List;
-import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
@@ -34,8 +33,8 @@ import org.geotoolkit.sld.MutableSLDFactory;
 import org.geotoolkit.sld.MutableStyledLayerDescriptor;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.sld.xml.GTtoSLD100Transformer;
-import org.geotoolkit.sld.xml.NamespacePrefixMapperImpl;
 import org.geotoolkit.sld.xml.SLD100toGTTransformer;
+import org.geotoolkit.xml.MarshallerPool;
 
 import org.junit.Test;
 import org.opengis.filter.FilterFactory2;
@@ -68,10 +67,7 @@ public class SLD100Test extends TestCase{
         SLD_FACTORY = new DefaultSLDFactory();
     }
 
-    private static final NamespacePrefixMapperImpl SLD_NAMESPACE = new NamespacePrefixMapperImpl("http://www.opengis.net/sld");
-    
-    private static Unmarshaller UNMARSHALLER = null;
-    private static Marshaller MARSHALLER = null;
+    private static MarshallerPool POOL;
     private static SLD100toGTTransformer TRANSFORMER_GT = null;
     private static GTtoSLD100Transformer TRANSFORMER_SLD = null;
     
@@ -84,14 +80,10 @@ public class SLD100Test extends TestCase{
     
     static {
         try {
-            JAXBContext jaxbContext = JAXBContext.newInstance(org.geotoolkit.sld.xml.v100.StyledLayerDescriptor.class);
-            UNMARSHALLER = jaxbContext.createUnmarshaller();
-            MARSHALLER = jaxbContext.createMarshaller();
-            MARSHALLER.setProperty("com.sun.xml.internal.bind.namespacePrefixMapper",SLD_NAMESPACE);
-            MARSHALLER.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
-            MARSHALLER.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+            POOL = new MarshallerPool(org.geotoolkit.sld.xml.v100.StyledLayerDescriptor.class);
+            
         } catch (JAXBException ex) {ex.printStackTrace();}
-        assertNotNull(UNMARSHALLER);
+        
         
         TRANSFORMER_GT = new SLD100toGTTransformer(FILTER_FACTORY, STYLE_FACTORY, SLD_FACTORY);
         assertNotNull(TRANSFORMER_GT);
@@ -119,9 +111,7 @@ public class SLD100Test extends TestCase{
     
     }
     
-    private Object unMarshall(File testFile) throws JAXBException{
-        return UNMARSHALLER.unmarshal(testFile);
-    }
+    
     
     
     
@@ -131,10 +121,13 @@ public class SLD100Test extends TestCase{
     
     @Test
     public void testSLD() throws JAXBException{
-        
+
+        final Unmarshaller UNMARSHALLER = POOL.acquireUnmarshaller();
+        final Marshaller MARSHALLER     = POOL.acquireMarshaller();
+
         //Read test-------------------------------------------------------------
         //----------------------------------------------------------------------
-        Object obj = unMarshall(FILE_SLD);
+        Object obj =  UNMARSHALLER.unmarshal(FILE_SLD);
         assertNotNull(obj);
         
         StyledLayerDescriptor jax = (StyledLayerDescriptor) obj;
@@ -276,7 +269,9 @@ public class SLD100Test extends TestCase{
         
                 
         MARSHALLER.marshal(pvt, TEST_FILE_SLD);
-        
+
+        POOL.release(MARSHALLER);
+        POOL.release(UNMARSHALLER);
     }
     
     
