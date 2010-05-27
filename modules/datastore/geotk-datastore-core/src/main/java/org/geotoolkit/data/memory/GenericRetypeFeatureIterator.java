@@ -20,6 +20,7 @@ package org.geotoolkit.data.memory;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.FeatureReader;
@@ -85,7 +86,49 @@ public abstract class GenericRetypeFeatureIterator<F extends Feature, R extends 
             throw new IllegalArgumentException("FeatureReader already produces contents with the correct schema");
         }
 
-        final Collection<PropertyDescriptor> originalDesc = original.getDescriptors();
+        final Collection<PropertyDescriptor> targetDesc = target.getDescriptors();
+
+        if (targetDesc.size() > original.getDescriptors().size()) {
+            throw new IllegalArgumentException("Unable to retype  FeatureReader (original does not cover requested type)");
+        }
+
+        final PropertyDescriptor[] types = targetDesc.toArray(new PropertyDescriptor[targetDesc.size()]);
+
+        //verify types binding
+        for (PropertyDescriptor attrib : types) {
+            final String xpath = attrib.getName().getLocalPart();
+            final PropertyDescriptor check = original.getDescriptor(xpath);
+            final Class<?> targetBinding = attrib.getType().getBinding();
+            final Class<?> checkBinding = check.getType().getBinding();
+            if (!targetBinding.isAssignableFrom(checkBinding)) {
+                throw new IllegalArgumentException(
+                        "Unable to retype FeatureReader for " + xpath +
+                        " as " + Classes.getShortName(checkBinding) +
+                        " cannot be assigned to " + Classes.getShortName(targetBinding));
+            }
+        }
+
+        return types;
+    }
+
+    /**
+     * Generate a table of indexes betwwen two simplefeaturetypes.
+     * Allow acces by index rather then by names.
+     *
+     * @param target Desired FeatureType
+     * @param original Original FeatureType
+     *
+     * @return Mapping from originoal to target FeatureType
+     *
+     * @throws IllegalArgumentException if unable to provide a mapping
+     */
+    protected int[] typeIndexes(final SimpleFeatureType original, final SimpleFeatureType target) {
+
+        if (target.equals(original)) {
+            throw new IllegalArgumentException("FeatureReader already produces contents with the correct schema");
+        }
+
+        final List<PropertyDescriptor> originalDesc = new ArrayList<PropertyDescriptor>(original.getDescriptors());
         final Collection<PropertyDescriptor> targetDesc = target.getDescriptors();
 
         if (targetDesc.size() > originalDesc.size()) {
@@ -93,14 +136,14 @@ public abstract class GenericRetypeFeatureIterator<F extends Feature, R extends 
         }
 
 
-        final PropertyDescriptor[] types = new PropertyDescriptor[targetDesc.size()];
+        final int[] types = new int[targetDesc.size()];
 
         int i=0;
         for (PropertyDescriptor attrib : targetDesc) {
             final String xpath = attrib.getName().getLocalPart();
-            types[i] = attrib;
-
             final PropertyDescriptor check = original.getDescriptor(xpath);
+            types[i] = originalDesc.indexOf(check);
+
             final Class<?> targetBinding = attrib.getType().getBinding();
             final Class<?> checkBinding = check.getType().getBinding();
             if (!targetBinding.isAssignableFrom(checkBinding)) {
@@ -114,6 +157,7 @@ public abstract class GenericRetypeFeatureIterator<F extends Feature, R extends 
 
         return types;
     }
+
 
     /**
      * {@inheritDoc }
@@ -199,7 +243,7 @@ public abstract class GenericRetypeFeatureIterator<F extends Feature, R extends 
         /**
          * The descriptors we are going to from the original reader
          */
-        private final PropertyDescriptor[] types;
+        private final int[] types;
 
         private final DefaultSimpleFeature feature;
 
@@ -211,7 +255,7 @@ public abstract class GenericRetypeFeatureIterator<F extends Feature, R extends 
         private GenericReuseRetypeFeatureReader(R reader, T mask){
             super(reader);
             this.mask = mask;
-            types = typeAttributes(reader.getFeatureType(), (SimpleFeatureType)mask);
+            types = typeIndexes((SimpleFeatureType)reader.getFeatureType(), (SimpleFeatureType)mask);
 
             feature = new DefaultSimpleFeature((SimpleFeatureType) mask, null,new Object[types.length], false);
         }
@@ -222,7 +266,7 @@ public abstract class GenericRetypeFeatureIterator<F extends Feature, R extends 
             feature.setId(next.getID());
 
             for (int i = 0; i < types.length; i++) {
-                feature.setAttribute(i, next.getAttribute(types[i].getName()));
+                feature.setAttribute(i, next.getAttribute(types[i]));
             }
             
             return (F) feature;

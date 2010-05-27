@@ -16,19 +16,12 @@
  */
 package org.geotoolkit.data.shapefile.indexed;
 
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
 
-import org.geotoolkit.ShapeTestData;
 import org.geotoolkit.data.shapefile.ShpFiles;
 import org.geotoolkit.data.shapefile.AbstractTestCaseSupport;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.URL;
 
 public abstract class FIDTestCase extends AbstractTestCaseSupport {
     protected FIDTestCase( String name ) throws IOException {
@@ -47,6 +40,7 @@ public abstract class FIDTestCase extends AbstractTestCaseSupport {
 
     protected ShpFiles shpFiles;
 
+    @Override
     protected void setUp() throws Exception {
         super.setUp();
         
@@ -56,7 +50,7 @@ public abstract class FIDTestCase extends AbstractTestCaseSupport {
         backshx = sibling(backshp, "shx");
         backprj =  sibling(backshp, "prj");
         backqix =  sibling(backshp, "qix");
-
+        
         fixFile =  sibling(backshp, "fix");
 
         shpFiles = new ShpFiles(backshx);

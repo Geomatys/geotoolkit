@@ -78,8 +78,8 @@ public class DbaseFileReader {
 
         @Override
         public String toString() {
-            StringBuffer ret = new StringBuffer("DBF Row - ");
-            for (int i = 0; i < header.getNumFields(); i++) {
+            final StringBuilder ret = new StringBuilder("DBF Row - ");
+            for (int i=0; i < header.getNumFields(); i++) {
                 ret.append(header.getFieldName(i)).append(": \"");
                 try {
                     ret.append(this.read(i));
@@ -295,17 +295,11 @@ public class DbaseFileReader {
             bufferCheck();
 
             // read the deleted flag
-            char tempDeleted = (char) buffer.get();
+            final char tempDeleted = (char) buffer.get();
 
             // skip the next bytes
-            buffer.position(buffer.position() + header.getRecordLength() - 1); // the
-            // 1 is
-            // for
-            // the
-            // deleted
-            // flag
-            // just
-            // read.
+            // the 1 is for the deleted flag just read.
+            buffer.position(buffer.position() + header.getRecordLength() - 1); 
 
             // add the row if it is not deleted.
             if (tempDeleted != '*') {
@@ -491,14 +485,14 @@ public class DbaseFileReader {
                 try {
                     String tempString = charBuffer.subSequence(fieldOffset,
                             fieldOffset + 4).toString();
-                    int tempYear = Integer.parseInt(tempString);
+                    final int tempYear = Integer.parseInt(tempString);
                     tempString = charBuffer.subSequence(fieldOffset + 4,
                             fieldOffset + 6).toString();
-                    int tempMonth = Integer.parseInt(tempString) - 1;
+                    final int tempMonth = Integer.parseInt(tempString) - 1;
                     tempString = charBuffer.subSequence(fieldOffset + 6,
                             fieldOffset + 8).toString();
-                    int tempDay = Integer.parseInt(tempString);
-                    Calendar cal = Calendar.getInstance();
+                    final int tempDay = Integer.parseInt(tempString);
+                    final Calendar cal = Calendar.getInstance();
                     cal.clear();
                     cal.set(Calendar.YEAR, tempYear);
                     cal.set(Calendar.MONTH, tempMonth);
@@ -517,10 +511,10 @@ public class DbaseFileReader {
                     final String number = extractNumberString(charBuffer,
                             fieldOffset, fieldLen);
                     if (clazz == Integer.class) {
-                        object = new Integer(number);
+                        object = Integer.valueOf(number);
                         break;
                     } else if (clazz == Long.class) {
-                        object = new Long(number);
+                        object = Long.valueOf(number);
                         break;
                     }
                     // else will fall through to the floating point number
@@ -535,8 +529,7 @@ public class DbaseFileReader {
 
                     // Lets try parsing a long instead...
                     try {
-                        object = new Long(extractNumberString(charBuffer,
-                                fieldOffset, fieldLen));
+                        object = Long.valueOf(extractNumberString(charBuffer, fieldOffset, fieldLen));
                         break;
                     } catch (NumberFormatException e2) {
 
@@ -546,9 +539,7 @@ public class DbaseFileReader {
             case 'f':
             case 'F': // floating point number
                 try {
-
-                    object = new Double(extractNumberString(charBuffer,
-                            fieldOffset, fieldLen));
+                    object = Double.valueOf(extractNumberString(charBuffer, fieldOffset, fieldLen));
                 } catch (NumberFormatException e) {
                     // todo: use progresslistener, this isn't a grave error,
                     // though it
@@ -574,11 +565,9 @@ public class DbaseFileReader {
      * @param fieldOffset
      * @param fieldLen
      */
-    private final String extractNumberString(final CharBuffer charBuffer2,
+    private static String extractNumberString(final CharBuffer charBuffer2,
             final int fieldOffset, final int fieldLen) {
-        String thing = charBuffer2.subSequence(fieldOffset,
-                fieldOffset + fieldLen).toString().trim();
-        return thing;
+        return charBuffer2.subSequence(fieldOffset, fieldOffset+fieldLen).toString().trim();
     }
 
     public static void main(String[] args) throws Exception {
@@ -587,8 +576,7 @@ public class DbaseFileReader {
         System.out.println(reader.getHeader());
         int r = 0;
         while (reader.hasNext()) {
-            System.out.println(++r + ","
-                    + java.util.Arrays.asList(reader.readEntry()));
+            System.out.println(++r + "," + java.util.Arrays.asList(reader.readEntry()));
         }
         reader.close();
     }

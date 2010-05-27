@@ -20,8 +20,10 @@ import java.io.IOException;
 import java.util.List;
 
 import org.geotoolkit.data.AbstractPropertyReader;
+import org.geotoolkit.data.shapefile.dbf.DbaseFileHeader;
 import org.geotoolkit.data.shapefile.dbf.DbaseFileReader;
 import org.geotoolkit.data.shapefile.shp.ShapefileReader;
+import org.geotoolkit.util.Converters;
 
 import org.opengis.feature.type.AttributeDescriptor;
 
@@ -34,6 +36,7 @@ import org.opengis.feature.type.AttributeDescriptor;
  */
 public class ShapefileAttributeReader extends AbstractPropertyReader {
 
+    protected final boolean[] narrowing;
     protected ShapefileReader shp;
     protected DbaseFileReader dbf;
     protected DbaseFileReader.Row row;
@@ -57,6 +60,16 @@ public class ShapefileAttributeReader extends AbstractPropertyReader {
         super(atts);
         this.shp = shp;
         this.dbf = dbf;
+
+        //the attribut descriptor might define types that are mare restrictive
+        //then what the readers can do.
+        narrowing = new boolean[atts.length];
+        if(dbf != null){
+            final DbaseFileHeader header = dbf.getHeader();
+            for(int i=1;i<atts.length;i++){
+                narrowing[i] = (atts[i].getType().getBinding() != header.getFieldClass(i-1));
+            }
+        }
     }
 
     /**
@@ -136,7 +149,12 @@ public class ShapefileAttributeReader extends AbstractPropertyReader {
             return record.shape();
         }else{
             if (row != null) {
-                return row.read(param - 1);
+                if(narrowing[param-1]){
+                    //must procede to a retype
+                    return Converters.convert(row.read(param - 1), metaData[param].getType().getBinding());
+                }else{
+                    return row.read(param - 1);
+                }
             }
             return null;
         }
@@ -149,7 +167,12 @@ public class ShapefileAttributeReader extends AbstractPropertyReader {
     public void read(Object[] buffer) throws IOException {
         buffer[0] = record.shape();
         for(int i=0,n=getPropertyCount()-1; i<n; i++){
-            buffer[i+1] = row.read(i);
+            if(narrowing[i+1]){
+                //must procede to a retype
+                buffer[i+1] = Converters.convert(row.read(i), metaData[i+1].getType().getBinding());
+            }else{
+                buffer[i+1] = row.read(i);
+            }
         }
     }
 }

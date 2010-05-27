@@ -18,20 +18,23 @@ package org.geotoolkit.data.shapefile.indexed;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.geotoolkit.storage.DataStoreException;
-import org.geotoolkit.data.query.Query;
-import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.data.FeatureCollection;
+import org.geotoolkit.data.DataUtilities;
 import org.geotoolkit.data.FeatureIterator;
-import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
+import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.session.Session;
+import org.geotoolkit.factory.FactoryFinder;
+import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
@@ -45,10 +48,7 @@ import org.opengis.filter.spatial.BBOX;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Map.Entry;
-import org.geotoolkit.data.DataUtilities;
+
 
 public class FidQueryTest extends FIDTestCase {
     public  FidQueryTest(  ) throws IOException {
@@ -65,29 +65,28 @@ public class FidQueryTest extends FIDTestCase {
 
     private int numFeatures;
 
+    @Override
     protected void setUp() throws Exception {
-
         super.setUp();
 
-        URL url = backshp.toURI().toURL();
+        final URL url = backshp.toURI().toURL();
         ds = new IndexedShapefileDataStore(url, null, false, true, IndexType.QIX);
         numFeatures = 0;
         name = ds.getNames().iterator().next();
         session = ds.createSession(true);
-        {
-            FeatureIterator<SimpleFeature> features = ds.getFeatureReader(QueryBuilder.all(name));
-            try {
-                while (features.hasNext()) {
-                    numFeatures++;
-                    SimpleFeature feature = features.next();
-                    fids.put(feature.getID(), feature);
-                }
-            } finally {
-                if (features != null)
-                    features.close();
+
+        final FeatureIterator<SimpleFeature> features = ds.getFeatureReader(QueryBuilder.all(name));
+        try {
+            while (features.hasNext()) {
+                numFeatures++;
+                final SimpleFeature feature = features.next();
+                fids.put(feature.getID(), feature);
             }
-            assertEquals(numFeatures, fids.size());
+        } finally {
+            if (features != null)
+                features.close();
         }
+        assertEquals(numFeatures, fids.size());
 
     }
 
@@ -162,7 +161,7 @@ public class FidQueryTest extends FIDTestCase {
                 features.close();
             }
         }
-        feature.setAttribute("ID", new Integer(newId));
+        feature.setAttribute("ID", new Long(newId));
         this.assertFidsMatch();
     }
 
@@ -236,30 +235,24 @@ public class FidQueryTest extends FIDTestCase {
     }
 
     private void assertFidsMatch() throws IOException, DataStoreException {
-        // long start = System.currentTimeMillis();
-        Query query = QueryBuilder.all(name);
-
         int i = 0;
 
         for (Iterator<Entry<String,SimpleFeature>> iter = fids.entrySet().iterator(); iter.hasNext();) {
             i++;
-            Entry<String,SimpleFeature> entry = iter.next();
-            String fid = (String) entry.getKey();
-            FeatureId id = fac.featureId(fid);
-            Filter filter = fac.id(Collections.singleton(id));
-            final QueryBuilder builder = new QueryBuilder(query);
-            builder.setFilter(filter);
-            query = builder.buildQuery();
-            FeatureIterator<SimpleFeature> features = ds.getFeatureReader(query);
+            final Entry<String,SimpleFeature> entry = iter.next();
+            final String fid = (String) entry.getKey();
+            final FeatureId id = fac.featureId(fid);
+            final Filter filter = fac.id(Collections.singleton(id));
+            final Query query = QueryBuilder.filtered(name, filter);
+            final FeatureIterator<SimpleFeature> features = ds.getFeatureReader(query);
             try {
-                SimpleFeature feature = features.next();
+                final SimpleFeature feature = features.next();
                 assertFalse(features.hasNext());
                 assertEquals(i + "th feature", entry.getValue(), feature);
             } finally {
                 if (features != null)
                     features.close();
             }
-
         }
     }
 

@@ -43,7 +43,7 @@ import org.geotoolkit.util.logging.Logging;
  */
 public class DbaseFileHeader {
 
-    private final Logger LOGGER = Logging.getLogger("org.geotoolkit.data.shapefile");
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.data.shapefile");
     
     // Constant for the size of a record
     private static final int FILE_DESCRIPTOR_SIZE = 32;
@@ -709,16 +709,20 @@ public class DbaseFileHeader {
      */
     @Override
     public String toString() {
-        StringBuffer fs = new StringBuffer();
-        for (int i = 0, ii = fields.length; i < ii; i++) {
-            DbaseField f = fields[i];
-            fs.append(f.fieldName + " " + f.fieldType + " " + f.fieldLength
-                    + " " + f.decimalCount + " " + f.fieldDataAddress + "\n");
+        final StringBuilder fs = new StringBuilder();
+
+        fs.append("DB3 Header\n Date : ").append(date)
+          .append("\n Records : ").append(recordCnt)
+          .append("\n Fields : ").append(fieldCnt)
+          .append('\n');
+
+        for (DbaseField f : fields) {
+            fs.append(f.fieldName).append(' ').append(f.fieldType).append(' ')
+                    .append(f.fieldLength).append(' ').append(f.decimalCount)
+                    .append(' ').append(f.fieldDataAddress).append('\n');
         }
 
-        return "DB3 Header\n" + "Date : " + date + "\n" + "Records : "
-                + recordCnt + "\n" + "Fields : " + fieldCnt + "\n" + fs;
-
+        return fs.toString();
     }
 
 }

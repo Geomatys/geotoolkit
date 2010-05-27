@@ -288,71 +288,39 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
         }
     }
 
-    //not possible in the new model
-//    public void testForceCRS() throws Exception {
-//        File file = new File("test.shp");
-//        URL toURL = file.toURL();
-//
-//        ShapefileDataStore ds = new ShapefileDataStore(toURL);
-//        SimpleFeatureType toCreate = FeatureTypeUtilities.createType("test", "geom:MultiPolygon");
-//        ds.createSchema(toCreate.getName(),toCreate);
-//        FeatureType before = ds.getSchema("test");
-//
-//        ds.forceSchemaCRS(CRS.decode("EPSG:3005"));
-//        FeatureType after = ds.getSchema("test");
-//
-//        assertNotSame(before, after);
-//        assertNull("4326", before.getCoordinateReferenceSystem());
-//        assertEquals("NAD83 / BC Albers", after.getCoordinateReferenceSystem().getName().getCode());
-//
-//        file.deleteOnExit();
-//        file = new File("test.dbf");
-//        file.deleteOnExit();
-//        file = new File("test.shp");
-//        file.deleteOnExit();
-//
-//        file = new File("test.prj");
-//
-//        if (file.exists())
-//            file.deleteOnExit();
-//
-//        file = new File("test.shx");
-//        if (file.exists())
-//            file.deleteOnExit();
-//    }
-
     /**
      * Create a set of features, then remove every other one, updating the
      * remaining. Test for removal and proper update after reloading...
      */
     public void testUpdating() throws Throwable {
-            ShapefileDataStore sds = createDataStore();
-            loadFeatures(sds);
+        ShapefileDataStore sds = createDataStore();
+        loadFeatures(sds);
 
-            FeatureWriter<SimpleFeatureType, SimpleFeature> writer = null;
-            try {
-                writer = sds.getFeatureWriter(sds.getNames().iterator().next(),Filter.INCLUDE);
-                while (writer.hasNext()) {
-                    SimpleFeature feat = writer.next();
-                    Byte b = (Byte) feat.getAttribute(1);
-                    if (b.byteValue() % 2 == 0) {
-                        writer.remove();
-                    } else {
-                        feat.setAttribute(1, new Byte((byte) -1));
-                    }
+        FeatureWriter<SimpleFeatureType, SimpleFeature> writer = null;
+        try {
+            writer = sds.getFeatureWriter(sds.getNames().iterator().next(), Filter.INCLUDE);
+            while (writer.hasNext()) {
+                SimpleFeature feat = writer.next();
+                Byte b = (Byte) feat.getAttribute(1);
+                if (b.byteValue() % 2 == 0) {
+                    writer.remove();
+                } else {
+                    feat.setAttribute(1, new Byte((byte) -1));
                 }
-            } finally {
-                if (writer != null)
-                    writer.close();
             }
-            FeatureCollection<SimpleFeature> fc = loadFeatures(sds);
+        } finally {
+            if (writer != null) {
+                writer.close();
+            }
+        }
+        FeatureCollection<SimpleFeature> fc = loadFeatures(sds);
 
-            assertEquals(10, fc.size());
-            FeatureIterator<SimpleFeature> i = fc.iterator();
-            for (; i.hasNext();) {
-                assertEquals(-1, ((Byte) i.next().getAttribute(1)).byteValue());
-            }
-            i.close();
+        assertEquals(10, fc.size());
+        FeatureIterator<SimpleFeature> i = fc.iterator();
+        for (; i.hasNext();) {
+            assertEquals(-1, ((Byte) i.next().getAttribute(1)).byteValue());
+        }
+        i.close();
     }
 
     /**
