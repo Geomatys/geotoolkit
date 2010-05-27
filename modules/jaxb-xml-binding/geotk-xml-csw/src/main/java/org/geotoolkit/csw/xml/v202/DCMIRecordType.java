@@ -82,6 +82,37 @@ import org.geotoolkit.util.Utilities;
     "contributor" ,
     "description" ,
     "temporal"    ,
+    "mediator",
+    "isRequiredBy",
+    "audience",
+    "extent",
+    "tableOfContents",
+    "hasVersion",
+    "requires",
+    "dateSubmitted",
+    "license",
+    "conformsTo",
+    "bibliographicCitation",
+    "isVersionOf",
+    "available",
+    "accessRights",
+    "isPartOf",
+    "valid",
+    "educationLevel",
+    "replaces",
+    "issued",
+    "created",
+    "hasPart",
+    "provenance",
+    "isReplacedBy",
+    "alternative",
+    "rightsHolder",
+    "dateCopyrighted",
+    "medium",
+    "dateAccepted",
+    "isFormatOf",
+    "hasFormat",
+    "isReferencedBy",
     "dcElement"   
 })
 @XmlSeeAlso({
@@ -155,6 +186,100 @@ public class DCMIRecordType extends AbstractRecordType implements DCMIRecord {
 
     @XmlElement(name = "temporal", namespace = "http://purl.org/dc/terms/")
     private SimpleLiteral temporal;
+
+    @XmlElement(name = "mediator", namespace = "http://purl.org/dc/terms/")
+    private List<SimpleLiteral> mediator;
+
+    @XmlElement(name = "isRequiredBy", namespace = "http://purl.org/dc/terms/")
+    private List<SimpleLiteral> isRequiredBy;
+
+    @XmlElement(name = "audience", namespace = "http://purl.org/dc/terms/")
+    private List<SimpleLiteral> audience;
+
+    @XmlElement(name = "extent", namespace = "http://purl.org/dc/terms/")
+    private List<SimpleLiteral> extent;
+
+    @XmlElement(name = "tableOfContents", namespace = "http://purl.org/dc/terms/")
+    private List<SimpleLiteral> tableOfContents;
+
+    @XmlElement(name = "hasVersion", namespace = "http://purl.org/dc/terms/")
+    private List<SimpleLiteral> hasVersion;
+
+    @XmlElement(name = "requires", namespace = "http://purl.org/dc/terms/")
+    private List<SimpleLiteral> requires;
+
+    @XmlElement(name = "dateSubmitted", namespace = "http://purl.org/dc/terms/")
+    private List<SimpleLiteral> dateSubmitted;
+
+    @XmlElement(name = "license", namespace = "http://purl.org/dc/terms/")
+    private List<SimpleLiteral> license;
+
+    @XmlElement(name = "conformsTo", namespace = "http://purl.org/dc/terms/")
+    private List<SimpleLiteral> conformsTo;
+
+    @XmlElement(name = "bibliographicCitation", namespace = "http://purl.org/dc/terms/")
+    private List<SimpleLiteral> bibliographicCitation;
+
+    @XmlElement(name = "isVersionOf", namespace = "http://purl.org/dc/terms/")
+    private List<SimpleLiteral> isVersionOf;
+
+    @XmlElement(name = "available", namespace = "http://purl.org/dc/terms/")
+    private List<SimpleLiteral> available;
+
+    @XmlElement(name = "accessRights", namespace = "http://purl.org/dc/terms/")
+    private List<SimpleLiteral> accessRights;
+
+    @XmlElement(name = "isPartOf", namespace = "http://purl.org/dc/terms/")
+    private List<SimpleLiteral> isPartOf;
+
+    @XmlElement(name = "valid", namespace = "http://purl.org/dc/terms/")
+    private List<SimpleLiteral> valid;
+
+    @XmlElement(name = "educationLevel", namespace = "http://purl.org/dc/terms/")
+    private List<SimpleLiteral> educationLevel;
+
+    @XmlElement(name = "replaces", namespace = "http://purl.org/dc/terms/")
+    private List<SimpleLiteral> replaces;
+
+    @XmlElement(name = "issued", namespace = "http://purl.org/dc/terms/")
+    private List<SimpleLiteral> issued;
+
+    @XmlElement(name = "created", namespace = "http://purl.org/dc/terms/")
+    private List<SimpleLiteral> created;
+
+    @XmlElement(name = "hasPart", namespace = "http://purl.org/dc/terms/")
+    private List<SimpleLiteral> hasPart;
+
+    @XmlElement(name = "provenance", namespace = "http://purl.org/dc/terms/")
+    private List<SimpleLiteral> provenance;
+
+    @XmlElement(name = "isReplacedBy", namespace = "http://purl.org/dc/terms/")
+    private List<SimpleLiteral> isReplacedBy;
+
+    @XmlElement(name = "alternative", namespace = "http://purl.org/dc/terms/")
+    private List<SimpleLiteral> alternative;
+
+    @XmlElement(name = "rightsHolder", namespace = "http://purl.org/dc/terms/")
+    private List<SimpleLiteral> rightsHolder;
+
+    @XmlElement(name = "dateCopyrighted", namespace = "http://purl.org/dc/terms/")
+    private List<SimpleLiteral> dateCopyrighted;
+
+    @XmlElement(name = "medium", namespace = "http://purl.org/dc/terms/")
+    private List<SimpleLiteral> medium;
+
+    @XmlElement(name = "dateAccepted", namespace = "http://purl.org/dc/terms/")
+    private List<SimpleLiteral> dateAccepted;
+
+    @XmlElement(name = "isFormatOf", namespace = "http://purl.org/dc/terms/")
+    private List<SimpleLiteral> isFormatOf;
+
+    @XmlElement(name = "hasFormat", namespace = "http://purl.org/dc/terms/")
+    private List<SimpleLiteral> hasFormat;
+
+    @XmlElement(name = "isReferencedBy", namespace = "http://purl.org/dc/terms/")
+    private List<SimpleLiteral> isReferencedBy;
+
     
     /**
      * An empty constructor used by JAXB
@@ -600,5 +725,718 @@ public class DCMIRecordType extends AbstractRecordType implements DCMIRecord {
         int hash = 7;
         hash = 17 * hash + (this.identifier != null ? this.identifier.hashCode() : 0);
         return hash;
+    }
+
+    /**
+     * @return the mediator
+     */
+    public List<SimpleLiteral> getMediator() {
+        return mediator;
+    }
+
+    /**
+     * @param mediator the mediator to set
+     */
+    public void setMediator(List<SimpleLiteral> mediator) {
+        this.mediator = mediator;
+    }
+
+    /**
+     * @param mediator the mediator to set
+     */
+    public void setMediator(SimpleLiteral mediator) {
+         if (this.mediator == null)
+            this.mediator = new ArrayList<SimpleLiteral>();
+        this.mediator.add(mediator);
+    }
+
+    /**
+     * @return the isRequiredBy
+     */
+    public List<SimpleLiteral> getIsRequiredBy() {
+        return isRequiredBy;
+    }
+
+    /**
+     * @param isRequiredBy the isRequiredBy to set
+     */
+    public void setIsRequiredBy(List<SimpleLiteral> isRequiredBy) {
+        this.isRequiredBy = isRequiredBy;
+    }
+
+    /**
+     * @param isRequiredBy the isRequiredBy to set
+     */
+    public void setIsRequiredBy(SimpleLiteral isRequiredBy) {
+         if (this.isRequiredBy == null)
+            this.isRequiredBy = new ArrayList<SimpleLiteral>();
+        this.isRequiredBy.add(isRequiredBy);
+    }
+
+    /**
+     * @return the audience
+     */
+    public List<SimpleLiteral> getAudience() {
+        return audience;
+    }
+
+    /**
+     * @param audience the audience to set
+     */
+    public void setAudience(List<SimpleLiteral> audience) {
+        this.audience = audience;
+    }
+
+    /**
+     * @param audience the audience to set
+     */
+    public void setAudience(SimpleLiteral audience) {
+         if (this.audience == null)
+            this.audience = new ArrayList<SimpleLiteral>();
+        this.audience.add(audience);
+    }
+
+    /**
+     * @return the extent
+     */
+    public List<SimpleLiteral> getExtent() {
+        return extent;
+    }
+
+    /**
+     * @param extent the extent to set
+     */
+    public void setExtent(List<SimpleLiteral> extent) {
+        this.extent = extent;
+    }
+
+    /**
+     * @param extent the extent to set
+     */
+    public void setExtent(SimpleLiteral extent) {
+         if (this.extent == null)
+            this.extent = new ArrayList<SimpleLiteral>();
+        this.extent.add(extent);
+    }
+
+    /**
+     * @return the tableOfContents
+     */
+    public List<SimpleLiteral> getTableOfContents() {
+        return tableOfContents;
+    }
+
+    /**
+     * @param tableOfContents the tableOfContents to set
+     */
+    public void setTableOfContents(List<SimpleLiteral> tableOfContents) {
+        this.tableOfContents = tableOfContents;
+    }
+
+    /**
+     * @param tableOfContents the tableOfContents to set
+     */
+    public void setTableOfContents(SimpleLiteral tableOfContents) {
+         if (this.tableOfContents == null)
+            this.tableOfContents = new ArrayList<SimpleLiteral>();
+        this.tableOfContents.add(tableOfContents);
+    }
+
+    /**
+     * @return the hasVersion
+     */
+    public List<SimpleLiteral> getHasVersion() {
+        return hasVersion;
+    }
+
+    /**
+     * @param hasVersion the hasVersion to set
+     */
+    public void setHasVersion(List<SimpleLiteral> hasVersion) {
+        this.hasVersion = hasVersion;
+    }
+
+    /**
+     * @param hasVersion the hasVersion to set
+     */
+    public void setHasVersion(SimpleLiteral hasVersion) {
+         if (this.hasVersion == null)
+            this.hasVersion = new ArrayList<SimpleLiteral>();
+        this.hasVersion.add(hasVersion);
+    }
+
+    /**
+     * @return the requires
+     */
+    public List<SimpleLiteral> getRequires() {
+        return requires;
+    }
+
+    /**
+     * @param requires the requires to set
+     */
+    public void setRequires(List<SimpleLiteral> requires) {
+        this.requires = requires;
+    }
+
+    /**
+     * @param requires the requires to set
+     */
+    public void setRequires(SimpleLiteral requires) {
+         if (this.requires == null)
+            this.requires = new ArrayList<SimpleLiteral>();
+        this.requires.add(requires);
+    }
+
+    /**
+     * @return the dateSubmitted
+     */
+    public List<SimpleLiteral> getDateSubmitted() {
+        return dateSubmitted;
+    }
+
+    /**
+     * @param dateSubmitted the dateSubmitted to set
+     */
+    public void setDateSubmitted(List<SimpleLiteral> dateSubmitted) {
+        this.dateSubmitted = dateSubmitted;
+    }
+
+    /**
+     * @param dateSubmitted the dateSubmitted to set
+     */
+    public void setDateSubmitted(SimpleLiteral dateSubmitted) {
+         if (this.dateSubmitted == null)
+            this.dateSubmitted = new ArrayList<SimpleLiteral>();
+        this.dateSubmitted.add(dateSubmitted);
+    }
+
+    /**
+     * @return the license
+     */
+    public List<SimpleLiteral> getLicense() {
+        return license;
+    }
+
+    /**
+     * @param license the license to set
+     */
+    public void setLicense(List<SimpleLiteral> license) {
+        this.license = license;
+    }
+
+    /**
+     * @param license the license to set
+     */
+    public void setLicense(SimpleLiteral license) {
+         if (this.license == null)
+            this.license = new ArrayList<SimpleLiteral>();
+        this.license.add(license);
+    }
+
+    /**
+     * @return the conformsTo
+     */
+    public List<SimpleLiteral> getConformsTo() {
+        return conformsTo;
+    }
+
+    /**
+     * @param conformsTo the conformsTo to set
+     */
+    public void setConformsTo(List<SimpleLiteral> conformsTo) {
+        this.conformsTo = conformsTo;
+    }
+
+    /**
+     * @param conformsTo the conformsTo to set
+     */
+    public void setConformsTo(SimpleLiteral conformsTo) {
+         if (this.conformsTo == null)
+            this.conformsTo = new ArrayList<SimpleLiteral>();
+        this.conformsTo.add(conformsTo);
+    }
+
+    /**
+     * @return the bibliographicCitation
+     */
+    public List<SimpleLiteral> getBibliographicCitation() {
+        return bibliographicCitation;
+    }
+
+    /**
+     * @param bibliographicCitation the bibliographicCitation to set
+     */
+    public void setBibliographicCitation(List<SimpleLiteral> bibliographicCitation) {
+        this.bibliographicCitation = bibliographicCitation;
+    }
+
+    /**
+     * @param bibliographicCitation the bibliographicCitation to set
+     */
+    public void setBibliographicCitation(SimpleLiteral bibliographicCitation) {
+         if (this.bibliographicCitation == null)
+            this.bibliographicCitation = new ArrayList<SimpleLiteral>();
+        this.bibliographicCitation.add(bibliographicCitation);
+    }
+
+    /**
+     * @return the isVersionOf
+     */
+    public List<SimpleLiteral> getIsVersionOf() {
+        return isVersionOf;
+    }
+
+    /**
+     * @param isVersionOf the isVersionOf to set
+     */
+    public void setIsVersionOf(List<SimpleLiteral> isVersionOf) {
+        this.isVersionOf = isVersionOf;
+    }
+
+    /**
+     * @param isVersionOf the isVersionOf to set
+     */
+    public void setIsVersionOf(SimpleLiteral isVersionOf) {
+         if (this.isVersionOf == null)
+            this.isVersionOf = new ArrayList<SimpleLiteral>();
+        this.isVersionOf.add(isVersionOf);
+    }
+
+    /**
+     * @return the available
+     */
+    public List<SimpleLiteral> getAvailable() {
+        return available;
+    }
+
+    /**
+     * @param available the available to set
+     */
+    public void setAvailable(List<SimpleLiteral> available) {
+        this.available = available;
+    }
+
+    /**
+     * @param available the available to set
+     */
+    public void setAvailable(SimpleLiteral available) {
+         if (this.available == null)
+            this.available = new ArrayList<SimpleLiteral>();
+        this.available.add(available);
+    }
+
+    /**
+     * @return the accessRights
+     */
+    public List<SimpleLiteral> getAccessRights() {
+        return accessRights;
+    }
+
+    /**
+     * @param accessRights the accessRights to set
+     */
+    public void setAccessRights(List<SimpleLiteral> accessRights) {
+        this.accessRights = accessRights;
+    }
+
+    /**
+     * @param accesRights the accesRights to set
+     */
+    public void setAccessRights(SimpleLiteral accessRights) {
+         if (this.accessRights == null)
+            this.accessRights = new ArrayList<SimpleLiteral>();
+        this.accessRights.add(accessRights);
+    }
+
+    /**
+     * @return the isPartOf
+     */
+    public List<SimpleLiteral> getIsPartOf() {
+        return isPartOf;
+    }
+
+    /**
+     * @param isPartOf the isPartOf to set
+     */
+    public void setIsPartOf(List<SimpleLiteral> isPartOf) {
+        this.isPartOf = isPartOf;
+    }
+
+    /**
+     * @param isPartOf the isPartOf to set
+     */
+    public void setIsPartOf(SimpleLiteral isPartOf) {
+         if (this.isPartOf == null)
+            this.isPartOf = new ArrayList<SimpleLiteral>();
+        this.isPartOf.add(isPartOf);
+    }
+
+    /**
+     * @return the valid
+     */
+    public List<SimpleLiteral> getValid() {
+        return valid;
+    }
+
+    /**
+     * @param valid the valid to set
+     */
+    public void setValid(List<SimpleLiteral> valid) {
+        this.valid = valid;
+    }
+
+    /**
+     * @param valid the valid to set
+     */
+    public void setValid(SimpleLiteral valid) {
+         if (this.valid == null)
+            this.valid = new ArrayList<SimpleLiteral>();
+        this.valid.add(valid);
+    }
+
+    /**
+     * @return the educationLevel
+     */
+    public List<SimpleLiteral> getEducationLevel() {
+        return educationLevel;
+    }
+
+    /**
+     * @param educationLevel the educationLevel to set
+     */
+    public void setEducationLevel(List<SimpleLiteral> educationLevel) {
+        this.educationLevel = educationLevel;
+    }
+
+    /**
+     * @param eductionLevel the eductionLevel to set
+     */
+    public void setEducationLevel(SimpleLiteral educationLevel) {
+         if (this.educationLevel == null)
+            this.educationLevel = new ArrayList<SimpleLiteral>();
+        this.educationLevel.add(educationLevel);
+    }
+
+    /**
+     * @return the replaces
+     */
+    public List<SimpleLiteral> getReplaces() {
+        return replaces;
+    }
+
+    /**
+     * @param replaces the replaces to set
+     */
+    public void setReplaces(List<SimpleLiteral> replaces) {
+        this.replaces = replaces;
+    }
+
+    /**
+     * @param replaces the replaces to set
+     */
+    public void setReplaces(SimpleLiteral replaces) {
+         if (this.replaces == null)
+            this.replaces = new ArrayList<SimpleLiteral>();
+        this.replaces.add(replaces);
+    }
+
+    /**
+     * @return the issued
+     */
+    public List<SimpleLiteral> getIssued() {
+        return issued;
+    }
+
+    /**
+     * @param issued the issued to set
+     */
+    public void setIssued(List<SimpleLiteral> issued) {
+        this.issued = issued;
+    }
+
+    /**
+     * @param issued the issued to set
+     */
+    public void setIssued(SimpleLiteral issued) {
+         if (this.issued == null)
+            this.issued = new ArrayList<SimpleLiteral>();
+        this.issued.add(issued);
+    }
+
+    /**
+     * @return the created
+     */
+    public List<SimpleLiteral> getCreated() {
+        return created;
+    }
+
+    /**
+     * @param created the created to set
+     */
+    public void setCreated(List<SimpleLiteral> created) {
+        this.created = created;
+    }
+
+    /**
+     * @param created the created to set
+     */
+    public void setcreated(SimpleLiteral created) {
+         if (this.created == null)
+            this.created = new ArrayList<SimpleLiteral>();
+        this.created.add(created);
+    }
+
+    /**
+     * @return the hasPart
+     */
+    public List<SimpleLiteral> getHasPart() {
+        return hasPart;
+    }
+
+    /**
+     * @param hasPart the hasPart to set
+     */
+    public void setHasPart(List<SimpleLiteral> hasPart) {
+        this.hasPart = hasPart;
+    }
+
+    /**
+     * @param hasPart the hasPart to set
+     */
+    public void setHasPart(SimpleLiteral hasPart) {
+         if (this.hasPart == null)
+            this.hasPart = new ArrayList<SimpleLiteral>();
+        this.hasPart.add(hasPart);
+    }
+
+    /**
+     * @return the provenance
+     */
+    public List<SimpleLiteral> getProvenance() {
+        return provenance;
+    }
+
+    /**
+     * @param provenance the provenance to set
+     */
+    public void setProvenance(List<SimpleLiteral> provenance) {
+        this.provenance = provenance;
+    }
+
+    /**
+     * @param provenance the provenance to set
+     */
+    public void setProvenance(SimpleLiteral provenance) {
+         if (this.provenance == null)
+            this.provenance = new ArrayList<SimpleLiteral>();
+        this.provenance.add(provenance);
+    }
+
+    /**
+     * @return the isReplacedBy
+     */
+    public List<SimpleLiteral> getIsReplacedBy() {
+        return isReplacedBy;
+    }
+
+    /**
+     * @param isReplacedBy the isReplacedBy to set
+     */
+    public void setIsReplacedBy(List<SimpleLiteral> isReplacedBy) {
+        this.isReplacedBy = isReplacedBy;
+    }
+
+    /**
+     * @param isReplacedBy the isReplacedBy to set
+     */
+    public void setIsReplacedBy(SimpleLiteral isReplacedBy) {
+         if (this.isReplacedBy == null)
+            this.isReplacedBy = new ArrayList<SimpleLiteral>();
+        this.isReplacedBy.add(isReplacedBy);
+    }
+
+    /**
+     * @return the alternative
+     */
+    public List<SimpleLiteral> getAlternative() {
+        return alternative;
+    }
+
+    /**
+     * @param alternative the alternative to set
+     */
+    public void setAlternative(List<SimpleLiteral> alternative) {
+        this.alternative = alternative;
+    }
+
+    /**
+     * @param alternative the alternative to set
+     */
+    public void setAlternative(SimpleLiteral alternative) {
+         if (this.alternative == null)
+            this.alternative = new ArrayList<SimpleLiteral>();
+        this.alternative.add(alternative);
+    }
+
+    /**
+     * @return the rightsHolder
+     */
+    public List<SimpleLiteral> getRightsHolder() {
+        return rightsHolder;
+    }
+
+    /**
+     * @param rightsHolder the rightsHolder to set
+     */
+    public void setRightsHolder(List<SimpleLiteral> rightsHolder) {
+        this.rightsHolder = rightsHolder;
+    }
+
+    /**
+     * @param rightsHolder the rightsHolder to set
+     */
+    public void setRightsHolder(SimpleLiteral rightsHolder) {
+         if (this.rightsHolder == null)
+            this.rightsHolder = new ArrayList<SimpleLiteral>();
+        this.rightsHolder.add(rightsHolder);
+    }
+
+    /**
+     * @return the dateCopyrighted
+     */
+    public List<SimpleLiteral> getDateCopyrighted() {
+        return dateCopyrighted;
+    }
+
+    /**
+     * @param dateCopyrighted the dateCopyrighted to set
+     */
+    public void setDateCopyrighted(List<SimpleLiteral> dateCopyrighted) {
+        this.dateCopyrighted = dateCopyrighted;
+    }
+
+    /**
+     * @param dateCopyrighted the dateCopyrighted to set
+     */
+    public void setDateCopyrighted(SimpleLiteral dateCopyrighted) {
+         if (this.dateCopyrighted == null)
+            this.dateCopyrighted = new ArrayList<SimpleLiteral>();
+        this.dateCopyrighted.add(dateCopyrighted);
+    }
+
+    /**
+     * @return the medium
+     */
+    public List<SimpleLiteral> getMedium() {
+        return medium;
+    }
+
+    /**
+     * @param medium the medium to set
+     */
+    public void setMedium(List<SimpleLiteral> medium) {
+        this.medium = medium;
+    }
+
+    /**
+     * @param medium the medium to set
+     */
+    public void setMedium(SimpleLiteral medium) {
+         if (this.medium == null)
+            this.medium = new ArrayList<SimpleLiteral>();
+        this.medium.add(medium);
+    }
+
+    /**
+     * @return the dateAccepted
+     */
+    public List<SimpleLiteral> getDateAccepted() {
+        return dateAccepted;
+    }
+
+    /**
+     * @param dateAccepted the dateAccepted to set
+     */
+    public void setDateAccepted(List<SimpleLiteral> dateAccepted) {
+        this.dateAccepted = dateAccepted;
+    }
+
+    /**
+     * @param dateAccepted the dateAccepted to set
+     */
+    public void setdateAccepted(SimpleLiteral dateAccepted) {
+         if (this.dateAccepted == null)
+            this.dateAccepted = new ArrayList<SimpleLiteral>();
+        this.dateAccepted.add(dateAccepted);
+    }
+
+    /**
+     * @return the isFormatOf
+     */
+    public List<SimpleLiteral> getIsFormatOf() {
+        return isFormatOf;
+    }
+
+    /**
+     * @param isFormatOf the isFormatOf to set
+     */
+    public void setIsFormatOf(List<SimpleLiteral> isFormatOf) {
+        this.isFormatOf = isFormatOf;
+    }
+
+    /**
+     * @param isFormatOf the isFormatOf to set
+     */
+    public void setIsFormatOf(SimpleLiteral isFormatOf) {
+         if (this.isFormatOf == null)
+            this.isFormatOf = new ArrayList<SimpleLiteral>();
+        this.isFormatOf.add(isFormatOf);
+    }
+
+    /**
+     * @return the hasFormat
+     */
+    public List<SimpleLiteral> getHasFormat() {
+        return hasFormat;
+    }
+
+    /**
+     * @param hasFormat the hasFormat to set
+     */
+    public void setHasFormat(List<SimpleLiteral> hasFormat) {
+        this.hasFormat = hasFormat;
+    }
+
+    /**
+     * @param hasFormat the hasFormat to set
+     */
+    public void setHasFormat(SimpleLiteral hasFormat) {
+         if (this.hasFormat == null)
+            this.hasFormat = new ArrayList<SimpleLiteral>();
+        this.hasFormat.add(hasFormat);
+    }
+
+    /**
+     * @return the isReferencedBy
+     */
+    public List<SimpleLiteral> getIsReferencedBy() {
+        return isReferencedBy;
+    }
+
+    /**
+     * @param isReferencedBy the isReferencedBy to set
+     */
+    public void setIsReferencedBy(List<SimpleLiteral> isReferencedBy) {
+        this.isReferencedBy = isReferencedBy;
+    }
+
+    /**
+     * @param isReferencedBy the isReferencedBy to set
+     */
+    public void setIsReferencedBy(SimpleLiteral isReferencedBy) {
+         if (this.isReferencedBy == null)
+            this.isReferencedBy = new ArrayList<SimpleLiteral>();
+        this.isReferencedBy.add(isReferencedBy);
     }
 }
