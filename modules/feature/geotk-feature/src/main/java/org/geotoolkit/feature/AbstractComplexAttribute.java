@@ -91,7 +91,7 @@ public abstract class AbstractComplexAttribute<V extends Collection<Property>,I 
         //we size it to 1, in most of the cases there is always a single property for a name.
         final List<Property> matches = new ArrayList<Property>(1);
         for(Property prop : getProperties()){
-            if(prop.getName().getLocalPart().equals(name)){
+            if(DefaultName.match(prop.getName(),name)){
                 matches.add(prop);
             }
         }
@@ -122,7 +122,7 @@ public abstract class AbstractComplexAttribute<V extends Collection<Property>,I 
     public Property getProperty(String name) {
         //TODO find a faster way, hashmap ?
         for(Property prop : getProperties()){
-            if(prop.getName().getLocalPart().equals(name)){
+            if(DefaultName.match(prop.getName(),name)){
                 return prop;
             }
         }

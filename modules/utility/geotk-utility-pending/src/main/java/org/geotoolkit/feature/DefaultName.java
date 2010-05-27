@@ -228,4 +228,30 @@ public class DefaultName implements Name {
         }
     }
 
+    /**
+     * Tests that the given string representation matches the given name.
+     * String can be written with only the local part or in extendedform or JCR 
+     * extended form. 
+     * 
+     * @param name
+     * @param candidate
+     * @return true if the string match the name
+     */
+    public static boolean match(Name name, String candidate){
+        if(candidate.startsWith("{")){
+            //candidate is in extended form
+            return candidate.equals(DefaultName.toJCRExtendedForm(name));
+        }
+
+        int index = candidate.lastIndexOf(':');
+
+        if(index <= 0){
+            return candidate.equals(name.getLocalPart());
+        }else{
+            final String uri = candidate.substring(0,index);
+            final String local = candidate.substring(index+1,candidate.length());
+            return uri.equals(name.getNamespaceURI()) && local.equals(name.getLocalPart());
+        }
+    }
+
 }
