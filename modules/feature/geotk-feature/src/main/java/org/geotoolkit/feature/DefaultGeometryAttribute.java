@@ -98,13 +98,15 @@ public class DefaultGeometryAttribute extends DefaultAttribute<Object,GeometryDe
     @Override
     public synchronized BoundingBox getBounds() {
         if (bounds == null) {
+            //we explicitly use the getValue method, since subclass can override it
+            final Object val = getValue();
             //get the type crs if defined
             CoordinateReferenceSystem crs = getType().getCoordinateReferenceSystem();
 
             if(crs == null){
                 //the type does not define the crs, then the object value might define it
-                if(value instanceof Geometry){
-                    final int srid = ((Geometry)value).getSRID();
+                if(val instanceof Geometry){
+                    final int srid = ((Geometry)val).getSRID();
                     if(srid != -1){
                         try {
                             crs = CRS.decode(SRIDGenerator.toSRS(srid, SRIDGenerator.Version.V1));
@@ -114,13 +116,13 @@ public class DefaultGeometryAttribute extends DefaultAttribute<Object,GeometryDe
                             Logger.getLogger(DefaultGeometryAttribute.class.getName()).log(Level.WARNING, null, ex);
                         }
                     }
-                }else if(value instanceof org.opengis.geometry.Geometry){
-                    crs = ((org.opengis.geometry.Geometry)value).getCoordinateReferenceSystem();
+                }else if(val instanceof org.opengis.geometry.Geometry){
+                    crs = ((org.opengis.geometry.Geometry)val).getCoordinateReferenceSystem();
                 }
             }
 
             final JTSEnvelope2D bbox = new JTSEnvelope2D(crs);
-            final Geometry geom = (Geometry) value;
+            final Geometry geom = (Geometry) val;
             if (geom != null) {
                 bbox.expandToInclude(geom.getEnvelopeInternal());
             } else {

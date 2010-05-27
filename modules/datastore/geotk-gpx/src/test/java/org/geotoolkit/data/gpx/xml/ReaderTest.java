@@ -36,6 +36,7 @@ import org.junit.Test;
 import org.opengis.feature.ComplexAttribute;
 import org.opengis.feature.Feature;
 import org.opengis.feature.Property;
+import org.opengis.geometry.BoundingBox;
 import static org.junit.Assert.*;
 
 /**
@@ -170,6 +171,13 @@ public class ReaderTest {
         checkPoint((Feature) points.get(1).getValue(), 1);
         checkPoint((Feature) points.get(2).getValue(), 2);
 
+        BoundingBox bbox = f.getBounds();
+        assertEquals(bbox.getMinX(), 15.0d, DELTA);
+        assertEquals(bbox.getMaxX(), 35.0d, DELTA);
+        assertEquals(bbox.getMinY(), 10.0d, DELTA);
+        assertEquals(bbox.getMaxY(), 30.0d, DELTA);
+
+
         f = reader.next();
         assertEquals(null,                  f.getProperty("name"));
         assertEquals(null,                  f.getProperty("cmt"));
@@ -183,6 +191,9 @@ public class ReaderTest {
 
         points = new ArrayList<Property>(f.getProperties("rtept"));
         assertEquals(0,points.size());
+
+        bbox = f.getBounds();
+        assertNull(bbox);
 
         assertFalse(reader.hasNext());
     }
@@ -234,6 +245,12 @@ public class ReaderTest {
         points = new ArrayList<Property>(seg2.getProperties("trkpt"));
         assertEquals(0, points.size());
 
+        BoundingBox bbox = f.getBounds();
+        assertEquals(bbox.getMinX(), 15.0d, DELTA);
+        assertEquals(bbox.getMaxX(), 35.0d, DELTA);
+        assertEquals(bbox.getMinY(), 10.0d, DELTA);
+        assertEquals(bbox.getMaxY(), 30.0d, DELTA);
+
         f = reader.next();
         assertEquals(null,                  f.getProperty("name"));
         assertEquals(null,                  f.getProperty("cmt"));
@@ -247,6 +264,10 @@ public class ReaderTest {
 
         segments = new ArrayList<Property>(f.getProperties("trkseg"));
         assertEquals(0,segments.size());
+
+        bbox = f.getBounds();
+        assertNull(bbox);
+
 
         assertFalse(reader.hasNext());
     }
@@ -279,6 +300,13 @@ public class ReaderTest {
             assertEquals("http://first-adress1.org", links.get(0).getValue().toString());
             assertEquals("http://first-adress2.org", links.get(1).getValue().toString());
             assertEquals("http://first-adress3.org", links.get(2).getValue().toString());
+
+            final BoundingBox bbox = f.getBounds();
+            assertEquals(bbox.getMinX(), 15.0d, DELTA);
+            assertEquals(bbox.getMaxX(), 15.0d, DELTA);
+            assertEquals(bbox.getMinY(), 10.0d, DELTA);
+            assertEquals(bbox.getMaxY(), 10.0d, DELTA);
+
         }else if(num == 1){
             assertEquals(1,                     f.getProperty("index").getValue());
             assertEquals(25.0,                  ((Point)f.getProperty("geometry").getValue()).getX(), DELTA);
@@ -303,6 +331,13 @@ public class ReaderTest {
 
             final List<Property> links = new ArrayList<Property>(f.getProperties("link"));
             assertEquals(0,links.size());
+
+            final BoundingBox bbox = f.getBounds();
+            assertEquals(bbox.getMinX(), 25.0d, DELTA);
+            assertEquals(bbox.getMaxX(), 25.0d, DELTA);
+            assertEquals(bbox.getMinY(), 20.0d, DELTA);
+            assertEquals(bbox.getMaxY(), 20.0d, DELTA);
+
         }else if(num == 2){
             assertEquals(2,                     f.getProperty("index").getValue());
             assertEquals(35.0,                  ((Point)f.getProperty("geometry").getValue()).getX(), DELTA);
@@ -329,6 +364,13 @@ public class ReaderTest {
             assertEquals(2,links.size());
             assertEquals("http://third-adress1.org", links.get(0).getValue().toString());
             assertEquals("http://third-adress2.org", links.get(1).getValue().toString());
+
+            final BoundingBox bbox = f.getBounds();
+            assertEquals(bbox.getMinX(), 35.0d, DELTA);
+            assertEquals(bbox.getMaxX(), 35.0d, DELTA);
+            assertEquals(bbox.getMinY(), 30.0d, DELTA);
+            assertEquals(bbox.getMaxY(), 30.0d, DELTA);
+
         }else{
             fail("unexpected point number :" + num);
         }

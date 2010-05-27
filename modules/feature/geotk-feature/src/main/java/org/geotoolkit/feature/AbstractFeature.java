@@ -88,7 +88,10 @@ public abstract class AbstractFeature<C extends Collection<Property>> extends Ab
                 if (property instanceof GeometryAttribute) {
                     final GeometryAttribute ga = (GeometryAttribute) property;
                     if(bounds == null){
-                        bounds = new DefaultBoundingBox(ga.getBounds());
+                        final BoundingBox bbox = ga.getBounds();
+                        if(!bbox.isEmpty()){
+                            bounds = new DefaultBoundingBox(ga.getBounds());
+                        }
                     }else{
                         bounds.include(ga.getBounds());
                     }

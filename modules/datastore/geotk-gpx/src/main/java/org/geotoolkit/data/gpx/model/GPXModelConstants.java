@@ -31,6 +31,7 @@ import java.util.List;
 
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
+import org.geotoolkit.feature.DefaultGeometryAttribute;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.LenientFeatureFactory;
@@ -135,6 +136,7 @@ public final class GPXModelConstants {
         ftb.add(new DefaultName(GPX_NAMESPACE, TAG_WPT_PDOP),   Double.class,0,1,true,null);
         ftb.add(new DefaultName(GPX_NAMESPACE, TAG_WPT_AGEOFGPSDATA),Double.class,0,1,true,null);
         ftb.add(new DefaultName(GPX_NAMESPACE, TAG_WPT_DGPSID), Integer.class,0,1,true,null);
+        ftb.setDefaultGeometry(GPX_GEOMETRY);
         TYPE_WAYPOINT = ftb.buildFeatureType();
 
 
@@ -161,6 +163,7 @@ public final class GPXModelConstants {
         ftb.add(new DefaultName(GPX_NAMESPACE, TAG_NUMBER),    Integer.class,0,1,true,null);
         ftb.add(new DefaultName(GPX_NAMESPACE, TAG_TYPE),       String.class,0,1,true,null);
         ftb.add(TYPE_WAYPOINT,new DefaultName(GPX_NAMESPACE, TAG_RTE_RTEPT),null,0,Integer.MAX_VALUE,true,null);
+        ftb.setDefaultGeometry(GPX_GEOMETRY);
         TYPE_ROUTE = ftb.buildFeatureType();
 
 
@@ -172,6 +175,7 @@ public final class GPXModelConstants {
         ftb.add(new DefaultName(GPX_NAMESPACE, "index"),        Integer.class,1,1,false,null);
         ftb.add(new DefaultName(GPX_NAMESPACE, GPX_GEOMETRY),     LineString.class,GPX_CRS,1,1,false,null);
         ftb.add(TYPE_WAYPOINT,new DefaultName(GPX_NAMESPACE, TAG_TRK_SEG_PT),null,0,Integer.MAX_VALUE,true,null);
+        ftb.setDefaultGeometry(GPX_GEOMETRY);
         TYPE_TRACK_SEGMENT = ftb.buildType();
 
         //------------------- TRACK TYPE ---------------------------------------
@@ -197,6 +201,7 @@ public final class GPXModelConstants {
         ftb.add(new DefaultName(GPX_NAMESPACE, TAG_NUMBER),       Integer.class,0,1,true,null);
         ftb.add(new DefaultName(GPX_NAMESPACE, TAG_TYPE),         String.class,0,1,true,null);
         ftb.add(TYPE_TRACK_SEGMENT,new DefaultName(GPX_NAMESPACE, TAG_TRK_SEG),null,0,Integer.MAX_VALUE,true,null);
+        ftb.setDefaultGeometry(GPX_GEOMETRY);
         TYPE_TRACK = ftb.buildFeatureType();
 
         DESC_WAYPOINT = ftf.createAttributeDescriptor( TYPE_WAYPOINT, TYPE_WAYPOINT.getName(), 1, 1, true, null);
@@ -281,18 +286,20 @@ public final class GPXModelConstants {
         if(number != null)      properties.add(FF.createAttribute(number, (AttributeDescriptor) TYPE_ROUTE.getDescriptor(TAG_NUMBER), null));
         if(type != null)        properties.add(FF.createAttribute(type, (AttributeDescriptor) TYPE_ROUTE.getDescriptor(TAG_TYPE), null));
 
-        final List<Coordinate> coords = new ArrayList<Coordinate>();
         if(wayPoints != null && !wayPoints.isEmpty()){
             final AttributeDescriptor ptDesc = (AttributeDescriptor) TYPE_ROUTE.getDescriptor(TAG_RTE_RTEPT);
             for(Feature pt : wayPoints){
                 properties.add(FF.createAttribute(pt, ptDesc,null));
-                coords.add( ((Point)pt.getProperty(GPX_GEOMETRY).getValue()).getCoordinate());
             }
         }
-        final LineString geom = GF.createLineString(coords.toArray(new Coordinate[coords.size()]));
-        properties.add(FF.createGeometryAttribute(geom, (GeometryDescriptor) TYPE_ROUTE.getDescriptor(GPX_GEOMETRY), null, null));
 
-        return FF.createFeature(properties, TYPE_ROUTE, Integer.toString(index));
+        final CalculatedLineString geomAtt = new CalculatedLineString(
+                (GeometryDescriptor)TYPE_ROUTE.getDescriptor(GPX_GEOMETRY), TAG_RTE_RTEPT);
+        properties.add(geomAtt);
+
+        final Feature feature = FF.createFeature(properties, TYPE_ROUTE, Integer.toString(index));
+        geomAtt.setRelated(feature);
+        return feature;
     }
 
     public static ComplexAttribute createTrackSegment(int index, List<Feature> wayPoints) {
@@ -301,18 +308,20 @@ public final class GPXModelConstants {
 
         properties.add(FF.createAttribute(index, (AttributeDescriptor) TYPE_TRACK_SEGMENT.getDescriptor("index"), null));
 
-        final List<Coordinate> coords = new ArrayList<Coordinate>();
         if(wayPoints != null && !wayPoints.isEmpty()){
             final AttributeDescriptor ptDesc = (AttributeDescriptor) TYPE_TRACK_SEGMENT.getDescriptor(TAG_TRK_SEG_PT);
             for(Feature pt : wayPoints){
                 properties.add(FF.createAttribute(pt, ptDesc, null));
-                coords.add( ((Point)pt.getProperty(GPX_GEOMETRY).getValue()).getCoordinate());
             }
         }
-        final LineString geom = GF.createLineString(coords.toArray(new Coordinate[coords.size()]));
-        properties.add(FF.createGeometryAttribute(geom, (GeometryDescriptor) TYPE_TRACK_SEGMENT.getDescriptor(GPX_GEOMETRY), null, null));
 
-        return FF.createComplexAttribute(properties, DESC_TRACK_SEGMENT, Integer.toString(index));
+        final CalculatedLineString geomAtt = new CalculatedLineString(
+                (GeometryDescriptor)TYPE_TRACK_SEGMENT.getDescriptor(GPX_GEOMETRY), TAG_TRK_SEG_PT);
+        properties.add(geomAtt);
+
+        final ComplexAttribute ca = FF.createComplexAttribute(properties, DESC_TRACK_SEGMENT, Integer.toString(index));
+        geomAtt.setRelated(ca);
+        return ca;
     }
 
     public static Feature createTrack(int index, String name, String cmt, String desc,
@@ -337,24 +346,83 @@ public final class GPXModelConstants {
         if(number != null)      properties.add(FF.createAttribute(number, (AttributeDescriptor) TYPE_TRACK.getDescriptor(TAG_NUMBER), null));
         if(type != null)        properties.add(FF.createAttribute(type, (AttributeDescriptor) TYPE_TRACK.getDescriptor(TAG_TYPE), null));
 
-        final List<LineString> strings = new ArrayList<LineString>();
         if(segments != null && !segments.isEmpty()){
             final AttributeDescriptor ptDesc = (AttributeDescriptor) TYPE_TRACK.getDescriptor(TAG_TRK_SEG);
             for(ComplexAttribute seg : segments){
                 properties.add(FF.createAttribute(seg, ptDesc, null));
-                final Property prop = seg.getProperty(GPX_GEOMETRY);
-                if(prop != null){
-                    final Object obj = prop.getValue();
-                    if(obj != null){
-                        strings.add((LineString) obj);
-                    }
-                }
             }
         }
-        final MultiLineString geom = GF.createMultiLineString(strings.toArray(new LineString[strings.size()]));
-        properties.add(FF.createGeometryAttribute(geom, (GeometryDescriptor) TYPE_TRACK.getDescriptor(GPX_GEOMETRY), null, null));
 
-        return FF.createFeature(properties, TYPE_TRACK, Integer.toString(index));
+        final CalculatedMultiLineString geomAtt = new CalculatedMultiLineString(
+                (GeometryDescriptor)TYPE_TRACK.getDescriptor(GPX_GEOMETRY), TAG_TRK_SEG);
+        properties.add(geomAtt);
+
+        final Feature feature = FF.createFeature(properties, TYPE_TRACK, Integer.toString(index));
+        geomAtt.setRelated(feature);
+        return feature;
+    }
+
+    private static class CalculatedLineString extends DefaultGeometryAttribute{
+
+        private final String subAttName;
+        private ComplexAttribute relatedFeature;
+
+        private CalculatedLineString(GeometryDescriptor desc, String subAttName){
+            super(null,desc,null);
+            this.subAttName = subAttName;
+        }
+
+        public void setRelated(ComplexAttribute relatedFeature) {
+            this.relatedFeature = relatedFeature;
+        }
+
+        public ComplexAttribute getRelated() {
+            return relatedFeature;
+        }
+
+        @Override
+        public Object getValue() {
+            final Collection<Property> wayPoints = relatedFeature.getProperties(subAttName);
+            final List<Coordinate> coords = new ArrayList<Coordinate>();
+            for(Property prop : wayPoints){
+                final ComplexAttribute pt = (ComplexAttribute) prop.getValue();
+                coords.add( ((Point)pt.getProperty(GPX_GEOMETRY).getValue()).getCoordinate());
+            }
+            return GF.createLineString(coords.toArray(new Coordinate[coords.size()]));
+        }
+
+    }
+
+    private static class CalculatedMultiLineString extends DefaultGeometryAttribute{
+
+        private final String subAttName;
+        private ComplexAttribute relatedFeature;
+
+        private CalculatedMultiLineString(GeometryDescriptor desc, String subAttName){
+            super(null,desc,null);
+            this.subAttName = subAttName;
+        }
+
+        public void setRelated(ComplexAttribute relatedFeature) {
+            this.relatedFeature = relatedFeature;
+        }
+
+        public ComplexAttribute getRelated() {
+            return relatedFeature;
+        }
+
+        @Override
+        public Object getValue() {
+            final Collection<Property> wayPoints = relatedFeature.getProperties(subAttName);
+            final List<LineString> subs = new ArrayList<LineString>();
+            for(Property prop : wayPoints){
+                final ComplexAttribute pt = (ComplexAttribute) prop.getValue();
+                subs.add( (LineString)pt.getProperty(GPX_GEOMETRY).getValue());
+            }
+            
+            return GF.createMultiLineString(subs.toArray(new LineString[subs.size()]));
+        }
+
     }
 
 }
