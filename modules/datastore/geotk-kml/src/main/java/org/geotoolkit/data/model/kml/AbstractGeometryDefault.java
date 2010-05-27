@@ -12,6 +12,13 @@ public abstract class AbstractGeometryDefault extends AbstractObjectDefault impl
     protected List<SimpleType> geometrySimpleExtensions;
     protected List<AbstractObject> geometryObjectExtensions;
 
+    /**
+     *
+     * @param objectSimpleExtensions
+     * @param idAttributes
+     * @param abstractGeometrySimpleExtensions
+     * @param abstractGeometryObjectExtensions
+     */
     protected AbstractGeometryDefault(List<SimpleType> objectSimpleExtensions, 
             IdAttributes idAttributes,
             List<SimpleType> abstractGeometrySimpleExtensions,
@@ -21,8 +28,17 @@ public abstract class AbstractGeometryDefault extends AbstractObjectDefault impl
         this.geometryObjectExtensions = abstractGeometryObjectExtensions;
     }
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public List<SimpleType> getAbstractGeometrySimpleExtensions(){return this.geometrySimpleExtensions;}
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public List<AbstractObject> getAbstractGeometryObjectExtensions(){return this.geometryObjectExtensions;}
 

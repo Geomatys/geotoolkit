@@ -1,6 +1,8 @@
 package org.geotoolkit.data.model.kml;
 
 /**
+ * <p>This class implements an angle whose value
+ * is included between -180 and 180 degrees.</p>
  *
  * @author Samuel Andrés
  */
@@ -8,6 +10,10 @@ public class Angle180Default implements Angle180{
 
     private double angle;
 
+    /**
+     * @param angle The angle value.
+     * @throws KmlException If the angle value is out of bound.
+     */
     public Angle180Default(double angle)throws KmlException {
         if(angle >= -180 && angle <= 180){
             this.angle = angle;
@@ -16,6 +22,9 @@ public class Angle180Default implements Angle180{
         }
     }
 
+    /**
+     * @{@inheritDoc }
+     */
     @Override
     public double getAngle(){return this.angle;}
 }

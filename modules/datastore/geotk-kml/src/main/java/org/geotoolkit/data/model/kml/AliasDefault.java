@@ -14,6 +14,15 @@ public class AliasDefault extends AbstractObjectDefault implements Alias {
     private List<SimpleType> aliasSimpleExtensions;
     private List<AbstractObject> aliasObjectExtensions;
 
+    /**
+     *
+     * @param objectSimpleExtensions
+     * @param idAttributes
+     * @param targetHref
+     * @param sourceHref
+     * @param aliasSimpleExtensions
+     * @param aliasObjectExtensions
+     */
     public AliasDefault(List<SimpleType> objectSimpleExtensions,
             IdAttributes idAttributes,
             String targetHref, String sourceHref,
@@ -25,21 +34,37 @@ public class AliasDefault extends AbstractObjectDefault implements Alias {
         this.aliasObjectExtensions = aliasObjectExtensions;
     }
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public String getTargetHref() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public String getSourceHref() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public List<SimpleType> getAliasSimpleExtensions() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public List<AbstractObject> getAliasObjectExtensions() {
         throw new UnsupportedOperationException("Not supported yet.");

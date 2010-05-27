@@ -12,6 +12,13 @@ public abstract class AbstractSubStyleDefault extends AbstractObjectDefault impl
     protected List<SimpleType> subStyleSimpleExtensions;
     protected List<AbstractObject> subStyleObjectExtensions;
 
+    /**
+     *
+     * @param objectSimpleExtensions
+     * @param idAttributes
+     * @param subStyleSimpleExtensions
+     * @param subStyleObjectExtensions
+     */
     protected AbstractSubStyleDefault(List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
             List<SimpleType> subStyleSimpleExtensions, List<AbstractObject> subStyleObjectExtensions){
         super(objectSimpleExtensions, idAttributes);
@@ -19,9 +26,17 @@ public abstract class AbstractSubStyleDefault extends AbstractObjectDefault impl
         this.subStyleObjectExtensions = subStyleObjectExtensions;
     }
 
+    /**
+     *
+     * @{@inheritDoc}
+     */
     @Override
     public List<SimpleType> getSubStyleSimpleExtensions() {return this.subStyleSimpleExtensions;}
 
+    /**
+     *
+     * @{@inheritDoc}
+     */
     @Override
     public List<AbstractObject> getSubStyleObjectExtensions() {return this.subStyleObjectExtensions;}
 

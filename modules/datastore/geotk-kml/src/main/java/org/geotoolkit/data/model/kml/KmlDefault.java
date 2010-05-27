@@ -14,6 +14,13 @@ public class KmlDefault implements Kml{
     private List<SimpleType> kmlSimpleExtensions;
     private List<AbstractObject> kmlObjectExtensions;
 
+    /**
+     *
+     * @param networkLinkControl
+     * @param abstractFeature
+     * @param kmlSimpleExtensions
+     * @param kmlObjectExtensions
+     */
     public KmlDefault(NetworkLinkControl networkLinkControl,
             AbstractFeature abstractFeature,
             List<SimpleType> kmlSimpleExtensions,
@@ -24,15 +31,31 @@ public class KmlDefault implements Kml{
         this.kmlObjectExtensions = kmlObjectExtensions;
     }
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public NetworkLinkControl getNetworkLinkControl() {return this.networkLinkControl;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public AbstractFeature getAbstractFeature() {return this.abstractFeature;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public List<SimpleType> getKmlSimpleExtensions() {return this.kmlSimpleExtensions;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public List<AbstractObject> getKmlObjectExtensions() {return this.kmlObjectExtensions;}
 

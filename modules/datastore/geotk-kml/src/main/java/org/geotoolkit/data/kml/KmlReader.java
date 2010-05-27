@@ -11,7 +11,6 @@ import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLReporter;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
 import org.geotoolkit.data.model.KmlFactory;
 import org.geotoolkit.data.model.KmlFactoryDefault;
 import org.geotoolkit.data.model.atom.AtomPersonConstruct;
@@ -135,6 +134,7 @@ public class KmlReader extends StaxStreamReader {
         // Errors displaying
         this.inputFactory.setXMLReporter(new XMLReporter() {
 
+            @Override
             public void report(String message, String typeErreur, Object source, javax.xml.stream.Location location) throws XMLStreamException {
 //                System.out.println("Erreur de type : " + typeErreur + ", message : " + message);
             }
@@ -150,6 +150,11 @@ public class KmlReader extends StaxStreamReader {
         this.kmlFactory = new KmlFactoryDefault();
     }
 
+    /**
+     * <p>This method reads the Kml document assigned to the KmlReader.</p>
+     *
+     * @return The Kml object mapping the document.
+     */
     public Kml read() {
 
         try {
@@ -178,6 +183,12 @@ public class KmlReader extends StaxStreamReader {
         return this.root;
     }
 
+    /**
+     *
+     * @return
+     * @throws XMLStreamException
+     * @throws KmlException
+     */
     private Kml readKml() throws XMLStreamException, KmlException {
         NetworkLinkControl networkLinkControl = null;
         AbstractFeature abstractFeature = null;
@@ -551,6 +562,13 @@ public class KmlReader extends StaxStreamReader {
         return resultat;
     }
 
+    /**
+     *
+     * @param eName The tag name.
+     * @return
+     * @throws XMLStreamException
+     * @throws KmlException
+     */
     private AbstractGeometry readAbstractGeometry(String eName) throws XMLStreamException, KmlException {
         AbstractGeometry resultat = null;
         if (TAG_MULTI_GEOMETRY.equals(eName)) {
@@ -766,6 +784,11 @@ public class KmlReader extends StaxStreamReader {
 
     }
 
+    /**
+     * 
+     * @return
+     * @throws XMLStreamException
+     */
      private Alias readAlias() throws XMLStreamException{
         // AbstractObject
         List<SimpleType> objectSimpleExtensions = null;
@@ -1101,6 +1124,13 @@ public class KmlReader extends StaxStreamReader {
 
     }
 
+    /**
+     *
+     * @param eName The tag name.
+     * @return
+     * @throws XMLStreamException
+     * @throws KmlException
+     */
     private AbstractFeature readAbstractFeature(String eName) throws XMLStreamException, KmlException {
         AbstractFeature resultat = null;
         if (isAbstractContainer(eName)) {
@@ -1118,9 +1148,9 @@ public class KmlReader extends StaxStreamReader {
     }
 
     /**
-     * Reads an AbstractOverlay
-     * @param eName The Tag name
-     * @return an AbstractOverlay instance
+     *
+     * @param eName The Tag name.
+     * @return
      * @throws XMLStreamException
      */
     private AbstractOverlay readAbstractOverlay(String eName) throws XMLStreamException, KmlException {
@@ -1627,8 +1657,8 @@ public class KmlReader extends StaxStreamReader {
 
     /**
      *
-     * @param eName The tag name
-     * @return An AbstractContainer instance
+     * @param eName The tag name.
+     * @return
      * @throws XMLStreamException
      */
     private AbstractContainer readAbstractContainer(String eName) throws XMLStreamException, KmlException {
@@ -1643,8 +1673,8 @@ public class KmlReader extends StaxStreamReader {
 
     /**
      *
-     * @param eName The tag name
-     * @return An AbstractView instance
+     * @param eName The tag name.
+     * @return
      * @throws XMLStreamException
      */
     private AbstractView readAbstractView(String eName) throws XMLStreamException, KmlException {
@@ -1778,7 +1808,7 @@ public class KmlReader extends StaxStreamReader {
     /**
      *
      * @param eName The tag name
-     * @return An AbstractStyleSelector instance
+     * @return
      * @throws XMLStreamException
      */
     private AbstractStyleSelector readAbstractStyleSelector(String eName) throws XMLStreamException, KmlException {
@@ -2441,7 +2471,7 @@ public class KmlReader extends StaxStreamReader {
     /**
      *
      * @param eName The tag name
-     * @return An AbstractTimePrimitive instance
+     * @return
      * @throws XMLStreamException
      */
     private AbstractTimePrimitive readAbstractTimePrimitive(String eName) throws XMLStreamException {
@@ -2994,9 +3024,10 @@ public class KmlReader extends StaxStreamReader {
     }
 
     /**
-     * Transforms a String of KML coordinates into an instance of Coordinates
-     * @param coordinates The coordinates String
-     * @return The Coordinates object wich is a List of Coordinate instances.
+     * <p>This method transforms a String of KML coordinates into an instance of Coordinates.</p>
+     *
+     * @param coordinates The coordinates String.
+     * @return
      */
     private Coordinates readCoordinates(String coordinates) {
         List<Coordinate> coordinatesList = new ArrayList<Coordinate>();
@@ -3012,6 +3043,10 @@ public class KmlReader extends StaxStreamReader {
         return this.kmlFactory.createCoordinates(coordinatesList);
     }
 
+    /**
+     *
+     * @return
+     */
     private IdAttributes readIdAttributes() {
         return this.kmlFactory.createIdAttributes(
                 reader.getAttributeValue(null, ATT_ID), reader.getAttributeValue(null, ATT_TARGET_ID));
@@ -3020,6 +3055,12 @@ public class KmlReader extends StaxStreamReader {
 
     /*
      *  METHODES DE TEST SUR LES TYPES ABSTRAITS
+     */
+
+    /**
+     *
+     * @param eName the tag name.
+     * @return true if the tag name is an AbstractGeometry element.
      */
     private boolean isAbstractGeometry(String eName) {
         return (TAG_MULTI_GEOMETRY.equals(eName)
@@ -3030,6 +3071,11 @@ public class KmlReader extends StaxStreamReader {
                 || TAG_MODEL.equals(eName));
     }
 
+    /**
+     *
+     * @param eName the tag name.
+     * @return true if the tag name is an AbstractFeature element.
+     */
     private boolean isAbstractFeature(String eName) {
         return (TAG_FOLDER.equals(eName)
                 || TAG_GROUND_OVERLAY.equals(eName)
@@ -3040,27 +3086,52 @@ public class KmlReader extends StaxStreamReader {
                 || TAG_PLACEMARK.equals(eName));
     }
 
+    /**
+     *
+     * @param eName the tag name.
+     * @return true if the tag name is an AbstractContainer element.
+     */
     private boolean isAbstractContainer(String eName) {
         return (TAG_FOLDER.equals(eName)
                 || TAG_DOCUMENT.equals(eName));
     }
 
+    /**
+     *
+     * @param eName the tag name.
+     * @return true if the tag name is an AbstractOverlay element.
+     */
     private boolean isAbstractOverlay(String eName) {
         return (TAG_GROUND_OVERLAY.equals(eName)
                 || TAG_PHOTO_OVERLAY.equals(eName)
                 || TAG_SCREEN_OVERLAY.equals(eName));
     }
 
+    /**
+     *
+     * @param eName the tag name.
+     * @return true if the tag name is an AbstractView element.
+     */
     private boolean isAbstractView(String eName) {
         return (TAG_LOOK_AT.equals(eName)
                 || TAG_CAMERA.equals(eName));
     }
 
+    /**
+     *
+     * @param eName the tag name.
+     * @return true if the tag name is an AbstractTimePrimitive element.
+     */
     private boolean isAbstractTimePrimitive(String eName) {
         return (TAG_TIME_STAMP.equals(eName)
                 || TAG_TIME_SPAN.equals(eName));
     }
 
+    /**
+     *
+     * @param eName the tag name.
+     * @return true if the tag name is an AbstractStyleSelector element.
+     */
     private boolean isAbstractStyleSelector(String eName) {
         return (TAG_STYLE.equals(eName)
                 || TAG_STYLE_MAP.equals(eName));
@@ -3069,8 +3140,12 @@ public class KmlReader extends StaxStreamReader {
     /*
      * METHODES UTILITAIRES
      */
+
     /**
-     * Adaptation of boolean parsing to XML boolean values 1 and 0.
+     * <p>XML language provides two notations for boolean type :
+     * "true" can be written "1" and "0" significates "false".
+     * This method considers all this values as Strings and return its boolean value.</p>
+     * 
      * @param bool The String to parse
      * @return true if bool is equal to "true" or "1".
      */

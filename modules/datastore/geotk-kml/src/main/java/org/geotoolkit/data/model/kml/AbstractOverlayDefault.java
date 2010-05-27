@@ -18,6 +18,34 @@ public abstract class AbstractOverlayDefault extends AbstractFeatureDefault impl
     protected List<SimpleType> abstractOveraySimpleExtensions;
     protected List<AbstractObject> abstractOverlayObjectExtensions;
 
+    /**
+     *
+     * @param objectSimpleExtensions
+     * @param idAttributes
+     * @param name
+     * @param visibility
+     * @param open
+     * @param author
+     * @param link
+     * @param address
+     * @param addressDetails
+     * @param phoneNumber
+     * @param snippet
+     * @param description
+     * @param view
+     * @param timePrimitive
+     * @param styleUrl
+     * @param styleSelector
+     * @param region
+     * @param extendedData
+     * @param abstractFeatureSimpleExtensions
+     * @param abstractFeatureObjectExtensions
+     * @param color
+     * @param drawOrder
+     * @param icon
+     * @param abstractOveraySimpleExtensions
+     * @param abstractOverlayObjectExtensions
+     */
     protected AbstractOverlayDefault(List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
             String name, boolean visibility, boolean open, AtomPersonConstruct author, AtomLink link,
             String address, AddressDetails addressDetails, String phoneNumber, String snippet,
@@ -44,18 +72,38 @@ public abstract class AbstractOverlayDefault extends AbstractFeatureDefault impl
         
     }
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public Color getColor() {return this.color;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public int getDrawOrder() {return this.drawOrder;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public Link getIcon() {return this.icon;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public List<SimpleType> getAbstractOverlaySimpleExtensions() {return this.abstractOveraySimpleExtensions;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public List<AbstractObject> getAbstractOverlayObjectExtensions() {return this.abstractOverlayObjectExtensions;}
 

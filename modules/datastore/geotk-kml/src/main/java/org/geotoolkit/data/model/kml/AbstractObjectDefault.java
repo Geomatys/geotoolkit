@@ -12,17 +12,30 @@ public abstract class AbstractObjectDefault implements AbstractObject {
     protected List<SimpleType> objectSimpleExtensions;
     protected IdAttributes idAttributes;
 
+    /**
+     * 
+     * @param objectSimpleExtensions
+     * @param idAttributes
+     */
     protected AbstractObjectDefault(List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes){
 
         this.objectSimpleExtensions = objectSimpleExtensions;
         this.idAttributes = idAttributes;
     }
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public List<SimpleType> getObjectSimpleExtensions() {
         return this.objectSimpleExtensions;
     }
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public IdAttributes getIdAttributes() {
         return this.idAttributes;

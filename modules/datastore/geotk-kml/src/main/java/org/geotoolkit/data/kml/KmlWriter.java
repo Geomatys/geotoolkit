@@ -1,15 +1,11 @@
 package org.geotoolkit.data.kml;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.xml.stream.XMLEventFactory;
-import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
 import org.geotoolkit.data.model.atom.AtomLink;
 import org.geotoolkit.data.model.atom.AtomPersonConstruct;
 import org.geotoolkit.data.model.kml.AbstractColorStyle;
@@ -35,7 +31,6 @@ import org.geotoolkit.data.model.kml.Boundary;
 import org.geotoolkit.data.model.kml.Camera;
 import org.geotoolkit.data.model.kml.Color;
 import org.geotoolkit.data.model.kml.ColorMode;
-import org.geotoolkit.data.model.kml.Coordinate;
 import org.geotoolkit.data.model.kml.Coordinates;
 import org.geotoolkit.data.model.kml.Data;
 import org.geotoolkit.data.model.kml.DisplayMode;
@@ -62,6 +57,7 @@ import org.geotoolkit.data.model.kml.Lod;
 import org.geotoolkit.data.model.kml.LookAt;
 import org.geotoolkit.data.model.kml.Model;
 import org.geotoolkit.data.model.kml.MultiGeometry;
+import org.geotoolkit.data.model.kml.NetworkLink;
 import org.geotoolkit.data.model.kml.Orientation;
 import org.geotoolkit.data.model.kml.Pair;
 import org.geotoolkit.data.model.kml.PhotoOverlay;
@@ -90,19 +86,16 @@ import org.geotoolkit.xml.StaxStreamWriter;
 import static org.geotoolkit.data.model.ModelConstants.*;
 
 /**
- *
+ * This class provides a method to read KML files, version 2.2.
  * @author Samuel Andrés
  */
 public class KmlWriter extends StaxStreamWriter {
-
-    //private XMLOutputFactory outputFactory;
-    //private File file;
 
     public KmlWriter(File file){
         this.initSource(file);
     }
 
-    public void initSource(Object o) {
+    private void initSource(Object o) {
         System.setProperty("javax.xml.stream.XMLOutputFactory", "com.ctc.wstx.stax.WstxOutputFactory");
         try {
             //this.outputFactory = XMLOutputFactory.newInstance();
@@ -114,6 +107,11 @@ public class KmlWriter extends StaxStreamWriter {
         }
     }
 
+    /**
+     * <p>This method writes a Kml 2.2 document into the file assigned to the KmlWriter.</p>
+     *
+     * @param kml The Kml object to write.
+     */
     public void write(Kml kml) {
         try {
 
@@ -144,6 +142,11 @@ public class KmlWriter extends StaxStreamWriter {
         }
     }
 
+    /**
+     *
+     * @param kml The Kml object to write.
+     * @throws XMLStreamException
+     */
     private void writeKml(Kml kml) throws XMLStreamException{
         if (kml.getNetworkLinkControl() != null){
         }
@@ -156,6 +159,13 @@ public class KmlWriter extends StaxStreamWriter {
         }
     }
 
+    /**
+     * <p>This method writes the common fields for
+     * instances of AbstractObject.</p>
+     *
+     * @param abstractObject The AbstractObject to write.
+     * @throws XMLStreamException
+     */
     private void writeCommonAbstractObject(AbstractObject abstractObject) throws XMLStreamException{
         if (abstractObject.getIdAttributes() != null){
             this.writeIdAttributes(abstractObject.getIdAttributes());
@@ -165,6 +175,12 @@ public class KmlWriter extends StaxStreamWriter {
         }
     }
 
+    /**
+     * <p>This method writes identification attributes.</p>
+     *
+     * @param idAttributes The IdAttributes to write.
+     * @throws XMLStreamException
+     */
     private void writeIdAttributes(IdAttributes idAttributes) throws XMLStreamException{
         if(idAttributes.getId() != null){
             writer.writeAttribute(ATT_ID, idAttributes.getId());
@@ -174,11 +190,16 @@ public class KmlWriter extends StaxStreamWriter {
         }
     }
 
+    /**
+     *
+     * @param abstractFeature The AbstractFeature to write.
+     * @throws XMLStreamException
+     */
     private void writeAbstractFeature(AbstractFeature abstractFeature) throws XMLStreamException{
         if (abstractFeature instanceof AbstractContainer){
             this.writeAbstractContainer((AbstractContainer)abstractFeature);
-//        } else if (abstractFeature instanceof NetworkLink){
-//
+        } else if (abstractFeature instanceof NetworkLink){
+            this.writeNetworkLink((NetworkLink) abstractFeature);
         } else if (abstractFeature instanceof AbstractOverlay){
             this.writeAbstractOverlay((AbstractOverlay)abstractFeature);
         } else if (abstractFeature instanceof Placemark){
@@ -186,6 +207,17 @@ public class KmlWriter extends StaxStreamWriter {
         }
     }
 
+    private void writeNetworkLink(NetworkLink networkLink){
+
+    }
+
+    /**
+     * <p>This method writes the common fields for
+     * instances of AbstractFeature.</p>
+     *
+     * @param abstractFeature The AbstractFeature to write.
+     * @throws XMLStreamException
+     */
     private void writeCommonAbstractFeature(AbstractFeature abstractFeature) throws XMLStreamException{
         this.writeCommonAbstractObject(abstractFeature);
         if (abstractFeature.getName() != null){
@@ -347,6 +379,11 @@ public class KmlWriter extends StaxStreamWriter {
 
     }
 
+    /**
+     *
+     * @param abstractTimePrimitive The AbstractTimePrimitive to write.
+     * @throws XMLStreamException
+     */
     private void writeAbstractTimePrimitive(AbstractTimePrimitive abstractTimePrimitive) throws XMLStreamException{
         if (abstractTimePrimitive instanceof TimeSpan){
             this.writeTimeSpan((TimeSpan) abstractTimePrimitive);
@@ -388,6 +425,11 @@ public class KmlWriter extends StaxStreamWriter {
         writer.writeEndElement();
     }
 
+    /**
+     *
+     * @param abstractView The AbstractView to write.
+     * @throws XMLStreamException
+     */
     private void writeAbstractView(AbstractView abstractView) throws XMLStreamException{
         if (abstractView instanceof LookAt){
                 this.writeLookAt((LookAt)abstractView);
@@ -430,6 +472,13 @@ public class KmlWriter extends StaxStreamWriter {
 
     }
 
+    /**
+     * <p>This method writes the common fields for
+     * AbstractView instances.</p>
+     * 
+     * @param abstractView The AbstractView to write.
+     * @throws XMLStreamException
+     */
     private void writeCommonAbstractView(AbstractView abstractView) throws XMLStreamException{
         this.writeCommonAbstractObject(abstractView);
         if (abstractView.getAbstractViewSimpleExtensions() != null){
@@ -440,7 +489,14 @@ public class KmlWriter extends StaxStreamWriter {
         }
     }
 
-     private void writeCommonAbstractTimePrimitive(AbstractTimePrimitive abstractTimePrimitive) throws XMLStreamException{
+    /**
+     * <p>This method writes the common fields for
+     * AbstractTimePrimitive instances.</p>
+     *
+     * @param abstractTimePrimitive The AbstractTimePrimitive to write.
+     * @throws XMLStreamException
+     */
+    private void writeCommonAbstractTimePrimitive(AbstractTimePrimitive abstractTimePrimitive) throws XMLStreamException{
         this.writeCommonAbstractObject(abstractTimePrimitive);
         if (abstractTimePrimitive.getAbstractTimePrimitiveSimpleExtensions() != null){
             this.writeSimpleExtensions(abstractTimePrimitive.getAbstractTimePrimitiveSimpleExtensions());
@@ -450,6 +506,11 @@ public class KmlWriter extends StaxStreamWriter {
         }
     }
 
+    /**
+     *
+     * @param abstractStyleSelector The AbstractStyleSelector to write.
+     * @throws XMLStreamException
+     */
     private void writeAbstractStyleSelector(AbstractStyleSelector abstractStyleSelector) throws XMLStreamException{
         if (abstractStyleSelector instanceof Style){
             this.writeStyle((Style)abstractStyleSelector);
@@ -458,6 +519,13 @@ public class KmlWriter extends StaxStreamWriter {
         }
     }
 
+    /**
+     * <p>This method writes the common fields for
+     * AbstractStyleSelector instances.</p>
+     *
+     * @param abstractStyleSelector
+     * @throws XMLStreamException
+     */
     private void writeCommonAbstractStyleSelector(AbstractStyleSelector abstractStyleSelector) throws XMLStreamException{
         this.writeCommonAbstractObject(abstractStyleSelector);
         if (abstractStyleSelector.getAbstractStyleSelectorSimpleExtensions() != null){
@@ -719,6 +787,12 @@ public class KmlWriter extends StaxStreamWriter {
         writer.writeEndElement();
     }
 
+    /**
+     * <p>This method writes the Link structure used by different elements.</p>
+     *
+     * @param link
+     * @throws XMLStreamException
+     */
     private void writeLink_structure(Link link) throws XMLStreamException{
         this.writeCommonAbstractObject(link);
         if (link.getHref() != null){
@@ -759,6 +833,13 @@ public class KmlWriter extends StaxStreamWriter {
         }
     }
 
+    /**
+     * <p>This method writes the common fields for
+     * instances of AbstractColorStyle.</p>
+     *
+     * @param abstractColorStyle The AbstractColorStyle to write.
+     * @throws XMLStreamException
+     */
     private void writeCommonAbstractColorStyle(AbstractColorStyle abstractColorStyle) throws XMLStreamException{
         this.writeCommonAbstractSubStyle(abstractColorStyle);
         if (abstractColorStyle.getColor() != null){
@@ -775,6 +856,13 @@ public class KmlWriter extends StaxStreamWriter {
         }
     }
 
+    /**
+     * <p>This method writes the common fields for
+     * instances of AbstractSubStyle.</p>
+     *
+     * @param abstractSubStyle The AbstractSubStyle to write.
+     * @throws XMLStreamException
+     */
     private void writeCommonAbstractSubStyle(AbstractSubStyle abstractSubStyle) throws XMLStreamException{
         this.writeCommonAbstractObject(abstractSubStyle);
         if (abstractSubStyle.getSubStyleSimpleExtensions() != null){
@@ -800,6 +888,11 @@ public class KmlWriter extends StaxStreamWriter {
         writer.writeEndElement();
     }
 
+    /**
+     *
+     * @param abstractContainer The AbstractContainer to write
+     * @throws XMLStreamException
+     */
     private void writeAbstractContainer(AbstractContainer abstractContainer) throws XMLStreamException{
         if (abstractContainer instanceof Folder){
             this.writeFolder((Folder)abstractContainer);
@@ -807,15 +900,28 @@ public class KmlWriter extends StaxStreamWriter {
             this.writeDocument((Document)abstractContainer);
         }
     }
-    
+
+    /**
+     *
+     * @param abstractOverlay The AbstractOverlay to write.
+     * @throws XMLStreamException
+     */
     private void writeAbstractOverlay(AbstractOverlay abstractOverlay) throws XMLStreamException{
         if (abstractOverlay instanceof GroundOverlay){
             this.writeGroundOverlay((GroundOverlay)abstractOverlay);
         } else if (abstractOverlay instanceof ScreenOverlay){
             this.writeScreenOverlay((ScreenOverlay)abstractOverlay);
         } else if (abstractOverlay instanceof PhotoOverlay){
-            //this.writePhotoOverlay((PhotoOverlay)abstractOverlay);
+            this.writePhotoOverlay((PhotoOverlay) abstractOverlay);
         }
+    }
+
+    private void writePhotoOverlay(PhotoOverlay photoOverlay) throws XMLStreamException{
+        writer.writeStartElement(URI_KML, TAG_PHOTO_OVERLAY);
+        this.writeCommonAbstractOverlay(photoOverlay);
+
+
+        writer.writeEndElement();
     }
 
     private void writeScreenOverlay(ScreenOverlay screenOverlay) throws XMLStreamException{
@@ -922,6 +1028,13 @@ public class KmlWriter extends StaxStreamWriter {
         }
     }
 
+    /**
+     * <p>This method writes tha common fields for
+     * AbstractContainer instances.</p>
+     *
+     * @param abstractContainer The AbstractContainer to write.
+     * @throws XMLStreamException
+     */
     private void writeCommonAbstractContainer(AbstractContainer abstractContainer) throws XMLStreamException{
         this.writeCommonAbstractFeature(abstractContainer);
         if (abstractContainer.getAbstractContainerSimpleExtensions() != null){
@@ -933,8 +1046,8 @@ public class KmlWriter extends StaxStreamWriter {
     }
 
     /**
-     * Writes a folder element
-     * @param folder The element to write
+     *
+     * @param folder
      * @throws XMLStreamException
      */
     private void writeFolder(Folder folder) throws XMLStreamException{
@@ -956,8 +1069,8 @@ public class KmlWriter extends StaxStreamWriter {
     }
 
     /**
-     * Writes a document element
-     * @param document The element to write
+     *
+     * @param document
      * @throws XMLStreamException
      */
     private void writeDocument(Document document) throws XMLStreamException{
@@ -987,6 +1100,11 @@ public class KmlWriter extends StaxStreamWriter {
         
     }
 
+    /**
+     *
+     * @param abstractGeometry
+     * @throws XMLStreamException
+     */
     private void writeAbstractGeometry(AbstractGeometry abstractGeometry) throws XMLStreamException{
         if (abstractGeometry instanceof MultiGeometry){
             this.writeMultiGeometry((MultiGeometry) abstractGeometry);
@@ -1003,6 +1121,13 @@ public class KmlWriter extends StaxStreamWriter {
         }
     }
 
+    /**
+     * <p>This method writes the common fields for
+     * instances of AbstractGeometry.</p>
+     *
+     * @param abstractGeometry
+     * @throws XMLStreamException
+     */
     private void writeCommonAbstractGeometry(AbstractGeometry abstractGeometry) throws XMLStreamException{
         this.writeCommonAbstractObject(abstractGeometry);
         if (abstractGeometry.getAbstractGeometrySimpleExtensions() != null){
@@ -1098,6 +1223,11 @@ public class KmlWriter extends StaxStreamWriter {
         writer.writeEndElement();
     }
 
+    /**
+     * 
+     * @param alias
+     * @throws XMLStreamException
+     */
     private void writeAlias(Alias alias) throws XMLStreamException{
         writer.writeStartElement(URI_KML, TAG_ALIAS);
         this.writeCommonAbstractObject(alias);
@@ -1447,6 +1577,11 @@ public class KmlWriter extends StaxStreamWriter {
         }
     }
 
+    /**
+     *
+     * @param altitudeMode
+     * @throws XMLStreamException
+     */
     private void writeAltitudeMode(AltitudeMode altitudeMode) throws XMLStreamException{
         if(DEF_ALTITUDE_MODE != altitudeMode){
             writer.writeStartElement(URI_KML, TAG_ALTITUDE_MODE);
@@ -1655,6 +1790,11 @@ public class KmlWriter extends StaxStreamWriter {
         }
     }
 
+    /**
+     * This method writes a latitude angle.
+     * @param latitude The latitude value.
+     * @throws XMLStreamException
+     */
     private void writeLatitude(Angle90 latitude) throws XMLStreamException{
         if (!DEF_LATITUDE.equals(latitude)){
             writer.writeStartElement(URI_KML, TAG_LATITUDE);

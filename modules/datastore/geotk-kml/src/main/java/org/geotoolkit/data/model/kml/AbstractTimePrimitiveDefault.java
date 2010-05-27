@@ -12,6 +12,13 @@ public class AbstractTimePrimitiveDefault extends AbstractObjectDefault implemen
     private List<SimpleType> abstractTimePrimitiveSimpleExtensions;
     private List<AbstractObject> abstractTimePrimitiveObjectExtensions;
 
+    /**
+     *
+     * @param objectSimpleExtensions
+     * @param idAttributes
+     * @param abstractTimePrimitiveSimpleExtensions
+     * @param abstractTimePrimitiveObjectExtensions
+     */
     protected AbstractTimePrimitiveDefault(List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
             List<SimpleType> abstractTimePrimitiveSimpleExtensions, List<AbstractObject> abstractTimePrimitiveObjectExtensions){
             super(objectSimpleExtensions, idAttributes);
@@ -19,9 +26,17 @@ public class AbstractTimePrimitiveDefault extends AbstractObjectDefault implemen
             this.abstractTimePrimitiveObjectExtensions = abstractTimePrimitiveObjectExtensions;
     }
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public List<SimpleType> getAbstractTimePrimitiveSimpleExtensions() {return this.abstractTimePrimitiveSimpleExtensions;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public List<AbstractObject> getAbstractTimePrimitiveObjectExtensions() {return this.abstractTimePrimitiveObjectExtensions;}
 

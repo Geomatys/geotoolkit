@@ -15,6 +15,31 @@ public class AbstractContainerDefault extends AbstractFeatureDefault implements 
     protected List<SimpleType> containerSimpleExtensions;
     protected List<AbstractObject> containerObjectExtensions;
 
+    /**
+     *
+     * @param objectSimpleExtensions
+     * @param idAttributes
+     * @param name
+     * @param visibility
+     * @param open
+     * @param author
+     * @param link
+     * @param address
+     * @param addressDetails
+     * @param phoneNumber
+     * @param snippet
+     * @param description
+     * @param view
+     * @param timePrimitive
+     * @param styleUrl
+     * @param styleSelector
+     * @param region
+     * @param extendedData
+     * @param abstractFeatureSimpleExtensions
+     * @param abstractFeatureObjectExtensions
+     * @param abstractContainerSimpleExtensions
+     * @param abstractContainerObjectExtensions
+     */
     protected AbstractContainerDefault(List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
             String name, boolean visibility, boolean open, AtomPersonConstruct author, AtomLink link,
             String address, AddressDetails addressDetails, String phoneNumber, String snippet,
@@ -35,9 +60,15 @@ public class AbstractContainerDefault extends AbstractFeatureDefault implements 
         this.containerObjectExtensions = abstractContainerObjectExtensions;
     }
 
+    /**
+     * @{@inheritDoc}
+     */
     @Override
     public List<SimpleType> getAbstractContainerSimpleExtensions() {return this.containerSimpleExtensions;}
 
+    /**
+     * @{@inheritDoc}
+     */
     @Override
     public List<AbstractObject> getAbstractContainerObjectExtensions() {return this.featureObjectExtensions;}
 

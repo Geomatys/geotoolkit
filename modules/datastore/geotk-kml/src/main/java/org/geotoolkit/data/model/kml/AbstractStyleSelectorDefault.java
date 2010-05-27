@@ -12,6 +12,13 @@ public abstract class AbstractStyleSelectorDefault extends AbstractObjectDefault
     protected List<SimpleType> styleSelectorSimpleExtensions;
     protected List<AbstractObject> styleSelectorObjectExtensions;
 
+    /**
+     *
+     * @param objectSimpleExtensions
+     * @param idAttributes
+     * @param abstractStyleSelectorSimpleExtensions
+     * @param abstractStyleSelectorObjectExtensions
+     */
     protected AbstractStyleSelectorDefault(List<SimpleType> objectSimpleExtensions,
             IdAttributes idAttributes,
             List<SimpleType> abstractStyleSelectorSimpleExtensions,
@@ -21,11 +28,19 @@ public abstract class AbstractStyleSelectorDefault extends AbstractObjectDefault
         this.styleSelectorObjectExtensions = abstractStyleSelectorObjectExtensions;
     }
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public List<SimpleType> getAbstractStyleSelectorSimpleExtensions() {
         return this.styleSelectorSimpleExtensions;
     }
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public List<AbstractObject> getAbstractStyleSelectorObjectExtensions() {
         return this.styleSelectorObjectExtensions;

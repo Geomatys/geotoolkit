@@ -12,6 +12,13 @@ public abstract class AbstractViewDefault extends AbstractObjectDefault implemen
     protected List<SimpleType> abstractViewSimpleExtensions;
     protected List<AbstractObject> abstractViewObjectExtensions;
 
+    /**
+     *
+     * @param objectSimpleExtensions
+     * @param idAttributes
+     * @param abstractViewSimpleExtensions
+     * @param abstractViewObjectExtensions
+     */
     protected AbstractViewDefault(List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
             List<SimpleType> abstractViewSimpleExtensions, List<AbstractObject> abstractViewObjectExtensions){
         super(objectSimpleExtensions, idAttributes);
@@ -19,9 +26,17 @@ public abstract class AbstractViewDefault extends AbstractObjectDefault implemen
         this.abstractViewObjectExtensions = abstractViewObjectExtensions;
     }
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public List<SimpleType> getAbstractViewSimpleExtensions() {return this.abstractViewSimpleExtensions;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public List<AbstractObject> getAbstractViewObjectExtensions() {return this.abstractViewObjectExtensions;}
 

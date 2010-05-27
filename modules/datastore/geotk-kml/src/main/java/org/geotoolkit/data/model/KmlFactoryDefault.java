@@ -156,6 +156,9 @@ import org.geotoolkit.data.model.xsd.SimpleType;
  */
 public class KmlFactoryDefault implements KmlFactory{
 
+    /**
+     * @{@inheritDoc }
+     */
     @Override
     public Kml createKml(NetworkLinkControl networkLinkControl,
             AbstractFeature abstractFeature,
@@ -165,6 +168,9 @@ public class KmlFactoryDefault implements KmlFactory{
                 kmlSimpleExtensions, kmlObjectExtensions);
     }
 
+    /**
+     * @{@inheritDoc }
+     */
     @Override
     public Alias createAlias(List<SimpleType> objectSimpleExtensions,
             IdAttributes idAttributes,
@@ -174,36 +180,57 @@ public class KmlFactoryDefault implements KmlFactory{
                 targetHref, sourceHref, aliasSimpleExtensions, aliasObjectExtensions);
     }
 
+    /**
+     * @{@inheritDoc }
+     */
     @Override
     public Angle180 createAngle180(double angle) throws KmlException{
         return new Angle180Default(angle);
     }
 
+    /**
+     * @{@inheritDoc }
+     */
     @Override
     public Anglepos180 createAnglepos180(double angle) throws KmlException{
         return new Anglepos180Default(angle);
     }
 
+    /**
+     * @{@inheritDoc }
+     */
     @Override
     public Angle360 createAngle360(double angle) throws KmlException{
         return new Angle360Default(angle);
     }
 
+    /**
+     * @{@inheritDoc }
+     */
     @Override
     public Angle90 createAngle90(double angle) throws KmlException{
         return new Angle90Default(angle);
     }
 
+    /**
+     * @{@inheritDoc }
+     */
     @Override
     public AtomLink createAtomLinkDefault(String href, String rel, String type, String hreflang, String title, String length){
         return new AtomLinkDefault(href, rel, type, hreflang, title, length);
     }
 
+    /**
+     * @{@inheritDoc }
+     */
     @Override
     public AtomPersonConstruct createAtomPersonConstruct(List<String> names, List<String> uris, List<String> emails){
         return new AtomPersonConstructDefault(names, uris, emails);
     }
 
+    /**
+     * @{@inheritDoc }
+     */
     @Override
     public BalloonStyle createBalloonStyle(List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
             List<SimpleType> subStyleSimpleExtensions, List<AbstractObject> subStyleObjectExtensions,
@@ -215,18 +242,27 @@ public class KmlFactoryDefault implements KmlFactory{
                 balloonStyleSimpleExtensions, balloonStyleObjectExtensions);
     }
 
+    /**
+     * @{@inheritDoc }
+     */
     @Override
     public BasicLink createBasicLink(List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
             String href, List<SimpleType> basicLinkSimpleExtensions, List<AbstractObject> basicLinkObjectExtensions){
         return new BasicLinkDefault(objectSimpleExtensions, idAttributes, href, basicLinkSimpleExtensions, basicLinkObjectExtensions);
     }
 
+    /**
+     * @{@inheritDoc }
+     */
     @Override
     public Boundary createBoundary(LinearRing linearRing,
             List<SimpleType> boundarySimpleExtensions, List<AbstractObject> boundaryObjectExtensions){
         return new BoundaryDefault(linearRing, boundarySimpleExtensions, boundaryObjectExtensions);
     }
 
+    /**
+     * @{@inheritDoc }
+     */
     @Override
     public Camera createCamera(List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
             List<SimpleType> abstractViewSimpleExtensions, List<AbstractObject> abstractViewObjectExtensions,
@@ -239,41 +275,65 @@ public class KmlFactoryDefault implements KmlFactory{
                 cameraSimpleExtensions, cameraObjectExtensions);
     }
 
+    /**
+     * @{@inheritDoc }
+     */
     @Override
     public Change createChange(List<AbstractObject> objects){
         return new ChangeDefault(objects);
     }
 
+    /**
+     * @{@inheritDoc }
+     */
     @Override
     public Color createColor(String color) throws KmlException{
         return new ColorDefault(color);
     }
 
+    /**
+     * @{@inheritDoc }
+     */
     @Override
     public Coordinate createCoordinate(String listCoordinates) {
         return new CoordinateDefault(listCoordinates);
     }
 
+    /**
+     * @{@inheritDoc }
+     */
     @Override
     public Coordinate createCoordinate(double geodeticLongiude, double geodeticLatitude, double altitude) {
         return new CoordinateDefault(geodeticLongiude, geodeticLatitude, altitude);
     }
 
+    /**
+     * @{@inheritDoc }
+     */
     @Override
     public Coordinate createCoordinate(double geodeticLongiude, double geodeticLatitude) {
         return new CoordinateDefault(geodeticLongiude, geodeticLatitude);
     }
 
+    /**
+     * @{@inheritDoc }
+     */
     @Override
     public Coordinates createCoordinates(List<Coordinate> coordinates) {
         return new CoordinatesDefault(coordinates);
     }
 
+    /**
+     * @{@inheritDoc }
+     */
     @Override
     public Create createCreate(List<AbstractContainer> containers){
         return new CreateDefault(containers);
     }
 
+    /**
+     * @{@inheritDoc }
+     */
     @Override
     public Data createData(List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
             String displayName, String value, List<Object> dataExtensions){
@@ -281,11 +341,17 @@ public class KmlFactoryDefault implements KmlFactory{
                 displayName, value, dataExtensions);
     }
 
+    /**
+     * @{@inheritDoc }
+     */
     @Override
     public Delete createDelete(List<AbstractFeature> features){
         return new DeleteDefault(features);
     }
 
+    /**
+     * @{@inheritDoc }
+     */
     @Override
     public Document createDocument(List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
             String name, boolean visibility, boolean open, AtomPersonConstruct author, AtomLink link,
@@ -309,11 +375,17 @@ public class KmlFactoryDefault implements KmlFactory{
                 schemas, features, documentSimpleExtensions, documentObjectExtensions);
     }
 
+    /**
+     * @{@inheritDoc }
+     */
     @Override
     public ExtendedData createExtendedData(List<Data> datas, List<SchemaData> schemaDatas, List<Object> anyOtherElements){
         return new ExtendedDataDefault(datas, schemaDatas, anyOtherElements);
     }
 
+    /**
+     * @{@inheritDoc }
+     */
     @Override
     public Folder createFolder(List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
             String name, boolean visibility, boolean open, AtomPersonConstruct author, AtomLink link,
@@ -337,6 +409,9 @@ public class KmlFactoryDefault implements KmlFactory{
                 features, folderSimpleExtensions, folderObjectExtensions);
     }
 
+    /**
+     * @{@inheritDoc }
+     */
     @Override
     public GroundOverlay createGroundOverlay(List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
             String name, boolean visibility, boolean open, AtomPersonConstruct author, AtomLink link,
@@ -363,6 +438,9 @@ public class KmlFactoryDefault implements KmlFactory{
                 groundOverlaySimpleExtensions, groundOverlayObjectExtensions);
     }
 
+    /**
+     * @{@inheritDoc }
+     */
     @Override
     public IconStyle createIconStyle(List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
             List<SimpleType> subStyleSimpleExtensions, List<AbstractObject> subStyleObjectExtensions,
@@ -377,12 +455,18 @@ public class KmlFactoryDefault implements KmlFactory{
                 scale, heading, icon, hotSpot,
                 iconStyleSimpleExtensions, iconStyleObjectExtensions);
     }
-    
+
+    /**
+     * @{@inheritDoc }
+     */
     @Override
     public IdAttributes createIdAttributes(String id, String targetId){
         return new IdAttributesDefault(id, targetId);
     }
 
+    /**
+     * @{@inheritDoc }
+     */
     @Override
     public ItemIcon createItemIcon(List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
             List<ItemIconState> states, String href,
@@ -391,6 +475,9 @@ public class KmlFactoryDefault implements KmlFactory{
                 states, href, itemIconSimpleExtensions, itemIconObjectExtensions);
     }
 
+    /**
+     * @{@inheritDoc }
+     */
     @Override
     public LabelStyle createLabelStyle(List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
             List<SimpleType> subStyleSimpleExtensions, List<AbstractObject> subStyleObjectExtensions,
@@ -404,6 +491,9 @@ public class KmlFactoryDefault implements KmlFactory{
                 scale, labelStyleSimpleExtensions, labelStyleObjectExtensions);
     }
 
+    /**
+     * @{@inheritDoc }
+     */
     @Override
     public LatLonBox createLatLonBox(List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
             Angle180 north, Angle180 south, Angle180 east, Angle180 west,
@@ -414,6 +504,9 @@ public class KmlFactoryDefault implements KmlFactory{
                 rotation, latLonBoxSimpleExtensions, latLonBoxObjectExtensions);
     }
 
+    /**
+     * @{@inheritDoc }
+     */
     @Override
     public LatLonAltBox createLatLonAltBox(List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
             Angle180 north, Angle180 south, Angle180 east, Angle180 west,
@@ -425,6 +518,9 @@ public class KmlFactoryDefault implements KmlFactory{
                 minAltitude, maxAltitude, altitudeMode, latLonAltBoxSimpleExtensions, latLonAltBoxObjectExtensions);
     }
 
+    /**
+     * @{@inheritDoc }
+     */
     @Override
     public LinearRing createLinearRing(List<SimpleType> objectSimpleExtensions,
             IdAttributes idAttributes,
@@ -442,6 +538,9 @@ public class KmlFactoryDefault implements KmlFactory{
                 linearRingSimpleExtensions, linearRingObjectExtensions);
     }
 
+    /**
+     * @{@inheritDoc }
+     */
     @Override
     public LineString createLineString(List<SimpleType> objectSimpleExtensions,
             IdAttributes idAttributes,
@@ -458,6 +557,9 @@ public class KmlFactoryDefault implements KmlFactory{
                 lineStringSimpleExtensions, lineStringObjectExtensions);
     }
 
+    /**
+     * @{@inheritDoc }
+     */
     @Override
     public LineStyle createLineStyle(List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
             List<SimpleType> subStyleSimpleExtensions, List<AbstractObject> subStyleObjectExtensions,
@@ -470,7 +572,10 @@ public class KmlFactoryDefault implements KmlFactory{
                 color, colorMode, colorStyleSimpleExtensions, colorStyleObjectExtensions,
                 width, lineStyleSimpleExtensions, lineStyleObjectExtensions);
     }
-    
+
+    /**
+     * @{@inheritDoc }
+     */
     @Override
     public Link createLink(List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
             String href, List<SimpleType> basicLinkSimpleExtensions, List<AbstractObject> basicLinkObjectExtensions,
@@ -481,6 +586,9 @@ public class KmlFactoryDefault implements KmlFactory{
                 href, basicLinkSimpleExtensions, basicLinkObjectExtensions, refreshMode, refreshInterval, viewRefreshMode, viewRefreshTime, viewBoundScale, viewFormat, httpQuery, linkSimpleExtensions, linkObjectExtensions);
     }
 
+    /**
+     * @{@inheritDoc }
+     */
     @Override
     public ListStyle createListStyle(List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
             List<SimpleType> subStyleSimpleExtensions, List<AbstractObject> subStyleObjectExtensions,
@@ -492,6 +600,9 @@ public class KmlFactoryDefault implements KmlFactory{
                 listStyleSimpleExtensions, listStyleObjectExtensions);
     }
 
+    /**
+     * @{@inheritDoc }
+     */
     @Override
     public Location createLocation(List<SimpleType> objectSimpleExtensions,
             IdAttributes idAttributes,
@@ -502,6 +613,9 @@ public class KmlFactoryDefault implements KmlFactory{
                 locationSimpleExtensions, locationObjectExtensions);
     }
 
+    /**
+     * @{@inheritDoc }
+     */
     @Override
     public Lod createLod(List<SimpleType> objectSimpleExtensions,
             IdAttributes idAttributes,
@@ -512,6 +626,9 @@ public class KmlFactoryDefault implements KmlFactory{
                 lodSimpleExtentions, lodObjectExtensions);
     }
 
+    /**
+     * @{@inheritDoc }
+     */
     @Override
     public LookAt createLookAt(List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
             List<SimpleType> abstractViewSimpleExtensions, List<AbstractObject> abstractViewObjectExtensions,
@@ -524,6 +641,9 @@ public class KmlFactoryDefault implements KmlFactory{
                 lookAtSimpleExtensions, lookAtObjectExtensions);
     }
 
+    /**
+     * @{@inheritDoc }
+     */
     @Override
     public Model createModel(List<SimpleType> objectSimpleExtensions,
             IdAttributes idAttributes,
@@ -537,6 +657,9 @@ public class KmlFactoryDefault implements KmlFactory{
                 modelSimpleExtensions, modelObjectExtensions);
     }
 
+    /**
+     * @{@inheritDoc }
+     */
     @Override
     public MultiGeometry createMultiGeometry(List<SimpleType> objectSimpleExtensions,
             IdAttributes idAttributes,
@@ -550,6 +673,9 @@ public class KmlFactoryDefault implements KmlFactory{
                 geometries, multiGeometrySimpleExtensions, multiGeometryObjectExtensions);
     }
 
+    /**
+     * @{@inheritDoc }
+     */
     @Override
     public NetworkLinkControl createNetworkLinkControl(double minRefreshPeriod,
             double maxSessionLength, String cookie, String message, String linkName, String linkDescription,
@@ -561,6 +687,9 @@ public class KmlFactoryDefault implements KmlFactory{
                 networkLinkControlSimpleExtensions, networkLinkControlObjectExtensions);
     }
 
+    /**
+     * @{@inheritDoc }
+     */
     @Override
     public Orientation createOrientation(List<SimpleType> objectSimpleExtensions,
             IdAttributes idAttributes,
@@ -572,6 +701,9 @@ public class KmlFactoryDefault implements KmlFactory{
                 orientationSimpleExtensions, orientationObjectExtensions);
     }
 
+    /**
+     * @{@inheritDoc }
+     */
     @Override
     public Pair createPair(List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
             StyleState key, String styleUrl, AbstractStyleSelector styleSelector,
@@ -582,6 +714,9 @@ public class KmlFactoryDefault implements KmlFactory{
                 pairSimpleExtensions, pairObjectExtensions);
     }
 
+    /**
+     * @{@inheritDoc }
+     */
     @Override
     public PhotoOverlay createPhotoOverlay(List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
             String name, boolean visibility, boolean open, AtomPersonConstruct author, AtomLink link,
@@ -606,6 +741,9 @@ public class KmlFactoryDefault implements KmlFactory{
                 photoOverlaySimpleExtensions, photoOverlayObjectExtensions);
     }
 
+    /**
+     * @{@inheritDoc }
+     */
     @Override
     public Placemark createPlacemark(List<SimpleType> objectSimpleExtensions,
             IdAttributes idAttributes,
@@ -635,6 +773,9 @@ public class KmlFactoryDefault implements KmlFactory{
                 placemarkSimpleExtensions, placemarkObjectExtension);
     }
 
+    /**
+     * @{@inheritDoc }
+     */
     @Override
     public Point createPoint(List<SimpleType> objectSimpleExtensions,
             IdAttributes idAttributes,
@@ -650,6 +791,9 @@ public class KmlFactoryDefault implements KmlFactory{
                 extrude, altitudeMode, coordinates, pointSimpleExtensions, pointObjectExtensions);
     }
 
+    /**
+     * @{@inheritDoc }
+     */
     @Override
     public Polygon createPolygon(List<SimpleType> objectSimpleExtensions,
             IdAttributes idAttributes,
@@ -664,6 +808,9 @@ public class KmlFactoryDefault implements KmlFactory{
                 polygonSimpleExtensions, polygonObjectExtensions);
     }
 
+    /**
+     * @{@inheritDoc }
+     */
     @Override
     public PolyStyle createPolyStyle(List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
             List<SimpleType> subStyleSimpleExtensions, List<AbstractObject> subStyleObjectExtensions,
@@ -677,6 +824,9 @@ public class KmlFactoryDefault implements KmlFactory{
                 fill, outline, polyStyleSimpleExtensions, polyStyleObjectExtensions);
     }
 
+    /**
+     * @{@inheritDoc }
+     */
     @Override
     public Region createRegion(List<SimpleType> objectSimpleExtensions,
             IdAttributes idAttributes,
@@ -685,6 +835,9 @@ public class KmlFactoryDefault implements KmlFactory{
                 latLonAltBox, lod, regionSimpleExtensions, regionObjectExtentions);
     }
 
+    /**
+     * @{@inheritDoc }
+     */
     @Override
     public ResourceMap createResourceMap(List<SimpleType> objectSimpleExtensions,
             IdAttributes idAttributes,
@@ -694,6 +847,9 @@ public class KmlFactoryDefault implements KmlFactory{
                 aliases, resourceMapSimpleExtensions, resourceMapObjectExtensions);
     }
 
+    /**
+     * @{@inheritDoc }
+     */
     @Override
     public Scale createScale(List<SimpleType> objectSimpleExtensions,
             IdAttributes idAttributes, double x, double y, double z,
@@ -701,12 +857,18 @@ public class KmlFactoryDefault implements KmlFactory{
         return new ScaleDefault(objectSimpleExtensions, idAttributes, x, y, z, scaleSimpleExtensions, scaleObjectExtensions);
     }
 
+    /**
+     * @{@inheritDoc }
+     */
     @Override
     public Schema createSchema(List<SimpleField> simpleFields,
             String name, String id){
         return new SchemaDefault(simpleFields, name, id);
     }
 
+    /**
+     * @{@inheritDoc }
+     */
     @Override
     public SchemaData createSchemaData(List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
             List<SimpleData> simpleDatas, List<Object> schemaDataExtensions){
@@ -714,6 +876,9 @@ public class KmlFactoryDefault implements KmlFactory{
                 simpleDatas, schemaDataExtensions);
     }
 
+    /**
+     * @{@inheritDoc }
+     */
     @Override
     public ScreenOverlay createScreenOverlay(List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
             String name, boolean visibility, boolean open, AtomPersonConstruct author, AtomLink link,
@@ -739,21 +904,33 @@ public class KmlFactoryDefault implements KmlFactory{
                 screenOverlaySimpleExtensions, screenOverlayObjectExtensions);
     }
 
+    /**
+     * @{@inheritDoc }
+     */
     @Override
     public SimpleData createSimpleData(String name, String content){
         return new SimpleDataDefault(name, content);
     }
 
+    /**
+     * @{@inheritDoc }
+     */
     @Override
     public SimpleField createSimpleField(String displayName, String type, String name){
         return new SimpleFieldDefault(displayName, type, name);
     }
 
+    /**
+     * @{@inheritDoc }
+     */
     @Override
     public Snippet createSnippet(int maxLines, String content){
         return new SnippetDefault(maxLines, content);
     }
 
+    /**
+     * @{@inheritDoc }
+     */
     @Override
     public Style createStyle(List<SimpleType> objectSimpleExtensions,
             IdAttributes idAttributes,
@@ -768,6 +945,9 @@ public class KmlFactoryDefault implements KmlFactory{
                 styleSimpleExtensions, styleObjectExtensions);
     }
 
+    /**
+     * @{@inheritDoc }
+     */
     @Override
     public StyleMap createStyleMap(List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
             List<SimpleType> abstractStyleSelectorSimpleExtensions,
@@ -778,6 +958,9 @@ public class KmlFactoryDefault implements KmlFactory{
                 pairs, styleMapSimpleExtensions, styleMapObjectExtensions);
     }
 
+    /**
+     * @{@inheritDoc }
+     */
     @Override
     public TimeSpan createTimeSpan(List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
             List<SimpleType> abstractTimePrimitiveSimpleExtensions, List<AbstractObject> abstractTimePrimitiveObjectExtensions,
@@ -787,6 +970,9 @@ public class KmlFactoryDefault implements KmlFactory{
                 begin, end, timeSpanSimpleExtensions, timeSpanObjectExtensions);
     }
 
+    /**
+     * @{@inheritDoc }
+     */
     @Override
     public TimeStamp createTimeStamp(List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
             List<SimpleType> abstractTimePrimitiveSimpleExtensions, List<AbstractObject> abstractTimePrimitiveObjectExtensions,
@@ -796,6 +982,9 @@ public class KmlFactoryDefault implements KmlFactory{
                 when, timeStampSimpleExtensions, timeStampObjectExtensions);
     }
 
+    /**
+     * @{@inheritDoc }
+     */
     @Override
     public Update createUpdate(List<Create> creates,
             List<Delete> deletes, List<Change> changes,
@@ -803,16 +992,28 @@ public class KmlFactoryDefault implements KmlFactory{
         return new UpdateDefault(creates, deletes, changes, updateOpExtensions, updateExtensions);
     }
 
+    /**
+     * @{@inheritDoc }
+     */
     @Override
     public Vec2 createVec2(double x, double y, Units xUnit, Units yUnit){
         return new Vec2Default(x, y, xUnit, yUnit);
     }
 
+    
     /*
-     *
      * Utilities to initialize default values.
      */
 
+    /**
+     * <p>This method creates a default Color.</p>
+     *
+     * <p>Use the appropriate OPAQUE_BLACK or OPAQUE_BLACK
+     * values to obtain a default color.</p>
+     *
+     * @param flag
+     * @return
+     */
     public static Color createColor(int flag){
         Color color = null;
         try {
@@ -827,6 +1028,15 @@ public class KmlFactoryDefault implements KmlFactory{
         return color;
     }
 
+    /**
+     * <p>This method creates a default Angle180.</p>
+     *
+     * <p>Use the appropriate ANGLE_MIN, ANGLE_ZERO or ANGLE_MAX
+     * values to obtain a default angle.</p>
+     *
+     * @param flag
+     * @return
+     */
     public static Angle180 createAngle180(String flag){
         Angle180 angle = null;
         try {
@@ -843,7 +1053,16 @@ public class KmlFactoryDefault implements KmlFactory{
         }
         return angle;
     }
-    
+
+    /**
+     * <p>This method creates a default Anglepos180.</p>
+     *
+     * <p>Use the appropriate ANGLE_MIN, ANGLE_ZERO or ANGLE_MAX
+     * values to obtain a default angle.</p>
+     *
+     * @param flag
+     * @return
+     */
     public static Anglepos180 createAnglepos180(String flag){
         Anglepos180 angle = null;
         try {
@@ -856,6 +1075,15 @@ public class KmlFactoryDefault implements KmlFactory{
         return angle;
     }
 
+    /**
+     * <p>This method creates a default Anglepos180.</p>
+     *
+     * <p>Use the appropriate ANGLE_MIN, ANGLE_ZERO or ANGLE_MAX
+     * values to obtain a default angle.</p>
+     *
+     * @param flag
+     * @return
+     */
     public static Angle360 createAngle360(String flag){
         Angle360 angle = null;
         try {
@@ -873,6 +1101,15 @@ public class KmlFactoryDefault implements KmlFactory{
         return angle;
     }
 
+    /**
+     * <p>This method creates a default Anglepos180.</p>
+     *
+     * <p>Use the appropriate ANGLE_MIN, ANGLE_ZERO or ANGLE_MAX
+     * values to obtain a default angle.</p>
+     *
+     * @param flag
+     * @return
+     */
     public static Angle90 createAngle90(String flag){
         Angle90 angle = null;
         try {
