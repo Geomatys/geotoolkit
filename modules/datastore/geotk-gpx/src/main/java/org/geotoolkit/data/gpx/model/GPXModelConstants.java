@@ -18,7 +18,6 @@
 package org.geotoolkit.data.gpx.model;
 
 import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.MultiLineString;
 import com.vividsolutions.jts.geom.Point;
@@ -64,7 +63,6 @@ public final class GPXModelConstants {
 
     private static final FeatureFactory FF = FactoryFinder.getFeatureFactory(
             new Hints(Hints.FEATURE_FACTORY, LenientFeatureFactory.class));
-    private static final GeometryFactory GF = new GeometryFactory();
 
     public static final CoordinateReferenceSystem GPX_CRS = DefaultGeographicCRS.WGS84;
     public static final String GPX_NAMESPACE = "http://www.topografix.com/GPX/1/1";
