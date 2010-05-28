@@ -18,6 +18,21 @@ public class ModelDefault extends AbstractGeometryDefault implements Model {
     private List<SimpleType> modelSimpleExtensions;
     private List<AbstractObject> modelObjectExtensions;
 
+    /**
+     *
+     * @param objectSimpleExtensions
+     * @param idAttributes
+     * @param abstractGeometrySimpleExtensions
+     * @param abstractGeometryObjectExtensions
+     * @param altitudeMode
+     * @param location
+     * @param orientation
+     * @param scale
+     * @param link
+     * @param resourceMap
+     * @param modelSimpleExtensions
+     * @param modelObjectExtensions
+     */
     public ModelDefault(List<SimpleType> objectSimpleExtensions,
             IdAttributes idAttributes,
             List<SimpleType> abstractGeometrySimpleExtensions,
@@ -36,27 +51,59 @@ public class ModelDefault extends AbstractGeometryDefault implements Model {
         this.modelObjectExtensions = modelObjectExtensions;
     }
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public AltitudeMode getAltitudeMode() {return this.altitudeMode;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public Location getLocation() {return this.location;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public Orientation getOrientation() {return this.orientation;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public Scale getScale() {return this.scale;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public Link getLink() {return this.link;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public ResourceMap getRessourceMap() {return this.resourceMap;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public List<SimpleType> getModelSimpleExtensions() {return this.modelSimpleExtensions;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public List<AbstractObject> getModelObjectExtensions() {return this.modelObjectExtensions;}
 }

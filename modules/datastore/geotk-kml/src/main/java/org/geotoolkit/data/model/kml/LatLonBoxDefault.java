@@ -13,6 +13,20 @@ public class LatLonBoxDefault extends AbstractLatLonBoxDefault implements LatLon
     private List<SimpleType> latLonBoxSimpleExtensions;
     private List<AbstractObject> latLonBoxObjectExtensions;
 
+    /**
+     *
+     * @param objectSimpleExtensions
+     * @param idAttributes
+     * @param north
+     * @param south
+     * @param east
+     * @param west
+     * @param abstractLatLonBoxSimpleExtensions
+     * @param abstractLatLonBoxObjectExtensions
+     * @param rotation
+     * @param latLonBoxSimpleExtensions
+     * @param latLonBoxObjectExtensions
+     */
     public LatLonBoxDefault(List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
             Angle180 north, Angle180 south, Angle180 east, Angle180 west,
             List<SimpleType> abstractLatLonBoxSimpleExtensions, List<AbstractObject> abstractLatLonBoxObjectExtensions,
@@ -25,12 +39,24 @@ public class LatLonBoxDefault extends AbstractLatLonBoxDefault implements LatLon
         this.latLonBoxObjectExtensions = latLonBoxObjectExtensions;
     }
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public Angle180 getRotation() {return this.rotation;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public List<SimpleType> getLatLonBoxSimpleExtensions() {return this.latLonBoxSimpleExtensions;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public List<AbstractObject> getLatLonBoxObjectExtensions() {return this.latLonBoxObjectExtensions;}
 }

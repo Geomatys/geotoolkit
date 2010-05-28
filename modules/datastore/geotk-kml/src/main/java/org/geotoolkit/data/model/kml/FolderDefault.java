@@ -16,6 +16,34 @@ public class FolderDefault extends AbstractContainerDefault implements Folder {
     private List<SimpleType> folderSimpleExtensions;
     private List<AbstractObject> folderObjectExtensions;
 
+    /**
+     *
+     * @param objectSimpleExtensions
+     * @param idAttributes
+     * @param name
+     * @param visibility
+     * @param open
+     * @param author
+     * @param link
+     * @param address
+     * @param addressDetails
+     * @param phoneNumber
+     * @param snippet
+     * @param description
+     * @param view
+     * @param timePrimitive
+     * @param styleUrl
+     * @param styleSelector
+     * @param region
+     * @param extendedData
+     * @param abstractFeatureSimpleExtensions
+     * @param abstractFeatureObjectExtensions
+     * @param abstractContainerSimpleExtensions
+     * @param abstractContainerObjectExtensions
+     * @param features
+     * @param folderSimpleExtensions
+     * @param folderObjectExtensions
+     */
     public FolderDefault(List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
             String name, boolean visibility, boolean open, AtomPersonConstruct author, AtomLink link,
             String address, AddressDetails addressDetails, String phoneNumber, String snippet,
@@ -42,12 +70,24 @@ public class FolderDefault extends AbstractContainerDefault implements Folder {
         this.folderObjectExtensions = folderObjectExtensions;
     }
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public List<AbstractFeature> getAbstractFeatures() {return this.features;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public List<AbstractObject> getFolderObjectExtensions() {return this.folderObjectExtensions;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public List<SimpleType> getFolderSimpleExtensions() { return this.folderSimpleExtensions;}
 

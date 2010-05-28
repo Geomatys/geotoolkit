@@ -15,6 +15,18 @@ public class PointDefault extends AbstractGeometryDefault implements Point {
     private List<SimpleType> pointSimpleExtensions;
     private List<AbstractObject> pointObjectExtensions;
 
+    /**
+     *
+     * @param objectSimpleExtensions
+     * @param idAttributes
+     * @param abstractGeometrySimpleExtensions
+     * @param abstractGeometryObjectExtensions
+     * @param extrude
+     * @param altitudeMode
+     * @param coordinates
+     * @param pointSimpleExtensions
+     * @param pointObjectExtensions
+     */
     public PointDefault(List<SimpleType> objectSimpleExtensions,
             IdAttributes idAttributes,
             List<SimpleType> abstractGeometrySimpleExtensions,
@@ -33,18 +45,38 @@ public class PointDefault extends AbstractGeometryDefault implements Point {
         this.pointObjectExtensions = pointObjectExtensions;
     }
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public boolean getExtrude() {return this.extrude;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public AltitudeMode getAltitudeMode() {return this.altitudeMode;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public Coordinates getCoordinates() {return this.coordinates;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public List<SimpleType> getPointSimpleExtensions() {return this.pointSimpleExtensions;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public List<AbstractObject> getPointObjectExtensions() {return this.pointObjectExtensions;}
 

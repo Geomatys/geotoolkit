@@ -13,6 +13,16 @@ public class MultiGeometryDefault extends AbstractGeometryDefault implements Mul
     private List<SimpleType> multiGeometrySimpleExtensions;
     private List<AbstractObject> multiGeometryObjectExtensions;
 
+    /**
+     *
+     * @param objectSimpleExtensions
+     * @param idAttributes
+     * @param abstractGeometrySimpleExtensions
+     * @param abstractGeometryObjectExtensions
+     * @param geometries
+     * @param multiGeometrySimpleExtensions
+     * @param multiGeometryObjectExtensions
+     */
     public MultiGeometryDefault(List<SimpleType> objectSimpleExtensions,
             IdAttributes idAttributes,
             List<SimpleType> abstractGeometrySimpleExtensions,
@@ -27,12 +37,24 @@ public class MultiGeometryDefault extends AbstractGeometryDefault implements Mul
         this.multiGeometryObjectExtensions = multiGeometryObjectExtensions;
     }
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public List<AbstractGeometry> getGeometries() {return this.geometries;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public List<SimpleType> getMultiGeometrySimpleExtensions() {return this.multiGeometrySimpleExtensions;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public List<AbstractObject> getMultiGeometryObjectExtensions() {return this.multiGeometryObjectExtensions;}
 

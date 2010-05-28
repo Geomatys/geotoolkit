@@ -217,7 +217,7 @@ public interface KmlFactory {
             List<SimpleType> boundarySimpleExtensions, List<AbstractObject> boundaryObjectExtensions);
 
     /**
-     *
+     * 
      * @param objectSimpleExtensions
      * @param idAttributes
      * @param abstractViewSimpleExtensions
@@ -228,6 +228,7 @@ public interface KmlFactory {
      * @param heading
      * @param tilt
      * @param roll
+     * @param altitudeMode
      * @param cameraSimpleExtensions
      * @param cameraObjectExtensions
      * @return
@@ -235,7 +236,7 @@ public interface KmlFactory {
     public Camera createCamera(List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
             List<SimpleType> abstractViewSimpleExtensions, List<AbstractObject> abstractViewObjectExtensions,
             Angle180 longitude, Angle90 latitude, double altitude,
-            Angle360 heading, Anglepos180 tilt, Angle180 roll,
+            Angle360 heading, Anglepos180 tilt, Angle180 roll, AltitudeMode altitudeMode,
             List<SimpleType> cameraSimpleExtensions, List<AbstractObject> cameraObjectExtensions);
 
     /**

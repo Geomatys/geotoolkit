@@ -13,6 +13,12 @@ public class SchemaDefault implements Schema {
     private String name;
     private String id;
 
+    /**
+     *
+     * @param simpleFields
+     * @param name
+     * @param id
+     */
     public SchemaDefault(List<SimpleField> simpleFields,
             String name, String id){
         this.simpleFields = simpleFields;
@@ -20,12 +26,24 @@ public class SchemaDefault implements Schema {
         this.id = id;
     }
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public List<SimpleField> getSimpleFields() {return this.simpleFields;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public String getName() {return this.name;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public String getId() {return this.id;}
 

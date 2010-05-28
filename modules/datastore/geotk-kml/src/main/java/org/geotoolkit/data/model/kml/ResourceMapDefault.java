@@ -13,6 +13,14 @@ public class ResourceMapDefault extends AbstractObjectDefault implements Resourc
     private List<SimpleType> resourceMapSimpleExtensions;
     private List<AbstractObject> resourceMapObjectExtensions;
 
+    /**
+     *
+     * @param objectSimpleExtensions
+     * @param idAttributes
+     * @param aliases
+     * @param resourceMapSimpleExtensions
+     * @param resourceMapObjectExtensions
+     */
     public ResourceMapDefault(List<SimpleType> objectSimpleExtensions,
             IdAttributes idAttributes,
             List<Alias> aliases,
@@ -23,12 +31,24 @@ public class ResourceMapDefault extends AbstractObjectDefault implements Resourc
         this.resourceMapObjectExtensions = resourceMapObjectExtensions;
     }
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public List<Alias> getAliases() {return this.aliases;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public List<SimpleType> getResourceMapSimpleExtensions() {return this.resourceMapSimpleExtensions;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public List<AbstractObject> getResourceMapObjectExtensions() {return this.resourceMapObjectExtensions;}
 

@@ -13,6 +13,16 @@ public class TimeStampDefault extends AbstractTimePrimitiveDefault implements Ti
     private List<SimpleType> timeStampSimpleExtensions;
     private List<AbstractObject> timeStampObjectExtensions;
 
+    /**
+     *
+     * @param objectSimpleExtensions
+     * @param idAttributes
+     * @param abstractTimePrimitiveSimpleExtensions
+     * @param abstractTimePrimitiveObjectExtensions
+     * @param when
+     * @param timeStampSimpleExtensions
+     * @param timeStampObjectExtensions
+     */
     public TimeStampDefault(List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
             List<SimpleType> abstractTimePrimitiveSimpleExtensions, List<AbstractObject> abstractTimePrimitiveObjectExtensions,
             String when, List<SimpleType> timeStampSimpleExtensions, List<AbstractObject> timeStampObjectExtensions){
@@ -23,12 +33,24 @@ public class TimeStampDefault extends AbstractTimePrimitiveDefault implements Ti
         this.timeStampObjectExtensions = timeStampObjectExtensions;
     }
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public String getWhen() {return this.when;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public List<SimpleType> getTimeStampSimpleExtensions() {return this.timeStampSimpleExtensions;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public List<AbstractObject> getTimeStampObjectExtensions() {return this.timeStampObjectExtensions;}
 

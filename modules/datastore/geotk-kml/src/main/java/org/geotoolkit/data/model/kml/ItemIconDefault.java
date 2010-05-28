@@ -14,6 +14,15 @@ public class ItemIconDefault extends AbstractObjectDefault implements ItemIcon {
     private List<SimpleType> itemIconSimpleExtensions;
     private List<AbstractObject> itemIconObjectExtensions;
 
+    /**
+     *
+     * @param objectSimpleExtensions
+     * @param idAttributes
+     * @param states
+     * @param href
+     * @param itemIconSimpleExtensions
+     * @param itemIconObjectExtensions
+     */
     public ItemIconDefault(List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
             List<ItemIconState> states, String href,
             List<SimpleType> itemIconSimpleExtensions, List<AbstractObject> itemIconObjectExtensions){
@@ -24,15 +33,31 @@ public class ItemIconDefault extends AbstractObjectDefault implements ItemIcon {
         this.itemIconObjectExtensions = itemIconObjectExtensions;
     }
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public List<ItemIconState> getStates() {return this.states;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public String getHref() {return this.href;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public List<SimpleType> getItemIconSimpleExtensions() {return this.itemIconSimpleExtensions;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public List<AbstractObject> getItemIconObjectExtensions() {return this.itemIconObjectExtensions;}
 

@@ -224,6 +224,12 @@ public class KmlReader extends StaxStreamReader {
         return this.kmlFactory.createKml(networkLinkControl, abstractFeature, kmlSimpleExtensions, kmlObjectExtensions);
     }
 
+    /**
+     * 
+     * @return
+     * @throws XMLStreamException
+     * @throws KmlException
+     */
     private Placemark readPlacemark() throws XMLStreamException, KmlException {
         // AbstractObject
         List<SimpleType> objectSimpleExtensions = null;
@@ -332,6 +338,12 @@ public class KmlReader extends StaxStreamReader {
                 abstractGeometry, placemarkSimpleExtensions, placemarkObjectExtensions);
     }
 
+    /**
+     * 
+     * @return
+     * @throws XMLStreamException
+     * @throws KmlException
+     */
     private Region readRegion() throws XMLStreamException, KmlException {
         // AbstractObject
         List<SimpleType> objectSimpleExtensions = null;
@@ -375,6 +387,11 @@ public class KmlReader extends StaxStreamReader {
                 latLonAltBox, lod, regionSimpleExtensions, regionObjectExtentions);
     }
 
+    /**
+     * 
+     * @return
+     * @throws XMLStreamException
+     */
     private Lod readLod() throws XMLStreamException {
         // AbstractObject
         List<SimpleType> objectSimpleExtensions = null;
@@ -424,6 +441,11 @@ public class KmlReader extends StaxStreamReader {
                 minLodPixels, maxLodPixels, minFadeExtent, maxFadeExtent, lodSimpleExtentions, lodObjectExtensions);
     }
 
+    /**
+     * 
+     * @return
+     * @throws XMLStreamException
+     */
     private ExtendedData readExtendedData() throws XMLStreamException {
         List<Data> datas = new ArrayList<Data>();
         List<SchemaData> schemaDatas = new ArrayList<SchemaData>();
@@ -460,6 +482,11 @@ public class KmlReader extends StaxStreamReader {
         return this.kmlFactory.createExtendedData(datas, schemaDatas, anyOtherElements);
     }
 
+    /**
+     * 
+     * @return
+     * @throws XMLStreamException
+     */
     private Data readData() throws XMLStreamException {
         // AbstractObject
         List<SimpleType> objectSimpleExtensions = null;
@@ -501,6 +528,11 @@ public class KmlReader extends StaxStreamReader {
         return this.kmlFactory.createData(objectSimpleExtensions, idAttributes, displayName, value, dataExtensions);
     }
 
+    /**
+     * 
+     * @return
+     * @throws XMLStreamException
+     */
     private SchemaData readSchemaData() throws XMLStreamException {
         // AbstractObject
         List<SimpleType> objectSimpleExtensions = null;
@@ -539,6 +571,11 @@ public class KmlReader extends StaxStreamReader {
         return this.kmlFactory.createSchemaData(objectSimpleExtensions, idAttributes, simpleDatas, schemaDataExtensions);
     }
 
+    /**
+     * 
+     * @return
+     * @throws XMLStreamException
+     */
     private SimpleData readSimpleData() throws XMLStreamException {
         return this.kmlFactory.createSimpleData(reader.getAttributeValue(null, ATT_NAME), reader.getElementText());
     }
@@ -592,6 +629,12 @@ public class KmlReader extends StaxStreamReader {
         return resultat;
     }
 
+    /**
+     * 
+     * @return
+     * @throws XMLStreamException
+     * @throws KmlException
+     */
     private Polygon readPolygon() throws XMLStreamException, KmlException {
         // AbstractObject
         List<SimpleType> objectSimpleExtensions = null;
@@ -649,6 +692,11 @@ public class KmlReader extends StaxStreamReader {
                 polygonSimpleExtensions, polygonObjectExtensions);
     }
 
+    /**
+     * 
+     * @return
+     * @throws XMLStreamException
+     */
     private Boundary readBoundary() throws XMLStreamException{
         LinearRing linearRing = null;
         List<SimpleType> boundarySimpleExtensions = null;
@@ -683,6 +731,12 @@ public class KmlReader extends StaxStreamReader {
         return this.kmlFactory.createBoundary(linearRing, boundarySimpleExtensions, boundaryObjectExtensions);
     }
 
+    /**
+     * 
+     * @return
+     * @throws XMLStreamException
+     * @throws KmlException
+     */
     private Model readModel() throws XMLStreamException, KmlException {
         // AbstractObject
         List<SimpleType> objectSimpleExtensions = null;
@@ -743,6 +797,11 @@ public class KmlReader extends StaxStreamReader {
                 modelSimpleExtensions, modelObjectExtensions);
     }
 
+    /**
+     * 
+     * @return
+     * @throws XMLStreamException
+     */
     private ResourceMap readResourceMap() throws XMLStreamException{
         // AbstractObject
         List<SimpleType> objectSimpleExtensions = null;
@@ -833,6 +892,11 @@ public class KmlReader extends StaxStreamReader {
 
     }
 
+     /**
+      * 
+      * @return
+      * @throws XMLStreamException
+      */
     private Scale readScale() throws XMLStreamException{
         // AbstractObject
         List<SimpleType> objectSimpleExtensions = null;
@@ -880,6 +944,12 @@ public class KmlReader extends StaxStreamReader {
         
     }
 
+    /**
+     * 
+     * @return
+     * @throws XMLStreamException
+     * @throws KmlException
+     */
     private Location readLocation() throws XMLStreamException, KmlException {
         // AbstractObject
         List<SimpleType> objectSimpleExtensions = null;
@@ -926,6 +996,12 @@ public class KmlReader extends StaxStreamReader {
                 longitude, latitude, altitude, locationSimpleExtensions, locationObjectExtensions);
     }
 
+    /**
+     * 
+     * @return
+     * @throws XMLStreamException
+     * @throws KmlException
+     */
     private Orientation readOrientation() throws XMLStreamException, KmlException {
         // AbstractObject
         List<SimpleType> objectSimpleExtensions = null;
@@ -971,6 +1047,11 @@ public class KmlReader extends StaxStreamReader {
                 heading, tilt, roll, orientationSimpleExtensions, orientationObjectExtensions);
     }
 
+    /**
+     * 
+     * @return
+     * @throws XMLStreamException
+     */
     private LinearRing readLinearRing() throws XMLStreamException {
         // AbstractObject
         List<SimpleType> objectSimpleExtensions = null;
@@ -1025,6 +1106,11 @@ public class KmlReader extends StaxStreamReader {
                 linearRingSimpleExtensions, linearRingObjectExtensions);
     }
 
+    /**
+     *
+     * @return
+     * @throws XMLStreamException
+     */
     private LineString readLineString() throws XMLStreamException {
         // AbstractObject
         List<SimpleType> objectSimpleExtensions = null;
@@ -1079,6 +1165,12 @@ public class KmlReader extends StaxStreamReader {
                 lineStringSimpleExtensions, lineStringObjectExtensions);
     }
 
+    /**
+     * 
+     * @return
+     * @throws XMLStreamException
+     * @throws KmlException
+     */
     private MultiGeometry readMultiGeometry() throws XMLStreamException, KmlException{
         // AbstractObject
         List<SimpleType> objectSimpleExtensions = null;
@@ -1167,6 +1259,12 @@ public class KmlReader extends StaxStreamReader {
         return resultat;
     }
 
+    /**
+     * 
+     * @return
+     * @throws XMLStreamException
+     * @throws KmlException
+     */
     private GroundOverlay readGroundOverlay() throws XMLStreamException, KmlException {
 
         // AbstractObject
@@ -1305,11 +1403,19 @@ public class KmlReader extends StaxStreamReader {
                 groundOverlaySimpleExtensions, groundOverlayObjectExtensions);
     }
 
+    /**
+     * 
+     * @param stopTag
+     * @return
+     * @throws KmlException
+     * @throws XMLStreamException
+     */
     private Link readLink(String stopTag) throws KmlException, XMLStreamException {
 
         if (stopTag == null) {
             throw new KmlException("The stop tag cannot be null. "
-                    + "It's probably an <Icon>, <Link> or <Url> tag according to KML 2.2 specification.");
+                    + "It's probably an <Icon>, <Link> or <Url> tag according to KML 2.2 specification. " +
+                    "Url tag is deprecated.");
         }
 
         // Comme BasicLink
@@ -1380,6 +1486,12 @@ public class KmlReader extends StaxStreamReader {
                 linkSimpleExtensions, linkObjectExtensions);
     }
 
+    /**
+     *
+     * @return
+     * @throws XMLStreamException
+     * @throws KmlException
+     */
     private LatLonBox readLatLonBox() throws XMLStreamException, KmlException {
         // AbstractObject
         List<SimpleType> objectSimpleExtensions = null;
@@ -1441,6 +1553,12 @@ public class KmlReader extends StaxStreamReader {
                 rotation, latLonBoxSimpleExtensions, latLonBoxObjectExtensions);
     }
 
+    /**
+     * 
+     * @return
+     * @throws XMLStreamException
+     * @throws KmlException
+     */
     private LatLonAltBox readLatLonAltBox() throws XMLStreamException, KmlException {
         // AbstractObject
         List<SimpleType> objectSimpleExtensions = null;
@@ -1513,6 +1631,12 @@ public class KmlReader extends StaxStreamReader {
         return resultat;
     }
 
+    /**
+     * 
+     * @return
+     * @throws XMLStreamException
+     * @throws KmlException
+     */
     private ScreenOverlay readScreenOverlay() throws XMLStreamException, KmlException {
 
         // AbstractObject
@@ -1687,6 +1811,12 @@ public class KmlReader extends StaxStreamReader {
         return resultat;
     }
 
+    /**
+     *
+     * @return
+     * @throws XMLStreamException
+     * @throws KmlException
+     */
     private LookAt readLookAt() throws XMLStreamException, KmlException {
         // AbstractObject
         List<SimpleType> objectSimpleExtensions = null;
@@ -1746,6 +1876,12 @@ public class KmlReader extends StaxStreamReader {
                 lookAtSimpleExtensions, lookAtObjectExtensions);
     }
 
+    /**
+     * 
+     * @return
+     * @throws XMLStreamException
+     * @throws KmlException
+     */
     private Camera readCamera() throws XMLStreamException, KmlException {
         // AbstractObject
         List<SimpleType> objectSimpleExtensions = null;
@@ -1762,6 +1898,7 @@ public class KmlReader extends StaxStreamReader {
         Angle360 heading = DEF_HEADING;
         Anglepos180 tilt = DEF_TILT;
         Angle180 roll = DEF_ROLL;
+        AltitudeMode altitudeMode = DEF_ALTITUDE_MODE;
         List<SimpleType> cameraSimpleExtensions = null;
         List<AbstractObject> cameraObjectExtensions = null;
 
@@ -1788,6 +1925,8 @@ public class KmlReader extends StaxStreamReader {
                             tilt = this.kmlFactory.createAnglepos180(Double.parseDouble(reader.getElementText()));
                         } else if (TAG_ROLL.equals(eName)) {
                             roll = this.kmlFactory.createAngle180(Double.parseDouble(reader.getElementText()));
+                        } else if (TAG_ALTITUDE_MODE.equals(eName)) {
+                            altitudeMode = AltitudeMode.transform(reader.getElementText());
                         }
                     }
                     break;
@@ -1801,7 +1940,7 @@ public class KmlReader extends StaxStreamReader {
         }
         return this.kmlFactory.createCamera(objectSimpleExtensions, idAttributes,
                 abstractViewSimpleExtensions, abstractViewObjectExtensions,
-                longitude, latitude, altitude, heading, tilt, roll,
+                longitude, latitude, altitude, heading, tilt, roll, altitudeMode,
                 cameraSimpleExtensions, cameraObjectExtensions);
     }
 
@@ -1821,6 +1960,12 @@ public class KmlReader extends StaxStreamReader {
         return resultat;
     }
 
+    /**
+     * 
+     * @return
+     * @throws XMLStreamException
+     * @throws KmlException
+     */
     private StyleMap readStyleMap() throws XMLStreamException, KmlException {
         // AbstractObject
         List<SimpleType> objectSimpleExtensions = null;
@@ -1865,6 +2010,12 @@ public class KmlReader extends StaxStreamReader {
                 pairs, styleMapSimpleExtensions, styleMapObjectExtensions);
     }
 
+    /**
+     * 
+     * @return
+     * @throws XMLStreamException
+     * @throws KmlException
+     */
     private Pair readPair() throws XMLStreamException, KmlException {
         // AbstractObject
         List<SimpleType> objectSimpleExtensions = null;
@@ -1910,6 +2061,12 @@ public class KmlReader extends StaxStreamReader {
                 key, styleUrl, styleSelector, pairSimpleExtensions, pairObjectExtensions);
     }
 
+    /**
+     * 
+     * @return
+     * @throws XMLStreamException
+     * @throws KmlException
+     */
     private Style readStyle() throws XMLStreamException, KmlException {
         // AbstractObject
         List<SimpleType> objectSimpleExtensions = null;
@@ -1970,6 +2127,12 @@ public class KmlReader extends StaxStreamReader {
                 styleSimpleExtensions, styleObjectExtensions);
     }
 
+    /**
+     * 
+     * @return
+     * @throws XMLStreamException
+     * @throws KmlException
+     */
     private IconStyle readIconStyle() throws XMLStreamException, KmlException {
         // AbstractObject
         List<SimpleType> objectSimpleExtensions = null;
@@ -2040,6 +2203,12 @@ public class KmlReader extends StaxStreamReader {
                 iconStyleSimpleExtensions, iconStyleObjectExtensions);
     }
 
+    /**
+     * 
+     * @return
+     * @throws XMLStreamException
+     * @throws KmlException
+     */
     private LabelStyle readLabelStyle() throws XMLStreamException, KmlException {
         // AbstractObject
         List<SimpleType> objectSimpleExtensions = null;
@@ -2099,6 +2268,12 @@ public class KmlReader extends StaxStreamReader {
                 scale, labelStyleSimpleExtensions, labelStyleObjectExtensions);
     }
 
+    /**
+     * 
+     * @return
+     * @throws XMLStreamException
+     * @throws KmlException
+     */
     private LineStyle readLineStyle() throws XMLStreamException, KmlException {
         // AbstractObject
         List<SimpleType> objectSimpleExtensions = null;
@@ -2158,6 +2333,12 @@ public class KmlReader extends StaxStreamReader {
                 width, lineStyleSimpleExtensions, lineStyleObjectExtensions);
     }
 
+    /**
+     * 
+     * @return
+     * @throws XMLStreamException
+     * @throws KmlException
+     */
     private PolyStyle readPolyStyle() throws XMLStreamException, KmlException {
         // AbstractObject
         List<SimpleType> objectSimpleExtensions = null;
@@ -2220,6 +2401,12 @@ public class KmlReader extends StaxStreamReader {
                 fill, outline, polyStyleSimpleExtensions, polyStyleObjectExtensions);
     }
 
+    /**
+     * 
+     * @return
+     * @throws XMLStreamException
+     * @throws KmlException
+     */
     private BalloonStyle readBalloonStyle() throws XMLStreamException, KmlException {
         // AbstractObject
         List<SimpleType> objectSimpleExtensions = null;
@@ -2276,6 +2463,12 @@ public class KmlReader extends StaxStreamReader {
                 balloonStyleSimpleExtensions, balloonStyleObjectExtensions);
     }
 
+    /**
+     * 
+     * @return
+     * @throws XMLStreamException
+     * @throws KmlException
+     */
     private ListStyle readListStyle() throws XMLStreamException, KmlException {
         // AbstractObject
         List<SimpleType> objectSimpleExtensions = null;
@@ -2332,6 +2525,11 @@ public class KmlReader extends StaxStreamReader {
                 listStyleSimpleExtensions, listStyleObjectExtensions);
     }
 
+    /**
+     *
+     * @return
+     * @throws XMLStreamException
+     */
     private ItemIcon readItemIcon() throws XMLStreamException {
         // AbstractObject
         List<SimpleType> objectSimpleExtensions = null;
@@ -2376,6 +2574,11 @@ public class KmlReader extends StaxStreamReader {
                 states, href, itemIconSimpleExtensions, itemIconObjectExtensions);
     }
 
+    /**
+     *
+     * @return
+     * @throws XMLStreamException
+     */
     private List<ItemIconState> readStates() throws XMLStreamException {
 
         List<ItemIconState> states = new ArrayList<ItemIconState>();
@@ -2388,6 +2591,13 @@ public class KmlReader extends StaxStreamReader {
         return states;
     }
 
+    /**
+     * 
+     * @param stopTag
+     * @return
+     * @throws XMLStreamException
+     * @throws KmlException
+     */
     private BasicLink readBasicLink(String stopTag) throws XMLStreamException, KmlException {
 
         if (stopTag == null) {
@@ -2430,6 +2640,13 @@ public class KmlReader extends StaxStreamReader {
                 href, basicLinkSimpleExtensions, basicLinkObjectExtensions);
     }
 
+    /**
+     * 
+     * @param stopTag
+     * @return
+     * @throws XMLStreamException
+     * @throws KmlException
+     */
     private Vec2 readVec2(String stopTag) throws XMLStreamException, KmlException {
 
         if (stopTag == null) {
@@ -2484,6 +2701,11 @@ public class KmlReader extends StaxStreamReader {
         return resultat;
     }
 
+    /**
+     * 
+     * @return
+     * @throws XMLStreamException
+     */
     private TimeSpan readTimeSpan() throws XMLStreamException{
         // AbstractObject
         List<SimpleType> objectSimpleExtensions = null;
@@ -2529,6 +2751,11 @@ public class KmlReader extends StaxStreamReader {
                 begin, end, TimeSpanSimpleExtensions, TimeSpanObjectExtensions);
     }
 
+    /**
+     * 
+     * @return
+     * @throws XMLStreamException
+     */
     private TimeStamp readTimeStamp() throws XMLStreamException{
         // AbstractObject
         List<SimpleType> objectSimpleExtensions = null;
@@ -2662,6 +2889,12 @@ public class KmlReader extends StaxStreamReader {
         return resultat;
     }
 
+    /**
+     * 
+     * @return
+     * @throws XMLStreamException
+     * @throws KmlException
+     */
     private Folder readFolder() throws XMLStreamException, KmlException {
         // AbstractObject
         List<SimpleType> objectSimpleExtensions = null;
@@ -2776,6 +3009,12 @@ public class KmlReader extends StaxStreamReader {
                 features, folderSimpleExtensions, folderObjectExtensions);
     }
 
+    /**
+     * 
+     * @return
+     * @throws XMLStreamException
+     * @throws KmlException
+     */
     private Document readDocument() throws XMLStreamException, KmlException {
 
         // AbstractObject
@@ -2895,6 +3134,11 @@ public class KmlReader extends StaxStreamReader {
                 schemas, features, documentSimpleExtensions, documentObjectExtensions);
     }
 
+    /**
+     * 
+     * @return
+     * @throws XMLStreamException
+     */
     private Schema readSchema() throws XMLStreamException {
 
         // Schema
@@ -2931,6 +3175,11 @@ public class KmlReader extends StaxStreamReader {
         return this.kmlFactory.createSchema(simplefields, name, id);
     }
 
+    /**
+     * 
+     * @return
+     * @throws XMLStreamException
+     */
     private SimpleField readSimpleField() throws XMLStreamException {
 
         // SimpleField
@@ -2973,6 +3222,11 @@ public class KmlReader extends StaxStreamReader {
         return resultat;
     }
 
+    /**
+     * 
+     * @return
+     * @throws XMLStreamException
+     */
     private Point readPoint() throws XMLStreamException {
         // AbstractObject
         List<SimpleType> objectSimpleExtensions = null;

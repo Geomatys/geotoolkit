@@ -18,6 +18,21 @@ public class StyleDefault extends AbstractStyleSelectorDefault implements Style 
     private List<SimpleType> styleSimpleExtensions;
     private List<AbstractObject> styleObjectExtensions;
 
+    /**
+     *
+     * @param objectSimpleExtensions
+     * @param idAttributes
+     * @param abstractStyleSelectorSimpleExtensions
+     * @param abstractStyleSelectorObjectExtensions
+     * @param iconStyle
+     * @param labelStyle
+     * @param lineStyle
+     * @param polyStyle
+     * @param balloonStyle
+     * @param listStyle
+     * @param styleSimpleExtensions
+     * @param styleObjectExtensions
+     */
     public StyleDefault(List<SimpleType> objectSimpleExtensions,
             IdAttributes idAttributes,
             List<SimpleType> abstractStyleSelectorSimpleExtensions,
@@ -38,27 +53,59 @@ public class StyleDefault extends AbstractStyleSelectorDefault implements Style 
         this.styleObjectExtensions = styleObjectExtensions;
     }
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public IconStyle getIconStyle() {return this.iconStyle;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public LabelStyle getLabelStyle() {return this.labelStyle;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public LineStyle getLineStyle() {return this.lineStyle;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public PolyStyle getPolyStyle() {return this.polyStyle;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public BalloonStyle getBalloonStyle() {return this.balloonStyle;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public ListStyle getListStyle() {return this.listStyle;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public List<SimpleType> getStyleSimpleExtensions() {return this.styleSimpleExtensions;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public List<AbstractObject> getStyleObjectExtensions() {return this.styleObjectExtensions;}
 

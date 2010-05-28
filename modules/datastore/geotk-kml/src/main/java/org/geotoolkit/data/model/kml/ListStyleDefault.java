@@ -16,6 +16,19 @@ public class ListStyleDefault extends AbstractSubStyleDefault implements ListSty
     private List<SimpleType> listStyleSimpleExtensions;
     private List<AbstractObject> listStyleObjectExtensions;
 
+    /**
+     *
+     * @param objectSimpleExtensions
+     * @param idAttributes
+     * @param subStyleSimpleExtensions
+     * @param subStyleObjectExtensions
+     * @param listItem
+     * @param bgColor
+     * @param itemIcons
+     * @param maxSnippetLines
+     * @param listStyleSimpleExtensions
+     * @param listStyleObjectExtensions
+     */
     public ListStyleDefault(List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
             List<SimpleType> subStyleSimpleExtensions, List<AbstractObject> subStyleObjectExtensions,
             ListItem listItem, Color bgColor, List<ItemIcon> itemIcons, int maxSnippetLines,
@@ -30,21 +43,45 @@ public class ListStyleDefault extends AbstractSubStyleDefault implements ListSty
         this.listStyleObjectExtensions = listStyleObjectExtensions;
     }
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public ListItem getListItem() {return this.listItem;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public Color getBgColor() {return this.bgColor;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public List<ItemIcon> getItemIcons() {return this.itemIcons;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public int getMaxSnippetLines() {return this.maxSnippetLines;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public List<SimpleType> getListStyleSimpleExtensions() {return this.listStyleSimpleExtensions;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public List<AbstractObject> getListStyleObjectExtensions() {return this.listStyleObjectExtensions;}
 

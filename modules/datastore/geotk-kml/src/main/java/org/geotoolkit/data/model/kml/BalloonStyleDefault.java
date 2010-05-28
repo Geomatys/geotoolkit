@@ -16,6 +16,19 @@ public class BalloonStyleDefault extends AbstractSubStyleDefault implements Ball
     private List<SimpleType> balloonStyleSimpleExtensions;
     private List<AbstractObject> balloonStyleObjectExtensions;
 
+    /**
+     *
+     * @param objectSimpleExtensions
+     * @param idAttributes
+     * @param subStyleSimpleExtensions
+     * @param subStyleObjectExtensions
+     * @param bgColor
+     * @param textColor
+     * @param text
+     * @param displayMode
+     * @param balloonStyleSimpleExtensions
+     * @param balloonStyleObjectExtensions
+     */
     public BalloonStyleDefault(List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
             List<SimpleType> subStyleSimpleExtensions, List<AbstractObject> subStyleObjectExtensions,
             Color bgColor, Color textColor, String text, DisplayMode displayMode,
@@ -30,21 +43,45 @@ public class BalloonStyleDefault extends AbstractSubStyleDefault implements Ball
         this.balloonStyleObjectExtensions = balloonStyleObjectExtensions;
     }
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public Color getBgColor() {return this.bgColor;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public Color getTextColor() {return this.textColor;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public String getText() {return this.text;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public DisplayMode getDisplayMode() {return this.displayMode;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public List<SimpleType> getBalloonStyleSimpleExtensions() {return this.balloonStyleSimpleExtensions;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public List<AbstractObject> getBalloonStyleObjectExtensions() {return this.balloonStyleObjectExtensions;}
 

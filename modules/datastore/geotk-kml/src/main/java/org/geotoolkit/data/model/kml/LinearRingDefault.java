@@ -16,6 +16,19 @@ public class LinearRingDefault extends AbstractGeometryDefault implements Linear
     private List<SimpleType> linearRingSimpleExtensions;
     private List<AbstractObject> linearRingObjectExtensions;
 
+    /**
+     *
+     * @param objectSimpleExtensions
+     * @param idAttributes
+     * @param abstractGeometrySimpleExtensions
+     * @param abstractGeometryObjectExtensions
+     * @param extrude
+     * @param tessellate
+     * @param altitudeMode
+     * @param coordinates
+     * @param linearRingSimpleExtensions
+     * @param linearRingObjectExtensions
+     */
     public LinearRingDefault(List<SimpleType> objectSimpleExtensions,
             IdAttributes idAttributes,
             List<SimpleType> abstractGeometrySimpleExtensions,
@@ -35,21 +48,45 @@ public class LinearRingDefault extends AbstractGeometryDefault implements Linear
         this.linearRingObjectExtensions = linearRingObjectExtensions;
     }
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public boolean getExtrude() {return this.extrude;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public boolean getTessellate() {return this.tessellate;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public AltitudeMode getAltitudeMode() {return this.altitudeMode;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public Coordinates getCoordinates() {return this.coordinates;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public List<SimpleType> getLinearRingSimpleExtensions() {return this.linearRingSimpleExtensions;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public List<AbstractObject> getLinearRingObjectExtensions() {return this.linearRingObjectExtensions;}
 

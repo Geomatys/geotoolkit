@@ -23,6 +23,23 @@ public class LinkDefault extends AbstractObjectDefault implements Link {
     private List<SimpleType> linkSimpleExtensions;
     private List<AbstractObject> linkObjectExtensions;
 
+    /**
+     *
+     * @param objectSimpleExtensions
+     * @param idAttributes
+     * @param href
+     * @param basicLinkSimpleExtensions
+     * @param basicLinkObjectExtensions
+     * @param refreshMode
+     * @param refreshInterval
+     * @param viewRefreshMode
+     * @param viewRefreshTime
+     * @param viewBoundScale
+     * @param viewFormat
+     * @param httpQuery
+     * @param linkSimpleExtensions
+     * @param linkObjectExtensions
+     */
     public LinkDefault(List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
             String href, List<SimpleType> basicLinkSimpleExtensions, List<AbstractObject> basicLinkObjectExtensions,
             RefreshMode refreshMode, double refreshInterval, ViewRefreshMode viewRefreshMode, double viewRefreshTime,
@@ -42,45 +59,101 @@ public class LinkDefault extends AbstractObjectDefault implements Link {
 
     }
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public String getHref() {return this.href;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public List<SimpleType> getBasicLinkSimpleExtensions() {return this.basicLinkSimpleExtensions;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public List<AbstractObject> getBasicLinkObjectExtensions() {return this.basicLinkObjectExtensions;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public RefreshMode getRefreshMode() {return this.refreshMode;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public double getRefreshInterval() {return this.refreshInterval;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public ViewRefreshMode getViewRefreshMode() {return this.viewRefreshMode;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public double getViewRefreshTime() {return this.viewRefreshTime;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public double getViewBoundScale() {return this.viewBoundScale;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public String getViewFormat() {return this.viewFormat;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public String getHttpQuery() {return this.httpQuery;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public List<SimpleType> getLinkSimpleExtensions() {return this.linkSimpleExtensions;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public List<AbstractObject> getLinkObjectExtensions() {return this.linkObjectExtensions;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public List<SimpleType> getObjectSimpleExtensions() {return this.objectSimpleExtensions;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public IdAttributes getIdAttributes() {return this.idAttributes;}
 

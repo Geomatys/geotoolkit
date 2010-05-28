@@ -16,6 +16,19 @@ public class LineStringDefault extends AbstractGeometryDefault implements LineSt
     private List<SimpleType> lineStringSimpleExtensions;
     private List<AbstractObject> lineStringObjectExtensions;
 
+    /**
+     *
+     * @param objectSimpleExtensions
+     * @param idAttributes
+     * @param abstractGeometrySimpleExtensions
+     * @param abstractGeometryObjectExtensions
+     * @param extrude
+     * @param tessellate
+     * @param altitudeMode
+     * @param coordinates
+     * @param lineStringSimpleExtensions
+     * @param lineStringObjectExtensions
+     */
     public LineStringDefault(List<SimpleType> objectSimpleExtensions,
             IdAttributes idAttributes,
             List<SimpleType> abstractGeometrySimpleExtensions,
@@ -35,21 +48,45 @@ public class LineStringDefault extends AbstractGeometryDefault implements LineSt
         this.lineStringObjectExtensions = lineStringObjectExtensions;
     }
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public boolean getExtrude() {return this.extrude;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public boolean getTessellate() {return this.tessellate;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public AltitudeMode getAltitudeMode() {return this.altitudeMode;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public Coordinates getCoordinates() {return this.coordinates;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public List<SimpleType> getLineStringSimpleExtensions() {return this.lineStringSimpleExtensions;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public List<AbstractObject> getLineStringObjectExtensions() {return this.lineStringObjectExtensions;}
 

@@ -16,6 +16,14 @@ public class BasicLinkDefault implements BasicLink {
     private List<SimpleType> basicLinkSimpleExtensions;
     private List<AbstractObject> basicLinkObjectExtensions;
 
+    /**
+     *
+     * @param objectSimpleExtensions
+     * @param idAttributes
+     * @param href
+     * @param basicLinkSimpleExtensions
+     * @param basicLinkObjectExtensions
+     */
     public BasicLinkDefault(List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
             String href, List<SimpleType> basicLinkSimpleExtensions, List<AbstractObject> basicLinkObjectExtensions){
             this.objectSimpleExtensions = objectSimpleExtensions;
@@ -25,18 +33,38 @@ public class BasicLinkDefault implements BasicLink {
             this.basicLinkObjectExtensions = basicLinkObjectExtensions;
     }
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public List<SimpleType> getObjectSimpleExtensions() {return this.objectSimpleExtensions;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public IdAttributes getIdAttributes() {return this.idAttributes;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public String getHref() {return this.href;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public List<SimpleType> getBasicLinkSimpleExtensions() {return this.basicLinkSimpleExtensions;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public List<AbstractObject> getBasicLinkObjectExtensions() {return this.basicLinkObjectExtensions;}
 

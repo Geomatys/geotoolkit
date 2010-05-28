@@ -267,11 +267,11 @@ public class KmlFactoryDefault implements KmlFactory{
     public Camera createCamera(List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
             List<SimpleType> abstractViewSimpleExtensions, List<AbstractObject> abstractViewObjectExtensions,
             Angle180 longitude, Angle90 latitude, double altitude,
-            Angle360 heading, Anglepos180 tilt, Angle180 roll,
+            Angle360 heading, Anglepos180 tilt, Angle180 roll, AltitudeMode altitudeMode,
             List<SimpleType> cameraSimpleExtensions, List<AbstractObject> cameraObjectExtensions){
         return new CameraDefault(objectSimpleExtensions, idAttributes,
                 abstractViewSimpleExtensions, abstractViewObjectExtensions,
-                longitude, latitude, altitude, heading, tilt, roll,
+                longitude, latitude, altitude, heading, tilt, roll, altitudeMode,
                 cameraSimpleExtensions, cameraObjectExtensions);
     }
 

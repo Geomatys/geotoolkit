@@ -5,7 +5,7 @@ import org.geotoolkit.data.model.xsd.SimpleType;
 
 /**
  *
- * @author SAmuel Andrés
+ * @author Samuel Andrés
  */
 public class NetworkLinkControlDefault implements NetworkLinkControl {
 
@@ -22,6 +22,21 @@ public class NetworkLinkControlDefault implements NetworkLinkControl {
     private List<SimpleType> networkLinkControlSimpleExtensions;
     private List<AbstractObject> networkLinkControlObjectExtensions;
 
+    /**
+     *
+     * @param minRefreshPeriod
+     * @param maxSessionLength
+     * @param cookie
+     * @param message
+     * @param linkName
+     * @param linkDescription
+     * @param linkSnippet
+     * @param expire
+     * @param update
+     * @param view
+     * @param networkLinkControlSimpleExtensions
+     * @param networkLinkControlObjectExtensions
+     */
     public NetworkLinkControlDefault(double minRefreshPeriod,
             double maxSessionLength, String cookie, String message, String linkName, String linkDescription,
             Snippet linkSnippet, String expire, Update update, AbstractView view,
@@ -40,39 +55,87 @@ public class NetworkLinkControlDefault implements NetworkLinkControl {
         this.networkLinkControlObjectExtensions = networkLinkControlObjectExtensions;
     }
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public double getMinRefreshPeriod() {return this.minRefreshPeriod;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public double getMaxSessionLength() {return this.maxSessionLength;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public String getCookie() {return this.cookie;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public String getMessage() {return this.message;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public String getLinkName() {return this.linkName;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public String getLinkDescription() {return this.linkDescription;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public Snippet getLinkSnippet() {return this.linkSnippet;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public String getExpire() {return this.expire;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public Update getUpdate() {return this.update;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public AbstractView getView() {return this.view;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public List<SimpleType> getNetworkLinkControlSimpleExtensions() {return this.networkLinkControlSimpleExtensions;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public List<AbstractObject> getNetworkLinkControlObjectExtensions() {return this.networkLinkControlObjectExtensions;}
 

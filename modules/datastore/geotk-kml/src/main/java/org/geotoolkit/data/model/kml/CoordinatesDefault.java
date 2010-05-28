@@ -10,6 +10,10 @@ public class CoordinatesDefault implements Coordinates{
 
     private List<Coordinate> coordinates;
 
+    /**
+     * 
+     * @param coordinates
+     */
     public CoordinatesDefault(List<Coordinate> coordinates){
         this.coordinates = coordinates;
     }
@@ -19,8 +23,7 @@ public class CoordinatesDefault implements Coordinates{
 
     /**
      *
-     * @param i the index of the Coordinate to return.
-     * @return The Coordinate at the index i.
+     * @{@inheritDoc }
      */
     @Override
     public Coordinate getCoordinate(int i) {
@@ -32,8 +35,8 @@ public class CoordinatesDefault implements Coordinates{
     }
 
     /**
-     * Get the XML schema list of coordinates.
-     * @return The String of coordinates values formated as a XML schema list.
+     * 
+     * @{@inheritDoc }
      */
     @Override
     public String getCoordinatesString(){

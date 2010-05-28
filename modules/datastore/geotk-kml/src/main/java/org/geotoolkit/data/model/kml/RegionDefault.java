@@ -14,6 +14,15 @@ public class RegionDefault extends AbstractObjectDefault implements Region {
     private List<SimpleType> regionSimpleExtensions;
     private List<AbstractObject> regionObjectExtentions;
 
+    /**
+     *
+     * @param objectSimpleExtensions
+     * @param idAttributes
+     * @param latLonAltBox
+     * @param lod
+     * @param regionSimpleExtensions
+     * @param regionObjectExtentions
+     */
     public RegionDefault(List<SimpleType> objectSimpleExtensions,
             IdAttributes idAttributes,
             LatLonAltBox latLonAltBox, Lod lod, List<SimpleType> regionSimpleExtensions, List<AbstractObject> regionObjectExtentions){
@@ -24,15 +33,31 @@ public class RegionDefault extends AbstractObjectDefault implements Region {
         this.regionObjectExtentions = regionObjectExtentions;
     }
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public LatLonAltBox getLatLonAltBox() {return this.latLonAltBox;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public Lod getLod() {return this.lod;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public List<SimpleType> getRegionSimpleExtensions() {return this.regionSimpleExtensions;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public List<AbstractObject> getRegionObjectExtensions() {return this.regionObjectExtentions;}
 

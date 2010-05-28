@@ -17,6 +17,20 @@ public class PolygonDefault extends AbstractGeometryDefault implements Polygon {
     private List<SimpleType> polygonSimpleExtensions;
     private List<AbstractObject> polygonObjectExtensions;
 
+    /**
+     *
+     * @param objectSimpleExtensions
+     * @param idAttributes
+     * @param abstractGeometrySimpleExtensions
+     * @param abstractGeometryObjectExtensions
+     * @param extrude
+     * @param tessellate
+     * @param altitudeMode
+     * @param outerBoundaryIs
+     * @param innerBoundariesAre
+     * @param polygonSimpleExtensions
+     * @param polygonObjectExtensions
+     */
     public PolygonDefault(List<SimpleType> objectSimpleExtensions,
             IdAttributes idAttributes,
             List<SimpleType> abstractGeometrySimpleExtensions,
@@ -35,24 +49,52 @@ public class PolygonDefault extends AbstractGeometryDefault implements Polygon {
         this.polygonObjectExtensions = polygonObjectExtensions;
     }
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public boolean getExtrude() {return this.extrude;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public boolean getTessellate() {return this.tessellate;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public AltitudeMode getAltitudeMode() {return this.altitudeMode;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public Boundary getOuterBoundaryIs() {return this.outerBoundaryIs;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public List<Boundary> getInnerBoundariesAre() {return this.innerBoundariesAre;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public List<SimpleType> getPolygonSimpleExtensions() {return this.polygonSimpleExtensions;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public List<AbstractObject> getPolygonObjectExtensions() {return this.polygonObjectExtensions;}
 

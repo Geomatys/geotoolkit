@@ -8,9 +8,11 @@ public class ColorDefault implements Color {
 
     private String color;
 
-    public static final String BG_COLOR = "ffffffff";
-    public static final String TEXT_COLOR = "ff000000";
-
+    /**
+     *
+     * @param color
+     * @throws KmlException
+     */
     public ColorDefault(String color) throws KmlException{
         if(color.matches("[0-9a-fA-F]{8}")){
             this.color = color;
@@ -19,6 +21,10 @@ public class ColorDefault implements Color {
         }
     }
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public String getColor() {return this.color;}
 

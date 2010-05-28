@@ -15,6 +15,16 @@ public class PairDefault extends AbstractObjectDefault implements Pair{
     private List<SimpleType> pairSimpleExtensions;
     private List<AbstractObject> pairObjectExtensions;
 
+    /**
+     *
+     * @param objectSimpleExtensions
+     * @param idAttributes
+     * @param key
+     * @param styleUrl
+     * @param styleSelector
+     * @param pairSimpleExtensions
+     * @param pairObjectExtensions
+     */
     public PairDefault(List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
             StyleState key, String styleUrl, AbstractStyleSelector styleSelector,
             List<SimpleType> pairSimpleExtensions,
@@ -27,18 +37,38 @@ public class PairDefault extends AbstractObjectDefault implements Pair{
         this.pairObjectExtensions = pairObjectExtensions;
     }
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public StyleState getKey() {return this.key;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public String getStyleUrl() {return this.styleUrl;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public AbstractStyleSelector getAbstractStyleSelector() {return this.styleSelector;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public List<SimpleType> getPairSimpleExtensions() {return this.pairSimpleExtensions;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public List<AbstractObject> getPairObjectExtensions() {return this.pairObjectExtensions;}
 

@@ -12,6 +12,13 @@ public class SchemaDataDefault extends AbstractObjectDefault implements SchemaDa
     public List<SimpleData> simpleDatas;
     public List<Object> schemaDataExtensions;
 
+    /**
+     *
+     * @param objectSimpleExtensions
+     * @param idAttributes
+     * @param simpleDatas
+     * @param schemaDataExtensions
+     */
     public SchemaDataDefault(List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
             List<SimpleData> simpleDatas, List<Object> schemaDataExtensions){
         super(objectSimpleExtensions, idAttributes);
@@ -19,9 +26,17 @@ public class SchemaDataDefault extends AbstractObjectDefault implements SchemaDa
         this.schemaDataExtensions = schemaDataExtensions;
     }
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public List<SimpleData> getSimpleDatas() {return this.simpleDatas;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public List<Object> getSchemaDataExtensions() {return this.schemaDataExtensions;}
 

@@ -10,6 +10,10 @@ public class CoordinateDefault implements Coordinate{
     private double geodeticLatitude;
     private double altitude;
 
+    /**
+     *
+     * @param coordinates
+     */
     public CoordinateDefault(String coordinates){
         String[] coordinatesList = coordinates.split(",");
         this.geodeticLongitude = Double.valueOf(coordinatesList[0]);//problème lorsqu'une chaîne de chiffres débute par un espace ou autre caractère d'espacement
@@ -19,26 +23,53 @@ public class CoordinateDefault implements Coordinate{
         }
     }
 
+    /**
+     *
+     * @param geodeticLongiude
+     * @param geodeticLatitude
+     * @param altitude
+     */
     public CoordinateDefault(double geodeticLongiude, double geodeticLatitude, double altitude){
         this.geodeticLongitude = geodeticLongiude;
         this.geodeticLatitude = geodeticLatitude;
         this.altitude = altitude;
     }
 
+    /**
+     *
+     * @param geodeticLongiude
+     * @param geodeticLatitude
+     */
     public CoordinateDefault(double geodeticLongiude, double geodeticLatitude){
         this.geodeticLongitude = geodeticLongiude;
         this.geodeticLatitude = geodeticLatitude;
     }
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public double getGeodeticLongitude() {return this.geodeticLongitude;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public double getGeodeticLatitude() {return this.geodeticLatitude;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public double getAltitude() {return this.altitude;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public String getCoordinateString() {
         return String.valueOf(geodeticLongitude)+","+
@@ -46,6 +77,7 @@ public class CoordinateDefault implements Coordinate{
                 String.valueOf(altitude);
     }
 
+    @Override
     public String toString(){
         String resultat = "Coordinate : ";
         resultat += "\n\tGeodetic Longitude = "+geodeticLongitude+

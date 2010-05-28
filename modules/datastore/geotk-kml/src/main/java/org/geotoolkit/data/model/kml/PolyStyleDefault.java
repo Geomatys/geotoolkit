@@ -14,6 +14,21 @@ public class PolyStyleDefault extends AbstractColorStyleDefault implements PolyS
     private List<SimpleType> polyStyleSimpleExtensions;
     private List<AbstractObject> polyStyleObjectExtensions;
 
+    /**
+     *
+     * @param objectSimpleExtensions
+     * @param idAttributes
+     * @param subStyleSimpleExtensions
+     * @param subStyleObjectExtensions
+     * @param color
+     * @param colorMode
+     * @param colorStyleSimpleExtensions
+     * @param colorStyleObjectExtensions
+     * @param fill
+     * @param outline
+     * @param polyStyleSimpleExtensions
+     * @param polyStyleObjectExtensions
+     */
     public PolyStyleDefault(List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
             List<SimpleType> subStyleSimpleExtensions, List<AbstractObject> subStyleObjectExtensions,
             Color color, ColorMode colorMode,
@@ -29,15 +44,31 @@ public class PolyStyleDefault extends AbstractColorStyleDefault implements PolyS
         this.polyStyleObjectExtensions = polyStyleObjectExtensions;
     }
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public boolean getFill() {return this.fill;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public boolean getOutline() {return this.outline;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public List<SimpleType> getPolyStyleSimpleExtensions() {return this.polyStyleSimpleExtensions;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public List<AbstractObject> getPolyStyleObjectExtensions() {return this.polyStyleObjectExtensions;}
 

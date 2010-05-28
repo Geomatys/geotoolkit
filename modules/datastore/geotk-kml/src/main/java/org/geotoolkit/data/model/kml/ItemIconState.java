@@ -2,7 +2,7 @@ package org.geotoolkit.data.model.kml;
 
 /**
  *
- * <p>Thi enumeration maps itemIconStateEnumType type.</p>
+ * <p>This enumeration maps itemIconStateEnumType type.</p>
  *
  * <br />&lt;simpleType name="itemIconStateEnumType">
  * <br />&lt;restriction base="string">
@@ -53,7 +53,7 @@ public enum ItemIconState {
         return transform(itemIconState, null);
     }
 
-        /**
+    /**
      *
      * @param altitudeMode
      * @param defaultValue The default value to return if itemIconState String parameter

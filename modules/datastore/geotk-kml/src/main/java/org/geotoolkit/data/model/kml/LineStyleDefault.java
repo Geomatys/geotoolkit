@@ -13,6 +13,20 @@ public class LineStyleDefault extends AbstractColorStyleDefault implements LineS
     private List<SimpleType> lineStyleSimpleExtensions;
     private List<AbstractObject> lineStyleObjectExtentions;
 
+    /**
+     *
+     * @param objectSimpleExtensions
+     * @param idAttributes
+     * @param subStyleSimpleExtensions
+     * @param subStyleObjectExtensions
+     * @param color
+     * @param colorMode
+     * @param colorStyleSimpleExtensions
+     * @param colorStyleObjectExtensions
+     * @param width
+     * @param lineStyleSimpleExtensions
+     * @param lineStyleObjectExtensions
+     */
     public LineStyleDefault(List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
             List<SimpleType> subStyleSimpleExtensions, List<AbstractObject> subStyleObjectExtensions,
             Color color, ColorMode colorMode,
@@ -27,12 +41,24 @@ public class LineStyleDefault extends AbstractColorStyleDefault implements LineS
         this.lineStyleObjectExtentions = lineStyleObjectExtensions;
     }
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public double getWidth() {return this.width;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public List<SimpleType> getLineStyleSimpleExtensions() {return this.lineStyleSimpleExtensions;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public List<AbstractObject> getLineStyleObjectExtensions() {return this.lineStyleObjectExtentions;}
 

@@ -10,10 +10,18 @@ public class ChangeDefault implements Change {
 
     private List<AbstractObject> objects;
 
+    /**
+     *
+     * @param objects
+     */
     public ChangeDefault(List<AbstractObject> objects){
         this.objects = objects;
     }
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public List<AbstractObject> getObjects() {return this.objects;}
 

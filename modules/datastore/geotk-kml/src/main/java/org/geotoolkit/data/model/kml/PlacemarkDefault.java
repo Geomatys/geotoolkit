@@ -16,7 +16,32 @@ public class PlacemarkDefault extends AbstractFeatureDefault implements Placemar
     private List<SimpleType> placemarkSimpleExtension;
     private List<AbstractObject> placemarkObjectExtension;
 
-
+    /**
+     *
+     * @param objectSimpleExtensions
+     * @param idAttributes
+     * @param name
+     * @param visibility
+     * @param open
+     * @param author
+     * @param link
+     * @param address
+     * @param addressDetails
+     * @param phoneNumber
+     * @param snippet
+     * @param description
+     * @param view
+     * @param timePrimitive
+     * @param styleUrl
+     * @param styleSelector
+     * @param region
+     * @param extendedData
+     * @param abstractFeatureSimpleExtensions
+     * @param abstractFeatureObjectExtensions
+     * @param abstractGeometry
+     * @param placemarkSimpleExtensions
+     * @param placemarkObjectExtension
+     */
     public PlacemarkDefault(List<SimpleType> objectSimpleExtensions,
             IdAttributes idAttributes,
             String name,
@@ -49,17 +74,28 @@ public class PlacemarkDefault extends AbstractFeatureDefault implements Placemar
         this.placemarkObjectExtension = placemarkObjectExtension;
     }
 
-
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public AbstractGeometry getAbstractGeometry() {
         return this.abstractGeometry;
     }
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public List<SimpleType> getPlacemarkSimpleExtensions() {
         return this.placemarkSimpleExtension;
     }
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public List<AbstractObject> getPlacemarkObjectExtensions() {
         return this.placemarkObjectExtension;

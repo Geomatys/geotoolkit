@@ -6,17 +6,26 @@
 package org.geotoolkit.data.model.kml;
 
 /**
+ * <p>A spécific exception class for KML parsing errors.</p>
  *
- * @author w7mainuser
+ * @author Samuel Andrés
  */
 public class KmlException extends Exception{
 
     private String message;
 
+    /**
+     *
+     * @param message
+     */
     public KmlException(String message){
         this.message = message;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public String getMessage(){
         return this.message;

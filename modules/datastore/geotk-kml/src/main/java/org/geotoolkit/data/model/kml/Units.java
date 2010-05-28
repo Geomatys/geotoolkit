@@ -12,18 +12,38 @@ public enum Units {
     
     private String unit;
 
+    /**
+     * 
+     * @param unit
+     */
     private Units(String unit){
         this.unit = unit;
     }
 
+    /**
+     *
+     * @return
+     */
     public String getUnit(){
         return this.unit;
     }
 
+    /**
+     *
+     * @param unit
+     * @return The Units instance corresponding to the unit parameter.
+     */
     public static Units transform(String unit){
         return transform(unit, null);
     }
 
+    /**
+     *
+     * @param unit
+     * @param defaultValue The default value to return if unit String parameter
+     * do not correspond to one Units instance.
+     * @return The Units instance corresponding to the unit parameter.
+     */
     public static Units transform(String unit, Units defaultValue){
         Units resultat = defaultValue;
         for(Units u : Units.values()){

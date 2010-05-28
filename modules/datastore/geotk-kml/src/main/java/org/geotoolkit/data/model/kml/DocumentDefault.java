@@ -17,6 +17,35 @@ public class DocumentDefault extends AbstractContainerDefault implements Documen
     private List<SimpleType> documentSimpleExtensions;
     private List<AbstractObject> documentObjectExtensions;
 
+    /**
+     *
+     * @param objectSimpleExtensions
+     * @param idAttributes
+     * @param name
+     * @param visibility
+     * @param open
+     * @param author
+     * @param link
+     * @param address
+     * @param addressDetails
+     * @param phoneNumber
+     * @param snippet
+     * @param description
+     * @param view
+     * @param timePrimitive
+     * @param styleUrl
+     * @param styleSelector
+     * @param region
+     * @param extendedData
+     * @param abstractFeatureSimpleExtensions
+     * @param abstractFeatureObjectExtensions
+     * @param abstractContainerSimpleExtensions
+     * @param abstractContainerObjectExtensions
+     * @param schemas
+     * @param features
+     * @param documentSimpleExtensions
+     * @param documentObjectExtensions
+     */
     public DocumentDefault(List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
             String name, boolean visibility, boolean open, AtomPersonConstruct author, AtomLink link,
             String address, AddressDetails addressDetails, String phoneNumber, String snippet,
@@ -44,18 +73,38 @@ public class DocumentDefault extends AbstractContainerDefault implements Documen
         this.documentObjectExtensions = documentObjectExtensions;
     }
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public List<Schema> getSchemas() {return this.schemas;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public List<AbstractFeature> getAbstractFeatures() {return this.features;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public List<AbstractObject> getDocumentObjectExtensions() {return this.documentObjectExtensions;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public List<SimpleType> getDocumentSimpleExtensions() { return this.documentSimpleExtensions;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public String toString(){
         String resultat = super.toString()+

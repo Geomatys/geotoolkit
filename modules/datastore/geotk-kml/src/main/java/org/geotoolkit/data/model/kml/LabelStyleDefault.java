@@ -13,6 +13,20 @@ public class LabelStyleDefault extends AbstractColorStyleDefault implements Labe
     private List<SimpleType> labelStyleSimpleExtensions;
     private List<AbstractObject> labelStyleObjectExtensions;
 
+    /**
+     *
+     * @param objectSimpleExtensions
+     * @param idAttributes
+     * @param subStyleSimpleExtensions
+     * @param subStyleObjectExtensions
+     * @param color
+     * @param colorMode
+     * @param colorStyleSimpleExtensions
+     * @param colorStyleObjectExtensions
+     * @param scale
+     * @param iconStyleSimpleExtensions
+     * @param iconStyleObjectExtensions
+     */
     public LabelStyleDefault(List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
             List<SimpleType> subStyleSimpleExtensions, List<AbstractObject> subStyleObjectExtensions,
             Color color, ColorMode colorMode,
@@ -27,12 +41,24 @@ public class LabelStyleDefault extends AbstractColorStyleDefault implements Labe
         this.labelStyleObjectExtensions = iconStyleObjectExtensions;
     }
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public double getScale() {return this.scale;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public List<SimpleType> getLabelStyleSimpleExtensions() {return this.labelStyleSimpleExtensions;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public List<AbstractObject> getLabelStyleObjectExtensions() {return this.labelStyleObjectExtensions;}
 

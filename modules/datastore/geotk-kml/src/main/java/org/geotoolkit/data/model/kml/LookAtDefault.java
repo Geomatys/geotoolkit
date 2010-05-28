@@ -18,6 +18,21 @@ public class LookAtDefault extends AbstractViewDefault implements LookAt {
     private List<SimpleType> lookAtSimpleExtensions;
     private List<AbstractObject> lookAtObjectExtensions;
 
+    /**
+     *
+     * @param objectSimpleExtensions
+     * @param idAttributes
+     * @param abstractViewSimpleExtensions
+     * @param abstractViewObjectExtensions
+     * @param longitude
+     * @param latitude
+     * @param altitude
+     * @param heading
+     * @param tilt
+     * @param range
+     * @param lookAtSimpleExtensions
+     * @param lookAtObjectExtensions
+     */
     public LookAtDefault(List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
             List<SimpleType> abstractViewSimpleExtensions, List<AbstractObject> abstractViewObjectExtensions,
             Angle180 longitude, Angle90 latitude, double altitude,
@@ -35,27 +50,59 @@ public class LookAtDefault extends AbstractViewDefault implements LookAt {
         this.lookAtObjectExtensions = lookAtObjectExtensions;
     }
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public Angle180 getLongitude() {return this.longitude;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public Angle90 getLatitude() {return this.latitude;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public double getAltitude() {return this.altitude;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public Angle360 getHeading() {return this.heading;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public Anglepos180 getTilt() {return this.tilt;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public double getRange() {return this.range;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public List<SimpleType> getLookAtSimpleExtensions() {return this.lookAtSimpleExtensions;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public List<AbstractObject> getLookAtObjectExtensions() {return this.lookAtObjectExtensions;}
 

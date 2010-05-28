@@ -16,6 +16,23 @@ public class IconStyleDefault extends AbstractColorStyleDefault implements IconS
     private List<SimpleType> iconStyleSimpleExtensions;
     private List<AbstractObject> iconStyleObjectExtensions;
 
+    /**
+     *
+     * @param objectSimpleExtensions
+     * @param idAttributes
+     * @param subStyleSimpleExtensions
+     * @param subStyleObjectExtensions
+     * @param color
+     * @param colorMode
+     * @param colorStyleSimpleExtensions
+     * @param colorStyleObjectExtensions
+     * @param scale
+     * @param heading
+     * @param icon
+     * @param hotSpot
+     * @param iconStyleSimpleExtensions
+     * @param iconStyleObjectExtensions
+     */
     public IconStyleDefault(List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
             List<SimpleType> subStyleSimpleExtensions, List<AbstractObject> subStyleObjectExtensions,
             Color color, ColorMode colorMode,
@@ -33,21 +50,45 @@ public class IconStyleDefault extends AbstractColorStyleDefault implements IconS
         this.iconStyleObjectExtensions = iconStyleObjectExtensions;
     }
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public double getScale() {return this.scale;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public Angle360 getHeading() {return this.heading;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public BasicLink getIcon() {return this.icon;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public Vec2 getHotSpot() {return this.hotSpot;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public List<SimpleType> getIconStyleSimpleExtensions() {return this.iconStyleSimpleExtensions;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public List<AbstractObject> getIconStyleObjectExtensions() {return this.iconStyleObjectExtensions;}
 
