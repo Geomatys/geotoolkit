@@ -130,15 +130,16 @@ public class RecordType extends DCMIRecordType implements Record, Settable {
                       SimpleLiteral references) {
         
         super(identifier, title,type, subject, formats, modified, date, _abstract, creator, distributor, language, spatial, references, null);
-        
-        this.boundingBox = new ArrayList<JAXBElement<? extends BoundingBoxType>>();
-        for (BoundingBoxType bbox: bboxes) {
-            if (bbox instanceof WGS84BoundingBoxType)
-                this.boundingBox.add(owsFactory.createWGS84BoundingBox((WGS84BoundingBoxType)bbox));
-            else
-                this.boundingBox.add(owsFactory.createBoundingBox(bbox));
+
+        if (bboxes != null) {
+            this.boundingBox = new ArrayList<JAXBElement<? extends BoundingBoxType>>();
+            for (BoundingBoxType bbox: bboxes) {
+                if (bbox instanceof WGS84BoundingBoxType)
+                    this.boundingBox.add(owsFactory.createWGS84BoundingBox((WGS84BoundingBoxType)bbox));
+                else
+                    this.boundingBox.add(owsFactory.createBoundingBox(bbox));
+            }
         }
-        
     }
     
     /**
