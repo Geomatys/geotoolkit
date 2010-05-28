@@ -29,6 +29,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.ByteOrder;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -38,13 +39,14 @@ import org.opengis.referencing.FactoryException;
 
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.internal.io.Installation;
+import org.geotoolkit.referencing.operation.transform.NTv2Transform;
 
 
 /**
  * The panel displaying available data and giving the opportunity to download them.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.05
+ * @version 3.12
  *
  * @since 3.00
  * @module
@@ -54,7 +56,7 @@ final class DataPanel extends JComponent {
     /**
      * Index of items to reports. The {@code COUNT} field is the total number of items.
      */
-    static final int EPSG = 0, NADCON = 1, COUNT = 2;
+    static final int EPSG=0, NADCON=1, RGF93=2, COUNT=3;
 
     /**
      * User for fetching localized words.
@@ -104,6 +106,11 @@ final class DataPanel extends JComponent {
                     button = Vocabulary.Keys.DOWNLOAD;
                     break;
                 }
+                case RGF93: {
+                    label = resources.getString(Vocabulary.Keys.DATA_$1, "RGF93");
+                    button = Vocabulary.Keys.DOWNLOAD;
+                    break;
+                }
                 default: throw new AssertionError(i);
             }
             final int type = i;
@@ -149,7 +156,7 @@ final class DataPanel extends JComponent {
             downloads[i].setEnabled(false);
             state.setString(resources.getMenuLabel(Vocabulary.Keys.VERIFYING));
         }
-        refresh(NADCON, EPSG); // Fastest refrest first.
+        refresh(RGF93, NADCON, EPSG); // Fastest refrest first.
     }
 
     /**
@@ -184,6 +191,13 @@ final class DataPanel extends JComponent {
                             if (new File(directory, "conus.las").isFile() &&
                                 new File(directory, "conus.los").isFile())
                             {
+                                found = true;
+                            }
+                            break;
+                        }
+                        case RGF93: {
+                            final File directory = Installation.NTv2.directory(true);
+                            if (new File(directory, NTv2Transform.RGF93).isFile()) {
                                 found = true;
                             }
                             break;
@@ -277,6 +291,16 @@ final class DataPanel extends JComponent {
                     unzip(new URL("http://www.ngs.noaa.gov/PC_PROD/NADCON/GRIDS.zip"), directory);
                     break;
                 }
+                case RGF93: {
+                    final File directory = Installation.NTv2.validDirectory(true);
+                    String url = "http://lambert93.ign.fr/fileadmin/files/" + NTv2Transform.RGF93;
+                    if (ByteOrder.BIG_ENDIAN.equals(ByteOrder.nativeOrder())) {
+                        final int split = url.lastIndexOf('.');
+                        url = url.substring(0, split) + "_b" + url.substring(split);
+                    }
+                    copy(new URL(url), new File(directory, NTv2Transform.RGF93));
+                    break;
+                }
             }
             return null;
         }
@@ -300,8 +324,34 @@ final class DataPanel extends JComponent {
         }
 
         /**
+         * Copies the given stream to the given target file.
+         *
+         * @param  in The input stream to copy. The stream will be closed.
+         * @param  target The destination file.
+         * @throws IOException If an error occured while copying the entries.
+         */
+        private void copy(final URL url, final File target) throws IOException {
+            final URLConnection connection = url.openConnection();
+            final int progressDivisor = connection.getContentLength() / 100;
+            final InputStream in = connection.getInputStream();
+            final OutputStream out = new FileOutputStream(target);
+            int done = 0;
+            try {
+                final byte[] buffer = new byte[4096];
+                int n; while ((n = in.read(buffer)) > 0) {
+                    out.write(buffer, 0, n);
+                    if (progressDivisor > 0) {
+                        setProgress(Math.min(100, (done += n) / progressDivisor));
+                    }
+                }
+            } finally {
+                out.close();
+                in.close();
+            }
+        }
+
+        /**
          * Unzip the given stream to the given target directory.
-         * This convenience method does not log the progress.
          *
          * @param  in The input stream to unzip. The stream will be closed.
          * @param  target The destination directory.

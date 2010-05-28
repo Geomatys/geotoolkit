@@ -40,7 +40,7 @@ import org.geotoolkit.util.logging.Logging;
  * shift over United States.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.11
+ * @version 3.12
  *
  * @since 3.00
  * @module
@@ -66,11 +66,11 @@ public enum Installation {
     NADCON("org/geotoolkit/referencing/operation/transform", "NADCON", "NADCON"),
 
     /**
-     * The grid shift file location for RGF93 transform.
+     * The grid shift file location for NTv2 transforms, including RGF93.
      *
-     * @since 3.11
+     * @since 3.12
      */
-    RGF93("org/geotoolkit/referencing/operation/transform", "RGF93", "RGF93"),
+    NTv2("org/geotoolkit/referencing/operation/transform", "NTv2", "NTv2"),
 
     /**
      * The EPSG database, or parameters required for a connection to a distant EPSG database.

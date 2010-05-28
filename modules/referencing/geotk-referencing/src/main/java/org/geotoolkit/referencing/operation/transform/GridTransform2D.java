@@ -38,8 +38,8 @@ import org.geotoolkit.geometry.DirectPosition2D;
 
 /**
  * A specialization of {@link GridTransform} in the two-dimensional case. The default implementation
- * is invertible for the {@linkplain GridType#OFFSET OFFSET} and {@linkplain GridType#NADCON NADCON}
- * grid types (assuming that the offsets are small), but not for the
+ * is invertible for the {@link GridType#OFFSET OFFSET}, {@link GridType#NADCON NADCON} and
+ * {@link GridType#NTv2 NTv2} grid types (assuming that the offsets are small), but not for the
  * {@linkplain GridType#LOCALIZATION LOCALIZATION} type. For an invertible localization grid,
  * see the {@link org.geotoolkit.referencing.operation.builder.LocalizationGrid} builder.
  *

@@ -68,8 +68,9 @@ import org.geotoolkit.referencing.operation.matrix.MatrixFactory;
  * columns and rows in the grid), then output coordinates are extrapolated.
  * <p>
  * In the case of a {@link GridType#LOCALIZATION LOCALIZATION} grid, we are done. But in the case
- * of {@link GridType#OFFSET OFFSET} or {@link GridType#NADCON NADCON} grids, the above coordinates
- * are added to the input coordinates in order to get the final output coordinates.
+ * of {@link GridType#OFFSET OFFSET}, {@link GridType#NADCON NADCON} or {@link GridType#NTv2 NTv2}
+ * grids, the above coordinates are added to the input coordinates in order to get the final output
+ * coordinates.
  *
  *
  * {@section Invertibility}
@@ -81,7 +82,8 @@ import org.geotoolkit.referencing.operation.matrix.MatrixFactory;
  *
  * @author Rémi Eve (IRD)
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.00
+ * @author Simon Reynard (Geomatys)
+ * @version 3.12
  *
  * @since 3.00
  * @module
@@ -226,9 +228,10 @@ public class GridTransform extends AbstractMathTransform implements Serializable
             throw new IllegalArgumentException(Errors.format(Errors.Keys.MISMATCHED_ARRAY_LENGTH));
         }
         if (area != null) {
-            xOrigin = area.getMinX();
+            final double longitudeSign = GridType.NTv2.equals(type) ? -1 : +1;
+            xOrigin = area.getMinX() * longitudeSign;
             yOrigin = area.getMinY();
-            scaleX  = width  / area.getWidth();
+            scaleX  = width  / area.getWidth() * longitudeSign;
             scaleY  = height / area.getHeight();
         } else {
             xOrigin = 0;
@@ -297,6 +300,7 @@ public class GridTransform extends AbstractMathTransform implements Serializable
             double x = (v10 - v00); x += ((v11 - v01) - x) * dy;
             double y = (v01 - v00); y += ((v11 - v10) - y) * dx;
             switch (type) {
+                case NTv2:
                 case NADCON: {
                     x /= -3600;
                     y /= +3600;
@@ -358,6 +362,7 @@ public class GridTransform extends AbstractMathTransform implements Serializable
                     }
                     break;
                 }
+                case NTv2:
                 case NADCON: {
                     switch (j) {
                         case 0: value = x - value/3600; break;
@@ -526,6 +531,7 @@ public class GridTransform extends AbstractMathTransform implements Serializable
                         }
                         break;
                     }
+                    case NTv2:
                     case NADCON: {
                         switch (j) {
                             case 0: value = x - value/3600; break;
