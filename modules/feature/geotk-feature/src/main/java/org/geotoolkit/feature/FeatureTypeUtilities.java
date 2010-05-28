@@ -344,7 +344,11 @@ public class FeatureTypeUtilities {
         if(same){
             int i=0;
             for(PropertyDescriptor desc : featureType.getDescriptors()){
-                same = desc.getName().equals(properties[i]);
+                if(properties[i].getNamespaceURI() == null){
+                    same = desc.getName().getLocalPart().equals(properties[i].getLocalPart());
+                }else{
+                    same = desc.getName().equals(properties[i]);
+                }
                 if(!same) break;
                 i++;
             }
@@ -358,7 +362,11 @@ public class FeatureTypeUtilities {
         tb.setName(featureType.getName());
 
         for (int i=0; i<properties.length; i++) {
-            tb.add(featureType.getDescriptor(properties[i]));
+            PropertyDescriptor desc = featureType.getDescriptor(properties[i]);
+            if(desc == null){
+                throw new SchemaException("Property not found : " + properties[i] +'\n'+featureType);
+            }
+            tb.add(desc);
         }
         return tb.buildFeatureType();
     }

@@ -64,8 +64,7 @@ public class DefaultFeature extends AbstractFeature<Collection<Property>> {
      */
     public DefaultFeature(Collection<? extends Property> properties, AttributeDescriptor desc, FeatureId id) {
         super(desc, id);
-        value = new ArrayList<Property>();
-        value.addAll(properties);
+        value = new ArrayList<Property>(properties);
     }
 
 }

@@ -17,39 +17,47 @@
 
 package org.geotoolkit.data.osm;
 
-import java.io.File;
+import com.vividsolutions.jts.geom.LineString;
+
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.locks.ReadWriteLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
 import javax.xml.stream.XMLStreamException;
 
 import org.geotoolkit.data.AbstractDataStore;
 import org.geotoolkit.data.DataStoreRuntimeException;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureWriter;
+import org.geotoolkit.data.memory.GenericExtendFeatureIterator;
+import org.geotoolkit.data.memory.GenericExtendFeatureIterator.FeatureExtend;
+import org.geotoolkit.data.memory.MemoryDataStore;
 import org.geotoolkit.data.osm.xml.OSMXMLReader;
-import org.geotoolkit.data.osm.xml.OSMXMLWriter;
 import org.geotoolkit.data.query.Query;
+import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.query.QueryCapabilities;
-import org.geotoolkit.feature.DefaultFeature;
-import org.geotoolkit.filter.identity.DefaultFeatureId;
-import org.geotoolkit.internal.io.IOUtilities;
+import org.geotoolkit.feature.calculated.CalculatedLineStringAttribute;
+import org.geotoolkit.factory.FactoryFinder;
+import org.geotoolkit.feature.AttributeDescriptorBuilder;
+import org.geotoolkit.feature.DefaultAttribute;
+import org.geotoolkit.feature.DefaultName;
+import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.storage.DataStoreException;
 
 import org.opengis.feature.Feature;
 import org.opengis.feature.Property;
+import org.opengis.feature.type.AttributeDescriptor;
+import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.Name;
 import org.opengis.feature.type.PropertyDescriptor;
 import org.opengis.filter.Filter;
+import org.opengis.filter.FilterFactory;
 import org.opengis.filter.identity.FeatureId;
+import org.opengis.filter.identity.Identifier;
 
 import static org.geotoolkit.data.osm.model.OSMModelConstants.*;
 
@@ -64,24 +72,79 @@ import static org.geotoolkit.data.osm.model.OSMModelConstants.*;
  */
 public class OSMMemoryDataStore extends AbstractDataStore{
 
-    private final ReadWriteLock RWLock = new ReentrantReadWriteLock();
-    private final ReadWriteLock TempLock = new ReentrantReadWriteLock();
+    private static final FilterFactory FF = FactoryFinder.getFilterFactory(null);
 
-    private final File file;
+    private static final FeatureType TYPE_WAY_EXTENDED;
+    private static final GeometryDescriptor ATT_WAY_GEOMETRY;
+    private static final AttributeDescriptor ATT_NODES_LINK;
+    
+    static{
+        final AttributeDescriptorBuilder adb = new AttributeDescriptorBuilder();
+        final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
+        ATT_WAY_GEOMETRY = (GeometryDescriptor) adb.create(
+                new DefaultName(OSM_NAMESPACE, "geometry_calculated"), LineString.class, OSM_CRS, 1, 1, false, null);
+        ATT_NODES_LINK = adb.create(TYPE_NODE,new DefaultName(OSM_NAMESPACE, "nodes_link"), null,0,Integer.MAX_VALUE,false,null);
 
-    public OSMMemoryDataStore(File f){
-        this.file = f;
+        ftb.copy(TYPE_WAY);
+        ftb.add(ATT_WAY_GEOMETRY);
+        ftb.add(ATT_NODES_LINK);
+        ftb.setDefaultGeometry(ATT_WAY_GEOMETRY.getName());
+        TYPE_WAY_EXTENDED = ftb.buildFeatureType();
     }
 
-    private File createWriteFile() throws MalformedURLException{
-        return (File) IOUtilities.changeExtension(file, "wgpx");
+    private final FeatureExtend wayExtend = new FeatureExtend() {
+        @Override
+        public void extendProperties(Feature candidate, Collection<Property> props) {
+            final Collection<Property> nodeProps = candidate.getProperties(ATT_WAY_NODES.getName());
+            for(Property prop : nodeProps){
+                final Long l = (Long) prop.getValue();
+                props.add(new OSMNodeAttribute(ATT_NODES_LINK, l));
+            }
+
+            final CalculatedLineStringAttribute geomAtt = new CalculatedLineStringAttribute(
+                ATT_WAY_GEOMETRY,
+                ATT_NODES_LINK.getName(), ATT_NODE_POINT.getName());
+            props.add(geomAtt);
+            geomAtt.setRelated(candidate);
+        }
+    };
+
+    private final MemoryDataStore store;
+
+    public OSMMemoryDataStore(Object input) throws IOException, XMLStreamException, DataStoreException{
+        store = new MemoryDataStore();
+        store.createSchema(TYPE_NODE.getName(), TYPE_NODE);
+        store.createSchema(TYPE_WAY.getName(), TYPE_WAY);
+        store.createSchema(TYPE_RELATION.getName(), TYPE_RELATION);
+
+        final OSMXMLReader reader = new OSMXMLReader();
+        try{
+            reader.setInput(input);
+            while(reader.hasNext()){
+                final Object obj = reader.next();
+
+                if(obj instanceof Feature){
+                    final Feature feature = (Feature) obj;
+                    final FeatureType ft = feature.getType();
+
+                    if(!store.getNames().contains(ft.getName())){
+                        store.createSchema(ft.getName(), ft);
+                    }
+
+                    store.addFeatures(ft.getName(), Collections.singleton(feature));
+                }
+
+            }
+        }finally{
+            reader.dispose();
+        }
     }
 
     @Override
     public Set<Name> getNames() throws DataStoreException {
         final Set<Name> names = new HashSet<Name>();
         names.add(TYPE_NODE.getName());
-        names.add(TYPE_WAY.getName());
+        names.add(TYPE_WAY_EXTENDED.getName());
         names.add(TYPE_RELATION.getName());
         return names;
     }
@@ -90,8 +153,8 @@ public class OSMMemoryDataStore extends AbstractDataStore{
     public FeatureType getFeatureType(Name typeName) throws DataStoreException {
         if(TYPE_NODE.getName().equals(typeName)){
             return TYPE_NODE;
-        }else if(TYPE_WAY.getName().equals(typeName)){
-            return TYPE_WAY;
+        }else if(TYPE_WAY_EXTENDED.getName().equals(typeName)){
+            return TYPE_WAY_EXTENDED;
         }else if(TYPE_RELATION.getName().equals(typeName)){
             return TYPE_RELATION;
         }else{
@@ -102,15 +165,20 @@ public class OSMMemoryDataStore extends AbstractDataStore{
     @Override
     public FeatureReader getFeatureReader(Query query) throws DataStoreException {
         final FeatureType ft = getFeatureType(query.getTypeName());
-        final FeatureReader fr = new OSMFeatureReader(ft);
+
+        FeatureReader fr = store.getFeatureReader(QueryBuilder.all(query.getTypeName()));
+
+        //Add calculated attributs.
+        if(ft.getName().equals(TYPE_WAY_EXTENDED.getName())){
+            fr = GenericExtendFeatureIterator.wrap(fr, TYPE_WAY_EXTENDED, wayExtend, query.getHints());
+        }
+        
         return handleRemaining(fr, query);
     }
 
     @Override
     public FeatureWriter getFeatureWriter(Name typeName, Filter filter) throws DataStoreException {
-        final FeatureType ft = getFeatureType(typeName);
-        final FeatureWriter fw = new OSMFeatureWriter(ft);
-        return handleRemaining(fw, filter);
+        throw new UnsupportedOperationException("Not yet.");
     }
 
     ////////////////////////////////////////////////////////////////////////////
@@ -152,195 +220,32 @@ public class OSMMemoryDataStore extends AbstractDataStore{
         handleRemoveWithFeatureWriter(groupName, filter);
     }
 
+    private class OSMNodeAttribute extends DefaultAttribute<Object, AttributeDescriptor, Identifier> {
 
-    private class OSMFeatureReader implements FeatureReader<FeatureType, Feature>{
+        private final long nodeId;
 
-        protected final FeatureType restriction;
-        protected final OSMXMLReader reader;
-        protected Feature current = null;
-
-        private OSMFeatureReader(FeatureType restriction) throws DataStoreException{
-            RWLock.readLock().lock();
-            this.restriction = restriction;
-
-            if(file.exists()){
-                reader = new OSMXMLReader();
-                try {
-                    reader.setInput(file);
-                } catch (IOException ex) {
-                    throw new DataStoreException(ex);
-                } catch (XMLStreamException ex) {
-                    throw new DataStoreException(ex);
-                }
-            }else{
-                reader = null;
-            }
-
+        public OSMNodeAttribute(AttributeDescriptor desc, long nodeId) {
+            super(null, desc, null);
+            this.nodeId = nodeId;
         }
 
         @Override
-        public FeatureType getFeatureType() {
-            return restriction;
-        }
+        public Object getValue() {
+            final QueryBuilder qb = new QueryBuilder(TYPE_NODE.getName());
+            qb.setFilter(FF.id(Collections.singleton(FF.featureId(Long.toString(nodeId)))));
 
-        @Override
-        public Feature next() throws DataStoreRuntimeException {
-            read();
-            final Feature ob = current;
-            current = null;
-            if(ob == null){
-                throw new DataStoreRuntimeException("No more records.");
-            }
-            return ob;
-        }
-
-        @Override
-        public boolean hasNext() throws DataStoreRuntimeException {
-            read();
-            return current != null;
-        }
-
-        private void read() throws DataStoreRuntimeException{
-            if(current != null) return;
-            if(reader == null) return;
-            
+            FeatureReader reader= null;
             try {
-                while(reader.hasNext()) {
-                    final Object candidate = reader.next();
-                    //OSM xml reader can return different objects, not only features.
-                    if(candidate instanceof Feature){
-                        current = (Feature)candidate;
-
-                        if(current.getType() == restriction){
-                            return; //type match
-                        }
-                    }
-                }
-            } catch (XMLStreamException ex) {
+                reader = getFeatureReader(qb.buildQuery());
+                return reader.next();
+            } catch (DataStoreException ex) {
                 throw new DataStoreRuntimeException(ex);
-            }
-            current = null;
-        }
-
-        @Override
-        public void close() {
-            RWLock.readLock().unlock();
-            if(reader != null){
-                try {
-                    reader.dispose();
-                } catch (IOException ex) {
-                    throw new DataStoreRuntimeException(ex);
-                } catch (XMLStreamException ex) {
-                    throw new DataStoreRuntimeException(ex);
+            } finally{
+                if(reader != null){
+                    reader.close();
                 }
             }
         }
-
-        @Override
-        public void remove() {
-            throw new DataStoreRuntimeException("Not supported on reader.");
-        }
-
     }
-
-    private class OSMFeatureWriter extends OSMFeatureReader implements FeatureWriter<FeatureType, Feature>{
-
-        private final OSMXMLWriter writer;
-        private final File writeFile;
-        private Feature edited = null;
-        private Feature lastWritten = null;
-
-        private OSMFeatureWriter(FeatureType restriction) throws DataStoreException{
-            super(restriction);
-
-            TempLock.writeLock().lock();
-
-            try{
-                writeFile = createWriteFile();
-                if (!writeFile.exists()) {
-                    writeFile.createNewFile();
-                }
-                writer = new OSMXMLWriter();
-                writer.setOutput(writeFile);
-                writer.writeStartDocument();
-                writer.writeOSMTag();
-            }catch(IOException ex){
-                throw new DataStoreException(ex);
-            }catch(XMLStreamException ex){
-                throw new DataStoreException(ex);
-            }
-        }
-
-        @Override
-        public Feature next() throws DataStoreRuntimeException {
-            try{
-                write();
-                edited = super.next();
-            }catch(DataStoreRuntimeException ex){
-                //we reach append mode
-                final Collection<Property> properties = new ArrayList<Property>();
-                if(restriction == TYPE_NODE){
-                    edited = DefaultFeature.create(properties, TYPE_NODE, new DefaultFeatureId(String.valueOf(-1)));
-                }else if(restriction == TYPE_WAY){
-                    edited = DefaultFeature.create(properties, TYPE_WAY, new DefaultFeatureId(String.valueOf(-1)));
-                }else if(restriction == TYPE_RELATION){
-                    edited = DefaultFeature.create(properties, TYPE_RELATION, new DefaultFeatureId(String.valueOf(-1)));
-                }else{
-                    throw new DataStoreRuntimeException("Writer append not allowed on GPX entity writer, choose a defined type.");
-                }
-            }
-            return edited;
-        }
-
-        @Override
-        public void write() throws DataStoreRuntimeException {
-            throw new DataStoreRuntimeException("not supported yet.");
-//            if(edited == null || lastWritten == edited) return;
-//            lastWritten = edited;
-//
-//            try{
-//                if(restriction == TYPE_NODE){
-//                    writer.writeWayPoint(edited, GPXConstants.TAG_WPT);
-//                }else if(restriction == TYPE_WAY){
-//                    writer.writeRoute(edited);
-//                }else if(restriction == TYPE_RELATION){
-//                    writer.writeTrack(edited);
-//                }else{
-//                    throw new DataStoreRuntimeException("Writer not allowed on GPX entity writer, choose a defined type.");
-//                }
-//            }catch(XMLStreamException ex){
-//                throw new DataStoreRuntimeException(ex);
-//            }
-
-        }
-
-        @Override
-        public void close() {
-
-            try {
-                writer.writeEndDocument();
-                writer.dispose();
-            } catch (IOException ex) {
-                throw new DataStoreRuntimeException(ex);
-            } catch (XMLStreamException ex) {
-                throw new DataStoreRuntimeException(ex);
-            }
-
-            //close read iterator
-            super.close();
-
-            //flip files
-            RWLock.writeLock().lock();
-            try{
-                file.delete();
-                writeFile.renameTo(file);
-            }finally{
-                RWLock.writeLock().unlock();
-                TempLock.writeLock().unlock();
-            }
-        }
-
-    }
-
 
 }

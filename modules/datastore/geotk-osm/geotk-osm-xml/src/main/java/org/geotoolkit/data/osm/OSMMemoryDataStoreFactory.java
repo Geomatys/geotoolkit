@@ -17,7 +17,6 @@
 
 package org.geotoolkit.data.osm;
 
-import java.io.IOException;
 import java.net.URL;
 
 import org.geotoolkit.data.AbstractFileDataStoreFactory;
@@ -66,7 +65,7 @@ public class OSMMemoryDataStoreFactory extends AbstractFileDataStoreFactory {
         final String name = path.substring(slash, dot);
         try {
             return new OSMMemoryDataStore(IOUtilities.toFile(url, null));
-        } catch (IOException ex) {
+        } catch (Exception ex) {
             throw new DataStoreException(ex);
         }
     }
