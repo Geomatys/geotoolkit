@@ -31,6 +31,8 @@ import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -259,5 +261,31 @@ public class Utils {
             LOGGER.log(Level.WARNING, "Unhandled type :" + obj.getClass(),new IllegalArgumentException());
         }
         return null;
+    }
+
+    /**
+     * Return a List of QName from a Set Of Name.
+     * @param typeNames
+     * @return
+     */
+    public static List<QName> getQNameListFromNameSet(Collection<Name> typeNames) {
+        final List<QName> result = new ArrayList<QName>(typeNames.size());
+        for (Name typeName : typeNames) {
+            result.add(Utils.getQnameFromName(typeName));
+        }
+        return result;
+    }
+
+    /**
+     * Return a List of Name from a Set Of QName.
+     * @param typeNames
+     * @return
+     */
+    public static List<Name> getNameListFromQNameSet(Collection<QName> typeNames) {
+        final List<Name> result = new ArrayList<Name>(typeNames.size());
+        for (QName typeName : typeNames) {
+            result.add(Utils.getNameFromQname(typeName));
+        }
+        return result;
     }
 }

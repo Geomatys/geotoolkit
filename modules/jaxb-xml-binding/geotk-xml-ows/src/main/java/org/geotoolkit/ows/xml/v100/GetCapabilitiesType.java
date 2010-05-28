@@ -104,11 +104,36 @@ public class GetCapabilitiesType implements AbstractGetCapabilities {
         return sections;
     }
 
+    /**
+     * Return true if the request contains the specified section.
+     *
+     * @param sectionName The name of the searched section.
+     * @return true if the request contains the specified section.
+     */
+    public boolean containsSection(String sectionName) {
+        if (sections != null) {
+            return sections.containsSection(sectionName);
+        }
+        return false;
+    }
+
    /**
     * Gets the value of the acceptFormats property.
     */
     public AcceptFormatsType getAcceptFormats() {
         return acceptFormats;
+    }
+
+    /**
+    * Return the first outputFormat of the is if there is one
+    */
+    public String getFirstAcceptFormat() {
+        if (acceptFormats != null) {
+            if (acceptFormats.getOutputFormat().size() > 0) {
+                return acceptFormats.getOutputFormat().get(0);
+            }
+        }
+        return null;
     }
 
     /**

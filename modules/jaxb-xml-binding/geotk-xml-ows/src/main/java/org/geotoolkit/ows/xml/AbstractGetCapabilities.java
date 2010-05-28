@@ -27,9 +27,13 @@ import org.geotoolkit.util.Versioned;
  */
 public interface AbstractGetCapabilities extends Versioned {
 
-    public AcceptVersions getAcceptVersions();
+    AcceptVersions getAcceptVersions();
 
-    public Sections getSections();
+    Sections getSections();
 
-    public AcceptFormats getAcceptFormats();
+    String getFirstAcceptFormat();
+
+    boolean containsSection(String sectionName);
+
+    AcceptFormats getAcceptFormats();
 }

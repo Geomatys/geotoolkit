@@ -108,6 +108,19 @@ public class SectionsType implements Sections {
         }
        return Collections.unmodifiableList(section);
     }
+
+    /**
+     * Return true if the Sections contains the specified section.
+     *
+     * @param sectionName The name of the searched section.
+     * @return true if the Section contains the specified section.
+     */
+    public boolean containsSection(String sectionName) {
+        if (section != null) {
+            return section.contains(sectionName);
+        }
+        return false;
+    }
     
      /**
      * Add a new section to the list.

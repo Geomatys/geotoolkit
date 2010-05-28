@@ -25,8 +25,9 @@ import java.util.List;
  */
 public interface Sections {
 
-    public List<String> getSection();
+    List<String> getSection();
 
-    public void add(String section);
+    void add(String section);
 
+    boolean containsSection(String sectionName);
 }
