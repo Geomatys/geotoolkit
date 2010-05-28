@@ -41,6 +41,6 @@ public interface XmlFeatureWriter {
     /**
      * Free the resources.
      */
-    void dispose();
+    void dispose() throws IOException, XMLStreamException;
     
 }

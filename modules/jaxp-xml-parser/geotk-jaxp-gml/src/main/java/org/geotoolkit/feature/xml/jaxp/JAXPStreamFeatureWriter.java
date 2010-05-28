@@ -37,6 +37,7 @@ import org.geotoolkit.geometry.isoonjts.JTSUtils;
 import org.geotoolkit.internal.jaxb.ObjectFactory;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.xml.MarshallerPool;
 import org.geotoolkit.xml.Namespaces;
 import org.geotoolkit.xml.StaxStreamWriter;
@@ -47,24 +48,31 @@ import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.GeometryType;
 import org.opengis.feature.type.Name;
 import org.opengis.feature.type.PropertyDescriptor;
+import org.opengis.feature.type.PropertyType;
 import org.opengis.geometry.Envelope;
 import org.opengis.geometry.Geometry;
 import org.opengis.referencing.FactoryException;
 
+
 /**
+ * Handles writing process of features using JAXP. The {@link #dispose()} method MUST be
+ * called in order to release some resources.
  *
  * @author Guilhem Legal (Geomatys)
  */
 public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeatureWriter {
+    /**
+     * Logger for this writer.
+     */
+    protected static final Logger LOGGER = Logging.getLogger(JAXPStreamFeatureWriter.class);
 
-    protected static final Logger LOGGER = Logger.getLogger("org.geotoolkit.feature.xml.jaxp");
-
-    protected String schemaLocation;
-
+    /**
+     * The pool of marshallers used for marshalling geometries.
+     */
     private static MarshallerPool pool;
     static {
         try {
-            Map<String, String> properties = new HashMap<String, String>();
+            final Map<String, String> properties = new HashMap<String, String>();
             properties.put(Marshaller.JAXB_FRAGMENT, "true");
             properties.put(Marshaller.JAXB_FORMATTED_OUTPUT, "false");
             pool = new MarshallerPool(properties, ObjectFactory.class);
@@ -73,15 +81,22 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
         }
     }
 
-    protected static ObjectFactory factory = new ObjectFactory();
+    /**
+     * Object factory to build a geometry.
+     */
+    private static final ObjectFactory OBJECT_FACTORY = new ObjectFactory();
 
+    /**
+     * The marshaller used by the feature writer. This marshaller must be released to the
+     * {@link #pool} when closing the feature writer in calling {@link #dispose}.
+     */
     protected final Marshaller marshaller;
 
-    public static final String GML_NAMESPACE = "http://www.opengis.net/gml";
+    protected String schemaLocation;
 
     private int lastUnknowPrefix = 0;
 
-    private Map<String, String> UnknowNamespaces = new HashMap<String, String>();
+    private final Map<String, String> unknowNamespaces = new HashMap<String, String>();
 
 
     public JAXPStreamFeatureWriter() throws JAXBException {
@@ -90,7 +105,7 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
          marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, false);
     }
 
-    public JAXPStreamFeatureWriter(Map<String, String> schemaLocations) throws JAXBException {
+    public JAXPStreamFeatureWriter(final Map<String, String> schemaLocations) throws JAXBException {
          marshaller = pool.acquireMarshaller();
          marshaller.setProperty(Marshaller.JAXB_FRAGMENT, true);
          marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, false);
@@ -103,70 +118,95 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
          }
     }
 
+    /**
+     * Dispose the allocated resources. <strong>Must</strong> be called when closing the feautre writer.
+     *
+     * @throws IOException
+     * @throws XMLStreamException
+     */
     @Override
-    public void dispose() {
+    public void dispose() throws IOException, XMLStreamException{
+        super.dispose();
         pool.release(marshaller);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public void write(Object candidate, Object output) throws IOException, XMLStreamException, DataStoreException{
+    public void write(final Object candidate, final Object output) throws IOException,
+                                               XMLStreamException, DataStoreException
+    {
         setOutput(output);
-        if(candidate instanceof Feature){
+        if (candidate instanceof Feature) {
             writeFeature((Feature) candidate,true);
-        }else if(candidate instanceof FeatureCollection){
+        } else if (candidate instanceof FeatureCollection) {
             writeFeatureCollection((FeatureCollection) candidate,false);
+        } else {
+            throw new IllegalArgumentException("The given object is not a Feature or a" +
+                    " FeatureCollection: "+ candidate);
         }
     }
-    
-    private void writeFeature(Feature feature, boolean root) throws XMLStreamException {
+
+    /**
+     * Write the feature into the stream.
+     *
+     * @param feature The feature
+     * @param root
+     * @throws XMLStreamException
+     */
+    private void writeFeature(final Feature feature, final boolean root) throws XMLStreamException {
 
         //the root element of the xml document (type of the feature)
         final FeatureType type = feature.getType();
-        final String namespace = type.getName().getNamespaceURI();
-        final String localPart = type.getName().getLocalPart();
+        final Name typeName = type.getName();
+        final String namespace = typeName.getNamespaceURI();
+        final String localPart = typeName.getLocalPart();
         if (namespace != null) {
             final Prefix prefix = getPrefix(namespace);
             writer.writeStartElement(prefix.prefix, localPart, namespace);
-            writer.writeAttribute("gml", GML_NAMESPACE, "id", feature.getIdentifier().getID());
+            writer.writeAttribute("gml", Namespaces.GML, "id", feature.getIdentifier().getID());
             if (prefix.unknow && !root) {
                 writer.writeNamespace(prefix.prefix, namespace);
             }
             if (root) {
-                writer.writeNamespace("gml", GML_NAMESPACE);
-                if (!namespace.equals(GML_NAMESPACE)) {
+                writer.writeNamespace("gml", Namespaces.GML);
+                if (!namespace.equals(Namespaces.GML)) {
                     writer.writeNamespace(prefix.prefix, namespace);
                 }
             }
         } else {
             writer.writeStartElement(localPart);
-            writer.writeAttribute("gml", GML_NAMESPACE, "id", feature.getIdentifier().getID());
+            writer.writeAttribute("gml", Namespaces.GML, "id", feature.getIdentifier().getID());
         }
 
         //write properties in the type order
         for(final PropertyDescriptor desc : type.getDescriptors()){
             final Collection<Property> props = feature.getProperties(desc.getName());
             for (Property a : props) {
-
-                if (a.getValue() instanceof Collection && !(a.getType() instanceof GeometryType)) {
-                    String namespaceProperty = a.getName().getNamespaceURI();
-                    for (Object value : (Collection)a.getValue()) {
+                final Object valueA = a.getValue();
+                final PropertyType typeA = a.getType();
+                final Name nameA = a.getName();
+                final String nameProperty = nameA.getLocalPart();
+                String namespaceProperty = nameA.getNamespaceURI();
+                if (valueA instanceof Collection && !(typeA instanceof GeometryType)) {
+                    for (Object value : (Collection)valueA) {
                         if (namespaceProperty != null) {
-                            writer.writeStartElement(namespaceProperty, a.getName().getLocalPart());
+                            writer.writeStartElement(namespaceProperty, nameProperty);
                         } else {
-                            writer.writeStartElement(a.getName().getLocalPart());
+                            writer.writeStartElement(nameProperty);
                         }
                         writer.writeCharacters(Utils.getStringValue(value));
                         writer.writeEndElement();
                     }
 
-                } else if (a.getValue() instanceof Map && !(a.getType() instanceof GeometryType)) {
-                    String namespaceProperty = a.getName().getNamespaceURI();
-                    Map map = (Map)a.getValue();
+                } else if (valueA instanceof Map && !(typeA instanceof GeometryType)) {
+                    final Map map = (Map)valueA;
                     for (Object key : map.keySet()) {
                         if (namespaceProperty != null) {
-                            writer.writeStartElement(namespaceProperty, a.getName().getLocalPart());
+                            writer.writeStartElement(namespaceProperty, nameProperty);
                         } else {
-                            writer.writeStartElement(a.getName().getLocalPart());
+                            writer.writeStartElement(nameProperty);
                         }
                         if (key != null) {
                             writer.writeAttribute("name", (String)key);
@@ -175,14 +215,12 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
                         writer.writeEndElement();
                     }
 
-                } else if (!(a.getType() instanceof GeometryType)) {
-                    String value = Utils.getStringValue(a.getValue());
+                } else if (!(typeA instanceof GeometryType)) {
+                    String value = Utils.getStringValue(valueA);
                     if (value != null || (value == null && !a.isNillable())) {
 
-                        String namespaceProperty = a.getName().getNamespaceURI();
-                        String nameProperty      = a.getName().getLocalPart();
-                        if ((nameProperty.equals("name") || nameProperty.equals("description")) && !GML_NAMESPACE.equals(namespaceProperty)) {
-                            namespaceProperty = GML_NAMESPACE;
+                        if ((nameProperty.equals("name") || nameProperty.equals("description")) && !Namespaces.GML.equals(namespaceProperty)) {
+                            namespaceProperty = Namespaces.GML;
                             LOGGER.warning("the property name and description of a feature must have the GML namespace");
                         }
                         if (namespaceProperty != null) {
@@ -199,18 +237,15 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
                 // we add the geometry
                 } else {
 
-                    if (a.getValue() != null) {
-                        Name geometryName        = a.getName();
-                        String namespaceProperty = geometryName.getNamespaceURI();
-
+                    if (valueA != null) {
                         if (namespaceProperty != null) {
-                            writer.writeStartElement(geometryName.getNamespaceURI(), geometryName.getLocalPart());
+                            writer.writeStartElement(namespaceProperty, nameProperty);
                         } else {
-                            writer.writeStartElement(geometryName.getLocalPart());
+                            writer.writeStartElement(nameProperty);
                         }
-                        Geometry isoGeometry = JTSUtils.toISO((com.vividsolutions.jts.geom.Geometry) a.getValue(), feature.getType().getCoordinateReferenceSystem());
+                        Geometry isoGeometry = JTSUtils.toISO((com.vividsolutions.jts.geom.Geometry) valueA, type.getCoordinateReferenceSystem());
                         try {
-                            marshaller.marshal(factory.buildAnyGeometry(isoGeometry), writer);
+                            marshaller.marshal(OBJECT_FACTORY.buildAnyGeometry(isoGeometry), writer);
                         } catch (JAXBException ex) {
                             LOGGER.log(Level.WARNING, "JAXB Exception while marshalling the iso geometry: " + ex.getMessage(), ex);
                         }
@@ -230,7 +265,9 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
      * @param fragment : true if we write in a stream, dont write start and end elements
      * @throws DataStoreException
      */
-    public void writeFeatureCollection(FeatureCollection featureCollection, boolean fragment) throws DataStoreException, XMLStreamException {
+    public void writeFeatureCollection(final FeatureCollection featureCollection, final boolean fragment)
+                                                            throws DataStoreException, XMLStreamException
+    {
         
         // the XML header
         if(!fragment){
@@ -243,8 +280,8 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
         if (featureCollection.getID() != null) {
             collectionID = featureCollection.getID();
         }
-        writer.writeAttribute("gml", GML_NAMESPACE, "id", collectionID);
-        writer.writeNamespace("gml", GML_NAMESPACE);
+        writer.writeAttribute("gml", Namespaces.GML, "id", collectionID);
+        writer.writeNamespace("gml", Namespaces.GML);
         writer.writeNamespace("wfs", "http://www.opengis.net/wfs");
         if (schemaLocation != null && !schemaLocation.equals("")) {
             writer.writeNamespace("xsi", "http://www.w3.org/2001/XMLSchema-instance");
@@ -254,7 +291,7 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
         FeatureType type = featureCollection.getFeatureType();
         if (type != null && type.getName() != null) {
             String namespace = type.getName().getNamespaceURI();
-            if (namespace != null && !namespace.equals(GML_NAMESPACE)) {
+            if (namespace != null && !namespace.equals(Namespaces.GML)) {
                 Prefix prefix    = getPrefix(namespace);
                 writer.writeNamespace(prefix.prefix, namespace);
             }
@@ -270,7 +307,7 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
             while (iterator.hasNext()) {
                 final Feature f = iterator.next();
 
-                writer.writeStartElement("gml", "featureMember", GML_NAMESPACE);
+                writer.writeStartElement("gml", "featureMember", Namespaces.GML);
                 writeFeature(f, false);
                 writer.writeEndElement();
             }
@@ -305,8 +342,8 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
                     LOGGER.log(Level.WARNING, null, ex);
                 }
             }
-            streamWriter.writeStartElement("gml", "boundedBy", GML_NAMESPACE);
-            streamWriter.writeStartElement("gml", "Envelope", GML_NAMESPACE);
+            streamWriter.writeStartElement("gml", "boundedBy", Namespaces.GML);
+            streamWriter.writeStartElement("gml", "Envelope", Namespaces.GML);
             if (srsName != null) {
                 streamWriter.writeAttribute("srsName", srsName);
             } else {
@@ -314,13 +351,13 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
             }
 
             // lower corner
-            streamWriter.writeStartElement("gml", "lowerCorner", GML_NAMESPACE);
+            streamWriter.writeStartElement("gml", "lowerCorner", Namespaces.GML);
             String lowValue = bounds.getLowerCorner().getOrdinate(0) + " " + bounds.getLowerCorner().getOrdinate(1);
             streamWriter.writeCharacters(lowValue);
             streamWriter.writeEndElement();
 
             // upper corner
-            streamWriter.writeStartElement("gml", "upperCorner", GML_NAMESPACE);
+            streamWriter.writeStartElement("gml", "upperCorner", Namespaces.GML);
             String uppValue = bounds.getUpperCorner().getOrdinate(0) + " " + bounds.getUpperCorner().getOrdinate(1);
             streamWriter.writeCharacters(uppValue);
             streamWriter.writeEndElement();
@@ -330,22 +367,31 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
         }
     }
 
-    private Prefix getPrefix(String namespace) {
+    /**
+     * Returns the prefix for the given namespace.
+     *
+     * @param namespace The namespace for which we want the prefix.
+     */
+    private Prefix getPrefix(final String namespace) {
         String prefix = Namespaces.getPreferredPrefix(namespace, null);
         boolean unknow = false;
         if (prefix == null) {
-            prefix = UnknowNamespaces.get(namespace);
+            prefix = unknowNamespaces.get(namespace);
             if (prefix == null) {
                 prefix = "ns" + lastUnknowPrefix;
                 lastUnknowPrefix++;
                 unknow = true;
-                UnknowNamespaces.put(namespace, prefix);
+                unknowNamespaces.put(namespace, prefix);
             }
         }
         return new Prefix(unknow, prefix);
     }
 
-    private class Prefix {
+
+    /**
+     * Inner class for handling prefix and if it is already known.
+     */
+    private final class Prefix {
         public boolean unknow;
         public String prefix;
 
