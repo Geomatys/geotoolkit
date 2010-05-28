@@ -185,7 +185,7 @@ public class FeatureTypeUtilities {
     public static final SimpleFeatureType EMPTY = new DefaultSimpleFeatureType(
             new DefaultName("Empty"), Collections.EMPTY_LIST, null, false, Collections.EMPTY_LIST, null, null);
 
-
+    
     private FeatureTypeUtilities() {}
 
     /**

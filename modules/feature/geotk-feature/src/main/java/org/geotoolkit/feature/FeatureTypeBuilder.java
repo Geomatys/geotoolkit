@@ -16,8 +16,6 @@
  */
 package org.geotoolkit.feature;
 
-import com.vividsolutions.jts.geom.Geometry;
-
 import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -106,6 +104,8 @@ public class FeatureTypeBuilder {
      * Factories an builders.
      */
     protected final FeatureTypeFactory factory;
+    protected final AttributeDescriptorBuilder attributeDescBuilder;
+
     /**
      * Map of java class bound to properties types.
      */
@@ -174,7 +174,7 @@ public class FeatureTypeBuilder {
         }else{
             this.factory = factory;
         }
-
+        this.attributeDescBuilder = new AttributeDescriptorBuilder(this.factory);
         setBindings(new DefaultSimpleSchema());
         reset();
     }
@@ -455,50 +455,13 @@ public class FeatureTypeBuilder {
 
     public void add(final Name name, final Class binding, final CoordinateReferenceSystem crs,
             int min, int max, boolean nillable, Map<Object,Object> userData) {
-
-        final PropertyType at;
-        if(Geometry.class.isAssignableFrom(binding) ||
-                org.opengis.geometry.Geometry.class.isAssignableFrom(binding)){
-            at = factory.createGeometryType(name, binding, crs, false, false, null, null, null);
-        }
-//TODO must check that we can allow collection as simple attribut types
-//        else if(Collection.class.isAssignableFrom(binding) ||
-//                org.opengis.geometry.Geometry.class.isAssignableFrom(binding)){
-//            throw new IllegalArgumentException("Binding class is : "+ binding +" this is a Complex type. Create a complex type using the factory");
-//        }
-        else{
-            //non geometric field
-            at = factory.createAttributeType(name, binding, false, false, null, null, null);
-        }
-
-        add(at,name,crs,min,max,nillable,userData);
+        final AttributeDescriptor desc = attributeDescBuilder.create(name, binding, crs, min, max, nillable, userData);
+        add(desc);
     }
 
     public void add(final PropertyType at, final Name name, final CoordinateReferenceSystem crs,
             int min, int max, boolean nillable, Map<Object,Object> userData){
-        Object defaultValue = null;
-        if(!nillable){
-            //search for the best default value.
-            try {
-                defaultValue = FeatureUtilities.defaultValue(at.getBinding());
-            } catch (Exception e) {
-                //do nothing
-            }
-        }
-
-        final PropertyDescriptor desc;
-        if(at instanceof GeometryType){
-            desc = factory.createGeometryDescriptor((GeometryType)at, name, min, max, nillable, defaultValue);
-        }else if(at instanceof AttributeType){
-            desc = factory.createAttributeDescriptor((AttributeType)at, name, min, max, nillable, defaultValue);
-        }else{
-            throw new IllegalArgumentException("Property type is : "+ at.getClass() +" This type is not supported yet.");
-        }
-
-        if(userData != null){
-            desc.getUserData().putAll(userData);
-        }
-
+        final AttributeDescriptor desc = attributeDescBuilder.create(at, name, crs, min, max, nillable, userData);
         add(desc);
     }
 

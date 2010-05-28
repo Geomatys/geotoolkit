@@ -198,17 +198,18 @@ public class DefaultSimpleFeatureType extends DefaultFeatureType implements Simp
         //must iterate backward to make first attribut with same local part first
         for(int i=n-1; i>=0; i--){
             final AttributeDescriptor ad = descs.get(i);
-            index.put(ad.getName(), i);
-            index.put(new DefaultName(ad.getName().getLocalPart()), i);
+            final Name name = ad.getName();
+            index.put(name, i);
+            index.put(new DefaultName(name.getLocalPart()), i);
             //must add possible string combinaison
-            index.put(ad.getName().getLocalPart(), i);
-            index.put(DefaultName.toJCRExtendedForm(ad.getName()), i);
-            index.put(DefaultName.toExtendedForm(ad.getName()), i);
+            index.put(name.getLocalPart(), i);
+            index.put(DefaultName.toJCRExtendedForm(name), i);
+            index.put(DefaultName.toExtendedForm(name), i);
         }
 
         final GeometryDescriptor geomDesc = featureType.getGeometryDescriptor();
         if (geomDesc != null) {
-            index.put(null, index.get(geomDesc.getLocalName()));
+            index.put(null, index.get(geomDesc.getName()));
         }
         return index;
     }

@@ -135,7 +135,7 @@ public class SimpleFeatureBuilder {
     /**
      * logger
      */
-    static Logger LOGGER = Logging.getLogger("org.geotoolkit.feature");
+    static final Logger LOGGER = Logging.getLogger("org.geotoolkit.feature");
     /** the feature type */
     private final SimpleFeatureType featureType;
     /** the feature factory */
