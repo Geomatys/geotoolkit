@@ -77,7 +77,7 @@ import org.geotoolkit.util.collection.BackingStoreException;
  * @param <T> The type of objects to be included in this set.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @version 3.12
  *
  * @since 2.2
  * @module
@@ -369,16 +369,24 @@ public class IdentifiedObjectSet<T extends IdentifiedObject> extends AbstractSet
      * objects. If this method returns {@code true} for the given exception, then the exception
      * will be logged in the {@linkplain AbstractAuthorityFactory#LOGGER Geotk factory logger}
      * with the {@link Level#FINE FINE} level. If this method returns {@code false}, then the
-     * exception will be retrown as a {@link BackingStoreException}. The default implementation
-     * returns {@code true} only for {@link NoSuchIdentifierException} (not to be confused with
-     * {@link NoSuchAuthorityCodeException}).
+     * exception will be retrown as a {@link BackingStoreException}.
+     * <p>
+     * The default implementation returns {@code true} if the given exception is one of the
+     * following types:
+     * <p>
+     * <ul>
+     *   <li>{@link NoSuchIdentifierException} (not to be confused with
+     *       {@link NoSuchAuthorityCodeException}).</li>
+     *   <li>{@link OptionalFactoryOperationException}</li>
+     * </ul>
      *
      * @param  exception The exception that occured while creating an object.
      * @return {@code true} if the given exception should be considered recoverable, or
      *         {@code false} if it should be considered fatal.
      */
     protected boolean isRecoverableFailure(final FactoryException exception) {
-        return (exception instanceof NoSuchIdentifierException);
+        return (exception instanceof NoSuchIdentifierException) ||
+               (exception instanceof OptionalFactoryOperationException);
     }
 
     /**
