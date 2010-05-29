@@ -168,6 +168,12 @@ public class GetCapabilitiesType implements GetCapabilities {
                 if (sec != null)
                     section = section + ',' + sec;
             }
+
+            @Override
+            public boolean containsSection(String sectionName) {
+                //todo try to compile before commit.
+                throw new UnsupportedOperationException("Not supported.");
+            }
         };
     }
 
@@ -185,5 +191,17 @@ public class GetCapabilitiesType implements GetCapabilities {
     @Override
     public String toKvp() {
         return "request=GetCapabilities&service="+ getService() + "&version="+ getVersion();
+    }
+
+    @Override
+    public String getFirstAcceptFormat() {
+        //todo try to compile before commit.
+        throw new UnsupportedOperationException("Not supported.");
+    }
+
+    @Override
+    public boolean containsSection(String sectionName) {
+        //todo try to compile before commit.
+        throw new UnsupportedOperationException("Not supported.");
     }
 }
