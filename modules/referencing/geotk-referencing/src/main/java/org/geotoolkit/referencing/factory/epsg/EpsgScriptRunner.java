@@ -36,7 +36,7 @@ import org.geotoolkit.internal.sql.ScriptRunner;
  * be used for other flavors (not officially supported by EPSG) like JavaDB.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.01
+ * @version 3.12
  *
  * @since 3.00
  * @module
@@ -47,7 +47,7 @@ final class EpsgScriptRunner extends ScriptRunner {
      * The {@code ".sql"} suffix is omitted.
      */
     static final String[] SCRIPTS = {
-        "Tables", "Data", "FKeys", "Indexes"
+        "Tables", "Data", "Extensions", "FKeys", "Indexes"
     };
 
     /**

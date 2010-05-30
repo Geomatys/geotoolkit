@@ -122,7 +122,7 @@ public class NTv2Transform extends GridTransform2D {
     @Override
     public ParameterValueGroup getParameterValues() {
         final ParameterValueGroup parameters = getParameterDescriptors().createValue();
-        parameters.parameter(DIFF_FILE.getName().getCode()).setValue(gridFile);
+        parameters.parameter(DIFFERENCE_FILE.getName().getCode()).setValue(gridFile);
         return parameters;
     }
 }

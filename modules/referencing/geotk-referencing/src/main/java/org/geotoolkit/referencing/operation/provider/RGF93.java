@@ -32,57 +32,48 @@ import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.referencing.NamedIdentifier;
 import org.geotoolkit.referencing.operation.transform.NTv2Transform;
 import org.geotoolkit.referencing.operation.MathTransformProvider;
+import org.geotoolkit.resources.Errors;
 
 
 /**
- * The provider for "<cite>National Transformation</cite>" version 2 (ESPG:9615).
- * The math transform implementations instantiated by this provider may be any of
- * the following classes:
- * <p>
- * <ul>
- *   <li>{@link org.geotoolkit.referencing.operation.transform.NTv2Transform}</li>
- * </ul>
- *
- * {@section Grid data}
- *
- * This transform requires data that are not bundled by default with Geotk. Run the
- * <a href="http://www.geotoolkit.org/modules/utility/geotk-setup">geotk-setup</a> module
- * for downloading and installing the grid data.
+ * The provider for "<cite>France geocentric interpolation</cite>" (ESPG:9655).
+ * The current implementation delegates to the emulation based on NTv2 method.
  *
  * @author Simon Reynard (Geomatys)
+ * @author Martin Desruisseaux (Geomatys)
  * @version 3.12
  *
  * @since 3.12
  * @module
  */
-public class NTv2 extends MathTransformProvider {
+public class RGF93 extends MathTransformProvider {
     /**
      * Serial number for interoperability with different versions.
      */
-    private static final long serialVersionUID = -4707304160205218546L;
+    private static final long serialVersionUID = 4049217192968903800L;
 
     /**
-     * The operation parameter descriptor for the <cite>Latitude and longitude difference file</cite>
-     * parameter value. The file extension is typically {@code ".gsb"}. There is no default value.
+     * The operation parameter descriptor for the <cite>Geocentric translation file</cite>
+     * parameter value. The default value is {@code "gr3df97a.txt"}.
      */
-    public static final ParameterDescriptor<String> DIFFERENCE_FILE = new DefaultParameterDescriptor<String>(
-            "Latitude and longitude difference file", String.class, null, null);
+    public static final ParameterDescriptor<String> TRANSLATION_FILE = new DefaultParameterDescriptor<String>(
+            "Geocentric translation file", String.class, null, "gr3df97a.txt");
 
     /**
      * The parameters group.
      */
     public static final ParameterDescriptorGroup PARAMETERS = Identifiers.createDescriptorGroup(
         new ReferenceIdentifier[] {
-            new NamedIdentifier(Citations.EPSG, "NTv2"),
-            new IdentifierCode (Citations.EPSG,  9615)
+            new NamedIdentifier(Citations.EPSG, "France geocentric interpolation"),
+            new IdentifierCode (Citations.EPSG,  9655)
         }, new ParameterDescriptor<?>[] {
-            DIFFERENCE_FILE
+            TRANSLATION_FILE
         });
 
     /**
      * Constructs a provider.
      */
-    public NTv2() {
+    public RGF93() {
         super(2, 2, PARAMETERS);
     }
 
@@ -101,6 +92,10 @@ public class NTv2 extends MathTransformProvider {
      */
     @Override
     protected MathTransform createMathTransform(final ParameterValueGroup values) throws FactoryException {
-        return new NTv2Transform(Parameters.stringValue(DIFFERENCE_FILE, values));
+        final String file = Parameters.stringValue(TRANSLATION_FILE, values);
+        if (!"gr3df97a.txt".equals(file)) {
+            throw new FactoryException(Errors.format(Errors.Keys.CANT_READ_$1, file));
+        }
+        return new NTv2Transform(NTv2Transform.RGF93);
     }
 }
