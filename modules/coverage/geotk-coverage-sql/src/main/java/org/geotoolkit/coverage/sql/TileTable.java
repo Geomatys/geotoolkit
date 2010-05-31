@@ -188,10 +188,10 @@ final class TileTable extends Table implements Comparator<TileManager> {
                         while (results.next()) {
                             final int    seriesID = results.getInt   (seriesIndex);
                             final String filename = results.getString(filenameIndex);
-                            final int       index = results.getInt   (indexIndex);
-                            final int      extent = results.getInt   (extentIndex);
-                            final int          dx = results.getInt   (dxIndex); // '0' if null, which is fine.
-                            final int          dy = results.getInt   (dyIndex); // '0' if null, which is fine.
+                            final int    index    = results.getInt   (indexIndex);
+                            final int    extent   = results.getInt   (extentIndex);
+                            final int    dx       = results.getInt   (dxIndex); // '0' if null, which is fine.
+                            final int    dy       = results.getInt   (dyIndex); // '0' if null, which is fine.
                             /*
                              * Gets the series, which usually never change for the whole mosaic (but this is not
                              * mandatory - the real thing that can't change is the layer).  The series is needed

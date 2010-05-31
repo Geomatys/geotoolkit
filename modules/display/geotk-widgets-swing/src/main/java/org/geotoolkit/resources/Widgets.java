@@ -106,6 +106,11 @@ public final class Widgets extends IndexedResourceBundle {
         public static final int SELECT_DIRECTORY = 4;
 
         /**
+         * Select a file
+         */
+        public static final int SELECT_FILE = 12;
+
+        /**
          * <html><i>from</i> {0}<br><i>to</i> {1}</html>
          */
         public static final int TIME_RANGE_$2 = 5;

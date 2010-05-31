@@ -385,7 +385,7 @@ final class WritableGridCoverageTable extends GridCoverageTable {
              * the user asked for the replacement of existing file, we just copy the set of
              * existing URI. Otherwise we do nothing since we can't get the list of new items.
              */
-            if (series.protocol.equalsIgnoreCase("file")) {
+            if (series.protocol.equalsIgnoreCase(SeriesEntry.FILE_PROTOCOL)) {
                 File directory = series.file("*");
                 final String filename = directory.getName();
                 final int split = filename.lastIndexOf('*');

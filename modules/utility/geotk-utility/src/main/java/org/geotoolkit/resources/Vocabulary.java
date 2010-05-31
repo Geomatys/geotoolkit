@@ -505,6 +505,11 @@ public final class Vocabulary extends IndexedResourceBundle {
         public static final int EASTING = 88;
 
         /**
+         * Edit
+         */
+        public static final int EDIT = 346;
+
+        /**
          * Efficiency
          */
         public static final int EFFICIENCY = 89;

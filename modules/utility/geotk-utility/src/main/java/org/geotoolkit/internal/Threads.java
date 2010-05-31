@@ -82,7 +82,7 @@ public final class Threads extends AtomicInteger implements ThreadFactory {
     }
 
     /**
-     * The executor to be returned by {@link #executor()}.
+     * The executors to be returned by {@link #executor(boolean)}.
      * Will be created only when first needed.
      */
     private static volatile ExecutorService normalExecutor, daemonExecutor;

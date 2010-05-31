@@ -85,7 +85,7 @@ import org.geotoolkit.gui.swing.Dialog;
  * <a href="http://www.geotoolkit.org/demos/geotk-simples/applet/CoordinateChooser.html">demonstration applet</a>.
  * </td></tr></table>
  *
- * @author Martin Desruisseaux (IRD)
+ * @author Martin Desruisseaux (IRD, Geomatys)
  * @version 3.12
  *
  * @since 2.3
@@ -451,10 +451,10 @@ public class CoordinateChooser extends JComponent implements Dialog {
      * @param area The new geographic area of interest.
      */
     public void setGeographicArea(final Rectangle2D area) {
-        xmin.setValue(new Longitude(area.getMinX()));
-        xmax.setValue(new Longitude(area.getMaxX()));
-        ymin.setValue(new  Latitude(area.getMinY()));
-        ymax.setValue(new  Latitude(area.getMaxY()));
+        xmin.setValue(new Longitude(Math.max(Longitude.MIN_VALUE, area.getMinX())));
+        xmax.setValue(new Longitude(Math.min(Longitude.MAX_VALUE, area.getMaxX())));
+        ymin.setValue(new  Latitude(Math.max( Latitude.MIN_VALUE, area.getMinY())));
+        ymax.setValue(new  Latitude(Math.min( Latitude.MAX_VALUE, area.getMaxY())));
     }
 
     /**
@@ -477,7 +477,7 @@ public class CoordinateChooser extends JComponent implements Dialog {
      * @param resolution The new preferred resolution, or {@code null} for the best available one.
      */
     public void setPreferredResolution(final Dimension2D resolution) {
-        if (resolution!=null) {
+        if (resolution != null) {
             xres.setValue(new Double(resolution.getWidth ()*60));
             yres.setValue(new Double(resolution.getHeight()*60));
             radioPrefRes.setSelected(true);

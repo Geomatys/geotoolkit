@@ -202,8 +202,14 @@ public class PropertiesSheet extends JComponent {
          */
         buffer.setLength(0);
         buffer.append("<html>");
-        final String text    = formatter.format(item);
-        final String warning = formatter.getWarning();
+        String text, warning;
+        try {
+            text = formatter.format(item);
+            warning = formatter.getWarning();
+        } catch (RuntimeException e) {
+            text = String.valueOf(item.getName());
+            warning = e.getLocalizedMessage();
+        }
         if (warning != null) {
             buffer.append("<p><b>").append(Vocabulary.getResources(locale).getString(Vocabulary.Keys.WARNING))
                     .append(":</b> ").append(warning).append("</p><hr>\n");

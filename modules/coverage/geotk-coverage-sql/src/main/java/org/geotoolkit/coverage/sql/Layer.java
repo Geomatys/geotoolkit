@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.coverage.sql;
 
+import java.io.File;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -139,6 +140,17 @@ public interface Layer {
      * @throws CoverageStoreException if an error occured while querying the database.
      */
     SortedSet<String> getImageFormats() throws CoverageStoreException;
+
+    /**
+     * Returns the directories where the image files are stored, sorted by decreasing frequency
+     * of use.
+     *
+     * @return The image directories, with the most frequently used directory first.
+     * @throws CoverageStoreException if an error occured while querying the database.
+     *
+     * @since 3.12
+     */
+    SortedSet<File> getImageDirectories() throws CoverageStoreException;
 
     /**
      * Returns the grid geometries used by the coverages in this layer, sorted by decreasing

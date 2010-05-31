@@ -54,7 +54,7 @@ final class SeriesEntry extends DefaultEntry {
     /**
      * The value to put in {@link #protocol} for files.
      */
-    private static final String FILE_PROTOCOL = "file";
+    static final String FILE_PROTOCOL = "file";
 
     /**
      * The protocol in a URL, or {@code "file"} if the files should be read locally.
@@ -73,7 +73,7 @@ final class SeriesEntry extends DefaultEntry {
      * The path separator is Unix slash, never the Windows backslash.
      * May be an empty string but never {@code null}.
      */
-    private final String path;
+    final String path;
 
     /**
      * The extension to add to filenames, not including the dot character.

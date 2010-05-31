@@ -76,6 +76,11 @@ import org.geotoolkit.gui.swing.WindowCreator;
 @SuppressWarnings("serial")
 public class AuthorityCodesComboBox extends WindowCreator {
     /**
+     * Action commands.
+     */
+    private static final String SEARCH="SEARCH", CONFIRM="CONFIRM", SELECT="SELECT", INFO="INFO";
+
+    /**
      * The authority factory responsible for creating objects from a list of codes.
      */
     private final AuthorityFactory factory;
@@ -88,20 +93,20 @@ public class AuthorityCodesComboBox extends WindowCreator {
     /**
      * The list of CRS objects.
      */
-    private final JComboBox list;
+    private final JComboBox codeComboBox;
 
     /**
      * The text field for searching item.
      */
-    private final JTextField search;
+    private final JTextField searchField;
 
     /**
-     * The {@link #search} or {@link #list} field.
+     * The {@link #searchField} or {@link #codeComboBox} field.
      */
     private final JPanel searchOrList;
 
     /**
-     * The card layout showing either {@link #list} or {@link #search}.
+     * The card layout showing either {@link #codeComboBox} or {@link #searchField}.
      */
     private final CardLayout cards;
 
@@ -179,28 +184,28 @@ public class AuthorityCodesComboBox extends WindowCreator {
         this.factory = factory;
         final Locale locale = getLocale();
         final Vocabulary resources = Vocabulary.getResources(locale);
+        final Listeners listeners = new Listeners();
 
         setLayout(new BorderLayout());
         cards        = new CardLayout();
         searchOrList = new JPanel(cards);
         codeList     = new AuthorityCodeList(locale, factory, types);
-        list         = new FastComboBox(codeList);
-        search       = new JTextField();
-        search.addActionListener(new ActionListener() {
-            @Override public void actionPerformed(final ActionEvent event) {
-                search(false);
-            }
-        });
-        final ListCellRenderer renderer = list.getRenderer();
+        codeComboBox = new FastComboBox(codeList);
+        searchField  = new JTextField();
+        searchField .setActionCommand(CONFIRM);
+        searchField .addActionListener(listeners);
+        codeComboBox.setActionCommand(SELECT);
+        codeComboBox.addActionListener(listeners);
+        final ListCellRenderer renderer = codeComboBox.getRenderer();
         if (renderer instanceof JLabel) { // This is the case of typical Swing implementations.
-            list.setRenderer(new AuthorityCodeRenderer(renderer));
+            codeComboBox.setRenderer(new AuthorityCodeRenderer(renderer));
         }
-        list.setPrototypeDisplayValue(new AuthorityCode());
-        Dimension size = list.getPreferredSize();
+        codeComboBox.setPrototypeDisplayValue(new AuthorityCode());
+        Dimension size = codeComboBox.getPreferredSize();
         size.width = 400; // Example of text to hold: "Unknown datum based upon the Average Terrestrial System 1977 ellipsoid"
-        list.setPreferredSize(size);
-        searchOrList.add(list,   "List");
-        searchOrList.add(search, "Search");
+        codeComboBox.setPreferredSize(size);
+        searchOrList.add(codeComboBox,   "List");
+        searchOrList.add(searchField, "Search");
         add(searchOrList, BorderLayout.CENTER);
         /*
          * Add the "Info" button.
@@ -210,13 +215,11 @@ public class AuthorityCodesComboBox extends WindowCreator {
         final IconFactory icons = IconFactory.DEFAULT;
         String label = resources.getString(Vocabulary.Keys.INFORMATIONS);
         button = icons.getButton("crystalProject/16/actions/info.png", label, label);
+        button.setEnabled(false);
         button.setFocusable(false);
         button.setPreferredSize(size);
-        button.addActionListener(new ActionListener() {
-            @Override public void actionPerformed(final ActionEvent event) {
-                showProperties(true);
-            }
-        });
+        button.setActionCommand(INFO);
+        button.addActionListener(listeners);
         showProperties = button;
         /*
          * Add the "Search" button.
@@ -225,11 +228,8 @@ public class AuthorityCodesComboBox extends WindowCreator {
         button = icons.getButton("crystalProject/16/actions/find.png", label, label);
         button.setFocusable(false);
         button.setPreferredSize(size);
-        button.addActionListener(new ActionListener() {
-            @Override public void actionPerformed(final ActionEvent event) {
-                search(true);
-            }
-        });
+        button.setActionCommand(SEARCH);
+        button.addActionListener(listeners);
         /*
          * Add the two buttons after the combo box.
          */
@@ -237,6 +237,26 @@ public class AuthorityCodesComboBox extends WindowCreator {
         box.add(button);
         box.add(showProperties);
         add(box, BorderLayout.LINE_END);
+    }
+
+    /**
+     * Various listeners used by the enclosing class.
+     *
+     * @todo switch(String) when allowed to use Java 7.
+     */
+    private final class Listeners implements ActionListener {
+        @Override public void actionPerformed(final ActionEvent event) {
+            final String action = event.getActionCommand();
+            if (SEARCH.equals(action)) {
+                search(true);
+            } else if (CONFIRM.equals(action)) {
+                search(false);
+            } else if (INFO.equals(action)) {
+                showProperties(true);
+            } else if (SELECT.equals(action)) {
+                showProperties.setEnabled(codeComboBox.getSelectedItem() != null);
+            }
+        }
     }
 
     /**
@@ -265,7 +285,7 @@ public class AuthorityCodesComboBox extends WindowCreator {
      */
     public String getSelectedCode() {
         final AuthorityCode code;
-        final JComboBox list = this.list;
+        final JComboBox list = this.codeComboBox;
         if (EventQueue.isDispatchThread()) {
             code = (AuthorityCode) list.getModel().getSelectedItem();
         } else {
@@ -293,9 +313,9 @@ public class AuthorityCodesComboBox extends WindowCreator {
      */
     public void setSelectedCode(final String code) {
         if (code == null) {
-            list.setSelectedItem(null);
+            codeComboBox.setSelectedItem(null);
         } else {
-            final ComboBoxModel model = list.getModel();
+            final ComboBoxModel model = codeComboBox.getModel();
             if (model instanceof AuthorityCodeList) {
                 ((AuthorityCodeList) model).setSelectedCode(code);
             } else {
@@ -376,7 +396,7 @@ public class AuthorityCodesComboBox extends WindowCreator {
                     message = e.toString();
                 }
                 if (title == null) {
-                    title = String.valueOf(list.getModel().getSelectedItem());
+                    title = String.valueOf(codeComboBox.getModel().getSelectedItem());
                 }
                 if (properties == null) {
                     properties = new PropertiesSheet();
@@ -399,7 +419,7 @@ public class AuthorityCodesComboBox extends WindowCreator {
                     }
                     final Listener listener = new Listener();
                     SwingUtilities.addWindowListener(AuthorityCodesComboBox.this, listener);
-                    list.addActionListener(listener);
+                    codeComboBox.addActionListener(listener);
                     window.setDefaultCloseOperation(Window.HIDE_ON_CLOSE);
                     window.setSize(600, 500);
                     propertiesWindow = window;
@@ -425,12 +445,12 @@ public class AuthorityCodesComboBox extends WindowCreator {
         final JComponent component;
         final String name;
         if (enable) {
-            component = search;
+            component = searchField;
             name = "Search";
         } else {
-            component = list;
+            component = codeComboBox;
             name = "List";
-            filter(search.getText());
+            filter(searchField.getText());
             if (propertiesWindow != null && propertiesWindow.isVisible()) {
                 showProperties(false);
             }
@@ -483,6 +503,6 @@ public class AuthorityCodesComboBox extends WindowCreator {
             }
             model = filtered;
         }
-        list.setModel(model);
+        codeComboBox.setModel(model);
     }
 }

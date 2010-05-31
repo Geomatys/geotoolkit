@@ -97,7 +97,7 @@ import org.geotoolkit.resources.Vocabulary;
  * }
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.07
+ * @version 3.12
  *
  * @see ImageProperties
  * @see ImageFileChooser
@@ -402,6 +402,33 @@ public class ImageFileProperties extends ImageProperties implements PropertyChan
     }
 
     /**
+     * Reads the metadata and thumbnails from the given image input in a background thread.
+     * This method delegates to the {@link #setImage(File)} method if the given input is a
+     * file, or to {@link #setImageInput(Object)} otherwise, from a background thread. If
+     * the operation fails, then the {@link IOException} is painted in the quicklook area.
+     * <p>
+     * <b>NOTE:</b> This method must be invoked from the <cite>Swing</cite> thread.
+     *
+     * @param input The image input, or {@code null} if none.
+     *
+     * @since 3.12
+     */
+    public void setImageLater(final Object input) {
+        Worker w = worker;
+        if (w != null) {
+            worker = null;
+            w.cancel();
+        }
+        if (input == null) {
+            setImage((RenderedImage) null);
+        } else {
+            w = new Worker(input);
+            worker = w; // Must be before execute.
+            w.execute();
+        }
+    }
+
+    /**
      * The task to be run by {@link ImageFileProperties#setImageInput(Object) in the caller
      * (preferably a background) thread. The {@link Runnable} part is to be run in the Swing
      * thread. The {@link Formats.ReadCall} part is to be run in the caller thread.
@@ -501,14 +528,7 @@ public class ImageFileProperties extends ImageProperties implements PropertyChan
             if (input instanceof File) {
                 final File file = (File) input;
                 if (file.isFile()) {
-                    Worker w = this.worker;
-                    if (w != null) {
-                        worker = null;
-                        w.cancel();
-                    }
-                    w = new Worker(file);
-                    worker = w; // Must be before execute.
-                    w.execute();
+                    setImageLater(file);
                 }
             }
         }
@@ -516,7 +536,8 @@ public class ImageFileProperties extends ImageProperties implements PropertyChan
 
     /**
      * The worker thread which will fetch image properties in background.
-     * In case of failure, the {@link IOException} is ignored.
+     * In the operation fails, the {@link IOException} is painted in the
+     * quicklook area.
      *
      * @author Martin Desruisseaux (Geomatys)
      * @version 3.05
@@ -530,7 +551,7 @@ public class ImageFileProperties extends ImageProperties implements PropertyChan
         /**
          * The file to read.
          */
-        private final File input;
+        private final Object input;
 
         /**
          * The image reader. Used only for cancelation.
@@ -540,7 +561,7 @@ public class ImageFileProperties extends ImageProperties implements PropertyChan
         /**
          * Creates a new worker thread for reading the given image.
          */
-        Worker(final File input) {
+        Worker(final Object input) {
             this.input = input;
         }
 
@@ -550,8 +571,12 @@ public class ImageFileProperties extends ImageProperties implements PropertyChan
          */
         @Override
         protected Object doInBackground() throws IOException {
-            publish (input);
-            setImage(input);
+            publish(input);
+            if (input instanceof File) {
+                setImage((File) input);
+            } else {
+                setImageInput(input);
+            }
             return null;
         }
 

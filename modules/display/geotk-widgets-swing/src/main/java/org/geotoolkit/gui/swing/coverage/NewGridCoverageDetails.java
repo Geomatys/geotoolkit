@@ -17,16 +17,21 @@
  */
 package org.geotoolkit.gui.swing.coverage;
 
-import java.awt.Component;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
+import java.io.File;
 import java.awt.Insets;
-import javax.swing.BorderFactory;
+import java.awt.GridLayout;
+import java.awt.GridBagLayout;
+import java.awt.GridBagConstraints;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import javax.swing.JPanel;
 import javax.swing.JLabel;
-import javax.swing.JTextField;
+import javax.swing.JButton;
 import javax.swing.JComponent;
-import java.text.ParseException;
+import javax.swing.JTextField;
+import javax.swing.BorderFactory;
 
+import org.jdesktop.swingx.JXTitledPanel;
 import org.jdesktop.swingx.JXTitledSeparator;
 
 import org.opengis.referencing.crs.VerticalCRS;
@@ -34,14 +39,12 @@ import org.opengis.referencing.crs.ProjectedCRS;
 import org.opengis.referencing.crs.GeographicCRS;
 import org.opengis.referencing.crs.CRSAuthorityFactory;
 
-import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Widgets;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.coverage.sql.CoverageDatabaseEvent;
 import org.geotoolkit.coverage.sql.DatabaseVetoException;
 import org.geotoolkit.coverage.sql.NewGridCoverageReference;
 import org.geotoolkit.coverage.sql.CoverageDatabaseController;
-import org.geotoolkit.gui.swing.Dialog;
 import org.geotoolkit.gui.swing.referencing.AuthorityCodesComboBox;
 import org.geotoolkit.internal.swing.SwingUtilities;
 
@@ -57,11 +60,16 @@ import org.geotoolkit.internal.swing.SwingUtilities;
  * @module
  */
 @SuppressWarnings("serial")
-final class NewGridCoverageDetails extends JComponent implements Dialog, CoverageDatabaseController {
+final class NewGridCoverageDetails extends JComponent implements CoverageDatabaseController, ActionListener {
+    /**
+     * Action commands.
+     */
+    private static final String OK="OK", CANCEL="CANCEL";
+
     /**
      * The {@link CoverageList} that created this panel.
      */
-    private final Component owner;
+    private final CoverageList owner;
 
     /**
      * The label showing the filename, including its extension.
@@ -95,7 +103,7 @@ final class NewGridCoverageDetails extends JComponent implements Dialog, Coverag
      * @param crsFactory The authority factory to use for fetching the list of available CRS.
      */
     @SuppressWarnings("unchecked")
-    public NewGridCoverageDetails(final Component owner, final CRSAuthorityFactory crsFactory) {
+    NewGridCoverageDetails(final CoverageList owner, final CRSAuthorityFactory crsFactory) {
         this.owner = owner;
         setLayout(new GridBagLayout());
         setBorder(BorderFactory.createEmptyBorder(9, 9, 9, 9));
@@ -111,11 +119,29 @@ final class NewGridCoverageDetails extends JComponent implements Dialog, Coverag
         final GridBagConstraints c = new GridBagConstraints();
         c.gridy=0; c.fill=GridBagConstraints.HORIZONTAL;
         addSeparator(resources.getString(Vocabulary.Keys.FILE), c);
-        addLabel(resources.getLabel(Vocabulary.Keys.NAME),   filename, c);
-        addLabel(resources.getLabel(Vocabulary.Keys.FORMAT), format,   c);
+        addLabel(resources.getLabel(Vocabulary.Keys.NAME), filename, c);
+        addLabel(resources.getLabel(Vocabulary.Keys.FORMAT), format, c);
         addSeparator(resources.getString(Vocabulary.Keys.COORDINATE_REFERENCE_SYSTEM), c);
         addLabel(resources.getLabel(Vocabulary.Keys.HORIZONTAL), horizontalCRS, c);
         addLabel(resources.getLabel(Vocabulary.Keys.VERTICAL),   verticalCRS,   c);
+
+        final JButton okButton, cancelButton;
+        okButton     = new JButton(resources.getString(Vocabulary.Keys.OK));
+        cancelButton = new JButton(resources.getString(Vocabulary.Keys.CANCEL));
+        okButton.setActionCommand(OK);
+        cancelButton.setActionCommand(CANCEL);
+        okButton.addActionListener(this);
+        cancelButton.addActionListener(this);
+        final JPanel buttonBar = new JPanel(new GridLayout(1, 2));
+        buttonBar.setOpaque(false);
+        buttonBar.add(okButton);
+        buttonBar.add(cancelButton);
+
+        final Insets insets = c.insets;
+        insets.left=24; insets.right=24; insets.top=15; insets.bottom=9;
+        c.gridx=0; c.gridwidth=2;
+        c.weighty=1; c.fill=GridBagConstraints.NONE; c.anchor=GridBagConstraints.SOUTH;
+        add(buttonBar, c);
     }
 
     /**
@@ -142,67 +168,100 @@ final class NewGridCoverageDetails extends JComponent implements Dialog, Coverag
     }
 
     /**
+     * Returns this panel in a {@link JXTitledPanel}.
+     */
+    final JComponent createTitledPane() {
+        return new JXTitledPanel(Widgets.getResources(getLocale()).getString(Widgets.Keys.CONFIRM_ADD_DATA), this);
+    }
+
+    /**
      * Invoked when a new coverage is about to be added. This method set the fields value to
      * the values declared in the given {@code reference} argument, and shows the window.
+     * This method needs to be invoked in a thread different than <cite>Swing</cite>.
      *
      * @throws DatabaseVetoException If the user clicked on the "Cancel" button.
      */
     @Override
-    public void coverageAdding(final CoverageDatabaseEvent event, final NewGridCoverageReference reference)
+    public synchronized void coverageAdding(final CoverageDatabaseEvent event, final NewGridCoverageReference reference)
             throws DatabaseVetoException
     {
-        if (event.isBefore() && event.getNumEntryChange() > 0) {
-            this.reference = reference;
-            filename.setText(reference.getFile().getPath());
-            format  .setText(reference.format);
-            if (reference.horizontalSRID != 0) {
-                horizontalCRS.setSelectedCode(String.valueOf(reference.horizontalSRID));
+        /*
+         * Do not show the widget if this method is invoked after the insertion (because
+         * it is too late for editing the values), or invoked for record removal.
+         */
+        if (!event.isBefore() || event.getNumEntryChange() <= 0) {
+            return;
+        }
+        /*
+         * Copies the information from the given reference to the fields in this widget.
+         */
+        final File file = reference.getFile();
+        SwingUtilities.invokeAndWait(new Runnable() {
+            @Override public void run() {
+                filename.setText(file.getName());
+                format.setText(reference.format);
+                setSelectedCode(horizontalCRS, reference.horizontalSRID);
+                setSelectedCode(verticalCRS,   reference.verticalSRID);
+                owner.setSelectionPanel(CoverageList.CONTROLLER);
+                owner.properties.setImageLater(file);
+                NewGridCoverageDetails.this.reference = reference;
             }
-            if (reference.verticalSRID != 0) {
-                verticalCRS.setSelectedCode(String.valueOf(reference.verticalSRID));
-            }
-            if (showDialog(owner, Widgets.getResources(getLocale()).getString(Widgets.Keys.CONFIRM_ADD_DATA))) {
-                // TODO
-            } else {
-                throw new DatabaseVetoException();
-            }
+        });
+        try {
+            wait();
+        } catch (InterruptedException e) {
+            throw new DatabaseVetoException(e);
+        }
+        /*
+         * At this point, we have been weakup by a button pressed by the user.
+         * If it was the "Ok" button, the fields are already updated. If it was
+         * the "Cancel" button, then the reference has been set to null.
+         */
+        if (this.reference == null) {
+            throw new DatabaseVetoException();
         }
     }
 
     /**
-     * Parse the selected authority code from the given combo box.
+     * Invoked when the user pressed the "Ok" or "Cancel" button.
+     *
+     * @todo switch(String) with Java 7.
      */
-    private int getSelectedCode(final AuthorityCodesComboBox choices) throws ParseException {
+    @Override
+    public synchronized void actionPerformed(final ActionEvent event) {
+        final String action = event.getActionCommand();
+        if (OK.equals(action)) {
+            if (reference != null) try {
+                reference.format = format.getText();
+                reference.horizontalSRID = getSelectedCode(horizontalCRS);
+                reference.verticalSRID   = getSelectedCode(verticalCRS);
+            } catch (NumberFormatException e) {
+                // Do not weakup the sleeping thread.
+                // User will need to make an other selection.
+                return;
+            }
+        } else {
+            reference = null;
+        }
+        notifyAll(); // Weakup the sleeping 'coverageAdding' method.
+    }
+
+    /**
+     * Parses the selected authority code from the given combo box,
+     * or {@code 0} if there is no selection.
+     */
+    private static int getSelectedCode(final AuthorityCodesComboBox choices) throws NumberFormatException {
         String code = choices.getSelectedCode();
-        if (code != null && (code = code.trim()).length() != 0) try {
+        if (code != null && (code = code.trim()).length() != 0) {
             return Integer.parseInt(code);
-        } catch (NumberFormatException e) {
-            final ParseException ex = new ParseException(Errors.getResources(getLocale())
-                    .getString(Errors.Keys.UNPARSABLE_NUMBER_$1, code), 0);
-            ex.initCause(e);
-            throw ex;
         }
         return 0;
     }
 
     /**
-     * {@inheritDoc}
+     * Sets the selected authority code to the given combo box.
      */
-    @Override
-    public void commitEdit() throws ParseException {
-        final NewGridCoverageReference reference = this.reference;
-        if (reference != null) {
-            reference.format = format.getText();
-            reference.horizontalSRID = getSelectedCode(horizontalCRS);
-            reference.verticalSRID   = getSelectedCode(verticalCRS);
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean showDialog(final Component owner, final String title) {
-        return SwingUtilities.showDialog(owner, this, title);
+    private static void setSelectedCode(final AuthorityCodesComboBox choices, final int code) {
+        choices.setSelectedCode(code != 0 ? String.valueOf(code) : null);
     }
 }

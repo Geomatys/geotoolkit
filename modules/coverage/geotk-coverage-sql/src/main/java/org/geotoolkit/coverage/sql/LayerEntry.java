@@ -28,6 +28,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.sql.SQLException;
 import java.awt.geom.Dimension2D;
+import java.io.File;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.InvalidObjectException;
@@ -628,12 +629,35 @@ final class LayerEntry extends DefaultEntry implements Layer {
             throw new CoverageStoreException(e);
         }
         final int[] count = series.frequencies();
-        final FrequencySortedSet<String> names = new FrequencySortedSet<String>();
+        final FrequencySortedSet<String> names = new FrequencySortedSet<String>(true);
         int i = 0;
         for (final SeriesEntry entry : series) {
             names.add(entry.format.imageFormat, count[i++]);
         }
         return names;
+    }
+
+    /**
+     * Returns the directories where the image files are stored.
+     */
+    @Override
+    public SortedSet<File> getImageDirectories() throws CoverageStoreException {
+        final FrequencySortedSet<SeriesEntry> series;
+        try {
+            series = getCountBySeries();
+        } catch (SQLException e) {
+            throw new CoverageStoreException(e);
+        }
+        final int[] count = series.frequencies();
+        final FrequencySortedSet<File> directories = new FrequencySortedSet<File>(true);
+        int i = 0;
+        for (final SeriesEntry entry : series) {
+            if (entry.protocol.equalsIgnoreCase(SeriesEntry.FILE_PROTOCOL)) {
+                directories.add(new File(entry.path), count[i]);
+            }
+            i++;
+        }
+        return directories;
     }
 
     /**
@@ -655,7 +679,7 @@ final class LayerEntry extends DefaultEntry implements Layer {
                 return XCollections.emptySortedSet();
             }
             final int[] count = extents.frequencies();
-            final FrequencySortedSet<GeneralGridGeometry> geometries = new FrequencySortedSet<GeneralGridGeometry>();
+            final FrequencySortedSet<GeneralGridGeometry> geometries = new FrequencySortedSet<GeneralGridGeometry>(true);
             int i = 0;
             for (final GridGeometryEntry entry : extents) {
                 GeneralGridGeometry gg = entry.geometry;
