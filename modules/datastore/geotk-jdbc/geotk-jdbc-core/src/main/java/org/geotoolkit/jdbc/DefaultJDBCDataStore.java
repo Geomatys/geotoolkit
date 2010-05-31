@@ -57,7 +57,6 @@ import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.jdbc.FilterToSQL;
 import org.geotoolkit.data.jdbc.FilterToSQLException;
 import org.geotoolkit.data.jdbc.PreparedFilterToSQL;
-import org.geotoolkit.data.jdbc.datasource.ManageableDataSource;
 import org.geotoolkit.data.jdbc.fidmapper.FIDMapper;
 import org.geotoolkit.data.memory.GenericFilterFeatureIterator;
 import org.geotoolkit.data.memory.GenericReprojectFeatureIterator;

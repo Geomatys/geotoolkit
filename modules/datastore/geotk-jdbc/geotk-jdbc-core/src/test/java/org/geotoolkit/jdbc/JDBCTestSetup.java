@@ -29,8 +29,6 @@ import java.util.logging.Logger;
 import javax.sql.DataSource;
 
 import org.apache.commons.dbcp.BasicDataSource;
-import org.geotoolkit.data.jdbc.datasource.DBCPDataSource;
-import org.geotoolkit.data.jdbc.datasource.ManageableDataSource;
 import org.geotoolkit.jdbc.dialect.SQLDialect;
 
 

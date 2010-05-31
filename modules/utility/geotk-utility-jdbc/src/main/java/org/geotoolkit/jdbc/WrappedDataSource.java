@@ -15,7 +15,7 @@
  *    Lesser General Public License for more details.
  */
 
-package org.geotoolkit.sql;
+package org.geotoolkit.jdbc;
 
 import java.io.PrintWriter;
 import java.sql.Connection;

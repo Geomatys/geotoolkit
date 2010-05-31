@@ -13,7 +13,7 @@
 
   <parent>
     <groupId>org.geotoolkit.pending</groupId>
-    <artifactId>modules</artifactId>
+    <artifactId>utility</artifactId>
     <version>SNAPSHOT</version>
   </parent>
 
@@ -22,12 +22,12 @@
   <!--     Module Description                                      -->
   <!-- =========================================================== -->
   <groupId>org.geotoolkit.pending</groupId>
-  <artifactId>utility</artifactId>
-  <packaging>pom</packaging>
-  <name>Utilities</name>
+  <artifactId>geotk-utility-jdbc</artifactId>
+  <packaging>jar</packaging>
+  <name>Utility JDBC</name>
 
   <description>
-    Projects group for miscellaneous utilities.
+    Utilies related to JDBC pool management and other usefull.
   </description>
 
 
@@ -36,26 +36,28 @@
   <!-- =========================================================== -->
   <developers>
     <developer>
-      <name>Martin Desruisseaux</name>
-      <id>desruisseaux</id>
-      <email>desruisseaux@users.sourceforge.net</email>
+      <name>Johann Sorel</name>
+      <id>jsorel</id>
+      <email>johann.sorel@geomatys.com</email>
       <organization>Geomatys</organization>
       <organizationUrl>http://www.geomatys.fr/</organizationUrl>
       <timezone>+1</timezone>
       <roles>
-        <role>Administrator</role>
+        <role>Module Maintainer</role>
+        <role>Java Developer</role>
       </roles>
     </developer>
   </developers>
 
 
   <!-- =========================================================== -->
-  <!--     Modules included in the build                           -->
+  <!--     Dependency Management                                   -->
   <!-- =========================================================== -->
-  <modules>
-    <module>geotk-utility-pending</module>
-    <module>geotk-utility-jdbc</module>
-    <module>geotk-spatial-lucene</module>
-  </modules>
+  <dependencies>
+      <dependency>
+      <groupId>commons-dbcp</groupId>
+      <artifactId>commons-dbcp</artifactId>
+    </dependency>
+  </dependencies>
 
 </project>

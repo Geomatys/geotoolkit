@@ -58,14 +58,15 @@
       <artifactId>geotk-filter</artifactId>
       <version>${project.version}</version>
     </dependency>
+    <dependency>
+      <groupId>org.geotoolkit.pending</groupId>
+      <artifactId>geotk-utility-jdbc</artifactId>
+      <version>${project.version}</version>
+    </dependency>
 
     <dependency>
       <groupId>commons-dbcp</groupId>
       <artifactId>commons-dbcp</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>commons-collections</groupId>
-      <artifactId>commons-collections</artifactId>
     </dependency>
   </dependencies>
   
