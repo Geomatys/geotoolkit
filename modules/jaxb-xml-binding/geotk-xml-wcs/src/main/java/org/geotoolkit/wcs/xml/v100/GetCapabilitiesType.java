@@ -171,8 +171,10 @@ public class GetCapabilitiesType implements GetCapabilities {
 
             @Override
             public boolean containsSection(String sectionName) {
-                //todo try to compile before commit.
-                throw new UnsupportedOperationException("Not supported.");
+                if (section != null) {
+                    return section.contains(sectionName);
+                }
+                return false;
             }
         };
     }
@@ -195,13 +197,14 @@ public class GetCapabilitiesType implements GetCapabilities {
 
     @Override
     public String getFirstAcceptFormat() {
-        //todo try to compile before commit.
-        throw new UnsupportedOperationException("Not supported.");
+        return "application/xml";
     }
 
     @Override
     public boolean containsSection(String sectionName) {
-        //todo try to compile before commit.
-        throw new UnsupportedOperationException("Not supported.");
+        if (section != null) {
+            return section.contains(sectionName);
+        }
+        return false;
     }
 }

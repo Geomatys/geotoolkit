@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.resources.jaxb.service;
 
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 import org.geotoolkit.service.OperationMetadataImpl;
@@ -32,7 +33,7 @@ import org.opengis.service.OperationMetadata;
 public class OperationMetadataAdapter extends XmlAdapter<OperationMetadataAdapter, OperationMetadata> {
     
     private OperationMetadata parameter;
-    
+
     /**
      * Empty constructor for JAXB only.
      */
@@ -64,8 +65,16 @@ public class OperationMetadataAdapter extends XmlAdapter<OperationMetadataAdapte
      */
     @XmlElement(name = "SV_OperationMetadata")
     public OperationMetadataImpl getOperationMetadata() {
-        return (parameter instanceof OperationMetadataImpl) ?
-            (OperationMetadataImpl)parameter : new OperationMetadataImpl(parameter);
+        if (parameter instanceof OperationMetadataImpl) {
+            OperationMetadataImpl param = (OperationMetadataImpl) parameter;
+            if (param.isUuidref()) {
+                return null;
+            } else {
+                return param;
+            }
+        } else {
+            return new OperationMetadataImpl(parameter);
+        }
     }
 
     /**
@@ -74,6 +83,32 @@ public class OperationMetadataAdapter extends XmlAdapter<OperationMetadataAdapte
      */
     public void setOperationMetadata(final OperationMetadataImpl OperationMetadata) {
         this.parameter = OperationMetadata;
+    }
+
+    /**
+     * Returns the {@link OperationMetadataImpl} generated from the metadata value.
+     * This method is systematically called at marshalling-time by JAXB.
+     */
+    @XmlAttribute(name = "uuidref")
+    public String getUuidref() {
+        if (parameter instanceof OperationMetadataImpl) {
+            OperationMetadataImpl param = (OperationMetadataImpl) parameter;
+            if (param.isUuidref()) {
+                return param.getOperationName();
+            } else {
+                return null;
+            }
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Sets the value for the {@link OperationMetadataImpl}. This method is systematically
+     * called at unmarshalling-time by JAXB.
+     */
+    public void setUuidref(final String uuidref) {
+        this.parameter = new OperationMetadataImpl(uuidref);
     }
 
     /**

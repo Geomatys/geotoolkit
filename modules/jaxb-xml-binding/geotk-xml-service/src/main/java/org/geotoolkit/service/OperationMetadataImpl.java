@@ -61,6 +61,8 @@ public class OperationMetadataImpl implements OperationMetadata {
     private Collection<OnlineResource> connectPoint;
     private Collection<OperationMetadata> dependsOn;
 
+    private boolean isUuidref;
+    
     /**
      * An empty constrcutor used by JAXB
      */
@@ -229,6 +231,20 @@ public class OperationMetadataImpl implements OperationMetadata {
             this.dependsOn = new ArrayList<OperationMetadata>();
         }
         this.dependsOn.add(dependsOn);
+    }
+
+    /**
+     * @return the isUuidref
+     */
+    public boolean isUuidref() {
+        return isUuidref;
+    }
+
+    /**
+     * @param isUuidref the isUuidref to set
+     */
+    public void setIsUuidref(boolean isUuidref) {
+        this.isUuidref = isUuidref;
     }
     
     @Override
