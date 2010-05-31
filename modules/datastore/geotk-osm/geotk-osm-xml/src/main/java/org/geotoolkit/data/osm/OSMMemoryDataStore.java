@@ -93,6 +93,12 @@ public class OSMMemoryDataStore extends AbstractDataStore{
     }
 
     private final FeatureExtend wayExtend = new FeatureExtend() {
+
+        @Override
+        public FeatureType getExtendedType(FeatureType original) {
+            return TYPE_WAY_EXTENDED;
+        }
+
         @Override
         public void extendProperties(Feature candidate, Collection<Property> props) {
             final Collection<Property> nodeProps = candidate.getProperties(ATT_WAY_NODES.getName());
@@ -170,7 +176,7 @@ public class OSMMemoryDataStore extends AbstractDataStore{
 
         //Add calculated attributs.
         if(ft.getName().equals(TYPE_WAY_EXTENDED.getName())){
-            fr = GenericExtendFeatureIterator.wrap(fr, TYPE_WAY_EXTENDED, wayExtend, query.getHints());
+            fr = GenericExtendFeatureIterator.wrap(fr, wayExtend, query.getHints());
         }
         
         return handleRemaining(fr, query);

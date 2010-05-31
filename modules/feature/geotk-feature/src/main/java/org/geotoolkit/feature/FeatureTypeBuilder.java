@@ -491,7 +491,7 @@ public class FeatureTypeBuilder {
      * Use of this method is discouraged. Consider using {@link #add(String, Class)}.
      * </p>
      */
-    public void addAll(final List<? extends PropertyDescriptor> descriptors) {
+    public void addAll(final Collection<? extends PropertyDescriptor> descriptors) {
         for (PropertyDescriptor ad : descriptors) {
             add(ad);
         }

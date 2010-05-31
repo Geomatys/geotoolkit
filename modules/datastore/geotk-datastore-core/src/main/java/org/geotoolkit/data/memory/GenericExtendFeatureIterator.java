@@ -19,15 +19,22 @@ package org.geotoolkit.data.memory;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Map;
+import org.geotoolkit.data.AbstractFeatureCollection;
 
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.DataStoreRuntimeException;
+import org.geotoolkit.data.FeatureCollection;
+import org.geotoolkit.data.query.Query;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.AbstractFeature;
+import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.LenientFeatureFactory;
 import org.geotoolkit.feature.type.DefaultAttributeDescriptor;
+import org.geotoolkit.storage.DataStoreException;
+import org.geotoolkit.util.collection.CloseableIterator;
 import org.geotoolkit.util.converter.Classes;
 
 import org.opengis.feature.Feature;
@@ -35,6 +42,8 @@ import org.opengis.feature.FeatureFactory;
 import org.opengis.feature.Property;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.FeatureType;
+import org.opengis.feature.type.PropertyDescriptor;
+import org.opengis.filter.Filter;
 import org.opengis.filter.identity.FeatureId;
 
 /**
@@ -43,7 +52,7 @@ import org.opengis.filter.identity.FeatureId;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public abstract class GenericExtendFeatureIterator<F extends Feature, R extends FeatureIterator<F>>
+public class GenericExtendFeatureIterator<F extends Feature, R extends FeatureIterator<F>>
         implements FeatureIterator<F> {
 
     protected static final FeatureFactory FF = FactoryFinder
@@ -82,6 +91,21 @@ public abstract class GenericExtendFeatureIterator<F extends Feature, R extends 
     }
 
     @Override
+    public F next() throws DataStoreRuntimeException {
+        final Feature next = iterator.next();
+        final Collection<Property> properties = new ArrayList<Property>(next.getProperties());
+        final AttributeDescriptor desc = new DefaultAttributeDescriptor( mask, mask.getName(), 1, 1, true, null);
+        final NoCopyFeature feature = new NoCopyFeature(desc, properties, next.getIdentifier());
+        extend.extendProperties(feature, properties);
+        return (F) feature;
+    }
+
+    @Override
+    public void remove() {
+        iterator.remove();
+    }
+
+    @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder(Classes.getShortClassName(this));
         sb.append('\n');
@@ -103,34 +127,26 @@ public abstract class GenericExtendFeatureIterator<F extends Feature, R extends 
             return (T) mask;
         }
         
-        @Override
-        public F next() throws DataStoreRuntimeException {
-            final Feature next = iterator.next();
-            final Collection<Property> properties = new ArrayList<Property>(next.getProperties());
-            final AttributeDescriptor desc = new DefaultAttributeDescriptor( mask, mask.getName(), 1, 1, true, null);
-            final NoCopyFeature feature = new NoCopyFeature(desc, properties, next.getIdentifier());
-            extend.extendProperties(feature, properties);
-            return (F) feature;
-        }
-
-        @Override
-        public void remove() {
-            iterator.remove();
-        }
-
     }
 
     /**
      * Wrap a FeatureReader with a new featuretype.
      */
     public static <T extends FeatureType, F extends Feature> FeatureReader<T,F> wrap(
-            FeatureReader<T,F> reader, FeatureType mask, FeatureExtend extend, Hints hints){
+            FeatureReader<T,F> reader, FeatureExtend extend, Hints hints){
+
+        final FeatureType mask = extend.getExtendedType(reader.getFeatureType());
+
         if(mask.equals(reader.getFeatureType())){
             //same type mapping, no need to wrap it
             return reader;
         }
             
         return new GenericSeparateExtendFeatureReader(reader, mask, extend);
+    }
+
+    public static FeatureCollection wrap(FeatureCollection col, FeatureExtend extend, Hints hints){
+        return new ExtendFeatureCollection(col, extend, hints);
     }
 
     private static class NoCopyFeature extends AbstractFeature<Collection<Property>>{
@@ -142,12 +158,83 @@ public abstract class GenericExtendFeatureIterator<F extends Feature, R extends 
 
     }
 
+    private static class ExtendFeatureCollection extends AbstractFeatureCollection{
+
+        protected final FeatureCollection col;
+        protected final FeatureType mask;
+        protected final FeatureExtend extend;
+
+        private ExtendFeatureCollection(FeatureCollection col, FeatureExtend extend, Hints hints){
+            super(col.getID(),col.getSource());
+            this.mask = extend.getExtendedType(col.getFeatureType());
+            this.extend = extend;
+            this.col = col;
+        }
+
+        @Override
+        public FeatureType getFeatureType() {
+            return mask;
+        }
+
+        @Override
+        public FeatureCollection subCollection(Query query) throws DataStoreException {
+            final FeatureCollection sub = col.subCollection(query);
+            return new ExtendFeatureCollection(sub, extend, query.getHints());
+        }
+
+        @Override
+        public CloseableIterator getRows() throws DataStoreException {
+            return col.getRows();
+        }
+
+        @Override
+        public FeatureIterator iterator(Hints hints) throws DataStoreRuntimeException {
+            final FeatureIterator sub = col.iterator(hints);
+            return new GenericExtendFeatureIterator(sub, mask, extend);
+        }
+
+        @Override
+        public void update(Filter filter, Map values) throws DataStoreException {
+            col.update(filter, values);
+        }
+
+        @Override
+        public void remove(Filter filter) throws DataStoreException {
+            col.remove(filter);
+        }
+
+    }
+
     /**
      * Object used to create the new properties for the feature.
      */
-    public static interface FeatureExtend{
+    public static abstract class FeatureExtend{
 
-        void extendProperties(Feature candidate, Collection<Property> props);
+        protected final PropertyDescriptor[] descs;
+        protected final FeatureType extendedType;
+
+        public FeatureExtend(PropertyDescriptor ... descs){
+            this.descs = descs;
+            this.extendedType = null;
+        }
+
+        public FeatureExtend(FeatureType extendedType){
+            this.descs = null;
+            this.extendedType = extendedType;
+        }
+
+        public FeatureType getExtendedType(FeatureType original){
+            if(extendedType != null){
+                return extendedType;
+            }else{
+                final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
+                ftb.copy(original);
+                ftb.addAll(descs);
+                return ftb.buildFeatureType();
+            }
+        }
+
+        public abstract void extendProperties(Feature candidate, Collection<Property> props);
 
     }
 
