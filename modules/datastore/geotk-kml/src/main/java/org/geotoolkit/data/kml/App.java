@@ -116,7 +116,7 @@ public class App {
         
         //featuresTests();
         
-        File input = new File("/home/samuel/Documents/doc_kml/exemples/region.xml");
+        File input = new File("/home/samuel/Documents/doc_kml/exemples/stylesAndFeatures.xml");
         File output = new File("/home/samuel/Documents/doc_kml/exemples/output.xml");
         KmlReader reader = new KmlReader(input);
         Kml kml = reader.read();

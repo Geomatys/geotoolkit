@@ -58,6 +58,8 @@ import org.geotoolkit.data.model.kml.FolderDefault;
 import org.geotoolkit.data.model.kml.GridOrigin;
 import org.geotoolkit.data.model.kml.GroundOverlay;
 import org.geotoolkit.data.model.kml.GroundOverlayDefault;
+import org.geotoolkit.data.model.kml.Icon;
+import org.geotoolkit.data.model.kml.IconDefault;
 import org.geotoolkit.data.model.kml.IconStyle;
 import org.geotoolkit.data.model.kml.IconStyleDefault;
 import org.geotoolkit.data.model.kml.IdAttributes;
@@ -424,7 +426,7 @@ public class KmlFactoryDefault implements KmlFactory{
             Region region, ExtendedData extendedData,
             List<SimpleType> abstractFeatureSimpleExtensions,
             List<AbstractObject> abstractFeatureObjectExtensions,
-            Color color, int drawOrder, Link icon,
+            Color color, int drawOrder, Icon icon,
             List<SimpleType> abstractOveraySimpleExtensions, List<AbstractObject> abstractOverlayObjectExtensions,
             double altitude, AltitudeMode altitudeMode, LatLonBox latLonBox,
             List<SimpleType> groundOverlaySimpleExtensions, List<AbstractObject> groundOverlayObjectExtensions){
@@ -439,6 +441,15 @@ public class KmlFactoryDefault implements KmlFactory{
                 abstractOveraySimpleExtensions, abstractOverlayObjectExtensions,
                 altitude, altitudeMode, latLonBox,
                 groundOverlaySimpleExtensions, groundOverlayObjectExtensions);
+    }
+
+    /**
+     * 
+     * @{@inheritDoc }
+     */
+    @Override
+    public Icon createIcon(Link link){
+        return new IconDefault(link);
     }
 
     /**
@@ -694,11 +705,11 @@ public class KmlFactoryDefault implements KmlFactory{
     @Override
     public NetworkLinkControl createNetworkLinkControl(double minRefreshPeriod,
             double maxSessionLength, String cookie, String message, String linkName, String linkDescription,
-            Snippet linkSnippet, String expire, Update update, AbstractView view,
+            Snippet linkSnippet, String expires, Update update, AbstractView view,
             List<SimpleType> networkLinkControlSimpleExtensions, List<AbstractObject> networkLinkControlObjectExtensions){
         return new NetworkLinkControlDefault(minRefreshPeriod, maxSessionLength,
                 cookie, message, linkName, linkDescription, linkSnippet,
-                expire, update, view,
+                expires, update, view,
                 networkLinkControlSimpleExtensions, networkLinkControlObjectExtensions);
     }
 
@@ -741,7 +752,7 @@ public class KmlFactoryDefault implements KmlFactory{
             Region region, ExtendedData extendedData,
             List<SimpleType> abstractFeatureSimpleExtensions,
             List<AbstractObject> abstractFeatureObjectExtensions,
-            Color color, int drawOrder, Link icon,
+            Color color, int drawOrder, Icon icon,
             List<SimpleType> abstractOveraySimpleExtensions, List<AbstractObject> abstractOverlayObjectExtensions,
             Angle180 rotation, ViewVolume viewVolume, ImagePyramid imagePyramid, Point point, Shape shape,
             List<SimpleType> photoOverlaySimpleExtensions, List<AbstractObject> photoOverlayObjectExtensions){
@@ -903,7 +914,7 @@ public class KmlFactoryDefault implements KmlFactory{
             Region region, ExtendedData extendedData,
             List<SimpleType> abstractFeatureSimpleExtensions,
             List<AbstractObject> abstractFeatureObjectExtensions,
-            Color color, int drawOrder, Link icon,
+            Color color, int drawOrder, Icon icon,
             List<SimpleType> abstractOveraySimpleExtensions, List<AbstractObject> abstractOverlayObjectExtensions,
             Vec2 overlayXY, Vec2 screenXY, Vec2 rotationXY, Vec2 size, Angle180 rotation,
             List<SimpleType> screenOverlaySimpleExtensions, List<AbstractObject> screenOverlayObjectExtensions){

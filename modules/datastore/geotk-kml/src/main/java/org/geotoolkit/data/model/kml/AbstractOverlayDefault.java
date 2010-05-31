@@ -14,7 +14,7 @@ public abstract class AbstractOverlayDefault extends AbstractFeatureDefault impl
 
     protected Color color;
     protected int drawOrder;
-    protected Link icon;
+    protected Icon icon;
     protected List<SimpleType> abstractOveraySimpleExtensions;
     protected List<AbstractObject> abstractOverlayObjectExtensions;
 
@@ -54,7 +54,7 @@ public abstract class AbstractOverlayDefault extends AbstractFeatureDefault impl
             Region region, ExtendedData extendedData,
             List<SimpleType> abstractFeatureSimpleExtensions,
             List<AbstractObject> abstractFeatureObjectExtensions,
-            Color color, int drawOrder, Link icon,
+            Color color, int drawOrder, Icon icon,
             List<SimpleType> abstractOveraySimpleExtensions, List<AbstractObject> abstractOverlayObjectExtensions){
        super(objectSimpleExtensions, idAttributes,
             name, visibility, open, author, link,
@@ -91,7 +91,7 @@ public abstract class AbstractOverlayDefault extends AbstractFeatureDefault impl
      * @{@inheritDoc }
      */
     @Override
-    public Link getIcon() {return this.icon;}
+    public Icon getIcon() {return this.icon;}
 
     /**
      *

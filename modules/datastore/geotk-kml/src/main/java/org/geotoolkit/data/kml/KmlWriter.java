@@ -29,16 +29,20 @@ import org.geotoolkit.data.model.kml.BalloonStyle;
 import org.geotoolkit.data.model.kml.BasicLink;
 import org.geotoolkit.data.model.kml.Boundary;
 import org.geotoolkit.data.model.kml.Camera;
+import org.geotoolkit.data.model.kml.Change;
 import org.geotoolkit.data.model.kml.Color;
 import org.geotoolkit.data.model.kml.ColorMode;
 import org.geotoolkit.data.model.kml.Coordinates;
+import org.geotoolkit.data.model.kml.Create;
 import org.geotoolkit.data.model.kml.Data;
+import org.geotoolkit.data.model.kml.Delete;
 import org.geotoolkit.data.model.kml.DisplayMode;
 import org.geotoolkit.data.model.kml.Document;
 import org.geotoolkit.data.model.kml.ExtendedData;
 import org.geotoolkit.data.model.kml.Folder;
 import org.geotoolkit.data.model.kml.GridOrigin;
 import org.geotoolkit.data.model.kml.GroundOverlay;
+import org.geotoolkit.data.model.kml.Icon;
 import org.geotoolkit.data.model.kml.IconStyle;
 import org.geotoolkit.data.model.kml.IdAttributes;
 import org.geotoolkit.data.model.kml.ImagePyramid;
@@ -60,6 +64,7 @@ import org.geotoolkit.data.model.kml.LookAt;
 import org.geotoolkit.data.model.kml.Model;
 import org.geotoolkit.data.model.kml.MultiGeometry;
 import org.geotoolkit.data.model.kml.NetworkLink;
+import org.geotoolkit.data.model.kml.NetworkLinkControl;
 import org.geotoolkit.data.model.kml.Orientation;
 import org.geotoolkit.data.model.kml.Pair;
 import org.geotoolkit.data.model.kml.PhotoOverlay;
@@ -76,11 +81,14 @@ import org.geotoolkit.data.model.kml.SchemaData;
 import org.geotoolkit.data.model.kml.ScreenOverlay;
 import org.geotoolkit.data.model.kml.Shape;
 import org.geotoolkit.data.model.kml.SimpleData;
+import org.geotoolkit.data.model.kml.SimpleField;
+import org.geotoolkit.data.model.kml.Snippet;
 import org.geotoolkit.data.model.kml.Style;
 import org.geotoolkit.data.model.kml.StyleMap;
 import org.geotoolkit.data.model.kml.StyleState;
 import org.geotoolkit.data.model.kml.TimeSpan;
 import org.geotoolkit.data.model.kml.TimeStamp;
+import org.geotoolkit.data.model.kml.Update;
 import org.geotoolkit.data.model.kml.Vec2;
 import org.geotoolkit.data.model.kml.ViewRefreshMode;
 import org.geotoolkit.data.model.kml.ViewVolume;
@@ -153,6 +161,7 @@ public class KmlWriter extends StaxStreamWriter {
      */
     private void writeKml(Kml kml) throws XMLStreamException{
         if (kml.getNetworkLinkControl() != null){
+            this.writeNetworkLinkControl(kml.getNetworkLinkControl());
         }
         if (kml.getAbstractFeature() != null){
             this.writeAbstractFeature(kml.getAbstractFeature());
@@ -160,6 +169,207 @@ public class KmlWriter extends StaxStreamWriter {
         if (kml.getKmlSimpleExtensions() != null){
         }
         if (kml.getKmlObjectExtensions() != null){
+        }
+    }
+
+    /**
+     *
+     * @param networkLinkControl
+     * @throws XMLStreamException
+     */
+    private void writeNetworkLinkControl(NetworkLinkControl networkLinkControl) throws XMLStreamException{
+        writer.writeStartElement(URI_KML, TAG_NETWORK_LINK_CONTROL);
+        if (isFiniteNumber(networkLinkControl.getMinRefreshPeriod())){
+            this.writeMinRefreshPeriod(networkLinkControl.getMinRefreshPeriod());
+        }
+        if (isFiniteNumber(networkLinkControl.getMaxSessionLength())){
+            this.writeMaxSessionLength(networkLinkControl.getMaxSessionLength());
+        }
+        if (networkLinkControl.getCookie() != null){
+            this.writeCookie(networkLinkControl.getCookie());
+        }
+        if (networkLinkControl.getMessage() != null){
+            this.writeMessage(networkLinkControl.getMessage());
+        }
+        if (networkLinkControl.getLinkName() != null){
+            this.writeLinkName(networkLinkControl.getLinkName());
+        }
+        if (networkLinkControl.getLinkDescription() != null){
+            this.writeLinkDescription(networkLinkControl.getLinkDescription());
+        }
+        if (networkLinkControl.getLinkSnippet() != null){
+            this.writeLinkSnippet(networkLinkControl.getLinkSnippet());
+        }
+        if (networkLinkControl.getExpires() != null){
+            this.writeExpires(networkLinkControl.getExpires());
+        }
+        if (networkLinkControl.getUpdate() != null){
+            this.writeUpdate(networkLinkControl.getUpdate());
+        }
+        if (networkLinkControl.getView() != null){
+            this.writeAbstractView(networkLinkControl.getView());
+        }
+        if (networkLinkControl.getLinkDescription() != null){
+            this.writeSimpleExtensions(networkLinkControl.getNetworkLinkControlSimpleExtensions());
+        }
+        if (networkLinkControl.getLinkDescription() != null){
+            this.writeObjectExtensions(networkLinkControl.getNetworkLinkControlObjectExtensions());
+        }
+        writer.writeEndElement();
+    }
+
+    /**
+     *
+     * @param update
+     * @throws XMLStreamException
+     */
+    private void writeUpdate(Update update) throws XMLStreamException{
+        writer.writeStartElement(URI_KML, TAG_UPDATE);
+        if(update.getCreates() != null){
+            for (Create create : update.getCreates()){
+                this.writeCreate(create);
+            }
+        }
+        if(update.getDeletes() != null){
+            for (Delete delete : update.getDeletes()){
+                this.writeDelete(delete);
+            }
+        }
+        if(update.getChanges() != null){
+            for (Change change : update.getChanges()){
+                this.writeChange(change);
+            }
+        }
+        writer.writeEndElement();
+    }
+
+    /**
+     *
+     * @param create
+     * @throws XMLStreamException
+     */
+    private void writeCreate(Create create) throws XMLStreamException{
+        writer.writeStartElement(URI_KML, TAG_CREATE);
+        for (AbstractContainer container : create.getContainers()){
+            this.writeAbstractContainer(container);
+        }
+        writer.writeEndElement();
+    }
+
+    /**
+     *
+     * @param delete
+     * @throws XMLStreamException
+     */
+    private void writeDelete(Delete delete) throws XMLStreamException{
+        writer.writeStartElement(URI_KML, TAG_DELETE);
+        for (AbstractFeature feature : delete.getFeatures()){
+            this.writeAbstractFeature(feature);
+        }
+        writer.writeEndElement();
+    }
+
+    /**
+     *
+     * @param change
+     * @throws XMLStreamException
+     */
+    private void writeChange(Change change) throws XMLStreamException{
+        writer.writeStartElement(URI_KML, TAG_CHANGE);
+        for (AbstractObject object : change.getObjects()){
+            this.writeAbstractObject(object);
+        }
+        writer.writeEndElement();
+    }
+
+    /**
+     *
+     * @param object
+     * @throws XMLStreamException
+     */
+    private void writeAbstractObject(AbstractObject object) throws XMLStreamException{
+        if (object instanceof Region){
+            this.writeRegion((Region) object);
+        } else if (object instanceof Lod){
+           this.writeLod((Lod) object);
+        } else if (object instanceof Link){
+            this.writeLink((Link) object);
+        } else if (object instanceof Icon){
+            this.writeIcon((Icon) object);
+        } else if (object instanceof Location){
+            this.writeLocation((Location) object);
+        } else if (object instanceof Orientation){
+            this.writeOrientation((Orientation) object);
+        } else if (object instanceof ResourceMap){
+            this.writeResourceMap((ResourceMap) object);
+        } else if (object instanceof SchemaData){
+            this.writeSchemaData((SchemaData) object);
+        } else if (object instanceof Scale){
+           this.writeScale((Scale) object);
+        } else if (object instanceof Alias){
+            this.writeAlias((Alias) object);
+        } else if (object instanceof ViewVolume){
+            this.writeViewVolume((ViewVolume) object);
+        } else if (object instanceof ImagePyramid){
+            this.writeImagePyramid((ImagePyramid) object);
+        } else if (object instanceof Pair){
+            this.writePair((Pair) object);
+        } else if (object instanceof ItemIcon){
+            this.writeItemIcon((ItemIcon) object);
+        } else if (object instanceof AbstractFeature){
+            this.writeAbstractFeature((AbstractFeature) object);
+        } else if (object instanceof AbstractGeometry){
+            this.writeAbstractGeometry((AbstractGeometry) object);
+        } else if (object instanceof AbstractStyleSelector){
+            this.writeAbstractStyleSelector((AbstractStyleSelector) object);
+        } else if (object instanceof AbstractSubStyle){
+            this.writeAbstractSubStyle((AbstractSubStyle) object);
+        } else if (object instanceof AbstractView){
+            this.writeAbstractView((AbstractView) object);
+        } else if (object instanceof AbstractTimePrimitive){
+            this.writeAbstractTimePrimitive((AbstractTimePrimitive) object);
+        } else if (object instanceof AbstractLatLonBox){
+            this.writeAbstractLatLonBox((AbstractLatLonBox) object);
+        }
+    }
+
+    private void writeAbstractLatLonBox(AbstractLatLonBox abstractLatLonBox) throws XMLStreamException{
+        if(abstractLatLonBox instanceof LatLonAltBox){
+            this.writeLatLonAltBox((LatLonAltBox) abstractLatLonBox);
+        } else if (abstractLatLonBox instanceof LatLonBox){
+            this.writeLatLonBox((LatLonBox) abstractLatLonBox);
+        }
+    }
+
+    /**
+     *
+     * @param subStyle
+     * @throws XMLStreamException
+     */
+    private void writeAbstractSubStyle(AbstractSubStyle subStyle) throws XMLStreamException{
+        if (subStyle instanceof BalloonStyle){
+            this.writeBalloonStyle((BalloonStyle) subStyle);
+        } else if (subStyle instanceof ListStyle){
+            this.writeListStyle((ListStyle) subStyle);
+        } else if (subStyle instanceof AbstractColorStyle){
+            this.writeAbstractColorStyle((AbstractColorStyle) subStyle);
+        }
+    }
+
+    /**
+     *
+     * @param colorStyle
+     * @throws XMLStreamException
+     */
+    private void writeAbstractColorStyle(AbstractColorStyle colorStyle) throws XMLStreamException{
+        if (colorStyle instanceof IconStyle){
+            this.writeIconStyle((IconStyle) colorStyle);
+        } else if (colorStyle instanceof LabelStyle){
+            this.writeLabelStyle((LabelStyle) colorStyle);
+        } else if (colorStyle instanceof PolyStyle){
+            this.writePolyStyle((PolyStyle) colorStyle);
+        } else if (colorStyle instanceof LineStyle){
+            this.writeLineStyle((LineStyle) colorStyle);
         }
     }
 
@@ -928,7 +1138,7 @@ public class KmlWriter extends StaxStreamWriter {
      * @param icon
      * @throws XMLStreamException
      */
-    private void writeIcon(Link icon) throws XMLStreamException{
+    private void writeIcon(Icon icon) throws XMLStreamException{
         writer.writeStartElement(URI_KML, TAG_ICON);
         this.writeLink_structure(icon);
         writer.writeEndElement();
@@ -1334,7 +1544,6 @@ public class KmlWriter extends StaxStreamWriter {
     private void writeDocument(Document document) throws XMLStreamException{
         writer.writeStartElement(URI_KML, TAG_DOCUMENT);
         this.writeCommonAbstractContainer(document);
-
         if (document.getSchemas() != null){
             for(Schema schema : document.getSchemas()){
                 this.writeSchema(schema);
@@ -1354,8 +1563,44 @@ public class KmlWriter extends StaxStreamWriter {
         writer.writeEndElement();
     }
 
-    private void writeSchema(Schema schema){
-        
+    /**
+     *
+     * @param schema
+     * @throws XMLStreamException
+     */
+    private void writeSchema(Schema schema) throws XMLStreamException{
+        writer.writeStartElement(URI_KML, TAG_SCHEMA);
+        if (schema.getSimpleFields() != null){
+            for (SimpleField sf : schema.getSimpleFields()){
+                this.writeSimpleField(sf);
+            }
+        }
+        if (schema.getName() != null){
+            writer.writeAttribute(ATT_NAME, schema.getName());
+        }
+        if (schema.getId() != null){
+            writer.writeAttribute(ATT_ID, schema.getId());
+        }
+        writer.writeEndElement();
+    }
+
+    /**
+     * 
+     * @param simpleField
+     * @throws XMLStreamException
+     */
+    private void writeSimpleField(SimpleField simpleField) throws XMLStreamException{
+        writer.writeStartElement(URI_KML, TAG_SIMPLE_FIELD);
+        if (simpleField.getDisplayName() != null){
+            this.writeDisplayName(simpleField.getDisplayName());
+        }
+        if (simpleField.getType() != null){
+            writer.writeAttribute(ATT_TYPE, simpleField.getType());
+        }
+        if (simpleField.getName() != null){
+            writer.writeAttribute(ATT_ID, simpleField.getName());
+        }
+        writer.writeEndElement();
     }
 
     /**
@@ -1978,6 +2223,74 @@ public class KmlWriter extends StaxStreamWriter {
         writer.writeEndElement();
     }
 
+
+    /**
+     * 
+     * @param cookie
+     * @throws XMLStreamException
+     */
+    private void writeCookie(String cookie) throws XMLStreamException {
+        writer.writeStartElement(URI_KML, TAG_COOKIE);
+        writer.writeCharacters(cookie);
+        writer.writeEndElement();
+    }
+
+    /**
+     *
+     * @param message
+     * @throws XMLStreamException
+     */
+    private void writeMessage(String message) throws XMLStreamException {
+        writer.writeStartElement(URI_KML, TAG_MESSAGE);
+        writer.writeCharacters(message);
+        writer.writeEndElement();
+    }
+
+    /**
+     *
+     * @param linkName
+     * @throws XMLStreamException
+     */
+    private void writeLinkName(String linkName) throws XMLStreamException {
+        writer.writeStartElement(URI_KML, TAG_LINK_NAME);
+        writer.writeCharacters(linkName);
+        writer.writeEndElement();
+    }
+
+    /**
+     *
+     * @param linkDescription
+     * @throws XMLStreamException
+     */
+    private void writeLinkDescription(String linkDescription) throws XMLStreamException {
+        writer.writeStartElement(URI_KML, TAG_LINK_DESCRIPTION);
+        writer.writeCharacters(linkDescription);
+        writer.writeEndElement();
+    }
+
+    /**
+     *
+     * @param expires
+     * @throws XMLStreamException
+     */
+    private void writeExpires(String expires) throws XMLStreamException {
+        writer.writeStartElement(URI_KML, TAG_EXPIRES);
+        writer.writeCharacters(expires);
+        writer.writeEndElement();
+    }
+
+    /**
+     * 
+     * @param linkSnippet
+     * @throws XMLStreamException
+     */
+    private void writeLinkSnippet(Snippet linkSnippet) throws XMLStreamException {
+        writer.writeStartElement(URI_KML, TAG_LINK_SNIPPET);
+        writer.writeAttribute(ATT_MAX_LINES, String.valueOf(linkSnippet.getMaxLines()));
+        writer.writeCharacters(linkSnippet.getContent());
+        writer.writeEndElement();
+    }
+
     /**
      * 
      * @param color
@@ -2371,6 +2684,32 @@ public class KmlWriter extends StaxStreamWriter {
 
     /**
      *
+     * @param minRefreshPeriod
+     * @throws XMLStreamException
+     */
+    private void writeMinRefreshPeriod(double minRefreshPeriod) throws XMLStreamException {
+        if (DEF_MIN_REFRESH_PERIOD != minRefreshPeriod){
+            writer.writeStartElement(URI_KML, TAG_MIN_REFRESH_PERIOD);
+            writer.writeCharacters(Double.toString(minRefreshPeriod));
+            writer.writeEndElement();
+        }
+    }
+
+    /**
+     * 
+     * @param maxSessionLength
+     * @throws XMLStreamException
+     */
+    private void writeMaxSessionLength(double maxSessionLength) throws XMLStreamException {
+        if (DEF_MAX_SESSION_LENGTH != maxSessionLength){
+            writer.writeStartElement(URI_KML, TAG_MAX_SESSION_LENGTH);
+            writer.writeCharacters(Double.toString(maxSessionLength));
+            writer.writeEndElement();
+        }
+    }
+
+    /**
+     *
      * @param titleSize
      * @throws XMLStreamException
      */
@@ -2501,7 +2840,7 @@ public class KmlWriter extends StaxStreamWriter {
 
     /**
      * This method writes a latitude angle.
-     * @param latitude The latitude value.
+     * @param latitude The latitude cookie.
      * @throws XMLStreamException
      */
     private void writeLatitude(Angle90 latitude) throws XMLStreamException{

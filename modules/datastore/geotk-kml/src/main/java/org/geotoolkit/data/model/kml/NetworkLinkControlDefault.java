@@ -16,7 +16,7 @@ public class NetworkLinkControlDefault implements NetworkLinkControl {
     private String linkName;
     private String linkDescription;
     private Snippet linkSnippet;
-    private String expire;
+    private String expires;
     private Update update;
     private AbstractView view;
     private List<SimpleType> networkLinkControlSimpleExtensions;
@@ -31,7 +31,7 @@ public class NetworkLinkControlDefault implements NetworkLinkControl {
      * @param linkName
      * @param linkDescription
      * @param linkSnippet
-     * @param expire
+     * @param expires
      * @param update
      * @param view
      * @param networkLinkControlSimpleExtensions
@@ -48,7 +48,7 @@ public class NetworkLinkControlDefault implements NetworkLinkControl {
         this.linkName = linkName;
         this.linkDescription = linkDescription;
         this.linkSnippet = linkSnippet;
-        this.expire = expire;
+        this.expires = expire;
         this.update = update;
         this.view = view;
         this.networkLinkControlSimpleExtensions = networkLinkControlSimpleExtensions;
@@ -109,7 +109,7 @@ public class NetworkLinkControlDefault implements NetworkLinkControl {
      * @{@inheritDoc }
      */
     @Override
-    public String getExpire() {return this.expire;}
+    public String getExpires() {return this.expires;}
 
     /**
      *

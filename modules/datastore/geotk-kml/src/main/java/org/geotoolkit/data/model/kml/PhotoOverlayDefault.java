@@ -63,7 +63,7 @@ public class PhotoOverlayDefault extends AbstractOverlayDefault implements Photo
             Region region, ExtendedData extendedData,
             List<SimpleType> abstractFeatureSimpleExtensions,
             List<AbstractObject> abstractFeatureObjectExtensions,
-            Color color, int drawOrder, Link icon,
+            Color color, int drawOrder, Icon icon,
             List<SimpleType> abstractOveraySimpleExtensions, List<AbstractObject> abstractOverlayObjectExtensions,
             Angle180 rotation, ViewVolume viewVolume, ImagePyramid imagePyramid, Point point, Shape shape,
             List<SimpleType> photoOverlaySimpleExtensions, List<AbstractObject> photoOverlayObjectExtensions){

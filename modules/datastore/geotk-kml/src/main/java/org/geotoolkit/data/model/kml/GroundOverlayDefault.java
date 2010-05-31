@@ -59,7 +59,7 @@ public class GroundOverlayDefault extends AbstractOverlayDefault implements Grou
             Region region, ExtendedData extendedData,
             List<SimpleType> abstractFeatureSimpleExtensions,
             List<AbstractObject> abstractFeatureObjectExtensions,
-            Color color, int drawOrder, Link icon,
+            Color color, int drawOrder, Icon icon,
             List<SimpleType> abstractOveraySimpleExtensions, List<AbstractObject> abstractOverlayObjectExtensions,
             double altitude, AltitudeMode altitudeMode, LatLonBox latLonBox,
             List<SimpleType> groundOverlaySimpleExtensions, List<AbstractObject> groundOverlayObjectExtensions){

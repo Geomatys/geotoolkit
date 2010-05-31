@@ -87,14 +87,19 @@ public final class ModelConstants {
     public static final String TAG_BEGIN = "begin";
     public static final String TAG_BG_COLOR = "bgColor";
     public static final String TAG_BOTTOM_FOV = "bottomFov";
+    public static final String TAG_CHANGE = "Change";
     public static final String TAG_COLOR = "color";
+    public static final String TAG_COOKIE = "cookie";
     public static final String TAG_COORDINATES = "coordinates";
+    public static final String TAG_CREATE = "Create";
     public static final String TAG_DATA = "Data";
+    public static final String TAG_DELETE = "Delete";
     public static final String TAG_DESCRIPTION = "description";
     public static final String TAG_DISPLAY_NAME = "displayName";
     public static final String TAG_DRAW_ORDER = "drawOrder";
     public static final String TAG_EAST = "east";
     public static final String TAG_END = "end";
+    public static final String TAG_EXPIRES = "expires";
     public static final String TAG_EXTENDED_DATA = "ExtendedData";
     public static final String TAG_EXTRUDE = "extrude";
     public static final String TAG_FILL = "fill";
@@ -113,6 +118,9 @@ public final class ModelConstants {
     public static final String TAG_LAT_LON_ALT_BOX = "LatLonAltBox";
     public static final String TAG_LEFT_FOV = "leftFov";
     public static final String TAG_LINK = "Link";
+    public static final String TAG_LINK_DESCRIPTION = "linkDescription";
+    public static final String TAG_LINK_NAME = "linkName";
+    public static final String TAG_LINK_SNIPPET = "linkSnippet";
     public static final String TAG_LIST_ITEM = "listItemType";
     public static final String TAG_LOCATION = "Location";
     public static final String TAG_LOD = "Lod";
@@ -123,9 +131,12 @@ public final class ModelConstants {
     public static final String TAG_MAX_SNIPPET_LINES = "maxSnippetLines";
     public static final String TAG_MAX_HEIGHT = "maxHeight";
     public static final String TAG_MAX_WIDTH = "maxWidth";
+    public static final String TAG_MAX_SESSION_LENGTH = "maxSessionLength";
+    public static final String TAG_MESSAGE = "message";
     public static final String TAG_MIN_ALTITUDE = "minAltitude";
     public static final String TAG_MIN_FADE_EXTENT = "minFadeExtent";
     public static final String TAG_MIN_LOD_PIXELS = "minLodPixels";
+    public static final String TAG_MIN_REFRESH_PERIOD = "minRefreshPeriod";
     public static final String TAG_NAME = "name";
     public static final String TAG_NEAR = "near";
     public static final String TAG_NORTH = "north";
@@ -166,6 +177,7 @@ public final class ModelConstants {
     public static final String TAG_TILT = "tilt";
     public static final String TAG_TITLE_SIZE = "tileSize";
     public static final String TAG_TOP_FOV = "bottomFov";
+    public static final String TAG_UPDATE = "update";
     public static final String TAG_VALUE = "value";
     public static final String TAG_VIEW_FORMAT = "viewFormat";
     public static final String TAG_VIEW_BOUND_SCALE = "viewBoundScale";
@@ -195,6 +207,7 @@ public final class ModelConstants {
     public static final String ATT_NAME = "name";
     public static final String ATT_TARGET_ID = "targetId";
     public static final String ATT_TYPE = "type";
+    public static final String ATT_MAX_LINES = "maxLines";
 
     // ATTRIBUTES VEC2
     public static final String ATT_X = "x";
@@ -248,6 +261,7 @@ public final class ModelConstants {
     public static final double DEF_MAX_LOD_PIXELS = -1.0;
     public static final double DEF_MAX_SESSION_LENGTH = -1.0;
     public static final int DEF_MAX_SNIPPET_LINES = 2;
+    public static final int DEF_MAX_SNIPPET_LINES_ATT = 2;
     public static final int DEF_MAX_WIDTH = 0;
     public static final double DEF_MIN_ALTITUDE = 0.0;
     public static final double DEF_MIN_FADE_EXTENT = 0.0;
@@ -261,7 +275,6 @@ public final class ModelConstants {
     public static final double DEF_REFRESH_INTERVAL = 4.0;
     public static final double DEF_SCALE = 1.0;
     public static final Shape DEF_SHAPE = Shape.RECTANGLE;
-    public static final int DEF_SNIPPET_MAX_LINES = 2;
     public static final StyleState DEF_STYLE_STATE = StyleState.NORMAL;
     public static final boolean DEF_TESSELLATE = false;
     public static final int DEF_TITLE_SIZE = 256;

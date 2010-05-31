@@ -43,7 +43,7 @@ public interface AbstractOverlay extends AbstractFeature{
      *
      * @return the icon link.
      */
-    public Link getIcon();
+    public Icon getIcon();
 
     /**
      *

@@ -76,7 +76,7 @@ public interface NetworkLinkControl {
      *
      * @return
      */
-    public String getExpire();
+    public String getExpires();
 
     /**
      *

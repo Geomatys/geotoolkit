@@ -29,19 +29,19 @@ public interface Update {
      *
      * @return
      */
-    public List<Create> getCreate();
+    public List<Create> getCreates();
 
     /**
      *
      * @return
      */
-    public List<Delete> getDelete();
+    public List<Delete> getDeletes();
 
     /**
      *
      * @return
      */
-    public List<Change> getChange();
+    public List<Change> getChanges();
 
     /**
      *

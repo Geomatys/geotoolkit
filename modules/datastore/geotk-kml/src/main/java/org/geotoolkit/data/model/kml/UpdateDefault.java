@@ -37,21 +37,21 @@ public class UpdateDefault implements Update {
      * @{@inheritDoc }
      */
     @Override
-    public List<Create> getCreate() {return this.creates;}
+    public List<Create> getCreates() {return this.creates;}
 
     /**
      *
      * @{@inheritDoc }
      */
     @Override
-    public List<Delete> getDelete() {return this.deletes;}
+    public List<Delete> getDeletes() {return this.deletes;}
 
     /**
      *
      * @{@inheritDoc }
      */
     @Override
-    public List<Change> getChange() {return this.changes;}
+    public List<Change> getChanges() {return this.changes;}
 
     /**
      *

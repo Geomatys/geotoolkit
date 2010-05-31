@@ -4,7 +4,10 @@ import com.ctc.wstx.stax.WstxInputFactory;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.stream.XMLInputFactory;
@@ -15,12 +18,15 @@ import org.geotoolkit.data.model.KmlFactory;
 import org.geotoolkit.data.model.KmlFactoryDefault;
 import org.geotoolkit.data.model.atom.AtomPersonConstruct;
 import org.geotoolkit.data.model.atom.AtomLink;
+import org.geotoolkit.data.model.kml.AbstractColorStyle;
 import org.geotoolkit.data.model.kml.AbstractContainer;
 import org.geotoolkit.data.model.kml.AbstractFeature;
 import org.geotoolkit.data.model.kml.AbstractGeometry;
+import org.geotoolkit.data.model.kml.AbstractLatLonBox;
 import org.geotoolkit.data.model.kml.AbstractObject;
 import org.geotoolkit.data.model.kml.AbstractOverlay;
 import org.geotoolkit.data.model.kml.AbstractStyleSelector;
+import org.geotoolkit.data.model.kml.AbstractSubStyle;
 import org.geotoolkit.data.model.kml.AbstractTimePrimitive;
 import org.geotoolkit.data.model.kml.AbstractView;
 import org.geotoolkit.data.model.kml.Alias;
@@ -33,17 +39,21 @@ import org.geotoolkit.data.model.kml.BalloonStyle;
 import org.geotoolkit.data.model.kml.BasicLink;
 import org.geotoolkit.data.model.kml.Boundary;
 import org.geotoolkit.data.model.kml.Camera;
+import org.geotoolkit.data.model.kml.Change;
 import org.geotoolkit.data.model.kml.Color;
 import org.geotoolkit.data.model.kml.ColorMode;
 import org.geotoolkit.data.model.kml.Coordinate;
 import org.geotoolkit.data.model.kml.Coordinates;
+import org.geotoolkit.data.model.kml.Create;
 import org.geotoolkit.data.model.kml.Data;
+import org.geotoolkit.data.model.kml.Delete;
 import org.geotoolkit.data.model.kml.DisplayMode;
 import org.geotoolkit.data.model.kml.Document;
 import org.geotoolkit.data.model.kml.ExtendedData;
 import org.geotoolkit.data.model.kml.Folder;
 import org.geotoolkit.data.model.kml.GridOrigin;
 import org.geotoolkit.data.model.kml.GroundOverlay;
+import org.geotoolkit.data.model.kml.Icon;
 import org.geotoolkit.data.model.kml.IconStyle;
 import org.geotoolkit.data.model.kml.IdAttributes;
 import org.geotoolkit.data.model.kml.ImagePyramid;
@@ -84,12 +94,14 @@ import org.geotoolkit.data.model.kml.ScreenOverlay;
 import org.geotoolkit.data.model.kml.Shape;
 import org.geotoolkit.data.model.kml.SimpleData;
 import org.geotoolkit.data.model.kml.SimpleField;
+import org.geotoolkit.data.model.kml.Snippet;
 import org.geotoolkit.data.model.kml.Style;
 import org.geotoolkit.data.model.kml.StyleMap;
 import org.geotoolkit.data.model.kml.StyleState;
 import org.geotoolkit.data.model.kml.TimeSpan;
 import org.geotoolkit.data.model.kml.TimeStamp;
 import org.geotoolkit.data.model.kml.Units;
+import org.geotoolkit.data.model.kml.Update;
 import org.geotoolkit.data.model.kml.Vec2;
 import org.geotoolkit.data.model.kml.ViewRefreshMode;
 import org.geotoolkit.data.model.kml.ViewVolume;
@@ -584,23 +596,355 @@ public class KmlReader extends StaxStreamReader {
         return this.kmlFactory.createSimpleData(reader.getAttributeValue(null, ATT_NAME), reader.getElementText());
     }
 
-    private NetworkLinkControl readNetworkLinkControl() {
-        NetworkLinkControl resultat = null;
-//        if()
-//        kml:minRefreshPeriod" minOccurs="0"/>
-//      <element ref="kml:maxSessionLength" minOccurs="0"/>
-//      <element ref="kml:cookie" minOccurs="0"/>
-//      <element ref="kml:message" minOccurs="0"/>
-//      <element ref="kml:linkName" minOccurs="0"/>
-//      <element ref="kml:linkDescription" minOccurs="0"/>
-//      <element ref="kml:linkSnippet" minOccurs="0"/>
-//      <element ref="kml:expires" minOccurs="0"/>
-//      <element ref="kml:Update" minOccurs="0"/>
-//      <element ref="kml:AbstractViewGroup" minOccurs="0"/>
-//      <element ref="kml:NetworkLinkControlSimpleExtensionGroup" minOccurs="0" maxOccurs="unbounded"/>
-//      <element ref="kml:NetworkLinkControlObjectExtensionGroup" minOccurs="0" maxOccurs="unbounded"/>
+    /**
+     *
+     * @return
+     * @throws XMLStreamException
+     * @throws KmlException
+     */
+    private NetworkLinkControl readNetworkLinkControl() throws XMLStreamException, KmlException {
+        double minRefreshPeriod = DEF_MIN_REFRESH_PERIOD;
+        double maxSessionLength = DEF_MAX_SESSION_LENGTH;
+        String cookie = null;
+        String message = null;
+        String linkName = null;
+        String linkDescription = null;
+        Snippet linkSnippet = null;
+        String expires = null;
+        Update update = null;
+        AbstractView view = null;
+        List<SimpleType> networkLinkControlSimpleExtensions = null;
+        List<AbstractObject> networkLinkControlObjectExtensions = null;
 
+        boucle:
+        while (reader.hasNext()) {
+
+            switch (reader.next()) {
+                case XMLStreamConstants.START_ELEMENT:
+                    final String eName = reader.getLocalName();
+                    final String eUri = reader.getNamespaceURI();
+
+                    if (URI_KML.equals(eUri)) {
+
+                        if (TAG_MIN_REFRESH_PERIOD.equals(eName)) {
+                            minRefreshPeriod = Double.parseDouble(reader.getElementText());
+                        }
+                        if (TAG_MAX_SESSION_LENGTH.equals(eName)) {
+                            maxSessionLength = Double.parseDouble(reader.getElementText());
+                        }
+                        if (TAG_COOKIE.equals(eName)){
+                            cookie = reader.getElementText();
+                        }
+                        if (TAG_MESSAGE.equals(eName)){
+                            message = reader.getElementText();
+                        }
+                        if (TAG_LINK_NAME.equals(eName)){
+                            linkName = reader.getElementText();
+                        }
+                        if (TAG_LINK_DESCRIPTION.equals(eName)){
+                            linkDescription = reader.getElementText();
+                        }
+                        if (TAG_LINK_SNIPPET.equals(eName)){
+                            linkSnippet = this.readSnippet();
+                        }
+                        if (TAG_EXPIRES.equals(eName)){
+                            expires = reader.getElementText();
+                        }
+                        if (TAG_UPDATE.equals(eName)){
+                            update = this.readUpdate();
+                        }
+                        if (isAbstractView(eName)){
+                            this.readAbstractView(eName);
+                        }
+                    }
+                    break;
+
+                case XMLStreamConstants.END_ELEMENT:
+                    if (TAG_NETWORK_LINK_CONTROL.equals(reader.getLocalName()) && URI_KML.contains(reader.getNamespaceURI())) {
+                        break boucle;
+                    }
+                    break;
+            }
+
+        }
+
+        return this.kmlFactory.createNetworkLinkControl(minRefreshPeriod, maxSessionLength,
+                cookie, message, linkName, linkDescription, linkSnippet, expires, update, view,
+                networkLinkControlSimpleExtensions, networkLinkControlObjectExtensions);
+    }
+
+    /**
+     * 
+     * @return
+     * @throws XMLStreamException
+     */
+    private Update readUpdate() throws XMLStreamException, KmlException{
+        List<Create> creates = new ArrayList<Create>();
+        List<Delete> deletes = new ArrayList<Delete>();
+        List<Change> changes = new ArrayList<Change>();
+        List<Object> updateOpExtensions = null;
+        List<Object> updateExtensions = null;
+
+        boucle:
+        while (reader.hasNext()) {
+
+            switch (reader.next()) {
+                case XMLStreamConstants.START_ELEMENT:
+                    final String eName = reader.getLocalName();
+                    final String eUri = reader.getNamespaceURI();
+
+                    if (URI_KML.equals(eUri)) {
+
+                        if (TAG_CREATE.equals(eName)) {
+                            creates.add(this.readCreate());
+                        }
+                        if (TAG_DELETE.equals(eName)) {
+                            deletes.add(this.readDelete());
+                        }
+                        if (TAG_CHANGE.equals(eName)){
+                            changes.add(this.readChange());
+                        }
+                    }
+                    break;
+
+                case XMLStreamConstants.END_ELEMENT:
+                    if (TAG_UPDATE.equals(reader.getLocalName()) && URI_KML.contains(reader.getNamespaceURI())) {
+                        break boucle;
+                    }
+                    break;
+            }
+        }
+
+        return this.kmlFactory.createUpdate(creates, deletes, changes, updateOpExtensions, updateExtensions);
+    }
+
+    /**
+     *
+     * @return
+     * @throws XMLStreamException
+     * @throws KmlException
+     */
+    private Create readCreate() throws XMLStreamException, KmlException{
+        List<AbstractContainer> containers = new ArrayList<AbstractContainer>();
+
+        boucle:
+        while (reader.hasNext()) {
+
+            switch (reader.next()) {
+                case XMLStreamConstants.START_ELEMENT:
+                    final String eName = reader.getLocalName();
+                    final String eUri = reader.getNamespaceURI();
+
+                    if (URI_KML.equals(eUri)) {
+
+                        if (isAbstractContainer(eName)) {
+                            containers.add(this.readAbstractContainer(eName));
+                        }
+                    }
+                    break;
+
+                case XMLStreamConstants.END_ELEMENT:
+                    if (TAG_CREATE.equals(reader.getLocalName()) && URI_KML.contains(reader.getNamespaceURI())) {
+                        break boucle;
+                    }
+                    break;
+            }
+        }
+        return this.kmlFactory.createCreate(containers);
+    }
+
+    /**
+     * 
+     * @return
+     * @throws XMLStreamException
+     * @throws KmlException
+     */
+    private Delete readDelete() throws XMLStreamException, KmlException{
+        List<AbstractFeature> features = new ArrayList<AbstractFeature>();
+
+        boucle:
+        while (reader.hasNext()) {
+
+            switch (reader.next()) {
+                case XMLStreamConstants.START_ELEMENT:
+                    final String eName = reader.getLocalName();
+                    final String eUri = reader.getNamespaceURI();
+
+                    if (URI_KML.equals(eUri)) {
+
+                        if (isAbstractObject(eName)) {
+                            features.add(this.readAbstractFeature(eName));
+                        }
+                    }
+                    break;
+
+                case XMLStreamConstants.END_ELEMENT:
+                    if (TAG_DELETE.equals(reader.getLocalName()) && URI_KML.contains(reader.getNamespaceURI())) {
+                        break boucle;
+                    }
+                    break;
+            }
+        }
+        return this.kmlFactory.createDelete(features);
+    }
+
+    /**
+     *
+     * @return
+     * @throws XMLStreamException
+     * @throws KmlException
+     */
+    private Change readChange() throws XMLStreamException, KmlException{
+        List<AbstractObject> objects = new ArrayList<AbstractObject>();
+
+        boucle:
+        while (reader.hasNext()) {
+
+            switch (reader.next()) {
+                case XMLStreamConstants.START_ELEMENT:
+                    final String eName = reader.getLocalName();
+                    final String eUri = reader.getNamespaceURI();
+
+                    if (URI_KML.equals(eUri)) {
+
+                        if (isAbstractObject(eName)) {
+                            objects.add(this.readAbstractObject(eName));
+                        }
+                    }
+                    break;
+
+                case XMLStreamConstants.END_ELEMENT:
+                    if (TAG_CHANGE.equals(reader.getLocalName()) && URI_KML.contains(reader.getNamespaceURI())) {
+                        break boucle;
+                    }
+                    break;
+            }
+        }
+        return this.kmlFactory.createChange(objects);
+    }
+
+    /**
+     *
+     * @param eName
+     * @return
+     * @throws XMLStreamException
+     * @throws KmlException
+     */
+    private AbstractObject readAbstractObject(String eName) throws XMLStreamException, KmlException{
+        AbstractObject resultat = null;
+        if (TAG_REGION.equals(eName)){
+            resultat = this.readRegion();
+        } else if (TAG_LOD.equals(eName)){
+            resultat = this.readLod();
+        } else if (TAG_LINK.equals(eName)){
+            resultat = this.readLink(eName);
+        } else if (TAG_ICON.equals(eName)){
+            resultat = this.readIcon(eName);
+        } else if (TAG_LOCATION.equals(eName)){
+            resultat = this.readLocation();
+        } else if (TAG_ORIENTATION.equals(eName)){
+            resultat = this.readOrientation();
+        } else if (TAG_RESOURCE_MAP.equals(eName)){
+            resultat = this.readResourceMap();
+        } else if (TAG_SCHEMA_DATA.equals(eName)){
+            resultat = this.readSchemaData();
+        } else if (TAG_SCALE.equals(eName)){
+            resultat = this.readScale();
+        } else if (TAG_ALIAS.equals(eName)){
+            resultat = this.readAlias();
+        } else if (TAG_VIEW_VOLUME.equals(eName)){
+            resultat = this.readViewVolume();
+        } else if (TAG_IMAGE_PYRAMID.equals(eName)){
+            resultat = this.readImagePyramid();
+        } else if (TAG_PAIR.equals(eName)){
+            resultat = this.readPair();
+        } else if (TAG_ITEM_ICON.equals(eName)){
+            resultat = this.readItemIcon();
+        } else if (isAbstractFeature(eName)){
+            resultat = this.readAbstractFeature(eName);
+        } else if (isAbstractGeometry(eName)){
+            resultat = this.readAbstractGeometry(eName);
+        } else if (isAbstractStyleSelector(eName)){
+            resultat = this.readAbstractStyleSelector(eName);
+        } else if (isAbstractSubStyle(eName)){
+            resultat = this.readAbstractSubStyle(eName);
+        } else if (isAbstractView(eName)){
+           resultat = this.readAbstractView(eName);
+        } else if (isAbstractTimePrimitive(eName)){
+            resultat= this.readAbstractTimePrimitive(eName);
+        } else if (isAbstractLatLonBox(eName)){
+            resultat= this.readAbstractLatLonBox(eName);
+        }
         return resultat;
+    }
+
+    /**
+     * 
+     * @param eName
+     * @return
+     * @throws XMLStreamException
+     * @throws KmlException
+     */
+    private AbstractLatLonBox readAbstractLatLonBox(String eName) throws XMLStreamException, KmlException{
+        AbstractLatLonBox resultat = null;
+        if (TAG_LAT_LON_ALT_BOX.equals(eName)){
+            resultat = this.readLatLonAltBox();
+        } else if (TAG_LAT_LON_BOX.equals(eName)){
+            resultat = this.readLatLonBox();
+        }
+        return resultat;
+    }
+
+    /**
+     *
+     * @param eName
+     * @return
+     */
+    private AbstractSubStyle readAbstractSubStyle(String eName) throws XMLStreamException, KmlException{
+        AbstractSubStyle resultat = null;
+        if (TAG_BALLOON_STYLE.equals(eName)){
+            resultat = this.readBalloonStyle();
+        } else if (TAG_LIST_STYLE.equals(eName)){
+            resultat = this.readListStyle();
+        } else if (isAbstractColorStyle(eName)){
+            resultat = this.readAbstractColorStyle(eName);
+        }
+        return resultat;
+    }
+
+    /**
+     *
+     * @param eName
+     * @return
+     * @throws XMLStreamException
+     * @throws KmlException
+     */
+    private AbstractColorStyle readAbstractColorStyle(String eName) throws XMLStreamException, KmlException{
+        AbstractColorStyle resultat = null;
+        if (TAG_ICON_STYLE.equals(eName)){
+            resultat = this.readIconStyle();
+        } else if (TAG_LABEL_STYLE.equals(eName)){
+            resultat = this.readLabelStyle();
+        } else if (TAG_POLY_STYLE.equals(eName)){
+            resultat = this.readPolyStyle();
+        } else if (TAG_LINE_STYLE.equals(eName)){
+            resultat = this.readLineStyle();
+        }
+        return resultat;
+    }
+
+    /**
+     *
+     * @return
+     * @throws XMLStreamException
+     */
+    private Snippet readSnippet() throws XMLStreamException{
+        int maxLines = DEF_MAX_SNIPPET_LINES_ATT;
+        if (reader.getAttributeValue(null, ATT_MAX_LINES) != null){
+            maxLines = Integer.parseInt(reader.getAttributeValue(null, ATT_MAX_LINES));
+        }
+        String content = reader.getElementText();
+        return this.kmlFactory.createSnippet(maxLines, content);
     }
 
     /**
@@ -1298,7 +1642,7 @@ public class KmlReader extends StaxStreamReader {
         // AbstractOverlay
         Color color = DEF_COLOR;
         int drawOrder = DEF_DRAW_ORDER;
-        Link icon = null;
+        Icon icon = null;
         List<SimpleType> abstractOverlaySimpleExtensions = null;
         List<AbstractObject> abstractOverlayObjectExtensions = null;
 
@@ -1356,7 +1700,7 @@ public class KmlReader extends StaxStreamReader {
                         } else if (TAG_DRAW_ORDER.equals(eName)) {
                             drawOrder = Integer.parseInt(reader.getElementText());
                         } else if (TAG_ICON.equals(eName)) {
-                            icon = readLink(eName);
+                            icon = readIcon(eName);
                         }
 
                         // GROUND OVERLAY
@@ -1414,13 +1758,7 @@ public class KmlReader extends StaxStreamReader {
      * @throws KmlException
      * @throws XMLStreamException
      */
-    private Link readLink(String stopTag) throws KmlException, XMLStreamException {
-
-        if (stopTag == null) {
-            throw new KmlException("The stop tag cannot be null. "
-                    + "It's probably an <Icon>, <Link> or <Url> tag according to KML 2.2 specification. " +
-                    "Url tag is deprecated.");
-        }
+    private Link readLink(String stopName) throws XMLStreamException {
 
         // Comme BasicLink
         List<SimpleType> objectSimpleExtensions = null;
@@ -1476,7 +1814,7 @@ public class KmlReader extends StaxStreamReader {
                     break;
 
                 case XMLStreamConstants.END_ELEMENT:
-                    if (stopTag.equals(reader.getLocalName()) && URI_KML.contains(reader.getNamespaceURI())) {
+                    if (stopName.equals(reader.getLocalName()) && URI_KML.contains(reader.getNamespaceURI())) {
                         break boucle;
                     }
                     break;
@@ -1488,6 +1826,16 @@ public class KmlReader extends StaxStreamReader {
                 href, basicLinkSimpleExtensions, basicLinkObjectExtensions,
                 refreshMode, refreshInterval, viewRefreshMode, viewRefreshTime, viewBoundScale, viewFormat, httpQuery,
                 linkSimpleExtensions, linkObjectExtensions);
+    }
+
+
+    /**
+     * 
+     * @return
+     * @throws XMLStreamException
+     */
+    private Icon readIcon(String stopName) throws XMLStreamException{
+        return this.kmlFactory.createIcon(this.readLink(stopName));
     }
 
     /**
@@ -1774,7 +2122,7 @@ public class KmlReader extends StaxStreamReader {
         // AbstractOverlay
         Color color = DEF_COLOR;
         int drawOrder = DEF_DRAW_ORDER;
-        Link icon = null;
+        Icon icon = null;
         List<SimpleType> abstractOverlaySimpleExtensions = null;
         List<AbstractObject> abstractOverlayObjectExtensions = null;
 
@@ -1834,7 +2182,7 @@ public class KmlReader extends StaxStreamReader {
                         } else if (TAG_DRAW_ORDER.equals(eName)) {
                             drawOrder = Integer.parseInt(reader.getElementText());
                         } else if (TAG_ICON.equals(eName)) {
-                            icon = readLink(eName);
+                            icon = readIcon(eName);
                         }
 
                         // PHOTO OVERLAY
@@ -1922,7 +2270,7 @@ public class KmlReader extends StaxStreamReader {
         // AbstractOverlay
         Color color = DEF_COLOR;
         int drawOrder = DEF_DRAW_ORDER;
-        Link icon = null;
+        Icon icon = null;
         List<SimpleType> abstractOverlaySimpleExtensions = null;
         List<AbstractObject> abstractOverlayObjectExtensions = null;
 
@@ -1982,7 +2330,7 @@ public class KmlReader extends StaxStreamReader {
                         } else if (TAG_DRAW_ORDER.equals(eName)) {
                             drawOrder = Integer.parseInt(reader.getElementText());
                         } else if (TAG_ICON.equals(eName)) {
-                            icon = readLink(eName);
+                            icon = readIcon(eName);
                         }
 
                         // SCREEN OVERLAY
@@ -3645,6 +3993,53 @@ public class KmlReader extends StaxStreamReader {
     private boolean isAbstractStyleSelector(String eName) {
         return (TAG_STYLE.equals(eName)
                 || TAG_STYLE_MAP.equals(eName));
+    }
+
+    /**
+     *
+     * @param eName
+     * @return
+     */
+    private boolean isAbstractSubStyle(String eName){
+        return (TAG_BALLOON_STYLE.equals(eName)
+                || TAG_LIST_STYLE.equals(eName)
+                || isAbstractColorStyle(eName));
+    }
+
+    /**
+     *
+     * @param eName
+     * @return
+     */
+    private boolean isAbstractColorStyle(String eName){
+        return (TAG_ICON_STYLE.equals(eName)
+                || TAG_LABEL_STYLE.equals(eName)
+                || TAG_POLY_STYLE.equals(eName)
+                || TAG_LINE_STYLE.equals(eName));
+    }
+
+    /**
+     *
+     * @param eName
+     * @return
+     */
+    private boolean isAbstractObject(String eName) {
+        // Compléter avec les autres types hériant de AbstractObject
+        return (isAbstractFeature(eName)
+                || isAbstractGeometry(eName)
+                || isAbstractStyleSelector(eName)
+                || isAbstractSubStyle(eName)
+                || isAbstractView(eName));
+    }
+
+    /**
+     * 
+     * @param eName
+     * @return
+     */
+    private boolean isAbstractLatLonBox(String eName) {
+        return (TAG_LAT_LON_ALT_BOX.equals(eName)
+                || TAG_LAT_LON_BOX.equals(eName));
     }
 
     /*
