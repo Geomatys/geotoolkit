@@ -52,6 +52,7 @@ import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.LenientFeatureFactory;
 import org.geotoolkit.feature.type.DefaultGeometryDescriptor;
 import org.geotoolkit.filter.identity.DefaultFeatureId;
+import org.geotoolkit.jdbc.ManageableDataSource;
 import org.geotoolkit.referencing.CRS;
 
 import org.opengis.feature.Feature;
@@ -93,21 +94,21 @@ public class OMDataStore extends AbstractDataStore {
 
     private final Map<Name, FeatureType> types = new HashMap<Name,FeatureType>();
 
-    private final Connection connection;
+    private final ManageableDataSource source;
 
     private static final String SQL_ALL_SAMPLING_POINT = "SELECT * FROM \"observation\".\"sampling_points\"";
     private static final String SQL_WRITE_SAMPLING_POINT = "INSERT INTO \"observation\".\"sampling_points\" VALUES(?,?,?,?,?,?,?,?,?)";
     private static final String SQL_GET_LAST_ID = "SELECT COUNT(*) FROM \"observation\".\"sampling_points\"";
 
 
-    public OMDataStore(Connection connection) {
+    public OMDataStore(ManageableDataSource source) {
         super();
-        this.connection = connection;
+        this.source = source;
         initTypes();
     }
 
-    private Connection getConnection(){
-        return connection;
+    private Connection getConnection() throws SQLException{
+        return source.getConnection();
     }
 
     private void initTypes() {
@@ -141,7 +142,7 @@ public class OMDataStore extends AbstractDataStore {
     public void dispose() {
         super.dispose();
         try {
-            connection.close();
+            source.close();
         } catch (SQLException ex) {
             getLogger().info("SQL Exception while closing O&M datastore");
         }
@@ -196,15 +197,19 @@ public class OMDataStore extends AbstractDataStore {
         final FeatureType featureType = getFeatureType(groupName); //raise an error if type doesn't exist
         final List<FeatureId> result = new ArrayList<FeatureId>();
 
+
+        Connection cnx = null;
+        PreparedStatement stmtWrite = null;
         try {
+            cnx = getConnection();
+            stmtWrite = cnx.prepareStatement(SQL_WRITE_SAMPLING_POINT);
+
             for(final Feature feature : newFeatures) {
                 FeatureId identifier = feature.getIdentifier();
                 if (identifier == null || identifier.getID().isEmpty()) {
                     identifier = getNewFeatureId();
                 }
 
-                final Connection cnx = getConnection();
-                final PreparedStatement stmtWrite = cnx.prepareStatement(SQL_WRITE_SAMPLING_POINT);
 
                 stmtWrite.setString(1, identifier.getID());
                 stmtWrite.setString(2, (String)feature.getProperty(ATT_DESC).getValue());
@@ -241,15 +246,33 @@ public class OMDataStore extends AbstractDataStore {
             }
         } catch (SQLException ex) {
             LOGGER.log(Level.WARNING, SQL_WRITE_SAMPLING_POINT.toString(), ex);
+        }finally{
+            if(stmtWrite != null){
+                try {
+                    stmtWrite.close();
+                } catch (SQLException ex) {
+                    LOGGER.log(Level.WARNING, null, ex);
+                }
+            }
+
+            if(cnx != null){
+                try {
+                    cnx.close();
+                } catch (SQLException ex) {
+                    LOGGER.log(Level.WARNING, null, ex);
+                }
+            }
         }
 
         return result;
     }
 
     public FeatureId getNewFeatureId() {
+        Connection cnx = null;
+        PreparedStatement stmtLastId = null;
         try {
-            final Connection cnx = getConnection();
-            final PreparedStatement stmtLastId = cnx.prepareStatement(SQL_GET_LAST_ID);
+            cnx = getConnection();
+            stmtLastId = cnx.prepareStatement(SQL_GET_LAST_ID);
             final ResultSet result = stmtLastId.executeQuery();
             if (result.next()) {
                 final int nb = result.getInt(1) + 1;
@@ -257,6 +280,22 @@ public class OMDataStore extends AbstractDataStore {
             }
         } catch (SQLException ex) {
             LOGGER.log(Level.WARNING, null, ex);
+        }finally{
+            if(stmtLastId != null){
+                try {
+                    stmtLastId.close();
+                } catch (SQLException ex) {
+                    LOGGER.log(Level.WARNING, null, ex);
+                }
+            }
+
+            if(cnx != null){
+                try {
+                    cnx.close();
+                } catch (SQLException ex) {
+                    LOGGER.log(Level.WARNING, null, ex);
+                }
+            }
         }
         return null;
     }
@@ -313,6 +352,7 @@ public class OMDataStore extends AbstractDataStore {
 
     private class OMReader implements FeatureReader{
 
+        private final Connection cnx;
         private boolean firstCRS = true;
         private final FeatureType type;
         private final ResultSet result;
@@ -320,7 +360,7 @@ public class OMDataStore extends AbstractDataStore {
 
         private OMReader(FeatureType type) throws SQLException{
             this.type = type;
-            final Connection cnx = getConnection();
+            cnx = getConnection();
             final PreparedStatement stmtAll = cnx.prepareStatement(SQL_ALL_SAMPLING_POINT);
             result = stmtAll.executeQuery();
         }
@@ -394,6 +434,7 @@ public class OMDataStore extends AbstractDataStore {
         public void close() {
             try {
                 result.close();
+                cnx.close();
             } catch (SQLException ex) {
                 throw new DataStoreRuntimeException(ex);
             }

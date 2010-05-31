@@ -49,6 +49,7 @@ import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.LenientFeatureFactory;
 import org.geotoolkit.feature.type.DefaultFeatureTypeFactory;
 import org.geotoolkit.geometry.jts.SRIDGenerator;
+import org.geotoolkit.jdbc.ManageableDataSource;
 import org.geotoolkit.referencing.CRS;
 
 import org.opengis.feature.Feature;
@@ -80,7 +81,7 @@ public class SMLDataStore extends AbstractDataStore {
 
     private final Map<Name,FeatureType> types = new HashMap<Name, FeatureType>();
 
-    private final Connection connection;
+    private final ManageableDataSource source;
 
     private static final String SML_NAMESPACE = "http://www.opengis.net/sml/1.0";
     private final static Name SML_TN_SYSTEM         = new DefaultName(SML_NAMESPACE, "System");
@@ -142,13 +143,13 @@ public class SMLDataStore extends AbstractDataStore {
 
     private final QueryCapabilities capabilities = new DefaultQueryCapabilities(false);
     
-    public SMLDataStore(Connection connection) {
-        this.connection = connection;        
+    public SMLDataStore(ManageableDataSource source) {
+        this.source = source;
         initTypes();
     }
 
-    public Connection getConnection() {
-        return connection;
+    public Connection getConnection() throws SQLException {
+        return source.getConnection();
     }
 
     private void initTypes() {
@@ -418,6 +419,7 @@ public class SMLDataStore extends AbstractDataStore {
                 stmtTextValue2.close();
                 stmtContactRole.close();
                 stmtContactName.close();
+                cnx.close();
             } catch (SQLException ex) {
                 getLogger().info("SQL Exception while closing SML datastore");
             }

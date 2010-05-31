@@ -19,15 +19,13 @@ package org.geotoolkit.data.sml;
 
 import java.io.IOException;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.apache.commons.dbcp.BasicDataSource;
 
 import org.geotoolkit.data.AbstractDataStoreFactory;
 import org.geotoolkit.data.DataStore;
 import org.geotoolkit.storage.DataStoreException;
-import org.geotoolkit.internal.sql.DefaultDataSource;
+import org.geotoolkit.jdbc.DBCPDataSource;
+import org.geotoolkit.jdbc.ManageableDataSource;
 import org.geotoolkit.metadata.iso.quality.DefaultConformanceResult;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
@@ -40,6 +38,7 @@ import org.opengis.parameter.ParameterValueGroup;
 /**
  *
  * @author Guilhem Legal (Geomatys)
+ * @author Johann Sorel (Geomatys)
  * @module pending
  */
 public class SMLDataStoreFactory extends AbstractDataStoreFactory {
@@ -87,8 +86,6 @@ public class SMLDataStoreFactory extends AbstractDataStoreFactory {
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
             new DefaultParameterDescriptorGroup("SMLParameters",
                 new GeneralParameterDescriptor[]{DBTYPE,HOST,PORT,DATABASE,USER,PASSWD,NAMESPACE, SGBDTYPE, DERBYURL});
-
-    private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.data.sml");
     
     /**
      * {@inheritDoc }
@@ -123,24 +120,51 @@ public class SMLDataStoreFactory extends AbstractDataStoreFactory {
 
     @Override
     public DataStore createDataStore(ParameterValueGroup params) throws DataStoreException {
-        try {
-            DefaultDataSource ds  = new DefaultDataSource(getJDBCUrl(params));
-            final String user     = (String) params.parameter(USER.getName().toString()).getValue();
-            final String pass     = (String) params.parameter(PASSWD.getName().toString()).getValue();
-            Connection connection = ds.getConnection(user, pass);
-            SMLDataStore datastore = new SMLDataStore(connection);
-            return datastore;
-        } catch (SQLException ex) {
-            LOGGER.log(Level.WARNING, "SQL Exception while creating ML datastore", ex);
+        try{
+            //create a datasource
+            final BasicDataSource dataSource = new BasicDataSource();
+
+            // some default data source behaviour
+            dataSource.setPoolPreparedStatements(true);
+
+            // driver
+            dataSource.setDriverClassName(getDriverClassName(params));
+
+            // url
+            dataSource.setUrl(getJDBCUrl(params));
+
+            // username
+            final String user = (String) params.parameter(USER.getName().toString()).getValue();
+            dataSource.setUsername(user);
+
+            // password
+            final String passwd = (String) params.parameter(PASSWD.getName().toString()).getValue();
+            if (passwd != null) {
+                dataSource.setPassword(passwd);
+            }
+
+            // some datastores might need this
+            dataSource.setAccessToUnderlyingConnectionAllowed(true);
+
+            final ManageableDataSource source = new DBCPDataSource(dataSource);
+            return new SMLDataStore(source);
         } catch (IOException ex) {
             throw new DataStoreException(ex);
         }
-        return null;
     }
 
     @Override
     public DataStore createNewDataStore(ParameterValueGroup params) throws DataStoreException {
         throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    private String getDriverClassName(final ParameterValueGroup params){
+        final String type  = (String) params.parameter(SGBDTYPE.getName().toString()).getValue();
+        if (type.equals("derby")) {
+            return "org.apache.derby.jdbc.EmbeddedDriver";
+        } else {
+            return "org.postgresql.Driver";
+        }
     }
 
     private String getJDBCUrl(final ParameterValueGroup params) throws IOException {
