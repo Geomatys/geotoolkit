@@ -42,9 +42,11 @@ import org.geotoolkit.data.model.kml.DisplayMode;
 import org.geotoolkit.data.model.kml.Document;
 import org.geotoolkit.data.model.kml.ExtendedData;
 import org.geotoolkit.data.model.kml.Folder;
+import org.geotoolkit.data.model.kml.GridOrigin;
 import org.geotoolkit.data.model.kml.GroundOverlay;
 import org.geotoolkit.data.model.kml.IconStyle;
 import org.geotoolkit.data.model.kml.IdAttributes;
+import org.geotoolkit.data.model.kml.ImagePyramid;
 import org.geotoolkit.data.model.kml.ItemIcon;
 import org.geotoolkit.data.model.kml.ItemIconState;
 import org.geotoolkit.data.model.kml.Kml;
@@ -79,6 +81,7 @@ import org.geotoolkit.data.model.kml.Scale;
 import org.geotoolkit.data.model.kml.Schema;
 import org.geotoolkit.data.model.kml.SchemaData;
 import org.geotoolkit.data.model.kml.ScreenOverlay;
+import org.geotoolkit.data.model.kml.Shape;
 import org.geotoolkit.data.model.kml.SimpleData;
 import org.geotoolkit.data.model.kml.SimpleField;
 import org.geotoolkit.data.model.kml.Style;
@@ -89,6 +92,7 @@ import org.geotoolkit.data.model.kml.TimeStamp;
 import org.geotoolkit.data.model.kml.Units;
 import org.geotoolkit.data.model.kml.Vec2;
 import org.geotoolkit.data.model.kml.ViewRefreshMode;
+import org.geotoolkit.data.model.kml.ViewVolume;
 import org.geotoolkit.data.model.xal.AddressDetails;
 import org.geotoolkit.data.model.xsd.SimpleType;
 import org.geotoolkit.xml.StaxStreamReader;
@@ -1625,10 +1629,262 @@ public class KmlReader extends StaxStreamReader {
                 minAltitude, maxAltitude, altitudeMode, latLonAltBoxSimpleExtensions, latLonAltBoxObjectExtensions);
     }
 
-    private PhotoOverlay readPhotoOverlay() {
-        PhotoOverlay resultat = null;
+    /**
+     *
+     * @return
+     * @throws XMLStreamException
+     * @throws KmlException
+     */
+    private ImagePyramid readImagePyramid() throws XMLStreamException, KmlException {
 
-        return resultat;
+        // AbstractObject
+        List<SimpleType> objectSimpleExtensions = null;
+        IdAttributes idAttributes = this.readIdAttributes();
+
+        // ImagePyramid
+        int titleSize = DEF_TITLE_SIZE;
+        int maxWidth = DEF_MAX_WIDTH;
+        int maxHeight = DEF_MAX_HEIGHT;
+        GridOrigin gridOrigin = DEF_GRID_ORIGIN;
+        List<SimpleType> imagePyramidSimpleExtensions = null;
+        List<AbstractObject> imagePyramidObjectExtensions = null;
+
+        boucle:
+        while (reader.hasNext()) {
+
+            switch (reader.next()) {
+                case XMLStreamConstants.START_ELEMENT:
+                    final String eName = reader.getLocalName();
+                    final String eUri = reader.getNamespaceURI();
+
+                    if (URI_KML.equals(eUri)) {
+
+                        // IMAGE PYRAMID
+                        if (TAG_TITLE_SIZE.equals(eName)) {
+                            titleSize = Integer.parseInt(reader.getElementText());
+                        } else if (TAG_MAX_WIDTH.equals(eName)) {
+                            maxWidth = Integer.parseInt(reader.getElementText());
+                        } else if (TAG_MAX_HEIGHT.equals(eName)) {
+                            maxHeight = Integer.parseInt(reader.getElementText());
+                        } else if (TAG_GRID_ORIGIN.equals(eName)) {
+                            gridOrigin = GridOrigin.transform(reader.getElementText());
+                        }
+                    }
+                    break;
+
+                case XMLStreamConstants.END_ELEMENT:
+                    if (TAG_IMAGE_PYRAMID.equals(reader.getLocalName()) && URI_KML.contains(reader.getNamespaceURI())) {
+                        break boucle;
+                    }
+                    break;
+            }
+
+        }
+
+        return this.kmlFactory.createImagePyramid(objectSimpleExtensions, idAttributes,
+                titleSize, maxWidth, maxHeight, gridOrigin,
+                imagePyramidSimpleExtensions, imagePyramidObjectExtensions);
+    }
+
+    /**
+     *
+     * @return
+     * @throws XMLStreamException
+     * @throws KmlException
+     */
+    private ViewVolume readViewVolume() throws XMLStreamException, KmlException {
+
+        // AbstractObject
+        List<SimpleType> objectSimpleExtensions = null;
+        IdAttributes idAttributes = this.readIdAttributes();
+
+        // ViewVolume
+        Angle180 leftFov = DEF_LEFT_FOV;
+        Angle180 rightFov = DEF_RIGHT_FOV;
+        Angle90 bottomFov = DEF_BOTTOM_FOV;
+        Angle90 topFov = DEF_TOP_FOV;
+        double near = DEF_NEAR;
+        List<SimpleType> viewVolumeSimpleExtensions = null;
+        List<AbstractObject> viewVolumeObjectExtensions = null;
+
+        boucle:
+        while (reader.hasNext()) {
+
+            switch (reader.next()) {
+                case XMLStreamConstants.START_ELEMENT:
+                    final String eName = reader.getLocalName();
+                    final String eUri = reader.getNamespaceURI();
+
+                    if (URI_KML.equals(eUri)) {
+
+                        // VIEW VOLUME
+                        if (TAG_LEFT_FOV.equals(eName)) {
+                            leftFov = this.kmlFactory.createAngle180(Double.parseDouble(reader.getElementText()));
+                        } else if (TAG_RIGHT_FOV.equals(eName)) {
+                            rightFov = this.kmlFactory.createAngle180(Double.parseDouble(reader.getElementText()));
+                        } else if (TAG_BOTTOM_FOV.equals(eName)) {
+                            bottomFov = this.kmlFactory.createAngle90(Double.parseDouble(reader.getElementText()));
+                        } else if (TAG_TOP_FOV.equals(eName)) {
+                            topFov = this.kmlFactory.createAngle90(Double.parseDouble(reader.getElementText()));
+                        } else if (TAG_NEAR.equals(eName)) {
+                            near = Double.parseDouble(reader.getElementText());
+                        }
+                    }
+                    break;
+
+                case XMLStreamConstants.END_ELEMENT:
+                    if (TAG_VIEW_VOLUME.equals(reader.getLocalName()) && URI_KML.contains(reader.getNamespaceURI())) {
+                        break boucle;
+                    }
+                    break;
+            }
+
+        }
+
+        return this.kmlFactory.createViewVolume(objectSimpleExtensions, idAttributes,
+                leftFov, rightFov, bottomFov, topFov, viewVolumeSimpleExtensions, viewVolumeObjectExtensions);
+    }
+
+    private PhotoOverlay readPhotoOverlay() throws XMLStreamException, KmlException {
+
+        // AbstractObject
+        List<SimpleType> objectSimpleExtensions = null;
+        IdAttributes idAttributes = this.readIdAttributes();
+
+        // AbstractFeature
+        String name = null;
+        boolean visibility = DEF_VISIBILITY;
+        boolean open = DEF_OPEN;
+        AtomPersonConstruct author = null;
+        AtomLink link = null;
+        String address = null;
+        AddressDetails addressDetails = null;
+        String phoneNumber = null;
+        String snippet = null;
+        String description = null;
+        AbstractView view = null;
+        AbstractTimePrimitive timePrimitive = null;
+        String styleUrl = null;
+        List<AbstractStyleSelector> styleSelector = new ArrayList<AbstractStyleSelector>();
+        Region region = null;
+        ExtendedData extendedData = null;
+        List<SimpleType> featureSimpleExtensions = null;
+        List<AbstractObject> featureObjectExtensions = null;
+
+        // AbstractOverlay
+        Color color = DEF_COLOR;
+        int drawOrder = DEF_DRAW_ORDER;
+        Link icon = null;
+        List<SimpleType> abstractOverlaySimpleExtensions = null;
+        List<AbstractObject> abstractOverlayObjectExtensions = null;
+
+        // PhotoOverlay
+        Angle180 rotation = DEF_ROTATION;
+        ViewVolume viewVolume = null;
+        ImagePyramid imagePyramid = null;
+        Point point = null;
+        Shape shape = null;
+        List<SimpleType> photoOverlaySimpleExtensions = null;
+        List<AbstractObject> photoOverlayObjectExtensions = null;
+
+        boucle:
+        while (reader.hasNext()) {
+
+            switch (reader.next()) {
+                case XMLStreamConstants.START_ELEMENT:
+                    final String eName = reader.getLocalName();
+                    final String eUri = reader.getNamespaceURI();
+
+                    if (URI_KML.equals(eUri)) {
+
+                        // ABSTRACT FEATURE
+                        if (TAG_NAME.equals(eName)) {
+                            name = reader.getElementText();
+                        } else if (TAG_VISIBILITY.equals(eName)) {
+                            visibility = parseBoolean(reader.getElementText());
+                        } else if (TAG_OPEN.equals(eName)) {
+                            open = parseBoolean(reader.getElementText());
+                        } else if (TAG_ADDRESS.equals(eName)) {
+                            address = reader.getElementText();
+                        } else if (TAG_PHONE_NUMBER.equals(eName)) {
+                            phoneNumber = reader.getElementText();
+                        } else if (TAG_SNIPPET.equals(eName)) {
+                            snippet = reader.getElementText();
+                        } else if (TAG_DESCRIPTION.equals(eName)) {
+                            description = reader.getElementText();
+                        } else if (TAG_STYLE_URL.equals(eName)) {
+                            styleUrl = reader.getElementText();
+                        } else if (isAbstractView(eName)) {
+                            view = this.readAbstractView(eName);
+                        } else if (isAbstractTimePrimitive(eName)) {
+                            timePrimitive = this.readAbstractTimePrimitive(eName);
+                        } else if (TAG_STYLE_URL.equals(eName)) {
+                            styleUrl = reader.getElementText();
+                        } else if (isAbstractStyleSelector(eName)) {
+                            styleSelector.add(this.readAbstractStyleSelector(eName));
+                        } else if (TAG_REGION.equals(eName)) {
+                            region = this.readRegion();
+                        } else if (TAG_EXTENDED_DATA.equals(eName)) {
+                            extendedData = this.readExtendedData();
+                        }
+
+                        // ABSTRACT OVERLAY
+                        else if (TAG_COLOR.equals(eName)) {
+                            color = this.kmlFactory.createColor(reader.getElementText());
+                        } else if (TAG_DRAW_ORDER.equals(eName)) {
+                            drawOrder = Integer.parseInt(reader.getElementText());
+                        } else if (TAG_ICON.equals(eName)) {
+                            icon = readLink(eName);
+                        }
+
+                        // PHOTO OVERLAY
+                        else if (TAG_ROTATION.equals(eName)) {
+                            rotation = this.kmlFactory.createAngle180(Double.parseDouble(reader.getElementText()));
+                        } else if (TAG_VIEW_VOLUME.equals(eName)) {
+                            viewVolume = this.readViewVolume();
+                        } else if (TAG_IMAGE_PYRAMID.equals(eName)) {
+                            imagePyramid = this.readImagePyramid();
+                        } else if (TAG_POINT.equals(eName)) {
+                            point = this.readPoint();
+                        } else if (TAG_SHAPE.equals(eName)) {
+                            shape = Shape.transform(reader.getElementText());
+                        }
+
+
+                    } else if (URI_ATOM.equals(eUri)) {
+
+                        // ABSTRACT FEATURE
+                        if (TAG_ATOM_PERSON_CONSTRUCT.equals(eName)) {
+                            author = this.readAtomPersonConstruct();
+                        } else if (TAG_ATOM_LINK.equals(eName)) {
+                            link = this.readAtomLink();
+                        }
+                    }
+                    if (URI_XAL.equals(eUri)) {
+
+                        // ABSTRACT FEATURE
+                        if (TAG_XAL_ADDRESS_DETAILS.equals(eName)) {
+                            addressDetails = this.readXalAddressDetails();
+                        }
+                    }
+                    break;
+
+                case XMLStreamConstants.END_ELEMENT:
+                    if (TAG_PHOTO_OVERLAY.equals(reader.getLocalName()) && URI_KML.contains(reader.getNamespaceURI())) {
+                        break boucle;
+                    }
+                    break;
+            }
+
+        }
+
+        return this.kmlFactory.createPhotoOverlay(objectSimpleExtensions, idAttributes,
+                name, visibility, open, author, link, address, addressDetails, phoneNumber,
+                snippet, description, view, timePrimitive, styleUrl, styleSelector, region, extendedData,
+                abstractOverlaySimpleExtensions, abstractOverlayObjectExtensions,
+                color, drawOrder, icon, abstractOverlaySimpleExtensions, abstractOverlayObjectExtensions,
+                rotation, viewVolume, imagePyramid, point, shape,
+                photoOverlaySimpleExtensions, photoOverlayObjectExtensions);
     }
 
     /**

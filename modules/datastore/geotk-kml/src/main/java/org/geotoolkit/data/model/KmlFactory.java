@@ -32,6 +32,7 @@ import org.geotoolkit.data.model.kml.DisplayMode;
 import org.geotoolkit.data.model.kml.Document;
 import org.geotoolkit.data.model.kml.ExtendedData;
 import org.geotoolkit.data.model.kml.Folder;
+import org.geotoolkit.data.model.kml.GridOrigin;
 import org.geotoolkit.data.model.kml.GroundOverlay;
 import org.geotoolkit.data.model.kml.IconStyle;
 import org.geotoolkit.data.model.kml.IdAttributes;
@@ -486,6 +487,22 @@ public interface KmlFactory {
      * @return
      */
     public IdAttributes createIdAttributes(String id, String targetId);
+
+    /**
+     * 
+     * @param objectSimpleExtensions
+     * @param idAttributes
+     * @param titleSize
+     * @param maxWidth
+     * @param maxHeight
+     * @param gridOrigin
+     * @param imagePyramidSimpleExtensions
+     * @param imagePyramidObjectExtensions
+     * @return
+     */
+    public ImagePyramid createImagePyramid(List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
+            int titleSize, int maxWidth, int maxHeight, GridOrigin gridOrigin,
+            List<SimpleType> imagePyramidSimpleExtensions, List<AbstractObject> imagePyramidObjectExtensions);
 
     /**
      *
@@ -1226,4 +1243,20 @@ public interface KmlFactory {
      * @return
      */
     public Vec2 createVec2(double x, double y, Units xUnit, Units yUnit);
+
+    /**
+     * 
+     * @param objectSimpleExtensions
+     * @param idAttributes
+     * @param leftFov
+     * @param rightFov
+     * @param bottomFov
+     * @param topFov
+     * @param viewVolumeSimpleExtensions
+     * @param viewVolumeObjectExtensions
+     * @return
+     */
+    public ViewVolume createViewVolume(List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
+            Angle180 leftFov, Angle180 rightFov, Angle90 bottomFov, Angle90 topFov,
+            List<SimpleType> viewVolumeSimpleExtensions, List<AbstractObject> viewVolumeObjectExtensions);
 }

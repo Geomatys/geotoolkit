@@ -55,6 +55,7 @@ import org.geotoolkit.data.model.kml.ExtendedData;
 import org.geotoolkit.data.model.kml.ExtendedDataDefault;
 import org.geotoolkit.data.model.kml.Folder;
 import org.geotoolkit.data.model.kml.FolderDefault;
+import org.geotoolkit.data.model.kml.GridOrigin;
 import org.geotoolkit.data.model.kml.GroundOverlay;
 import org.geotoolkit.data.model.kml.GroundOverlayDefault;
 import org.geotoolkit.data.model.kml.IconStyle;
@@ -62,6 +63,7 @@ import org.geotoolkit.data.model.kml.IconStyleDefault;
 import org.geotoolkit.data.model.kml.IdAttributes;
 import org.geotoolkit.data.model.kml.IdAttributesDefault;
 import org.geotoolkit.data.model.kml.ImagePyramid;
+import org.geotoolkit.data.model.kml.ImagePyramidDefault;
 import org.geotoolkit.data.model.kml.ItemIcon;
 import org.geotoolkit.data.model.kml.ItemIconDefault;
 import org.geotoolkit.data.model.kml.ItemIconState;
@@ -147,6 +149,7 @@ import org.geotoolkit.data.model.kml.Vec2;
 import org.geotoolkit.data.model.kml.Vec2Default;
 import org.geotoolkit.data.model.kml.ViewRefreshMode;
 import org.geotoolkit.data.model.kml.ViewVolume;
+import org.geotoolkit.data.model.kml.ViewVolumeDefault;
 import org.geotoolkit.data.model.xal.AddressDetails;
 import org.geotoolkit.data.model.xsd.SimpleType;
 
@@ -462,6 +465,18 @@ public class KmlFactoryDefault implements KmlFactory{
     @Override
     public IdAttributes createIdAttributes(String id, String targetId){
         return new IdAttributesDefault(id, targetId);
+    }
+
+    /**
+     * @{@inheritDoc }
+     */
+    @Override
+    public ImagePyramid createImagePyramid(List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
+            int titleSize, int maxWidth, int maxHeight, GridOrigin gridOrigin,
+            List<SimpleType> imagePyramidSimpleExtensions, List<AbstractObject> imagePyramidObjectExtensions){
+        return new ImagePyramidDefault(objectSimpleExtensions, idAttributes,
+                titleSize, maxWidth, maxHeight, gridOrigin,
+                imagePyramidSimpleExtensions, imagePyramidObjectExtensions);
     }
 
     /**
@@ -998,6 +1013,18 @@ public class KmlFactoryDefault implements KmlFactory{
     @Override
     public Vec2 createVec2(double x, double y, Units xUnit, Units yUnit){
         return new Vec2Default(x, y, xUnit, yUnit);
+    }
+
+    /**
+     * @{@inheritDoc }
+     */
+    @Override
+    public ViewVolume createViewVolume(List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
+            Angle180 leftFov, Angle180 rightFov, Angle90 bottomFov, Angle90 topFov,
+            List<SimpleType> viewVolumeSimpleExtensions, List<AbstractObject> viewVolumeObjectExtensions){
+        return new ViewVolumeDefault(objectSimpleExtensions, idAttributes,
+                leftFov, rightFov, bottomFov, topFov,
+                viewVolumeSimpleExtensions, viewVolumeObjectExtensions);
     }
 
     

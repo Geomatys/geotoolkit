@@ -37,9 +37,11 @@ import org.geotoolkit.data.model.kml.DisplayMode;
 import org.geotoolkit.data.model.kml.Document;
 import org.geotoolkit.data.model.kml.ExtendedData;
 import org.geotoolkit.data.model.kml.Folder;
+import org.geotoolkit.data.model.kml.GridOrigin;
 import org.geotoolkit.data.model.kml.GroundOverlay;
 import org.geotoolkit.data.model.kml.IconStyle;
 import org.geotoolkit.data.model.kml.IdAttributes;
+import org.geotoolkit.data.model.kml.ImagePyramid;
 import org.geotoolkit.data.model.kml.ItemIcon;
 import org.geotoolkit.data.model.kml.ItemIconState;
 import org.geotoolkit.data.model.kml.Kml;
@@ -72,6 +74,7 @@ import org.geotoolkit.data.model.kml.Scale;
 import org.geotoolkit.data.model.kml.Schema;
 import org.geotoolkit.data.model.kml.SchemaData;
 import org.geotoolkit.data.model.kml.ScreenOverlay;
+import org.geotoolkit.data.model.kml.Shape;
 import org.geotoolkit.data.model.kml.SimpleData;
 import org.geotoolkit.data.model.kml.Style;
 import org.geotoolkit.data.model.kml.StyleMap;
@@ -80,6 +83,7 @@ import org.geotoolkit.data.model.kml.TimeSpan;
 import org.geotoolkit.data.model.kml.TimeStamp;
 import org.geotoolkit.data.model.kml.Vec2;
 import org.geotoolkit.data.model.kml.ViewRefreshMode;
+import org.geotoolkit.data.model.kml.ViewVolume;
 import org.geotoolkit.data.model.xal.AddressDetails;
 import org.geotoolkit.data.model.xsd.SimpleType;
 import org.geotoolkit.xml.StaxStreamWriter;
@@ -1075,11 +1079,84 @@ public class KmlWriter extends StaxStreamWriter {
         }
     }
 
+    /**
+     *
+     * @param photoOverlay
+     * @throws XMLStreamException
+     */
     private void writePhotoOverlay(PhotoOverlay photoOverlay) throws XMLStreamException{
         writer.writeStartElement(URI_KML, TAG_PHOTO_OVERLAY);
         this.writeCommonAbstractOverlay(photoOverlay);
+        if (photoOverlay.getRotation() != null){
+            this.writeRotation(photoOverlay.getRotation());
+        }
+        if (photoOverlay.getViewVolume() != null){
+            this.writeViewVolume(photoOverlay.getViewVolume());
+        }
+        if (photoOverlay.getImagePyramid() != null){
+            this.writeImagePyramid(photoOverlay.getImagePyramid());
+        }
+        if (photoOverlay.getPoint() != null){
+            this.writePoint(photoOverlay.getPoint());
+        }
+        if (photoOverlay.getShape() != null){
+            this.writeShape(photoOverlay.getShape());
+        }
+        if (photoOverlay.getPhotoOverlaySimpleExtensions() != null){
+            this.writeSimpleExtensions(photoOverlay.getPhotoOverlaySimpleExtensions());
+        }
+        if (photoOverlay.getPhotoOverlayObjectExtensions() != null){
+            this.writeObjectExtensions(photoOverlay.getPhotoOverlayObjectExtensions());
+        }
+        writer.writeEndElement();
+    }
 
-
+    /**
+     * 
+     * @param imagePyramid
+     * @throws XMLStreamException
+     */
+    private void writeImagePyramid(ImagePyramid imagePyramid) throws XMLStreamException{
+        writer.writeStartElement(URI_KML, TAG_IMAGE_PYRAMID);
+        this.writeCommonAbstractObject(imagePyramid);
+        if (isFiniteNumber(imagePyramid.getTitleSize())){
+            this.writeTitleSize(imagePyramid.getTitleSize());
+        }
+        if (isFiniteNumber(imagePyramid.getMaxWidth())){
+            this.writeMaxWidth(imagePyramid.getMaxWidth());
+        }
+        if (isFiniteNumber(imagePyramid.getMaxHeight())){
+            this.writeMaxHeight(imagePyramid.getMaxHeight());
+        }
+        if (imagePyramid.getGridOrigin() != null){
+            this.writeGridOrigin(imagePyramid.getGridOrigin());
+        }
+        writer.writeEndElement();
+    }
+    
+    /**
+     *
+     * @param viewVolume
+     * @throws XMLStreamException
+     */
+    private void writeViewVolume(ViewVolume viewVolume) throws XMLStreamException{
+        writer.writeStartElement(URI_KML, TAG_VIEW_VOLUME);
+        this.writeCommonAbstractObject(viewVolume);
+        if (viewVolume.getLeftFov() != null){
+            this.writeLeftFov(viewVolume.getLeftFov());
+        }
+        if (viewVolume.getRightFov() != null){
+            this.writeRightFov(viewVolume.getRightFov());
+        }
+        if (viewVolume.getBottomFov() != null){
+            this.writeBottomFov(viewVolume.getBottomFov());
+        }
+        if (viewVolume.getTopFov() != null){
+            this.writeTopFov(viewVolume.getTopFov());
+        }
+        if (isFiniteNumber(viewVolume.getNear())){
+            this.writeNear(viewVolume.getNear());
+        }
         writer.writeEndElement();
     }
 
@@ -2033,6 +2110,32 @@ public class KmlWriter extends StaxStreamWriter {
 
     /**
      *
+     * @param shape
+     * @throws XMLStreamException
+     */
+    private void writeShape(Shape shape) throws XMLStreamException{
+        if (DEF_SHAPE != shape){
+            writer.writeStartElement(URI_KML, TAG_SHAPE);
+            writer.writeCharacters(shape.getShape());
+            writer.writeEndElement();
+        }
+    }
+
+    /**
+     * 
+     * @param gridOrigin
+     * @throws XMLStreamException
+     */
+    private void writeGridOrigin(GridOrigin gridOrigin) throws XMLStreamException{
+        if (DEF_GRID_ORIGIN != gridOrigin){
+            writer.writeStartElement(URI_KML, TAG_GRID_ORIGIN);
+            writer.writeCharacters(gridOrigin.getGridOrigin());
+            writer.writeEndElement();
+        }
+    }
+
+    /**
+     *
      * @param scale
      * @throws XMLStreamException
      */
@@ -2254,6 +2357,58 @@ public class KmlWriter extends StaxStreamWriter {
     }
 
     /**
+     * 
+     * @param near
+     * @throws XMLStreamException
+     */
+    private void writeNear(double near) throws XMLStreamException {
+        if (DEF_NEAR != near){
+            writer.writeStartElement(URI_KML, TAG_NEAR);
+            writer.writeCharacters(Double.toString(near));
+            writer.writeEndElement();
+        }
+    }
+
+    /**
+     *
+     * @param titleSize
+     * @throws XMLStreamException
+     */
+    private void writeTitleSize(int titleSize) throws XMLStreamException{
+        if (DEF_TITLE_SIZE != titleSize){
+            writer.writeStartElement(URI_KML, TAG_TITLE_SIZE);
+            writer.writeCharacters(Integer.toString(titleSize));
+            writer.writeEndElement();
+        }
+    }
+
+    /**
+     *
+     * @param maxWidth
+     * @throws XMLStreamException
+     */
+    private void writeMaxWidth(int maxWidth) throws XMLStreamException{
+        if (DEF_MAX_WIDTH != maxWidth){
+            writer.writeStartElement(URI_KML, TAG_MAX_WIDTH);
+            writer.writeCharacters(Integer.toString(maxWidth));
+            writer.writeEndElement();
+        }
+    }
+
+    /**
+     *
+     * @param maxHeight
+     * @throws XMLStreamException
+     */
+    private void writeMaxHeight(int maxHeight) throws XMLStreamException{
+        if (DEF_MAX_HEIGHT != maxHeight){
+            writer.writeStartElement(URI_KML, TAG_MAX_HEIGHT);
+            writer.writeCharacters(Integer.toString(maxHeight));
+            writer.writeEndElement();
+        }
+    }
+
+    /**
      *
      * @param msl
      * @throws XMLStreamException
@@ -2275,6 +2430,58 @@ public class KmlWriter extends StaxStreamWriter {
         if (!DEF_HEADING.equals(heading)){
             writer.writeStartElement(URI_KML, TAG_HEADING);
             writer.writeCharacters(Double.toString(heading.getAngle()));
+            writer.writeEndElement();
+        }
+    }
+
+    /**
+     *
+     * @param bottomFov
+     * @throws XMLStreamException
+     */
+    private void writeBottomFov(Angle90 bottomFov) throws XMLStreamException{
+        if (!DEF_BOTTOM_FOV.equals(bottomFov)){
+            writer.writeStartElement(URI_KML, TAG_BOTTOM_FOV);
+            writer.writeCharacters(Double.toString(bottomFov.getAngle()));
+            writer.writeEndElement();
+        }
+    }
+
+    /**
+     *
+     * @param topFov
+     * @throws XMLStreamException
+     */
+    private void writeTopFov(Angle90 topFov) throws XMLStreamException{
+        if (!DEF_TOP_FOV.equals(topFov)){
+            writer.writeStartElement(URI_KML, TAG_TOP_FOV);
+            writer.writeCharacters(Double.toString(topFov.getAngle()));
+            writer.writeEndElement();
+        }
+    }
+
+    /**
+     *
+     * @param leftFov
+     * @throws XMLStreamException
+     */
+    private void writeLeftFov(Angle180 leftFov) throws XMLStreamException{
+        if (!DEF_LEFT_FOV.equals(leftFov)){
+            writer.writeStartElement(URI_KML, TAG_LEFT_FOV);
+            writer.writeCharacters(Double.toString(leftFov.getAngle()));
+            writer.writeEndElement();
+        }
+    }
+
+    /**
+     *
+     * @param rightFov
+     * @throws XMLStreamException
+     */
+    private void writeRightFov(Angle180 rightFov) throws XMLStreamException{
+        if (!DEF_RIGHT_FOV.equals(rightFov)){
+            writer.writeStartElement(URI_KML, TAG_RIGHT_FOV);
+            writer.writeCharacters(Double.toString(rightFov.getAngle()));
             writer.writeEndElement();
         }
     }
