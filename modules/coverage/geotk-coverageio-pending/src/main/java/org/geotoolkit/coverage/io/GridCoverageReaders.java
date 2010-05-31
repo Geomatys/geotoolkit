@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.coverage;
+package org.geotoolkit.coverage.io;
 
 import java.awt.Dimension;
 import java.io.File;
@@ -22,16 +22,12 @@ import java.io.IOException;
 import java.net.URL;
 import javax.imageio.ImageReader;
 
-import org.geotoolkit.coverage.io.CoverageStoreException;
-import org.geotoolkit.coverage.io.GridCoverageReader;
-import org.geotoolkit.coverage.io.ImageCoverageReader;
 import org.geotoolkit.image.io.mosaic.MosaicBuilder;
 import org.geotoolkit.image.io.mosaic.MosaicImageReader;
 import org.geotoolkit.image.io.mosaic.MosaicImageWriteParam;
 import org.geotoolkit.image.io.mosaic.TileManager;
 import org.geotoolkit.image.io.mosaic.TileWritingPolicy;
-
-import org.opengis.referencing.operation.NoninvertibleTransformException;
+import org.geotoolkit.lang.Static;
 
 /**
  * Utility class to aquiere a coverage reader from a file.
@@ -39,17 +35,18 @@ import org.opengis.referencing.operation.NoninvertibleTransformException;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class WorldImageReaderUtilities {
+@Static
+public class GridCoverageReaders {
     
     private static final File TILE_CACHE_FOLDER = new File(System.getProperty("java.io.tmpdir") + File.separator + "imageTiles");
 
-    private WorldImageReaderUtilities(){}
+    private GridCoverageReaders(){}
 
     /**
      * Create a simple reader which doesnt use any pyramid or mosaic tiling.
      * Use this reader if you know you have a small image.
      */
-    public static GridCoverageReader createSimpleReader(File input) throws IOException, CoverageStoreException{
+    public static GridCoverageReader createSimpleReader(File input) throws CoverageStoreException{
         final ImageCoverageReader ic = new ImageCoverageReader();
         ic.setInput(input);
         return ic;
@@ -61,7 +58,7 @@ public class WorldImageReaderUtilities {
      * size and it's format. The creation time can go from a few seconds to several
      * minuts or even hours if you give him an image like the full resolution BlueMarble.
      */
-    public static GridCoverageReader createMosaicReader(File input) throws IOException, NoninvertibleTransformException, CoverageStoreException{
+    public static GridCoverageReader createMosaicReader(File input) throws IOException, CoverageStoreException{
         final int tileSize = 512;
         final File tileFolder = getTempFolder(input,tileSize);
         return createMosaicReader(input, tileSize, tileFolder);
@@ -73,7 +70,7 @@ public class WorldImageReaderUtilities {
      * size and it's format. The creation time can go from a few seconds to several
      * minuts or even hours if you give him an image like the full resolution BlueMarble.
      */
-    public static GridCoverageReader createMosaicReader(URL input) throws IOException, NoninvertibleTransformException, CoverageStoreException{
+    public static GridCoverageReader createMosaicReader(URL input) throws IOException, CoverageStoreException{
         final int tileSize = 512;
         final File tileFolder = getTempFolder(input,tileSize);
         return createMosaicReader(input, tileSize, tileFolder);
@@ -86,7 +83,7 @@ public class WorldImageReaderUtilities {
      * @param tileSize : favorite tile size, this should go over 2000, recommmanded 512 or 256.
      * @param tileFolder : cache directory where tiles will be stored
      */
-    public static GridCoverageReader createMosaicReader(File input, int tileSize, File tileFolder) throws IOException, NoninvertibleTransformException, CoverageStoreException{
+    public static GridCoverageReader createMosaicReader(File input, int tileSize, File tileFolder) throws IOException, CoverageStoreException{
         final ImageReader reader = buildMosaicReader(input, tileSize, tileFolder);
         final ImageCoverageReader ic = new ImageCoverageReader();
         ic.setInput(reader);
@@ -100,7 +97,7 @@ public class WorldImageReaderUtilities {
      * @param tileSize : favorite tile size, this should go over 2000, recommmanded 512 or 256.
      * @param tileFolder : cache directory where tiles will be stored
      */
-    public static GridCoverageReader createMosaicReader(URL input, int tileSize, File tileFolder) throws IOException, NoninvertibleTransformException, CoverageStoreException{
+    public static GridCoverageReader createMosaicReader(URL input, int tileSize, File tileFolder) throws IOException, CoverageStoreException{
         final ImageReader reader = buildMosaicReader(input, tileSize, tileFolder);
         final ImageCoverageReader ic = new ImageCoverageReader();
         ic.setInput(reader);
@@ -129,7 +126,7 @@ public class WorldImageReaderUtilities {
      * Get or create a temp folder to store the mosaic. the folder is based on the
      * file name, so tiles can be find again if the file name hasn't change.
      */
-    private static File getTempFolder(File input,int tileSize) throws IOException{
+    private static File getTempFolder(File input,int tileSize) {
         return getTempFolder(input.getName(), tileSize);
     }
 
@@ -137,7 +134,7 @@ public class WorldImageReaderUtilities {
      * Get or create a temp folder to store the mosaic. the folder is based on the
      * file name, so tiles can be find again if the file name hasn't change.
      */
-    private static File getTempFolder(URL input,int tileSize) throws IOException{
+    private static File getTempFolder(URL input,int tileSize) {
         return getTempFolder(input.getFile(), tileSize);
     }
 
@@ -145,18 +142,15 @@ public class WorldImageReaderUtilities {
      * Get or create a temp folder to store the mosaic. the folder is based on the
      * file name, so tiles can be find again if the file name hasn't change.
      */
-    private static File getTempFolder(String pathName,int tileSize) throws IOException{
+    private static File getTempFolder(String pathName,int tileSize) {
 
-        //we must test both since the slash may change if we are in a jar on windows
-        int lastSlash = pathName.lastIndexOf('/');
-        int second = pathName.lastIndexOf('\\');
-        if(second > lastSlash) lastSlash = second;
+        final int lastSlash = pathName.lastIndexOf(File.separator);
 
         if(lastSlash >= 0){
             pathName = pathName.substring(lastSlash+1, pathName.length());
         }
         
-        final int stop = pathName.lastIndexOf(".");
+        final int stop = pathName.lastIndexOf('.');
 
         final String name;
         if(stop >= 0){
@@ -167,11 +161,8 @@ public class WorldImageReaderUtilities {
             name = pathName;
         }
         final StringBuilder builder = new StringBuilder(TILE_CACHE_FOLDER.getAbsolutePath());
-        builder.append(File.separator);
-        builder.append(name);
-        builder.append("_");
-        builder.append(tileSize);
-        File cacheFolder = new File(builder.toString());
+        builder.append(File.separator).append(name).append('_').append(tileSize);
+        final File cacheFolder = new File(builder.toString());
 
         //create the tile folder if not created
         cacheFolder.mkdirs();
