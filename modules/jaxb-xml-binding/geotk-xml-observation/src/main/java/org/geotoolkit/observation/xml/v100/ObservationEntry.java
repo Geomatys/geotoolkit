@@ -236,7 +236,9 @@ public class ObservationEntry implements Observation, Entry {
         } else if (featureOfInterest instanceof SamplingSurfaceType) {
             this.featureOfInterest   = new FeaturePropertyType(factory.createSamplingSurface((SamplingSurfaceType)featureOfInterest));
         }
-        this.observedProperty    = new PhenomenonPropertyType(observedProperty);
+        if (observedProperty != null) {
+            this.observedProperty    = new PhenomenonPropertyType(observedProperty);
+        }
         this.procedure           = procedure;
         this.resultQuality       = quality;
         this.result              = omfactory.createResult(result);
@@ -302,7 +304,9 @@ public class ObservationEntry implements Observation, Entry {
         this.name                = name;
         this.definition          = definition;
         this.featureOfInterest   = featureOfInterest;
-        this.observedProperty    = new PhenomenonPropertyType(observedProperty);
+        if (observedProperty != null) {
+            this.observedProperty    = new PhenomenonPropertyType(observedProperty);
+        }
         this.procedure           = procedure;
         this.resultQuality       = null;
         this.result              = omfactory.createResult(result);
