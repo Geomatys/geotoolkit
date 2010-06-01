@@ -46,9 +46,9 @@ import org.apache.maven.project.MavenProject;
  */
 public class PackerSpecificMojo extends AbstractMojo {
     /**
-     * The Geotoolkit version.
+     * The Geotoolkit.org version.
      */
-    private static final String VERSION = "SNAPSHOT";
+    static final String VERSION = "SNAPSHOT";
 
     /**
      * The Maven project running this plugin.

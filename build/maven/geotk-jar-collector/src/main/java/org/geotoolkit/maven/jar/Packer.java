@@ -321,8 +321,8 @@ public final class Packer implements FilenameFilter {
             System.out.println(" is not a directory.");
             return;
         }
-        final Packer packer = new Packer(targetDirectory, "SNAPSHOT");
-        packer.addPack("geotk-bundle-pending-SNAPSHOT.jar");
+        final Packer packer = new Packer(targetDirectory, PackerSpecificMojo.VERSION);
+        packer.addPack("geotk-bundle-pending-" + PackerSpecificMojo.VERSION + ".jar");
         try {
             packer.createJars();
         } finally {

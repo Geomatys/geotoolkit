@@ -35,7 +35,7 @@ import com.sun.tools.doclets.Taglet;
  */
 public final class Module implements Taglet {
     /**
-     * Geotoolkit version to be referenced by this taglet.
+     * Geotoolkit.org version to be referenced by this taglet.
      */
     private static final String VERSION = "SNAPSHOT";
 
