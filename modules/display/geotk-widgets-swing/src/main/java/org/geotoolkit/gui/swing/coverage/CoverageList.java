@@ -91,7 +91,7 @@ public class CoverageList extends JComponent {
     /**
      * Action commands.
      */
-    private static final String ADD="ADD", REMOVE="REMOVE";
+    private static final String ADD="ADD", REMOVE="REMOVE", REFRESH="REFRESH";
 
     /**
      * Layout parameters for the components put in {@link #selectionPanel}.
@@ -204,6 +204,7 @@ public class CoverageList extends JComponent {
         button(resources, Vocabulary.Keys.ADD, "toolbarButtonGraphics/table/RowInsertBefore24.gif", ADD);
         removeButton = button(resources, Vocabulary.Keys.REMOVE, "toolbarButtonGraphics/table/RowDelete24.gif", REMOVE);
         removeButton.setEnabled(false);
+        button(resources, Vocabulary.Keys.REFRESH, "toolbarButtonGraphics/general/Refresh24.gif", REFRESH);
         /*
          * Put the components in this panel.
          */
@@ -274,6 +275,8 @@ public class CoverageList extends JComponent {
                 removeCoverage();
             } else if (ImageFileChooser.CANCEL_SELECTION.equals(action)) {
                 setSelectionPanel(TABLE);
+            } else if (REFRESH.equals(action)) {
+                refresh();
             }
         }
 
@@ -389,6 +392,16 @@ public class CoverageList extends JComponent {
         }
         firePropertyChange("layer", layer, oldLayer);
         firePropertyChange("envelope", envelope, oldEnvelope);
+    }
+
+    /**
+     * Reloads the list of coverages in the {@linkplain #getLayer() current layer} which
+     * intersect the {@linkplain #getEnvelope() current envelope}.
+     *
+     * @since 3.12
+     */
+    public void refresh() {
+        setData(layer, envelope);
     }
 
     /**
@@ -527,6 +540,7 @@ public class CoverageList extends JComponent {
                         EventQueue.invokeLater(new Runnable() {
                             @Override public void run() {
                                 setSelectionPanel(TABLE);
+                                refresh();
                             }
                         });
                     }
