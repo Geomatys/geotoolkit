@@ -421,8 +421,25 @@ public class KmlWriter extends StaxStreamWriter {
         }
     }
 
-    private void writeNetworkLink(NetworkLink networkLink){
-
+    /**
+     *
+     * @param networkLink
+     * @throws XMLStreamException
+     */
+    private void writeNetworkLink(NetworkLink networkLink) throws XMLStreamException{
+        writer.writeStartElement(URI_KML, TAG_NETWORK_LINK);
+        this.writeRefreshVisibility(networkLink.getRefreshVisibility());
+        this.writeFlyToView(networkLink.getFlyToView());
+        if (networkLink.getLink() != null){
+            this.writeLink(networkLink.getLink());
+        }
+        if (networkLink.getNetworkLinkSimpleExtensions() != null){
+            this.writeSimpleExtensions(networkLink.getNetworkLinkSimpleExtensions());
+        }
+        if (networkLink.getNetworkLinkObjectExtensions() != null){
+            this.writeObjectExtensions(networkLink.getNetworkLinkObjectExtensions());
+        }
+        writer.writeEndElement();
     }
 
     /**
@@ -2028,6 +2045,40 @@ public class KmlWriter extends StaxStreamWriter {
         if (DEF_TESSELLATE != tessellate){
             writer.writeStartElement(URI_KML, TAG_TESSELLATE);
             if(tessellate){
+                writer.writeCharacters(SimpleType.BOOLEAN_TRUE);
+            } else {
+                writer.writeCharacters(SimpleType.BOOLEAN_FALSE);
+            }
+            writer.writeEndElement();
+        }
+    }
+
+    /**
+     *
+     * @param refreshVisibility
+     * @throws XMLStreamException
+     */
+    private void writeRefreshVisibility(boolean refreshVisibility) throws XMLStreamException{
+        if (DEF_REFRESH_VISIBILITY != refreshVisibility){
+            writer.writeStartElement(URI_KML, TAG_REFRESH_VISIBILITY);
+            if(refreshVisibility){
+                writer.writeCharacters(SimpleType.BOOLEAN_TRUE);
+            } else {
+                writer.writeCharacters(SimpleType.BOOLEAN_FALSE);
+            }
+            writer.writeEndElement();
+        }
+    }
+
+    /**
+     * 
+     * @param flyToView
+     * @throws XMLStreamException
+     */
+    private void writeFlyToView(boolean flyToView) throws XMLStreamException{
+        if (DEF_FLY_TO_VIEW != flyToView){
+            writer.writeStartElement(URI_KML, TAG_FLY_TO_VIEW);
+            if(flyToView){
                 writer.writeCharacters(SimpleType.BOOLEAN_TRUE);
             } else {
                 writer.writeCharacters(SimpleType.BOOLEAN_FALSE);

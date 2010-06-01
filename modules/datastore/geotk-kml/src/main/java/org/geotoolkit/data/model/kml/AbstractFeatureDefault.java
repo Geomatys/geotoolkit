@@ -16,7 +16,7 @@ public abstract class AbstractFeatureDefault extends AbstractObjectDefault imple
     protected boolean visibility;
     protected boolean open;
     protected AtomPersonConstruct author;
-    protected AtomLink link;
+    protected AtomLink atomLink;
     protected String address;
     protected AddressDetails addressDetails;
     protected String phoneNumber;
@@ -39,7 +39,7 @@ public abstract class AbstractFeatureDefault extends AbstractObjectDefault imple
      * @param visibility
      * @param open
      * @param author
-     * @param link
+     * @param atomLink
      * @param address
      * @param addressDetails
      * @param phoneNumber
@@ -55,7 +55,7 @@ public abstract class AbstractFeatureDefault extends AbstractObjectDefault imple
      * @param abstractFeatureObjectExtensions
      */
     protected AbstractFeatureDefault(List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
-            String name, boolean visibility, boolean open, AtomPersonConstruct author, AtomLink link,
+            String name, boolean visibility, boolean open, AtomPersonConstruct author, AtomLink atomLink,
             String address, AddressDetails addressDetails, String phoneNumber, String snippet,
             String description, AbstractView view, AbstractTimePrimitive timePrimitive,
             String styleUrl, List<AbstractStyleSelector> styleSelector,
@@ -68,7 +68,7 @@ public abstract class AbstractFeatureDefault extends AbstractObjectDefault imple
         this.visibility = visibility;
         this.open = open;
         this.author = author;
-        this.link = link;
+        this.atomLink = atomLink;
         this.address = address;
         this.addressDetails = addressDetails;
         this.phoneNumber = phoneNumber;
@@ -117,7 +117,7 @@ public abstract class AbstractFeatureDefault extends AbstractObjectDefault imple
      * @{@inheritDoc }
      */
     @Override
-    public AtomLink getAtomLink() {return this.link;}
+    public AtomLink getAtomLink() {return this.atomLink;}
 
     @Override
     public String getAddress() {return this.address;}
@@ -213,7 +213,7 @@ public abstract class AbstractFeatureDefault extends AbstractObjectDefault imple
                 "\n\tvisibility : "+this.visibility+
                 "\n\topen : "+this.open+
                 "\n\tauthor : "+this.author+
-                "\n\tlink : "+this.link+
+                "\n\tlink : "+this.atomLink+
                 "\n\taddress : "+this.address+
                 "\n\taddressDetails : "+this.addressDetails+
                 "\n\tphoneNumber : "+this.phoneNumber+

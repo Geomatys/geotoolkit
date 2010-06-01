@@ -56,6 +56,7 @@ import org.geotoolkit.data.model.kml.Lod;
 import org.geotoolkit.data.model.kml.LookAt;
 import org.geotoolkit.data.model.kml.Model;
 import org.geotoolkit.data.model.kml.MultiGeometry;
+import org.geotoolkit.data.model.kml.NetworkLink;
 import org.geotoolkit.data.model.kml.NetworkLinkControl;
 import org.geotoolkit.data.model.kml.Orientation;
 import org.geotoolkit.data.model.kml.Pair;
@@ -800,6 +801,46 @@ public interface KmlFactory {
             List<AbstractGeometry> geometries,
             List<SimpleType> multiGeometrySimpleExtensions,
             List<AbstractObject> multiGeometryObjectExtensions);
+
+    /**
+     * 
+     * @param objectSimpleExtensions
+     * @param idAttributes
+     * @param name
+     * @param visibility
+     * @param open
+     * @param author
+     * @param atomLink
+     * @param address
+     * @param addressDetails
+     * @param phoneNumber
+     * @param snippet
+     * @param description
+     * @param view
+     * @param timePrimitive
+     * @param styleUrl
+     * @param styleSelector
+     * @param region
+     * @param extendedData
+     * @param abstractFeatureSimpleExtensions
+     * @param abstractFeatureObjectExtensions
+     * @param refreshVisibility
+     * @param flyToView
+     * @param link
+     * @param networkLinkSimpleExtensions
+     * @param networkLinkObjectExtensions
+     * @return
+     */
+     public NetworkLink createNetworkLink(List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
+            String name, boolean visibility, boolean open, AtomPersonConstruct author, AtomLink atomLink,
+            String address, AddressDetails addressDetails, String phoneNumber, String snippet,
+            String description, AbstractView view, AbstractTimePrimitive timePrimitive,
+            String styleUrl, List<AbstractStyleSelector> styleSelector,
+            Region region, ExtendedData extendedData,
+            List<SimpleType> abstractFeatureSimpleExtensions,
+            List<AbstractObject> abstractFeatureObjectExtensions,
+            boolean refreshVisibility, boolean flyToView, Link link,
+            List<SimpleType> networkLinkSimpleExtensions, List<AbstractObject> networkLinkObjectExtensions);
 
     /**
      *

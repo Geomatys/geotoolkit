@@ -103,6 +103,7 @@ public final class ModelConstants {
     public static final String TAG_EXTENDED_DATA = "ExtendedData";
     public static final String TAG_EXTRUDE = "extrude";
     public static final String TAG_FILL = "fill";
+    public static final String TAG_FLY_TO_VIEW = "flyToView";
     public static final String TAG_GRID_ORIGIN = "gridOrigin";
     public static final String TAG_HEADING = "heading";
     public static final String TAG_HOT_SPOT = "hotSpot";
@@ -150,6 +151,7 @@ public final class ModelConstants {
     public static final String TAG_RANGE = "range";
     public static final String TAG_REFRESH_INTERVAL = "refreshInterval";
     public static final String TAG_REFRESH_MODE = "refreshMode";
+    public static final String TAG_REFRESH_VISIBILITY = "refreshVisibility";
     public static final String TAG_REGION = "Region";
     public static final String TAG_RESOURCE_MAP = "ResourceMap";
     public static final String TAG_RIGHT_FOV = "rightFov";
@@ -253,6 +255,7 @@ public final class ModelConstants {
     public static final int DEF_DRAW_ORDER = 0;
     public static final boolean DEF_EXTRUDE = false;
     public static final boolean DEF_FILL = true;
+    public static final boolean DEF_FLY_TO_VIEW = false;
     public static final GridOrigin DEF_GRID_ORIGIN= GridOrigin.LOWER_LEFT;
     public static final ListItem DEF_LIST_ITEM = ListItem.CHECK;
     public static final double DEF_MAX_ALTITUDE = 0.0;
@@ -272,6 +275,7 @@ public final class ModelConstants {
     public static final boolean DEF_OUTLINE = true;
     public static final double DEF_RANGE = 0.0;
     public static final RefreshMode DEF_REFRESH_MODE = RefreshMode.ON_CHANGE;
+    public static final boolean DEF_REFRESH_VISIBILITY = false;
     public static final double DEF_REFRESH_INTERVAL = 4.0;
     public static final double DEF_SCALE = 1.0;
     public static final Shape DEF_SHAPE = Shape.RECTANGLE;

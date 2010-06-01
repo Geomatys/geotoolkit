@@ -3820,10 +3820,127 @@ public class KmlReader extends StaxStreamReader {
         return this.kmlFactory.createSimpleField(displayName, type, name);
     }
 
-    private NetworkLink readNetworkLink() {
-        NetworkLink resultat = null;
+    /**
+     * 
+     * @return
+     * @throws XMLStreamException
+     * @throws KmlException
+     */
+    private NetworkLink readNetworkLink() throws XMLStreamException, KmlException {
+        // AbstractObject
+        List<SimpleType> objectSimpleExtensions = null;
+        IdAttributes idAttributes = this.readIdAttributes();
 
-        return resultat;
+        // AbstractFeature
+        String name = null;
+        boolean visibility = DEF_VISIBILITY;
+        boolean open = DEF_OPEN;
+        AtomPersonConstruct author = null;
+        AtomLink atomLink = null;
+        String address = null;
+        AddressDetails addressDetails = null;
+        String phoneNumber = null;
+        String snippet = null;
+        String description = null;
+        AbstractView view = null;
+        AbstractTimePrimitive timePrimitive = null;
+        String styleUrl = null;
+        List<AbstractStyleSelector> styleSelector = new ArrayList<AbstractStyleSelector>();
+        Region region = null;
+        ExtendedData extendedData = null;
+        List<SimpleType> featureSimpleExtensions = null;
+        List<AbstractObject> featureObjectExtensions = null;
+
+        // NetworkLink
+        boolean refreshVisibility = DEF_REFRESH_VISIBILITY;
+        boolean flyToView = DEF_FLY_TO_VIEW;
+        Link link = null;
+        List<SimpleType> networkLinkSimpleExtensions = null;
+        List<AbstractObject> networkLinkObjectExtensions = null;
+
+        boucle:
+        while (reader.hasNext()) {
+
+            switch (reader.next()) {
+                case XMLStreamConstants.START_ELEMENT:
+                    final String eName = reader.getLocalName();
+                    final String eUri = reader.getNamespaceURI();
+
+                    if (URI_KML.equals(eUri)) {
+
+                        // ABSTRACT FEATURE
+                        if (TAG_NAME.equals(eName)) {
+                            name = reader.getElementText();
+                        } else if (TAG_VISIBILITY.equals(eName)) {
+                            visibility = parseBoolean(reader.getElementText());
+                        } else if (TAG_OPEN.equals(eName)) {
+                            open = parseBoolean(reader.getElementText());
+                        } else if (TAG_ADDRESS.equals(eName)) {
+                            address = reader.getElementText();
+                        } else if (TAG_PHONE_NUMBER.equals(eName)) {
+                            phoneNumber = reader.getElementText();
+                        } else if (TAG_SNIPPET.equals(eName)) {
+                            snippet = reader.getElementText();
+                        } else if (TAG_DESCRIPTION.equals(eName)) {
+                            description = reader.getElementText();
+                        } else if (TAG_STYLE_URL.equals(eName)) {
+                            styleUrl = reader.getElementText();
+                        } else if (isAbstractView(eName)) {
+                            view = this.readAbstractView(eName);
+                        } else if (isAbstractTimePrimitive(eName)) {
+                            timePrimitive = this.readAbstractTimePrimitive(eName);
+                        } else if (isAbstractStyleSelector(eName)) {
+                            styleSelector.add(this.readAbstractStyleSelector(eName));
+                        } else if (TAG_REGION.equals(eName)) {
+                            region = this.readRegion();
+                        } else if (TAG_EXTENDED_DATA.equals(eName)) {
+                            extendedData = this.readExtendedData();
+                        }
+
+                        // NETWORK LINK
+                        else if (TAG_REFRESH_VISIBILITY.equals(eName)) {
+                            refreshVisibility = parseBoolean(reader.getElementText());
+                        } else if (TAG_FLY_TO_VIEW.equals(eName)) {
+                            flyToView = parseBoolean(reader.getElementText());
+                        } else if (TAG_STYLE_URL.equals(eName)) {
+                            link = this.readLink(eName);
+                        }
+
+
+                    } else if (URI_ATOM.equals(eUri)) {
+
+                        // ABSTRACT FEATURE
+                        if (TAG_ATOM_PERSON_CONSTRUCT.equals(eName)) {
+                            author = this.readAtomPersonConstruct();
+                        } else if (TAG_ATOM_LINK.equals(eName)) {
+                            atomLink = this.readAtomLink();
+                        }
+                    }
+                    if (URI_XAL.equals(eUri)) {
+
+                        // ABSTRACT FEATURE
+                        if (TAG_XAL_ADDRESS_DETAILS.equals(eName)) {
+                            addressDetails = this.readXalAddressDetails();
+                        }
+                    }
+                    break;
+
+                case XMLStreamConstants.END_ELEMENT:
+                    if (TAG_NETWORK_LINK.equals(reader.getLocalName()) && URI_KML.contains(reader.getNamespaceURI())) {
+                        break boucle;
+                    }
+                    break;
+            }
+
+        }
+
+        return this.kmlFactory.createNetworkLink(objectSimpleExtensions, idAttributes,
+                name, visibility, open, author, atomLink, address, addressDetails,
+                phoneNumber, snippet, description, view, timePrimitive, styleUrl,
+                styleSelector, region, extendedData,
+                featureSimpleExtensions, featureObjectExtensions,
+                refreshVisibility, flyToView, link,
+                networkLinkSimpleExtensions, networkLinkObjectExtensions);
     }
 
     /**

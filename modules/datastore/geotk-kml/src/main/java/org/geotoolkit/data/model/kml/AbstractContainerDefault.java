@@ -23,7 +23,7 @@ public class AbstractContainerDefault extends AbstractFeatureDefault implements 
      * @param visibility
      * @param open
      * @param author
-     * @param link
+     * @param atomLink
      * @param address
      * @param addressDetails
      * @param phoneNumber

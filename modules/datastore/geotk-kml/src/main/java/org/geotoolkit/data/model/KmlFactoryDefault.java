@@ -99,8 +99,10 @@ import org.geotoolkit.data.model.kml.Model;
 import org.geotoolkit.data.model.kml.ModelDefault;
 import org.geotoolkit.data.model.kml.MultiGeometry;
 import org.geotoolkit.data.model.kml.MultiGeometryDefault;
+import org.geotoolkit.data.model.kml.NetworkLink;
 import org.geotoolkit.data.model.kml.NetworkLinkControl;
 import org.geotoolkit.data.model.kml.NetworkLinkControlDefault;
+import org.geotoolkit.data.model.kml.NetworkLinkDefault;
 import org.geotoolkit.data.model.kml.Orientation;
 import org.geotoolkit.data.model.kml.OrientationDefault;
 import org.geotoolkit.data.model.kml.Pair;
@@ -697,6 +699,28 @@ public class KmlFactoryDefault implements KmlFactory{
         return new MultiGeometryDefault(objectSimpleExtensions, idAttributes,
                 abstractGeometrySimpleExtensions, abstractGeometryObjectExtensions,
                 geometries, multiGeometrySimpleExtensions, multiGeometryObjectExtensions);
+    }
+
+    /**
+     * @{@inheritDoc }
+     */
+    @Override
+    public NetworkLink createNetworkLink(List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
+            String name, boolean visibility, boolean open, AtomPersonConstruct author, AtomLink atomLink,
+            String address, AddressDetails addressDetails, String phoneNumber, String snippet,
+            String description, AbstractView view, AbstractTimePrimitive timePrimitive,
+            String styleUrl, List<AbstractStyleSelector> styleSelector,
+            Region region, ExtendedData extendedData,
+            List<SimpleType> abstractFeatureSimpleExtensions,
+            List<AbstractObject> abstractFeatureObjectExtensions,
+            boolean refreshVisibility, boolean flyToView, Link link,
+            List<SimpleType> networkLinkSimpleExtensions, List<AbstractObject> networkLinkObjectExtensions){
+        return new NetworkLinkDefault(objectSimpleExtensions, idAttributes, name, visibility, open, author, atomLink,
+                address, addressDetails, phoneNumber, snippet, description, view, timePrimitive,
+                styleUrl, styleSelector, region, extendedData,
+                abstractFeatureSimpleExtensions, abstractFeatureObjectExtensions,
+                refreshVisibility, flyToView, link,
+                networkLinkSimpleExtensions, networkLinkObjectExtensions);
     }
 
     /**
