@@ -20,7 +20,6 @@ package org.geotoolkit.coverage.io;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.List;
-import java.util.Locale;
 import java.util.concurrent.CancellationException;
 import javax.imageio.ImageReader;
 
@@ -30,8 +29,6 @@ import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.util.collection.BackingStoreException;
 import org.geotoolkit.util.MeasurementRange;
-import org.geotoolkit.util.Localized;
-import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.internal.io.IOUtilities;
 
@@ -67,7 +64,7 @@ import org.geotoolkit.internal.io.IOUtilities;
  * @since 3.09 (derived from 2.4)
  * @module
  */
-public abstract class GridCoverageReader implements Localized {
+public abstract class GridCoverageReader extends GridCoverageStore {
     /**
      * The input (typically a {@link java.io.File}, {@link java.net.URL} or {@link String}),
      * or {@code null} if input is not set.
@@ -75,60 +72,9 @@ public abstract class GridCoverageReader implements Localized {
     Object input;
 
     /**
-     * The locale to use for formatting messages, or {@code null} for a default locale.
-     */
-    Locale locale;
-
-    /**
-     * {@code true} if a request to abort the current read operation has been made. Subclasses
-     * should set this field to {@code false} at the begining of each read operation, and pool
-     * the value regularly during the read.
-     *
-     * @see #abort()
-     *
-     * @since 3.10
-     */
-    protected volatile boolean abortRequested;
-
-    /**
      * Creates a new instance.
      */
     protected GridCoverageReader() {
-    }
-
-    /**
-     * Returns the locale to use for formatting warnings and error messages,
-     * or {@code null} for the {@linkplain Locale#getDefault() default}.
-     *
-     * @return The current locale, or {@code null}.
-     *
-     * @see ImageReader#getLocale()
-     */
-    @Override
-    public Locale getLocale() {
-        return locale;
-    }
-
-    /**
-     * Sets the current locale of this coverage reader to the given value. A value of
-     * {@code null} removes any previous setting, and indicates that the reader should
-     * localize as it sees fit.
-     *
-     * @param locale The new locale to use.
-     *
-     * @see ImageReader#setLocale(Locale)
-     */
-    public void setLocale(final Locale locale) {
-        this.locale = locale;
-    }
-
-    /**
-     * Returns a localized string for the specified error key.
-     *
-     * @param key One of the constants declared in the {@link Errors.Keys} inner class.
-     */
-    final String formatErrorMessage(final int key) {
-        return Errors.getResources(locale).getString(key);
     }
 
     /**
@@ -300,65 +246,15 @@ public abstract class GridCoverageReader implements Localized {
             throws CoverageStoreException, CancellationException;
 
     /**
-     * Cancels the read operation which is currently under progress in an other thread.
-     * The read operation will throw a {@link CancellationException}, unless it had the
-     * time to complete.
-     *
-     * {@section Note for implementors}
-     * Subclasses should set the {@link #abortRequested} field to {@code false} at the
-     * beginning of each read operation, and poll the value regularly during the read.
-     *
-     * @see #abortRequested
-     * @see ImageReader#abort()
-     *
-     * @since 3.10
-     */
-    public void abort() {
-        abortRequested = true;
-    }
-
-    /**
-     * Throws {@link CancellationException} if a request to abort the current read operation
-     * has been made since the reader was instantiated or {@link #clearAbortRequest()} was
-     * called.
-     *
-     * @throws CancellationException If the {@link #abort()} method has been invoked.
-     *
-     * @see ImageReader#abortRequested()
-     */
-    final void checkAbortState() throws CancellationException {
-        if (abortRequested) {
-            throw new CancellationException(formatErrorMessage(Errors.Keys.CANCELED_OPERATION));
-        }
-    }
-
-    /**
      * Restores the {@code GridCoverageReader} to its initial state.
      *
      * @throws CoverageStoreException if an error occurs while restoring to the initial state.
      *
      * @see ImageReader#reset()
      */
+    @Override
     public void reset() throws CoverageStoreException {
-        locale = null;
-        input  = null;
-        abortRequested = false;
-    }
-
-    /**
-     * Allows any resources held by this reader to be released. The result of calling any other
-     * method subsequent to a call to this method is undefined.
-     * <p>
-     * The default implementation invokes {@link #reset()}. Subclass implementations
-     * should ensure that all resources, especially JCBC connections, are released.
-     *
-     * @throws CoverageStoreException if an error occurs while disposing resources.
-     *
-     * @see ImageReader#dispose()
-     *
-     * @since 3.10
-     */
-    public void dispose() throws CoverageStoreException {
-        reset();
+        super.reset();
+        input = null;
     }
 }
