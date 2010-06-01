@@ -17,6 +17,9 @@
  */
 package org.geotoolkit.referencing.operation.transform;
 
+import java.net.URL;
+import java.io.File;
+
 import org.opengis.referencing.FactoryException;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptorGroup;

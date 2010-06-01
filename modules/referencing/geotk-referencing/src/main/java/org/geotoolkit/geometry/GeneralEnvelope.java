@@ -77,7 +77,7 @@ import org.geotoolkit.metadata.iso.spatial.PixelTranslation;
  *   <li>From a string representing a {@code BBOX} in <cite>Well Known Text</cite> format.</li>
  * </ul>
  *
- * @author Martin Desruisseaux (IRD, Geometys)
+ * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Simone Giannecchini (Geosolutions)
  * @version 3.11
  *
