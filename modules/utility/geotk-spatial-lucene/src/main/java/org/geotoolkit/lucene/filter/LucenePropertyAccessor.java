@@ -42,11 +42,18 @@ import org.geotoolkit.geometry.jts.SRIDGenerator;
  * @module pending
  */
 public class LucenePropertyAccessor implements PropertyAccessor {
+    private static final GeometryFactory GF = new GeometryFactory();
 
-    private final WKBReader reader;
+    private static final ThreadLocal<WKBReader> THREAD_LOCAL = new ThreadLocal<WKBReader>(){
+
+        @Override
+        protected WKBReader initialValue() {
+            return new WKBReader(GF);
+        }
+
+    };
 
     LucenePropertyAccessor() {
-        reader = new WKBReader(new GeometryFactory());
     }
 
     /**
@@ -61,7 +68,7 @@ public class LucenePropertyAccessor implements PropertyAccessor {
      * {@inheritDoc }
      */
     @Override
-    public synchronized Object get(Object object, String xpath, Class target) throws IllegalArgumentException {
+    public Object get(Object object, String xpath, Class target) throws IllegalArgumentException {
         Document doc = (Document) object;
 
         if(xpath.equals(LuceneOGCFilter.GEOMETRY_FIELD_NAME)){
@@ -79,7 +86,7 @@ public class LucenePropertyAccessor implements PropertyAccessor {
             stream.read(new byte[5]);
             
             try {
-                final Geometry geom = reader.read(stream);
+                final Geometry geom = THREAD_LOCAL.get().read(stream);
                 geom.setSRID(srid);
                 return geom;
             } catch (IOException ex) {
