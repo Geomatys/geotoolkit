@@ -18,38 +18,17 @@
 package org.geotoolkit.feature;
 
 import javax.xml.namespace.QName;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.opengis.feature.type.Name;
 
 /**
+ * Test Name.
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class DefaultNameTest {
-
-    public DefaultNameTest() {
-    }
-
-    @BeforeClass
-    public static void setUpClass() throws Exception {
-    }
-
-    @AfterClass
-    public static void tearDownClass() throws Exception {
-    }
-
-    @Before
-    public void setUp() {
-    }
-
-    @After
-    public void tearDown() {
-    }
 
     /**
      * Test of isGlobal method, of class DefaultName.
@@ -113,8 +92,26 @@ public class DefaultNameTest {
         assertEquals(name.getLocalPart(), local);
         assertEquals(name.isGlobal(), true);
 
-
     }
 
+    @Test
+    public void testEquals(){
+        Name n1 = new DefaultName("http://test.com", "test");
+        Name n2 = new DefaultName("http://test.com", "test");
+        assertEquals(n1, n2);
+
+        n1 = new DefaultName("http://test.com", ":", "test1");
+        n2 = new DefaultName("http://test.com", ":", "test2");
+        assertFalse( n1.equals(n2) );
+
+        n1 = new DefaultName("http://test.com1", ":", "test");
+        n2 = new DefaultName("http://test.com2", ":", "test");
+        assertFalse( n1.equals(n2) );
+
+        //separator must not be used for equals
+        n1 = new DefaultName("http://test.com", ":", "test");
+        n2 = new DefaultName("http://test.com", "/", "test");
+        assertEquals(n1, n2);
+    }
 
 }

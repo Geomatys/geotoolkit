@@ -218,8 +218,8 @@ public class FeatureTypeBuilder {
         defaultGeometry = null;
     }
 
-    public void setName(String localPart){
-        setName(new DefaultName(localPart));
+    public void setName(String name){
+        setName(DefaultName.valueOf(name));
     }
 
     public void setName(String namespace, String localPart){
@@ -376,12 +376,12 @@ public class FeatureTypeBuilder {
     }
 
     public void add(final String name, final Class binding){
-        add(new DefaultName(name),binding);
+        add(DefaultName.valueOf(name),binding);
     }
 
     public void add(final String name, final Class binding, int min, int max,
             boolean nillable, Map<Object,Object> userData) {
-        add(new DefaultName(name),binding,min,max,nillable,userData);
+        add(DefaultName.valueOf(name),binding,min,max,nillable,userData);
     }
 
     /**
@@ -408,7 +408,7 @@ public class FeatureTypeBuilder {
     }
 
     public void add(final String name, final Class binding, final CoordinateReferenceSystem crs){
-        add(new DefaultName(name),binding,crs);
+        add(DefaultName.valueOf(name),binding,crs);
     }
 
     /**
@@ -558,11 +558,22 @@ public class FeatureTypeBuilder {
         return buildFeatureType(false);
     }
 
-    public SimpleFeatureType buildSimpleFeatureType() {
+    /**
+     *
+     * @return
+     * @throws IllegalArgumentException : if one property is not simple
+     */
+    public SimpleFeatureType buildSimpleFeatureType() throws IllegalArgumentException{
         return (SimpleFeatureType) buildFeatureType(true);
     }
 
-    private FeatureType buildFeatureType(boolean simple) {
+    /**
+     *
+     * @param simple
+     * @return
+     * @throws IllegalArgumentException : if asking for a simple type and one property is not simple
+     */
+    private FeatureType buildFeatureType(boolean simple) throws IllegalArgumentException{
         GeometryDescriptor defaultGeometry = null;
 
         if(superType == null){

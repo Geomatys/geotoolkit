@@ -28,16 +28,54 @@ import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 import org.geotoolkit.feature.AttributeDescriptorBuilder;
 import org.geotoolkit.feature.AttributeTypeBuilder;
+import org.geotoolkit.feature.DataTestCase;
+import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.FeatureTypeBuilder;
+import org.geotoolkit.feature.FeatureUtilities;
+import org.geotoolkit.feature.FeatureValidationUtilities;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.opengis.feature.type.AttributeDescriptor;
 
-public class SimpleFeatureBuilderTest extends TestCase {
+public class SimpleFeatureBuilderTest extends DataTestCase {
+
+    static final Set immutable;
+
+    static {
+        immutable = new HashSet();
+        immutable.add(String.class);
+        immutable.add(Integer.class);
+        immutable.add(Double.class);
+        immutable.add(Float.class);
+    }
 
     SimpleFeatureBuilder builder;
 
+    public SimpleFeatureBuilderTest(String testName) throws Exception {
+        super(testName);
+    }
+
+    public static void main(String[] args) {
+        junit.textui.TestRunner.run(suite());
+    }
+
+    public static Test suite() {
+        TestSuite suite = new TestSuite(SimpleFeatureBuilderTest.class);
+        return suite;
+    }
+
     protected void setUp() throws Exception {
+        super.setUp();
         FeatureTypeBuilder typeBuilder = new FeatureTypeBuilder();
         typeBuilder.setName("test");
         typeBuilder.add("point", Point.class, DefaultGeographicCRS.WGS84);
@@ -199,4 +237,214 @@ public class SimpleFeatureBuilderTest extends TestCase {
         }
 
     }
+
+    public void testAbstractType() throws Exception {
+
+        FeatureTypeBuilder tb = new FeatureTypeBuilder();
+        tb.setName("http://www.nowhereinparticular.net", "AbstractThing");
+        tb.setAbstract(true);
+
+        SimpleFeatureType abstractType = tb.buildSimpleFeatureType();
+        tb.setName("http://www.nowhereinparticular.net", "AbstractType2");
+        tb.setSuperType(abstractType);
+        tb.add(new DefaultName("X"), String.class);
+        SimpleFeatureType abstractType2 = tb.buildSimpleFeatureType();
+
+        try {
+            SimpleFeatureBuilder.build(abstractType, new Object[0], null);
+            fail("abstract type allowed create");
+        } catch (IllegalArgumentException iae) {
+        } catch (UnsupportedOperationException uoe) {
+        }
+
+        try {
+            SimpleFeatureBuilder.build(abstractType2, new Object[0], null);
+            fail("abstract type allowed create");
+        } catch (IllegalArgumentException iae) {
+        } catch (UnsupportedOperationException uoe) {
+        }
+
+    }
+
+    public void testCopyFeature() throws Exception {
+        SimpleFeature feature = lakeFeatures[0];
+        assertDuplicate("feature", feature, SimpleFeatureBuilder.copy(feature));
+    }
+
+    public void testDeepCopy() throws Exception {
+        // primative
+        String str = "FooBar";
+        Integer i = new Integer(3);
+        Float f = new Float(3.14);
+        Double d = new Double(3.14159);
+
+        AttributeTypeBuilder ab = new AttributeTypeBuilder();
+        AttributeDescriptorBuilder adb = new AttributeDescriptorBuilder();
+        ab.setBinding(Object.class);
+        adb.setName(new DefaultName("test"));
+        adb.setType(ab.buildType());
+        AttributeDescriptor testType = adb.buildDescriptor();
+
+        assertSame("String", str, FeatureUtilities.duplicate(str));
+        assertSame("Integer", i, FeatureUtilities.duplicate(i));
+        assertSame("Float", f, FeatureUtilities.duplicate(f));
+        assertSame("Double", d, FeatureUtilities.duplicate(d));
+
+        // collections
+        Object objs[] = new Object[]{str, i, f, d,};
+        int ints[] = new int[]{1, 2, 3, 4,};
+        List list = new ArrayList();
+        list.add(str);
+        list.add(i);
+        list.add(f);
+        list.add(d);
+        Map map = new HashMap();
+        map.put("a", str);
+        map.put("b", i);
+        map.put("c", f);
+        map.put("d", d);
+        assertDuplicate("objs", objs, FeatureUtilities.duplicate(objs));
+        assertDuplicate("ints", ints, FeatureUtilities.duplicate(ints));
+        assertDuplicate("list", list, FeatureUtilities.duplicate(list));
+        assertDuplicate("map", map, FeatureUtilities.duplicate(map));
+
+        // complex type
+        SimpleFeature feature = lakeFeatures[0];
+
+        Coordinate coords = new Coordinate(1, 3);
+        Coordinate coords2 = new Coordinate(1, 3);
+        GeometryFactory gf = new GeometryFactory();
+        Geometry point = gf.createPoint(coords);
+        Geometry point2 = gf.createPoint(coords2);
+
+        // JTS does not implement Object equals contract
+        assertTrue("jts identity", point != point2);
+        assertTrue("jts equals1", point.equals(point2));
+        assertTrue("jts equals", !point.equals((Object) point2));
+
+        assertDuplicate("jts duplicate", point, point2);
+        assertDuplicate("feature", feature, FeatureUtilities.duplicate(feature));
+        assertDuplicate("point", point, FeatureUtilities.duplicate(point));
+    }
+
+    protected void assertDuplicate(String message, Object expected, Object value) {
+        // Ensure value is equal to expected
+        if (expected.getClass().isArray()) {
+            int length1 = Array.getLength(expected);
+            int length2 = Array.getLength(value);
+            assertEquals(message, length1, length2);
+            for (int i = 0; i < length1; i++) {
+                assertDuplicate(
+                        message + "[" + i + "]",
+                        Array.get(expected, i),
+                        Array.get(value, i));
+            }
+            //assertNotSame( message, expected, value );
+        } else if (expected instanceof Geometry) {
+            // JTS Geometry does not meet the Obejct equals contract!
+            // So we need to do our assertEquals statement
+            //
+            assertTrue(message, value instanceof Geometry);
+            assertTrue(message, expected instanceof Geometry);
+            Geometry expectedGeom = (Geometry) expected;
+            Geometry actualGeom = (Geometry) value;
+            assertTrue(message, expectedGeom.equals(actualGeom));
+        } else if (expected instanceof SimpleFeature) {
+            assertDuplicate(message, ((SimpleFeature) expected).getAttributes(),
+                    ((SimpleFeature) value).getAttributes());
+        } else {
+            assertEquals(message, expected, value);
+        }
+        // Ensure Non Immutables are actually copied
+        if (!immutable.contains(expected.getClass())) {
+            //assertNotSame( message, expected, value );
+        }
+    }
+
+
+    public void testWithoutRestriction(){
+        // used to prevent warning
+        FilterFactory fac = FactoryFinder.getFilterFactory(null);
+
+        String attributeName = "string";
+        FeatureTypeBuilder builder = new FeatureTypeBuilder();
+        builder.setName("test");
+        builder.add(attributeName, String.class);
+        SimpleFeatureType featureType = builder.buildSimpleFeatureType();
+
+        SimpleFeature feature = SimpleFeatureBuilder.build(featureType, new Object[]{"Value"},
+                null);
+
+        assertNotNull( feature );
+    }
+    /**
+     * This utility class is used by Types to prevent attribute modification.
+     */
+    public void testRestrictionCheck() {
+        FilterFactory fac = FactoryFinder.getFilterFactory(null);
+
+        String attributeName = "string";
+        PropertyIsEqualTo filter = fac.equals(fac.property("string"), fac
+                .literal("Value"));
+
+        final FeatureTypeBuilder builder = new FeatureTypeBuilder();
+
+        final AttributeTypeBuilder atb = new AttributeTypeBuilder();
+        atb.setBinding(String.class);
+        atb.addRestriction(filter);
+        final AttributeDescriptorBuilder adb = new AttributeDescriptorBuilder();
+        adb.setName(attributeName);
+        adb.setType(atb.buildType());
+
+        builder.setName("test");
+        builder.add(adb.buildDescriptor());
+
+        SimpleFeatureType featureType = builder.buildSimpleFeatureType();
+
+        SimpleFeature feature = SimpleFeatureBuilder.build(featureType, new Object[]{"Value"},
+                null);
+
+        assertNotNull( feature );
+
+    }
+
+    public void testAssertNamedAssignable(){
+        FeatureTypeBuilder builder = new FeatureTypeBuilder();
+
+        builder.reset();
+        builder.setName("Test");
+        builder.add("name", String.class );
+        builder.add("age", Double.class );
+        SimpleFeatureType test = builder.buildSimpleFeatureType();
+
+        builder.reset();
+        builder.setName("Test");
+        builder.add("age", Double.class );
+        builder.add("name",String.class);
+        SimpleFeatureType test2 = builder.buildSimpleFeatureType();
+
+        builder.reset();
+        builder.setName("Test");
+        builder.add("name",String.class);
+        SimpleFeatureType test3 = builder.buildSimpleFeatureType();
+
+        builder.reset();
+        builder.setName("Test");
+        builder.add("name",String.class);
+        builder.add("distance", Double.class );
+        SimpleFeatureType test4 = builder.buildSimpleFeatureType();
+
+        FeatureValidationUtilities.assertNameAssignable( test, test );
+        FeatureValidationUtilities.assertNameAssignable( test, test2 );
+        FeatureValidationUtilities.assertNameAssignable( test2, test );
+        try {
+            FeatureValidationUtilities.assertNameAssignable( test, test3 );
+            fail("Expected assertNameAssignable to fail as age is not covered");
+        }
+        catch ( IllegalArgumentException expected ){
+        }
+
+        FeatureValidationUtilities.assertOrderAssignable( test, test4 );
+    }
+
 }

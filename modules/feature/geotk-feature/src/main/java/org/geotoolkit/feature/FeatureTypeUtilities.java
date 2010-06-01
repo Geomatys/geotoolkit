@@ -923,9 +923,10 @@ public class FeatureTypeUtilities {
      */
     public static List<FeatureType> getAncestors(FeatureType featureType) {
         final List<FeatureType> ancestors = new ArrayList<FeatureType>();
-        while (featureType.getSuper() != null) {
-            if (featureType.getSuper() instanceof FeatureType) {
-                final FeatureType superType = (FeatureType) featureType.getSuper();
+        AttributeType ancestor;
+        while ((ancestor = featureType.getSuper()) != null) {
+            if (ancestor instanceof FeatureType) {
+                final FeatureType superType = (FeatureType) ancestor;
                 ancestors.add(superType);
                 featureType = superType;
             }
@@ -1198,124 +1199,6 @@ public class FeatureTypeUtilities {
     public static SimpleFeature template(final SimpleFeatureType featureType, final String featureID,
             Object[] atts) throws IllegalAttributeException {
         return SimpleFeatureBuilder.build(featureType, defaultValues(featureType, atts), featureID);
-    }
-
-    /**
-     * Compare operation for FeatureType.
-     *
-     * <p>
-     * Results in:
-     * </p>
-     *
-     * <ul>
-     * <li>
-     * 1: if typeA is a sub type/reorder/renamespace of typeB
-     * </li>
-     * <li>
-     * 0: if typeA and typeB are the same type
-     * </li>
-     * <li>
-     * -1: if typeA is not subtype of typeB
-     * </li>
-     * </ul>
-     *
-     * <p>
-     * Comparison is based on AttributeTypes, an IOException is thrown if the
-     * AttributeTypes are not compatiable.
-     * </p>
-     *
-     * <p>
-     * Namespace is not considered in this opperations. You may still need to
-     * reType to get the correct namesapce, or reorder.
-     * </p>
-     *
-     * @param typeA FeatureType beind compared
-     * @param typeB FeatureType being compared against
-     *
-     */
-    public static int compare(final SimpleFeatureType typeA, final SimpleFeatureType typeB) {
-        if (typeA == typeB) {
-            return 0;
-        }
-
-        if (typeA == null) {
-            return -1;
-        }
-
-        if (typeB == null) {
-            return -1;
-        }
-
-        final int countA = typeA.getAttributeCount();
-        final int countB = typeB.getAttributeCount();
-
-        if (countA > countB) {
-            return -1;
-        }
-
-        // may still be the same featureType
-        // (Perhaps they differ on namespace?)
-        AttributeDescriptor a;
-
-        // may still be the same featureType
-        // (Perhaps they differ on namespace?)
-        int match = 0;
-
-        for (int i = 0; i < countA; i++) {
-            a = typeA.getDescriptor(i);
-
-            if (isMatch(a, typeB.getDescriptor(i))) {
-                match++;
-            } else if (isMatch(a, typeB.getDescriptor(a.getLocalName()))) {
-                // match was found in a different position
-            } else {
-                // cannot find any match for Attribute in typeA
-                return -1;
-            }
-        }
-
-        if ((countA == countB) && (match == countA)) {
-            // all attributes in typeA agreed with typeB
-            // (same order and type)
-            //            if (typeA.getNamespace() == null) {
-            //            	if(typeB.getNamespace() == null) {
-            //            		return 0;
-            //            	} else {
-            //            		return 1;
-            //            	}
-            //            } else if(typeA.getNamespace().equals(typeB.getNamespace())) {
-            //                return 0;
-            //            } else {
-            //                return 1;
-            //            }
-            return 0;
-        }
-
-        return 1;
-    }
-
-    public static boolean isMatch(final AttributeDescriptor a, final AttributeDescriptor b) {
-        if (a == b) {
-            return true;
-        }
-
-        if (b == null) {
-            return false;
-        }
-
-        if (a == null) {
-            return false;
-        }
-
-        if (a.equals(b)) {
-            return true;
-        }
-
-        if (a.getLocalName().equals(b.getLocalName()) && a.getClass().equals(b.getClass())) {
-            return true;
-        }
-
-        return false;
     }
 
    /**
