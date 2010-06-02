@@ -80,7 +80,9 @@ public class GetRecordByIdResponseType implements GetRecordByIdResponse {
      */
     public GetRecordByIdResponseType(List<? extends AbstractRecordType> abstractRecords, List<? extends Object> others) {
         if (abstractRecords != null && others != null) {
-            throw new IllegalArgumentException("only one of abstractRecords or others mustn't be null");
+            if (abstractRecords.size() > 0 && others.size() > 0) {
+                throw new IllegalArgumentException("only one of abstractRecords or others must be fill");
+            }
         }
         this.abstractRecord = abstractRecords;
         this.any = others;
