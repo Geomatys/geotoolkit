@@ -22,6 +22,7 @@ import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
@@ -46,7 +47,18 @@ public class AbstractTransaction extends AbstractRequest implements TransactionR
     /**
      * Default logger for all GetRecords requests.
      */
-    protected static final Logger LOGGER = Logging.getLogger(AbstractGetRecords.class);
+    protected static final Logger LOGGER = Logging.getLogger(AbstractTransaction.class);
+
+    private static final MarshallerPool POOL;
+    static {
+        MarshallerPool temp = null;
+        try {
+            temp = new MarshallerPool(EBRIMClassesContext.getAllClasses());
+        } catch (JAXBException ex) {
+            LOGGER.log(Level.SEVERE, ex.getLocalizedMessage(), ex);
+        }
+        POOL = temp;
+    }
 
     /**
      * The version to use for this webservice request.
@@ -121,11 +133,9 @@ public class AbstractTransaction extends AbstractRequest implements TransactionR
 
         final OutputStream stream = conec.getOutputStream();
 
-        MarshallerPool pool = null;
         Marshaller marsh = null;
         try {
-            pool = new MarshallerPool(EBRIMClassesContext.getAllClasses());
-            marsh = pool.acquireMarshaller();
+            marsh = POOL.acquireMarshaller();
             final TransactionType transactXml;
             if (delete != null) {
                 transactXml = new TransactionType("CSW", version, delete);
@@ -141,8 +151,8 @@ public class AbstractTransaction extends AbstractRequest implements TransactionR
         } catch (JAXBException ex) {
             throw new IOException(ex);
         } finally {
-            if (pool != null && marsh != null) {
-                pool.release(marsh);
+            if (POOL != null && marsh != null) {
+                POOL.release(marsh);
             }
         }
         stream.close();

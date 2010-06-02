@@ -22,10 +22,13 @@ import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import org.geotoolkit.client.AbstractRequest;
 import org.geotoolkit.sos.xml.v100.DescribeSensor;
+import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.xml.MarshallerPool;
 
 
@@ -37,6 +40,29 @@ import org.geotoolkit.xml.MarshallerPool;
  * @module pending
  */
 public abstract class AbstractDescribeSensor extends AbstractRequest implements DescribeSensorRequest {
+    /**
+     * Logger specific for this implementation of {@link Request}.
+     */
+    private static final Logger LOGGER = Logging.getLogger(AbstractDescribeSensor.class);
+
+    private static final MarshallerPool POOL;
+    static {
+        MarshallerPool temp = null;
+        try {
+            temp = new MarshallerPool("org.geotoolkit.sos.xml.v100:" +
+                                      "org.geotoolkit.gml.xml.v311:" +
+                                      "org.geotoolkit.swe.xml.v100:" +
+                                      "org.geotoolkit.swe.xml.v101:" +
+                                      "org.geotoolkit.observation.xml.v100:" +
+                                      "org.geotoolkit.sampling.xml.v100:" +
+                                      "org.geotoolkit.sml.xml.v100:" +
+                                      "org.geotoolkit.sml.xml.v101");
+        } catch (JAXBException ex) {
+            LOGGER.log(Level.SEVERE, ex.getLocalizedMessage(), ex);
+        }
+        POOL = temp;
+    }
+
     /**
      * The version to use for this webservice request.
      */
@@ -120,26 +146,17 @@ public abstract class AbstractDescribeSensor extends AbstractRequest implements 
 
         final OutputStream stream = conec.getOutputStream();
 
-        MarshallerPool pool = null;
         Marshaller marsh = null;
         try {
-            pool = new MarshallerPool("org.geotoolkit.sos.xml.v100:" +
-                                      "org.geotoolkit.gml.xml.v311:" +
-                                      "org.geotoolkit.swe.xml.v100:" +
-                                      "org.geotoolkit.swe.xml.v101:" +
-                                      "org.geotoolkit.observation.xml.v100:" +
-                                      "org.geotoolkit.sampling.xml.v100:" +
-                                      "org.geotoolkit.sml.xml.v100:" +
-                                      "org.geotoolkit.sml.xml.v101");
-            marsh = pool.acquireMarshaller();
+            marsh = POOL.acquireMarshaller();
             final DescribeSensor descSensorXml = new DescribeSensor(version, "SOS",
                     sensorId, outputFormat);
             marsh.marshal(descSensorXml, stream);
         } catch (JAXBException ex) {
             throw new IOException(ex);
         } finally {
-            if (pool != null && marsh != null) {
-                pool.release(marsh);
+            if (POOL != null && marsh != null) {
+                POOL.release(marsh);
             }
         }
         stream.close();

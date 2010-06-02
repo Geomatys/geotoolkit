@@ -22,6 +22,7 @@ import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
@@ -48,7 +49,18 @@ public class AbstractHarvest extends AbstractRequest implements HarvestRequest {
     /**
      * Default logger for all GetRecords requests.
      */
-    protected static final Logger LOGGER = Logging.getLogger(AbstractGetRecords.class);
+    protected static final Logger LOGGER = Logging.getLogger(AbstractHarvest.class);
+
+    private static final MarshallerPool POOL;
+    static {
+        MarshallerPool temp = null;
+        try {
+            temp = new MarshallerPool(EBRIMClassesContext.getAllClasses());
+        } catch (JAXBException ex) {
+            LOGGER.log(Level.SEVERE, ex.getLocalizedMessage(), ex);
+        }
+        POOL = temp;
+    }
 
     /**
      * The version to use for this webservice request.
@@ -177,11 +189,9 @@ public class AbstractHarvest extends AbstractRequest implements HarvestRequest {
 
         final OutputStream stream = conec.getOutputStream();
 
-        MarshallerPool pool = null;
         Marshaller marsh = null;
         try {
-            pool = new MarshallerPool(EBRIMClassesContext.getAllClasses());
-            marsh = pool.acquireMarshaller();
+            marsh = POOL.acquireMarshaller();
             final DefaultPeriodDuration periodDuration = (harvestInterval == null) ? null :
                     (DefaultPeriodDuration) TemporalUtilities.getDurationFromString(harvestInterval);
             final Duration duration = (periodDuration == null) ? null :
@@ -200,8 +210,8 @@ public class AbstractHarvest extends AbstractRequest implements HarvestRequest {
         } catch (JAXBException ex) {
             throw new IOException(ex);
         } finally {
-            if (pool != null && marsh != null) {
-                pool.release(marsh);
+            if (POOL != null && marsh != null) {
+                POOL.release(marsh);
             }
         }
         stream.close();

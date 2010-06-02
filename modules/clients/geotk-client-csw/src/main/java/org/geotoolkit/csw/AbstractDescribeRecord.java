@@ -23,6 +23,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Arrays;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
@@ -46,6 +47,17 @@ public abstract class AbstractDescribeRecord extends AbstractRequest implements 
      * Default logger for all DescribeRecord requests.
      */
     protected static final Logger LOGGER = Logging.getLogger(AbstractDescribeRecord.class);
+
+    private static final MarshallerPool POOL;
+    static {
+        MarshallerPool temp = null;
+        try {
+            temp = new MarshallerPool(EBRIMClassesContext.getAllClasses());
+        } catch (JAXBException ex) {
+            LOGGER.log(Level.SEVERE, ex.getLocalizedMessage(), ex);
+        }
+        POOL = temp;
+    }
 
     /**
      * The version to use for this webservice request.
@@ -154,19 +166,17 @@ public abstract class AbstractDescribeRecord extends AbstractRequest implements 
 
         final OutputStream stream = conec.getOutputStream();
 
-        MarshallerPool pool = null;
         Marshaller marsh = null;
         try {
-            pool = new MarshallerPool(EBRIMClassesContext.getAllClasses());
-            marsh = pool.acquireMarshaller();
+            marsh = POOL.acquireMarshaller();
             final DescribeRecordType describeXml = new DescribeRecordType("CSW", version,
                     Arrays.asList(typeNames), outputFormat, schemaLanguage);
             marsh.marshal(describeXml, stream);
         } catch (JAXBException ex) {
             throw new IOException(ex);
         } finally {
-            if (pool != null && marsh != null) {
-                pool.release(marsh);
+            if (POOL != null && marsh != null) {
+                POOL.release(marsh);
             }
         }
         stream.close();

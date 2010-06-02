@@ -22,11 +22,14 @@ import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import org.geotoolkit.client.AbstractRequest;
 import org.geotoolkit.csw.xml.v202.GetCapabilitiesType;
 import org.geotoolkit.ebrim.xml.EBRIMClassesContext;
+import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.xml.MarshallerPool;
 
 
@@ -38,6 +41,22 @@ import org.geotoolkit.xml.MarshallerPool;
  * @module pending
  */
 public abstract class AbstractGetCapabilities extends AbstractRequest implements GetCapabilitiesRequest {
+    /**
+     * Default logger for all GetCapabilities requests.
+     */
+    protected static final Logger LOGGER = Logging.getLogger(AbstractGetCapabilities.class);
+
+    private static final MarshallerPool POOL;
+    static {
+        MarshallerPool temp = null;
+        try {
+            temp = new MarshallerPool(EBRIMClassesContext.getAllClasses());
+        } catch (JAXBException ex) {
+            LOGGER.log(Level.SEVERE, ex.getLocalizedMessage(), ex);
+        }
+        POOL = temp;
+    }
+
     /**
      * The version of the CSW service.
      */
@@ -72,18 +91,16 @@ public abstract class AbstractGetCapabilities extends AbstractRequest implements
 
         final OutputStream stream = conec.getOutputStream();
 
-        MarshallerPool pool = null;
         Marshaller marsh = null;
         try {
-            pool = new MarshallerPool(EBRIMClassesContext.getAllClasses());
-            marsh = pool.acquireMarshaller();
+            marsh = POOL.acquireMarshaller();
             final GetCapabilitiesType getCapsXml = new GetCapabilitiesType(version);
             marsh.marshal(getCapsXml, stream);
         } catch (JAXBException ex) {
             throw new IOException(ex);
         } finally {
-            if (pool != null && marsh != null) {
-                pool.release(marsh);
+            if (POOL != null && marsh != null) {
+                POOL.release(marsh);
             }
         }
         stream.close();

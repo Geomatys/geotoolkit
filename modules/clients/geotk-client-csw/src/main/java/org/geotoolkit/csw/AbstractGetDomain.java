@@ -22,6 +22,7 @@ import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
@@ -44,6 +45,17 @@ public abstract class AbstractGetDomain extends AbstractRequest implements GetDo
      * Default logger for all GetDomain requests.
      */
     protected static final Logger LOGGER = Logging.getLogger(AbstractGetDomain.class);
+
+    private static final MarshallerPool POOL;
+    static {
+        MarshallerPool temp = null;
+        try {
+            temp = new MarshallerPool(EBRIMClassesContext.getAllClasses());
+        } catch (JAXBException ex) {
+            LOGGER.log(Level.SEVERE, ex.getLocalizedMessage(), ex);
+        }
+        POOL = temp;
+    }
 
     /**
      * The version to use for this webservice request.
@@ -112,18 +124,16 @@ public abstract class AbstractGetDomain extends AbstractRequest implements GetDo
 
         final OutputStream stream = conec.getOutputStream();
 
-        MarshallerPool pool = null;
         Marshaller marsh = null;
         try {
-            pool = new MarshallerPool(EBRIMClassesContext.getAllClasses());
-            marsh = pool.acquireMarshaller();
+            marsh = POOL.acquireMarshaller();
             final GetDomainType domainXml = new GetDomainType("CSW", version, propertyName, null);
             marsh.marshal(domainXml, stream);
         } catch (JAXBException ex) {
             throw new IOException(ex);
         } finally {
-            if (pool != null && marsh != null) {
-                pool.release(marsh);
+            if (POOL != null && marsh != null) {
+                POOL.release(marsh);
             }
         }
         stream.close();
