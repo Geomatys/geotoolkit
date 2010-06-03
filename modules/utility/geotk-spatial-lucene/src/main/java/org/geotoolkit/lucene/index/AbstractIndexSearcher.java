@@ -325,11 +325,13 @@ public abstract class AbstractIndexSearcher extends IndexLucene {
             if (spatialQuery.getSubQueries().size() > 0) {
                 final SpatialQuery sub        = spatialQuery.getSubQueries().get(0);
                 final List<String> subResults = doSearch(sub);
+                final List<String> toRemove   = new ArrayList<String>();
                 for (String r : results) {
                     if (!subResults.contains(r)) {
-                        results.remove(r);
+                        toRemove.add(r);
                     }
                 }
+                results.removeAll(toRemove);
             }
 
             //we put the query in cache
