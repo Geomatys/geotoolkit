@@ -17,6 +17,8 @@
  */
 package org.geotoolkit.filter;
 
+import java.util.AbstractMap.SimpleEntry;
+import java.util.Map.Entry;
 import org.geotoolkit.filter.accessor.Accessors;
 import org.geotoolkit.filter.accessor.PropertyAccessor;
 
@@ -32,6 +34,11 @@ import org.opengis.filter.expression.PropertyName;
 public class DefaultPropertyName extends AbstractExpression implements PropertyName{
 
     private final String property;
+
+    /**
+     * Stores the last accessor returned.
+     */
+    private Entry<Class,PropertyAccessor> lastAccessor;
 
     public DefaultPropertyName(String property) {
         if(property == null){
@@ -53,7 +60,18 @@ public class DefaultPropertyName extends AbstractExpression implements PropertyN
      */
     @Override
     public Object evaluate(Object candidate) {
-        PropertyAccessor accessor = Accessors.getAccessor(candidate.getClass(),property, null);
+        Entry<Class,PropertyAccessor> copy = lastAccessor;
+        if (copy != null && copy.getKey().equals(candidate.getClass())) {
+            final PropertyAccessor access = copy.getValue();
+            if (access != null) {
+                return access.get( candidate, property, null );
+            }
+            return null;
+        }
+
+        final PropertyAccessor accessor = Accessors.getAccessor(candidate.getClass(),property, null);
+        copy = new SimpleEntry<Class, PropertyAccessor>(candidate.getClass(),accessor);
+        lastAccessor = copy;
     	if (accessor == null) {
             return null;
     	}
