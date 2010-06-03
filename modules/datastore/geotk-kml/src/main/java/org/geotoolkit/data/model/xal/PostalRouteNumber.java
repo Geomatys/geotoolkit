@@ -1,29 +1,29 @@
 package org.geotoolkit.data.model.xal;
 
 /**
- * <p>This interface maps AdministrativeAreaName type.</p>
+ * <p>This interface maps PostalRouteNumber element.</p>
  *
- * <p>Name of the administrative area. eg. MI in USA, NSW in Australia.</p>
- *
+ * <br />&lt;xs:element name="PostalRouteNumber">
  * <br />&lt;xs:complexType mixed="true">
- * <br />&lt;xs:attribute name="Type"/>
  * <br />&lt;xs:attributeGroup ref="grPostal"/>
  * <br />&lt;xs:anyAttribute namespace="##other"/>
  * <br />&lt;/xs:complexType>
+ * <br />&lt;/xs:element>
  *
  * @author Samuel Andrés
  */
-public interface AdministrativeAreaName {
+public interface PostalRouteNumber {
 
     /**
      *
      * @return
      */
-    public String getType();
+    public String getContent();
 
     /**
-     *
+     * 
      * @return
      */
     public GrPostal getGrPostal();
+
 }

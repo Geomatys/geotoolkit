@@ -1,25 +1,31 @@
 package org.geotoolkit.data.model.xal;
 
 /**
- * <p>This interface maps AdministrativeAreaName type.</p>
- *
- * <p>Name of the administrative area. eg. MI in USA, NSW in Australia.</p>
+ * <p>This interface maps MailStopNumber element.</p>
  *
  * <br />&lt;xs:complexType mixed="true">
- * <br />&lt;xs:attribute name="Type"/>
+ * <br />&lt;xs:attribute name="NameNumberSeparator">...
+ * <br />&lt;/xs:attribute>
  * <br />&lt;xs:attributeGroup ref="grPostal"/>
  * <br />&lt;xs:anyAttribute namespace="##other"/>
  * <br />&lt;/xs:complexType>
  *
  * @author Samuel Andrés
  */
-public interface AdministrativeAreaName {
+public interface MailStopNumber {
 
     /**
+     * 
+     * @return
+     */
+    public String getContent();
+
+    /**
+     * <p>"-" in MS-123.</p>
      *
      * @return
      */
-    public String getType();
+    public String getNameNumberSeparator();
 
     /**
      *

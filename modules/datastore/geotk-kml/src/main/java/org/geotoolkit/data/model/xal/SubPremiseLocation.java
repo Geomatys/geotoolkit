@@ -1,25 +1,25 @@
 package org.geotoolkit.data.model.xal;
 
 /**
- * <p>This interface maps AdministrativeAreaName type.</p>
+ * <p>This interface maps PremiseLocation element.</p>
  *
- * <p>Name of the administrative area. eg. MI in USA, NSW in Australia.</p>
+ * <p>Name of the SubPremise Location. eg. LOBBY, BASEMENT, GROUND FLOOR, etc...</p>
  *
+ * <br />&lt;xs:element name="SubPremiseLocation">
  * <br />&lt;xs:complexType mixed="true">
- * <br />&lt;xs:attribute name="Type"/>
  * <br />&lt;xs:attributeGroup ref="grPostal"/>
- * <br />&lt;xs:anyAttribute namespace="##other"/>
  * <br />&lt;/xs:complexType>
+ * <br />&lt;/xs:element>
  *
  * @author Samuel Andrés
  */
-public interface AdministrativeAreaName {
+public interface SubPremiseLocation {
 
     /**
-     *
+     * 
      * @return
      */
-    public String getType();
+    public String getContent();
 
     /**
      *
