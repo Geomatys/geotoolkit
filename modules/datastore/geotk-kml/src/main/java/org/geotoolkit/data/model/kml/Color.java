@@ -5,18 +5,20 @@ import org.geotoolkit.data.model.xsd.SimpleType;
 /**
  * <p>This interface maps the colorType type</p>
  *
- * <br />&lt;simpleType name="colorType">
- * <br />&lt;annotation>
- * <br />&lt;documentation>&lt;![CDATA[
+ * <pre>
+ * &lt;simpleType name="colorType">
+ *  &lt;annotation>
+ *      &lt;documentation>&lt;![CDATA[
  *       aabbggrr
  *       ffffffff: opaque white
  *       ff000000: opaque]]>
- * <br />&lt;/documentation>
- * <br />&lt;/annotation>
- * <br />&lt;restriction base="hexBinary">
- * <br />&lt;length value="4"/>
- * <br />&lt;/restriction>
- * <br />&lt;/simpleType>
+ *      &lt;/documentation>
+ *  &lt;/annotation>
+ *  &lt;restriction base="hexBinary">
+ *      &lt;length value="4"/>
+ *  &lt;/restriction>
+ * &lt;/simpleType>
+ * </pre>
  *
  * @author Samuel Andrés
  */

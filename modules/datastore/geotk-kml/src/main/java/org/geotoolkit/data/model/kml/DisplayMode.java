@@ -4,12 +4,14 @@ package org.geotoolkit.data.model.kml;
  *
  * <p>Thi enumeration maps displayMode type.</p>
  *
- * <br />&lt;simpleType name="displayModeEnumType">
- * <br />&lt;restriction base="string">
- * <br />&lt;enumeration value="default"/>
- * <br />&lt;enumeration value="hide"/>
- * <br />&lt;/restriction>
- * <br />&lt;/simpleType>
+ * <pre>
+ * &lt;simpleType name="displayModeEnumType">
+ *  &lt;restriction base="string">
+ *      &lt;enumeration value="default"/>
+ *      &lt;enumeration value="hide"/>
+ *  &lt;/restriction>
+ * &lt;/simpleType>
+ * </pre>
  *
  * @author Samuel Andrés
  */

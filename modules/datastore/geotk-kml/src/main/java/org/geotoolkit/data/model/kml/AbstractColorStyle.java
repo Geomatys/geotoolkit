@@ -6,22 +6,26 @@ import org.geotoolkit.data.model.xsd.SimpleType;
 /**
  * <p>This interface maps AbstractColorStyle element.</p>
  *
- * <br />&lt;element name="AbstractColorStyleGroup" type="kml:AbstractColorStyleType" abstract="true" substitutionGroup="kml:AbstractSubStyleGroup"/>
- * <br />&lt;complexType name="AbstractColorStyleType" abstract="true">
- * <br />&lt;complexContent>
- * <br />&lt;extension base="kml:AbstractSubStyleType">
- * <br />&lt;sequence>
- * <br />&lt;element ref="kml:color" minOccurs="0"/>
- * <br />&lt;element ref="kml:colorMode" minOccurs="0"/>
- * <br />&lt;element ref="kml:AbstractColorStyleSimpleExtensionGroup" minOccurs="0" maxOccurs="unbounded"/>
- * <br />&lt;element ref="kml:AbstractColorStyleObjectExtensionGroup" minOccurs="0" maxOccurs="unbounded"/>
- * <br />&lt;/sequence>
- * <br />&lt;/extension>
- * <br />&lt;/complexContent>
- * <br />&lt;/complexType>
- * <br />&lt;element name="AbstractColorStyleObjectExtensionGroup" abstract="true" substitutionGroup="kml:AbstractObjectGroup"/>
- * <br />&lt;element name="AbstractColorStyleSimpleExtensionGroup" abstract="true" type="anySimpleType"/>
- * 
+ * <pre>
+ * &lt;element name="AbstractColorStyleGroup" type="kml:AbstractColorStyleType" abstract="true" substitutionGroup="kml:AbstractSubStyleGroup"/>
+ *
+ * &lt;complexType name="AbstractColorStyleType" abstract="true">
+ *  &lt;complexContent>
+ *      &lt;extension base="kml:AbstractSubStyleType">
+ *          &lt;sequence>
+ *              &lt;element ref="kml:color" minOccurs="0"/>
+ *              &lt;element ref="kml:colorMode" minOccurs="0"/>
+ *              &lt;element ref="kml:AbstractColorStyleSimpleExtensionGroup" minOccurs="0" maxOccurs="unbounded"/>
+ *              &lt;element ref="kml:AbstractColorStyleObjectExtensionGroup" minOccurs="0" maxOccurs="unbounded"/>
+ *          &lt;/sequence>
+ *      &lt;/extension>
+ *  &lt;/complexContent>
+ * &lt;/complexType>
+ *
+ * &lt;element name="AbstractColorStyleObjectExtensionGroup" abstract="true" substitutionGroup="kml:AbstractObjectGroup"/>
+ * &lt;element name="AbstractColorStyleSimpleExtensionGroup" abstract="true" type="anySimpleType"/>
+ * </pre>
+ *
  * @author Samuel Andrés
  */
 public interface AbstractColorStyle extends AbstractSubStyle {

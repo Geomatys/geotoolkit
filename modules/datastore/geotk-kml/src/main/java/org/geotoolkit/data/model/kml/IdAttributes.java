@@ -3,10 +3,12 @@ package org.geotoolkit.data.model.kml;
 /**
  * <p>This interface maps idAttributes attributeGroup.</p>
  *
- * <br />&lt;attributeGroup name="idAttributes">
- * <br />&lt;attribute name="id" type="ID" use="optional"/> <!-- NOT AN OBJETC : type String -->
- * <br />&lt;attribute name="targetId" type="NCName" use="optional"/> <!-- NOT AN OBJETC : type String -->
- * <br />&lt;/attributeGroup>
+ * <pre>
+ * &lt;attributeGroup name="idAttributes">
+ *  &lt;attribute name="id" type="ID" use="optional"/> <!-- NOT AN OBJETC : type String -->
+ *  &lt;attribute name="targetId" type="NCName" use="optional"/> <!-- NOT AN OBJETC : type String -->
+ * &lt;/attributeGroup>
+ * </pre>
  *
  * @author Samuel Andrés
  */

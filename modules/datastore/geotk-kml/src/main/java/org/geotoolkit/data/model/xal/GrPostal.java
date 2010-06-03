@@ -14,9 +14,15 @@ public interface GrPostal {
 
     /**
      * 
+     * @return
+     */
+    public String getName();
+
+    /**
+     * 
      * <p>Used by postal services to encode the name of the element.</p>
      * 
      * @return
      */
-    public String getCode();
+    public String getValue();
 }

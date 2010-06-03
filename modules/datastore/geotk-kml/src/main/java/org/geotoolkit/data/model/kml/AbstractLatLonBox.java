@@ -6,22 +6,25 @@ import org.geotoolkit.data.model.xsd.SimpleType;
 /**
  * <p>This interface maps AbstractLatLonBoxType type.</p>
  *
- * <br />&lt;complexType name="AbstractLatLonBoxType" abstract="true">
- * <br />&lt;complexContent>
- * <br />&lt;extension base="kml:AbstractObjectType">
- * <br />&lt;sequence>
- * <br />&lt;element ref="kml:north" minOccurs="0"/>
- * <br />&lt;element ref="kml:south" minOccurs="0"/>
- * <br />&lt;element ref="kml:east" minOccurs="0"/>
- * <br />&lt;element ref="kml:west" minOccurs="0"/>
- * <br />&lt;element ref="kml:AbstractLatLonBoxSimpleExtensionGroup" minOccurs="0" maxOccurs="unbounded"/>
- * <br />&lt;element ref="kml:AbstractLatLonBoxObjectExtensionGroup" minOccurs="0" maxOccurs="unbounded"/>
- * <br />&lt;/sequence>
- * <br />&lt;/extension>
- * <br />&lt;/complexContent>
- * <br />&lt;/complexType>
- * <br />&lt;element name="AbstractLatLonBoxSimpleExtensionGroup" abstract="true" type="anySimpleType"/>
- * <br />&lt;element name="AbstractLatLonBoxObjectExtensionGroup" abstract="true" substitutionGroup="kml:AbstractObjectGroup"/>
+ * <pre>
+ * &lt;complexType name="AbstractLatLonBoxType" abstract="true">
+ *  &lt;complexContent>
+ *      &lt;extension base="kml:AbstractObjectType">
+ *          &lt;sequence>
+ *              &lt;element ref="kml:north" minOccurs="0"/>
+ *              &lt;element ref="kml:south" minOccurs="0"/>
+ *              &lt;element ref="kml:east" minOccurs="0"/>
+ *              &lt;element ref="kml:west" minOccurs="0"/>
+ *              &lt;element ref="kml:AbstractLatLonBoxSimpleExtensionGroup" minOccurs="0" maxOccurs="unbounded"/>
+ *              &lt;element ref="kml:AbstractLatLonBoxObjectExtensionGroup" minOccurs="0" maxOccurs="unbounded"/>
+ *          &lt;/sequence>
+ *      &lt;/extension>
+ *  &lt;/complexContent>
+ * &lt;/complexType>
+ *
+ * &lt;element name="AbstractLatLonBoxSimpleExtensionGroup" abstract="true" type="anySimpleType"/>
+ * &lt;element name="AbstractLatLonBoxObjectExtensionGroup" abstract="true" substitutionGroup="kml:AbstractObjectGroup"/>
+ * </pre>
  *
  * @author Samuel Andrés
  */

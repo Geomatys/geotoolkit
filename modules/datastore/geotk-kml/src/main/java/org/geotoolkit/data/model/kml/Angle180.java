@@ -5,12 +5,14 @@ import org.geotoolkit.data.model.xsd.SimpleType;
 /**
  * <p>This interface maps Angle180 type:</p>
  *
- * <br />&lt;simpleType name="angle180Type">
- * <br />&lt;restriction base="double">
- * <br />&lt;minInclusive value="-180"/>
- * <br />&lt;maxInclusive value="180.0"/>
- * <br />&lt;/restriction>
- * <br />&lt;/simpleType>
+ * <pre>
+ * &lt;simpleType name="angle180Type">
+ *  &lt;restriction base="double">
+ *      &lt;minInclusive value="-180"/>
+ *      &lt;maxInclusive value="180.0"/>
+ *  &lt;/restriction>
+ * &lt;/simpleType>
+ * </pre>S
  *
  * @author Samuel Andrés
  */

@@ -5,9 +5,11 @@ import org.geotoolkit.data.model.xsd.SimpleType;
 
 /**
  *
- * <br />&lt;simpleType name="coordinatesType">
- * <br />&lt;list itemType="string"/>
- * <br />&lt;/simpleType>
+ * <pre>
+ * &lt;simpleType name="coordinatesType">
+ *  &lt;list itemType="string"/>
+ * &lt;/simpleType>
+ * </pre>
  *
  * @author Samuel Andrés
  */

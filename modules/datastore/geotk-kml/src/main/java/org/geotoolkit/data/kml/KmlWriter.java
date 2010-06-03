@@ -95,10 +95,11 @@ import org.geotoolkit.data.model.kml.ViewVolume;
 import org.geotoolkit.data.model.xal.AddressDetails;
 import org.geotoolkit.data.model.xsd.SimpleType;
 import org.geotoolkit.xml.StaxStreamWriter;
-import static org.geotoolkit.data.model.ModelConstants.*;
+import static org.geotoolkit.data.model.KmlModelConstants.*;
 
 /**
- * This class provides a method to read KML files, version 2.2.
+ * <p>This class provides a method to read KML files, version 2.2.</p>
+ *
  * @author Samuel Andrés
  */
 public class KmlWriter extends StaxStreamWriter {

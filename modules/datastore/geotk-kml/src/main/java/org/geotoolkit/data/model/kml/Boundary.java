@@ -10,17 +10,21 @@ import org.geotoolkit.data.model.xsd.SimpleType;
  * <li>innerBoundaryIs element.</li>
  * </ul>
  *
- * <br />&lt;element name="outerBoundaryIs" type="kml:BoundaryType"/>
- * <br />&lt;element name="innerBoundaryIs" type="kml:BoundaryType"/>
- * <br />&lt;complexType name="BoundaryType" final="#all">
- * <br />&lt;sequence>
- * <br />&lt;element ref="kml:LinearRing" minOccurs="0"/>
- * <br />&lt;element ref="kml:BoundarySimpleExtensionGroup" minOccurs="0" maxOccurs="unbounded"/>
- * <br />&lt;element ref="kml:BoundaryObjectExtensionGroup" minOccurs="0" maxOccurs="unbounded"/>
- * <br />&lt;/sequence>
- * <br />&lt;/complexType>
- * <br />&lt;element name="BoundarySimpleExtensionGroup" abstract="true" type="anySimpleType"/>
- * <br />&lt;element name="BoundaryObjectExtensionGroup" abstract="true" substitutionGroup="kml:AbstractObjectGroup"/>
+ * <pre>
+ * &lt;element name="outerBoundaryIs" type="kml:BoundaryType"/>
+ * &lt;element name="innerBoundaryIs" type="kml:BoundaryType"/>
+ *
+ * &lt;complexType name="BoundaryType" final="#all">
+ *  &lt;sequence>
+ *      &lt;element ref="kml:LinearRing" minOccurs="0"/>
+ *      &lt;element ref="kml:BoundarySimpleExtensionGroup" minOccurs="0" maxOccurs="unbounded"/>
+ *      &lt;element ref="kml:BoundaryObjectExtensionGroup" minOccurs="0" maxOccurs="unbounded"/>
+ *  &lt;/sequence>
+ * &lt;/complexType>
+ *
+ * &lt;element name="BoundarySimpleExtensionGroup" abstract="true" type="anySimpleType"/>
+ * &lt;element name="BoundaryObjectExtensionGroup" abstract="true" substitutionGroup="kml:AbstractObjectGroup"/>
+ * </pre>
  *
  * @author Samuel Andrés
  */

@@ -20,6 +20,8 @@ import org.geotoolkit.data.model.kml.ExtendedData;
 import org.geotoolkit.data.model.kml.IdAttributes;
 import org.geotoolkit.data.model.kml.Kml;
 import org.geotoolkit.data.model.kml.Region;
+import org.geotoolkit.data.model.xal.AddressDetails;
+import org.geotoolkit.data.model.xal.Xal;
 import org.geotoolkit.feature.DefaultComplexAttribute;
 import org.geotoolkit.feature.DefaultFeature;
 import org.geotoolkit.feature.DefaultName;
@@ -116,15 +118,26 @@ public class App {
         
         //featuresTests();
         
-        File input = new File("/home/samuel/Documents/doc_kml/exemples/stylesAndFeatures.xml");
+        File inputKML = new File("/home/samuel/Documents/doc_kml/exemples/stylesAndFeatures.xml");
+        File inputXAL = new File("/home/samuel/Documents/doc_kml/exemples/XAL.xml");
         File output = new File("/home/samuel/Documents/doc_kml/exemples/output.xml");
-        KmlReader reader = new KmlReader(input);
-        Kml kml = reader.read();
+
+        KmlReader readerKML = new KmlReader(inputKML);
+        Kml kml = readerKML.read();
         //System.out.println(kml);
+        KmlWriter writerKML = new KmlWriter(output);
+        writerKML.write(kml);
 
-        KmlWriter writer = new KmlWriter(output);
-        writer.write(kml);
+        XalReader readerXAL = new XalReader(inputXAL);
+        Xal xal = readerXAL.read();
+        System.out.println(xal);
+        System.out.println(xal.getAddressDetails().size());
+        for (AddressDetails ad : xal.getAddressDetails()){
+            System.out.println(ad.getAddressType());
+        }
 
+        XalWriter writerXal = new XalWriter(output);
+        writerXal.write(xal);
 
     }
 

@@ -5,12 +5,15 @@ import java.util.List;
 /**
  * <p>This interface maps Change element.</p>
  *
- * <br />&lt;element name="Change" type="kml:ChangeType"/>
- * <br />&lt;complexType name="ChangeType">
- * <br />&lt;sequence>
- * <br />&lt;element ref="kml:AbstractObjectGroup" minOccurs="0" maxOccurs="unbounded"/>
- * <br />&lt;/sequence>
- * <br />&lt;/complexType>
+ * <pre>
+ * &lt;element name="Change" type="kml:ChangeType"/>
+ *
+ * &lt;complexType name="ChangeType">
+ *  &lt;sequence>
+ *      &lt;element ref="kml:AbstractObjectGroup" minOccurs="0" maxOccurs="unbounded"/>
+ *  &lt;/sequence>
+ * &lt;/complexType>
+ * </pre>
  *
  * @author Samuel Andrés
  */

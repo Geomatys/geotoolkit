@@ -6,23 +6,27 @@ import org.geotoolkit.data.model.xsd.SimpleType;
 /**
  * <p>This interface maps iconStyle element.</p>
  *
- * <br />&lt;element name="IconStyle" type="kml:IconStyleType" substitutionGroup="kml:AbstractColorStyleGroup"/>
- * <br />&lt;complexType name="IconStyleType" final="#all">
- * <br />&lt;complexContent>
- * <br />&lt;extension base="kml:AbstractColorStyleType">
- * <br />&lt;sequence>
- * <br />&lt;element ref="kml:scale" minOccurs="0"/>
- * <br />&lt;element ref="kml:heading" minOccurs="0"/>
- * <br />&lt;element name="Icon" type="kml:BasicLinkType" minOccurs="0"/>
- * <br />&lt;element ref="kml:hotSpot" minOccurs="0"/>
- * <br />&lt;element ref="kml:IconStyleSimpleExtensionGroup" minOccurs="0" maxOccurs="unbounded"/>
- * <br />&lt;element ref="kml:IconStyleObjectExtensionGroup" minOccurs="0" maxOccurs="unbounded"/>
- * <br />&lt;/sequence>
- * <br />&lt;/extension>
- * <br />&lt;/complexContent>
- * <br />&lt;/complexType>
- * <br />&lt;element name="IconStyleSimpleExtensionGroup" abstract="true" type="anySimpleType"/>
- * <br />&lt;element name="IconStyleObjectExtensionGroup" abstract="true" substitutionGroup="kml:AbstractObjectGroup"/>
+ * <pre>
+ * &lt;element name="IconStyle" type="kml:IconStyleType" substitutionGroup="kml:AbstractColorStyleGroup"/>
+ *
+ * &lt;complexType name="IconStyleType" final="#all">
+ *  &lt;complexContent>
+ *      &lt;extension base="kml:AbstractColorStyleType">
+ *          &lt;sequence>
+ *              &lt;element ref="kml:scale" minOccurs="0"/>
+ *              &lt;element ref="kml:heading" minOccurs="0"/>
+ *              &lt;element name="Icon" type="kml:BasicLinkType" minOccurs="0"/>
+ *              &lt;element ref="kml:hotSpot" minOccurs="0"/>
+ *              &lt;element ref="kml:IconStyleSimpleExtensionGroup" minOccurs="0" maxOccurs="unbounded"/>
+ *              &lt;element ref="kml:IconStyleObjectExtensionGroup" minOccurs="0" maxOccurs="unbounded"/>
+ *          &lt;/sequence>
+ *      &lt;/extension>
+ *  &lt;/complexContent>
+ * &lt;/complexType>
+ *
+ * &lt;element name="IconStyleSimpleExtensionGroup" abstract="true" type="anySimpleType"/>
+ * &lt;element name="IconStyleObjectExtensionGroup" abstract="true" substitutionGroup="kml:AbstractObjectGroup"/>
+ * </pre>
  *
  * @author Samuel Andrés
  */

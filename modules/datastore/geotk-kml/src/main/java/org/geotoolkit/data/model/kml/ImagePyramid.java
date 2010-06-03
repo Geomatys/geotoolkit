@@ -6,23 +6,27 @@ import org.geotoolkit.data.model.xsd.SimpleType;
 /**
  * <p>This interface maps ImagePyramid element.</p>
  *
- * <br />&lt;element name="ImagePyramid" type="kml:ImagePyramidType" substitutionGroup="kml:AbstractObjectGroup"/>
- * <br />&lt;complexType name="ImagePyramidType" final="#all">
- * <br />&lt;complexContent>
- * <br />&lt;extension base="kml:AbstractObjectType">
- * <br />&lt;sequence>
- * <br />&lt;element ref="kml:tileSize" minOccurs="0"/>
- * <br />&lt;element ref="kml:maxWidth" minOccurs="0"/>
- * <br />&lt;element ref="kml:maxHeight" minOccurs="0"/>
- * <br />&lt;element ref="kml:gridOrigin" minOccurs="0"/>
- * <br />&lt;element ref="kml:ImagePyramidSimpleExtensionGroup" minOccurs="0" maxOccurs="unbounded"/>
- * <br />&lt;element ref="kml:ImagePyramidObjectExtensionGroup" minOccurs="0" maxOccurs="unbounded"/>
- * <br />&lt;/sequence>
- * <br />&lt;/extension>
- * <br />&lt;/complexContent>
- * <br />&lt;/complexType>
- * <br />&lt;element name="ImagePyramidSimpleExtensionGroup" abstract="true" type="anySimpleType"/>
- * <br />&lt;element name="ImagePyramidObjectExtensionGroup" abstract="true" substitutionGroup="kml:AbstractObjectGroup"/>
+ * <pre>
+ * &lt;element name="ImagePyramid" type="kml:ImagePyramidType" substitutionGroup="kml:AbstractObjectGroup"/>
+ *
+ * &lt;complexType name="ImagePyramidType" final="#all">
+ *  &lt;complexContent>
+ *      &lt;extension base="kml:AbstractObjectType">
+ *          &lt;sequence>
+ *              &lt;element ref="kml:tileSize" minOccurs="0"/>
+ *              &lt;element ref="kml:maxWidth" minOccurs="0"/>
+ *              &lt;element ref="kml:maxHeight" minOccurs="0"/>
+ *              &lt;element ref="kml:gridOrigin" minOccurs="0"/>
+ *              &lt;element ref="kml:ImagePyramidSimpleExtensionGroup" minOccurs="0" maxOccurs="unbounded"/>
+ *              &lt;element ref="kml:ImagePyramidObjectExtensionGroup" minOccurs="0" maxOccurs="unbounded"/>
+ *          &lt;/sequence>
+ *      &lt;/extension>
+ *  &lt;/complexContent>
+ * &lt;/complexType>
+ *
+ * &lt;element name="ImagePyramidSimpleExtensionGroup" abstract="true" type="anySimpleType"/>
+ * &lt;element name="ImagePyramidObjectExtensionGroup" abstract="true" substitutionGroup="kml:AbstractObjectGroup"/>
+ * </pre>
  *
  * @author Samuel Andrés
  */

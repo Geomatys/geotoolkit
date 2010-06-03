@@ -10,48 +10,50 @@ import java.util.List;
  * There could be more than one premise in a street referenced in an address.
  * For example a building address near a major shopping centre or raiwlay station</p>
  *
- * <br />&lt;xs:element name="Premise">
- * <br />&lt;xs:complexType>
- * <br />&lt;xs:sequence>
- * <br />&lt;xs:element ref="AddressLine" minOccurs="0" maxOccurs="unbounded"/>
- * <br />&lt;xs:element name="PremiseName" minOccurs="0" maxOccurs="unbounded">...
- * <br />&lt;/xs:element>
- * <br />&lt;xs:choice minOccurs="0">
- * <br />&lt;xs:element name="PremiseLocation">...
- * <br />&lt;/xs:element>
- * <br />&lt;xs:choice>
- * <br />&lt;xs:element ref="PremiseNumber" maxOccurs="unbounded"/>
- * <br />&lt;xs:element name="PremiseNumberRange">...
- * <br />&lt;/xs:element>
- * <br />&lt;/xs:choice>
- * <br />&lt;/xs:choice>
- * <br />&lt;xs:element ref="PremiseNumberPrefix" minOccurs="0" maxOccurs="unbounded"/>
- * <br />&lt;xs:element ref="PremiseNumberSuffix" minOccurs="0" maxOccurs="unbounded"/>
- * <br />&lt;xs:element name="BuildingName" type="BuildingNameType" minOccurs="0" maxOccurs="unbounded">...
- * <br />&lt;/xs:element>
- * <br />&lt;xs:choice>
- * <br />&lt;xs:element name="SubPremise" type="SubPremiseType" minOccurs="0" maxOccurs="unbounded">...
- * <br />&lt;/xs:element>
- * <br />&lt;xs:element name="Firm" type="FirmType" minOccurs="0">...
- * <br />&lt;/xs:element>
- * <br />&lt;/xs:choice>
- * <br />&lt;xs:element name="MailStop" type="MailStopType" minOccurs="0">...
- * <br />&lt;/xs:element>
- * <br />&lt;xs:element ref="PostalCode" minOccurs="0"/>
- * <br />&lt;xs:element ref="Premise" minOccurs="0"/>
- * <br />&lt;xs:any namespace="##other" minOccurs="0" maxOccurs="unbounded"/>
- * <br />&lt;/xs:sequence>
- * <br />&lt;xs:attribute name="Type">...
- * <br />&lt;/xs:attribute>
- * <br />&lt;xs:attribute name="PremiseDependency">...
- * <br />&lt;/xs:attribute>
- * <br />&lt;xs:attribute name="PremiseDependencyType">
- * <br />&lt;/xs:attribute>
- * <br />&lt;xs:attribute name="PremiseThoroughfareConnector">...
- * <br />&lt;/xs:attribute>
- * <br />&lt;xs:anyAttribute namespace="##other"/>
- * <br />&lt;/xs:complexType>
- * <br />&lt;/xs:element>
+ * <pre>
+ * &lt;xs:element name="Premise">
+ *  &lt;xs:complexType>
+ *      &lt;xs:sequence>
+ *          &lt;xs:element ref="AddressLine" minOccurs="0" maxOccurs="unbounded"/>
+ *          &lt;xs:element name="PremiseName" minOccurs="0" maxOccurs="unbounded">...
+ *          &lt;/xs:element>
+ *          &lt;xs:choice minOccurs="0">
+ *              &lt;xs:element name="PremiseLocation">...
+ *              &lt;/xs:element>
+ *              &lt;xs:choice>
+ *                  &lt;xs:element ref="PremiseNumber" maxOccurs="unbounded"/>
+ *                  &lt;xs:element name="PremiseNumberRange">...
+ *                  &lt;/xs:element>
+ *              &lt;/xs:choice>
+ *          &lt;/xs:choice>
+ *          &lt;xs:element ref="PremiseNumberPrefix" minOccurs="0" maxOccurs="unbounded"/>
+ *          &lt;xs:element ref="PremiseNumberSuffix" minOccurs="0" maxOccurs="unbounded"/>
+ *          &lt;xs:element name="BuildingName" type="BuildingNameType" minOccurs="0" maxOccurs="unbounded">...
+ *          &lt;/xs:element>
+ *          &lt;xs:choice>
+ *              &lt;xs:element name="SubPremise" type="SubPremiseType" minOccurs="0" maxOccurs="unbounded">...
+ *              &lt;/xs:element>
+ *              &lt;xs:element name="Firm" type="FirmType" minOccurs="0">...
+ *              &lt;/xs:element>
+ *          &lt;/xs:choice>
+ *          &lt;xs:element name="MailStop" type="MailStopType" minOccurs="0">...
+ *          &lt;/xs:element>
+ *          &lt;xs:element ref="PostalCode" minOccurs="0"/>
+ *          &lt;xs:element ref="Premise" minOccurs="0"/>
+ *          &lt;xs:any namespace="##other" minOccurs="0" maxOccurs="unbounded"/>
+ *      &lt;/xs:sequence>
+ *      &lt;xs:attribute name="Type">...
+ *      &lt;/xs:attribute>
+ *      &lt;xs:attribute name="PremiseDependency">...
+ *      &lt;/xs:attribute>
+ *      &lt;xs:attribute name="PremiseDependencyType">
+ *      &lt;/xs:attribute>
+ *      &lt;xs:attribute name="PremiseThoroughfareConnector">...
+ *      &lt;/xs:attribute>
+ *      &lt;xs:anyAttribute namespace="##other"/>
+ *  &lt;/xs:complexType>
+ * &lt;/xs:element>
+ * </pre>
  *
  * @author Samuel Andrés
  */

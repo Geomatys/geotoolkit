@@ -6,21 +6,25 @@ import org.geotoolkit.data.model.xsd.SimpleType;
 /**
  * <p>This interface maps Document element.</p>
  *
- * <br />&lt;element name="Document" type="kml:DocumentType" substitutionGroup="kml:AbstractContainerGroup"/>
- * <br />&lt;complexType name="DocumentType" final="#all">
- * <br />&lt;complexContent>
- * <br />&lt;extension base="kml:AbstractContainerType">
- * <br />&lt;sequence>
- * <br />&lt;element ref="kml:Schema" minOccurs="0" maxOccurs="unbounded"/>
- * <br />&lt;element ref="kml:AbstractFeatureGroup" minOccurs="0" maxOccurs="unbounded"/>
- * <br />&lt;element ref="kml:DocumentSimpleExtensionGroup" minOccurs="0" maxOccurs="unbounded"/>
- * <br />&lt;element ref="kml:DocumentObjectExtensionGroup" minOccurs="0" maxOccurs="unbounded"/>
- * <br />&lt;/sequence>
- * <br />&lt;/extension>
- * <br />&lt;/complexContent>
- * <br />&lt;/complexType>
- * <br />&lt;element name="DocumentSimpleExtensionGroup" abstract="true" type="anySimpleType"/>
- * <br />&lt;element name="DocumentObjectExtensionGroup" abstract="true" substitutionGroup="kml:AbstractObjectGroup"/>
+ * <pre>
+ * &lt;element name="Document" type="kml:DocumentType" substitutionGroup="kml:AbstractContainerGroup"/>
+ *
+ * &lt;complexType name="DocumentType" final="#all">
+ *  &lt;complexContent>
+ *      &lt;extension base="kml:AbstractContainerType">
+ *          &lt;sequence>
+ *              &lt;element ref="kml:Schema" minOccurs="0" maxOccurs="unbounded"/>
+ *              &lt;element ref="kml:AbstractFeatureGroup" minOccurs="0" maxOccurs="unbounded"/>
+ *              &lt;element ref="kml:DocumentSimpleExtensionGroup" minOccurs="0" maxOccurs="unbounded"/>
+ *              &lt;element ref="kml:DocumentObjectExtensionGroup" minOccurs="0" maxOccurs="unbounded"/>
+ *          &lt;/sequence>
+ *      &lt;/extension>
+ *  &lt;/complexContent>
+ * &lt;/complexType>
+ *
+ * &lt;element name="DocumentSimpleExtensionGroup" abstract="true" type="anySimpleType"/>
+ * &lt;element name="DocumentObjectExtensionGroup" abstract="true" substitutionGroup="kml:AbstractObjectGroup"/>
+ * </pre>
  *
  * @author Samuel Andrés
  */

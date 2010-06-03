@@ -5,12 +5,14 @@ import org.geotoolkit.data.model.xsd.SimpleType;
 /**
  * <p>This interface maps Angle90 type:</p>
  *
- * <br />&lt;simpleType name="angle90Type">
- * <br />&lt;restriction base="double">
- * <br />&lt;minInclusive value="-90"/>
- * <br />&lt;maxInclusive value="90.0"/>
- * <br />&lt;/restriction>
- * <br />&lt;/simpleType>
+ * <pre>
+ * &lt;simpleType name="angle90Type">
+ *  &lt;restriction base="double">
+ *      &lt;minInclusive value="-90"/>
+ *      &lt;maxInclusive value="90.0"/>
+ *  &lt;/restriction>
+ * &lt;/simpleType>
+ * </pre>
  *
  * @author Samuel Andrés
  */

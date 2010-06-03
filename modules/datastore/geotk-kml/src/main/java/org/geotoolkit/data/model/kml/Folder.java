@@ -6,20 +6,24 @@ import org.geotoolkit.data.model.xsd.SimpleType;
 /**
  * <p>This interface maps Foder element.</p>
  *
- * <br />&lt;element name="Folder" type="kml:FolderType" substitutionGroup="kml:AbstractContainerGroup"/>
- * <br />&lt;complexType name="FolderType" final="#all">
- * <br />&lt;complexContent>
- * <br />&lt;extension base="kml:AbstractContainerType">
- * <br />&lt;sequence>
- * <br />&lt;element ref="kml:AbstractFeatureGroup" minOccurs="0" maxOccurs="unbounded"/>
- * <br />&lt;element ref="kml:FolderSimpleExtensionGroup" minOccurs="0" maxOccurs="unbounded"/>
- * <br />&lt;element ref="kml:FolderObjectExtensionGroup" minOccurs="0" maxOccurs="unbounded"/>
- * <br />&lt;/sequence>
- * <br />&lt;/extension>
- * <br />&lt;/complexContent>
- * <br />&lt;/complexType>
- * <br />&lt;element name="FolderSimpleExtensionGroup" abstract="true" type="anySimpleType"/>
- * <br />&lt;element name="FolderObjectExtensionGroup" abstract="true" substitutionGroup="kml:AbstractObjectGroup"/>
+ * <pre>
+ * &lt;element name="Folder" type="kml:FolderType" substitutionGroup="kml:AbstractContainerGroup"/>
+ *
+ * &lt;complexType name="FolderType" final="#all">
+ *  &lt;complexContent>
+ *      &lt;extension base="kml:AbstractContainerType">
+ *          &lt;sequence>
+ *              &lt;element ref="kml:AbstractFeatureGroup" minOccurs="0" maxOccurs="unbounded"/>
+ *              &lt;element ref="kml:FolderSimpleExtensionGroup" minOccurs="0" maxOccurs="unbounded"/>
+ *              &lt;element ref="kml:FolderObjectExtensionGroup" minOccurs="0" maxOccurs="unbounded"/>
+ *          &lt;/sequence>
+ *      &lt;/extension>
+ *  &lt;/complexContent>
+ * &lt;/complexType>
+ *
+ * &lt;element name="FolderSimpleExtensionGroup" abstract="true" type="anySimpleType"/>
+ * &lt;element name="FolderObjectExtensionGroup" abstract="true" substitutionGroup="kml:AbstractObjectGroup"/>
+ * </pre>
  *
  * @author Samuel Andrés
  */

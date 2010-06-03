@@ -3,12 +3,14 @@ package org.geotoolkit.data.model.kml;
 /**
  * <p>This enumeration maps gridOriginEnumType type.</p>
  *
- * <br />&lt;simpleType name="gridOriginEnumType">
- * <br />&lt;restriction base="string">
- * <br />&lt;enumeration value="lowerLeft"/>
- * <br />&lt;enumeration value="upperLeft"/>
- * <br />&lt;/restriction>
- * <br />&lt;/simpleType>
+ * <pre>
+ * &lt;simpleType name="gridOriginEnumType">
+ *  &lt;restriction base="string">
+ *      &lt;enumeration value="lowerLeft"/>
+ *      &lt;enumeration value="upperLeft"/>
+ *  &lt;/restriction>
+ * &lt;/simpleType>
+ * </pre>
  *
  * @author Samuel Andrés
  */

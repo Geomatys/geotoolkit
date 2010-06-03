@@ -5,12 +5,15 @@ import java.util.List;
 /**
  * <p>This interface maps Delete element.</p>
  *
- * <br />&lt;element name="Delete" type="kml:DeleteType"/>
- * <br />&lt;complexType name="DeleteType">
- * <br />&lt;sequence>
- * <br />&lt;element ref="kml:AbstractFeatureGroup" minOccurs="0" maxOccurs="unbounded"/>
- * <br />&lt;/sequence>
- * <br />&lt;/complexType>
+ * <pre>
+ * &lt;element name="Delete" type="kml:DeleteType"/>
+ * 
+ * &lt;complexType name="DeleteType">
+ *  &lt;sequence>
+ *      &lt;element ref="kml:AbstractFeatureGroup" minOccurs="0" maxOccurs="unbounded"/>
+ *  &lt;/sequence>
+ * &lt;/complexType>
+ * </pre>
  *
  * @author Samuel Andrés
  */

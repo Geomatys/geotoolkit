@@ -5,14 +5,17 @@ import java.util.List;
 /**
  * <p>This interface maps ExtendedDate element.</p>
  *
- * <br />&lt;element name="ExtendedData" type="kml:ExtendedDataType"/>
- * <br />&lt;complexType name="ExtendedDataType" final="#all">
- * <br />&lt;sequence>
- * <br />&lt;element ref="kml:Data" minOccurs="0" maxOccurs="unbounded"/>
- * <br />&lt;element ref="kml:SchemaData" minOccurs="0" maxOccurs="unbounded"/>
- * <br />&lt;any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
- * <br />&lt;/sequence>
- * <br />&lt;/complexType>
+ * <pre>
+ * &lt;element name="ExtendedData" type="kml:ExtendedDataType"/>
+ *
+ * &lt;complexType name="ExtendedDataType" final="#all">
+ *  &lt;sequence>
+ *      &lt;element ref="kml:Data" minOccurs="0" maxOccurs="unbounded"/>
+ *      &lt;element ref="kml:SchemaData" minOccurs="0" maxOccurs="unbounded"/>
+ *      &lt;any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+ *  &lt;/sequence>
+ * &lt;/complexType>
+ * </pre>
  *
  * @author Samuel Andrés
  */

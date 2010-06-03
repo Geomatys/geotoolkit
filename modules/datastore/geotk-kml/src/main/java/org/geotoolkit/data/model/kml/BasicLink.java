@@ -14,20 +14,23 @@ import org.geotoolkit.data.model.xsd.SimpleType;
  * <p>This interface is not an extension of AbstractObject, and 
  * redefines AbstractObject fields.</p>
  *
- * <br />&lt;complexType name="BasicLinkType">
- * <br />&lt;complexContent>
- * <br />&lt;extension base="kml:AbstractObjectType">
- * <br />&lt;sequence>
- * <br />&lt;element ref="kml:href" minOccurs="0"/>
- * <br />&lt;element ref="kml:BasicLinkSimpleExtensionGroup" minOccurs="0" maxOccurs="unbounded"/>
- * <br />&lt;element ref="kml:BasicLinkObjectExtensionGroup" minOccurs="0" maxOccurs="unbounded"/>
- * <br />&lt;/sequence>
- * <br />&lt;/extension>
- * <br />&lt;/complexContent>
- * <br />&lt;/complexType>
- * <br />&lt;element name="BasicLinkSimpleExtensionGroup" abstract="true" type="anySimpleType"/>
- * <br />&lt;element name="BasicLinkObjectExtensionGroup" abstract="true" substitutionGroup="kml:AbstractObjectGroup"/>
+ * <pre>
+ * &lt;complexType name="BasicLinkType">
+ *  &lt;complexContent>
+ *      &lt;extension base="kml:AbstractObjectType">
+ *          &lt;sequence>
+ *              &lt;element ref="kml:href" minOccurs="0"/>
+ *              &lt;element ref="kml:BasicLinkSimpleExtensionGroup" minOccurs="0" maxOccurs="unbounded"/>
+ *              &lt;element ref="kml:BasicLinkObjectExtensionGroup" minOccurs="0" maxOccurs="unbounded"/>
+ *          &lt;/sequence>
+ *      &lt;/extension>
+ *  &lt;/complexContent>
+ * &lt;/complexType>
  *
+ * &lt;element name="BasicLinkSimpleExtensionGroup" abstract="true" type="anySimpleType"/>
+ * &lt;element name="BasicLinkObjectExtensionGroup" abstract="true" substitutionGroup="kml:AbstractObjectGroup"/>
+ * </pre>
+ * 
  * @author Samuel Andrés
  */
 public interface BasicLink {

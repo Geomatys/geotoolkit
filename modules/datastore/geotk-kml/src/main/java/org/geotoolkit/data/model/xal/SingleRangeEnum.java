@@ -4,12 +4,14 @@ package org.geotoolkit.data.model.xal;
  *
  * <p>Building 12-14 is "Range" and Building 12 is "Single"</p>
  *
- * <br />&lt;xs:simpleType>
- * <br />&lt;s:restriction base="xs:NMTOKEN">
- * <br />&lt;xs:enumeration value="Single"/>
- * <br />&lt;xs:enumeration value="Range"/>
- * <br />&lt;/xs:restriction>
- * <br />&lt;/xs:simpleType>
+ * <pre>
+ * &lt;xs:simpleType>
+ *  &lt;xs:restriction base="xs:NMTOKEN">
+ *      &lt;xs:enumeration value="Single"/>
+ *      &lt;xs:enumeration value="Range"/>
+ *  &lt;/xs:restriction>
+ * &lt;/xs:simpleType>
+ *</pre>
  *
  * @author Samuel Andrés
  */

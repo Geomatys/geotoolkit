@@ -108,7 +108,7 @@ import org.geotoolkit.data.model.kml.ViewVolume;
 import org.geotoolkit.data.model.xal.AddressDetails;
 import org.geotoolkit.data.model.xsd.SimpleType;
 import org.geotoolkit.xml.StaxStreamReader;
-import static org.geotoolkit.data.model.ModelConstants.*;
+import static org.geotoolkit.data.model.KmlModelConstants.*;
 
 /**
  *

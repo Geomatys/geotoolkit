@@ -12,27 +12,29 @@ import java.util.List;
  *
  * <p>DependentThroughfare is related to a street; occurs in GB, IE, ES, PT.</p>
  *
- * <br />&lt;xs:element name="DependentThoroughfare" minOccurs="0">
- * <br />&lt;xs:complexType>
- * <br />&lt;xs:sequence>
- * <br />&lt;xs:element ref="AddressLine" minOccurs="0" maxOccurs="unbounded"/>
- * <br />&lt;xs:element name="ThoroughfarePreDirection" type="ThoroughfarePreDirectionType" minOccurs="0">...
- * <br />&lt;/xs:element>
- * <br />&lt;xs:element name="ThoroughfareLeadingType" type="ThoroughfareLeadingTypeType" minOccurs="0">...
- * <br />&lt;/xs:element>
- * <br />&lt;xs:element name="ThoroughfareName" type="ThoroughfareNameType" minOccurs="0" maxOccurs="unbounded">...
- * <br />&lt;/xs:element>
- * <br />&lt;xs:element name="ThoroughfareTrailingType" type="ThoroughfareTrailingTypeType" minOccurs="0">...
- * <br />&lt;/xs:element>
- * <br />&lt;xs:element name="ThoroughfarePostDirection" type="ThoroughfarePostDirectionType" minOccurs="0">...
- * <br />&lt;/xs:element>
- * <br />&lt;xs:any namespace="##other" minOccurs="0" maxOccurs="unbounded"/>
- * <br />&lt;/xs:sequence>
- * <br />&lt;xs:attribute name="Type"/>
- * <br />&lt;xs:anyAttribute namespace="##other"/>
- * <br />&lt;/xs:complexType>
- * <br />&lt;/xs:element>
- * 
+ * <pre>
+ * &lt;xs:element name="DependentThoroughfare" minOccurs="0">
+ *  &lt;xs:complexType>
+ *      &lt;xs:sequence>
+ *          &lt;xs:element ref="AddressLine" minOccurs="0" maxOccurs="unbounded"/>
+ *          &lt;xs:element name="ThoroughfarePreDirection" type="ThoroughfarePreDirectionType" minOccurs="0">...
+ *          &lt;/xs:element>
+ *          &lt;xs:element name="ThoroughfareLeadingType" type="ThoroughfareLeadingTypeType" minOccurs="0">...
+ *          &lt;/xs:element>
+ *          &lt;xs:element name="ThoroughfareName" type="ThoroughfareNameType" minOccurs="0" maxOccurs="unbounded">...
+ *          &lt;/xs:element>
+ *          &lt;xs:element name="ThoroughfareTrailingType" type="ThoroughfareTrailingTypeType" minOccurs="0">...
+ *          &lt;/xs:element>
+ *          &lt;xs:element name="ThoroughfarePostDirection" type="ThoroughfarePostDirectionType" minOccurs="0">...
+ *          &lt;/xs:element>
+ *          &lt;xs:any namespace="##other" minOccurs="0" maxOccurs="unbounded"/>
+ *      &lt;/xs:sequence>
+ *      &lt;xs:attribute name="Type"/>
+ *      &lt;xs:anyAttribute namespace="##other"/>
+ *  &lt;/xs:complexType>
+ * &lt;/xs:element>
+ * </pre>
+ *
  * @author Samuel Andrés
  */
 public interface DependentThoroughfare {

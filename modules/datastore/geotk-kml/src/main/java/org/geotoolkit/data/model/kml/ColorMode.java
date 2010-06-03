@@ -2,12 +2,14 @@ package org.geotoolkit.data.model.kml;
 /**
  * <p>This enumeration maps colorModeEnumType.</p>
  *
- * <br />&lt;simpleType name="colorModeEnumType">
- * <br />&lt;restriction base="string">
- * <br />&lt;enumeration value="normal"/>
- * <br />&lt;enumeration value="random"/>
- * <br />&lt;/restriction>
- * <br />&lt;/simpleType>
+ * <pre>
+ * &lt;simpleType name="colorModeEnumType">
+ *  &lt;restriction base="string">
+ *      &lt;enumeration value="normal"/>
+ *      &lt;enumeration value="random"/>
+ *  &lt;/restriction>
+ * &lt;/simpleType>
+ * </pre>
  *
  * @author Samuel Andrés
  */

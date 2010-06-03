@@ -6,15 +6,19 @@ import java.util.List;
 /**
  * <p>This interface maps an AbstractObjectGroup element.</p>
  *
- * <br />&lt;element name="AbstractObjectGroup" type="kml:AbstractObjectType" abstract="true"/>
- * <br />&lt;complexType name="AbstractObjectType" abstract="true">
- * <br />&lt;sequence>
- * <br />&lt;element ref="kml:ObjectSimpleExtensionGroup" minOccurs="0" maxOccurs="unbounded"/>
- * <br />&lt;/sequence>
- * <br />&lt;attributeGroup ref="kml:idAttributes"/>
- * <br />&lt;/complexType>
- * <br />&lt;element name="ObjectSimpleExtensionGroup" abstract="true" type="anySimpleType"/>
-
+ * <pre>
+ * &lt;element name="AbstractObjectGroup" type="kml:AbstractObjectType" abstract="true"/>
+ *
+ * &lt;complexType name="AbstractObjectType" abstract="true">
+ *  &lt;sequence>
+ *      &lt;element ref="kml:ObjectSimpleExtensionGroup" minOccurs="0" maxOccurs="unbounded"/>
+ *  &lt;/sequence>
+ *  &lt;attributeGroup ref="kml:idAttributes"/>
+ * &lt;/complexType>
+ *
+ * &lt;element name="ObjectSimpleExtensionGroup" abstract="true" type="anySimpleType"/>
+ * </pre>
+ *
  * @author Samuel Andrés
  */
 public interface AbstractObject {

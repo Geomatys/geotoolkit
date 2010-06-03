@@ -9,47 +9,51 @@ import org.geotoolkit.data.model.xsd.SimpleType;
 /**
  * <p>This interface maps AbstractFeatureGroup element.</p>
  *
- * <br />&lt;element name="AbstractFeatureGroup" type="kml:AbstractFeatureType" abstract="true" substitutionGroup="kml:AbstractObjectGroup"/>
- * <br />&lt;omplexType name="AbstractFeatureType" abstract="true">
- * <br />&lt;complexContent>
- * <br />&lt;extension base="kml:AbstractObjectType">
- * <br />&lt;sequence>
- * <br />&lt;element ref="kml:name" minOccurs="0"/>
- * <br />&lt;element ref="kml:visibility" minOccurs="0"/>
- * <br />&lt;element ref="kml:open" minOccurs="0"/>
- * <br />&lt;element ref="atom:author" minOccurs="0"/>
- * <br />&lt;element ref="atom:link" minOccurs="0"/>
- * <br />&lt;element ref="kml:address" minOccurs="0"/>
- * <br />&lt;element ref="xal:AddressDetails" minOccurs="0"/>
- * <br />&lt;element ref="kml:phoneNumber" minOccurs="0"/>
- * <br />&lt;choice>
- * <br />&lt;annotation>
- * <br />&lt;documentation>Snippet deprecated in 2.2&lt;/documentation>
- * <br />&lt;/annotation>
- * <br />&lt;element ref="kml:Snippet" minOccurs="0"/>
- * <br />&lt;element ref="kml:snippet" minOccurs="0"/>
- * <br />&lt;/choice>
- * <br />&lt;element ref="kml:description" minOccurs="0"/>
- * <br />&lt;element ref="kml:AbstractViewGroup" minOccurs="0"/>
- * <br />&lt;element ref="kml:AbstractTimePrimitiveGroup" minOccurs="0"/>
- * <br />&lt;element ref="kml:styleUrl" minOccurs="0"/>
- * <br />&lt;element ref="kml:AbstractStyleSelectorGroup" minOccurs="0" maxOccurs="unbounded"/>
- * <br />&lt;element ref="kml:Region" minOccurs="0"/>
- * <br />&lt;choice>
- * <br />&lt;annotation>
- * <br />&lt;documentation>Metadata deprecated in 2.2&lt;/documentation>
- * <br />&lt;/annotation>
- * <br />&lt;element ref="kml:Metadata" minOccurs="0"/>
- * <br />&lt;element ref="kml:ExtendedData" minOccurs="0"/>
- * <br />&lt;/choice>
- * <br />&lt;element ref="kml:AbstractFeatureSimpleExtensionGroup" minOccurs="0" maxOccurs="unbounded"/>
- * <br />&lt;element ref="kml:AbstractFeatureObjectExtensionGroup" minOccurs="0" maxOccurs="unbounded"/>
- * <br />&lt;/sequence>
- * <br />&lt;/extension>
- * <br />&lt;/complexContent>
- * <br />&lt;/complexType>
- * <br />&lt;element name="AbstractFeatureObjectExtensionGroup" abstract="true" substitutionGroup="kml:AbstractObjectGroup"/>
- * <br />&lt;element name="AbstractFeatureSimpleExtensionGroup" abstract="true" type="anySimpleType"/>
+ * <pre>
+ * &lt;element name="AbstractFeatureGroup" type="kml:AbstractFeatureType" abstract="true" substitutionGroup="kml:AbstractObjectGroup"/>
+ * 
+ * &lt;complexType name="AbstractFeatureType" abstract="true">
+ *  &lt;complexContent>
+ *      &lt;extension base="kml:AbstractObjectType">
+ *          &lt;sequence>
+ *              &lt;element ref="kml:name" minOccurs="0"/>
+ *              &lt;element ref="kml:visibility" minOccurs="0"/>
+ *              &lt;element ref="kml:open" minOccurs="0"/>
+ *              &lt;element ref="atom:author" minOccurs="0"/>
+ *              &lt;element ref="atom:link" minOccurs="0"/>
+ *              &lt;element ref="kml:address" minOccurs="0"/>
+ *              &lt;element ref="xal:AddressDetails" minOccurs="0"/>
+ *              &lt;element ref="kml:phoneNumber" minOccurs="0"/>
+ *              &lt;choice>
+ *                  &lt;annotation>
+ *                      &lt;documentation>Snippet deprecated in 2.2&lt;/documentation>
+ *                  &lt;/annotation>
+ *                  &lt;element ref="kml:Snippet" minOccurs="0"/>
+ *                  &lt;element ref="kml:snippet" minOccurs="0"/>
+ *              &lt;/choice>
+ *              &lt;element ref="kml:description" minOccurs="0"/>
+ *              &lt;element ref="kml:AbstractViewGroup" minOccurs="0"/>
+ *              &lt;element ref="kml:AbstractTimePrimitiveGroup" minOccurs="0"/>
+ *              &lt;element ref="kml:styleUrl" minOccurs="0"/>
+ *              &lt;element ref="kml:AbstractStyleSelectorGroup" minOccurs="0" maxOccurs="unbounded"/>
+ *              &lt;element ref="kml:Region" minOccurs="0"/>
+ *              &lt;choice>
+ *                  &lt;annotation>
+ *                      &lt;documentation>Metadata deprecated in 2.2&lt;/documentation>
+ *                  &lt;/annotation>
+ *                  &lt;element ref="kml:Metadata" minOccurs="0"/>
+ *                  &lt;element ref="kml:ExtendedData" minOccurs="0"/>
+ *              &lt;/choice>
+ *              &lt;element ref="kml:AbstractFeatureSimpleExtensionGroup" minOccurs="0" maxOccurs="unbounded"/>
+ *              &lt;element ref="kml:AbstractFeatureObjectExtensionGroup" minOccurs="0" maxOccurs="unbounded"/>
+ *          &lt;/sequence>
+ *      &lt;/extension>
+ *  &lt;/complexContent>
+ * &lt;/complexType>
+ *
+ * &lt;element name="AbstractFeatureObjectExtensionGroup" abstract="true" substitutionGroup="kml:AbstractObjectGroup"/>
+ * &lt;element name="AbstractFeatureSimpleExtensionGroup" abstract="true" type="anySimpleType"/>
+ *</pre>
  *
  * @author Samuel Andrés
  */

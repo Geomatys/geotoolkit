@@ -15,16 +15,17 @@ import org.geotoolkit.data.model.kml.Shape;
 import org.geotoolkit.data.model.kml.StyleState;
 import org.geotoolkit.data.model.kml.Units;
 import org.geotoolkit.data.model.kml.ViewRefreshMode;
+import org.geotoolkit.data.model.XalModelConstants.*;
 
 /**
  *
  * @author Samuel Andrés
  */
-public final class ModelConstants {
+public final class KmlModelConstants {
 
     // NAMESPACES
     public static final String URI_KML = "http://www.opengis.net/kml/2.2";
-    public static final String URI_XAL = "urn:oasis:names:tc:ciq:xsdschema:xAL:2.0";
+    public static final String URI_XAL = XalModelConstants.URI_XAL;
     public static final String URI_ATOM = "http://www.w3.org/2005/Atom";
     public static final String URI_XSI = "http://www.w3.org/2001/XMLSchema-instance";
     public static final String PREFIX_XAL = "xal";
@@ -201,8 +202,8 @@ public final class ModelConstants {
     public static final String TAG_ATOM_URI = "uri";
     public static final String TAG_ATOM_EMAIL = "email";
 
-    // ELEMENTARY TAGS -- ATOM
-    public static final String TAG_XAL_ADDRESS_DETAILS = "AddressDetails";
+    // ELEMENTARY TAGS -- XAL
+    public static final String TAG_XAL_ADDRESS_DETAILS = XalModelConstants.TAG_ADDRESS_DETAILS;
 
     // ATTRIBUTES
     public static final String ATT_ID = "id";
