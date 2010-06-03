@@ -152,7 +152,7 @@ public final class StringUtilities {
      * @return A string with all spaces replaced by the matching URL character %20.
      */
     public static String convertSpacesForUrl(final String s) {
-        return s.replaceAll(" ", "%20");
+            return (s != null) ? s.replaceAll(" ", "%20") : s;
     }
 
     /**
