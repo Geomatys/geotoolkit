@@ -146,13 +146,14 @@ public final class StringUtilities {
     }
 
     /**
-     * Converts all spaces from a string into the URL convention, %20
+     * Converts all spaces from a string into the URL convention, %20.
+     * Note that the given string <strong>MUST</strong> not be {@code null}.
      *
-     * @param s The initial string.
+     * @param s The initial string. Should not be {@code null}.
      * @return A string with all spaces replaced by the matching URL character %20.
      */
     public static String convertSpacesForUrl(final String s) {
-            return (s != null) ? s.replaceAll(" ", "%20") : s;
+        return s.replaceAll(" ", "%20");
     }
 
     /**

@@ -24,16 +24,12 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.geotoolkit.io.TableWriter;
 import org.geotoolkit.util.StringUtilities;
-import org.geotoolkit.util.logging.Logging;
 
 
 /**
@@ -45,11 +41,6 @@ import org.geotoolkit.util.logging.Logging;
  * @module pending
  */
 public abstract class AbstractRequest implements Request {
-    /**
-     * Logger specific for this implementation of {@link Request}.
-     */
-    private static final Logger LOGGER = Logging.getLogger(AbstractRequest.class);
-
     /**
      * if this value is used for a parameter, only the parameter name will be
      * added without '=' character appended.
@@ -75,7 +66,7 @@ public abstract class AbstractRequest implements Request {
         this(serverURL,null);
     }
 
-    protected AbstractRequest(String serverURL, final String subPath) {
+    protected AbstractRequest(final String serverURL, final String subPath) {
         this.serverURL = serverURL;
         this.subPath = subPath;
     }
@@ -85,7 +76,7 @@ public abstract class AbstractRequest implements Request {
      * parameter values.
      * @return adress subpath
      */
-    protected String getSubPath(){
+    protected String getSubPath() {
         return subPath;
     }
 
@@ -97,61 +88,49 @@ public abstract class AbstractRequest implements Request {
 
         String completeURL = this.serverURL;
         final String subPath = getSubPath();
-        if(subPath != null){
-            if(completeURL.endsWith("/")){
-                if(subPath.startsWith("/")){
-                    completeURL = completeURL.substring(0,completeURL.length()-1) + subPath;
-                }else{
-                    completeURL = completeURL + subPath;
+        if (subPath != null) {
+            if (completeURL.endsWith("/")) {
+                if (subPath.startsWith("/")) {
+                    completeURL = completeURL.substring(0, completeURL.length()-1);
                 }
-            }else{
-                if(subPath.startsWith("/")){
-                    completeURL = completeURL + subPath;
-                }else{
-                    completeURL = completeURL + "/" + subPath;
+            } else {
+                if (!subPath.startsWith("/")) {
+                    completeURL = completeURL + '/';
                 }
             }
+            completeURL = completeURL + subPath;
         }
 
-        final StringBuilder sb = new StringBuilder();
-        final List<String> keys = new ArrayList<String>(requestParameters.keySet());
-
-        sb.append(completeURL);
-
-        if(!keys.isEmpty() && !completeURL.contains("?")){
-            sb.append("?");
-        }
-
+        final StringBuilder sb = new StringBuilder(completeURL);
         if (!requestParameters.isEmpty()) {
+            if (!completeURL.contains("?")) {
+                sb.append('?');
+            }
             final char c = sb.charAt(sb.length()-1);
             if (!(c == '?' || c == '&')) {
-                sb.append("&");
-            }
-
-            String key = keys.get(0);
-            try {
-                sb.append(StringUtilities.convertSpacesForUrl(key));
-                final String value = requestParameters.get(key);
-                if(DONT_ENCODE_EQUAL != value){
-                    sb.append('=');
-                    if(value != null){
-                        sb.append(URLEncoder.encode(value, "UTF-8"));
-                    }
-                }
-            } catch (UnsupportedEncodingException ex) {
-                // Should not occur.
-                LOGGER.log(Level.FINER, ex.getLocalizedMessage(), ex);
-            }
-
-            for (int i = 1, n = keys.size(); i < n; i++) {
-                key = keys.get(i);
                 sb.append('&');
-                sb.append(StringUtilities.convertSpacesForUrl(key));
-                final Object value = requestParameters.get(key);
-                if(DONT_ENCODE_EQUAL != value){
-                    sb.append('=');
-                    sb.append(StringUtilities.convertSpacesForUrl(requestParameters.get(key)));
+            }
+
+            boolean firstKeyRead = false;
+            for (Entry<String,String> entry : requestParameters.entrySet()) {
+                final String key = entry.getKey();
+                if (key == null) {
+                    throw new MalformedURLException("A key in the given URL is null. Please check the URL. " +
+                            "Here is the current decoding of the URL: "+ sb.toString());
                 }
+                if (firstKeyRead) {
+                    sb.append('&');
+                }
+                try {
+                    sb.append(URLEncoder.encode(key, "UTF-8"));
+                    final String value = entry.getValue();
+                    if(DONT_ENCODE_EQUAL != value){
+                        sb.append('=').append(URLEncoder.encode(value, "UTF-8"));
+                    }
+                } catch (UnsupportedEncodingException ex) {
+                    throw new MalformedURLException("Can't encode URL in UTF-8: "+ ex.getLocalizedMessage());
+                }
+                firstKeyRead = true;
             }
         }
 
@@ -182,10 +161,10 @@ public abstract class AbstractRequest implements Request {
         }
     }
 
-    protected InputStream openRichException(URLConnection cnx) throws IOException{
-        try{
+    protected InputStream openRichException(URLConnection cnx) throws IOException {
+        try {
             return cnx.getInputStream();
-        }catch(IOException ex){
+        } catch(IOException ex) {
             final StringWriter writer = new StringWriter();
             final TableWriter tablewriter = new TableWriter(writer);
 
@@ -193,9 +172,9 @@ public abstract class AbstractRequest implements Request {
 
             for(Entry<String,List<String>> entry : cnx.getHeaderFields().entrySet()){
                 tablewriter.write((entry.getKey()!= null)? entry.getKey() : "null");
-                tablewriter.write("\t");
+                tablewriter.write('\t');
                 tablewriter.write(StringUtilities.toCommaSeparatedValues(entry.getValue()));
-                tablewriter.write("\n");
+                tablewriter.write('\n');
             }
             tablewriter.nextLine(TableWriter.DOUBLE_HORIZONTAL_LINE);
 
@@ -206,9 +185,8 @@ public abstract class AbstractRequest implements Request {
                 e.printStackTrace();
             }
 
-            throw new IOException("\n"+writer.toString(), ex);
+            throw new IOException('\n'+ writer.toString(), ex);
         }
-
     }
 
 }
