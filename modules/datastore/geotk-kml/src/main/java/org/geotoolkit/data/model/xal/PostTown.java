@@ -33,7 +33,7 @@ public interface PostTown {
      * 
      * @return
      */
-    public List<AddressLine> getAddressLines();
+    public List<GenericTypedGrPostal> getAddressLines();
 
     /**
      * <p>Name of the post town.</p>

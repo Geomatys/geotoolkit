@@ -24,7 +24,7 @@ public interface PremiseNumberRangeFrom {
      *
      * @return
      */
-    public List<AddressLine> getAddressLines();
+    public List<GenericTypedGrPostal> getAddressLines();
 
     /**
      *

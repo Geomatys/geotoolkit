@@ -23,7 +23,7 @@ public class AddressDetailsDefault implements AddressDetails {
 
     public AddressDetailsDefault(PostalServiceElements postalServiceElements, Object localisation,
             String addressType, String currentStatus, String validFromDate, String validToDate,
-            String usage, GrPostal grPostal, String AddressDetailsKey) throws XalException{
+            String usage, GrPostal grPostal, String addressDetailsKey) throws XalException{
         this.postalServiceElements = postalServiceElements;
         if (localisation instanceof GenericTypedGrPostal){
             this.address = (GenericTypedGrPostal) localisation;
@@ -45,50 +45,106 @@ public class AddressDetailsDefault implements AddressDetails {
         this.currentStatus = currentStatus;
         this.validFromDate = validFromDate;
         this.validToDate = validToDate;
-        this.usage = this.usage;
+        this.usage = usage;
         this.grPostal = grPostal;
         this.addressDetailsKey = addressDetailsKey;
     }
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public PostalServiceElements getPostalServiceElements() {return this.postalServiceElements;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public GenericTypedGrPostal getAddress() {return this.address;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public AddressLines getAddressLines() {return this.addressLines;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public Country getCountry() {return this.country;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public AdministrativeArea getAdministrativeArea() {return this.administrativeArea;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public Locality getLocality() {return this.locality;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public Thoroughfare getThoroughfare() {return this.thoroughfare;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public String getAddressType() {return this.addressType;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public String getCurrentStatus() {return this.currentStatus;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public String getValidFromDate() {return this.validFromDate;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public String getValidToDate() {return this.validToDate;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public String getUsage() {return this.usage;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public GrPostal getGrPostal() {return this.grPostal;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public String getAddressDetailsKey() {return this.addressDetailsKey;}
 

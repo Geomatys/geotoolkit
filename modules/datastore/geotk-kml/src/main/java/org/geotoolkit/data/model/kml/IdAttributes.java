@@ -5,8 +5,8 @@ package org.geotoolkit.data.model.kml;
  *
  * <pre>
  * &lt;attributeGroup name="idAttributes">
- *  &lt;attribute name="id" type="ID" use="optional"/> <!-- NOT AN OBJETC : type String -->
- *  &lt;attribute name="targetId" type="NCName" use="optional"/> <!-- NOT AN OBJETC : type String -->
+ *  &lt;attribute name="id" type="ID" use="optional"/>
+ *  &lt;attribute name="targetId" type="NCName" use="optional"/>
  * &lt;/attributeGroup>
  * </pre>
  *

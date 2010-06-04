@@ -12,23 +12,27 @@ import org.geotoolkit.data.model.xsd.SimpleType;
  *
  * <p>This interface considers logical to inherit from AbstractLatLonBox interface which both
  * contains AbstractLatLonBoxType mapping and extends AbstractObject.</p>
+ * 
+ * <pre>
+ * &lt;element name="LatLonAltBox" type="kml:LatLonAltBoxType" substitutionGroup="kml:AbstractObjectGroup"/>
  *
- * <br />&lt;element name="LatLonAltBox" type="kml:LatLonAltBoxType" substitutionGroup="kml:AbstractObjectGroup"/>
- * <br />&lt;complexType name="LatLonAltBoxType" final="#all">
- * <br />&lt;complexContent>
- * <br />&lt;extension base="kml:AbstractLatLonBoxType">
- * <br />&lt;sequence>
- * <br />&lt;element ref="kml:minAltitude" minOccurs="0"/>
- * <br />&lt;element ref="kml:maxAltitude" minOccurs="0"/>
- * <br />&lt;element ref="kml:altitudeModeGroup" minOccurs="0"/>
- * <br />&lt;element ref="kml:LatLonAltBoxSimpleExtensionGroup" minOccurs="0" maxOccurs="unbounded"/>
- * <br />&lt;element ref="kml:LatLonAltBoxObjectExtensionGroup" minOccurs="0" maxOccurs="unbounded"/>
- * <br />&lt;/sequence>
- * <br />&lt;/extension>
- * <br />&lt;/complexContent>
- * <br />&lt;/complexType>
- * <br />&lt;element name="LatLonAltBoxSimpleExtensionGroup" abstract="true" type="anySimpleType"/>
- * <br />&lt;element name="LatLonAltBoxObjectExtensionGroup" abstract="true" substitutionGroup="kml:AbstractObjectGroup"/>
+ * &lt;complexType name="LatLonAltBoxType" final="#all">
+ *  &lt;complexContent>
+ *      &lt;extension base="kml:AbstractLatLonBoxType">
+ *          &lt;sequence>
+ *              &lt;element ref="kml:minAltitude" minOccurs="0"/>
+ *              &lt;element ref="kml:maxAltitude" minOccurs="0"/>
+ *              &lt;element ref="kml:altitudeModeGroup" minOccurs="0"/>
+ *              &lt;element ref="kml:LatLonAltBoxSimpleExtensionGroup" minOccurs="0" maxOccurs="unbounded"/>
+ *              &lt;element ref="kml:LatLonAltBoxObjectExtensionGroup" minOccurs="0" maxOccurs="unbounded"/>
+ *          &lt;/sequence>
+ *      &lt;/extension>
+ *  &lt;/complexContent>
+ * &lt;/complexType>
+ *
+ * &lt;element name="LatLonAltBoxSimpleExtensionGroup" abstract="true" type="anySimpleType"/>
+ * &lt;element name="LatLonAltBoxObjectExtensionGroup" abstract="true" substitutionGroup="kml:AbstractObjectGroup"/>
+ * </pre>
  *
  * @author Samuel Andrés
  */

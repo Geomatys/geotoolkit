@@ -6,6 +6,14 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.stream.XMLStreamException;
 import org.geotoolkit.data.model.xal.AddressDetails;
+import org.geotoolkit.data.model.xal.AddressLines;
+import org.geotoolkit.data.model.xal.AdministrativeArea;
+import org.geotoolkit.data.model.xal.Country;
+import org.geotoolkit.data.model.xal.GenericTypedGrPostal;
+import org.geotoolkit.data.model.xal.GrPostal;
+import org.geotoolkit.data.model.xal.Locality;
+import org.geotoolkit.data.model.xal.PostalServiceElements;
+import org.geotoolkit.data.model.xal.Thoroughfare;
 import org.geotoolkit.data.model.xal.Xal;
 import org.geotoolkit.xml.StaxStreamWriter;
 import static org.geotoolkit.data.model.XalModelConstants.*;
@@ -79,8 +87,121 @@ public class XalWriter extends StaxStreamWriter {
         }
     }
 
+    /**
+     *
+     * @param addressDetails
+     * @throws XMLStreamException
+     */
     private void writeAddressDetails(AddressDetails addressDetails) throws XMLStreamException{
         writer.writeStartElement(TAG_ADDRESS_DETAILS);
+        if (addressDetails.getPostalServiceElements() != null){
+            this.writePostalServiceElements(addressDetails.getPostalServiceElements());
+        }
+        if (addressDetails.getAddress() != null){
+            this.writeAddress(addressDetails.getAddress());
+        }
+         if (addressDetails.getAddressLines() != null){
+            this.writeAddressLines(addressDetails.getAddressLines());
+        }
+        if (addressDetails.getCountry() != null){
+            this.writeCountry(addressDetails.getCountry());
+        }
+        if (addressDetails.getAdministrativeArea() != null){
+            this.writeAdministrativeArea(addressDetails.getAdministrativeArea());
+        }
+        if (addressDetails.getLocality() != null){
+            this.writeLocality(addressDetails.getLocality());
+        }
+        if (addressDetails.getThoroughfare() != null){
+            this.writeThoroughfare(addressDetails.getThoroughfare());
+        }
+        if (addressDetails.getAddressType() != null){
+            writer.writeAttribute(ATT_ADDRESS_TYPE, addressDetails.getAddressType());
+        }
+        if (addressDetails.getCurrentStatus() != null){
+            writer.writeAttribute(ATT_CURRENT_STATUS, addressDetails.getCurrentStatus());
+        }
+        if (addressDetails.getValidFromDate() != null){
+            writer.writeAttribute(ATT_VALID_FROM_DATE, addressDetails.getValidFromDate());
+        }
+        if (addressDetails.getValidToDate() != null){
+            writer.writeAttribute(ATT_VALID_TO_DATE, addressDetails.getValidToDate());
+        }
+        if (addressDetails.getUsage() != null){
+            writer.writeAttribute(ATT_USAGE, addressDetails.getUsage());
+        }
+        if (addressDetails.getGrPostal() != null){
+            this.writeGrPostal(addressDetails.getGrPostal());
+        }
+        if (addressDetails.getAddressDetailsKey() != null){
+            writer.writeAttribute(ATT_ADDRESS_DETAILS_KEY, addressDetails.getAddressDetailsKey());
+        }
         writer.writeEndElement();
     }
+
+    private void writePostalServiceElements(PostalServiceElements postalServiceElements) throws XMLStreamException{
+        writer.writeStartElement(TAG_POSTAL_SERVICE_ELEMENTS);
+
+        writer.writeEndElement();
+    }
+
+    private void writeAddress(GenericTypedGrPostal address) throws XMLStreamException{
+        writer.writeStartElement(TAG_ADDRESS);
+        this.writeGenericTypedGrPostal(address);
+        writer.writeEndElement();
+    }
+
+    private void writeAddressLines(AddressLines addressLines) throws XMLStreamException{
+        writer.writeStartElement(TAG_ADDRESS_LINES);
+        for (GenericTypedGrPostal addressLine : addressLines.getAddressLines()){
+            this.writeAddressLine(addressLine);
+        }
+        writer.writeEndElement();
+    }
+
+    private void writeAddressLine(GenericTypedGrPostal addressline) throws XMLStreamException{
+        writer.writeStartElement(TAG_ADDRESS_LINE);
+        this.writeGenericTypedGrPostal(addressline);
+        writer.writeEndElement();
+    }
+
+    private void writeCountry(Country country) throws XMLStreamException{
+        writer.writeStartElement(TAG_COUNTRY);
+        writer.writeEndElement();
+    }
+
+    private void writeAdministrativeArea(AdministrativeArea administrativeArea) throws XMLStreamException{
+        writer.writeStartElement(TAG_ADMINISTRATIVE_AREA);
+        writer.writeEndElement();
+    }
+
+    private void writeLocality(Locality locality) throws XMLStreamException{
+        writer.writeStartElement(TAG_LOCALITY);
+        writer.writeEndElement();
+    }
+
+    private void writeThoroughfare(Thoroughfare thoroughfare) throws XMLStreamException{
+        writer.writeStartElement(TAG_THOROUGHFARE);
+        writer.writeEndElement();
+    }
+
+    private void writeGenericTypedGrPostal(GenericTypedGrPostal generic) throws XMLStreamException{
+        if (generic.getType() != null){
+            writer.writeAttribute(ATT_TYPE, generic.getType());
+        }
+        if (generic.getGrPostal() != null){
+            this.writeGrPostal(generic.getGrPostal());
+        }
+        if (generic.getContent() != null){
+            writer.writeCharacters(generic.getContent());
+        }
+    }
+
+    private void writeGrPostal(GrPostal grPostal) throws XMLStreamException{
+        if (grPostal.getCode() != null){
+            writer.writeAttribute(ATT_CODE, grPostal.getCode());
+        }
+    }
+
+
 }

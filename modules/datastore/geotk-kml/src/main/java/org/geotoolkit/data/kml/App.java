@@ -134,6 +134,9 @@ public class App {
         System.out.println(xal.getAddressDetails().size());
         for (AddressDetails ad : xal.getAddressDetails()){
             System.out.println(ad.getAddressType());
+            if (ad.getAddressLines() != null){
+                System.out.println("SIZE : "+ad.getAddressLines().getAddressLines().size());
+            }
         }
 
         XalWriter writerXal = new XalWriter(output);

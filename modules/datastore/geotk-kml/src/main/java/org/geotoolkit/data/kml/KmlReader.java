@@ -1753,7 +1753,7 @@ public class KmlReader extends StaxStreamReader {
 
     /**
      * 
-     * @param stopTag
+     * @param stopName
      * @return
      * @throws KmlException
      * @throws XMLStreamException

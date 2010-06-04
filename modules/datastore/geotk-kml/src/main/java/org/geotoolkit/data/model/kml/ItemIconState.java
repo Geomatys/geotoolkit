@@ -4,16 +4,18 @@ package org.geotoolkit.data.model.kml;
  *
  * <p>This enumeration maps itemIconStateEnumType type.</p>
  *
- * <br />&lt;simpleType name="itemIconStateEnumType">
- * <br />&lt;restriction base="string">
- * <br />&lt;enumeration value="open"/>
- * <br />&lt;enumeration value="closed"/>
- * <br />&lt;enumeration value="error"/>
- * <br />&lt;enumeration value="fetching0"/>
- * <br />&lt;enumeration value="fetching1"/>
- * <br />&lt;enumeration value="fetching2"/>
- * <br />&lt;/restriction>
- * <br />&lt;/simpleType>
+ * <pre>
+ * &lt;simpleType name="itemIconStateEnumType">
+ *  &lt;restriction base="string">
+ *      &lt;enumeration value="open"/>
+ *      &lt;enumeration value="closed"/>
+ *      &lt;enumeration value="error"/>
+ *      &lt;enumeration value="fetching0"/>
+ *      &lt;enumeration value="fetching1"/>
+ *      &lt;enumeration value="fetching2"/>
+ *  &lt;/restriction>
+ * &lt;/simpleType>
+ * </pre>
  *
  * @author Samuel Andrés
  */

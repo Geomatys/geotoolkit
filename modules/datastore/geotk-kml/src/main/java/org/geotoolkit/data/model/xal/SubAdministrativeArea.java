@@ -42,7 +42,7 @@ public interface SubAdministrativeArea {
      *
      * @return
      */
-    public List<AddressLine> getAddressLines();
+    public List<GenericTypedGrPostal> getAddressLines();
 
     /**
      *

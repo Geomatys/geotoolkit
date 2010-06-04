@@ -14,21 +14,25 @@ import org.geotoolkit.data.model.xsd.SimpleType;
  * <p>This interface considers logical to inherit from AbstractLatLonBox interface which both
  * contains AbstractLatLonBoxType mapping and extends AbstractObject.</p>
  *
- * <br />&lt;element name="LatLonBox" type="kml:LatLonBoxType" substitutionGroup="kml:AbstractObjectGroup"/>
- * <br />&lt;complexType name="LatLonBoxType" final="#all">
- * <br />&lt;complexContent>
- * <br />&lt;extension base="kml:AbstractLatLonBoxType">
- * <br />&lt;sequence>
- * <br />&lt;element ref="kml:rotation" minOccurs="0"/>
- * <br />&lt;element ref="kml:LatLonBoxSimpleExtensionGroup" minOccurs="0" maxOccurs="unbounded"/>
- * <br />&lt;element ref="kml:LatLonBoxObjectExtensionGroup" minOccurs="0" maxOccurs="unbounded"/>
- * <br />&lt;/sequence>
- * <br />&lt;/extension>
- * <br />&lt;/complexContent>
- * <br />&lt;/complexType>
- * <br />&lt;element name="LatLonBoxSimpleExtensionGroup" abstract="true" type="anySimpleType"/>
- * <br />&lt;element name="LatLonBoxObjectExtensionGroup" abstract="true" substitutionGroup="kml:AbstractObjectGroup"/>
-
+ * <pre>
+ * &lt;element name="LatLonBox" type="kml:LatLonBoxType" substitutionGroup="kml:AbstractObjectGroup"/>
+ *
+ * &lt;complexType name="LatLonBoxType" final="#all">
+ *  &lt;complexContent>
+ *      &lt;extension base="kml:AbstractLatLonBoxType">
+ *          &lt;sequence>
+ *              &lt;element ref="kml:rotation" minOccurs="0"/>
+ *              &lt;element ref="kml:LatLonBoxSimpleExtensionGroup" minOccurs="0" maxOccurs="unbounded"/>
+ *              &lt;element ref="kml:LatLonBoxObjectExtensionGroup" minOccurs="0" maxOccurs="unbounded"/>
+ *          &lt;/sequence>
+ *      &lt;/extension>
+ *  &lt;/complexContent>
+ * &lt;/complexType>
+ *
+ * &lt;element name="LatLonBoxSimpleExtensionGroup" abstract="true" type="anySimpleType"/>
+ * &lt;element name="LatLonBoxObjectExtensionGroup" abstract="true" substitutionGroup="kml:AbstractObjectGroup"/>
+ * </pre>
+ *
  * @author Samuel Andrés
  */
 public interface LatLonBox extends AbstractLatLonBox {

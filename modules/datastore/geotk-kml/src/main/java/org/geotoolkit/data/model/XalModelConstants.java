@@ -29,6 +29,7 @@ public final class XalModelConstants {
     public static final String ATT_ADDRESS_TYPE = "AddressType";
     public static final String ATT_CODE = "Code";
     public static final String ATT_CURRENT_STATUS = "CurrentStatus";
+    public static final String ATT_TYPE = "Type";
     public static final String ATT_USAGE = "Usage";
     public static final String ATT_VALID_FROM_DATE = "ValidFromDate";
     public static final String ATT_VALID_TO_DATE = "ValidToDate";

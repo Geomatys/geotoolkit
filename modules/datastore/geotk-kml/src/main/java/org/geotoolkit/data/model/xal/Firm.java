@@ -28,7 +28,7 @@ public interface Firm {
      * 
      * @return
      */
-    public List<AddressLine> getAddressLines();
+    public List<GenericTypedGrPostal> getAddressLines();
 
     /**
      * <p>Name of the firm.</p>

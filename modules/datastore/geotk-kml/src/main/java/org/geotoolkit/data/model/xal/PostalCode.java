@@ -34,7 +34,7 @@ public interface PostalCode {
      *
      * @return
      */
-    public List<AddressLine> getAddressLines();
+    public List<GenericTypedGrPostal> getAddressLines();
 
     /**
      * <p>Specification of a postcode.

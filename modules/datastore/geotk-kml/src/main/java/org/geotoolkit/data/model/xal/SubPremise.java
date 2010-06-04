@@ -43,7 +43,7 @@ public interface SubPremise {
      * 
      * @return
      */
-    public List<AddressLine> getAddressLines();
+    public List<GenericTypedGrPostal> getAddressLines();
 
     /**
      * <p>Name of the SubPremise.</p>

@@ -25,7 +25,7 @@ import java.util.List;
  */
 public interface PostalRoute {
 
-    public List<AddressLine> getAddressLines();
+    public List<GenericTypedGrPostal> getAddressLines();
 
     /*
      * === CHOICE: ===

@@ -7,15 +7,18 @@ import java.util.List;
  *
  * <p>Container for Address lines.</p>
  *
- * <br />&lt;xs:element name="AddressLines" type="AddressLinesType">...
- * <br />&lt;/xs:element>
- * <br />&lt;xs:complexType name="AddressLinesType">
- * <br />&lt;xs:sequence>
- * <br />&lt;xs:element ref="AddressLine" maxOccurs="unbounded"/>
- * <br />&lt;xs:any namespace="##other" minOccurs="0" maxOccurs="unbounded"/>
- * <br />&lt;/xs:sequence>
- * <br />&lt;xs:anyAttribute namespace="##other"/><!-- These attributes are not implemented -->
- * <br />&lt;/xs:complexType>
+ * <pre>
+ * &lt;xs:element name="AddressLines" type="AddressLinesType">...
+ * &lt;/xs:element>
+ *
+ * &lt;xs:complexType name="AddressLinesType">
+ *  &lt;xs:sequence>
+ *      &lt;xs:element ref="AddressLine" maxOccurs="unbounded"/>
+ *      &lt;xs:any namespace="##other" minOccurs="0" maxOccurs="unbounded"/>
+ *  &lt;/xs:sequence>
+ *  &lt;xs:anyAttribute namespace="##other"/><!-- These attributes are not implemented -->
+ * &lt;/xs:complexType>
+ * </pre>
  *
  * @author Samuel Andrés
  */
@@ -25,6 +28,6 @@ public interface AddressLines {
      * 
      * @return
      */
-    public List<AddressLine> getAddressLines();
+    public List<GenericTypedGrPostal> getAddressLines();
 
 }

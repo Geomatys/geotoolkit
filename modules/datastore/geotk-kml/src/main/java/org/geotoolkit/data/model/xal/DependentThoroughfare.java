@@ -43,7 +43,7 @@ public interface DependentThoroughfare {
      *
      * @return
      */
-    public List<AddressLine> getAddressLines();
+    public List<GenericTypedGrPostal> getAddressLines();
 
     /**
      * <p>North Baker Street, where North is the pre-direction.

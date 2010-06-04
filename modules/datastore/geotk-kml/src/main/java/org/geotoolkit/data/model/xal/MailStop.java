@@ -26,7 +26,7 @@ public interface MailStop {
      * 
      * @return
      */
-    public List<AddressLine> getAddressLines();
+    public List<GenericTypedGrPostal> getAddressLines();
 
     /**
      * <p>Name of the the Mail Stop. eg. MSP, MS, etc.</p>

@@ -64,7 +64,7 @@ public interface Thoroughfare {
      *
      * @return
      */
-    public List<AddressLine> getAddressLine();
+    public List<GenericTypedGrPostal> getAddressLine();
 
     /**
      *

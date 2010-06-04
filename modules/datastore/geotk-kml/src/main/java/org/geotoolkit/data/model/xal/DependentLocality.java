@@ -46,7 +46,7 @@ public interface DependentLocality {
      *
      * @return
      */
-    public List<AddressLine> getAddressLines();
+    public List<GenericTypedGrPostal> getAddressLines();
 
     /**
      * <p>Name of the dependent locality.</p>

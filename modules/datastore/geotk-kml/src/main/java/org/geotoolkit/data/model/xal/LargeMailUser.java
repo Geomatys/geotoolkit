@@ -32,7 +32,7 @@ public interface LargeMailUser {
      *
      * @return
      */
-    public List<AddressLine> getAddressLines();
+    public List<GenericTypedGrPostal> getAddressLines();
 
     /**
      * <p>Name of the large mail user. eg. Smith Ford International airport.</p>

@@ -32,7 +32,7 @@ public interface Department {
      * 
      * @return
      */
-    public List<AddressLine> getAddressLines();
+    public List<GenericTypedGrPostal> getAddressLines();
 
     /**
      * <p>Specification of the name of a department.</p>

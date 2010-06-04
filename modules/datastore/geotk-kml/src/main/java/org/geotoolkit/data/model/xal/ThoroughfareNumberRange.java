@@ -40,7 +40,7 @@ public interface ThoroughfareNumberRange {
      * 
      * @return
      */
-    public List<AddressLine> getAddressLines();
+    public List<GenericTypedGrPostal> getAddressLines();
 
     /**
      *
