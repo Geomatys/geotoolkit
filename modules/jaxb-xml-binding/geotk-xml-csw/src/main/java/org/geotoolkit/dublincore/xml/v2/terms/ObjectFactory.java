@@ -78,6 +78,10 @@ public class ObjectFactory {
     public static final QName _IsReferencedBy_QNAME        = new QName("http://purl.org/dc/terms/", "isReferencedBy");
     public static final QName _Abstract_QNAME              = new QName("http://purl.org/dc/terms/", "abstract");
 
+    public static final QName _InstructionalMethod_QNAME   = new QName("http://purl.org/dc/terms/", "instructionalMethod");
+    public static final QName _AccrualMethod_QNAME   = new QName("http://purl.org/dc/terms/", "accrualMethod");
+    public static final QName _AccrualPeriodicity_QNAME   = new QName("http://purl.org/dc/terms/", "accrualPeriodicity");
+    public static final QName _AccrualPolicy_QNAME   = new QName("http://purl.org/dc/terms/", "accrualPolicy");
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: org.purl.dc.terms
      * 
@@ -85,6 +89,38 @@ public class ObjectFactory {
     public ObjectFactory() {
     }
 
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link SimpleLiteral }{@code >}}
+     *
+     */
+    @XmlElementDecl(namespace = "http://purl.org/dc/terms/", name = "instructionalMethod", substitutionHeadNamespace = "http://purl.org/dc/elements/1.1/", substitutionHeadName = "DC-element")
+    public JAXBElement<SimpleLiteral> createInstructionalMethod(SimpleLiteral value) {
+        return new JAXBElement<SimpleLiteral>(_InstructionalMethod_QNAME, SimpleLiteral.class, null, value);
+    }
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link SimpleLiteral }{@code >}}
+     *
+     */
+    @XmlElementDecl(namespace = "http://purl.org/dc/terms/", name = "accrualMethod", substitutionHeadNamespace = "http://purl.org/dc/elements/1.1/", substitutionHeadName ="DC-element")
+    public JAXBElement<SimpleLiteral> createAccrualMethod(SimpleLiteral value) {
+        return new JAXBElement<SimpleLiteral>(_AccrualMethod_QNAME, SimpleLiteral.class, null, value);
+    }
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link SimpleLiteral }{@code >}}
+     *
+     */
+    @XmlElementDecl(namespace = "http://purl.org/dc/terms/", name = "accrualPeriodicity", substitutionHeadNamespace = "http://purl.org/dc/elements/1.1/", substitutionHeadName = "DC-element")
+    public JAXBElement<SimpleLiteral> createAccrualPeriodicity(SimpleLiteral value) {
+        return new JAXBElement<SimpleLiteral>(_AccrualPeriodicity_QNAME, SimpleLiteral.class, null, value);
+    }
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link SimpleLiteral }{@code >}}
+     *
+     */
+    @XmlElementDecl(namespace = "http://purl.org/dc/terms/", name = "accrualPolicy", substitutionHeadNamespace = "http://purl.org/dc/elements/1.1/", substitutionHeadName = "DC-element")
+    public JAXBElement<SimpleLiteral> createAccrualPolicy(SimpleLiteral value) {
+        return new JAXBElement<SimpleLiteral>(_AccrualPolicy_QNAME, SimpleLiteral.class, null, value);
+    }
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link SimpleLiteral }{@code >}}
      * 

@@ -49,8 +49,6 @@ public interface DCMIRecord extends AbstractRecord {
     
     public List<? extends AbstractSimpleLiteral> getCreator();
     
-    public AbstractSimpleLiteral getDistributor();
-    
     public AbstractSimpleLiteral getLanguage();
     
     public List<? extends AbstractSimpleLiteral> getRelation();

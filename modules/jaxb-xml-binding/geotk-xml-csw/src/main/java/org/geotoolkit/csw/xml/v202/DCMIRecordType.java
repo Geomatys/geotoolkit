@@ -67,7 +67,6 @@ import org.geotoolkit.util.Utilities;
     "subject"     ,
     "format"      ,
     "language"    ,
-    "distributor" ,
     "creator"     ,
     "modified"    ,
     "date"        ,    
@@ -113,6 +112,10 @@ import org.geotoolkit.util.Utilities;
     "isFormatOf",
     "hasFormat",
     "isReferencedBy",
+    "instructionalMethod",
+    "accrualMethod",
+    "accrualPeriodicity",
+    "accrualPolicy",
     "dcElement"   
 })
 @XmlSeeAlso({
@@ -138,9 +141,6 @@ public class DCMIRecordType extends AbstractRecordType implements DCMIRecord {
     
     @XmlElement(name = "language", namespace = "http://purl.org/dc/elements/1.1/")
     private SimpleLiteral language;
-    
-    @XmlElement(name = "publisher", namespace = "http://purl.org/dc/elements/1.1/")
-    private SimpleLiteral distributor;
     
     @XmlElement(name = "creator", namespace = "http://purl.org/dc/elements/1.1/")
     private List<SimpleLiteral> creator;
@@ -280,7 +280,17 @@ public class DCMIRecordType extends AbstractRecordType implements DCMIRecord {
     @XmlElement(name = "isReferencedBy", namespace = "http://purl.org/dc/terms/")
     private List<SimpleLiteral> isReferencedBy;
 
+    @XmlElement(name = "instructionalMethod", namespace = "http://purl.org/dc/terms/")
+    private List<SimpleLiteral> instructionalMethod;
+
+    @XmlElement(name = "accrualMethod", namespace = "http://purl.org/dc/terms/")
+    private List<SimpleLiteral> accrualMethod;
     
+    @XmlElement(name = "accrualPeriodicity", namespace = "http://purl.org/dc/terms/")
+    private List<SimpleLiteral> accrualPeriodicity;
+    
+    @XmlElement(name = "accrualPolicy", namespace = "http://purl.org/dc/terms/")
+    private List<SimpleLiteral> accrualPolicy;
     /**
      * An empty constructor used by JAXB
      */
@@ -291,7 +301,7 @@ public class DCMIRecordType extends AbstractRecordType implements DCMIRecord {
     
     public DCMIRecordType(SimpleLiteral identifier, SimpleLiteral title, SimpleLiteral type, 
             List<SimpleLiteral> subjects, SimpleLiteral format, SimpleLiteral modified, SimpleLiteral date, SimpleLiteral _abstract,
-            SimpleLiteral creator, SimpleLiteral distributor, SimpleLiteral language, SimpleLiteral spatial, 
+            SimpleLiteral creator, SimpleLiteral publisher, SimpleLiteral language, SimpleLiteral spatial,
             SimpleLiteral references) {
         
         this.identifier = identifier;
@@ -308,7 +318,9 @@ public class DCMIRecordType extends AbstractRecordType implements DCMIRecord {
         if (creator != null) {
             this.creator     = Arrays.asList(creator);
         }
-        this.distributor = distributor;
+        if (publisher != null) {
+            this.publisher = Arrays.asList(publisher);
+        }
         this.language    = language;
         this.modified    = modified;
         if (_abstract != null) {
@@ -321,7 +333,7 @@ public class DCMIRecordType extends AbstractRecordType implements DCMIRecord {
     
     public DCMIRecordType(SimpleLiteral identifier, SimpleLiteral title, SimpleLiteral type, 
             List<SimpleLiteral> subjects, List<SimpleLiteral> format, SimpleLiteral modified, SimpleLiteral date, List<SimpleLiteral> _abstract,
-            List<SimpleLiteral> creator, SimpleLiteral distributor, SimpleLiteral language, SimpleLiteral spatial, 
+            List<SimpleLiteral> creator, SimpleLiteral publisher, SimpleLiteral language, SimpleLiteral spatial,
             SimpleLiteral references, List<SimpleLiteral> relation) {
         
         this.identifier = identifier;
@@ -334,7 +346,9 @@ public class DCMIRecordType extends AbstractRecordType implements DCMIRecord {
         
         this.subject     = subjects;
         this.creator     = creator;
-        this.distributor = distributor;
+        if (publisher != null) {
+            this.publisher = Arrays.asList(publisher);
+        }
         this.language    = language;
         this.modified    = modified;
         this._abstract   = _abstract;
@@ -447,14 +461,6 @@ public class DCMIRecordType extends AbstractRecordType implements DCMIRecord {
     
     public List<SimpleLiteral> getCreator() {
         return creator;
-    }
-    
-    public void setDistributor(SimpleLiteral distributor) {
-        this.distributor = distributor;
-    }
-    
-    public SimpleLiteral getDistributor() {
-        return distributor;
     }
     
     public void setLanguage(SimpleLiteral language) {
@@ -617,9 +623,6 @@ public class DCMIRecordType extends AbstractRecordType implements DCMIRecord {
                 s.append(sl).append('\n');
             }
         }
-        if (distributor != null) {
-            s.append("distributor: ").append(distributor).append('\n');
-        }
         if (date != null) {
             s.append("date: ").append(date).append('\n');
         }
@@ -700,7 +703,6 @@ public class DCMIRecordType extends AbstractRecordType implements DCMIRecord {
                    Utilities.equals(this.coverage,    that.coverage)    &&
                    Utilities.equals(this.date,        that.date)        &&
                    Utilities.equals(this.description, that.description) &&
-                   Utilities.equals(this.distributor, that.distributor) &&
                    Utilities.equals(this.format,      that.format)      &&
                    Utilities.equals(this.identifier,  that.identifier)  &&
                    Utilities.equals(this.language,    that.language)    &&
@@ -1366,8 +1368,9 @@ public class DCMIRecordType extends AbstractRecordType implements DCMIRecord {
      * @param dateAccepted the dateAccepted to set
      */
     public void setdateAccepted(SimpleLiteral dateAccepted) {
-         if (this.dateAccepted == null)
+         if (this.dateAccepted == null) {
             this.dateAccepted = new ArrayList<SimpleLiteral>();
+         }
         this.dateAccepted.add(dateAccepted);
     }
 
@@ -1438,5 +1441,97 @@ public class DCMIRecordType extends AbstractRecordType implements DCMIRecord {
          if (this.isReferencedBy == null)
             this.isReferencedBy = new ArrayList<SimpleLiteral>();
         this.isReferencedBy.add(isReferencedBy);
+    }
+
+    /**
+     * @return the instructionalMethod
+     */
+    public List<SimpleLiteral> getInstructionalMethod() {
+        return instructionalMethod;
+    }
+
+    /**
+     * @param instructionalMethod the instructionalMethod to set
+     */
+    public void setInstructionalMethod(List<SimpleLiteral> instructionalMethod) {
+        this.instructionalMethod = instructionalMethod;
+    }
+
+    /**
+     * @param isReferencedBy the isReferencedBy to set
+     */
+    public void setInstructionalMethod(SimpleLiteral instructionalMethod) {
+         if (this.instructionalMethod == null)
+            this.instructionalMethod = new ArrayList<SimpleLiteral>();
+        this.instructionalMethod.add(instructionalMethod);
+    }
+
+    /**
+     * @return the accrualMethod
+     */
+    public List<SimpleLiteral> getAccrualMethod() {
+        return accrualMethod;
+    }
+
+    /**
+     * @param accrualMethod the accrualMethod to set
+     */
+    public void setAccrualMethod(List<SimpleLiteral> accrualMethod) {
+        this.accrualMethod = accrualMethod;
+    }
+
+    /**
+     * @param isReferencedBy the isReferencedBy to set
+     */
+    public void setAccrualMethod(SimpleLiteral instructionalMethod) {
+         if (this.accrualMethod == null)
+            this.accrualMethod = new ArrayList<SimpleLiteral>();
+        this.accrualMethod.add(instructionalMethod);
+    }
+
+    /**
+     * @return the accrualPeriodicity
+     */
+    public List<SimpleLiteral> getAccrualPeriodicity() {
+        return accrualPeriodicity;
+    }
+
+    /**
+     * @param isReferencedBy the isReferencedBy to set
+     */
+    public void setAccrualPeriodicity(SimpleLiteral instructionalPeriodicity) {
+         if (this.accrualPeriodicity == null)
+            this.accrualPeriodicity = new ArrayList<SimpleLiteral>();
+        this.accrualPeriodicity.add(instructionalPeriodicity);
+    }
+
+    /**
+     * @param accrualPeriodicity the accrualPeriodicity to set
+     */
+    public void setAccrualPeriodicity(List<SimpleLiteral> accrualPeriodicity) {
+        this.accrualPeriodicity = accrualPeriodicity;
+    }
+
+    /**
+     * @return the accrualPolicy
+     */
+    public List<SimpleLiteral> getAccrualPolicy() {
+        return accrualPolicy;
+    }
+
+    /**
+     * @param accrualPolicy the accrualPolicy to set
+     */
+    public void setAccrualPolicy(List<SimpleLiteral> accrualPolicy) {
+        this.accrualPolicy = accrualPolicy;
+    }
+
+    /**
+     * @param isReferencedBy the isReferencedBy to set
+     */
+    public void setAccrualPolicy(SimpleLiteral instructionalPolicy) {
+         if (this.accrualPolicy == null)
+            this.accrualPolicy = new ArrayList<SimpleLiteral>();
+        this.accrualPolicy.add(instructionalPolicy);
     }
 }
