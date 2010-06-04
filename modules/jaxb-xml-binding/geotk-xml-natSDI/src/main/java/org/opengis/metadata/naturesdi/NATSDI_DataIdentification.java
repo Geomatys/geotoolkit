@@ -20,6 +20,7 @@
  */
 package org.opengis.metadata.naturesdi;
 
+import java.util.List;
 import org.opengis.metadata.identification.DataIdentification;
 
 /**
@@ -28,5 +29,5 @@ import org.opengis.metadata.identification.DataIdentification;
  */
 public interface NATSDI_DataIdentification extends DataIdentification {
 
-    NATSDI_SpeciesInformation getSpeciesInformation();
+    List<? extends NATSDI_SpeciesInformation> getSpeciesInformation();
 }

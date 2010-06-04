@@ -21,6 +21,7 @@
 
 package org.opengis.metadata.naturesdi;
 
+import java.util.List;
 import org.opengis.metadata.citation.Citation;
 
 /**
@@ -34,12 +35,12 @@ public interface NATSDI_SpeciesInformation {
     /**
      * @return the classificationSystemAuthority
      */
-    public Citation getClassificationSystemAuthority();
+    public List<? extends Citation> getClassificationSystemAuthority();
 
     /**
      * @return the authorCitation
      */
-    public Citation getAuthorCitation();
+    public List<? extends Citation> getAuthorCitation();
 
     /**
      * @return the speciesVernacularName

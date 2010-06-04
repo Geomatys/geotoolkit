@@ -21,6 +21,8 @@
 
 package org.geotoolkit.naturesdi;
 
+import java.util.ArrayList;
+import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -35,19 +37,30 @@ import org.geotoolkit.metadata.iso.identification.DefaultDataIdentification;
 @XmlRootElement(name="NATSDI_DataIdentification")
 public class NATSDI_DataIdentification extends DefaultDataIdentification implements org.opengis.metadata.naturesdi.NATSDI_DataIdentification {
 
-    private NATSDI_SpeciesInformation speciesInformation;
+    private List<NATSDI_SpeciesInformation> speciesInformation;
 
     /**
      * @return the speciesInformation
      */
-    public org.opengis.metadata.naturesdi.NATSDI_SpeciesInformation getSpeciesInformation() {
+    public List<? extends org.opengis.metadata.naturesdi.NATSDI_SpeciesInformation> getSpeciesInformation() {
         return speciesInformation;
     }
 
     /**
      * @param speciesInformation the speciesInformation to set
      */
-    public void setSpeciesInformation(org.opengis.metadata.naturesdi.NATSDI_SpeciesInformation speciesInformation) {
-        this.speciesInformation = (NATSDI_SpeciesInformation) speciesInformation;
+    public void setSpeciesInformation(List<? extends org.opengis.metadata.naturesdi.NATSDI_SpeciesInformation> speciesInformation) {
+        this.speciesInformation = (List<NATSDI_SpeciesInformation>) speciesInformation;
+    }
+
+    /**
+     * @param speciesInformation the speciesInformation to set
+     */
+    public void setSpeciesInformation(NATSDI_SpeciesInformation speciesInformation) {
+        if (speciesInformation == null) {
+            this.speciesInformation = new ArrayList<NATSDI_SpeciesInformation>();
+        }
+        this.speciesInformation.add(speciesInformation);
+
     }
 }

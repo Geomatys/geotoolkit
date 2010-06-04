@@ -21,6 +21,7 @@
 
 package org.geotoolkit.naturesdi;
 
+import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import org.opengis.metadata.citation.Citation;
@@ -34,9 +35,9 @@ public class NATSDI_SpeciesInformation implements org.opengis.metadata.naturesdi
 
     private NATSDI_TaxonomicClassification taxonomicClassification;
 
-    private Citation classificationSystemAuthority;
+    private List<? extends Citation> classificationSystemAuthority;
 
-    private Citation authorCitation;
+    private List<? extends Citation> authorCitation;
 
     private String speciesVernacularName;
 
@@ -44,8 +45,8 @@ public class NATSDI_SpeciesInformation implements org.opengis.metadata.naturesdi
 
     }
 
-    public NATSDI_SpeciesInformation(NATSDI_TaxonomicClassification taxonomicClassification, Citation classificationSystemAuthority,
-            Citation authorCitation, String speciesVernacularName) {
+    public NATSDI_SpeciesInformation(NATSDI_TaxonomicClassification taxonomicClassification, List<? extends Citation> classificationSystemAuthority,
+            List<? extends Citation> authorCitation, String speciesVernacularName) {
         this.authorCitation = authorCitation;
         this.classificationSystemAuthority = classificationSystemAuthority;
         this.speciesVernacularName = speciesVernacularName;
@@ -69,28 +70,28 @@ public class NATSDI_SpeciesInformation implements org.opengis.metadata.naturesdi
     /**
      * @return the classificationSystemAuthority
      */
-    public Citation getClassificationSystemAuthority() {
+    public List<? extends Citation> getClassificationSystemAuthority() {
         return classificationSystemAuthority;
     }
 
     /**
      * @param classificationSystemAuthority the classificationSystemAuthority to set
      */
-    public void setClassificationSystemAuthority(Citation classificationSystemAuthority) {
+    public void setClassificationSystemAuthority(List<? extends Citation> classificationSystemAuthority) {
         this.classificationSystemAuthority = classificationSystemAuthority;
     }
 
     /**
      * @return the authorCitation
      */
-    public Citation getAuthorCitation() {
+    public List<? extends Citation> getAuthorCitation() {
         return authorCitation;
     }
 
     /**
      * @param authorCitation the authorCitation to set
      */
-    public void setAuthorCitation(Citation authorCitation) {
+    public void setAuthorCitation(List<? extends Citation> authorCitation) {
         this.authorCitation = authorCitation;
     }
 
