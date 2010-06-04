@@ -11,9 +11,12 @@ import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLReporter;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
 import org.geotoolkit.data.model.XalFactory;
 import org.geotoolkit.data.model.XalFactoryDefault;
+import org.geotoolkit.data.model.kml.KmlException;
 import org.geotoolkit.data.model.xal.AddressDetails;
+import org.geotoolkit.data.model.xal.AddressIdentifier;
 import org.geotoolkit.data.model.xal.AddressLines;
 import org.geotoolkit.data.model.xal.AdministrativeArea;
 import org.geotoolkit.data.model.xal.Country;
@@ -21,6 +24,7 @@ import org.geotoolkit.data.model.xal.GenericTypedGrPostal;
 import org.geotoolkit.data.model.xal.GrPostal;
 import org.geotoolkit.data.model.xal.Locality;
 import org.geotoolkit.data.model.xal.PostalServiceElements;
+import org.geotoolkit.data.model.xal.SortingCode;
 import org.geotoolkit.data.model.xal.Thoroughfare;
 import org.geotoolkit.data.model.xal.Xal;
 import org.geotoolkit.data.model.xal.XalException;
@@ -41,6 +45,15 @@ public class XalReader extends StaxStreamReader{
         super();
         this.initSource(file);
     }
+    
+    public XalReader() {
+        super();
+        this.xalFactory = new XalFactoryDefault();
+    }
+
+    public void setReader(XMLStreamReader reader){this.reader = reader;}
+
+    public XMLStreamReader getReader(){return this.reader;}
 
     private void initSource(Object o) {
         // Choice of the StAX implementation of Java 6 interface
@@ -167,7 +180,7 @@ public class XalReader extends StaxStreamReader{
         String validFromDate = reader.getAttributeValue(null, ATT_VALID_FROM_DATE);
         String validToDate = reader.getAttributeValue(null, ATT_VALID_TO_DATE);
         String usage = reader.getAttributeValue(null, ATT_USAGE);
-        GrPostal grPostal = null;
+        GrPostal grPostal = this.readGrPostal();
         String addressDetailsKey = reader.getAttributeValue(null, ATT_ADDRESS_DETAILS_KEY);
 
         boucle:
@@ -210,10 +223,105 @@ public class XalReader extends StaxStreamReader{
                 addressType, currentStatus, validFromDate, validToDate, usage, grPostal, addressDetailsKey);
     }
 
-    private PostalServiceElements readPostalServiceElements(){return null;}
+    private PostalServiceElements readPostalServiceElements() throws XMLStreamException{
+        List<AddressIdentifier> addressIdentifiers = new ArrayList<AddressIdentifier>();
+        GenericTypedGrPostal endorsementLineCode = null;
+        GenericTypedGrPostal keyLineCode = null;
+        GenericTypedGrPostal barCode = null;
+        SortingCode sortingCode = null;
+        GenericTypedGrPostal addressLatitude = null;
+        GenericTypedGrPostal addressLatitudeDirection = null;
+        GenericTypedGrPostal addressLongitude = null;
+        GenericTypedGrPostal addressLongitudeDirection = null;
+        List<GenericTypedGrPostal> supplementaryPostalServiceData = new ArrayList<GenericTypedGrPostal>();
+        String type = reader.getAttributeValue(null, ATT_TYPE);
 
-    private GenericTypedGrPostal readGenericTypedGrPostal(){return null;}
+        boucle:
+        while (reader.hasNext()) {
 
+            switch (reader.next()) {
+                case XMLStreamConstants.START_ELEMENT:
+                    final String eName = reader.getLocalName();
+                    final String eUri = reader.getNamespaceURI();
+
+                    if (URI_XAL.equals(eUri)) {
+                        if (TAG_ADDRESS_IDENTIFIER.equals(eName)) {
+                            addressIdentifiers.add(this.readAddressIdentifier());
+                        } else if (TAG_ENDORSEMENT_LINE_CODE.equals(eName)){
+                            endorsementLineCode = this.readGenericTypedGrPostal();
+                        } else if (TAG_KEY_LINE_CODE.equals(eName)){
+                            keyLineCode = this.readGenericTypedGrPostal();
+                        } else if (TAG_BARCODE.equals(eName)){
+                            barCode = this.readGenericTypedGrPostal();
+                        } else if (TAG_SORTING_CODE.equals(eName)){
+                            sortingCode = this.readSortingCode();
+                        } else if (TAG_ADDRESS_LATITUDE.equals(eName)){
+                            addressLatitude = this.readGenericTypedGrPostal();
+                        } else if (TAG_ADDRESS_LATITUDE_DIRECTION.equals(eName)){
+                            addressLatitudeDirection = this.readGenericTypedGrPostal();
+                        } else if (TAG_ADDRESS_LONGITUDE.equals(eName)){
+                            addressLongitude = this.readGenericTypedGrPostal();
+                        } else if (TAG_ADDRESS_LONGITUDE_DIRECTION.equals(eName)){
+                            addressLongitudeDirection = this.readGenericTypedGrPostal();
+                        }
+                    }
+                    break;
+
+                case XMLStreamConstants.END_ELEMENT:
+                    if (TAG_POSTAL_SERVICE_ELEMENTS.equals(reader.getLocalName()) && URI_XAL.contains(reader.getNamespaceURI())) {
+                        break boucle;
+                    }
+                    break;
+            }
+
+        }
+
+        return this.xalFactory.createPostalServiceElements(addressIdentifiers, endorsementLineCode,
+                keyLineCode, barCode, sortingCode, addressLatitude, addressLatitudeDirection,
+                addressLongitude, addressLongitudeDirection, supplementaryPostalServiceData, type);
+    }
+
+    /**
+     *
+     * @return
+     * @throws XMLStreamException
+     */
+    private GenericTypedGrPostal readGenericTypedGrPostal() throws XMLStreamException{
+        String type = reader.getAttributeValue(null, ATT_TYPE);
+        GrPostal grPostal = this.readGrPostal();
+        String content = reader.getElementText();
+        return this.xalFactory.createGenericTypedGrPostal(type, grPostal, content);
+    }
+
+    /**
+     * 
+     * @return
+     * @throws XMLStreamException
+     */
+    private SortingCode readSortingCode() throws XMLStreamException{
+        String type = reader.getAttributeValue(null, ATT_TYPE);
+        GrPostal grPostal = this.readGrPostal();
+        return this.xalFactory.createSortingCode(type, grPostal);
+    }
+
+    /**
+     * 
+     * @return
+     * @throws XMLStreamException
+     */
+    private AddressIdentifier readAddressIdentifier() throws XMLStreamException{
+        String content = this.reader.getElementText();
+        String identifierType = reader.getAttributeValue(null, ATT_IDENTIFIER_TYPE);
+        String type = reader.getAttributeValue(null, ATT_TYPE);
+        GrPostal grPostal = this.readGrPostal();
+        return this.xalFactory.createAddressIdentifier(content, identifierType, type, grPostal);
+    }
+
+    /**
+     *
+     * @return
+     * @throws XMLStreamException
+     */
     private AddressLines readAddressLines() throws XMLStreamException{
         List<GenericTypedGrPostal> addressLines = new ArrayList<GenericTypedGrPostal>();
 
@@ -227,11 +335,9 @@ public class XalReader extends StaxStreamReader{
 
                     if (URI_XAL.equals(eUri)) {
                         if (TAG_ADDRESS_LINE.equals(eName)) {
-                            addressLines.add(this.readGenericTypedGrPostal(eName));
-                            System.out.println("coco");
-                        } else { System.out.println("youpi");}
+                            addressLines.add(this.readGenericTypedGrPostal());
+                        }
                     }
-                    System.out.println("ettc");
                     break;
 
                 case XMLStreamConstants.END_ELEMENT:
@@ -246,14 +352,10 @@ public class XalReader extends StaxStreamReader{
         return this.xalFactory.createAddressLines(addressLines);
     }
 
-    private GenericTypedGrPostal readGenericTypedGrPostal(String stopTag) throws XMLStreamException{
-        String type = reader.getAttributeValue(null, ATT_TYPE);
-        GrPostal grPostal = this.readGrPostal();
-        String content = reader.getElementText();
-
-        return this.xalFactory.createGenericTypedGrPostal(type, grPostal, content);
-    }
-
+    /**
+     *
+     * @return
+     */
     public GrPostal readGrPostal(){
         return this.xalFactory.createGrPostal(reader.getAttributeValue(null, ATT_CODE));
     }

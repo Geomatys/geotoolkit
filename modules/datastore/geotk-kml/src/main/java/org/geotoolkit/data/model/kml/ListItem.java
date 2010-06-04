@@ -3,14 +3,16 @@ package org.geotoolkit.data.model.kml;
 /**
  * <p>This enumeration maps listItemTypeEnumType type.</p>
  *
- * <br />&lt;simpleType name="listItemTypeEnumType">
- * <br />&lt;restriction base="string">
- * <br />&lt;enumeration value="radioFolder"/>
- * <br />&lt;enumeration value="check"/>
- * <br />&lt;enumeration value="checkHideChildren"/>
- * <br />&lt;enumeration value="checkOffOnly"/>
- * <br />&lt;/restriction>
- * <br />&lt;/simpleType>
+ * <pre>
+ * &lt;simpleType name="listItemTypeEnumType">
+ *  &lt;restriction base="string">
+ *      &lt;enumeration value="radioFolder"/>
+ *      &lt;enumeration value="check"/>
+ *      &lt;enumeration value="checkHideChildren"/>
+ *      &lt;enumeration value="checkOffOnly"/>
+ *  &lt;/restriction>
+ * &lt;/simpleType>
+ * </pre>
  *
  * @author Samuel Andrés
  */

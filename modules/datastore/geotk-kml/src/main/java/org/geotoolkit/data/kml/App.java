@@ -128,19 +128,19 @@ public class App {
         KmlWriter writerKML = new KmlWriter(output);
         writerKML.write(kml);
 
-        XalReader readerXAL = new XalReader(inputXAL);
-        Xal xal = readerXAL.read();
-        System.out.println(xal);
-        System.out.println(xal.getAddressDetails().size());
-        for (AddressDetails ad : xal.getAddressDetails()){
-            System.out.println(ad.getAddressType());
-            if (ad.getAddressLines() != null){
-                System.out.println("SIZE : "+ad.getAddressLines().getAddressLines().size());
-            }
-        }
-
-        XalWriter writerXal = new XalWriter(output);
-        writerXal.write(xal);
+//        XalReader readerXAL = new XalReader(inputXAL);
+//        Xal xal = readerXAL.read();
+//        System.out.println(xal);
+//        System.out.println(xal.getAddressDetails().size());
+//        for (AddressDetails ad : xal.getAddressDetails()){
+//            System.out.println(ad.getAddressType());
+//            if (ad.getAddressLines() != null){
+//                System.out.println("SIZE : "+ad.getAddressLines().getAddressLines().size());
+//            }
+//        }
+//
+//        XalWriter writerXal = new XalWriter(output);
+//        writerXal.write(xal);
 
     }
 

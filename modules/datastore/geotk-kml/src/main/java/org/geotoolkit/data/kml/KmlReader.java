@@ -106,6 +106,7 @@ import org.geotoolkit.data.model.kml.Vec2;
 import org.geotoolkit.data.model.kml.ViewRefreshMode;
 import org.geotoolkit.data.model.kml.ViewVolume;
 import org.geotoolkit.data.model.xal.AddressDetails;
+import org.geotoolkit.data.model.xal.XalException;
 import org.geotoolkit.data.model.xsd.SimpleType;
 import org.geotoolkit.xml.StaxStreamReader;
 import static org.geotoolkit.data.model.KmlModelConstants.*;
@@ -119,10 +120,12 @@ public class KmlReader extends StaxStreamReader {
     private XMLInputFactory inputFactory;//A SUPPRIMER
     private Kml root;
     private KmlFactory kmlFactory;
+    private XalReader xalReader;
 
     public KmlReader(File file) {
         super();
         this.initSource(file);
+        xalReader = new XalReader();
     }
 
     private void initSource(Object o) {
@@ -331,7 +334,6 @@ public class KmlReader extends StaxStreamReader {
                         }
                     }
                     if (URI_XAL.equals(eUri)) {
-
                         // ABSTRACT FEATURE
                         if (TAG_XAL_ADDRESS_DETAILS.equals(eName)) {
                             addressDetails = this.readXalAddressDetails();
@@ -3468,28 +3470,20 @@ public class KmlReader extends StaxStreamReader {
         return resultat;
     }
 
+    /**
+     * 
+     * @return
+     * @throws XMLStreamException
+     */
     private AddressDetails readXalAddressDetails() throws XMLStreamException {
+        this.xalReader.setReader(reader);
         AddressDetails resultat = null;
-        boucle:
-        while (reader.hasNext()) {
-
-            switch (reader.next()) {
-                case XMLStreamConstants.START_ELEMENT:
-                    final String eName = reader.getLocalName();
-                    final String eUri = reader.getNamespaceURI();
-
-                    if (URI_XAL.equals(eUri)) {
-                    }
-                    break;
-
-                case XMLStreamConstants.END_ELEMENT:
-                    if (TAG_XAL_ADDRESS_DETAILS.equals(reader.getLocalName()) && URI_XAL.contains(reader.getNamespaceURI())) {
-                        break boucle;
-                    }
-                    break;
-            }
-
+        try {
+            resultat = this.xalReader.readAddressDetails();
+        } catch (XalException ex) {
+            Logger.getLogger(KmlReader.class.getName()).log(Level.SEVERE, null, ex);
         }
+        this.reader = this.xalReader.getReader();
         return resultat;
     }
 

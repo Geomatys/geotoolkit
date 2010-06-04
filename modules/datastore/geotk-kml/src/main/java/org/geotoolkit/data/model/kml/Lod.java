@@ -6,23 +6,27 @@ import org.geotoolkit.data.model.xsd.SimpleType;
 /**
  * <p>This interface maps Lod element.</p>
  *
- * <br />&lt;element name="Lod" type="kml:LodType" substitutionGroup="kml:AbstractObjectGroup"/>
- * <br />&lt;complexType name="LodType" final="#all">
- * <br />&lt;complexContent>
- * <br />&lt;extension base="kml:AbstractObjectType">
- * <br />&lt;sequence>
- * <br />&lt;element ref="kml:minLodPixels" minOccurs="0"/>
- * <br />&lt;element ref="kml:maxLodPixels" minOccurs="0"/>
- * <br />&lt;element ref="kml:minFadeExtent" minOccurs="0"/>
- * <br />&lt;element ref="kml:maxFadeExtent" minOccurs="0"/>
- * <br />&lt;element ref="kml:LodSimpleExtensionGroup" minOccurs="0" maxOccurs="unbounded"/>
- * <br />&lt;element ref="kml:LodObjectExtensionGroup" minOccurs="0" maxOccurs="unbounded"/>
- * <br />&lt;/sequence>
- * <br />&lt;/extension>
- * <br />&lt;/complexContent>
- * <br />&lt;/complexType>
- * <br />&lt;element name="LodSimpleExtensionGroup" abstract="true" type="anySimpleType"/>
- * <br />&lt;element name="LodObjectExtensionGroup" abstract="true" substitutionGroup="kml:AbstractObjectGroup"/>
+ * <pre>
+ * &lt;element name="Lod" type="kml:LodType" substitutionGroup="kml:AbstractObjectGroup"/>
+ *
+ * &lt;complexType name="LodType" final="#all">
+ *  &lt;complexContent>
+ *      &lt;extension base="kml:AbstractObjectType">
+ *          &lt;sequence>
+ *              &lt;element ref="kml:minLodPixels" minOccurs="0"/>
+ *              &lt;element ref="kml:maxLodPixels" minOccurs="0"/>
+ *              &lt;element ref="kml:minFadeExtent" minOccurs="0"/>
+ *              &lt;element ref="kml:maxFadeExtent" minOccurs="0"/>
+ *              &lt;element ref="kml:LodSimpleExtensionGroup" minOccurs="0" maxOccurs="unbounded"/>
+ *              &lt;element ref="kml:LodObjectExtensionGroup" minOccurs="0" maxOccurs="unbounded"/>
+ *          &lt;/sequence>
+ *      &lt;/extension>
+ *  &lt;/complexContent>
+ * &lt;/complexType>
+ *
+ * &lt;element name="LodSimpleExtensionGroup" abstract="true" type="anySimpleType"/>
+ * &lt;element name="LodObjectExtensionGroup" abstract="true" substitutionGroup="kml:AbstractObjectGroup"/>
+ * </pre>
  *
  * @author Samuel Andrés
  */

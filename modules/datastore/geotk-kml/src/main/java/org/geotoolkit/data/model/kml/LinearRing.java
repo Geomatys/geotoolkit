@@ -6,23 +6,27 @@ import org.geotoolkit.data.model.xsd.SimpleType;
 /**
  * <p>This interface maps LinearRing element.</p>
  *
- * <br />&lt;element name="LinearRing" type="kml:LinearRingType" substitutionGroup="kml:AbstractGeometryGroup"/>
- * <br />&lt;complexType name="LinearRingType" final="#all">
- * <br />&lt;complexContent>
- * <br />&lt;extension base="kml:AbstractGeometryType">
- * <br />&lt;sequence>
- * <br />&lt;element ref="kml:extrude" minOccurs="0"/>
- * <br />&lt;element ref="kml:tessellate" minOccurs="0"/>
- * <br />&lt;element ref="kml:altitudeModeGroup" minOccurs="0"/>
- * <br />&lt;element ref="kml:coordinates" minOccurs="0"/>
- * <br />&lt;element ref="kml:LinearRingSimpleExtensionGroup" minOccurs="0" maxOccurs="unbounded"/>
- * <br />&lt;element ref="kml:LinearRingObjectExtensionGroup" minOccurs="0" maxOccurs="unbounded"/>
- * <br />&lt;/sequence>
- * <br />&lt;/extension>
- * <br />&lt;/complexContent>
- * <br />&lt;/complexType>
- * <br />&lt;element name="LinearRingSimpleExtensionGroup" abstract="true" type="anySimpleType"/>
- * <br />&lt;element name="LinearRingObjectExtensionGroup" abstract="true" substitutionGroup="kml:AbstractObjectGroup"/>
+ * <pre>
+ * &lt;element name="LinearRing" type="kml:LinearRingType" substitutionGroup="kml:AbstractGeometryGroup"/>
+ *
+ * &lt;complexType name="LinearRingType" final="#all">
+ *  &lt;complexContent>
+ *      &lt;extension base="kml:AbstractGeometryType">
+ *          &lt;sequence>
+ *              &lt;element ref="kml:extrude" minOccurs="0"/>
+ *              &lt;element ref="kml:tessellate" minOccurs="0"/>
+ *              &lt;element ref="kml:altitudeModeGroup" minOccurs="0"/>
+ *              &lt;element ref="kml:coordinates" minOccurs="0"/>
+ *              &lt;element ref="kml:LinearRingSimpleExtensionGroup" minOccurs="0" maxOccurs="unbounded"/>
+ *              &lt;element ref="kml:LinearRingObjectExtensionGroup" minOccurs="0" maxOccurs="unbounded"/>
+ *          &lt;/sequence>
+ *      &lt;/extension>
+ *  &lt;/complexContent>
+ * &lt;/complexType>
+ *
+ * &lt;element name="LinearRingSimpleExtensionGroup" abstract="true" type="anySimpleType"/>
+ * &lt;element name="LinearRingObjectExtensionGroup" abstract="true" substitutionGroup="kml:AbstractObjectGroup"/>
+ * </pre>
  *
  * @author Samuel Andrés
  */

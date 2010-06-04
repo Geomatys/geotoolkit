@@ -5,13 +5,14 @@ package org.geotoolkit.data.model.xal;
  *
  * <p>Used for sorting addresses. Values may for example be CEDEX 16 (France).</p>
  *
- * <br />&lt;xs:element name="SortingCode" minOccurs="0">
- * <br />&lt;xs:complexType>
- * <br />&lt;xs:attribute name="Type">
- * <br />&lt;xs:annotation>
- * <br />&lt;xs:xs:attributeGroup ref="grPostal"/>
- * <br />&lt;xs:/xs:complexType>
- * <br />&lt;xs:/xs:element>
+ * <pre>
+ * &lt;xs:element name="SortingCode" minOccurs="0">
+ *  &lt;xs:complexType>
+ *      &lt;xs:attribute name="Type">
+ *      &lt;xs:xs:attributeGroup ref="grPostal"/>
+ *  &lt;xs:/xs:complexType>
+ * &lt;xs:/xs:element>
+ * </pre>
  *
  * @author Samuel Andrés
  */

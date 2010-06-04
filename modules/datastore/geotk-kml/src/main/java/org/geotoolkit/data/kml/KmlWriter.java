@@ -104,20 +104,25 @@ import static org.geotoolkit.data.model.KmlModelConstants.*;
  */
 public class KmlWriter extends StaxStreamWriter {
 
-    public KmlWriter(File file){
-        this.initSource(file);
-    }
+    private XalWriter xalWriter;
 
-    private void initSource(Object o) {
-        System.setProperty("javax.xml.stream.XMLOutputFactory", "com.ctc.wstx.stax.WstxOutputFactory");
+    public KmlWriter(File file){
         try {
-            //this.outputFactory = XMLOutputFactory.newInstance();
-            this.setOutput(o);
-        } catch (IOException ex) {
-            Logger.getLogger(KmlWriter.class.getName()).log(Level.SEVERE, null, ex);
+            this.initSource(file);
+            this.xalWriter = new XalWriter();
         } catch (XMLStreamException ex) {
             Logger.getLogger(KmlWriter.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(KmlWriter.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+
+    private void initSource(Object o) throws XMLStreamException, IOException {
+        System.setProperty("javax.xml.stream.XMLOutputFactory", "com.ctc.wstx.stax.WstxOutputFactory");
+        //this.outputFactory = XMLOutputFactory.newInstance();
+        this.setOutput(o);
+        this.writer.setPrefix(PREFIX_XAL, URI_XAL);
+        this.writer.setPrefix(PREFIX_ATOM, URI_ATOM);
     }
 
     /**
@@ -130,15 +135,13 @@ public class KmlWriter extends StaxStreamWriter {
 
             // FACULTATIF : INDENTATION DE LA SORTIE
             //streamWriter = new IndentingXMLStreamWriter(streamWriter);
-
             writer.writeStartDocument("UTF-8", "1.0");
-
-            writer.writeStartElement(TAG_KML);
             writer.setDefaultNamespace(URI_KML);
-            writer.writeDefaultNamespace(URI_KML);
-            /*streamWriter.writeNamespace(PREFIX_ATOM, URI_ATOM);
-            streamWriter.writeNamespace(PREFIX_XAL, URI_XAL);
-            streamWriter.writeNamespace(PREFIX_XSI, URI_XSI);
+            writer.writeStartElement(URI_KML,TAG_KML);
+            //writer.writeDefaultNamespace(URI_KML);
+            writer.writeNamespace(PREFIX_ATOM, URI_ATOM);
+            writer.writeNamespace(PREFIX_XAL, URI_XAL);
+            /*streamWriter.writeNamespace(PREFIX_XSI, URI_XSI);
             streamWriter.writeAttribute(URI_XSI,
                     "schemaLocation",
                     URI_KML+" C:/Users/w7mainuser/Documents/OGC_SCHEMAS/sld/1.1.0/StyledLayerDescriptor.xsd");
@@ -645,8 +648,18 @@ public class KmlWriter extends StaxStreamWriter {
 
     }
 
+    /**
+     *
+     * @param details
+     */
     private void writeXalAddresDetails(AddressDetails details){
-
+        this.xalWriter.setWriter(writer);
+        try {
+            this.xalWriter.writeAddressDetails(details);
+        } catch (XMLStreamException ex) {
+            Logger.getLogger(KmlWriter.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        this.writer = this.xalWriter.getWriter();
     }
 
     /**
