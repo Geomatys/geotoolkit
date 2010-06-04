@@ -42,25 +42,15 @@ public class NATSDI_DataIdentification extends DefaultDataIdentification impleme
     /**
      * @return the speciesInformation
      */
-    public List<? extends org.opengis.metadata.naturesdi.NATSDI_SpeciesInformation> getSpeciesInformation() {
-        return speciesInformation;
+    public List<NATSDI_SpeciesInformation> getSpeciesInformation() {
+        return speciesInformation = nonNullList(speciesInformation, NATSDI_SpeciesInformation.class);
     }
 
     /**
      * @param speciesInformation the speciesInformation to set
      */
-    public void setSpeciesInformation(List<? extends org.opengis.metadata.naturesdi.NATSDI_SpeciesInformation> speciesInformation) {
-        this.speciesInformation = (List<NATSDI_SpeciesInformation>) speciesInformation;
+    public void setSpeciesInformation(List<NATSDI_SpeciesInformation> newValues) {
+        speciesInformation = copyList(newValues, speciesInformation, NATSDI_SpeciesInformation.class);
     }
 
-    /**
-     * @param speciesInformation the speciesInformation to set
-     */
-    public void setSpeciesInformation(NATSDI_SpeciesInformation speciesInformation) {
-        if (speciesInformation == null) {
-            this.speciesInformation = new ArrayList<NATSDI_SpeciesInformation>();
-        }
-        this.speciesInformation.add(speciesInformation);
-
-    }
 }

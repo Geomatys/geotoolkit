@@ -21,9 +21,11 @@
 
 package org.geotoolkit.naturesdi;
 
+import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import org.geotoolkit.metadata.iso.citation.DefaultCitation;
 import org.opengis.metadata.citation.Citation;
 
 /**
@@ -35,9 +37,9 @@ public class NATSDI_SpeciesInformation implements org.opengis.metadata.naturesdi
 
     private NATSDI_TaxonomicClassification taxonomicClassification;
 
-    private List<? extends Citation> classificationSystemAuthority;
+    private List<DefaultCitation> classificationSystemAuthority;
 
-    private List<? extends Citation> authorCitation;
+    private List<DefaultCitation> authorCitation;
 
     private String speciesVernacularName;
 
@@ -45,8 +47,8 @@ public class NATSDI_SpeciesInformation implements org.opengis.metadata.naturesdi
 
     }
 
-    public NATSDI_SpeciesInformation(NATSDI_TaxonomicClassification taxonomicClassification, List<? extends Citation> classificationSystemAuthority,
-            List<? extends Citation> authorCitation, String speciesVernacularName) {
+    public NATSDI_SpeciesInformation(NATSDI_TaxonomicClassification taxonomicClassification, List<DefaultCitation> classificationSystemAuthority,
+            List<DefaultCitation> authorCitation, String speciesVernacularName) {
         this.authorCitation = authorCitation;
         this.classificationSystemAuthority = classificationSystemAuthority;
         this.speciesVernacularName = speciesVernacularName;
@@ -78,7 +80,17 @@ public class NATSDI_SpeciesInformation implements org.opengis.metadata.naturesdi
      * @param classificationSystemAuthority the classificationSystemAuthority to set
      */
     public void setClassificationSystemAuthority(List<? extends Citation> classificationSystemAuthority) {
-        this.classificationSystemAuthority = classificationSystemAuthority;
+        this.classificationSystemAuthority = (List<DefaultCitation>) classificationSystemAuthority;
+    }
+
+    /**
+     * @param classificationSystemAuthority the classificationSystemAuthority to set
+     */
+    public void setClassificationSystemAuthority(DefaultCitation classificationSystemAuthority) {
+        if (this.classificationSystemAuthority == null) {
+            this.classificationSystemAuthority = new ArrayList<DefaultCitation>();
+        }
+        this.classificationSystemAuthority.add(classificationSystemAuthority);
     }
 
     /**
@@ -92,8 +104,19 @@ public class NATSDI_SpeciesInformation implements org.opengis.metadata.naturesdi
      * @param authorCitation the authorCitation to set
      */
     public void setAuthorCitation(List<? extends Citation> authorCitation) {
-        this.authorCitation = authorCitation;
+        this.authorCitation = (List<DefaultCitation>) authorCitation;
     }
+
+    /**
+     * @param authorCitation the authorCitation to set
+     */
+    public void setAuthorCitation(DefaultCitation authorCitation) {
+        if (this.authorCitation == null) {
+            this.authorCitation = new ArrayList<DefaultCitation>();
+        }
+        this.authorCitation.add(authorCitation);
+    }
+
 
     /**
      * @return the speciesVernacularName
