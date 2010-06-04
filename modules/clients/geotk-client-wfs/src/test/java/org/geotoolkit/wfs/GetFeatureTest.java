@@ -53,7 +53,7 @@ public class GetFeatureTest {
         }
         final String sUrl = url.toString();
         assertTrue(sUrl.startsWith("http://test.com?"));
-        assertTrue(sUrl.contains("TYPENAME=ut%3Avalue"));
+        assertTrue(sUrl.contains("TYPENAME=ut:value"));
         assertTrue(sUrl.contains("NAMESPACE=xmlns(ut=http://myqnametest.com)"));
         assertTrue(sUrl.contains("%3Cogc%3APropertyName%3EpropGeom%3C%2Fogc%3APropertyName%3E"));
         assertTrue(sUrl.contains("%3Cgml%3AEnvelope+srsName%3D%22CRS%3A84%22%3E"));

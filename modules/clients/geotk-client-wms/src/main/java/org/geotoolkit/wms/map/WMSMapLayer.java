@@ -47,7 +47,6 @@ import org.geotoolkit.map.DynamicMapLayer;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.operation.transform.LinearTransform;
 import org.geotoolkit.style.DefaultStyleFactory;
-import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.wms.GetLegendRequest;
 import org.geotoolkit.wms.GetMapRequest;
 import org.geotoolkit.wms.WebMapServer;
@@ -60,35 +59,36 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.TransformException;
 
+
 /**
+ * Map representation of a WMS layer.
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class WMSMapLayer extends AbstractMapLayer implements DynamicMapLayer{
-
+public class WMSMapLayer extends AbstractMapLayer implements DynamicMapLayer {
+    /**
+     * EPSG:4326 object.
+     */
     private static final CoordinateReferenceSystem EPSG_4326;
-
     static {
         CoordinateReferenceSystem crs = null;
         try {
             crs = CRS.decode("EPSG:4326");
         } catch (NoSuchAuthorityCodeException ex) {
-            Logger.getLogger(WMSMapLayer.class.getName()).log(Level.WARNING, null, ex);
+            LOGGER.log(Level.WARNING, ex.getLocalizedMessage(), ex);
         } catch (FactoryException ex) {
-            Logger.getLogger(WMSMapLayer.class.getName()).log(Level.WARNING, null, ex);
+            LOGGER.log(Level.WARNING, ex.getLocalizedMessage(), ex);
         }
         EPSG_4326 = crs;
     }
-
-
 
     /**
      * Configure the politic when the requested envelope is in CRS:84.
      * Some servers are not strict on axis order or crs definitions.
      * that's why we need this.
      */
-    public static enum CRS84Politic{
+    public static enum CRS84Politic {
         STRICT,
         CONVERT_TO_EPSG4326
     }
@@ -98,17 +98,19 @@ public class WMSMapLayer extends AbstractMapLayer implements DynamicMapLayer{
      * Some servers are not strict on axis order or crs definitions.
      * that's why we need this.
      */
-    public static enum EPSG4326Politic{
+    public static enum EPSG4326Politic {
         STRICT,
         CONVERT_TO_CRS84
     }
 
-
-    //TODO : we should use the envelope profided by the wms capabilities
+    //TODO : we should use the envelope provided by the wms capabilities
     private static final Envelope MAXEXTEND_ENV = new Envelope2D(DefaultGeographicCRS.WGS84, -180, -90, 360, 180);
 
+    /**
+     * The web map server to request.
+     */
     private final WebMapServer server;
-    private final Map<String,String> dims = new HashMap<String, String>();
+    private final Map<String, String> dims = new HashMap<String, String>();
     private String[] layers;
     private String styles = null;
     private String sld = null;
@@ -118,18 +120,18 @@ public class WMSMapLayer extends AbstractMapLayer implements DynamicMapLayer{
     private EPSG4326Politic epsg4326Politic = EPSG4326Politic.STRICT;
     private boolean useLocalReprojection = false;
 
-    public WMSMapLayer(WebMapServer server,String ... layers) {
+    public WMSMapLayer(final WebMapServer server, final String... layers) {
         super(new DefaultStyleFactory().style());
         this.server = server;
         this.layers = layers;
     }
 
-    public WebMapServer getServer(){
+    public WebMapServer getServer() {
         return server;
     }
 
-    public void setCrs84Politic(CRS84Politic crs84Politic) {
-        if(crs84Politic == null){
+    public void setCrs84Politic(final CRS84Politic crs84Politic) {
+        if (crs84Politic == null) {
             throw new NullPointerException("CRS84 politic can not be null.");
         }
         this.crs84Politic = crs84Politic;
@@ -139,8 +141,8 @@ public class WMSMapLayer extends AbstractMapLayer implements DynamicMapLayer{
         return crs84Politic;
     }
 
-    public void setEpsg4326Politic(EPSG4326Politic epsg4326Politic) {
-        if(epsg4326Politic == null){
+    public void setEpsg4326Politic(final EPSG4326Politic epsg4326Politic) {
+        if (epsg4326Politic == null) {
             throw new NullPointerException("EPSG4326 politic can not be null.");
         }
         this.epsg4326Politic = epsg4326Politic;
@@ -172,7 +174,7 @@ public class WMSMapLayer extends AbstractMapLayer implements DynamicMapLayer{
         return MAXEXTEND_ENV;
     }
 
-    public GetMapRequest createGetMapRequest(){
+    public GetMapRequest createGetMapRequest() {
         final GetMapRequest request = server.createGetMap();
         request.setLayers(layers);
         return request;
@@ -182,16 +184,16 @@ public class WMSMapLayer extends AbstractMapLayer implements DynamicMapLayer{
      * {@inheritDoc }
      */
     @Override
-    public URL query(final RenderingContext context) throws PortrayalException{
-        return query(context,null);
+    public URL query(final RenderingContext context) throws PortrayalException {
+        return query(context, null);
     }
 
     /**
      * {@inheritDoc }
      */
-    private URL query(final RenderingContext context, CoordinateReferenceSystem replaceCRS) throws PortrayalException{
+    private URL query(final RenderingContext context, CoordinateReferenceSystem replaceCRS) throws PortrayalException {
 
-        if( !(context instanceof RenderingContext2D)){
+        if (!(context instanceof RenderingContext2D)) {
             throw new PortrayalException("WMSLayer only support rendering for RenderingContext2D");
         }
 
@@ -200,7 +202,7 @@ public class WMSMapLayer extends AbstractMapLayer implements DynamicMapLayer{
 
         //looks like the reprojection will be handle by geotoolkit,
         //the distant server might not be very friendly or projection capabilities
-        if(replaceCRS != null){
+        if (replaceCRS != null) {
             try {
                 env = CRS.transform(env, replaceCRS);
             } catch (TransformException ex) {
@@ -225,30 +227,30 @@ public class WMSMapLayer extends AbstractMapLayer implements DynamicMapLayer{
         return null;
     }
 
-    public URL query(Envelope env, final Dimension rect) throws MalformedURLException  {
+    public URL query(Envelope env, final Dimension rect) throws MalformedURLException {
 
         //check the politics, the distant wms server might not be strict on axis orders
         // nor in it's crs definitions between CRS:84 and EPSG:4326
 
         //check CRS84 politic---------------------------------------------------
-        if(crs84Politic != CRS84Politic.STRICT){
-            if(CRS.equalsIgnoreMetadata(env.getCoordinateReferenceSystem(), DefaultGeographicCRS.WGS84)){
-                switch(crs84Politic){
-                    case CONVERT_TO_EPSG4326 :
+        if (crs84Politic != CRS84Politic.STRICT) {
+            if (CRS.equalsIgnoreMetadata(env.getCoordinateReferenceSystem(), DefaultGeographicCRS.WGS84)) {
+                switch (crs84Politic) {
+                    case CONVERT_TO_EPSG4326:
                         env = new Envelope2D(env);
-                        ((Envelope2D)env).setCoordinateReferenceSystem(EPSG_4326);
+                        ((Envelope2D) env).setCoordinateReferenceSystem(EPSG_4326);
                         break;
                 }
             }
         }
 
         //check EPSG4326 politic------------------------------------------------
-        if(epsg4326Politic != EPSG4326Politic.STRICT){
-            if(CRS.equalsIgnoreMetadata(env.getCoordinateReferenceSystem(), DefaultGeographicCRS.WGS84)){
-                switch(epsg4326Politic){
+        if (epsg4326Politic != EPSG4326Politic.STRICT) {
+            if (CRS.equalsIgnoreMetadata(env.getCoordinateReferenceSystem(), DefaultGeographicCRS.WGS84)) {
+                switch (epsg4326Politic) {
                     case CONVERT_TO_CRS84:
                         env = new Envelope2D(env);
-                        ((Envelope2D)env).setCoordinateReferenceSystem(DefaultGeographicCRS.WGS84);
+                        ((Envelope2D) env).setCoordinateReferenceSystem(DefaultGeographicCRS.WGS84);
                         break;
                 }
             }
@@ -258,7 +260,7 @@ public class WMSMapLayer extends AbstractMapLayer implements DynamicMapLayer{
         request.setEnvelope(env);
         request.setDimension(rect);
         request.setLayers(layers);
-        request.setStyles(styles==null ? "" : styles);
+        request.setStyles(styles == null ? "" : styles);
         request.setSld(sld);
         request.setSldBody(sldBody);
         request.setFormat(format);
@@ -271,7 +273,7 @@ public class WMSMapLayer extends AbstractMapLayer implements DynamicMapLayer{
      */
     @Override
     public void portray(RenderingContext context) throws PortrayalException {
-        if( !(context instanceof RenderingContext2D)){
+        if (!(context instanceof RenderingContext2D)) {
             throw new PortrayalException("WMSLayer only support rendering for RenderingContext2D");
         }
 
@@ -280,7 +282,7 @@ public class WMSMapLayer extends AbstractMapLayer implements DynamicMapLayer{
 
         //check if we must make the  coverage reprojection ourself--------------
         CoordinateReferenceSystem replace = null;
-        if(useLocalReprojection){
+        if (useLocalReprojection) {
             try {
                 if (!supportCRS(context2D.getCanvasObjectiveBounds().getCoordinateReferenceSystem())) {
                     replace = DefaultGeographicCRS.WGS84;
@@ -301,16 +303,16 @@ public class WMSMapLayer extends AbstractMapLayer implements DynamicMapLayer{
             throw new PortrayalException(io);
         }
 
-        if(image == null){
+        if (image == null) {
             throw new PortrayalException("WMS server didn't returned an image.");
         }
 
-        if(replace != null){
+        if (replace != null) {
             context2D.switchToObjectiveCRS();
 
             Envelope env = context2D.getCanvasObjectiveBounds();
             try {
-                env = CRS.transform(((RenderingContext2D)context).getCanvasObjectiveBounds(),replace);
+                env = CRS.transform(((RenderingContext2D) context).getCanvasObjectiveBounds(), replace);
             } catch (TransformException ex) {
                 Logger.getLogger(WMSMapLayer.class.getName()).log(Level.WARNING, null, ex);
             }
@@ -319,25 +321,25 @@ public class WMSMapLayer extends AbstractMapLayer implements DynamicMapLayer{
             GridCoverage2D dataCoverage = factory.create("Test", image, env);
 
             dataCoverage = (GridCoverage2D) Operations.DEFAULT.resample(
-                        dataCoverage,((RenderingContext2D)context).getCanvasObjectiveBounds(),Interpolation.getInstance(Interpolation.INTERP_BILINEAR));
-            
+                    dataCoverage, ((RenderingContext2D) context).getCanvasObjectiveBounds(), Interpolation.getInstance(Interpolation.INTERP_BILINEAR));
+
             final MathTransform2D trs2D = dataCoverage.getGridGeometry().getGridToCRS2D();
-            if(trs2D instanceof AffineTransform){
+            if (trs2D instanceof AffineTransform) {
                 g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
-                g2.drawRenderedImage(image, (AffineTransform)trs2D);
-            }else if (trs2D instanceof LinearTransform) {
+                g2.drawRenderedImage(image, (AffineTransform) trs2D);
+            } else if (trs2D instanceof LinearTransform) {
                 final LinearTransform lt = (LinearTransform) trs2D;
                 //final int col = lt.getMatrix().getNumCol();
                 //final int row = lt.getMatrix().getNumRow();
                 //TODO using only the first parameters of the linear transform
                 throw new PortrayalException("Could not render image, GridToCRS is a not an AffineTransform, found a " + trs2D.getClass());
-            }else{
-                throw new PortrayalException("Could not render image, GridToCRS is a not an AffineTransform, found a " + trs2D.getClass() );
+            } else {
+                throw new PortrayalException("Could not render image, GridToCRS is a not an AffineTransform, found a " + trs2D.getClass());
             }
 
 
 
-        }else{
+        } else {
             //switch to displayCRS
             context2D.switchToDisplayCRS();
 
@@ -346,13 +348,13 @@ public class WMSMapLayer extends AbstractMapLayer implements DynamicMapLayer{
             // to be larger than the canvas size, this is a normal behavior since
             // wms layer can not handle rotations.
             final Dimension dim = context2D.getCanvasDisplayBounds().getSize();
-            if(image != null && dim != null){
+            if (image != null && dim != null) {
                 double rotation = context2D.getCanvas().getController().getRotation();
-                g2.translate(dim.width/2, dim.height/2);
+                g2.translate(dim.width / 2, dim.height / 2);
                 g2.rotate(rotation);
-                g2.drawImage(image, -image.getWidth()/2, -image.getHeight()/2, null);
+                g2.drawImage(image, -image.getWidth() / 2, -image.getHeight() / 2, null);
                 g2.rotate(-rotation);
-                g2.translate(-dim.width/2, -dim.height/2);
+                g2.translate(-dim.width / 2, -dim.height / 2);
             }
         }
     }
@@ -375,21 +377,21 @@ public class WMSMapLayer extends AbstractMapLayer implements DynamicMapLayer{
         return buffer;
     }
 
-    public void setLayerNames(String ... names){
+    public void setLayerNames(String... names) {
         this.layers = names;
     }
 
-    public String[] getLayerNames(){
+    public String[] getLayerNames() {
         return layers.clone();
     }
 
-    public String getCombinedLayerNames(){
+    public String getCombinedLayerNames() {
         final StringBuilder sb = new StringBuilder();
-        for(String str : layers){
+        for (String str : layers) {
             sb.append(str).append(',');
         }
-        if(sb.toString().endsWith(",")){
-            sb.deleteCharAt(sb.length()-1);
+        if (sb.toString().endsWith(",")) {
+            sb.deleteCharAt(sb.length() - 1);
         }
         return sb.toString();
     }
@@ -420,7 +422,7 @@ public class WMSMapLayer extends AbstractMapLayer implements DynamicMapLayer{
 
     public void setFormat(String format) {
         this.format = format;
-        if(this.format == null){
+        if (this.format == null) {
             format = "image/png";
         }
     }
@@ -433,18 +435,17 @@ public class WMSMapLayer extends AbstractMapLayer implements DynamicMapLayer{
         return dims;
     }
 
-    private boolean supportCRS(CoordinateReferenceSystem crs) throws FactoryException{
+    private boolean supportCRS(CoordinateReferenceSystem crs) throws FactoryException {
         final AbstractLayer layer = server.getCapabilities().getLayerFromName(layers[0]);
 
         final String srid = CRS.lookupIdentifier(crs, true);
 
-        for(String str : layer.getCRS()){
-            if(srid.equalsIgnoreCase(str)){
+        for (String str : layer.getCRS()) {
+            if (srid.equalsIgnoreCase(str)) {
                 return true;
             }
         }
 
         return false;
     }
-
 }
