@@ -22,6 +22,7 @@ import java.awt.geom.AffineTransform;
 import java.io.File;
 import java.io.Closeable;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.Collection;
 import javax.imageio.ImageReader;
 import javax.imageio.IIOException;
@@ -50,6 +51,7 @@ import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.referencing.factory.AbstractAuthorityFactory;
+import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.resources.Errors;
 
 
@@ -64,7 +66,7 @@ import org.geotoolkit.resources.Errors;
  * the insertion in the database occurs.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.12
+ * @version 3.13
  *
  * @see CoverageDatabaseListener
  *
@@ -83,6 +85,11 @@ public final class NewGridCoverageReference {
         Citations.POSTGIS,
         Citations.EPSG
     };
+
+    /**
+     * The originating database.
+     */
+    private final SpatialDatabase database;
 
     /**
      * The series in which the images will be added, or {@code null} if unknown.
@@ -115,11 +122,20 @@ public final class NewGridCoverageReference {
     public final String extension;
 
     /**
-     * The name of the image format. It shall be one of the primary key values in the
+     * The name of the coverage format. It shall be one of the primary key values in the
      * {@code "Formats"} table. Note that this is not necessarly the same name than the
      * {@linkplain ImageReaderSpi#getFormatNames() image format name}.
+     * <p>
+     * The value of this field is the format which seems the best fit. A list of
+     * alternative formats can be obtained by {@link #getAlternativeFormats()}.
      */
     public String format;
+
+    /**
+     * Some formats which may be applicable as an alternative to {@code series.format}.
+     * This list is created by {@link #getAlternativeFormats()} when first needed.
+     */
+    private FormatEntry[] alternativeFormats;
 
     /**
      * The image reader provider.
@@ -226,6 +242,7 @@ public final class NewGridCoverageReference {
     private NewGridCoverageReference(final SpatialDatabase database, final ImageReader reader,
             Object input, final int imageIndex, final Tile tile) throws IOException, FactoryException
     {
+        this.database = database;
         /*
          * Get the input, which must be an instance of File.
          * Split that input file into the path components.
@@ -499,6 +516,38 @@ public final class NewGridCoverageReference {
             name = name + '.' + extension;
         }
         return new File(path, name);
+    }
+
+    /**
+     * Returns a list of formats which may be used as an alternative to {@link #format}.
+     * This method can be invoked from Graphical User Interface wanting to provide a
+     * choice to user.
+     *
+     * @return A list of formats which may be used as an alternative to {@link #format}.
+     * @throws CoverageStoreException If an error occured while fetching the list of
+     *         alternative formats from the database.
+     *
+     * @since 3.13
+     */
+    public String[] getAlternativeFormats() throws CoverageStoreException {
+        if (alternativeFormats == null) {
+            if (spi == null) {
+                alternativeFormats = new FormatEntry[] {};
+            } else try {
+                final FormatTable table = database.getTable(FormatTable.class);
+                table.setImageFormats(spi.getFormatNames());
+                final Collection<FormatEntry> formats = table.getEntries();
+                table.release();
+                alternativeFormats = formats.toArray(new FormatEntry[formats.size()]);
+            } catch (SQLException e) {
+                throw new CoverageStoreException(e);
+            }
+        }
+        final String[] names = new String[alternativeFormats.length];
+        for (int i=0; i<names.length; i++) {
+            names[i] = alternativeFormats[i].identifier.toString();
+        }
+        return names;
     }
 
     /**

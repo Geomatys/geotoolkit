@@ -80,6 +80,7 @@ public final class XMathTest {
     public void testCountDecimalFractionDigits() {
         assertEquals(0,   countDecimalFractionDigits(-65.0));
         assertEquals(1,   countDecimalFractionDigits(-65.5));
+        assertEquals(5,   countDecimalFractionDigits(  6.00125));
         assertEquals(6,   countDecimalFractionDigits( 65.123456));
         assertEquals(0,   countDecimalFractionDigits(1.23456E+200));
         assertEquals(1,   countDecimalFractionDigits(5E-1));

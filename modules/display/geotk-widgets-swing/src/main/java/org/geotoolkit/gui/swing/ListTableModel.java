@@ -329,8 +329,10 @@ public abstract class ListTableModel<E> extends AbstractTableModel {
      * @return {@code true} if the row order changed as a result of this method call.
      * @throws UnsupportedOperationException if the underlying {@linkplain #elements} list
      *         is not modifiable.
+     * @throws ClassCastException if the list contains elements that are not
+     *         <cite>mutually comparable</cite>.
      */
-    public boolean sort() throws UnsupportedOperationException {
+    public boolean sort() throws UnsupportedOperationException, ClassCastException {
         boolean changed = false;
         if (!elements.isEmpty()) {
             final E[] array = elements.toArray(createArray(elements.size()));

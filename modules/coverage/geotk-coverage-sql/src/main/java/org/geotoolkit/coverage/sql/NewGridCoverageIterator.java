@@ -196,6 +196,7 @@ final class NewGridCoverageIterator implements Iterator<NewGridCoverageReference
                     imageInput = ImageIO.createImageInputStream(input);
                 }
             }
+            // Need metadata, but no need for backward seeks.
             reader.setInput(imageInput, true, false);
         }
         return new NewGridCoverageReference(database, reader, input, imageIndex);

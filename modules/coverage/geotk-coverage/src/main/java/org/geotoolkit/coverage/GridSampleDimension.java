@@ -76,6 +76,8 @@ import org.geotoolkit.lang.Immutable;
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @version 3.11
  *
+ * @see org.geotoolkit.gui.swing.coverage.SampleDimensionPanel
+ *
  * @since 1.2
  * @module
  */

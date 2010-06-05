@@ -17,8 +17,14 @@
  */
 package org.geotoolkit.coverage.sql;
 
+import java.util.Set;
 import java.util.List;
+import java.util.Arrays;
 import java.util.Locale;
+import java.util.HashSet;
+import java.util.Iterator;
+import javax.imageio.spi.IIORegistry;
+import javax.imageio.spi.ImageReaderSpi;
 
 import org.geotoolkit.coverage.Category;
 import org.geotoolkit.coverage.GridSampleDimension;
@@ -31,6 +37,7 @@ import org.geotoolkit.util.collection.UnmodifiableArrayList;
 import org.geotoolkit.util.Utilities;
 
 import org.geotoolkit.math.XMath;
+import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.MeasurementRange;
 import org.geotoolkit.internal.sql.table.DefaultEntry;
 
@@ -39,7 +46,7 @@ import org.geotoolkit.internal.sql.table.DefaultEntry;
  * Information about an image format.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.12
+ * @version 3.13
  *
  * @since 3.09 (derived from Seagis)
  * @module
@@ -65,6 +72,13 @@ final class FormatEntry extends DefaultEntry {
      * it contains the {@code '/'} character.
      */
     public final String imageFormat;
+
+    /**
+     * Alternative image format names or MIME types for the same reader than the one
+     * identified by {@link #imageFormat}. This array is computed when first needed
+     * from the list of registered {@link ImageReaderSpi}.
+     */
+    private transient String[] imageFormats;
 
     /**
      * The sample dimensions for coverages encoded with this format, or {@code null} if undefined.
@@ -96,8 +110,8 @@ final class FormatEntry extends DefaultEntry {
     public final String paletteName;
 
     /**
-     * {@code GEOPHYSICS} if coverage to be read contains already geophysics values, or
-     * {@code
+     * {@code GEOPHYSICS} if the coverage to be read contains already geophysics values, or
+     * {@code PACKED} if the coverage to be read use packed integers.
      */
     public final ViewType viewType;
 
@@ -137,6 +151,35 @@ final class FormatEntry extends DefaultEntry {
         }
         this.paletteName = paletteName;
         this.viewType    = viewType;
+    }
+
+    /**
+     * Returns alternative image format names or MIME types for the same reader than the one
+     * identified by {@link #imageFormat}. This array is computed from the list of registered
+     * {@link ImageReaderSpi}.
+     *
+     * @return Alternative image format names. This method returns a direct reference to
+     *         its internal array - do not modify.
+     */
+    public synchronized String[] getImageFormats() {
+        if (imageFormats == null) {
+            final Set<String> names = new HashSet<String>();
+            for (final Iterator<ImageReaderSpi> it = IIORegistry.getDefaultInstance()
+                    .getServiceProviders(ImageReaderSpi.class, false); it.hasNext();)
+            {
+                final ImageReaderSpi spi = it.next();
+                final String[] candidates = spi.getFormatNames();
+                final String[] mimeTypes  = spi.getMIMETypes();
+                if (XArrays.containsIgnoreCase(candidates, imageFormat) ||
+                    XArrays.containsIgnoreCase(mimeTypes,  imageFormat))
+                {
+                    names.addAll(Arrays.asList(candidates));
+                    names.addAll(Arrays.asList(mimeTypes));
+                }
+            }
+            imageFormats = names.toArray(new String[names.size()]);
+        }
+        return imageFormats;
     }
 
     /**

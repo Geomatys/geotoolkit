@@ -1150,6 +1150,11 @@ public final class Vocabulary extends IndexedResourceBundle {
         public static final int OCCURENCE = 212;
 
         /**
+         * Offset
+         */
+        public static final int OFFSET = 349;
+
+        /**
          * Ok
          */
         public static final int OK = 213;
@@ -1258,6 +1263,8 @@ public final class Vocabulary extends IndexedResourceBundle {
          * Pixel size
          */
         public static final int PIXEL_SIZE = 234;
+
+        public static final int PIXEL_VALUES = 348;
 
         /**
          * {0} points on a {1} × {2} grid.
@@ -1400,6 +1407,11 @@ public final class Vocabulary extends IndexedResourceBundle {
         public static final int RUNNING_TASKS = 257;
 
         /**
+         * Sample dimensions
+         */
+        public static final int SAMPLE_DIMENSIONS = 351;
+
+        /**
          * Sample model
          */
         public static final int SAMPLE_MODEL = 258;
@@ -1413,6 +1425,11 @@ public final class Vocabulary extends IndexedResourceBundle {
          * Saving {0}…
          */
         public static final int SAVING_$1 = 260;
+
+        /**
+         * Scale
+         */
+        public static final int SCALE = 350;
 
         /**
          * Scale 1:{0} (approximative)
@@ -1608,6 +1625,11 @@ public final class Vocabulary extends IndexedResourceBundle {
          * Time zone
          */
         public static final int TIME_ZONE = 299;
+
+        /**
+         * Transfert function
+         */
+        public static final int TRANSFERT_FUNCTION = 347;
 
         /**
          * Transformation

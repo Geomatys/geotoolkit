@@ -1,0 +1,59 @@
+/*
+ *    Geotoolkit.org - An Open Source Java GIS Toolkit
+ *    http://www.geotoolkit.org
+ *
+ *    (C) 2010, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2010, Geomatys
+ *
+ *    This library is free software; you can redistribute it and/or
+ *    modify it under the terms of the GNU Lesser General Public
+ *    License as published by the Free Software Foundation;
+ *    version 2.1 of the License.
+ *
+ *    This library is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *    Lesser General Public License for more details.
+ */
+package org.geotoolkit.gui.swing.coverage;
+
+import javax.measure.unit.SI;
+
+import org.geotoolkit.coverage.Category;
+import org.geotoolkit.coverage.GridSampleDimension;
+import org.geotoolkit.test.gui.SwingBase;
+
+
+/**
+ * Tests the {@link SampleDimensionPanel}.
+ *
+ * @author Martin Desruisseaux (Geomatys)
+ * @version 3.13
+ *
+ * @since 3.13
+ */
+public final class SampleDimensionPanelTest extends SwingBase<SampleDimensionPanel> {
+    /**
+     * Constructs the test case.
+     */
+    public SampleDimensionPanelTest() {
+        super(SampleDimensionPanel.class);
+    }
+
+    /**
+     * Creates the widget.
+     */
+    @Override
+    protected SampleDimensionPanel create() {
+        final SampleDimensionPanel panel = new SampleDimensionPanel();
+        panel.setSampleDimension(new GridSampleDimension("Temperature",
+            new Category[] {
+                new Category("No data",     null, 0),
+                new Category("Land",        null, 7),
+                new Category("Clouds",      null, 3),
+                new Category("Temperature", null, 10, 100, 0.1, 5),
+                new Category("Foo",         null, 100, 120, -1, 3)
+            }, SI.CELSIUS));
+        return panel;
+    }
+}

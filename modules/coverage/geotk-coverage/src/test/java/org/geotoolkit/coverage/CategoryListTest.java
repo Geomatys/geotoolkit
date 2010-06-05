@@ -164,7 +164,7 @@ public final class CategoryListTest {
             assertSame(list.geophysics(true).geophysics(false), list);
             assertSame(list.geophysics(false), list);
 
-            final Range range = list.getRange();
+            final Range<?> range = list.getRange();
             assertEquals("min", 0,   ((Number)range.getMinValue()).doubleValue(), 0);
             assertEquals("max", 120, ((Number)range.getMaxValue()).doubleValue(), 0);
             assertTrue  ("min included", range.isMinIncluded() == true);

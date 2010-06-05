@@ -75,6 +75,8 @@ import org.geotoolkit.referencing.operation.transform.LinearTransform1D;
  * @version 3.11
  *
  * @see GridSampleDimension
+ * @see org.geotoolkit.gui.swing.coverage.CategoryRecord
+ * @see org.geotoolkit.gui.swing.coverage.CategoryTable
  *
  * @since 1.2
  * @module

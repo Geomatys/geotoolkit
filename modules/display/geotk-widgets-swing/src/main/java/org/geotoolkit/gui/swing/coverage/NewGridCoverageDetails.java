@@ -17,8 +17,10 @@
  */
 package org.geotoolkit.gui.swing.coverage;
 
+import java.awt.BorderLayout;
+import java.awt.Container;
 import java.io.File;
-import java.awt.Insets;
+import java.util.Locale;
 import java.awt.GridLayout;
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
@@ -27,12 +29,15 @@ import java.awt.event.ActionListener;
 import javax.swing.JPanel;
 import javax.swing.JLabel;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JTextField;
-import javax.swing.BorderFactory;
+import javax.swing.JScrollPane;
+import javax.swing.DefaultComboBoxModel;
 
+import org.jdesktop.swingx.JXTaskPane;
 import org.jdesktop.swingx.JXTitledPanel;
-import org.jdesktop.swingx.JXTitledSeparator;
+import org.jdesktop.swingx.JXTaskPaneContainer;
 
 import org.opengis.referencing.crs.VerticalCRS;
 import org.opengis.referencing.crs.ProjectedCRS;
@@ -41,6 +46,8 @@ import org.opengis.referencing.crs.CRSAuthorityFactory;
 
 import org.geotoolkit.resources.Widgets;
 import org.geotoolkit.resources.Vocabulary;
+import org.geotoolkit.util.logging.Logging;
+import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.sql.CoverageDatabaseEvent;
 import org.geotoolkit.coverage.sql.DatabaseVetoException;
 import org.geotoolkit.coverage.sql.NewGridCoverageReference;
@@ -54,7 +61,7 @@ import org.geotoolkit.internal.swing.SwingUtilities;
  * Users can verify and modify those information before they are written in the database.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.12
+ * @version 3.13
  *
  * @since 3.12
  * @module
@@ -79,7 +86,7 @@ final class NewGridCoverageDetails extends JComponent implements CoverageDatabas
     /**
      * The format (editable).
      */
-    private final JTextField format;
+    private final JComboBox format;
 
     /**
      * The combo box for horizontal CRS.
@@ -90,6 +97,11 @@ final class NewGridCoverageDetails extends JComponent implements CoverageDatabas
      * The combo box for vertical CRS.
      */
     private final AuthorityCodesComboBox verticalCRS;
+
+    /**
+     * The component for the definition of categories.
+     */
+    private final SampleDimensionPanel sampleDimensionEditor;
 
     /**
      * The coverage reference in process of being edited, or {@code null} if none.
@@ -105,25 +117,41 @@ final class NewGridCoverageDetails extends JComponent implements CoverageDatabas
     @SuppressWarnings("unchecked")
     NewGridCoverageDetails(final CoverageList owner, final CRSAuthorityFactory crsFactory) {
         this.owner = owner;
-        setLayout(new GridBagLayout());
-        setBorder(BorderFactory.createEmptyBorder(9, 9, 9, 9));
-        final Vocabulary resources = Vocabulary.getResources(getLocale());
-
+        setLayout(new BorderLayout());
+        final Locale     locale    = getLocale();
+        final Vocabulary resources = Vocabulary.getResources(locale);
         filename      = new JTextField();
-        format        = new JTextField();
+        format        = new JComboBox();
         horizontalCRS = new AuthorityCodesComboBox(crsFactory, GeographicCRS.class, ProjectedCRS.class);
         verticalCRS   = new AuthorityCodesComboBox(crsFactory, VerticalCRS.class);
-
+        sampleDimensionEditor = new SampleDimensionPanel();
         filename.setEditable(false);
+        format.setEditable(true);
 
+        final JXTaskPaneContainer container = new JXTaskPaneContainer();
         final GridBagConstraints c = new GridBagConstraints();
         c.gridy=0; c.fill=GridBagConstraints.HORIZONTAL;
-        addSeparator(resources.getString(Vocabulary.Keys.FILE), c);
-        addLabel(resources.getLabel(Vocabulary.Keys.NAME), filename, c);
-        addLabel(resources.getLabel(Vocabulary.Keys.FORMAT), format, c);
-        addSeparator(resources.getString(Vocabulary.Keys.COORDINATE_REFERENCE_SYSTEM), c);
-        addLabel(resources.getLabel(Vocabulary.Keys.HORIZONTAL), horizontalCRS, c);
-        addLabel(resources.getLabel(Vocabulary.Keys.VERTICAL),   verticalCRS,   c);
+
+        JXTaskPane pane = new JXTaskPane();
+        pane.setLayout(new GridBagLayout());
+        pane.setTitle(resources.getString(Vocabulary.Keys.FILE));
+        addRow(pane, resources.getLabel(Vocabulary.Keys.NAME), filename, c);
+        addRow(pane, resources.getLabel(Vocabulary.Keys.FORMAT), format, c);
+        container.add(pane);
+
+        c.gridy=0;
+        pane = new JXTaskPane();
+        pane.setLayout(new GridBagLayout());
+        pane.setTitle(resources.getString(Vocabulary.Keys.COORDINATE_REFERENCE_SYSTEM));
+        addRow(pane, resources.getLabel(Vocabulary.Keys.HORIZONTAL), horizontalCRS, c);
+        addRow(pane, resources.getLabel(Vocabulary.Keys.VERTICAL), verticalCRS, c);
+        container.add(pane);
+
+        c.gridy=0;
+        pane = new JXTaskPane();
+        pane.setTitle(resources.getString(Vocabulary.Keys.SAMPLE_DIMENSIONS));
+        pane.add(sampleDimensionEditor);
+        container.add(pane);
 
         final JButton okButton, cancelButton;
         okButton     = new JButton(resources.getString(Vocabulary.Keys.OK));
@@ -137,33 +165,23 @@ final class NewGridCoverageDetails extends JComponent implements CoverageDatabas
         buttonBar.add(okButton);
         buttonBar.add(cancelButton);
 
-        final Insets insets = c.insets;
-        insets.left=24; insets.right=24; insets.top=15; insets.bottom=9;
-        c.gridx=0; c.gridwidth=2;
-        c.weighty=1; c.fill=GridBagConstraints.NONE; c.anchor=GridBagConstraints.SOUTH;
-        add(buttonBar, c);
-    }
+        // For centering the buttons
+        final JComponent centered = new JPanel();
+        centered.setOpaque(false);
+        centered.add(buttonBar);
 
-    /**
-     * Adds a titles separator.
-     */
-    private void addSeparator(final String text, final GridBagConstraints c) {
-        final Insets insets = c.insets;
-        insets.left=0; insets.top=9; insets.bottom=3;
-        c.gridx=0; c.gridwidth=2;
-        add(new JXTitledSeparator(text), c);
-        insets.left=18; insets.top=0; insets.bottom=0;
-        c.gridy++; c.gridwidth=1;
+        add(new JScrollPane(container), BorderLayout.CENTER);
+        add(centered, BorderLayout.SOUTH);
     }
 
     /**
      * Adds a label associated with a field.
      */
-    private void addLabel(final String text, final JComponent value, final GridBagConstraints c) {
+    private static void addRow(final Container pane, final String text, final JComponent value, final GridBagConstraints c) {
         final JLabel label = new JLabel(text);
         label.setLabelFor(value);
-        c.gridx=0; c.weightx=0; add(label, c);
-        c.gridx++; c.weightx=1; add(value, c);
+        c.gridx=0; c.weightx=0; pane.add(label, c);
+        c.gridx++; c.weightx=1; pane.add(value, c);
         c.gridy++;
     }
 
@@ -198,8 +216,14 @@ final class NewGridCoverageDetails extends JComponent implements CoverageDatabas
         final File file = reference.getFile();
         SwingUtilities.invokeAndWait(new Runnable() {
             @Override public void run() {
+                try {
+                    format.setModel(new DefaultComboBoxModel(reference.getAlternativeFormats()));
+                } catch (CoverageStoreException e) {
+                    Logging.unexpectedException(NewGridCoverageReference.class, "getAlternativeFormats", e);
+                    // Keep the current combo box content unchanged.
+                }
                 filename.setText(file.getName());
-                format.setText(reference.format);
+                format.setSelectedItem(reference.format);
                 setSelectedCode(horizontalCRS, reference.horizontalSRID);
                 setSelectedCode(verticalCRS,   reference.verticalSRID);
                 owner.setSelectionPanel(CoverageList.CONTROLLER);
@@ -232,7 +256,7 @@ final class NewGridCoverageDetails extends JComponent implements CoverageDatabas
         final String action = event.getActionCommand();
         if (OK.equals(action)) {
             if (reference != null) try {
-                reference.format = format.getText();
+                reference.format = (String) format.getSelectedItem();
                 reference.horizontalSRID = getSelectedCode(horizontalCRS);
                 reference.verticalSRID   = getSelectedCode(verticalCRS);
             } catch (NumberFormatException e) {

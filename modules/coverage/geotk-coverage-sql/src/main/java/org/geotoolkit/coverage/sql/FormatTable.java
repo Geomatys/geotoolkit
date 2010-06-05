@@ -17,6 +17,8 @@
  */
 package org.geotoolkit.coverage.sql;
 
+import java.sql.Array;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -24,6 +26,7 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.internal.sql.table.Database;
+import org.geotoolkit.internal.sql.table.QueryType;
 import org.geotoolkit.internal.sql.table.SingletonTable;
 import org.geotoolkit.internal.sql.table.CatalogException;
 import org.geotoolkit.internal.sql.table.IllegalRecordException;
@@ -31,9 +34,12 @@ import org.geotoolkit.internal.sql.table.IllegalRecordException;
 
 /**
  * Connection to the table of image {@linkplain Format formats}.
+ * <p>
+ * <b>NOTE:</b> The inherited {@link #getEntries()} method returns only the
+ * entries using one of the formats listed to {@link #setImageFormats(String[]).
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.12
+ * @version 3.13
  *
  * @since 3.09 (derived from Seagis)
  * @module
@@ -43,6 +49,12 @@ final class FormatTable extends SingletonTable<FormatEntry> {
      * The sample dimensions table, created when first needed.
      */
     private transient SampleDimensionTable sampleDimensions;
+
+    /**
+     * The last value given to {@link #setImageFormats(String[]).
+     * Used in order to find similar formats with {@link #getEntries()}.
+     */
+    private String[] imageFormats;
 
     /**
      * Creates a format table.
@@ -81,6 +93,18 @@ final class FormatTable extends SingletonTable<FormatEntry> {
     }
 
     /**
+     * Sets the image formats for the entries to be returned by {@link #getEntries()}.
+     * The image formats array is typically provided by {@link FormatEntry#getImageFormats()}.
+     *
+     * @param formats The image formats. This method does not clone the provided array;
+     *        do not modify!
+     */
+    public void setImageFormats(final String... formats) {
+        imageFormats = formats;
+        fireStateChanged("imageFormats");
+    }
+
+    /**
      * Returns the {@link SampleDimensionTable} instance, creating it if needed.
      */
     private SampleDimensionTable getSampleDimensionTable() throws CatalogException {
@@ -102,8 +126,8 @@ final class FormatTable extends SingletonTable<FormatEntry> {
     @Override
     protected FormatEntry createEntry(final ResultSet results, final Comparable<?> identifier) throws SQLException {
         final FormatQuery query = (FormatQuery) super.query;
-        final int encodingIndex = indexOf(query.encoding);
-        final String format   = results.getString(indexOf(query.format));
+        final int encodingIndex = indexOf(query.packMode);
+        final String format   = results.getString(indexOf(query.plugin));
         final String encoding = results.getString(encodingIndex);
         final String comments = results.getString(indexOf(query.comments));
         final ViewType viewType;
@@ -130,5 +154,27 @@ final class FormatTable extends SingletonTable<FormatEntry> {
             paletteName = entry.paletteName;
         }
         return new FormatEntry(identifier, format, paletteName, sampleDimensions, viewType, comments);
+    }
+
+    /**
+     * Custom configuration of a statement which is about to be executed. In the particular case
+     * where the query type is {@code LIST}, this method configure the statement in order to search
+     * for formats using the same image plugin.
+     */
+    @Override
+    protected void configure(final QueryType type, final PreparedStatement statement) throws SQLException {
+        super.configure(type, statement);
+        switch (type) {
+            case LIST: {
+                if (imageFormats == null) {
+                    imageFormats = new String[0];
+                }
+                final Array array = statement.getConnection().createArrayOf("varchar", imageFormats);
+                final FormatQuery query = (FormatQuery) super.query;
+                statement.setArray(indexOf(query.byPlugin), array);
+                //array.free(); TODO: Revisit after we upgrated the PostgreSQL driver.
+                break;
+            }
+        }
     }
 }

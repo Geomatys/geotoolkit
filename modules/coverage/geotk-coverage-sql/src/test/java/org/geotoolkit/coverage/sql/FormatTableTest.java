@@ -33,7 +33,7 @@ import static org.junit.Assert.*;
  * Tests {@link FormatTable}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.12
+ * @version 3.13
  *
  * @since 3.09 (derived from Seagis)
  */
@@ -48,6 +48,22 @@ public class FormatTableTest extends CatalogTestBase {
      * The name of an other format, this one having two bands.
      */
     public static final String CURRENT = "Mars (u,v)";
+
+    /**
+     * Tests the list of identifiers.
+     *
+     * @throws SQLException If the test can't connect to the database.
+     */
+    @Test
+    public void testListID() throws SQLException {
+        final FormatTable table = getDatabase().getTable(FormatTable.class);
+        final Set<String> identifiers = table.getIdentifiers();
+        assertTrue(identifiers.contains(TEMPERATURE));
+        assertTrue(identifiers.contains(CURRENT));
+        assertTrue(identifiers.contains("TIFF"));
+        assertTrue(identifiers.contains("PNG"));
+        table.release();
+    }
 
     /**
      * Tests the {@link FormatTable#getEntry} and {@link FormatTable#getEntries} methods.
@@ -70,6 +86,7 @@ public class FormatTableTest extends CatalogTestBase {
         /*
          * Ask for every format, and ensure that our instance is in the list.
          */
+        table.setImageFormats(entry.getImageFormats());
         final Set<FormatEntry> entries = table.getEntries();
         assertFalse(entries.isEmpty());
         assertTrue(entries.contains(entry));
@@ -98,6 +115,7 @@ public class FormatTableTest extends CatalogTestBase {
         /*
          * Ask for every format, and ensure that our instance is in the list.
          */
+        table.setImageFormats(entry.getImageFormats());
         final Set<FormatEntry> entries = table.getEntries();
         assertFalse(entries.isEmpty());
         assertTrue(entries.contains(entry));

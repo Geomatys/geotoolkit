@@ -31,7 +31,7 @@ import static org.geotoolkit.internal.sql.table.QueryType.*;
  * The query to execute for a {@link FormatTable}.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.09
+ * @version 3.13
  *
  * @since 3.09 (derived from Seagis)
  * @module
@@ -40,12 +40,12 @@ final class FormatQuery extends Query {
     /**
      * Column to appear after the {@code "SELECT"} clause.
      */
-    final Column name, format, encoding, comments;
+    final Column name, plugin, packMode, comments;
 
     /**
      * Parameter to appear after the {@code "FROM"} clause.
      */
-    final Parameter byName;
+    final Parameter byName, byPlugin;
 
     /**
      * Creates a new query for the specified database.
@@ -55,11 +55,13 @@ final class FormatQuery extends Query {
     public FormatQuery(final Database database) {
         super(database, "Formats");
         final QueryType[] usage = {SELECT, LIST};
-        name     = addMandatoryColumn("name",     usage);
-        format   = addMandatoryColumn("plugin",   usage);
-        encoding = addMandatoryColumn("packMode", usage);
+        name     = addMandatoryColumn("name",     SELECT, LIST, LIST_ID);
+        plugin   = addMandatoryColumn("plugin",   usage);
+        packMode = addMandatoryColumn("packMode", usage);
         comments = addOptionalColumn ("comments", null, usage);
         byName   = addParameter(name, SELECT);
-        name.setOrdering(Ordering.ASC, LIST);
+        byPlugin = addParameter(plugin, LIST);
+        byPlugin.setSearchValue("ANY(?)", LIST);
+        name.setOrdering(Ordering.ASC, LIST, LIST_ID);
     }
 }

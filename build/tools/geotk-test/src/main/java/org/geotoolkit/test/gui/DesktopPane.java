@@ -25,6 +25,7 @@ import java.util.prefs.Preferences;
 import java.util.concurrent.CountDownLatch;
 import java.awt.Desktop;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowEvent;
@@ -42,7 +43,7 @@ import static org.junit.Assert.*;
  * The desktop pane where to put the widgets to be tested.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.12
+ * @version 3.13
  *
  * @since 3.05
  */
@@ -265,7 +266,9 @@ final class DesktopPane extends JDesktopPane {
                 title = String.valueOf(ci.getTitle());
                 c = ci.getRootPane().getComponent(0);
             }
-            titles[i] = title + " : " + c.getClass().getSimpleName();
+            final Dimension size = c.getSize();
+            titles[i] = title + " : " + c.getClass().getSimpleName() +
+                    '[' + size.width + " \u00D7 " + size.height + ']';
         }
         final JInternalFrame frame = new JInternalFrame("Windows", true, true, true, true);
         frame.add(new JScrollPane(new JList(titles)));

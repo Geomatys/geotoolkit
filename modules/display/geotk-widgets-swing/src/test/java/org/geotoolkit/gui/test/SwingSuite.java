@@ -20,6 +20,7 @@ package org.geotoolkit.gui.test;
 import org.junit.*;
 import org.geotoolkit.gui.swing.*;
 import org.geotoolkit.gui.swing.image.*;
+import org.geotoolkit.gui.swing.coverage.*;
 import org.geotoolkit.gui.swing.referencing.*;
 import org.geotoolkit.test.gui.SwingBase;
 
@@ -32,7 +33,7 @@ import org.geotoolkit.test.gui.SwingBase;
  * must be set to {@code true}: {@code org.geotoolkit.showWidgetTests}
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.05
+ * @version 3.13
  *
  * @since 3.05
  */
@@ -78,6 +79,10 @@ public final class SwingSuite extends SwingBase<About> {
             KernelEditorTest.class,
             GradientKernelEditorTest.class,
             OperationTreeBrowserTest.class,
+            null,
+
+            // Coverage-related widgets
+            SampleDimensionPanelTest.class,
             null,
 
             // CRS-related widgets
