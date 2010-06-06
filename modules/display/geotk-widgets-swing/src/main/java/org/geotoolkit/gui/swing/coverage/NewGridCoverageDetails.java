@@ -20,6 +20,7 @@ package org.geotoolkit.gui.swing.coverage;
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.io.File;
+import java.util.List;
 import java.util.Locale;
 import java.awt.GridLayout;
 import java.awt.GridBagLayout;
@@ -46,13 +47,16 @@ import org.opengis.referencing.crs.CRSAuthorityFactory;
 
 import org.geotoolkit.resources.Widgets;
 import org.geotoolkit.resources.Vocabulary;
+import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.logging.Logging;
+import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.sql.CoverageDatabaseEvent;
 import org.geotoolkit.coverage.sql.DatabaseVetoException;
 import org.geotoolkit.coverage.sql.NewGridCoverageReference;
 import org.geotoolkit.coverage.sql.CoverageDatabaseController;
 import org.geotoolkit.gui.swing.referencing.AuthorityCodesComboBox;
+import org.geotoolkit.internal.sql.table.NoSuchRecordException;
 import org.geotoolkit.internal.swing.SwingUtilities;
 
 
@@ -89,6 +93,17 @@ final class NewGridCoverageDetails extends JComponent implements CoverageDatabas
     private final JComboBox format;
 
     /**
+     * The currently selected format. Used only in order to avoid querying the database
+     * for format twice, and potentially popup two error dialog boxes for the same error.
+     */
+    private String selectedFormat;
+
+    /**
+     * A note (whatever the format is editable or not) about the selected format.
+     */
+    private final JLabel formatNote;
+
+    /**
      * The combo box for horizontal CRS.
      */
     private final AuthorityCodesComboBox horizontalCRS;
@@ -122,11 +137,17 @@ final class NewGridCoverageDetails extends JComponent implements CoverageDatabas
         final Vocabulary resources = Vocabulary.getResources(locale);
         filename      = new JTextField();
         format        = new JComboBox();
+        formatNote    = new JLabel();
         horizontalCRS = new AuthorityCodesComboBox(crsFactory, GeographicCRS.class, ProjectedCRS.class);
         verticalCRS   = new AuthorityCodesComboBox(crsFactory, VerticalCRS.class);
         sampleDimensionEditor = new SampleDimensionPanel();
         filename.setEditable(false);
         format.setEditable(true);
+        format.addActionListener(new ActionListener() {
+            @Override public void actionPerformed(final ActionEvent event) {
+                formatSelected();
+            }
+        });
 
         final JXTaskPaneContainer container = new JXTaskPaneContainer();
         final GridBagConstraints c = new GridBagConstraints();
@@ -137,6 +158,7 @@ final class NewGridCoverageDetails extends JComponent implements CoverageDatabas
         pane.setTitle(resources.getString(Vocabulary.Keys.FILE));
         addRow(pane, resources.getLabel(Vocabulary.Keys.NAME), filename, c);
         addRow(pane, resources.getLabel(Vocabulary.Keys.FORMAT), format, c);
+        addRow(pane, null, formatNote, c);
         container.add(pane);
 
         c.gridy=0;
@@ -178,10 +200,14 @@ final class NewGridCoverageDetails extends JComponent implements CoverageDatabas
      * Adds a label associated with a field.
      */
     private static void addRow(final Container pane, final String text, final JComponent value, final GridBagConstraints c) {
-        final JLabel label = new JLabel(text);
-        label.setLabelFor(value);
-        c.gridx=0; c.weightx=0; pane.add(label, c);
-        c.gridx++; c.weightx=1; pane.add(value, c);
+        c.gridx=0; c.weightx=0;
+        if (text != null) {
+            final JLabel label = new JLabel(text);
+            label.setLabelFor(value);
+            pane.add(label, c);
+        }
+        c.gridx++; c.weightx=1;
+        pane.add(value, c);
         c.gridy++;
     }
 
@@ -190,6 +216,50 @@ final class NewGridCoverageDetails extends JComponent implements CoverageDatabas
      */
     final JComponent createTitledPane() {
         return new JXTitledPanel(Widgets.getResources(getLocale()).getString(Widgets.Keys.CONFIRM_ADD_DATA), this);
+    }
+
+    /**
+     * Invoked when the user selected a format.
+     */
+    private void formatSelected() {
+        final String formatName = (String) format.getSelectedItem();
+        if (!Utilities.equals(formatName, selectedFormat)) {
+            List<GridSampleDimension> bands = null;
+            CoverageStoreException failure = null;
+            if (reference != null) {
+                reference.format = formatName;
+                selectedFormat = formatName;
+                try {
+                    bands = reference.getSampleDimensions();
+                } catch (CoverageStoreException e) {
+                    if (e.getCause() instanceof NoSuchRecordException) {
+                        /*
+                         * The user supplied a new format name. Do not modify the current sample
+                         * dimensions, since we assume that the user will want to edit them.
+                         */
+                        setFormatEditable(true);
+                        return;
+                    }
+                    failure = e;
+                }
+            }
+            final GridSampleDimension band = (bands != null && !bands.isEmpty()) ? bands.get(0) : null;
+            sampleDimensionEditor.setSampleDimension(band);
+            setFormatEditable(false);
+            if (failure != null) {
+                owner.exceptionOccured(failure);
+            }
+        }
+    }
+
+    /**
+     * Sets whatever the format described in the "Sample dimensions" section is editable.
+     * This also update the note label behind the "Format" field.
+     */
+    private void setFormatEditable(final boolean editable) {
+        formatNote.setText(Widgets.getResources(getLocale()).getString(
+                editable ? Widgets.Keys.NEW_FORMAT : Widgets.Keys.RENAME_FORMAT_FOR_EDIT));
+        sampleDimensionEditor.setEditable(editable);
     }
 
     /**
@@ -216,6 +286,7 @@ final class NewGridCoverageDetails extends JComponent implements CoverageDatabas
         final File file = reference.getFile();
         SwingUtilities.invokeAndWait(new Runnable() {
             @Override public void run() {
+                NewGridCoverageDetails.this.reference = reference; // Must be set first.
                 try {
                     format.setModel(new DefaultComboBoxModel(reference.getAlternativeFormats()));
                 } catch (CoverageStoreException e) {
@@ -228,7 +299,6 @@ final class NewGridCoverageDetails extends JComponent implements CoverageDatabas
                 setSelectedCode(verticalCRS,   reference.verticalSRID);
                 owner.setSelectionPanel(CoverageList.CONTROLLER);
                 owner.properties.setImageLater(file);
-                NewGridCoverageDetails.this.reference = reference;
             }
         });
         try {

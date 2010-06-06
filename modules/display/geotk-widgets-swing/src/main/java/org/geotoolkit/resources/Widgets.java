@@ -91,6 +91,11 @@ public final class Widgets extends IndexedResourceBundle {
         public static final int LAYER_ELEMENTS_$1 = 9;
 
         /**
+         * New format (editable).
+         */
+        public static final int NEW_FORMAT = 13;
+
+        /**
          * Remove all
          */
         public static final int REMOVE_ALL = 2;
@@ -99,6 +104,11 @@ public final class Widgets extends IndexedResourceBundle {
          * Remove selected elements
          */
         public static final int REMOVE_SELECTED_ELEMENTS = 3;
+
+        /**
+         * Rename this format if sample dimensions need to be edited.
+         */
+        public static final int RENAME_FORMAT_FOR_EDIT = 14;
 
         /**
          * Select a directory

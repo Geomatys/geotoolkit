@@ -33,6 +33,7 @@ import javax.measure.unit.Unit;
 
 import org.geotoolkit.coverage.Category;
 import org.geotoolkit.coverage.GridSampleDimension;
+import org.geotoolkit.internal.swing.table.JTables;
 import org.geotoolkit.resources.Vocabulary;
 
 
@@ -73,6 +74,7 @@ public class SampleDimensionPanel extends JComponent {
 
         categories = new CategoryTable(locale);
         final JTable table = new JTable(categories);
+        JTables.setHeaderCenterAlignment(table);
         categories.configure(table);
 
         name  = new JTextField();
@@ -122,5 +124,26 @@ public class SampleDimensionPanel extends JComponent {
         name.setText(description);
         units.setText(unitSymbol);
         categories.setCategories(cat);
+    }
+
+    /**
+     * Returns {@code true} if the sample dimension is editable.
+     *
+     * @return {@code true} if the sample dimension is editable.
+     */
+    public boolean isEditable() {
+        return categories.isEditable();
+    }
+
+    /**
+     * Sets whatever edition should be allowed for this component.
+     * Editions are enabled by default, like most <cite>Swing</cite> components.
+     *
+     * @param editable {@code false} for disabling edition, or {@code true} for re-enabling it.
+     */
+    public void setEditable(final boolean editable) {
+        name      .setEditable(editable);
+        units     .setEditable(editable);
+        categories.setEditable(editable);
     }
 }

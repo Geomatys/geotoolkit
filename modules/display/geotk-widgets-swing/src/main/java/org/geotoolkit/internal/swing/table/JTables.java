@@ -20,9 +20,11 @@ package org.geotoolkit.internal.swing.table;
 import java.util.List;
 import java.util.Arrays;
 import java.util.Comparator;
+import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
+import javax.swing.table.TableCellRenderer;
 import org.jdesktop.swingx.table.TableColumnExt;
 import org.jdesktop.swingx.table.TableColumnModelExt;
 
@@ -34,7 +36,7 @@ import org.geotoolkit.resources.Errors;
  * Utilities that apply to {@link JTable} and related classes.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.05
+ * @version 3.13
  *
  * @since 3.05
  * @module
@@ -45,6 +47,20 @@ public final class JTables {
      * Do not allow instantiation of this class.
      */
     private JTables() {
+    }
+
+    /**
+     * Sets the alignments of header labels to {@link JLabel#CENTER}, if possible.
+     *
+     * @param table The table for which to set the alignment of header label.
+     *
+     * @since 3.13
+     */
+    public static void setHeaderCenterAlignment(final JTable table) {
+        final TableCellRenderer renderer = table.getTableHeader().getDefaultRenderer();
+        if (renderer instanceof JLabel) {
+            ((JLabel) renderer).setHorizontalAlignment(JLabel.CENTER);
+        }
     }
 
     /**

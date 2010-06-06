@@ -20,7 +20,7 @@
  * Widgets related to {@linkplain org.geotoolkit.coverage.grid.GridCoverage2D grid coverages}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.12
+ * @version 3.13
  *
  * @since 3.11
  * @module

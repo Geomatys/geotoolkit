@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.Closeable;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Collection;
 import javax.imageio.ImageReader;
 import javax.imageio.IIOException;
@@ -52,6 +53,7 @@ import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.referencing.factory.AbstractAuthorityFactory;
 import org.geotoolkit.coverage.io.CoverageStoreException;
+import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.resources.Errors;
 
 
@@ -128,6 +130,9 @@ public final class NewGridCoverageReference {
      * <p>
      * The value of this field is the format which seems the best fit. A list of
      * alternative formats can be obtained by {@link #getAlternativeFormats()}.
+     *
+     * @see #getAlternativeFormats()
+     * @see #getSampleDimensions()
      */
     public String format;
 
@@ -548,6 +553,38 @@ public final class NewGridCoverageReference {
             names[i] = alternativeFormats[i].identifier.toString();
         }
         return names;
+    }
+
+    /**
+     * Returns the sample dimensions for coverages associated with the {@linkplain #format},
+     * or {@code null} if undefined. If non-null, then the list is garanteed to be non-empty
+     * and the list size is equals to the expected number of bands.
+     *
+     * {@note Empty lists are not allowed because our Image I/O framework interprets them as
+     *        "<cite>no bands</cite>", as opposed to "<cite>unknown bands</cite>". The later
+     *        is what we mean here.}
+     *
+     * Each {@code GridSampleDimension} specifies how to convert pixel values to geophysics values,
+     * or conversely. Their type (geophysics or not) is format dependent. For example coverages
+     * read from PNG files will typically store their data as integer values (non-geophysics),
+     * while coverages read from ASCII files will often store their pixel values as real numbers
+     * (geophysics values).
+     *
+     * @return The sample dimensions, or {@code null} if none.
+     * @throws CoverageStoreException If an error occured while reading from the database.
+     *
+     * @since 3.13
+     */
+    public List<GridSampleDimension> getSampleDimensions() throws CoverageStoreException {
+        final FormatEntry entry;
+        try {
+            final FormatTable table = database.getTable(FormatTable.class);
+            entry = table.getEntry(format);
+            table.release();
+        } catch (SQLException e) {
+            throw new CoverageStoreException(e);
+        }
+        return entry.sampleDimensions;
     }
 
     /**

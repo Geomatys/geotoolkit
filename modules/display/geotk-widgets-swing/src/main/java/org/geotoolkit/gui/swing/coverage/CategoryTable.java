@@ -64,17 +64,26 @@ import static org.geotoolkit.gui.swing.coverage.CategoryRecord.*;
  * The default implementation provides the following columns (implementors can subclass this
  * model if they want to provides additional columns):
  * <p>
- * <ol>
+ * <ul>
  *   <li>The category name.</li>
- *   <li>The minimal sample value.</li>
- *   <li>The maximal sample value.</li>
- *   <li>The minimal geophysics value.</li>
- *   <li>The maximal geophysics value.</li>
- *   <li>The {@linkplain TransferFunctionType transfer function type}.</li>
- *   <li>The offset term in the transfer function.</li>
- *   <li>The scale term in the transfer function.</li>
+ *   <li>Range of sample values:
+ *   <ul>
+ *     <li>The minimal sample value.</li>
+ *     <li>The maximal sample value.</li>
+ *   </ul></li>
+ *   <li>Range of geophysics values:
+ *   <ul>
+ *     <li>The minimal geophysics value.</li>
+ *     <li>The maximal geophysics value.</li>
+ *   </ul></li>
+ *   <li>Transfert function:
+ *   <ul>
+ *     <li>The {@linkplain TransferFunctionType transfer function type}.</li>
+ *     <li>The offset term in the transfer function.</li>
+ *     <li>The scale term in the transfer function.</li>
+ *   </ul></li>
  *   <li>The color palette name, or a single color.</li>
- * </ol>
+ * </ul>
  * <p>
  * Some of the above-cited columns are inter-dependents. For example if the value of the
  * offset or scale factor is modified, then the minimal and maximal geophysics values will
@@ -135,6 +144,12 @@ public class CategoryTable extends ListTableModel<CategoryRecord> {
      * The column headers.
      */
     private final String[] headers;
+
+    /**
+     * {@code true} if the table is editable.
+     * Every {@code CategoryTable} instances are editable by default.
+     */
+    private boolean editable = true;
 
     /**
      * Creates a new, initially empty, table.
@@ -315,7 +330,7 @@ public class CategoryTable extends ListTableModel<CategoryRecord> {
 
     /**
      * Returns {@code true} if the given cell is editable. The default implementation
-     * returns {@code true} for every cells.
+     * returns the same value than {@link #isEditable()} for every cells.
      *
      * @param  row    The index of the row being queried.
      * @param  column The index of the column being queried.
@@ -323,7 +338,27 @@ public class CategoryTable extends ListTableModel<CategoryRecord> {
      */
     @Override
     public boolean isCellEditable(int row, int column) {
-        return true;
+        return editable;
+    }
+
+    /**
+     * Returns {@code true} if this table is editable.
+     * Every {@code CategoryTable} instances are editable by default.
+     *
+     * @return {@code true} if this table is editable.
+     */
+    public boolean isEditable() {
+        return editable;
+    }
+
+    /**
+     * Sets whatever edition should be allowed for any cell in this table.
+     * Editions are enabled by default, like most <cite>Swing</cite> components.
+     *
+     * @param editable {@code false} for disabling edition, or {@code true} for re-enabling it.
+     */
+    public void setEditable(final boolean editable) {
+        this.editable = editable;
     }
 
     /**
