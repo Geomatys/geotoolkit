@@ -18,6 +18,7 @@ package org.geotoolkit.natureSDI;
 
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -60,20 +61,18 @@ public class NatureSDIXMLBindingTest {
     @Ignore
     public void marshallingTest() throws JAXBException {
 
-        /*Marshaller marshaller = pool.acquireMarshaller();
+        Marshaller marshaller = pool.acquireMarshaller();
         NATSDI_DataIdentification identInfo = new NATSDI_DataIdentification();
 
-        Map<String, Object> metamap = identInfo.asMap();
-
+        
 
         NATSDI_SpeciesInformation inf = new NATSDI_SpeciesInformation();
 
         inf.setSpeciesVernacularName("poissons");
 
-        final List<NATSDI_SpeciesInformation> infs = Collections.singletonList(inf);
-        metamap.put("speciesInformation", infs);
+        //metamap.put("speciesInformation", inf);
         
-        identInfo.setSpeciesInformation(infs);
+        identInfo.setSpeciesInformation(Arrays.asList(inf));
 
         StringWriter sw = new StringWriter();
         marshaller.marshal(identInfo, sw);
@@ -82,7 +81,7 @@ public class NatureSDIXMLBindingTest {
 
         System.out.println(result);
         
-        we remove the first line
+        //we remove the first line
         result = result.substring(result.indexOf("?>") + 3);
         //we remove the xmlmns
         result = result.replace(" xmlns:gml=\"http://www.opengis.net/gml\"", "");
@@ -95,7 +94,7 @@ public class NatureSDIXMLBindingTest {
                            "</gml:Envelope>" + '\n' ;
         assertEquals(expResult, result);
 
-        pool.release(marshaller);*/
+        pool.release(marshaller);
 
     }
 
@@ -110,7 +109,7 @@ public class NatureSDIXMLBindingTest {
         Unmarshaller unmarshaller = pool.acquireUnmarshaller();
         String xml = 
         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>" + '\n' +
-        "<ns6:NATSDI_DataIdentification xmlns:gco=\"http://www.isotc211.org/2005/gco\" xmlns:ns6=\"http://www.mdweb-project.org/files/xsd/\" >" + '\n' +
+        "<ns6:NATSDI_DataIdentification xmlns:gco=\"http://www.isotc211.org/2005/gco\" xmlns:ns6=\"http://www.mdweb-project.org/files/xsd\" >" + '\n' +
         "<ns6:speciesInformation>" + '\n' +
         "    <ns6:speciesVernacularName>" + '\n' +
         "        <gco:CharacterString>poissons</gco:CharacterString>" + '\n' +

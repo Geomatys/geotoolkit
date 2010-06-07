@@ -26,6 +26,8 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import org.geotoolkit.internal.jaxb.naturesdi.SpeciesInformationAdapter;
 import org.geotoolkit.metadata.iso.identification.DefaultDataIdentification;
 
 
@@ -37,6 +39,7 @@ import org.geotoolkit.metadata.iso.identification.DefaultDataIdentification;
 @XmlRootElement(name="NATSDI_DataIdentification")
 public class NATSDI_DataIdentification extends DefaultDataIdentification implements org.opengis.metadata.naturesdi.NATSDI_DataIdentification {
 
+    @XmlJavaTypeAdapter(SpeciesInformationAdapter.class)
     private List<NATSDI_SpeciesInformation> speciesInformation;
 
     /**

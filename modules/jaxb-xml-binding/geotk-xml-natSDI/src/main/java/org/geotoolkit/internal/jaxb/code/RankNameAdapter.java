@@ -76,7 +76,7 @@ public final class RankNameAdapter extends CodeListAdapter<RankNameAdapter, NATS
      * @return The value to be marshalled.
      */
     @Override
-    @XmlElement(name = "NATSDI_RankNameCode")
+    @XmlElement(name = "NATSDI_RankNameCode", namespace="http://www.mdweb-project.org/files/xsd")
     public CodeListProxy getElement() {
         return proxy;
     }

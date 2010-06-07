@@ -25,6 +25,8 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import org.geotoolkit.internal.jaxb.naturesdi.TaxonomicClassificationAdapter;
 import org.geotoolkit.metadata.iso.citation.DefaultCitation;
 import org.opengis.metadata.citation.Citation;
 
@@ -35,6 +37,7 @@ import org.opengis.metadata.citation.Citation;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class NATSDI_SpeciesInformation implements org.opengis.metadata.naturesdi.NATSDI_SpeciesInformation {
 
+    @XmlJavaTypeAdapter(TaxonomicClassificationAdapter.class)
     private NATSDI_TaxonomicClassification taxonomicClassification;
 
     private List<DefaultCitation> classificationSystemAuthority;

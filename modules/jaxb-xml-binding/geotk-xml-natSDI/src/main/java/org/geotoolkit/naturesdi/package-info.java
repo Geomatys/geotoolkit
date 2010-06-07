@@ -17,7 +17,7 @@
  */
 
 
-@XmlSchema(elementFormDefault = XmlNsForm.QUALIFIED, namespace = "http://www.mdweb-project.org/files/xsd/", xmlns = {
+@XmlSchema(elementFormDefault = XmlNsForm.QUALIFIED, namespace = "http://www.mdweb-project.org/files/xsd", xmlns = {
     @XmlNs(prefix = "gmd", namespaceURI = Namespaces.GMD),
     @XmlNs(prefix = "gco", namespaceURI = Namespaces.GCO),
     @XmlNs(prefix = "xsi", namespaceURI = Namespaces.XSI)
