@@ -1221,11 +1221,21 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
                             closeSafe(ps);
                         }
                     } else {
+                        //this technic must be generalize to all primary keys, must revisite tests for this
                         String sql = insertSQL(featureType, feature, nextKeyValues, cx);
                         getLogger().log(Level.FINE, "Inserting new feature: {0}", sql);
 
-                        //TODO: execute in batch to improve performance?
-                        st.execute(sql);
+                        if(nextKeyValues.isEmpty() || nextKeyValues.get(0) == null){
+                            st.execute(sql,Statement.RETURN_GENERATED_KEYS);
+                            ResultSet rs = st.getGeneratedKeys();
+                            rs.next();
+                            final int id = rs.getInt(1);
+                            nextKeyValues.set(0, id);
+                            rs.close();
+                            feature.setAttribute(key.getColumns().get(0).getName(), id);
+                        }else{
+                            st.execute(sql);
+                        }
                     }
 
                     //report the feature id as user data since we cant set the fid
@@ -2472,7 +2482,7 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
             sqlType.append(',');
             sqlValues.append(',');
         }
-        
+
         sqlType.setLength(sqlType.length() - 1);
         sqlValues.setLength(sqlValues.length() - 1);
         sqlValues.append(")");
