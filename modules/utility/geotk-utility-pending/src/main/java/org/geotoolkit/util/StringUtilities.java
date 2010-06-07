@@ -19,7 +19,6 @@ package org.geotoolkit.util;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -351,7 +350,15 @@ public final class StringUtilities {
         if (values == null || values.length == 0) {
             return "";
         }
-        return toCommaSeparatedValues(Arrays.asList(values));
+        final StringBuilder builder = new StringBuilder();
+        final int size = values.length;
+        for (int i=0; i<size; i++) {
+            if (i>0) {
+                builder.append(',');
+            }
+            builder.append(values[i]);
+        }
+        return builder.toString();
     }
 
     /**

@@ -29,7 +29,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.media.jai.Interpolation;
 import org.geotoolkit.coverage.CoverageFactoryFinder;
@@ -47,6 +46,7 @@ import org.geotoolkit.map.DynamicMapLayer;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.operation.transform.LinearTransform;
 import org.geotoolkit.style.DefaultStyleFactory;
+import org.geotoolkit.util.StringUtilities;
 import org.geotoolkit.wms.GetLegendRequest;
 import org.geotoolkit.wms.GetMapRequest;
 import org.geotoolkit.wms.WebMapServer;
@@ -64,6 +64,7 @@ import org.opengis.referencing.operation.TransformException;
  * Map representation of a WMS layer.
  *
  * @author Johann Sorel (Geomatys)
+ * @author Cédric Briançon (Geomatys)
  * @module pending
  */
 public class WMSMapLayer extends AbstractMapLayer implements DynamicMapLayer {
@@ -110,12 +111,37 @@ public class WMSMapLayer extends AbstractMapLayer implements DynamicMapLayer {
      * The web map server to request.
      */
     private final WebMapServer server;
+
+    /**
+     * Map for optional dimensions specified for the GetMap request.
+     */
     private final Map<String, String> dims = new HashMap<String, String>();
+
+    /**
+     * The layers to request.
+     */
     private String[] layers;
-    private String styles = null;
+
+    /**
+     * The styles associated to the {@link #layers}.
+     */
+    private String[] styles;
+
+    /**
+     * Optional SLD file for the layer to request.
+     */
     private String sld = null;
+
+    /**
+     * Optional SLD body directly in the request.
+     */
     private String sldBody = null;
+
+    /**
+     * Output format of the response.
+     */
     private String format = "image/png";
+
     private CRS84Politic crs84Politic = CRS84Politic.STRICT;
     private EPSG4326Politic epsg4326Politic = EPSG4326Politic.STRICT;
     private boolean useLocalReprojection = false;
@@ -126,6 +152,9 @@ public class WMSMapLayer extends AbstractMapLayer implements DynamicMapLayer {
         this.layers = layers;
     }
 
+    /**
+     * Returns the {@link WebMapServer} to request. Can't be {@code null}.
+     */
     public WebMapServer getServer() {
         return server;
     }
@@ -174,6 +203,12 @@ public class WMSMapLayer extends AbstractMapLayer implements DynamicMapLayer {
         return MAXEXTEND_ENV;
     }
 
+    /**
+     * Creates the {@linkplain GetMapRequest get map request} object.
+     *
+     * @return A {@linkplain GetMapRequest get map request} object containing the
+     *         predefined parameters.
+     */
     public GetMapRequest createGetMapRequest() {
         final GetMapRequest request = server.createGetMap();
         request.setLayers(layers);
@@ -210,7 +245,6 @@ public class WMSMapLayer extends AbstractMapLayer implements DynamicMapLayer {
             }
         }
 
-
         Shape rect = context2D.getCanvasDisplayBounds();
 
         final double rotation = context2D.getCanvas().getController().getRotation();
@@ -227,6 +261,16 @@ public class WMSMapLayer extends AbstractMapLayer implements DynamicMapLayer {
         return null;
     }
 
+    /**
+     * Gives a {@linkplain GetMapRequest get map request} for the given envelope and
+     * output dimension. The default format will be {@code image/png} if the
+     * {@link #setFormat(java.lang.String)} has not been called.
+     *
+     * @param env A valid envlope to request.
+     * @param rect The dimension for the output response.
+     * @return A {@linkplain GetMapRequest get map request}.
+     * @throws MalformedURLException if the generated url is invalid.
+     */
     public URL query(Envelope env, final Dimension rect) throws MalformedURLException {
 
         //check the politics, the distant wms server might not be strict on axis orders
@@ -260,7 +304,7 @@ public class WMSMapLayer extends AbstractMapLayer implements DynamicMapLayer {
         request.setEnvelope(env);
         request.setDimension(rect);
         request.setLayers(layers);
-        request.setStyles(styles == null ? "" : styles);
+        request.setStyles(styles);
         request.setSld(sld);
         request.setSldBody(sldBody);
         request.setFormat(format);
@@ -304,7 +348,7 @@ public class WMSMapLayer extends AbstractMapLayer implements DynamicMapLayer {
         }
 
         if (image == null) {
-            throw new PortrayalException("WMS server didn't returned an image.");
+            throw new PortrayalException("WMS server didn't return an image.");
         }
 
         if (replace != null) {
@@ -312,16 +356,17 @@ public class WMSMapLayer extends AbstractMapLayer implements DynamicMapLayer {
 
             Envelope env = context2D.getCanvasObjectiveBounds();
             try {
-                env = CRS.transform(((RenderingContext2D) context).getCanvasObjectiveBounds(), replace);
+                env = CRS.transform(context2D.getCanvasObjectiveBounds(), replace);
             } catch (TransformException ex) {
-                Logger.getLogger(WMSMapLayer.class.getName()).log(Level.WARNING, null, ex);
+                LOGGER.log(Level.WARNING, null, ex);
             }
 
             final GridCoverageFactory factory = CoverageFactoryFinder.getGridCoverageFactory(null);
             GridCoverage2D dataCoverage = factory.create("Test", image, env);
 
             dataCoverage = (GridCoverage2D) Operations.DEFAULT.resample(
-                    dataCoverage, ((RenderingContext2D) context).getCanvasObjectiveBounds(), Interpolation.getInstance(Interpolation.INTERP_BILINEAR));
+                    dataCoverage, context2D.getCanvasObjectiveBounds(),
+                    Interpolation.getInstance(Interpolation.INTERP_BILINEAR));
 
             final MathTransform2D trs2D = dataCoverage.getGridGeometry().getGridToCRS2D();
             if (trs2D instanceof AffineTransform) {
@@ -336,8 +381,6 @@ public class WMSMapLayer extends AbstractMapLayer implements DynamicMapLayer {
             } else {
                 throw new PortrayalException("Could not render image, GridToCRS is a not an AffineTransform, found a " + trs2D.getClass());
             }
-
-
 
         } else {
             //switch to displayCRS
@@ -370,6 +413,8 @@ public class WMSMapLayer extends AbstractMapLayer implements DynamicMapLayer {
         final BufferedImage buffer;
         try {
             buffer = ImageIO.read(request.getURL());
+        } catch (MalformedURLException ex) {
+            throw new PortrayalException(ex);
         } catch (IOException ex) {
             throw new PortrayalException(ex);
         }
@@ -377,49 +422,83 @@ public class WMSMapLayer extends AbstractMapLayer implements DynamicMapLayer {
         return buffer;
     }
 
-    public void setLayerNames(String... names) {
+    /**
+     * Sets the layer names to requests.
+     *
+     * @param names Array of layer names.
+     */
+    public void setLayerNames(final String... names) {
         this.layers = names;
     }
 
+    /**
+     * Returns the layer names.
+     */
     public String[] getLayerNames() {
         return layers.clone();
     }
 
+    /**
+     * Returns a concatenated string of all layer names, separated by comma.
+     */
     public String getCombinedLayerNames() {
-        final StringBuilder sb = new StringBuilder();
-        for (String str : layers) {
-            sb.append(str).append(',');
-        }
-        if (sb.toString().endsWith(",")) {
-            sb.deleteCharAt(sb.length() - 1);
-        }
-        return sb.toString();
+        return StringUtilities.toCommaSeparatedValues(layers);
     }
 
-    public void setStyles(String styles) {
+    /**
+     * Sets the styles for the layers.
+     *
+     * @param styles Array of style names.
+     */
+    public void setStyles(final String... styles) {
         this.styles = styles;
     }
 
-    public String getStyles() {
-        return styles;
+    /**
+     * Returns the style names.
+     */
+    public String[] getStyles() {
+        return styles.clone();
     }
 
-    public void setSld(String sld) {
+    /**
+     * Sets the sld value.
+     *
+     * @param sld A sld string.
+     */
+    public void setSld(final String sld) {
         this.sld = sld;
     }
 
+    /**
+     * Gets the sld parameters. Can return {@code null}.
+     */
     public String getSld() {
         return sld;
     }
 
-    public void setSldBody(String sldBody) {
+    /**
+     * Sets the slBody parameter.
+     *
+     * @param sldBody A sld body.
+     */
+    public void setSldBody(final String sldBody) {
         this.sldBody = sldBody;
     }
 
+    /**
+     * Gets the sld body parameter of this request. Can return {@code null}.
+     */
     public String getSldBody() {
         return sldBody;
     }
 
+    /**
+     * Sets the format for the output response. By default sets to {@code image/png}
+     * if none.
+     *
+     * @param format The mime type of an output format.
+     */
     public void setFormat(String format) {
         this.format = format;
         if (this.format == null) {
@@ -427,6 +506,9 @@ public class WMSMapLayer extends AbstractMapLayer implements DynamicMapLayer {
         }
     }
 
+    /**
+     * Gets the format for the output response. By default {@code image/png}.
+     */
     public String getFormat() {
         return format;
     }
@@ -435,7 +517,15 @@ public class WMSMapLayer extends AbstractMapLayer implements DynamicMapLayer {
         return dims;
     }
 
-    private boolean supportCRS(CoordinateReferenceSystem crs) throws FactoryException {
+    /**
+     * Verify if the server supports the given {@linkplain CoordinateReferenceSystem crs}.
+     *
+     * @param crs The {@linkplain CoordinateReferenceSystem crs} to test.
+     * @return {@code True} if the given {@linkplain CoordinateReferenceSystem crs} is present
+     *         in the list of supported crs in the GetCapabilities response. {@code False} otherwise.
+     * @throws FactoryException
+     */
+    private boolean supportCRS(final CoordinateReferenceSystem crs) throws FactoryException {
         final AbstractLayer layer = server.getCapabilities().getLayerFromName(layers[0]);
 
         final String srid = CRS.lookupIdentifier(crs, true);
