@@ -6,25 +6,29 @@ import org.geotoolkit.data.model.xsd.SimpleType;
 /**
  * <p>This interface maps NetworkLinkControl element.</p>
  *
- * <br />&lt;element name="NetworkLinkControl" type="kml:NetworkLinkControlType"/>
- * <br />&lt;complexType name="NetworkLinkControlType" final="#all">
- * <br />&lt;sequence>
- * <br />&lt;element ref="kml:minRefreshPeriod" minOccurs="0"/>
- * <br />&lt;element ref="kml:maxSessionLength" minOccurs="0"/>
- * <br />&lt;element ref="kml:cookie" minOccurs="0"/>
- * <br />&lt;element ref="kml:message" minOccurs="0"/>
- * <br />&lt;element ref="kml:linkName" minOccurs="0"/>
- * <br />&lt;element ref="kml:linkDescription" minOccurs="0"/>
- * <br />&lt;element ref="kml:linkSnippet" minOccurs="0"/>
- * <br />&lt;element ref="kml:expires" minOccurs="0"/>
- * <br />&lt;element ref="kml:Update" minOccurs="0"/>
- * <br />&lt;element ref="kml:AbstractViewGroup" minOccurs="0"/>
- * <br />&lt;element ref="kml:NetworkLinkControlSimpleExtensionGroup" minOccurs="0" maxOccurs="unbounded"/>
- * <br />&lt;element ref="kml:NetworkLinkControlObjectExtensionGroup" minOccurs="0" maxOccurs="unbounded"/>
- * <br />&lt;/sequence>
- * <br />&lt;/complexType>
- * <br />&lt;element name="NetworkLinkControlSimpleExtensionGroup" abstract="true" type="anySimpleType"/>
- * <br />&lt;element name="NetworkLinkControlObjectExtensionGroup" abstract="true" substitutionGroup="kml:AbstractObjectGroup"/>
+ * <pre>
+ * &lt;element name="NetworkLinkControl" type="kml:NetworkLinkControlType"/>
+ *
+ * &lt;complexType name="NetworkLinkControlType" final="#all">
+ *  &lt;sequence>
+ *      &lt;element ref="kml:minRefreshPeriod" minOccurs="0"/>
+ *      &lt;element ref="kml:maxSessionLength" minOccurs="0"/>
+ *      &lt;element ref="kml:cookie" minOccurs="0"/>
+ *      &lt;element ref="kml:message" minOccurs="0"/>
+ *      &lt;element ref="kml:linkName" minOccurs="0"/>
+ *      &lt;element ref="kml:linkDescription" minOccurs="0"/>
+ *      &lt;element ref="kml:linkSnippet" minOccurs="0"/>
+ *      &lt;element ref="kml:expires" minOccurs="0"/>
+ *      &lt;element ref="kml:Update" minOccurs="0"/>
+ *      &lt;element ref="kml:AbstractViewGroup" minOccurs="0"/>
+ *      &lt;element ref="kml:NetworkLinkControlSimpleExtensionGroup" minOccurs="0" maxOccurs="unbounded"/>
+ *      &lt;element ref="kml:NetworkLinkControlObjectExtensionGroup" minOccurs="0" maxOccurs="unbounded"/>
+ *  &lt;/sequence>
+ * &lt;/complexType>
+ *
+ * &lt;element name="NetworkLinkControlSimpleExtensionGroup" abstract="true" type="anySimpleType"/>
+ * &lt;element name="NetworkLinkControlObjectExtensionGroup" abstract="true" substitutionGroup="kml:AbstractObjectGroup"/>
+ * </pre>
  *
  * @author Samuel Andrés
  */

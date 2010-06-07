@@ -2,6 +2,7 @@ package org.geotoolkit.data.model.kml;
 
 import java.util.List;
 import org.geotoolkit.data.model.xsd.SimpleType;
+import static java.util.Collections.*;
 
 /**
  *
@@ -9,10 +10,10 @@ import org.geotoolkit.data.model.xsd.SimpleType;
  */
 public class KmlDefault implements Kml{
 
-    private NetworkLinkControl networkLinkControl;
-    private AbstractFeature abstractFeature;
-    private List<SimpleType> kmlSimpleExtensions;
-    private List<AbstractObject> kmlObjectExtensions;
+    private final NetworkLinkControl networkLinkControl;
+    private final AbstractFeature abstractFeature;
+    private final List<SimpleType> kmlSimpleExtensions;
+    private final List<AbstractObject> kmlObjectExtensions;
 
     /**
      *
@@ -27,8 +28,8 @@ public class KmlDefault implements Kml{
             List<AbstractObject> kmlObjectExtensions){
         this.networkLinkControl = networkLinkControl;
         this.abstractFeature = abstractFeature;
-        this.kmlSimpleExtensions = kmlSimpleExtensions;
-        this.kmlObjectExtensions = kmlObjectExtensions;
+        this.kmlSimpleExtensions = (kmlSimpleExtensions == null) ? EMPTY_LIST : kmlSimpleExtensions;
+        this.kmlObjectExtensions = (kmlObjectExtensions == null) ? EMPTY_LIST : kmlObjectExtensions;
     }
 
     /**

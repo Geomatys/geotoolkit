@@ -2,6 +2,7 @@ package org.geotoolkit.data.model.kml;
 
 import java.util.List;
 import org.geotoolkit.data.model.xsd.SimpleType;
+import static java.util.Collections.*;
 
 /**
  *
@@ -9,12 +10,12 @@ import org.geotoolkit.data.model.xsd.SimpleType;
  */
 public class ImagePyramidDefault extends AbstractObjectDefault implements ImagePyramid {
 
-    private int titleSize;
-    private int maxWidth;
-    private int maxHeight;
-    private GridOrigin gridOrigin;
-    private List<SimpleType> imagePyramidSimpleExtensions;
-    private List<AbstractObject> imagePyramidObjectExtensions;
+    private final int titleSize;
+    private final int maxWidth;
+    private final int maxHeight;
+    private final GridOrigin gridOrigin;
+    private final List<SimpleType> imagePyramidSimpleExtensions;
+    private final List<AbstractObject> imagePyramidObjectExtensions;
 
     /**
      *
@@ -35,8 +36,8 @@ public class ImagePyramidDefault extends AbstractObjectDefault implements ImageP
         this.maxWidth = maxWidth;
         this.maxHeight = maxHeight;
         this.gridOrigin = gridOrigin;
-        this.imagePyramidSimpleExtensions = imagePyramidSimpleExtensions;
-        this.imagePyramidObjectExtensions = imagePyramidObjectExtensions;
+        this.imagePyramidSimpleExtensions = (imagePyramidSimpleExtensions == null) ? EMPTY_LIST : imagePyramidSimpleExtensions;
+        this.imagePyramidObjectExtensions = (imagePyramidObjectExtensions == null) ? EMPTY_LIST : imagePyramidObjectExtensions;
     }
 
     /**

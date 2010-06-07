@@ -1,6 +1,7 @@
 package org.geotoolkit.data.model.kml;
 
 import java.util.List;
+import static java.util.Collections.*;
 
 /**
  *
@@ -8,14 +9,14 @@ import java.util.List;
  */
 public class CoordinatesDefault implements Coordinates{
 
-    private List<Coordinate> coordinates;
+    private final List<Coordinate> coordinates;
 
     /**
      * 
      * @param coordinates
      */
     public CoordinatesDefault(List<Coordinate> coordinates){
-        this.coordinates = coordinates;
+        this.coordinates = (coordinates == null) ? EMPTY_LIST : coordinates;
     }
 
     @Override

@@ -2,6 +2,7 @@ package org.geotoolkit.data.model.kml;
 
 import java.util.List;
 import org.geotoolkit.data.model.xsd.SimpleType;
+import static java.util.Collections.*;
 
 /**
  *
@@ -9,15 +10,15 @@ import org.geotoolkit.data.model.xsd.SimpleType;
  */
 public class CameraDefault extends AbstractViewDefault implements Camera {
 
-    private Angle180 longitude;
-    private Angle90 latitude;
-    private double altitude;
-    private Angle360 heading;
-    private Anglepos180 tilt;
-    private Angle180 roll;
-    private AltitudeMode altitudeMode;
-    private List<SimpleType> cameraSimpleExtensions;
-    private List<AbstractObject> cameraObjectExtensions;
+    private final Angle180 longitude;
+    private final Angle90 latitude;
+    private final double altitude;
+    private final Angle360 heading;
+    private final Anglepos180 tilt;
+    private final Angle180 roll;
+    private final AltitudeMode altitudeMode;
+    private final List<SimpleType> cameraSimpleExtensions;
+    private final List<AbstractObject> cameraObjectExtensions;
 
     /**
      * 
@@ -49,8 +50,8 @@ public class CameraDefault extends AbstractViewDefault implements Camera {
         this.tilt = tilt;
         this.roll = roll;
         this.altitudeMode = altitudeMode;
-        this.cameraSimpleExtensions = cameraSimpleExtensions;
-        this.cameraObjectExtensions = cameraObjectExtensions;
+        this.cameraSimpleExtensions = (cameraSimpleExtensions == null) ? EMPTY_LIST : cameraSimpleExtensions;
+        this.cameraObjectExtensions = (cameraObjectExtensions == null) ? EMPTY_LIST : cameraObjectExtensions;
     }
 
     /**

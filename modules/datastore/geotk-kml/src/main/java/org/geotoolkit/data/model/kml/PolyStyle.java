@@ -4,23 +4,27 @@ import java.util.List;
 import org.geotoolkit.data.model.xsd.SimpleType;
 
 /**
- * <p></p>
+ * <p>This interface maps PointStyle element.</p>
  *
- * <br />&lt;element name="PolyStyle" type="kml:PolyStyleType" substitutionGroup="kml:AbstractColorStyleGroup"/>
- * <br />&lt;complexType name="PolyStyleType" final="#all">
- * <br />&lt;complexContent>
- * <br />&lt;extension base="kml:AbstractColorStyleType">
- * <br />&lt;sequence>
- * <br />&lt;element ref="kml:fill" minOccurs="0"/>
- * <br />&lt;element ref="kml:outline" minOccurs="0"/>
- * <br />&lt;element ref="kml:PolyStyleSimpleExtensionGroup" minOccurs="0" maxOccurs="unbounded"/>
- * <br />&lt;element ref="kml:PolyStyleObjectExtensionGroup" minOccurs="0" maxOccurs="unbounded"/>
- * <br />&lt;/sequence>
- * <br />&lt;/extension>
- * <br />&lt;/complexContent>
- * <br />&lt;/complexType>
- * <br />&lt;element name="PolyStyleSimpleExtensionGroup" abstract="true" type="anySimpleType"/>
- * <br />&lt;element name="PolyStyleObjectExtensionGroup" abstract="true" substitutionGroup="kml:AbstractObjectGroup"/>
+ * <pre>
+ * &lt;element name="PolyStyle" type="kml:PolyStyleType" substitutionGroup="kml:AbstractColorStyleGroup"/>
+ *
+ * &lt;complexType name="PolyStyleType" final="#all">
+ *  &lt;complexContent>
+ *      &lt;extension base="kml:AbstractColorStyleType">
+ *          &lt;sequence>
+ *              &lt;element ref="kml:fill" minOccurs="0"/>
+ *              &lt;element ref="kml:outline" minOccurs="0"/>
+ *              &lt;element ref="kml:PolyStyleSimpleExtensionGroup" minOccurs="0" maxOccurs="unbounded"/>
+ *              &lt;element ref="kml:PolyStyleObjectExtensionGroup" minOccurs="0" maxOccurs="unbounded"/>
+ *          &lt;/sequence>
+ *      &lt;/extension>
+ *  &lt;/complexContent>
+ * &lt;/complexType>
+ *
+ * &lt;element name="PolyStyleSimpleExtensionGroup" abstract="true" type="anySimpleType"/>
+ * &lt;element name="PolyStyleObjectExtensionGroup" abstract="true" substitutionGroup="kml:AbstractObjectGroup"/>
+ * </pre>
  *
  * @author Samuel Andrés
  */

@@ -5,6 +5,7 @@ import org.geotoolkit.data.model.atom.AtomPersonConstruct;
 import org.geotoolkit.data.model.atom.AtomLink;
 import org.geotoolkit.data.model.xal.AddressDetails;
 import org.geotoolkit.data.model.xsd.SimpleType;
+import static java.util.Collections.*;
 
 /**
  *
@@ -12,24 +13,24 @@ import org.geotoolkit.data.model.xsd.SimpleType;
  */
 public abstract class AbstractFeatureDefault extends AbstractObjectDefault implements AbstractFeature {
 
-    protected String name;
-    protected boolean visibility;
-    protected boolean open;
-    protected AtomPersonConstruct author;
-    protected AtomLink atomLink;
-    protected String address;
-    protected AddressDetails addressDetails;
-    protected String phoneNumber;
-    protected String snippet;
-    protected String description;
-    protected AbstractView view;
-    protected AbstractTimePrimitive timePrimitive;
-    protected String styleUrl;
-    protected List<AbstractStyleSelector> styleSelector;
-    protected Region region;
-    protected ExtendedData extendedData;
-    protected List<SimpleType> featureSimpleExtensions;
-    protected List<AbstractObject> featureObjectExtensions;
+    protected final String name;
+    protected final boolean visibility;
+    protected final boolean open;
+    protected final AtomPersonConstruct author;
+    protected final AtomLink atomLink;
+    protected final String address;
+    protected final AddressDetails addressDetails;
+    protected final String phoneNumber;
+    protected final String snippet;
+    protected final String description;
+    protected final AbstractView view;
+    protected final AbstractTimePrimitive timePrimitive;
+    protected final String styleUrl;
+    protected final List<AbstractStyleSelector> styleSelector;
+    protected final Region region;
+    protected final ExtendedData extendedData;
+    protected final List<SimpleType> featureSimpleExtensions;
+    protected final List<AbstractObject> featureObjectExtensions;
 
     /**
      *
@@ -77,11 +78,11 @@ public abstract class AbstractFeatureDefault extends AbstractObjectDefault imple
         this.view = view;
         this.timePrimitive = timePrimitive;
         this.styleUrl = styleUrl;
-        this.styleSelector = styleSelector;
+        this.styleSelector = (styleSelector == null) ? EMPTY_LIST : styleSelector;
         this.region = region;
         this.extendedData = extendedData;
-        this.featureSimpleExtensions = abstractFeatureSimpleExtensions;
-        this.featureObjectExtensions = abstractFeatureObjectExtensions;
+        this.featureSimpleExtensions = (abstractFeatureSimpleExtensions == null) ? EMPTY_LIST : abstractFeatureSimpleExtensions;
+        this.featureObjectExtensions = (abstractFeatureObjectExtensions == null) ? EMPTY_LIST : abstractFeatureObjectExtensions;
     }
 
     /**
@@ -119,6 +120,10 @@ public abstract class AbstractFeatureDefault extends AbstractObjectDefault imple
     @Override
     public AtomLink getAtomLink() {return this.atomLink;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public String getAddress() {return this.address;}
 

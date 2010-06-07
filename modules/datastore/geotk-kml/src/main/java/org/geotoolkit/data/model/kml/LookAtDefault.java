@@ -2,6 +2,7 @@ package org.geotoolkit.data.model.kml;
 
 import java.util.List;
 import org.geotoolkit.data.model.xsd.SimpleType;
+import static java.util.Collections.*;
 
 /**
  *
@@ -9,14 +10,14 @@ import org.geotoolkit.data.model.xsd.SimpleType;
  */
 public class LookAtDefault extends AbstractViewDefault implements LookAt {
 
-    private Angle180 longitude;
-    private Angle90 latitude;
-    private double altitude;
-    private Angle360 heading;
-    private Anglepos180 tilt;
-    private double range;
-    private List<SimpleType> lookAtSimpleExtensions;
-    private List<AbstractObject> lookAtObjectExtensions;
+    private final Angle180 longitude;
+    private final Angle90 latitude;
+    private final double altitude;
+    private final Angle360 heading;
+    private final Anglepos180 tilt;
+    private final double range;
+    private final List<SimpleType> lookAtSimpleExtensions;
+    private final List<AbstractObject> lookAtObjectExtensions;
 
     /**
      *
@@ -46,8 +47,8 @@ public class LookAtDefault extends AbstractViewDefault implements LookAt {
         this.heading = heading;
         this.tilt = tilt;
         this.range = range;
-        this.lookAtSimpleExtensions = lookAtSimpleExtensions;
-        this.lookAtObjectExtensions = lookAtObjectExtensions;
+        this.lookAtSimpleExtensions = (lookAtSimpleExtensions == null) ? EMPTY_LIST : lookAtSimpleExtensions;
+        this.lookAtObjectExtensions = (lookAtObjectExtensions == null) ? EMPTY_LIST : lookAtObjectExtensions;
     }
 
     /**

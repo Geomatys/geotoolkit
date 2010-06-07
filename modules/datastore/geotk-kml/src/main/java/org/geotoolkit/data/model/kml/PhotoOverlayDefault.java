@@ -5,6 +5,7 @@ import org.geotoolkit.data.model.atom.AtomLink;
 import org.geotoolkit.data.model.atom.AtomPersonConstruct;
 import org.geotoolkit.data.model.xal.AddressDetails;
 import org.geotoolkit.data.model.xsd.SimpleType;
+import static java.util.Collections.*;
 
 /**
  *
@@ -12,13 +13,13 @@ import org.geotoolkit.data.model.xsd.SimpleType;
  */
 public class PhotoOverlayDefault extends AbstractOverlayDefault implements PhotoOverlay {
 
-    private Angle180 rotation;
-    private ViewVolume viewVolume;
-    private ImagePyramid imagePyramid;
-    private Point point;
-    private Shape shape;
-    private List<SimpleType> photoOverlaySimpleExtensions;
-    private List<AbstractObject> photoOverlayObjectExtensions;
+    private final Angle180 rotation;
+    private final ViewVolume viewVolume;
+    private final ImagePyramid imagePyramid;
+    private final Point point;
+    private final Shape shape;
+    private final List<SimpleType> photoOverlaySimpleExtensions;
+    private final List<AbstractObject> photoOverlayObjectExtensions;
 
     /**
      *
@@ -77,8 +78,8 @@ public class PhotoOverlayDefault extends AbstractOverlayDefault implements Photo
         this.imagePyramid = imagePyramid;
         this.point = point;
         this.shape = shape;
-        this.photoOverlaySimpleExtensions = photoOverlaySimpleExtensions;
-        this.photoOverlayObjectExtensions = photoOverlayObjectExtensions;
+        this.photoOverlaySimpleExtensions = (photoOverlaySimpleExtensions == null) ? EMPTY_LIST : photoOverlaySimpleExtensions;
+        this.photoOverlayObjectExtensions = (photoOverlayObjectExtensions == null) ? EMPTY_LIST : photoOverlayObjectExtensions;
     }
 
     /**

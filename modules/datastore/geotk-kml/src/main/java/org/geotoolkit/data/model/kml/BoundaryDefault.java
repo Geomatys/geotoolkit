@@ -2,6 +2,7 @@ package org.geotoolkit.data.model.kml;
 
 import java.util.List;
 import org.geotoolkit.data.model.xsd.SimpleType;
+import static java.util.Collections.*;
 
 /**
  *
@@ -9,9 +10,9 @@ import org.geotoolkit.data.model.xsd.SimpleType;
  */
 public class BoundaryDefault implements Boundary {
 
-    private LinearRing linearRing;
-    private List<SimpleType> boundarySimpleExtensions;
-    private List<AbstractObject> boundaryObjectExtensions;
+    private final LinearRing linearRing;
+    private final List<SimpleType> boundarySimpleExtensions;
+    private final List<AbstractObject> boundaryObjectExtensions;
 
     /**
      *
@@ -21,8 +22,8 @@ public class BoundaryDefault implements Boundary {
      */
     public BoundaryDefault(LinearRing linearRing, List<SimpleType> boundarySimpleExtensions, List<AbstractObject> boundaryObjectExtensions){
         this.linearRing = linearRing;
-        this.boundarySimpleExtensions = boundarySimpleExtensions;
-        this.boundaryObjectExtensions = boundaryObjectExtensions;
+        this.boundarySimpleExtensions = (boundarySimpleExtensions == null) ? EMPTY_LIST : boundarySimpleExtensions;
+        this.boundaryObjectExtensions = (boundaryObjectExtensions == null) ? EMPTY_LIST : boundaryObjectExtensions;
     }
 
     /**

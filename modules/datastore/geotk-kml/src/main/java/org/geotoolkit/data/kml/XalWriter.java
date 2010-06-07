@@ -1,7 +1,5 @@
 package org.geotoolkit.data.kml;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.stream.XMLStreamException;
@@ -11,15 +9,18 @@ import org.geotoolkit.data.model.xal.AddressIdentifier;
 import org.geotoolkit.data.model.xal.AddressLines;
 import org.geotoolkit.data.model.xal.AdministrativeArea;
 import org.geotoolkit.data.model.xal.Country;
+import org.geotoolkit.data.model.xal.CountryNameCode;
 import org.geotoolkit.data.model.xal.GenericTypedGrPostal;
 import org.geotoolkit.data.model.xal.GrPostal;
 import org.geotoolkit.data.model.xal.Locality;
+import org.geotoolkit.data.model.xal.PostOffice;
+import org.geotoolkit.data.model.xal.PostalCode;
 import org.geotoolkit.data.model.xal.PostalServiceElements;
 import org.geotoolkit.data.model.xal.SortingCode;
+import org.geotoolkit.data.model.xal.SubAdministrativeArea;
 import org.geotoolkit.data.model.xal.Thoroughfare;
 import org.geotoolkit.data.model.xal.Xal;
 import org.geotoolkit.xml.StaxStreamWriter;
-import org.omg.IOP.TAG_INTERNET_IOP;
 import static org.geotoolkit.data.model.XalModelConstants.*;
 
 /**
@@ -28,30 +29,14 @@ import static org.geotoolkit.data.model.XalModelConstants.*;
  */
 public class XalWriter extends StaxStreamWriter {
 
-    public XalWriter(File file){
-        super();
-        this.initSource(file);
-    }
-
     public XalWriter(){
         super();
     }
 
     public void setWriter(XMLStreamWriter writer){this.writer = writer;}
 
+    @Override
     public XMLStreamWriter getWriter(){return this.writer;}
-
-    private void initSource(Object o) {
-        System.setProperty("javax.xml.stream.XMLOutputFactory", "com.ctc.wstx.stax.WstxOutputFactory");
-        try {
-            //this.outputFactory = XMLOutputFactory.newInstance();
-            this.setOutput(o);
-        } catch (IOException ex) {
-            Logger.getLogger(KmlWriter.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (XMLStreamException ex) {
-            Logger.getLogger(KmlWriter.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
 
     /**
      * <p>This method writes a xAL 2.0 document into the file assigned to the KmlWriter.</p>
@@ -76,9 +61,7 @@ public class XalWriter extends StaxStreamWriter {
             this.writeXal(xal);
             writer.writeEndElement();
             writer.writeEndDocument();
-
             writer.flush();
-            writer.close();
 
         } catch (XMLStreamException ex) {
             Logger.getLogger(KmlWriter.class.getName()).log(Level.SEVERE, null, ex);
@@ -262,13 +245,103 @@ public class XalWriter extends StaxStreamWriter {
         writer.writeEndElement();
     }
 
+    private void writeAdministrativeAreaName(GenericTypedGrPostal name) throws XMLStreamException{
+        writer.writeStartElement(URI_XAL,TAG_ADMINISTRATIVE_AREA_NAME);
+        this.writeGenericTypedGrPostal(name);
+        writer.writeEndElement();
+    }
+
     private void writeCountry(Country country) throws XMLStreamException{
         writer.writeStartElement(URI_XAL,TAG_COUNTRY);
+        if (country.getAddressLines() != null){
+            for (GenericTypedGrPostal addressLine : country.getAddressLines()){
+                this.writeAddressLine(addressLine);
+            }
+        }
+        if (country.getCountryNameCodes() != null){
+            for (CountryNameCode countryNameCode : country.getCountryNameCodes()){
+                this.writeCountryNameCode(countryNameCode);
+            }
+        }
+        if (country.getCountryNames() != null){
+            for (GenericTypedGrPostal countryName : country.getCountryNames()){
+                this.writeCountryName(countryName);
+            }
+        }
+        if (country.getAdministrativeArea() != null){
+            this.writeAdministrativeArea(country.getAdministrativeArea());
+        }
+        if (country.getLocality() != null){
+            this.writeLocality(country.getLocality());
+        }
+        if (country.getThoroughfare() != null){
+            this.writeThoroughfare(country.getThoroughfare());
+        }
+        writer.writeEndElement();
+    }
+
+    private void writeCountryName (GenericTypedGrPostal countryName) throws XMLStreamException{
+        writer.writeStartElement(URI_XAL, TAG_COUNTRY_NAME);
+        this.writeGenericTypedGrPostal(countryName);
+        writer.writeEndElement();
+    }
+
+    private void writeCountryNameCode(CountryNameCode countryNameCode) throws XMLStreamException{
+        writer.writeStartElement(URI_XAL,TAG_COUNTRY_NAME_CODE);
+        if (countryNameCode.getScheme() != null){
+            writer.writeAttribute(ATT_SCHEME, countryNameCode.getScheme());
+        }
+        if (countryNameCode.getGrPostal() != null){
+            this.writeGrPostal(countryNameCode.getGrPostal());
+        }
+        if (countryNameCode.getContent() != null){
+            writer.writeCharacters(countryNameCode.getContent());
+        }
         writer.writeEndElement();
     }
 
     private void writeAdministrativeArea(AdministrativeArea administrativeArea) throws XMLStreamException{
         writer.writeStartElement(URI_XAL,TAG_ADMINISTRATIVE_AREA);
+        if (administrativeArea.getType() != null){
+            writer.writeAttribute(ATT_TYPE, administrativeArea.getType());
+        }
+        if (administrativeArea.getUsageType() != null){
+            writer.writeAttribute(ATT_USAGE_TYPE, administrativeArea.getUsageType());
+        }
+        if (administrativeArea.getIndicator() != null){
+            writer.writeAttribute(ATT_INDICATOR, administrativeArea.getIndicator());
+        }
+        if (administrativeArea.getAddressLines() != null){
+            for (GenericTypedGrPostal addressLine : administrativeArea.getAddressLines()){
+                this.writeAddressLine(addressLine);
+            }
+        }
+        if (administrativeArea.getAdministrativeAreaNames() != null){
+            for (GenericTypedGrPostal name : administrativeArea.getAdministrativeAreaNames()){
+                this.writeAdministrativeAreaName(name);
+            }
+        }
+        if (administrativeArea.getSubAdministrativeArea() != null){
+            this.writeSubAdministrativeArea(administrativeArea.getSubAdministrativeArea());
+        }
+        if (administrativeArea.getLocality() != null){
+            this.writeLocality(administrativeArea.getLocality());
+        }
+        else if (administrativeArea.getPostOffice() != null){
+            this.writePostOffice(administrativeArea.getPostOffice());
+        } else if (administrativeArea.getPostalCode() != null){
+            this.writePostalCode(administrativeArea.getPostalCode());
+        }
+        writer.writeEndElement();
+    }
+
+    private void writePostOffice(PostOffice postOffice) throws XMLStreamException{
+        writer.writeStartElement(URI_XAL,TAG_POST_OFFICE);
+        writer.writeEndElement();
+    }
+    
+     private void writePostalCode(PostalCode postalCode) throws XMLStreamException{
+        writer.writeStartElement(URI_XAL,TAG_POSTAL_CODE);
         writer.writeEndElement();
     }
 
@@ -326,6 +399,38 @@ public class XalWriter extends StaxStreamWriter {
         if (grPostal.getCode() != null){
             writer.writeAttribute(ATT_CODE, grPostal.getCode());
         }
+    }
+
+    private void writeSubAdministrativeArea(SubAdministrativeArea subAdministrativeArea) throws XMLStreamException {
+        writer.writeStartElement(URI_XAL,TAG_SUB_ADMINISTRATIVE_AREA);
+        if (subAdministrativeArea.getType() != null){
+            writer.writeAttribute(ATT_TYPE, subAdministrativeArea.getType());
+        }
+        if (subAdministrativeArea.getUsageType() != null){
+            writer.writeAttribute(ATT_USAGE_TYPE, subAdministrativeArea.getUsageType());
+        }
+        if (subAdministrativeArea.getIndicator() != null){
+            writer.writeAttribute(ATT_INDICATOR, subAdministrativeArea.getIndicator());
+        }
+        if (subAdministrativeArea.getAddressLines() != null){
+            for (GenericTypedGrPostal addressLine : subAdministrativeArea.getAddressLines()){
+                this.writeAddressLine(addressLine);
+            }
+        }
+        if (subAdministrativeArea.getSubAdministrativeAreaNames() != null){
+            for (GenericTypedGrPostal name : subAdministrativeArea.getSubAdministrativeAreaNames()){
+                this.writeAdministrativeAreaName(name);
+            }
+        }
+        if (subAdministrativeArea.getLocality() != null){
+            this.writeLocality(subAdministrativeArea.getLocality());
+        }
+        else if (subAdministrativeArea.getPostOffice() != null){
+            this.writePostOffice(subAdministrativeArea.getPostOffice());
+        } else if (subAdministrativeArea.getPostalCode() != null){
+            this.writePostalCode(subAdministrativeArea.getPostalCode());
+        }
+        writer.writeEndElement();
     }
 
 

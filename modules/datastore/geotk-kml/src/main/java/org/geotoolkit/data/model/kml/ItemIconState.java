@@ -28,7 +28,7 @@ public enum ItemIconState {
     FETCHING_1("fetching1"),
     TETCHING_2("fetching2");
 
-    private String itemIconState;
+    private final String itemIconState;
 
     /**
      *
@@ -63,13 +63,9 @@ public enum ItemIconState {
      * @return The ItemIconState instance corresponding to the itemIconState parameter.
      */
     public static ItemIconState transform(String itemIconState, ItemIconState defaultValue){
-        ItemIconState resultat = defaultValue;
         for(ItemIconState cm : ItemIconState.values()){
-            if(cm.getItemIconState().equals(itemIconState)){
-                resultat = cm;
-                break;
-            }
+            if(cm.getItemIconState().equals(itemIconState)) return cm;
         }
-        return resultat;
+        return defaultValue;
     }
 }

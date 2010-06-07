@@ -2,6 +2,7 @@ package org.geotoolkit.data.model.kml;
 
 import java.util.List;
 import org.geotoolkit.data.model.xsd.SimpleType;
+import static java.util.Collections.*;
 
 /**
  *
@@ -9,11 +10,11 @@ import org.geotoolkit.data.model.xsd.SimpleType;
  */
 public class PairDefault extends AbstractObjectDefault implements Pair{
 
-    private StyleState key;
-    private String styleUrl;
-    private AbstractStyleSelector styleSelector;
-    private List<SimpleType> pairSimpleExtensions;
-    private List<AbstractObject> pairObjectExtensions;
+    private final StyleState key;
+    private final String styleUrl;
+    private final AbstractStyleSelector styleSelector;
+    private final List<SimpleType> pairSimpleExtensions;
+    private final List<AbstractObject> pairObjectExtensions;
 
     /**
      *
@@ -33,8 +34,8 @@ public class PairDefault extends AbstractObjectDefault implements Pair{
         this.key = key;
         this.styleUrl = styleUrl;
         this.styleSelector = styleSelector;
-        this.pairSimpleExtensions = pairSimpleExtensions;
-        this.pairObjectExtensions = pairObjectExtensions;
+        this.pairSimpleExtensions = (pairSimpleExtensions == null) ? EMPTY_LIST : pairSimpleExtensions;
+        this.pairObjectExtensions = (pairObjectExtensions == null) ? EMPTY_LIST : pairObjectExtensions;
     }
 
     /**

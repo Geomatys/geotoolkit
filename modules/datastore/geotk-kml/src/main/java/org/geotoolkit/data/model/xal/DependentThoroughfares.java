@@ -1,18 +1,18 @@
 package org.geotoolkit.data.model.xal;
 
-import org.geotoolkit.data.model.kml.*;
-
 /**
  * <p>This enumeration maps dependentThoroughfares attribute.</p>
  *
  * <p>Does this thoroughfare have a a dependent thoroughfare? Corner of street X, etc.</p>
  *
- * <br />&lt;xs:simpleType>
- * <br />&lt;xs:restriction base="xs:NMTOKEN">
- * <br />&lt;xs:enumeration value="Yes"/>
- * <br />&lt;xs:enumeration value="No"/>
- * <br />&lt;/xs:restriction>
- * <br />&lt;/xs:simpleType>
+ * <pre>
+ * &lt;xs:simpleType>
+ *  &lt;xs:restriction base="xs:NMTOKEN">
+ *      &lt;xs:enumeration value="Yes"/>
+ *      &lt;xs:enumeration value="No"/>
+ *  &lt;/xs:restriction>
+ * &lt;/xs:simpleType>
+ * </pre>
  *
  * @author Samuel Andrés
  */
@@ -56,13 +56,11 @@ public enum DependentThoroughfares {
      * @return The DependentThoroughfares instance corresponding to the dependentThoroughfares parameter.
      */
     public static DependentThoroughfares transform(String dependentThoroughfares, DependentThoroughfares defaultValue){
-        DependentThoroughfares resultat = defaultValue;
         for(DependentThoroughfares dtf : DependentThoroughfares.values()){
             if(dtf.getDependentThoroughfares().equals(dependentThoroughfares)){
-                resultat = dtf;
-                break;
+                return dtf;
             }
         }
-        return resultat;
+        return defaultValue;
     }
 }

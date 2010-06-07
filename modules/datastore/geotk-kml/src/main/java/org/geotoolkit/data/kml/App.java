@@ -6,10 +6,12 @@
 package org.geotoolkit.data.kml;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import javax.xml.stream.XMLStreamException;
 import org.geotoolkit.data.model.KmlFactory;
 import org.geotoolkit.data.model.KmlFactoryDefault;
 import org.geotoolkit.data.model.kml.AbstractFeature;
@@ -28,9 +30,6 @@ import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.DefaultProperty;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.filter.identity.DefaultFeatureId;
-import org.geotoolkit.util.StringUtilities;
-import org.geotoolkit.util.Strings;
-import org.geotoolkit.util.XInteger;
 import org.opengis.feature.ComplexAttribute;
 import org.opengis.feature.Feature;
 import org.opengis.feature.Property;
@@ -113,7 +112,7 @@ public class App {
         return kmlFactory.createKml(null, placeMark, null, null);
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException, XMLStreamException {
 
         
         //featuresTests();
@@ -122,25 +121,35 @@ public class App {
         File inputXAL = new File("/home/samuel/Documents/doc_kml/exemples/XAL.xml");
         File output = new File("/home/samuel/Documents/doc_kml/exemples/output.xml");
 
-        KmlReader readerKML = new KmlReader(inputKML);
-        Kml kml = readerKML.read();
-        //System.out.println(kml);
-        KmlWriter writerKML = new KmlWriter(output);
-        writerKML.write(kml);
+        KmlReader kmlReader = new KmlReader();
+        kmlReader.setInput(inputKML);
+        Kml kml = kmlReader.read();
+        kmlReader.dispose();
 
-//        XalReader readerXAL = new XalReader(inputXAL);
-//        Xal xal = readerXAL.read();
-//        System.out.println(xal);
-//        System.out.println(xal.getAddressDetails().size());
-//        for (AddressDetails ad : xal.getAddressDetails()){
-//            System.out.println(ad.getAddressType());
-//            if (ad.getAddressLines() != null){
-//                System.out.println("SIZE : "+ad.getAddressLines().getAddressLines().size());
-//            }
-//        }
-//
-//        XalWriter writerXal = new XalWriter(output);
-//        writerXal.write(xal);
+        //System.out.println(kml);
+        KmlWriter kmlWriter = new KmlWriter();
+        kmlWriter.setOutput(output);
+        kmlWriter.write(kml);
+        kmlWriter.dispose();
+
+        XalReader xalReader = new XalReader();
+        xalReader.setInput(inputXAL);
+        Xal xal = xalReader.read();
+        xalReader.dispose();
+        
+        System.out.println(xal);
+        System.out.println(xal.getAddressDetails().size());
+        for (AddressDetails ad : xal.getAddressDetails()){
+            System.out.println(ad.getAddressType());
+            if (ad.getAddressLines() != null){
+                System.out.println("SIZE : "+ad.getAddressLines().getAddressLines().size());
+            }
+        }
+
+        XalWriter xalWriter = new XalWriter();
+        xalWriter.setOutput(output);
+        xalWriter.write(xal);
+        xalWriter.dispose();
 
     }
 

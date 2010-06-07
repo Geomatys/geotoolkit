@@ -5,6 +5,7 @@ import org.geotoolkit.data.model.atom.AtomPersonConstruct;
 import org.geotoolkit.data.model.atom.AtomLink;
 import org.geotoolkit.data.model.xal.AddressDetails;
 import org.geotoolkit.data.model.xsd.SimpleType;
+import static java.util.Collections.*;
 
 /**
  *
@@ -12,9 +13,9 @@ import org.geotoolkit.data.model.xsd.SimpleType;
  */
 public class PlacemarkDefault extends AbstractFeatureDefault implements Placemark {
 
-    private AbstractGeometry abstractGeometry;
-    private List<SimpleType> placemarkSimpleExtension;
-    private List<AbstractObject> placemarkObjectExtension;
+    private final AbstractGeometry abstractGeometry;
+    private final List<SimpleType> placemarkSimpleExtension;
+    private final List<AbstractObject> placemarkObjectExtension;
 
     /**
      *
@@ -70,8 +71,8 @@ public class PlacemarkDefault extends AbstractFeatureDefault implements Placemar
             abstractFeatureObjectExtensions);
 
         this.abstractGeometry = abstractGeometry;
-        this.placemarkSimpleExtension = placemarkSimpleExtensions;
-        this.placemarkObjectExtension = placemarkObjectExtension;
+        this.placemarkSimpleExtension = (placemarkSimpleExtensions == null) ? EMPTY_LIST : placemarkSimpleExtensions;
+        this.placemarkObjectExtension = (placemarkObjectExtension == null) ? EMPTY_LIST : placemarkObjectExtension;
     }
 
     /**

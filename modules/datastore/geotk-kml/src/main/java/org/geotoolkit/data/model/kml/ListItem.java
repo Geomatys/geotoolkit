@@ -23,7 +23,7 @@ public enum ListItem {
     CHECK_HIDE_CHILDREN("checkHideChildren"),
     CHECK_OFF_ONLY("checkOffOnly");
 
-    private String item;
+    private final String item;
 
     /**
      * 
@@ -58,13 +58,9 @@ public enum ListItem {
      * @return The ListItem instance corresponding to the item parameter.
      */
     public static ListItem transform(String item, ListItem defaultValue){
-        ListItem resultat = defaultValue;
         for(ListItem cm : ListItem.values()){
-            if(cm.getItem().equals(item)){
-                resultat = cm;
-                break;
-            }
+            if(cm.getItem().equals(item)) return cm;
         }
-        return resultat;
+        return defaultValue;
     }
 }

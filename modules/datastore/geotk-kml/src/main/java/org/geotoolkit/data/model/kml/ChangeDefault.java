@@ -1,6 +1,7 @@
 package org.geotoolkit.data.model.kml;
 
 import java.util.List;
+import static java.util.Collections.*;
 
 /**
  *
@@ -8,14 +9,14 @@ import java.util.List;
  */
 public class ChangeDefault implements Change {
 
-    private List<AbstractObject> objects;
+    private final List<AbstractObject> objects;
 
     /**
      *
      * @param objects
      */
     public ChangeDefault(List<AbstractObject> objects){
-        this.objects = objects;
+        this.objects = (objects == null) ? EMPTY_LIST : objects;
     }
 
     /**

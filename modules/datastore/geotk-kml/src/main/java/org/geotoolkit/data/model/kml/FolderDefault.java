@@ -5,6 +5,7 @@ import org.geotoolkit.data.model.xsd.SimpleType;
 import org.geotoolkit.data.model.atom.AtomPersonConstruct;
 import org.geotoolkit.data.model.atom.AtomLink;
 import org.geotoolkit.data.model.xal.AddressDetails;
+import static java.util.Collections.*;
 
 /**
  *
@@ -12,9 +13,9 @@ import org.geotoolkit.data.model.xal.AddressDetails;
  */
 public class FolderDefault extends AbstractContainerDefault implements Folder {
 
-    private List<AbstractFeature> features;
-    private List<SimpleType> folderSimpleExtensions;
-    private List<AbstractObject> folderObjectExtensions;
+    private final List<AbstractFeature> features;
+    private final List<SimpleType> folderSimpleExtensions;
+    private final List<AbstractObject> folderObjectExtensions;
 
     /**
      *
@@ -65,9 +66,9 @@ public class FolderDefault extends AbstractContainerDefault implements Folder {
                 abstractFeatureSimpleExtensions, abstractFeatureObjectExtensions,
                 abstractContainerSimpleExtensions, abstractContainerObjectExtensions);
 
-        this.features = features;
-        this.folderSimpleExtensions = folderSimpleExtensions;
-        this.folderObjectExtensions = folderObjectExtensions;
+        this.features = (features == null) ? EMPTY_LIST : features;
+        this.folderSimpleExtensions = (folderSimpleExtensions == null) ? EMPTY_LIST : folderSimpleExtensions;
+        this.folderObjectExtensions = (folderObjectExtensions == null) ? EMPTY_LIST : folderObjectExtensions;
     }
 
     /**

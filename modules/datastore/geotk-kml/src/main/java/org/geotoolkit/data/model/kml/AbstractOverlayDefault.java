@@ -5,6 +5,7 @@ import org.geotoolkit.data.model.atom.AtomLink;
 import org.geotoolkit.data.model.atom.AtomPersonConstruct;
 import org.geotoolkit.data.model.xal.AddressDetails;
 import org.geotoolkit.data.model.xsd.SimpleType;
+import static java.util.Collections.*;
 
 /**
  *
@@ -12,11 +13,11 @@ import org.geotoolkit.data.model.xsd.SimpleType;
  */
 public abstract class AbstractOverlayDefault extends AbstractFeatureDefault implements AbstractOverlay {
 
-    protected Color color;
-    protected int drawOrder;
-    protected Icon icon;
-    protected List<SimpleType> abstractOveraySimpleExtensions;
-    protected List<AbstractObject> abstractOverlayObjectExtensions;
+    protected final Color color;
+    protected final int drawOrder;
+    protected final Icon icon;
+    protected final List<SimpleType> abstractOveraySimpleExtensions;
+    protected final List<AbstractObject> abstractOverlayObjectExtensions;
 
     /**
      *
@@ -67,8 +68,8 @@ public abstract class AbstractOverlayDefault extends AbstractFeatureDefault impl
        this.color = color;
        this.drawOrder = drawOrder;
        this.icon = icon;
-       this.abstractOveraySimpleExtensions = abstractOveraySimpleExtensions;
-       this.abstractOverlayObjectExtensions = abstractOverlayObjectExtensions;
+       this.abstractOveraySimpleExtensions = (abstractOveraySimpleExtensions == null) ? EMPTY_LIST : abstractOveraySimpleExtensions;
+       this.abstractOverlayObjectExtensions = (abstractOverlayObjectExtensions == null) ? EMPTY_LIST : abstractOverlayObjectExtensions;
         
     }
 

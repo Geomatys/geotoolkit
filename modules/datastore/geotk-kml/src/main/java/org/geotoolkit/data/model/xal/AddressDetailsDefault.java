@@ -6,20 +6,20 @@ package org.geotoolkit.data.model.xal;
  */
 public class AddressDetailsDefault implements AddressDetails {
 
-    private PostalServiceElements postalServiceElements;
+    private final PostalServiceElements postalServiceElements;
     private GenericTypedGrPostal address;
     private AddressLines addressLines;
     private Country country;
     private AdministrativeArea administrativeArea;
     private Locality locality;
     private Thoroughfare thoroughfare;
-    private String addressType;
-    private String currentStatus;
-    private String validFromDate;
-    private String validToDate;
-    private String usage;
-    private GrPostal grPostal;
-    private String addressDetailsKey;
+    private final String addressType;
+    private final String currentStatus;
+    private final String validFromDate;
+    private final String validToDate;
+    private final String usage;
+    private final GrPostal grPostal;
+    private final String addressDetailsKey;
 
     public AddressDetailsDefault(PostalServiceElements postalServiceElements, Object localisation,
             String addressType, String currentStatus, String validFromDate, String validToDate,

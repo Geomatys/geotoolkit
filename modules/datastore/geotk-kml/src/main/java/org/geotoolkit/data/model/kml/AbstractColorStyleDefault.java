@@ -2,6 +2,7 @@ package org.geotoolkit.data.model.kml;
 
 import java.util.List;
 import org.geotoolkit.data.model.xsd.SimpleType;
+import static java.util.Collections.*;
 
 /**
  *
@@ -9,10 +10,10 @@ import org.geotoolkit.data.model.xsd.SimpleType;
  */
 public abstract class AbstractColorStyleDefault extends AbstractSubStyleDefault implements AbstractColorStyle {
 
-    protected Color color;
-    protected ColorMode colorMode;
-    protected List<SimpleType> colorStyleSimpleExtensions;
-    protected List<AbstractObject> colorStyleObjectExtensions;
+    protected final Color color;
+    protected final ColorMode colorMode;
+    protected final List<SimpleType> colorStyleSimpleExtensions;
+    protected final List<AbstractObject> colorStyleObjectExtensions;
 
     /**
      *
@@ -32,8 +33,8 @@ public abstract class AbstractColorStyleDefault extends AbstractSubStyleDefault 
         super(objectSimpleExtensions, idAttributes, subStyleSimpleExtensions, subStyleObjectExtensions);
         this.color = color;
         this.colorMode = colorMode;
-        this.colorStyleSimpleExtensions = colorStyleSimpleExtensions;
-        this.colorStyleObjectExtensions = colorStyleObjectExtensions;
+        this.colorStyleSimpleExtensions = (colorStyleSimpleExtensions == null) ? EMPTY_LIST : colorStyleSimpleExtensions;
+        this.colorStyleObjectExtensions = (colorStyleObjectExtensions == null) ? EMPTY_LIST : colorStyleObjectExtensions;
     }
 
     /**

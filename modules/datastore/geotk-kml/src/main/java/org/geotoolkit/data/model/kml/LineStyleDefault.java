@@ -2,6 +2,7 @@ package org.geotoolkit.data.model.kml;
 
 import java.util.List;
 import org.geotoolkit.data.model.xsd.SimpleType;
+import static java.util.Collections.*;
 
 /**
  *
@@ -9,9 +10,9 @@ import org.geotoolkit.data.model.xsd.SimpleType;
  */
 public class LineStyleDefault extends AbstractColorStyleDefault implements LineStyle {
 
-    private double width;
-    private List<SimpleType> lineStyleSimpleExtensions;
-    private List<AbstractObject> lineStyleObjectExtentions;
+    private final double width;
+    private final List<SimpleType> lineStyleSimpleExtensions;
+    private final List<AbstractObject> lineStyleObjectExtentions;
 
     /**
      *
@@ -37,8 +38,8 @@ public class LineStyleDefault extends AbstractColorStyleDefault implements LineS
                 subStyleSimpleExtensions, subStyleObjectExtensions,
                 color, colorMode, colorStyleSimpleExtensions, colorStyleObjectExtensions);
         this.width = width;
-        this.lineStyleSimpleExtensions = lineStyleSimpleExtensions;
-        this.lineStyleObjectExtentions = lineStyleObjectExtensions;
+        this.lineStyleSimpleExtensions = (lineStyleSimpleExtensions == null) ? EMPTY_LIST : lineStyleSimpleExtensions;
+        this.lineStyleObjectExtentions = (lineStyleObjectExtensions == null) ? EMPTY_LIST : lineStyleObjectExtensions;
     }
 
     /**

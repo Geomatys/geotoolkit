@@ -2,6 +2,7 @@ package org.geotoolkit.data.model.kml;
 
 import java.util.List;
 import org.geotoolkit.data.model.xsd.SimpleType;
+import static java.util.Collections.*;
 
 /**
  *
@@ -9,12 +10,12 @@ import org.geotoolkit.data.model.xsd.SimpleType;
  */
 public class IconStyleDefault extends AbstractColorStyleDefault implements IconStyle {
 
-    private double scale;
-    private Angle360 heading;
-    private BasicLink icon;
-    private Vec2 hotSpot;
-    private List<SimpleType> iconStyleSimpleExtensions;
-    private List<AbstractObject> iconStyleObjectExtensions;
+    private final double scale;
+    private final Angle360 heading;
+    private final BasicLink icon;
+    private final Vec2 hotSpot;
+    private final List<SimpleType> iconStyleSimpleExtensions;
+    private final List<AbstractObject> iconStyleObjectExtensions;
 
     /**
      *
@@ -46,8 +47,8 @@ public class IconStyleDefault extends AbstractColorStyleDefault implements IconS
         this.heading = heading;
         this.icon = icon;
         this.hotSpot = hotSpot;
-        this.iconStyleSimpleExtensions = iconStyleSimpleExtensions;
-        this.iconStyleObjectExtensions = iconStyleObjectExtensions;
+        this.iconStyleSimpleExtensions = (iconStyleSimpleExtensions == null) ? EMPTY_LIST : iconStyleSimpleExtensions;
+        this.iconStyleObjectExtensions = (iconStyleObjectExtensions == null) ? EMPTY_LIST : iconStyleObjectExtensions;
     }
 
     /**

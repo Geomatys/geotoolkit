@@ -2,6 +2,7 @@ package org.geotoolkit.data.model.kml;
 
 import java.util.List;
 import org.geotoolkit.data.model.xsd.SimpleType;
+import static java.util.Collections.*;
 
 /**
  *
@@ -9,19 +10,19 @@ import org.geotoolkit.data.model.xsd.SimpleType;
  */
 public class LinkDefault extends AbstractObjectDefault implements Link {
 
-    private String href;
-    private List<SimpleType> basicLinkSimpleExtensions;
-    private List<AbstractObject> basicLinkObjectExtensions;
+    private final  String href;
+    private final List<SimpleType> basicLinkSimpleExtensions;
+    private final List<AbstractObject> basicLinkObjectExtensions;
     
-    private RefreshMode refreshMode;
-    private double refreshInterval;
-    private ViewRefreshMode viewRefreshMode;
-    private double viewRefreshTime;
-    private double viewBoundScale;
-    private String viewFormat;
-    private String httpQuery;
-    private List<SimpleType> linkSimpleExtensions;
-    private List<AbstractObject> linkObjectExtensions;
+    private final RefreshMode refreshMode;
+    private final double refreshInterval;
+    private final ViewRefreshMode viewRefreshMode;
+    private final double viewRefreshTime;
+    private final double viewBoundScale;
+    private final String viewFormat;
+    private final String httpQuery;
+    private final List<SimpleType> linkSimpleExtensions;
+    private final List<AbstractObject> linkObjectExtensions;
 
     /**
      *
@@ -47,6 +48,9 @@ public class LinkDefault extends AbstractObjectDefault implements Link {
             List<SimpleType> linkSimpleExtensions, List<AbstractObject> linkObjectExtensions){
         super(objectSimpleExtensions, idAttributes);
         this.href = href;
+        this.basicLinkSimpleExtensions = (basicLinkSimpleExtensions == null) ? EMPTY_LIST : basicLinkSimpleExtensions;
+        this.basicLinkObjectExtensions = (basicLinkObjectExtensions == null) ? EMPTY_LIST : basicLinkObjectExtensions;
+
         this.refreshMode = refreshMode;
         this.refreshInterval = refreshInterval;
         this.viewRefreshMode = viewRefreshMode;
@@ -54,8 +58,8 @@ public class LinkDefault extends AbstractObjectDefault implements Link {
         this.viewBoundScale = viewBoundScale;
         this.viewFormat = viewFormat;
         this.httpQuery = httpQuery;
-        this.linkSimpleExtensions = linkSimpleExtensions;
-        this.linkObjectExtensions = linkObjectExtensions;
+        this.linkSimpleExtensions = (linkSimpleExtensions == null) ? EMPTY_LIST : linkSimpleExtensions;
+        this.linkObjectExtensions = (linkObjectExtensions == null) ? EMPTY_LIST : linkObjectExtensions;
 
     }
 

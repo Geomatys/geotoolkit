@@ -2,6 +2,7 @@ package org.geotoolkit.data.model.kml;
 
 import java.util.List;
 import org.geotoolkit.data.model.xsd.SimpleType;
+import static java.util.Collections.*;
 
 /**
  *
@@ -9,9 +10,9 @@ import org.geotoolkit.data.model.xsd.SimpleType;
  */
 public class LabelStyleDefault extends AbstractColorStyleDefault implements LabelStyle {
 
-    private double scale;
-    private List<SimpleType> labelStyleSimpleExtensions;
-    private List<AbstractObject> labelStyleObjectExtensions;
+    private final double scale;
+    private final List<SimpleType> labelStyleSimpleExtensions;
+    private final List<AbstractObject> labelStyleObjectExtensions;
 
     /**
      *
@@ -37,8 +38,8 @@ public class LabelStyleDefault extends AbstractColorStyleDefault implements Labe
                 subStyleSimpleExtensions, subStyleObjectExtensions,
                 color, colorMode, colorStyleSimpleExtensions, colorStyleObjectExtensions);
         this.scale = scale;
-        this.labelStyleSimpleExtensions = iconStyleSimpleExtensions;
-        this.labelStyleObjectExtensions = iconStyleObjectExtensions;
+        this.labelStyleSimpleExtensions = (iconStyleSimpleExtensions == null) ? EMPTY_LIST : iconStyleSimpleExtensions;
+        this.labelStyleObjectExtensions = (iconStyleObjectExtensions == null) ? EMPTY_LIST : iconStyleObjectExtensions;
     }
 
     /**

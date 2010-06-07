@@ -1,6 +1,7 @@
 package org.geotoolkit.data.model.kml;
 
 import java.util.List;
+import static java.util.Collections.*;
 
 /**
  *
@@ -8,14 +9,14 @@ import java.util.List;
  */
 public class DeleteDefault implements Delete {
 
-    private List<AbstractFeature> features;
+    private final List<AbstractFeature> features;
 
     /**
      *
      * @param features
      */
     public DeleteDefault(List<AbstractFeature> features){
-        this.features = features;
+        this.features = (features == null) ? EMPTY_LIST : features;
     }
 
     /**

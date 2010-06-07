@@ -5,6 +5,7 @@ import org.geotoolkit.data.model.atom.AtomLink;
 import org.geotoolkit.data.model.atom.AtomPersonConstruct;
 import org.geotoolkit.data.model.xal.AddressDetails;
 import org.geotoolkit.data.model.xsd.SimpleType;
+import static java.util.Collections.*;
 
 /**
  *
@@ -12,11 +13,11 @@ import org.geotoolkit.data.model.xsd.SimpleType;
  */
 public class GroundOverlayDefault extends AbstractOverlayDefault implements GroundOverlay {
 
-    private double altitude;
-    private AltitudeMode altitudeMode;
-    private LatLonBox latLonBox;
-    private List<SimpleType> groundOverlaySimpleExtensions;
-    private List<AbstractObject> groundOverlayObjectExtensions;
+    private final double altitude;
+    private final AltitudeMode altitudeMode;
+    private final LatLonBox latLonBox;
+    private final List<SimpleType> groundOverlaySimpleExtensions;
+    private final List<AbstractObject> groundOverlayObjectExtensions;
 
     /**
      *
@@ -73,8 +74,8 @@ public class GroundOverlayDefault extends AbstractOverlayDefault implements Grou
         this.altitude = altitude;
         this.altitudeMode = altitudeMode;
         this.latLonBox = latLonBox;
-        this.groundOverlaySimpleExtensions = groundOverlaySimpleExtensions;
-        this.groundOverlayObjectExtensions = groundOverlayObjectExtensions;
+        this.groundOverlaySimpleExtensions = (groundOverlaySimpleExtensions == null) ? EMPTY_LIST : groundOverlaySimpleExtensions;
+        this.groundOverlayObjectExtensions = (groundOverlayObjectExtensions == null) ? EMPTY_LIST : groundOverlayObjectExtensions;
     }
 
     /**

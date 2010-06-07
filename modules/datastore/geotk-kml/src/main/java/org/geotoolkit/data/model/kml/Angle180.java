@@ -12,7 +12,7 @@ import org.geotoolkit.data.model.xsd.SimpleType;
  *      &lt;maxInclusive value="180.0"/>
  *  &lt;/restriction>
  * &lt;/simpleType>
- * </pre>S
+ * </pre>
  *
  * @author Samuel Andrés
  */

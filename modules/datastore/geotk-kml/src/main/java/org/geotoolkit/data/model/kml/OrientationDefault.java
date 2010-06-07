@@ -2,6 +2,7 @@ package org.geotoolkit.data.model.kml;
 
 import java.util.List;
 import org.geotoolkit.data.model.xsd.SimpleType;
+import static java.util.Collections.*;
 
 /**
  *
@@ -9,11 +10,11 @@ import org.geotoolkit.data.model.xsd.SimpleType;
  */
 public class OrientationDefault extends AbstractObjectDefault implements Orientation {
 
-    private Angle360 heading;
-    private Anglepos180 tilt;
-    private Angle180 roll;
-    private List<SimpleType> orientationSimpleExtensions;
-    private List<AbstractObject> orientationObjectExtensions;
+    private final Angle360 heading;
+    private final Anglepos180 tilt;
+    private final Angle180 roll;
+    private final List<SimpleType> orientationSimpleExtensions;
+    private final List<AbstractObject> orientationObjectExtensions;
 
     /**
      *
@@ -34,8 +35,8 @@ public class OrientationDefault extends AbstractObjectDefault implements Orienta
         this.heading = heading;
         this.tilt= tilt;
         this.roll = roll;
-        this.orientationSimpleExtensions = orientationSimpleExtensions;
-        this.orientationObjectExtensions = orientationObjectExtensions;
+        this.orientationSimpleExtensions = (orientationSimpleExtensions == null) ? EMPTY_LIST : orientationSimpleExtensions;
+        this.orientationObjectExtensions = (orientationObjectExtensions == null) ? EMPTY_LIST : orientationObjectExtensions;
     }
 
     /**

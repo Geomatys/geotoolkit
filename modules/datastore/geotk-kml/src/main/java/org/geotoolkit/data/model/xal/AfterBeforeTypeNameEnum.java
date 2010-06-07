@@ -22,7 +22,7 @@ public enum AfterBeforeTypeNameEnum {
     BEFORE_TYPE("BeforeType"),
     AFTER_TYPE("AfterType");
 
-    private String afterBeforTypeName;
+    private final String afterBeforTypeName;
 
     /**
      * 
@@ -57,13 +57,9 @@ public enum AfterBeforeTypeNameEnum {
      * @return The AfterBeforeTypeNameEnum instance corresponding to the afterBeforTypeName parameter.
      */
     public static AfterBeforeTypeNameEnum transform(String afterBeforTypeName, AfterBeforeTypeNameEnum defaultValue){
-        AfterBeforeTypeNameEnum resultat = defaultValue;
         for(AfterBeforeTypeNameEnum io : AfterBeforeTypeNameEnum.values()){
-            if(io.getNumberOccurrence().equals(afterBeforTypeName)){
-                resultat = io;
-                break;
-            }
+            if(io.getNumberOccurrence().equals(afterBeforTypeName)) return io;
         }
-        return resultat;
+        return defaultValue;
     }
 }

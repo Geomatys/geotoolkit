@@ -18,7 +18,7 @@ public enum ColorMode {
     NORMAL("normal"),
     RANDOM("random");
 
-    private String colorMode;
+    private final String colorMode;
 
     /**
      *
@@ -53,13 +53,9 @@ public enum ColorMode {
      * @return The ColorMode instance corresponding to the colorMode parameter.
      */
     public static ColorMode transform(String colorMode, ColorMode defaultValue){
-        ColorMode resultat = defaultValue;
         for(ColorMode cm : ColorMode.values()){
-            if(cm.getColorMode().equals(colorMode)){
-                resultat = cm;
-                break;
-            }
+            if(cm.getColorMode().equals(colorMode)) return cm;
         }
-        return resultat;
+        return defaultValue;
     }
 }

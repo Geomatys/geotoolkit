@@ -2,6 +2,7 @@ package org.geotoolkit.data.model.kml;
 
 import java.util.List;
 import org.geotoolkit.data.model.xsd.SimpleType;
+import static java.util.Collections.*;
 
 /**
  *
@@ -9,11 +10,11 @@ import org.geotoolkit.data.model.xsd.SimpleType;
  */
 public class LocationDefault extends AbstractObjectDefault implements Location {
 
-    private Angle180 longitude;
-    private Angle90 latitude;
-    private double altitude;
-    private List<SimpleType> locationSimpleExtensions;
-    private List<AbstractObject> locationObjectExtensions;
+    private final Angle180 longitude;
+    private final Angle90 latitude;
+    private final double altitude;
+    private final List<SimpleType> locationSimpleExtensions;
+    private final List<AbstractObject> locationObjectExtensions;
 
     /**
      *
@@ -33,8 +34,8 @@ public class LocationDefault extends AbstractObjectDefault implements Location {
         this.longitude = longitude;
         this.latitude = latitude;
         this.altitude = altitude;
-        this.locationSimpleExtensions = locationSimpleExtensions;
-        this.locationObjectExtensions = locationObjectExtensions;
+        this.locationSimpleExtensions = (locationSimpleExtensions == null) ? EMPTY_LIST : locationSimpleExtensions;
+        this.locationObjectExtensions = (locationObjectExtensions == null) ? EMPTY_LIST : locationObjectExtensions;
     }
 
     /**

@@ -5,6 +5,7 @@ import org.geotoolkit.data.model.atom.AtomLink;
 import org.geotoolkit.data.model.atom.AtomPersonConstruct;
 import org.geotoolkit.data.model.xal.AddressDetails;
 import org.geotoolkit.data.model.xsd.SimpleType;
+import static java.util.Collections.*;
 
 /**
  *
@@ -12,11 +13,11 @@ import org.geotoolkit.data.model.xsd.SimpleType;
  */
 public class NetworkLinkDefault extends AbstractFeatureDefault implements NetworkLink {
 
-    private boolean refreshVisibility;
-    private boolean flyToView;
-    private Link link;
-    private List<SimpleType> networkLinkSimpleExtensions;
-    private List<AbstractObject> networkLinkObjectExtensions;
+    private final boolean refreshVisibility;
+    private final boolean flyToView;
+    private final Link link;
+    private final List<SimpleType> networkLinkSimpleExtensions;
+    private final List<AbstractObject> networkLinkObjectExtensions;
 
     /**
      * 
@@ -63,8 +64,8 @@ public class NetworkLinkDefault extends AbstractFeatureDefault implements Networ
         this.refreshVisibility = refreshVisibility;
         this.flyToView = flyToView;
         this.link = link;
-        this.networkLinkSimpleExtensions = networkLinkSimpleExtensions;
-        this.networkLinkObjectExtensions = networkLinkObjectExtensions;
+        this.networkLinkSimpleExtensions = (networkLinkSimpleExtensions == null) ? EMPTY_LIST : networkLinkSimpleExtensions;
+        this.networkLinkObjectExtensions = (networkLinkObjectExtensions == null) ? EMPTY_LIST : networkLinkObjectExtensions;
     }
 
     /**

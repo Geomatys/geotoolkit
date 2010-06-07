@@ -2,6 +2,7 @@ package org.geotoolkit.data.model.kml;
 
 import java.util.List;
 import org.geotoolkit.data.model.xsd.SimpleType;
+import static java.util.Collections.*;
 
 /**
  *
@@ -9,8 +10,8 @@ import org.geotoolkit.data.model.xsd.SimpleType;
  */
 public class AbstractTimePrimitiveDefault extends AbstractObjectDefault implements AbstractTimePrimitive {
 
-    private List<SimpleType> abstractTimePrimitiveSimpleExtensions;
-    private List<AbstractObject> abstractTimePrimitiveObjectExtensions;
+    protected final List<SimpleType> abstractTimePrimitiveSimpleExtensions;
+    protected final List<AbstractObject> abstractTimePrimitiveObjectExtensions;
 
     /**
      *
@@ -22,8 +23,8 @@ public class AbstractTimePrimitiveDefault extends AbstractObjectDefault implemen
     protected AbstractTimePrimitiveDefault(List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
             List<SimpleType> abstractTimePrimitiveSimpleExtensions, List<AbstractObject> abstractTimePrimitiveObjectExtensions){
             super(objectSimpleExtensions, idAttributes);
-            this.abstractTimePrimitiveSimpleExtensions = abstractTimePrimitiveSimpleExtensions;
-            this.abstractTimePrimitiveObjectExtensions = abstractTimePrimitiveObjectExtensions;
+            this.abstractTimePrimitiveSimpleExtensions = (abstractTimePrimitiveSimpleExtensions == null) ? EMPTY_LIST : abstractTimePrimitiveSimpleExtensions;
+            this.abstractTimePrimitiveObjectExtensions = (abstractTimePrimitiveObjectExtensions == null) ? EMPTY_LIST : abstractTimePrimitiveObjectExtensions;
     }
 
     /**

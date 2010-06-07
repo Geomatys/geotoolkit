@@ -2,6 +2,7 @@ package org.geotoolkit.data.model.kml;
 
 import java.util.List;
 import org.geotoolkit.data.model.xsd.SimpleType;
+import static java.util.Collections.*;
 
 /**
  *
@@ -9,10 +10,10 @@ import org.geotoolkit.data.model.xsd.SimpleType;
  */
 public class PolyStyleDefault extends AbstractColorStyleDefault implements PolyStyle{
 
-    private boolean fill;
-    private boolean outline;
-    private List<SimpleType> polyStyleSimpleExtensions;
-    private List<AbstractObject> polyStyleObjectExtensions;
+    private final boolean fill;
+    private final boolean outline;
+    private final List<SimpleType> polyStyleSimpleExtensions;
+    private final List<AbstractObject> polyStyleObjectExtensions;
 
     /**
      *
@@ -40,8 +41,8 @@ public class PolyStyleDefault extends AbstractColorStyleDefault implements PolyS
                 color, colorMode, colorStyleSimpleExtensions, colorStyleObjectExtensions);
         this.fill = fill;
         this.outline = outline;
-        this.polyStyleSimpleExtensions = polyStyleSimpleExtensions;
-        this.polyStyleObjectExtensions = polyStyleObjectExtensions;
+        this.polyStyleSimpleExtensions = (polyStyleSimpleExtensions == null) ? EMPTY_LIST : polyStyleSimpleExtensions;
+        this.polyStyleObjectExtensions = (polyStyleObjectExtensions == null) ? EMPTY_LIST : polyStyleObjectExtensions;
     }
 
     /**

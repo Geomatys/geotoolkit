@@ -6,10 +6,10 @@ package org.geotoolkit.data.model.xal;
  */
 public class AddressIdentifierDefault implements AddressIdentifier {
 
-    private String content;
-    private String identifierType;
-    private String type;
-    private GrPostal grPostal;
+    private final String content;
+    private final String identifierType;
+    private final String type;
+    private final GrPostal grPostal;
 
     /**
      *

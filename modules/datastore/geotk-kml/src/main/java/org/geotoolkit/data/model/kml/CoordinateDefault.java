@@ -6,9 +6,9 @@ package org.geotoolkit.data.model.kml;
  */
 public class CoordinateDefault implements Coordinate{
 
-    private double geodeticLongitude;
-    private double geodeticLatitude;
-    private double altitude;
+    private final double geodeticLongitude;
+    private final double geodeticLatitude;
+    private final double altitude;
 
     /**
      *
@@ -20,6 +20,8 @@ public class CoordinateDefault implements Coordinate{
         this.geodeticLatitude = Double.valueOf(coordinatesList[1]);
         if(coordinatesList[2] != null){
             this.altitude = Double.valueOf(coordinatesList[2]);
+        } else {
+            this.altitude = Double.NaN;
         }
     }
 
@@ -43,6 +45,7 @@ public class CoordinateDefault implements Coordinate{
     public CoordinateDefault(double geodeticLongiude, double geodeticLatitude){
         this.geodeticLongitude = geodeticLongiude;
         this.geodeticLatitude = geodeticLatitude;
+        this.altitude = Double.NaN;
     }
 
     /**

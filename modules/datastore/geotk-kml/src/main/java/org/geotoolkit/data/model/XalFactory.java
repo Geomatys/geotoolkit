@@ -3,12 +3,15 @@ package org.geotoolkit.data.model;
 import java.util.List;
 import org.geotoolkit.data.model.xal.AddressDetails;
 import org.geotoolkit.data.model.xal.AddressIdentifier;
-import org.geotoolkit.data.model.xal.AddressIdentifierDefault;
 import org.geotoolkit.data.model.xal.AddressLines;
+import org.geotoolkit.data.model.xal.AdministrativeArea;
+import org.geotoolkit.data.model.xal.Country;
+import org.geotoolkit.data.model.xal.CountryNameCode;
 import org.geotoolkit.data.model.xal.GenericTypedGrPostal;
 import org.geotoolkit.data.model.xal.GrPostal;
 import org.geotoolkit.data.model.xal.PostalServiceElements;
 import org.geotoolkit.data.model.xal.SortingCode;
+import org.geotoolkit.data.model.xal.SubAdministrativeArea;
 import org.geotoolkit.data.model.xal.Xal;
 import org.geotoolkit.data.model.xal.XalException;
 
@@ -104,4 +107,56 @@ public interface XalFactory {
      * @return
      */
     public AddressIdentifier createAddressIdentifier(String content, String identifierType, String type, GrPostal grPostal);
+
+    /**
+     * 
+     * @param addressLines
+     * @param countryNameCodes
+     * @param countryNames
+     * @param localisation
+     * @return
+     * @throws XalException
+     */
+    public Country createCountry(List<GenericTypedGrPostal> addressLines,
+            List<CountryNameCode> countryNameCodes, List<GenericTypedGrPostal> countryNames, Object localisation) throws XalException;
+
+    /**
+     * 
+     * @param sheme
+     * @param grPostal
+     * @param content
+     * @return
+     */
+    public CountryNameCode createCountryNameCode(String sheme, GrPostal grPostal, String content);
+
+    /**
+     * 
+     * @param addressLines
+     * @param administrativeAreaNames
+     * @param subAdministrativeArea
+     * @param localisation
+     * @param type
+     * @param usageType
+     * @param indicator
+     * @return
+     * @throws XalException
+     */
+    public AdministrativeArea createAdministrativeArea(List<GenericTypedGrPostal> addressLines,
+            List<GenericTypedGrPostal> administrativeAreaNames, SubAdministrativeArea subAdministrativeArea,
+            Object localisation, String type, String usageType, String indicator) throws XalException;
+
+    /**
+     * 
+     * @param addressLines
+     * @param subAdministrativeAreaNames
+     * @param localisation
+     * @param type
+     * @param usageType
+     * @param indicator
+     * @return
+     * @throws XalException
+     */
+    public SubAdministrativeArea createSubAdministrativeArea(List<GenericTypedGrPostal> addressLines,
+            List<GenericTypedGrPostal> subAdministrativeAreaNames,
+            Object localisation, String type, String usageType, String indicator) throws XalException;
 }

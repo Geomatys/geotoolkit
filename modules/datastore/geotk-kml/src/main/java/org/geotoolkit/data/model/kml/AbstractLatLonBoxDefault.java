@@ -2,6 +2,7 @@ package org.geotoolkit.data.model.kml;
 
 import java.util.List;
 import org.geotoolkit.data.model.xsd.SimpleType;
+import static java.util.Collections.*;
 
 /**
  *
@@ -9,12 +10,12 @@ import org.geotoolkit.data.model.xsd.SimpleType;
  */
 public abstract class AbstractLatLonBoxDefault extends AbstractObjectDefault implements AbstractLatLonBox {
 
-    protected Angle180 north;
-    protected Angle180 south;
-    protected Angle180 east;
-    protected Angle180 west;
-    protected List<SimpleType> abstractLatLonBoxSimpleExtensions;
-    protected List<AbstractObject> abstractLatLonBoxObjectExtensions;
+    protected final Angle180 north;
+    protected final Angle180 south;
+    protected final Angle180 east;
+    protected final Angle180 west;
+    protected final List<SimpleType> abstractLatLonBoxSimpleExtensions;
+    protected final List<AbstractObject> abstractLatLonBoxObjectExtensions;
 
     /**
      * 
@@ -35,8 +36,8 @@ public abstract class AbstractLatLonBoxDefault extends AbstractObjectDefault imp
         this.south = south;
         this.east = east;
         this.west = west;
-        this.abstractLatLonBoxSimpleExtensions = abstractLatLonBoxSimpleExtensions;
-        this.abstractLatLonBoxObjectExtensions = abstractLatLonBoxObjectExtensions;
+        this.abstractLatLonBoxSimpleExtensions = (abstractLatLonBoxSimpleExtensions == null) ? EMPTY_LIST : abstractLatLonBoxSimpleExtensions;
+        this.abstractLatLonBoxObjectExtensions = (abstractLatLonBoxObjectExtensions == null) ? EMPTY_LIST : abstractLatLonBoxObjectExtensions;
     }
 
     /**

@@ -2,6 +2,7 @@ package org.geotoolkit.data.model.kml;
 
 import java.util.List;
 import org.geotoolkit.data.model.xsd.SimpleType;
+import static java.util.Collections.*;
 
 /**
  *
@@ -9,18 +10,18 @@ import org.geotoolkit.data.model.xsd.SimpleType;
  */
 public class NetworkLinkControlDefault implements NetworkLinkControl {
 
-    private double minRefreshPeriod;
-    private double maxSessionLength;
-    private String cookie;
-    private String message;
-    private String linkName;
-    private String linkDescription;
-    private Snippet linkSnippet;
-    private String expires;
-    private Update update;
-    private AbstractView view;
-    private List<SimpleType> networkLinkControlSimpleExtensions;
-    private List<AbstractObject> networkLinkControlObjectExtensions;
+    private final double minRefreshPeriod;
+    private final double maxSessionLength;
+    private final String cookie;
+    private final String message;
+    private final String linkName;
+    private final String linkDescription;
+    private final Snippet linkSnippet;
+    private final String expires;
+    private final Update update;
+    private final AbstractView view;
+    private final List<SimpleType> networkLinkControlSimpleExtensions;
+    private final List<AbstractObject> networkLinkControlObjectExtensions;
 
     /**
      *
@@ -51,8 +52,8 @@ public class NetworkLinkControlDefault implements NetworkLinkControl {
         this.expires = expire;
         this.update = update;
         this.view = view;
-        this.networkLinkControlSimpleExtensions = networkLinkControlSimpleExtensions;
-        this.networkLinkControlObjectExtensions = networkLinkControlObjectExtensions;
+        this.networkLinkControlSimpleExtensions = (networkLinkControlSimpleExtensions == null) ? EMPTY_LIST : networkLinkControlSimpleExtensions;
+        this.networkLinkControlObjectExtensions = (networkLinkControlObjectExtensions == null) ? EMPTY_LIST : networkLinkControlObjectExtensions;
     }
 
     /**

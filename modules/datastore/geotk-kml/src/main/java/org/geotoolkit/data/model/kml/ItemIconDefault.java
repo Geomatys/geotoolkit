@@ -2,6 +2,7 @@ package org.geotoolkit.data.model.kml;
 
 import java.util.List;
 import org.geotoolkit.data.model.xsd.SimpleType;
+import static java.util.Collections.*;
 
 /**
  *
@@ -9,10 +10,10 @@ import org.geotoolkit.data.model.xsd.SimpleType;
  */
 public class ItemIconDefault extends AbstractObjectDefault implements ItemIcon {
 
-    private List<ItemIconState> states;
-    private String href;
-    private List<SimpleType> itemIconSimpleExtensions;
-    private List<AbstractObject> itemIconObjectExtensions;
+    private final List<ItemIconState> states;
+    private final String href;
+    private final List<SimpleType> itemIconSimpleExtensions;
+    private final List<AbstractObject> itemIconObjectExtensions;
 
     /**
      *
@@ -29,8 +30,8 @@ public class ItemIconDefault extends AbstractObjectDefault implements ItemIcon {
         super(objectSimpleExtensions, idAttributes);
         this.states = states;
         this.href = href;
-        this.itemIconSimpleExtensions = itemIconSimpleExtensions;
-        this.itemIconObjectExtensions = itemIconObjectExtensions;
+        this.itemIconSimpleExtensions = (itemIconSimpleExtensions == null) ? EMPTY_LIST : itemIconSimpleExtensions;
+        this.itemIconObjectExtensions = (itemIconObjectExtensions == null) ? EMPTY_LIST : itemIconObjectExtensions;
     }
 
     /**

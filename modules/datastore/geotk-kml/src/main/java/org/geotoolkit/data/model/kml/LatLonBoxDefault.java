@@ -2,6 +2,7 @@ package org.geotoolkit.data.model.kml;
 
 import java.util.List;
 import org.geotoolkit.data.model.xsd.SimpleType;
+import static java.util.Collections.*;
 
 /**
  *
@@ -9,9 +10,9 @@ import org.geotoolkit.data.model.xsd.SimpleType;
  */
 public class LatLonBoxDefault extends AbstractLatLonBoxDefault implements LatLonBox{
 
-    private Angle180 rotation;
-    private List<SimpleType> latLonBoxSimpleExtensions;
-    private List<AbstractObject> latLonBoxObjectExtensions;
+    private final Angle180 rotation;
+    private final List<SimpleType> latLonBoxSimpleExtensions;
+    private final List<AbstractObject> latLonBoxObjectExtensions;
 
     /**
      *
@@ -35,8 +36,8 @@ public class LatLonBoxDefault extends AbstractLatLonBoxDefault implements LatLon
             List<AbstractObject> latLonBoxObjectExtensions){
         super(objectSimpleExtensions, idAttributes, north, south, east, west, abstractLatLonBoxSimpleExtensions, abstractLatLonBoxObjectExtensions);
         this.rotation = rotation;
-        this.latLonBoxSimpleExtensions = latLonBoxSimpleExtensions;
-        this.latLonBoxObjectExtensions = latLonBoxObjectExtensions;
+        this.latLonBoxSimpleExtensions = (latLonBoxSimpleExtensions == null) ? EMPTY_LIST : latLonBoxSimpleExtensions;
+        this.latLonBoxObjectExtensions = (latLonBoxObjectExtensions == null) ? EMPTY_LIST : latLonBoxObjectExtensions;
     }
 
     /**

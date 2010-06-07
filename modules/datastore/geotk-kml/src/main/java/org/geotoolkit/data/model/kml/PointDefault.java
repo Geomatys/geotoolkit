@@ -2,6 +2,7 @@ package org.geotoolkit.data.model.kml;
 
 import java.util.List;
 import org.geotoolkit.data.model.xsd.SimpleType;
+import static java.util.Collections.*;
 
 /**
  *
@@ -9,11 +10,11 @@ import org.geotoolkit.data.model.xsd.SimpleType;
  */
 public class PointDefault extends AbstractGeometryDefault implements Point {
 
-    private boolean extrude;
-    private AltitudeMode altitudeMode;
-    private Coordinates coordinates;
-    private List<SimpleType> pointSimpleExtensions;
-    private List<AbstractObject> pointObjectExtensions;
+    private final boolean extrude;
+    private final AltitudeMode altitudeMode;
+    private final Coordinates coordinates;
+    private final List<SimpleType> pointSimpleExtensions;
+    private final List<AbstractObject> pointObjectExtensions;
 
     /**
      *
@@ -41,8 +42,8 @@ public class PointDefault extends AbstractGeometryDefault implements Point {
         this.extrude = extrude;
         this.altitudeMode = altitudeMode;
         this.coordinates = coordinates;
-        this.pointSimpleExtensions = pointSimpleExtensions;
-        this.pointObjectExtensions = pointObjectExtensions;
+        this.pointSimpleExtensions = (pointSimpleExtensions == null) ? EMPTY_LIST : pointSimpleExtensions;
+        this.pointObjectExtensions = (pointObjectExtensions == null) ? EMPTY_LIST : pointObjectExtensions;
     }
 
     /**

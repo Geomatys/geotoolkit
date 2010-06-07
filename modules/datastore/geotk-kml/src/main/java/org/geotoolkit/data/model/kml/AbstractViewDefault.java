@@ -2,6 +2,7 @@ package org.geotoolkit.data.model.kml;
 
 import java.util.List;
 import org.geotoolkit.data.model.xsd.SimpleType;
+import static java.util.Collections.*;
 
 /**
  *
@@ -9,8 +10,8 @@ import org.geotoolkit.data.model.xsd.SimpleType;
  */
 public abstract class AbstractViewDefault extends AbstractObjectDefault implements AbstractView {
 
-    protected List<SimpleType> abstractViewSimpleExtensions;
-    protected List<AbstractObject> abstractViewObjectExtensions;
+    protected final List<SimpleType> abstractViewSimpleExtensions;
+    protected final List<AbstractObject> abstractViewObjectExtensions;
 
     /**
      *
@@ -22,8 +23,8 @@ public abstract class AbstractViewDefault extends AbstractObjectDefault implemen
     protected AbstractViewDefault(List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
             List<SimpleType> abstractViewSimpleExtensions, List<AbstractObject> abstractViewObjectExtensions){
         super(objectSimpleExtensions, idAttributes);
-        this.abstractViewSimpleExtensions = abstractViewSimpleExtensions;
-        this.abstractViewObjectExtensions = abstractViewObjectExtensions;
+        this.abstractViewSimpleExtensions = (abstractViewSimpleExtensions == null) ? EMPTY_LIST : abstractViewSimpleExtensions;
+        this.abstractViewObjectExtensions = (abstractViewObjectExtensions == null) ? EMPTY_LIST : abstractViewObjectExtensions;
     }
 
     /**

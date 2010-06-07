@@ -6,22 +6,26 @@ import org.geotoolkit.data.model.xsd.SimpleType;
 /**
  * <p>This interface maps Pair element.</p>
  *
- * <br />&lt;element name="Pair" type="kml:PairType" substitutionGroup="kml:AbstractObjectGroup"/>
- * <br />&lt;complexType name="PairType" final="#all">
- * <br />&lt;complexContent>
- * <br />&lt;extension base="kml:AbstractObjectType">
- * <br />&lt;sequence>
- * <br />&lt;element ref="kml:key" minOccurs="0"/>
- * <br />&lt;element ref="kml:styleUrl" minOccurs="0"/>
- * <br />&lt;element ref="kml:AbstractStyleSelectorGroup" minOccurs="0"/>
- * <br />&lt;element ref="kml:PairSimpleExtensionGroup" minOccurs="0" maxOccurs="unbounded"/>
- * <br />&lt;element ref="kml:PairObjectExtensionGroup" minOccurs="0" maxOccurs="unbounded"/>
- * <br />&lt;/sequence>
- * <br />&lt;/extension>
- * <br />&lt;/complexContent>
- * <br />&lt;/complexType>
- * <br />&lt;element name="PairSimpleExtensionGroup" abstract="true" type="anySimpleType"/>
- * <br />&lt;element name="PairObjectExtensionGroup" abstract="true" substitutionGroup="kml:AbstractObjectGroup"/>
+ * <pre>
+ * &lt;element name="Pair" type="kml:PairType" substitutionGroup="kml:AbstractObjectGroup"/>
+ *
+ * &lt;complexType name="PairType" final="#all">
+ *  &lt;complexContent>
+ *      &lt;extension base="kml:AbstractObjectType">
+ *          &lt;sequence>
+ *          &lt;element ref="kml:key" minOccurs="0"/>
+ *          &lt;element ref="kml:styleUrl" minOccurs="0"/>
+ *          &lt;element ref="kml:AbstractStyleSelectorGroup" minOccurs="0"/>
+ *          &lt;element ref="kml:PairSimpleExtensionGroup" minOccurs="0" maxOccurs="unbounded"/>
+ *          &lt;element ref="kml:PairObjectExtensionGroup" minOccurs="0" maxOccurs="unbounded"/>
+ *          &lt;/sequence>
+ *      &lt;/extension>
+ *  &lt;/complexContent>
+ * &lt;/complexType>
+ *
+ * &lt;element name="PairSimpleExtensionGroup" abstract="true" type="anySimpleType"/>
+ * &lt;element name="PairObjectExtensionGroup" abstract="true" substitutionGroup="kml:AbstractObjectGroup"/>
+ * </pre>
  *
  * @author Samuel Andrés
  */

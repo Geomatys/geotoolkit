@@ -24,13 +24,20 @@ public final class XalModelConstants {
     public static final String TAG_ADDRESS_LONGITUDE = "AddressLongitude";
     public static final String TAG_ADDRESS_LONGITUDE_DIRECTION = "AddressLongitudeDirection";
     public static final String TAG_ADMINISTRATIVE_AREA = "AdministrativeArea";
+    public static final String TAG_ADMINISTRATIVE_AREA_NAME = "AdministrativeAreaName";
     public static final String TAG_BARCODE = "Barcode";
     public static final String TAG_COUNTRY = "Country";
+    public static final String TAG_COUNTRY_NAME = "CountryName";
+    public static final String TAG_COUNTRY_NAME_CODE = "CountryNameCode";
     public static final String TAG_ENDORSEMENT_LINE_CODE = "EndorsementLineCode";
     public static final String TAG_KEY_LINE_CODE = "KeyLineCode";
     public static final String TAG_LOCALITY = "Locality";
+    public static final String TAG_POSTAL_CODE = "PostalCode";
     public static final String TAG_POSTAL_SERVICE_ELEMENTS = "PostalServiceElements";
+    public static final String TAG_POST_OFFICE = "PostOffice";
     public static final String TAG_SORTING_CODE = "SortingCode";
+    public static final String TAG_SUB_ADMINISTRATIVE_AREA = "SubAdministrativeArea";
+    public static final String TAG_SUB_ADMINISTRATIVE_AREA_NAME = "SubAdministrativeAreaName";
     public static final String TAG_SUPPLEMENTARY_POSTAL_SERVICE_DATA = "SupplementaryPostalServiceData";
     public static final String TAG_THOROUGHFARE = "Thoroughfare";
 
@@ -40,8 +47,11 @@ public final class XalModelConstants {
     public static final String ATT_CODE = "Code";
     public static final String ATT_CURRENT_STATUS = "CurrentStatus";
     public static final String ATT_IDENTIFIER_TYPE = "IdentifierType";
+    public static final String ATT_INDICATOR = "Indicator";
+    public static final String ATT_SCHEME = "Scheme";
     public static final String ATT_TYPE = "Type";
     public static final String ATT_USAGE = "Usage";
+    public static final String ATT_USAGE_TYPE = "UsageType";
     public static final String ATT_VALID_FROM_DATE = "ValidFromDate";
     public static final String ATT_VALID_TO_DATE = "ValidToDate";
     public static final String ATT_VERSION = "Version";

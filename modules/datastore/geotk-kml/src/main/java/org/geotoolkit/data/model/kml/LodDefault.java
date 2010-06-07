@@ -2,6 +2,7 @@ package org.geotoolkit.data.model.kml;
 
 import java.util.List;
 import org.geotoolkit.data.model.xsd.SimpleType;
+import static java.util.Collections.*;
 
 /**
  *
@@ -9,12 +10,12 @@ import org.geotoolkit.data.model.xsd.SimpleType;
  */
 public class LodDefault extends AbstractObjectDefault implements Lod {
 
-    private double minLodPixels;
-    private double maxLodPixels;
-    private double minFadeExtent;
-    private double maxFadeExtent;
-    private List<SimpleType> lodSimpleExtentions;
-    private List<AbstractObject> lodObjectExtensions;
+    private final double minLodPixels;
+    private final double maxLodPixels;
+    private final double minFadeExtent;
+    private final double maxFadeExtent;
+    private final List<SimpleType> lodSimpleExtentions;
+    private final List<AbstractObject> lodObjectExtensions;
 
     /**
      *
@@ -36,8 +37,8 @@ public class LodDefault extends AbstractObjectDefault implements Lod {
         this.maxLodPixels = maxLodPixels;
         this.minFadeExtent = minFadeExtent;
         this.maxFadeExtent = maxFadeExtent;
-        this.lodSimpleExtentions = lodSimpleExtentions;
-        this.lodObjectExtensions = lodObjectExtensions;
+        this.lodSimpleExtentions = (lodSimpleExtentions == null) ? EMPTY_LIST : lodSimpleExtentions;
+        this.lodObjectExtensions = (lodObjectExtensions == null) ? EMPTY_LIST : lodObjectExtensions;
     }
 
     /**

@@ -4,26 +4,30 @@ import java.util.List;
 import org.geotoolkit.data.model.xsd.SimpleType;
 
 /**
- * <p></p>
- * <br />&lt;element name="PhotoOverlay" type="kml:PhotoOverlayType" substitutionGroup="kml:AbstractOverlayGroup"/>
- * <br />&lt;complexType name="PhotoOverlayType" final="#all">
- * <br />&lt;complexContent>
- * <br />&lt;extension base="kml:AbstractOverlayType">
- * <br />&lt;sequence>
- * <br />&lt;element ref="kml:rotation" minOccurs="0"/>
- * <br />&lt;element ref="kml:ViewVolume" minOccurs="0"/>
- * <br />&lt;element ref="kml:ImagePyramid" minOccurs="0"/>
- * <br />&lt;element ref="kml:Point" minOccurs="0"/>
- * <br />&lt;element ref="kml:shape" minOccurs="0"/>
- * <br />&lt;element ref="kml:PhotoOverlaySimpleExtensionGroup" minOccurs="0" maxOccurs="unbounded"/>
- * <br />&lt;element ref="kml:PhotoOverlayObjectExtensionGroup" minOccurs="0" maxOccurs="unbounded"/>
- * <br />&lt;/sequence>
- * <br />&lt;/extension>
- * <br />&lt;/complexContent>
- * <br />&lt;/complexType>
- * <br />&lt;element name="PhotoOverlaySimpleExtensionGroup" abstract="true" type="anySimpleType"/>
- * <br />&lt;element name="PhotoOverlayObjectExtensionGroup" abstract="true" substitutionGroup="kml:AbstractObjectGroup"/>
-
+ * <p>This interface maps PhotoOverlay element.</p>
+ *
+ * <pre>
+ * &lt;element name="PhotoOverlay" type="kml:PhotoOverlayType" substitutionGroup="kml:AbstractOverlayGroup"/>
+ *
+ * &lt;complexType name="PhotoOverlayType" final="#all">
+ *  &lt;complexContent>
+ *      &lt;extension base="kml:AbstractOverlayType">
+ *          &lt;sequence>
+ *              &lt;element ref="kml:rotation" minOccurs="0"/>
+ *              &lt;element ref="kml:ViewVolume" minOccurs="0"/>
+ *              &lt;element ref="kml:ImagePyramid" minOccurs="0"/>
+ *              &lt;element ref="kml:Point" minOccurs="0"/>
+ *              &lt;element ref="kml:shape" minOccurs="0"/>
+ *              &lt;element ref="kml:PhotoOverlaySimpleExtensionGroup" minOccurs="0" maxOccurs="unbounded"/>
+ *              &lt;element ref="kml:PhotoOverlayObjectExtensionGroup" minOccurs="0" maxOccurs="unbounded"/>
+ *          &lt;/sequence>
+ *      &lt;/extension>
+ *  &lt;/complexContent>
+ * &lt;/complexType>
+ *
+ * &lt;element name="PhotoOverlaySimpleExtensionGroup" abstract="true" type="anySimpleType"/>
+ * &lt;element name="PhotoOverlayObjectExtensionGroup" abstract="true" substitutionGroup="kml:AbstractObjectGroup"/>
+ * </pre>
  *
  * @author Samuel Andrés
  */

@@ -19,7 +19,7 @@ public enum GridOrigin {
     LOWER_LEFT("lowerLeft"),
     UPPER_LEFT("upperLeft");
 
-    private String gridOrigin;
+    private final String gridOrigin;
 
     private GridOrigin(String gridOrigin){
         this.gridOrigin = gridOrigin;
@@ -50,13 +50,9 @@ public enum GridOrigin {
      * @return The GridOrigin instance corresponding to the gridOrigin parameter.
      */
     public static GridOrigin transform(String gridOrigin, GridOrigin defaultValue){
-        GridOrigin resultat = defaultValue;
         for(GridOrigin go : GridOrigin.values()){
-            if(go.getGridOrigin().equals(gridOrigin)){
-                resultat = go;
-                break;
-            }
+            if(go.getGridOrigin().equals(gridOrigin)) return go;
         }
-        return resultat;
+        return defaultValue;
     }
 }

@@ -6,7 +6,7 @@ package org.geotoolkit.data.model.kml;
  */
 public class ColorDefault implements Color {
 
-    private String color;
+    private final String color;
 
     /**
      *

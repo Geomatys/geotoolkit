@@ -2,6 +2,7 @@ package org.geotoolkit.data.model.kml;
 
 import java.util.List;
 import org.geotoolkit.data.model.xsd.SimpleType;
+import static java.util.Collections.*;
 
 /**
  *
@@ -9,12 +10,12 @@ import org.geotoolkit.data.model.xsd.SimpleType;
  */
 public class LinearRingDefault extends AbstractGeometryDefault implements LinearRing {
 
-    private boolean extrude;
-    private boolean tessellate;
-    private AltitudeMode altitudeMode;
-    private Coordinates coordinates;
-    private List<SimpleType> linearRingSimpleExtensions;
-    private List<AbstractObject> linearRingObjectExtensions;
+    private final boolean extrude;
+    private final boolean tessellate;
+    private final AltitudeMode altitudeMode;
+    private final Coordinates coordinates;
+    private final List<SimpleType> linearRingSimpleExtensions;
+    private final List<AbstractObject> linearRingObjectExtensions;
 
     /**
      *
@@ -44,8 +45,8 @@ public class LinearRingDefault extends AbstractGeometryDefault implements Linear
         this.tessellate = tessellate;
         this.altitudeMode = altitudeMode;
         this.coordinates = coordinates;
-        this.linearRingSimpleExtensions = linearRingSimpleExtensions;
-        this.linearRingObjectExtensions = linearRingObjectExtensions;
+        this.linearRingSimpleExtensions = (linearRingSimpleExtensions == null) ? EMPTY_LIST : linearRingSimpleExtensions;
+        this.linearRingObjectExtensions = (linearRingObjectExtensions == null) ? EMPTY_LIST : linearRingObjectExtensions;
     }
 
     /**

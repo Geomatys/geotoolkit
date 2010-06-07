@@ -1,6 +1,7 @@
 package org.geotoolkit.data.model.kml;
 
 import java.util.List;
+import static java.util.Collections.*;
 
 /**
  *
@@ -8,14 +9,14 @@ import java.util.List;
  */
 public class CreateDefault implements Create {
 
-    private List<AbstractContainer> containers;
+    private final List<AbstractContainer> containers;
 
     /**
      *
      * @param containers
      */
     public CreateDefault(List<AbstractContainer> containers){
-        this.containers = containers;
+        this.containers = (containers == null) ? EMPTY_LIST : containers;
     }
 
     /**

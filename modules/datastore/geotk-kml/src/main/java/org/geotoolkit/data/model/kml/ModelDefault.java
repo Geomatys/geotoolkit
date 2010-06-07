@@ -2,6 +2,7 @@ package org.geotoolkit.data.model.kml;
 
 import java.util.List;
 import org.geotoolkit.data.model.xsd.SimpleType;
+import static java.util.Collections.*;
 
 /**
  *
@@ -9,14 +10,14 @@ import org.geotoolkit.data.model.xsd.SimpleType;
  */
 public class ModelDefault extends AbstractGeometryDefault implements Model {
 
-    private AltitudeMode altitudeMode;
-    private Location location;
-    private Orientation orientation;
-    private Scale scale;
-    private Link link;
-    private ResourceMap resourceMap;
-    private List<SimpleType> modelSimpleExtensions;
-    private List<AbstractObject> modelObjectExtensions;
+    private final AltitudeMode altitudeMode;
+    private final Location location;
+    private final Orientation orientation;
+    private final Scale scale;
+    private final Link link;
+    private final ResourceMap resourceMap;
+    private final List<SimpleType> modelSimpleExtensions;
+    private final List<AbstractObject> modelObjectExtensions;
 
     /**
      *
@@ -47,8 +48,8 @@ public class ModelDefault extends AbstractGeometryDefault implements Model {
         this.scale = scale;
         this.link = link;
         this.resourceMap = resourceMap;
-        this.modelSimpleExtensions = modelSimpleExtensions;
-        this.modelObjectExtensions = modelObjectExtensions;
+        this.modelSimpleExtensions = (modelSimpleExtensions == null) ? EMPTY_LIST : modelSimpleExtensions;
+        this.modelObjectExtensions = (modelObjectExtensions == null) ? EMPTY_LIST : modelObjectExtensions;
     }
 
     /**

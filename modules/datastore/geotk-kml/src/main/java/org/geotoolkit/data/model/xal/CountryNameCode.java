@@ -5,16 +5,24 @@ package org.geotoolkit.data.model.xal;
  *
  * <p>A country code according to the specified scheme.</p>
  *
- * <br />&lt;xs:complexType mixed="true">
- * <br />&lt;xs:attribute name="Scheme">...
- * <br />&lt;/xs:attribute>
- * <br />&lt;xs:attributeGroup ref="grPostal"/>
- * <br />&lt;xs:anyAttribute namespace="##other"/>
- * <br />&lt;/xs:complexType>
+ * <pre>
+ * &lt;xs:complexType mixed="true">
+ *  &lt;xs:attribute name="Scheme">...
+ *  &lt;/xs:attribute>
+ *  &lt;xs:attributeGroup ref="grPostal"/>
+ *  &lt;xs:anyAttribute namespace="##other"/>
+ * &lt;/xs:complexType>
+ * </pre>
  *
  * @author Samuel Andrés
  */
 public interface CountryNameCode {
+
+    /**
+     * 
+     * @return
+     */
+    public String getContent();
 
     /**
      * <p>Country code scheme possible values, but not limited to:

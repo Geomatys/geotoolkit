@@ -2,6 +2,7 @@ package org.geotoolkit.data.model.kml;
 
 import java.util.List;
 import org.geotoolkit.data.model.xsd.SimpleType;
+import static java.util.Collections.*;
 
 /**
  *
@@ -9,12 +10,12 @@ import org.geotoolkit.data.model.xsd.SimpleType;
  */
 public class LineStringDefault extends AbstractGeometryDefault implements LineString {
 
-    private boolean extrude;
-    private boolean tessellate;
-    private AltitudeMode altitudeMode;
-    private Coordinates coordinates;
-    private List<SimpleType> lineStringSimpleExtensions;
-    private List<AbstractObject> lineStringObjectExtensions;
+    private final boolean extrude;
+    private final boolean tessellate;
+    private final AltitudeMode altitudeMode;
+    private final Coordinates coordinates;
+    private final List<SimpleType> lineStringSimpleExtensions;
+    private final List<AbstractObject> lineStringObjectExtensions;
 
     /**
      *
@@ -44,8 +45,8 @@ public class LineStringDefault extends AbstractGeometryDefault implements LineSt
         this.tessellate = tessellate;
         this.altitudeMode = altitudeMode;
         this.coordinates = coordinates;
-        this.lineStringSimpleExtensions = lineStringSimpleExtensions;
-        this.lineStringObjectExtensions = lineStringObjectExtensions;
+        this.lineStringSimpleExtensions = (lineStringSimpleExtensions == null) ? EMPTY_LIST : lineStringSimpleExtensions;
+        this.lineStringObjectExtensions = (lineStringObjectExtensions == null) ? EMPTY_LIST : lineStringObjectExtensions;
     }
 
     /**

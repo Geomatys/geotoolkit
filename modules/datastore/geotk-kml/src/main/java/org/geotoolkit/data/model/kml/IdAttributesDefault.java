@@ -6,8 +6,8 @@ package org.geotoolkit.data.model.kml;
  */
 public class IdAttributesDefault implements IdAttributes{
 
-    private String id;
-    private String targetId;
+    private final String id;
+    private final String targetId;
 
     /**
      *

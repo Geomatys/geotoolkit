@@ -5,6 +5,7 @@ import org.geotoolkit.data.model.atom.AtomPersonConstruct;
 import org.geotoolkit.data.model.atom.AtomLink;
 import org.geotoolkit.data.model.xal.AddressDetails;
 import org.geotoolkit.data.model.xsd.SimpleType;
+import static java.util.Collections.*;
 
 /**
  *
@@ -12,8 +13,8 @@ import org.geotoolkit.data.model.xsd.SimpleType;
  */
 public class AbstractContainerDefault extends AbstractFeatureDefault implements AbstractContainer {
 
-    protected List<SimpleType> containerSimpleExtensions;
-    protected List<AbstractObject> containerObjectExtensions;
+    protected final List<SimpleType> containerSimpleExtensions;
+    protected final List<AbstractObject> containerObjectExtensions;
 
     /**
      *
@@ -56,8 +57,8 @@ public class AbstractContainerDefault extends AbstractFeatureDefault implements 
                 phoneNumber, snippet, description, view, timePrimitive, styleUrl, styleSelector, region, extendedData,
                 abstractFeatureSimpleExtensions, abstractFeatureObjectExtensions);
 
-        this.containerSimpleExtensions = abstractContainerSimpleExtensions;
-        this.containerObjectExtensions = abstractContainerObjectExtensions;
+        this.containerSimpleExtensions = (abstractContainerSimpleExtensions == null) ? EMPTY_LIST : abstractContainerSimpleExtensions;
+        this.containerObjectExtensions = (abstractContainerObjectExtensions == null) ? EMPTY_LIST : abstractContainerObjectExtensions;
     }
 
     /**

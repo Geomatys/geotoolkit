@@ -1,6 +1,7 @@
 package org.geotoolkit.data.model.kml;
 
 import java.util.List;
+import static java.util.Collections.*;
 
 /**
  *
@@ -8,9 +9,9 @@ import java.util.List;
  */
 public class ExtendedDataDefault implements ExtendedData {
 
-    private List<Data> datas;
-    private List<SchemaData> schemaDatas;
-    private List<Object> anyOtherElements;
+    private final List<Data> datas;
+    private final List<SchemaData> schemaDatas;
+    private final List<Object> anyOtherElements;
 
     /**
      *
@@ -19,9 +20,9 @@ public class ExtendedDataDefault implements ExtendedData {
      * @param anyOtherElements
      */
     public ExtendedDataDefault(List<Data> datas, List<SchemaData> schemaDatas, List<Object> anyOtherElements){
-        this.datas = datas;
-        this.schemaDatas = schemaDatas;
-        this.anyOtherElements = anyOtherElements;
+        this.datas = (datas == null) ? EMPTY_LIST : datas;
+        this.schemaDatas = (schemaDatas == null) ? EMPTY_LIST : schemaDatas;
+        this.anyOtherElements = (anyOtherElements == null) ? EMPTY_LIST : anyOtherElements;
     }
 
     /**

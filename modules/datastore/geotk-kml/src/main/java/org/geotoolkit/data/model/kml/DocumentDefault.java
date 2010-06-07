@@ -5,6 +5,7 @@ import org.geotoolkit.data.model.xsd.SimpleType;
 import org.geotoolkit.data.model.atom.AtomPersonConstruct;
 import org.geotoolkit.data.model.atom.AtomLink;
 import org.geotoolkit.data.model.xal.AddressDetails;
+import static java.util.Collections.*;
 
 /**
  *
@@ -12,10 +13,10 @@ import org.geotoolkit.data.model.xal.AddressDetails;
  */
 public class DocumentDefault extends AbstractContainerDefault implements Document{
 
-    private List<Schema> schemas;
-    private List<AbstractFeature> features;
-    private List<SimpleType> documentSimpleExtensions;
-    private List<AbstractObject> documentObjectExtensions;
+    private final List<Schema> schemas;
+    private final List<AbstractFeature> features;
+    private final List<SimpleType> documentSimpleExtensions;
+    private final List<AbstractObject> documentObjectExtensions;
 
     /**
      *
@@ -69,8 +70,8 @@ public class DocumentDefault extends AbstractContainerDefault implements Documen
 
         this.schemas = schemas;
         this.features = features;
-        this.documentSimpleExtensions = documentSimpleExtensions;
-        this.documentObjectExtensions = documentObjectExtensions;
+        this.documentSimpleExtensions = (documentSimpleExtensions == null) ? EMPTY_LIST : documentSimpleExtensions;
+        this.documentObjectExtensions = (documentObjectExtensions == null) ? EMPTY_LIST : documentObjectExtensions;
     }
 
     /**

@@ -2,6 +2,7 @@ package org.geotoolkit.data.model.kml;
 
 import java.util.List;
 import org.geotoolkit.data.model.xsd.SimpleType;
+import static java.util.Collections.*;
 
 /**
  *
@@ -9,11 +10,11 @@ import org.geotoolkit.data.model.xsd.SimpleType;
  */
 public class LatLonAltBoxDefault extends AbstractLatLonBoxDefault implements LatLonAltBox {
 
-    private double minAltitude;
-    private double maxAltitude;
-    private AltitudeMode altitudeMode;
-    private List<SimpleType> latLonAltBoxSimpleExtensions;
-    private List<AbstractObject> latLonAltBoxObjectExtensions;
+    private final double minAltitude;
+    private final double maxAltitude;
+    private final AltitudeMode altitudeMode;
+    private final List<SimpleType> latLonAltBoxSimpleExtensions;
+    private final List<AbstractObject> latLonAltBoxObjectExtensions;
 
     /**
      *
@@ -40,8 +41,8 @@ public class LatLonAltBoxDefault extends AbstractLatLonBoxDefault implements Lat
         this.minAltitude = minAltitude;
         this.maxAltitude = maxAltitude;
         this.altitudeMode = altitudeMode;
-        this.latLonAltBoxSimpleExtensions = latLonAltBoxSimpleExtensions;
-        this.latLonAltBoxObjectExtensions = latLonAltBoxObjectExtensions;
+        this.latLonAltBoxSimpleExtensions = (latLonAltBoxSimpleExtensions == null) ? EMPTY_LIST : latLonAltBoxSimpleExtensions;
+        this.latLonAltBoxObjectExtensions = (latLonAltBoxObjectExtensions == null) ? EMPTY_LIST : latLonAltBoxObjectExtensions;
     }
 
     /**

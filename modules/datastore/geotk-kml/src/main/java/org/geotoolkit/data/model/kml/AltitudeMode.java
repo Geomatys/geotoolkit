@@ -25,7 +25,7 @@ public enum AltitudeMode {
     RELATIVE_TO_GROUND("relativeToGround"),
     ABSOLUTE("absolute");
 
-    private String altitudeMode;
+    private final String altitudeMode;
 
     /**
      *
@@ -60,13 +60,9 @@ public enum AltitudeMode {
      * @return The AltitudeMode instance corresponding to the altitudeMode parameter.
      */
     public static AltitudeMode transform(String altitudeMode, AltitudeMode defaultValue){
-        AltitudeMode resultat = defaultValue;
         for(AltitudeMode cm : AltitudeMode.values()){
-            if(cm.getAltitudeMode().equals(altitudeMode)){
-                resultat = cm;
-                break;
-            }
+            if(cm.getAltitudeMode().equals(altitudeMode)) return cm;
         }
-        return resultat;
+        return defaultValue;
     }
 }

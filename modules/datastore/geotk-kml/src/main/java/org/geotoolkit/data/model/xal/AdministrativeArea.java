@@ -7,30 +7,32 @@ import java.util.List;
  *
  * <p>Examples of administrative areas are provinces counties, special regions (such as "Rijnmond"), etc.</p>
  *
- * <br />&lt;xs:element name="AdministrativeArea">
- * <br />&lt;xs:complexType>
- * <br />&lt;xs:sequence>
- * <br />&lt;xs:element ref="AddressLine" minOccurs="0" maxOccurs="unbounded"/>
- * <br />&lt;xs:element name="AdministrativeAreaName" minOccurs="0" maxOccurs="unbounded">...
- * <br />&lt;/xs:element>
- * <br />&lt;xs:element name="SubAdministrativeArea" minOccurs="0">...
- * <br />&lt;/xs:element>
- * <br />&lt;xs:choice minOccurs="0">
- * <br />&lt;xs:element ref="Locality"/>
- * <br />&lt;xs:element ref="PostOffice"/>
- * <br />&lt;xs:element ref="PostalCode"/>
- * <br />&lt;/xs:choice>
- * <br />&lt;xs:any namespace="##other" minOccurs="0" maxOccurs="unbounded"/>
- * <br />&lt;/xs:sequence>
- * <br />&lt;xs:attribute name="Type">...
- * <br />&lt;/xs:attribute>
- * <br />&lt;xs:attribute name="UsageType">...
- * <br />&lt;/xs:attribute>
- * <br />&lt;xs:attribute name="Indicator">...
- * <br />&lt;/xs:attribute>
- * <br />&lt;xs:anyAttribute namespace="##other"/>
- * <br />&lt;/xs:complexType>
- * <br />&lt;/xs:element>
+ * <pre>
+ * &lt;xs:element name="AdministrativeArea">
+ *  &lt;xs:complexType>
+ *      &lt;xs:sequence>
+ *          &lt;xs:element ref="AddressLine" minOccurs="0" maxOccurs="unbounded"/>
+ *          &lt;xs:element name="AdministrativeAreaName" minOccurs="0" maxOccurs="unbounded">...
+ *          &lt;/xs:element>
+ *          &lt;xs:element name="SubAdministrativeArea" minOccurs="0">...
+ *          &lt;/xs:element>
+ *          &lt;xs:choice minOccurs="0">
+ *              &lt;xs:element ref="Locality"/>
+ *              &lt;xs:element ref="PostOffice"/>
+ *              &lt;xs:element ref="PostalCode"/>
+ *          &lt;/xs:choice>
+ *          &lt;xs:any namespace="##other" minOccurs="0" maxOccurs="unbounded"/>
+ *      &lt;/xs:sequence>
+ *      &lt;xs:attribute name="Type">...
+ *      &lt;/xs:attribute>
+ *      &lt;xs:attribute name="UsageType">...
+ *      &lt;/xs:attribute>
+ *      &lt;xs:attribute name="Indicator">...
+ *      &lt;/xs:attribute>
+ *      &lt;xs:anyAttribute namespace="##other"/>
+ *  &lt;/xs:complexType>
+ * &lt;/xs:element>
+ * </pre>
  *
  * @author Samuel Andrés
  */
@@ -46,7 +48,7 @@ public interface AdministrativeArea {
      *
      * @return
      */
-    public List<AdministrativeAreaName> getAdministrativeAreaNames();
+    public List<GenericTypedGrPostal> getAdministrativeAreaNames();
 
     /**
      *

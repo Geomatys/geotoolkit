@@ -2,6 +2,7 @@ package org.geotoolkit.data.model.kml;
 
 import java.util.List;
 import org.geotoolkit.data.model.xsd.SimpleType;
+import static java.util.Collections.*;
 
 /**
  *
@@ -9,12 +10,12 @@ import org.geotoolkit.data.model.xsd.SimpleType;
  */
 public class BasicLinkDefault implements BasicLink {
 
-    private List<SimpleType> objectSimpleExtensions;
-    private IdAttributes idAttributes;
+    private final List<SimpleType> objectSimpleExtensions;
+    private final IdAttributes idAttributes;
     
-    private String href;
-    private List<SimpleType> basicLinkSimpleExtensions;
-    private List<AbstractObject> basicLinkObjectExtensions;
+    private final String href;
+    private final List<SimpleType> basicLinkSimpleExtensions;
+    private final List<AbstractObject> basicLinkObjectExtensions;
 
     /**
      *
@@ -29,8 +30,8 @@ public class BasicLinkDefault implements BasicLink {
             this.objectSimpleExtensions = objectSimpleExtensions;
             this.idAttributes = idAttributes;
             this.href = href;
-            this.basicLinkSimpleExtensions = basicLinkSimpleExtensions;
-            this.basicLinkObjectExtensions = basicLinkObjectExtensions;
+            this.basicLinkSimpleExtensions = (basicLinkSimpleExtensions == null) ? EMPTY_LIST : basicLinkSimpleExtensions;
+            this.basicLinkObjectExtensions = (basicLinkObjectExtensions == null) ? EMPTY_LIST : basicLinkObjectExtensions;
     }
 
     /**

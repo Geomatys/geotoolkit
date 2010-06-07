@@ -1,6 +1,7 @@
 package org.geotoolkit.data.model.xal;
 
 import java.util.List;
+import static java.util.Collections.*;
 
 /**
  *
@@ -8,10 +9,10 @@ import java.util.List;
  */
 public class AddressLinesDefault implements AddressLines {
 
-    private List<GenericTypedGrPostal> addressLines;
+    private final List<GenericTypedGrPostal> addressLines;
     
     public AddressLinesDefault(List<GenericTypedGrPostal> addressLines){
-        this.addressLines = addressLines;
+        this.addressLines = (addressLines == null) ? EMPTY_LIST : addressLines;
     }
     
     /**

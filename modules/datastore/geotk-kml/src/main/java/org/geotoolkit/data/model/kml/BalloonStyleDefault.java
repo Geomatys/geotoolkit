@@ -2,6 +2,7 @@ package org.geotoolkit.data.model.kml;
 
 import java.util.List;
 import org.geotoolkit.data.model.xsd.SimpleType;
+import static java.util.Collections.*;
 
 /**
  *
@@ -9,12 +10,12 @@ import org.geotoolkit.data.model.xsd.SimpleType;
  */
 public class BalloonStyleDefault extends AbstractSubStyleDefault implements BalloonStyle {
 
-    private Color bgColor;
-    private Color textColor;
-    private String text;
-    private DisplayMode displayMode;
-    private List<SimpleType> balloonStyleSimpleExtensions;
-    private List<AbstractObject> balloonStyleObjectExtensions;
+    private final Color bgColor;
+    private final Color textColor;
+    private final String text;
+    private final DisplayMode displayMode;
+    private final List<SimpleType> balloonStyleSimpleExtensions;
+    private final List<AbstractObject> balloonStyleObjectExtensions;
 
     /**
      *
@@ -39,8 +40,8 @@ public class BalloonStyleDefault extends AbstractSubStyleDefault implements Ball
         this.textColor = textColor;
         this.text = text;
         this.displayMode = displayMode;
-        this.balloonStyleSimpleExtensions = balloonStyleSimpleExtensions;
-        this.balloonStyleObjectExtensions = balloonStyleObjectExtensions;
+        this.balloonStyleSimpleExtensions = (balloonStyleSimpleExtensions == null) ? EMPTY_LIST : balloonStyleSimpleExtensions;
+        this.balloonStyleObjectExtensions = (balloonStyleObjectExtensions == null) ? EMPTY_LIST : balloonStyleObjectExtensions;
     }
 
     /**

@@ -104,23 +104,16 @@ import static org.geotoolkit.data.model.KmlModelConstants.*;
  */
 public class KmlWriter extends StaxStreamWriter {
 
-    private XalWriter xalWriter;
+    private final XalWriter xalWriter = new XalWriter();
 
-    public KmlWriter(File file){
-        try {
-            this.initSource(file);
-            this.xalWriter = new XalWriter();
-        } catch (XMLStreamException ex) {
-            Logger.getLogger(KmlWriter.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(KmlWriter.class.getName()).log(Level.SEVERE, null, ex);
-        }
+    public KmlWriter(){
+        super();
     }
 
-    private void initSource(Object o) throws XMLStreamException, IOException {
-        System.setProperty("javax.xml.stream.XMLOutputFactory", "com.ctc.wstx.stax.WstxOutputFactory");
-        //this.outputFactory = XMLOutputFactory.newInstance();
-        this.setOutput(o);
+    @Override
+    public void setOutput(Object output) throws XMLStreamException, IOException{
+        super.setOutput(output);
+        this.xalWriter.setOutput(writer);
         this.writer.setPrefix(PREFIX_XAL, URI_XAL);
         this.writer.setPrefix(PREFIX_ATOM, URI_ATOM);
     }
@@ -149,9 +142,7 @@ public class KmlWriter extends StaxStreamWriter {
             this.writeKml(kml);
             writer.writeEndElement();
             writer.writeEndDocument();
-
             writer.flush();
-            writer.close();
 
         } catch (XMLStreamException ex) {
             Logger.getLogger(KmlWriter.class.getName()).log(Level.SEVERE, null, ex);
@@ -229,6 +220,7 @@ public class KmlWriter extends StaxStreamWriter {
      */
     private void writeUpdate(Update update) throws XMLStreamException{
         writer.writeStartElement(URI_KML, TAG_UPDATE);
+
         if(update.getCreates() != null){
             for (Create create : update.getCreates()){
                 this.writeCreate(create);

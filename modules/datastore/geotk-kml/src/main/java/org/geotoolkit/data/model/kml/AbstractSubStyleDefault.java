@@ -2,6 +2,7 @@ package org.geotoolkit.data.model.kml;
 
 import java.util.List;
 import org.geotoolkit.data.model.xsd.SimpleType;
+import static java.util.Collections.*;
 
 /**
  *
@@ -9,8 +10,8 @@ import org.geotoolkit.data.model.xsd.SimpleType;
  */
 public abstract class AbstractSubStyleDefault extends AbstractObjectDefault implements AbstractSubStyle {
 
-    protected List<SimpleType> subStyleSimpleExtensions;
-    protected List<AbstractObject> subStyleObjectExtensions;
+    protected final List<SimpleType> subStyleSimpleExtensions;
+    protected final List<AbstractObject> subStyleObjectExtensions;
 
     /**
      *
@@ -22,8 +23,8 @@ public abstract class AbstractSubStyleDefault extends AbstractObjectDefault impl
     protected AbstractSubStyleDefault(List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
             List<SimpleType> subStyleSimpleExtensions, List<AbstractObject> subStyleObjectExtensions){
         super(objectSimpleExtensions, idAttributes);
-        this.subStyleSimpleExtensions = subStyleSimpleExtensions;
-        this.subStyleObjectExtensions = subStyleObjectExtensions;
+        this.subStyleSimpleExtensions = (subStyleSimpleExtensions == null) ? EMPTY_LIST : subStyleSimpleExtensions;
+        this.subStyleObjectExtensions = (subStyleObjectExtensions == null) ? EMPTY_LIST : subStyleObjectExtensions;
     }
 
     /**

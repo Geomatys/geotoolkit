@@ -20,7 +20,7 @@ public enum DisplayMode {
     DEFAULT("default"),
     HIDE("hide");
 
-    private String mode;
+    private final String mode;
 
     /**
      *
@@ -55,14 +55,10 @@ public enum DisplayMode {
      * @return The DisplayMode instance corresponding to the mode parameter.
      */
     public static DisplayMode transform(String mode, DisplayMode defaultValue){
-        DisplayMode resultat = defaultValue;
         for(DisplayMode cm : DisplayMode.values()){
-            if(cm.getDisplayMode().equals(mode)){
-                resultat = cm;
-                break;
-            }
+            if(cm.getDisplayMode().equals(mode)) return cm;
         }
-        return resultat;
+        return defaultValue;
     }
 
 }

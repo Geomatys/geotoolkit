@@ -19,7 +19,7 @@ public enum AfterBeforeEnum {
     BEFORE("Before"),
     AFTER("After");
 
-    private String beforeAfter;
+    private final  String beforeAfter;
 
     /**
      * 
@@ -54,13 +54,9 @@ public enum AfterBeforeEnum {
      * @return The AfterBeforeEnum instance corresponding to the beforeAfter parameter.
      */
     public static AfterBeforeEnum transform(String beforeAfter, AfterBeforeEnum defaultValue){
-        AfterBeforeEnum resultat = defaultValue;
         for(AfterBeforeEnum ba : AfterBeforeEnum.values()){
-            if(ba.getAfterBeforeEnum().equals(beforeAfter)){
-                resultat = ba;
-                break;
-            }
+            if(ba.getAfterBeforeEnum().equals(beforeAfter)) return ba;
         }
-        return resultat;
+        return defaultValue;
     }
 }

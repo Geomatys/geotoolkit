@@ -2,6 +2,7 @@ package org.geotoolkit.data.model.kml;
 
 import java.util.List;
 import org.geotoolkit.data.model.xsd.SimpleType;
+import static java.util.Collections.*;
 
 /**
  *
@@ -9,12 +10,12 @@ import org.geotoolkit.data.model.xsd.SimpleType;
  */
 public class ListStyleDefault extends AbstractSubStyleDefault implements ListStyle {
 
-    private ListItem listItem;
-    private Color bgColor;
-    private List<ItemIcon> itemIcons;
-    private int maxSnippetLines;
-    private List<SimpleType> listStyleSimpleExtensions;
-    private List<AbstractObject> listStyleObjectExtensions;
+    private final ListItem listItem;
+    private final Color bgColor;
+    private final List<ItemIcon> itemIcons;
+    private final int maxSnippetLines;
+    private final List<SimpleType> listStyleSimpleExtensions;
+    private final List<AbstractObject> listStyleObjectExtensions;
 
     /**
      *
@@ -39,8 +40,8 @@ public class ListStyleDefault extends AbstractSubStyleDefault implements ListSty
         this.bgColor = bgColor;
         this.itemIcons = itemIcons;
         this.maxSnippetLines = maxSnippetLines;
-        this.listStyleSimpleExtensions = listStyleSimpleExtensions;
-        this.listStyleObjectExtensions = listStyleObjectExtensions;
+        this.listStyleSimpleExtensions = (listStyleSimpleExtensions == null) ? EMPTY_LIST : listStyleSimpleExtensions;
+        this.listStyleObjectExtensions = (listStyleObjectExtensions == null) ? EMPTY_LIST : listStyleObjectExtensions;
     }
 
     /**

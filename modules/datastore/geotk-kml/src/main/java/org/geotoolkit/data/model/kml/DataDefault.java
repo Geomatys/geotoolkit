@@ -2,6 +2,7 @@ package org.geotoolkit.data.model.kml;
 
 import java.util.List;
 import org.geotoolkit.data.model.xsd.SimpleType;
+import static java.util.Collections.*;
 
 /**
  *
@@ -9,9 +10,9 @@ import org.geotoolkit.data.model.xsd.SimpleType;
  */
 public class DataDefault extends AbstractObjectDefault implements Data {
 
-    private String displayName;
-    private String value;
-    private List<Object> dataExtensions;
+    private final String displayName;
+    private final String value;
+    private final List<Object> dataExtensions;
 
     /**
      *
@@ -26,7 +27,7 @@ public class DataDefault extends AbstractObjectDefault implements Data {
         super(objectSimpleExtensions, idAttributes);
         this.displayName = displayName;
         this.value = value;
-        this.dataExtensions = dataExtensions;
+        this.dataExtensions = (dataExtensions == null) ? EMPTY_LIST : dataExtensions;
     }
 
     /**

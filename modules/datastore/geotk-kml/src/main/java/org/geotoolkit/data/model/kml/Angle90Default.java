@@ -8,7 +8,7 @@ package org.geotoolkit.data.model.kml;
  */
 public class Angle90Default implements Angle90 {
 
-    private double angle;
+    private final double angle;
 
     /**
      * @param angle The angle value.

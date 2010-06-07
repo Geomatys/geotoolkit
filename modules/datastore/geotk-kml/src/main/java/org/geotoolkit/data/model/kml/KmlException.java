@@ -12,7 +12,7 @@ package org.geotoolkit.data.model.kml;
  */
 public class KmlException extends Exception{
 
-    private String message;
+    private final String message;
 
     /**
      *
@@ -27,10 +27,5 @@ public class KmlException extends Exception{
      * @return
      */
     @Override
-    public String getMessage(){
-        return this.message;
-    }
-
-
-
+    public String getMessage(){return this.message;}
 }
