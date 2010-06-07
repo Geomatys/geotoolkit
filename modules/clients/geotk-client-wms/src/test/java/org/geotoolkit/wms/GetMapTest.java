@@ -66,7 +66,7 @@ public class GetMapTest {
         }
         final String sUrl = url.toString();
         assertTrue(sUrl.startsWith("http://test.com?"));
-        assertTrue(sUrl.contains("BBOX=-180.0%2C-90.0%2C180.0%2C90.0"));
+        assertTrue(sUrl.contains("BBOX=-180.0,-90.0,180.0,90.0"));
         assertTrue(sUrl.contains("SRS=CRS:84"));
         assertTrue(sUrl.contains("FORMAT=image/png"));
         assertTrue(sUrl.contains("WIDTH=800"));
@@ -103,7 +103,7 @@ public class GetMapTest {
         }
         final String sUrl = url.toString();
         assertTrue(sUrl.startsWith("http://test.com?"));
-        assertTrue(sUrl.contains("BBOX=-180.0%2C-90.0%2C180.0%2C90.0"));
+        assertTrue(sUrl.contains("BBOX=-180.0,-90.0,180.0,90.0"));
         assertTrue(sUrl.contains("CRS=CRS:84"));
         assertTrue(sUrl.contains("FORMAT=image/png"));
         assertTrue(sUrl.contains("WIDTH=800"));

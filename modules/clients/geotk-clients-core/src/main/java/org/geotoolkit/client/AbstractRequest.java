@@ -19,11 +19,9 @@ package org.geotoolkit.client;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
-import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -121,14 +119,13 @@ public abstract class AbstractRequest implements Request {
                 if (firstKeyRead) {
                     sb.append('&');
                 }
-                try {
-                    sb.append(URLEncoder.encode(key, "UTF-8"));
-                    final String value = entry.getValue();
-                    if(DONT_ENCODE_EQUAL != value){
-                        sb.append('=').append(URLEncoder.encode(value, "UTF-8"));
+                sb.append(StringUtilities.convertSpacesForUrl(key));
+                final String value = entry.getValue();
+                if(DONT_ENCODE_EQUAL != value){
+                    sb.append('=');
+                    if (value != null) {
+                        sb.append(StringUtilities.convertSpacesForUrl(value));
                     }
-                } catch (UnsupportedEncodingException ex) {
-                    throw new MalformedURLException("Can't encode URL in UTF-8: "+ ex.getLocalizedMessage());
                 }
                 firstKeyRead = true;
             }

@@ -18,6 +18,8 @@ package org.geotoolkit.natureSDI;
 
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
@@ -55,7 +57,7 @@ public class NatureSDIXMLBindingTest {
      *
      * @throws JAXBException
      */
-    @Test
+    @Ignore
     public void marshallingTest() throws JAXBException {
 
         /*Marshaller marshaller = pool.acquireMarshaller();
@@ -68,9 +70,10 @@ public class NatureSDIXMLBindingTest {
 
         inf.setSpeciesVernacularName("poissons");
 
-        metamap.put("speciesInformation", inf);
+        final List<NATSDI_SpeciesInformation> infs = Collections.singletonList(inf);
+        metamap.put("speciesInformation", infs);
         
-        identInfo.setSpeciesInformation(inf);
+        identInfo.setSpeciesInformation(infs);
 
         StringWriter sw = new StringWriter();
         marshaller.marshal(identInfo, sw);
