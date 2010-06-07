@@ -37,7 +37,6 @@ import javax.swing.JScrollPane;
 import javax.swing.DefaultComboBoxModel;
 
 import org.jdesktop.swingx.JXTaskPane;
-import org.jdesktop.swingx.JXTitledPanel;
 import org.jdesktop.swingx.JXTaskPaneContainer;
 
 import org.opengis.referencing.crs.VerticalCRS;
@@ -71,11 +70,11 @@ import org.geotoolkit.internal.swing.SwingUtilities;
  * @module
  */
 @SuppressWarnings("serial")
-final class NewGridCoverageDetails extends JComponent implements CoverageDatabaseController, ActionListener {
+final class NewGridCoverageDetails extends JComponent implements CoverageDatabaseController {
     /**
      * Action commands.
      */
-    private static final String OK="OK", CANCEL="CANCEL";
+    private static final String SELECT_FORMAT="SELECT_FORMAT", OK="OK", CANCEL="CANCEL";
 
     /**
      * The {@link CoverageList} that created this panel.
@@ -143,11 +142,7 @@ final class NewGridCoverageDetails extends JComponent implements CoverageDatabas
         sampleDimensionEditor = new SampleDimensionPanel();
         filename.setEditable(false);
         format.setEditable(true);
-        format.addActionListener(new ActionListener() {
-            @Override public void actionPerformed(final ActionEvent event) {
-                formatSelected();
-            }
-        });
+        format.setActionCommand(SELECT_FORMAT);
 
         final JXTaskPaneContainer container = new JXTaskPaneContainer();
         final GridBagConstraints c = new GridBagConstraints();
@@ -158,7 +153,7 @@ final class NewGridCoverageDetails extends JComponent implements CoverageDatabas
         pane.setTitle(resources.getString(Vocabulary.Keys.FILE));
         addRow(pane, resources.getLabel(Vocabulary.Keys.NAME), filename, c);
         addRow(pane, resources.getLabel(Vocabulary.Keys.FORMAT), format, c);
-        addRow(pane, null, formatNote, c);
+        c.insets.left=6; addRow(pane, null, formatNote, c); c.insets.left=0;
         container.add(pane);
 
         c.gridy=0;
@@ -180,8 +175,6 @@ final class NewGridCoverageDetails extends JComponent implements CoverageDatabas
         cancelButton = new JButton(resources.getString(Vocabulary.Keys.CANCEL));
         okButton.setActionCommand(OK);
         cancelButton.setActionCommand(CANCEL);
-        okButton.addActionListener(this);
-        cancelButton.addActionListener(this);
         final JPanel buttonBar = new JPanel(new GridLayout(1, 2));
         buttonBar.setOpaque(false);
         buttonBar.add(okButton);
@@ -194,6 +187,11 @@ final class NewGridCoverageDetails extends JComponent implements CoverageDatabas
 
         add(new JScrollPane(container), BorderLayout.CENTER);
         add(centered, BorderLayout.SOUTH);
+
+        final Listeners listeners = new Listeners();
+        format      .addActionListener(listeners);
+        okButton    .addActionListener(listeners);
+        cancelButton.addActionListener(listeners);
     }
 
     /**
@@ -212,10 +210,21 @@ final class NewGridCoverageDetails extends JComponent implements CoverageDatabas
     }
 
     /**
-     * Returns this panel in a {@link JXTitledPanel}.
+     * Listener for various action handled by the enclosing class.
+     *
+     * @todo switch(String) with Java 7.
      */
-    final JComponent createTitledPane() {
-        return new JXTitledPanel(Widgets.getResources(getLocale()).getString(Widgets.Keys.CONFIRM_ADD_DATA), this);
+    private final class Listeners implements ActionListener {
+        @Override public void actionPerformed(final ActionEvent event) {
+            final String action = event.getActionCommand();
+            if (SELECT_FORMAT.equals(action)) {
+                formatSelected();
+            } else if (OK.equals(action)) {
+                NewGridCoverageDetails.this.actionPerformed(true);
+            } if (CANCEL.equals(action)) {
+                NewGridCoverageDetails.this.actionPerformed(false);
+            }
+        }
     }
 
     /**
@@ -243,8 +252,7 @@ final class NewGridCoverageDetails extends JComponent implements CoverageDatabas
                     failure = e;
                 }
             }
-            final GridSampleDimension band = (bands != null && !bands.isEmpty()) ? bands.get(0) : null;
-            sampleDimensionEditor.setSampleDimension(band);
+            sampleDimensionEditor.setSampleDimensions(bands);
             setFormatEditable(false);
             if (failure != null) {
                 owner.exceptionOccured(failure);
@@ -319,12 +327,11 @@ final class NewGridCoverageDetails extends JComponent implements CoverageDatabas
     /**
      * Invoked when the user pressed the "Ok" or "Cancel" button.
      *
-     * @todo switch(String) with Java 7.
+     * @param confirm {@code true} if the user pressed the "Ok" button,
+     *        or {@code false} if he pressed the "Cancel" button.
      */
-    @Override
-    public synchronized void actionPerformed(final ActionEvent event) {
-        final String action = event.getActionCommand();
-        if (OK.equals(action)) {
+    private synchronized void actionPerformed(final boolean confirm) {
+        if (confirm) {
             if (reference != null) try {
                 reference.format = (String) format.getSelectedItem();
                 reference.horizontalSRID = getSelectedCode(horizontalCRS);

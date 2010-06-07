@@ -145,6 +145,11 @@ public final class Vocabulary extends IndexedResourceBundle {
         public static final int BAND = 17;
 
         /**
+         * Band {0}
+         */
+        public static final int BAND_$1 = 352;
+
+        /**
          * Barometric altitude
          */
         public static final int BAROMETRIC_ALTITUDE = 18;

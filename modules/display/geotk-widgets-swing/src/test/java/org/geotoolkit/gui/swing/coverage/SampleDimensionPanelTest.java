@@ -17,11 +17,15 @@
  */
 package org.geotoolkit.gui.swing.coverage;
 
+import java.util.List;
+import java.util.Arrays;
 import javax.measure.unit.SI;
 
 import org.geotoolkit.coverage.Category;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.test.gui.SwingBase;
+
+import static org.junit.Assert.*;
 
 
 /**
@@ -45,15 +49,24 @@ public final class SampleDimensionPanelTest extends SwingBase<SampleDimensionPan
      */
     @Override
     protected SampleDimensionPanel create() {
-        final SampleDimensionPanel panel = new SampleDimensionPanel();
-        panel.setSampleDimension(new GridSampleDimension("Temperature",
+        final GridSampleDimension band1 = new GridSampleDimension("Temperature",
             new Category[] {
                 new Category("No data",     null, 0),
                 new Category("Land",        null, 7),
                 new Category("Clouds",      null, 3),
                 new Category("Temperature", null, 10, 100, 0.1, 5),
                 new Category("Foo",         null, 100, 120, -1, 3)
-            }, SI.CELSIUS));
+            }, SI.CELSIUS);
+        final GridSampleDimension band2 = new GridSampleDimension("Sea Level Anomaly",
+            new Category[] {
+                new Category("No data",     null, 0),
+                new Category("SLA",         null, 1, 255, 0.25, -32)
+            }, SI.CENTIMETRE);
+        final List<GridSampleDimension> bands = Arrays.asList(band1, band2);
+
+        final SampleDimensionPanel panel = new SampleDimensionPanel();
+        panel.setSampleDimensions(bands);
+        assertEquals(bands, panel.getSampleDimensions());
         return panel;
     }
 }

@@ -143,12 +143,22 @@ public final class GraphicsUtilities {
      * @param method The method invoking this one.  Used only for logging purpose.
      */
     public static void setLookAndFeel(final Class<?> caller, final String method) {
-        /*
-         * MacOS come with a default L&F which is different than in standard JDK.
-         * Leave it unchanged.
-         */
-        if (!OS.MAC_OS.equals(OS.current())) try {
-            UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
+        String laf = System.getProperty("swing.defaultlaf"); // Documented in UIManager.
+        if (laf != null) {
+            if (laf.equalsIgnoreCase("Nimbus")) {
+                laf = "com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel";
+            } else {
+                // Do not change the user-supplied setting.
+                return;
+            }
+        } else if (OS.MAC_OS.equals(OS.current())) {
+            // MacOS come with a default L&F which is different than in standard JDK.
+            return;
+        } else {
+            laf = UIManager.getSystemLookAndFeelClassName();
+        }
+        try {
+            UIManager.setLookAndFeel(laf);
         } catch (Exception e) {
             Logging.recoverableException(caller, method, e);
         }

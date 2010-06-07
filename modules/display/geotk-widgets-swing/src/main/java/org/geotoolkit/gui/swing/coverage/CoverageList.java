@@ -511,7 +511,7 @@ public class CoverageList extends JComponent {
                         factory = AuthorityFactoryFinder.getCRSAuthorityFactory("EPSG", null);
                     }
                     addController = new NewGridCoverageDetails(this, factory);
-                    selectionPanel.add(addController.createTitledPane(), CONTROLLER);
+                    selectionPanel.add(addController, CONTROLLER);
                 }
                 /*
                  * Runs a worker in a background thread for adding the new coverages.

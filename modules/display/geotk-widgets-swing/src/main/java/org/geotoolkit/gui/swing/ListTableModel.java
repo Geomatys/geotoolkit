@@ -53,7 +53,7 @@ import org.geotoolkit.internal.swing.SwingUtilities;
  * @param <E> The type of elements in the list backing this table model.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.13
  *
  * @since 3.00
  * @module
@@ -187,6 +187,19 @@ public abstract class ListTableModel<E> extends AbstractTableModel {
         task.selection = selection;
         SwingUtilities.invokeAndWait(task);
         return task.array;
+    }
+
+    /**
+     * Sets the elements. All previous elements are discarted before to add the new ones.
+     *
+     * @param elts The new elements.
+     *
+     * @since 3.13
+     */
+    public void setElements(final E... elts) {
+        elements.clear();
+        elements.addAll(Arrays.asList(elts));
+        fireTableDataChanged();
     }
 
     /**

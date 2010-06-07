@@ -108,6 +108,13 @@ public class CategoryTable extends ListTableModel<CategoryRecord> {
     private static final boolean DEBUG = false;
 
     /**
+     * The row height used by {@link #configure(JTable)}. The {@link JTable} default value
+     * is 16 pixels, but we use a higher value in order to have room for superscripts in
+     * exponential notation.
+     */
+    private static final int ROW_HEIGHT = 20;
+
+    /**
      * Columns index.
      */
     private static final int NAME=0, SAMPLE_MIN=1, SAMPLE_MAX=2,
@@ -416,11 +423,11 @@ public class CategoryTable extends ListTableModel<CategoryRecord> {
      * the following steps:
      * <p>
      * <ul>
-     *   <li>{@linkplain JTable#setDefaultRenderer Install the cell renderers}</li>
-     *   <li>{@linkplain JTable#setDefaultEditor   Install the cell editors}</li>
-     *   <li>{@linkplain JTable#setRowHeight(int)  Modify the row height}</li>
-     *   <li>{@linkplain TableColumn#setPreferredWidth(int) Modify the preferred column width}</li>
-     *   <li>{@linkplain JTable#setPreferredSize   Set the table preferred size}</li>
+     *   <li>{@linkplain JTable#setDefaultRenderer Install the cell renderers}.</li>
+     *   <li>{@linkplain JTable#setDefaultEditor   Install the cell editors}.</li>
+     *   <li>{@linkplain JTable#setRowHeight(int)  Modify the row height}.</li>
+     *   <li>{@linkplain TableColumn#setPreferredWidth(int) Modify the preferred column width}.</li>
+     *   <li>{@linkplain JTable#setPreferredSize   Set the table preferred size}.</li>
      * </ul>
      *
      * @param table The table in which to install the cell renderes and editors.
@@ -433,7 +440,7 @@ public class CategoryTable extends ListTableModel<CategoryRecord> {
         table.setDefaultEditor  (TransferFunctionType.class, new FunctionEditor(renderer.functionLabels));
         table.setDefaultEditor  (Integer.class, new NumberEditor(false));
         table.setDefaultEditor  (Double.class,  editor);
-        table.setRowHeight(20);
+        table.setRowHeight(ROW_HEIGHT);
         final TableColumnModel columns = table.getColumnModel();
         final int n = columns.getColumnCount();
         int total = 0;
@@ -449,7 +456,7 @@ public class CategoryTable extends ListTableModel<CategoryRecord> {
             column.setPreferredWidth(width);
             total += width;
         }
-        table.setPreferredSize(new Dimension(total, 140));
+        table.setPreferredSize(new Dimension(total, ROW_HEIGHT*4));
     }
 
 
