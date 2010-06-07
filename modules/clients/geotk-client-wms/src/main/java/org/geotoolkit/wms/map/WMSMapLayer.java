@@ -304,7 +304,11 @@ public class WMSMapLayer extends AbstractMapLayer implements DynamicMapLayer {
         request.setEnvelope(env);
         request.setDimension(rect);
         request.setLayers(layers);
-        request.setStyles(styles);
+        if (styles == null) {
+            request.setStyles("");
+        } else {
+            request.setStyles(styles);
+        }
         request.setSld(sld);
         request.setSldBody(sldBody);
         request.setFormat(format);
