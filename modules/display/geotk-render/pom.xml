@@ -79,27 +79,27 @@
     <dependency>
       <groupId>org.geotoolkit.pending</groupId>
       <artifactId>geotk-engine-core</artifactId>
-      <version>${geotoolkit.version}</version>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.geotoolkit.pending</groupId>
       <artifactId>geotk-style</artifactId>
-      <version>${geotoolkit.version}</version>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.geotoolkit.pending</groupId>
       <artifactId>geotk-coverageio-pending</artifactId>
-      <version>${geotoolkit.version}</version>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.geotoolkit.pending</groupId>
       <artifactId>geotk-cql</artifactId>
-      <version>${geotoolkit.version}</version>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.geotoolkit.pending</groupId>
       <artifactId>geotk-datastore-core</artifactId>
-      <version>${geotoolkit.version}</version>
+      <version>${project.version}</version>
     </dependency>
   </dependencies>
   

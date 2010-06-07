@@ -68,27 +68,26 @@
         <dependency>
             <groupId>org.geotoolkit.pending</groupId>
             <artifactId>geotk-xml-se</artifactId>
-            <version>${geotoolkit.version}</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.geotoolkit.pending</groupId>
             <artifactId>geotk-style</artifactId>
-            <version>${geotoolkit.version}</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.geotoolkit.pending</groupId>
             <artifactId>geotk-filter</artifactId>
-            <version>${geotoolkit.version}</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.geotoolkit.pending</groupId>
             <artifactId>geotk-go2-style-extension</artifactId>
-            <version>${geotoolkit.version}</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.geotoolkit.project</groupId>
             <artifactId>geotk-provided</artifactId>
-            <version>${geotoolkit.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

@@ -61,7 +61,6 @@
       <groupId>org.geotoolkit</groupId>
       <artifactId>geotk-epsg</artifactId>
       <scope>test</scope>
-      <version>${geotoolkit.version}</version>
     </dependency>
     <dependency>
       <groupId>postgresql</groupId>

@@ -59,7 +59,7 @@
     <dependency>
         <groupId>org.geotoolkit.pending</groupId>
         <artifactId>geotk-xml-gml</artifactId>
-        <version>${geotoolkit.version}</version>
+        <version>${project.version}</version>
     </dependency>
   </dependencies>
 

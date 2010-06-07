@@ -71,7 +71,6 @@
     <dependency>
       <groupId>org.geotoolkit.project</groupId>
       <artifactId>geotk-test</artifactId>
-      <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
@@ -86,7 +85,7 @@
       <plugin>
         <groupId>org.geotoolkit.project</groupId>
         <artifactId>geotk-jar-collector</artifactId>
-        <version>${project.version}</version>
+        <version>${geotoolkit.version}</version>
         <executions>
           <execution>
             <goals>

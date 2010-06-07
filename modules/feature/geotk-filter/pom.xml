@@ -60,13 +60,12 @@
       <dependency>
           <groupId>org.geotoolkit.pending</groupId>
           <artifactId>geotk-jtswrapper</artifactId>
-          <version>${geotoolkit.version}</version>
+          <version>${project.version}</version>
       </dependency>
 
       <dependency>
           <groupId>org.geotoolkit.project</groupId>
           <artifactId>geotk-provided</artifactId>
-          <version>${geotoolkit.version}</version>
           <scope>provided</scope>
       </dependency>
       <dependency>

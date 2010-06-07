@@ -67,23 +67,23 @@
         <dependency>
             <groupId>org.geotoolkit.pending</groupId>
             <artifactId>geotk-filter</artifactId>
-            <version>${geotoolkit.version}</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.geotoolkit.pending</groupId>
             <artifactId>geotk-jtswrapper</artifactId>
-            <version>${geotoolkit.version}</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.geotoolkit.pending</groupId>
             <artifactId>geotk-render</artifactId>
-            <version>${geotoolkit.version}</version>
+            <version>${project.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.geotoolkit.pending</groupId>
             <artifactId>geotk-svg</artifactId>
-            <version>${geotoolkit.version}</version>
+            <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>

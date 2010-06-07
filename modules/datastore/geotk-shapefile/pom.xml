@@ -74,13 +74,11 @@
         <dependency>
             <groupId>org.geotoolkit.project</groupId>
             <artifactId>geotk-test</artifactId>
-            <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.geotoolkit</groupId>
             <artifactId>geotk-epsg</artifactId>
-            <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>

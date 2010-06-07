@@ -277,7 +277,17 @@
       <dependency>
         <groupId>org.geotoolkit.project</groupId>
         <artifactId>geotk-provided</artifactId>
-	<version>${geotoolkit.version}</version>      
+	    <version>${geotoolkit.version}</version>      
+      </dependency>
+      <dependency>
+        <groupId>org.geotoolkit</groupId>
+        <artifactId>geotk-epsg</artifactId>
+        <version>${geotoolkit.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.geotoolkit</groupId>
+        <artifactId>geotk-storage</artifactId>
+        <version>${geotoolkit.version}</version>
       </dependency>
 
       <!-- Batik SVG -->
@@ -578,7 +588,7 @@
           <tagletArtifact>
             <groupId>org.geotoolkit.project</groupId>
             <artifactId>geotk-javadoc</artifactId>
-            <version>${project.version}</version>
+            <version>${geotoolkit.version}</version>
           </tagletArtifact>
 
           <!-- Creates links to existing javadoc-generated   -->

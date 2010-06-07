@@ -65,17 +65,17 @@
     <dependency>
       <groupId>org.geotoolkit.pending</groupId>
       <artifactId>geotk-xml-ogc</artifactId>
-      <version>${geotoolkit.version}</version>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.geotoolkit.pending</groupId>
       <artifactId>geotk-xml-ows</artifactId>
-      <version>${geotoolkit.version}</version>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.geotoolkit.pending</groupId>
       <artifactId>geotk-xml-om</artifactId>
-      <version>${geotoolkit.version}</version>
+      <version>${project.version}</version>
     </dependency>
   </dependencies>
 
