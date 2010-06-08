@@ -54,12 +54,12 @@ final class FormatQuery extends Query {
      */
     public FormatQuery(final Database database) {
         super(database, "Formats");
-        final QueryType[] usage = {SELECT, LIST};
-        name     = addMandatoryColumn("name",     SELECT, LIST, LIST_ID);
+        final QueryType[] usage = {SELECT, LIST, INSERT};
+        name     = addMandatoryColumn("name",     EXISTS, SELECT, LIST, LIST_ID, INSERT);
         plugin   = addMandatoryColumn("plugin",   usage);
         packMode = addMandatoryColumn("packMode", usage);
-        comments = addOptionalColumn ("comments", null, usage);
-        byName   = addParameter(name, SELECT);
+        comments = addOptionalColumn ("comments", null, SELECT, LIST);
+        byName   = addParameter(name, EXISTS, SELECT);
         byPlugin = addParameter(plugin, LIST);
         byPlugin.setSearchValue("ANY(?)", LIST);
         name.setOrdering(Ordering.ASC, LIST, LIST_ID);

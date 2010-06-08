@@ -203,7 +203,8 @@ class CategoryList extends AbstractList<Category> implements MathTransform1D, Co
             categories[i] = categories[i].geophysics(geophysics);
         }
         Arrays.sort(categories, this);
-        assert isSorted(categories);
+        // Do not call "assert isSorted(categories)" now.
+        // Wait for the check for range overlap to be done first.
         assert isGeophysics(geophysics);
         /*
          * Constructs the array of Category.minimum values. During
@@ -243,6 +244,7 @@ class CategoryList extends AbstractList<Category> implements MathTransform1D, Co
             }
         }
         this.hasGaps = hasGaps;
+        assert isSorted(categories);
         /*
          * Search for the "nodata" category. This loop looks
          * for a qualitative category with the NaN value.

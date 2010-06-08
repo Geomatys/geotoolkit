@@ -17,12 +17,17 @@
  */
 package org.geotoolkit.coverage.sql;
 
+import java.util.List;
 import java.sql.Array;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import org.geotoolkit.util.Utilities;
+import org.geotoolkit.util.NumberRange;
+import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.resources.Errors;
+import org.geotoolkit.coverage.Category;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.internal.sql.table.Database;
@@ -176,5 +181,92 @@ final class FormatTable extends SingletonTable<FormatEntry> {
                 break;
             }
         }
+    }
+
+    /**
+     * Returns the size of the given list, or 0 if null.
+     */
+    private static int size(final List<?> list) {
+        return (list != null) ? list.size() : 0;
+    }
+
+    /**
+     * Gets the range of sample values from the given category, with inclusive
+     * bounds for consistency with the database definition.
+     */
+    private static NumberRange<?> getRange(final Category category) {
+        NumberRange<?> range = category.geophysics(false).getRange();
+        final Class<?> type = range.getElementClass();
+        if (Classes.isInteger(type)) {
+            if (!range.isMaxIncluded() || !range.isMinIncluded() || !Integer.class.equals(type)) {
+                range = new NumberRange<Integer>(Integer.class,
+                        (int) Math.floor(range.getMinimum(true)), true,
+                        (int) Math.ceil (range.getMaximum(true)), true);
+            }
+        }
+        return range;
+    }
+
+    /**
+     * If a format exists for the given codec and sample dimensions, return it.
+     * Otherwise returns {@code null}.
+     * <p>
+     * This method ignores mismatches in the following properties, because they
+     * do not affect the numerical values computed by the transfer function:
+     * <p>
+     * <ul>
+     *   <li>Sample dimension names.</li>
+     *   <li>Category names.</li>
+     *   <li>Color palette (ignored because often encoded in the image format,
+     *       in which case {@link #createEntry()} will ignore it anyway).</li>
+     * </ul>
+     *
+     * @param  codecName  The name of the Image I/O plugin.
+     * @param  bands      The sample dimensions to look for.
+     * @return An existing format, or {@code null} if none.
+     * @throws SQLException If an error occured while querying the database.
+     *
+     * @since 3.13
+     */
+    public FormatEntry find(final String codecName, final List<GridSampleDimension> bands)
+            throws SQLException
+    {
+        final int numBands = size(bands);
+        setImageFormats(FormatEntry.getImageFormats(codecName));
+next:   for (final FormatEntry candidate : getEntries()) {
+            final List<GridSampleDimension> current = candidate.sampleDimensions;
+            if (size(current) == numBands) {
+                for (int i=0; i<numBands; i++) {
+                    final GridSampleDimension band1 = bands.get(i);
+                    final GridSampleDimension band2 = current.get(i);
+                    if (Utilities.equals(band1.getUnits(), band2.getUnits())) {
+                        final List<Category> categories1 = band1.getCategories();
+                        final List<Category> categories2 = band2.getCategories();
+                        final int numCategories = size(categories1);
+                        if (size(categories2) == numCategories) {
+                            for (int j=0; j<numCategories; j++) {
+                                final Category category1 = categories1.get(j);
+                                final Category category2 = categories2.get(j);
+                                /*
+                                 * Compares the sample value range (not the geophysics one) because
+                                 * the former is definitive in the database. However do not convert
+                                 * to geophysics categories when comparing the transforms,  because
+                                 * we want to differentiate "geophysics" views from the packed ones
+                                 * (the former have identity transforms).
+                                 */
+                                if (!Utilities.equals(getRange(category1), getRange(category2)) ||
+                                    !Utilities.equals(category1.getSampleToGeophysics(),
+                                                      category2.getSampleToGeophysics()))
+                                {
+                                    continue next;
+                                }
+                            }
+                        }
+                        return candidate;
+                    }
+                }
+            }
+        }
+        return null;
     }
 }

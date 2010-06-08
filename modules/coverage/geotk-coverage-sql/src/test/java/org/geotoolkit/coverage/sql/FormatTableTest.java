@@ -19,9 +19,12 @@ package org.geotoolkit.coverage.sql;
 
 import java.util.Set;
 import java.util.List;
+import java.util.Arrays;
 import java.sql.SQLException;
+import javax.measure.unit.SI;
 
 import org.geotoolkit.test.Depend;
+import org.geotoolkit.coverage.Category;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.internal.sql.table.CatalogTestBase;
 
@@ -119,6 +122,62 @@ public class FormatTableTest extends CatalogTestBase {
         final Set<FormatEntry> entries = table.getEntries();
         assertFalse(entries.isEmpty());
         assertTrue(entries.contains(entry));
+        table.release();
+    }
+
+    /**
+     * Tests the {@lik FormatTable#exists} method.
+     *
+     * @throws SQLException If the test can't connect to the database.
+     */
+    @Test
+    public void testExists() throws SQLException {
+        final FormatTable table = getDatabase().getTable(FormatTable.class);
+        assertTrue ("PNG",   table.exists("PNG"));
+        assertFalse("Dummy", table.exists("Dummy"));
+        table.release();
+    }
+
+    /**
+     * Tests the {@lik FormatTable#find} method.
+     *
+     * @throws SQLException If the test can't connect to the database.
+     */
+    @Test
+    public void testFind() throws SQLException {
+        final Category[] categories = {
+            new Category("No data",     null, 0),
+            new Category("Temperature", null, 1, 256, 0.15, -3)
+        };
+        final FormatTable table = getDatabase().getTable(FormatTable.class);
+        /*
+         * Following entry should be found for the PNG format only.
+         */
+        GridSampleDimension search = new GridSampleDimension("Temperature", categories, SI.CELSIUS);
+        FormatEntry found = table.find("NetCDF", Arrays.asList(search));
+        assertNull("Should be defined for the PNG format, not NetCDF.", found);
+        found = table.find("PNG", Arrays.asList(search));
+        assertNotNull("Should be defined for the PNG format.", found);
+        assertEquals(TEMPERATURE, found.getIdentifier());
+        /*
+         * Replace the category by a different one.
+         * The entry should not be found anymore.
+         */
+        categories[1] = new Category("Temperature", null, 1, 256, 0.15, -4);
+        search = new GridSampleDimension("Temperature", categories, SI.CELSIUS);
+        found = table.find("PNG", Arrays.asList(search));
+        assertNull("Should not found because the transfer function is different.", found);
+
+        categories[1] = new Category("Temperature", null, 1, 255, 0.15, -3);
+        search = new GridSampleDimension("Temperature", categories, SI.CELSIUS);
+        found = table.find("PNG", Arrays.asList(search));
+        assertNull("Should not found because the range is different.", found);
+
+        categories[1] = new Category("Temperature", null, 1, 256, 0.15, -3);
+        search = new GridSampleDimension("Temperature", categories, SI.CELSIUS);
+        found = table.find("PNG", Arrays.asList(search));
+        assertNotNull("Should found since the category has been restored.", found);
+        assertEquals(TEMPERATURE, found.getIdentifier());
         table.release();
     }
 }

@@ -55,7 +55,6 @@ import org.geotoolkit.coverage.sql.DatabaseVetoException;
 import org.geotoolkit.coverage.sql.NewGridCoverageReference;
 import org.geotoolkit.coverage.sql.CoverageDatabaseController;
 import org.geotoolkit.gui.swing.referencing.AuthorityCodesComboBox;
-import org.geotoolkit.internal.sql.table.NoSuchRecordException;
 import org.geotoolkit.internal.swing.SwingUtilities;
 
 
@@ -240,15 +239,19 @@ final class NewGridCoverageDetails extends JComponent implements CoverageDatabas
                 selectedFormat = formatName;
                 try {
                     bands = reference.getSampleDimensions();
-                } catch (CoverageStoreException e) {
-                    if (e.getCause() instanceof NoSuchRecordException) {
+                    if (!reference.isFormatDefined()) {
                         /*
                          * The user supplied a new format name. Do not modify the current sample
-                         * dimensions, since we assume that the user will want to edit them.
+                         * dimensions (unless the user selected the automatically inferred format),
+                         * since we assume that the user will want to edit them.
                          */
+                        if (bands != null) {
+                            sampleDimensionEditor.setSampleDimensions(bands);
+                        }
                         setFormatEditable(true);
                         return;
                     }
+                } catch (CoverageStoreException e) {
                     failure = e;
                 }
             }

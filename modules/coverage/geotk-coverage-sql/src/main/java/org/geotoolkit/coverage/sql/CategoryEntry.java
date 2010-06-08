@@ -34,8 +34,8 @@ import org.geotoolkit.coverage.GridSampleDimension;
  */
 final class CategoryEntry {
     /**
-     * The name of the color palette, or {@code null} if none. If many color palettes
-     * are found, the one for the largest range of value is used.
+     * The name of the color palette, or {@code null} if none. If more than one color
+     * palettes are found, then the one for the largest range of values is used.
      */
     final String paletteName;
 

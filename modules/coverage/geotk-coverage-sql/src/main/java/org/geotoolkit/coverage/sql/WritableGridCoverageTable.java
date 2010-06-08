@@ -245,7 +245,10 @@ final class WritableGridCoverageTable extends GridCoverageTable {
                 if (cause instanceof FactoryException) {
                     throw (FactoryException) cause;
                 }
-                throw exception.unwrapOrRethrow(IOException.class);
+                if (cause instanceof IOException) {
+                    throw (IOException) cause;
+                }
+                throw exception.unwrapOrRethrow(SQLException.class);
             }
             /*
              * If no destination series were explicitly specified, and if we are allowed to

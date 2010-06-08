@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.MissingResourceException;
 import java.util.concurrent.CancellationException;
@@ -45,12 +44,10 @@ import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.stream.ImageInputStream;
 
 import org.opengis.geometry.Envelope;
-import org.opengis.util.InternationalString;
 import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.coverage.grid.RectifiedGrid;
 import org.opengis.metadata.spatial.Georectified;
 import org.opengis.metadata.spatial.PixelOrientation;
-import org.opengis.metadata.content.TransferFunctionType;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
@@ -59,7 +56,6 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;
 
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.coverage.Category;
 import org.geotoolkit.coverage.CoverageFactoryFinder;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
@@ -69,6 +65,7 @@ import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.InvalidGridGeometryException;
 import org.geotoolkit.display.shape.XRectangle2D;
 import org.geotoolkit.geometry.GeneralDirectPosition;
+import org.geotoolkit.image.io.ImageMetadataException;
 import org.geotoolkit.image.io.NamedImageStore;
 import org.geotoolkit.image.io.SampleConversionType;
 import org.geotoolkit.image.io.SpatialImageReadParam;
@@ -82,9 +79,7 @@ import org.geotoolkit.image.io.mosaic.MosaicImageReader;
 import org.geotoolkit.image.io.mosaic.MosaicImageReadParam;
 import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.util.XArrays;
-import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.collection.BackingStoreException;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.crs.DefaultImageCRS;
@@ -122,7 +117,7 @@ import org.geotoolkit.referencing.operation.transform.ConcatenatedTransform;
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Johann Sorel (Geomatys)
- * @version 3.12
+ * @version 3.13
  *
  * @since 3.09 (derived from 2.2)
  * @module
@@ -661,7 +656,7 @@ public class ImageCoverageReader extends GridCoverageReader {
         }
         /*
          * Get the required information from the SpatialMetadata, if any.
-         * For now we just collect them - they will be processed later.
+         * Here we just collect them - they will be processed by MetadataHelper.
          */
         List<SampleDimension> sampleDimensions = null;
         try {
@@ -675,90 +670,11 @@ public class ImageCoverageReader extends GridCoverageReader {
         if (sampleDimensions == null || sampleDimensions.isEmpty()) {
             return null;
         }
-        /*
-         * Now convert the SampleDimension instances to GridSampleDimension instances.
-         * For each sample dimension, we create a qualitative category for each fill
-         * values (if any) and a single quantitative category for the range of sample
-         * values.
-         */
-        InternationalString untitled = null; // To be created only if needed.
-        final MetadataHelper hlp = getMetadataHelper();
-        final List<Category> categories = new ArrayList<Category>();
-        final GridSampleDimension[] bands = new GridSampleDimension[sampleDimensions.size()];
-        boolean hasSampleDimensions = false;
-        for (int i=0; i<bands.length; i++) {
-            final SampleDimension sd = sampleDimensions.get(i);
-            if (sd != null) {
-                /*
-                 * Get a name for the sample dimensions. This name will be given both to the
-                 * GridSampleDimension object and to the single qualitative Category. If no
-                 * name can be found, "Untitled" will be used.
-                 */
-                InternationalString dimensionName = sd.getDescriptor();
-                if (dimensionName == null) {
-                    if (untitled == null) {
-                        untitled = Vocabulary.formatInternational(Vocabulary.Keys.UNTITLED);
-                    }
-                    dimensionName = untitled;
-                }
-                /*
-                 * Create a qualitative category for each fill value.
-                 */
-                final double[] fillValues = sd.getFillSampleValues();
-                if (fillValues != null) {
-                    final CharSequence name = Category.NODATA.getName();
-                    for (int j=0; j<fillValues.length; j++) {
-                        final double fv = fillValues[i];
-                        final int ifv = (int) fv;
-                        final Category c;
-                        if (ifv == fv) {
-                            c = new Category(name, null, ifv);
-                        } else {
-                            c = new Category(name, null, fv);
-                        }
-                        categories.add(c);
-                    }
-                }
-                /*
-                 * Create a quantitative category for the range of valid sample values.
-                 */
-                final NumberRange<?> range = hlp.getValidSampleValues(sd, fillValues);
-                if (range != null) {
-                    final Double scale = sd.getScaleFactor();
-                    if (scale != null) {
-                        Double offset = sd.getOffset();
-                        if (offset == null) {
-                            offset = 0.0;
-                        }
-                        final TransferFunctionType type = sd.getTransferFunctionType();
-                        if (type == null || type.equals(TransferFunctionType.LINEAR)) {
-                            categories.add(new Category(dimensionName, null, range, scale, offset));
-                        } else {
-                            /*
-                             * TODO: We need to support exponential and logarithmic transforms
-                             * here. For doing a good job, we should use a MathTransformFactory
-                             * (see CategoryTable for inspiration). In order to be consistent, we
-                             * should use that factory for the transform implicitly created by
-                             * the above new Category(...) constructor call, and the transform
-                             * implicitly created by MetadataHelper.createGridToCRS(...).
-                             */
-                            throw new CoverageStoreException(Errors.getResources(locale)
-                                    .getString(Errors.Keys.UNSUPPORTED_OPERATION_$1, type));
-                        }
-                    }
-                }
-                /*
-                 * Create the GridSampleDimension instance.
-                 */
-                if (!categories.isEmpty()) {
-                    bands[i] = new GridSampleDimension(dimensionName,
-                            categories.toArray(new Category[categories.size()]), sd.getUnits());
-                    categories.clear();
-                    hasSampleDimensions = true;
-                }
-            }
+        try {
+            return getMetadataHelper().getGridSampleDimensions(sampleDimensions);
+        } catch (ImageMetadataException e) {
+            throw new CoverageStoreException(e);
         }
-        return hasSampleDimensions ? Arrays.asList(bands) : null;
     }
 
     /**

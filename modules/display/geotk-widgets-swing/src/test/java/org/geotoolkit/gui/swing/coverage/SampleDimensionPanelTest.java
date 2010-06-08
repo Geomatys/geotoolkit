@@ -19,6 +19,7 @@ package org.geotoolkit.gui.swing.coverage;
 
 import java.util.List;
 import java.util.Arrays;
+import java.text.ParseException;
 import javax.measure.unit.SI;
 
 import org.geotoolkit.coverage.Category;
@@ -66,7 +67,11 @@ public final class SampleDimensionPanelTest extends SwingBase<SampleDimensionPan
 
         final SampleDimensionPanel panel = new SampleDimensionPanel();
         panel.setSampleDimensions(bands);
-        assertEquals(bands, panel.getSampleDimensions());
+        try {
+            assertEquals(bands, panel.getSampleDimensions());
+        } catch (ParseException e) {
+            fail(e.getLocalizedMessage());
+        }
         return panel;
     }
 }

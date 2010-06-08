@@ -20,6 +20,8 @@ package org.geotoolkit.image.io.metadata;
 import java.awt.Point;
 import java.util.List;
 import java.util.Locale;
+import java.util.Arrays;
+import java.util.ArrayList;
 import java.text.NumberFormat;
 import java.text.FieldPosition;
 import java.awt.Rectangle;
@@ -28,14 +30,19 @@ import java.awt.geom.AffineTransform;
 import javax.imageio.IIOParam;
 import javax.measure.unit.Unit;
 import javax.measure.unit.UnitFormat;
+import org.geotoolkit.coverage.Category;
+import org.geotoolkit.coverage.GridSampleDimension;
 
 import org.opengis.geometry.DirectPosition;
+import org.opengis.util.InternationalString;
 import org.opengis.coverage.grid.RectifiedGrid;
 import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.operation.MathTransform;
+import org.opengis.metadata.content.TransferFunctionType;
 
 import org.geotoolkit.math.XMath;
 import org.geotoolkit.resources.Errors;
+import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.util.Localized;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.NumberRange;
@@ -44,7 +51,9 @@ import org.geotoolkit.display.shape.DoubleDimension2D;
 import org.geotoolkit.image.io.ImageMetadataException;
 import org.geotoolkit.referencing.operation.matrix.XMatrix;
 import org.geotoolkit.referencing.operation.matrix.MatrixFactory;
+import org.geotoolkit.referencing.operation.transform.LinearTransform1D;
 import org.geotoolkit.referencing.operation.transform.ProjectiveTransform;
+import org.opengis.referencing.operation.MathTransform1D;
 
 
 /**
@@ -52,7 +61,7 @@ import org.geotoolkit.referencing.operation.transform.ProjectiveTransform;
  * Instances of ISO 19115-2 metadata are typically obtained from {@link SpatialMetadata} objects.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.11
+ * @version 3.13
  *
  * @since 3.07
  * @module
@@ -533,6 +542,141 @@ public class MetadataHelper implements Localized {
             uf.format(commonUnit, buffer.append(' '), pos);
         }
         return buffer.toString();
+    }
+
+    /**
+     * Converts the given {@link SampleDimension} instances to {@link GridSampleDimension} instances.
+     * For each input sample dimension, this method creates a qualitative {@linkplain Category
+     * category} for each {@linkplain SampleDimension#getFillSampleValues() fill values} (if any)
+     * and a single quantitative category for the {@linkplain SampleDimension#getValidSampleValues()
+     * range of sample values}.
+     * <p>
+     * The {@code sampleDimensions} argument is typically obtained by the following method call:
+     *
+     * {@preformat java
+     *     SpatialMetadata metadata = ...
+     *     sampleDimensions = metadata.getListForType(SampleDimension.class);
+     * }
+     *
+     * @param  sampleDimensions The sample dimensions from Image I/O metadata, or {@code null}.
+     * @return The {@link GridSampleDimension}s, or {@code null} if the given list was null or empty.
+     * @throws ImageMetadataException If this method can not create the grid sample dimensions.
+     *
+     * @since 3.13
+     */
+    public List<GridSampleDimension> getGridSampleDimensions(
+            final List<? extends SampleDimension> sampleDimensions) throws ImageMetadataException
+    {
+        if (sampleDimensions == null || sampleDimensions.isEmpty()) {
+            return null;
+        }
+        /*
+         * Now convert the SampleDimension instances to GridSampleDimension instances.
+         * For each sample dimension, we create a qualitative category for each fill
+         * values (if any) and a single quantitative category for the range of sample
+         * values.
+         */
+        InternationalString untitled = null; // To be created only if needed.
+        final List<Category> categories = new ArrayList<Category>();
+        final GridSampleDimension[] bands = new GridSampleDimension[sampleDimensions.size()];
+        boolean hasSampleDimensions = false;
+        for (int i=0; i<bands.length; i++) {
+            final SampleDimension sd = sampleDimensions.get(i);
+            if (sd != null) {
+                /*
+                 * Get a name for the sample dimensions. This name will be given both to the
+                 * GridSampleDimension object and to the single qualitative Category. If no
+                 * name can be found, "Untitled" will be used.
+                 */
+                InternationalString dimensionName = sd.getDescriptor();
+                if (dimensionName == null) {
+                    if (untitled == null) {
+                        untitled = Vocabulary.formatInternational(Vocabulary.Keys.UNTITLED);
+                    }
+                    dimensionName = untitled;
+                }
+                /*
+                 * Create a qualitative category for each fill value.
+                 */
+                final double[] fillValues = sd.getFillSampleValues();
+                if (fillValues != null) {
+                    final CharSequence name = Category.NODATA.getName();
+                    for (int j=0; j<fillValues.length; j++) {
+                        final double fv = fillValues[i];
+                        final int ifv = (int) fv;
+                        final Category c;
+                        if (ifv == fv) {
+                            c = new Category(name, null, ifv);
+                        } else {
+                            c = new Category(name, null, fv);
+                        }
+                        categories.add(c);
+                    }
+                }
+                /*
+                 * Create a quantitative category for the range of valid sample values.
+                 */
+                final NumberRange<?> range = getValidSampleValues(sd, fillValues);
+                if (range != null) {
+                    final Double scale  = sd.getScaleFactor();
+                    final Double offset = sd.getOffset();
+                    if (scale != null || offset != null || !overlap(categories, range)) {
+                        MathTransform1D tr = LinearTransform1D.create(
+                                (scale  != null) ? adjustForRoundingError(scale)  : 1,
+                                (offset != null) ? adjustForRoundingError(offset) : 0);
+                        final TransferFunctionType type = sd.getTransferFunctionType();
+                        if (type != null && !type.equals(TransferFunctionType.LINEAR)) {
+                            /*
+                             * TODO: We need to support exponential and logarithmic transforms
+                             * here. For doing a good job, we should use a MathTransformFactory
+                             * (see CategoryTable for inspiration). In order to be consistent, we
+                             * should use that factory for the transform implicitly created by
+                             * the above new Category(...) constructor call, and the transform
+                             * implicitly created by MetadataHelper.createGridToCRS(...).
+                             */
+                            throw new ImageMetadataException(Errors.getResources(getLocale())
+                                    .getString(Errors.Keys.UNSUPPORTED_OPERATION_$1, type));
+                        }
+                        categories.add(new Category(dimensionName, null, range, tr));
+                    }
+                }
+                /*
+                 * Create the GridSampleDimension instance.
+                 */
+                if (!categories.isEmpty()) {
+                    final Category[] array = categories.toArray(new Category[categories.size()]);
+                    final Unit<?> unit = sd.getUnits();
+                    try {
+                        bands[i] = new GridSampleDimension(dimensionName, array, unit);
+                    } catch (IllegalArgumentException e) {
+                        throw new ImageMetadataException(e.getLocalizedMessage(), e);
+                    }
+                    categories.clear();
+                    hasSampleDimensions = true;
+                }
+            }
+        }
+        return hasSampleDimensions ? Arrays.asList(bands) : null;
+    }
+
+    /**
+     * Returns {@code true} if the given range overlaps at least one category. This method is
+     * invoked when the image metadata declares a range of sample value, but does not declare
+     * any offset and scale factor. Sometime (e.g. in some NetCDF files encoded in a way not
+     * compliant with CF-convention), the range is actually garbage data that we should ignore.
+     * In some other cases (e.g. in ASCII-Grid), the range is still valid.
+     * <p>
+     * As an heuristic rule, we will consider the range as garbage data if it overlaps any
+     * previously defined categories. Attempt to create a {@code GridSampleDimension} with
+     * such range would thrown an exception anyway.
+     */
+    private static boolean overlap(final List<Category> categories, final NumberRange<?> range) {
+        for (final Category category : categories) {
+            if (range.intersects(category.getRange())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

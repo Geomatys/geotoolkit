@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.io.IOException;
+import java.sql.SQLException;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.IIOException;
@@ -126,7 +127,7 @@ final class NewGridCoverageIterator implements Iterator<NewGridCoverageReference
                             final SeriesEntry                series,
                             final int                        imageIndex,
                             final Iterator<?>                inputToAdd,
-                            Object input) throws IOException, FactoryException
+                            Object input) throws SQLException, IOException, FactoryException
     {
         this.listeners  = listeners;
         this.controller = controller;
@@ -154,7 +155,7 @@ final class NewGridCoverageIterator implements Iterator<NewGridCoverageReference
      * @return The entry, or {@code null} if the given input should be skipped.
      * @throws IOException if an I/O operation was required and failed.
      */
-    private NewGridCoverageReference createEntry(Object input) throws IOException, FactoryException {
+    private NewGridCoverageReference createEntry(Object input) throws SQLException, IOException, FactoryException {
         if (input == null) {
             return null;
         }
@@ -219,8 +220,10 @@ final class NewGridCoverageIterator implements Iterator<NewGridCoverageReference
             }
             try {
                 next = createEntry(input);
-            } catch (IOException exception) { // TODO: multi-catch
+            } catch (SQLException exception) { // TODO: multi-catch
                 // Will be unwrapped by WritableGridCoverageTable.
+                throw new BackingStoreException(exception);
+            } catch (IOException exception) {
                 throw new BackingStoreException(exception);
             } catch (FactoryException exception) {
                 throw new BackingStoreException(exception);

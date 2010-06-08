@@ -163,23 +163,33 @@ final class FormatEntry extends DefaultEntry {
      */
     public synchronized String[] getImageFormats() {
         if (imageFormats == null) {
-            final Set<String> names = new HashSet<String>();
-            for (final Iterator<ImageReaderSpi> it = IIORegistry.getDefaultInstance()
-                    .getServiceProviders(ImageReaderSpi.class, false); it.hasNext();)
-            {
-                final ImageReaderSpi spi = it.next();
-                final String[] candidates = spi.getFormatNames();
-                final String[] mimeTypes  = spi.getMIMETypes();
-                if (XArrays.containsIgnoreCase(candidates, imageFormat) ||
-                    XArrays.containsIgnoreCase(mimeTypes,  imageFormat))
-                {
-                    names.addAll(Arrays.asList(candidates));
-                    names.addAll(Arrays.asList(mimeTypes));
-                }
-            }
-            imageFormats = names.toArray(new String[names.size()]);
+            imageFormats = getImageFormats(imageFormat);
         }
         return imageFormats;
+    }
+
+    /**
+     * Returns alternatives to the given image format name or MIME type.
+     *
+     * @param  imageFormat The image format for which to search for alternatives.
+     * @return Possible alternatives to the given image format.
+     */
+    static String[] getImageFormats(final String imageFormat) {
+        final Set<String> names = new HashSet<String>();
+        for (final Iterator<ImageReaderSpi> it = IIORegistry.getDefaultInstance()
+                .getServiceProviders(ImageReaderSpi.class, false); it.hasNext();)
+        {
+            final ImageReaderSpi spi = it.next();
+            final String[] candidates = spi.getFormatNames();
+            final String[] mimeTypes  = spi.getMIMETypes();
+            if (XArrays.containsIgnoreCase(candidates, imageFormat) ||
+                XArrays.containsIgnoreCase(mimeTypes,  imageFormat))
+            {
+                names.addAll(Arrays.asList(candidates));
+                names.addAll(Arrays.asList(mimeTypes));
+            }
+        }
+        return names.toArray(new String[names.size()]);
     }
 
     /**

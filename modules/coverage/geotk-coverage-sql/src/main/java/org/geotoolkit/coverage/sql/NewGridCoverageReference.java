@@ -45,15 +45,18 @@ import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.image.io.mosaic.Tile;
 import org.geotoolkit.image.io.metadata.MetadataHelper;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
+import org.geotoolkit.image.io.metadata.SampleDimension;
 import org.geotoolkit.image.io.SpatialImageReader;
 import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.internal.sql.table.SpatialDatabase;
+import org.geotoolkit.internal.sql.table.NoSuchRecordException;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.referencing.factory.AbstractAuthorityFactory;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.GridSampleDimension;
+import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.resources.Errors;
 
 
@@ -128,13 +131,20 @@ public final class NewGridCoverageReference {
      * {@code "Formats"} table. Note that this is not necessarly the same name than the
      * {@linkplain ImageReaderSpi#getFormatNames() image format name}.
      * <p>
-     * The value of this field is the format which seems the best fit. A list of
+     * This field is initialized to the format which seems the best fit. A list of
      * alternative formats can be obtained by {@link #getAlternativeFormats()}.
      *
      * @see #getAlternativeFormats()
      * @see #getSampleDimensions()
      */
     public String format;
+
+    /**
+     * The format entry which seems the best fit. The {@link #format} field is initialized
+     * to the name of this format. The most interresting information from this field is the
+     * list of sample dimensions.
+     */
+    private final FormatEntry bestFormat;
 
     /**
      * Some formats which may be applicable as an alternative to {@code series.format}.
@@ -209,7 +219,7 @@ public final class NewGridCoverageReference {
      * @throws IOException if an error occured while reading the image.
      */
     NewGridCoverageReference(final SpatialDatabase database, final Tile tile)
-            throws IOException, FactoryException
+            throws SQLException, IOException, FactoryException
     {
         this(database, tile.getImageReader(), tile.getInput(), tile.getImageIndex(), tile);
     }
@@ -226,7 +236,8 @@ public final class NewGridCoverageReference {
      * @throws IOException if an error occured while reading the image.
      */
     NewGridCoverageReference(final SpatialDatabase database, final ImageReader reader,
-            final Object input, final int imageIndex) throws IOException, FactoryException
+            final Object input, final int imageIndex)
+            throws SQLException, IOException, FactoryException
     {
         this(database, reader, input, imageIndex, null);
     }
@@ -245,7 +256,8 @@ public final class NewGridCoverageReference {
      * @throws IOException if an error occured while reading the image.
      */
     private NewGridCoverageReference(final SpatialDatabase database, final ImageReader reader,
-            Object input, final int imageIndex, final Tile tile) throws IOException, FactoryException
+            Object input, final int imageIndex, final Tile tile)
+            throws SQLException, IOException, FactoryException
     {
         this.database = database;
         /*
@@ -274,8 +286,12 @@ public final class NewGridCoverageReference {
          * metadata if there is no image metadata.
          */
         spi = reader.getOriginatingProvider();
-        if (spi != null) {
-            format = getFormatName(spi);
+        String imageFormat = getFormatName(spi);
+        if (imageFormat == null) {
+            imageFormat = IOUtilities.extension(input);
+        }
+        if (imageFormat.length() == 0) {
+            throw new IOException(Errors.format(Errors.Keys.UNDEFINED_FORMAT));
         }
         SpatialMetadata metadata = null;
         if (true) {
@@ -289,6 +305,8 @@ public final class NewGridCoverageReference {
                 }
             }
         }
+        final MetadataHelper helper = (metadata == null) ? null : new MetadataHelper(
+                (reader instanceof SpatialImageReader) ? (SpatialImageReader) reader : null);
         /*
          * Get the geolocalization from the image, then complete with the tile information if
          * there is a Tile object. We avoid invoking Tile.getRegion() because it may create a
@@ -306,8 +324,6 @@ public final class NewGridCoverageReference {
             // We want to allow modifications.
             gridToCRS = new AffineTransform(gridToCRS);
         } else if (metadata != null) {
-            final MetadataHelper helper = new MetadataHelper(
-                    (reader instanceof SpatialImageReader) ? (SpatialImageReader) reader : null);
             gridToCRS = helper.getAffineTransform(metadata.getInstanceForType(RectifiedGrid.class), null);
         } else {
             gridToCRS = new AffineTransform();
@@ -315,6 +331,8 @@ public final class NewGridCoverageReference {
         this.gridToCRS = gridToCRS;
         /*
          * Get the CRS, then try to infer the horizontal and vertical SRID from it.
+         * This code scan the "spatial_ref_sys" PostGIS table until matches are found,
+         * or leaves the SRID to 0 if no match is found.
          */
         if (metadata != null) {
             final CoordinateReferenceSystem crs = metadata.getInstanceForType(CoordinateReferenceSystem.class);
@@ -336,6 +354,23 @@ public final class NewGridCoverageReference {
                 }
             }
         }
+        /*
+         * Get the sample dimensions. This code extract the SampleDimensions from the metadata,
+         * convert them to GridSampleDimensions, then search if a format already exists in the
+         * database for those dimensions.
+         */
+        final List<GridSampleDimension> sampleDimensions = (metadata == null) ? null :
+                helper.getGridSampleDimensions(metadata.getListForType(SampleDimension.class));
+        final FormatTable formatTable = database.getTable(FormatTable.class);
+        FormatEntry candidate = formatTable.find(imageFormat, sampleDimensions);
+        formatTable.release();
+        if (candidate == null) {
+            candidate = new FormatEntry(imageFormat, imageFormat, null, (sampleDimensions == null) ? null :
+                    sampleDimensions.toArray(new GridSampleDimension[sampleDimensions.size()]),
+                    ViewType.NATIVE, null);
+        }
+        bestFormat = candidate;
+        format = (String) candidate.getIdentifier();
         /*
          * Close the reader but do not dispose it, since it may be used for the next entry.
          */
@@ -464,11 +499,14 @@ public final class NewGridCoverageReference {
      * Returns the format name. Current implementation selects the longuest name,
      * on the assumption that it is the most explicit name.
      *
-     * @param  spi The image reader provider.
-     * @return The format name (never {@code null} and never empty).
+     * @param  spi The image reader provider, or {@code null}.
+     * @return The format name, or {@code null} if {@code spi} was null.
      * @throws IOException if the format can not be obtained.
      */
     private static String getFormatName(final ImageReaderSpi spi) throws IOException {
+        if (spi == null) {
+            return null;
+        }
         String format = "";
         String[] formats = spi.getFormatNames();
         if (formats != null) {
@@ -500,7 +538,7 @@ public final class NewGridCoverageReference {
                 }
             }
             if (format.length() == 0) {
-                throw new IOException(Errors.format(Errors.Keys.UNDEFINED_FORMAT));
+                return null;
             }
         }
         return format;
@@ -535,18 +573,14 @@ public final class NewGridCoverageReference {
      * @since 3.13
      */
     public String[] getAlternativeFormats() throws CoverageStoreException {
-        if (alternativeFormats == null) {
-            if (spi == null) {
-                alternativeFormats = new FormatEntry[] {};
-            } else try {
-                final FormatTable table = database.getTable(FormatTable.class);
-                table.setImageFormats(spi.getFormatNames());
-                final Collection<FormatEntry> formats = table.getEntries();
-                table.release();
-                alternativeFormats = formats.toArray(new FormatEntry[formats.size()]);
-            } catch (SQLException e) {
-                throw new CoverageStoreException(e);
-            }
+        if (alternativeFormats == null) try {
+            final FormatTable table = database.getTable(FormatTable.class);
+            table.setImageFormats(bestFormat.getImageFormats());
+            final Collection<FormatEntry> formats = table.getEntries();
+            table.release();
+            alternativeFormats = formats.toArray(new FormatEntry[formats.size()]);
+        } catch (SQLException e) {
+            throw new CoverageStoreException(e);
         }
         final String[] names = new String[alternativeFormats.length];
         for (int i=0; i<names.length; i++) {
@@ -556,14 +590,31 @@ public final class NewGridCoverageReference {
     }
 
     /**
+     * Returns {@code true} if the {@linkplain #format} is already defined in the database,
+     * or {@code false} if this is a new format.
+     *
+     * @return {@code true} if the current format is defined in the database.
+     * @throws CoverageStoreException If an error occured while reading from the database.
+     *
+     * @since 3.13
+     */
+    public boolean isFormatDefined() throws CoverageStoreException {
+        final boolean isDefined;
+        try {
+            final FormatTable table = database.getTable(FormatTable.class);
+            isDefined = table.exists(format);
+            table.release();
+        } catch (SQLException e) {
+            throw new CoverageStoreException(e);
+        }
+        return isDefined;
+    }
+
+    /**
      * Returns the sample dimensions for coverages associated with the {@linkplain #format},
-     * or {@code null} if undefined. If non-null, then the list is garanteed to be non-empty
-     * and the list size is equals to the expected number of bands.
-     *
-     * {@note Empty lists are not allowed because our Image I/O framework interprets them as
-     *        "<cite>no bands</cite>", as opposed to "<cite>unknown bands</cite>". The later
-     *        is what we mean here.}
-     *
+     * or {@code null} if undefined. If non-null, then the list size is equals to the number
+     * of bands.
+     * <p>
      * Each {@code GridSampleDimension} specifies how to convert pixel values to geophysics values,
      * or conversely. Their type (geophysics or not) is format dependent. For example coverages
      * read from PNG files will typically store their data as integer values (non-geophysics),
@@ -576,10 +627,18 @@ public final class NewGridCoverageReference {
      * @since 3.13
      */
     public List<GridSampleDimension> getSampleDimensions() throws CoverageStoreException {
+        if (bestFormat.getIdentifier().equals(format)) {
+            return bestFormat.sampleDimensions;
+        }
         final FormatEntry entry;
         try {
             final FormatTable table = database.getTable(FormatTable.class);
-            entry = table.getEntry(format);
+            try {
+                entry = table.getEntry(format);
+            } catch (NoSuchRecordException e) {
+                table.release();
+                return null;
+            }
             table.release();
         } catch (SQLException e) {
             throw new CoverageStoreException(e);

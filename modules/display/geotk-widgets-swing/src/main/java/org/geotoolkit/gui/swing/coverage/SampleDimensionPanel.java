@@ -187,8 +187,9 @@ public class SampleDimensionPanel extends JComponent {
      * <b>Tip:</b> consider invoking {@link #commitEdit()} before to invoke this method.
      *
      * @return The sample dimensions, or {@code null} if none.
+     * @throws ParseException If at least two categories have overlapping range of sample values.
      */
-    public List<GridSampleDimension> getSampleDimensions() {
+    public List<GridSampleDimension> getSampleDimensions() throws ParseException {
         GridSampleDimension[] bands = dimensions;
         if (bands == null) {
             return null;
@@ -202,7 +203,14 @@ public class SampleDimensionPanel extends JComponent {
                     categories[j] = records[j].getCategory();
                 }
                 final String name = ((BandName) nameField.getModel().getElementAt(i)).name;
-                final GridSampleDimension band = new GridSampleDimension(name, categories, units[i]);
+                final GridSampleDimension band;
+                try {
+                    band = new GridSampleDimension(name, categories, units[i]);
+                } catch (IllegalArgumentException e) {
+                    ParseException ex = new ParseException(e.getLocalizedMessage(), 0);
+                    ex.initCause(e);
+                    throw ex;
+                }
                 if (!band.equals(bands[i])) {
                     bands[i] = band;
                 }
