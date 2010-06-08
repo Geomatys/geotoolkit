@@ -642,11 +642,20 @@ public class CategoryTable extends ListTableModel<CategoryRecord> {
         private int row, column;
 
         /**
+         * {@code true} if this editor is formatting real numbers,
+         * or {@code false} if it is formatting integer numbers.
+         */
+        private final boolean realNumbers;
+
+        /**
          * Creates a new editor for integers if {@code real} is {@code false}, or for
          * floating points if {@code real} is {@code true}.
          */
         NumberEditor(final boolean realNumbers) {
+            this.realNumbers = realNumbers;
             if (realNumbers) {
+                // This particular constructor call (using Double number) seems to be
+                // required, otherwise fractional step size between 0 and 1 have no effect.
                 editorComponent = new JSpinner(new SpinnerNumberModel(0.0, null, null, 1.0));
             } else {
                 editorComponent = new JSpinner();
@@ -689,7 +698,9 @@ public class CategoryTable extends ListTableModel<CategoryRecord> {
                 value = Double.valueOf(column == SCALE ? 1 : 0);
             }
             model.setValue(value);
-            configure(getFormat(), row); // Must be after setValue.
+            if (realNumbers) {
+                configure(getFormat(), row); // Must be after setValue.
+            }
             model.addChangeListener(this);
             return editorComponent;
         }

@@ -28,18 +28,19 @@ import java.awt.event.ActionListener;
 import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.JComboBox;
-import javax.swing.JTextField;
 import javax.swing.JComponent;
 import javax.swing.JScrollPane;
+import javax.swing.JFormattedTextField;
 import javax.swing.DefaultComboBoxModel;
+import java.text.ParseException;
 
 import org.opengis.util.InternationalString;
 import javax.measure.unit.Unit;
 
-import org.geotoolkit.measure.Units;
 import org.geotoolkit.coverage.Category;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.internal.swing.table.JTables;
+import org.geotoolkit.internal.swing.UnitFormatter;
 import org.geotoolkit.resources.Vocabulary;
 
 
@@ -97,7 +98,7 @@ public class SampleDimensionPanel extends JComponent {
     /**
      * Units of measurement.
      */
-    private final JTextField unitField;
+    private final JFormattedTextField unitField;
 
     /**
      * The model for categories table.
@@ -116,9 +117,9 @@ public class SampleDimensionPanel extends JComponent {
     private CategoryRecord[][] records;
 
     /**
-     * The unit symbols for each sample dimensions.
+     * The unit for each sample dimensions.
      */
-    private String[] units;
+    private Unit<?>[] units;
 
     /**
      * The index of the currently selected sample dimension, or {@code -1} if none.
@@ -141,7 +142,7 @@ public class SampleDimensionPanel extends JComponent {
         table.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
 
         nameField = new JComboBox();
-        unitField = new JTextField();
+        unitField = new JFormattedTextField(new UnitFormatter(locale));
         final JLabel nameLabel = new JLabel(resources.getLabel(Vocabulary.Keys.BAND));
         final JLabel unitLabel = new JLabel(resources.getLabel(Vocabulary.Keys.UNITS));
         nameLabel.setLabelFor(nameField);
@@ -182,6 +183,8 @@ public class SampleDimensionPanel extends JComponent {
      * the elements specified to the last call to {@link #setSampleDimensions(List)} if the
      * user didn't edited the values, or a list containing new {@code GridSampleDimension}
      * instances otherwise.
+     * <p>
+     * <b>Tip:</b> consider invoking {@link #commitEdit()} before to invoke this method.
      *
      * @return The sample dimensions, or {@code null} if none.
      */
@@ -199,14 +202,7 @@ public class SampleDimensionPanel extends JComponent {
                     categories[j] = records[j].getCategory();
                 }
                 final String name = ((BandName) nameField.getModel().getElementAt(i)).name;
-                Unit<?> unit = null;
-                String unitSymbol = units[i];
-                if (unitSymbol != null && ((unitSymbol = unitSymbol.trim()).length() != 0)) try {
-                    unit = Units.valueOf(unitSymbol);
-                } catch (IllegalArgumentException e) {
-                    // TODO: ignored for now. We need some way to warn the user.
-                }
-                final GridSampleDimension band = new GridSampleDimension(name, categories, unit);
+                final GridSampleDimension band = new GridSampleDimension(name, categories, units[i]);
                 if (!band.equals(bands[i])) {
                     bands[i] = band;
                 }
@@ -229,17 +225,14 @@ public class SampleDimensionPanel extends JComponent {
         units      = null;
         records    = null;
         dimensions = null;
-        if (bands != null) {
+        if (bands != null && !bands.isEmpty()) {
             final int n = bands.size();
             dimensions  = bands.toArray(new GridSampleDimension[n]);
             records     = new CategoryRecord[n][];
-            units       = new String[n];
+            units       = new Unit<?>[n];
             for (int i=0; i<n; i++) {
                 final GridSampleDimension band = dimensions[i];
-                final Unit<?> uom = band.getUnits();
-                if (uom != null) {
-                    units[i] = uom.toString();
-                }
+                units[i] = band.getUnits();
                 final InternationalString desc = band.getDescription();
                 String name = null;
                 if (desc != null) {
@@ -269,7 +262,7 @@ public class SampleDimensionPanel extends JComponent {
                 if (records[selectedIndex] == null) {
                     records[selectedIndex] = categories.getElements();
                 }
-                units[selectedIndex] = unitField.getText();
+                units[selectedIndex] = (Unit<?>) unitField.getValue();
             }
             /*
              * If the CategoryRecords have been previously created for the sample
@@ -283,7 +276,7 @@ public class SampleDimensionPanel extends JComponent {
                  */
                 categories.setCategories(band.getCategories());
             }
-            unitField.setText(units[index]);
+            unitField.setValue(units[index]);
             selectedIndex = index;
         } else if (selectedIndex >= 0) {
             /*
@@ -299,7 +292,7 @@ public class SampleDimensionPanel extends JComponent {
                  */
                 selectedIndex = -1;
                 categories.setCategories(null);
-                unitField.setText(null);
+                unitField.setValue(null);
             }
         }
     }
@@ -323,5 +316,24 @@ public class SampleDimensionPanel extends JComponent {
         nameField     .setEditable(editable);
         unitField     .setEditable(editable);
         categories.setEditable(editable);
+    }
+
+    /**
+     * Forces the current value to be taken from the editable fields and set them as the
+     * current values. If this operation fails for at least one field, this method will
+     * set the focus on the offending field before to throw the exception.
+     *
+     * @throws ParseException If at least one values couldn't be commited.
+     */
+    public void commitEdit() throws ParseException {
+        try {
+            unitField.commitEdit();
+        } catch (ParseException e) {
+            unitField.requestFocus();
+            throw e;
+        }
+        if (selectedIndex >= 0) {
+            units[selectedIndex] = (Unit<?>) unitField.getValue();
+        }
     }
 }
