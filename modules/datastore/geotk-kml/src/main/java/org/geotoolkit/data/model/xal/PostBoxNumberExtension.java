@@ -5,13 +5,15 @@ package org.geotoolkit.data.model.xal;
  *
  * <p>Some countries like USA have POBox as 12345-123.</p>
  *
- * <br />&lt;xs:element name="PostBoxNumberExtension" minOccurs="0">
- * <br />&lt;xs:complexType mixed="true">
- * <br />&lt;xs:attribute name="NumberExtensionSeparator">...
- * <br />&lt;/xs:attribute>
- * <br />&lt;xs:anyAttribute namespace="##other"/>
- * <br />&lt;/xs:complexType>
- * <br />&lt;/xs:element>
+ * <pre>
+ * &lt;xs:element name="PostBoxNumberExtension" minOccurs="0">
+ *  &lt;xs:complexType mixed="true">
+ *      &lt;xs:attribute name="NumberExtensionSeparator">...
+ *      &lt;/xs:attribute>
+ *      &lt;xs:anyAttribute namespace="##other"/>
+ *  &lt;/xs:complexType>
+ * &lt;/xs:element>
+ * </pre>
  *
  * @author Samuel Andrés
  */

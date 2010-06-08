@@ -3,12 +3,14 @@ package org.geotoolkit.data.model.kml;
 /**
  * <p>This enumeration maps styleStateEnumType.</p>
  *
- * <br />&lt;simpleType name="styleStateEnumType">
- * <br />&lt;restriction base="string">
- * <br />&lt;enumeration value="normal"/>
- * <br />&lt;enumeration value="highlight"/>
- * <br />&lt;/restriction>
- * <br />&lt;/simpleType>
+ * <pre>
+ * &lt;simpleType name="styleStateEnumType">
+ *  &lt;restriction base="string">
+ *      &lt;enumeration value="normal"/>
+ *      &lt;enumeration value="highlight"/>
+ *  &lt;/restriction>
+ * &lt;/simpleType>
+ * </pre>
  *
  * @author Samuel Andrés
  */
@@ -17,7 +19,7 @@ public enum StyleState {
     NORMAL("normal"),
     HIGHLIGHT("highlight");
 
-    private String styleState;
+    private final String styleState;
 
     /**
      * 
@@ -52,13 +54,9 @@ public enum StyleState {
      * @return The StyleState instance corresponding to the styleState parameter.
      */
     public static StyleState transform(String styleState, StyleState defaultValue){
-        StyleState resultat = defaultValue;
         for(StyleState cm : StyleState.values()){
-            if(cm.getStyleState().equals(styleState)){
-                resultat = cm;
-                break;
-            }
+            if(cm.getStyleState().equals(styleState)) return cm;
         }
-        return resultat;
+        return defaultValue;
     }
 }

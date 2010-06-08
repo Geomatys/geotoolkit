@@ -2,6 +2,7 @@ package org.geotoolkit.data.model.kml;
 
 import java.util.List;
 import org.geotoolkit.data.model.xsd.SimpleType;
+import static java.util.Collections.*;
 
 /**
  *
@@ -9,10 +10,10 @@ import org.geotoolkit.data.model.xsd.SimpleType;
  */
 public class TimeSpanDefault extends AbstractTimePrimitiveDefault implements TimeSpan {
 
-    private String begin;
-    private String end;
-    private List<SimpleType> timeSpanSimpleExtensions;
-    private List<AbstractObject> timeSpanObjectExtensions;
+    private final String begin;
+    private final String end;
+    private final List<SimpleType> timeSpanSimpleExtensions;
+    private final List<AbstractObject> timeSpanObjectExtensions;
 
     /**
      *
@@ -32,8 +33,8 @@ public class TimeSpanDefault extends AbstractTimePrimitiveDefault implements Tim
                 abstractTimePrimitiveSimpleExtensions, abstractTimePrimitiveObjectExtensions);
         this.begin = begin;
         this.end = end;
-        this.timeSpanSimpleExtensions = timeSpanSimpleExtensions;
-        this.timeSpanObjectExtensions = timeSpanObjectExtensions;
+        this.timeSpanSimpleExtensions = (timeSpanSimpleExtensions == null) ? EMPTY_LIST : timeSpanSimpleExtensions;
+        this.timeSpanObjectExtensions = (timeSpanObjectExtensions == null) ? EMPTY_LIST : timeSpanObjectExtensions;
     }
 
     /**

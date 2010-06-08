@@ -1,32 +1,42 @@
 package org.geotoolkit.data.kml;
 
-import com.ctc.wstx.stax.WstxInputFactory;
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLReporter;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import org.geotoolkit.data.model.XalFactory;
 import org.geotoolkit.data.model.XalFactoryDefault;
-import org.geotoolkit.data.model.kml.KmlException;
 import org.geotoolkit.data.model.xal.AddressDetails;
 import org.geotoolkit.data.model.xal.AddressIdentifier;
 import org.geotoolkit.data.model.xal.AddressLines;
 import org.geotoolkit.data.model.xal.AdministrativeArea;
 import org.geotoolkit.data.model.xal.Country;
 import org.geotoolkit.data.model.xal.CountryNameCode;
+import org.geotoolkit.data.model.xal.Department;
+import org.geotoolkit.data.model.xal.DependentLocality;
+import org.geotoolkit.data.model.xal.Firm;
 import org.geotoolkit.data.model.xal.GenericTypedGrPostal;
 import org.geotoolkit.data.model.xal.GrPostal;
+import org.geotoolkit.data.model.xal.LargeMailUser;
 import org.geotoolkit.data.model.xal.Locality;
+import org.geotoolkit.data.model.xal.MailStop;
+import org.geotoolkit.data.model.xal.MailStopNumber;
+import org.geotoolkit.data.model.xal.PostBox;
+import org.geotoolkit.data.model.xal.PostBoxNumber;
+import org.geotoolkit.data.model.xal.PostBoxNumberExtension;
+import org.geotoolkit.data.model.xal.PostBoxNumberPrefix;
+import org.geotoolkit.data.model.xal.PostBoxNumberSuffix;
 import org.geotoolkit.data.model.xal.PostOffice;
+import org.geotoolkit.data.model.xal.PostTown;
+import org.geotoolkit.data.model.xal.PostTownSuffix;
 import org.geotoolkit.data.model.xal.PostalCode;
+import org.geotoolkit.data.model.xal.PostalCodeNumberExtension;
+import org.geotoolkit.data.model.xal.PostalRoute;
 import org.geotoolkit.data.model.xal.PostalServiceElements;
+import org.geotoolkit.data.model.xal.Premise;
 import org.geotoolkit.data.model.xal.SortingCode;
 import org.geotoolkit.data.model.xal.SubAdministrativeArea;
 import org.geotoolkit.data.model.xal.Thoroughfare;
@@ -53,9 +63,9 @@ public class XalReader extends StaxStreamReader{
     public XMLStreamReader getReader(){return this.reader;}
 
     /**
-     * <p>This method reads the Kml document assigned to the KmlReader.</p>
+     * <p>This method reads the xAL document assigned to the XalReader.</p>
      *
-     * @return The Kml object mapping the document.
+     * @return The XalS object mapping the document.
      */
     public Xal read() {
 
@@ -86,10 +96,10 @@ public class XalReader extends StaxStreamReader{
     }
 
     /**
-     *
+     * 
      * @return
      * @throws XMLStreamException
-     * @throws KmlException
+     * @throws XalException
      */
     private Xal readXal() throws XMLStreamException, XalException {
         String version = reader.getAttributeValue(null, ATT_VERSION);
@@ -460,16 +470,363 @@ public class XalReader extends StaxStreamReader{
                 localisation, type, usageType, indicator);
     }
 
-    private PostOffice readPostOffice(){
-        return null;
+    private Locality readLocality() throws XMLStreamException, XalException{
+        List<GenericTypedGrPostal> addressLines = new ArrayList<GenericTypedGrPostal>();
+        List<GenericTypedGrPostal> localityNames = new ArrayList<GenericTypedGrPostal>();
+        Object postal = null;
+        Thoroughfare thoroughfare = null;
+        Premise premise = null;
+        DependentLocality dependentLocality = null;
+        PostalCode postalCode = null;
+        String type = reader.getAttributeValue(null, ATT_TYPE);
+        String usageType = reader.getAttributeValue(null, ATT_USAGE_TYPE);
+        String indicator = reader.getAttributeValue(null, ATT_INDICATOR);
+
+        boucle:
+        while (reader.hasNext()) {
+
+            switch (reader.next()) {
+                case XMLStreamConstants.START_ELEMENT:
+                    final String eName = reader.getLocalName();
+                    final String eUri = reader.getNamespaceURI();
+
+                    if (URI_XAL.equals(eUri)) {
+                        if (TAG_ADDRESS_LINE.equals(eName)) {
+                            addressLines.add(this.readGenericTypedGrPostal());
+                        } else if (TAG_LOCALITY_NAME.equals(eName)){
+                            localityNames.add(this.readGenericTypedGrPostal());
+                        } else if (TAG_POST_BOX.equals(eName)){
+                            postal = this.readPostBox();
+                        } else if (TAG_LARGE_MAIL_USER.equals(eName)){
+                            postal = this.readLargeMailUser();
+                        } else if (TAG_POST_OFFICE.equals(eName)){
+                            postal = this.readPostOffice();
+                        } else if (TAG_POSTAL_ROUTE.equals(eName)){
+                            postal = this.readPostalRoute();
+                        } else if (TAG_THOROUGHFARE.equals(eName)){
+                            thoroughfare = this.readThoroughfare();
+                        } else if (TAG_PREMISE.equals(eName)){
+                            premise = this.readPremise();
+                        } else if (TAG_DEPENDENT_LOCALITY.equals(eName)){
+                            dependentLocality = this.readPDependentLocality();
+                        } else if (TAG_POSTAL_CODE.equals(eName)){
+                            postalCode = this.readPostalCode();
+                        }
+                    }
+                    break;
+
+                case XMLStreamConstants.END_ELEMENT:
+                    if (TAG_LOCALITY.equals(reader.getLocalName()) && URI_XAL.contains(reader.getNamespaceURI())) {
+                        break boucle;
+                    }
+                    break;
+            }
+        }
+        return XalReader.xalFactory.createLocality(addressLines, localityNames,
+                postal, thoroughfare, premise, dependentLocality,
+                postalCode, type, usageType, indicator);
     }
 
-    private PostalCode readPostalCode(){
-        return null;
+    private PostBox readPostBox() throws XMLStreamException {
+        List<GenericTypedGrPostal> addressLines = new ArrayList<GenericTypedGrPostal>();
+        PostBoxNumber postBoxNumber = null;
+        PostBoxNumberPrefix postBoxNumberPrefix = null;
+        PostBoxNumberSuffix postBoxNumberSuffix = null;
+        PostBoxNumberExtension postBoxNumberExtension = null;
+        Firm firm = null;
+        PostalCode postalCode = null;
+        String type = reader.getAttributeValue(null, ATT_TYPE);
+        String indicator = reader.getAttributeValue(null, ATT_INDICATOR);
+
+        boucle:
+        while (reader.hasNext()) {
+
+            switch (reader.next()) {
+                case XMLStreamConstants.START_ELEMENT:
+                    final String eName = reader.getLocalName();
+                    final String eUri = reader.getNamespaceURI();
+
+                    if (URI_XAL.equals(eUri)) {
+                        if (TAG_ADDRESS_LINE.equals(eName)) {
+                            addressLines.add(this.readGenericTypedGrPostal());
+                        } else if (TAG_POST_BOX_NUMBER.equals(eName)){
+                            postBoxNumber = this.readPostBoxNumber();
+                        } else if (TAG_POST_BOX_NUMBER_PREFIX.equals(eName)){
+                            postBoxNumberPrefix = this.readPostBoxNumberPrefix();
+                        } else if (TAG_POST_BOX_NUMBER_SUFFIX.equals(eName)){
+                            postBoxNumberSuffix = this.readPostBoxNumberSuffix();
+                        } else if (TAG_POST_BOX_NUMBER_EXTENSION.equals(eName)){
+                            postBoxNumberExtension = this.readPostBoxNumberExtension();
+                        } else if (TAG_FIRM.equals(eName)){
+                            firm = this.readFirm();
+                        } else if (TAG_POSTAL_CODE.equals(eName)){
+                            postalCode = this.readPostalCode();
+                        }
+                    }
+                    break;
+
+                case XMLStreamConstants.END_ELEMENT:
+                    if (TAG_POST_BOX.equals(reader.getLocalName()) && URI_XAL.contains(reader.getNamespaceURI())) {
+                        break boucle;
+                    }
+                    break;
+            }
+        }
+        return XalReader.xalFactory.createPostBox(addressLines, postBoxNumber,
+                postBoxNumberPrefix, postBoxNumberSuffix, postBoxNumberExtension,
+                firm, postalCode, type, indicator);
+
     }
 
-    private Locality readLocality(){return null;}
+    private PostBoxNumber readPostBoxNumber() throws XMLStreamException{
+        GrPostal grPostal = this.readGrPostal();
+        String content = reader.getElementText();
+        return XalReader.xalFactory.createPostBoxNumber(grPostal, content);
+    }
 
-    private Thoroughfare readThoroughfare(){return null;}
+    private PostBoxNumberPrefix readPostBoxNumberPrefix() throws XMLStreamException {
+        GrPostal grPostal = this.readGrPostal();
+        String numberPrefixSeparator = reader.getAttributeValue(null, ATT_NUMBER_PREFIX_SEPARATOR);
+        String content = reader.getElementText();
+        return XalReader.xalFactory.createPostBoxNumberPrefix(numberPrefixSeparator, grPostal, content);
+    }
+
+    private PostBoxNumberSuffix readPostBoxNumberSuffix() throws XMLStreamException {
+        GrPostal grPostal = this.readGrPostal();
+        String numberSuffixSeparator = reader.getAttributeValue(null, ATT_NUMBER_SUFFIX_SEPARATOR);
+        String content = reader.getElementText();
+        return XalReader.xalFactory.createPostBoxNumberSuffix(numberSuffixSeparator, grPostal, content);
+    }
+
+    private PostBoxNumberExtension readPostBoxNumberExtension() throws XMLStreamException {
+        String numberExtensionSeparator = reader.getAttributeValue(null, ATT_NUMBER_EXTENSION_SEPARATOR);
+        String content = reader.getElementText();
+        return XalReader.xalFactory.createPostBoxNumberExtension(numberExtensionSeparator, content);
+    }
+
+    private Firm readFirm() throws XMLStreamException {
+        List<GenericTypedGrPostal> addressLines = new ArrayList<GenericTypedGrPostal>();
+        List<GenericTypedGrPostal> firmNames = new ArrayList<GenericTypedGrPostal>();
+        List<Department> departments = new ArrayList<Department>();
+        MailStop mailStop = null;
+        PostalCode postalCode = null;
+        String type = reader.getAttributeValue(null, ATT_TYPE);
+
+        boucle:
+        while (reader.hasNext()) {
+
+            switch (reader.next()) {
+                case XMLStreamConstants.START_ELEMENT:
+                    final String eName = reader.getLocalName();
+                    final String eUri = reader.getNamespaceURI();
+
+                    if (URI_XAL.equals(eUri)) {
+                        if (TAG_ADDRESS_LINE.equals(eName)) {
+                            addressLines.add(this.readGenericTypedGrPostal());
+                        } else if (TAG_FIRM_NAME.equals(eName)){
+                            firmNames.add(this.readGenericTypedGrPostal());
+                        } else if (TAG_DEPARTMENT.equals(eName)){
+                            departments.add(this.readDepartment());
+                        } else if (TAG_MAIL_STOP.equals(eName)){
+                            mailStop = this.readMailStop();
+                        } else if (TAG_POSTAL_CODE.equals(eName)){
+                            postalCode = this.readPostalCode();
+                        }
+                    }
+                    break;
+
+                case XMLStreamConstants.END_ELEMENT:
+                    if (TAG_FIRM.equals(reader.getLocalName()) && URI_XAL.contains(reader.getNamespaceURI())) {
+                        break boucle;
+                    }
+                    break;
+            }
+        }
+        return XalReader.xalFactory.createFirm(addressLines, firmNames, departments, mailStop, postalCode, type);
+    }
+
+    private Department readDepartment() throws XMLStreamException{
+        List<GenericTypedGrPostal> addressLines = new ArrayList<GenericTypedGrPostal>();
+        List<GenericTypedGrPostal> departmentNames = new ArrayList<GenericTypedGrPostal>();
+        MailStop mailStop = null;
+        PostalCode postalCode = null;
+        String type = reader.getAttributeValue(null, ATT_TYPE);
+
+        boucle:
+        while (reader.hasNext()) {
+
+            switch (reader.next()) {
+                case XMLStreamConstants.START_ELEMENT:
+                    final String eName = reader.getLocalName();
+                    final String eUri = reader.getNamespaceURI();
+
+                    if (URI_XAL.equals(eUri)) {
+                        if (TAG_ADDRESS_LINE.equals(eName)) {
+                            addressLines.add(this.readGenericTypedGrPostal());
+                        } else if (TAG_DEPARTMENT_NAME.equals(eName)){
+                            departmentNames.add(this.readGenericTypedGrPostal());
+                        } else if (TAG_MAIL_STOP.equals(eName)){
+                            mailStop = this.readMailStop();
+                        } else if (TAG_POSTAL_CODE.equals(eName)){
+                            postalCode = this.readPostalCode();
+                        }
+                    }
+                    break;
+
+                case XMLStreamConstants.END_ELEMENT:
+                    if (TAG_DEPARTMENT.equals(reader.getLocalName()) && URI_XAL.contains(reader.getNamespaceURI())) {
+                        break boucle;
+                    }
+                    break;
+            }
+        }
+        return XalReader.xalFactory.createDepartment(addressLines, departmentNames, mailStop, postalCode, type);
+
+    }
+
+    private MailStop readMailStop() throws XMLStreamException {
+        List<GenericTypedGrPostal> addressLines = new ArrayList<GenericTypedGrPostal>();
+        List<GenericTypedGrPostal> mailStopNames = new ArrayList<GenericTypedGrPostal>();
+        MailStopNumber mailStopNumber = null;
+        String type = reader.getAttributeValue(null, ATT_TYPE);
+
+        boucle:
+        while (reader.hasNext()) {
+
+            switch (reader.next()) {
+                case XMLStreamConstants.START_ELEMENT:
+                    final String eName = reader.getLocalName();
+                    final String eUri = reader.getNamespaceURI();
+
+                    if (URI_XAL.equals(eUri)) {
+                        if (TAG_ADDRESS_LINE.equals(eName)) {
+                            addressLines.add(this.readGenericTypedGrPostal());
+                        } else if (TAG_MAIL_STOP_NAME.equals(eName)){
+                            mailStopNames.add(this.readGenericTypedGrPostal());
+                        } else if (TAG_MAIL_STOP_NUMBER.equals(eName)){
+                            mailStopNumber = this.readMailStopNumber();
+                        }
+                    }
+                    break;
+
+                case XMLStreamConstants.END_ELEMENT:
+                    if (TAG_MAIL_STOP.equals(reader.getLocalName()) && URI_XAL.contains(reader.getNamespaceURI())) {
+                        break boucle;
+                    }
+                    break;
+            }
+        }
+        return XalReader.xalFactory.createMailStop(addressLines, mailStopNames, mailStopNumber, type);
+    }
+
+    private MailStopNumber readMailStopNumber() throws XMLStreamException {
+        String nameNumberSeparator = reader.getAttributeValue(null, ATT_NAME_NUMBER_SEPARATOR);
+        GrPostal grPostal = this.readGrPostal();
+        String content = reader.getElementText();
+        return XalReader.xalFactory.createMailStopNumber(nameNumberSeparator, grPostal, content);
+    }
+
+    private PostalCode readPostalCode() throws XMLStreamException {
+        List<GenericTypedGrPostal> addressLines = new ArrayList<GenericTypedGrPostal>();
+        List<GenericTypedGrPostal> postalCodeNumbers = new ArrayList<GenericTypedGrPostal>();
+        List<PostalCodeNumberExtension> postalCodeNumberExtensions = new ArrayList<PostalCodeNumberExtension>();
+        PostTown postTown = null;
+        String type = reader.getAttributeValue(null, ATT_TYPE);
+
+        boucle:
+        while (reader.hasNext()) {
+
+            switch (reader.next()) {
+                case XMLStreamConstants.START_ELEMENT:
+                    final String eName = reader.getLocalName();
+                    final String eUri = reader.getNamespaceURI();
+
+                    if (URI_XAL.equals(eUri)) {
+                        if (TAG_ADDRESS_LINE.equals(eName)) {
+                            addressLines.add(this.readGenericTypedGrPostal());
+                        } else if (TAG_POSTAL_CODE_NUMBER.equals(eName)){
+                            postalCodeNumbers.add(this.readGenericTypedGrPostal());
+                        } else if (TAG_POSTAL_CODE_NUMBER_EXTENSION.equals(eName)){
+                            postalCodeNumberExtensions.add(this.readPostalCodeNumberExtension());
+                        } else if (TAG_POST_TOWN.equals(eName)){
+                            postTown = this.readPostTown();
+                        }
+                    }
+                    break;
+
+                case XMLStreamConstants.END_ELEMENT:
+                    if (TAG_POSTAL_CODE.equals(reader.getLocalName()) && URI_XAL.contains(reader.getNamespaceURI())) {
+                        break boucle;
+                    }
+                    break;
+            }
+        }
+        return XalReader.xalFactory.createPostalCode(addressLines, postalCodeNumbers, postalCodeNumberExtensions, postTown, type);
+    }
+
+    private PostalCodeNumberExtension readPostalCodeNumberExtension() throws XMLStreamException{
+        String type = reader.getAttributeValue(null, ATT_TYPE);
+        String numberExtensionSeparator = reader.getAttributeValue(null, ATT_NUMBER_EXTENSION_SEPARATOR);
+        GrPostal grPostal = this.readGrPostal();
+        String content = reader.getElementText();
+        return XalReader.xalFactory.createPostalCodeNumberExtension(type, numberExtensionSeparator, grPostal, content);
+    }
+
+
+    private PostTown readPostTown() throws XMLStreamException {
+        List<GenericTypedGrPostal> addressLines = new ArrayList<GenericTypedGrPostal>();
+        List<GenericTypedGrPostal> postTownNames = new ArrayList<GenericTypedGrPostal>();
+        PostTownSuffix postTownSuffix = null;
+        String type = reader.getAttributeValue(null, ATT_TYPE);
+
+        boucle:
+        while (reader.hasNext()) {
+
+            switch (reader.next()) {
+                case XMLStreamConstants.START_ELEMENT:
+                    final String eName = reader.getLocalName();
+                    final String eUri = reader.getNamespaceURI();
+
+                    if (URI_XAL.equals(eUri)) {
+                        if (TAG_ADDRESS_LINE.equals(eName)) {
+                            addressLines.add(this.readGenericTypedGrPostal());
+                        } else if (TAG_POST_TOWN_NAME.equals(eName)){
+                            postTownNames.add(this.readGenericTypedGrPostal());
+                        } else if (TAG_POST_TOWN_SUFFIX.equals(eName)){
+                            postTownSuffix = this.readPostTownSuffix();
+                        }
+                    }
+                    break;
+
+                case XMLStreamConstants.END_ELEMENT:
+                    if (TAG_POST_TOWN.equals(reader.getLocalName()) && URI_XAL.contains(reader.getNamespaceURI())) {
+                        break boucle;
+                    }
+                    break;
+            }
+        }
+        return XalReader.xalFactory.createPostTown(addressLines, postTownNames, postTownSuffix, type);
+
+    }
+
+    private PostTownSuffix readPostTownSuffix() throws XMLStreamException {
+        GrPostal grPostal = this.readGrPostal();
+        String content = reader.getElementText();
+        return XalReader.xalFactory.createPostTownSuffix(grPostal, content);
+    }
+
+    private Thoroughfare readThoroughfare() {return null;}
+
+    private LargeMailUser readLargeMailUser() {return null;}
+
+    private PostalRoute readPostalRoute() {return null;}
+
+    private Premise readPremise() {return null;}
+
+    private DependentLocality readPDependentLocality() {return null;}
+    
+    private PostOffice readPostOffice() {return null;}
+
+    
 
 }

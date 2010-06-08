@@ -2,6 +2,7 @@ package org.geotoolkit.data.model.kml;
 
 import java.util.List;
 import org.geotoolkit.data.model.xsd.SimpleType;
+import static java.util.Collections.*;
 
 /**
  *
@@ -9,14 +10,14 @@ import org.geotoolkit.data.model.xsd.SimpleType;
  */
 public class StyleDefault extends AbstractStyleSelectorDefault implements Style {
 
-    private IconStyle iconStyle;
-    private LabelStyle labelStyle;
-    private LineStyle lineStyle;
-    private PolyStyle polyStyle;
-    private BalloonStyle balloonStyle;
-    private ListStyle listStyle;
-    private List<SimpleType> styleSimpleExtensions;
-    private List<AbstractObject> styleObjectExtensions;
+    private final IconStyle iconStyle;
+    private final LabelStyle labelStyle;
+    private final LineStyle lineStyle;
+    private final PolyStyle polyStyle;
+    private final BalloonStyle balloonStyle;
+    private final ListStyle listStyle;
+    private final List<SimpleType> styleSimpleExtensions;
+    private final List<AbstractObject> styleObjectExtensions;
 
     /**
      *
@@ -49,8 +50,8 @@ public class StyleDefault extends AbstractStyleSelectorDefault implements Style 
         this.polyStyle = polyStyle;
         this.balloonStyle = balloonStyle;
         this.listStyle = listStyle;
-        this.styleSimpleExtensions = styleSimpleExtensions;
-        this.styleObjectExtensions = styleObjectExtensions;
+        this.styleSimpleExtensions = (styleSimpleExtensions == null) ? EMPTY_LIST : styleSimpleExtensions;
+        this.styleObjectExtensions = (styleObjectExtensions == null) ? EMPTY_LIST : styleObjectExtensions;
     }
 
     /**

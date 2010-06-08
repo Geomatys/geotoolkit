@@ -2,13 +2,15 @@ package org.geotoolkit.data.model.kml;
 /**
  * <p>This enumeration maps refreshModeEnumType type.</p>
  *
- * <br />&lt;simpleType name="refreshModeEnumType">
- * <br />&lt;restriction base="string">
- * <br />&lt;enumeration value="onChange"/>
- * <br />&lt;enumeration value="onInterval"/>
- * <br />&lt;enumeration value="onExpire"/>
- * <br />&lt;/restriction>
- * <br />&lt;/simpleType>
+ * <pre>
+ * &lt;simpleType name="refreshModeEnumType">
+ *  &lt;restriction base="string">
+ *      &lt;enumeration value="onChange"/>
+ *      &lt;enumeration value="onInterval"/>
+ *      &lt;enumeration value="onExpire"/>
+ *  &lt;/restriction>
+ * &lt;/simpleType>
+ * </pre>
  *
  * @author Samuel Andrés
  */
@@ -18,7 +20,7 @@ public enum RefreshMode {
     ON_INTERVAL("onInterval"),
     ON_EXPIRE("onExpire");
 
-    private String refreshMode;
+    private final String refreshMode;
 
     /**
      * 
@@ -53,13 +55,9 @@ public enum RefreshMode {
      * @return The RefreshMode instance corresponding to the refreshMode parameter.
      */
     public static RefreshMode transform(String refreshMode, RefreshMode defaultValue){
-        RefreshMode resultat = defaultValue;
         for(RefreshMode cm : RefreshMode.values()){
-            if(cm.getRefreshMode().equals(refreshMode)){
-                resultat = cm;
-                break;
-            }
+            if(cm.getRefreshMode().equals(refreshMode)) return cm;
         }
-        return resultat;
+        return defaultValue;
     }
 }

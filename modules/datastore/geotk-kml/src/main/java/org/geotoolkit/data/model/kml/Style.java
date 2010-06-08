@@ -6,25 +6,29 @@ import org.geotoolkit.data.model.xsd.SimpleType;
 /**
  * <p>This interface maps Style element.</p>
  *
- * <br />&lt;element name="Style" type="kml:StyleType" substitutionGroup="kml:AbstractStyleSelectorGroup"/>
- * <br />&lt;complexType name="StyleType" final="#all">
- * <br />&lt;complexContent>
- * <br />&lt;extension base="kml:AbstractStyleSelectorType">
- * <br />&lt;sequence>
- * <br />&lt;element ref="kml:IconStyle" minOccurs="0"/>
- * <br />&lt;element ref="kml:LabelStyle" minOccurs="0"/>
- * <br />&lt;element ref="kml:LineStyle" minOccurs="0"/>
- * <br />&lt;element ref="kml:PolyStyle" minOccurs="0"/>
- * <br />&lt;element ref="kml:BalloonStyle" minOccurs="0"/>
- * <br />&lt;element ref="kml:ListStyle" minOccurs="0"/>
- * <br />&lt;element ref="kml:StyleSimpleExtensionGroup" minOccurs="0" maxOccurs="unbounded"/>
- * <br />&lt;element ref="kml:StyleObjectExtensionGroup" minOccurs="0" maxOccurs="unbounded"/>
- * <br />&lt;/sequence>
- * <br />&lt;/extension>
- * <br />&lt;/complexContent>
- * <br />&lt;/complexType>
- * <br />&lt;element name="StyleSimpleExtensionGroup" abstract="true" type="anySimpleType"/>
- * <br />&lt;element name="StyleObjectExtensionGroup" abstract="true" substitutionGroup="kml:AbstractObjectGroup"/>
+ * <pre>
+ * &lt;element name="Style" type="kml:StyleType" substitutionGroup="kml:AbstractStyleSelectorGroup"/>
+ *
+ * &lt;complexType name="StyleType" final="#all">
+ *  &lt;complexContent>
+ *      &lt;extension base="kml:AbstractStyleSelectorType">
+ *          &lt;sequence>
+ *              &lt;element ref="kml:IconStyle" minOccurs="0"/>
+ *              &lt;element ref="kml:LabelStyle" minOccurs="0"/>
+ *              &lt;element ref="kml:LineStyle" minOccurs="0"/>
+ *              &lt;element ref="kml:PolyStyle" minOccurs="0"/>
+ *              &lt;element ref="kml:BalloonStyle" minOccurs="0"/>
+ *              &lt;element ref="kml:ListStyle" minOccurs="0"/>
+ *              &lt;element ref="kml:StyleSimpleExtensionGroup" minOccurs="0" maxOccurs="unbounded"/>
+ *              &lt;element ref="kml:StyleObjectExtensionGroup" minOccurs="0" maxOccurs="unbounded"/>
+ *          &lt;/sequence>
+ *      &lt;/extension>
+ *  &lt;/complexContent>
+ * &lt;/complexType>
+ *
+ * &lt;element name="StyleSimpleExtensionGroup" abstract="true" type="anySimpleType"/>
+ * &lt;element name="StyleObjectExtensionGroup" abstract="true" substitutionGroup="kml:AbstractObjectGroup"/>
+ * </pre>
  *
  * @author Samuel Andrés
  */

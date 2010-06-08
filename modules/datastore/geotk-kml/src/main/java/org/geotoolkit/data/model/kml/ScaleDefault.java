@@ -2,6 +2,7 @@ package org.geotoolkit.data.model.kml;
 
 import java.util.List;
 import org.geotoolkit.data.model.xsd.SimpleType;
+import static java.util.Collections.*;
 
 /**
  *
@@ -9,11 +10,11 @@ import org.geotoolkit.data.model.xsd.SimpleType;
  */
 public class ScaleDefault extends AbstractObjectDefault implements Scale {
 
-    private double x;
-    private double y;
-    private double z;
-    private List<SimpleType> scaleSimpleExtensions;
-    private List<AbstractObject> scaleObjectExtensions;
+    private final double x;
+    private final double y;
+    private final double z;
+    private final List<SimpleType> scaleSimpleExtensions;
+    private final List<AbstractObject> scaleObjectExtensions;
 
     /**
      *
@@ -32,6 +33,8 @@ public class ScaleDefault extends AbstractObjectDefault implements Scale {
         this.x = x;
         this.y = y;
         this.z = z;
+        this.scaleSimpleExtensions = (scaleSimpleExtensions == null) ? EMPTY_LIST : scaleSimpleExtensions;
+        this.scaleObjectExtensions = (scaleObjectExtensions == null) ? EMPTY_LIST : scaleObjectExtensions;
     }
 
     /**

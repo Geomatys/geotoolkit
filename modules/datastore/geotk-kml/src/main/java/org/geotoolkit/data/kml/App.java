@@ -114,7 +114,6 @@ public class App {
 
     public static void main(String[] args) throws IOException, XMLStreamException {
 
-        
         //featuresTests();
         
         File inputKML = new File("/home/samuel/Documents/doc_kml/exemples/stylesAndFeatures.xml");

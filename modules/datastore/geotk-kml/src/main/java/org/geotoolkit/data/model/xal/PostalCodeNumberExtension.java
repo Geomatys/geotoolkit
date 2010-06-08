@@ -5,14 +5,16 @@ package org.geotoolkit.data.model.xal;
  *
  * <p>Examples are: 1234 (USA), 1G (UK), etc.</p>
  *
- * <br />&lt;xs:complexType mixed="true">
- * <br />&lt;xs:attribute name="Type">...
- * <br />&lt;/xs:attribute>
- * <br />&lt;xs:attribute name="NumberExtensionSeparator">...
- * <br />&lt;/xs:attribute>
- * <br />&lt;xs:attributeGroup ref="grPostal"/>
- * <br />&lt;xs:anyAttribute namespace="##other"/>
- * <br />&lt;/xs:complexType>
+ * <pre>
+ * &lt;xs:complexType mixed="true">
+ *  &lt;xs:attribute name="Type">...
+ *  &lt;/xs:attribute>
+ *  &lt;xs:attribute name="NumberExtensionSeparator">...
+ *  &lt;/xs:attribute>
+ *  &lt;xs:attributeGroup ref="grPostal"/>
+ *  &lt;xs:anyAttribute namespace="##other"/>
+ * &lt;/xs:complexType>
+ * </pre>
  *
  * @author Samuel Andrés
  */

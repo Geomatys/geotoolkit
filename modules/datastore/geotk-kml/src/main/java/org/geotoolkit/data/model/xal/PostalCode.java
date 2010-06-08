@@ -8,23 +8,25 @@ import java.util.List;
  * <p>PostalCode is the container element for either simple or complex (extended) postal codes.
  * Type: Area Code, Postcode, etc.</p>
  *
- * <br />&lt;xs:element name="PostalCode">
- * <br />&lt;xs:complexType>
- * <br />&lt;xs:sequence>
- * <br />&lt;xs:element ref="AddressLine" minOccurs="0" maxOccurs="unbounded"/>
- * <br />&lt;xs:element name="PostalCodeNumber" minOccurs="0" maxOccurs="unbounded">
- * <br />&lt;/xs:element>
- * <br />&lt;xs:element name="PostalCodeNumberExtension" minOccurs="0" maxOccurs="unbounded">...
- * <br />&lt;/xs:element>
- * <br />&lt;xs:element name="PostTown" minOccurs="0">...
- * <br />&lt;/xs:element>
- * <br />&lt;xs:any namespace="##other" minOccurs="0" maxOccurs="unbounded"/>
- * <br />&lt;/xs:sequence>
- * <br />&lt;xs:attribute name="Type">...
- * <br />&lt;/xs:attribute>
- * <br />&lt;xs:anyAttribute namespace="##other"/>
- * <br />&lt;/xs:complexType>
- * <br />&lt;/xs:element>
+ * <pre>
+ * &lt;xs:element name="PostalCode">
+ *  &lt;xs:complexType>
+ *      &lt;xs:sequence>
+ *          &lt;xs:element ref="AddressLine" minOccurs="0" maxOccurs="unbounded"/>
+ *          &lt;xs:element name="PostalCodeNumber" minOccurs="0" maxOccurs="unbounded">
+ *          &lt;/xs:element>
+ *          &lt;xs:element name="PostalCodeNumberExtension" minOccurs="0" maxOccurs="unbounded">...
+ *          &lt;/xs:element>
+ *          &lt;xs:element name="PostTown" minOccurs="0">...
+ *          &lt;/xs:element>
+ *          &lt;xs:any namespace="##other" minOccurs="0" maxOccurs="unbounded"/>
+ *      &lt;/xs:sequence>
+ *      &lt;xs:attribute name="Type">...
+ *      &lt;/xs:attribute>
+ *      anyAttribute namespace="##other"/>
+ *  &lt;/xs:complexType>
+ * &lt;/xs:element>
+ * </pre>
  *
  * @author Samuel Andrés
  */
@@ -49,7 +51,7 @@ public interface PostalCode {
      *
      * @return
      */
-    public List<PostalCodeNumberExtension> getPostalCodenumberExtensions();
+    public List<PostalCodeNumberExtension> getPostalCodeNumberExtensions();
 
     /**
      * 

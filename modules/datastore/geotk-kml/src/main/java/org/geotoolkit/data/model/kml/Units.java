@@ -10,7 +10,7 @@ public enum Units {
     PIXELS("pixels"),
     INSET_PIXELS("insetPixels");
     
-    private String unit;
+    private final String unit;
 
     /**
      * 
@@ -45,14 +45,10 @@ public enum Units {
      * @return The Units instance corresponding to the unit parameter.
      */
     public static Units transform(String unit, Units defaultValue){
-        Units resultat = defaultValue;
         for(Units u : Units.values()){
-            if(u.getUnit().equals(unit)){
-                resultat = u;
-                break;
-            }
+            if(u.getUnit().equals(unit)) return u;
         }
-        return resultat;
+        return defaultValue;
     }
 
 }

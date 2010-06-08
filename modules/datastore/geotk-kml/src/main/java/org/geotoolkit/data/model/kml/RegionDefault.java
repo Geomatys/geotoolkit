@@ -2,6 +2,7 @@ package org.geotoolkit.data.model.kml;
 
 import java.util.List;
 import org.geotoolkit.data.model.xsd.SimpleType;
+import static java.util.Collections.*;
 
 /**
  *
@@ -9,10 +10,10 @@ import org.geotoolkit.data.model.xsd.SimpleType;
  */
 public class RegionDefault extends AbstractObjectDefault implements Region {
 
-    private LatLonAltBox latLonAltBox;
-    private Lod lod;
-    private List<SimpleType> regionSimpleExtensions;
-    private List<AbstractObject> regionObjectExtentions;
+    private final LatLonAltBox latLonAltBox;
+    private final Lod lod;
+    private final List<SimpleType> regionSimpleExtensions;
+    private final List<AbstractObject> regionObjectExtentions;
 
     /**
      *
@@ -29,8 +30,8 @@ public class RegionDefault extends AbstractObjectDefault implements Region {
         super(objectSimpleExtensions, idAttributes);
         this.latLonAltBox = latLonAltBox;
         this.lod = lod;
-        this.regionSimpleExtensions = regionSimpleExtensions;
-        this.regionObjectExtentions = regionObjectExtentions;
+        this.regionSimpleExtensions = (regionSimpleExtensions == null) ? EMPTY_LIST : regionSimpleExtensions;
+        this.regionObjectExtentions = (regionObjectExtentions == null) ? EMPTY_LIST : regionObjectExtentions;
     }
 
     /**

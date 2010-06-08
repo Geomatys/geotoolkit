@@ -1,8 +1,6 @@
 package org.geotoolkit.data.model;
 
 import java.util.List;
-import java.util.List;
-import org.geotoolkit.data.model.xal.AddressIdentifier;
 import org.geotoolkit.data.model.xal.AddressLinesDefault;
 import org.geotoolkit.data.model.xal.AddressDetails;
 import org.geotoolkit.data.model.xal.AddressDetailsDefault;
@@ -15,16 +13,47 @@ import org.geotoolkit.data.model.xal.Country;
 import org.geotoolkit.data.model.xal.CountryDefault;
 import org.geotoolkit.data.model.xal.CountryNameCode;
 import org.geotoolkit.data.model.xal.CountryNameCodeDefault;
+import org.geotoolkit.data.model.xal.Department;
+import org.geotoolkit.data.model.xal.DepartmentDefault;
+import org.geotoolkit.data.model.xal.DependentLocality;
+import org.geotoolkit.data.model.xal.Firm;
+import org.geotoolkit.data.model.xal.FirmDefault;
 import org.geotoolkit.data.model.xal.GenericTypedGrPostal;
 import org.geotoolkit.data.model.xal.GenericTypedGrPostalDefault;
 import org.geotoolkit.data.model.xal.GrPostal;
 import org.geotoolkit.data.model.xal.GrPostalDefault;
+import org.geotoolkit.data.model.xal.Locality;
+import org.geotoolkit.data.model.xal.LocalityDefault;
+import org.geotoolkit.data.model.xal.MailStop;
+import org.geotoolkit.data.model.xal.MailStopDefault;
+import org.geotoolkit.data.model.xal.MailStopNumber;
+import org.geotoolkit.data.model.xal.MailStopNumberDefault;
+import org.geotoolkit.data.model.xal.PostBox;
+import org.geotoolkit.data.model.xal.PostBoxDefault;
+import org.geotoolkit.data.model.xal.PostBoxNumber;
+import org.geotoolkit.data.model.xal.PostBoxNumberDefault;
+import org.geotoolkit.data.model.xal.PostBoxNumberExtension;
+import org.geotoolkit.data.model.xal.PostBoxNumberExtensionDefault;
+import org.geotoolkit.data.model.xal.PostBoxNumberPrefix;
+import org.geotoolkit.data.model.xal.PostBoxNumberPrefixDefault;
+import org.geotoolkit.data.model.xal.PostBoxNumberSuffix;
+import org.geotoolkit.data.model.xal.PostBoxNumberSuffixDefault;
+import org.geotoolkit.data.model.xal.PostTown;
+import org.geotoolkit.data.model.xal.PostTownDefault;
+import org.geotoolkit.data.model.xal.PostTownSuffix;
+import org.geotoolkit.data.model.xal.PostTownSuffixDefault;
+import org.geotoolkit.data.model.xal.PostalCode;
+import org.geotoolkit.data.model.xal.PostalCodeDefault;
+import org.geotoolkit.data.model.xal.PostalCodeNumberExtension;
+import org.geotoolkit.data.model.xal.PostalCodeNumberExtensionDefault;
 import org.geotoolkit.data.model.xal.PostalServiceElements;
 import org.geotoolkit.data.model.xal.PostalServiceElementsDefault;
+import org.geotoolkit.data.model.xal.Premise;
 import org.geotoolkit.data.model.xal.SortingCode;
 import org.geotoolkit.data.model.xal.SortingCodeDefault;
 import org.geotoolkit.data.model.xal.SubAdministrativeArea;
 import org.geotoolkit.data.model.xal.SubAdministrativeAreaDefault;
+import org.geotoolkit.data.model.xal.Thoroughfare;
 import org.geotoolkit.data.model.xal.Xal;
 import org.geotoolkit.data.model.xal.XalDefault;
 import org.geotoolkit.data.model.xal.XalException;
@@ -158,6 +187,149 @@ public class XalFactoryDefault implements XalFactory {
             List<GenericTypedGrPostal> subAdministrativeAreaNames,
             Object localisation, String type, String usageType, String indicator) throws XalException {
         return new SubAdministrativeAreaDefault(addressLines, subAdministrativeAreaNames, localisation, type, usageType, indicator);
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public Locality createLocality(List<GenericTypedGrPostal> addressLines,
+            List<GenericTypedGrPostal> localityNames, Object postal,
+            Thoroughfare thoroughfare, Premise premise,
+            DependentLocality dependentLocality, PostalCode postalCode,
+            String type, String usageType, String indicator) throws XalException {
+        return new LocalityDefault(addressLines, localityNames,
+                postal, thoroughfare, premise, dependentLocality,
+                postalCode, type, usageType, indicator);
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public PostBoxNumber createPostBoxNumber(GrPostal grPostal, String content) {
+        return new PostBoxNumberDefault(grPostal, content);
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public PostBoxNumberPrefix createPostBoxNumberPrefix(String numberPrefixSeparator, GrPostal grPostal, String content) {
+        return new PostBoxNumberPrefixDefault(numberPrefixSeparator, grPostal, content);
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public PostBoxNumberSuffix createPostBoxNumberSuffix(String numberSuffixSeparator, GrPostal grPostal, String content) {
+        return new PostBoxNumberSuffixDefault(numberSuffixSeparator, grPostal, content);
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public PostBoxNumberExtension createPostBoxNumberExtension(String numberExtensionSeparator, String content) {
+        return new PostBoxNumberExtensionDefault(numberExtensionSeparator, content);
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public Firm createFirm(List<GenericTypedGrPostal> addressLines, List<GenericTypedGrPostal> firmNames, List<Department> departments, MailStop mailStop, PostalCode postalCode, String type) {
+        return new FirmDefault(addressLines, firmNames, departments, mailStop, postalCode, type);
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public PostBox createPostBox(List<GenericTypedGrPostal> addressLines,
+            PostBoxNumber postBoxNumber, PostBoxNumberPrefix postBoxNumberPrefix,
+            PostBoxNumberSuffix postBoxNumberSuffix, PostBoxNumberExtension postBoxNumberExtension,
+            Firm firm, PostalCode postalCode, String type, String indicator) {
+        return new PostBoxDefault(addressLines, postBoxNumber,
+                postBoxNumberPrefix, postBoxNumberSuffix, postBoxNumberExtension,
+                firm, postalCode, type, indicator);
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public Department createDepartment(List<GenericTypedGrPostal> addressLines,
+            List<GenericTypedGrPostal> departmentNames, MailStop mailStop, PostalCode postalCode, String type) {
+        return new DepartmentDefault(addressLines, departmentNames, mailStop, postalCode, type);
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public MailStop createMailStop(List<GenericTypedGrPostal> addressLines,
+            List<GenericTypedGrPostal> mailStopNames, MailStopNumber mailStopNumber, String type) {
+        return new MailStopDefault(addressLines, mailStopNames, mailStopNumber, type);
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public MailStopNumber createMailStopNumber(String nameNumberSeparator, GrPostal grPostal, String content) {
+        return new MailStopNumberDefault(nameNumberSeparator, grPostal, content);
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public PostalCode createPostalCode(List<GenericTypedGrPostal> addressLines,
+            List<GenericTypedGrPostal> postalCodeNumbers, List<PostalCodeNumberExtension> postalCodeNumberExtensions,
+            PostTown postTown, String type) {
+        return new PostalCodeDefault(addressLines, postalCodeNumbers, postalCodeNumberExtensions, postTown, type);
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public PostalCodeNumberExtension createPostalCodeNumberExtension(String type, String numberExtensionSeparator,
+            GrPostal grPostal, String content) {
+        return new PostalCodeNumberExtensionDefault(type, numberExtensionSeparator, grPostal, content);
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public PostTownSuffix createPostTownSuffix(GrPostal grPostal, String content) {
+        return new PostTownSuffixDefault(grPostal, content);
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public PostTown createPostTown(List<GenericTypedGrPostal> addressLines,
+            List<GenericTypedGrPostal> postTownNames, PostTownSuffix postTownSuffix, String type) {
+        return new PostTownDefault(addressLines, postTownNames, postTownSuffix, type);
     }
 
 }

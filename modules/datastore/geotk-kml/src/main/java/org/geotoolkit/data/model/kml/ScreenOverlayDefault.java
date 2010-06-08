@@ -5,6 +5,7 @@ import org.geotoolkit.data.model.atom.AtomLink;
 import org.geotoolkit.data.model.atom.AtomPersonConstruct;
 import org.geotoolkit.data.model.xal.AddressDetails;
 import org.geotoolkit.data.model.xsd.SimpleType;
+import static java.util.Collections.*;
 
 /**
  *
@@ -12,13 +13,13 @@ import org.geotoolkit.data.model.xsd.SimpleType;
  */
 public class ScreenOverlayDefault extends AbstractOverlayDefault implements ScreenOverlay {
 
-    private Vec2 overlayXY;
-    private Vec2 screenXY;
-    private Vec2 rotationXY;
-    private Vec2 size;
-    private Angle180 rotation;
-    private List<SimpleType> screenOverlaySimpleExtensions;
-    private List<AbstractObject> screenOverlayObjectExtensions;
+    private final Vec2 overlayXY;
+    private final Vec2 screenXY;
+    private final Vec2 rotationXY;
+    private final Vec2 size;
+    private final Angle180 rotation;
+    private final List<SimpleType> screenOverlaySimpleExtensions;
+    private final List<AbstractObject> screenOverlayObjectExtensions;
 
     /**
      *
@@ -79,8 +80,8 @@ public class ScreenOverlayDefault extends AbstractOverlayDefault implements Scre
         this.rotationXY = rotationXY;
         this.size = size;
         this.rotation = rotation;
-        this.screenOverlaySimpleExtensions = screenOverlaySimpleExtensions;
-        this.screenOverlayObjectExtensions = screenOverlayObjectExtensions;
+        this.screenOverlaySimpleExtensions = (screenOverlaySimpleExtensions == null) ? EMPTY_LIST : screenOverlaySimpleExtensions;
+        this.screenOverlayObjectExtensions = (screenOverlayObjectExtensions == null) ? EMPTY_LIST : screenOverlayObjectExtensions;
     }
 
     /**

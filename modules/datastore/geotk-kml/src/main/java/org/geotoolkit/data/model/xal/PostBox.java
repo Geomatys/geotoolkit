@@ -10,30 +10,32 @@ import java.util.List;
  * Only a single postbox number can be specified.
  * Examples of postboxes are POBox, free mail numbers, etc.</p>
  *
- * <br />&lt;xs:element name="PostBox">
- * <br />&lt;xs:complexType>
- * <br />&lt;xs:sequence>
- * <br />&lt;xs:element ref="AddressLine" minOccurs="0" maxOccurs="unbounded"/>
- * <br />&lt;xs:element name="PostBoxNumber">...
- * <br />&lt;/xs:element>
- * <br />&lt;xs:element name="PostBoxNumberPrefix" minOccurs="0">...
- * <br />&lt;/xs:element>
- * <br />&lt;xs:element name="PostBoxNumberSuffix" minOccurs="0">...
- * <br />&lt;/xs:element>
- * <br />&lt;xs:element name="PostBoxNumberExtension" minOccurs="0">...
- * <br />&lt;/xs:element>
- * <br />&lt;xs:element name="Firm" type="FirmType" minOccurs="0">...
- * <br />&lt;/xs:element>
- * <br />&lt;xs:element ref="PostalCode" minOccurs="0"/>
- * <br />&lt;xs:any namespace="##other" minOccurs="0" maxOccurs="unbounded"/>
- * <br />&lt;/xs:sequence>
- * <br />&lt;xs:attribute name="Type">...
- * <br />&lt;/xs:attribute>
- * <br />&lt;xs:attribute name="Indicator">...
- * <br />&lt;/xs:attribute>
- * <br />&lt;xs:anyAttribute namespace="##other"/>
- * <br />&lt;/xs:complexType>
- * <br />&lt;/xs:element>
+ * <pre>
+ * &lt;xs:element name="PostBox">
+ *  &lt;xs:complexType>
+ *      &lt;xs:sequence>
+ *          &lt;xs:element ref="AddressLine" minOccurs="0" maxOccurs="unbounded"/>
+ *          &lt;xs:element name="PostBoxNumber">...
+ *          &lt;/xs:element>
+ *          &lt;xs:element name="PostBoxNumberPrefix" minOccurs="0">...
+ *          &lt;/xs:element>
+ *          &lt;xs:element name="PostBoxNumberSuffix" minOccurs="0">...
+ *          &lt;/xs:element>
+ *          &lt;xs:element name="PostBoxNumberExtension" minOccurs="0">...
+ *          &lt;/xs:element>
+ *          &lt;xs:element name="Firm" type="FirmType" minOccurs="0">...
+ *          &lt;/xs:element>
+ *          &lt;xs:element ref="PostalCode" minOccurs="0"/>
+ *          &lt;xs:any namespace="##other" minOccurs="0" maxOccurs="unbounded"/>
+ *      &lt;/xs:sequence>
+ *      &lt;xs:attribute name="Type">...
+ *      &lt;/xs:attribute>
+ *      &lt;xs:attribute name="Indicator">...
+ *      &lt;/xs:attribute>
+ *      &lt;xs:anyAttribute namespace="##other"/>
+ *  &lt;/xs:complexType>
+ * &lt;/xs:element>
+ * </pre>
  *
  * @author Samuel Andrés
  */

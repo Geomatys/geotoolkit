@@ -4,22 +4,26 @@ import java.util.List;
 import org.geotoolkit.data.model.xsd.SimpleType;
 
 /**
- * <p></p>
+ * <p>This interface maps TimeStamp element.</p>
  *
- * <br />&lt;element name="TimeStamp" type="kml:TimeStampType" substitutionGroup="kml:AbstractTimePrimitiveGroup"/>
- * <br />&lt;complexType name="TimeStampType" final="#all">
- * <br />&lt;complexContent>
- * <br />&lt;extension base="kml:AbstractTimePrimitiveType">
- * <br />&lt;sequence>
- * <br />&lt;element ref="kml:when" minOccurs="0"/>
- * <br />&lt;element ref="kml:TimeStampSimpleExtensionGroup" minOccurs="0" maxOccurs="unbounded"/>
- * <br />&lt;element ref="kml:TimeStampObjectExtensionGroup" minOccurs="0" maxOccurs="unbounded"/>
- * <br />&lt;/sequence>
- * <br />&lt;/extension>
- * <br />&lt;/complexContent>
- * <br />&lt;/complexType>
- * <br />&lt;element name="TimeStampSimpleExtensionGroup" abstract="true" type="anySimpleType"/>
- * <br />&lt;element name="TimeStampObjectExtensionGroup" abstract="true" substitutionGroup="kml:AbstractObjectGroup"/>
+ * <pre>
+ * &lt;element name="TimeStamp" type="kml:TimeStampType" substitutionGroup="kml:AbstractTimePrimitiveGroup"/>
+ *
+ * &lt;complexType name="TimeStampType" final="#all">
+ *  &lt;complexContent>
+ *      &lt;extension base="kml:AbstractTimePrimitiveType">
+ *          &lt;sequence>
+ *              &lt;element ref="kml:when" minOccurs="0"/>
+ *              &lt;element ref="kml:TimeStampSimpleExtensionGroup" minOccurs="0" maxOccurs="unbounded"/>
+ *              &lt;element ref="kml:TimeStampObjectExtensionGroup" minOccurs="0" maxOccurs="unbounded"/>
+ *          &lt;/sequence>
+ *      &lt;/extension>
+ *  &lt;/complexContent>
+ * &lt;/complexType>
+ *
+ * &lt;element name="TimeStampSimpleExtensionGroup" abstract="true" type="anySimpleType"/>
+ * &lt;element name="TimeStampObjectExtensionGroup" abstract="true" substitutionGroup="kml:AbstractObjectGroup"/>
+ * </pre>
  *
  * @author Samuel Andrés
  */

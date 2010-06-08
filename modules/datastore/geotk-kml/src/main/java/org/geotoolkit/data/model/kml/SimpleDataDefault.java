@@ -6,8 +6,8 @@ package org.geotoolkit.data.model.kml;
  */
 public class SimpleDataDefault implements SimpleData {
 
-    private String name;
-    private String content;
+    private final String name;
+    private final String content;
 
     /**
      *

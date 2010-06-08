@@ -6,9 +6,9 @@ package org.geotoolkit.data.model.kml;
  */
 public class SimpleFieldDefault implements SimpleField {
 
-    private String displayName;
-    private String type;
-    private String name;
+    private final String displayName;
+    private final String type;
+    private final String name;
 
     /**
      *

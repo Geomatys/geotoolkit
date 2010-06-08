@@ -10,20 +10,22 @@ import java.util.List;
  * It can also be a subpart of a locality.
  * An actual post town in Norway is "Bergen".</p>
  *
- * <br />&lt;xs:element name="PostTown" minOccurs="0">
- * <br />&lt;xs:complexType>
- * <br />&lt;xs:sequence>
- * <br />&lt;xs:element ref="AddressLine" minOccurs="0" maxOccurs="unbounded"/>
- * <br />&lt;xs:element name="PostTownName" minOccurs="0" maxOccurs="unbounded">...
- * <br />&lt;/xs:element>
- * <br />&lt;xs:element name="PostTownSuffix" minOccurs="0">...
- * <br />&lt;/xs:element>
- * <br />&lt;/xs:sequence>
- * <br />&lt;xs:attribute name="Type">...
- * <br />&lt;/xs:attribute>
- * <br />&lt;xs:anyAttribute namespace="##other"/>
- * <br />&lt;/xs:complexType>
- * <br />&lt;/xs:element>
+ * <pre>
+ * &lt;xs:element name="PostTown" minOccurs="0">
+ *  &lt;xs:complexType>
+ *      &lt;xs:sequence>
+ *          &lt;xs:element ref="AddressLine" minOccurs="0" maxOccurs="unbounded"/>
+ *          &lt;xs:element name="PostTownName" minOccurs="0" maxOccurs="unbounded">...
+ *          &lt;/xs:element>
+ *          &lt;xs:element name="PostTownSuffix" minOccurs="0">...
+ *          &lt;/xs:element>
+ *      &lt;/xs:sequence>
+ *      &lt;xs:attribute name="Type">...
+ *      &lt;/xs:attribute>
+ *      &lt;xs:anyAttribute namespace="##other"/>
+ *  &lt;/xs:complexType>
+ * &lt;/xs:element>
+ * </pre>
  *
  * @author Samuel Andrés
  */
@@ -41,6 +43,12 @@ public interface PostTown {
      * @return
      */
     public List<GenericTypedGrPostal> getPostTownNames();
+
+    /**
+     *
+     * @return
+     */
+    public PostTownSuffix getPostTownSuffix();
 
     /**
      * 

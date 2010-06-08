@@ -5,20 +5,22 @@ import java.util.List;
 /**
  * <p>This interface maps FirmType type.</p>
  *
- * <br />&lt;xs:complexType name="FirmType">
- * <br />&lt;xs:sequence>
- * <br />&lt;xs:element ref="AddressLine" minOccurs="0" maxOccurs="unbounded"/>
- * <br />&lt;xs:element name="FirmName" minOccurs="0" maxOccurs="unbounded">...
- * <br />&lt;/xs:element>
- * <br />&lt;xs:element ref="Department" minOccurs="0" maxOccurs="unbounded"/>
- * <br />&lt;xs:element name="MailStop" type="MailStopType" minOccurs="0">...
- * <br />&lt;/xs:element>
- * <br />&lt;xs:element ref="PostalCode" minOccurs="0"/>
- * <br />&lt;xs:any namespace="##other" minOccurs="0" maxOccurs="unbounded"/>
- * <br />&lt;/xs:sequence>
- * <br />&lt;xs:attribute name="Type"/>
- * <br />&lt;xs:anyAttribute namespace="##other"/>
- * <br />&lt;/xs:complexType>
+ * <pre>
+ * &lt;xs:complexType name="FirmType">
+ *  &lt;xs:sequence>
+ *      &lt;xs:element ref="AddressLine" minOccurs="0" maxOccurs="unbounded"/>
+ *      &lt;xs:element name="FirmName" minOccurs="0" maxOccurs="unbounded">...
+ *      &lt;/xs:element>
+ *      &lt;xs:element ref="Department" minOccurs="0" maxOccurs="unbounded"/>
+ *      &lt;xs:element name="MailStop" type="MailStopType" minOccurs="0">...
+ *      &lt;/xs:element>
+ *      &lt;xs:element ref="PostalCode" minOccurs="0"/>
+ *      &lt;xs:any namespace="##other" minOccurs="0" maxOccurs="unbounded"/>
+ *  &lt;/xs:sequence>
+ *  &lt;xs:attribute name="Type"/>
+ *  &lt;xs:anyAttribute namespace="##other"/>
+ * &lt;/xs:complexType>
+ * </pre>
  *
  * @author Samuel Andrés
  */

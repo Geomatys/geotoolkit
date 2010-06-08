@@ -6,8 +6,8 @@ package org.geotoolkit.data.model.kml;
  */
 public class SnippetDefault implements Snippet{
 
-    private int maxLines;
-    private String content;
+    private final int maxLines;
+    private final String content;
 
     /**
      *

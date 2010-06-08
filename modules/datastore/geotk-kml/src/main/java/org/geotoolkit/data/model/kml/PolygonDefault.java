@@ -2,6 +2,7 @@ package org.geotoolkit.data.model.kml;
 
 import java.util.List;
 import org.geotoolkit.data.model.xsd.SimpleType;
+import static java.util.Collections.*;
 
 /**
  *
@@ -9,13 +10,13 @@ import org.geotoolkit.data.model.xsd.SimpleType;
  */
 public class PolygonDefault extends AbstractGeometryDefault implements Polygon {
 
-    private boolean extrude;
-    private boolean tessellate;
-    private AltitudeMode altitudeMode;
-    private Boundary outerBoundaryIs;
-    private List<Boundary> innerBoundariesAre;
-    private List<SimpleType> polygonSimpleExtensions;
-    private List<AbstractObject> polygonObjectExtensions;
+    private final boolean extrude;
+    private final boolean tessellate;
+    private final AltitudeMode altitudeMode;
+    private final Boundary outerBoundaryIs;
+    private final List<Boundary> innerBoundariesAre;
+    private final List<SimpleType> polygonSimpleExtensions;
+    private final List<AbstractObject> polygonObjectExtensions;
 
     /**
      *
@@ -44,9 +45,9 @@ public class PolygonDefault extends AbstractGeometryDefault implements Polygon {
         this.tessellate = tessellate;
         this.altitudeMode = altitudeMode;
         this.outerBoundaryIs = outerBoundaryIs;
-        this.innerBoundariesAre = innerBoundariesAre;
-        this.polygonSimpleExtensions = polygonSimpleExtensions;
-        this.polygonObjectExtensions = polygonObjectExtensions;
+        this.innerBoundariesAre = (innerBoundariesAre == null) ? EMPTY_LIST : innerBoundariesAre;
+        this.polygonSimpleExtensions = (polygonSimpleExtensions == null) ? EMPTY_LIST : polygonSimpleExtensions;
+        this.polygonObjectExtensions = (polygonObjectExtensions == null) ? EMPTY_LIST : polygonObjectExtensions;
     }
 
     /**

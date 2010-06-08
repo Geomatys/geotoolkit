@@ -3,21 +3,25 @@ package org.geotoolkit.data.model.kml;
 import java.util.List;
 
 /**
- * <p>THis interface maps SchemaData element.</p>
+ * <p>This interface maps SchemaData element.</p>
  *
- * <br />&lt;element name="SchemaData" type="kml:SchemaDataType" substitutionGroup="kml:AbstractObjectGroup"/>
- * <br />&lt;complexType name="SchemaDataType" final="#all">
- * <br />&lt;complexContent>
- * <br />&lt;extension base="kml:AbstractObjectType">
- * <br />&lt;sequence>
- * <br />&lt;element ref="kml:SimpleData" minOccurs="0" maxOccurs="unbounded"/>
- * <br />&lt;element ref="kml:SchemaDataExtension" minOccurs="0" maxOccurs="unbounded"/>
- * <br />&lt;/sequence>
- * <br />&lt;attribute name="schemaUrl" type="anyURI"/>
- * <br />&lt;/extension>
- * <br />&lt;/complexContent>
- * <br />&lt;/complexType>
- * <br />&lt;element name="SchemaDataExtension" abstract="true"/>
+ * <pre>
+ * &lt;element name="SchemaData" type="kml:SchemaDataType" substitutionGroup="kml:AbstractObjectGroup"/>
+ *
+ * &lt;complexType name="SchemaDataType" final="#all">
+ *  &lt;complexContent>
+ *      &lt;extension base="kml:AbstractObjectType">
+ *          &lt;sequence>
+ *              &lt;element ref="kml:SimpleData" minOccurs="0" maxOccurs="unbounded"/>
+ *              &lt;element ref="kml:SchemaDataExtension" minOccurs="0" maxOccurs="unbounded"/>
+ *          &lt;/sequence>
+ *          &lt;attribute name="schemaUrl" type="anyURI"/>
+ *      &lt;/extension>
+ *  &lt;/complexContent>
+ * &lt;/complexType>
+ *
+ * &lt;element name="SchemaDataExtension" abstract="true"/>
+ * </pre>
  *
  * @author Samuel Andrés
  */

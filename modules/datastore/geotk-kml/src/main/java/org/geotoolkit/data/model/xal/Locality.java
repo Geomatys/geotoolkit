@@ -7,39 +7,38 @@ import java.util.List;
  *
  * <p>Locality is one level lower than adminisstrative area. Eg.: cities, reservations and any other built-up areas.</p>
  *
- * <br />&lt;xs:element name="Locality">
- * <br />&lt;xs:annotation>
- * <br />&lt;xs:documentation></xs:documentation>
- * <br />&lt;/xs:annotation>
- * <br />&lt;xs:complexType>
- * <br />&lt;xs:sequence>
- * <br />&lt;xs:element ref="AddressLine" minOccurs="0" maxOccurs="unbounded"/>
- * <br />&lt;xs:element name="LocalityName" minOccurs="0" maxOccurs="unbounded">...
- * <br />&lt;/xs:element>
- * <br />&lt;xs:choice minOccurs="0">
- * <br />&lt;xs:element ref="PostBox"/>
- * <br />&lt;xs:element name="LargeMailUser" type="LargeMailUserType">...
- * <br />&lt;/xs:element>
- * <br />&lt;xs:element ref="PostOffice"/>
- * <br />&lt;xs:element name="PostalRoute" type="PostalRouteType">...
- * <br />&lt;/xs:element>
- * <br />&lt;/xs:choice>
- * <br />&lt;xs:element ref="Thoroughfare" minOccurs="0"/>
- * <br />&lt;xs:element ref="Premise" minOccurs="0"/>
- * <br />&lt;xs:element name="DependentLocality" type="DependentLocalityType" minOccurs="0">...
- * <br />&lt;/xs:element>
- * <br />&lt;xs:element ref="PostalCode" minOccurs="0"/>
- * <br />&lt;xs:any namespace="##other" minOccurs="0" maxOccurs="unbounded"/>
- * <br />&lt;/xs:sequence>
- * <br />&lt;xs:attribute name="Type">...
- * <br />&lt;/xs:attribute>
- * <br />&lt;xs:attribute name="UsageType">...
- * <br />&lt;/xs:attribute>
- * <br />&lt;xs:attribute name="Indicator">...
- * <br />&lt;/xs:attribute>
- * <br />&lt;xs:anyAttribute namespace="##other"/>
- * <br />&lt;/xs:complexType>
- * <br />&lt;/xs:element>
+ * <pre>
+ * &lt;xs:element name="Locality">
+ *  &lt;xs:complexType>
+ *      &lt;xs:sequence>
+ *          &lt;xs:element ref="AddressLine" minOccurs="0" maxOccurs="unbounded"/>
+ *          &lt;xs:element name="LocalityName" minOccurs="0" maxOccurs="unbounded">...
+ *          &lt;/xs:element>
+ *          &lt;xs:choice minOccurs="0">
+ *              &lt;xs:element ref="PostBox"/>
+ *              &lt;xs:element name="LargeMailUser" type="LargeMailUserType">...
+ *              &lt;/xs:element>
+ *              &lt;xs:element ref="PostOffice"/>
+ *              &lt;xs:element name="PostalRoute" type="PostalRouteType">...
+ *              &lt;/xs:element>
+ *          &lt;/xs:choice>
+ *          &lt;xs:element ref="Thoroughfare" minOccurs="0"/>
+ *          &lt;xs:element ref="Premise" minOccurs="0"/>
+ *          &lt;xs:element name="DependentLocality" type="DependentLocalityType" minOccurs="0">...
+ *          &lt;/xs:element>
+ *          &lt;xs:element ref="PostalCode" minOccurs="0"/>
+ *          &lt;xs:any namespace="##other" minOccurs="0" maxOccurs="unbounded"/>
+ *      &lt;/xs:sequence>
+ *      &lt;xs:attribute name="Type">...
+ *      &lt;/xs:attribute>
+ *      &lt;xs:attribute name="UsageType">...
+ *      &lt;/xs:attribute>
+ *      &lt;xs:attribute name="Indicator">...
+ *      &lt;/xs:attribute>
+ *      &lt;xs:anyAttribute namespace="##other"/>
+ *  &lt;/xs:complexType>
+ * &lt;/xs:element>
+ * </pre>
  *
  * @author Samuel Andrés
  */
@@ -55,7 +54,7 @@ public interface Locality {
      *
      * @return
      */
-    public List<LocalityName> getLocalityNames();
+    public List<GenericTypedGrPostal> getLocalityNames();
     
     /*
      * === CHOICE: ===

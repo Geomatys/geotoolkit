@@ -2,13 +2,15 @@ package org.geotoolkit.data.model.kml;
 /**
  * <p>This enumeration maps shapeEnumType type.</p>
  *
- * <br />&lt;simpleType name="shapeEnumType">
- * <br />&lt;restriction base="string">
- * <br />&lt;enumeration value="rectangle"/>
- * <br />&lt;enumeration value="cylinder"/>
- * <br />&lt;enumeration value="sphere"/>
- * <br />&lt;/restriction>
- * <br />&lt;/simpleType>
+ * <pre>
+ * &lt;simpleType name="shapeEnumType">
+ *  &lt;restriction base="string">
+ *      &lt;enumeration value="rectangle"/>
+ *      &lt;enumeration value="cylinder"/>
+ *      &lt;enumeration value="sphere"/>
+ *  &lt;/restriction>
+ * &lt;/simpleType>
+ * </pre>
  *
  * @author Samuel Andrés
  */
@@ -18,7 +20,7 @@ public enum Shape {
     CYLINDER("cylinder"),
     SPHERE("sphere");
 
-    private String shape;
+    private final String shape;
 
     /**
      *
@@ -53,13 +55,9 @@ public enum Shape {
      * @return The Shape instance corresponding to the shape parameter.
      */
     public static Shape transform(String shape, Shape defaultValue){
-        Shape resultat = defaultValue;
         for(Shape s : Shape.values()){
-            if(s.getShape().equals(shape)){
-                resultat = s;
-                break;
-            }
+            if(s.getShape().equals(shape)) return s;
         }
-        return resultat;
+        return defaultValue;
     }
 }

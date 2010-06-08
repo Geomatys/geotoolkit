@@ -2,6 +2,7 @@ package org.geotoolkit.data.model.kml;
 
 import java.util.List;
 import org.geotoolkit.data.model.xsd.SimpleType;
+import static java.util.Collections.*;
 
 /**
  *
@@ -9,9 +10,9 @@ import org.geotoolkit.data.model.xsd.SimpleType;
  */
 public class TimeStampDefault extends AbstractTimePrimitiveDefault implements TimeStamp {
 
-    private String when;
-    private List<SimpleType> timeStampSimpleExtensions;
-    private List<AbstractObject> timeStampObjectExtensions;
+    private final String when;
+    private final List<SimpleType> timeStampSimpleExtensions;
+    private final List<AbstractObject> timeStampObjectExtensions;
 
     /**
      *
@@ -29,8 +30,8 @@ public class TimeStampDefault extends AbstractTimePrimitiveDefault implements Ti
         super(objectSimpleExtensions, idAttributes,
                 abstractTimePrimitiveSimpleExtensions, abstractTimePrimitiveObjectExtensions);
         this.when = when;
-        this.timeStampSimpleExtensions = timeStampSimpleExtensions;
-        this.timeStampObjectExtensions = timeStampObjectExtensions;
+        this.timeStampSimpleExtensions = (timeStampSimpleExtensions == null) ? EMPTY_LIST : timeStampSimpleExtensions;
+        this.timeStampObjectExtensions = (timeStampObjectExtensions == null) ? EMPTY_LIST : timeStampObjectExtensions;
     }
 
     /**

@@ -3,18 +3,22 @@ package org.geotoolkit.data.model.kml;
 import java.util.List;
 
 /**
- * <p></p>
+ * <p>This interface maps Schema element.</p>
  *
- * <br />&lt;element name="Schema" type="kml:SchemaType"/>
- * <br />&lt;complexType name="SchemaType" final="#all">
- * <br />&lt;sequence>
- * <br />&lt;element ref="kml:SimpleField" minOccurs="0" maxOccurs="unbounded"/>
- * <br />&lt;element ref="kml:SchemaExtension" minOccurs="0" maxOccurs="unbounded"/>
- * <br />&lt;/sequence>
- * <br />&lt;attribute name="name" type="string"/>
- * <br />&lt;attribute name="id" type="ID"/>
- * <br />&lt;/complexType>
- * <br />&lt;element name="SchemaExtension" abstract="true"/>
+ * <pre>
+ * &lt;element name="Schema" type="kml:SchemaType"/>
+ *
+ * &lt;complexType name="SchemaType" final="#all">
+ *  &lt;sequence>
+ *      &lt;element ref="kml:SimpleField" minOccurs="0" maxOccurs="unbounded"/>
+ *      &lt;element ref="kml:SchemaExtension" minOccurs="0" maxOccurs="unbounded"/>
+ *  &lt;/sequence>
+ *  &lt;attribute name="name" type="string"/>
+ *  &lt;attribute name="id" type="ID"/>
+ * &lt;/complexType>
+ *
+ * &lt;element name="SchemaExtension" abstract="true"/>
+ * </pre>
  *
  * @author Samuel Andrés
  */

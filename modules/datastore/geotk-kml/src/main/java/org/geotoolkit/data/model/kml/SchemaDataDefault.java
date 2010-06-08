@@ -2,6 +2,7 @@ package org.geotoolkit.data.model.kml;
 
 import java.util.List;
 import org.geotoolkit.data.model.xsd.SimpleType;
+import static java.util.Collections.*;
 
 /**
  *
@@ -9,8 +10,8 @@ import org.geotoolkit.data.model.xsd.SimpleType;
  */
 public class SchemaDataDefault extends AbstractObjectDefault implements SchemaData {
 
-    public List<SimpleData> simpleDatas;
-    public List<Object> schemaDataExtensions;
+    public final List<SimpleData> simpleDatas;
+    public final List<Object> schemaDataExtensions;
 
     /**
      *
@@ -22,8 +23,8 @@ public class SchemaDataDefault extends AbstractObjectDefault implements SchemaDa
     public SchemaDataDefault(List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
             List<SimpleData> simpleDatas, List<Object> schemaDataExtensions){
         super(objectSimpleExtensions, idAttributes);
-        this.simpleDatas = simpleDatas;
-        this.schemaDataExtensions = schemaDataExtensions;
+        this.simpleDatas = (simpleDatas == null) ? EMPTY_LIST : simpleDatas;
+        this.schemaDataExtensions = (schemaDataExtensions == null) ? EMPTY_LIST : schemaDataExtensions;
     }
 
     /**

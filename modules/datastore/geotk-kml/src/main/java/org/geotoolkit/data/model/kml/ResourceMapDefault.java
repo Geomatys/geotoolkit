@@ -2,6 +2,7 @@ package org.geotoolkit.data.model.kml;
 
 import java.util.List;
 import org.geotoolkit.data.model.xsd.SimpleType;
+import static java.util.Collections.*;
 
 /**
  *
@@ -9,9 +10,9 @@ import org.geotoolkit.data.model.xsd.SimpleType;
  */
 public class ResourceMapDefault extends AbstractObjectDefault implements ResourceMap {
 
-    private List<Alias> aliases;
-    private List<SimpleType> resourceMapSimpleExtensions;
-    private List<AbstractObject> resourceMapObjectExtensions;
+    private final List<Alias> aliases;
+    private final List<SimpleType> resourceMapSimpleExtensions;
+    private final List<AbstractObject> resourceMapObjectExtensions;
 
     /**
      *
@@ -27,8 +28,8 @@ public class ResourceMapDefault extends AbstractObjectDefault implements Resourc
             List<SimpleType> resourceMapSimpleExtensions, List<AbstractObject> resourceMapObjectExtensions){
         super(objectSimpleExtensions, idAttributes);
         this.aliases = aliases;
-        this.resourceMapSimpleExtensions = resourceMapSimpleExtensions;
-        this.resourceMapObjectExtensions = resourceMapObjectExtensions;
+        this.resourceMapSimpleExtensions = (resourceMapSimpleExtensions == null) ? EMPTY_LIST : resourceMapSimpleExtensions;
+        this.resourceMapObjectExtensions = (resourceMapObjectExtensions == null) ? EMPTY_LIST : resourceMapObjectExtensions;
     }
 
     /**

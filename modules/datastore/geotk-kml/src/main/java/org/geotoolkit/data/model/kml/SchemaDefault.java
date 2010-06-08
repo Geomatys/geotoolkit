@@ -1,6 +1,7 @@
 package org.geotoolkit.data.model.kml;
 
 import java.util.List;
+import static java.util.Collections.*;
 
 /**
  *
@@ -8,10 +9,10 @@ import java.util.List;
  */
 public class SchemaDefault implements Schema {
 
-    private List<SimpleField> simpleFields;
-    //private List<SchemaExtension> schemaExtensions;
-    private String name;
-    private String id;
+    private final List<SimpleField> simpleFields;
+    //private final List<SchemaExtension> schemaExtensions;
+    private final String name;
+    private final String id;
 
     /**
      *
@@ -21,7 +22,7 @@ public class SchemaDefault implements Schema {
      */
     public SchemaDefault(List<SimpleField> simpleFields,
             String name, String id){
-        this.simpleFields = simpleFields;
+        this.simpleFields = (simpleFields == null) ? EMPTY_LIST : simpleFields;
         this.name = name;
         this.id = id;
     }

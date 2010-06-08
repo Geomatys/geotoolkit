@@ -3,13 +3,15 @@ package org.geotoolkit.data.model.kml;
 /**
  * <p>This interface maps SnippetType type.</p>
  *
- * <br />&lt;complexType name="SnippetType" final="#all">
- * <br />&lt;simpleContent>
- * <br />&lt;extension base="string">
- * <br />&lt;attribute name="maxLines" type="int" use="optional" default="2"/>
- * <br />&lt;/extension>
- * <br />&lt;/simpleContent>
- * <br />&lt;/complexType>
+ * <pre>
+ * &lt;complexType name="SnippetType" final="#all">
+ *  &lt;simpleContent>
+ *      &lt;extension base="string">
+ *          &lt;attribute name="maxLines" type="int" use="optional" default="2"/>
+ *      &lt;/extension>
+ *  &lt;/simpleContent>
+ * &lt;/complexType>
+ * </pre>
  *
  * @author Samuel Andrés
  */

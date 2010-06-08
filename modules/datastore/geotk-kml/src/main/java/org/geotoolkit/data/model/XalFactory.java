@@ -7,11 +7,28 @@ import org.geotoolkit.data.model.xal.AddressLines;
 import org.geotoolkit.data.model.xal.AdministrativeArea;
 import org.geotoolkit.data.model.xal.Country;
 import org.geotoolkit.data.model.xal.CountryNameCode;
+import org.geotoolkit.data.model.xal.Department;
+import org.geotoolkit.data.model.xal.DependentLocality;
+import org.geotoolkit.data.model.xal.Firm;
 import org.geotoolkit.data.model.xal.GenericTypedGrPostal;
 import org.geotoolkit.data.model.xal.GrPostal;
+import org.geotoolkit.data.model.xal.Locality;
+import org.geotoolkit.data.model.xal.MailStop;
+import org.geotoolkit.data.model.xal.MailStopNumber;
+import org.geotoolkit.data.model.xal.PostBox;
+import org.geotoolkit.data.model.xal.PostBoxNumber;
+import org.geotoolkit.data.model.xal.PostBoxNumberExtension;
+import org.geotoolkit.data.model.xal.PostBoxNumberPrefix;
+import org.geotoolkit.data.model.xal.PostBoxNumberSuffix;
+import org.geotoolkit.data.model.xal.PostTown;
+import org.geotoolkit.data.model.xal.PostTownSuffix;
+import org.geotoolkit.data.model.xal.PostalCode;
+import org.geotoolkit.data.model.xal.PostalCodeNumberExtension;
 import org.geotoolkit.data.model.xal.PostalServiceElements;
+import org.geotoolkit.data.model.xal.Premise;
 import org.geotoolkit.data.model.xal.SortingCode;
 import org.geotoolkit.data.model.xal.SubAdministrativeArea;
+import org.geotoolkit.data.model.xal.Thoroughfare;
 import org.geotoolkit.data.model.xal.Xal;
 import org.geotoolkit.data.model.xal.XalException;
 
@@ -159,4 +176,163 @@ public interface XalFactory {
     public SubAdministrativeArea createSubAdministrativeArea(List<GenericTypedGrPostal> addressLines,
             List<GenericTypedGrPostal> subAdministrativeAreaNames,
             Object localisation, String type, String usageType, String indicator) throws XalException;
+
+    /**
+     * 
+     * @param addressLines
+     * @param localityNames
+     * @param postal
+     * @param thoroughfare
+     * @param premise
+     * @param dependentLocality
+     * @param postalCode
+     * @param type
+     * @param usageType
+     * @param indicator
+     * @return
+     * @throws XalException
+     */
+    public Locality createLocality(List<GenericTypedGrPostal> addressLines, List<GenericTypedGrPostal> localityNames,
+            Object postal,
+            Thoroughfare thoroughfare, Premise premise, DependentLocality dependentLocality, PostalCode postalCode,
+            String type, String usageType, String indicator) throws XalException;
+
+    /**
+     * 
+     * @param grPostal
+     * @param content
+     * @return
+     */
+    public PostBoxNumber createPostBoxNumber(GrPostal grPostal, String content);
+
+    /**
+     * 
+     * @param numberPrefixSeparator
+     * @param grPostal
+     * @param content
+     * @return
+     */
+    public PostBoxNumberPrefix createPostBoxNumberPrefix(String numberPrefixSeparator, GrPostal grPostal, String content);
+
+    /**
+     * 
+     * @param numberSuffixSeparator
+     * @param grPostal
+     * @param content
+     * @return
+     */
+    public PostBoxNumberSuffix createPostBoxNumberSuffix(String numberSuffixSeparator, GrPostal grPostal, String content);
+
+    /**
+     * 
+     * @param numberExtensionSeparator
+     * @param content
+     * @return
+     */
+    public PostBoxNumberExtension createPostBoxNumberExtension(String numberExtensionSeparator, String content);
+
+    /**
+     * 
+     * @param addressLines
+     * @param firmNames
+     * @param departments
+     * @param mailStop
+     * @param postalCode
+     * @param type
+     * @return
+     */
+    public Firm createFirm(List<GenericTypedGrPostal> addressLines, List<GenericTypedGrPostal> firmNames,
+            List<Department> departments, MailStop mailStop, PostalCode postalCode, String type);
+
+    /**
+     * 
+     * @param addressLines
+     * @param postBoxNumber
+     * @param postBoxNumberPrefix
+     * @param postBoxNumberSuffix
+     * @param postBoxNumberExtension
+     * @param firm
+     * @param postalCode
+     * @param type
+     * @param indicator
+     * @return
+     */
+    public PostBox createPostBox(List<GenericTypedGrPostal> addressLines, PostBoxNumber postBoxNumber,
+            PostBoxNumberPrefix postBoxNumberPrefix, PostBoxNumberSuffix postBoxNumberSuffix,
+            PostBoxNumberExtension postBoxNumberExtension, Firm firm,
+            PostalCode postalCode, String type, String indicator);
+
+    /**
+     * 
+     * @param addressLines
+     * @param departmentNames
+     * @param mailStop
+     * @param postalCode
+     * @param type
+     * @return
+     */
+    public Department createDepartment(List<GenericTypedGrPostal> addressLines, List<GenericTypedGrPostal> departmentNames,
+            MailStop mailStop, PostalCode postalCode, String type);
+
+    /**
+     *
+     * @param addressLines
+     * @param mailStopNames
+     * @param mailStopNumber
+     * @param type
+     * @return
+     */
+    public MailStop createMailStop(List<GenericTypedGrPostal> addressLines, List<GenericTypedGrPostal> mailStopNames,
+            MailStopNumber mailStopNumber, String type);
+
+    /**
+     * 
+     * @param nameNumberSeparator
+     * @param grPostal
+     * @param content
+     * @return
+     */
+    public MailStopNumber createMailStopNumber(String nameNumberSeparator, GrPostal grPostal, String content);
+
+    /**
+     * 
+     * @param addressLines
+     * @param postalCodeNumbers
+     * @param postalCodeNumberExtensions
+     * @param postTown
+     * @param type
+     * @return
+     */
+    public PostalCode createPostalCode(List<GenericTypedGrPostal> addressLines, List<GenericTypedGrPostal> postalCodeNumbers,
+            List<PostalCodeNumberExtension> postalCodeNumberExtensions, PostTown postTown, String type);
+
+    /**
+     * 
+     * @param type
+     * @param numberExtensionSeparator
+     * @param grPostal
+     * @param content
+     * @return
+     */
+    public PostalCodeNumberExtension createPostalCodeNumberExtension(String type, String numberExtensionSeparator,
+            GrPostal grPostal, String content);
+
+    /**
+     * 
+     * @param grPostal
+     * @param content
+     * @return
+     */
+    public PostTownSuffix createPostTownSuffix(GrPostal grPostal, String content);
+
+    /**
+     * 
+     * @param addressLines
+     * @param postTownNames
+     * @param postTownSuffix
+     * @param type
+     * @return
+     */
+    public PostTown createPostTown(List<GenericTypedGrPostal> addressLines,
+            List<GenericTypedGrPostal> postTownNames, PostTownSuffix postTownSuffix, String type);
 }

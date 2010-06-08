@@ -5,18 +5,20 @@ import java.util.List;
 /**
  * <p>This interface maps MailStopType type.</p>
  *
- * <br />&lt;xs:complexType name="MailStopType">
- * <br />&lt;xs:sequence>
- * <br />&lt;xs:element ref="AddressLine" minOccurs="0" maxOccurs="unbounded"/>
- * <br />&lt;xs:element name="MailStopName" minOccurs="0">...
- * <br />&lt;/xs:element>
- * <br />&lt;xs:element name="MailStopNumber" minOccurs="0">...
- * <br />&lt;/xs:element>
- * <br />&lt;xs:any namespace="##other" minOccurs="0" maxOccurs="unbounded"/>
- * <br />&lt;/xs:sequence>
- * <br />&lt;xs:attribute name="Type"/>
- * <br />&lt;xs:anyAttribute namespace="##other"/>
- * <br />&lt;/xs:complexType>
+ * <pre>
+ * &lt;xs:complexType name="MailStopType">
+ *  &lt;xs:sequence>
+ *      &lt;xs:element ref="AddressLine" minOccurs="0" maxOccurs="unbounded"/>
+ *      &lt;xs:element name="MailStopName" minOccurs="0">...
+ *      &lt;/xs:element>
+ *      &lt;xs:element name="MailStopNumber" minOccurs="0">...
+ *      &lt;/xs:element>
+ *      &lt;xs:any namespace="##other" minOccurs="0" maxOccurs="unbounded"/>
+ *  &lt;/xs:sequence>
+ *  &lt;xs:attribute name="Type"/>
+ *  &lt;xs:anyAttribute namespace="##other"/>
+ * &lt;/xs:complexType>
+ * </pre>
  * 
  * @author Samuel Andrés
  */
