@@ -120,7 +120,7 @@ COMMENT ON INDEX "SampleDimensions_index" IS
 -- Dependencies: "SampleDimensions"                                                             --
 --------------------------------------------------------------------------------------------------
 
-CREATE TYPE "Function" AS ENUM ('log');
+CREATE TYPE "TransferFunctionType" AS ENUM ('linear', 'logarithmic', 'exponential');
 
 CREATE TABLE "Categories" (
     "format"   character varying NOT NULL,
@@ -130,7 +130,7 @@ CREATE TABLE "Categories" (
     "upper"    integer           NOT NULL,
     "c0"       double precision,
     "c1"       double precision,
-    "function" "Function",
+    "function" "TransferFunctionType",
     "colors"   character varying,
     PRIMARY KEY ("format", "band", "name"),
     FOREIGN KEY ("format", "band") REFERENCES "SampleDimensions" ON UPDATE CASCADE ON DELETE CASCADE,
@@ -163,7 +163,7 @@ COMMENT ON COLUMN "Categories"."c0" IS
 COMMENT ON COLUMN "Categories"."c1" IS
     'Coefficient C1 of the equation y=C0+C1*x, where x is the pixel value and y is the value of the geophysical measurement.  May be left blank if not applicable.';
 COMMENT ON COLUMN "Categories"."function" IS
-    'Function applied to the geophysical values.  For example, the value "log" indicates that the values are expressed in the form log(y)=C0+C1*x.';
+    'Transform function to be used when scaling a physical value: "linear" (or omitted) for y=C0+C1*x, or "expentional" for y=10^(C0+C1*x).';
 COMMENT ON COLUMN "Categories"."colors" IS
     'This field can be either a color code or the name of a color pallet.';
 COMMENT ON CONSTRAINT "Categories_format_fkey" ON "Categories" IS

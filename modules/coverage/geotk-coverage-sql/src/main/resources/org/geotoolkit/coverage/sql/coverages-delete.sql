@@ -24,7 +24,7 @@ DROP TABLE    "Series";
 DROP TABLE    "Layers";
 DROP VIEW     "RangeOfFormats";
 DROP TABLE    "Categories";
-DROP TYPE     "Function";
+DROP TYPE     "TransferFunctionType";
 DROP TABLE    "SampleDimensions";
 DROP TABLE    "Formats";
 DROP TYPE     "PackMode";

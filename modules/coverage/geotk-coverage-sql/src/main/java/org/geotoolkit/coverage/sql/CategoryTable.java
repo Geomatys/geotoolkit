@@ -187,8 +187,21 @@ final class CategoryTable extends Table {
                     MathTransform tr;
                     try {
                         tr = mtFactory.createAffineTransform(new Matrix2(c1, c0, 0, 1));
-                        if (function != null) {
-                            if (function.equalsIgnoreCase("log")) {
+                        /*
+                         * Check for transfer function:
+                         *
+                         *   - NULL is considered synonymous to "linear".
+                         *
+                         *   - "log" (not to be confused with "logarithmic") is handled as
+                         *     "exponential" for compatibility with legacy databases. It was
+                         *      interpreted as log(y)=C0+C1*x.
+                         *
+                         *   - "logarithmic" is not yet implemented, because we don't know yet
+                         *     if the log should be computed before or after the offset and scale
+                         *     factor.
+                         */
+                        if (function != null && !function.equalsIgnoreCase("linear")) {
+                            if (function.equalsIgnoreCase("exponential") || function.equalsIgnoreCase("log")) {
                                 // Quantitative and logarithmic category.
                                 if (exponential == null) {
                                     final ParameterValueGroup param = mtFactory.getDefaultParameters("Exponential");
