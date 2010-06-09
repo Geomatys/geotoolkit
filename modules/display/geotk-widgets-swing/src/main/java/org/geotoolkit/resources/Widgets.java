@@ -96,6 +96,11 @@ public final class Widgets extends IndexedResourceBundle {
         public static final int NEW_FORMAT = 13;
 
         /**
+         * Raster sample values are geophysics.
+         */
+        public static final int RASTER_IS_GEOPHYSICS = 15;
+
+        /**
          * Remove all
          */
         public static final int REMOVE_ALL = 2;

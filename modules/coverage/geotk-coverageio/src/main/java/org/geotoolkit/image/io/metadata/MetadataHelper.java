@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.image.io.metadata;
 
+import java.awt.Color;
 import java.awt.Point;
 import java.util.List;
 import java.util.Locale;
@@ -30,14 +31,13 @@ import java.awt.geom.AffineTransform;
 import javax.imageio.IIOParam;
 import javax.measure.unit.Unit;
 import javax.measure.unit.UnitFormat;
-import org.geotoolkit.coverage.Category;
-import org.geotoolkit.coverage.GridSampleDimension;
 
 import org.opengis.geometry.DirectPosition;
 import org.opengis.util.InternationalString;
 import org.opengis.coverage.grid.RectifiedGrid;
 import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.operation.MathTransform;
+import org.opengis.referencing.operation.MathTransform1D;
 import org.opengis.metadata.content.TransferFunctionType;
 
 import org.geotoolkit.math.XMath;
@@ -47,13 +47,14 @@ import org.geotoolkit.util.Localized;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.MeasurementRange;
+import org.geotoolkit.coverage.Category;
+import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.display.shape.DoubleDimension2D;
 import org.geotoolkit.image.io.ImageMetadataException;
 import org.geotoolkit.referencing.operation.matrix.XMatrix;
 import org.geotoolkit.referencing.operation.matrix.MatrixFactory;
 import org.geotoolkit.referencing.operation.transform.LinearTransform1D;
 import org.geotoolkit.referencing.operation.transform.ProjectiveTransform;
-import org.opengis.referencing.operation.MathTransform1D;
 
 
 /**
@@ -81,6 +82,12 @@ public class MetadataHelper implements Localized {
      * The image reader or writer for which we are creating metadata, or {@code null} if none.
      */
     private final Localized owner;
+
+    /**
+     * The "Untitled" word in various locales. This is created only if needed,
+     * and reused for every categories which does not provide explicitly a name.
+     */
+    private transient InternationalString untitled;
 
     /**
      * Creates a new metadata helper for the given {@code ImageReader} or {@code ImageWriter}.
@@ -558,6 +565,9 @@ public class MetadataHelper implements Localized {
      *     sampleDimensions = metadata.getListForType(SampleDimension.class);
      * }
      *
+     * Subclasses can customize the creation of the <cite>quantitative</cite> category by
+     * overriding the {@link #createCategory createCategory(...)} method.
+     *
      * @param  sampleDimensions The sample dimensions from Image I/O metadata, or {@code null}.
      * @return The {@link GridSampleDimension}s, or {@code null} if the given list was null or empty.
      * @throws ImageMetadataException If this method can not create the grid sample dimensions.
@@ -576,25 +586,12 @@ public class MetadataHelper implements Localized {
          * values (if any) and a single quantitative category for the range of sample
          * values.
          */
-        InternationalString untitled = null; // To be created only if needed.
         final List<Category> categories = new ArrayList<Category>();
         final GridSampleDimension[] bands = new GridSampleDimension[sampleDimensions.size()];
         boolean hasSampleDimensions = false;
         for (int i=0; i<bands.length; i++) {
             final SampleDimension sd = sampleDimensions.get(i);
             if (sd != null) {
-                /*
-                 * Get a name for the sample dimensions. This name will be given both to the
-                 * GridSampleDimension object and to the single qualitative Category. If no
-                 * name can be found, "Untitled" will be used.
-                 */
-                InternationalString dimensionName = sd.getDescriptor();
-                if (dimensionName == null) {
-                    if (untitled == null) {
-                        untitled = Vocabulary.formatInternational(Vocabulary.Keys.UNTITLED);
-                    }
-                    dimensionName = untitled;
-                }
                 /*
                  * Create a qualitative category for each fill value.
                  */
@@ -615,48 +612,138 @@ public class MetadataHelper implements Localized {
                 }
                 /*
                  * Create a quantitative category for the range of valid sample values.
+                 * If there is no offset and scale factor, then the values are assumed
+                 * geophysics values.
                  */
-                final NumberRange<?> range = getValidSampleValues(sd, fillValues);
-                if (range != null) {
-                    final Double scale  = sd.getScaleFactor();
-                    final Double offset = sd.getOffset();
-                    if (scale != null || offset != null || !overlap(categories, range)) {
-                        MathTransform1D tr = LinearTransform1D.create(
-                                (scale  != null) ? adjustForRoundingError(scale)  : 1,
-                                (offset != null) ? adjustForRoundingError(offset) : 0);
-                        final TransferFunctionType type = sd.getTransferFunctionType();
-                        if (type != null && !type.equals(TransferFunctionType.LINEAR)) {
-                            /*
-                             * TODO: We need to support exponential and logarithmic transforms
-                             * here. For doing a good job, we should use a MathTransformFactory
-                             * (see CategoryTable for inspiration). In order to be consistent, we
-                             * should use that factory for the transform implicitly created by
-                             * the above new Category(...) constructor call, and the transform
-                             * implicitly created by MetadataHelper.createGridToCRS(...).
-                             */
-                            throw new ImageMetadataException(Errors.getResources(getLocale())
-                                    .getString(Errors.Keys.UNSUPPORTED_OPERATION_$1, type));
-                        }
-                        categories.add(new Category(dimensionName, null, range, tr));
+                MathTransform1D tr = null;
+                NumberRange<?> range  = getValidSampleValues(sd, fillValues);
+                final Double   scale  = sd.getScaleFactor();
+                final Double   offset = sd.getOffset();
+                if (scale != null || offset != null) {
+                    tr = LinearTransform1D.create(
+                            (scale  != null) ? adjustForRoundingError(scale)  : 1,
+                            (offset != null) ? adjustForRoundingError(offset) : 0);
+                    final TransferFunctionType type = sd.getTransferFunctionType();
+                    if (type != null && !type.equals(TransferFunctionType.LINEAR)) {
+                        /*
+                         * TODO: We need to support exponential and logarithmic transforms
+                         * here. For doing a good job, we should use a MathTransformFactory
+                         * (see CategoryTable for inspiration). In order to be consistent, we
+                         * should use that factory for the transform implicitly created by
+                         * the above new Category(...) constructor call, and the transform
+                         * implicitly created by MetadataHelper.createGridToCRS(...).
+                         */
+                        throw new ImageMetadataException(Errors.getResources(getLocale())
+                                .getString(Errors.Keys.UNSUPPORTED_OPERATION_$1, type));
                     }
+                } else if (overlap(categories, range)) {
+                    range = null; // The range looks like garbage. See 'overlap' javadoc.
+                }
+                final Category category = createCategory(sd.getDescriptor(), null, range, tr);
+                if (category != null) {
+                    categories.add(category);
                 }
                 /*
-                 * Create the GridSampleDimension instance.
+                 * Create the GridSampleDimension instance. If a quantitative category has been
+                 * created, we will use its name (this is usually the sd.getDescriptor() value).
+                 * Otherwise we will ask again for sd.getDescriptor(), or falling that we will
+                 * use "Untitled".
                  */
                 if (!categories.isEmpty()) {
+                    InternationalString dimensionName = null;
+                    if (category != null) {
+                        dimensionName = category.getName();
+                    }
+                    if (dimensionName == null) {
+                        dimensionName = sd.getDescriptor();
+                        if (dimensionName == null) {
+                            if (untitled == null) {
+                                untitled = Vocabulary.formatInternational(Vocabulary.Keys.UNTITLED);
+                            }
+                            dimensionName = untitled;
+                        }
+                    }
                     final Category[] array = categories.toArray(new Category[categories.size()]);
                     final Unit<?> unit = sd.getUnits();
+                    final GridSampleDimension band;
                     try {
-                        bands[i] = new GridSampleDimension(dimensionName, array, unit);
+                        band = new GridSampleDimension(dimensionName, array, unit);
                     } catch (IllegalArgumentException e) {
                         throw new ImageMetadataException(e.getLocalizedMessage(), e);
                     }
+                    bands[i] = band;
                     categories.clear();
                     hasSampleDimensions = true;
                 }
             }
         }
         return hasSampleDimensions ? Arrays.asList(bands) : null;
+    }
+
+    /**
+     * Creates a new <cite>quantitative</cite> category from the given metadata, or {@code null} if
+     * no category can be created. This method is invoked by {@link #getGridSampleDimensions(List)}
+     * at most once for each {@link SampleDimension}, with argument values extracted from the sample
+     * dimension. Any argument can be {@code null} if no corresponding information was found in the
+     * sample dimension. This is implementors responsability to handle the null values, for example
+     * by replacing them with default values.
+     * <p>
+     * The default implementation process the null arguments as below:
+     * <p>
+     * <ul>
+     *   <li>If the {@code dimensionName} argument is {@code null}, then this method replaces
+     *       it by the {@code "Untitled"} localized string.</li>
+     *   <li>If the {@code validSampleValues} range is {@code null}, then this method can not
+     *       create a category and returns {@code null}.</li>
+     *   <li>If the {@code transferFunction} argument is {@code null}, then the image sample
+     *       values are assumed {@linkplain org.geotoolkit.coverage.grid.ViewType#GEOPHYSICS
+     *       geophysics}. Consequently, this method uses an identity transfer function.</li>
+     * </ul>
+     * <p>
+     * Then, this method passes the resulting arguments to the
+     * {@linkplain Category#Category(InternationalString, Color[], NumberRange, MathTransform1D)
+     * category constructor}.
+     * <p>
+     * Subclasses should override this method if they want to process the metadata in a different
+     * way, for example with different default values for {@code null} arguments.
+     *
+     * @param dimensionName
+     *          The {@linkplain SampleDimension#getDescriptor() sample dimension description},
+     *          or {@code null} if none.
+     * @param colors
+     *          The colors, or {@code null} if none. Note that the default {@code MetadataHelper}
+     *          implementation will always pass {@code null} for this argument.
+     * @param validSampleValues
+     *          The {@linkplain #getValidSampleValues(SampleDimension) range of valid sample values},
+     *          or {@code null} if none.
+     * @param transferFunction
+     *          The transfer function inferred from the {@linkplain SampleDimension#getScale() scale},
+     *          {@linkplain SampleDimension#getOffset() offset} and
+     *          {@linkplain SampleDimension#getTransferFunctionType transfer function type},
+     *          or {@code null} if no offset and scale factor were found.
+     * @return  The category, or {@code null} if no category should be created from the
+     *          given argument.
+     * @throws  ImageMetadataException If an error occured while creating the category.
+     *
+     * @since 3.13
+     */
+    protected Category createCategory(InternationalString dimensionName, final Color[] colors,
+            final NumberRange<?> validSampleValues, MathTransform1D transferFunction)
+            throws ImageMetadataException
+    {
+        if (validSampleValues == null) {
+            return null;
+        }
+        if (dimensionName == null) {
+            if (untitled == null) {
+                untitled = Vocabulary.formatInternational(Vocabulary.Keys.UNTITLED);
+            }
+            dimensionName = untitled;
+        }
+        if (transferFunction == null) {
+            transferFunction = LinearTransform1D.IDENTITY;
+        }
+        return new Category(dimensionName, colors, validSampleValues, transferFunction);
     }
 
     /**
@@ -671,9 +758,11 @@ public class MetadataHelper implements Localized {
      * such range would thrown an exception anyway.
      */
     private static boolean overlap(final List<Category> categories, final NumberRange<?> range) {
-        for (final Category category : categories) {
-            if (range.intersects(category.getRange())) {
-                return true;
+        if (range != null) {
+            for (final Category category : categories) {
+                if (range.intersects(category.getRange())) {
+                    return true;
+                }
             }
         }
         return false;

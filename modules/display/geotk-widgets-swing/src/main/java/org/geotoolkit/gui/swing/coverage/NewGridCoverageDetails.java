@@ -31,6 +31,7 @@ import javax.swing.JPanel;
 import javax.swing.JLabel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JTextField;
 import javax.swing.JScrollPane;
@@ -102,6 +103,11 @@ final class NewGridCoverageDetails extends JComponent implements CoverageDatabas
     private final JLabel formatNote;
 
     /**
+     * {@code true} if the format describe geophysics values, or {@code false} for packed values.
+     */
+    private final JCheckBox isGeophysics;
+
+    /**
      * The combo box for horizontal CRS.
      */
     private final AuthorityCodesComboBox horizontalCRS;
@@ -132,10 +138,12 @@ final class NewGridCoverageDetails extends JComponent implements CoverageDatabas
         this.owner = owner;
         setLayout(new BorderLayout());
         final Locale     locale    = getLocale();
+        final Widgets    guires    = Widgets.getResources(locale);
         final Vocabulary resources = Vocabulary.getResources(locale);
         filename      = new JTextField();
         format        = new JComboBox();
         formatNote    = new JLabel();
+        isGeophysics  = new JCheckBox(guires.getString(Widgets.Keys.RASTER_IS_GEOPHYSICS));
         horizontalCRS = new AuthorityCodesComboBox(crsFactory, GeographicCRS.class, ProjectedCRS.class);
         verticalCRS   = new AuthorityCodesComboBox(crsFactory, VerticalCRS.class);
         sampleDimensionEditor = new SampleDimensionPanel();
@@ -152,7 +160,10 @@ final class NewGridCoverageDetails extends JComponent implements CoverageDatabas
         pane.setTitle(resources.getString(Vocabulary.Keys.FILE));
         addRow(pane, resources.getLabel(Vocabulary.Keys.NAME), filename, c);
         addRow(pane, resources.getLabel(Vocabulary.Keys.FORMAT), format, c);
-        c.insets.left=6; addRow(pane, null, formatNote, c); c.insets.left=0;
+        c.insets.left=6;
+        addRow(pane, null, formatNote, c);
+        addRow(pane, null, isGeophysics, c);
+        c.insets.left=0;
         container.add(pane);
 
         c.gridy=0;
@@ -255,6 +266,19 @@ final class NewGridCoverageDetails extends JComponent implements CoverageDatabas
                     failure = e;
                 }
             }
+            /*
+             * Check if the bands are geophysics.
+             */
+            boolean geophysics = false;
+            if (bands != null) {
+                for (final GridSampleDimension band : bands) {
+                    if (!band.getCategories().isEmpty() && band == band.geophysics(true)) {
+                        geophysics = true;
+                        break;
+                    }
+                }
+            }
+            isGeophysics.setSelected(geophysics);
             sampleDimensionEditor.setSampleDimensions(bands);
             setFormatEditable(false);
             if (failure != null) {

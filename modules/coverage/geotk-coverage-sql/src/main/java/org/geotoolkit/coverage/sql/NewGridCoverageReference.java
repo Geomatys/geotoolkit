@@ -46,7 +46,6 @@ import org.geotoolkit.image.io.mosaic.Tile;
 import org.geotoolkit.image.io.metadata.MetadataHelper;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.image.io.metadata.SampleDimension;
-import org.geotoolkit.image.io.SpatialImageReader;
 import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.internal.sql.table.SpatialDatabase;
 import org.geotoolkit.internal.sql.table.NoSuchRecordException;
@@ -305,8 +304,7 @@ public final class NewGridCoverageReference {
                 }
             }
         }
-        final MetadataHelper helper = (metadata == null) ? null : new MetadataHelper(
-                (reader instanceof SpatialImageReader) ? (SpatialImageReader) reader : null);
+        final MetadataHelper helper = (metadata != null) ? new NewGridCoverageHelper(reader) : null;
         /*
          * Get the geolocalization from the image, then complete with the tile information if
          * there is a Tile object. We avoid invoking Tile.getRegion() because it may create a
