@@ -199,6 +199,8 @@ public class AnyScalarPropertyType implements AnyScalar, Entry {
             return _boolean;
         } else if (quantity != null){
             return quantity;
+        } else if (text != null){
+            return text;
         } return null;
     }
 
