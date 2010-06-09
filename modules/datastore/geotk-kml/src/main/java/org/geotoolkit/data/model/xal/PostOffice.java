@@ -8,29 +8,31 @@ import java.util.List;
  * <p>Specification of a post office. Examples are a rural post office where
  * post is delivered and a post office containing post office boxes.</p>
  *
- * <br />&lt;xs:element name="PostOffice">
- * <br />&lt;xs:complexType>
- * <br />&lt;xs:sequence>
- * <br />&lt;xs:element ref="AddressLine" minOccurs="0" maxOccurs="unbounded"/>
- * <br />&lt;xs:choice>
- * <br />&lt;xs:element name="PostOfficeName" minOccurs="0" maxOccurs="unbounded">...
- * <br />&lt;/xs:element>
- * <br />&lt;xs:element name="PostOfficeNumber" minOccurs="0">...
- * <br />&lt;/xs:element>
- * <br />&lt;/xs:choice>
- * <br />&lt;xs:element name="PostalRoute" type="PostalRouteType" minOccurs="0">...
- * <br />&lt;/xs:element>
- * <br />&lt;xs:element ref="PostBox" minOccurs="0"/>
- * <br />&lt;xs:element ref="PostalCode" minOccurs="0"/>
- * <br />&lt;xs:any namespace="##other" minOccurs="0" maxOccurs="unbounded"/>
- * <br />&lt;/xs:sequence>
- * <br />&lt;xs:attribute name="Type">...
- * <br />&lt;/xs:attribute>
- * <br />&lt;xs:attribute name="Indicator">...
- * <br />&lt;/xs:attribute>
- * <br />&lt;xs:anyAttribute namespace="##other"/>
- * <br />&lt;/xs:complexType>
- * <br />&lt;/xs:element>
+ * <pre>
+ * &lt;xs:element name="PostOffice">
+ *  &lt;xs:complexType>
+ *      &lt;xs:sequence>
+ *          &lt;xs:element ref="AddressLine" minOccurs="0" maxOccurs="unbounded"/>
+ *          &lt;xs:choice>
+ *              &lt;xs:element name="PostOfficeName" minOccurs="0" maxOccurs="unbounded">...
+ *              &lt;/xs:element>
+ *              &lt;xs:element name="PostOfficeNumber" minOccurs="0">...
+ *              &lt;/xs:element>
+ *          &lt;/xs:choice>
+ *          &lt;xs:element name="PostalRoute" type="PostalRouteType" minOccurs="0">...
+ *          &lt;/xs:element>
+ *          &lt;xs:element ref="PostBox" minOccurs="0"/>
+ *          &lt;xs:element ref="PostalCode" minOccurs="0"/>
+ *          &lt;xs:any namespace="##other" minOccurs="0" maxOccurs="unbounded"/>
+ *      &lt;/xs:sequence>
+ *      &lt;xs:attribute name="Type">...
+ *      &lt;/xs:attribute>
+ *      &lt;xs:attribute name="Indicator">...
+ *      &lt;/xs:attribute>
+ *      &lt;xs:anyAttribute namespace="##other"/>
+ *  &lt;/xs:complexType>
+ * &lt;/xs:element>
+ * </pre>
  *
  * @author Samuel Andrés
  */
@@ -53,7 +55,7 @@ public interface PostOffice {
      *
      * @return
      */
-    public GenericTypedGrPostal getPostOfficeName();
+    public List<GenericTypedGrPostal> getPostOfficeNames();
 
     /**
      * <p>Specification of the number of the postoffice. Common in rural postoffices.</p>

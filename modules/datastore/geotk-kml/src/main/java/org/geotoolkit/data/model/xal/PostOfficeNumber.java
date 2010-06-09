@@ -4,14 +4,16 @@ package org.geotoolkit.data.model.xal;
  *
  * <p>This interface maps PostOfficeNumber type.</p>
  *
- * <br />&lt;xs:complexType mixed="true">
- * <br />&lt;xs:attribute name="Indicator">...
- * <br />&lt;/xs:attribute>
- * <br />&lt;xs:attribute name="IndicatorOccurrence">...
- * <br />&lt;/xs:attribute>
- * <br />&lt;xs:attributeGroup ref="grPostal"/>
- * <br />&lt;xs:anyAttribute namespace="##other"/>
- * <br />&lt;/xs:complexType>
+ * <pre>
+ * &lt;xs:complexType mixed="true">
+ *  &lt;xs:attribute name="Indicator">...
+ *  &lt;/xs:attribute>
+ *  &lt;xs:attribute name="IndicatorOccurrence">...
+ *  &lt;/xs:attribute>
+ *  &lt;xs:attributeGroup ref="grPostal"/>
+ *  &lt;xs:anyAttribute namespace="##other"/>
+ * &lt;/xs:complexType>
+ * </pre>
  *
  * @author Samuel Andrés
  */
@@ -33,11 +35,11 @@ public interface PostOfficeNumber {
      * <p>MS occurs before 62 in MS 62.</p>
      * @return
      */
-    public AfterBeforeEnum getIndicatorOccurence();
+    public AfterBeforeEnum getIndicatorOccurrence();
 
     /**
      * 
      * @return
      */
-    public GrPostal gerGrPostal();
+    public GrPostal getGrPostal();
 }

@@ -3,12 +3,14 @@ package org.geotoolkit.data.model.kml;
 /**
  * <p>This interface maps vec2Type type.</p>
  *
- * <br />&lt;complexType name="vec2Type" abstract="false">
- * <br />&lt;attribute name="x" type="double" default="1.0"/>
- * <br />&lt;attribute name="y" type="double" default="1.0"/>
- * <br />&lt;attribute name="xunits" type="kml:unitsEnumType" use="optional" default="fraction"/>
- * <br />&lt;attribute name="yunits" type="kml:unitsEnumType" use="optional" default="fraction"/>
- * <br />&lt;/complexType>
+ * <pre>
+ * &lt;complexType name="vec2Type" abstract="false">
+ *  &lt;attribute name="x" type="double" default="1.0"/>
+ *  &lt;attribute name="y" type="double" default="1.0"/>
+ *  &lt;attribute name="xunits" type="kml:unitsEnumType" use="optional" default="fraction"/>
+ *  &lt;attribute name="yunits" type="kml:unitsEnumType" use="optional" default="fraction"/>
+ * &lt;/complexType>
+ * </pre>
  *
  * @author Samuel Andrés
  */

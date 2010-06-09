@@ -8,6 +8,8 @@ import org.geotoolkit.data.model.xal.AddressDetails;
 import org.geotoolkit.data.model.xal.AddressIdentifier;
 import org.geotoolkit.data.model.xal.AddressLines;
 import org.geotoolkit.data.model.xal.AdministrativeArea;
+import org.geotoolkit.data.model.xal.AfterBeforeEnum;
+import org.geotoolkit.data.model.xal.BuildingName;
 import org.geotoolkit.data.model.xal.Country;
 import org.geotoolkit.data.model.xal.CountryNameCode;
 import org.geotoolkit.data.model.xal.Department;
@@ -16,6 +18,8 @@ import org.geotoolkit.data.model.xal.Firm;
 import org.geotoolkit.data.model.xal.GenericTypedGrPostal;
 import org.geotoolkit.data.model.xal.GrPostal;
 import org.geotoolkit.data.model.xal.LargeMailUser;
+import org.geotoolkit.data.model.xal.LargeMailUserIdentifier;
+import org.geotoolkit.data.model.xal.LargeMailUserName;
 import org.geotoolkit.data.model.xal.Locality;
 import org.geotoolkit.data.model.xal.MailStop;
 import org.geotoolkit.data.model.xal.MailStopNumber;
@@ -25,11 +29,13 @@ import org.geotoolkit.data.model.xal.PostBoxNumberExtension;
 import org.geotoolkit.data.model.xal.PostBoxNumberPrefix;
 import org.geotoolkit.data.model.xal.PostBoxNumberSuffix;
 import org.geotoolkit.data.model.xal.PostOffice;
+import org.geotoolkit.data.model.xal.PostOfficeNumber;
 import org.geotoolkit.data.model.xal.PostTown;
 import org.geotoolkit.data.model.xal.PostTownSuffix;
 import org.geotoolkit.data.model.xal.PostalCode;
 import org.geotoolkit.data.model.xal.PostalCodeNumberExtension;
 import org.geotoolkit.data.model.xal.PostalRoute;
+import org.geotoolkit.data.model.xal.PostalRouteNumber;
 import org.geotoolkit.data.model.xal.PostalServiceElements;
 import org.geotoolkit.data.model.xal.Premise;
 import org.geotoolkit.data.model.xal.SortingCode;
@@ -335,6 +341,18 @@ public class XalWriter extends StaxStreamWriter {
     private void writeTownName(GenericTypedGrPostal postTownName) throws XMLStreamException {
         writer.writeStartElement(URI_XAL, TAG_POST_TOWN_NAME);
         this.writeGenericTypedGrPostal(postTownName);
+        writer.writeEndElement();
+    }
+
+    private void writePostalRouteName(GenericTypedGrPostal postalRouteName) throws XMLStreamException {
+        writer.writeStartElement(URI_XAL, TAG_POSTAL_ROUTE_NAME);
+        this.writeGenericTypedGrPostal(postalRouteName);
+        writer.writeEndElement();
+    }
+
+    private void writePostOfficeName(GenericTypedGrPostal postOfficeName) throws XMLStreamException {
+        writer.writeStartElement(URI_XAL, TAG_POST_OFFICE_NAME);
+        this.writeGenericTypedGrPostal(postOfficeName);
         writer.writeEndElement();
     }
 
@@ -693,6 +711,36 @@ public class XalWriter extends StaxStreamWriter {
 
     private void writePostOffice(PostOffice postOffice) throws XMLStreamException{
         writer.writeStartElement(URI_XAL,TAG_POST_OFFICE);
+
+        if (postOffice.getType() != null){
+            writer.writeAttribute(ATT_TYPE, postOffice.getType());
+        }
+        if (postOffice.getIndicator() != null){
+            writer.writeAttribute(ATT_INDICATOR, postOffice.getIndicator());
+        }
+        if (postOffice.getAddressLines() != null){
+            for (GenericTypedGrPostal addressLine : postOffice.getAddressLines()){
+                this.writeAddressLine(addressLine);
+            }
+        }
+        if (postOffice.getPostOfficeNames() != null){
+            for (GenericTypedGrPostal postOfficeName : postOffice.getPostOfficeNames()){
+                this.writePostOfficeName(postOfficeName);
+            }
+        }
+        if (postOffice.getPostOfficeNumber() != null){
+            this.writePostOfficeNumber(postOffice.getPostOfficeNumber());
+        }
+        if (postOffice.getPostalRoute() != null){
+            this.writePostalRoute(postOffice.getPostalRoute());
+        }
+        if (postOffice.getPostBox() != null){
+            this.writePostBox(postOffice.getPostBox());
+        }
+        if (postOffice.getPostalCode() != null){
+            this.writePostalCode(postOffice.getPostalCode());
+        }
+
         writer.writeEndElement();
     }
 
@@ -772,9 +820,143 @@ public class XalWriter extends StaxStreamWriter {
         writer.writeEndElement();
     }
 
-    private void writeLargeMailUser(LargeMailUser largeMailUser) {}
+    private void writeLargeMailUser(LargeMailUser largeMailUser) throws XMLStreamException {
+        writer.writeStartElement(URI_XAL,TAG_LARGE_MAIL_USER);
+        if (largeMailUser.getType() != null){
+            writer.writeAttribute(ATT_TYPE, largeMailUser.getType());
+        }
+        if (largeMailUser.getAddressLines() != null){
+            for(GenericTypedGrPostal addressLine : largeMailUser.getAddressLines()){
+                this.writeAddressLine(addressLine);
+            }
+        }
+        if (largeMailUser.getLargeMailUserNames() != null){
+            for(LargeMailUserName largeMailUserName : largeMailUser.getLargeMailUserNames()){
+                this.writeLargeMailUserName(largeMailUserName);
+            }
+        }
+        if (largeMailUser.getLargeMailUserIdentifier() != null){
+            this.writeLargeMailUserIdentifier(largeMailUser.getLargeMailUserIdentifier());
+        }
+        if (largeMailUser.getBuildingNames() != null){
+            for (BuildingName buildingName : largeMailUser.getBuildingNames()){
+                this.writeBuildingName(buildingName);
+            }
+        }
+        if (largeMailUser.getDepartment() != null){
+            this.writeDepartment(largeMailUser.getDepartment());
+        }
+        if (largeMailUser.getPostBox() != null){
+            this.writePostBox(largeMailUser.getPostBox());
+        }
+        if (largeMailUser.getThoroughfare() != null){
+            this.writeThoroughfare(largeMailUser.getThoroughfare());
+        }
+        if (largeMailUser.getPostalCode() != null){
+            this.writePostalCode(largeMailUser.getPostalCode());
+        }
+        writer.writeEndElement();
+    }
 
-    private void writePostalRoute(PostalRoute postalRoute) {}
+    private void writeLargeMailUserName(LargeMailUserName largeMailUserName) throws XMLStreamException{
+        writer.writeStartElement(URI_XAL,TAG_LARGE_MAIL_USER_NAME);
+        if (largeMailUserName.getType() != null){
+            writer.writeAttribute(ATT_TYPE, largeMailUserName.getType());
+        }
+        if (largeMailUserName.getCode() != null){
+            writer.writeAttribute(ATT_CODE, largeMailUserName.getCode());
+        }
+        if (largeMailUserName.getContent() != null){
+            writer.writeCharacters(largeMailUserName.getContent());
+        }
+        writer.writeEndElement();
+    }
+
+    private void writeLargeMailUserIdentifier(LargeMailUserIdentifier largeMailUserIdentifier) throws XMLStreamException{
+        writer.writeStartElement(URI_XAL,TAG_LARGE_MAIL_USER_IDENTIFIER);
+        if (largeMailUserIdentifier.getType() != null){
+            writer.writeAttribute(ATT_TYPE, largeMailUserIdentifier.getType());
+        }
+        if (largeMailUserIdentifier.getIndicator() != null){
+            writer.writeAttribute(ATT_INDICATOR, largeMailUserIdentifier.getIndicator());
+        }
+        if (largeMailUserIdentifier.getGrPostal() != null){
+            this.writeGrPostal(largeMailUserIdentifier.getGrPostal());
+        }
+        if (largeMailUserIdentifier.getContent() != null){
+            writer.writeCharacters(largeMailUserIdentifier.getContent());
+        }
+        writer.writeEndElement();
+    }
+
+    private void writeBuildingName(BuildingName buildingName) throws XMLStreamException{
+        writer.writeStartElement(URI_XAL,TAG_BUILDING_NAME);
+        if (buildingName.getType() != null){
+            writer.writeAttribute(ATT_TYPE, buildingName.getType());
+        }
+        if (buildingName.getTypeOccurrence() != null){
+            writer.writeAttribute(ATT_TYPE_OCCURRENCE, buildingName.getTypeOccurrence().getAfterBeforeEnum());
+        }
+        if (buildingName.getGrPostal() != null){
+            this.writeGrPostal(buildingName.getGrPostal());
+        }
+        if (buildingName.getContent() != null){
+            writer.writeCharacters(buildingName.getContent());
+        }
+        writer.writeEndElement();
+    }
+
+    private void writePostalRoute(PostalRoute postalRoute) throws XMLStreamException {
+        writer.writeStartElement(URI_XAL,TAG_POSTAL_ROUTE);
+        if (postalRoute.getType() != null){
+            writer.writeAttribute(ATT_TYPE, postalRoute.getType());
+        }
+        if (postalRoute.getAddressLines() != null){
+            for(GenericTypedGrPostal addressLine : postalRoute.getAddressLines()){
+                this.writeAddressLine(addressLine);
+            }
+        }
+        if (postalRoute.getPostalRouteNames() != null){
+            for(GenericTypedGrPostal postalRouteNames : postalRoute.getPostalRouteNames()){
+                this.writePostalRouteName(postalRouteNames);
+            }
+        }
+        if (postalRoute.getPostalRouteNumber() != null){
+            this.writePostalRouteNumber(postalRoute.getPostalRouteNumber());
+        }
+        if (postalRoute.getPostBox() != null){
+            this.writePostBox(postalRoute.getPostBox());
+        }
+        writer.writeEndElement();
+    }
+
+    private void writePostalRouteNumber(PostalRouteNumber postalRouteNumber) throws XMLStreamException{
+        writer.writeStartElement(URI_XAL,TAG_POSTAL_ROUTE_NUMBER);
+        if (postalRouteNumber.getGrPostal() != null){
+            this.writeGrPostal(postalRouteNumber.getGrPostal());
+        }
+        if (postalRouteNumber.getContent() != null){
+            writer.writeCharacters(postalRouteNumber.getContent());
+        }
+        writer.writeEndElement();
+    }
+
+    private void writePostOfficeNumber(PostOfficeNumber postOfficeNumber) throws XMLStreamException{
+        writer.writeStartElement(URI_XAL,TAG_POST_OFFICE_NUMBER);
+        if (postOfficeNumber.getIndicator() != null){
+            writer.writeAttribute(ATT_INDICATOR, postOfficeNumber.getIndicator());
+        }
+        if (postOfficeNumber.getIndicatorOccurrence() != null){
+            writer.writeAttribute(ATT_INDICATOR_OCCURRENCE, postOfficeNumber.getIndicatorOccurrence().getAfterBeforeEnum());
+        }
+        if (postOfficeNumber.getGrPostal() != null){
+            this.writeGrPostal(postOfficeNumber.getGrPostal());
+        }
+        if (postOfficeNumber.getContent() != null){
+            writer.writeCharacters(postOfficeNumber.getContent());
+        }
+        writer.writeEndElement();
+    }
 
     private void writePremise(Premise premise) {}
 

@@ -9,6 +9,9 @@ import org.geotoolkit.data.model.xal.AddressIdentifierDefault;
 import org.geotoolkit.data.model.xal.AddressLines;
 import org.geotoolkit.data.model.xal.AdministrativeArea;
 import org.geotoolkit.data.model.xal.AdministrativeAreaDefault;
+import org.geotoolkit.data.model.xal.AfterBeforeEnum;
+import org.geotoolkit.data.model.xal.BuildingName;
+import org.geotoolkit.data.model.xal.BuildingNameDefault;
 import org.geotoolkit.data.model.xal.Country;
 import org.geotoolkit.data.model.xal.CountryDefault;
 import org.geotoolkit.data.model.xal.CountryNameCode;
@@ -22,6 +25,12 @@ import org.geotoolkit.data.model.xal.GenericTypedGrPostal;
 import org.geotoolkit.data.model.xal.GenericTypedGrPostalDefault;
 import org.geotoolkit.data.model.xal.GrPostal;
 import org.geotoolkit.data.model.xal.GrPostalDefault;
+import org.geotoolkit.data.model.xal.LargeMailUser;
+import org.geotoolkit.data.model.xal.LargeMailUserDefault;
+import org.geotoolkit.data.model.xal.LargeMailUserIdentifier;
+import org.geotoolkit.data.model.xal.LargeMailUserIdentifierDefault;
+import org.geotoolkit.data.model.xal.LargeMailUserName;
+import org.geotoolkit.data.model.xal.LargeMailUserNameDefault;
 import org.geotoolkit.data.model.xal.Locality;
 import org.geotoolkit.data.model.xal.LocalityDefault;
 import org.geotoolkit.data.model.xal.MailStop;
@@ -38,6 +47,10 @@ import org.geotoolkit.data.model.xal.PostBoxNumberPrefix;
 import org.geotoolkit.data.model.xal.PostBoxNumberPrefixDefault;
 import org.geotoolkit.data.model.xal.PostBoxNumberSuffix;
 import org.geotoolkit.data.model.xal.PostBoxNumberSuffixDefault;
+import org.geotoolkit.data.model.xal.PostOffice;
+import org.geotoolkit.data.model.xal.PostOfficeDefault;
+import org.geotoolkit.data.model.xal.PostOfficeNumber;
+import org.geotoolkit.data.model.xal.PostOfficeNumberDefault;
 import org.geotoolkit.data.model.xal.PostTown;
 import org.geotoolkit.data.model.xal.PostTownDefault;
 import org.geotoolkit.data.model.xal.PostTownSuffix;
@@ -46,6 +59,10 @@ import org.geotoolkit.data.model.xal.PostalCode;
 import org.geotoolkit.data.model.xal.PostalCodeDefault;
 import org.geotoolkit.data.model.xal.PostalCodeNumberExtension;
 import org.geotoolkit.data.model.xal.PostalCodeNumberExtensionDefault;
+import org.geotoolkit.data.model.xal.PostalRoute;
+import org.geotoolkit.data.model.xal.PostalRouteDefault;
+import org.geotoolkit.data.model.xal.PostalRouteNumber;
+import org.geotoolkit.data.model.xal.PostalRouteNumberDefault;
 import org.geotoolkit.data.model.xal.PostalServiceElements;
 import org.geotoolkit.data.model.xal.PostalServiceElementsDefault;
 import org.geotoolkit.data.model.xal.Premise;
@@ -330,6 +347,90 @@ public class XalFactoryDefault implements XalFactory {
     public PostTown createPostTown(List<GenericTypedGrPostal> addressLines,
             List<GenericTypedGrPostal> postTownNames, PostTownSuffix postTownSuffix, String type) {
         return new PostTownDefault(addressLines, postTownNames, postTownSuffix, type);
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public LargeMailUserIdentifier createLargeMailUserIdentifier(String type, String indicator, GrPostal grPostal, String content) {
+        return new LargeMailUserIdentifierDefault(type, indicator, grPostal, content);
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public LargeMailUserName createLargeMailUserName(String type, String code, String content) {
+        return new LargeMailUserNameDefault(type, code, content);
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public LargeMailUser createLargeMailUser(List<GenericTypedGrPostal> addressLines,
+            List<LargeMailUserName> largeMailUserNames, LargeMailUserIdentifier largeMailUserIdentifier,
+            List<BuildingName> buildingNames, Department department, PostBox postBox,
+            Thoroughfare thoroughfare, PostalCode postalCode, String type) {
+        return new LargeMailUserDefault(addressLines, largeMailUserNames,
+                largeMailUserIdentifier, buildingNames, department,
+                postBox, thoroughfare, postalCode, type);
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public BuildingName createBuildingName(String type, AfterBeforeEnum typeOccurrence,
+            GrPostal grPostal, String content) {
+        return new BuildingNameDefault(type, typeOccurrence, grPostal, content);
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public PostalRouteNumber createPostalRouteNumber(GrPostal grPostal, String content) {
+        return new PostalRouteNumberDefault(grPostal, content);
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public PostalRoute createPostalRoute(List<GenericTypedGrPostal> addressLines,
+            Object localisation,
+            PostBox postBox, String type) throws XalException {
+        return new PostalRouteDefault(addressLines, localisation, postBox, type);
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public PostOffice createPostOffice(List<GenericTypedGrPostal> addressLines,
+            Object localisation, PostalRoute postalRoute, PostBox postBox,
+            PostalCode postalCode, String type, String indicator) throws XalException {
+        return new PostOfficeDefault(addressLines, localisation, postalRoute,
+                postBox, postalCode, type, indicator);
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public PostOfficeNumber createPostOfficeNumber(String indicator,
+            AfterBeforeEnum indicatorOccurence, GrPostal grPostal, String content) {
+        return new PostOfficeNumberDefault(indicator, indicatorOccurence, grPostal, content);
     }
 
 }

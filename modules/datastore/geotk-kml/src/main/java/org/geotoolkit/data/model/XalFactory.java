@@ -5,6 +5,8 @@ import org.geotoolkit.data.model.xal.AddressDetails;
 import org.geotoolkit.data.model.xal.AddressIdentifier;
 import org.geotoolkit.data.model.xal.AddressLines;
 import org.geotoolkit.data.model.xal.AdministrativeArea;
+import org.geotoolkit.data.model.xal.AfterBeforeEnum;
+import org.geotoolkit.data.model.xal.BuildingName;
 import org.geotoolkit.data.model.xal.Country;
 import org.geotoolkit.data.model.xal.CountryNameCode;
 import org.geotoolkit.data.model.xal.Department;
@@ -12,6 +14,9 @@ import org.geotoolkit.data.model.xal.DependentLocality;
 import org.geotoolkit.data.model.xal.Firm;
 import org.geotoolkit.data.model.xal.GenericTypedGrPostal;
 import org.geotoolkit.data.model.xal.GrPostal;
+import org.geotoolkit.data.model.xal.LargeMailUser;
+import org.geotoolkit.data.model.xal.LargeMailUserIdentifier;
+import org.geotoolkit.data.model.xal.LargeMailUserName;
 import org.geotoolkit.data.model.xal.Locality;
 import org.geotoolkit.data.model.xal.MailStop;
 import org.geotoolkit.data.model.xal.MailStopNumber;
@@ -20,10 +25,14 @@ import org.geotoolkit.data.model.xal.PostBoxNumber;
 import org.geotoolkit.data.model.xal.PostBoxNumberExtension;
 import org.geotoolkit.data.model.xal.PostBoxNumberPrefix;
 import org.geotoolkit.data.model.xal.PostBoxNumberSuffix;
+import org.geotoolkit.data.model.xal.PostOffice;
+import org.geotoolkit.data.model.xal.PostOfficeNumber;
 import org.geotoolkit.data.model.xal.PostTown;
 import org.geotoolkit.data.model.xal.PostTownSuffix;
 import org.geotoolkit.data.model.xal.PostalCode;
 import org.geotoolkit.data.model.xal.PostalCodeNumberExtension;
+import org.geotoolkit.data.model.xal.PostalRoute;
+import org.geotoolkit.data.model.xal.PostalRouteNumber;
 import org.geotoolkit.data.model.xal.PostalServiceElements;
 import org.geotoolkit.data.model.xal.Premise;
 import org.geotoolkit.data.model.xal.SortingCode;
@@ -335,4 +344,99 @@ public interface XalFactory {
      */
     public PostTown createPostTown(List<GenericTypedGrPostal> addressLines,
             List<GenericTypedGrPostal> postTownNames, PostTownSuffix postTownSuffix, String type);
+
+    /**
+     *
+     * @param type
+     * @param indicator
+     * @param grPostal
+     * @param content
+     * @return
+     */
+    public LargeMailUserIdentifier createLargeMailUserIdentifier(String type,
+            String indicator, GrPostal grPostal, String content);
+
+    /**
+     *
+     * @param type
+     * @param code
+     * @param content
+     * @return
+     */
+    public LargeMailUserName createLargeMailUserName(String type, String code, String content);
+
+    /**
+     * 
+     * @param addressLines
+     * @param largeMailUserNames
+     * @param largeMailUserIdentifier
+     * @param buildingNames
+     * @param department
+     * @param postBox
+     * @param thoroughfare
+     * @param postalCode
+     * @param type
+     * @return
+     */
+    public LargeMailUser createLargeMailUser(List<GenericTypedGrPostal> addressLines,
+            List<LargeMailUserName> largeMailUserNames, LargeMailUserIdentifier largeMailUserIdentifier,
+            List<BuildingName> buildingNames, Department department, PostBox postBox,
+            Thoroughfare thoroughfare, PostalCode postalCode, String type);
+
+    /**
+     * 
+     * @param type
+     * @param typeOccurrence
+     * @param grPostal
+     * @param content
+     * @return
+     */
+    public BuildingName createBuildingName(String type, AfterBeforeEnum typeOccurrence,
+            GrPostal grPostal, String content);
+
+    /**
+     *
+     * @param grPostal
+     * @param content
+     * @return
+     */
+    public PostalRouteNumber createPostalRouteNumber(GrPostal grPostal, String content);
+
+    /**
+     * 
+     * @param addressLines
+     * @param localisation
+     * @param postBox
+     * @param type
+     * @return
+     * @throws XalException
+     */
+    public PostalRoute createPostalRoute(List<GenericTypedGrPostal> addressLines,
+            Object localisation, PostBox postBox, String type) throws XalException;
+
+    /**
+     * 
+     * @param addressLines
+     * @param localisation
+     * @param postalRoute
+     * @param postBox
+     * @param postalCode
+     * @param type
+     * @param indicator
+     * @return
+     * @throws XalException
+     */
+    public PostOffice createPostOffice(List<GenericTypedGrPostal> addressLines, Object localisation,
+            PostalRoute postalRoute, PostBox postBox, PostalCode postalCode, String type, String indicator) throws XalException;
+
+    /**
+     * 
+     * @param indicator
+     * @param indicatorOccurence
+     * @param grPostal
+     * @param content
+     * @return
+     */
+    public PostOfficeNumber createPostOfficeNumber(String indicator,
+            AfterBeforeEnum indicatorOccurence, GrPostal grPostal, String content);
 }

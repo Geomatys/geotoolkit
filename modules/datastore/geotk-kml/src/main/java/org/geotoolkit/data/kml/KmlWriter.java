@@ -1,6 +1,5 @@
 package org.geotoolkit.data.kml;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.logging.Level;

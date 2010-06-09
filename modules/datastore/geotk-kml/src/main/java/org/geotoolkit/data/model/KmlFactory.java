@@ -1306,6 +1306,6 @@ public interface KmlFactory {
      * @return
      */
     public ViewVolume createViewVolume(List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
-            Angle180 leftFov, Angle180 rightFov, Angle90 bottomFov, Angle90 topFov,
+            Angle180 leftFov, Angle180 rightFov, Angle90 bottomFov, Angle90 topFov, double near,
             List<SimpleType> viewVolumeSimpleExtensions, List<AbstractObject> viewVolumeObjectExtensions);
 }

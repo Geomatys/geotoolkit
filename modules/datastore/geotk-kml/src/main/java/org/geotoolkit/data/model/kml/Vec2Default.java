@@ -6,10 +6,10 @@ package org.geotoolkit.data.model.kml;
  */
 public class Vec2Default implements Vec2 {
 
-    private double x;
-    private double y;
-    private Units xUnit;
-    private Units yUnit;
+    private final double x;
+    private final double y;
+    private final Units xUnit;
+    private final Units yUnit;
 
     /**
      *

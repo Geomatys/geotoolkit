@@ -5,24 +5,26 @@ import java.util.List;
 /**
  * <p>This interface maps LargeMailUserType type.</p>
  *
- * <br />&lt;xs:complexType name="LargeMailUserType">
- * <br />&lt;xs:sequence>
- * <br />&lt;xs:element ref="AddressLine" minOccurs="0" maxOccurs="unbounded"/>
- * <br />&lt;xs:element name="LargeMailUserName" minOccurs="0" maxOccurs="unbounded">...
- * <br />&lt;/xs:element>
- * <br />&lt;xs:element name="LargeMailUserIdentifier" minOccurs="0">...
- * <br />&lt;/xs:element>
- * <br />&lt;xs:element name="BuildingName" type="BuildingNameType" minOccurs="0" maxOccurs="unbounded">...
- * <br />&lt;/xs:element>
- * <br />&lt;xs:element ref="Department" minOccurs="0"/>
- * <br />&lt;xs:element ref="PostBox" minOccurs="0"/>
- * <br />&lt;xs:element ref="Thoroughfare" minOccurs="0"/>
- * <br />&lt;xs:element ref="PostalCode" minOccurs="0"/>
- * <br />&lt;xs:any namespace="##other" minOccurs="0" maxOccurs="unbounded"/>
- * <br />&lt;/xs:sequence>
- * <br />&lt;xs:attribute name="Type" type="xs:string"/>
- * <br />&lt;xs:anyAttribute namespace="##other"/>
- * <br />&lt;/xs:complexType>
+ * <pre>
+ * &lt;xs:complexType name="LargeMailUserType">
+ *  &lt;xs:sequence>
+ *      &lt;xs:element ref="AddressLine" minOccurs="0" maxOccurs="unbounded"/>
+ *      &lt;xs:element name="LargeMailUserName" minOccurs="0" maxOccurs="unbounded">...
+ *      &lt;/xs:element>
+ *      &lt;xs:element name="LargeMailUserIdentifier" minOccurs="0">...
+ *      &lt;/xs:element>
+ *      &lt;xs:element name="BuildingName" type="BuildingNameType" minOccurs="0" maxOccurs="unbounded">...
+ *      &lt;/xs:element>
+ *      &lt;xs:element ref="Department" minOccurs="0"/>
+ *      &lt;xs:element ref="PostBox" minOccurs="0"/>
+ *      &lt;xs:element ref="Thoroughfare" minOccurs="0"/>
+ *      &lt;xs:element ref="PostalCode" minOccurs="0"/>
+ *      &lt;xs:any namespace="##other" minOccurs="0" maxOccurs="unbounded"/>
+ *  &lt;/xs:sequence>
+ *  &lt;xs:attribute name="Type" type="xs:string"/>
+ *  &lt;xs:anyAttribute namespace="##other"/>
+ * &lt;/xs:complexType>
+ * </pre>
  *
  * @author Samuel Andrés
  */

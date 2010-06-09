@@ -2,6 +2,7 @@ package org.geotoolkit.data.model.kml;
 
 import java.util.List;
 import org.geotoolkit.data.model.xsd.SimpleType;
+import static java.util.Collections.*;
 
 /**
  *
@@ -9,13 +10,13 @@ import org.geotoolkit.data.model.xsd.SimpleType;
  */
 public class ViewVolumeDefault extends AbstractObjectDefault implements ViewVolume {
 
-    private Angle180 leftFov;
-    private Angle180 rightFov;
-    private Angle90 bottomFov;
-    private Angle90 topFov;
-    private double near;
-    private List<SimpleType> viewVolumeSimpleExtensions;
-    private List<AbstractObject> viewVolumeObjectExtensions;
+    private final Angle180 leftFov;
+    private final Angle180 rightFov;
+    private final Angle90 bottomFov;
+    private final Angle90 topFov;
+    private final double near;
+    private final List<SimpleType> viewVolumeSimpleExtensions;
+    private final List<AbstractObject> viewVolumeObjectExtensions;
 
     /**
      *
@@ -29,15 +30,16 @@ public class ViewVolumeDefault extends AbstractObjectDefault implements ViewVolu
      * @param viewVolumeObjectExtensions
      */
     public ViewVolumeDefault(List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
-            Angle180 leftFov, Angle180 rightFov, Angle90 bottomFov, Angle90 topFov,
+            Angle180 leftFov, Angle180 rightFov, Angle90 bottomFov, Angle90 topFov, double near,
             List<SimpleType> viewVolumeSimpleExtensions, List<AbstractObject> viewVolumeObjectExtensions){
         super(objectSimpleExtensions, idAttributes);
         this.leftFov = leftFov;
         this.rightFov = rightFov;
         this.bottomFov = bottomFov;
         this.topFov = topFov;
-        this.viewVolumeSimpleExtensions = viewVolumeSimpleExtensions;
-        this.viewVolumeObjectExtensions = viewVolumeObjectExtensions;
+        this.near = near;
+        this.viewVolumeSimpleExtensions = (viewVolumeSimpleExtensions == null) ? EMPTY_LIST : viewVolumeSimpleExtensions;
+        this.viewVolumeObjectExtensions = (viewVolumeObjectExtensions == null) ? EMPTY_LIST : viewVolumeObjectExtensions;
     }
 
     /**

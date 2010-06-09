@@ -1055,10 +1055,10 @@ public class KmlFactoryDefault implements KmlFactory{
      */
     @Override
     public ViewVolume createViewVolume(List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
-            Angle180 leftFov, Angle180 rightFov, Angle90 bottomFov, Angle90 topFov,
+            Angle180 leftFov, Angle180 rightFov, Angle90 bottomFov, Angle90 topFov, double near,
             List<SimpleType> viewVolumeSimpleExtensions, List<AbstractObject> viewVolumeObjectExtensions){
         return new ViewVolumeDefault(objectSimpleExtensions, idAttributes,
-                leftFov, rightFov, bottomFov, topFov,
+                leftFov, rightFov, bottomFov, topFov, near,
                 viewVolumeSimpleExtensions, viewVolumeObjectExtensions);
     }
 

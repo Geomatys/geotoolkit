@@ -2047,7 +2047,7 @@ public class KmlReader extends StaxStreamReader {
         }
 
         return KmlReader.kmlFactory.createViewVolume(objectSimpleExtensions, idAttributes,
-                leftFov, rightFov, bottomFov, topFov, viewVolumeSimpleExtensions, viewVolumeObjectExtensions);
+                leftFov, rightFov, bottomFov, topFov, near, viewVolumeSimpleExtensions, viewVolumeObjectExtensions);
     }
 
     private PhotoOverlay readPhotoOverlay() throws XMLStreamException, KmlException {

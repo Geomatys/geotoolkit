@@ -6,24 +6,28 @@ import org.geotoolkit.data.model.xsd.SimpleType;
 /**
  * <p>This interface maps viewVolume element.</p>
  *
- * <br />&lt;element name="ViewVolume" type="kml:ViewVolumeType" substitutionGroup="kml:AbstractObjectGroup"/>
- * <br />&lt;complexType name="ViewVolumeType" final="#all">
- * <br />&lt;complexContent>
- * <br />&lt;extension base="kml:AbstractObjectType">
- * <br />&lt;sequence>
- * <br />&lt;element ref="kml:leftFov" minOccurs="0"/>
- * <br />&lt;element ref="kml:rightFov" minOccurs="0"/>
- * <br />&lt;element ref="kml:bottomFov" minOccurs="0"/>
- * <br />&lt;element ref="kml:topFov" minOccurs="0"/>
- * <br />&lt;element ref="kml:near" minOccurs="0"/>
- * <br />&lt;element ref="kml:ViewVolumeSimpleExtensionGroup" minOccurs="0" maxOccurs="unbounded"/>
- * <br />&lt;element ref="kml:ViewVolumeObjectExtensionGroup" minOccurs="0" maxOccurs="unbounded"/>
- * <br />&lt;/sequence>
- * <br />&lt;/extension>
- * <br />&lt;/complexContent>
- * <br />&lt;/complexType>
- * <br />&lt;element name="ViewVolumeSimpleExtensionGroup" abstract="true" type="anySimpleType"/>
- * <br />&lt;element name="ViewVolumeObjectExtensionGroup" abstract="true" substitutionGroup="kml:AbstractObjectGroup"/>
+ * <pre>
+ * &lt;element name="ViewVolume" type="kml:ViewVolumeType" substitutionGroup="kml:AbstractObjectGroup"/>
+ *
+ * &lt;complexType name="ViewVolumeType" final="#all">
+ *  &lt;complexContent>
+ *      &lt;extension base="kml:AbstractObjectType">
+ *          &lt;sequence>
+ *              &lt;element ref="kml:leftFov" minOccurs="0"/>
+ *              &lt;element ref="kml:rightFov" minOccurs="0"/>
+ *              &lt;element ref="kml:bottomFov" minOccurs="0"/>
+ *              &lt;element ref="kml:topFov" minOccurs="0"/>
+ *              &lt;element ref="kml:near" minOccurs="0"/>
+ *              &lt;element ref="kml:ViewVolumeSimpleExtensionGroup" minOccurs="0" maxOccurs="unbounded"/>
+ *              &lt;element ref="kml:ViewVolumeObjectExtensionGroup" minOccurs="0" maxOccurs="unbounded"/>
+ *          &lt;/sequence>
+ *      &lt;/extension>
+ *  &lt;/complexContent>
+ * &lt;/complexType>
+ *
+ * &lt;element name="ViewVolumeSimpleExtensionGroup" abstract="true" type="anySimpleType"/>
+ * &lt;element name="ViewVolumeObjectExtensionGroup" abstract="true" substitutionGroup="kml:AbstractObjectGroup"/>
+ * </pre>
  *
  * @author Samuel Andrés
  */

@@ -2,14 +2,16 @@ package org.geotoolkit.data.model.kml;
 /**
  * <p>This enumeration maps viewRefreshModeEnumType type.</p>
  *
- * <br />&lt;simpleType name="viewRefreshModeEnumType">
- * <br />&lt;restriction base="string">
- * <br />&lt;enumeration value="never"/>
- * <br />&lt;enumeration value="onRequest"/>
- * <br />&lt;enumeration value="onStop"/>
- * <br />&lt;enumeration value="onRegion"/>
- * <br />&lt;/restriction>
- * <br />&lt;/simpleType>
+ * <pre>
+ * &lt;simpleType name="viewRefreshModeEnumType">
+ *  &lt;restriction base="string">
+ *      &lt;enumeration value="never"/>
+ *      &lt;enumeration value="onRequest"/>
+ *      &lt;enumeration value="onStop"/>
+ *      &lt;enumeration value="onRegion"/>
+ *  &lt;/restriction>
+ * &lt;/simpleType>
+ * </pre>
  *
  * @author Samuel Andrés
  */
@@ -20,7 +22,7 @@ public enum ViewRefreshMode {
     ON_STOP("onStop"),
     ON_REGION("onRegion");
 
-    private String viewRefreshMode;
+    private final String viewRefreshMode;
 
     /**
      * 
@@ -55,14 +57,10 @@ public enum ViewRefreshMode {
      * @return The ViewRefreshMode instance corresponding to the viewRefreshMode parameter.
      */
     public static ViewRefreshMode transform(String viewRefreshMode, ViewRefreshMode defaultValue){
-        ViewRefreshMode resultat = defaultValue;
         for(ViewRefreshMode cm : ViewRefreshMode.values()){
-            if(cm.getViewRefreshMode().equals(viewRefreshMode)){
-                resultat = cm;
-                break;
-            }
+            if(cm.getViewRefreshMode().equals(viewRefreshMode)) return cm;
         }
-        return resultat;
+        return defaultValue;
     }
 
 }

@@ -5,21 +5,23 @@ import java.util.List;
 /**
  * <p>This interface maps PostalRouteType type.</p>
  *
- * <br />&lt;xs:complexType name="PostalRouteType">
- * <br />&lt;xs:sequence>
- * <br />&lt;xs:element ref="AddressLine" minOccurs="0" maxOccurs="unbounded"/>
- * <br />&lt;xs:choice>
- * <br />&lt;xs:element name="PostalRouteName" maxOccurs="unbounded">...
- * <br />&lt;/xs:element>
- * <br />&lt;xs:element name="PostalRouteNumber">...
- * <br />&lt;/xs:element>
- * <br />&lt;/xs:choice>
- * <br />&lt;xs:element ref="PostBox" minOccurs="0"/>
- * <br />&lt;xs:any namespace="##other" minOccurs="0" maxOccurs="unbounded"/>
- * <br />&lt;xs:sequence>
- * <br />&lt;xs:attribute name="Type"/>
- * <br />&lt;xs:anyAttribute namespace="##other"/>
- * <br />&lt;/xs:complexType>
+ * <pre>
+ * &lt;xs:complexType name="PostalRouteType">
+ *  &lt;xs:sequence>
+ *      &lt;xs:element ref="AddressLine" minOccurs="0" maxOccurs="unbounded"/>
+ *      &lt;xs:choice>
+ *          &lt;xs:element name="PostalRouteName" maxOccurs="unbounded">...
+ *          &lt;/xs:element>
+ *          &lt;xs:element name="PostalRouteNumber">...
+ *          &lt;/xs:element>
+ *      &lt;/xs:choice>
+ *      &lt;xs:element ref="PostBox" minOccurs="0"/>
+ *      &lt;xs:any namespace="##other" minOccurs="0" maxOccurs="unbounded"/>
+ *  &lt;xs:sequence>
+ *  &lt;xs:attribute name="Type"/>
+ *  &lt;xs:anyAttribute namespace="##other"/>
+ * &lt;/xs:complexType>
+ * </pre>
  *
  * @author Samuel Andrés
  */
@@ -36,7 +38,7 @@ public interface PostalRoute {
      *
      * @return
      */
-    public List<GenericTypedGrPostal> getPostalRouteName();
+    public List<GenericTypedGrPostal> getPostalRouteNames();
 
     /**
      * <p>Number of the Postal Route.</p>
