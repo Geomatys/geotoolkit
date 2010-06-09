@@ -5,38 +5,40 @@ import java.util.List;
 /**
  * <p>This interface maps DependentLocalityType type.</p>
  *
- * <br />&lt;xs:complexType name="DependentLocalityType">
- * <br />&lt;xs:sequence>
- * <br />&lt;xs:element ref="AddressLine" minOccurs="0" maxOccurs="unbounded"/>
- * <br />&lt;xs:element name="DependentLocalityName" minOccurs="0" maxOccurs="unbounded">...
- * <br />&lt;/xs:element>
- * <br />&lt;xs:element name="DependentLocalityNumber" minOccurs="0">...
- * <br />&lt;/xs:element>
- * <br />&lt;xs:choice minOccurs="0">
- * <br />&lt;xs:element ref="PostBox"/>
- * <br />&lt;xs:element name="LargeMailUser" type="LargeMailUserType">...
- * <br />&lt;/xs:element>
- * <br />&lt;xs:element ref="PostOffice"/>
- * <br />&lt;xs:element name="PostalRoute" type="PostalRouteType">...
- * <br />&lt;/xs:element>
- * <br />&lt;/xs:choice>
- * <br />&lt;xs:element ref="Thoroughfare" minOccurs="0"/>
- * <br />&lt;xs:element ref="Premise" minOccurs="0"/>
- * <br />&lt;xs:element name="DependentLocality" type="DependentLocalityType" minOccurs="0">...
- * <br />&lt;/xs:element>
- * <br />&lt;xs:element ref="PostalCode" minOccurs="0"/>
- * <br />&lt;xs:any namespace="##other" minOccurs="0" maxOccurs="unbounded"/>
- * <br />&lt;/xs:sequence>
- * <br />&lt;xs:attribute name="Type">...
- * <br />&lt;/xs:attribute>
- * <br />&lt;xs:attribute name="UsageType">...
- * <br />&lt;/xs:attribute>
- * <br />&lt;xs:attribute name="Connector">...
- * <br />&lt;/xs:attribute>
- * <br />&lt;xs:attribute name="Indicator">...
- * <br />&lt;/xs:attribute>
- * <br />&lt;xs:anyAttribute namespace="##other"/>
- * <br />&lt;/xs:complexType>
+ * <pre>
+ * &lt;xs:complexType name="DependentLocalityType">
+ *  &lt;xs:sequence>
+ *      &lt;xs:element ref="AddressLine" minOccurs="0" maxOccurs="unbounded"/>
+ *      &lt;xs:element name="DependentLocalityName" minOccurs="0" maxOccurs="unbounded">...
+ *      &lt;/xs:element>
+ *      &lt;xs:element name="DependentLocalityNumber" minOccurs="0">...
+ *      &lt;/xs:element>
+ *      &lt;xs:choice minOccurs="0">
+ *          &lt;xs:element ref="PostBox"/>
+ *          &lt;xs:element name="LargeMailUser" type="LargeMailUserType">...
+ *          &lt;/xs:element>
+ *          &lt;xs:element ref="PostOffice"/>
+ *          &lt;xs:element name="PostalRoute" type="PostalRouteType">...
+ *          &lt;/xs:element>
+ *      &lt;/xs:choice>
+ *      &lt;xs:element ref="Thoroughfare" minOccurs="0"/>
+ *      &lt;xs:element ref="Premise" minOccurs="0"/>
+ *      &lt;xs:element name="DependentLocality" type="DependentLocalityType" minOccurs="0">...
+ *      &lt;/xs:element>
+ *      &lt;xs:element ref="PostalCode" minOccurs="0"/>
+ *      &lt;xs:any namespace="##other" minOccurs="0" maxOccurs="unbounded"/>
+ *  &lt;/xs:sequence>
+ *  &lt;xs:attribute name="Type">...
+ *  &lt;/xs:attribute>
+ *  &lt;xs:attribute name="UsageType">...
+ *  &lt;/xs:attribute>
+ *  &lt;xs:attribute name="Connector">...
+ *  &lt;/xs:attribute>
+ *  &lt;xs:attribute name="Indicator">...
+ *  &lt;/xs:attribute>
+ *  &lt;xs:anyAttribute namespace="##other"/>
+ * &lt;/xs:complexType>
+ * </pre>
  * 
  * @author Samuel Andrés
  */

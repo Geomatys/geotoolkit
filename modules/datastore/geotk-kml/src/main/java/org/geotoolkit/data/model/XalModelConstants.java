@@ -33,6 +33,8 @@ public final class XalModelConstants {
     public static final String TAG_DEPARTMENT = "Department";
     public static final String TAG_DEPARTMENT_NAME = "DepartmentName";
     public static final String TAG_DEPENDENT_LOCALITY = "DependentLocality";
+    public static final String TAG_DEPENDENT_LOCALITY_NAME = "DependentLocalityName";
+    public static final String TAG_DEPENDENT_LOCALITY_NUMBER = "DependentLocalityNumber";
     public static final String TAG_ENDORSEMENT_LINE_CODE = "EndorsementLineCode";
     public static final String TAG_FIRM = "Firm";
     public static final String TAG_FIRM_NAME = "FirmName";
@@ -74,10 +76,12 @@ public final class XalModelConstants {
     public static final String ATT_ADDRESS_DETAILS_KEY = "AddressDetailsKey";
     public static final String ATT_ADDRESS_TYPE = "AddressType";
     public static final String ATT_CODE = "Code";
+    public static final String ATT_CONNECTOR = "Connector";
     public static final String ATT_CURRENT_STATUS = "CurrentStatus";
     public static final String ATT_IDENTIFIER_TYPE = "IdentifierType";
     public static final String ATT_INDICATOR = "Indicator";
     public static final String ATT_INDICATOR_OCCURRENCE = "IndicatorOccurrence";
+    public static final String ATT_NAME_NUMBER_OCCURRENCE = "NameNumberOccurrence";
     public static final String ATT_NAME_NUMBER_SEPARATOR = "NameNumberSeparator";
     public static final String ATT_NUMBER_EXTENSION_SEPARATOR = "NumberExtensionSeparator";
     public static final String ATT_NUMBER_PREFIX_SEPARATOR = "NumberPrefixSeparator";

@@ -19,6 +19,9 @@ import org.geotoolkit.data.model.xal.CountryNameCodeDefault;
 import org.geotoolkit.data.model.xal.Department;
 import org.geotoolkit.data.model.xal.DepartmentDefault;
 import org.geotoolkit.data.model.xal.DependentLocality;
+import org.geotoolkit.data.model.xal.DependentLocalityDefault;
+import org.geotoolkit.data.model.xal.DependentLocalityNumber;
+import org.geotoolkit.data.model.xal.DependentLocalityNumberDefault;
 import org.geotoolkit.data.model.xal.Firm;
 import org.geotoolkit.data.model.xal.FirmDefault;
 import org.geotoolkit.data.model.xal.GenericTypedGrPostal;
@@ -431,6 +434,32 @@ public class XalFactoryDefault implements XalFactory {
     public PostOfficeNumber createPostOfficeNumber(String indicator,
             AfterBeforeEnum indicatorOccurence, GrPostal grPostal, String content) {
         return new PostOfficeNumberDefault(indicator, indicatorOccurence, grPostal, content);
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public DependentLocalityNumber createDependentLocalityNumber(
+            AfterBeforeEnum nameNumberOccurence, GrPostal grPostal, String content) {
+        return new DependentLocalityNumberDefault(nameNumberOccurence, grPostal, content);
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public DependentLocality createDependentLocality(List<GenericTypedGrPostal> addressLines,
+            List<GenericTypedGrPostal> dependentLocalityNames,
+            DependentLocalityNumber dependentLocalityNumber,
+            Object localisation, Thoroughfare thoroughfare, Premise premise,
+            DependentLocality dependentLocality, PostalCode postalCode, String type,
+            String usageType, String connector, String indicator) throws XalException {
+        return new DependentLocalityDefault(addressLines, dependentLocalityNames,
+                dependentLocalityNumber, localisation, thoroughfare, premise,
+                dependentLocality, postalCode, type, usageType, connector, indicator);
     }
 
 }

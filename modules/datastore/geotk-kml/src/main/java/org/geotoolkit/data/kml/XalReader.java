@@ -20,6 +20,7 @@ import org.geotoolkit.data.model.xal.Country;
 import org.geotoolkit.data.model.xal.CountryNameCode;
 import org.geotoolkit.data.model.xal.Department;
 import org.geotoolkit.data.model.xal.DependentLocality;
+import org.geotoolkit.data.model.xal.DependentLocalityNumber;
 import org.geotoolkit.data.model.xal.Firm;
 import org.geotoolkit.data.model.xal.GenericTypedGrPostal;
 import org.geotoolkit.data.model.xal.GrPostal;
@@ -515,7 +516,7 @@ public class XalReader extends StaxStreamReader{
                         } else if (TAG_PREMISE.equals(eName)){
                             premise = this.readPremise();
                         } else if (TAG_DEPENDENT_LOCALITY.equals(eName)){
-                            dependentLocality = this.readPDependentLocality();
+                            dependentLocality = this.readDependentLocality();
                         } else if (TAG_POSTAL_CODE.equals(eName)){
                             postalCode = this.readPostalCode();
                         }
@@ -998,16 +999,76 @@ public class XalReader extends StaxStreamReader{
         return XalReader.xalFactory.createPostOfficeNumber(indicator, indicatorOccurence, grPostal, content);
     }
 
+     private DependentLocalityNumber readDependentLocalityNumber() throws XMLStreamException{
+         GrPostal grPostal = this.readGrPostal();
+         AfterBeforeEnum nameNumberOccurrence = AfterBeforeEnum.transform(reader.getAttributeValue(null, ATT_NAME_NUMBER_OCCURRENCE));
+         String content = reader.getElementText();
+         return XalReader.xalFactory.createDependentLocalityNumber(nameNumberOccurrence, grPostal, content);
+     }
+
+    private DependentLocality readDependentLocality() throws XMLStreamException, XalException {
+        List<GenericTypedGrPostal> addressLines = new ArrayList<GenericTypedGrPostal>();
+        List<GenericTypedGrPostal> dependentLocalityNames = new ArrayList<GenericTypedGrPostal>();
+        DependentLocalityNumber dependentLocalityNumber = null;
+        Object localisation = null;
+        Thoroughfare thoroughfare = null;
+        Premise premise = null;
+        DependentLocality dependentLocality = null;
+        PostalCode postalCode = null;
+        String type = reader.getAttributeValue(null, ATT_TYPE);
+        String usageType = reader.getAttributeValue(null, ATT_USAGE_TYPE);
+        String connector = reader.getAttributeValue(null, ATT_CONNECTOR);
+        String indicator = reader.getAttributeValue(null, ATT_INDICATOR);
+
+        boucle:
+        while (reader.hasNext()) {
+
+            switch (reader.next()) {
+                case XMLStreamConstants.START_ELEMENT:
+                    final String eName = reader.getLocalName();
+                    final String eUri = reader.getNamespaceURI();
+
+                    if (URI_XAL.equals(eUri)) {
+                        if (TAG_ADDRESS_LINE.equals(eName)) {
+                            addressLines.add(this.readGenericTypedGrPostal());
+                        } else if (TAG_DEPENDENT_LOCALITY_NAME.equals(eName)) {
+                            dependentLocalityNames.add(this.readGenericTypedGrPostal());
+                        } else if (TAG_DEPENDENT_LOCALITY_NUMBER.equals(eName)){
+                            dependentLocalityNumber = this.readDependentLocalityNumber();
+                        } else if (TAG_POST_BOX.equals(eName)){
+                            localisation = this.readPostBox();
+                        } else if (TAG_LARGE_MAIL_USER.equals(eName)){
+                            localisation = this.readLargeMailUser();
+                        } else if (TAG_POST_OFFICE.equals(eName)){
+                            localisation = this.readPostOffice();
+                        } else if (TAG_POSTAL_ROUTE.equals(eName)){
+                            localisation = this.readPostalRoute();
+                        } else if (TAG_THOROUGHFARE.equals(eName)){
+                            thoroughfare = this.readThoroughfare();
+                        } else if (TAG_PREMISE.equals(eName)){
+                            premise = this.readPremise();
+                        } else if (TAG_DEPENDENT_LOCALITY.equals(eName)){
+                            dependentLocality = this.readDependentLocality();
+                        } else if (TAG_POSTAL_CODE.equals(eName)){
+                            postalCode = this.readPostalCode();
+                        }
+                    }
+                    break;
+
+                case XMLStreamConstants.END_ELEMENT:
+                    if (TAG_DEPENDENT_LOCALITY.equals(reader.getLocalName()) && URI_XAL.contains(reader.getNamespaceURI())) {
+                        break boucle;
+                    }
+                    break;
+            }
+        }
+        return XalReader.xalFactory.createDependentLocality(addressLines, dependentLocalityNames,
+                dependentLocalityNumber, localisation, thoroughfare, premise,
+                dependentLocality, postalCode, type, usageType, connector, indicator);
+    }
+
     private Thoroughfare readThoroughfare() {return null;}
 
     private Premise readPremise() {return null;}
-
-    private DependentLocality readPDependentLocality() {return null;}
-    
-    
-
-    
-
-    
 
 }

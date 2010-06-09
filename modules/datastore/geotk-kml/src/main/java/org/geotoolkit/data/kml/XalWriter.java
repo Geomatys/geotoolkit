@@ -14,6 +14,7 @@ import org.geotoolkit.data.model.xal.Country;
 import org.geotoolkit.data.model.xal.CountryNameCode;
 import org.geotoolkit.data.model.xal.Department;
 import org.geotoolkit.data.model.xal.DependentLocality;
+import org.geotoolkit.data.model.xal.DependentLocalityNumber;
 import org.geotoolkit.data.model.xal.Firm;
 import org.geotoolkit.data.model.xal.GenericTypedGrPostal;
 import org.geotoolkit.data.model.xal.GrPostal;
@@ -338,6 +339,12 @@ public class XalWriter extends StaxStreamWriter {
         writer.writeEndElement();
     }
 
+    private void writeDependentLocalityName(GenericTypedGrPostal dependentLocalityName) throws XMLStreamException {
+        writer.writeStartElement(URI_XAL, TAG_DEPENDENT_LOCALITY_NAME);
+        this.writeGenericTypedGrPostal(dependentLocalityName);
+        writer.writeEndElement();
+    }
+
     private void writeTownName(GenericTypedGrPostal postTownName) throws XMLStreamException {
         writer.writeStartElement(URI_XAL, TAG_POST_TOWN_NAME);
         this.writeGenericTypedGrPostal(postTownName);
@@ -401,6 +408,60 @@ public class XalWriter extends StaxStreamWriter {
             this.writePostOffice(administrativeArea.getPostOffice());
         } else if (administrativeArea.getPostalCode() != null){
             this.writePostalCode(administrativeArea.getPostalCode());
+        }
+        writer.writeEndElement();
+    }
+
+    private void writeDependentLocality(DependentLocality dependentLocality) throws XMLStreamException {
+        writer.writeStartElement(URI_XAL,TAG_DEPENDENT_LOCALITY);
+        if (dependentLocality.getType() != null){
+            writer.writeAttribute(ATT_TYPE, dependentLocality.getType());
+        }
+        if (dependentLocality.getUsageType() != null){
+            writer.writeAttribute(ATT_USAGE_TYPE, dependentLocality.getUsageType());
+        }
+        if (dependentLocality.getConnector() != null){
+            writer.writeAttribute(ATT_CONNECTOR, dependentLocality.getConnector());
+        }
+        if (dependentLocality.getIndicator() != null){
+            writer.writeAttribute(ATT_INDICATOR, dependentLocality.getIndicator());
+        }
+        if (dependentLocality.getAddressLines() != null){
+            for (GenericTypedGrPostal addressLine : dependentLocality.getAddressLines()){
+                this.writeAddressLine(addressLine);
+            }
+        }
+        if (dependentLocality.getDependentLocalityNames() != null){
+            for (GenericTypedGrPostal dependentLocalityName : dependentLocality.getDependentLocalityNames()){
+                this.writeDependentLocalityName(dependentLocalityName);
+            }
+        }
+        if (dependentLocality.getDependentLocalityNumber() != null){
+            this.writeDependentLocalityNumber(dependentLocality.getDependentLocalityNumber());
+        }
+        if (dependentLocality.getPostBox() != null){
+            this.writePostBox(dependentLocality.getPostBox());
+        }
+        if (dependentLocality.getLargeMailUser() != null){
+            this.writeLargeMailUser(dependentLocality.getLargeMailUser());
+        }
+        if (dependentLocality.getPostOffice() != null){
+            this.writePostOffice(dependentLocality.getPostOffice());
+        }
+        if (dependentLocality.getPostalRoute() != null){
+            this.writePostalRoute(dependentLocality.getPostalRoute());
+        }
+        if (dependentLocality.getThoroughfare() != null){
+            this.writeThoroughfare(dependentLocality.getThoroughfare());
+        }
+        if (dependentLocality.getPremise() != null){
+            this.writePremise(dependentLocality.getPremise());
+        }
+        if (dependentLocality.getDependentLocality() != null){
+            this.writeDependentLocality(dependentLocality.getDependentLocality());
+        }
+        if (dependentLocality.getPostalCode() != null){
+            this.writePostalCode(dependentLocality.getPostalCode());
         }
         writer.writeEndElement();
     }
@@ -958,9 +1019,22 @@ public class XalWriter extends StaxStreamWriter {
         writer.writeEndElement();
     }
 
+    private void writeDependentLocalityNumber(DependentLocalityNumber dependentLocalityNumber) throws XMLStreamException{
+        writer.writeStartElement(URI_XAL,TAG_DEPENDENT_LOCALITY_NUMBER);
+        if (dependentLocalityNumber.getNameNumberOccurrence() != null){
+            writer.writeAttribute(ATT_NAME_NUMBER_OCCURRENCE, dependentLocalityNumber.getNameNumberOccurrence().getAfterBeforeEnum());
+        }
+        if (dependentLocalityNumber.getGrPostal() != null){
+            this.writeGrPostal(dependentLocalityNumber.getGrPostal());
+        }
+        if (dependentLocalityNumber.getContent() != null){
+            writer.writeCharacters(dependentLocalityNumber.getContent());
+        }
+        writer.writeEndElement();
+    }
+
     private void writePremise(Premise premise) {}
 
-    private void writeDependentLocality(DependentLocality dependentLocality) {}
 
 
 }

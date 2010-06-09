@@ -11,6 +11,7 @@ import org.geotoolkit.data.model.xal.Country;
 import org.geotoolkit.data.model.xal.CountryNameCode;
 import org.geotoolkit.data.model.xal.Department;
 import org.geotoolkit.data.model.xal.DependentLocality;
+import org.geotoolkit.data.model.xal.DependentLocalityNumber;
 import org.geotoolkit.data.model.xal.Firm;
 import org.geotoolkit.data.model.xal.GenericTypedGrPostal;
 import org.geotoolkit.data.model.xal.GrPostal;
@@ -439,4 +440,38 @@ public interface XalFactory {
      */
     public PostOfficeNumber createPostOfficeNumber(String indicator,
             AfterBeforeEnum indicatorOccurence, GrPostal grPostal, String content);
+
+    /**
+     * 
+     * @param nameNumberOccurence
+     * @param grPostal
+     * @param content
+     * @return
+     */
+    public DependentLocalityNumber createDependentLocalityNumber(
+            AfterBeforeEnum nameNumberOccurence, GrPostal grPostal, String content);
+
+    /**
+     *
+     * @param addressLines
+     * @param dependentLocalityNames
+     * @param dependentLocalityNumber
+     * @param localisation
+     * @param thoroughfare
+     * @param premise
+     * @param dependentLocality
+     * @param postalCode
+     * @param type
+     * @param usageType
+     * @param connector
+     * @param indicator
+     * @return
+     * @throws XalException
+     */
+    public DependentLocality createDependentLocality(List<GenericTypedGrPostal> addressLines,
+            List<GenericTypedGrPostal> dependentLocalityNames,
+            DependentLocalityNumber dependentLocalityNumber,
+            Object localisation, Thoroughfare thoroughfare, Premise premise,
+            DependentLocality dependentLocality, PostalCode postalCode,
+            String type, String usageType, String connector, String indicator) throws XalException;
 }
