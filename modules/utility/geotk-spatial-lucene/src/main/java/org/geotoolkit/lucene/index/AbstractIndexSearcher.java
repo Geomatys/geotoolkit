@@ -165,7 +165,7 @@ public abstract class AbstractIndexSearcher extends IndexLucene {
             final String metadataID = getMatchingID(searcher.doc(i));
             identifiers.add(i, metadataID);
         }
-        LOGGER.log(logLevel,identifiers.size() + " records founded.");
+        LOGGER.log(logLevel,identifiers.size() + " records found.");
     }
 
     /**
@@ -326,10 +326,20 @@ public abstract class AbstractIndexSearcher extends IndexLucene {
                 final SpatialQuery sub        = spatialQuery.getSubQueries().get(0);
                 final List<String> subResults = doSearch(sub);
                 final List<String> toRemove   = new ArrayList<String>();
-                for (String r : results) {
-                    if (!subResults.contains(r)) {
-                        toRemove.add(r);
+                if (operator == SerialChainFilter.AND) {
+                    for (String r : results) {
+                        if (!subResults.contains(r)) {
+                            toRemove.add(r);
+                        }
                     }
+                } else if (operator == SerialChainFilter.OR){
+                    for (String r : subResults) {
+                        if (!results.contains(r)) {
+                            results.add(r);
+                        }
+                    }
+                } else {
+                    LOGGER.warning("unimplemented case in doSearch");
                 }
                 results.removeAll(toRemove);
             }
