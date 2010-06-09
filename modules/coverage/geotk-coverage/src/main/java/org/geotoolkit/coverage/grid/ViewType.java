@@ -78,7 +78,7 @@ public enum ViewType {
     /**
      * Coverage data are packed, usually as integers convertible to geophysics values. The conversion
      * is performed by the {@linkplain org.geotoolkit.coverage.GridSampleDimension#getSampleToGeophysics
-     * sample to geophysics} transform.
+     * sample to geophysics} transform (called "<cite>Transfer Function</cite>" in ISO 19115-2).
      * <p>
      * This view is often synonymous to {@link #RENDERED}, but may be different for some data types
      * that are incompatible with {@linkplain IndexColorModel index color model} (e.g. 32 bits

@@ -2,7 +2,11 @@ Coverage core
 
   Implementations of Grid Coverage services, derived from ISO 19123 and OGC 01-004 specifications.
 
-  See {{{../index.html}Overview of Coverage support in Geotoolkit.org}}.
+  * {{{../index.html}Overview of Coverage support in Geotoolkit.org}}.
+
+  * {{{../faq.html}Frequently Asked Questions}}
+
+  * {{{../../../apidocs/org/geotoolkit/coverage/processing/operation/package-summary.html#package_description}List of supported operations}}
 
 
 * Packages provided in this module

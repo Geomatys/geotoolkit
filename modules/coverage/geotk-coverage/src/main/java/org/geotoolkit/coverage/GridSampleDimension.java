@@ -1171,9 +1171,9 @@ public class GridSampleDimension implements SampleDimension, Serializable {
     }
 
     /**
-     * Returns a transform from sample values to geophysics values. If this sample dimension
-     * has no category, then this method returns {@code null}. If all sample values are
-     * already geophysics values (including {@code NaN} for "no data" values), then this
+     * Returns the <cite>transfer function</cite> from sample values to geophysics values. If
+     * this sample dimension has no category, then this method returns {@code null}. If all sample
+     * values are already geophysics values (including {@code NaN} for "no data" values), then this
      * method returns an identity transform. Otherwise, this method returns a transform expecting
      * sample values as input and computing geophysics value as output. This transform will take
      * care of converting all "{@linkplain #getNoDataValues() no data values}" into
@@ -1183,8 +1183,8 @@ public class GridSampleDimension implements SampleDimension, Serializable {
      * transform is capable to differenciate {@code NaN} values to get back the original
      * sample value.
      *
-     * @return The transform from sample to geophysics values, or {@code null} if this
-     *         sample dimension do not defines any transform (which is not the same that
+     * @return The <cite>transfer function</cite> from sample to geophysics values, or {@code null}
+     *         if this sample dimension do not defines any transform (which is not the same that
      *         defining an identity transform).
      *
      * @see #getScale

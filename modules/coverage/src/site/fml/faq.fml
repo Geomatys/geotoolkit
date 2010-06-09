@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<faqs title="Coverage FAQ" toplink="false">
+  <part id="general">
+    <title>General</title>
+    <faq id="use">
+      <question>
+        How do I create and use a <code>GridCoverage2D</code>?
+      </question>
+      <answer>
+        <p>See the overview in the <a href="index.html">module home</a> page.</p>
+      </answer>
+    </faq>
+  </part>
+</faqs>

@@ -1,13 +1,29 @@
 Referencing core
 
   Implementations of Coordinate Reference Systems (CRS), conversion and transformation services
-  derived from ISO 19111. For a list of plugins, see the {{{../index.html}parent project}}.
+  derived from ISO 19111. For a list of plugins, definition of terms and tutorial, see the
+  {{{../index.html}parent project}}.
 
   * Getting started
 
   * {{{../faq.html}Frequently Asked Questions}}
 
+  * {{{../../../apidocs/org/geotoolkit/referencing/operation/provider/package-summary.html}List of supported transforms}}
 
-* Tutorial
 
-  * {{{http://jsorel.developpez.com/tutoriels/java/geotoolkit-georeferencement/}GeotoolKit - Géoréférencement}} (French)
+* References
+
+  * {{{http://www.geoapi.org/snapshot/javadoc/org/opengis/referencing/doc-files/WKT.html}Well Known Text (WKT) format}}
+
+  * {{{http://www.epsg-registry.org/}EPSG registry service}} (geodetic parameter dataset)
+
+
+* Packages provided in this module
+
+  The main packages are listed below.
+
+  * <<<org.geotoolkit.referencing>>> and sub-packages
+
+  * <<<org.geotoolkit.parameter>>>
+
+  * <<<org.geotoolkit.io.wkt>>>
