@@ -56,7 +56,7 @@ import org.geotoolkit.internal.sql.AuthenticatedDataSource;
  * and to recycle those threads, because this class may use a new connection for each thread.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.12
+ * @version 3.13
  *
  * @since 3.09 (derived from Seagis)
  * @module
@@ -376,6 +376,10 @@ public class Database implements Localized {
         Session session;
         final Long threadID = Thread.currentThread().getId();
         synchronized (sessions) {
+            /*
+             * WARNING: Do not invoke any method which may synchronize
+             *          on 'session' inside this synchronized block.
+             */
             session = sessions.get(threadID);
             if (session != null) {
                 if (session.threadID == null) {
@@ -562,11 +566,17 @@ public class Database implements Localized {
      * @throws SQLException If an error occured while closing the connection.
      */
     public void reset() throws SQLException {
+        final Session[] s;
         synchronized (sessions) {
-            for (final Session session : sessions.values()) {
-                session.close();
-            }
+            s = sessions.values().toArray(new Session[sessions.size()]);
             sessions.clear();
+        }
+        /*
+         * The calls to Session.close() must be performed
+         * outside the synchronized (sessions) block.
+         */
+        for (final Session session : s) {
+            session.close();
         }
         locale = null;
     }
