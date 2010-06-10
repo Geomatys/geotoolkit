@@ -7,19 +7,21 @@ package org.geotoolkit.data.model.xal;
  * A premise name is specified when the premise cannot be addressed
  * using a street name plus premise (house) number.</p>
  *
- * <br />&lt;xs:complexType mixed="true">
- * <br />&lt;xs:attribute name="Type"/>
- * <br />&lt;xs:attribute name="TypeOccurrence">
- * <br />&lt;xs:simpleType>
- * <br />&lt;xs:restriction base="xs:NMTOKEN">
- * <br />&lt;xs:enumeration value="Before"/>
- * <br />&lt;xs:enumeration value="After"/>
- * <br />&lt;/xs:restriction>
- * <br />&lt;/xs:simpleType>
- * <br />&lt;/xs:attribute>
- * <br />&lt;xs:attributeGroup ref="grPostal"/>
- * <br />&lt;xs:anyAttribute namespace="##other"/>
- * <br />&lt;/xs:complexType>
+ * <pre>
+ * &lt;xs:complexType mixed="true">
+ *  &lt;xs:attribute name="Type"/>
+ *  &lt;xs:attribute name="TypeOccurrence">
+ *  &lt;xs:simpleType>
+ *      &lt;xs:restriction base="xs:NMTOKEN">
+ *          &lt;xs:enumeration value="Before"/>
+ *          &lt;xs:enumeration value="After"/>
+ *      &lt;/xs:restriction>
+ *  &lt;/xs:simpleType>
+ *  &lt;/xs:attribute>
+ *  &lt;xs:attributeGroup ref="grPostal"/>
+ *  &lt;xs:anyAttribute namespace="##other"/>
+ * &lt;/xs:complexType>
+ * </pre>
  *
  * @author Samuel Andrés
  */
@@ -30,6 +32,6 @@ public interface PremiseName extends GenericTypedGrPostal {
      * 
      * @return
      */
-    public AfterBeforeEnum getTypeOccurence();
+    public AfterBeforeEnum getTypeOccurrence();
 
 }

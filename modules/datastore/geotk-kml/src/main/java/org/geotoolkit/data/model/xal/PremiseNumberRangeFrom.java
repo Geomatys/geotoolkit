@@ -5,16 +5,18 @@ import java.util.List;
 /**
  * <p>Start number details of the premise number range.</p>;
  *
- * <br />&lt;xs:element name="PremiseNumberRangeFrom">
- * <br />&lt;xs:complexType>
- * <br />&lt;xs:sequence>
- * <br />&lt;xs:element ref="AddressLine" minOccurs="0" maxOccurs="unbounded"/>
- * <br />&lt;xs:element ref="PremiseNumberPrefix" minOccurs="0" maxOccurs="unbounded"/>
- * <br />&lt;xs:element ref="PremiseNumber" maxOccurs="unbounded"/>
- * <br />&lt;xs:element ref="PremiseNumberSuffix" minOccurs="0" maxOccurs="unbounded"/>
- * <br />&lt;/xs:sequence>
- * <br />&lt;/xs:complexType>
- * <br />&lt;/xs:element>
+ * <pre>
+ * &lt;xs:element name="PremiseNumberRangeFrom">
+ *  &lt;xs:complexType>
+ *      &lt;xs:sequence>
+ *          &lt;xs:element ref="AddressLine" minOccurs="0" maxOccurs="unbounded"/>
+ *          &lt;xs:element ref="PremiseNumberPrefix" minOccurs="0" maxOccurs="unbounded"/>
+ *          &lt;xs:element ref="PremiseNumber" maxOccurs="unbounded"/>
+ *          &lt;xs:element ref="PremiseNumberSuffix" minOccurs="0" maxOccurs="unbounded"/>
+ *      &lt;/xs:sequence>
+ *  &lt;/xs:complexType>
+ * &lt;/xs:element>
+ * </pre>
  *
  * @author Samuel Andrés
  */
@@ -36,7 +38,7 @@ public interface PremiseNumberRangeFrom {
      *
      * @return
      */
-    public List<PremiseNumber> getPremiseNUmber();
+    public List<PremiseNumber> getPremiseNumbers();
 
     /**
      * 

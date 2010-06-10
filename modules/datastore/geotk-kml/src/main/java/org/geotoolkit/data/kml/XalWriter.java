@@ -8,7 +8,6 @@ import org.geotoolkit.data.model.xal.AddressDetails;
 import org.geotoolkit.data.model.xal.AddressIdentifier;
 import org.geotoolkit.data.model.xal.AddressLines;
 import org.geotoolkit.data.model.xal.AdministrativeArea;
-import org.geotoolkit.data.model.xal.AfterBeforeEnum;
 import org.geotoolkit.data.model.xal.BuildingName;
 import org.geotoolkit.data.model.xal.Country;
 import org.geotoolkit.data.model.xal.CountryNameCode;
@@ -39,8 +38,22 @@ import org.geotoolkit.data.model.xal.PostalRoute;
 import org.geotoolkit.data.model.xal.PostalRouteNumber;
 import org.geotoolkit.data.model.xal.PostalServiceElements;
 import org.geotoolkit.data.model.xal.Premise;
+import org.geotoolkit.data.model.xal.PremiseLocation;
+import org.geotoolkit.data.model.xal.PremiseName;
+import org.geotoolkit.data.model.xal.PremiseNumber;
+import org.geotoolkit.data.model.xal.PremiseNumberPrefix;
+import org.geotoolkit.data.model.xal.PremiseNumberRange;
+import org.geotoolkit.data.model.xal.PremiseNumberRangeFrom;
+import org.geotoolkit.data.model.xal.PremiseNumberRangeTo;
+import org.geotoolkit.data.model.xal.PremiseNumberSuffix;
 import org.geotoolkit.data.model.xal.SortingCode;
 import org.geotoolkit.data.model.xal.SubAdministrativeArea;
+import org.geotoolkit.data.model.xal.SubPremise;
+import org.geotoolkit.data.model.xal.SubPremiseLocation;
+import org.geotoolkit.data.model.xal.SubPremiseName;
+import org.geotoolkit.data.model.xal.SubPremiseNumber;
+import org.geotoolkit.data.model.xal.SubPremiseNumberPrefix;
+import org.geotoolkit.data.model.xal.SubPremiseNumberSuffix;
 import org.geotoolkit.data.model.xal.Thoroughfare;
 import org.geotoolkit.data.model.xal.Xal;
 import org.geotoolkit.xml.StaxStreamWriter;
@@ -514,11 +527,6 @@ public class XalWriter extends StaxStreamWriter {
         writer.writeEndElement();
     }
 
-    private void writeThoroughfare(Thoroughfare thoroughfare) throws XMLStreamException{
-        writer.writeStartElement(URI_XAL,TAG_THOROUGHFARE);
-        writer.writeEndElement();
-    }
-
     private void writeGenericTypedGrPostal(GenericTypedGrPostal generic) throws XMLStreamException{
         if (generic.getType() != null){
             writer.writeAttribute(ATT_TYPE, generic.getType());
@@ -967,6 +975,62 @@ public class XalWriter extends StaxStreamWriter {
         writer.writeEndElement();
     }
 
+    private void writePremiseName(PremiseName premiseName) throws XMLStreamException{
+        writer.writeStartElement(URI_XAL,TAG_PREMISE_NAME);
+        if (premiseName.getType() != null){
+            writer.writeAttribute(ATT_TYPE, premiseName.getType());
+        }
+        if (premiseName.getTypeOccurrence() != null){
+            writer.writeAttribute(ATT_TYPE_OCCURRENCE, premiseName.getTypeOccurrence().getAfterBeforeEnum());
+        }
+        if (premiseName.getGrPostal() != null){
+            this.writeGrPostal(premiseName.getGrPostal());
+        }
+        if (premiseName.getContent() != null){
+            writer.writeCharacters(premiseName.getContent());
+        }
+        writer.writeEndElement();
+    }
+
+    private void writePremiseLocation(PremiseLocation premiseLocation) throws XMLStreamException{
+        writer.writeStartElement(URI_XAL,TAG_PREMISE_LOCATION);
+        if (premiseLocation.getGrPostal() != null){
+            this.writeGrPostal(premiseLocation.getGrPostal());
+        }
+        if (premiseLocation.getContent() != null){
+            writer.writeCharacters(premiseLocation.getContent());
+        }
+        writer.writeEndElement();
+    }
+
+    private void writeSubPremiseName(SubPremiseName subPremiseName) throws XMLStreamException{
+        writer.writeStartElement(URI_XAL,TAG_SUB_PREMISE_NAME);
+        if (subPremiseName.getType() != null){
+            writer.writeAttribute(ATT_TYPE, subPremiseName.getType());
+        }
+        if (subPremiseName.getTypeOccurrence() != null){
+            writer.writeAttribute(ATT_TYPE_OCCURRENCE, subPremiseName.getTypeOccurrence().getAfterBeforeEnum());
+        }
+        if (subPremiseName.getGrPostal() != null){
+            this.writeGrPostal(subPremiseName.getGrPostal());
+        }
+        if (subPremiseName.getContent() != null){
+            writer.writeCharacters(subPremiseName.getContent());
+        }
+        writer.writeEndElement();
+    }
+
+    private void writeSubPremiseLocation(SubPremiseLocation subPremiseLocation) throws XMLStreamException{
+        writer.writeStartElement(URI_XAL,TAG_SUB_PREMISE_LOCATION);
+        if (subPremiseLocation.getGrPostal() != null){
+            this.writeGrPostal(subPremiseLocation.getGrPostal());
+        }
+        if (subPremiseLocation.getContent() != null){
+            writer.writeCharacters(subPremiseLocation.getContent());
+        }
+        writer.writeEndElement();
+    }
+
     private void writePostalRoute(PostalRoute postalRoute) throws XMLStreamException {
         writer.writeStartElement(URI_XAL,TAG_POSTAL_ROUTE);
         if (postalRoute.getType() != null){
@@ -1033,8 +1097,331 @@ public class XalWriter extends StaxStreamWriter {
         writer.writeEndElement();
     }
 
-    private void writePremise(Premise premise) {}
+    private void writePremise(Premise premise) throws XMLStreamException {
+        writer.writeStartElement(URI_XAL,TAG_PREMISE);
+        if (premise.getType() != null){
+            writer.writeAttribute(ATT_TYPE, premise.getType());
+        }
+        if (premise.getPremiseDependency() != null){
+            writer.writeAttribute(ATT_PREMISE_DEPENDENCY, premise.getPremiseDependency());
+        }
+        if (premise.getPremiseDependencyType() != null){
+            writer.writeAttribute(ATT_PREMISE_DEPENDENCY_TYPE, premise.getPremiseDependencyType());
+        }
+        if (premise.getPremiseThoroughfareConnector() != null){
+            writer.writeAttribute(ATT_PREMISE_THOROUGHFARE_CONNECTOR, premise.getPremiseThoroughfareConnector());
+        }
+        if (premise.getAddressLines() != null){
+            for(GenericTypedGrPostal addressLine : premise.getAddressLines()){
+                this.writeAddressLine(addressLine);
+            }
+        }
+        if (premise.getPremiseNames() != null){
+            for(PremiseName premiseName : premise.getPremiseNames()){
+                this.writePremiseName(premiseName);
+            }
+        }
+        if (premise.getPremiseLocation() != null){
+            this.writePremiseLocation(premise.getPremiseLocation());
+        }
+        if (premise.getPremiseNumbers() != null){
+            for(PremiseNumber premiseNumber : premise.getPremiseNumbers()){
+                this.writePremiseNumber(premiseNumber);
+            }
+        }
+        if (premise.getPremiseNumberRange() != null){
+            this.writePremiseNumberRange(premise.getPremiseNumberRange());
+        }
+        if (premise.getPremiseNumberPrefix() != null){
+            for(PremiseNumberPrefix premiseNumberPrefix : premise.getPremiseNumberPrefix()){
+                this.writePremiseNumberPrefix(premiseNumberPrefix);
+            }
+        }
+        if (premise.getPremiseNumberSuffix() != null){
+            for(PremiseNumberSuffix premiseNumberSuffix : premise.getPremiseNumberSuffix()){
+                this.writePremiseNumberSuffix(premiseNumberSuffix);
+            }
+        }
+        if (premise.getBuildingNames() != null){
+            for(BuildingName buildingName : premise.getBuildingNames()){
+                this.writeBuildingName(buildingName);
+            }
+        }
+        if (premise.getSubPremises() != null){
+            for(SubPremise subPremise : premise.getSubPremises()){
+                this.writeSubPremise(subPremise);
+            }
+        }
+        if (premise.getFirm() != null){
+            this.writeFirm(premise.getFirm());
+        }
+        if (premise.getMailStop() != null){
+            this.writeMailStop(premise.getMailStop());
+        }
+        if (premise.getPostalCode() != null){
+            this.writePostalCode(premise.getPostalCode());
+        }
+        if (premise.getPremise() != null){
+            this.writePremise(premise.getPremise());
+        }
+        writer.writeEndElement();
+    }
 
+    private void writePremiseNumber(PremiseNumber premiseNumber) throws XMLStreamException {
+        writer.writeStartElement(URI_XAL,TAG_PREMISE_NUMBER);
+        if (premiseNumber.getNumberType() != null){
+            writer.writeAttribute(ATT_NUMBER_TYPE, premiseNumber.getNumberType().getSingleRange());
+        }
+        if (premiseNumber.getType() != null){
+            writer.writeAttribute(ATT_TYPE, premiseNumber.getType());
+        }
+        if (premiseNumber.getIndicator() != null){
+            writer.writeAttribute(ATT_INDICATOR, premiseNumber.getIndicator());
+        }
+        if (premiseNumber.getIndicatorOccurrence() != null){
+            writer.writeAttribute(ATT_INDICATOR_OCCURRENCE, premiseNumber.getIndicatorOccurrence().getAfterBeforeEnum());
+        }
+        if (premiseNumber.getNumberTypeOccurrence() != null){
+            writer.writeAttribute(ATT_NUMBER_TYPE_OCCURRENCE, premiseNumber.getNumberTypeOccurrence().getAfterBeforeEnum());
+        }
+        if (premiseNumber.getGrPostal() != null){
+            this.writeGrPostal(premiseNumber.getGrPostal());
+        }
+        if (premiseNumber.getContent() != null){
+            writer.writeCharacters(premiseNumber.getContent());
+        }
+        writer.writeEndElement();
+    }
 
+    private void writeSubPremiseNumber(SubPremiseNumber subPremiseNumber) throws XMLStreamException {
+        writer.writeStartElement(URI_XAL,TAG_SUB_PREMISE_NUMBER);
+        if (subPremiseNumber.getIndicator() != null){
+            writer.writeAttribute(ATT_INDICATOR, subPremiseNumber.getIndicator());
+        }
+        if (subPremiseNumber.getIndicatorOccurrence() != null){
+            writer.writeAttribute(ATT_INDICATOR_OCCURRENCE, subPremiseNumber.getIndicatorOccurrence().getAfterBeforeEnum());
+        }
+        if (subPremiseNumber.getNumberTypeOccurrence() != null){
+            writer.writeAttribute(ATT_NUMBER_TYPE_OCCURRENCE, subPremiseNumber.getNumberTypeOccurrence().getAfterBeforeEnum());
+        }
+        if (subPremiseNumber.getPremiseNumberSeparator() != null){
+            writer.writeAttribute(ATT_PREMISE_NUMBER_SEPARATOR, subPremiseNumber.getPremiseNumberSeparator());
+        }
+        if (subPremiseNumber.getType() != null){
+            writer.writeAttribute(ATT_TYPE, subPremiseNumber.getType());
+        }
+        if (subPremiseNumber.getGrPostal() != null){
+            this.writeGrPostal(subPremiseNumber.getGrPostal());
+        }
+        if (subPremiseNumber.getContent() != null){
+            writer.writeCharacters(subPremiseNumber.getContent());
+        }
+        writer.writeEndElement();
+    }
 
+    private void writePremiseNumberRange(PremiseNumberRange premiseNumberRange) throws XMLStreamException {
+        writer.writeStartElement(URI_XAL,TAG_PREMISE_NUMBER_RANGE);
+        if (premiseNumberRange.getRangeType() != null){
+            writer.writeAttribute(ATT_RANGE_TYPE, premiseNumberRange.getRangeType());
+        }
+        if (premiseNumberRange.getIndicator() != null){
+            writer.writeAttribute(ATT_INDICATOR, premiseNumberRange.getIndicator());
+        }
+        if (premiseNumberRange.getSeparator() != null){
+            writer.writeAttribute(ATT_SEPARATOR, premiseNumberRange.getSeparator());
+        }
+        if (premiseNumberRange.getType() != null){
+            writer.writeAttribute(ATT_TYPE, premiseNumberRange.getType());
+        }
+        if (premiseNumberRange.getIndicatorOccurrence() != null){
+            writer.writeAttribute(ATT_INDICATOR_OCCURRENCE, premiseNumberRange.getIndicatorOccurrence().getAfterBeforeEnum());
+        }
+        if (premiseNumberRange.getNumberRangeOccurrence() != null){
+            writer.writeAttribute(ATT_NUMBER_RANGE_OCCURRENCE, premiseNumberRange.getNumberRangeOccurrence().getAfterBeforeTypeEnum());
+        }
+        if (premiseNumberRange.getPremiseNumberRangeFrom() != null){
+            this.writePremiseNumberRangeFrom(premiseNumberRange.getPremiseNumberRangeFrom());
+        }
+        if (premiseNumberRange.getPremiseNumberRangeTo() != null){
+            this.writePremiseNumberRangeTo(premiseNumberRange.getPremiseNumberRangeTo());
+        }
+        writer.writeEndElement();
+    }
+
+    private void writePremiseNumberRangeFrom(PremiseNumberRangeFrom premiseNumberRangeFrom) throws XMLStreamException {
+        writer.writeStartElement(URI_XAL,TAG_PREMISE_NUMBER_RANGE_FROM);
+        if (premiseNumberRangeFrom.getAddressLines() != null){
+            for(GenericTypedGrPostal addressLine : premiseNumberRangeFrom.getAddressLines()){
+                this.writeAddressLine(addressLine);
+            }
+        }
+        if (premiseNumberRangeFrom.getPremiseNumberPrefixes() != null){
+            for(PremiseNumberPrefix premiseNumberPrefix : premiseNumberRangeFrom.getPremiseNumberPrefixes()){
+                this.writePremiseNumberPrefix(premiseNumberPrefix);
+            }
+        }
+        if (premiseNumberRangeFrom.getPremiseNumbers() != null){
+            for(PremiseNumber premiseNumber : premiseNumberRangeFrom.getPremiseNumbers()){
+                this.writePremiseNumber(premiseNumber);
+            }
+        }
+        if (premiseNumberRangeFrom.getPremiseNumberSuffixes() != null){
+            for(PremiseNumberSuffix premiseNumberSuffix : premiseNumberRangeFrom.getPremiseNumberSuffixes()){
+                this.writePremiseNumberSuffix(premiseNumberSuffix);
+            }
+        }
+        writer.writeEndElement();
+    }
+
+    private void writePremiseNumberRangeTo(PremiseNumberRangeTo premiseNumberRangeTo) throws XMLStreamException {
+        writer.writeStartElement(URI_XAL,TAG_PREMISE_NUMBER_RANGE_TO);
+        if (premiseNumberRangeTo.getAddressLines() != null){
+            for(GenericTypedGrPostal addressLine : premiseNumberRangeTo.getAddressLines()){
+                this.writeAddressLine(addressLine);
+            }
+        }
+        if (premiseNumberRangeTo.getPremiseNumberPrefixes() != null){
+            for(PremiseNumberPrefix premiseNumberPrefix : premiseNumberRangeTo.getPremiseNumberPrefixes()){
+                this.writePremiseNumberPrefix(premiseNumberPrefix);
+            }
+        }
+        if (premiseNumberRangeTo.getPremiseNumbers() != null){
+            for(PremiseNumber premiseNumber : premiseNumberRangeTo.getPremiseNumbers()){
+                this.writePremiseNumber(premiseNumber);
+            }
+        }
+        if (premiseNumberRangeTo.getPremiseNumberSuffixes() != null){
+            for(PremiseNumberSuffix premiseNumberSuffix : premiseNumberRangeTo.getPremiseNumberSuffixes()){
+                this.writePremiseNumberSuffix(premiseNumberSuffix);
+            }
+        }
+        writer.writeEndElement();
+    }
+
+    private void writePremiseNumberPrefix(PremiseNumberPrefix premiseNumberPrefix) throws XMLStreamException {
+        writer.writeStartElement(URI_XAL,TAG_PREMISE_NUMBER_PREFIX);
+        if (premiseNumberPrefix.getNumberPrefixSeparator() != null){
+            writer.writeAttribute(ATT_NUMBER_PREFIX_SEPARATOR, premiseNumberPrefix.getNumberPrefixSeparator());
+        }
+        if (premiseNumberPrefix.getType() != null){
+            writer.writeAttribute(ATT_TYPE, premiseNumberPrefix.getType());
+        }
+        if (premiseNumberPrefix.getGrPostal() != null){
+            this.writeGrPostal(premiseNumberPrefix.getGrPostal());
+        }
+        if (premiseNumberPrefix.getContent() != null){
+            writer.writeCharacters(premiseNumberPrefix.getContent());
+        }
+        writer.writeEndElement();
+    }
+
+    private void writePremiseNumberSuffix(PremiseNumberSuffix premiseNumberSuffix) throws XMLStreamException {
+        writer.writeStartElement(URI_XAL,TAG_PREMISE_NUMBER_PREFIX);
+        if (premiseNumberSuffix.getNumberSuffixSeparator() != null){
+            writer.writeAttribute(ATT_NUMBER_SUFFIX_SEPARATOR, premiseNumberSuffix.getNumberSuffixSeparator());
+        }
+        if (premiseNumberSuffix.getType() != null){
+            writer.writeAttribute(ATT_TYPE, premiseNumberSuffix.getType());
+        }
+        if (premiseNumberSuffix.getGrPostal() != null){
+            this.writeGrPostal(premiseNumberSuffix.getGrPostal());
+        }
+        if (premiseNumberSuffix.getContent() != null){
+            writer.writeCharacters(premiseNumberSuffix.getContent());
+        }
+        writer.writeEndElement();
+    }
+
+    private void writeSubPremiseNumberPrefix(SubPremiseNumberPrefix subPremiseNumberPrefix) throws XMLStreamException {
+        writer.writeStartElement(URI_XAL,TAG_SUB_PREMISE_NUMBER_PREFIX);
+        if (subPremiseNumberPrefix.getNumberPrefixSeparator() != null){
+            writer.writeAttribute(ATT_NUMBER_PREFIX_SEPARATOR, subPremiseNumberPrefix.getNumberPrefixSeparator());
+        }
+        if (subPremiseNumberPrefix.getType() != null){
+            writer.writeAttribute(ATT_TYPE, subPremiseNumberPrefix.getType());
+        }
+        if (subPremiseNumberPrefix.getGrPostal() != null){
+            this.writeGrPostal(subPremiseNumberPrefix.getGrPostal());
+        }
+        if (subPremiseNumberPrefix.getContent() != null){
+            writer.writeCharacters(subPremiseNumberPrefix.getContent());
+        }
+        writer.writeEndElement();
+    }
+
+    private void writeSubPremiseNumberSuffix(SubPremiseNumberSuffix subPremiseNumberSuffix) throws XMLStreamException {
+        writer.writeStartElement(URI_XAL,TAG_SUB_PREMISE_NUMBER_PREFIX);
+        if (subPremiseNumberSuffix.getNumberSuffixSeparator() != null){
+            writer.writeAttribute(ATT_NUMBER_SUFFIX_SEPARATOR, subPremiseNumberSuffix.getNumberSuffixSeparator());
+        }
+        if (subPremiseNumberSuffix.getType() != null){
+            writer.writeAttribute(ATT_TYPE, subPremiseNumberSuffix.getType());
+        }
+        if (subPremiseNumberSuffix.getGrPostal() != null){
+            this.writeGrPostal(subPremiseNumberSuffix.getGrPostal());
+        }
+        if (subPremiseNumberSuffix.getContent() != null){
+            writer.writeCharacters(subPremiseNumberSuffix.getContent());
+        }
+        writer.writeEndElement();
+    }
+
+    private void writeSubPremise(SubPremise subPremise) throws XMLStreamException {
+        writer.writeStartElement(URI_XAL,TAG_SUB_PREMISE);
+        if (subPremise.getType() != null){
+            writer.writeAttribute(ATT_TYPE, subPremise.getType());
+        }
+        if (subPremise.getAddressLines() != null){
+            for(GenericTypedGrPostal addressLine : subPremise.getAddressLines()){
+                this.writeAddressLine(addressLine);
+            }
+        }
+        if (subPremise.getSubPremiseNames() != null){
+            for(SubPremiseName subPremiseName : subPremise.getSubPremiseNames()){
+                this.writeSubPremiseName(subPremiseName);
+            }
+        }
+        if (subPremise.getSubPremiseLocation() != null){
+            this.writeSubPremiseLocation(subPremise.getSubPremiseLocation());
+        }
+        if (subPremise.getSubPremiseNumbers() != null){
+            for(SubPremiseNumber subPremiseNumber : subPremise.getSubPremiseNumbers()){
+                this.writeSubPremiseNumber(subPremiseNumber);
+            }
+        }
+        if (subPremise.getSubPremiseNumberPrefixes() != null){
+            for(SubPremiseNumberPrefix subPremiseNumberPrefix : subPremise.getSubPremiseNumberPrefixes()){
+                this.writeSubPremiseNumberPrefix(subPremiseNumberPrefix);
+            }
+        }
+        if (subPremise.getSubPremiseNumberSuffixes() != null){
+            for(SubPremiseNumberSuffix subPremiseNumberSuffix : subPremise.getSubPremiseNumberSuffixes()){
+                this.writeSubPremiseNumberSuffix(subPremiseNumberSuffix);
+            }
+        }
+        if (subPremise.getBuildingNames() != null){
+            for(BuildingName buildingName : subPremise.getBuildingNames()){
+                this.writeBuildingName(buildingName);
+            }
+        }
+        if (subPremise.getFirm() != null){
+            this.writeFirm(subPremise.getFirm());
+        }
+        if (subPremise.getMailStop() != null){
+            this.writeMailStop(subPremise.getMailStop());
+        }
+        if (subPremise.getPostalCode() != null){
+            this.writePostalCode(subPremise.getPostalCode());
+        }
+        if (subPremise.getSubPremise() != null){
+            this.writeSubPremise(subPremise.getSubPremise());
+        }
+        writer.writeEndElement();
+
+    }
+
+    private void writeThoroughfare(Thoroughfare thoroughfare) throws XMLStreamException{
+        writer.writeStartElement(URI_XAL,TAG_THOROUGHFARE);
+        writer.writeEndElement();
+    }
 }

@@ -5,12 +5,14 @@ package org.geotoolkit.data.model.xal;
  *
  * <p>LOBBY, BASEMENT, GROUND FLOOR, etc...</p>
  *
- * <br />&lt;xs:element name="PremiseLocation">
- * <br />&lt;xs:complexType mixed="true">
- * <br />&lt;xs:attributeGroup ref="grPostal"/>
- * <br />&lt;xs:anyAttribute namespace="##other"/>
- * <br />&lt;/xs:complexType>
- * <br />&lt;/xs:element>
+ * <pre>
+ * &lt;xs:element name="PremiseLocation">
+ *  &lt;xs:complexType mixed="true">
+ *      &lt;xs:attributeGroup ref="grPostal"/>
+ *      &lt;xs:anyAttribute namespace="##other"/>
+ *  &lt;/xs:complexType>
+ * &lt;/xs:element>
+ * </pre>
  *
  * @author Samuel Andrés
  */

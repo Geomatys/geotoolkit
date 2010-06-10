@@ -4,14 +4,16 @@ package org.geotoolkit.data.model.xal;
  *
  * <p>23-25 Archer St, where number appears before name.</p>
  *
- * <br />&lt;xs:simpleType>
- * <br />&lt;s:restriction base="xs:NMTOKEN">
- * <br />&lt;xs:enumeration value="BeforeName"/>
- * <br />&lt;xs:enumeration value="AfterName"/>
- * <br />&lt;xs:enumeration value="BeforeType"/>
- * <br />&lt;xs:enumeration value="AfterType"/>
- * <br />&lt;/xs:restriction>
- * <br />&lt;/xs:simpleType>
+ * <pre>
+ * &lt;xs:simpleType>
+ *  &lt;s:restriction base="xs:NMTOKEN">
+ *      &lt;xs:enumeration value="BeforeName"/>
+ *      &lt;xs:enumeration value="AfterName"/>
+ *      &lt;xs:enumeration value="BeforeType"/>
+ *      &lt;xs:enumeration value="AfterType"/>
+ *  &lt;/xs:restriction>
+ * &lt;/xs:simpleType>
+ * </pre>
  *
  * @author Samuel Andrés
  */
@@ -36,7 +38,7 @@ public enum AfterBeforeTypeNameEnum {
      *
      * @return
      */
-    public String getNumberOccurrence(){
+    public String getAfterBeforeTypeEnum(){
         return this.afterBeforTypeName;
     }
 
@@ -58,7 +60,7 @@ public enum AfterBeforeTypeNameEnum {
      */
     public static AfterBeforeTypeNameEnum transform(String afterBeforTypeName, AfterBeforeTypeNameEnum defaultValue){
         for(AfterBeforeTypeNameEnum io : AfterBeforeTypeNameEnum.values()){
-            if(io.getNumberOccurrence().equals(afterBeforTypeName)) return io;
+            if(io.getAfterBeforeTypeEnum().equals(afterBeforTypeName)) return io;
         }
         return defaultValue;
     }

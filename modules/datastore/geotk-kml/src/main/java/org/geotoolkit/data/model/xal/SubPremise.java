@@ -5,35 +5,37 @@ import java.util.List;
 /**
  * <p>This interface maps SubpremiseType type.</p>
  *
- * <br />&lt;xs:complexType name="SubPremiseType">
- * <br />&lt;xs:sequence>
- * <br />&lt;xs:element ref="AddressLine" minOccurs="0" maxOccurs="unbounded"/>
- * <br />&lt;xs:element name="SubPremiseName" minOccurs="0" maxOccurs="unbounded">...
- * <br />&lt;/xs:element>
- * <br />&lt;xs:choice minOccurs="0">
- * <br />&lt;xs:element name="SubPremiseLocation">...
- * <br />&lt;/xs:element>
- * <br />&lt;xs:element name="SubPremiseNumber" minOccurs="0" maxOccurs="unbounded">...
- * <br />&lt;/xs:element>
- * <br />&lt;/xs:choice>
- * <br />&lt;xs:element name="SubPremiseNumberPrefix" minOccurs="0" maxOccurs="unbounded">...
- * <br />&lt;/xs:element>
- * <br />&lt;xs:element name="SubPremiseNumberSuffix" minOccurs="0" maxOccurs="unbounded">...
- * <br />&lt;/xs:element>
- * <br />&lt;xs:element name="BuildingName" type="BuildingNameType" minOccurs="0" maxOccurs="unbounded">...
- * <br />&lt;/xs:element>
- * <br />&lt;xs:element name="Firm" type="FirmType" minOccurs="0">...
- * <br />&lt;/xs:element>
- * <br />&lt;xs:element name="MailStop" type="MailStopType" minOccurs="0">...
- * <br />&lt;/xs:element>
- * <br />&lt;xs:element ref="PostalCode" minOccurs="0"/>
- * <br />&lt;xs:element name="SubPremise" type="SubPremiseType" minOccurs="0">...
- * <br />&lt;/xs:element>
- * <br />&lt;xs:any namespace="##other" minOccurs="0" maxOccurs="unbounded"/>
- * <br />&lt;/xs:sequence>
- * <br />&lt;xs:attribute name="Type"/>
- * <br />&lt;xs:anyAttribute namespace="##other"/>
- * <br />&lt;/xs:complexType>
+ * <pre>
+ * &lt;xs:complexType name="SubPremiseType">
+ *  &lt;xs:sequence>
+ *      &lt;xs:element ref="AddressLine" minOccurs="0" maxOccurs="unbounded"/>
+ *      &lt;xs:element name="SubPremiseName" minOccurs="0" maxOccurs="unbounded">...
+ *      &lt;/xs:element>
+ *      &lt;xs:choice minOccurs="0">
+ *          &lt;xs:element name="SubPremiseLocation">...
+ *          &lt;/xs:element>
+ *          &lt;xs:element name="SubPremiseNumber" minOccurs="0" maxOccurs="unbounded">...
+ *          &lt;/xs:element>
+ *      &lt;/xs:choice>
+ *      &lt;xs:element name="SubPremiseNumberPrefix" minOccurs="0" maxOccurs="unbounded">...
+ *      &lt;/xs:element>
+ *      &lt;xs:element name="SubPremiseNumberSuffix" minOccurs="0" maxOccurs="unbounded">...
+ *      &lt;/xs:element>
+ *      &lt;xs:element name="BuildingName" type="BuildingNameType" minOccurs="0" maxOccurs="unbounded">...
+ *      &lt;/xs:element>
+ *      &lt;xs:element name="Firm" type="FirmType" minOccurs="0">...
+ *      &lt;/xs:element>
+ *      &lt;xs:element name="MailStop" type="MailStopType" minOccurs="0">...
+ *      &lt;/xs:element>
+ *      &lt;xs:element ref="PostalCode" minOccurs="0"/>
+ *      &lt;xs:element name="SubPremise" type="SubPremiseType" minOccurs="0">...
+ *      &lt;/xs:element>
+ *      &lt;xs:any namespace="##other" minOccurs="0" maxOccurs="unbounded"/>
+ *  &lt;/xs:sequence>
+ *  &lt;xs:attribute name="Type"/>
+ *  &lt;xs:anyAttribute namespace="##other"/>
+ * &lt;/xs:complexType>
+ * </pre>
  *
  * @author Samuel Andrés
  */
@@ -72,7 +74,7 @@ public interface SubPremise {
      *
      * @return
      */
-    public List<SubPremiseNumberPrefix> getSubPremiseNumbersPrefixes();
+    public List<SubPremiseNumberPrefix> getSubPremiseNumberPrefixes();
 
     /**
      * <p>Suffix of the sub premise number. eg. A in 12A.</p>
@@ -122,7 +124,7 @@ public interface SubPremise {
      *
      * @return
      */
-    public List<SubPremise> getSubPremises();
+    public SubPremise getSubPremise();
 
     /**
      * 

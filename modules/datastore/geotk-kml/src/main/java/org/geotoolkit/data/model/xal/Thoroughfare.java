@@ -3,58 +3,60 @@ package org.geotoolkit.data.model.xal;
 import java.util.List;
 
 /**
- * <p></p>
+ * <p>This interface maps Thoroughfare element.</p>
  *
  * <p>Specification of a thoroughfare. A thoroughfare could be a rd, street, canal, river, etc.
  * Note dependentlocality in a street. For example, in some countries, a large street will
  * have many subdivisions with numbers. Normally the subdivision name is the same as the road name,
  * but with a number to identifiy it. Eg. SOI SUKUMVIT 3, SUKUMVIT RD, BANGKOK.</p>
  *
- * <br />&lt;xs:element name="Thoroughfare">
- * <br />&lt;xs:complexType>
- * <br />&lt;xs:sequence>
- * <br />&lt;xs:element ref="AddressLine" minOccurs="0" maxOccurs="unbounded"/>
- * <br />&lt;xs:choice minOccurs="0" maxOccurs="unbounded">
- * <br />&lt;xs:element ref="ThoroughfareNumber"/>
- * <br />&lt;xs:element name="ThoroughfareNumberRange">...
- * <br />&lt;/xs:element>
- * <br />&lt;/xs:choice>
- * <br />&lt;xs:element ref="ThoroughfareNumberPrefix" minOccurs="0" maxOccurs="unbounded"/>
- * <br />&lt;xs:element ref="ThoroughfareNumberSuffix" minOccurs="0" maxOccurs="unbounded"/>
- * <br />&lt;xs:element name="ThoroughfarePreDirection" type="ThoroughfarePreDirectionType" minOccurs="0">...
- * <br />&lt;/xs:element>
- * <br />&lt;xs:element name="ThoroughfareLeadingType" type="ThoroughfareLeadingTypeType" minOccurs="0">...
- * <br />&lt;/xs:element>
- * <br />&lt;xs:element name="ThoroughfareName" type="ThoroughfareNameType" minOccurs="0" maxOccurs="unbounded">...
- * <br />&lt;/xs:element>
- * <br />&lt;xs:element name="ThoroughfareTrailingType" type="ThoroughfareTrailingTypeType" minOccurs="0">...
- * <br />&lt;/xs:element>
- * <br />&lt;xs:element name="ThoroughfarePostDirection" type="ThoroughfarePostDirectionType" minOccurs="0">...
- * <br />&lt;/xs:element>
- * <br />&lt;xs:element name="DependentThoroughfare" minOccurs="0">...
- * <br />&lt;/xs:element>
- * <br />&lt;xs:choice minOccurs="0">
- * <br />&lt;xs:element name="DependentLocality" type="DependentLocalityType">...
- * <br />&lt;/xs:element>
- * <br />&lt;xs:element ref="Premise"/>
- * <br />&lt;xs:element name="Firm" type="FirmType">...
- * <br />&lt;/xs:element>
- * <br />&lt;xs:element ref="PostalCode"/>
- * <br />&lt;/xs:choice>
- * <br />&lt;xs:any namespace="##other" minOccurs="0" maxOccurs="unbounded"/>
- * <br />&lt;/xs:sequence>
- * <br />&lt;xs:attribute name="Type"/>
- * <br />&lt;xs:attribute name="DependentThoroughfares">...
- * <br />&lt;/xs:attribute>
- * <br />&lt;xs:attribute name="DependentThoroughfaresIndicator">...
- * <br />&lt;/xs:attribute>
- * <br />&lt;xs:attribute name="DependentThoroughfaresConnector">...
- * <br />&lt;/xs:attribute>
- * <br />&lt;xs:attribute name="DependentThoroughfaresType">...
- * <br />&lt;/xs:attribute>
- * <br />&lt;xs:anyAttribute namespace="##other"/>
- * <br />&lt;/xs:complexType>
- * <br />&lt;/xs:element>
+ * <pre>
+ * &lt;xs:element name="Thoroughfare">
+ *  &lt;xs:complexType>
+ *      &lt;xs:sequence>
+ *          &lt;xs:element ref="AddressLine" minOccurs="0" maxOccurs="unbounded"/>
+ *              &lt;xs:choice minOccurs="0" maxOccurs="unbounded">
+ *                  &lt;xs:element ref="ThoroughfareNumber"/>
+ *                  &lt;xs:element name="ThoroughfareNumberRange">...
+ *                  &lt;/xs:element>
+ *              &lt;/xs:choice>
+ *          &lt;xs:element ref="ThoroughfareNumberPrefix" minOccurs="0" maxOccurs="unbounded"/>
+ *          &lt;xs:element ref="ThoroughfareNumberSuffix" minOccurs="0" maxOccurs="unbounded"/>
+ *          &lt;xs:element name="ThoroughfarePreDirection" type="ThoroughfarePreDirectionType" minOccurs="0">...
+ *          &lt;/xs:element>
+ *          &lt;xs:element name="ThoroughfareLeadingType" type="ThoroughfareLeadingTypeType" minOccurs="0">...
+ *          &lt;/xs:element>
+ *          &lt;xs:element name="ThoroughfareName" type="ThoroughfareNameType" minOccurs="0" maxOccurs="unbounded">...
+ *          &lt;/xs:element>
+ *          &lt;xs:element name="ThoroughfareTrailingType" type="ThoroughfareTrailingTypeType" minOccurs="0">...
+ *          &lt;/xs:element>
+ *          &lt;xs:element name="ThoroughfarePostDirection" type="ThoroughfarePostDirectionType" minOccurs="0">...
+ *          &lt;/xs:element>
+ *          &lt;xs:element name="DependentThoroughfare" minOccurs="0">...
+ *          &lt;/xs:element>
+ *          &lt;xs:choice minOccurs="0">
+ *              &lt;xs:element name="DependentLocality" type="DependentLocalityType">...
+ *              &lt;/xs:element>
+ *              &lt;xs:element ref="Premise"/>
+ *              &lt;xs:element name="Firm" type="FirmType">...
+ *              &lt;/xs:element>
+ *              &lt;xs:element ref="PostalCode"/>
+ *          &lt;/xs:choice>
+ *          &lt;xs:any namespace="##other" minOccurs="0" maxOccurs="unbounded"/>
+ *      &lt;/xs:sequence>
+ *      &lt;xs:attribute name="Type"/>
+ *      &lt;xs:attribute name="DependentThoroughfares">...
+ *      &lt;/xs:attribute>
+ *      &lt;xs:attribute name="DependentThoroughfaresIndicator">...
+ *      &lt;/xs:attribute>
+ *      &lt;xs:attribute name="DependentThoroughfaresConnector">...
+ *      &lt;/xs:attribute>
+ *      &lt;xs:attribute name="DependentThoroughfaresType">...
+ *      &lt;/xs:attribute>
+ *      &lt;xs:anyAttribute namespace="##other"/>
+ *  &lt;/xs:complexType>
+ * &lt;/xs:element>
+ * </pre>
  *
  * @author Samuel Andrés
  */
@@ -70,13 +72,7 @@ public interface Thoroughfare {
      *
      * @return
      */
-    public List<ThoroughfareNumber> getThoroughfareNumbers();
-
-    /**
-     *
-     * @return
-     */
-    public List<ThoroughfareNumberRange> getThoroughfareNumberRanges();
+    public List<Object> getThoroughfareNumbers();
 
     /**
      *
@@ -113,7 +109,7 @@ public interface Thoroughfare {
      *
      * @return
      */
-    public GenericTypedGrPostal getfPostThoroughfareTrailingType();
+    public GenericTypedGrPostal getThoroughfareTrailingType();
 
     /**
      *

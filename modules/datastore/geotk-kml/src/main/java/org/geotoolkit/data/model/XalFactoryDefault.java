@@ -10,6 +10,7 @@ import org.geotoolkit.data.model.xal.AddressLines;
 import org.geotoolkit.data.model.xal.AdministrativeArea;
 import org.geotoolkit.data.model.xal.AdministrativeAreaDefault;
 import org.geotoolkit.data.model.xal.AfterBeforeEnum;
+import org.geotoolkit.data.model.xal.AfterBeforeTypeNameEnum;
 import org.geotoolkit.data.model.xal.BuildingName;
 import org.geotoolkit.data.model.xal.BuildingNameDefault;
 import org.geotoolkit.data.model.xal.Country;
@@ -69,10 +70,40 @@ import org.geotoolkit.data.model.xal.PostalRouteNumberDefault;
 import org.geotoolkit.data.model.xal.PostalServiceElements;
 import org.geotoolkit.data.model.xal.PostalServiceElementsDefault;
 import org.geotoolkit.data.model.xal.Premise;
+import org.geotoolkit.data.model.xal.PremiseDefault;
+import org.geotoolkit.data.model.xal.PremiseLocation;
+import org.geotoolkit.data.model.xal.PremiseLocationDefault;
+import org.geotoolkit.data.model.xal.PremiseName;
+import org.geotoolkit.data.model.xal.PremiseNameDefault;
+import org.geotoolkit.data.model.xal.PremiseNumber;
+import org.geotoolkit.data.model.xal.PremiseNumberDefault;
+import org.geotoolkit.data.model.xal.PremiseNumberPrefix;
+import org.geotoolkit.data.model.xal.PremiseNumberPrefixDefault;
+import org.geotoolkit.data.model.xal.PremiseNumberRange;
+import org.geotoolkit.data.model.xal.PremiseNumberRangeDefault;
+import org.geotoolkit.data.model.xal.PremiseNumberRangeFrom;
+import org.geotoolkit.data.model.xal.PremiseNumberRangeFromDefault;
+import org.geotoolkit.data.model.xal.PremiseNumberRangeTo;
+import org.geotoolkit.data.model.xal.PremiseNumberRangeToDefault;
+import org.geotoolkit.data.model.xal.PremiseNumberSuffix;
+import org.geotoolkit.data.model.xal.PremiseNumberSuffixDefault;
+import org.geotoolkit.data.model.xal.SingleRangeEnum;
 import org.geotoolkit.data.model.xal.SortingCode;
 import org.geotoolkit.data.model.xal.SortingCodeDefault;
 import org.geotoolkit.data.model.xal.SubAdministrativeArea;
 import org.geotoolkit.data.model.xal.SubAdministrativeAreaDefault;
+import org.geotoolkit.data.model.xal.SubPremise;
+import org.geotoolkit.data.model.xal.SubPremiseDefault;
+import org.geotoolkit.data.model.xal.SubPremiseLocation;
+import org.geotoolkit.data.model.xal.SubPremiseLocationDefault;
+import org.geotoolkit.data.model.xal.SubPremiseName;
+import org.geotoolkit.data.model.xal.SubPremiseNameDefault;
+import org.geotoolkit.data.model.xal.SubPremiseNumber;
+import org.geotoolkit.data.model.xal.SubPremiseNumberDefault;
+import org.geotoolkit.data.model.xal.SubPremiseNumberPrefix;
+import org.geotoolkit.data.model.xal.SubPremiseNumberPrefixDefault;
+import org.geotoolkit.data.model.xal.SubPremiseNumberSuffix;
+import org.geotoolkit.data.model.xal.SubPremiseNumberSuffixDefault;
 import org.geotoolkit.data.model.xal.Thoroughfare;
 import org.geotoolkit.data.model.xal.Xal;
 import org.geotoolkit.data.model.xal.XalDefault;
@@ -462,4 +493,171 @@ public class XalFactoryDefault implements XalFactory {
                 dependentLocality, postalCode, type, usageType, connector, indicator);
     }
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public Premise createPremise(List<GenericTypedGrPostal> addressLines, List<PremiseName> premiseNames,
+            Object location,
+            List<PremiseNumberPrefix> premiseNumberPrefixes,
+            List<PremiseNumberSuffix> premiseNumberSuffixes,
+            List<BuildingName> buildingNames,
+            Object sub,
+            MailStop mailStop, PostalCode postalCode, Premise premise,
+            String type, String premiseDependency, String premiseDependencyType,
+            String premiseThoroughfareConnector) throws XalException{
+        return new PremiseDefault(addressLines, premiseNames, location,
+                premiseNumberPrefixes, premiseNumberSuffixes, buildingNames,
+                sub, mailStop, postalCode, premise,
+                type, premiseDependency, premiseDependencyType, premiseThoroughfareConnector);
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public PremiseName createPremiseName(String type, AfterBeforeEnum typeOccurrence, GrPostal grPostal, String content) {
+        return new PremiseNameDefault(type, typeOccurrence, grPostal, content);
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public PremiseLocation createPremiseLocation(GrPostal grPostal, String content){
+        return new PremiseLocationDefault(grPostal, content);
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public SubPremiseName createSubPremiseName(String type, AfterBeforeEnum typeOccurrence, GrPostal grPostal, String content) {
+        return new SubPremiseNameDefault(type, typeOccurrence, grPostal, content);
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public SubPremiseLocation createSubPremiseLocation(GrPostal grPostal, String content){
+        return new SubPremiseLocationDefault(grPostal, content);
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public PremiseNumber createPremiseNumber(SingleRangeEnum numberType, String type, String indicator,
+            AfterBeforeEnum indicatorOccurrence, AfterBeforeEnum numberTypeOccurrence,
+            GrPostal grPostal, String content){
+        return new PremiseNumberDefault(numberType, type, indicator, indicatorOccurrence, numberTypeOccurrence, grPostal, content);
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public PremiseNumberRange createPremiseNumberRange(PremiseNumberRangeFrom premiseNumberRangeFrom,
+            PremiseNumberRangeTo premiseNumberRangeTo, String rangeType,
+            String indicator, String separator, String type,
+            AfterBeforeEnum indicatorOccurrence, AfterBeforeTypeNameEnum numberRangeOccurrence){
+        return new PremiseNumberRangeDefault(premiseNumberRangeFrom, premiseNumberRangeTo,
+                rangeType, indicator, separator, type, indicatorOccurrence, numberRangeOccurrence);
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public PremiseNumberRangeFrom createPremiseNumberRangeFrom(List<GenericTypedGrPostal> addressLines,
+            List<PremiseNumberPrefix> premiseNumberPrefixes,
+            List<PremiseNumber> premiseNumbers,
+            List<PremiseNumberSuffix> premiseNumberSuffixes) {
+        return new PremiseNumberRangeFromDefault(addressLines, premiseNumberPrefixes, premiseNumbers, premiseNumberSuffixes);
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public PremiseNumberRangeTo createPremiseNumberRangeTo(List<GenericTypedGrPostal> addressLines,
+            List<PremiseNumberPrefix> premiseNumberPrefixes,
+            List<PremiseNumber> premiseNumbers,
+            List<PremiseNumberSuffix> premiseNumberSuffixes) {
+        return new PremiseNumberRangeToDefault(addressLines, premiseNumberPrefixes, premiseNumbers, premiseNumberSuffixes);
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public PremiseNumberPrefix createPremiseNumberPrefix(String numberPrefixSeparator,
+            String type, GrPostal grPostal, String content) {
+        return new PremiseNumberPrefixDefault(numberPrefixSeparator, type, grPostal, content);
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public PremiseNumberSuffix createPremiseNumberSuffix(String numberSuffixSeparator,
+            String type, GrPostal grPostal, String content) {
+        return new PremiseNumberSuffixDefault(numberSuffixSeparator, type, grPostal, content);
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public SubPremiseNumberPrefix createSubPremiseNumberPrefix(String numberPrefixSeparator,
+            String type, GrPostal grPostal, String content) {
+        return new SubPremiseNumberPrefixDefault(numberPrefixSeparator, type, grPostal, content);
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public SubPremiseNumberSuffix createSubPremiseNumberSuffix(String numberSuffixSeparator,
+            String type, GrPostal grPostal, String content) {
+        return new SubPremiseNumberSuffixDefault(numberSuffixSeparator, type, grPostal, content);
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public SubPremiseNumber createSubPremiseNumber(String indicator,
+            AfterBeforeEnum indicatorOccurrence, AfterBeforeEnum numberTypeOccurrence,
+            String premiseNumberSeparator, String type, GrPostal grPostal, String content) {
+        return new SubPremiseNumberDefault(indicator, indicatorOccurrence,
+                numberTypeOccurrence, premiseNumberSeparator, type, grPostal, content);
+    }
+
+    @Override
+    public SubPremise createSubPremise(List<GenericTypedGrPostal> addressLines,
+            List<SubPremiseName> subPremiseNames, Object location,
+            List<SubPremiseNumberPrefix> subPremiseNumberPrefixes,
+            List<SubPremiseNumberSuffix> subPremiseNumberSuffixes,
+            List<BuildingName> buildingNames, Firm firm, MailStop mailStop,
+            PostalCode postalCode, SubPremise subPremise, String type) throws XalException {
+        return new SubPremiseDefault(addressLines, subPremiseNames, location,
+                subPremiseNumberPrefixes, subPremiseNumberSuffixes,
+                buildingNames, firm, mailStop, postalCode, subPremise, type);
+    }
 }

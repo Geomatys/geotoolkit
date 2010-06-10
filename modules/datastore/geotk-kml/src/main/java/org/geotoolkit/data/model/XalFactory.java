@@ -6,6 +6,7 @@ import org.geotoolkit.data.model.xal.AddressIdentifier;
 import org.geotoolkit.data.model.xal.AddressLines;
 import org.geotoolkit.data.model.xal.AdministrativeArea;
 import org.geotoolkit.data.model.xal.AfterBeforeEnum;
+import org.geotoolkit.data.model.xal.AfterBeforeTypeNameEnum;
 import org.geotoolkit.data.model.xal.BuildingName;
 import org.geotoolkit.data.model.xal.Country;
 import org.geotoolkit.data.model.xal.CountryNameCode;
@@ -36,8 +37,23 @@ import org.geotoolkit.data.model.xal.PostalRoute;
 import org.geotoolkit.data.model.xal.PostalRouteNumber;
 import org.geotoolkit.data.model.xal.PostalServiceElements;
 import org.geotoolkit.data.model.xal.Premise;
+import org.geotoolkit.data.model.xal.PremiseLocation;
+import org.geotoolkit.data.model.xal.PremiseName;
+import org.geotoolkit.data.model.xal.PremiseNumber;
+import org.geotoolkit.data.model.xal.PremiseNumberPrefix;
+import org.geotoolkit.data.model.xal.PremiseNumberRange;
+import org.geotoolkit.data.model.xal.PremiseNumberRangeFrom;
+import org.geotoolkit.data.model.xal.PremiseNumberRangeTo;
+import org.geotoolkit.data.model.xal.PremiseNumberSuffix;
+import org.geotoolkit.data.model.xal.SingleRangeEnum;
 import org.geotoolkit.data.model.xal.SortingCode;
 import org.geotoolkit.data.model.xal.SubAdministrativeArea;
+import org.geotoolkit.data.model.xal.SubPremise;
+import org.geotoolkit.data.model.xal.SubPremiseLocation;
+import org.geotoolkit.data.model.xal.SubPremiseName;
+import org.geotoolkit.data.model.xal.SubPremiseNumber;
+import org.geotoolkit.data.model.xal.SubPremiseNumberPrefix;
+import org.geotoolkit.data.model.xal.SubPremiseNumberSuffix;
 import org.geotoolkit.data.model.xal.Thoroughfare;
 import org.geotoolkit.data.model.xal.Xal;
 import org.geotoolkit.data.model.xal.XalException;
@@ -474,4 +490,210 @@ public interface XalFactory {
             Object localisation, Thoroughfare thoroughfare, Premise premise,
             DependentLocality dependentLocality, PostalCode postalCode,
             String type, String usageType, String connector, String indicator) throws XalException;
+
+    /**
+     * 
+     * @param addressLines
+     * @param premiseNames
+     * @param location
+     * @param premiseNumberPrefixes
+     * @param premiseNumberSuffixes
+     * @param buildingNames
+     * @param sub
+     * @param mailStop
+     * @param postalCode
+     * @param premise
+     * @param type
+     * @param premiseDependency
+     * @param premiseDependencyType
+     * @param premiseThoroughfareConnector
+     * @return
+     * @throws XalException
+     */
+    public Premise createPremise(List<GenericTypedGrPostal> addressLines, List<PremiseName> premiseNames,
+            Object location,
+            List<PremiseNumberPrefix> premiseNumberPrefixes,
+            List<PremiseNumberSuffix> premiseNumberSuffixes,
+            List<BuildingName> buildingNames,
+            Object sub,
+            MailStop mailStop, PostalCode postalCode, Premise premise,
+            String type, String premiseDependency, String premiseDependencyType,
+            String premiseThoroughfareConnector) throws XalException;
+
+    /**
+     * 
+     * @param type
+     * @param typeOccurrence
+     * @param grPostal
+     * @param content
+     * @return
+     */
+    public PremiseName createPremiseName(String type, AfterBeforeEnum typeOccurrence,
+            GrPostal grPostal, String content);
+
+    /**
+     *
+     * @param grPostal
+     * @param content
+     * @return
+     */
+    public PremiseLocation createPremiseLocation(GrPostal grPostal, String content);
+    /**
+     *
+     * @param type
+     * @param typeOccurrence
+     * @param grPostal
+     * @param content
+     * @return
+     */
+    public SubPremiseName createSubPremiseName(String type, AfterBeforeEnum typeOccurrence,
+            GrPostal grPostal, String content);
+
+    /**
+     *
+     * @param grPostal
+     * @param content
+     * @return
+     */
+    public SubPremiseLocation createSubPremiseLocation(GrPostal grPostal, String content);
+
+    /**
+     * 
+     * @param numberType
+     * @param type
+     * @param indicator
+     * @param indicatorOccurrence
+     * @param numberTypeOccurrence
+     * @param grPostal
+     * @param content
+     * @return
+     */
+    public PremiseNumber createPremiseNumber(SingleRangeEnum numberType, String type, String indicator,
+            AfterBeforeEnum indicatorOccurrence, AfterBeforeEnum numberTypeOccurrence,
+            GrPostal grPostal, String content);
+
+    /**
+     *
+     * @param premiseNumberRangeFrom
+     * @param premiseNumberRangeTo
+     * @param rangeType
+     * @param indicator
+     * @param separator
+     * @param type
+     * @param indicatorOccurrence
+     * @param numberRangeOccurrence
+     * @return
+     */
+    public PremiseNumberRange createPremiseNumberRange(PremiseNumberRangeFrom premiseNumberRangeFrom,
+            PremiseNumberRangeTo premiseNumberRangeTo, String rangeType,
+            String indicator, String separator, String type,
+            AfterBeforeEnum indicatorOccurrence, AfterBeforeTypeNameEnum numberRangeOccurrence);
+
+    /**
+     * 
+     * @param addressLines
+     * @param premiseNumberPrefixes
+     * @param premiseNumbers
+     * @param premiseNumberSuffixes
+     * @return
+     */
+    public PremiseNumberRangeFrom createPremiseNumberRangeFrom(List<GenericTypedGrPostal> addressLines,
+            List<PremiseNumberPrefix> premiseNumberPrefixes,
+            List<PremiseNumber> premiseNumbers,
+            List<PremiseNumberSuffix> premiseNumberSuffixes);
+
+    /**
+     * 
+     * @param addressLines
+     * @param premiseNumberPrefixes
+     * @param premiseNumbers
+     * @param premiseNumberSuffixes
+     * @return
+     */
+    public PremiseNumberRangeTo createPremiseNumberRangeTo(List<GenericTypedGrPostal> addressLines,
+            List<PremiseNumberPrefix> premiseNumberPrefixes,
+            List<PremiseNumber> premiseNumbers,
+            List<PremiseNumberSuffix> premiseNumberSuffixes);
+
+    /**
+     *
+     * @param numberPrefixSeparator
+     * @param type
+     * @param grPostal
+     * @param content
+     * @return
+     */
+    public PremiseNumberPrefix createPremiseNumberPrefix(String numberPrefixSeparator,
+            String type, GrPostal grPostal, String content);
+
+    /**
+     * 
+     * @param numberSuffixSeparator
+     * @param type
+     * @param grPostal
+     * @param content
+     * @return
+     */
+    public PremiseNumberSuffix createPremiseNumberSuffix(String numberSuffixSeparator,
+            String type, GrPostal grPostal, String content);
+
+        /**
+     *
+     * @param numberPrefixSeparator
+     * @param type
+     * @param grPostal
+     * @param content
+     * @return
+     */
+    public SubPremiseNumberPrefix createSubPremiseNumberPrefix(String numberPrefixSeparator,
+            String type, GrPostal grPostal, String content);
+
+    /**
+     *
+     * @param numberSuffixSeparator
+     * @param type
+     * @param grPostal
+     * @param content
+     * @return
+     */
+    public SubPremiseNumberSuffix createSubPremiseNumberSuffix(String numberSuffixSeparator,
+            String type, GrPostal grPostal, String content);
+
+    /**
+     * 
+     * @param indicator
+     * @param indicatorOccurrence
+     * @param numberTypeOccurrence
+     * @param premiseNumberSeparator
+     * @param type
+     * @param grPostal
+     * @param content
+     * @return
+     */
+    public SubPremiseNumber createSubPremiseNumber(String indicator, AfterBeforeEnum indicatorOccurrence,
+            AfterBeforeEnum numberTypeOccurrence, String premiseNumberSeparator,
+            String type, GrPostal grPostal, String content);
+
+    /**
+     * 
+     * @param addressLines
+     * @param subPremiseNames
+     * @param location
+     * @param subPremiseNumberPrefixes
+     * @param subPremiseNumberSuffixes
+     * @param buildingNames
+     * @param firm
+     * @param mailStop
+     * @param postalCode
+     * @param subPremise
+     * @param type
+     * @return
+     * @throws XalException
+     */
+    public SubPremise createSubPremise(List<GenericTypedGrPostal> addressLines,
+            List<SubPremiseName> subPremiseNames, Object location,
+            List<SubPremiseNumberPrefix> subPremiseNumberPrefixes,
+            List<SubPremiseNumberSuffix> subPremiseNumberSuffixes,
+            List<BuildingName> buildingNames, Firm firm, MailStop mailStop,
+            PostalCode postalCode, SubPremise subPremise, String type) throws XalException;
 }

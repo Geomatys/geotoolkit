@@ -5,21 +5,23 @@ package org.geotoolkit.data.model.xal;
  *
  * <p>Eg.: 23 Archer street or 25/15 Zero Avenue, etc.</p>
  *
- * <br />&lt;xs:element name="ThoroughfareNumber">
- * <br />&lt;xs:complexType mixed="true">
- * <br />&lt;xs:attribute name="SingleRangeEnum">...
- * <br />&lt;/xs:attribute>
- * <br />&lt;xs:attribute name="Type"/>
- * <br />&lt;xs:attribute name="Indicator">
- * <br />&lt;/xs:attribute>
- * <br />&lt;xs:attribute name="AfterBeforeEnum">...
- * <br />&lt;/xs:attribute>
- * <br />&lt;xs:attribute name="AfterBeforeTypeNameEnum">...
- * <br />&lt;/xs:attribute>
- * <br />&lt;xs:attributeGroup ref="grPostal"/>
- * <br />&lt;xs:anyAttribute namespace="##other"/>
- * <br />&lt;/xs:complexType>
- * <br />&lt;/xs:element>
+ * <pre>
+ * &lt;xs:element name="ThoroughfareNumber">
+ *  &lt;xs:complexType mixed="true">
+ *      &lt;xs:attribute name="SingleRangeEnum">...
+ *      &lt;/xs:attribute>
+ *      &lt;xs:attribute name="Type"/>
+ *      &lt;xs:attribute name="Indicator">
+ *      &lt;/xs:attribute>
+ *      &lt;xs:attribute name="AfterBeforeEnum">...
+ *      &lt;/xs:attribute>
+ *      &lt;xs:attribute name="AfterBeforeTypeNameEnum">...
+ *      &lt;/xs:attribute>
+ *      &lt;xs:attributeGroup ref="grPostal"/>
+ *      &lt;xs:anyAttribute namespace="##other"/>
+ *  &lt;/xs:complexType>
+ * &lt;/xs:element>
+ * </pre>
  *
  * @author Samuel Andrés
  */

@@ -1,6 +1,5 @@
 package org.geotoolkit.data.kml;
 
-import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -15,6 +14,7 @@ import org.geotoolkit.data.model.xal.AddressIdentifier;
 import org.geotoolkit.data.model.xal.AddressLines;
 import org.geotoolkit.data.model.xal.AdministrativeArea;
 import org.geotoolkit.data.model.xal.AfterBeforeEnum;
+import org.geotoolkit.data.model.xal.AfterBeforeTypeNameEnum;
 import org.geotoolkit.data.model.xal.BuildingName;
 import org.geotoolkit.data.model.xal.Country;
 import org.geotoolkit.data.model.xal.CountryNameCode;
@@ -45,8 +45,25 @@ import org.geotoolkit.data.model.xal.PostalRoute;
 import org.geotoolkit.data.model.xal.PostalRouteNumber;
 import org.geotoolkit.data.model.xal.PostalServiceElements;
 import org.geotoolkit.data.model.xal.Premise;
+import org.geotoolkit.data.model.xal.PremiseLocation;
+import org.geotoolkit.data.model.xal.PremiseName;
+import org.geotoolkit.data.model.xal.PremiseNumber;
+import org.geotoolkit.data.model.xal.PremiseNumberPrefix;
+import org.geotoolkit.data.model.xal.PremiseNumberPrefixDefault;
+import org.geotoolkit.data.model.xal.PremiseNumberRange;
+import org.geotoolkit.data.model.xal.PremiseNumberRangeFrom;
+import org.geotoolkit.data.model.xal.PremiseNumberRangeTo;
+import org.geotoolkit.data.model.xal.PremiseNumberSuffix;
+import org.geotoolkit.data.model.xal.PremiseNumberSuffixDefault;
+import org.geotoolkit.data.model.xal.SingleRangeEnum;
 import org.geotoolkit.data.model.xal.SortingCode;
 import org.geotoolkit.data.model.xal.SubAdministrativeArea;
+import org.geotoolkit.data.model.xal.SubPremise;
+import org.geotoolkit.data.model.xal.SubPremiseLocation;
+import org.geotoolkit.data.model.xal.SubPremiseName;
+import org.geotoolkit.data.model.xal.SubPremiseNumber;
+import org.geotoolkit.data.model.xal.SubPremiseNumberPrefix;
+import org.geotoolkit.data.model.xal.SubPremiseNumberSuffix;
 import org.geotoolkit.data.model.xal.Thoroughfare;
 import org.geotoolkit.data.model.xal.Xal;
 import org.geotoolkit.data.model.xal.XalException;
@@ -1067,8 +1084,348 @@ public class XalReader extends StaxStreamReader{
                 dependentLocality, postalCode, type, usageType, connector, indicator);
     }
 
+    private Premise readPremise() throws XMLStreamException, XalException {
+
+        List<GenericTypedGrPostal> addressLines = new ArrayList<GenericTypedGrPostal>();
+        List<PremiseName> premiseNames = new ArrayList<PremiseName>();
+        PremiseLocation premiseLocation = null;
+        List<PremiseNumber> premiseNumbers = new ArrayList<PremiseNumber>();
+        PremiseNumberRange premiseNumberRange = null;
+        Object location = null;
+        List<PremiseNumberPrefix> premiseNumberPrefixes = new ArrayList<PremiseNumberPrefix>();
+        List<PremiseNumberSuffix> premiseNumberSuffixes = new ArrayList<PremiseNumberSuffix>();
+        List<BuildingName> buildingNames = new ArrayList<BuildingName>();
+        List<SubPremise> subPremises = new ArrayList<SubPremise>();
+        Firm firm = null;
+        Object sub = null;
+        MailStop mailStop = null;
+        PostalCode postalCode = null;
+        Premise premise = null;
+        String type = reader.getAttributeValue(null, ATT_TYPE);
+        String premiseDependency = reader.getAttributeValue(null, ATT_PREMISE_DEPENDENCY);
+        String premiseDependencyType = reader.getAttributeValue(null, ATT_PREMISE_DEPENDENCY_TYPE);
+        String premiseThoroughfareConnector = reader.getAttributeValue(null, ATT_PREMISE_THOROUGHFARE_CONNECTOR);
+
+        boucle:
+        while (reader.hasNext()) {
+
+            switch (reader.next()) {
+                case XMLStreamConstants.START_ELEMENT:
+                    final String eName = reader.getLocalName();
+                    final String eUri = reader.getNamespaceURI();
+
+                    if (URI_XAL.equals(eUri)) {
+                        if (TAG_ADDRESS_LINE.equals(eName)) {
+                            addressLines.add(this.readGenericTypedGrPostal());
+                        } else if (TAG_PREMISE_NAME.equals(eName)) {
+                            premiseNames.add(this.readPremiseName());
+                        } else if (TAG_PREMISE_LOCATION.equals(eName)){
+                            premiseLocation = this.readPremiseLocation();
+                            if (location == null) location = premiseLocation;
+                        } else if (TAG_PREMISE_NUMBER.equals(eName)){
+                            premiseNumbers.add(this.readPremiseNumber());
+                            if (location == null) location = premiseNumbers;
+                        } else if (TAG_PREMISE_NUMBER_RANGE.equals(eName)){
+                            premiseNumberRange = this.readPremiseNumberRange();
+                            if (location == null) location = premiseNumberRange;
+                        } else if (TAG_PREMISE_NUMBER_PREFIX.equals(eName)){
+                            premiseNumberPrefixes.add(this.readPremiseNumberPrefix());
+                        } else if (TAG_PREMISE_NUMBER_SUFFIX.equals(eName)){
+                            premiseNumberSuffixes.add(this.readPremiseNumberSuffix());
+                        } else if (TAG_BUILDING_NAME.equals(eName)){
+                            buildingNames.add(this.readBuildingName());
+                        } else if (TAG_SUB_PREMISE.equals(eName)){
+                            subPremises.add(this.readSubPremise());
+                            if (sub == null) sub = subPremises;
+                        } else if (TAG_FIRM.equals(eName)){
+                            firm = this.readFirm();
+                            if (sub == null) sub = firm;
+                        } else if (TAG_MAIL_STOP.equals(eName)){
+                            mailStop = this.readMailStop();
+                        } else if (TAG_POSTAL_CODE.equals(eName)){
+                            postalCode = this.readPostalCode();
+                        } else if (TAG_PREMISE.equals(eName)){
+                            premise = this.readPremise();
+                        }
+                    }
+                    break;
+
+                case XMLStreamConstants.END_ELEMENT:
+                    if (TAG_PREMISE.equals(reader.getLocalName()) && URI_XAL.contains(reader.getNamespaceURI())) {
+                        break boucle;
+                    }
+                    break;
+            }
+        }
+        return XalReader.xalFactory.createPremise(addressLines, premiseNames, location,
+                premiseNumberPrefixes, premiseNumberSuffixes, buildingNames,
+                sub, mailStop, postalCode, premise,
+                type, premiseDependency, premiseDependencyType, premiseThoroughfareConnector);
+
+    }
+
+    private PremiseName readPremiseName() throws XMLStreamException {
+        String type = reader.getAttributeValue(null, ATT_TYPE);
+        AfterBeforeEnum typeOccurrence = AfterBeforeEnum.transform(reader.getAttributeValue(null, ATT_TYPE_OCCURRENCE));
+        GrPostal grPostal = this.readGrPostal();
+        String content = reader.getElementText();
+        return XalReader.xalFactory.createPremiseName(type, typeOccurrence, grPostal, content);
+    }
+
+    private PremiseLocation readPremiseLocation() throws XMLStreamException {
+        GrPostal grPostal = this.readGrPostal();
+        String content = reader.getElementText();
+        return XalReader.xalFactory.createPremiseLocation(grPostal, content);
+    }
+
+    private PremiseNumber readPremiseNumber() throws XMLStreamException {
+        SingleRangeEnum numberType = SingleRangeEnum.transform(reader.getAttributeValue(null, ATT_NUMBER_TYPE));
+        String type = reader.getAttributeValue(null, ATT_TYPE);
+        String indicator = reader.getAttributeValue(null, ATT_INDICATOR);
+        AfterBeforeEnum indicatorOccurrence = AfterBeforeEnum.transform(reader.getAttributeValue(null, ATT_INDICATOR_OCCURRENCE));
+        AfterBeforeEnum numberTypeOccurrence = AfterBeforeEnum.transform(reader.getAttributeValue(null, ATT_NUMBER_TYPE_OCCURRENCE));
+        GrPostal grPostal = this.readGrPostal();
+        String content = reader.getElementText();
+        return XalReader.xalFactory.createPremiseNumber(numberType, type, indicator,
+                indicatorOccurrence, numberTypeOccurrence, grPostal, content);
+    }
+
+    private PremiseNumberRange readPremiseNumberRange() throws XMLStreamException {
+        String rangeType = reader.getAttributeValue(null, ATT_RANGE_TYPE);
+        String indicator = reader.getAttributeValue(null, ATT_INDICATOR);
+        String separator = reader.getAttributeValue(null, ATT_SEPARATOR);
+        String type = reader.getAttributeValue(null, ATT_TYPE);
+        AfterBeforeEnum indicatorOccurrence = AfterBeforeEnum.transform(reader.getAttributeValue(null, ATT_INDICATOR_OCCURRENCE));
+        AfterBeforeTypeNameEnum numberRangeOccurrence = AfterBeforeTypeNameEnum.transform(reader.getAttributeValue(null, ATT_NUMBER_RANGE_OCCURRENCE));
+        PremiseNumberRangeFrom premiseNumberRangeFrom = null;
+        PremiseNumberRangeTo premiseNumberRangeTo = null;
+
+        boucle:
+        while (reader.hasNext()) {
+
+            switch (reader.next()) {
+                case XMLStreamConstants.START_ELEMENT:
+                    final String eName = reader.getLocalName();
+                    final String eUri = reader.getNamespaceURI();
+
+                    if (URI_XAL.equals(eUri)) {
+                        if (TAG_PREMISE_NUMBER_RANGE_FROM.equals(eName)) {
+                            premiseNumberRangeFrom = this.readPremiseNumberRangeFrom();
+                        } else if (TAG_PREMISE_NUMBER_RANGE_TO.equals(eName)) {
+                            premiseNumberRangeTo = this.readPremiseNumberRangeTo();
+                        }
+                    }
+                    break;
+
+                case XMLStreamConstants.END_ELEMENT:
+                    if (TAG_PREMISE_NUMBER_RANGE.equals(reader.getLocalName()) && URI_XAL.contains(reader.getNamespaceURI())) {
+                        break boucle;
+                    }
+                    break;
+            }
+        }
+        return XalReader.xalFactory.createPremiseNumberRange(premiseNumberRangeFrom,
+                premiseNumberRangeTo, rangeType, indicator, separator,
+                type, indicatorOccurrence, numberRangeOccurrence);
+    }
+
+    private PremiseNumberRangeFrom readPremiseNumberRangeFrom() throws XMLStreamException {
+        List<GenericTypedGrPostal> addressLines = new ArrayList<GenericTypedGrPostal>();
+        List<PremiseNumberPrefix> premiseNumberPrefixes = new ArrayList<PremiseNumberPrefix>();
+        List<PremiseNumber> premiseNumbers = new ArrayList<PremiseNumber>();
+        List<PremiseNumberSuffix> premiseNumberSuffixes = new ArrayList<PremiseNumberSuffix>();
+
+        boucle:
+        while (reader.hasNext()) {
+
+            switch (reader.next()) {
+                case XMLStreamConstants.START_ELEMENT:
+                    final String eName = reader.getLocalName();
+                    final String eUri = reader.getNamespaceURI();
+
+                    if (URI_XAL.equals(eUri)) {
+                        if (TAG_ADDRESS_LINE.equals(eName)) {
+                            addressLines.add(this.readGenericTypedGrPostal());
+                        } else if (TAG_PREMISE_NUMBER_PREFIX.equals(eName)){
+                            premiseNumberPrefixes.add(this.readPremiseNumberPrefix());
+                        } else if (TAG_PREMISE_NUMBER.equals(eName)){
+                            premiseNumbers.add(this.readPremiseNumber());
+                        } else if (TAG_PREMISE_NUMBER_SUFFIX.equals(eName)){
+                            premiseNumberSuffixes.add(this.readPremiseNumberSuffix());
+                        }
+                    }
+                    break;
+
+                case XMLStreamConstants.END_ELEMENT:
+                    if (TAG_PREMISE_NUMBER_RANGE_FROM.equals(reader.getLocalName()) && URI_XAL.contains(reader.getNamespaceURI())) {
+                        break boucle;
+                    }
+                    break;
+            }
+        }
+        return XalReader.xalFactory.createPremiseNumberRangeFrom(addressLines,
+                premiseNumberPrefixes, premiseNumbers, premiseNumberSuffixes);
+    }
+
+    private PremiseNumberRangeTo readPremiseNumberRangeTo() throws XMLStreamException {
+        List<GenericTypedGrPostal> addressLines = new ArrayList<GenericTypedGrPostal>();
+        List<PremiseNumberPrefix> premiseNumberPrefixes = new ArrayList<PremiseNumberPrefix>();
+        List<PremiseNumber> premiseNumbers = new ArrayList<PremiseNumber>();
+        List<PremiseNumberSuffix> premiseNumberSuffixes = new ArrayList<PremiseNumberSuffix>();
+
+        boucle:
+        while (reader.hasNext()) {
+
+            switch (reader.next()) {
+                case XMLStreamConstants.START_ELEMENT:
+                    final String eName = reader.getLocalName();
+                    final String eUri = reader.getNamespaceURI();
+
+                    if (URI_XAL.equals(eUri)) {
+                        if (TAG_ADDRESS_LINE.equals(eName)) {
+                            addressLines.add(this.readGenericTypedGrPostal());
+                        } else if (TAG_PREMISE_NUMBER_PREFIX.equals(eName)){
+                            premiseNumberPrefixes.add(this.readPremiseNumberPrefix());
+                        } else if (TAG_PREMISE_NUMBER.equals(eName)){
+                            premiseNumbers.add(this.readPremiseNumber());
+                        } else if (TAG_PREMISE_NUMBER_SUFFIX.equals(eName)){
+                            premiseNumberSuffixes.add(this.readPremiseNumberSuffix());
+                        }
+                    }
+                    break;
+
+                case XMLStreamConstants.END_ELEMENT:
+                    if (TAG_PREMISE_NUMBER_RANGE_TO.equals(reader.getLocalName()) && URI_XAL.contains(reader.getNamespaceURI())) {
+                        break boucle;
+                    }
+                    break;
+            }
+        }
+        return XalReader.xalFactory.createPremiseNumberRangeTo(addressLines,
+                premiseNumberPrefixes, premiseNumbers, premiseNumberSuffixes);
+    }
+
+    private PremiseNumberPrefix readPremiseNumberPrefix() throws XMLStreamException {
+        String numberPrefixSeparator = reader.getAttributeValue(null, ATT_NUMBER_PREFIX_SEPARATOR);
+        String type = reader.getAttributeValue(null, ATT_TYPE);
+        GrPostal grPostal = this.readGrPostal();
+        String content = reader.getElementText();
+        return XalReader.xalFactory.createPremiseNumberPrefix(numberPrefixSeparator, type, grPostal, content);
+    }
+
+    private PremiseNumberSuffix readPremiseNumberSuffix() throws XMLStreamException {
+        String numberSuffixSeparator = reader.getAttributeValue(null, ATT_NUMBER_SUFFIX_SEPARATOR);
+        String type = reader.getAttributeValue(null, ATT_TYPE);
+        GrPostal grPostal = this.readGrPostal();
+        String content = reader.getElementText();
+        return XalReader.xalFactory.createPremiseNumberSuffix(numberSuffixSeparator, type, grPostal, content);
+    }
+
+    private SubPremise readSubPremise() throws XMLStreamException, XalException {
+        List<GenericTypedGrPostal> addressLines = new ArrayList<GenericTypedGrPostal>();
+        List<SubPremiseName> subPremiseNames = new ArrayList<SubPremiseName>();
+        SubPremiseLocation subPremiseLocation = null;
+        List<SubPremiseNumber> subPremiseNumbers = new ArrayList<SubPremiseNumber>();
+        Object location = null;
+        List<SubPremiseNumberPrefix> subPremiseNumberPrefixes = new ArrayList<SubPremiseNumberPrefix>();
+        List<SubPremiseNumberSuffix> subPremiseNumberSuffixes = new ArrayList<SubPremiseNumberSuffix>();
+        List<BuildingName> buildingNames = new ArrayList<BuildingName>();
+        Firm firm = null;
+        MailStop mailStop = null;
+        PostalCode postalCode = null;
+        SubPremise subPremise = null;
+        String type = reader.getAttributeValue(null, ATT_TYPE);
+
+        boucle:
+        while (reader.hasNext()) {
+
+            switch (reader.next()) {
+                case XMLStreamConstants.START_ELEMENT:
+                    final String eName = reader.getLocalName();
+                    final String eUri = reader.getNamespaceURI();
+
+                    if (URI_XAL.equals(eUri)) {
+                        if (TAG_ADDRESS_LINE.equals(eName)) {
+                            addressLines.add(this.readGenericTypedGrPostal());
+                        } else if (TAG_SUB_PREMISE_NAME.equals(eName)) {
+                            subPremiseNames.add(this.readSubPremiseName());
+                        } else if (TAG_SUB_PREMISE_LOCATION.equals(eName)){
+                            subPremiseLocation = this.readSubPremiseLocation();
+                            if (location == null) location = subPremiseLocation;
+                        } else if (TAG_SUB_PREMISE_NUMBER.equals(eName)){
+                            subPremiseNumbers.add(this.readSubPremiseNumber());
+                            if (location == null) location = subPremiseNumbers;
+                        } else if (TAG_SUB_PREMISE_NUMBER_PREFIX.equals(eName)){
+                            subPremiseNumberPrefixes.add(this.readSubPremiseNumberPrefix());
+                        } else if (TAG_SUB_PREMISE_NUMBER_SUFFIX.equals(eName)){
+                            subPremiseNumberSuffixes.add(this.readSubPremiseNumberSuffix());
+                        } else if (TAG_BUILDING_NAME.equals(eName)){
+                            buildingNames.add(this.readBuildingName());
+                        } else if (TAG_FIRM.equals(eName)){
+                            firm = this.readFirm();
+                        } else if (TAG_MAIL_STOP.equals(eName)){
+                            mailStop = this.readMailStop();
+                        } else if (TAG_POSTAL_CODE.equals(eName)){
+                            postalCode = this.readPostalCode();
+                        } else if (TAG_SUB_PREMISE.equals(eName)){
+                            subPremise = this.readSubPremise();
+                        }
+                    }
+                    break;
+
+                case XMLStreamConstants.END_ELEMENT:
+                    if (TAG_SUB_PREMISE.equals(reader.getLocalName()) && URI_XAL.contains(reader.getNamespaceURI())) {
+                        break boucle;
+                    }
+                    break;
+            }
+        }
+        return XalReader.xalFactory.createSubPremise(addressLines, subPremiseNames,
+                location, subPremiseNumberPrefixes, subPremiseNumberSuffixes,
+                buildingNames, firm, mailStop, postalCode, subPremise, type);
+    }
+
+    private SubPremiseNumberPrefix readSubPremiseNumberPrefix() throws XMLStreamException {
+        String numberPrefixSeparator = reader.getAttributeValue(null, ATT_NUMBER_PREFIX_SEPARATOR);
+        String type = reader.getAttributeValue(null, ATT_TYPE);
+        GrPostal grPostal = this.readGrPostal();
+        String content = reader.getElementText();
+        return XalReader.xalFactory.createSubPremiseNumberPrefix(numberPrefixSeparator, type, grPostal, content);
+    }
+
+    private SubPremiseNumberSuffix readSubPremiseNumberSuffix() throws XMLStreamException {
+        String numberSuffixSeparator = reader.getAttributeValue(null, ATT_NUMBER_SUFFIX_SEPARATOR);
+        String type = reader.getAttributeValue(null, ATT_TYPE);
+        GrPostal grPostal = this.readGrPostal();
+        String content = reader.getElementText();
+        return XalReader.xalFactory.createSubPremiseNumberSuffix(numberSuffixSeparator, type, grPostal, content);
+    }
+
+    private SubPremiseName readSubPremiseName() throws XMLStreamException {
+        String type = reader.getAttributeValue(null, ATT_TYPE);
+        AfterBeforeEnum typeOccurrence = AfterBeforeEnum.transform(reader.getAttributeValue(null, ATT_TYPE_OCCURRENCE));
+        GrPostal grPostal = this.readGrPostal();
+        String content = reader.getElementText();
+        return XalReader.xalFactory.createSubPremiseName(type, typeOccurrence, grPostal, content);
+    }
+
+    private SubPremiseLocation readSubPremiseLocation() throws XMLStreamException {
+        GrPostal grPostal = this.readGrPostal();
+        String content = reader.getElementText();
+        return XalReader.xalFactory.createSubPremiseLocation(grPostal, content);
+    }
+
+    private SubPremiseNumber readSubPremiseNumber() throws XMLStreamException {
+        String premiseNumberSeparator = reader.getAttributeValue(null, ATT_PREMISE_NUMBER_SEPARATOR);
+        String type = reader.getAttributeValue(null, ATT_TYPE);
+        String indicator = reader.getAttributeValue(null, ATT_INDICATOR);
+        AfterBeforeEnum indicatorOccurrence = AfterBeforeEnum.transform(reader.getAttributeValue(null, ATT_INDICATOR_OCCURRENCE));
+        AfterBeforeEnum numberTypeOccurrence = AfterBeforeEnum.transform(reader.getAttributeValue(null, ATT_NUMBER_TYPE_OCCURRENCE));
+        GrPostal grPostal = this.readGrPostal();
+        String content = reader.getElementText();
+        return XalReader.xalFactory.createSubPremiseNumber(indicator, indicatorOccurrence,
+                numberTypeOccurrence, premiseNumberSeparator, type, grPostal, content);
+    }
+
     private Thoroughfare readThoroughfare() {return null;}
-
-    private Premise readPremise() {return null;}
-
 }

@@ -12,22 +12,24 @@ package org.geotoolkit.data.model.xal;
  * Premises in a street are often uniquely identified by means of consecutive identifiers.
  * The identifier can be a number, a letter or any combination of the two.</p>
  *
- * <br />&lt;xs:element name="PremiseNumber">
- * <br />&lt;xs:complexType mixed="true">
- * <br />&lt;xs:attribute name="NumberType">...
- * <br />&lt;/xs:attribute>
- * <br />&lt;xs:attribute name="Type"/>
- * <br />&lt;xs:attribute name="Indicator">...
- * <br />&lt;/xs:attribute>
- * <br />&lt;xs:attribute name="IndicatorOccurrence">...
- * <br />&lt;/xs:attribute>
- * <br />&lt;xs:attribute name="NumberTypeOccurrence">...
- * <br />&lt;/xs:attribute>
- * <br />&lt;xs:attributeGroup ref="grPostal"/>
- * <br />&lt;xs:anyAttribute namespace="##other"/>
- * <br />&lt;/xs:complexType>
- * <br />&lt;/xs:element>
- * 
+ * <pre>
+ * &lt;xs:element name="PremiseNumber">
+ *  &lt;xs:complexType mixed="true">
+ *      &lt;xs:attribute name="NumberType">...
+ *      &lt;/xs:attribute>
+ *      &lt;xs:attribute name="Type"/>
+ *      &lt;xs:attribute name="Indicator">...
+ *      &lt;/xs:attribute>
+ *      &lt;xs:attribute name="IndicatorOccurrence">...
+ *      &lt;/xs:attribute>
+ *      &lt;xs:attribute name="NumberTypeOccurrence">...
+ *      &lt;/xs:attribute>
+ *      &lt;xs:attributeGroup ref="grPostal"/>
+ *      &lt;xs:anyAttribute namespace="##other"/>
+ *  &lt;/xs:complexType>
+ * &lt;/xs:element>
+ * </pre>
+ *
  * @author Samuel Andrés
  */
 public interface PremiseNumber extends GenericTypedGrPostal{

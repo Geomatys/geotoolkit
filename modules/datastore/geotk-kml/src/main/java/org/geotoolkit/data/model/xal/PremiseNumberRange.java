@@ -1,31 +1,33 @@
 package org.geotoolkit.data.model.xal;
 
 /**
- * <p></p>
+ * <p>This interface maps premiseNumberRange element.</p>
  *
  * <p>Specification for defining the premise number range. Some premises have number as Building C1-C7.</p>
  *
- * <br />&lt;xs:element name="PremiseNumberRange">
- * <br />&lt;xs:complexType>
- * <br />&lt;xs:sequence>
- * <br />&lt;xs:element name="PremiseNumberRangeFrom">...
- * <br />&lt;/xs:element>
- * <br />&lt;xs:element name="PremiseNumberRangeTo">...
- * <br />&lt;/xs:element>
- * <br />&lt;/xs:sequence>
- * <br />&lt;xs:attribute name="RangeType">...
- * <br />&lt;/xs:attribute>
- * <br />&lt;xs:attribute name="Indicator">...
- * <br />&lt;/xs:attribute>
- * <br />&lt;xs:attribute name="Separator">...
- * <br />&lt;/xs:attribute>
- * <br />&lt;xs:attribute name="Type"/>
- * <br />&lt;xs:attribute name="IndicatorOccurence">...
- * <br />&lt;/xs:attribute>
- * <br />&lt;xs:attribute name="NumberRangeOccurence">...
- * <br />&lt;/xs:attribute>
- * <br />&lt;/xs:complexType>
- * <br />&lt;/xs:element>
+ * <pre>
+ * &lt;xs:element name="PremiseNumberRange">
+ *  &lt;xs:complexType>
+ *      &lt;xs:sequence>
+ *          &lt;xs:element name="PremiseNumberRangeFrom">...
+ *          &lt;/xs:element>
+ *          &lt;xs:element name="PremiseNumberRangeTo">...
+ *          &lt;/xs:element>
+ *      &lt;/xs:sequence>
+ *      &lt;xs:attribute name="RangeType">...
+ *      &lt;/xs:attribute>
+ *      &lt;xs:attribute name="Indicator">...
+ *      &lt;/xs:attribute>
+ *      &lt;xs:attribute name="Separator">...
+ *      &lt;/xs:attribute>
+ *      &lt;xs:attribute name="Type"/>
+ *      &lt;xs:attribute name="IndicatorOccurence">...
+ *      &lt;/xs:attribute>
+ *      &lt;xs:attribute name="NumberRangeOccurence">...
+ *      &lt;/xs:attribute>
+ *  &lt;/xs:complexType>
+ * &lt;/xs:element>
+ * </pre>
  *
  * @author Samuel Andrés
  */

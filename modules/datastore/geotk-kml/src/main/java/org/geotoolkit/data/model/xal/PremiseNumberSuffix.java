@@ -5,16 +5,18 @@ package org.geotoolkit.data.model.xal;
  *
  * <p>A in 12A</p>
  *
- * <br />&lt;xs:element name="PremiseNumberSuffix">
- * <br />&lt;xs:complexType mixed="true">
- * <br />&lt;xs:attribute name="NumberSuffixSeparator">...
- * <br />&lt;/xs:attribute>
- * <br />&lt;xs:attribute name="Type"/>
- * <br />&lt;xs:attributeGroup ref="grPostal"/>
- * <br />&lt;xs:anyAttribute namespace="##other"/>
- * <br />&lt;/xs:complexType>
- * <br />&lt;/xs:element>
- * 
+ * <pre>
+ * &lt;xs:element name="PremiseNumberSuffix">
+ *  &lt;xs:complexType mixed="true">
+ *      &lt;xs:attribute name="NumberSuffixSeparator">...
+ *      &lt;/xs:attribute>
+ *      &lt;xs:attribute name="Type"/>
+ *      &lt;xs:attributeGroup ref="grPostal"/>
+ *      &lt;xs:anyAttribute namespace="##other"/>
+ *  &lt;/xs:complexType>
+ * &lt;/xs:element>
+ * </pre>
+ *
  * @author Samuel Andrés
  */
 public interface PremiseNumberSuffix extends GenericTypedGrPostal {

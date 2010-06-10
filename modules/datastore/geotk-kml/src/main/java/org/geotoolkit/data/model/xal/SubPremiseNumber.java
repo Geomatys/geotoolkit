@@ -13,19 +13,20 @@ package org.geotoolkit.data.model.xal;
  * which is either a number or a single letter that is surrounded
  * by fixed parts at the left (prefix) or the right (postfix).</p>
  *
- * <br />&lt;xs:complexType mixed="true">
- * <br />&lt;xs:attribute name="Indicator">...
- * <br />&lt;/xs:attribute>
- * <br />&lt;xs:attribute name="IndicatorOccurrence">...
- * <br />&lt;/xs:attribute>
- * <br />&lt;xs:attribute name="NumberTypeOccurrence">...
- * <br />&lt;/xs:attribute>
- * <br />&lt;xs:attribute name="PremiseNumberSeparator">...
- * <br />&lt;/xs:attribute>
- * <br />&lt;xs:attribute name="Type"/>
- * <br />&lt;xs:attributeGroup ref="grPostal"/>
- * <br />&lt;xs:anyAttribute namespace="##other"/>
- * <br />&lt;/xs:complexType>
+ * <pre>
+ * &lt;xs:complexType mixed="true">
+ *  &lt;xs:attribute name="Indicator">...
+ *  &lt;/xs:attribute>
+ *  &lt;xs:attribute name="IndicatorOccurrence">...
+ *  &lt;/xs:attribute>
+ *  &lt;xs:attribute name="NumberTypeOccurrence">...
+ *  &lt;/xs:attribute>
+ *  &lt;xs:attribute name="PremiseNumberSeparator">...
+ *  &lt;/xs:attribute>
+ *  &lt;xs:attribute name="Type"/>
+ *  &lt;xs:attributeGroup ref="grPostal"/>
+ *  &lt;xs:anyAttribute namespace="##other"/>
+ * &lt;/xs:complexType>
  *
  * @author Samuel Andrés
  */

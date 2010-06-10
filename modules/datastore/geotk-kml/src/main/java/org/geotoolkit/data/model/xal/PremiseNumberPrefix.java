@@ -6,19 +6,21 @@ package org.geotoolkit.data.model.xal;
  *
  * <p>A in A12</p>
  *
- * <br />&lt;xs:element name="PremiseNumberPrefix">
- * <br />&lt;xs:complexType>
- * <br />&lt;xs:simpleContent>
- * <br />&lt;xs:extension base="xs:string">
- * <br />&lt;xs:attribute name="NumberPrefixSeparator">...
- * <br />&lt;/xs:attribute>
- * <br />&lt;xs:attribute name="Type"/>
- * <br />&lt;xs:attributeGroup ref="grPostal"/>
- * <br />&lt;xs:anyAttribute namespace="##other"/>
- * <br />&lt;/xs:extension>
- * <br />&lt;/xs:simpleContent>
- * <br />&lt;/xs:complexType>
- * <br />&lt;/xs:element>
+ * <pre>
+ * &lt;xs:element name="PremiseNumberPrefix">
+ *  &lt;xs:complexType>
+ *      &lt;xs:simpleContent>
+ *          &lt;xs:extension base="xs:string">
+ *              &lt;xs:attribute name="NumberPrefixSeparator">...
+ *              &lt;/xs:attribute>
+ *              &lt;xs:attribute name="Type"/>
+ *              &lt;xs:attributeGroup ref="grPostal"/>
+ *              &lt;xs:anyAttribute namespace="##other"/>
+ *          &lt;/xs:extension>
+ *      &lt;/xs:simpleContent>
+ *  &lt;/xs:complexType>
+ * &lt;/xs:element>
+ * </pre>
  *
  * @author Samuel Andrés
  */
