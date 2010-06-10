@@ -64,7 +64,7 @@ public abstract class AbstractIndexSearcher extends IndexLucene {
     /**
      * A default Query requesting all the document
      */
-    private final Query simpleQuery = new TermQuery(new Term("metafile", "doc"));
+    private final static Query SIMPLE_QUERY = new TermQuery(new Term("metafile", "doc"));
 
     /**
      * A map of cached request
@@ -276,10 +276,10 @@ public abstract class AbstractIndexSearcher extends IndexLucene {
                 final TopDocs hits2;
                 if (sort != null) {
                     hits1 = searcher.search(query, null, maxRecords, sort);
-                    hits2 = searcher.search(simpleQuery, spatialQuery.getSpatialFilter(), maxRecords, sort);
+                    hits2 = searcher.search(SIMPLE_QUERY, spatialQuery.getSpatialFilter(), maxRecords, sort);
                 } else {
                     hits1 = searcher.search(query, maxRecords);
-                    hits2 = searcher.search(simpleQuery, spatialQuery.getSpatialFilter(), maxRecords);
+                    hits2 = searcher.search(SIMPLE_QUERY, spatialQuery.getSpatialFilter(), maxRecords);
                 }
                 for (ScoreDoc doc : hits1.scoreDocs) {
                     results.add(identifiers.get(doc.doc));
@@ -306,9 +306,9 @@ public abstract class AbstractIndexSearcher extends IndexLucene {
 
                 final TopDocs hits2;
                 if (sort != null) {
-                    hits2 = searcher.search(simpleQuery, null, maxRecords, sort);
+                    hits2 = searcher.search(SIMPLE_QUERY, null, maxRecords, sort);
                 } else {
-                    hits2 = searcher.search(simpleQuery, maxRecords);
+                    hits2 = searcher.search(SIMPLE_QUERY, maxRecords);
                 }
                 for (ScoreDoc doc : hits2.scoreDocs) {
                     final String id = identifiers.get(doc.doc);
@@ -323,25 +323,31 @@ public abstract class AbstractIndexSearcher extends IndexLucene {
 
             // if we have some subQueries we execute it separely and merge the result
             if (spatialQuery.getSubQueries().size() > 0) {
-                final SpatialQuery sub        = spatialQuery.getSubQueries().get(0);
-                final List<String> subResults = doSearch(sub);
-                final List<String> toRemove   = new ArrayList<String>();
-                if (operator == SerialChainFilter.AND) {
-                    for (String r : results) {
-                        if (!subResults.contains(r)) {
-                            toRemove.add(r);
-                        }
-                    }
-                } else if (operator == SerialChainFilter.OR){
-                    for (String r : subResults) {
-                        if (!results.contains(r)) {
-                            results.add(r);
-                        }
-                    }
-                } else {
-                    LOGGER.warning("unimplemented case in doSearch");
+
+                if (operator == SerialChainFilter.OR && query.equals(SIMPLE_QUERY)) {
+                    results.clear();
                 }
-                results.removeAll(toRemove);
+                
+                for (SpatialQuery sub : spatialQuery.getSubQueries()) {
+                    final List<String> subResults = doSearch(sub);
+                    final List<String> toRemove   = new ArrayList<String>();
+                    if (operator == SerialChainFilter.AND) {
+                        for (String r : results) {
+                            if (!subResults.contains(r)) {
+                                toRemove.add(r);
+                            }
+                        }
+                    } else if (operator == SerialChainFilter.OR){
+                        for (String r : subResults) {
+                            if (!results.contains(r)) {
+                                results.add(r);
+                            }
+                        }
+                    } else {
+                        LOGGER.warning("unimplemented case in doSearch");
+                    }
+                    results.removeAll(toRemove);
+                }
             }
 
             //we put the query in cache
