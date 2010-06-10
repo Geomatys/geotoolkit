@@ -160,10 +160,8 @@ final class NewGridCoverageDetails extends JComponent implements CoverageDatabas
         pane.setTitle(resources.getString(Vocabulary.Keys.FILE));
         addRow(pane, resources.getLabel(Vocabulary.Keys.NAME), filename, c);
         addRow(pane, resources.getLabel(Vocabulary.Keys.FORMAT), format, c);
-        c.insets.left=6;
-        addRow(pane, null, formatNote, c);
-        addRow(pane, null, isGeophysics, c);
-        c.insets.left=0;
+        c.insets.left=6; addRow(pane, null, formatNote, c);
+        c.insets.left=0; addRow(pane, null, isGeophysics, c);
         container.add(pane);
 
         c.gridy=0;
@@ -238,63 +236,57 @@ final class NewGridCoverageDetails extends JComponent implements CoverageDatabas
     }
 
     /**
-     * Invoked when the user selected a format.
+     * Invoked when the user selected a format in the {@link JComboBox}, or when the format
+     * changed programatically. If the format changed, get the {@link GridSampleDimension}s
+     * and updates the field with the new values.
      */
     private void formatSelected() {
         final String formatName = (String) format.getSelectedItem();
         if (!Utilities.equals(formatName, selectedFormat)) {
+            selectedFormat = formatName;
             List<GridSampleDimension> bands = null;
             CoverageStoreException failure = null;
-            if (reference != null) {
+            boolean editable = false;
+            if (reference != null) try {
                 reference.format = formatName;
-                selectedFormat = formatName;
-                try {
-                    bands = reference.getSampleDimensions();
-                    if (!reference.isFormatDefined()) {
-                        /*
-                         * The user supplied a new format name. Do not modify the current sample
-                         * dimensions (unless the user selected the automatically inferred format),
-                         * since we assume that the user will want to edit them.
-                         */
-                        if (bands != null) {
-                            sampleDimensionEditor.setSampleDimensions(bands);
-                        }
-                        setFormatEditable(true);
-                        return;
-                    }
-                } catch (CoverageStoreException e) {
-                    failure = e;
-                }
+                bands = reference.getSampleDimensions();
+                editable = !reference.isFormatDefined();
+            } catch (CoverageStoreException e) {
+                failure = e;
             }
             /*
-             * Check if the bands are geophysics.
+             * Set the SampleDimensionPanel to the new values or clear the panel if there is no
+             * bands, except if the format does not exist. In the later case, we assume that the
+             * user wants to create a new format using the current values as a template.
              */
-            boolean geophysics = false;
-            if (bands != null) {
-                for (final GridSampleDimension band : bands) {
-                    if (!band.getCategories().isEmpty() && band == band.geophysics(true)) {
-                        geophysics = true;
-                        break;
+            if (bands != null || !editable) {
+                boolean geophysics = false;
+                if (bands != null) {
+                    for (final GridSampleDimension band : bands) {
+                        if (!band.getCategories().isEmpty() && band == band.geophysics(true)) {
+                            geophysics = true;
+                            break;
+                        }
                     }
                 }
+                isGeophysics.setSelected(geophysics);
+                sampleDimensionEditor.setSampleDimensions(bands);
             }
-            isGeophysics.setSelected(geophysics);
-            sampleDimensionEditor.setSampleDimensions(bands);
-            setFormatEditable(false);
+            /*
+             * Sets whatever the format described in the "Sample dimensions" section is
+             * editable. This also update the note label behind the "Format" field.
+             */
+            formatNote.setText(Widgets.getResources(getLocale()).getString(
+                    editable ? Widgets.Keys.NEW_FORMAT : Widgets.Keys.RENAME_FORMAT_FOR_EDIT));
+            sampleDimensionEditor.setEditable(editable);
+            isGeophysics.setEnabled(editable);
+            /*
+             * Finally, report the error if there is any.
+             */
             if (failure != null) {
                 owner.exceptionOccured(failure);
             }
         }
-    }
-
-    /**
-     * Sets whatever the format described in the "Sample dimensions" section is editable.
-     * This also update the note label behind the "Format" field.
-     */
-    private void setFormatEditable(final boolean editable) {
-        formatNote.setText(Widgets.getResources(getLocale()).getString(
-                editable ? Widgets.Keys.NEW_FORMAT : Widgets.Keys.RENAME_FORMAT_FOR_EDIT));
-        sampleDimensionEditor.setEditable(editable);
     }
 
     /**

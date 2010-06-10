@@ -711,10 +711,12 @@ public class Category implements Serializable {
     }
 
     /**
-     * Returns a transform from sample values to geophysics values. If this category
-     * is not a quantitative one, then this method returns {@code null}.
+     * Returns the <cite>transfer function</cite> from sample values to geophysics values.
+     * If this category is not a quantitative one, then this method returns {@code null}.
      *
-     * @return The transform from sample values to geophysics values.
+     * @return The <cite>transfer function</cite> from sample values to geophysics values.
+     *
+     * @see GridSampleDimension#getSampleToGeophysics()
      */
     public MathTransform1D getSampleToGeophysics() {
         return isQuantitative() ? transform : null;

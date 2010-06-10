@@ -24,7 +24,7 @@ import javax.imageio.IIOException;
  * Thrown if an error occured while reading or writing the image metadata.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.08
+ * @version 3.13
  *
  * @since 3.08
  * @module
@@ -43,6 +43,18 @@ public class ImageMetadataException extends IIOException {
      */
     public ImageMetadataException(final String message) {
         super(message);
+    }
+
+    /**
+     * Constructs a new exception with the specified cause.
+     * The cause is saved for later retrieval by the {@link #getCause()} method.
+     *
+     * @param cause The cause.
+     *
+     * @since 3.13
+     */
+    public ImageMetadataException(final Throwable cause) {
+        super((cause != null) ? cause.getLocalizedMessage() : null, cause);
     }
 
     /**

@@ -39,8 +39,11 @@ import org.opengis.referencing.IdentifiedObject;
 import org.opengis.referencing.ReferenceIdentifier;
 import org.opengis.referencing.crs.CRSAuthorityFactory;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.operation.MathTransform1D;
 
+import org.geotoolkit.util.Localized;
 import org.geotoolkit.util.DateRange;
+import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.image.io.mosaic.Tile;
 import org.geotoolkit.image.io.metadata.MetadataHelper;
@@ -56,6 +59,7 @@ import org.geotoolkit.referencing.factory.AbstractAuthorityFactory;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.ViewType;
+import org.geotoolkit.coverage.Category;
 import org.geotoolkit.resources.Errors;
 
 
@@ -89,6 +93,12 @@ public final class NewGridCoverageReference {
         Citations.POSTGIS,
         Citations.EPSG
     };
+
+    /**
+     * The range of sample values to use if no transfer function is defined.
+     * Note that the value 0 is reserved for "no data".
+     */
+    private static final NumberRange<Integer> PACKED_RANGE = NumberRange.create(1, 255);
 
     /**
      * The originating database.
@@ -304,7 +314,8 @@ public final class NewGridCoverageReference {
                 }
             }
         }
-        final MetadataHelper helper = (metadata != null) ? new NewGridCoverageHelper(reader) : null;
+        final MetadataHelper helper = (metadata != null) ? new MetadataHelper(
+                (reader instanceof Localized) ? (Localized) reader : null) : null;
         /*
          * Get the geolocalization from the image, then complete with the tile information if
          * there is a Tile object. We avoid invoking Tile.getRegion() because it may create a
@@ -353,19 +364,65 @@ public final class NewGridCoverageReference {
             }
         }
         /*
-         * Get the sample dimensions. This code extract the SampleDimensions from the metadata,
-         * convert them to GridSampleDimensions, then search if a format already exists in the
-         * database for those dimensions.
+         * Get the sample dimensions. This code extracts the SampleDimensions from the metadata,
+         * convert them to GridSampleDimensions, then check if the resulting sample dimensions
+         * are geophysics. If every sample dimensions are geophysics, then we will replace them
+         * by new sample dimensions using the [1...255] range of packed values, and 0 for "no data".
+         * We don't do that in the default MetadataHelper implementation because the choosen range
+         * is arbitrary. In the particular case of NewGridCoverageReference, this is okay because
+         * the choosen range will be saved in the database.
          */
         final List<GridSampleDimension> sampleDimensions = (metadata == null) ? null :
                 helper.getGridSampleDimensions(metadata.getListForType(SampleDimension.class));
+        GridSampleDimension[] bands = null;
+        boolean isGeophysics = false;
+        if (sampleDimensions != null) {
+            bands = sampleDimensions.toArray(new GridSampleDimension[sampleDimensions.size()]);
+            for (int i=0; i<bands.length; i++) {
+                final GridSampleDimension band = bands[i];
+                if (band != null) {
+                    final List<Category> categories = band.getCategories();
+                    for (int j=categories.size(); --j>=0;) {
+                        final Category c = categories.get(j);
+                        /*
+                         * MetadataHelper should have created at most one quantitative category
+                         * for each GridSampleDimension, which can be recognized by a non-null
+                         * transfer function. This is usually the last category.
+                         */
+                        final MathTransform1D transferFunction = c.getSampleToGeophysics();
+                        if (transferFunction != null) {
+                            if (isGeophysics = transferFunction.isIdentity()) {
+                                bands[i] = new GridSampleDimension(band.getDescription(), new Category[] {
+                                        Category.NODATA,
+                                        new Category(c.getName(), c.getColors(), PACKED_RANGE, c.getRange())
+                                }, band.getUnits());
+                            }
+                            break;
+                        }
+                    }
+                }
+                /*
+                 * If we found at least one non-geophysics band, cancel the process.
+                 * Overwrite our bands array with the original GridSampleDimensions,
+                 * so we don't modify them.
+                 */
+                if (!isGeophysics) {
+                    bands = sampleDimensions.toArray(bands);
+                    break;
+                }
+            }
+        }
+        /*
+         * Search if a format already exists in the database for the sample dimensions.
+         * If no existing format is found, create a new FormatEntry but do not add it
+         * in the database yet.
+         */
         final FormatTable formatTable = database.getTable(FormatTable.class);
         FormatEntry candidate = formatTable.find(imageFormat, sampleDimensions);
         formatTable.release();
         if (candidate == null) {
-            candidate = new FormatEntry(imageFormat, imageFormat, null, (sampleDimensions == null) ? null :
-                    sampleDimensions.toArray(new GridSampleDimension[sampleDimensions.size()]),
-                    ViewType.NATIVE, null);
+            candidate = new FormatEntry(imageFormat, imageFormat, null, bands,
+                    isGeophysics ? ViewType.GEOPHYSICS : ViewType.NATIVE, null);
         }
         bestFormat = candidate;
         format = (String) candidate.getIdentifier();

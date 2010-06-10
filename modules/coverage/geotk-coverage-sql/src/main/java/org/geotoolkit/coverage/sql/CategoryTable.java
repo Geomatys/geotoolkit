@@ -199,13 +199,16 @@ final class CategoryTable extends Table {
                          *   - "logarithmic" is not yet implemented, because we don't know yet
                          *     if the log should be computed before or after the offset and scale
                          *     factor.
+                         *
+                         * NOTE: The formulas used below must be consistent with the formulas in
+                         *       MetadataHelper.getGridSampleDimensions(List<SampleDimension>).
                          */
                         if (function != null && !function.equalsIgnoreCase("linear")) {
                             if (function.equalsIgnoreCase("exponential") || function.equalsIgnoreCase("log")) {
                                 // Quantitative and logarithmic category.
                                 if (exponential == null) {
                                     final ParameterValueGroup param = mtFactory.getDefaultParameters("Exponential");
-                                    param.parameter("base").setValue(10.0); // Must be a 'double'
+                                    param.parameter("base").setValue(10d); // Must be a 'double'
                                     exponential = mtFactory.createParameterizedTransform(param);
                                 }
                                 tr = mtFactory.createConcatenatedTransform(tr, exponential);
