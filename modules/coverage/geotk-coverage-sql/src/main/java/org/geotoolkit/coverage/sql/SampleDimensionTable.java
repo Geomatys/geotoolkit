@@ -243,7 +243,9 @@ final class SampleDimensionTable extends Table {
                     categories.add(band.getCategories());
                 }
                 release(ce);
-                getCategoryTable().addCategories(format, categories);
+                if (!categories.isEmpty()) {
+                    getCategoryTable().addCategories(format, categories);
+                }
                 success = true;
             } finally {
                 transactionEnd(success);

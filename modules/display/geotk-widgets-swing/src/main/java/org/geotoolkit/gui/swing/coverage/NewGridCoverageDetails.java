@@ -22,6 +22,7 @@ import java.awt.Container;
 import java.io.File;
 import java.util.List;
 import java.util.Locale;
+import java.text.ParseException;
 import java.awt.GridLayout;
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
@@ -249,7 +250,8 @@ final class NewGridCoverageDetails extends JComponent implements CoverageDatabas
             boolean editable = false;
             if (reference != null) try {
                 reference.format = formatName;
-                bands = reference.getSampleDimensions();
+                reference.refresh();
+                bands = reference.sampleDimensions;
                 editable = !reference.isFormatDefined();
             } catch (CoverageStoreException e) {
                 failure = e;
@@ -259,7 +261,7 @@ final class NewGridCoverageDetails extends JComponent implements CoverageDatabas
              * bands, except if the format does not exist. In the later case, we assume that the
              * user wants to create a new format using the current values as a template.
              */
-            if (bands != null || !editable) {
+            if (!editable || (bands != null && !bands.isEmpty())) {
                 boolean geophysics = false;
                 if (bands != null) {
                     for (final GridSampleDimension band : bands) {
@@ -336,8 +338,9 @@ final class NewGridCoverageDetails extends JComponent implements CoverageDatabas
         }
         /*
          * At this point, we have been weakup by a button pressed by the user.
-         * If it was the "Ok" button, the fields are already updated. If it was
-         * the "Cancel" button, then the reference has been set to null.
+         * If it was the "Ok" button, the fields are already updated (see the
+         * actionPerformed method below). If it was the "Cancel" button, then
+         * the reference has been set to null.
          */
         if (this.reference == null) {
             throw new DatabaseVetoException();
@@ -352,13 +355,26 @@ final class NewGridCoverageDetails extends JComponent implements CoverageDatabas
      */
     private synchronized void actionPerformed(final boolean confirm) {
         if (confirm) {
+            final NewGridCoverageReference reference = this.reference;
             if (reference != null) try {
                 reference.format = (String) format.getSelectedItem();
                 reference.horizontalSRID = getSelectedCode(horizontalCRS);
                 reference.verticalSRID   = getSelectedCode(verticalCRS);
+                reference.sampleDimensions.clear();
+                sampleDimensionEditor.commitEdit();
+                final List<GridSampleDimension> bands = sampleDimensionEditor.getSampleDimensions();
+                if (bands != null) {
+                    final boolean isGeophysics = this.isGeophysics.isSelected();
+                    for (int i=bands.size(); --i>=0;) {
+                        bands.set(i, bands.get(i).geophysics(isGeophysics));
+                    }
+                    reference.sampleDimensions.addAll(bands);
+                }
             } catch (NumberFormatException e) {
                 // Do not weakup the sleeping thread.
                 // User will need to make an other selection.
+                return;
+            } catch (ParseException e) {
                 return;
             }
         } else {

@@ -108,7 +108,7 @@ public class SampleDimensionPanel extends JComponent {
     /**
      * The sample dimensions, or {@code null} if none.
      */
-    private GridSampleDimension[] dimensions;
+    private GridSampleDimension[] sampleDimensions;
 
     /**
      * The records for each sample dimensions. This is remembered in order to avoid
@@ -124,7 +124,7 @@ public class SampleDimensionPanel extends JComponent {
     /**
      * The index of the currently selected sample dimension, or {@code -1} if none.
      */
-    private int selectedIndex = -1;
+    private int selectedBandIndex = -1;
 
     /**
      * Creates a new, initially empty, panel.
@@ -174,7 +174,7 @@ public class SampleDimensionPanel extends JComponent {
      */
     private final class Listeners implements ActionListener {
         @Override public void actionPerformed(final ActionEvent event) {
-            setSampleDimension();
+            bandSelected();
         }
     }
 
@@ -190,7 +190,7 @@ public class SampleDimensionPanel extends JComponent {
      * @throws ParseException If at least two categories have overlapping range of sample values.
      */
     public List<GridSampleDimension> getSampleDimensions() throws ParseException {
-        GridSampleDimension[] bands = dimensions;
+        GridSampleDimension[] bands = sampleDimensions;
         if (bands == null) {
             return null;
         }
@@ -230,16 +230,16 @@ public class SampleDimensionPanel extends JComponent {
         final Vocabulary resources = Vocabulary.getResources(locale);
         final DefaultComboBoxModel nameList = (DefaultComboBoxModel) nameField.getModel();
         nameList.removeAllElements();
-        units      = null;
-        records    = null;
-        dimensions = null;
+        units   = null;
+        records = null;
+        sampleDimensions = null;
         if (bands != null && !bands.isEmpty()) {
             final int n = bands.size();
-            dimensions  = bands.toArray(new GridSampleDimension[n]);
-            records     = new CategoryRecord[n][];
-            units       = new Unit<?>[n];
+            sampleDimensions = bands.toArray(new GridSampleDimension[n]);
+            records = new CategoryRecord[n][];
+            units   = new Unit<?>[n];
             for (int i=0; i<n; i++) {
-                final GridSampleDimension band = dimensions[i];
+                final GridSampleDimension band = sampleDimensions[i];
                 units[i] = band.getUnits();
                 final InternationalString desc = band.getDescription();
                 String name = null;
@@ -255,50 +255,50 @@ public class SampleDimensionPanel extends JComponent {
     }
 
     /**
-     * Sets the sample dimensions from the currently selected item in the combo box.
+     * Invoked when a particular band has been selected in the list of sample dimensions.
      */
-    private void setSampleDimension() {
-        final int index = nameField.getSelectedIndex();
-        if (index >= 0) {
-            final GridSampleDimension band = dimensions[index];
+    private void bandSelected() {
+        final int bandIndex = nameField.getSelectedIndex();
+        if (bandIndex >= 0) {
+            final GridSampleDimension band = sampleDimensions[bandIndex];
             /*
              * Before to assign a new list of categories to the CategoryTable,
              * save the current values (in case the user edited them).
              */
             final CategoryRecord[][] records = this.records;
-            if (selectedIndex >= 0) {
-                if (records[selectedIndex] == null) {
-                    records[selectedIndex] = categories.getElements();
+            if (selectedBandIndex >= 0) {
+                if (records[selectedBandIndex] == null) {
+                    records[selectedBandIndex] = categories.getElements();
                 }
-                units[selectedIndex] = (Unit<?>) unitField.getValue();
+                units[selectedBandIndex] = (Unit<?>) unitField.getValue();
             }
             /*
              * If the CategoryRecords have been previously created for the sample
              * dimension to display, reuse them (so we get any user edited values).
              */
-            if (records[index] != null) {
-                categories.setElements(records[index]);
+            if (records[bandIndex] != null) {
+                categories.setElements(records[bandIndex]);
             } else {
                 /*
                  * Otherwise create a new set of CategoryRecords.
                  */
                 categories.setCategories(band.getCategories());
             }
-            unitField.setValue(units[index]);
-            selectedIndex = index;
-        } else if (selectedIndex >= 0) {
+            unitField.setValue(units[bandIndex]);
+            selectedBandIndex = bandIndex;
+        } else if (selectedBandIndex >= 0) {
             /*
              * If the user edited the name of an existing item, just update the name.
              * The categories and units are left untouched.
              */
             final String text = (String) nameField.getSelectedItem();
             if (text != null) {
-                ((BandName) nameField.getModel().getElementAt(selectedIndex)).name = text;
+                ((BandName) nameField.getModel().getElementAt(selectedBandIndex)).name = text;
             } else {
                 /*
                  * Replacing the current selection by a null selection.
                  */
-                selectedIndex = -1;
+                selectedBandIndex = -1;
                 categories.setCategories(null);
                 unitField.setValue(null);
             }
@@ -340,8 +340,9 @@ public class SampleDimensionPanel extends JComponent {
             unitField.requestFocus();
             throw e;
         }
-        if (selectedIndex >= 0) {
-            units[selectedIndex] = (Unit<?>) unitField.getValue();
+        if (selectedBandIndex >= 0) {
+            units[selectedBandIndex] = (Unit<?>) unitField.getValue();
+            records[selectedBandIndex] = categories.getElements();
         }
     }
 }

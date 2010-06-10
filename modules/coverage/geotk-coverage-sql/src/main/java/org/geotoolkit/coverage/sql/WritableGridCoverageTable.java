@@ -270,12 +270,16 @@ final class WritableGridCoverageTable extends GridCoverageTable {
              */
             entries.fireCoverageAdding(true, entry);
             if (entry.series == null) {
-                final SeriesTable table = getDatabase().getTable(SeriesTable.class);
-                table.setLayer(getLayer());
+                final Database database = getDatabase();
+                final FormatTable formatTable = database.getTable(FormatTable.class);
+                entry.format = formatTable.findOrCreate(entry.format, entry.bestFormat.imageFormat, entry.sampleDimensions);
+                formatTable.release();
+                final SeriesTable seriesTable = database.getTable(SeriesTable.class);
+                seriesTable.setLayer(getLayer());
                 final String path = (entry.path != null) ? entry.path.getPath() : "";
-                final int id = table.findOrCreate(path, entry.extension, entry.format);
-                entry.series = table.getEntry(id);
-                table.release();
+                final int id = seriesTable.findOrCreate(path, entry.extension, entry.format);
+                entry.series = seriesTable.getEntry(id);
+                seriesTable.release();
             }
             specificSeries = entry.series;
             /*

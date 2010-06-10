@@ -39,7 +39,6 @@ import org.geotoolkit.internal.sql.table.LocalCache;
 import org.geotoolkit.internal.sql.table.SingletonTable;
 import org.geotoolkit.internal.sql.table.CatalogException;
 import org.geotoolkit.internal.sql.table.IllegalRecordException;
-import org.geotoolkit.internal.sql.table.IllegalUpdateException;
 
 
 /**
@@ -163,7 +162,7 @@ final class FormatTable extends SingletonTable<FormatEntry> {
             sampleDimensions = entry.sampleDimensions;
             paletteName = entry.paletteName;
         }
-        return new FormatEntry(identifier, format, paletteName, sampleDimensions, viewType, comments);
+        return new FormatEntry((String) identifier, format, paletteName, sampleDimensions, viewType, comments);
     }
 
     /**
@@ -276,7 +275,10 @@ next:   for (final FormatEntry candidate : getEntries()) {
     }
 
     /**
-     * Create a new format for the given sample dimensions.
+     * Creates a new format for the given sample dimensions, or returns an existing one.
+     * If a format for the given name already exists, then this method does nothing; it
+     * does not check the image format and the bands. Otherwise a new format created with
+     * the given image format and the bands.
      *
      * @param  name        The name of the new format, or {@code null} for a default one.
      * @param  imageFormat The name of the Image I/O plugin.
@@ -286,41 +288,51 @@ next:   for (final FormatEntry candidate : getEntries()) {
      *
      * @since 3.13
      */
-    public String addFormat(String name, final String imageFormat, final List<GridSampleDimension> bands)
+    public String findOrCreate(String name, final String imageFormat, final List<GridSampleDimension> bands)
             throws SQLException
     {
         /*
          * Determine whatever the given bands are for geophysics or packed data.
-         * If the type seems inconsistent, throws an exception.
+         * If at least one band is not geophysics, we consider all of them as packed.
          */
-        ViewType type = null;
-        for (final GridSampleDimension band : bands) {
+        ViewType type = ViewType.PHOTOGRAPHIC;
+check:  for (final GridSampleDimension band : bands) {
             for (final Category category : band.getCategories()) {
                 final MathTransform1D tr = category.getSampleToGeophysics();
                 if (tr != null) {
-                    final ViewType t = tr.isIdentity() ? ViewType.GEOPHYSICS : ViewType.PACKED;
-                    if (type == null) {
-                        type = t;
-                    } else if (!type.equals(t)) {
-                        throw new IllegalUpdateException(errors().getString(Errors.Keys.MIXED_CATEGORIES));
+                    if (tr.isIdentity()) {
+                        type = ViewType.GEOPHYSICS;
+                    } else {
+                        type = ViewType.PACKED;
+                        break check;
                     }
                 }
             }
         }
-        if (type == null) {
-            type = ViewType.PHOTOGRAPHIC;
-        }
         /*
-         * Now process to the insertion in the database.
+         * Now process to the insertion in the database. Before doing the actual
+         * insertion, we will check for existing entries inside the write lock.
          */
         final FormatQuery query = (FormatQuery) super.query;
         synchronized (getLock()) {
             boolean success = false;
             transactionBegin();
             try {
+                /*
+                 * Checks for existing entries.
+                 */
                 if (name == null) {
+                    final FormatEntry candidate = find(imageFormat, bands);
+                    if (candidate != null) {
+                        return candidate.getIdentifier();
+                    }
                     name = searchFreeIdentifier(imageFormat);
+                } else if (exists(name)) {
+                    return name;
                 }
+                /*
+                 * No existing entry fit. Adds the new entry.
+                 */
                 final LocalCache.Stmt ce = getStatement(QueryType.INSERT);
                 final PreparedStatement statement = ce.statement;
                 statement.setString(indexOf(query.name),     name);
@@ -329,7 +341,9 @@ next:   for (final FormatEntry candidate : getEntries()) {
                 final boolean inserted = updateSingleton(statement);
                 release(ce);
                 if (inserted) {
-                    getSampleDimensionTable().addSampleDimensions(name, bands);
+                    if (!bands.isEmpty()) {
+                        getSampleDimensionTable().addSampleDimensions(name, bands);
+                    }
                     success = true;
                 }
             } finally {

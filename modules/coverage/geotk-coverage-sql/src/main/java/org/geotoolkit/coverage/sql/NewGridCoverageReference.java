@@ -24,6 +24,7 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Collection;
 import javax.imageio.ImageReader;
 import javax.imageio.IIOException;
@@ -144,16 +145,34 @@ public final class NewGridCoverageReference {
      * alternative formats can be obtained by {@link #getAlternativeFormats()}.
      *
      * @see #getAlternativeFormats()
-     * @see #getSampleDimensions()
+     * @see #refresh()
      */
     public String format;
+
+    /**
+     * The sample dimensions for coverages associated with the {@linkplain #format}, or an empty
+     * list if undefined. If non-empty, then the list size is equals to the number of bands.
+     * <p>
+     * Each {@code GridSampleDimension} specifies how to convert pixel values to geophysics values,
+     * or conversely. Their type (geophysics or not) is format dependent. For example coverages
+     * read from PNG files will typically store their data as integer values (non-geophysics),
+     * while coverages read from ASCII files will often store their pixel values as real numbers
+     * (geophysics values).
+     * <p>
+     * The content of this list can be modified in-place.
+     *
+     * @see #refresh()
+     *
+     * @since 3.13
+     */
+    public final List<GridSampleDimension> sampleDimensions;
 
     /**
      * The format entry which seems the best fit. The {@link #format} field is initialized
      * to the name of this format. The most interresting information from this field is the
      * list of sample dimensions.
      */
-    private final FormatEntry bestFormat;
+    final FormatEntry bestFormat;
 
     /**
      * Some formats which may be applicable as an alternative to {@code series.format}.
@@ -425,7 +444,10 @@ public final class NewGridCoverageReference {
                     isGeophysics ? ViewType.GEOPHYSICS : ViewType.NATIVE, null);
         }
         bestFormat = candidate;
-        format = (String) candidate.getIdentifier();
+        format = candidate.getIdentifier();
+        this.sampleDimensions = (candidate.sampleDimensions != null) ?
+            new ArrayList<GridSampleDimension>(candidate.sampleDimensions) :
+            new ArrayList<GridSampleDimension>();
         /*
          * Close the reader but do not dispose it, since it may be used for the next entry.
          */
@@ -666,39 +688,48 @@ public final class NewGridCoverageReference {
     }
 
     /**
-     * Returns the sample dimensions for coverages associated with the {@linkplain #format},
-     * or {@code null} if undefined. If non-null, then the list size is equals to the number
-     * of bands.
+     * Recomputes some attributes in this {@code NewGridCoverageReference}. This method can be
+     * invoked after one of the following attributes changed:
      * <p>
-     * Each {@code GridSampleDimension} specifies how to convert pixel values to geophysics values,
-     * or conversely. Their type (geophysics or not) is format dependent. For example coverages
-     * read from PNG files will typically store their data as integer values (non-geophysics),
-     * while coverages read from ASCII files will often store their pixel values as real numbers
-     * (geophysics values).
+     * <ul>
+     *   <li>{@link #format}</li>
+     * </ul>
+     * <p>
+     * The current implementation recomputes the following attributes. Note that this list
+     * may be expanded in a future version.
+     * <p>
+     * <ul>
+     *   <li>{@link #sampleDimensions}</li>
+     * </ul>
      *
-     * @return The sample dimensions, or {@code null} if none.
      * @throws CoverageStoreException If an error occured while reading from the database.
      *
      * @since 3.13
      */
-    public List<GridSampleDimension> getSampleDimensions() throws CoverageStoreException {
+    public void refresh() throws CoverageStoreException {
+        sampleDimensions.clear();
+        final List<GridSampleDimension> newContent;
         if (bestFormat.getIdentifier().equals(format)) {
-            return bestFormat.sampleDimensions;
-        }
-        final FormatEntry entry;
-        try {
-            final FormatTable table = database.getTable(FormatTable.class);
+            newContent = bestFormat.sampleDimensions;
+        } else {
+            final FormatEntry entry;
             try {
-                entry = table.getEntry(format);
-            } catch (NoSuchRecordException e) {
+                final FormatTable table = database.getTable(FormatTable.class);
+                try {
+                    entry = table.getEntry(format);
+                } catch (NoSuchRecordException e) {
+                    table.release();
+                    return;
+                }
                 table.release();
-                return null;
+            } catch (SQLException e) {
+                throw new CoverageStoreException(e);
             }
-            table.release();
-        } catch (SQLException e) {
-            throw new CoverageStoreException(e);
+            newContent = entry.sampleDimensions;
         }
-        return entry.sampleDimensions;
+        if (newContent != null) {
+            sampleDimensions.addAll(newContent);
+        }
     }
 
     /**

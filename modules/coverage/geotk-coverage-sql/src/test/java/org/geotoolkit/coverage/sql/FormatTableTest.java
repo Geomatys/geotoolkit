@@ -182,13 +182,13 @@ public class FormatTableTest extends CatalogTestBase {
     }
 
     /**
-     * Tests the {@link FormatTable#addFormat} method.
+     * Tests the {@link FormatTable#findOrCreate} method.
      *
      * @throws SQLException If the test can't connect to the database.
      */
     @Test
     @Ignore
-    public void testAddFormat() throws SQLException {
+    public void testFindOrCreate() throws SQLException {
         final String formatName = "New format test";
         final List<GridSampleDimension> bands = Arrays.asList(
             new GridSampleDimension("Temperature",
@@ -206,7 +206,7 @@ public class FormatTableTest extends CatalogTestBase {
                 }, null));
 
         final FormatTable table = getDatabase().getTable(FormatTable.class);
-        assertEquals(formatName, table.addFormat(formatName, "PNG", bands));
+        assertEquals(formatName, table.findOrCreate(formatName, "PNG", bands));
         assertEquals(1, table.delete(formatName));
         table.release();
     }

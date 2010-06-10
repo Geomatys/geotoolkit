@@ -126,15 +126,15 @@ final class FormatEntry extends DefaultEntry {
      * Creates a new entry for this format.
      *
      * @param name        An identifier for this entry.
-     * @param formatName  Format name (i.e. the plugin to use).
+     * @param imageFormat The Image I/O format name (i.e. the plugin to use).
      * @param paletteName The name of the color palette, or {@code null} if unspecified.
      * @param bands       Sample dimensions for coverages encoded with this format, or {@code null}.
      */
-    protected FormatEntry(final Comparable<?> name, final String formatName, final String paletteName,
+    protected FormatEntry(final String name, final String imageFormat, final String paletteName,
             final GridSampleDimension[] bands, final ViewType viewType, final String comments)
     {
         super(name, comments);
-        this.imageFormat = formatName.trim();
+        this.imageFormat = imageFormat.trim();
         if (bands != null) {
             final boolean geophysics = ViewType.GEOPHYSICS.equals(viewType);
             final SampleDomain[] domains = new SampleDomain[bands.length];
@@ -151,6 +151,14 @@ final class FormatEntry extends DefaultEntry {
         }
         this.paletteName = paletteName;
         this.viewType    = viewType;
+    }
+
+    /**
+     * Returns the name of this format.
+     */
+    @Override
+    public String getIdentifier() {
+        return (String) super.getIdentifier();
     }
 
     /**
