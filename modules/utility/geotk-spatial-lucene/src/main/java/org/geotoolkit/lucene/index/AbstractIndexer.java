@@ -163,16 +163,30 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
      *
      * @throws IndexingException
      */
-    public abstract void createIndex(List<? extends Object> toIndex) throws IndexingException;
+    public abstract void createIndex(List<E> toIndex) throws IndexingException;
 
-    /**
+    
+   /**
      * Index a document from the specified object with the specified index writer.
      * Used when indexing in line many document.
      *
      * @param writer An Lucene index writer.
      * @param object The object to index.
      */
-    public abstract void indexDocument(IndexWriter writer, E object);
+    public void indexDocument(IndexWriter writer, E meta) {
+        try {
+            //adding the document in a specific model. in this case we use a MDwebDocument.
+            writer.addDocument(createDocument(meta));
+            LOGGER.finer("Metadata: " + getIdentifier(meta) + " indexed");
+
+        } catch (IndexingException ex) {
+            LOGGER.warning("indexingException " + ex.getMessage());
+            LOGGER.log(Level.WARNING, ex.getMessage(), ex);
+        } catch (IOException ex) {
+            LOGGER.warning(IO_SINGLE_MSG + ex.getMessage());
+            LOGGER.log(Level.WARNING, ex.getMessage(), ex);
+        }
+    }
 
     /**
      * This method add to index of lucene a new document.
@@ -180,8 +194,34 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
      *
      * @param object The object to index.
      */
-    public abstract void indexDocument(E object);
+    public void indexDocument(E meta) {
+        try {
+            final IndexWriter writer = new IndexWriter(new SimpleFSDirectory(getFileDirectory()), analyzer, false,IndexWriter.MaxFieldLength.UNLIMITED);
 
+            //adding the document in a specific model. in this case we use a MDwebDocument.
+            writer.addDocument(createDocument(meta));
+            LOGGER.finer("Metadata: " + getIdentifier(meta) + " indexed");
+            writer.optimize();
+            writer.close();
+
+        } catch (IndexingException ex) {
+            LOGGER.severe("IndexingException " + ex.getMessage());
+            LOGGER.log(Level.WARNING, ex.getMessage(), ex);
+        } catch (IOException ex) {
+            LOGGER.warning(IO_SINGLE_MSG + ex.getMessage());
+            LOGGER.log(Level.WARNING, ex.getMessage(), ex);
+        }
+    }
+
+
+    /**
+     * Return the identifier of the metadata
+     * 
+     * @param metadata
+     * @return
+     */
+    protected abstract String getIdentifier(E metadata);
+    
     /**
      * This method stop all the current indexation running
      */
