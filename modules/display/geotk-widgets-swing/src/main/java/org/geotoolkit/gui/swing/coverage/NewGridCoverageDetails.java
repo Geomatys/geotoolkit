@@ -331,6 +331,7 @@ final class NewGridCoverageDetails extends JComponent implements CoverageDatabas
         try {
             wait();
         } catch (InterruptedException e) {
+            // This happen if the CoverateList frame has been made inactive.
             throw new DatabaseVetoException(e);
         }
         /*

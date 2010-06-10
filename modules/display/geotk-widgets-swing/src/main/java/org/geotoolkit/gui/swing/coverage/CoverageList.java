@@ -79,7 +79,7 @@ import org.geotoolkit.resources.Widgets;
  * selected file on the right side.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.12
+ * @version 3.13
  *
  * @see CoverageTableModel
  *
@@ -97,6 +97,11 @@ public class CoverageList extends JComponent {
      * Layout parameters for the components put in {@link #selectionPanel}.
      */
     static final String TABLE="TABLE", FILES="FILES", CONTROLLER="CONTROLLER";
+
+    /**
+     * The name of the panel currently selected in {@link #selectionPanel}.
+     */
+    private String selectionPanelName;
 
     /**
      * The panel where to select a coverage, either from the table of coverages
@@ -187,10 +192,14 @@ public class CoverageList extends JComponent {
         table.getSelectionModel().addListSelectionListener(listeners);
         this.table = table;
 
+        final Dimension minimumSize = new Dimension(120, 100);
         selectionPanel = new JPanel(new CardLayout());
         selectionPanel.add(new JScrollPane(table), TABLE);
+        selectionPanel.setMinimumSize(minimumSize);
+        selectionPanelName = TABLE;
 
         properties = new ImageFileProperties();
+        properties.setMinimumSize(minimumSize);
         properties.setPreferredSize(new Dimension(440, 400));
         final JSplitPane pane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, selectionPanel, properties);
         pane.setOneTouchExpandable(true);
@@ -263,6 +272,8 @@ public class CoverageList extends JComponent {
         /**
          * Invoked when one of the buttons ("Remove", "Add", etc.) has been pressed.
          * This method delegates to the appropriate method in the encloding class.
+         *
+         * @todo Use switch(String) with Java 7.
          */
         @Override
         public void actionPerformed(final ActionEvent event) {
@@ -270,7 +281,12 @@ public class CoverageList extends JComponent {
             if (ADD.equals(action)) {
                 addNewCoverage(false);
             } else if (ImageFileChooser.APPROVE_SELECTION.equals(action)) {
-                addNewCoverage(true);
+                // Must check if the file selection panel is visible, because pressing the 'Enter'
+                // key in the format JComboBox of the NewGridCoverageDetails widget seems to also
+                // fire the event associated with "Ok" button of the JFileChooser.
+                if (FILES.equals(selectionPanelName)) {
+                    addNewCoverage(true);
+                }
             } else if (REMOVE.equals(action)) {
                 removeCoverage();
             } else if (ImageFileChooser.CANCEL_SELECTION.equals(action)) {
@@ -288,7 +304,9 @@ public class CoverageList extends JComponent {
         public void propertyChange(final PropertyChangeEvent event) {
             if (Boolean.FALSE.equals(event.getNewValue())) {
                 if (executor != null) {
-                    executor.shutdown();
+                    // Use shutdownNow() - not shutdown() - because we need
+                    // InterruptedException to be thrown in the waiting thread.
+                    executor.shutdownNow();
                     executor = null;
                 }
             }
@@ -436,6 +454,7 @@ public class CoverageList extends JComponent {
      */
     final void setSelectionPanel(final String name) {
         ((CardLayout) selectionPanel.getLayout()).show(selectionPanel, name);
+        selectionPanelName = name;
         toolbar.setButtonsEnabled(TABLE.equals(name));
         // TODO: use switch(String) with Java 7.
         if (TABLE.equals(name)) {
@@ -527,13 +546,8 @@ public class CoverageList extends JComponent {
                         try {
                             layer.addCoverageReferences(Arrays.asList(files), addController);
                         } catch (DatabaseVetoException e) {
-                            // User cancelled the operation. Do not report the exception
-                            // (since it is intentional), except if it was caused by an
-                            // other exception (typically InterruptedException).
-                            final Throwable cause = e.getCause();
-                            if (cause instanceof Exception) {
-                                exceptionOccured((Exception) cause);
-                            }
+                            // User cancelled the operation or closed the frame.
+                            // Do not report the exception since it is intentional.
                         } catch (CoverageStoreException e) {
                             exceptionOccured(e);
                         }

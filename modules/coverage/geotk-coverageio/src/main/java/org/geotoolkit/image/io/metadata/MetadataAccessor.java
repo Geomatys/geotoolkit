@@ -164,7 +164,7 @@ import org.geotoolkit.resources.IndexedResourceBundle;
  *
  * @author Martin Desruisseaux (Geomatys)
  * @author Cédric Briançon (Geomatys)
- * @version 3.09
+ * @version 3.13
  *
  * @see SpatialMetadata#getInstanceForType(Class)
  * @see SpatialMetadata#getListForType(Class)
@@ -710,6 +710,18 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
      */
     public String name() {
         return parent.getNodeName();
+    }
+
+    /**
+     * Returns {@code true} if this node contains no child and no attribute.
+     *
+     * @return {@code true} if this node is empty, or {@code false} if it contains at
+     *         least one child or one attribute.
+     *
+     * @since 3.13
+     */
+    public boolean isEmpty() {
+        return childs.isEmpty() && !currentElement().hasAttributes();
     }
 
     /**

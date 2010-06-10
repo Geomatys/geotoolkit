@@ -288,25 +288,27 @@ public class ReferencingBuilder {
         if (userObject != null) {
             return userObject;
         }
-        final Class<? extends CoordinateReferenceSystem> type =
-                getInterface("getCoordinateReferenceSystem", baseType, accessor);
-        if (type != null) {
-            final Map<String,?> properties = getName(accessor);
-            final CRSFactory factory = factories().getCRSFactory();
-            if (GeographicCRS.class.isAssignableFrom(type)) {
-                return baseType.cast(factory.createGeographicCRS(properties,
-                        getDatum(GeodeticDatum.class),
-                        getCoordinateSystem(EllipsoidalCS.class)));
-            } else if (ProjectedCRS.class.isAssignableFrom(type)) {
-                final GeographicCRS baseCRS = factory.createGeographicCRS(
-                        Collections.singletonMap(GeographicCRS.NAME_KEY, untitled(accessor)),
-                        getDatum(GeodeticDatum.class), DefaultEllipsoidalCS.GEODETIC_2D);
-                final CartesianCS derivedCS = getCoordinateSystem(CartesianCS.class);
-                return baseType.cast(factory.createProjectedCRS(properties, baseCRS,
-                        getConversionFromBase(baseCRS, derivedCS), derivedCS));
-            } else {
-                // TODO: test for other types of CRS here (VerticalCRS, etc.)
-                warning("getCoordinateReferenceSystem", Errors.Keys.UNKNOWN_TYPE_$1, type);
+        if (!accessor.isEmpty()) {
+            final Class<? extends CoordinateReferenceSystem> type =
+                    getInterface("getCoordinateReferenceSystem", baseType, accessor);
+            if (type != null) {
+                final Map<String,?> properties = getName(accessor);
+                final CRSFactory factory = factories().getCRSFactory();
+                if (GeographicCRS.class.isAssignableFrom(type)) {
+                    return baseType.cast(factory.createGeographicCRS(properties,
+                            getDatum(GeodeticDatum.class),
+                            getCoordinateSystem(EllipsoidalCS.class)));
+                } else if (ProjectedCRS.class.isAssignableFrom(type)) {
+                    final GeographicCRS baseCRS = factory.createGeographicCRS(
+                            Collections.singletonMap(GeographicCRS.NAME_KEY, untitled(accessor)),
+                            getDatum(GeodeticDatum.class), DefaultEllipsoidalCS.GEODETIC_2D);
+                    final CartesianCS derivedCS = getCoordinateSystem(CartesianCS.class);
+                    return baseType.cast(factory.createProjectedCRS(properties, baseCRS,
+                            getConversionFromBase(baseCRS, derivedCS), derivedCS));
+                } else {
+                    // TODO: test for other types of CRS here (VerticalCRS, etc.)
+                    warning("getCoordinateReferenceSystem", Errors.Keys.UNKNOWN_TYPE_$1, type);
+                }
             }
         }
         return getDefault("getCoordinateReferenceSystem", accessor, baseType);

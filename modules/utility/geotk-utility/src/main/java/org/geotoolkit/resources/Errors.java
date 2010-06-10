@@ -1050,6 +1050,11 @@ public final class Errors extends IndexedResourceBundle {
         public static final int THREAD_DOESNT_HOLD_LOCK = 198;
 
         /**
+         * Timeout.
+         */
+        public static final int TIMEOUT = 252;
+
+        /**
          * Tolerance error.
          */
         public static final int TOLERANCE_ERROR = 199;

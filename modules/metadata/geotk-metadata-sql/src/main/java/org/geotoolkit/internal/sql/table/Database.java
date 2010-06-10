@@ -20,6 +20,7 @@ package org.geotoolkit.internal.sql.table;
 import java.sql.Statement;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.SQLTimeoutException;
 import java.sql.SQLNonTransientException;
 import javax.sql.DataSource;
 import java.lang.reflect.Constructor;
@@ -34,6 +35,7 @@ import java.util.Properties;
 import java.util.Calendar;
 import java.util.ConcurrentModificationException;
 import java.util.GregorianCalendar;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -63,6 +65,11 @@ import org.geotoolkit.internal.sql.AuthenticatedDataSource;
  */
 @ThreadSafe(concurrent = true)
 public class Database implements Localized {
+    /**
+     * The timeout (in minutes) for acquirying a write lock.
+     */
+    private static final int TIMEOUT = 2;
+
     /**
      * The data source, which is mandatory. It is recommanded to provide a data source that
      * create pooled connections, because connections may be created and closed often.
@@ -476,8 +483,13 @@ public class Database implements Localized {
      */
     final void transactionBegin() throws SQLException {
         boolean success = false;
-        transactionLock.lock();
+        final boolean locked;
         try {
+            locked = transactionLock.tryLock(TIMEOUT, TimeUnit.MINUTES);
+        } catch (InterruptedException e) {
+            throw new SQLTimeoutException(e);
+        }
+        if (locked) try {
             if (transactionLock.getHoldCount() == 1) {
                 final LocalCache sp = getLocalCache();
                 assert Thread.holdsLock(sp); // Necessary for blocking the cleaner thread.
@@ -490,6 +502,8 @@ public class Database implements Localized {
             if (!success) {
                 transactionLock.unlock();
             }
+        } else {
+            throw new SQLTimeoutException(Errors.getResources(getLocale()).getString(Errors.Keys.TIMEOUT));
         }
     }
 
