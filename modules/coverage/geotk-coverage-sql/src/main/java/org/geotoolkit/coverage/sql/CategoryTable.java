@@ -22,9 +22,11 @@ import java.util.Map;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Locale;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.PreparedStatement;
+import java.sql.Types;
 
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.FactoryException;
@@ -34,6 +36,7 @@ import org.opengis.referencing.operation.MathTransformFactory;
 
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.coverage.Category;
+import org.geotoolkit.internal.coverage.TransferFunction;
 import org.geotoolkit.referencing.operation.matrix.Matrix2;
 import org.geotoolkit.image.io.PaletteFactory;
 import org.geotoolkit.resources.Errors;
@@ -44,6 +47,7 @@ import org.geotoolkit.internal.sql.table.QueryType;
 import org.geotoolkit.internal.sql.table.LocalCache;
 import org.geotoolkit.internal.sql.table.CatalogException;
 import org.geotoolkit.internal.sql.table.IllegalRecordException;
+import org.geotoolkit.internal.sql.table.IllegalUpdateException;
 import org.geotoolkit.internal.sql.table.SpatialDatabase;
 
 
@@ -53,7 +57,7 @@ import org.geotoolkit.internal.sql.table.SpatialDatabase;
  * required for creating a {@link org.geotoolkit.coverage.grid.GridCoverage2D}.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.12
+ * @version 3.13
  *
  * @since 3.09 (derived from Seagis)
  * @module
@@ -266,6 +270,74 @@ final class CategoryTable extends Table {
     {
         if (dimensions.put(band, categories.toArray(new Category[categories.size()])) != null) {
             throw new AssertionError(band); // Should never happen.
+        }
+    }
+
+    /**
+     * Adds the given categories in the database.
+     *
+     * @param  format The newly created format for which to write the sample dimensions.
+     * @param  categories The categories to add for each band.
+     * @throws SQLException if an error occured while writing to the database.
+     *
+     * @since 3.13
+     */
+    public void addCategories(final String format, final List<List<Category>> categories) throws SQLException {
+        final CategoryQuery query = (CategoryQuery) this.query;
+        final Locale locale = getLocale();
+        synchronized (getLock()) {
+            boolean success = false;
+            transactionBegin();
+            try {
+                final LocalCache.Stmt ce = getStatement(QueryType.INSERT);
+                final PreparedStatement statement = ce.statement;
+                statement.setString(indexOf(query.format), format);
+                final int bandIndex     = indexOf(query.band    );
+                final int nameIndex     = indexOf(query.name    );
+                final int lowerIndex    = indexOf(query.lower   );
+                final int upperIndex    = indexOf(query.upper   );
+                final int c0Index       = indexOf(query.c0      );
+                final int c1Index       = indexOf(query.c1      );
+                final int functionIndex = indexOf(query.function);
+                final int colorsIndex   = indexOf(query.colors  );
+                int bandNumber = 0;
+                for (final List<Category> list : categories) {
+                    statement.setInt(bandIndex, ++bandNumber);
+                    for (Category category : list) {
+                        category = category.geophysics(false);
+                        final TransferFunction tf = new TransferFunction(category, locale);
+                        if (tf.warning != null) {
+                            throw new IllegalUpdateException(tf.warning);
+                        }
+                        final NumberRange<?> range = category.getRange();
+                        statement.setString(nameIndex, String.valueOf(category.getName()));
+                        statement.setInt(lowerIndex, (int) Math.floor(range.getMinimum(true)));
+                        statement.setInt(upperIndex, (int) Math.ceil (range.getMaximum(true)));
+                        if (tf.isQuantitative) {
+                            statement.setDouble(c0Index, tf.offset);
+                            statement.setDouble(c1Index, tf.scale);
+                            if (tf.type != null) {
+                                statement.setString(functionIndex, tf.type.identifier());
+                            } else {
+                                statement.setNull(functionIndex, Types.VARCHAR);
+                            }
+                        } else {
+                            statement.setNull(c0Index, Types.DOUBLE);
+                            statement.setNull(c1Index, Types.DOUBLE);
+                            statement.setNull(functionIndex, Types.VARCHAR);
+                        }
+                        statement.setNull(colorsIndex, Types.VARCHAR); // TODO
+                        final int count = statement.executeUpdate();
+                        if (count != 1) {
+                            throw new IllegalUpdateException(locale, count);
+                        }
+                    }
+                }
+                release(ce);
+                success = true;
+            } finally {
+                transactionEnd(success);
+            }
         }
     }
 }

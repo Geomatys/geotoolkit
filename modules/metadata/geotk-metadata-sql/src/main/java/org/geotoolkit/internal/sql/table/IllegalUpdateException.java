@@ -30,7 +30,7 @@ import org.geotoolkit.resources.Errors;
  * revert to the previous state through a call to {@link java.sql.Connection#rollback()}.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.09
+ * @version 3.13
  *
  * @since 3.09 (derived from Seagis)
  * @module
@@ -54,8 +54,10 @@ public class IllegalUpdateException extends CatalogException {
      *
      * @param locale The locale to use for formatting the error message, or {@code null}.
      * @param count The unexpected number of rows changed.
+     *
+     * @since 3.13
      */
-    IllegalUpdateException(final Locale locale, final int count) {
+    public IllegalUpdateException(final Locale locale, final int count) {
         this(Errors.getResources(locale).getString(Errors.Keys.UNEXPECTED_UPDATES_$1, count));
     }
 

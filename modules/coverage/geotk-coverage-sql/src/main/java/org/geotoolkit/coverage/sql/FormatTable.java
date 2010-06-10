@@ -17,11 +17,14 @@
  */
 package org.geotoolkit.coverage.sql;
 
+import java.util.Locale;
 import java.util.List;
 import java.sql.Array;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+
+import org.opengis.referencing.operation.MathTransform1D;
 
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.NumberRange;
@@ -32,9 +35,11 @@ import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.internal.sql.table.Database;
 import org.geotoolkit.internal.sql.table.QueryType;
+import org.geotoolkit.internal.sql.table.LocalCache;
 import org.geotoolkit.internal.sql.table.SingletonTable;
 import org.geotoolkit.internal.sql.table.CatalogException;
 import org.geotoolkit.internal.sql.table.IllegalRecordException;
+import org.geotoolkit.internal.sql.table.IllegalUpdateException;
 
 
 /**
@@ -268,5 +273,69 @@ next:   for (final FormatEntry candidate : getEntries()) {
             }
         }
         return null;
+    }
+
+    /**
+     * Create a new format for the given sample dimensions.
+     *
+     * @param  name        The name of the new format, or {@code null} for a default one.
+     * @param  imageFormat The name of the Image I/O plugin.
+     * @param  bands       The sample dimensions to add to the database.
+     * @return The format name.
+     * @throws SQLException if an error occured while writing to the database.
+     *
+     * @since 3.13
+     */
+    public String addFormat(String name, final String imageFormat, final List<GridSampleDimension> bands)
+            throws SQLException
+    {
+        /*
+         * Determine whatever the given bands are for geophysics or packed data.
+         * If the type seems inconsistent, throws an exception.
+         */
+        ViewType type = null;
+        for (final GridSampleDimension band : bands) {
+            for (final Category category : band.getCategories()) {
+                final MathTransform1D tr = category.getSampleToGeophysics();
+                if (tr != null) {
+                    final ViewType t = tr.isIdentity() ? ViewType.GEOPHYSICS : ViewType.PACKED;
+                    if (type == null) {
+                        type = t;
+                    } else if (!type.equals(t)) {
+                        throw new IllegalUpdateException(errors().getString(Errors.Keys.MIXED_CATEGORIES));
+                    }
+                }
+            }
+        }
+        if (type == null) {
+            type = ViewType.PHOTOGRAPHIC;
+        }
+        /*
+         * Now process to the insertion in the database.
+         */
+        final FormatQuery query = (FormatQuery) super.query;
+        synchronized (getLock()) {
+            boolean success = false;
+            transactionBegin();
+            try {
+                if (name == null) {
+                    name = searchFreeIdentifier(imageFormat);
+                }
+                final LocalCache.Stmt ce = getStatement(QueryType.INSERT);
+                final PreparedStatement statement = ce.statement;
+                statement.setString(indexOf(query.name),     name);
+                statement.setString(indexOf(query.plugin),   imageFormat);
+                statement.setString(indexOf(query.packMode), type.name().toLowerCase(Locale.ENGLISH));
+                final boolean inserted = updateSingleton(statement);
+                release(ce);
+                if (inserted) {
+                    getSampleDimensionTable().addSampleDimensions(name, bands);
+                    success = true;
+                }
+            } finally {
+                transactionEnd(success);
+            }
+        }
+        return name;
     }
 }

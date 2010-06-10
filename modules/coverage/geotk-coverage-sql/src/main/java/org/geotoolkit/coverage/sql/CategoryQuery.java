@@ -31,16 +31,16 @@ import static org.geotoolkit.internal.sql.table.QueryType.*;
  * The query to execute for a {@link CategoryTable}.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.09
+ * @version 3.13
  *
  * @since 3.09 (derived from Seagis)
  * @module
  */
 final class CategoryQuery extends Query {
     /**
-     * Column to appear after the {@code "SELECT"} clause.
+     * Column to appear after the {@code "SELECT"} or {@code "INSERT"} clause.
      */
-    final Column band, name, lower, upper, c0, c1, function, colors;
+    final Column format, band, name, lower, upper, c0, c1, function, colors;
 
     /**
      * Parameter to appear after the {@code "FROM"} clause.
@@ -54,18 +54,17 @@ final class CategoryQuery extends Query {
      */
     public CategoryQuery(final Database database) {
         super(database, "Categories");
-        final Column format;
-        final QueryType[] none = {    };
         final QueryType[] list = {LIST};
-        format   = addMandatoryColumn("format",         none);
-        band     = addMandatoryColumn("band",           list);
-        name     = addMandatoryColumn("name",           list);
-        lower    = addMandatoryColumn("lower",          list);
-        upper    = addMandatoryColumn("upper",          list);
-        c0       = addMandatoryColumn("c0",             list);
-        c1       = addMandatoryColumn("c1",             list);
-        function = addOptionalColumn ("function", null, list);
-        colors   = addOptionalColumn ("colors",   null, list);
+        final QueryType[] lins = {LIST, INSERT};
+        format   = addMandatoryColumn("format",         INSERT);
+        band     = addMandatoryColumn("band",           lins);
+        name     = addMandatoryColumn("name",           lins);
+        lower    = addMandatoryColumn("lower",          lins);
+        upper    = addMandatoryColumn("upper",          lins);
+        c0       = addMandatoryColumn("c0",             lins);
+        c1       = addMandatoryColumn("c1",             lins);
+        function = addOptionalColumn ("function", null, lins);
+        colors   = addOptionalColumn ("colors",   null, lins);
         byFormat = addParameter(format, list);
         band .setOrdering(Ordering.ASC, list);
         lower.setOrdering(Ordering.ASC, list);

@@ -36,11 +36,18 @@ final class CategoryEntry {
     /**
      * The name of the color palette, or {@code null} if none. If more than one color
      * palettes are found, then the one for the largest range of values is used.
+     * <p>
+     * This is used for initializing the {@link FormatEntry#paletteName} attribute,
+     * which is used by {@link GridCoverageLoader}. We retain only one palette name
+     * because there is typically only one visible band in an index color model, so
+     * {@code GridCoverageLoader} wants only one palette.
      */
     final String paletteName;
 
     /**
      * The categories for each sample dimensions in a given format.
+     * The keys are band numbers, where the first band is numbered 1.
+     * Values are the categories for that band.
      */
     final Map<Integer,Category[]> categories;
 

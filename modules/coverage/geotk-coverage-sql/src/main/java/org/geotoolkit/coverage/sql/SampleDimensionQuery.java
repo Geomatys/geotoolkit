@@ -31,7 +31,7 @@ import static org.geotoolkit.internal.sql.table.QueryType.*;
  * The query to execute for a {@link SampleDimensionTable}.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.09
+ * @version 3.13
  *
  * @since 3.09 (derived from Seagis)
  * @module
@@ -40,7 +40,7 @@ final class SampleDimensionQuery extends Query {
     /**
      * Column to appear after the {@code "SELECT"} clause.
      */
-    final Column band, name, units;
+    final Column format, band, name, units;
 
     /**
      * Parameter to appear after the {@code "FROM"} clause.
@@ -54,13 +54,13 @@ final class SampleDimensionQuery extends Query {
      */
     public SampleDimensionQuery(final Database database) {
         super(database, "SampleDimensions");
-        final Column format;
-        final QueryType[] usage = {LIST};
-        format   = addMandatoryColumn("format",      usage);
-        band     = addOptionalColumn ("band", 1,     usage);
-        name     = addMandatoryColumn("name",        usage);
-        units    = addOptionalColumn ("units", null, usage);
-        byFormat = addParameter(format, usage);
-        band.setOrdering(Ordering.ASC, usage);
+        final QueryType[] list = {LIST};
+        final QueryType[] lins = {LIST, INSERT};
+        format   = addMandatoryColumn("format",      INSERT);
+        band     = addOptionalColumn ("band", 1,     lins);
+        name     = addMandatoryColumn("name",        lins);
+        units    = addOptionalColumn ("units", null, lins);
+        byFormat = addParameter(format, list);
+        band.setOrdering(Ordering.ASC, list);
     }
 }

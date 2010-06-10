@@ -19,13 +19,14 @@ package org.geotoolkit.gui.swing.coverage;
 
 import java.awt.Color;
 import java.util.Locale;
+import java.util.logging.Level;
+import java.util.logging.LogRecord;
 import java.text.NumberFormat;
 import java.io.IOException;
 import java.io.Serializable;
 import java.io.ObjectInputStream;
 
 import org.opengis.util.InternationalString;
-import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.MathTransform1D;
 import org.opengis.metadata.content.TransferFunctionType;
 
@@ -33,9 +34,10 @@ import org.geotoolkit.math.XMath;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.Cloneable;
 import org.geotoolkit.util.NumberRange;
+import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.coverage.Category;
-import org.geotoolkit.referencing.operation.transform.LinearTransform;
+import org.geotoolkit.internal.coverage.TransferFunction;
 import org.geotoolkit.referencing.operation.transform.LinearTransform1D;
 import org.geotoolkit.referencing.operation.transform.ConcatenatedTransform;
 import org.geotoolkit.referencing.operation.transform.LogarithmicTransform1D;
@@ -138,26 +140,28 @@ public class CategoryRecord implements Cloneable, Serializable {
      *       transfer functions.
      */
     public CategoryRecord(Category category, final Locale locale) {
-        category = category.geophysics(false);
+        this.category = category = category.geophysics(false);
         final InternationalString name = category.getName();
         if (name != null) {
             this.name = name.toString(locale);
         }
-        final NumberRange<?> range = category.getRange();
-        sampleMin = (int) Math.round(range.getMinimum(true));
-        sampleMax = (int) Math.round(range.getMaximum(true));
-        final MathTransform1D function = category.getSampleToGeophysics();
-        if (function instanceof LinearTransform) {
-            final Matrix m = ((LinearTransform) function).getMatrix();
-            scale  = m.getElement(0, 0);
-            offset = m.getElement(0, m.getNumCol() - 1);
-            functionType = LINEAR;
+        final TransferFunction tf = new TransferFunction(category, locale);
+        sampleMin = tf.minimum;
+        sampleMax = tf.maximum;
+        scale     = tf.scale;
+        offset    = tf.offset;
+        if (tf.isQuantitative) {
             fractionDigits = -1;
-        } else {
-            // Qualitative category, or unknown transfer function.
-            scale = 1;
         }
-        this.category = category;
+        if (tf.type != null) {
+            setTransferFunctionType(tf.type);
+        }
+        if (tf.warning != null) {
+            final LogRecord record = new LogRecord(Level.WARNING, tf.warning);
+            record.setSourceClassName(CategoryRecord.class.getName());
+            record.setSourceMethodName("<init>");
+            Logging.log(CategoryRecord.class, record);
+        }
     }
 
     /**

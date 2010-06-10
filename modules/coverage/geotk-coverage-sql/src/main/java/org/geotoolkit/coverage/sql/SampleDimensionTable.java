@@ -18,7 +18,11 @@
 package org.geotoolkit.coverage.sql;
 
 import java.util.Map;
+import java.util.List;
+import java.util.Locale;
 import java.util.Arrays;
+import java.util.ArrayList;
+import java.sql.Types;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.PreparedStatement;
@@ -37,6 +41,7 @@ import org.geotoolkit.internal.sql.table.QueryType;
 import org.geotoolkit.internal.sql.table.LocalCache;
 import org.geotoolkit.internal.sql.table.CatalogException;
 import org.geotoolkit.internal.sql.table.IllegalRecordException;
+import org.geotoolkit.internal.sql.table.IllegalUpdateException;
 
 
 /**
@@ -45,7 +50,7 @@ import org.geotoolkit.internal.sql.table.IllegalRecordException;
  * components needed for creation of {@link GridCoverage2D}.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.12
+ * @version 3.13
  *
  * @since 3.09 (derived from Seagis)
  * @module
@@ -55,6 +60,12 @@ final class SampleDimensionTable extends Table {
      * The {@linkplain Category categories} table, created only when first needed.
      */
     private transient CategoryTable categories;
+
+    /**
+     * The unit format for parsing and formatting unit symbols.
+     * Created only when first needed.
+     */
+    private transient UnitFormat unitFormat;
 
     /**
      * Creates a sample dimension table.
@@ -97,6 +108,18 @@ final class SampleDimensionTable extends Table {
     }
 
     /**
+     * Returns the unit format for parsing and formatting unit symbols.
+     * Uses the France locale because it is the authoritative locale of BIPM.
+     * For most languages, it doesn't make any change in the set of symbols.
+     */
+    private UnitFormat getUnitFormat() {
+        if (unitFormat == null) {
+            unitFormat = UnitFormat.getInstance(Locale.FRANCE);
+        }
+        return unitFormat;
+    }
+
+    /**
      * Returns the sample dimensions for the given format. If no sample dimensions are specified,
      * return {@code null} (not an empty list). We are not allowed to return an empty list because
      * our Image I/O framework interprets that as "no bands", as opposed to "unknown bands".
@@ -110,7 +133,6 @@ final class SampleDimensionTable extends Table {
         String[]  names = new String [8];
         Unit<?>[] units = new Unit<?>[8];
         int numSampleDimensions = 0;
-        UnitFormat unitFormat = null;
         synchronized (getLock()) {
             final LocalCache.Stmt ce = getStatement(QueryType.LIST);
             final PreparedStatement statement = ce.statement;
@@ -129,11 +151,8 @@ final class SampleDimensionTable extends Table {
                     if (unitSymbol.length() == 0) {
                         unit = Unit.ONE;
                     } else {
-                        if (unitFormat == null) {
-                            unitFormat = UnitFormat.getInstance();
-                        }
                         try {
-                            unit = (Unit<?>) unitFormat.parseObject(unitSymbol);
+                            unit = (Unit<?>) getUnitFormat().parseObject(unitSymbol);
                         } catch (ParseException e) {
                             // The constructor of this exception will close the ResultSet.
                             final IllegalRecordException ex = new IllegalRecordException(errors().getString(
@@ -182,5 +201,53 @@ final class SampleDimensionTable extends Table {
         }
         entry.sampleDimensions = sampleDimensions;
         return entry;
+    }
+
+    /**
+     * Adds the given sample dimensions to the database.
+     *
+     * @param  format The newly created format for which to write the sample dimensions.
+     * @param  bands The sample dimensions to add.
+     * @throws SQLException if an error occured while writing to the database.
+     *
+     * @since 3.13
+     */
+    public void addSampleDimensions(final String format, final List<GridSampleDimension> bands) throws SQLException {
+        final SampleDimensionQuery query = (SampleDimensionQuery) super.query;
+        synchronized (getLock()) {
+            boolean success = false;
+            transactionBegin();
+            try {
+                final LocalCache.Stmt ce = getStatement(QueryType.INSERT);
+                final PreparedStatement statement = ce.statement;
+                statement.setString(indexOf(query.format), format);
+                final int bandIndex = indexOf(query.band);
+                final int nameIndex = indexOf(query.name);
+                final int unitIndex = indexOf(query.units);
+                final List<List<Category>> categories = new ArrayList<List<Category>>(bands.size());
+                int bandNumber = 0;
+                for (GridSampleDimension band : bands) {
+                    band = band.geophysics(false);
+                    statement.setInt(bandIndex, ++bandNumber);
+                    statement.setString(nameIndex, String.valueOf(band.getDescription()));
+                    final Unit<?> unit = band.getUnits();
+                    if (unit != null) {
+                        statement.setString(unitIndex, getUnitFormat().format(unit));
+                    } else {
+                        statement.setNull(unitIndex, Types.VARCHAR);
+                    }
+                    final int count = statement.executeUpdate();
+                    if (count != 1) {
+                        throw new IllegalUpdateException(getLocale(), count);
+                    }
+                    categories.add(band.getCategories());
+                }
+                release(ce);
+                getCategoryTable().addCategories(format, categories);
+                success = true;
+            } finally {
+                transactionEnd(success);
+            }
+        }
     }
 }

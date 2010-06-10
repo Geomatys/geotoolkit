@@ -59,7 +59,7 @@ final class FormatQuery extends Query {
         plugin   = addMandatoryColumn("plugin",   usage);
         packMode = addMandatoryColumn("packMode", usage);
         comments = addOptionalColumn ("comments", null, SELECT, LIST);
-        byName   = addParameter(name, EXISTS, SELECT);
+        byName   = addParameter(name, EXISTS, SELECT, DELETE);
         byPlugin = addParameter(plugin, LIST);
         byPlugin.setSearchValue("ANY(?)", LIST);
         name.setOrdering(Ordering.ASC, LIST, LIST_ID);
