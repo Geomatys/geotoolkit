@@ -56,6 +56,8 @@ import org.jdesktop.swingx.JXBusyLabel;
 import org.jdesktop.swingx.JXTitledPanel;
 
 import javax.measure.unit.Unit;
+import javax.measure.converter.ConversionException;
+
 import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
 import org.opengis.metadata.extent.GeographicBoundingBox;
@@ -561,16 +563,18 @@ public class LayerList extends WindowCreator {
      *
      * @param formats The format names, or {@code null} if none.
      * @param ranges  The ranges of measure, or {@code null} if none.
+     * @param rangeText The text to display for the ranges, or {@code null} for computing
+     *        it from the {@code ranges} argument. This is non-null only if an error occured
+     *        while computing the range, because of incompatibles units.
      */
-    final void setFormat(final Set<String> formats, final List<MeasurementRange<?>> ranges) {
+    final void setFormat(final Set<String> formats, final List<MeasurementRange<?>> ranges, String rangeText) {
         String text = null;
         if (formats != null && !formats.isEmpty()) {
             text = formats.toString();
             text = text.substring(1, text.length() - 1); // For removing the brackets.
         }
         setText(imageFormat, text);
-        text = null;
-        if (ranges != null && !ranges.isEmpty()) {
+        if (rangeText == null && ranges != null && !ranges.isEmpty()) {
             boolean hasMore = false;
             final StringBuffer buffer = new StringBuffer("<html>");
             final FieldPosition pos = new FieldPosition(0);
@@ -581,9 +585,9 @@ public class LayerList extends WindowCreator {
                 rangeFormat.format(range, buffer, pos);
                 hasMore = true;
             }
-            text = buffer.append("</html>").toString();
+            rangeText = buffer.append("</html>").toString();
         }
-        setText(sampleValueRanges, text);
+        setText(sampleValueRanges, rangeText);
     }
 
     /**
@@ -657,7 +661,7 @@ public class LayerList extends WindowCreator {
     private void setLayerProperties(final String layer) {
         if (layer == null) {
             setDomain(null, null, null, null, null);
-            setFormat(null, null);
+            setFormat(null, null, null);
             return;
         }
         busyDomain.setBusy(true);
@@ -672,6 +676,7 @@ public class LayerList extends WindowCreator {
             private String[] elevations;
             private Set<String> formats;
             private List<MeasurementRange<?>> ranges;
+            private String rangeError;
 
             /**
              * Computes the fields declared in this class. This method can be invoked
@@ -683,7 +688,19 @@ public class LayerList extends WindowCreator {
                 bbox       = layer.getGeographicBoundingBox();
                 resolution = layer.getTypicalResolution();
                 formats    = layer.getImageFormats();
-                ranges     = layer.getSampleValueRanges();
+                try {
+                    ranges = layer.getSampleValueRanges();
+                } catch (CoverageStoreException e) {
+                    Throwable cause = e.getCause();
+                    if (cause instanceof ConversionException) {
+                        rangeError = cause.getLocalizedMessage();
+                        if (rangeError == null) {
+                            rangeError = e.getLocalizedMessage();
+                        }
+                    } else {
+                        throw e;
+                    }
+                }
                 final DateRange timeRange = layer.getTimeRange();
                 if (timeRange != null) {
                     startTime = timeRange.getMinValue();
@@ -734,7 +751,7 @@ public class LayerList extends WindowCreator {
                         EventQueue.invokeLater(this);
                     } else {
                         setDomain(name, bbox, startTime, endTime, resolution);
-                        setFormat(formats, ranges);
+                        setFormat(formats, ranges, rangeError);
                         LayerList.this.elevations.setElements(elevations);
                     }
                 } finally {

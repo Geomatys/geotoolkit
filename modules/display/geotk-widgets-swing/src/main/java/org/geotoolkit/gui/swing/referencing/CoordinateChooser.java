@@ -86,7 +86,7 @@ import org.geotoolkit.gui.swing.Dialog;
  * </td></tr></table>
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.12
+ * @version 3.13
  *
  * @since 2.3
  * @module
@@ -259,8 +259,8 @@ public class CoordinateChooser extends JComponent implements Dialog {
         xmax = new JSpinner(new SpinnerAngleModel(new Longitude(Longitude.MAX_VALUE)));
         ymin = new JSpinner(new SpinnerAngleModel(new  Latitude( Latitude.MIN_VALUE)));
         ymax = new JSpinner(new SpinnerAngleModel(new  Latitude( Latitude.MAX_VALUE)));
-        xres = new JSpinner(new SpinnerNumberModel(1, 0, 360*60, 1));
-        yres = new JSpinner(new SpinnerNumberModel(1, 0, 180*60, 1));
+        xres = new JSpinner(new SpinnerNumberModel(1d, 0d, 360d*60, 1d));
+        yres = new JSpinner(new SpinnerNumberModel(1d, 0d, 180d*60, 1d));
 
         final AngleFormat   angleFormat = new AngleFormat("D°MM.m'", locale);
         final DateFormat     dateFormat = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT, locale);
@@ -478,8 +478,8 @@ public class CoordinateChooser extends JComponent implements Dialog {
      */
     public void setPreferredResolution(final Dimension2D resolution) {
         if (resolution != null) {
-            xres.setValue(new Double(resolution.getWidth ()*60));
-            yres.setValue(new Double(resolution.getHeight()*60));
+            xres.setValue(Double.valueOf(resolution.getWidth ()*60));
+            yres.setValue(Double.valueOf(resolution.getHeight()*60));
             radioPrefRes.setSelected(true);
         }  else {
             radioBestRes.setSelected(true);

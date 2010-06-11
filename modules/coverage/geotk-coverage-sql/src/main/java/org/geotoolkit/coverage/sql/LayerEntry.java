@@ -556,8 +556,14 @@ final class LayerEntry extends DefaultEntry implements Layer {
                                 ranges = Arrays.copyOf(ranges, candidates.length);
                                 System.arraycopy(candidates, length, ranges, length, candidates.length - length);
                             }
-                            for (int i=0; i<length; i++) {
+                            for (int i=0; i<length; i++) try {
                                 ranges[i] = ranges[i].union(candidates[i]);
+                            } catch (IllegalArgumentException e) {
+                                // May occurs if the units are not convertible.
+                                // We are interrested in the ConversionException cause.
+                                final Throwable cause = e.getCause();
+                                throw new CoverageStoreException(e.getLocalizedMessage(),
+                                        (cause instanceof Exception) ? (Exception) cause : e);
                             }
                         }
                     }

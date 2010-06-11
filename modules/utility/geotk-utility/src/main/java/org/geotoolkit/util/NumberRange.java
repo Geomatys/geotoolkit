@@ -528,7 +528,7 @@ public class NumberRange<T extends Number & Comparable<? super T>> extends Range
      */
     @Override
     @SuppressWarnings({"unchecked","rawtypes"})
-    public boolean contains(Range<?> range) {
+    public boolean contains(Range<?> range) throws IllegalArgumentException {
         final Class<? extends Number> type = widestClass(elementClass, getElementClass(range));
         /*
          * The type bounds is actually <? extends Number & Comparable> but I'm unable to express
@@ -545,7 +545,7 @@ public class NumberRange<T extends Number & Comparable<? super T>> extends Range
      */
     @Override
     @SuppressWarnings({"unchecked","rawtypes"})
-    public boolean intersects(Range<?> range) {
+    public boolean intersects(Range<?> range) throws IllegalArgumentException {
         final Class<? extends Number> type = widestClass(elementClass, getElementClass(range));
         /*
          * The type bounds is actually <? extends Number & Comparable> but I'm unable to express
@@ -563,7 +563,7 @@ public class NumberRange<T extends Number & Comparable<? super T>> extends Range
      */
     @Override
     @SuppressWarnings({"unchecked","rawtypes"})
-    public NumberRange<?> union(Range<?> range) {
+    public NumberRange<?> union(Range<?> range) throws IllegalArgumentException {
         final Class<? extends Number> type = widestClass(elementClass, getElementClass(range));
         range = convertAndCast((Range) range, (Class) type);
         return (NumberRange) castTo((Class) type).unionNC(range);
@@ -575,7 +575,7 @@ public class NumberRange<T extends Number & Comparable<? super T>> extends Range
      */
     @Override
     @SuppressWarnings({"unchecked","rawtypes"})
-    public NumberRange<?> intersect(Range<?> range) {
+    public NumberRange<?> intersect(Range<?> range) throws IllegalArgumentException {
         final Class<? extends Number> rangeType = getElementClass(range);
         Class<? extends Number> type = widestClass(elementClass, rangeType);
         range = castTo((Class) type).intersectNC(convertAndCast((Range) range, (Class) type));
@@ -595,7 +595,7 @@ public class NumberRange<T extends Number & Comparable<? super T>> extends Range
      */
     @Override
     @SuppressWarnings({"unchecked","rawtypes"})
-    public NumberRange<?>[] subtract(Range<?> range) {
+    public NumberRange<?>[] subtract(Range<?> range) throws IllegalArgumentException {
         Class<? extends Number> type = widestClass(elementClass, getElementClass(range));
         return (NumberRange[]) castTo((Class) type)
                 .subtractNC(convertAndCast((Range) range, (Class) type));

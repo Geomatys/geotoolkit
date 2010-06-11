@@ -333,7 +333,7 @@ public class Range<T extends Comparable<? super T>> implements Serializable  {
      * @param  range The range to check for inclusion in this range.
      * @return {@code true} if the given range is included in this range.
      * @throws IllegalArgumentException is the given range can not be converted to a valid type
-     *         through widening conversion.
+     *         through widening conversion, or if the units of measurement are not convertible.
      */
     public boolean contains(final Range<?> range) throws IllegalArgumentException {
         return containsNC(ensureCompatible(range));
@@ -354,7 +354,7 @@ public class Range<T extends Comparable<? super T>> implements Serializable  {
      * @param  range The range to check for intersection with this range.
      * @return {@code true} if the given range intersects this range.
      * @throws IllegalArgumentException is the given range can not be converted to a valid type
-     *         through widening conversion.
+     *         through widening conversion, or if the units of measurement are not convertible.
      *
      * @see javax.media.jai.util.Range#intersects
      */
@@ -377,7 +377,7 @@ public class Range<T extends Comparable<? super T>> implements Serializable  {
      * @param  range The range to intersect.
      * @return The intersection of this range with the provided range.
      * @throws IllegalArgumentException is the given range can not be converted to a valid type
-     *         through widening conversion.
+     *         through widening conversion, or if the units of measurement are not convertible.
      *
      * @see javax.media.jai.util.Range#intersect
      */
@@ -418,7 +418,7 @@ public class Range<T extends Comparable<? super T>> implements Serializable  {
      * @param  range The range to substract.
      * @return This range without the given range.
      * @throws IllegalArgumentException is the given range can not be converted to a valid type
-     *         through widening conversion.
+     *         through widening conversion, or if the units of measurement are not convertible.
      *
      * @see javax.media.jai.util.Range#subtract
      */
@@ -467,7 +467,7 @@ public class Range<T extends Comparable<? super T>> implements Serializable  {
      * @param  range The range to add to this range.
      * @return The union of this range with the given range.
      * @throws IllegalArgumentException is the given range can not be converted to a valid type
-     *         through widening conversion.
+     *         through widening conversion, or if the units of measurement are not convertible.
      *
      * @see javax.media.jai.util.Range#union
      */
