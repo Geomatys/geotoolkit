@@ -7,18 +7,20 @@ import java.util.List;
  *
  * <p>Starting number in the range.</p>
  *
- * <br />&lt;xs:element name="ThoroughfareNumberFrom">
- * <br />&lt;xs:complexType mixed="true">
- * <br />&lt;xs:sequence>
- * <br />&lt;xs:element ref="AddressLine" minOccurs="0" maxOccurs="unbounded"/>
- * <br />&lt;xs:element ref="ThoroughfareNumberPrefix" minOccurs="0" maxOccurs="unbounded"/>
- * <br />&lt;xs:element ref="ThoroughfareNumber" maxOccurs="unbounded"/>
- * <br />&lt;xs:element ref="ThoroughfareNumberSuffix" minOccurs="0" maxOccurs="unbounded"/>
- * <br />&lt;/xs:sequence>
- * <br />&lt;xs:attributeGroup ref="grPostal"/>
- * <br />&lt;xs:anyAttribute namespace="##other"/>
- * <br />&lt;/xs:complexType>
- * <br />&lt;/xs:element>
+ * <pre>
+ * &lt;xs:element name="ThoroughfareNumberFrom">
+ *  &lt;xs:complexType mixed="true">
+ *  &lt;xs:sequence>
+ *      &lt;xs:element ref="AddressLine" minOccurs="0" maxOccurs="unbounded"/>
+ *      &lt;xs:element ref="ThoroughfareNumberPrefix" minOccurs="0" maxOccurs="unbounded"/>
+ *      &lt;xs:element ref="ThoroughfareNumber" maxOccurs="unbounded"/>
+ *      &lt;xs:element ref="ThoroughfareNumberSuffix" minOccurs="0" maxOccurs="unbounded"/>
+ *  &lt;/xs:sequence>
+ *  &lt;xs:attributeGroup ref="grPostal"/>
+ *  &lt;xs:anyAttribute namespace="##other"/>
+ *  &lt;/xs:complexType>
+ * &lt;/xs:element>
+ * </pre>
  *
  * @author Samuel Andrés
  */

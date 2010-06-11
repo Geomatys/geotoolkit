@@ -1,16 +1,16 @@
 package org.geotoolkit.data.model.xal;
 
-import org.geotoolkit.data.model.kml.*;
-
 /**
  * <p>This enumeration maps oddEven element.</p>
  *
- * <br />&lt;xs:simpleType>
- * <br />&lt;s:restriction base="xs:NMTOKEN">
- * <br />&lt;xs:enumeration value="Odd"/>
- * <br />&lt;xs:enumeration value="Even"/>
- * <br />&lt;/xs:restriction>
- * <br />&lt;/xs:simpleType>
+ * <pre>
+ * &lt;xs:simpleType>
+ *  &lt;s:restriction base="xs:NMTOKEN">
+ *      &lt;xs:enumeration value="Odd"/>
+ *      &lt;xs:enumeration value="Even"/>
+ *  &lt;/xs:restriction>
+ * &lt;/xs:simpleType>
+ * </pre>
  *
  * @author Samuel Andrés
  */
@@ -33,7 +33,7 @@ public enum OddEvenEnum {
      *
      * @return
      */
-    public String getRangeType(){
+    public String getOddEven(){
         return this.oddEven;
     }
 
@@ -56,7 +56,7 @@ public enum OddEvenEnum {
     public static OddEvenEnum transform(String oddEven, OddEvenEnum defaultValue){
         OddEvenEnum resultat = defaultValue;
         for(OddEvenEnum rt : OddEvenEnum.values()){
-            if(rt.getRangeType().equals(oddEven)){
+            if(rt.getOddEven().equals(oddEven)){
                 resultat = rt;
                 break;
             }

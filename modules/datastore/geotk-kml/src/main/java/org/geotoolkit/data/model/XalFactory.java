@@ -13,6 +13,8 @@ import org.geotoolkit.data.model.xal.CountryNameCode;
 import org.geotoolkit.data.model.xal.Department;
 import org.geotoolkit.data.model.xal.DependentLocality;
 import org.geotoolkit.data.model.xal.DependentLocalityNumber;
+import org.geotoolkit.data.model.xal.DependentThoroughfare;
+import org.geotoolkit.data.model.xal.DependentThoroughfares;
 import org.geotoolkit.data.model.xal.Firm;
 import org.geotoolkit.data.model.xal.GenericTypedGrPostal;
 import org.geotoolkit.data.model.xal.GrPostal;
@@ -22,6 +24,7 @@ import org.geotoolkit.data.model.xal.LargeMailUserName;
 import org.geotoolkit.data.model.xal.Locality;
 import org.geotoolkit.data.model.xal.MailStop;
 import org.geotoolkit.data.model.xal.MailStopNumber;
+import org.geotoolkit.data.model.xal.OddEvenEnum;
 import org.geotoolkit.data.model.xal.PostBox;
 import org.geotoolkit.data.model.xal.PostBoxNumber;
 import org.geotoolkit.data.model.xal.PostBoxNumberExtension;
@@ -55,6 +58,12 @@ import org.geotoolkit.data.model.xal.SubPremiseNumber;
 import org.geotoolkit.data.model.xal.SubPremiseNumberPrefix;
 import org.geotoolkit.data.model.xal.SubPremiseNumberSuffix;
 import org.geotoolkit.data.model.xal.Thoroughfare;
+import org.geotoolkit.data.model.xal.ThoroughfareNumber;
+import org.geotoolkit.data.model.xal.ThoroughfareNumberFrom;
+import org.geotoolkit.data.model.xal.ThoroughfareNumberPrefix;
+import org.geotoolkit.data.model.xal.ThoroughfareNumberRange;
+import org.geotoolkit.data.model.xal.ThoroughfareNumberSuffix;
+import org.geotoolkit.data.model.xal.ThoroughfareNumberTo;
 import org.geotoolkit.data.model.xal.Xal;
 import org.geotoolkit.data.model.xal.XalException;
 
@@ -696,4 +705,112 @@ public interface XalFactory {
             List<SubPremiseNumberSuffix> subPremiseNumberSuffixes,
             List<BuildingName> buildingNames, Firm firm, MailStop mailStop,
             PostalCode postalCode, SubPremise subPremise, String type) throws XalException;
+
+    /**
+     * 
+     * @param addressLines
+     * @param thoroughfareNumbers
+     * @param thoroughfareNumberPrefixes
+     * @param thoroughfareNumberSuffixes
+     * @param thoroughfarePreDirection
+     * @param thoroughfareLeadingType
+     * @param thoroughfareNames
+     * @param thoroughfareTrailingType
+     * @param thoroughfarPostDirection
+     * @param dependentThoroughfare
+     * @param location
+     * @param type
+     * @param dependentThoroughfares
+     * @param dependentThoroughfaresIndicator
+     * @param dependentThoroughfaresConnector
+     * @param dependentThoroughfaresType
+     * @return
+     * @throws XalException
+     */
+    public Thoroughfare createThoroughfare(List<GenericTypedGrPostal> addressLines, List<Object> thoroughfareNumbers,
+            List<ThoroughfareNumberPrefix> thoroughfareNumberPrefixes,
+            List<ThoroughfareNumberSuffix> thoroughfareNumberSuffixes,
+            GenericTypedGrPostal thoroughfarePreDirection,
+            GenericTypedGrPostal thoroughfareLeadingType,
+            List<GenericTypedGrPostal> thoroughfareNames,
+            GenericTypedGrPostal thoroughfareTrailingType,
+            GenericTypedGrPostal thoroughfarPostDirection,
+            DependentThoroughfare dependentThoroughfare,
+            Object location,
+            String type, DependentThoroughfares dependentThoroughfares, String dependentThoroughfaresIndicator,
+            String dependentThoroughfaresConnector, String dependentThoroughfaresType) throws XalException;
+
+    /**
+     *
+     * @param addressLines
+     * @param thoroughfareNumberFrom
+     * @param thoroughfareNumberTo
+     * @param rangeType
+     * @param indicator
+     * @param separator
+     * @param type
+     * @param indicatorOccurrence
+     * @param numberRangeOccurrence
+     * @return
+     */
+    public ThoroughfareNumberRange createThoroughfareNumberRange(List<GenericTypedGrPostal> addressLines,
+            ThoroughfareNumberFrom thoroughfareNumberFrom,
+            ThoroughfareNumberTo thoroughfareNumberTo,
+            OddEvenEnum rangeType, String indicator, String separator, String type,
+            AfterBeforeEnum indicatorOccurrence, AfterBeforeTypeNameEnum numberRangeOccurrence);
+
+    /**
+     * 
+     * @param numberType
+     * @param type
+     * @param indicator
+     * @param indicatorOccurence
+     * @param numberOccurrence
+     * @param grPostal
+     * @param content
+     * @return
+     */
+    public ThoroughfareNumber createThoroughfareNumber(SingleRangeEnum numberType,
+            String type, String indicator, AfterBeforeEnum indicatorOccurence,
+            AfterBeforeTypeNameEnum numberOccurrence, GrPostal grPostal, String content);
+
+    /**
+     * 
+     * @param content
+     * @param grPostal
+     * @return
+     * @throws XalException
+     */
+    public ThoroughfareNumberFrom createThoroughfareNumberFrom(List<Object> content, GrPostal grPostal) throws XalException;
+
+    /**
+     * 
+     * @param content
+     * @param grPostal
+     * @return
+     * @throws XalException
+     */
+    public ThoroughfareNumberTo createThoroughfareNumberTo(List<Object> content, GrPostal grPostal) throws XalException;
+
+    /**
+     * 
+     * @param numberSuffixSeparator
+     * @param type
+     * @param grPostal
+     * @param content
+     * @return
+     */
+    public ThoroughfareNumberSuffix createThoroughfareNumberSuffix(String numberSuffixSeparator,
+            String type, GrPostal grPostal, String content);
+
+    /**
+     * 
+     * @param numberPrefixSeparator
+     * @param type
+     * @param grPostal
+     * @param content
+     * @return
+     */
+    public ThoroughfareNumberPrefix createThoroughfareNumberPrefix(String numberPrefixSeparator,
+        String type, GrPostal grPostal, String content);
 }

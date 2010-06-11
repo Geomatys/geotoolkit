@@ -92,6 +92,7 @@ import org.geotoolkit.data.model.kml.Vec2;
 import org.geotoolkit.data.model.kml.ViewRefreshMode;
 import org.geotoolkit.data.model.kml.ViewVolume;
 import org.geotoolkit.data.model.xal.AddressDetails;
+import org.geotoolkit.data.model.xal.XalException;
 import org.geotoolkit.data.model.xsd.SimpleType;
 import org.geotoolkit.xml.StaxStreamWriter;
 import static org.geotoolkit.data.model.KmlModelConstants.*;
@@ -643,11 +644,11 @@ public class KmlWriter extends StaxStreamWriter {
      *
      * @param details
      */
-    private void writeXalAddresDetails(AddressDetails details){
+    private void writeXalAddresDetails(AddressDetails details) throws XMLStreamException{
         this.xalWriter.setWriter(writer);
         try {
             this.xalWriter.writeAddressDetails(details);
-        } catch (XMLStreamException ex) {
+        } catch (XalException ex) {
             Logger.getLogger(KmlWriter.class.getName()).log(Level.SEVERE, null, ex);
         }
         this.writer = this.xalWriter.getWriter();

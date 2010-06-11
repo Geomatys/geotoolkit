@@ -16,7 +16,7 @@ public class ThoroughfareDefault implements Thoroughfare {
     private final GenericTypedGrPostal thoroughfareLeadingType;
     private final List<GenericTypedGrPostal> thoroughfareNames;
     private final GenericTypedGrPostal thoroughfareTrailingType;
-    private final GenericTypedGrPostal thoroughfarPostDirection;
+    private final GenericTypedGrPostal thoroughfarePostDirection;
     private final DependentThoroughfare dependentThoroughfare;
     private DependentLocality dependentLocality;
     private Premise premise;
@@ -28,6 +28,26 @@ public class ThoroughfareDefault implements Thoroughfare {
     private final String dependentThoroughfaresConnector;
     private final String dependentThoroughfaresType;
 
+    /**
+     *
+     * @param addressLines
+     * @param thoroughfareNumbers
+     * @param thoroughfareNumberPrefixes
+     * @param thoroughfareNumberSuffixes
+     * @param thoroughfarePreDirection
+     * @param thoroughfareLeadingType
+     * @param thoroughfareNames
+     * @param thoroughfareTrailingType
+     * @param thoroughfarePostDirection
+     * @param dependentThoroughfare
+     * @param location
+     * @param type
+     * @param dependentThoroughfares
+     * @param dependentThoroughfaresIndicator
+     * @param dependentThoroughfaresConnector
+     * @param dependentThoroughfaresType
+     * @throws XalException
+     */
     public ThoroughfareDefault(List<GenericTypedGrPostal> addressLines, List<Object> thoroughfareNumbers,
             List<ThoroughfareNumberPrefix> thoroughfareNumberPrefixes,
             List<ThoroughfareNumberSuffix> thoroughfareNumberSuffixes,
@@ -48,7 +68,7 @@ public class ThoroughfareDefault implements Thoroughfare {
         this.thoroughfareLeadingType = thoroughfareLeadingType;
         this.thoroughfareNames = thoroughfareNames;
         this.thoroughfareTrailingType = thoroughfareTrailingType;
-        this.thoroughfarPostDirection = thoroughfarPostDirection;
+        this.thoroughfarePostDirection = thoroughfarPostDirection;
         this.dependentThoroughfare = dependentThoroughfare;
         if (location instanceof DependentLocality){
             this.dependentLocality = (DependentLocality) location;
@@ -68,6 +88,12 @@ public class ThoroughfareDefault implements Thoroughfare {
         this.dependentThoroughfaresType = dependentThoroughfaresType;
     }
 
+    /**
+     *
+     * @param thoroughfareNumbers
+     * @return
+     * @throws XalException
+     */
     private List<Object> verifThoroughfareNumbers(List<Object> thoroughfareNumbers) throws XalException{
         for (Object thoroughfareNumber : thoroughfareNumbers){
             if(!(thoroughfareNumber instanceof ThoroughfareNumber) && !(thoroughfareNumber instanceof ThoroughfareNumberRange))
@@ -76,60 +102,136 @@ public class ThoroughfareDefault implements Thoroughfare {
         return thoroughfareNumbers;
     }
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
-    public List<GenericTypedGrPostal> getAddressLine() {return this.addressLines;}
+    public List<GenericTypedGrPostal> getAddressLines() {return this.addressLines;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public List<Object> getThoroughfareNumbers() {return this.thoroughfareNumbers;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public List<ThoroughfareNumberPrefix> getThoroughfareNumberPrefixes() {return this.thoroughfareNumberPrefixes;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public List<ThoroughfareNumberSuffix> getThoroughfareNumberSuffixes() {return this.thoroughfareNumberSuffixes;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public GenericTypedGrPostal getThoroughfarePreDirection() {return this.thoroughfarePreDirection;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public GenericTypedGrPostal getThoroughfareLeadingType() {return this.thoroughfareLeadingType;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public List<GenericTypedGrPostal> getThoroughfareNames() {return this.thoroughfareNames;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public GenericTypedGrPostal getThoroughfareTrailingType() {return this.thoroughfareTrailingType;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
-    public GenericTypedGrPostal getThoroughfarePostDirection() {return this.thoroughfarPostDirection;}
+    public GenericTypedGrPostal getThoroughfarePostDirection() {return this.thoroughfarePostDirection;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public DependentThoroughfare getDependentThoroughfare() {return this.dependentThoroughfare;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public DependentLocality getDependentLocality() {return this.dependentLocality;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
-    public Premise getPremises() {return this.premise;}
+    public Premise getPremise() {return this.premise;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public Firm getFirm() {return this.firm;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public PostalCode getPostalCode() {return this.postalCode;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public String getType() {return this.type;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public DependentThoroughfares getDependentThoroughfares() {return this.dependentThoroughfares;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public String getDependentThoroughfaresIndicator() {return this.dependentThoroughfaresIndicator;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public String getDependentThoroughfaresConnector() {return this.dependentThoroughfaresConnector;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public String getDependentThoroughfaresType() {return this.dependentThoroughfaresType;}
 

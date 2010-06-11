@@ -21,6 +21,8 @@ import org.geotoolkit.data.model.xal.CountryNameCode;
 import org.geotoolkit.data.model.xal.Department;
 import org.geotoolkit.data.model.xal.DependentLocality;
 import org.geotoolkit.data.model.xal.DependentLocalityNumber;
+import org.geotoolkit.data.model.xal.DependentThoroughfare;
+import org.geotoolkit.data.model.xal.DependentThoroughfares;
 import org.geotoolkit.data.model.xal.Firm;
 import org.geotoolkit.data.model.xal.GenericTypedGrPostal;
 import org.geotoolkit.data.model.xal.GrPostal;
@@ -30,6 +32,7 @@ import org.geotoolkit.data.model.xal.LargeMailUserName;
 import org.geotoolkit.data.model.xal.Locality;
 import org.geotoolkit.data.model.xal.MailStop;
 import org.geotoolkit.data.model.xal.MailStopNumber;
+import org.geotoolkit.data.model.xal.OddEvenEnum;
 import org.geotoolkit.data.model.xal.PostBox;
 import org.geotoolkit.data.model.xal.PostBoxNumber;
 import org.geotoolkit.data.model.xal.PostBoxNumberExtension;
@@ -49,12 +52,10 @@ import org.geotoolkit.data.model.xal.PremiseLocation;
 import org.geotoolkit.data.model.xal.PremiseName;
 import org.geotoolkit.data.model.xal.PremiseNumber;
 import org.geotoolkit.data.model.xal.PremiseNumberPrefix;
-import org.geotoolkit.data.model.xal.PremiseNumberPrefixDefault;
 import org.geotoolkit.data.model.xal.PremiseNumberRange;
 import org.geotoolkit.data.model.xal.PremiseNumberRangeFrom;
 import org.geotoolkit.data.model.xal.PremiseNumberRangeTo;
 import org.geotoolkit.data.model.xal.PremiseNumberSuffix;
-import org.geotoolkit.data.model.xal.PremiseNumberSuffixDefault;
 import org.geotoolkit.data.model.xal.SingleRangeEnum;
 import org.geotoolkit.data.model.xal.SortingCode;
 import org.geotoolkit.data.model.xal.SubAdministrativeArea;
@@ -65,6 +66,12 @@ import org.geotoolkit.data.model.xal.SubPremiseNumber;
 import org.geotoolkit.data.model.xal.SubPremiseNumberPrefix;
 import org.geotoolkit.data.model.xal.SubPremiseNumberSuffix;
 import org.geotoolkit.data.model.xal.Thoroughfare;
+import org.geotoolkit.data.model.xal.ThoroughfareNumber;
+import org.geotoolkit.data.model.xal.ThoroughfareNumberFrom;
+import org.geotoolkit.data.model.xal.ThoroughfareNumberPrefix;
+import org.geotoolkit.data.model.xal.ThoroughfareNumberRange;
+import org.geotoolkit.data.model.xal.ThoroughfareNumberSuffix;
+import org.geotoolkit.data.model.xal.ThoroughfareNumberTo;
 import org.geotoolkit.data.model.xal.Xal;
 import org.geotoolkit.data.model.xal.XalException;
 import org.geotoolkit.xml.StaxStreamReader;
@@ -839,7 +846,7 @@ public class XalReader extends StaxStreamReader{
         return XalReader.xalFactory.createPostTownSuffix(grPostal, content);
     }
 
-    private LargeMailUser readLargeMailUser() throws XMLStreamException {
+    private LargeMailUser readLargeMailUser() throws XMLStreamException, XalException {
         List<GenericTypedGrPostal> addressLines = new ArrayList<GenericTypedGrPostal>();
         List<LargeMailUserName> largeMailUserNames = new ArrayList<LargeMailUserName>();
         LargeMailUserIdentifier largeMailUserIdentifier = null;
@@ -1427,5 +1434,242 @@ public class XalReader extends StaxStreamReader{
                 numberTypeOccurrence, premiseNumberSeparator, type, grPostal, content);
     }
 
-    private Thoroughfare readThoroughfare() {return null;}
+
+    private Thoroughfare readThoroughfare() throws XMLStreamException, XalException {
+        List<GenericTypedGrPostal> addressLines = new ArrayList<GenericTypedGrPostal>();
+        List<Object> thoroughfareNumbers = new ArrayList<Object>();
+        List<ThoroughfareNumberPrefix> thoroughfareNumberPrefixes = new ArrayList<ThoroughfareNumberPrefix>();
+        List<ThoroughfareNumberSuffix> thoroughfareNumberSuffixes = new ArrayList<ThoroughfareNumberSuffix>();
+        GenericTypedGrPostal thoroughfarePreDirection = null;
+        GenericTypedGrPostal thoroughfareLeadingType = null;
+        List<GenericTypedGrPostal> thoroughfareNames = new ArrayList<GenericTypedGrPostal>();
+        GenericTypedGrPostal thoroughfareTrailingType = null;
+        GenericTypedGrPostal thoroughfarePostDirection = null;
+        DependentThoroughfare dependentThoroughfare = null;
+        Object location = null;
+        String type = null;
+        DependentThoroughfares dependentThoroughfares =  DependentThoroughfares.transform(reader.getAttributeValue(null, ATT_DEPENDENT_THOROUGHFARES));
+        String dependentThoroughfaresIndicator =  reader.getAttributeValue(null, ATT_DEPENDENT_THOROUGHFARES_INDICATOR);
+        String dependentThoroughfaresConnector =  reader.getAttributeValue(null, ATT_DEPENDENT_THOROUGHFARES_CONNECTOR);
+        String dependentThoroughfaresType = reader.getAttributeValue(null, ATT_DEPENDENT_THOROUGHFARES_TYPE);
+
+        boucle:
+        while (reader.hasNext()) {
+
+            switch (reader.next()) {
+                case XMLStreamConstants.START_ELEMENT:
+                    final String eName = reader.getLocalName();
+                    final String eUri = reader.getNamespaceURI();
+
+                    if (URI_XAL.equals(eUri)) {
+                        if (TAG_ADDRESS_LINE.equals(eName)) {
+                            addressLines.add(this.readGenericTypedGrPostal());
+                        } else if (TAG_THOROUGHFARE_NUMBER.equals(eName)) {
+                            thoroughfareNumbers.add(this.readThoroughfareNumber());
+                        } else if (TAG_THOROUGHFARE_NUMBER_RANGE.equals(eName)){
+                            thoroughfareNumbers.add(this.readThoroughfareNumberRange());
+                        } else if (TAG_THOROUGHFARE_NUMBER_PREFIX.equals(eName)){
+                            thoroughfareNumberPrefixes.add(this.readThoroughfareNumberPrefix());
+                        } else if (TAG_THOROUGHFARE_NUMBER_SUFFIX.equals(eName)){
+                            thoroughfareNumberSuffixes.add(this.readThoroughfareNumberSuffix());
+                        } else if (TAG_THOROUGHFARE_PRE_DIRECTION.equals(eName)){
+                            thoroughfarePreDirection = this.readGenericTypedGrPostal();
+                        } else if (TAG_THOROUGHFARE_LEADING_TYPE.equals(eName)){
+                            thoroughfareLeadingType = this.readGenericTypedGrPostal();
+                        } else if (TAG_THOROUGHFARE_NAME.equals(eName)){
+                            thoroughfareNames.add(this.readGenericTypedGrPostal());
+                        } else if (TAG_THOROUGHFARE_TRAILING_TYPE.equals(eName)){
+                            thoroughfareTrailingType = this.readGenericTypedGrPostal();
+                        } else if (TAG_THOROUGHFARE_POST_DIRECTION.equals(eName)){
+                            thoroughfarePostDirection = this.readGenericTypedGrPostal();
+                        } else if (TAG_DEPENDENT_THOROUGHFARE.equals(eName)){
+                            dependentThoroughfare = this.readDependentThoroughfare();
+                        } else if (TAG_DEPENDENT_LOCALITY.equals(eName)){
+                            location = this.readDependentLocality();
+                        } else if (TAG_PREMISE.equals(eName)){
+                            location = this.readPremise();
+                        } else if (TAG_FIRM.equals(eName)){
+                            location = this.readFirm();
+                        } else if (TAG_POSTAL_CODE.equals(eName)){
+                            location = this.readPostalCode();
+                        }
+                    }
+                    break;
+
+                case XMLStreamConstants.END_ELEMENT:
+                    if (TAG_THOROUGHFARE.equals(reader.getLocalName()) && URI_XAL.contains(reader.getNamespaceURI())) {
+                        break boucle;
+                    }
+                    break;
+            }
+        }
+        return XalReader.xalFactory.createThoroughfare(addressLines, thoroughfareNumbers,
+                thoroughfareNumberPrefixes, thoroughfareNumberSuffixes, thoroughfarePreDirection,
+                thoroughfareLeadingType, thoroughfareNames, thoroughfareTrailingType,
+                thoroughfarePostDirection, dependentThoroughfare, location, type,
+                dependentThoroughfares, dependentThoroughfaresIndicator,
+                dependentThoroughfaresConnector, dependentThoroughfaresType);
+    }
+
+    private ThoroughfareNumber readThoroughfareNumber() throws XMLStreamException {
+        SingleRangeEnum numberType = SingleRangeEnum.transform(reader.getAttributeValue(null, ATT_NUMBER_TYPE));
+        String type = reader.getAttributeValue(null, ATT_TYPE);
+        String indicator = reader.getAttributeValue(null, ATT_INDICATOR);
+        AfterBeforeEnum indicatorOccurence = AfterBeforeEnum.transform(reader.getAttributeValue(null, ATT_INDICATOR_OCCURRENCE));
+        AfterBeforeTypeNameEnum numberOccurrence = AfterBeforeTypeNameEnum.transform(reader.getAttributeValue(null, ATT_NUMBER_OCCURRENCE));
+        GrPostal grPostal = this.readGrPostal();
+        String content = reader.getElementText();
+        return XalReader.xalFactory.createThoroughfareNumber(numberType, type,
+                indicator, indicatorOccurence, numberOccurrence, grPostal, content);
+    }
+
+    private ThoroughfareNumberRange readThoroughfareNumberRange() throws XMLStreamException, XalException {
+        List<GenericTypedGrPostal> addressLines = new ArrayList<GenericTypedGrPostal>();
+        ThoroughfareNumberFrom thoroughfareNumberFrom = null;
+        ThoroughfareNumberTo thoroughfareNumberTo = null;
+        OddEvenEnum rangeType = OddEvenEnum.transform(reader.getAttributeValue(null, ATT_RANGE_TYPE));
+        String indicator = reader.getAttributeValue(null, ATT_INDICATOR);
+        String separator = reader.getAttributeValue(null, ATT_SEPARATOR);
+        String type = reader.getAttributeValue(null, ATT_TYPE);
+        AfterBeforeEnum indicatorOccurrence = AfterBeforeEnum.transform(reader.getAttributeValue(null, ATT_INDICATOR_OCCURRENCE));
+        AfterBeforeTypeNameEnum numberRangeOccurrence = AfterBeforeTypeNameEnum.transform(reader.getAttributeValue(null, ATT_NUMBER_RANGE_OCCURRENCE));
+
+        boucle:
+        while (reader.hasNext()) {
+
+            switch (reader.next()) {
+                case XMLStreamConstants.START_ELEMENT:
+                    final String eName = reader.getLocalName();
+                    final String eUri = reader.getNamespaceURI();
+
+                    if (URI_XAL.equals(eUri)) {
+                        if (TAG_ADDRESS_LINE.equals(eName)) {
+                            addressLines.add(this.readGenericTypedGrPostal());
+                        } else if (TAG_THOROUGHFARE_NUMBER_FROM.equals(eName)) {
+                            thoroughfareNumberFrom = this.readThoroughfareNumberFrom();
+                        } else if (TAG_THOROUGHFARE_NUMBER_TO.equals(eName)){
+                            thoroughfareNumberTo = this.readThoroughfareNumberTo();
+                        }
+                    }
+                    break;
+
+                case XMLStreamConstants.END_ELEMENT:
+                    if (TAG_THOROUGHFARE_NUMBER_RANGE.equals(reader.getLocalName()) && URI_XAL.contains(reader.getNamespaceURI())) {
+                        break boucle;
+                    }
+                    break;
+            }
+        }
+
+        return XalReader.xalFactory.createThoroughfareNumberRange(addressLines,
+                thoroughfareNumberFrom, thoroughfareNumberTo, rangeType, indicator,
+                separator, type, indicatorOccurrence, numberRangeOccurrence);
+    }
+
+    private ThoroughfareNumberFrom readThoroughfareNumberFrom() throws XMLStreamException, XalException {
+        List<Object> content = new ArrayList<Object>();
+        GrPostal grPostal = this.readGrPostal();
+
+        boucle:
+        while (reader.hasNext()) {
+
+            switch (reader.next()) {
+                case XMLStreamConstants.START_ELEMENT:
+                    final String eName = reader.getLocalName();
+                    final String eUri = reader.getNamespaceURI();
+
+                    if (URI_XAL.equals(eUri)) {
+                        if (TAG_ADDRESS_LINE.equals(eName)) {
+                            content.add(this.readGenericTypedGrPostal());
+                        } else if (TAG_THOROUGHFARE_NUMBER_PREFIX.equals(eName)) {
+                            content.add(this.readThoroughfareNumberPrefix());
+                        } else if (TAG_THOROUGHFARE_NUMBER.equals(eName)) {
+                            content.add(this.readThoroughfareNumber());
+                        } else if (TAG_THOROUGHFARE_NUMBER_SUFFIX.equals(eName)){
+                            content.add(this.readThoroughfareNumberSuffix());
+                        }
+                    }
+                    break;
+
+                case XMLStreamConstants.CHARACTERS:
+                    String textNode = reader.getText();
+                    textNode = textNode.replaceAll("^\\s*","").replaceAll("\\s*$","");
+                    if (!textNode.equals("")) content.add(textNode);
+                    break;
+
+                case XMLStreamConstants.END_ELEMENT:
+                    if (TAG_THOROUGHFARE_NUMBER_FROM.equals(reader.getLocalName()) && URI_XAL.contains(reader.getNamespaceURI())) {
+                        break boucle;
+                    }
+                    break;
+            }
+        }
+
+        return XalReader.xalFactory.createThoroughfareNumberFrom(content, grPostal);
+    }
+
+    private ThoroughfareNumberTo readThoroughfareNumberTo() throws XMLStreamException, XalException {
+        List<Object> content = new ArrayList<Object>();
+        GrPostal grPostal = this.readGrPostal();
+
+        boucle:
+        while (reader.hasNext()) {
+
+            switch (reader.next()) {
+                case XMLStreamConstants.START_ELEMENT:
+                    final String eName = reader.getLocalName();
+                    final String eUri = reader.getNamespaceURI();
+
+                    if (URI_XAL.equals(eUri)) {
+                        if (TAG_ADDRESS_LINE.equals(eName)) {
+                            content.add(this.readGenericTypedGrPostal());
+                        } else if (TAG_THOROUGHFARE_NUMBER_PREFIX.equals(eName)) {
+                            content.add(this.readThoroughfareNumberPrefix());
+                        } else if (TAG_THOROUGHFARE_NUMBER.equals(eName)) {
+                            content.add(this.readThoroughfareNumber());
+                        } else if (TAG_THOROUGHFARE_NUMBER_SUFFIX.equals(eName)){
+                            content.add(this.readThoroughfareNumberSuffix());
+                        }
+                    }
+                    break;
+
+                case XMLStreamConstants.CHARACTERS:
+                    String textNode = reader.getText();
+                    textNode = textNode.replaceAll("^\\s*","").replaceAll("\\s*$","");
+                    if (!textNode.equals("")) content.add(textNode);
+                    break;
+
+                case XMLStreamConstants.END_ELEMENT:
+                    if (TAG_THOROUGHFARE_NUMBER_TO.equals(reader.getLocalName()) && URI_XAL.contains(reader.getNamespaceURI())) {
+                        break boucle;
+                    }
+                    break;
+            }
+        }
+
+        return XalReader.xalFactory.createThoroughfareNumberTo(content, grPostal);
+    }
+
+    private ThoroughfareNumberPrefix readThoroughfareNumberPrefix() throws XMLStreamException {
+        String numberPrefixSeparator = reader.getAttributeValue(null, ATT_NUMBER_PREFIX_SEPARATOR);
+        String type = reader.getAttributeValue(null, ATT_TYPE);
+        GrPostal grPostal = this.readGrPostal();
+        String content = reader.getElementText();
+        return XalReader.xalFactory.createThoroughfareNumberPrefix(numberPrefixSeparator, type, grPostal, content);
+    }
+
+    private ThoroughfareNumberSuffix readThoroughfareNumberSuffix() throws XMLStreamException {
+        String numberSuffixSeparator = reader.getAttributeValue(null, ATT_NUMBER_SUFFIX_SEPARATOR);
+        String type = reader.getAttributeValue(null, ATT_TYPE);
+        GrPostal grPostal = this.readGrPostal();
+        String content = reader.getElementText();
+        return XalReader.xalFactory.createThoroughfareNumberSuffix(numberSuffixSeparator, type, grPostal, content);
+    }
+
+    private DependentThoroughfare readDependentThoroughfare() {
+return null;
+    }
+
+
+
 }

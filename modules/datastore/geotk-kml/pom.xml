@@ -95,6 +95,13 @@
             <type>jar</type>
             <version>3.2.1</version>
         </dependency>
+        <dependency>
+          <groupId>org.geotoolkit.pending</groupId>
+          <artifactId>geotk-jaxp-core</artifactId>
+          <version>${project.version}</version>
+          <scope>test</scope>
+          <classifier>tests</classifier>
+      </dependency>
     </dependencies>
 
 

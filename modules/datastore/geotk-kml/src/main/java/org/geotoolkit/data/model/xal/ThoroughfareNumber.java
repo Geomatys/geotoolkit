@@ -25,13 +25,7 @@ package org.geotoolkit.data.model.xal;
  *
  * @author Samuel Andrés
  */
-public interface ThoroughfareNumber {
-
-    /**
-     *
-     * @return
-     */
-    public String getContent();
+public interface ThoroughfareNumber extends GenericTypedGrPostal {
 
     /**
      *
@@ -39,11 +33,6 @@ public interface ThoroughfareNumber {
      */
     public SingleRangeEnum getNumberType();
 
-    /**
-     *
-     * @return
-     */
-    public String getType();
 
     /**
      * <p>No. in Street No.12 or "#" in Street # 12, etc.</p>
@@ -63,11 +52,5 @@ public interface ThoroughfareNumber {
      * @return
      */
     public AfterBeforeTypeNameEnum getNumberOccurence();
-
-    /**
-     *
-     * @return
-     */
-    public GrPostal getGrPostal();
 
 }

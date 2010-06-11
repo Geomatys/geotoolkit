@@ -390,13 +390,13 @@ public class KmlReader extends StaxStreamReader {
 
                         // REGION
                         if (TAG_MIN_LOD_PIXELS.equals(eName)) {
-                            minLodPixels = Double.parseDouble(reader.getElementText());
+                            minLodPixels = parseDouble(reader.getElementText());
                         } else if (TAG_MAX_LOD_PIXELS.equals(eName)) {
-                            maxLodPixels = Double.parseDouble(reader.getElementText());
+                            maxLodPixels = parseDouble(reader.getElementText());
                         } else if (TAG_MIN_FADE_EXTENT.equals(eName)) {
-                            minFadeExtent = Double.parseDouble(reader.getElementText());
+                            minFadeExtent = parseDouble(reader.getElementText());
                         } else if (TAG_MAX_FADE_EXTENT.equals(eName)) {
-                            maxFadeExtent = Double.parseDouble(reader.getElementText());
+                            maxFadeExtent = parseDouble(reader.getElementText());
                         }
                     }
                     break;
@@ -584,10 +584,10 @@ public class KmlReader extends StaxStreamReader {
                     if (URI_KML.equals(eUri)) {
 
                         if (TAG_MIN_REFRESH_PERIOD.equals(eName)) {
-                            minRefreshPeriod = Double.parseDouble(reader.getElementText());
+                            minRefreshPeriod = parseDouble(reader.getElementText());
                         }
                         if (TAG_MAX_SESSION_LENGTH.equals(eName)) {
-                            maxSessionLength = Double.parseDouble(reader.getElementText());
+                            maxSessionLength = parseDouble(reader.getElementText());
                         }
                         if (TAG_COOKIE.equals(eName)){
                             cookie = reader.getElementText();
@@ -1226,11 +1226,11 @@ public class KmlReader extends StaxStreamReader {
                     // SCALE
                     if (URI_KML.equals(eUri)) {
                         if (TAG_X.equals(eName)) {
-                            x = Double.parseDouble(reader.getElementText());
+                            x = parseDouble(reader.getElementText());
                         } else if (TAG_Y.equals(eName)) {
-                            y = Double.parseDouble(reader.getElementText());
+                            y = parseDouble(reader.getElementText());
                         } else if (TAG_Z.equals(eName)){
-                            y = Double.parseDouble(reader.getElementText());
+                            y = parseDouble(reader.getElementText());
                         }
                     }
                     break;
@@ -1279,11 +1279,11 @@ public class KmlReader extends StaxStreamReader {
                     // LOCATION
                     if (URI_KML.equals(eUri)) {
                         if (TAG_LONGITUDE.equals(eName)) {
-                            longitude = KmlReader.kmlFactory.createAngle180(Double.parseDouble(reader.getElementText()));
+                            longitude = KmlReader.kmlFactory.createAngle180(parseDouble(reader.getElementText()));
                         } else if (TAG_LATITUDE.equals(eName)) {
-                            latitude = KmlReader.kmlFactory.createAngle90(Double.parseDouble(reader.getElementText()));
+                            latitude = KmlReader.kmlFactory.createAngle90(parseDouble(reader.getElementText()));
                         } else if (TAG_ALTITUDE.equals(eName)){
-                            altitude = Double.parseDouble(reader.getElementText());
+                            altitude = parseDouble(reader.getElementText());
                         }
                     }
                     break;
@@ -1330,11 +1330,11 @@ public class KmlReader extends StaxStreamReader {
                     // ORIENTATION
                     if (URI_KML.equals(eUri)) {
                         if (TAG_HEADING.equals(eName)) {
-                            heading = KmlReader.kmlFactory.createAngle360(Double.parseDouble(reader.getElementText()));
+                            heading = KmlReader.kmlFactory.createAngle360(parseDouble(reader.getElementText()));
                         } else if (TAG_TILT.equals(eName)) {
-                            tilt = KmlReader.kmlFactory.createAnglepos180(Double.parseDouble(reader.getElementText()));
+                            tilt = KmlReader.kmlFactory.createAnglepos180(parseDouble(reader.getElementText()));
                         } else if (TAG_ROLL.equals(eName)) {
-                            roll = KmlReader.kmlFactory.createAngle180(Double.parseDouble(reader.getElementText()));
+                            roll = KmlReader.kmlFactory.createAngle180(parseDouble(reader.getElementText()));
                         }
                     }
                     break;
@@ -1662,7 +1662,7 @@ public class KmlReader extends StaxStreamReader {
 
                         // GROUND OVERLAY
                         else if (TAG_ALTITUDE.equals(eName)) {
-                            altitude = Double.parseDouble(reader.getElementText());
+                            altitude = parseDouble(reader.getElementText());
                         } else if (TAG_ALTITUDE_MODE.equals(eName)) {
                             altitudeMode = AltitudeMode.transform(reader.getElementText());
                         } else if (TAG_LAT_LON_BOX.equals(eName)) {
@@ -1755,13 +1755,13 @@ public class KmlReader extends StaxStreamReader {
                         if (TAG_REFRESH_MODE.equals(eName)) {
                             refreshMode = RefreshMode.transform(reader.getElementText());
                         } else if (TAG_REFRESH_INTERVAL.equals(eName)) {
-                            refreshInterval = Double.parseDouble(reader.getElementText());
+                            refreshInterval = parseDouble(reader.getElementText());
                         } else if (TAG_VIEW_REFRESH_MODE.equals(eName)) {
                             viewRefreshMode = ViewRefreshMode.transform(reader.getElementText());
                         } else if (TAG_VIEW_REFRESH_TIME.equals(eName)) {
-                            viewRefreshTime = Double.parseDouble(reader.getElementText());
+                            viewRefreshTime = parseDouble(reader.getElementText());
                         } else if (TAG_VIEW_BOUND_SCALE.equals(eName)) {
-                            viewBoundScale = Double.parseDouble(reader.getElementText());
+                            viewBoundScale = parseDouble(reader.getElementText());
                         } else if (TAG_VIEW_FORMAT.equals(eName)) {
                             viewFormat = reader.getElementText();
                         } else if (TAG_HTTP_QUERY.equals(eName)) {
@@ -1831,18 +1831,18 @@ public class KmlReader extends StaxStreamReader {
 
                         // ABSTRACT LATLONBOX
                         if (TAG_NORTH.equals(eName)) {
-                            north = KmlReader.kmlFactory.createAngle180(Double.parseDouble(reader.getElementText()));
+                            north = KmlReader.kmlFactory.createAngle180(parseDouble(reader.getElementText()));
                         } else if (TAG_SOUTH.equals(eName)) {
-                            south = KmlReader.kmlFactory.createAngle180(Double.parseDouble(reader.getElementText()));
+                            south = KmlReader.kmlFactory.createAngle180(parseDouble(reader.getElementText()));
                         } else if (TAG_EAST.equals(eName)) {
-                            east = KmlReader.kmlFactory.createAngle180(Double.parseDouble(reader.getElementText()));
+                            east = KmlReader.kmlFactory.createAngle180(parseDouble(reader.getElementText()));
                         } else if (TAG_WEST.equals(eName)) {
-                            west = KmlReader.kmlFactory.createAngle180(Double.parseDouble(reader.getElementText()));
+                            west = KmlReader.kmlFactory.createAngle180(parseDouble(reader.getElementText()));
                         } 
                         
                         // LATLONBOX
                         else if (TAG_ROTATION.equals(eName)) {
-                            rotation = KmlReader.kmlFactory.createAngle180(Double.parseDouble(reader.getElementText()));
+                            rotation = KmlReader.kmlFactory.createAngle180(parseDouble(reader.getElementText()));
                         }
 
                     }
@@ -1900,20 +1900,20 @@ public class KmlReader extends StaxStreamReader {
 
                         // ABSTRACT LATLONBOX
                         if (TAG_NORTH.equals(eName)) {
-                            north = KmlReader.kmlFactory.createAngle180(Double.parseDouble(reader.getElementText()));
+                            north = KmlReader.kmlFactory.createAngle180(parseDouble(reader.getElementText()));
                         } else if (TAG_SOUTH.equals(eName)) {
-                            south = KmlReader.kmlFactory.createAngle180(Double.parseDouble(reader.getElementText()));
+                            south = KmlReader.kmlFactory.createAngle180(parseDouble(reader.getElementText()));
                         } else if (TAG_EAST.equals(eName)) {
-                            east = KmlReader.kmlFactory.createAngle180(Double.parseDouble(reader.getElementText()));
+                            east = KmlReader.kmlFactory.createAngle180(parseDouble(reader.getElementText()));
                         } else if (TAG_WEST.equals(eName)) {
-                            west = KmlReader.kmlFactory.createAngle180(Double.parseDouble(reader.getElementText()));
+                            west = KmlReader.kmlFactory.createAngle180(parseDouble(reader.getElementText()));
                         }
 
                         // LATLONALTBOX
                         else if (TAG_MIN_ALTITUDE.equals(eName)) {
-                            minAltitude = Double.parseDouble(reader.getElementText());
+                            minAltitude = parseDouble(reader.getElementText());
                         } else if (TAG_MAX_ALTITUDE.equals(eName)) {
-                            maxAltitude = Double.parseDouble(reader.getElementText());
+                            maxAltitude = parseDouble(reader.getElementText());
                         } else if (TAG_MIN_ALTITUDE.equals(eName)) {
                             altitudeMode = AltitudeMode.transform(reader.getElementText());
                         }
@@ -2024,15 +2024,15 @@ public class KmlReader extends StaxStreamReader {
 
                         // VIEW VOLUME
                         if (TAG_LEFT_FOV.equals(eName)) {
-                            leftFov = KmlReader.kmlFactory.createAngle180(Double.parseDouble(reader.getElementText()));
+                            leftFov = KmlReader.kmlFactory.createAngle180(parseDouble(reader.getElementText()));
                         } else if (TAG_RIGHT_FOV.equals(eName)) {
-                            rightFov = KmlReader.kmlFactory.createAngle180(Double.parseDouble(reader.getElementText()));
+                            rightFov = KmlReader.kmlFactory.createAngle180(parseDouble(reader.getElementText()));
                         } else if (TAG_BOTTOM_FOV.equals(eName)) {
-                            bottomFov = KmlReader.kmlFactory.createAngle90(Double.parseDouble(reader.getElementText()));
+                            bottomFov = KmlReader.kmlFactory.createAngle90(parseDouble(reader.getElementText()));
                         } else if (TAG_TOP_FOV.equals(eName)) {
-                            topFov = KmlReader.kmlFactory.createAngle90(Double.parseDouble(reader.getElementText()));
+                            topFov = KmlReader.kmlFactory.createAngle90(parseDouble(reader.getElementText()));
                         } else if (TAG_NEAR.equals(eName)) {
-                            near = Double.parseDouble(reader.getElementText());
+                            near = parseDouble(reader.getElementText());
                         }
                     }
                     break;
@@ -2144,7 +2144,7 @@ public class KmlReader extends StaxStreamReader {
 
                         // PHOTO OVERLAY
                         else if (TAG_ROTATION.equals(eName)) {
-                            rotation = KmlReader.kmlFactory.createAngle180(Double.parseDouble(reader.getElementText()));
+                            rotation = KmlReader.kmlFactory.createAngle180(parseDouble(reader.getElementText()));
                         } else if (TAG_VIEW_VOLUME.equals(eName)) {
                             viewVolume = this.readViewVolume();
                         } else if (TAG_IMAGE_PYRAMID.equals(eName)) {
@@ -2300,7 +2300,7 @@ public class KmlReader extends StaxStreamReader {
                         } else if (TAG_SIZE.equals(eName)) {
                             size = this.readVec2(eName);
                         } else if (TAG_ROTATION.equals(eName)) {
-                            rotation = KmlReader.kmlFactory.createAngle180(Double.parseDouble(reader.getElementText()));
+                            rotation = KmlReader.kmlFactory.createAngle180(parseDouble(reader.getElementText()));
                         }
 
 
@@ -2409,17 +2409,17 @@ public class KmlReader extends StaxStreamReader {
 
                         // LOOK AT
                         if (TAG_LONGITUDE.equals(eName)) {
-                            longitude = KmlReader.kmlFactory.createAngle180(Double.parseDouble(reader.getElementText()));
+                            longitude = KmlReader.kmlFactory.createAngle180(parseDouble(reader.getElementText()));
                         } else if (TAG_LATITUDE.equals(eName)) {
-                            latitude = KmlReader.kmlFactory.createAngle90(Double.parseDouble(reader.getElementText()));
+                            latitude = KmlReader.kmlFactory.createAngle90(parseDouble(reader.getElementText()));
                         } else if (TAG_ALTITUDE.equals(eName)) {
-                            altitude = Double.parseDouble(reader.getElementText());
+                            altitude = parseDouble(reader.getElementText());
                         } else if (TAG_HEADING.equals(eName)) {
-                            heading = KmlReader.kmlFactory.createAngle360(Double.parseDouble(reader.getElementText()));
+                            heading = KmlReader.kmlFactory.createAngle360(parseDouble(reader.getElementText()));
                         } else if (TAG_TILT.equals(eName)) {
-                            tilt = KmlReader.kmlFactory.createAnglepos180(Double.parseDouble(reader.getElementText()));
+                            tilt = KmlReader.kmlFactory.createAnglepos180(parseDouble(reader.getElementText()));
                         } else if (TAG_RANGE.equals(eName)) {
-                            range = Double.parseDouble(reader.getElementText());
+                            range = parseDouble(reader.getElementText());
                         }
                     }
                     break;
@@ -2475,17 +2475,17 @@ public class KmlReader extends StaxStreamReader {
 
                         // CAMERA
                         if (TAG_LONGITUDE.equals(eName)) {
-                            longitude = KmlReader.kmlFactory.createAngle180(Double.parseDouble(reader.getElementText()));
+                            longitude = KmlReader.kmlFactory.createAngle180(parseDouble(reader.getElementText()));
                         } else if (TAG_LATITUDE.equals(eName)) {
-                            latitude = KmlReader.kmlFactory.createAngle90(Double.parseDouble(reader.getElementText()));
+                            latitude = KmlReader.kmlFactory.createAngle90(parseDouble(reader.getElementText()));
                         } else if (TAG_ALTITUDE.equals(eName)) {
-                            altitude = Double.parseDouble(reader.getElementText());
+                            altitude = parseDouble(reader.getElementText());
                         } else if (TAG_HEADING.equals(eName)) {
-                            heading = KmlReader.kmlFactory.createAngle360(Double.parseDouble(reader.getElementText()));
+                            heading = KmlReader.kmlFactory.createAngle360(parseDouble(reader.getElementText()));
                         } else if (TAG_TILT.equals(eName)) {
-                            tilt = KmlReader.kmlFactory.createAnglepos180(Double.parseDouble(reader.getElementText()));
+                            tilt = KmlReader.kmlFactory.createAnglepos180(parseDouble(reader.getElementText()));
                         } else if (TAG_ROLL.equals(eName)) {
-                            roll = KmlReader.kmlFactory.createAngle180(Double.parseDouble(reader.getElementText()));
+                            roll = KmlReader.kmlFactory.createAngle180(parseDouble(reader.getElementText()));
                         } else if (TAG_ALTITUDE_MODE.equals(eName)) {
                             altitudeMode = AltitudeMode.transform(reader.getElementText());
                         }
@@ -2736,9 +2736,9 @@ public class KmlReader extends StaxStreamReader {
 
                         // ICON STYLE
                         else if (TAG_SCALE.equals(eName)) {
-                            scale = Double.parseDouble(reader.getElementText());
+                            scale = parseDouble(reader.getElementText());
                         } else if (TAG_HEADING.equals(eName)) {
-                            heading = KmlReader.kmlFactory.createAngle360(Double.parseDouble(reader.getElementText()));
+                            heading = KmlReader.kmlFactory.createAngle360(parseDouble(reader.getElementText()));
                         } else if (TAG_ICON.equals(eName)) {
                             icon = this.readBasicLink(TAG_ICON);
                         } else if (TAG_HOT_SPOT.equals(eName)) {
@@ -2809,7 +2809,7 @@ public class KmlReader extends StaxStreamReader {
 
                         // LABEL STYLE
                         else if (TAG_SCALE.equals(eName)) {
-                            scale = Double.parseDouble(reader.getElementText());
+                            scale = parseDouble(reader.getElementText());
                         }
                     }
                     break;
@@ -2874,7 +2874,7 @@ public class KmlReader extends StaxStreamReader {
 
                         // LINE STYLE
                         else if (TAG_WIDTH.equals(eName)) {
-                            width = Double.parseDouble(reader.getElementText());
+                            width = parseDouble(reader.getElementText());
                         }
                     }
                     break;
@@ -3218,13 +3218,13 @@ public class KmlReader extends StaxStreamReader {
         double x = DEF_VEC2_X;
         String sx = reader.getAttributeValue(null, ATT_X);
         if (sx != null) {
-            x = Double.parseDouble(sx);
+            x = parseDouble(sx);
         }
 
         double y = DEF_VEC2_Y;
         String sy = reader.getAttributeValue(null, ATT_Y);
         if (sy != null) {
-            y = Double.parseDouble(sy);
+            y = parseDouble(sy);
         }
 
         Units xUnit = Units.transform(reader.getAttributeValue(null, ATT_XUNITS), DEF_VEC2_XUNIT);
@@ -4123,5 +4123,9 @@ public class KmlReader extends StaxStreamReader {
              return !candidate.equals("0");
         }
         return Boolean.parseBoolean(candidate);
+    }
+
+    protected static double parseDouble(String candidate){
+        return Double.parseDouble(candidate.replace(',', '.'));
     }
 }

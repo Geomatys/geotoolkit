@@ -5,14 +5,16 @@ package org.geotoolkit.data.model.xal;
  *
  * <p>Prefix before the number. A in A12 Archer Street.</p>
  *
- * <br />&lt;xs:element name="ThoroughfareNumberPrefix">
- * <br />&lt;xs:complexType mixed="true">
- * <br />&lt;xs:attribute name="NumberPrefixSeparator"/>
- * <br />&lt;xs:attribute name="Type"/>
- * <br />&lt;xs:attributeGroup ref="grPostal"/>
- * <br />&lt;xs:anyAttribute namespace="##other"/>
- * <br />&lt;/xs:complexType>
- * <br />&lt;/xs:element>
+ * <pre>
+ * &lt;xs:element name="ThoroughfareNumberPrefix">
+ *  &lt;xs:complexType mixed="true">
+ *      &lt;xs:attribute name="NumberPrefixSeparator"/>
+ *      &lt;xs:attribute name="Type"/>
+ *      &lt;xs:attributeGroup ref="grPostal"/>
+ *      &lt;xs:anyAttribute namespace="##other"/>
+ *  &lt;/xs:complexType>
+ * &lt;/xs:element>
+ * </pre>
  *
  * @author Samuel Andrés
  */

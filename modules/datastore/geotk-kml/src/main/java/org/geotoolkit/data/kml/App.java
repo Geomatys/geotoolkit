@@ -131,20 +131,27 @@ public class App {
         Xal xal = xalReader.read();
         xalReader.dispose();
         
-        System.out.println(xal);
-        System.out.println(xal.getAddressDetails().size());
-        for (AddressDetails ad : xal.getAddressDetails()){
-            System.out.println(ad.getAddressType());
-            if (ad.getAddressLines() != null){
-                System.out.println("SIZE : "+ad.getAddressLines().getAddressLines().size());
-            }
-        }
+//        System.out.println(xal);
+//        System.out.println(xal.getAddressDetails().size());
+//        for (AddressDetails ad : xal.getAddressDetails()){
+//            System.out.println(ad.getAddressType());
+//            if (ad.getAddressLines() != null){
+//                System.out.println("SIZE : "+ad.getAddressLines().getAddressLines().size());
+//            }
+//        }
 
         XalWriter xalWriter = new XalWriter();
         xalWriter.setOutput(output);
         xalWriter.write(xal);
         xalWriter.dispose();
 
+//        System.out.println("test");
+//        String test = " \n  r";
+//        System.out.println(test);
+//        System.out.println(test.matches(".*r"));
+//
+//        System.out.println(test.replaceAll("\\s","y"));
+//        System.out.println("fin test");
     }
 
 

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:xal="urn:oasis:names:tc:ciq:xsdschema:xAL:2.0">
+<PhotoOverlay>
+	<Camera>
+		<longitude>4.0</longitude>
+		<latitude>43.0</latitude>
+		<altitude>625.0</altitude>
+		<heading>2.0</heading>
+		<tilt>0</tilt>
+		<roll>0</roll>
+		<altitudeMode>relativeToGround</altitudeMode>
+	</Camera>
+</PhotoOverlay>
+</kml>

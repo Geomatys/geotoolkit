@@ -35,6 +35,7 @@ public final class XalModelConstants {
     public static final String TAG_DEPENDENT_LOCALITY = "DependentLocality";
     public static final String TAG_DEPENDENT_LOCALITY_NAME = "DependentLocalityName";
     public static final String TAG_DEPENDENT_LOCALITY_NUMBER = "DependentLocalityNumber";
+    public static final String TAG_DEPENDENT_THOROUGHFARE = "DependentThoroughfare";
     public static final String TAG_ENDORSEMENT_LINE_CODE = "EndorsementLineCode";
     public static final String TAG_FIRM = "Firm";
     public static final String TAG_FIRM_NAME = "FirmName";
@@ -85,6 +86,17 @@ public final class XalModelConstants {
     public static final String TAG_SUB_PREMISE_NUMBER_SUFFIX = "SubPremiseNumberSuffix";
     public static final String TAG_SUPPLEMENTARY_POSTAL_SERVICE_DATA = "SupplementaryPostalServiceData";
     public static final String TAG_THOROUGHFARE = "Thoroughfare";
+    public static final String TAG_THOROUGHFARE_LEADING_TYPE = "ThoroughfareLeadingType";
+    public static final String TAG_THOROUGHFARE_NAME = "ThoroughfareName";
+    public static final String TAG_THOROUGHFARE_NUMBER = "ThoroughfareNumber";
+    public static final String TAG_THOROUGHFARE_NUMBER_FROM = "ThoroughfareNumberFrom";
+    public static final String TAG_THOROUGHFARE_NUMBER_PREFIX = "ThoroughfareNumberPrefix";
+    public static final String TAG_THOROUGHFARE_NUMBER_RANGE = "ThoroughfareNumberRange";
+    public static final String TAG_THOROUGHFARE_NUMBER_SUFFIX = "ThoroughfareNumberSuffix";
+    public static final String TAG_THOROUGHFARE_NUMBER_TO = "ThoroughfareNumberTo";
+    public static final String TAG_THOROUGHFARE_POST_DIRECTION = "ThoroughfarePostDirection";
+    public static final String TAG_THOROUGHFARE_PRE_DIRECTION = "ThoroughfarePreDirection";
+    public static final String TAG_THOROUGHFARE_TRAILING_TYPE = "ThoroughfareTrailingType";
 
     // ATTRIBUTES
     public static final String ATT_ADDRESS_DETAILS_KEY = "AddressDetailsKey";
@@ -92,12 +104,17 @@ public final class XalModelConstants {
     public static final String ATT_CODE = "Code";
     public static final String ATT_CONNECTOR = "Connector";
     public static final String ATT_CURRENT_STATUS = "CurrentStatus";
+    public static final String ATT_DEPENDENT_THOROUGHFARES = "DependentThoroughfares";
+    public static final String ATT_DEPENDENT_THOROUGHFARES_CONNECTOR = "DependentThoroughfaresConnector";
+    public static final String ATT_DEPENDENT_THOROUGHFARES_INDICATOR = "DependentThoroughfaresIndicator";
+    public static final String ATT_DEPENDENT_THOROUGHFARES_TYPE = "DependentThoroughfaresType";
     public static final String ATT_IDENTIFIER_TYPE = "IdentifierType";
     public static final String ATT_INDICATOR = "Indicator";
     public static final String ATT_INDICATOR_OCCURRENCE = "IndicatorOccurrence";
     public static final String ATT_NAME_NUMBER_OCCURRENCE = "NameNumberOccurrence";
     public static final String ATT_NAME_NUMBER_SEPARATOR = "NameNumberSeparator";
     public static final String ATT_NUMBER_EXTENSION_SEPARATOR = "NumberExtensionSeparator";
+    public static final String ATT_NUMBER_OCCURRENCE = "NumberOccurrence";
     public static final String ATT_NUMBER_PREFIX_SEPARATOR = "NumberPrefixSeparator";
     public static final String ATT_NUMBER_RANGE_OCCURRENCE = "NumberRangeOccurence";
     public static final String ATT_NUMBER_SUFFIX_SEPARATOR = "NumberSuffixSeparator";

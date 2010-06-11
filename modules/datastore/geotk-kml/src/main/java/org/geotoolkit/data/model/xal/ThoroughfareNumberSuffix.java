@@ -5,19 +5,21 @@ package org.geotoolkit.data.model.xal;
  *
  * <p>Suffix after the number. A in 12A Archer Street.</p>
  *
- * <br />&ltxs:element name="ThoroughfareNumberSuffix">
- * <br />&ltxs:complexType mixed="true">
- * <br />&ltxs:attribute name="NumberSuffixSeparator">
- * <br />&lt/xs:attribute>
- * <br />&ltxs:attribute name="Type"/>
- * <br />&ltxs:attributeGroup ref="grPostal"/>
- * <br />&ltxs:anyAttribute namespace="##other"/>
- * <br />&lt/xs:complexType>
- * <br />&lt/xs:element>
+ * <pre>
+ * &ltxs:element name="ThoroughfareNumberSuffix">
+ *  &ltxs:complexType mixed="true">
+ *      &ltxs:attribute name="NumberSuffixSeparator">
+ *      &lt/xs:attribute>
+ *      &ltxs:attribute name="Type"/>
+ *      &ltxs:attributeGroup ref="grPostal"/>
+ *      &ltxs:anyAttribute namespace="##other"/>
+ *  &lt/xs:complexType>
+ * &lt/xs:element>
+ * </pre>
  *
  * @author Samuel Andrés
  */
-public interface ThoroughfareNumberSuffix {
+public interface ThoroughfareNumberSuffix extends GenericTypedGrPostal{
 
     /**
      * <p>NEAR, ADJACENT TO, etc</p>

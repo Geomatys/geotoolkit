@@ -14,6 +14,7 @@ import org.geotoolkit.data.model.xal.CountryNameCode;
 import org.geotoolkit.data.model.xal.Department;
 import org.geotoolkit.data.model.xal.DependentLocality;
 import org.geotoolkit.data.model.xal.DependentLocalityNumber;
+import org.geotoolkit.data.model.xal.DependentThoroughfare;
 import org.geotoolkit.data.model.xal.Firm;
 import org.geotoolkit.data.model.xal.GenericTypedGrPostal;
 import org.geotoolkit.data.model.xal.GrPostal;
@@ -55,7 +56,14 @@ import org.geotoolkit.data.model.xal.SubPremiseNumber;
 import org.geotoolkit.data.model.xal.SubPremiseNumberPrefix;
 import org.geotoolkit.data.model.xal.SubPremiseNumberSuffix;
 import org.geotoolkit.data.model.xal.Thoroughfare;
+import org.geotoolkit.data.model.xal.ThoroughfareNumber;
+import org.geotoolkit.data.model.xal.ThoroughfareNumberFrom;
+import org.geotoolkit.data.model.xal.ThoroughfareNumberPrefix;
+import org.geotoolkit.data.model.xal.ThoroughfareNumberRange;
+import org.geotoolkit.data.model.xal.ThoroughfareNumberSuffix;
+import org.geotoolkit.data.model.xal.ThoroughfareNumberTo;
 import org.geotoolkit.data.model.xal.Xal;
+import org.geotoolkit.data.model.xal.XalException;
 import org.geotoolkit.xml.StaxStreamWriter;
 import static org.geotoolkit.data.model.XalModelConstants.*;
 
@@ -99,6 +107,8 @@ public class XalWriter extends StaxStreamWriter {
             writer.writeEndDocument();
             writer.flush();
 
+        } catch (XalException ex) {
+            Logger.getLogger(XalWriter.class.getName()).log(Level.SEVERE, null, ex);
         } catch (XMLStreamException ex) {
             Logger.getLogger(KmlWriter.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -109,7 +119,7 @@ public class XalWriter extends StaxStreamWriter {
      * @param xal The Xal object to write.
      * @throws XMLStreamException
      */
-    private void writeXal(Xal xal) throws XMLStreamException{
+    private void writeXal(Xal xal) throws XMLStreamException, XalException{
         if (xal.getVersion() != null) writer.writeAttribute(ATT_VERSION, xal.getVersion());
         for(AddressDetails ad : xal.getAddressDetails()){
             this.writeAddressDetails(ad);
@@ -121,7 +131,7 @@ public class XalWriter extends StaxStreamWriter {
      * @param addressDetails
      * @throws XMLStreamException
      */
-    public void writeAddressDetails(AddressDetails addressDetails) throws XMLStreamException{
+    public void writeAddressDetails(AddressDetails addressDetails) throws XMLStreamException, XalException{
         writer.writeStartElement(URI_XAL,TAG_ADDRESS_DETAILS);
         if (addressDetails.getAddressType() != null){
             writer.writeAttribute(ATT_ADDRESS_TYPE, addressDetails.getAddressType());
@@ -287,7 +297,7 @@ public class XalWriter extends StaxStreamWriter {
         writer.writeEndElement();
     }
 
-    private void writeCountry(Country country) throws XMLStreamException{
+    private void writeCountry(Country country) throws XMLStreamException, XalException{
         writer.writeStartElement(URI_XAL,TAG_COUNTRY);
         if (country.getAddressLines() != null){
             for (GenericTypedGrPostal addressLine : country.getAddressLines()){
@@ -376,6 +386,36 @@ public class XalWriter extends StaxStreamWriter {
         writer.writeEndElement();
     }
 
+    private void writeThoroughfarePostDirection(GenericTypedGrPostal thoroughfarePostDirection) throws XMLStreamException {
+        writer.writeStartElement(URI_XAL, TAG_THOROUGHFARE_POST_DIRECTION);
+        this.writeGenericTypedGrPostal(thoroughfarePostDirection);
+        writer.writeEndElement();
+    }
+
+    private void writeThoroughfarePreDirection(GenericTypedGrPostal thoroughfarePreDirection) throws XMLStreamException {
+        writer.writeStartElement(URI_XAL, TAG_THOROUGHFARE_PRE_DIRECTION);
+        this.writeGenericTypedGrPostal(thoroughfarePreDirection);
+        writer.writeEndElement();
+    }
+
+    private void writeThoroughfareName(GenericTypedGrPostal name) throws XMLStreamException {
+        writer.writeStartElement(URI_XAL, TAG_THOROUGHFARE_NAME);
+        this.writeGenericTypedGrPostal(name);
+        writer.writeEndElement();
+    }
+
+    private void writeThoroughfareTrailingType(GenericTypedGrPostal thoroughfareTrailingType) throws XMLStreamException {
+        writer.writeStartElement(URI_XAL, TAG_THOROUGHFARE_TRAILING_TYPE);
+        this.writeGenericTypedGrPostal(thoroughfareTrailingType);
+        writer.writeEndElement();
+    }
+
+    private void writeThoroughfareLeadingType(GenericTypedGrPostal thoroughfareLeadingType) throws XMLStreamException {
+        writer.writeStartElement(URI_XAL, TAG_THOROUGHFARE_LEADING_TYPE);
+        this.writeGenericTypedGrPostal(thoroughfareLeadingType);
+        writer.writeEndElement();
+    }
+
     private void writeCountryNameCode(CountryNameCode countryNameCode) throws XMLStreamException{
         writer.writeStartElement(URI_XAL,TAG_COUNTRY_NAME_CODE);
         if (countryNameCode.getScheme() != null){
@@ -390,7 +430,7 @@ public class XalWriter extends StaxStreamWriter {
         writer.writeEndElement();
     }
 
-    private void writeAdministrativeArea(AdministrativeArea administrativeArea) throws XMLStreamException{
+    private void writeAdministrativeArea(AdministrativeArea administrativeArea) throws XMLStreamException, XalException{
         writer.writeStartElement(URI_XAL,TAG_ADMINISTRATIVE_AREA);
         if (administrativeArea.getType() != null){
             writer.writeAttribute(ATT_TYPE, administrativeArea.getType());
@@ -425,7 +465,7 @@ public class XalWriter extends StaxStreamWriter {
         writer.writeEndElement();
     }
 
-    private void writeDependentLocality(DependentLocality dependentLocality) throws XMLStreamException {
+    private void writeDependentLocality(DependentLocality dependentLocality) throws XMLStreamException, XalException {
         writer.writeStartElement(URI_XAL,TAG_DEPENDENT_LOCALITY);
         if (dependentLocality.getType() != null){
             writer.writeAttribute(ATT_TYPE, dependentLocality.getType());
@@ -479,7 +519,7 @@ public class XalWriter extends StaxStreamWriter {
         writer.writeEndElement();
     }
 
-    private void writeLocality(Locality locality) throws XMLStreamException{
+    private void writeLocality(Locality locality) throws XMLStreamException, XalException{
         writer.writeStartElement(URI_XAL,TAG_LOCALITY);
         if (locality.getType() != null){
             writer.writeAttribute(ATT_TYPE, locality.getType());
@@ -573,7 +613,7 @@ public class XalWriter extends StaxStreamWriter {
         }
     }
 
-    private void writeSubAdministrativeArea(SubAdministrativeArea subAdministrativeArea) throws XMLStreamException {
+    private void writeSubAdministrativeArea(SubAdministrativeArea subAdministrativeArea) throws XMLStreamException, XalException {
         writer.writeStartElement(URI_XAL,TAG_SUB_ADMINISTRATIVE_AREA);
         if (subAdministrativeArea.getType() != null){
             writer.writeAttribute(ATT_TYPE, subAdministrativeArea.getType());
@@ -889,7 +929,7 @@ public class XalWriter extends StaxStreamWriter {
         writer.writeEndElement();
     }
 
-    private void writeLargeMailUser(LargeMailUser largeMailUser) throws XMLStreamException {
+    private void writeLargeMailUser(LargeMailUser largeMailUser) throws XMLStreamException, XalException {
         writer.writeStartElement(URI_XAL,TAG_LARGE_MAIL_USER);
         if (largeMailUser.getType() != null){
             writer.writeAttribute(ATT_TYPE, largeMailUser.getType());
@@ -1420,8 +1460,231 @@ public class XalWriter extends StaxStreamWriter {
 
     }
 
-    private void writeThoroughfare(Thoroughfare thoroughfare) throws XMLStreamException{
+    private void writeThoroughfare(Thoroughfare thoroughfare) throws XMLStreamException, XalException{
         writer.writeStartElement(URI_XAL,TAG_THOROUGHFARE);
+        if (thoroughfare.getType() != null){
+            writer.writeAttribute(ATT_TYPE, thoroughfare.getType());
+        }
+        if (thoroughfare.getDependentThoroughfares() != null){
+            writer.writeAttribute(ATT_DEPENDENT_THOROUGHFARES, thoroughfare.getDependentThoroughfares().getDependentThoroughfares());
+        }
+        if (thoroughfare.getDependentThoroughfaresIndicator() != null){
+            writer.writeAttribute(ATT_DEPENDENT_THOROUGHFARES_INDICATOR, thoroughfare.getDependentThoroughfaresIndicator());
+        }
+        if (thoroughfare.getDependentThoroughfaresConnector() != null){
+            writer.writeAttribute(ATT_DEPENDENT_THOROUGHFARES_CONNECTOR, thoroughfare.getDependentThoroughfaresConnector());
+        }
+        if (thoroughfare.getDependentThoroughfaresType() != null){
+            writer.writeAttribute(ATT_DEPENDENT_THOROUGHFARES_TYPE, thoroughfare.getDependentThoroughfaresType());
+        }
+        if (thoroughfare.getAddressLines() != null){
+            for(GenericTypedGrPostal addressLine : thoroughfare.getAddressLines()){
+                this.writeAddressLine(addressLine);
+            }
+        }
+        if (thoroughfare.getThoroughfareNumbers() != null){
+            for(Object object : thoroughfare.getThoroughfareNumbers()){
+                if (object instanceof ThoroughfareNumber)
+                    this.writeThoroughfareNumber((ThoroughfareNumber) object);
+                else if (object instanceof ThoroughfareNumberRange)
+                    this.writeThoroughfareNumberRange((ThoroughfareNumberRange) object);
+                else
+                    throw new XalException("Error writting Thoroughfare.\n" +
+                            "Requiered here "+ThoroughfareNumber.class.toString()+" or "+
+                            ThoroughfareNumberRange.class.toString()+".");
+            }
+        }
+        if (thoroughfare.getThoroughfareNumberPrefixes() != null){
+            for(ThoroughfareNumberPrefix prefix : thoroughfare.getThoroughfareNumberPrefixes()){
+                this.writeThoroughfareNumberPrefix(prefix);
+            }
+        }
+        if (thoroughfare.getThoroughfareNumberSuffixes() != null){
+            for(ThoroughfareNumberSuffix suffix : thoroughfare.getThoroughfareNumberSuffixes()){
+                this.writeThoroughfareNumberSuffix(suffix);
+            }
+        }
+        if (thoroughfare.getThoroughfarePreDirection() != null){
+            this.writeThoroughfarePreDirection(thoroughfare.getThoroughfarePreDirection());
+        }
+        if (thoroughfare.getThoroughfareLeadingType() != null){
+            this.writeThoroughfareLeadingType(thoroughfare.getThoroughfareLeadingType());
+        }
+        if (thoroughfare.getThoroughfareNames() != null){
+            for(GenericTypedGrPostal name : thoroughfare.getThoroughfareNames()){
+                this.writeThoroughfareName(name);
+            }
+        }
+        if (thoroughfare.getThoroughfareTrailingType() != null){
+            this.writeThoroughfareTrailingType(thoroughfare.getThoroughfareTrailingType());
+        }
+        if (thoroughfare.getThoroughfarePostDirection() != null){
+            this.writeThoroughfarePostDirection(thoroughfare.getThoroughfarePostDirection());
+        }
+        if (thoroughfare.getDependentThoroughfare() != null){
+            this.writeDependentThoroughfare(thoroughfare.getDependentThoroughfare());
+        }
+        if (thoroughfare.getDependentLocality() != null){
+            this.writeDependentLocality(thoroughfare.getDependentLocality());
+        }
+        if (thoroughfare.getPremise() != null){
+            this.writePremise(thoroughfare.getPremise());
+        }
+        if (thoroughfare.getFirm() != null){
+            this.writeFirm(thoroughfare.getFirm());
+        }
+        if (thoroughfare.getPostalCode() != null){
+            this.writePostalCode(thoroughfare.getPostalCode());
+        }
         writer.writeEndElement();
+    }
+
+    private void writeThoroughfareNumber(ThoroughfareNumber thoroughfareNumber) throws XMLStreamException {
+        writer.writeStartElement(URI_XAL,TAG_THOROUGHFARE_NUMBER);
+        if (thoroughfareNumber.getNumberType() != null){
+            writer.writeAttribute(ATT_NUMBER_TYPE, thoroughfareNumber.getNumberType().getSingleRange());
+        }
+        if (thoroughfareNumber.getType() != null){
+            writer.writeAttribute(ATT_TYPE, thoroughfareNumber.getType());
+        }
+        if (thoroughfareNumber.getIndicator() != null){
+            writer.writeAttribute(ATT_INDICATOR, thoroughfareNumber.getIndicator());
+        }
+        if (thoroughfareNumber.getIndicatorOccurence() != null){
+            writer.writeAttribute(ATT_INDICATOR_OCCURRENCE, thoroughfareNumber.getIndicatorOccurence().getAfterBeforeEnum());
+        }
+        if (thoroughfareNumber.getNumberOccurence() != null){
+            writer.writeAttribute(ATT_NUMBER_OCCURRENCE, thoroughfareNumber.getNumberOccurence().getAfterBeforeTypeEnum());
+        }
+        if (thoroughfareNumber.getGrPostal() != null){
+            this.writeGrPostal(thoroughfareNumber.getGrPostal());
+        }
+        if (thoroughfareNumber.getContent() != null){
+            writer.writeCharacters(thoroughfareNumber.getContent());
+        }
+        writer.writeEndElement();
+    }
+
+    private void writeThoroughfareNumberRange(ThoroughfareNumberRange thoroughfareNumberRange) throws XMLStreamException, XalException {
+        writer.writeStartElement(URI_XAL,TAG_THOROUGHFARE_NUMBER_RANGE);
+        if (thoroughfareNumberRange.getRangeType() != null){
+            writer.writeAttribute(ATT_RANGE_TYPE, thoroughfareNumberRange.getRangeType().getOddEven());
+        }
+        if (thoroughfareNumberRange.getIndicator() != null){
+            writer.writeAttribute(ATT_INDICATOR, thoroughfareNumberRange.getIndicator());
+        }
+        if (thoroughfareNumberRange.getSeparator() != null){
+            writer.writeAttribute(ATT_SEPARATOR, thoroughfareNumberRange.getSeparator());
+        }
+        if (thoroughfareNumberRange.getIndicatorOccurence() != null){
+            writer.writeAttribute(ATT_INDICATOR_OCCURRENCE, thoroughfareNumberRange.getIndicatorOccurence().getAfterBeforeEnum());
+        }
+        if (thoroughfareNumberRange.getNumberRangeOccurence() != null){
+            writer.writeAttribute(ATT_NUMBER_RANGE_OCCURRENCE, thoroughfareNumberRange.getNumberRangeOccurence().getAfterBeforeTypeEnum());
+        }
+        if (thoroughfareNumberRange.getType() != null){
+            writer.writeAttribute(ATT_TYPE, thoroughfareNumberRange.getType());
+        }
+        if (thoroughfareNumberRange.getAddressLines() != null){
+            for(GenericTypedGrPostal addressLine : thoroughfareNumberRange.getAddressLines()){
+                this.writeAddressLine(addressLine);
+            }
+        }
+        if (thoroughfareNumberRange.getThoroughfareNumberFrom() != null){
+            this.writeThoroughfareNumberFrom(thoroughfareNumberRange.getThoroughfareNumberFrom());
+        }
+        if (thoroughfareNumberRange.getThoroughfareNumberTo() != null){
+            this.writeThoroughfareNumberTo(thoroughfareNumberRange.getThoroughfareNumberTo());
+        }
+        writer.writeEndElement();
+    }
+
+
+    private void writeThoroughfareNumberSuffix(ThoroughfareNumberSuffix suffix) throws XMLStreamException {
+        writer.writeStartElement(URI_XAL,TAG_THOROUGHFARE_NUMBER_PREFIX);
+        if (suffix.getNumberSuffixSeparator() != null){
+            writer.writeAttribute(ATT_NUMBER_SUFFIX_SEPARATOR, suffix.getNumberSuffixSeparator());
+        }
+        if (suffix.getType() != null){
+            writer.writeAttribute(ATT_TYPE, suffix.getType());
+        }
+        if (suffix.getGrPostal() != null){
+            this.writeGrPostal(suffix.getGrPostal());
+        }
+        if (suffix.getContent() != null){
+            writer.writeCharacters(suffix.getContent());
+        }
+        writer.writeEndElement();
+    }
+
+    private void writeThoroughfareNumberPrefix(ThoroughfareNumberPrefix prefix) throws XMLStreamException {
+        writer.writeStartElement(URI_XAL,TAG_THOROUGHFARE_NUMBER_PREFIX);
+        if (prefix.getNumberPrefixSeparator() != null){
+            writer.writeAttribute(ATT_NUMBER_PREFIX_SEPARATOR, prefix.getNumberPrefixSeparator());
+        }
+        if (prefix.getType() != null){
+            writer.writeAttribute(ATT_TYPE, prefix.getType());
+        }
+        if (prefix.getGrPostal() != null){
+            this.writeGrPostal(prefix.getGrPostal());
+        }
+        if (prefix.getContent() != null){
+            writer.writeCharacters(prefix.getContent());
+        }
+        writer.writeEndElement();
+    }
+
+    private void writeThoroughfareNumberFrom(ThoroughfareNumberFrom thoroughfareNumberFrom) throws XMLStreamException, XalException {
+        writer.writeStartElement(URI_XAL,TAG_THOROUGHFARE_NUMBER_FROM);
+        if (thoroughfareNumberFrom.getGrPostal() != null){
+            this.writeGrPostal(thoroughfareNumberFrom.getGrPostal());
+        }
+        if (thoroughfareNumberFrom.getContent() != null){
+            for (Object object : thoroughfareNumberFrom.getContent()){
+                if (object instanceof ThoroughfareNumberPrefix){
+                    this.writeThoroughfareNumberPrefix((ThoroughfareNumberPrefix) object);
+                } else if (object instanceof ThoroughfareNumber){
+                    this.writeThoroughfareNumber((ThoroughfareNumber) object);
+                } else if (object instanceof ThoroughfareNumberSuffix){
+                    this.writeThoroughfareNumberSuffix((ThoroughfareNumberSuffix) object);
+                } else if (object instanceof GenericTypedGrPostal){
+                    this.writeAddressLine((GenericTypedGrPostal) object);
+                } else if (object instanceof String){
+                    writer.writeCharacters((String) object);
+                } else{
+                    throw new XalException("Invalid content for "+ThoroughfareNumberFrom.class.toString());
+                }
+            }
+        }
+        writer.writeEndElement();
+    }
+
+    private void writeThoroughfareNumberTo(ThoroughfareNumberTo thoroughfareNumberTo) throws XMLStreamException, XalException {
+        writer.writeStartElement(URI_XAL,TAG_THOROUGHFARE_NUMBER_TO);
+        if (thoroughfareNumberTo.getGrPostal() != null){
+            this.writeGrPostal(thoroughfareNumberTo.getGrPostal());
+        }
+        if (thoroughfareNumberTo.getContent() != null){
+            for (Object object : thoroughfareNumberTo.getContent()){
+                if (object instanceof ThoroughfareNumberPrefix){
+                    this.writeThoroughfareNumberPrefix((ThoroughfareNumberPrefix) object);
+                } else if (object instanceof ThoroughfareNumber){
+                    this.writeThoroughfareNumber((ThoroughfareNumber) object);
+                } else if (object instanceof ThoroughfareNumberSuffix){
+                    this.writeThoroughfareNumberSuffix((ThoroughfareNumberSuffix) object);
+                } else if (object instanceof GenericTypedGrPostal){
+                    this.writeAddressLine((GenericTypedGrPostal) object);
+                } else if (object instanceof String){
+                    writer.writeCharacters((String) object);
+                } else{
+                    throw new XalException("Invalid content for "+ThoroughfareNumberTo.class.toString());
+                }
+            }
+        }
+        writer.writeEndElement();
+    }
+
+    private void writeDependentThoroughfare(DependentThoroughfare dependentThoroughfare) {
+
     }
 }

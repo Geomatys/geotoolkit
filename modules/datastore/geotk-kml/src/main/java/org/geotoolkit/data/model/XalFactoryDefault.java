@@ -23,6 +23,8 @@ import org.geotoolkit.data.model.xal.DependentLocality;
 import org.geotoolkit.data.model.xal.DependentLocalityDefault;
 import org.geotoolkit.data.model.xal.DependentLocalityNumber;
 import org.geotoolkit.data.model.xal.DependentLocalityNumberDefault;
+import org.geotoolkit.data.model.xal.DependentThoroughfare;
+import org.geotoolkit.data.model.xal.DependentThoroughfares;
 import org.geotoolkit.data.model.xal.Firm;
 import org.geotoolkit.data.model.xal.FirmDefault;
 import org.geotoolkit.data.model.xal.GenericTypedGrPostal;
@@ -41,6 +43,7 @@ import org.geotoolkit.data.model.xal.MailStop;
 import org.geotoolkit.data.model.xal.MailStopDefault;
 import org.geotoolkit.data.model.xal.MailStopNumber;
 import org.geotoolkit.data.model.xal.MailStopNumberDefault;
+import org.geotoolkit.data.model.xal.OddEvenEnum;
 import org.geotoolkit.data.model.xal.PostBox;
 import org.geotoolkit.data.model.xal.PostBoxDefault;
 import org.geotoolkit.data.model.xal.PostBoxNumber;
@@ -105,6 +108,19 @@ import org.geotoolkit.data.model.xal.SubPremiseNumberPrefixDefault;
 import org.geotoolkit.data.model.xal.SubPremiseNumberSuffix;
 import org.geotoolkit.data.model.xal.SubPremiseNumberSuffixDefault;
 import org.geotoolkit.data.model.xal.Thoroughfare;
+import org.geotoolkit.data.model.xal.ThoroughfareDefault;
+import org.geotoolkit.data.model.xal.ThoroughfareNumber;
+import org.geotoolkit.data.model.xal.ThoroughfareNumberDefault;
+import org.geotoolkit.data.model.xal.ThoroughfareNumberFrom;
+import org.geotoolkit.data.model.xal.ThoroughfareNumberFromDefault;
+import org.geotoolkit.data.model.xal.ThoroughfareNumberPrefix;
+import org.geotoolkit.data.model.xal.ThoroughfareNumberPrefixDefault;
+import org.geotoolkit.data.model.xal.ThoroughfareNumberRange;
+import org.geotoolkit.data.model.xal.ThoroughfareNumberRangeDefault;
+import org.geotoolkit.data.model.xal.ThoroughfareNumberSuffix;
+import org.geotoolkit.data.model.xal.ThoroughfareNumberSuffixDefault;
+import org.geotoolkit.data.model.xal.ThoroughfareNumberTo;
+import org.geotoolkit.data.model.xal.ThoroughfareNumberToDefault;
 import org.geotoolkit.data.model.xal.Xal;
 import org.geotoolkit.data.model.xal.XalDefault;
 import org.geotoolkit.data.model.xal.XalException;
@@ -649,6 +665,10 @@ public class XalFactoryDefault implements XalFactory {
                 numberTypeOccurrence, premiseNumberSeparator, type, grPostal, content);
     }
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public SubPremise createSubPremise(List<GenericTypedGrPostal> addressLines,
             List<SubPremiseName> subPremiseNames, Object location,
@@ -659,5 +679,92 @@ public class XalFactoryDefault implements XalFactory {
         return new SubPremiseDefault(addressLines, subPremiseNames, location,
                 subPremiseNumberPrefixes, subPremiseNumberSuffixes,
                 buildingNames, firm, mailStop, postalCode, subPremise, type);
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public Thoroughfare createThoroughfare(List<GenericTypedGrPostal> addressLines,
+            List<Object> thoroughfareNumbers, List<ThoroughfareNumberPrefix> thoroughfareNumberPrefixes,
+            List<ThoroughfareNumberSuffix> thoroughfareNumberSuffixes,
+            GenericTypedGrPostal thoroughfarePreDirection, GenericTypedGrPostal thoroughfareLeadingType,
+            List<GenericTypedGrPostal> thoroughfareNames, GenericTypedGrPostal thoroughfareTrailingType,
+            GenericTypedGrPostal thoroughfarPostDirection, DependentThoroughfare dependentThoroughfare,
+            Object location, String type, DependentThoroughfares dependentThoroughfares,
+            String dependentThoroughfaresIndicator, String dependentThoroughfaresConnector,
+            String dependentThoroughfaresType) throws XalException {
+        return new ThoroughfareDefault(addressLines, thoroughfareNumbers,
+                thoroughfareNumberPrefixes, thoroughfareNumberSuffixes,
+                thoroughfarePreDirection, thoroughfareLeadingType,
+                thoroughfareNames, thoroughfareTrailingType,
+                thoroughfarPostDirection, dependentThoroughfare,
+                location, type, dependentThoroughfares, dependentThoroughfaresIndicator,
+                dependentThoroughfaresConnector, dependentThoroughfaresType);
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public ThoroughfareNumberRange createThoroughfareNumberRange(List<GenericTypedGrPostal> addressLines,
+            ThoroughfareNumberFrom thoroughfareNumberFrom, ThoroughfareNumberTo thoroughfareNumberTo,
+            OddEvenEnum rangeType, String indicator, String separator, String type,
+            AfterBeforeEnum indicatorOccurrence, AfterBeforeTypeNameEnum numberRangeOccurrence) {
+        return new ThoroughfareNumberRangeDefault(addressLines, thoroughfareNumberFrom,
+                thoroughfareNumberTo, rangeType, indicator, separator, type,
+                indicatorOccurrence, numberRangeOccurrence);
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public ThoroughfareNumber createThoroughfareNumber(SingleRangeEnum numberType,
+            String type, String indicator, AfterBeforeEnum indicatorOccurence,
+            AfterBeforeTypeNameEnum numberOccurrence, GrPostal grPostal, String content) {
+        return new ThoroughfareNumberDefault(numberType, type, indicator,
+                indicatorOccurence, numberOccurrence, grPostal, content);
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public ThoroughfareNumberFrom createThoroughfareNumberFrom(List<Object> content, GrPostal grPostal) throws XalException {
+        return new ThoroughfareNumberFromDefault(content, grPostal);
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public ThoroughfareNumberTo createThoroughfareNumberTo(List<Object> content, GrPostal grPostal) throws XalException {
+        return new ThoroughfareNumberToDefault(content, grPostal);
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public ThoroughfareNumberSuffix createThoroughfareNumberSuffix(
+            String numberSuffixSeparator, String type, GrPostal grPostal, String content) {
+        return new ThoroughfareNumberSuffixDefault(numberSuffixSeparator, type, grPostal, content);
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public ThoroughfareNumberPrefix createThoroughfareNumberPrefix(
+            String numberPrefixSeparator, String type, GrPostal grPostal, String content) {
+        return new ThoroughfareNumberPrefixDefault(numberPrefixSeparator, type, grPostal, content);
     }
 }
