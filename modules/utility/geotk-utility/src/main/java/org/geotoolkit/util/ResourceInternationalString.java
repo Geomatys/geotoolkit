@@ -52,7 +52,8 @@ import org.opengis.util.InternationalString;
  * for Italian, <i>etc.</i>
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @author Johann Sorel (Geomatys)
+ * @version 3.13
  *
  * @since 2.1
  * @module
@@ -75,16 +76,38 @@ public class ResourceInternationalString extends AbstractInternationalString imp
     private final String key;
 
     /**
+     * The class loader to use for loading the resources file, or {@code null} for the default
+     * class loader.
+     */
+    private final ClassLoader loader;
+
+    /**
      * Creates a new international string from the specified resource bundle and key.
      *
      * @param resources The name of the resource bundle, as a fully qualified class name.
      * @param key The key for the resource to fetch.
      */
     public ResourceInternationalString(final String resources, final String key) {
+        this(resources, key, null);
+    }
+
+    /**
+     * Creates a new international string from the specified resource bundle, key and class loader.
+     *
+     * @param resources The name of the resource bundle, as a fully qualified class name.
+     * @param key The key for the resource to fetch.
+     * @param loader The class loader to use for loading the resources file,
+     *        or {@code null} for the default class loader.
+     *
+     * @since 3.13
+     */
+    public ResourceInternationalString(final String resources, final String key, final ClassLoader loader) {
         this.resources = resources;
         this.key       = key;
+        this.loader    = loader;
         ensureNonNull("resources", resources);
         ensureNonNull("key",       key);
+
     }
 
     /**
@@ -122,7 +145,8 @@ public class ResourceInternationalString extends AbstractInternationalString imp
      * @since 3.00
      */
     protected ResourceBundle getBundle(final Locale locale) {
-        return ResourceBundle.getBundle(resources, locale);
+        return (loader == null) ? ResourceBundle.getBundle(resources, locale) :
+                ResourceBundle.getBundle(resources, locale, loader);
     }
 
     /**
