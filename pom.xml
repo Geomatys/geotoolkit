@@ -310,9 +310,9 @@
 
       <!-- Jasper report -->
       <dependency>
-        <groupId>jasperreports</groupId>
+        <groupId>net.sf.jasperreports</groupId>
         <artifactId>jasperreports</artifactId>
-        <version>3.1.0</version>
+        <version>3.7.2</version>
       </dependency>
       <dependency>
         <groupId>xml-apis</groupId>
