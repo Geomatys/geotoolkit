@@ -93,7 +93,6 @@
   <!-- =========================================================== -->
   <modules>
     <module>geotk-coverageio-dimap</module>
-    <module>geotk-coverageio-pending</module>
   </modules>
 
 </project>

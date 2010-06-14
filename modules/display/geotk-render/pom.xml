@@ -88,11 +88,6 @@
     </dependency>
     <dependency>
       <groupId>org.geotoolkit.pending</groupId>
-      <artifactId>geotk-coverageio-pending</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.geotoolkit.pending</groupId>
       <artifactId>geotk-cql</artifactId>
       <version>${project.version}</version>
     </dependency>
