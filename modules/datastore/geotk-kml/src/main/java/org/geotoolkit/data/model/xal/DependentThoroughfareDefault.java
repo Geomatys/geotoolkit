@@ -72,7 +72,7 @@ public class DependentThoroughfareDefault implements DependentThoroughfare {
      * @{@inheritDoc }
      */
     @Override
-    public GenericTypedGrPostal getfPostThoroughfareTrailingType() {return this.thoroughfareTrailingType;}
+    public GenericTypedGrPostal getThoroughfareTrailingType() {return this.thoroughfareTrailingType;}
 
     /**
      *

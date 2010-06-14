@@ -8,7 +8,21 @@ import java.util.List;
  */
 public interface AtomPersonConstruct {
 
+    /**
+     *
+     * @return
+     */
     public List<String> getNames();
+
+    /**
+     *
+     * @return
+     */
     public List<String> getUris();
+
+    /**
+     * 
+     * @return
+     */
     public List<String> getEmails();
 }

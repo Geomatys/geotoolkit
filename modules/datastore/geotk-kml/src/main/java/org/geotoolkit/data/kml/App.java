@@ -17,7 +17,6 @@ import org.geotoolkit.data.model.kml.ExtendedData;
 import org.geotoolkit.data.model.kml.IdAttributes;
 import org.geotoolkit.data.model.kml.Kml;
 import org.geotoolkit.data.model.kml.Region;
-import org.geotoolkit.data.model.xal.AddressDetails;
 import org.geotoolkit.data.model.xal.Xal;
 import org.geotoolkit.feature.DefaultComplexAttribute;
 import org.geotoolkit.feature.DefaultFeature;
@@ -140,10 +139,10 @@ public class App {
 //            }
 //        }
 
-        XalWriter xalWriter = new XalWriter();
-        xalWriter.setOutput(output);
-        xalWriter.write(xal);
-        xalWriter.dispose();
+//        XalWriter xalWriter = new XalWriter();
+//        xalWriter.setOutput(output);
+//        xalWriter.write(xal);
+//        xalWriter.dispose();
 
 //        System.out.println("test");
 //        String test = " \n  r";

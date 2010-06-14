@@ -24,6 +24,7 @@ import org.geotoolkit.data.model.xal.DependentLocalityDefault;
 import org.geotoolkit.data.model.xal.DependentLocalityNumber;
 import org.geotoolkit.data.model.xal.DependentLocalityNumberDefault;
 import org.geotoolkit.data.model.xal.DependentThoroughfare;
+import org.geotoolkit.data.model.xal.DependentThoroughfareDefault;
 import org.geotoolkit.data.model.xal.DependentThoroughfares;
 import org.geotoolkit.data.model.xal.Firm;
 import org.geotoolkit.data.model.xal.FirmDefault;
@@ -766,5 +767,19 @@ public class XalFactoryDefault implements XalFactory {
     public ThoroughfareNumberPrefix createThoroughfareNumberPrefix(
             String numberPrefixSeparator, String type, GrPostal grPostal, String content) {
         return new ThoroughfareNumberPrefixDefault(numberPrefixSeparator, type, grPostal, content);
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public DependentThoroughfare createDependentThoroughfare(List<GenericTypedGrPostal> addressLines,
+            GenericTypedGrPostal thoroughfarePreDirection, GenericTypedGrPostal thoroughfareLeadingType,
+            List<GenericTypedGrPostal> thoroughfareNames, GenericTypedGrPostal thoroughfareTrailingType,
+            GenericTypedGrPostal thoroughfarePostDirection, String type) {
+        return new DependentThoroughfareDefault(addressLines, thoroughfarePreDirection,
+                thoroughfareLeadingType, thoroughfareNames, thoroughfareTrailingType,
+                thoroughfarePostDirection, type);
     }
 }

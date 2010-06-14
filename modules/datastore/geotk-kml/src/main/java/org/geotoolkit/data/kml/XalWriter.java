@@ -1684,7 +1684,33 @@ public class XalWriter extends StaxStreamWriter {
         writer.writeEndElement();
     }
 
-    private void writeDependentThoroughfare(DependentThoroughfare dependentThoroughfare) {
-
+    private void writeDependentThoroughfare(DependentThoroughfare thoroughfare) throws XMLStreamException {
+        writer.writeStartElement(URI_XAL,TAG_DEPENDENT_THOROUGHFARE);
+        if (thoroughfare.getType() != null){
+            writer.writeAttribute(ATT_TYPE, thoroughfare.getType());
+        }
+        if (thoroughfare.getAddressLines() != null){
+            for(GenericTypedGrPostal addressLine : thoroughfare.getAddressLines()){
+                this.writeAddressLine(addressLine);
+            }
+        }
+        if (thoroughfare.getThoroughfarePreDirection() != null){
+            this.writeThoroughfarePreDirection(thoroughfare.getThoroughfarePreDirection());
+        }
+        if (thoroughfare.getThoroughfareLeadingType() != null){
+            this.writeThoroughfareLeadingType(thoroughfare.getThoroughfareLeadingType());
+        }
+        if (thoroughfare.getThoroughfareNames() != null){
+            for(GenericTypedGrPostal name : thoroughfare.getThoroughfareNames()){
+                this.writeThoroughfareName(name);
+            }
+        }
+        if (thoroughfare.getThoroughfareTrailingType() != null){
+            this.writeThoroughfareTrailingType(thoroughfare.getThoroughfareTrailingType());
+        }
+        if (thoroughfare.getThoroughfarePostDirection() != null){
+            this.writeThoroughfarePostDirection(thoroughfare.getThoroughfarePostDirection());
+        }
+        writer.writeEndElement();
     }
 }

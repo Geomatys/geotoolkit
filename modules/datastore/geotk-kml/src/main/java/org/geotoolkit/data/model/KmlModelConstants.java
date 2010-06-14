@@ -26,7 +26,7 @@ public final class KmlModelConstants {
     // NAMESPACES
     public static final String URI_KML = "http://www.opengis.net/kml/2.2";
     public static final String URI_XAL = XalModelConstants.URI_XAL;
-    public static final String URI_ATOM = "http://www.w3.org/2005/Atom";
+    public static final String URI_ATOM = AtomModelConstants.URI_ATOM;
     public static final String URI_XSI = "http://www.w3.org/2001/XMLSchema-instance";
     public static final String PREFIX_XAL = "xal";
     public static final String PREFIX_ATOM = "atom";
@@ -197,7 +197,7 @@ public final class KmlModelConstants {
 
     // ELEMENTARY TAGS -- ATOM
     public static final String TAG_ATOM_LINK = "link";
-    public static final String TAG_ATOM_PERSON_CONSTRUCT = "atomPersonConstruct";
+    public static final String TAG_ATOM_AUTHOR = "author";
     public static final String TAG_ATOM_NAME = "name";
     public static final String TAG_ATOM_URI = "uri";
     public static final String TAG_ATOM_EMAIL = "email";

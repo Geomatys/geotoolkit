@@ -72,7 +72,7 @@ public interface DependentThoroughfare {
      *
      * @return
      */
-    public GenericTypedGrPostal getfPostThoroughfareTrailingType();
+    public GenericTypedGrPostal getThoroughfareTrailingType();
 
     /**
      * <p>221-bis Baker Street North, where North is the post-direction.

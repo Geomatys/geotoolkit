@@ -92,8 +92,6 @@ public class XalReader extends StaxStreamReader{
 
     public void setReader(XMLStreamReader reader){this.reader = reader;}
 
-    public XMLStreamReader getReader(){return this.reader;}
-
     /**
      * <p>This method reads the xAL document assigned to the XalReader.</p>
      *
@@ -1447,7 +1445,7 @@ public class XalReader extends StaxStreamReader{
         GenericTypedGrPostal thoroughfarePostDirection = null;
         DependentThoroughfare dependentThoroughfare = null;
         Object location = null;
-        String type = null;
+        String type = reader.getAttributeValue(null, ATT_TYPE);
         DependentThoroughfares dependentThoroughfares =  DependentThoroughfares.transform(reader.getAttributeValue(null, ATT_DEPENDENT_THOROUGHFARES));
         String dependentThoroughfaresIndicator =  reader.getAttributeValue(null, ATT_DEPENDENT_THOROUGHFARES_INDICATOR);
         String dependentThoroughfaresConnector =  reader.getAttributeValue(null, ATT_DEPENDENT_THOROUGHFARES_CONNECTOR);
@@ -1666,10 +1664,49 @@ public class XalReader extends StaxStreamReader{
         return XalReader.xalFactory.createThoroughfareNumberSuffix(numberSuffixSeparator, type, grPostal, content);
     }
 
-    private DependentThoroughfare readDependentThoroughfare() {
-return null;
+    private DependentThoroughfare readDependentThoroughfare() throws XMLStreamException {
+        List<GenericTypedGrPostal> addressLines = new ArrayList<GenericTypedGrPostal>();
+        GenericTypedGrPostal thoroughfarePreDirection = null;
+        GenericTypedGrPostal thoroughfareLeadingType = null;
+        List<GenericTypedGrPostal> thoroughfareNames = new ArrayList<GenericTypedGrPostal>();
+        GenericTypedGrPostal thoroughfareTrailingType = null;
+        GenericTypedGrPostal thoroughfarePostDirection = null;
+        String type = reader.getAttributeValue(null, ATT_TYPE);
+
+        boucle:
+        while (reader.hasNext()) {
+
+            switch (reader.next()) {
+                case XMLStreamConstants.START_ELEMENT:
+                    final String eName = reader.getLocalName();
+                    final String eUri = reader.getNamespaceURI();
+
+                    if (URI_XAL.equals(eUri)) {
+                        if (TAG_ADDRESS_LINE.equals(eName)) {
+                            addressLines.add(this.readGenericTypedGrPostal());
+                        } else if (TAG_THOROUGHFARE_PRE_DIRECTION.equals(eName)){
+                            thoroughfarePreDirection = this.readGenericTypedGrPostal();
+                        } else if (TAG_THOROUGHFARE_LEADING_TYPE.equals(eName)){
+                            thoroughfareLeadingType = this.readGenericTypedGrPostal();
+                        } else if (TAG_THOROUGHFARE_NAME.equals(eName)){
+                            thoroughfareNames.add(this.readGenericTypedGrPostal());
+                        } else if (TAG_THOROUGHFARE_TRAILING_TYPE.equals(eName)){
+                            thoroughfareTrailingType = this.readGenericTypedGrPostal();
+                        } else if (TAG_THOROUGHFARE_POST_DIRECTION.equals(eName)){
+                            thoroughfarePostDirection = this.readGenericTypedGrPostal();
+                        }
+                    }
+                    break;
+
+                case XMLStreamConstants.END_ELEMENT:
+                    if (TAG_DEPENDENT_THOROUGHFARE.equals(reader.getLocalName()) && URI_XAL.contains(reader.getNamespaceURI())) {
+                        break boucle;
+                    }
+                    break;
+            }
+        }
+        return XalReader.xalFactory.createDependentThoroughfare(addressLines, thoroughfarePreDirection,
+                thoroughfareLeadingType, thoroughfareNames, thoroughfareTrailingType, thoroughfarePostDirection, type);
     }
-
-
 
 }

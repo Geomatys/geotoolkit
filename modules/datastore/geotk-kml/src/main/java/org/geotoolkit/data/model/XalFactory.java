@@ -813,4 +813,20 @@ public interface XalFactory {
      */
     public ThoroughfareNumberPrefix createThoroughfareNumberPrefix(String numberPrefixSeparator,
         String type, GrPostal grPostal, String content);
+
+    /**
+     * 
+     * @param addressLines
+     * @param thoroughfarePreDirection
+     * @param thoroughfareLeadingType
+     * @param thoroughfareNames
+     * @param thoroughfareTrailingType
+     * @param thoroughfarePostDirection
+     * @param type
+     * @return
+     */
+    public DependentThoroughfare createDependentThoroughfare(List<GenericTypedGrPostal> addressLines,
+            GenericTypedGrPostal thoroughfarePreDirection, GenericTypedGrPostal thoroughfareLeadingType,
+            List<GenericTypedGrPostal> thoroughfareNames, GenericTypedGrPostal thoroughfareTrailingType,
+            GenericTypedGrPostal thoroughfarePostDirection, String type);
 }

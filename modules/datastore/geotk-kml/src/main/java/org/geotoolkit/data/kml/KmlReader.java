@@ -113,6 +113,7 @@ public class KmlReader extends StaxStreamReader {
     private Kml root;
     private static final KmlFactory kmlFactory = new KmlFactoryDefault();
     private final XalReader xalReader = new XalReader();
+    private final AtomReader atomReader = new AtomReader();
 
     public KmlReader() {
         super();
@@ -122,6 +123,7 @@ public class KmlReader extends StaxStreamReader {
     public void setInput(Object input) throws IOException, XMLStreamException {
         super.setInput(input);
         this.xalReader.setInput(reader);
+        this.atomReader.setInput(reader);
     }
 
     /**
@@ -282,7 +284,7 @@ public class KmlReader extends StaxStreamReader {
                     } else if (URI_ATOM.equals(eUri)) {
 
                         // ABSTRACT FEATURE
-                        if (TAG_ATOM_PERSON_CONSTRUCT.equals(eName)) {
+                        if (TAG_ATOM_AUTHOR.equals(eName)) {
                             author = this.readAtomPersonConstruct();
                         } else if (TAG_ATOM_LINK.equals(eName)) {
                             link = this.readAtomLink();
@@ -1673,7 +1675,7 @@ public class KmlReader extends StaxStreamReader {
                     } else if (URI_ATOM.equals(eUri)) {
 
                         // ABSTRACT FEATURE
-                        if (TAG_ATOM_PERSON_CONSTRUCT.equals(eName)) {
+                        if (TAG_ATOM_AUTHOR.equals(eName)) {
                             author = this.readAtomPersonConstruct();
                         } else if (TAG_ATOM_LINK.equals(eName)) {
                             link = this.readAtomLink();
@@ -2159,7 +2161,7 @@ public class KmlReader extends StaxStreamReader {
                     } else if (URI_ATOM.equals(eUri)) {
 
                         // ABSTRACT FEATURE
-                        if (TAG_ATOM_PERSON_CONSTRUCT.equals(eName)) {
+                        if (TAG_ATOM_AUTHOR.equals(eName)) {
                             author = this.readAtomPersonConstruct();
                         } else if (TAG_ATOM_LINK.equals(eName)) {
                             link = this.readAtomLink();
@@ -2307,7 +2309,7 @@ public class KmlReader extends StaxStreamReader {
                     } else if (URI_ATOM.equals(eUri)) {
 
                         // ABSTRACT FEATURE
-                        if (TAG_ATOM_PERSON_CONSTRUCT.equals(eName)) {
+                        if (TAG_ATOM_AUTHOR.equals(eName)) {
                             author = this.readAtomPersonConstruct();
                         } else if (TAG_ATOM_LINK.equals(eName)) {
                             link = this.readAtomLink();
@@ -3361,68 +3363,21 @@ public class KmlReader extends StaxStreamReader {
 
     /**
      *
-     * @return An AtomPersonConstruct instance
+     * @return
      * @throws XMLStreamException
      */
     private AtomPersonConstruct readAtomPersonConstruct() throws XMLStreamException {
-        List<String> names = new ArrayList<String>();
-        List<String> uris = new ArrayList<String>();
-        List<String> emails = new ArrayList<String>();
-
-        boucle:
-        while (reader.hasNext()) {
-
-            switch (reader.next()) {
-                case XMLStreamConstants.START_ELEMENT:
-                    final String eName = reader.getLocalName();
-                    final String eUri = reader.getNamespaceURI();
-
-                    if (URI_ATOM.equals(eUri)) {
-                        if (TAG_ATOM_NAME.equals(eName)) {
-                            names.add(reader.getElementText());
-                        } else if (TAG_ATOM_URI.equals(eName)) {
-                            uris.add(reader.getElementText());
-                        } else if (TAG_ATOM_NAME.equals(eName)) {
-                            emails.add(reader.getElementText());
-                        }
-                    }
-                    break;
-
-                case XMLStreamConstants.END_ELEMENT:
-                    if (TAG_ATOM_PERSON_CONSTRUCT.equals(reader.getLocalName()) && URI_ATOM.contains(reader.getNamespaceURI())) {
-                        break boucle;
-                    }
-                    break;
-            }
-
-        }
-        return KmlReader.kmlFactory.createAtomPersonConstruct(names, uris, emails);
+        System.out.println("YOUPI");
+        return this.atomReader.readAuthor();
     }
 
+    /**
+     * 
+     * @return
+     * @throws XMLStreamException
+     */
     private AtomLink readAtomLink() throws XMLStreamException {
-        AtomLink resultat = null;
-
-        boucle:
-        while (reader.hasNext()) {
-
-            switch (reader.next()) {
-                case XMLStreamConstants.START_ELEMENT:
-                    final String eName = reader.getLocalName();
-                    final String eUri = reader.getNamespaceURI();
-
-                    if (URI_ATOM.equals(eUri)) {
-                    }
-                    break;
-
-                case XMLStreamConstants.END_ELEMENT:
-                    if (TAG_ATOM_LINK.equals(reader.getLocalName()) && URI_ATOM.contains(reader.getNamespaceURI())) {
-                        break boucle;
-                    }
-                    break;
-            }
-
-        }
-        return resultat;
+        return this.atomReader.readLink();
     }
 
     /**
@@ -3529,7 +3484,7 @@ public class KmlReader extends StaxStreamReader {
                     } else if (URI_ATOM.equals(eUri)) {
 
                         // ABSTRACT FEATURE
-                        if (TAG_ATOM_PERSON_CONSTRUCT.equals(eName)) {
+                        if (TAG_ATOM_AUTHOR.equals(eName)) {
                             author = this.readAtomPersonConstruct();
                         } else if (TAG_ATOM_LINK.equals(eName)) {
                             link = this.readAtomLink();
@@ -3654,7 +3609,7 @@ public class KmlReader extends StaxStreamReader {
                     } else if (URI_ATOM.equals(eUri)) {
 
                         // ABSTRACT FEATURE
-                        if (TAG_ATOM_PERSON_CONSTRUCT.equals(eName)) {
+                        if (TAG_ATOM_AUTHOR.equals(eName)) {
                             author = this.readAtomPersonConstruct();
                         } else if (TAG_ATOM_LINK.equals(eName)) {
                             link = this.readAtomLink();
@@ -3857,7 +3812,7 @@ public class KmlReader extends StaxStreamReader {
                     } else if (URI_ATOM.equals(eUri)) {
 
                         // ABSTRACT FEATURE
-                        if (TAG_ATOM_PERSON_CONSTRUCT.equals(eName)) {
+                        if (TAG_ATOM_AUTHOR.equals(eName)) {
                             author = this.readAtomPersonConstruct();
                         } else if (TAG_ATOM_LINK.equals(eName)) {
                             atomLink = this.readAtomLink();

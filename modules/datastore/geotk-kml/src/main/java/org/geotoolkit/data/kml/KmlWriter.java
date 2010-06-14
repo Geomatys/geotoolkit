@@ -105,6 +105,7 @@ import static org.geotoolkit.data.model.KmlModelConstants.*;
 public class KmlWriter extends StaxStreamWriter {
 
     private final XalWriter xalWriter = new XalWriter();
+    private final AtomWriter atomWriter = new AtomWriter();
 
     public KmlWriter(){
         super();
@@ -114,6 +115,7 @@ public class KmlWriter extends StaxStreamWriter {
     public void setOutput(Object output) throws XMLStreamException, IOException{
         super.setOutput(output);
         this.xalWriter.setOutput(writer);
+        this.atomWriter.setOutput(writer);
         this.writer.setPrefix(PREFIX_XAL, URI_XAL);
         this.writer.setPrefix(PREFIX_ATOM, URI_ATOM);
     }
@@ -632,12 +634,12 @@ public class KmlWriter extends StaxStreamWriter {
         writer.writeEndElement();
     }
 
-    private void writeAtomPersonConstruct(AtomPersonConstruct person){
-
+    private void writeAtomPersonConstruct(AtomPersonConstruct person) throws XMLStreamException{
+        this.atomWriter.writeAuthor(person);
     }
 
-    private void writeAtomLink(AtomLink link){
-
+    private void writeAtomLink(AtomLink link) throws XMLStreamException{
+        this.atomWriter.writeLink(link);
     }
 
     /**
