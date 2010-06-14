@@ -123,7 +123,6 @@
     <module>jaxp-xml-parser</module>
     <module>datastore</module>
     <module>processing</module>
-    <module>coverage</module>
     <module>display</module>
     <module>jaxb-xml-binding</module>
     <module>clients</module>
