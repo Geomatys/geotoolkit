@@ -20,8 +20,10 @@
 package org.geotoolkit.feature.type;
 
 
-import java.util.List;
+import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.Point;
+
+import java.util.List;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -34,10 +36,10 @@ import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
 
+import org.junit.Test;
+
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.FeatureType;
-
-import org.junit.Test;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.ComplexType;
 import org.opengis.feature.type.FeatureTypeFactory;
@@ -255,6 +257,7 @@ public class FeatureTypeBuilderTest {
         ftb.add("{http://test.com}att_Integer", Integer.class);
         ftb.add("{http://test.com}att_Double", Double.class);
         ftb.add("{http://test.com}att_Date", Date.class);
+        ftb.add("{http://test.com}att_Geom", Geometry.class, DefaultGeographicCRS.WGS84);
         final SimpleFeatureType sft = ftb.buildSimpleFeatureType();
 
         assertEquals(DefaultName.valueOf("{http://test.com}att_String"), sft.getAttributeDescriptors().get(0).getName());
@@ -297,9 +300,18 @@ public class FeatureTypeBuilderTest {
         assertEquals(DefaultName.valueOf("{http://test.com}att_Date"), sft.getDescriptor("{http://test.com}att_Date").getName());
         assertEquals(DefaultName.valueOf("{http://test.com}att_Date"), sft.getDescriptor(new DefaultName("http://test.com", "att_Date")).getName());
 
+        assertEquals(DefaultName.valueOf("{http://test.com}att_Geom"), sft.getAttributeDescriptors().get(6).getName());
+        assertEquals(DefaultName.valueOf("{http://test.com}att_Geom"), sft.getDescriptor(6).getName());
+        assertEquals(DefaultName.valueOf("{http://test.com}att_Geom"), sft.getDescriptor("att_Geom").getName());
+        assertEquals(DefaultName.valueOf("{http://test.com}att_Geom"), sft.getDescriptor("http://test.com:att_Geom").getName());
+        assertEquals(DefaultName.valueOf("{http://test.com}att_Geom"), sft.getDescriptor("{http://test.com}att_Geom").getName());
+        assertEquals(DefaultName.valueOf("{http://test.com}att_Geom"), sft.getDescriptor(new DefaultName("http://test.com", "att_Geom")).getName());
 
+        //geometry attribut
+        assertEquals(DefaultName.valueOf("{http://test.com}att_Geom"), sft.getGeometryDescriptor().getName());
+        assertEquals(DefaultGeographicCRS.WGS84, sft.getCoordinateReferenceSystem());
 
-
+        
         ////////////////////////////////////////////////////////////////////////
         //same test on complex type ////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////
@@ -311,6 +323,7 @@ public class FeatureTypeBuilderTest {
         ftb.add("{http://test.com}att_Integer", Integer.class,0,12,true,null);
         ftb.add("{http://test.com}att_Double", Double.class,0,12,true,null);
         ftb.add("{http://test.com}att_Date", Date.class,0,12,true,null);
+        ftb.add("{http://test.com}att_Geom", Geometry.class, DefaultGeographicCRS.WGS84,0,12,true,null);
         FeatureType ft = ftb.buildFeatureType();
         assertFalse(ft instanceof SimpleFeatureType);
 
@@ -342,6 +355,10 @@ public class FeatureTypeBuilderTest {
         assertEquals(DefaultName.valueOf("{http://test.com}att_Date"), ft.getDescriptor("http://test.com:att_Date").getName());
         assertEquals(DefaultName.valueOf("{http://test.com}att_Date"), ft.getDescriptor("{http://test.com}att_Date").getName());
         assertEquals(DefaultName.valueOf("{http://test.com}att_Date"), ft.getDescriptor(new DefaultName("http://test.com", "att_Date")).getName());
+
+        //geometry attribut
+        assertEquals(DefaultName.valueOf("{http://test.com}att_Geom"), ft.getGeometryDescriptor().getName());
+        assertEquals(DefaultGeographicCRS.WGS84, ft.getCoordinateReferenceSystem());
 
     }
 
@@ -497,7 +514,7 @@ public class FeatureTypeBuilderTest {
         ftb.setSuperType(typeA);
         ftb.add(new DefaultName("b"), String.class);
         final SimpleFeatureType typeB = ftb.buildSimpleFeatureType();
-
+        
         ftb.reset();
         ftb.setName(new DefaultName(uri, "C"));
         ftb.setSuperType(typeB);

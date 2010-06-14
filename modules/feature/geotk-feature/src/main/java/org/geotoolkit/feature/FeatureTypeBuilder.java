@@ -384,6 +384,15 @@ public class FeatureTypeBuilder {
         add(DefaultName.valueOf(name),binding,min,max,nillable,userData);
     }
 
+    public void add(final String name, final Class binding, final CoordinateReferenceSystem crs){
+        add(DefaultName.valueOf(name),binding,crs);
+    }
+
+    public void add(final String name, final Class binding, final CoordinateReferenceSystem crs,
+            int min, int max, boolean nillable, Map<Object,Object> userData) {
+        add(DefaultName.valueOf(name),binding,crs,min,max,nillable,userData);
+    }
+
     /**
      * Adds a new attribute w/ provided name and class.
      *
@@ -405,10 +414,6 @@ public class FeatureTypeBuilder {
     public void add(final Name name, final Class binding, int min, int max,
             boolean nillable, Map<Object,Object> userData) {
         add(name,binding,null,min,max,nillable,userData);
-    }
-
-    public void add(final String name, final Class binding, final CoordinateReferenceSystem crs){
-        add(DefaultName.valueOf(name),binding,crs);
     }
 
     /**

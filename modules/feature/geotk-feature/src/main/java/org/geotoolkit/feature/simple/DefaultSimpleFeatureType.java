@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.feature.simple;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -211,6 +212,8 @@ public class DefaultSimpleFeatureType extends DefaultFeatureType implements Simp
         if (geomDesc != null) {
             index.put(null, index.get(geomDesc.getName()));
         }
-        return index;
+
+        //ensure that the index won't be modified
+        return Collections.unmodifiableMap(index);
     }
 }
