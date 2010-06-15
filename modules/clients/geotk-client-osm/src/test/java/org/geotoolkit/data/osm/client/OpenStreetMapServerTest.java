@@ -63,7 +63,8 @@ public class OpenStreetMapServerTest {
         boolean valid = false;
         try {
             server.getURI().toURL().openConnection().connect();
-            valid = true;
+            Api api = server.getCapabilities(); //check the server respond
+            valid = (api!=null);
         } catch (Exception ex) {
             //server is not accessible
         }
