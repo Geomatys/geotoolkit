@@ -7,7 +7,7 @@ package org.geotoolkit.data.model.xal;
  */
 public class XalException extends Exception{
 
-    private String message;
+    private final String message;
 
     /**
      *

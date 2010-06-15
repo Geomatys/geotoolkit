@@ -5,11 +5,13 @@ package org.geotoolkit.data.model.xal;
  *
  * <p>Name of the SubPremise Location. eg. LOBBY, BASEMENT, GROUND FLOOR, etc...</p>
  *
- * <br />&lt;xs:element name="SubPremiseLocation">
- * <br />&lt;xs:complexType mixed="true">
- * <br />&lt;xs:attributeGroup ref="grPostal"/>
- * <br />&lt;/xs:complexType>
- * <br />&lt;/xs:element>
+ * <pre>
+ * &lt;xs:element name="SubPremiseLocation">
+ *  &lt;xs:complexType mixed="true">
+ *      &lt;xs:attributeGroup ref="grPostal"/>
+ *  &lt;/xs:complexType>
+ * &lt;/xs:element>
+ * </pre>
  *
  * @author Samuel Andrés
  */

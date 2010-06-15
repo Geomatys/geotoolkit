@@ -1,6 +1,7 @@
 package org.geotoolkit.data.model.xal;
 
 import java.util.List;
+import static java.util.Collections.*;
 
 /**
  *
@@ -8,9 +9,9 @@ import java.util.List;
  */
 public class CountryDefault implements Country {
 
-    private List<GenericTypedGrPostal> addressLines;
-    private List<CountryNameCode> countryNameCodes;
-    private List<GenericTypedGrPostal> countryNames;
+    private final List<GenericTypedGrPostal> addressLines;
+    private final List<CountryNameCode> countryNameCodes;
+    private final List<GenericTypedGrPostal> countryNames;
     private AdministrativeArea administrativeArea;
     private Locality locality;
     private Thoroughfare thoroughfare;
@@ -25,9 +26,9 @@ public class CountryDefault implements Country {
      */
     public CountryDefault(List<GenericTypedGrPostal> addressLines,
             List<CountryNameCode> countryNameCodes, List<GenericTypedGrPostal> countryNames, Object localisation) throws XalException{
-        this.addressLines = addressLines;
-        this.countryNameCodes = countryNameCodes;
-        this.countryNames = countryNames;
+        this.addressLines = (addressLines == null) ? EMPTY_LIST : addressLines;
+        this.countryNameCodes = (countryNameCodes == null) ? EMPTY_LIST : countryNameCodes;
+        this.countryNames = (countryNames == null) ? EMPTY_LIST : countryNames;
         if (localisation instanceof AdministrativeArea){
             this.administrativeArea = (AdministrativeArea) localisation;
         } else if (localisation instanceof Locality){

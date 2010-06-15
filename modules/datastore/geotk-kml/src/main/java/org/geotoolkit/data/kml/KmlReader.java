@@ -2110,7 +2110,9 @@ public class KmlReader extends StaxStreamReader {
                         } else if (TAG_VISIBILITY.equals(eName)) {
                             visibility = parseBoolean(reader.getElementText());
                         } else if (TAG_OPEN.equals(eName)) {
+                            System.out.println("=> "+open);
                             open = parseBoolean(reader.getElementText());
+                            System.out.println(open+" =>");
                         } else if (TAG_ADDRESS.equals(eName)) {
                             address = reader.getElementText();
                         } else if (TAG_PHONE_NUMBER.equals(eName)) {
@@ -3367,7 +3369,6 @@ public class KmlReader extends StaxStreamReader {
      * @throws XMLStreamException
      */
     private AtomPersonConstruct readAtomPersonConstruct() throws XMLStreamException {
-        System.out.println("YOUPI");
         return this.atomReader.readAuthor();
     }
 

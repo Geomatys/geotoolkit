@@ -27,6 +27,7 @@ package org.geotoolkit.data.model.xal;
  *  &lt;xs:attributeGroup ref="grPostal"/>
  *  &lt;xs:anyAttribute namespace="##other"/>
  * &lt;/xs:complexType>
+ * </pre>
  *
  * @author Samuel Andrés
  */

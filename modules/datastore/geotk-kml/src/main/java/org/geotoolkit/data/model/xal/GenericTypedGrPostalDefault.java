@@ -6,9 +6,9 @@ package org.geotoolkit.data.model.xal;
  */
 public class GenericTypedGrPostalDefault implements GenericTypedGrPostal {
 
-    public String type;
-    public GrPostal grPostal;
-    public String content;
+    public final String type;
+    public final GrPostal grPostal;
+    public final String content;
     
     /**
      * 

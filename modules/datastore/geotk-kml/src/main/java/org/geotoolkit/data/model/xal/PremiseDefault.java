@@ -1,6 +1,7 @@
 package org.geotoolkit.data.model.xal;
 
 import java.util.List;
+import static java.util.Collections.*;
 
 /**
  *
@@ -53,8 +54,8 @@ public class PremiseDefault implements Premise{
             MailStop mailStop, PostalCode postalCode, Premise premise,
             String type, String premiseDependency, String premiseDependencyType,
             String premiseThoroughfareConnector) throws XalException{
-        this.addressLines = addressLines;
-        this.premiseNames = premiseNames;
+        this.addressLines = (addressLines == null) ? EMPTY_LIST : addressLines;
+        this.premiseNames = (premiseNames == null) ? EMPTY_LIST : premiseNames;
         if (location instanceof PremiseLocation){
             premiseLocation = (PremiseLocation) location;
         } else if (location instanceof List){
@@ -68,9 +69,9 @@ public class PremiseDefault implements Premise{
         } else if (location != null){
             throw new XalException("This kind of location ("+location.getClass()+") is not allowed here : "+this.getClass());
         }
-        this.premiseNumberPrefixes = premiseNumberPrefixes;
-        this.premiseNumberSuffixes = premiseNumberSuffixes;
-        this.buildingNames = buildingNames;
+        this.premiseNumberPrefixes = (premiseNumberPrefixes == null) ? EMPTY_LIST : premiseNumberPrefixes;
+        this.premiseNumberSuffixes = (premiseNumberSuffixes == null) ? EMPTY_LIST : premiseNumberSuffixes;
+        this.buildingNames = (buildingNames == null) ? EMPTY_LIST : buildingNames;
         if (sub instanceof List){
             try {
                 subPremises =  (List<SubPremise>) sub;

@@ -1,6 +1,7 @@
 package org.geotoolkit.data.model.xal;
 
 import java.util.List;
+import static java.util.Collections.*;
 
 /**
  *
@@ -24,9 +25,9 @@ public class PostalCodeDefault implements PostalCode {
      */
     public PostalCodeDefault(List<GenericTypedGrPostal> addressLines, List<GenericTypedGrPostal> postalCodeNumbers,
             List<PostalCodeNumberExtension> postalCodeNumberExtensions, PostTown postTown, String type){
-        this.addressLines = addressLines;
-        this.postalCodeNumbers = postalCodeNumbers;
-        this.postalCodeNumberExtensions = postalCodeNumberExtensions;
+        this.addressLines = (addressLines == null) ? EMPTY_LIST : addressLines;
+        this.postalCodeNumbers = (postalCodeNumbers == null) ? EMPTY_LIST : postalCodeNumbers;
+        this.postalCodeNumberExtensions = (postalCodeNumberExtensions == null) ? EMPTY_LIST : postalCodeNumberExtensions;
         this.postTown = postTown;
         this.type = type;
     }

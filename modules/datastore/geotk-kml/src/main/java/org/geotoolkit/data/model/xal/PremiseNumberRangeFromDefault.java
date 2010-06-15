@@ -1,6 +1,7 @@
 package org.geotoolkit.data.model.xal;
 
 import java.util.List;
+import static java.util.Collections.*;
 
 /**
  *
@@ -24,10 +25,10 @@ public class PremiseNumberRangeFromDefault implements PremiseNumberRangeFrom {
             List<PremiseNumberPrefix> premiseNumberPrefixes,
             List<PremiseNumber> premiseNumbers,
             List<PremiseNumberSuffix> premiseNumberSuffixes){
-        this.addressLines = addressLines;
-        this.premiseNumberPrefixes = premiseNumberPrefixes;
-        this.premiseNumbers = premiseNumbers;
-        this.premiseNumberSuffixes = premiseNumberSuffixes;
+        this.addressLines = (addressLines == null) ? EMPTY_LIST : addressLines;
+        this.premiseNumberPrefixes = (premiseNumberPrefixes == null) ? EMPTY_LIST : premiseNumberPrefixes;
+        this.premiseNumbers = (premiseNumbers == null) ? EMPTY_LIST : premiseNumbers;
+        this.premiseNumberSuffixes = (premiseNumberSuffixes == null) ? EMPTY_LIST : premiseNumberSuffixes;
     }
 
     /**

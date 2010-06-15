@@ -1,6 +1,7 @@
 package org.geotoolkit.data.model.xal;
 
 import java.util.List;
+import static java.util.Collections.*;
 
 /**
  *
@@ -22,8 +23,8 @@ public class PostTownDefault implements PostTown{
      */
     public PostTownDefault(List<GenericTypedGrPostal> addressLines,
             List<GenericTypedGrPostal> postTownNames, PostTownSuffix postTownSuffix, String type){
-        this.addressLines = addressLines;
-        this.postTownNames = postTownNames;
+        this.addressLines = (addressLines == null) ? EMPTY_LIST : addressLines;
+        this.postTownNames = (postTownNames == null) ? EMPTY_LIST : postTownNames;
         this.postTownSuffix = postTownSuffix;
         this.type = type;
     }

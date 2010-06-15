@@ -1,6 +1,7 @@
 package org.geotoolkit.data.model.xal;
 
 import java.util.List;
+import static java.util.Collections.*;
 
 /**
  *
@@ -34,10 +35,10 @@ public class LargeMailUserDefault implements LargeMailUser {
             List<LargeMailUserName> largeMailUserNames, LargeMailUserIdentifier largeMailUserIdentifier,
             List<BuildingName> buildingNames, Department department, PostBox postBox,
             Thoroughfare thoroughfare, PostalCode postalCode, String type){
-        this.addressLines = addressLines;
-        this.largeMailUserNames = largeMailUserNames;
+        this.addressLines = (addressLines == null) ? EMPTY_LIST : addressLines;
+        this.largeMailUserNames = (largeMailUserNames == null) ? EMPTY_LIST : addressLines;
         this.largeMailUserIdentifier = largeMailUserIdentifier;
-        this.buildingNames = buildingNames;
+        this.buildingNames = (buildingNames == null) ? EMPTY_LIST : buildingNames;
         this.department = department;
         this.postBox = postBox;
         this.thoroughfare = thoroughfare;

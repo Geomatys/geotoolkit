@@ -3,10 +3,12 @@ package org.geotoolkit.data.model.xal;
 /**
  * <p>This interface maps grPostal attributeGroup.</p>
  *
- * <br />&lt;xs:attributeGroup name="grPostal">
- * <br />&lt;xs:attribute name="Code">...
- * <br />&lt;/xs:attribute>
- * <br />&lt;/xs:attributeGroup>
+ * <pre>
+ *  &lt;xs:attributeGroup name="grPostal">
+ *  &lt;xs:attribute name="Code">...
+ *  &lt;/xs:attribute>
+ *  &lt;/xs:attributeGroup>
+ * </pre>
  *
  * @author Samuel Andrés
  */

@@ -6,8 +6,8 @@ package org.geotoolkit.data.model.xal;
  */
 public class PostBoxNumberDefault implements PostBoxNumber {
 
-    private String content;
-    private GrPostal grPostal;
+    private final String content;
+    private final GrPostal grPostal;
 
     /**
      *

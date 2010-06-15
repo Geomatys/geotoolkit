@@ -1,6 +1,7 @@
 package org.geotoolkit.data.model.xal;
 
 import java.util.List;
+import static java.util.Collections.*;
 
 /**
  *
@@ -26,9 +27,9 @@ public class FirmDefault implements Firm {
      */
     public FirmDefault(List<GenericTypedGrPostal> addressLines, List<GenericTypedGrPostal> firmNames,
             List<Department> departments, MailStop mailStop, PostalCode postalCode, String type){
-        this.addressLines = addressLines;
-        this.firmNames = firmNames;
-        this.departments = departments;
+        this.addressLines = (addressLines == null) ? EMPTY_LIST : addressLines;
+        this.firmNames = (firmNames == null) ? EMPTY_LIST : firmNames;
+        this.departments = (departments == null) ? EMPTY_LIST : departments;
         this.mailStop = mailStop;
         this.postalCode = postalCode;
         this.type = type;
@@ -39,53 +40,41 @@ public class FirmDefault implements Firm {
      * @{@inheritDoc }
      */
     @Override
-    public List<GenericTypedGrPostal> getAddressLines() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
+    public List<GenericTypedGrPostal> getAddressLines() {return this.addressLines;}
 
     /**
      *
      * @{@inheritDoc }
      */
     @Override
-    public List<GenericTypedGrPostal> getFirmNames() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
+    public List<GenericTypedGrPostal> getFirmNames() {return this.firmNames;}
 
     /**
      *
      * @{@inheritDoc }
      */
     @Override
-    public List<Department> getDepartments() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
+    public List<Department> getDepartments() {return this.departments;}
 
     /**
      *
      * @{@inheritDoc }
      */
     @Override
-    public MailStop getMailStop() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
+    public MailStop getMailStop() {return this.mailStop;}
 
     /**
      *
      * @{@inheritDoc }
      */
     @Override
-    public PostalCode getPostalCode() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
+    public PostalCode getPostalCode() {return this.postalCode;}
 
     /**
      *
      * @{@inheritDoc }
      */
     @Override
-    public String getType() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
+    public String getType() {return this.type;}
 
 }

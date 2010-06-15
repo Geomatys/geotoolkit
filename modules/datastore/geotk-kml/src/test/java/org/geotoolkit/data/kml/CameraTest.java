@@ -1,10 +1,5 @@
 package org.geotoolkit.data.kml;
 
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 import java.io.File;
 import java.io.IOException;
 import javax.xml.parsers.ParserConfigurationException;
@@ -22,7 +17,6 @@ import org.geotoolkit.data.model.kml.Camera;
 import org.geotoolkit.data.model.kml.Kml;
 import org.geotoolkit.data.model.kml.KmlException;
 import org.geotoolkit.data.model.kml.PhotoOverlay;
-import org.geotoolkit.data.model.kml.Shape;
 import org.geotoolkit.xml.DomCompare;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -31,6 +25,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.xml.sax.SAXException;
+
+import static org.geotoolkit.data.model.KmlModelConstants.*;
 
 /**
  *
@@ -59,21 +55,6 @@ public class CameraTest {
     public void tearDown() {
     }
 
-//    <?xml version="1.0" encoding="UTF-8"?>
-//<kml xmlns="http://www.opengis.net/kml/2.2" xmlns:kml="http://www.opengis.net/kml/2.2" xmlns:atom="http://www.w3.org/2005/Atom">
-//<PhotoOverlay>
-//	<Camera>
-//		<longitude>4,790858574000052</longitude>
-//		<latitude>43,49802144</latitude>
-//		<altitude>625,7200000002864</altitude>
-//		<heading>2,191600960195955e-14</heading>
-//		<tilt>0</tilt>
-//		<roll>0</roll>
-//		<altitudeMode>relativeToGround</altitudeMode>
-//	</Camera>
-//</PhotoOverlay>
-//</kml>
-
      @Test
      public void cameraReadTest() throws IOException, XMLStreamException {
 
@@ -86,7 +67,6 @@ public class CameraTest {
          assertTrue(feature instanceof PhotoOverlay);
          final AbstractView view = ((PhotoOverlay)feature).getView();
          assertTrue(view instanceof Camera);
-
 
          final Camera camera = (Camera) view;
          assertEquals(4, camera.getLongitude().getAngle(), DELTA);
@@ -104,13 +84,14 @@ public class CameraTest {
          Angle180 roll = kmlFactory.createAngle180(0);
          Camera camera = kmlFactory.createCamera(null, null, null, null, longitude, latitude, 625, heading, tilt, roll, AltitudeMode.RELATIVE_TO_GROUND, null, null);
 
-         final PhotoOverlay photoOverlay = kmlFactory.createPhotoOverlay(null, null, null, true,
-                 true, null, null, null, null, null, null, null, camera,
-                 null, null, null, null, null, null, null, null, 0, null, null, null,
-                 roll, null, null, null, Shape.SPHERE, null, null);
+         final PhotoOverlay photoOverlay = kmlFactory.createPhotoOverlay(null, null, null, DEF_VISIBILITY,
+                 DEF_OPEN, null, null, null, null, null, null, null, camera,
+                 null, null, null, null, null, null, null, null, DEF_DRAW_ORDER, null, null, null,
+                 DEF_ROTATION, null, null, null, null, null, null);
          final Kml kml = kmlFactory.createKml(null, photoOverlay, null, null);
 
          File temp = File.createTempFile("testKml",".kml");
+         temp.deleteOnExit();
 
          KmlWriter writer = new KmlWriter();
          writer.setOutput(temp);
@@ -119,9 +100,6 @@ public class CameraTest {
 
          DomCompare.compare(
                  new File("src/test/resources/org/geotoolkit/data/kml/camera.kml"), temp);
-           
-
-
 
      }
 

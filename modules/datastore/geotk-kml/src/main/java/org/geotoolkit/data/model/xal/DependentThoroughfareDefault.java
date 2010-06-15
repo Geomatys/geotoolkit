@@ -1,6 +1,7 @@
 package org.geotoolkit.data.model.xal;
 
 import java.util.List;
+import static java.util.Collections.*;
 
 /**
  *
@@ -30,10 +31,10 @@ public class DependentThoroughfareDefault implements DependentThoroughfare {
             GenericTypedGrPostal thoroughfarePreDirection, GenericTypedGrPostal thoroughfareLeadingType,
             List<GenericTypedGrPostal> thoroughfareNames, GenericTypedGrPostal thoroughfareTrailingType,
             GenericTypedGrPostal thoroughfarePostDirection, String type){
-        this.addressLines = addressLines;
+        this.addressLines = (addressLines == null) ? EMPTY_LIST : addressLines;
         this.thoroughfarePreDirection = thoroughfarePreDirection;
         this.thoroughfareLeadingType = thoroughfareLeadingType;
-        this.thoroughfareNames = thoroughfareNames;
+        this.thoroughfareNames = (thoroughfareNames == null) ? EMPTY_LIST : thoroughfareNames;
         this.thoroughfareTrailingType = thoroughfareTrailingType;
         this.thoroughfarePostDirection = thoroughfarePostDirection;
         this.type = type;

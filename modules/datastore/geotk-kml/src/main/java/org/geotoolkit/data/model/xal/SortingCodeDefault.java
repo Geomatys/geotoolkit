@@ -6,8 +6,8 @@ package org.geotoolkit.data.model.xal;
  */
 public class SortingCodeDefault implements SortingCode {
 
-    private String type;
-    private GrPostal grPostal;
+    private final String type;
+    private final GrPostal grPostal;
 
     /**
      * 

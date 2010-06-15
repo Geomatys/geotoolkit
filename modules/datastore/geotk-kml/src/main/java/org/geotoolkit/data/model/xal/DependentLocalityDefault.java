@@ -1,6 +1,7 @@
 package org.geotoolkit.data.model.xal;
 
 import java.util.List;
+import static java.util.Collections.*;
 
 /**
  *
@@ -46,8 +47,8 @@ public class DependentLocalityDefault implements DependentLocality {
             Object localisation, Thoroughfare thoroughfare, Premise premise,
             DependentLocality dependentLocality, PostalCode postalCode,
             String type, String usageType, String connector, String indicator) throws XalException{
-        this.addressLines = addressLines;
-        this.dependentLocalityNames = dependentLocalityNames;
+        this.addressLines = (addressLines == null) ? EMPTY_LIST : addressLines;
+        this.dependentLocalityNames = (dependentLocalityNames == null) ? EMPTY_LIST : dependentLocalityNames;
         this.dependentLocalityNumber = dependentLocalityNumber;
         if (localisation instanceof PostBox){
             this.postBox = (PostBox) localisation;

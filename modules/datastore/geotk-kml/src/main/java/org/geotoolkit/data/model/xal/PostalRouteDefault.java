@@ -1,6 +1,7 @@
 package org.geotoolkit.data.model.xal;
 
 import java.util.List;
+import static java.util.Collections.*;
 
 /**
  *
@@ -24,7 +25,7 @@ public class PostalRouteDefault implements PostalRoute {
      */
     public PostalRouteDefault(List<GenericTypedGrPostal> addressLines,
             Object localisation, PostBox postBox, String type) throws XalException{
-        this.addressLines = addressLines;
+        this.addressLines = (addressLines == null) ? EMPTY_LIST : addressLines;
         if (localisation instanceof List){
             try{
                 this.postalRouteNames = (List<GenericTypedGrPostal>) localisation;

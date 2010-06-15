@@ -1,20 +1,22 @@
 package org.geotoolkit.data.model.xal;
 
 import java.util.List;
+import static java.util.Collections.*;
 
 /**
  *
  * @author Samuel Andrés
  */
 public class SubAdministrativeAreaDefault implements SubAdministrativeArea {
-private List<GenericTypedGrPostal> addressLines;
-    private List<GenericTypedGrPostal> subAdministrativeAreaNames;
+
+    private final List<GenericTypedGrPostal> addressLines;
+    private final List<GenericTypedGrPostal> subAdministrativeAreaNames;
     private Locality locality;
     private PostOffice postOffice;
     private PostalCode postalCode;
-    private String type;
-    private String usageType;
-    private String indicator;
+    private final String type;
+    private final String usageType;
+    private final String indicator;
 
     /**
      * 
@@ -29,8 +31,8 @@ private List<GenericTypedGrPostal> addressLines;
     public SubAdministrativeAreaDefault(List<GenericTypedGrPostal> addressLines,
             List<GenericTypedGrPostal> subAdministrativeAreaNames,
             Object localisation, String type, String usageType, String indicator) throws XalException{
-        this.addressLines = addressLines;
-        this.subAdministrativeAreaNames = subAdministrativeAreaNames;
+        this.addressLines = (addressLines == null) ? EMPTY_LIST : addressLines;
+        this.subAdministrativeAreaNames = (subAdministrativeAreaNames == null) ? EMPTY_LIST : subAdministrativeAreaNames;
         if (localisation instanceof Locality){
             this.locality = (Locality) localisation;
         } else if (localisation instanceof PostOffice){

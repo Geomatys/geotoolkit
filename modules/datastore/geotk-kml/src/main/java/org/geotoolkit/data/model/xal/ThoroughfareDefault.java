@@ -1,6 +1,7 @@
 package org.geotoolkit.data.model.xal;
 
 import java.util.List;
+import static java.util.Collections.*;
 
 /**
  *
@@ -60,13 +61,13 @@ public class ThoroughfareDefault implements Thoroughfare {
             Object location,
             String type, DependentThoroughfares dependentThoroughfares, String dependentThoroughfaresIndicator,
             String dependentThoroughfaresConnector, String dependentThoroughfaresType) throws XalException{
-        this.addressLines = addressLines;
-        this.thoroughfareNumbers = this.verifThoroughfareNumbers(thoroughfareNumbers);
-        this.thoroughfareNumberPrefixes = thoroughfareNumberPrefixes;
-        this.thoroughfareNumberSuffixes = thoroughfareNumberSuffixes;
+        this.addressLines = (addressLines == null) ? EMPTY_LIST : addressLines;
+        this.thoroughfareNumbers = (thoroughfareNumbers == null) ? EMPTY_LIST : this.verifThoroughfareNumbers(thoroughfareNumbers);
+        this.thoroughfareNumberPrefixes = (thoroughfareNumberPrefixes == null) ? EMPTY_LIST : thoroughfareNumberPrefixes;
+        this.thoroughfareNumberSuffixes = (thoroughfareNumberSuffixes == null) ? EMPTY_LIST : thoroughfareNumberSuffixes;
         this.thoroughfarePreDirection = thoroughfarePreDirection;
         this.thoroughfareLeadingType = thoroughfareLeadingType;
-        this.thoroughfareNames = thoroughfareNames;
+        this.thoroughfareNames = (thoroughfareNames == null) ? EMPTY_LIST : thoroughfareNames;
         this.thoroughfareTrailingType = thoroughfareTrailingType;
         this.thoroughfarePostDirection = thoroughfarPostDirection;
         this.dependentThoroughfare = dependentThoroughfare;

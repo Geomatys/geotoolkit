@@ -6,7 +6,7 @@ package org.geotoolkit.data.model.xal;
  */
 public class GrPostalDefault implements GrPostal{
 
-    private String code;
+    private final String code;
 
     /**
      * 

@@ -5,12 +5,14 @@ package org.geotoolkit.data.model.xal;
  *
  * <p>No.12-14 where "No." is before actual street number.</p>
  *
- * <br />&lt;xs:simpleType>
- * <br />&lt;s:restriction base="xs:NMTOKEN">
- * <br />&lt;xs:enumeration value="Before"/>
- * <br />&lt;xs:enumeration value="After"/>
- * <br />&lt;/xs:restriction>
- * <br />&lt;/xs:simpleType>
+ * <pre>
+ *  &lt;xs:simpleType>
+ *  &lt;s:restriction base="xs:NMTOKEN">
+ *  &lt;xs:enumeration value="Before"/>
+ *  &lt;xs:enumeration value="After"/>
+ *  &lt;/xs:restriction>
+ *  &lt;/xs:simpleType>
+ * </pre>
  *
  * @author Samuel Andrés
  */

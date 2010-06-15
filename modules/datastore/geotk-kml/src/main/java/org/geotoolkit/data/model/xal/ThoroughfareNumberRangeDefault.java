@@ -1,6 +1,7 @@
 package org.geotoolkit.data.model.xal;
 
 import java.util.List;
+import static java.util.Collections.*;
 
 /**
  *
@@ -35,7 +36,7 @@ public class ThoroughfareNumberRangeDefault implements ThoroughfareNumberRange {
             ThoroughfareNumberTo thoroughfareNumberTo,
             OddEvenEnum rangeType, String indicator, String separator, String type,
             AfterBeforeEnum indicatorOccurrence, AfterBeforeTypeNameEnum numberRangeOccurrence){
-        this.addressLines = addressLines;
+        this.addressLines = (addressLines == null) ? EMPTY_LIST : addressLines;
         this.thoroughfareNumberFrom = thoroughfareNumberFrom;
         this.thoroughfareNumberTo = thoroughfareNumberTo;
         this.rangeType = rangeType;

@@ -1,6 +1,7 @@
 package org.geotoolkit.data.model.xal;
 
 import java.util.List;
+import static java.util.Collections.*;
 
 /**
  *
@@ -34,7 +35,7 @@ public class PostBoxDefault implements PostBox {
             PostBoxNumberPrefix postBoxNumberPrefix, PostBoxNumberSuffix postBoxNumberSuffix,
             PostBoxNumberExtension postBoxNumberExtension, Firm firm,
             PostalCode postalCode, String type, String indicator){
-        this.addressLines = addressLines;
+        this.addressLines = (addressLines == null) ? EMPTY_LIST : addressLines;
         this.postBoxNumber = postBoxNumber;
         this.postBoxNumberPrefix = postBoxNumberPrefix;
         this.postBoxNumberSuffix = postBoxNumberSuffix;

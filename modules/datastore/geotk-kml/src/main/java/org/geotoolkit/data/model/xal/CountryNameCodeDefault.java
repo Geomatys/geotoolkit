@@ -6,9 +6,9 @@ package org.geotoolkit.data.model.xal;
  */
 public class CountryNameCodeDefault implements CountryNameCode {
 
-    private String content;
-    private String scheme;
-    private GrPostal grPostal;
+    private final String content;
+    private final String scheme;
+    private final GrPostal grPostal;
 
     /**
      *

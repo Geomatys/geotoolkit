@@ -196,11 +196,11 @@ public final class KmlModelConstants {
     public static final String TAG_Z = "z";
 
     // ELEMENTARY TAGS -- ATOM
-    public static final String TAG_ATOM_LINK = "link";
-    public static final String TAG_ATOM_AUTHOR = "author";
-    public static final String TAG_ATOM_NAME = "name";
-    public static final String TAG_ATOM_URI = "uri";
-    public static final String TAG_ATOM_EMAIL = "email";
+    public static final String TAG_ATOM_LINK = AtomModelConstants.TAG_LINK;
+    public static final String TAG_ATOM_AUTHOR = AtomModelConstants.TAG_AUTHOR;
+//    public static final String TAG_ATOM_NAME = "name";
+//    public static final String TAG_ATOM_URI = "uri";
+//    public static final String TAG_ATOM_EMAIL = "email";
 
     // ELEMENTARY TAGS -- XAL
     public static final String TAG_XAL_ADDRESS_DETAILS = XalModelConstants.TAG_ADDRESS_DETAILS;

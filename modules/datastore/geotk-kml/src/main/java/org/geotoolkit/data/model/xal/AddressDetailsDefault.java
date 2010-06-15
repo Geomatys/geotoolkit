@@ -21,6 +21,19 @@ public class AddressDetailsDefault implements AddressDetails {
     private final GrPostal grPostal;
     private final String addressDetailsKey;
 
+    /**
+     * 
+     * @param postalServiceElements
+     * @param localisation
+     * @param addressType
+     * @param currentStatus
+     * @param validFromDate
+     * @param validToDate
+     * @param usage
+     * @param grPostal
+     * @param addressDetailsKey
+     * @throws XalException
+     */
     public AddressDetailsDefault(PostalServiceElements postalServiceElements, Object localisation,
             String addressType, String currentStatus, String validFromDate, String validToDate,
             String usage, GrPostal grPostal, String addressDetailsKey) throws XalException{

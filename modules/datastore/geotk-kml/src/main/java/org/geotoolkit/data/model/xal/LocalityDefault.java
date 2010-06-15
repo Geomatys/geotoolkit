@@ -1,6 +1,7 @@
 package org.geotoolkit.data.model.xal;
 
 import java.util.List;
+import static java.util.Collections.*;
 
 /**
  *
@@ -40,8 +41,8 @@ public class LocalityDefault implements Locality {
             Object postal,
             Thoroughfare thoroughfare, Premise premise, DependentLocality dependentLocality, PostalCode postalCode,
             String type, String usageType, String indicator) throws XalException{
-        this.addressLines = addressLines;
-        this.localityNames = localityNames;
+        this.addressLines = (addressLines == null) ? EMPTY_LIST : addressLines;
+        this.localityNames = (localityNames == null) ? EMPTY_LIST : localityNames;
         if (postal instanceof PostBox){
             this.postBox = (PostBox) postal;
         } else if (postal instanceof LargeMailUser){

@@ -1,6 +1,7 @@
 package org.geotoolkit.data.model.xal;
 
 import java.util.List;
+import static java.util.Collections.*;
 
 /**
  *
@@ -22,8 +23,8 @@ public class MailStopDefault implements MailStop {
      */
     public MailStopDefault(List<GenericTypedGrPostal> addressLines, List<GenericTypedGrPostal> mailStopNames,
             MailStopNumber mailStopNumber, String type){
-        this.addressLines = addressLines;
-        this.mailStopNames = mailStopNames;
+        this.addressLines = (addressLines == null) ? EMPTY_LIST : addressLines;
+        this.mailStopNames = (mailStopNames == null) ? EMPTY_LIST : mailStopNames;
         this.mailStopNumber = mailStopNumber;
         this.type = type;
     }

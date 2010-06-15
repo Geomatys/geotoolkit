@@ -1,11 +1,13 @@
 package org.geotoolkit.data.kml;
 
+import org.geotoolkit.data.zip.ZipUtilities;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.zip.ZipOutputStream;
 import javax.xml.stream.XMLStreamException;
 import org.geotoolkit.data.model.KmlFactory;
 import org.geotoolkit.data.model.KmlFactoryDefault;
@@ -109,48 +111,20 @@ public class App {
     public static void main(String[] args) throws IOException, XMLStreamException {
 
         //featuresTests();
-        
-        File inputKML = new File("/home/samuel/Documents/doc_kml/exemples/stylesAndFeatures.xml");
-        File inputXAL = new File("/home/samuel/Documents/doc_kml/exemples/XAL.xml");
-        File output = new File("/home/samuel/Documents/doc_kml/exemples/output.xml");
+
+        File inputKML = new File("/home/samuel/netbeans/Test/src/main/resources/exemple.kml");
+        File output = File.createTempFile("output",".kml");
+        //output.deleteOnExit();
 
         KmlReader kmlReader = new KmlReader();
         kmlReader.setInput(inputKML);
         Kml kml = kmlReader.read();
         kmlReader.dispose();
 
-        //System.out.println(kml);
         KmlWriter kmlWriter = new KmlWriter();
         kmlWriter.setOutput(output);
         kmlWriter.write(kml);
         kmlWriter.dispose();
-
-        XalReader xalReader = new XalReader();
-        xalReader.setInput(inputXAL);
-        Xal xal = xalReader.read();
-        xalReader.dispose();
-        
-//        System.out.println(xal);
-//        System.out.println(xal.getAddressDetails().size());
-//        for (AddressDetails ad : xal.getAddressDetails()){
-//            System.out.println(ad.getAddressType());
-//            if (ad.getAddressLines() != null){
-//                System.out.println("SIZE : "+ad.getAddressLines().getAddressLines().size());
-//            }
-//        }
-
-//        XalWriter xalWriter = new XalWriter();
-//        xalWriter.setOutput(output);
-//        xalWriter.write(xal);
-//        xalWriter.dispose();
-
-//        System.out.println("test");
-//        String test = " \n  r";
-//        System.out.println(test);
-//        System.out.println(test.matches(".*r"));
-//
-//        System.out.println(test.replaceAll("\\s","y"));
-//        System.out.println("fin test");
     }
 
 

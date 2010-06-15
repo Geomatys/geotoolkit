@@ -1,6 +1,7 @@
 package org.geotoolkit.data.model.xal;
 
 import java.util.List;
+import static java.util.Collections.*;
 
 /**
  *
@@ -24,8 +25,8 @@ public class DepartmentDefault implements Department {
      */
     public DepartmentDefault(List<GenericTypedGrPostal> addressLines, List<GenericTypedGrPostal> departmentNames,
             MailStop mailStop, PostalCode postalCode, String type){
-        this.addressLines = addressLines;
-        this.departmentNames = departmentNames;
+        this.addressLines = (addressLines == null) ? EMPTY_LIST : addressLines;
+        this.departmentNames = (departmentNames == null) ? EMPTY_LIST : departmentNames;
         this.mailStop = mailStop;
         this.postalCode = postalCode;
         this.type = type;

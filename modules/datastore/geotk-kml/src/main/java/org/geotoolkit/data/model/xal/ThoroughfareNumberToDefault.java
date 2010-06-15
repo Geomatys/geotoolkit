@@ -1,6 +1,7 @@
 package org.geotoolkit.data.model.xal;
 
 import java.util.List;
+import static java.util.Collections.*;
 
 /**
  *
@@ -18,7 +19,7 @@ public class ThoroughfareNumberToDefault implements ThoroughfareNumberTo {
      * @throws XalException
      */
     public ThoroughfareNumberToDefault(List<Object> content, GrPostal grPostal) throws XalException{
-        this.content = this.verifContent(content);
+        this.content = (content == null) ? EMPTY_LIST : this.verifContent(content);
         this.grPostal = grPostal;
     }
 
