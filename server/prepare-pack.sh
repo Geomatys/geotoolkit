@@ -10,7 +10,7 @@
 #
 # Remove entries that duplicate commons-collections-3.2.1.jar.
 #
-zip -d commons-beanutils-1.7.0.jar org/apache/commons/collections/*
+zip -d commons-beanutils-1.8.3.jar org/apache/commons/collections/*
 
 #
 # Remove entries that duplicate batik-ext-1.7.jar and JDK 6.
