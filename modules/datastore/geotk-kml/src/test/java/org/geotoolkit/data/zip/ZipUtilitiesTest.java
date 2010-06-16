@@ -4,7 +4,15 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.List;
+import java.util.zip.Adler32;
+import java.util.zip.CRC32;
+import java.util.zip.Checksum;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
+import java.util.zip.ZipOutputStream;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -17,6 +25,8 @@ import static org.junit.Assert.*;
  * @author Samuel Andrés
  */
 public class ZipUtilitiesTest {
+
+    private final static Checksum CHECKSUM = new Adler32();
 
     public ZipUtilitiesTest() {
     }
@@ -38,6 +48,22 @@ public class ZipUtilitiesTest {
     }
 
     @Test
+    public void fileTestStored() throws IOException{
+
+        File file1 = File.createTempFile("file1",".txt");
+        File archive = File.createTempFile("archive",".zip");
+        file1.deleteOnExit();
+        archive.deleteOnExit();
+
+        ZipUtilities.setChecksumAlgorithm(CHECKSUM);
+        ZipUtilities.zip(archive,file1);
+        ZipUtilities.unzip(archive);
+        
+        List<String> zipContent = listContent(archive);
+        assertEquals(zipContent.get(0), file1.getName());
+    }
+
+    @Test
     public void fileTest() throws IOException{
 
         File file1 = File.createTempFile("file1",".txt");
@@ -45,10 +71,11 @@ public class ZipUtilitiesTest {
         file1.deleteOnExit();
         archive.deleteOnExit();
 
-        ZipUtilities.archive(archive,file1);
-        ZipUtilities.extract(archive);
-        
-        List<String> zipContent = ZipUtilities.listContent(archive);
+        ZipUtilities.setChecksumAlgorithm(CHECKSUM);
+        ZipUtilities.zip(archive,ZipOutputStream.DEFLATED,9,file1);
+        ZipUtilities.unzip(archive);
+
+        List<String> zipContent = listContent(archive);
         assertEquals(zipContent.get(0), file1.getName());
     }
 
@@ -63,10 +90,11 @@ public class ZipUtilitiesTest {
         String file1Path = file1.getAbsolutePath();
         String archivePath = archive.getAbsolutePath();
 
-        ZipUtilities.archive(archivePath,file1Path);
-        ZipUtilities.extract(archive);
+        ZipUtilities.setChecksumAlgorithm(CHECKSUM);
+        ZipUtilities.zip(archivePath,ZipOutputStream.DEFLATED,9,file1Path);
+        ZipUtilities.unzip(archivePath);
 
-        List<String> zipContent = ZipUtilities.listContent(archive);
+        List<String> zipContent = listContent(archive);
         assertEquals(zipContent.get(0), file1.getName());
     }
 
@@ -79,11 +107,13 @@ public class ZipUtilitiesTest {
         archive.deleteOnExit();
 
         URL url1 = new URL("file://"+file1.getAbsolutePath());
+        URL urlArchive = new URL("file://"+archive.getAbsolutePath());
 
-        ZipUtilities.archive(archive,url1);
-        ZipUtilities.extract(archive);
+        ZipUtilities.setChecksumAlgorithm(CHECKSUM);
+        ZipUtilities.zip(archive,ZipOutputStream.DEFLATED,9,url1);
+        ZipUtilities.unzip(urlArchive);
 
-        List<String> zipContent = ZipUtilities.listContent(archive);
+        List<String> zipContent = listContent(archive);
         assertEquals(zipContent.get(0), file1.getName());
     }
 
@@ -96,12 +126,43 @@ public class ZipUtilitiesTest {
         archive.deleteOnExit();
 
         URI uri1 = URI.create("file://"+file1.getAbsolutePath());
+        URI uriArchive = URI.create("file://"+archive.getAbsolutePath());
 
-        ZipUtilities.archive(archive,uri1);
-        ZipUtilities.extract(archive);
+        ZipUtilities.setChecksumAlgorithm(CHECKSUM);
+        ZipUtilities.zip(archive,ZipOutputStream.DEFLATED,9,uri1);
+        ZipUtilities.unzip(uriArchive);
 
-        List<String> zipContent = ZipUtilities.listContent(archive);
+        List<String> zipContent = listContent(archive);
         assertEquals(zipContent.get(0), file1.getName());
+    }
+
+    /**
+     * <p>This method lists the content of indicated archive.</p>
+     *
+     * @param archive Instance of ZipFile, File or String path
+     * @return a list of archive entries.
+     * @throws IOException
+     */
+    public static List<String> listContent(final Object archive)
+            throws IOException{
+
+        final List<String> out = new ArrayList<String>();
+        ZipFile zf = null;
+
+        if(archive instanceof ZipFile){
+            zf = (ZipFile) archive;
+        } else if(archive instanceof File){
+            zf = new ZipFile((File) archive);
+        } else if (archive instanceof String){
+            zf = new ZipFile((String) archive);
+        }
+
+        Enumeration entries = zf.entries();
+        while (entries.hasMoreElements()){
+            ZipEntry entry = (ZipEntry) entries.nextElement();
+            out.add(entry.getName());
+        }
+        return out;
     }
 
 }

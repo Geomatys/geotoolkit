@@ -1,35 +1,35 @@
 package org.geotoolkit.data.model;
 
 import java.util.List;
-import org.geotoolkit.data.model.xal.AddressLinesDefault;
+import org.geotoolkit.data.model.xal.DefaultAddressLines;
 import org.geotoolkit.data.model.xal.AddressDetails;
-import org.geotoolkit.data.model.xal.AddressDetailsDefault;
+import org.geotoolkit.data.model.xal.DefaultAddressDetails;
 import org.geotoolkit.data.model.xal.AddressIdentifier;
-import org.geotoolkit.data.model.xal.AddressIdentifierDefault;
+import org.geotoolkit.data.model.xal.DefaultAddressIdentifier;
 import org.geotoolkit.data.model.xal.AddressLines;
 import org.geotoolkit.data.model.xal.AdministrativeArea;
-import org.geotoolkit.data.model.xal.AdministrativeAreaDefault;
+import org.geotoolkit.data.model.xal.DefaultAdministrativeArea;
 import org.geotoolkit.data.model.xal.AfterBeforeEnum;
 import org.geotoolkit.data.model.xal.AfterBeforeTypeNameEnum;
 import org.geotoolkit.data.model.xal.BuildingName;
-import org.geotoolkit.data.model.xal.BuildingNameDefault;
+import org.geotoolkit.data.model.xal.DefaultBuildingName;
 import org.geotoolkit.data.model.xal.Country;
-import org.geotoolkit.data.model.xal.CountryDefault;
+import org.geotoolkit.data.model.xal.DefaultCountry;
 import org.geotoolkit.data.model.xal.CountryNameCode;
-import org.geotoolkit.data.model.xal.CountryNameCodeDefault;
+import org.geotoolkit.data.model.xal.DefaultCountryNameCode;
 import org.geotoolkit.data.model.xal.Department;
-import org.geotoolkit.data.model.xal.DepartmentDefault;
+import org.geotoolkit.data.model.xal.DefaultDepartment;
 import org.geotoolkit.data.model.xal.DependentLocality;
-import org.geotoolkit.data.model.xal.DependentLocalityDefault;
+import org.geotoolkit.data.model.xal.DefaultDependentLocality;
 import org.geotoolkit.data.model.xal.DependentLocalityNumber;
-import org.geotoolkit.data.model.xal.DependentLocalityNumberDefault;
+import org.geotoolkit.data.model.xal.DefaultDependentLocalityNumber;
 import org.geotoolkit.data.model.xal.DependentThoroughfare;
-import org.geotoolkit.data.model.xal.DependentThoroughfareDefault;
+import org.geotoolkit.data.model.xal.DefaultDependentThoroughfare;
 import org.geotoolkit.data.model.xal.DependentThoroughfares;
 import org.geotoolkit.data.model.xal.Firm;
-import org.geotoolkit.data.model.xal.FirmDefault;
+import org.geotoolkit.data.model.xal.DefaultFirm;
 import org.geotoolkit.data.model.xal.GenericTypedGrPostal;
-import org.geotoolkit.data.model.xal.GenericTypedGrPostalDefault;
+import org.geotoolkit.data.model.xal.DefaultGenericTypedGrPostal;
 import org.geotoolkit.data.model.xal.GrPostal;
 import org.geotoolkit.data.model.xal.GrPostalDefault;
 import org.geotoolkit.data.model.xal.LargeMailUser;
@@ -149,7 +149,7 @@ public class XalFactoryDefault implements XalFactory {
     public AddressDetails createAddressDetails(PostalServiceElements postalServiceElements,
             Object localisation, String addressType, String currentStatus, String validFromDate,
             String validToDate, String usage, GrPostal grPostal, String AddressDetailsKey) throws XalException {
-        return new AddressDetailsDefault(postalServiceElements, localisation,
+        return new DefaultAddressDetails(postalServiceElements, localisation,
                 addressType, currentStatus, validFromDate, validToDate, usage, grPostal, AddressDetailsKey);
     }
 
@@ -159,7 +159,7 @@ public class XalFactoryDefault implements XalFactory {
      */
     @Override
     public AddressLines createAddressLines(List<GenericTypedGrPostal> addressLines) {
-        return new AddressLinesDefault(addressLines);
+        return new DefaultAddressLines(addressLines);
     }
 
     /**
@@ -168,7 +168,7 @@ public class XalFactoryDefault implements XalFactory {
      */
     @Override
     public GenericTypedGrPostal createGenericTypedGrPostal(String type, GrPostal grPostal, String Content) {
-        return new GenericTypedGrPostalDefault(type, grPostal, Content);
+        return new DefaultGenericTypedGrPostal(type, grPostal, Content);
     }
 
     /**
@@ -212,7 +212,7 @@ public class XalFactoryDefault implements XalFactory {
     @Override
     public AddressIdentifier createAddressIdentifier(String content, String identifierType,
             String type, GrPostal grPostal) {
-        return new AddressIdentifierDefault(content, identifierType, type, grPostal);
+        return new DefaultAddressIdentifier(content, identifierType, type, grPostal);
     }
 
     /**
@@ -222,7 +222,7 @@ public class XalFactoryDefault implements XalFactory {
     @Override
     public Country createCountry(List<GenericTypedGrPostal> addressLines, List<CountryNameCode> countryNameCodes,
             List<GenericTypedGrPostal> countryNames, Object localisation) throws XalException {
-        return new CountryDefault(addressLines, countryNameCodes, countryNames, localisation);
+        return new DefaultCountry(addressLines, countryNameCodes, countryNames, localisation);
     }
 
     /**
@@ -231,7 +231,7 @@ public class XalFactoryDefault implements XalFactory {
      */
     @Override
     public CountryNameCode createCountryNameCode(String sheme, GrPostal grPostal, String content) {
-        return new CountryNameCodeDefault(sheme, grPostal, content);
+        return new DefaultCountryNameCode(sheme, grPostal, content);
     }
 
     /**
@@ -242,7 +242,7 @@ public class XalFactoryDefault implements XalFactory {
     public AdministrativeArea createAdministrativeArea(List<GenericTypedGrPostal> addressLines, 
             List<GenericTypedGrPostal> administrativeAreaNames, SubAdministrativeArea subAdministrativeArea,
             Object localisation, String type, String usageType, String indicator) throws XalException {
-        return new AdministrativeAreaDefault(addressLines, administrativeAreaNames,
+        return new DefaultAdministrativeArea(addressLines, administrativeAreaNames,
                 subAdministrativeArea, localisation, type, usageType, indicator);
     }
 
@@ -314,7 +314,7 @@ public class XalFactoryDefault implements XalFactory {
      */
     @Override
     public Firm createFirm(List<GenericTypedGrPostal> addressLines, List<GenericTypedGrPostal> firmNames, List<Department> departments, MailStop mailStop, PostalCode postalCode, String type) {
-        return new FirmDefault(addressLines, firmNames, departments, mailStop, postalCode, type);
+        return new DefaultFirm(addressLines, firmNames, departments, mailStop, postalCode, type);
     }
 
     /**
@@ -338,7 +338,7 @@ public class XalFactoryDefault implements XalFactory {
     @Override
     public Department createDepartment(List<GenericTypedGrPostal> addressLines,
             List<GenericTypedGrPostal> departmentNames, MailStop mailStop, PostalCode postalCode, String type) {
-        return new DepartmentDefault(addressLines, departmentNames, mailStop, postalCode, type);
+        return new DefaultDepartment(addressLines, departmentNames, mailStop, postalCode, type);
     }
 
     /**
@@ -439,7 +439,7 @@ public class XalFactoryDefault implements XalFactory {
     @Override
     public BuildingName createBuildingName(String type, AfterBeforeEnum typeOccurrence,
             GrPostal grPostal, String content) {
-        return new BuildingNameDefault(type, typeOccurrence, grPostal, content);
+        return new DefaultBuildingName(type, typeOccurrence, grPostal, content);
     }
 
     /**
@@ -491,7 +491,7 @@ public class XalFactoryDefault implements XalFactory {
     @Override
     public DependentLocalityNumber createDependentLocalityNumber(
             AfterBeforeEnum nameNumberOccurence, GrPostal grPostal, String content) {
-        return new DependentLocalityNumberDefault(nameNumberOccurence, grPostal, content);
+        return new DefaultDependentLocalityNumber(nameNumberOccurence, grPostal, content);
     }
 
     /**
@@ -505,7 +505,7 @@ public class XalFactoryDefault implements XalFactory {
             Object localisation, Thoroughfare thoroughfare, Premise premise,
             DependentLocality dependentLocality, PostalCode postalCode, String type,
             String usageType, String connector, String indicator) throws XalException {
-        return new DependentLocalityDefault(addressLines, dependentLocalityNames,
+        return new DefaultDependentLocality(addressLines, dependentLocalityNames,
                 dependentLocalityNumber, localisation, thoroughfare, premise,
                 dependentLocality, postalCode, type, usageType, connector, indicator);
     }
@@ -778,7 +778,7 @@ public class XalFactoryDefault implements XalFactory {
             GenericTypedGrPostal thoroughfarePreDirection, GenericTypedGrPostal thoroughfareLeadingType,
             List<GenericTypedGrPostal> thoroughfareNames, GenericTypedGrPostal thoroughfareTrailingType,
             GenericTypedGrPostal thoroughfarePostDirection, String type) {
-        return new DependentThoroughfareDefault(addressLines, thoroughfarePreDirection,
+        return new DefaultDependentThoroughfare(addressLines, thoroughfarePreDirection,
                 thoroughfareLeadingType, thoroughfareNames, thoroughfareTrailingType,
                 thoroughfarePostDirection, type);
     }

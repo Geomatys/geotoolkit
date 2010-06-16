@@ -1,3 +1,19 @@
+/*
+ *    Geotoolkit - An Open Source Java GIS Toolkit
+ *    http://www.geotoolkit.org
+ *
+ *    (C) 2010, Geomatys
+ *
+ *    This library is free software; you can redistribute it and/or
+ *    modify it under the terms of the GNU Lesser General Public
+ *    License as published by the Free Software Foundation;
+ *    version 2.1 of the License.
+ *
+ *    This library is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *    Lesser General Public License for more details.
+ */
 package org.geotoolkit.data.zip;
 
 import java.io.BufferedInputStream;
@@ -15,8 +31,10 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.zip.Adler32;
+import java.util.zip.CRC32;
 import java.util.zip.CheckedInputStream;
 import java.util.zip.CheckedOutputStream;
+import java.util.zip.Checksum;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
@@ -29,166 +47,228 @@ import java.util.zip.ZipOutputStream;
  */
 public class ZipUtilities {
 
-    static final int BUFFER = 2048;
-    static final byte[] data = new byte[BUFFER];
+    private static final int BUFFER = 2048;
+    private static Checksum INTEGRITY = null;
 
+    private ZipUtilities(){}
+
+    /**
+     * <p>Set integrity algorithm used by the class.
+     * There is no default integrity algorythm used.</p>
+     *
+     * @param integrity Instance of java.util.zip.Adler32 or java.util.zip.CRC32.
+     * If this parameter is instance of another class, none will be used.
+     */
+    public static void setChecksumAlgorithm(final Checksum integrity){
+        if ((integrity instanceof Adler32)
+                || (integrity instanceof CRC32)){
+            INTEGRITY = integrity;
+        } else {
+            INTEGRITY = null;
+        }
+    }
+    
+    /**
+     * <p>This method allows to put resources into zip archive specified resource, 
+     * with compression :</p>
+     * <ul>
+     * <li>Compression method is set to DEFLATED.</li>
+     * <li>Level of compression is set to 9.</li>
+     * </ul>
+     * 
+     * @param zip The resource which files will be archived into. This argument must be
+     * instance of File, String (representing a path), or OutputStream. Cannot be null.
+     * @param resources The files to compress. Tese objects can be File instances or
+     * String representing files paths, URL, URI or InputStream. Cannot be null.
+     * @throws IOException
+     */
+    public static void zip(final Object zip, final Object... resources) throws IOException{
+        zip(zip, ZipOutputStream.STORED, 0, resources);
+    }
 
     /**
      * <p>This method allows to put resources into zip archive specified resource.</p>
      *
-     * @param zip
-     * @param method
-     * @param level
-     * @param resources
+     * @param zip The resource which files will be archived into. This argument must be
+     * instance of File, String (representing a path), or OutputStream. Cannot be null.
+     * @param method The compression method is a static int constant from ZipOutputSteeam with
+     * two theorical possible values :
+     * <ul>
+     * <li>DEFLATED to compress archive.</li>
+     * <li>STORED to let the archive uncompressed (unsupported).</li>
+     * </ul>
+     * @param level The compression level is an integer between 0 (not compressed) to 9 (best compression).
+     * @param resources The files to compress. Tese objects can be File instances or
+     * String representing files paths, URL, URI or InputStream. Cannot be null.
      * @throws IOException
      */
-    public static void archive(Object out, int method, int level,Object... files)
+    public static void zip(final Object zip, final int method, final int level, final Object... files)
             throws IOException{
-        CheckedOutputStream checksum = new CheckedOutputStream(toOutputStream(out), new Adler32());
-        BufferedOutputStream buf = new BufferedOutputStream(checksum);
-        archiveCore(buf, method, level, files);
-    }
-    
-    /**
-     * <p>This method allows to put resources into zip archive specified resource.</p>
-     * <p>Compression method is set to DEFLATED.</p>
-     * <p>Level of compression is set to 9.</p>
-     * 
-     * @param zip
-     * @param resources
-     * @throws IOException
-     */
-    public static void archive(Object zip,Object... resources) throws IOException{
-        ZipUtilities.archive(zip, ZipOutputStream.DEFLATED, 9, resources);
+
+        final BufferedOutputStream buf;
+        if (INTEGRITY != null){
+            CheckedOutputStream checksum = new CheckedOutputStream(toOutputStream(zip), INTEGRITY);
+            buf = new BufferedOutputStream(checksum);
+        } else {
+            buf = new BufferedOutputStream(toOutputStream(zip));
+        }
+        zipCore(buf, method, level, files);
     }
 
     /**
-     * <p>This method extract a ZIP archive zip into the specified location.</p>
+     * <p>This method creates an OutputStream with ZIP archive from the list of resources parameter.</p>
+     *
+     * @param zip OutputStrem on ZIP archive that will contain archives of resource files.
+     * @param method The compression method is a static int constant from ZipOutputSteeam with
+     * two theorical possible values : 
+     * <ul>
+     * <li>DEFLATED to compress archive.</li>
+     * <li>STORED to let the archive uncompressed (unsupported).</li>
+     * </ul>
+     * @param level The compression level is an integer between 0 (not compressed) to 9 (best compression).
+     * @param resources The files to compress. Tese objects can be File instances or
+     * String representing files paths, URL, URI or InputStream. Cannot be null.
+     * @throws IOException
+     */
+    private static void zipCore(final OutputStream zip, final int method, final int level, final Object... resources)
+            throws IOException {
+
+
+        final byte[] data = new byte[BUFFER];
+        final ZipOutputStream zout = new ZipOutputStream(zip);
+        final CRC32 crc = new CRC32();
+        boolean stored = false;
+
+
+        if (ZipOutputStream.STORED == method){
+            stored = true;
+            for (Object resource : resources){
+                if (!(resource instanceof File)){
+                    throw new IllegalArgumentException("This compression is supported with File resources only.");
+                }
+            }
+        } else if (ZipOutputStream.DEFLATED != method)
+            throw new IllegalArgumentException("This compression method is not supported.");
+        if (Double.isNaN(level) || Double.isInfinite(level) || level > 9 || level < 0)
+            throw new IllegalArgumentException("Illegal compression level.");
+
+        try {
+            zout.setMethod(method);
+            zout.setLevel(level);
+
+            for (int i = 0; i<resources.length; i++){
+                InputStream fi = toInputStream(resources[i]);
+                BufferedInputStream buffi = new BufferedInputStream(fi, BUFFER);
+
+                crc.reset();
+                    int bytesRead;
+                while ((bytesRead = buffi.read(data)) != -1) {
+                    crc.update(data, 0, bytesRead);
+                }
+
+                try {
+                    ZipEntry entry = new ZipEntry(getFileName(resources[i]));
+                    if(stored){
+                        File file = (File) resources[i];
+                        entry.setCompressedSize(file.length());
+                        entry.setSize(file.length());
+                        entry.setCrc(crc.getValue());
+                    }
+                    zout.putNextEntry(entry);
+                    int count;
+                    while((count = buffi.read(data,0,BUFFER)) != -1){zout.write(data, 0, count);}
+                } finally {
+                    zout.closeEntry();
+                    buffi.close();
+                }
+            }
+        } finally {
+            zout.close();
+        }
+    }
+
+    /**
+     * <p>This method extracts a ZIP archive into the directory which contents it.</p>
+     *
+     * @param zip The archive parameter as File, URL, URI, InputStream or String path.
+     * This argument cannot be null.
+     * @throws IOException
+     */
+    public static void unzip(final Object zip) throws IOException{
+        unzip(zip, getParent(zip));
+    }
+
+    /**
+     * <p>This method extract a ZIP archive into the specified location.</p>
      *
      * <p>ZIP resource parameter
      *
      * @param zip The archive parameter can be instance of InputStream, File,
-     * URL, URI or a String path.
+     * URL, URI or a String path. This argument cannot be null.
      * @param resource The resource where archive content will be extracted.
-     * This location can be specified as instance of File, URL, URI or a String path.
+     * This resource location can be specified as instance of File or a String path.
+     * This argument cannot be null.
      * @throws IOException
      */
-    public static void extract (Object zip, Object resource)
+    public static void unzip(final Object zip, final Object resource)
             throws IOException{
-        CheckedInputStream checksum = new CheckedInputStream(toInputStream(zip), new Adler32());
-        BufferedInputStream buffi = new BufferedInputStream(checksum);
-        extractCore(buffi,resource);
-    }
-
-    /**
-     * <p>This method extract a ZIP archive into the directory which contents it.</p>
-     *
-     * <p>Be careful, this method does not accept an InputStream parameter, bt only
-     * File, URL, URI or a String path.</p>
-     *
-     * @param zip The archive parameter as File, URL, URI or String path.
-     * @throws IOException
-     */
-    public static void extract(Object zip) throws IOException{
-        ZipUtilities.extract(zip, ZipUtilities.getParent(zip));
-    }
-
-    /**
-     * <p>This method lists the content of indicated archive.</p>
-     *
-     * @param archive Instance of ZipFile, File or String path
-     * @return a list of archive entries.
-     * @throws IOException
-     */
-    public static List<String> listContent(Object archive) throws IOException{
-        List<String> out = new ArrayList<String>();
-        ZipFile zf = null;
-        if(archive instanceof ZipFile){
-            zf = (ZipFile) archive;
-        } else if(archive instanceof File){
-            zf = new ZipFile((File) archive);
-        } else if (archive instanceof String){
-            zf = new ZipFile((String) archive);
+        final BufferedInputStream buffi;
+        if (INTEGRITY != null){
+            CheckedInputStream checksum = new CheckedInputStream(toInputStream(zip), INTEGRITY);
+            buffi = new BufferedInputStream(checksum);
+        } else {
+            buffi = new BufferedInputStream(toInputStream(zip));
         }
-        Enumeration entries = zf.entries();
-        while (entries.hasMoreElements()){
-            ZipEntry entry = (ZipEntry) entries.nextElement();
-            out.add(entry.getName());
-        }
-        return out;
+        unzipCore(buffi,resource);
     }
-
-    /**
-     * <p>This method creates a ZIP archive zip OutputStream, from list of resources zip parameter.</p>
-     * 
-     * @param zip OutputStrem on ZIP resource that will contain resource files to archive.
-     * @param method ZIP archive method.
-     * @param level ZIP compression level
-     * @param resources Resources to archive.
-     * @throws IOException
-     */
-    private static void archiveCore(OutputStream zip, int method, int level,Object... resources)
-            throws IOException {
-
-        ZipOutputStream zout = new ZipOutputStream(zip);
-        zout.setMethod(method);
-        zout.setLevel(level);
-
-        for (int i = 0; i<resources.length; i++){
-            InputStream fi = toInputStream(resources[i]);
-            BufferedInputStream buffi = new BufferedInputStream(fi, BUFFER);
-            ZipEntry entry = new ZipEntry(ZipUtilities.getFileName(resources[i]));
-            zout.putNextEntry(entry);
-
-            int count;
-            while((count = buffi.read(data,0,BUFFER)) != -1){zout.write(data, 0, count);}
-            zout.closeEntry();
-            buffi.close();
-        }
-        zout.close();
-    }
-
-
 
     /**
      * <p>This method extract a ZIP archive from an InputStream, into directory
-     * whose path is indicated.</p>
+     * whose path is indicated by resource object.</p>
      *
      * @param zip InputStream on ZIP resource that contains resources to extract.
-     * @param resource The resource which the resources will be extracted in.
+     * @param resource The resource where files will be extracted.
+     * Must be instance of File or a String path. This argument cannot be null.
      * @throws IOException
      */
-    private static void extractCore(InputStream zip, Object resource) throws IOException {
-       
-        ZipInputStream zis = new ZipInputStream(zip);
-        String extractPath = ZipUtilities.getPath(resource);
+    private static void unzipCore(final InputStream zip, final Object resource)
+            throws IOException {
+
+        final byte[] data = new byte[BUFFER];
+        final ZipInputStream zis = new ZipInputStream(zip);
         
-        BufferedOutputStream dest = null;
-        ZipEntry entry;
-        while ((entry = zis.getNextEntry()) != null){
-            File file = new File(extractPath, entry.getName());
-            FileOutputStream fos = new FileOutputStream(file);
-            dest = new BufferedOutputStream(fos, BUFFER);
-            
-            int count;
-            while ((count = zis.read(data, 0, BUFFER)) != -1){dest.write(data,0,count);}
-            dest.flush();
-            dest.close();
+        try {
+            String extractPath = ZipUtilities.getPath(resource);
+            ZipEntry entry;
+            while ((entry = zis.getNextEntry()) != null){
+                OutputStream fos = toOutputStream(new File(extractPath, entry.getName()));
+                BufferedOutputStream dest = new BufferedOutputStream(fos, BUFFER);
+                try {
+                    int count;
+                    while ((count = zis.read(data, 0, BUFFER)) != -1){dest.write(data,0,count);}
+                    dest.flush();
+                } finally {
+                    dest.close();
+                }
+            }
+        } finally {
+            zis.close();
         }
-        zis.close();
     }
 
     /**
-     * <p>This method gives an OUtputStream to write resource instance of File,
-     * or a String path. Resource can be instance of OutputStream and zip
+     * <p>This method gives an OutputStream to write resource instance of File,
+     * or a String path. Resource can be instance of OutputStream and in
      * this case, the method returns the same OutputStream.</p>
      *
-     * @param resource Resource.
+     * @param resource Resource instance of OutputStream, File, or a String Path.
+     * This argument cannot be null.
      * @return An OutputStream to write zip the given resource.
      * @throws IOException
      */
-    private static OutputStream toOutputStream(Object resource) throws
-            IOException{
+    private static OutputStream toOutputStream(final Object resource)
+            throws IOException{
+
         OutputStream fot = null;
         if(resource instanceof File){
             fot = new FileOutputStream((File)resource);
@@ -196,21 +276,28 @@ public class ZipUtilities {
             fot = new FileOutputStream(new File((String) resource));
         } else if (resource instanceof OutputStream){
             fot = (OutputStream) resource;
+        } else if (resource != null){
+            throw new IllegalArgumentException("This argument must be instance of File, " +
+                    "String (representing a path) or OutputStream.");
+        } else{
+            throw new NullPointerException("This argument cannot be null.");
         }
         return fot;
     }
 
     /**
      * <p>This method gives an InputStream to read resource instance of File,
-     * URL, URI or a String path. Resource can be instance of InputStream and zip
+     * URL, URI or a String path. Resource can be instance of InputStream and in
      * this case, the method returns the same InputStream.</p>
      *
-     * @param resource Resource.
+     * @param resource Resource instance of InputStream, File, URL, URI, or a String path.
+     * This argument cannot be null.
      * @return An InputStream to read the given resource.
      * @throws IOException
      */
-    private static InputStream toInputStream(Object resource)
+    private static InputStream toInputStream(final Object resource)
             throws IOException{
+
         InputStream fit = null;
         if(resource instanceof File){
             fit = new FileInputStream((File)resource);
@@ -222,20 +309,26 @@ public class ZipUtilities {
             fit = new FileInputStream(new File((String) resource));
         } else if(resource instanceof InputStream){
             fit = (InputStream) resource;
+        } else if (resource != null){
+            throw new IllegalArgumentException("This argument must be instance of File, " +
+                    "String (representing a path), URL, URI or InputStream.");
+        } else{
+            throw new NullPointerException("This argument cannot be null.");
         }
         return fit;
     }
 
     /**
      * <p>This method returns the path of a given resource which can be
-     * instance of File, URL, URI or String.</p>
+     * instance of File, URL, URI or String. Returns null in other cases.</p>
      *
-     * @param resource
+     * @param resource instance of File, URL, URI, or String path.
      * @return The resource path.
      * @throws MalformedURLException
      */
-    private static String getPath(Object resource)
+    private static String getPath(final Object resource)
             throws MalformedURLException{
+
         String extractPath = null;
         if(resource instanceof File){
             extractPath = ((File) resource).getPath();
@@ -250,14 +343,17 @@ public class ZipUtilities {
     }
 
     /**
-     * <p>This method returs the path of the resource container.</p>
+     * <p>This method returs the path of the resource container (parent directory).
+     * Resource can be an instance of File, URL, URI or String path.
+     * Return snull in other cases.</p>
      *
-     * @param resource
+     * @param resource instance of File, URL, URI, or String path.
      * @return The path of the resource container.
      * @throws MalformedURLException
      */
-    private static String getParent(Object resource)
+    private static String getParent(final Object resource)
             throws MalformedURLException{
+
         String extractPath = null;
         if(resource instanceof File){
             extractPath = ((File) resource).getParent();
@@ -269,13 +365,17 @@ public class ZipUtilities {
     }
 
     /**
-     * <p>This method gives the resource file name.</p>
+     * <p>This method gives the resource file name.
+     * Resource can be an instance of File, URL, URI or String path.
+     * Return snull in other cases.</p>
      *
-     * @param resource
+     * @param resource instance of File, URL, URI, or String path.
      * @return
      * @throws MalformedURLException
      */
-    private static String getFileName(Object resource) throws MalformedURLException{
+    private static String getFileName(final Object resource)
+            throws MalformedURLException{
+
         String fileName = null;
         if(resource instanceof File){
             fileName = ((File) resource).getName();
