@@ -151,4 +151,29 @@ public abstract class StaxStreamReader {
         }
     }
 
+    /**
+     * <p>XML language provides two notations for boolean type :
+     * "true" can be written "1" and "0" significates "false".
+     * This method considers all this values as Strings and return its boolean value.</p>
+     *
+     * @param bool The String to parse
+     * @return true if bool is equal to "true" or "1".
+     */
+    protected static boolean parseBoolean(String candidate) {
+        if (candidate.length() == 1) {
+            return !candidate.equals("0");
+        }
+        return Boolean.parseBoolean(candidate);
+    }
+
+    /**
+     * <p>This method reads doubles with coma separated.</p>
+     * 
+     * @param candidate Can not be null.
+     * @return
+     */
+    protected static double parseDouble(String candidate) {
+        return Double.parseDouble(candidate.replace(',', '.'));
+    }
+
 }

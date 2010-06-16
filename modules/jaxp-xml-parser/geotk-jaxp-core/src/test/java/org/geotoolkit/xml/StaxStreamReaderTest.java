@@ -101,6 +101,8 @@ public class StaxStreamReaderTest {
     private void validate(Person person){
         assertNotNull(person);
         assertEquals(person.name, "Jean-Pierre");
+        assertEquals(person.age, 13.5, 0.000000001);
+        assertEquals(person.male, true);
     }
 
 }

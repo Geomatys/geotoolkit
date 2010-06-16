@@ -14,7 +14,6 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-
 package org.geotoolkit.xml;
 
 import javax.xml.stream.XMLStreamException;
@@ -25,40 +24,47 @@ import javax.xml.stream.XMLStreamReader;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class MockReader extends StaxStreamReader{
+public class MockReader extends StaxStreamReader {
 
     private static final String TAG_PERSON = "person";
     private static final String TAG_NAME = "name";
-    
-    public Person read() throws XMLStreamException{
-        while(reader.hasNext()){
+    private static final String ATT_AGE = "age";
+    private static final String ATT_MALE = "male";
+
+    public Person read() throws XMLStreamException {
+        while (reader.hasNext()) {
             final int type = reader.next();
-            if(type == XMLStreamReader.START_ELEMENT &&
-                    reader.getLocalName().equalsIgnoreCase(TAG_PERSON)){
+            if (type == XMLStreamReader.START_ELEMENT
+                    && reader.getLocalName().equalsIgnoreCase(TAG_PERSON)) {
                 return readPerson();
             }
         }
-        
+
         throw new XMLStreamException("Person tag not found");
     }
 
-    private Person readPerson() throws XMLStreamException{
-        while(reader.hasNext()){
+    private Person readPerson() throws XMLStreamException {
+
+        Person person = new Person();
+        person.age = parseDouble(reader.getAttributeValue(null, ATT_AGE));
+        person.male = parseBoolean(reader.getAttributeValue(null, ATT_MALE));
+        while (reader.hasNext()) {
             final int type = reader.next();
-            if(type == XMLStreamReader.START_ELEMENT &&
-                    reader.getLocalName().equalsIgnoreCase(TAG_NAME)){
-                Person person = new Person();
+            if (type == XMLStreamReader.START_ELEMENT
+                    && reader.getLocalName().equalsIgnoreCase(TAG_NAME)) {
                 person.name = reader.getElementText();
                 toTagEnd(TAG_PERSON);
-                return person;
+
             }
         }
 
-        throw new XMLStreamException("Name tag not found");
+        return person;
     }
 
-    public static final class Person{
+    public static final class Person {
+
         public String name;
+        public double age;
+        public boolean male;
     }
-
 }

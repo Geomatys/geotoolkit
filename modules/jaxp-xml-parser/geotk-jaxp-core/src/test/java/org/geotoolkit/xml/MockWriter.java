@@ -33,7 +33,9 @@ public class MockWriter extends StaxStreamWriter{
 
         writer.writeStartDocument("UTF-8", "1.0");
             writer.writeStartElement(namespace, "Person");
-                writer.writeDefaultNamespace(namespace);            
+                writer.writeDefaultNamespace(namespace);
+                writer.writeAttribute("age", "13.5");
+                writer.writeAttribute("male", "1");
                 writeSimpleTag(namespace, "Name", "Jean-Pierre");
             writer.writeEndElement();
         writer.writeEndDocument();
