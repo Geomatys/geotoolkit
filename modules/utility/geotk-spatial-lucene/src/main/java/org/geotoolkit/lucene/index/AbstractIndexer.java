@@ -106,7 +106,7 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
                         currentIndexDirectory = indexDirectory;
                     }
                 } catch(NumberFormatException ex) {
-                    LOGGER.warning("Unable to parse the timestamp:" + suffix);
+                    LOGGER.log(Level.WARNING, "Unable to parse the timestamp:{0}", suffix);
                 }
             }
         }
@@ -177,14 +177,12 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
         try {
             //adding the document in a specific model. in this case we use a MDwebDocument.
             writer.addDocument(createDocument(meta));
-            LOGGER.finer("Metadata: " + getIdentifier(meta) + " indexed");
+            LOGGER.log(Level.FINER, "Metadata: {0} indexed", getIdentifier(meta));
 
         } catch (IndexingException ex) {
-            LOGGER.warning("indexingException " + ex.getMessage());
-            LOGGER.log(Level.WARNING, ex.getMessage(), ex);
+            LOGGER.log(Level.WARNING, "indexingException " +ex.getMessage(), ex);
         } catch (IOException ex) {
-            LOGGER.warning(IO_SINGLE_MSG + ex.getMessage());
-            LOGGER.log(Level.WARNING, ex.getMessage(), ex);
+            LOGGER.log(Level.WARNING, IO_SINGLE_MSG + ex.getMessage(), ex);
         }
     }
 
@@ -200,16 +198,14 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
 
             //adding the document in a specific model. in this case we use a MDwebDocument.
             writer.addDocument(createDocument(meta));
-            LOGGER.finer("Metadata: " + getIdentifier(meta) + " indexed");
+            LOGGER.log(Level.FINER, "Metadata: {0} indexed", getIdentifier(meta));
             writer.optimize();
             writer.close();
 
         } catch (IndexingException ex) {
-            LOGGER.severe("IndexingException " + ex.getMessage());
-            LOGGER.log(Level.WARNING, ex.getMessage(), ex);
+            LOGGER.log(Level.WARNING, "IndexingException " + ex.getMessage(), ex);
         } catch (IOException ex) {
-            LOGGER.warning(IO_SINGLE_MSG + ex.getMessage());
-            LOGGER.log(Level.WARNING, ex.getMessage(), ex);
+            LOGGER.log(Level.WARNING, IO_SINGLE_MSG + ex.getMessage(), ex);
         }
     }
 
@@ -240,22 +236,19 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
 
             final Term t          = new Term("id", identifier);
             final TermQuery query = new TermQuery(t);
-            LOGGER.log(logLevel, "Term query:" + query);
-
+            LOGGER.log(logLevel, "Term query:{0}", query);
 
             writer.deleteDocuments(query);
-            LOGGER.log(logLevel, "Metadata: " + identifier + " removed from the index");
+            LOGGER.log(logLevel, "Metadata: {0} removed from the index", identifier);
 
             writer.commit();
             writer.optimize();
             writer.close();
 
         } catch (CorruptIndexException ex) {
-            LOGGER.severe("CorruptIndexException while indexing document: " + ex.getMessage());
-            LOGGER.log(Level.SEVERE, ex.getMessage(), ex);
+            LOGGER.log(Level.WARNING, "CorruptIndexException while indexing document: " + ex.getMessage(), ex);
         } catch (IOException ex) {
-            LOGGER.severe("IOException while indexing document: " + ex.getMessage());
-            LOGGER.log(Level.WARNING, ex.getMessage(), ex);
+            LOGGER.log(Level.WARNING, "IOException while indexing document: " + ex.getMessage(), ex);
         }
     }
 
@@ -282,6 +275,16 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
     private final Polygon polygon           = new Polygon(ring, new LinearRing[0],GF);
     
 
+    /**
+     * Encode bounding box coordinate in a byte array.
+     * 
+     * @param minx minimal X coordinate.
+     * @param maxx maximal X coordinate.
+     * @param miny minimal Y coordinate.
+     * @param maxy maximal Y coordinate.
+     * @param srid coordinate spatial reference identifier.
+     * @return
+     */
     protected byte[] toBytes(double minx, double maxx, double miny, double maxy, int srid){
         coords[0].x = minx;
         coords[0].y = miny;
@@ -297,6 +300,15 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
         return WKBUtils.toWKBwithSRID(polygon);
     }
 
+    /**
+     * Return a JTS polygon from bounding box coordinate.
+     * 
+     * @param minx minimal X coordinate.
+     * @param maxx maximal X coordinate.
+     * @param miny minimal Y coordinate.
+     * @param maxy maximal Y coordinate.
+     * @param srid coordinate spatial reference identifier.
+     */
     protected Polygon getPolygon(double minx, double maxx, double miny, double maxy, int srid){
         final Coordinate[] crds = new Coordinate[]{
         new Coordinate(0, 0),
@@ -323,10 +335,30 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
     }
 
 
+    /**
+     * Add a geometric field with a boundingBox object in the specified document.
+     * 
+     * @param doc The lucene document currently building.
+     * @param minx minimal X coordinate.
+     * @param maxx maximal X coordinate.
+     * @param miny minimal Y coordinate.
+     * @param maxy maximal Y coordinate.
+     * @param srid coordinate spatial reference identifier.
+     */
     protected void addBoundingBox(Document doc, double minx, double maxx, double miny, double maxy, int srid) {
         addGeometry(doc, toBytes(minx, maxx, miny, maxy,srid));
     }
 
+    /**
+     * Add a geometric field with a Multi-boundingBox object in the specified lucene document.
+     *
+     * @param doc The lucene document currently building.
+     * @param minx a list of minimal X coordinate.
+     * @param maxx a list of maximal X coordinate.
+     * @param miny a list of minimal Y coordinate.
+     * @param maxy a list of maximal Y coordinate.
+     * @param srid coordinate spatial reference identifier.
+     */
     protected void addMultipleBoundingBox(Document doc, List<Double> minx, List<Double> maxx, List<Double> miny, List<Double> maxy, int srid) {
         Polygon[] polygons = new Polygon[minx.size()];
         for (int i = 0; i < minx.size(); i++) {
@@ -336,14 +368,27 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
         addGeometry(doc, geom);
     }
 
+    /**
+     * Add a geometric field with a JTS geometry in the specified lucene document.
+     * @param doc The lucene document currently building.
+     * @param geom A JTS geometry
+     */
     public static void addGeometry(Document doc, Geometry geom) {
         addGeometry(doc, WKBUtils.toWKBwithSRID(geom));
     }
 
+     /**
+     * Add a geometric field with a geometry byte encoded in the specified lucene document.
+     * @param doc The lucene document currently building.
+     * @param geom A geometry byte encoded.
+     */
     public static void addGeometry(Document doc, byte[] geom) {
         doc.add(new Field(LuceneOGCFilter.GEOMETRY_FIELD_NAME,geom,Field.Store.YES));
     }
 
+    /**
+     * Free the resources.
+     */
     public abstract void destroy();
 
     /**
@@ -360,7 +405,8 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
 
     /**
      * Return the service ID of this index or "" if there is not explicit service ID.
-     * @return service id
+     * 
+     * @return the service ID of this index or "" if there is not explicit service ID.
      */
     protected String getServiceID() {
         File directory       = getFileDirectory();
@@ -376,10 +422,13 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
     /**
      * A file filter to retrieve all the index directory in a specified directory.
      *
-     * @author Guilhem Legal
+     * @author Guilhem Legal (Geomatys)
      */
     public static class IndexDirectoryFilter implements FilenameFilter {
 
+        /**
+         * The service ID.
+         */
         private String prefix;
 
         public IndexDirectoryFilter(String id) {
@@ -389,6 +438,13 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
             }
         }
 
+        /**
+         * Return true if the specified file is a directory and if its name start with the serviceID + 'index-'.
+         *
+         * @param dir The current directory explored.
+         * @param name The name of the file.
+         * @return True if the specified file in the current directory match the conditions.
+         */
         public boolean accept(File dir, String name) {
             File f = new File(dir, name);
             return (name.startsWith(prefix + "index-") && f.isDirectory());
