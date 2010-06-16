@@ -1,5 +1,6 @@
 package org.geotoolkit.data.kml;
 
+import java.awt.Color;
 import org.geotoolkit.data.zip.ZipUtilities;
 import java.io.File;
 import java.io.IOException;
@@ -125,6 +126,7 @@ public class App {
         kmlWriter.setOutput(output);
         kmlWriter.write(kml);
         kmlWriter.dispose();
+        
     }
 
 

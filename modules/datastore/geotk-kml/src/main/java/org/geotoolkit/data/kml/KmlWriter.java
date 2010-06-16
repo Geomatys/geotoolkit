@@ -1,5 +1,6 @@
 package org.geotoolkit.data.kml;
 
+import java.awt.Color;
 import java.io.IOException;
 import java.util.List;
 import java.util.logging.Level;
@@ -29,7 +30,6 @@ import org.geotoolkit.data.model.kml.BasicLink;
 import org.geotoolkit.data.model.kml.Boundary;
 import org.geotoolkit.data.model.kml.Camera;
 import org.geotoolkit.data.model.kml.Change;
-import org.geotoolkit.data.model.kml.Color;
 import org.geotoolkit.data.model.kml.ColorMode;
 import org.geotoolkit.data.model.kml.Coordinates;
 import org.geotoolkit.data.model.kml.Create;
@@ -2358,7 +2358,7 @@ public class KmlWriter extends StaxStreamWriter {
     private void writeColor(Color color) throws XMLStreamException{
         if (DEF_COLOR != color){
             writer.writeStartElement(URI_KML, TAG_COLOR);
-            writer.writeCharacters(color.getColor());
+            writer.writeCharacters(KmlUtilities.toKmlColor(color));
             writer.writeEndElement();
         }
     }
@@ -2371,7 +2371,7 @@ public class KmlWriter extends StaxStreamWriter {
     private void writeBgColor(Color color) throws XMLStreamException{
         if (DEF_BG_COLOR != color){
             writer.writeStartElement(URI_KML, TAG_BG_COLOR);
-            writer.writeCharacters(color.getColor());
+            writer.writeCharacters(KmlUtilities.toKmlColor(color));
             writer.writeEndElement();
         }
     }
@@ -2384,7 +2384,7 @@ public class KmlWriter extends StaxStreamWriter {
     private void writeTextColor(Color color) throws XMLStreamException{
         if(DEF_TEXT_COLOR != color){
             writer.writeStartElement(URI_KML, TAG_TEXT_COLOR);
-            writer.writeCharacters(color.getColor());
+            writer.writeCharacters(KmlUtilities.toKmlColor(color));
             writer.writeEndElement();
         }
     }

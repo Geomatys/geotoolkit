@@ -1,5 +1,6 @@
 package org.geotoolkit.data.kml;
 
+import java.awt.Color;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,7 +34,6 @@ import org.geotoolkit.data.model.kml.BasicLink;
 import org.geotoolkit.data.model.kml.Boundary;
 import org.geotoolkit.data.model.kml.Camera;
 import org.geotoolkit.data.model.kml.Change;
-import org.geotoolkit.data.model.kml.Color;
 import org.geotoolkit.data.model.kml.ColorMode;
 import org.geotoolkit.data.model.kml.Coordinate;
 import org.geotoolkit.data.model.kml.Coordinates;
@@ -1655,7 +1655,7 @@ public class KmlReader extends StaxStreamReader {
 
                         // ABSTRACT OVERLAY
                         else if (TAG_COLOR.equals(eName)) {
-                            color = KmlReader.kmlFactory.createColor(reader.getElementText());
+                            color = KmlUtilities.parseColor(reader.getElementText());
                         } else if (TAG_DRAW_ORDER.equals(eName)) {
                             drawOrder = Integer.parseInt(reader.getElementText());
                         } else if (TAG_ICON.equals(eName)) {
@@ -2139,7 +2139,7 @@ public class KmlReader extends StaxStreamReader {
 
                         // ABSTRACT OVERLAY
                         else if (TAG_COLOR.equals(eName)) {
-                            color = KmlReader.kmlFactory.createColor(reader.getElementText());
+                            color = KmlUtilities.parseColor(reader.getElementText());
                         } else if (TAG_DRAW_ORDER.equals(eName)) {
                             drawOrder = Integer.parseInt(reader.getElementText());
                         } else if (TAG_ICON.equals(eName)) {
@@ -2287,7 +2287,7 @@ public class KmlReader extends StaxStreamReader {
 
                         // ABSTRACT OVERLAY
                         else if (TAG_COLOR.equals(eName)) {
-                            color = KmlReader.kmlFactory.createColor(reader.getElementText());
+                            color = KmlUtilities.parseColor(reader.getElementText());
                         } else if (TAG_DRAW_ORDER.equals(eName)) {
                             drawOrder = Integer.parseInt(reader.getElementText());
                         } else if (TAG_ICON.equals(eName)) {
@@ -2733,7 +2733,7 @@ public class KmlReader extends StaxStreamReader {
 
                         // COLOR STYLE
                         if (TAG_COLOR.equals(eName)) {
-                            color = KmlReader.kmlFactory.createColor(reader.getElementText());
+                            color = KmlUtilities.parseColor(reader.getElementText());
                         } else if (TAG_COLOR_MODE.equals(eName)) {
                             colorMode = ColorMode.transform(reader.getElementText());
                         }
@@ -2806,7 +2806,7 @@ public class KmlReader extends StaxStreamReader {
 
                         // COLOR STYLE
                         if (TAG_COLOR.equals(eName)) {
-                            color = KmlReader.kmlFactory.createColor(reader.getElementText());
+                            color = KmlUtilities.parseColor(reader.getElementText());
                         } else if (TAG_COLOR_MODE.equals(eName)) {
                             colorMode = ColorMode.transform(reader.getElementText());
                         }
@@ -2871,7 +2871,7 @@ public class KmlReader extends StaxStreamReader {
 
                         // COLOR STYLE
                         if (TAG_COLOR.equals(eName)) {
-                            color = KmlReader.kmlFactory.createColor(reader.getElementText());
+                            color = KmlUtilities.parseColor(reader.getElementText());
                         } else if (TAG_COLOR_MODE.equals(eName)) {
                             colorMode = ColorMode.transform(reader.getElementText());
                         }
@@ -2937,7 +2937,7 @@ public class KmlReader extends StaxStreamReader {
 
                         // COLOR STYLE
                         if (TAG_COLOR.equals(eName)) {
-                            color = KmlReader.kmlFactory.createColor(reader.getElementText());
+                            color = KmlUtilities.parseColor(reader.getElementText());
                         } else if (TAG_COLOR_MODE.equals(eName)) {
                             colorMode = ColorMode.transform(reader.getElementText());
                         }
@@ -3001,9 +3001,9 @@ public class KmlReader extends StaxStreamReader {
 
                         // BALLOON STYLE
                         if (TAG_BG_COLOR.equals(eName)) {
-                            bgColor = KmlReader.kmlFactory.createColor(reader.getElementText());
+                            bgColor = KmlUtilities.parseColor(reader.getElementText());
                         } else if (TAG_TEXT_COLOR.equals(eName)) {
-                            textColor = KmlReader.kmlFactory.createColor(reader.getElementText());
+                            textColor = KmlUtilities.parseColor(reader.getElementText());
                         } else if (TAG_TEXT.equals(eName)) {
                             text = reader.getElementText();
                         } else if (TAG_DISPLAY_MODE.equals(eName)) {
@@ -3065,7 +3065,7 @@ public class KmlReader extends StaxStreamReader {
                         if (TAG_LIST_ITEM.equals(eName)) {
                             listItem = listItem.transform(reader.getElementText());
                         } else if (TAG_BG_COLOR.equals(eName)) {
-                            bgColor = KmlReader.kmlFactory.createColor(reader.getElementText());
+                            bgColor = KmlUtilities.parseColor(reader.getElementText());
                         } else if (TAG_ITEM_ICON.equals(eName)) {
                             itemIcons.add(this.readItemIcon());
                         } else if (TAG_MAX_SNIPPET_LINES.equals(eName)) {
@@ -4060,28 +4060,5 @@ public class KmlReader extends StaxStreamReader {
     private boolean isAbstractLatLonBox(String eName) {
         return (TAG_LAT_LON_ALT_BOX.equals(eName)
                 || TAG_LAT_LON_BOX.equals(eName));
-    }
-
-    /*
-     * METHODES UTILITAIRES
-     */
-
-    /**
-     * <p>XML language provides two notations for boolean type :
-     * "true" can be written "1" and "0" significates "false".
-     * This method considers all this values as Strings and return its boolean value.</p>
-     * 
-     * @param bool The String to parse
-     * @return true if bool is equal to "true" or "1".
-     */
-    protected static boolean parseBoolean(String candidate) {
-        if (candidate.length() == 1){
-             return !candidate.equals("0");
-        }
-        return Boolean.parseBoolean(candidate);
-    }
-
-    protected static double parseDouble(String candidate){
-        return Double.parseDouble(candidate.replace(',', '.'));
     }
 }

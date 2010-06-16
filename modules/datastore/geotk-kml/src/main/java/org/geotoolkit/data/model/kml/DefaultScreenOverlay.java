@@ -1,5 +1,6 @@
 package org.geotoolkit.data.model.kml;
 
+import java.awt.Color;
 import java.util.List;
 import org.geotoolkit.data.model.atom.AtomLink;
 import org.geotoolkit.data.model.atom.AtomPersonConstruct;

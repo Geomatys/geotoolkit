@@ -1,5 +1,6 @@
 package org.geotoolkit.data.model;
 
+import java.awt.Color;
 import java.util.List;
 import org.geotoolkit.data.model.atom.AtomPersonConstruct;
 import org.geotoolkit.data.model.atom.AtomLink;
@@ -21,7 +22,6 @@ import org.geotoolkit.data.model.kml.BasicLink;
 import org.geotoolkit.data.model.kml.Boundary;
 import org.geotoolkit.data.model.kml.Camera;
 import org.geotoolkit.data.model.kml.Change;
-import org.geotoolkit.data.model.kml.Color;
 import org.geotoolkit.data.model.kml.ColorMode;
 import org.geotoolkit.data.model.kml.Coordinate;
 import org.geotoolkit.data.model.kml.Coordinates;
@@ -248,14 +248,6 @@ public interface KmlFactory {
      * @return
      */
     public Change createChange(List<AbstractObject> objects);
-
-    /**
-     *
-     * @param color
-     * @return
-     * @throws KmlException
-     */
-    public Color createColor(String color) throws KmlException;
 
     /**
      *

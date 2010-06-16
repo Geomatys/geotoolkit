@@ -1,5 +1,6 @@
 package org.geotoolkit.data.model.kml;
 
+import java.awt.Color;
 import java.util.List;
 import org.geotoolkit.data.model.xsd.SimpleType;
 import static java.util.Collections.*;

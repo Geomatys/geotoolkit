@@ -1,5 +1,6 @@
 package org.geotoolkit.data.model;
 
+import java.awt.Color;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -35,8 +36,6 @@ import org.geotoolkit.data.model.kml.Camera;
 import org.geotoolkit.data.model.kml.DefaultCamera;
 import org.geotoolkit.data.model.kml.Change;
 import org.geotoolkit.data.model.kml.DefaultChange;
-import org.geotoolkit.data.model.kml.Color;
-import org.geotoolkit.data.model.kml.ColorDefault;
 import org.geotoolkit.data.model.kml.ColorMode;
 import org.geotoolkit.data.model.kml.Coordinate;
 import org.geotoolkit.data.model.kml.DefaultCoordinate;
@@ -288,14 +287,6 @@ public class KmlFactoryDefault implements KmlFactory{
     @Override
     public Change createChange(List<AbstractObject> objects){
         return new DefaultChange(objects);
-    }
-
-    /**
-     * @{@inheritDoc }
-     */
-    @Override
-    public Color createColor(String color) throws KmlException{
-        return new ColorDefault(color);
     }
 
     /**
@@ -1066,29 +1057,6 @@ public class KmlFactoryDefault implements KmlFactory{
     /*
      * Utilities to initialize default values.
      */
-
-    /**
-     * <p>This method creates a default Color.</p>
-     *
-     * <p>Use the appropriate OPAQUE_BLACK or OPAQUE_BLACK
-     * values to obtain a default color.</p>
-     *
-     * @param flag
-     * @return
-     */
-    public static Color createColor(int flag){
-        Color color = null;
-        try {
-            if (flag == 0) {
-                color = new ColorDefault("ff000000");
-            } else if (flag == 1) {
-                color = new ColorDefault("ffffffff");
-            }
-        } catch (KmlException ex) {
-                Logger.getLogger(KmlFactoryDefault.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return color;
-    }
 
     /**
      * <p>This method creates a default Angle180.</p>
