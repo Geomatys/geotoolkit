@@ -169,17 +169,11 @@ public abstract class AbstractComplexAttribute<V extends Collection<Property>,I 
         tablewriter.write("name\t value\n");
         tablewriter.nextLine(TableWriter.SINGLE_HORIZONTAL_LINE);
 
-        final Collection<PropertyDescriptor> descs = getType().getDescriptors();
-        final int last = descs.size()-1;
-        int i=0;
-        for (PropertyDescriptor property : descs) {
-            if(i==last){
-                toString(tablewriter, property, this, 1, 1, 1);
-            }else{
-                toString(tablewriter, property, this, 1, 0, 1);
-            }
-            i++;
+        final Collection<? extends Property> properties = getProperties();
+        for(Property prop : properties){
+            toString(tablewriter, prop, sb, 1, 1, 1);
         }
+
         tablewriter.nextLine(TableWriter.DOUBLE_HORIZONTAL_LINE);
         try {
             tablewriter.flush();
@@ -193,75 +187,59 @@ public abstract class AbstractComplexAttribute<V extends Collection<Property>,I 
         return sb.toString();
     }
 
-    private void toString(TableWriter tablewriter, PropertyDescriptor desc, Object att, int depth, int pos, int startdepth){
+    private static void toString(TableWriter tablewriter, Property property, Object att, int depth, int pos, int startdepth){
 
-        final Collection<Property> values;
-        if(att instanceof ComplexAttribute){
-            values = ((ComplexAttribute)att).getProperties(desc.getName());
-        }else{
-            values = Collections.singleton((Property)att);
-        }
-
-        if(values.isEmpty())return;
+        Object value = property.getValue();
 
         if(depth > 1){
             for(int i=1; i<depth-1;i++){
                 if(i < startdepth){
-                    tablewriter.write("\u00A0\u00A0\u00A0");
+                    tablewriter.write("\u00A0\u00A0\u00A0\u00A0");
                 }else{
-                    tablewriter.write("\u2502\u00A0\u00A0");
+                    tablewriter.write("\u00A0\u00A0\u2502\u00A0");
                 }
             }
             if(pos == 0){
-                tablewriter.write("\u251C\u2500\u2500");
+                tablewriter.write("\u00A0\u00A0\u251C\u2500");
             }else if(pos == 1){
-                tablewriter.write("\u2514\u2500\u2500");
+                tablewriter.write("\u00A0\u00A0\u2514\u2500");
             }else{
-                tablewriter.write("\u251C\u2500\u2500");
+                tablewriter.write("\u00A0\u00A0\u251C\u2500");
             }
         }
 
-        for(Property p : values){
-            final Object value = p.getValue();
+        //write property name
+        tablewriter.write(DefaultName.toJCRExtendedForm(property.getName()));
+        tablewriter.write('\t');
 
-            tablewriter.write(DefaultName.toJCRExtendedForm(desc.getName()));
-            tablewriter.write("\t");
+        if(property.getType() instanceof ComplexType){
 
-            if(desc.getType() instanceof ComplexType){
-                tablewriter.write("\n");
+            if(value instanceof ComplexAttribute){
+                value = ((ComplexAttribute)value).getProperties();
+            }
 
-                final ComplexAttribute ca = (ComplexAttribute) value;
-//                PropertyDescriptor td = new DefaultPropertyDescriptor(ca.getType(), ca.getName(), 0, 1, true);
-//                toString(tablewriter,td,ca,depth+1,pos,startdepth);
-//
-//                final Collection<PropertyDescriptor> descs = ca.getType().getDescriptors();
-//                for (PropertyDescriptor property : descs) {
-//                    toString(tablewriter, property, ca, depth+1,pos,startdepth);
-//                }
+            final Collection<? extends Property> childs = (Collection<? extends Property>) value;
 
+            tablewriter.write('\n');
 
-                final ComplexType ct = (ComplexType) ca.getType();
-                final Collection<PropertyDescriptor> descs = ct.getDescriptors();
-                int i=0;
-                int n=descs.size()-1;
-                for(PropertyDescriptor sub : descs){
-                    if(i==n){
-                        toString(tablewriter, sub, value, depth+1, 1, startdepth +((pos == 1)? 1 : 0));
-                    }else if(i == 0){
-                        toString(tablewriter, sub, value, depth+1, 0, startdepth);
-                    }else{
-                        toString(tablewriter, sub, value, depth+1, -1, startdepth);
-                    }
-                    i++;
+            int i=0;
+            int n=childs.size()-1;
+            for(Property sub : childs){
+                if(i==n){
+                    toString(tablewriter, sub, value, depth+1, 1, startdepth +((pos == 1)? 1 : 0));
+                }else if(i == 0){
+                    toString(tablewriter, sub, value, depth+1, 0, startdepth);
+                }else{
+                    toString(tablewriter, sub, value, depth+1, -1, startdepth);
                 }
-            }else{
-                tablewriter.write((value == null)? "null" : value.toString());
-                tablewriter.write("\n");
+                i++;
             }
 
+        }else{
+            //simple property
+            tablewriter.write((value == null)? "null" : value.toString());
+            tablewriter.write("\n");
         }
-
     }
-
 
 }
