@@ -27,16 +27,11 @@ import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.List;
-import java.util.zip.Adler32;
 import java.util.zip.CRC32;
 import java.util.zip.CheckedInputStream;
 import java.util.zip.CheckedOutputStream;
 import java.util.zip.Checksum;
 import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
@@ -48,25 +43,8 @@ import java.util.zip.ZipOutputStream;
 public class ZipUtilities {
 
     private static final int BUFFER = 2048;
-    private static Checksum INTEGRITY = null;
 
     private ZipUtilities(){}
-
-    /**
-     * <p>Set integrity algorithm used by the class.
-     * There is no default integrity algorythm used.</p>
-     *
-     * @param integrity Instance of java.util.zip.Adler32 or java.util.zip.CRC32.
-     * If this parameter is instance of another class, none will be used.
-     */
-    public static void setChecksumAlgorithm(final Checksum integrity){
-        if ((integrity instanceof Adler32)
-                || (integrity instanceof CRC32)){
-            INTEGRITY = integrity;
-        } else {
-            INTEGRITY = null;
-        }
-    }
     
     /**
      * <p>This method allows to put resources into zip archive specified resource, 
@@ -78,12 +56,13 @@ public class ZipUtilities {
      * 
      * @param zip The resource which files will be archived into. This argument must be
      * instance of File, String (representing a path), or OutputStream. Cannot be null.
+     * @param checksum Checksum object (instance of Alder32 or CRC32).
      * @param resources The files to compress. Tese objects can be File instances or
      * String representing files paths, URL, URI or InputStream. Cannot be null.
      * @throws IOException
      */
-    public static void zip(final Object zip, final Object... resources) throws IOException{
-        zip(zip, ZipOutputStream.STORED, 0, resources);
+    public static void zip(final Object zip,  final Checksum checksum, final Object... resources) throws IOException{
+        zip(zip, ZipOutputStream.STORED, 0, checksum, resources);
     }
 
     /**
@@ -98,21 +77,22 @@ public class ZipUtilities {
      * <li>STORED to let the archive uncompressed (unsupported).</li>
      * </ul>
      * @param level The compression level is an integer between 0 (not compressed) to 9 (best compression).
+     * @param checksum Checksum object (instance of Alder32 or CRC32).
      * @param resources The files to compress. Tese objects can be File instances or
      * String representing files paths, URL, URI or InputStream. Cannot be null.
      * @throws IOException
      */
-    public static void zip(final Object zip, final int method, final int level, final Object... files)
+    public static void zip(final Object zip, final int method, final int level, final Checksum checksum, final Object... resources)
             throws IOException{
 
         final BufferedOutputStream buf;
-        if (INTEGRITY != null){
-            CheckedOutputStream checksum = new CheckedOutputStream(toOutputStream(zip), INTEGRITY);
-            buf = new BufferedOutputStream(checksum);
+        if (checksum != null){
+            CheckedOutputStream cos = new CheckedOutputStream(toOutputStream(zip), checksum);
+            buf = new BufferedOutputStream(cos);
         } else {
             buf = new BufferedOutputStream(toOutputStream(zip));
         }
-        zipCore(buf, method, level, files);
+        zipCore(buf, method, level, resources);
     }
 
     /**
@@ -192,10 +172,11 @@ public class ZipUtilities {
      *
      * @param zip The archive parameter as File, URL, URI, InputStream or String path.
      * This argument cannot be null.
+     * @param checksum Checksum object (instance of Alder32 or CRC32).
      * @throws IOException
      */
-    public static void unzip(final Object zip) throws IOException{
-        unzip(zip, getParent(zip));
+    public static void unzip(final Object zip, final Checksum checksum) throws IOException{
+        unzip(zip, getParent(zip), checksum);
     }
 
     /**
@@ -208,14 +189,15 @@ public class ZipUtilities {
      * @param resource The resource where archive content will be extracted.
      * This resource location can be specified as instance of File or a String path.
      * This argument cannot be null.
+     * @param checksum Checksum object (instance of Alder32 or CRC32).
      * @throws IOException
      */
-    public static void unzip(final Object zip, final Object resource)
+    public static void unzip(final Object zip, final Object resource, final Checksum checksum)
             throws IOException{
         final BufferedInputStream buffi;
-        if (INTEGRITY != null){
-            CheckedInputStream checksum = new CheckedInputStream(toInputStream(zip), INTEGRITY);
-            buffi = new BufferedInputStream(checksum);
+        if (checksum != null){
+            CheckedInputStream cis = new CheckedInputStream(toInputStream(zip), checksum);
+            buffi = new BufferedInputStream(cis);
         } else {
             buffi = new BufferedInputStream(toInputStream(zip));
         }

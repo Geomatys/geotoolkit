@@ -31,99 +31,99 @@ import org.geotoolkit.data.model.xal.DefaultFirm;
 import org.geotoolkit.data.model.xal.GenericTypedGrPostal;
 import org.geotoolkit.data.model.xal.DefaultGenericTypedGrPostal;
 import org.geotoolkit.data.model.xal.GrPostal;
-import org.geotoolkit.data.model.xal.GrPostalDefault;
+import org.geotoolkit.data.model.xal.DefaultGrPostal;
 import org.geotoolkit.data.model.xal.LargeMailUser;
-import org.geotoolkit.data.model.xal.LargeMailUserDefault;
+import org.geotoolkit.data.model.xal.DefaultLargeMailUser;
 import org.geotoolkit.data.model.xal.LargeMailUserIdentifier;
-import org.geotoolkit.data.model.xal.LargeMailUserIdentifierDefault;
+import org.geotoolkit.data.model.xal.DefaultLargeMailUserIdentifier;
 import org.geotoolkit.data.model.xal.LargeMailUserName;
-import org.geotoolkit.data.model.xal.LargeMailUserNameDefault;
+import org.geotoolkit.data.model.xal.DefaultLargeMailUserName;
 import org.geotoolkit.data.model.xal.Locality;
-import org.geotoolkit.data.model.xal.LocalityDefault;
+import org.geotoolkit.data.model.xal.DefaultLocality;
 import org.geotoolkit.data.model.xal.MailStop;
-import org.geotoolkit.data.model.xal.MailStopDefault;
+import org.geotoolkit.data.model.xal.DefaultMailStop;
 import org.geotoolkit.data.model.xal.MailStopNumber;
-import org.geotoolkit.data.model.xal.MailStopNumberDefault;
+import org.geotoolkit.data.model.xal.DefaultMailStopNumber;
 import org.geotoolkit.data.model.xal.OddEvenEnum;
 import org.geotoolkit.data.model.xal.PostBox;
-import org.geotoolkit.data.model.xal.PostBoxDefault;
+import org.geotoolkit.data.model.xal.DefaultPostBox;
 import org.geotoolkit.data.model.xal.PostBoxNumber;
-import org.geotoolkit.data.model.xal.PostBoxNumberDefault;
+import org.geotoolkit.data.model.xal.DefaultPostBoxNumber;
 import org.geotoolkit.data.model.xal.PostBoxNumberExtension;
-import org.geotoolkit.data.model.xal.PostBoxNumberExtensionDefault;
+import org.geotoolkit.data.model.xal.DefaultPostBoxNumberExtension;
 import org.geotoolkit.data.model.xal.PostBoxNumberPrefix;
-import org.geotoolkit.data.model.xal.PostBoxNumberPrefixDefault;
+import org.geotoolkit.data.model.xal.DefaultPostBoxNumberPrefix;
 import org.geotoolkit.data.model.xal.PostBoxNumberSuffix;
-import org.geotoolkit.data.model.xal.PostBoxNumberSuffixDefault;
+import org.geotoolkit.data.model.xal.DefaultPostBoxNumberSuffix;
 import org.geotoolkit.data.model.xal.PostOffice;
-import org.geotoolkit.data.model.xal.PostOfficeDefault;
+import org.geotoolkit.data.model.xal.DefaultPostOffice;
 import org.geotoolkit.data.model.xal.PostOfficeNumber;
-import org.geotoolkit.data.model.xal.PostOfficeNumberDefault;
+import org.geotoolkit.data.model.xal.DefaultPostOfficeNumber;
 import org.geotoolkit.data.model.xal.PostTown;
-import org.geotoolkit.data.model.xal.PostTownDefault;
+import org.geotoolkit.data.model.xal.DefaultPostTown;
 import org.geotoolkit.data.model.xal.PostTownSuffix;
-import org.geotoolkit.data.model.xal.PostTownSuffixDefault;
+import org.geotoolkit.data.model.xal.DefaultPostTownSuffix;
 import org.geotoolkit.data.model.xal.PostalCode;
-import org.geotoolkit.data.model.xal.PostalCodeDefault;
+import org.geotoolkit.data.model.xal.DefaultPostalCode;
 import org.geotoolkit.data.model.xal.PostalCodeNumberExtension;
-import org.geotoolkit.data.model.xal.PostalCodeNumberExtensionDefault;
+import org.geotoolkit.data.model.xal.DefaultPostalCodeNumberExtension;
 import org.geotoolkit.data.model.xal.PostalRoute;
-import org.geotoolkit.data.model.xal.PostalRouteDefault;
+import org.geotoolkit.data.model.xal.DefaultPostalRoute;
 import org.geotoolkit.data.model.xal.PostalRouteNumber;
-import org.geotoolkit.data.model.xal.PostalRouteNumberDefault;
+import org.geotoolkit.data.model.xal.DefaultPostalRouteNumber;
 import org.geotoolkit.data.model.xal.PostalServiceElements;
-import org.geotoolkit.data.model.xal.PostalServiceElementsDefault;
+import org.geotoolkit.data.model.xal.DefaultPostalServiceElements;
 import org.geotoolkit.data.model.xal.Premise;
-import org.geotoolkit.data.model.xal.PremiseDefault;
+import org.geotoolkit.data.model.xal.DefaultPremise;
 import org.geotoolkit.data.model.xal.PremiseLocation;
-import org.geotoolkit.data.model.xal.PremiseLocationDefault;
+import org.geotoolkit.data.model.xal.DefaultPremiseLocation;
 import org.geotoolkit.data.model.xal.PremiseName;
-import org.geotoolkit.data.model.xal.PremiseNameDefault;
+import org.geotoolkit.data.model.xal.DefaultPremiseName;
 import org.geotoolkit.data.model.xal.PremiseNumber;
-import org.geotoolkit.data.model.xal.PremiseNumberDefault;
+import org.geotoolkit.data.model.xal.DefaultPremiseNumber;
 import org.geotoolkit.data.model.xal.PremiseNumberPrefix;
-import org.geotoolkit.data.model.xal.PremiseNumberPrefixDefault;
+import org.geotoolkit.data.model.xal.DefaultPremiseNumberPrefix;
 import org.geotoolkit.data.model.xal.PremiseNumberRange;
-import org.geotoolkit.data.model.xal.PremiseNumberRangeDefault;
+import org.geotoolkit.data.model.xal.DefaultPremiseNumberRange;
 import org.geotoolkit.data.model.xal.PremiseNumberRangeFrom;
-import org.geotoolkit.data.model.xal.PremiseNumberRangeFromDefault;
+import org.geotoolkit.data.model.xal.DefaultPremiseNumberRangeFrom;
 import org.geotoolkit.data.model.xal.PremiseNumberRangeTo;
-import org.geotoolkit.data.model.xal.PremiseNumberRangeToDefault;
+import org.geotoolkit.data.model.xal.DefaultPremiseNumberRangeTo;
 import org.geotoolkit.data.model.xal.PremiseNumberSuffix;
-import org.geotoolkit.data.model.xal.PremiseNumberSuffixDefault;
+import org.geotoolkit.data.model.xal.DefaultPremiseNumberSuffix;
 import org.geotoolkit.data.model.xal.SingleRangeEnum;
 import org.geotoolkit.data.model.xal.SortingCode;
-import org.geotoolkit.data.model.xal.SortingCodeDefault;
+import org.geotoolkit.data.model.xal.DefaultSortingCode;
 import org.geotoolkit.data.model.xal.SubAdministrativeArea;
-import org.geotoolkit.data.model.xal.SubAdministrativeAreaDefault;
+import org.geotoolkit.data.model.xal.DefaultSubAdministrativeArea;
 import org.geotoolkit.data.model.xal.SubPremise;
-import org.geotoolkit.data.model.xal.SubPremiseDefault;
+import org.geotoolkit.data.model.xal.DefaultSubPremise;
 import org.geotoolkit.data.model.xal.SubPremiseLocation;
-import org.geotoolkit.data.model.xal.SubPremiseLocationDefault;
+import org.geotoolkit.data.model.xal.DefaultSubPremiseLocation;
 import org.geotoolkit.data.model.xal.SubPremiseName;
-import org.geotoolkit.data.model.xal.SubPremiseNameDefault;
+import org.geotoolkit.data.model.xal.DefaultSubPremiseName;
 import org.geotoolkit.data.model.xal.SubPremiseNumber;
-import org.geotoolkit.data.model.xal.SubPremiseNumberDefault;
+import org.geotoolkit.data.model.xal.DefaultSubPremiseNumber;
 import org.geotoolkit.data.model.xal.SubPremiseNumberPrefix;
-import org.geotoolkit.data.model.xal.SubPremiseNumberPrefixDefault;
+import org.geotoolkit.data.model.xal.DefaultSubPremiseNumberPrefix;
 import org.geotoolkit.data.model.xal.SubPremiseNumberSuffix;
-import org.geotoolkit.data.model.xal.SubPremiseNumberSuffixDefault;
+import org.geotoolkit.data.model.xal.DefaultSubPremiseNumberSuffix;
 import org.geotoolkit.data.model.xal.Thoroughfare;
-import org.geotoolkit.data.model.xal.ThoroughfareDefault;
+import org.geotoolkit.data.model.xal.DefaultThoroughfare;
 import org.geotoolkit.data.model.xal.ThoroughfareNumber;
-import org.geotoolkit.data.model.xal.ThoroughfareNumberDefault;
+import org.geotoolkit.data.model.xal.DefaultThoroughfareNumber;
 import org.geotoolkit.data.model.xal.ThoroughfareNumberFrom;
-import org.geotoolkit.data.model.xal.ThoroughfareNumberFromDefault;
+import org.geotoolkit.data.model.xal.DefaultThoroughfareNumberFrom;
 import org.geotoolkit.data.model.xal.ThoroughfareNumberPrefix;
-import org.geotoolkit.data.model.xal.ThoroughfareNumberPrefixDefault;
+import org.geotoolkit.data.model.xal.DefaultThoroughfareNumberPrefix;
 import org.geotoolkit.data.model.xal.ThoroughfareNumberRange;
-import org.geotoolkit.data.model.xal.ThoroughfareNumberRangeDefault;
+import org.geotoolkit.data.model.xal.DefaultThoroughfareNumberRange;
 import org.geotoolkit.data.model.xal.ThoroughfareNumberSuffix;
-import org.geotoolkit.data.model.xal.ThoroughfareNumberSuffixDefault;
+import org.geotoolkit.data.model.xal.DefaultThoroughfareNumberSuffix;
 import org.geotoolkit.data.model.xal.ThoroughfareNumberTo;
-import org.geotoolkit.data.model.xal.ThoroughfareNumberToDefault;
+import org.geotoolkit.data.model.xal.DefaultThoroughfareNumberTo;
 import org.geotoolkit.data.model.xal.Xal;
-import org.geotoolkit.data.model.xal.XalDefault;
+import org.geotoolkit.data.model.xal.DefaultXal;
 import org.geotoolkit.data.model.xal.XalException;
 
 /**
@@ -138,7 +138,7 @@ public class XalFactoryDefault implements XalFactory {
      */
     @Override
     public Xal createXal(List<AddressDetails> addressDetails, String version) {
-        return new XalDefault(addressDetails, version);
+        return new DefaultXal(addressDetails, version);
     }
 
     /**
@@ -177,7 +177,7 @@ public class XalFactoryDefault implements XalFactory {
      */
     @Override
     public GrPostal createGrPostal(String code) {
-        return new GrPostalDefault(code);
+        return new DefaultGrPostal(code);
     }
 
     /**
@@ -190,7 +190,7 @@ public class XalFactoryDefault implements XalFactory {
             SortingCode sortingCode, GenericTypedGrPostal addressLatitude, GenericTypedGrPostal addressLatitudeDirection,
             GenericTypedGrPostal addressLongitude, GenericTypedGrPostal addressLongitudeDirection,
             List<GenericTypedGrPostal> supplementaryPostalServiceData, String type) {
-        return new PostalServiceElementsDefault(addressIdentifiers,endorsementLineCode,
+        return new DefaultPostalServiceElements(addressIdentifiers,endorsementLineCode,
             keyLineCode, barCode, sortingCode, addressLatitude,
             addressLatitudeDirection, addressLongitude, addressLongitudeDirection,
             supplementaryPostalServiceData, type);
@@ -202,7 +202,7 @@ public class XalFactoryDefault implements XalFactory {
      */
     @Override
     public SortingCode createSortingCode(String type, GrPostal grPostal) {
-        return new SortingCodeDefault(type, grPostal);
+        return new DefaultSortingCode(type, grPostal);
     }
 
     /**
@@ -254,7 +254,7 @@ public class XalFactoryDefault implements XalFactory {
     public SubAdministrativeArea createSubAdministrativeArea(List<GenericTypedGrPostal> addressLines,
             List<GenericTypedGrPostal> subAdministrativeAreaNames,
             Object localisation, String type, String usageType, String indicator) throws XalException {
-        return new SubAdministrativeAreaDefault(addressLines, subAdministrativeAreaNames, localisation, type, usageType, indicator);
+        return new DefaultSubAdministrativeArea(addressLines, subAdministrativeAreaNames, localisation, type, usageType, indicator);
     }
 
     /**
@@ -267,7 +267,7 @@ public class XalFactoryDefault implements XalFactory {
             Thoroughfare thoroughfare, Premise premise,
             DependentLocality dependentLocality, PostalCode postalCode,
             String type, String usageType, String indicator) throws XalException {
-        return new LocalityDefault(addressLines, localityNames,
+        return new DefaultLocality(addressLines, localityNames,
                 postal, thoroughfare, premise, dependentLocality,
                 postalCode, type, usageType, indicator);
     }
@@ -278,7 +278,7 @@ public class XalFactoryDefault implements XalFactory {
      */
     @Override
     public PostBoxNumber createPostBoxNumber(GrPostal grPostal, String content) {
-        return new PostBoxNumberDefault(grPostal, content);
+        return new DefaultPostBoxNumber(grPostal, content);
     }
 
     /**
@@ -287,7 +287,7 @@ public class XalFactoryDefault implements XalFactory {
      */
     @Override
     public PostBoxNumberPrefix createPostBoxNumberPrefix(String numberPrefixSeparator, GrPostal grPostal, String content) {
-        return new PostBoxNumberPrefixDefault(numberPrefixSeparator, grPostal, content);
+        return new DefaultPostBoxNumberPrefix(numberPrefixSeparator, grPostal, content);
     }
 
     /**
@@ -296,7 +296,7 @@ public class XalFactoryDefault implements XalFactory {
      */
     @Override
     public PostBoxNumberSuffix createPostBoxNumberSuffix(String numberSuffixSeparator, GrPostal grPostal, String content) {
-        return new PostBoxNumberSuffixDefault(numberSuffixSeparator, grPostal, content);
+        return new DefaultPostBoxNumberSuffix(numberSuffixSeparator, grPostal, content);
     }
 
     /**
@@ -305,7 +305,7 @@ public class XalFactoryDefault implements XalFactory {
      */
     @Override
     public PostBoxNumberExtension createPostBoxNumberExtension(String numberExtensionSeparator, String content) {
-        return new PostBoxNumberExtensionDefault(numberExtensionSeparator, content);
+        return new DefaultPostBoxNumberExtension(numberExtensionSeparator, content);
     }
 
     /**
@@ -326,7 +326,7 @@ public class XalFactoryDefault implements XalFactory {
             PostBoxNumber postBoxNumber, PostBoxNumberPrefix postBoxNumberPrefix,
             PostBoxNumberSuffix postBoxNumberSuffix, PostBoxNumberExtension postBoxNumberExtension,
             Firm firm, PostalCode postalCode, String type, String indicator) {
-        return new PostBoxDefault(addressLines, postBoxNumber,
+        return new DefaultPostBox(addressLines, postBoxNumber,
                 postBoxNumberPrefix, postBoxNumberSuffix, postBoxNumberExtension,
                 firm, postalCode, type, indicator);
     }
@@ -348,7 +348,7 @@ public class XalFactoryDefault implements XalFactory {
     @Override
     public MailStop createMailStop(List<GenericTypedGrPostal> addressLines,
             List<GenericTypedGrPostal> mailStopNames, MailStopNumber mailStopNumber, String type) {
-        return new MailStopDefault(addressLines, mailStopNames, mailStopNumber, type);
+        return new DefaultMailStop(addressLines, mailStopNames, mailStopNumber, type);
     }
 
     /**
@@ -357,7 +357,7 @@ public class XalFactoryDefault implements XalFactory {
      */
     @Override
     public MailStopNumber createMailStopNumber(String nameNumberSeparator, GrPostal grPostal, String content) {
-        return new MailStopNumberDefault(nameNumberSeparator, grPostal, content);
+        return new DefaultMailStopNumber(nameNumberSeparator, grPostal, content);
     }
 
     /**
@@ -368,7 +368,7 @@ public class XalFactoryDefault implements XalFactory {
     public PostalCode createPostalCode(List<GenericTypedGrPostal> addressLines,
             List<GenericTypedGrPostal> postalCodeNumbers, List<PostalCodeNumberExtension> postalCodeNumberExtensions,
             PostTown postTown, String type) {
-        return new PostalCodeDefault(addressLines, postalCodeNumbers, postalCodeNumberExtensions, postTown, type);
+        return new DefaultPostalCode(addressLines, postalCodeNumbers, postalCodeNumberExtensions, postTown, type);
     }
 
     /**
@@ -378,7 +378,7 @@ public class XalFactoryDefault implements XalFactory {
     @Override
     public PostalCodeNumberExtension createPostalCodeNumberExtension(String type, String numberExtensionSeparator,
             GrPostal grPostal, String content) {
-        return new PostalCodeNumberExtensionDefault(type, numberExtensionSeparator, grPostal, content);
+        return new DefaultPostalCodeNumberExtension(type, numberExtensionSeparator, grPostal, content);
     }
 
     /**
@@ -387,7 +387,7 @@ public class XalFactoryDefault implements XalFactory {
      */
     @Override
     public PostTownSuffix createPostTownSuffix(GrPostal grPostal, String content) {
-        return new PostTownSuffixDefault(grPostal, content);
+        return new DefaultPostTownSuffix(grPostal, content);
     }
 
     /**
@@ -397,7 +397,7 @@ public class XalFactoryDefault implements XalFactory {
     @Override
     public PostTown createPostTown(List<GenericTypedGrPostal> addressLines,
             List<GenericTypedGrPostal> postTownNames, PostTownSuffix postTownSuffix, String type) {
-        return new PostTownDefault(addressLines, postTownNames, postTownSuffix, type);
+        return new DefaultPostTown(addressLines, postTownNames, postTownSuffix, type);
     }
 
     /**
@@ -406,7 +406,7 @@ public class XalFactoryDefault implements XalFactory {
      */
     @Override
     public LargeMailUserIdentifier createLargeMailUserIdentifier(String type, String indicator, GrPostal grPostal, String content) {
-        return new LargeMailUserIdentifierDefault(type, indicator, grPostal, content);
+        return new DefaultLargeMailUserIdentifier(type, indicator, grPostal, content);
     }
 
     /**
@@ -415,7 +415,7 @@ public class XalFactoryDefault implements XalFactory {
      */
     @Override
     public LargeMailUserName createLargeMailUserName(String type, String code, String content) {
-        return new LargeMailUserNameDefault(type, code, content);
+        return new DefaultLargeMailUserName(type, code, content);
     }
 
     /**
@@ -427,7 +427,7 @@ public class XalFactoryDefault implements XalFactory {
             List<LargeMailUserName> largeMailUserNames, LargeMailUserIdentifier largeMailUserIdentifier,
             List<BuildingName> buildingNames, Department department, PostBox postBox,
             Thoroughfare thoroughfare, PostalCode postalCode, String type) {
-        return new LargeMailUserDefault(addressLines, largeMailUserNames,
+        return new DefaultLargeMailUser(addressLines, largeMailUserNames,
                 largeMailUserIdentifier, buildingNames, department,
                 postBox, thoroughfare, postalCode, type);
     }
@@ -448,7 +448,7 @@ public class XalFactoryDefault implements XalFactory {
      */
     @Override
     public PostalRouteNumber createPostalRouteNumber(GrPostal grPostal, String content) {
-        return new PostalRouteNumberDefault(grPostal, content);
+        return new DefaultPostalRouteNumber(grPostal, content);
     }
 
     /**
@@ -459,7 +459,7 @@ public class XalFactoryDefault implements XalFactory {
     public PostalRoute createPostalRoute(List<GenericTypedGrPostal> addressLines,
             Object localisation,
             PostBox postBox, String type) throws XalException {
-        return new PostalRouteDefault(addressLines, localisation, postBox, type);
+        return new DefaultPostalRoute(addressLines, localisation, postBox, type);
     }
 
     /**
@@ -470,7 +470,7 @@ public class XalFactoryDefault implements XalFactory {
     public PostOffice createPostOffice(List<GenericTypedGrPostal> addressLines,
             Object localisation, PostalRoute postalRoute, PostBox postBox,
             PostalCode postalCode, String type, String indicator) throws XalException {
-        return new PostOfficeDefault(addressLines, localisation, postalRoute,
+        return new DefaultPostOffice(addressLines, localisation, postalRoute,
                 postBox, postalCode, type, indicator);
     }
 
@@ -481,7 +481,7 @@ public class XalFactoryDefault implements XalFactory {
     @Override
     public PostOfficeNumber createPostOfficeNumber(String indicator,
             AfterBeforeEnum indicatorOccurence, GrPostal grPostal, String content) {
-        return new PostOfficeNumberDefault(indicator, indicatorOccurence, grPostal, content);
+        return new DefaultPostOfficeNumber(indicator, indicatorOccurence, grPostal, content);
     }
 
     /**
@@ -524,7 +524,7 @@ public class XalFactoryDefault implements XalFactory {
             MailStop mailStop, PostalCode postalCode, Premise premise,
             String type, String premiseDependency, String premiseDependencyType,
             String premiseThoroughfareConnector) throws XalException{
-        return new PremiseDefault(addressLines, premiseNames, location,
+        return new DefaultPremise(addressLines, premiseNames, location,
                 premiseNumberPrefixes, premiseNumberSuffixes, buildingNames,
                 sub, mailStop, postalCode, premise,
                 type, premiseDependency, premiseDependencyType, premiseThoroughfareConnector);
@@ -536,7 +536,7 @@ public class XalFactoryDefault implements XalFactory {
      */
     @Override
     public PremiseName createPremiseName(String type, AfterBeforeEnum typeOccurrence, GrPostal grPostal, String content) {
-        return new PremiseNameDefault(type, typeOccurrence, grPostal, content);
+        return new DefaultPremiseName(type, typeOccurrence, grPostal, content);
     }
 
     /**
@@ -545,7 +545,7 @@ public class XalFactoryDefault implements XalFactory {
      */
     @Override
     public PremiseLocation createPremiseLocation(GrPostal grPostal, String content){
-        return new PremiseLocationDefault(grPostal, content);
+        return new DefaultPremiseLocation(grPostal, content);
     }
 
     /**
@@ -554,7 +554,7 @@ public class XalFactoryDefault implements XalFactory {
      */
     @Override
     public SubPremiseName createSubPremiseName(String type, AfterBeforeEnum typeOccurrence, GrPostal grPostal, String content) {
-        return new SubPremiseNameDefault(type, typeOccurrence, grPostal, content);
+        return new DefaultSubPremiseName(type, typeOccurrence, grPostal, content);
     }
 
     /**
@@ -563,7 +563,7 @@ public class XalFactoryDefault implements XalFactory {
      */
     @Override
     public SubPremiseLocation createSubPremiseLocation(GrPostal grPostal, String content){
-        return new SubPremiseLocationDefault(grPostal, content);
+        return new DefaultSubPremiseLocation(grPostal, content);
     }
 
     /**
@@ -574,7 +574,7 @@ public class XalFactoryDefault implements XalFactory {
     public PremiseNumber createPremiseNumber(SingleRangeEnum numberType, String type, String indicator,
             AfterBeforeEnum indicatorOccurrence, AfterBeforeEnum numberTypeOccurrence,
             GrPostal grPostal, String content){
-        return new PremiseNumberDefault(numberType, type, indicator, indicatorOccurrence, numberTypeOccurrence, grPostal, content);
+        return new DefaultPremiseNumber(numberType, type, indicator, indicatorOccurrence, numberTypeOccurrence, grPostal, content);
     }
 
     /**
@@ -586,7 +586,7 @@ public class XalFactoryDefault implements XalFactory {
             PremiseNumberRangeTo premiseNumberRangeTo, String rangeType,
             String indicator, String separator, String type,
             AfterBeforeEnum indicatorOccurrence, AfterBeforeTypeNameEnum numberRangeOccurrence){
-        return new PremiseNumberRangeDefault(premiseNumberRangeFrom, premiseNumberRangeTo,
+        return new DefaultPremiseNumberRange(premiseNumberRangeFrom, premiseNumberRangeTo,
                 rangeType, indicator, separator, type, indicatorOccurrence, numberRangeOccurrence);
     }
 
@@ -599,7 +599,7 @@ public class XalFactoryDefault implements XalFactory {
             List<PremiseNumberPrefix> premiseNumberPrefixes,
             List<PremiseNumber> premiseNumbers,
             List<PremiseNumberSuffix> premiseNumberSuffixes) {
-        return new PremiseNumberRangeFromDefault(addressLines, premiseNumberPrefixes, premiseNumbers, premiseNumberSuffixes);
+        return new DefaultPremiseNumberRangeFrom(addressLines, premiseNumberPrefixes, premiseNumbers, premiseNumberSuffixes);
     }
 
     /**
@@ -611,7 +611,7 @@ public class XalFactoryDefault implements XalFactory {
             List<PremiseNumberPrefix> premiseNumberPrefixes,
             List<PremiseNumber> premiseNumbers,
             List<PremiseNumberSuffix> premiseNumberSuffixes) {
-        return new PremiseNumberRangeToDefault(addressLines, premiseNumberPrefixes, premiseNumbers, premiseNumberSuffixes);
+        return new DefaultPremiseNumberRangeTo(addressLines, premiseNumberPrefixes, premiseNumbers, premiseNumberSuffixes);
     }
 
     /**
@@ -621,7 +621,7 @@ public class XalFactoryDefault implements XalFactory {
     @Override
     public PremiseNumberPrefix createPremiseNumberPrefix(String numberPrefixSeparator,
             String type, GrPostal grPostal, String content) {
-        return new PremiseNumberPrefixDefault(numberPrefixSeparator, type, grPostal, content);
+        return new DefaultPremiseNumberPrefix(numberPrefixSeparator, type, grPostal, content);
     }
 
     /**
@@ -631,7 +631,7 @@ public class XalFactoryDefault implements XalFactory {
     @Override
     public PremiseNumberSuffix createPremiseNumberSuffix(String numberSuffixSeparator,
             String type, GrPostal grPostal, String content) {
-        return new PremiseNumberSuffixDefault(numberSuffixSeparator, type, grPostal, content);
+        return new DefaultPremiseNumberSuffix(numberSuffixSeparator, type, grPostal, content);
     }
 
     /**
@@ -641,7 +641,7 @@ public class XalFactoryDefault implements XalFactory {
     @Override
     public SubPremiseNumberPrefix createSubPremiseNumberPrefix(String numberPrefixSeparator,
             String type, GrPostal grPostal, String content) {
-        return new SubPremiseNumberPrefixDefault(numberPrefixSeparator, type, grPostal, content);
+        return new DefaultSubPremiseNumberPrefix(numberPrefixSeparator, type, grPostal, content);
     }
 
     /**
@@ -651,7 +651,7 @@ public class XalFactoryDefault implements XalFactory {
     @Override
     public SubPremiseNumberSuffix createSubPremiseNumberSuffix(String numberSuffixSeparator,
             String type, GrPostal grPostal, String content) {
-        return new SubPremiseNumberSuffixDefault(numberSuffixSeparator, type, grPostal, content);
+        return new DefaultSubPremiseNumberSuffix(numberSuffixSeparator, type, grPostal, content);
     }
 
     /**
@@ -662,7 +662,7 @@ public class XalFactoryDefault implements XalFactory {
     public SubPremiseNumber createSubPremiseNumber(String indicator,
             AfterBeforeEnum indicatorOccurrence, AfterBeforeEnum numberTypeOccurrence,
             String premiseNumberSeparator, String type, GrPostal grPostal, String content) {
-        return new SubPremiseNumberDefault(indicator, indicatorOccurrence,
+        return new DefaultSubPremiseNumber(indicator, indicatorOccurrence,
                 numberTypeOccurrence, premiseNumberSeparator, type, grPostal, content);
     }
 
@@ -677,7 +677,7 @@ public class XalFactoryDefault implements XalFactory {
             List<SubPremiseNumberSuffix> subPremiseNumberSuffixes,
             List<BuildingName> buildingNames, Firm firm, MailStop mailStop,
             PostalCode postalCode, SubPremise subPremise, String type) throws XalException {
-        return new SubPremiseDefault(addressLines, subPremiseNames, location,
+        return new DefaultSubPremise(addressLines, subPremiseNames, location,
                 subPremiseNumberPrefixes, subPremiseNumberSuffixes,
                 buildingNames, firm, mailStop, postalCode, subPremise, type);
     }
@@ -696,7 +696,7 @@ public class XalFactoryDefault implements XalFactory {
             Object location, String type, DependentThoroughfares dependentThoroughfares,
             String dependentThoroughfaresIndicator, String dependentThoroughfaresConnector,
             String dependentThoroughfaresType) throws XalException {
-        return new ThoroughfareDefault(addressLines, thoroughfareNumbers,
+        return new DefaultThoroughfare(addressLines, thoroughfareNumbers,
                 thoroughfareNumberPrefixes, thoroughfareNumberSuffixes,
                 thoroughfarePreDirection, thoroughfareLeadingType,
                 thoroughfareNames, thoroughfareTrailingType,
@@ -714,7 +714,7 @@ public class XalFactoryDefault implements XalFactory {
             ThoroughfareNumberFrom thoroughfareNumberFrom, ThoroughfareNumberTo thoroughfareNumberTo,
             OddEvenEnum rangeType, String indicator, String separator, String type,
             AfterBeforeEnum indicatorOccurrence, AfterBeforeTypeNameEnum numberRangeOccurrence) {
-        return new ThoroughfareNumberRangeDefault(addressLines, thoroughfareNumberFrom,
+        return new DefaultThoroughfareNumberRange(addressLines, thoroughfareNumberFrom,
                 thoroughfareNumberTo, rangeType, indicator, separator, type,
                 indicatorOccurrence, numberRangeOccurrence);
     }
@@ -727,7 +727,7 @@ public class XalFactoryDefault implements XalFactory {
     public ThoroughfareNumber createThoroughfareNumber(SingleRangeEnum numberType,
             String type, String indicator, AfterBeforeEnum indicatorOccurence,
             AfterBeforeTypeNameEnum numberOccurrence, GrPostal grPostal, String content) {
-        return new ThoroughfareNumberDefault(numberType, type, indicator,
+        return new DefaultThoroughfareNumber(numberType, type, indicator,
                 indicatorOccurence, numberOccurrence, grPostal, content);
     }
 
@@ -737,7 +737,7 @@ public class XalFactoryDefault implements XalFactory {
      */
     @Override
     public ThoroughfareNumberFrom createThoroughfareNumberFrom(List<Object> content, GrPostal grPostal) throws XalException {
-        return new ThoroughfareNumberFromDefault(content, grPostal);
+        return new DefaultThoroughfareNumberFrom(content, grPostal);
     }
 
     /**
@@ -746,7 +746,7 @@ public class XalFactoryDefault implements XalFactory {
      */
     @Override
     public ThoroughfareNumberTo createThoroughfareNumberTo(List<Object> content, GrPostal grPostal) throws XalException {
-        return new ThoroughfareNumberToDefault(content, grPostal);
+        return new DefaultThoroughfareNumberTo(content, grPostal);
     }
 
     /**
@@ -756,7 +756,7 @@ public class XalFactoryDefault implements XalFactory {
     @Override
     public ThoroughfareNumberSuffix createThoroughfareNumberSuffix(
             String numberSuffixSeparator, String type, GrPostal grPostal, String content) {
-        return new ThoroughfareNumberSuffixDefault(numberSuffixSeparator, type, grPostal, content);
+        return new DefaultThoroughfareNumberSuffix(numberSuffixSeparator, type, grPostal, content);
     }
 
     /**
@@ -766,7 +766,7 @@ public class XalFactoryDefault implements XalFactory {
     @Override
     public ThoroughfareNumberPrefix createThoroughfareNumberPrefix(
             String numberPrefixSeparator, String type, GrPostal grPostal, String content) {
-        return new ThoroughfareNumberPrefixDefault(numberPrefixSeparator, type, grPostal, content);
+        return new DefaultThoroughfareNumberPrefix(numberPrefixSeparator, type, grPostal, content);
     }
 
     /**
