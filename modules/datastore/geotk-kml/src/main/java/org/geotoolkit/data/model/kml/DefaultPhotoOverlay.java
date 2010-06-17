@@ -14,13 +14,22 @@ import static java.util.Collections.*;
  */
 public class DefaultPhotoOverlay extends DefaultAbstractOverlay implements PhotoOverlay {
 
-    private final Angle180 rotation;
-    private final ViewVolume viewVolume;
-    private final ImagePyramid imagePyramid;
-    private final Point point;
-    private final Shape shape;
-    private final List<SimpleType> photoOverlaySimpleExtensions;
-    private final List<AbstractObject> photoOverlayObjectExtensions;
+    private Angle180 rotation;
+    private ViewVolume viewVolume;
+    private ImagePyramid imagePyramid;
+    private Point point;
+    private Shape shape;
+    private List<SimpleType> photoOverlaySimpleExtensions;
+    private List<AbstractObject> photoOverlayObjectExtensions;
+
+    /**
+     * 
+     */
+    public DefaultPhotoOverlay(){
+        super();
+        this.photoOverlaySimpleExtensions = EMPTY_LIST;
+        this.photoOverlayObjectExtensions = EMPTY_LIST;
+    }
 
     /**
      *
@@ -57,18 +66,18 @@ public class DefaultPhotoOverlay extends DefaultAbstractOverlay implements Photo
      * @param photoOverlaySimpleExtensions
      * @param photoOverlayObjectExtensions
      */
-    public DefaultPhotoOverlay(List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
-            String name, boolean visibility, boolean open, AtomPersonConstruct author, AtomLink link,
-            String address, AddressDetails addressDetails, String phoneNumber, String snippet,
-            String description, AbstractView view, AbstractTimePrimitive timePrimitive,
-            String styleUrl, List<AbstractStyleSelector> styleSelector,
-            Region region, ExtendedData extendedData,
-            List<SimpleType> abstractFeatureSimpleExtensions,
-            List<AbstractObject> abstractFeatureObjectExtensions,
-            Color color, int drawOrder, Icon icon,
-            List<SimpleType> abstractOveraySimpleExtensions, List<AbstractObject> abstractOverlayObjectExtensions,
-            Angle180 rotation, ViewVolume viewVolume, ImagePyramid imagePyramid, Point point, Shape shape,
-            List<SimpleType> photoOverlaySimpleExtensions, List<AbstractObject> photoOverlayObjectExtensions){
+    public DefaultPhotoOverlay(final List<SimpleType> objectSimpleExtensions, final IdAttributes idAttributes,
+            final String name, final boolean visibility, final boolean open, final AtomPersonConstruct author, final AtomLink link,
+            final String address, final AddressDetails addressDetails, final String phoneNumber, final String snippet,
+            final String description, final AbstractView view, final AbstractTimePrimitive timePrimitive,
+            final String styleUrl, final List<AbstractStyleSelector> styleSelector,
+            final Region region, final ExtendedData extendedData,
+            final List<SimpleType> abstractFeatureSimpleExtensions,
+            final List<AbstractObject> abstractFeatureObjectExtensions,
+            final Color color, final int drawOrder, final Icon icon,
+            final List<SimpleType> abstractOveraySimpleExtensions, final List<AbstractObject> abstractOverlayObjectExtensions,
+            final Angle180 rotation, final ViewVolume viewVolume, final ImagePyramid imagePyramid, final Point point, final Shape shape,
+            final List<SimpleType> photoOverlaySimpleExtensions, final List<AbstractObject> photoOverlayObjectExtensions){
         super(objectSimpleExtensions, idAttributes,
                 name, visibility, open, author, link, address, addressDetails, phoneNumber, snippet,
                 description, view, timePrimitive, styleUrl, styleSelector, region, extendedData,
@@ -131,5 +140,58 @@ public class DefaultPhotoOverlay extends DefaultAbstractOverlay implements Photo
      */
     @Override
     public List<AbstractObject> getPhotoOverlayObjectExtensions() {return this.photoOverlayObjectExtensions;}
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setRotation(Angle180 rotation) {this.rotation = rotation;}
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setViewVolume(ViewVolume viewVolume) {this.viewVolume = viewVolume;}
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setImagePyramid(ImagePyramid imagePyramid) {this.imagePyramid = imagePyramid;}
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setPoint(Point point) {this.point = point;}
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setShape(Shape shape) {this.shape = shape;}
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setPhotoOverlaySimpleExtensions(List<SimpleType> photoOverlaySimpleExtensions) {
+        this.photoOverlaySimpleExtensions = photoOverlaySimpleExtensions;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setPhotoOverlayObjectExtensions(List<AbstractObject> photoOverlayObjectExtensions) {
+        this.photoOverlayObjectExtensions = photoOverlayObjectExtensions;
+    }
 
 }

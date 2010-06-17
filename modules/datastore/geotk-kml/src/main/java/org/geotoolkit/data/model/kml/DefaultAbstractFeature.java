@@ -13,24 +13,34 @@ import static java.util.Collections.*;
  */
 public abstract class DefaultAbstractFeature extends DefaultAbstractObject implements AbstractFeature {
 
-    protected final String name;
-    protected final boolean visibility;
-    protected final boolean open;
-    protected final AtomPersonConstruct author;
-    protected final AtomLink atomLink;
-    protected final String address;
-    protected final AddressDetails addressDetails;
-    protected final String phoneNumber;
-    protected final String snippet;
-    protected final String description;
-    protected final AbstractView view;
-    protected final AbstractTimePrimitive timePrimitive;
-    protected final String styleUrl;
-    protected final List<AbstractStyleSelector> styleSelector;
-    protected final Region region;
-    protected final ExtendedData extendedData;
-    protected final List<SimpleType> featureSimpleExtensions;
-    protected final List<AbstractObject> featureObjectExtensions;
+    protected String name;
+    protected boolean visibility;
+    protected boolean open;
+    protected AtomPersonConstruct author;
+    protected AtomLink atomLink;
+    protected String address;
+    protected AddressDetails addressDetails;
+    protected String phoneNumber;
+    protected String snippet;
+    protected String description;
+    protected AbstractView view;
+    protected AbstractTimePrimitive timePrimitive;
+    protected String styleUrl;
+    protected List<AbstractStyleSelector> styleSelector;
+    protected Region region;
+    protected ExtendedData extendedData;
+    protected List<SimpleType> featureSimpleExtensions;
+    protected List<AbstractObject> featureObjectExtensions;
+
+    /**
+     * 
+     */
+    protected DefaultAbstractFeature(){
+        super();
+        this.styleSelector = EMPTY_LIST;
+        this.featureSimpleExtensions = EMPTY_LIST;
+        this.featureObjectExtensions = EMPTY_LIST;
+    }
 
     /**
      *
@@ -210,6 +220,136 @@ public abstract class DefaultAbstractFeature extends DefaultAbstractObject imple
      */
     @Override
     public List<AbstractObject> getAbstractFeatureObjectExtensions() {return this.featureObjectExtensions;}
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setName(String name){this.name = name;}
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setVisibility(boolean visibility){this.visibility = visibility;}
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setOpen(boolean open){this.open = open;}
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setAuthor(AtomPersonConstruct author){this.author = author;}
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setAtomLink(AtomLink atomLink){this.atomLink = atomLink;}
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setAddress(String address){this.address = address;}
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setAddressDetails(AddressDetails addressDetails){this.addressDetails = addressDetails;}
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setPhoneNumber(String phoneNumber){this.phoneNumber = phoneNumber;}
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setSnippet(String snippet){this.snippet = snippet;}
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setDescription(String description){this.description = description;}
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setView(AbstractView view){this.view = view;}
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setTimePrimitive(AbstractTimePrimitive timePrimitive){this.timePrimitive = timePrimitive;}
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setStyleUrl(String styleUrl){this.styleUrl = styleUrl;}
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setStyleSelectors(List<AbstractStyleSelector> styleSelectors){this.styleSelector = styleSelectors;}
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setRegion(Region region){this.region = region;}
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setExtendedData(ExtendedData extendedData){this.extendedData = extendedData;}
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setAbstractFeatureSimpleExtensions(List<SimpleType> abstractFeatureSimpleExtensions){
+        this.featureSimpleExtensions = abstractFeatureSimpleExtensions;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setAbstractFeatureObjectExtensions(List<AbstractObject> abstractFeatureObjectExtensions){
+        this.featureObjectExtensions = abstractFeatureObjectExtensions;
+    }
 
     @Override
     public String toString(){

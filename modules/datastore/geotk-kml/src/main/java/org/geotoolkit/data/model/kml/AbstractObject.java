@@ -34,4 +34,16 @@ public interface AbstractObject {
      * @return The identification attributes.
      */
     public IdAttributes getIdAttributes();
+
+    /**
+     * 
+     * @param objectSimpleExtentions
+     */
+    public void setObjectSimpleExtensions(List<SimpleType> objectSimpleExtentions);
+
+    /**
+     *
+     * @param idAttributes
+     */
+    public void setIdAttributes(IdAttributes idAttributes);
 }

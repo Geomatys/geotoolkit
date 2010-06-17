@@ -159,18 +159,6 @@ public interface KmlFactory {
 
     /**
      *
-     * @param href
-     * @param rel
-     * @param type
-     * @param hreflang
-     * @param title
-     * @param length
-     * @return
-     */
-    public AtomLink createAtomLinkDefault(String href, String rel, String type, String hreflang, String title, String length);
-
-    /**
-     *
      * @param objectSimpleExtensions
      * @param idAttributes
      * @param subStyleSimpleExtensions
@@ -232,6 +220,12 @@ public interface KmlFactory {
             Angle180 longitude, Angle90 latitude, double altitude,
             Angle360 heading, Anglepos180 tilt, Angle180 roll, AltitudeMode altitudeMode,
             List<SimpleType> cameraSimpleExtensions, List<AbstractObject> cameraObjectExtensions);
+
+    /**
+     * 
+     * @return
+     */
+    public Camera createCamera();
 
     /**
      *
@@ -927,6 +921,12 @@ public interface KmlFactory {
             List<SimpleType> abstractOveraySimpleExtensions, List<AbstractObject> abstractOverlayObjectExtensions,
             Angle180 rotation, ViewVolume viewVolume, ImagePyramid imagePyramid, Point point, Shape shape,
             List<SimpleType> photoOverlaySimpleExtensions, List<AbstractObject> photoOverlayObjectExtensions);
+
+    /**
+     * 
+     * @return
+     */
+    public PhotoOverlay createPhotoOverlay();
 
     /**
      *

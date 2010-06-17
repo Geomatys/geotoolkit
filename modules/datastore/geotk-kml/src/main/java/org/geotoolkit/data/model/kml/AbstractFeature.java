@@ -166,4 +166,112 @@ public interface AbstractFeature extends AbstractObject {
      * @return The AbstractFeature list of object extensions.
      */
     public List<AbstractObject> getAbstractFeatureObjectExtensions();
+
+    /**
+     * 
+     * @param name
+     */
+    public void setName(String name);
+
+    /**
+     *
+     * @param visibility
+     */
+    public void setVisibility(boolean visibility);
+
+    /**
+     *
+     * @param open
+     */
+    public void setOpen(boolean open);
+
+    /**
+     *
+     * @param author
+     */
+    public void setAuthor(AtomPersonConstruct author);
+
+    /**
+     *
+     * @param link
+     */
+    public void setAtomLink(AtomLink atomLink);
+
+    /**
+     *
+     * @param address
+     */
+    public void setAddress(String address);
+
+    /**
+     *
+     * @param addressDetails
+     */
+    public void setAddressDetails(AddressDetails addressDetails);
+
+    /**
+     *
+     * @param phoneNumber
+     */
+    public void setPhoneNumber(String phoneNumber);
+
+    /**
+     *
+     * @param snoppet
+     */
+    public void setSnippet(String snippet);
+
+    /**
+     *
+     * @param description
+     */
+    public void setDescription(String description);
+
+    /**
+     *
+     * @param view
+     */
+    public void setView(AbstractView view);
+
+    /**
+     *
+     * @param timePrimitive
+     */
+    public void setTimePrimitive(AbstractTimePrimitive timePrimitive);
+
+    /**
+     *
+     * @param styleUrl
+     */
+    public void setStyleUrl(String styleUrl);
+
+    /**
+     *
+     * @param styleSelectors
+     */
+    public void setStyleSelectors(List<AbstractStyleSelector> styleSelectors);
+
+    /**
+     *
+     * @param region
+     */
+    public void setRegion(Region region);
+
+    /**
+     *
+     * @param extendedData
+     */
+    public void setExtendedData(ExtendedData extendedData);
+
+    /**
+     *
+     * @param abstractFeatureSimpleExtensions
+     */
+    public void setAbstractFeatureSimpleExtensions(List<SimpleType> abstractFeatureSimpleExtensions);
+
+    /**
+     *
+     * @param abstractFeatureObjectExtensions
+     */
+    public void setAbstractFeatureObjectExtensions(List<AbstractObject> abstractFeatureObjectExtensions);
 }

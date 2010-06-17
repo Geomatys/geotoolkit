@@ -75,4 +75,46 @@ public interface PhotoOverlay extends AbstractOverlay {
      */
     public List<AbstractObject> getPhotoOverlayObjectExtensions();
 
+    /**
+     *
+     * @param rotation
+     */
+    public void setRotation(Angle180 rotation);
+
+    /**
+     *
+     * @param viewVolume
+     */
+    public void setViewVolume(ViewVolume viewVolume);
+
+    /**
+     *
+     * @param imagePyramid
+     */
+    public void setImagePyramid(ImagePyramid imagePyramid);
+
+    /**
+     *
+     * @param point
+     */
+    public void setPoint(Point point);
+
+    /**
+     *
+     * @param shape
+     */
+    public void setShape(Shape shape);
+
+    /**
+     *
+     * @param photoOverlaySimpleExtensions
+     */
+    public void setPhotoOverlaySimpleExtensions(List<SimpleType> photoOverlaySimpleExtensions);
+
+    /**
+     * 
+     * @param photoOverlayObjectExtensions
+     */
+    public void setPhotoOverlayObjectExtensions(List<AbstractObject> photoOverlayObjectExtensions);
+
 }

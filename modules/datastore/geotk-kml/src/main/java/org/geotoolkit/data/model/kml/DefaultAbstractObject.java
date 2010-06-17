@@ -10,8 +10,12 @@ import static java.util.Collections.*;
  */
 public abstract class DefaultAbstractObject implements AbstractObject {
 
-    protected final List<SimpleType> objectSimpleExtensions;
-    protected final IdAttributes idAttributes;
+    protected List<SimpleType> objectSimpleExtensions;
+    protected IdAttributes idAttributes;
+
+    protected DefaultAbstractObject(){
+        this.objectSimpleExtensions = EMPTY_LIST;
+    }
 
     /**
      * 
@@ -40,6 +44,24 @@ public abstract class DefaultAbstractObject implements AbstractObject {
     @Override
     public IdAttributes getIdAttributes() {
         return this.idAttributes;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setObjectSimpleExtensions(List<SimpleType> objectSimpleExtensions){
+        this.objectSimpleExtensions = objectSimpleExtensions;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */ 
+    @Override
+    public void setIdAttributes(IdAttributes idAttributes){
+        this.idAttributes = idAttributes;
     }
 
     @Override

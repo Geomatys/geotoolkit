@@ -10,8 +10,14 @@ import static java.util.Collections.*;
  */
 public abstract class DefaultAbstractView extends DefaultAbstractObject implements AbstractView {
 
-    protected final List<SimpleType> abstractViewSimpleExtensions;
-    protected final List<AbstractObject> abstractViewObjectExtensions;
+    protected List<SimpleType> abstractViewSimpleExtensions;
+    protected List<AbstractObject> abstractViewObjectExtensions;
+
+    protected DefaultAbstractView(){
+        super();
+        this.abstractViewSimpleExtensions = EMPTY_LIST;
+        this.abstractViewObjectExtensions = EMPTY_LIST;
+    }
 
     /**
      *
@@ -40,5 +46,23 @@ public abstract class DefaultAbstractView extends DefaultAbstractObject implemen
      */
     @Override
     public List<AbstractObject> getAbstractViewObjectExtensions() {return this.abstractViewObjectExtensions;}
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setAbstractViewSimpleExtensions(List<SimpleType> abstractViewSimpleExtensions){
+        this.abstractViewSimpleExtensions = abstractViewSimpleExtensions;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setAbstractViewObjectExtensions(List<AbstractObject> abstractViewObjectExtensions){
+        this.abstractViewObjectExtensions = abstractViewObjectExtensions;
+    }
 
 }

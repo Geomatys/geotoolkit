@@ -1,14 +1,11 @@
 package org.geotoolkit.data.kml;
 
-import java.awt.Color;
-import org.geotoolkit.data.zip.ZipUtilities;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.zip.ZipOutputStream;
 import javax.xml.stream.XMLStreamException;
 import org.geotoolkit.data.model.KmlFactory;
 import org.geotoolkit.data.model.KmlFactoryDefault;
@@ -20,7 +17,6 @@ import org.geotoolkit.data.model.kml.ExtendedData;
 import org.geotoolkit.data.model.kml.IdAttributes;
 import org.geotoolkit.data.model.kml.Kml;
 import org.geotoolkit.data.model.kml.Region;
-import org.geotoolkit.data.model.xal.Xal;
 import org.geotoolkit.feature.DefaultComplexAttribute;
 import org.geotoolkit.feature.DefaultFeature;
 import org.geotoolkit.feature.DefaultName;
@@ -57,10 +53,6 @@ public class App {
         properties.add(new DefaultProperty("rue jean moulin", adressType.getDescriptor("rue")));
         properties.add(new DefaultProperty("montmartre", adressType.getDescriptor("ville")));
         ComplexAttribute adress1 = new DefaultComplexAttribute(properties,  descAdress, new DefaultFeatureId("RR"));
-
-
-
-
 
         ftb.reset();
         ftb.setName("Personne");

@@ -2,6 +2,7 @@ package org.geotoolkit.data.model.kml;
 
 import java.util.List;
 import org.geotoolkit.data.model.xsd.SimpleType;
+import static org.geotoolkit.data.model.KmlModelConstants.*;
 import static java.util.Collections.*;
 
 /**
@@ -10,15 +11,27 @@ import static java.util.Collections.*;
  */
 public class DefaultCamera extends DefaultAbstractView implements Camera {
 
-    private final Angle180 longitude;
-    private final Angle90 latitude;
-    private final double altitude;
-    private final Angle360 heading;
-    private final Anglepos180 tilt;
-    private final Angle180 roll;
-    private final AltitudeMode altitudeMode;
-    private final List<SimpleType> cameraSimpleExtensions;
-    private final List<AbstractObject> cameraObjectExtensions;
+    private Angle180 longitude;
+    private Angle90 latitude;
+    private double altitude;
+    private Angle360 heading;
+    private Anglepos180 tilt;
+    private Angle180 roll;
+    private AltitudeMode altitudeMode;
+    private List<SimpleType> cameraSimpleExtensions;
+    private List<AbstractObject> cameraObjectExtensions;
+
+    public DefaultCamera(){
+        super();
+        this.longitude = null;
+        this.latitude = null;
+        this.heading = null;
+        this.tilt = null;
+        this.roll = null;
+        this.altitudeMode = null;
+        this.cameraSimpleExtensions = EMPTY_LIST;
+        this.cameraObjectExtensions = EMPTY_LIST;
+    }
 
     /**
      * 
@@ -116,5 +129,72 @@ public class DefaultCamera extends DefaultAbstractView implements Camera {
      */
     @Override
     public List<AbstractObject> getCameraObjectExtensions() {return this.cameraObjectExtensions;}
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setLongitude(Angle180 longitude) {this.longitude = longitude;}
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setLatitude(Angle90 latitude) {this.latitude = latitude;}
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setAltitude(double altitude) {this.altitude = altitude;}
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setHeading(Angle360 heading) {this.heading = heading;}
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setTilt(Anglepos180 tilt) {this.tilt = tilt;}
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setRoll(Angle180 roll) {this.roll = roll;}
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setAltitudeMode(AltitudeMode altitudeMode) {this.altitudeMode = altitudeMode;}
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setCameraSimpleExtensions(List<SimpleType> cameraSimpleExtensions) {
+        this.cameraSimpleExtensions = cameraSimpleExtensions;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setCameraObjectExtensions(List<AbstractObject> cameraObjectExtensions) {
+        this.cameraObjectExtensions = cameraObjectExtensions;
+    }
 
 }

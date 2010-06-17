@@ -49,7 +49,7 @@ public class AtomReader extends StaxStreamReader{
                         } else if (TAG_URI.equals(eName)) {
                             params.add(URI.create(reader.getElementText()));
                         } else if (TAG_EMAIL.equals(eName)) {
-                            params.add(this.atomFactory.createAtomEmail(reader.getElementText()));
+                            params.add(atomFactory.createAtomEmail(reader.getElementText()));
                         }
                     }
                     break;

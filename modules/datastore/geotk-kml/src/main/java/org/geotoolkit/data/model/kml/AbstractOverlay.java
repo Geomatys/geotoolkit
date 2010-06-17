@@ -61,4 +61,34 @@ public interface AbstractOverlay extends AbstractFeature{
      * @return the list of AbstractOverlay object extensions.
      */
     public List<AbstractObject> getAbstractOverlayObjectExtensions();
+
+    /**
+     *
+     * @param color
+     */
+    public void setColor(Color color);
+
+    /**
+     *
+     * @param drawOrder
+     */
+    public void setDrawOrder(int drawOrder);
+
+    /**
+     *
+     * @param link
+     */
+    public void setIcon(Icon link);
+
+    /**
+     *
+     * @param abstractOverlaySimpleExtensions
+     */
+    public void setAbstractOverlaySimpleExtensions(List<SimpleType> abstractOverlaySimpleExtensions);
+
+    /**
+     * 
+     * @param abstractOverlayObjectExtensions
+     */
+    public void setAbstractOverlayObjectExtensions(List<AbstractObject> abstractOverlayObjectExtensions);
 }

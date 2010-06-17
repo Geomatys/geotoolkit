@@ -75,30 +75,41 @@ public class CameraTest {
 
      @Test
      public void cameraWriteTest() throws KmlException, IOException, XMLStreamException, ParserConfigurationException, SAXException{
-         final KmlFactory kmlFactory = new KmlFactoryDefault();
+        final KmlFactory kmlFactory = new KmlFactoryDefault();
 
-         Angle180 longitude = kmlFactory.createAngle180(4);
-         Angle90 latitude = kmlFactory.createAngle90(43);
-         Angle360 heading = kmlFactory.createAngle360(2);
-         Anglepos180 tilt = kmlFactory.createAnglepos180(0);
-         Angle180 roll = kmlFactory.createAngle180(0);
-         Camera camera = kmlFactory.createCamera(null, null, null, null, longitude, latitude, 625, heading, tilt, roll, AltitudeMode.RELATIVE_TO_GROUND, null, null);
+        Angle180 longitude = kmlFactory.createAngle180(4);
+        Angle90 latitude = kmlFactory.createAngle90(43);
+        double altitude = 625;
+        Angle360 heading = kmlFactory.createAngle360(2);
+        Anglepos180 tilt = kmlFactory.createAnglepos180(0);
+        Angle180 roll = kmlFactory.createAngle180(0);
+         
+        final Camera camera = kmlFactory.createCamera();
+        camera.setLongitude(longitude);
+        camera.setLatitude(latitude);
+        camera.setAltitude(altitude);
+        camera.setHeading(heading);
+        camera.setTilt(tilt);
+        camera.setRoll(roll);
+        camera.setAltitudeMode(AltitudeMode.RELATIVE_TO_GROUND);
 
-         final PhotoOverlay photoOverlay = kmlFactory.createPhotoOverlay(null, null, null, DEF_VISIBILITY,
-                 DEF_OPEN, null, null, null, null, null, null, null, camera,
-                 null, null, null, null, null, null, null, null, DEF_DRAW_ORDER, null, null, null,
-                 DEF_ROTATION, null, null, null, null, null, null);
-         final Kml kml = kmlFactory.createKml(null, photoOverlay, null, null);
+        final PhotoOverlay photoOverlay = kmlFactory.createPhotoOverlay();
+        photoOverlay.setView(camera);
+        photoOverlay.setVisibility(DEF_VISIBILITY);
+        photoOverlay.setOpen(DEF_OPEN);
+        photoOverlay.setDrawOrder(DEF_DRAW_ORDER);
+        photoOverlay.setRotation(DEF_ROTATION);
+        final Kml kml = kmlFactory.createKml(null, photoOverlay, null, null);
 
-         File temp = File.createTempFile("testKml",".kml");
-         temp.deleteOnExit();
+        File temp = File.createTempFile("testKml",".kml");
+        temp.deleteOnExit();
 
-         KmlWriter writer = new KmlWriter();
-         writer.setOutput(temp);
-         writer.write(kml);
-         writer.dispose();
+        KmlWriter writer = new KmlWriter();
+        writer.setOutput(temp);
+        writer.write(kml);
+        writer.dispose();
 
-         DomCompare.compare(
+        DomCompare.compare(
                  new File("src/test/resources/org/geotoolkit/data/kml/camera.kml"), temp);
 
      }

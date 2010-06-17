@@ -89,4 +89,58 @@ public interface Camera extends AbstractView {
      */
     public List<AbstractObject> getCameraObjectExtensions();
 
+    /**
+     *
+     * @param longitude
+     */
+    public void setLongitude(Angle180 longitude);
+
+    /**
+     *
+     * @param latitude
+     */
+    public void setLatitude(Angle90 latitude);
+
+    /**
+     *
+     * @param atitude
+     */
+    public void setAltitude(double altitude);
+
+    /**
+     *
+     * @param heading
+     */
+    public void setHeading(Angle360 heading);
+
+    /**
+     *
+     * @param tilt
+     */
+    public void setTilt(Anglepos180 tilt);
+
+    /**
+     *
+     * @param roll
+     */
+    public void setRoll(Angle180 roll);
+
+    /**
+     *
+     * @param altitudeMode
+     */
+    public void setAltitudeMode(AltitudeMode altitudeMode);
+
+    /**
+     *
+     * @param cameraSimpleExtensions
+     */
+    public void setCameraSimpleExtensions(List<SimpleType> cameraSimpleExtensions);
+
+    /**
+     * 
+     * @param cameraObjectExtensions
+     */
+    public void setCameraObjectExtensions(List<AbstractObject> cameraObjectExtensions);
+
 }

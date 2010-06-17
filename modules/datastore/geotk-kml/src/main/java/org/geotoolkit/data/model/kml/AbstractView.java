@@ -40,4 +40,16 @@ public interface AbstractView extends AbstractObject{
      */
     public List<AbstractObject> getAbstractViewObjectExtensions();
 
+    /**
+     *
+     * @param abstractViewSimpleExtensions
+     */
+    public void setAbstractViewSimpleExtensions(List<SimpleType> abstractViewSimpleExtensions);
+
+    /**
+     * 
+     * @param abstractViewObjectExtensions
+     */
+    public void setAbstractViewObjectExtensions(List<AbstractObject> abstractViewObjectExtensions);
+
 }

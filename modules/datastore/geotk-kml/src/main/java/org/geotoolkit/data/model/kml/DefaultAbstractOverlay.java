@@ -14,11 +14,20 @@ import static java.util.Collections.*;
  */
 public abstract class DefaultAbstractOverlay extends DefaultAbstractFeature implements AbstractOverlay {
 
-    protected final Color color;
-    protected final int drawOrder;
-    protected final Icon icon;
-    protected final List<SimpleType> abstractOveraySimpleExtensions;
-    protected final List<AbstractObject> abstractOverlayObjectExtensions;
+    protected Color color;
+    protected int drawOrder;
+    protected Icon icon;
+    protected List<SimpleType> abstractOveraySimpleExtensions;
+    protected List<AbstractObject> abstractOverlayObjectExtensions;
+
+    /**
+     * 
+     */
+    protected DefaultAbstractOverlay(){
+        super();
+        this.abstractOveraySimpleExtensions = EMPTY_LIST;
+        this.abstractOverlayObjectExtensions = EMPTY_LIST;
+    }
 
     /**
      *
@@ -108,5 +117,44 @@ public abstract class DefaultAbstractOverlay extends DefaultAbstractFeature impl
      */
     @Override
     public List<AbstractObject> getAbstractOverlayObjectExtensions() {return this.abstractOverlayObjectExtensions;}
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setColor(Color color){this.color = color;}
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setDrawOrder(int drawOrder){this.drawOrder = drawOrder;}
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setIcon(Icon icon){this.icon = icon;}
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setAbstractOverlaySimpleExtensions(List<SimpleType> abstractOverlaySimpleExtensions){
+        this.abstractOveraySimpleExtensions = abstractOverlaySimpleExtensions;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setAbstractOverlayObjectExtensions(List<AbstractObject> abstractOverlayObjectExtensions){
+        this.abstractOverlayObjectExtensions = abstractOverlayObjectExtensions;
+    }
 
 }

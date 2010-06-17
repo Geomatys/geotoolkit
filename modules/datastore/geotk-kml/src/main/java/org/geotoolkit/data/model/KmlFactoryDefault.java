@@ -5,9 +5,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.geotoolkit.data.model.atom.AtomLink;
-import org.geotoolkit.data.model.atom.DefaultAtomLink;
 import org.geotoolkit.data.model.atom.AtomPersonConstruct;
-import org.geotoolkit.data.model.atom.DefaultAtomPersonConstruct;
 import org.geotoolkit.data.model.kml.AbstractContainer;
 import org.geotoolkit.data.model.kml.AbstractFeature;
 import org.geotoolkit.data.model.kml.AbstractGeometry;
@@ -222,14 +220,6 @@ public class KmlFactoryDefault implements KmlFactory{
      * @{@inheritDoc }
      */
     @Override
-    public AtomLink createAtomLinkDefault(String href, String rel, String type, String hreflang, String title, String length){
-        return new DefaultAtomLink(href, rel, type, hreflang, title, length);
-    }
-
-    /**
-     * @{@inheritDoc }
-     */
-    @Override
     public BalloonStyle createBalloonStyle(List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
             List<SimpleType> subStyleSimpleExtensions, List<AbstractObject> subStyleObjectExtensions,
             Color bgColor, Color textColor, String text, DisplayMode displayMode,
@@ -272,6 +262,12 @@ public class KmlFactoryDefault implements KmlFactory{
                 longitude, latitude, altitude, heading, tilt, roll, altitudeMode,
                 cameraSimpleExtensions, cameraObjectExtensions);
     }
+
+    /**
+     * @{@inheritDoc }
+     */
+    @Override
+    public Camera createCamera(){return new DefaultCamera();}
 
     /**
      * @{@inheritDoc }
@@ -772,6 +768,14 @@ public class KmlFactoryDefault implements KmlFactory{
                 abstractOveraySimpleExtensions, abstractOverlayObjectExtensions,
                 rotation, viewVolume, imagePyramid, point, shape,
                 photoOverlaySimpleExtensions, photoOverlayObjectExtensions);
+    }
+    
+    /**
+     * @{@inheritDoc }
+     */
+    @Override
+    public PhotoOverlay createPhotoOverlay(){
+        return new DefaultPhotoOverlay();
     }
 
     /**
