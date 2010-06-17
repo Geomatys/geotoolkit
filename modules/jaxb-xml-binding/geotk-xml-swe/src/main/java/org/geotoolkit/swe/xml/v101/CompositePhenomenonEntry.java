@@ -93,6 +93,23 @@ public class CompositePhenomenonEntry extends CompoundPhenomenonEntry implements
         }
         return result;
     }
+
+    /**
+     * Return true if the composite phenomenon contains the specified phenomenon.
+     * 
+     * @param phenomenonId
+     * @return
+     */
+    public boolean containsPhenomenon(String phenomenonId) {
+        if (component != null) {
+            for (PhenomenonPropertyType pheno : component) {
+                if (pheno.getPhenomenon().getId().equals(phenomenonId)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
     
     /**
      * Return the components.

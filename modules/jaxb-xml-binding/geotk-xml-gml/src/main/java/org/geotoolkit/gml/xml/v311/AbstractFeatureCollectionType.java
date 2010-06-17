@@ -80,6 +80,23 @@ public abstract class AbstractFeatureCollectionType extends AbstractFeatureEntry
     }
 
     /**
+     * Return true if the feature colelction contains the specified feature.
+     *
+     * @param featureId
+     * @return
+     */
+    public boolean containsFeature(String featureId) {
+        if (featureMember == null) {
+            for (FeaturePropertyType feat : featureMember) {
+                if (feat.getHref() != null && feat.getHref().equals(featureId)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
      * Gets the value of the featureMembers property.
      * 
      * @return

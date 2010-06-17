@@ -108,7 +108,7 @@ public class OperationsMetadata implements AbstractOperationsMetadata {
      */
     public Operation getOperation(String operationName) {
         for (Operation op: operation){
-            if (op.getName().equals(operationName)) {
+            if (op.getName().equalsIgnoreCase(operationName)) {
                 return op;
             }
         }
@@ -122,7 +122,7 @@ public class OperationsMetadata implements AbstractOperationsMetadata {
      */
     public void removeOperation(String operationName) {
         for (Operation op: operation){
-            if (op.getName().equals(operationName)) {
+            if (op.getName().equalsIgnoreCase(operationName)) {
                 operation.remove(op);
                 return;
             }
@@ -152,7 +152,7 @@ public class OperationsMetadata implements AbstractOperationsMetadata {
             constraint = new ArrayList<DomainType>();
         
         for (DomainType d : constraint) {
-            if (d.getName().equals(name))
+            if (d.getName().equalsIgnoreCase(name))
                 return d;
         }
         return null; 
@@ -165,7 +165,7 @@ public class OperationsMetadata implements AbstractOperationsMetadata {
         }
         
         for (DomainType d : constraint) {
-            if (d.getName().equals(name))
+            if (d.getName().equalsIgnoreCase(name))
                 constraint.remove(d);
         }
     }

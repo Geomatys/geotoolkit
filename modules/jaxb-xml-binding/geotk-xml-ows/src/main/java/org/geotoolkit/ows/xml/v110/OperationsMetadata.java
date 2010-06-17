@@ -116,7 +116,7 @@ public class OperationsMetadata implements AbstractOperationsMetadata {
      */
     public Operation getOperation(String operationName) {
         for (Operation op: operation){
-            if (op.getName().equals(operationName)) {
+            if (op.getName().equalsIgnoreCase(operationName)) {
                 return op;
             }
         }
