@@ -1,9 +1,11 @@
 package org.geotoolkit.data.kml;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
 import org.geotoolkit.data.model.AtomFactory;
 import org.geotoolkit.data.model.AtomFactoryDefault;
 import org.geotoolkit.data.model.atom.AtomLink;
@@ -23,15 +25,15 @@ public class AtomReader extends StaxStreamReader{
         super();
     }
 
+    public XMLStreamReader getReader(){return this.reader;}
+
     /**
      *
      * @return
      * @throws XMLStreamException
      */
     public AtomPersonConstruct readAuthor() throws XMLStreamException {
-        List<String> names = new ArrayList<String>();
-        List<String> uris = new ArrayList<String>();
-        List<String> emails = new ArrayList<String>();
+        List<Object> params = new ArrayList<Object>();
 
         boucle:
         while (reader.hasNext()) {
@@ -43,11 +45,11 @@ public class AtomReader extends StaxStreamReader{
 
                     if (URI_ATOM.equals(eUri)) {
                         if (TAG_NAME.equals(eName)) {
-                            names.add(reader.getElementText());
+                            params.add(reader.getElementText());
                         } else if (TAG_URI.equals(eName)) {
-                            uris.add(reader.getElementText());
+                            params.add(URI.create(reader.getElementText()));
                         } else if (TAG_EMAIL.equals(eName)) {
-                            emails.add(reader.getElementText());
+                            params.add(this.atomFactory.createAtomEmail(reader.getElementText()));
                         }
                     }
                     break;
@@ -61,7 +63,7 @@ public class AtomReader extends StaxStreamReader{
 
         }
 
-        return AtomReader.atomFactory.createAtomPersonConstruct(names, uris, emails);
+        return AtomReader.atomFactory.createAtomPersonConstruct(params);
     }
 
     /**

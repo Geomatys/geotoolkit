@@ -41,4 +41,41 @@ public interface AtomLink {
      * @return
      */
     public String getLength();
+
+        /**
+     *
+     * @param href
+     */
+    public void setHref(final String href);
+
+    /**
+     *
+     * @param rel
+     */
+    public void setRel(final String rel);
+
+    /**
+     *
+     * @param type
+     */
+    public void setType(final String type);
+
+    /**
+     *
+     * @param hreflang
+     */
+    public void setHreflang(final String hreflang);
+
+    /**
+     *
+     * @param title
+     */
+    public void setTitle(final String title);
+
+    /**
+     *
+     * @param length
+     */
+    public void setLength(final String length);
+
 }

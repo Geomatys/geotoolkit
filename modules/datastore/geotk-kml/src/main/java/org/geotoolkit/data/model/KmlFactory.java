@@ -171,15 +171,6 @@ public interface KmlFactory {
 
     /**
      *
-     * @param names
-     * @param uris
-     * @param emails
-     * @return
-     */
-    public AtomPersonConstruct createAtomPersonConstruct(List<String> names, List<String> uris, List<String> emails);
-
-    /**
-     *
      * @param objectSimpleExtensions
      * @param idAttributes
      * @param subStyleSimpleExtensions

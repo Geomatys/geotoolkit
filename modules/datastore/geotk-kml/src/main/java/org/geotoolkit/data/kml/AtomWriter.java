@@ -1,7 +1,9 @@
 package org.geotoolkit.data.kml;
 
+import java.net.URI;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
+import org.geotoolkit.data.model.atom.AtomEmail;
 import org.geotoolkit.data.model.atom.AtomLink;
 import org.geotoolkit.data.model.atom.AtomPersonConstruct;
 import org.geotoolkit.xml.StaxStreamWriter;
@@ -26,19 +28,15 @@ public class AtomWriter extends StaxStreamWriter{
      */
     public void writeAuthor(AtomPersonConstruct author) throws XMLStreamException{
         writer.writeStartElement(URI_ATOM,TAG_AUTHOR);
-        if (author.getNames() != null){
-            for (String name : author.getNames()){
-                this.writeName(name);
-            }
-        }
-        if (author.getUris() != null){
-            for (String uri : author.getUris()){
-                this.writeUri(uri);
-            }
-        }
-        if (author.getEmails() != null){
-            for (String email : author.getEmails()){
-                this.writeEmail(email);
+        if (author.getParams() != null){
+            for (Object param : author.getParams()){
+                if (param instanceof String){
+                    this.writeName((String) param);
+                } else if (param instanceof URI){
+                    this.writeUri((URI) param);
+                } else if (param instanceof AtomEmail){
+                    this.writeEmail((AtomEmail) param);
+                }
             }
         }
         writer.writeEndElement();
@@ -88,9 +86,9 @@ public class AtomWriter extends StaxStreamWriter{
      * @param uri
      * @throws XMLStreamException
      */
-    private void writeUri(String uri) throws XMLStreamException {
+    private void writeUri(URI uri) throws XMLStreamException {
         writer.writeStartElement(URI_ATOM,TAG_URI);
-        writer.writeCharacters(uri);
+        writer.writeCharacters(uri.toString());
         writer.writeEndElement();
     }
 
@@ -99,9 +97,9 @@ public class AtomWriter extends StaxStreamWriter{
      * @param email
      * @throws XMLStreamException
      */
-    private void writeEmail(String email) throws XMLStreamException {
+    private void writeEmail(AtomEmail email) throws XMLStreamException {
         writer.writeStartElement(URI_ATOM,TAG_EMAIL);
-        writer.writeCharacters(email);
+        writer.writeCharacters(email.getAddress());
         writer.writeEndElement();
     }
 }

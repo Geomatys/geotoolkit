@@ -12,17 +12,11 @@ public interface AtomPersonConstruct {
      *
      * @return
      */
-    public List<String> getNames();
-
-    /**
-     *
-     * @return
-     */
-    public List<String> getUris();
+    public List<Object> getParams();
 
     /**
      * 
-     * @return
+     * @param params
      */
-    public List<String> getEmails();
+    public void setParams(final List<Object> params);
 }

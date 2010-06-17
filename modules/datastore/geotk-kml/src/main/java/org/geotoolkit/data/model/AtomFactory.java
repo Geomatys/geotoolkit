@@ -1,6 +1,7 @@
 package org.geotoolkit.data.model;
 
 import java.util.List;
+import org.geotoolkit.data.model.atom.AtomEmail;
 import org.geotoolkit.data.model.atom.AtomLink;
 import org.geotoolkit.data.model.atom.AtomPersonConstruct;
 
@@ -21,13 +22,37 @@ public interface AtomFactory {
      * @return
      */
     public AtomLink createAtomLink(String href, String rel, String type, String hreflang, String title, String length);
-
+    
     /**
      * 
-     * @param names
-     * @param uris
-     * @param emails
      * @return
      */
-    public AtomPersonConstruct createAtomPersonConstruct(List<String> names, List<String> uris, List<String> emails);
+    public AtomLink createAtomLink();
+
+    /**
+     *
+     * @param params
+     * @return
+     */
+    public AtomPersonConstruct createAtomPersonConstruct(List<Object> params);
+    
+    /**
+     * 
+     * @return
+     */
+    public AtomPersonConstruct createAtomPersonConstruct();
+
+
+     /**
+      *
+      * @param address
+      * @return
+      */
+    public AtomEmail createAtomEmail(String address);
+    
+    /**
+     * 
+     * @return
+     */
+    public AtomEmail createAtomEmail();
 }

@@ -5,9 +5,9 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.geotoolkit.data.model.atom.AtomLink;
-import org.geotoolkit.data.model.atom.AtomLinkDefault;
+import org.geotoolkit.data.model.atom.DefaultAtomLink;
 import org.geotoolkit.data.model.atom.AtomPersonConstruct;
-import org.geotoolkit.data.model.atom.AtomPersonConstructDefault;
+import org.geotoolkit.data.model.atom.DefaultAtomPersonConstruct;
 import org.geotoolkit.data.model.kml.AbstractContainer;
 import org.geotoolkit.data.model.kml.AbstractFeature;
 import org.geotoolkit.data.model.kml.AbstractGeometry;
@@ -223,15 +223,7 @@ public class KmlFactoryDefault implements KmlFactory{
      */
     @Override
     public AtomLink createAtomLinkDefault(String href, String rel, String type, String hreflang, String title, String length){
-        return new AtomLinkDefault(href, rel, type, hreflang, title, length);
-    }
-
-    /**
-     * @{@inheritDoc }
-     */
-    @Override
-    public AtomPersonConstruct createAtomPersonConstruct(List<String> names, List<String> uris, List<String> emails){
-        return new AtomPersonConstructDefault(names, uris, emails);
+        return new DefaultAtomLink(href, rel, type, hreflang, title, length);
     }
 
     /**
