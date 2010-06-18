@@ -63,7 +63,7 @@ public interface Camera extends AbstractView {
      *
      * @return the tilt angle.
      */
-    public Anglepos180 getTilt();
+    public double getTilt();
 
     /**
      *
@@ -117,7 +117,7 @@ public interface Camera extends AbstractView {
      *
      * @param tilt
      */
-    public void setTilt(Anglepos180 tilt);
+    public void setTilt(double tilt);
 
     /**
      *

@@ -41,4 +41,16 @@ public interface AbstractContainer extends AbstractFeature {
      */
     public List<AbstractObject> getAbstractContainerObjectExtensions();
 
+    /**
+     *
+     * @param abstractContainerSimpleExtensions
+     */
+    public void setAbstractContainerSimpleExtensions(List<SimpleType> containerSimpleExtensions);
+
+    /**
+     *
+     * @param abstractContainerObjectExtensions
+     */
+    public void setAbstractContainerObjectExtensions(List<AbstractObject> containerObjectExtensions);
+
 }

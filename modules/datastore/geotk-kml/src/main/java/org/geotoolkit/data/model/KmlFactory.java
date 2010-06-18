@@ -16,7 +16,6 @@ import org.geotoolkit.data.model.kml.AltitudeMode;
 import org.geotoolkit.data.model.kml.Angle180;
 import org.geotoolkit.data.model.kml.Angle360;
 import org.geotoolkit.data.model.kml.Angle90;
-import org.geotoolkit.data.model.kml.Anglepos180;
 import org.geotoolkit.data.model.kml.BalloonStyle;
 import org.geotoolkit.data.model.kml.BasicLink;
 import org.geotoolkit.data.model.kml.Boundary;
@@ -139,14 +138,6 @@ public interface KmlFactory {
      * @return
      * @throws KmlException
      */
-    public Anglepos180 createAnglepos180(double angle) throws KmlException;
-
-    /**
-     *
-     * @param angle
-     * @return
-     * @throws KmlException
-     */
     public Angle360 createAngle360(double angle) throws KmlException;
 
     /**
@@ -218,7 +209,7 @@ public interface KmlFactory {
     public Camera createCamera(List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
             List<SimpleType> abstractViewSimpleExtensions, List<AbstractObject> abstractViewObjectExtensions,
             Angle180 longitude, Angle90 latitude, double altitude,
-            Angle360 heading, Anglepos180 tilt, Angle180 roll, AltitudeMode altitudeMode,
+            Angle360 heading, double tilt, Angle180 roll, AltitudeMode altitudeMode,
             List<SimpleType> cameraSimpleExtensions, List<AbstractObject> cameraObjectExtensions);
 
     /**
@@ -386,6 +377,12 @@ public interface KmlFactory {
             List<AbstractFeature> features,
             List<SimpleType> folderSimpleExtensions,
             List<AbstractObject> folderObjectExtensions);
+
+    /**
+     * 
+     * @return
+     */
+    public Folder createFolder();
 
     /**
      *
@@ -734,8 +731,14 @@ public interface KmlFactory {
     public LookAt createLookAt(List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
             List<SimpleType> abstractViewSimpleExtensions, List<AbstractObject> abstractViewObjectExtensions,
             Angle180 longitude, Angle90 latitude, double altitude,
-            Angle360 heading, Anglepos180 tilt, double range,
+            Angle360 heading, double tilt, double range,
             List<SimpleType> lookAtSimpleExtensions, List<AbstractObject> lookAtObjectExtensions);
+
+    /**
+     * 
+     * @return
+     */
+    public LookAt createLookAt();
 
     /**
      *
@@ -853,7 +856,7 @@ public interface KmlFactory {
      */
     public Orientation createOrientation(List<SimpleType> objectSimpleExtensions,
             IdAttributes idAttributes,
-            Angle360 heading, Anglepos180 tilt, Angle180 roll,
+            Angle360 heading, double tilt, Angle180 roll,
             List<SimpleType> orientationSimpleExtensions,
             List<AbstractObject> orientationObjectExtensions);
 

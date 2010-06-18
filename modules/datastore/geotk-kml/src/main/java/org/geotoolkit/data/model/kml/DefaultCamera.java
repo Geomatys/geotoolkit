@@ -15,20 +15,14 @@ public class DefaultCamera extends DefaultAbstractView implements Camera {
     private Angle90 latitude;
     private double altitude;
     private Angle360 heading;
-    private Anglepos180 tilt;
+    private double tilt;
     private Angle180 roll;
     private AltitudeMode altitudeMode;
     private List<SimpleType> cameraSimpleExtensions;
     private List<AbstractObject> cameraObjectExtensions;
 
     public DefaultCamera(){
-        super();
-        this.longitude = null;
-        this.latitude = null;
-        this.heading = null;
-        this.tilt = null;
-        this.roll = null;
-        this.altitudeMode = null;
+        this.altitude = DEF_ALTITUDE;
         this.cameraSimpleExtensions = EMPTY_LIST;
         this.cameraObjectExtensions = EMPTY_LIST;
     }
@@ -52,7 +46,7 @@ public class DefaultCamera extends DefaultAbstractView implements Camera {
     public DefaultCamera(List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
             List<SimpleType> abstractViewSimpleExtensions, List<AbstractObject> abstractViewObjectExtensions,
             Angle180 longitude, Angle90 latitude, double altitude,
-            Angle360 heading, Anglepos180 tilt, Angle180 roll, AltitudeMode altitudeMode,
+            Angle360 heading, double tilt, Angle180 roll, AltitudeMode altitudeMode,
             List<SimpleType> cameraSimpleExtensions, List<AbstractObject> cameraObjectExtensions){
         super(objectSimpleExtensions, idAttributes,
                 abstractViewSimpleExtensions, abstractViewObjectExtensions);
@@ -100,7 +94,7 @@ public class DefaultCamera extends DefaultAbstractView implements Camera {
      * @{@inheritDoc }
      */
     @Override
-    public Anglepos180 getTilt() {return this.tilt;}
+    public double getTilt() {return this.tilt;}
 
     /**
      *
@@ -163,7 +157,7 @@ public class DefaultCamera extends DefaultAbstractView implements Camera {
      * @{@inheritDoc }
      */
     @Override
-    public void setTilt(Anglepos180 tilt) {this.tilt = tilt;}
+    public void setTilt(double tilt) {this.tilt = tilt;}
 
     /**
      *

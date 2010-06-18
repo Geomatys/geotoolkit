@@ -22,8 +22,6 @@ import org.geotoolkit.data.model.kml.Angle360;
 import org.geotoolkit.data.model.kml.DefaultAngle360;
 import org.geotoolkit.data.model.kml.Angle90;
 import org.geotoolkit.data.model.kml.DefaultAngle90;
-import org.geotoolkit.data.model.kml.Anglepos180;
-import org.geotoolkit.data.model.kml.DefaultAnglepos180;
 import org.geotoolkit.data.model.kml.BalloonStyle;
 import org.geotoolkit.data.model.kml.DefaultBalloonStyle;
 import org.geotoolkit.data.model.kml.BasicLink;
@@ -196,14 +194,6 @@ public class KmlFactoryDefault implements KmlFactory{
      * @{@inheritDoc }
      */
     @Override
-    public Anglepos180 createAnglepos180(double angle) throws KmlException{
-        return new DefaultAnglepos180(angle);
-    }
-
-    /**
-     * @{@inheritDoc }
-     */
-    @Override
     public Angle360 createAngle360(double angle) throws KmlException{
         return new DefaultAngle360(angle);
     }
@@ -255,7 +245,7 @@ public class KmlFactoryDefault implements KmlFactory{
     public Camera createCamera(List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
             List<SimpleType> abstractViewSimpleExtensions, List<AbstractObject> abstractViewObjectExtensions,
             Angle180 longitude, Angle90 latitude, double altitude,
-            Angle360 heading, Anglepos180 tilt, Angle180 roll, AltitudeMode altitudeMode,
+            Angle360 heading, double tilt, Angle180 roll, AltitudeMode altitudeMode,
             List<SimpleType> cameraSimpleExtensions, List<AbstractObject> cameraObjectExtensions){
         return new DefaultCamera(objectSimpleExtensions, idAttributes,
                 abstractViewSimpleExtensions, abstractViewObjectExtensions,
@@ -393,6 +383,14 @@ public class KmlFactoryDefault implements KmlFactory{
                 abstractFeatureSimpleExtensions, abstractFeatureObjectExtensions,
                 abstractContainerSimpleExtensions, abstractContainerObjectExtensions,
                 features, folderSimpleExtensions, folderObjectExtensions);
+    }
+
+    /**
+     * @{@inheritDoc }
+     */
+    @Override
+    public Folder createFolder(){
+        return new DefaultFolder();
     }
 
     /**
@@ -640,12 +638,20 @@ public class KmlFactoryDefault implements KmlFactory{
     public LookAt createLookAt(List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
             List<SimpleType> abstractViewSimpleExtensions, List<AbstractObject> abstractViewObjectExtensions,
             Angle180 longitude, Angle90 latitude, double altitude,
-            Angle360 heading, Anglepos180 tilt, double range,
+            Angle360 heading, double tilt, double range,
             List<SimpleType> lookAtSimpleExtensions, List<AbstractObject> lookAtObjectExtensions){
         return new DefaultLookAt(objectSimpleExtensions, idAttributes,
                 abstractViewSimpleExtensions, abstractViewObjectExtensions,
                 longitude, latitude, altitude, heading, tilt, range,
                 lookAtSimpleExtensions, lookAtObjectExtensions);
+    }
+
+    /**
+     * @{@inheritDoc }
+     */
+    @Override
+    public LookAt createLookAt(){
+        return new DefaultLookAt();
     }
 
     /**
@@ -722,7 +728,7 @@ public class KmlFactoryDefault implements KmlFactory{
     @Override
     public Orientation createOrientation(List<SimpleType> objectSimpleExtensions,
             IdAttributes idAttributes,
-            Angle360 heading, Anglepos180 tilt, Angle180 roll,
+            Angle360 heading, double tilt, Angle180 roll,
             List<SimpleType> orientationSimpleExtensions,
             List<AbstractObject> orientationObjectExtensions){
         return new DefaultOrientation(objectSimpleExtensions, idAttributes,
@@ -1074,27 +1080,6 @@ public class KmlFactoryDefault implements KmlFactory{
                 angle = new DefaultAngle180(-180.0);
             }
 
-        } catch (KmlException ex) {
-            Logger.getLogger(KmlFactoryDefault.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return angle;
-    }
-
-    /**
-     * <p>This method creates a default Anglepos180.</p>
-     *
-     * <p>Use the appropriate ANGLE_MIN, ANGLE_ZERO or ANGLE_MAX
-     * values to obtain a default angle.</p>
-     *
-     * @param flag
-     * @return
-     */
-    public static Anglepos180 createAnglepos180(String flag){
-        Anglepos180 angle = null;
-        try {
-            if ("zero".equals(flag)) {
-                angle = new DefaultAnglepos180(0.0);
-            }
         } catch (KmlException ex) {
             Logger.getLogger(KmlFactoryDefault.class.getName()).log(Level.SEVERE, null, ex);
         }

@@ -13,9 +13,13 @@ import static java.util.Collections.*;
  */
 public class DefaultAbstractContainer extends DefaultAbstractFeature implements AbstractContainer {
 
-    protected final List<SimpleType> containerSimpleExtensions;
-    protected final List<AbstractObject> containerObjectExtensions;
+    protected List<SimpleType> containerSimpleExtensions;
+    protected List<AbstractObject> containerObjectExtensions;
 
+    protected DefaultAbstractContainer(){
+        containerSimpleExtensions = EMPTY_LIST;
+        containerObjectExtensions = EMPTY_LIST;
+    }
     /**
      *
      * @param objectSimpleExtensions
@@ -73,11 +77,26 @@ public class DefaultAbstractContainer extends DefaultAbstractFeature implements 
     @Override
     public List<AbstractObject> getAbstractContainerObjectExtensions() {return this.featureObjectExtensions;}
 
+    /**
+     * @{@inheritDoc}
+     */
+    @Override
+    public void setAbstractContainerSimpleExtensions(List<SimpleType> containerSimpleExtensions) {
+        this.containerSimpleExtensions = containerSimpleExtensions;
+    }
+
+    /**
+     * @{@inheritDoc}
+     */
+    @Override
+    public void setAbstractContainerObjectExtensions(List<AbstractObject> containerObjectExtensions) {
+        this.containerObjectExtensions = containerObjectExtensions;
+    }
+
     @Override
     public String toString(){
         String resultat = super.toString()+
                 "\n\tAbstractContainerDefault : ";
         return resultat;
     }
-
 }

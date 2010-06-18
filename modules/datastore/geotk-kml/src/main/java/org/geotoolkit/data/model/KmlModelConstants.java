@@ -5,7 +5,6 @@ import org.geotoolkit.data.model.kml.AltitudeMode;
 import org.geotoolkit.data.model.kml.Angle180;
 import org.geotoolkit.data.model.kml.Angle360;
 import org.geotoolkit.data.model.kml.Angle90;
-import org.geotoolkit.data.model.kml.Anglepos180;
 import org.geotoolkit.data.model.kml.ColorMode;
 import org.geotoolkit.data.model.kml.DisplayMode;
 import org.geotoolkit.data.model.kml.GridOrigin;
@@ -243,7 +242,7 @@ public final class KmlModelConstants {
     public static final Angle180 DEF_SOUTH = KmlFactoryDefault.createAngle180(ANGLE_MIN);
     public static final Color DEF_TEXT_COLOR = new Color(0,0,0,255);
     public static final Angle90 DEF_TOP_FOV = KmlFactoryDefault.createAngle90(ANGLE_ZERO);
-    public static final Anglepos180 DEF_TILT = KmlFactoryDefault.createAnglepos180(ANGLE_ZERO);
+    public static final double DEF_TILT = 0.0;
     public static final Angle180 DEF_WEST = KmlFactoryDefault.createAngle180(ANGLE_MIN);
 
     // OTHER DEFAULT VALUES

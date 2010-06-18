@@ -2,6 +2,7 @@ package org.geotoolkit.data.model.kml;
 
 import java.util.List;
 import org.geotoolkit.data.model.xsd.SimpleType;
+import static org.geotoolkit.data.model.KmlModelConstants.*;
 import static java.util.Collections.*;
 
 /**
@@ -10,14 +11,25 @@ import static java.util.Collections.*;
  */
 public class DefaultLookAt extends DefaultAbstractView implements LookAt {
 
-    private final Angle180 longitude;
-    private final Angle90 latitude;
-    private final double altitude;
-    private final Angle360 heading;
-    private final Anglepos180 tilt;
-    private final double range;
-    private final List<SimpleType> lookAtSimpleExtensions;
-    private final List<AbstractObject> lookAtObjectExtensions;
+    private Angle180 longitude;
+    private Angle90 latitude;
+    private double altitude;
+    private Angle360 heading;
+    private double tilt;
+    private double range;
+    private List<SimpleType> lookAtSimpleExtensions;
+    private List<AbstractObject> lookAtObjectExtensions;
+
+    /**
+     * 
+     */
+    public DefaultLookAt(){
+        this.altitude = DEF_ALTITUDE;
+        this.tilt = DEF_TILT;
+        this.range = DEF_RANGE;
+        this.lookAtSimpleExtensions = EMPTY_LIST;
+        this.lookAtObjectExtensions = EMPTY_LIST;
+    }
 
     /**
      *
@@ -37,7 +49,7 @@ public class DefaultLookAt extends DefaultAbstractView implements LookAt {
     public DefaultLookAt(List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
             List<SimpleType> abstractViewSimpleExtensions, List<AbstractObject> abstractViewObjectExtensions,
             Angle180 longitude, Angle90 latitude, double altitude,
-            Angle360 heading, Anglepos180 tilt, double range,
+            Angle360 heading, double tilt, double range,
             List<SimpleType> lookAtSimpleExtensions, List<AbstractObject> lookAtObjectExtensions){
         super(objectSimpleExtensions, idAttributes,
                 abstractViewSimpleExtensions, abstractViewObjectExtensions);
@@ -84,7 +96,7 @@ public class DefaultLookAt extends DefaultAbstractView implements LookAt {
      * @{@inheritDoc }
      */
     @Override
-    public Anglepos180 getTilt() {return this.tilt;}
+    public double getTilt() {return this.tilt;}
 
     /**
      *
@@ -106,5 +118,65 @@ public class DefaultLookAt extends DefaultAbstractView implements LookAt {
      */
     @Override
     public List<AbstractObject> getLookAtObjectExtensions() {return this.lookAtObjectExtensions;}
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setLongitude(Angle180 longitude) {this.longitude = longitude;}
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setLatitude(Angle90 latitude) {this.latitude = latitude;}
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setAltitude(double altitude) {this.altitude = altitude;}
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setHeading(Angle360 heading) {this.heading = heading;}
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setTilt(double tilt) {this.tilt = tilt;}
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setRange(double range) {this.range = range;}
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setLookAtSimpleExtensions(List<SimpleType> lookAtSimpleExtensions) {
+        this.lookAtSimpleExtensions = lookAtSimpleExtensions;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setLookAtObjectExtensions(List<AbstractObject> lookAtObjectExtensions) {
+        this.lookAtObjectExtensions = lookAtObjectExtensions;
+    }
 
 }

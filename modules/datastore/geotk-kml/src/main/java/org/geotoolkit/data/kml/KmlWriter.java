@@ -24,7 +24,6 @@ import org.geotoolkit.data.model.kml.AltitudeMode;
 import org.geotoolkit.data.model.kml.Angle180;
 import org.geotoolkit.data.model.kml.Angle360;
 import org.geotoolkit.data.model.kml.Angle90;
-import org.geotoolkit.data.model.kml.Anglepos180;
 import org.geotoolkit.data.model.kml.BalloonStyle;
 import org.geotoolkit.data.model.kml.BasicLink;
 import org.geotoolkit.data.model.kml.Boundary;
@@ -745,7 +744,7 @@ public class KmlWriter extends StaxStreamWriter {
         if (lookAt.getHeading() != null){
             this.writeHeading(lookAt.getHeading());
         }
-        if (lookAt.getTilt() != null){
+        if (isFiniteNumber(lookAt.getTilt())){
             this.writeTilt(lookAt.getTilt());
         }
         if (isFiniteNumber(lookAt.getRange())){
@@ -775,7 +774,7 @@ public class KmlWriter extends StaxStreamWriter {
         if (camera.getHeading() != null){
             this.writeHeading(camera.getHeading());
         }
-        if (camera.getTilt() != null){
+        if (isFiniteNumber(camera.getTilt())){
             this.writeTilt(camera.getTilt());
         }
         if (camera.getRoll() != null){
@@ -1732,7 +1731,7 @@ public class KmlWriter extends StaxStreamWriter {
         if (orientation.getHeading() != null){
             this.writeHeading(orientation.getHeading());
         }
-        if (orientation.getTilt() != null){
+        if (isFiniteNumber(orientation.getTilt())){
             this.writeTilt(orientation.getTilt());
         }
         if (orientation.getRoll() != null){
@@ -2915,10 +2914,10 @@ public class KmlWriter extends StaxStreamWriter {
      * @param tilt
      * @throws XMLStreamException
      */
-    private void writeTilt(Anglepos180 tilt) throws XMLStreamException{
-        if (!DEF_TILT.equals(tilt)){
+    private void writeTilt(double tilt) throws XMLStreamException{
+        if (DEF_TILT != tilt){
             writer.writeStartElement(URI_KML, TAG_TILT);
-            writer.writeCharacters(Double.toString(tilt.getAngle()));
+            writer.writeCharacters(Double.toString(KmlUtilities.checkAnglePos180(tilt)));
             writer.writeEndElement();
         }
     }

@@ -14,7 +14,6 @@ public abstract class DefaultAbstractView extends DefaultAbstractObject implemen
     protected List<AbstractObject> abstractViewObjectExtensions;
 
     protected DefaultAbstractView(){
-        super();
         this.abstractViewSimpleExtensions = EMPTY_LIST;
         this.abstractViewObjectExtensions = EMPTY_LIST;
     }

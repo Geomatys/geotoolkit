@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:xal="urn:oasis:names:tc:ciq:xsdschema:xAL:2.0">
+<Folder>
+<LookAt>
+<longitude>-122.0839597145766</longitude>
+<latitude>37.42222904525232</latitude>
+<altitude>1000.34</altitude>
+<heading>-148.4122922628044</heading>
+<tilt>40.5575073395506</tilt>
+<range>500.6566641072245</range>
+</LookAt>
+</Folder>
+</kml>

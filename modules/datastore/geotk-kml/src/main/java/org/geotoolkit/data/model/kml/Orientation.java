@@ -41,7 +41,7 @@ public interface Orientation extends AbstractObject {
      *
      * @return
      */
-    public Anglepos180 getTilt();
+    public double getTilt();
 
     /**
      *

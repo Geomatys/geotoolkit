@@ -12,7 +12,6 @@ import org.geotoolkit.data.model.kml.AltitudeMode;
 import org.geotoolkit.data.model.kml.Angle180;
 import org.geotoolkit.data.model.kml.Angle360;
 import org.geotoolkit.data.model.kml.Angle90;
-import org.geotoolkit.data.model.kml.Anglepos180;
 import org.geotoolkit.data.model.kml.Camera;
 import org.geotoolkit.data.model.kml.Kml;
 import org.geotoolkit.data.model.kml.KmlException;
@@ -70,6 +69,12 @@ public class CameraTest {
 
          final Camera camera = (Camera) view;
          assertEquals(4, camera.getLongitude().getAngle(), DELTA);
+         assertEquals(43, camera.getLatitude().getAngle(), DELTA);
+         assertEquals(625, camera.getAltitude(), DELTA);
+         assertEquals(2, camera.getHeading().getAngle(), DELTA);
+         assertEquals(1, camera.getTilt(), DELTA);
+         assertEquals(0, camera.getRoll().getAngle(), DELTA);
+         assertEquals(AltitudeMode.RELATIVE_TO_GROUND, camera.getAltitudeMode());
          
      }
 
@@ -81,7 +86,7 @@ public class CameraTest {
         Angle90 latitude = kmlFactory.createAngle90(43);
         double altitude = 625;
         Angle360 heading = kmlFactory.createAngle360(2);
-        Anglepos180 tilt = kmlFactory.createAnglepos180(0);
+        double tilt =1.0;
         Angle180 roll = kmlFactory.createAngle180(0);
          
         final Camera camera = kmlFactory.createCamera();
@@ -92,7 +97,6 @@ public class CameraTest {
         camera.setTilt(tilt);
         camera.setRoll(roll);
         camera.setAltitudeMode(AltitudeMode.RELATIVE_TO_GROUND);
-
         final PhotoOverlay photoOverlay = kmlFactory.createPhotoOverlay();
         photoOverlay.setView(camera);
         photoOverlay.setVisibility(DEF_VISIBILITY);

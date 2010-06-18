@@ -6,6 +6,7 @@ import org.geotoolkit.data.model.atom.AtomLink;
 import org.geotoolkit.data.model.atom.AtomPersonConstruct;
 import org.geotoolkit.data.model.xal.AddressDetails;
 import org.geotoolkit.data.model.xsd.SimpleType;
+import static org.geotoolkit.data.model.KmlModelConstants.*;
 import static java.util.Collections.*;
 
 /**
@@ -15,7 +16,7 @@ import static java.util.Collections.*;
 public abstract class DefaultAbstractOverlay extends DefaultAbstractFeature implements AbstractOverlay {
 
     protected Color color;
-    protected int drawOrder;
+    protected int drawOrder = DEF_DRAW_ORDER;
     protected Icon icon;
     protected List<SimpleType> abstractOveraySimpleExtensions;
     protected List<AbstractObject> abstractOverlayObjectExtensions;

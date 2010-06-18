@@ -11,7 +11,7 @@ import static java.util.Collections.*;
 public class DefaultOrientation extends DefaultAbstractObject implements Orientation {
 
     private final Angle360 heading;
-    private final Anglepos180 tilt;
+    private final double tilt;
     private final Angle180 roll;
     private final List<SimpleType> orientationSimpleExtensions;
     private final List<AbstractObject> orientationObjectExtensions;
@@ -28,7 +28,7 @@ public class DefaultOrientation extends DefaultAbstractObject implements Orienta
      */
     public DefaultOrientation(List<SimpleType> objectSimpleExtensions,
             IdAttributes idAttributes,
-            Angle360 heading, Anglepos180 tilt, Angle180 roll,
+            Angle360 heading, double tilt, Angle180 roll,
             List<SimpleType> orientationSimpleExtensions,
             List<AbstractObject> orientationObjectExtensions){
         super(objectSimpleExtensions, idAttributes);
@@ -51,7 +51,7 @@ public class DefaultOrientation extends DefaultAbstractObject implements Orienta
      * @{@inheritDoc }
      */
     @Override
-    public Anglepos180 getTilt() {return this.tilt;}
+    public double getTilt() {return this.tilt;}
 
     /**
      *

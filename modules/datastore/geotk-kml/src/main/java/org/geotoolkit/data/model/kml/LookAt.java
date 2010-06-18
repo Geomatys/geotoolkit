@@ -64,7 +64,7 @@ public interface LookAt extends AbstractView {
      *
      * @return
      */
-    public Anglepos180 getTilt();
+    public double getTilt();
 
     /**
      *
@@ -83,4 +83,52 @@ public interface LookAt extends AbstractView {
      * @return the lis of LookAt object extensions.
      */
     public List<AbstractObject> getLookAtObjectExtensions();
+
+    /**
+     *
+     * @param angle
+     */
+    public void setLongitude(Angle180 longitude);
+
+    /**
+     *
+     * @param latitude
+     */
+    public void setLatitude(Angle90 latitude);
+
+    /**
+     *
+     * @param altitude
+     */
+    public void setAltitude(double altitude);
+
+    /**
+     *
+     * @param heading
+     */
+    public void setHeading(Angle360 heading);
+
+    /**
+     *
+     * @param tilt
+     */
+    public void setTilt(double tilt);
+
+    /**
+     *
+     * @param range
+     */
+    public void setRange(double range);
+
+    /**
+     *
+     * @param lookAtSimpleExtensions
+     */
+    public void setLookAtSimpleExtensions(List<SimpleType> lookAtSimpleExtensions);
+
+    /**
+     *
+     * @param lookAtObjectExtensions
+     */
+    public void setLookAtObjectExtensions(List<AbstractObject> lookAtObjectExtensions);
 }

@@ -5,6 +5,7 @@ import org.geotoolkit.data.model.atom.AtomPersonConstruct;
 import org.geotoolkit.data.model.atom.AtomLink;
 import org.geotoolkit.data.model.xal.AddressDetails;
 import org.geotoolkit.data.model.xsd.SimpleType;
+import static org.geotoolkit.data.model.KmlModelConstants.*;
 import static java.util.Collections.*;
 
 /**
@@ -37,6 +38,8 @@ public abstract class DefaultAbstractFeature extends DefaultAbstractObject imple
      */
     protected DefaultAbstractFeature(){
         super();
+        this.visibility = DEF_VISIBILITY;
+        this.open = DEF_OPEN;
         this.styleSelector = EMPTY_LIST;
         this.featureSimpleExtensions = EMPTY_LIST;
         this.featureObjectExtensions = EMPTY_LIST;

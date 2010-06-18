@@ -13,9 +13,15 @@ import static java.util.Collections.*;
  */
 public class DefaultFolder extends DefaultAbstractContainer implements Folder {
 
-    private final List<AbstractFeature> features;
-    private final List<SimpleType> folderSimpleExtensions;
-    private final List<AbstractObject> folderObjectExtensions;
+    private List<AbstractFeature> features;
+    private List<SimpleType> folderSimpleExtensions;
+    private List<AbstractObject> folderObjectExtensions;
+
+    public DefaultFolder(){
+        this.features = EMPTY_LIST;
+        this.folderSimpleExtensions = EMPTY_LIST;
+        this.folderObjectExtensions = EMPTY_LIST;
+    }
 
     /**
      *
@@ -90,7 +96,34 @@ public class DefaultFolder extends DefaultAbstractContainer implements Folder {
      * @{@inheritDoc }
      */
     @Override
-    public List<SimpleType> getFolderSimpleExtensions() { return this.folderSimpleExtensions;}
+    public List<SimpleType> getFolderSimpleExtensions() {return this.folderSimpleExtensions;}
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setAbstractFeatures(List<AbstractFeature> abstractFeatures) {
+        this.features = abstractFeatures;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setFolderSimpleExtensions(List<SimpleType> folderSimpleExtensions) {
+        this.folderSimpleExtensions = folderSimpleExtensions;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void getFolderObjectExtensions(List<AbstractObject> folderObjectExtensions) {
+        this.folderObjectExtensions = folderObjectExtensions;
+    }
 
     @Override
     public String toString(){
@@ -98,5 +131,4 @@ public class DefaultFolder extends DefaultAbstractContainer implements Folder {
                 "\n\tFolderDefault : ";
         return resultat;
     }
-
 }
