@@ -121,6 +121,12 @@ public class CompositePhenomenonEntry extends CompoundPhenomenonEntry implements
         return component;
     }
 
+    public void update(String id, String name, int Dimension) {
+        this.setId(id);
+        this.setName(name);
+        this.setDimension(Dimension);
+    }
+    
     /**
      * Return a code representing this composite phenomenon.
      */
