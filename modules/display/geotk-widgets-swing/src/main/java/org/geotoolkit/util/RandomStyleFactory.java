@@ -163,7 +163,7 @@ public class RandomStyleFactory extends Factory {
         return style;
     }
     
-    public static MutableStyle createRandomVectorStyle(FeatureCollection<SimpleFeature> fs) {
+    public static MutableStyle createRandomVectorStyle(FeatureCollection fs) {
         
         final Symbolizer ps;
         final FeatureType typ = fs.getFeatureType();

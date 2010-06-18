@@ -458,7 +458,7 @@ public class OSMPostgresDB {
 
             stmt.setLong(i++, relationId);
             stmt.setLong(i++, member.getReference());
-            stmt.setString(i++, ""+member.getType().charValue());
+            stmt.setString(i++, ""+member.getMemberType().charValue());
             stmt.setString(i++, member.getRole());
             stmt.setInt(i++,k);
         }

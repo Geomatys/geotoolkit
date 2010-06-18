@@ -30,7 +30,8 @@ import org.geotoolkit.io.TableWriter;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
 
 import org.opengis.feature.Property;
-import org.opengis.feature.type.AttributeDescriptor;
+
+import static org.geotoolkit.data.osm.model.OSMModelConstants.*;
 
 /**
  * OSM Relation, Open Street Map relations can define "anything".
@@ -64,24 +65,15 @@ public class Relation extends IdentifiedElement{
     }
 
     @Override
-    public Collection<Property> getProperties() {
+    public Collection<Property> getValue() {
         final Collection<Property> props = new ArrayList<Property>();
-        props.add(FF.createAttribute(id, (AttributeDescriptor) getType().getDescriptor("id"),null));
-        props.add(FF.createAttribute(version, (AttributeDescriptor) getType().getDescriptor("version"),null));
-        props.add(FF.createAttribute(changeset, (AttributeDescriptor) getType().getDescriptor("changeset"),null));
-        props.add(FF.createAttribute(user, (AttributeDescriptor) getType().getDescriptor("user"),null));
-        props.add(FF.createAttribute(timestamp, (AttributeDescriptor) getType().getDescriptor("timestamp"),null));
-
-        final AttributeDescriptor tagDesc = (AttributeDescriptor) getType().getDescriptor("tags");
-        for(final Tag t : tags){
-            props.add(FF.createAttribute(t, tagDesc, null));
-        }
-
-        final AttributeDescriptor memDesc = (AttributeDescriptor) getType().getDescriptor("members");
-        for(final Member m : members){
-            props.add(FF.createAttribute(m, memDesc, null));
-        }
-
+        props.add(FF.createAttribute(id,            ATT_ID,null));
+        props.add(FF.createAttribute(version,       ATT_VERSION,null));
+        props.add(FF.createAttribute(changeset,     ATT_CHANGESET,null));
+        props.add(FF.createAttribute(user,          ATT_USER,null));
+        props.add(FF.createAttribute(timestamp,     ATT_TIMESTAMP,null));
+        props.addAll(tags);
+        props.addAll(members);
         return props;
     }
 

@@ -17,7 +17,16 @@
 
 package org.geotoolkit.data.osm.model;
 
+import java.util.ArrayList;
 import java.io.Serializable;
+import java.util.Collection;
+
+import org.geotoolkit.feature.AbstractComplexAttribute;
+
+import org.opengis.feature.Property;
+import org.opengis.filter.identity.Identifier;
+
+import static org.geotoolkit.data.osm.model.OSMModelConstants.*;
 
 /**
  * A Single Member of a relation.
@@ -25,13 +34,14 @@ import java.io.Serializable;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class Member implements Serializable {
+public class Member extends AbstractComplexAttribute<Collection<Property>,Identifier> implements Serializable {
 
     private final long ref;
     private final MemberType type;
     private final String role;
 
     public Member(long ref, MemberType type, String role) {
+        super(ATT_RELATION_MEMBER,null);
         if(type == null){
             throw new NullPointerException("Member type can not be null.");
         }
@@ -62,8 +72,17 @@ public class Member implements Serializable {
      * Narrow the type of the relation member, which can be a node, way or relation.
      * @return MemberType
      */
-    public MemberType getType() {
+    public MemberType getMemberType() {
         return type;
+    }
+
+    @Override
+    public Collection<Property> getValue() {
+        final Collection<Property> props = new ArrayList<Property>();
+        props.add(FF.createAttribute(ref, ATT_MEMBER_REF, null));
+        props.add(FF.createAttribute(role, ATT_MEMBER_ROLE, null));
+        props.add(FF.createAttribute(type.getAttributValue(), ATT_MEMBER_TYPE, null));
+        return props;
     }
 
     @Override

@@ -200,7 +200,7 @@ public class OSMXMLWriter extends StaxStreamWriter{
             writer.writeStartElement(TAG_RELMB);
             writer.writeAttribute(ATT_RELMB_REF, Long.toString(m.getReference()));
             writer.writeAttribute(ATT_RELMB_ROLE, m.getRole());
-            writer.writeAttribute(ATT_RELMB_TYPE, m.getType().getAttributValue());
+            writer.writeAttribute(ATT_RELMB_TYPE, m.getMemberType().getAttributValue());
             writer.writeEndElement();
         }
     }

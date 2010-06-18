@@ -23,8 +23,9 @@ import java.util.Collection;
 import org.geotoolkit.feature.AbstractComplexAttribute;
 
 import org.opengis.feature.Property;
-import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.filter.identity.Identifier;
+
+import static org.geotoolkit.data.osm.model.OSMModelConstants.*;
 
 /**
  * OSM Tag. Every OSM element might have tags.
@@ -41,7 +42,7 @@ public class Tag extends AbstractComplexAttribute<Collection<Property>,Identifie
     private final String v;
 
     public Tag(String key, String value) {
-        super(OSMModelConstants.DESC_TAG,new SimpleId(key));
+        super(OSMModelConstants.ATT_TAG,new SimpleId(key));
         this.k = key;
         this.v = value;
     }
@@ -63,10 +64,10 @@ public class Tag extends AbstractComplexAttribute<Collection<Property>,Identifie
     // feature/attribut model --------------------------------------------------
 
     @Override
-    public Collection<Property> getProperties() {
+    public Collection<Property> getValue() {
         final Collection<Property> props = new ArrayList<Property>();
-        props.add(IdentifiedElement.FF.createAttribute(k, (AttributeDescriptor) getType().getDescriptor("k"),null));
-        props.add(IdentifiedElement.FF.createAttribute(k, (AttributeDescriptor) getType().getDescriptor("v"),null));
+        props.add(FF.createAttribute(k, ATT_K, null));
+        props.add(FF.createAttribute(v, ATT_V, null));
         return props;
     }
 

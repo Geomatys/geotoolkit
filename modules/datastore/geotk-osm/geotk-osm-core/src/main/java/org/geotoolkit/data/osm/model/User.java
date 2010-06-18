@@ -18,11 +18,13 @@ package org.geotoolkit.data.osm.model;
 
 import java.util.ArrayList;
 import java.util.Collection;
+
 import org.geotoolkit.feature.AbstractComplexAttribute;
-import org.geotoolkit.feature.DefaultProperty;
 
 import org.opengis.feature.Property;
 import org.opengis.filter.identity.Identifier;
+
+import static org.geotoolkit.data.osm.model.OSMModelConstants.*;
 
 /**
  * Open Street Map user.
@@ -52,7 +54,7 @@ public class User extends AbstractComplexAttribute<Collection<Property>,Identifi
      * @param userName The name of the user that this object represents.
      */
     private User(int id, String userName) {
-        super(OSMModelConstants.DESC_USER, new SimpleId(id));
+        super(OSMModelConstants.ATT_USER, new SimpleId(id));
         if (userName == null) {
             throw new NullPointerException("The user name cannot be null.");
         }
@@ -90,10 +92,10 @@ public class User extends AbstractComplexAttribute<Collection<Property>,Identifi
     }
 
     @Override
-    public Collection<Property> getProperties() {
+    public Collection<Property> getValue() {
         final Collection<Property> props = new ArrayList<Property>();
-        props.add(new DefaultProperty(id, getType().getDescriptor("id")));
-        props.add(new DefaultProperty(name, getType().getDescriptor("name")));
+        props.add(FF.createAttribute(id, ATT_USER_ID, null));
+        props.add(FF.createAttribute(name, ATT_USER_NAME, null));
         return props;
     }
 

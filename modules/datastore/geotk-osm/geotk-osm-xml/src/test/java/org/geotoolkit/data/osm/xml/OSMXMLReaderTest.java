@@ -151,10 +151,10 @@ public class OSMXMLReaderTest {
         assertEquals(2, rel.getMembers().size());
         assertEquals(27776903, rel.getMembers().get(0).getReference());
         assertEquals("border", rel.getMembers().get(0).getRole());
-        assertEquals(MemberType.WAY, rel.getMembers().get(0).getType());
+        assertEquals(MemberType.WAY, rel.getMembers().get(0).getMemberType());
         assertEquals(319408586, rel.getMembers().get(1).getReference());
         assertEquals("center", rel.getMembers().get(1).getRole());
-        assertEquals(MemberType.NODE, rel.getMembers().get(1).getType());
+        assertEquals(MemberType.NODE, rel.getMembers().get(1).getMemberType());
 
     }
 
@@ -215,10 +215,10 @@ public class OSMXMLReaderTest {
         assertEquals(2, rel.getMembers().size());
         assertEquals(27776903, rel.getMembers().get(0).getReference());
         assertEquals("border", rel.getMembers().get(0).getRole());
-        assertEquals(MemberType.WAY, rel.getMembers().get(0).getType());
+        assertEquals(MemberType.WAY, rel.getMembers().get(0).getMemberType());
         assertEquals(319408586, rel.getMembers().get(1).getReference());
         assertEquals("center", rel.getMembers().get(1).getRole());
-        assertEquals(MemberType.NODE, rel.getMembers().get(1).getType());
+        assertEquals(MemberType.NODE, rel.getMembers().get(1).getMemberType());
 
     }
 
@@ -319,10 +319,10 @@ public class OSMXMLReaderTest {
         assertEquals(2, rel.getMembers().size());
         assertEquals(27776903, rel.getMembers().get(0).getReference());
         assertEquals("border", rel.getMembers().get(0).getRole());
-        assertEquals(MemberType.WAY, rel.getMembers().get(0).getType());
+        assertEquals(MemberType.WAY, rel.getMembers().get(0).getMemberType());
         assertEquals(319408586, rel.getMembers().get(1).getReference());
         assertEquals("center", rel.getMembers().get(1).getRole());
-        assertEquals(MemberType.NODE, rel.getMembers().get(1).getType());
+        assertEquals(MemberType.NODE, rel.getMembers().get(1).getMemberType());
 
     }
 

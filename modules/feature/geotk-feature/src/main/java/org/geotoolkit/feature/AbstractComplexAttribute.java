@@ -20,8 +20,8 @@ package org.geotoolkit.feature;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 import org.geotoolkit.io.TableWriter;
@@ -33,6 +33,7 @@ import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.ComplexType;
 import org.opengis.feature.type.Name;
 import org.opengis.feature.type.PropertyDescriptor;
+import org.opengis.feature.type.PropertyType;
 import org.opengis.filter.identity.Identifier;
 
 /**
@@ -61,7 +62,7 @@ public abstract class AbstractComplexAttribute<V extends Collection<Property>,I 
      */
     @Override
     public V getProperties() {
-    	return value;
+    	return getValue();
     }
 
     /**
@@ -169,10 +170,7 @@ public abstract class AbstractComplexAttribute<V extends Collection<Property>,I 
         tablewriter.write("name\t value\n");
         tablewriter.nextLine(TableWriter.SINGLE_HORIZONTAL_LINE);
 
-        final Collection<? extends Property> properties = getProperties();
-        for(Property prop : properties){
-            toString(tablewriter, prop, sb, 1, 1, 1);
-        }
+        toString(tablewriter, this, null, true);
 
         tablewriter.nextLine(TableWriter.DOUBLE_HORIZONTAL_LINE);
         try {
@@ -187,59 +185,109 @@ public abstract class AbstractComplexAttribute<V extends Collection<Property>,I 
         return sb.toString();
     }
 
-    private static void toString(TableWriter tablewriter, Property property, Object att, int depth, int pos, int startdepth){
+    private static final String BLANCK = "\u00A0\u00A0\u00A0\u00A0";
+    private static final String LINE =    "\u00A0\u00A0\u2502\u00A0";
+    private static final String CROSS =  "\u00A0\u00A0\u251C\u2500";
+    private static final String END =    "\u00A0\u00A0\u2514\u2500";
 
-        Object value = property.getValue();
+    /**
+     *
+     * @param tablewriter
+     * @param property
+     * @param index
+     * @param path
+     * @param last node of the tree
+     */
+    private static void toString(TableWriter tablewriter, Property property, Integer index, boolean last, String... path){
 
-        if(depth > 1){
-            for(int i=1; i<depth-1;i++){
-                if(i < startdepth){
-                    tablewriter.write("\u00A0\u00A0\u00A0\u00A0");
-                }else{
-                    tablewriter.write("\u00A0\u00A0\u2502\u00A0");
-                }
-            }
-            if(pos == 0){
-                tablewriter.write("\u00A0\u00A0\u251C\u2500");
-            }else if(pos == 1){
-                tablewriter.write("\u00A0\u00A0\u2514\u2500");
-            }else{
-                tablewriter.write("\u00A0\u00A0\u251C\u2500");
-            }
+        //draw the path.
+        for(String t : path){
+            tablewriter.write(t);
         }
 
         //write property name
         tablewriter.write(DefaultName.toJCRExtendedForm(property.getName()));
+        //write the index if one
+        if(index != null){
+            tablewriter.write('[');
+            tablewriter.write(index.toString());
+            tablewriter.write(']');
+        }
+
         tablewriter.write('\t');
 
-        if(property.getType() instanceof ComplexType){
+        final PropertyType pt = property.getType();
+        if(pt instanceof ComplexType){
+            //no value
+            tablewriter.write('\n');
+            
+            final ComplexType ct = (ComplexType) pt;
 
+            final Object value = property.getValue();
+            final ComplexAttribute ca;
             if(value instanceof ComplexAttribute){
-                value = ((ComplexAttribute)value).getProperties();
+                //hack, when feature are not correctly build
+                //todo fix all complexe feature instances, then remove
+                ca = (ComplexAttribute)value;
+            }else{
+                ca = (ComplexAttribute)property;
             }
 
-            final Collection<? extends Property> childs = (Collection<? extends Property>) value;
+            int nbProperty = ca.getProperties().size();
+            int nb=0;
 
-            tablewriter.write('\n');
+            String[] subPath = last(path, LINE);
 
-            int i=0;
-            int n=childs.size()-1;
-            for(Property sub : childs){
-                if(i==n){
-                    toString(tablewriter, sub, value, depth+1, 1, startdepth +((pos == 1)? 1 : 0));
-                }else if(i == 0){
-                    toString(tablewriter, sub, value, depth+1, 0, startdepth);
+            for(PropertyDescriptor desc : ct.getDescriptors()){
+
+                if(desc.getMaxOccurs()==1){
+                    final Property sub = ca.getProperty(desc.getName());
+                    if(sub != null){
+                        nb++;
+                        if(last){ subPath = last(path, BLANCK); }
+
+                        toString(tablewriter, sub, null, nb==nbProperty, append(subPath, (nb==nbProperty)?END:CROSS));
+                    }
                 }else{
-                    toString(tablewriter, sub, value, depth+1, -1, startdepth);
+                    final Collection<? extends Property> properties = ca.getProperties(desc.getName());
+                    int i = 0;
+                    int n = properties.size()-1;
+                    for(Property sub : properties){
+                        nb++;
+                        if(last){ subPath = last(path, BLANCK); }
+                        
+                        if(i==n){
+                            toString(tablewriter, sub, i, nb==nbProperty, append(subPath, (nb==nbProperty)?END:CROSS));
+                        }else if(i == 0){
+                            toString(tablewriter, sub, i, nb==nbProperty, append(subPath, (nb==nbProperty)?END:CROSS));
+                        }else{
+                            toString(tablewriter, sub, i, nb==nbProperty, append(subPath, (nb==nbProperty)?END:CROSS));
+                        }
+                        i++;
+                    }
                 }
-                i++;
             }
 
         }else{
             //simple property
+            final Object value = property.getValue();
             tablewriter.write((value == null)? "null" : value.toString());
-            tablewriter.write("\n");
+            tablewriter.write('\n');
         }
     }
 
+    private static String[] append(String[] array, String end){
+        array = Arrays.copyOf(array, array.length+1);
+        array[array.length-1] = end;
+        return array;
+    }
+
+    private static String[] last(String[] array, String end){
+        array = array.clone();
+        if(array.length>0){
+            array[array.length-1] = end;
+        }
+        return array;
+    }
+    
 }
