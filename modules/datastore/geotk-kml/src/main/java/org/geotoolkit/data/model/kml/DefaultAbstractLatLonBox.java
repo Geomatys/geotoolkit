@@ -1,6 +1,7 @@
 package org.geotoolkit.data.model.kml;
 
 import java.util.List;
+import org.geotoolkit.data.kml.KmlUtilities;
 import org.geotoolkit.data.model.xsd.SimpleType;
 import static java.util.Collections.*;
 
@@ -10,10 +11,10 @@ import static java.util.Collections.*;
  */
 public abstract class DefaultAbstractLatLonBox extends DefaultAbstractObject implements AbstractLatLonBox {
 
-    protected final Angle180 north;
-    protected final Angle180 south;
-    protected final Angle180 east;
-    protected final Angle180 west;
+    protected final double north;
+    protected final double south;
+    protected final double east;
+    protected final double west;
     protected final List<SimpleType> abstractLatLonBoxSimpleExtensions;
     protected final List<AbstractObject> abstractLatLonBoxObjectExtensions;
 
@@ -29,13 +30,13 @@ public abstract class DefaultAbstractLatLonBox extends DefaultAbstractObject imp
      * @param abstractLatLonBoxObjectExtensions
      */
     protected DefaultAbstractLatLonBox(List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
-            Angle180 north, Angle180 south, Angle180 east, Angle180 west,
+            double north, double south, double east, double west,
             List<SimpleType> abstractLatLonBoxSimpleExtensions, List<AbstractObject> abstractLatLonBoxObjectExtensions){
         super(objectSimpleExtensions, idAttributes);
-        this.north = north;
-        this.south = south;
-        this.east = east;
-        this.west = west;
+        this.north = KmlUtilities.checkAngle180(north);
+        this.south = KmlUtilities.checkAngle180(south);
+        this.east = KmlUtilities.checkAngle180(east);
+        this.west = KmlUtilities.checkAngle180(west);
         this.abstractLatLonBoxSimpleExtensions = (abstractLatLonBoxSimpleExtensions == null) ? EMPTY_LIST : abstractLatLonBoxSimpleExtensions;
         this.abstractLatLonBoxObjectExtensions = (abstractLatLonBoxObjectExtensions == null) ? EMPTY_LIST : abstractLatLonBoxObjectExtensions;
     }
@@ -45,28 +46,28 @@ public abstract class DefaultAbstractLatLonBox extends DefaultAbstractObject imp
      * @{@inheritDoc }
      */
     @Override
-    public Angle180 getNorth() {return this.north;}
+    public double getNorth() {return this.north;}
 
     /**
      *
      * @{@inheritDoc }
      */
     @Override
-    public Angle180 getSouth() {return this.south;}
+    public double getSouth() {return this.south;}
 
     /**
      *
      * @{@inheritDoc }
      */
     @Override
-    public Angle180 getEast() {return this.east;}
+    public double getEast() {return this.east;}
 
     /**
      *
      * @{@inheritDoc }
      */
     @Override
-    public Angle180 getWest() {return this.west;}
+    public double getWest() {return this.west;}
 
     /**
      *

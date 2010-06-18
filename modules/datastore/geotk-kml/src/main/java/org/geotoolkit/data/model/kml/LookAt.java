@@ -40,13 +40,13 @@ public interface LookAt extends AbstractView {
      *
      * @return
      */
-    public Angle180 getLongitude();
+    public double getLongitude();
 
     /**
      *
      * @return
      */
-    public Angle90 getLatitude();
+    public double getLatitude();
 
     /**
      *
@@ -58,7 +58,7 @@ public interface LookAt extends AbstractView {
      *
      * @return
      */
-    public Angle360 getHeading();
+    public double getHeading();
 
     /**
      *
@@ -88,13 +88,13 @@ public interface LookAt extends AbstractView {
      *
      * @param angle
      */
-    public void setLongitude(Angle180 longitude);
+    public void setLongitude(double longitude);
 
     /**
      *
      * @param latitude
      */
-    public void setLatitude(Angle90 latitude);
+    public void setLatitude(double latitude);
 
     /**
      *
@@ -106,7 +106,7 @@ public interface LookAt extends AbstractView {
      *
      * @param heading
      */
-    public void setHeading(Angle360 heading);
+    public void setHeading(double heading);
 
     /**
      *

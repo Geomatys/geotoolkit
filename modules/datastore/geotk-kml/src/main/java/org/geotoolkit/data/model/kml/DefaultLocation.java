@@ -1,6 +1,7 @@
 package org.geotoolkit.data.model.kml;
 
 import java.util.List;
+import org.geotoolkit.data.kml.KmlUtilities;
 import org.geotoolkit.data.model.xsd.SimpleType;
 import static java.util.Collections.*;
 
@@ -10,8 +11,8 @@ import static java.util.Collections.*;
  */
 public class DefaultLocation extends DefaultAbstractObject implements Location {
 
-    private final Angle180 longitude;
-    private final Angle90 latitude;
+    private final double longitude;
+    private final double latitude;
     private final double altitude;
     private final List<SimpleType> locationSimpleExtensions;
     private final List<AbstractObject> locationObjectExtensions;
@@ -28,11 +29,11 @@ public class DefaultLocation extends DefaultAbstractObject implements Location {
      */
     public DefaultLocation(List<SimpleType> objectSimpleExtensions,
             IdAttributes idAttributes,
-            Angle180 longitude, Angle90 latitude, double altitude,
+            double longitude, double latitude, double altitude,
             List<SimpleType> locationSimpleExtensions, List<AbstractObject> locationObjectExtensions){
         super(objectSimpleExtensions, idAttributes);
-        this.longitude = longitude;
-        this.latitude = latitude;
+        this.longitude = KmlUtilities.checkAngle180(longitude);
+        this.latitude = KmlUtilities.checkAngle90(latitude);
         this.altitude = altitude;
         this.locationSimpleExtensions = (locationSimpleExtensions == null) ? EMPTY_LIST : locationSimpleExtensions;
         this.locationObjectExtensions = (locationObjectExtensions == null) ? EMPTY_LIST : locationObjectExtensions;
@@ -43,14 +44,14 @@ public class DefaultLocation extends DefaultAbstractObject implements Location {
      * @{@inheritDoc }
      */
     @Override
-    public Angle180 getLongitude() {return this.longitude;}
+    public double getLongitude() {return this.longitude;}
 
     /**
      *
      * @{@inheritDoc }
      */
     @Override
-    public Angle90 getLatitude() {return this.latitude;}
+    public double getLatitude() {return this.latitude;}
 
     /**
      *

@@ -13,9 +13,6 @@ import org.geotoolkit.data.model.kml.AbstractTimePrimitive;
 import org.geotoolkit.data.model.kml.AbstractView;
 import org.geotoolkit.data.model.kml.Alias;
 import org.geotoolkit.data.model.kml.AltitudeMode;
-import org.geotoolkit.data.model.kml.Angle180;
-import org.geotoolkit.data.model.kml.Angle360;
-import org.geotoolkit.data.model.kml.Angle90;
 import org.geotoolkit.data.model.kml.BalloonStyle;
 import org.geotoolkit.data.model.kml.BasicLink;
 import org.geotoolkit.data.model.kml.Boundary;
@@ -126,30 +123,6 @@ public interface KmlFactory {
 
     /**
      *
-     * @param angle
-     * @return
-     * @throws KmlException
-     */
-    public Angle180 createAngle180(double angle) throws KmlException;
-
-    /**
-     *
-     * @param angle
-     * @return
-     * @throws KmlException
-     */
-    public Angle360 createAngle360(double angle) throws KmlException;
-
-    /**
-     *
-     * @param angle The angle value.
-     * @return The Angle90 object.
-     * @throws KmlException If he angle value is out of bound.
-     */
-    public Angle90 createAngle90(double angle) throws KmlException;
-
-    /**
-     *
      * @param objectSimpleExtensions
      * @param idAttributes
      * @param subStyleSimpleExtensions
@@ -208,8 +181,8 @@ public interface KmlFactory {
      */
     public Camera createCamera(List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
             List<SimpleType> abstractViewSimpleExtensions, List<AbstractObject> abstractViewObjectExtensions,
-            Angle180 longitude, Angle90 latitude, double altitude,
-            Angle360 heading, double tilt, Angle180 roll, AltitudeMode altitudeMode,
+            double longitude, double latitude, double altitude,
+            double heading, double tilt, double roll, AltitudeMode altitudeMode,
             List<SimpleType> cameraSimpleExtensions, List<AbstractObject> cameraObjectExtensions);
 
     /**
@@ -460,7 +433,7 @@ public interface KmlFactory {
             List<SimpleType> subStyleSimpleExtensions, List<AbstractObject> subStyleObjectExtensions,
             Color color, ColorMode colorMode,
             List<SimpleType> colorStyleSimpleExtensions, List<AbstractObject> colorStyleObjectExtensions,
-            double scale, Angle360 heading, BasicLink icon, Vec2 hotSpot,
+            double scale, double heading, BasicLink icon, Vec2 hotSpot,
             List<SimpleType> iconStyleSimpleExtensions, List<AbstractObject> iconStyleObjectExtensions);
 
     /**
@@ -539,9 +512,9 @@ public interface KmlFactory {
      * @return
      */
     public LatLonBox createLatLonBox(List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
-            Angle180 north, Angle180 south, Angle180 east, Angle180 west,
+            double north, double south, double east, double west,
             List<SimpleType> abstractLatLonBoxSimpleExtensions, List<AbstractObject> abstractLatLonBoxObjectExtensions,
-            Angle180 rotation, List<SimpleType> latLonBoxSimpleExtensions, List<AbstractObject> latLonBoxObjectExtensions);
+            double rotation, List<SimpleType> latLonBoxSimpleExtensions, List<AbstractObject> latLonBoxObjectExtensions);
 
     /**
      *
@@ -561,7 +534,7 @@ public interface KmlFactory {
      * @return
      */
     public LatLonAltBox createLatLonAltBox(List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
-            Angle180 north, Angle180 south, Angle180 east, Angle180 west,
+            double north, double south, double east, double west,
             List<SimpleType> abstractLatLonBoxSimpleExtensions, List<AbstractObject> abstractLatLonBoxObjectExtensions,
             double minAltitude, double maxAltitude, AltitudeMode altitudeMode,
             List<SimpleType> latLonAltBoxSimpleExtensions, List<AbstractObject> latLonAltBoxObjectExtensions);
@@ -692,7 +665,7 @@ public interface KmlFactory {
      */
     public Location createLocation(List<SimpleType> objectSimpleExtensions,
             IdAttributes idAttributes,
-            Angle180 longitude, Angle90 latitude, double altitude,
+            double longitude, double latitude, double altitude,
             List<SimpleType> locationSimpleExtensions, List<AbstractObject> locationObjectExtensions);
 
     /**
@@ -730,8 +703,8 @@ public interface KmlFactory {
      */
     public LookAt createLookAt(List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
             List<SimpleType> abstractViewSimpleExtensions, List<AbstractObject> abstractViewObjectExtensions,
-            Angle180 longitude, Angle90 latitude, double altitude,
-            Angle360 heading, double tilt, double range,
+            double longitude, double latitude, double altitude,
+            double heading, double tilt, double range,
             List<SimpleType> lookAtSimpleExtensions, List<AbstractObject> lookAtObjectExtensions);
 
     /**
@@ -856,7 +829,7 @@ public interface KmlFactory {
      */
     public Orientation createOrientation(List<SimpleType> objectSimpleExtensions,
             IdAttributes idAttributes,
-            Angle360 heading, double tilt, Angle180 roll,
+            double heading, double tilt, double roll,
             List<SimpleType> orientationSimpleExtensions,
             List<AbstractObject> orientationObjectExtensions);
 
@@ -922,7 +895,7 @@ public interface KmlFactory {
             List<AbstractObject> abstractFeatureObjectExtensions,
             Color color, int drawOrder, Icon icon,
             List<SimpleType> abstractOveraySimpleExtensions, List<AbstractObject> abstractOverlayObjectExtensions,
-            Angle180 rotation, ViewVolume viewVolume, ImagePyramid imagePyramid, Point point, Shape shape,
+            double rotation, ViewVolume viewVolume, ImagePyramid imagePyramid, Point point, Shape shape,
             List<SimpleType> photoOverlaySimpleExtensions, List<AbstractObject> photoOverlayObjectExtensions);
 
     /**
@@ -1157,7 +1130,7 @@ public interface KmlFactory {
             List<AbstractObject> abstractFeatureObjectExtensions,
             Color color, int drawOrder, Icon icon,
             List<SimpleType> abstractOveraySimpleExtensions, List<AbstractObject> abstractOverlayObjectExtensions,
-            Vec2 overlayXY, Vec2 screenXY, Vec2 rotationXY, Vec2 size, Angle180 rotation,
+            Vec2 overlayXY, Vec2 screenXY, Vec2 rotationXY, Vec2 size, double rotation,
             List<SimpleType> screenOverlaySimpleExtensions, List<AbstractObject> screenOverlayObjectExtensions);
 
     /**
@@ -1292,6 +1265,6 @@ public interface KmlFactory {
      * @return
      */
     public ViewVolume createViewVolume(List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
-            Angle180 leftFov, Angle180 rightFov, Angle90 bottomFov, Angle90 topFov, double near,
+            double leftFov, double rightFov, double bottomFov, double topFov, double near,
             List<SimpleType> viewVolumeSimpleExtensions, List<AbstractObject> viewVolumeObjectExtensions);
 }

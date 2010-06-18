@@ -33,7 +33,7 @@ public class DefaultLatLonAltBox extends DefaultAbstractLatLonBox implements Lat
      * @param latLonAltBoxObjectExtensions
      */
     public DefaultLatLonAltBox(List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
-            Angle180 north, Angle180 south, Angle180 east, Angle180 west,
+            double north, double south, double east, double west,
             List<SimpleType> abstractLatLonBoxSimpleExtensions, List<AbstractObject> abstractLatLonBoxObjectExtensions,
             double minAltitude, double maxAltitude, AltitudeMode altitudeMode,
             List<SimpleType> latLonAltBoxSimpleExtensions, List<AbstractObject> latLonAltBoxObjectExtensions){

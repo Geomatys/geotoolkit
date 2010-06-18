@@ -7,7 +7,7 @@
 <altitude>625.0</altitude>
 <heading>2.0</heading>
 <tilt>1.0</tilt>
-<roll>0.0</roll>
+<roll>2.0</roll>
 <altitudeMode>relativeToGround</altitudeMode>
 </Camera>
 </PhotoOverlay>

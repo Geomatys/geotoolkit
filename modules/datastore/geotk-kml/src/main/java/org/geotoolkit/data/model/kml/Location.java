@@ -35,13 +35,13 @@ public interface Location extends AbstractObject {
      *
      * @return
      */
-    public Angle180 getLongitude();
+    public double getLongitude();
 
     /**
      *
      * @return
      */
-    public Angle90 getLatitude();
+    public double getLatitude();
 
     /**
      *

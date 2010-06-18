@@ -2,6 +2,7 @@ package org.geotoolkit.data.model.kml;
 
 import java.awt.Color;
 import java.util.List;
+import org.geotoolkit.data.kml.KmlUtilities;
 import org.geotoolkit.data.model.atom.AtomLink;
 import org.geotoolkit.data.model.atom.AtomPersonConstruct;
 import org.geotoolkit.data.model.xal.AddressDetails;
@@ -14,7 +15,7 @@ import static java.util.Collections.*;
  */
 public class DefaultPhotoOverlay extends DefaultAbstractOverlay implements PhotoOverlay {
 
-    private Angle180 rotation;
+    private double rotation;
     private ViewVolume viewVolume;
     private ImagePyramid imagePyramid;
     private Point point;
@@ -76,14 +77,14 @@ public class DefaultPhotoOverlay extends DefaultAbstractOverlay implements Photo
             final List<AbstractObject> abstractFeatureObjectExtensions,
             final Color color, final int drawOrder, final Icon icon,
             final List<SimpleType> abstractOveraySimpleExtensions, final List<AbstractObject> abstractOverlayObjectExtensions,
-            final Angle180 rotation, final ViewVolume viewVolume, final ImagePyramid imagePyramid, final Point point, final Shape shape,
+            final double rotation, final ViewVolume viewVolume, final ImagePyramid imagePyramid, final Point point, final Shape shape,
             final List<SimpleType> photoOverlaySimpleExtensions, final List<AbstractObject> photoOverlayObjectExtensions){
         super(objectSimpleExtensions, idAttributes,
                 name, visibility, open, author, link, address, addressDetails, phoneNumber, snippet,
                 description, view, timePrimitive, styleUrl, styleSelector, region, extendedData,
                 abstractFeatureSimpleExtensions, abstractFeatureObjectExtensions,
                 color, drawOrder, icon, abstractOveraySimpleExtensions, abstractOverlayObjectExtensions);
-        this.rotation = rotation;
+        this.rotation = KmlUtilities.checkAngle180(rotation);
         this.viewVolume = viewVolume;
         this.imagePyramid = imagePyramid;
         this.point = point;
@@ -97,7 +98,7 @@ public class DefaultPhotoOverlay extends DefaultAbstractOverlay implements Photo
      * @{@inheritDoc }
      */
     @Override
-    public Angle180 getRotation() {return this.rotation;}
+    public double getRotation() {return this.rotation;}
 
     /**
      *
@@ -146,7 +147,7 @@ public class DefaultPhotoOverlay extends DefaultAbstractOverlay implements Photo
      * @{@inheritDoc }
      */
     @Override
-    public void setRotation(Angle180 rotation) {this.rotation = rotation;}
+    public void setRotation(double rotation) {this.rotation = KmlUtilities.checkAngle180(rotation);}
 
     /**
      *

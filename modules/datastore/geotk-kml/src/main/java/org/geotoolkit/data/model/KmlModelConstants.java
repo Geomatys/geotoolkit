@@ -2,9 +2,6 @@ package org.geotoolkit.data.model;
 
 import java.awt.Color;
 import org.geotoolkit.data.model.kml.AltitudeMode;
-import org.geotoolkit.data.model.kml.Angle180;
-import org.geotoolkit.data.model.kml.Angle360;
-import org.geotoolkit.data.model.kml.Angle90;
 import org.geotoolkit.data.model.kml.ColorMode;
 import org.geotoolkit.data.model.kml.DisplayMode;
 import org.geotoolkit.data.model.kml.GridOrigin;
@@ -228,22 +225,22 @@ public final class KmlModelConstants {
 
     // ANGLES AND COLORS DEFAULT VALUES
     public static final Color DEF_BG_COLOR = new Color(255,255,255,255);
-    public static final Angle90 DEF_BOTTOM_FOV = KmlFactoryDefault.createAngle90(ANGLE_ZERO);
+    public static final double DEF_BOTTOM_FOV = 0;
     public static final Color DEF_COLOR = new Color(255,255,255,255);
-    public static final Angle180 DEF_EAST = KmlFactoryDefault.createAngle180(ANGLE_MAX);
-    public static final Angle360 DEF_HEADING = KmlFactoryDefault.createAngle360(ANGLE_ZERO);
-    public static final Angle90 DEF_LATITUDE = KmlFactoryDefault.createAngle90(ANGLE_ZERO);
-    public static final Angle180 DEF_LEFT_FOV = KmlFactoryDefault.createAngle180(ANGLE_ZERO);
-    public static final Angle180 DEF_LONGITUDE = KmlFactoryDefault.createAngle180(ANGLE_ZERO);
-    public static final Angle180 DEF_NORTH = KmlFactoryDefault.createAngle180(ANGLE_MAX);
-    public static final Angle180 DEF_RIGHT_FOV = KmlFactoryDefault.createAngle180(ANGLE_ZERO);
-    public static final Angle180 DEF_ROLL = KmlFactoryDefault.createAngle180(ANGLE_ZERO);
-    public static final Angle180 DEF_ROTATION = KmlFactoryDefault.createAngle180(ANGLE_ZERO);
-    public static final Angle180 DEF_SOUTH = KmlFactoryDefault.createAngle180(ANGLE_MIN);
+    public static final double DEF_EAST = 180;
+    public static final double DEF_HEADING = 0;
+    public static final double DEF_LATITUDE = 0;
+    public static final double DEF_LEFT_FOV = 0;
+    public static final double DEF_LONGITUDE = 0;
+    public static final double DEF_NORTH = 180;
+    public static final double DEF_RIGHT_FOV = 0;
+    public static final double DEF_ROLL = 0;
+    public static final double DEF_ROTATION = 0;
+    public static final double DEF_SOUTH = -180;
     public static final Color DEF_TEXT_COLOR = new Color(0,0,0,255);
-    public static final Angle90 DEF_TOP_FOV = KmlFactoryDefault.createAngle90(ANGLE_ZERO);
+    public static final double DEF_TOP_FOV = 0;
     public static final double DEF_TILT = 0.0;
-    public static final Angle180 DEF_WEST = KmlFactoryDefault.createAngle180(ANGLE_MIN);
+    public static final double DEF_WEST = -180;
 
     // OTHER DEFAULT VALUES
     public static final double DEF_ALTITUDE = 0.0;

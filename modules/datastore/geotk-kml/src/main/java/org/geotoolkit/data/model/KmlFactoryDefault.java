@@ -16,12 +16,6 @@ import org.geotoolkit.data.model.kml.AbstractView;
 import org.geotoolkit.data.model.kml.Alias;
 import org.geotoolkit.data.model.kml.DefaultAlias;
 import org.geotoolkit.data.model.kml.AltitudeMode;
-import org.geotoolkit.data.model.kml.Angle180;
-import org.geotoolkit.data.model.kml.DefaultAngle180;
-import org.geotoolkit.data.model.kml.Angle360;
-import org.geotoolkit.data.model.kml.DefaultAngle360;
-import org.geotoolkit.data.model.kml.Angle90;
-import org.geotoolkit.data.model.kml.DefaultAngle90;
 import org.geotoolkit.data.model.kml.BalloonStyle;
 import org.geotoolkit.data.model.kml.DefaultBalloonStyle;
 import org.geotoolkit.data.model.kml.BasicLink;
@@ -186,30 +180,6 @@ public class KmlFactoryDefault implements KmlFactory{
      * @{@inheritDoc }
      */
     @Override
-    public Angle180 createAngle180(double angle) throws KmlException{
-        return new DefaultAngle180(angle);
-    }
-
-    /**
-     * @{@inheritDoc }
-     */
-    @Override
-    public Angle360 createAngle360(double angle) throws KmlException{
-        return new DefaultAngle360(angle);
-    }
-
-    /**
-     * @{@inheritDoc }
-     */
-    @Override
-    public Angle90 createAngle90(double angle) throws KmlException{
-        return new DefaultAngle90(angle);
-    }
-
-    /**
-     * @{@inheritDoc }
-     */
-    @Override
     public BalloonStyle createBalloonStyle(List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
             List<SimpleType> subStyleSimpleExtensions, List<AbstractObject> subStyleObjectExtensions,
             Color bgColor, Color textColor, String text, DisplayMode displayMode,
@@ -244,8 +214,8 @@ public class KmlFactoryDefault implements KmlFactory{
     @Override
     public Camera createCamera(List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
             List<SimpleType> abstractViewSimpleExtensions, List<AbstractObject> abstractViewObjectExtensions,
-            Angle180 longitude, Angle90 latitude, double altitude,
-            Angle360 heading, double tilt, Angle180 roll, AltitudeMode altitudeMode,
+            double longitude, double latitude, double altitude,
+            double heading, double tilt, double roll, AltitudeMode altitudeMode,
             List<SimpleType> cameraSimpleExtensions, List<AbstractObject> cameraObjectExtensions){
         return new DefaultCamera(objectSimpleExtensions, idAttributes,
                 abstractViewSimpleExtensions, abstractViewObjectExtensions,
@@ -439,7 +409,7 @@ public class KmlFactoryDefault implements KmlFactory{
             List<SimpleType> subStyleSimpleExtensions, List<AbstractObject> subStyleObjectExtensions,
             Color color, ColorMode colorMode,
             List<SimpleType> colorStyleSimpleExtensions, List<AbstractObject> colorStyleObjectExtensions,
-            double scale, Angle360 heading, BasicLink icon, Vec2 hotSpot,
+            double scale, double heading, BasicLink icon, Vec2 hotSpot,
             List<SimpleType> iconStyleSimpleExtensions, List<AbstractObject> iconStyleObjectExtensions){
         return new DefaultIconStyle(objectSimpleExtensions, idAttributes,
                 subStyleSimpleExtensions, subStyleObjectExtensions,
@@ -501,9 +471,9 @@ public class KmlFactoryDefault implements KmlFactory{
      */
     @Override
     public LatLonBox createLatLonBox(List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
-            Angle180 north, Angle180 south, Angle180 east, Angle180 west,
+            double north, double south, double east, double west,
             List<SimpleType> abstractLatLonBoxSimpleExtensions, List<AbstractObject> abstractLatLonBoxObjectExtensions,
-            Angle180 rotation, List<SimpleType> latLonBoxSimpleExtensions, List<AbstractObject> latLonBoxObjectExtensions){
+            double rotation, List<SimpleType> latLonBoxSimpleExtensions, List<AbstractObject> latLonBoxObjectExtensions){
         return new DefaultLatLonBox(objectSimpleExtensions, idAttributes,
                 north, south, east, west, abstractLatLonBoxSimpleExtensions, abstractLatLonBoxObjectExtensions,
                 rotation, latLonBoxSimpleExtensions, latLonBoxObjectExtensions);
@@ -514,7 +484,7 @@ public class KmlFactoryDefault implements KmlFactory{
      */
     @Override
     public LatLonAltBox createLatLonAltBox(List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
-            Angle180 north, Angle180 south, Angle180 east, Angle180 west,
+            double north, double south, double east, double west,
             List<SimpleType> abstractLatLonBoxSimpleExtensions, List<AbstractObject> abstractLatLonBoxObjectExtensions,
             double minAltitude, double maxAltitude, AltitudeMode altitudeMode,
             List<SimpleType> latLonAltBoxSimpleExtensions, List<AbstractObject> latLonAltBoxObjectExtensions){
@@ -611,7 +581,7 @@ public class KmlFactoryDefault implements KmlFactory{
     @Override
     public Location createLocation(List<SimpleType> objectSimpleExtensions,
             IdAttributes idAttributes,
-            Angle180 longitude, Angle90 latitude, double altitude,
+            double longitude, double latitude, double altitude,
             List<SimpleType> locationSimpleExtensions, List<AbstractObject> locationObjectExtensions){
         return new DefaultLocation(objectSimpleExtensions, idAttributes,
                 longitude, latitude, altitude,
@@ -637,8 +607,8 @@ public class KmlFactoryDefault implements KmlFactory{
     @Override
     public LookAt createLookAt(List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
             List<SimpleType> abstractViewSimpleExtensions, List<AbstractObject> abstractViewObjectExtensions,
-            Angle180 longitude, Angle90 latitude, double altitude,
-            Angle360 heading, double tilt, double range,
+            double longitude, double latitude, double altitude,
+            double heading, double tilt, double range,
             List<SimpleType> lookAtSimpleExtensions, List<AbstractObject> lookAtObjectExtensions){
         return new DefaultLookAt(objectSimpleExtensions, idAttributes,
                 abstractViewSimpleExtensions, abstractViewObjectExtensions,
@@ -728,7 +698,7 @@ public class KmlFactoryDefault implements KmlFactory{
     @Override
     public Orientation createOrientation(List<SimpleType> objectSimpleExtensions,
             IdAttributes idAttributes,
-            Angle360 heading, double tilt, Angle180 roll,
+            double heading, double tilt, double roll,
             List<SimpleType> orientationSimpleExtensions,
             List<AbstractObject> orientationObjectExtensions){
         return new DefaultOrientation(objectSimpleExtensions, idAttributes,
@@ -763,7 +733,7 @@ public class KmlFactoryDefault implements KmlFactory{
             List<AbstractObject> abstractFeatureObjectExtensions,
             Color color, int drawOrder, Icon icon,
             List<SimpleType> abstractOveraySimpleExtensions, List<AbstractObject> abstractOverlayObjectExtensions,
-            Angle180 rotation, ViewVolume viewVolume, ImagePyramid imagePyramid, Point point, Shape shape,
+            double rotation, ViewVolume viewVolume, ImagePyramid imagePyramid, Point point, Shape shape,
             List<SimpleType> photoOverlaySimpleExtensions, List<AbstractObject> photoOverlayObjectExtensions){
         return new DefaultPhotoOverlay(objectSimpleExtensions, idAttributes,
                 name, visibility, open, author, link, address,
@@ -933,7 +903,7 @@ public class KmlFactoryDefault implements KmlFactory{
             List<AbstractObject> abstractFeatureObjectExtensions,
             Color color, int drawOrder, Icon icon,
             List<SimpleType> abstractOveraySimpleExtensions, List<AbstractObject> abstractOverlayObjectExtensions,
-            Vec2 overlayXY, Vec2 screenXY, Vec2 rotationXY, Vec2 size, Angle180 rotation,
+            Vec2 overlayXY, Vec2 screenXY, Vec2 rotationXY, Vec2 size, double rotation,
             List<SimpleType> screenOverlaySimpleExtensions, List<AbstractObject> screenOverlayObjectExtensions){
         return new DefaultScreenOverlay(objectSimpleExtensions, idAttributes,
                 name, visibility, open, author, link, address,
@@ -1048,93 +1018,10 @@ public class KmlFactoryDefault implements KmlFactory{
      */
     @Override
     public ViewVolume createViewVolume(List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
-            Angle180 leftFov, Angle180 rightFov, Angle90 bottomFov, Angle90 topFov, double near,
+            double leftFov, double rightFov, double bottomFov, double topFov, double near,
             List<SimpleType> viewVolumeSimpleExtensions, List<AbstractObject> viewVolumeObjectExtensions){
         return new DefaultViewVolume(objectSimpleExtensions, idAttributes,
                 leftFov, rightFov, bottomFov, topFov, near,
                 viewVolumeSimpleExtensions, viewVolumeObjectExtensions);
-    }
-
-    
-    /*
-     * Utilities to initialize default values.
-     */
-
-    /**
-     * <p>This method creates a default Angle180.</p>
-     *
-     * <p>Use the appropriate ANGLE_MIN, ANGLE_ZERO or ANGLE_MAX
-     * values to obtain a default angle.</p>
-     *
-     * @param flag
-     * @return
-     */
-    public static Angle180 createAngle180(String flag){
-        Angle180 angle = null;
-        try {
-            if ("max".equals(flag)) {
-                angle = new DefaultAngle180(180.0);
-            } else if ("zero".equals(flag)) {
-                angle = new DefaultAngle180(0.0);
-            } else if ("min".equals(flag)) {
-                angle = new DefaultAngle180(-180.0);
-            }
-
-        } catch (KmlException ex) {
-            Logger.getLogger(KmlFactoryDefault.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return angle;
-    }
-
-    /**
-     * <p>This method creates a default Anglepos180.</p>
-     *
-     * <p>Use the appropriate ANGLE_MIN, ANGLE_ZERO or ANGLE_MAX
-     * values to obtain a default angle.</p>
-     *
-     * @param flag
-     * @return
-     */
-    public static Angle360 createAngle360(String flag){
-        Angle360 angle = null;
-        try {
-            if ("max".equals(flag)) {
-                angle = new DefaultAngle360(360.0);
-            } else if ("zero".equals(flag)) {
-                angle = new DefaultAngle360(0.0);
-            } else if ("min".equals(flag)) {
-                angle = new DefaultAngle360(-360.0);
-            }
-
-        } catch (KmlException ex) {
-            Logger.getLogger(KmlFactoryDefault.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return angle;
-    }
-
-    /**
-     * <p>This method creates a default Anglepos180.</p>
-     *
-     * <p>Use the appropriate ANGLE_MIN, ANGLE_ZERO or ANGLE_MAX
-     * values to obtain a default angle.</p>
-     *
-     * @param flag
-     * @return
-     */
-    public static Angle90 createAngle90(String flag){
-        Angle90 angle = null;
-        try {
-            if ("max".equals(flag)) {
-                angle = new DefaultAngle90(90.0);
-            } else if ("zero".equals(flag)) {
-                angle = new DefaultAngle90(0.0);
-            } else if ("min".equals(flag)) {
-                angle = new DefaultAngle90(-90.0);
-            }
-
-        } catch (KmlException ex) {
-            Logger.getLogger(KmlFactoryDefault.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return angle;
     }
 }

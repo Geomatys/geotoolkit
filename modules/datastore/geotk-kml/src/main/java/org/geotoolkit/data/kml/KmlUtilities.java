@@ -123,4 +123,100 @@ public class KmlUtilities {
         }
         return angle;
     }
+
+    /**
+     * <p>This method check value for Anglepos90 element.</p>
+     *
+     * <pre>
+     * &lt;simpleType name="angle90posType">
+     *  &lt;restriction base="double">
+     *      &lt;minInclusive value="0"/>
+     *      &lt;maxInclusive value="90.0"/>
+     *  &lt;/restriction>
+     * &lt;/simpleType>
+     * </pre>
+     *
+     * @param angle
+     * @return
+     */
+    public static double checkAnglePos90(double angle) {
+        if (angle < 0 || angle > 90) {
+            throw new IllegalArgumentException("This angle type requires a value "
+                    + "between 0 and 90 degrees. You've intented an initialization with "
+                    + angle + " degree(s)");
+        }
+        return angle;
+    }
+
+    /**
+     * <p>This method check value for Angle180 element.</p>
+     *
+     * <pre>
+     * &lt;simpleType name="angle180Type">
+     *  &lt;restriction base="double">
+     *      &lt;minInclusive value="-180"/>
+     *      &lt;maxInclusive value="180.0"/>
+     *  &lt;/restriction>
+     * &lt;/simpleType>
+     * </pre>
+     *
+     * @param angle
+     * @return
+     */
+    public static double checkAngle180(double angle) {
+        if (angle < -180 || angle > 180) {
+            throw new IllegalArgumentException("This angle type requires a value "
+                    + "between -180 and 180 degrees. You've intented an initialization with "
+                    + angle + " degree(s)");
+        }
+        return angle;
+    }
+
+    /**
+     * <p>This method check value for Angle180 element.</p>
+     *
+     * <pre>
+     * &lt;simpleType name="angle90Type">
+     *  &lt;restriction base="double">
+     *      &lt;minInclusive value="-90"/>
+     *      &lt;maxInclusive value="90.0"/>
+     *  &lt;/restriction>
+     * &lt;/simpleType>
+     * </pre>
+     *
+     * @param angle
+     * @return
+     */
+    public static double checkAngle90(double angle) {
+        if (angle < -90 || angle > 90) {
+            throw new IllegalArgumentException("This angle type requires a value "
+                    + "between -90 and 90 degrees. You've intented an initialization with "
+                    + angle + " degree(s)");
+        }
+        return angle;
+    }
+
+    /**
+     * <p>This method check value for Angle360 element.</p>
+     *
+     * <pre>
+     * &lt;simpleType name="angle360Type">
+     *  &lt;restriction base="double">
+     *      &lt;minInclusive value="-360"/>
+     *      &lt;maxInclusive value="360.0"/>
+     *  &lt;/restriction>
+     * &lt;/simpleType>
+     * </pre>
+     *
+     * @param angle
+     * @return
+     */
+    public static double checkAngle360(double angle) {
+        if (angle < -360 || angle > 360) {
+            throw new IllegalArgumentException("This angle type requires a value "
+                    + "between -360 and 360 degrees. You've intented an initialization with "
+                    + angle + " degree(s)");
+        }
+        return angle;
+    }
 }

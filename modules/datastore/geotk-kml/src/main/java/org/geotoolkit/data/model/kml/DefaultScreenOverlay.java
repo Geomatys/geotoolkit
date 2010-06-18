@@ -2,6 +2,7 @@ package org.geotoolkit.data.model.kml;
 
 import java.awt.Color;
 import java.util.List;
+import org.geotoolkit.data.kml.KmlUtilities;
 import org.geotoolkit.data.model.atom.AtomLink;
 import org.geotoolkit.data.model.atom.AtomPersonConstruct;
 import org.geotoolkit.data.model.xal.AddressDetails;
@@ -18,7 +19,7 @@ public class DefaultScreenOverlay extends DefaultAbstractOverlay implements Scre
     private final Vec2 screenXY;
     private final Vec2 rotationXY;
     private final Vec2 size;
-    private final Angle180 rotation;
+    private final double rotation;
     private final List<SimpleType> screenOverlaySimpleExtensions;
     private final List<AbstractObject> screenOverlayObjectExtensions;
 
@@ -67,7 +68,7 @@ public class DefaultScreenOverlay extends DefaultAbstractOverlay implements Scre
             List<AbstractObject> abstractFeatureObjectExtensions,
             Color color, int drawOrder, Icon icon,
             List<SimpleType> abstractOveraySimpleExtensions, List<AbstractObject> abstractOverlayObjectExtensions,
-            Vec2 overlayXY, Vec2 screenXY, Vec2 rotationXY, Vec2 size, Angle180 rotation,
+            Vec2 overlayXY, Vec2 screenXY, Vec2 rotationXY, Vec2 size, double rotation,
             List<SimpleType> screenOverlaySimpleExtensions, List<AbstractObject> screenOverlayObjectExtensions){
         super(objectSimpleExtensions, idAttributes,
                 name, visibility, open, author, link,
@@ -80,7 +81,7 @@ public class DefaultScreenOverlay extends DefaultAbstractOverlay implements Scre
         this.screenXY = screenXY;
         this.rotationXY = rotationXY;
         this.size = size;
-        this.rotation = rotation;
+        this.rotation = KmlUtilities.checkAngle180(rotation);
         this.screenOverlaySimpleExtensions = (screenOverlaySimpleExtensions == null) ? EMPTY_LIST : screenOverlaySimpleExtensions;
         this.screenOverlayObjectExtensions = (screenOverlayObjectExtensions == null) ? EMPTY_LIST : screenOverlayObjectExtensions;
     }
@@ -118,7 +119,7 @@ public class DefaultScreenOverlay extends DefaultAbstractOverlay implements Scre
      * @{@inheritDoc }
      */
     @Override
-    public Angle180 getRotation() {return this.rotation;}
+    public double getRotation() {return this.rotation;}
 
     /**
      *

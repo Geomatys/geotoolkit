@@ -1,6 +1,7 @@
 package org.geotoolkit.data.model.kml;
 
 import java.util.List;
+import org.geotoolkit.data.kml.KmlUtilities;
 import org.geotoolkit.data.model.xsd.SimpleType;
 import static org.geotoolkit.data.model.KmlModelConstants.*;
 import static java.util.Collections.*;
@@ -11,10 +12,10 @@ import static java.util.Collections.*;
  */
 public class DefaultLookAt extends DefaultAbstractView implements LookAt {
 
-    private Angle180 longitude;
-    private Angle90 latitude;
+    private double longitude;
+    private double latitude;
     private double altitude;
-    private Angle360 heading;
+    private double heading;
     private double tilt;
     private double range;
     private List<SimpleType> lookAtSimpleExtensions;
@@ -24,7 +25,10 @@ public class DefaultLookAt extends DefaultAbstractView implements LookAt {
      * 
      */
     public DefaultLookAt(){
+        this.longitude = DEF_LONGITUDE;
+        this.latitude = DEF_LATITUDE;
         this.altitude = DEF_ALTITUDE;
+        this.heading = DEF_HEADING;
         this.tilt = DEF_TILT;
         this.range = DEF_RANGE;
         this.lookAtSimpleExtensions = EMPTY_LIST;
@@ -48,16 +52,16 @@ public class DefaultLookAt extends DefaultAbstractView implements LookAt {
      */
     public DefaultLookAt(List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
             List<SimpleType> abstractViewSimpleExtensions, List<AbstractObject> abstractViewObjectExtensions,
-            Angle180 longitude, Angle90 latitude, double altitude,
-            Angle360 heading, double tilt, double range,
+            double longitude, double latitude, double altitude,
+            double heading, double tilt, double range,
             List<SimpleType> lookAtSimpleExtensions, List<AbstractObject> lookAtObjectExtensions){
         super(objectSimpleExtensions, idAttributes,
                 abstractViewSimpleExtensions, abstractViewObjectExtensions);
-        this.longitude = longitude;
-        this.latitude = latitude;
+        this.longitude = KmlUtilities.checkAngle180(longitude);
+        this.latitude = KmlUtilities.checkAngle90(latitude);
         this.altitude = altitude;
-        this.heading = heading;
-        this.tilt = tilt;
+        this.heading = KmlUtilities.checkAngle360(heading);
+        this.tilt = KmlUtilities.checkAnglePos180(tilt);
         this.range = range;
         this.lookAtSimpleExtensions = (lookAtSimpleExtensions == null) ? EMPTY_LIST : lookAtSimpleExtensions;
         this.lookAtObjectExtensions = (lookAtObjectExtensions == null) ? EMPTY_LIST : lookAtObjectExtensions;
@@ -68,14 +72,14 @@ public class DefaultLookAt extends DefaultAbstractView implements LookAt {
      * @{@inheritDoc }
      */
     @Override
-    public Angle180 getLongitude() {return this.longitude;}
+    public double getLongitude() {return this.longitude;}
 
     /**
      *
      * @{@inheritDoc }
      */
     @Override
-    public Angle90 getLatitude() {return this.latitude;}
+    public double getLatitude() {return this.latitude;}
 
     /**
      *
@@ -89,7 +93,7 @@ public class DefaultLookAt extends DefaultAbstractView implements LookAt {
      * @{@inheritDoc }
      */
     @Override
-    public Angle360 getHeading() {return this.heading;}
+    public double getHeading() {return this.heading;}
 
     /**
      *
@@ -124,14 +128,14 @@ public class DefaultLookAt extends DefaultAbstractView implements LookAt {
      * @{@inheritDoc }
      */
     @Override
-    public void setLongitude(Angle180 longitude) {this.longitude = longitude;}
+    public void setLongitude(double longitude) {this.longitude = KmlUtilities.checkAngle180(longitude);}
 
     /**
      *
      * @{@inheritDoc }
      */
     @Override
-    public void setLatitude(Angle90 latitude) {this.latitude = latitude;}
+    public void setLatitude(double latitude) {this.latitude = KmlUtilities.checkAngle90(latitude);}
 
     /**
      *
@@ -145,14 +149,14 @@ public class DefaultLookAt extends DefaultAbstractView implements LookAt {
      * @{@inheritDoc }
      */
     @Override
-    public void setHeading(Angle360 heading) {this.heading = heading;}
+    public void setHeading(double heading) {this.heading = KmlUtilities.checkAngle360(heading);}
 
     /**
      *
      * @{@inheritDoc }
      */
     @Override
-    public void setTilt(double tilt) {this.tilt = tilt;}
+    public void setTilt(double tilt) {this.tilt = KmlUtilities.checkAnglePos180(tilt);}
 
     /**
      *

@@ -37,7 +37,7 @@ public interface PhotoOverlay extends AbstractOverlay {
      *
      * @return
      */
-    public Angle180 getRotation();
+    public double getRotation();
 
     /**
      *
@@ -79,7 +79,7 @@ public interface PhotoOverlay extends AbstractOverlay {
      *
      * @param rotation
      */
-    public void setRotation(Angle180 rotation);
+    public void setRotation(double rotation);
 
     /**
      *

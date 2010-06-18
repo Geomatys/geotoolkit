@@ -6,19 +6,12 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
 import org.geotoolkit.data.model.KmlFactory;
 import org.geotoolkit.data.model.KmlFactoryDefault;
-import org.geotoolkit.data.model.kml.AbstractContainer;
 import org.geotoolkit.data.model.kml.AbstractFeature;
 import org.geotoolkit.data.model.kml.AbstractView;
-import org.geotoolkit.data.model.kml.AltitudeMode;
-import org.geotoolkit.data.model.kml.Angle180;
-import org.geotoolkit.data.model.kml.Angle360;
-import org.geotoolkit.data.model.kml.Angle90;
-import org.geotoolkit.data.model.kml.Camera;
 import org.geotoolkit.data.model.kml.Folder;
 import org.geotoolkit.data.model.kml.Kml;
 import org.geotoolkit.data.model.kml.KmlException;
 import org.geotoolkit.data.model.kml.LookAt;
-import org.geotoolkit.data.model.kml.PhotoOverlay;
 import org.geotoolkit.xml.DomCompare;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -28,7 +21,6 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 import org.xml.sax.SAXException;
 
-import static org.geotoolkit.data.model.KmlModelConstants.*;
 
 /**
  *
@@ -73,10 +65,10 @@ public class LookAtTest {
          assertTrue(view instanceof LookAt);
 
          final LookAt lookAt = (LookAt) view;
-         assertEquals(-122.0839597145766, lookAt.getLongitude().getAngle(), DELTA);
-         assertEquals(37.42222904525232, lookAt.getLatitude().getAngle(), DELTA);
+         assertEquals(-122.0839597145766, lookAt.getLongitude(), DELTA);
+         assertEquals(37.42222904525232, lookAt.getLatitude(), DELTA);
          assertEquals(1000.34, lookAt.getAltitude(), DELTA);
-         assertEquals(-148.4122922628044, lookAt.getHeading().getAngle(), DELTA);
+         assertEquals(-148.4122922628044, lookAt.getHeading(), DELTA);
          assertEquals(40.5575073395506, lookAt.getTilt(), DELTA);
          assertEquals(500.6566641072245, lookAt.getRange(), DELTA);
          
@@ -86,10 +78,10 @@ public class LookAtTest {
      public void lookAtWriteTest() throws KmlException, IOException, XMLStreamException, ParserConfigurationException, SAXException{
         final KmlFactory kmlFactory = new KmlFactoryDefault();
 
-        Angle180 longitude = kmlFactory.createAngle180(-122.0839597145766);
-        Angle90 latitude = kmlFactory.createAngle90(37.42222904525232);
+        double longitude = -122.0839597145766;
+        double latitude = 37.42222904525232;
         double altitude = 1000.34;
-        Angle360 heading = kmlFactory.createAngle360(-148.4122922628044);
+        double heading = -148.4122922628044;
         double tilt = 40.5575073395506;
         double range = 500.6566641072245;
          

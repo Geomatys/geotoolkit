@@ -39,13 +39,13 @@ public interface Camera extends AbstractView {
      *
      * @return the longitude angle.
      */
-    public Angle180 getLongitude();
+    public double getLongitude();
 
     /**
      *
      * @return the latiude angle.
      */
-    public Angle90 getLatitude();
+    public double getLatitude();
 
     /**
      *
@@ -57,7 +57,7 @@ public interface Camera extends AbstractView {
      *
      * @return the heading angle.
      */
-    public Angle360 getHeading();
+    public double getHeading();
 
     /**
      *
@@ -69,7 +69,7 @@ public interface Camera extends AbstractView {
      *
      * @return the roll angle.
      */
-    public Angle180 getRoll();
+    public double getRoll();
 
     /**
      *
@@ -93,13 +93,13 @@ public interface Camera extends AbstractView {
      *
      * @param longitude
      */
-    public void setLongitude(Angle180 longitude);
+    public void setLongitude(double longitude);
 
     /**
      *
      * @param latitude
      */
-    public void setLatitude(Angle90 latitude);
+    public void setLatitude(double latitude);
 
     /**
      *
@@ -111,7 +111,7 @@ public interface Camera extends AbstractView {
      *
      * @param heading
      */
-    public void setHeading(Angle360 heading);
+    public void setHeading(double heading);
 
     /**
      *
@@ -123,7 +123,7 @@ public interface Camera extends AbstractView {
      *
      * @param roll
      */
-    public void setRoll(Angle180 roll);
+    public void setRoll(double roll);
 
     /**
      *

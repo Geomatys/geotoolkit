@@ -1,6 +1,7 @@
 package org.geotoolkit.data.model.kml;
 
 import java.util.List;
+import org.geotoolkit.data.kml.KmlUtilities;
 import org.geotoolkit.data.model.xsd.SimpleType;
 import static java.util.Collections.*;
 
@@ -10,7 +11,7 @@ import static java.util.Collections.*;
  */
 public class DefaultLatLonBox extends DefaultAbstractLatLonBox implements LatLonBox{
 
-    private final Angle180 rotation;
+    private final double rotation;
     private final List<SimpleType> latLonBoxSimpleExtensions;
     private final List<AbstractObject> latLonBoxObjectExtensions;
 
@@ -29,13 +30,13 @@ public class DefaultLatLonBox extends DefaultAbstractLatLonBox implements LatLon
      * @param latLonBoxObjectExtensions
      */
     public DefaultLatLonBox(List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
-            Angle180 north, Angle180 south, Angle180 east, Angle180 west,
+            double north, double south, double east, double west,
             List<SimpleType> abstractLatLonBoxSimpleExtensions, List<AbstractObject> abstractLatLonBoxObjectExtensions,
-            Angle180 rotation,
+            double rotation,
             List<SimpleType> latLonBoxSimpleExtensions,
             List<AbstractObject> latLonBoxObjectExtensions){
         super(objectSimpleExtensions, idAttributes, north, south, east, west, abstractLatLonBoxSimpleExtensions, abstractLatLonBoxObjectExtensions);
-        this.rotation = rotation;
+        this.rotation = KmlUtilities.checkAngle180(rotation);
         this.latLonBoxSimpleExtensions = (latLonBoxSimpleExtensions == null) ? EMPTY_LIST : latLonBoxSimpleExtensions;
         this.latLonBoxObjectExtensions = (latLonBoxObjectExtensions == null) ? EMPTY_LIST : latLonBoxObjectExtensions;
     }
@@ -45,7 +46,7 @@ public class DefaultLatLonBox extends DefaultAbstractLatLonBox implements LatLon
      * @{@inheritDoc }
      */
     @Override
-    public Angle180 getRotation() {return this.rotation;}
+    public double getRotation() {return this.rotation;}
 
     /**
      *

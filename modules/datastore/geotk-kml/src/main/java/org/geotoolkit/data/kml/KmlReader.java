@@ -25,9 +25,6 @@ import org.geotoolkit.data.model.kml.AbstractTimePrimitive;
 import org.geotoolkit.data.model.kml.AbstractView;
 import org.geotoolkit.data.model.kml.Alias;
 import org.geotoolkit.data.model.kml.AltitudeMode;
-import org.geotoolkit.data.model.kml.Angle180;
-import org.geotoolkit.data.model.kml.Angle360;
-import org.geotoolkit.data.model.kml.Angle90;
 import org.geotoolkit.data.model.kml.BalloonStyle;
 import org.geotoolkit.data.model.kml.BasicLink;
 import org.geotoolkit.data.model.kml.Boundary;
@@ -1262,8 +1259,8 @@ public class KmlReader extends StaxStreamReader {
         IdAttributes idAttributes = this.readIdAttributes();
 
         // Location
-        Angle180 longitude = DEF_LONGITUDE;
-        Angle90 latitude = DEF_LATITUDE;
+        double longitude = DEF_LONGITUDE;
+        double latitude = DEF_LATITUDE;
         double altitude = DEF_ALTITUDE;
         List<SimpleType> locationSimpleExtensions = null;
         List<AbstractObject> locationObjectExtensions = null;
@@ -1280,9 +1277,9 @@ public class KmlReader extends StaxStreamReader {
                     // LOCATION
                     if (URI_KML.equals(eUri)) {
                         if (TAG_LONGITUDE.equals(eName)) {
-                            longitude = KmlReader.kmlFactory.createAngle180(parseDouble(reader.getElementText()));
+                            longitude = KmlUtilities.checkAnglePos180(parseDouble(reader.getElementText()));
                         } else if (TAG_LATITUDE.equals(eName)) {
-                            latitude = KmlReader.kmlFactory.createAngle90(parseDouble(reader.getElementText()));
+                            latitude = KmlUtilities.checkAngle90(parseDouble(reader.getElementText()));
                         } else if (TAG_ALTITUDE.equals(eName)){
                             altitude = parseDouble(reader.getElementText());
                         }
@@ -1314,9 +1311,9 @@ public class KmlReader extends StaxStreamReader {
         IdAttributes idAttributes = this.readIdAttributes();
 
         // Orientation
-        Angle360 heading = DEF_HEADING;
+        double heading = DEF_HEADING;
         double tilt = DEF_TILT;
-        Angle180 roll = DEF_ROLL;
+        double roll = DEF_ROLL;
         List<SimpleType> orientationSimpleExtensions = null;
         List<AbstractObject> orientationObjectExtensions = null;
 
@@ -1331,11 +1328,11 @@ public class KmlReader extends StaxStreamReader {
                     // ORIENTATION
                     if (URI_KML.equals(eUri)) {
                         if (TAG_HEADING.equals(eName)) {
-                            heading = KmlReader.kmlFactory.createAngle360(parseDouble(reader.getElementText()));
+                            heading = KmlUtilities.checkAngle360(parseDouble(reader.getElementText()));
                         } else if (TAG_TILT.equals(eName)) {
                             tilt = KmlUtilities.checkAnglePos180(parseDouble(reader.getElementText()));
                         } else if (TAG_ROLL.equals(eName)) {
-                            roll = KmlReader.kmlFactory.createAngle180(parseDouble(reader.getElementText()));
+                            roll = KmlUtilities.checkAnglePos180(parseDouble(reader.getElementText()));
                         }
                     }
                     break;
@@ -1808,15 +1805,15 @@ public class KmlReader extends StaxStreamReader {
         IdAttributes idAttributes = this.readIdAttributes();
 
         // AbstractLatLonBox
-        Angle180 north = DEF_NORTH;
-        Angle180 south = DEF_SOUTH;
-        Angle180 east = DEF_EAST;
-        Angle180 west = DEF_WEST;
+        double north = DEF_NORTH;
+        double south = DEF_SOUTH;
+        double east = DEF_EAST;
+        double west = DEF_WEST;
         List<SimpleType> abstractLatLonBoxSimpleExtensions = null;
         List<AbstractObject> abstractLatLonBoxObjectExtensions = null;
 
         // LatLonBox
-        Angle180 rotation = DEF_ROTATION;
+        double rotation = DEF_ROTATION;
         List<SimpleType> latLonBoxSimpleExtensions = null;
         List<AbstractObject> latLonBoxObjectExtensions = null;
 
@@ -1832,18 +1829,18 @@ public class KmlReader extends StaxStreamReader {
 
                         // ABSTRACT LATLONBOX
                         if (TAG_NORTH.equals(eName)) {
-                            north = KmlReader.kmlFactory.createAngle180(parseDouble(reader.getElementText()));
+                            north = KmlUtilities.checkAngle180(parseDouble(reader.getElementText()));
                         } else if (TAG_SOUTH.equals(eName)) {
-                            south = KmlReader.kmlFactory.createAngle180(parseDouble(reader.getElementText()));
+                            south = KmlUtilities.checkAngle180(parseDouble(reader.getElementText()));
                         } else if (TAG_EAST.equals(eName)) {
-                            east = KmlReader.kmlFactory.createAngle180(parseDouble(reader.getElementText()));
+                            east = KmlUtilities.checkAngle180(parseDouble(reader.getElementText()));
                         } else if (TAG_WEST.equals(eName)) {
-                            west = KmlReader.kmlFactory.createAngle180(parseDouble(reader.getElementText()));
+                            west = KmlUtilities.checkAngle180(parseDouble(reader.getElementText()));
                         } 
                         
                         // LATLONBOX
                         else if (TAG_ROTATION.equals(eName)) {
-                            rotation = KmlReader.kmlFactory.createAngle180(parseDouble(reader.getElementText()));
+                            rotation = KmlUtilities.checkAngle180(parseDouble(reader.getElementText()));
                         }
 
                     }
@@ -1875,10 +1872,10 @@ public class KmlReader extends StaxStreamReader {
         IdAttributes idAttributes = this.readIdAttributes();
 
         // AbstractLatLonBox
-        Angle180 north = DEF_NORTH;
-        Angle180 south = DEF_SOUTH;
-        Angle180 east = DEF_EAST;
-        Angle180 west = DEF_WEST;
+        double north = DEF_NORTH;
+        double south = DEF_SOUTH;
+        double east = DEF_EAST;
+        double west = DEF_WEST;
         List<SimpleType> abstractLatLonBoxSimpleExtensions = null;
         List<AbstractObject> abstractLatLonBoxObjectExtensions = null;
 
@@ -1901,13 +1898,13 @@ public class KmlReader extends StaxStreamReader {
 
                         // ABSTRACT LATLONBOX
                         if (TAG_NORTH.equals(eName)) {
-                            north = KmlReader.kmlFactory.createAngle180(parseDouble(reader.getElementText()));
+                            north = KmlUtilities.checkAngle180(parseDouble(reader.getElementText()));
                         } else if (TAG_SOUTH.equals(eName)) {
-                            south = KmlReader.kmlFactory.createAngle180(parseDouble(reader.getElementText()));
+                            south = KmlUtilities.checkAngle180(parseDouble(reader.getElementText()));
                         } else if (TAG_EAST.equals(eName)) {
-                            east = KmlReader.kmlFactory.createAngle180(parseDouble(reader.getElementText()));
+                            east = KmlUtilities.checkAngle180(parseDouble(reader.getElementText()));
                         } else if (TAG_WEST.equals(eName)) {
-                            west = KmlReader.kmlFactory.createAngle180(parseDouble(reader.getElementText()));
+                            west = KmlUtilities.checkAngle180(parseDouble(reader.getElementText()));
                         }
 
                         // LATLONALTBOX
@@ -2005,10 +2002,10 @@ public class KmlReader extends StaxStreamReader {
         IdAttributes idAttributes = this.readIdAttributes();
 
         // ViewVolume
-        Angle180 leftFov = DEF_LEFT_FOV;
-        Angle180 rightFov = DEF_RIGHT_FOV;
-        Angle90 bottomFov = DEF_BOTTOM_FOV;
-        Angle90 topFov = DEF_TOP_FOV;
+        double leftFov = DEF_LEFT_FOV;
+        double rightFov = DEF_RIGHT_FOV;
+        double bottomFov = DEF_BOTTOM_FOV;
+        double topFov = DEF_TOP_FOV;
         double near = DEF_NEAR;
         List<SimpleType> viewVolumeSimpleExtensions = null;
         List<AbstractObject> viewVolumeObjectExtensions = null;
@@ -2025,13 +2022,13 @@ public class KmlReader extends StaxStreamReader {
 
                         // VIEW VOLUME
                         if (TAG_LEFT_FOV.equals(eName)) {
-                            leftFov = KmlReader.kmlFactory.createAngle180(parseDouble(reader.getElementText()));
+                            leftFov = KmlUtilities.checkAngle180(parseDouble(reader.getElementText()));
                         } else if (TAG_RIGHT_FOV.equals(eName)) {
-                            rightFov = KmlReader.kmlFactory.createAngle180(parseDouble(reader.getElementText()));
+                            rightFov = KmlUtilities.checkAngle180(parseDouble(reader.getElementText()));
                         } else if (TAG_BOTTOM_FOV.equals(eName)) {
-                            bottomFov = KmlReader.kmlFactory.createAngle90(parseDouble(reader.getElementText()));
+                            bottomFov =  KmlUtilities.checkAngle90(parseDouble(reader.getElementText()));
                         } else if (TAG_TOP_FOV.equals(eName)) {
-                            topFov = KmlReader.kmlFactory.createAngle90(parseDouble(reader.getElementText()));
+                            topFov =  KmlUtilities.checkAngle90(parseDouble(reader.getElementText()));
                         } else if (TAG_NEAR.equals(eName)) {
                             near = parseDouble(reader.getElementText());
                         }
@@ -2085,7 +2082,7 @@ public class KmlReader extends StaxStreamReader {
         List<AbstractObject> abstractOverlayObjectExtensions = null;
 
         // PhotoOverlay
-        Angle180 rotation = DEF_ROTATION;
+        double rotation = DEF_ROTATION;
         ViewVolume viewVolume = null;
         ImagePyramid imagePyramid = null;
         Point point = null;
@@ -2147,7 +2144,7 @@ public class KmlReader extends StaxStreamReader {
 
                         // PHOTO OVERLAY
                         else if (TAG_ROTATION.equals(eName)) {
-                            rotation = KmlReader.kmlFactory.createAngle180(parseDouble(reader.getElementText()));
+                            rotation = KmlUtilities.checkAngle180(parseDouble(reader.getElementText()));
                         } else if (TAG_VIEW_VOLUME.equals(eName)) {
                             viewVolume = this.readViewVolume();
                         } else if (TAG_IMAGE_PYRAMID.equals(eName)) {
@@ -2239,7 +2236,7 @@ public class KmlReader extends StaxStreamReader {
         Vec2 screenXY = null;
         Vec2 rotationXY = null;
         Vec2 size = null;
-        Angle180 rotation = DEF_ROTATION;
+        double rotation = DEF_ROTATION;
         List<SimpleType> screenOverlaySimpleExtensions = null;
         List<AbstractObject> screenOverlayObjectExtensions = null;
 
@@ -2303,7 +2300,7 @@ public class KmlReader extends StaxStreamReader {
                         } else if (TAG_SIZE.equals(eName)) {
                             size = this.readVec2(eName);
                         } else if (TAG_ROTATION.equals(eName)) {
-                            rotation = KmlReader.kmlFactory.createAngle180(parseDouble(reader.getElementText()));
+                            rotation = KmlUtilities.checkAngle180(parseDouble(reader.getElementText()));
                         }
 
 
@@ -2350,7 +2347,6 @@ public class KmlReader extends StaxStreamReader {
      * @throws XMLStreamException
      */
     private AbstractContainer readAbstractContainer(String eName) throws XMLStreamException, KmlException {
-        System.out.println("ABSTRACT CONTAINER");
         AbstractContainer resultat = null;
         if (TAG_FOLDER.equals(eName)) {
             resultat = readFolder();
@@ -2392,10 +2388,10 @@ public class KmlReader extends StaxStreamReader {
         List<AbstractObject> abstractViewObjectExtensions = null;
 
         // LookAt
-        Angle180 longitude = DEF_LONGITUDE;
-        Angle90 latitude = DEF_LATITUDE;
+        double longitude = DEF_LONGITUDE;
+        double latitude = DEF_LATITUDE;
         double altitude = DEF_ALTITUDE;
-        Angle360 heading = DEF_HEADING;
+        double heading = DEF_HEADING;
         double tilt = DEF_TILT;
         double range = DEF_RANGE;
         List<SimpleType> lookAtSimpleExtensions = null;
@@ -2413,13 +2409,13 @@ public class KmlReader extends StaxStreamReader {
 
                         // LOOK AT
                         if (TAG_LONGITUDE.equals(eName)) {
-                            longitude = KmlReader.kmlFactory.createAngle180(parseDouble(reader.getElementText()));
+                            longitude = KmlUtilities.checkAngle180(parseDouble(reader.getElementText()));
                         } else if (TAG_LATITUDE.equals(eName)) {
-                            latitude = KmlReader.kmlFactory.createAngle90(parseDouble(reader.getElementText()));
+                            latitude =  KmlUtilities.checkAngle90(parseDouble(reader.getElementText()));
                         } else if (TAG_ALTITUDE.equals(eName)) {
                             altitude = parseDouble(reader.getElementText());
                         } else if (TAG_HEADING.equals(eName)) {
-                            heading = KmlReader.kmlFactory.createAngle360(parseDouble(reader.getElementText()));
+                            heading = KmlUtilities.checkAngle360(parseDouble(reader.getElementText()));
                         } else if (TAG_TILT.equals(eName)) {
                             tilt = KmlUtilities.checkAnglePos180(parseDouble(reader.getElementText()));
                         } else if (TAG_RANGE.equals(eName)) {
@@ -2457,12 +2453,12 @@ public class KmlReader extends StaxStreamReader {
         List<AbstractObject> abstractViewObjectExtensions = null;
 
         // Camera
-        Angle180 longitude = DEF_LONGITUDE;
-        Angle90 latitude = DEF_LATITUDE;
+        double longitude = DEF_LONGITUDE;
+        double latitude = DEF_LATITUDE;
         double altitude = DEF_ALTITUDE;
-        Angle360 heading = DEF_HEADING;
+        double heading = DEF_HEADING;
         double tilt = DEF_TILT;
-        Angle180 roll = DEF_ROLL;
+        double roll = DEF_ROLL;
         AltitudeMode altitudeMode = DEF_ALTITUDE_MODE;
         List<SimpleType> cameraSimpleExtensions = null;
         List<AbstractObject> cameraObjectExtensions = null;
@@ -2479,17 +2475,17 @@ public class KmlReader extends StaxStreamReader {
 
                         // CAMERA
                         if (TAG_LONGITUDE.equals(eName)) {
-                            longitude = KmlReader.kmlFactory.createAngle180(parseDouble(reader.getElementText()));
+                            longitude = KmlUtilities.checkAngle180(parseDouble(reader.getElementText()));
                         } else if (TAG_LATITUDE.equals(eName)) {
-                            latitude = KmlReader.kmlFactory.createAngle90(parseDouble(reader.getElementText()));
+                            latitude =  KmlUtilities.checkAngle90(parseDouble(reader.getElementText()));
                         } else if (TAG_ALTITUDE.equals(eName)) {
                             altitude = parseDouble(reader.getElementText());
                         } else if (TAG_HEADING.equals(eName)) {
-                            heading = KmlReader.kmlFactory.createAngle360(parseDouble(reader.getElementText()));
+                            heading = KmlUtilities.checkAngle360(parseDouble(reader.getElementText()));
                         } else if (TAG_TILT.equals(eName)) {
                             tilt = KmlUtilities.checkAnglePos180(parseDouble(reader.getElementText()));
                         } else if (TAG_ROLL.equals(eName)) {
-                            roll = KmlReader.kmlFactory.createAngle180(parseDouble(reader.getElementText()));
+                            roll = KmlUtilities.checkAngle180(parseDouble(reader.getElementText()));
                         } else if (TAG_ALTITUDE_MODE.equals(eName)) {
                             altitudeMode = AltitudeMode.transform(reader.getElementText());
                         }
@@ -2715,7 +2711,7 @@ public class KmlReader extends StaxStreamReader {
 
         // IconStyle
         double scale = DEF_SCALE;
-        Angle360 heading = DEF_HEADING;
+        double heading = DEF_HEADING;
         BasicLink icon = null;
         Vec2 hotSpot = null;
         List<SimpleType> iconStyleSimpleExtensions = null;
@@ -2742,7 +2738,7 @@ public class KmlReader extends StaxStreamReader {
                         else if (TAG_SCALE.equals(eName)) {
                             scale = parseDouble(reader.getElementText());
                         } else if (TAG_HEADING.equals(eName)) {
-                            heading = KmlReader.kmlFactory.createAngle360(parseDouble(reader.getElementText()));
+                            heading = KmlUtilities.checkAngle360(parseDouble(reader.getElementText()));
                         } else if (TAG_ICON.equals(eName)) {
                             icon = this.readBasicLink(TAG_ICON);
                         } else if (TAG_HOT_SPOT.equals(eName)) {

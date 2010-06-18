@@ -9,9 +9,6 @@ import org.geotoolkit.data.model.KmlFactoryDefault;
 import org.geotoolkit.data.model.kml.AbstractFeature;
 import org.geotoolkit.data.model.kml.AbstractView;
 import org.geotoolkit.data.model.kml.AltitudeMode;
-import org.geotoolkit.data.model.kml.Angle180;
-import org.geotoolkit.data.model.kml.Angle360;
-import org.geotoolkit.data.model.kml.Angle90;
 import org.geotoolkit.data.model.kml.Camera;
 import org.geotoolkit.data.model.kml.Kml;
 import org.geotoolkit.data.model.kml.KmlException;
@@ -34,6 +31,7 @@ import static org.geotoolkit.data.model.KmlModelConstants.*;
 public class CameraTest {
 
     private static final double DELTA = 0.000000000001;
+    private static final String pathToTestFile = "src/test/resources/org/geotoolkit/data/kml/camera.kml";
 
     public CameraTest() {
     }
@@ -58,7 +56,7 @@ public class CameraTest {
      public void cameraReadTest() throws IOException, XMLStreamException {
 
          final KmlReader reader = new KmlReader();
-         reader.setInput(new File("src/test/resources/org/geotoolkit/data/kml/camera.kml"));
+         reader.setInput(new File(pathToTestFile));
          final Kml kmlObjects = reader.read();
          reader.dispose();
 
@@ -68,12 +66,12 @@ public class CameraTest {
          assertTrue(view instanceof Camera);
 
          final Camera camera = (Camera) view;
-         assertEquals(4, camera.getLongitude().getAngle(), DELTA);
-         assertEquals(43, camera.getLatitude().getAngle(), DELTA);
+         assertEquals(4, camera.getLongitude(), DELTA);
+         assertEquals(43, camera.getLatitude(), DELTA);
          assertEquals(625, camera.getAltitude(), DELTA);
-         assertEquals(2, camera.getHeading().getAngle(), DELTA);
+         assertEquals(2, camera.getHeading(), DELTA);
          assertEquals(1, camera.getTilt(), DELTA);
-         assertEquals(0, camera.getRoll().getAngle(), DELTA);
+         assertEquals(2, camera.getRoll(), DELTA);
          assertEquals(AltitudeMode.RELATIVE_TO_GROUND, camera.getAltitudeMode());
          
      }
@@ -82,12 +80,12 @@ public class CameraTest {
      public void cameraWriteTest() throws KmlException, IOException, XMLStreamException, ParserConfigurationException, SAXException{
         final KmlFactory kmlFactory = new KmlFactoryDefault();
 
-        Angle180 longitude = kmlFactory.createAngle180(4);
-        Angle90 latitude = kmlFactory.createAngle90(43);
+        double longitude = 4;
+        double latitude = 43;
         double altitude = 625;
-        Angle360 heading = kmlFactory.createAngle360(2);
-        double tilt =1.0;
-        Angle180 roll = kmlFactory.createAngle180(0);
+        double heading = 2;
+        double tilt = 1.0;
+        double roll = 2.0;
          
         final Camera camera = kmlFactory.createCamera();
         camera.setLongitude(longitude);
@@ -105,8 +103,8 @@ public class CameraTest {
         photoOverlay.setRotation(DEF_ROTATION);
         final Kml kml = kmlFactory.createKml(null, photoOverlay, null, null);
 
-        File temp = File.createTempFile("testKml",".kml");
-        temp.deleteOnExit();
+        File temp = File.createTempFile("testCamera",".kml");
+        //temp.deleteOnExit();
 
         KmlWriter writer = new KmlWriter();
         writer.setOutput(temp);
@@ -114,7 +112,7 @@ public class CameraTest {
         writer.dispose();
 
         DomCompare.compare(
-                 new File("src/test/resources/org/geotoolkit/data/kml/camera.kml"), temp);
+                 new File(pathToTestFile), temp);
 
      }
 

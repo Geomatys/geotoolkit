@@ -37,25 +37,25 @@ public interface ViewVolume extends AbstractObject {
      *
      * @return
      */
-    public Angle180 getLeftFov();
+    public double getLeftFov();
 
     /**
      *
      * @return
      */
-    public Angle180 getRightFov();
+    public double getRightFov();
 
     /**
      *
      * @return
      */
-    public Angle90 getBottomFov();
+    public double getBottomFov();
 
     /**
      *
      * @return
      */
-    public Angle90 getTopFov();
+    public double getTopFov();
 
     /**
      *

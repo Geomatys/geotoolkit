@@ -61,7 +61,7 @@ public interface ScreenOverlay extends AbstractOverlay {
      *
      * @return
      */
-    public Angle180 getRotation();
+    public double getRotation();
 
     /**
      *

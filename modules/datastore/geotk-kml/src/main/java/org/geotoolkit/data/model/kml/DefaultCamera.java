@@ -1,6 +1,7 @@
 package org.geotoolkit.data.model.kml;
 
 import java.util.List;
+import org.geotoolkit.data.kml.KmlUtilities;
 import org.geotoolkit.data.model.xsd.SimpleType;
 import static org.geotoolkit.data.model.KmlModelConstants.*;
 import static java.util.Collections.*;
@@ -11,12 +12,12 @@ import static java.util.Collections.*;
  */
 public class DefaultCamera extends DefaultAbstractView implements Camera {
 
-    private Angle180 longitude;
-    private Angle90 latitude;
+    private double longitude;
+    private double latitude;
     private double altitude;
-    private Angle360 heading;
+    private double heading;
     private double tilt;
-    private Angle180 roll;
+    private double roll;
     private AltitudeMode altitudeMode;
     private List<SimpleType> cameraSimpleExtensions;
     private List<AbstractObject> cameraObjectExtensions;
@@ -45,17 +46,17 @@ public class DefaultCamera extends DefaultAbstractView implements Camera {
      */
     public DefaultCamera(List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
             List<SimpleType> abstractViewSimpleExtensions, List<AbstractObject> abstractViewObjectExtensions,
-            Angle180 longitude, Angle90 latitude, double altitude,
-            Angle360 heading, double tilt, Angle180 roll, AltitudeMode altitudeMode,
+            double longitude, double latitude, double altitude,
+            double heading, double tilt, double roll, AltitudeMode altitudeMode,
             List<SimpleType> cameraSimpleExtensions, List<AbstractObject> cameraObjectExtensions){
         super(objectSimpleExtensions, idAttributes,
                 abstractViewSimpleExtensions, abstractViewObjectExtensions);
-        this.longitude = longitude;
-        this.latitude = latitude;
+        this.longitude = KmlUtilities.checkAngle180(longitude);
+        this.latitude = KmlUtilities.checkAngle90(latitude);
         this.altitude = altitude;
-        this.heading = heading;
-        this.tilt = tilt;
-        this.roll = roll;
+        this.heading = KmlUtilities.checkAngle360(heading);
+        this.tilt = KmlUtilities.checkAnglePos180(tilt);
+        this.roll = KmlUtilities.checkAngle180(roll);
         this.altitudeMode = altitudeMode;
         this.cameraSimpleExtensions = (cameraSimpleExtensions == null) ? EMPTY_LIST : cameraSimpleExtensions;
         this.cameraObjectExtensions = (cameraObjectExtensions == null) ? EMPTY_LIST : cameraObjectExtensions;
@@ -66,14 +67,14 @@ public class DefaultCamera extends DefaultAbstractView implements Camera {
      * @{@inheritDoc }
      */
     @Override
-    public Angle180 getLongitude() {return this.longitude;}
+    public double getLongitude() {return this.longitude;}
 
     /**
      *
      * @{@inheritDoc }
      */
     @Override
-    public Angle90 getLatitude() {return this.latitude;}
+    public double getLatitude() {return this.latitude;}
 
     /**
      *
@@ -87,7 +88,7 @@ public class DefaultCamera extends DefaultAbstractView implements Camera {
      * @{@inheritDoc }
      */
     @Override
-    public Angle360 getHeading() {return this.heading;}
+    public double getHeading() {return this.heading;}
 
     /**
      *
@@ -101,7 +102,7 @@ public class DefaultCamera extends DefaultAbstractView implements Camera {
      * @{@inheritDoc }
      */
     @Override
-    public Angle180 getRoll() {return this.roll;}
+    public double getRoll() {return this.roll;}
 
     /**
      *
@@ -129,14 +130,14 @@ public class DefaultCamera extends DefaultAbstractView implements Camera {
      * @{@inheritDoc }
      */
     @Override
-    public void setLongitude(Angle180 longitude) {this.longitude = longitude;}
+    public void setLongitude(double longitude) {this.longitude = KmlUtilities.checkAngle180(longitude);}
 
     /**
      *
      * @{@inheritDoc }
      */
     @Override
-    public void setLatitude(Angle90 latitude) {this.latitude = latitude;}
+    public void setLatitude(double latitude) {this.latitude = KmlUtilities.checkAngle90(latitude);}
 
     /**
      *
@@ -150,21 +151,21 @@ public class DefaultCamera extends DefaultAbstractView implements Camera {
      * @{@inheritDoc }
      */
     @Override
-    public void setHeading(Angle360 heading) {this.heading = heading;}
+    public void setHeading(double heading) {this.heading = KmlUtilities.checkAngle360(heading);}
 
     /**
      *
      * @{@inheritDoc }
      */
     @Override
-    public void setTilt(double tilt) {this.tilt = tilt;}
+    public void setTilt(double tilt) {this.tilt = KmlUtilities.checkAnglePos180(tilt);}
 
     /**
      *
      * @{@inheritDoc }
      */
     @Override
-    public void setRoll(Angle180 roll) {this.roll = roll;}
+    public void setRoll(double roll) {this.roll = KmlUtilities.checkAngle180(roll);}
 
     /**
      *

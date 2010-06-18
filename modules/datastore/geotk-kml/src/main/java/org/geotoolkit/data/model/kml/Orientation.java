@@ -35,7 +35,7 @@ public interface Orientation extends AbstractObject {
      *
      * @return
      */
-    public Angle360 getHeading();
+    public double getHeading();
 
     /**
      *
@@ -47,7 +47,7 @@ public interface Orientation extends AbstractObject {
      *
      * @return
      */
-    public Angle180 getRoll();
+    public double getRoll();
 
     /**
      *

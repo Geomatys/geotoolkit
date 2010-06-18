@@ -42,7 +42,7 @@ public interface IconStyle extends AbstractColorStyle {
      *
      * @return
      */
-    public Angle360 getHeading();
+    public double getHeading();
     
     /**
      * 
