@@ -18,6 +18,7 @@
 package org.geotoolkit.referencing;
 
 import java.awt.Shape;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.IllegalPathStateException;
 import java.awt.geom.PathIterator;
 import java.awt.geom.Point2D;
@@ -44,17 +45,23 @@ import static org.junit.Assert.*;
  *
  * @author Daniele Franzoni
  * @author Martin Desruisseaux (Geomatys)
- * @since 2.1
+ * @author Katrin Lasinger
+ * @version 3.13
  *
- * @version 3.00
+ * @since 2.1
  */
 public final class GeodeticCalculatorTest {
+    /**
+     * Small tolerance value for floating point comparisons.
+     */
+    private static final double EPS = 1E-6;
+
     /**
      * Tests some trivial azimuth directions.
      */
     @Test
     public void testAzimuth() {
-        final double EPS = 2E-1;
+        final double EPS = 2E-1; // Relax the default (static) tolerance threshold.
         final GeodeticCalculator calculator = new GeodeticCalculator();
         assertTrue(calculator.getCoordinateReferenceSystem() instanceof GeographicCRS);
         calculator.setStartingGeographicPoint(12, 20);
@@ -155,14 +162,14 @@ public final class GeodeticCalculatorTest {
         final double y = 30;
         calculator.setStartingPosition(new DirectPosition2D(x,y));
         Point2D point = calculator.getStartingGeographicPoint();
-        assertEquals(y, point.getX(), 1E-5);
-        assertEquals(x, point.getY(), 1E-5);
+        assertEquals(y, point.getX(), EPS);
+        assertEquals(x, point.getY(), EPS);
 
         calculator.setDirection(10, 100);
         DirectPosition position = calculator.getDestinationPosition();
         point = calculator.getDestinationGeographicPoint();
-        assertEquals(point.getX(), position.getOrdinate(1), 1E-5);
-        assertEquals(point.getY(), position.getOrdinate(0), 1E-5);
+        assertEquals(point.getX(), position.getOrdinate(1), EPS);
+        assertEquals(point.getY(), position.getOrdinate(0), EPS);
     }
 
     /**
@@ -209,5 +216,68 @@ public final class GeodeticCalculatorTest {
         assertEquals(reference.orthodromicDistance(180, 40, -5, -30),
                      calculator.getOrthodromicDistance(), 1E-4);
         assertEquals(23.053, calculator.getAzimuth(), 1E-3);
+    }
+
+    /**
+     * Tests case for the error reported in
+     * <a href="http://jira.geotoolkit.org/browse/GEOTK-103">GEOTK-103</a>
+     *
+     * @author Katrin Lasinger
+     * @since 3.13
+     */
+    @Test
+    public void testGeodeticCurveOnEquator() {
+        final GeodeticCalculator calculator = new GeodeticCalculator();
+        calculator.setStartingGeographicPoint(20, 0);
+        calculator.setDestinationGeographicPoint(12, 0);
+        assertEquals(-90, calculator.getAzimuth(), EPS);
+        /*
+         * Ensures that the y ordinate is 0 everywhere on the path.
+         */
+        final Shape geodeticCurve = calculator.getGeodeticCurve();
+        final PathIterator it = geodeticCurve.getPathIterator(new AffineTransform());
+        final double[] coords = new double[2];
+        while (!it.isDone()) {
+            it.currentSegment(coords);
+            assertEquals(0, coords[1], EPS);
+            it.next();
+        }
+    }
+
+    /**
+     * Tests case for the error reported in
+     * <a href="http://jira.codehaus.org/browse/GEOT-2716">GEOT-2716</a>
+     *
+     * @author Katrin Lasinger
+     * @since 3.13
+     */
+    @Test
+    public void testPointsOnGeodeticCurve() {
+        final GeodeticCalculator calculator = new GeodeticCalculator();
+        calculator.setStartingGeographicPoint(0, 0);
+        calculator.setDestinationGeographicPoint(0, 10);
+        final Shape geodeticCurve = calculator.getGeodeticCurve();
+        final PathIterator it = geodeticCurve.getPathIterator(new AffineTransform());
+        double[] coordsStart = new double[2];
+        double[] coordsEnd = new double[2];
+        double distance = Double.NaN;
+        int numPts = 0;
+        while (!it.isDone()) {
+            System.arraycopy(coordsEnd, 0, coordsStart, 0, coordsStart.length);
+            it.currentSegment(coordsEnd);
+            if (++numPts >= 2) {
+                // We can calculate the distance only after we iterated over at least 2 points.
+                calculator.setStartingGeographicPoint(coordsStart[0], coordsStart[1]);
+                calculator.setDestinationGeographicPoint(coordsEnd[0], coordsEnd[1]);
+                final double currentDistance = calculator.getOrthodromicDistance();
+                if (numPts == 2) {
+                    // Use the first distance that we computed as the reference distance value.
+                    // All remaining iteration of the loop will compare against this reference.
+                    distance = currentDistance;
+                }
+                assertEquals(distance, currentDistance, distance*EPS);
+            }
+            it.next();
+        }
     }
 }

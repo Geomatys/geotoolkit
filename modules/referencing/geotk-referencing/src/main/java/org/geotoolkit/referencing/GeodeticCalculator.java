@@ -1108,7 +1108,7 @@ public class GeodeticCalculator {
 
         // The distance in ellispoid axis units.
         distance = semiMinorAxis * (bo*sig + b2*ssig*q2 + b4*r2*q4 + b6*r3*q6);
-        double az1 = (dlon < 0) ? PI*(3/2) : PI/2;
+        double az1 = (dlon < 0) ? PI*1.5 : PI/2;
 
         // now compute the az1 & az2 for latitudes not on the equator
         if ((abs(su1) >= TOLERANCE_0) || (abs(su2) >= TOLERANCE_0)) {
@@ -1151,7 +1151,7 @@ public class GeodeticCalculator {
         final double         long2 = this.long2;
         final double          lat2 = this.lat2;
         final double      distance = this.distance;
-        final double deltaDistance = distance / (numberOfPoints+1);
+        final double deltaDistance = distance / numberOfPoints;
         final GeneralPath     path = new GeneralPath(GeneralPath.WIND_EVEN_ODD, numberOfPoints+1);
         path.moveTo((float) toDegrees(long1), (float) toDegrees(lat1));
         for (int i=1; i<numberOfPoints; i++) {
