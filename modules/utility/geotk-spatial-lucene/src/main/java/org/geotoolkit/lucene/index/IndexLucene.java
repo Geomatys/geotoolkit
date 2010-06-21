@@ -27,12 +27,16 @@ import org.apache.lucene.store.RAMDirectory;
 import org.apache.lucene.util.Version;
 
 /**
- *
+ * Base class to manipulate Lucene index.
+ * 
  * @author Guilhem Legal
  * @module pending
  */
 public abstract class IndexLucene {
 
+    /**
+     * for debug purpose.
+     */
     protected static final Logger LOGGER = Logger.getLogger("org.constellation.metadata.index");
 
     /**
@@ -50,17 +54,22 @@ public abstract class IndexLucene {
      */
     private File fileDirectory;
 
+    /**
+     * The global level of log.
+     */
     protected Level logLevel = Level.INFO;
     
    /**
-     * Creates a new Lucene Index.
-     */
+    * Creates a new Lucene Index.
+    * Analyser field is set to default value StandardAnalyzer.
+    */
     public IndexLucene() {
         analyzer = new StandardAnalyzer(Version.LUCENE_CURRENT);
     }
 
     /**
      * Creates a new Lucene Index with the specified Analyzer.
+     * If the analyzer is null it will be set to default value StandardAnalyzer.
      */
     public IndexLucene(final Analyzer analyzer) {
         if (analyzer == null)

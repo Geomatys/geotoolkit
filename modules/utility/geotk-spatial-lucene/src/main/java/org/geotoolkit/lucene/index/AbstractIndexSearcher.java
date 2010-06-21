@@ -56,7 +56,7 @@ import org.geotoolkit.lucene.index.AbstractIndexer.IndexDirectoryFilter;
  * @author Guilhem legal (Geomatys)
  * @module pending
  */
-public abstract class AbstractIndexSearcher extends IndexLucene {
+public class AbstractIndexSearcher extends IndexLucene {
 
     /**
      * This is the index searcher of Lucene.
@@ -202,7 +202,40 @@ public abstract class AbstractIndexSearcher extends IndexLucene {
      *
      * @return A database id.
      */
-    public abstract String identifierQuery(String id) throws SearchingException;
+    public String identifierQuery(String id) throws SearchingException {
+        try {
+            final TermQuery query = new TermQuery(new Term(getIdentifierSearchField(), id));
+            final List<String> results = new ArrayList<String>();
+            final int maxRecords = searcher.maxDoc();
+            if (maxRecords == 0) {
+                LOGGER.warning("There is no document in the index");
+                return null;
+            }
+            final TopDocs hits = searcher.search(query, maxRecords);
+            for (ScoreDoc doc : hits.scoreDocs) {
+                results.add(searcher.doc(doc.doc, new IDFieldSelector()).get("id"));
+            }
+            if (results.size() > 1) {
+                LOGGER.log(Level.WARNING, "multiple record in lucene index for identifier: {0}", id);
+            }
+            if (results.size() > 0) {
+                return results.get(0);
+            } else {
+                return null;
+            }
+        } catch (IOException ex) {
+            throw new SearchingException("Parse Exception while performing lucene request", ex);
+        }
+    }
+
+    /**
+     * Return the name of the identifier field used in the identifierQuery method.
+     * 
+     * @return the name of the identifier field.
+     */
+    public String getIdentifierSearchField() {
+        return "id";
+    }
 
     /**
      * This method return the database ID of a matching Document
@@ -211,7 +244,9 @@ public abstract class AbstractIndexSearcher extends IndexLucene {
      *
      * @return A database id.
      */
-    public abstract String getMatchingID(Document doc) throws SearchingException;
+    public String getMatchingID(Document doc) throws SearchingException {
+        return doc.get("id");
+    }
 
     /**
      * This method proceed a lucene search and returns a list of ID.
