@@ -26,7 +26,6 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.event.EventListenerList;
 
 import org.geotoolkit.display.canvas.AbstractCanvas;
@@ -55,7 +54,7 @@ import org.opengis.referencing.operation.TransformException;
  * @author Martin Desruisseaux (IRD)
  * @author Johann Sorel (Geomatys)
  */
-public abstract class AbstractContainer implements GraphicsContainer<Graphic>{
+public abstract class AbstractContainer<C extends ReferencedCanvas, G extends Graphic> implements GraphicsContainer<G>{
 
     /**
      * A listener to be notified when a graphic property changed.
@@ -76,16 +75,16 @@ public abstract class AbstractContainer implements GraphicsContainer<Graphic>{
      * preserved no matter how {@link #sortedGraphics} reorder graphics. This is because we
      * want to preserve to {@link #add} contract for 2D graphics whit a z-value.
      */
-    protected final Map<Graphic,Graphic> graphics = new LinkedHashMap<Graphic,Graphic>();
+    protected final Map<G,G> graphics = new LinkedHashMap<G,G>();
 
     /**
      * The set of {@link Graphic}s given to the user. This set is act like a
      * proxy, this set delegate his methods to the graphics map.
      */
-    private final AbstractSet<Graphic> userGraphics = new AbstractSet<Graphic>() {
+    private final AbstractSet<G> userGraphics = new AbstractSet<G>() {
 
         @Override
-        public Iterator<Graphic> iterator() {
+        public Iterator<G> iterator() {
             return graphics.keySet().iterator();
         }
 
@@ -101,13 +100,13 @@ public abstract class AbstractContainer implements GraphicsContainer<Graphic>{
      */
     protected final EventListenerList ContainerListeners = new EventListenerList();
 
-    protected final Canvas canvas;
+    protected final C canvas;
     
     
     /**
      * Create a Default Abstract renderer with no particular hints.
      */
-    protected AbstractContainer(ReferencedCanvas canvas){
+    protected AbstractContainer(C canvas){
         this.canvas = canvas;
         canvas.addPropertyChangeListener(new PropertyChangeListener(){
 
@@ -163,7 +162,7 @@ public abstract class AbstractContainer implements GraphicsContainer<Graphic>{
      * {@inheritDoc}
      */
     @Override
-    public Canvas getCanvas(){
+    public C getCanvas(){
         return canvas;
     }
     
@@ -173,7 +172,7 @@ public abstract class AbstractContainer implements GraphicsContainer<Graphic>{
      * {@inheritDoc}
      */
     @Override
-    public synchronized Collection<Graphic> graphics() {
+    public synchronized Collection<G> graphics() {
         return userGraphics;
     }
     
@@ -206,7 +205,7 @@ public abstract class AbstractContainer implements GraphicsContainer<Graphic>{
      *       {@code graphic1} was already added to {@code canvas1} and {@code graphic2} was already
      *       added to {@code canvas2} before the above-cited {@code add} method calls.
      */
-    protected synchronized Graphic add(Graphic graphic) throws IllegalArgumentException {
+    protected synchronized Graphic add(G graphic) throws IllegalArgumentException {
         
         if (graphic instanceof AbstractGraphic) {
             final AbstractGraphic candidate = (AbstractGraphic) graphic;
@@ -219,7 +218,7 @@ public abstract class AbstractContainer implements GraphicsContainer<Graphic>{
                     assert !graphics.containsKey(candidate) : candidate;
                     if (canvas != null) {
 //                        try {
-                            graphic = candidate;
+                            graphic = (G) candidate;
 //                        graphic = candidate.clone();
 //                        } catch (CloneNotSupportedException e) {
 //                            throw new IllegalArgumentException(
@@ -240,7 +239,7 @@ public abstract class AbstractContainer implements GraphicsContainer<Graphic>{
          * method call, then the previous graphic instance will be kept (instead of the new
          * supplied one).
          */
-        final Graphic previous = graphics.put(graphic, graphic);
+        final G previous = graphics.put(graphic, graphic);
         if (previous != null) {
             graphic = previous;
             graphics.put(graphic, graphic);
@@ -270,7 +269,7 @@ public abstract class AbstractContainer implements GraphicsContainer<Graphic>{
      * @see #removeAll
      * @see #getGraphics
      */
-    protected synchronized void remove(final Graphic graphic) throws IllegalArgumentException {
+    protected synchronized void remove(final G graphic) throws IllegalArgumentException {
         
         if (graphic instanceof AbstractGraphic) {
             final AbstractGraphic candidate = (AbstractGraphic) graphic;
@@ -322,7 +321,7 @@ public abstract class AbstractContainer implements GraphicsContainer<Graphic>{
      */
     protected synchronized void removeAll() {
         
-        Set<Graphic> vals = graphics.keySet();
+        Set<G> vals = graphics.keySet();
         
         for (final Graphic graphic : vals) {
             if (graphic instanceof AbstractGraphic) {

@@ -44,7 +44,7 @@ class DefaultContainerEvent extends ContainerEvent{
      * @param container : the container who generate this event
      * @param graphics : graphics concerned by this event
      */
-    DefaultContainerEvent(final GraphicsContainer container, final Collection<Graphic> graphics){
+    DefaultContainerEvent(final GraphicsContainer container, final Collection<? extends Graphic> graphics){
         super(container);
         this.graphics = new ArrayList<Graphic>(graphics);
     }
