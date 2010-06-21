@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2007 - 2009, Geomatys
+ *    (C) 2007 - 2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.document.Document;
@@ -50,7 +51,8 @@ import org.geotoolkit.lucene.index.AbstractIndexer.IndexDirectoryFilter;
 
 
 /**
- *
+ * An Abstract lucene index searcher. allowing to perform query on the index.
+ * 
  * @author Guilhem legal (Geomatys)
  * @module pending
  */
@@ -82,11 +84,6 @@ public abstract class AbstractIndexSearcher extends IndexLucene {
     private final boolean isCacheEnabled;
 
     /**
-     * A flag indicating if the multiLingual system for query is enabled.
-    
-    private boolean isMultiLingualEnabled; */
-
-    /**
      * A list of metadata ID ordered by DocID.
      */
     private  List<String> identifiers;
@@ -94,9 +91,9 @@ public abstract class AbstractIndexSearcher extends IndexLucene {
     /**
      * Build a new index searcher.
      *
-     * @param configDir The configuration Directory where to build the indexDirectory.
+     * @param configDir The configuration directory where to build the index directory.
      * @param serviceID the "ID" of the service (allow multiple index in the same directory). The value "" is allowed.
-     * @param analyzer  A lucene Analyzer
+     * @param analyzer  A lucene Analyzer (Default is StandardAnalyzer)
      */
     public AbstractIndexSearcher(File configDir, String serviceID, Analyzer analyzer) throws IndexingException {
         super(analyzer);
@@ -115,7 +112,7 @@ public abstract class AbstractIndexSearcher extends IndexLucene {
                             currentIndexDirectory = indexDirectory;
                         }
                     } catch (NumberFormatException ex) {
-                        LOGGER.warning("Unable to parse the timestamp:" + suffix);
+                        LOGGER.log(Level.WARNING, "Unable to parse the timestamp:{0}", suffix);
                     }
                 }
             }
@@ -125,7 +122,6 @@ public abstract class AbstractIndexSearcher extends IndexLucene {
                 throw new IndexingException("The index searcher can't find a index directory.");
             }
             isCacheEnabled        = true;
-            //isMultiLingualEnabled = false;
             initSearcher();
             initIdentifiersList();
 
@@ -141,18 +137,26 @@ public abstract class AbstractIndexSearcher extends IndexLucene {
         
     }
 
+    /**
+     * Build a new index searcher.
+     *
+     * @param configDir The configuration directory where to build the index directory.
+     * @param serviceID the "ID" of the service (allow multiple index in the same directory). The value "" is allowed.
+     * 
+     * @throws IndexingException
+     */
     public AbstractIndexSearcher(File configDir, String serviceID) throws IndexingException {
         this(configDir, serviceID, null);
     }
 
     /**
-     * Returns the IndexSearcher of this index.
+     * initialize the IndexSearcher of this index.
      */
     private void initSearcher() throws CorruptIndexException, IOException {
         final File indexDirectory = getFileDirectory();
         final IndexReader ireader = IndexReader.open(new SimpleFSDirectory(indexDirectory), true);
         searcher                  = new IndexSearcher(ireader);
-        LOGGER.info("Creating new Index Searcher with index directory:" + indexDirectory.getPath());
+        LOGGER.log(Level.INFO, "Creating new Index Searcher with index directory:{0}", indexDirectory.getPath());
        
     }
 
@@ -165,7 +169,7 @@ public abstract class AbstractIndexSearcher extends IndexLucene {
             final String metadataID = getMatchingID(searcher.doc(i));
             identifiers.add(i, metadataID);
         }
-        LOGGER.log(logLevel,identifiers.size() + " records found.");
+        LOGGER.log(logLevel, "{0} records found.", identifiers.size());
     }
 
     /**
@@ -194,7 +198,7 @@ public abstract class AbstractIndexSearcher extends IndexLucene {
      * This method proceed a lucene search and to verify that the identifier exist.
      * If it exist it return the database ID.
      *
-     * @param id A simple Term query on "indentifier field".
+     * @param id A simple Term query on "identifier field".
      *
      * @return A database id.
      */
@@ -224,7 +228,7 @@ public abstract class AbstractIndexSearcher extends IndexLucene {
             //we look for a cached Query
             if (isCacheEnabled && cachedQueries.containsKey(spatialQuery)) {
                 results = cachedQueries.get(spatialQuery);
-                LOGGER.log(logLevel, "returning result from cache (" + results.size() + " matching documents)");
+                LOGGER.log(logLevel, "returning result from cache ({0} matching documents)", results.size());
                 return results;
             }
 
@@ -256,7 +260,7 @@ public abstract class AbstractIndexSearcher extends IndexLucene {
             if (filter != null) {
                 f = filter.toString();
             }
-            LOGGER.log(logLevel, "Searching for: " + query.toString(field) + '\n' + SerialChainFilter.valueOf(operator) + '\n' + f + '\n' + sorted + '\n' + "max records: " + maxRecords);
+            LOGGER.log(logLevel, "Searching for: " + query.toString(field) + '\n' + SerialChainFilter.valueOf(operator) + '\n' + f + '\n' + sorted + "\nmax records: " + maxRecords);
 
             // simple query with an AND
             if (operator == SerialChainFilter.AND || (operator == SerialChainFilter.OR && filter == null)) {
