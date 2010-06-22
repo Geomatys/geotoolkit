@@ -1,18 +1,18 @@
 package org.geotoolkit.data.kml;
 
+import org.geotoolkit.data.kml.xml.KmlReader;
+import org.geotoolkit.data.kml.xml.KmlWriter;
 import java.io.File;
 import java.io.IOException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
-import org.geotoolkit.data.model.KmlFactory;
-import org.geotoolkit.data.model.KmlFactoryDefault;
-import org.geotoolkit.data.model.kml.AbstractFeature;
-import org.geotoolkit.data.model.kml.AbstractView;
-import org.geotoolkit.data.model.kml.AltitudeMode;
-import org.geotoolkit.data.model.kml.Camera;
-import org.geotoolkit.data.model.kml.Kml;
-import org.geotoolkit.data.model.kml.KmlException;
-import org.geotoolkit.data.model.kml.PhotoOverlay;
+import org.geotoolkit.data.kml.model.AbstractFeature;
+import org.geotoolkit.data.kml.model.AbstractView;
+import org.geotoolkit.data.kml.model.AltitudeMode;
+import org.geotoolkit.data.kml.model.Camera;
+import org.geotoolkit.data.kml.model.Kml;
+import org.geotoolkit.data.kml.model.KmlException;
+import org.geotoolkit.data.kml.model.PhotoOverlay;
 import org.geotoolkit.xml.DomCompare;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -22,7 +22,7 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 import org.xml.sax.SAXException;
 
-import static org.geotoolkit.data.model.KmlModelConstants.*;
+import static org.geotoolkit.data.kml.xml.KmlModelConstants.*;
 
 /**
  *

@@ -205,9 +205,9 @@ public class ZipUtilities2 {
         decompress(new File(fileName));
     }
 
-    public static void main(String[] args)
-            throws IOException {
-        ZipUtilities2.compress("/home/samuel/Bureau/resultKmz", "/home/samuel/Bureau/test.zip", Deflater.BEST_SPEED);
-        ZipUtilities2.decompress("/home/samuel/Bureau/test.zip", "/home/samuel/Bureau/dezip", false);
-    }
+//    public static void main(String[] args)
+//            throws IOException {
+//        ZipUtilities2.compress("/home/samuel/Bureau/resultKmz", "/home/samuel/Bureau/test.zip", Deflater.BEST_SPEED);
+//        ZipUtilities2.decompress("/home/samuel/Bureau/test.zip", "/home/samuel/Bureau/dezip", false);
+//    }
 }

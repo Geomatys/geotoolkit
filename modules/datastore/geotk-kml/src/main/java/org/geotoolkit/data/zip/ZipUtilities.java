@@ -242,6 +242,7 @@ public class ZipUtilities {
                     file.mkdirs();
                     continue;
                 }
+                file.getParentFile().mkdirs();
                 OutputStream fos = toOutputStream(file);
                 BufferedOutputStream dest = new BufferedOutputStream(fos, BUFFER);
                 try {
@@ -396,5 +397,6 @@ public class ZipUtilities {
         ZipUtilities.zip("/home/samuel/Bureau/test.kmz", ZipOutputStream.DEFLATED, 9, null,
                 new File("/home/samuel/Bureau/resultKmz/files"),
                 new File("/home/samuel/Bureau/resultKmz/doc.kml"));
+        ZipUtilities.unzip("/home/samuel/Bureau/test.kmz",new File("/home/samuel/Bureau/Bidon"),null);
     }
 }

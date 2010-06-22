@@ -1,5 +1,7 @@
 package org.geotoolkit.data.kml;
 
+import org.geotoolkit.data.atom.xml.AtomReader;
+import org.geotoolkit.data.atom.xml.AtomWriter;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -7,11 +9,11 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
-import org.geotoolkit.data.model.AtomFactory;
-import org.geotoolkit.data.model.AtomFactoryDefault;
-import org.geotoolkit.data.model.AtomModelConstants;
-import org.geotoolkit.data.model.atom.AtomEmail;
-import org.geotoolkit.data.model.atom.AtomPersonConstruct;
+import org.geotoolkit.data.atom.AtomFactory;
+import org.geotoolkit.data.atom.AtomFactoryDefault;
+import org.geotoolkit.data.atom.xml.AtomModelConstants;
+import org.geotoolkit.data.atom.model.AtomEmail;
+import org.geotoolkit.data.atom.model.AtomPersonConstruct;
 import org.geotoolkit.xml.DomCompare;
 import org.junit.After;
 import org.junit.AfterClass;

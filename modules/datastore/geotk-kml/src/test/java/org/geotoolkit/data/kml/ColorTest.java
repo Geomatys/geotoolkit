@@ -1,7 +1,7 @@
 package org.geotoolkit.data.kml;
 
 import java.awt.Color;
-import org.geotoolkit.data.model.kml.KmlException;
+import org.geotoolkit.data.kml.model.KmlException;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;

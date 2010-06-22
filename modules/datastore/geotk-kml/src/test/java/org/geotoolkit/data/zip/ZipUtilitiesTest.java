@@ -112,7 +112,8 @@ public class ZipUtilitiesTest {
         archive.deleteOnExit();
 
         ZipUtilities.zip(archive, ZipOutputStream.DEFLATED, 9, CHECKSUM, dir);
-        ZipUtilities.unzip(archive,CHECKSUM);
+        File extract = new File ("/tmp/extract");
+        ZipUtilities.unzip(archive,extract,CHECKSUM);
 
         List<String> zipContent = listContent(archive);
 //        assertEquals("/tmp/"+zipContent.get(0), file1.getPath());
