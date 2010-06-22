@@ -53,7 +53,12 @@ public class Utils {
 
     private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.feature.xml");
 
-    private static final DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+    private static final DateFormat timestampFormatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+    static{
+        timestampFormatter.setTimeZone(TimeZone.getTimeZone("GMT+0"));
+    }
+
+    private static final DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
     static{
         dateFormatter.setTimeZone(TimeZone.getTimeZone("GMT+0"));
     }
@@ -250,7 +255,7 @@ public class Utils {
         if (obj instanceof String) {
             return (String) obj;
         } else if (obj instanceof Timestamp) {
-            return dateFormatter.format(new Date(((Timestamp)obj).getTime()));
+            return timestampFormatter.format(new Date(((Timestamp)obj).getTime()));
         } else if (obj instanceof java.sql.Date) {
             return dateFormatter.format((java.sql.Date) obj);
         } else if (obj instanceof java.util.Date) {
