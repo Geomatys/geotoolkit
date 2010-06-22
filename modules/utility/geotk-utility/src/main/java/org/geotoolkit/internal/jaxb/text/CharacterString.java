@@ -29,7 +29,7 @@ import org.geotoolkit.internal.jaxb.metadata.FreeText;
  * element, for ISO-19139 compliance.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.04
+ * @version 3.13
  *
  * @since 2.5
  * @module
@@ -37,10 +37,9 @@ import org.geotoolkit.internal.jaxb.metadata.FreeText;
 @XmlSeeAlso(FreeText.class)
 public class CharacterString {
     /**
-     * The text or anchor value. It can only by an instance of
-     * {@link CharSequence} or {@link AnchorType}.
+     * The text or anchor value. {@link AnchorType} needs to be handled in a special way.
      */
-    protected Object text;
+    CharSequence text;
 
     /**
      * Empty constructor for JAXB only.
@@ -58,23 +57,14 @@ public class CharacterString {
     }
 
     /**
-     * Builds an adapter for the given text.
-     *
-     * @param text The string to marshall.
-     */
-    public CharacterString(final AnchorType text) {
-        this.text = text;
-    }
-
-    /**
      * Returns the text. This method may be called by JAXB at marshalling-time.
      *
      * @return The text, or {@code null}.
      */
     @XmlElement(name = "CharacterString", namespace = Namespaces.GCO)
     public final String getCharacterString() {
-        final Object text = this.text;
-        return (text instanceof CharSequence) ? text.toString() : null;
+        final CharSequence text = this.text;
+        return (text == null || text instanceof AnchorType) ? null : text.toString();
     }
 
     /**
@@ -100,7 +90,7 @@ public class CharacterString {
      */
     @XmlElement(name = "Anchor", namespace = Namespaces.GMX)
     public final AnchorType getAnchor() {
-        final Object text = this.text;
+        final CharSequence text = this.text;
         return (text instanceof AnchorType) ? (AnchorType) text : null;
     }
 
@@ -120,7 +110,7 @@ public class CharacterString {
      */
     @Override
     public final String toString() {
-        final Object text = this.text;
+        final CharSequence text = this.text;
         return (text != null) ? text.toString() : null;
     }
 }

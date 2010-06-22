@@ -25,7 +25,7 @@ import javax.xml.bind.annotation.adapters.XmlAdapter;
  * element, for ISO-19139 compliance.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.00
+ * @version 3.13
  *
  * @since 3.00
  * @module
@@ -46,14 +46,7 @@ public class CharSequenceAdapter extends XmlAdapter<CharacterString, CharSequenc
      */
     @Override
     public final CharSequence unmarshal(final CharacterString value) {
-        if (value == null) {
-            return null;
-        }
-        final Object text = value.text;
-        if (text == null || text instanceof CharSequence) {
-            return (CharSequence) text;
-        }
-        return text.toString();
+        return (value != null) ? value.text : null;
     }
 
     /**

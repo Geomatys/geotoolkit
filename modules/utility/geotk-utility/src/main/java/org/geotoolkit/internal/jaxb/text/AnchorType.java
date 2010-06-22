@@ -18,11 +18,15 @@
 package org.geotoolkit.internal.jaxb.text;
 
 import java.net.URI;
+import java.util.Locale;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+
+import org.opengis.util.InternationalString;
+
 import org.geotoolkit.xml.Namespaces;
 
 
@@ -30,19 +34,97 @@ import org.geotoolkit.xml.Namespaces;
  * The {@code AnchorType} element, which is included in {@code CharacterString} elements.
  *
  * @author Guilhem Legal (Geomatys)
- * @version 3.04
+ * @author Martin Desruisseaux (Geomatys)
+ * @version 3.13
+ *
+ * @see <a href="http://www.xml.com/pub/a/2000/09/xlink/part2.html">XLink introduction</a>
  *
  * @since 2.5
  * @module
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(namespace = Namespaces.GMX)
-public final class AnchorType { // Should NOT implement CharSequence.
+public final class AnchorType implements InternationalString {
     /**
-     * A URN.
+     * The type of link. May have one of the following values:
+     * <p>
+     * <ul>
+     *   <li>simple: a simple link</li>
+     *   <li>extended: an extended, possibly multi-resource, link</li>
+     *   <li>locator: a pointer to an external resource</li>
+     *   <li>resource: an internal resource</li>
+     *   <li>arc: a traversal rule between resources</li>
+     *   <li>title: a descriptive title for another linking element</li>
+     * </ul>
+     *
+     * @since 3.13
      */
     @XmlAttribute(namespace = Namespaces.XLINK)
-    private URI href;
+    public String type;
+
+    /**
+     * A URN to an external resources, or to an other part of a XML document, or an identifier.
+     */
+    @XmlAttribute(namespace = Namespaces.XLINK)
+    public URI href;
+
+    /**
+     * A URI reference for some description of the arc role.
+     *
+     * @since 3.13
+     */
+    @XmlAttribute(namespace = Namespaces.XLINK)
+    public URI role;
+
+    /**
+     * A URI reference for some description of the arc role.
+     *
+     * @since 3.13
+     */
+    @XmlAttribute(namespace = Namespaces.XLINK)
+    public URI arcrole;
+
+    /**
+     * Just as with resources, this is simply a human-readable string with a short description
+     * for the arc.
+     *
+     * @since 3.13
+     */
+    @XmlAttribute(namespace = Namespaces.XLINK)
+    public String title;
+
+    /**
+     * Communicates the desired presentation of the ending resource on traversal
+     * from the starting resource. It's value should be treated as follows:
+     * <p>
+     * <ul>
+     *   <li>new: load ending resource in a new window, frame, pane, or other presentation context</li>
+     *   <li>replace: load the resource in the same window, frame, pane, or other presentation context</li>
+     *   <li>embed: load ending resource in place of the presentation of the starting resource</li>
+     *   <li>other: behavior is unconstrained; examine other markup in the link for hints</li>
+     *   <li>none: behavior is unconstrained</li>
+     * </ul>
+     *
+     * @since 3.13
+     */
+    @XmlAttribute(namespace = Namespaces.XLINK)
+    public String show;
+
+    /**
+     * Communicates the desired timing of traversal from the starting resource to the ending
+     * resource. It's value should be treated as follows:
+     * <p>
+     * <ul>
+     *   <li>onLoad: traverse to the ending resource immediately on loading the starting resource</li>
+     *   <li>onRequest: traverse from the starting resource to the ending resource only on a post-loading event triggered for this purpose</li>
+     *   <li>other: behavior is unconstrained; examine other markup in link for hints</li>
+     *   <li>none: behavior is unconstrained</li>
+     * </ul>
+     *
+     * @since 3.13
+     */
+    @XmlAttribute(namespace = Namespaces.XLINK)
+    public String actuate;
 
     /**
      * Often a short textual description of the URN target.
@@ -60,7 +142,7 @@ public final class AnchorType { // Should NOT implement CharSequence.
     /**
      * Creates an {@code AnchorType} initialized to the given value.
      *
-     * @param href  A URN.
+     * @param href  A URN to an external resources or an identifier.
      * @param value Often a short textual description of the URN target.
      */
     public AnchorType(final URI href, final String value) {
@@ -75,5 +157,50 @@ public final class AnchorType { // Should NOT implement CharSequence.
     @Override
     public String toString() {
         return value;
+    }
+
+    /**
+     * Returns the text as a string, or {@code null} if none.
+     */
+    @Override
+    public String toString(final Locale locale) {
+        return value;
+    }
+
+    /**
+     * Returns the number of characters in the value.
+     */
+    @Override
+    public int length() {
+        return (value != null) ? value.length() : 0;
+    }
+
+    /**
+     * Returns the character at the given index.
+     */
+    @Override
+    public char charAt(final int index) {
+        return (value != null ? value : "").charAt(index);
+    }
+
+    /**
+     * Returns the sequence of characters in the given range of index.
+     */
+    @Override
+    public CharSequence subSequence(final int start, final int end) {
+        return (value != null ? value : "").subSequence(start, end);
+    }
+
+    /**
+     * Compares the value of this object with the given international string for order.
+     * Null values are sorted last.
+     */
+    @Override
+    public int compareTo(final InternationalString other) {
+        final String ot;
+        if (other == null || (ot = other.toString()) == null) {
+            return (value != null) ? -1 : 0;
+        }
+        return (value != null) ? value.compareTo(ot) : +1;
     }
 }

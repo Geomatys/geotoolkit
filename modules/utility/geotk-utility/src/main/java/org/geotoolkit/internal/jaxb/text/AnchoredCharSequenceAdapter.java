@@ -21,6 +21,7 @@ import java.net.URI;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Collections;
+
 import org.geotoolkit.resources.Errors;
 
 
@@ -38,7 +39,7 @@ import org.geotoolkit.resources.Errors;
  *
  * @author Guilhem Legal (Geomatys)
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.13
  *
  * @since 3.00
  * @module
@@ -109,7 +110,7 @@ public final class AnchoredCharSequenceAdapter extends CharSequenceAdapter {
      * @return The adapter for this string.
      */
     @Override
-    public CharacterString marshal(final CharSequence value) {
+    public CharacterString marshal(CharSequence value) {
         if (value != null) {
             final URI href;
             String key = value.toString();
@@ -120,10 +121,9 @@ public final class AnchoredCharSequenceAdapter extends CharSequenceAdapter {
                         href = anchors.get(key);
                     }
                     if (href != null) {
-                        return new CharacterString(new AnchorType(href, key));
-                    } else {
-                        return new CharacterString(value);
+                        value = new AnchorType(href, key);
                     }
+                    return new CharacterString(value);
                 }
             }
         }

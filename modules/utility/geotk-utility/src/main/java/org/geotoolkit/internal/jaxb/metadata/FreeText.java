@@ -59,7 +59,7 @@ public final class FreeText extends CharacterString {
      *             same text.
      */
     public FreeText(final DefaultInternationalString text) {
+        super(text);
         textGroup = new TextGroup(text);
-        this.text = text;
     }
 }

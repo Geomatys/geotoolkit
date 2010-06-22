@@ -35,7 +35,7 @@ import org.geotoolkit.internal.jaxb.metadata.InternationalStringAdapter;
  *
  * @author Guilhem Legal (Geomatys)
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.13
  *
  * @see AnchoredCharSequenceAdapter
  *
@@ -71,6 +71,9 @@ public final class AnchoredInternationalStringAdapter extends InternationalStrin
      */
     @Override
     public CharacterString marshal(final InternationalString value) {
+        if (value instanceof AnchorType) {
+            return new CharacterString((AnchorType) value);
+        }
         if (value instanceof DefaultInternationalString) {
             return new FreeText((DefaultInternationalString) value);
         }

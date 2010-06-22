@@ -20,9 +20,12 @@ package org.geotoolkit.internal.jaxb.metadata;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 
 import org.opengis.util.InternationalString;
+
 import org.geotoolkit.util.SimpleInternationalString;
 import org.geotoolkit.util.DefaultInternationalString;
 import org.geotoolkit.internal.jaxb.text.CharacterString;
+import org.geotoolkit.internal.jaxb.text.AnchorType;
+
 
 
 /**
@@ -32,7 +35,8 @@ import org.geotoolkit.internal.jaxb.text.CharacterString;
  *
  * @author Cédric Briançon (Geomatys)
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.04
+ * @author Guilhem Legal (Geomatys)
+ * @version 3.13
  *
  * @since 2.5
  * @module
@@ -66,6 +70,10 @@ public class InternationalStringAdapter extends XmlAdapter<CharacterString, Inte
                 }
                 return ist;
             }
+            final AnchorType anchor = value.getAnchor();
+            if (anchor != null) {
+                return anchor;
+            }
             String text = value.toString();
             if (text != null) {
                 text = text.trim();
@@ -78,7 +86,7 @@ public class InternationalStringAdapter extends XmlAdapter<CharacterString, Inte
     }
 
     /**
-     * Converts an {@link InternationalString} to an object to formatted into a
+     * Converts an {@link InternationalString} to an object to format into a
      * XML stream. JAXB invokes automatically this method at marshalling time.
      *
      * @param  value The string value.
@@ -87,6 +95,9 @@ public class InternationalStringAdapter extends XmlAdapter<CharacterString, Inte
     @Override
     public CharacterString marshal(final InternationalString value) {
         if (value != null) {
+            if (value instanceof AnchorType) {
+                return new CharacterString((AnchorType) value);
+            }
             if (value instanceof DefaultInternationalString) {
                 return new FreeText((DefaultInternationalString) value);
             }
