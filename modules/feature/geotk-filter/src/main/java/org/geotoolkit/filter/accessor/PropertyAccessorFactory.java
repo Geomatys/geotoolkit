@@ -26,6 +26,16 @@ import org.geotoolkit.factory.Hints;
  * @module pending
  */
 public interface PropertyAccessorFactory {
+
+    /**
+     * The priority of this factory, since several factory might
+     * be able to handle a given property path, the most restrictive
+     * factory should have the highest priority.
+     * 
+     * @return int, higher value for higher priority.
+     */
+    int getPriority();
+
     /**
      * Creates a property accessor for a particular class.
      *

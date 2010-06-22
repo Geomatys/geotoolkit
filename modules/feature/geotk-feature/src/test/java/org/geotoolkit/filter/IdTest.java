@@ -15,7 +15,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.filter.identity;
+package org.geotoolkit.filter;
 
 import org.junit.Test;
 import org.opengis.filter.identity.FeatureId;
@@ -43,6 +43,13 @@ public class IdTest {
 
         assertEquals(strid, id1.getID());
         assertEquals(id1, id2);
+
+        assertTrue(id1.matches(FEATURE_1));
+    }
+
+    @Test
+    public void testGmlFeatureId(){
+        //geotoolkit doesnt handle GML objects
     }
 
 }

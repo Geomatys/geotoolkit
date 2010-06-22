@@ -53,12 +53,12 @@ public class BinaryLogicTest {
         filters.add(filter3);
 
         And and = FF.and(filters);
-        assertTrue( and.evaluate(FEATURE_1) );
+        assertTrue( and.evaluate(CANDIDATE_1) );
 
         Filter filter4 = FF.equals(FF.property("testGeometry"), FF.literal(WRONG_GEOMETRY));
         filters.add(filter4);
         and = FF.and(filters);
-        assertFalse( and.evaluate(FEATURE_1) );
+        assertFalse( and.evaluate(CANDIDATE_1) );
 
     }
 
@@ -75,20 +75,20 @@ public class BinaryLogicTest {
         filters.add(filter3);
 
         Or or = FF.or(filters);
-        assertTrue( or.evaluate(FEATURE_1) );
+        assertTrue( or.evaluate(CANDIDATE_1) );
 
         Filter filter4 = FF.equals(FF.property("testGeometry"), FF.literal(WRONG_GEOMETRY));
         Filter filter5 = FF.equals(FF.property("testInteger"), FF.literal(312.23));
         filters.add(filter4);
         filters.add(filter5);
         or = FF.or(filters);
-        assertTrue( or.evaluate(FEATURE_1) );
+        assertTrue( or.evaluate(CANDIDATE_1) );
 
         filters.clear();
         filters.add(filter4);
         filters.add(filter5);
         or = FF.or(filters);
-        assertFalse( or.evaluate(FEATURE_1) );
+        assertFalse( or.evaluate(CANDIDATE_1) );
 
     }
 

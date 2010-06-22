@@ -3,7 +3,7 @@
  *    http://www.geotoolkit.org
  *
  *    (C) 2002-2008, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2009, Geomatys
+ *    (C) 2009-2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -17,10 +17,13 @@
  */
 package org.geotoolkit.filter.accessor;
 
-import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Iterator;
-import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
+
 import org.geotoolkit.factory.FactoryRegistry;
+import org.geotoolkit.lang.Static;
 
 /**
  * Utility class to obtain a propertyAccesor.
@@ -28,6 +31,7 @@ import org.geotoolkit.factory.FactoryRegistry;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
+@Static
 public class Accessors {
 
     private static final PropertyAccessorFactory[] ACCESSOR_FACTORIES;
@@ -36,7 +40,14 @@ public class Accessors {
         final FactoryRegistry fr = new FactoryRegistry(PropertyAccessorFactory.class);
         final Iterator<PropertyAccessorFactory> factories = fr.getServiceProviders(PropertyAccessorFactory.class, null, null, null);
 
-        final List<PropertyAccessorFactory> lst = new ArrayList<PropertyAccessorFactory>();
+        final Set<PropertyAccessorFactory> lst = new TreeSet<PropertyAccessorFactory>(
+                new Comparator<PropertyAccessorFactory>(){
+                    @Override
+                    public int compare(PropertyAccessorFactory t, PropertyAccessorFactory t1) {
+                        return t.getPriority() - t1.getPriority();
+                    }
+            });
+
         while(factories.hasNext()){
             lst.add(factories.next());
         }
@@ -54,7 +65,7 @@ public class Accessors {
      * @param target : expected output type
      * @return PropertyAccessor or null if none could match the given classes
      */
-    public static final PropertyAccessor getAccessor(Class type, String xpath, Class target){
+    public static PropertyAccessor getAccessor(Class type, String xpath, Class target){
         for(final PropertyAccessorFactory pf : ACCESSOR_FACTORIES){
             final PropertyAccessor pa = pf.createPropertyAccessor(type, xpath, target,null);
             if(pa != null) return pa;

@@ -55,12 +55,12 @@ public class FilterTest {
 
         Id id = FF.id(ids);
 
-        assertFalse(id.evaluate(FEATURE_1));
+        assertFalse(id.evaluate(CANDIDATE_1));
 
         ids.add(FF.featureId("testFeatureType.1"));
         id = FF.id(ids);
 
-        assertTrue(id.evaluate(FEATURE_1));
+        assertTrue(id.evaluate(CANDIDATE_1));
     }
 
     @Test
@@ -79,10 +79,10 @@ public class FilterTest {
     @Test
     public void testNot(){
         Filter filter = FF.equals(FF.property("testString"), FF.literal("test string data"));
-        assertTrue(filter.evaluate(FEATURE_1));
+        assertTrue(filter.evaluate(CANDIDATE_1));
 
         Not not = FF.not(filter);
-        assertFalse(not.evaluate(FEATURE_1));
+        assertFalse(not.evaluate(CANDIDATE_1));
     }
 
     @Test
@@ -93,12 +93,12 @@ public class FilterTest {
         int ibefore = 12;
         int iafter = 250;
         PropertyIsBetween between = FF.between(property, FF.literal(ibefore), FF.literal(iafter));
-        assertTrue(between.evaluate(FEATURE_1));
+        assertTrue(between.evaluate(CANDIDATE_1));
 
         ibefore = 112;
         iafter = 360;
         between = FF.between(property, FF.literal(ibefore), FF.literal(iafter));
-        assertFalse(between.evaluate(FEATURE_1));
+        assertFalse(between.evaluate(CANDIDATE_1));
 
         property = FF.property("date");
 
@@ -106,41 +106,41 @@ public class FilterTest {
         Date dafter = new Date(DATE.getTime()+360000);
 
         between = FF.between(property, FF.literal(dbefore), FF.literal(dafter));
-        assertTrue(between.evaluate(FEATURE_1));
+        assertTrue(between.evaluate(CANDIDATE_1));
 
         dbefore = new Date(DATE.getTime()+10000);
         dafter = new Date(DATE.getTime()+360000);
 
         between = FF.between(property, FF.literal(dbefore), FF.literal(dafter));
-        assertFalse(between.evaluate(FEATURE_1));
+        assertFalse(between.evaluate(CANDIDATE_1));
 
         //test against strings
         between = FF.between(property, FF.literal("1850-09-01Z"), FF.literal("2210-11-01Z"));
-        assertTrue(between.evaluate(FEATURE_1));
+        assertTrue(between.evaluate(CANDIDATE_1));
 
         between = FF.between(property, FF.literal("2150-09-01Z"), FF.literal("2210-11-01Z"));
-        assertFalse(between.evaluate(FEATURE_1));
+        assertFalse(between.evaluate(CANDIDATE_1));
 
         //test against timestamp
         dbefore = new Timestamp(DATE.getTime()+10000);
         dafter = new Timestamp(DATE.getTime()+360000);
 
         between = FF.between(property, FF.literal(dbefore), FF.literal(dafter));
-        assertFalse(between.evaluate(FEATURE_1));
+        assertFalse(between.evaluate(CANDIDATE_1));
 
         dbefore = new Timestamp(DATE.getTime()-360000);
         dafter = new Timestamp(DATE.getTime()+360000);
 
         between = FF.between(property, FF.literal(dbefore), FF.literal(dafter));
-        assertTrue(between.evaluate(FEATURE_1));
+        assertTrue(between.evaluate(CANDIDATE_1));
 
         //test timestamp against string
         property = FF.property("datetime2");
         between = FF.between(property, FF.literal("1850-09-01Z"), FF.literal("2210-11-01Z"));
-        assertTrue(between.evaluate(FEATURE_1));
+        assertTrue(between.evaluate(CANDIDATE_1));
 
         between = FF.between(property, FF.literal("2150-09-01Z"), FF.literal("2210-11-01Z"));
-        assertFalse(between.evaluate(FEATURE_1));
+        assertFalse(between.evaluate(CANDIDATE_1));
         
     }
 
@@ -151,19 +151,19 @@ public class FilterTest {
 
 
         PropertyIsLike filter = FF.like(testAttribute, "test*", "*", ".", "!");
-        assertTrue(filter.evaluate(FEATURE_1));
+        assertTrue(filter.evaluate(CANDIDATE_1));
 
         // Test for false positive.
         filter = FF.like(testAttribute, "cows*", "*", ".", "!");
-        assertFalse(filter.evaluate(FEATURE_1));
+        assertFalse(filter.evaluate(CANDIDATE_1));
 
         // Test we don't match if single character is missing
         filter = FF.like(testAttribute, "test*a.", "*", ".", "!");
-        assertFalse(filter.evaluate(FEATURE_1));
+        assertFalse(filter.evaluate(CANDIDATE_1));
 
         // Test we do match if the single char is there
         filter = FF.like(testAttribute, "test*dat.", "*", ".", "!");
-        assertTrue(filter.evaluate(FEATURE_1));
+        assertTrue(filter.evaluate(CANDIDATE_1));
 
 
     }
@@ -171,16 +171,16 @@ public class FilterTest {
     @Test
     public void testIsNull(){
         Filter filter = FF.isNull(FF.property("testNull"));
-        assertTrue(filter.evaluate(FEATURE_1));
+        assertTrue(filter.evaluate(CANDIDATE_1));
 
         filter = FF.isNull(FF.property("testString"));
-        assertFalse(filter.evaluate(FEATURE_1));
+        assertFalse(filter.evaluate(CANDIDATE_1));
     }
 
     @Test
     public void testPropertyName(){
         Expression exp = FF.property("testString");
-        assertEquals(exp.evaluate(FEATURE_1), "test string data");
+        assertEquals(exp.evaluate(CANDIDATE_1), "test string data");
     }
 
 }

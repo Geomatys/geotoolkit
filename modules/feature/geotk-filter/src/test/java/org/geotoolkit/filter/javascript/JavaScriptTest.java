@@ -72,7 +72,7 @@ public class JavaScriptTest {
         exp = ff.literal("$testInteger * $testDouble");
         jsFunction = ff.function(JavaScriptFunctionFactory.JAVASCRIPT, exp);
 
-        result = jsFunction.evaluate(FilterTestConstants.FEATURE_1,Number.class).doubleValue();
+        result = jsFunction.evaluate(FilterTestConstants.CANDIDATE_1,Number.class).doubleValue();
         assert(result == 10201);
 
         exp = ff.literal("x = $testLong - 6*$testFloat;" +
@@ -87,7 +87,7 @@ public class JavaScriptTest {
         assert(property2.getPropertyName().equals("testFloat"));
 
 
-        result = jsFunction.evaluate(FilterTestConstants.FEATURE_1,Number.class).doubleValue();
+        result = jsFunction.evaluate(FilterTestConstants.CANDIDATE_1,Number.class).doubleValue();
         assert(result == 10);
 
         

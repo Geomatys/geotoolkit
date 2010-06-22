@@ -17,8 +17,10 @@
  */
 package org.geotoolkit.filter.identity;
 
+import org.opengis.feature.Attribute;
 import org.opengis.feature.Feature;
 import org.opengis.filter.identity.FeatureId;
+import org.opengis.filter.identity.Identifier;
 
 /**
  * Immutable feature id.
@@ -50,8 +52,9 @@ public class DefaultFeatureId implements FeatureId {
      */
     @Override
     public boolean matches(Object object) {
-        if (object instanceof Feature) {
-            return id.equals(((Feature)object).getIdentifier().getID());
+        if (object instanceof Attribute) {
+            final Identifier identifier = ((Attribute)object).getIdentifier();
+            return identifier != null && id.equals(identifier.getID());
         }
         return false;
     }

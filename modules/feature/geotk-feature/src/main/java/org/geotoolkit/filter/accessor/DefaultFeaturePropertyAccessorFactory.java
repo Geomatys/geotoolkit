@@ -165,6 +165,11 @@ public class DefaultFeaturePropertyAccessorFactory implements PropertyAccessorFa
         return xpath;
     }
 
+    @Override
+    public int getPriority() {
+        return 0;
+    }
+
     /**
      * Access to SimpleFeature Identifier.
      * 

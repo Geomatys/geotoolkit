@@ -17,30 +17,22 @@
  */
 package org.geotoolkit.filter;
 
-import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LinearRing;
-import com.vividsolutions.jts.geom.Polygon;
 
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.feature.dummy.DummyDescriptor;
-import org.geotoolkit.feature.dummy.DummyGeometryDescriptor;
-import org.geotoolkit.feature.dummy.DummySimpleFeature;
-import org.geotoolkit.feature.dummy.DummySimpleFeatureType;
 import org.geotoolkit.referencing.CRS;
-
 import org.geotoolkit.util.logging.Logging;
-import org.opengis.feature.simple.SimpleFeature;
-import org.opengis.feature.type.AttributeDescriptor;
+
 import org.opengis.filter.FilterFactory2;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
@@ -61,10 +53,10 @@ public class FilterTestConstants {
             FactoryFinder.getFilterFactory(new Hints(Hints.FILTER_FACTORY, FilterFactory2.class));
     public static final GeometryFactory GF = new GeometryFactory();
 
-    public static Geometry RIGHT_GEOMETRY;
-    public static Geometry WRONG_GEOMETRY;
-    public static Date DATE;
-    public static final SimpleFeature FEATURE_1;
+    public static final Geometry RIGHT_GEOMETRY;
+    public static final Geometry WRONG_GEOMETRY;
+    public static final Date DATE;
+    public static final Object CANDIDATE_1;
 
     static{
         CoordinateReferenceSystem crs = null;
@@ -75,27 +67,6 @@ public class FilterTestConstants {
         } catch (FactoryException ex) {
             LOGGER.log(Level.WARNING, null, ex);
         }
-
-        final List<AttributeDescriptor> desc = new ArrayList<AttributeDescriptor>();
-        final DummyGeometryDescriptor geomDesc = new DummyGeometryDescriptor("testGeometry", Polygon.class, crs);
-
-        desc.add(geomDesc);
-        desc.add(new DummyDescriptor("testBoolean", Boolean.class));
-        desc.add(new DummyDescriptor("testCharacter", Character.class));
-        desc.add(new DummyDescriptor("testByte", Byte.class));
-        desc.add(new DummyDescriptor("testShort", Short.class));
-        desc.add(new DummyDescriptor("testInteger", Integer.class));
-        desc.add(new DummyDescriptor("testLong", Long.class));
-        desc.add(new DummyDescriptor("testFloat", Float.class));
-        desc.add(new DummyDescriptor("testDouble", Double.class));
-        desc.add(new DummyDescriptor("testString", String.class));
-        desc.add(new DummyDescriptor("testString2", String.class));
-        desc.add(new DummyDescriptor("date", java.sql.Date.class));
-        desc.add(new DummyDescriptor("time", java.sql.Time.class));
-        desc.add(new DummyDescriptor("datetime1", java.util.Date.class));
-        desc.add(new DummyDescriptor("datetime2", java.sql.Timestamp.class));
-        desc.add(new DummyDescriptor("testNull", String.class));
-        desc.add(new DummyDescriptor("attribut.Géométrie", String.class));
 
         Coordinate[] coords = new Coordinate[5];
         coords[0] = new Coordinate(5, 5);
@@ -114,33 +85,31 @@ public class FilterTestConstants {
         ring = GF.createLinearRing(coords);
         WRONG_GEOMETRY = GF.createPolygon(ring, new LinearRing[0]);
 
-        // Builds the test feature
-        Object[] attributes = new Object[17];
-        attributes[0] = RIGHT_GEOMETRY;
-        attributes[1] = new Boolean(true);
-        attributes[2] = new Character('t');
-        attributes[3] = new Byte("101");
-        attributes[4] = new Short("101");
-        attributes[5] = new Integer(101);
-        attributes[6] = new Long(101);
-        attributes[7] = new Float(101);
-        attributes[8] = new Double(101);
-        attributes[9] = "test string data";
-        attributes[10] = "cow $10";
-
-        // setup date ones
         DATE = new Date();
-        attributes[11] = new java.sql.Date(DATE.getTime());
-        attributes[12] = new java.sql.Time(DATE.getTime());
-        attributes[13] = DATE;
-        Timestamp stamp = new java.sql.Timestamp(DATE.getTime());
-        attributes[14] = stamp;
-        attributes[15] = null;
-        attributes[16] = "POINT(45,32)";
 
-        // Creates the feature
-        final DummySimpleFeatureType featureType = new DummySimpleFeatureType(desc, geomDesc, crs);
-        FEATURE_1 = new DummySimpleFeature(attributes, "testFeatureType.1", featureType);
+        // Builds the test candidate
+        final Map<String,Object> candidate = new HashMap<String, Object>();
+        candidate.put("@id", "testFeatureType.1");
+        candidate.put("testGeometry", RIGHT_GEOMETRY);
+        candidate.put("testBoolean", Boolean.TRUE);
+        candidate.put("testCharacter", 't');
+        candidate.put("testByte", Byte.valueOf((byte)101));
+        candidate.put("testShort", Short.valueOf((short)101));
+        candidate.put("testInteger", Integer.valueOf(101));
+        candidate.put("testLong", Long.valueOf(101l));
+        candidate.put("testFloat", Float.valueOf(101f));
+        candidate.put("testDouble", Double.valueOf(101d));
+        candidate.put("testString", "test string data");
+        candidate.put("testString2", "cow $10");
+        candidate.put("date", new java.sql.Date(DATE.getTime()));
+        candidate.put("time", new java.sql.Time(DATE.getTime()));
+        candidate.put("datetime1", DATE);
+        candidate.put("datetime2", new java.sql.Timestamp(DATE.getTime()));
+        candidate.put("testNull", null);
+        candidate.put("attribut.Géométrie", "POINT(45,32)");
+
+        // assign the candidate
+        CANDIDATE_1 = candidate;
     }
 
 }

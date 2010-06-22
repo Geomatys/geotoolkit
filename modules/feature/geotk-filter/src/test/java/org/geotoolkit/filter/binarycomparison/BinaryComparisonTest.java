@@ -53,96 +53,96 @@ public class BinaryComparisonTest {
 
         property = FF.property("testGeometry");
         filter = FF.equals(property, rightliteral);
-        assertTrue(filter.evaluate(FEATURE_1));
+        assertTrue(filter.evaluate(CANDIDATE_1));
         filter = FF.equals(property, falseliteral);
-        assertFalse(filter.evaluate(FEATURE_1));
+        assertFalse(filter.evaluate(CANDIDATE_1));
 
         rightliteral = FF.literal(true);
         falseliteral = FF.literal(false);
 
         property = FF.property("testBoolean");
         filter = FF.equals(property, rightliteral);
-        assertTrue(filter.evaluate(FEATURE_1));
+        assertTrue(filter.evaluate(CANDIDATE_1));
         filter = FF.equals(property, falseliteral);
-        assertFalse(filter.evaluate(FEATURE_1));
+        assertFalse(filter.evaluate(CANDIDATE_1));
         
         rightliteral = FF.literal('t');
         falseliteral = FF.literal('z');
 
         property = FF.property("testCharacter");
         filter = FF.equals(property, rightliteral);
-        assertTrue(filter.evaluate(FEATURE_1));
+        assertTrue(filter.evaluate(CANDIDATE_1));
         filter = FF.equals(property, falseliteral);
-        assertFalse(filter.evaluate(FEATURE_1));
+        assertFalse(filter.evaluate(CANDIDATE_1));
 
         rightliteral = FF.literal(new Byte("101"));
         falseliteral = FF.literal(new Byte("011"));
 
         property = FF.property("testByte");
         filter = FF.equals(property, rightliteral);
-        assertTrue(filter.evaluate(FEATURE_1));
+        assertTrue(filter.evaluate(CANDIDATE_1));
         filter = FF.equals(property, falseliteral);
-        assertFalse(filter.evaluate(FEATURE_1));
+        assertFalse(filter.evaluate(CANDIDATE_1));
 
         rightliteral = FF.literal(101);
         falseliteral = FF.literal(103);
 
         property = FF.property("testShort");
         filter = FF.equals(property, rightliteral);
-        assertTrue(filter.evaluate(FEATURE_1));
+        assertTrue(filter.evaluate(CANDIDATE_1));
         filter = FF.equals(property, falseliteral);
-        assertFalse(filter.evaluate(FEATURE_1));
+        assertFalse(filter.evaluate(CANDIDATE_1));
 
         property = FF.property("testInteger");
         filter = FF.equals(property, rightliteral);
-        assertTrue(filter.evaluate(FEATURE_1));
+        assertTrue(filter.evaluate(CANDIDATE_1));
         filter = FF.equals(property, falseliteral);
-        assertFalse(filter.evaluate(FEATURE_1));
+        assertFalse(filter.evaluate(CANDIDATE_1));
 
         property = FF.property("testLong");
         filter = FF.equals(property, rightliteral);
-        assertTrue(filter.evaluate(FEATURE_1));
+        assertTrue(filter.evaluate(CANDIDATE_1));
         filter = FF.equals(property, falseliteral);
-        assertFalse(filter.evaluate(FEATURE_1));
+        assertFalse(filter.evaluate(CANDIDATE_1));
 
         property = FF.property("testFloat");
         filter = FF.equals(property, rightliteral);
-        assertTrue(filter.evaluate(FEATURE_1));
+        assertTrue(filter.evaluate(CANDIDATE_1));
         filter = FF.equals(property, falseliteral);
-        assertFalse(filter.evaluate(FEATURE_1));
+        assertFalse(filter.evaluate(CANDIDATE_1));
 
         property = FF.property("testDouble");
         filter = FF.equals(property, rightliteral);
-        assertTrue(filter.evaluate(FEATURE_1));
+        assertTrue(filter.evaluate(CANDIDATE_1));
         filter = FF.equals(property, falseliteral);
-        assertFalse(filter.evaluate(FEATURE_1));
+        assertFalse(filter.evaluate(CANDIDATE_1));
 
         rightliteral = FF.literal(DATE);
         falseliteral = FF.literal(new Date(DATE.getTime()+360000));
 
         property = FF.property("date");
         filter = FF.equals(property, rightliteral);
-        assertTrue(filter.evaluate(FEATURE_1));
+        assertTrue(filter.evaluate(CANDIDATE_1));
         filter = FF.equals(property, falseliteral);
-        assertFalse(filter.evaluate(FEATURE_1));
+        assertFalse(filter.evaluate(CANDIDATE_1));
 
         property = FF.property("time");
         filter = FF.equals(property, rightliteral);
-        assertTrue(filter.evaluate(FEATURE_1));
+        assertTrue(filter.evaluate(CANDIDATE_1));
         filter = FF.equals(property, falseliteral);
-        assertFalse(filter.evaluate(FEATURE_1));
+        assertFalse(filter.evaluate(CANDIDATE_1));
 
         property = FF.property("datetime1");
         filter = FF.equals(property, rightliteral);
-        assertTrue(filter.evaluate(FEATURE_1));
+        assertTrue(filter.evaluate(CANDIDATE_1));
         filter = FF.equals(property, falseliteral);
-        assertFalse(filter.evaluate(FEATURE_1));
+        assertFalse(filter.evaluate(CANDIDATE_1));
 
         property = FF.property("datetime2");
         filter = FF.equals(property, rightliteral);
-        assertTrue(filter.evaluate(FEATURE_1));
+        assertTrue(filter.evaluate(CANDIDATE_1));
         filter = FF.equals(property, falseliteral);
-        assertFalse(filter.evaluate(FEATURE_1));
+        assertFalse(filter.evaluate(CANDIDATE_1));
 
     }
 
@@ -158,11 +158,11 @@ public class BinaryComparisonTest {
 
         property = FF.property("testCharacter");
         filter = FF.greater(aboveLiteral,property);
-        assertTrue(filter.evaluate(FEATURE_1));
+        assertTrue(filter.evaluate(CANDIDATE_1));
         filter = FF.greater(equalLiteral,property);
-        assertFalse(filter.evaluate(FEATURE_1));
+        assertFalse(filter.evaluate(CANDIDATE_1));
         filter = FF.greater(underLiteral,property);
-        assertFalse(filter.evaluate(FEATURE_1));
+        assertFalse(filter.evaluate(CANDIDATE_1));
 
         aboveLiteral = FF.literal(new Byte("111"));
         equalLiteral = FF.literal(new Byte("101"));
@@ -170,11 +170,11 @@ public class BinaryComparisonTest {
 
         property = FF.property("testByte");
         filter = FF.greater(aboveLiteral,property);
-        assertTrue(filter.evaluate(FEATURE_1));
+        assertTrue(filter.evaluate(CANDIDATE_1));
         filter = FF.greater(equalLiteral,property);
-        assertFalse(filter.evaluate(FEATURE_1));
+        assertFalse(filter.evaluate(CANDIDATE_1));
         filter = FF.greater(underLiteral,property);
-        assertFalse(filter.evaluate(FEATURE_1));
+        assertFalse(filter.evaluate(CANDIDATE_1));
 
         aboveLiteral = FF.literal(103);
         equalLiteral = FF.literal(101);
@@ -182,43 +182,43 @@ public class BinaryComparisonTest {
 
         property = FF.property("testShort");
         filter = FF.greater(aboveLiteral,property);
-        assertTrue(filter.evaluate(FEATURE_1));
+        assertTrue(filter.evaluate(CANDIDATE_1));
         filter = FF.greater(equalLiteral,property);
-        assertFalse(filter.evaluate(FEATURE_1));
+        assertFalse(filter.evaluate(CANDIDATE_1));
         filter = FF.greater(underLiteral,property);
-        assertFalse(filter.evaluate(FEATURE_1));
+        assertFalse(filter.evaluate(CANDIDATE_1));
 
         property = FF.property("testInteger");
         filter = FF.greater(aboveLiteral,property);
-        assertTrue(filter.evaluate(FEATURE_1));
+        assertTrue(filter.evaluate(CANDIDATE_1));
         filter = FF.greater(equalLiteral,property);
-        assertFalse(filter.evaluate(FEATURE_1));
+        assertFalse(filter.evaluate(CANDIDATE_1));
         filter = FF.greater(underLiteral,property);
-        assertFalse(filter.evaluate(FEATURE_1));
+        assertFalse(filter.evaluate(CANDIDATE_1));
 
         property = FF.property("testLong");
         filter = FF.greater(aboveLiteral,property);
-        assertTrue(filter.evaluate(FEATURE_1));
+        assertTrue(filter.evaluate(CANDIDATE_1));
         filter = FF.greater(equalLiteral,property);
-        assertFalse(filter.evaluate(FEATURE_1));
+        assertFalse(filter.evaluate(CANDIDATE_1));
         filter = FF.greater(underLiteral,property);
-        assertFalse(filter.evaluate(FEATURE_1));
+        assertFalse(filter.evaluate(CANDIDATE_1));
 
         property = FF.property("testFloat");
         filter = FF.greater(aboveLiteral,property);
-        assertTrue(filter.evaluate(FEATURE_1));
+        assertTrue(filter.evaluate(CANDIDATE_1));
         filter = FF.greater(equalLiteral,property);
-        assertFalse(filter.evaluate(FEATURE_1));
+        assertFalse(filter.evaluate(CANDIDATE_1));
         filter = FF.greater(underLiteral,property);
-        assertFalse(filter.evaluate(FEATURE_1));
+        assertFalse(filter.evaluate(CANDIDATE_1));
 
         property = FF.property("testDouble");
         filter = FF.greater(aboveLiteral,property);
-        assertTrue(filter.evaluate(FEATURE_1));
+        assertTrue(filter.evaluate(CANDIDATE_1));
         filter = FF.greater(equalLiteral,property);
-        assertFalse(filter.evaluate(FEATURE_1));
+        assertFalse(filter.evaluate(CANDIDATE_1));
         filter = FF.greater(underLiteral,property);
-        assertFalse(filter.evaluate(FEATURE_1));
+        assertFalse(filter.evaluate(CANDIDATE_1));
 
         aboveLiteral = FF.literal(new Date(DATE.getTime()+360000));
         equalLiteral = FF.literal(DATE);
@@ -226,45 +226,45 @@ public class BinaryComparisonTest {
 
         property = FF.property("date");
         filter = FF.greater(aboveLiteral,property);
-        assertTrue(filter.evaluate(FEATURE_1));
+        assertTrue(filter.evaluate(CANDIDATE_1));
         filter = FF.greater(equalLiteral,property);
-        assertFalse(filter.evaluate(FEATURE_1));
+        assertFalse(filter.evaluate(CANDIDATE_1));
         filter = FF.greater(underLiteral,property);
-        assertFalse(filter.evaluate(FEATURE_1));
+        assertFalse(filter.evaluate(CANDIDATE_1));
 
         //test against string dates
         Literal aboveStrLiteral = FF.literal("3021-05-25");
         Literal underStrLiteral = FF.literal("1850-11-01");
         property = FF.property("date");
         filter = FF.greater(property,aboveStrLiteral);
-        assertFalse(filter.evaluate(FEATURE_1));
+        assertFalse(filter.evaluate(CANDIDATE_1));
         filter = FF.greater(property,underStrLiteral);
-        assertTrue(filter.evaluate(FEATURE_1));
+        assertTrue(filter.evaluate(CANDIDATE_1));
 
         //ensure the test in mad in primary on dates over string
         property = FF.property("date");
         filter = FF.greater(aboveStrLiteral,property);
-        assertTrue(filter.evaluate(FEATURE_1));
+        assertTrue(filter.evaluate(CANDIDATE_1));
         filter = FF.greater(underStrLiteral,property);
-        assertFalse(filter.evaluate(FEATURE_1));
+        assertFalse(filter.evaluate(CANDIDATE_1));
 
 
 
         property = FF.property("time");
         filter = FF.greater(aboveLiteral,property);
-        assertTrue(filter.evaluate(FEATURE_1));
+        assertTrue(filter.evaluate(CANDIDATE_1));
         filter = FF.greater(equalLiteral,property);
-        assertFalse(filter.evaluate(FEATURE_1));
+        assertFalse(filter.evaluate(CANDIDATE_1));
         filter = FF.greater(underLiteral,property);
-        assertFalse(filter.evaluate(FEATURE_1));
+        assertFalse(filter.evaluate(CANDIDATE_1));
 
         property = FF.property("datetime1");
         filter = FF.greater(aboveLiteral,property);
-        assertTrue(filter.evaluate(FEATURE_1));
+        assertTrue(filter.evaluate(CANDIDATE_1));
         filter = FF.greater(equalLiteral,property);
-        assertFalse(filter.evaluate(FEATURE_1));
+        assertFalse(filter.evaluate(CANDIDATE_1));
         filter = FF.greater(underLiteral,property);
-        assertFalse(filter.evaluate(FEATURE_1));
+        assertFalse(filter.evaluate(CANDIDATE_1));
 
 //        property = FF.property("datetime2");
 //        filter = FF.greater(aboveLiteral,property);
@@ -288,11 +288,11 @@ public class BinaryComparisonTest {
 
         property = FF.property("testCharacter");
         filter = FF.greaterOrEqual(aboveLiteral,property);
-        assertTrue(filter.evaluate(FEATURE_1));
+        assertTrue(filter.evaluate(CANDIDATE_1));
         filter = FF.greaterOrEqual(equalLiteral,property);
-        assertTrue(filter.evaluate(FEATURE_1));
+        assertTrue(filter.evaluate(CANDIDATE_1));
         filter = FF.greaterOrEqual(underLiteral,property);
-        assertFalse(filter.evaluate(FEATURE_1));
+        assertFalse(filter.evaluate(CANDIDATE_1));
 
         aboveLiteral = FF.literal(new Byte("111"));
         equalLiteral = FF.literal(new Byte("101"));
@@ -300,11 +300,11 @@ public class BinaryComparisonTest {
 
         property = FF.property("testByte");
         filter = FF.greaterOrEqual(aboveLiteral,property);
-        assertTrue(filter.evaluate(FEATURE_1));
+        assertTrue(filter.evaluate(CANDIDATE_1));
         filter = FF.greaterOrEqual(equalLiteral,property);
-        assertTrue(filter.evaluate(FEATURE_1));
+        assertTrue(filter.evaluate(CANDIDATE_1));
         filter = FF.greaterOrEqual(underLiteral,property);
-        assertFalse(filter.evaluate(FEATURE_1));
+        assertFalse(filter.evaluate(CANDIDATE_1));
 
         aboveLiteral = FF.literal(103);
         equalLiteral = FF.literal(101);
@@ -312,43 +312,43 @@ public class BinaryComparisonTest {
 
         property = FF.property("testShort");
         filter = FF.greaterOrEqual(aboveLiteral,property);
-        assertTrue(filter.evaluate(FEATURE_1));
+        assertTrue(filter.evaluate(CANDIDATE_1));
         filter = FF.greaterOrEqual(equalLiteral,property);
-        assertTrue(filter.evaluate(FEATURE_1));
+        assertTrue(filter.evaluate(CANDIDATE_1));
         filter = FF.greaterOrEqual(underLiteral,property);
-        assertFalse(filter.evaluate(FEATURE_1));
+        assertFalse(filter.evaluate(CANDIDATE_1));
 
         property = FF.property("testInteger");
         filter = FF.greaterOrEqual(aboveLiteral,property);
-        assertTrue(filter.evaluate(FEATURE_1));
+        assertTrue(filter.evaluate(CANDIDATE_1));
         filter = FF.greaterOrEqual(equalLiteral,property);
-        assertTrue(filter.evaluate(FEATURE_1));
+        assertTrue(filter.evaluate(CANDIDATE_1));
         filter = FF.greaterOrEqual(underLiteral,property);
-        assertFalse(filter.evaluate(FEATURE_1));
+        assertFalse(filter.evaluate(CANDIDATE_1));
 
         property = FF.property("testLong");
         filter = FF.greaterOrEqual(aboveLiteral,property);
-        assertTrue(filter.evaluate(FEATURE_1));
+        assertTrue(filter.evaluate(CANDIDATE_1));
         filter = FF.greaterOrEqual(equalLiteral,property);
-        assertTrue(filter.evaluate(FEATURE_1));
+        assertTrue(filter.evaluate(CANDIDATE_1));
         filter = FF.greaterOrEqual(underLiteral,property);
-        assertFalse(filter.evaluate(FEATURE_1));
+        assertFalse(filter.evaluate(CANDIDATE_1));
 
         property = FF.property("testFloat");
         filter = FF.greaterOrEqual(aboveLiteral,property);
-        assertTrue(filter.evaluate(FEATURE_1));
+        assertTrue(filter.evaluate(CANDIDATE_1));
         filter = FF.greaterOrEqual(equalLiteral,property);
-        assertTrue(filter.evaluate(FEATURE_1));
+        assertTrue(filter.evaluate(CANDIDATE_1));
         filter = FF.greaterOrEqual(underLiteral,property);
-        assertFalse(filter.evaluate(FEATURE_1));
+        assertFalse(filter.evaluate(CANDIDATE_1));
 
         property = FF.property("testDouble");
         filter = FF.greaterOrEqual(aboveLiteral,property);
-        assertTrue(filter.evaluate(FEATURE_1));
+        assertTrue(filter.evaluate(CANDIDATE_1));
         filter = FF.greaterOrEqual(equalLiteral,property);
-        assertTrue(filter.evaluate(FEATURE_1));
+        assertTrue(filter.evaluate(CANDIDATE_1));
         filter = FF.greaterOrEqual(underLiteral,property);
-        assertFalse(filter.evaluate(FEATURE_1));
+        assertFalse(filter.evaluate(CANDIDATE_1));
 
         aboveLiteral = FF.literal(new Date(DATE.getTime()+360000));
         equalLiteral = FF.literal(DATE);
@@ -356,35 +356,35 @@ public class BinaryComparisonTest {
 
         property = FF.property("date");
         filter = FF.greaterOrEqual(aboveLiteral,property);
-        assertTrue(filter.evaluate(FEATURE_1));
+        assertTrue(filter.evaluate(CANDIDATE_1));
         filter = FF.greaterOrEqual(equalLiteral,property);
-        assertTrue(filter.evaluate(FEATURE_1));
+        assertTrue(filter.evaluate(CANDIDATE_1));
         filter = FF.greaterOrEqual(underLiteral,property);
-        assertFalse(filter.evaluate(FEATURE_1));
+        assertFalse(filter.evaluate(CANDIDATE_1));
 
         property = FF.property("time");
         filter = FF.greaterOrEqual(aboveLiteral,property);
-        assertTrue(filter.evaluate(FEATURE_1));
+        assertTrue(filter.evaluate(CANDIDATE_1));
         filter = FF.greaterOrEqual(equalLiteral,property);
-        assertTrue(filter.evaluate(FEATURE_1));
+        assertTrue(filter.evaluate(CANDIDATE_1));
         filter = FF.greaterOrEqual(underLiteral,property);
-        assertFalse(filter.evaluate(FEATURE_1));
+        assertFalse(filter.evaluate(CANDIDATE_1));
 
         property = FF.property("datetime1");
         filter = FF.greaterOrEqual(aboveLiteral,property);
-        assertTrue(filter.evaluate(FEATURE_1));
+        assertTrue(filter.evaluate(CANDIDATE_1));
         filter = FF.greaterOrEqual(equalLiteral,property);
-        assertTrue(filter.evaluate(FEATURE_1));
+        assertTrue(filter.evaluate(CANDIDATE_1));
         filter = FF.greaterOrEqual(underLiteral,property);
-        assertFalse(filter.evaluate(FEATURE_1));
+        assertFalse(filter.evaluate(CANDIDATE_1));
 
         property = FF.property("datetime2");
         filter = FF.greaterOrEqual(aboveLiteral,property);
-        assertTrue(filter.evaluate(FEATURE_1));
+        assertTrue(filter.evaluate(CANDIDATE_1));
         filter = FF.greaterOrEqual(equalLiteral,property);
-        assertTrue(filter.evaluate(FEATURE_1));
+        assertTrue(filter.evaluate(CANDIDATE_1));
         filter = FF.greaterOrEqual(underLiteral,property);
-        assertFalse(filter.evaluate(FEATURE_1));
+        assertFalse(filter.evaluate(CANDIDATE_1));
 
     }
 
@@ -400,11 +400,11 @@ public class BinaryComparisonTest {
 
         property = FF.property("testCharacter");
         filter = FF.less(aboveLiteral,property);
-        assertFalse(filter.evaluate(FEATURE_1));
+        assertFalse(filter.evaluate(CANDIDATE_1));
         filter = FF.less(equalLiteral,property);
-        assertFalse(filter.evaluate(FEATURE_1));
+        assertFalse(filter.evaluate(CANDIDATE_1));
         filter = FF.less(underLiteral,property);
-        assertTrue(filter.evaluate(FEATURE_1));
+        assertTrue(filter.evaluate(CANDIDATE_1));
 
         aboveLiteral = FF.literal(new Byte("111"));
         equalLiteral = FF.literal(new Byte("101"));
@@ -412,11 +412,11 @@ public class BinaryComparisonTest {
 
         property = FF.property("testByte");
         filter = FF.less(aboveLiteral,property);
-        assertFalse(filter.evaluate(FEATURE_1));
+        assertFalse(filter.evaluate(CANDIDATE_1));
         filter = FF.less(equalLiteral,property);
-        assertFalse(filter.evaluate(FEATURE_1));
+        assertFalse(filter.evaluate(CANDIDATE_1));
         filter = FF.less(underLiteral,property);
-        assertTrue(filter.evaluate(FEATURE_1));
+        assertTrue(filter.evaluate(CANDIDATE_1));
 
         aboveLiteral = FF.literal(103);
         equalLiteral = FF.literal(101);
@@ -424,43 +424,43 @@ public class BinaryComparisonTest {
 
         property = FF.property("testShort");
         filter = FF.less(aboveLiteral,property);
-        assertFalse(filter.evaluate(FEATURE_1));
+        assertFalse(filter.evaluate(CANDIDATE_1));
         filter = FF.less(equalLiteral,property);
-        assertFalse(filter.evaluate(FEATURE_1));
+        assertFalse(filter.evaluate(CANDIDATE_1));
         filter = FF.less(underLiteral,property);
-        assertTrue(filter.evaluate(FEATURE_1));
+        assertTrue(filter.evaluate(CANDIDATE_1));
 
         property = FF.property("testInteger");
         filter = FF.less(aboveLiteral,property);
-        assertFalse(filter.evaluate(FEATURE_1));
+        assertFalse(filter.evaluate(CANDIDATE_1));
         filter = FF.less(equalLiteral,property);
-        assertFalse(filter.evaluate(FEATURE_1));
+        assertFalse(filter.evaluate(CANDIDATE_1));
         filter = FF.less(underLiteral,property);
-        assertTrue(filter.evaluate(FEATURE_1));
+        assertTrue(filter.evaluate(CANDIDATE_1));
 
         property = FF.property("testLong");
         filter = FF.less(aboveLiteral,property);
-        assertFalse(filter.evaluate(FEATURE_1));
+        assertFalse(filter.evaluate(CANDIDATE_1));
         filter = FF.less(equalLiteral,property);
-        assertFalse(filter.evaluate(FEATURE_1));
+        assertFalse(filter.evaluate(CANDIDATE_1));
         filter = FF.less(underLiteral,property);
-        assertTrue(filter.evaluate(FEATURE_1));
+        assertTrue(filter.evaluate(CANDIDATE_1));
 
         property = FF.property("testFloat");
         filter = FF.less(aboveLiteral,property);
-        assertFalse(filter.evaluate(FEATURE_1));
+        assertFalse(filter.evaluate(CANDIDATE_1));
         filter = FF.less(equalLiteral,property);
-        assertFalse(filter.evaluate(FEATURE_1));
+        assertFalse(filter.evaluate(CANDIDATE_1));
         filter = FF.less(underLiteral,property);
-        assertTrue(filter.evaluate(FEATURE_1));
+        assertTrue(filter.evaluate(CANDIDATE_1));
 
         property = FF.property("testDouble");
         filter = FF.less(aboveLiteral,property);
-        assertFalse(filter.evaluate(FEATURE_1));
+        assertFalse(filter.evaluate(CANDIDATE_1));
         filter = FF.less(equalLiteral,property);
-        assertFalse(filter.evaluate(FEATURE_1));
+        assertFalse(filter.evaluate(CANDIDATE_1));
         filter = FF.less(underLiteral,property);
-        assertTrue(filter.evaluate(FEATURE_1));
+        assertTrue(filter.evaluate(CANDIDATE_1));
 
         aboveLiteral = FF.literal(new Date(DATE.getTime()+360000));
         equalLiteral = FF.literal(DATE);
@@ -468,35 +468,35 @@ public class BinaryComparisonTest {
 
         property = FF.property("date");
         filter = FF.less(aboveLiteral,property);
-        assertFalse(filter.evaluate(FEATURE_1));
+        assertFalse(filter.evaluate(CANDIDATE_1));
         filter = FF.less(equalLiteral,property);
-        assertFalse(filter.evaluate(FEATURE_1));
+        assertFalse(filter.evaluate(CANDIDATE_1));
         filter = FF.less(underLiteral,property);
-        assertTrue(filter.evaluate(FEATURE_1));
+        assertTrue(filter.evaluate(CANDIDATE_1));
 
         property = FF.property("time");
         filter = FF.less(aboveLiteral,property);
-        assertFalse(filter.evaluate(FEATURE_1));
+        assertFalse(filter.evaluate(CANDIDATE_1));
         filter = FF.less(equalLiteral,property);
-        assertFalse(filter.evaluate(FEATURE_1));
+        assertFalse(filter.evaluate(CANDIDATE_1));
         filter = FF.less(underLiteral,property);
-        assertTrue(filter.evaluate(FEATURE_1));
+        assertTrue(filter.evaluate(CANDIDATE_1));
 
         property = FF.property("datetime1");
         filter = FF.less(aboveLiteral,property);
-        assertFalse(filter.evaluate(FEATURE_1));
+        assertFalse(filter.evaluate(CANDIDATE_1));
         filter = FF.less(equalLiteral,property);
-        assertFalse(filter.evaluate(FEATURE_1));
+        assertFalse(filter.evaluate(CANDIDATE_1));
         filter = FF.less(underLiteral,property);
-        assertTrue(filter.evaluate(FEATURE_1));
+        assertTrue(filter.evaluate(CANDIDATE_1));
 
         property = FF.property("datetime2");
         filter = FF.less(aboveLiteral,property);
-        assertFalse(filter.evaluate(FEATURE_1));
+        assertFalse(filter.evaluate(CANDIDATE_1));
         filter = FF.less(equalLiteral,property);
-        assertFalse(filter.evaluate(FEATURE_1));
+        assertFalse(filter.evaluate(CANDIDATE_1));
         filter = FF.less(underLiteral,property);
-        assertTrue(filter.evaluate(FEATURE_1));
+        assertTrue(filter.evaluate(CANDIDATE_1));
 
     }
 
@@ -512,11 +512,11 @@ public class BinaryComparisonTest {
 
         property = FF.property("testCharacter");
         filter = FF.lessOrEqual(aboveLiteral,property);
-        assertFalse(filter.evaluate(FEATURE_1));
+        assertFalse(filter.evaluate(CANDIDATE_1));
         filter = FF.lessOrEqual(equalLiteral,property);
-        assertTrue(filter.evaluate(FEATURE_1));
+        assertTrue(filter.evaluate(CANDIDATE_1));
         filter = FF.lessOrEqual(underLiteral,property);
-        assertTrue(filter.evaluate(FEATURE_1));
+        assertTrue(filter.evaluate(CANDIDATE_1));
 
         aboveLiteral = FF.literal(new Byte("111"));
         equalLiteral = FF.literal(new Byte("101"));
@@ -524,11 +524,11 @@ public class BinaryComparisonTest {
 
         property = FF.property("testByte");
         filter = FF.lessOrEqual(aboveLiteral,property);
-        assertFalse(filter.evaluate(FEATURE_1));
+        assertFalse(filter.evaluate(CANDIDATE_1));
         filter = FF.lessOrEqual(equalLiteral,property);
-        assertTrue(filter.evaluate(FEATURE_1));
+        assertTrue(filter.evaluate(CANDIDATE_1));
         filter = FF.lessOrEqual(underLiteral,property);
-        assertTrue(filter.evaluate(FEATURE_1));
+        assertTrue(filter.evaluate(CANDIDATE_1));
 
         aboveLiteral = FF.literal(103);
         equalLiteral = FF.literal(101);
@@ -536,43 +536,43 @@ public class BinaryComparisonTest {
 
         property = FF.property("testShort");
         filter = FF.lessOrEqual(aboveLiteral,property);
-        assertFalse(filter.evaluate(FEATURE_1));
+        assertFalse(filter.evaluate(CANDIDATE_1));
         filter = FF.lessOrEqual(equalLiteral,property);
-        assertTrue(filter.evaluate(FEATURE_1));
+        assertTrue(filter.evaluate(CANDIDATE_1));
         filter = FF.lessOrEqual(underLiteral,property);
-        assertTrue(filter.evaluate(FEATURE_1));
+        assertTrue(filter.evaluate(CANDIDATE_1));
 
         property = FF.property("testInteger");
         filter = FF.lessOrEqual(aboveLiteral,property);
-        assertFalse(filter.evaluate(FEATURE_1));
+        assertFalse(filter.evaluate(CANDIDATE_1));
         filter = FF.lessOrEqual(equalLiteral,property);
-        assertTrue(filter.evaluate(FEATURE_1));
+        assertTrue(filter.evaluate(CANDIDATE_1));
         filter = FF.lessOrEqual(underLiteral,property);
-        assertTrue(filter.evaluate(FEATURE_1));
+        assertTrue(filter.evaluate(CANDIDATE_1));
 
         property = FF.property("testLong");
         filter = FF.lessOrEqual(aboveLiteral,property);
-        assertFalse(filter.evaluate(FEATURE_1));
+        assertFalse(filter.evaluate(CANDIDATE_1));
         filter = FF.lessOrEqual(equalLiteral,property);
-        assertTrue(filter.evaluate(FEATURE_1));
+        assertTrue(filter.evaluate(CANDIDATE_1));
         filter = FF.lessOrEqual(underLiteral,property);
-        assertTrue(filter.evaluate(FEATURE_1));
+        assertTrue(filter.evaluate(CANDIDATE_1));
 
         property = FF.property("testFloat");
         filter = FF.lessOrEqual(aboveLiteral,property);
-        assertFalse(filter.evaluate(FEATURE_1));
+        assertFalse(filter.evaluate(CANDIDATE_1));
         filter = FF.lessOrEqual(equalLiteral,property);
-        assertTrue(filter.evaluate(FEATURE_1));
+        assertTrue(filter.evaluate(CANDIDATE_1));
         filter = FF.lessOrEqual(underLiteral,property);
-        assertTrue(filter.evaluate(FEATURE_1));
+        assertTrue(filter.evaluate(CANDIDATE_1));
 
         property = FF.property("testDouble");
         filter = FF.lessOrEqual(aboveLiteral,property);
-        assertFalse(filter.evaluate(FEATURE_1));
+        assertFalse(filter.evaluate(CANDIDATE_1));
         filter = FF.lessOrEqual(equalLiteral,property);
-        assertTrue(filter.evaluate(FEATURE_1));
+        assertTrue(filter.evaluate(CANDIDATE_1));
         filter = FF.lessOrEqual(underLiteral,property);
-        assertTrue(filter.evaluate(FEATURE_1));
+        assertTrue(filter.evaluate(CANDIDATE_1));
 
         aboveLiteral = FF.literal(new Date(DATE.getTime()+360000));
         equalLiteral = FF.literal(DATE);
@@ -580,35 +580,35 @@ public class BinaryComparisonTest {
 
         property = FF.property("date");
         filter = FF.lessOrEqual(aboveLiteral,property);
-        assertFalse(filter.evaluate(FEATURE_1));
+        assertFalse(filter.evaluate(CANDIDATE_1));
         filter = FF.lessOrEqual(equalLiteral,property);
-        assertTrue(filter.evaluate(FEATURE_1));
+        assertTrue(filter.evaluate(CANDIDATE_1));
         filter = FF.lessOrEqual(underLiteral,property);
-        assertTrue(filter.evaluate(FEATURE_1));
+        assertTrue(filter.evaluate(CANDIDATE_1));
 
         property = FF.property("time");
         filter = FF.lessOrEqual(aboveLiteral,property);
-        assertFalse(filter.evaluate(FEATURE_1));
+        assertFalse(filter.evaluate(CANDIDATE_1));
         filter = FF.lessOrEqual(equalLiteral,property);
-        assertTrue(filter.evaluate(FEATURE_1));
+        assertTrue(filter.evaluate(CANDIDATE_1));
         filter = FF.lessOrEqual(underLiteral,property);
-        assertTrue(filter.evaluate(FEATURE_1));
+        assertTrue(filter.evaluate(CANDIDATE_1));
 
         property = FF.property("datetime1");
         filter = FF.lessOrEqual(aboveLiteral,property);
-        assertFalse(filter.evaluate(FEATURE_1));
+        assertFalse(filter.evaluate(CANDIDATE_1));
         filter = FF.lessOrEqual(equalLiteral,property);
-        assertTrue(filter.evaluate(FEATURE_1));
+        assertTrue(filter.evaluate(CANDIDATE_1));
         filter = FF.lessOrEqual(underLiteral,property);
-        assertTrue(filter.evaluate(FEATURE_1));
+        assertTrue(filter.evaluate(CANDIDATE_1));
 
         property = FF.property("datetime2");
         filter = FF.lessOrEqual(aboveLiteral,property);
-        assertFalse(filter.evaluate(FEATURE_1));
+        assertFalse(filter.evaluate(CANDIDATE_1));
         filter = FF.lessOrEqual(equalLiteral,property);
-        assertFalse(filter.evaluate(FEATURE_1));
+        assertFalse(filter.evaluate(CANDIDATE_1));
         filter = FF.lessOrEqual(underLiteral,property);
-        assertTrue(filter.evaluate(FEATURE_1));
+        assertTrue(filter.evaluate(CANDIDATE_1));
 
     }
 
@@ -623,96 +623,96 @@ public class BinaryComparisonTest {
 
         property = FF.property("testGeometry");
         filter = FF.notEqual(property, rightliteral);
-        assertFalse(filter.evaluate(FEATURE_1));
+        assertFalse(filter.evaluate(CANDIDATE_1));
         filter = FF.notEqual(property, falseliteral);
-        assertTrue(filter.evaluate(FEATURE_1));
+        assertTrue(filter.evaluate(CANDIDATE_1));
 
         rightliteral = FF.literal(true);
         falseliteral = FF.literal(false);
 
         property = FF.property("testBoolean");
         filter = FF.notEqual(property, rightliteral);
-        assertFalse(filter.evaluate(FEATURE_1));
+        assertFalse(filter.evaluate(CANDIDATE_1));
         filter = FF.notEqual(property, falseliteral);
-        assertTrue(filter.evaluate(FEATURE_1));
+        assertTrue(filter.evaluate(CANDIDATE_1));
 
         rightliteral = FF.literal('t');
         falseliteral = FF.literal('z');
 
         property = FF.property("testCharacter");
         filter = FF.notEqual(property, rightliteral);
-        assertFalse(filter.evaluate(FEATURE_1));
+        assertFalse(filter.evaluate(CANDIDATE_1));
         filter = FF.notEqual(property, falseliteral);
-        assertTrue(filter.evaluate(FEATURE_1));
+        assertTrue(filter.evaluate(CANDIDATE_1));
 
         rightliteral = FF.literal(new Byte("101"));
         falseliteral = FF.literal(new Byte("011"));
 
         property = FF.property("testByte");
         filter = FF.notEqual(property, rightliteral);
-        assertFalse(filter.evaluate(FEATURE_1));
+        assertFalse(filter.evaluate(CANDIDATE_1));
         filter = FF.notEqual(property, falseliteral);
-        assertTrue(filter.evaluate(FEATURE_1));
+        assertTrue(filter.evaluate(CANDIDATE_1));
 
         rightliteral = FF.literal(101);
         falseliteral = FF.literal(103);
 
         property = FF.property("testShort");
         filter = FF.notEqual(property, rightliteral);
-        assertFalse(filter.evaluate(FEATURE_1));
+        assertFalse(filter.evaluate(CANDIDATE_1));
         filter = FF.notEqual(property, falseliteral);
-        assertTrue(filter.evaluate(FEATURE_1));
+        assertTrue(filter.evaluate(CANDIDATE_1));
 
         property = FF.property("testInteger");
         filter = FF.notEqual(property, rightliteral);
-        assertFalse(filter.evaluate(FEATURE_1));
+        assertFalse(filter.evaluate(CANDIDATE_1));
         filter = FF.notEqual(property, falseliteral);
-        assertTrue(filter.evaluate(FEATURE_1));
+        assertTrue(filter.evaluate(CANDIDATE_1));
 
         property = FF.property("testLong");
         filter = FF.notEqual(property, rightliteral);
-        assertFalse(filter.evaluate(FEATURE_1));
+        assertFalse(filter.evaluate(CANDIDATE_1));
         filter = FF.notEqual(property, falseliteral);
-        assertTrue(filter.evaluate(FEATURE_1));
+        assertTrue(filter.evaluate(CANDIDATE_1));
 
         property = FF.property("testFloat");
         filter = FF.notEqual(property, rightliteral);
-        assertFalse(filter.evaluate(FEATURE_1));
+        assertFalse(filter.evaluate(CANDIDATE_1));
         filter = FF.notEqual(property, falseliteral);
-        assertTrue(filter.evaluate(FEATURE_1));
+        assertTrue(filter.evaluate(CANDIDATE_1));
 
         property = FF.property("testDouble");
         filter = FF.notEqual(property, rightliteral);
-        assertFalse(filter.evaluate(FEATURE_1));
+        assertFalse(filter.evaluate(CANDIDATE_1));
         filter = FF.notEqual(property, falseliteral);
-        assertTrue(filter.evaluate(FEATURE_1));
+        assertTrue(filter.evaluate(CANDIDATE_1));
 
         rightliteral = FF.literal(DATE);
         falseliteral = FF.literal(new Date(DATE.getTime()+360000));
 
         property = FF.property("date");
         filter = FF.notEqual(property, rightliteral);
-        assertFalse(filter.evaluate(FEATURE_1));
+        assertFalse(filter.evaluate(CANDIDATE_1));
         filter = FF.notEqual(property, falseliteral);
-        assertTrue(filter.evaluate(FEATURE_1));
+        assertTrue(filter.evaluate(CANDIDATE_1));
 
         property = FF.property("time");
         filter = FF.notEqual(property, rightliteral);
-        assertFalse(filter.evaluate(FEATURE_1));
+        assertFalse(filter.evaluate(CANDIDATE_1));
         filter = FF.notEqual(property, falseliteral);
-        assertTrue(filter.evaluate(FEATURE_1));
+        assertTrue(filter.evaluate(CANDIDATE_1));
 
         property = FF.property("datetime1");
         filter = FF.notEqual(property, rightliteral);
-        assertFalse(filter.evaluate(FEATURE_1));
+        assertFalse(filter.evaluate(CANDIDATE_1));
         filter = FF.notEqual(property, falseliteral);
-        assertTrue(filter.evaluate(FEATURE_1));
+        assertTrue(filter.evaluate(CANDIDATE_1));
 
         property = FF.property("datetime2");
         filter = FF.notEqual(property, rightliteral);
-        assertFalse(filter.evaluate(FEATURE_1));
+        assertFalse(filter.evaluate(CANDIDATE_1));
         filter = FF.notEqual(property, falseliteral);
-        assertTrue(filter.evaluate(FEATURE_1));
+        assertTrue(filter.evaluate(CANDIDATE_1));
 
     }
 
@@ -726,9 +726,9 @@ public class BinaryComparisonTest {
 
         property = FF.property("testString");
         filter = FF.equal(property, rightliteral, false);
-        assertTrue(filter.evaluate(FEATURE_1));
+        assertTrue(filter.evaluate(CANDIDATE_1));
         filter = FF.equal(property, rightliteral, true);
-        assertFalse(filter.evaluate(FEATURE_1));
+        assertFalse(filter.evaluate(CANDIDATE_1));
 
     }
 

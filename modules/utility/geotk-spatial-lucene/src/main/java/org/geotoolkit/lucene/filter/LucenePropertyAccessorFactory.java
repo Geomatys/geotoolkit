@@ -36,6 +36,11 @@ public class LucenePropertyAccessorFactory implements PropertyAccessorFactory{
         accessor = new LucenePropertyAccessor();
     }
 
+    @Override
+    public int getPriority() {
+        return 10;
+    }
+
     /**
      * {@inheritDoc }
      */

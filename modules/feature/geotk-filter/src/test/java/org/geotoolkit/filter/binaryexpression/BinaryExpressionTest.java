@@ -48,27 +48,27 @@ public class BinaryExpressionTest {
 
         property = FF.property("testShort");
         exp = FF.add(property,combineLiteral);
-        result = exp.evaluate(FEATURE_1, Double.class);
+        result = exp.evaluate(CANDIDATE_1, Double.class);
         assertEquals(result, correctResult, 0.0000001d);
 
         property = FF.property("testInteger");
         exp = FF.add(property,combineLiteral);
-        result = exp.evaluate(FEATURE_1, Double.class);
+        result = exp.evaluate(CANDIDATE_1, Double.class);
         assertEquals(result, correctResult, 0.0000001d);
 
         property = FF.property("testLong");
         exp = FF.add(property,combineLiteral);
-        result = exp.evaluate(FEATURE_1, Double.class);
+        result = exp.evaluate(CANDIDATE_1, Double.class);
         assertEquals(result, correctResult, 0.0000001d);
 
         property = FF.property("testFloat");
         exp = FF.add(property,combineLiteral);
-        result = exp.evaluate(FEATURE_1, Double.class);
+        result = exp.evaluate(CANDIDATE_1, Double.class);
         assertEquals(result, correctResult, 0.0000001d);
 
         property = FF.property("testDouble");
         exp = FF.add(property,combineLiteral);
-        result = exp.evaluate(FEATURE_1, Double.class);
+        result = exp.evaluate(CANDIDATE_1, Double.class);
         assertEquals(result, correctResult, 0.0000001d);
 
     }
@@ -85,27 +85,27 @@ public class BinaryExpressionTest {
 
         property = FF.property("testShort");
         exp = FF.divide(property,combineLiteral);
-        result = exp.evaluate(FEATURE_1, Double.class);
+        result = exp.evaluate(CANDIDATE_1, Double.class);
         assertEquals(result, correctResult, 0.0000001d);
 
         property = FF.property("testInteger");
         exp = FF.divide(property,combineLiteral);
-        result = exp.evaluate(FEATURE_1, Double.class);
+        result = exp.evaluate(CANDIDATE_1, Double.class);
         assertEquals(result, correctResult, 0.0000001d);
 
         property = FF.property("testLong");
         exp = FF.divide(property,combineLiteral);
-        result = exp.evaluate(FEATURE_1, Double.class);
+        result = exp.evaluate(CANDIDATE_1, Double.class);
         assertEquals(result, correctResult, 0.0000001d);
 
         property = FF.property("testFloat");
         exp = FF.divide(property,combineLiteral);
-        result = exp.evaluate(FEATURE_1, Double.class);
+        result = exp.evaluate(CANDIDATE_1, Double.class);
         assertEquals(result, correctResult, 0.0000001d);
 
         property = FF.property("testDouble");
         exp = FF.divide(property,combineLiteral);
-        result = exp.evaluate(FEATURE_1, Double.class);
+        result = exp.evaluate(CANDIDATE_1, Double.class);
         assertEquals(result, correctResult, 0.0000001d);
 
     }
@@ -122,27 +122,27 @@ public class BinaryExpressionTest {
 
         property = FF.property("testShort");
         exp = FF.multiply(property,combineLiteral);
-        result = exp.evaluate(FEATURE_1, Double.class);
+        result = exp.evaluate(CANDIDATE_1, Double.class);
         assertEquals(result, correctResult, 0.0000001d);
 
         property = FF.property("testInteger");
         exp = FF.multiply(property,combineLiteral);
-        result = exp.evaluate(FEATURE_1, Double.class);
+        result = exp.evaluate(CANDIDATE_1, Double.class);
         assertEquals(result, correctResult, 0.0000001d);
 
         property = FF.property("testLong");
         exp = FF.multiply(property,combineLiteral);
-        result = exp.evaluate(FEATURE_1, Double.class);
+        result = exp.evaluate(CANDIDATE_1, Double.class);
         assertEquals(result, correctResult, 0.0000001d);
 
         property = FF.property("testFloat");
         exp = FF.multiply(property,combineLiteral);
-        result = exp.evaluate(FEATURE_1, Double.class);
+        result = exp.evaluate(CANDIDATE_1, Double.class);
         assertEquals(result, correctResult, 0.0000001d);
 
         property = FF.property("testDouble");
         exp = FF.multiply(property,combineLiteral);
-        result = exp.evaluate(FEATURE_1, Double.class);
+        result = exp.evaluate(CANDIDATE_1, Double.class);
         assertEquals(result, correctResult, 0.0000001d);
 
     }
@@ -159,27 +159,27 @@ public class BinaryExpressionTest {
 
         property = FF.property("testShort");
         exp = FF.subtract(property,combineLiteral);
-        result = exp.evaluate(FEATURE_1, Double.class);
+        result = exp.evaluate(CANDIDATE_1, Double.class);
         assertEquals(result, correctResult, 0.0000001d);
 
         property = FF.property("testInteger");
         exp = FF.subtract(property,combineLiteral);
-        result = exp.evaluate(FEATURE_1, Double.class);
+        result = exp.evaluate(CANDIDATE_1, Double.class);
         assertEquals(result, correctResult, 0.0000001d);
 
         property = FF.property("testLong");
         exp = FF.subtract(property,combineLiteral);
-        result = exp.evaluate(FEATURE_1, Double.class);
+        result = exp.evaluate(CANDIDATE_1, Double.class);
         assertEquals(result, correctResult, 0.0000001d);
 
         property = FF.property("testFloat");
         exp = FF.subtract(property,combineLiteral);
-        result = exp.evaluate(FEATURE_1, Double.class);
+        result = exp.evaluate(CANDIDATE_1, Double.class);
         assertEquals(result, correctResult, 0.0000001d);
 
         property = FF.property("testDouble");
         exp = FF.subtract(property,combineLiteral);
-        result = exp.evaluate(FEATURE_1, Double.class);
+        result = exp.evaluate(CANDIDATE_1, Double.class);
         assertEquals(result, correctResult, 0.0000001d);
 
     }
