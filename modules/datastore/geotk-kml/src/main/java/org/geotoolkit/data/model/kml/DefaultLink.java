@@ -3,6 +3,7 @@ package org.geotoolkit.data.model.kml;
 import java.util.List;
 import org.geotoolkit.data.model.xsd.SimpleType;
 import static java.util.Collections.*;
+import static org.geotoolkit.data.model.KmlModelConstants.*;
 
 /**
  *
@@ -10,19 +11,35 @@ import static java.util.Collections.*;
  */
 public class DefaultLink extends DefaultAbstractObject implements Link {
 
-    private final  String href;
-    private final List<SimpleType> basicLinkSimpleExtensions;
-    private final List<AbstractObject> basicLinkObjectExtensions;
+    private String href;
+    private List<SimpleType> basicLinkSimpleExtensions;
+    private List<AbstractObject> basicLinkObjectExtensions;
     
-    private final RefreshMode refreshMode;
-    private final double refreshInterval;
-    private final ViewRefreshMode viewRefreshMode;
-    private final double viewRefreshTime;
-    private final double viewBoundScale;
-    private final String viewFormat;
-    private final String httpQuery;
-    private final List<SimpleType> linkSimpleExtensions;
-    private final List<AbstractObject> linkObjectExtensions;
+    private RefreshMode refreshMode;
+    private double refreshInterval;
+    private ViewRefreshMode viewRefreshMode;
+    private double viewRefreshTime;
+    private double viewBoundScale;
+    private String viewFormat;
+    private String httpQuery;
+    private List<SimpleType> linkSimpleExtensions;
+    private List<AbstractObject> linkObjectExtensions;
+
+    /**
+     * 
+     */
+    public DefaultLink(){
+        this.basicLinkSimpleExtensions = EMPTY_LIST;
+        this.basicLinkObjectExtensions = EMPTY_LIST;
+
+        this.refreshMode = DEF_REFRESH_MODE;
+        this.refreshInterval = DEF_REFRESH_INTERVAL;
+        this.viewRefreshMode = DEF_VIEW_REFRESH_MODE;
+        this.viewRefreshTime = DEF_VIEW_REFRESH_TIME;
+        this.viewBoundScale = DEF_VIEW_BOUND_SCALE;
+        this.linkSimpleExtensions = EMPTY_LIST;
+        this.linkObjectExtensions = EMPTY_LIST;
+    }
 
     /**
      *
@@ -160,5 +177,97 @@ public class DefaultLink extends DefaultAbstractObject implements Link {
      */
     @Override
     public IdAttributes getIdAttributes() {return this.idAttributes;}
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setHref(String href) {this.href = href;}
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setBasicLinkSimpleExtensions(List<SimpleType> basicLinkSimpleExtensions) {
+        this.basicLinkSimpleExtensions = basicLinkSimpleExtensions;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setBasicLinkObjectExtensions(List<AbstractObject> basicLinkObjectExtensions) {
+        this.basicLinkObjectExtensions = basicLinkObjectExtensions;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setRefreshMode(RefreshMode refreshMode) {this.refreshMode = refreshMode;}
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setRefreshInterval(double refreshInterval) {this.refreshInterval = refreshInterval;}
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setViewRefreshMode(ViewRefreshMode viewRefreshMode) {this.viewRefreshMode = viewRefreshMode;}
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setViewRefreshTime(double viewRefreshTime) {this.viewRefreshTime = viewRefreshTime;}
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setViewBoundScale(double viewBoundScale) {this.viewBoundScale = viewBoundScale;}
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setViewFormat(String viewFormat) {this.viewFormat = viewFormat;}
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setHttpQuery(String httpQuery) {this.httpQuery = httpQuery;}
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setLinkSimpleExtensions(List<SimpleType> linkSimpleExtensions) {
+        this.linkSimpleExtensions = linkSimpleExtensions;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setLinkObjectExtensions(List<AbstractObject> linkObjectExtensions) {
+        this.linkObjectExtensions = linkObjectExtensions;
+    }
 
 }

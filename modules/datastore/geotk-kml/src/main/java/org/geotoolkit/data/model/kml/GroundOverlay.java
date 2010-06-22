@@ -27,6 +27,15 @@ import org.geotoolkit.data.model.xsd.SimpleType;
  * &lt;element name="GroundOverlayObjectExtensionGroup" abstract="true" substitutionGroup="kml:AbstractObjectGroup"/>
  * </pre>
  *
+ * <h3>OGC Documentation</h3>
+ *
+ * <p>Specifies the distance above the terrain in meters. It shall be interpreted according to
+ * kml:altitudeMode. Only kml:altitudeMode clampToGround or absolute values shall be
+ * encoded for kml:GroundOverlay.</p>
+ *
+ * <p>A kml:GroundOverlay element shall contain the kml:Icon and kml:LatLonBox child
+ * elements outside of an update context, that is when not a descendant of kml:Update.</p>
+ *
  * @author Samuel Andrés
  */
 public interface GroundOverlay extends AbstractOverlay {
@@ -42,6 +51,11 @@ public interface GroundOverlay extends AbstractOverlay {
      * @return
      */
     public AltitudeMode getAltitudeMode();
+
+    /**
+     *
+     * @return
+     */
     public LatLonBox getLatLonBox();
 
     /**
@@ -55,5 +69,35 @@ public interface GroundOverlay extends AbstractOverlay {
      * @return
      */
     public List<AbstractObject> getGroundOverlayObjectExtensions();
+
+    /**
+     *
+     * @param altitude
+     */
+    public void setAltitude(double altitude);
+
+    /**
+     *
+     * @param altitudeMode
+     */
+    public void setAltitudeMode(AltitudeMode altitudeMode);
+
+    /**
+     *
+     * @param latLonBox
+     */
+    public void setLatLonBox(LatLonBox latLonBox);
+
+    /**
+     *
+     * @param groundOverlaySimpleExtensions
+     */
+    public void setGroundOverlaySimpleExtensions(List<SimpleType> groundOverlaySimpleExtensions);
+
+    /**
+     *
+     * @param groundOverlayObjectExtensions
+     */
+    public void setGroundOverlayObjectExtensions(List<AbstractObject> groundOverlayObjectExtensions);
 
 }

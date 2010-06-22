@@ -27,6 +27,11 @@ import org.geotoolkit.data.model.xsd.SimpleType;
  * &lt;element name="PointObjectExtensionGroup" abstract="true" substitutionGroup="kml:AbstractObjectGroup"/>
  * </pre>
  *
+ * <h3>OGC Documentation</h3>
+ *
+ * <p>A geographic location defined by a single geodetic longitude, geodetic latitude, and
+ * (optional) altitude coordinate tuple.</p>
+ *
  * @author Samuel Andrés
  */
 public interface Point extends AbstractGeometry{
@@ -60,4 +65,34 @@ public interface Point extends AbstractGeometry{
      * @return the list of Point object extensions.
      */
     public List<AbstractObject> getPointObjectExtensions();
+
+    /**
+     *
+     * @param extrude
+     */
+    public void setExtrude(boolean extrude);
+
+    /**
+     *
+     * @param altitudeMode
+     */
+    public void setAltitudeMode(AltitudeMode altitudeMode);
+
+    /**
+     *
+     * @param coordinates
+     */
+    public void setCoordinates(Coordinates coordinates);
+
+    /**
+     *
+     * @param pointSimpleExtensions
+     */
+    public void setPointSimpleExtensions(List<SimpleType> pointSimpleExtensions);
+
+    /**
+     *
+     * @param pointObjectExensions
+     */
+    public void setPointObjectExtensions(List<AbstractObject> pointObjectExensions);
 }

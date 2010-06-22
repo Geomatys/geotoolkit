@@ -90,14 +90,7 @@ public class KmlUtilities {
         g = ((g.length() == 1) ? "0" : "") + g;
         b = ((b.length() == 1) ? "0" : "") + b;
         a = ((a.length() == 1) ? "0" : "") + a;
-        return r + g + b + a;
-    }
-
-    public static void main(String[] args) throws KmlException {
-        Color couleur = new Color(1, 0, 55, 255);
-        System.out.println(toKmlColor(couleur));
-
-        parseColor("ffffffff");
+        return a + b + g + r;
     }
 
     /**

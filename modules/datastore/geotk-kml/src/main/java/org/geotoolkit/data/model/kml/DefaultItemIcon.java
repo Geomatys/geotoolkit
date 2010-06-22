@@ -10,10 +10,19 @@ import static java.util.Collections.*;
  */
 public class DefaultItemIcon extends DefaultAbstractObject implements ItemIcon {
 
-    private final List<ItemIconState> states;
-    private final String href;
-    private final List<SimpleType> itemIconSimpleExtensions;
-    private final List<AbstractObject> itemIconObjectExtensions;
+    private List<ItemIconState> states;
+    private String href;
+    private List<SimpleType> itemIconSimpleExtensions;
+    private List<AbstractObject> itemIconObjectExtensions;
+
+    /**
+     * 
+     */
+    public DefaultItemIcon(){
+        this.states = EMPTY_LIST;
+        this.itemIconSimpleExtensions = EMPTY_LIST;
+        this.itemIconObjectExtensions = EMPTY_LIST;
+    }
 
     /**
      *
@@ -61,6 +70,38 @@ public class DefaultItemIcon extends DefaultAbstractObject implements ItemIcon {
      */
     @Override
     public List<AbstractObject> getItemIconObjectExtensions() {return this.itemIconObjectExtensions;}
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setStates(List<ItemIconState> states) {this.states = states;}
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setHref(String href) {this.href = href;}
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setItemIconSimpleExtensions(List<SimpleType> itemIconSimpleExtensions) {
+        this.itemIconSimpleExtensions = itemIconSimpleExtensions;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setItemIconObjectExtensions(List<AbstractObject> itemIconObjectExtensions) {
+        this.itemIconObjectExtensions = itemIconObjectExtensions;
+    }
 
     @Override
     public String toString(){

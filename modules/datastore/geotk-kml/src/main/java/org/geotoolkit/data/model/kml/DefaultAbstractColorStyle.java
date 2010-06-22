@@ -11,11 +11,13 @@ import static java.util.Collections.*;
  */
 public abstract class DefaultAbstractColorStyle extends DefaultAbstractSubStyle implements AbstractColorStyle {
 
-    protected final Color color;
-    protected final ColorMode colorMode;
-    protected final List<SimpleType> colorStyleSimpleExtensions;
-    protected final List<AbstractObject> colorStyleObjectExtensions;
+    protected Color color;
+    protected ColorMode colorMode;
+    protected List<SimpleType> colorStyleSimpleExtensions;
+    protected List<AbstractObject> colorStyleObjectExtensions;
 
+    protected DefaultAbstractColorStyle(){}
+    
     /**
      *
      * @param objectSimpleExtensions
@@ -65,6 +67,38 @@ public abstract class DefaultAbstractColorStyle extends DefaultAbstractSubStyle 
      */
     @Override
     public List<AbstractObject> getColorStyleObjectExtensions() {return this.colorStyleObjectExtensions;}
+
+    /**
+     *
+     * @{@inheritDoc}
+     */
+    @Override
+    public void setColor(Color color){this.color = color;}
+
+    /**
+     *
+     * @{@inheritDoc}
+     */
+    @Override
+    public void setColorMode(ColorMode colorMode){this.colorMode = colorMode;}
+
+    /**
+     *
+     * @{@inheritDoc}
+     */
+    @Override
+    public void setColorStyleSimpleExtensions(List<SimpleType> colorStyleSimpleExtensions){
+        this.colorStyleSimpleExtensions = colorStyleSimpleExtensions;
+    }
+
+    /**
+     *
+     * @{@inheritDoc}
+     */
+    @Override
+    public void setColorStyleObjectExtensions(List<AbstractObject> colorStyleObjectExtensions){
+        this.colorStyleObjectExtensions = colorStyleObjectExtensions;
+    }
 
     @Override
     public String toString(){

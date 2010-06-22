@@ -7,6 +7,7 @@ import org.geotoolkit.data.model.atom.AtomPersonConstruct;
 import org.geotoolkit.data.model.xal.AddressDetails;
 import org.geotoolkit.data.model.xsd.SimpleType;
 import static java.util.Collections.*;
+import static org.geotoolkit.data.model.KmlModelConstants.*;
 
 /**
  *
@@ -14,11 +15,21 @@ import static java.util.Collections.*;
  */
 public class DefaultGroundOverlay extends DefaultAbstractOverlay implements GroundOverlay {
 
-    private final double altitude;
-    private final AltitudeMode altitudeMode;
-    private final LatLonBox latLonBox;
-    private final List<SimpleType> groundOverlaySimpleExtensions;
-    private final List<AbstractObject> groundOverlayObjectExtensions;
+    private double altitude;
+    private AltitudeMode altitudeMode;
+    private LatLonBox latLonBox;
+    private List<SimpleType> groundOverlaySimpleExtensions;
+    private List<AbstractObject> groundOverlayObjectExtensions;
+
+    /**
+     * 
+     */
+    public DefaultGroundOverlay(){
+       this.altitude = DEF_ALTITUDE;
+       this.altitudeMode = DEF_ALTITUDE_MODE;
+       this.groundOverlaySimpleExtensions = EMPTY_LIST;
+       this.groundOverlayObjectExtensions = EMPTY_LIST;
+    }
 
     /**
      *
@@ -113,5 +124,44 @@ public class DefaultGroundOverlay extends DefaultAbstractOverlay implements Grou
      */
     @Override
     public List<AbstractObject> getGroundOverlayObjectExtensions() {return this.groundOverlayObjectExtensions;}
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setAltitude(double altitude) {this.altitude = altitude;}
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setAltitudeMode(AltitudeMode altitudeMode) {this.altitudeMode = altitudeMode;}
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setLatLonBox(LatLonBox latLonBox) {this.latLonBox= latLonBox;}
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setGroundOverlaySimpleExtensions(List<SimpleType> groundOverlaySimpleExtensions) {
+        this.groundOverlaySimpleExtensions = groundOverlaySimpleExtensions;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setGroundOverlayObjectExtensions(List<AbstractObject> groundOverlayObjectExtensions) {
+        this.groundOverlayObjectExtensions = groundOverlayObjectExtensions;
+    }
 
 }

@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.util.List;
 import org.geotoolkit.data.kml.KmlUtilities;
 import org.geotoolkit.data.model.xsd.SimpleType;
+import static org.geotoolkit.data.model.KmlModelConstants.*;
 import static java.util.Collections.*;
 
 /**
@@ -12,12 +13,19 @@ import static java.util.Collections.*;
  */
 public class DefaultIconStyle extends DefaultAbstractColorStyle implements IconStyle {
 
-    private final double scale;
-    private final double heading;
-    private final BasicLink icon;
-    private final Vec2 hotSpot;
-    private final List<SimpleType> iconStyleSimpleExtensions;
-    private final List<AbstractObject> iconStyleObjectExtensions;
+    private double scale;
+    private double heading;
+    private BasicLink icon;
+    private Vec2 hotSpot;
+    private List<SimpleType> iconStyleSimpleExtensions;
+    private List<AbstractObject> iconStyleObjectExtensions;
+
+    public DefaultIconStyle(){
+        this.scale = DEF_SCALE;
+        this.heading = DEF_HEADING;
+        this.iconStyleSimpleExtensions = EMPTY_LIST;
+        this.iconStyleObjectExtensions = EMPTY_LIST;
+    }
 
     /**
      *
@@ -95,6 +103,52 @@ public class DefaultIconStyle extends DefaultAbstractColorStyle implements IconS
     @Override
     public List<AbstractObject> getIconStyleObjectExtensions() {return this.iconStyleObjectExtensions;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setScale(double scale) {this.scale = scale;}
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setHeading(double heading) {this.heading = heading;}
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setIcon(BasicLink icon) {this.icon = icon;}
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setHotSpot(Vec2 hotSpot) {this.hotSpot = hotSpot;}
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setIconStyleSimpleExtensions(List<SimpleType> iconStyleSimpleExtensions) {
+        this.iconStyleSimpleExtensions = iconStyleSimpleExtensions;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setIconStyleObjectExtensions(List<AbstractObject> iconStyleObjectExtensions) {
+        this.iconStyleObjectExtensions = iconStyleObjectExtensions;
+    }
+
     @Override
     public String toString(){
         String resultat = super.toString()+
@@ -105,5 +159,4 @@ public class DefaultIconStyle extends DefaultAbstractColorStyle implements IconS
                 "\n\thotSpot : "+this.hotSpot;
         return resultat;
     }
-
 }

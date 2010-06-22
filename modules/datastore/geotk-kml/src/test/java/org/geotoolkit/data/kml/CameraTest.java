@@ -104,7 +104,7 @@ public class CameraTest {
         final Kml kml = kmlFactory.createKml(null, photoOverlay, null, null);
 
         File temp = File.createTempFile("testCamera",".kml");
-        //temp.deleteOnExit();
+        temp.deleteOnExit();
 
         KmlWriter writer = new KmlWriter();
         writer.setOutput(temp);

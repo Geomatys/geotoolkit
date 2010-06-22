@@ -54,4 +54,28 @@ public interface ItemIcon extends AbstractObject {
      */
     public List<AbstractObject> getItemIconObjectExtensions();
 
+    /**
+     *
+     * @param states
+     */
+    public void setStates(List<ItemIconState> states);
+
+    /**
+     *
+     * @param href
+     */
+    public void setHref(String href);
+
+    /**
+     *
+     * @param itemIconSimpleExtensions
+     */
+    public void setItemIconSimpleExtensions(List<SimpleType> itemIconSimpleExtensions);
+
+    /**
+     *
+     * @param itemIconObjectExtensions
+     */
+    public void setItemIconObjectExtensions(List<AbstractObject> itemIconObjectExtensions);
+
 }

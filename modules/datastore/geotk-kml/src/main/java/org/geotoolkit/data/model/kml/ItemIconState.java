@@ -26,7 +26,7 @@ public enum ItemIconState {
     ERROR("error"),
     FETCHING_0("fetching0"),
     FETCHING_1("fetching1"),
-    TETCHING_2("fetching2");
+    FETCHING_2("fetching2");
 
     private final String itemIconState;
 

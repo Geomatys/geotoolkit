@@ -3,6 +3,7 @@ package org.geotoolkit.data.model.kml;
 import java.awt.Color;
 import java.util.List;
 import org.geotoolkit.data.model.xsd.SimpleType;
+import static org.geotoolkit.data.model.KmlModelConstants.*;
 import static java.util.Collections.*;
 
 /**
@@ -11,12 +12,22 @@ import static java.util.Collections.*;
  */
 public class DefaultListStyle extends DefaultAbstractSubStyle implements ListStyle {
 
-    private final ListItem listItem;
-    private final Color bgColor;
-    private final List<ItemIcon> itemIcons;
-    private final int maxSnippetLines;
-    private final List<SimpleType> listStyleSimpleExtensions;
-    private final List<AbstractObject> listStyleObjectExtensions;
+    private ListItem listItem;
+    private Color bgColor;
+    private List<ItemIcon> itemIcons;
+    private int maxSnippetLines;
+    private List<SimpleType> listStyleSimpleExtensions;
+    private List<AbstractObject> listStyleObjectExtensions;
+
+    /**
+     * 
+     */
+    public DefaultListStyle(){
+        this.bgColor = DEF_BG_COLOR;
+        this.maxSnippetLines = DEF_MAX_SNIPPET_LINES;
+        this.listStyleSimpleExtensions = EMPTY_LIST;
+        this.listStyleObjectExtensions = EMPTY_LIST;
+    }
 
     /**
      *
@@ -86,6 +97,52 @@ public class DefaultListStyle extends DefaultAbstractSubStyle implements ListSty
      */
     @Override
     public List<AbstractObject> getListStyleObjectExtensions() {return this.listStyleObjectExtensions;}
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setListItem(ListItem listItem) {this.listItem = listItem;}
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setBgColor(Color bgColor) {this.bgColor = bgColor;}
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setItemIcons(List<ItemIcon> itemIcons) {this.itemIcons = itemIcons;}
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setMaxSnippetLines(int maxSnippetLines) {this.maxSnippetLines = maxSnippetLines;}
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setListStyleSimpleExtensions(List<SimpleType> listStyleSimpleExtensions) {
+        this.listStyleSimpleExtensions = listStyleSimpleExtensions;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setListStyleObjectExtensions(List<AbstractObject> listStyleObjectExtensions) {
+        this.listStyleObjectExtensions = listStyleObjectExtensions;
+    }
 
     @Override
     public String toString(){

@@ -69,4 +69,40 @@ public interface ListStyle extends AbstractSubStyle {
      */
     public List<AbstractObject> getListStyleObjectExtensions();
 
+    /**
+     *
+     * @param listItem
+     */
+    public void setListItem(ListItem listItem);
+
+    /**
+     *
+     * @param bgColor
+     */
+    public void setBgColor(Color bgColor);
+
+    /**
+     *
+     * @param itemIcons
+     */
+    public void setItemIcons(List<ItemIcon> itemIcons);
+
+    /**
+     *
+     * @param maxSnippetLines
+     */
+    public void setMaxSnippetLines(int maxSnippetLines);
+
+    /**
+     *
+     * @param listStyleSimpleExtensions
+     */
+    public void setListStyleSimpleExtensions(List<SimpleType> listStyleSimpleExtensions);
+
+    /**
+     *
+     * @param listStyleObjectExtensions
+     */
+    public void setListStyleObjectExtensions(List<AbstractObject> listStyleObjectExtensions);
+
 }

@@ -218,11 +218,6 @@ public final class KmlModelConstants {
      * VALEURS PAR DEFAUT
      */
 
-    // FLAGS FOR ANGLES AND COLORS DEFAULT VALUES
-    private static final String ANGLE_MAX = "max";
-    private static final String ANGLE_MIN = "min";
-    private static final String ANGLE_ZERO = "zero";
-
     // ANGLES AND COLORS DEFAULT VALUES
     public static final Color DEF_BG_COLOR = new Color(255,255,255,255);
     public static final double DEF_BOTTOM_FOV = 0;

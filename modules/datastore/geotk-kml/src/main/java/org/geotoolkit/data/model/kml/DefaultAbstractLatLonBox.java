@@ -4,6 +4,7 @@ import java.util.List;
 import org.geotoolkit.data.kml.KmlUtilities;
 import org.geotoolkit.data.model.xsd.SimpleType;
 import static java.util.Collections.*;
+import static org.geotoolkit.data.model.KmlModelConstants.*;
 
 /**
  *
@@ -11,12 +12,24 @@ import static java.util.Collections.*;
  */
 public abstract class DefaultAbstractLatLonBox extends DefaultAbstractObject implements AbstractLatLonBox {
 
-    protected final double north;
-    protected final double south;
-    protected final double east;
-    protected final double west;
-    protected final List<SimpleType> abstractLatLonBoxSimpleExtensions;
-    protected final List<AbstractObject> abstractLatLonBoxObjectExtensions;
+    protected double north;
+    protected double south;
+    protected double east;
+    protected double west;
+    protected List<SimpleType> abstractLatLonBoxSimpleExtensions;
+    protected List<AbstractObject> abstractLatLonBoxObjectExtensions;
+
+    /**
+     * 
+     */
+    protected DefaultAbstractLatLonBox(){
+        this.north = DEF_NORTH;
+        this.south = DEF_SOUTH;
+        this.east = DEF_EAST;
+        this.west = DEF_WEST;
+        this.abstractLatLonBoxSimpleExtensions = EMPTY_LIST;
+        this.abstractLatLonBoxObjectExtensions = EMPTY_LIST;
+    }
 
     /**
      * 
@@ -83,4 +96,49 @@ public abstract class DefaultAbstractLatLonBox extends DefaultAbstractObject imp
     @Override
     public List<AbstractObject> getAbstractLatLonBoxObjectExtensions() {return this.abstractLatLonBoxObjectExtensions;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setNorth(double north){this.north = north;}
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setSouth(double south){this.south = south;}
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setEast(double east){this.east = east;}
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setWest(double west){this.west = west;}
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setAbstractLatLonBoxSimpleExtensions(List<SimpleType> abstractLatLonBoxSimpleExtensions){
+        this.abstractLatLonBoxSimpleExtensions = abstractLatLonBoxSimpleExtensions;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setAbstractLatLonBoxObjectExtensions(List<AbstractObject> abstractLatLonBoxObjectExtensions){
+        this.abstractLatLonBoxObjectExtensions = abstractLatLonBoxObjectExtensions;
+    }
 }

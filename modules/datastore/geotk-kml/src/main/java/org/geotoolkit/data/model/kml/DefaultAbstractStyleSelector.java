@@ -10,9 +10,11 @@ import static java.util.Collections.*;
  */
 public abstract class DefaultAbstractStyleSelector extends DefaultAbstractObject implements AbstractStyleSelector {
 
-    protected final List<SimpleType> styleSelectorSimpleExtensions;
-    protected final List<AbstractObject> styleSelectorObjectExtensions;
+    protected List<SimpleType> styleSelectorSimpleExtensions;
+    protected List<AbstractObject> styleSelectorObjectExtensions;
 
+    protected DefaultAbstractStyleSelector(){}
+    
     /**
      *
      * @param objectSimpleExtensions
@@ -45,6 +47,24 @@ public abstract class DefaultAbstractStyleSelector extends DefaultAbstractObject
     @Override
     public List<AbstractObject> getAbstractStyleSelectorObjectExtensions() {
         return this.styleSelectorObjectExtensions;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setAbstractStyleSelectorSimpleExtensions(List<SimpleType> abstractStyleSelectorSimpleExtensions){
+        this.styleSelectorSimpleExtensions = abstractStyleSelectorSimpleExtensions;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setAbstractStyleSelectorObjectExtensions(List<AbstractObject> abstractStyleSelectorObjectExtensions){
+        this.styleSelectorObjectExtensions = abstractStyleSelectorObjectExtensions;
     }
 
     @Override

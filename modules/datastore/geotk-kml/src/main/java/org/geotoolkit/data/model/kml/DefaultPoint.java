@@ -3,6 +3,7 @@ package org.geotoolkit.data.model.kml;
 import java.util.List;
 import org.geotoolkit.data.model.xsd.SimpleType;
 import static java.util.Collections.*;
+import static org.geotoolkit.data.model.KmlModelConstants.*;
 
 /**
  *
@@ -10,11 +11,21 @@ import static java.util.Collections.*;
  */
 public class DefaultPoint extends DefaultAbstractGeometry implements Point {
 
-    private final boolean extrude;
-    private final AltitudeMode altitudeMode;
-    private final Coordinates coordinates;
-    private final List<SimpleType> pointSimpleExtensions;
-    private final List<AbstractObject> pointObjectExtensions;
+    private boolean extrude;
+    private AltitudeMode altitudeMode;
+    private Coordinates coordinates;
+    private List<SimpleType> pointSimpleExtensions;
+    private List<AbstractObject> pointObjectExtensions;
+
+    /**
+     *
+     */
+    public DefaultPoint(){
+        this.extrude = DEF_EXTRUDE;
+        this.altitudeMode = DEF_ALTITUDE_MODE;
+        this.pointSimpleExtensions = EMPTY_LIST;
+        this.pointObjectExtensions = EMPTY_LIST;
+    }
 
     /**
      *
@@ -81,6 +92,45 @@ public class DefaultPoint extends DefaultAbstractGeometry implements Point {
     @Override
     public List<AbstractObject> getPointObjectExtensions() {return this.pointObjectExtensions;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setExtrude(boolean extrude) {this.extrude = extrude;}
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setAltitudeMode(AltitudeMode altitudeMode) {this.altitudeMode = altitudeMode;}
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setCoordinates(Coordinates coordinates) {this.coordinates = coordinates;}
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setPointSimpleExtensions(List<SimpleType> pointSimpleExtensions) {
+        this.pointSimpleExtensions = pointSimpleExtensions;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setPointObjectExtensions(List<AbstractObject> pointObjectExensions) {
+        this.pointObjectExtensions = pointObjectExensions;
+    }
+
     @Override
     public String toString(){
         String resultat = super.toString();
@@ -88,5 +138,4 @@ public class DefaultPoint extends DefaultAbstractGeometry implements Point {
         resultat += "\n\t"+coordinates.toString();
         return resultat;
     }
-
 }

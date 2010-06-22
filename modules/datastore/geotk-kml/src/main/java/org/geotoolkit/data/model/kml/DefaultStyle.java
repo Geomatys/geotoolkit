@@ -10,15 +10,23 @@ import static java.util.Collections.*;
  */
 public class DefaultStyle extends DefaultAbstractStyleSelector implements Style {
 
-    private final IconStyle iconStyle;
-    private final LabelStyle labelStyle;
-    private final LineStyle lineStyle;
-    private final PolyStyle polyStyle;
-    private final BalloonStyle balloonStyle;
-    private final ListStyle listStyle;
-    private final List<SimpleType> styleSimpleExtensions;
-    private final List<AbstractObject> styleObjectExtensions;
+    private IconStyle iconStyle;
+    private LabelStyle labelStyle;
+    private LineStyle lineStyle;
+    private PolyStyle polyStyle;
+    private BalloonStyle balloonStyle;
+    private ListStyle listStyle;
+    private List<SimpleType> styleSimpleExtensions;
+    private List<AbstractObject> styleObjectExtensions;
 
+    /**
+     * 
+     */
+    public DefaultStyle(){
+        this.styleSimpleExtensions = EMPTY_LIST;
+        this.styleObjectExtensions = EMPTY_LIST;
+    }
+    
     /**
      *
      * @param objectSimpleExtensions
@@ -110,6 +118,66 @@ public class DefaultStyle extends DefaultAbstractStyleSelector implements Style 
     @Override
     public List<AbstractObject> getStyleObjectExtensions() {return this.styleObjectExtensions;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setIconStyle(IconStyle iconStyle) {this.iconStyle = iconStyle;};
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setLabelStyle(LabelStyle labelStyle) {this.labelStyle = labelStyle;}
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setLineStyle(LineStyle lineStyle) {this.lineStyle = lineStyle;}
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setPolyStyle(PolyStyle polyStyle) {this.polyStyle = polyStyle;}
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setBalloonStyle(BalloonStyle baloonStyle) {this.balloonStyle = baloonStyle;}
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setListStyle(ListStyle listStyle) {this.listStyle = listStyle;}
+
+    @
+    /**
+     *
+     * @{@inheritDoc }
+     */Override
+    public void setStyleSimpleExtensions(List<SimpleType> styleSimpleExtensions) {
+        this.styleSimpleExtensions = styleSimpleExtensions;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setStyleObjectExtensions(List<AbstractObject> styleObjectExtensions) {
+        this.styleObjectExtensions = styleObjectExtensions;
+    }
+    
     @Override
     public String toString(){
         String resultat = super.toString()+

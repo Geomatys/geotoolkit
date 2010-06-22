@@ -81,4 +81,52 @@ public interface Style extends AbstractStyleSelector {
      * @return th elist of Style object extensions.
      */
     public List<AbstractObject> getStyleObjectExtensions();
+
+    /**
+     *
+     * @param iconStyle
+     */
+    public void setIconStyle(IconStyle iconStyle);
+
+    /**
+     *
+     * @param labelStyle
+     */
+    public void setLabelStyle(LabelStyle labelStyle);
+
+    /**
+     *
+     * @param lineStyle
+     */
+    public void setLineStyle(LineStyle lineStyle);
+
+    /**
+     *
+     * @param polyStyle
+     */
+    public void setPolyStyle(PolyStyle polyStyle);
+
+    /**
+     *
+     * @param baloonStyle
+     */
+    public void setBalloonStyle(BalloonStyle baloonStyle);
+
+    /**
+     *
+     * @param listStyle
+     */
+    public void setListStyle(ListStyle listStyle);
+
+    /**
+     *
+     * @param styleSimpleExtensions
+     */
+    public void setStyleSimpleExtensions(List<SimpleType> styleSimpleExtensions);
+
+    /**
+     * 
+     * @param styleObjectExtensions
+     */
+    public void setStyleObjectExtensions(List<AbstractObject> styleObjectExtensions);
 }

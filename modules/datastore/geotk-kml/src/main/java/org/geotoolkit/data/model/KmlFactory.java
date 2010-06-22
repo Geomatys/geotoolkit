@@ -37,7 +37,6 @@ import org.geotoolkit.data.model.kml.ImagePyramid;
 import org.geotoolkit.data.model.kml.ItemIcon;
 import org.geotoolkit.data.model.kml.ItemIconState;
 import org.geotoolkit.data.model.kml.Kml;
-import org.geotoolkit.data.model.kml.KmlException;
 import org.geotoolkit.data.model.kml.LabelStyle;
 import org.geotoolkit.data.model.kml.LatLonAltBox;
 import org.geotoolkit.data.model.kml.LatLonBox;
@@ -151,6 +150,12 @@ public interface KmlFactory {
      */
     public BasicLink createBasicLink(List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
             String href, List<SimpleType> basicLinkSimpleExtensions, List<AbstractObject> basicLinkObjectExtensions);
+
+    /**
+     * 
+     * @return
+     */
+    public BasicLink createBasicLink();
 
     /**
      *
@@ -406,6 +411,12 @@ public interface KmlFactory {
 
     /**
      * 
+     * @return
+     */
+    public GroundOverlay createGroundOverlay();
+
+    /**
+     * 
      * @param link
      * @return
      */
@@ -435,6 +446,12 @@ public interface KmlFactory {
             List<SimpleType> colorStyleSimpleExtensions, List<AbstractObject> colorStyleObjectExtensions,
             double scale, double heading, BasicLink icon, Vec2 hotSpot,
             List<SimpleType> iconStyleSimpleExtensions, List<AbstractObject> iconStyleObjectExtensions);
+
+    /**
+     * 
+     * @return
+     */
+    public IconStyle createIconStyle();
 
     /**
      *
@@ -473,6 +490,12 @@ public interface KmlFactory {
     public ItemIcon createItemIcon(List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
             List<ItemIconState> states, String href,
             List<SimpleType> itemIconSimpleExtensions, List<AbstractObject> itemIconObjectExtensions);
+
+    /**
+     * 
+     * @return
+     */
+    public ItemIcon createItemIcon();
 
     /**
      *
@@ -515,6 +538,12 @@ public interface KmlFactory {
             double north, double south, double east, double west,
             List<SimpleType> abstractLatLonBoxSimpleExtensions, List<AbstractObject> abstractLatLonBoxObjectExtensions,
             double rotation, List<SimpleType> latLonBoxSimpleExtensions, List<AbstractObject> latLonBoxObjectExtensions);
+
+    /**
+     * 
+     * @return
+     */
+    public LatLonBox createLatLonBox();
 
     /**
      *
@@ -634,6 +663,12 @@ public interface KmlFactory {
             List<SimpleType> linkSimpleExtensions, List<AbstractObject> linkObjectExtensions);
 
     /**
+     * 
+     * @return
+     */
+    public Link createLink();
+
+    /**
      *
      * @param objectSimpleExtensions
      * @param idAttributes
@@ -651,6 +686,12 @@ public interface KmlFactory {
             List<SimpleType> subStyleSimpleExtensions, List<AbstractObject> subStyleObjectExtensions,
             ListItem listItem, Color bgColor, List<ItemIcon> itemIcons, int maxSnippetLines,
             List<SimpleType> listStyleSimpleExtensions, List<AbstractObject> listStyleObjectExtensions);
+
+    /**
+     * 
+     * @return
+     */
+    public ListStyle createListStyle();
 
     /**
      *
@@ -975,6 +1016,12 @@ public interface KmlFactory {
             List<AbstractObject> pointObjectExtensions);
 
     /**
+     * 
+     * @return
+     */
+    public Point createPoint();
+
+    /**
      *
      * @param objectSimpleExtensions
      * @param idAttributes
@@ -1183,6 +1230,12 @@ public interface KmlFactory {
             List<AbstractObject> styleObjectExtensions);
 
     /**
+     * 
+     * @return
+     */
+    public Style createStyle();
+
+    /**
      *
      * @param objectSimpleExtensions
      * @param idAttributes
@@ -1267,4 +1320,10 @@ public interface KmlFactory {
     public ViewVolume createViewVolume(List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
             double leftFov, double rightFov, double bottomFov, double topFov, double near,
             List<SimpleType> viewVolumeSimpleExtensions, List<AbstractObject> viewVolumeObjectExtensions);
+
+    /**
+     * 
+     * @return
+     */
+    public ViewVolume createViewVolume();
 }

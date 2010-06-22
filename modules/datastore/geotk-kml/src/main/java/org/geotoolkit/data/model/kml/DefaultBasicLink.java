@@ -10,12 +10,20 @@ import static java.util.Collections.*;
  */
 public class DefaultBasicLink implements BasicLink {
 
-    private final List<SimpleType> objectSimpleExtensions;
-    private final IdAttributes idAttributes;
+    private List<SimpleType> objectSimpleExtensions;
+    private IdAttributes idAttributes;
     
-    private final String href;
-    private final List<SimpleType> basicLinkSimpleExtensions;
-    private final List<AbstractObject> basicLinkObjectExtensions;
+    private String href;
+    private List<SimpleType> basicLinkSimpleExtensions;
+    private List<AbstractObject> basicLinkObjectExtensions;
+
+    /**
+     * 
+     */
+    public DefaultBasicLink(){
+         this.basicLinkSimpleExtensions = EMPTY_LIST;
+         this.basicLinkObjectExtensions = EMPTY_LIST;
+    }
 
     /**
      *
@@ -68,6 +76,49 @@ public class DefaultBasicLink implements BasicLink {
      */
     @Override
     public List<AbstractObject> getBasicLinkObjectExtensions() {return this.basicLinkObjectExtensions;}
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setObjectSimpleExtensions(List<SimpleType> objectSimpleExtensions) {
+        this.objectSimpleExtensions = objectSimpleExtensions;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setIdAttributes(IdAttributes idAttributes) {
+        this.idAttributes = idAttributes;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setHref(String href) {this.href = href;}
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setBasicLinkSimpleExtensions(List<SimpleType> basicLinkSimpleExtensions) {
+        this.basicLinkSimpleExtensions = basicLinkSimpleExtensions;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setBasicLinkObjectExtensions(List<AbstractObject> basicLinkObjectExtensions) {
+        this.basicLinkObjectExtensions = basicLinkObjectExtensions;
+    }
 
     @Override
     public String toString(){

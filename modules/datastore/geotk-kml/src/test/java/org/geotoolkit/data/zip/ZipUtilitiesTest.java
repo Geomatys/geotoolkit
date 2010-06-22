@@ -76,7 +76,8 @@ public class ZipUtilitiesTest {
         List<String> zipContent = listContent(archive);
         assertEquals(zipContent.get(0), file1.getName());
     }
-
+//ZipUtilities2.compress("/home/samuel/Bureau/test", "", Deflater.BEST_SPEED);
+//        ZipUtilities2.decompress("/home/samuel/Bureau/test.zip", "/home/samuel/Bureau/dezip", false);
     @Test
     public void fileTest() throws IOException{
 
@@ -90,6 +91,33 @@ public class ZipUtilitiesTest {
 
         List<String> zipContent = listContent(archive);
         assertEquals(zipContent.get(0), file1.getName());
+    }
+
+    @Test
+    public void directoryTest() throws IOException{
+
+        File dir = new File ("/tmp/directory");
+        dir.mkdir();
+        dir.deleteOnExit();
+        File file1 = File.createTempFile("file1", ".txt", dir);
+        file1.deleteOnExit();
+        File file2 = File.createTempFile("file2", ".txt", dir);
+        file2.deleteOnExit();
+        File dir2 = new File(dir,"directory2");
+        dir2.mkdir();
+        dir2.deleteOnExit();
+        File file3 = File.createTempFile("file3", ".txt", dir2);
+        file3.deleteOnExit();
+        File archive = File.createTempFile("archive",".zip");
+        archive.deleteOnExit();
+
+        ZipUtilities.zip(archive, ZipOutputStream.DEFLATED, 9, CHECKSUM, dir);
+        ZipUtilities.unzip(archive,CHECKSUM);
+
+        List<String> zipContent = listContent(archive);
+//        assertEquals("/tmp/"+zipContent.get(0), file1.getPath());
+//        assertEquals("/tmp/"+zipContent.get(1), file2.getPath());
+//        assertEquals("/tmp/"+zipContent.get(2), file3.getPath());
     }
 
     @Test

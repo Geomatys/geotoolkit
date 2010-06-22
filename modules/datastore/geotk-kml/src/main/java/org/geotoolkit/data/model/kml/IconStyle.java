@@ -67,4 +67,40 @@ public interface IconStyle extends AbstractColorStyle {
      * @return
      */
     public List<AbstractObject> getIconStyleObjectExtensions();
+
+    /**
+     *
+     * @param scale
+     */
+    public void setScale(double scale);
+
+    /**
+     *
+     * @param heading
+     */
+    public void setHeading(double heading);
+
+    /**
+     *
+     * @param icon
+     */
+    public void setIcon(BasicLink icon);
+
+    /**
+     *
+     * @param hotSpot
+     */
+    public void setHotSpot(Vec2 hotSpot);
+
+    /**
+     *
+     * @param iconStyleSimpleExtensions
+     */
+    public void setIconStyleSimpleExtensions(List<SimpleType> iconStyleSimpleExtensions);
+
+    /**
+     *
+     * @param iconStyleObjectExtensions
+     */
+    public void setIconStyleObjectExtensions(List<AbstractObject> iconStyleObjectExtensions);
 }

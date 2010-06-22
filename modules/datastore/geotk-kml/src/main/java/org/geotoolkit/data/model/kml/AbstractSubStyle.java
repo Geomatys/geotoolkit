@@ -39,4 +39,16 @@ public interface AbstractSubStyle extends AbstractObject {
      * @return The AbstractSubStyle object extensions.
      */
     public List<AbstractObject> getSubStyleObjectExtensions();
+
+    /**
+     * 
+     * @param subStyleSimpleExtensions
+     */
+    public void setSubStyleSimpleExtensions(List<SimpleType> subStyleSimpleExtensions);
+
+    /**
+     *
+     * @param subStyleObjectExtensions
+     */
+    public void setSubStyleObjectExtensions(List<AbstractObject> subStyleObjectExtensions);
 }

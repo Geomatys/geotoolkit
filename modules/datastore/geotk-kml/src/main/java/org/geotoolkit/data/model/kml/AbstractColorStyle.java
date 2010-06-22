@@ -54,4 +54,28 @@ public interface AbstractColorStyle extends AbstractSubStyle {
      * @return The AbstractColorStyle object extensions.
      */
     public List<AbstractObject> getColorStyleObjectExtensions();
+
+    /**
+     *
+     * @param color
+     */
+    public void setColor(Color color);
+
+    /**
+     *
+     * @param colorMode
+     */
+    public void setColorMode(ColorMode colorMode);
+
+    /**
+     *
+     * @param colorStyleSimpleExtensions
+     */
+    public void setColorStyleSimpleExtensions(List<SimpleType> colorStyleSimpleExtensions);
+
+    /**
+     *
+     * @param colorStyleObjectExtensions
+     */
+    public void setColorStyleObjectExtensions(List<AbstractObject> colorStyleObjectExtensions);
 }

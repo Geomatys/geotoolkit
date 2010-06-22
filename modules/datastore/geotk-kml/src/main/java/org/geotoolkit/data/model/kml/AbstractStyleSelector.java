@@ -40,4 +40,16 @@ public interface AbstractStyleSelector extends AbstractObject {
      */
     public List<AbstractObject> getAbstractStyleSelectorObjectExtensions();
 
+    /**
+     * 
+     * @param abstractStyleSelectorSimpleExtensions
+     */
+    public void setAbstractStyleSelectorSimpleExtensions(List<SimpleType> abstractStyleSelectorSimpleExtensions);
+
+    /**
+     *
+     * @param abstractStyleSelectorObjectExtensions
+     */
+    public void setAbstractStyleSelectorObjectExtensions(List<AbstractObject> abstractStyleSelectorObjectExtensions);
+
 }

@@ -37,25 +37,25 @@ public interface Camera extends AbstractView {
 
     /**
      *
-     * @return the longitude angle.
+     * @return the camera longitude position.
      */
     public double getLongitude();
 
     /**
      *
-     * @return the latiude angle.
+     * @return the camera latitude position.
      */
     public double getLatitude();
 
     /**
      *
-     * @return the altitude.
+     * @return the camera altitude position.
      */
     public double getAltitude();
 
     /**
      *
-     * @return the heading angle.
+     * @return the camera heading angle.
      */
     public double getHeading();
 

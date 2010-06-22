@@ -66,4 +66,40 @@ public interface AbstractLatLonBox extends AbstractObject {
      */
     public List<AbstractObject> getAbstractLatLonBoxObjectExtensions();
 
+    /**
+     *
+     * @param north
+     */
+    public void setNorth(double north);
+
+    /**
+     *
+     * @param south
+     */
+    public void setSouth(double south);
+
+    /**
+     *
+     * @param east
+     */
+    public void setEast(double east);
+
+    /**
+     *
+     * @param west
+     */
+    public void setWest(double west);
+
+    /**
+     *
+     * @param abstractLatLonBoxSimpleExtensions
+     */
+    public void setAbstractLatLonBoxSimpleExtensions(List<SimpleType> abstractLatLonBoxSimpleExtensions);
+
+    /**
+     * 
+     * @param abstractLatLonBoxObjectExtensions
+     */
+    public void setAbstractLatLonBoxObjectExtensions(List<AbstractObject> abstractLatLonBoxObjectExtensions);
+
 }

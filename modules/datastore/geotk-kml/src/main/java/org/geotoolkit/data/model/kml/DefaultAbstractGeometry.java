@@ -10,8 +10,16 @@ import static java.util.Collections.*;
  */
 public abstract class DefaultAbstractGeometry extends DefaultAbstractObject implements AbstractGeometry {
 
-    protected final List<SimpleType> geometrySimpleExtensions;
-    protected final List<AbstractObject> geometryObjectExtensions;
+    protected List<SimpleType> geometrySimpleExtensions;
+    protected List<AbstractObject> geometryObjectExtensions;
+
+    /**
+     * 
+     */
+    protected DefaultAbstractGeometry(){
+        this.geometrySimpleExtensions = EMPTY_LIST;
+        this.geometryObjectExtensions = EMPTY_LIST;
+    }
 
     /**
      *
@@ -42,6 +50,24 @@ public abstract class DefaultAbstractGeometry extends DefaultAbstractObject impl
      */
     @Override
     public List<AbstractObject> getAbstractGeometryObjectExtensions(){return this.geometryObjectExtensions;}
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setAbstractGeometrySimpleExtensions(List<SimpleType> geometrySimpleExtensions){
+        this.geometrySimpleExtensions = geometrySimpleExtensions;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setAbstractGeometryObjectExtensions(List<AbstractObject> geometryObjectExtensions){
+        this.geometryObjectExtensions = geometryObjectExtensions;
+    }
 
     @Override
     public String toString(){

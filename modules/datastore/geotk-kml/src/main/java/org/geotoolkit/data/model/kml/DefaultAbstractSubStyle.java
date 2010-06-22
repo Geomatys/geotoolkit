@@ -10,8 +10,13 @@ import static java.util.Collections.*;
  */
 public abstract class DefaultAbstractSubStyle extends DefaultAbstractObject implements AbstractSubStyle {
 
-    protected final List<SimpleType> subStyleSimpleExtensions;
-    protected final List<AbstractObject> subStyleObjectExtensions;
+    protected List<SimpleType> subStyleSimpleExtensions;
+    protected List<AbstractObject> subStyleObjectExtensions;
+
+    /**
+     * 
+     */
+    protected DefaultAbstractSubStyle(){}
 
     /**
      *
@@ -40,6 +45,24 @@ public abstract class DefaultAbstractSubStyle extends DefaultAbstractObject impl
      */
     @Override
     public List<AbstractObject> getSubStyleObjectExtensions() {return this.subStyleObjectExtensions;}
+
+    /**
+     *
+     * @{@inheritDoc}
+     */
+    @Override
+    public void setSubStyleSimpleExtensions(List<SimpleType> subStyleSimpleExtensions){
+        this.subStyleSimpleExtensions = subStyleSimpleExtensions;
+    }
+
+    /**
+     *
+     * @{@inheritDoc}
+     */
+    @Override
+    public void setSubStyleObjectExtensions(List<AbstractObject> subStyleObjectExtensions){
+        this.subStyleObjectExtensions = subStyleObjectExtensions;
+    }
 
     @Override
     public String toString(){

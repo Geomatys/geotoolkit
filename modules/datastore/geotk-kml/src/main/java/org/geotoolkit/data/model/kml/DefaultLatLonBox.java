@@ -4,6 +4,7 @@ import java.util.List;
 import org.geotoolkit.data.kml.KmlUtilities;
 import org.geotoolkit.data.model.xsd.SimpleType;
 import static java.util.Collections.*;
+import static org.geotoolkit.data.model.KmlModelConstants.*;
 
 /**
  *
@@ -11,9 +12,15 @@ import static java.util.Collections.*;
  */
 public class DefaultLatLonBox extends DefaultAbstractLatLonBox implements LatLonBox{
 
-    private final double rotation;
-    private final List<SimpleType> latLonBoxSimpleExtensions;
-    private final List<AbstractObject> latLonBoxObjectExtensions;
+    private double rotation;
+    private List<SimpleType> latLonBoxSimpleExtensions;
+    private List<AbstractObject> latLonBoxObjectExtensions;
+
+    public DefaultLatLonBox(){
+        this.rotation = DEF_ROTATION;
+        this.latLonBoxSimpleExtensions = EMPTY_LIST;
+        this.latLonBoxObjectExtensions = EMPTY_LIST;
+    }
 
     /**
      *
@@ -61,4 +68,29 @@ public class DefaultLatLonBox extends DefaultAbstractLatLonBox implements LatLon
      */
     @Override
     public List<AbstractObject> getLatLonBoxObjectExtensions() {return this.latLonBoxObjectExtensions;}
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setRotation(double rotation) {this.rotation = rotation;}
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setLatLonBoxSimpleExtensions(List<SimpleType> latLonBoxSimpleExtensions) {
+        this.latLonBoxSimpleExtensions = latLonBoxSimpleExtensions;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setLatLonBoxObjectExtensions(List<AbstractObject> latLonBoxObjectExtensions) {
+        this.latLonBoxObjectExtensions = latLonBoxObjectExtensions;
+    }
 }

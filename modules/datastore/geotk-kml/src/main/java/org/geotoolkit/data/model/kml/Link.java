@@ -104,4 +104,76 @@ public interface Link extends AbstractObject {
      * @return the list of Link object extensions.
      */
     public List<AbstractObject> getLinkObjectExtensions();
+
+    /**
+     *
+     * @param href
+     */
+    public void setHref(String href);
+
+    /**
+     *
+     * @param basicLInkSimpleExtensions
+     */
+    public void setBasicLinkSimpleExtensions(List<SimpleType> basicLinkSimpleExtensions);
+
+    /**
+     *
+     * @param basicLinkObjectExtensions
+     */
+    public void setBasicLinkObjectExtensions( List<AbstractObject> basicLinkObjectExtensions);
+
+    /**
+     *
+     * @param refreshMode
+     */
+    public void setRefreshMode(RefreshMode refreshMode);
+
+    /**
+     *
+     * @param refreshInterval
+     */
+    public void setRefreshInterval(double refreshInterval);
+
+    /**
+     *
+     * @param viewRefreshMode
+     */
+    public void setViewRefreshMode(ViewRefreshMode viewRefreshMode);
+
+    /**
+     *
+     * @param viewRefreshTime
+     */
+    public void setViewRefreshTime(double viewRefreshTime);
+
+    /**
+     *
+     * @return
+     */
+    public void setViewBoundScale(double viewBoundScale);
+
+    /**
+     *
+     * @param viewFormat
+     */
+    public void setViewFormat(String viewFormat);
+
+    /**
+     *
+     * @param httpQuery
+     */
+    public void setHttpQuery(String httpQuery);
+
+    /**
+     *
+     * @param linkSimpleExtensions
+     */
+    public void setLinkSimpleExtensions(List<SimpleType> linkSimpleExtensions);
+
+    /**
+     * 
+     * @param linkObjectExtensions
+     */
+    public void setLinkObjectExtensions(List<AbstractObject> linkObjectExtensions);
 }

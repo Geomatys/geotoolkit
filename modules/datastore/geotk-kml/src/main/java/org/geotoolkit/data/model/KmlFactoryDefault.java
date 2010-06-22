@@ -2,8 +2,6 @@ package org.geotoolkit.data.model;
 
 import java.awt.Color;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.geotoolkit.data.model.atom.AtomLink;
 import org.geotoolkit.data.model.atom.AtomPersonConstruct;
 import org.geotoolkit.data.model.kml.AbstractContainer;
@@ -60,7 +58,6 @@ import org.geotoolkit.data.model.kml.DefaultItemIcon;
 import org.geotoolkit.data.model.kml.ItemIconState;
 import org.geotoolkit.data.model.kml.Kml;
 import org.geotoolkit.data.model.kml.DefaultKml;
-import org.geotoolkit.data.model.kml.KmlException;
 import org.geotoolkit.data.model.kml.LabelStyle;
 import org.geotoolkit.data.model.kml.DefaultLabelStyle;
 import org.geotoolkit.data.model.kml.LatLonAltBox;
@@ -197,6 +194,14 @@ public class KmlFactoryDefault implements KmlFactory{
     public BasicLink createBasicLink(List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
             String href, List<SimpleType> basicLinkSimpleExtensions, List<AbstractObject> basicLinkObjectExtensions){
         return new DefaultBasicLink(objectSimpleExtensions, idAttributes, href, basicLinkSimpleExtensions, basicLinkObjectExtensions);
+    }
+
+    /**
+     * @{@inheritDoc }
+     */
+    @Override
+    public BasicLink createBasicLink(){
+        return new DefaultBasicLink();
     }
 
     /**
@@ -393,6 +398,14 @@ public class KmlFactoryDefault implements KmlFactory{
     }
 
     /**
+     * @{@inheritDoc }
+     */
+    @Override
+    public GroundOverlay createGroundOverlay(){
+        return new DefaultGroundOverlay();
+    }
+
+    /**
      * 
      * @{@inheritDoc }
      */
@@ -417,6 +430,11 @@ public class KmlFactoryDefault implements KmlFactory{
                 colorStyleSimpleExtensions, colorStyleObjectExtensions,
                 scale, heading, icon, hotSpot,
                 iconStyleSimpleExtensions, iconStyleObjectExtensions);
+    }
+
+    @Override
+    public IconStyle createIconStyle(){
+        return new DefaultIconStyle();
     }
 
     /**
@@ -454,6 +472,14 @@ public class KmlFactoryDefault implements KmlFactory{
      * @{@inheritDoc }
      */
     @Override
+    public ItemIcon createItemIcon(){
+        return new DefaultItemIcon();
+    }
+
+    /**
+     * @{@inheritDoc }
+     */
+    @Override
     public LabelStyle createLabelStyle(List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
             List<SimpleType> subStyleSimpleExtensions, List<AbstractObject> subStyleObjectExtensions,
             Color color, ColorMode colorMode,
@@ -477,6 +503,14 @@ public class KmlFactoryDefault implements KmlFactory{
         return new DefaultLatLonBox(objectSimpleExtensions, idAttributes,
                 north, south, east, west, abstractLatLonBoxSimpleExtensions, abstractLatLonBoxObjectExtensions,
                 rotation, latLonBoxSimpleExtensions, latLonBoxObjectExtensions);
+    }
+
+    /**
+     * @{@inheritDoc }
+     */
+    @Override
+    public LatLonBox createLatLonBox(){
+        return new DefaultLatLonBox();
     }
 
     /**
@@ -565,6 +599,14 @@ public class KmlFactoryDefault implements KmlFactory{
      * @{@inheritDoc }
      */
     @Override
+    public Link createLink(){
+        return new DefaultLink();
+    }
+
+    /**
+     * @{@inheritDoc }
+     */
+    @Override
     public ListStyle createListStyle(List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
             List<SimpleType> subStyleSimpleExtensions, List<AbstractObject> subStyleObjectExtensions,
             ListItem listItem, Color bgColor, List<ItemIcon> itemIcons, int maxSnippetLines,
@@ -573,6 +615,14 @@ public class KmlFactoryDefault implements KmlFactory{
                 subStyleSimpleExtensions, subStyleObjectExtensions,
                 listItem, bgColor, itemIcons, maxSnippetLines,
                 listStyleSimpleExtensions, listStyleObjectExtensions);
+    }
+
+    /**
+     * @{@inheritDoc }
+     */
+    @Override
+    public ListStyle createListStyle(){
+        return new DefaultListStyle();
     }
 
     /**
@@ -808,6 +858,14 @@ public class KmlFactoryDefault implements KmlFactory{
      * @{@inheritDoc }
      */
     @Override
+    public Point createPoint(){
+        return new DefaultPoint();
+    }
+
+    /**
+     * @{@inheritDoc }
+     */
+    @Override
     public Polygon createPolygon(List<SimpleType> objectSimpleExtensions,
             IdAttributes idAttributes,
             List<SimpleType> abstractGeometrySimpleExtensions,
@@ -962,6 +1020,14 @@ public class KmlFactoryDefault implements KmlFactory{
      * @{@inheritDoc }
      */
     @Override
+    public Style createStyle(){
+        return new DefaultStyle();
+    }
+
+    /**
+     * @{@inheritDoc }
+     */
+    @Override
     public StyleMap createStyleMap(List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
             List<SimpleType> abstractStyleSelectorSimpleExtensions,
             List<AbstractObject> abstractStyleSelectorObjectExtensions,
@@ -1023,5 +1089,13 @@ public class KmlFactoryDefault implements KmlFactory{
         return new DefaultViewVolume(objectSimpleExtensions, idAttributes,
                 leftFov, rightFov, bottomFov, topFov, near,
                 viewVolumeSimpleExtensions, viewVolumeObjectExtensions);
+    }
+
+    /**
+     * @{@inheritDoc }
+     */
+    @Override
+    public ViewVolume createViewVolume(){
+        return new DefaultViewVolume();
     }
 }

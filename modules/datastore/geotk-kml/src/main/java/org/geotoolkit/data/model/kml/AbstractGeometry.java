@@ -40,4 +40,16 @@ public interface AbstractGeometry extends AbstractObject{
      * @return The AbstractGeometry object extensions.
      */
     public List<AbstractObject> getAbstractGeometryObjectExtensions();
+
+    /**
+     *
+     * @param abstractGeometrySimpleExtensions
+     */
+    public void setAbstractGeometrySimpleExtensions(List<SimpleType> abstractGeometrySimpleExtensions);
+
+    /**
+     *
+     * @param abstractGeometryObjectExtensions
+     */
+    public void setAbstractGeometryObjectExtensions(List<AbstractObject> abstractGeometryObjectExtensions);
 }

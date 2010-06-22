@@ -75,9 +75,14 @@ public class DefaultCoordinate implements Coordinate{
      */
     @Override
     public String getCoordinateString() {
-        return String.valueOf(geodeticLongitude)+","+
+        String result;
+        if (!Double.isNaN(this.altitude))
+            result = String.valueOf(geodeticLongitude)+","+
                 String.valueOf(geodeticLatitude)+","+
                 String.valueOf(altitude);
+        else result = String.valueOf(geodeticLongitude)+","+
+                String.valueOf(geodeticLatitude);
+        return result;
     }
 
     @Override
