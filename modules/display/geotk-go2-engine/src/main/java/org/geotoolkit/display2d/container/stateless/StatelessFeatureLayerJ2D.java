@@ -525,6 +525,10 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
         }
     }
 
+    /**
+     * Creates an optimal query to send to the datastore, knowing which properties are knowned and
+     * the appropriate bounding box to filter.
+     */
     protected static Query prepareQuery(RenderingContext2D renderingContext, FeatureMapLayer layer, CachedRule[] rules){
 
         final FeatureCollection<? extends Feature> fs            = layer.getCollection();
@@ -663,6 +667,41 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
         final Set<String> copy = new HashSet<String>(attributs);
         copy.add(geomAttName);
         final String[] atts = copy.toArray(new String[copy.size()]);
+
+        //check that properties names does not hold sub properties values, if one is found
+        //then we reduce it to the first parent property.
+        for(int i=0; i<atts.length; i++){
+            String attName = atts[i];
+            int index = attName.indexOf('/');
+            if(index >=0){
+                //remove all xpath filtering and indexing
+                int n = attName.indexOf('[', index+1);
+                while(n > 0){
+                    int d = attName.indexOf(']', n);
+                    if(d>0){
+                        attName = attName.substring(index, n)+attName.substring(d+1);
+                    }else{
+                        break;
+                    }
+                    n = attName.indexOf('[', index+1);
+                }
+
+                //looks like we have a path
+                int nextOcc = attName.indexOf('/', index+1);
+                int startBracket = attName.indexOf('{', index+1);
+                int endBracket = attName.indexOf('}', index+1);
+                if(nextOcc> startBracket && nextOcc<endBracket){
+                    //in a qname, ignore this slash
+                    nextOcc = attName.indexOf('/', endBracket+1);
+                }
+
+                if(endBracket > index){
+                    //this is a path, reduce it
+                    atts[i] = attName.substring(index+1, nextOcc);
+                }
+            }
+        }
+
         final QueryBuilder qb = new QueryBuilder();
         qb.setTypeName(schema.getName());
         qb.setFilter(filter);

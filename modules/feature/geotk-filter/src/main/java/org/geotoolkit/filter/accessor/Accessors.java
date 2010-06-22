@@ -44,7 +44,7 @@ public class Accessors {
                 new Comparator<PropertyAccessorFactory>(){
                     @Override
                     public int compare(PropertyAccessorFactory t, PropertyAccessorFactory t1) {
-                        return t.getPriority() - t1.getPriority();
+                        return t1.getPriority() - t.getPriority();
                     }
             });
 
