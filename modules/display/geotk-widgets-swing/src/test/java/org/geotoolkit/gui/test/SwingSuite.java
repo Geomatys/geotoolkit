@@ -70,6 +70,7 @@ public final class SwingSuite extends SwingBase<About> {
 
             // Image-related widgets
             ColorRampTest.class,
+            PaletteComboBoxTest.class,
             MultiColorChooserTest.class,
             IIOMetadataPanelTest.class,
             ImagePaneTest.class,

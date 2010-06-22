@@ -62,7 +62,7 @@ import org.geotoolkit.resources.Errors;
  * to be leveraged in other modules without introducing a dependency to Swing widgets.
  *
  * @author Martin Desruisseaux (MPO, IRD, Geomatys)
- * @version 3.10
+ * @version 3.13
  *
  * @since 3.10 (derived from 1.1)
  * @module
@@ -70,7 +70,9 @@ import org.geotoolkit.resources.Errors;
 @SuppressWarnings("serial") // Used only for Swing serialization.
 public class ColorRamp implements Serializable {
     /**
-     * Margin (in pixel) on each sides: top, left, right and bottom of the color ramp.
+     * The default margin (in pixel) on each sides: top, left, right and bottom of the color ramp.
+     * This margin is added in order to keep some space for the first and the last graduation label,
+     * otherwise that graduation would be partially outside the color ramp area.
      */
     public static final int MARGIN = 10;
 
@@ -436,10 +438,11 @@ public class ColorRamp implements Serializable {
      * @param  bounds     The bounding box where to paint the color ramp.
      * @param  font       The font to use for the label, or {@code null} for a default font.
      * @param  foreground The color to use for label, or {@code null} for a default color.
-     * @return Bounding   box of graduation labels (NOT taking in account the color ramp
-     *                    behind them), or {@code null} if no label has been painted.
+     * @return box of graduation labels (NOT taking in account the color ramp behind them),
+     *         or {@code null} if no label has been painted.
      */
     public final Rectangle2D paint(final Graphics2D graphics, final Rectangle bounds, Font font, Color foreground) {
+        final int margin = labelVisibles ? MARGIN : 0;
         final int[] colors = this.colors;
         final int length = colors.length;
         final double dx, dy;
@@ -447,13 +450,13 @@ public class ColorRamp implements Serializable {
             dx = 0;
             dy = 0;
         } else {
-            dx = (double) (bounds.width  - 2*MARGIN) / length;
-            dy = (double) (bounds.height - 2*MARGIN) / length;
+            dx = (double) (bounds.width  - 2*margin) / length;
+            dy = (double) (bounds.height - 2*margin) / length;
             int i=0, lastIndex=0;
             int color = colors[0];
             int nextColor = color;
-            final int ox = bounds.x + MARGIN;
-            final int oy = bounds.y + bounds.height - MARGIN;
+            final int ox = bounds.x + margin;
+            final int oy = bounds.y + bounds.height - margin;
             final Rectangle2D.Double rect = new Rectangle2D.Double();
             rect.setRect(bounds);
             while (++i <= length) {
@@ -467,21 +470,21 @@ public class ColorRamp implements Serializable {
                     rect.x      = ox + dx*lastIndex;
                     rect.width  = dx * (i-lastIndex);
                     if (lastIndex == 0) {
-                        rect.x     -= MARGIN;
-                        rect.width += MARGIN;
+                        rect.x     -= margin;
+                        rect.width += margin;
                     }
                     if (i == length) {
-                        rect.width += MARGIN;
+                        rect.width += margin;
                     }
                 } else {
                     rect.y      = oy - dy*i;
                     rect.height = dy * (i-lastIndex);
                     if (lastIndex == 0) {
-                        rect.height += MARGIN;
+                        rect.height += margin;
                     }
                     if (i == length) {
-                        rect.y      -= MARGIN;
-                        rect.height += MARGIN;
+                        rect.y      -= margin;
+                        rect.height += margin;
                     }
                 }
                 graphics.setColor(new Color(color, true));
@@ -503,13 +506,13 @@ public class ColorRamp implements Serializable {
             final double axisMinimum = graduation.getMinimum();
             final double visualLength, scale, offset;
             if (horizontal) {
-                visualLength = bounds.getWidth() - 2*MARGIN - dx;
+                visualLength = bounds.getWidth() - 2*margin - dx;
                 scale        = visualLength / axisRange;
-                offset       = (bounds.getMinX() + MARGIN + 0.5*dx) - scale*axisMinimum;
+                offset       = (bounds.getMinX() + margin + 0.5*dx) - scale*axisMinimum;
             } else {
-                visualLength = bounds.getHeight() - 2*MARGIN - dy;
+                visualLength = bounds.getHeight() - 2*margin - dy;
                 scale        = -visualLength / axisRange;
-                offset       = (bounds.getMaxY() - MARGIN - 0.5*dy) + scale*axisMinimum;
+                offset       = (bounds.getMaxY() - margin - 0.5*dy) + scale*axisMinimum;
             }
             if (hints == null) {
                 hints = new RenderingHints(null);
