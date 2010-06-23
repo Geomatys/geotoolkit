@@ -135,45 +135,6 @@ public class FolderTest {
         assertEquals(0, coordinate21.getAltitude(), DELTA);
     }
 
-
-//    <Folder>
-//  <name>Folder.kml</name>
-//  <open>1</open>
-//  <description>
-//    A folder is a container that can hold multiple other objects
-//  </description>
-//  <Placemark>
-//    <name>Folder object 1 (Placemark)</name>
-//    <Point>
-//      <coordinates>-122.377588,37.830266,0</coordinates>
-//    </Point>
-//  </Placemark>
-//  <Placemark>
-//    <name>Folder object 2 (Polygon)</name>
-//    <Polygon>
-//      <outerBoundaryIs>
-//        <LinearRing>
-//          <coordinates>
-//            -122.377830,37.830445,0
-//            -122.377576,37.830631,0
-//            -122.377840,37.830642,0
-//            -122.377830,37.830445,0
-//          </coordinates>
-//        </LinearRing>
-//      </outerBoundaryIs>
-//    </Polygon>
-//  </Placemark>
-//  <Placemark>
-//    <name>Folder object 3 (Path)</name>
-//    <LineString>
-//      <tessellate>1</tessellate>
-//      <coordinates>
-//        -122.378009,37.830128,0 -122.377885,37.830379,0
-//      </coordinates>
-//    </LineString>
-//  </Placemark>
-//</Folder>
-
     @Test
     public void folderWriteTest() throws KmlException, IOException, XMLStreamException, ParserConfigurationException, SAXException {
         final KmlFactory kmlFactory = new DefaultKmlFactory();
@@ -232,15 +193,6 @@ public class FolderTest {
         placemark2.setAbstractGeometry(lineString);
         placemark2.setName("Folder object 3 (Path)");
 
-//        Style style = kmlFactory.createStyle();
-//        Color color = new Color(204,0,0,255);
-//        LabelStyle labelStyle = kmlFactory.createLabelStyle();
-//        labelStyle.setColor(color);
-//        style.setLabelStyle(labelStyle);
-//
-//        IdAttributes idAttributes = kmlFactory.createIdAttributes("exampleStyleDocument", null);
-//        style.setIdAttributes(idAttributes);
-//
         Folder folder = kmlFactory.createFolder();
         folder.setName("Folder.kml");
         folder.setOpen(true);

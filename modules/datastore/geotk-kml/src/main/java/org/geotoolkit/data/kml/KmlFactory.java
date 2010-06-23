@@ -872,6 +872,12 @@ public interface KmlFactory {
             boolean refreshVisibility, boolean flyToView, Link link,
             List<SimpleType> networkLinkSimpleExtensions, List<AbstractObject> networkLinkObjectExtensions);
 
+     /**
+      * 
+      * @return
+      */
+     public NetworkLink createNetworkLink();
+
     /**
      *
      * @param minRefreshPeriod

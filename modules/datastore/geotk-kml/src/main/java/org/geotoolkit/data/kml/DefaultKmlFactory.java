@@ -777,6 +777,14 @@ public class DefaultKmlFactory implements KmlFactory{
      * @{@inheritDoc }
      */
     @Override
+    public NetworkLink createNetworkLink(){
+        return new DefaultNetworkLink();
+    }
+
+    /**
+     * @{@inheritDoc }
+     */
+    @Override
     public NetworkLinkControl createNetworkLinkControl(double minRefreshPeriod,
             double maxSessionLength, String cookie, String message, String linkName, String linkDescription,
             Snippet linkSnippet, String expires, Update update, AbstractView view,

@@ -67,4 +67,34 @@ public interface NetworkLink extends AbstractFeature {
      */
     public List<AbstractObject> getNetworkLinkObjectExtensions();
 
+    /**
+     *
+     * @param refreshVisibility
+     */
+    public void setRefreshVisibility(boolean refreshVisibility);
+
+    /**
+     *
+     * @param flyToView
+     */
+    public void setFlyToView(boolean flyToView);
+
+    /**
+     *
+     * @param link
+     */
+    public void setLink(Link link);
+
+    /**
+     *
+     * @param networkLinkSimpleExtensions
+     */
+    public void setNetworkLinkSimpleExtensions(List<SimpleType> networkLinkSimpleExtensions);
+
+    /**
+     *
+     * @param networkLinkObjectExtensions
+     */
+    public void setNetworkLinkObjectExtensions(List<AbstractObject> networkLinkObjectExtensions);
+
 }

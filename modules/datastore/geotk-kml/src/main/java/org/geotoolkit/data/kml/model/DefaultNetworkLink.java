@@ -6,6 +6,7 @@ import org.geotoolkit.data.atom.model.AtomPersonConstruct;
 import org.geotoolkit.data.xal.model.AddressDetails;
 import org.geotoolkit.data.kml.xsd.SimpleType;
 import static java.util.Collections.*;
+import static org.geotoolkit.data.kml.xml.KmlModelConstants.*;
 
 /**
  *
@@ -13,11 +14,21 @@ import static java.util.Collections.*;
  */
 public class DefaultNetworkLink extends DefaultAbstractFeature implements NetworkLink {
 
-    private final boolean refreshVisibility;
-    private final boolean flyToView;
-    private final Link link;
-    private final List<SimpleType> networkLinkSimpleExtensions;
-    private final List<AbstractObject> networkLinkObjectExtensions;
+    private boolean refreshVisibility;
+    private boolean flyToView;
+    private Link link;
+    private List<SimpleType> networkLinkSimpleExtensions;
+    private List<AbstractObject> networkLinkObjectExtensions;
+
+    /**
+     * 
+     */
+    public DefaultNetworkLink(){
+        this.refreshVisibility = DEF_REFRESH_VISIBILITY;
+        this.flyToView = DEF_FLY_TO_VIEW;
+        this.networkLinkSimpleExtensions = EMPTY_LIST;
+        this.networkLinkObjectExtensions = EMPTY_LIST;
+    }
 
     /**
      * 
@@ -102,4 +113,49 @@ public class DefaultNetworkLink extends DefaultAbstractFeature implements Networ
      */
     @Override
     public List<AbstractObject> getNetworkLinkObjectExtensions() {return this.networkLinkObjectExtensions;}
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setRefreshVisibility(boolean refreshVisibility) {
+        this.refreshVisibility = refreshVisibility;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setFlyToView(boolean flyToView) {
+        this.flyToView = flyToView;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setLink(Link link) {
+        this.link = link;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setNetworkLinkSimpleExtensions(List<SimpleType> networkLinkSimpleExtensions) {
+        this.networkLinkSimpleExtensions = networkLinkSimpleExtensions;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setNetworkLinkObjectExtensions(List<AbstractObject> networkLinkObjectExtensions) {
+        this.networkLinkObjectExtensions = networkLinkObjectExtensions;
+    }
 }

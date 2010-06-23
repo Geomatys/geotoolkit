@@ -425,6 +425,7 @@ public class KmlWriter extends StaxStreamWriter {
      */
     private void writeNetworkLink(NetworkLink networkLink) throws XMLStreamException{
         writer.writeStartElement(URI_KML, TAG_NETWORK_LINK);
+        this.writeCommonAbstractFeature(networkLink);
         this.writeRefreshVisibility(networkLink.getRefreshVisibility());
         this.writeFlyToView(networkLink.getFlyToView());
         if (networkLink.getLink() != null){
