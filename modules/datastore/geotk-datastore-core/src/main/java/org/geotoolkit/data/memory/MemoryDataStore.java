@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2009, Geomatys
+ *    (C) 2009-2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -24,9 +24,11 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.geotoolkit.data.AbstractDataStore;
@@ -37,6 +39,7 @@ import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.query.DefaultQueryCapabilities;
 import org.geotoolkit.data.query.Query;
+import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.query.QueryCapabilities;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.HintsPending;
@@ -54,7 +57,9 @@ import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.Name;
 import org.opengis.feature.type.PropertyDescriptor;
 import org.opengis.filter.Filter;
+import org.opengis.filter.Id;
 import org.opengis.filter.identity.FeatureId;
+import org.opengis.filter.identity.Identifier;
 
 /**
  * @todo : make this concurrent
@@ -65,7 +70,7 @@ public class MemoryDataStore extends AbstractDataStore{
 
     private static interface Group{
         FeatureType getFeatureType();
-        Iterator<Feature> createIterator();
+        Iterator<? extends Feature> createIterator(Id ids);
         ArrayPropertyRW createPropertyReader();
         ArrayFIDRW createFIDReader();
     }
@@ -75,26 +80,26 @@ public class MemoryDataStore extends AbstractDataStore{
      */
     private static class SimpleGroup implements Group{
         final SimpleFeatureType type;
-        final List<Object[]> datas;
+        final Map<String,Object[]> features;
         private final String base;
         private final AtomicLong inc = new AtomicLong();
 
         public SimpleGroup(SimpleFeatureType type) {
             this.type = type;
-            this.datas = new ArrayList<Object[]>();
             this.base = type.getName().getLocalPart()+".";
+            this.features = new ConcurrentHashMap<String, Object[]>();
         }
 
         @Override
         public ArrayPropertyRW createPropertyReader(){
             final Collection<PropertyDescriptor> props = type.getDescriptors();
             final PropertyDescriptor[] arr = props.toArray(new PropertyDescriptor[props.size()]);
-            return new ArrayPropertyRW(arr, 1, datas);
+            return new ArrayPropertyRW(arr, features);
         }
 
         @Override
         public ArrayFIDRW createFIDReader(){
-            return new ArrayFIDRW(0, datas , base, inc);
+            return new ArrayFIDRW(features , base, inc);
         }
 
         @Override
@@ -103,7 +108,7 @@ public class MemoryDataStore extends AbstractDataStore{
         }
 
         @Override
-        public Iterator<Feature> createIterator() {
+        public Iterator<Feature> createIterator(Id ids) {
             return null;
         }
 
@@ -114,20 +119,48 @@ public class MemoryDataStore extends AbstractDataStore{
      */
     private static class ComplexGroup implements Group{
         final FeatureType type;
-        final List<Feature> features;
+        final Map<String,Feature> features;
 
         ComplexGroup(FeatureType type){
             this.type = type;
-            features = new ArrayList<Feature>();
+            this.features = new ConcurrentHashMap<String, Feature>();
         }
+        
         @Override
         public FeatureType getFeatureType() {
             return type;
         }
 
         @Override
-        public Iterator<Feature> createIterator() {
-            return features.iterator();
+        public Iterator<? extends Feature> createIterator(Id ids) {
+
+            if(ids == null){
+                return features.values().iterator();
+            }
+
+            final Set<Identifier> fids = ids.getIdentifiers();
+            final Iterator<Identifier> iteIds = fids.iterator();
+
+            return new Iterator<Feature>(){
+
+                @Override
+                public boolean hasNext() {
+                    return iteIds.hasNext();
+                }
+
+                @Override
+                public Feature next() {
+                    final String strid = iteIds.next().getID().toString();
+                    final Feature f = features.get(strid);
+                    return f;
+                }
+
+                @Override
+                public void remove() {
+                    throw new UnsupportedOperationException("Not supported yet.");
+                }
+
+            };
         }
 
         @Override
@@ -300,7 +333,9 @@ public class MemoryDataStore extends AbstractDataStore{
 
         if(grp instanceof ComplexGroup){
             final ComplexGroup cg = (ComplexGroup) grp;
-            cg.features.addAll(collection);
+            for(Feature f : collection){
+                cg.features.put(f.getIdentifier().getID(), f);
+            }
             return null;
         }else{
             final MemoryFeatureWriter writer = (MemoryFeatureWriter)getFeatureWriterAppend(groupName);
@@ -318,25 +353,26 @@ public class MemoryDataStore extends AbstractDataStore{
                     }
 
                     //we are in append mode
-                    final Object[] vals = new Object[writer.properties.getPropertyCount()+1];
+                    final Object[] vals = new Object[writer.properties.getPropertyCount()];
 
                     //use the original id if possible
-                    vals[0] = f.getIdentifier().getID();
-                    if(vals[0] == null || vals[0].toString().isEmpty() || containId(writer.grp.datas, vals[0].toString())){
-                        vals[0] = writer.modified.getIdentifier();
+                    String strid = f.getIdentifier().getID();
+                    if(strid == null || strid.isEmpty() || writer.grp.features.containsKey(strid)){
+                        //key is not valid, use the created one.
+                        strid = writer.modified.getIdentifier().getID();
                     }
 
                     for(int i=0; i<descs.length; i++){
-                        vals[i+1] = Converters.convert(
+                        vals[i] = Converters.convert(
                                 writer.modified.getProperty(descs[i].getName()).getValue(),
                                 descs[i].getType().getBinding());
                     }
-                    writer.grp.datas.add(vals);
+                    writer.grp.features.put(strid, vals);
 
                     //fire add event
                     fireFeaturesAdded(writer.grp.type.getName());
 
-                    ids.add(new DefaultFeatureId(vals[0].toString()));
+                    ids.add(new DefaultFeatureId(strid));
                 }
             }finally{
                 //todo must close safely both iterator
@@ -383,8 +419,22 @@ public class MemoryDataStore extends AbstractDataStore{
             throw new DataStoreException("No featureType for name : " + query.getTypeName());
         }
 
+        //we can handle id filter
+        final Filter filter = query.getFilter();
+        final QueryBuilder remaining = new QueryBuilder(query);
+
+        final Iterator<? extends Feature> ite;
+        if(filter instanceof Id){
+            ite = grp.createIterator((Id)filter);
+            if(ite != null){
+                remaining.setFilter(Filter.INCLUDE);
+            }
+        }else{
+            ite = grp.createIterator(null);
+        }
+
         final FeatureReader reader;
-        final Iterator<Feature> ite = grp.createIterator();
+        
         if(ite != null){
             reader = GenericWrapFeatureIterator.wrapToReader(ite, grp.getFeatureType());
         }else{
@@ -398,7 +448,7 @@ public class MemoryDataStore extends AbstractDataStore{
 
         //fall back on generic parameter handling.
         //todo we should handle at least spatial filter here by using a quadtree.
-        return handleRemaining(reader, query);
+        return handleRemaining(reader, remaining.buildQuery());
     }
 
     /**
@@ -410,7 +460,19 @@ public class MemoryDataStore extends AbstractDataStore{
         final FeatureWriter writer;
 
         final Group grp = groups.get(type.getName());
-        final Iterator<Feature> ite = grp.createIterator();
+
+        //we can handle id filter
+
+        final Iterator<? extends Feature> ite;
+        if(filter instanceof Id){
+            ite = grp.createIterator((Id)filter);
+            if(ite != null){
+                filter = Filter.INCLUDE;
+            }
+        }else{
+            ite = grp.createIterator(null);
+        }
+        
         if(ite != null){
             writer = GenericWrapFeatureIterator.wrapToWriter(ite, type);
         }else{
@@ -431,13 +493,6 @@ public class MemoryDataStore extends AbstractDataStore{
     public void dispose() {
         super.dispose();
         groups.clear();
-    }
-
-    private static boolean containId(List<Object[]> datas, String id){
-        for(Object[] objs : datas){
-            if(objs[0].toString().equals(id)) return true;
-        }
-        return false;
     }
 
     private class MemoryFeatureWriter<T extends FeatureType, F extends Feature> implements FeatureWriter<T,F>{
@@ -486,17 +541,17 @@ public class MemoryDataStore extends AbstractDataStore{
 
             if(currentFeature == null){
                 //we are in append mode
-                final Object[] vals = new Object[properties.getPropertyCount()+1];
-                vals[0] = modified.getIdentifier();
+                final Object[] vals = new Object[properties.getPropertyCount()];
+                final String strid = modified.getIdentifier().getID();
 
                 for(int i=0; i<descs.length; i++){
-                    vals[i+1] = Converters.convert(
+                    vals[i] = Converters.convert(
                             modified.getProperty(descs[i].getName()).getValue(),
                             descs[i].getType().getBinding());
                 }
-                grp.datas.add(vals);
+                grp.features.put(strid, vals);
                 //move the reader forward so that we wont write again on the same feature
-                reader.next();
+                //reader.next();
 
                 //fire add event
                 fireFeaturesAdded(grp.type.getName());
