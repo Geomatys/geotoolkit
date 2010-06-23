@@ -76,7 +76,7 @@ public class LookAtTest {
 
      @Test
      public void lookAtWriteTest() throws KmlException, IOException, XMLStreamException, ParserConfigurationException, SAXException{
-        final KmlFactory kmlFactory = new KmlFactoryDefault();
+        final KmlFactory kmlFactory = new DefaultKmlFactory();
 
         double longitude = -122.0839597145766;
         double latitude = 37.42222904525232;

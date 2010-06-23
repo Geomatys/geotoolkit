@@ -6,8 +6,13 @@ package org.geotoolkit.data.kml.model;
  */
 public class DefaultIdAttributes implements IdAttributes{
 
-    private final String id;
-    private final String targetId;
+    private String id;
+    private String targetId;
+
+    /**
+     * 
+     */
+    public DefaultIdAttributes(){}
 
     /**
      *
@@ -32,4 +37,22 @@ public class DefaultIdAttributes implements IdAttributes{
      */
     @Override
     public String getTargetId(){return this.targetId;}
+
+    /**
+     *
+     * @{@inheritDoc}
+     */
+    @Override
+    public void getId(String id) {
+        this.id = id;
+    }
+
+    /**
+     *
+     * @{@inheritDoc}
+     */
+    @Override
+    public void getTargetId(String targetId) {
+        this.targetId = targetId;
+    }
 }

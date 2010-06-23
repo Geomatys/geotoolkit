@@ -40,4 +40,28 @@ public interface Vec2 {
      */
     public Units getYUnits();
 
+    /**
+     *
+     * @param x
+     */
+    public void setX(double x);
+
+    /**
+     *
+     * @param y
+     */
+    public void setY(double y);
+
+    /**
+     *
+     * @param xUnitx
+     */
+    public void setXUnits(Units xUnit);
+
+    /**
+     *
+     * @param yUnits
+     */
+    public void setYUnits(Units yUnit);
+
 }

@@ -12,7 +12,7 @@ import org.geotoolkit.data.atom.model.DefaultAtomPersonConstruct;
  *
  * @author Samuel Andrés
  */
-public class AtomFactoryDefault implements AtomFactory{
+public class DefaultAtomFactory implements AtomFactory{
 
     /**
      * 

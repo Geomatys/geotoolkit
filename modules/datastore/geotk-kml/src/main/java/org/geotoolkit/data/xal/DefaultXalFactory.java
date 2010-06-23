@@ -130,7 +130,7 @@ import org.geotoolkit.data.xal.model.XalException;
  *
  * @author Samuel Andrés
  */
-public class XalFactoryDefault implements XalFactory {
+public class DefaultXalFactory implements XalFactory {
 
     /**
      *

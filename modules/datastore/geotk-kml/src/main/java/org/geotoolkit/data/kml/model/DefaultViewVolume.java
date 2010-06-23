@@ -12,34 +12,10 @@ import static org.geotoolkit.data.kml.xml.KmlModelConstants.*;
  */
 public class DefaultViewVolume extends DefaultAbstractObject implements ViewVolume {
 
-    /**
-     * Angle, in decimal degrees, from the left side of the view volume to the camera's view vector.
-     * A negative value of the angle corresponds to a field of view that is ‘left’ of the view vector.
-     */
     private double leftFov;
-
-    /**
-     * Angle, in decimal degrees, from the camera's view vector to the right side of the view
-     * volume. A positive value of the angle corresponds to a field of view that is ‘right’ of the view
-     * vector.
-     */
     private double rightFov;
-
-    /**
-     * Angle, in decimal degrees, from the the bottom side of the view volume to camera's view
-     * vector.
-     */
     private double bottomFov;
-
-    /**
-     * Angle, in decimal degrees, from the camera's view vector to the top side of the view volume.
-     */
     private double topFov;
-
-    /**
-     * Length in meters of the view vector, which starts from the camera viewpoint and ends at the
-     * kml:PhotoOverlay shape. The value shall be positive.
-     */
     private double near;
     private List<SimpleType> viewVolumeSimpleExtensions;
     private List<AbstractObject> viewVolumeObjectExtensions;
@@ -74,8 +50,8 @@ public class DefaultViewVolume extends DefaultAbstractObject implements ViewVolu
         super(objectSimpleExtensions, idAttributes);
         this.leftFov = KmlUtilities.checkAngle180(leftFov);
         this.rightFov = KmlUtilities.checkAngle180(rightFov);
-        this.bottomFov = bottomFov;
-        this.topFov = topFov;
+        this.bottomFov = KmlUtilities.checkAngle90(bottomFov);
+        this.topFov = KmlUtilities.checkAngle90(topFov);
         this.near = near;
         this.viewVolumeSimpleExtensions = (viewVolumeSimpleExtensions == null) ? EMPTY_LIST : viewVolumeSimpleExtensions;
         this.viewVolumeObjectExtensions = (viewVolumeObjectExtensions == null) ? EMPTY_LIST : viewVolumeObjectExtensions;
@@ -135,28 +111,28 @@ public class DefaultViewVolume extends DefaultAbstractObject implements ViewVolu
      * @{@inheritDoc }
      */
     @Override
-    public void setLeftFov(double leftFov) {this.leftFov = leftFov;}
+    public void setLeftFov(double leftFov) {this.leftFov = KmlUtilities.checkAngle180(leftFov);}
 
     /**
      *
      * @{@inheritDoc }
      */
     @Override
-    public void setRightFov(double rightFov) {this.rightFov = rightFov;}
+    public void setRightFov(double rightFov) {this.rightFov = KmlUtilities.checkAngle180(rightFov);}
 
     /**
      *
      * @{@inheritDoc }
      */
     @Override
-    public void setBottomFov(double bottomFov) {this.bottomFov = bottomFov;}
+    public void setBottomFov(double bottomFov) {this.bottomFov = KmlUtilities.checkAngle90(bottomFov);}
 
     /**
      *
      * @{@inheritDoc }
      */
     @Override
-    public void setTopFov(double topFov) {this.topFov = topFov;}
+    public void setTopFov(double topFov) {this.topFov = KmlUtilities.checkAngle90(topFov);}
 
     /**
      *

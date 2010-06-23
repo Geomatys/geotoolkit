@@ -52,33 +52,33 @@ public class CameraTest {
     public void tearDown() {
     }
 
-     @Test
-     public void cameraReadTest() throws IOException, XMLStreamException {
+    @Test
+    public void cameraReadTest() throws IOException, XMLStreamException {
 
-         final KmlReader reader = new KmlReader();
-         reader.setInput(new File(pathToTestFile));
-         final Kml kmlObjects = reader.read();
-         reader.dispose();
+        final KmlReader reader = new KmlReader();
+        reader.setInput(new File(pathToTestFile));
+        final Kml kmlObjects = reader.read();
+        reader.dispose();
 
-         final AbstractFeature feature = kmlObjects.getAbstractFeature();
-         assertTrue(feature instanceof PhotoOverlay);
-         final AbstractView view = ((PhotoOverlay)feature).getView();
-         assertTrue(view instanceof Camera);
+        final AbstractFeature feature = kmlObjects.getAbstractFeature();
+        assertTrue(feature instanceof PhotoOverlay);
+        final AbstractView view = ((PhotoOverlay)feature).getView();
+        assertTrue(view instanceof Camera);
 
-         final Camera camera = (Camera) view;
-         assertEquals(4, camera.getLongitude(), DELTA);
-         assertEquals(43, camera.getLatitude(), DELTA);
-         assertEquals(625, camera.getAltitude(), DELTA);
-         assertEquals(2, camera.getHeading(), DELTA);
-         assertEquals(1, camera.getTilt(), DELTA);
-         assertEquals(2, camera.getRoll(), DELTA);
-         assertEquals(AltitudeMode.RELATIVE_TO_GROUND, camera.getAltitudeMode());
-         
-     }
+        final Camera camera = (Camera) view;
+        assertEquals(4, camera.getLongitude(), DELTA);
+        assertEquals(43, camera.getLatitude(), DELTA);
+        assertEquals(625, camera.getAltitude(), DELTA);
+        assertEquals(2, camera.getHeading(), DELTA);
+        assertEquals(1, camera.getTilt(), DELTA);
+        assertEquals(2, camera.getRoll(), DELTA);
+        assertEquals(AltitudeMode.RELATIVE_TO_GROUND, camera.getAltitudeMode());
 
-     @Test
-     public void cameraWriteTest() throws KmlException, IOException, XMLStreamException, ParserConfigurationException, SAXException{
-        final KmlFactory kmlFactory = new KmlFactoryDefault();
+    }
+
+    @Test
+    public void cameraWriteTest() throws KmlException, IOException, XMLStreamException, ParserConfigurationException, SAXException{
+        final KmlFactory kmlFactory = new DefaultKmlFactory();
 
         double longitude = 4;
         double latitude = 43;
@@ -86,7 +86,7 @@ public class CameraTest {
         double heading = 2;
         double tilt = 1.0;
         double roll = 2.0;
-         
+
         final Camera camera = kmlFactory.createCamera();
         camera.setLongitude(longitude);
         camera.setLatitude(latitude);
@@ -114,7 +114,7 @@ public class CameraTest {
         DomCompare.compare(
                  new File(pathToTestFile), temp);
 
-     }
+    }
 
 
 }

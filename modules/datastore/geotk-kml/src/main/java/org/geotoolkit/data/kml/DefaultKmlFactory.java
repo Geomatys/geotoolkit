@@ -147,7 +147,7 @@ import org.geotoolkit.data.kml.xsd.SimpleType;
  *
  * @author Samuel Andrés
  */
-public class KmlFactoryDefault implements KmlFactory{
+public class DefaultKmlFactory implements KmlFactory{
 
     /**
      * @{@inheritDoc }
@@ -443,6 +443,14 @@ public class KmlFactoryDefault implements KmlFactory{
     @Override
     public IdAttributes createIdAttributes(String id, String targetId){
         return new DefaultIdAttributes(id, targetId);
+    }
+
+    /**
+     * @{@inheritDoc }
+     */
+    @Override
+    public IdAttributes createIdAttributes(){
+        return new DefaultIdAttributes();
     }
 
     /**
@@ -975,6 +983,11 @@ public class KmlFactoryDefault implements KmlFactory{
                 screenOverlaySimpleExtensions, screenOverlayObjectExtensions);
     }
 
+    @Override
+    public ScreenOverlay createScreenOverlay(){
+        return new DefaultScreenOverlay();
+    }
+
     /**
      * @{@inheritDoc }
      */
@@ -1077,6 +1090,14 @@ public class KmlFactoryDefault implements KmlFactory{
     @Override
     public Vec2 createVec2(double x, double y, Units xUnit, Units yUnit){
         return new DefaultVec2(x, y, xUnit, yUnit);
+    }
+
+    /**
+     * @{@inheritDoc }
+     */
+    @Override
+    public Vec2 createVec2(){
+        return new DefaultVec2();
     }
 
     /**

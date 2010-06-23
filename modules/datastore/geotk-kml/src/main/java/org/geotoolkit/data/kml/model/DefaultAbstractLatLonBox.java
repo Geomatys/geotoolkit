@@ -46,8 +46,8 @@ public abstract class DefaultAbstractLatLonBox extends DefaultAbstractObject imp
             double north, double south, double east, double west,
             List<SimpleType> abstractLatLonBoxSimpleExtensions, List<AbstractObject> abstractLatLonBoxObjectExtensions){
         super(objectSimpleExtensions, idAttributes);
-        this.north = KmlUtilities.checkAngle180(north);
-        this.south = KmlUtilities.checkAngle180(south);
+        this.north = KmlUtilities.checkAngle90(north);
+        this.south = KmlUtilities.checkAngle90(south);
         this.east = KmlUtilities.checkAngle180(east);
         this.west = KmlUtilities.checkAngle180(west);
         this.abstractLatLonBoxSimpleExtensions = (abstractLatLonBoxSimpleExtensions == null) ? EMPTY_LIST : abstractLatLonBoxSimpleExtensions;
@@ -101,28 +101,28 @@ public abstract class DefaultAbstractLatLonBox extends DefaultAbstractObject imp
      * @{@inheritDoc }
      */
     @Override
-    public void setNorth(double north){this.north = north;}
+    public void setNorth(double north){this.north = KmlUtilities.checkAngle90(north);}
 
     /**
      *
      * @{@inheritDoc }
      */
     @Override
-    public void setSouth(double south){this.south = south;}
+    public void setSouth(double south){this.south = KmlUtilities.checkAngle90(south);}
 
     /**
      *
      * @{@inheritDoc }
      */
     @Override
-    public void setEast(double east){this.east = east;}
+    public void setEast(double east){this.east = KmlUtilities.checkAngle180(east);}
 
     /**
      *
      * @{@inheritDoc }
      */
     @Override
-    public void setWest(double west){this.west = west;}
+    public void setWest(double west){this.west = KmlUtilities.checkAngle180(west);}
 
     /**
      *

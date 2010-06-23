@@ -75,4 +75,46 @@ public interface ScreenOverlay extends AbstractOverlay {
      */
     public List<AbstractObject> getScreenOverlayObjectExtensions();
 
+    /**
+     *
+     * @param overlayXY
+     */
+    public void setOverlayXY(Vec2 overlayXY);
+
+    /**
+     *
+     * @param screenXY
+     */
+    public void setScreenXY(Vec2 screenXY);
+
+    /**
+     *
+     * @param rotationXY
+     */
+    public void setRotationXY(Vec2 rotationXY);
+
+    /**
+     *
+     * @param size
+     */
+    public void setSize(Vec2 size);
+
+    /**
+     *
+     * @param rotation
+     */
+    public void setRotation(double rotation);
+
+    /**
+     *
+     * @param screenOverlaySimpleExtentions
+     */
+    public void setScreenOverlaySimpleExtensions(List<SimpleType> screenOverlaySimpleExtentions);
+
+    /**
+     * 
+     * @param screenOverlayObjectExtensions
+     */
+    public void setScreenOverlayObjectExtensions(List<AbstractObject> screenOverlayObjectExtensions);
+
 }

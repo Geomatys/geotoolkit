@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:xal="urn:oasis:names:tc:ciq:xsdschema:xAL:2.0">
+<PhotoOverlay>
+  <name>A simple non-pyramidal photo</name>
+  <description>High above the ocean</description>
+  <Icon>
+  <href>small-photo.jpg</href>
+  </Icon>
+  <ViewVolume>
+    <leftFov>-60.0</leftFov>
+    <rightFov>60.0</rightFov>
+    <bottomFov>-45.0</bottomFov>
+    <topFov>45.0</topFov>
+    <near>1000.0</near>
+  </ViewVolume>
+  <Point>
+    <coordinates>1.0,1.0</coordinates>
+  </Point>
+</PhotoOverlay>
+</kml>			

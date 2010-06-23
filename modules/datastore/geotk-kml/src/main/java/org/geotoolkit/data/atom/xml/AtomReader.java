@@ -7,7 +7,7 @@ import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import org.geotoolkit.data.atom.AtomFactory;
-import org.geotoolkit.data.atom.AtomFactoryDefault;
+import org.geotoolkit.data.atom.DefaultAtomFactory;
 import org.geotoolkit.data.atom.model.AtomLink;
 import org.geotoolkit.data.atom.model.AtomPersonConstruct;
 import org.geotoolkit.xml.StaxStreamReader;
@@ -19,7 +19,7 @@ import static org.geotoolkit.data.atom.xml.AtomModelConstants.*;
  */
 public class AtomReader extends StaxStreamReader{
 
-    private static final AtomFactory atomFactory = new AtomFactoryDefault();
+    private static final AtomFactory atomFactory = new DefaultAtomFactory();
 
     public AtomReader() {
         super();

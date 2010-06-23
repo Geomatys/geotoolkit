@@ -25,4 +25,16 @@ public interface IdAttributes {
      * @return The targetId value.
      */
     public String getTargetId();
+
+    /**
+     * 
+     * @param id
+     */
+    public void getId(String id);
+
+    /**
+     *
+     * @param targetId
+     */
+    public void getTargetId(String targetId);
 }

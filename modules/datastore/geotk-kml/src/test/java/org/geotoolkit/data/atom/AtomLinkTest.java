@@ -3,7 +3,7 @@
  * and open the template in the editor.
  */
 
-package org.geotoolkit.data.kml;
+package org.geotoolkit.data.atom;
 
 import org.geotoolkit.data.atom.xml.AtomReader;
 import org.geotoolkit.data.atom.xml.AtomWriter;
@@ -16,7 +16,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import org.geotoolkit.data.atom.AtomFactory;
-import org.geotoolkit.data.atom.AtomFactoryDefault;
+import org.geotoolkit.data.atom.DefaultAtomFactory;
 import org.geotoolkit.data.atom.xml.AtomModelConstants;
 import org.geotoolkit.data.atom.model.AtomLink;
 import org.geotoolkit.data.atom.model.AtomPersonConstruct;
@@ -34,6 +34,8 @@ import org.xml.sax.SAXException;
  * @author samuel
  */
 public class AtomLinkTest {
+
+    private static final String pathToTestFile = "src/test/resources/org/geotoolkit/data/atom/link.atom";
 
     public AtomLinkTest() {
     }
@@ -57,7 +59,7 @@ public class AtomLinkTest {
     @Test
     public void atomLinkReadTest() throws IOException, XMLStreamException {
         final AtomReader reader = new AtomReader();
-        reader.setInput(new File("src/test/resources/org/geotoolkit/data/kml/link.atom"));
+        reader.setInput(new File(pathToTestFile));
         AtomLink link = null;
         boucle:
         while (reader.getReader().hasNext()) {
@@ -87,7 +89,7 @@ public class AtomLinkTest {
 
      @Test
      public void atomLinkWriteTest() throws XMLStreamException, IOException, ParserConfigurationException, SAXException {
-        final AtomFactory atomFactory = new AtomFactoryDefault();
+        final AtomFactory atomFactory = new DefaultAtomFactory();
 
         final AtomLink link = atomFactory.createAtomLink();
         link.setHref("HREF");
@@ -113,7 +115,7 @@ public class AtomLinkTest {
         writer.dispose();
 
         DomCompare.compare(
-                new File("src/test/resources/org/geotoolkit/data/kml/link.atom"), temp);
+                new File(pathToTestFile), temp);
 
      }
 

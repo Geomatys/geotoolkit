@@ -8,6 +8,7 @@ import org.geotoolkit.data.atom.model.AtomPersonConstruct;
 import org.geotoolkit.data.xal.model.AddressDetails;
 import org.geotoolkit.data.kml.xsd.SimpleType;
 import static java.util.Collections.*;
+import static org.geotoolkit.data.kml.xml.KmlModelConstants.*;
 
 /**
  *
@@ -15,13 +16,22 @@ import static java.util.Collections.*;
  */
 public class DefaultScreenOverlay extends DefaultAbstractOverlay implements ScreenOverlay {
 
-    private final Vec2 overlayXY;
-    private final Vec2 screenXY;
-    private final Vec2 rotationXY;
-    private final Vec2 size;
-    private final double rotation;
-    private final List<SimpleType> screenOverlaySimpleExtensions;
-    private final List<AbstractObject> screenOverlayObjectExtensions;
+    private Vec2 overlayXY;
+    private Vec2 screenXY;
+    private Vec2 rotationXY;
+    private Vec2 size;
+    private double rotation;
+    private List<SimpleType> screenOverlaySimpleExtensions;
+    private List<AbstractObject> screenOverlayObjectExtensions;
+
+    /**
+     *
+     */
+    public DefaultScreenOverlay(){
+        this.rotation = DEF_ROTATION;
+        this.screenOverlaySimpleExtensions = EMPTY_LIST;
+        this.screenOverlayObjectExtensions = EMPTY_LIST;
+    }
 
     /**
      *
@@ -91,48 +101,125 @@ public class DefaultScreenOverlay extends DefaultAbstractOverlay implements Scre
      * @{@inheritDoc }
      */
     @Override
-    public Vec2 getOverlayXY() {return this.overlayXY;}
+    public Vec2 getOverlayXY() {
+        return this.overlayXY;
+    }
 
     /**
      *
      * @{@inheritDoc }
      */
     @Override
-    public Vec2 getScreenXY() {return this.screenXY;}
+    public Vec2 getScreenXY() {
+        return this.screenXY;
+    }
 
     /**
      *
      * @{@inheritDoc }
      */
     @Override
-    public Vec2 getRotationXY() {return this.rotationXY;}
+    public Vec2 getRotationXY() {
+        return this.rotationXY;
+    }
 
     /**
      *
      * @{@inheritDoc }
      */
     @Override
-    public Vec2 getSize() {return this.size;}
+    public Vec2 getSize() {
+        return this.size;
+    }
 
     /**
      *
      * @{@inheritDoc }
      */
     @Override
-    public double getRotation() {return this.rotation;}
+    public double getRotation() {
+        return this.rotation;
+    }
 
     /**
      *
      * @{@inheritDoc }
      */
     @Override
-    public List<SimpleType> getScreenOverlaySimpleExtensions() {return this.screenOverlaySimpleExtensions;}
+    public List<SimpleType> getScreenOverlaySimpleExtensions() {
+        return this.screenOverlaySimpleExtensions;
+    }
 
     /**
      *
      * @{@inheritDoc }
      */
     @Override
-    public List<AbstractObject> getScreenOverlayObjectExtensions() {return this.screenOverlayObjectExtensions;}
+    public List<AbstractObject> getScreenOverlayObjectExtensions() {
+        return this.screenOverlayObjectExtensions;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setOverlayXY(Vec2 overlayXY){
+        this.overlayXY = overlayXY;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setScreenXY(Vec2 screenXY) {
+        this.screenXY = screenXY;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setRotationXY(Vec2 rotationXY) {
+        this.rotationXY = rotationXY;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setSize(Vec2 size) {
+        this.size = size;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setRotation(double rotation) {
+        this.rotation = KmlUtilities.checkAngle180(rotation);
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setScreenOverlaySimpleExtensions(List<SimpleType> screenOverlaySimpleExtentions) {
+        this.screenOverlaySimpleExtensions = screenOverlaySimpleExtentions;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setScreenOverlayObjectExtensions(List<AbstractObject> screenOverlayObjectExtensions) {
+        this.screenOverlayObjectExtensions = screenOverlayObjectExtensions;
+    }
 
 }

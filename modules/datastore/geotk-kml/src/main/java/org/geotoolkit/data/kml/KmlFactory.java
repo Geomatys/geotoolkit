@@ -463,6 +463,12 @@ public interface KmlFactory {
 
     /**
      * 
+     * @return
+     */
+    public IdAttributes createIdAttributes();
+
+    /**
+     * 
      * @param objectSimpleExtensions
      * @param idAttributes
      * @param titleSize
@@ -1182,6 +1188,11 @@ public interface KmlFactory {
 
     /**
      *
+     * @return
+     */
+    public ScreenOverlay createScreenOverlay();
+    /**
+     *
      * @param name
      * @param content
      * @return
@@ -1304,6 +1315,12 @@ public interface KmlFactory {
      * @return
      */
     public Vec2 createVec2(double x, double y, Units xUnit, Units yUnit);
+
+    /**
+     * 
+     * @return
+     */
+    public Vec2 createVec2();
 
     /**
      * 

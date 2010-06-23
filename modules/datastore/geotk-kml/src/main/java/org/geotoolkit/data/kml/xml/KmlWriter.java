@@ -2562,10 +2562,10 @@ public class KmlWriter extends StaxStreamWriter {
      * @param drawOrder
      * @throws XMLStreamException
      */
-    private void writeDrawOrder(double drawOrder) throws XMLStreamException{
+    private void writeDrawOrder(int drawOrder) throws XMLStreamException{
         if (DEF_DRAW_ORDER != drawOrder){
             writer.writeStartElement(URI_KML, TAG_DRAW_ORDER);
-            writer.writeCharacters(Double.toString(drawOrder));
+            writer.writeCharacters(Integer.toString(drawOrder));
             writer.writeEndElement();
         }
     }
@@ -2852,6 +2852,7 @@ public class KmlWriter extends StaxStreamWriter {
     private void writeTopFov(double topFov) throws XMLStreamException{
         if (DEF_TOP_FOV != topFov){
             writer.writeStartElement(URI_KML, TAG_TOP_FOV);
+            System.out.println("TOP FOV : "+TAG_TOP_FOV);
             writer.writeCharacters(Double.toString(topFov));
             writer.writeEndElement();
         }

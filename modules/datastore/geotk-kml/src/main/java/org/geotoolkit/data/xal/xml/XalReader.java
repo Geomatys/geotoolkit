@@ -9,7 +9,7 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import org.geotoolkit.data.kml.xml.KmlReader;
 import org.geotoolkit.data.xal.XalFactory;
-import org.geotoolkit.data.xal.XalFactoryDefault;
+import org.geotoolkit.data.xal.DefaultXalFactory;
 import org.geotoolkit.data.xal.model.AddressDetails;
 import org.geotoolkit.data.xal.model.AddressIdentifier;
 import org.geotoolkit.data.xal.model.AddressLines;
@@ -85,7 +85,7 @@ import static org.geotoolkit.data.xal.xml.XalModelConstants.*;
 public class XalReader extends StaxStreamReader{
 
     private Xal root;
-    private static final XalFactory xalFactory = new XalFactoryDefault();
+    private static final XalFactory xalFactory = new DefaultXalFactory();
     
     public XalReader() {
         super();

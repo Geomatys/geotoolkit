@@ -11,7 +11,7 @@ import java.util.logging.Logger;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import org.geotoolkit.data.kml.KmlFactory;
-import org.geotoolkit.data.kml.KmlFactoryDefault;
+import org.geotoolkit.data.kml.DefaultKmlFactory;
 import org.geotoolkit.data.atom.model.AtomPersonConstruct;
 import org.geotoolkit.data.atom.model.AtomLink;
 import org.geotoolkit.data.kml.KmlUtilities;
@@ -110,7 +110,7 @@ import static org.geotoolkit.data.kml.xml.KmlModelConstants.*;
 public class KmlReader extends StaxStreamReader {
 
     private Kml root;
-    private static final KmlFactory kmlFactory = new KmlFactoryDefault();
+    private static final KmlFactory kmlFactory = new DefaultKmlFactory();
     private final XalReader xalReader = new XalReader();
     private final AtomReader atomReader = new AtomReader();
 

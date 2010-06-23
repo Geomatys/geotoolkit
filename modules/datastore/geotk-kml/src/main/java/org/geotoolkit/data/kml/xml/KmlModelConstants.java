@@ -176,7 +176,7 @@ public final class KmlModelConstants {
     public static final String TAG_TEXT_COLOR = "textColor";
     public static final String TAG_TILT = "tilt";
     public static final String TAG_TITLE_SIZE = "tileSize";
-    public static final String TAG_TOP_FOV = "bottomFov";
+    public static final String TAG_TOP_FOV = "topFov";
     public static final String TAG_UPDATE = "update";
     public static final String TAG_VALUE = "value";
     public static final String TAG_VIEW_FORMAT = "viewFormat";

@@ -18,7 +18,7 @@ public class DefaultCoordinate implements Coordinate{
         String[] coordinatesList = coordinates.split(",");
         this.geodeticLongitude = Double.valueOf(coordinatesList[0]);//problème lorsqu'une chaîne de chiffres débute par un espace ou autre caractère d'espacement
         this.geodeticLatitude = Double.valueOf(coordinatesList[1]);
-        if(coordinatesList[2] != null){
+        if(coordinatesList.length == 3){
             this.altitude = Double.valueOf(coordinatesList[2]);
         } else {
             this.altitude = Double.NaN;

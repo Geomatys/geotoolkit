@@ -33,11 +33,6 @@ import org.geotoolkit.data.kml.xsd.SimpleType;
  * &lt;element name="LatLonBoxObjectExtensionGroup" abstract="true" substitutionGroup="kml:AbstractObjectGroup"/>
  * </pre>
  *
- * <h3>OGC Documentation</h3>
- *
- * <p>Specifies the extent of a 2D bounding box. kml:north, kml:south, kml:east, and
- * kml:west shall be specified.</p>
- *
  * @author Samuel Andrés
  */
 public interface LatLonBox extends AbstractLatLonBox {
