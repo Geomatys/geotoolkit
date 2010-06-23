@@ -19,7 +19,6 @@ package org.geotoolkit.filter.accessor;
 
 import java.util.Map;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.util.Converters;
 
 /**
  * Test accesor for Map collections.
@@ -45,13 +44,9 @@ public class DummyMapAccessorFactory implements PropertyAccessorFactory{
 
     private static class MapAccessor implements PropertyAccessor{
 
+        @Override
         public boolean canHandle(Class clazz, String xpath, Class target) {
             return Map.class.isAssignableFrom(clazz);
-        }
-
-        @Override
-        public boolean canHandle(Object object, String xpath, Class target) {
-            return canHandle(object.getClass(), xpath, target);
         }
 
         @Override
