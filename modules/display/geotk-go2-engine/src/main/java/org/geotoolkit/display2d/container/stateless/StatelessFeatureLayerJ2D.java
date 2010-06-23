@@ -65,6 +65,7 @@ import org.geotoolkit.display2d.primitive.ProjectedFeature;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRenderer;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.HintsPending;
+import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.style.StyleUtilities;
 
 import org.opengis.display.primitive.Graphic;
@@ -701,6 +702,9 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
                 }
             }
         }
+
+        //optimize the filter
+        filter = FilterUtilities.prepare(filter,Feature.class);
 
         final QueryBuilder qb = new QueryBuilder();
         qb.setTypeName(schema.getName());
