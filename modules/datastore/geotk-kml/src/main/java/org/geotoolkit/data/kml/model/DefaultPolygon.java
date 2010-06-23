@@ -3,6 +3,7 @@ package org.geotoolkit.data.kml.model;
 import java.util.List;
 import org.geotoolkit.data.kml.xsd.SimpleType;
 import static java.util.Collections.*;
+import static org.geotoolkit.data.kml.xml.KmlModelConstants.*;
 
 /**
  *
@@ -10,13 +11,25 @@ import static java.util.Collections.*;
  */
 public class DefaultPolygon extends DefaultAbstractGeometry implements Polygon {
 
-    private final boolean extrude;
-    private final boolean tessellate;
-    private final AltitudeMode altitudeMode;
-    private final Boundary outerBoundaryIs;
-    private final List<Boundary> innerBoundariesAre;
-    private final List<SimpleType> polygonSimpleExtensions;
-    private final List<AbstractObject> polygonObjectExtensions;
+    private boolean extrude;
+    private boolean tessellate;
+    private AltitudeMode altitudeMode;
+    private Boundary outerBoundaryIs;
+    private List<Boundary> innerBoundariesAre;
+    private List<SimpleType> polygonSimpleExtensions;
+    private List<AbstractObject> polygonObjectExtensions;
+
+    /**
+     *
+     */
+    public DefaultPolygon(){
+        this.extrude = DEF_EXTRUDE;
+        this.tessellate = DEF_TESSELLATE;
+        this.altitudeMode = DEF_ALTITUDE_MODE;
+        this.innerBoundariesAre = EMPTY_LIST;
+        this.polygonSimpleExtensions = EMPTY_LIST;
+        this.polygonObjectExtensions = EMPTY_LIST;
+    }
 
     /**
      *
@@ -98,5 +111,68 @@ public class DefaultPolygon extends DefaultAbstractGeometry implements Polygon {
      */
     @Override
     public List<AbstractObject> getPolygonObjectExtensions() {return this.polygonObjectExtensions;}
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setExtrude(boolean extrude) {
+        this.extrude = extrude;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setTessellate(boolean tesselate) {
+        this.tessellate = tesselate;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setAltitudeMode(AltitudeMode altitudeMode) {
+        this.altitudeMode = altitudeMode;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setOuterBoundaryIs(Boundary outerBoundaryIs) {
+        this.outerBoundaryIs = outerBoundaryIs;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setInnerBoundariesAre(List<Boundary> innerBoundariesAre) {
+        this.innerBoundariesAre = innerBoundariesAre;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setPolygonSimpleExtensions(List<SimpleType> polygonSimpleExtensions) {
+        this.polygonSimpleExtensions = polygonSimpleExtensions;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setPolygonObjectExtensions(List<AbstractObject> polygonObjectExtensions) {
+        this.polygonObjectExtensions = polygonObjectExtensions;
+    }
 
 }

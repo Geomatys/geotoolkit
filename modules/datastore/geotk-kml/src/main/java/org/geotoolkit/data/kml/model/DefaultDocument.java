@@ -11,12 +11,22 @@ import static java.util.Collections.*;
  *
  * @author Samuel Andrés
  */
-public class DefaultDocument extends DefaultAbstractContainer implements Document{
+public class DefaultDocument extends DefaultAbstractContainer implements Document {
 
-    private final List<Schema> schemas;
-    private final List<AbstractFeature> features;
-    private final List<SimpleType> documentSimpleExtensions;
-    private final List<AbstractObject> documentObjectExtensions;
+    private List<Schema> schemas;
+    private List<AbstractFeature> features;
+    private List<SimpleType> documentSimpleExtensions;
+    private List<AbstractObject> documentObjectExtensions;
+
+    /**
+     * 
+     */
+    public DefaultDocument() {
+        this.schemas = EMPTY_LIST;
+        this.features = EMPTY_LIST;
+        this.documentSimpleExtensions = EMPTY_LIST;
+        this.documentObjectExtensions = EMPTY_LIST;
+    }
 
     /**
      *
@@ -59,7 +69,7 @@ public class DefaultDocument extends DefaultAbstractContainer implements Documen
             List<AbstractObject> abstractContainerObjectExtensions,
             List<Schema> schemas, List<AbstractFeature> features,
             List<SimpleType> documentSimpleExtensions,
-            List<AbstractObject> documentObjectExtensions){
+            List<AbstractObject> documentObjectExtensions) {
 
         super(objectSimpleExtensions, idAttributes,
                 name, visibility, open, author, link, address, addressDetails, phoneNumber,
@@ -68,8 +78,8 @@ public class DefaultDocument extends DefaultAbstractContainer implements Documen
                 abstractFeatureSimpleExtensions, abstractFeatureObjectExtensions,
                 abstractContainerSimpleExtensions, abstractContainerObjectExtensions);
 
-        this.schemas = schemas;
-        this.features = features;
+        this.schemas = (schemas == null) ? EMPTY_LIST : schemas;
+        this.features = (features == null) ? EMPTY_LIST : features;
         this.documentSimpleExtensions = (documentSimpleExtensions == null) ? EMPTY_LIST : documentSimpleExtensions;
         this.documentObjectExtensions = (documentObjectExtensions == null) ? EMPTY_LIST : documentObjectExtensions;
     }
@@ -79,38 +89,81 @@ public class DefaultDocument extends DefaultAbstractContainer implements Documen
      * @{@inheritDoc }
      */
     @Override
-    public List<Schema> getSchemas() {return this.schemas;}
-
-    /**
-     *
-     * @{@inheritDoc }
-     */
-    @Override
-    public List<AbstractFeature> getAbstractFeatures() {return this.features;}
-
-    /**
-     *
-     * @{@inheritDoc }
-     */
-    @Override
-    public List<AbstractObject> getDocumentObjectExtensions() {return this.documentObjectExtensions;}
-
-    /**
-     *
-     * @{@inheritDoc }
-     */
-    @Override
-    public List<SimpleType> getDocumentSimpleExtensions() { return this.documentSimpleExtensions;}
-
-    /**
-     *
-     * @{@inheritDoc }
-     */
-    @Override
-    public String toString(){
-        String resultat = super.toString()+
-                "\n\tDocumentDefault : ";
-        return resultat;
+    public List<Schema> getSchemas() {
+        return this.schemas;
     }
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public List<AbstractFeature> getAbstractFeatures() {
+        return this.features;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public List<AbstractObject> getDocumentObjectExtensions() {
+        return this.documentObjectExtensions;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public List<SimpleType> getDocumentSimpleExtensions() {
+        return this.documentSimpleExtensions;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setSchemas(List<Schema> schemas) {
+        this.schemas = schemas;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setAbstractFeatures(List<AbstractFeature> features) {
+        this.features = features;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setDocumentSimpleExtensions(List<SimpleType> documentSimpleExtensions) {
+        this.documentSimpleExtensions = documentSimpleExtensions;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setDocumentObjectExtensions(List<AbstractObject> documentObjectExtensions) {
+        this.documentObjectExtensions = documentObjectExtensions;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public String toString() {
+        String resultat = super.toString()
+                + "\n\tDocumentDefault : ";
+        return resultat;
+    }
 }

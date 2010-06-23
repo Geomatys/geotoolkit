@@ -3,6 +3,7 @@ package org.geotoolkit.data.kml.model;
 import java.util.List;
 import org.geotoolkit.data.kml.xsd.SimpleType;
 import static java.util.Collections.*;
+import static org.geotoolkit.data.kml.xml.KmlModelConstants.*;
 
 /**
  *
@@ -10,12 +11,23 @@ import static java.util.Collections.*;
  */
 public class DefaultLineString extends DefaultAbstractGeometry implements LineString {
 
-    private final boolean extrude;
-    private final boolean tessellate;
-    private final AltitudeMode altitudeMode;
-    private final Coordinates coordinates;
-    private final List<SimpleType> lineStringSimpleExtensions;
-    private final List<AbstractObject> lineStringObjectExtensions;
+    private boolean extrude;
+    private boolean tessellate;
+    private AltitudeMode altitudeMode;
+    private Coordinates coordinates;
+    private List<SimpleType> lineStringSimpleExtensions;
+    private List<AbstractObject> lineStringObjectExtensions;
+
+    /**
+     * 
+     */
+    public DefaultLineString(){
+        this.extrude = DEF_EXTRUDE;
+        this.tessellate = DEF_TESSELLATE;
+        this.altitudeMode = DEF_ALTITUDE_MODE;
+        this.lineStringSimpleExtensions = EMPTY_LIST;
+        this.lineStringObjectExtensions = EMPTY_LIST;
+    }
 
     /**
      *
@@ -91,6 +103,60 @@ public class DefaultLineString extends DefaultAbstractGeometry implements LineSt
     @Override
     public List<AbstractObject> getLineStringObjectExtensions() {return this.lineStringObjectExtensions;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setExtrude(boolean extrude) {
+        this.extrude = extrude;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setTessellate(boolean tessellate) {
+        this.tessellate = tessellate;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setAltitudeMode(AltitudeMode altitudeMode) {
+        this.altitudeMode = altitudeMode;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setCoordinates(Coordinates coordinates) {
+        this.coordinates = coordinates;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setLineStringSimpleExtensions(List<SimpleType> lineStringSimpleExtensions) {
+        this.lineStringSimpleExtensions = lineStringSimpleExtensions;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setLineStringObjectExtensions(List<AbstractObject> lineStringObjectExtensions) {
+        this.lineStringObjectExtensions = lineStringObjectExtensions;
+    }
+
     @Override
     public String toString(){
         String resultat = super.toString();
@@ -98,5 +164,4 @@ public class DefaultLineString extends DefaultAbstractGeometry implements LineSt
         resultat += "\n\t"+coordinates.toString();
         return resultat;
     }
-
 }

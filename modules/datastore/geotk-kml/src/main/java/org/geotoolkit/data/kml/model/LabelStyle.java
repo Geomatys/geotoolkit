@@ -48,4 +48,21 @@ public interface LabelStyle extends AbstractColorStyle {
      */
     public List<AbstractObject> getLabelStyleObjectExtensions();
 
+    /**
+     *
+     * @param scale
+     */
+    public void setScale(double scale);
+
+    /**
+     *
+     * @param labelStyleSimpleExtensions
+     */
+    public void setLabelStyleSimpleExtensions(List<SimpleType> labelStyleSimpleExtensions);
+
+    /**
+     *
+     * @param labelStyleObjectExtensions
+     */
+    public void setLabelStyleObjectExtensions(List<AbstractObject> labelStyleObjectExtensions);
 }

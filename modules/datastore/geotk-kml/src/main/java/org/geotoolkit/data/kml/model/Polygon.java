@@ -74,4 +74,46 @@ public interface Polygon extends AbstractGeometry {
      * @return th elist of Polygon object extensions.
      */
     public List<AbstractObject> getPolygonObjectExtensions();
+
+    /**
+     *
+     * @param extrude
+     */
+    public void setExtrude(boolean extrude);
+
+    /**
+     *
+     * @param tesselate
+     */
+    public void setTessellate(boolean tesselate);
+
+    /**
+     *
+     * @param altitudeMode
+     */
+    public void setAltitudeMode(AltitudeMode altitudeMode);
+
+    /**
+     *
+     * @param outerBoundaryIs
+     */
+    public void setOuterBoundaryIs(Boundary outerBoundaryIs);
+
+    /**
+     *
+     * @param innerBoundariesAre
+     */
+    public void setInnerBoundariesAre(List<Boundary> innerBoundariesAre);
+
+    /**
+     *
+     * @param polygonSimpleExtensions
+     */
+    public void setPolygonSimpleExtensions(List<SimpleType> polygonSimpleExtensions);
+
+    /**
+     * 
+     * @param polygonObjectExtensions
+     */
+    public void setPolygonObjectExtensions(List<AbstractObject> polygonObjectExtensions);
 }

@@ -69,4 +69,40 @@ public interface LineString extends AbstractGeometry {
      */
     public List<AbstractObject> getLineStringObjectExtensions();
 
+    /**
+     *
+     * @param extrude
+     */
+    public void setExtrude(boolean extrude);
+
+    /**
+     *
+     * @param tesselate
+     */
+    public void setTessellate(boolean tessellate);
+
+    /**
+     *
+     * @param altitudeMode
+     */
+    public void setAltitudeMode(AltitudeMode altitudeMode);
+
+    /**
+     *
+     * @param coordinates
+     */
+    public void setCoordinates(Coordinates coordinates);
+
+    /**
+     *
+     * @param lineStringSimpleExtensions
+     */
+    public void setLineStringSimpleExtensions(List<SimpleType> lineStringSimpleExtensions);
+
+    /**
+     *
+     * @param lineStringObjectExtensions
+     */
+    public void setLineStringObjectExtensions(List<AbstractObject> lineStringObjectExtensions);
+
 }

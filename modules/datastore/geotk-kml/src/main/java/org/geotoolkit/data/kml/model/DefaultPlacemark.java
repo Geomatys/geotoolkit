@@ -13,9 +13,17 @@ import static java.util.Collections.*;
  */
 public class DefaultPlacemark extends DefaultAbstractFeature implements Placemark {
 
-    private final AbstractGeometry abstractGeometry;
-    private final List<SimpleType> placemarkSimpleExtension;
-    private final List<AbstractObject> placemarkObjectExtension;
+    private AbstractGeometry abstractGeometry;
+    private List<SimpleType> placemarkSimpleExtensions;
+    private List<AbstractObject> placemarkObjectExtensions;
+
+    /**
+     * 
+     */
+    public DefaultPlacemark(){
+        this.placemarkSimpleExtensions = EMPTY_LIST;
+        this.placemarkObjectExtensions = EMPTY_LIST;
+    }
 
     /**
      *
@@ -71,8 +79,8 @@ public class DefaultPlacemark extends DefaultAbstractFeature implements Placemar
             abstractFeatureObjectExtensions);
 
         this.abstractGeometry = abstractGeometry;
-        this.placemarkSimpleExtension = (placemarkSimpleExtensions == null) ? EMPTY_LIST : placemarkSimpleExtensions;
-        this.placemarkObjectExtension = (placemarkObjectExtension == null) ? EMPTY_LIST : placemarkObjectExtension;
+        this.placemarkSimpleExtensions = (placemarkSimpleExtensions == null) ? EMPTY_LIST : placemarkSimpleExtensions;
+        this.placemarkObjectExtensions = (placemarkObjectExtension == null) ? EMPTY_LIST : placemarkObjectExtension;
     }
 
     /**
@@ -90,7 +98,7 @@ public class DefaultPlacemark extends DefaultAbstractFeature implements Placemar
      */
     @Override
     public List<SimpleType> getPlacemarkSimpleExtensions() {
-        return this.placemarkSimpleExtension;
+        return this.placemarkSimpleExtensions;
     }
 
     /**
@@ -99,7 +107,34 @@ public class DefaultPlacemark extends DefaultAbstractFeature implements Placemar
      */
     @Override
     public List<AbstractObject> getPlacemarkObjectExtensions() {
-        return this.placemarkObjectExtension;
+        return this.placemarkObjectExtensions;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setAbstractGeometry(AbstractGeometry abstractGeometry) {
+        this.abstractGeometry = abstractGeometry;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setPlacemarkSimpleExtensions(List<SimpleType> placemarkSimpleExtensions) {
+        this.placemarkSimpleExtensions = placemarkSimpleExtensions;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setPlacemarkObjectExtensions(List<AbstractObject> placemarkObjectExtensions) {
+        this.placemarkObjectExtensions = placemarkObjectExtensions;
     }
 
     @Override

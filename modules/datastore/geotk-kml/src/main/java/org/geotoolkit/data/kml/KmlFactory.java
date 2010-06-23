@@ -169,6 +169,12 @@ public interface KmlFactory {
 
     /**
      * 
+     * @return
+     */
+    public Boundary createBoundary();
+
+    /**
+     * 
      * @param objectSimpleExtensions
      * @param idAttributes
      * @param abstractViewSimpleExtensions
@@ -303,6 +309,12 @@ public interface KmlFactory {
             List<Schema> schemas, List<AbstractFeature> features,
             List<SimpleType> documentSimpleExtensions,
             List<AbstractObject> documentObjectExtensions);
+
+    /**
+     * 
+     * @return
+     */
+    public Document createDocument();
 
     /**
      *
@@ -526,6 +538,12 @@ public interface KmlFactory {
             List<SimpleType> labelStyleSimpleExtensions, List<AbstractObject> labelStyleObjectExtensions);
 
     /**
+     * 
+     * @return
+     */
+    public LabelStyle createLabelStyle();
+
+    /**
      *
      * @param objectSimpleExtensions
      * @param idAttributes
@@ -599,6 +617,12 @@ public interface KmlFactory {
             List<AbstractObject> linearRingObjectExtensions);
 
     /**
+     * 
+     * @return
+     */
+    public LinearRing createLinearRing();
+
+    /**
      *
      * @param objectSimpleExtensions
      * @param idAttributes
@@ -621,6 +645,12 @@ public interface KmlFactory {
             Coordinates coordinates,
             List<SimpleType> lineStringSimpleExtensions,
             List<AbstractObject> lineStringObjectExtensions);
+
+    /**
+     * 
+     * @return
+     */
+    public LineString createLineString();
 
     /**
      *
@@ -999,6 +1029,12 @@ public interface KmlFactory {
             List<AbstractObject> placemarkObjectExtension);
 
     /**
+     * 
+     * @return
+     */
+    public Placemark createPlacemark();
+
+    /**
      *
      * @param objectSimpleExtensions
      * @param idAttributes
@@ -1049,6 +1085,12 @@ public interface KmlFactory {
             boolean extrude, boolean tessellate, AltitudeMode altitudeMode,
             Boundary outerBoundaryIs, List<Boundary> innerBoundariesAre,
             List<SimpleType> polygonSimpleExtensions, List<AbstractObject> polygonObjectExtensions);
+
+    /**
+     * 
+     * @return
+     */
+    public Polygon createPolygon();
 
     /**
      *

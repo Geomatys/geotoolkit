@@ -68,4 +68,40 @@ public interface LinearRing extends AbstractGeometry {
      */
     public List<AbstractObject> getLinearRingObjectExtensions();
 
+    /**
+     * 
+     * @param extrude
+     */
+    public void setExtrude(boolean extrude);
+
+    /**
+     *
+     * @param tesselate
+     */
+    public void setTessellate(boolean tesselate);
+
+    /**
+     *
+     * @param altitudeMode
+     */
+    public void setAltitudeMode(AltitudeMode altitudeMode);
+
+    /**
+     *
+     * @param coordinates
+     */
+    public void setCoordinates(Coordinates coordinates);
+
+    /**
+     *
+     * @param linearRingSimpleExtensions
+     */
+    public void setLinearRingSimpleExtensions(List<SimpleType> linearRingSimpleExtensions);
+
+    /**
+     *
+     * @param linearRingObjectExtensions
+     */
+    public void setLinearRingObjectExtensions(List<AbstractObject> linearRingObjectExtensions);
+
 }

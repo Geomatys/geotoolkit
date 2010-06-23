@@ -56,7 +56,6 @@ public class PhotoOverlayTest {
     public void tearDown() {
     }
 
-
     @Test
     public void photoOverlayReadTest() throws IOException, XMLStreamException {
 

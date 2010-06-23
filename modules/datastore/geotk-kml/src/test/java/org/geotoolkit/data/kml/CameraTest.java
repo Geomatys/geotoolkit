@@ -26,7 +26,7 @@ import static org.geotoolkit.data.kml.xml.KmlModelConstants.*;
 
 /**
  *
- * @author samuel
+ * @author Samuel Andrés
  */
 public class CameraTest {
 
@@ -62,7 +62,7 @@ public class CameraTest {
 
         final AbstractFeature feature = kmlObjects.getAbstractFeature();
         assertTrue(feature instanceof PhotoOverlay);
-        final AbstractView view = ((PhotoOverlay)feature).getView();
+        final AbstractView view = ((PhotoOverlay) feature).getView();
         assertTrue(view instanceof Camera);
 
         final Camera camera = (Camera) view;
@@ -77,7 +77,7 @@ public class CameraTest {
     }
 
     @Test
-    public void cameraWriteTest() throws KmlException, IOException, XMLStreamException, ParserConfigurationException, SAXException{
+    public void cameraWriteTest() throws KmlException, IOException, XMLStreamException, ParserConfigurationException, SAXException {
         final KmlFactory kmlFactory = new DefaultKmlFactory();
 
         double longitude = 4;
@@ -103,7 +103,7 @@ public class CameraTest {
         photoOverlay.setRotation(DEF_ROTATION);
         final Kml kml = kmlFactory.createKml(null, photoOverlay, null, null);
 
-        File temp = File.createTempFile("testCamera",".kml");
+        File temp = File.createTempFile("testCamera", ".kml");
         temp.deleteOnExit();
 
         KmlWriter writer = new KmlWriter();
@@ -112,9 +112,7 @@ public class CameraTest {
         writer.dispose();
 
         DomCompare.compare(
-                 new File(pathToTestFile), temp);
+                new File(pathToTestFile), temp);
 
     }
-
-
 }

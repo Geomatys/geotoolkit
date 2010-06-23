@@ -217,6 +217,14 @@ public class DefaultKmlFactory implements KmlFactory{
      * @{@inheritDoc }
      */
     @Override
+    public Boundary createBoundary(){
+        return new DefaultBoundary();
+    }
+
+    /**
+     * @{@inheritDoc }
+     */
+    @Override
     public Camera createCamera(List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
             List<SimpleType> abstractViewSimpleExtensions, List<AbstractObject> abstractViewObjectExtensions,
             double longitude, double latitude, double altitude,
@@ -324,6 +332,14 @@ public class DefaultKmlFactory implements KmlFactory{
                 abstractFeatureSimpleExtensions, abstractFeatureObjectExtensions,
                 abstractContainerSimpleExtensions, abstractContainerObjectExtensions,
                 schemas, features, documentSimpleExtensions, documentObjectExtensions);
+    }
+
+    /**
+     * @{@inheritDoc }
+     */
+    @Override
+    public Document createDocument(){
+        return new DefaultDocument();
     }
 
     /**
@@ -500,6 +516,11 @@ public class DefaultKmlFactory implements KmlFactory{
                 scale, labelStyleSimpleExtensions, labelStyleObjectExtensions);
     }
 
+    @Override
+    public LabelStyle createLabelStyle(){
+        return new DefaultLabelStyle();
+    }
+
     /**
      * @{@inheritDoc }
      */
@@ -559,6 +580,14 @@ public class DefaultKmlFactory implements KmlFactory{
      * @{@inheritDoc }
      */
     @Override
+    public LinearRing createLinearRing(){
+        return new DefaultLinearRing();
+    }
+
+    /**
+     * @{@inheritDoc }
+     */
+    @Override
     public LineString createLineString(List<SimpleType> objectSimpleExtensions,
             IdAttributes idAttributes,
             List<SimpleType> abstractGeometrySimpleExtensions,
@@ -572,6 +601,14 @@ public class DefaultKmlFactory implements KmlFactory{
                 abstractGeometrySimpleExtensions, abstractGeometryObjectExtensions,
                 extrude, tessellate, altitudeMode, coordinates,
                 lineStringSimpleExtensions, lineStringObjectExtensions);
+    }
+
+    /**
+     * @{@inheritDoc }
+     */
+    @Override
+    public LineString createLineString(){
+        return new DefaultLineString();
     }
 
     /**
@@ -848,6 +885,14 @@ public class DefaultKmlFactory implements KmlFactory{
      * @{@inheritDoc }
      */
     @Override
+    public Placemark createPlacemark(){
+        return new DefaultPlacemark();
+    }
+
+    /**
+     * @{@inheritDoc }
+     */
+    @Override
     public Point createPoint(List<SimpleType> objectSimpleExtensions,
             IdAttributes idAttributes,
             List<SimpleType> abstractGeometrySimpleExtensions,
@@ -885,6 +930,14 @@ public class DefaultKmlFactory implements KmlFactory{
                 abstractGeometrySimpleExtensions, abstractGeometryObjectExtensions,
                 extrude, tessellate, altitudeMode, outerBoundaryIs, innerBoundariesAre,
                 polygonSimpleExtensions, polygonObjectExtensions);
+    }
+
+    /**
+     * @{@inheritDoc }
+     */
+    @Override
+    public Polygon createPolygon(){
+        return new DefaultPolygon();
     }
 
     /**

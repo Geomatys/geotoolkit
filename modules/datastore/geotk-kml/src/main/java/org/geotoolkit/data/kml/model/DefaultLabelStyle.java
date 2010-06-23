@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.util.List;
 import org.geotoolkit.data.kml.xsd.SimpleType;
 import static java.util.Collections.*;
+import static org.geotoolkit.data.kml.xml.KmlModelConstants.*;
 
 /**
  *
@@ -11,9 +12,15 @@ import static java.util.Collections.*;
  */
 public class DefaultLabelStyle extends DefaultAbstractColorStyle implements LabelStyle {
 
-    private final double scale;
-    private final List<SimpleType> labelStyleSimpleExtensions;
-    private final List<AbstractObject> labelStyleObjectExtensions;
+    private double scale;
+    private List<SimpleType> labelStyleSimpleExtensions;
+    private List<AbstractObject> labelStyleObjectExtensions;
+
+    public DefaultLabelStyle(){
+        this.scale = DEF_SCALE;
+        this.labelStyleSimpleExtensions = EMPTY_LIST;
+        this.labelStyleObjectExtensions = EMPTY_LIST;
+    }
 
     /**
      *
@@ -70,6 +77,21 @@ public class DefaultLabelStyle extends DefaultAbstractColorStyle implements Labe
                 "\n\tLabelStyleDefault : "+
                 "\n\tscale : "+this.scale;
         return resultat;
+    }
+
+    @Override
+    public void setScale(double scale) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void setLabelStyleSimpleExtensions(List<SimpleType> labelStyleSimpleExtensions) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void setLabelStyleObjectExtensions(List<AbstractObject> labelStyleObjectExtensions) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
 }

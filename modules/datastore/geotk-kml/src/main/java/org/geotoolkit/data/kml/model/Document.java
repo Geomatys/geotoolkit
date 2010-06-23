@@ -54,4 +54,27 @@ public interface Document extends AbstractContainer {
      */
     public List<AbstractObject> getDocumentObjectExtensions();
 
+    /**
+     *
+     * @param schemas
+     */
+    public void setSchemas(List<Schema> schemas);
+
+    /**
+     *
+     * @param abstractFeatures
+     */
+    public void setAbstractFeatures(List<AbstractFeature> features);
+
+    /**
+     *
+     * @param documentSimpleExtensions
+     */
+    public void setDocumentSimpleExtensions(List<SimpleType> documentSimpleExtensions);
+
+    /**
+     *
+     * @param documentObjectExtensions
+     */
+    public void setDocumentObjectExtensions(List<AbstractObject> documentObjectExtensions);
 }

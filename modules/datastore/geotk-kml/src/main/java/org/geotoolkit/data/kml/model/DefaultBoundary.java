@@ -10,9 +10,17 @@ import static java.util.Collections.*;
  */
 public class DefaultBoundary implements Boundary {
 
-    private final LinearRing linearRing;
-    private final List<SimpleType> boundarySimpleExtensions;
-    private final List<AbstractObject> boundaryObjectExtensions;
+    private LinearRing linearRing;
+    private List<SimpleType> boundarySimpleExtensions;
+    private List<AbstractObject> boundaryObjectExtensions;
+
+    /**
+     * 
+     */
+    public DefaultBoundary() {
+        this.boundarySimpleExtensions = EMPTY_LIST;
+        this.boundaryObjectExtensions = EMPTY_LIST;
+    }
 
     /**
      *
@@ -20,7 +28,7 @@ public class DefaultBoundary implements Boundary {
      * @param boundarySimpleExtensions
      * @param boundaryObjectExtensions
      */
-    public DefaultBoundary(LinearRing linearRing, List<SimpleType> boundarySimpleExtensions, List<AbstractObject> boundaryObjectExtensions){
+    public DefaultBoundary(LinearRing linearRing, List<SimpleType> boundarySimpleExtensions, List<AbstractObject> boundaryObjectExtensions) {
         this.linearRing = linearRing;
         this.boundarySimpleExtensions = (boundarySimpleExtensions == null) ? EMPTY_LIST : boundarySimpleExtensions;
         this.boundaryObjectExtensions = (boundaryObjectExtensions == null) ? EMPTY_LIST : boundaryObjectExtensions;
@@ -31,20 +39,52 @@ public class DefaultBoundary implements Boundary {
      * @{@inheritDoc }
      */
     @Override
-    public LinearRing getLinearRing() {return this.linearRing;}
+    public LinearRing getLinearRing() {
+        return this.linearRing;
+    }
 
     /**
      *
      * @{@inheritDoc }
      */
     @Override
-    public List<SimpleType> getBoundarySimpleExtensions() {return this.boundarySimpleExtensions;}
+    public List<SimpleType> getBoundarySimpleExtensions() {
+        return this.boundarySimpleExtensions;
+    }
 
     /**
      *
      * @{@inheritDoc }
      */
     @Override
-    public List<AbstractObject> getBoundaryObjectExtensions() {return this.boundaryObjectExtensions;}
+    public List<AbstractObject> getBoundaryObjectExtensions() {
+        return this.boundaryObjectExtensions;
+    }
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setLinearRing(LinearRing linearRing) {
+        this.linearRing = linearRing;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setBoundarySimpleExtensions(List<SimpleType> boundarySimpleExtensions) {
+        this.boundarySimpleExtensions = boundarySimpleExtensions;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setBoundaryObjectExtensions(List<AbstractObject> boundaryObjectExtensions) {
+        this.boundaryObjectExtensions = boundaryObjectExtensions;
+    }
 }

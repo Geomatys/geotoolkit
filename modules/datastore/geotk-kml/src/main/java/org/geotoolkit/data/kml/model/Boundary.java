@@ -48,4 +48,21 @@ public interface Boundary {
      */
     public List<AbstractObject> getBoundaryObjectExtensions();
 
+    /**
+     * 
+     * @param linearRing
+     */
+    public void setLinearRing(LinearRing linearRing);
+
+    /**
+     *
+     * @param boundarySimpleExtensions
+     */
+    public void setBoundarySimpleExtensions(List<SimpleType> boundarySimpleExtensions);
+
+    /**
+     * 
+     * @param boundaryObjectExtensions
+     */
+    public void setBoundaryObjectExtensions(List<AbstractObject> boundaryObjectExtensions);
 }
