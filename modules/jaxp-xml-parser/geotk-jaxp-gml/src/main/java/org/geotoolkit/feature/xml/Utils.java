@@ -58,7 +58,7 @@ public class Utils {
         timestampFormatter.setTimeZone(TimeZone.getTimeZone("GMT+0"));
     }
 
-    private static final DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
+    private static final DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd'Z'");
     static{
         dateFormatter.setTimeZone(TimeZone.getTimeZone("GMT+0"));
     }
