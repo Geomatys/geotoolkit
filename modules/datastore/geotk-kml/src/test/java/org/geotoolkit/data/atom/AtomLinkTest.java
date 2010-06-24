@@ -1,25 +1,14 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package org.geotoolkit.data.atom;
 
 import org.geotoolkit.data.atom.xml.AtomReader;
 import org.geotoolkit.data.atom.xml.AtomWriter;
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
-import org.geotoolkit.data.atom.AtomFactory;
-import org.geotoolkit.data.atom.DefaultAtomFactory;
 import org.geotoolkit.data.atom.xml.AtomModelConstants;
 import org.geotoolkit.data.atom.model.AtomLink;
-import org.geotoolkit.data.atom.model.AtomPersonConstruct;
 import org.geotoolkit.xml.DomCompare;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -31,7 +20,7 @@ import org.xml.sax.SAXException;
 
 /**
  *
- * @author samuel
+ * @author Samuel Andrés
  */
 public class AtomLinkTest {
 

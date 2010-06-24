@@ -558,10 +558,13 @@ public interface KmlFactory {
      * @param latLonBoxObjectExtensions
      * @return
      */
-    public LatLonBox createLatLonBox(List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
+    public LatLonBox createLatLonBox(
+            List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
             double north, double south, double east, double west,
-            List<SimpleType> abstractLatLonBoxSimpleExtensions, List<AbstractObject> abstractLatLonBoxObjectExtensions,
-            double rotation, List<SimpleType> latLonBoxSimpleExtensions, List<AbstractObject> latLonBoxObjectExtensions);
+            List<SimpleType> abstractLatLonBoxSimpleExtensions,
+            List<AbstractObject> abstractLatLonBoxObjectExtensions,
+            double rotation, List<SimpleType> latLonBoxSimpleExtensions,
+            List<AbstractObject> latLonBoxObjectExtensions);
 
     /**
      * 
@@ -586,11 +589,14 @@ public interface KmlFactory {
      * @param latLonAltBoxObjectExtensions
      * @return
      */
-    public LatLonAltBox createLatLonAltBox(List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
+    public LatLonAltBox createLatLonAltBox(
+            List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
             double north, double south, double east, double west,
-            List<SimpleType> abstractLatLonBoxSimpleExtensions, List<AbstractObject> abstractLatLonBoxObjectExtensions,
+            List<SimpleType> abstractLatLonBoxSimpleExtensions,
+            List<AbstractObject> abstractLatLonBoxObjectExtensions,
             double minAltitude, double maxAltitude, AltitudeMode altitudeMode,
-            List<SimpleType> latLonAltBoxSimpleExtensions, List<AbstractObject> latLonAltBoxObjectExtensions);
+            List<SimpleType> latLonAltBoxSimpleExtensions,
+            List<AbstractObject> latLonAltBoxObjectExtensions);
 
     /**
      *
@@ -667,12 +673,22 @@ public interface KmlFactory {
      * @param lineStyleObjectExtensions
      * @return
      */
-    public LineStyle createLineStyle(List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
-            List<SimpleType> subStyleSimpleExtensions, List<AbstractObject> subStyleObjectExtensions,
+    public LineStyle createLineStyle(
+            List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
+            List<SimpleType> subStyleSimpleExtensions,
+            List<AbstractObject> subStyleObjectExtensions,
             Color color, ColorMode colorMode,
-            List<SimpleType> colorStyleSimpleExtensions, List<AbstractObject> colorStyleObjectExtensions,
+            List<SimpleType> colorStyleSimpleExtensions,
+            List<AbstractObject> colorStyleObjectExtensions,
             double width,
-            List<SimpleType> lineStyleSimpleExtensions, List<AbstractObject> lineStyleObjectExtensions);
+            List<SimpleType> lineStyleSimpleExtensions,
+            List<AbstractObject> lineStyleObjectExtensions);
+
+    /**
+     * 
+     * @return
+     */
+    public LineStyle createLineStyle();
 
     /**
      *
@@ -692,11 +708,15 @@ public interface KmlFactory {
      * @param linkObjectExtensions
      * @return
      */
-    public Link createLink(List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
-            String href, List<SimpleType> basicLinkSimpleExtensions, List<AbstractObject> basicLinkObjectExtensions,
-            RefreshMode refreshMode, double refreshInterval, ViewRefreshMode viewRefreshMode, double viewRefreshTime,
+    public Link createLink(
+            List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
+            String href, List<SimpleType> basicLinkSimpleExtensions,
+            List<AbstractObject> basicLinkObjectExtensions,
+            RefreshMode refreshMode, double refreshInterval,
+            ViewRefreshMode viewRefreshMode, double viewRefreshTime,
             double viewBoundScale, String viewFormat, String httpQuery,
-            List<SimpleType> linkSimpleExtensions, List<AbstractObject> linkObjectExtensions);
+            List<SimpleType> linkSimpleExtensions,
+            List<AbstractObject> linkObjectExtensions);
 
     /**
      * 
@@ -910,8 +930,8 @@ public interface KmlFactory {
      * @param orientationObjectExtensions
      * @return
      */
-    public Orientation createOrientation(List<SimpleType> objectSimpleExtensions,
-            IdAttributes idAttributes,
+    public Orientation createOrientation(
+            List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
             double heading, double tilt, double roll,
             List<SimpleType> orientationSimpleExtensions,
             List<AbstractObject> orientationObjectExtensions);
@@ -927,10 +947,17 @@ public interface KmlFactory {
      * @param pairObjectExtensions
      * @return
      */
-    public Pair createPair(List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
+    public Pair createPair(
+            List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
             StyleState key, String styleUrl, AbstractStyleSelector styleSelector,
             List<SimpleType> pairSimpleExtensions,
             List<AbstractObject> pairObjectExtensions);
+
+    /**
+     * 
+     * @return
+     */
+    public Pair createPair();
 
     /**
      *
@@ -968,18 +995,24 @@ public interface KmlFactory {
      * @param photoOverlayObjectExtensions
      * @return
      */
-    public PhotoOverlay createPhotoOverlay(List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
-            String name, boolean visibility, boolean open, AtomPersonConstruct author, AtomLink link,
-            String address, AddressDetails addressDetails, String phoneNumber, String snippet,
-            String description, AbstractView view, AbstractTimePrimitive timePrimitive,
+    public PhotoOverlay createPhotoOverlay(
+            List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
+            String name, boolean visibility, boolean open,
+            AtomPersonConstruct author, AtomLink link,
+            String address, AddressDetails addressDetails, String phoneNumber, 
+            String snippet, String description, AbstractView view,
+            AbstractTimePrimitive timePrimitive,
             String styleUrl, List<AbstractStyleSelector> styleSelector,
             Region region, ExtendedData extendedData,
             List<SimpleType> abstractFeatureSimpleExtensions,
             List<AbstractObject> abstractFeatureObjectExtensions,
             Color color, int drawOrder, Icon icon,
-            List<SimpleType> abstractOveraySimpleExtensions, List<AbstractObject> abstractOverlayObjectExtensions,
-            double rotation, ViewVolume viewVolume, ImagePyramid imagePyramid, Point point, Shape shape,
-            List<SimpleType> photoOverlaySimpleExtensions, List<AbstractObject> photoOverlayObjectExtensions);
+            List<SimpleType> abstractOveraySimpleExtensions,
+            List<AbstractObject> abstractOverlayObjectExtensions,
+            double rotation, ViewVolume viewVolume, ImagePyramid imagePyramid,
+            Point point, Shape shape,
+            List<SimpleType> photoOverlaySimpleExtensions,
+            List<AbstractObject> photoOverlayObjectExtensions);
 
     /**
      * 
@@ -1090,7 +1123,8 @@ public interface KmlFactory {
             List<AbstractObject> abstractGeometryObjectExtensions,
             boolean extrude, boolean tessellate, AltitudeMode altitudeMode,
             Boundary outerBoundaryIs, List<Boundary> innerBoundariesAre,
-            List<SimpleType> polygonSimpleExtensions, List<AbstractObject> polygonObjectExtensions);
+            List<SimpleType> polygonSimpleExtensions,
+            List<AbstractObject> polygonObjectExtensions);
 
     /**
      * 
@@ -1114,12 +1148,22 @@ public interface KmlFactory {
      * @param polyStyleObjectExtensions
      * @return
      */
-    public PolyStyle createPolyStyle(List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
-            List<SimpleType> subStyleSimpleExtensions, List<AbstractObject> subStyleObjectExtensions,
+    public PolyStyle createPolyStyle(
+            List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
+            List<SimpleType> subStyleSimpleExtensions,
+            List<AbstractObject> subStyleObjectExtensions,
             Color color, ColorMode colorMode,
-            List<SimpleType> colorStyleSimpleExtensions, List<AbstractObject> colorStyleObjectExtensions,
+            List<SimpleType> colorStyleSimpleExtensions,
+            List<AbstractObject> colorStyleObjectExtensions,
             boolean fill, boolean outline,
-            List<SimpleType> polyStyleSimpleExtensions, List<AbstractObject> polyStyleObjectExtensions);
+            List<SimpleType> polyStyleSimpleExtensions,
+            List<AbstractObject> polyStyleObjectExtensions);
+
+    /**
+     * 
+     * @return
+     */
+    public PolyStyle createPolyStyle();
 
     /**
      *
@@ -1133,7 +1177,9 @@ public interface KmlFactory {
      */
     public Region createRegion(List<SimpleType> objectSimpleExtensions,
             IdAttributes idAttributes,
-            LatLonAltBox latLonAltBox, Lod lod, List<SimpleType> regionSimpleExtensions, List<AbstractObject> regionObjectExtentions);
+            LatLonAltBox latLonAltBox, Lod lod, 
+            List<SimpleType> regionSimpleExtensions,
+            List<AbstractObject> regionObjectExtentions);
 
     /**
      *
@@ -1144,10 +1190,11 @@ public interface KmlFactory {
      * @param resourceMapObjectExtensions
      * @return
      */
-    public ResourceMap createResourceMap(List<SimpleType> objectSimpleExtensions,
-            IdAttributes idAttributes,
+    public ResourceMap createResourceMap(
+            List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
             List<Alias> aliases,
-            List<SimpleType> resourceMapSimpleExtensions, List<AbstractObject> resourceMapObjectExtensions);
+            List<SimpleType> resourceMapSimpleExtensions,
+            List<AbstractObject> resourceMapObjectExtensions);
 
     /**
      *
@@ -1162,7 +1209,8 @@ public interface KmlFactory {
      */
     public Scale createScale(List<SimpleType> objectSimpleExtensions,
             IdAttributes idAttributes, double x, double y, double z,
-            List<SimpleType> scaleSimpleExtensions, List<AbstractObject> scaleObjectExtensions);
+            List<SimpleType> scaleSimpleExtensions,
+            List<AbstractObject> scaleObjectExtensions);
 
     /**
      *
@@ -1310,6 +1358,12 @@ public interface KmlFactory {
             List<AbstractObject> abstractStyleSelectorObjectExtensions,
             List<Pair> pairs, List<SimpleType> styleMapSimpleExtensions, List<AbstractObject> styleMapObjectExtensions);
 
+    /**
+     * 
+     * @return
+     */
+    public StyleMap createStyleMap();
+    
     /**
      *
      * @param objectSimpleExtensions

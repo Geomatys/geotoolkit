@@ -13,28 +13,30 @@ import static org.geotoolkit.data.atom.xml.AtomModelConstants.*;
  *
  * @author Samuel Andrés
  */
-public class AtomWriter extends StaxStreamWriter{
+public class AtomWriter extends StaxStreamWriter {
 
-    public AtomWriter(){
+    public AtomWriter() {
         super();
     }
 
-    public void setWriter(XMLStreamWriter writer){this.writer = writer;}
+    public void setWriter(XMLStreamWriter writer) {
+        this.writer = writer;
+    }
 
     /**
      *
      * @param author
      * @throws XMLStreamException
      */
-    public void writeAuthor(AtomPersonConstruct author) throws XMLStreamException{
-        writer.writeStartElement(URI_ATOM,TAG_AUTHOR);
-        if (author.getParams() != null){
-            for (Object param : author.getParams()){
-                if (param instanceof String){
+    public void writeAuthor(AtomPersonConstruct author) throws XMLStreamException {
+        writer.writeStartElement(URI_ATOM, TAG_AUTHOR);
+        if (author.getParams() != null) {
+            for (Object param : author.getParams()) {
+                if (param instanceof String) {
                     this.writeName((String) param);
-                } else if (param instanceof URI){
+                } else if (param instanceof URI) {
                     this.writeUri((URI) param);
-                } else if (param instanceof AtomEmail){
+                } else if (param instanceof AtomEmail) {
                     this.writeEmail((AtomEmail) param);
                 }
             }
@@ -47,24 +49,24 @@ public class AtomWriter extends StaxStreamWriter{
      * @param link
      * @throws XMLStreamException
      */
-    public void writeLink(AtomLink link) throws XMLStreamException{
-        writer.writeStartElement(URI_ATOM,TAG_LINK);
-        if (link.getHref() != null){
+    public void writeLink(AtomLink link) throws XMLStreamException {
+        writer.writeStartElement(URI_ATOM, TAG_LINK);
+        if (link.getHref() != null) {
             writer.writeAttribute(ATT_HREF, link.getHref());
         }
-        if (link.getRel() != null){
+        if (link.getRel() != null) {
             writer.writeAttribute(ATT_REL, link.getRel());
         }
-        if (link.getType() != null){
+        if (link.getType() != null) {
             writer.writeAttribute(ATT_TYPE, link.getType());
         }
-        if (link.getHreflang() != null){
+        if (link.getHreflang() != null) {
             writer.writeAttribute(ATT_HREFLANG, link.getHreflang());
         }
-        if (link.getTitle() != null){
+        if (link.getTitle() != null) {
             writer.writeAttribute(ATT_TITLE, link.getTitle());
         }
-        if (link.getLength() != null){
+        if (link.getLength() != null) {
             writer.writeAttribute(ATT_LENGTH, link.getLength());
         }
         writer.writeEndElement();
@@ -76,7 +78,7 @@ public class AtomWriter extends StaxStreamWriter{
      * @throws XMLStreamException
      */
     private void writeName(String name) throws XMLStreamException {
-        writer.writeStartElement(URI_ATOM,TAG_NAME);
+        writer.writeStartElement(URI_ATOM, TAG_NAME);
         writer.writeCharacters(name);
         writer.writeEndElement();
     }
@@ -87,7 +89,7 @@ public class AtomWriter extends StaxStreamWriter{
      * @throws XMLStreamException
      */
     private void writeUri(URI uri) throws XMLStreamException {
-        writer.writeStartElement(URI_ATOM,TAG_URI);
+        writer.writeStartElement(URI_ATOM, TAG_URI);
         writer.writeCharacters(uri.toString());
         writer.writeEndElement();
     }
@@ -98,7 +100,7 @@ public class AtomWriter extends StaxStreamWriter{
      * @throws XMLStreamException
      */
     private void writeEmail(AtomEmail email) throws XMLStreamException {
-        writer.writeStartElement(URI_ATOM,TAG_EMAIL);
+        writer.writeStartElement(URI_ATOM, TAG_EMAIL);
         writer.writeCharacters(email.getAddress());
         writer.writeEndElement();
     }

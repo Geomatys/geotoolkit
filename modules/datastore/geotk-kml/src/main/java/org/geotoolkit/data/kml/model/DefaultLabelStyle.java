@@ -16,7 +16,7 @@ public class DefaultLabelStyle extends DefaultAbstractColorStyle implements Labe
     private List<SimpleType> labelStyleSimpleExtensions;
     private List<AbstractObject> labelStyleObjectExtensions;
 
-    public DefaultLabelStyle(){
+    public DefaultLabelStyle() {
         this.scale = DEF_SCALE;
         this.labelStyleSimpleExtensions = EMPTY_LIST;
         this.labelStyleObjectExtensions = EMPTY_LIST;
@@ -41,7 +41,7 @@ public class DefaultLabelStyle extends DefaultAbstractColorStyle implements Labe
             Color color, ColorMode colorMode,
             List<SimpleType> colorStyleSimpleExtensions, List<AbstractObject> colorStyleObjectExtensions,
             double scale,
-            List<SimpleType> iconStyleSimpleExtensions, List<AbstractObject> iconStyleObjectExtensions){
+            List<SimpleType> iconStyleSimpleExtensions, List<AbstractObject> iconStyleObjectExtensions) {
         super(objectSimpleExtensions, idAttributes,
                 subStyleSimpleExtensions, subStyleObjectExtensions,
                 color, colorMode, colorStyleSimpleExtensions, colorStyleObjectExtensions);
@@ -55,43 +55,60 @@ public class DefaultLabelStyle extends DefaultAbstractColorStyle implements Labe
      * @{@inheritDoc }
      */
     @Override
-    public double getScale() {return this.scale;}
-
-    /**
-     *
-     * @{@inheritDoc }
-     */
-    @Override
-    public List<SimpleType> getLabelStyleSimpleExtensions() {return this.labelStyleSimpleExtensions;}
-
-    /**
-     *
-     * @{@inheritDoc }
-     */
-    @Override
-    public List<AbstractObject> getLabelStyleObjectExtensions() {return this.labelStyleObjectExtensions;}
-
-    @Override
-    public String toString(){
-        String resultat = super.toString()+
-                "\n\tLabelStyleDefault : "+
-                "\n\tscale : "+this.scale;
-        return resultat;
+    public double getScale() {
+        return this.scale;
     }
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public List<SimpleType> getLabelStyleSimpleExtensions() {
+        return this.labelStyleSimpleExtensions;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public List<AbstractObject> getLabelStyleObjectExtensions() {
+        return this.labelStyleObjectExtensions;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public void setScale(double scale) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        this.scale = scale;
     }
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public void setLabelStyleSimpleExtensions(List<SimpleType> labelStyleSimpleExtensions) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        this.labelStyleSimpleExtensions = labelStyleSimpleExtensions;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setLabelStyleObjectExtensions(List<AbstractObject> labelStyleObjectExtensions) {
+        this.labelStyleObjectExtensions = labelStyleObjectExtensions;
     }
 
     @Override
-    public void setLabelStyleObjectExtensions(List<AbstractObject> labelStyleObjectExtensions) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public String toString() {
+        String resultat = super.toString()
+                + "\n\tLabelStyleDefault : "
+                + "\n\tscale : " + this.scale;
+        return resultat;
     }
-
 }

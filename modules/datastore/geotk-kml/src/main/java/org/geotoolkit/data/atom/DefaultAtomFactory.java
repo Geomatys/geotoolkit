@@ -12,14 +12,15 @@ import org.geotoolkit.data.atom.model.DefaultAtomPersonConstruct;
  *
  * @author Samuel Andrés
  */
-public class DefaultAtomFactory implements AtomFactory{
+public class DefaultAtomFactory implements AtomFactory {
 
     /**
      * 
      * @{@inheritDoc }
      */
     @Override
-    public AtomLink createAtomLink(String href, String rel, String type, String hreflang, String title, String length) {
+    public AtomLink createAtomLink(String href, String rel, String type,
+            String hreflang, String title, String length) {
         return new DefaultAtomLink(href, rel, type, hreflang, title, length);
     }
 
@@ -67,6 +68,4 @@ public class DefaultAtomFactory implements AtomFactory{
     public AtomEmail createAtomEmail() {
         return new DefaultAtomEmail();
     }
-
-
 }

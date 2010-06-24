@@ -6,8 +6,6 @@ import java.util.Arrays;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
 import org.geotoolkit.data.kml.model.AbstractFeature;
-import org.geotoolkit.data.kml.model.AltitudeMode;
-import org.geotoolkit.data.kml.model.Camera;
 import org.geotoolkit.data.kml.model.Coordinate;
 import org.geotoolkit.data.kml.model.Coordinates;
 import org.geotoolkit.data.kml.model.Icon;

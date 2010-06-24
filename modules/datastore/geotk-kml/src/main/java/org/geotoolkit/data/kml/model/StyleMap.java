@@ -47,4 +47,22 @@ public interface StyleMap extends AbstractStyleSelector {
      */
     public List<AbstractObject> getStyleMapObjectExtensions();
 
+    /**
+     *
+     * @param pairs
+     */
+    public void setPairs(List<Pair> pairs);
+
+    /**
+     *
+     * @param styleMapSimpleExtensions
+     */
+    public void setStyleMapSimpleExtensions(List<SimpleType> styleMapSimpleExtensions);
+
+    /**
+     *
+     * @param styleMapObjectExtensions
+     */
+    public void setStyleMapObjectExtensions(List<AbstractObject> styleMapObjectExtensions);
+
 }

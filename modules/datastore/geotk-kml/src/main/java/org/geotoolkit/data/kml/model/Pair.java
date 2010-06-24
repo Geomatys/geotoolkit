@@ -61,4 +61,34 @@ public interface Pair extends AbstractObject {
      */
     public List<AbstractObject> getPairObjectExtensions();
 
+    /**
+     *
+     * @param key
+     */
+    public void setKey(StyleState key);
+
+    /**
+     *
+     * @param styleUrl
+     */
+    public void setStyleUrl(String styleUrl);
+
+    /**
+     * 
+     * @param styleSelector
+     */
+    public void setAbstractStyleSelector(AbstractStyleSelector styleSelector);
+
+    /**
+     *
+     * @param pairSimpleExtensions
+     */
+    public void setPairSimpleExtensions(List<SimpleType> pairSimpleExtensions);
+
+    /**
+     *
+     * @param pairObjectExtensions
+     */
+    public void setPairObjectExtensions(List<AbstractObject> pairObjectExtensions);
+
 }

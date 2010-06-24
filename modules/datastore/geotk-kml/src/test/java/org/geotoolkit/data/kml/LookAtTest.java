@@ -24,7 +24,7 @@ import org.xml.sax.SAXException;
 
 /**
  *
- * @author samuel
+ * @author Samuel Andrés
  */
 public class LookAtTest {
 

@@ -21,10 +21,11 @@ public interface AtomFactory {
      * @param length
      * @return
      */
-    public AtomLink createAtomLink(String href, String rel, String type, String hreflang, String title, String length);
-    
+    public AtomLink createAtomLink(String href, String rel, String type,
+            String hreflang, String title, String length);
+
     /**
-     * 
+     *
      * @return
      */
     public AtomLink createAtomLink();
@@ -35,23 +36,22 @@ public interface AtomFactory {
      * @return
      */
     public AtomPersonConstruct createAtomPersonConstruct(List<Object> params);
-    
+
     /**
-     * 
+     *
      * @return
      */
     public AtomPersonConstruct createAtomPersonConstruct();
 
-
-     /**
-      *
-      * @param address
-      * @return
-      */
-    public AtomEmail createAtomEmail(String address);
-    
     /**
-     * 
+     *
+     * @param address
+     * @return
+     */
+    public AtomEmail createAtomEmail(String address);
+
+    /**
+     *
      * @return
      */
     public AtomEmail createAtomEmail();

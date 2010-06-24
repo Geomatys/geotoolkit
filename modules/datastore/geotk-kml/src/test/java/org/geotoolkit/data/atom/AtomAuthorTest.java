@@ -9,8 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
-import org.geotoolkit.data.atom.AtomFactory;
-import org.geotoolkit.data.atom.DefaultAtomFactory;
 import org.geotoolkit.data.atom.xml.AtomModelConstants;
 import org.geotoolkit.data.atom.model.AtomEmail;
 import org.geotoolkit.data.atom.model.AtomPersonConstruct;
@@ -25,7 +23,7 @@ import org.xml.sax.SAXException;
 
 /**
  *
- * @author samuel
+ * @author Samuel Andrés
  */
 public class AtomAuthorTest {
 

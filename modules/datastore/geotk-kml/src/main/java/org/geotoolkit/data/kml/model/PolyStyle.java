@@ -54,4 +54,28 @@ public interface PolyStyle extends AbstractColorStyle {
      */
     public List<AbstractObject> getPolyStyleObjectExtensions();
 
+    /**
+     *
+     * @param fill
+     */
+    public void setFill(boolean fill);
+
+    /**
+     *
+     * @param outline
+     */
+    public void setOutline(boolean outline);
+
+    /**
+     *
+     * @param polyStyleSimpleExtensions
+     */
+    public void setPolyStyleSimpleExtensions(List<SimpleType> polyStyleSimpleExtensions);
+
+    /**
+     *
+     * @param polyStyleObjectExtensions
+     */
+    public void setPolyStyleObjectExtensions(List<AbstractObject> polyStyleObjectExtensions);
+
 }

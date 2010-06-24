@@ -47,4 +47,21 @@ public interface LineStyle extends AbstractColorStyle {
      */
     public List<AbstractObject> getLineStyleObjectExtensions();
 
+    /**
+     *
+     * @param width
+     */
+    public void setWidth(double width);
+
+    /**
+     *
+     * @param lineStyleSimpleExtensions
+     */
+    public void setLineStyleSimpleExtensions(List<SimpleType> lineStyleSimpleExtensions);
+
+    /**
+     *
+     * @param lineStyleObjectExtensions
+     */
+    public void setLineStyleObjectExtensions(List<AbstractObject> lineStyleObjectExtensions);
 }

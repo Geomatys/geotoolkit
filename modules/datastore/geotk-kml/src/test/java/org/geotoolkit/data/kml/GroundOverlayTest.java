@@ -26,7 +26,7 @@ import static org.junit.Assert.*;
 
 /**
  *
- * @author samuel
+ * @author Samuel Andrés
  */
 public class GroundOverlayTest {
 

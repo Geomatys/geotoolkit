@@ -17,7 +17,7 @@ import static org.geotoolkit.data.atom.xml.AtomModelConstants.*;
  *
  * @author Samuel Andrés
  */
-public class AtomReader extends StaxStreamReader{
+public class AtomReader extends StaxStreamReader {
 
     private static final AtomFactory atomFactory = new DefaultAtomFactory();
 
@@ -25,7 +25,9 @@ public class AtomReader extends StaxStreamReader{
         super();
     }
 
-    public XMLStreamReader getReader(){return this.reader;}
+    public XMLStreamReader getReader() {
+        return this.reader;
+    }
 
     /**
      *
@@ -55,7 +57,8 @@ public class AtomReader extends StaxStreamReader{
                     break;
 
                 case XMLStreamConstants.END_ELEMENT:
-                    if (TAG_AUTHOR.equals(reader.getLocalName()) && URI_ATOM.contains(reader.getNamespaceURI())) {
+                    if (TAG_AUTHOR.equals(reader.getLocalName())
+                            && URI_ATOM.contains(reader.getNamespaceURI())) {
                         break boucle;
                     }
                     break;
@@ -79,7 +82,7 @@ public class AtomReader extends StaxStreamReader{
         String title = reader.getAttributeValue(null, ATT_TITLE);
         String length = reader.getAttributeValue(null, ATT_LENGTH);
 
-        return AtomReader.atomFactory.createAtomLink(href, rel, type, hreflang, title, length);
+        return AtomReader.atomFactory.createAtomLink(
+                href, rel, type, hreflang, title, length);
     }
-
 }

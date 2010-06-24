@@ -3,6 +3,7 @@ package org.geotoolkit.data.kml.model;
 import java.util.List;
 import org.geotoolkit.data.kml.xsd.SimpleType;
 import static java.util.Collections.*;
+import static org.geotoolkit.data.kml.xml.KmlModelConstants.*;
 
 /**
  *
@@ -10,11 +11,17 @@ import static java.util.Collections.*;
  */
 public class DefaultPair extends DefaultAbstractObject implements Pair{
 
-    private final StyleState key;
-    private final String styleUrl;
-    private final AbstractStyleSelector styleSelector;
-    private final List<SimpleType> pairSimpleExtensions;
-    private final List<AbstractObject> pairObjectExtensions;
+    private StyleState key;
+    private String styleUrl;
+    private AbstractStyleSelector styleSelector;
+    private List<SimpleType> pairSimpleExtensions;
+    private List<AbstractObject> pairObjectExtensions;
+
+    public DefaultPair(){
+        this.key = DEF_STYLE_STATE;
+        this.pairSimpleExtensions = EMPTY_LIST;
+        this.pairObjectExtensions = EMPTY_LIST;
+    }
 
     /**
      *
@@ -72,5 +79,50 @@ public class DefaultPair extends DefaultAbstractObject implements Pair{
      */
     @Override
     public List<AbstractObject> getPairObjectExtensions() {return this.pairObjectExtensions;}
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setKey(StyleState key) {
+        this.key = key;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setStyleUrl(String styleUrl) {
+        this.styleUrl = styleUrl;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setAbstractStyleSelector(AbstractStyleSelector styleSelector) {
+        this.styleSelector = styleSelector;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setPairSimpleExtensions(List<SimpleType> pairSimpleExtensions) {
+        this.pairSimpleExtensions = pairSimpleExtensions;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setPairObjectExtensions(List<AbstractObject> pairObjectExtensions) {
+        this.pairObjectExtensions = pairObjectExtensions;
+    }
 
 }

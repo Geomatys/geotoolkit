@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.util.List;
 import org.geotoolkit.data.kml.xsd.SimpleType;
 import static java.util.Collections.*;
+import static org.geotoolkit.data.kml.xml.KmlModelConstants.*;
 
 /**
  *
@@ -11,9 +12,18 @@ import static java.util.Collections.*;
  */
 public class DefaultLineStyle extends DefaultAbstractColorStyle implements LineStyle {
 
-    private final double width;
-    private final List<SimpleType> lineStyleSimpleExtensions;
-    private final List<AbstractObject> lineStyleObjectExtentions;
+    private double width;
+    private List<SimpleType> lineStyleSimpleExtensions;
+    private List<AbstractObject> lineStyleObjectExtentions;
+
+    /**
+     * 
+     */
+    public DefaultLineStyle() {
+        this.width = DEF_WIDTH;
+        this.lineStyleSimpleExtensions = EMPTY_LIST;
+        this.lineStyleSimpleExtensions = EMPTY_LIST;
+    }
 
     /**
      *
@@ -34,7 +44,7 @@ public class DefaultLineStyle extends DefaultAbstractColorStyle implements LineS
             Color color, ColorMode colorMode,
             List<SimpleType> colorStyleSimpleExtensions, List<AbstractObject> colorStyleObjectExtensions,
             double width,
-            List<SimpleType> lineStyleSimpleExtensions, List<AbstractObject> lineStyleObjectExtensions){
+            List<SimpleType> lineStyleSimpleExtensions, List<AbstractObject> lineStyleObjectExtensions) {
         super(objectSimpleExtensions, idAttributes,
                 subStyleSimpleExtensions, subStyleObjectExtensions,
                 color, colorMode, colorStyleSimpleExtensions, colorStyleObjectExtensions);
@@ -48,28 +58,60 @@ public class DefaultLineStyle extends DefaultAbstractColorStyle implements LineS
      * @{@inheritDoc }
      */
     @Override
-    public double getWidth() {return this.width;}
-
-    /**
-     *
-     * @{@inheritDoc }
-     */
-    @Override
-    public List<SimpleType> getLineStyleSimpleExtensions() {return this.lineStyleSimpleExtensions;}
-
-    /**
-     *
-     * @{@inheritDoc }
-     */
-    @Override
-    public List<AbstractObject> getLineStyleObjectExtensions() {return this.lineStyleObjectExtentions;}
-
-    @Override
-    public String toString(){
-        String resultat = super.toString()+
-                "\n\tLineStyleDefault : "+
-                "\n\twidth : "+this.width;
-        return resultat;
+    public double getWidth() {
+        return this.width;
     }
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public List<SimpleType> getLineStyleSimpleExtensions() {
+        return this.lineStyleSimpleExtensions;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public List<AbstractObject> getLineStyleObjectExtensions() {
+        return this.lineStyleObjectExtentions;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setWidth(double width) {
+        this.width = width;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setLineStyleSimpleExtensions(List<SimpleType> lineStyleSimpleExtensions) {
+        this.lineStyleSimpleExtensions = lineStyleSimpleExtensions;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setLineStyleObjectExtensions(List<AbstractObject> lineStyleObjectExtensions) {
+        this.lineStyleObjectExtentions = lineStyleObjectExtensions;
+    }
+
+    @Override
+    public String toString() {
+        String resultat = super.toString()
+                + "\n\tLineStyleDefault : "
+                + "\n\twidth : " + this.width;
+        return resultat;
+    }
 }

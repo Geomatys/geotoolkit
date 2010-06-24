@@ -8,24 +8,22 @@ import static java.util.Collections.*;
  *
  * @author Samuel Andrés
  */
-public class DefaultAtomPersonConstruct implements AtomPersonConstruct{
+public class DefaultAtomPersonConstruct implements AtomPersonConstruct {
 
     private List<Object> params;
 
     /**
      * 
      */
-    public DefaultAtomPersonConstruct(){
+    public DefaultAtomPersonConstruct() {
         this.params = EMPTY_LIST;
     }
-    
+
     /**
      *
-     * @param names
-     * @param uris
-     * @param emails
+     * @param params
      */
-    public DefaultAtomPersonConstruct(final List<Object> params){
+    public DefaultAtomPersonConstruct(final List<Object> params) {
         this.params = (params == null) ? EMPTY_LIST : verifParams(params);
     }
 
@@ -34,22 +32,34 @@ public class DefaultAtomPersonConstruct implements AtomPersonConstruct{
      * @{@inheritDoc }
      */
     @Override
-    public List<Object> getParams() {return this.params;}
-
+    public List<Object> getParams() {
+        return this.params;
+    }
 
     /**
      *
      * @{@inheritDoc }
      */
     @Override
-    public void setParams(final List<Object> params) {this.params = this.verifParams(params);}
+    public void setParams(final List<Object> params) {
+        this.params = this.verifParams(params);
+    }
 
-    private List<Object> verifParams(List<Object> params){
-        for (Object param : params){
-            if(!(param instanceof String) && !(param instanceof AtomEmail) && !(param instanceof URI))
-                throw new IllegalArgumentException("This list must content only String, URI or AtomEmail instances.");
+    /**
+     * <p>THis method checks parameters class.</p>
+     *
+     * @param params
+     * @return
+     */
+    private List<Object> verifParams(List<Object> params) {
+        for (Object param : params) {
+            if (!(param instanceof String) && !(param instanceof AtomEmail)
+                    && !(param instanceof URI)) {
+                throw new IllegalArgumentException(
+                        "This list must content only String," +
+                        " URI or AtomEmail instances.");
+            }
         }
         return params;
     }
-
 }

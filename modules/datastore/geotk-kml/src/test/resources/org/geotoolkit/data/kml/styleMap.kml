@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2"
+xmlns:atom="http://www.w3.org/2005/Atom"
+xmlns:xal="urn:oasis:names:tc:ciq:xsdschema:xAL:2.0">
+<Document>
+  <name>StyleMap.kml</name>
+  <open>1</open>
+  <Style id="normalState">
+    <IconStyle>
+      <Icon>
+        <href>http://maps.google.com/mapfiles/kml/pal3/icon55.png</href>
+      </Icon>
+    </IconStyle>
+    <LabelStyle>
+    </LabelStyle>
+  </Style>
+  <Style id="highlightState">
+    <IconStyle>
+      <scale>1.1</scale>
+      <Icon>
+        <href>http://maps.google.com/mapfiles/kml/pal3/icon60.png</href>
+      </Icon>
+    </IconStyle>
+    <LabelStyle>
+      <color>ff0000c0</color>
+      <scale>1.1</scale>
+    </LabelStyle>
+  </Style>
+  <StyleMap id="styleMapExample">
+    <Pair>
+      <styleUrl>#normalState</styleUrl>
+    </Pair>
+    <Pair>
+      <key>highlight</key>
+      <styleUrl>#highlightState</styleUrl>
+    </Pair>
+  </StyleMap>
+  <Placemark>
+    <name>StyleMap example</name>
+    <styleUrl>#styleMapExample</styleUrl>
+    <Point>
+      <coordinates>-122.368987,37.817634,0.0</coordinates>
+    </Point>
+  </Placemark>
+</Document>
+</kml>

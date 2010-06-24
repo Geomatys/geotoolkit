@@ -11,7 +11,7 @@ public class DefaultAtomEmail implements AtomEmail {
     /**
      *
      */
-    public DefaultAtomEmail(){
+    public DefaultAtomEmail() {
         this.address = null;
     }
 
@@ -19,11 +19,12 @@ public class DefaultAtomEmail implements AtomEmail {
      * 
      * @param address
      */
-    public DefaultAtomEmail(String address){
-        if(address.matches(".+@.+")){
+    public DefaultAtomEmail(String address) {
+        if (address.matches(".+@.+")) {
             this.address = address;
         } else {
-            throw new IllegalArgumentException("Illegal address format for "+this.getClass());
+            throw new IllegalArgumentException(
+                    "Illegal address format for " + this.getClass());
         }
     }
 
@@ -32,13 +33,16 @@ public class DefaultAtomEmail implements AtomEmail {
      * @{@inheritDoc }
      */
     @Override
-    public String getAddress() {return this.address;}
+    public String getAddress() {
+        return this.address;
+    }
 
     /**
      *
      * @{@inheritDoc }
      */
     @Override
-    public void setAddress(String address) {this.address = address;}
-
+    public void setAddress(String address) {
+        this.address = address;
+    }
 }

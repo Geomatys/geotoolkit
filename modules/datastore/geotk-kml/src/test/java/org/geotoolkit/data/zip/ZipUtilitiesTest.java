@@ -76,8 +76,7 @@ public class ZipUtilitiesTest {
         List<String> zipContent = listContent(archive);
         assertEquals(zipContent.get(0), file1.getName());
     }
-//ZipUtilities2.compress("/home/samuel/Bureau/test", "", Deflater.BEST_SPEED);
-//        ZipUtilities2.decompress("/home/samuel/Bureau/test.zip", "/home/samuel/Bureau/dezip", false);
+
     @Test
     public void fileTest() throws IOException{
 

@@ -1,6 +1,20 @@
 package org.geotoolkit.data.atom.model;
 
 /**
+ * <p>This interface maps atom link element.</p>
+ *
+ * <pre>
+ * &lt;element name="link">
+ *  &lt;complexType>
+ *      &lt;attribute name="href" use="required"/>
+ *      &lt;attribute name="rel"/>
+ *      &lt;attribute name="type" type="atom:atomMediaType"/>
+ *      &lt;attribute name="hreflang" type="atom:atomLanguageTag"/>
+ *      &lt;attribute name="title"/>
+ *      &lt;attribute name="length"/>
+ *  &lt;/complexType>
+ * &lt;/element>
+ * </pre>
  *
  * @author Samuel Andrés
  */
@@ -42,7 +56,7 @@ public interface AtomLink {
      */
     public String getLength();
 
-        /**
+    /**
      *
      * @param href
      */
@@ -77,5 +91,4 @@ public interface AtomLink {
      * @param length
      */
     public void setLength(final String length);
-
 }
