@@ -120,8 +120,5 @@ public abstract class NotifiedCheckedList<E> extends CheckedArrayList<E>{
             notifyRemove(copy, range);
         }
     }
-    
-    
-    
-        
+      
 }

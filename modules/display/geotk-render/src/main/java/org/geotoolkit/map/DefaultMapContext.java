@@ -23,8 +23,10 @@ import java.util.EventObject;
 import java.util.List;
 import java.util.logging.Logger;
 import java.beans.PropertyChangeEvent;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Level;
 import javax.swing.event.EventListenerList;
 
@@ -34,7 +36,6 @@ import org.geotoolkit.style.CollectionChangeEvent;
 import org.geotoolkit.style.StyleConstants;
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.Utilities;
-import org.geotoolkit.util.collection.NotifiedCheckedList;
 
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -53,20 +54,17 @@ final class DefaultMapContext implements MapContext {
 
     private static final Logger LOGGER = org.geotoolkit.util.logging.Logging.getLogger("org.geotoolkit.map");
 
-    private final List<MapLayer> layers = new NotifiedCheckedList<MapLayer>(MapLayer.class) {
+    private final List<MapLayer> layers = new CopyOnWriteArrayList<MapLayer>() {
 
-        @Override
         protected Object getLock() {
             return DefaultMapContext.this;
         }
 
-        @Override
         protected void notifyAdd(final MapLayer item, final int index) {
             fireLayerChange(CollectionChangeEvent.ITEM_ADDED, item, NumberRange.create(index, index),null );
             item.addLayerListener(layerListener);
         }
 
-        @Override
         protected void notifyAdd(final Collection<? extends MapLayer> items, final NumberRange<Integer> range) {
             fireLayerChange(CollectionChangeEvent.ITEM_ADDED, items, range);
             for(final MapLayer layer : items){
@@ -74,17 +72,91 @@ final class DefaultMapContext implements MapContext {
             }
         }
 
-        @Override
         protected void notifyRemove(final MapLayer item, final int index) {
             fireLayerChange(CollectionChangeEvent.ITEM_REMOVED, item, NumberRange.create(index, index),null );
             item.removeLayerListener(layerListener);
         }
 
-        @Override
         protected void notifyRemove(final Collection<? extends MapLayer> items, final NumberRange<Integer> range) {
             fireLayerChange(CollectionChangeEvent.ITEM_REMOVED, items, range );
             for(final MapLayer layer : items){
                 layer.removeLayerListener(layerListener);
+            }
+        }
+
+        @Override
+        public boolean add(final MapLayer element) throws IllegalArgumentException, UnsupportedOperationException {
+            if(element == null) return false;
+            final boolean added = super.add(element);
+            if (added) {
+                final int index = super.size() - 1;
+                notifyAdd(element, index);
+            }
+            return added;
+        }
+
+        @Override
+        public void add(final int index, final MapLayer element) throws IllegalArgumentException, UnsupportedOperationException {
+            super.add(index, element);
+            notifyAdd(element, index);
+        }
+
+        @Override
+        public boolean addAll(final Collection<? extends MapLayer> collection) throws IllegalArgumentException, UnsupportedOperationException {
+            final int startIndex = super.size();
+            final boolean added = super.addAll(collection);
+            if (added) {
+                notifyAdd(collection, NumberRange.create(startIndex, super.size()-1) );
+            }
+            return added;
+        }
+
+        @Override
+        public boolean addAll(final int index, final Collection<? extends MapLayer> collection) throws IllegalArgumentException, UnsupportedOperationException {
+            final boolean added = super.addAll(index, collection);
+            if (added) {
+                notifyAdd(collection, NumberRange.create(index, index + collection.size()) );
+            }
+            return added;
+        }
+
+        @Override
+        public boolean remove(final Object o) throws UnsupportedOperationException {
+            final int index = super.indexOf(o);
+            if (index >= 0) {
+                super.remove(index);
+                notifyRemove((MapLayer)o, index );
+                return true;
+            }
+            return false;
+        }
+
+        @Override
+        public MapLayer remove(final int index) throws UnsupportedOperationException {
+            final MapLayer removed = super.remove(index);
+            notifyRemove(removed, index );
+            return removed;
+        }
+
+        @Override
+        public boolean removeAll(final Collection<?> c) throws UnsupportedOperationException {
+            //TODO handle remove by collection events if possible
+            // to avoid several calls to remove
+            boolean valid = false;
+            for(final Object i : c){
+                final boolean val = remove(i);
+                if(val) valid = val;
+            }
+            return valid;
+        }
+
+        @Override
+        public void clear() throws UnsupportedOperationException {
+            if(!isEmpty()){
+                final Collection<MapLayer> copy = new ArrayList<MapLayer>(this);
+                final NumberRange<Integer> range = NumberRange.create(0, copy.size()-1);
+                super.clear();
+                notifyRemove(copy, range);
             }
         }
 
