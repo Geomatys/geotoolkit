@@ -70,6 +70,7 @@ import org.geotoolkit.style.StyleUtilities;
 import org.opengis.display.primitive.Graphic;
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.FeatureType;
+import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.feature.type.Name;
 import org.opengis.filter.Filter;
 import org.opengis.filter.expression.Expression;
@@ -531,13 +532,14 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
      */
     protected static Query prepareQuery(RenderingContext2D renderingContext, FeatureMapLayer layer, CachedRule[] rules){
 
-        final FeatureCollection<? extends Feature> fs            = layer.getCollection();
-        final FeatureType schema                                 = fs.getFeatureType();
-        final String geomAttName                                 = schema.getGeometryDescriptor().getLocalName();
-        BoundingBox bbox                                         = renderingContext.getPaintingObjectiveBounds2D();
-        final CoordinateReferenceSystem bboxCRS                  = bbox.getCoordinateReferenceSystem();
-        final CanvasMonitor monitor                              = renderingContext.getMonitor();
-        final CoordinateReferenceSystem layerCRS                 = schema.getCoordinateReferenceSystem();
+        final FeatureCollection<? extends Feature> fs   = layer.getCollection();
+        final FeatureType schema                        = fs.getFeatureType();
+        final GeometryDescriptor geomDesc               = schema.getGeometryDescriptor();
+        BoundingBox bbox                                = renderingContext.getPaintingObjectiveBounds2D();
+        final CoordinateReferenceSystem bboxCRS         = bbox.getCoordinateReferenceSystem();
+        final CanvasMonitor monitor                     = renderingContext.getMonitor();
+        final CoordinateReferenceSystem layerCRS        = schema.getCoordinateReferenceSystem();
+        final String geomAttName                        = (geomDesc!=null)? geomDesc.getLocalName() : null;
 
         if( !CRS.equalsIgnoreMetadata(layerCRS,bboxCRS)){
             //BBox and layer bounds have different CRS. reproject bbox bounds
@@ -589,7 +591,11 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
         //   filter = Filter.INCLUDE;
         //}else{
         //make a bbox filter
-        filter = FILTER_FACTORY.bbox(FILTER_FACTORY.property(geomAttName),bbox);
+        if(geomAttName != null){
+            filter = FILTER_FACTORY.bbox(FILTER_FACTORY.property(geomAttName),bbox);
+        }else{
+            filter = Filter.EXCLUDE;
+        }
         //}
 
         //concatenate geographique filter with data filter if there is one
@@ -665,7 +671,9 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
 
         final Set<String> attributs = GO2Utilities.propertiesCachedNames(rules);
         final Set<String> copy = new HashSet<String>(attributs);
-        copy.add(geomAttName);
+        if(geomAttName != null){
+            copy.add(geomAttName);
+        }
         final String[] atts = copy.toArray(new String[copy.size()]);
 
         //check that properties names does not hold sub properties values, if one is found

@@ -24,7 +24,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.data.FeatureCollection;
@@ -85,17 +84,24 @@ public class StatefullFeatureLayerJ2D extends StatelessFeatureLayerJ2D{
         //we work against the 2D crs for features
         //todo we should work against the ND crs when datastore will handle more than 2D.
         final CoordinateReferenceSystem objectiveCRS = context.getObjectiveCRS2D();
+
+        CoordinateReferenceSystem sourceCRS = dataCRS;
+        if(sourceCRS == null){
+            //layer has no projection ? we will assume it is the objective crs
+            sourceCRS = objectiveCRS;
+        }
+
         if(objectiveCRS != lastObjectiveCRS){
             //change the aff value to force it's refresh
             params.objectiveToDisplay.setTransform(2, 0, 0, 2, 0, 0);
             lastObjectiveCRS = objectiveCRS;
             objectiveCleared = true;
-
+            
             try {
-                params.dataToObjective = context.getMathTransform(dataCRS, objectiveCRS);
+                params.dataToObjective = context.getMathTransform(sourceCRS, objectiveCRS);
                 params.dataToObjectiveTransformer.setMathTransform(params.dataToObjective);
             } catch (FactoryException ex) {
-                Logger.getLogger(StatefullFeatureLayerJ2D.class.getName()).log(Level.WARNING, null, ex);
+                getLogger().log(Level.WARNING, null, ex);
             }
 
             for(StatefullProjectedFeature gra : cache.values()){
@@ -109,11 +115,11 @@ public class StatefullFeatureLayerJ2D extends StatelessFeatureLayerJ2D{
 
         if(!objtoDisp.equals(params.objectiveToDisplay)){
             params.objectiveToDisplay.setTransform(objtoDisp);
-            params.updateGeneralizationFactor(context, dataCRS);
+            params.updateGeneralizationFactor(context, sourceCRS);
             try {
-                params.dataToDisplayTransformer.setMathTransform(context.getMathTransform(dataCRS, context.getDisplayCRS()));
+                params.dataToDisplayTransformer.setMathTransform(context.getMathTransform(sourceCRS, context.getDisplayCRS()));
             } catch (FactoryException ex) {
-                ex.printStackTrace();
+                getLogger().log(Level.WARNING, "Fail to calculate math transform",ex);
             }
 
             if(!objectiveCleared){
