@@ -27,6 +27,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 
 import org.opengis.util.InternationalString;
 
+import org.geotoolkit.util.Utilities;
 import org.geotoolkit.xml.Namespaces;
 
 
@@ -203,4 +204,66 @@ public final class AnchorType implements InternationalString {
         }
         return (value != null) ? value.compareTo(ot) : +1;
     }
+
+    /**
+     * Compares this {@code AnchorType} with the given object for equality.
+     *
+     * @param object The object to compare with this anchor type.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof AnchorType) {
+            final AnchorType that = (AnchorType) object;
+            return Utilities.equals(this.type,    that.type)    &&
+                   Utilities.equals(this.href,    that.href)    &&
+                   Utilities.equals(this.role,    that.role)    &&
+                   Utilities.equals(this.arcrole, that.arcrole) &&
+                   Utilities.equals(this.title,   that.title)   &&
+                   Utilities.equals(this.show,    that.show)    &&
+                   Utilities.equals(this.actuate, that.actuate) &&
+                   Utilities.equals(this.value,   that.value);
+        }
+        return false;
+    }
+
+    /**
+     * Returns a hash code value for this anchor type.
+     */
+    @Override
+    public int hashCode() {
+        return Utilities.hash(type,
+               Utilities.hash(href,
+               Utilities.hash(role,
+               Utilities.hash(arcrole,
+               Utilities.hash(title,
+               Utilities.hash(show,
+               Utilities.hash(actuate,
+               Utilities.hash(value, 99911302))))))));
+    }
+
+    /*
+     * Following methods are temporary. They are required by Constellation which expect setter
+     * methods. A future version may remove those methods if we update Constellation for using
+     * directly the field values.
+     */
+    @Deprecated public String getType()    {return type;}
+    @Deprecated public URI    getHref()    {return href;}
+    @Deprecated public URI    getRole()    {return role;}
+    @Deprecated public URI    getArcrole() {return arcrole;}
+    @Deprecated public String getTitle()   {return title;}
+    @Deprecated public String getShow()    {return show;}
+    @Deprecated public String getActuate() {return actuate;}
+    @Deprecated public String getValue()   {return value;}
+
+    @Deprecated public void setType   (String  type)   {this.type    = type;}
+    @Deprecated public void setHref   (URI     href)   {this.href    = href;}
+    @Deprecated public void setRole   (URI     role)   {this.role    = role;}
+    @Deprecated public void setArcrole(URI  arcrole)   {this.arcrole = arcrole;}
+    @Deprecated public void setTitle  (String title)   {this.title   = title;}
+    @Deprecated public void setShow   (String show)    {this.show    = show;}
+    @Deprecated public void setActuate(String actuate) {this.actuate = actuate;}
+    @Deprecated public void setValue  (String value)   {this.value   = value;}
 }
