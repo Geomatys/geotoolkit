@@ -140,6 +140,12 @@ public interface KmlFactory {
             List<SimpleType> balloonStyleSimpleExtensions, List<AbstractObject> balloonStyleObjectExtensions);
 
     /**
+     * 
+     * @return
+     */
+    public BalloonStyle createBalloonStyle();
+
+    /**
      *
      * @param objectSimpleExtensions
      * @param idAttributes

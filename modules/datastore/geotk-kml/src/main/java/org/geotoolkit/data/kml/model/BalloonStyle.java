@@ -76,4 +76,40 @@ public interface BalloonStyle extends AbstractSubStyle {
      */
     public List<AbstractObject> getBalloonStyleObjectExtensions();
 
+    /**
+     *
+     * @param bgColor
+     */
+    public void setBgColor(Color bgColor);
+
+    /**
+     *
+     * @param textColor
+     */
+    public void setTextColor(Color textColor);
+
+    /**
+     *
+     * @param text
+     */
+    public void setText(String text);
+
+    /**
+     *
+     * @param displayMode
+     */
+    public void setDisplayMode(DisplayMode displayMode);
+
+    /**
+     *
+     * @param balloonStyleSimpleExtensions
+     */
+    public void setBalloonStyleSimpleExtensions(List<SimpleType> balloonStyleSimpleExtensions);
+
+    /**
+     * 
+     * @param balloonStyleObjectExtensions
+     */
+    public void setBalloonStyleObjectExtensions(List<AbstractObject> balloonStyleObjectExtensions);
+
 }

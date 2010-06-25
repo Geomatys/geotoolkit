@@ -192,6 +192,14 @@ public class DefaultKmlFactory implements KmlFactory {
      * @{@inheritDoc }
      */
     @Override
+    public BalloonStyle createBalloonStyle(){
+        return new DefaultBalloonStyle();
+    }
+
+    /**
+     * @{@inheritDoc }
+     */
+    @Override
     public BasicLink createBasicLink(
             List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
             String href, List<SimpleType> basicLinkSimpleExtensions, 

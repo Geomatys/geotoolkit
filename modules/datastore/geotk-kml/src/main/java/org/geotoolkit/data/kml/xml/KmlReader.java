@@ -116,6 +116,11 @@ public class KmlReader extends StaxStreamReader {
 
     public KmlReader() {
         super();
+//        System.setProperty("javax.xml.stream.XMLInputFactory", "com.bea.xml.stream.MXParserFactory");
+//        System.setProperty("javax.xml.stream.XMLEventFactory", "com.bea.xml.stream.EventFactory");
+
+//        System.setProperty("javax.xml.stream.XMLInputFactory", "com.ctc.wstx.stax.WstxInputFactory");
+//        System.setProperty("javax.xml.stream.XMLEventFactory", "com.ctc.wstx.stax.WstxEventFactory");
     }
 
     @Override
@@ -1078,7 +1083,7 @@ public class KmlReader extends StaxStreamReader {
                             location = this.readLocation();
                         } else if (TAG_ORIENTATION.equals(eName)) {
                             orientation = this.readOrientation();
-                        } else if (TAG_SCALE.equals(eName)) {
+                        } else if (TAG_SCALE_BIG.equals(eName)) {
                             scale = readScale();
                         } else if (TAG_LINK.equals(eName)) {
                             link = this.readLink(eName);
@@ -1237,7 +1242,8 @@ public class KmlReader extends StaxStreamReader {
                     break;
 
                 case XMLStreamConstants.END_ELEMENT:
-                    if (TAG_SCALE.equals(reader.getLocalName()) && URI_KML.contains(reader.getNamespaceURI())) {
+                    if (TAG_SCALE_BIG.equals(reader.getLocalName())
+                            && URI_KML.contains(reader.getNamespaceURI())) {
                         break boucle;
                     }
                     break;
@@ -1280,7 +1286,7 @@ public class KmlReader extends StaxStreamReader {
                     // LOCATION
                     if (URI_KML.equals(eUri)) {
                         if (TAG_LONGITUDE.equals(eName)) {
-                            longitude = KmlUtilities.checkAnglePos180(parseDouble(reader.getElementText()));
+                            longitude = KmlUtilities.checkAngle180(parseDouble(reader.getElementText()));
                         } else if (TAG_LATITUDE.equals(eName)) {
                             latitude = KmlUtilities.checkAngle90(parseDouble(reader.getElementText()));
                         } else if (TAG_ALTITUDE.equals(eName)){
@@ -1335,7 +1341,7 @@ public class KmlReader extends StaxStreamReader {
                         } else if (TAG_TILT.equals(eName)) {
                             tilt = KmlUtilities.checkAnglePos180(parseDouble(reader.getElementText()));
                         } else if (TAG_ROLL.equals(eName)) {
-                            roll = KmlUtilities.checkAnglePos180(parseDouble(reader.getElementText()));
+                            roll = KmlUtilities.checkAngle180(parseDouble(reader.getElementText()));
                         }
                     }
                     break;

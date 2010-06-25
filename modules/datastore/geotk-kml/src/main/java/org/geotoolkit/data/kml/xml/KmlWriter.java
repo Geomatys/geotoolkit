@@ -2113,7 +2113,7 @@ public class KmlWriter extends StaxStreamWriter {
      */
     private void writeSnippet(String snippet) throws XMLStreamException{
         writer.writeStartElement(URI_KML, TAG_SNIPPET);
-        writer.writeCharacters(snippet);
+        this.writeCharacterContent(snippet);
         writer.writeEndElement();
     }
 
@@ -2146,7 +2146,7 @@ public class KmlWriter extends StaxStreamWriter {
      */
     private void writeDescription(String description) throws XMLStreamException{
         writer.writeStartElement(URI_KML, TAG_DESCRIPTION);
-        writer.writeCharacters(description);
+        this.writeCharacterContent(description);
         writer.writeEndElement();
     }
 
@@ -2168,7 +2168,7 @@ public class KmlWriter extends StaxStreamWriter {
      */
     private void writeText(String text) throws XMLStreamException{
         writer.writeStartElement(URI_KML, TAG_TEXT);
-        writer.writeCharacters(text);
+        this.writeCharacterContent(text);
         writer.writeEndElement();
     }
 
@@ -2323,7 +2323,7 @@ public class KmlWriter extends StaxStreamWriter {
      */
     private void writeLinkDescription(String linkDescription) throws XMLStreamException {
         writer.writeStartElement(URI_KML, TAG_LINK_DESCRIPTION);
-        writer.writeCharacters(linkDescription);
+        this.writeCharacterContent(linkDescription);
         writer.writeEndElement();
     }
 
@@ -2346,7 +2346,7 @@ public class KmlWriter extends StaxStreamWriter {
     private void writeLinkSnippet(Snippet linkSnippet) throws XMLStreamException {
         writer.writeStartElement(URI_KML, TAG_LINK_SNIPPET);
         writer.writeAttribute(ATT_MAX_LINES, String.valueOf(linkSnippet.getMaxLines()));
-        writer.writeCharacters(linkSnippet.getContent());
+        this.writeCharacterContent(linkSnippet.getContent());
         writer.writeEndElement();
     }
 
@@ -3090,6 +3090,32 @@ public class KmlWriter extends StaxStreamWriter {
      */
     private static boolean isFiniteNumber(double d){
         return !(Double.isInfinite(d) && Double.isNaN(d));
+    }
+
+    private boolean isCDATA(String string){
+        return string.contains("<");
+    }
+
+    /**
+     * <p>This method whrites character content as
+     * CDATA if input String contains "&lt;" character.
+     * Following KML elements mays contains CDATA : </p>
+     * <ul>
+     * <li>snippet,</p>
+     * <li>description,</li>
+     * <li>text,</li>
+     * <li>linkDescription,</li>
+     * <li>linkSnippet.</li>
+     * </ul>
+     *
+     * @param string
+     * @throws XMLStreamException
+     */
+    private void writeCharacterContent(String string) throws XMLStreamException{
+        if(isCDATA(string))
+            writer.writeCData(string);
+        else
+            writer.writeCharacters(string);
     }
 
 }
