@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.jdbc;
 
-import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.query.QueryBuilder;
@@ -84,7 +83,7 @@ public abstract class JDBCGeometrylessTest extends JDBCTestSupport {
     
     public void testGetBounds() throws Exception {
         JTSEnvelope2D env = (JTSEnvelope2D) dataStore.getEnvelope(QueryBuilder.all(nsname(PERSON)));
-        assertTrue(env.isEmpty());
+        assertNull(env);
     }
     
     public void testCreate() throws Exception {
