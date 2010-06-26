@@ -33,6 +33,7 @@ import java.lang.ref.SoftReference;
 import org.geotoolkit.util.Disposable;
 import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.resources.Errors;
+import org.geotoolkit.internal.ReferenceQueueConsumer;
 
 
 /**
@@ -267,7 +268,7 @@ public class Cache<K,V> extends AbstractMap<K,V> {
      * Returns {@code true} if the given value is an instance of one of the reserved types
      * used internally by this class.
      */
-    static final boolean isReservedType(final Object value) {
+    static boolean isReservedType(final Object value) {
         return (value instanceof Handler<?> || value instanceof Reference<?>);
     }
 
@@ -834,7 +835,7 @@ public class Cache<K,V> extends AbstractMap<K,V> {
 
         /** Creates a references to be stored in the given map under the given key. */
         Soft(final ConcurrentMap<K,Object> map, final K key, final Object value) {
-            super(value, WeakCollectionCleaner.DEFAULT.queue);
+            super(value, ReferenceQueueConsumer.DEFAULT.queue);
             this.map = map;
             this.key = key;
         }
@@ -855,7 +856,7 @@ public class Cache<K,V> extends AbstractMap<K,V> {
 
         /** Creates a references to be stored in the given map under the given key. */
         Weak(final ConcurrentMap<K,Object> map, final K key, final Object value) {
-            super(value, WeakCollectionCleaner.DEFAULT.queue);
+            super(value, ReferenceQueueConsumer.DEFAULT.queue);
             this.map = map;
             this.key = key;
         }

@@ -21,22 +21,37 @@ import java.util.logging.Level;
 import java.lang.ref.Reference;
 import java.lang.ref.ReferenceQueue;
 
+import org.geotoolkit.util.Disposable;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.converter.Classes;
 
 
 /**
  * Base class for thread that will process {@link Reference} enqueued in a {@link ReferenceQueue}.
+ * This thread invokes {@link Disposeable#dispose} on each enqueded {@linkplain Reference reference}.
+ * Every {@link Reference} implementations to be enqueued in {@link ReferenceQueueConsumer#queue}
+ * <strong>must</strong> implement the {@link Disposable} interface
  *
  * @param <T> The type of objects being referenced.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.09
+ * @version 3.13
  *
  * @since 3.00
  * @module
  */
-public abstract class ReferenceQueueConsumer<T> extends DaemonThread {
+public class ReferenceQueueConsumer<T> extends DaemonThread {
+    /**
+     * The default thread.
+     */
+    public static final ReferenceQueueConsumer<Object> DEFAULT;
+    static {
+        // Call to Thread.start() must be outside the constructor
+        // (Reference: Goetz et al.: "Java Concurrency in Practice").
+        DEFAULT = new ReferenceQueueConsumer<Object>("ReferenceQueueConsumer");
+        DEFAULT.start();
+    }
+
     /**
      * List of references collected by the garbage collector.
      */
@@ -55,10 +70,19 @@ public abstract class ReferenceQueueConsumer<T> extends DaemonThread {
 
     /**
      * Invoked everytime a reference has been taken from the {@linkplain #queue}.
+     * The default implementation invokes {@link Disposable#dispose()} method.
+     * Subclasses can override this method if they want a different behavior.
      *
      * @param reference The reference (never {@code null}).
      */
-    protected abstract void process(Reference<? extends T> reference);
+    protected void process(final Reference<? extends T> reference) {
+        /*
+         * If the reference does not implement the Disposeable interface, we want
+         * the ClassCastException to be logged in the "catch" block of the super
+         * class since it would be a programming error that we want to know about.
+         */
+        ((Disposable) reference).dispose();
+    }
 
     /**
      * Loop to be run during the virtual machine lifetime.
@@ -106,6 +130,6 @@ public abstract class ReferenceQueueConsumer<T> extends DaemonThread {
                 // keep the same behaviour as if assertions were turned off.
             }
         }
-        Logging.getLogger(getClass()).log(level, Classes.getShortClassName(this) + " daemon stopped.");
+        Logging.getLogger(getClass()).log(level, "{0} daemon stopped.", Classes.getShortClassName(this));
     }
 }

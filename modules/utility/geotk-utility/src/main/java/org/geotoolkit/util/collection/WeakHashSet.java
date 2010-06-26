@@ -31,6 +31,7 @@ import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.Disposable;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.lang.ThreadSafe;
+import org.geotoolkit.internal.ReferenceQueueConsumer;
 
 
 /**
@@ -106,7 +107,7 @@ public class WeakHashSet<E> extends AbstractSet<E> implements CheckedCollection<
          * Constructs a new weak reference.
          */
         Entry(final E obj, final Entry next, final int hash) {
-            super(obj, WeakCollectionCleaner.DEFAULT.queue);
+            super(obj, ReferenceQueueConsumer.DEFAULT.queue);
             this.next = next;
             this.hash = hash;
         }
@@ -438,9 +439,9 @@ public class WeakHashSet<E> extends AbstractSet<E> implements CheckedCollection<
      *     return object;
      * }
      */
-    private final <T extends E> T intern(final T obj, final int operation) {
+    private <T extends E> T intern(final T obj, final int operation) {
         assert Thread.holdsLock(this);
-        assert WeakCollectionCleaner.DEFAULT.isAlive();
+        assert ReferenceQueueConsumer.DEFAULT.isAlive();
         assert valid() : count;
         if (obj != null) {
             /*
@@ -491,8 +492,8 @@ public class WeakHashSet<E> extends AbstractSet<E> implements CheckedCollection<
 
     /**
      * Returns a view of this set as an array. Elements will be in an arbitrary
-     * order. Note that this array contains strong reference.  Consequently, no
-     * object reclamation will occurs as long as a reference to this array is hold.
+     * order. Note that this array contains strong references. Consequently, no
+     * object reclamation will occur as long as a reference to this array is hold.
      */
     @Override
     public synchronized E[] toArray() {
@@ -503,7 +504,7 @@ public class WeakHashSet<E> extends AbstractSet<E> implements CheckedCollection<
         final Entry[] table = this.table;
         for (int i=0; i<table.length; i++) {
             for (Entry el=table[i]; el!=null; el=el.next) {
-                if ((elements[index]=el.get()) != null) {
+                if ((elements[index] = el.get()) != null) {
                     index++;
                 }
             }

@@ -21,6 +21,7 @@ import java.util.Set;
 import java.awt.image.ColorModel;
 import java.lang.ref.WeakReference;
 
+import org.geotoolkit.util.Disposable;
 import org.geotoolkit.internal.ReferenceQueueConsumer;
 
 
@@ -28,61 +29,38 @@ import org.geotoolkit.internal.ReferenceQueueConsumer;
  * Allows garbage-collection of {@link Palette} after their index color model has been
  * garbage collected.
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.13
  *
  * @since 2.1
  * @module
  */
-final class PaletteDisposer extends ReferenceQueueConsumer<ColorModel> {
+final class PaletteDisposer extends WeakReference<ColorModel> implements Disposable {
     /**
-     * A weak reference to a color model created by a palette.
+     * The palette that created the color model.
      */
-    static final class Reference extends WeakReference<ColorModel> {
-        /**
-         * Starts the disposer thread when the {@link Reference} are about to be created.
-         */
-        private static final PaletteDisposer DISPOSER = new PaletteDisposer();
-        static {
-            // Call to Thread.start() must be outside the constructor
-            // (Reference: Goetz et al.: "Java Concurrency in Practice").
-            DISPOSER.start();
-        }
-
-        /**
-         * The palette that created the color model.
-         */
-        final Palette palette;
-
-        /**
-         * Creates the weak reference for the specified color model.
-         */
-        public Reference(final Palette palette, final ColorModel colors) {
-            super(colors, DISPOSER.queue);
-            this.palette = palette;
-            final Set<Palette> protectedPalettes = palette.factory.protectedPalettes;
-            synchronized (protectedPalettes) {
-                protectedPalettes.add(palette);
-            }
-        }
-    }
+    private final Palette palette;
 
     /**
-     * Creates a new disposer thread.
+     * Creates the weak reference for the specified color model.
      */
-    private PaletteDisposer() {
-        super("PaletteDisposer");
+    public PaletteDisposer(final Palette palette, final ColorModel colors) {
+        super(colors, ReferenceQueueConsumer.DEFAULT.queue);
+        this.palette = palette;
+        final Set<Palette> protectedPalettes = palette.factory.protectedPalettes;
+        synchronized (protectedPalettes) {
+            protectedPalettes.add(palette);
+        }
     }
 
     /**
      * Removes the palette from the set of protected ones.
      */
     @Override
-    protected void process(final java.lang.ref.Reference<? extends ColorModel> reference) {
-        final Reference ref = (Reference) reference;
-        final Set<Palette> protectedPalettes = ref.palette.factory.protectedPalettes;
+    public void dispose() {
+        final Set<Palette> protectedPalettes = palette.factory.protectedPalettes;
         synchronized (protectedPalettes) {
-            protectedPalettes.remove(ref.palette);
+            protectedPalettes.remove(palette);
         }
     }
 }

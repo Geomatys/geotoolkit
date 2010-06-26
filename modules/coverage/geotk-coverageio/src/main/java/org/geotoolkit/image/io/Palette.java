@@ -201,7 +201,7 @@ public abstract class Palette {
         }
         final ImageTypeSpecifier its = createImageTypeSpecifier();
         samples   = its.getSampleModel();
-        colors    = new PaletteDisposer.Reference(this, its.getColorModel());
+        colors    = new PaletteDisposer(this, its.getColorModel());
         specifier = new WeakReference<ImageTypeSpecifier>(its);
         return its;
     }

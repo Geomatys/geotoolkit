@@ -26,6 +26,7 @@ import org.opengis.coverage.Coverage;
 
 import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.resources.Errors;
+import org.geotoolkit.util.Disposable;
 import org.geotoolkit.util.NullArgumentException;
 import org.geotoolkit.internal.ReferenceQueueConsumer;
 
@@ -62,24 +63,13 @@ import org.geotoolkit.internal.ReferenceQueueConsumer;
  *        package for that reason.}
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.00
+ * @version 3.13
  *
  * @since 2.1
  * @module
  */
 @ThreadSafe(concurrent = true)
 public class CoverageReferences {
-    /**
-     * The thread for removal {@link #pool} entries in which the coverage
-     * has been garbage-collected.
-     */
-    private static final Disposer DISPOSER = new Disposer();
-    static {
-        // Call to Thread.start() must be outside the constructor
-        // (Reference: Goetz et al.: "Java Concurrency in Practice").
-        DISPOSER.start();
-    }
-
     /**
      * The default, system-wide weak references for {@linkplain Coverage coverages}.
      */
@@ -182,13 +172,13 @@ public class CoverageReferences {
     /**
      * A reference to a coverage, to be stored in {@link CoverageReferences#pool}.
      *
-     * @author Martin Desruisseaux (IRD)
-     * @version 3.00
+     * @author Martin Desruisseaux (IRD, Geomatys)
+     * @version 3.13
      *
      * @since 2.1
      * @module
      */
-    private final class Ref extends WeakReference<Coverage> {
+    private final class Ref extends WeakReference<Coverage> implements Disposable {
         /**
          * Hash code value, saved at construction time before
          * the coverage reference is nullified.
@@ -199,7 +189,7 @@ public class CoverageReferences {
          * Constructs a reference to the specified coverage.
          */
         Ref(final Coverage coverage) {
-            super(coverage, DISPOSER.queue);
+            super(coverage, ReferenceQueueConsumer.DEFAULT.queue);
             hash = System.identityHashCode(coverage);
         }
 
@@ -250,39 +240,21 @@ public class CoverageReferences {
          */
         @Override
         public void clear() {
-            // Do not invoke super.clear() - see javadoc.
+            dispose();
+        }
+
+        /**
+         * Removes a reference from the map. This method is invoked by
+         * {@link ReferenceQueueConsumer#process} when the reference has
+         * been garbage-collected.
+         */
+        @Override
+        public void dispose() {
+            // Do not invoke super.clear() - see clear() javadoc.
             if (get() == null) {
                 final Ref old = pool.remove(this);
                 assert old == this || old == null;
             }
-        }
-    }
-
-    /**
-     * The thread for removing dead references.
-     *
-     * @author Martin Desruisseaux (IRD)
-     * @version 3.00
-     *
-     * @since 2.1
-     * @module
-     */
-    private static final class Disposer extends ReferenceQueueConsumer<Coverage> {
-        /**
-         * Constructs a cleaner thread.
-         */
-        Disposer() {
-            super("CoverageReferences");
-        }
-
-        /**
-         * Removes a reference from the map. We rely on the {@link Ref#clear}
-         * method which override the {@link Reference#clear} method invoked here.
-         */
-        @Override
-        protected void process(final Reference<? extends Coverage> ref) {
-            assert ref.get() == null;
-            ref.clear();
         }
     }
 }

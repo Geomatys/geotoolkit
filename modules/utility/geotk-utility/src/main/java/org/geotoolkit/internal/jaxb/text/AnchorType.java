@@ -65,6 +65,8 @@ public final class AnchorType implements InternationalString {
 
     /**
      * A URN to an external resources, or to an other part of a XML document, or an identifier.
+     * The {@code idref} attribute allows an XML element to refer to another XML element that
+     * has a corresponding {@code id} attribute.
      */
     @XmlAttribute(namespace = Namespaces.XLINK)
     public URI href;
@@ -195,6 +197,8 @@ public final class AnchorType implements InternationalString {
     /**
      * Compares the value of this object with the given international string for order.
      * Null values are sorted last.
+     *
+     * @param other The string to compare with this anchor type.
      */
     @Override
     public int compareTo(final InternationalString other) {

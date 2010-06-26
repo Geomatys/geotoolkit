@@ -20,19 +20,23 @@ package org.geotoolkit.util.collection;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Array;
 import java.util.AbstractMap;
+import java.util.AbstractSet;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
+import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.Disposable;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.NullArgumentException;
 import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.resources.Errors;
+import org.geotoolkit.internal.ReferenceQueueConsumer;
 
 
 /**
@@ -65,16 +69,11 @@ import org.geotoolkit.resources.Errors;
  * as soon as the garbage collector determines that they are no longuer in use. If caching
  * service are wanted, or if concurrency are wanted, consider using {@link Cache} instead.
  *
- * {@section Unsupported operations}
- * Current implementation does not support the {@link #entrySet entrySet}, {@link #keySet keySet}
- * and {@link #values values} views. Note that the above operations are supported by {@link Cache},
- * which is a more powerfull alternative to this class.
- *
  * @param <K> The class of key elements.
  * @param <V> The class of value elements.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.06
+ * @version 3.13
  *
  * @see java.util.WeakHashMap
  * @see WeakHashSet
@@ -95,6 +94,11 @@ public class WeakValueHashMap<K,V> extends AbstractMap<K,V> {
      * where {@link #table} must be rebuild.
      */
     private static final float LOAD_FACTOR = 0.75f;
+
+    /**
+     * Number of millisecond to wait before to rehash the table for reducing its size.
+     */
+    private static final long HOLD_TIME = 60 * 1000L;
 
     /**
      * An entry in the {@link WeakValueHashMap}. This is a weak reference
@@ -121,7 +125,7 @@ public class WeakValueHashMap<K,V> extends AbstractMap<K,V> {
          * Constructs a new weak reference.
          */
         Entry(final K key, final V value, final Entry next, final int index) {
-            super(value, WeakCollectionCleaner.DEFAULT.queue);
+            super(value, ReferenceQueueConsumer.DEFAULT.queue);
             this.key   = key;
             this.next  = next;
             this.index = index;
@@ -218,10 +222,9 @@ public class WeakValueHashMap<K,V> extends AbstractMap<K,V> {
     private long lastRehashTime;
 
     /**
-     * Number of millisecond to wait before to rehash
-     * the table for reducing its size.
+     * The set of entries, created only when first needed.
      */
-    private static final long HOLD_TIME = 60 * 1000L;
+    private transient Set<Map.Entry<K,V>> entrySet;
 
     /**
      * Creates a {@code WeakValueHashMap}.
@@ -441,7 +444,7 @@ public class WeakValueHashMap<K,V> extends AbstractMap<K,V> {
      */
     @Override
     public synchronized V get(final Object key) {
-        assert WeakCollectionCleaner.DEFAULT.isAlive();
+        assert ReferenceQueueConsumer.DEFAULT.isAlive();
         assert valid();
         final Entry[] table = this.table;
         final int index = hashCode(key) % table.length;
@@ -457,7 +460,7 @@ public class WeakValueHashMap<K,V> extends AbstractMap<K,V> {
      * Implementation of {@link #put} and {@link #remove} operations.
      */
     private synchronized V intern(final K key, final V value) {
-        assert WeakCollectionCleaner.DEFAULT.isAlive();
+        assert ReferenceQueueConsumer.DEFAULT.isAlive();
         assert valid();
         /*
          * Check if {@code obj} is already contained in this
@@ -531,12 +534,67 @@ public class WeakValueHashMap<K,V> extends AbstractMap<K,V> {
     /**
      * Returns a set view of the mappings contained in this map.
      * Each element in this set is a {@link java.util.Map.Entry}.
-     * The current implementation thrown {@link UnsupportedOperationException}.
      *
      * @return a set view of the mappings contained in this map.
      */
     @Override
-    public Set<Map.Entry<K,V>> entrySet() {
-        throw new UnsupportedOperationException();
+    public synchronized Set<Map.Entry<K,V>> entrySet() {
+        if (entrySet == null) {
+            entrySet = new EntrySet();
+        }
+        return entrySet;
+    }
+
+    /**
+     * The set of entries.
+     *
+     * @author Martin Desruisseaux (Geomatys)
+     * @version 3.13
+     *
+     * @since 3.13
+     * @module
+     */
+    private final class EntrySet extends AbstractSet<Map.Entry<K,V>> {
+        /**
+         * Returns the number of entries in the map.
+         */
+        @Override
+        public int size() {
+            return WeakValueHashMap.this.size();
+        }
+
+        /**
+         * Returns a view of this set as an array. Note that this array contains strong references.
+         * Consequently, no object reclamation will occur as long as a reference to this array is
+         * hold.
+         */
+        @Override
+        public Map.Entry<K,V>[] toArray() {
+            synchronized (WeakValueHashMap.this) {
+                assert valid();
+                @SuppressWarnings({"unchecked","rawtypes"})
+                final Map.Entry<K,V>[] elements = new Map.Entry[size()];
+                int index = 0;
+                final Entry[] table = WeakValueHashMap.this.table;
+                for (int i=0; i<table.length; i++) {
+                    for (Entry el=table[i]; el!=null; el=el.next) {
+                        final Map.Entry<K,V> entry = new SimpleEntry<K,V>(el);
+                        if (entry.getValue() != null) {
+                            elements[index++] = entry;
+                        }
+                    }
+                }
+                return XArrays.resize(elements, index);
+            }
+        }
+
+        /**
+         * Returns an iterator over the elements contained in this collection. No element from
+         * this set will be garbage collected as long as a reference to the iterator is hold.
+         */
+        @Override
+        public Iterator<Map.Entry<K, V>> iterator() {
+            return Arrays.asList(toArray()).iterator();
+        }
     }
 }

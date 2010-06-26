@@ -21,10 +21,16 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.logging.Level;
+import java.util.logging.LogRecord;
 import java.lang.ref.PhantomReference;
 
-import org.geotoolkit.internal.Threads;
 import org.geotoolkit.lang.Static;
+import org.geotoolkit.util.Disposable;
+import org.geotoolkit.util.logging.Logging;
+import org.geotoolkit.resources.Loggings;
+import org.geotoolkit.internal.Threads;
+import org.geotoolkit.internal.ReferenceQueueConsumer;
 
 
 /**
@@ -38,13 +44,13 @@ import org.geotoolkit.lang.Static;
  *        Callers should ignore that detail.}
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.03
+ * @version 3.13
  *
  * @since 3.03
  * @module
  */
 @Static
-public final class TemporaryFile extends PhantomReference<File> {
+public final class TemporaryFile extends PhantomReference<File> implements Disposable {
     /**
      * The temporary files not yet deleted. Keys are the string returned by {@link File#getPath()}.
      */
@@ -77,7 +83,7 @@ public final class TemporaryFile extends PhantomReference<File> {
      * Creates a new reference to a temporary file.
      */
     private TemporaryFile(final File file) {
-        super(file, TemporaryFileCleaner.INSTANCE.queue);
+        super(file, ReferenceQueueConsumer.DEFAULT.queue);
         path = file.getPath();
     }
 
@@ -123,12 +129,12 @@ public final class TemporaryFile extends PhantomReference<File> {
     }
 
     /**
-     * Deletes the current file. This is invoked by {@link TemporaryFileCleaner}
+     * Deletes the current file. This is invoked by {@link #dispose()}
      * when a {@link File} object has been garbage-collected.
      *
      * @return {@code true} if the file has been successfully deleted.
      */
-    final boolean delete() {
+    private boolean delete() {
         synchronized (REFERENCES) {
             if (REFERENCES.remove(path) == this) {
                 return new File(path).delete();
@@ -155,6 +161,24 @@ public final class TemporaryFile extends PhantomReference<File> {
             }
         }
         return deleted;
+    }
+
+    /**
+     * Deletes this file. This method is invoked automatically when
+     * a {@link File} object has been garbage-collected.
+     */
+    @Override
+    public void dispose() {
+        if (delete()) {
+            /*
+             * Logs the message at the WARNING level because execution of this code
+             * means that the application failed to delete itself the temporary file.
+             */
+            final LogRecord record = Loggings.format(Level.WARNING, Loggings.Keys.TEMPORARY_FILE_GC_$1, this);
+            record.setSourceClassName(TemporaryFile.class.getName());
+            record.setSourceMethodName("delete");
+            Logging.log(TemporaryFile.class, record);
+        }
     }
 
     /**
