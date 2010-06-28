@@ -21,6 +21,7 @@ import java.net.URI;
 import java.net.URL;
 import java.net.URISyntaxException;
 import java.net.MalformedURLException;
+import java.util.UUID;
 import javax.measure.unit.Unit;
 
 import org.geotoolkit.measure.Units;
@@ -57,7 +58,7 @@ import org.geotoolkit.measure.Units;
  * {@code ObjectConverters} to a (un)marshaller.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.07
+ * @version 3.13
  *
  * @since 3.07
  * @module
@@ -126,6 +127,35 @@ public class ObjectConverters {
             return Units.valueOf(value);
         } catch (IllegalArgumentException e) {
             if (!exceptionOccured(value, String.class, Unit.class, e)) {
+                throw e;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Converts the given string to a Universal Unique Identifier. The default implementation
+     * is as below, omitting the check for null value and the call to {@link #exceptionOccured
+     * exceptionOccured} in case of error:
+     *
+     * {@preformat java
+     *     return UUID.fromString(value);
+     * }
+     *
+     * @param  value The string to convert to a UUID, or {@code null}.
+     * @return The converted UUID, or {@code null} if the given value was null of if an
+     *         exception was thrown and {@code exceptionOccured} returned {@code true}.
+     * @throws IllegalArgumentException If the given string can not be converted to a UUID.
+     *
+     * @see UUID#fromString(String)
+     *
+     * @since 3.13
+     */
+    public UUID toUUID(String value) throws IllegalArgumentException {
+        if (value != null && (value = value.trim()).length() != 0) try {
+            return UUID.fromString(value);
+        } catch (RuntimeException e) { // Multi-catch: IllegalArgumentException & NumberFormatException
+            if (!exceptionOccured(value, String.class, UUID.class, e)) {
                 throw e;
             }
         }

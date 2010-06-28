@@ -31,7 +31,7 @@ import org.geotoolkit.referencing.DefaultReferenceIdentifier;
  * package documentation for more information about JAXB and interface.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.05
+ * @version 3.13
  *
  * @since 2.5
  * @module
@@ -72,6 +72,9 @@ public final class IdentifierAdapter extends MetadataAdapter<IdentifierAdapter,I
     @Override
     @XmlElement(name = "MD_Identifier")
     public DefaultIdentifier getElement() {
+        if (uuidref != null) {
+            return null;
+        }
         final Identifier metadata = this.metadata;
         if (metadata instanceof ReferenceIdentifier) {
             return null;
@@ -98,6 +101,9 @@ public final class IdentifierAdapter extends MetadataAdapter<IdentifierAdapter,I
      */
     @XmlElement(name = "RS_Identifier")
     public DefaultReferenceIdentifier getReferenceIdentifier() {
+        if (uuidref != null) {
+            return null;
+        }
         final Identifier metadata = this.metadata;
         if (!(metadata instanceof ReferenceIdentifier)) {
             return null;

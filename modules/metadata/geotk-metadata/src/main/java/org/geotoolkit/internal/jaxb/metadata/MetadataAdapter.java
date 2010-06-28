@@ -17,7 +17,13 @@
  */
 package org.geotoolkit.internal.jaxb.metadata;
 
+import java.util.UUID;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
+
+import org.geotoolkit.util.UUIDs;
+import org.geotoolkit.xml.Namespaces;
+import org.geotoolkit.internal.jaxb.MarshalContext;
 
 
 /**
@@ -28,7 +34,7 @@ import javax.xml.bind.annotation.adapters.XmlAdapter;
  *
  * @author Cédric Briançon (Geomatys)
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.05
+ * @version 3.13
  *
  * @see XmlAdapter
  *
@@ -44,6 +50,27 @@ public abstract class MetadataAdapter<ValueType extends MetadataAdapter<ValueTyp
     protected BoundType metadata;
 
     /**
+     * An identifier for the metadata, or {@code null} if none. This field is initialized
+     * at construction time to the value registered in {@link UUIDs}, if any.
+     *
+     * @since 3.13
+     */
+    @XmlAttribute(namespace = Namespaces.GCO)
+    protected String uuid;
+
+    /**
+     * A URN to an external resources, or to an other part of a XML document, or an identifier.
+     * The {@code uuidref} attribute is used to refer to an XML element that has a corresponding
+     * {@code uuid} attribute.
+     *
+     * @see <a href="http://www.schemacentral.com/sc/niem21/a-uuidref-1.html">Usage of uuidref</a>
+     *
+     * @since 3.13
+     */
+    @XmlAttribute(namespace = Namespaces.GCO)
+    protected String uuidref;
+
+    /**
      * Empty constructor for subclasses only.
      */
     protected MetadataAdapter() {
@@ -56,6 +83,10 @@ public abstract class MetadataAdapter<ValueType extends MetadataAdapter<ValueTyp
      */
     protected MetadataAdapter(final BoundType metadata) {
         this.metadata = metadata;
+        final UUID id = UUIDs.DEFAULT.getUUID(metadata);
+        if (id != null) {
+            uuid = id.toString();
+        }
     }
 
     /**
@@ -90,11 +121,18 @@ public abstract class MetadataAdapter<ValueType extends MetadataAdapter<ValueTyp
      *
      * @param value The adapter for this metadata value.
      * @return A GeoAPI interface which represents the metadata value.
+     *
+     * @todo We should replace the (BoundType) cast by a call to Class.cast(Object).
      */
     @Override
+    @SuppressWarnings("unchecked")
     public final BoundType unmarshal(final ValueType value) {
         if (value == null) {
             return null;
+        }
+        if (value.metadata == null && uuidref != null) {
+            final UUID uuid = MarshalContext.converters().toUUID(uuidref);
+            value.metadata = (BoundType) UUIDs.DEFAULT.lookup(uuid);
         }
         return value.metadata;
     }
