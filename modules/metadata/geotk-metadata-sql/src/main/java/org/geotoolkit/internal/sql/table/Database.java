@@ -147,6 +147,8 @@ public class Database implements Localized {
         /**
          * The {@linkplain Thread#getId() ID} of the thread which is using this {@code Session},
          * or {@code null} if this {@code Session} is available for reuse by any thread.
+         * <p>
+         * This field can be read or written only in a {@code synchronized(session)} block.
          */
         private Long threadID;
 
@@ -219,11 +221,22 @@ public class Database implements Localized {
          */
         @Override
         public String toString() {
-            final StringBuilder buffer = new StringBuilder("Session[");
-            if (threadID != null) {
-                buffer.append("threadID=").append(threadID);
+            final long currentID = Thread.currentThread().getId();
+            final StringBuilder buffer = new StringBuilder("Sessions:");
+            synchronized (sessions) {
+                for (final Map.Entry<Long,Session> entry : sessions.entrySet()) {
+                    final Session session = entry.getValue();
+                    final Long check = session.threadID;
+                    final Long id = entry.getKey();
+                    buffer.append("\n  ").append(session == this ? "this." : "     ")
+                          .append("threadID=").append(id).append(' ')
+                          .append(check == null ? "available" : check.equals(id) ? "in use" : "ERROR");
+                    if (id == currentID) {
+                        buffer.append(" (current thread)");
+                    }
+                }
             }
-            return buffer.append(']').toString();
+            return buffer.toString();
         }
     }
 
@@ -352,7 +365,7 @@ public class Database implements Localized {
      */
     final Calendar getCalendar() {
         final Session s = getLocalCache();
-        assert Thread.holdsLock(s);
+        assert Thread.holdsLock(s) : s;
         Calendar calendar = s.calendar;
         if (calendar == null) {
             s.calendar = calendar = new GregorianCalendar(timezone, Locale.CANADA);
@@ -492,7 +505,7 @@ public class Database implements Localized {
         if (locked) try {
             if (transactionLock.getHoldCount() == 1) {
                 final LocalCache sp = getLocalCache();
-                assert Thread.holdsLock(sp); // Necessary for blocking the cleaner thread.
+                assert Thread.holdsLock(sp) : sp; // Necessary for blocking the cleaner thread.
                 final Connection connection = sp.connection();
                 connection.setReadOnly(false);
                 connection.setAutoCommit(false);
@@ -520,7 +533,7 @@ public class Database implements Localized {
         try {
             if (transactionLock.getHoldCount() == 1) {
                 final LocalCache sp = getLocalCache();
-                assert Thread.holdsLock(sp); // Necessary for blocking the cleaner thread.
+                assert Thread.holdsLock(sp) : sp; // Necessary for blocking the cleaner thread.
                 final Connection connection = sp.connection();
                 if (success) {
                     connection.commit();
