@@ -68,4 +68,34 @@ public interface LatLonAltBox extends AbstractLatLonBox{
      */
     public List<AbstractObject> getLatLonAltBoxObjectExtensions();
 
+    /**
+     *
+     * @param minAltitude
+     */
+    public void setMinAltitude(double minAltitude);
+
+    /**
+     *
+     * @param maxAltitude
+     */
+    public void setMaxAltitude(double maxAltitude);
+
+    /**
+     *
+     * @param altitudeMode
+     */
+    public void setAltitudeMode(AltitudeMode altitudeMode);
+
+    /**
+     *
+     * @param latLonAltBoxSimpleExtensions
+     */
+    public void setLatLonAltBoxSimpleExtensions(List<SimpleType> latLonAltBoxSimpleExtensions);
+
+    /**
+     * 
+     * @param latLonAltBoxObjectExtensions
+     */
+    public void setLatLonAltBoxObjectExtensions(List<AbstractObject> latLonAltBoxObjectExtensions);
+
 }

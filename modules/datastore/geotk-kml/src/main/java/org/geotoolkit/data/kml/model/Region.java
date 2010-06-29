@@ -54,4 +54,28 @@ public interface Region extends AbstractObject{
      */
     public List<AbstractObject> getRegionObjectExtensions();
 
+    /**
+     *
+     * @param latLonAltBox
+     */
+    public void setLatLonAltBox(LatLonAltBox latLonAltBox);
+
+    /**
+     *
+     * @param lod
+     */
+    public void setLod(Lod lod);
+
+    /**
+     *
+     * @param regionSimpleExtensions
+     */
+    public void setRegionSimpleExtensions(List<SimpleType> regionSimpleExtensions);
+
+    /**
+     * 
+     * @param regionObjectExtensions
+     */
+    public void setRegionObjectExtensions(List<AbstractObject> regionObjectExtensions);
+
 }

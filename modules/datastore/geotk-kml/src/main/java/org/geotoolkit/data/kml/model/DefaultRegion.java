@@ -10,11 +10,18 @@ import static java.util.Collections.*;
  */
 public class DefaultRegion extends DefaultAbstractObject implements Region {
 
-    private final LatLonAltBox latLonAltBox;
-    private final Lod lod;
-    private final List<SimpleType> regionSimpleExtensions;
-    private final List<AbstractObject> regionObjectExtentions;
+    private LatLonAltBox latLonAltBox;
+    private Lod lod;
+    private List<SimpleType> regionSimpleExtensions;
+    private List<AbstractObject> regionObjectExtentions;
 
+    /**
+     *
+     */
+    public DefaultRegion(){
+        this.regionSimpleExtensions = EMPTY_LIST;
+        this.regionObjectExtentions = EMPTY_LIST;
+    }
     /**
      *
      * @param objectSimpleExtensions
@@ -61,5 +68,41 @@ public class DefaultRegion extends DefaultAbstractObject implements Region {
      */
     @Override
     public List<AbstractObject> getRegionObjectExtensions() {return this.regionObjectExtentions;}
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setLatLonAltBox(LatLonAltBox latLonAltBox) {
+        this.latLonAltBox = latLonAltBox;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setLod(Lod lod) {
+        this.lod = lod;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setRegionSimpleExtensions(List<SimpleType> regionSimpleExtensions) {
+        this.regionSimpleExtensions = regionSimpleExtensions;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setRegionObjectExtensions(List<AbstractObject> regionObjectExtensions) {
+        this.regionObjectExtentions = regionObjectExtensions;
+    }
 
 }

@@ -3,6 +3,7 @@ package org.geotoolkit.data.kml.model;
 import java.util.List;
 import org.geotoolkit.data.kml.xsd.SimpleType;
 import static java.util.Collections.*;
+import static org.geotoolkit.data.kml.xml.KmlModelConstants.*;
 
 /**
  *
@@ -10,12 +11,22 @@ import static java.util.Collections.*;
  */
 public class DefaultLatLonAltBox extends DefaultAbstractLatLonBox implements LatLonAltBox {
 
-    private final double minAltitude;
-    private final double maxAltitude;
-    private final AltitudeMode altitudeMode;
-    private final List<SimpleType> latLonAltBoxSimpleExtensions;
-    private final List<AbstractObject> latLonAltBoxObjectExtensions;
+    private double minAltitude;
+    private double maxAltitude;
+    private AltitudeMode altitudeMode;
+    private List<SimpleType> latLonAltBoxSimpleExtensions;
+    private List<AbstractObject> latLonAltBoxObjectExtensions;
 
+    /**
+     * 
+     */
+    public DefaultLatLonAltBox(){
+        this.minAltitude = DEF_MIN_ALTITUDE;
+        this.maxAltitude = DEF_MAX_ALTITUDE;
+        this.altitudeMode = DEF_ALTITUDE_MODE;
+        this.latLonAltBoxSimpleExtensions = EMPTY_LIST;
+        this.latLonAltBoxObjectExtensions = EMPTY_LIST;
+    }
     /**
      *
      * @param objectSimpleExtensions
@@ -79,5 +90,50 @@ public class DefaultLatLonAltBox extends DefaultAbstractLatLonBox implements Lat
      */
     @Override
     public List<AbstractObject> getLatLonAltBoxObjectExtensions() {return this.latLonAltBoxObjectExtensions;}
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setMinAltitude(double minAltitude) {
+        this.minAltitude = minAltitude;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setMaxAltitude(double maxAltitude) {
+        this.maxAltitude = maxAltitude;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setAltitudeMode(AltitudeMode altitudeMode) {
+        this.altitudeMode = altitudeMode;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setLatLonAltBoxSimpleExtensions(List<SimpleType> latLonAltBoxSimpleExtensions) {
+        this.latLonAltBoxSimpleExtensions = latLonAltBoxSimpleExtensions;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setLatLonAltBoxObjectExtensions(List<AbstractObject> latLonAltBoxObjectExtensions) {
+        this.latLonAltBoxObjectExtensions = latLonAltBoxObjectExtensions;
+    }
 
 }

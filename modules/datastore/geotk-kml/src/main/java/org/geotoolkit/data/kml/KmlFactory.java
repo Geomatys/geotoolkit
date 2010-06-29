@@ -606,6 +606,12 @@ public interface KmlFactory {
             List<AbstractObject> latLonAltBoxObjectExtensions);
 
     /**
+     * 
+     * @return
+     */
+    public LatLonAltBox createLatLonAltBox();
+
+    /**
      *
      * @param objectSimpleExtensions
      * @param idAttributes
@@ -788,6 +794,12 @@ public interface KmlFactory {
             IdAttributes idAttributes,
             double minLodPixels, double maxLodPixels, double minFadeExtent, double maxFadeExtent,
             List<SimpleType> lodSimpleExtentions, List<AbstractObject> lodObjectExtensions);
+
+    /**
+     * 
+     * @return
+     */
+    public Lod createLod();
 
     /**
      *
@@ -1187,6 +1199,12 @@ public interface KmlFactory {
             LatLonAltBox latLonAltBox, Lod lod, 
             List<SimpleType> regionSimpleExtensions,
             List<AbstractObject> regionObjectExtentions);
+
+    /**
+     * 
+     * @return
+     */
+    public Region createRegion();
 
     /**
      *

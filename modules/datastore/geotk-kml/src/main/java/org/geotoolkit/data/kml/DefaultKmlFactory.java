@@ -614,6 +614,14 @@ public class DefaultKmlFactory implements KmlFactory {
      * @{@inheritDoc }
      */
     @Override
+    public LatLonAltBox createLatLonAltBox(){
+        return new DefaultLatLonAltBox();
+    }
+
+    /**
+     * @{@inheritDoc }
+     */
+    @Override
     public LinearRing createLinearRing(
             List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
             List<SimpleType> abstractGeometrySimpleExtensions,
@@ -774,6 +782,14 @@ public class DefaultKmlFactory implements KmlFactory {
         return new DefaultLod(objectSimpleExtensions, idAttributes,
                 minLodPixels, maxLodPixels, minFadeExtent, maxFadeExtent,
                 lodSimpleExtentions, lodObjectExtensions);
+    }
+
+    /**
+     * @{@inheritDoc }
+     */
+    @Override
+    public Lod createLod(){
+        return new DefaultLod();
     }
 
     /**
@@ -1097,6 +1113,14 @@ public class DefaultKmlFactory implements KmlFactory {
             List<AbstractObject> regionObjectExtentions) {
         return new DefaultRegion(objectSimpleExtensions, idAttributes,
                 latLonAltBox, lod, regionSimpleExtensions, regionObjectExtentions);
+    }
+
+    /**
+     * @{@inheritDoc }
+     */
+    @Override
+    public Region createRegion(){
+        return new DefaultRegion();
     }
 
     /**

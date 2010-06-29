@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2"
+xmlns:atom="http://www.w3.org/2005/Atom"
+xmlns:xal="urn:oasis:names:tc:ciq:xsdschema:xAL:2.0">
+<Placemark>
+  <name>Colorado</name>
+    <Region>
+        <LatLonAltBox>
+            <north>50.625</north>
+            <south>45.0</south>
+            <east>28.125</east>
+            <west>22.5</west>
+            <minAltitude>10.0</minAltitude>
+            <maxAltitude>50.0</maxAltitude>
+        </LatLonAltBox>
+        <Lod>
+            <minLodPixels>128.0</minLodPixels>
+            <maxLodPixels>1024.0</maxLodPixels>
+            <minFadeExtent>128.0</minFadeExtent>
+            <maxFadeExtent>128.0</maxFadeExtent>
+        </Lod>
+    </Region>
+</Placemark>
+</kml>
