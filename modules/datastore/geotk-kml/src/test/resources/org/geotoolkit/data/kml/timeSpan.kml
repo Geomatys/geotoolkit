@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2"
+xmlns:atom="http://www.w3.org/2005/Atom"
+xmlns:xal="urn:oasis:names:tc:ciq:xsdschema:xAL:2.0">
+<Placemark>
+  <name>Colorado</name>
+  <TimeSpan>
+    <begin>1876-08-02T22:31:54.543+01:00</begin>
+  </TimeSpan>
+</Placemark>
+</kml>

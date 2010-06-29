@@ -1,6 +1,7 @@
 package org.geotoolkit.data.kml;
 
 import java.awt.Color;
+import java.util.Calendar;
 import java.util.List;
 import org.geotoolkit.data.atom.model.AtomLink;
 import org.geotoolkit.data.atom.model.AtomPersonConstruct;
@@ -1263,7 +1264,7 @@ public class DefaultKmlFactory implements KmlFactory {
             List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
             List<SimpleType> abstractTimePrimitiveSimpleExtensions,
             List<AbstractObject> abstractTimePrimitiveObjectExtensions,
-            String begin, String end, List<SimpleType> timeSpanSimpleExtensions,
+            Calendar begin, Calendar end, List<SimpleType> timeSpanSimpleExtensions,
             List<AbstractObject> timeSpanObjectExtensions) {
         return new DefaultTimeSpan(objectSimpleExtensions, idAttributes,
                 abstractTimePrimitiveSimpleExtensions, abstractTimePrimitiveObjectExtensions,
@@ -1274,15 +1275,31 @@ public class DefaultKmlFactory implements KmlFactory {
      * @{@inheritDoc }
      */
     @Override
+    public TimeSpan createTimeSpan(){
+        return new DefaultTimeSpan();
+    }
+
+    /**
+     * @{@inheritDoc }
+     */
+    @Override
     public TimeStamp createTimeStamp(
             List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
             List<SimpleType> abstractTimePrimitiveSimpleExtensions,
             List<AbstractObject> abstractTimePrimitiveObjectExtensions,
-            String when, List<SimpleType> timeStampSimpleExtensions,
+            Calendar when, List<SimpleType> timeStampSimpleExtensions,
             List<AbstractObject> timeStampObjectExtensions) {
         return new DefaultTimeStamp(objectSimpleExtensions, idAttributes,
                 abstractTimePrimitiveSimpleExtensions, abstractTimePrimitiveObjectExtensions,
                 when, timeStampSimpleExtensions, timeStampObjectExtensions);
+    }
+
+    /**
+     * @{@inheritDoc }
+     */
+    @Override
+    public TimeStamp createTimeStamp(){
+        return new DefaultTimeStamp();
     }
 
     /**

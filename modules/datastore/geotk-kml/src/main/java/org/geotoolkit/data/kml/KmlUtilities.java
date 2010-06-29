@@ -1,6 +1,10 @@
 package org.geotoolkit.data.kml;
 
 import java.awt.Color;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import org.geotoolkit.data.kml.model.KmlException;
 
 /**
@@ -212,4 +216,11 @@ public class KmlUtilities {
         }
         return angle;
     }
+
+//    public static Date toDate(String kmlDateTimeType) throws ParseException{
+//        Date date = new Date();
+//        kmlDateTimeType.
+//        DateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd");
+//        return dateFormat.parse(kmlDateTimeType);
+//    }
 }

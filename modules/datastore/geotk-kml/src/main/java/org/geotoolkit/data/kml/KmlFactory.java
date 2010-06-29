@@ -1,6 +1,7 @@
 package org.geotoolkit.data.kml;
 
 import java.awt.Color;
+import java.util.Calendar;
 import java.util.List;
 import org.geotoolkit.data.atom.model.AtomPersonConstruct;
 import org.geotoolkit.data.atom.model.AtomLink;
@@ -1384,7 +1385,13 @@ public interface KmlFactory {
      */
     public TimeSpan createTimeSpan(List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
             List<SimpleType> abstractTimePrimitiveSimpleExtensions, List<AbstractObject> abstractTimePrimitiveObjectExtensions,
-            String begin, String end, List<SimpleType> timeSpanSimpleExtensions, List<AbstractObject> timeSpanObjectExtensions);
+            Calendar begin, Calendar end, List<SimpleType> timeSpanSimpleExtensions, List<AbstractObject> timeSpanObjectExtensions);
+
+    /**
+     *
+     * @return
+     */
+    public TimeSpan createTimeSpan();
 
     /**
      *
@@ -1399,8 +1406,14 @@ public interface KmlFactory {
      */
     public TimeStamp createTimeStamp(List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
             List<SimpleType> abstractTimePrimitiveSimpleExtensions, List<AbstractObject> abstractTimePrimitiveObjectExtensions,
-            String when, List<SimpleType> timeStampSimpleExtensions, List<AbstractObject> timeStampObjectExtensions);
+            Calendar when, List<SimpleType> timeStampSimpleExtensions, List<AbstractObject> timeStampObjectExtensions);
 
+    /**
+     * 
+     * @return
+     */
+    public TimeStamp createTimeStamp();
+    
     /**
      *
      * @param creates

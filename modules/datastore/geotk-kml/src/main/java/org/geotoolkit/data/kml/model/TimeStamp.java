@@ -1,5 +1,6 @@
 package org.geotoolkit.data.kml.model;
 
+import java.util.Calendar;
 import java.util.List;
 import org.geotoolkit.data.kml.xsd.SimpleType;
 
@@ -33,7 +34,7 @@ public interface TimeStamp extends AbstractTimePrimitive{
      *
      * @return
      */
-    public String getWhen();
+    public Calendar getWhen();
 
     /**
      *
@@ -46,4 +47,22 @@ public interface TimeStamp extends AbstractTimePrimitive{
      * @return the list of TimeStamp object extensions.
      */
     public List<AbstractObject> getTimeStampObjectExtensions();
+
+    /**
+     * 
+     * @param when
+     */
+    public void setWhen(Calendar when);
+
+    /**
+     *
+     * @param timeStampSimpleExtensions
+     */
+    public void setTimeStampSimpleExtensions(List<SimpleType> timeStampSimpleExtensions);
+
+    /**
+     *
+     * @param timeStampObjectExtensions
+     */
+    public void setTimeStampObjectExtensions(List<AbstractObject> timeStampObjectExtensions);
 }

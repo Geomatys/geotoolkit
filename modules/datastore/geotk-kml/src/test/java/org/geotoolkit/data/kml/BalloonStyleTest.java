@@ -86,6 +86,8 @@ public class BalloonStyleTest {
 "      $[geDirections]\n"+
 "      ";//]]>";
 
+        //text= "salut";
+
         assertEquals(text, balloonStyle.getText());
 
         assertEquals(1, document.getAbstractFeatures().size());

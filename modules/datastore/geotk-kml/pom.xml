@@ -109,6 +109,12 @@
           <scope>test</scope>
           <classifier>tests</classifier>
       </dependency>
+        <dependency>
+            <groupId>org.geotoolkit.pending</groupId>
+            <artifactId>geotk-temporal</artifactId>
+            <version>SNAPSHOT</version>
+            <type>jar</type>
+        </dependency>
     </dependencies>
 
 
@@ -129,4 +135,6 @@
         </plugins>
     </build>
 </project>
+
+
 

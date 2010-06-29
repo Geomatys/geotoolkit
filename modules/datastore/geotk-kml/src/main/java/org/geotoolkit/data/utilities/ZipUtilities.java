@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.data.zip;
+package org.geotoolkit.data.utilities;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;

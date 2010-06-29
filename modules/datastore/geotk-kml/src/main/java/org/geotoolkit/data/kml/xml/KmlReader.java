@@ -5,6 +5,7 @@ import org.geotoolkit.data.atom.xml.AtomReader;
 import java.awt.Color;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -100,6 +101,7 @@ import org.geotoolkit.data.kml.model.ViewVolume;
 import org.geotoolkit.data.xal.model.AddressDetails;
 import org.geotoolkit.data.xal.model.XalException;
 import org.geotoolkit.data.kml.xsd.SimpleType;
+import org.geotoolkit.data.utilities.DateUtilities;
 import org.geotoolkit.xml.StaxStreamReader;
 import static org.geotoolkit.data.kml.xml.KmlModelConstants.*;
 
@@ -113,6 +115,7 @@ public class KmlReader extends StaxStreamReader {
     private static final KmlFactory kmlFactory = new DefaultKmlFactory();
     private final XalReader xalReader = new XalReader();
     private final AtomReader atomReader = new AtomReader();
+    private final DateUtilities fastDateParser = new DateUtilities();
 
     public KmlReader() {
         super();
@@ -2115,9 +2118,7 @@ public class KmlReader extends StaxStreamReader {
                         } else if (TAG_VISIBILITY.equals(eName)) {
                             visibility = parseBoolean(reader.getElementText());
                         } else if (TAG_OPEN.equals(eName)) {
-                            System.out.println("=> "+open);
                             open = parseBoolean(reader.getElementText());
-                            System.out.println(open+" =>");
                         } else if (TAG_ADDRESS.equals(eName)) {
                             address = reader.getElementText();
                         } else if (TAG_PHONE_NUMBER.equals(eName)) {
@@ -3010,7 +3011,7 @@ public class KmlReader extends StaxStreamReader {
                         } else if (TAG_TEXT_COLOR.equals(eName)) {
                             textColor = KmlUtilities.parseColor(reader.getElementText());
                         } else if (TAG_TEXT.equals(eName)) {
-                            text = reader.getElementText();
+                            text = this.readElementText();
                         } else if (TAG_DISPLAY_MODE.equals(eName)) {
                             displayMode = DisplayMode.transform(reader.getElementText());
                         }
@@ -3031,6 +3032,35 @@ public class KmlReader extends StaxStreamReader {
                 subStyleSimpleExtensions, subStyleObjectExtensions,
                 bgColor, textColor, text, displayMode,
                 balloonStyleSimpleExtensions, balloonStyleObjectExtensions);
+    }
+
+    /**
+     * <p>This method is a try to separate CDATA and text content.</p>
+     *
+     * @return
+     * @throws XMLStreamException
+     */
+    private String readElementText() throws XMLStreamException{
+        String resultat = null;
+        boucle:
+        while (reader.hasNext()) {
+            switch (reader.getEventType()) {
+                case XMLStreamConstants.CDATA:
+                    System.out.println("CDATA");
+                    resultat = reader.getText();
+                    break;
+                case XMLStreamConstants.CHARACTERS:
+                    System.out.println("CHARACTERS");
+                    resultat = reader.getText();
+                    break;
+                case XMLStreamConstants.END_ELEMENT:
+                    System.out.println("END");
+                    break boucle;
+            }
+            reader.next();
+        }
+
+        return resultat;
     }
 
     /**
@@ -3286,8 +3316,8 @@ public class KmlReader extends StaxStreamReader {
         List<AbstractObject> AbstractTimePrimitiveObjectExtensions = null;
 
         // TimeSpan
-        String begin = null;
-        String end = null;
+        Calendar begin = null;
+        Calendar end = null;
         List<SimpleType> TimeSpanSimpleExtensions = null;
         List<AbstractObject> TimeSpanObjectExtensions = null;
 
@@ -3301,9 +3331,9 @@ public class KmlReader extends StaxStreamReader {
 
                     if (URI_KML.equals(eUri)) {
                         if (TAG_BEGIN.equals(eName)) {
-                            begin = reader.getElementText();
+                            begin = fastDateParser.getCalendar(reader.getElementText());
                         } else if (TAG_END.equals(eName)) {
-                            end = reader.getElementText();
+                            end = fastDateParser.getCalendar(reader.getElementText());
                         }
                     }
                     break;
@@ -3336,7 +3366,7 @@ public class KmlReader extends StaxStreamReader {
         List<AbstractObject> AbstractTimePrimitiveObjectExtensions = null;
 
         // TimeStamp
-        String when = null;
+        Calendar when = null;
         List<SimpleType> TimeStampSimpleExtensions = null;
         List<AbstractObject> TimeStampObjectExtensions = null;
 
@@ -3350,7 +3380,7 @@ public class KmlReader extends StaxStreamReader {
 
                     if (URI_KML.equals(eUri)) {
                         if (TAG_WHEN.equals(eName)) {
-                            when = reader.getElementText();
+                            when = fastDateParser.getCalendar(reader.getElementText());
                         }
                     }
                     break;

@@ -93,7 +93,6 @@ public class AtomLinkTest {
 
         AtomWriter writer = new AtomWriter();
         writer.setOutput(temp);
-         System.out.println("WRITER : "+writer.getWriter());
         writer.getWriter().writeStartDocument("UTF-8", "1.0");
         writer.getWriter().setDefaultNamespace(AtomModelConstants.URI_ATOM);
 

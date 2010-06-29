@@ -4,6 +4,7 @@ import org.geotoolkit.data.xal.xml.XalWriter;
 import org.geotoolkit.data.atom.xml.AtomWriter;
 import java.awt.Color;
 import java.io.IOException;
+import java.util.Calendar;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -93,6 +94,7 @@ import org.geotoolkit.data.kml.model.ViewVolume;
 import org.geotoolkit.data.xal.model.AddressDetails;
 import org.geotoolkit.data.xal.model.XalException;
 import org.geotoolkit.data.kml.xsd.SimpleType;
+import org.geotoolkit.data.utilities.DateUtilities;
 import org.geotoolkit.xml.StaxStreamWriter;
 import static org.geotoolkit.data.kml.xml.KmlModelConstants.*;
 
@@ -675,7 +677,7 @@ public class KmlWriter extends StaxStreamWriter {
      * @throws XMLStreamException
      */
     private void writeTimeSpan(TimeSpan timeSpan) throws XMLStreamException{
-        writer.writeEmptyElement(URI_KML, TAG_TIME_SPAN);
+        writer.writeStartElement(URI_KML, TAG_TIME_SPAN);
         this.writeCommonAbstractTimePrimitive(timeSpan);
         if (timeSpan.getBegin() != null){
             this.writeBegin(timeSpan.getBegin());
@@ -698,7 +700,7 @@ public class KmlWriter extends StaxStreamWriter {
      * @throws XMLStreamException
      */
     private void writeTimeStamp(TimeStamp timeStamp) throws XMLStreamException{
-        writer.writeEmptyElement(URI_KML, TAG_TIME_STAMP);
+        writer.writeStartElement(URI_KML, TAG_TIME_STAMP);
         this.writeCommonAbstractTimePrimitive(timeStamp);
         if (timeStamp.getWhen() != null){
             this.writeWhen(timeStamp.getWhen());
@@ -2232,9 +2234,9 @@ public class KmlWriter extends StaxStreamWriter {
      * @param begin
      * @throws XMLStreamException
      */
-    private void writeBegin(String begin) throws XMLStreamException {
+    private void writeBegin(Calendar begin) throws XMLStreamException {
         writer.writeStartElement(URI_KML, TAG_BEGIN);
-        writer.writeCharacters(begin);
+        this.writeCalendar(begin);
         writer.writeEndElement();
     }
 
@@ -2243,9 +2245,9 @@ public class KmlWriter extends StaxStreamWriter {
      * @param end
      * @throws XMLStreamException
      */
-    private void writeEnd(String end) throws XMLStreamException {
+    private void writeEnd(Calendar end) throws XMLStreamException {
         writer.writeStartElement(URI_KML, TAG_END);
-        writer.writeCharacters(end);
+        this.writeCalendar(end);
         writer.writeEndElement();
     }
 
@@ -2254,10 +2256,19 @@ public class KmlWriter extends StaxStreamWriter {
      * @param when
      * @throws XMLStreamException
      */
-    private void writeWhen(String when) throws XMLStreamException {
+    private void writeWhen(Calendar when) throws XMLStreamException {
         writer.writeStartElement(URI_KML, TAG_WHEN);
-        writer.writeCharacters(when);
+        this.writeCalendar(when);
         writer.writeEndElement();
+    }
+
+    /**
+     *
+     * @param calendar
+     * @throws XMLStreamException
+     */
+    private void writeCalendar(Calendar calendar) throws XMLStreamException{
+        writer.writeCharacters(DateUtilities.getFormatedString(calendar, true));
     }
 
     /**
@@ -2853,7 +2864,6 @@ public class KmlWriter extends StaxStreamWriter {
     private void writeTopFov(double topFov) throws XMLStreamException{
         if (DEF_TOP_FOV != topFov){
             writer.writeStartElement(URI_KML, TAG_TOP_FOV);
-            System.out.println("TOP FOV : "+TAG_TOP_FOV);
             writer.writeCharacters(Double.toString(topFov));
             writer.writeEndElement();
         }

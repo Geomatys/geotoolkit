@@ -10,8 +10,13 @@ import static java.util.Collections.*;
  */
 public class DefaultAbstractTimePrimitive extends DefaultAbstractObject implements AbstractTimePrimitive {
 
-    protected final List<SimpleType> abstractTimePrimitiveSimpleExtensions;
-    protected final List<AbstractObject> abstractTimePrimitiveObjectExtensions;
+    protected List<SimpleType> abstractTimePrimitiveSimpleExtensions;
+    protected List<AbstractObject> abstractTimePrimitiveObjectExtensions;
+
+    protected DefaultAbstractTimePrimitive(){
+        this.abstractTimePrimitiveSimpleExtensions = EMPTY_LIST;
+        this.abstractTimePrimitiveObjectExtensions = EMPTY_LIST;
+    }
 
     /**
      *
@@ -20,8 +25,10 @@ public class DefaultAbstractTimePrimitive extends DefaultAbstractObject implemen
      * @param abstractTimePrimitiveSimpleExtensions
      * @param abstractTimePrimitiveObjectExtensions
      */
-    protected DefaultAbstractTimePrimitive(List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
-            List<SimpleType> abstractTimePrimitiveSimpleExtensions, List<AbstractObject> abstractTimePrimitiveObjectExtensions){
+    protected DefaultAbstractTimePrimitive(
+            List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
+            List<SimpleType> abstractTimePrimitiveSimpleExtensions,
+            List<AbstractObject> abstractTimePrimitiveObjectExtensions){
             super(objectSimpleExtensions, idAttributes);
             this.abstractTimePrimitiveSimpleExtensions = (abstractTimePrimitiveSimpleExtensions == null) ? EMPTY_LIST : abstractTimePrimitiveSimpleExtensions;
             this.abstractTimePrimitiveObjectExtensions = (abstractTimePrimitiveObjectExtensions == null) ? EMPTY_LIST : abstractTimePrimitiveObjectExtensions;
@@ -32,13 +39,17 @@ public class DefaultAbstractTimePrimitive extends DefaultAbstractObject implemen
      * @{@inheritDoc }
      */
     @Override
-    public List<SimpleType> getAbstractTimePrimitiveSimpleExtensions() {return this.abstractTimePrimitiveSimpleExtensions;}
+    public List<SimpleType> getAbstractTimePrimitiveSimpleExtensions() {
+        return this.abstractTimePrimitiveSimpleExtensions;
+    }
 
     /**
      *
      * @{@inheritDoc }
      */
     @Override
-    public List<AbstractObject> getAbstractTimePrimitiveObjectExtensions() {return this.abstractTimePrimitiveObjectExtensions;}
+    public List<AbstractObject> getAbstractTimePrimitiveObjectExtensions() {
+        return this.abstractTimePrimitiveObjectExtensions;
+    }
 
 }

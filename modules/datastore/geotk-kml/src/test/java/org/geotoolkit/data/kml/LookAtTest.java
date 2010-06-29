@@ -59,7 +59,6 @@ public class LookAtTest {
          reader.dispose();
 
          final AbstractFeature feature = kmlObjects.getAbstractFeature();
-         System.out.println(feature);
          assertTrue(feature instanceof Folder);
          final AbstractView view = ((Folder)feature).getView();
          assertTrue(view instanceof LookAt);
