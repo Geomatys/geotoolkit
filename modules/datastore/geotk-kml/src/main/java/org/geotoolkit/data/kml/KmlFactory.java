@@ -122,6 +122,12 @@ public interface KmlFactory {
             List<SimpleType> aliasSimpleExtensions, List<AbstractObject> aliasObjectExtensions);
 
     /**
+     * 
+     * @return
+     */
+    public Alias createAlias();
+
+    /**
      *
      * @param objectSimpleExtensions
      * @param idAttributes
@@ -779,6 +785,12 @@ public interface KmlFactory {
             List<SimpleType> locationSimpleExtensions, List<AbstractObject> locationObjectExtensions);
 
     /**
+     * 
+     * @return
+     */
+    public Location createLocation();
+
+    /**
      *
      * @param objectSimpleExtensions
      * @param idAttributes
@@ -853,6 +865,12 @@ public interface KmlFactory {
             List<SimpleType> modelSimpleExtensions, List<AbstractObject> modelObjectExtensions);
 
     /**
+     * 
+     * @return
+     */
+    public Model createModel();
+
+    /**
      *
      * @param objectSimpleExtensions
      * @param idAttributes
@@ -870,6 +888,12 @@ public interface KmlFactory {
             List<AbstractGeometry> geometries,
             List<SimpleType> multiGeometrySimpleExtensions,
             List<AbstractObject> multiGeometryObjectExtensions);
+
+    /**
+     * 
+     * @return
+     */
+    public MultiGeometry createMultiGeometry();
 
     /**
      * 
@@ -954,6 +978,12 @@ public interface KmlFactory {
             double heading, double tilt, double roll,
             List<SimpleType> orientationSimpleExtensions,
             List<AbstractObject> orientationObjectExtensions);
+
+    /**
+     * 
+     * @return
+     */
+    public Orientation createOrientation();
 
     /**
      *
@@ -1222,6 +1252,12 @@ public interface KmlFactory {
             List<AbstractObject> resourceMapObjectExtensions);
 
     /**
+     * 
+     * @return
+     */
+    public ResourceMap createResourceMap();
+
+    /**
      *
      * @param objectSimpleExtensions
      * @param idAttributes
@@ -1236,6 +1272,12 @@ public interface KmlFactory {
             IdAttributes idAttributes, double x, double y, double z,
             List<SimpleType> scaleSimpleExtensions,
             List<AbstractObject> scaleObjectExtensions);
+
+    /**
+     * 
+     * @return
+     */
+    public Scale createScale();
 
     /**
      *

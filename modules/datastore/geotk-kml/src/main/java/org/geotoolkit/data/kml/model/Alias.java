@@ -55,4 +55,28 @@ public interface Alias extends AbstractObject {
      */
     public List<AbstractObject> getAliasObjectExtensions();
 
+    /**
+     *
+     * @param targetHref
+     */
+    public void setTargetHref(String targetHref);
+
+    /**
+     *
+     * @param sourceHref
+     */
+    public void setSourceHref(String sourceHref);
+
+    /**
+     *
+     * @param aliasSimpleExtensions
+     */
+    public void setAliasSimpleExtensions(List<SimpleType> aliasSimpleExtensions);
+
+    /**
+     * 
+     * @param aliasObjectExtensions
+     */
+    public void setAliasObjectExtensions(List<AbstractObject> aliasObjectExtensions);
+
 }

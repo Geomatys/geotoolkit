@@ -46,5 +46,23 @@ public interface ResourceMap extends AbstractObject {
      * @return the list of ResourceMap object extensions.
      */
     public List<AbstractObject> getResourceMapObjectExtensions();
+
+    /**
+     *
+     * @param aliases
+     */
+    public void setAliases(List<Alias> aliases);
+
+    /**
+     *
+     * @param resourceMapSimpleExtensions
+     */
+    public void setResourceMapSimpleExtensions(List<SimpleType> resourceMapSimpleExtensions);
+
+    /**
+     * 
+     * @param resourceMapObjectExtensions
+     */
+    public void setResourceMapObjectExtensions(List<AbstractObject> resourceMapObjectExtensions);
     
 }

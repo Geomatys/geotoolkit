@@ -61,4 +61,34 @@ public interface Scale extends AbstractObject {
      */
     public List<AbstractObject> getScaleObjectExtensions();
 
+    /**
+     *
+     * @param x
+     */
+    public void setX(double x);
+
+    /**
+     *
+     * @param y
+     */
+    public void setY(double y);
+
+    /**
+     *
+     * @param z
+     */
+    public void setZ(double z);
+
+    /**
+     *
+     * @param scaleSimpleExtensions
+     */
+    public void setScaleSimpleExtensions(List<SimpleType> scaleSimpleExtensions);
+
+    /**
+     * 
+     * @param scaleObjectExtensions
+     */
+    public void setScaleObjectExtensions(List<AbstractObject> scaleObjectExtensions);
+
 }

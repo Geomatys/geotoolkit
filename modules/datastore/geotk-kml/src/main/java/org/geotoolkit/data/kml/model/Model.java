@@ -82,4 +82,52 @@ public interface Model extends AbstractGeometry {
      */
     public List<AbstractObject> getModelObjectExtensions();
 
+    /**
+     *
+     * @param altitudeMode
+     */
+    public void setAltitudeMode(AltitudeMode altitudeMode);
+
+    /**
+     *
+     * @param location
+     */
+    public void setLocation(Location location);
+
+    /**
+     *
+     * @param orientation
+     */
+    public void setOrientation(Orientation orientation);
+
+    /**
+     *
+     * @param scale
+     */
+    public void setScale(Scale scale);
+
+    /**
+     *
+     * @param link
+     */
+    public void setLink(Link link);
+
+    /**
+     *
+     * @param resourceMap
+     */
+    public void setRessourceMap(ResourceMap resourceMap);
+
+    /**
+     *
+     * @param modelSimpleExtensions
+     */
+    public void setModelSimpleExtensions(List<SimpleType> modelSimpleExtensions);
+
+    /**
+     * 
+     * @param modelObjectExtensions
+     */
+    public void setModelObjectExtensions(List<AbstractObject> modelObjectExtensions);
+
 }

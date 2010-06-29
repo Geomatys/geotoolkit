@@ -61,4 +61,34 @@ public interface Location extends AbstractObject {
      */
     public List<AbstractObject> getLocationObjectExtensions();
 
+    /**
+     *
+     * @param longitude
+     */
+    public void setLongitude(double longitude);
+
+    /**
+     *
+     * @param latitude
+     */
+    public void setLatitude(double latitude);
+
+    /**
+     *
+     * @param altitude
+     */
+    public void setAltitude(double altitude);
+
+    /**
+     *
+     * @param locationSimpleExtensions
+     */
+    public void setLocationSimpleExtensions(List<SimpleType> locationSimpleExtensions);
+
+    /**
+     * 
+     * @param locationObjectExtensions
+     */
+    public void setLocationObjectExtensions(List<AbstractObject> locationObjectExtensions);
+
 }

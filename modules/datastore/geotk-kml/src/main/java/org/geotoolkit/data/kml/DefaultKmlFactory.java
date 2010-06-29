@@ -178,6 +178,14 @@ public class DefaultKmlFactory implements KmlFactory {
      * @{@inheritDoc }
      */
     @Override
+    public Alias createAlias(){
+        return new DefaultAlias();
+    }
+
+    /**
+     * @{@inheritDoc }
+     */
+    @Override
     public BalloonStyle createBalloonStyle(
             List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
             List<SimpleType> subStyleSimpleExtensions, List<AbstractObject> subStyleObjectExtensions,
@@ -773,6 +781,14 @@ public class DefaultKmlFactory implements KmlFactory {
      * @{@inheritDoc }
      */
     @Override
+    public Location createLocation(){
+        return new DefaultLocation();
+    }
+
+    /**
+     * @{@inheritDoc }
+     */
+    @Override
     public Lod createLod(
             List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
             double minLodPixels, double maxLodPixels,
@@ -840,6 +856,14 @@ public class DefaultKmlFactory implements KmlFactory {
      * @{@inheritDoc }
      */
     @Override
+    public Model createModel(){
+        return new DefaultModel();
+    }
+
+    /**
+     * @{@inheritDoc }
+     */
+    @Override
     public MultiGeometry createMultiGeometry(List<SimpleType> objectSimpleExtensions,
             IdAttributes idAttributes,
             List<SimpleType> abstractGeometrySimpleExtensions,
@@ -852,6 +876,14 @@ public class DefaultKmlFactory implements KmlFactory {
                 geometries, multiGeometrySimpleExtensions, multiGeometryObjectExtensions);
     }
 
+    /**
+     * @{@inheritDoc }
+     */
+    @Override
+    public MultiGeometry createMultiGeometry(){
+        return new DefaultMultiGeometry();
+    }
+    
     /**
      * @{@inheritDoc }
      */
@@ -914,6 +946,14 @@ public class DefaultKmlFactory implements KmlFactory {
         return new DefaultOrientation(objectSimpleExtensions, idAttributes,
                 heading, tilt, roll,
                 orientationSimpleExtensions, orientationObjectExtensions);
+    }
+
+    /**
+     * @{@inheritDoc }
+     */
+    @Override
+    public Orientation createOrientation(){
+        return new DefaultOrientation();
     }
 
     /**
@@ -1140,6 +1180,14 @@ public class DefaultKmlFactory implements KmlFactory {
      * @{@inheritDoc }
      */
     @Override
+    public ResourceMap createResourceMap(){
+        return new DefaultResourceMap();
+    }
+
+    /**
+     * @{@inheritDoc }
+     */
+    @Override
     public Scale createScale(
             List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
             double x, double y, double z,
@@ -1147,6 +1195,14 @@ public class DefaultKmlFactory implements KmlFactory {
             List<AbstractObject> scaleObjectExtensions) {
         return new DefaultScale(objectSimpleExtensions, idAttributes, x, y, z,
                 scaleSimpleExtensions, scaleObjectExtensions);
+    }
+
+    /**
+     * @{@inheritDoc }
+     */
+    @Override
+    public Scale createScale(){
+        return new DefaultScale();
     }
 
     /**

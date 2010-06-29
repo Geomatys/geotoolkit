@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2"
+xmlns:atom="http://www.w3.org/2005/Atom"
+xmlns:xal="urn:oasis:names:tc:ciq:xsdschema:xAL:2.0">
+<Placemark>
+  <name>LinearRing.kml</name>
+  <Polygon>
+    <outerBoundaryIs>
+      <LinearRing>
+        <coordinates>
+          -122.365662,37.826988,0.0 -122.365202,37.826302,0.0 -122.364581,37.82655,0.0 -122.365038,37.827237,0.0 -122.365662,37.826988,0.0
+        </coordinates>
+      </LinearRing>
+    </outerBoundaryIs>
+  </Polygon>
+</Placemark>
+</kml>

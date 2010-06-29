@@ -4,6 +4,7 @@ import java.util.List;
 import org.geotoolkit.data.kml.KmlUtilities;
 import org.geotoolkit.data.kml.xsd.SimpleType;
 import static java.util.Collections.*;
+import static org.geotoolkit.data.kml.xml.KmlModelConstants.*;
 
 /**
  *
@@ -11,11 +12,19 @@ import static java.util.Collections.*;
  */
 public class DefaultLocation extends DefaultAbstractObject implements Location {
 
-    private final double longitude;
-    private final double latitude;
-    private final double altitude;
-    private final List<SimpleType> locationSimpleExtensions;
-    private final List<AbstractObject> locationObjectExtensions;
+    private double longitude;
+    private double latitude;
+    private double altitude;
+    private List<SimpleType> locationSimpleExtensions;
+    private List<AbstractObject> locationObjectExtensions;
+
+    public DefaultLocation(){
+        this.longitude = DEF_LONGITUDE;
+        this.latitude = DEF_LATITUDE;
+        this.altitude = DEF_ALTITUDE;
+        this.locationSimpleExtensions = EMPTY_LIST;
+        this.locationObjectExtensions = EMPTY_LIST;
+    }
 
     /**
      *
@@ -30,7 +39,7 @@ public class DefaultLocation extends DefaultAbstractObject implements Location {
     public DefaultLocation(List<SimpleType> objectSimpleExtensions,
             IdAttributes idAttributes,
             double longitude, double latitude, double altitude,
-            List<SimpleType> locationSimpleExtensions, List<AbstractObject> locationObjectExtensions){
+            List<SimpleType> locationSimpleExtensions, List<AbstractObject> locationObjectExtensions) {
         super(objectSimpleExtensions, idAttributes);
         this.longitude = KmlUtilities.checkAngle180(longitude);
         this.latitude = KmlUtilities.checkAngle90(latitude);
@@ -44,34 +53,88 @@ public class DefaultLocation extends DefaultAbstractObject implements Location {
      * @{@inheritDoc }
      */
     @Override
-    public double getLongitude() {return this.longitude;}
+    public double getLongitude() {
+        return this.longitude;
+    }
 
     /**
      *
      * @{@inheritDoc }
      */
     @Override
-    public double getLatitude() {return this.latitude;}
+    public double getLatitude() {
+        return this.latitude;
+    }
 
     /**
      *
      * @{@inheritDoc }
      */
     @Override
-    public double getAltitude() {return this.altitude;}
+    public double getAltitude() {
+        return this.altitude;
+    }
 
     /**
      *
      * @{@inheritDoc }
      */
     @Override
-    public List<SimpleType> getLocationSimpleExtensions() {return this.locationSimpleExtensions;}
+    public List<SimpleType> getLocationSimpleExtensions() {
+        return this.locationSimpleExtensions;
+    }
 
     /**
      *
      * @{@inheritDoc }
      */
     @Override
-    public List<AbstractObject> getLocationObjectExtensions() {return this.locationObjectExtensions;}
+    public List<AbstractObject> getLocationObjectExtensions() {
+        return this.locationObjectExtensions;
+    }
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setAltitude(double altitude) {
+        this.altitude = altitude;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setLocationSimpleExtensions(List<SimpleType> locationSimpleExtensions) {
+        this.locationSimpleExtensions = locationSimpleExtensions;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setLocationObjectExtensions(List<AbstractObject> locationObjectExtensions) {
+        this.locationObjectExtensions = locationObjectExtensions;
+    }
 }

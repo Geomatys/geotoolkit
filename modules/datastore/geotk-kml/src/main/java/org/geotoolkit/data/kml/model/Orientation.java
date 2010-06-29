@@ -60,4 +60,34 @@ public interface Orientation extends AbstractObject {
      * @return the list of Orientation object extensions
      */
     public List<AbstractObject> getOrientationObjectExtensions();
+
+    /**
+     *
+     * @param heading
+     */
+    public void setHeading(double heading);
+
+    /**
+     *
+     * @param tilt
+     */
+    public void setTilt(double tilt);
+
+    /**
+     *
+     * @param roll
+     */
+    public void setRoll(double roll);
+
+    /**
+     *
+     * @param orientationSimpleExtensions
+     */
+    public void setOrientationSimpleExtensions(List<SimpleType> orientationSimpleExtensions);
+
+    /**
+     * 
+     * @param orientationObjectExtensions
+     */
+    public void setOrientationObjectExtensions(List<AbstractObject> orientationObjectExtensions);
 }

@@ -1749,7 +1749,7 @@ public class KmlWriter extends StaxStreamWriter {
      * @throws XMLStreamException
      */
     private void writeScale(Scale scale) throws XMLStreamException{
-        writer.writeStartElement(URI_KML, TAG_SCALE);
+        writer.writeStartElement(URI_KML, TAG_SCALE_BIG);
         if (isFiniteNumber(scale.getX())){
             this.writeX(scale.getX());
         }

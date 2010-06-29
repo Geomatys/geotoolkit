@@ -47,4 +47,22 @@ public interface MultiGeometry extends AbstractGeometry {
      */
     public List<AbstractObject> getMultiGeometryObjectExtensions();
 
+    /**
+     *
+     * @param geometries
+     */
+    public void setGeometries(List<AbstractGeometry> geometries);
+
+    /**
+     *
+     * @param multiGeometrySimpleExtensions
+     */
+    public void setMultiGeometrySimpleExtensions(List<SimpleType> multiGeometrySimpleExtensions);
+
+    /**
+     * 
+     * @param multiGeometryObjectExtensions
+     */
+    public void setMultiGeometryObjectExtensions(List<AbstractObject> multiGeometryObjectExtensions);
+
 }

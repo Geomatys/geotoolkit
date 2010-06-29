@@ -1090,7 +1090,7 @@ public class KmlReader extends StaxStreamReader {
                             scale = readScale();
                         } else if (TAG_LINK.equals(eName)) {
                             link = this.readLink(eName);
-                        } else if (TAG_SCALE.equals(eName)) {
+                        } else if (TAG_RESOURCE_MAP.equals(eName)) {
                             resourceMap = readResourceMap();
                         }
                     }
@@ -1239,7 +1239,7 @@ public class KmlReader extends StaxStreamReader {
                         } else if (TAG_Y.equals(eName)) {
                             y = parseDouble(reader.getElementText());
                         } else if (TAG_Z.equals(eName)){
-                            y = parseDouble(reader.getElementText());
+                            z = parseDouble(reader.getElementText());
                         }
                     }
                     break;

@@ -10,10 +10,15 @@ import static java.util.Collections.*;
  */
 public class DefaultAlias extends DefaultAbstractObject implements Alias {
 
-    private final String targetHref;
-    private final String sourceHref;
-    private final List<SimpleType> aliasSimpleExtensions;
-    private final List<AbstractObject> aliasObjectExtensions;
+    private String targetHref;
+    private String sourceHref;
+    private List<SimpleType> aliasSimpleExtensions;
+    private List<AbstractObject> aliasObjectExtensions;
+
+    public DefaultAlias(){
+        this.aliasSimpleExtensions = EMPTY_LIST;
+        this.aliasObjectExtensions = EMPTY_LIST;
+    }
 
     /**
      *
@@ -62,5 +67,41 @@ public class DefaultAlias extends DefaultAbstractObject implements Alias {
      */
     @Override
     public List<AbstractObject> getAliasObjectExtensions() {return this.aliasObjectExtensions;}
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setTargetHref(String targetHref) {
+        this.targetHref = targetHref;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setSourceHref(String sourceHref) {
+        this.sourceHref = sourceHref;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setAliasSimpleExtensions(List<SimpleType> aliasSimpleExtensions) {
+        this.aliasSimpleExtensions = aliasSimpleExtensions;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setAliasObjectExtensions(List<AbstractObject> aliasObjectExtensions) {
+        this.aliasObjectExtensions = aliasObjectExtensions;
+    }
 
 }
