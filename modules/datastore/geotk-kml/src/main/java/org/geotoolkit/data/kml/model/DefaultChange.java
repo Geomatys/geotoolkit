@@ -9,7 +9,11 @@ import static java.util.Collections.*;
  */
 public class DefaultChange implements Change {
 
-    private final List<AbstractObject> objects;
+    private List<AbstractObject> objects;
+
+    public DefaultChange(){
+        this.objects = EMPTY_LIST;
+    }
 
     /**
      *
@@ -25,5 +29,14 @@ public class DefaultChange implements Change {
      */
     @Override
     public List<AbstractObject> getObjects() {return this.objects;}
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setObjects(List<AbstractObject> objects) {
+        this.objects = objects;
+    }
 
 }

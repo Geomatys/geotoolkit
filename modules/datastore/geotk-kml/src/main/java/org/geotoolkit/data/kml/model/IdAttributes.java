@@ -30,11 +30,11 @@ public interface IdAttributes {
      * 
      * @param id
      */
-    public void getId(String id);
+    public void setId(String id);
 
     /**
      *
      * @param targetId
      */
-    public void getTargetId(String targetId);
+    public void setTargetId(String targetId);
 }

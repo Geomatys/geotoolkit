@@ -113,24 +113,18 @@ public class DateUtilities {
         /*
          * Is the date only a year (gYear)?
          */
-
-            System.out.println("YOOOO : "+date.indexOf('-',1)+"-- "+startOfZone);
         if((startOfMonth = date.indexOf('-',1)) < 0){
             if (startOfTime >= 0){
                 year = XInteger.parseIntSigned(date, 0, startOfTime);
-                System.out.println("1 : "+date.subSequence(0, startOfTime)+" =? "+year);
             }else if (startOfZone >= 0){
                 year = XInteger.parseIntSigned(date, 0, startOfZone);
-                System.out.println("2 : "+date.subSequence(0, startOfZone)+" =? "+year);
             }else{
                 year = XInteger.parseIntSigned(date, 0, date.length());
-                System.out.println("3 : "+date.subSequence(0, date.length())+" =? "+year);
             }
             month = 0;
             day = 1;
         } else {
             year = XInteger.parseIntSigned(date, 0, startOfMonth);
-                System.out.println("4 : "+date.subSequence(0, startOfMonth)+" =? "+year);
             startOfMonth++;
 
             /*
@@ -153,7 +147,6 @@ public class DateUtilities {
                     day = XInteger.parseIntUnsigned(date, startOfDay, startOfZone);
                 else
                     day = XInteger.parseIntUnsigned(date, startOfDay, date.length());
-                System.out.println(day);
             }
         }
 

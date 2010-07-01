@@ -24,4 +24,10 @@ public interface Change {
      * @return the lis of AbstractObjects
      */
     public List<AbstractObject> getObjects();
+
+    /**
+     * 
+     * @param objects
+     */
+    public void setObjects(List<AbstractObject> objects);
 }

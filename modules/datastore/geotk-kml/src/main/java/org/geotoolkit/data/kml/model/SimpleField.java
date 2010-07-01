@@ -29,7 +29,6 @@ public interface SimpleField {
      * @return
      */
     public String getDisplayName();
-    //public List<SimpleFieldExtension> getSimpleFieldExtensions();
 
     /**
      *
@@ -42,4 +41,34 @@ public interface SimpleField {
      * @return
      */
     public String getName();
+
+    /**
+     *
+     * @return
+     */
+    public List<Object> getSimpleFieldExtensions();
+
+    /**
+     *
+     * @param displayName
+     */
+    public void setDisplayName(String displayName);
+
+    /**
+     *
+     * @param type
+     */
+    public void setType(String type);
+
+    /**
+     *
+     * @param name
+     */
+    public void setName(String name);
+
+    /**
+     * 
+     * @param simpleFieldExtensions
+     */
+    public void setSimpleFieldExtensions(List<Object> simpleFieldExtensions);
 }

@@ -22,7 +22,7 @@ public class DefaultCamera extends DefaultAbstractView implements Camera {
     private List<SimpleType> cameraSimpleExtensions;
     private List<AbstractObject> cameraObjectExtensions;
 
-    public DefaultCamera(){
+    public DefaultCamera() {
         this.altitude = DEF_ALTITUDE;
         this.cameraSimpleExtensions = EMPTY_LIST;
         this.cameraObjectExtensions = EMPTY_LIST;
@@ -48,7 +48,7 @@ public class DefaultCamera extends DefaultAbstractView implements Camera {
             List<SimpleType> abstractViewSimpleExtensions, List<AbstractObject> abstractViewObjectExtensions,
             double longitude, double latitude, double altitude,
             double heading, double tilt, double roll, AltitudeMode altitudeMode,
-            List<SimpleType> cameraSimpleExtensions, List<AbstractObject> cameraObjectExtensions){
+            List<SimpleType> cameraSimpleExtensions, List<AbstractObject> cameraObjectExtensions) {
         super(objectSimpleExtensions, idAttributes,
                 abstractViewSimpleExtensions, abstractViewObjectExtensions);
         this.longitude = KmlUtilities.checkAngle180(longitude);
@@ -67,112 +67,144 @@ public class DefaultCamera extends DefaultAbstractView implements Camera {
      * @{@inheritDoc }
      */
     @Override
-    public double getLongitude() {return this.longitude;}
+    public double getLongitude() {
+        return this.longitude;
+    }
 
     /**
      *
      * @{@inheritDoc }
      */
     @Override
-    public double getLatitude() {return this.latitude;}
+    public double getLatitude() {
+        return this.latitude;
+    }
 
     /**
      *
      * @{@inheritDoc }
      */
     @Override
-    public double getAltitude() {return this.altitude;}
+    public double getAltitude() {
+        return this.altitude;
+    }
 
     /**
      *
      * @{@inheritDoc }
      */
     @Override
-    public double getHeading() {return this.heading;}
+    public double getHeading() {
+        return this.heading;
+    }
 
     /**
      *
      * @{@inheritDoc }
      */
     @Override
-    public double getTilt() {return this.tilt;}
+    public double getTilt() {
+        return this.tilt;
+    }
 
     /**
      *
      * @{@inheritDoc }
      */
     @Override
-    public double getRoll() {return this.roll;}
+    public double getRoll() {
+        return this.roll;
+    }
 
     /**
      *
      * @{@inheritDoc }
      */
     @Override
-    public AltitudeMode getAltitudeMode() {return this.altitudeMode;}
+    public AltitudeMode getAltitudeMode() {
+        return this.altitudeMode;
+    }
 
     /**
      *
      * @{@inheritDoc }
      */
     @Override
-    public List<SimpleType> getCameraSimpleExtensions() {return this.cameraSimpleExtensions;}
+    public List<SimpleType> getCameraSimpleExtensions() {
+        return this.cameraSimpleExtensions;
+    }
 
     /**
      *
      * @{@inheritDoc }
      */
     @Override
-    public List<AbstractObject> getCameraObjectExtensions() {return this.cameraObjectExtensions;}
+    public List<AbstractObject> getCameraObjectExtensions() {
+        return this.cameraObjectExtensions;
+    }
 
     /**
      *
      * @{@inheritDoc }
      */
     @Override
-    public void setLongitude(double longitude) {this.longitude = KmlUtilities.checkAngle180(longitude);}
+    public void setLongitude(double longitude) {
+        this.longitude = KmlUtilities.checkAngle180(longitude);
+    }
 
     /**
      *
      * @{@inheritDoc }
      */
     @Override
-    public void setLatitude(double latitude) {this.latitude = KmlUtilities.checkAngle90(latitude);}
+    public void setLatitude(double latitude) {
+        this.latitude = KmlUtilities.checkAngle90(latitude);
+    }
 
     /**
      *
      * @{@inheritDoc }
      */
     @Override
-    public void setAltitude(double altitude) {this.altitude = altitude;}
+    public void setAltitude(double altitude) {
+        this.altitude = altitude;
+    }
 
     /**
      *
      * @{@inheritDoc }
      */
     @Override
-    public void setHeading(double heading) {this.heading = KmlUtilities.checkAngle360(heading);}
+    public void setHeading(double heading) {
+        this.heading = KmlUtilities.checkAngle360(heading);
+    }
 
     /**
      *
      * @{@inheritDoc }
      */
     @Override
-    public void setTilt(double tilt) {this.tilt = KmlUtilities.checkAnglePos180(tilt);}
+    public void setTilt(double tilt) {
+        this.tilt = KmlUtilities.checkAnglePos180(tilt);
+    }
 
     /**
      *
      * @{@inheritDoc }
      */
     @Override
-    public void setRoll(double roll) {this.roll = KmlUtilities.checkAngle180(roll);}
+    public void setRoll(double roll) {
+        this.roll = KmlUtilities.checkAngle180(roll);
+    }
 
     /**
      *
      * @{@inheritDoc }
      */
     @Override
-    public void setAltitudeMode(AltitudeMode altitudeMode) {this.altitudeMode = altitudeMode;}
+    public void setAltitudeMode(AltitudeMode altitudeMode) {
+        this.altitudeMode = altitudeMode;
+    }
 
     /**
      *
@@ -191,5 +223,4 @@ public class DefaultCamera extends DefaultAbstractView implements Camera {
     public void setCameraObjectExtensions(List<AbstractObject> cameraObjectExtensions) {
         this.cameraObjectExtensions = cameraObjectExtensions;
     }
-
 }

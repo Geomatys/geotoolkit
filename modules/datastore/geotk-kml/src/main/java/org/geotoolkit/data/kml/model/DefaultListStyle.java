@@ -24,6 +24,7 @@ public class DefaultListStyle extends DefaultAbstractSubStyle implements ListSty
      */
     public DefaultListStyle(){
         this.bgColor = DEF_BG_COLOR;
+        this.itemIcons = EMPTY_LIST;
         this.maxSnippetLines = DEF_MAX_SNIPPET_LINES;
         this.listStyleSimpleExtensions = EMPTY_LIST;
         this.listStyleObjectExtensions = EMPTY_LIST;

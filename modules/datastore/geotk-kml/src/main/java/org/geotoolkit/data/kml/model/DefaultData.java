@@ -10,9 +10,16 @@ import static java.util.Collections.*;
  */
 public class DefaultData extends DefaultAbstractObject implements Data {
 
-    private final String displayName;
-    private final String value;
-    private final List<Object> dataExtensions;
+    private String displayName;
+    private String value;
+    private List<Object> dataExtensions;
+
+    /**
+     *
+     */
+    public DefaultData(){
+        this.dataExtensions = EMPTY_LIST;
+    }
 
     /**
      *
@@ -50,5 +57,32 @@ public class DefaultData extends DefaultAbstractObject implements Data {
      */
     @Override
     public List<Object> getDataExtensions() {return this.dataExtensions;}
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setValue(String value) {
+        this.value = value;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setDataExtensions(List<Object> dataExtensions) {
+        this.dataExtensions = dataExtensions;
+    }
 
 }

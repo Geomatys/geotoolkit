@@ -115,7 +115,7 @@ public class DefaultIconStyle extends DefaultAbstractColorStyle implements IconS
      * @{@inheritDoc }
      */
     @Override
-    public void setHeading(double heading) {this.heading = heading;}
+    public void setHeading(double heading) {this.heading = KmlUtilities.checkAngle360(heading);}
 
     /**
      *

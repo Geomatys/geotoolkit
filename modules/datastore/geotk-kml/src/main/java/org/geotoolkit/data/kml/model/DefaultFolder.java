@@ -121,7 +121,7 @@ public class DefaultFolder extends DefaultAbstractContainer implements Folder {
      * @{@inheritDoc }
      */
     @Override
-    public void getFolderObjectExtensions(List<AbstractObject> folderObjectExtensions) {
+    public void setFolderObjectExtensions(List<AbstractObject> folderObjectExtensions) {
         this.folderObjectExtensions = folderObjectExtensions;
     }
 

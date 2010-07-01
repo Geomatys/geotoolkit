@@ -10,13 +10,13 @@ import static org.geotoolkit.data.kml.xml.KmlModelConstants.*;
  *
  * @author Samuel Andrés
  */
-public class DefaultLatLonBox extends DefaultAbstractLatLonBox implements LatLonBox{
+public class DefaultLatLonBox extends DefaultAbstractLatLonBox implements LatLonBox {
 
     private double rotation;
     private List<SimpleType> latLonBoxSimpleExtensions;
     private List<AbstractObject> latLonBoxObjectExtensions;
 
-    public DefaultLatLonBox(){
+    public DefaultLatLonBox() {
         this.rotation = DEF_ROTATION;
         this.latLonBoxSimpleExtensions = EMPTY_LIST;
         this.latLonBoxObjectExtensions = EMPTY_LIST;
@@ -41,7 +41,7 @@ public class DefaultLatLonBox extends DefaultAbstractLatLonBox implements LatLon
             List<SimpleType> abstractLatLonBoxSimpleExtensions, List<AbstractObject> abstractLatLonBoxObjectExtensions,
             double rotation,
             List<SimpleType> latLonBoxSimpleExtensions,
-            List<AbstractObject> latLonBoxObjectExtensions){
+            List<AbstractObject> latLonBoxObjectExtensions) {
         super(objectSimpleExtensions, idAttributes, north, south, east, west, abstractLatLonBoxSimpleExtensions, abstractLatLonBoxObjectExtensions);
         this.rotation = KmlUtilities.checkAngle180(rotation);
         this.latLonBoxSimpleExtensions = (latLonBoxSimpleExtensions == null) ? EMPTY_LIST : latLonBoxSimpleExtensions;
@@ -53,28 +53,36 @@ public class DefaultLatLonBox extends DefaultAbstractLatLonBox implements LatLon
      * @{@inheritDoc }
      */
     @Override
-    public double getRotation() {return this.rotation;}
+    public double getRotation() {
+        return this.rotation;
+    }
 
     /**
      *
      * @{@inheritDoc }
      */
     @Override
-    public List<SimpleType> getLatLonBoxSimpleExtensions() {return this.latLonBoxSimpleExtensions;}
+    public List<SimpleType> getLatLonBoxSimpleExtensions() {
+        return this.latLonBoxSimpleExtensions;
+    }
 
     /**
      *
      * @{@inheritDoc }
      */
     @Override
-    public List<AbstractObject> getLatLonBoxObjectExtensions() {return this.latLonBoxObjectExtensions;}
+    public List<AbstractObject> getLatLonBoxObjectExtensions() {
+        return this.latLonBoxObjectExtensions;
+    }
 
     /**
      *
      * @{@inheritDoc }
      */
     @Override
-    public void setRotation(double rotation) {this.rotation = rotation;}
+    public void setRotation(double rotation) {
+        this.rotation = KmlUtilities.checkAngle180(rotation);
+    }
 
     /**
      *

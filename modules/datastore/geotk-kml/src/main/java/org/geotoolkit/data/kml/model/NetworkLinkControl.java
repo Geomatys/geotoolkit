@@ -1,5 +1,6 @@
 package org.geotoolkit.data.kml.model;
 
+import java.util.Calendar;
 import java.util.List;
 import org.geotoolkit.data.kml.xsd.SimpleType;
 
@@ -80,7 +81,7 @@ public interface NetworkLinkControl {
      *
      * @return
      */
-    public String getExpires();
+    public Calendar getExpires();
 
     /**
      *
@@ -106,4 +107,75 @@ public interface NetworkLinkControl {
      */
     public List<AbstractObject> getNetworkLinkControlObjectExtensions();
 
+    /**
+     *
+     * @param minRefreshPeriod
+     */
+    public void setMinRefreshPeriod(double minRefreshPeriod);
+
+    /**
+     *
+     * @param maxSessionLength
+     */
+    public void setMaxSessionLength(double maxSessionLength);
+
+    /**
+     *
+     * @param cookie
+     */
+    public void setCookie(String cookie);
+
+    /**
+     *
+     * @param message
+     */
+    public void setMessage(String message);
+
+    /**
+     *
+     * @param linkName
+     */
+    public void setLinkName(String linkName);
+
+    /**
+     *
+     * @param linkDescription
+     */
+    public void setLinkDescription(String linkDescription);
+
+    /**
+     *
+     * @param linkSnippet
+     */
+    public void setLinkSnippet(Snippet linkSnippet);
+
+    /**
+     *
+     * @param expires
+     */
+    public void setExpires(Calendar expires);
+
+    /**
+     *
+     * @param update
+     */
+    public void setUpdate(Update update);
+
+    /**
+     *
+     * @param abstractView
+     */
+    public void setView(AbstractView abstractView);
+
+    /**
+     *
+     * @param networkLinkControlSimpleExtensions
+     */
+    public void setNetworkLinkControlSimpleExtensions(List<SimpleType> networkLinkControlSimpleExtensions);
+
+    /**
+     * 
+     * @param networkLinkControlObjectExtensions
+     */
+    public void setNetworkLinkControlObjectExtensions(List<AbstractObject> networkLinkControlObjectExtensions);
 }

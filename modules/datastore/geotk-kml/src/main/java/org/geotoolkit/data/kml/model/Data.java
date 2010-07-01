@@ -46,4 +46,22 @@ public interface Data extends AbstractObject {
      * @return the list of data extensions.
      */
     public List<Object> getDataExtensions();
+
+    /**
+     *
+     * @param displayName
+     */
+    public void setDisplayName(String displayName);
+
+    /**
+     *
+     * @param value
+     */
+    public void setValue(String value);
+
+    /**
+     *
+     * @param dataExtensions
+     */
+    public void setDataExtensions(List<Object> dataExtensions);
 }

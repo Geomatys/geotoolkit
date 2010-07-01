@@ -99,7 +99,7 @@ public class DefaultLocation extends DefaultAbstractObject implements Location {
      */
     @Override
     public void setLongitude(double longitude) {
-        this.longitude = longitude;
+        this.longitude = KmlUtilities.checkAngle180(longitude);
     }
 
     /**
@@ -108,7 +108,7 @@ public class DefaultLocation extends DefaultAbstractObject implements Location {
      */
     @Override
     public void setLatitude(double latitude) {
-        this.latitude = latitude;
+        this.latitude = KmlUtilities.checkAngle90(latitude);
     }
 
     /**

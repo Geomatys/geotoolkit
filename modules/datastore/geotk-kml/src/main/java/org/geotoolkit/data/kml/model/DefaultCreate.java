@@ -9,7 +9,11 @@ import static java.util.Collections.*;
  */
 public class DefaultCreate implements Create {
 
-    private final List<AbstractContainer> containers;
+    private List<AbstractContainer> containers;
+
+    public DefaultCreate(){
+        this.containers = EMPTY_LIST;
+    }
 
     /**
      *
@@ -25,5 +29,14 @@ public class DefaultCreate implements Create {
      */
     @Override
     public List<AbstractContainer> getContainers() {return this.containers;}
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setContainers(List<AbstractContainer> containers) {
+        this.containers = containers;
+    }
 
 }

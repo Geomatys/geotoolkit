@@ -29,6 +29,12 @@ public interface Kml {
 
     /**
      *
+     * @return
+     */
+    public String getVersion();
+
+    /**
+     *
      * @return The Kml NetworkLinkControl.
      */
     public NetworkLinkControl getNetworkLinkControl();
@@ -50,5 +56,35 @@ public interface Kml {
      * @return The Kml list of object extensions.
      */
     public List<AbstractObject> getKmlObjectExtensions();
+
+    /**
+     * 
+     * @param version
+     */
+    public void setVersion(String version) throws KmlException;
+
+    /**
+     * 
+     * @param networkLinkCOntrol
+     */
+    public void setNetworkLinkControl(NetworkLinkControl networkLinkCOntrol);
+
+    /**
+     * 
+     * @param feature
+     */
+    public void setAbstractFeature(AbstractFeature feature);
+
+    /**
+     *
+     * @param kmlSimpleExtensions
+     */
+    public void setKmlSimpleExtensions(List<SimpleType> kmlSimpleExtensions);
+
+    /**
+     * 
+     * @param kmlObjectExtensions
+     */
+    public void setKmlObjectExtensions(List<AbstractObject> kmlObjectExtensions);
 
 }

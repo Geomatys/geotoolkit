@@ -29,7 +29,6 @@ public interface Schema {
      * @return
      */
     public List<SimpleField> getSimpleFields();
-    //public List<SchemaExtension> getSchemaExtensions();
 
     /**
      *
@@ -42,4 +41,34 @@ public interface Schema {
      * @return
      */
     public String getId();
+
+    /**
+     *
+     * @return
+     */
+    public List<Object> getSchemaExtensions();
+
+    /**
+     *
+     * @param simpleFields
+     */
+    public void setSimpleFields(List<SimpleField> simpleFields);
+
+    /**
+     *
+     * @param name
+     */
+    public void setName(String name);
+
+    /**
+     *
+     * @param id
+     */
+    public void setId(String id);
+
+    /**
+     * 
+     * @param schemaExtensions
+     */
+    public void setSchemaExtensions(List<Object> schemaExtensions);
 }

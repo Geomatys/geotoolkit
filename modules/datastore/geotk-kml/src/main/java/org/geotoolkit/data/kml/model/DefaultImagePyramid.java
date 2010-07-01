@@ -3,6 +3,7 @@ package org.geotoolkit.data.kml.model;
 import java.util.List;
 import org.geotoolkit.data.kml.xsd.SimpleType;
 import static java.util.Collections.*;
+import static org.geotoolkit.data.kml.xml.KmlModelConstants.*;
 
 /**
  *
@@ -10,12 +11,24 @@ import static java.util.Collections.*;
  */
 public class DefaultImagePyramid extends DefaultAbstractObject implements ImagePyramid {
 
-    private final int titleSize;
-    private final int maxWidth;
-    private final int maxHeight;
-    private final GridOrigin gridOrigin;
-    private final List<SimpleType> imagePyramidSimpleExtensions;
-    private final List<AbstractObject> imagePyramidObjectExtensions;
+    private int titleSize;
+    private int maxWidth;
+    private int maxHeight;
+    private GridOrigin gridOrigin;
+    private List<SimpleType> imagePyramidSimpleExtensions;
+    private List<AbstractObject> imagePyramidObjectExtensions;
+
+    /**
+     *
+     */
+    public DefaultImagePyramid(){
+        this.titleSize = DEF_TITLE_SIZE;
+        this.maxWidth = DEF_MAX_WIDTH;
+        this.maxHeight = DEF_MAX_HEIGHT;
+        this.gridOrigin = DEF_GRID_ORIGIN;
+        this.imagePyramidSimpleExtensions = EMPTY_LIST;
+        this.imagePyramidObjectExtensions = EMPTY_LIST;
+    }
 
     /**
      *
@@ -81,5 +94,59 @@ public class DefaultImagePyramid extends DefaultAbstractObject implements ImageP
      */
     @Override
     public List<AbstractObject> getImagePyramidObjectExtensions() {return this.imagePyramidObjectExtensions;}
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setTitleSize(int titleSize) {
+        this.titleSize = titleSize;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setMaxWidth(int maxWidth) {
+        this.maxWidth = maxWidth;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setMaxHeight(int maxHeight) {
+        this.maxHeight = maxHeight;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setGridOrigin(GridOrigin gridOrigin) {
+        this.gridOrigin = gridOrigin;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setImagePyramidSimpleExtensions(List<SimpleType> imagePyramidSimpleExtensions) {
+        this.imagePyramidSimpleExtensions = imagePyramidSimpleExtensions;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setImagePyramidObjectExtensions(List<AbstractObject> imagePyramidObjectExtensions) {
+        this.imagePyramidObjectExtensions = imagePyramidObjectExtensions;
+    }
 
 }

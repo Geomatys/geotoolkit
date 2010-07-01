@@ -103,7 +103,7 @@ public class DefaultOrientation extends DefaultAbstractObject implements Orienta
      */
     @Override
     public void setHeading(double heading) {
-        this.heading = heading;
+        this.heading = KmlUtilities.checkAngle360(heading);
     }
 
     /**
@@ -112,7 +112,7 @@ public class DefaultOrientation extends DefaultAbstractObject implements Orienta
      */
     @Override
     public void setTilt(double tilt) {
-        this.tilt = tilt;
+        this.tilt = KmlUtilities.checkAnglePos180(tilt);
     }
 
     /**
@@ -121,7 +121,7 @@ public class DefaultOrientation extends DefaultAbstractObject implements Orienta
      */
     @Override
     public void setRoll(double roll) {
-        this.roll = roll;
+        this.roll = KmlUtilities.checkAngle180(roll);
     }
 
     /**

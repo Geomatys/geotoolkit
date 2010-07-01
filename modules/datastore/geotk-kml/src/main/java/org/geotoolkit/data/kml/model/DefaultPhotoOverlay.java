@@ -26,7 +26,7 @@ public class DefaultPhotoOverlay extends DefaultAbstractOverlay implements Photo
     /**
      * 
      */
-    public DefaultPhotoOverlay(){
+    public DefaultPhotoOverlay() {
         super();
         this.photoOverlaySimpleExtensions = EMPTY_LIST;
         this.photoOverlayObjectExtensions = EMPTY_LIST;
@@ -78,7 +78,7 @@ public class DefaultPhotoOverlay extends DefaultAbstractOverlay implements Photo
             final Color color, final int drawOrder, final Icon icon,
             final List<SimpleType> abstractOveraySimpleExtensions, final List<AbstractObject> abstractOverlayObjectExtensions,
             final double rotation, final ViewVolume viewVolume, final ImagePyramid imagePyramid, final Point point, final Shape shape,
-            final List<SimpleType> photoOverlaySimpleExtensions, final List<AbstractObject> photoOverlayObjectExtensions){
+            final List<SimpleType> photoOverlaySimpleExtensions, final List<AbstractObject> photoOverlayObjectExtensions) {
         super(objectSimpleExtensions, idAttributes,
                 name, visibility, open, author, link, address, addressDetails, phoneNumber, snippet,
                 description, view, timePrimitive, styleUrl, styleSelector, region, extendedData,
@@ -98,84 +98,108 @@ public class DefaultPhotoOverlay extends DefaultAbstractOverlay implements Photo
      * @{@inheritDoc }
      */
     @Override
-    public double getRotation() {return this.rotation;}
+    public double getRotation() {
+        return this.rotation;
+    }
 
     /**
      *
      * @{@inheritDoc }
      */
     @Override
-    public ViewVolume getViewVolume() {return this.viewVolume;}
+    public ViewVolume getViewVolume() {
+        return this.viewVolume;
+    }
 
     /**
      *
      * @{@inheritDoc }
      */
     @Override
-    public ImagePyramid getImagePyramid() {return this.imagePyramid;}
+    public ImagePyramid getImagePyramid() {
+        return this.imagePyramid;
+    }
 
     /**
      *
      * @{@inheritDoc }
      */
     @Override
-    public Point getPoint() {return this.point;}
+    public Point getPoint() {
+        return this.point;
+    }
 
     /**
      *
      * @{@inheritDoc }
      */
     @Override
-    public Shape getShape() {return this.shape;}
+    public Shape getShape() {
+        return this.shape;
+    }
 
     /**
      *
      * @{@inheritDoc }
      */
     @Override
-    public List<SimpleType> getPhotoOverlaySimpleExtensions() {return this.photoOverlaySimpleExtensions;}
+    public List<SimpleType> getPhotoOverlaySimpleExtensions() {
+        return this.photoOverlaySimpleExtensions;
+    }
 
     /**
      *
      * @{@inheritDoc }
      */
     @Override
-    public List<AbstractObject> getPhotoOverlayObjectExtensions() {return this.photoOverlayObjectExtensions;}
+    public List<AbstractObject> getPhotoOverlayObjectExtensions() {
+        return this.photoOverlayObjectExtensions;
+    }
 
     /**
      *
      * @{@inheritDoc }
      */
     @Override
-    public void setRotation(double rotation) {this.rotation = KmlUtilities.checkAngle180(rotation);}
+    public void setRotation(double rotation) {
+        this.rotation = KmlUtilities.checkAngle180(rotation);
+    }
 
     /**
      *
      * @{@inheritDoc }
      */
     @Override
-    public void setViewVolume(ViewVolume viewVolume) {this.viewVolume = viewVolume;}
+    public void setViewVolume(ViewVolume viewVolume) {
+        this.viewVolume = viewVolume;
+    }
 
     /**
      *
      * @{@inheritDoc }
      */
     @Override
-    public void setImagePyramid(ImagePyramid imagePyramid) {this.imagePyramid = imagePyramid;}
+    public void setImagePyramid(ImagePyramid imagePyramid) {
+        this.imagePyramid = imagePyramid;
+    }
 
     /**
      *
      * @{@inheritDoc }
      */
     @Override
-    public void setPoint(Point point) {this.point = point;}
+    public void setPoint(Point point) {
+        this.point = point;
+    }
 
     /**
      *
      * @{@inheritDoc }
      */
     @Override
-    public void setShape(Shape shape) {this.shape = shape;}
+    public void setShape(Shape shape) {
+        this.shape = shape;
+    }
 
     /**
      *
@@ -194,5 +218,4 @@ public class DefaultPhotoOverlay extends DefaultAbstractOverlay implements Photo
     public void setPhotoOverlayObjectExtensions(List<AbstractObject> photoOverlayObjectExtensions) {
         this.photoOverlayObjectExtensions = photoOverlayObjectExtensions;
     }
-
 }

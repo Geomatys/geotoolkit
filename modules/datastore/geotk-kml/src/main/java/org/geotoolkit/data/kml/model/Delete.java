@@ -25,4 +25,10 @@ public interface Delete {
      */
     public List<AbstractFeature> getFeatures();
 
+    /**
+     * 
+     * @param features
+     */
+    public void setFeatures(List<AbstractFeature> features);
+
 }

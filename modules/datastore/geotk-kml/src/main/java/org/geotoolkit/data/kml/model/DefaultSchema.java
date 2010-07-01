@@ -9,10 +9,18 @@ import static java.util.Collections.*;
  */
 public class DefaultSchema implements Schema {
 
-    private final List<SimpleField> simpleFields;
-    //private final List<SchemaExtension> schemaExtensions;
-    private final String name;
-    private final String id;
+    private List<SimpleField> simpleFields;
+    private String name;
+    private String id;
+    private List<Object> schemaExtensions;
+
+    /**
+     * 
+     */
+    public DefaultSchema(){
+        this.simpleFields = EMPTY_LIST;
+        this.schemaExtensions = EMPTY_LIST;
+    }
 
     /**
      *
@@ -21,10 +29,11 @@ public class DefaultSchema implements Schema {
      * @param id
      */
     public DefaultSchema(List<SimpleField> simpleFields,
-            String name, String id){
+            String name, String id, List<Object> schemaExtensions){
         this.simpleFields = (simpleFields == null) ? EMPTY_LIST : simpleFields;
         this.name = name;
         this.id = id;
+        this.schemaExtensions = (schemaExtensions == null) ? EMPTY_LIST : schemaExtensions;
     }
 
     /**
@@ -47,5 +56,50 @@ public class DefaultSchema implements Schema {
      */
     @Override
     public String getId() {return this.id;}
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public List<Object> getSchemaExtensions() {
+        return this.schemaExtensions;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setSimpleFields(List<SimpleField> simpleFields) {
+        this.simpleFields = simpleFields;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setSchemaExtensions(List<Object> schemaExtensions) {
+        this.schemaExtensions = schemaExtensions;
+    }
 
 }

@@ -40,4 +40,16 @@ public interface AbstractTimePrimitive extends AbstractObject {
      */
     public List<AbstractObject> getAbstractTimePrimitiveObjectExtensions();
 
+    /**
+     * 
+     * @param abstractTimePrimitiveSimpleExtensions
+     */
+    public void getAbstractTimePrimitiveSimpleExtensions(List<SimpleType> abstractTimePrimitiveSimpleExtensions);
+
+    /**
+     *
+     * @param abstractTimePrimitiveObjectExtensions
+     */
+    public void getAbstractTimePrimitiveObjectExtensions(List<AbstractObject> abstractTimePrimitiveObjectExtensions);
+
 }

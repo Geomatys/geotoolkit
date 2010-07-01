@@ -24,4 +24,10 @@ public interface Create {
      * @return the AbstractContainer list.
      */
     public List<AbstractContainer> getContainers();
+
+    /**
+     * 
+     * @param containers
+     */
+    public void setContainers(List<AbstractContainer> containers);
 }

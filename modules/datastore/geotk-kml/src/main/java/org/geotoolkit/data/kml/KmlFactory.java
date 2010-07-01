@@ -107,6 +107,12 @@ public interface KmlFactory {
             List<AbstractObject> kmlObjectExtensions);
 
     /**
+     * 
+     * @return
+     */
+    public Kml createKml();
+
+    /**
      *
      * @param objectSimpleExtensions
      * @param idAttributes
@@ -223,6 +229,12 @@ public interface KmlFactory {
     public Change createChange(List<AbstractObject> objects);
 
     /**
+     * 
+     * @return
+     */
+    public Change createChange();
+
+    /**
      *
      * @param listCoordinates
      * @return
@@ -261,6 +273,12 @@ public interface KmlFactory {
     public Create createCreate(List<AbstractContainer> containers);
 
     /**
+     * 
+     * @return
+     */
+    public Create createCreate();
+
+    /**
      *
      * @param objectSimpleExtensions
      * @param idAttributes
@@ -273,11 +291,23 @@ public interface KmlFactory {
             String displayName, String value, List<Object> dataExtensions);
 
     /**
+     * 
+     * @return
+     */
+    public Data createData();
+
+    /**
      *
      * @param features
      * @return
      */
     public Delete createDelete(List<AbstractFeature> features);
+
+    /**
+     * 
+     * @return
+     */
+    public Delete createDelete();
 
     /**
      *
@@ -336,7 +366,14 @@ public interface KmlFactory {
      * @param anyOtherElements
      * @return
      */
-    public ExtendedData createExtendedData(List<Data> datas, List<SchemaData> schemaDatas, List<Object> anyOtherElements);
+    public ExtendedData createExtendedData(List<Data> datas, 
+            List<SchemaData> schemaDatas, List<Object> anyOtherElements);
+
+    /**
+     * 
+     * @return
+     */
+    public ExtendedData createExtendedData();
 
     /**
      *
@@ -508,6 +545,12 @@ public interface KmlFactory {
             int titleSize, int maxWidth, int maxHeight, GridOrigin gridOrigin,
             List<SimpleType> imagePyramidSimpleExtensions, List<AbstractObject> imagePyramidObjectExtensions);
 
+    /**
+     * 
+     * @return
+     */
+    public ImagePyramid createImagePyramid();
+    
     /**
      *
      * @param objectSimpleExtensions
@@ -959,8 +1002,14 @@ public interface KmlFactory {
      */
     public NetworkLinkControl createNetworkLinkControl(double minRefreshPeriod,
             double maxSessionLength, String cookie, String message, String linkName, String linkDescription,
-            Snippet linkSnippet, String expire, Update update, AbstractView view,
+            Snippet linkSnippet, Calendar expire, Update update, AbstractView view,
             List<SimpleType> networkLinkControlSimpleExtensions, List<AbstractObject> networkLinkControlObjectExtensions);
+
+    /**
+     * 
+     * @return
+     */
+    public NetworkLinkControl createNetworkLinkControl();
 
     /**
      *
@@ -1280,14 +1329,21 @@ public interface KmlFactory {
     public Scale createScale();
 
     /**
-     *
+     * 
      * @param simpleFields
      * @param name
      * @param id
+     * @param schemaExtensions
      * @return
      */
     public Schema createSchema(List<SimpleField> simpleFields,
-            String name, String id);
+            String name, String id, List<Object> schemaExtensions);
+
+    /**
+     * 
+     * @return
+     */
+    public Schema createSchema();
 
     /**
      *
@@ -1367,9 +1423,17 @@ public interface KmlFactory {
      * @param displayName
      * @param type
      * @param name
+     * @param simpleFieldExtensions
      * @return
      */
-    public SimpleField createSimpleField(String displayName, String type, String name);
+    public SimpleField createSimpleField(String displayName, String type, 
+            String name, List<Object> simpleFieldExtensions);
+
+    /**
+     * 
+     * @return
+     */
+    public SimpleField createSimpleField();
 
     /**
      *

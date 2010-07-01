@@ -1,8 +1,10 @@
 package org.geotoolkit.data.kml.model;
 
+import java.util.Calendar;
 import java.util.List;
 import org.geotoolkit.data.kml.xsd.SimpleType;
 import static java.util.Collections.*;
+import static org.geotoolkit.data.kml.xml.KmlModelConstants.*;
 
 /**
  *
@@ -10,18 +12,28 @@ import static java.util.Collections.*;
  */
 public class DefaultNetworkLinkControl implements NetworkLinkControl {
 
-    private final double minRefreshPeriod;
-    private final double maxSessionLength;
-    private final String cookie;
-    private final String message;
-    private final String linkName;
-    private final String linkDescription;
-    private final Snippet linkSnippet;
-    private final String expires;
-    private final Update update;
-    private final AbstractView view;
-    private final List<SimpleType> networkLinkControlSimpleExtensions;
-    private final List<AbstractObject> networkLinkControlObjectExtensions;
+    private double minRefreshPeriod;
+    private double maxSessionLength;
+    private String cookie;
+    private String message;
+    private String linkName;
+    private String linkDescription;
+    private Snippet linkSnippet;
+    private Calendar expires;
+    private Update update;
+    private AbstractView view;
+    private List<SimpleType> networkLinkControlSimpleExtensions;
+    private List<AbstractObject> networkLinkControlObjectExtensions;
+
+    /**
+     *
+     */
+    public DefaultNetworkLinkControl(){
+        this.minRefreshPeriod = DEF_MIN_REFRESH_PERIOD;
+        this.maxSessionLength = DEF_MAX_SESSION_LENGTH;
+        this.networkLinkControlSimpleExtensions = EMPTY_LIST;
+        this.networkLinkControlObjectExtensions = EMPTY_LIST;
+    }
 
     /**
      *
@@ -40,7 +52,7 @@ public class DefaultNetworkLinkControl implements NetworkLinkControl {
      */
     public DefaultNetworkLinkControl(double minRefreshPeriod,
             double maxSessionLength, String cookie, String message, String linkName, String linkDescription,
-            Snippet linkSnippet, String expire, Update update, AbstractView view,
+            Snippet linkSnippet, Calendar expire, Update update, AbstractView view,
             List<SimpleType> networkLinkControlSimpleExtensions, List<AbstractObject> networkLinkControlObjectExtensions){
         this.minRefreshPeriod = minRefreshPeriod;
         this.maxSessionLength = maxSessionLength;
@@ -110,7 +122,7 @@ public class DefaultNetworkLinkControl implements NetworkLinkControl {
      * @{@inheritDoc }
      */
     @Override
-    public String getExpires() {return this.expires;}
+    public Calendar getExpires() {return this.expires;}
 
     /**
      *
@@ -139,5 +151,113 @@ public class DefaultNetworkLinkControl implements NetworkLinkControl {
      */
     @Override
     public List<AbstractObject> getNetworkLinkControlObjectExtensions() {return this.networkLinkControlObjectExtensions;}
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setMinRefreshPeriod(double minRefreshPeriod) {
+        this.minRefreshPeriod = minRefreshPeriod;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setMaxSessionLength(double maxSessionLength) {
+        this.maxSessionLength = maxSessionLength;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setCookie(String cookie) {
+        this.cookie = cookie;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setLinkName(String linkName) {
+        this.linkName = linkName;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setLinkDescription(String linkDescription) {
+        this.linkDescription = linkDescription;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setLinkSnippet(Snippet linkSnippet) {
+        this.linkSnippet = linkSnippet;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setExpires(Calendar expires) {
+        this.expires = expires;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setUpdate(Update update) {
+        this.update = update;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setView(AbstractView abstractView) {
+        this.view = abstractView;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setNetworkLinkControlSimpleExtensions(List<SimpleType> networkLinkControlSimpleExtensions) {
+        this.networkLinkControlSimpleExtensions = networkLinkControlSimpleExtensions;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setNetworkLinkControlObjectExtensions(List<AbstractObject> networkLinkControlObjectExtensions) {
+        this.networkLinkControlObjectExtensions = networkLinkControlObjectExtensions;
+    }
 
 }

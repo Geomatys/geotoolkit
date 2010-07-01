@@ -9,7 +9,14 @@ import static java.util.Collections.*;
  */
 public class DefaultDelete implements Delete {
 
-    private final List<AbstractFeature> features;
+    private List<AbstractFeature> features;
+
+    /**
+     * 
+     */
+    public DefaultDelete(){
+        this.features = EMPTY_LIST;
+    }
 
     /**
      *
@@ -25,4 +32,13 @@ public class DefaultDelete implements Delete {
      */
     @Override
     public List<AbstractFeature> getFeatures() {return this.features;}
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setFeatures(List<AbstractFeature> features) {
+        this.features = features;
+    }
 }

@@ -63,6 +63,6 @@ public interface Folder extends AbstractContainer {
      * 
      * @param folderObjectExtensions
      */
-    public void getFolderObjectExtensions(List<AbstractObject> folderObjectExtensions);
+    public void setFolderObjectExtensions(List<AbstractObject> folderObjectExtensions);
 
 }

@@ -111,7 +111,7 @@ import static org.geotoolkit.data.kml.xml.KmlModelConstants.*;
  */
 public class KmlReader extends StaxStreamReader {
 
-    private Kml root;
+    private String URI_KML;
     private static final KmlFactory kmlFactory = new DefaultKmlFactory();
     private final XalReader xalReader = new XalReader();
     private final AtomReader atomReader = new AtomReader();
@@ -126,6 +126,15 @@ public class KmlReader extends StaxStreamReader {
 //        System.setProperty("javax.xml.stream.XMLEventFactory", "com.ctc.wstx.stax.WstxEventFactory");
     }
 
+    /**
+     * <p>Set input. This method doesn't indicate kml uri version whose detection
+     * is automatic at kml root reading. In other cases, method with Kml version uri
+     * argument is necessary.</p>
+     *
+     * @param input
+     * @throws IOException
+     * @throws XMLStreamException
+     */
     @Override
     public void setInput(Object input) throws IOException, XMLStreamException {
         super.setInput(input);
@@ -134,12 +143,31 @@ public class KmlReader extends StaxStreamReader {
     }
 
     /**
+     * <p>Set input. This method is necessary if Kml elements are read out of Kml document
+     * with kml root elements.</p>
+     *
+     * @param input
+     * @param KmlVersionUri
+     * @throws IOException
+     * @throws XMLStreamException
+     * @throws KmlException
+     */
+    public void setInput(Object input, String KmlVersionUri)
+            throws IOException, XMLStreamException, KmlException {
+        this.setInput(input);
+        if (URI_KML_2_2.equals(KmlVersionUri) || URI_KML_2_1.equals(KmlVersionUri))
+            this.URI_KML = KmlVersionUri;
+        else
+            throw new KmlException("Bad Kml version Uri. This reader supports 2.1 and 2.2 versions.");
+    }
+
+    /**
      * <p>This method reads the Kml document assigned to the KmlReader.</p>
      *
      * @return The Kml object mapping the document.
      */
     public Kml read() {
-
+        Kml root = null;
         try {
 
             while (reader.hasNext()) {
@@ -150,9 +178,12 @@ public class KmlReader extends StaxStreamReader {
                         final String eName = reader.getLocalName();
                         final String eUri = reader.getNamespaceURI();
 
-                        if (URI_KML.equals(eUri)) {
+                        if (URI_KML_2_2.equals(eUri)
+                                || URI_KML_2_1.equals(eUri)) {
                             if (TAG_KML.equals(eName)) {
-                                this.root = this.readKml();
+                                this.URI_KML = eUri;
+                                root = this.readKml();
+                                root.setVersion(URI_KML);
                             }
                         }
                         break;
@@ -163,7 +194,7 @@ public class KmlReader extends StaxStreamReader {
         } catch (KmlException ex) {
             System.out.println("KML EXCEPTION : " + ex.getMessage());
         }
-        return this.root;
+        return root;
     }
 
     /**
@@ -576,7 +607,7 @@ public class KmlReader extends StaxStreamReader {
         String linkName = null;
         String linkDescription = null;
         Snippet linkSnippet = null;
-        String expires = null;
+        Calendar expires = null;
         Update update = null;
         AbstractView view = null;
         List<SimpleType> networkLinkControlSimpleExtensions = null;
@@ -614,7 +645,7 @@ public class KmlReader extends StaxStreamReader {
                             linkSnippet = this.readSnippet();
                         }
                         if (TAG_EXPIRES.equals(eName)){
-                            expires = reader.getElementText();
+                            expires = fastDateParser.getCalendar(reader.getElementText());
                         }
                         if (TAG_UPDATE.equals(eName)){
                             update = this.readUpdate();
@@ -3685,7 +3716,7 @@ public class KmlReader extends StaxStreamReader {
 
         // Schema
         List<SimpleField> simplefields = new ArrayList<SimpleField>();
-        //public List<SchemaExtension> getSchemaExtensions();
+        List<Object> schemaExtensions = new ArrayList<Object>();
         String name = reader.getAttributeValue(null, ATT_NAME);
         String id = reader.getAttributeValue(null, ATT_ID);
 
@@ -3714,7 +3745,7 @@ public class KmlReader extends StaxStreamReader {
 
         }
 
-        return KmlReader.kmlFactory.createSchema(simplefields, name, id);
+        return KmlReader.kmlFactory.createSchema(simplefields, name, id, schemaExtensions);
     }
 
     /**
@@ -3726,7 +3757,7 @@ public class KmlReader extends StaxStreamReader {
 
         // SimpleField
         String displayName = null;
-        //public List<SimpleFieldExtension> getSimpleFieldExtensions();
+        List<Object> simpleFieldExtensions = new ArrayList<Object>();
         String name = reader.getAttributeValue(null, ATT_NAME);
         String type = reader.getAttributeValue(null, ATT_TYPE);
 
@@ -3755,7 +3786,7 @@ public class KmlReader extends StaxStreamReader {
 
         }
 
-        return KmlReader.kmlFactory.createSimpleField(displayName, type, name);
+        return KmlReader.kmlFactory.createSimpleField(displayName, type, name, simpleFieldExtensions);
     }
 
     /**

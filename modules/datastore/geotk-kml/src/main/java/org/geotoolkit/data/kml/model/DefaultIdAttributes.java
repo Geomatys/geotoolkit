@@ -43,7 +43,7 @@ public class DefaultIdAttributes implements IdAttributes{
      * @{@inheritDoc}
      */
     @Override
-    public void getId(String id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -52,7 +52,7 @@ public class DefaultIdAttributes implements IdAttributes{
      * @{@inheritDoc}
      */
     @Override
-    public void getTargetId(String targetId) {
+    public void setTargetId(String targetId) {
         this.targetId = targetId;
     }
 }

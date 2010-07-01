@@ -166,6 +166,14 @@ public class DefaultKmlFactory implements KmlFactory {
      * @{@inheritDoc }
      */
     @Override
+    public Kml createKml(){
+        return new DefaultKml();
+    }
+
+    /**
+     * @{@inheritDoc }
+     */
+    @Override
     public Alias createAlias(
             List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
             String targetHref, String sourceHref,
@@ -282,6 +290,14 @@ public class DefaultKmlFactory implements KmlFactory {
      * @{@inheritDoc }
      */
     @Override
+    public Change createChange(){
+        return new DefaultChange();
+    }
+
+    /**
+     * @{@inheritDoc }
+     */
+    @Override
     public Coordinate createCoordinate(String listCoordinates) {
         return new DefaultCoordinate(listCoordinates);
     }
@@ -324,6 +340,14 @@ public class DefaultKmlFactory implements KmlFactory {
      * @{@inheritDoc }
      */
     @Override
+    public Create createCreate() {
+        return new DefaultCreate();
+    }
+
+    /**
+     * @{@inheritDoc }
+     */
+    @Override
     public Data createData(
             List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
             String displayName, String value, List<Object> dataExtensions) {
@@ -335,8 +359,24 @@ public class DefaultKmlFactory implements KmlFactory {
      * @{@inheritDoc }
      */
     @Override
+    public Data createData(){
+        return new DefaultData();
+    }
+
+    /**
+     * @{@inheritDoc }
+     */
+    @Override
     public Delete createDelete(List<AbstractFeature> features) {
         return new DefaultDelete(features);
+    }
+
+    /**
+     * @{@inheritDoc }
+     */
+    @Override
+    public Delete createDelete() {
+        return new DefaultDelete();
     }
 
     /**
@@ -382,6 +422,15 @@ public class DefaultKmlFactory implements KmlFactory {
     public ExtendedData createExtendedData(List<Data> datas, 
             List<SchemaData> schemaDatas, List<Object> anyOtherElements) {
         return new DefaultExtendedData(datas, schemaDatas, anyOtherElements);
+    }
+
+
+    /**
+     * @{@inheritDoc }
+     */
+    @Override
+    public ExtendedData createExtendedData(){
+        return new DefaultExtendedData();
     }
 
     /**
@@ -524,6 +573,14 @@ public class DefaultKmlFactory implements KmlFactory {
         return new DefaultImagePyramid(objectSimpleExtensions, idAttributes,
                 titleSize, maxWidth, maxHeight, gridOrigin,
                 imagePyramidSimpleExtensions, imagePyramidObjectExtensions);
+    }
+    
+    /**
+     * @{@inheritDoc }
+     */
+    @Override
+    public ImagePyramid createImagePyramid(){
+        return new DefaultImagePyramid();
     }
 
     /**
@@ -926,12 +983,20 @@ public class DefaultKmlFactory implements KmlFactory {
     @Override
     public NetworkLinkControl createNetworkLinkControl(double minRefreshPeriod,
             double maxSessionLength, String cookie, String message, String linkName, String linkDescription,
-            Snippet linkSnippet, String expires, Update update, AbstractView view,
+            Snippet linkSnippet, Calendar expires, Update update, AbstractView view,
             List<SimpleType> networkLinkControlSimpleExtensions, List<AbstractObject> networkLinkControlObjectExtensions) {
         return new DefaultNetworkLinkControl(minRefreshPeriod, maxSessionLength,
                 cookie, message, linkName, linkDescription, linkSnippet,
                 expires, update, view,
                 networkLinkControlSimpleExtensions, networkLinkControlObjectExtensions);
+    }
+
+    /**
+     * @{@inheritDoc }
+     */
+    @Override
+    public NetworkLinkControl createNetworkLinkControl(){
+        return new DefaultNetworkLinkControl();
     }
 
     /**
@@ -1210,8 +1275,16 @@ public class DefaultKmlFactory implements KmlFactory {
      */
     @Override
     public Schema createSchema(List<SimpleField> simpleFields,
-            String name, String id) {
-        return new DefaultSchema(simpleFields, name, id);
+            String name, String id, List<Object> schemaExtensions) {
+        return new DefaultSchema(simpleFields, name, id, schemaExtensions);
+    }
+
+    /**
+     * @{@inheritDoc }
+     */
+    @Override
+    public Schema createSchema(){
+        return new DefaultSchema();
     }
 
     /**
@@ -1275,8 +1348,17 @@ public class DefaultKmlFactory implements KmlFactory {
      * @{@inheritDoc }
      */
     @Override
-    public SimpleField createSimpleField(String displayName, String type, String name) {
-        return new DefaultSimpleField(displayName, type, name);
+    public SimpleField createSimpleField(String displayName, String type, 
+            String name, List<Object> simpleFieldExtensions) {
+        return new DefaultSimpleField(displayName, type, name, simpleFieldExtensions);
+    }
+
+    /**
+     * @{@inheritDoc }
+     */
+    @Override
+    public SimpleField createSimpleField(){
+        return new DefaultSimpleField();
     }
 
     /**

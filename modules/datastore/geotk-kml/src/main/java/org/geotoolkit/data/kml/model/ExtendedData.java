@@ -38,4 +38,22 @@ public interface ExtendedData {
      * @return
      */
     public List<Object> getAnyOtherElements();
+
+    /**
+     *
+     * @param datas
+     */
+    public void setDatas(List<Data> datas);
+
+    /**
+     *
+     * @param schemaDatas
+     */
+    public void setSchemaData(List<SchemaData> schemaDatas);
+
+    /**
+     *
+     * @param anyOtherElements
+     */
+    public void setAnyOtherElements(List<Object> anyOtherElements);
 }
