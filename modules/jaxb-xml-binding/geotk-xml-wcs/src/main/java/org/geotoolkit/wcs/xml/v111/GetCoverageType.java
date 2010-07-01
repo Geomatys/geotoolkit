@@ -149,7 +149,10 @@ public class GetCoverageType implements GetCoverage {
      */
     @Override
     public Version getVersion() {
-        return new Version(version);
+         if (version != null) {
+            return new Version(version);
+        }
+        return null;
     }
 
     /**

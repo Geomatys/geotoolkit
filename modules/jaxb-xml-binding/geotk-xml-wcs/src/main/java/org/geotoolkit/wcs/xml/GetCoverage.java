@@ -33,6 +33,8 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  */
 public interface GetCoverage extends Versioned {
 
+    String getService();
+    
     /**
      * Returns the {@link CoordinateReferenceSystem} of the request, or {@code null}
      * if none.
@@ -82,6 +84,8 @@ public interface GetCoverage extends Versioned {
     String getTime();
 
     RangeSubset getRangeSubset();
+
+    DomainSubset getDomainSubset();
 
     String toKvp();
 }

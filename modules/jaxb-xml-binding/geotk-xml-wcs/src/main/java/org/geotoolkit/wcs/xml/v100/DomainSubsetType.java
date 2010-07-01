@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlElementRefs;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.wcs.xml.DomainSubset;
 
 
 /**
@@ -58,7 +59,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "DomainSubsetType", propOrder = {
     "content"
 })
-public class DomainSubsetType {
+public class DomainSubsetType implements DomainSubset {
 
     @XmlElementRefs({
         @XmlElementRef(name = "temporalSubset", namespace = "http://www.opengis.net/wcs", type = JAXBElement.class),
