@@ -425,6 +425,7 @@ public class AbstractIndexSearcher extends IndexLucene {
         try {
             if (searcher != null)
                 searcher.close();
+            cachedQueries.clear();
         } catch (IOException ex) {
             LOGGER.warning("IOException while closing the index searcher");
         }
