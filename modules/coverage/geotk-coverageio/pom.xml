@@ -107,6 +107,10 @@
   <!-- =========================================================== -->
   <dependencies>
     <dependency>
+      <groupId>javax.media</groupId>
+      <artifactId>jai_imageio</artifactId>
+    </dependency>
+    <dependency>
       <groupId>org.geotoolkit</groupId>
       <artifactId>geotk-utility</artifactId>
       <version>${project.version}</version>

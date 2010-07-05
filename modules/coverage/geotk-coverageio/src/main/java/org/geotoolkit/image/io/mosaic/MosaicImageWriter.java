@@ -650,10 +650,17 @@ public class MosaicImageWriter extends ImageWriter implements Disposable {
                         }
                         if (false) { // Removed from compilation except when debugging.
                             final ThreadPoolExecutor e = (ThreadPoolExecutor) executor;
-                            logger.fine("Active threads: " + e.getActiveCount() +
-                                      "  Enqueued tasks: " + e.getQueue().size() +
-                                      "  Available permits: " + submitPermits.availablePermits() +
-                                      "  Available ImageWriters: " + cache.size());
+                            logger.log(Level.FINE,
+                                    "Active threads: {0}  " +
+                                    "Enqueued tasks: {1}  " +
+                                    "Available permits: {2}  " +
+                                    "Available ImageWriters: {3}",
+                                new Integer[] {
+                                    e.getActiveCount(),
+                                    e.getQueue().size(),
+                                    submitPermits.availablePermits(),
+                                    cache.size()
+                            });
                         }
                     }
                 }
@@ -712,7 +719,7 @@ public class MosaicImageWriter extends ImageWriter implements Disposable {
      *         to get a percentage of completion.
      * @throws IOException if at least one task threw a {@code IOException}.
      */
-    private final void awaitTermination(final List<Future<?>> tasks, int done, final float progressScale)
+    private void awaitTermination(final List<Future<?>> tasks, int done, final float progressScale)
             throws IOException
     {
         done -= tasks.size();
@@ -1274,10 +1281,17 @@ search: for (final Tile tile : tiles) {
             }
             if (reader == null) {
                 final Iterator<ImageReader> it = ImageIO.getImageReadersByFormatName("raw");
-                if (!it.hasNext()) {
+                while (it.hasNext()) {
+                    reader = it.next();
+                    if (!reader.getClass().getName().startsWith("org.geotoolkit.")) {
+                        break;
+                    }
+                    // The Geotk implementation is oriented toward one-banded values.
+                    // Prefer an other implementation (typically JAI) if one is found.
+                }
+                if (reader == null) {
                     throw new UnsupportedImageFormatException(Errors.format(Errors.Keys.NO_IMAGE_READER));
                 }
-                reader = it.next();
             }
             Tile.close(reader.getInput());
             reader.setInput(raw.getImageInputStream());
