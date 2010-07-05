@@ -534,10 +534,15 @@ public class WMSMapLayer extends AbstractMapLayer implements DynamicMapLayer {
 
         final String srid = CRS.lookupIdentifier(crs, true);
 
-        for (String str : layer.getCRS()) {
-            if (srid.equalsIgnoreCase(str)) {
-                return true;
+        if(layer != null){
+            for (String str : layer.getCRS()) {
+                if (srid.equalsIgnoreCase(str)) {
+                    return true;
+                }
             }
+        }else{
+            LOGGER.log(Level.WARNING, "Layer : " + layers[0] + " could not be found in the getCapabilities. "
+                    + "This can be caused by an incorrect layer name (check case-sensitivity) or a non-compliant wms serveur.");
         }
 
         return false;
