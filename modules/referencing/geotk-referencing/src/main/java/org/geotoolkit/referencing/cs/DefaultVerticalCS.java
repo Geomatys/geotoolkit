@@ -28,6 +28,7 @@ import org.opengis.geometry.MismatchedDimensionException;
 
 import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.measure.Measure;
+import org.geotoolkit.internal.referencing.AxisDirections;
 
 
 /**
@@ -147,7 +148,7 @@ public class DefaultVerticalCS extends AbstractCS implements VerticalCS {
      */
     @Override
     protected boolean isCompatibleDirection(final AxisDirection direction) {
-        return AxisDirection.UP.equals(direction.absolute());
+        return AxisDirection.UP.equals(AxisDirections.absolute(direction));
     }
 
     /**

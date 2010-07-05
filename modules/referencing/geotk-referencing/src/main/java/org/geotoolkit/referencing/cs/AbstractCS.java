@@ -45,6 +45,7 @@ import org.geotoolkit.measure.Measure;
 import org.geotoolkit.measure.Units;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.referencing.operation.matrix.GeneralMatrix;
+import org.geotoolkit.internal.referencing.AxisDirections;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.io.wkt.Formatter;
 import org.geotoolkit.resources.Errors;
@@ -185,10 +186,10 @@ public class AbstractCS extends AbstractIdentifiedObject implements CoordinateSy
              * Ensures there is no axis along the same direction
              * (e.g. two North axis, or an East and a West axis).
              */
-            final AxisDirection check = direction.absolute();
+            final AxisDirection check = AxisDirections.absolute(direction);
             if (!check.equals(AxisDirection.OTHER)) {
                 for (int j=i; --j>=0;) {
-                    if (check.equals(axis[j].getDirection().absolute())) {
+                    if (check.equals(AxisDirections.absolute(axis[j].getDirection()))) {
                         // TODO: localize name()
                         final String nameI = axis[i].getDirection().name();
                         final String nameJ = axis[j].getDirection().name();
@@ -213,7 +214,7 @@ public class AbstractCS extends AbstractIdentifiedObject implements CoordinateSy
                         /*
                          * Note: for the check below, maybe it would have be nice to use:
                          *
-                         *     if (m == null || m.baseDirection.equals(expected.opposite())
+                         * if (m == null || m.baseDirection.equals(AxisDirections.opposite(expected))
                          *
                          * but the EPSG database contains many axis named "Northing" with
                          * direction like "South along 180 deg", so it doesn't seem to be
@@ -608,10 +609,10 @@ next:   for (int i=0; i<axis0.length; i++) {
         }
         final AxisDirection[] checks = new AxisDirection[axis.length];
         for (int i=0; i<checks.length; i++) {
-            checks[i] = userCS.getAxis(i).getDirection().absolute();
+            checks[i] = AxisDirections.absolute(userCS.getAxis(i).getDirection());
         }
 next:   for (int i=0; i<axis.length; i++) {
-            final AxisDirection direction = axis[i].getDirection().absolute();
+            final AxisDirection direction = AxisDirections.absolute(axis[i].getDirection());
             for (int j=0; j<checks.length; j++) {
                 final AxisDirection candidate = checks[j];
                 if (candidate != null && candidate.equals(direction)) {

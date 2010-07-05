@@ -18,6 +18,7 @@
 package org.geotoolkit.internal.referencing;
 
 import org.opengis.referencing.datum.VerticalDatumType;
+import org.geotoolkit.lang.Static;
 
 
 /**
@@ -31,6 +32,7 @@ import org.opengis.referencing.datum.VerticalDatumType;
  * @since 3.03
  * @module
  */
+@Static
 public final class VerticalDatumTypes {
     /**
      * Do not allow instantiation of this class.

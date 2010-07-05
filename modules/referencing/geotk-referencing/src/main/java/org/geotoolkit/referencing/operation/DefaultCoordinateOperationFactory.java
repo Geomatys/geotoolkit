@@ -53,6 +53,7 @@ import org.geotoolkit.referencing.datum.DefaultPrimeMeridian;
 import org.geotoolkit.referencing.operation.matrix.XMatrix;
 import org.geotoolkit.referencing.operation.matrix.Matrix4;
 import org.geotoolkit.referencing.operation.matrix.MatrixFactory;
+import org.geotoolkit.internal.referencing.AxisDirections;
 import org.geotoolkit.internal.referencing.VerticalDatumTypes;
 
 import static java.util.Collections.singletonList;
@@ -586,7 +587,7 @@ public class DefaultCoordinateOperationFactory extends AbstractCoordinateOperati
         Matrix matrix = null;
         if (sourceCS.getDimension() == 2 && targetCS.getDimension() == 3) {
             for (int k=3; --k>=0;) {
-                if (AxisDirection.UP.equals(targetCS.getAxis(k).getDirection().absolute())) {
+                if (AxisDirection.UP.equals(AxisDirections.absolute(targetCS.getAxis(k).getDirection()))) {
                     final CoordinateSystemAxis axis0 = targetCS.getAxis(k != 0 ? 0 : 1);
                     final CoordinateSystemAxis axis1 = targetCS.getAxis(k != 2 ? 2 : 1);
                     final EllipsoidalCS step = new DefaultEllipsoidalCS("Step", axis0, axis1);
@@ -615,7 +616,7 @@ public class DefaultCoordinateOperationFactory extends AbstractCoordinateOperati
         for (int i=targetCS.getDimension(); --i>=0;) {
             final CoordinateSystemAxis axis = targetCS.getAxis(i);
             final AxisDirection direction = axis.getDirection();
-            if (AxisDirection.EAST.equals(direction.absolute())) {
+            if (AxisDirection.EAST.equals(AxisDirections.absolute(direction))) {
                 /*
                  * A longitude ordinate has been found (i.e. the axis is oriented toward EAST or
                  * WEST). Compute the amount of angle to add to the source longitude in order to
@@ -1678,7 +1679,7 @@ search: for (final SingleCRS crs : candidates) {
      * {@link org.opengis.referencing.operation.CoordinateOperationAuthorityFactory}.
      * If no coordinate operation was found in the database, then this method returns {@code null}.
      */
-    private final CoordinateOperation tryDB(final SingleCRS sourceCRS, final SingleCRS targetCRS) {
+    private CoordinateOperation tryDB(final SingleCRS sourceCRS, final SingleCRS targetCRS) {
         return (sourceCRS == targetCRS) ? null : createFromDatabase(sourceCRS, targetCRS);
     }
 

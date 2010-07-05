@@ -44,6 +44,7 @@ import org.geotoolkit.referencing.AbstractReferenceSystem;
 import org.geotoolkit.referencing.cs.DefaultEllipsoidalCS;
 import org.geotoolkit.referencing.datum.DefaultEllipsoid;
 import org.geotoolkit.referencing.datum.DefaultGeodeticDatum;
+import org.geotoolkit.internal.referencing.AxisDirections;
 import org.geotoolkit.util.UnsupportedImplementationException;
 import org.geotoolkit.io.wkt.Formatter;
 import org.geotoolkit.lang.Immutable;
@@ -277,7 +278,7 @@ public class DefaultGeographicCRS extends AbstractSingleCRS implements Geographi
             final Unit<?> candidate = axis.getUnit();
             if (Units.isAngular(candidate)) {
                 unit = candidate.asType(Angle.class);
-                if (AxisDirection.EAST.equals(axis.getDirection().absolute())) {
+                if (AxisDirection.EAST.equals(AxisDirections.absolute(axis.getDirection()))) {
                     break; // Found the longitude axis.
                 }
             }

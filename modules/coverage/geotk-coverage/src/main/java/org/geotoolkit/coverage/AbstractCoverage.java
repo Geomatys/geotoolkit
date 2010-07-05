@@ -82,6 +82,7 @@ import org.geotoolkit.io.LineWriter;
 import org.geotoolkit.util.Localized;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.internal.image.ImageUtilities;
+import org.geotoolkit.internal.referencing.AxisDirections;
 import org.geotoolkit.resources.Errors;
 
 
@@ -1022,10 +1023,10 @@ public abstract class AbstractCoverage extends PropertySourceImpl implements Cov
                     // We should provide a rendering hint for configuring that.
                     Arrays.sort(normalized);
                     for (int i = normalized.length; --i >= 0;) {
-                        normalized[i] = normalized[i].absolute();
+                        normalized[i] = AxisDirections.absolute(normalized[i]);
                     }
                 }
-                normalized[1] = normalized[1].opposite(); // Image's Y axis is downward.
+                normalized[1] = AxisDirections.opposite(normalized[1]); // Image's Y axis is downward.
                 matrix = new GeneralMatrix(srcEnvelope, axis, dstEnvelope, normalized);
             } else {
                 matrix = new GeneralMatrix(srcEnvelope, dstEnvelope);

@@ -26,6 +26,7 @@ import org.opengis.referencing.cs.AxisDirection;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
 
 import org.geotoolkit.lang.Immutable;
+import org.geotoolkit.internal.referencing.AxisDirections;
 
 
 /**
@@ -115,6 +116,6 @@ public class DefaultPolarCS extends AbstractCS implements PolarCS {
      */
     @Override
     protected boolean isCompatibleDirection(final AxisDirection direction) {
-        return !AxisDirection.FUTURE.equals(direction.absolute());
+        return !AxisDirection.FUTURE.equals(AxisDirections.absolute(direction));
     }
 }

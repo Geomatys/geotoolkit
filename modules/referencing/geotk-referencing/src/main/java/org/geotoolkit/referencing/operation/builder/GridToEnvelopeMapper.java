@@ -33,6 +33,7 @@ import org.opengis.referencing.operation.MathTransform;
 
 import org.geotoolkit.referencing.operation.matrix.MatrixFactory;
 import org.geotoolkit.referencing.operation.transform.ProjectiveTransform;
+import org.geotoolkit.internal.referencing.AxisDirections;
 import org.geotoolkit.util.NullArgumentException;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.resources.Errors;
@@ -319,8 +320,8 @@ public class GridToEnvelopeMapper {
      */
     private static boolean swapXY(final CoordinateSystem cs) {
         if (cs != null && cs.getDimension() >= 2) {
-            return AxisDirection.NORTH.equals(cs.getAxis(0).getDirection().absolute()) &&
-                   AxisDirection.EAST .equals(cs.getAxis(1).getDirection().absolute());
+            return AxisDirection.NORTH.equals(AxisDirections.absolute(cs.getAxis(0).getDirection())) &&
+                   AxisDirection.EAST .equals(AxisDirections.absolute(cs.getAxis(1).getDirection()));
         }
         return false;
     }
@@ -378,7 +379,7 @@ public class GridToEnvelopeMapper {
      * Returns which (if any) axis in <cite>user</cite> space (not grid space)
      * should have their direction reversed. If <code>{@linkplain #isAutomatic
      * isAutomatic}({@linkplain #REVERSE_AXIS})</code> returns {@code true}
-     * (which is the default), then this method make the following assumptions:
+     * (which is the default), then this method makes the following assumptions:
      * <p>
      * <ul>
      *   <li>Axis should be reverted if needed in order to point toward their
@@ -400,8 +401,8 @@ public class GridToEnvelopeMapper {
                 if (isAutomatic(REVERSE_AXIS)) {
                     for (int i=0; i<dimension; i++) {
                         final AxisDirection direction = cs.getAxis(i).getDirection();
-                        final AxisDirection absolute  = direction.absolute();
-                        reverseAxis[i] = direction.equals(absolute.opposite());
+                        final AxisDirection absolute  = AxisDirections.absolute(direction);
+                        reverseAxis[i] = direction.equals(AxisDirections.opposite(absolute));
                     }
                     if (dimension >= 2) {
                         final int i = getSwapXY() ? 0 : 1;
@@ -423,7 +424,7 @@ public class GridToEnvelopeMapper {
                 }
             }
         }
-        return reverseAxis;
+        return (reverseAxis != null) ? reverseAxis.clone() : null;
     }
 
     /**
@@ -433,11 +434,14 @@ public class GridToEnvelopeMapper {
      *
      * @param reverse The reversal state of each axis. A {@code null} value means to reverse no axis.
      */
-    public void setReverseAxis(final boolean[] reverse) {
+    public void setReverseAxis(boolean[] reverse) {
+        if (reverse != null) {
+            reverse = reverse.clone();
+        }
         if (!Arrays.equals(reverseAxis, reverse)) {
             reset();
         }
-        this.reverseAxis = reverse;
+        reverseAxis = reverse;
         defined |= REVERSE_AXIS;
     }
 

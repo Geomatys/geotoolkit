@@ -27,6 +27,7 @@ import org.opengis.referencing.cs.CoordinateSystemAxis;
 
 import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.resources.Vocabulary;
+import org.geotoolkit.internal.referencing.AxisDirections;
 
 
 /**
@@ -135,6 +136,6 @@ public class DefaultSphericalCS extends AbstractCS implements SphericalCS {
      */
     @Override
     protected boolean isCompatibleDirection(final AxisDirection direction) {
-        return !AxisDirection.FUTURE.equals(direction.absolute());
+        return !AxisDirection.FUTURE.equals(AxisDirections.absolute(direction));
     }
 }

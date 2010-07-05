@@ -40,6 +40,7 @@ import org.opengis.util.InternationalString;
 import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.io.wkt.Formatter;
 import org.geotoolkit.measure.Units;
+import org.geotoolkit.internal.referencing.AxisDirections;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
@@ -763,7 +764,7 @@ public class DefaultCoordinateSystemAxis extends AbstractIdentifiedObject implem
         ensureNonNull("unit",         unit);
         if (Units.isAngular(unit)) {
             final UnitConverter fromDegrees = NonSI.DEGREE_ANGLE.getConverterTo(unit.asType(Angle.class));
-            final AxisDirection dir = direction.absolute();
+            final AxisDirection dir = AxisDirections.absolute(direction);
             if (dir.equals(AxisDirection.NORTH)) {
                 final double range = Math.abs(fromDegrees.convert(90));
                 minimum = -range;

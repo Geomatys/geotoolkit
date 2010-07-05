@@ -51,6 +51,7 @@ import org.geotoolkit.internal.image.io.SampleMetadataFormat;
 import org.geotoolkit.internal.image.io.DimensionAccessor;
 import org.geotoolkit.internal.image.io.GridDomainAccessor;
 import org.geotoolkit.internal.image.io.Warnings;
+import org.geotoolkit.internal.referencing.AxisDirections;
 import org.geotoolkit.referencing.adapters.NetcdfAxis;
 import org.geotoolkit.referencing.adapters.NetcdfCRS;
 import org.geotoolkit.referencing.CRS;
@@ -205,7 +206,7 @@ final class NetcdfMetadata extends SpatialMetadata {
             final int offset = units.lastIndexOf('_');
             if (offset >= 0) {
                 final String direction = units.substring(offset + 1).trim();
-                final String opposite = axis.getDirection().opposite().name();
+                final String opposite = AxisDirections.opposite(axis.getDirection()).name();
                 if (direction.equalsIgnoreCase(opposite)) {
                     warning("setCoordinateSystem", Errors.Keys.INCONSISTENT_AXIS_ORIENTATION_$2,
                             new String[] {axis.getCode(), direction});

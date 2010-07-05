@@ -96,12 +96,12 @@ public final class CRSUtilities {
      * Returns the dimension within the coordinate system of the first occurrence of an axis
      * colinear with the specified axis. If an axis with the same
      * {@linkplain CoordinateSystemAxis#getDirection direction} or an
-     * {@linkplain AxisDirection#opposite opposite} direction than {@code axis}
+     * {@linkplain AxisDirections#opposite opposite} direction than {@code axis}
      * ocurs in the coordinate system, then the dimension of the first such occurrence
      * is returned. That is, the value <var>k</var> such that:
      *
      * {@preformat java
-     *     cs.getAxis(k).getDirection().absolute() == axis.getDirection().absolute()
+     *     absolute(cs.getAxis(k).getDirection()) == absolute(axis.getDirection())
      * }
      *
      * is {@code true}. If no such axis occurs in this coordinate system,
@@ -119,10 +119,10 @@ public final class CRSUtilities {
     {
         int candidate = -1;
         final int dimension = cs.getDimension();
-        final AxisDirection direction = axis.getDirection().absolute();
+        final AxisDirection direction = AxisDirections.absolute(axis.getDirection());
         for (int i=0; i<dimension; i++) {
             final CoordinateSystemAxis xi = cs.getAxis(i);
-            if (direction.equals(xi.getDirection().absolute())) {
+            if (direction.equals(AxisDirections.absolute(xi.getDirection()))) {
                 candidate = i;
                 if (axis.equals(xi)) {
                     break;
@@ -149,8 +149,8 @@ public final class CRSUtilities {
             int i = subCS.getDimension();
             if (dim + i <= fullCS.getDimension()) {
                 while (--i > 0) { // Intentionally exclude 0.
-                    if (!subCS.getAxis(i).getDirection().absolute().equals(
-                        fullCS.getAxis(i + dim).getDirection().absolute()))
+                    if (!AxisDirections.absolute(subCS.getAxis(i).getDirection()).equals(
+                         AxisDirections.absolute(fullCS.getAxis(i + dim).getDirection())))
                     {
                         return -1;
                     }

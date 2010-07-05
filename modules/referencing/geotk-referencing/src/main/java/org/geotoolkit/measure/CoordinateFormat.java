@@ -49,6 +49,7 @@ import org.opengis.geometry.MismatchedDimensionException;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.geometry.TransformedDirectPosition;
+import org.geotoolkit.internal.referencing.AxisDirections;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.util.NullArgumentException;
 import org.geotoolkit.util.converter.Classes;
@@ -272,7 +273,7 @@ public class CoordinateFormat extends Format {
             final CoordinateSystemAxis axis = cs.getAxis(i);
             final Unit<?> unit = axis.getUnit();
             AxisDirection dir = axis.getDirection();
-            final boolean neg = (dir != (dir = dir.absolute()));
+            final boolean neg = (dir != (dir = AxisDirections.absolute(dir)));
             /*
              * Formatter for angular units. Target unit is DEGREE_ANGLE.
              * Type is LONGITUDE, LATITUDE or ANGLE depending on axis direction.

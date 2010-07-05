@@ -28,6 +28,7 @@ import org.geotoolkit.referencing.IdentifiedObjectTest;
 
 import org.junit.*;
 import org.geotoolkit.referencing.ReferencingTestCase;
+import org.geotoolkit.internal.referencing.AxisDirections;
 
 import static org.geotoolkit.test.Commons.serialize;
 import static org.geotoolkit.referencing.cs.DefaultCoordinateSystemAxis.*;
@@ -251,9 +252,9 @@ public final class CoordinateSystemAxisTest extends ReferencingTestCase {
                 angle -= 360;
             }
             assertEquals(index, base + i, c.ordinal());
-            assertEquals(index, base + i + (i<h ? h : -h), c.opposite().ordinal());
+            assertEquals(index, base + i + (i<h ? h : -h), AxisDirections.opposite(c).ordinal());
             assertEquals(index, 0, getAngle(c, c), EPS);
-            assertEquals(index, 180, Math.abs(getAngle(c, c.opposite())), EPS);
+            assertEquals(index, 180, Math.abs(getAngle(c, AxisDirections.opposite(c))), EPS);
             assertEquals(index, angle, getAngle(c, AxisDirection.NORTH), EPS);
         }
     }

@@ -30,6 +30,7 @@ import org.geotoolkit.measure.Units;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
 import org.geotoolkit.factory.FactoryRegistryException;
+import org.geotoolkit.internal.referencing.AxisDirections;
 import org.geotoolkit.referencing.cs.DefaultCoordinateSystemAxis;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.lang.ThreadSafe;
@@ -110,7 +111,7 @@ public class OrderedAxisAuthorityFactory extends TransformedAuthorityFactory
 {
     /**
      * The default order for axis directions. Note that this array needs to contain only the
-     * "{@linkplain AxisDirection#absolute absolute}" directions.
+     * "{@linkplain AxisDirections#absolute absolute}" directions.
      * <p>
      * REMINDER: If this array is modified, don't forget to update the class javadoc above.
      */
@@ -281,7 +282,7 @@ public class OrderedAxisAuthorityFactory extends TransformedAuthorityFactory
         }
         int length = 0;
         for (int i=0; i<axisOrder.length; i++) {
-            final int ordinal = axisOrder[i].absolute().ordinal() + 1;
+            final int ordinal = AxisDirections.absolute(axisOrder[i]).ordinal() + 1;
             if (ordinal > length) {
                 length = ordinal;
             }
@@ -289,7 +290,7 @@ public class OrderedAxisAuthorityFactory extends TransformedAuthorityFactory
         final int[] directionRanks = new int[length];
         Arrays.fill(directionRanks, length);
         for (int i=0; i<axisOrder.length; i++) {
-            final int ordinal  = axisOrder[i].absolute().ordinal();
+            final int ordinal  = AxisDirections.absolute(axisOrder[i]).ordinal();
             final int previous = directionRanks[ordinal];
             if (previous != length) {
                 throw new IllegalArgumentException(Errors.format(Errors.Keys.COLINEAR_AXIS_$2,
@@ -304,8 +305,8 @@ public class OrderedAxisAuthorityFactory extends TransformedAuthorityFactory
      * Returns the rank for the specified axis. Any axis that were not specified
      * at construction time will ordered after all known axis.
      */
-    private final int rank(final AxisDirection axis) {
-        int c = axis.absolute().ordinal();
+    private int rank(final AxisDirection axis) {
+        int c = AxisDirections.absolute(axis).ordinal();
         c = (c >= 0 && c < directionRanks.length) ? directionRanks[c] : directionRanks.length;
         return c;
     }
@@ -386,14 +387,12 @@ public class OrderedAxisAuthorityFactory extends TransformedAuthorityFactory
      * Replaces the specified direction, if applicable. This method is invoked automatically by the
      * {@link #replace(CoordinateSystem)} method. The default implementation replaces the direction
      * only if the {@link Hints#FORCE_STANDARD_AXIS_DIRECTIONS FORCE_STANDARD_AXIS_DIRECTIONS} hint
-     * was specified as {@link Boolean#TRUE TRUE} at construction time. In such case, the default
-     * substitution table is as specified in the {@link AxisDirection#absolute} method.
-     * Subclasses may override this method if they want to use a different substitution table.
+     * was specified as {@link Boolean#TRUE TRUE} at construction time.
      *
      * @since 2.3
      */
     @Override
     protected AxisDirection replace(final AxisDirection direction) {
-        return (forceStandardDirections) ? direction.absolute() : direction;
+        return (forceStandardDirections) ? AxisDirections.absolute(direction) : direction;
     }
 }

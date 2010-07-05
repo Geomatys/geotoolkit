@@ -37,6 +37,7 @@ import org.geotoolkit.measure.Units;
 import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
+import org.geotoolkit.internal.referencing.AxisDirections;
 
 
 /**
@@ -204,7 +205,7 @@ public class DefaultEllipsoidalCS extends AbstractCS implements EllipsoidalCS {
      */
     @Override
     protected boolean isCompatibleDirection(AxisDirection direction) {
-        direction = direction.absolute();
+        direction = AxisDirections.absolute(direction);
         return AxisDirection.NORTH.equals(direction) ||
                AxisDirection.EAST .equals(direction) ||
                AxisDirection.UP   .equals(direction);
@@ -219,7 +220,7 @@ public class DefaultEllipsoidalCS extends AbstractCS implements EllipsoidalCS {
      */
     @Override
     protected boolean isCompatibleUnit(AxisDirection direction, final Unit<?> unit) {
-        direction = direction.absolute();
+        direction = AxisDirections.absolute(direction);
         if (AxisDirection.UP.equals(direction)) {
             return Units.isLinear(unit);
         }
@@ -232,7 +233,7 @@ public class DefaultEllipsoidalCS extends AbstractCS implements EllipsoidalCS {
     private void updateConverters() {
         for (int i=getDimension(); --i>=0;) {
             final CoordinateSystemAxis axis = getAxis(i);
-            final AxisDirection   direction = axis.getDirection().absolute();
+            final AxisDirection   direction = AxisDirections.absolute(axis.getDirection());
             final Unit<?>              unit = axis.getUnit();
             if (AxisDirection.EAST.equals(direction)) {
                 longitudeAxis      = i;

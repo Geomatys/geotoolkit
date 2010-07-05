@@ -25,6 +25,7 @@ import org.opengis.referencing.cs.AxisDirection;
 
 import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.internal.CodeLists;
+import org.geotoolkit.internal.referencing.AxisDirections;
 
 
 /**
@@ -121,7 +122,7 @@ final class DirectionAlongMeridian implements Comparable<DirectionAlongMeridian>
         }
         String group = m.group(1);
         final AxisDirection baseDirection = Directions.find(BASE_DIRECTIONS, group);
-        if (baseDirection == null || !AxisDirection.NORTH.equals(baseDirection.absolute())) {
+        if (baseDirection == null || !AxisDirection.NORTH.equals(AxisDirections.absolute(baseDirection))) {
             // We expected "North" or "South" direction.
             return null;
         }
@@ -144,7 +145,7 @@ final class DirectionAlongMeridian implements Comparable<DirectionAlongMeridian>
             if (sign == null) {
                 return null;
             }
-            final AxisDirection abs = sign.absolute();
+            final AxisDirection abs = AxisDirections.absolute(sign);
             if (sign == null || !AxisDirection.EAST.equals(abs)) {
                 // We expected "East" or "West" direction.
                 return null;
@@ -213,7 +214,7 @@ final class DirectionAlongMeridian implements Comparable<DirectionAlongMeridian>
          * Reverses the sign for axis oriented toward SOUTH,
          * so a positive angle is a right-handed system.
          */
-        if (!baseDirection.equals(baseDirection.absolute())) {
+        if (!baseDirection.equals(AxisDirections.absolute(baseDirection))) {
             angle = -angle;
         }
         return angle;

@@ -1,0 +1,139 @@
+/*
+ *    Geotoolkit.org - An Open Source Java GIS Toolkit
+ *    http://www.geotoolkit.org
+ *
+ *    (C) 2010, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2010, Geomatys
+ *
+ *    This library is free software; you can redistribute it and/or
+ *    modify it under the terms of the GNU Lesser General Public
+ *    License as published by the Free Software Foundation;
+ *    version 2.1 of the License.
+ *
+ *    This library is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *    Lesser General Public License for more details.
+ */
+package org.geotoolkit.internal.referencing;
+
+import java.util.Map;
+import java.util.HashMap;
+import org.opengis.referencing.cs.AxisDirection;
+import org.geotoolkit.lang.Static;
+
+import static org.opengis.referencing.cs.AxisDirection.*;
+
+
+/**
+ * Utilities methods related to {@link AxisDirection}.
+ *
+ * @author Martin Desruisseaux (Geomatys)
+ * @version 3.13
+ *
+ * @since 3.13
+ * @module
+ */
+@Static
+public final class AxisDirections {
+    /**
+     * Do not allow instantiation of this class.
+     */
+    private AxisDirections() {
+    }
+
+    /**
+     * For each direction, the opposite direction.
+     */
+    private static final Map<AxisDirection,AxisDirection> opposites =
+            new HashMap<AxisDirection,AxisDirection>(35);
+    static {
+        opposites.put(OTHER, OTHER);
+        final AxisDirection[] dir = {
+            NORTH,            SOUTH,
+            NORTH_NORTH_EAST, SOUTH_SOUTH_WEST,
+            NORTH_EAST,       SOUTH_WEST,
+            EAST_NORTH_EAST,  WEST_SOUTH_WEST,
+            EAST,             WEST,
+            EAST_SOUTH_EAST,  WEST_NORTH_WEST,
+            SOUTH_EAST,       NORTH_WEST,
+            SOUTH_SOUTH_EAST, NORTH_NORTH_WEST,
+            UP,               DOWN,
+            FUTURE,           PAST,
+            COLUMN_POSITIVE,  COLUMN_NEGATIVE,
+            ROW_POSITIVE,     ROW_NEGATIVE,
+            DISPLAY_RIGHT,    DISPLAY_LEFT,
+            DISPLAY_UP,       DISPLAY_DOWN
+        };
+        for (int i=0; i<dir.length; i++) {
+            if (opposites.put(dir[i], dir[i ^ 1]) != null) {
+                throw new AssertionError(i);
+            }
+        }
+    }
+
+    /**
+     * Returns the opposite direction of the given direction. The opposite direction of
+     * {@linkplain #NORTH North} is {@linkplain #SOUTH South}, and the opposite direction
+     * of {@linkplain #SOUTH South} is {@linkplain #NORTH North}. The same applies to
+     * {@linkplain #EAST East}-{@linkplain #WEST West}, {@linkplain #UP Up}-{@linkplain #DOWN Down}
+     * and {@linkplain #FUTURE Future}-{@linkplain #PAST Past}, <i>etc.</i> If the given axis
+     * direction has no opposite, then this method returns {@code null}.
+     *
+     * @param  dir The direction for which to return the opposite direction.
+     * @return The opposite direction, or {@code null} if none or unknown.
+     */
+    public static AxisDirection opposite(final AxisDirection dir) {
+        return opposites.get(dir);
+    }
+    /**
+     * Returns the "absolute" direction of the given direction.
+     * This "absolute" operation is similar to the {@code Math.abs(int)}
+     * method in that "negative" directions like ({@link #SOUTH}, {@link #WEST},
+     * {@link #DOWN}, {@link #PAST}) are changed for their "positive" counterparts
+     * ({@link #NORTH}, {@link #EAST}, {@link #UP}, {@link #FUTURE}).
+     * More specifically, the following conversion table is applied:
+     * <br>&nbsp;
+     * <table cellpadding="9"><tr>
+     * <td width='50%'><table border="1" bgcolor="F4F8FF">
+     *   <tr bgcolor="#B9DCFF">
+     *     <th nowrap width='50%'>&nbsp;&nbsp;Direction&nbsp;&nbsp;</th>
+     *     <th nowrap width='50%'>&nbsp;&nbsp;Absolute value&nbsp;&nbsp;</th>
+     *   </tr>
+     *   <tr><td width='50%'>&nbsp;{@link #NORTH}</td> <td width='50%'>&nbsp;{@link #NORTH}</td> </tr>
+     *   <tr><td width='50%'>&nbsp;{@link #SOUTH}</td> <td width='50%'>&nbsp;{@link #NORTH}</td> </tr>
+     *   <tr><td width='50%'>&nbsp;{@link #EAST}</td>  <td width='50%'>&nbsp;{@link #EAST}</td>  </tr>
+     *   <tr><td width='50%'>&nbsp;{@link #WEST}</td>  <td width='50%'>&nbsp;{@link #EAST}</td>  </tr>
+     *   <tr><td width='50%'>&nbsp;{@link #UP}</td>    <td width='50%'>&nbsp;{@link #UP}</td>    </tr>
+     *   <tr><td width='50%'>&nbsp;{@link #DOWN}</td>  <td width='50%'>&nbsp;{@link #UP}</td>    </tr>
+     * </table></td>
+     * <td width='50%'><table border="1" bgcolor="F4F8FF">
+     *   <tr bgcolor="#B9DCFF">
+     *     <th nowrap width='50%'>&nbsp;&nbsp;Direction&nbsp;&nbsp;</th>
+     *     <th nowrap width='50%'>&nbsp;&nbsp;Absolute value&nbsp;&nbsp;</th>
+     *   </tr>
+     *   <tr><td width='50%'>&nbsp;{@link #DISPLAY_RIGHT}</td> <td width='50%'>&nbsp;{@link #DISPLAY_RIGHT}</td> </tr>
+     *   <tr><td width='50%'>&nbsp;{@link #DISPLAY_LEFT}</td>  <td width='50%'>&nbsp;{@link #DISPLAY_RIGHT}</td> </tr>
+     *   <tr><td width='50%'>&nbsp;{@link #DISPLAY_UP}</td>    <td width='50%'>&nbsp;{@link #DISPLAY_UP}</td>    </tr>
+     *   <tr><td width='50%'>&nbsp;{@link #DISPLAY_DOWN}</td>  <td width='50%'>&nbsp;{@link #DISPLAY_UP}</td>    </tr>
+     *   <tr><td width='50%'>&nbsp;{@link #FUTURE}</td>        <td width='50%'>&nbsp;{@link #FUTURE}</td>        </tr>
+     *   <tr><td width='50%'>&nbsp;{@link #PAST}</td>          <td width='50%'>&nbsp;{@link #FUTURE}</td>        </tr>
+     * </table></td></tr>
+     *   <tr align="center"><td width='50%'>{@link #OTHER}</td><td width='50%'>{@link #OTHER}</td></tr>
+     * </table>
+     *
+     * @param  dir The direction for which to return the absolute direction.
+     * @return The direction from the above table.
+     */
+    public static AxisDirection absolute(final AxisDirection dir) {
+        if (dir != null) {
+            final AxisDirection opposite = opposite(dir);
+            if (opposite != null) {
+                if (opposite.ordinal() < dir.ordinal()) {
+                    return opposite;
+                }
+            }
+        }
+        return dir;
+    }
+}

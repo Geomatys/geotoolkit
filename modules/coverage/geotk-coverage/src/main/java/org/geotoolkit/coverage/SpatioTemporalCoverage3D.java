@@ -50,6 +50,7 @@ import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
 import org.geotoolkit.referencing.operation.transform.ProjectiveTransform;
 import org.geotoolkit.metadata.iso.extent.DefaultGeographicBoundingBox;
+import org.geotoolkit.internal.referencing.AxisDirections;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.resources.Errors;
 
@@ -180,7 +181,7 @@ public class SpatioTemporalCoverage3D extends AbstractCoverage {
             Boolean swap = null; // 'null' if unknown, otherwise TRUE or FALSE.
 control:    for (int p=0; p<=1; p++) {
                 final AxisDirection direction;
-                direction = cs.getAxis(p==0 ? xDimension : yDimension).getDirection().absolute();
+                direction = AxisDirections.absolute(cs.getAxis(p==0 ? xDimension : yDimension).getDirection());
                 for (int i=0; i<DIRECTIONS.length; i++) {
                     if (direction.equals(DIRECTIONS[i])) {
                         final boolean needSwap = (i & 1) != p;

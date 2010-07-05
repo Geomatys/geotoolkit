@@ -34,6 +34,7 @@ import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.measure.Measure;
 import org.geotoolkit.measure.Units;
 import org.geotoolkit.resources.Vocabulary;
+import org.geotoolkit.internal.referencing.AxisDirections;
 
 
 /**
@@ -165,7 +166,7 @@ public class DefaultTimeCS extends AbstractCS implements TimeCS {
      */
     @Override
     protected boolean isCompatibleDirection(final AxisDirection direction) {
-        return AxisDirection.FUTURE.equals(direction.absolute());
+        return AxisDirection.FUTURE.equals(AxisDirections.absolute(direction));
     }
 
     /**

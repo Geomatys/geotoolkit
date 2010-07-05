@@ -40,6 +40,7 @@ import org.geotoolkit.math.Statistics;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.io.ContentFormatException;
 import org.geotoolkit.io.LineFormat;
+import org.geotoolkit.internal.referencing.AxisDirections;
 import org.geotoolkit.internal.referencing.MatrixUtilities;
 
 
@@ -284,10 +285,10 @@ public class GeneralMatrix extends GMatrix implements XMatrix {
         for (int dstIndex=0; dstIndex<dstAxis.length; dstIndex++) {
             boolean hasFound = false;
             final AxisDirection dstAxe = dstAxis[dstIndex];
-            final AxisDirection search = dstAxe.absolute();
+            final AxisDirection search = AxisDirections.absolute(dstAxe);
             for (int srcIndex=0; srcIndex<srcAxis.length; srcIndex++) {
                 final AxisDirection srcAxe = srcAxis[srcIndex];
-                if (search.equals(srcAxe.absolute())) {
+                if (search.equals(AxisDirections.absolute(srcAxe))) {
                     if (hasFound) {
                         throw new IllegalArgumentException(Errors.format(
                                 Errors.Keys.COLINEAR_AXIS_$2, srcAxe.name(), dstAxe.name()));
