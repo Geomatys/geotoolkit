@@ -1,6 +1,6 @@
 package org.geotoolkit.data.kml.model;
 
-import java.util.List;
+import com.vividsolutions.jts.geom.CoordinateSequence;
 import org.geotoolkit.data.kml.xsd.SimpleType;
 
 /**
@@ -13,24 +13,6 @@ import org.geotoolkit.data.kml.xsd.SimpleType;
  *
  * @author Samuel Andrés
  */
-public interface Coordinates extends SimpleType {
+public interface Coordinates extends SimpleType, CoordinateSequence {
 
-    /**
-     *
-     * @return the lis of coordinates.
-     */
-    public List<Coordinate> getCoordinates();
-
-    /**
-     *
-     * @param i the potition of the required coordinate in the list.
-     * @return a specific coordinate.
-     */
-    public Coordinate getCoordinate(int i);
-
-    /**
-     *
-     * @return the coordinate String in KML (XML) format.
-     */
-    public String getCoordinatesString();
 }

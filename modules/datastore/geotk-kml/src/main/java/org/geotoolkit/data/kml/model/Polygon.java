@@ -1,7 +1,6 @@
 package org.geotoolkit.data.kml.model;
 
 import java.util.List;
-import org.geotoolkit.data.kml.xsd.SimpleType;
 
 /**
  * <p>This interface maps Polygon element.</p>
@@ -52,28 +51,16 @@ public interface Polygon extends AbstractGeometry {
     public AltitudeMode getAltitudeMode();
 
     /**
+     * 
+     * @return
+     */
+    public Boundary getOuterBoundary();
+
+    /**
      *
      * @return
      */
-    public Boundary getOuterBoundaryIs();
-
-    /**
-     *
-     * @return
-     */
-    public List<Boundary> getInnerBoundariesAre();
-
-    /**
-     *
-     * @return the list of Polygon simple extensions.
-     */
-    public List<SimpleType> getPolygonSimpleExtensions();
-
-    /**
-     *
-     * @return th elist of Polygon object extensions.
-     */
-    public List<AbstractObject> getPolygonObjectExtensions();
+    public List<Boundary> getInnerBoundaries();
 
     /**
      *
@@ -92,28 +79,4 @@ public interface Polygon extends AbstractGeometry {
      * @param altitudeMode
      */
     public void setAltitudeMode(AltitudeMode altitudeMode);
-
-    /**
-     *
-     * @param outerBoundaryIs
-     */
-    public void setOuterBoundaryIs(Boundary outerBoundaryIs);
-
-    /**
-     *
-     * @param innerBoundariesAre
-     */
-    public void setInnerBoundariesAre(List<Boundary> innerBoundariesAre);
-
-    /**
-     *
-     * @param polygonSimpleExtensions
-     */
-    public void setPolygonSimpleExtensions(List<SimpleType> polygonSimpleExtensions);
-
-    /**
-     * 
-     * @param polygonObjectExtensions
-     */
-    public void setPolygonObjectExtensions(List<AbstractObject> polygonObjectExtensions);
 }

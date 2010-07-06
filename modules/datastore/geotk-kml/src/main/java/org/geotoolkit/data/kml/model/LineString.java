@@ -1,8 +1,5 @@
 package org.geotoolkit.data.kml.model;
 
-import java.util.List;
-import org.geotoolkit.data.kml.xsd.SimpleType;
-
 /**
  *
  * <p>This interface maps LineString element.</p>
@@ -35,74 +32,44 @@ public interface LineString extends AbstractGeometry {
 
     /**
      *
+     * @return
+     */
+    Coordinates getCoordinateSequence();
+
+    /**
+     *
      * @return the exetrude value.
      */
-    public boolean getExtrude();
+    boolean getExtrude();
 
     /**
      *
      * @return the tessalate value.
      */
-    public boolean getTessellate();
+    boolean getTessellate();
 
     /**
      *
      * @return the altitude mode.
      */
-    public AltitudeMode getAltitudeMode();
+    AltitudeMode getAltitudeMode();
 
     /**
-     *
-     * @return the coordinates.
-     */
-    public Coordinates getCoordinates();
-
-    /**
-     *
-     * @return the list of LineString simple extensions.
-     */
-    public List<SimpleType> getLineStringSimpleExtensions();
-
-    /**
-     *
-     * @return the list of LineString object extensions.
-     */
-    public List<AbstractObject> getLineStringObjectExtensions();
-
-    /**
-     *
+     * 
      * @param extrude
      */
-    public void setExtrude(boolean extrude);
+    void setExtrude(boolean extrude);
 
     /**
      *
      * @param tesselate
      */
-    public void setTessellate(boolean tessellate);
+    void setTessellate(boolean tessellate);
 
     /**
      *
      * @param altitudeMode
      */
-    public void setAltitudeMode(AltitudeMode altitudeMode);
-
-    /**
-     *
-     * @param coordinates
-     */
-    public void setCoordinates(Coordinates coordinates);
-
-    /**
-     *
-     * @param lineStringSimpleExtensions
-     */
-    public void setLineStringSimpleExtensions(List<SimpleType> lineStringSimpleExtensions);
-
-    /**
-     *
-     * @param lineStringObjectExtensions
-     */
-    public void setLineStringObjectExtensions(List<AbstractObject> lineStringObjectExtensions);
+    void setAltitudeMode(AltitudeMode altitudeMode);
 
 }

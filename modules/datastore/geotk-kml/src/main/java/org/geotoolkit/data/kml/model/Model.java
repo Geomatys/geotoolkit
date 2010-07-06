@@ -1,8 +1,5 @@
 package org.geotoolkit.data.kml.model;
 
-import java.util.List;
-import org.geotoolkit.data.kml.xsd.SimpleType;
-
 /**
  * <p>This interface maps Model element.</p>
  *
@@ -72,18 +69,6 @@ public interface Model extends AbstractGeometry {
 
     /**
      *
-     * @return the list of Model simple extensions.
-     */
-    public List<SimpleType> getModelSimpleExtensions();
-
-    /**
-     *
-     * @return the list of Model object extensions.
-     */
-    public List<AbstractObject> getModelObjectExtensions();
-
-    /**
-     *
      * @param altitudeMode
      */
     public void setAltitudeMode(AltitudeMode altitudeMode);
@@ -117,17 +102,5 @@ public interface Model extends AbstractGeometry {
      * @param resourceMap
      */
     public void setRessourceMap(ResourceMap resourceMap);
-
-    /**
-     *
-     * @param modelSimpleExtensions
-     */
-    public void setModelSimpleExtensions(List<SimpleType> modelSimpleExtensions);
-
-    /**
-     * 
-     * @param modelObjectExtensions
-     */
-    public void setModelObjectExtensions(List<AbstractObject> modelObjectExtensions);
 
 }

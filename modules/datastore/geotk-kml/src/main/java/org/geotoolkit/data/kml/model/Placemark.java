@@ -1,8 +1,5 @@
 package org.geotoolkit.data.kml.model;
 
-import java.util.List;
-import org.geotoolkit.data.kml.xsd.SimpleType;
-
 /**
  * <p>This interface maps Placemark element.</p>
  *
@@ -37,32 +34,8 @@ public interface Placemark extends AbstractFeature {
 
     /**
      *
-     * @return the list of Placemark simple extensions.
-     */
-    public List<SimpleType> getPlacemarkSimpleExtensions();
-
-    /**
-     *
-     * @return the list of Placemark object extensions.
-     */
-    public List<AbstractObject> getPlacemarkObjectExtensions();
-
-    /**
-     *
      * @param abstractGeometry
      */
     public void setAbstractGeometry(AbstractGeometry abstractGeometry);
-
-    /**
-     *
-     * @param placemarkSimpleExtensions
-     */
-    public void setPlacemarkSimpleExtensions(List<SimpleType> placemarkSimpleExtensions);
-
-    /**
-     *
-     * @param placemarkObjectExtensions
-     */
-    public void setPlacemarkObjectExtensions(List<AbstractObject> placemarkObjectExtensions);
 
 }

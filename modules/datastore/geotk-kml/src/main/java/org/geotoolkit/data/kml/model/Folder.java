@@ -37,32 +37,8 @@ public interface Folder extends AbstractContainer {
 
     /**
      *
-     * @return the list of Folder simple extensions.
-     */
-    public List<SimpleType> getFolderSimpleExtensions();
-
-    /**
-     *
-     * @return the lst of Folder object extensions.
-     */
-    public List<AbstractObject> getFolderObjectExtensions();
-
-    /**
-     *
      * @param abstractFeatures
      */
     public void setAbstractFeatures(List<AbstractFeature> abstractFeatures);
-
-    /**
-     *
-     * @param folderSimpleExtensions
-     */
-    public void setFolderSimpleExtensions(List<SimpleType> folderSimpleExtensions);
-
-    /**
-     * 
-     * @param folderObjectExtensions
-     */
-    public void setFolderObjectExtensions(List<AbstractObject> folderObjectExtensions);
 
 }

@@ -17,7 +17,7 @@ public class DefaultData extends DefaultAbstractObject implements Data {
     /**
      *
      */
-    public DefaultData(){
+    public DefaultData() {
         this.dataExtensions = EMPTY_LIST;
     }
 
@@ -30,7 +30,7 @@ public class DefaultData extends DefaultAbstractObject implements Data {
      * @param dataExtensions
      */
     public DefaultData(List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
-            String displayName, String value, List<Object> dataExtensions){
+            String displayName, String value, List<Object> dataExtensions) {
         super(objectSimpleExtensions, idAttributes);
         this.displayName = displayName;
         this.value = value;
@@ -42,21 +42,27 @@ public class DefaultData extends DefaultAbstractObject implements Data {
      * @{@inheritDoc }
      */
     @Override
-    public String getDisplayName() {return this.displayName;}
+    public String getDisplayName() {
+        return this.displayName;
+    }
 
     /**
      *
      * @{@inheritDoc }
      */
     @Override
-    public String getValue() {return this.value;}
+    public String getValue() {
+        return this.value;
+    }
 
     /**
      *
      * @{@inheritDoc }
      */
     @Override
-    public List<Object> getDataExtensions() {return this.dataExtensions;}
+    public List<Object> getDataExtensions() {
+        return this.dataExtensions;
+    }
 
     /**
      *
@@ -85,4 +91,8 @@ public class DefaultData extends DefaultAbstractObject implements Data {
         this.dataExtensions = dataExtensions;
     }
 
+    @Override
+    public Extensions extensions() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 }

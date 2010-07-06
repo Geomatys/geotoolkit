@@ -5,9 +5,8 @@ import java.util.List;
 import org.geotoolkit.data.kml.KmlUtilities;
 import org.geotoolkit.data.atom.model.AtomLink;
 import org.geotoolkit.data.atom.model.AtomPersonConstruct;
-import org.geotoolkit.data.xal.model.AddressDetails;
 import org.geotoolkit.data.kml.xsd.SimpleType;
-import static java.util.Collections.*;
+import org.geotoolkit.data.xal.model.AddressDetails;
 import static org.geotoolkit.data.kml.xml.KmlModelConstants.*;
 
 /**
@@ -21,16 +20,12 @@ public class DefaultScreenOverlay extends DefaultAbstractOverlay implements Scre
     private Vec2 rotationXY;
     private Vec2 size;
     private double rotation;
-    private List<SimpleType> screenOverlaySimpleExtensions;
-    private List<AbstractObject> screenOverlayObjectExtensions;
 
     /**
      *
      */
-    public DefaultScreenOverlay(){
+    public DefaultScreenOverlay() {
         this.rotation = DEF_ROTATION;
-        this.screenOverlaySimpleExtensions = EMPTY_LIST;
-        this.screenOverlayObjectExtensions = EMPTY_LIST;
     }
 
     /**
@@ -41,7 +36,7 @@ public class DefaultScreenOverlay extends DefaultAbstractOverlay implements Scre
      * @param visibility
      * @param open
      * @param author
-     * @param link
+     * @param atomLink
      * @param address
      * @param addressDetails
      * @param phoneNumber
@@ -58,7 +53,7 @@ public class DefaultScreenOverlay extends DefaultAbstractOverlay implements Scre
      * @param color
      * @param drawOrder
      * @param icon
-     * @param abstractOveraySimpleExtensions
+     * @param abstractOverlaySimpleExtensions
      * @param abstractOverlayObjectExtensions
      * @param overlayXY
      * @param screenXY
@@ -66,34 +61,47 @@ public class DefaultScreenOverlay extends DefaultAbstractOverlay implements Scre
      * @param size
      * @param rotation
      * @param screenOverlaySimpleExtensions
-     * @param screenOverlayObjectExtensions
+     * @param screendOverlayObjectExtensions
      */
-    public DefaultScreenOverlay(List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
-            String name, boolean visibility, boolean open, AtomPersonConstruct author, AtomLink link,
-            String address, AddressDetails addressDetails, String phoneNumber, String snippet,
-            String description, AbstractView view, AbstractTimePrimitive timePrimitive,
+    public DefaultScreenOverlay(List<SimpleType> objectSimpleExtensions,
+            IdAttributes idAttributes,
+            String name, boolean visibility, boolean open,
+            AtomPersonConstruct author, AtomLink atomLink,
+            String address, AddressDetails addressDetails,
+            String phoneNumber, String snippet,
+            String description, AbstractView view,
+            AbstractTimePrimitive timePrimitive,
             String styleUrl, List<AbstractStyleSelector> styleSelector,
             Region region, ExtendedData extendedData,
             List<SimpleType> abstractFeatureSimpleExtensions,
             List<AbstractObject> abstractFeatureObjectExtensions,
             Color color, int drawOrder, Icon icon,
-            List<SimpleType> abstractOveraySimpleExtensions, List<AbstractObject> abstractOverlayObjectExtensions,
+            List<SimpleType> abstractOverlaySimpleExtensions,
+            List<AbstractObject> abstractOverlayObjectExtensions,
             Vec2 overlayXY, Vec2 screenXY, Vec2 rotationXY, Vec2 size, double rotation,
-            List<SimpleType> screenOverlaySimpleExtensions, List<AbstractObject> screenOverlayObjectExtensions){
+            List<SimpleType> screenOverlaySimpleExtensions,
+            List<AbstractObject> screendOverlayObjectExtensions) {
         super(objectSimpleExtensions, idAttributes,
-                name, visibility, open, author, link,
+                name, visibility, open, author, atomLink,
                 address, addressDetails, phoneNumber, snippet,
-                description, view, timePrimitive,
-                styleUrl, styleSelector, region, extendedData,
-                abstractFeatureSimpleExtensions, abstractFeatureObjectExtensions,
-                color, drawOrder, icon, abstractOveraySimpleExtensions, abstractOverlayObjectExtensions);
+                description, view, timePrimitive, styleUrl, styleSelector,
+                region, extendedData,
+                abstractFeatureSimpleExtensions,
+                abstractFeatureObjectExtensions,
+                color, drawOrder, icon,
+                abstractOverlaySimpleExtensions,
+                abstractOverlayObjectExtensions);
         this.overlayXY = overlayXY;
         this.screenXY = screenXY;
         this.rotationXY = rotationXY;
         this.size = size;
         this.rotation = KmlUtilities.checkAngle180(rotation);
-        this.screenOverlaySimpleExtensions = (screenOverlaySimpleExtensions == null) ? EMPTY_LIST : screenOverlaySimpleExtensions;
-        this.screenOverlayObjectExtensions = (screenOverlayObjectExtensions == null) ? EMPTY_LIST : screenOverlayObjectExtensions;
+        if (screenOverlaySimpleExtensions != null) {
+            this.extensions().simples(Extensions.Names.SCREEN_OVERLAY).addAll(screenOverlaySimpleExtensions);
+        }
+        if (screendOverlayObjectExtensions != null) {
+            this.extensions().complexes(Extensions.Names.SCREEN_OVERLAY).addAll(screendOverlayObjectExtensions);
+        }
     }
 
     /**
@@ -146,25 +154,7 @@ public class DefaultScreenOverlay extends DefaultAbstractOverlay implements Scre
      * @{@inheritDoc }
      */
     @Override
-    public List<SimpleType> getScreenOverlaySimpleExtensions() {
-        return this.screenOverlaySimpleExtensions;
-    }
-
-    /**
-     *
-     * @{@inheritDoc }
-     */
-    @Override
-    public List<AbstractObject> getScreenOverlayObjectExtensions() {
-        return this.screenOverlayObjectExtensions;
-    }
-
-    /**
-     *
-     * @{@inheritDoc }
-     */
-    @Override
-    public void setOverlayXY(Vec2 overlayXY){
+    public void setOverlayXY(Vec2 overlayXY) {
         this.overlayXY = overlayXY;
     }
 
@@ -203,23 +193,4 @@ public class DefaultScreenOverlay extends DefaultAbstractOverlay implements Scre
     public void setRotation(double rotation) {
         this.rotation = KmlUtilities.checkAngle180(rotation);
     }
-
-    /**
-     *
-     * @{@inheritDoc }
-     */
-    @Override
-    public void setScreenOverlaySimpleExtensions(List<SimpleType> screenOverlaySimpleExtentions) {
-        this.screenOverlaySimpleExtensions = screenOverlaySimpleExtentions;
-    }
-
-    /**
-     *
-     * @{@inheritDoc }
-     */
-    @Override
-    public void setScreenOverlayObjectExtensions(List<AbstractObject> screenOverlayObjectExtensions) {
-        this.screenOverlayObjectExtensions = screenOverlayObjectExtensions;
-    }
-
 }

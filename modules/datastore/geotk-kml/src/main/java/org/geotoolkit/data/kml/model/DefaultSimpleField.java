@@ -14,7 +14,7 @@ public class DefaultSimpleField implements SimpleField {
     private String name;
     private List<Object> simpleFieldExtensions;
 
-    public DefaultSimpleField(){
+    public DefaultSimpleField() {
         this.simpleFieldExtensions = EMPTY_LIST;
     }
 
@@ -23,8 +23,10 @@ public class DefaultSimpleField implements SimpleField {
      * @param displayName
      * @param type
      * @param name
+     * @param simpleFieldExtensions
      */
-    public DefaultSimpleField(String displayName, String type, String name, List<Object> simpleFieldExtensions){
+    public DefaultSimpleField(String displayName, String type,
+            String name, List<Object> simpleFieldExtensions) {
         this.displayName = displayName;
         this.type = type;
         this.name = name;
@@ -36,21 +38,27 @@ public class DefaultSimpleField implements SimpleField {
      * @{@inheritDoc }
      */
     @Override
-    public String getDisplayName() {return this.displayName;}
+    public String getDisplayName() {
+        return this.displayName;
+    }
 
     /**
      *
      * @{@inheritDoc }
      */
     @Override
-    public String getType() {return this.type;}
+    public String getType() {
+        return this.type;
+    }
 
     /**
      *
      * @{@inheritDoc }
      */
     @Override
-    public String getName() {return this.name;}
+    public String getName() {
+        return this.name;
+    }
 
     /**
      *
@@ -96,5 +104,4 @@ public class DefaultSimpleField implements SimpleField {
     public void setSimpleFieldExtensions(List<Object> simpleFieldExtensions) {
         this.simpleFieldExtensions = simpleFieldExtensions;
     }
-
 }

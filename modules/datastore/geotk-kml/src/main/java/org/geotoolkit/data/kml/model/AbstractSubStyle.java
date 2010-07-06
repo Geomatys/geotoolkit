@@ -1,8 +1,5 @@
 package org.geotoolkit.data.kml.model;
 
-import java.util.List;
-import org.geotoolkit.data.kml.xsd.SimpleType;
-
 /**
  * <p>This interface maps AbstractSubStyle element.</p>
  *
@@ -28,27 +25,4 @@ import org.geotoolkit.data.kml.xsd.SimpleType;
  */
 public interface AbstractSubStyle extends AbstractObject {
 
-    /**
-     *
-     * @return The AbstractSubStyle simple extensions.
-     */
-    public List<SimpleType> getSubStyleSimpleExtensions();
-
-    /**
-     *
-     * @return The AbstractSubStyle object extensions.
-     */
-    public List<AbstractObject> getSubStyleObjectExtensions();
-
-    /**
-     * 
-     * @param subStyleSimpleExtensions
-     */
-    public void setSubStyleSimpleExtensions(List<SimpleType> subStyleSimpleExtensions);
-
-    /**
-     *
-     * @param subStyleObjectExtensions
-     */
-    public void setSubStyleObjectExtensions(List<AbstractObject> subStyleObjectExtensions);
 }

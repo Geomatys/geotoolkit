@@ -1,10 +1,12 @@
 package org.geotoolkit.data.kml;
 
+import com.vividsolutions.jts.geom.Coordinate;
 import java.awt.Color;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import org.geotoolkit.data.kml.model.Coordinates;
 import org.geotoolkit.data.kml.model.KmlException;
 
 /**
@@ -223,4 +225,43 @@ public class KmlUtilities {
 //        DateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd");
 //        return dateFormat.parse(kmlDateTimeType);
 //    }
+
+    public static String toString(Coordinate coordinate) {
+        final StringBuilder sb = new StringBuilder();
+        sb.append(coordinate.x);
+        sb.append(',');
+        sb.append(coordinate.y);
+        if(!Double.isNaN(coordinate.z)) {
+            sb.append(',');
+            sb.append(coordinate.z);
+        }
+        return sb.toString();
+    }
+
+    public static String toString(Coordinates coordinates){
+        final StringBuilder sb = new StringBuilder();
+
+        for(int i=0, n=coordinates.size(); i<n; i++){
+            sb.append(toString(coordinates.getCoordinate(i)));
+            if(i != n-1)
+                sb.append(' ');
+        }
+        return sb.toString();
+    }
+
+
+    public static Coordinate toCoordinate(String coordinates){
+        final String[] coordinatesList = coordinates.split(",");
+        final Coordinate c = new Coordinate();
+
+        c.x = Double.valueOf(coordinatesList[0].trim());
+        c.y = Double.valueOf(coordinatesList[1].trim());
+        if(coordinatesList.length == 3){
+            c.z = Double.valueOf(coordinatesList[2].trim());
+        }
+
+        return c;
+    }
+
+
 }

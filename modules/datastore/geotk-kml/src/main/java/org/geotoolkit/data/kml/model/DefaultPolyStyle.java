@@ -3,7 +3,6 @@ package org.geotoolkit.data.kml.model;
 import java.awt.Color;
 import java.util.List;
 import org.geotoolkit.data.kml.xsd.SimpleType;
-import static java.util.Collections.*;
 import static org.geotoolkit.data.kml.xml.KmlModelConstants.*;
 
 /**
@@ -14,8 +13,6 @@ public class DefaultPolyStyle extends DefaultAbstractColorStyle implements PolyS
 
     private boolean fill;
     private boolean outline;
-    private List<SimpleType> polyStyleSimpleExtensions;
-    private List<AbstractObject> polyStyleObjectExtensions;
 
     /**
      * 
@@ -23,16 +20,14 @@ public class DefaultPolyStyle extends DefaultAbstractColorStyle implements PolyS
     public DefaultPolyStyle() {
         this.fill = DEF_FILL;
         this.outline = DEF_OUTLINE;
-        this.polyStyleSimpleExtensions = EMPTY_LIST;
-        this.polyStyleObjectExtensions = EMPTY_LIST;
     }
 
     /**
      *
      * @param objectSimpleExtensions
      * @param idAttributes
-     * @param subStyleSimpleExtensions
-     * @param subStyleObjectExtensions
+     * @param abstractSubStyleSimpleExtensions
+     * @param abstractSubStyleObjectExtensions
      * @param color
      * @param colorMode
      * @param colorStyleSimpleExtensions
@@ -42,19 +37,30 @@ public class DefaultPolyStyle extends DefaultAbstractColorStyle implements PolyS
      * @param polyStyleSimpleExtensions
      * @param polyStyleObjectExtensions
      */
-    public DefaultPolyStyle(List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
-            List<SimpleType> subStyleSimpleExtensions, List<AbstractObject> subStyleObjectExtensions,
+    public DefaultPolyStyle(List<SimpleType> objectSimpleExtensions,
+            IdAttributes idAttributes,
+            List<SimpleType> abstractSubStyleSimpleExtensions,
+            List<AbstractObject> abstractSubStyleObjectExtensions,
             Color color, ColorMode colorMode,
-            List<SimpleType> colorStyleSimpleExtensions, List<AbstractObject> colorStyleObjectExtensions,
+            List<SimpleType> colorStyleSimpleExtensions,
+            List<AbstractObject> colorStyleObjectExtensions,
             boolean fill, boolean outline,
-            List<SimpleType> polyStyleSimpleExtensions, List<AbstractObject> polyStyleObjectExtensions) {
+            List<SimpleType> polyStyleSimpleExtensions,
+            List<AbstractObject> polyStyleObjectExtensions) {
         super(objectSimpleExtensions, idAttributes,
-                subStyleSimpleExtensions, subStyleObjectExtensions,
-                color, colorMode, colorStyleSimpleExtensions, colorStyleObjectExtensions);
+                abstractSubStyleSimpleExtensions,
+                abstractSubStyleObjectExtensions,
+                color, colorMode,
+                colorStyleSimpleExtensions,
+                colorStyleObjectExtensions);
         this.fill = fill;
         this.outline = outline;
-        this.polyStyleSimpleExtensions = (polyStyleSimpleExtensions == null) ? EMPTY_LIST : polyStyleSimpleExtensions;
-        this.polyStyleObjectExtensions = (polyStyleObjectExtensions == null) ? EMPTY_LIST : polyStyleObjectExtensions;
+        if (polyStyleSimpleExtensions != null) {
+            this.extensions().simples(Extensions.Names.POLY_STYLE).addAll(polyStyleSimpleExtensions);
+        }
+        if (polyStyleObjectExtensions != null) {
+            this.extensions().complexes(Extensions.Names.POLY_STYLE).addAll(polyStyleObjectExtensions);
+        }
     }
 
     /**
@@ -80,24 +86,6 @@ public class DefaultPolyStyle extends DefaultAbstractColorStyle implements PolyS
      * @{@inheritDoc }
      */
     @Override
-    public List<SimpleType> getPolyStyleSimpleExtensions() {
-        return this.polyStyleSimpleExtensions;
-    }
-
-    /**
-     *
-     * @{@inheritDoc }
-     */
-    @Override
-    public List<AbstractObject> getPolyStyleObjectExtensions() {
-        return this.polyStyleObjectExtensions;
-    }
-
-    /**
-     *
-     * @{@inheritDoc }
-     */
-    @Override
     public void setFill(boolean fill) {
         this.fill = fill;
     }
@@ -109,24 +97,6 @@ public class DefaultPolyStyle extends DefaultAbstractColorStyle implements PolyS
     @Override
     public void setOutline(boolean outline) {
         this.outline = outline;
-    }
-
-    /**
-     *
-     * @{@inheritDoc }
-     */
-    @Override
-    public void setPolyStyleSimpleExtensions(List<SimpleType> polyStyleSimpleExtensions) {
-        this.polyStyleSimpleExtensions = polyStyleSimpleExtensions;
-    }
-
-    /**
-     *
-     * @{@inheritDoc }
-     */
-    @Override
-    public void setPolyStyleObjectExtensions(List<AbstractObject> polyStyleObjectExtensions) {
-        this.polyStyleObjectExtensions = polyStyleObjectExtensions;
     }
 
     @Override

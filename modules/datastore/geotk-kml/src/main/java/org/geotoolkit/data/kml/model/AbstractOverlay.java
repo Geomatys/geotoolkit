@@ -1,8 +1,6 @@
 package org.geotoolkit.data.kml.model;
 
 import java.awt.Color;
-import java.util.List;
-import org.geotoolkit.data.kml.xsd.SimpleType;
 
 /**
  * <p>This interface maps AbstractOverlayGroup element.</p>
@@ -52,18 +50,6 @@ public interface AbstractOverlay extends AbstractFeature{
 
     /**
      *
-     * @return the list of AbstractOverlay simple extensions.
-     */
-    public List<SimpleType> getAbstractOverlaySimpleExtensions();
-
-    /**
-     *
-     * @return the list of AbstractOverlay object extensions.
-     */
-    public List<AbstractObject> getAbstractOverlayObjectExtensions();
-
-    /**
-     *
      * @param color
      */
     public void setColor(Color color);
@@ -80,15 +66,4 @@ public interface AbstractOverlay extends AbstractFeature{
      */
     public void setIcon(Icon link);
 
-    /**
-     *
-     * @param abstractOverlaySimpleExtensions
-     */
-    public void setAbstractOverlaySimpleExtensions(List<SimpleType> abstractOverlaySimpleExtensions);
-
-    /**
-     * 
-     * @param abstractOverlayObjectExtensions
-     */
-    public void setAbstractOverlayObjectExtensions(List<AbstractObject> abstractOverlayObjectExtensions);
 }

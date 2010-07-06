@@ -1,8 +1,5 @@
 package org.geotoolkit.data.kml.model;
 
-import java.util.List;
-import org.geotoolkit.data.kml.xsd.SimpleType;
-
 /**
  * <p>This interface maps LinkType type.</p>
  *
@@ -38,18 +35,6 @@ public interface Link extends AbstractObject {
      * @return
      */
     public String getHref();
-
-    /**
-     *
-     * @return
-     */
-    public List<SimpleType> getBasicLinkSimpleExtensions();
-
-    /**
-     *
-     * @return
-     */
-    public List<AbstractObject> getBasicLinkObjectExtensions();
 
     /**
      *
@@ -95,33 +80,9 @@ public interface Link extends AbstractObject {
 
     /**
      *
-     * @return the list of Link simple extensions.
-     */
-    public List<SimpleType> getLinkSimpleExtensions();
-
-    /**
-     *
-     * @return the list of Link object extensions.
-     */
-    public List<AbstractObject> getLinkObjectExtensions();
-
-    /**
-     *
      * @param href
      */
     public void setHref(String href);
-
-    /**
-     *
-     * @param basicLInkSimpleExtensions
-     */
-    public void setBasicLinkSimpleExtensions(List<SimpleType> basicLinkSimpleExtensions);
-
-    /**
-     *
-     * @param basicLinkObjectExtensions
-     */
-    public void setBasicLinkObjectExtensions( List<AbstractObject> basicLinkObjectExtensions);
 
     /**
      *
@@ -164,16 +125,4 @@ public interface Link extends AbstractObject {
      * @param httpQuery
      */
     public void setHttpQuery(String httpQuery);
-
-    /**
-     *
-     * @param linkSimpleExtensions
-     */
-    public void setLinkSimpleExtensions(List<SimpleType> linkSimpleExtensions);
-
-    /**
-     * 
-     * @param linkObjectExtensions
-     */
-    public void setLinkObjectExtensions(List<AbstractObject> linkObjectExtensions);
 }

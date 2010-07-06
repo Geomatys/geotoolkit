@@ -11,7 +11,7 @@ public class DefaultChange implements Change {
 
     private List<AbstractObject> objects;
 
-    public DefaultChange(){
+    public DefaultChange() {
         this.objects = EMPTY_LIST;
     }
 
@@ -19,7 +19,7 @@ public class DefaultChange implements Change {
      *
      * @param objects
      */
-    public DefaultChange(List<AbstractObject> objects){
+    public DefaultChange(List<AbstractObject> objects) {
         this.objects = (objects == null) ? EMPTY_LIST : objects;
     }
 
@@ -28,7 +28,9 @@ public class DefaultChange implements Change {
      * @{@inheritDoc }
      */
     @Override
-    public List<AbstractObject> getObjects() {return this.objects;}
+    public List<AbstractObject> getObjects() {
+        return this.objects;
+    }
 
     /**
      *
@@ -38,5 +40,4 @@ public class DefaultChange implements Change {
     public void setObjects(List<AbstractObject> objects) {
         this.objects = objects;
     }
-
 }

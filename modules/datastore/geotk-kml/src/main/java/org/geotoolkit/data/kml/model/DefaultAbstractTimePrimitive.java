@@ -2,7 +2,6 @@ package org.geotoolkit.data.kml.model;
 
 import java.util.List;
 import org.geotoolkit.data.kml.xsd.SimpleType;
-import static java.util.Collections.*;
 
 /**
  *
@@ -10,15 +9,10 @@ import static java.util.Collections.*;
  */
 public class DefaultAbstractTimePrimitive extends DefaultAbstractObject implements AbstractTimePrimitive {
 
-    protected List<SimpleType> abstractTimePrimitiveSimpleExtensions;
-    protected List<AbstractObject> abstractTimePrimitiveObjectExtensions;
-
     /**
      * 
      */
-    protected DefaultAbstractTimePrimitive(){
-        this.abstractTimePrimitiveSimpleExtensions = EMPTY_LIST;
-        this.abstractTimePrimitiveObjectExtensions = EMPTY_LIST;
+    protected DefaultAbstractTimePrimitive() {
     }
 
     /**
@@ -28,49 +22,16 @@ public class DefaultAbstractTimePrimitive extends DefaultAbstractObject implemen
      * @param abstractTimePrimitiveSimpleExtensions
      * @param abstractTimePrimitiveObjectExtensions
      */
-    protected DefaultAbstractTimePrimitive(
-            List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
+    protected DefaultAbstractTimePrimitive(List<SimpleType> objectSimpleExtensions,
+            IdAttributes idAttributes,
             List<SimpleType> abstractTimePrimitiveSimpleExtensions,
-            List<AbstractObject> abstractTimePrimitiveObjectExtensions){
-            super(objectSimpleExtensions, idAttributes);
-            this.abstractTimePrimitiveSimpleExtensions = (abstractTimePrimitiveSimpleExtensions == null) ? EMPTY_LIST : abstractTimePrimitiveSimpleExtensions;
-            this.abstractTimePrimitiveObjectExtensions = (abstractTimePrimitiveObjectExtensions == null) ? EMPTY_LIST : abstractTimePrimitiveObjectExtensions;
+            List<AbstractObject> abstractTimePrimitiveObjectExtensions) {
+        super(objectSimpleExtensions, idAttributes);
+        if (abstractTimePrimitiveSimpleExtensions != null) {
+            this.extensions().simples(Extensions.Names.TIME_PRIMITIVE).addAll(abstractTimePrimitiveSimpleExtensions);
+        }
+        if (abstractTimePrimitiveObjectExtensions != null) {
+            this.extensions().complexes(Extensions.Names.TIME_PRIMITIVE).addAll(abstractTimePrimitiveObjectExtensions);
+        }
     }
-
-    /**
-     *
-     * @{@inheritDoc }
-     */
-    @Override
-    public List<SimpleType> getAbstractTimePrimitiveSimpleExtensions() {
-        return this.abstractTimePrimitiveSimpleExtensions;
-    }
-
-    /**
-     *
-     * @{@inheritDoc }
-     */
-    @Override
-    public List<AbstractObject> getAbstractTimePrimitiveObjectExtensions() {
-        return this.abstractTimePrimitiveObjectExtensions;
-    }
-
-    /**
-     *
-     * @{@inheritDoc }
-     */
-    @Override
-    public void getAbstractTimePrimitiveSimpleExtensions(List<SimpleType> abstractTimePrimitiveSimpleExtensions) {
-        this.abstractTimePrimitiveSimpleExtensions = abstractTimePrimitiveSimpleExtensions;
-    }
-
-    /**
-     *
-     * @{@inheritDoc }
-     */
-    @Override
-    public void getAbstractTimePrimitiveObjectExtensions(List<AbstractObject> abstractTimePrimitiveObjectExtensions) {
-        this.abstractTimePrimitiveObjectExtensions = abstractTimePrimitiveObjectExtensions;
-    }
-
 }

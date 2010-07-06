@@ -11,15 +11,18 @@ public class DefaultCreate implements Create {
 
     private List<AbstractContainer> containers;
 
-    public DefaultCreate(){
+    /**
+     *
+     */
+    public DefaultCreate() {
         this.containers = EMPTY_LIST;
     }
 
     /**
-     *
+     * 
      * @param containers
      */
-    public DefaultCreate(List<AbstractContainer> containers){
+    public DefaultCreate(List<AbstractContainer> containers) {
         this.containers = (containers == null) ? EMPTY_LIST : containers;
     }
 
@@ -28,7 +31,9 @@ public class DefaultCreate implements Create {
      * @{@inheritDoc }
      */
     @Override
-    public List<AbstractContainer> getContainers() {return this.containers;}
+    public List<AbstractContainer> getContainers() {
+        return this.containers;
+    }
 
     /**
      *
@@ -38,5 +43,4 @@ public class DefaultCreate implements Create {
     public void setContainers(List<AbstractContainer> containers) {
         this.containers = containers;
     }
-
 }

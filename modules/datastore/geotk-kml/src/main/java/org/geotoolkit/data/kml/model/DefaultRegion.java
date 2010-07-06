@@ -2,7 +2,6 @@ package org.geotoolkit.data.kml.model;
 
 import java.util.List;
 import org.geotoolkit.data.kml.xsd.SimpleType;
-import static java.util.Collections.*;
 
 /**
  *
@@ -12,33 +11,36 @@ public class DefaultRegion extends DefaultAbstractObject implements Region {
 
     private LatLonAltBox latLonAltBox;
     private Lod lod;
-    private List<SimpleType> regionSimpleExtensions;
-    private List<AbstractObject> regionObjectExtentions;
 
     /**
      *
      */
-    public DefaultRegion(){
-        this.regionSimpleExtensions = EMPTY_LIST;
-        this.regionObjectExtentions = EMPTY_LIST;
+    public DefaultRegion() {
     }
+
     /**
-     *
+     * 
      * @param objectSimpleExtensions
      * @param idAttributes
      * @param latLonAltBox
      * @param lod
      * @param regionSimpleExtensions
-     * @param regionObjectExtentions
+     * @param regionObjectExtensions
      */
     public DefaultRegion(List<SimpleType> objectSimpleExtensions,
             IdAttributes idAttributes,
-            LatLonAltBox latLonAltBox, Lod lod, List<SimpleType> regionSimpleExtensions, List<AbstractObject> regionObjectExtentions){
+            LatLonAltBox latLonAltBox, Lod lod,
+            List<SimpleType> regionSimpleExtensions,
+            List<AbstractObject> regionObjectExtensions) {
         super(objectSimpleExtensions, idAttributes);
         this.latLonAltBox = latLonAltBox;
         this.lod = lod;
-        this.regionSimpleExtensions = (regionSimpleExtensions == null) ? EMPTY_LIST : regionSimpleExtensions;
-        this.regionObjectExtentions = (regionObjectExtentions == null) ? EMPTY_LIST : regionObjectExtentions;
+        if (regionSimpleExtensions != null) {
+            this.extensions().simples(Extensions.Names.REGION).addAll(regionSimpleExtensions);
+        }
+        if (regionObjectExtensions != null) {
+            this.extensions().complexes(Extensions.Names.REGION).addAll(regionObjectExtensions);
+        }
     }
 
     /**
@@ -46,28 +48,18 @@ public class DefaultRegion extends DefaultAbstractObject implements Region {
      * @{@inheritDoc }
      */
     @Override
-    public LatLonAltBox getLatLonAltBox() {return this.latLonAltBox;}
+    public LatLonAltBox getLatLonAltBox() {
+        return this.latLonAltBox;
+    }
 
     /**
      *
      * @{@inheritDoc }
      */
     @Override
-    public Lod getLod() {return this.lod;}
-
-    /**
-     *
-     * @{@inheritDoc }
-     */
-    @Override
-    public List<SimpleType> getRegionSimpleExtensions() {return this.regionSimpleExtensions;}
-
-    /**
-     *
-     * @{@inheritDoc }
-     */
-    @Override
-    public List<AbstractObject> getRegionObjectExtensions() {return this.regionObjectExtentions;}
+    public Lod getLod() {
+        return this.lod;
+    }
 
     /**
      *
@@ -86,23 +78,4 @@ public class DefaultRegion extends DefaultAbstractObject implements Region {
     public void setLod(Lod lod) {
         this.lod = lod;
     }
-
-    /**
-     *
-     * @{@inheritDoc }
-     */
-    @Override
-    public void setRegionSimpleExtensions(List<SimpleType> regionSimpleExtensions) {
-        this.regionSimpleExtensions = regionSimpleExtensions;
-    }
-
-    /**
-     *
-     * @{@inheritDoc }
-     */
-    @Override
-    public void setRegionObjectExtensions(List<AbstractObject> regionObjectExtensions) {
-        this.regionObjectExtentions = regionObjectExtensions;
-    }
-
 }

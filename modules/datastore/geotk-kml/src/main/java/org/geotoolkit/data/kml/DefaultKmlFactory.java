@@ -1,6 +1,9 @@
 package org.geotoolkit.data.kml;
 
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.GeometryFactory;
 import java.awt.Color;
+import java.net.URI;
 import java.util.Calendar;
 import java.util.List;
 import org.geotoolkit.data.atom.model.AtomLink;
@@ -26,8 +29,6 @@ import org.geotoolkit.data.kml.model.DefaultCamera;
 import org.geotoolkit.data.kml.model.Change;
 import org.geotoolkit.data.kml.model.DefaultChange;
 import org.geotoolkit.data.kml.model.ColorMode;
-import org.geotoolkit.data.kml.model.Coordinate;
-import org.geotoolkit.data.kml.model.DefaultCoordinate;
 import org.geotoolkit.data.kml.model.Coordinates;
 import org.geotoolkit.data.kml.model.DefaultCoordinates;
 import org.geotoolkit.data.kml.model.Create;
@@ -148,7 +149,9 @@ import org.geotoolkit.data.kml.xsd.SimpleType;
  *
  * @author Samuel Andrés
  */
-public class DefaultKmlFactory implements KmlFactory {
+public class DefaultKmlFactory implements KmlFactory{
+
+    private static final GeometryFactory GF = new GeometryFactory();
 
     /**
      * @{@inheritDoc }
@@ -299,7 +302,7 @@ public class DefaultKmlFactory implements KmlFactory {
      */
     @Override
     public Coordinate createCoordinate(String listCoordinates) {
-        return new DefaultCoordinate(listCoordinates);
+        return KmlUtilities.toCoordinate(listCoordinates);
     }
 
     /**
@@ -308,7 +311,7 @@ public class DefaultKmlFactory implements KmlFactory {
     @Override
     public Coordinate createCoordinate(
             double geodeticLongiude, double geodeticLatitude, double altitude) {
-        return new DefaultCoordinate(geodeticLongiude, geodeticLatitude, altitude);
+        return new Coordinate(geodeticLongiude, geodeticLatitude, altitude);
     }
 
     /**
@@ -317,7 +320,7 @@ public class DefaultKmlFactory implements KmlFactory {
     @Override
     public Coordinate createCoordinate(
             double geodeticLongiude, double geodeticLatitude) {
-        return new DefaultCoordinate(geodeticLongiude, geodeticLatitude);
+        return new Coordinate(geodeticLongiude, geodeticLatitude);
     }
 
     /**
@@ -325,7 +328,7 @@ public class DefaultKmlFactory implements KmlFactory {
      */
     @Override
     public Coordinates createCoordinates(List<Coordinate> coordinates) {
-        return new DefaultCoordinates(coordinates);
+        return new DefaultCoordinates(coordinates.toArray(new Coordinate[coordinates.size()]));
     }
 
     /**
@@ -668,11 +671,12 @@ public class DefaultKmlFactory implements KmlFactory {
             List<SimpleType> latLonAltBoxSimpleExtensions, 
             List<AbstractObject> latLonAltBoxObjectExtensions) {
         return new DefaultLatLonAltBox(objectSimpleExtensions, idAttributes,
-                north, south, east, west, 
+                north, south, east, west,
                 abstractLatLonBoxSimpleExtensions,
                 abstractLatLonBoxObjectExtensions,
                 minAltitude, maxAltitude, altitudeMode,
-                latLonAltBoxSimpleExtensions, latLonAltBoxObjectExtensions);
+                latLonAltBoxSimpleExtensions,
+                latLonAltBoxObjectExtensions);
     }
 
     /**
@@ -700,15 +704,15 @@ public class DefaultKmlFactory implements KmlFactory {
                 abstractGeometrySimpleExtensions, abstractGeometryObjectExtensions,
                 extrude, tessellate,
                 altitudeMode, coordinates,
-                linearRingSimpleExtensions, linearRingObjectExtensions);
+                linearRingSimpleExtensions, linearRingObjectExtensions, GF);
     }
 
     /**
      * @{@inheritDoc }
      */
     @Override
-    public LinearRing createLinearRing() {
-        return new DefaultLinearRing();
+    public LinearRing createLinearRing(Coordinates coordinates){
+        return new DefaultLinearRing(coordinates, GF);
     }
 
     /**
@@ -725,17 +729,20 @@ public class DefaultKmlFactory implements KmlFactory {
             List<SimpleType> lineStringSimpleExtensions,
             List<AbstractObject> lineStringObjectExtensions) {
         return new DefaultLineString(objectSimpleExtensions, idAttributes,
-                abstractGeometrySimpleExtensions, abstractGeometryObjectExtensions,
-                extrude, tessellate, altitudeMode, coordinates,
-                lineStringSimpleExtensions, lineStringObjectExtensions);
+                abstractGeometrySimpleExtensions,
+                abstractGeometryObjectExtensions,
+                extrude, tessellate, altitudeMode,
+                coordinates,
+                lineStringSimpleExtensions,
+                lineStringObjectExtensions, GF);
     }
 
     /**
      * @{@inheritDoc }
      */
     @Override
-    public LineString createLineString() {
-        return new DefaultLineString();
+    public LineString createLineString(Coordinates coordinates) {
+        return new DefaultLineString(coordinates,GF);
     }
 
     /**
@@ -1142,15 +1149,15 @@ public class DefaultKmlFactory implements KmlFactory {
         return new DefaultPoint(objectSimpleExtensions, idAttributes,
                 abstractGeometrySimpleExtensions, abstractGeometryObjectExtensions,
                 extrude, altitudeMode, coordinates,
-                pointSimpleExtensions, pointObjectExtensions);
+                pointSimpleExtensions, pointObjectExtensions, GF);
     }
 
     /**
      * @{@inheritDoc }
      */
     @Override
-    public Point createPoint() {
-        return new DefaultPoint();
+    public Point createPoint(Coordinates coordinates) {
+        return new DefaultPoint(coordinates, GF);
     }
 
     /**
@@ -1162,21 +1169,24 @@ public class DefaultKmlFactory implements KmlFactory {
             List<SimpleType> abstractGeometrySimpleExtensions,
             List<AbstractObject> abstractGeometryObjectExtensions,
             boolean extrude, boolean tessellate, AltitudeMode altitudeMode,
-            Boundary outerBoundaryIs, List<Boundary> innerBoundariesAre,
+            Boundary outerBoundary, List<Boundary> innerBoundaries,
             List<SimpleType> polygonSimpleExtensions,
             List<AbstractObject> polygonObjectExtensions) {
         return new DefaultPolygon(objectSimpleExtensions, idAttributes,
-                abstractGeometrySimpleExtensions, abstractGeometryObjectExtensions,
-                extrude, tessellate, altitudeMode, outerBoundaryIs, innerBoundariesAre,
-                polygonSimpleExtensions, polygonObjectExtensions);
+                abstractGeometrySimpleExtensions,
+                abstractGeometryObjectExtensions,
+                extrude, tessellate, altitudeMode,
+                outerBoundary, innerBoundaries, GF,
+                polygonSimpleExtensions,
+                polygonObjectExtensions);
     }
 
     /**
      * @{@inheritDoc }
      */
     @Override
-    public Polygon createPolygon() {
-        return new DefaultPolygon();
+    public Polygon createPolygon(Boundary outerBoundary, List<Boundary> innerBoundaries) {
+        return new DefaultPolygon(outerBoundary, innerBoundaries, GF);
     }
 
     /**
@@ -1468,11 +1478,19 @@ public class DefaultKmlFactory implements KmlFactory {
      * @{@inheritDoc }
      */
     @Override
-    public Update createUpdate(List<Create> creates,
+    public Update createUpdate(URI targetHref, List<Create> creates,
             List<Delete> deletes, List<Change> changes,
             List<Object> updateOpExtensions, List<Object> updateExtensions) {
-        return new DefaultUpdate(creates, deletes, changes,
+        return new DefaultUpdate(targetHref, creates, deletes, changes,
                 updateOpExtensions, updateExtensions);
+    }
+
+    /**
+     * @{@inheritDoc }
+     */
+    @Override
+    public Update createUpdate(){
+        return new DefaultUpdate();
     }
 
     /**

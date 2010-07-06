@@ -1,8 +1,5 @@
 package org.geotoolkit.data.kml.model;
 
-import java.util.List;
-import org.geotoolkit.data.kml.xsd.SimpleType;
-
 /**
  * <p>This interface maps PhotoOverlay element.</p>
  *
@@ -65,18 +62,6 @@ public interface PhotoOverlay extends AbstractOverlay {
 
     /**
      *
-     * @return the list of PhotoOverlay simple extensions.
-     */
-    public List<SimpleType> getPhotoOverlaySimpleExtensions();
-
-    /**
-     *
-     * @return the list of PhotoOverlay object extensions.
-     */
-    public List<AbstractObject> getPhotoOverlayObjectExtensions();
-
-    /**
-     *
      * @param rotation
      */
     public void setRotation(double rotation);
@@ -104,17 +89,5 @@ public interface PhotoOverlay extends AbstractOverlay {
      * @param shape
      */
     public void setShape(Shape shape);
-
-    /**
-     *
-     * @param photoOverlaySimpleExtensions
-     */
-    public void setPhotoOverlaySimpleExtensions(List<SimpleType> photoOverlaySimpleExtensions);
-
-    /**
-     * 
-     * @param photoOverlayObjectExtensions
-     */
-    public void setPhotoOverlayObjectExtensions(List<AbstractObject> photoOverlayObjectExtensions);
 
 }

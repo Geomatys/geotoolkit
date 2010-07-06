@@ -1,8 +1,5 @@
 package org.geotoolkit.data.kml.model;
 
-import java.util.List;
-import org.geotoolkit.data.kml.xsd.SimpleType;
-
 /**
  *
  * <p>This interface maps Alias element.</p>
@@ -45,18 +42,6 @@ public interface Alias extends AbstractObject {
 
     /**
      *
-     * @return the list of Alias simple extensions.
-     */
-    public List<SimpleType> getAliasSimpleExtensions();
-
-    /**
-     *
-     * @return The list of Alias object extensions.
-     */
-    public List<AbstractObject> getAliasObjectExtensions();
-
-    /**
-     *
      * @param targetHref
      */
     public void setTargetHref(String targetHref);
@@ -66,17 +51,5 @@ public interface Alias extends AbstractObject {
      * @param sourceHref
      */
     public void setSourceHref(String sourceHref);
-
-    /**
-     *
-     * @param aliasSimpleExtensions
-     */
-    public void setAliasSimpleExtensions(List<SimpleType> aliasSimpleExtensions);
-
-    /**
-     * 
-     * @param aliasObjectExtensions
-     */
-    public void setAliasObjectExtensions(List<AbstractObject> aliasObjectExtensions);
 
 }

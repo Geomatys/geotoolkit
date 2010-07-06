@@ -1,5 +1,6 @@
 package org.geotoolkit.data.kml;
 
+import com.vividsolutions.jts.geom.Coordinate;
 import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
@@ -8,7 +9,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
 import org.geotoolkit.data.kml.model.AbstractFeature;
 import org.geotoolkit.data.kml.model.AbstractStyleSelector;
-import org.geotoolkit.data.kml.model.Coordinate;
 import org.geotoolkit.data.kml.model.Coordinates;
 import org.geotoolkit.data.kml.model.Document;
 import org.geotoolkit.data.kml.model.Folder;
@@ -111,31 +111,31 @@ public class ListStyleTest {
             final Placemark placemark00 = (Placemark) folder0.getAbstractFeatures().get(0);
             assertEquals("pl1", placemark00.getName());
             assertTrue(placemark00.getAbstractGeometry() instanceof Point);
-            final Coordinates coordinates00 = ((Point) placemark00.getAbstractGeometry()).getCoordinates();
-            assertEquals(1, coordinates00.getCoordinates().size());
-            assertEquals(-122.362815, coordinates00.getCoordinate(0).getGeodeticLongitude(), DELTA);
-            assertEquals(37.822931, coordinates00.getCoordinate(0).getGeodeticLatitude(), DELTA);
-            assertEquals(0, coordinates00.getCoordinate(0).getAltitude(), DELTA);
+            final Coordinates coordinates00 = ((Point) placemark00.getAbstractGeometry()).getCoordinateSequence();
+            assertEquals(1, coordinates00.size());
+            assertEquals(-122.362815, coordinates00.getCoordinate(0).x, DELTA);
+            assertEquals(37.822931, coordinates00.getCoordinate(0).y, DELTA);
+            assertEquals(0, coordinates00.getCoordinate(0).z, DELTA);
            
             assertTrue(folder0.getAbstractFeatures().get(1) instanceof Placemark);
             final Placemark placemark01 = (Placemark) folder0.getAbstractFeatures().get(1);
             assertEquals("pl2", placemark01.getName());
             assertTrue(placemark01.getAbstractGeometry() instanceof Point);
-            final Coordinates coordinates01 = ((Point) placemark01.getAbstractGeometry()).getCoordinates();
-            assertEquals(1, coordinates01.getCoordinates().size());
-            assertEquals(-122.362825, coordinates01.getCoordinate(0).getGeodeticLongitude(), DELTA);
-            assertEquals(37.822931, coordinates01.getCoordinate(0).getGeodeticLatitude(), DELTA);
-            assertEquals(0, coordinates01.getCoordinate(0).getAltitude(), DELTA);
+            final Coordinates coordinates01 = ((Point) placemark01.getAbstractGeometry()).getCoordinateSequence();
+            assertEquals(1, coordinates01.size());
+            assertEquals(-122.362825, coordinates01.getCoordinate(0).x, DELTA);
+            assertEquals(37.822931, coordinates01.getCoordinate(0).y, DELTA);
+            assertEquals(0, coordinates01.getCoordinate(0).z, DELTA);
 
             assertTrue(folder0.getAbstractFeatures().get(2) instanceof Placemark);
             final Placemark placemark02 = (Placemark) folder0.getAbstractFeatures().get(2);
             assertEquals("pl3", placemark02.getName());
             assertTrue(placemark02.getAbstractGeometry() instanceof Point);
-            final Coordinates coordinates02 = ((Point) placemark02.getAbstractGeometry()).getCoordinates();
-            assertEquals(1, coordinates02.getCoordinates().size());
-            assertEquals(-122.362835, coordinates02.getCoordinate(0).getGeodeticLongitude(), DELTA);
-            assertEquals(37.822931, coordinates02.getCoordinate(0).getGeodeticLatitude(), DELTA);
-            assertEquals(0, coordinates02.getCoordinate(0).getAltitude(), DELTA);
+            final Coordinates coordinates02 = ((Point) placemark02.getAbstractGeometry()).getCoordinateSequence();
+            assertEquals(1, coordinates02.size());
+            assertEquals(-122.362835, coordinates02.getCoordinate(0).x, DELTA);
+            assertEquals(37.822931, coordinates02.getCoordinate(0).y, DELTA);
+            assertEquals(0, coordinates02.getCoordinate(0).z, DELTA);
 
         assertTrue(folder.getAbstractFeatures().get(1) instanceof Folder);
         final Folder folder1 = (Folder) folder.getAbstractFeatures().get(1);
@@ -149,31 +149,31 @@ public class ListStyleTest {
             final Placemark placemark10 = (Placemark) folder1.getAbstractFeatures().get(0);
             assertEquals("pl4", placemark10.getName());
             assertTrue(placemark10.getAbstractGeometry() instanceof Point);
-            final Coordinates coordinates10 = ((Point) placemark10.getAbstractGeometry()).getCoordinates();
-            assertEquals(1, coordinates10.getCoordinates().size());
-            assertEquals(-122.362845, coordinates10.getCoordinate(0).getGeodeticLongitude(), DELTA);
-            assertEquals(37.822941, coordinates10.getCoordinate(0).getGeodeticLatitude(), DELTA);
-            assertEquals(0, coordinates10.getCoordinate(0).getAltitude(), DELTA);
+            final Coordinates coordinates10 = ((Point) placemark10.getAbstractGeometry()).getCoordinateSequence();
+            assertEquals(1, coordinates10.size());
+            assertEquals(-122.362845, coordinates10.getCoordinate(0).x, DELTA);
+            assertEquals(37.822941, coordinates10.getCoordinate(0).y, DELTA);
+            assertEquals(0, coordinates10.getCoordinate(0).z, DELTA);
 
             assertTrue(folder1.getAbstractFeatures().get(1) instanceof Placemark);
             final Placemark placemark11 = (Placemark) folder1.getAbstractFeatures().get(1);
             assertEquals("pl5", placemark11.getName());
             assertTrue(placemark11.getAbstractGeometry() instanceof Point);
-            final Coordinates coordinates11 = ((Point) placemark11.getAbstractGeometry()).getCoordinates();
-            assertEquals(1, coordinates11.getCoordinates().size());
-            assertEquals(-122.362855, coordinates11.getCoordinate(0).getGeodeticLongitude(), DELTA);
-            assertEquals(37.822941, coordinates11.getCoordinate(0).getGeodeticLatitude(), DELTA);
-            assertEquals(0, coordinates11.getCoordinate(0).getAltitude(), DELTA);
+            final Coordinates coordinates11 = ((Point) placemark11.getAbstractGeometry()).getCoordinateSequence();
+            assertEquals(1, coordinates11.size());
+            assertEquals(-122.362855, coordinates11.getCoordinate(0).x, DELTA);
+            assertEquals(37.822941, coordinates11.getCoordinate(0).y, DELTA);
+            assertEquals(0, coordinates11.getCoordinate(0).z, DELTA);
 
             assertTrue(folder1.getAbstractFeatures().get(2) instanceof Placemark);
             final Placemark placemark12 = (Placemark) folder1.getAbstractFeatures().get(2);
             assertEquals("pl6", placemark12.getName());
             assertTrue(placemark12.getAbstractGeometry() instanceof Point);
-            final Coordinates coordinates12 = ((Point) placemark12.getAbstractGeometry()).getCoordinates();
-            assertEquals(1, coordinates12.getCoordinates().size());
-            assertEquals(-122.362865, coordinates12.getCoordinate(0).getGeodeticLongitude(), DELTA);
-            assertEquals(37.822941, coordinates12.getCoordinate(0).getGeodeticLatitude(), DELTA);
-            assertEquals(0, coordinates12.getCoordinate(0).getAltitude(), DELTA);
+            final Coordinates coordinates12 = ((Point) placemark12.getAbstractGeometry()).getCoordinateSequence();
+            assertEquals(1, coordinates12.size());
+            assertEquals(-122.362865, coordinates12.getCoordinate(0).x, DELTA);
+            assertEquals(37.822941, coordinates12.getCoordinate(0).y, DELTA);
+            assertEquals(0, coordinates12.getCoordinate(0).z, DELTA);
 
         assertTrue(folder.getAbstractFeatures().get(2) instanceof Folder);
         final Folder folder2 = (Folder) folder.getAbstractFeatures().get(2);
@@ -187,31 +187,31 @@ public class ListStyleTest {
             final Placemark placemark20 = (Placemark) folder2.getAbstractFeatures().get(0);
             assertEquals("pl7", placemark20.getName());
             assertTrue(placemark20.getAbstractGeometry() instanceof Point);
-            final Coordinates coordinates20 = ((Point) placemark20.getAbstractGeometry()).getCoordinates();
-            assertEquals(1, coordinates20.getCoordinates().size());
-            assertEquals(-122.362875, coordinates20.getCoordinate(0).getGeodeticLongitude(), DELTA);
-            assertEquals(37.822951, coordinates20.getCoordinate(0).getGeodeticLatitude(), DELTA);
-            assertEquals(0, coordinates20.getCoordinate(0).getAltitude(), DELTA);
+            final Coordinates coordinates20 = ((Point) placemark20.getAbstractGeometry()).getCoordinateSequence();
+            assertEquals(1, coordinates20.size());
+            assertEquals(-122.362875, coordinates20.getCoordinate(0).x, DELTA);
+            assertEquals(37.822951, coordinates20.getCoordinate(0).y, DELTA);
+            assertEquals(0, coordinates20.getCoordinate(0).z, DELTA);
 
             assertTrue(folder2.getAbstractFeatures().get(1) instanceof Placemark);
             final Placemark placemark21 = (Placemark) folder2.getAbstractFeatures().get(1);
             assertEquals("pl8", placemark21.getName());
             assertTrue(placemark21.getAbstractGeometry() instanceof Point);
-            final Coordinates coordinates21 = ((Point) placemark21.getAbstractGeometry()).getCoordinates();
-            assertEquals(1, coordinates21.getCoordinates().size());
-            assertEquals(-122.362885, coordinates21.getCoordinate(0).getGeodeticLongitude(), DELTA);
-            assertEquals(37.822951, coordinates21.getCoordinate(0).getGeodeticLatitude(), DELTA);
-            assertEquals(0, coordinates21.getCoordinate(0).getAltitude(), DELTA);
+            final Coordinates coordinates21 = ((Point) placemark21.getAbstractGeometry()).getCoordinateSequence();
+            assertEquals(1, coordinates21.size());
+            assertEquals(-122.362885, coordinates21.getCoordinate(0).x, DELTA);
+            assertEquals(37.822951, coordinates21.getCoordinate(0).y, DELTA);
+            assertEquals(0, coordinates21.getCoordinate(0).z, DELTA);
 
             assertTrue(folder2.getAbstractFeatures().get(2) instanceof Placemark);
             final Placemark placemark22 = (Placemark) folder2.getAbstractFeatures().get(2);
             assertEquals("pl9", placemark22.getName());
             assertTrue(placemark22.getAbstractGeometry() instanceof Point);
-            final Coordinates coordinates22 = ((Point) placemark22.getAbstractGeometry()).getCoordinates();
-            assertEquals(1, coordinates22.getCoordinates().size());
-            assertEquals(-122.362895, coordinates22.getCoordinate(0).getGeodeticLongitude(), DELTA);
-            assertEquals(37.822951, coordinates22.getCoordinate(0).getGeodeticLatitude(), DELTA);
-            assertEquals(0, coordinates22.getCoordinate(0).getAltitude(), DELTA);
+            final Coordinates coordinates22 = ((Point) placemark22.getAbstractGeometry()).getCoordinateSequence();
+            assertEquals(1, coordinates22.size());
+            assertEquals(-122.362895, coordinates22.getCoordinate(0).x, DELTA);
+            assertEquals(37.822951, coordinates22.getCoordinate(0).y, DELTA);
+            assertEquals(0, coordinates22.getCoordinate(0).z, DELTA);
 
     }
 
@@ -239,24 +239,15 @@ public class ListStyleTest {
         final Coordinates coordinates21 = kmlFactory.createCoordinates(Arrays.asList(coordinate210));
         final Coordinates coordinates22 = kmlFactory.createCoordinates(Arrays.asList(coordinate220));
 
-        final Point point00 = kmlFactory.createPoint();
-        point00.setCoordinates(coordinates00);
-            final Point point01 = kmlFactory.createPoint();
-            point01.setCoordinates(coordinates01);
-        final Point point02 = kmlFactory.createPoint();
-        point02.setCoordinates(coordinates02);
-            final Point point10 = kmlFactory.createPoint();
-            point10.setCoordinates(coordinates10);
-        final Point point11 = kmlFactory.createPoint();
-        point11.setCoordinates(coordinates11);
-            final Point point12 = kmlFactory.createPoint();
-            point12.setCoordinates(coordinates12);
-        final Point point20 = kmlFactory.createPoint();
-        point20.setCoordinates(coordinates20);
-            final Point point21 = kmlFactory.createPoint();
-            point21.setCoordinates(coordinates21);
-        final Point point22 = kmlFactory.createPoint();
-        point22.setCoordinates(coordinates22);
+        final Point point00 = kmlFactory.createPoint(coordinates00);
+            final Point point01 = kmlFactory.createPoint(coordinates01);
+        final Point point02 = kmlFactory.createPoint(coordinates02);
+            final Point point10 = kmlFactory.createPoint(coordinates10);
+        final Point point11 = kmlFactory.createPoint(coordinates11);
+            final Point point12 = kmlFactory.createPoint(coordinates12);
+        final Point point20 = kmlFactory.createPoint(coordinates20);
+            final Point point21 = kmlFactory.createPoint(coordinates21);
+        final Point point22 = kmlFactory.createPoint(coordinates22);
 
         final Placemark placemark00 = kmlFactory.createPlacemark();
         placemark00.setName("pl1");

@@ -16,10 +16,10 @@ public class DefaultExtendedData implements ExtendedData {
     /**
      *
      */
-    public DefaultExtendedData(){
-       this.datas = EMPTY_LIST;
-       this.schemaDatas = EMPTY_LIST;
-       this.anyOtherElements = EMPTY_LIST;
+    public DefaultExtendedData() {
+        this.datas = EMPTY_LIST;
+        this.schemaDatas = EMPTY_LIST;
+        this.anyOtherElements = EMPTY_LIST;
     }
 
     /**
@@ -28,7 +28,8 @@ public class DefaultExtendedData implements ExtendedData {
      * @param schemaDatas
      * @param anyOtherElements
      */
-    public DefaultExtendedData(List<Data> datas, List<SchemaData> schemaDatas, List<Object> anyOtherElements){
+    public DefaultExtendedData(List<Data> datas,
+            List<SchemaData> schemaDatas, List<Object> anyOtherElements) {
         this.datas = (datas == null) ? EMPTY_LIST : datas;
         this.schemaDatas = (schemaDatas == null) ? EMPTY_LIST : schemaDatas;
         this.anyOtherElements = (anyOtherElements == null) ? EMPTY_LIST : anyOtherElements;
@@ -39,21 +40,27 @@ public class DefaultExtendedData implements ExtendedData {
      * @{@inheritDoc }
      */
     @Override
-    public List<Data> getDatas() {return this.datas;}
+    public List<Data> getDatas() {
+        return this.datas;
+    }
 
     /**
      *
      * @{@inheritDoc }
      */
     @Override
-    public List<SchemaData> getSchemaData() {return this.schemaDatas;}
+    public List<SchemaData> getSchemaData() {
+        return this.schemaDatas;
+    }
 
     /**
      *
      * @{@inheritDoc }
      */
     @Override
-    public List<Object> getAnyOtherElements() {return this.anyOtherElements;}
+    public List<Object> getAnyOtherElements() {
+        return this.anyOtherElements;
+    }
 
     /**
      *
@@ -81,5 +88,4 @@ public class DefaultExtendedData implements ExtendedData {
     public void setAnyOtherElements(List<Object> anyOtherElements) {
         this.anyOtherElements = anyOtherElements;
     }
-
 }

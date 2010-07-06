@@ -3,8 +3,8 @@ package org.geotoolkit.data.kml.model;
 import java.util.List;
 import org.geotoolkit.data.atom.model.AtomPersonConstruct;
 import org.geotoolkit.data.atom.model.AtomLink;
-import org.geotoolkit.data.xal.model.AddressDetails;
 import org.geotoolkit.data.kml.xsd.SimpleType;
+import org.geotoolkit.data.xal.model.AddressDetails;
 import static java.util.Collections.*;
 
 /**
@@ -13,13 +13,9 @@ import static java.util.Collections.*;
  */
 public class DefaultAbstractContainer extends DefaultAbstractFeature implements AbstractContainer {
 
-    protected List<SimpleType> containerSimpleExtensions;
-    protected List<AbstractObject> containerObjectExtensions;
-
-    protected DefaultAbstractContainer(){
-        containerSimpleExtensions = EMPTY_LIST;
-        containerObjectExtensions = EMPTY_LIST;
+    protected DefaultAbstractContainer() {
     }
+
     /**
      *
      * @param objectSimpleExtensions
@@ -45,58 +41,43 @@ public class DefaultAbstractContainer extends DefaultAbstractFeature implements 
      * @param abstractContainerSimpleExtensions
      * @param abstractContainerObjectExtensions
      */
-    protected DefaultAbstractContainer(List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
-            String name, boolean visibility, boolean open, AtomPersonConstruct author, AtomLink link,
-            String address, AddressDetails addressDetails, String phoneNumber, String snippet,
-            String description, AbstractView view, AbstractTimePrimitive timePrimitive,
+    protected DefaultAbstractContainer(List<SimpleType> objectSimpleExtensions,
+            IdAttributes idAttributes,
+            String name, boolean visibility, boolean open,
+            AtomPersonConstruct author, AtomLink atomLink,
+            String address, AddressDetails addressDetails,
+            String phoneNumber, String snippet,
+            String description, AbstractView view,
+            AbstractTimePrimitive timePrimitive,
             String styleUrl, List<AbstractStyleSelector> styleSelector,
             Region region, ExtendedData extendedData,
             List<SimpleType> abstractFeatureSimpleExtensions,
             List<AbstractObject> abstractFeatureObjectExtensions,
             List<SimpleType> abstractContainerSimpleExtensions,
-            List<AbstractObject> abstractContainerObjectExtensions){
+            List<AbstractObject> abstractContainerObjectExtensions) {
 
         super(objectSimpleExtensions, idAttributes,
-                name, visibility, open, author, link, address, addressDetails,
-                phoneNumber, snippet, description, view, timePrimitive, styleUrl, styleSelector, region, extendedData,
-                abstractFeatureSimpleExtensions, abstractFeatureObjectExtensions);
-
-        this.containerSimpleExtensions = (abstractContainerSimpleExtensions == null) ? EMPTY_LIST : abstractContainerSimpleExtensions;
-        this.containerObjectExtensions = (abstractContainerObjectExtensions == null) ? EMPTY_LIST : abstractContainerObjectExtensions;
-    }
-
-    /**
-     * @{@inheritDoc}
-     */
-    @Override
-    public List<SimpleType> getAbstractContainerSimpleExtensions() {return this.containerSimpleExtensions;}
-
-    /**
-     * @{@inheritDoc}
-     */
-    @Override
-    public List<AbstractObject> getAbstractContainerObjectExtensions() {return this.featureObjectExtensions;}
-
-    /**
-     * @{@inheritDoc}
-     */
-    @Override
-    public void setAbstractContainerSimpleExtensions(List<SimpleType> containerSimpleExtensions) {
-        this.containerSimpleExtensions = containerSimpleExtensions;
-    }
-
-    /**
-     * @{@inheritDoc}
-     */
-    @Override
-    public void setAbstractContainerObjectExtensions(List<AbstractObject> containerObjectExtensions) {
-        this.containerObjectExtensions = containerObjectExtensions;
+                name, visibility, open,
+                author, atomLink,
+                address, addressDetails,
+                phoneNumber, snippet, description,
+                view, timePrimitive,
+                styleUrl, styleSelector,
+                region, extendedData,
+                abstractFeatureSimpleExtensions,
+                abstractFeatureObjectExtensions);
+        if (abstractContainerSimpleExtensions != null) {
+            this.extensions().simples(Extensions.Names.CONTAINER).addAll(abstractContainerSimpleExtensions);
+        }
+        if (abstractContainerObjectExtensions != null) {
+            this.extensions().complexes(Extensions.Names.CONTAINER).addAll(abstractContainerObjectExtensions);
+        }
     }
 
     @Override
-    public String toString(){
-        String resultat = super.toString()+
-                "\n\tAbstractContainerDefault : ";
+    public String toString() {
+        String resultat = super.toString()
+                + "\n\tAbstractContainerDefault : ";
         return resultat;
     }
 }

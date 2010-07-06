@@ -1,66 +1,19 @@
 package org.geotoolkit.data.kml.model;
 
-import java.util.List;
-import static java.util.Collections.*;
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.impl.CoordinateArraySequence;
 
 /**
  *
  * @author Samuel Andrés
  */
-public class DefaultCoordinates implements Coordinates{
-
-    private final List<Coordinate> coordinates;
+public class DefaultCoordinates extends CoordinateArraySequence implements Coordinates{
 
     /**
      * 
      * @param coordinates
      */
-    public DefaultCoordinates(List<Coordinate> coordinates){
-        this.coordinates = (coordinates == null) ? EMPTY_LIST : coordinates;
+    public DefaultCoordinates(Coordinate[] coordinates){
+        super(coordinates);
     }
-
-    @Override
-    public List<Coordinate> getCoordinates() {return this.coordinates;}
-
-    /**
-     *
-     * @{@inheritDoc }
-     */
-    @Override
-    public Coordinate getCoordinate(int i) {
-        Coordinate resultat = null;
-        if (i < this.coordinates.size()){
-            resultat = this.coordinates.get(i);
-        }
-        return resultat;
-    }
-
-    /**
-     * 
-     * @{@inheritDoc }
-     */
-    @Override
-    public String getCoordinatesString(){
-        String resultat = "";
-        int position = 0;
-        for(Coordinate coordinate : this.coordinates){
-            position += 1;
-            if(position == this.coordinates.size()){
-                resultat += coordinate.getCoordinateString();
-            } else {
-                resultat += coordinate.getCoordinateString()+" ";
-            }
-        }
-        return resultat;
-    }
-
-    @Override
-    public String toString(){
-        String resultat = "Coordinates : ";
-        for(Coordinate c : this.coordinates){
-            resultat += "\n\t"+c.toString();
-        }
-        return resultat;
-    }
-
 }

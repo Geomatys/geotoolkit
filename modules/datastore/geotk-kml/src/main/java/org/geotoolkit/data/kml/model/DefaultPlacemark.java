@@ -3,9 +3,8 @@ package org.geotoolkit.data.kml.model;
 import java.util.List;
 import org.geotoolkit.data.atom.model.AtomPersonConstruct;
 import org.geotoolkit.data.atom.model.AtomLink;
-import org.geotoolkit.data.xal.model.AddressDetails;
 import org.geotoolkit.data.kml.xsd.SimpleType;
-import static java.util.Collections.*;
+import org.geotoolkit.data.xal.model.AddressDetails;
 
 /**
  *
@@ -14,26 +13,22 @@ import static java.util.Collections.*;
 public class DefaultPlacemark extends DefaultAbstractFeature implements Placemark {
 
     private AbstractGeometry abstractGeometry;
-    private List<SimpleType> placemarkSimpleExtensions;
-    private List<AbstractObject> placemarkObjectExtensions;
 
     /**
      * 
      */
-    public DefaultPlacemark(){
-        this.placemarkSimpleExtensions = EMPTY_LIST;
-        this.placemarkObjectExtensions = EMPTY_LIST;
+    public DefaultPlacemark() {
     }
 
     /**
-     *
+     * 
      * @param objectSimpleExtensions
      * @param idAttributes
      * @param name
      * @param visibility
      * @param open
      * @param author
-     * @param link
+     * @param atomLink
      * @param address
      * @param addressDetails
      * @param phoneNumber
@@ -49,17 +44,13 @@ public class DefaultPlacemark extends DefaultAbstractFeature implements Placemar
      * @param abstractFeatureObjectExtensions
      * @param abstractGeometry
      * @param placemarkSimpleExtensions
-     * @param placemarkObjectExtension
+     * @param placemarkObjectExtensions
      */
     public DefaultPlacemark(List<SimpleType> objectSimpleExtensions,
             IdAttributes idAttributes,
-            String name,
-            boolean visibility,
-            boolean open,
-            AtomPersonConstruct author,
-            AtomLink link,
-            String address,
-            AddressDetails addressDetails,
+            String name, boolean visibility, boolean open,
+            AtomPersonConstruct author, AtomLink atomLink,
+            String address, AddressDetails addressDetails,
             String phoneNumber, String snippet,
             String description, AbstractView view,
             AbstractTimePrimitive timePrimitive,
@@ -69,18 +60,23 @@ public class DefaultPlacemark extends DefaultAbstractFeature implements Placemar
             List<AbstractObject> abstractFeatureObjectExtensions,
             AbstractGeometry abstractGeometry,
             List<SimpleType> placemarkSimpleExtensions,
-            List<AbstractObject> placemarkObjectExtension){
+            List<AbstractObject> placemarkObjectExtensions) {
 
         super(objectSimpleExtensions, idAttributes,
-            name, visibility, open, author, link, address, addressDetails,
-            phoneNumber, snippet, description, view, timePrimitive,
-            styleUrl, styleSelector, region, extendedData,
-            abstractFeatureSimpleExtensions,
-            abstractFeatureObjectExtensions);
-
+                name, visibility, open,
+                author, atomLink,
+                address, addressDetails,
+                phoneNumber, snippet, description, view, timePrimitive,
+                styleUrl, styleSelector, region, extendedData,
+                abstractFeatureSimpleExtensions,
+                abstractFeatureObjectExtensions);
         this.abstractGeometry = abstractGeometry;
-        this.placemarkSimpleExtensions = (placemarkSimpleExtensions == null) ? EMPTY_LIST : placemarkSimpleExtensions;
-        this.placemarkObjectExtensions = (placemarkObjectExtension == null) ? EMPTY_LIST : placemarkObjectExtension;
+        if (placemarkSimpleExtensions != null) {
+            this.extensions().simples(Extensions.Names.PLACEMARK).addAll(placemarkSimpleExtensions);
+        }
+        if (placemarkObjectExtensions != null) {
+            this.extensions().complexes(Extensions.Names.PLACEMARK).addAll(placemarkObjectExtensions);
+        }
     }
 
     /**
@@ -97,48 +93,12 @@ public class DefaultPlacemark extends DefaultAbstractFeature implements Placemar
      * @{@inheritDoc }
      */
     @Override
-    public List<SimpleType> getPlacemarkSimpleExtensions() {
-        return this.placemarkSimpleExtensions;
-    }
-
-    /**
-     *
-     * @{@inheritDoc }
-     */
-    @Override
-    public List<AbstractObject> getPlacemarkObjectExtensions() {
-        return this.placemarkObjectExtensions;
-    }
-
-    /**
-     *
-     * @{@inheritDoc }
-     */
-    @Override
     public void setAbstractGeometry(AbstractGeometry abstractGeometry) {
         this.abstractGeometry = abstractGeometry;
     }
 
-    /**
-     *
-     * @{@inheritDoc }
-     */
     @Override
-    public void setPlacemarkSimpleExtensions(List<SimpleType> placemarkSimpleExtensions) {
-        this.placemarkSimpleExtensions = placemarkSimpleExtensions;
-    }
-
-    /**
-     *
-     * @{@inheritDoc }
-     */
-    @Override
-    public void setPlacemarkObjectExtensions(List<AbstractObject> placemarkObjectExtensions) {
-        this.placemarkObjectExtensions = placemarkObjectExtensions;
-    }
-
-    @Override
-    public String toString(){
+    public String toString() {
         String resultat = super.toString();
         resultat += "Placemark : ";
         //resultat += "\n\t"+abstractGeometry;

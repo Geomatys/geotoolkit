@@ -1,8 +1,5 @@
 package org.geotoolkit.data.kml.model;
 
-import java.util.List;
-import org.geotoolkit.data.kml.xsd.SimpleType;
-
 /**
  * <p>This interface maps AbstractLatLonBoxType type.</p>
  *
@@ -56,18 +53,6 @@ public interface AbstractLatLonBox extends AbstractObject {
 
     /**
      *
-     * @return the AbstractLatLonBox simple extensions.
-     */
-    public List<SimpleType> getAbstractLatLonBoxSimpleExtensions();
-
-    /**
-     *
-     * @return the abstractLAtLonBox object extensions.
-     */
-    public List<AbstractObject> getAbstractLatLonBoxObjectExtensions();
-
-    /**
-     *
      * @param north
      */
     public void setNorth(double north);
@@ -89,17 +74,5 @@ public interface AbstractLatLonBox extends AbstractObject {
      * @param west
      */
     public void setWest(double west);
-
-    /**
-     *
-     * @param abstractLatLonBoxSimpleExtensions
-     */
-    public void setAbstractLatLonBoxSimpleExtensions(List<SimpleType> abstractLatLonBoxSimpleExtensions);
-
-    /**
-     * 
-     * @param abstractLatLonBoxObjectExtensions
-     */
-    public void setAbstractLatLonBoxObjectExtensions(List<AbstractObject> abstractLatLonBoxObjectExtensions);
 
 }

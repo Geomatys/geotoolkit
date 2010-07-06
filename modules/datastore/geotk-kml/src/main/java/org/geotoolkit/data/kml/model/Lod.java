@@ -1,8 +1,5 @@
 package org.geotoolkit.data.kml.model;
 
-import java.util.List;
-import org.geotoolkit.data.kml.xsd.SimpleType;
-
 /**
  * <p>This interface maps Lod element.</p>
  *
@@ -58,18 +55,6 @@ public interface Lod extends AbstractObject{
 
     /**
      *
-     * @return the list of Lod simple extensions.
-     */
-    public List<SimpleType> getLodSimpleExtensions();
-
-    /**
-     *
-     * @return the list of Lod object extensions.
-     */
-    public List<AbstractObject> getLodObjectExtensions();
-
-    /**
-     *
      * @param minLodPixels
      */
     public void setMinLodPixels(double minLodPixels);
@@ -91,17 +76,5 @@ public interface Lod extends AbstractObject{
      * @param maxFadeExtent
      */
     public void setMaxFadeExtent(double maxFadeExtent);
-
-    /**
-     *
-     * @param lodSimpleExtensions
-     */
-    public void setLodSimpleExtensions(List<SimpleType> lodSimpleExtensions);
-
-    /**
-     * 
-     * @param lodObjectExtensions
-     */
-    public void setLodObjectExtensions(List<AbstractObject> lodObjectExtensions);
 
 }

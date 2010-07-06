@@ -1,5 +1,6 @@
 package org.geotoolkit.data.kml;
 
+import com.vividsolutions.jts.geom.Coordinate;
 import org.geotoolkit.data.kml.xml.KmlReader;
 import java.io.File;
 import java.io.IOException;
@@ -9,7 +10,6 @@ import javax.xml.stream.XMLStreamException;
 import org.geotoolkit.data.kml.model.AbstractFeature;
 import org.geotoolkit.data.kml.model.AltitudeMode;
 import org.geotoolkit.data.kml.model.Boundary;
-import org.geotoolkit.data.kml.model.Coordinate;
 import org.geotoolkit.data.kml.model.Coordinates;
 import org.geotoolkit.data.kml.model.Document;
 import org.geotoolkit.data.kml.model.Kml;
@@ -78,66 +78,66 @@ public class PolygonTest {
         assertTrue(polygon.getExtrude());
         assertEquals(AltitudeMode.RELATIVE_TO_GROUND, polygon.getAltitudeMode());
 
-        final Boundary outerBoundaryIs = polygon.getOuterBoundaryIs();
+        final Boundary outerBoundaryIs = polygon.getOuterBoundary();
         final LinearRing linearRing1 = outerBoundaryIs.getLinearRing();
-        final Coordinates coordinates1 = linearRing1.getCoordinates();
-        assertEquals(5, coordinates1.getCoordinates().size());
+        final Coordinates coordinates1 = linearRing1.getCoordinateSequence();
+        assertEquals(5, coordinates1.size());
 
         final Coordinate coordinate10 = coordinates1.getCoordinate(0);
-        assertEquals(-122.366278, coordinate10.getGeodeticLongitude(), DELTA);
-        assertEquals(37.818844, coordinate10.getGeodeticLatitude(), DELTA);
-        assertEquals(30, coordinate10.getAltitude(), DELTA);
+        assertEquals(-122.366278, coordinate10.x, DELTA);
+        assertEquals(37.818844, coordinate10.y, DELTA);
+        assertEquals(30, coordinate10.z, DELTA);
 
         final Coordinate coordinate11 = coordinates1.getCoordinate(1);
-        assertEquals(-122.365248, coordinate11.getGeodeticLongitude(), DELTA);
-        assertEquals(37.819267, coordinate11.getGeodeticLatitude(), DELTA);
-        assertEquals(30, coordinate11.getAltitude(), DELTA);
+        assertEquals(-122.365248, coordinate11.x, DELTA);
+        assertEquals(37.819267, coordinate11.y, DELTA);
+        assertEquals(30, coordinate11.z, DELTA);
 
         final Coordinate coordinate12 = coordinates1.getCoordinate(2);
-        assertEquals(-122.365640, coordinate12.getGeodeticLongitude(), DELTA);
-        assertEquals(37.819861, coordinate12.getGeodeticLatitude(), DELTA);
-        assertEquals(30, coordinate12.getAltitude(), DELTA);
+        assertEquals(-122.365640, coordinate12.x, DELTA);
+        assertEquals(37.819861, coordinate12.y, DELTA);
+        assertEquals(30, coordinate12.z, DELTA);
 
         final Coordinate coordinate13 = coordinates1.getCoordinate(3);
-        assertEquals(-122.366669, coordinate13.getGeodeticLongitude(), DELTA);
-        assertEquals(37.819429, coordinate13.getGeodeticLatitude(), DELTA);
-        assertEquals(30, coordinate13.getAltitude(), DELTA);
+        assertEquals(-122.366669, coordinate13.x, DELTA);
+        assertEquals(37.819429, coordinate13.y, DELTA);
+        assertEquals(30, coordinate13.z, DELTA);
 
         final Coordinate coordinate14 = coordinates1.getCoordinate(4);
-        assertEquals(-122.366278, coordinate14.getGeodeticLongitude(), DELTA);
-        assertEquals(37.818844, coordinate14.getGeodeticLatitude(), DELTA);
-        assertEquals(30, coordinate14.getAltitude(), DELTA);
+        assertEquals(-122.366278, coordinate14.x, DELTA);
+        assertEquals(37.818844, coordinate14.y, DELTA);
+        assertEquals(30, coordinate14.z, DELTA);
 
-        assertEquals(1, polygon.getInnerBoundariesAre().size());
-        final Boundary innerBoundaryIs = polygon.getInnerBoundariesAre().get(0);
+        assertEquals(1, polygon.getInnerBoundaries().size());
+        final Boundary innerBoundaryIs = polygon.getInnerBoundaries().get(0);
         final LinearRing linearRing2 = innerBoundaryIs.getLinearRing();
-        final Coordinates coordinates2 = linearRing2.getCoordinates();
-        assertEquals(5, coordinates2.getCoordinates().size());
+        final Coordinates coordinates2 = linearRing2.getCoordinateSequence();
+        assertEquals(5, coordinates2.size());
 
         final Coordinate coordinate20 = coordinates2.getCoordinate(0);
-        assertEquals(-122.366212, coordinate20.getGeodeticLongitude(), DELTA);
-        assertEquals(37.818977, coordinate20.getGeodeticLatitude(), DELTA);
-        assertEquals(30, coordinate20.getAltitude(), DELTA);
+        assertEquals(-122.366212, coordinate20.x, DELTA);
+        assertEquals(37.818977, coordinate20.y, DELTA);
+        assertEquals(30, coordinate20.z, DELTA);
 
         final Coordinate coordinate21 = coordinates2.getCoordinate(1);
-        assertEquals(-122.365424, coordinate21.getGeodeticLongitude(), DELTA);
-        assertEquals(37.819294, coordinate21.getGeodeticLatitude(), DELTA);
-        assertEquals(30, coordinate21.getAltitude(), DELTA);
+        assertEquals(-122.365424, coordinate21.x, DELTA);
+        assertEquals(37.819294, coordinate21.y, DELTA);
+        assertEquals(30, coordinate21.z, DELTA);
 
         final Coordinate coordinate22 = coordinates2.getCoordinate(2);
-        assertEquals(-122.365704, coordinate22.getGeodeticLongitude(), DELTA);
-        assertEquals(37.819731, coordinate22.getGeodeticLatitude(), DELTA);
-        assertEquals(30, coordinate22.getAltitude(), DELTA);
+        assertEquals(-122.365704, coordinate22.x, DELTA);
+        assertEquals(37.819731, coordinate22.y, DELTA);
+        assertEquals(30, coordinate22.z, DELTA);
 
         final Coordinate coordinate23 = coordinates2.getCoordinate(3);
-        assertEquals(-122.366488, coordinate23.getGeodeticLongitude(), DELTA);
-        assertEquals(37.819402, coordinate23.getGeodeticLatitude(), DELTA);
-        assertEquals(30, coordinate23.getAltitude(), DELTA);
+        assertEquals(-122.366488, coordinate23.x, DELTA);
+        assertEquals(37.819402, coordinate23.y, DELTA);
+        assertEquals(30, coordinate23.z, DELTA);
 
         final Coordinate coordinate24 = coordinates2.getCoordinate(4);
-        assertEquals(-122.366212, coordinate24.getGeodeticLongitude(), DELTA);
-        assertEquals(37.818977, coordinate24.getGeodeticLatitude(), DELTA);
-        assertEquals(30, coordinate24.getAltitude(), DELTA);
+        assertEquals(-122.366212, coordinate24.x, DELTA);
+        assertEquals(37.818977, coordinate24.y, DELTA);
+        assertEquals(30, coordinate24.z, DELTA);
 
 
     }
@@ -164,11 +164,9 @@ public class PolygonTest {
         final Coordinates coordinates2 = kmlFactory.createCoordinates(
                 Arrays.asList(coordinate20, coordinate21, coordinate22, coordinate23, coordinate24));
         
-        final LinearRing linearRing1 = kmlFactory.createLinearRing();
-        linearRing1.setCoordinates(coordinates1);
+        final LinearRing linearRing1 = kmlFactory.createLinearRing(coordinates1);
         
-        final  LinearRing linearRing2 = kmlFactory.createLinearRing();
-        linearRing2.setCoordinates(coordinates2);
+        final  LinearRing linearRing2 = kmlFactory.createLinearRing(coordinates2);
         
         final Boundary outerBoundaryIs = kmlFactory.createBoundary();
         outerBoundaryIs.setLinearRing(linearRing1);
@@ -176,11 +174,9 @@ public class PolygonTest {
         final Boundary innerBoundaryIs = kmlFactory.createBoundary();
         innerBoundaryIs.setLinearRing(linearRing2);
 
-        final Polygon polygon = kmlFactory.createPolygon();
+        final Polygon polygon = kmlFactory.createPolygon(outerBoundaryIs, Arrays.asList(innerBoundaryIs));
         polygon.setExtrude(true);
         polygon.setAltitudeMode(AltitudeMode.RELATIVE_TO_GROUND);
-        polygon.setOuterBoundaryIs(outerBoundaryIs);
-        polygon.setInnerBoundariesAre(Arrays.asList(innerBoundaryIs));
 
         final Placemark placemark = kmlFactory.createPlacemark();
         placemark.setName("hollow box");

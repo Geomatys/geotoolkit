@@ -1,8 +1,5 @@
 package org.geotoolkit.data.kml.model;
 
-import java.util.List;
-import org.geotoolkit.data.kml.xsd.SimpleType;
-
 /**
  * <p>This interface maps Pair element.</p>
  *
@@ -51,18 +48,6 @@ public interface Pair extends AbstractObject {
 
     /**
      *
-     * @return the list of Pair simple extensions.
-     */
-    public List<SimpleType> getPairSimpleExtensions();
-
-    /**
-     *
-     * @return the list of Pair object extensions.
-     */
-    public List<AbstractObject> getPairObjectExtensions();
-
-    /**
-     *
      * @param key
      */
     public void setKey(StyleState key);
@@ -78,17 +63,5 @@ public interface Pair extends AbstractObject {
      * @param styleSelector
      */
     public void setAbstractStyleSelector(AbstractStyleSelector styleSelector);
-
-    /**
-     *
-     * @param pairSimpleExtensions
-     */
-    public void setPairSimpleExtensions(List<SimpleType> pairSimpleExtensions);
-
-    /**
-     *
-     * @param pairObjectExtensions
-     */
-    public void setPairObjectExtensions(List<AbstractObject> pairObjectExtensions);
 
 }

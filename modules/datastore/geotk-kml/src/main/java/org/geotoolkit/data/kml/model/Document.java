@@ -44,18 +44,6 @@ public interface Document extends AbstractContainer {
 
     /**
      *
-     * @return the list of Document simple extensions.
-     */
-    public List<SimpleType> getDocumentSimpleExtensions();
-
-    /**
-     *
-     * @return the list of Document object extensions.
-     */
-    public List<AbstractObject> getDocumentObjectExtensions();
-
-    /**
-     *
      * @param schemas
      */
     public void setSchemas(List<Schema> schemas);
@@ -65,16 +53,4 @@ public interface Document extends AbstractContainer {
      * @param abstractFeatures
      */
     public void setAbstractFeatures(List<AbstractFeature> features);
-
-    /**
-     *
-     * @param documentSimpleExtensions
-     */
-    public void setDocumentSimpleExtensions(List<SimpleType> documentSimpleExtensions);
-
-    /**
-     *
-     * @param documentObjectExtensions
-     */
-    public void setDocumentObjectExtensions(List<AbstractObject> documentObjectExtensions);
 }

@@ -46,18 +46,6 @@ public interface Kml {
     public AbstractFeature getAbstractFeature();
 
     /**
-     *
-     * @return The Kml list of simple extensions.
-     */
-    public List<SimpleType> getKmlSimpleExtensions();
-
-    /**
-     *
-     * @return The Kml list of object extensions.
-     */
-    public List<AbstractObject> getKmlObjectExtensions();
-
-    /**
      * 
      * @param version
      */
@@ -76,15 +64,9 @@ public interface Kml {
     public void setAbstractFeature(AbstractFeature feature);
 
     /**
-     *
-     * @param kmlSimpleExtensions
-     */
-    public void setKmlSimpleExtensions(List<SimpleType> kmlSimpleExtensions);
-
-    /**
      * 
-     * @param kmlObjectExtensions
+     * @return
      */
-    public void setKmlObjectExtensions(List<AbstractObject> kmlObjectExtensions);
+    public Extensions extensions();
 
 }

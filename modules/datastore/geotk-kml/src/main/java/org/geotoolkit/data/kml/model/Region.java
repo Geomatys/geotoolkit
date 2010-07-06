@@ -1,8 +1,5 @@
 package org.geotoolkit.data.kml.model;
 
-import java.util.List;
-import org.geotoolkit.data.kml.xsd.SimpleType;
-
 /**
  * <p>This interface maps Region element.</p>
  *
@@ -44,18 +41,6 @@ public interface Region extends AbstractObject{
 
     /**
      *
-     * @return the list of Region simple extensions.
-     */
-    public List<SimpleType> getRegionSimpleExtensions();
-
-    /**
-     *
-     * @return the list of Region object extensions.
-     */
-    public List<AbstractObject> getRegionObjectExtensions();
-
-    /**
-     *
      * @param latLonAltBox
      */
     public void setLatLonAltBox(LatLonAltBox latLonAltBox);
@@ -65,17 +50,5 @@ public interface Region extends AbstractObject{
      * @param lod
      */
     public void setLod(Lod lod);
-
-    /**
-     *
-     * @param regionSimpleExtensions
-     */
-    public void setRegionSimpleExtensions(List<SimpleType> regionSimpleExtensions);
-
-    /**
-     * 
-     * @param regionObjectExtensions
-     */
-    public void setRegionObjectExtensions(List<AbstractObject> regionObjectExtensions);
 
 }

@@ -2,7 +2,6 @@ package org.geotoolkit.data.kml.model;
 
 import java.util.List;
 import org.geotoolkit.data.kml.xsd.SimpleType;
-import static java.util.Collections.*;
 
 /**
  *
@@ -10,36 +9,39 @@ import static java.util.Collections.*;
  */
 public class DefaultBasicLink implements BasicLink {
 
-    private List<SimpleType> objectSimpleExtensions;
+    private final Extensions extensions = new Extensions();
     private IdAttributes idAttributes;
-    
     private String href;
-    private List<SimpleType> basicLinkSimpleExtensions;
-    private List<AbstractObject> basicLinkObjectExtensions;
 
     /**
      * 
      */
-    public DefaultBasicLink(){
-         this.basicLinkSimpleExtensions = EMPTY_LIST;
-         this.basicLinkObjectExtensions = EMPTY_LIST;
+    public DefaultBasicLink() {
     }
 
     /**
-     *
+     * 
      * @param objectSimpleExtensions
      * @param idAttributes
      * @param href
      * @param basicLinkSimpleExtensions
      * @param basicLinkObjectExtensions
      */
-    public DefaultBasicLink(List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
-            String href, List<SimpleType> basicLinkSimpleExtensions, List<AbstractObject> basicLinkObjectExtensions){
-            this.objectSimpleExtensions = objectSimpleExtensions;
-            this.idAttributes = idAttributes;
-            this.href = href;
-            this.basicLinkSimpleExtensions = (basicLinkSimpleExtensions == null) ? EMPTY_LIST : basicLinkSimpleExtensions;
-            this.basicLinkObjectExtensions = (basicLinkObjectExtensions == null) ? EMPTY_LIST : basicLinkObjectExtensions;
+    public DefaultBasicLink(List<SimpleType> objectSimpleExtensions,
+            IdAttributes idAttributes, String href,
+            List<SimpleType> basicLinkSimpleExtensions,
+            List<AbstractObject> basicLinkObjectExtensions) {
+        this.idAttributes = idAttributes;
+        this.href = href;
+        if (objectSimpleExtensions != null) {
+            this.extensions().simples(Extensions.Names.OBJECT).addAll(objectSimpleExtensions);
+        }
+        if (basicLinkSimpleExtensions != null) {
+            this.extensions().simples(Extensions.Names.BASIC_LINK).addAll(basicLinkSimpleExtensions);
+        }
+        if (basicLinkObjectExtensions != null) {
+            this.extensions().complexes(Extensions.Names.BASIC_LINK).addAll(basicLinkObjectExtensions);
+        }
     }
 
     /**
@@ -47,43 +49,17 @@ public class DefaultBasicLink implements BasicLink {
      * @{@inheritDoc }
      */
     @Override
-    public List<SimpleType> getObjectSimpleExtensions() {return this.objectSimpleExtensions;}
+    public IdAttributes getIdAttributes() {
+        return this.idAttributes;
+    }
 
     /**
      *
      * @{@inheritDoc }
      */
     @Override
-    public IdAttributes getIdAttributes() {return this.idAttributes;}
-
-    /**
-     *
-     * @{@inheritDoc }
-     */
-    @Override
-    public String getHref() {return this.href;}
-
-    /**
-     *
-     * @{@inheritDoc }
-     */
-    @Override
-    public List<SimpleType> getBasicLinkSimpleExtensions() {return this.basicLinkSimpleExtensions;}
-
-    /**
-     *
-     * @{@inheritDoc }
-     */
-    @Override
-    public List<AbstractObject> getBasicLinkObjectExtensions() {return this.basicLinkObjectExtensions;}
-
-    /**
-     *
-     * @{@inheritDoc }
-     */
-    @Override
-    public void setObjectSimpleExtensions(List<SimpleType> objectSimpleExtensions) {
-        this.objectSimpleExtensions = objectSimpleExtensions;
+    public String getHref() {
+        return this.href;
     }
 
     /**
@@ -100,31 +76,23 @@ public class DefaultBasicLink implements BasicLink {
      * @{@inheritDoc }
      */
     @Override
-    public void setHref(String href) {this.href = href;}
-
-    /**
-     *
-     * @{@inheritDoc }
-     */
-    @Override
-    public void setBasicLinkSimpleExtensions(List<SimpleType> basicLinkSimpleExtensions) {
-        this.basicLinkSimpleExtensions = basicLinkSimpleExtensions;
-    }
-
-    /**
-     *
-     * @{@inheritDoc }
-     */
-    @Override
-    public void setBasicLinkObjectExtensions(List<AbstractObject> basicLinkObjectExtensions) {
-        this.basicLinkObjectExtensions = basicLinkObjectExtensions;
+    public void setHref(String href) {
+        this.href = href;
     }
 
     @Override
-    public String toString(){
-        String resultat = "BasicLinkDefault : "+
-                "\n\thref : "+this.href;
+    public String toString() {
+        String resultat = "BasicLinkDefault : "
+                + "\n\thref : " + this.href;
         return resultat;
     }
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public Extensions extensions() {
+        return this.extensions;
+    }
 }

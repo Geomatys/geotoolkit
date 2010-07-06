@@ -1,8 +1,5 @@
 package org.geotoolkit.data.kml.model;
 
-import java.util.List;
-import org.geotoolkit.data.kml.xsd.SimpleType;
-
 /**
  * <p>This interface maps LineStyle element.</p>
  *
@@ -37,31 +34,8 @@ public interface LineStyle extends AbstractColorStyle {
 
     /**
      *
-     * @return
-     */
-    public List<SimpleType> getLineStyleSimpleExtensions();
-
-    /**
-     * 
-     * @return
-     */
-    public List<AbstractObject> getLineStyleObjectExtensions();
-
-    /**
-     *
      * @param width
      */
     public void setWidth(double width);
 
-    /**
-     *
-     * @param lineStyleSimpleExtensions
-     */
-    public void setLineStyleSimpleExtensions(List<SimpleType> lineStyleSimpleExtensions);
-
-    /**
-     *
-     * @param lineStyleObjectExtensions
-     */
-    public void setLineStyleObjectExtensions(List<AbstractObject> lineStyleObjectExtensions);
 }

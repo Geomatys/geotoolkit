@@ -1,8 +1,5 @@
 package org.geotoolkit.data.kml.model;
 
-import java.util.List;
-import org.geotoolkit.data.kml.xsd.SimpleType;
-
 /**
  * <p>This interface maps LatLonAltBox element.</p>
  *
@@ -58,18 +55,6 @@ public interface LatLonAltBox extends AbstractLatLonBox{
 
     /**
      *
-     * @return the list of LatLonAltBox simple extensions.
-     */
-    public List<SimpleType> getLatLonAltBoxSimpleExtensions();
-
-    /**
-     *
-     * @return the list of LatLonAltBox object extensions.
-     */
-    public List<AbstractObject> getLatLonAltBoxObjectExtensions();
-
-    /**
-     *
      * @param minAltitude
      */
     public void setMinAltitude(double minAltitude);
@@ -85,17 +70,5 @@ public interface LatLonAltBox extends AbstractLatLonBox{
      * @param altitudeMode
      */
     public void setAltitudeMode(AltitudeMode altitudeMode);
-
-    /**
-     *
-     * @param latLonAltBoxSimpleExtensions
-     */
-    public void setLatLonAltBoxSimpleExtensions(List<SimpleType> latLonAltBoxSimpleExtensions);
-
-    /**
-     * 
-     * @param latLonAltBoxObjectExtensions
-     */
-    public void setLatLonAltBoxObjectExtensions(List<AbstractObject> latLonAltBoxObjectExtensions);
 
 }

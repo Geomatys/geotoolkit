@@ -4,7 +4,7 @@ package org.geotoolkit.data.kml.model;
  *
  * @author Samuel Andrés
  */
-public class DefaultSnippet implements Snippet{
+public class DefaultSnippet implements Snippet {
 
     private final int maxLines;
     private final String content;
@@ -14,7 +14,7 @@ public class DefaultSnippet implements Snippet{
      * @param maxLines
      * @param content
      */
-    public DefaultSnippet(int maxLines, String content){
+    public DefaultSnippet(int maxLines, String content) {
         this.maxLines = maxLines;
         this.content = content;
     }
@@ -24,14 +24,16 @@ public class DefaultSnippet implements Snippet{
      * @{@inheritDoc }
      */
     @Override
-    public int getMaxLines() {return this.maxLines;}
-
+    public int getMaxLines() {
+        return this.maxLines;
+    }
 
     /**
      *
      * @{@inheritDoc }
      */
     @Override
-    public String getContent() {return this.content;}
-
+    public String getContent() {
+        return this.content;
+    }
 }

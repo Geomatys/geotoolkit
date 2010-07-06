@@ -1,8 +1,5 @@
 package org.geotoolkit.data.kml.model;
 
-import org.geotoolkit.data.kml.xsd.SimpleType;
-import java.util.List;
-
 /**
  * <p>This interface maps an AbstractObjectGroup element.</p>
  *
@@ -27,19 +24,13 @@ public interface AbstractObject {
      *
      * @return The list of simple extensions.
      */
-    public List<SimpleType> getObjectSimpleExtensions();
+    public Extensions extensions();
 
     /**
      *
      * @return The identification attributes.
      */
     public IdAttributes getIdAttributes();
-
-    /**
-     * 
-     * @param objectSimpleExtentions
-     */
-    public void setObjectSimpleExtensions(List<SimpleType> objectSimpleExtentions);
 
     /**
      *

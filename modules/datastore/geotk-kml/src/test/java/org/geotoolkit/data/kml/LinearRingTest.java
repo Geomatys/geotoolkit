@@ -1,5 +1,6 @@
 package org.geotoolkit.data.kml;
 
+import com.vividsolutions.jts.geom.Coordinate;
 import org.geotoolkit.data.kml.xml.KmlReader;
 import java.io.File;
 import java.io.IOException;
@@ -8,7 +9,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
 import org.geotoolkit.data.kml.model.AbstractFeature;
 import org.geotoolkit.data.kml.model.Boundary;
-import org.geotoolkit.data.kml.model.Coordinate;
 import org.geotoolkit.data.kml.model.Coordinates;
 import org.geotoolkit.data.kml.model.Kml;
 import org.geotoolkit.data.kml.model.KmlException;
@@ -67,36 +67,36 @@ public class LinearRingTest {
         final Placemark placemark = (Placemark) feature;
         assertEquals("LinearRing.kml", placemark.getName());
         assertTrue(placemark.getAbstractGeometry() instanceof Polygon);
-        final Boundary outerBoundaryIs = ((Polygon) placemark.getAbstractGeometry()).getOuterBoundaryIs();
+        final Boundary outerBoundaryIs = ((Polygon) placemark.getAbstractGeometry()).getOuterBoundary();
         final LinearRing linearRing = outerBoundaryIs.getLinearRing();
-        final Coordinates coordinates = linearRing.getCoordinates();
+        final Coordinates coordinates = linearRing.getCoordinateSequence();
 
-        assertEquals(5, coordinates.getCoordinates().size());
+        assertEquals(5, coordinates.size());
 
         Coordinate coordinate0 = coordinates.getCoordinate(0);
-        assertEquals(-122.365662, coordinate0.getGeodeticLongitude(), DELTA);
-        assertEquals(37.826988, coordinate0.getGeodeticLatitude(), DELTA);
-        assertEquals(0, coordinate0.getAltitude(), DELTA);
+        assertEquals(-122.365662, coordinate0.x, DELTA);
+        assertEquals(37.826988, coordinate0.y, DELTA);
+        assertEquals(0, coordinate0.z, DELTA);
 
         Coordinate coordinate1 = coordinates.getCoordinate(1);
-        assertEquals(-122.365202, coordinate1.getGeodeticLongitude(), DELTA);
-        assertEquals(37.826302, coordinate1.getGeodeticLatitude(), DELTA);
-        assertEquals(0, coordinate1.getAltitude(), DELTA);
+        assertEquals(-122.365202, coordinate1.x, DELTA);
+        assertEquals(37.826302, coordinate1.y, DELTA);
+        assertEquals(0, coordinate1.z, DELTA);
 
         Coordinate coordinate2 = coordinates.getCoordinate(2);
-        assertEquals(-122.364581, coordinate2.getGeodeticLongitude(), DELTA);
-        assertEquals(37.82655, coordinate2.getGeodeticLatitude(), DELTA);
-        assertEquals(0, coordinate2.getAltitude(), DELTA);
+        assertEquals(-122.364581, coordinate2.x, DELTA);
+        assertEquals(37.82655, coordinate2.y, DELTA);
+        assertEquals(0, coordinate2.z, DELTA);
 
         Coordinate coordinate3 = coordinates.getCoordinate(3);
-        assertEquals(-122.365038, coordinate3.getGeodeticLongitude(), DELTA);
-        assertEquals(37.827237, coordinate3.getGeodeticLatitude(), DELTA);
-        assertEquals(0, coordinate3.getAltitude(), DELTA);
+        assertEquals(-122.365038, coordinate3.x, DELTA);
+        assertEquals(37.827237, coordinate3.y, DELTA);
+        assertEquals(0, coordinate3.z, DELTA);
 
         Coordinate coordinate4 = coordinates.getCoordinate(4);
-        assertEquals(-122.365662, coordinate4.getGeodeticLongitude(), DELTA);
-        assertEquals(37.826988, coordinate4.getGeodeticLatitude(), DELTA);
-        assertEquals(0, coordinate4.getAltitude(), DELTA);
+        assertEquals(-122.365662, coordinate4.x, DELTA);
+        assertEquals(37.826988, coordinate4.y, DELTA);
+        assertEquals(0, coordinate4.z, DELTA);
 
 
     }
@@ -114,15 +114,13 @@ public class LinearRingTest {
         final Coordinates coordinates = kmlFactory.createCoordinates(Arrays.asList(
                 coordinate0, coordinate1, coordinate2, coordinate3, coordinate4));
 
-        final LinearRing linearRing = kmlFactory.createLinearRing();
-        linearRing.setCoordinates(coordinates);
+        final LinearRing linearRing = kmlFactory.createLinearRing(coordinates);
 
         final Boundary outerBoundaryIs = kmlFactory.createBoundary();
         outerBoundaryIs.setLinearRing(linearRing);
 
 
-        final Polygon polygon = kmlFactory.createPolygon();
-        polygon.setOuterBoundaryIs(outerBoundaryIs);
+        final Polygon polygon = kmlFactory.createPolygon(outerBoundaryIs, null);
 
         final Placemark placemark = kmlFactory.createPlacemark();
         placemark.setName("LinearRing.kml");

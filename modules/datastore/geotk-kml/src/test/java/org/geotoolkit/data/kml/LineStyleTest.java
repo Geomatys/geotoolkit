@@ -1,5 +1,6 @@
 package org.geotoolkit.data.kml;
 
+import com.vividsolutions.jts.geom.Coordinate;
 import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
@@ -9,19 +10,14 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
 import org.geotoolkit.data.kml.model.AbstractFeature;
 import org.geotoolkit.data.kml.model.AbstractStyleSelector;
-import org.geotoolkit.data.kml.model.BasicLink;
-import org.geotoolkit.data.kml.model.ColorMode;
-import org.geotoolkit.data.kml.model.Coordinate;
 import org.geotoolkit.data.kml.model.Coordinates;
 import org.geotoolkit.data.kml.model.Document;
 import org.geotoolkit.data.kml.model.IdAttributes;
 import org.geotoolkit.data.kml.model.Kml;
 import org.geotoolkit.data.kml.model.KmlException;
-import org.geotoolkit.data.kml.model.LabelStyle;
 import org.geotoolkit.data.kml.model.LineString;
 import org.geotoolkit.data.kml.model.LineStyle;
 import org.geotoolkit.data.kml.model.Placemark;
-import org.geotoolkit.data.kml.model.Point;
 import org.geotoolkit.data.kml.model.Style;
 import org.geotoolkit.data.kml.xml.KmlReader;
 import org.geotoolkit.data.kml.xml.KmlWriter;
@@ -95,16 +91,16 @@ public class LineStyleTest {
         LineString lineString = (LineString) placemark.getAbstractGeometry();
         assertTrue(lineString.getExtrude());
         assertTrue(lineString.getTessellate());
-        Coordinates coordinates = lineString.getCoordinates();
-        assertEquals(2, coordinates.getCoordinates().size());
+        Coordinates coordinates = lineString.getCoordinateSequence();
+        assertEquals(2, coordinates.size());
         Coordinate coordinate0 = coordinates.getCoordinate(0);
-        assertEquals(-122.364383, coordinate0.getGeodeticLongitude(), DELTA);
-        assertEquals(37.824664, coordinate0.getGeodeticLatitude(), DELTA);
-        assertEquals(0, coordinate0.getAltitude(), DELTA);
+        assertEquals(-122.364383, coordinate0.x, DELTA);
+        assertEquals(37.824664, coordinate0.y, DELTA);
+        assertEquals(0, coordinate0.z, DELTA);
         Coordinate coordinate1 = coordinates.getCoordinate(1);
-        assertEquals(-122.364152, coordinate1.getGeodeticLongitude(), DELTA);
-        assertEquals(37.824322, coordinate1.getGeodeticLatitude(), DELTA);
-        assertEquals(0, coordinate1.getAltitude(), DELTA);
+        assertEquals(-122.364152, coordinate1.x, DELTA);
+        assertEquals(37.824322, coordinate1.y, DELTA);
+        assertEquals(0, coordinate1.z, DELTA);
     }
 
     @Test
@@ -114,8 +110,7 @@ public class LineStyleTest {
         Coordinate coordinate0 = kmlFactory.createCoordinate(-122.364383, 37.824664, 0);
         Coordinate coordinate1 = kmlFactory.createCoordinate(-122.364152, 37.824322, 0);
         Coordinates coordinates = kmlFactory.createCoordinates(Arrays.asList(coordinate0, coordinate1));
-        LineString lineString = kmlFactory.createLineString();
-        lineString.setCoordinates(coordinates);
+        LineString lineString = kmlFactory.createLineString(coordinates);
         lineString.setTessellate(true);
         lineString.setExtrude(true);
 

@@ -37,12 +37,6 @@ public interface BasicLink {
 
     /**
      *
-     * @return the list of simple extensions.
-     */
-    public List<SimpleType> getObjectSimpleExtensions();
-
-    /**
-     *
      * @return the identification attributes.
      */
     public IdAttributes getIdAttributes();
@@ -52,24 +46,6 @@ public interface BasicLink {
      * @return the href.
      */
     public String getHref();
-
-    /**
-     *
-     * @return the list of BasicLink simple extensions.
-     */
-    public List<SimpleType> getBasicLinkSimpleExtensions();
-
-    /**
-     *
-     * @return the list of BasicLink object extensions.
-     */
-    public List<AbstractObject> getBasicLinkObjectExtensions();
-
-    /**
-     * 
-     * @param objectSimpleExtensions
-     */
-    public void setObjectSimpleExtensions(List<SimpleType> objectSimpleExtensions);
 
     /**
      *
@@ -84,14 +60,8 @@ public interface BasicLink {
     public void setHref(String href);
 
     /**
-     *
-     * @param basicLinkSimpleExtensions
+     * 
+     * @return
      */
-    public void setBasicLinkSimpleExtensions(List<SimpleType> basicLinkSimpleExtensions);
-
-    /**
-     *
-     * @param basicLinkObjectExtensions
-     */
-    public void setBasicLinkObjectExtensions(List<AbstractObject> basicLinkObjectExtensions);
+    public Extensions extensions();
 }

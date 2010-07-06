@@ -1,8 +1,6 @@
 package org.geotoolkit.data.kml.model;
 
 import java.awt.Color;
-import java.util.List;
-import org.geotoolkit.data.kml.xsd.SimpleType;
 
 /**
  * <p>This interface maps AbstractColorStyle element.</p>
@@ -45,18 +43,6 @@ public interface AbstractColorStyle extends AbstractSubStyle {
 
     /**
      *
-     * @return The AbstractColorStyle simple extensions.
-     */
-    public List<SimpleType> getColorStyleSimpleExtensions();
-
-    /**
-     *
-     * @return The AbstractColorStyle object extensions.
-     */
-    public List<AbstractObject> getColorStyleObjectExtensions();
-
-    /**
-     *
      * @param color
      */
     public void setColor(Color color);
@@ -66,16 +52,4 @@ public interface AbstractColorStyle extends AbstractSubStyle {
      * @param colorMode
      */
     public void setColorMode(ColorMode colorMode);
-
-    /**
-     *
-     * @param colorStyleSimpleExtensions
-     */
-    public void setColorStyleSimpleExtensions(List<SimpleType> colorStyleSimpleExtensions);
-
-    /**
-     *
-     * @param colorStyleObjectExtensions
-     */
-    public void setColorStyleObjectExtensions(List<AbstractObject> colorStyleObjectExtensions);
 }

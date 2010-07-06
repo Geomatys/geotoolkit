@@ -60,18 +60,6 @@ public interface GroundOverlay extends AbstractOverlay {
 
     /**
      *
-     * @return
-     */
-    public List<SimpleType> getGroundOverlaySimpleExtensions();
-
-    /**
-     * 
-     * @return
-     */
-    public List<AbstractObject> getGroundOverlayObjectExtensions();
-
-    /**
-     *
      * @param altitude
      */
     public void setAltitude(double altitude);
@@ -87,17 +75,5 @@ public interface GroundOverlay extends AbstractOverlay {
      * @param latLonBox
      */
     public void setLatLonBox(LatLonBox latLonBox);
-
-    /**
-     *
-     * @param groundOverlaySimpleExtensions
-     */
-    public void setGroundOverlaySimpleExtensions(List<SimpleType> groundOverlaySimpleExtensions);
-
-    /**
-     *
-     * @param groundOverlayObjectExtensions
-     */
-    public void setGroundOverlayObjectExtensions(List<AbstractObject> groundOverlayObjectExtensions);
 
 }

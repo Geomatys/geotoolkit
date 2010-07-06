@@ -3,7 +3,6 @@ package org.geotoolkit.data.kml.model;
 import java.util.List;
 import org.geotoolkit.data.kml.KmlUtilities;
 import org.geotoolkit.data.kml.xsd.SimpleType;
-import static java.util.Collections.*;
 import static org.geotoolkit.data.kml.xml.KmlModelConstants.*;
 
 /**
@@ -15,8 +14,6 @@ public class DefaultOrientation extends DefaultAbstractObject implements Orienta
     private double heading;
     private double tilt;
     private double roll;
-    private List<SimpleType> orientationSimpleExtensions;
-    private List<AbstractObject> orientationObjectExtensions;
 
     /**
      *
@@ -25,12 +22,10 @@ public class DefaultOrientation extends DefaultAbstractObject implements Orienta
         this.heading = DEF_HEADING;
         this.tilt = DEF_TILT;
         this.roll = DEF_ROLL;
-        this.orientationSimpleExtensions = EMPTY_LIST;
-        this.orientationObjectExtensions = EMPTY_LIST;
     }
 
     /**
-     *
+     * 
      * @param objectSimpleExtensions
      * @param idAttributes
      * @param heading
@@ -48,8 +43,12 @@ public class DefaultOrientation extends DefaultAbstractObject implements Orienta
         this.heading = KmlUtilities.checkAngle360(heading);
         this.tilt = KmlUtilities.checkAnglePos180(tilt);
         this.roll = KmlUtilities.checkAngle180(roll);
-        this.orientationSimpleExtensions = (orientationSimpleExtensions == null) ? EMPTY_LIST : orientationSimpleExtensions;
-        this.orientationObjectExtensions = (orientationObjectExtensions == null) ? EMPTY_LIST : orientationObjectExtensions;
+        if (orientationSimpleExtensions != null) {
+            this.extensions().simples(Extensions.Names.ORIENTATION).addAll(orientationSimpleExtensions);
+        }
+        if (orientationObjectExtensions != null) {
+            this.extensions().complexes(Extensions.Names.ORIENTATION).addAll(orientationObjectExtensions);
+        }
     }
 
     /**
@@ -84,24 +83,6 @@ public class DefaultOrientation extends DefaultAbstractObject implements Orienta
      * @{@inheritDoc }
      */
     @Override
-    public List<SimpleType> getOrientationSimpleExtensions() {
-        return this.orientationSimpleExtensions;
-    }
-
-    /**
-     *
-     * @{@inheritDoc }
-     */
-    @Override
-    public List<AbstractObject> getOrientationObjectExtensions() {
-        return this.orientationObjectExtensions;
-    }
-
-    /**
-     *
-     * @{@inheritDoc }
-     */
-    @Override
     public void setHeading(double heading) {
         this.heading = KmlUtilities.checkAngle360(heading);
     }
@@ -122,23 +103,5 @@ public class DefaultOrientation extends DefaultAbstractObject implements Orienta
     @Override
     public void setRoll(double roll) {
         this.roll = KmlUtilities.checkAngle180(roll);
-    }
-
-    /**
-     *
-     * @{@inheritDoc }
-     */
-    @Override
-    public void setOrientationSimpleExtensions(List<SimpleType> orientationSimpleExtensions) {
-        this.orientationSimpleExtensions = orientationSimpleExtensions;
-    }
-
-    /**
-     *
-     * @{@inheritDoc }
-     */
-    @Override
-    public void setOrientationObjectExtensions(List<AbstractObject> orientationObjectExtensions) {
-        this.orientationObjectExtensions = orientationObjectExtensions;
     }
 }

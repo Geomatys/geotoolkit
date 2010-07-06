@@ -1,8 +1,6 @@
 package org.geotoolkit.data.kml.model;
 
 import java.util.Calendar;
-import java.util.List;
-import org.geotoolkit.data.kml.xsd.SimpleType;
 
 /**
  * <p>This interface maps NetworkLinkControl element.</p>
@@ -97,18 +95,6 @@ public interface NetworkLinkControl {
 
     /**
      *
-     * @return the list of NetworkLinkControl simple extensions.
-     */
-    public List<SimpleType> getNetworkLinkControlSimpleExtensions();
-
-    /**
-     *
-     * @return the list of NetworkLinkControl object extensions.
-     */
-    public List<AbstractObject> getNetworkLinkControlObjectExtensions();
-
-    /**
-     *
      * @param minRefreshPeriod
      */
     public void setMinRefreshPeriod(double minRefreshPeriod);
@@ -168,14 +154,9 @@ public interface NetworkLinkControl {
     public void setView(AbstractView abstractView);
 
     /**
-     *
-     * @param networkLinkControlSimpleExtensions
-     */
-    public void setNetworkLinkControlSimpleExtensions(List<SimpleType> networkLinkControlSimpleExtensions);
-
-    /**
      * 
-     * @param networkLinkControlObjectExtensions
+     * @return
      */
-    public void setNetworkLinkControlObjectExtensions(List<AbstractObject> networkLinkControlObjectExtensions);
+    public Extensions extensions();
+
 }

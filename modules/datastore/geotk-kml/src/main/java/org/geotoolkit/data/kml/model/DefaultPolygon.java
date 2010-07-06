@@ -1,34 +1,58 @@
 package org.geotoolkit.data.kml.model;
 
+import com.vividsolutions.jts.geom.GeometryFactory;
 import java.util.List;
 import org.geotoolkit.data.kml.xsd.SimpleType;
-import static java.util.Collections.*;
 import static org.geotoolkit.data.kml.xml.KmlModelConstants.*;
+import static java.util.Collections.*;
 
 /**
  *
  * @author Samuel Andrés
  */
-public class DefaultPolygon extends DefaultAbstractGeometry implements Polygon {
+public class DefaultPolygon extends com.vividsolutions.jts.geom.Polygon implements Polygon {
 
+    private IdAttributes idAttributes;
+    private final Extensions extensions = new Extensions();
     private boolean extrude;
     private boolean tessellate;
     private AltitudeMode altitudeMode;
-    private Boundary outerBoundaryIs;
-    private List<Boundary> innerBoundariesAre;
-    private List<SimpleType> polygonSimpleExtensions;
-    private List<AbstractObject> polygonObjectExtensions;
+    private Boundary outerBoundary;
+    private List<Boundary> innerBoundaries;
+
+    /**
+     * <p>This method extract LinearaRings from Boundaries list</p>
+     * 
+     * @param boundaries
+     * @return
+     */
+    private static com.vividsolutions.jts.geom.LinearRing[] extract(List<Boundary> boundaries) {
+        if (boundaries == null) {
+            return null;
+        }
+        com.vividsolutions.jts.geom.LinearRing[] linearRing = new com.vividsolutions.jts.geom.LinearRing[boundaries.size()];
+        for (int i = 0, size = boundaries.size(); i < size; i++) {
+            linearRing[i] = (com.vividsolutions.jts.geom.LinearRing) boundaries.get(i).getLinearRing();
+        }
+        return linearRing;
+    }
 
     /**
      *
+     * @param outerBoundary
+     * @param innerBoundaries
+     * @param factory
      */
-    public DefaultPolygon(){
+    public DefaultPolygon(Boundary outerBoundary,
+            List<Boundary> innerBoundaries, GeometryFactory factory) {
+        super((com.vividsolutions.jts.geom.LinearRing) outerBoundary.getLinearRing(),
+                (com.vividsolutions.jts.geom.LinearRing[]) extract(innerBoundaries),
+                factory);
         this.extrude = DEF_EXTRUDE;
         this.tessellate = DEF_TESSELLATE;
         this.altitudeMode = DEF_ALTITUDE_MODE;
-        this.innerBoundariesAre = EMPTY_LIST;
-        this.polygonSimpleExtensions = EMPTY_LIST;
-        this.polygonObjectExtensions = EMPTY_LIST;
+        this.outerBoundary = outerBoundary;
+        this.innerBoundaries = (innerBoundaries == null) ? EMPTY_LIST : innerBoundaries;
     }
 
     /**
@@ -40,8 +64,9 @@ public class DefaultPolygon extends DefaultAbstractGeometry implements Polygon {
      * @param extrude
      * @param tessellate
      * @param altitudeMode
-     * @param outerBoundaryIs
-     * @param innerBoundariesAre
+     * @param outerBoundary
+     * @param innerBoundaries
+     * @param factory
      * @param polygonSimpleExtensions
      * @param polygonObjectExtensions
      */
@@ -50,17 +75,38 @@ public class DefaultPolygon extends DefaultAbstractGeometry implements Polygon {
             List<SimpleType> abstractGeometrySimpleExtensions,
             List<AbstractObject> abstractGeometryObjectExtensions,
             boolean extrude, boolean tessellate, AltitudeMode altitudeMode,
-            Boundary outerBoundaryIs, List<Boundary> innerBoundariesAre,
-            List<SimpleType> polygonSimpleExtensions, List<AbstractObject> polygonObjectExtensions){
-        super(objectSimpleExtensions, idAttributes,
-                abstractGeometrySimpleExtensions, abstractGeometryObjectExtensions);
+            Boundary outerBoundary,
+            List<Boundary> innerBoundaries, GeometryFactory factory,
+            List<SimpleType> polygonSimpleExtensions,
+            List<AbstractObject> polygonObjectExtensions) {
+
+        super((com.vividsolutions.jts.geom.LinearRing) outerBoundary.getLinearRing(),
+                extract(innerBoundaries),
+                factory);
+
+        if (objectSimpleExtensions != null) {
+            this.extensions().simples(Extensions.Names.OBJECT).addAll(objectSimpleExtensions);
+        }
+        this.idAttributes = idAttributes;
+
+        if (abstractGeometrySimpleExtensions != null) {
+            this.extensions().simples(Extensions.Names.GEOMETRY).addAll(abstractGeometrySimpleExtensions);
+        }
+        if (abstractGeometryObjectExtensions != null) {
+            this.extensions().complexes(Extensions.Names.GEOMETRY).addAll(abstractGeometryObjectExtensions);
+        }
         this.extrude = extrude;
         this.tessellate = tessellate;
         this.altitudeMode = altitudeMode;
-        this.outerBoundaryIs = outerBoundaryIs;
-        this.innerBoundariesAre = (innerBoundariesAre == null) ? EMPTY_LIST : innerBoundariesAre;
-        this.polygonSimpleExtensions = (polygonSimpleExtensions == null) ? EMPTY_LIST : polygonSimpleExtensions;
-        this.polygonObjectExtensions = (polygonObjectExtensions == null) ? EMPTY_LIST : polygonObjectExtensions;
+        this.outerBoundary = outerBoundary;
+        this.innerBoundaries = innerBoundaries;
+
+        if (polygonSimpleExtensions != null) {
+            this.extensions().simples(Extensions.Names.POLYGON).addAll(polygonSimpleExtensions);
+        }
+        if (polygonObjectExtensions != null) {
+            this.extensions().complexes(Extensions.Names.POLYGON).addAll(polygonObjectExtensions);
+        }
     }
 
     /**
@@ -68,49 +114,27 @@ public class DefaultPolygon extends DefaultAbstractGeometry implements Polygon {
      * @{@inheritDoc }
      */
     @Override
-    public boolean getExtrude() {return this.extrude;}
+    public boolean getExtrude() {
+        return this.extrude;
+    }
 
     /**
      *
      * @{@inheritDoc }
      */
     @Override
-    public boolean getTessellate() {return this.tessellate;}
+    public boolean getTessellate() {
+        return this.tessellate;
+    }
 
     /**
      *
      * @{@inheritDoc }
      */
     @Override
-    public AltitudeMode getAltitudeMode() {return this.altitudeMode;}
-
-    /**
-     *
-     * @{@inheritDoc }
-     */
-    @Override
-    public Boundary getOuterBoundaryIs() {return this.outerBoundaryIs;}
-
-    /**
-     *
-     * @{@inheritDoc }
-     */
-    @Override
-    public List<Boundary> getInnerBoundariesAre() {return this.innerBoundariesAre;}
-
-    /**
-     *
-     * @{@inheritDoc }
-     */
-    @Override
-    public List<SimpleType> getPolygonSimpleExtensions() {return this.polygonSimpleExtensions;}
-
-    /**
-     *
-     * @{@inheritDoc }
-     */
-    @Override
-    public List<AbstractObject> getPolygonObjectExtensions() {return this.polygonObjectExtensions;}
+    public AltitudeMode getAltitudeMode() {
+        return this.altitudeMode;
+    }
 
     /**
      *
@@ -139,40 +163,28 @@ public class DefaultPolygon extends DefaultAbstractGeometry implements Polygon {
         this.altitudeMode = altitudeMode;
     }
 
-    /**
-     *
-     * @{@inheritDoc }
-     */
     @Override
-    public void setOuterBoundaryIs(Boundary outerBoundaryIs) {
-        this.outerBoundaryIs = outerBoundaryIs;
+    public Extensions extensions() {
+        return this.extensions;
     }
 
-    /**
-     *
-     * @{@inheritDoc }
-     */
     @Override
-    public void setInnerBoundariesAre(List<Boundary> innerBoundariesAre) {
-        this.innerBoundariesAre = innerBoundariesAre;
+    public IdAttributes getIdAttributes() {
+        return this.idAttributes;
     }
 
-    /**
-     *
-     * @{@inheritDoc }
-     */
     @Override
-    public void setPolygonSimpleExtensions(List<SimpleType> polygonSimpleExtensions) {
-        this.polygonSimpleExtensions = polygonSimpleExtensions;
+    public void setIdAttributes(IdAttributes idAttributes) {
+        this.idAttributes = idAttributes;
     }
 
-    /**
-     *
-     * @{@inheritDoc }
-     */
     @Override
-    public void setPolygonObjectExtensions(List<AbstractObject> polygonObjectExtensions) {
-        this.polygonObjectExtensions = polygonObjectExtensions;
+    public Boundary getOuterBoundary() {
+        return this.outerBoundary;
     }
 
+    @Override
+    public List<Boundary> getInnerBoundaries() {
+        return this.innerBoundaries;
+    }
 }

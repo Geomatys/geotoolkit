@@ -1,8 +1,5 @@
 package org.geotoolkit.data.kml.model;
 
-import java.util.List;
-import org.geotoolkit.data.kml.xsd.SimpleType;
-
 /**
  * <p>This interface maps AbstractTimePrimitiveGroup element.</p>
  *
@@ -27,29 +24,4 @@ import org.geotoolkit.data.kml.xsd.SimpleType;
  * @author Samuel Andrés
  */
 public interface AbstractTimePrimitive extends AbstractObject {
-
-    /**
-     *
-     * @return the list of AbstractTimePrimitive simple extensions.
-     */
-    public List<SimpleType> getAbstractTimePrimitiveSimpleExtensions();
-
-    /**
-     *
-     * @return the list of AbtractTimePrimitive object extensions.
-     */
-    public List<AbstractObject> getAbstractTimePrimitiveObjectExtensions();
-
-    /**
-     * 
-     * @param abstractTimePrimitiveSimpleExtensions
-     */
-    public void getAbstractTimePrimitiveSimpleExtensions(List<SimpleType> abstractTimePrimitiveSimpleExtensions);
-
-    /**
-     *
-     * @param abstractTimePrimitiveObjectExtensions
-     */
-    public void getAbstractTimePrimitiveObjectExtensions(List<AbstractObject> abstractTimePrimitiveObjectExtensions);
-
 }

@@ -51,18 +51,6 @@ public interface Scale extends AbstractObject {
 
     /**
      *
-     * @return the list of Scale simple extensions.
-     */
-    public List<SimpleType> getScaleSimpleExtensions();
-
-    /**
-     *
-     * @return the list of Scale object extensions.
-     */
-    public List<AbstractObject> getScaleObjectExtensions();
-
-    /**
-     *
      * @param x
      */
     public void setX(double x);
@@ -78,17 +66,5 @@ public interface Scale extends AbstractObject {
      * @param z
      */
     public void setZ(double z);
-
-    /**
-     *
-     * @param scaleSimpleExtensions
-     */
-    public void setScaleSimpleExtensions(List<SimpleType> scaleSimpleExtensions);
-
-    /**
-     * 
-     * @param scaleObjectExtensions
-     */
-    public void setScaleObjectExtensions(List<AbstractObject> scaleObjectExtensions);
 
 }

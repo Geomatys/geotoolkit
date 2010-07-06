@@ -1,14 +1,15 @@
 package org.geotoolkit.data.kml;
 
+import com.vividsolutions.jts.geom.Coordinate;
 import org.geotoolkit.data.kml.xml.KmlReader;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
 import org.geotoolkit.data.kml.model.AbstractFeature;
 import org.geotoolkit.data.kml.model.AbstractGeometry;
-import org.geotoolkit.data.kml.model.Coordinate;
 import org.geotoolkit.data.kml.model.Coordinates;
 import org.geotoolkit.data.kml.model.Kml;
 import org.geotoolkit.data.kml.model.KmlException;
@@ -76,31 +77,31 @@ public class MultiGeometryTest {
         LineString lineString0 = (LineString) multiGeometry.getGeometries().get(0);
         LineString lineString1 = (LineString) multiGeometry.getGeometries().get(1);
 
-        final Coordinates coordinates0 = lineString0.getCoordinates();
-        final Coordinates coordinates1 = lineString1.getCoordinates();
-        assertEquals(2, coordinates0.getCoordinates().size());
-        assertEquals(2, coordinates1.getCoordinates().size());
+        final Coordinates coordinates0 = lineString0.getCoordinateSequence();
+        final Coordinates coordinates1 = lineString1.getCoordinateSequence();
+        assertEquals(2, coordinates0.size());
+        assertEquals(2, coordinates1.size());
         
         final Coordinate coordinate00 = coordinates0.getCoordinate(0);
         final Coordinate coordinate01 = coordinates0.getCoordinate(1);
         final Coordinate coordinate10 = coordinates1.getCoordinate(0);
         final Coordinate coordinate11 = coordinates1.getCoordinate(1);
         
-        assertEquals(-122.4425587930444, coordinate00.getGeodeticLongitude(), DELTA);
-        assertEquals(37.80666418607323, coordinate00.getGeodeticLatitude(), DELTA);
-        assertEquals(0, coordinate00.getAltitude(), DELTA);
+        assertEquals(-122.4425587930444, coordinate00.x, DELTA);
+        assertEquals(37.80666418607323, coordinate00.y, DELTA);
+        assertEquals(0, coordinate00.z, DELTA);
 
-        assertEquals(-122.4428379594768, coordinate01.getGeodeticLongitude(), DELTA);
-        assertEquals(37.80663578323093, coordinate01.getGeodeticLatitude(), DELTA);
-        assertEquals(0, coordinate01.getAltitude(), DELTA);
+        assertEquals(-122.4428379594768, coordinate01.x, DELTA);
+        assertEquals(37.80663578323093, coordinate01.y, DELTA);
+        assertEquals(0, coordinate01.z, DELTA);
 
-        assertEquals(-122.4425509770566, coordinate10.getGeodeticLongitude(), DELTA);
-        assertEquals(37.80662588061205, coordinate10.getGeodeticLatitude(), DELTA);
-        assertEquals(0, coordinate10.getAltitude(), DELTA);
+        assertEquals(-122.4425509770566, coordinate10.x, DELTA);
+        assertEquals(37.80662588061205, coordinate10.y, DELTA);
+        assertEquals(0, coordinate10.z, DELTA);
 
-        assertEquals(-122.4428340530617, coordinate11.getGeodeticLongitude(), DELTA);
-        assertEquals(37.8065999493009, coordinate11.getGeodeticLatitude(), DELTA);
-        assertEquals(0, coordinate11.getAltitude(), DELTA);
+        assertEquals(-122.4428340530617, coordinate11.x, DELTA);
+        assertEquals(37.8065999493009, coordinate11.y, DELTA);
+        assertEquals(0, coordinate11.z, DELTA);
 
     }
 
@@ -116,11 +117,9 @@ public class MultiGeometryTest {
         final Coordinates coordinates0 = kmlFactory.createCoordinates(Arrays.asList(coordinate00, coordinate01));
         final Coordinates coordinates1 = kmlFactory.createCoordinates(Arrays.asList(coordinate10, coordinate11));
 
-        final LineString lineString0 = kmlFactory.createLineString();
-        lineString0.setCoordinates(coordinates0);
+        final LineString lineString0 = kmlFactory.createLineString(coordinates0);
 
-        final LineString lineString1 = kmlFactory.createLineString();
-        lineString1.setCoordinates(coordinates1);
+        final LineString lineString1 = kmlFactory.createLineString(coordinates1);
 
         final MultiGeometry multiGeometry = kmlFactory.createMultiGeometry();
         multiGeometry.setGeometries(Arrays.asList((AbstractGeometry) lineString0, (AbstractGeometry) lineString1));

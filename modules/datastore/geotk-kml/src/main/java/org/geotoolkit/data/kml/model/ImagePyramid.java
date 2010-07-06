@@ -58,18 +58,6 @@ public interface ImagePyramid extends AbstractObject {
 
     /**
      * 
-     * @return the list of ImagePyramid simple extensions.
-     */
-    public List<SimpleType> getImagePyramidSimpleExtensions();
-
-    /**
-     *
-     * @return the list of ImagePyramid object extensions.
-     */
-    public List<AbstractObject> getImagePyramidObjectExtensions();
-
-    /**
-     * 
      * @param titleSize
      */
     public void setTitleSize(int titleSize);
@@ -92,15 +80,4 @@ public interface ImagePyramid extends AbstractObject {
      */
     public void setGridOrigin(GridOrigin gridOrigin);
 
-    /**
-     *
-     * @param imagePyramidSimpleExtensions
-     */
-    public void setImagePyramidSimpleExtensions(List<SimpleType> imagePyramidSimpleExtensions);
-
-    /**
-     *
-     * @param imagePyramidObjectExtensions
-     */
-    public void setImagePyramidObjectExtensions(List<AbstractObject> imagePyramidObjectExtensions);
 }

@@ -1,8 +1,6 @@
 package org.geotoolkit.data.kml.model;
 
 import java.awt.Color;
-import java.util.List;
-import org.geotoolkit.data.kml.xsd.SimpleType;
 
 /**
  *
@@ -63,19 +61,7 @@ public interface BalloonStyle extends AbstractSubStyle {
      * @return the display mode
      */
     public DisplayMode getDisplayMode();
-
-    /**
-     *
-     * @return the BalloonStyle simple extensions.
-     */
-    public List<SimpleType> getBalloonStyleSimpleExtensions();
-
-    /**
-     *
-     * @return the Balloon Style object extensions.
-     */
-    public List<AbstractObject> getBalloonStyleObjectExtensions();
-
+    
     /**
      *
      * @param bgColor
@@ -99,17 +85,5 @@ public interface BalloonStyle extends AbstractSubStyle {
      * @param displayMode
      */
     public void setDisplayMode(DisplayMode displayMode);
-
-    /**
-     *
-     * @param balloonStyleSimpleExtensions
-     */
-    public void setBalloonStyleSimpleExtensions(List<SimpleType> balloonStyleSimpleExtensions);
-
-    /**
-     * 
-     * @param balloonStyleObjectExtensions
-     */
-    public void setBalloonStyleObjectExtensions(List<AbstractObject> balloonStyleObjectExtensions);
 
 }

@@ -3,7 +3,6 @@ package org.geotoolkit.data.kml.model;
 import java.awt.Color;
 import java.util.List;
 import org.geotoolkit.data.kml.xsd.SimpleType;
-import static java.util.Collections.*;
 import static org.geotoolkit.data.kml.xml.KmlModelConstants.*;
 
 /**
@@ -16,8 +15,6 @@ public class DefaultBalloonStyle extends DefaultAbstractSubStyle implements Ball
     private Color textColor;
     private String text;
     private DisplayMode displayMode;
-    private List<SimpleType> balloonStyleSimpleExtensions;
-    private List<AbstractObject> balloonStyleObjectExtensions;
 
     /**
      * 
@@ -26,16 +23,14 @@ public class DefaultBalloonStyle extends DefaultAbstractSubStyle implements Ball
         this.bgColor = DEF_BG_COLOR;
         this.textColor = DEF_TEXT_COLOR;
         this.displayMode = DEF_DISPLAY_MODE;
-        this.balloonStyleSimpleExtensions = EMPTY_LIST;
-        this.balloonStyleObjectExtensions = EMPTY_LIST;
     }
 
     /**
      *
      * @param objectSimpleExtensions
      * @param idAttributes
-     * @param subStyleSimpleExtensions
-     * @param subStyleObjectExtensions
+     * @param abstractSubStyleSimpleExtensions
+     * @param abstractSubStyleObjectExtensions
      * @param bgColor
      * @param textColor
      * @param text
@@ -43,18 +38,26 @@ public class DefaultBalloonStyle extends DefaultAbstractSubStyle implements Ball
      * @param balloonStyleSimpleExtensions
      * @param balloonStyleObjectExtensions
      */
-    public DefaultBalloonStyle(List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
-            List<SimpleType> subStyleSimpleExtensions, List<AbstractObject> subStyleObjectExtensions,
+    public DefaultBalloonStyle(List<SimpleType> objectSimpleExtensions,
+            IdAttributes idAttributes,
+            List<SimpleType> abstractSubStyleSimpleExtensions,
+            List<AbstractObject> abstractSubStyleObjectExtensions,
             Color bgColor, Color textColor, String text, DisplayMode displayMode,
-            List<SimpleType> balloonStyleSimpleExtensions, List<AbstractObject> balloonStyleObjectExtensions) {
+            List<SimpleType> balloonStyleSimpleExtensions,
+            List<AbstractObject> balloonStyleObjectExtensions) {
         super(objectSimpleExtensions, idAttributes,
-                subStyleSimpleExtensions, subStyleObjectExtensions);
+                abstractSubStyleSimpleExtensions,
+                abstractSubStyleObjectExtensions);
         this.bgColor = bgColor;
         this.textColor = textColor;
         this.text = text;
         this.displayMode = displayMode;
-        this.balloonStyleSimpleExtensions = (balloonStyleSimpleExtensions == null) ? EMPTY_LIST : balloonStyleSimpleExtensions;
-        this.balloonStyleObjectExtensions = (balloonStyleObjectExtensions == null) ? EMPTY_LIST : balloonStyleObjectExtensions;
+        if (balloonStyleSimpleExtensions != null) {
+            this.extensions().simples(Extensions.Names.BALLOON_STYLE).addAll(balloonStyleSimpleExtensions);
+        }
+        if (balloonStyleObjectExtensions != null) {
+            this.extensions().complexes(Extensions.Names.BALLOON_STYLE).addAll(balloonStyleObjectExtensions);
+        }
     }
 
     /**
@@ -98,24 +101,6 @@ public class DefaultBalloonStyle extends DefaultAbstractSubStyle implements Ball
      * @{@inheritDoc }
      */
     @Override
-    public List<SimpleType> getBalloonStyleSimpleExtensions() {
-        return this.balloonStyleSimpleExtensions;
-    }
-
-    /**
-     *
-     * @{@inheritDoc }
-     */
-    @Override
-    public List<AbstractObject> getBalloonStyleObjectExtensions() {
-        return this.balloonStyleObjectExtensions;
-    }
-
-    /**
-     *
-     * @{@inheritDoc }
-     */
-    @Override
     public void setBgColor(Color bgColor) {
         this.bgColor = bgColor;
     }
@@ -145,24 +130,6 @@ public class DefaultBalloonStyle extends DefaultAbstractSubStyle implements Ball
     @Override
     public void setDisplayMode(DisplayMode displayMode) {
         this.displayMode = displayMode;
-    }
-
-    /**
-     *
-     * @{@inheritDoc }
-     */
-    @Override
-    public void setBalloonStyleSimpleExtensions(List<SimpleType> balloonStyleSimpleExtensions) {
-        this.balloonStyleSimpleExtensions = balloonStyleSimpleExtensions;
-    }
-
-    /**
-     *
-     * @{@inheritDoc }
-     */
-    @Override
-    public void setBalloonStyleObjectExtensions(List<AbstractObject> balloonStyleObjectExtensions) {
-        this.balloonStyleObjectExtensions = balloonStyleObjectExtensions;
     }
 
     @Override

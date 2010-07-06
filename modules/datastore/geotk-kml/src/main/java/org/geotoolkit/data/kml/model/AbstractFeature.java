@@ -4,7 +4,6 @@ import java.util.List;
 import org.geotoolkit.data.atom.model.AtomPersonConstruct;
 import org.geotoolkit.data.atom.model.AtomLink;
 import org.geotoolkit.data.xal.model.AddressDetails;
-import org.geotoolkit.data.kml.xsd.SimpleType;
 
 /**
  * <p>This interface maps AbstractFeatureGroup element.</p>
@@ -156,18 +155,6 @@ public interface AbstractFeature extends AbstractObject {
     public ExtendedData getExtendedData();
 
     /**
-     *
-     * @return The AbstractFeature list of simple extensions.
-     */
-    public List<SimpleType> getAbstractFeatureSimpleExtensions();
-
-    /**
-     *
-     * @return The AbstractFeature list of object extensions.
-     */
-    public List<AbstractObject> getAbstractFeatureObjectExtensions();
-
-    /**
      * 
      * @param name
      */
@@ -263,15 +250,4 @@ public interface AbstractFeature extends AbstractObject {
      */
     public void setExtendedData(ExtendedData extendedData);
 
-    /**
-     *
-     * @param abstractFeatureSimpleExtensions
-     */
-    public void setAbstractFeatureSimpleExtensions(List<SimpleType> abstractFeatureSimpleExtensions);
-
-    /**
-     *
-     * @param abstractFeatureObjectExtensions
-     */
-    public void setAbstractFeatureObjectExtensions(List<AbstractObject> abstractFeatureObjectExtensions);
 }

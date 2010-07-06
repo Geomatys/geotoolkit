@@ -1,8 +1,5 @@
 package org.geotoolkit.data.kml.model;
 
-import java.util.List;
-import org.geotoolkit.data.kml.xsd.SimpleType;
-
 /**
  * <p>This interface maps Orientation element.</p>
  *
@@ -51,18 +48,6 @@ public interface Orientation extends AbstractObject {
 
     /**
      *
-     * @return the list of Orientation simple extentions.
-     */
-    public List<SimpleType> getOrientationSimpleExtensions();
-
-    /**
-     *
-     * @return the list of Orientation object extensions
-     */
-    public List<AbstractObject> getOrientationObjectExtensions();
-
-    /**
-     *
      * @param heading
      */
     public void setHeading(double heading);
@@ -79,15 +64,4 @@ public interface Orientation extends AbstractObject {
      */
     public void setRoll(double roll);
 
-    /**
-     *
-     * @param orientationSimpleExtensions
-     */
-    public void setOrientationSimpleExtensions(List<SimpleType> orientationSimpleExtensions);
-
-    /**
-     * 
-     * @param orientationObjectExtensions
-     */
-    public void setOrientationObjectExtensions(List<AbstractObject> orientationObjectExtensions);
 }

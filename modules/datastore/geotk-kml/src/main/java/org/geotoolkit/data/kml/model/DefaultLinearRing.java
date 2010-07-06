@@ -1,36 +1,36 @@
 package org.geotoolkit.data.kml.model;
 
+import com.vividsolutions.jts.geom.GeometryFactory;
 import java.util.List;
 import org.geotoolkit.data.kml.xsd.SimpleType;
-import static java.util.Collections.*;
 import static org.geotoolkit.data.kml.xml.KmlModelConstants.*;
 
 /**
  *
  * @author Samuel Andrés
  */
-public class DefaultLinearRing extends DefaultAbstractGeometry implements LinearRing {
+public class DefaultLinearRing extends com.vividsolutions.jts.geom.LinearRing implements LinearRing {
 
+    protected IdAttributes idAttributes;
+    private final Extensions exts = new Extensions();
     private boolean extrude;
     private boolean tessellate;
     private AltitudeMode altitudeMode;
-    private Coordinates coordinates;
-    private List<SimpleType> linearRingSimpleExtensions;
-    private List<AbstractObject> linearRingObjectExtensions;
-
-    /**
-     * 
-     */
-    public DefaultLinearRing() {
-        this.extrude = DEF_EXTRUDE;
-        this.tessellate = DEF_TESSELLATE;
-        this.altitudeMode = DEF_ALTITUDE_MODE;
-        this.linearRingSimpleExtensions = EMPTY_LIST;
-        this.linearRingObjectExtensions = EMPTY_LIST;
-    }
 
     /**
      *
+     * @param coordinates
+     * @param factory
+     */
+    public DefaultLinearRing(Coordinates coordinates, GeometryFactory factory) {
+        super(coordinates, factory);
+        this.extrude = DEF_EXTRUDE;
+        this.tessellate = DEF_TESSELLATE;
+        this.altitudeMode = DEF_ALTITUDE_MODE;
+    }
+
+    /**
+     * 
      * @param objectSimpleExtensions
      * @param idAttributes
      * @param abstractGeometrySimpleExtensions
@@ -39,8 +39,9 @@ public class DefaultLinearRing extends DefaultAbstractGeometry implements Linear
      * @param tessellate
      * @param altitudeMode
      * @param coordinates
-     * @param linearRingSimpleExtensions
-     * @param linearRingObjectExtensions
+     * @param lineStringSimpleExtensions
+     * @param lineStringObjectExtensions
+     * @param factory
      */
     public DefaultLinearRing(List<SimpleType> objectSimpleExtensions,
             IdAttributes idAttributes,
@@ -49,16 +50,30 @@ public class DefaultLinearRing extends DefaultAbstractGeometry implements Linear
             boolean extrude, boolean tessellate,
             AltitudeMode altitudeMode,
             Coordinates coordinates,
-            List<SimpleType> linearRingSimpleExtensions,
-            List<AbstractObject> linearRingObjectExtensions) {
-        super(objectSimpleExtensions, idAttributes,
-                abstractGeometrySimpleExtensions, abstractGeometryObjectExtensions);
+            List<SimpleType> lineStringSimpleExtensions,
+            List<AbstractObject> lineStringObjectExtensions,
+            GeometryFactory factory) {
+        super(coordinates, factory);
+        this.idAttributes = idAttributes;
+        if (objectSimpleExtensions != null) {
+            this.extensions().simples(Extensions.Names.OBJECT).addAll(objectSimpleExtensions);
+        }
+        if (abstractGeometrySimpleExtensions != null) {
+            this.extensions().simples(Extensions.Names.GEOMETRY).addAll(abstractGeometrySimpleExtensions);
+        }
+        if (abstractGeometryObjectExtensions != null) {
+            this.extensions().complexes(Extensions.Names.GEOMETRY).addAll(abstractGeometryObjectExtensions);
+        }
         this.extrude = extrude;
         this.tessellate = tessellate;
         this.altitudeMode = altitudeMode;
-        this.coordinates = coordinates;
-        this.linearRingSimpleExtensions = (linearRingSimpleExtensions == null) ? EMPTY_LIST : linearRingSimpleExtensions;
-        this.linearRingObjectExtensions = (linearRingObjectExtensions == null) ? EMPTY_LIST : linearRingObjectExtensions;
+        if (lineStringSimpleExtensions != null) {
+            this.extensions().simples(Extensions.Names.LINAR_RING).addAll(lineStringSimpleExtensions);
+        }
+        if (lineStringObjectExtensions != null) {
+            this.extensions().complexes(Extensions.Names.LINAR_RING).addAll(lineStringObjectExtensions);
+        }
+
     }
 
     /**
@@ -93,26 +108,8 @@ public class DefaultLinearRing extends DefaultAbstractGeometry implements Linear
      * @{@inheritDoc }
      */
     @Override
-    public Coordinates getCoordinates() {
-        return this.coordinates;
-    }
-
-    /**
-     *
-     * @{@inheritDoc }
-     */
-    @Override
-    public List<SimpleType> getLinearRingSimpleExtensions() {
-        return this.linearRingSimpleExtensions;
-    }
-
-    /**
-     *
-     * @{@inheritDoc }
-     */
-    @Override
-    public List<AbstractObject> getLinearRingObjectExtensions() {
-        return this.linearRingObjectExtensions;
+    public Coordinates getCoordinateSequence() {
+        return (Coordinates) super.getCoordinateSequence();
     }
 
     /**
@@ -147,8 +144,8 @@ public class DefaultLinearRing extends DefaultAbstractGeometry implements Linear
      * @{@inheritDoc }
      */
     @Override
-    public void setCoordinates(Coordinates coordinates) {
-        this.coordinates = coordinates;
+    public Extensions extensions() {
+        return this.exts;
     }
 
     /**
@@ -156,8 +153,8 @@ public class DefaultLinearRing extends DefaultAbstractGeometry implements Linear
      * @{@inheritDoc }
      */
     @Override
-    public void setLinearRingSimpleExtensions(List<SimpleType> linearRingSimpleExtensions) {
-        this.linearRingSimpleExtensions = linearRingSimpleExtensions;
+    public IdAttributes getIdAttributes() {
+        return this.idAttributes;
     }
 
     /**
@@ -165,19 +162,7 @@ public class DefaultLinearRing extends DefaultAbstractGeometry implements Linear
      * @{@inheritDoc }
      */
     @Override
-    public void setLinearRingObjectExtensions(List<AbstractObject> linearRingObjectExtensions) {
-        this.linearRingObjectExtensions = linearRingObjectExtensions;
-    }
-
-    /**
-     *
-     * @{@inheritDoc }
-     */
-    @Override
-    public String toString() {
-        String resultat = super.toString();
-        resultat += "LinearRing : ";
-        resultat += "\n\t" + coordinates.toString();
-        return resultat;
+    public void setIdAttributes(IdAttributes idAttributes) {
+        this.idAttributes = idAttributes;
     }
 }

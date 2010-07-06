@@ -1,8 +1,5 @@
 package org.geotoolkit.data.kml.model;
 
-import java.util.List;
-import org.geotoolkit.data.kml.xsd.SimpleType;
-
 /**
  * <p>This interface maps BoundaryType type used by :</p>
  * <ul>
@@ -37,32 +34,14 @@ public interface Boundary {
     public LinearRing getLinearRing();
 
     /**
-     *
-     * @return the list of boundary simple extensions.
-     */
-    public List<SimpleType> getBoundarySimpleExtensions();
-
-    /**
-     *
-     * @return the list of boundary object extensions.
-     */
-    public List<AbstractObject> getBoundaryObjectExtensions();
-
-    /**
      * 
      * @param linearRing
      */
     public void setLinearRing(LinearRing linearRing);
 
     /**
-     *
-     * @param boundarySimpleExtensions
-     */
-    public void setBoundarySimpleExtensions(List<SimpleType> boundarySimpleExtensions);
-
-    /**
      * 
-     * @param boundaryObjectExtensions
+     * @return
      */
-    public void setBoundaryObjectExtensions(List<AbstractObject> boundaryObjectExtensions);
+    public Extensions extensions();
 }

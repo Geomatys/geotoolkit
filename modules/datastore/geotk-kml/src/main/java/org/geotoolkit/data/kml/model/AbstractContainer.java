@@ -1,8 +1,5 @@
 package org.geotoolkit.data.kml.model;
 
-import java.util.List;
-import org.geotoolkit.data.kml.xsd.SimpleType;
-
 /**
  *
  * <p>This interface maps AbstractContainerGroup element.</p>
@@ -28,29 +25,5 @@ import org.geotoolkit.data.kml.xsd.SimpleType;
  * @author Samuel Andrés
  */
 public interface AbstractContainer extends AbstractFeature {
-
-    /**
-     *
-     * @return The AbstractContainer simple extensions.
-     */
-    public List<SimpleType> getAbstractContainerSimpleExtensions();
-
-    /**
-     *
-     * @return The AbstractContainer object extensions.
-     */
-    public List<AbstractObject> getAbstractContainerObjectExtensions();
-
-    /**
-     *
-     * @param abstractContainerSimpleExtensions
-     */
-    public void setAbstractContainerSimpleExtensions(List<SimpleType> containerSimpleExtensions);
-
-    /**
-     *
-     * @param abstractContainerObjectExtensions
-     */
-    public void setAbstractContainerObjectExtensions(List<AbstractObject> containerObjectExtensions);
 
 }

@@ -12,16 +12,12 @@ public class DefaultItemIcon extends DefaultAbstractObject implements ItemIcon {
 
     private List<ItemIconState> states;
     private String href;
-    private List<SimpleType> itemIconSimpleExtensions;
-    private List<AbstractObject> itemIconObjectExtensions;
 
     /**
      * 
      */
-    public DefaultItemIcon(){
+    public DefaultItemIcon() {
         this.states = EMPTY_LIST;
-        this.itemIconSimpleExtensions = EMPTY_LIST;
-        this.itemIconObjectExtensions = EMPTY_LIST;
     }
 
     /**
@@ -33,14 +29,20 @@ public class DefaultItemIcon extends DefaultAbstractObject implements ItemIcon {
      * @param itemIconSimpleExtensions
      * @param itemIconObjectExtensions
      */
-    public DefaultItemIcon(List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
+    public DefaultItemIcon(List<SimpleType> objectSimpleExtensions,
+            IdAttributes idAttributes,
             List<ItemIconState> states, String href,
-            List<SimpleType> itemIconSimpleExtensions, List<AbstractObject> itemIconObjectExtensions){
+            List<SimpleType> itemIconSimpleExtensions,
+            List<AbstractObject> itemIconObjectExtensions) {
         super(objectSimpleExtensions, idAttributes);
         this.states = states;
         this.href = href;
-        this.itemIconSimpleExtensions = (itemIconSimpleExtensions == null) ? EMPTY_LIST : itemIconSimpleExtensions;
-        this.itemIconObjectExtensions = (itemIconObjectExtensions == null) ? EMPTY_LIST : itemIconObjectExtensions;
+        if (itemIconSimpleExtensions != null) {
+            this.extensions().simples(Extensions.Names.ITEM_ICON).addAll(itemIconSimpleExtensions);
+        }
+        if (itemIconObjectExtensions != null) {
+            this.extensions().complexes(Extensions.Names.ITEM_ICON).addAll(itemIconObjectExtensions);
+        }
     }
 
     /**
@@ -48,50 +50,8 @@ public class DefaultItemIcon extends DefaultAbstractObject implements ItemIcon {
      * @{@inheritDoc }
      */
     @Override
-    public List<ItemIconState> getStates() {return this.states;}
-
-    /**
-     *
-     * @{@inheritDoc }
-     */
-    @Override
-    public String getHref() {return this.href;}
-
-    /**
-     *
-     * @{@inheritDoc }
-     */
-    @Override
-    public List<SimpleType> getItemIconSimpleExtensions() {return this.itemIconSimpleExtensions;}
-
-    /**
-     *
-     * @{@inheritDoc }
-     */
-    @Override
-    public List<AbstractObject> getItemIconObjectExtensions() {return this.itemIconObjectExtensions;}
-
-    /**
-     *
-     * @{@inheritDoc }
-     */
-    @Override
-    public void setStates(List<ItemIconState> states) {this.states = states;}
-
-    /**
-     *
-     * @{@inheritDoc }
-     */
-    @Override
-    public void setHref(String href) {this.href = href;}
-
-    /**
-     *
-     * @{@inheritDoc }
-     */
-    @Override
-    public void setItemIconSimpleExtensions(List<SimpleType> itemIconSimpleExtensions) {
-        this.itemIconSimpleExtensions = itemIconSimpleExtensions;
+    public List<ItemIconState> getStates() {
+        return this.states;
     }
 
     /**
@@ -99,16 +59,34 @@ public class DefaultItemIcon extends DefaultAbstractObject implements ItemIcon {
      * @{@inheritDoc }
      */
     @Override
-    public void setItemIconObjectExtensions(List<AbstractObject> itemIconObjectExtensions) {
-        this.itemIconObjectExtensions = itemIconObjectExtensions;
+    public String getHref() {
+        return this.href;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setStates(List<ItemIconState> states) {
+        this.states = states;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setHref(String href) {
+        this.href = href;
     }
 
     @Override
-    public String toString(){
-        String resultat = super.toString()+
-                "\n\tBalloonStyleDefault : "+
-                "\n\tstates : "+this.states+
-                "\n\thref : "+this.href;
+    public String toString() {
+        String resultat = super.toString()
+                + "\n\tBalloonStyleDefault : "
+                + "\n\tstates : " + this.states
+                + "\n\thref : " + this.href;
         return resultat;
     }
 }

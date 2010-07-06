@@ -1,7 +1,6 @@
 package org.geotoolkit.data.kml.model;
 
 import java.util.List;
-import org.geotoolkit.data.kml.xsd.SimpleType;
 
 /**
  * <p>This interface maps StyleMap element.</p>
@@ -37,32 +36,8 @@ public interface StyleMap extends AbstractStyleSelector {
 
     /**
      *
-     * @return the list of StyleMap simple extensions.
-     */
-    public List<SimpleType> getStyleMapSimpleExtensions();
-
-    /**
-     *
-     * @return the list of StyleMap object extensions.
-     */
-    public List<AbstractObject> getStyleMapObjectExtensions();
-
-    /**
-     *
      * @param pairs
      */
     public void setPairs(List<Pair> pairs);
-
-    /**
-     *
-     * @param styleMapSimpleExtensions
-     */
-    public void setStyleMapSimpleExtensions(List<SimpleType> styleMapSimpleExtensions);
-
-    /**
-     *
-     * @param styleMapObjectExtensions
-     */
-    public void setStyleMapObjectExtensions(List<AbstractObject> styleMapObjectExtensions);
 
 }

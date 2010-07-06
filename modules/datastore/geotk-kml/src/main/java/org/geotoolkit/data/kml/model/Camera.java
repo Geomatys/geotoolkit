@@ -1,8 +1,5 @@
 package org.geotoolkit.data.kml.model;
 
-import java.util.List;
-import org.geotoolkit.data.kml.xsd.SimpleType;
-
 /**
  * <p>This interface maps Camera element.</p>
  *
@@ -79,18 +76,6 @@ public interface Camera extends AbstractView {
 
     /**
      *
-     * @return the list of Camera simple extensions.
-     */
-    public List<SimpleType> getCameraSimpleExtensions();
-
-    /**
-     *
-     * @return the list of Camera object extensions.
-     */
-    public List<AbstractObject> getCameraObjectExtensions();
-
-    /**
-     *
      * @param longitude
      */
     public void setLongitude(double longitude);
@@ -130,17 +115,5 @@ public interface Camera extends AbstractView {
      * @param altitudeMode
      */
     public void setAltitudeMode(AltitudeMode altitudeMode);
-
-    /**
-     *
-     * @param cameraSimpleExtensions
-     */
-    public void setCameraSimpleExtensions(List<SimpleType> cameraSimpleExtensions);
-
-    /**
-     * 
-     * @param cameraObjectExtensions
-     */
-    public void setCameraObjectExtensions(List<AbstractObject> cameraObjectExtensions);
 
 }

@@ -1,8 +1,5 @@
 package org.geotoolkit.data.kml.model;
 
-import java.util.List;
-import org.geotoolkit.data.kml.xsd.SimpleType;
-
 /**
  * <p>This interface maps iconStyle element.</p>
  *
@@ -58,18 +55,6 @@ public interface IconStyle extends AbstractColorStyle {
 
     /**
      *
-     * @return
-     */
-    public List<SimpleType> getIconStyleSimpleExtensions();
-
-    /**
-     * 
-     * @return
-     */
-    public List<AbstractObject> getIconStyleObjectExtensions();
-
-    /**
-     *
      * @param scale
      */
     public void setScale(double scale);
@@ -92,15 +77,4 @@ public interface IconStyle extends AbstractColorStyle {
      */
     public void setHotSpot(Vec2 hotSpot);
 
-    /**
-     *
-     * @param iconStyleSimpleExtensions
-     */
-    public void setIconStyleSimpleExtensions(List<SimpleType> iconStyleSimpleExtensions);
-
-    /**
-     *
-     * @param iconStyleObjectExtensions
-     */
-    public void setIconStyleObjectExtensions(List<AbstractObject> iconStyleObjectExtensions);
 }

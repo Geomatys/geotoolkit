@@ -1,8 +1,5 @@
 package org.geotoolkit.data.kml.model;
 
-import java.util.List;
-import org.geotoolkit.data.kml.xsd.SimpleType;
-
 /**
  * <p>This interface maps viewVolume element.</p>
  *
@@ -65,18 +62,6 @@ public interface ViewVolume extends AbstractObject {
 
     /**
      *
-     * @return the list of ViewVolume simple extensions.
-     */
-    public List<SimpleType> getViewVolumeSimpleExtensions();
-
-    /**
-     *
-     * @return the list of ViewVolume object extensions.
-     */
-    public List<AbstractObject> getViewVolumeObjectExtensions();
-
-    /**
-     *
      * @param leftFov
      */
     public void setLeftFov(double leftFov);
@@ -104,17 +89,5 @@ public interface ViewVolume extends AbstractObject {
      * @param near
      */
     public void setNear(double near);
-
-    /**
-     *
-     * @param viewVolumeSimpleExtensions
-     */
-    public void setViewVolumeSimpleExtensions(List<SimpleType> viewVolumeSimpleExtensions);
-
-    /**
-     *
-     * @param viewVolumeObjectExtensions
-     */
-    public void setViewVolumeObjectExtensions(List<AbstractObject> viewVolumeObjectExtensions);
 
 }

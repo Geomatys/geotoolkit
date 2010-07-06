@@ -2,7 +2,6 @@ package org.geotoolkit.data.kml.model;
 
 import java.util.List;
 import org.geotoolkit.data.kml.xsd.SimpleType;
-import static java.util.Collections.*;
 import static org.geotoolkit.data.kml.xml.KmlModelConstants.*;
 
 /**
@@ -14,8 +13,6 @@ public class DefaultScale extends DefaultAbstractObject implements Scale {
     private double x;
     private double y;
     private double z;
-    private List<SimpleType> scaleSimpleExtensions;
-    private List<AbstractObject> scaleObjectExtensions;
 
     /**
      * 
@@ -24,8 +21,6 @@ public class DefaultScale extends DefaultAbstractObject implements Scale {
         this.x = DEF_X;
         this.y = DEF_Y;
         this.z = DEF_Z;
-        this.scaleSimpleExtensions = EMPTY_LIST;
-        this.scaleObjectExtensions = EMPTY_LIST;
     }
 
     /**
@@ -39,14 +34,20 @@ public class DefaultScale extends DefaultAbstractObject implements Scale {
      * @param scaleObjectExtensions
      */
     public DefaultScale(List<SimpleType> objectSimpleExtensions,
-            IdAttributes idAttributes, double x, double y, double z,
-            List<SimpleType> scaleSimpleExtensions, List<AbstractObject> scaleObjectExtensions) {
+            IdAttributes idAttributes,
+            double x, double y, double z,
+            List<SimpleType> scaleSimpleExtensions,
+            List<AbstractObject> scaleObjectExtensions) {
         super(objectSimpleExtensions, idAttributes);
         this.x = x;
         this.y = y;
         this.z = z;
-        this.scaleSimpleExtensions = (scaleSimpleExtensions == null) ? EMPTY_LIST : scaleSimpleExtensions;
-        this.scaleObjectExtensions = (scaleObjectExtensions == null) ? EMPTY_LIST : scaleObjectExtensions;
+        if(scaleSimpleExtensions != null)
+        this.extensions().simples(Extensions.Names.SCALE)
+                .addAll(scaleSimpleExtensions);
+        if(scaleObjectExtensions != null)
+        this.extensions().complexes(Extensions.Names.SCALE)
+                .addAll(scaleObjectExtensions);
     }
 
     /**
@@ -81,24 +82,6 @@ public class DefaultScale extends DefaultAbstractObject implements Scale {
      * @{@inheritDoc }
      */
     @Override
-    public List<SimpleType> getScaleSimpleExtensions() {
-        return this.scaleSimpleExtensions;
-    }
-
-    /**
-     *
-     * @{@inheritDoc }
-     */
-    @Override
-    public List<AbstractObject> getScaleObjectExtensions() {
-        return this.scaleObjectExtensions;
-    }
-
-    /**
-     *
-     * @{@inheritDoc }
-     */
-    @Override
     public void setX(double x) {
         this.x = x;
     }
@@ -121,21 +104,9 @@ public class DefaultScale extends DefaultAbstractObject implements Scale {
         this.z = z;
     }
 
-    /**
-     *
-     * @{@inheritDoc }
-     */
     @Override
-    public void setScaleSimpleExtensions(List<SimpleType> scaleSimpleExtensions) {
-        this.scaleSimpleExtensions = scaleSimpleExtensions;
+    public Extensions extensions() {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    /**
-     *
-     * @{@inheritDoc }
-     */
-    @Override
-    public void setScaleObjectExtensions(List<AbstractObject> scaleObjectExtensions) {
-        this.scaleObjectExtensions = scaleObjectExtensions;
-    }
 }

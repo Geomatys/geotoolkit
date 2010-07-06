@@ -1,8 +1,5 @@
 package org.geotoolkit.data.kml.model;
 
-import java.util.List;
-import org.geotoolkit.data.kml.xsd.SimpleType;
-
 /**
  * <p>This interface maps PointStyle element.</p>
  *
@@ -44,18 +41,6 @@ public interface PolyStyle extends AbstractColorStyle {
 
     /**
      *
-     * @return the list of PolyStyle simple extensions.
-     */
-    public List<SimpleType> getPolyStyleSimpleExtensions();
-
-    /**
-     *
-     * @return the list of PolyStyle object extensions.
-     */
-    public List<AbstractObject> getPolyStyleObjectExtensions();
-
-    /**
-     *
      * @param fill
      */
     public void setFill(boolean fill);
@@ -65,17 +50,5 @@ public interface PolyStyle extends AbstractColorStyle {
      * @param outline
      */
     public void setOutline(boolean outline);
-
-    /**
-     *
-     * @param polyStyleSimpleExtensions
-     */
-    public void setPolyStyleSimpleExtensions(List<SimpleType> polyStyleSimpleExtensions);
-
-    /**
-     *
-     * @param polyStyleObjectExtensions
-     */
-    public void setPolyStyleObjectExtensions(List<AbstractObject> polyStyleObjectExtensions);
 
 }

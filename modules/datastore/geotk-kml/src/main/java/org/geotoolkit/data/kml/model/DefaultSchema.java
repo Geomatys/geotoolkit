@@ -17,19 +17,20 @@ public class DefaultSchema implements Schema {
     /**
      * 
      */
-    public DefaultSchema(){
+    public DefaultSchema() {
         this.simpleFields = EMPTY_LIST;
         this.schemaExtensions = EMPTY_LIST;
     }
 
     /**
-     *
+     * 
      * @param simpleFields
      * @param name
      * @param id
+     * @param schemaExtensions
      */
     public DefaultSchema(List<SimpleField> simpleFields,
-            String name, String id, List<Object> schemaExtensions){
+            String name, String id, List<Object> schemaExtensions) {
         this.simpleFields = (simpleFields == null) ? EMPTY_LIST : simpleFields;
         this.name = name;
         this.id = id;
@@ -41,21 +42,27 @@ public class DefaultSchema implements Schema {
      * @{@inheritDoc }
      */
     @Override
-    public List<SimpleField> getSimpleFields() {return this.simpleFields;}
+    public List<SimpleField> getSimpleFields() {
+        return this.simpleFields;
+    }
 
     /**
      *
      * @{@inheritDoc }
      */
     @Override
-    public String getName() {return this.name;}
+    public String getName() {
+        return this.name;
+    }
 
     /**
      *
      * @{@inheritDoc }
      */
     @Override
-    public String getId() {return this.id;}
+    public String getId() {
+        return this.id;
+    }
 
     /**
      *
@@ -101,5 +108,4 @@ public class DefaultSchema implements Schema {
     public void setSchemaExtensions(List<Object> schemaExtensions) {
         this.schemaExtensions = schemaExtensions;
     }
-
 }

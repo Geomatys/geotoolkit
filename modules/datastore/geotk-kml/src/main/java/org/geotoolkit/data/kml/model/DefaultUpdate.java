@@ -1,5 +1,6 @@
 package org.geotoolkit.data.kml.model;
 
+import java.net.URI;
 import java.util.List;
 import static java.util.Collections.*;
 
@@ -9,23 +10,34 @@ import static java.util.Collections.*;
  */
 public class DefaultUpdate implements Update {
 
-    private final List<Create> creates;
-    private final List<Delete> deletes;
-    private final List<Change> changes;
-    private final List<Object> updateOpExtensions;
-    private final List<Object> updateExtensions;
+    private URI targetHref;
+    private List<Create> creates;
+    private List<Delete> deletes;
+    private List<Change> changes;
+    private List<Object> updateOpExtensions;
+    private List<Object> updateExtensions;
+
+    public DefaultUpdate(){
+        this.creates = EMPTY_LIST;
+        this.deletes = EMPTY_LIST;
+        this.changes = EMPTY_LIST;
+        this.updateOpExtensions = EMPTY_LIST;
+        this.updateExtensions = EMPTY_LIST;
+    }
 
     /**
      *
+     * @param targetHref
      * @param creates
      * @param deletes
      * @param changes
      * @param updateOpExtensions
      * @param updateExtensions
      */
-    public DefaultUpdate(List<Create> creates,
+    public DefaultUpdate(URI targetHref, List<Create> creates,
             List<Delete> deletes, List<Change> changes,
-            List<Object> updateOpExtensions, List<Object> updateExtensions){
+            List<Object> updateOpExtensions, List<Object> updateExtensions) {
+        this.targetHref = targetHref;
         this.creates = (creates == null) ? EMPTY_LIST : creates;
         this.deletes = (deletes == null) ? EMPTY_LIST : deletes;
         this.changes = (changes == null) ? EMPTY_LIST : changes;
@@ -38,34 +50,106 @@ public class DefaultUpdate implements Update {
      * @{@inheritDoc }
      */
     @Override
-    public List<Create> getCreates() {return this.creates;}
+    public List<Create> getCreates() {
+        return this.creates;
+    }
 
     /**
      *
      * @{@inheritDoc }
      */
     @Override
-    public List<Delete> getDeletes() {return this.deletes;}
+    public List<Delete> getDeletes() {
+        return this.deletes;
+    }
 
     /**
      *
      * @{@inheritDoc }
      */
     @Override
-    public List<Change> getChanges() {return this.changes;}
+    public List<Change> getChanges() {
+        return this.changes;
+    }
 
     /**
      *
      * @{@inheritDoc }
      */
     @Override
-    public List<Object> getUpdateOpExtensions() {return this.updateOpExtensions;}
+    public List<Object> getUpdateOpExtensions() {
+        return this.updateOpExtensions;
+    }
 
     /**
      *
      * @{@inheritDoc }
      */
     @Override
-    public List<Object> getUpdateExtensions() {return this.updateExtensions;}
+    public List<Object> getUpdateExtensions() {
+        return this.updateExtensions;
+    }
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public URI getTargetHref() {
+        return this.targetHref;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setTargetHref(URI targetHref) {
+        this.targetHref = targetHref;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setCreates(List<Create> creates) {
+        this.creates = creates;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setDeletes(List<Delete> deletes) {
+        this.deletes = deletes;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setChanges(List<Change> changes) {
+        this.changes = changes;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setUpdateOpExtensions(List<Object> updateOpEXtensions) {
+        this.updateOpExtensions = updateOpEXtensions;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setUpdateExtensions(List<Object> updateExtensions) {
+        this.updateExtensions = updateExtensions;
+    }
 }

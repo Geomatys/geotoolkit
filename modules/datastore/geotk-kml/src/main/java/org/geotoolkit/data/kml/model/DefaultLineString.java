@@ -1,36 +1,36 @@
 package org.geotoolkit.data.kml.model;
 
+import com.vividsolutions.jts.geom.GeometryFactory;
 import java.util.List;
 import org.geotoolkit.data.kml.xsd.SimpleType;
-import static java.util.Collections.*;
 import static org.geotoolkit.data.kml.xml.KmlModelConstants.*;
 
 /**
  *
  * @author Samuel Andrés
  */
-public class DefaultLineString extends DefaultAbstractGeometry implements LineString {
+public class DefaultLineString extends com.vividsolutions.jts.geom.LineString implements LineString {
 
+    private IdAttributes idAttributes;
+    private Extensions extensions = new Extensions();
     private boolean extrude;
     private boolean tessellate;
     private AltitudeMode altitudeMode;
-    private Coordinates coordinates;
-    private List<SimpleType> lineStringSimpleExtensions;
-    private List<AbstractObject> lineStringObjectExtensions;
 
     /**
      * 
+     * @param coordinates
+     * @param factory
      */
-    public DefaultLineString(){
+    public DefaultLineString(Coordinates coordinates, GeometryFactory factory) {
+        super(coordinates, factory);
         this.extrude = DEF_EXTRUDE;
         this.tessellate = DEF_TESSELLATE;
         this.altitudeMode = DEF_ALTITUDE_MODE;
-        this.lineStringSimpleExtensions = EMPTY_LIST;
-        this.lineStringObjectExtensions = EMPTY_LIST;
     }
 
     /**
-     *
+     * 
      * @param objectSimpleExtensions
      * @param idAttributes
      * @param abstractGeometrySimpleExtensions
@@ -41,6 +41,7 @@ public class DefaultLineString extends DefaultAbstractGeometry implements LineSt
      * @param coordinates
      * @param lineStringSimpleExtensions
      * @param lineStringObjectExtensions
+     * @param factory
      */
     public DefaultLineString(List<SimpleType> objectSimpleExtensions,
             IdAttributes idAttributes,
@@ -50,15 +51,29 @@ public class DefaultLineString extends DefaultAbstractGeometry implements LineSt
             AltitudeMode altitudeMode,
             Coordinates coordinates,
             List<SimpleType> lineStringSimpleExtensions,
-            List<AbstractObject> lineStringObjectExtensions){
-        super(objectSimpleExtensions, idAttributes,
-            abstractGeometrySimpleExtensions, abstractGeometryObjectExtensions);
+            List<AbstractObject> lineStringObjectExtensions,
+            GeometryFactory factory) {
+        super(coordinates, factory);
+        this.idAttributes = idAttributes;
+        if (objectSimpleExtensions != null) {
+            this.extensions().simples(Extensions.Names.OBJECT).addAll(objectSimpleExtensions);
+        }
+        if (abstractGeometrySimpleExtensions != null) {
+            this.extensions().simples(Extensions.Names.GEOMETRY).addAll(abstractGeometrySimpleExtensions);
+        }
+        if (abstractGeometryObjectExtensions != null) {
+            this.extensions().complexes(Extensions.Names.GEOMETRY).addAll(abstractGeometryObjectExtensions);
+        }
         this.extrude = extrude;
         this.tessellate = tessellate;
         this.altitudeMode = altitudeMode;
-        this.coordinates = coordinates;
-        this.lineStringSimpleExtensions = (lineStringSimpleExtensions == null) ? EMPTY_LIST : lineStringSimpleExtensions;
-        this.lineStringObjectExtensions = (lineStringObjectExtensions == null) ? EMPTY_LIST : lineStringObjectExtensions;
+        if (lineStringSimpleExtensions != null) {
+            this.extensions().simples(Extensions.Names.LINE_STRING).addAll(lineStringSimpleExtensions);
+        }
+        if (lineStringObjectExtensions != null) {
+            this.extensions().complexes(Extensions.Names.LINE_STRING).addAll(lineStringObjectExtensions);
+        }
+
     }
 
     /**
@@ -66,42 +81,36 @@ public class DefaultLineString extends DefaultAbstractGeometry implements LineSt
      * @{@inheritDoc }
      */
     @Override
-    public boolean getExtrude() {return this.extrude;}
+    public Coordinates getCoordinateSequence() {
+        return (Coordinates) super.getCoordinateSequence();
+    }
 
     /**
      *
      * @{@inheritDoc }
      */
     @Override
-    public boolean getTessellate() {return this.tessellate;}
+    public boolean getExtrude() {
+        return this.extrude;
+    }
 
     /**
      *
      * @{@inheritDoc }
      */
     @Override
-    public AltitudeMode getAltitudeMode() {return this.altitudeMode;}
+    public boolean getTessellate() {
+        return this.tessellate;
+    }
 
     /**
      *
      * @{@inheritDoc }
      */
     @Override
-    public Coordinates getCoordinates() {return this.coordinates;}
-
-    /**
-     *
-     * @{@inheritDoc }
-     */
-    @Override
-    public List<SimpleType> getLineStringSimpleExtensions() {return this.lineStringSimpleExtensions;}
-
-    /**
-     *
-     * @{@inheritDoc }
-     */
-    @Override
-    public List<AbstractObject> getLineStringObjectExtensions() {return this.lineStringObjectExtensions;}
+    public AltitudeMode getAltitudeMode() {
+        return this.altitudeMode;
+    }
 
     /**
      *
@@ -130,38 +139,18 @@ public class DefaultLineString extends DefaultAbstractGeometry implements LineSt
         this.altitudeMode = altitudeMode;
     }
 
-    /**
-     *
-     * @{@inheritDoc }
-     */
     @Override
-    public void setCoordinates(Coordinates coordinates) {
-        this.coordinates = coordinates;
-    }
-
-    /**
-     *
-     * @{@inheritDoc }
-     */
-    @Override
-    public void setLineStringSimpleExtensions(List<SimpleType> lineStringSimpleExtensions) {
-        this.lineStringSimpleExtensions = lineStringSimpleExtensions;
-    }
-
-    /**
-     *
-     * @{@inheritDoc }
-     */
-    @Override
-    public void setLineStringObjectExtensions(List<AbstractObject> lineStringObjectExtensions) {
-        this.lineStringObjectExtensions = lineStringObjectExtensions;
+    public Extensions extensions() {
+        return this.extensions;
     }
 
     @Override
-    public String toString(){
-        String resultat = super.toString();
-        resultat += "LineString : ";
-        resultat += "\n\t"+coordinates.toString();
-        return resultat;
+    public IdAttributes getIdAttributes() {
+        return this.idAttributes;
+    }
+
+    @Override
+    public void setIdAttributes(IdAttributes idAttributes) {
+        this.idAttributes = idAttributes;
     }
 }

@@ -1,8 +1,5 @@
 package org.geotoolkit.data.kml.model;
 
-import java.util.List;
-import org.geotoolkit.data.kml.xsd.SimpleType;
-
 /**
  *
  * <p>This interface maps AbstractGeometryGroup element.</p>
@@ -29,27 +26,4 @@ import org.geotoolkit.data.kml.xsd.SimpleType;
  */
 public interface AbstractGeometry extends AbstractObject{
 
-    /**
-     *
-     * @return The AbstractGeometry simple extensions.
-     */
-    public List<SimpleType> getAbstractGeometrySimpleExtensions();
-
-    /**
-     *
-     * @return The AbstractGeometry object extensions.
-     */
-    public List<AbstractObject> getAbstractGeometryObjectExtensions();
-
-    /**
-     *
-     * @param abstractGeometrySimpleExtensions
-     */
-    public void setAbstractGeometrySimpleExtensions(List<SimpleType> abstractGeometrySimpleExtensions);
-
-    /**
-     *
-     * @param abstractGeometryObjectExtensions
-     */
-    public void setAbstractGeometryObjectExtensions(List<AbstractObject> abstractGeometryObjectExtensions);
 }

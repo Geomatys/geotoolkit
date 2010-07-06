@@ -14,7 +14,7 @@ public class DefaultSimpleData implements SimpleData {
      * @param name
      * @param content
      */
-    public DefaultSimpleData(String name, String content){
+    public DefaultSimpleData(String name, String content) {
         this.name = name;
         this.content = content;
     }
@@ -24,13 +24,16 @@ public class DefaultSimpleData implements SimpleData {
      * @{@inheritDoc }
      */
     @Override
-    public String getName() {return this.name;}
+    public String getName() {
+        return this.name;
+    }
 
     /**
      *
      * @{@inheritDoc }
      */
     @Override
-    public String getContent() {return this.content;}
-
+    public String getContent() {
+        return this.content;
+    }
 }

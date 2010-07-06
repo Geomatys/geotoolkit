@@ -15,13 +15,13 @@ public class DefaultSchemaData extends DefaultAbstractObject implements SchemaDa
 
     /**
      *
-     * @param objectSimpleExtensions
      * @param idAttributes
      * @param simpleDatas
      * @param schemaDataExtensions
      */
-    public DefaultSchemaData(List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
-            List<SimpleData> simpleDatas, List<Object> schemaDataExtensions){
+    public DefaultSchemaData(List<SimpleType> objectSimpleExtensions,
+            IdAttributes idAttributes,
+            List<SimpleData> simpleDatas, List<Object> schemaDataExtensions) {
         super(objectSimpleExtensions, idAttributes);
         this.simpleDatas = (simpleDatas == null) ? EMPTY_LIST : simpleDatas;
         this.schemaDataExtensions = (schemaDataExtensions == null) ? EMPTY_LIST : schemaDataExtensions;
@@ -32,13 +32,16 @@ public class DefaultSchemaData extends DefaultAbstractObject implements SchemaDa
      * @{@inheritDoc }
      */
     @Override
-    public List<SimpleData> getSimpleDatas() {return this.simpleDatas;}
+    public List<SimpleData> getSimpleDatas() {
+        return this.simpleDatas;
+    }
 
     /**
      *
      * @{@inheritDoc }
      */
     @Override
-    public List<Object> getSchemaDataExtensions() {return this.schemaDataExtensions;}
-
+    public List<Object> getSchemaDataExtensions() {
+        return this.schemaDataExtensions;
+    }
 }

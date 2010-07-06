@@ -5,9 +5,8 @@ import java.util.List;
 import org.geotoolkit.data.kml.KmlUtilities;
 import org.geotoolkit.data.atom.model.AtomLink;
 import org.geotoolkit.data.atom.model.AtomPersonConstruct;
-import org.geotoolkit.data.xal.model.AddressDetails;
 import org.geotoolkit.data.kml.xsd.SimpleType;
-import static java.util.Collections.*;
+import org.geotoolkit.data.xal.model.AddressDetails;
 
 /**
  *
@@ -20,16 +19,12 @@ public class DefaultPhotoOverlay extends DefaultAbstractOverlay implements Photo
     private ImagePyramid imagePyramid;
     private Point point;
     private Shape shape;
-    private List<SimpleType> photoOverlaySimpleExtensions;
-    private List<AbstractObject> photoOverlayObjectExtensions;
 
     /**
      * 
      */
     public DefaultPhotoOverlay() {
         super();
-        this.photoOverlaySimpleExtensions = EMPTY_LIST;
-        this.photoOverlayObjectExtensions = EMPTY_LIST;
     }
 
     /**
@@ -40,7 +35,7 @@ public class DefaultPhotoOverlay extends DefaultAbstractOverlay implements Photo
      * @param visibility
      * @param open
      * @param author
-     * @param link
+     * @param atomLink
      * @param address
      * @param addressDetails
      * @param phoneNumber
@@ -57,7 +52,7 @@ public class DefaultPhotoOverlay extends DefaultAbstractOverlay implements Photo
      * @param color
      * @param drawOrder
      * @param icon
-     * @param abstractOveraySimpleExtensions
+     * @param abstractOverlaySimpleExtensions
      * @param abstractOverlayObjectExtensions
      * @param rotation
      * @param viewVolume
@@ -67,30 +62,48 @@ public class DefaultPhotoOverlay extends DefaultAbstractOverlay implements Photo
      * @param photoOverlaySimpleExtensions
      * @param photoOverlayObjectExtensions
      */
-    public DefaultPhotoOverlay(final List<SimpleType> objectSimpleExtensions, final IdAttributes idAttributes,
-            final String name, final boolean visibility, final boolean open, final AtomPersonConstruct author, final AtomLink link,
-            final String address, final AddressDetails addressDetails, final String phoneNumber, final String snippet,
-            final String description, final AbstractView view, final AbstractTimePrimitive timePrimitive,
-            final String styleUrl, final List<AbstractStyleSelector> styleSelector,
-            final Region region, final ExtendedData extendedData,
-            final List<SimpleType> abstractFeatureSimpleExtensions,
-            final List<AbstractObject> abstractFeatureObjectExtensions,
-            final Color color, final int drawOrder, final Icon icon,
-            final List<SimpleType> abstractOveraySimpleExtensions, final List<AbstractObject> abstractOverlayObjectExtensions,
-            final double rotation, final ViewVolume viewVolume, final ImagePyramid imagePyramid, final Point point, final Shape shape,
-            final List<SimpleType> photoOverlaySimpleExtensions, final List<AbstractObject> photoOverlayObjectExtensions) {
+    public DefaultPhotoOverlay(List<SimpleType> objectSimpleExtensions,
+            IdAttributes idAttributes,
+            String name, boolean visibility, boolean open,
+            AtomPersonConstruct author, AtomLink atomLink,
+            String address, AddressDetails addressDetails,
+            String phoneNumber, String snippet,
+            String description, AbstractView view,
+            AbstractTimePrimitive timePrimitive,
+            String styleUrl, List<AbstractStyleSelector> styleSelector,
+            Region region, ExtendedData extendedData,
+            List<SimpleType> abstractFeatureSimpleExtensions,
+            List<AbstractObject> abstractFeatureObjectExtensions,
+            Color color, int drawOrder, Icon icon,
+            List<SimpleType> abstractOverlaySimpleExtensions,
+            List<AbstractObject> abstractOverlayObjectExtensions,
+            final double rotation, final ViewVolume viewVolume,
+            final ImagePyramid imagePyramid,
+            final Point point, final Shape shape,
+            List<SimpleType> photoOverlaySimpleExtensions,
+            List<AbstractObject> photoOverlayObjectExtensions) {
         super(objectSimpleExtensions, idAttributes,
-                name, visibility, open, author, link, address, addressDetails, phoneNumber, snippet,
-                description, view, timePrimitive, styleUrl, styleSelector, region, extendedData,
-                abstractFeatureSimpleExtensions, abstractFeatureObjectExtensions,
-                color, drawOrder, icon, abstractOveraySimpleExtensions, abstractOverlayObjectExtensions);
+                name, visibility, open,
+                author, atomLink, address, addressDetails,
+                phoneNumber, snippet, description, view,
+                timePrimitive, styleUrl, styleSelector,
+                region, extendedData,
+                abstractFeatureSimpleExtensions,
+                abstractFeatureObjectExtensions,
+                color, drawOrder, icon,
+                abstractOverlaySimpleExtensions,
+                abstractOverlayObjectExtensions);
         this.rotation = KmlUtilities.checkAngle180(rotation);
         this.viewVolume = viewVolume;
         this.imagePyramid = imagePyramid;
         this.point = point;
         this.shape = shape;
-        this.photoOverlaySimpleExtensions = (photoOverlaySimpleExtensions == null) ? EMPTY_LIST : photoOverlaySimpleExtensions;
-        this.photoOverlayObjectExtensions = (photoOverlayObjectExtensions == null) ? EMPTY_LIST : photoOverlayObjectExtensions;
+        if (photoOverlaySimpleExtensions != null) {
+            this.extensions().simples(Extensions.Names.PHOTO_OVERLAY).addAll(photoOverlaySimpleExtensions);
+        }
+        if (photoOverlayObjectExtensions != null) {
+            this.extensions().complexes(Extensions.Names.PHOTO_OVERLAY).addAll(photoOverlayObjectExtensions);
+        }
     }
 
     /**
@@ -143,24 +156,6 @@ public class DefaultPhotoOverlay extends DefaultAbstractOverlay implements Photo
      * @{@inheritDoc }
      */
     @Override
-    public List<SimpleType> getPhotoOverlaySimpleExtensions() {
-        return this.photoOverlaySimpleExtensions;
-    }
-
-    /**
-     *
-     * @{@inheritDoc }
-     */
-    @Override
-    public List<AbstractObject> getPhotoOverlayObjectExtensions() {
-        return this.photoOverlayObjectExtensions;
-    }
-
-    /**
-     *
-     * @{@inheritDoc }
-     */
-    @Override
     public void setRotation(double rotation) {
         this.rotation = KmlUtilities.checkAngle180(rotation);
     }
@@ -199,23 +194,5 @@ public class DefaultPhotoOverlay extends DefaultAbstractOverlay implements Photo
     @Override
     public void setShape(Shape shape) {
         this.shape = shape;
-    }
-
-    /**
-     *
-     * @{@inheritDoc }
-     */
-    @Override
-    public void setPhotoOverlaySimpleExtensions(List<SimpleType> photoOverlaySimpleExtensions) {
-        this.photoOverlaySimpleExtensions = photoOverlaySimpleExtensions;
-    }
-
-    /**
-     *
-     * @{@inheritDoc }
-     */
-    @Override
-    public void setPhotoOverlayObjectExtensions(List<AbstractObject> photoOverlayObjectExtensions) {
-        this.photoOverlayObjectExtensions = photoOverlayObjectExtensions;
     }
 }

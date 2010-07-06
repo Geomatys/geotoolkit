@@ -1,6 +1,8 @@
 package org.geotoolkit.data.kml;
 
+import com.vividsolutions.jts.geom.Coordinate;
 import java.awt.Color;
+import java.net.URI;
 import java.util.Calendar;
 import java.util.List;
 import org.geotoolkit.data.atom.model.AtomPersonConstruct;
@@ -20,7 +22,6 @@ import org.geotoolkit.data.kml.model.Boundary;
 import org.geotoolkit.data.kml.model.Camera;
 import org.geotoolkit.data.kml.model.Change;
 import org.geotoolkit.data.kml.model.ColorMode;
-import org.geotoolkit.data.kml.model.Coordinate;
 import org.geotoolkit.data.kml.model.Coordinates;
 import org.geotoolkit.data.kml.model.Create;
 import org.geotoolkit.data.kml.model.Data;
@@ -629,7 +630,7 @@ public interface KmlFactory {
     public LatLonBox createLatLonBox();
 
     /**
-     *
+     * 
      * @param objectSimpleExtensions
      * @param idAttributes
      * @param north
@@ -686,9 +687,10 @@ public interface KmlFactory {
 
     /**
      * 
+     * @param coordinates
      * @return
      */
-    public LinearRing createLinearRing();
+    public LinearRing createLinearRing(Coordinates coordinates);
 
     /**
      *
@@ -718,7 +720,7 @@ public interface KmlFactory {
      * 
      * @return
      */
-    public LineString createLineString();
+    public LineString createLineString(Coordinates coordinates);
 
     /**
      *
@@ -1198,10 +1200,10 @@ public interface KmlFactory {
      * 
      * @return
      */
-    public Point createPoint();
+    public Point createPoint(Coordinates coordinates);
 
     /**
-     *
+     * 
      * @param objectSimpleExtensions
      * @param idAttributes
      * @param abstractGeometrySimpleExtensions
@@ -1209,8 +1211,8 @@ public interface KmlFactory {
      * @param extrude
      * @param tessellate
      * @param altitudeMode
-     * @param outerBoundaryIs
-     * @param innerBoundariesAre
+     * @param outerBoundary
+     * @param innerBoundaries
      * @param polygonSimpleExtensions
      * @param polygonObjectExtensions
      * @return
@@ -1220,7 +1222,7 @@ public interface KmlFactory {
             List<SimpleType> abstractGeometrySimpleExtensions,
             List<AbstractObject> abstractGeometryObjectExtensions,
             boolean extrude, boolean tessellate, AltitudeMode altitudeMode,
-            Boundary outerBoundaryIs, List<Boundary> innerBoundariesAre,
+            Boundary outerBoundary, List<Boundary> innerBoundaries,
             List<SimpleType> polygonSimpleExtensions,
             List<AbstractObject> polygonObjectExtensions);
 
@@ -1228,7 +1230,7 @@ public interface KmlFactory {
      * 
      * @return
      */
-    public Polygon createPolygon();
+    public Polygon createPolygon(Boundary outerBoundary, List<Boundary> innerBoundaries);
 
     /**
      *
@@ -1539,7 +1541,8 @@ public interface KmlFactory {
     public TimeStamp createTimeStamp();
     
     /**
-     *
+     * 
+     * @param targetHref
      * @param creates
      * @param deletes
      * @param changes
@@ -1547,9 +1550,14 @@ public interface KmlFactory {
      * @param updateExtensions
      * @return
      */
-    public Update createUpdate(List<Create> creates,
+    public Update createUpdate(URI targetHref, List<Create> creates,
             List<Delete> deletes, List<Change> changes,
             List<Object> updateOpExtensions, List<Object> updateExtensions);
+
+    /**
+     * 
+     */
+    public Update createUpdate();
 
     /**
      *

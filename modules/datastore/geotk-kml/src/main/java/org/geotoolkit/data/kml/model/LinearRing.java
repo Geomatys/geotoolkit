@@ -1,8 +1,5 @@
 package org.geotoolkit.data.kml.model;
 
-import java.util.List;
-import org.geotoolkit.data.kml.xsd.SimpleType;
-
 /**
  * <p>This interface maps LinearRing element.</p>
  *
@@ -36,6 +33,12 @@ public interface LinearRing extends AbstractGeometry {
      *
      * @return
      */
+    Coordinates getCoordinateSequence();
+    
+    /**
+     *
+     * @return
+     */
     public boolean getExtrude();
 
     /**
@@ -49,24 +52,6 @@ public interface LinearRing extends AbstractGeometry {
      * @return
      */
     public AltitudeMode getAltitudeMode();
-
-    /**
-     *
-     * @return
-     */
-    public Coordinates getCoordinates();
-
-    /**
-     *
-     * @return the list of LinearRing simple extensions.
-     */
-    public List<SimpleType> getLinearRingSimpleExtensions();
-
-    /**
-     *
-     * @return the list of LinearRing object extensions.
-     */
-    public List<AbstractObject> getLinearRingObjectExtensions();
 
     /**
      * 
@@ -85,23 +70,5 @@ public interface LinearRing extends AbstractGeometry {
      * @param altitudeMode
      */
     public void setAltitudeMode(AltitudeMode altitudeMode);
-
-    /**
-     *
-     * @param coordinates
-     */
-    public void setCoordinates(Coordinates coordinates);
-
-    /**
-     *
-     * @param linearRingSimpleExtensions
-     */
-    public void setLinearRingSimpleExtensions(List<SimpleType> linearRingSimpleExtensions);
-
-    /**
-     *
-     * @param linearRingObjectExtensions
-     */
-    public void setLinearRingObjectExtensions(List<AbstractObject> linearRingObjectExtensions);
 
 }

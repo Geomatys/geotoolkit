@@ -2,7 +2,6 @@ package org.geotoolkit.data.kml.model;
 
 import java.util.List;
 import org.geotoolkit.data.kml.xsd.SimpleType;
-import static java.util.Collections.*;
 
 /**
  *
@@ -12,32 +11,33 @@ public class DefaultAlias extends DefaultAbstractObject implements Alias {
 
     private String targetHref;
     private String sourceHref;
-    private List<SimpleType> aliasSimpleExtensions;
-    private List<AbstractObject> aliasObjectExtensions;
 
-    public DefaultAlias(){
-        this.aliasSimpleExtensions = EMPTY_LIST;
-        this.aliasObjectExtensions = EMPTY_LIST;
+    public DefaultAlias() {
     }
 
     /**
-     *
+     * 
      * @param objectSimpleExtensions
      * @param idAttributes
      * @param targetHref
      * @param sourceHref
-     * @param aliasSimpleExtensions
-     * @param aliasObjectExtensions
+     * @param abstractAliasSimpleExtensions
+     * @param abstractAliasObjectExtensions
      */
     public DefaultAlias(List<SimpleType> objectSimpleExtensions,
             IdAttributes idAttributes,
             String targetHref, String sourceHref,
-            List<SimpleType> aliasSimpleExtensions, List<AbstractObject> aliasObjectExtensions){
+            List<SimpleType> abstractAliasSimpleExtensions,
+            List<AbstractObject> abstractAliasObjectExtensions) {
         super(objectSimpleExtensions, idAttributes);
         this.targetHref = targetHref;
         this.sourceHref = sourceHref;
-        this.aliasSimpleExtensions = (aliasSimpleExtensions == null) ? EMPTY_LIST : aliasSimpleExtensions;
-        this.aliasObjectExtensions = (aliasObjectExtensions == null) ? EMPTY_LIST : aliasObjectExtensions;
+        if (abstractAliasSimpleExtensions != null) {
+            this.extensions().simples(Extensions.Names.ALIAS).addAll(abstractAliasSimpleExtensions);
+        }
+        if (abstractAliasObjectExtensions != null) {
+            this.extensions().complexes(Extensions.Names.ALIAS).addAll(abstractAliasObjectExtensions);
+        }
     }
 
     /**
@@ -45,31 +45,20 @@ public class DefaultAlias extends DefaultAbstractObject implements Alias {
      * @{@inheritDoc }
      */
     @Override
-    public String getTargetHref() {return this.targetHref;}
+    public String getTargetHref() {
+        return this.targetHref;
+    }
 
     /**
      *
      * @{@inheritDoc }
      */
     @Override
-    public String getSourceHref() {return this.sourceHref;}
+    public String getSourceHref() {
+        return this.sourceHref;
+    }
 
     /**
-     *
-     * @{@inheritDoc }
-     */
-    @Override
-    public List<SimpleType> getAliasSimpleExtensions() {return this.aliasSimpleExtensions;}
-
-    /**
-     *
-     * @{@inheritDoc }
-     */
-    @Override
-    public List<AbstractObject> getAliasObjectExtensions() {return this.aliasObjectExtensions;}
-
-    /**
-     *
      * @{@inheritDoc }
      */
     @Override
@@ -85,23 +74,4 @@ public class DefaultAlias extends DefaultAbstractObject implements Alias {
     public void setSourceHref(String sourceHref) {
         this.sourceHref = sourceHref;
     }
-
-    /**
-     *
-     * @{@inheritDoc }
-     */
-    @Override
-    public void setAliasSimpleExtensions(List<SimpleType> aliasSimpleExtensions) {
-        this.aliasSimpleExtensions = aliasSimpleExtensions;
-    }
-
-    /**
-     *
-     * @{@inheritDoc }
-     */
-    @Override
-    public void setAliasObjectExtensions(List<AbstractObject> aliasObjectExtensions) {
-        this.aliasObjectExtensions = aliasObjectExtensions;
-    }
-
 }

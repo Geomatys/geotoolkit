@@ -1,5 +1,6 @@
 package org.geotoolkit.data.kml;
 
+import com.vividsolutions.jts.geom.Coordinate;
 import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
@@ -9,7 +10,6 @@ import javax.xml.stream.XMLStreamException;
 import org.geotoolkit.data.kml.model.AbstractFeature;
 import org.geotoolkit.data.kml.model.AbstractStyleSelector;
 import org.geotoolkit.data.kml.model.BalloonStyle;
-import org.geotoolkit.data.kml.model.Coordinate;
 import org.geotoolkit.data.kml.model.Coordinates;
 import org.geotoolkit.data.kml.model.Document;
 import org.geotoolkit.data.kml.model.IdAttributes;
@@ -99,12 +99,12 @@ public class BalloonStyleTest {
 
         assertTrue(placemark.getAbstractGeometry() instanceof Point);
         final Point point = (Point) placemark.getAbstractGeometry();
-        Coordinates coordinates = point.getCoordinates();
-        assertEquals(1, coordinates.getCoordinates().size());
+        Coordinates coordinates = point.getCoordinateSequence();
+        assertEquals(1, coordinates.size());
         Coordinate coordinate = coordinates.getCoordinate(0);
-        assertEquals(-122.370533, coordinate.getGeodeticLongitude(), DELTA);
-        assertEquals(37.823842, coordinate.getGeodeticLatitude(), DELTA);
-        assertEquals(0, coordinate.getAltitude(), DELTA);
+        assertEquals(-122.370533, coordinate.x, DELTA);
+        assertEquals(37.823842, coordinate.y, DELTA);
+        assertEquals(0, coordinate.z, DELTA);
 
     }
 
@@ -114,8 +114,7 @@ public class BalloonStyleTest {
 
         Coordinate coordinate = kmlFactory.createCoordinate(-122.370533,37.823842,0.0);
         Coordinates coordinates = kmlFactory.createCoordinates(Arrays.asList(coordinate));
-        Point point = kmlFactory.createPoint();
-        point.setCoordinates(coordinates);
+        Point point = kmlFactory.createPoint(coordinates);
 
         Placemark placemark = kmlFactory.createPlacemark();
         placemark.setName("BalloonStyle");

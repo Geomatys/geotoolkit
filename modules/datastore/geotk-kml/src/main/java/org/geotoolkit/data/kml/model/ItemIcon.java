@@ -44,18 +44,6 @@ public interface ItemIcon extends AbstractObject {
 
     /**
      *
-     * @return the ItemIcon list of simple extensions.
-     */
-    public List<SimpleType> getItemIconSimpleExtensions();
-
-    /**
-     *
-     * @return the ItemIcon list of object extensions.
-     */
-    public List<AbstractObject> getItemIconObjectExtensions();
-
-    /**
-     *
      * @param states
      */
     public void setStates(List<ItemIconState> states);
@@ -65,17 +53,5 @@ public interface ItemIcon extends AbstractObject {
      * @param href
      */
     public void setHref(String href);
-
-    /**
-     *
-     * @param itemIconSimpleExtensions
-     */
-    public void setItemIconSimpleExtensions(List<SimpleType> itemIconSimpleExtensions);
-
-    /**
-     *
-     * @param itemIconObjectExtensions
-     */
-    public void setItemIconObjectExtensions(List<AbstractObject> itemIconObjectExtensions);
 
 }

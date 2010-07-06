@@ -1,5 +1,6 @@
 package org.geotoolkit.data.kml;
 
+import com.vividsolutions.jts.geom.Coordinate;
 import org.geotoolkit.data.kml.xml.KmlReader;
 import java.io.File;
 import java.io.IOException;
@@ -8,7 +9,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
 import org.geotoolkit.data.kml.model.AbstractFeature;
 import org.geotoolkit.data.kml.model.AltitudeMode;
-import org.geotoolkit.data.kml.model.Coordinate;
 import org.geotoolkit.data.kml.model.Coordinates;
 import org.geotoolkit.data.kml.model.Document;
 import org.geotoolkit.data.kml.model.Kml;
@@ -93,18 +93,18 @@ public class LineStringTest {
         assertTrue(lineString0.getExtrude());
         assertTrue(lineString0.getTessellate());
 
-        final Coordinates coordinates0 = lineString0.getCoordinates();
-        assertEquals(2, coordinates0.getCoordinates().size());
+        final Coordinates coordinates0 = lineString0.getCoordinateSequence();
+        assertEquals(2, coordinates0.size());
 
         final Coordinate coordinate00 = coordinates0.getCoordinate(0);
-        assertEquals(-122.364383, coordinate00.getGeodeticLongitude(), DELTA);
-        assertEquals(37.824664, coordinate00.getGeodeticLatitude(), DELTA);
-        assertEquals(0, coordinate00.getAltitude(), DELTA);
+        assertEquals(-122.364383, coordinate00.x, DELTA);
+        assertEquals(37.824664, coordinate00.y, DELTA);
+        assertEquals(0, coordinate00.z, DELTA);
 
         final Coordinate coordinate01 = coordinates0.getCoordinate(1);
-        assertEquals(-122.364152, coordinate01.getGeodeticLongitude(), DELTA);
-        assertEquals(37.824322, coordinate01.getGeodeticLatitude(), DELTA);
-        assertEquals(0, coordinate01.getAltitude(), DELTA);
+        assertEquals(-122.364152, coordinate01.x, DELTA);
+        assertEquals(37.824322, coordinate01.y, DELTA);
+        assertEquals(0, coordinate01.z, DELTA);
 
         assertEquals("extruded", placemark1.getName());
         assertTrue(placemark1.getAbstractGeometry() instanceof LineString);
@@ -113,18 +113,18 @@ public class LineStringTest {
         assertTrue(lineString1.getTessellate());
         assertEquals(AltitudeMode.RELATIVE_TO_GROUND, lineString1.getAltitudeMode());
 
-        final Coordinates coordinates1 = lineString1.getCoordinates();
-        assertEquals(2, coordinates1.getCoordinates().size());
+        final Coordinates coordinates1 = lineString1.getCoordinateSequence();
+        assertEquals(2, coordinates1.size());
 
         final Coordinate coordinate10 = coordinates1.getCoordinate(0);
-        assertEquals(-122.364167, coordinate10.getGeodeticLongitude(), DELTA);
-        assertEquals(37.824787, coordinate10.getGeodeticLatitude(), DELTA);
-        assertEquals(50, coordinate10.getAltitude(), DELTA);
+        assertEquals(-122.364167, coordinate10.x, DELTA);
+        assertEquals(37.824787, coordinate10.y, DELTA);
+        assertEquals(50, coordinate10.z, DELTA);
 
         final Coordinate coordinate11 = coordinates1.getCoordinate(1);
-        assertEquals(-122.363917, coordinate11.getGeodeticLongitude(), DELTA);
-        assertEquals(37.824423, coordinate11.getGeodeticLatitude(), DELTA);
-        assertEquals(50, coordinate11.getAltitude(), DELTA);
+        assertEquals(-122.363917, coordinate11.x, DELTA);
+        assertEquals(37.824423, coordinate11.y, DELTA);
+        assertEquals(50, coordinate11.z, DELTA);
 
     }
 
@@ -140,13 +140,11 @@ public class LineStringTest {
         final Coordinates coordinates0 = kmlFactory.createCoordinates(Arrays.asList(coordinate00, coordinate01));
         final Coordinates coordinates1 = kmlFactory.createCoordinates(Arrays.asList(coordinate10, coordinate11));
 
-        final LineString lineString0 = kmlFactory.createLineString();
-        lineString0.setCoordinates(coordinates0);
+        final LineString lineString0 = kmlFactory.createLineString(coordinates0);
         lineString0.setExtrude(true);
         lineString0.setTessellate(true);
 
-        final LineString lineString1 = kmlFactory.createLineString();
-        lineString1.setCoordinates(coordinates1);
+        final LineString lineString1 = kmlFactory.createLineString(coordinates1);
         lineString1.setExtrude(true);
         lineString1.setTessellate(true);
         lineString1.setAltitudeMode(AltitudeMode.RELATIVE_TO_GROUND);

@@ -38,6 +38,7 @@ import org.geotoolkit.data.kml.model.Delete;
 import org.geotoolkit.data.kml.model.DisplayMode;
 import org.geotoolkit.data.kml.model.Document;
 import org.geotoolkit.data.kml.model.ExtendedData;
+import org.geotoolkit.data.kml.model.Extensions.Names;
 import org.geotoolkit.data.kml.model.Folder;
 import org.geotoolkit.data.kml.model.GridOrigin;
 import org.geotoolkit.data.kml.model.GroundOverlay;
@@ -197,9 +198,9 @@ public class KmlWriter extends StaxStreamWriter {
         if (kml.getAbstractFeature() != null){
             this.writeAbstractFeature(kml.getAbstractFeature());
         }
-        if (kml.getKmlSimpleExtensions() != null){
+        if (kml.extensions().simples(Names.KML) != null){
         }
-        if (kml.getKmlObjectExtensions() != null){
+        if (kml.extensions().complexes(Names.KML) != null){
         }
     }
 
@@ -240,11 +241,9 @@ public class KmlWriter extends StaxStreamWriter {
         if (networkLinkControl.getView() != null){
             this.writeAbstractView(networkLinkControl.getView());
         }
-        if (networkLinkControl.getLinkDescription() != null){
-            this.writeSimpleExtensions(networkLinkControl.getNetworkLinkControlSimpleExtensions());
+        if (networkLinkControl.extensions().simples(Names.NETWORK_LINK_CONTROL) != null){
         }
-        if (networkLinkControl.getLinkDescription() != null){
-            this.writeObjectExtensions(networkLinkControl.getNetworkLinkControlObjectExtensions());
+        if (networkLinkControl.extensions().complexes(Names.NETWORK_LINK_CONTROL) != null){
         }
         writer.writeEndElement();
     }
@@ -256,7 +255,9 @@ public class KmlWriter extends StaxStreamWriter {
      */
     private void writeUpdate(Update update) throws XMLStreamException{
         writer.writeStartElement(URI_KML, TAG_UPDATE);
-
+        if(update.getTargetHref() != null){
+            this.writeTargetHref(update.getTargetHref().toString());
+        }
         for (Create create : update.getCreates()){
             this.writeCreate(create);
         }
@@ -410,8 +411,7 @@ public class KmlWriter extends StaxStreamWriter {
         if (abstractObject.getIdAttributes() != null){
             this.writeIdAttributes(abstractObject.getIdAttributes());
         }
-        if (abstractObject.getObjectSimpleExtensions() != null){
-            this.writeSimpleExtensions(abstractObject.getObjectSimpleExtensions());
+        if (abstractObject.extensions().simples(Names.OBJECT) != null){
         }
     }
 
@@ -460,11 +460,9 @@ public class KmlWriter extends StaxStreamWriter {
         if (networkLink.getLink() != null){
             this.writeLink(networkLink.getLink());
         }
-        if (networkLink.getNetworkLinkSimpleExtensions() != null){
-            this.writeSimpleExtensions(networkLink.getNetworkLinkSimpleExtensions());
+        if (networkLink.extensions().simples(Names.NETWORK_LINK) != null){
         }
-        if (networkLink.getNetworkLinkObjectExtensions() != null){
-            this.writeObjectExtensions(networkLink.getNetworkLinkObjectExtensions());
+        if (networkLink.extensions().complexes(Names.NETWORK_LINK) != null){
         }
         writer.writeEndElement();
     }
@@ -522,11 +520,9 @@ public class KmlWriter extends StaxStreamWriter {
         if (abstractFeature.getExtendedData() != null){
             this.writeExtendedData(abstractFeature.getExtendedData());
         }
-        if (abstractFeature.getAbstractFeatureSimpleExtensions() != null){
-            this.writeSimpleExtensions(abstractFeature.getAbstractFeatureSimpleExtensions());
+        if (abstractFeature.extensions().simples(Names.FEATURE) != null){
         }
-        if (abstractFeature.getAbstractFeatureObjectExtensions() != null){
-            this.writeObjectExtensions(abstractFeature.getAbstractFeatureObjectExtensions());
+        if (abstractFeature.extensions().complexes(Names.FEATURE) != null){
         }
     }
 
@@ -704,11 +700,9 @@ public class KmlWriter extends StaxStreamWriter {
         if (timeSpan.getEnd() != null){
             this.writeEnd(timeSpan.getEnd());
         }
-        if (timeSpan.getTimeSpanSimpleExtensions() != null){
-            this.writeSimpleExtensions(timeSpan.getTimeSpanSimpleExtensions());
+        if (timeSpan.extensions().simples(Names.TIME_SPAN) != null){
         }
-        if (timeSpan.getTimeSpanObjectExtensions() != null){
-            this.writeObjectExtensions(timeSpan.getTimeSpanObjectExtensions());
+        if (timeSpan.extensions().complexes(Names.TIME_SPAN) != null){
         }
         writer.writeEndElement();
     }
@@ -724,11 +718,9 @@ public class KmlWriter extends StaxStreamWriter {
         if (timeStamp.getWhen() != null){
             this.writeWhen(timeStamp.getWhen());
         }
-        if (timeStamp.getTimeStampSimpleExtensions() != null){
-            this.writeSimpleExtensions(timeStamp.getTimeStampSimpleExtensions());
+        if (timeStamp.extensions().simples(Names.TIME_STAMP) != null){
         }
-        if (timeStamp.getTimeStampObjectExtensions() != null){
-            this.writeObjectExtensions(timeStamp.getTimeStampObjectExtensions());
+        if (timeStamp.extensions().complexes(Names.TIME_STAMP) != null){
         }
         writer.writeEndElement();
     }
@@ -772,11 +764,9 @@ public class KmlWriter extends StaxStreamWriter {
         if (isFiniteNumber(lookAt.getRange())){
             this.writeRange(lookAt.getRange());
         }
-        if (lookAt.getLookAtSimpleExtensions() != null){
-            this.writeSimpleExtensions(lookAt.getLookAtSimpleExtensions());
+        if (lookAt.extensions().simples(Names.LOOK_AT) != null){
         }
-        if (lookAt.getLookAtObjectExtensions() != null){
-            this.writeObjectExtensions(lookAt.getLookAtObjectExtensions());
+        if (lookAt.extensions().complexes(Names.LOOK_AT) != null){
         }
         writer.writeEndElement();
     }
@@ -805,11 +795,9 @@ public class KmlWriter extends StaxStreamWriter {
         if (camera.getAltitudeMode() != null){
             this.writeAltitudeMode(camera.getAltitudeMode());
         }
-        if (camera.getCameraSimpleExtensions() != null){
-            this.writeSimpleExtensions(camera.getCameraSimpleExtensions());
+        if (camera.extensions().simples(Names.CAMERA) != null){
         }
-        if (camera.getCameraObjectExtensions() != null){
-            this.writeObjectExtensions(camera.getCameraObjectExtensions());
+        if (camera.extensions().complexes(Names.CAMERA) != null){
         }
         writer.writeEndElement();
     }
@@ -823,11 +811,9 @@ public class KmlWriter extends StaxStreamWriter {
      */
     private void writeCommonAbstractView(AbstractView abstractView) throws XMLStreamException{
         this.writeCommonAbstractObject(abstractView);
-        if (abstractView.getAbstractViewSimpleExtensions() != null){
-            this.writeSimpleExtensions(abstractView.getAbstractViewSimpleExtensions());
+        if (abstractView.extensions().simples(Names.VIEW) != null){
         }
-        if (abstractView.getAbstractViewObjectExtensions() != null){
-            this.writeObjectExtensions(abstractView.getAbstractViewObjectExtensions());
+        if (abstractView.extensions().complexes(Names.VIEW) != null){
         }
     }
 
@@ -840,11 +826,9 @@ public class KmlWriter extends StaxStreamWriter {
      */
     private void writeCommonAbstractTimePrimitive(AbstractTimePrimitive abstractTimePrimitive) throws XMLStreamException{
         this.writeCommonAbstractObject(abstractTimePrimitive);
-        if (abstractTimePrimitive.getAbstractTimePrimitiveSimpleExtensions() != null){
-            this.writeSimpleExtensions(abstractTimePrimitive.getAbstractTimePrimitiveSimpleExtensions());
+        if (abstractTimePrimitive.extensions().simples(Names.TIME_PRIMITIVE) != null){
         }
-        if (abstractTimePrimitive.getAbstractTimePrimitiveObjectExtensions() != null){
-            this.writeObjectExtensions(abstractTimePrimitive.getAbstractTimePrimitiveObjectExtensions());
+        if (abstractTimePrimitive.extensions().complexes(Names.TIME_PRIMITIVE) != null){
         }
     }
 
@@ -870,11 +854,9 @@ public class KmlWriter extends StaxStreamWriter {
      */
     private void writeCommonAbstractStyleSelector(AbstractStyleSelector abstractStyleSelector) throws XMLStreamException{
         this.writeCommonAbstractObject(abstractStyleSelector);
-        if (abstractStyleSelector.getAbstractStyleSelectorSimpleExtensions() != null){
-            this.writeSimpleExtensions(abstractStyleSelector.getAbstractStyleSelectorSimpleExtensions());
+        if (abstractStyleSelector.extensions().simples(Names.STYLE_SELECTOR) != null){
         }
-        if (abstractStyleSelector.getAbstractStyleSelectorObjectExtensions() != null){
-            this.writeObjectExtensions(abstractStyleSelector.getAbstractStyleSelectorObjectExtensions());
+        if (abstractStyleSelector.extensions().complexes(Names.STYLE_SELECTOR) != null){
         }
     }
 
@@ -889,11 +871,9 @@ public class KmlWriter extends StaxStreamWriter {
         for(Pair pair : styleMap.getPairs()){
             this.writePair(pair);
         }
-        if (styleMap.getStyleMapSimpleExtensions() != null){
-            this.writeSimpleExtensions(styleMap.getStyleMapSimpleExtensions());
+        if (styleMap.extensions().simples(Names.STYLE_MAP) != null){
         }
-        if (styleMap.getStyleMapObjectExtensions() != null){
-            this.writeObjectExtensions(styleMap.getStyleMapObjectExtensions());
+        if (styleMap.extensions().complexes(Names.STYLE_MAP) != null){
         }
         writer.writeEndElement();
     }
@@ -915,11 +895,9 @@ public class KmlWriter extends StaxStreamWriter {
         if (pair.getAbstractStyleSelector() != null){
             this.writeAbstractStyleSelector(pair.getAbstractStyleSelector());
         }
-        if (pair.getPairSimpleExtensions() != null){
-            this.writeSimpleExtensions(pair.getPairSimpleExtensions());
+        if (pair.extensions().simples(Names.PAIR) != null){
         }
-        if (pair.getPairObjectExtensions() != null){
-            this.writeObjectExtensions(pair.getPairObjectExtensions());
+        if (pair.extensions().complexes(Names.PAIR) != null){
         }
         writer.writeEndElement();
     }
@@ -950,11 +928,9 @@ public class KmlWriter extends StaxStreamWriter {
         if (style.getListStyle() != null){
             this.writeListStyle(style.getListStyle());
         }
-        if (style.getStyleSimpleExtensions() != null){
-            this.writeSimpleExtensions(style.getStyleSimpleExtensions());
+        if (style.extensions().simples(Names.STYLE) != null){
         }
-        if (style.getStyleObjectExtensions() != null){
-            this.writeObjectExtensions(style.getStyleObjectExtensions());
+        if (style.extensions().complexes(Names.STYLE) != null){
         }
         writer.writeEndElement();
     }
@@ -979,11 +955,9 @@ public class KmlWriter extends StaxStreamWriter {
         if (iconStyle.getHotSpot() != null){
             this.writeHotSpot(iconStyle.getHotSpot());
         }
-        if (iconStyle.getIconStyleSimpleExtensions() != null){
-            this.writeSimpleExtensions(iconStyle.getIconStyleSimpleExtensions());
+        if (iconStyle.extensions().simples(Names.ICON_STYLE) != null){
         }
-        if (iconStyle.getIconStyleObjectExtensions() != null){
-            this.writeObjectExtensions(iconStyle.getIconStyleObjectExtensions());
+        if (iconStyle.extensions().complexes(Names.ICON_STYLE) != null){
         }
         writer.writeEndElement();
     }
@@ -999,11 +973,9 @@ public class KmlWriter extends StaxStreamWriter {
         if (isFiniteNumber(labelStyle.getScale())){
             this.writeScale(labelStyle.getScale());
         }
-        if (labelStyle.getLabelStyleSimpleExtensions() != null){
-            this.writeSimpleExtensions(labelStyle.getLabelStyleSimpleExtensions());
+        if (labelStyle.extensions().simples(Names.LABEL_STYLE) != null){
         }
-        if (labelStyle.getLabelStyleObjectExtensions() != null){
-            this.writeObjectExtensions(labelStyle.getLabelStyleObjectExtensions());
+        if (labelStyle.extensions().complexes(Names.LABEL_STYLE) != null){
         }
         writer.writeEndElement();
     }
@@ -1019,11 +991,9 @@ public class KmlWriter extends StaxStreamWriter {
         if (isFiniteNumber(lineStyle.getWidth())){
             this.writeWidth(lineStyle.getWidth());
         }
-        if (lineStyle.getLineStyleSimpleExtensions() != null){
-            this.writeSimpleExtensions(lineStyle.getLineStyleSimpleExtensions());
+        if (lineStyle.extensions().simples(Names.LINE_STYLE) != null){
         }
-        if (lineStyle.getLineStyleObjectExtensions() != null){
-            this.writeObjectExtensions(lineStyle.getLineStyleObjectExtensions());
+        if (lineStyle.extensions().complexes(Names.LINE_STYLE) != null){
         }
         writer.writeEndElement();
     }
@@ -1038,11 +1008,9 @@ public class KmlWriter extends StaxStreamWriter {
         this.writeCommonAbstractColorStyle(polyStyle);
         this.writeFill(polyStyle.getFill());
         this.writeOutline(polyStyle.getOutline());
-        if (polyStyle.getPolyStyleSimpleExtensions() != null){
-            this.writeSimpleExtensions(polyStyle.getPolyStyleSimpleExtensions());
+        if (polyStyle.extensions().simples(Names.POLY_STYLE) != null){
         }
-        if (polyStyle.getPolyStyleObjectExtensions() != null){
-            this.writeObjectExtensions(polyStyle.getPolyStyleObjectExtensions());
+        if (polyStyle.extensions().complexes(Names.POLY_STYLE) != null){
         }
         writer.writeEndElement();
     }
@@ -1067,11 +1035,9 @@ public class KmlWriter extends StaxStreamWriter {
         if (balloonStyle.getDisplayMode() != null){
             this.writeDisplayMode(balloonStyle.getDisplayMode());
         }
-        if (balloonStyle.getBalloonStyleSimpleExtensions() != null){
-            this.writeSimpleExtensions(balloonStyle.getBalloonStyleSimpleExtensions());
+        if (balloonStyle.extensions().simples(Names.BALLOON_STYLE) != null){
         }
-        if (balloonStyle.getBalloonStyleObjectExtensions() != null){
-            this.writeObjectExtensions(balloonStyle.getBalloonStyleObjectExtensions());
+        if (balloonStyle.extensions().complexes(Names.BALLOON_STYLE) != null){
         }
         writer.writeEndElement();
     }
@@ -1096,11 +1062,9 @@ public class KmlWriter extends StaxStreamWriter {
         if (isFiniteNumber(listStyle.getMaxSnippetLines())){
             this.writeMaxSnippetLines(listStyle.getMaxSnippetLines());
         }
-        if (listStyle.getListStyleSimpleExtensions() != null){
-            this.writeSimpleExtensions(listStyle.getListStyleSimpleExtensions());
+        if (listStyle.extensions().simples(Names.LIST_STYLE) != null){
         }
-        if (listStyle.getListStyleObjectExtensions() != null){
-            this.writeObjectExtensions(listStyle.getListStyleObjectExtensions());
+        if (listStyle.extensions().complexes(Names.LIST_STYLE) != null){
         }
         writer.writeEndElement();
     }
@@ -1119,11 +1083,9 @@ public class KmlWriter extends StaxStreamWriter {
         if (itemIcon.getHref() != null){
             this.writeHref(itemIcon.getHref());
         }
-        if (itemIcon.getItemIconSimpleExtensions() != null){
-            this.writeSimpleExtensions(itemIcon.getItemIconSimpleExtensions());
+        if (itemIcon.extensions().simples(Names.ITEM_ICON) != null){
         }
-        if (itemIcon.getItemIconObjectExtensions() != null){
-            this.writeObjectExtensions(itemIcon.getItemIconObjectExtensions());
+        if (itemIcon.extensions().complexes(Names.ITEM_ICON) != null){
         }
         writer.writeEndElement();
     }
@@ -1159,17 +1121,14 @@ public class KmlWriter extends StaxStreamWriter {
         if (icon.getIdAttributes() != null){
             this.writeIdAttributes(icon.getIdAttributes());
         }
-        if (icon.getObjectSimpleExtensions() != null){
-            this.writeSimpleExtensions(icon.getObjectSimpleExtensions());
+        if (icon.extensions().simples(Names.OBJECT) != null){
         }
         if (icon.getHref() != null){
             this.writeHref(icon.getHref());
         }
-        if (icon.getBasicLinkSimpleExtensions() != null){
-            this.writeSimpleExtensions(icon.getBasicLinkSimpleExtensions());
+        if (icon.extensions().simples(Names.BASIC_LINK) != null){
         }
-        if (icon.getBasicLinkObjectExtensions() != null){
-            this.writeObjectExtensions(icon.getBasicLinkObjectExtensions());
+        if (icon.extensions().complexes(Names.BASIC_LINK) != null){
         }
         writer.writeEndElement();
     }
@@ -1208,11 +1167,9 @@ public class KmlWriter extends StaxStreamWriter {
         if (link.getHref() != null){
             this.writeHref(link.getHref());
         }
-        if (link.getBasicLinkSimpleExtensions() != null){
-            this.writeSimpleExtensions(link.getBasicLinkSimpleExtensions());
+        if (link.extensions().simples(Names.BASIC_LINK) != null){
         }
-        if (link.getBasicLinkObjectExtensions() != null){
-            this.writeObjectExtensions(link.getBasicLinkObjectExtensions());
+        if (link.extensions().complexes(Names.BASIC_LINK) != null){
         }
         if (link.getRefreshMode() != null){
             this.writeRefreshMode(link.getRefreshMode());
@@ -1235,11 +1192,9 @@ public class KmlWriter extends StaxStreamWriter {
         if (link.getHttpQuery() != null){
             this.writeHttpQuery(link.getHttpQuery());
         }
-        if (link.getLinkSimpleExtensions() != null){
-            this.writeSimpleExtensions(link.getLinkSimpleExtensions());
+        if (link.extensions().simples(Names.LINK) != null){
         }
-        if (link.getLinkObjectExtensions() != null){
-            this.writeObjectExtensions(link.getLinkObjectExtensions());
+        if (link.extensions().complexes(Names.LINK) != null){
         }
     }
 
@@ -1258,11 +1213,9 @@ public class KmlWriter extends StaxStreamWriter {
         if (abstractColorStyle.getColorMode() != null){
             this.writeColorMode(abstractColorStyle.getColorMode());
         }
-        if (abstractColorStyle.getColorStyleSimpleExtensions() != null){
-            this.writeSimpleExtensions(abstractColorStyle.getColorStyleSimpleExtensions());
+        if (abstractColorStyle.extensions().simples(Names.COLOR_STYLE) != null){
         }
-        if (abstractColorStyle.getColorStyleObjectExtensions() != null){
-            this.writeObjectExtensions(abstractColorStyle.getColorStyleObjectExtensions());
+        if (abstractColorStyle.extensions().complexes(Names.COLOR_STYLE) != null){
         }
     }
 
@@ -1275,11 +1228,9 @@ public class KmlWriter extends StaxStreamWriter {
      */
     private void writeCommonAbstractSubStyle(AbstractSubStyle abstractSubStyle) throws XMLStreamException{
         this.writeCommonAbstractObject(abstractSubStyle);
-        if (abstractSubStyle.getSubStyleSimpleExtensions() != null){
-            this.writeSimpleExtensions(abstractSubStyle.getSubStyleSimpleExtensions());
+        if (abstractSubStyle.extensions().simples(Names.SUB_STYLE) != null){
         }
-        if (abstractSubStyle.getSubStyleObjectExtensions() != null){
-            this.writeObjectExtensions(abstractSubStyle.getSubStyleObjectExtensions());
+        if (abstractSubStyle.extensions().complexes(Names.SUB_STYLE) != null){
         }
     }
 
@@ -1294,11 +1245,9 @@ public class KmlWriter extends StaxStreamWriter {
         if (placemark.getAbstractGeometry() != null){
             this.writeAbstractGeometry(placemark.getAbstractGeometry());
         }
-        if (placemark.getPlacemarkSimpleExtensions() != null){
-            this.writeSimpleExtensions(placemark.getPlacemarkSimpleExtensions());
+        if (placemark.extensions().simples(Names.PLACEMARK) != null){
         }
-        if (placemark.getPlacemarkObjectExtensions() != null){
-            this.writeObjectExtensions(placemark.getPlacemarkObjectExtensions());
+        if (placemark.extensions().complexes(Names.PLACEMARK) != null){
         }
         writer.writeEndElement();
     }
@@ -1354,11 +1303,9 @@ public class KmlWriter extends StaxStreamWriter {
         if (photoOverlay.getShape() != null){
             this.writeShape(photoOverlay.getShape());
         }
-        if (photoOverlay.getPhotoOverlaySimpleExtensions() != null){
-            this.writeSimpleExtensions(photoOverlay.getPhotoOverlaySimpleExtensions());
+        if (photoOverlay.extensions().simples(Names.PHOTO_OVERLAY) != null){
         }
-        if (photoOverlay.getPhotoOverlayObjectExtensions() != null){
-            this.writeObjectExtensions(photoOverlay.getPhotoOverlayObjectExtensions());
+        if (photoOverlay.extensions().complexes(Names.PHOTO_OVERLAY) != null){
         }
         writer.writeEndElement();
     }
@@ -1435,11 +1382,9 @@ public class KmlWriter extends StaxStreamWriter {
         if (isFiniteNumber(screenOverlay.getRotation())){
             this.writeRotation(screenOverlay.getRotation());
         }
-        if (screenOverlay.getScreenOverlaySimpleExtensions() != null){
-            this.writeSimpleExtensions(screenOverlay.getScreenOverlaySimpleExtensions());
+        if (screenOverlay.extensions().simples(Names.SCREEN_OVERLAY) != null){
         }
-        if (screenOverlay.getScreenOverlayObjectExtensions() != null){
-            this.writeObjectExtensions(screenOverlay.getScreenOverlayObjectExtensions());
+        if (screenOverlay.extensions().complexes(Names.SCREEN_OVERLAY) != null){
         }
         writer.writeEndElement();
     }
@@ -1461,11 +1406,9 @@ public class KmlWriter extends StaxStreamWriter {
         if (groundOverlay.getLatLonBox() != null){
             this.writeLatLonBox(groundOverlay.getLatLonBox());
         }
-        if (groundOverlay.getGroundOverlaySimpleExtensions() != null){
-            this.writeSimpleExtensions(groundOverlay.getGroundOverlaySimpleExtensions());
+        if (groundOverlay.extensions().simples(Names.GROUND_OVERLAY) != null){
         }
-        if (groundOverlay.getGroundOverlayObjectExtensions() != null){
-            this.writeObjectExtensions(groundOverlay.getGroundOverlayObjectExtensions());
+        if (groundOverlay.extensions().complexes(Names.GROUND_OVERLAY) != null){
         }
         writer.writeEndElement();
     }
@@ -1481,11 +1424,9 @@ public class KmlWriter extends StaxStreamWriter {
         if (isFiniteNumber(latLonBox.getRotation())){
             this.writeRotation(latLonBox.getRotation());
         }
-        if (latLonBox.getLatLonBoxSimpleExtensions() != null){
-            this.writeSimpleExtensions(latLonBox.getLatLonBoxSimpleExtensions());
+        if (latLonBox.extensions().simples(Names.LAT_LON_BOX) != null){
         }
-        if (latLonBox.getLatLonBoxObjectExtensions() != null){
-            this.writeObjectExtensions(latLonBox.getLatLonBoxObjectExtensions());
+        if (latLonBox.extensions().complexes(Names.LAT_LON_BOX) != null){
         }
         writer.writeEndElement();
     }
@@ -1511,11 +1452,9 @@ public class KmlWriter extends StaxStreamWriter {
         if (isFiniteNumber(abstractLatLonBox.getWest())){
             this.writeWest(abstractLatLonBox.getWest());
         }
-        if (abstractLatLonBox.getAbstractLatLonBoxSimpleExtensions() != null){
-            this.writeSimpleExtensions(abstractLatLonBox.getAbstractLatLonBoxSimpleExtensions());
+        if (abstractLatLonBox.extensions().simples(Names.ABSTRACT_LAT_LON_BOX) != null){
         }
-        if (abstractLatLonBox.getAbstractLatLonBoxObjectExtensions() != null){
-            this.writeObjectExtensions(abstractLatLonBox.getAbstractLatLonBoxObjectExtensions());
+        if (abstractLatLonBox.extensions().complexes(Names.ABSTRACT_LAT_LON_BOX) != null){
         }
     }
     
@@ -1530,11 +1469,9 @@ public class KmlWriter extends StaxStreamWriter {
         if (abstractOverlay.getIcon() != null){
             this.writeIcon(abstractOverlay.getIcon());
         }
-        if (abstractOverlay.getAbstractOverlaySimpleExtensions() != null){
-            this.writeSimpleExtensions(abstractOverlay.getAbstractOverlaySimpleExtensions());
+        if (abstractOverlay.extensions().simples(Names.OVERLAY) != null){
         }
-        if (abstractOverlay.getAbstractOverlayObjectExtensions() != null){
-            this.writeObjectExtensions(abstractOverlay.getAbstractOverlayObjectExtensions());
+        if (abstractOverlay.extensions().complexes(Names.OVERLAY) != null){
         }
     }
 
@@ -1547,11 +1484,9 @@ public class KmlWriter extends StaxStreamWriter {
      */
     private void writeCommonAbstractContainer(AbstractContainer abstractContainer) throws XMLStreamException{
         this.writeCommonAbstractFeature(abstractContainer);
-        if (abstractContainer.getAbstractContainerSimpleExtensions() != null){
-            this.writeSimpleExtensions(abstractContainer.getAbstractContainerSimpleExtensions());
+        if (abstractContainer.extensions().simples(Names.CONTAINER) != null){
         }
-        if (abstractContainer.getAbstractContainerObjectExtensions() != null){
-            this.writeObjectExtensions(abstractContainer.getAbstractContainerObjectExtensions());
+        if (abstractContainer.extensions().complexes(Names.CONTAINER) != null){
         }
     }
 
@@ -1567,11 +1502,9 @@ public class KmlWriter extends StaxStreamWriter {
         for(AbstractFeature abstractFeature : folder.getAbstractFeatures()){
             this.writeAbstractFeature(abstractFeature);
         }
-        if (folder.getFolderSimpleExtensions() != null){
-            this.writeSimpleExtensions(folder.getFolderSimpleExtensions());
+        if (folder.extensions().simples(Names.FOLDER) != null){
         }
-        if (folder.getFolderObjectExtensions() != null){
-            this.writeObjectExtensions(folder.getFolderObjectExtensions());
+        if (folder.extensions().complexes(Names.FOLDER) != null){
         }
         writer.writeEndElement();
     }
@@ -1590,11 +1523,9 @@ public class KmlWriter extends StaxStreamWriter {
         for(AbstractFeature abstractFeature : document.getAbstractFeatures()){
             this.writeAbstractFeature(abstractFeature);
         }
-        if (document.getDocumentSimpleExtensions() != null){
-            this.writeSimpleExtensions(document.getDocumentSimpleExtensions());
+        if (document.extensions().simples(Names.DOCUMENT) != null){
         }
-        if (document.getDocumentObjectExtensions() != null){
-            this.writeObjectExtensions(document.getDocumentObjectExtensions());
+        if (document.extensions().complexes(Names.DOCUMENT) != null){
         }
         writer.writeEndElement();
     }
@@ -1667,11 +1598,9 @@ public class KmlWriter extends StaxStreamWriter {
      */
     private void writeCommonAbstractGeometry(AbstractGeometry abstractGeometry) throws XMLStreamException{
         this.writeCommonAbstractObject(abstractGeometry);
-        if (abstractGeometry.getAbstractGeometrySimpleExtensions() != null){
-            this.writeSimpleExtensions(abstractGeometry.getAbstractGeometrySimpleExtensions());
+        if (abstractGeometry.extensions().simples(Names.GEOMETRY) != null){
         }
-        if (abstractGeometry.getAbstractGeometryObjectExtensions() != null){
-            this.writeObjectExtensions(abstractGeometry.getAbstractGeometryObjectExtensions());
+        if (abstractGeometry.extensions().complexes(Names.GEOMETRY) != null){
         }
     }
 
@@ -1701,11 +1630,9 @@ public class KmlWriter extends StaxStreamWriter {
         if (model.getRessourceMap() != null){
             this.writeResourceMap(model.getRessourceMap());
         }
-        if (model.getModelSimpleExtensions() != null){
-            this.writeSimpleExtensions(model.getModelSimpleExtensions());
+        if (model.extensions().simples(Names.MODEL) != null){
         }
-        if (model.getModelObjectExtensions() != null){
-            this.writeObjectExtensions(model.getModelObjectExtensions());
+        if (model.extensions().complexes(Names.MODEL) != null){
         }
         writer.writeEndElement();
     }
@@ -1813,17 +1740,15 @@ public class KmlWriter extends StaxStreamWriter {
         if (polygon.getAltitudeMode() != null){
             this.writeAltitudeMode(polygon.getAltitudeMode());
         }
-        if (polygon.getOuterBoundaryIs() != null){
-            this.writeOuterBoundaryIs(polygon.getOuterBoundaryIs());
+        if (polygon.getOuterBoundary() != null){
+            this.writeOuterBoundaryIs(polygon.getOuterBoundary());
         }
-        for(Boundary innerBoundaryIs : polygon.getInnerBoundariesAre()){
+        for(Boundary innerBoundaryIs : polygon.getInnerBoundaries()){
             this.writeInnerBoundaryIs(innerBoundaryIs);
         }
-        if (polygon.getPolygonSimpleExtensions() != null){
-            this.writeSimpleExtensions(polygon.getPolygonSimpleExtensions());
+        if (polygon.extensions().simples(Names.POLYGON) != null){
         }
-        if (polygon.getPolygonObjectExtensions() != null){
-            this.writeObjectExtensions(polygon.getPolygonObjectExtensions());
+        if (polygon.extensions().complexes(Names.POLYGON) != null){
         }
         writer.writeEndElement();
     }
@@ -1849,11 +1774,9 @@ public class KmlWriter extends StaxStreamWriter {
         if (boundary.getLinearRing() != null){
             this.writeLinearRing(boundary.getLinearRing());
         }
-        if (boundary.getBoundarySimpleExtensions() != null){
-            this.writeSimpleExtensions(boundary.getBoundarySimpleExtensions());
+        if (boundary.extensions().simples(Names.BOUNDARY) != null){
         }
-        if (boundary.getBoundaryObjectExtensions() != null){
-            this.writeObjectExtensions(boundary.getBoundaryObjectExtensions());
+        if (boundary.extensions().complexes(Names.BOUNDARY) != null){
         }
     }
 
@@ -1870,14 +1793,12 @@ public class KmlWriter extends StaxStreamWriter {
         if (lineString.getAltitudeMode() != null){
             this.writeAltitudeMode(lineString.getAltitudeMode());
         }
-        if (lineString.getCoordinates() != null){
-            this.writeCoordinates(lineString.getCoordinates());
+
+        this.writeCoordinates(lineString.getCoordinateSequence());
+
+        if (lineString.extensions().simples(Names.LINE_STRING) != null){
         }
-        if (lineString.getLineStringSimpleExtensions() != null){
-            this.writeSimpleExtensions(lineString.getLineStringSimpleExtensions());
-        }
-        if (lineString.getLineStringObjectExtensions() != null){
-            this.writeObjectExtensions(lineString.getLineStringObjectExtensions());
+        if (lineString.extensions().complexes(Names.LINE_STRING) != null){
         }
         writer.writeEndElement();
     }
@@ -1895,14 +1816,10 @@ public class KmlWriter extends StaxStreamWriter {
         if (linearRing.getAltitudeMode() != null){
             this.writeAltitudeMode(linearRing.getAltitudeMode());
         }
-        if (linearRing.getCoordinates() != null){
-            this.writeCoordinates(linearRing.getCoordinates());
+        this.writeCoordinates(linearRing.getCoordinateSequence());
+        if (linearRing.extensions().simples(Names.LINEAR_RING) != null){
         }
-        if (linearRing.getLinearRingSimpleExtensions() != null){
-            this.writeSimpleExtensions(linearRing.getLinearRingSimpleExtensions());
-        }
-        if (linearRing.getLinearRingObjectExtensions() != null){
-            this.writeObjectExtensions(linearRing.getLinearRingObjectExtensions());
+        if (linearRing.extensions().complexes(Names.LINEAR_RING) != null){
         }
         writer.writeEndElement();
     }
@@ -1918,11 +1835,9 @@ public class KmlWriter extends StaxStreamWriter {
         for (AbstractGeometry abstractGeometry : multiGeometry.getGeometries()){
             this.writeAbstractGeometry(abstractGeometry);
         }
-        if (multiGeometry.getMultiGeometrySimpleExtensions() != null){
-            this.writeSimpleExtensions(multiGeometry.getMultiGeometrySimpleExtensions());
+        if (multiGeometry.extensions().simples(Names.MULTI_GEOMETRY) != null){
         }
-        if (multiGeometry.getMultiGeometryObjectExtensions() != null){
-            this.writeObjectExtensions(multiGeometry.getMultiGeometryObjectExtensions());
+        if (multiGeometry.extensions().complexes(Names.MULTI_GEOMETRY) != null){
         }
         writer.writeEndElement();
     }
@@ -1939,14 +1854,12 @@ public class KmlWriter extends StaxStreamWriter {
         if (point.getAltitudeMode() != null){
             this.writeAltitudeMode(point.getAltitudeMode());
         }
-        if (point.getCoordinates() != null){
-            this.writeCoordinates(point.getCoordinates());
+        if (point.getCoordinateSequence() != null){
+            this.writeCoordinates(point.getCoordinateSequence());
         }
-        if (point.getPointSimpleExtensions() != null){
-            this.writeSimpleExtensions(point.getPointSimpleExtensions());
+        if (point.extensions().simples(Names.POINT) != null){
         }
-        if (point.getPointObjectExtensions() != null){
-            this.writeObjectExtensions(point.getPointObjectExtensions());
+        if (point.extensions().complexes(Names.POINT) != null){
         }
         writer.writeEndElement();
     }
@@ -1958,7 +1871,7 @@ public class KmlWriter extends StaxStreamWriter {
      */
     private void writeCoordinates(Coordinates coordinates) throws XMLStreamException{
         writer.writeStartElement(URI_KML, TAG_COORDINATES);
-        writer.writeCharacters(coordinates.getCoordinatesString());
+        writer.writeCharacters(KmlUtilities.toString(coordinates));
         writer.writeEndElement();
     }
 

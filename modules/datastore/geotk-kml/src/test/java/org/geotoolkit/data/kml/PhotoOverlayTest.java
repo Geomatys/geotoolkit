@@ -1,12 +1,12 @@
 package org.geotoolkit.data.kml;
 
+import com.vividsolutions.jts.geom.Coordinate;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
 import org.geotoolkit.data.kml.model.AbstractFeature;
-import org.geotoolkit.data.kml.model.Coordinate;
 import org.geotoolkit.data.kml.model.Coordinates;
 import org.geotoolkit.data.kml.model.Icon;
 import org.geotoolkit.data.kml.model.Kml;
@@ -79,10 +79,10 @@ public class PhotoOverlayTest {
         assertEquals(1000, viewVolume.getNear(), DELTA);
 
         final Point point = photoOverlay.getPoint();
-        final Coordinates coordinates = point.getCoordinates();
-        assertEquals(1,coordinates.getCoordinates().size());
-        assertEquals(1, coordinates.getCoordinate(0).getGeodeticLongitude(), DELTA);
-        assertEquals(1, coordinates.getCoordinate(0).getGeodeticLatitude(), DELTA);
+        final Coordinates coordinates = point.getCoordinateSequence();
+        assertEquals(1,coordinates.size());
+        assertEquals(1, coordinates.getCoordinate(0).x, DELTA);
+        assertEquals(1, coordinates.getCoordinate(0).y, DELTA);
 
 
     }
@@ -95,8 +95,7 @@ public class PhotoOverlayTest {
         final double latitude = 1;
         final Coordinate coordinate = kmlFactory.createCoordinate(longitude, latitude);
         final Coordinates coordinates = kmlFactory.createCoordinates(Arrays.asList(coordinate));
-        final Point point = kmlFactory.createPoint();
-        point.setCoordinates(coordinates);
+        final Point point = kmlFactory.createPoint(coordinates);
 
         final double leftFov = -60.0;
         final double rightFov = 60.0;

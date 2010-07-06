@@ -15,8 +15,6 @@ public class DefaultDocument extends DefaultAbstractContainer implements Documen
 
     private List<Schema> schemas;
     private List<AbstractFeature> features;
-    private List<SimpleType> documentSimpleExtensions;
-    private List<AbstractObject> documentObjectExtensions;
 
     /**
      * 
@@ -24,8 +22,6 @@ public class DefaultDocument extends DefaultAbstractContainer implements Documen
     public DefaultDocument() {
         this.schemas = EMPTY_LIST;
         this.features = EMPTY_LIST;
-        this.documentSimpleExtensions = EMPTY_LIST;
-        this.documentObjectExtensions = EMPTY_LIST;
     }
 
     /**
@@ -36,7 +32,7 @@ public class DefaultDocument extends DefaultAbstractContainer implements Documen
      * @param visibility
      * @param open
      * @param author
-     * @param link
+     * @param atomLink
      * @param address
      * @param addressDetails
      * @param phoneNumber
@@ -57,31 +53,44 @@ public class DefaultDocument extends DefaultAbstractContainer implements Documen
      * @param documentSimpleExtensions
      * @param documentObjectExtensions
      */
-    public DefaultDocument(List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
-            String name, boolean visibility, boolean open, AtomPersonConstruct author, AtomLink link,
-            String address, AddressDetails addressDetails, String phoneNumber, String snippet,
-            String description, AbstractView view, AbstractTimePrimitive timePrimitive,
+    public DefaultDocument(List<SimpleType> objectSimpleExtensions,
+            IdAttributes idAttributes,
+            String name, boolean visibility, boolean open,
+            AtomPersonConstruct author, AtomLink atomLink,
+            String address, AddressDetails addressDetails,
+            String phoneNumber, String snippet,
+            String description, AbstractView view,
+            AbstractTimePrimitive timePrimitive,
             String styleUrl, List<AbstractStyleSelector> styleSelector,
             Region region, ExtendedData extendedData,
             List<SimpleType> abstractFeatureSimpleExtensions,
             List<AbstractObject> abstractFeatureObjectExtensions,
             List<SimpleType> abstractContainerSimpleExtensions,
             List<AbstractObject> abstractContainerObjectExtensions,
-            List<Schema> schemas, List<AbstractFeature> features,
+            List<Schema> schemas,
+            List<AbstractFeature> features,
             List<SimpleType> documentSimpleExtensions,
             List<AbstractObject> documentObjectExtensions) {
 
         super(objectSimpleExtensions, idAttributes,
-                name, visibility, open, author, link, address, addressDetails, phoneNumber,
-                snippet, description, view, timePrimitive, styleUrl, styleSelector,
+                name, visibility, open,
+                author, atomLink,
+                address, addressDetails,
+                phoneNumber, snippet, description,
+                view, timePrimitive, styleUrl, styleSelector,
                 region, extendedData,
-                abstractFeatureSimpleExtensions, abstractFeatureObjectExtensions,
-                abstractContainerSimpleExtensions, abstractContainerObjectExtensions);
-
+                abstractFeatureSimpleExtensions,
+                abstractFeatureObjectExtensions,
+                abstractContainerSimpleExtensions,
+                abstractContainerObjectExtensions);
         this.schemas = (schemas == null) ? EMPTY_LIST : schemas;
         this.features = (features == null) ? EMPTY_LIST : features;
-        this.documentSimpleExtensions = (documentSimpleExtensions == null) ? EMPTY_LIST : documentSimpleExtensions;
-        this.documentObjectExtensions = (documentObjectExtensions == null) ? EMPTY_LIST : documentObjectExtensions;
+        if (documentSimpleExtensions != null) {
+            this.extensions().simples(Extensions.Names.DOCUMENT).addAll(documentSimpleExtensions);
+        }
+        if (documentObjectExtensions != null) {
+            this.extensions().complexes(Extensions.Names.DOCUMENT).addAll(documentObjectExtensions);
+        }
     }
 
     /**
@@ -107,24 +116,6 @@ public class DefaultDocument extends DefaultAbstractContainer implements Documen
      * @{@inheritDoc }
      */
     @Override
-    public List<AbstractObject> getDocumentObjectExtensions() {
-        return this.documentObjectExtensions;
-    }
-
-    /**
-     *
-     * @{@inheritDoc }
-     */
-    @Override
-    public List<SimpleType> getDocumentSimpleExtensions() {
-        return this.documentSimpleExtensions;
-    }
-
-    /**
-     *
-     * @{@inheritDoc }
-     */
-    @Override
     public void setSchemas(List<Schema> schemas) {
         this.schemas = schemas;
     }
@@ -136,24 +127,6 @@ public class DefaultDocument extends DefaultAbstractContainer implements Documen
     @Override
     public void setAbstractFeatures(List<AbstractFeature> features) {
         this.features = features;
-    }
-
-    /**
-     *
-     * @{@inheritDoc }
-     */
-    @Override
-    public void setDocumentSimpleExtensions(List<SimpleType> documentSimpleExtensions) {
-        this.documentSimpleExtensions = documentSimpleExtensions;
-    }
-
-    /**
-     *
-     * @{@inheritDoc }
-     */
-    @Override
-    public void setDocumentObjectExtensions(List<AbstractObject> documentObjectExtensions) {
-        this.documentObjectExtensions = documentObjectExtensions;
     }
 
     /**

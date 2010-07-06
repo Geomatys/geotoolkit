@@ -1,5 +1,6 @@
 package org.geotoolkit.data.kml;
 
+import com.vividsolutions.jts.geom.Coordinate;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
@@ -8,7 +9,6 @@ import javax.xml.stream.XMLStreamException;
 import org.geotoolkit.data.kml.model.AbstractFeature;
 import org.geotoolkit.data.kml.model.AbstractGeometry;
 import org.geotoolkit.data.kml.model.AbstractView;
-import org.geotoolkit.data.kml.model.Coordinate;
 import org.geotoolkit.data.kml.model.Coordinates;
 import org.geotoolkit.data.kml.model.Kml;
 import org.geotoolkit.data.kml.model.KmlException;
@@ -80,12 +80,12 @@ public class PlacemarkTest {
         final AbstractGeometry geometry = placemark.getAbstractGeometry();
         assertTrue(geometry instanceof Point);
         Point point = (Point) geometry;
-        final Coordinates coordinates = point.getCoordinates();
-        assertEquals(1, coordinates.getCoordinates().size());
+        final Coordinates coordinates = point.getCoordinateSequence();
+        assertEquals(1, coordinates.size());
         Coordinate coordinate = coordinates.getCoordinate(0);
-        assertEquals(-90.86948943473118, coordinate.getGeodeticLongitude(), DELTA);
-        assertEquals(48.25450093195546, coordinate.getGeodeticLatitude(), DELTA);
-        assertEquals(0, coordinate.getAltitude(), DELTA);
+        assertEquals(-90.86948943473118, coordinate.x, DELTA);
+        assertEquals(48.25450093195546, coordinate.y, DELTA);
+        assertEquals(0, coordinate.z, DELTA);
     }
 
     @Test
@@ -94,8 +94,7 @@ public class PlacemarkTest {
 
         final Coordinate coordinate = kmlFactory.createCoordinate(-90.86948943473118, 48.25450093195546, 0);
         final Coordinates coordinates = kmlFactory.createCoordinates(Arrays.asList(coordinate));
-        final Point point = kmlFactory.createPoint();
-        point.setCoordinates(coordinates);
+        final Point point = kmlFactory.createPoint(coordinates);
 
         final LookAt lookAt = kmlFactory.createLookAt();
         lookAt.setLongitude(-90.86879847669974);

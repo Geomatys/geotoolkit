@@ -1,7 +1,6 @@
 package org.geotoolkit.data.kml.model;
 
 import java.util.List;
-import org.geotoolkit.data.kml.xsd.SimpleType;
 
 /**
  * <p>This interface maps ResourceMap element.</p>
@@ -37,32 +36,8 @@ public interface ResourceMap extends AbstractObject {
 
     /**
      *
-     * @return th elist of ResourceMap simple extensions.
-     */
-    public List<SimpleType> getResourceMapSimpleExtensions();
-
-    /**
-     *
-     * @return the list of ResourceMap object extensions.
-     */
-    public List<AbstractObject> getResourceMapObjectExtensions();
-
-    /**
-     *
      * @param aliases
      */
     public void setAliases(List<Alias> aliases);
 
-    /**
-     *
-     * @param resourceMapSimpleExtensions
-     */
-    public void setResourceMapSimpleExtensions(List<SimpleType> resourceMapSimpleExtensions);
-
-    /**
-     * 
-     * @param resourceMapObjectExtensions
-     */
-    public void setResourceMapObjectExtensions(List<AbstractObject> resourceMapObjectExtensions);
-    
 }

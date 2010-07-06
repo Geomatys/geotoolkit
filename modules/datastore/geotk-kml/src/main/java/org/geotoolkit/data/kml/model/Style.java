@@ -1,8 +1,5 @@
 package org.geotoolkit.data.kml.model;
 
-import java.util.List;
-import org.geotoolkit.data.kml.xsd.SimpleType;
-
 /**
  * <p>This interface maps Style element.</p>
  *
@@ -69,19 +66,7 @@ public interface Style extends AbstractStyleSelector {
      * @return
      */
     public ListStyle getListStyle();
-
-    /**
-     *
-     * @return the list of Style simple extensions.
-     */
-    public List<SimpleType> getStyleSimpleExtensions();
-
-    /**
-     *
-     * @return th elist of Style object extensions.
-     */
-    public List<AbstractObject> getStyleObjectExtensions();
-
+    
     /**
      *
      * @param iconStyle
@@ -118,15 +103,4 @@ public interface Style extends AbstractStyleSelector {
      */
     public void setListStyle(ListStyle listStyle);
 
-    /**
-     *
-     * @param styleSimpleExtensions
-     */
-    public void setStyleSimpleExtensions(List<SimpleType> styleSimpleExtensions);
-
-    /**
-     * 
-     * @param styleObjectExtensions
-     */
-    public void setStyleObjectExtensions(List<AbstractObject> styleObjectExtensions);
 }

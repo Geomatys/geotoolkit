@@ -1,8 +1,6 @@
 package org.geotoolkit.data.kml.model;
 
 import java.util.Calendar;
-import java.util.List;
-import org.geotoolkit.data.kml.xsd.SimpleType;
 
 /**
  * <p>This interface maps TimeSpan element.</p>
@@ -45,18 +43,6 @@ public interface TimeSpan extends AbstractTimePrimitive{
 
     /**
      *
-     * @return the list of TimeSpan simple extensions.
-     */
-    public List<SimpleType> getTimeSpanSimpleExtensions();
-
-    /**
-     *
-     * @return the list of TimeSpan object extensions.
-     */
-    public List<AbstractObject> getTimeSpanObjectExtensions();
-
-    /**
-     *
      * @param begin
      */
     public void setBegin(Calendar begin);
@@ -67,15 +53,4 @@ public interface TimeSpan extends AbstractTimePrimitive{
      */
     public void setEnd(Calendar end);
 
-    /**
-     *
-     * @param timeSpanSimpleExtensions
-     */
-    public void setTimeSpanSimpleExtensions(List<SimpleType> timeSpanSimpleExtensions);
-
-    /**
-     * 
-     * @param imeSpanObjectExtensionst
-     */
-    public void setTimeSpanObjectExtensions(List<AbstractObject> timeSpanObjectExtensions);
 }

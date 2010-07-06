@@ -14,15 +14,15 @@ public class DefaultDelete implements Delete {
     /**
      * 
      */
-    public DefaultDelete(){
+    public DefaultDelete() {
         this.features = EMPTY_LIST;
     }
 
     /**
-     *
+     * 
      * @param features
      */
-    public DefaultDelete(List<AbstractFeature> features){
+    public DefaultDelete(List<AbstractFeature> features) {
         this.features = (features == null) ? EMPTY_LIST : features;
     }
 
@@ -31,7 +31,9 @@ public class DefaultDelete implements Delete {
      * @{@inheritDoc }
      */
     @Override
-    public List<AbstractFeature> getFeatures() {return this.features;}
+    public List<AbstractFeature> getFeatures() {
+        return this.features;
+    }
 
     /**
      *

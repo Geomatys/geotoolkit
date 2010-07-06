@@ -3,7 +3,6 @@ package org.geotoolkit.data.kml.model;
 import java.awt.Color;
 import java.util.List;
 import org.geotoolkit.data.kml.xsd.SimpleType;
-import static java.util.Collections.*;
 import static org.geotoolkit.data.kml.xml.KmlModelConstants.*;
 
 /**
@@ -13,41 +12,51 @@ import static org.geotoolkit.data.kml.xml.KmlModelConstants.*;
 public class DefaultLabelStyle extends DefaultAbstractColorStyle implements LabelStyle {
 
     private double scale;
-    private List<SimpleType> labelStyleSimpleExtensions;
-    private List<AbstractObject> labelStyleObjectExtensions;
-
-    public DefaultLabelStyle() {
-        this.scale = DEF_SCALE;
-        this.labelStyleSimpleExtensions = EMPTY_LIST;
-        this.labelStyleObjectExtensions = EMPTY_LIST;
-    }
 
     /**
      *
+     */
+    public DefaultLabelStyle() {
+        this.scale = DEF_SCALE;
+    }
+
+    /**
+     * 
      * @param objectSimpleExtensions
      * @param idAttributes
-     * @param subStyleSimpleExtensions
-     * @param subStyleObjectExtensions
+     * @param abstractSubStyleSimpleExtensions
+     * @param abstractSubStyleObjectExtensions
      * @param color
      * @param colorMode
      * @param colorStyleSimpleExtensions
      * @param colorStyleObjectExtensions
      * @param scale
-     * @param iconStyleSimpleExtensions
-     * @param iconStyleObjectExtensions
+     * @param labelStyleSimpleExtensions
+     * @param labelStyleObjectExtensions
      */
-    public DefaultLabelStyle(List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
-            List<SimpleType> subStyleSimpleExtensions, List<AbstractObject> subStyleObjectExtensions,
+    public DefaultLabelStyle(List<SimpleType> objectSimpleExtensions,
+            IdAttributes idAttributes,
+            List<SimpleType> abstractSubStyleSimpleExtensions,
+            List<AbstractObject> abstractSubStyleObjectExtensions,
             Color color, ColorMode colorMode,
-            List<SimpleType> colorStyleSimpleExtensions, List<AbstractObject> colorStyleObjectExtensions,
+            List<SimpleType> colorStyleSimpleExtensions,
+            List<AbstractObject> colorStyleObjectExtensions,
             double scale,
-            List<SimpleType> iconStyleSimpleExtensions, List<AbstractObject> iconStyleObjectExtensions) {
+            List<SimpleType> labelStyleSimpleExtensions,
+            List<AbstractObject> labelStyleObjectExtensions) {
         super(objectSimpleExtensions, idAttributes,
-                subStyleSimpleExtensions, subStyleObjectExtensions,
-                color, colorMode, colorStyleSimpleExtensions, colorStyleObjectExtensions);
+                abstractSubStyleSimpleExtensions,
+                abstractSubStyleObjectExtensions,
+                color, colorMode,
+                colorStyleSimpleExtensions,
+                colorStyleObjectExtensions);
         this.scale = scale;
-        this.labelStyleSimpleExtensions = (iconStyleSimpleExtensions == null) ? EMPTY_LIST : iconStyleSimpleExtensions;
-        this.labelStyleObjectExtensions = (iconStyleObjectExtensions == null) ? EMPTY_LIST : iconStyleObjectExtensions;
+        if (labelStyleSimpleExtensions != null) {
+            this.extensions().simples(Extensions.Names.LABEL_STYLE).addAll(labelStyleSimpleExtensions);
+        }
+        if (labelStyleObjectExtensions != null) {
+            this.extensions().complexes(Extensions.Names.LABEL_STYLE).addAll(labelStyleObjectExtensions);
+        }
     }
 
     /**
@@ -64,44 +73,8 @@ public class DefaultLabelStyle extends DefaultAbstractColorStyle implements Labe
      * @{@inheritDoc }
      */
     @Override
-    public List<SimpleType> getLabelStyleSimpleExtensions() {
-        return this.labelStyleSimpleExtensions;
-    }
-
-    /**
-     *
-     * @{@inheritDoc }
-     */
-    @Override
-    public List<AbstractObject> getLabelStyleObjectExtensions() {
-        return this.labelStyleObjectExtensions;
-    }
-
-    /**
-     *
-     * @{@inheritDoc }
-     */
-    @Override
     public void setScale(double scale) {
         this.scale = scale;
-    }
-
-    /**
-     *
-     * @{@inheritDoc }
-     */
-    @Override
-    public void setLabelStyleSimpleExtensions(List<SimpleType> labelStyleSimpleExtensions) {
-        this.labelStyleSimpleExtensions = labelStyleSimpleExtensions;
-    }
-
-    /**
-     *
-     * @{@inheritDoc }
-     */
-    @Override
-    public void setLabelStyleObjectExtensions(List<AbstractObject> labelStyleObjectExtensions) {
-        this.labelStyleObjectExtensions = labelStyleObjectExtensions;
     }
 
     @Override

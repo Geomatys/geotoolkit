@@ -16,26 +16,22 @@ public class DefaultListStyle extends DefaultAbstractSubStyle implements ListSty
     private Color bgColor;
     private List<ItemIcon> itemIcons;
     private int maxSnippetLines;
-    private List<SimpleType> listStyleSimpleExtensions;
-    private List<AbstractObject> listStyleObjectExtensions;
 
     /**
      * 
      */
-    public DefaultListStyle(){
+    public DefaultListStyle() {
         this.bgColor = DEF_BG_COLOR;
         this.itemIcons = EMPTY_LIST;
         this.maxSnippetLines = DEF_MAX_SNIPPET_LINES;
-        this.listStyleSimpleExtensions = EMPTY_LIST;
-        this.listStyleObjectExtensions = EMPTY_LIST;
     }
 
     /**
      *
      * @param objectSimpleExtensions
      * @param idAttributes
-     * @param subStyleSimpleExtensions
-     * @param subStyleObjectExtensions
+     * @param abstractSubStyleSimpleExtensions
+     * @param abstractSubStyleObjectExtensions
      * @param listItem
      * @param bgColor
      * @param itemIcons
@@ -43,18 +39,26 @@ public class DefaultListStyle extends DefaultAbstractSubStyle implements ListSty
      * @param listStyleSimpleExtensions
      * @param listStyleObjectExtensions
      */
-    public DefaultListStyle(List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
-            List<SimpleType> subStyleSimpleExtensions, List<AbstractObject> subStyleObjectExtensions,
+    public DefaultListStyle(List<SimpleType> objectSimpleExtensions,
+            IdAttributes idAttributes,
+            List<SimpleType> abstractSubStyleSimpleExtensions,
+            List<AbstractObject> abstractSubStyleObjectExtensions,
             ListItem listItem, Color bgColor, List<ItemIcon> itemIcons, int maxSnippetLines,
-            List<SimpleType> listStyleSimpleExtensions, List<AbstractObject> listStyleObjectExtensions){
+            List<SimpleType> listStyleSimpleExtensions,
+            List<AbstractObject> listStyleObjectExtensions) {
         super(objectSimpleExtensions, idAttributes,
-                subStyleSimpleExtensions, subStyleObjectExtensions);
+                abstractSubStyleSimpleExtensions,
+                abstractSubStyleObjectExtensions);
         this.listItem = listItem;
         this.bgColor = bgColor;
         this.itemIcons = itemIcons;
         this.maxSnippetLines = maxSnippetLines;
-        this.listStyleSimpleExtensions = (listStyleSimpleExtensions == null) ? EMPTY_LIST : listStyleSimpleExtensions;
-        this.listStyleObjectExtensions = (listStyleObjectExtensions == null) ? EMPTY_LIST : listStyleObjectExtensions;
+        if (listStyleSimpleExtensions != null) {
+            this.extensions().simples(Extensions.Names.LIST_STYLE).addAll(listStyleSimpleExtensions);
+        }
+        if (listStyleObjectExtensions != null) {
+            this.extensions().complexes(Extensions.Names.LIST_STYLE).addAll(listStyleObjectExtensions);
+        }
     }
 
     /**
@@ -62,78 +66,8 @@ public class DefaultListStyle extends DefaultAbstractSubStyle implements ListSty
      * @{@inheritDoc }
      */
     @Override
-    public ListItem getListItem() {return this.listItem;}
-
-    /**
-     *
-     * @{@inheritDoc }
-     */
-    @Override
-    public Color getBgColor() {return this.bgColor;}
-
-    /**
-     *
-     * @{@inheritDoc }
-     */
-    @Override
-    public List<ItemIcon> getItemIcons() {return this.itemIcons;}
-
-    /**
-     *
-     * @{@inheritDoc }
-     */
-    @Override
-    public int getMaxSnippetLines() {return this.maxSnippetLines;}
-
-    /**
-     *
-     * @{@inheritDoc }
-     */
-    @Override
-    public List<SimpleType> getListStyleSimpleExtensions() {return this.listStyleSimpleExtensions;}
-
-    /**
-     *
-     * @{@inheritDoc }
-     */
-    @Override
-    public List<AbstractObject> getListStyleObjectExtensions() {return this.listStyleObjectExtensions;}
-
-    /**
-     *
-     * @{@inheritDoc }
-     */
-    @Override
-    public void setListItem(ListItem listItem) {this.listItem = listItem;}
-
-    /**
-     *
-     * @{@inheritDoc }
-     */
-    @Override
-    public void setBgColor(Color bgColor) {this.bgColor = bgColor;}
-
-    /**
-     *
-     * @{@inheritDoc }
-     */
-    @Override
-    public void setItemIcons(List<ItemIcon> itemIcons) {this.itemIcons = itemIcons;}
-
-    /**
-     *
-     * @{@inheritDoc }
-     */
-    @Override
-    public void setMaxSnippetLines(int maxSnippetLines) {this.maxSnippetLines = maxSnippetLines;}
-
-    /**
-     *
-     * @{@inheritDoc }
-     */
-    @Override
-    public void setListStyleSimpleExtensions(List<SimpleType> listStyleSimpleExtensions) {
-        this.listStyleSimpleExtensions = listStyleSimpleExtensions;
+    public ListItem getListItem() {
+        return this.listItem;
     }
 
     /**
@@ -141,18 +75,72 @@ public class DefaultListStyle extends DefaultAbstractSubStyle implements ListSty
      * @{@inheritDoc }
      */
     @Override
-    public void setListStyleObjectExtensions(List<AbstractObject> listStyleObjectExtensions) {
-        this.listStyleObjectExtensions = listStyleObjectExtensions;
+    public Color getBgColor() {
+        return this.bgColor;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public List<ItemIcon> getItemIcons() {
+        return this.itemIcons;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public int getMaxSnippetLines() {
+        return this.maxSnippetLines;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setListItem(ListItem listItem) {
+        this.listItem = listItem;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setBgColor(Color bgColor) {
+        this.bgColor = bgColor;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setItemIcons(List<ItemIcon> itemIcons) {
+        this.itemIcons = itemIcons;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setMaxSnippetLines(int maxSnippetLines) {
+        this.maxSnippetLines = maxSnippetLines;
     }
 
     @Override
-    public String toString(){
-        String resultat = super.toString()+
-                "\n\tListStyleDefault : "+
-                "\n\tlistItem : "+this.listItem+
-                "\n\tbgColor : "+this.bgColor+
-                "\n\titemIcons : "+this.itemIcons+
-                "\n\tmaxSnippetLines : "+this.maxSnippetLines;
+    public String toString() {
+        String resultat = super.toString()
+                + "\n\tListStyleDefault : "
+                + "\n\tlistItem : " + this.listItem
+                + "\n\tbgColor : " + this.bgColor
+                + "\n\titemIcons : " + this.itemIcons
+                + "\n\tmaxSnippetLines : " + this.maxSnippetLines;
         return resultat;
     }
 }

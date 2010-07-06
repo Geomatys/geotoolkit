@@ -1,9 +1,12 @@
 package org.geotoolkit.data.kml.xml;
 
+import com.vividsolutions.jts.geom.Coordinate;
+import java.net.URISyntaxException;
 import org.geotoolkit.data.xal.xml.XalReader;
 import org.geotoolkit.data.atom.xml.AtomReader;
 import java.awt.Color;
 import java.io.IOException;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -35,7 +38,6 @@ import org.geotoolkit.data.kml.model.Boundary;
 import org.geotoolkit.data.kml.model.Camera;
 import org.geotoolkit.data.kml.model.Change;
 import org.geotoolkit.data.kml.model.ColorMode;
-import org.geotoolkit.data.kml.model.Coordinate;
 import org.geotoolkit.data.kml.model.Coordinates;
 import org.geotoolkit.data.kml.model.Create;
 import org.geotoolkit.data.kml.model.Data;
@@ -166,7 +168,7 @@ public class KmlReader extends StaxStreamReader {
      *
      * @return The Kml object mapping the document.
      */
-    public Kml read() {
+    public Kml read(){
         Kml root = null;
         try {
 
@@ -189,6 +191,8 @@ public class KmlReader extends StaxStreamReader {
                         break;
                 }
             }
+        } catch (URISyntaxException ex) {
+            Logger.getLogger(KmlReader.class.getName()).log(Level.SEVERE, null, ex);
         } catch (XMLStreamException ex) {
             Logger.getLogger(KmlReader.class.getName()).log(Level.SEVERE, null, ex);
         } catch (KmlException ex) {
@@ -203,7 +207,7 @@ public class KmlReader extends StaxStreamReader {
      * @throws XMLStreamException
      * @throws KmlException
      */
-    private Kml readKml() throws XMLStreamException, KmlException {
+    private Kml readKml() throws XMLStreamException, KmlException, URISyntaxException {
         NetworkLinkControl networkLinkControl = null;
         AbstractFeature abstractFeature = null;
         List<SimpleType> kmlSimpleExtensions = null;
@@ -599,7 +603,7 @@ public class KmlReader extends StaxStreamReader {
      * @throws XMLStreamException
      * @throws KmlException
      */
-    private NetworkLinkControl readNetworkLinkControl() throws XMLStreamException, KmlException {
+    private NetworkLinkControl readNetworkLinkControl() throws XMLStreamException, KmlException, URISyntaxException {
         double minRefreshPeriod = DEF_MIN_REFRESH_PERIOD;
         double maxSessionLength = DEF_MAX_SESSION_LENGTH;
         String cookie = null;
@@ -622,7 +626,7 @@ public class KmlReader extends StaxStreamReader {
                     final String eUri = reader.getNamespaceURI();
 
                     if (URI_KML.equals(eUri)) {
-
+                        System.out.println(eName);
                         if (TAG_MIN_REFRESH_PERIOD.equals(eName)) {
                             minRefreshPeriod = parseDouble(reader.getElementText());
                         }
@@ -675,13 +679,14 @@ public class KmlReader extends StaxStreamReader {
      * @return
      * @throws XMLStreamException
      */
-    private Update readUpdate() throws XMLStreamException, KmlException{
+    private Update readUpdate() throws XMLStreamException, KmlException, URISyntaxException{
+        URI targetHref = null;
         List<Create> creates = new ArrayList<Create>();
         List<Delete> deletes = new ArrayList<Delete>();
         List<Change> changes = new ArrayList<Change>();
         List<Object> updateOpExtensions = null;
         List<Object> updateExtensions = null;
-
+        
         boucle:
         while (reader.hasNext()) {
 
@@ -691,7 +696,9 @@ public class KmlReader extends StaxStreamReader {
                     final String eUri = reader.getNamespaceURI();
 
                     if (URI_KML.equals(eUri)) {
-
+                        if (TAG_TARGET_HREF.equals(eName)) {
+                            targetHref = new URI(reader.getElementText());
+                        }
                         if (TAG_CREATE.equals(eName)) {
                             creates.add(this.readCreate());
                         }
@@ -712,7 +719,7 @@ public class KmlReader extends StaxStreamReader {
             }
         }
 
-        return KmlReader.kmlFactory.createUpdate(creates, deletes, changes, updateOpExtensions, updateExtensions);
+        return KmlReader.kmlFactory.createUpdate(targetHref, creates, deletes, changes, updateOpExtensions, updateExtensions);
     }
 
     /**

@@ -1,5 +1,6 @@
 package org.geotoolkit.data.kml;
 
+import com.vividsolutions.jts.geom.Coordinate;
 import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
@@ -10,7 +11,6 @@ import javax.xml.stream.XMLStreamException;
 import org.geotoolkit.data.kml.model.AbstractFeature;
 import org.geotoolkit.data.kml.model.AbstractGeometry;
 import org.geotoolkit.data.kml.model.AbstractStyleSelector;
-import org.geotoolkit.data.kml.model.Coordinate;
 import org.geotoolkit.data.kml.model.Coordinates;
 import org.geotoolkit.data.kml.model.Document;
 import org.geotoolkit.data.kml.model.IdAttributes;
@@ -91,24 +91,24 @@ public class DocumentTest {
         AbstractGeometry abstractGeometry0 = placemark0.getAbstractGeometry();
         assertTrue(abstractGeometry0 instanceof Point);
         Point point0 = (Point) abstractGeometry0;
-        Coordinates coordinates0 = point0.getCoordinates();
-        assertEquals(1, coordinates0.getCoordinates().size());
+        Coordinates coordinates0 = point0.getCoordinateSequence();
+        assertEquals(1, coordinates0.size());
         Coordinate coordinate00 = coordinates0.getCoordinate(0);
-        assertEquals(-122.371, coordinate00.getGeodeticLongitude(), DELTA);
-        assertEquals(37.816, coordinate00.getGeodeticLatitude(), DELTA);
-        assertEquals(0, coordinate00.getAltitude(), DELTA);
+        assertEquals(-122.371, coordinate00.x, DELTA);
+        assertEquals(37.816, coordinate00.y, DELTA);
+        assertEquals(0, coordinate00.z, DELTA);
 
         assertEquals("Document Feature 2",placemark1.getName());
         assertEquals("#exampleStyleDocument",placemark1.getStyleUrl());
         AbstractGeometry abstractGeometry1 = placemark1.getAbstractGeometry();
         assertTrue(abstractGeometry1 instanceof Point);
         Point point1 = (Point) abstractGeometry1;
-        Coordinates coordinates1 = point1.getCoordinates();
-        assertEquals(1, coordinates1.getCoordinates().size());
+        Coordinates coordinates1 = point1.getCoordinateSequence();
+        assertEquals(1, coordinates1.size());
         Coordinate coordinate10 = coordinates1.getCoordinate(0);
-        assertEquals(-122.370, coordinate10.getGeodeticLongitude(), DELTA);
-        assertEquals(37.817, coordinate10.getGeodeticLatitude(), DELTA);
-        assertEquals(0, coordinate10.getAltitude(), DELTA);
+        assertEquals(-122.370, coordinate10.x, DELTA);
+        assertEquals(37.817, coordinate10.y, DELTA);
+        assertEquals(0, coordinate10.z, DELTA);
     }
     
     @Test
@@ -121,8 +121,7 @@ public class DocumentTest {
         final double altitude00 = 0;
         final Coordinate coordinate00 = kmlFactory.createCoordinate(longitude00, latitude00, altitude00);
         final Coordinates coordinates0 = kmlFactory.createCoordinates(Arrays.asList(coordinate00));
-        final Point point0 = kmlFactory.createPoint();
-        point0.setCoordinates(coordinates0);
+        final Point point0 = kmlFactory.createPoint(coordinates0);
         placemark0.setAbstractGeometry(point0);
         placemark0.setName("Document Feature 1");
         placemark0.setStyleUrl("#exampleStyleDocument");
@@ -133,8 +132,7 @@ public class DocumentTest {
         final double altitude10 = 0;
         final Coordinate coordinate10 = kmlFactory.createCoordinate(longitude10, latitude10, altitude10);
         final Coordinates coordinates1 = kmlFactory.createCoordinates(Arrays.asList(coordinate10));
-        final Point point1 = kmlFactory.createPoint();
-        point1.setCoordinates(coordinates1);
+        final Point point1 = kmlFactory.createPoint(coordinates1);
         placemark1.setAbstractGeometry(point1);
         placemark1.setName("Document Feature 2");
         placemark1.setStyleUrl("#exampleStyleDocument");

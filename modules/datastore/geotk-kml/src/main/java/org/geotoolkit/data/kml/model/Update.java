@@ -1,5 +1,6 @@
 package org.geotoolkit.data.kml.model;
 
+import java.net.URI;
 import java.util.List;
 
 /**
@@ -33,6 +34,12 @@ public interface Update {
      *
      * @return
      */
+    public URI getTargetHref();
+
+    /**
+     *
+     * @return
+     */
     public List<Create> getCreates();
 
     /**
@@ -58,4 +65,40 @@ public interface Update {
      * @return
      */
     public List<Object> getUpdateExtensions();
+
+    /**
+     *
+     * @param targetHref
+     */
+    public void setTargetHref(URI targetHref);
+
+    /**
+     *
+     * @param creates
+     */
+    public void setCreates(List<Create> creates);
+
+    /**
+     *
+     * @param deletes
+     */
+    public void setDeletes(List<Delete> deletes);
+
+    /**
+     *
+     * @param changes
+     */
+    public void setChanges(List<Change> changes);
+
+    /**
+     *
+     * @param updateOpEXtensions
+     */
+    public void setUpdateOpExtensions(List<Object> updateOpEXtensions);
+
+    /**
+     * 
+     * @param updateExtensions
+     */
+    public void setUpdateExtensions(List<Object> updateExtensions);
 }

@@ -1,8 +1,5 @@
 package org.geotoolkit.data.kml.model;
 
-import java.util.List;
-import org.geotoolkit.data.kml.xsd.SimpleType;
-
 /**
  * <p>This interface maps Location element.</p>
  *
@@ -51,18 +48,6 @@ public interface Location extends AbstractObject {
 
     /**
      *
-     * @return the list of Location simple extensions
-     */
-    public List<SimpleType> getLocationSimpleExtensions();
-
-    /**
-     *
-     * @return the list of Location object extensions
-     */
-    public List<AbstractObject> getLocationObjectExtensions();
-
-    /**
-     *
      * @param longitude
      */
     public void setLongitude(double longitude);
@@ -78,17 +63,5 @@ public interface Location extends AbstractObject {
      * @param altitude
      */
     public void setAltitude(double altitude);
-
-    /**
-     *
-     * @param locationSimpleExtensions
-     */
-    public void setLocationSimpleExtensions(List<SimpleType> locationSimpleExtensions);
-
-    /**
-     * 
-     * @param locationObjectExtensions
-     */
-    public void setLocationObjectExtensions(List<AbstractObject> locationObjectExtensions);
 
 }

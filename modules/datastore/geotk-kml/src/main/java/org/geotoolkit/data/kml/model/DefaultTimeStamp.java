@@ -3,7 +3,6 @@ package org.geotoolkit.data.kml.model;
 import java.util.Calendar;
 import java.util.List;
 import org.geotoolkit.data.kml.xsd.SimpleType;
-import static java.util.Collections.*;
 
 /**
  *
@@ -11,20 +10,17 @@ import static java.util.Collections.*;
  */
 public class DefaultTimeStamp extends DefaultAbstractTimePrimitive implements TimeStamp {
 
+    private final Extensions exts = new Extensions();
     private Calendar when;
-    private List<SimpleType> timeStampSimpleExtensions;
-    private List<AbstractObject> timeStampObjectExtensions;
 
     /**
      * 
      */
-    public DefaultTimeStamp(){
-        this.timeStampSimpleExtensions = EMPTY_LIST;
-        this.timeStampObjectExtensions = EMPTY_LIST;
+    public DefaultTimeStamp() {
     }
 
     /**
-     *
+     * 
      * @param objectSimpleExtensions
      * @param idAttributes
      * @param abstractTimePrimitiveSimpleExtensions
@@ -33,14 +29,23 @@ public class DefaultTimeStamp extends DefaultAbstractTimePrimitive implements Ti
      * @param timeStampSimpleExtensions
      * @param timeStampObjectExtensions
      */
-    public DefaultTimeStamp(List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
-            List<SimpleType> abstractTimePrimitiveSimpleExtensions, List<AbstractObject> abstractTimePrimitiveObjectExtensions,
-            Calendar when, List<SimpleType> timeStampSimpleExtensions, List<AbstractObject> timeStampObjectExtensions) {
+    public DefaultTimeStamp(List<SimpleType> objectSimpleExtensions,
+            IdAttributes idAttributes,
+            List<SimpleType> abstractTimePrimitiveSimpleExtensions,
+            List<AbstractObject> abstractTimePrimitiveObjectExtensions,
+            Calendar when,
+            List<SimpleType> timeStampSimpleExtensions,
+            List<AbstractObject> timeStampObjectExtensions) {
         super(objectSimpleExtensions, idAttributes,
-                abstractTimePrimitiveSimpleExtensions, abstractTimePrimitiveObjectExtensions);
+                abstractTimePrimitiveSimpleExtensions,
+                abstractTimePrimitiveObjectExtensions);
         this.when = when;
-        this.timeStampSimpleExtensions = (timeStampSimpleExtensions == null) ? EMPTY_LIST : timeStampSimpleExtensions;
-        this.timeStampObjectExtensions = (timeStampObjectExtensions == null) ? EMPTY_LIST : timeStampObjectExtensions;
+        if (timeStampSimpleExtensions != null) {
+            this.extensions().simples(Extensions.Names.TIME_STAMP).addAll(timeStampSimpleExtensions);
+        }
+        if (timeStampObjectExtensions != null) {
+            this.extensions().complexes(Extensions.Names.TIME_STAMP).addAll(timeStampObjectExtensions);
+        }
     }
 
     /**
@@ -57,43 +62,7 @@ public class DefaultTimeStamp extends DefaultAbstractTimePrimitive implements Ti
      * @{@inheritDoc }
      */
     @Override
-    public List<SimpleType> getTimeStampSimpleExtensions() {
-        return this.timeStampSimpleExtensions;
-    }
-
-    /**
-     *
-     * @{@inheritDoc }
-     */
-    @Override
-    public List<AbstractObject> getTimeStampObjectExtensions() {
-        return this.timeStampObjectExtensions;
-    }
-
-    /**
-     *
-     * @{@inheritDoc }
-     */
-    @Override
     public void setWhen(Calendar when) {
         this.when = when;
-    }
-
-    /**
-     *
-     * @{@inheritDoc }
-     */
-    @Override
-    public void setTimeStampSimpleExtensions(List<SimpleType> timeStampSimpleExtensions) {
-        this.timeStampSimpleExtensions = timeStampSimpleExtensions;
-    }
-
-    /**
-     *
-     * @{@inheritDoc }
-     */
-    @Override
-    public void setTimeStampObjectExtensions(List<AbstractObject> timeStampObjectExtensions) {
-        this.timeStampObjectExtensions = timeStampObjectExtensions;
     }
 }

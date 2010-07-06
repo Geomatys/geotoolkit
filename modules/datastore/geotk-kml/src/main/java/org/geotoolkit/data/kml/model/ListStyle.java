@@ -2,7 +2,6 @@ package org.geotoolkit.data.kml.model;
 
 import java.awt.Color;
 import java.util.List;
-import org.geotoolkit.data.kml.xsd.SimpleType;
 
 /**
  * <p>This interface maps ListStyle.</p>
@@ -56,19 +55,7 @@ public interface ListStyle extends AbstractSubStyle {
      * @return
      */
     public int getMaxSnippetLines();
-
-    /**
-     *
-     * @return the list of ListStyle simple extensions.
-     */
-    public List<SimpleType> getListStyleSimpleExtensions();
-
-    /**
-     *
-     * @return the list of ListStyle object extensions.
-     */
-    public List<AbstractObject> getListStyleObjectExtensions();
-
+    
     /**
      *
      * @param listItem
@@ -92,17 +79,5 @@ public interface ListStyle extends AbstractSubStyle {
      * @param maxSnippetLines
      */
     public void setMaxSnippetLines(int maxSnippetLines);
-
-    /**
-     *
-     * @param listStyleSimpleExtensions
-     */
-    public void setListStyleSimpleExtensions(List<SimpleType> listStyleSimpleExtensions);
-
-    /**
-     *
-     * @param listStyleObjectExtensions
-     */
-    public void setListStyleObjectExtensions(List<AbstractObject> listStyleObjectExtensions);
 
 }

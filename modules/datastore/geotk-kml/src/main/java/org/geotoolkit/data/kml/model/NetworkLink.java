@@ -1,8 +1,5 @@
 package org.geotoolkit.data.kml.model;
 
-import java.util.List;
-import org.geotoolkit.data.kml.xsd.SimpleType;
-
 /**
  * <p>This interface maps NetworkLink element.</p>
  *
@@ -57,18 +54,6 @@ public interface NetworkLink extends AbstractFeature {
 
     /**
      *
-     * @return the list of NetworkLink simple extensions.
-     */
-    public List<SimpleType> getNetworkLinkSimpleExtensions();
-
-    /**
-     *
-     * @return the list of NetworkLink object extensions.
-     */
-    public List<AbstractObject> getNetworkLinkObjectExtensions();
-
-    /**
-     *
      * @param refreshVisibility
      */
     public void setRefreshVisibility(boolean refreshVisibility);
@@ -84,17 +69,5 @@ public interface NetworkLink extends AbstractFeature {
      * @param link
      */
     public void setLink(Link link);
-
-    /**
-     *
-     * @param networkLinkSimpleExtensions
-     */
-    public void setNetworkLinkSimpleExtensions(List<SimpleType> networkLinkSimpleExtensions);
-
-    /**
-     *
-     * @param networkLinkObjectExtensions
-     */
-    public void setNetworkLinkObjectExtensions(List<AbstractObject> networkLinkObjectExtensions);
 
 }

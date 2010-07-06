@@ -3,7 +3,6 @@ package org.geotoolkit.data.kml.model;
 import java.util.Calendar;
 import java.util.List;
 import org.geotoolkit.data.kml.xsd.SimpleType;
-import static java.util.Collections.*;
 import static org.geotoolkit.data.kml.xml.KmlModelConstants.*;
 
 /**
@@ -12,6 +11,7 @@ import static org.geotoolkit.data.kml.xml.KmlModelConstants.*;
  */
 public class DefaultNetworkLinkControl implements NetworkLinkControl {
 
+    private Extensions extensions = new Extensions();
     private double minRefreshPeriod;
     private double maxSessionLength;
     private String cookie;
@@ -22,17 +22,13 @@ public class DefaultNetworkLinkControl implements NetworkLinkControl {
     private Calendar expires;
     private Update update;
     private AbstractView view;
-    private List<SimpleType> networkLinkControlSimpleExtensions;
-    private List<AbstractObject> networkLinkControlObjectExtensions;
 
     /**
      *
      */
-    public DefaultNetworkLinkControl(){
+    public DefaultNetworkLinkControl() {
         this.minRefreshPeriod = DEF_MIN_REFRESH_PERIOD;
         this.maxSessionLength = DEF_MAX_SESSION_LENGTH;
-        this.networkLinkControlSimpleExtensions = EMPTY_LIST;
-        this.networkLinkControlObjectExtensions = EMPTY_LIST;
     }
 
     /**
@@ -44,16 +40,18 @@ public class DefaultNetworkLinkControl implements NetworkLinkControl {
      * @param linkName
      * @param linkDescription
      * @param linkSnippet
-     * @param expires
+     * @param expire
      * @param update
      * @param view
      * @param networkLinkControlSimpleExtensions
      * @param networkLinkControlObjectExtensions
      */
     public DefaultNetworkLinkControl(double minRefreshPeriod,
-            double maxSessionLength, String cookie, String message, String linkName, String linkDescription,
+            double maxSessionLength, String cookie, String message,
+            String linkName, String linkDescription,
             Snippet linkSnippet, Calendar expire, Update update, AbstractView view,
-            List<SimpleType> networkLinkControlSimpleExtensions, List<AbstractObject> networkLinkControlObjectExtensions){
+            List<SimpleType> networkLinkControlSimpleExtensions,
+            List<AbstractObject> networkLinkControlObjectExtensions) {
         this.minRefreshPeriod = minRefreshPeriod;
         this.maxSessionLength = maxSessionLength;
         this.cookie = cookie;
@@ -64,8 +62,12 @@ public class DefaultNetworkLinkControl implements NetworkLinkControl {
         this.expires = expire;
         this.update = update;
         this.view = view;
-        this.networkLinkControlSimpleExtensions = (networkLinkControlSimpleExtensions == null) ? EMPTY_LIST : networkLinkControlSimpleExtensions;
-        this.networkLinkControlObjectExtensions = (networkLinkControlObjectExtensions == null) ? EMPTY_LIST : networkLinkControlObjectExtensions;
+        if (networkLinkControlSimpleExtensions != null) {
+            this.extensions().simples(Extensions.Names.NETWORK_LINK_CONTROL).addAll(networkLinkControlSimpleExtensions);
+        }
+        if (networkLinkControlObjectExtensions != null) {
+            this.extensions().complexes(Extensions.Names.NETWORK_LINK_CONTROL).addAll(networkLinkControlObjectExtensions);
+        }
     }
 
     /**
@@ -73,84 +75,90 @@ public class DefaultNetworkLinkControl implements NetworkLinkControl {
      * @{@inheritDoc }
      */
     @Override
-    public double getMinRefreshPeriod() {return this.minRefreshPeriod;}
+    public double getMinRefreshPeriod() {
+        return this.minRefreshPeriod;
+    }
 
     /**
      *
      * @{@inheritDoc }
      */
     @Override
-    public double getMaxSessionLength() {return this.maxSessionLength;}
+    public double getMaxSessionLength() {
+        return this.maxSessionLength;
+    }
 
     /**
      *
      * @{@inheritDoc }
      */
     @Override
-    public String getCookie() {return this.cookie;}
+    public String getCookie() {
+        return this.cookie;
+    }
 
     /**
      *
      * @{@inheritDoc }
      */
     @Override
-    public String getMessage() {return this.message;}
+    public String getMessage() {
+        return this.message;
+    }
 
     /**
      *
      * @{@inheritDoc }
      */
     @Override
-    public String getLinkName() {return this.linkName;}
+    public String getLinkName() {
+        return this.linkName;
+    }
 
     /**
      *
      * @{@inheritDoc }
      */
     @Override
-    public String getLinkDescription() {return this.linkDescription;}
+    public String getLinkDescription() {
+        return this.linkDescription;
+    }
 
     /**
      *
      * @{@inheritDoc }
      */
     @Override
-    public Snippet getLinkSnippet() {return this.linkSnippet;}
+    public Snippet getLinkSnippet() {
+        return this.linkSnippet;
+    }
 
     /**
      *
      * @{@inheritDoc }
      */
     @Override
-    public Calendar getExpires() {return this.expires;}
+    public Calendar getExpires() {
+        return this.expires;
+    }
 
     /**
      *
      * @{@inheritDoc }
      */
     @Override
-    public Update getUpdate() {return this.update;}
+    public Update getUpdate() {
+        return this.update;
+    }
 
     /**
      *
      * @{@inheritDoc }
      */
     @Override
-    public AbstractView getView() {return this.view;}
-
-    /**
-     *
-     * @{@inheritDoc }
-     */
-    @Override
-    public List<SimpleType> getNetworkLinkControlSimpleExtensions() {return this.networkLinkControlSimpleExtensions;}
-
-    /**
-     *
-     * @{@inheritDoc }
-     */
-    @Override
-    public List<AbstractObject> getNetworkLinkControlObjectExtensions() {return this.networkLinkControlObjectExtensions;}
+    public AbstractView getView() {
+        return this.view;
+    }
 
     /**
      *
@@ -242,22 +250,8 @@ public class DefaultNetworkLinkControl implements NetworkLinkControl {
         this.view = abstractView;
     }
 
-    /**
-     *
-     * @{@inheritDoc }
-     */
     @Override
-    public void setNetworkLinkControlSimpleExtensions(List<SimpleType> networkLinkControlSimpleExtensions) {
-        this.networkLinkControlSimpleExtensions = networkLinkControlSimpleExtensions;
+    public Extensions extensions() {
+        return this.extensions;
     }
-
-    /**
-     *
-     * @{@inheritDoc }
-     */
-    @Override
-    public void setNetworkLinkControlObjectExtensions(List<AbstractObject> networkLinkControlObjectExtensions) {
-        this.networkLinkControlObjectExtensions = networkLinkControlObjectExtensions;
-    }
-
 }

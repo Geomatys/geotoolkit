@@ -1,8 +1,5 @@
 package org.geotoolkit.data.kml.model;
 
-import java.util.List;
-import org.geotoolkit.data.kml.xsd.SimpleType;
-
 /**
  * <p>This interface maps Point element.</p>
  *
@@ -35,6 +32,12 @@ import org.geotoolkit.data.kml.xsd.SimpleType;
  * @author Samuel Andrés
  */
 public interface Point extends AbstractGeometry{
+    
+    /**
+     *
+     * @return
+     */
+    Coordinates getCoordinateSequence();
 
     /**
      *
@@ -50,24 +53,6 @@ public interface Point extends AbstractGeometry{
 
     /**
      *
-     * @return
-     */
-    public Coordinates getCoordinates();
-
-    /**
-     *
-     * @return the list of Point simple extensions.
-     */
-    public List<SimpleType> getPointSimpleExtensions();
-
-    /**
-     * 
-     * @return the list of Point object extensions.
-     */
-    public List<AbstractObject> getPointObjectExtensions();
-
-    /**
-     *
      * @param extrude
      */
     public void setExtrude(boolean extrude);
@@ -77,22 +62,4 @@ public interface Point extends AbstractGeometry{
      * @param altitudeMode
      */
     public void setAltitudeMode(AltitudeMode altitudeMode);
-
-    /**
-     *
-     * @param coordinates
-     */
-    public void setCoordinates(Coordinates coordinates);
-
-    /**
-     *
-     * @param pointSimpleExtensions
-     */
-    public void setPointSimpleExtensions(List<SimpleType> pointSimpleExtensions);
-
-    /**
-     *
-     * @param pointObjectExensions
-     */
-    public void setPointObjectExtensions(List<AbstractObject> pointObjectExensions);
 }

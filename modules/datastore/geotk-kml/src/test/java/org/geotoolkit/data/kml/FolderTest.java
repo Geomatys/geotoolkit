@@ -1,5 +1,6 @@
 package org.geotoolkit.data.kml;
 
+import com.vividsolutions.jts.geom.Coordinate;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
@@ -8,7 +9,6 @@ import javax.xml.stream.XMLStreamException;
 import org.geotoolkit.data.kml.model.AbstractFeature;
 import org.geotoolkit.data.kml.model.AbstractGeometry;
 import org.geotoolkit.data.kml.model.Boundary;
-import org.geotoolkit.data.kml.model.Coordinate;
 import org.geotoolkit.data.kml.model.Coordinates;
 import org.geotoolkit.data.kml.model.Folder;
 import org.geotoolkit.data.kml.model.Kml;
@@ -84,53 +84,53 @@ public class FolderTest {
         AbstractGeometry abstractGeometry0 = placemark0.getAbstractGeometry();
         assertTrue(abstractGeometry0 instanceof Point);
         Point point = (Point) abstractGeometry0;
-        Coordinates coordinates0 = point.getCoordinates();
-        assertEquals(1, coordinates0.getCoordinates().size());
+        Coordinates coordinates0 = point.getCoordinateSequence();
+        assertEquals(1, coordinates0.size());
         Coordinate coordinate00 = coordinates0.getCoordinate(0);
-        assertEquals(-122.377588, coordinate00.getGeodeticLongitude(), DELTA);
-        assertEquals(37.830266, coordinate00.getGeodeticLatitude(), DELTA);
-        assertEquals(0, coordinate00.getAltitude(), DELTA);
+        assertEquals(-122.377588, coordinate00.x, DELTA);
+        assertEquals(37.830266, coordinate00.y, DELTA);
+        assertEquals(0, coordinate00.z, DELTA);
 
         assertEquals("Folder object 2 (Polygon)", placemark1.getName());
         AbstractGeometry abstractGeometry1 = placemark1.getAbstractGeometry();
         assertTrue(abstractGeometry1 instanceof Polygon);
         Polygon polygon = (Polygon) abstractGeometry1;
-        Boundary outerBoundaryIs = (Boundary) polygon.getOuterBoundaryIs();
+        Boundary outerBoundaryIs = (Boundary) polygon.getOuterBoundary();
         LinearRing linearRing = outerBoundaryIs.getLinearRing();
-        Coordinates coordinates1 = linearRing.getCoordinates();
-        assertEquals(4, coordinates1.getCoordinates().size());
+        Coordinates coordinates1 = linearRing.getCoordinateSequence();
+        assertEquals(4, coordinates1.size());
         Coordinate coordinate10 = coordinates1.getCoordinate(0);
-        assertEquals(-122.377830, coordinate10.getGeodeticLongitude(), DELTA);
-        assertEquals(37.830445, coordinate10.getGeodeticLatitude(), DELTA);
-        assertEquals(0, coordinate10.getAltitude(), DELTA);
+        assertEquals(-122.377830, coordinate10.x, DELTA);
+        assertEquals(37.830445, coordinate10.y, DELTA);
+        assertEquals(0, coordinate10.z, DELTA);
         Coordinate coordinate11 = coordinates1.getCoordinate(1);
-        assertEquals(-122.377576, coordinate11.getGeodeticLongitude(), DELTA);
-        assertEquals(37.830631, coordinate11.getGeodeticLatitude(), DELTA);
-        assertEquals(0, coordinate11.getAltitude(), DELTA);
+        assertEquals(-122.377576, coordinate11.x, DELTA);
+        assertEquals(37.830631, coordinate11.y, DELTA);
+        assertEquals(0, coordinate11.z, DELTA);
         Coordinate coordinate12 = coordinates1.getCoordinate(2);
-        assertEquals(-122.377840, coordinate12.getGeodeticLongitude(), DELTA);
-        assertEquals(37.830642, coordinate12.getGeodeticLatitude(), DELTA);
-        assertEquals(0, coordinate12.getAltitude(), DELTA);
+        assertEquals(-122.377840, coordinate12.x, DELTA);
+        assertEquals(37.830642, coordinate12.y, DELTA);
+        assertEquals(0, coordinate12.z, DELTA);
         Coordinate coordinate13 = coordinates1.getCoordinate(3);
-        assertEquals(-122.377830, coordinate13.getGeodeticLongitude(), DELTA);
-        assertEquals(37.830445, coordinate13.getGeodeticLatitude(), DELTA);
-        assertEquals(0, coordinate13.getAltitude(), DELTA);
+        assertEquals(-122.377830, coordinate13.x, DELTA);
+        assertEquals(37.830445, coordinate13.y, DELTA);
+        assertEquals(0, coordinate13.z, DELTA);
 
         assertEquals("Folder object 3 (Path)", placemark2.getName());
         AbstractGeometry abstractGeometry2 = placemark2.getAbstractGeometry();
         assertTrue(abstractGeometry2 instanceof LineString);
         LineString lineString = (LineString) abstractGeometry2;
         assertTrue(lineString.getTessellate());
-        Coordinates coordinates2 = lineString.getCoordinates();
-        assertEquals(2, coordinates2.getCoordinates().size());
+        Coordinates coordinates2 = lineString.getCoordinateSequence();
+        assertEquals(2, coordinates2.size());
         Coordinate coordinate20 = coordinates2.getCoordinate(0);
-        assertEquals(-122.378009, coordinate20.getGeodeticLongitude(), DELTA);
-        assertEquals(37.830128, coordinate20.getGeodeticLatitude(), DELTA);
-        assertEquals(0, coordinate20.getAltitude(), DELTA);
+        assertEquals(-122.378009, coordinate20.x, DELTA);
+        assertEquals(37.830128, coordinate20.y, DELTA);
+        assertEquals(0, coordinate20.z, DELTA);
         Coordinate coordinate21 = coordinates2.getCoordinate(1);
-        assertEquals(-122.377885, coordinate21.getGeodeticLongitude(), DELTA);
-        assertEquals(37.830379, coordinate21.getGeodeticLatitude(), DELTA);
-        assertEquals(0, coordinate21.getAltitude(), DELTA);
+        assertEquals(-122.377885, coordinate21.x, DELTA);
+        assertEquals(37.830379, coordinate21.y, DELTA);
+        assertEquals(0, coordinate21.z, DELTA);
     }
 
     @Test
@@ -143,8 +143,7 @@ public class FolderTest {
         final double altitude00 = 0;
         final Coordinate coordinate00 = kmlFactory.createCoordinate(longitude00, latitude00, altitude00);
         final Coordinates coordinates0 = kmlFactory.createCoordinates(Arrays.asList(coordinate00));
-        final Point point = kmlFactory.createPoint();
-        point.setCoordinates(coordinates0);
+        final Point point = kmlFactory.createPoint(coordinates0);
         placemark0.setAbstractGeometry(point);
         placemark0.setName("Folder object 1 (Placemark)");
 
@@ -166,12 +165,10 @@ public class FolderTest {
         final Coordinate coordinate12 = kmlFactory.createCoordinate(longitude12, latitude12, altitude12);
         final Coordinate coordinate13 = kmlFactory.createCoordinate(longitude13, latitude13, altitude13);
         final Coordinates coordinates1 = kmlFactory.createCoordinates(Arrays.asList(coordinate10, coordinate11, coordinate12, coordinate13));
-        final LinearRing linearRing = kmlFactory.createLinearRing();
-        linearRing.setCoordinates(coordinates1);
+        final LinearRing linearRing = kmlFactory.createLinearRing(coordinates1);
         Boundary outerBoundaryIs = kmlFactory.createBoundary();
         outerBoundaryIs.setLinearRing(linearRing);
-        final Polygon polygon = kmlFactory.createPolygon();
-        polygon.setOuterBoundaryIs(outerBoundaryIs);
+        final Polygon polygon = kmlFactory.createPolygon(outerBoundaryIs, null);
         placemark1.setAbstractGeometry(polygon);
         placemark1.setName("Folder object 2 (Polygon)");
 
@@ -185,8 +182,7 @@ public class FolderTest {
         final Coordinate coordinate20 = kmlFactory.createCoordinate(longitude20, latitude20, altitude20);
         final Coordinate coordinate21 = kmlFactory.createCoordinate(longitude21, latitude21, altitude21);
         final Coordinates coordinates2 = kmlFactory.createCoordinates(Arrays.asList(coordinate20, coordinate21));
-        final LineString lineString = kmlFactory.createLineString();
-        lineString.setCoordinates(coordinates2);
+        final LineString lineString = kmlFactory.createLineString(coordinates2);
         lineString.setTessellate(true);
         placemark2.setAbstractGeometry(lineString);
         placemark2.setName("Folder object 3 (Path)");

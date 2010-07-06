@@ -11,16 +11,12 @@ import static java.util.Collections.*;
 public class DefaultMultiGeometry extends DefaultAbstractGeometry implements MultiGeometry {
 
     private List<AbstractGeometry> geometries;
-    private List<SimpleType> multiGeometrySimpleExtensions;
-    private List<AbstractObject> multiGeometryObjectExtensions;
 
     /**
      * 
      */
     public DefaultMultiGeometry() {
         this.geometries = EMPTY_LIST;
-        this.multiGeometrySimpleExtensions = EMPTY_LIST;
-        this.multiGeometryObjectExtensions = EMPTY_LIST;
     }
 
     /**
@@ -41,10 +37,15 @@ public class DefaultMultiGeometry extends DefaultAbstractGeometry implements Mul
             List<SimpleType> multiGeometrySimpleExtensions,
             List<AbstractObject> multiGeometryObjectExtensions) {
         super(objectSimpleExtensions, idAttributes,
-                abstractGeometrySimpleExtensions, abstractGeometryObjectExtensions);
+                abstractGeometrySimpleExtensions,
+                abstractGeometryObjectExtensions);
         this.geometries = (geometries == null) ? EMPTY_LIST : geometries;
-        this.multiGeometrySimpleExtensions = (multiGeometrySimpleExtensions == null) ? EMPTY_LIST : multiGeometrySimpleExtensions;
-        this.multiGeometryObjectExtensions = (multiGeometryObjectExtensions == null) ? EMPTY_LIST : multiGeometryObjectExtensions;
+        if (multiGeometrySimpleExtensions != null) {
+            this.extensions().simples(Extensions.Names.MULTI_GEOMETRY).addAll(multiGeometrySimpleExtensions);
+        }
+        if (multiGeometryObjectExtensions != null) {
+            this.extensions().complexes(Extensions.Names.MULTI_GEOMETRY).addAll(multiGeometryObjectExtensions);
+        }
     }
 
     /**
@@ -61,43 +62,7 @@ public class DefaultMultiGeometry extends DefaultAbstractGeometry implements Mul
      * @{@inheritDoc }
      */
     @Override
-    public List<SimpleType> getMultiGeometrySimpleExtensions() {
-        return this.multiGeometrySimpleExtensions;
-    }
-
-    /**
-     *
-     * @{@inheritDoc }
-     */
-    @Override
-    public List<AbstractObject> getMultiGeometryObjectExtensions() {
-        return this.multiGeometryObjectExtensions;
-    }
-
-    /**
-     *
-     * @{@inheritDoc }
-     */
-    @Override
     public void setGeometries(List<AbstractGeometry> geometries) {
         this.geometries = geometries;
-    }
-
-    /**
-     *
-     * @{@inheritDoc }
-     */
-    @Override
-    public void setMultiGeometrySimpleExtensions(List<SimpleType> multiGeometrySimpleExtensions) {
-        this.multiGeometrySimpleExtensions = multiGeometrySimpleExtensions;
-    }
-
-    /**
-     *
-     * @{@inheritDoc }
-     */
-    @Override
-    public void setMultiGeometryObjectExtensions(List<AbstractObject> multiGeometryObjectExtensions) {
-        this.multiGeometryObjectExtensions = multiGeometryObjectExtensions;
     }
 }

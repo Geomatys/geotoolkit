@@ -1,8 +1,5 @@
 package org.geotoolkit.data.kml.model;
 
-import java.util.List;
-import org.geotoolkit.data.kml.xsd.SimpleType;
-
 /**
  *
  * <p>This interface maps LatLonBox element.</p>
@@ -45,32 +42,8 @@ public interface LatLonBox extends AbstractLatLonBox {
 
     /**
      *
-     * @return the list of LatLonBox simple extensions.
-     */
-    public List<SimpleType> getLatLonBoxSimpleExtensions();
-
-    /**
-     *
-     * @return the list of LatLonBox object extensions.
-     */
-    public List<AbstractObject> getLatLonBoxObjectExtensions();
-
-    /**
-     *
      * @param rotation
      */
     public void setRotation(double rotation);
-
-    /**
-     *
-     * @param latLonBonSimpleExtenstions
-     */
-    public void setLatLonBoxSimpleExtensions(List<SimpleType> latLonBoxSimpleExtensions);
-
-    /**
-     * 
-     * @param latLonBoxObjectExtensions
-     */
-    public void setLatLonBoxObjectExtensions(List<AbstractObject> latLonBoxObjectExtensions);
 
 }

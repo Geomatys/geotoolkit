@@ -3,7 +3,6 @@ package org.geotoolkit.data.kml.model;
 import java.util.List;
 import org.geotoolkit.data.kml.KmlUtilities;
 import org.geotoolkit.data.kml.xsd.SimpleType;
-import static java.util.Collections.*;
 import static org.geotoolkit.data.kml.xml.KmlModelConstants.*;
 
 /**
@@ -13,13 +12,12 @@ import static org.geotoolkit.data.kml.xml.KmlModelConstants.*;
 public class DefaultLatLonBox extends DefaultAbstractLatLonBox implements LatLonBox {
 
     private double rotation;
-    private List<SimpleType> latLonBoxSimpleExtensions;
-    private List<AbstractObject> latLonBoxObjectExtensions;
 
+    /**
+     * 
+     */
     public DefaultLatLonBox() {
         this.rotation = DEF_ROTATION;
-        this.latLonBoxSimpleExtensions = EMPTY_LIST;
-        this.latLonBoxObjectExtensions = EMPTY_LIST;
     }
 
     /**
@@ -36,16 +34,25 @@ public class DefaultLatLonBox extends DefaultAbstractLatLonBox implements LatLon
      * @param latLonBoxSimpleExtensions
      * @param latLonBoxObjectExtensions
      */
-    public DefaultLatLonBox(List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
+    public DefaultLatLonBox(List<SimpleType> objectSimpleExtensions,
+            IdAttributes idAttributes,
             double north, double south, double east, double west,
-            List<SimpleType> abstractLatLonBoxSimpleExtensions, List<AbstractObject> abstractLatLonBoxObjectExtensions,
+            List<SimpleType> abstractLatLonBoxSimpleExtensions,
+            List<AbstractObject> abstractLatLonBoxObjectExtensions,
             double rotation,
             List<SimpleType> latLonBoxSimpleExtensions,
             List<AbstractObject> latLonBoxObjectExtensions) {
-        super(objectSimpleExtensions, idAttributes, north, south, east, west, abstractLatLonBoxSimpleExtensions, abstractLatLonBoxObjectExtensions);
+        super(objectSimpleExtensions, idAttributes,
+                north, south, east, west,
+                abstractLatLonBoxSimpleExtensions,
+                abstractLatLonBoxObjectExtensions);
         this.rotation = KmlUtilities.checkAngle180(rotation);
-        this.latLonBoxSimpleExtensions = (latLonBoxSimpleExtensions == null) ? EMPTY_LIST : latLonBoxSimpleExtensions;
-        this.latLonBoxObjectExtensions = (latLonBoxObjectExtensions == null) ? EMPTY_LIST : latLonBoxObjectExtensions;
+        if (latLonBoxSimpleExtensions != null) {
+            this.extensions().simples(Extensions.Names.LAT_LON_BOX).addAll(latLonBoxSimpleExtensions);
+        }
+        if (latLonBoxObjectExtensions != null) {
+            this.extensions().complexes(Extensions.Names.LAT_LON_BOX).addAll(latLonBoxObjectExtensions);
+        }
     }
 
     /**
@@ -62,43 +69,7 @@ public class DefaultLatLonBox extends DefaultAbstractLatLonBox implements LatLon
      * @{@inheritDoc }
      */
     @Override
-    public List<SimpleType> getLatLonBoxSimpleExtensions() {
-        return this.latLonBoxSimpleExtensions;
-    }
-
-    /**
-     *
-     * @{@inheritDoc }
-     */
-    @Override
-    public List<AbstractObject> getLatLonBoxObjectExtensions() {
-        return this.latLonBoxObjectExtensions;
-    }
-
-    /**
-     *
-     * @{@inheritDoc }
-     */
-    @Override
     public void setRotation(double rotation) {
         this.rotation = KmlUtilities.checkAngle180(rotation);
-    }
-
-    /**
-     *
-     * @{@inheritDoc }
-     */
-    @Override
-    public void setLatLonBoxSimpleExtensions(List<SimpleType> latLonBoxSimpleExtensions) {
-        this.latLonBoxSimpleExtensions = latLonBoxSimpleExtensions;
-    }
-
-    /**
-     *
-     * @{@inheritDoc }
-     */
-    @Override
-    public void setLatLonBoxObjectExtensions(List<AbstractObject> latLonBoxObjectExtensions) {
-        this.latLonBoxObjectExtensions = latLonBoxObjectExtensions;
     }
 }

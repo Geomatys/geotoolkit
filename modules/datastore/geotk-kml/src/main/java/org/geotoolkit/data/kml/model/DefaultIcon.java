@@ -6,11 +6,19 @@ package org.geotoolkit.data.kml.model;
  */
 public class DefaultIcon extends DefaultLink implements Icon {
 
+    /**
+     * 
+     * @param link
+     */
     public DefaultIcon(Link link){
-        super(link.getObjectSimpleExtensions(), link.getIdAttributes(),
-                link.getHref(), link.getBasicLinkSimpleExtensions(), link.getBasicLinkObjectExtensions(),
-                link.getRefreshMode(), link.getRefreshInterval(), link.getViewRefreshMode(), link.getViewRefreshTime(),
+        super(link.extensions().simples(Extensions.Names.OBJECT),
+                link.getIdAttributes(), link.getHref(),
+                link.extensions().simples(Extensions.Names.BASIC_LINK),
+                link.extensions().complexes(Extensions.Names.BASIC_LINK),
+                link.getRefreshMode(), link.getRefreshInterval(),
+                link.getViewRefreshMode(), link.getViewRefreshTime(),
                 link.getViewBoundScale(), link.getViewFormat(), link.getHttpQuery(),
-                link.getLinkSimpleExtensions(), link.getLinkObjectExtensions());
+                link.extensions().simples(Extensions.Names.LINK),
+                link.extensions().complexes(Extensions.Names.LINK));
     }
 }

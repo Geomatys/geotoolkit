@@ -1,8 +1,5 @@
 package org.geotoolkit.data.kml.model;
 
-import java.util.List;
-import org.geotoolkit.data.kml.xsd.SimpleType;
-
 /**
  *
  * <p>This interface maps Lod element.</p>
@@ -74,18 +71,6 @@ public interface LookAt extends AbstractView {
 
     /**
      *
-     * @return the list of LookAt simple extensions.
-     */
-    public List<SimpleType> getLookAtSimpleExtensions();
-
-    /**
-     *
-     * @return the lis of LookAt object extensions.
-     */
-    public List<AbstractObject> getLookAtObjectExtensions();
-
-    /**
-     *
      * @param angle
      */
     public void setLongitude(double longitude);
@@ -120,15 +105,4 @@ public interface LookAt extends AbstractView {
      */
     public void setRange(double range);
 
-    /**
-     *
-     * @param lookAtSimpleExtensions
-     */
-    public void setLookAtSimpleExtensions(List<SimpleType> lookAtSimpleExtensions);
-
-    /**
-     *
-     * @param lookAtObjectExtensions
-     */
-    public void setLookAtObjectExtensions(List<AbstractObject> lookAtObjectExtensions);
 }

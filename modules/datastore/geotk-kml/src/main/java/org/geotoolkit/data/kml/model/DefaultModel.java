@@ -2,7 +2,6 @@ package org.geotoolkit.data.kml.model;
 
 import java.util.List;
 import org.geotoolkit.data.kml.xsd.SimpleType;
-import static java.util.Collections.*;
 import static org.geotoolkit.data.kml.xml.KmlModelConstants.*;
 
 /**
@@ -11,19 +10,16 @@ import static org.geotoolkit.data.kml.xml.KmlModelConstants.*;
  */
 public class DefaultModel extends DefaultAbstractGeometry implements Model {
 
+    private final Extensions exts = new Extensions();
     private AltitudeMode altitudeMode;
     private Location location;
     private Orientation orientation;
     private Scale scale;
     private Link link;
     private ResourceMap resourceMap;
-    private List<SimpleType> modelSimpleExtensions;
-    private List<AbstractObject> modelObjectExtensions;
 
-    public DefaultModel(){
+    public DefaultModel() {
         this.altitudeMode = DEF_ALTITUDE_MODE;
-        this.modelSimpleExtensions = EMPTY_LIST;
-        this.modelObjectExtensions = EMPTY_LIST;
     }
 
     /**
@@ -45,18 +41,25 @@ public class DefaultModel extends DefaultAbstractGeometry implements Model {
             IdAttributes idAttributes,
             List<SimpleType> abstractGeometrySimpleExtensions,
             List<AbstractObject> abstractGeometryObjectExtensions,
-            AltitudeMode altitudeMode, Location location, Orientation orientation, Scale scale, Link link, ResourceMap resourceMap,
-            List<SimpleType> modelSimpleExtensions, List<AbstractObject> modelObjectExtensions){
+            AltitudeMode altitudeMode, Location location, Orientation orientation,
+            Scale scale, Link link, ResourceMap resourceMap,
+            List<SimpleType> modelSimpleExtensions,
+            List<AbstractObject> modelObjectExtensions) {
         super(objectSimpleExtensions, idAttributes,
-                abstractGeometrySimpleExtensions, abstractGeometryObjectExtensions);
+                abstractGeometrySimpleExtensions,
+                abstractGeometryObjectExtensions);
         this.altitudeMode = altitudeMode;
         this.location = location;
         this.orientation = orientation;
         this.scale = scale;
         this.link = link;
         this.resourceMap = resourceMap;
-        this.modelSimpleExtensions = (modelSimpleExtensions == null) ? EMPTY_LIST : modelSimpleExtensions;
-        this.modelObjectExtensions = (modelObjectExtensions == null) ? EMPTY_LIST : modelObjectExtensions;
+        if (modelSimpleExtensions != null) {
+            this.extensions().simples(Extensions.Names.MODEL).addAll(modelSimpleExtensions);
+        }
+        if (modelObjectExtensions != null) {
+            this.extensions().complexes(Extensions.Names.MODEL).addAll(modelObjectExtensions);
+        }
     }
 
     /**
@@ -64,56 +67,54 @@ public class DefaultModel extends DefaultAbstractGeometry implements Model {
      * @{@inheritDoc }
      */
     @Override
-    public AltitudeMode getAltitudeMode() {return this.altitudeMode;}
+    public AltitudeMode getAltitudeMode() {
+        return this.altitudeMode;
+    }
 
     /**
      *
      * @{@inheritDoc }
      */
     @Override
-    public Location getLocation() {return this.location;}
+    public Location getLocation() {
+        return this.location;
+    }
 
     /**
      *
      * @{@inheritDoc }
      */
     @Override
-    public Orientation getOrientation() {return this.orientation;}
+    public Orientation getOrientation() {
+        return this.orientation;
+    }
 
     /**
      *
      * @{@inheritDoc }
      */
     @Override
-    public Scale getScale() {return this.scale;}
+    public Scale getScale() {
+        return this.scale;
+    }
 
     /**
      *
      * @{@inheritDoc }
      */
     @Override
-    public Link getLink() {return this.link;}
+    public Link getLink() {
+        return this.link;
+    }
 
     /**
      *
      * @{@inheritDoc }
      */
     @Override
-    public ResourceMap getRessourceMap() {return this.resourceMap;}
-
-    /**
-     *
-     * @{@inheritDoc }
-     */
-    @Override
-    public List<SimpleType> getModelSimpleExtensions() {return this.modelSimpleExtensions;}
-
-    /**
-     *
-     * @{@inheritDoc }
-     */
-    @Override
-    public List<AbstractObject> getModelObjectExtensions() {return this.modelObjectExtensions;}
+    public ResourceMap getRessourceMap() {
+        return this.resourceMap;
+    }
 
     /**
      *
@@ -167,23 +168,5 @@ public class DefaultModel extends DefaultAbstractGeometry implements Model {
     @Override
     public void setRessourceMap(ResourceMap resourceMap) {
         this.resourceMap = resourceMap;
-    }
-
-    /**
-     *
-     * @{@inheritDoc }
-     */
-    @Override
-    public void setModelSimpleExtensions(List<SimpleType> modelSimpleExtensions) {
-        this.modelSimpleExtensions = modelSimpleExtensions;
-    }
-
-    /**
-     *
-     * @{@inheritDoc }
-     */
-    @Override
-    public void setModelObjectExtensions(List<AbstractObject> modelObjectExtensions) {
-        this.modelObjectExtensions = modelObjectExtensions;
     }
 }
