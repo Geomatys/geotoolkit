@@ -12,14 +12,14 @@
 
   <resources>
     <java version="1.6+" href="http://java.sun.com/products/autodl/j2se"/>
-    <jar href="geotk-simples-3.12.jar" main="true"/>
-    <jar href="geotk-widgets-swing-3.12.jar"/>
-    <jar href="geotk-display-3.12.jar" download="lazy"/>
-    <jar href="geotk-coverageio-3.12.jar" download="lazy"/>
-    <jar href="geotk-coverage-3.12.jar" download="lazy"/>
-    <jar href="geotk-referencing-3.12.jar" download="lazy"/>
-    <jar href="geotk-metadata-3.12.jar" download="lazy"/>
-    <jar href="geotk-utility-3.12.jar" download="lazy"/>
+    <jar href="geotk-simples-3.13.jar" main="true"/>
+    <jar href="geotk-widgets-swing-3.13.jar"/>
+    <jar href="geotk-display-3.13.jar" download="lazy"/>
+    <jar href="geotk-coverageio-3.13.jar" download="lazy"/>
+    <jar href="geotk-coverage-3.13.jar" download="lazy"/>
+    <jar href="geotk-referencing-3.13.jar" download="lazy"/>
+    <jar href="geotk-metadata-3.13.jar" download="lazy"/>
+    <jar href="geotk-utility-3.13.jar" download="lazy"/>
     <jar href="geoapi-pending-2.3-M8.jar" download="lazy"/>
     <jar href="vecmath-1.5.2.jar" download="lazy"/>
     <jar href="jsr-275-0.9.3.jar" download="lazy"/>

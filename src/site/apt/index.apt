@@ -29,20 +29,12 @@ The Geotoolkit.org library
 
 * News
 
-  Latest Geotoolkit.org monthly release is Geotk-3.12, released June 1, 2010.
+  Latest Geotoolkit.org monthly release is Geotk-3.13, released July 1, 2010.
   New features in this release are:
 
-  * Support for datum shifts backed by a NTv2 grid, including RGF93 transform.
+  * Improvement in the widgets for inserting new images in the coverages database.
 
-  * Better widgets for inserting new images in the coverages database.
-
-  * (PENDING) New datastore for CSV files.
-
-  * (PENDING) New datastore for GPX files (exchange format for GPS) - <<work in progress>>
-
-  * (PENDING) Improvements in Open Street Map support - <<work in progress>>
-
-  * (PENDING) Improvements in features API and performance.
+  * (PENDING) Bug fixes.
 
 
 * License
