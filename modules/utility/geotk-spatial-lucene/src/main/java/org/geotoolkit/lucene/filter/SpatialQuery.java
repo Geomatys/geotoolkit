@@ -25,7 +25,7 @@ import org.apache.lucene.search.Sort;
 
 import org.geotoolkit.util.Utilities;
 
-import org.opengis.referencing.FactoryException;
+import org.opengis.util.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.operation.TransformException;
 
@@ -78,7 +78,7 @@ public class SpatialQuery {
      * @param spatialFilter spatial filter
      * 
      * @throws org.opengis.referencing.NoSuchAuthorityCodeException
-     * @throws org.opengis.referencing.FactoryException
+     * @throws org.opengis.util.FactoryException
      * @throws org.opengis.referencing.operation.TransformException
      */
     public SpatialQuery(LuceneOGCFilter spatialFilter) throws NoSuchAuthorityCodeException, FactoryException, TransformException {

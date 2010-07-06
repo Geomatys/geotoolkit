@@ -19,7 +19,7 @@ package org.geotoolkit.gui.swing.crschooser;
 
 // OpenGIS dependencies
 import org.opengis.referencing.AuthorityFactory;
-import org.opengis.referencing.FactoryException;
+import org.opengis.util.FactoryException;
 
 
 /**

@@ -26,7 +26,7 @@ import java.util.List;
 import javax.swing.AbstractListModel;
 
 import org.opengis.referencing.AuthorityFactory;
-import org.opengis.referencing.FactoryException;
+import org.opengis.util.FactoryException;
 
 /**
  * A list of {@link Code}s. This implementation will try to fetch the codes only when

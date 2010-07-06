@@ -46,7 +46,7 @@ import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.referencing.CRS;
 
 import org.geotoolkit.util.logging.Logging;
-import org.opengis.referencing.FactoryException;
+import org.opengis.util.FactoryException;
 import org.opengis.referencing.operation.TransformException;
 
 /**

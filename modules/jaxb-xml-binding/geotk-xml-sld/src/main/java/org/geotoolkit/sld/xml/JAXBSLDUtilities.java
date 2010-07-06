@@ -28,7 +28,7 @@ import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.xml.MarshallerPool;
 
 import org.opengis.filter.FilterFactory2;
-import org.opengis.referencing.FactoryException;
+import org.opengis.util.FactoryException;
 import org.opengis.sld.StyledLayerDescriptor;
 
 /**

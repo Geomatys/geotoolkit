@@ -57,7 +57,7 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.Strings;
 import org.geotoolkit.util.Utilities;
 import org.opengis.parameter.ParameterValueGroup;
-import org.opengis.referencing.FactoryException;
+import org.opengis.util.FactoryException;
 import org.opengis.referencing.crs.CRSFactory;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.GeographicCRS;

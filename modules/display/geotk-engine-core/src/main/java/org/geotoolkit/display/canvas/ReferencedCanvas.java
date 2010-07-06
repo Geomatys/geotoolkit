@@ -29,7 +29,7 @@ import java.util.Collections;
 import org.opengis.display.primitive.Graphic;
 import org.opengis.display.canvas.CanvasState;
 import org.opengis.display.container.GraphicsContainer;
-import org.opengis.referencing.FactoryException;
+import org.opengis.util.FactoryException;
 import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.crs.DerivedCRS;
 import org.opengis.referencing.crs.GeneralDerivedCRS;

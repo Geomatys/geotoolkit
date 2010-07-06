@@ -26,7 +26,7 @@ import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.datum.DefaultEllipsoid;
 import org.geotoolkit.display.shape.ShapeUtilities;
-import org.opengis.referencing.FactoryException;
+import org.opengis.util.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.CoordinateOperation;
@@ -545,7 +545,7 @@ public class GeometricUtilities {
      * @return The geometric object reprojected in the target coordinate reference system.
      * 
      * @throws org.opengis.referencing.NoSuchAuthorityCodeException
-     * @throws org.opengis.referencing.FactoryException
+     * @throws org.opengis.util.FactoryException
      * @throws org.opengis.referencing.operation.TransformException
      */
     public static Object reprojectGeometry(final String targetCRSName, final String sourceCRSName, Object geometry) throws NoSuchAuthorityCodeException, FactoryException, TransformException {
@@ -603,7 +603,7 @@ public class GeometricUtilities {
      * @return The geometric object reprojected in the target coordinate reference system.
      * 
      * @throws org.opengis.referencing.NoSuchAuthorityCodeException
-     * @throws org.opengis.referencing.FactoryException
+     * @throws org.opengis.util.FactoryException
      * @throws org.opengis.referencing.operation.TransformException
      */
     public static Object reprojectBbox2DString(final String sourceCRSName, final String targetCRSName,  String boundingBox) throws NoSuchAuthorityCodeException, FactoryException, TransformException {

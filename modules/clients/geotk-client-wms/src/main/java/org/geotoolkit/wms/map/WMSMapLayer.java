@@ -53,7 +53,7 @@ import org.geotoolkit.wms.WebMapServer;
 import org.geotoolkit.wms.xml.AbstractLayer;
 
 import org.opengis.geometry.Envelope;
-import org.opengis.referencing.FactoryException;
+import org.opengis.util.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform2D;

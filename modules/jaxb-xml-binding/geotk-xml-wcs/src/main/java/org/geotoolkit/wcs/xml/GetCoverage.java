@@ -20,7 +20,7 @@ import java.awt.Dimension;
 import java.util.List;
 import org.geotoolkit.util.Versioned;
 import org.opengis.geometry.Envelope;
-import org.opengis.referencing.FactoryException;
+import org.opengis.util.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 

@@ -34,7 +34,7 @@ import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.util.logging.Logging;
 
 import org.opengis.filter.FilterFactory2;
-import org.opengis.referencing.FactoryException;
+import org.opengis.util.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 

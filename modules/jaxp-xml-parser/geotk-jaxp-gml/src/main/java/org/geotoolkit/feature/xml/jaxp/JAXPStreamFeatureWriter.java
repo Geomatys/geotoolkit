@@ -51,7 +51,7 @@ import org.opengis.feature.type.PropertyDescriptor;
 import org.opengis.feature.type.PropertyType;
 import org.opengis.geometry.Envelope;
 import org.opengis.geometry.Geometry;
-import org.opengis.referencing.FactoryException;
+import org.opengis.util.FactoryException;
 
 
 /**

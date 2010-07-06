@@ -24,7 +24,7 @@ import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.wms.v111.GetMap111;
 import org.geotoolkit.wms.v130.GetMap130;
 import org.junit.Test;
-import org.opengis.referencing.FactoryException;
+import org.opengis.util.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import static org.junit.Assert.*;

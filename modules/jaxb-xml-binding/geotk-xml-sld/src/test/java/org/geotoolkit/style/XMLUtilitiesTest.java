@@ -44,7 +44,7 @@ import org.geotoolkit.util.SimpleInternationalString;
 
 import org.opengis.filter.expression.Expression;
 import org.opengis.metadata.citation.OnlineResource;
-import org.opengis.referencing.FactoryException;
+import org.opengis.util.FactoryException;
 import org.opengis.sld.SLDLibrary;
 import org.opengis.style.AnchorPoint;
 import org.opengis.style.ChannelSelection;

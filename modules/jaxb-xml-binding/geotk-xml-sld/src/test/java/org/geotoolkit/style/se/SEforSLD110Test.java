@@ -47,7 +47,7 @@ import org.geotoolkit.xml.MarshallerPool;
 
 import org.junit.Test;
 import org.opengis.filter.FilterFactory2;
-import org.opengis.referencing.FactoryException;
+import org.opengis.util.FactoryException;
 import org.opengis.style.ContrastMethod;
 import org.opengis.style.LineSymbolizer;
 import org.opengis.style.Mark;
