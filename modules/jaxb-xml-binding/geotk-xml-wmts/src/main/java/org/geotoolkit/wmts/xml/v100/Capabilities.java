@@ -22,6 +22,9 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.ows.xml.v110.CapabilitiesBaseType;
+import org.geotoolkit.ows.xml.v110.OperationsMetadata;
+import org.geotoolkit.ows.xml.v110.ServiceIdentification;
+import org.geotoolkit.ows.xml.v110.ServiceProvider;
 
 
 /**
@@ -51,15 +54,24 @@ import org.geotoolkit.ows.xml.v110.CapabilitiesBaseType;
     "themes"
 })
 @XmlRootElement(name = "Capabilities")
-public class Capabilities
-    extends CapabilitiesBaseType
-{
+public class Capabilities extends CapabilitiesBaseType {
 
     @XmlElement(name = "Contents", required = true)
-    protected ContentsType contents;
+    private ContentsType contents;
     @XmlElement(name = "Themes")
-    protected Themes themes;
+    private Themes themes;
 
+    public Capabilities() {
+
+    }
+
+    public Capabilities(ServiceIdentification serviceIdentification, ServiceProvider serviceProvider,
+            OperationsMetadata operationsMetadata, String version, String updateSequence, ContentsType con, Themes them) {
+        super(serviceIdentification, serviceProvider, operationsMetadata, version, updateSequence);
+        this.contents = con;
+        this.themes = them;
+
+    }
     /**
      * Gets the value of the contents property.
      * 
