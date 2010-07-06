@@ -280,7 +280,7 @@ public final class Parameters {
             result.setExplanation(Descriptions.formatInternational(
                     Descriptions.Keys.NON_CONFORM_PARAMETER_$2, name, result.getExplanation()));
             result.setSpecification(name.getAuthority());
-            result.setPass(false);
+            result.setPass(Boolean.FALSE);
         }
         return result;
     }

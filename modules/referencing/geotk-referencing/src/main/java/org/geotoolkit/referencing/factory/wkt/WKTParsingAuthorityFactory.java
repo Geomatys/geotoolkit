@@ -85,7 +85,7 @@ import org.geotoolkit.util.XArrays;
  * @author Jody Garnett (Refractions)
  * @author Rueben Schulz (UBC)
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.10
+ * @version 3.14
  *
  * @since 3.10 (derived from 3.00)
  * @module
@@ -200,9 +200,9 @@ public class WKTParsingAuthorityFactory extends DirectAuthorityFactory {
     @Override
     public ConformanceResult availability() {
         return new Availability() {
-            @Override public boolean pass() {
+            @Override public Boolean pass() {
                 synchronized (WKTParsingAuthorityFactory.this) {
-                    return super.pass() && !definitions.isEmpty();
+                    return Boolean.TRUE.equals(super.pass()) && !definitions.isEmpty();
                 }
             }
         };

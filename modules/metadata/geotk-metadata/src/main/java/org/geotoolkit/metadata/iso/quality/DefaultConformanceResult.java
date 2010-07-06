@@ -38,7 +38,7 @@ import org.geotoolkit.lang.ThreadSafe;
  * @author Martin Desruisseaux (IRD)
  * @author Touraïvane (IRD)
  * @author Guilhem Legal (Geomatys)
- * @version 3.11
+ * @version 3.14
  *
  * @since 2.1
  * @module
@@ -152,8 +152,8 @@ public class DefaultConformanceResult extends AbstractResult implements Conforma
      * Returns an indication of the conformance result.
      */
     @Override
-    public synchronized boolean pass() {
-        return (pass != null) && pass;
+    public synchronized Boolean pass() {
+        return pass;
     }
 
     /**
@@ -161,7 +161,7 @@ public class DefaultConformanceResult extends AbstractResult implements Conforma
      *
      * @param newValue {@code true} if the test pass.
      */
-    public synchronized void setPass(final boolean newValue) {
+    public synchronized void setPass(final Boolean newValue) {
         checkWritePermission();
         pass = newValue;
     }

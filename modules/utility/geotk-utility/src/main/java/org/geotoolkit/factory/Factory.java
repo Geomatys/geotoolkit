@@ -574,7 +574,7 @@ public abstract class Factory {
      * create a new instance of {@code Availability}.
      *
      * @author Martin Desruisseaux (Geomatys)
-     * @version 3.03
+     * @version 3.14
      *
      * @since 3.03
      * @module
@@ -670,9 +670,9 @@ public abstract class Factory {
          * @return {@code true} if the encloding factory is ready for use.
          */
         @Override
-        public boolean pass() {
+        public Boolean pass() {
             if (failureCause != null) {
-                return false;
+                return Boolean.FALSE;
             }
             synchronized (Factory.this) {
                 return !hints.containsKey(DISPOSED);

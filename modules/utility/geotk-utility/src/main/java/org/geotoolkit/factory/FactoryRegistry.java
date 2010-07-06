@@ -571,7 +571,7 @@ public class FactoryRegistry extends ServiceRegistry {
             }
             try {
                 failure = factory.availability();
-                if (failure.pass()) {
+                if (Boolean.TRUE.equals(failure.pass())) {
                     failure = null; // Means "no failure".
                 } else {
                     unavailable(factory);

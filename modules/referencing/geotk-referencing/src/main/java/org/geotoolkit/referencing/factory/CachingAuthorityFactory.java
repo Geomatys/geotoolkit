@@ -287,7 +287,7 @@ public class CachingAuthorityFactory extends AbstractAuthorityFactory {
             return new Availability((Throwable) s);
         }
         return new Availability() {
-            @Override public boolean pass() {
+            @Override public Boolean pass() {
                 return Boolean.TRUE.equals(status) && super.pass();
             }
         };

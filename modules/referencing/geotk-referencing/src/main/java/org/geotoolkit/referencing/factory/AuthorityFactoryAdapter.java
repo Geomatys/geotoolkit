@@ -584,7 +584,7 @@ public class AuthorityFactoryAdapter extends AbstractAuthorityFactory {
             final AuthorityFactory factory = getFactory(f);
             if (factory instanceof Factory) {
                 final ConformanceResult result = ((Factory) factory).availability();
-                if (!result.pass()) {
+                if (!Boolean.TRUE.equals(result.pass())) {
                     lastAttempt = currentTime;
                     return new Unavailable(result);
                 }
@@ -601,7 +601,7 @@ public class AuthorityFactoryAdapter extends AbstractAuthorityFactory {
      * later time, because we have not tested the other dependencies.
      *
      * @author Martin Desruisseaux (Geomatys)
-     * @version 3.03
+     * @version 3.14
      *
      * @since 3.03
      * @module
@@ -618,8 +618,8 @@ public class AuthorityFactoryAdapter extends AbstractAuthorityFactory {
          * Returns {@code false} in every case.
          */
         @Override
-        public boolean pass() {
-            return false;
+        public Boolean pass() {
+            return Boolean.FALSE;
         }
     }
 
