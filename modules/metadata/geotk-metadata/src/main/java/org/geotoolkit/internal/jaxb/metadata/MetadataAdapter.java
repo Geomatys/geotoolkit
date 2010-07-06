@@ -21,8 +21,8 @@ import java.util.UUID;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 
-import org.geotoolkit.util.UUIDs;
 import org.geotoolkit.xml.Namespaces;
+import org.geotoolkit.internal.jaxb.UUIDs;
 import org.geotoolkit.internal.jaxb.MarshalContext;
 
 

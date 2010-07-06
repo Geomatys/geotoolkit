@@ -15,7 +15,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.util;
+package org.geotoolkit.internal.jaxb;
 
 import java.util.Map;
 import java.util.UUID;
@@ -26,6 +26,8 @@ import java.lang.ref.WeakReference;
 import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.internal.ReferenceQueueConsumer;
+import org.geotoolkit.util.Disposable;
+import org.geotoolkit.util.NullArgumentException;
 
 
 /**
