@@ -30,14 +30,20 @@ import org.geotoolkit.internal.ReferenceQueueConsumer;
 
 /**
  * Maps {@link UUID} to arbitrary objects. The objects are typically instances of ISO 19115
- * (metadata) and ISO 19111 (referencing) types. Each UUID is associated to a specific instance,
- * i.e. the underlying map uses {@linkplain System#identityHashCode identity hash code} and the
- * {@code ==} comparison operator - not the {@link Object#equals(Object)} method - when looking
- * for the {@link UUID} of a given object.
- * <p>
- * The object instances are referenced by {@linkplain WeakReference weak references}. Consequently,
- * assigning a {@link UUID} to an object will not prevent the object from being garbage collected.
- * <p>
+ * (metadata) and ISO 19111 (referencing) types. This {@code UUIDs} class works as a map with
+ * the following properties:
+ *
+ * <ul>
+ *   <li><p>Each UUID is associated to a specific instance, i.e. the underlying map uses
+ *   {@linkplain System#identityHashCode identity hash code} and the {@code ==} comparison
+ *   operator (not the {@link Object#equals(Object)} method) when looking for the {@link UUID}
+ *   of a given object.</p></li>
+ *
+ *   <li><p>The object instances are referenced by {@linkplain WeakReference weak references}.
+ *   Consequently, assigning a {@link UUID} to an object will not prevent the object from being
+ *   garbage collected.</p></li>
+ * </ul>
+ *
  * This class convenient at XML marshalling and unmarshalling time for handling the {@code uuid}
  * and {@code uuidref} attributes. The {@code uuidref} attribute is used to refer to an XML element
  * that has a corresponding {@code uuid} attribute.

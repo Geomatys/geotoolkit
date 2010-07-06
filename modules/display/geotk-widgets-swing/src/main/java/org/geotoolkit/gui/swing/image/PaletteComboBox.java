@@ -28,6 +28,7 @@ import javax.swing.JComboBox;
 import javax.swing.JComponent;
 
 import org.geotoolkit.resources.Vocabulary;
+import org.geotoolkit.image.io.Palette;
 import org.geotoolkit.image.io.PaletteFactory;
 import org.geotoolkit.internal.swing.table.ColorRampRenderer;
 

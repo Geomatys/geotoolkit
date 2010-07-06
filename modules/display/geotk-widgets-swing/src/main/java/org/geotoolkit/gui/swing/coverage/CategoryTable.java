@@ -220,7 +220,7 @@ public class CategoryTable extends ListTableModel<CategoryRecord> {
      * table, then adds all categories from the given list wrapped in {@link CategoryRecord}s.
      * <p>
      * Alternatively, user can create {@link CategoryRecord} themself and invoke one of the
-     * {@link #add add} or {@link #insertElement insertElement} methods directly.
+     * {@link #add add} or {@link #insert insert} methods directly.
      *
      * @param categories The categories to show, or {@code null} for clearing the table.
      */
