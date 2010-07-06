@@ -17,7 +17,7 @@
  */
 
 /**
- * {@linkplain org.opengis.referencing.Factory Factories} and base classes for
+ * {@linkplain org.opengis.util.Factory Factories} and base classes for
  * {@linkplain org.opengis.referencing.AuthorityFactory authority factories}.
  *
  * {@section Authority factories}

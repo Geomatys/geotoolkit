@@ -73,7 +73,7 @@ import org.geotoolkit.resources.Errors;
 
 /**
  * Simple utility class for making use of the {@linkplain CoordinateReferenceSystem
- * Coordinate Reference System} and associated {@linkplain org.opengis.referencing.Factory}
+ * Coordinate Reference System} and associated {@linkplain org.opengis.util.Factory}
  * implementations. This utility class is made up of static functions working with arbitrary
  * implementations of GeoAPI interfaces as much as possible.
  * <p>
