@@ -26,7 +26,7 @@ import org.opengis.referencing.crs.ProjectedCRS;
 import org.opengis.referencing.crs.GeographicCRS;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.GeodeticDatum;
-import org.opengis.referencing.FactoryException;
+import org.opengis.util.FactoryException;
 
 import org.geotoolkit.test.Depend;
 import org.geotoolkit.test.crs.WKT;

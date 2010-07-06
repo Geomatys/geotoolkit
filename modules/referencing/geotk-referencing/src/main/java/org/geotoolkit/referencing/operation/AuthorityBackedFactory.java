@@ -24,11 +24,11 @@ import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 
+import org.opengis.util.FactoryException;
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.citation.Citation;
 import org.opengis.metadata.quality.ConformanceResult;
 import org.opengis.referencing.AuthorityFactory;
-import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.*;

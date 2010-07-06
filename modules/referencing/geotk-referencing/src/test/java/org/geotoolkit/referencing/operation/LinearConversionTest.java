@@ -21,8 +21,8 @@ import java.util.Random;
 import javax.measure.converter.ConversionException;
 import javax.measure.unit.SI;
 
+import org.opengis.util.FactoryException;
 import org.opengis.parameter.ParameterValueGroup;
-import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.cs.AxisDirection;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransformFactory;

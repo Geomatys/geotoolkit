@@ -25,11 +25,11 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.opengis.util.GenericName;
+import org.opengis.util.FactoryException;
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.citation.Citation;
 import org.opengis.referencing.IdentifiedObject;
 import org.opengis.referencing.AuthorityFactory;
-import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.ReferenceIdentifier;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 
@@ -419,9 +419,8 @@ public class IdentifiedObjectFinder {
                 }
             }
             final Logger logger = Logging.getLogger(IdentifiedObjectFinder.class);
-            if (logger.isLoggable(Level.FINEST)) {
-                logger.finest("No match found for \"" + object.getName() + "\" among " + codes);
-            }
+            logger.log(Level.FINEST, "No match found for \"{0}\" among {1}",
+                    new Object[] {object.getName(), codes});
         }
         return null;
     }

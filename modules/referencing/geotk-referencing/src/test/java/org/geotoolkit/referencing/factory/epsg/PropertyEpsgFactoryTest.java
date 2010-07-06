@@ -22,8 +22,8 @@ import java.util.Set;
 import java.util.HashSet;
 import java.util.Collection;
 
+import org.opengis.util.FactoryException;
 import org.opengis.metadata.citation.Citation;
-import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.ReferenceIdentifier;
 import org.opengis.referencing.cs.AxisDirection;
 import org.opengis.referencing.cs.CoordinateSystem;

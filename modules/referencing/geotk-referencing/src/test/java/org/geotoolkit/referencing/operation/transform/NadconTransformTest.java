@@ -19,7 +19,7 @@ package org.geotoolkit.referencing.operation.transform;
 
 import org.junit.*;
 
-import org.opengis.referencing.FactoryException;
+import org.opengis.util.FactoryException;
 import org.opengis.referencing.operation.TransformException;
 
 import org.geotoolkit.referencing.operation.provider.NADCON;

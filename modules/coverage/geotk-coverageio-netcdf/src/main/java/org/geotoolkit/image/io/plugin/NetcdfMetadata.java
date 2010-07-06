@@ -39,8 +39,8 @@ import ucar.nc2.dataset.CoordSysBuilderIF;
 import ucar.nc2.dataset.EnhanceScaleMissing;
 import ucar.nc2.dataset.Enhancements;
 
+import org.opengis.util.FactoryException;
 import org.opengis.metadata.content.TransferFunctionType;
-import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import org.geotoolkit.image.io.metadata.SpatialMetadata;

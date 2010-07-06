@@ -20,7 +20,7 @@ package org.geotoolkit.referencing.operation.transform;
 import java.util.Random;
 import javax.vecmath.Point3d;
 
-import org.opengis.referencing.FactoryException;
+import org.opengis.util.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.CoordinateOperation;
 import org.opengis.referencing.operation.TransformException;

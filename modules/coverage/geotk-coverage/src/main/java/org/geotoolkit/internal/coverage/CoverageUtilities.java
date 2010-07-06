@@ -33,7 +33,7 @@ import javax.media.jai.PropertySource;
 import org.opengis.coverage.Coverage;
 import org.opengis.coverage.SampleDimension;
 import org.opengis.coverage.grid.GridCoverage;
-import org.opengis.referencing.FactoryException;
+import org.opengis.util.FactoryException;
 import org.opengis.referencing.operation.MathTransform1D;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;

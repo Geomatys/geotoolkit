@@ -31,8 +31,8 @@ import org.opengis.referencing.cs.*;
 import org.opengis.referencing.crs.*;
 import org.opengis.referencing.datum.*;
 import org.opengis.referencing.operation.*;
-import org.opengis.referencing.FactoryException;
 import org.opengis.parameter.ParameterValueGroup;
+import org.opengis.util.FactoryException;
 import org.opengis.util.GenericName;
 
 import org.geotoolkit.factory.FactoryFinder;

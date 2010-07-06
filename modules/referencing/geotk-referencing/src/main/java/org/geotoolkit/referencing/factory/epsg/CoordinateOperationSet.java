@@ -20,8 +20,8 @@ package org.geotoolkit.referencing.factory.epsg;
 import java.util.Map;
 import java.util.HashMap;
 
+import org.opengis.util.FactoryException;
 import org.opengis.referencing.AuthorityFactory;
-import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CRSAuthorityFactory;
 import org.opengis.referencing.operation.CoordinateOperation;
 import org.opengis.referencing.operation.CoordinateOperationAuthorityFactory;

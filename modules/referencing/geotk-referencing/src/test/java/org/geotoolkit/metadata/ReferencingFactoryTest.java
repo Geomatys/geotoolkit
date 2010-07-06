@@ -24,7 +24,7 @@ import org.opengis.metadata.citation.Citation;
 import org.opengis.metadata.citation.PresentationForm;
 import org.opengis.referencing.crs.CRSFactory;
 import org.opengis.referencing.crs.VerticalCRS;
-import org.opengis.referencing.FactoryException;
+import org.opengis.util.FactoryException;
 
 import org.geotoolkit.referencing.crs.DefaultVerticalCRS;
 import org.geotoolkit.test.Depend;

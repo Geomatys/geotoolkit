@@ -34,13 +34,13 @@ import org.opengis.referencing.datum.*;
 import org.opengis.referencing.operation.*;
 import org.opengis.referencing.IdentifiedObject;
 import org.opengis.referencing.AuthorityFactory;
-import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.metadata.extent.Extent;
 import org.opengis.metadata.citation.Citation;
 import org.opengis.metadata.quality.ConformanceResult;
 import org.opengis.util.InternationalString;
+import org.opengis.util.FactoryException;
 
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.Factory;

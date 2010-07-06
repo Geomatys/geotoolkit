@@ -17,7 +17,7 @@
  */
 package org.geotoolkit.referencing.factory;
 
-import org.opengis.referencing.FactoryException;
+import org.opengis.util.FactoryException;
 
 
 /**
@@ -55,14 +55,12 @@ public class OptionalFactoryOperationException extends FactoryException {
     }
 
     /**
-     * Construct an exception with the specified cause. The detail message
-     * is copied from the cause {@linkplain Exception#getLocalizedMessage
-     * localized message}.
+     * Construct an exception with the specified cause.
      *
      * @param  cause The cause for this exception. The cause is saved
      *         for later retrieval by the {@link #getCause()} method.
      */
-    public OptionalFactoryOperationException(Exception cause) {
+    public OptionalFactoryOperationException(Throwable cause) {
         super(cause.getLocalizedMessage(), cause);
     }
 

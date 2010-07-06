@@ -22,8 +22,8 @@ import java.io.StringWriter;
 import java.util.Collection;
 import java.sql.SQLException;
 
+import org.opengis.util.FactoryException;
 import org.opengis.referencing.IdentifiedObject;
-import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CRSAuthorityFactory;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;

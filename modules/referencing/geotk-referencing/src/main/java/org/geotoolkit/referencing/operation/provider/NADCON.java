@@ -18,12 +18,13 @@
 package org.geotoolkit.referencing.operation.provider;
 
 import java.io.IOException;
+
+import org.opengis.util.FactoryException;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.Transformation;
-import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.ReferenceIdentifier;
 
 import org.geotoolkit.lang.Immutable;

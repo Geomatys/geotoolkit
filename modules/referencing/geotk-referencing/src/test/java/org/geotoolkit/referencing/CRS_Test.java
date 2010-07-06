@@ -21,7 +21,7 @@ import java.util.Set;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.AffineTransform;
 
-import org.opengis.referencing.FactoryException;
+import org.opengis.util.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.CoordinateOperation;
 import org.opengis.referencing.operation.MathTransform;

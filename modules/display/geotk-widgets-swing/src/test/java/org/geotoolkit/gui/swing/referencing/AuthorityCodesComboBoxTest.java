@@ -20,7 +20,7 @@ package org.geotoolkit.gui.swing.referencing;
 import org.opengis.referencing.crs.CRSAuthorityFactory;
 import org.opengis.referencing.crs.GeographicCRS;
 import org.opengis.referencing.crs.ProjectedCRS;
-import org.opengis.referencing.FactoryException;
+import org.opengis.util.FactoryException;
 
 import org.geotoolkit.test.gui.SwingBase;
 import org.geotoolkit.factory.AuthorityFactoryFinder;

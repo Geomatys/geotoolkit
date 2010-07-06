@@ -23,7 +23,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.awt.RenderingHints;
 
-import org.opengis.referencing.FactoryException;
+import org.opengis.util.FactoryException;
 
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.internal.Threads;

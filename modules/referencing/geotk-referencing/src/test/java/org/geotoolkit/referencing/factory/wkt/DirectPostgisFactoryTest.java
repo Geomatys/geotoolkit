@@ -28,7 +28,7 @@ import java.util.Collections;
 import java.util.Properties;
 import java.util.Set;
 
-import org.opengis.referencing.FactoryException;
+import org.opengis.util.FactoryException;
 import org.opengis.referencing.crs.GeographicCRS;
 import org.opengis.referencing.crs.ProjectedCRS;
 import org.opengis.referencing.crs.VerticalCRS;

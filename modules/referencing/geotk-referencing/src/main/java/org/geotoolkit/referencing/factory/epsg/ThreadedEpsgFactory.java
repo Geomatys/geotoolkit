@@ -34,8 +34,8 @@ import javax.naming.Name;
 import javax.naming.NameNotFoundException;
 import javax.naming.NoInitialContextException;
 
+import org.opengis.util.FactoryException;
 import org.opengis.metadata.citation.Citation;
-import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.AuthorityFactory;
 import org.opengis.referencing.cs.CSAuthorityFactory;
 import org.opengis.referencing.crs.CRSAuthorityFactory;

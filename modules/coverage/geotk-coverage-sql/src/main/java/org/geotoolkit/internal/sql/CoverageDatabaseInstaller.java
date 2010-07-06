@@ -27,7 +27,7 @@ import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
 
-import org.opengis.referencing.FactoryException;
+import org.opengis.util.FactoryException;
 
 import org.geotoolkit.util.Strings;
 import org.geotoolkit.internal.io.Host;

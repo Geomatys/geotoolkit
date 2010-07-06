@@ -20,7 +20,7 @@ package org.geotoolkit.referencing.factory.epsg;
 import java.util.Set;
 import java.io.IOException;
 
-import org.opengis.referencing.FactoryException;
+import org.opengis.util.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.ProjectedCRS;
 import org.opengis.referencing.crs.CRSAuthorityFactory;

@@ -28,7 +28,7 @@ import javax.imageio.IIOException;
 import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.stream.ImageInputStream;
 
-import org.opengis.referencing.FactoryException;
+import org.opengis.util.FactoryException;
 
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.image.io.XImageIO;

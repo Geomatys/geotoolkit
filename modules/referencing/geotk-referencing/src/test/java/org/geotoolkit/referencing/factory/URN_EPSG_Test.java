@@ -17,8 +17,8 @@
  */
 package org.geotoolkit.referencing.factory;
 
+import org.opengis.util.FactoryException;
 import org.opengis.referencing.AuthorityFactory;
-import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import org.geotoolkit.util.Version;

@@ -30,11 +30,11 @@ import javax.measure.quantity.Length;
 
 import org.opengis.util.ScopedName;
 import org.opengis.util.GenericName;
+import org.opengis.util.FactoryException;
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.citation.Citation;
 import org.opengis.referencing.datum.*;
 import org.opengis.referencing.IdentifiedObject;
-import org.opengis.referencing.FactoryException;
 
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.FactoryFinder;
@@ -318,7 +318,7 @@ public class DatumAliases extends ReferencingFactory implements DatumFactory {
                             aliasMap.put(key, previous);
                         } else if (!Arrays.equals(previous, names)) {
                             // TODO: localize
-                            LOGGER.warning("Inconsistent aliases for datum \"" + name + "\".");
+                            LOGGER.log(Level.WARNING, "Inconsistent aliases for datum \"{0}\".", name);
                         }
                     }
                 }
@@ -472,7 +472,7 @@ public class DatumAliases extends ReferencingFactory implements DatumFactory {
      * actually an instance of {@link LinkedHashMap}. This method returns the number of elements
      * ignored.
      */
-    private static final int putAll(final GenericName[] names, final Map<String,GenericName> map) {
+    private static int putAll(final GenericName[] names, final Map<String,GenericName> map) {
         int ignored = 0;
         for (int i=0; i<names.length; i++) {
             final GenericName   name = names[i];

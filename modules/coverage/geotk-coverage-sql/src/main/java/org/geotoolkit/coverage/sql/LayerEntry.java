@@ -33,10 +33,10 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.InvalidObjectException;
 
+import org.opengis.util.FactoryException;
 import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.metadata.extent.GeographicBoundingBox;
 import org.opengis.geometry.MismatchedReferenceSystemException;
-import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.Matrix;

@@ -21,8 +21,8 @@ import java.net.URL;
 import java.io.IOException;
 import javax.sql.DataSource;
 
+import org.opengis.util.FactoryException;
 import org.opengis.metadata.citation.Citation;
-import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CRSAuthorityFactory;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 

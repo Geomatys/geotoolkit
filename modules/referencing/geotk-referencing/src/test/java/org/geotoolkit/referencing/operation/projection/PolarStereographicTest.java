@@ -19,8 +19,8 @@ package org.geotoolkit.referencing.operation.projection;
 
 import org.junit.*;
 
+import org.opengis.util.FactoryException;
 import org.opengis.parameter.ParameterValueGroup;
-import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.operation.TransformException;
 
 import org.geotoolkit.test.Depend;

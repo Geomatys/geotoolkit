@@ -21,8 +21,8 @@ import java.util.Collections;
 import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
 
+import org.opengis.util.FactoryException;
 import org.opengis.parameter.ParameterValueGroup;
-import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.IdentifiedObject;
 import org.opengis.referencing.crs.ProjectedCRS;
 import org.opengis.referencing.NoSuchAuthorityCodeException;

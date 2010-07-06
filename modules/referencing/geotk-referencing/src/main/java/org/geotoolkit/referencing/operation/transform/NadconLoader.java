@@ -30,7 +30,7 @@ import java.awt.geom.Rectangle2D;
 import java.awt.Dimension;
 import java.util.Arrays;
 
-import org.opengis.referencing.FactoryException;
+import org.opengis.util.FactoryException;
 
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Descriptions;

@@ -23,7 +23,7 @@ package org.geotoolkit.referencing.factory;
 import org.opengis.referencing.crs.*;
 import org.opengis.referencing.IdentifiedObject;
 import org.opengis.referencing.AuthorityFactory;
-import org.opengis.referencing.FactoryException;
+import org.opengis.util.FactoryException;
 
 import org.geotoolkit.test.Depend;
 import org.geotoolkit.referencing.crs.*;

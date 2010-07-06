@@ -20,9 +20,9 @@ package org.geotoolkit.referencing.operation.transform;
 import java.util.Arrays;
 import java.io.IOException;
 
+import org.opengis.util.FactoryException;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.parameter.ParameterValueGroup;
-import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransformFactory;
 import org.opengis.referencing.operation.TransformException;

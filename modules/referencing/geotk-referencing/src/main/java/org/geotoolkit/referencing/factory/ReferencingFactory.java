@@ -24,7 +24,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.logging.Logger;
 
-import org.opengis.referencing.Factory;
+import org.opengis.util.Factory;
 import org.opengis.referencing.AuthorityFactory;
 import org.opengis.metadata.citation.Citation;
 import org.opengis.parameter.InvalidParameterValueException;

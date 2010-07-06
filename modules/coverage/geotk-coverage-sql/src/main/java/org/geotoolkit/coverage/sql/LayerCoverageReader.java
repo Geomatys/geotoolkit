@@ -23,8 +23,8 @@ import java.util.concurrent.Future;
 import java.sql.SQLException;
 import java.awt.geom.Dimension2D;
 
+import org.opengis.util.FactoryException;
 import org.opengis.coverage.grid.GridCoverage;
-import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 

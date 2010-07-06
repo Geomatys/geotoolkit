@@ -35,7 +35,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.concurrent.ExecutionException;
 
-import org.opengis.referencing.FactoryException;
+import org.opengis.util.FactoryException;
 
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.internal.io.Installation;

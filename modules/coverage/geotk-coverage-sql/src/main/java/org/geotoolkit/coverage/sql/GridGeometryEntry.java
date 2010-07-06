@@ -27,9 +27,9 @@ import java.awt.geom.Rectangle2D;
 import java.awt.geom.RectangularShape;
 import static java.lang.Math.abs;
 
+import org.opengis.util.FactoryException;
 import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.referencing.datum.PixelInCell;
-import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.referencing.operation.MathTransformFactory;

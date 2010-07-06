@@ -24,7 +24,7 @@ import java.io.IOException;
 import java.io.LineNumberReader;
 import java.io.FileNotFoundException;
 
-import org.opengis.referencing.FactoryException;
+import org.opengis.util.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import org.geotoolkit.test.Depend;

@@ -22,7 +22,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import javax.sql.DataSource;
 
-import org.opengis.referencing.FactoryException;
+import org.opengis.util.FactoryException;
 
 import org.geotoolkit.test.Depend;
 import org.geotoolkit.internal.sql.DefaultDataSource;

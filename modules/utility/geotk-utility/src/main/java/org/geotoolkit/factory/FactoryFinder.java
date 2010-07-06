@@ -25,11 +25,11 @@ import javax.imageio.spi.ServiceRegistry;
 import java.io.IOException;
 import java.io.Writer;
 
+import org.opengis.util.Factory;
 import org.opengis.util.NameFactory;
 import org.opengis.style.StyleFactory;
 import org.opengis.filter.FilterFactory;
 import org.opengis.feature.FeatureFactory;
-import org.opengis.referencing.Factory;
 import org.opengis.referencing.cs.CSFactory;
 import org.opengis.referencing.cs.CSAuthorityFactory;
 import org.opengis.referencing.crs.CRSFactory;

@@ -29,9 +29,9 @@ import java.util.Comparator;
 import java.util.Collection;
 import java.util.Collections;
 
+import org.opengis.util.Factory;
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.citation.Citation;
-import org.opengis.referencing.Factory;
 import org.opengis.referencing.AuthorityFactory;
 
 import org.geotoolkit.io.TableWriter;

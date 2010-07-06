@@ -25,8 +25,8 @@ import java.util.concurrent.ExecutionException;
 import javax.swing.SwingWorker;
 import javax.swing.AbstractListModel;
 
+import org.opengis.util.FactoryException;
 import org.opengis.referencing.AuthorityFactory;
-import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.IdentifiedObject;
 
 import org.geotoolkit.util.Utilities;

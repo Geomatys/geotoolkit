@@ -20,8 +20,8 @@ package org.geotoolkit.metadata;
 import java.util.Map;
 import java.util.HashMap;
 
+import org.opengis.util.FactoryException;
 import org.opengis.metadata.citation.Citation;
-import org.opengis.referencing.FactoryException;
 import org.opengis.metadata.citation.PresentationForm;
 
 import org.geotoolkit.metadata.iso.citation.DefaultCitation;

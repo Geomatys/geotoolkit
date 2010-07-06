@@ -19,8 +19,8 @@ package org.geotoolkit.referencing.factory.web;
 
 import java.util.Locale;
 
+import org.opengis.util.FactoryException;
 import org.opengis.referencing.IdentifiedObject;
-import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.ReferenceIdentifier;
 
 import org.geotoolkit.referencing.AbstractIdentifiedObject;

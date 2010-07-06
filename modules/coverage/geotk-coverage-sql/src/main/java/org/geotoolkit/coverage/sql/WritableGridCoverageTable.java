@@ -39,7 +39,7 @@ import java.util.Map;
 import java.util.Set;
 import javax.imageio.ImageReader;
 
-import org.opengis.referencing.FactoryException;
+import org.opengis.util.FactoryException;
 
 import org.geotoolkit.util.DateRange;
 import org.geotoolkit.util.collection.BackingStoreException;

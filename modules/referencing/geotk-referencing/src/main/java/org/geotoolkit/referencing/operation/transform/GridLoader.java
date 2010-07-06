@@ -20,7 +20,7 @@ package org.geotoolkit.referencing.operation.transform;
 import java.util.concurrent.Callable;
 import java.lang.reflect.UndeclaredThrowableException;
 
-import org.opengis.referencing.FactoryException;
+import org.opengis.util.FactoryException;
 
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.collection.Cache;

@@ -27,6 +27,7 @@ import java.lang.reflect.InvocationTargetException;
 
 import org.opengis.referencing.*;
 import org.opengis.referencing.crs.*;
+import org.opengis.util.FactoryException;
 
 import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.resources.Errors;

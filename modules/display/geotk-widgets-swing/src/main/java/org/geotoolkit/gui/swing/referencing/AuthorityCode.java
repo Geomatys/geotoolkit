@@ -18,8 +18,8 @@
 package org.geotoolkit.gui.swing.referencing;
 
 import java.util.Locale;
+import org.opengis.util.FactoryException;
 import org.opengis.referencing.AuthorityFactory;
-import org.opengis.referencing.FactoryException;
 import org.geotoolkit.util.converter.Classes;
 
 

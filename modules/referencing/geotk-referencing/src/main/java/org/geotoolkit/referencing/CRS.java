@@ -38,6 +38,7 @@ import org.opengis.referencing.datum.*;
 import org.opengis.referencing.operation.*;
 import org.opengis.metadata.extent.*;
 import org.opengis.metadata.citation.Citation;
+import org.opengis.util.FactoryException;
 
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.util.Version;

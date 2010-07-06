@@ -20,7 +20,7 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
 
-import org.opengis.referencing.FactoryException;
+import org.opengis.util.FactoryException;
 
 import org.geotoolkit.console.Action;
 import org.geotoolkit.console.CommandLine;

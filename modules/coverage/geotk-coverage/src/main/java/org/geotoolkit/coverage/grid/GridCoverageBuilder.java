@@ -33,7 +33,7 @@ import javax.imageio.ImageIO;
 import javax.measure.unit.Unit;
 
 import org.opengis.geometry.Envelope;
-import org.opengis.referencing.FactoryException;
+import org.opengis.util.FactoryException;
 import org.opengis.referencing.operation.MathTransform1D;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;

@@ -25,9 +25,9 @@ import java.util.Map;
 import java.util.TreeSet;
 import java.util.TreeMap;
 
+import org.opengis.util.FactoryException;
 import org.opengis.metadata.citation.Citation;
 import org.opengis.referencing.IdentifiedObject;
-import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CRSAuthorityFactory;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 

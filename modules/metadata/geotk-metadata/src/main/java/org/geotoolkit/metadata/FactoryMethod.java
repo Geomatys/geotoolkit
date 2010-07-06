@@ -26,7 +26,7 @@ import java.lang.reflect.WildcardType;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.InvocationTargetException;
 
-import org.opengis.referencing.FactoryException;
+import org.opengis.util.FactoryException;
 
 import org.geotoolkit.lang.Immutable;
 

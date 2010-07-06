@@ -35,6 +35,7 @@ import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.util.ScopedName;
 import org.opengis.util.GenericName;
 import org.opengis.util.NameFactory;
+import org.opengis.util.FactoryException;
 import org.opengis.util.InternationalString;
 
 import org.geotoolkit.factory.Hints;

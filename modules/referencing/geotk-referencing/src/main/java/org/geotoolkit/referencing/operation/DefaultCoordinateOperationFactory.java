@@ -28,9 +28,9 @@ import javax.measure.quantity.Duration;
 import javax.measure.quantity.Length;
 import javax.vecmath.SingularMatrixException;
 
+import org.opengis.util.FactoryException;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterNotFoundException;
-import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.ReferenceIdentifier;
 import org.opengis.referencing.cs.*;
 import org.opengis.referencing.crs.*;

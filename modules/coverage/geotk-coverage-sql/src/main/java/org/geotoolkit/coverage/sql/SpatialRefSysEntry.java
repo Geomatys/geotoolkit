@@ -25,8 +25,8 @@ import java.awt.Dimension;
 import java.awt.geom.AffineTransform;
 import javax.measure.converter.ConversionException;
 
+import org.opengis.util.FactoryException;
 import org.opengis.coverage.grid.GridEnvelope;
-import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.crs.CRSFactory;
 import org.opengis.referencing.crs.SingleCRS;

@@ -20,8 +20,8 @@ package org.geotoolkit.referencing.operation.provider;
 import java.util.*;
 
 import org.opengis.util.GenericName;
+import org.opengis.util.FactoryException;
 import org.opengis.metadata.citation.Citation;
-import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.ReferenceIdentifier;
 import org.opengis.referencing.operation.OperationMethod;
 import org.opengis.referencing.operation.SingleOperation;

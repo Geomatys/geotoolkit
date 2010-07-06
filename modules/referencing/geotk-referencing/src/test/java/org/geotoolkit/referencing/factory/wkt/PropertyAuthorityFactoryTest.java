@@ -26,7 +26,7 @@ import java.awt.RenderingHints;
 import javax.measure.unit.NonSI;
 import javax.measure.converter.ConversionException;
 
-import org.opengis.referencing.FactoryException;
+import org.opengis.util.FactoryException;
 import org.opengis.referencing.cs.AxisDirection;
 import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;

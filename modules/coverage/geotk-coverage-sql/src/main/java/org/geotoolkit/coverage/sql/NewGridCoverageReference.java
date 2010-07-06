@@ -32,10 +32,10 @@ import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.stream.ImageInputStream;
 
+import org.opengis.util.FactoryException;
 import org.opengis.metadata.citation.Citation;
 import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.coverage.grid.RectifiedGrid;
-import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.IdentifiedObject;
 import org.opengis.referencing.ReferenceIdentifier;
 import org.opengis.referencing.crs.CRSAuthorityFactory;

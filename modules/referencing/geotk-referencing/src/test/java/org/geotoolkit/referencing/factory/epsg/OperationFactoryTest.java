@@ -17,7 +17,7 @@
  */
 package org.geotoolkit.referencing.factory.epsg;
 
-import org.opengis.referencing.FactoryException;
+import org.opengis.util.FactoryException;
 import org.opengis.referencing.operation.Conversion;
 import org.opengis.referencing.operation.Transformation;
 import org.opengis.referencing.operation.CoordinateOperation;

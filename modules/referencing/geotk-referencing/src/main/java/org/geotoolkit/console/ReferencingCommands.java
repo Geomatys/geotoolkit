@@ -20,9 +20,10 @@ package org.geotoolkit.console;
 import java.util.*;
 import java.io.IOException;
 
-import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.*;
 import org.opengis.referencing.operation.*;
+import org.opengis.parameter.ParameterValueGroup;
+import org.opengis.util.NoSuchIdentifierException;
 
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.FactoryFinder;

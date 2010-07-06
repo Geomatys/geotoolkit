@@ -34,9 +34,9 @@ import org.opengis.metadata.citation.Citation;
 import org.opengis.parameter.ParameterValue;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterNotFoundException;
-import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.IdentifiedObject;
-import org.opengis.referencing.NoSuchIdentifierException;
+import org.opengis.util.FactoryException;
+import org.opengis.util.NoSuchIdentifierException;
 
 // While start import is usually a deprecated practice, we use such a large amount
 // of interfaces in those packages that it we choose to exceptionnaly use * here.

@@ -31,7 +31,7 @@ import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.concurrent.Callable;
 
-import org.opengis.referencing.FactoryException;
+import org.opengis.util.FactoryException;
 
 import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.resources.Errors;

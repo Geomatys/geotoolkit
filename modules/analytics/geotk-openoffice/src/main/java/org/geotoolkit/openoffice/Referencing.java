@@ -32,12 +32,12 @@ import com.sun.star.registry.XRegistryKey;
 import com.sun.star.beans.XPropertySet;
 import com.sun.star.uno.AnyConverter;
 
+import org.opengis.util.FactoryException;
 import org.opengis.util.InternationalString;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterNotFoundException;
 import org.opengis.referencing.ReferenceSystem;
 import org.opengis.referencing.IdentifiedObject;
-import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.datum.Ellipsoid;
 import org.opengis.referencing.datum.Datum;
 import org.opengis.referencing.datum.GeodeticDatum;

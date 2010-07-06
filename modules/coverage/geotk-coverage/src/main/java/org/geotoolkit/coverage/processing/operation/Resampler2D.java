@@ -43,7 +43,7 @@ import javax.media.jai.InterpolationNearest;
 
 import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.coverage.grid.GridCoverage;
-import org.opengis.referencing.FactoryException;
+import org.opengis.util.FactoryException;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.CoordinateOperation;

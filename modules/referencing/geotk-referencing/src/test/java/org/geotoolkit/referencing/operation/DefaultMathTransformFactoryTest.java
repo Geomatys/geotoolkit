@@ -20,7 +20,7 @@ package org.geotoolkit.referencing.operation;
 import java.util.Set;
 
 import org.opengis.referencing.operation.OperationMethod;
-import org.opengis.referencing.NoSuchIdentifierException;
+import org.opengis.util.NoSuchIdentifierException;
 
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.FactoryFinder;

@@ -17,7 +17,7 @@
  */
 package org.geotoolkit.referencing.factory.web;
 
-import org.opengis.referencing.FactoryException;
+import org.opengis.util.FactoryException;
 import org.opengis.referencing.AuthorityFactory;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.GeographicCRS;

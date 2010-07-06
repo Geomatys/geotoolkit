@@ -52,7 +52,7 @@ import javax.swing.table.TableCellRenderer;
 
 import org.jdesktop.swingx.JXTitledPanel;
 
-import org.opengis.referencing.FactoryException;
+import org.opengis.util.FactoryException;
 import org.opengis.referencing.crs.CRSAuthorityFactory;
 
 import org.geotoolkit.util.Utilities;

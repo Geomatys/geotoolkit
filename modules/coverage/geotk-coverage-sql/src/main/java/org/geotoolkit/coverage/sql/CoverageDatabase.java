@@ -37,7 +37,7 @@ import java.lang.ref.Reference;
 import javax.sql.DataSource;
 import java.sql.SQLException;
 
-import org.opengis.referencing.FactoryException;
+import org.opengis.util.FactoryException;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.CRSAuthorityFactory;

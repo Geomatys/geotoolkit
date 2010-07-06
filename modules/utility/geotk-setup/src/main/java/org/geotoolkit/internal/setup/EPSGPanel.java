@@ -27,7 +27,7 @@ import javax.swing.JComboBox;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
-import org.opengis.referencing.FactoryException;
+import org.opengis.util.FactoryException;
 
 import org.geotoolkit.internal.io.Installation;
 import org.geotoolkit.referencing.factory.epsg.EpsgInstaller;

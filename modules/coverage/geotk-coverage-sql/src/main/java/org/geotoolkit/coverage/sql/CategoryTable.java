@@ -28,8 +28,8 @@ import java.sql.SQLException;
 import java.sql.PreparedStatement;
 import java.sql.Types;
 
+import org.opengis.util.FactoryException;
 import org.opengis.parameter.ParameterValueGroup;
-import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform1D;
 import org.opengis.referencing.operation.MathTransformFactory;

@@ -24,7 +24,7 @@ import java.awt.geom.PathIterator;
 import java.awt.geom.Point2D;
 import javax.measure.unit.SI;
 
-import org.opengis.referencing.FactoryException;
+import org.opengis.util.FactoryException;
 import org.opengis.referencing.crs.GeographicCRS;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.geometry.DirectPosition;

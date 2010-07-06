@@ -35,7 +35,7 @@ import java.sql.SQLDataException;
 import java.sql.PreparedStatement;
 
 import org.opengis.referencing.operation.Projection;
-import org.opengis.referencing.NoSuchIdentifierException;
+import org.opengis.util.NoSuchIdentifierException;
 
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.resources.Loggings;

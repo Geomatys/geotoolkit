@@ -19,7 +19,7 @@ package org.geotoolkit.referencing.operation;
 
 import javax.measure.converter.ConversionException;
 
-import org.opengis.referencing.FactoryException;
+import org.opengis.util.FactoryException;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.GeographicCRS;

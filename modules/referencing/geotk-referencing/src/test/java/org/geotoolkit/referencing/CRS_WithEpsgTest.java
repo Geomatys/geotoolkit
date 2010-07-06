@@ -26,13 +26,13 @@ import java.sql.SQLException;
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.citation.Citation;
 import org.opengis.referencing.AuthorityFactory;
-import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.cs.AxisDirection;
 import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
 import org.opengis.referencing.crs.CRSAuthorityFactory;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
+import org.opengis.util.FactoryException;
 
 import org.geotoolkit.test.Depend;
 import org.geotoolkit.factory.Hints;

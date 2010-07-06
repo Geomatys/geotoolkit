@@ -19,7 +19,7 @@ package org.geotoolkit.referencing.operation.transform;
 
 import java.io.IOException;
 
-import org.opengis.referencing.FactoryException;
+import org.opengis.util.FactoryException;
 import org.opengis.referencing.crs.ProjectedCRS;
 import org.opengis.referencing.operation.TransformException;
 

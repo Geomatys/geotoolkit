@@ -35,7 +35,7 @@ import java.nio.charset.Charset;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 
-import org.opengis.referencing.FactoryException;
+import org.opengis.util.FactoryException;
 
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Descriptions;

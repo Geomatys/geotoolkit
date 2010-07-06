@@ -32,10 +32,10 @@ import javax.measure.unit.Unit;
 import javax.measure.unit.UnitFormat;
 
 import org.opengis.geometry.DirectPosition;
+import org.opengis.util.FactoryException;
 import org.opengis.util.InternationalString;
 import org.opengis.coverage.grid.RectifiedGrid;
 import org.opengis.parameter.ParameterValueGroup;
-import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform1D;

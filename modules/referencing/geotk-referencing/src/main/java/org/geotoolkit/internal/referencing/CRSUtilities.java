@@ -24,6 +24,7 @@ import java.util.Collections;
 import java.awt.RenderingHints;
 import javax.measure.unit.Unit;
 
+import org.opengis.util.Factory;
 import org.opengis.referencing.*;
 import org.opengis.referencing.cs.*;
 import org.opengis.referencing.crs.*;

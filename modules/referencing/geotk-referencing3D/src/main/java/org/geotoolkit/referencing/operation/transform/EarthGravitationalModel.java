@@ -26,11 +26,11 @@ import java.io.DataInputStream;
 import java.io.BufferedInputStream;
 import java.io.FileNotFoundException;
 
+import org.opengis.util.FactoryException;
 import org.opengis.parameter.ParameterValue;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.referencing.datum.GeodeticDatum;
-import org.opengis.referencing.FactoryException;
 
 import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.referencing.CRS;

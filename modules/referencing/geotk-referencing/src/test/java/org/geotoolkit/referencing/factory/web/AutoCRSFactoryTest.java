@@ -23,8 +23,8 @@ import java.awt.geom.NoninvertibleTransformException;
 import javax.measure.unit.SI;
 import javax.measure.unit.NonSI;
 
+import org.opengis.util.FactoryException;
 import org.opengis.metadata.citation.Citation;
-import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.ProjectedCRS;
 import org.opengis.referencing.crs.CRSAuthorityFactory;
 

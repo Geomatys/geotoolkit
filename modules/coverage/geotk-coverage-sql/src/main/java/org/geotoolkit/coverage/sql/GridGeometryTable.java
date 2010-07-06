@@ -27,7 +27,7 @@ import java.awt.geom.AffineTransform;
 import java.util.Arrays;
 import java.util.logging.Level;
 
-import org.opengis.referencing.FactoryException;
+import org.opengis.util.FactoryException;
 import org.opengis.referencing.ReferenceIdentifier;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransformFactory;

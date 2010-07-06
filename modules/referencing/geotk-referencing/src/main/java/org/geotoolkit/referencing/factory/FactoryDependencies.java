@@ -25,9 +25,9 @@ import java.io.PrintWriter;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 
+import org.opengis.util.Factory;
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.citation.Citation;
-import org.opengis.referencing.Factory;
 import org.opengis.referencing.AuthorityFactory;
 import org.opengis.referencing.crs.CRSFactory;
 import org.opengis.referencing.crs.CRSAuthorityFactory;

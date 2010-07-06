@@ -21,8 +21,8 @@ import java.util.Arrays;
 import java.util.Random;
 import java.awt.geom.AffineTransform;
 
+import org.opengis.util.FactoryException;
 import org.opengis.parameter.ParameterValueGroup;
-import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.referencing.operation.NoninvertibleTransformException;

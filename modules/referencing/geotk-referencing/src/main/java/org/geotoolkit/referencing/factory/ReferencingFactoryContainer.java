@@ -26,8 +26,8 @@ import org.opengis.referencing.crs.*;
 import org.opengis.referencing.datum.*;
 import org.opengis.referencing.operation.*;
 import org.opengis.referencing.IdentifiedObject;
-import org.opengis.referencing.FactoryException;
-import org.opengis.referencing.Factory;
+import org.opengis.util.FactoryException;
+import org.opengis.util.Factory;
 
 import org.geotoolkit.util.XArrays;
 import org.geotoolkit.factory.Hints;

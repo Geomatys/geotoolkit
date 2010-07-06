@@ -7,8 +7,8 @@
  */
 package org.geotoolkit.demo.referencing;
 
+import org.opengis.util.FactoryException;
 import org.opengis.geometry.DirectPosition;
-import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;

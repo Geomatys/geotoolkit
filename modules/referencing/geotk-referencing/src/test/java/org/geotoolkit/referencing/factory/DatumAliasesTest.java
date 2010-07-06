@@ -22,7 +22,7 @@ import java.util.Collection;
 import java.util.Collections;
 
 import org.opengis.util.GenericName;
-import org.opengis.referencing.FactoryException;
+import org.opengis.util.FactoryException;
 import org.opengis.referencing.datum.Ellipsoid;
 import org.opengis.referencing.datum.DatumFactory;
 import org.opengis.referencing.datum.GeodeticDatum;
