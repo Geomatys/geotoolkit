@@ -117,7 +117,7 @@ public abstract class AbstractDataStoreFactory extends Factory implements DataSt
     @Override
     public boolean canProcess(ParameterValueGroup params) {
         final ConformanceResult result = Parameters.isValid(params, getParametersDescriptor());
-        return result.pass();
+        return (result != null) && Boolean.TRUE.equals(result.pass());
     }
 
     /**
@@ -126,7 +126,7 @@ public abstract class AbstractDataStoreFactory extends Factory implements DataSt
     @Override
     public ConformanceResult availability() {
         DefaultConformanceResult result =  new DefaultConformanceResult();
-        result.setPass(true);
+        result.setPass(Boolean.TRUE);
         return result;
     }
 
