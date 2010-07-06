@@ -1,0 +1,51 @@
+Performing a Geotoolkit.org release
+
+  This page is for Geotk release managers only.
+
+
+* Requirements
+
+  * Maven and Ant shall be available on the path.
+
+  * The <<<.m2/settings.xml>>> file shall contain connection information
+    to the <<<dav:http://maven.geotoolkit.org/>>> server.
+
+  * A clone of <<<http://hg.geotoolkit.org/geotoolkit>>> must be available in a directory named <<<public>>>.
+
+  * The <<<{{{setup.sh}public/build/src/site/resources/release/setup.sh}}>>> script shall have
+    been executed once from the parent directory of the above-cited <<<public>>> directory.
+
+  * The <<<release/$OLD_VERSION>>> directory shall exist (where <<<$OLD_VERSION>>> is defined
+    below) and shall contain the source code of the previous version, as processed by the <<<Move>>>
+    program described below.
+
+  * The home directory on <<<$GEOTK_SERVER>>> (defined below) shall contains a <<<geotk-release>>>
+    directory with a <<<packs>>> sub-directory. They are used temporarily for files transfert.
+
+
+* Performing a GeoAPI release
+
+  See {{{http://www.geoapi.org/tools/release-instruction.html}GeoAPI tools}}
+
+
+* Performing a Geotk release
+
+  If the GeoAPI version number has changed, edit the version number declared
+  in the <<<{{{update-version.xml}update-version.xml}}>>> file. Then define
+  the Geotk version numbers and the deployment server:
+
+-----------------------------------------------------
+export OLD_VERSION="3.12"
+export NEW_VERSION="3.13"
+export GEOTK_SERVER=(... put foo@server.com here ...)
+-----------------------------------------------------
+
+  Then, run the script after making sure that the tests pass:
+
+---------------------
+cd public
+mvn clean test
+../release/release.sh
+---------------------
+
+  (TODO - next steps to be documented later)
