@@ -160,12 +160,14 @@ public final class Trees {
         }
         final DefaultMutableTreeNode root = new NamedTreeNode(label, node, true);
         final NamedNodeMap attributes = node.getAttributes();
-        final int length = attributes.getLength();
-        for (int i=0; i<length; i++) {
-            final Node attribute = attributes.item(i);
-            if (attribute != null) {
-                label = attribute.getNodeName() + "=\"" + attribute.getNodeValue() + '"';
-                root.add(new NamedTreeNode(label, attribute, false));
+        if (attributes != null) {
+            final int length = attributes.getLength();
+            for (int i=0; i<length; i++) {
+                final Node attribute = attributes.item(i);
+                if (attribute != null) {
+                    label = attribute.getNodeName() + "=\"" + attribute.getNodeValue() + '"';
+                    root.add(new NamedTreeNode(label, attribute, false));
+                }
             }
         }
         for (Node child=node.getFirstChild(); child!=null; child=child.getNextSibling()) {
