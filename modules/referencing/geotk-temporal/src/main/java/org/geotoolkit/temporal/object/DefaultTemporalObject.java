@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.temporal.object;
 
+import java.io.Serializable;
 import org.opengis.temporal.TemporalObject;
 
 /**
@@ -25,5 +26,5 @@ import org.opengis.temporal.TemporalObject;
  * @author Mehdi Sidhoum (Geomatys)
  * @module pending
  */
-public abstract class DefaultTemporalObject implements TemporalObject {
+public abstract class DefaultTemporalObject implements TemporalObject, Serializable {
 }
