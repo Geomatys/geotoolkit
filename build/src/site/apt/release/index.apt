@@ -12,7 +12,7 @@ Performing a Geotoolkit.org release
 
   * A clone of <<<http://hg.geotoolkit.org/geotoolkit>>> must be available in a directory named <<<public>>>.
 
-  * The <<<{{{setup.sh}public/build/src/site/resources/release/setup.sh}}>>> script shall have
+  * The <<<{{{./setup.sh}public/build/src/site/resources/release/setup.sh}}>>> script shall have
     been executed once from the parent directory of the above-cited <<<public>>> directory.
 
   * The <<<release/$OLD_VERSION>>> directory shall exist (where <<<$OLD_VERSION>>> is defined
@@ -31,14 +31,14 @@ Performing a Geotoolkit.org release
 * Performing a Geotk release
 
   If the GeoAPI version number has changed, edit the version number declared
-  in the <<<{{{update-version.xml}update-version.xml}}>>> file. Then define
+  in the <<<{{{./update-version.xml}update-version.xml}}>>> file. Then define
   the Geotk version numbers and the deployment server:
 
------------------------------------------------------
+--------------------------------------------------------
 export OLD_VERSION="3.12"
 export NEW_VERSION="3.13"
-export GEOTK_SERVER=(... put foo@server.com here ...)
------------------------------------------------------
+export GEOTK_SERVER=(... insert foo@server.com here ...)
+--------------------------------------------------------
 
   Then, run the script after making sure that the tests pass:
 

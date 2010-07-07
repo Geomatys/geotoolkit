@@ -382,8 +382,8 @@ public class GridToEnvelopeMapper {
      * (which is the default), then this method makes the following assumptions:
      * <p>
      * <ul>
-     *   <li>Axis should be reverted if needed in order to point toward their
-     *       "{@linkplain AxisDirection#absolute absolute}" direction.</li>
+     *   <li>Axis should be reverted if needed in order to have the most commonly used
+     *       direction for increasing positive values (North, East, Up, Future).</li>
      *   <li>An exception to the above rule is the second axis in grid space,
      *       which is assumed to be the <var>y</var> axis on output device (usually
      *       the screen). This axis is reversed again in order to match the bottom
