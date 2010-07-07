@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2008 - 2009, Geomatys
+ *    (C) 2008 - 2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -51,7 +51,7 @@ import org.geotoolkit.ows.xml.v110.SectionsType;
 public class GetCapabilities extends GetCapabilitiesType {
 
     @XmlAttribute(required = true)
-    protected String service;
+    private String service;
 
     /**
      * An empty constructor used by JAXB

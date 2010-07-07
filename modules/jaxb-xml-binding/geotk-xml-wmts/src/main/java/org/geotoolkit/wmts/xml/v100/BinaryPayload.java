@@ -60,9 +60,9 @@ import javax.xml.bind.annotation.XmlType;
 public class BinaryPayload {
 
     @XmlElement(name = "Format", required = true)
-    protected String format;
+    private String format;
     @XmlElement(name = "PayloadContent", required = true)
-    protected byte[] payloadContent;
+    private byte[] payloadContent;
 
     /**
      * Gets the value of the format property.

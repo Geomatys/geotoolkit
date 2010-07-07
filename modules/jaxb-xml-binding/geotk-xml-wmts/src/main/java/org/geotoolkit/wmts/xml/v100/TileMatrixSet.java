@@ -64,9 +64,7 @@ import org.geotoolkit.ows.xml.v110.DescriptionType;
     "tileMatrix"
 })
 @XmlRootElement(name = "TileMatrixSet")
-public class TileMatrixSet
-    extends DescriptionType
-{
+public class TileMatrixSet extends DescriptionType {
 
     @XmlElement(name = "Identifier", namespace = "http://www.opengis.net/ows/1.1", required = true)
     protected CodeType identifier;

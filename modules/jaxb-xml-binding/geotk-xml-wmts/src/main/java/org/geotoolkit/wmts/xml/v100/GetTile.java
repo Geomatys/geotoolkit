@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2008 - 2009, Geomatys
+ *    (C) 2008 - 2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.wmts.xml.v100;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -72,27 +71,27 @@ import javax.xml.bind.annotation.XmlType;
 public class GetTile {
 
     @XmlElement(name = "Layer", required = true)
-    protected String layer;
+    private String layer;
     @XmlElement(name = "Style")
-    protected String style;
+    private String style;
     @XmlElement(name = "Format", required = true)
-    protected String format;
+    private String format;
     @XmlElement(name = "DimensionNameValue")
-    protected List<DimensionNameValue> dimensionNameValue;
+    private List<DimensionNameValue> dimensionNameValue;
     @XmlElement(name = "TileMatrixSet", required = true)
-    protected String tileMatrixSet;
+    private String tileMatrixSet;
     @XmlElement(name = "TileMatrix", required = true)
-    protected String tileMatrix;
+    private String tileMatrix;
     @XmlElement(name = "TileRow", required = true)
     @XmlSchemaType(name = "nonNegativeInteger")
-    protected BigInteger tileRow;
+    private Integer tileRow;
     @XmlElement(name = "TileCol", required = true)
     @XmlSchemaType(name = "nonNegativeInteger")
-    protected BigInteger tileCol;
+    private Integer tileCol;
     @XmlAttribute(required = true)
-    protected String service;
+    private String service;
     @XmlAttribute(required = true)
-    protected String version;
+    private String version;
 
     /**
      * Gets the value of the layer property.
@@ -248,10 +247,10 @@ public class GetTile {
      * 
      * @return
      *     possible object is
-     *     {@link BigInteger }
+     *     {@link Integer }
      *     
      */
-    public BigInteger getTileRow() {
+    public Integer getTileRow() {
         return tileRow;
     }
 
@@ -260,10 +259,10 @@ public class GetTile {
      * 
      * @param value
      *     allowed object is
-     *     {@link BigInteger }
+     *     {@link Integer }
      *     
      */
-    public void setTileRow(BigInteger value) {
+    public void setTileRow(Integer value) {
         this.tileRow = value;
     }
 
@@ -272,10 +271,10 @@ public class GetTile {
      * 
      * @return
      *     possible object is
-     *     {@link BigInteger }
+     *     {@link Integer }
      *     
      */
-    public BigInteger getTileCol() {
+    public Integer getTileCol() {
         return tileCol;
     }
 
@@ -284,10 +283,10 @@ public class GetTile {
      * 
      * @param value
      *     allowed object is
-     *     {@link BigInteger }
+     *     {@link Integer }
      *     
      */
-    public void setTileCol(BigInteger value) {
+    public void setTileCol(Integer value) {
         this.tileCol = value;
     }
 

@@ -17,12 +17,14 @@
 package org.geotoolkit.wmts.xml.v100;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.ows.xml.v110.BoundingBoxType;
 import org.geotoolkit.ows.xml.v110.DatasetDescriptionSummaryBaseType;
 
 
@@ -59,42 +61,31 @@ import org.geotoolkit.ows.xml.v110.DatasetDescriptionSummaryBaseType;
     "tileMatrixSet"
 })
 @XmlRootElement(name="LayerType")
-public class LayerType
-    extends DatasetDescriptionSummaryBaseType
-{
+public class LayerType extends DatasetDescriptionSummaryBaseType {
 
     @XmlElement(name = "Style", required = true)
-    protected List<Style> style;
+    private List<Style> style;
     @XmlElement(name = "Format", required = true)
-    protected List<FormatType> format;
+    private List<FormatType> format;
     @XmlElement(name = "InfoFormat")
-    protected List<FormatType> infoFormat;
+    private List<FormatType> infoFormat;
     @XmlElement(name = "Dimension")
-    protected List<Dimension> dimension;
+    private List<Dimension> dimension;
     @XmlElement(name = "TileMatrixSet", required = true)
-    protected List<String> tileMatrixSet;
+    private List<String> tileMatrixSet;
+
+    public LayerType() {
+
+    }
+
+    public LayerType(String layerName, String remarks, BoundingBoxType bbox, List<Style> style, List<Dimension> dimension) {
+        super(layerName, remarks, Arrays.asList(bbox));
+        this.style     = style;
+        this.dimension = dimension;
+    }
 
     /**
      * Metadata about the styles of this layer Gets the value of the style property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the style property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getStyle().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link Style }
-     * 
-     * 
      */
     public List<Style> getStyle() {
         if (style == null) {
@@ -105,25 +96,6 @@ public class LayerType
 
     /**
      * Gets the value of the format property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the format property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getFormat().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link FormatType }
-     * 
-     * 
      */
     public List<FormatType> getFormat() {
         if (format == null) {
@@ -134,25 +106,6 @@ public class LayerType
 
     /**
      * Gets the value of the infoFormat property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the infoFormat property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getInfoFormat().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link FormatType }
-     * 
-     * 
      */
     public List<FormatType> getInfoFormat() {
         if (infoFormat == null) {
@@ -162,26 +115,8 @@ public class LayerType
     }
 
     /**
-     * Extra dimensions for a tile and FeatureInfo requests.Gets the value of the dimension property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the dimension property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getDimension().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link Dimension }
-     * 
-     * 
+     * Extra dimensions for a tile and FeatureInfo requests.
+     * Gets the value of the dimension property.
      */
     public List<Dimension> getDimension() {
         if (dimension == null) {
@@ -192,24 +127,6 @@ public class LayerType
 
     /**
      * Gets the value of the tileMatrixSet property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the tileMatrixSet property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getTileMatrixSet().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link String }
-     * 
      * 
      */
     public List<String> getTileMatrixSet() {

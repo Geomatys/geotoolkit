@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2008 - 2009, Geomatys
+ *    (C) 2008 - 2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -56,17 +56,24 @@ import org.geotoolkit.ows.xml.v110.DescriptionType;
     "legendURL"
 })
 @XmlRootElement(name = "Style")
-public class Style
-    extends DescriptionType
-{
+public class Style extends DescriptionType {
 
     @XmlElement(name = "Identifier", namespace = "http://www.opengis.net/ows/1.1", required = true)
-    protected CodeType identifier;
+    private CodeType identifier;
     @XmlElement(name = "LegendURL")
-    protected List<LegendURL> legendURL;
+    private List<LegendURL> legendURL;
     @XmlAttribute
-    protected Boolean isDefault;
+    private Boolean isDefault;
 
+    public Style() {
+
+    }
+
+    public Style(CodeType identifier, List<LegendURL> legendURL) {
+        this.identifier = identifier;
+        this.legendURL  = legendURL;
+    }
+    
     /**
      * An unambiguous reference to this style, identifying a specific version when needed, normally used by software
      * 
@@ -93,25 +100,6 @@ public class Style
 
     /**
      * Description of an image that represents the legend of the map Gets the value of the legendURL property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the legendURL property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getLegendURL().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link LegendURL }
-     * 
-     * 
      */
     public List<LegendURL> getLegendURL() {
         if (legendURL == null) {

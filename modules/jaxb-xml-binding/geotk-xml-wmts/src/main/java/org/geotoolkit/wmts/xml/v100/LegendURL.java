@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2008 - 2009, Geomatys
+ *    (C) 2008 - 2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -61,20 +61,34 @@ import org.geotoolkit.ows.xml.v110.OnlineResourceType;
 public class LegendURL {
 
     @XmlElement(name = "Format", required = true)
-    protected String format;
+    private String format;
     @XmlElement(name = "OnlineResource", required = true)
-    protected OnlineResourceType onlineResource;
+    private OnlineResourceType onlineResource;
     @XmlAttribute
-    protected Double minScaleDenominator;
+    private Double minScaleDenominator;
     @XmlAttribute
-    protected Double maxScaleDenominator;
-    @XmlAttribute
-    @XmlSchemaType(name = "positiveInteger")
-    protected BigInteger width;
+    private Double maxScaleDenominator;
     @XmlAttribute
     @XmlSchemaType(name = "positiveInteger")
-    protected BigInteger height;
+    private BigInteger width;
+    @XmlAttribute
+    @XmlSchemaType(name = "positiveInteger")
+    private BigInteger height;
 
+    public LegendURL() {
+
+    }
+
+    public LegendURL(final String format, final OnlineResourceType onlineResource, final BigInteger width,
+            final BigInteger height, Double minScaleDenominator, Double maxScaleDenominator) {
+        this.format              = format;
+        this.height              = height;
+        this.onlineResource      = onlineResource;
+        this.width               = width;
+        this.minScaleDenominator = minScaleDenominator;
+        this.maxScaleDenominator = maxScaleDenominator;
+    }
+    
     /**
      * Gets the value of the format property.
      * 

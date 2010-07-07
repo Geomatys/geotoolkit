@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2008 - 2009, Geomatys
+ *    (C) 2008 - 2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -51,9 +51,9 @@ import javax.xml.bind.annotation.XmlType;
 public class FormatType {
 
     @XmlElement(name = "MIME", required = true)
-    protected String mime;
+    private String mime;
     @XmlElement(name = "FileExtension")
-    protected String fileExtension;
+    private String fileExtension;
 
     /**
      * Gets the value of the mime property.
