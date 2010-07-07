@@ -34,6 +34,7 @@ import org.geotoolkit.data.session.Session;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.geometry.DefaultBoundingBox;
+import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.util.collection.CloseableIterator;
@@ -282,13 +283,20 @@ public class DataUtilities {
             if (wrapped.length > 0) {
                 crs = wrapped[0].getEnvelope().getCoordinateReferenceSystem();
             }
-            final JTSEnvelope2D env = new JTSEnvelope2D(crs);
+            GeneralEnvelope bbox = null;
 
             for (FeatureCollection c : wrapped) {
-                env.expandToInclude(new JTSEnvelope2D(c.getEnvelope()));
-            }
+                Envelope e = c.getEnvelope();
 
-            return env;
+                if (e != null) {
+                    if (bbox != null) {
+                        bbox.add(e);
+                    } else {
+                      bbox = new GeneralEnvelope(e);
+                    }
+                }
+            }
+            return bbox;
         }
 
         public static FeatureCollection sequence(FeatureCollection... cols) {

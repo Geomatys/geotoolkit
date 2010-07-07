@@ -45,7 +45,7 @@ import org.junit.Test;
 import org.opengis.filter.FilterFactory2;
 import org.opengis.filter.expression.Expression;
 import org.opengis.metadata.citation.OnlineResource;
-import org.opengis.referencing.FactoryException;
+import org.opengis.util.FactoryException;
 import org.opengis.sld.Layer;
 import org.opengis.sld.SLDLibrary;
 import org.opengis.sld.StyledLayerDescriptor;

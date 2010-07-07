@@ -25,7 +25,7 @@ import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.wms.AbstractGetMap;
 
 import org.opengis.geometry.Envelope;
-import org.opengis.referencing.FactoryException;
+import org.opengis.util.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 

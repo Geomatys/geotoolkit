@@ -178,9 +178,9 @@ public class DefaultFeaturePropertyAccessorFactory implements PropertyAccessorFa
     private static class FidSimpleFeaturePropertyAccessor implements PropertyAccessor {
 
         @Override
-        public boolean canHandle(Object object, String xpath, Class target) {
+        public boolean canHandle(Class clazz, String xpath, Class target) {
             //we only work against feature, not feature type
-            return object instanceof Feature && xpath.matches("@(\\w+:)?id");
+            return Feature.class.isAssignableFrom(clazz) && xpath.matches("@(\\w+:)?id");
         }
 
         @Override
@@ -199,20 +199,13 @@ public class DefaultFeaturePropertyAccessorFactory implements PropertyAccessorFa
     static class DefaultGeometrySimpleFeaturePropertyAccessor implements PropertyAccessor {
 
         @Override
-        public boolean canHandle(Object object, String xpath, Class target) {
+        public boolean canHandle(Class clazz, String xpath, Class target) {
             if (!"".equals(xpath)) {
                 return false;
             }
 
-//        	if ( target != Geometry.class ) 
-//        		return false;
-
-            if (!(object instanceof Feature || object instanceof FeatureType)) {
-                return false;
-            }
-
-            return true;
-
+            return Feature.class.isAssignableFrom(clazz)
+                || FeatureType.class.isAssignableFrom(clazz);
         }
 
         @Override
@@ -246,19 +239,12 @@ public class DefaultFeaturePropertyAccessorFactory implements PropertyAccessorFa
     static class SimpleFeaturePropertyAccessor implements PropertyAccessor {
 
         @Override
-        public boolean canHandle(Object object, String xpath, Class target) {
+        public boolean canHandle(Class clazz, String xpath, Class target) {
             xpath = stripPrefix(xpath);
             final Name name = DefaultName.valueOf(xpath);
 
-            if (object instanceof Feature) {
-                return ((Feature) object).getProperty(name) != null;
-            }
-
-            if (object instanceof FeatureType) {
-                return ((FeatureType) object).getDescriptor(name) != null;
-            }
-
-            return false;
+            return Feature.class.isAssignableFrom(clazz)
+                || FeatureType.class.isAssignableFrom(clazz);
         }
 
         @Override
@@ -313,17 +299,10 @@ public class DefaultFeaturePropertyAccessorFactory implements PropertyAccessorFa
         }
 
         @Override
-        public boolean canHandle(Object object, String xpath, Class target) {
+        public boolean canHandle(Class clazz, String xpath, Class target) {
 
-            if (object instanceof Feature) {
-                return ((Feature) object).getProperty(xpath) != null;
-            }
-
-            if (object instanceof FeatureType) {
-                return ((FeatureType) object).getDescriptor(xpath) != null;
-            }
-
-            return false;
+            return Feature.class.isAssignableFrom(clazz)
+                || FeatureType.class.isAssignableFrom(clazz);
         }
 
         @Override

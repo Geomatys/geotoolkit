@@ -24,7 +24,7 @@ import java.util.logging.Level;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.wms.AbstractGetFeatureInfo;
 import org.opengis.geometry.Envelope;
-import org.opengis.referencing.FactoryException;
+import org.opengis.util.FactoryException;
 
 
 /**

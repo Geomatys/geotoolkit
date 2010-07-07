@@ -99,6 +99,10 @@ public final class TemporalUtilities {
      */
     private static final SimpleDateFormat sdf1 = new java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
     private static final SimpleDateFormat sdf2 = new java.text.SimpleDateFormat("yyyy-MM-dd");
+    static {
+        //we don't hour here so we put the timeZone to GMT+0
+        sdf2.setTimeZone(TimeZone.getTimeZone("GMT+0"));
+    }
     private static final SimpleDateFormat sdf3 = new java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
     private static final SimpleDateFormat sdf4 = new java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 

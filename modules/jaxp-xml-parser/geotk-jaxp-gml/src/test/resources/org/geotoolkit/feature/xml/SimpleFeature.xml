@@ -7,7 +7,7 @@
     <gml:attLong>48</gml:attLong>
     <gml:attDouble>96.12</gml:attDouble>
     <gml:attDecimal>456789</gml:attDecimal>
-    <gml:attDate>2005-08-21</gml:attDate>
+    <gml:attDate>2005-08-21Z</gml:attDate>
     <gml:attDateTime>2005-08-21T15:43:12.052Z</gml:attDateTime>
     <gml:attBoolean>true</gml:attBoolean>
 

@@ -160,7 +160,8 @@ public interface DataStore {
      * Get the envelope of all features matching the given query.
      * 
      * @param query : features to query
-     * @return Envelope or null if no features where found.
+     * @return Envelope, may be null if no features where found or there are no
+     *  geometry fields.
      * @throws IOException : error occured while reading
      */
     Envelope getEnvelope(Query query) throws DataStoreException;

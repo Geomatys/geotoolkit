@@ -17,13 +17,18 @@
 
 package org.geotoolkit.jdbc;
 
-import org.geotoolkit.jdbc.dialect.SQLDialect;
 import com.vividsolutions.jts.geom.GeometryFactory;
 
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.sql.DataSource;
 
 import org.geotoolkit.data.AbstractDataStore;
+import org.geotoolkit.jdbc.dialect.SQLDialect;
 
 import org.opengis.feature.FeatureFactory;
 import org.opengis.feature.type.FeatureTypeFactory;
@@ -221,6 +226,100 @@ public abstract class AbstractJDBCDataStore extends AbstractDataStore implements
     @Override
     public void setFetchSize(final int fetchSize) {
         this.fetchSize = fetchSize;
+    }
+
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Connection utils ////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public final Connection createConnection() throws SQLException {
+        getLogger().fine("CREATE CONNECTION");
+        final Connection cx = getDataSource().getConnection();
+        // isolation level is not set in the datastore, see
+        // http://jira.codehaus.org/browse/GEOT-2021
+
+        //call dialect callback to initialize the connection
+        dialect.initializeConnection(cx);
+        return cx;
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public void closeSafe(Connection cx, Statement st, ResultSet rs){
+        closeSafe(cx);
+        closeSafe(st);
+        closeSafe(rs);
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public void closeSafe(final ResultSet rs) {
+        if (rs == null) {
+            return;
+        }
+
+        try {
+            rs.close();
+        } catch (SQLException e) {
+            final String msg = "Error occurred closing result set";
+            getLogger().warning(msg);
+
+            if (getLogger().isLoggable(Level.FINER)) {
+                getLogger().log(Level.FINER, msg, e);
+            }
+        }
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public void closeSafe(final Statement st) {
+        if (st == null) {
+            return;
+        }
+
+        try {
+            st.close();
+        } catch (SQLException e) {
+            final String msg = "Error occurred closing statement";
+            getLogger().warning(msg);
+
+            if (getLogger().isLoggable(Level.FINER)) {
+                getLogger().log(Level.FINER, msg, e);
+            }
+        }
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public void closeSafe(final Connection cx) {
+        if (cx == null) {
+            return;
+        }
+
+        try {
+            cx.close();
+            getLogger().fine("CLOSE CONNECTION");
+        } catch (SQLException e) {
+            final String msg = "Error occurred closing connection";
+            getLogger().warning(msg);
+
+            if (getLogger().isLoggable(Level.FINER)) {
+                getLogger().log(Level.FINER, msg, e);
+            }
+        }
     }
 
 }

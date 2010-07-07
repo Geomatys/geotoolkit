@@ -25,7 +25,7 @@ import org.geotoolkit.display.canvas.ReferencedCanvas2D;
 import org.geotoolkit.map.CoverageMapLayer;
 
 import org.opengis.display.primitive.Graphic;
-import org.opengis.referencing.FactoryException;
+import org.opengis.util.FactoryException;
 import org.opengis.referencing.operation.TransformException;
 
 /**

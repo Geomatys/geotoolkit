@@ -36,6 +36,7 @@ import org.geotoolkit.jdbc.dialect.SQLDialect;
 import org.opengis.feature.FeatureFactory;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.FeatureTypeFactory;
+import org.opengis.feature.type.Name;
 import org.opengis.filter.FilterFactory;
 import org.opengis.geometry.Envelope;
 
@@ -51,12 +52,14 @@ public interface JDBCDataStore extends DataStore {
      * The native SRID associated to a certain descriptor
      */
     public static final String JDBC_NATIVE_SRID = "nativeSRID";
-    /**
-     * The envelope returned when bounds is called against a geometryless feature type
-     */
-    public static final Envelope EMPTY_ENVELOPE = new JTSEnvelope2D();
 
-    PrimaryKey getPrimaryKey(FeatureType type) throws DataStoreException;
+    /**
+     * Find the primary key of the given feature type.
+     * @param featureTypeName
+     * @return Primary key of the given feature type
+     * @throws DataStoreException
+     */
+    PrimaryKey getPrimaryKey(Name featureTypeName) throws DataStoreException;
 
     /**
      * The factory used to create feature types.
@@ -155,6 +158,18 @@ public interface JDBCDataStore extends DataStore {
      * Callers of this method should close the connection when done with it.
      */
     Connection createConnection() throws SQLException;
+
+    /**
+     * Utility method for closing a result set.
+     * <p>
+     * This method closed the result set "safely" in that it never throws an
+     * exception. Any exceptions that do occur are logged at {@link Level#FINER}.
+     * </p>
+     * @param cx The connection to close.
+     * @param st The statement to close.
+     * @param rs The result set to close.
+     */
+    void closeSafe(final Connection cx, final Statement st, final ResultSet rs);
 
     /**
      * Utility method for closing a result set.

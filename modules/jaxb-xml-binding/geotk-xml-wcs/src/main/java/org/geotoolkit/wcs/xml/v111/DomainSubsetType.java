@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.ows.xml.v110.BoundingBoxType;
 import org.geotoolkit.ows.xml.v110.WGS84BoundingBoxType;
+import org.geotoolkit.wcs.xml.DomainSubset;
 
 
 /**
@@ -54,7 +55,7 @@ import org.geotoolkit.ows.xml.v110.WGS84BoundingBoxType;
     "boundingBox",
     "temporalSubset"
 })
-public class DomainSubsetType {
+public class DomainSubsetType implements DomainSubset  {
 
     @XmlElementRef(name = "BoundingBox", namespace = "http://www.opengis.net/ows/1.1", type = JAXBElement.class)
     private JAXBElement<? extends BoundingBoxType> boundingBox;

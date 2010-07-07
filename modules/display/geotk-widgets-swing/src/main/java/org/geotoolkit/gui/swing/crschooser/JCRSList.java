@@ -38,7 +38,7 @@ import org.geotoolkit.referencing.CRS;
 import org.jdesktop.swingx.JXList;
 
 import org.opengis.referencing.AuthorityFactory;
-import org.opengis.referencing.FactoryException;
+import org.opengis.util.FactoryException;
 import org.opengis.referencing.IdentifiedObject;
 import org.opengis.referencing.crs.CRSAuthorityFactory;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;

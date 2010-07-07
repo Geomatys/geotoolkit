@@ -66,7 +66,7 @@ import org.opengis.filter.expression.Subtract;
 import org.opengis.filter.spatial.BinarySpatialOperator;
 import org.opengis.filter.spatial.Disjoint;
 import org.opengis.filter.spatial.Overlaps;
-import org.opengis.referencing.FactoryException;
+import org.opengis.util.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 
 /**

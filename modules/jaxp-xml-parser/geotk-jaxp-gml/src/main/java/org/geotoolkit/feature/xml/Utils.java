@@ -58,7 +58,7 @@ public class Utils {
         timestampFormatter.setTimeZone(TimeZone.getTimeZone("GMT+0"));
     }
 
-    private static final DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
+    private static final DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd'Z'");
     static{
         dateFormatter.setTimeZone(TimeZone.getTimeZone("GMT+0"));
     }
@@ -257,7 +257,8 @@ public class Utils {
         } else if (obj instanceof Timestamp) {
             return timestampFormatter.format(new Date(((Timestamp)obj).getTime()));
         } else if (obj instanceof java.sql.Date) {
-            return dateFormatter.format((java.sql.Date) obj);
+            // sql date does not have
+            return  obj.toString() + 'Z';
         } else if (obj instanceof java.util.Date) {
             return dateFormatter.format((java.util.Date) obj);
         } else if (obj instanceof Number || obj instanceof Boolean) {

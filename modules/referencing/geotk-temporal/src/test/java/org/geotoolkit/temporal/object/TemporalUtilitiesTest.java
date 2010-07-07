@@ -21,8 +21,6 @@ import java.text.ParseException;
 import java.util.Calendar;
 import java.lang.annotation.Annotation;
 import java.util.TimeZone;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -164,7 +162,7 @@ public class TemporalUtilitiesTest implements Test{
 
         str = "1995-11-23Z";
         date.setTime(TemporalUtilities.parseDate(str));
-        date.setTimeZone(TimeZone.getDefault());
+        date.setTimeZone(TimeZone.getTimeZone("GMT+0"));
         assertEquals(year, date.get(YEAR));
         assertEquals(month, date.get(MONTH));
         assertEquals(day, date.get(DAY_OF_MONTH));
@@ -175,7 +173,7 @@ public class TemporalUtilitiesTest implements Test{
 
         str = "1995-11-23";
         date.setTime(TemporalUtilities.parseDate(str));
-        date.setTimeZone(TimeZone.getDefault());
+        date.setTimeZone(TimeZone.getTimeZone("GMT+0"));
         assertEquals(year, date.get(YEAR));
         assertEquals(month, date.get(MONTH));
         assertEquals(day, date.get(DAY_OF_MONTH));
@@ -243,7 +241,7 @@ public class TemporalUtilitiesTest implements Test{
 
         str = "1995-11-23";
         date.setTime(TemporalUtilities.parseDate(str));
-        date.setTimeZone(TimeZone.getDefault());
+        date.setTimeZone(TimeZone.getTimeZone("GMT+0"));
         assertEquals(year, date.get(YEAR));
         assertEquals(month, date.get(MONTH));
         assertEquals(day, date.get(DAY_OF_MONTH));

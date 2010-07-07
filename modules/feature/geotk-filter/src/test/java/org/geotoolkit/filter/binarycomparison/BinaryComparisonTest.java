@@ -119,11 +119,15 @@ public class BinaryComparisonTest {
 
         rightliteral = FF.literal(DATE);
         falseliteral = FF.literal(new Date(DATE.getTime()+360000));
+        Literal falseliteral2 = FF.literal(new Date(DATE.getTime()+ 25*60*60*1000));
 
         property = FF.property("date");
         filter = FF.equals(property, rightliteral);
         assertTrue(filter.evaluate(CANDIDATE_1));
         filter = FF.equals(property, falseliteral);
+        assertTrue(filter.evaluate(CANDIDATE_1));
+
+        filter = FF.equals(property, falseliteral2);
         assertFalse(filter.evaluate(CANDIDATE_1));
 
         property = FF.property("time");
@@ -689,11 +693,14 @@ public class BinaryComparisonTest {
 
         rightliteral = FF.literal(DATE);
         falseliteral = FF.literal(new Date(DATE.getTime()+360000));
+        Literal falseliteral2 = FF.literal(new Date(DATE.getTime()+ 25*60*60*1000));
 
         property = FF.property("date");
         filter = FF.notEqual(property, rightliteral);
         assertFalse(filter.evaluate(CANDIDATE_1));
         filter = FF.notEqual(property, falseliteral);
+        assertFalse(filter.evaluate(CANDIDATE_1));
+        filter = FF.notEqual(property, falseliteral2);
         assertTrue(filter.evaluate(CANDIDATE_1));
 
         property = FF.property("time");

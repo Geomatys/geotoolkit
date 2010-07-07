@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.filter.binarycomparison;
 
+import java.util.Calendar;
 import java.util.Date;
 import org.geotoolkit.util.Converters;
 
@@ -95,10 +96,27 @@ public abstract class AbstractBinaryComparisonOperator<E extends Expression,F ex
 
         Object objright = right.evaluate(object,objleft.getClass());
 
+        if (objleft instanceof java.sql.Date && objright instanceof java.sql.Date) {
+            final Calendar cal1 = Calendar.getInstance();
+            cal1.setTime((java.sql.Date)objleft);
+            cal1.set(Calendar.HOUR_OF_DAY, 0);
+            cal1.set(Calendar.MINUTE, 0);
+            cal1.set(Calendar.SECOND, 0);
+            cal1.set(Calendar.MILLISECOND, 0);
+            
+            final Calendar cal2 = Calendar.getInstance();
+            cal2.setTime((java.sql.Date)objright);
+            cal2.set(Calendar.HOUR_OF_DAY, 0);
+            cal2.set(Calendar.MINUTE, 0);
+            cal2.set(Calendar.SECOND, 0);
+            cal2.set(Calendar.MILLISECOND, 0);
+
+            return cal1.compareTo(cal2);
+        }
+
         if(objright == null){
             return null;
         }
-
         return ((Comparable)objleft).compareTo(objright);
     }
 

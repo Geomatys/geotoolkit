@@ -32,12 +32,12 @@ public interface PropertyAccessor {
      * will actually work with the provided instance.
      * </p>
      *
-     * @param object The target object.
+     * @param object The target object class.
      * @param xpath An xpath expression denoting a property of the target object.
      *
      * @return <code>true</code> if the property can be accessed, otherwise <code>false</code>
      */
-    boolean canHandle(Object object, String xpath, Class target);
+    boolean canHandle(Class object, String xpath, Class target);
 
     /**
      * Accesses a property of <param>object</param> via xpath expression.

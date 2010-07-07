@@ -35,7 +35,6 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -67,7 +66,7 @@ import org.junit.Test;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.simple.SimpleFeatureType;
-import org.opengis.referencing.FactoryException;
+import org.opengis.util.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
@@ -289,7 +288,7 @@ public class XmlFeatureTest {
         assertTrue(obj instanceof SimpleFeature);
 
         SimpleFeature result = (SimpleFeature) obj;
-        //assertEquals(simpleFeatureFull.toString()+"\n"+result.toString()+"\n",simpleFeatureFull, result);
+        assertEquals(simpleFeatureFull, result);
     }
 
     @Test

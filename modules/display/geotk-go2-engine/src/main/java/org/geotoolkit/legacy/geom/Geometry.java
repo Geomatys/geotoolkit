@@ -36,7 +36,7 @@ import java.io.Serializable;
 
 import org.opengis.referencing.operation.OperationNotFoundException;
 import org.opengis.util.Cloneable;
-import org.opengis.referencing.FactoryException;
+import org.opengis.util.FactoryException;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;

@@ -29,7 +29,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.geotoolkit.math.Statistics;
-import org.opengis.referencing.FactoryException;
+import org.opengis.util.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 

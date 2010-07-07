@@ -20,9 +20,9 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.data.DataStoreRuntimeException;
@@ -34,6 +34,7 @@ import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.Name;
+import org.opengis.filter.Filter;
 import org.opengis.filter.Id;
 
 public class JDBCUpdateFeatureWriter extends JDBCFeatureReader implements
@@ -76,8 +77,10 @@ public class JDBCUpdateFeatureWriter extends JDBCFeatureReader implements
     
     @Override
     public void remove() throws DataStoreRuntimeException {
+        final Filter filter = dataStore.getFilterFactory().id(
+                Collections.singleton(last.getIdentifier()));
         try {
-            dataStore.delete(featureType, last.getID(), st.getConnection());
+            dataStore.delete(featureType, filter, st.getConnection());
         } catch (SQLException e) {
             throw new DataStoreRuntimeException(e);
         } catch (IOException e) {
@@ -89,7 +92,7 @@ public class JDBCUpdateFeatureWriter extends JDBCFeatureReader implements
     public void write() throws DataStoreRuntimeException {
         try {
             //figure out what the fid is
-            final PrimaryKey key = dataStore.getPrimaryKey(featureType);
+            final PrimaryKey key = dataStore.getPrimaryKey(featureType.getName());
             final String fid = PrimaryKey.encodeFID(key, rs);
 
             final Id filter = dataStore.getFilterFactory()
@@ -97,18 +100,17 @@ public class JDBCUpdateFeatureWriter extends JDBCFeatureReader implements
                                                                     .featureId(fid)));
 
             //figure out which attributes changed
-            final List<AttributeDescriptor> changed = new ArrayList<AttributeDescriptor>();
-            final List<Object> values = new ArrayList<Object>();
+            final Map<AttributeDescriptor,Object> changes = new HashMap<AttributeDescriptor, Object>();
 
             for (final AttributeDescriptor att : featureType.getAttributeDescriptors()) {
-                if (last.isDirrty(att.getLocalName())) {
-                    changed.add(att);
-                    values.add(last.getAttribute(att.getLocalName()));
+                final String attName = att.getLocalName();
+                if (last.isDirrty(attName)) {
+                    changes.put(att, last.getAttribute(attName));
                 }
             }
 
             //do the write
-            dataStore.update(featureType, changed, values, filter, st.getConnection());
+            dataStore.update(featureType, changes, filter, st.getConnection());
         } catch (Exception e) {
             throw new DataStoreRuntimeException(e);
         }

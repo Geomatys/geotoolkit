@@ -43,7 +43,7 @@ import java.util.NoSuchElementException;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.opengis.referencing.FactoryException;
+import org.opengis.util.FactoryException;
 import org.opengis.util.ProgressListener;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;

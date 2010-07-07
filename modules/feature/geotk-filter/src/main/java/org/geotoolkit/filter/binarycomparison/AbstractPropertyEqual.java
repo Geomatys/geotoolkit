@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.filter.binarycomparison;
 
+import java.util.Calendar;
 import org.geotoolkit.util.Converters;
 import org.geotoolkit.util.converter.Classes;
 import org.opengis.filter.expression.Expression;
@@ -63,10 +64,23 @@ public abstract class AbstractPropertyEqual extends AbstractBinaryComparisonOper
         if(converted1 != null){
             if(equalOrNumberEqual(value2, converted1)){
                 return true;
-            }
+            } 
         }
 
         Object converted2 = Converters.convert(value2, value1.getClass());
+        if (value1 instanceof java.sql.Date && converted2 != null) {
+            Calendar cal1 = Calendar.getInstance();
+            cal1.setTime((java.sql.Date)value1);
+            int expYear  = cal1.get(Calendar.YEAR);
+            int expMonth = cal1.get(Calendar.MONTH);
+            int expDay   = cal1.get(Calendar.DAY_OF_MONTH);
+
+            cal1.setTime((java.sql.Date)converted2);
+            return cal1.get(Calendar.YEAR) == expYear &&
+                   cal1.get(Calendar.MONTH) == expMonth &&
+                   cal1.get(Calendar.DAY_OF_MONTH) == expDay;
+        }
+        
         if(converted2 != null){
             if(equalOrNumberEqual(value1, converted2)){
                 return true;

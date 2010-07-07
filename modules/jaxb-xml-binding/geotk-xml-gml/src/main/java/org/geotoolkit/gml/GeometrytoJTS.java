@@ -74,7 +74,7 @@ import org.geotoolkit.gml.xml.v311.SurfacePropertyType;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.util.logging.Logging;
 
-import org.opengis.referencing.FactoryException;
+import org.opengis.util.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
@@ -97,7 +97,7 @@ public class GeometrytoJTS {
      *
      * @return A JTS Polygon
      * @throws org.opengis.referencing.NoSuchAuthorityCodeException
-     * @throws org.opengis.referencing.FactoryException
+     * @throws org.opengis.util.FactoryException
      */
     public static com.vividsolutions.jts.geom.Polygon toJTS(EnvelopeEntry gmlEnvelope)
             throws NoSuchAuthorityCodeException, FactoryException {

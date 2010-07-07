@@ -46,7 +46,7 @@ import org.geotoolkit.display2d.style.j2d.PathWalker;
 
 import org.opengis.feature.Feature;
 import org.opengis.geometry.Geometry;
-import org.opengis.referencing.FactoryException;
+import org.opengis.util.FactoryException;
 import org.opengis.referencing.operation.TransformException;
 
 /**

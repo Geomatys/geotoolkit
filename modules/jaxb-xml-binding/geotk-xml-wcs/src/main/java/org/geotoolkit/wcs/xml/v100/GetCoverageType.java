@@ -42,7 +42,7 @@ import org.geotoolkit.referencing.crs.DefaultVerticalCRS;
 import org.geotoolkit.util.Version;
 import org.geotoolkit.util.logging.Logging;
 import org.opengis.geometry.Envelope;
-import org.opengis.referencing.FactoryException;
+import org.opengis.util.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.VerticalCRS;
 
@@ -90,7 +90,7 @@ public class GetCoverageType implements GetCoverage {
     @XmlElement(required = true)
     private DomainSubsetType domainSubset;
     private RangeSubsetType rangeSubset;
-    private InterpolationMethod interpolationMethod;
+    private String interpolationMethod;
     @XmlElement(required = true)
     private OutputType output;
     @XmlAttribute(required = true)
@@ -110,7 +110,7 @@ public class GetCoverageType implements GetCoverage {
      * Build a new GetCoverage request (1.0.0)
      */
     public GetCoverageType(String sourceCoverage, DomainSubsetType domainSubset,
-            RangeSubsetType rangeSubset, InterpolationMethod interpolationMethod,
+            RangeSubsetType rangeSubset, String interpolationMethod,
             OutputType output) {
         
         this.domainSubset        = domainSubset;
@@ -149,7 +149,7 @@ public class GetCoverageType implements GetCoverage {
      * form to the requested CRS and/or grid size. 
      * Method shall be among those listed for the requested coverage in the DescribeCoverage response.
      */
-    public InterpolationMethod getInterpolationMethod() {
+    public String getInterpolationMethod() {
         return interpolationMethod;
     }
 
@@ -176,7 +176,10 @@ public class GetCoverageType implements GetCoverage {
      */
     @Override
     public Version getVersion() {
-        return new Version(version);
+         if (version != null) {
+            return new Version(version);
+        }
+        return null;
     }
 
     /**
@@ -225,7 +228,7 @@ public class GetCoverageType implements GetCoverage {
         }
         final EnvelopeEntry env = domainSubset.getSpatialSubSet().getEnvelope();
         final List<DirectPositionType> positions = env.getPos();
-        if (positions == null || positions.size() == 0) {
+        if (positions == null || positions.isEmpty()) {
             return null;
         }
         final DirectPositionType lows = positions.get(0);

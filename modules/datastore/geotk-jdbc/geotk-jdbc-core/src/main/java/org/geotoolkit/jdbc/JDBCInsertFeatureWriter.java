@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.Collections;
 
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.data.DataStoreRuntimeException;
@@ -76,7 +77,7 @@ public class JDBCInsertFeatureWriter extends JDBCFeatureReader implements Featur
     public void write() throws DataStoreRuntimeException {
         try {
             //do the insert
-            dataStore.insert(last, featureType, st.getConnection());
+            dataStore.insert(Collections.singleton(last), featureType, st.getConnection());
 
             //the datastore sets as userData, grab it and update the fid
             String fid = (String) last.getUserData().get( "fid" );

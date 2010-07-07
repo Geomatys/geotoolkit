@@ -33,6 +33,7 @@ import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.query.QueryBuilder;
+import org.opengis.geometry.Envelope;
 
 
 public abstract class JDBCFeatureCollectionTest extends JDBCTestSupport {
@@ -96,13 +97,13 @@ public abstract class JDBCFeatureCollectionTest extends JDBCTestSupport {
 
         assertEquals(1, sub.size());
         
-        JTSEnvelope2D exp = new JTSEnvelope2D(1, 1, 1, 1, CRS.decode("EPSG:4326"));
-        JTSEnvelope2D act = (JTSEnvelope2D) sub.getEnvelope();
+        Envelope exp = new JTSEnvelope2D(1, 1, 1, 1, CRS.decode("EPSG:4326"));
+        Envelope act = sub.getEnvelope();
         
-        assertEquals(exp.getMinX(), act.getMinX(), 0.1);
-        assertEquals(exp.getMinY(), act.getMinY(), 0.1);
-        assertEquals(exp.getMaxX(), act.getMaxX(), 0.1);
-        assertEquals(exp.getMaxY(), act.getMaxY(), 0.1);
+        assertEquals(exp.getMinimum(0), act.getMinimum(0), 0.1);
+        assertEquals(exp.getMinimum(1), act.getMinimum(1), 0.1);
+        assertEquals(exp.getMaximum(0), act.getMaximum(0), 0.1);
+        assertEquals(exp.getMaximum(1), act.getMaximum(1), 0.1);
         
         sub.clear();
         assertEquals(2, collection.size());

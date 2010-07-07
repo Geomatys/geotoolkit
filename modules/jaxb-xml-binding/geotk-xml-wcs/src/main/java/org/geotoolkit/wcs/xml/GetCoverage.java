@@ -20,7 +20,7 @@ import java.awt.Dimension;
 import java.util.List;
 import org.geotoolkit.util.Versioned;
 import org.opengis.geometry.Envelope;
-import org.opengis.referencing.FactoryException;
+import org.opengis.util.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 
@@ -33,6 +33,8 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  */
 public interface GetCoverage extends Versioned {
 
+    String getService();
+    
     /**
      * Returns the {@link CoordinateReferenceSystem} of the request, or {@code null}
      * if none.
@@ -82,6 +84,8 @@ public interface GetCoverage extends Versioned {
     String getTime();
 
     RangeSubset getRangeSubset();
+
+    DomainSubset getDomainSubset();
 
     String toKvp();
 }

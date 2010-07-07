@@ -60,8 +60,8 @@ public class LucenePropertyAccessor implements PropertyAccessor {
      * {@inheritDoc }
      */
     @Override
-    public boolean canHandle(Object object, String xpath, Class target) {
-        return object instanceof Document;
+    public boolean canHandle(Class clazz, String xpath, Class target) {
+        return Document.class.isAssignableFrom(clazz);
     }
 
     /**

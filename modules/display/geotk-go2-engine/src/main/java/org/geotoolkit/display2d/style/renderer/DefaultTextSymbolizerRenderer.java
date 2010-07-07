@@ -47,7 +47,7 @@ import org.geotoolkit.display2d.style.labeling.LabelLayer;
 import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
 
 import org.opengis.feature.Feature;
-import org.opengis.referencing.FactoryException;
+import org.opengis.util.FactoryException;
 
 /**
  * @author Johann Sorel (Geomatys)
