@@ -124,7 +124,7 @@ final class URN_Parser {
             }
         }
         throw new NoSuchAuthorityCodeException(
-                Errors.format(Errors.Keys.ILLEGAL_IDENTIFIER_$1, type), "urn:ogc:def", type);
+                Errors.format(Errors.Keys.ILLEGAL_IDENTIFIER_$1, type), "urn:ogc:def", type, urn);
     }
 
     /**

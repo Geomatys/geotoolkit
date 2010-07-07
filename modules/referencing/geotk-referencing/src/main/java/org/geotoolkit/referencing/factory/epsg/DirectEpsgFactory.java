@@ -778,7 +778,8 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
      *
      * @param  stmt The prepared statement in which to set the primary key.
      * @param  primaryKey The primary key.
-     * @throws SQLException If an error occured.
+     * @throws NoSuchIdentifierException If the primary key has not been found.
+     * @throws SQLException If an error occured while querying the database.
      */
     static ResultSet executeQuery(final PreparedStatement stmt, final String primaryKey)
             throws NoSuchIdentifierException, SQLException
@@ -2361,6 +2362,9 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
      * Returns {@code true} if the {@linkplain CoordinateOperation coordinate operation} for the
      * specified code is a {@linkplain Projection projection}. The caller must have ensured that
      * the designed operation is a {@linkplain Conversion conversion} before to invoke this method.
+     *
+     * @throws NoSuchIdentifierException If the code has not been found.
+     * @throws SQLException If an error occured while querying the database.
      */
     final boolean isProjection(final String code) throws NoSuchIdentifierException, SQLException {
         final PreparedStatement stmt;

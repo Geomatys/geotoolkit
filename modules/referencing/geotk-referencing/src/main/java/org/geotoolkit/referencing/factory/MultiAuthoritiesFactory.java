@@ -528,7 +528,7 @@ public class MultiAuthoritiesFactory extends AuthorityFactoryAdapter implements 
             }
         }
         final NoSuchAuthorityCodeException exception;
-        exception = new NoSuchAuthorityCodeException(message, authority, code);
+        exception = new NoSuchAuthorityCodeException(message, authority, code, code);
         exception.initCause(cause);
         throw exception;
     }

@@ -181,7 +181,7 @@ parse:  for (int i=0; i<MAXIMUM_FIELDS; i++) {
         this.type      = type;
         if (this.unit == null) {
             throw new NoSuchAuthorityCodeException(Errors.format(Errors.Keys.UNKNOWN_UNIT_$1, unit),
-                    authority, text.substring(splitIndices[0]).trim());
+                    authority, text.substring(splitIndices[0]).trim(), text);
         }
     }
 
@@ -190,16 +190,16 @@ parse:  for (int i=0; i<MAXIMUM_FIELDS; i++) {
      *
      * @param  type         The GeoAPI interface that was to be created.
      * @param  authority    Either {@code "AUTO"} or {@code "AUTO2"}.
-     * @param  code         The text that we were trying to parse.
+     * @param  identifier   The text that we were trying to parse.
      * @param  splitIndices The indices where to split. Only the first one is used.
      * @return An exception initialized with an error message built from the specified informations.
      */
     private static NoSuchAuthorityCodeException noSuchAuthorityCode(final Class<?> type,
-            final String authority, String code, final int[] splitIndices)
+            final String authority, final String identifier, final int[] splitIndices)
     {
-        code = code.substring(splitIndices[0]).trim();
+        final String code = identifier.substring(splitIndices[0]).trim();
         return new NoSuchAuthorityCodeException(Errors.format(Errors.Keys.NO_SUCH_AUTHORITY_CODE_$3,
-                code, authority, type), authority, code);
+                code, authority, type), authority, code, identifier);
     }
 
     /**

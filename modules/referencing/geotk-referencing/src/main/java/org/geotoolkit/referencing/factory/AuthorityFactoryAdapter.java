@@ -1347,7 +1347,7 @@ public class AuthorityFactoryAdapter extends AbstractAuthorityFactory {
      */
     private FactoryException missingFactory(final Class<?> category, final String code) {
         return new NoSuchAuthorityCodeException(Errors.format(Errors.Keys.FACTORY_NOT_FOUND_$1,
-                category), Citations.getIdentifier(getAuthority()), trimAuthority(code));
+                category), Citations.getIdentifier(getAuthority()), trimAuthority(code), code);
     }
 
     /**

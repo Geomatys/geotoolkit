@@ -375,8 +375,7 @@ public class IdentifiedObjectSet<T extends IdentifiedObject> extends AbstractSet
      * following types:
      * <p>
      * <ul>
-     *   <li>{@link NoSuchIdentifierException} (not to be confused with
-     *       {@link NoSuchAuthorityCodeException}).</li>
+     *   <li>{@link NoSuchIdentifierException} but not {@link NoSuchAuthorityCodeException}</li>
      *   <li>{@link OptionalFactoryOperationException}</li>
      * </ul>
      *
@@ -385,7 +384,7 @@ public class IdentifiedObjectSet<T extends IdentifiedObject> extends AbstractSet
      *         {@code false} if it should be considered fatal.
      */
     protected boolean isRecoverableFailure(final FactoryException exception) {
-        return (exception instanceof NoSuchIdentifierException) ||
+        return (exception instanceof NoSuchIdentifierException && !(exception instanceof NoSuchAuthorityCodeException)) ||
                (exception instanceof OptionalFactoryOperationException);
     }
 

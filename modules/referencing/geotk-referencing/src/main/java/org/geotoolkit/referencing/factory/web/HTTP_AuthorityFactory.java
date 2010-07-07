@@ -161,28 +161,28 @@ public class HTTP_AuthorityFactory extends AuthorityFactoryAdapter implements CR
      * @throws FactoryException if the code can't be converted.
      */
     @Override
-    protected String toBackingFactoryCode(String code) throws FactoryException {
-        code = code.trim();
+    protected String toBackingFactoryCode(final String code) throws FactoryException {
+        String fragment = code.trim();
         final int length = BASE_URL.length();
-        if (code.regionMatches(true, 0, BASE_URL, 0, length)) {
-            code = code.substring(length);
-            if (code.indexOf('/') < 0) {
-                final int split = code.indexOf('#');
-                if (split >= 0 && code.indexOf('#', split+1) < 0) {
-                    String authority = code.substring(0, split).trim();
+        if (fragment.regionMatches(true, 0, BASE_URL, 0, length)) {
+            fragment = fragment.substring(length);
+            if (fragment.indexOf('/') < 0) {
+                final int split = fragment.indexOf('#');
+                if (split >= 0 && fragment.indexOf('#', split+1) < 0) {
+                    String authority = fragment.substring(0, split).trim();
                     final int ext = authority.lastIndexOf('.');
                     if (ext > 0) {
                         // Removes the extension part (typically ".xml")
                         authority = authority.substring(0, ext);
                     }
-                    code = code.substring(split + 1).trim();
-                    code = authority + DefaultNameSpace.DEFAULT_SEPARATOR + code;
-                    return code;
+                    fragment = fragment.substring(split + 1).trim();
+                    fragment = authority + DefaultNameSpace.DEFAULT_SEPARATOR + fragment;
+                    return fragment;
                 }
             }
         }
         throw new NoSuchAuthorityCodeException(Errors.format(
-                Errors.Keys.ILLEGAL_ARGUMENT_$2, "code", code), BASE_URL, code);
+                Errors.Keys.ILLEGAL_ARGUMENT_$2, "code", code), BASE_URL, fragment, code);
     }
 
     /**
