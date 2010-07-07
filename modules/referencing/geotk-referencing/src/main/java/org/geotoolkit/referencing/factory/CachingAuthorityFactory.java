@@ -73,7 +73,7 @@ import org.geotoolkit.util.collection.Cache;
  * (and recreated on the fly if needed) otherwise.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.03
+ * @version 3.14
  *
  * @since 2.1
  * @module
@@ -104,6 +104,14 @@ public class CachingAuthorityFactory extends AbstractAuthorityFactory {
      * been determined.
      */
     private transient volatile Object status;
+
+    /**
+     * The authority, cached in order to avoid the synchronization performed by
+     * {@link Availability#pass()}. Profiling show that it was a contention point.
+     *
+     * @since 3.14
+     */
+    private transient volatile Citation authority;
 
     /**
      * The pool of cached objects. The keys are instances of {@link String} or {@link Pair}.
@@ -409,7 +417,16 @@ public class CachingAuthorityFactory extends AbstractAuthorityFactory {
      */
     @Override
     public Citation getAuthority() {
-        return getCitation("getAuthority");
+        Citation authority = this.authority;
+        if (authority == null) {
+            authority = getCitation("getAuthority");
+            if (Boolean.TRUE.equals(status)) {
+                // Cache only in case of success. If we failed, we
+                // will try again next time this method is invoked.
+                this.authority = authority;
+            }
+        }
+        return authority;
     }
 
     /**
@@ -1197,5 +1214,6 @@ public class CachingAuthorityFactory extends AbstractAuthorityFactory {
             factory.dispose(shutdown);
         }
         cache.clear();
+        authority = null;
     }
 }

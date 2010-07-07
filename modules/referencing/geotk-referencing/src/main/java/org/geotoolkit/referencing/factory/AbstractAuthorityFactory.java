@@ -149,7 +149,7 @@ public abstract class AbstractAuthorityFactory extends ReferencingFactory implem
      * Returns the authority or the vendor, or {@link Citations#UNKNOWN} if the information
      * is not available. For the vendor case we are not allowed to use the heuristic defined
      * in the super-class {@link ReferencingFactory#getVendor()} method, because this method
-     * is typically invoked by wrappers. We wanted the citation of the wrapped factory, not
+     * is typically invoked by wrappers. We want the citation of the wrapped factory, not
      * the wrapper.
      * <p>
      * The default implementation is not allowed to invoke overrideable methods of the same name
