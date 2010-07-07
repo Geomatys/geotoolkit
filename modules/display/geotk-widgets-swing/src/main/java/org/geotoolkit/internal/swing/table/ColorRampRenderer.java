@@ -59,11 +59,12 @@ public final class ColorRampRenderer extends DefaultListCellRenderer {
      * The name of a color palette. The ARGB colors are loaded when first needed.
      *
      * @author Martin Desruisseaux (Geomatys)
-     * @version 3.13
+     * @version 3.14
      *
      * @since 3.13
      * @module
      */
+    @SuppressWarnings("serial")
     public static final class Gradiant implements Serializable {
         /**
          * The name of the color palette.
@@ -71,7 +72,12 @@ public final class ColorRampRenderer extends DefaultListCellRenderer {
         private final String paletteName;
 
         /**
-         * The ARGB colors, created when first needeD.
+         * The colors, loaded when first needed.
+         */
+        private transient Color[] colors;
+
+        /**
+         * The expanded ARGB colors, created when first needed.
          */
         private transient int[] ARGB;
 
@@ -90,9 +96,23 @@ public final class ColorRampRenderer extends DefaultListCellRenderer {
          * @param  factory The factory to use for loading the colors.
          * @return The ARGB codes for the palette name given at construction time.
          */
-        public int[] getColors(final PaletteFactory factory) {
+        final int[] getARGBs(final PaletteFactory factory) {
             if (ARGB == null) {
-                Color[] colors;
+                final Color[] colors = getColors(factory);
+                ARGB = new int[Math.max(colors.length, 64)];
+                ColorUtilities.expand(colors, ARGB, 0, ARGB.length);
+            }
+            return ARGB;
+        }
+
+        /**
+         * Returns the colors. This method loads the colors when first needed.
+         *
+         * @param  factory The factory to use for loading the colors.
+         * @return The colors for the palette name given at construction time.
+         */
+        public Color[] getColors(final PaletteFactory factory) {
+            if (colors == null) {
                 try {
                     colors = factory.getColors(paletteName);
                 } catch (IOException e) {
@@ -100,12 +120,12 @@ public final class ColorRampRenderer extends DefaultListCellRenderer {
                     record.setSourceClassName(PaletteFactory.class.getName());
                     record.setSourceMethodName("getColors");
                     Logging.log(PaletteFactory.class, record);
+                }
+                if (colors == null) {
                     colors = new Color[] {Color.BLACK, Color.WHITE};
                 }
-                ARGB = new int[Math.max(colors.length, 64)];
-                ColorUtilities.expand(colors, ARGB, 0, ARGB.length);
             }
-            return ARGB;
+            return colors.clone();
         }
 
         /**
@@ -174,7 +194,7 @@ public final class ColorRampRenderer extends DefaultListCellRenderer {
                 setText(null);
                 final int[] ARGB;
                 if (isGradiant) {
-                    ARGB = ((Gradiant) value).getColors(factory);
+                    ARGB = ((Gradiant) value).getARGBs(factory);
                 } else {
                     ARGB = new int[] {((Color) value).getRGB()};
                 }

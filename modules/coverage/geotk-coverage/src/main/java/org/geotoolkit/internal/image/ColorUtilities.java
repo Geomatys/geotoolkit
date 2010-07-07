@@ -18,6 +18,7 @@
 package org.geotoolkit.internal.image;
 
 import java.util.Arrays;
+import java.util.Locale;
 import java.awt.Color;
 import java.awt.color.ColorSpace;
 import java.awt.image.DataBuffer;
@@ -39,7 +40,7 @@ import org.geotoolkit.lang.Static;
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Simone Giannecchini (Geosolutions)
- * @version 3.01
+ * @version 3.14
  *
  * @since 1.2
  * @module
@@ -101,6 +102,35 @@ public final class ColorUtilities {
             case 0:  break;
         }
         return values;
+    }
+
+    /**
+     * Returns a string representation of the given color.
+     * This method ommits the alpha component if the color is opaque.
+     *
+     * @param color The color.
+     * @return A string representation of the given color.
+     *
+     * @since 3.14
+     */
+    public static String toString(final Color color) {
+        int ARGB = color.getRGB();
+        final boolean isOpaque = (ARGB & 0xFF000000) == 0xFF000000;
+        int size;
+        if (isOpaque) {
+            ARGB &= 0xFFFFFF;
+            size = 6;
+        } else {
+            size = 8;
+        }
+        final String code = Integer.toHexString(ARGB).toUpperCase(Locale.US);
+        size -= code.length();
+        final StringBuilder buffer = new StringBuilder();
+        buffer.append('#');
+        while (--size >= 0) {
+            buffer.append('0');
+        }
+        return buffer.append(code).toString();
     }
 
     /**

@@ -26,10 +26,12 @@ import java.util.Locale;
 import java.util.ArrayList;
 import java.util.EventObject;
 import javax.swing.JComboBox;
+import javax.swing.ComboBoxModel;
 import javax.swing.JTable;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.AbstractCellEditor;
+import javax.swing.CellEditor;
 import javax.swing.DefaultCellEditor;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -43,6 +45,8 @@ import org.opengis.metadata.content.TransferFunctionType;
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.coverage.Category;
 import org.geotoolkit.gui.swing.ListTableModel;
+import org.geotoolkit.gui.swing.image.PaletteComboBox;
+import org.geotoolkit.image.io.PaletteFactory;
 import org.geotoolkit.resources.Vocabulary;
 
 import static org.geotoolkit.gui.swing.coverage.CategoryRecord.*;
@@ -91,7 +95,7 @@ import static org.geotoolkit.gui.swing.coverage.CategoryRecord.*;
  * is modified, then the offset and scale factors will be recomputed.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.13
+ * @version 3.14
  *
  * @since 3.13
  * @module
@@ -128,6 +132,7 @@ public class CategoryTable extends ListTableModel<CategoryRecord> {
         for (int i=0; i<TYPES.length; i++) {
             final Class<?> type;
             switch (i) {
+                case COLORS:     // A palette name as a String.
                 case NAME:       type = String.class; break;
                 case SAMPLE_MIN:
                 case SAMPLE_MAX: type = Integer.class; break;
@@ -159,27 +164,44 @@ public class CategoryTable extends ListTableModel<CategoryRecord> {
     private boolean editable = true;
 
     /**
+     * The factory to use for creating color palettes, or {@code null} for the default one.
+     */
+    final PaletteFactory paletteFactory;
+
+    /**
      * Creates a new, initially empty, table.
      *
      * @param locale The locale to use for the column headers.
      */
     public CategoryTable(final Locale locale) {
+        this(locale, null);
+    }
+
+    /**
+     * Creates a new, initially empty, table.
+     *
+     * @param locale The locale to use for the column headers.
+     * @param paletteFactory The factory to use for loading colors from a palette name,
+     *        or {@code null} for the {@linkplain PaletteFactory#getDefault() default}.
+     */
+    CategoryTable(final Locale locale, final PaletteFactory paletteFactory) {
         super(CategoryRecord.class);
         this.locale = locale;
+        this.paletteFactory = paletteFactory;
         final Vocabulary resources = Vocabulary.getResources(locale);
         headers = new String[TYPES.length];
         for (int i=0; i<TYPES.length; i++) {
             final int key;
             switch (i) {
-                case NAME:       key = Vocabulary.Keys.NAME; break;
+                case NAME:       key = Vocabulary.Keys.NAME;    break;
                 case SAMPLE_MIN:
                 case MINIMUM:    key = Vocabulary.Keys.MINIMUM; break;
                 case SAMPLE_MAX:
                 case MAXIMUM:    key = Vocabulary.Keys.MAXIMUM; break;
-                case TYPE:       key = Vocabulary.Keys.TYPE; break;
-                case OFFSET:     key = Vocabulary.Keys.OFFSET; break;
-                case SCALE:      key = Vocabulary.Keys.SCALE; break;
-                case COLORS:     key = Vocabulary.Keys.COLORS; break;
+                case TYPE:       key = Vocabulary.Keys.TYPE;    break;
+                case OFFSET:     key = Vocabulary.Keys.OFFSET;  break;
+                case SCALE:      key = Vocabulary.Keys.SCALE;   break;
+                case COLORS:     key = Vocabulary.Keys.COLORS;  break;
                 default: throw new AssertionError(i);
             }
             headers[i] = resources.getString(key);
@@ -193,8 +215,9 @@ public class CategoryTable extends ListTableModel<CategoryRecord> {
      */
     public CategoryTable(final CategoryTable table) {
         super(CategoryRecord.class);
-        locale  = table.locale;
-        headers = table.headers;
+        locale         = table.locale;
+        headers        = table.headers;
+        paletteFactory = table.paletteFactory;
         for (final CategoryRecord record : table.elements) {
             elements.add(record.clone());
         }
@@ -210,7 +233,7 @@ public class CategoryTable extends ListTableModel<CategoryRecord> {
     public List<Category> getCategories() {
         final List<Category> categories = new ArrayList<Category>(elements.size());
         for (final CategoryRecord record : elements) {
-            categories.add(record.getCategory());
+            categories.add(record.getCategory(paletteFactory));
         }
         return categories;
     }
@@ -225,10 +248,24 @@ public class CategoryTable extends ListTableModel<CategoryRecord> {
      * @param categories The categories to show, or {@code null} for clearing the table.
      */
     public void setCategories(final List<Category> categories) {
+        setCategories(categories, null);
+    }
+
+    /**
+     * Implementation of {@link #setCategories(List)} with opportunist reuse of an existing list
+     * of palettes. This avoid the cost of creating this list in the {@link CategoryRecord}
+     * constructor.
+     *
+     * @param categories The categories to show, or {@code null} for clearing the table.
+     * @param palettes A list of palettes to use for inferring the palettes names,
+     *        or {@code null} if none. This can be used for the common case where
+     *        this list is already available from the {@link SampleDimensionPanel} GUI.
+     */
+    final void setCategories(final List<Category> categories, final ComboBoxModel palettes) {
         elements.clear();
         if (categories != null) {
             for (final Category category : categories) {
-                elements.add(new CategoryRecord(category, locale));
+                elements.add(new CategoryRecord(category, locale, paletteFactory, palettes));
             }
         }
         fireTableDataChanged();
@@ -299,6 +336,7 @@ public class CategoryTable extends ListTableModel<CategoryRecord> {
             case TYPE:       return record.getTransferFunctionType();
             case OFFSET:     return record.getCoefficient(0);
             case SCALE:      return record.getCoefficient(1);
+            case COLORS:     return record.getPaletteName();
             default:         return null;
         }
     }
@@ -323,6 +361,7 @@ public class CategoryTable extends ListTableModel<CategoryRecord> {
             case TYPE:       changed = record.setTransferFunctionType((TransferFunctionType) value); break;
             case OFFSET:     changed = record.setCoefficient(0, (Number) value); break;
             case SCALE:      changed = record.setCoefficient(1, (Number) value); break;
+            case COLORS:     changed = record.setPaletteName((String) value); break;
             default:         changed = false; break;
         }
         if (changed) {
@@ -433,13 +472,15 @@ public class CategoryTable extends ListTableModel<CategoryRecord> {
      * @param table The table in which to install the cell renderes and editors.
      */
     public void configure(final JTable table) {
-        final NumberEditor editor   = new NumberEditor(true);
-        final CellRenderer renderer = new CellRenderer(locale, editor.getFormat());
+        final NumberEditor  numberEditor  = new NumberEditor(true);
+        final PaletteEditor paletteEditor = new PaletteEditor(paletteFactory);
+        final CellRenderer  renderer      = new CellRenderer(locale, numberEditor.getFormat());
         table.setDefaultRenderer(Double.class,               renderer);
         table.setDefaultRenderer(TransferFunctionType.class, renderer);
         table.setDefaultEditor  (TransferFunctionType.class, new FunctionEditor(renderer.functionLabels));
         table.setDefaultEditor  (Integer.class, new NumberEditor(false));
-        table.setDefaultEditor  (Double.class,  editor);
+        table.setDefaultEditor  (Double.class,  numberEditor);
+        table.getColumnModel().getColumn(COLORS).setCellEditor(paletteEditor);
         table.setRowHeight(ROW_HEIGHT);
         final TableColumnModel columns = table.getColumnModel();
         final int n = columns.getColumnCount();
@@ -457,6 +498,26 @@ public class CategoryTable extends ListTableModel<CategoryRecord> {
             total += width;
         }
         table.setPreferredSize(new Dimension(total, ROW_HEIGHT*4));
+    }
+
+    /**
+     * Returns the choices of color palettes, or {@code null} if none. This method can be
+     * invoked for tables configured with {@link #configure(JTable)}.
+     * <p>
+     * The elements in the combo box model will be instances of different types. The interresting
+     * type is {@link org.geotoolkit.internal.swing.table.ColorRampRenderer.Gradiant}.
+     *
+     */
+    static ComboBoxModel getPaletteChoices(final JTable table) {
+        final CellEditor editor = table.getColumnModel().getColumn(COLORS).getCellEditor();
+        if (editor instanceof CellEditor) {
+            for (final Component c : ((PaletteEditor) editor).comboBox.getComponents()) {
+                if (c instanceof JComboBox) {
+                    return ((JComboBox) c).getModel();
+                }
+            }
+        }
+        return null;
     }
 
 
@@ -719,6 +780,69 @@ public class CategoryTable extends ListTableModel<CategoryRecord> {
         @Override
         public void stateChanged(final ChangeEvent event) {
             setValueAt(getCellEditorValue(), row, column);
+        }
+    }
+
+    /**
+     * A cell editor for the color palette in the enclosing {@link CategoryTable}.
+     * This editor uses a {@link PaletteComboBox}.
+     *
+     * @author Martin Desruisseaux (Geomatys)
+     * @version 3.14
+     *
+     * @since 3.14
+     * @module
+     */
+    @SuppressWarnings("serial")
+    private static final class PaletteEditor extends AbstractCellEditor implements TableCellEditor {
+        /**
+         * The combo box to use as an editor.
+         */
+        final PaletteComboBox comboBox;
+
+        /**
+         * Creates a new editor for the given palette factory.
+         */
+        PaletteEditor(PaletteFactory factory) {
+            if (factory == null) {
+                factory = PaletteFactory.getDefault();
+            }
+            comboBox = new PaletteComboBox(factory);
+            comboBox.addDefaultColors();
+            for (final Component c : comboBox.getComponents()) {
+                if (c instanceof JComboBox) {
+                    // See javax.swing.DefaultCellEditor(JComboBox) source code.
+                    ((JComboBox) c).putClientProperty("JComboBox.isTableCellEditor", Boolean.TRUE);
+                }
+            }
+        }
+
+        /**
+         * Returns {@code true} if the cell can be edited. We require a double click,
+         * otherwise the combo box drop down list appears and disaspears too often.
+         */
+        @Override
+        public boolean isCellEditable(final EventObject event) {
+	    return !(event instanceof MouseEvent) || ((MouseEvent) event).getClickCount() >= 2;
+	}
+
+        /**
+         * Gets the name of the selected palette, or the opaque color code.
+         */
+        @Override
+        public String getCellEditorValue() {
+            return comboBox.getSelectedItem();
+        }
+
+        /**
+         * Configures the {@link PaletteComboBox} to the given value, and returns it.
+         */
+        @Override
+        public Component getTableCellEditorComponent(final JTable table, Object value,
+                final boolean isSelected, final int row, final int column)
+        {
+            comboBox.setSelectedItem((String) value);
+            return comboBox;
         }
     }
 }

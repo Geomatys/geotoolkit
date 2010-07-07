@@ -32,6 +32,7 @@ import javax.swing.JComponent;
 import javax.swing.JScrollPane;
 import javax.swing.JFormattedTextField;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.ComboBoxModel;
 import java.text.ParseException;
 
 import org.opengis.util.InternationalString;
@@ -41,6 +42,7 @@ import org.geotoolkit.coverage.Category;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.internal.swing.table.JTables;
 import org.geotoolkit.internal.swing.UnitFormatter;
+import org.geotoolkit.image.io.PaletteFactory;
 import org.geotoolkit.resources.Vocabulary;
 
 
@@ -49,7 +51,7 @@ import org.geotoolkit.resources.Vocabulary;
  * backed by a {@link CategoryTable} model.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.13
+ * @version 3.14
  *
  * @since 3.13
  * @module
@@ -96,6 +98,11 @@ public class SampleDimensionPanel extends JComponent {
     private final JComboBox nameField;
 
     /**
+     * The list of available color palettes, or {@code null} if unknown.
+     */
+    private final ComboBoxModel paletteChoices;
+
+    /**
      * Units of measurement.
      */
     private final JFormattedTextField unitField;
@@ -130,16 +137,27 @@ public class SampleDimensionPanel extends JComponent {
      * Creates a new, initially empty, panel.
      */
     public SampleDimensionPanel() {
+        this(null);
+    }
+
+    /**
+     * Creates a new, initially empty, panel.
+     *
+     * @param paletteFactory The factory to use for loading colors from a palette name,
+     *        or {@code null} for the {@linkplain PaletteFactory#getDefault() default}.
+     */
+    SampleDimensionPanel(final PaletteFactory paletteFactory) {
         setLayout(new GridBagLayout());
         final Locale     locale    = getLocale();
         final Vocabulary resources = Vocabulary.getResources(locale);
 
-        categories = new CategoryTable(locale);
+        categories = new CategoryTable(locale, paletteFactory);
         final JTable table = new JTable(categories);
         JTables.setHeaderCenterAlignment(table);
         categories.configure(table);
         table.setRowSelectionAllowed(false);
         table.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
+        paletteChoices = CategoryTable.getPaletteChoices(table);
 
         nameField = new JComboBox();
         unitField = new JFormattedTextField(new UnitFormatter(locale));
@@ -194,13 +212,14 @@ public class SampleDimensionPanel extends JComponent {
         if (bands == null) {
             return null;
         }
+        final PaletteFactory paletteFactory = categories.paletteFactory;
         bands = bands.clone();
         for (int i=0; i<bands.length; i++) {
             final CategoryRecord[] records = this.records[i];
             if (records != null) { // If null, the GridSampleDimension is unmodified.
                 final Category[] categories = new Category[records.length];
                 for (int j=0; j<categories.length; j++) {
-                    categories[j] = records[j].getCategory();
+                    categories[j] = records[j].getCategory(paletteFactory);
                 }
                 final String name = ((BandName) nameField.getModel().getElementAt(i)).name;
                 final GridSampleDimension band;
@@ -282,7 +301,7 @@ public class SampleDimensionPanel extends JComponent {
                 /*
                  * Otherwise create a new set of CategoryRecords.
                  */
-                categories.setCategories(band.getCategories());
+                categories.setCategories(band.getCategories(), paletteChoices);
             }
             unitField.setValue(units[bandIndex]);
             selectedBandIndex = bandIndex;

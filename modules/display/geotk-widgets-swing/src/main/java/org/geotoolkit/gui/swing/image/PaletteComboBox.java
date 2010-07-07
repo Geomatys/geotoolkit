@@ -19,7 +19,7 @@ package org.geotoolkit.gui.swing.image;
 
 import java.util.Set;
 import java.util.List;
-import java.util.Locale;
+import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.awt.Color;
@@ -30,6 +30,7 @@ import javax.swing.JComponent;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.image.io.Palette;
 import org.geotoolkit.image.io.PaletteFactory;
+import org.geotoolkit.internal.image.ColorUtilities;
 import org.geotoolkit.internal.swing.table.ColorRampRenderer;
 
 
@@ -38,13 +39,18 @@ import org.geotoolkit.internal.swing.table.ColorRampRenderer;
  * palettes is provided by a {@linkplain PaletteFactory palette factory} given to the constructor.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.13
+ * @version 3.14
  *
  * @since 3.13
  * @module
  */
 @SuppressWarnings("serial")
 public class PaletteComboBox extends JComponent {
+    /**
+     * The factory used for loading colors from a palette name.
+     */
+    private final PaletteFactory factory;
+
     /**
      * The combo box providing color palette choices.
      */
@@ -62,9 +68,10 @@ public class PaletteComboBox extends JComponent {
      * Creates a new combo box using the given palette factory. The combo box content will be
      * initialized to the {@linkplain PaletteFactory#getAvailableNames() available names}
      *
-     * @param factory The palette factory to use.
+     * @param factory The factory to use for loading colors from a palette name.
      */
     public PaletteComboBox(final PaletteFactory factory) {
+        this.factory = factory;
         final Vocabulary resources = Vocabulary.getResources(getLocale());
         Set<String> names = factory.getAvailableNames();
         if (names == null) {
@@ -137,24 +144,7 @@ public class PaletteComboBox extends JComponent {
         if (item instanceof ColorRampRenderer.Gradiant) {
             return item.toString();
         } else if (item instanceof Color) {
-            int ARGB = ((Color) item).getRGB();
-            final boolean isOpaque = (ARGB & 0xFF000000) == 0xFF000000;
-            int size;
-            if (isOpaque) {
-                ARGB &= 0xFFFFFF;
-                size = 6;
-            } else {
-                size = 8;
-            }
-            final String code = Integer.toHexString(ARGB).toUpperCase(Locale.US);
-            size -= code.length();
-
-            final StringBuilder buffer = new StringBuilder();
-            buffer.append('#');
-            while (--size >= 0) {
-                buffer.append('0');
-            }
-            return buffer.append(code).toString();
+            return ColorUtilities.toString((Color) item);
         }
         return null;
     }
@@ -195,6 +185,52 @@ public class PaletteComboBox extends JComponent {
                     candidate = candidate.toString();
                 }
                 if (toSearch.equals(candidate)) {
+                    break;
+                }
+            }
+        }
+        comboBox.setSelectedIndex(index);
+    }
+
+    /**
+     * Returns the colors for the currently selected item, or {@code null} if none.
+     *
+     * @return The colors of the currently selected item, or {@code null} if none.
+     *
+     * @since 3.14
+     */
+    public Color[] getSelectedColors() {
+        final Object item = comboBox.getSelectedItem();
+        if (item instanceof ColorRampRenderer.Gradiant) {
+            return ((ColorRampRenderer.Gradiant) item).getColors(factory);
+        } else if (item instanceof Color) {
+            return new Color[] {(Color) item};
+        }
+        return null;
+    }
+
+    /**
+     * Sets the currently selected item by its color. This method searchs for a choices
+     * providing the same colors than the given array. If such choices is found, it is
+     * selected. Otherwise this method selects the "<cite>none</cite>" choice.
+     *
+     * @param colors The colors to select, or {@code null} if none.
+     *
+     * @since 3.14
+     */
+    public void setSelectedColors(final Color... colors) {
+        int index = 0; // Index of the "none" choice.
+        if (colors != null) {
+            final Color singleton = (colors.length == 1) ? colors[0] : null;
+            index = comboBox.getItemCount();
+            while (--index != 0) {
+                final Object candidate = comboBox.getItemAt(index);
+                if (singleton != null && singleton.equals(candidate)) {
+                    break;
+                }
+                if (candidate instanceof ColorRampRenderer.Gradiant && Arrays.equals(colors,
+                        ((ColorRampRenderer.Gradiant) candidate).getColors(factory)))
+                {
                     break;
                 }
             }

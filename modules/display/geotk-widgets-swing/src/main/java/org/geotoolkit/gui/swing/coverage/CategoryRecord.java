@@ -18,6 +18,9 @@
 package org.geotoolkit.gui.swing.coverage;
 
 import java.awt.Color;
+import java.util.Set;
+import java.util.Vector;
+import java.util.Arrays;
 import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
@@ -25,6 +28,8 @@ import java.text.NumberFormat;
 import java.io.IOException;
 import java.io.Serializable;
 import java.io.ObjectInputStream;
+import javax.swing.ComboBoxModel;
+import javax.swing.DefaultComboBoxModel;
 
 import org.opengis.util.InternationalString;
 import org.opengis.referencing.operation.MathTransform1D;
@@ -37,7 +42,10 @@ import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.coverage.Category;
+import org.geotoolkit.image.io.PaletteFactory;
+import org.geotoolkit.internal.image.ColorUtilities;
 import org.geotoolkit.internal.coverage.TransferFunction;
+import org.geotoolkit.internal.swing.table.ColorRampRenderer;
 import org.geotoolkit.referencing.operation.transform.LinearTransform1D;
 import org.geotoolkit.referencing.operation.transform.ConcatenatedTransform;
 import org.geotoolkit.referencing.operation.transform.LogarithmicTransform1D;
@@ -56,7 +64,7 @@ import org.geotoolkit.resources.Errors;
  * the {@linkplain #getValueRange() range of values} will be recomputed accordingly.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.13
+ * @version 3.14
  *
  * @since 3.13
  * @module
@@ -121,6 +129,14 @@ public class CategoryRecord implements Cloneable, Serializable {
     private transient int fractionDigits;
 
     /**
+     * The name of a color palette, or the RGB code of a single color, or {@code null} if unknown.
+     * This is used for selection in a {@link org.geotoolkit.gui.swing.image.PaletteComboBox}.
+     *
+     * @see org.geotoolkit.internal.swing.table.ColorRampRenderer.Gradiant#paletteName
+     */
+    private String paletteName;
+
+    /**
      * Creates a new row initialized to the [0 &hellip; 255] range of sample values,
      * with no transfer function.
      */
@@ -136,10 +152,26 @@ public class CategoryRecord implements Cloneable, Serializable {
      * @param locale The locale to use for the localization of the category name,
      *        or {@code null} for an implementation-dependent default locale.
      *
-     * @todo Current implementation does not yet recognize logarithmic and exponential
-     *       transfer functions.
+     * @todo Current implementation does not yet recognize logarithmic transfer function.
      */
     public CategoryRecord(Category category, final Locale locale) {
+        this(category, locale, null, null);
+    }
+
+    /**
+     * Creates a new row initialized to the values inferred from the given category.
+     *
+     * @param category The category from which to infer the values.
+     * @param locale The locale to use for the localization of the category name,
+     *        or {@code null} for an implementation-dependent default locale.
+     * @param paletteFactory The factory to use for fetching the colors from their name.
+     * @param palettes A list of palettes to use for inferring the palettes names,
+     *        or {@code null} if none. This can be used for the common case where
+     *        this list is already available from the {@link SampleDimensionPanel} GUI.
+     */
+    CategoryRecord(Category category, final Locale locale,
+            PaletteFactory paletteFactory, ComboBoxModel palettes)
+    {
         this.category = category = category.geophysics(false);
         final InternationalString name = category.getName();
         if (name != null) {
@@ -157,23 +189,98 @@ public class CategoryRecord implements Cloneable, Serializable {
             setTransferFunctionType(tf.type);
         }
         if (tf.warning != null) {
-            final LogRecord record = new LogRecord(Level.WARNING, tf.warning);
-            record.setSourceClassName(CategoryRecord.class.getName());
-            record.setSourceMethodName("<init>");
-            Logging.log(CategoryRecord.class, record);
+            warning("<init>", tf.warning);
+        }
+        /*
+         * Determines the palette name or RGB code. In the simpliest
+         * case, we have a single Color object to format as "#RRGGBB".
+         */
+        final Color[] colors = category.getColors();
+        if (colors.length == 1) {
+            final Color singleton = colors[0];
+            if (singleton != null) {
+                paletteName = ColorUtilities.toString(singleton);
+            }
+        } else if (colors.length != 0) {
+            /*
+             * More complex case. Compares the colors against every palettes
+             * defined in the given list. We will create the list ourself if
+             * it was not explicitly provided.
+             */
+            if (paletteFactory == null) {
+                paletteFactory = PaletteFactory.getDefault();
+            }
+            if (palettes == null) {
+                final Set<String> names = paletteFactory.getAvailableNames();
+                if (names == null) {
+                    return;
+                }
+                final Vector<Object> items = new Vector<Object>(names.size());
+                for (final String n : names) {
+                    items.add(new ColorRampRenderer.Gradiant(n));
+                }
+                palettes = new DefaultComboBoxModel(items);
+            }
+            int index = palettes.getSize();
+            while (--index >= 0) {
+                final Object candidate = palettes.getElementAt(index);
+                if (candidate instanceof ColorRampRenderer.Gradiant && Arrays.equals(colors,
+                        ((ColorRampRenderer.Gradiant) candidate).getColors(paletteFactory)))
+                {
+                    paletteName = candidate.toString();
+                    break;
+                }
+            }
         }
     }
 
     /**
-     * Returns the category represented by this record.
+     * Logs a warning from the given method with the given message.
+     *
+     * @param message The message to log.
+     */
+    private static void warning(final String method, final String message) {
+        final LogRecord record = new LogRecord(Level.WARNING, message);
+        record.setSourceClassName(CategoryRecord.class.getName());
+        record.setSourceMethodName(method);
+        Logging.log(CategoryRecord.class, record);
+    }
+
+    /**
+     * Returns the category represented by this record. If a category has been specified at
+     * construction time and no setter method changed the attributes, then that category is
+     * returned unchanged. Otherwise a new category is created and returned.
      *
      * @return The category represented by this record.
-     *
-     * @todo Current version does not assign any color.
      */
     public Category getCategory() {
+        return getCategory(null);
+    }
+
+    /**
+     * Returns the category represented by this record, using the given palette factory
+     * if a new category needs to be built.
+     *
+     * @param  paletteFactory The factory to use for loading colors from a palette name,
+     *         or {@code null} for the {@linkplain PaletteFactory#getDefault() default}.
+     * @return The category represented by this record.
+     *
+     * @since 3.14
+     */
+    final Category getCategory(PaletteFactory paletteFactory) {
         if (category == null) {
-            final Color[] colors = null; // TODO
+            Color[] colors = null;
+            if (paletteName != null) {
+                if (paletteFactory == null) {
+                    paletteFactory = PaletteFactory.getDefault();
+                }
+                try {
+                    colors = paletteFactory.getColors(paletteName);
+                } catch (IOException e) {
+                    warning("getCategory", e.toString());
+                    // Leave 'colors' to null, which let Category chooses a default value.
+                }
+            }
             MathTransform1D sampleToGeophysics = null;
             if (functionType != NONE) {
                 sampleToGeophysics = LinearTransform1D.create(scale, offset);
@@ -548,6 +655,37 @@ public class CategoryRecord implements Cloneable, Serializable {
         if (format.getMaximumFractionDigits() != n) {
             format.setMaximumFractionDigits(n);
         }
+    }
+
+    /**
+     * Returns the colors, as a palette name or as a RGB code.
+     * The syntax of the returned string is described in
+     * {@link org.geotoolkit.gui.swing.image.PaletteComboBox#getSelectedItem()}.
+     *
+     * @return The palette name or RGB code, or {@code null} if none.
+     *
+     * @since 3.14
+     */
+    public String getPaletteName() {
+        return paletteName;
+    }
+
+    /**
+     * Sets the colors, as a palette name or as a RGB code.
+     * The syntax of the string argument is described in
+     * {@link org.geotoolkit.gui.swing.image.PaletteComboBox#getSelectedItem()}.
+     * <p>
+     * A list of available palette names is provided by the {@link PaletteFactory} javadoc.
+     *
+     * @param name The palette name or RGB code, or {@code null} if none.
+     * @return {@code true} if this object changed as a result of this method call.
+     *
+     * @since 3.14
+     */
+    public boolean setPaletteName(final String name) {
+        final boolean changed = !Utilities.equals(name, paletteName);
+        paletteName = name;
+        return changed;
     }
 
     /**
