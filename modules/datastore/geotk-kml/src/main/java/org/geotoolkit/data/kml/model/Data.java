@@ -31,9 +31,15 @@ public interface Data extends AbstractObject {
 
     /**
      *
+     * @return the name.
+     */
+    public String getName();
+
+    /**
+     *
      * @return the display name.
      */
-    public String getDisplayName();
+    public Object getDisplayName();
 
     /**
      *
@@ -46,6 +52,12 @@ public interface Data extends AbstractObject {
      * @return the list of data extensions.
      */
     public List<Object> getDataExtensions();
+
+    /**
+     *
+     * @param name
+     */
+    public void setName(String name);
 
     /**
      *

@@ -96,6 +96,7 @@ import org.geotoolkit.data.kml.model.ViewVolume;
 import org.geotoolkit.data.xal.model.AddressDetails;
 import org.geotoolkit.data.xal.model.XalException;
 import org.geotoolkit.data.kml.xsd.SimpleType;
+import org.geotoolkit.data.utilities.Cdata;
 import org.geotoolkit.data.utilities.DateUtilities;
 import org.geotoolkit.xml.StaxStreamWriter;
 import static org.geotoolkit.data.kml.xml.KmlModelConstants.*;
@@ -531,16 +532,19 @@ public class KmlWriter extends StaxStreamWriter {
      * @param extendedData
      * @throws XMLStreamException
      */
-    private void writeExtendedData(ExtendedData extendedData) throws XMLStreamException{
-        writer.writeStartElement(URI_KML, TAG_EXTENDED_DATA);
-        for (Data data : extendedData.getDatas()){
-            this.writeData(data);
-        }
-        for (SchemaData schemaData : extendedData.getSchemaData()){
-            this.writeSchemaData(schemaData);
-        }
-        if (extendedData.getAnyOtherElements() != null){
+    private void writeExtendedData(Object dataContainer) throws XMLStreamException{
+        if(dataContainer instanceof ExtendedData){
+            ExtendedData extendedData = (ExtendedData) dataContainer;
+            writer.writeStartElement(URI_KML, TAG_EXTENDED_DATA);
+            for (Data data : extendedData.getDatas()){
+                this.writeData(data);
+            }
+            for (SchemaData schemaData : extendedData.getSchemaData()){
+                this.writeSchemaData(schemaData);
+            }
+            if (extendedData.getAnyOtherElements() != null){
 
+            }
         }
         writer.writeEndElement();
     }
@@ -552,6 +556,7 @@ public class KmlWriter extends StaxStreamWriter {
      */
     private void writeSchemaData(SchemaData schemaData) throws XMLStreamException{
         writer.writeStartElement(URI_KML, TAG_SCHEMA_DATA);
+        writer.writeAttribute(ATT_SCHEMA_URL, schemaData.getSchemaURL().toString());
         this.writeCommonAbstractObject(schemaData);
         for (SimpleData simpleData : schemaData.getSimpleDatas()){
             this.writeSimpleData(simpleData);
@@ -578,6 +583,7 @@ public class KmlWriter extends StaxStreamWriter {
      */
     private void writeData(Data data) throws XMLStreamException{
         writer.writeStartElement(URI_KML, TAG_DATA);
+        writer.writeAttribute(ATT_NAME, data.getName());
         this.writeCommonAbstractObject(data);
         if (data.getDisplayName() != null){
             this.writeDisplayName(data.getDisplayName());
@@ -1537,14 +1543,14 @@ public class KmlWriter extends StaxStreamWriter {
      */
     private void writeSchema(Schema schema) throws XMLStreamException{
         writer.writeStartElement(URI_KML, TAG_SCHEMA);
-        for (SimpleField sf : schema.getSimpleFields()){
-            this.writeSimpleField(sf);
-        }
         if (schema.getName() != null){
             writer.writeAttribute(ATT_NAME, schema.getName());
         }
         if (schema.getId() != null){
             writer.writeAttribute(ATT_ID, schema.getId());
+        }
+        for (SimpleField sf : schema.getSimpleFields()){
+            this.writeSimpleField(sf);
         }
         writer.writeEndElement();
     }
@@ -1556,14 +1562,14 @@ public class KmlWriter extends StaxStreamWriter {
      */
     private void writeSimpleField(SimpleField simpleField) throws XMLStreamException{
         writer.writeStartElement(URI_KML, TAG_SIMPLE_FIELD);
-        if (simpleField.getDisplayName() != null){
-            this.writeDisplayName(simpleField.getDisplayName());
-        }
         if (simpleField.getType() != null){
             writer.writeAttribute(ATT_TYPE, simpleField.getType());
         }
         if (simpleField.getName() != null){
-            writer.writeAttribute(ATT_ID, simpleField.getName());
+            writer.writeAttribute(ATT_NAME, simpleField.getName());
+        }
+        if (simpleField.getDisplayName() != null){
+            this.writeDisplayName(simpleField.getDisplayName());
         }
         writer.writeEndElement();
     }
@@ -2027,9 +2033,17 @@ public class KmlWriter extends StaxStreamWriter {
      * @param snippet
      * @throws XMLStreamException
      */
-    private void writeSnippet(String snippet) throws XMLStreamException{
-        writer.writeStartElement(URI_KML, TAG_SNIPPET);
-        this.writeCharacterContent(snippet);
+    private void writeSnippet(Object snippet) throws XMLStreamException{
+        if(snippet instanceof String || snippet instanceof Cdata){
+            writer.writeStartElement(URI_KML, TAG_SNIPPET);
+            this.writeCharacterContent(snippet);
+        }
+        else if (snippet instanceof Snippet){
+            writer.writeStartElement(URI_KML, TAG_SNIPPET_BIG);
+            if(DEF_MAX_SNIPPET_LINES_ATT != ((Snippet) snippet).getMaxLines())
+                writer.writeAttribute(ATT_MAX_LINES, String.valueOf(((Snippet) snippet).getMaxLines()));
+            this.writeCharacterContent(((Snippet) snippet).getContent());
+        }
         writer.writeEndElement();
     }
 
@@ -2060,7 +2074,7 @@ public class KmlWriter extends StaxStreamWriter {
      * @param description
      * @throws XMLStreamException
      */
-    private void writeDescription(String description) throws XMLStreamException{
+    private void writeDescription(Object description) throws XMLStreamException{
         writer.writeStartElement(URI_KML, TAG_DESCRIPTION);
         this.writeCharacterContent(description);
         writer.writeEndElement();
@@ -2082,7 +2096,7 @@ public class KmlWriter extends StaxStreamWriter {
      * @param text
      * @throws XMLStreamException
      */
-    private void writeText(String text) throws XMLStreamException{
+    private void writeText(Object text) throws XMLStreamException{
         writer.writeStartElement(URI_KML, TAG_TEXT);
         this.writeCharacterContent(text);
         writer.writeEndElement();
@@ -2190,9 +2204,9 @@ public class KmlWriter extends StaxStreamWriter {
      * @param displayName
      * @throws XMLStreamException
      */
-    private void writeDisplayName(String displayName) throws XMLStreamException {
+    private void writeDisplayName(Object displayName) throws XMLStreamException {
         writer.writeStartElement(URI_KML, TAG_DISPLAY_NAME);
-        writer.writeCharacters(displayName);
+        this.writeCharacterContent(displayName);
         writer.writeEndElement();
     }
 
@@ -2246,7 +2260,7 @@ public class KmlWriter extends StaxStreamWriter {
      * @param linkDescription
      * @throws XMLStreamException
      */
-    private void writeLinkDescription(String linkDescription) throws XMLStreamException {
+    private void writeLinkDescription(Object linkDescription) throws XMLStreamException {
         writer.writeStartElement(URI_KML, TAG_LINK_DESCRIPTION);
         this.writeCharacterContent(linkDescription);
         writer.writeEndElement();
@@ -2270,7 +2284,8 @@ public class KmlWriter extends StaxStreamWriter {
      */
     private void writeLinkSnippet(Snippet linkSnippet) throws XMLStreamException {
         writer.writeStartElement(URI_KML, TAG_LINK_SNIPPET);
-        writer.writeAttribute(ATT_MAX_LINES, String.valueOf(linkSnippet.getMaxLines()));
+        if(DEF_MAX_SNIPPET_LINES_ATT != linkSnippet.getMaxLines())
+            writer.writeAttribute(ATT_MAX_LINES, String.valueOf(linkSnippet.getMaxLines()));
         this.writeCharacterContent(linkSnippet.getContent());
         writer.writeEndElement();
     }
@@ -3016,8 +3031,9 @@ public class KmlWriter extends StaxStreamWriter {
         return !(Double.isInfinite(d) && Double.isNaN(d));
     }
 
-    private boolean isCDATA(String string){
-        return string.contains("<");
+    private boolean isCDATA(Object string){
+        //return string.contains("<");
+        return string instanceof Cdata;
     }
 
     /**
@@ -3035,11 +3051,13 @@ public class KmlWriter extends StaxStreamWriter {
      * @param string
      * @throws XMLStreamException
      */
-    private void writeCharacterContent(String string) throws XMLStreamException{
+    private void writeCharacterContent(Object string) throws XMLStreamException{
         if(isCDATA(string))
-            writer.writeCData(string);
+            writer.writeCData(string.toString());
+        else if (string instanceof String)
+            writer.writeCharacters((String) string);
         else
-            writer.writeCharacters(string);
+            throw new IllegalArgumentException("Only String or CDATA argument.");
     }
 
 }

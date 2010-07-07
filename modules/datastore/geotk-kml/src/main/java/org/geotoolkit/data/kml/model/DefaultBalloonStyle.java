@@ -13,7 +13,7 @@ public class DefaultBalloonStyle extends DefaultAbstractSubStyle implements Ball
 
     private Color bgColor;
     private Color textColor;
-    private String text;
+    private Object text;
     private DisplayMode displayMode;
 
     /**
@@ -42,7 +42,7 @@ public class DefaultBalloonStyle extends DefaultAbstractSubStyle implements Ball
             IdAttributes idAttributes,
             List<SimpleType> abstractSubStyleSimpleExtensions,
             List<AbstractObject> abstractSubStyleObjectExtensions,
-            Color bgColor, Color textColor, String text, DisplayMode displayMode,
+            Color bgColor, Color textColor, Object text, DisplayMode displayMode,
             List<SimpleType> balloonStyleSimpleExtensions,
             List<AbstractObject> balloonStyleObjectExtensions) {
         super(objectSimpleExtensions, idAttributes,
@@ -83,7 +83,7 @@ public class DefaultBalloonStyle extends DefaultAbstractSubStyle implements Ball
      * @{@inheritDoc }
      */
     @Override
-    public String getText() {
+    public Object getText() {
         return this.text;
     }
 
@@ -119,7 +119,7 @@ public class DefaultBalloonStyle extends DefaultAbstractSubStyle implements Ball
      * @{@inheritDoc }
      */
     @Override
-    public void setText(String text) {
+    public void setText(Object text) {
         this.text = text;
     }
 

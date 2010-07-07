@@ -3,6 +3,7 @@ package org.geotoolkit.data.kml.model;
 import java.util.List;
 import org.geotoolkit.data.atom.model.AtomPersonConstruct;
 import org.geotoolkit.data.atom.model.AtomLink;
+import org.geotoolkit.data.utilities.Cdata;
 import org.geotoolkit.data.xal.model.AddressDetails;
 
 /**
@@ -110,13 +111,13 @@ public interface AbstractFeature extends AbstractObject {
      *
      * @return The AbstractFeature snippet.
      */
-    public String getSnippet();
+    public Object getSnippet();
 
     /**
      *
      * @return The AbstractFeature description.
      */
-    public String getDescription();
+    public Object getDescription();
 
     /**
      *
@@ -152,7 +153,7 @@ public interface AbstractFeature extends AbstractObject {
      *
      * @return The AbstractFeature extended data.
      */
-    public ExtendedData getExtendedData();
+    public Object getExtendedData();
 
     /**
      * 
@@ -204,15 +205,29 @@ public interface AbstractFeature extends AbstractObject {
 
     /**
      *
-     * @param snoppet
+     * @param snippet
      */
     public void setSnippet(String snippet);
+
+    /**
+     * 
+     * @param snippet
+     */
+    public void setSnippet(Cdata snippet);
+
+    /**
+     *
+     * @param snippet
+     * @deprecated
+     */
+    @Deprecated
+    public void setSnippet(Snippet snippet);
 
     /**
      *
      * @param description
      */
-    public void setDescription(String description);
+    public void setDescription(Object description);
 
     /**
      *
@@ -249,5 +264,13 @@ public interface AbstractFeature extends AbstractObject {
      * @param extendedData
      */
     public void setExtendedData(ExtendedData extendedData);
+    
+    /**
+     * 
+     * @param metaData
+     * @deprecated
+     */
+    @Deprecated
+    public void setExtendedData(MetaData metaData);
 
 }

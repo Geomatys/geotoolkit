@@ -28,7 +28,7 @@ public interface SimpleField {
      *
      * @return
      */
-    public String getDisplayName();
+    public Object getDisplayName();
 
     /**
      *
@@ -52,7 +52,7 @@ public interface SimpleField {
      *
      * @param displayName
      */
-    public void setDisplayName(String displayName);
+    public void setDisplayName(Object displayName);
 
     /**
      *

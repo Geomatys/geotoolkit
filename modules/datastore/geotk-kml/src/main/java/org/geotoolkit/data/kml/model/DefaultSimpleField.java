@@ -9,7 +9,7 @@ import static java.util.Collections.*;
  */
 public class DefaultSimpleField implements SimpleField {
 
-    private String displayName;
+    private Object displayName;
     private String type;
     private String name;
     private List<Object> simpleFieldExtensions;
@@ -25,7 +25,7 @@ public class DefaultSimpleField implements SimpleField {
      * @param name
      * @param simpleFieldExtensions
      */
-    public DefaultSimpleField(String displayName, String type,
+    public DefaultSimpleField(Object displayName, String type,
             String name, List<Object> simpleFieldExtensions) {
         this.displayName = displayName;
         this.type = type;
@@ -38,7 +38,7 @@ public class DefaultSimpleField implements SimpleField {
      * @{@inheritDoc }
      */
     @Override
-    public String getDisplayName() {
+    public Object getDisplayName() {
         return this.displayName;
     }
 
@@ -74,7 +74,7 @@ public class DefaultSimpleField implements SimpleField {
      * @{@inheritDoc }
      */
     @Override
-    public void setDisplayName(String displayName) {
+    public void setDisplayName(Object displayName) {
         this.displayName = displayName;
     }
 

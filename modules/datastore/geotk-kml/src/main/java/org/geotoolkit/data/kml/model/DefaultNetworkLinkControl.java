@@ -17,7 +17,7 @@ public class DefaultNetworkLinkControl implements NetworkLinkControl {
     private String cookie;
     private String message;
     private String linkName;
-    private String linkDescription;
+    private Object linkDescription;
     private Snippet linkSnippet;
     private Calendar expires;
     private Update update;
@@ -48,7 +48,7 @@ public class DefaultNetworkLinkControl implements NetworkLinkControl {
      */
     public DefaultNetworkLinkControl(double minRefreshPeriod,
             double maxSessionLength, String cookie, String message,
-            String linkName, String linkDescription,
+            String linkName, Object linkDescription,
             Snippet linkSnippet, Calendar expire, Update update, AbstractView view,
             List<SimpleType> networkLinkControlSimpleExtensions,
             List<AbstractObject> networkLinkControlObjectExtensions) {
@@ -120,7 +120,7 @@ public class DefaultNetworkLinkControl implements NetworkLinkControl {
      * @{@inheritDoc }
      */
     @Override
-    public String getLinkDescription() {
+    public Object getLinkDescription() {
         return this.linkDescription;
     }
 
@@ -210,7 +210,7 @@ public class DefaultNetworkLinkControl implements NetworkLinkControl {
      * @{@inheritDoc }
      */
     @Override
-    public void setLinkDescription(String linkDescription) {
+    public void setLinkDescription(Object linkDescription) {
         this.linkDescription = linkDescription;
     }
 

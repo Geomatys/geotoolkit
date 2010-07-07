@@ -24,9 +24,9 @@ public interface Snippet {
     public int getMaxLines();
 
     /**
-     * 
+     *
      * @return
      */
-    public String getContent();
+    public Object getContent();
 
 }

@@ -104,6 +104,7 @@ import org.geotoolkit.data.xal.model.AddressDetails;
 import org.geotoolkit.data.xal.model.XalException;
 import org.geotoolkit.data.kml.xsd.SimpleType;
 import org.geotoolkit.data.utilities.DateUtilities;
+import org.geotoolkit.data.utilities.DefaultCdata;
 import org.geotoolkit.xml.StaxStreamReader;
 import static org.geotoolkit.data.kml.xml.KmlModelConstants.*;
 
@@ -248,7 +249,7 @@ public class KmlReader extends StaxStreamReader {
      * @throws XMLStreamException
      * @throws KmlException
      */
-    private Placemark readPlacemark() throws XMLStreamException, KmlException {
+    private Placemark readPlacemark() throws XMLStreamException, KmlException, URISyntaxException {
         // AbstractObject
         List<SimpleType> objectSimpleExtensions = null;
         IdAttributes idAttributes = this.readIdAttributes();
@@ -262,14 +263,14 @@ public class KmlReader extends StaxStreamReader {
         String address = null;
         AddressDetails addressDetails = null;
         String phoneNumber = null;
-        String snippet = null;
-        String description = null;
+        Object snippet = null;
+        Object description = null;
         AbstractView view = null;
         AbstractTimePrimitive timePrimitive = null;
         String styleUrl = null;
         List<AbstractStyleSelector> styleSelector = new ArrayList<AbstractStyleSelector>();
         Region region = null;
-        ExtendedData extendedData = null;
+        Object extendedData = null;
         List<SimpleType> featureSimpleExtensions = null;
         List<AbstractObject> featureObjectExtensions = null;
 
@@ -300,9 +301,11 @@ public class KmlReader extends StaxStreamReader {
                         } else if (TAG_PHONE_NUMBER.equals(eName)) {
                             phoneNumber = reader.getElementText();
                         } else if (TAG_SNIPPET.equals(eName)) {
-                            snippet = reader.getElementText();
+                            snippet = this.readElementText();
+                        } else if (TAG_SNIPPET_BIG.equals(eName)) {
+                            snippet = this.readSnippet();
                         } else if (TAG_DESCRIPTION.equals(eName)) {
-                            description = reader.getElementText();
+                            description = this.readElementText();
                         } else if (TAG_STYLE_URL.equals(eName)) {
                             styleUrl = reader.getElementText();
                         } else if (isAbstractView(eName)) {
@@ -463,7 +466,7 @@ public class KmlReader extends StaxStreamReader {
      * @return
      * @throws XMLStreamException
      */
-    private ExtendedData readExtendedData() throws XMLStreamException {
+    private ExtendedData readExtendedData() throws XMLStreamException, URISyntaxException {
         List<Data> datas = new ArrayList<Data>();
         List<SchemaData> schemaDatas = new ArrayList<SchemaData>();
         List<Object> anyOtherElements = null;
@@ -510,7 +513,8 @@ public class KmlReader extends StaxStreamReader {
         IdAttributes idAttributes = this.readIdAttributes();
 
         // Data
-        String displayName = null;
+        String name = reader.getAttributeValue(null, ATT_NAME);
+        Object displayName = null;
         String value = null;
         List<Object> dataExtensions = null;
 
@@ -526,7 +530,7 @@ public class KmlReader extends StaxStreamReader {
 
                         // REGION
                         if (TAG_DISPLAY_NAME.equals(eName)) {
-                            displayName = reader.getElementText();
+                            displayName = this.readElementText();
                         } else if (TAG_VALUE.equals(eName)) {
                             value = reader.getElementText();
                         }
@@ -534,7 +538,8 @@ public class KmlReader extends StaxStreamReader {
                     break;
 
                 case XMLStreamConstants.END_ELEMENT:
-                    if (TAG_DATA.equals(reader.getLocalName()) && URI_KML.contains(reader.getNamespaceURI())) {
+                    if (TAG_DATA.equals(reader.getLocalName())
+                            && URI_KML.contains(reader.getNamespaceURI())) {
                         break boucle;
                     }
                     break;
@@ -542,7 +547,8 @@ public class KmlReader extends StaxStreamReader {
 
         }
 
-        return KmlReader.kmlFactory.createData(objectSimpleExtensions, idAttributes, displayName, value, dataExtensions);
+        return KmlReader.kmlFactory.createData(objectSimpleExtensions, idAttributes,
+                name, displayName, value, dataExtensions);
     }
 
     /**
@@ -550,12 +556,13 @@ public class KmlReader extends StaxStreamReader {
      * @return
      * @throws XMLStreamException
      */
-    private SchemaData readSchemaData() throws XMLStreamException {
+    private SchemaData readSchemaData() throws XMLStreamException, URISyntaxException {
         // AbstractObject
         List<SimpleType> objectSimpleExtensions = null;
         IdAttributes idAttributes = this.readIdAttributes();
 
-        // Data
+        // SchemaData
+        URI schemaURL = new URI(reader.getAttributeValue(null, ATT_SCHEMA_URL));
         List<SimpleData> simpleDatas = new ArrayList<SimpleData>();
         List<Object> schemaDataExtensions = null;
 
@@ -585,7 +592,8 @@ public class KmlReader extends StaxStreamReader {
 
         }
 
-        return KmlReader.kmlFactory.createSchemaData(objectSimpleExtensions, idAttributes, simpleDatas, schemaDataExtensions);
+        return KmlReader.kmlFactory.createSchemaData(objectSimpleExtensions, 
+                idAttributes, schemaURL, simpleDatas, schemaDataExtensions);
     }
 
     /**
@@ -609,7 +617,7 @@ public class KmlReader extends StaxStreamReader {
         String cookie = null;
         String message = null;
         String linkName = null;
-        String linkDescription = null;
+        Object linkDescription = null;
         Snippet linkSnippet = null;
         Calendar expires = null;
         Update update = null;
@@ -626,7 +634,6 @@ public class KmlReader extends StaxStreamReader {
                     final String eUri = reader.getNamespaceURI();
 
                     if (URI_KML.equals(eUri)) {
-                        System.out.println(eName);
                         if (TAG_MIN_REFRESH_PERIOD.equals(eName)) {
                             minRefreshPeriod = parseDouble(reader.getElementText());
                         }
@@ -643,7 +650,7 @@ public class KmlReader extends StaxStreamReader {
                             linkName = reader.getElementText();
                         }
                         if (TAG_LINK_DESCRIPTION.equals(eName)){
-                            linkDescription = reader.getElementText();
+                            linkDescription = this.readElementText();
                         }
                         if (TAG_LINK_SNIPPET.equals(eName)){
                             linkSnippet = this.readSnippet();
@@ -728,7 +735,7 @@ public class KmlReader extends StaxStreamReader {
      * @throws XMLStreamException
      * @throws KmlException
      */
-    private Create readCreate() throws XMLStreamException, KmlException{
+    private Create readCreate() throws XMLStreamException, KmlException, URISyntaxException{
         List<AbstractContainer> containers = new ArrayList<AbstractContainer>();
 
         boucle:
@@ -763,7 +770,7 @@ public class KmlReader extends StaxStreamReader {
      * @throws XMLStreamException
      * @throws KmlException
      */
-    private Delete readDelete() throws XMLStreamException, KmlException{
+    private Delete readDelete() throws XMLStreamException, KmlException, URISyntaxException{
         List<AbstractFeature> features = new ArrayList<AbstractFeature>();
 
         boucle:
@@ -798,7 +805,7 @@ public class KmlReader extends StaxStreamReader {
      * @throws XMLStreamException
      * @throws KmlException
      */
-    private Change readChange() throws XMLStreamException, KmlException{
+    private Change readChange() throws XMLStreamException, KmlException, URISyntaxException{
         List<AbstractObject> objects = new ArrayList<AbstractObject>();
 
         boucle:
@@ -834,7 +841,7 @@ public class KmlReader extends StaxStreamReader {
      * @throws XMLStreamException
      * @throws KmlException
      */
-    private AbstractObject readAbstractObject(String eName) throws XMLStreamException, KmlException{
+    private AbstractObject readAbstractObject(String eName) throws XMLStreamException, KmlException, URISyntaxException{
         AbstractObject resultat = null;
         if (TAG_REGION.equals(eName)){
             resultat = this.readRegion();
@@ -947,7 +954,7 @@ public class KmlReader extends StaxStreamReader {
         if (reader.getAttributeValue(null, ATT_MAX_LINES) != null){
             maxLines = Integer.parseInt(reader.getAttributeValue(null, ATT_MAX_LINES));
         }
-        String content = reader.getElementText();
+        Object content = this.readElementText();
         return KmlReader.kmlFactory.createSnippet(maxLines, content);
     }
 
@@ -1576,7 +1583,7 @@ public class KmlReader extends StaxStreamReader {
      * @throws XMLStreamException
      * @throws KmlException
      */
-    private AbstractFeature readAbstractFeature(String eName) throws XMLStreamException, KmlException {
+    private AbstractFeature readAbstractFeature(String eName) throws XMLStreamException, KmlException, URISyntaxException {
         AbstractFeature resultat = null;
         if (isAbstractContainer(eName)) {
             resultat = this.readAbstractContainer(eName);
@@ -1598,7 +1605,7 @@ public class KmlReader extends StaxStreamReader {
      * @return
      * @throws XMLStreamException
      */
-    private AbstractOverlay readAbstractOverlay(String eName) throws XMLStreamException, KmlException {
+    private AbstractOverlay readAbstractOverlay(String eName) throws XMLStreamException, KmlException, URISyntaxException {
         AbstractOverlay resultat = null;
         if (TAG_GROUND_OVERLAY.equals(eName)) {
             resultat = readGroundOverlay();
@@ -1618,7 +1625,7 @@ public class KmlReader extends StaxStreamReader {
      * @throws XMLStreamException
      * @throws KmlException
      */
-    private GroundOverlay readGroundOverlay() throws XMLStreamException, KmlException {
+    private GroundOverlay readGroundOverlay() throws XMLStreamException, KmlException, URISyntaxException {
 
         // AbstractObject
         List<SimpleType> objectSimpleExtensions = null;
@@ -1633,14 +1640,14 @@ public class KmlReader extends StaxStreamReader {
         String address = null;
         AddressDetails addressDetails = null;
         String phoneNumber = null;
-        String snippet = null;
-        String description = null;
+        Object snippet = null;
+        Object description = null;
         AbstractView view = null;
         AbstractTimePrimitive timePrimitive = null;
         String styleUrl = null;
         List<AbstractStyleSelector> styleSelector = new ArrayList<AbstractStyleSelector>();
         Region region = null;
-        ExtendedData extendedData = null;
+        Object extendedData = null;
         List<SimpleType> featureSimpleExtensions = null;
         List<AbstractObject> featureObjectExtensions = null;
 
@@ -1680,9 +1687,11 @@ public class KmlReader extends StaxStreamReader {
                         } else if (TAG_PHONE_NUMBER.equals(eName)) {
                             phoneNumber = reader.getElementText();
                         } else if (TAG_SNIPPET.equals(eName)) {
-                            snippet = reader.getElementText();
+                            snippet = this.readElementText();
+                        } else if (TAG_SNIPPET_BIG.equals(eName)) {
+                            snippet = this.readSnippet();
                         } else if (TAG_DESCRIPTION.equals(eName)) {
-                            description = reader.getElementText();
+                            description = this.readElementText();
                         } else if (TAG_STYLE_URL.equals(eName)) {
                             styleUrl = reader.getElementText();
                         } else if (isAbstractView(eName)) {
@@ -2098,7 +2107,7 @@ public class KmlReader extends StaxStreamReader {
                 leftFov, rightFov, bottomFov, topFov, near, viewVolumeSimpleExtensions, viewVolumeObjectExtensions);
     }
 
-    private PhotoOverlay readPhotoOverlay() throws XMLStreamException, KmlException {
+    private PhotoOverlay readPhotoOverlay() throws XMLStreamException, KmlException, URISyntaxException {
 
         // AbstractObject
         List<SimpleType> objectSimpleExtensions = null;
@@ -2113,14 +2122,14 @@ public class KmlReader extends StaxStreamReader {
         String address = null;
         AddressDetails addressDetails = null;
         String phoneNumber = null;
-        String snippet = null;
-        String description = null;
+        Object snippet = null;
+        Object description = null;
         AbstractView view = null;
         AbstractTimePrimitive timePrimitive = null;
         String styleUrl = null;
         List<AbstractStyleSelector> styleSelector = new ArrayList<AbstractStyleSelector>();
         Region region = null;
-        ExtendedData extendedData = null;
+        Object extendedData = null;
         List<SimpleType> featureSimpleExtensions = null;
         List<AbstractObject> featureObjectExtensions = null;
 
@@ -2162,9 +2171,11 @@ public class KmlReader extends StaxStreamReader {
                         } else if (TAG_PHONE_NUMBER.equals(eName)) {
                             phoneNumber = reader.getElementText();
                         } else if (TAG_SNIPPET.equals(eName)) {
-                            snippet = reader.getElementText();
+                            snippet = this.readElementText();
+                        } else if (TAG_SNIPPET_BIG.equals(eName)) {
+                            snippet = this.readSnippet();
                         } else if (TAG_DESCRIPTION.equals(eName)) {
-                            description = reader.getElementText();
+                            description = this.readElementText();
                         } else if (TAG_STYLE_URL.equals(eName)) {
                             styleUrl = reader.getElementText();
                         } else if (isAbstractView(eName)) {
@@ -2246,7 +2257,7 @@ public class KmlReader extends StaxStreamReader {
      * @throws XMLStreamException
      * @throws KmlException
      */
-    private ScreenOverlay readScreenOverlay() throws XMLStreamException, KmlException {
+    private ScreenOverlay readScreenOverlay() throws XMLStreamException, KmlException, URISyntaxException {
 
         // AbstractObject
         List<SimpleType> objectSimpleExtensions = null;
@@ -2261,14 +2272,14 @@ public class KmlReader extends StaxStreamReader {
         String address = null;
         AddressDetails addressDetails = null;
         String phoneNumber = null;
-        String snippet = null;
-        String description = null;
+        Object snippet = null;
+        Object description = null;
         AbstractView view = null;
         AbstractTimePrimitive timePrimitive = null;
         String styleUrl = null;
         List<AbstractStyleSelector> styleSelector = new ArrayList<AbstractStyleSelector>();
         Region region = null;
-        ExtendedData extendedData = null;
+        Object extendedData = null;
         List<SimpleType> featureSimpleExtensions = null;
         List<AbstractObject> featureObjectExtensions = null;
 
@@ -2310,9 +2321,11 @@ public class KmlReader extends StaxStreamReader {
                         } else if (TAG_PHONE_NUMBER.equals(eName)) {
                             phoneNumber = reader.getElementText();
                         } else if (TAG_SNIPPET.equals(eName)) {
-                            snippet = reader.getElementText();
+                            snippet = this.readElementText();
+                        } else if (TAG_SNIPPET_BIG.equals(eName)) {
+                            snippet = this.readSnippet();
                         } else if (TAG_DESCRIPTION.equals(eName)) {
-                            description = reader.getElementText();
+                            description = this.readElementText();
                         } else if (TAG_STYLE_URL.equals(eName)) {
                             styleUrl = reader.getElementText();
                         } else if (isAbstractView(eName)) {
@@ -2394,7 +2407,7 @@ public class KmlReader extends StaxStreamReader {
      * @return
      * @throws XMLStreamException
      */
-    private AbstractContainer readAbstractContainer(String eName) throws XMLStreamException, KmlException {
+    private AbstractContainer readAbstractContainer(String eName) throws XMLStreamException, KmlException, URISyntaxException {
         AbstractContainer resultat = null;
         if (TAG_FOLDER.equals(eName)) {
             resultat = readFolder();
@@ -3028,7 +3041,7 @@ public class KmlReader extends StaxStreamReader {
         // BalloonStyle
         Color bgColor = DEF_BG_COLOR;
         Color textColor = DEF_TEXT_COLOR;
-        String text = null;
+        Object text = null;
         DisplayMode displayMode = DEF_DISPLAY_MODE;
         List<SimpleType> balloonStyleSimpleExtensions = null;
         List<AbstractObject> balloonStyleObjectExtensions = null;
@@ -3078,14 +3091,14 @@ public class KmlReader extends StaxStreamReader {
      * @return
      * @throws XMLStreamException
      */
-    private String readElementText() throws XMLStreamException{
-        String resultat = null;
+    private Object readElementText() throws XMLStreamException{
+        Object resultat = null;
         boucle:
         while (reader.hasNext()) {
             switch (reader.getEventType()) {
                 case XMLStreamConstants.CDATA:
                     System.out.println("CDATA");
-                    resultat = reader.getText();
+                    resultat = new DefaultCdata(reader.getText());
                     break;
                 case XMLStreamConstants.CHARACTERS:
                     System.out.println("CHARACTERS");
@@ -3475,7 +3488,7 @@ public class KmlReader extends StaxStreamReader {
      * @throws XMLStreamException
      * @throws KmlException
      */
-    private Folder readFolder() throws XMLStreamException, KmlException {
+    private Folder readFolder() throws XMLStreamException, KmlException, URISyntaxException {
         // AbstractObject
         List<SimpleType> objectSimpleExtensions = null;
         IdAttributes idAttributes = this.readIdAttributes();
@@ -3489,14 +3502,14 @@ public class KmlReader extends StaxStreamReader {
         String address = null;
         AddressDetails addressDetails = null;
         String phoneNumber = null;
-        String snippet = null;
-        String description = null;
+        Object snippet = null;
+        Object description = null;
         AbstractView view = null;
         AbstractTimePrimitive timePrimitive = null;
         String styleUrl = null;
         List<AbstractStyleSelector> styleSelector = new ArrayList<AbstractStyleSelector>();
         Region region = null;
-        ExtendedData extendedData = null;
+        Object extendedData = null;
         List<SimpleType> featureSimpleExtensions = null;
         List<AbstractObject> featureObjectExtensions = null;
 
@@ -3531,9 +3544,11 @@ public class KmlReader extends StaxStreamReader {
                         } else if (TAG_PHONE_NUMBER.equals(eName)) {
                             phoneNumber = reader.getElementText();
                         } else if (TAG_SNIPPET.equals(eName)) {
-                            snippet = reader.getElementText();
+                            snippet = this.readElementText();
+                        } else if (TAG_SNIPPET_BIG.equals(eName)) {
+                            snippet = this.readSnippet();
                         } else if (TAG_DESCRIPTION.equals(eName)) {
-                            description = reader.getElementText();
+                            description = this.readElementText();
                         } else if (TAG_STYLE_URL.equals(eName)) {
                             styleUrl = reader.getElementText();
                         } else if (isAbstractView(eName)) {
@@ -3595,7 +3610,7 @@ public class KmlReader extends StaxStreamReader {
      * @throws XMLStreamException
      * @throws KmlException
      */
-    private Document readDocument() throws XMLStreamException, KmlException {
+    private Document readDocument() throws XMLStreamException, KmlException, URISyntaxException {
 
         // AbstractObject
         List<SimpleType> objectSimpleExtensions = null;
@@ -3610,14 +3625,14 @@ public class KmlReader extends StaxStreamReader {
         String address = null;
         AddressDetails addressDetails = null;
         String phoneNumber = null;
-        String snippet = null;
-        String description = null;
+        Object snippet = null;
+        Object description = null;
         AbstractView view = null;
         AbstractTimePrimitive timePrimitive = null;
         String styleUrl = null;
         List<AbstractStyleSelector> styleSelector = new ArrayList<AbstractStyleSelector>();
         Region region = null;
-        ExtendedData extendedData = null;
+        Object extendedData = null;
         List<SimpleType> featureSimpleExtensions = null;
         List<AbstractObject> featureObjectExtensions = null;
 
@@ -3653,9 +3668,11 @@ public class KmlReader extends StaxStreamReader {
                         } else if (TAG_PHONE_NUMBER.equals(eName)) {
                             phoneNumber = reader.getElementText();
                         } else if (TAG_SNIPPET.equals(eName)) {
-                            snippet = reader.getElementText();
+                            snippet = this.readElementText();
+                        } else if (TAG_SNIPPET_BIG.equals(eName)) {
+                            snippet = this.readSnippet();
                         } else if (TAG_DESCRIPTION.equals(eName)) {
-                            description = reader.getElementText();
+                            description = this.readElementText();
                         } else if (TAG_STYLE_URL.equals(eName)) {
                             styleUrl = reader.getElementText();
                         } else if (isAbstractView(eName)) {
@@ -3763,7 +3780,7 @@ public class KmlReader extends StaxStreamReader {
     private SimpleField readSimpleField() throws XMLStreamException {
 
         // SimpleField
-        String displayName = null;
+        Object displayName = null;
         List<Object> simpleFieldExtensions = new ArrayList<Object>();
         String name = reader.getAttributeValue(null, ATT_NAME);
         String type = reader.getAttributeValue(null, ATT_TYPE);
@@ -3779,7 +3796,7 @@ public class KmlReader extends StaxStreamReader {
                     // SIMPLE FIELD
                     if (URI_KML.equals(eUri)) {
                         if (TAG_DISPLAY_NAME.equals(eName)) {
-                            displayName = reader.getElementText();
+                            displayName = this.readElementText();
                         }
                     }
                     break;
@@ -3802,7 +3819,7 @@ public class KmlReader extends StaxStreamReader {
      * @throws XMLStreamException
      * @throws KmlException
      */
-    private NetworkLink readNetworkLink() throws XMLStreamException, KmlException {
+    private NetworkLink readNetworkLink() throws XMLStreamException, KmlException, URISyntaxException {
         // AbstractObject
         List<SimpleType> objectSimpleExtensions = null;
         IdAttributes idAttributes = this.readIdAttributes();
@@ -3816,14 +3833,14 @@ public class KmlReader extends StaxStreamReader {
         String address = null;
         AddressDetails addressDetails = null;
         String phoneNumber = null;
-        String snippet = null;
-        String description = null;
+        Object snippet = null;
+        Object description = null;
         AbstractView view = null;
         AbstractTimePrimitive timePrimitive = null;
         String styleUrl = null;
         List<AbstractStyleSelector> styleSelector = new ArrayList<AbstractStyleSelector>();
         Region region = null;
-        ExtendedData extendedData = null;
+        Object extendedData = null;
         List<SimpleType> featureSimpleExtensions = null;
         List<AbstractObject> featureObjectExtensions = null;
 
@@ -3856,9 +3873,11 @@ public class KmlReader extends StaxStreamReader {
                         } else if (TAG_PHONE_NUMBER.equals(eName)) {
                             phoneNumber = reader.getElementText();
                         } else if (TAG_SNIPPET.equals(eName)) {
-                            snippet = reader.getElementText();
+                            snippet = this.readElementText();
+                        } else if (TAG_SNIPPET_BIG.equals(eName)) {
+                            snippet = this.readSnippet();
                         } else if (TAG_DESCRIPTION.equals(eName)) {
-                            description = reader.getElementText();
+                            description = this.readElementText();
                         } else if (TAG_STYLE_URL.equals(eName)) {
                             styleUrl = reader.getElementText();
                         } else if (isAbstractView(eName)) {

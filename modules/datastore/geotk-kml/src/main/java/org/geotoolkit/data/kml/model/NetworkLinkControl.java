@@ -67,7 +67,7 @@ public interface NetworkLinkControl {
      *
      * @return
      */
-    public String getLinkDescription();
+    public Object getLinkDescription();
 
     /**
      *
@@ -127,7 +127,7 @@ public interface NetworkLinkControl {
      *
      * @param linkDescription
      */
-    public void setLinkDescription(String linkDescription);
+    public void setLinkDescription(Object linkDescription);
 
     /**
      *

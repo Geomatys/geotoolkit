@@ -20,6 +20,8 @@ import org.geotoolkit.data.kml.model.Point;
 import org.geotoolkit.data.kml.model.Style;
 import org.geotoolkit.data.kml.xml.KmlReader;
 import org.geotoolkit.data.kml.xml.KmlWriter;
+import org.geotoolkit.data.utilities.Cdata;
+import org.geotoolkit.data.utilities.DefaultCdata;
 import org.geotoolkit.xml.DomCompare;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -72,19 +74,18 @@ public class BalloonStyleTest {
         assertTrue(document.getOpen());
         assertEquals(1, document.getStyleSelectors().size());
         assertTrue(document.getStyleSelectors().get(0) instanceof Style);
-        Style style = (Style) document.getStyleSelectors().get(0);
+        final Style style = (Style) document.getStyleSelectors().get(0);
         assertEquals("exampleBalloonStyle", style.getIdAttributes().getId());
-        BalloonStyle balloonStyle = style.getBalloonStyle();
+        final BalloonStyle balloonStyle = style.getBalloonStyle();
         assertEquals(new Color(187, 255, 255, 255), balloonStyle.getBgColor());
-        String text = //"<![CDATA["+
-"\n      <b><font color=\"#CC0000\" size=\"+3\">$[name]</font></b>\n"+
+        final Cdata text = new DefaultCdata("\n      <b><font color=\"#CC0000\" size=\"+3\">$[name]</font></b>\n"+
 "      <br/><br/>\n"+
 "      <font face=\"Courier\">$[description]</font>\n"+
 "      <br/><br/>\n"+
 "      Extra text that will appear in the description balloon\n"+
 "      <br/><br/>\n"+
 "      $[geDirections]\n"+
-"      ";//]]>";
+"      ");
 
         //text= "salut";
 
@@ -92,16 +93,16 @@ public class BalloonStyleTest {
 
         assertEquals(1, document.getAbstractFeatures().size());
         assertTrue(document.getAbstractFeatures().get(0) instanceof Placemark);
-        Placemark placemark = (Placemark) document.getAbstractFeatures().get(0);
+        final Placemark placemark = (Placemark) document.getAbstractFeatures().get(0);
         assertEquals("BalloonStyle", placemark.getName());
         assertEquals("An example of BalloonStyle", placemark.getDescription());
         assertEquals("#exampleBalloonStyle",placemark.getStyleUrl());
 
         assertTrue(placemark.getAbstractGeometry() instanceof Point);
         final Point point = (Point) placemark.getAbstractGeometry();
-        Coordinates coordinates = point.getCoordinateSequence();
+        final Coordinates coordinates = point.getCoordinateSequence();
         assertEquals(1, coordinates.size());
-        Coordinate coordinate = coordinates.getCoordinate(0);
+        final Coordinate coordinate = coordinates.getCoordinate(0);
         assertEquals(-122.370533, coordinate.x, DELTA);
         assertEquals(37.823842, coordinate.y, DELTA);
         assertEquals(0, coordinate.z, DELTA);
@@ -112,36 +113,35 @@ public class BalloonStyleTest {
     public void balloonStyleWriteTest() throws KmlException, IOException, XMLStreamException, ParserConfigurationException, SAXException {
         final KmlFactory kmlFactory = new DefaultKmlFactory();
 
-        Coordinate coordinate = kmlFactory.createCoordinate(-122.370533,37.823842,0.0);
-        Coordinates coordinates = kmlFactory.createCoordinates(Arrays.asList(coordinate));
-        Point point = kmlFactory.createPoint(coordinates);
+        final Coordinate coordinate = kmlFactory.createCoordinate(-122.370533,37.823842,0.0);
+        final Coordinates coordinates = kmlFactory.createCoordinates(Arrays.asList(coordinate));
+        final Point point = kmlFactory.createPoint(coordinates);
 
-        Placemark placemark = kmlFactory.createPlacemark();
+        final Placemark placemark = kmlFactory.createPlacemark();
         placemark.setName("BalloonStyle");
         placemark.setDescription("An example of BalloonStyle");
         placemark.setStyleUrl("#exampleBalloonStyle");
         placemark.setAbstractGeometry(point);
 
-        BalloonStyle balloonStyle = kmlFactory.createBalloonStyle();
-        String text = //"<![CDATA["+
-"\n      <b><font color=\"#CC0000\" size=\"+3\">$[name]</font></b>\n"+
+        final BalloonStyle balloonStyle = kmlFactory.createBalloonStyle();
+        final Cdata text = new DefaultCdata("\n      <b><font color=\"#CC0000\" size=\"+3\">$[name]</font></b>\n"+
 "      <br/><br/>\n"+
 "      <font face=\"Courier\">$[description]</font>\n"+
 "      <br/><br/>\n"+
 "      Extra text that will appear in the description balloon\n"+
 "      <br/><br/>\n"+
 "      $[geDirections]\n"+
-"      ";//]]>";
+"      ");
         balloonStyle.setText(text);
         balloonStyle.setBgColor(new Color(187, 255, 255, 255));
 
-        IdAttributes idAttributes = kmlFactory.createIdAttributes("exampleBalloonStyle", null);
+        final IdAttributes idAttributes = kmlFactory.createIdAttributes("exampleBalloonStyle", null);
 
-        Style style = kmlFactory.createStyle();
+        final Style style = kmlFactory.createStyle();
         style.setIdAttributes(idAttributes);
         style.setBalloonStyle(balloonStyle);
 
-        Document document = kmlFactory.createDocument();
+        final Document document = kmlFactory.createDocument();
         document.setName("BalloonStyle.kml");
         document.setOpen(true);
         document.setStyleSelectors(Arrays.asList((AbstractStyleSelector) style));
@@ -149,10 +149,10 @@ public class BalloonStyleTest {
 
         final Kml kml = kmlFactory.createKml(null, document, null, null);
 
-        File temp = File.createTempFile("testBalloonStyle", ".kml");
+        final File temp = File.createTempFile("testBalloonStyle", ".kml");
         temp.deleteOnExit();
 
-        KmlWriter writer = new KmlWriter();
+        final KmlWriter writer = new KmlWriter();
         writer.setOutput(temp);
         writer.write(kml);
         writer.dispose();

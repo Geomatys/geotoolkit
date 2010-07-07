@@ -1,0 +1,130 @@
+package org.geotoolkit.data.kml;
+
+import java.net.URISyntaxException;
+import org.geotoolkit.data.kml.xml.KmlReader;
+import java.io.File;
+import java.io.IOException;
+import java.util.Arrays;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.stream.XMLStreamException;
+import org.geotoolkit.data.kml.model.AbstractFeature;
+import org.geotoolkit.data.kml.model.Document;
+import org.geotoolkit.data.kml.model.Kml;
+import org.geotoolkit.data.kml.model.KmlException;
+import org.geotoolkit.data.kml.model.Schema;
+import org.geotoolkit.data.kml.model.SimpleField;
+import org.geotoolkit.data.kml.xml.KmlWriter;
+import org.geotoolkit.data.utilities.DefaultCdata;
+import org.geotoolkit.xml.DomCompare;
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import static org.junit.Assert.*;
+import org.xml.sax.SAXException;
+
+/**
+ *
+ * @author Samuel Andrés
+ */
+public class SchemaTest {
+
+    private static final double DELTA = 0.000000000001;
+    private static final String pathToTestFile = "src/test/resources/org/geotoolkit/data/kml/schema.kml";
+
+    public SchemaTest() {
+    }
+
+    @BeforeClass
+    public static void setUpClass() throws Exception {
+    }
+
+    @AfterClass
+    public static void tearDownClass() throws Exception {
+    }
+
+    @Before
+    public void setUp() {
+    }
+
+    @After
+    public void tearDown() {
+    }
+
+    @Test
+    public void schemaReadTest() throws IOException, XMLStreamException {
+
+        final KmlReader reader = new KmlReader();
+        reader.setInput(new File(pathToTestFile));
+        final Kml kmlObjects = reader.read();
+        reader.dispose();
+
+        final AbstractFeature feature = kmlObjects.getAbstractFeature();
+        assertTrue(feature instanceof Document);
+
+        final Document document = (Document) feature;
+        assertEquals(1,document.getSchemas().size());
+
+        final Schema schema = document.getSchemas().get(0);
+        assertEquals("TrailHeadType", schema.getName());
+        assertEquals("TrailHeadTypeId", schema.getId());
+
+        assertEquals(3, schema.getSimpleFields().size());
+
+        SimpleField simpleField0 = schema.getSimpleFields().get(0);
+        assertEquals("string", simpleField0.getType());
+        assertEquals("TrailHeadName", simpleField0.getName());
+        assertEquals(new DefaultCdata("<b>Trail Head Name</b>"), simpleField0.getDisplayName());
+        SimpleField simpleField1 = schema.getSimpleFields().get(1);
+        assertEquals("double", simpleField1.getType());
+        assertEquals("TrailLength", simpleField1.getName());
+        assertEquals(new DefaultCdata("<i>The length in miles</i>"), simpleField1.getDisplayName());
+        SimpleField simpleField2 = schema.getSimpleFields().get(2);
+        assertEquals("int", simpleField2.getType());
+        assertEquals("ElevationGain", simpleField2.getName());
+        assertEquals(new DefaultCdata("<i>change in altitude</i>"), simpleField2.getDisplayName());
+
+    }
+
+    @Test
+    public void schemaWriteTest() throws KmlException, IOException, XMLStreamException, ParserConfigurationException, SAXException, URISyntaxException {
+        final KmlFactory kmlFactory = new DefaultKmlFactory();
+
+        SimpleField simpleField0 = kmlFactory.createSimpleField();
+        simpleField0.setDisplayName(new DefaultCdata("<b>Trail Head Name</b>"));
+        simpleField0.setType("string");
+        simpleField0.setName("TrailHeadName");
+
+        SimpleField simpleField1 = kmlFactory.createSimpleField();
+        simpleField1.setDisplayName(new DefaultCdata("<i>The length in miles</i>"));
+        simpleField1.setType("double");
+        simpleField1.setName("TrailLength");
+
+        SimpleField simpleField2 = kmlFactory.createSimpleField();
+        simpleField2.setDisplayName(new DefaultCdata("<i>change in altitude</i>"));
+        simpleField2.setType("int");
+        simpleField2.setName("ElevationGain");
+
+        Schema schema = kmlFactory.createSchema(
+                Arrays.asList(simpleField0, simpleField1, simpleField2),
+                "TrailHeadType", "TrailHeadTypeId", null);
+
+        Document document = kmlFactory.createDocument();
+        document.setSchemas(Arrays.asList(schema));
+
+        final Kml kml = kmlFactory.createKml(null, document, null, null);
+
+        File temp = File.createTempFile("testSchema", ".kml");
+        temp.deleteOnExit();
+
+        KmlWriter writer = new KmlWriter();
+        writer.setOutput(temp);
+        writer.write(kml);
+        writer.dispose();
+
+        DomCompare.compare(
+                new File(pathToTestFile), temp);
+
+    }
+}

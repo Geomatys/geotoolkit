@@ -54,7 +54,7 @@ public interface BalloonStyle extends AbstractSubStyle {
      *
      * @return the text content.
      */
-    public String getText();
+    public Object getText();
 
     /**
      *
@@ -78,7 +78,7 @@ public interface BalloonStyle extends AbstractSubStyle {
      *
      * @param text
      */
-    public void setText(String text);
+    public void setText(Object text);
 
     /**
      *

@@ -10,7 +10,8 @@ import static java.util.Collections.*;
  */
 public class DefaultData extends DefaultAbstractObject implements Data {
 
-    private String displayName;
+    private String name;
+    private Object displayName;
     private String value;
     private List<Object> dataExtensions;
 
@@ -22,16 +23,18 @@ public class DefaultData extends DefaultAbstractObject implements Data {
     }
 
     /**
-     *
+     * 
      * @param objectSimpleExtensions
      * @param idAttributes
+     * @param name
      * @param displayName
      * @param value
      * @param dataExtensions
      */
     public DefaultData(List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
-            String displayName, String value, List<Object> dataExtensions) {
+            String name, Object displayName, String value, List<Object> dataExtensions) {
         super(objectSimpleExtensions, idAttributes);
+        this.name = name;
         this.displayName = displayName;
         this.value = value;
         this.dataExtensions = (dataExtensions == null) ? EMPTY_LIST : dataExtensions;
@@ -42,7 +45,7 @@ public class DefaultData extends DefaultAbstractObject implements Data {
      * @{@inheritDoc }
      */
     @Override
-    public String getDisplayName() {
+    public Object getDisplayName() {
         return this.displayName;
     }
 
@@ -91,8 +94,21 @@ public class DefaultData extends DefaultAbstractObject implements Data {
         this.dataExtensions = dataExtensions;
     }
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
-    public Extensions extensions() {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public String getName() {
+        return this.name;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setName(String name) {
+        this.name = name;
     }
 }

@@ -167,6 +167,7 @@ public final class KmlModelConstants {
     public static final String TAG_SCHEMA_DATA = "SchemaData";
     public static final String TAG_SIMPLE_DATA = "SimpleData";
     public static final String TAG_SNIPPET = "snippet";
+    public static final String TAG_SNIPPET_BIG = "Snippet";
     public static final String TAG_SOURCE_HREF = "sourceHref";
     public static final String TAG_SOUTH = "south";
     public static final String TAG_STATE = "state";
@@ -196,9 +197,6 @@ public final class KmlModelConstants {
     // ELEMENTARY TAGS -- ATOM
     public static final String TAG_ATOM_LINK = AtomModelConstants.TAG_LINK;
     public static final String TAG_ATOM_AUTHOR = AtomModelConstants.TAG_AUTHOR;
-//    public static final String TAG_ATOM_NAME = "name";
-//    public static final String TAG_ATOM_URI = "uri";
-//    public static final String TAG_ATOM_EMAIL = "email";
 
     // ELEMENTARY TAGS -- XAL
     public static final String TAG_XAL_ADDRESS_DETAILS = XalModelConstants.TAG_ADDRESS_DETAILS;
@@ -206,6 +204,7 @@ public final class KmlModelConstants {
     // ATTRIBUTES
     public static final String ATT_ID = "id";
     public static final String ATT_NAME = "name";
+    public static final String ATT_SCHEMA_URL = "schemaUrl";
     public static final String ATT_TARGET_ID = "targetId";
     public static final String ATT_TYPE = "type";
     public static final String ATT_MAX_LINES = "maxLines";

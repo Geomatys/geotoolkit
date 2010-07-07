@@ -1,5 +1,6 @@
 package org.geotoolkit.data.kml.model;
 
+import java.net.URI;
 import java.util.List;
 
 /**
@@ -29,6 +30,12 @@ public interface SchemaData extends AbstractObject {
 
     /**
      *
+     * @return
+     */
+    public URI getSchemaURL();
+
+    /**
+     *
      * @return the list of SimpleData simple extensions.
      */
     public List<SimpleData> getSimpleDatas();
@@ -38,5 +45,23 @@ public interface SchemaData extends AbstractObject {
      * @return the list of SimpleData object extensions.
      */
     public List<Object> getSchemaDataExtensions();
+
+    /**
+     *
+     * @return
+     */
+    public void setSchemaURL(URI schemaURL);
+
+    /**
+     *
+     * @return the list of SimpleData simple extensions.
+     */
+    public void setSimpleDatas(List<SimpleData> simpleDatas);
+
+    /**
+     *
+     * @return the list of SimpleData object extensions.
+     */
+    public void setSchemaDataExtensions(List<Object> schemaDataExtensions);
 
 }

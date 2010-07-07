@@ -5,6 +5,7 @@ import org.geotoolkit.data.atom.model.AtomPersonConstruct;
 import org.geotoolkit.data.atom.model.AtomLink;
 import org.geotoolkit.data.xal.model.AddressDetails;
 import org.geotoolkit.data.kml.xsd.SimpleType;
+import org.geotoolkit.data.utilities.Cdata;
 import static org.geotoolkit.data.kml.xml.KmlModelConstants.*;
 import static java.util.Collections.*;
 
@@ -22,14 +23,14 @@ public abstract class DefaultAbstractFeature extends DefaultAbstractObject imple
     protected String address;
     protected AddressDetails addressDetails;
     protected String phoneNumber;
-    protected String snippet;
-    protected String description;
+    protected Object snippet;
+    protected Object description;
     protected AbstractView view;
     protected AbstractTimePrimitive timePrimitive;
     protected String styleUrl;
     protected List<AbstractStyleSelector> styleSelector;
     protected Region region;
-    protected ExtendedData extendedData;
+    protected Object extendedData;
 
     /**
      * 
@@ -69,11 +70,11 @@ public abstract class DefaultAbstractFeature extends DefaultAbstractObject imple
             String name, boolean visibility, boolean open,
             AtomPersonConstruct author, AtomLink atomLink,
             String address, AddressDetails addressDetails,
-            String phoneNumber, String snippet,
-            String description, AbstractView view,
+            String phoneNumber, Object snippet,
+            Object description, AbstractView view,
             AbstractTimePrimitive timePrimitive,
             String styleUrl, List<AbstractStyleSelector> styleSelector,
-            Region region, ExtendedData extendedData,
+            Region region, Object extendedData,
             List<SimpleType> abstractFeatureSimpleExtensions,
             List<AbstractObject> abstractFeatureObjectExtensions) {
 
@@ -86,14 +87,23 @@ public abstract class DefaultAbstractFeature extends DefaultAbstractObject imple
         this.address = address;
         this.addressDetails = addressDetails;
         this.phoneNumber = phoneNumber;
-        this.snippet = snippet;
+        if(snippet instanceof String 
+                || snippet instanceof Cdata
+                || snippet instanceof Snippet)
+            this.snippet = snippet;
+        else if (snippet != null)
+            throw new IllegalArgumentException("snippet muts be a String, Cdata or Snippet (deprecated) instance.");
         this.description = description;
         this.view = view;
         this.timePrimitive = timePrimitive;
         this.styleUrl = styleUrl;
         this.styleSelector = (styleSelector == null) ? EMPTY_LIST : styleSelector;
         this.region = region;
-        this.extendedData = extendedData;
+        if(extendedData instanceof ExtendedData
+                || extendedData instanceof MetaData)
+            this.extendedData = extendedData;
+        else if (extendedData != null)
+            throw new IllegalArgumentException("snippet muts be an ExtendedData or MetaData (deprecated) instance.");
         if (abstractFeatureSimpleExtensions != null) {
             this.extensions().simples(Extensions.Names.FEATURE).addAll(abstractFeatureSimpleExtensions);
         }
@@ -179,7 +189,7 @@ public abstract class DefaultAbstractFeature extends DefaultAbstractObject imple
      * @{@inheritDoc }
      */
     @Override
-    public String getSnippet() {
+    public Object getSnippet() {
         return this.snippet;
     }
 
@@ -188,7 +198,7 @@ public abstract class DefaultAbstractFeature extends DefaultAbstractObject imple
      * @{@inheritDoc }
      */
     @Override
-    public String getDescription() {
+    public Object getDescription() {
         return this.description;
     }
 
@@ -242,7 +252,7 @@ public abstract class DefaultAbstractFeature extends DefaultAbstractObject imple
      * @{@inheritDoc }
      */
     @Override
-    public ExtendedData getExtendedData() {
+    public Object getExtendedData() {
         return this.extendedData;
     }
 
@@ -324,7 +334,7 @@ public abstract class DefaultAbstractFeature extends DefaultAbstractObject imple
      */
     @Override
     public void setSnippet(String snippet) {
-        this.snippet = snippet;
+            this.snippet = snippet;
     }
 
     /**
@@ -332,7 +342,26 @@ public abstract class DefaultAbstractFeature extends DefaultAbstractObject imple
      * @{@inheritDoc }
      */
     @Override
-    public void setDescription(String description) {
+    public void setSnippet(Cdata snippet) {
+            this.snippet = snippet;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    @Deprecated
+    public void setSnippet(Snippet snippet) {
+            this.snippet = snippet;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setDescription(Object description) {
         this.description = description;
     }
 
@@ -388,6 +417,16 @@ public abstract class DefaultAbstractFeature extends DefaultAbstractObject imple
     @Override
     public void setExtendedData(ExtendedData extendedData) {
         this.extendedData = extendedData;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    @Deprecated
+    public void setExtendedData(MetaData metaData) {
+        this.extendedData = metaData;
     }
 
     @Override

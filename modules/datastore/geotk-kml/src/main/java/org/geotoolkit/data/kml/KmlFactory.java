@@ -150,7 +150,7 @@ public interface KmlFactory {
      */
     public BalloonStyle createBalloonStyle(List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
             List<SimpleType> subStyleSimpleExtensions, List<AbstractObject> subStyleObjectExtensions,
-            Color bgColor, Color textColor, String text, DisplayMode displayMode,
+            Color bgColor, Color textColor, Object text, DisplayMode displayMode,
             List<SimpleType> balloonStyleSimpleExtensions, List<AbstractObject> balloonStyleObjectExtensions);
 
     /**
@@ -280,16 +280,17 @@ public interface KmlFactory {
     public Create createCreate();
 
     /**
-     *
+     * 
      * @param objectSimpleExtensions
      * @param idAttributes
+     * @param name
      * @param displayName
      * @param value
      * @param dataExtensions
      * @return
      */
     public Data createData(List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
-            String displayName, String value, List<Object> dataExtensions);
+            String name, Object displayName, String value, List<Object> dataExtensions);
 
     /**
      * 
@@ -340,12 +341,15 @@ public interface KmlFactory {
      * @param documentObjectExtensions
      * @return
      */
-    public Document createDocument(List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
-            String name, boolean visibility, boolean open, AtomPersonConstruct author, AtomLink link,
-            String address, AddressDetails addressDetails, String phoneNumber, String snippet,
-            String description, AbstractView view, AbstractTimePrimitive timePrimitive,
+    public Document createDocument(List<SimpleType> objectSimpleExtensions,
+            IdAttributes idAttributes,
+            String name, boolean visibility, boolean open,
+            AtomPersonConstruct author, AtomLink link,
+            String address, AddressDetails addressDetails,
+            String phoneNumber, Object snippet,
+            Object description, AbstractView view, AbstractTimePrimitive timePrimitive,
             String styleUrl, List<AbstractStyleSelector> styleSelector,
-            Region region, ExtendedData extendedData,
+            Region region, Object extendedData,
             List<SimpleType> abstractFeatureSimpleExtensions,
             List<AbstractObject> abstractFeatureObjectExtensions,
             List<SimpleType> abstractContainerSimpleExtensions,
@@ -405,12 +409,15 @@ public interface KmlFactory {
      * @param folderObjectExtensions
      * @return
      */
-    public Folder createFolder(List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
-            String name, boolean visibility, boolean open, AtomPersonConstruct author, AtomLink link,
-            String address, AddressDetails addressDetails, String phoneNumber, String snippet,
-            String description, AbstractView view, AbstractTimePrimitive timePrimitive,
+    public Folder createFolder(List<SimpleType> objectSimpleExtensions,
+            IdAttributes idAttributes,
+            String name, boolean visibility, boolean open,
+            AtomPersonConstruct author, AtomLink link,
+            String address, AddressDetails addressDetails, 
+            String phoneNumber, Object snippet,
+            Object description, AbstractView view, AbstractTimePrimitive timePrimitive,
             String styleUrl, List<AbstractStyleSelector> styleSelector,
-            Region region, ExtendedData extendedData,
+            Region region, Object extendedData,
             List<SimpleType> abstractFeatureSimpleExtensions,
             List<AbstractObject> abstractFeatureObjectExtensions,
             List<SimpleType> abstractContainerSimpleExtensions,
@@ -459,12 +466,15 @@ public interface KmlFactory {
      * @param groundOverlayObjectExtensions
      * @return
      */
-    public GroundOverlay createGroundOverlay(List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
-            String name, boolean visibility, boolean open, AtomPersonConstruct author, AtomLink link,
-            String address, AddressDetails addressDetails, String phoneNumber, String snippet,
-            String description, AbstractView view, AbstractTimePrimitive timePrimitive,
+    public GroundOverlay createGroundOverlay(List<SimpleType> objectSimpleExtensions,
+            IdAttributes idAttributes,
+            String name, boolean visibility, boolean open,
+            AtomPersonConstruct author, AtomLink link,
+            String address, AddressDetails addressDetails, 
+            String phoneNumber, Object snippet,
+            Object description, AbstractView view, AbstractTimePrimitive timePrimitive,
             String styleUrl, List<AbstractStyleSelector> styleSelector,
-            Region region, ExtendedData extendedData,
+            Region region, Object extendedData,
             List<SimpleType> abstractFeatureSimpleExtensions,
             List<AbstractObject> abstractFeatureObjectExtensions,
             Color color, int drawOrder, Icon icon,
@@ -969,12 +979,16 @@ public interface KmlFactory {
      * @param networkLinkObjectExtensions
      * @return
      */
-     public NetworkLink createNetworkLink(List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
-            String name, boolean visibility, boolean open, AtomPersonConstruct author, AtomLink atomLink,
-            String address, AddressDetails addressDetails, String phoneNumber, String snippet,
-            String description, AbstractView view, AbstractTimePrimitive timePrimitive,
+     public NetworkLink createNetworkLink(List<SimpleType> objectSimpleExtensions,
+             IdAttributes idAttributes,
+            String name, boolean visibility, boolean open,
+            AtomPersonConstruct author, AtomLink atomLink,
+            String address, AddressDetails addressDetails, 
+            String phoneNumber, Object snippet,
+            Object description, AbstractView view,
+            AbstractTimePrimitive timePrimitive,
             String styleUrl, List<AbstractStyleSelector> styleSelector,
-            Region region, ExtendedData extendedData,
+            Region region, Object extendedData,
             List<SimpleType> abstractFeatureSimpleExtensions,
             List<AbstractObject> abstractFeatureObjectExtensions,
             boolean refreshVisibility, boolean flyToView, Link link,
@@ -1003,9 +1017,11 @@ public interface KmlFactory {
      * @return
      */
     public NetworkLinkControl createNetworkLinkControl(double minRefreshPeriod,
-            double maxSessionLength, String cookie, String message, String linkName, String linkDescription,
-            Snippet linkSnippet, Calendar expire, Update update, AbstractView view,
-            List<SimpleType> networkLinkControlSimpleExtensions, List<AbstractObject> networkLinkControlObjectExtensions);
+            double maxSessionLength, String cookie, String message, String linkName,
+            Object linkDescription,  Snippet linkSnippet, Calendar expire,
+            Update update, AbstractView view,
+            List<SimpleType> networkLinkControlSimpleExtensions,
+            List<AbstractObject> networkLinkControlObjectExtensions);
 
     /**
      * 
@@ -1100,10 +1116,10 @@ public interface KmlFactory {
             String name, boolean visibility, boolean open,
             AtomPersonConstruct author, AtomLink link,
             String address, AddressDetails addressDetails, String phoneNumber, 
-            String snippet, String description, AbstractView view,
+            Object snippet, Object description, AbstractView view,
             AbstractTimePrimitive timePrimitive,
             String styleUrl, List<AbstractStyleSelector> styleSelector,
-            Region region, ExtendedData extendedData,
+            Region region, Object extendedData,
             List<SimpleType> abstractFeatureSimpleExtensions,
             List<AbstractObject> abstractFeatureObjectExtensions,
             Color color, int drawOrder, Icon icon,
@@ -1156,11 +1172,11 @@ public interface KmlFactory {
             AtomLink link,
             String address,
             AddressDetails addressDetails,
-            String phoneNumber, String snippet,
-            String description, AbstractView view,
+            String phoneNumber, Object snippet,
+            Object description, AbstractView view,
             AbstractTimePrimitive timePrimitive,
             String styleUrl, List<AbstractStyleSelector> styleSelector,
-            Region region, ExtendedData extendedData,
+            Region region, Object extendedData,
             List<SimpleType> abstractFeatureSimpleExtensions,
             List<AbstractObject> abstractFeatureObjectExtensions,
             AbstractGeometry abstractGeometry,
@@ -1351,12 +1367,19 @@ public interface KmlFactory {
      *
      * @param objectSimpleExtensions
      * @param idAttributes
+     * @param schemaURL
      * @param simpleDatas
      * @param schemaDataExtensions
      * @return
      */
     public SchemaData createSchemaData(List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
-            List<SimpleData> simpleDatas, List<Object> schemaDataExtensions);
+            URI schemaURL, List<SimpleData> simpleDatas, List<Object> schemaDataExtensions);
+
+    /**
+     * 
+     * @return
+     */
+    public SchemaData createSchemaData();
 
     /**
      *
@@ -1394,12 +1417,15 @@ public interface KmlFactory {
      * @param screenOverlayObjectExtensions
      * @return
      */
-    public ScreenOverlay createScreenOverlay(List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
-            String name, boolean visibility, boolean open, AtomPersonConstruct author, AtomLink link,
-            String address, AddressDetails addressDetails, String phoneNumber, String snippet,
-            String description, AbstractView view, AbstractTimePrimitive timePrimitive,
+    public ScreenOverlay createScreenOverlay(List<SimpleType> objectSimpleExtensions,
+            IdAttributes idAttributes,
+            String name, boolean visibility, boolean open,
+            AtomPersonConstruct author, AtomLink link,
+            String address, AddressDetails addressDetails, 
+            String phoneNumber, Object snippet,
+            Object description, AbstractView view, AbstractTimePrimitive timePrimitive,
             String styleUrl, List<AbstractStyleSelector> styleSelector,
-            Region region, ExtendedData extendedData,
+            Region region, Object extendedData,
             List<SimpleType> abstractFeatureSimpleExtensions,
             List<AbstractObject> abstractFeatureObjectExtensions,
             Color color, int drawOrder, Icon icon,
@@ -1428,7 +1454,7 @@ public interface KmlFactory {
      * @param simpleFieldExtensions
      * @return
      */
-    public SimpleField createSimpleField(String displayName, String type, 
+    public SimpleField createSimpleField(Object displayName, String type,
             String name, List<Object> simpleFieldExtensions);
 
     /**
@@ -1443,7 +1469,7 @@ public interface KmlFactory {
      * @param content
      * @return
      */
-    public Snippet createSnippet(int maxLines, String content);
+    public Snippet createSnippet(int maxLines, Object content);
 
     /**
      *

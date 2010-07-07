@@ -200,7 +200,7 @@ public class DefaultKmlFactory implements KmlFactory{
     public BalloonStyle createBalloonStyle(
             List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
             List<SimpleType> subStyleSimpleExtensions, List<AbstractObject> subStyleObjectExtensions,
-            Color bgColor, Color textColor, String text, DisplayMode displayMode,
+            Color bgColor, Color textColor, Object text, DisplayMode displayMode,
             List<SimpleType> balloonStyleSimpleExtensions, List<AbstractObject> balloonStyleObjectExtensions) {
         return new DefaultBalloonStyle(objectSimpleExtensions, idAttributes,
                 subStyleSimpleExtensions, subStyleObjectExtensions,
@@ -353,9 +353,9 @@ public class DefaultKmlFactory implements KmlFactory{
     @Override
     public Data createData(
             List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
-            String displayName, String value, List<Object> dataExtensions) {
+            String name, Object displayName, String value, List<Object> dataExtensions) {
         return new DefaultData(objectSimpleExtensions, idAttributes,
-                displayName, value, dataExtensions);
+                name, displayName, value, dataExtensions);
     }
 
     /**
@@ -390,10 +390,11 @@ public class DefaultKmlFactory implements KmlFactory{
             List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
             String name, boolean visibility, boolean open,
             AtomPersonConstruct author, AtomLink link,
-            String address, AddressDetails addressDetails, String phoneNumber, String snippet,
-            String description, AbstractView view, AbstractTimePrimitive timePrimitive,
+            String address, AddressDetails addressDetails, 
+            String phoneNumber, Object snippet,
+            Object description, AbstractView view, AbstractTimePrimitive timePrimitive,
             String styleUrl, List<AbstractStyleSelector> styleSelector,
-            Region region, ExtendedData extendedData,
+            Region region, Object extendedData,
             List<SimpleType> abstractFeatureSimpleExtensions,
             List<AbstractObject> abstractFeatureObjectExtensions,
             List<SimpleType> abstractContainerSimpleExtensions,
@@ -444,10 +445,11 @@ public class DefaultKmlFactory implements KmlFactory{
             List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
             String name, boolean visibility, boolean open,
             AtomPersonConstruct author, AtomLink link,
-            String address, AddressDetails addressDetails, String phoneNumber, String snippet,
-            String description, AbstractView view, AbstractTimePrimitive timePrimitive,
+            String address, AddressDetails addressDetails, 
+            String phoneNumber, Object snippet,
+            Object description, AbstractView view, AbstractTimePrimitive timePrimitive,
             String styleUrl, List<AbstractStyleSelector> styleSelector,
-            Region region, ExtendedData extendedData,
+            Region region, Object extendedData,
             List<SimpleType> abstractFeatureSimpleExtensions,
             List<AbstractObject> abstractFeatureObjectExtensions,
             List<SimpleType> abstractContainerSimpleExtensions,
@@ -480,10 +482,11 @@ public class DefaultKmlFactory implements KmlFactory{
             List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
             String name, boolean visibility, boolean open,
             AtomPersonConstruct author, AtomLink link,
-            String address, AddressDetails addressDetails, String phoneNumber, String snippet,
-            String description, AbstractView view, AbstractTimePrimitive timePrimitive,
+            String address, AddressDetails addressDetails, 
+            String phoneNumber, Object snippet,
+            Object description, AbstractView view, AbstractTimePrimitive timePrimitive,
             String styleUrl, List<AbstractStyleSelector> styleSelector,
-            Region region, ExtendedData extendedData,
+            Region region, Object extendedData,
             List<SimpleType> abstractFeatureSimpleExtensions,
             List<AbstractObject> abstractFeatureObjectExtensions,
             Color color, int drawOrder, Icon icon,
@@ -957,10 +960,10 @@ public class DefaultKmlFactory implements KmlFactory{
             String name, boolean visibility, boolean open,
             AtomPersonConstruct author, AtomLink atomLink,
             String address, AddressDetails addressDetails, String phoneNumber, 
-            String snippet, String description,
+            Object snippet, Object description,
             AbstractView view, AbstractTimePrimitive timePrimitive,
             String styleUrl, List<AbstractStyleSelector> styleSelector,
-            Region region, ExtendedData extendedData,
+            Region region, Object extendedData,
             List<SimpleType> abstractFeatureSimpleExtensions,
             List<AbstractObject> abstractFeatureObjectExtensions,
             boolean refreshVisibility, boolean flyToView, Link link,
@@ -989,9 +992,11 @@ public class DefaultKmlFactory implements KmlFactory{
      */
     @Override
     public NetworkLinkControl createNetworkLinkControl(double minRefreshPeriod,
-            double maxSessionLength, String cookie, String message, String linkName, String linkDescription,
-            Snippet linkSnippet, Calendar expires, Update update, AbstractView view,
-            List<SimpleType> networkLinkControlSimpleExtensions, List<AbstractObject> networkLinkControlObjectExtensions) {
+            double maxSessionLength, String cookie, String message, String linkName, 
+            Object linkDescription, Snippet linkSnippet, Calendar expires,
+            Update update, AbstractView view,
+            List<SimpleType> networkLinkControlSimpleExtensions,
+            List<AbstractObject> networkLinkControlObjectExtensions) {
         return new DefaultNetworkLinkControl(minRefreshPeriod, maxSessionLength,
                 cookie, message, linkName, linkDescription, linkSnippet,
                 expires, update, view,
@@ -1059,11 +1064,11 @@ public class DefaultKmlFactory implements KmlFactory{
             String name, boolean visibility, boolean open,
             AtomPersonConstruct author, AtomLink link,
             String address, AddressDetails addressDetails,
-            String phoneNumber, String snippet,
-            String description, AbstractView view,
+            String phoneNumber, Object snippet,
+            Object description, AbstractView view,
             AbstractTimePrimitive timePrimitive,
             String styleUrl, List<AbstractStyleSelector> styleSelector,
-            Region region, ExtendedData extendedData,
+            Region region, Object extendedData,
             List<SimpleType> abstractFeatureSimpleExtensions,
             List<AbstractObject> abstractFeatureObjectExtensions,
             Color color, int drawOrder, Icon icon,
@@ -1105,11 +1110,11 @@ public class DefaultKmlFactory implements KmlFactory{
             AtomLink link,
             String address,
             AddressDetails addressDetails,
-            String phoneNumber, String snippet,
-            String description, AbstractView view,
+            String phoneNumber, Object snippet,
+            Object description, AbstractView view,
             AbstractTimePrimitive timePrimitive,
             String styleUrl, List<AbstractStyleSelector> styleSelector,
-            Region region, ExtendedData extendedData,
+            Region region, Object extendedData,
             List<SimpleType> abstractFeatureSimpleExtensions,
             List<AbstractObject> abstractFeatureObjectExtensions,
             AbstractGeometry abstractGeometry,
@@ -1303,9 +1308,17 @@ public class DefaultKmlFactory implements KmlFactory{
     @Override
     public SchemaData createSchemaData(
             List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
-            List<SimpleData> simpleDatas, List<Object> schemaDataExtensions) {
+            URI schemaURL, List<SimpleData> simpleDatas, List<Object> schemaDataExtensions) {
         return new DefaultSchemaData(objectSimpleExtensions, idAttributes,
-                simpleDatas, schemaDataExtensions);
+                schemaURL, simpleDatas, schemaDataExtensions);
+    }
+
+    /**
+     * @{@inheritDoc }
+     */
+    @Override
+    public SchemaData createSchemaData(){
+        return new DefaultSchemaData();
     }
 
     /**
@@ -1317,10 +1330,10 @@ public class DefaultKmlFactory implements KmlFactory{
             String name, boolean visibility, boolean open,
             AtomPersonConstruct author, AtomLink link,
             String address, AddressDetails addressDetails,
-            String phoneNumber, String snippet,
-            String description, AbstractView view, AbstractTimePrimitive timePrimitive,
+            String phoneNumber, Object snippet,
+            Object description, AbstractView view, AbstractTimePrimitive timePrimitive,
             String styleUrl, List<AbstractStyleSelector> styleSelector,
-            Region region, ExtendedData extendedData,
+            Region region, Object extendedData,
             List<SimpleType> abstractFeatureSimpleExtensions,
             List<AbstractObject> abstractFeatureObjectExtensions,
             Color color, int drawOrder, Icon icon,
@@ -1358,7 +1371,7 @@ public class DefaultKmlFactory implements KmlFactory{
      * @{@inheritDoc }
      */
     @Override
-    public SimpleField createSimpleField(String displayName, String type, 
+    public SimpleField createSimpleField(Object displayName, String type,
             String name, List<Object> simpleFieldExtensions) {
         return new DefaultSimpleField(displayName, type, name, simpleFieldExtensions);
     }
@@ -1375,7 +1388,7 @@ public class DefaultKmlFactory implements KmlFactory{
      * @{@inheritDoc }
      */
     @Override
-    public Snippet createSnippet(int maxLines, String content) {
+    public Snippet createSnippet(int maxLines, Object content) {
         return new DefaultSnippet(maxLines, content);
     }
 
