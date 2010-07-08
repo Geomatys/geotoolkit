@@ -136,7 +136,7 @@ public class ListingColorVisitor extends DefaultStyleVisitor{
             final Literal l = (Literal) exp;
             final Object value = l.getValue();
             try{
-                colors.add(Integer.decode(value.toString()));
+                colors.add(Integer.decode(value.toString()) | 0xFF000000);
             }catch(NumberFormatException ex){
                 //not a color ? this style is invalid
                 unpredictable = true;
