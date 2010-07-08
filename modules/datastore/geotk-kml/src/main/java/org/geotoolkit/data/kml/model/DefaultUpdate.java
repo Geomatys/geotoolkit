@@ -11,19 +11,12 @@ import static java.util.Collections.*;
 public class DefaultUpdate implements Update {
 
     private URI targetHref;
-    private List<Create> creates;
-    private List<Delete> deletes;
-    private List<Change> changes;
-    @Deprecated
-    private List<AbstractFeature> replaces;
+    private List<Object> updates;
     private List<Object> updateOpExtensions;
     private List<Object> updateExtensions;
 
     public DefaultUpdate(){
-        this.creates = EMPTY_LIST;
-        this.deletes = EMPTY_LIST;
-        this.changes = EMPTY_LIST;
-        this.replaces = EMPTY_LIST;
+        this.updates = EMPTY_LIST;
         this.updateOpExtensions = EMPTY_LIST;
         this.updateExtensions = EMPTY_LIST;
     }
@@ -31,22 +24,14 @@ public class DefaultUpdate implements Update {
     /**
      * 
      * @param targetHref
-     * @param creates
-     * @param deletes
-     * @param changes
-     * @param replaces
+     * @param updates
      * @param updateOpExtensions
      * @param updateExtensions
      */
-    public DefaultUpdate(URI targetHref, List<Create> creates,
-            List<Delete> deletes, List<Change> changes,
-            List<AbstractFeature> replaces,
+    public DefaultUpdate(URI targetHref, List<Object> updates,
             List<Object> updateOpExtensions, List<Object> updateExtensions) {
         this.targetHref = targetHref;
-        this.creates = (creates == null) ? EMPTY_LIST : creates;
-        this.deletes = (deletes == null) ? EMPTY_LIST : deletes;
-        this.changes = (changes == null) ? EMPTY_LIST : changes;
-        this.replaces = (replaces == null) ? EMPTY_LIST : replaces;
+        this.updates = (updates == null) ? EMPTY_LIST : updates;
         this.updateOpExtensions = (updateOpExtensions == null) ? EMPTY_LIST : updateOpExtensions;
         this.updateExtensions = (updateExtensions == null) ? EMPTY_LIST : updateExtensions;
     }
@@ -65,38 +50,9 @@ public class DefaultUpdate implements Update {
      * @{@inheritDoc }
      */
     @Override
-    public List<Create> getCreates() {
-        return this.creates;
+    public List<Object> getUpdates() {
+        return this.updates;
     }
-
-    /**
-     *
-     * @{@inheritDoc }
-     */
-    @Override
-    public List<Delete> getDeletes() {
-        return this.deletes;
-    }
-
-    /**
-     *
-     * @{@inheritDoc }
-     */
-    @Override
-    public List<Change> getChanges() {
-        return this.changes;
-    }
-
-    /**
-     *
-     * @{@inheritDoc }
-     */
-    @Override
-    @Deprecated
-    public List<AbstractFeature> getReplaces() {
-        return this.replaces;
-    }
-
 
     /**
      *
@@ -130,37 +86,10 @@ public class DefaultUpdate implements Update {
      * @{@inheritDoc }
      */
     @Override
-    public void setCreates(List<Create> creates) {
-        this.creates = creates;
+    public void setUpdates(List<Object> updates) {
+        this.updates = updates;
     }
 
-    /**
-     *
-     * @{@inheritDoc }
-     */
-    @Override
-    public void setDeletes(List<Delete> deletes) {
-        this.deletes = deletes;
-    }
-
-    /**
-     *
-     * @{@inheritDoc }
-     */
-    @Override
-    public void setChanges(List<Change> changes) {
-        this.changes = changes;
-    }
-    
-    /**
-     *
-     * @{@inheritDoc }
-     */
-    @Override
-    @Deprecated
-    public void setReplaces(List<AbstractFeature> replaces) {
-        this.replaces = replaces;
-    }
     /**
      *
      * @{@inheritDoc }

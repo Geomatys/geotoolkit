@@ -40,27 +40,7 @@ public interface Update {
      *
      * @return
      */
-    public List<Create> getCreates();
-
-    /**
-     *
-     * @return
-     */
-    public List<Delete> getDeletes();
-
-    /**
-     *
-     * @return
-     */
-    public List<Change> getChanges();
-
-    /**
-     * 
-     * @return
-     * @deprecated
-     */
-    @Deprecated
-    public List<AbstractFeature> getReplaces();
+    public List<Object> getUpdates();
 
     /**
      *
@@ -81,30 +61,10 @@ public interface Update {
     public void setTargetHref(URI targetHref);
 
     /**
-     *
-     * @param creates
-     */
-    public void setCreates(List<Create> creates);
-
-    /**
-     *
-     * @param deletes
-     */
-    public void setDeletes(List<Delete> deletes);
-
-    /**
-     *
-     * @param changes
-     */
-    public void setChanges(List<Change> changes);
-
-    /**
      * 
-     * @param replaces
-     * @deprecated
+     * @param updates
      */
-    @Deprecated
-    public void setReplaces(List<AbstractFeature> replaces);
+    public void setUpdates(List<Object> updates);
 
     /**
      *

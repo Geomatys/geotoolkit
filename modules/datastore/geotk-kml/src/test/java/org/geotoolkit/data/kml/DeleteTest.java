@@ -66,8 +66,9 @@ public class DeleteTest {
         final URI targetHref = update.getTargetHref();
         assertEquals("http://www.foo.com/Point.kml", targetHref.toString());
 
-        assertEquals(1, update.getDeletes().size());
-        Delete delete = update.getDeletes().get(0);
+        assertEquals(1, update.getUpdates().size());
+        assertTrue(update.getUpdates().get(0) instanceof Delete);
+        final Delete delete = (Delete) update.getUpdates().get(0);
 
         assertEquals(1, delete.getFeatures().size());
         assertTrue(delete.getFeatures().get(0) instanceof Placemark);
@@ -80,25 +81,25 @@ public class DeleteTest {
     public void deleteWriteTest() throws KmlException, IOException, XMLStreamException, ParserConfigurationException, SAXException, URISyntaxException {
         final KmlFactory kmlFactory = new DefaultKmlFactory();
 
-        Placemark placemark = kmlFactory.createPlacemark();
+        final Placemark placemark = kmlFactory.createPlacemark();
         placemark.setIdAttributes(kmlFactory.createIdAttributes(null, "pa3556"));
 
-        Delete delete = kmlFactory.createDelete();
+        final Delete delete = kmlFactory.createDelete();
         delete.setFeatures(Arrays.asList((AbstractFeature) placemark));
 
-        URI targetHref = new URI("http://www.foo.com/Point.kml");
+        final URI targetHref = new URI("http://www.foo.com/Point.kml");
 
-        Update update = kmlFactory.createUpdate();
-        update.setDeletes(Arrays.asList(delete));
+        final Update update = kmlFactory.createUpdate();
+        update.setUpdates(Arrays.asList((Object) delete));
         update.setTargetHref(targetHref);
 
-        NetworkLinkControl networkLinkControl = kmlFactory.createNetworkLinkControl();
+        final NetworkLinkControl networkLinkControl = kmlFactory.createNetworkLinkControl();
         networkLinkControl.setUpdate(update);
 
 
         final Kml kml = kmlFactory.createKml(networkLinkControl, null, null, null);
 
-        File temp = File.createTempFile("testDelete", ".kml");
+        final File temp = File.createTempFile("testDelete", ".kml");
         temp.deleteOnExit();
 
         KmlWriter writer = new KmlWriter();

@@ -265,18 +265,19 @@ public class KmlWriter extends StaxStreamWriter {
         if(update.getTargetHref() != null){
             this.writeTargetHref(update.getTargetHref());
         }
-        for (Create create : update.getCreates()){
-            this.writeCreate(create);
-        }
-        for (Delete delete : update.getDeletes()){
-            this.writeDelete(delete);
-        }
-        for (Change change : update.getChanges()){
-            this.writeChange(change);
-        }
-        for (AbstractFeature feature : update.getReplaces()){
-            checkVersion(URI_KML_2_1);
-            this.writeReplace(feature);
+        for (Object object : update.getUpdates()){
+            if(object instanceof Create)
+                this.writeCreate((Create) object);
+            else if (object instanceof Delete)
+                this.writeDelete((Delete) object);
+            else if (object instanceof Change)
+                this.writeChange((Change) object);
+            else if (object instanceof AbstractFeature){
+                checkVersion(URI_KML_2_1);
+                this.writeReplace((AbstractFeature) object);
+            } else {
+                throw new KmlException(object.getClass().getCanonicalName()+ " instance is not allowed here");
+            }
         }
         writer.writeEndElement();
     }

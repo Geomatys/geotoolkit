@@ -71,8 +71,9 @@ public class CreateTest {
         final URI targetHref = update.getTargetHref();
         assertEquals("http://myserver.com/Point.kml", targetHref.toString());
 
-        assertEquals(1, update.getCreates().size());
-        Create create = update.getCreates().get(0);
+        assertEquals(1, update.getUpdates().size());
+        assertTrue(update.getUpdates().get(0) instanceof Create);
+        Create create = (Create) update.getUpdates().get(0);
 
         assertEquals(1, create.getContainers().size());
         assertTrue(create.getContainers().get(0) instanceof Document);
@@ -119,7 +120,7 @@ public class CreateTest {
         URI targetHref = new URI("http://myserver.com/Point.kml");
 
         Update update = kmlFactory.createUpdate();
-        update.setCreates(Arrays.asList(create));
+        update.setUpdates(Arrays.asList((Object) create));
         update.setTargetHref(targetHref);
 
         NetworkLinkControl networkLinkControl = kmlFactory.createNetworkLinkControl();

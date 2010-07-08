@@ -68,8 +68,9 @@ public class ChangeTest {
         final URI targetHref = update.getTargetHref();
         assertEquals("http://www/~sam/January14Data/Point.kml", targetHref.toString());
 
-        assertEquals(1, update.getChanges().size());
-        Change change = update.getChanges().get(0);
+        assertEquals(1, update.getUpdates().size());
+        assertTrue(update.getUpdates().get(0) instanceof Change);
+        Change change = (Change) update.getUpdates().get(0);
 
         assertEquals(1, change.getObjects().size());
         assertTrue(change.getObjects().get(0) instanceof Point);
@@ -100,7 +101,7 @@ public class ChangeTest {
         Change change = kmlFactory.createChange(Arrays.asList((AbstractObject) point));
 
         Update update = kmlFactory.createUpdate();
-        update.setChanges(Arrays.asList(change));
+        update.setUpdates(Arrays.asList((Object) change));
         update.setTargetHref(new URI("http://www/~sam/January14Data/Point.kml"));
 
         NetworkLinkControl networkLinkControl = kmlFactory.createNetworkLinkControl();

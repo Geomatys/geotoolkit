@@ -705,10 +705,7 @@ public class KmlReader extends StaxStreamReader {
      */
     private Update readUpdate() throws XMLStreamException, KmlException, URISyntaxException{
         URI targetHref = null;
-        List<Create> creates = new ArrayList<Create>();
-        List<Delete> deletes = new ArrayList<Delete>();
-        List<Change> changes = new ArrayList<Change>();
-        List<AbstractFeature> replaces = new ArrayList<AbstractFeature>();
+        List<Object> updates = new ArrayList<Object>();
         List<Object> updateOpExtensions = null;
         List<Object> updateExtensions = null;
         
@@ -725,17 +722,17 @@ public class KmlReader extends StaxStreamReader {
                             targetHref = new URI(reader.getElementText());
                         }
                         if (TAG_CREATE.equals(eName)) {
-                            creates.add(this.readCreate());
+                            updates.add(this.readCreate());
                         }
                         if (TAG_DELETE.equals(eName)) {
-                            deletes.add(this.readDelete());
+                            updates.add(this.readDelete());
                         }
                         if (TAG_CHANGE.equals(eName)){
-                            changes.add(this.readChange());
+                            updates.add(this.readChange());
                         }
                         if (TAG_REPLACE.equals(eName)){
                             this.checkVersion(URI_KML_2_1);
-                            replaces.add(this.readReplace());
+                            updates.add(this.readReplace());
                         }
                     }
                     break;
@@ -748,8 +745,8 @@ public class KmlReader extends StaxStreamReader {
             }
         }
 
-        return KmlReader.kmlFactory.createUpdate(targetHref, creates, deletes, 
-                changes, replaces, updateOpExtensions, updateExtensions);
+        return KmlReader.kmlFactory.createUpdate(targetHref, updates,
+                updateOpExtensions, updateExtensions);
     }
 
     /**

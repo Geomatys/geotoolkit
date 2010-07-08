@@ -8,8 +8,6 @@ import java.net.URI;
 import java.util.Arrays;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
-import org.geotoolkit.data.kml.model.AbstractFeature;
-import org.geotoolkit.data.kml.model.Delete;
 import org.geotoolkit.data.kml.model.GroundOverlay;
 import org.geotoolkit.data.kml.model.Kml;
 import org.geotoolkit.data.kml.model.KmlException;
@@ -68,13 +66,12 @@ public class ReplaceTest {
         final URI targetHref = update.getTargetHref();
         assertEquals("http://chezmoi.com/tests.kml", targetHref.toString());
 
-        assertEquals(2, update.getReplaces().size());
-        System.out.println(update.getReplaces());
-        assertTrue(update.getReplaces().get(0) instanceof Placemark);
-        assertEquals("Replace placemark",((Placemark)update.getReplaces().get(0)).getName());
+        assertEquals(2, update.getUpdates().size());
+        assertTrue(update.getUpdates().get(0) instanceof Placemark);
+        assertEquals("Replace placemark",((Placemark)update.getUpdates().get(0)).getName());
 
-        assertTrue(update.getReplaces().get(1) instanceof GroundOverlay);
-        assertEquals("Replace overlay",((GroundOverlay)update.getReplaces().get(1)).getName());
+        assertTrue(update.getUpdates().get(1) instanceof GroundOverlay);
+        assertEquals("Replace overlay",((GroundOverlay)update.getUpdates().get(1)).getName());
 
     }
 
@@ -96,7 +93,7 @@ public class ReplaceTest {
 
         Update update = kmlFactory.createUpdate();
         update.setTargetHref(targetHref);
-        update.setReplaces(Arrays.asList(placemark, groundOverlay));
+        update.setUpdates(Arrays.asList((Object) placemark, (Object) groundOverlay));
 
         NetworkLinkControl networkLinkControl = kmlFactory.createNetworkLinkControl();
         networkLinkControl.setUpdate(update);
