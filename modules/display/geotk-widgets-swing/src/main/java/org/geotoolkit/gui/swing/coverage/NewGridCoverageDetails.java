@@ -318,6 +318,7 @@ final class NewGridCoverageDetails extends WindowCreator implements CoverageData
         SwingUtilities.invokeAndWait(new Runnable() {
             @Override public void run() {
                 NewGridCoverageDetails.this.reference = reference; // Must be set first.
+                selectedFormat = null; // Must be before the change of format choices.
                 try {
                     format.setModel(new DefaultComboBoxModel(reference.getAlternativeFormats()));
                 } catch (CoverageStoreException e) {

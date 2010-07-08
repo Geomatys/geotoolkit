@@ -640,7 +640,10 @@ public class CategoryRecord implements Cloneable, Serializable {
      */
     public boolean setPaletteName(final String name) {
         final boolean changed = !Utilities.equals(name, paletteName);
-        paletteName = name;
+        if (changed) {
+            paletteName = name;
+            category = null;
+        }
         return changed;
     }
 

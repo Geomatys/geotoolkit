@@ -17,11 +17,16 @@
  */
 package org.geotoolkit.internal.image.io;
 
+import java.io.IOException;
+import javax.imageio.ImageReader;
 import javax.imageio.metadata.IIOMetadata;
+import javax.media.jai.iterator.RectIter;
+import javax.media.jai.iterator.RectIterFactory;
 
 import org.opengis.metadata.content.TransferFunctionType;
 
 import org.geotoolkit.util.NumberRange;
+import org.geotoolkit.internal.image.ImageUtilities;
 import org.geotoolkit.image.io.metadata.MetadataAccessor;
 
 import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.FORMAT_NAME;
@@ -39,7 +44,7 @@ import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.FORMAT_NAME
  * }
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.11
+ * @version 3.14
  *
  * @since 3.06
  * @module
@@ -180,5 +185,85 @@ public final class DimensionAccessor extends MetadataAccessor {
         setAttribute("scaleFactor", scale);
         setAttribute("offset", offset);
         setAttribute("transferFunctionType", type);
+    }
+
+    /**
+     * Sets the minimum and maximum values from the pixel values. This method is costly
+     * and should be invoked only for relatively small images, after we checked that the
+     * extremums are not already declared in the metadata.
+     *
+     * @param  reader The image reader to use for reading the pixel values.
+     * @param  imageIndex The index of the image to read (usually 0).
+     * @throws IOException If an error occured while reading the image.
+     *
+     * @since 3.14
+     */
+    public void scanValidSampleValue(final ImageReader reader, final int imageIndex) throws IOException {
+        int bandIndex = 0;
+        final RectIter iter = RectIterFactory.create(reader.readAsRenderedImage(imageIndex, null), null);
+        iter.startBands();
+        if (!iter.finishedBands()) do {
+            if (bandIndex >= childCount()) {
+                bandIndex = appendChild();
+            }
+            selectChild(bandIndex);
+            setAttribute("minValue", Double.NaN);
+            setAttribute("maxValue", Double.NaN);
+            final double[] padValues = getAttributeAsDoubles("fillSampleValues", true);
+            double min = Double.POSITIVE_INFINITY;
+            double max = Double.NEGATIVE_INFINITY;
+            iter.startLines();
+            if (!iter.finishedLines()) do {
+                iter.startPixels();
+                if (!iter.finishedPixels()) {
+nextPixel:          do {
+                        final double sample = iter.getSampleDouble();
+                        if (padValues != null) {
+                            for (final double v : padValues) {
+                                if (sample == v) {
+                                    continue nextPixel;
+                                }
+                            }
+                        }
+                        if (sample < min) min = sample;
+                        if (sample > max) max = sample;
+                    } while (!iter.nextPixelDone());
+                }
+            } while (!iter.nextLineDone());
+            if (min < max) {
+                setValidSampleValue(min, max);
+                // Do not invoke setValueRange(min, max) because the
+                // later is about geophysics values, not sample values.
+            }
+            bandIndex++;
+        } while (!iter.nextBandDone());
+    }
+
+    /**
+     * Returns {@code true} if a call to {@link #scanValidSampleValue(ImageReader, int)} is
+     * recommanded. This method uses heuristic rules that may be changed in any future version.
+     *
+     * @param  reader The image reader to use for reading information.
+     * @param  imageIndex The index of the image to query (usually 0).
+     * @return {@code true} if a call to {@code scanValidSampleValue} is recommanded.
+     * @throws IOException If an error occured while querying the image.
+     *
+     * @since 3.14
+     */
+    public boolean scanSuggested(final ImageReader reader, final int imageIndex) throws IOException {
+        final int numChilds = childCount();
+        for (int i=0; i<numChilds; i++) {
+            selectChild(i);
+            if ((getAttribute("minValue") == null) &&
+                (getAttribute("maxValue") == null) &&
+                (getAttribute("validSampleValues") == null))
+            {
+                // Stop the band scanning whatever happen: if a scan is recommanded for at least
+                // one band, do the scan. If we don't have float type, we don't need to continue
+                // since this method will never returns 'true' in such case.
+                return ImageUtilities.isFloatType(reader.getRawImageType(imageIndex).getSampleModel().getDataType());
+            }
+        }
+        return false;
     }
 }

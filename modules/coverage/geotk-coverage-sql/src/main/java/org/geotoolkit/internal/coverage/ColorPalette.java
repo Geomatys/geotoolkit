@@ -145,7 +145,8 @@ public final class ColorPalette implements Serializable {
      * @param  choices A list of palettes to use for inferring the palettes names,
      *         or {@code null} if none. This can be used for the common case where
      *         this list is already available from the {@link SampleDimensionPanel} GUI.
-     * @return The name of the color palette, or {@code null} if no match were found.
+     * @return The name of the color palette, or {@code null} if no match were found or
+     *         if the color is fully transparent.
      */
     public static String findName(final Color[] colors, ComboBoxModel choices, PaletteFactory factory) {
         /*
@@ -154,11 +155,10 @@ public final class ColorPalette implements Serializable {
          */
         if (colors.length == 1) {
             final Color singleton = colors[0];
-            if (singleton != null) {
+            if (singleton != null && singleton.getAlpha() != 0) {
                 return ColorUtilities.toString(singleton);
             }
-        }
-        if (colors.length != 0) {
+        } else if (colors.length != 0) {
             /*
              * More complex case. Compares the colors against every palettes
              * defined in the given list. We will create the list ourself if

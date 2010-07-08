@@ -51,6 +51,7 @@ import org.geotoolkit.image.io.metadata.MetadataHelper;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.image.io.metadata.SampleDimension;
 import org.geotoolkit.internal.io.IOUtilities;
+import org.geotoolkit.internal.image.io.DimensionAccessor;
 import org.geotoolkit.internal.sql.table.SpatialDatabase;
 import org.geotoolkit.internal.sql.table.NoSuchRecordException;
 import org.geotoolkit.metadata.iso.citation.Citations;
@@ -75,7 +76,7 @@ import org.geotoolkit.resources.Errors;
  * the insertion in the database occurs.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.13
+ * @version 3.14
  *
  * @see CoverageDatabaseListener
  *
@@ -384,15 +385,23 @@ public final class NewGridCoverageReference {
         }
         /*
          * Get the sample dimensions. This code extracts the SampleDimensions from the metadata,
-         * convert them to GridSampleDimensions, then check if the resulting sample dimensions
+         * converts them to GridSampleDimensions, then check if the resulting sample dimensions
          * are geophysics. If every sample dimensions are geophysics, then we will replace them
          * by new sample dimensions using the [1...255] range of packed values, and 0 for "no data".
          * We don't do that in the default MetadataHelper implementation because the choosen range
          * is arbitrary. In the particular case of NewGridCoverageReference, this is okay because
-         * the choosen range will be saved in the database.
+         * the choosen range (the arbitrary choice) will be saved in the database.
          */
-        final List<GridSampleDimension> sampleDimensions = (metadata == null) ? null :
-                helper.getGridSampleDimensions(metadata.getListForType(SampleDimension.class));
+        final List<GridSampleDimension> sampleDimensions;
+        if (metadata == null) {
+            sampleDimensions = null;
+        } else {
+            final DimensionAccessor dimHelper = new DimensionAccessor(metadata);
+            if (dimHelper.scanSuggested(reader, imageIndex)) {
+                dimHelper.scanValidSampleValue(reader, imageIndex);
+            }
+            sampleDimensions = helper.getGridSampleDimensions(metadata.getListForType(SampleDimension.class));
+        }
         GridSampleDimension[] bands = null;
         boolean isGeophysics = false;
         if (sampleDimensions != null) {

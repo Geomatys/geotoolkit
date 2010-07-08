@@ -32,6 +32,7 @@ import org.geotoolkit.image.io.TextImageReader;
 import org.geotoolkit.image.io.TextImageReaderTestBase;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
+import org.geotoolkit.internal.image.io.DimensionAccessor;
 
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -44,7 +45,7 @@ import static org.geotoolkit.test.Commons.*;
  * This class provides also a {@link #verify} static method for manual testings.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.07
+ * @version 3.14
  *
  * @since 3.07
  */
@@ -95,6 +96,35 @@ public class AsciiGridReaderTest extends TextImageReaderTestBase {
             "            ├───minValue=“-1.893”\n" +
             "            ├───maxValue=“31.14”\n" +
             "            └───fillSampleValues=“-9999.0”\n"), metadata.toString());
+        /*
+         * Forces a scan of pixel values and test again.
+         */
+        final DimensionAccessor helper = new DimensionAccessor(metadata);
+        assertFalse("Pixels scan should not be needed.", helper.scanSuggested(reader, 0));
+        // Scan anyway, even if the above returned 'false'.
+        helper.scanValidSampleValue(reader, 0);
+        assertFalse("Pixels scan should not be needed.", helper.scanSuggested(reader, 0));
+        assertMultilinesEquals(decodeQuotes(
+            SpatialMetadataFormat.FORMAT_NAME + '\n' +
+            "├───RectifiedGridDomain\n" +
+            "│   ├───origin=“-9500.0 20500.0”\n" +
+            "│   ├───OffsetVectors\n" +
+            "│   │   ├───OffsetVector\n" +
+            "│   │   │   └───values=“1000.0 0.0”\n" +
+            "│   │   └───OffsetVector\n" +
+            "│   │       └───values=“0.0 -1000.0”\n" +
+            "│   └───Limits\n" +
+            "│       ├───low=“0 0”\n" +
+            "│       └───high=“19 41”\n" +
+            "├───SpatialRepresentation\n" +
+            "│   ├───numberOfDimensions=“2”\n" +
+            "│   ├───centerPoint=“0.0 0.0”\n" +
+            "│   └───pointInPixel=“center”\n" +
+            "└───ImageDescription\n" +
+            "    └───Dimensions\n" +
+            "        └───Dimension\n" +
+            "            ├───fillSampleValues=“-9999.0”\n" +
+            "            └───validSampleValues=“[-1.893 … 31.139999]”\n"), metadata.toString());
         reader.dispose();
     }
 
