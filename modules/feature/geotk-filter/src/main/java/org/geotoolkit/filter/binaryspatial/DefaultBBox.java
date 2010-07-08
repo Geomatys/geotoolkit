@@ -35,9 +35,9 @@ import org.opengis.feature.Feature;
 import org.opengis.filter.FilterVisitor;
 import org.opengis.filter.expression.PropertyName;
 import org.opengis.filter.spatial.BBOX;
+import org.opengis.geometry.BoundingBox;
 import org.opengis.geometry.Envelope;
 import org.opengis.util.FactoryException;
-import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
@@ -48,7 +48,7 @@ import org.opengis.referencing.operation.TransformException;
  * @author Johann Sorel (Geomatys).
  * @module pending
  */
-public class DefaultBBox extends AbstractBinarySpatialOperator<PropertyName,DefaultLiteral<Envelope>> implements BBOX {
+public class DefaultBBox extends AbstractBinarySpatialOperator<PropertyName,DefaultLiteral<BoundingBox>> implements BBOX {
 
     private static final LinearRing[] EMPTY_RINGS = new LinearRing[0];
     private static final GeometryFactory GEOMETRY_FACTORY = new GeometryFactory();
@@ -60,7 +60,7 @@ public class DefaultBBox extends AbstractBinarySpatialOperator<PropertyName,Defa
     private final CoordinateReferenceSystem crs;
     private final int srid;
 
-    public DefaultBBox(PropertyName property, DefaultLiteral<Envelope> bbox) {
+    public DefaultBBox(PropertyName property, DefaultLiteral<BoundingBox> bbox) {
         super(nonNullPropertyName(property),bbox);
         boundingGeometry = toGeometry(bbox.getValue());
         boundingEnv = boundingGeometry.getGeometry().getEnvelopeInternal();
