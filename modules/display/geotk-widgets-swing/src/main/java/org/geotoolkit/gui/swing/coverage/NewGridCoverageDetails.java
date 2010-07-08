@@ -38,6 +38,7 @@ import javax.swing.JTextField;
 import javax.swing.JScrollPane;
 import javax.swing.DefaultComboBoxModel;
 
+import org.jdesktop.swingx.JXLabel;
 import org.jdesktop.swingx.JXTaskPane;
 import org.jdesktop.swingx.JXTaskPaneContainer;
 
@@ -56,6 +57,7 @@ import org.geotoolkit.coverage.sql.CoverageDatabaseEvent;
 import org.geotoolkit.coverage.sql.DatabaseVetoException;
 import org.geotoolkit.coverage.sql.NewGridCoverageReference;
 import org.geotoolkit.coverage.sql.CoverageDatabaseController;
+import org.geotoolkit.gui.swing.WindowCreator;
 import org.geotoolkit.gui.swing.referencing.AuthorityCodesComboBox;
 import org.geotoolkit.internal.swing.SwingUtilities;
 
@@ -65,13 +67,13 @@ import org.geotoolkit.internal.swing.SwingUtilities;
  * Users can verify and modify those information before they are written in the database.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.13
+ * @version 3.14
  *
  * @since 3.12
  * @module
  */
 @SuppressWarnings("serial")
-final class NewGridCoverageDetails extends JComponent implements CoverageDatabaseController {
+final class NewGridCoverageDetails extends WindowCreator implements CoverageDatabaseController {
     /**
      * Action commands.
      */
@@ -375,6 +377,18 @@ final class NewGridCoverageDetails extends JComponent implements CoverageDatabas
                 // User will need to make an other selection.
                 return;
             } catch (ParseException e) {
+                return;
+            }
+            /*
+             * Perform some validity checks on user arguments.
+             */
+            if (reference.horizontalSRID == 0) {
+                final Widgets resources = Widgets.getResources(getLocale());
+                final JXLabel label = new JXLabel(resources.getString(Widgets.Keys.HORIZONTAL_CRS_REQUIRED));
+                final String  title = resources.getString(Widgets.Keys.INCOMPLETE_FORM);
+                label.setLineWrap(true);
+                getWindowHandler().showError(this, label, title);
+                // Do no weakup the sleeping thread.
                 return;
             }
         } else {

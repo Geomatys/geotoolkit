@@ -36,6 +36,7 @@ import org.geotoolkit.test.crs.WKT;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.geometry.DirectPosition2D;
 import org.geotoolkit.display.shape.XRectangle2D;
+import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
 import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
@@ -55,7 +56,7 @@ import static org.geotoolkit.test.Commons.decodeQuotes;
  *
  * @author Martin Desruisseaux (Geomatys)
  * @author Andrea Aime (OpenGeo)
- * @version 3.10
+ * @version 3.14
  *
  * @since 3.00
  */
@@ -89,6 +90,24 @@ public final class CRS_Test {
     @Test
     public void testDecode() throws FactoryException {
         assertSame(DefaultGeographicCRS.WGS84, CRS.decode("WGS84(DD)"));
+    }
+
+    /**
+     * Tests simple WKT parsing.
+     *
+     * @throws FactoryException Should not happen.
+     *
+     * @since 3.14
+     */
+    @Test
+    public void testParseWKT() throws FactoryException {
+        final CoordinateReferenceSystem crs = CRS.parseWKT("GEOGCS[\"GCS_WGS_1984\","
+                + "DATUM[\"D_WGS_1984\",SPHEROID[\"WGS_1984\",6378137,298.257223563]],"
+                + "PRIMEM[\"Greenwich\",0],UNIT[\"Degree\",0.0174532925199433]]");
+        assertTrue(crs instanceof DefaultGeographicCRS);
+        assertEquals("GCS_WGS_1984", crs.getName().getCode());
+        assertEquals("GCS_WGS_1984", CRS.getDeclaredIdentifier(crs));
+        assertNull(AbstractIdentifiedObject.getIdentifier(crs, Citations.EPSG));
     }
 
     /**

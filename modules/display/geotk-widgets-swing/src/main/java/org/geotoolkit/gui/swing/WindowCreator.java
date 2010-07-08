@@ -32,6 +32,7 @@ import javax.swing.UIManager;
 import org.geotoolkit.lang.Configuration;
 import org.geotoolkit.internal.swing.InternalWindowListener;
 import org.geotoolkit.internal.swing.SwingUtilities;
+import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.resources.Errors;
 
 
@@ -160,7 +161,7 @@ public abstract class WindowCreator extends JComponent {
      * windows with the NetBeans platform.
      *
      * @author Martin Desruisseaux (Geomatys)
-     * @version 3.12
+     * @version 3.14
      *
      * @since 3.12
      * @module
@@ -209,6 +210,18 @@ public abstract class WindowCreator extends JComponent {
          *         {@code false} otherwise.
          */
         boolean showDialog(Component owner, Component content, String title);
+
+        /**
+         * Shows an error message in a modal dialog with "<cite>Ok</cite>" button,
+         * and wait for the user to close the dialog.
+         *
+         * @param  owner   The {@link WindowCreator} which need to display a dialog window.
+         * @param  content The content to put in the dialog wondow.
+         * @param  title   The dialog title.
+         *
+         * @since 3.14
+         */
+        void showError(Component owner, Component content, String title);
     }
 
     /**
@@ -278,12 +291,25 @@ public abstract class WindowCreator extends JComponent {
             }
             return false;
         }
+
+        /**
+         * Shows a dialog box as a {@link JDialog} or {@link JInternalFrame} depending on
+         * the {@code owner} ancestor.
+         */
+        @Override
+        public void showError(final Component owner, final Component content, String title) {
+            if (title == null) {
+                title = Vocabulary.getResources(owner.getLocale()).getString(Vocabulary.Keys.ERROR);
+            }
+            JOptionPane.showMessageDialog(owner, content, title, JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     /**
      * A {@link JInternalFrame} which implement the {@link Window} interface.
      * This is one of the types of windows created by {@link DefaultHandler}.
      */
+    @SuppressWarnings("serial")
     private static final class InternalFrame extends JInternalFrame implements Window {
         InternalFrame(final String title) {
             super(title, true, true, true, true);
@@ -304,6 +330,7 @@ public abstract class WindowCreator extends JComponent {
      * A {@link JFrame} which implement the {@link Window} interface.
      * This is one of the types of windows created by {@link DefaultHandler}.
      */
+    @SuppressWarnings("serial")
     private static final class Frame extends JFrame implements Window {
         Frame(final String title) {super(title);}
     }
@@ -312,6 +339,7 @@ public abstract class WindowCreator extends JComponent {
      * A {@link JDialog} which implement the {@link Window} interface.
      * This is one of the types of windows created by {@link DefaultHandler}.
      */
+    @SuppressWarnings("serial")
     private static final class Dialog extends JDialog implements Window {
         Dialog(final java.awt.Frame  owner, final String title) {super(owner, title);}
         Dialog(final java.awt.Dialog owner, final String title) {super(owner, title);}

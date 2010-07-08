@@ -68,7 +68,7 @@ import org.geotoolkit.gui.swing.WindowCreator;
  * and a info button displaying the CRS {@linkplain PropertiesSheet properties sheet}.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.12
+ * @version 3.14
  *
  * @since 2.3
  * @module
@@ -111,9 +111,9 @@ public class AuthorityCodesComboBox extends WindowCreator {
     private final CardLayout cards;
 
     /**
-     * The button to press for showing properties.
+     * The button to press for showing the search field or the properties.
      */
-    private final JButton showProperties;
+    private final JButton showSearchField, showProperties;
 
     /**
      * Info about the currently selected item.
@@ -230,6 +230,7 @@ public class AuthorityCodesComboBox extends WindowCreator {
         button.setPreferredSize(size);
         button.setActionCommand(SEARCH);
         button.addActionListener(listeners);
+        showSearchField = button;
         /*
          * Add the two buttons after the combo box.
          */
@@ -468,41 +469,69 @@ public class AuthorityCodesComboBox extends WindowCreator {
      * @param keywords space-separated list of keywords to look for.
      */
     public void filter(String keywords) {
-        ComboBoxModel model = codeList;
-        if (keywords != null && ((keywords = keywords.trim()).length()) != 0) {
-            /*
-             * Quotes the keywords, except the spaces. Set the 'if' value to
-             * 'false' if the user already provided a regular expression.
-             */
-            if (true) {
-                final StringBuilder buffer = new StringBuilder(".*");
-                for (final String token : keywords.split("\\s+")) {
-                    buffer.append(Pattern.quote(token)).append(".*");
-                }
-                keywords = buffer.toString();
+        if (keywords == null || ((keywords = keywords.trim()).length()) == 0) {
+            codeComboBox.setModel(codeList);
+            return;
+        }
+        /*
+         * Quotes the keywords, except the spaces. Set the 'if' value to
+         * 'false' if the user already provided a regular expression.
+         */
+        if (true) {
+            final StringBuilder buffer = new StringBuilder(".*");
+            for (final String token : keywords.split("\\s+")) {
+                buffer.append(Pattern.quote(token)).append(".*");
             }
-            Matcher matcher = null;
-            final DefaultComboBoxModel filtered = new DefaultComboBoxModel();
-            final int size = codeList.getSize();
-            for (int i=0; i<size; i++) {
-                final AuthorityCode code = codeList.getElementAt(i);
-                final String name = code.toString();
-                if (matcher == null) {
-                    matcher = Pattern.compile(keywords, Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE).matcher(name);
-                } else {
-                    matcher.reset(name);
-                }
-                if (matcher.matches()) {
-                    filtered.addElement(code);
-                } else {
-                    matcher.reset(code.code);
+            keywords = buffer.toString();
+        }
+        /*
+         * Filters the list in a background thread.
+         * It may take a few seconds when invoked for the first time.
+         */
+        showSearchField.setEnabled(false);
+        codeComboBox.setEnabled(false);
+        final String words = keywords;
+        new SwingWorker<ComboBoxModel,Object>() {
+            @Override protected ComboBoxModel doInBackground() {
+                Matcher matcher = null;
+                final DefaultComboBoxModel filtered = new DefaultComboBoxModel();
+                final int size = codeList.getSize();
+                for (int i=0; i<size; i++) {
+                    final AuthorityCode code = codeList.getElementAt(i);
+                    final String name = code.toString();
+                    if (matcher == null) {
+                        matcher = Pattern.compile(words, Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE).matcher(name);
+                    } else {
+                        matcher.reset(name);
+                    }
                     if (matcher.matches()) {
                         filtered.addElement(code);
+                    } else {
+                        matcher.reset(code.code);
+                        if (matcher.matches()) {
+                            filtered.addElement(code);
+                        }
                     }
                 }
+                return filtered;
             }
-            model = filtered;
-        }
-        codeComboBox.setModel(model);
+
+            /**
+             * Invoked in the Swing thread after the filtering has been completed.
+             * This method assigns the new model to the combo box and enable it.
+             */
+            @Override protected void done() {
+                showSearchField.setEnabled(true);
+                codeComboBox.setEnabled(true);
+                ComboBoxModel model;
+                try {
+                    model = get();
+                } catch (Exception e) {
+                    getWindowHandler().showError(AuthorityCodesComboBox.this, new JLabel(e.toString()), null);
+                    return;
+                }
+                codeComboBox.setModel(model);
+            }
+        }.execute();
     }
 }

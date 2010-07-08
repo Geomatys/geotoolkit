@@ -86,6 +86,16 @@ public final class Widgets extends IndexedResourceBundle {
         public static final int EXPLAIN_DOMAIN_OF_ENTRIES = 11;
 
         /**
+         * A horizontal Coordinate Reference System must be specified.
+         */
+        public static final int HORIZONTAL_CRS_REQUIRED = 16;
+
+        /**
+         * Incomplete form
+         */
+        public static final int INCOMPLETE_FORM = 17;
+
+        /**
          * Elements of layer {0}
          */
         public static final int LAYER_ELEMENTS_$1 = 9;
