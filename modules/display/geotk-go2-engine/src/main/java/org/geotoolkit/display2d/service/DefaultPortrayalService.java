@@ -194,7 +194,10 @@ public class DefaultPortrayalService implements PortrayalService{
                 sceneDef.getHints());
         final ContextContainer2D renderer = new DefaultContextContainer2D(canvas, false);
         canvas.setContainer(renderer);
-        canvas.setBackgroundPainter(new SolidColorPainter(canvasDef.getBackground()));
+        final Color bgColor = canvasDef.getBackground();
+        if(bgColor != null){
+            canvas.setBackgroundPainter(new SolidColorPainter(bgColor));
+        }        
 
         final CanvasMonitor monitor = viewDef.getMonitor();
         if(monitor != null){

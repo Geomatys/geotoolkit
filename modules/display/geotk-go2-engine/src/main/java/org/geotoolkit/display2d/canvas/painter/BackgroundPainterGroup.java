@@ -50,4 +50,14 @@ public class BackgroundPainterGroup implements BackgroundPainter{
         return new BackgroundPainterGroup(painters.toArray(new BackgroundPainter[painters.size()]));
     }
 
+    @Override
+    public boolean isOpaque() {
+        for(BackgroundPainter bgp : painters){
+            if(bgp.isOpaque()){
+                return true;
+            }
+        }
+        return false;
+    }
+
 }

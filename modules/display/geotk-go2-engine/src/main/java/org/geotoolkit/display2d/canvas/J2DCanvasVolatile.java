@@ -3,7 +3,7 @@
  *    http://www.geotoolkit.org
  *
  *    (C) 2004 - 2008, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2008 - 2009, Geomatys
+ *    (C) 2008 - 2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -17,7 +17,6 @@
  */
 package org.geotoolkit.display2d.canvas;
 
-import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -31,11 +30,8 @@ import java.awt.geom.Area;
 import java.awt.image.VolatileImage;
 
 import org.geotoolkit.display.canvas.AbstractCanvas;
-import org.geotoolkit.display.canvas.CanvasController2D;
-import org.geotoolkit.display.canvas.DefaultController2D;
 import org.geotoolkit.display.container.AbstractContainer;
 import org.geotoolkit.display.container.AbstractContainer2D;
-import org.geotoolkit.display.canvas.RenderingContext;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.display.shape.XRectangle2D;
 import org.geotoolkit.display2d.GO2Utilities;
@@ -55,14 +51,11 @@ public class J2DCanvasVolatile extends J2DCanvas{
 
     private final GraphicsConfiguration GC;
     private final DrawingThread thread;
-    private CanvasController2D controller = new DefaultController2D(this);
-    private final DefaultRenderingContext2D context2D = new DefaultRenderingContext2D(this);
     private VolatileImage buffer0;
     private Dimension dim;
     private boolean mustupdate = false;
 
     private final Object LOCK = new Object();
-
 
     private final Area dirtyArea = new Area();
     
@@ -98,7 +91,6 @@ public class J2DCanvasVolatile extends J2DCanvas{
         super.dispose();
         thread.dispose();
         buffer0 = null;
-        controller = null;
         dim = null;
     }
 
@@ -124,12 +116,6 @@ public class J2DCanvasVolatile extends J2DCanvas{
 
     private synchronized VolatileImage createBackBuffer() {
         return GC.createCompatibleVolatileImage(dim.width, dim.height, VolatileImage.OPAQUE);
-    }
-
-
-    @Override
-    public CanvasController2D getController() {
-        return controller;
     }
         
     /**
@@ -216,18 +202,18 @@ public class J2DCanvasVolatile extends J2DCanvas{
         }
 
 
+        monitor.renderingStarted();
+        fireRenderingStateChanged(RenderingState.RENDERING);
 
-            monitor.renderingStarted();
-            fireRenderingStateChanged(RenderingState.RENDERING);
 
-
-        final AbstractContainer renderer         = getContainer();
-        if(renderer != null && renderer instanceof AbstractContainer2D){
-            final AbstractContainer2D renderer2D = (AbstractContainer2D) renderer;
-            render(context2D, renderer2D.getSortedGraphics());
+        final AbstractContainer2D container = getContainer();
+        if(container != null){
+            render(context2D, container.getSortedGraphics());
         }
         
-        //End painting
+        /**
+         * End painting, erase dirtyArea
+         */
         output.dispose();
         fireRenderingStateChanged(RenderingState.ON_HOLD);
         monitor.renderingFinished();
@@ -250,11 +236,6 @@ public class J2DCanvasVolatile extends J2DCanvas{
         synchronized(LOCK){
             return buffer0;
         }
-    }
-
-    @Override
-    protected RenderingContext getRenderingContext() {
-        return context2D;
     }
 
     @Override

@@ -3,7 +3,7 @@
  *    http://www.geotoolkit.org
  *
  *    (C) 2004 - 2008, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2008 - 2009, Geomatys
+ *    (C) 2008 - 2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -17,23 +17,38 @@
  */
 package org.geotoolkit.display2d.canvas;
 
-import java.awt.AlphaComposite;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
+import java.awt.RenderingHints;
 import java.awt.Shape;
 import java.awt.image.BufferedImage;
+import java.awt.image.ColorModel;
+import java.awt.image.IndexColorModel;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
 
-import org.geotoolkit.display.canvas.CanvasController2D;
-import org.geotoolkit.display.canvas.DefaultController2D;
 import org.geotoolkit.display.container.AbstractContainer2D;
-import org.geotoolkit.display.canvas.RenderingContext;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.display.shape.XRectangle2D;
+import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.display2d.GO2Utilities;
+import org.geotoolkit.display2d.canvas.painter.SolidColorPainter;
+import org.geotoolkit.display2d.container.statefull.StatefullContextJ2D;
+import org.geotoolkit.display2d.container.stateless.StatelessContextJ2D;
+import org.geotoolkit.display2d.primitive.GraphicJ2D;
+import org.geotoolkit.internal.image.ColorUtilities;
+import org.geotoolkit.map.GraphicBuilder;
+import org.geotoolkit.map.MapContext;
+import org.geotoolkit.map.MapLayer;
+import org.geotoolkit.style.MutableStyle;
+import org.geotoolkit.style.visitor.ListingColorVisitor;
 
 import org.opengis.display.canvas.RenderingState;
+import org.opengis.display.primitive.Graphic;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
@@ -44,8 +59,6 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  */
 public class J2DCanvasBuffered extends J2DCanvas{
 
-    private final CanvasController2D controller = new DefaultController2D(this);
-    private final DefaultRenderingContext2D context2D = new DefaultRenderingContext2D(this);
     private BufferedImage buffer;
     private Dimension dim;
 
@@ -97,14 +110,6 @@ public class J2DCanvasBuffered extends J2DCanvas{
     }
 
     /**
-     * {@inheritDoc }
-     */
-    @Override
-    public CanvasController2D getController() {
-        return controller;
-    }
-
-    /**
      * Returns the display bounds in terms of {@linkplain #getDisplayCRS display CRS}.
      * If no bounds were {@linkplain #setDisplayBounds explicitly set}, then this method
      * returns the {@linkplain Component#getBounds() widget bounds}.
@@ -126,7 +131,7 @@ public class J2DCanvasBuffered extends J2DCanvas{
 
         if(buffer == null){
             //create the buffer at the last possible moment
-            buffer = new BufferedImage(dim.width, dim.height, BufferedImage.TYPE_INT_ARGB);
+            buffer = createBufferedImage();
         }else{
             //we clear the buffer if it exists
             final Graphics2D g2D = (Graphics2D) buffer.getGraphics();
@@ -163,9 +168,9 @@ public class J2DCanvasBuffered extends J2DCanvas{
             painter.paint(context2D);
         }
 
-        final AbstractContainer2D renderer2D = getContainer();
-        if(renderer2D != null){
-            render(context, renderer2D.getSortedGraphics());
+        final AbstractContainer2D container = getContainer();
+        if(container != null){
+            render(context, container.getSortedGraphics());
         }
 
         /**
@@ -185,12 +190,163 @@ public class J2DCanvasBuffered extends J2DCanvas{
     }
 
     @Override
-    protected RenderingContext getRenderingContext() {
-        return context2D;
+    public void repaint(Shape displayArea) {
     }
 
-    @Override
-    public void repaint(Shape displayArea) {
+    /**
+     * This will try to create the most efficient bufferedImage knowing
+     * the different rendering parameters and hints.
+     * @return
+     */
+    private BufferedImage createBufferedImage(){
+
+        //See if a color model has been set, if so use it.
+        final ColorModel cm = (ColorModel)getRenderingHint(GO2Hints.KEY_COLOR_MODEL);
+        if(cm != null){
+            return new BufferedImage(cm,
+                    cm.createCompatibleWritableRaster(dim.width, dim.height),
+                    cm.isAlphaPremultiplied(), null);
+        }
+
+        //Get the Anti-aliasing value;
+        final boolean AA;
+        final Object val = getRenderingHint(RenderingHints.KEY_ANTIALIASING);
+        if(RenderingHints.VALUE_ANTIALIAS_ON == val){
+            AA = true;
+        }else{
+            //force AA off, to replace default value.
+            setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
+            AA = false;
+        }
+
+        //check background painter.
+        if(painter == null){
+
+            if(AA){
+                //Anti-aliasing enable, unpredictable colors
+                return new BufferedImage(dim.width, dim.height, BufferedImage.TYPE_INT_ARGB);
+            }
+
+            //check graphic object and see if we can predict colors
+            final Set<Integer> colors = extractColors(getContainer().getSortedGraphics());
+
+            if(colors != null){
+                //translucent background
+                colors.add(0);
+                //we succesfully predicted the colors, makes an index color model
+                return createBufferedImage(colors);
+            }else{
+                //we can't use a index color model, use an ARGB palette
+                return new BufferedImage(dim.width, dim.height, BufferedImage.TYPE_INT_ARGB);
+            }
+
+        }else{
+            if(painter.isOpaque()){
+                //background is opaque, we are sure we don't need an alpha
+                //see of we can determinate the background color, only if there is no AA.
+                if(!AA && painter instanceof SolidColorPainter){
+                    //check graphic object and see if we can predict colors
+                    final Set<Integer> colors = extractColors(getContainer().getSortedGraphics());
+
+                    if(colors != null){
+                        final Color bgColor = ((SolidColorPainter)painter).getColor();
+                        colors.add(bgColor.getRGB());
+                        //we succesfully predicted the colors, makes an index color model
+                        return createBufferedImage(colors);
+                    }else{
+                        //we can't use a index color model, use an RGB palette
+                        return new BufferedImage(dim.width, dim.height, BufferedImage.TYPE_INT_RGB);
+                    }
+                }else{
+                    //we can't determinate the background colors, use an RGB palette
+                    return new BufferedImage(dim.width, dim.height, BufferedImage.TYPE_INT_RGB);
+                }
+            }else{
+                //we can't determinate the background colors, use an ARGB palette
+                return new BufferedImage(dim.width, dim.height, BufferedImage.TYPE_INT_ARGB);
+            }
+        }
+
+    }
+
+    private BufferedImage createBufferedImage(Set<Integer> colors){
+        
+        if(colors.size() <= 1){
+            //in case no colors where used after all filters.
+            //icm must have at least 2 values
+            colors.add(Color.BLACK.getRGB());
+            if(colors.size() == 1){
+                //we are out of luck, it was black the single color.
+                colors.add(0); //add translucent
+            }
+        }
+
+        final int[] cmap = new int[colors.size()];
+        int i = 0;
+        for (Integer color : colors) {
+            cmap[i++] = color;
+        }
+
+        final IndexColorModel icm = ColorUtilities.getIndexColorModel(cmap);
+        return new BufferedImage(icm, icm.createCompatibleWritableRaster(dim.width, dim.height), icm.isAlphaPremultiplied(), null);
+    }
+
+    /**
+     * @param graphics graphics to explore
+     * @return Set of colors used by the graphics or null if unpredictable.
+     */
+    private static Set<Integer> extractColors(List<Graphic> graphics){
+
+        Set<Integer> colors = new LinkedHashSet<Integer>();
+
+        for(Graphic gra : graphics){
+            if(gra instanceof StatelessContextJ2D){
+                final StatelessContextJ2D cn = (StatelessContextJ2D) gra;
+                colors = extractColors(cn.getContext(), colors);
+            }else if(gra instanceof StatefullContextJ2D){
+                final StatefullContextJ2D cn = (StatefullContextJ2D) gra;
+                colors = extractColors(cn.getContext(), colors);
+            }else{
+                //can not extract colors
+                return null;
+            }
+        }
+
+        return colors;
+    }
+
+    private static Set<Integer> extractColors(MapContext context, Set<Integer> buffer){
+        for(MapLayer layer : context.layers()){
+            buffer = extractColors(layer, buffer);
+            if(buffer == null){
+                //unpredictable colors
+                return buffer;
+            }
+        }
+        return buffer;
+    }
+
+    private static Set<Integer> extractColors(MapLayer layer, Set<Integer> buffer){
+
+        final GraphicBuilder customBuilder = layer.getGraphicBuilder(GraphicJ2D.class);
+
+        if(customBuilder != null){
+            //this layer has a custom graphic builder, colors are unpredictable.
+            return null;
+        }
+
+        final MutableStyle style = layer.getStyle();
+        final ListingColorVisitor visitor = new ListingColorVisitor();
+        style.accept(visitor, null);
+        final Set<Integer> colors = visitor.getColors();
+
+        if(colors == null){
+            //unpredictable colors
+            return null;
+        }else{
+            buffer.addAll(colors);
+            return buffer;
+        }
 
     }
 

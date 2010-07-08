@@ -31,9 +31,16 @@ public class SolidColorPainter implements BackgroundPainter{
     private final Color color;
 
     public SolidColorPainter(Color color){
+        if(color == null){
+            throw new NullPointerException("Color can not be null.");
+        }
         this.color = color;
     }
 
+    public Color getColor() {
+        return color;
+    }
+    
     @Override
     public void paint(RenderingContext2D context) {
         if(color != null){
@@ -42,6 +49,11 @@ public class SolidColorPainter implements BackgroundPainter{
             g.setPaint(color);
             g.fillRect(rect.x, rect.y, rect.width, rect.height);
         }
+    }
+
+    @Override
+    public boolean isOpaque() {
+        return color.getAlpha() == 255;
     }
 
 }
