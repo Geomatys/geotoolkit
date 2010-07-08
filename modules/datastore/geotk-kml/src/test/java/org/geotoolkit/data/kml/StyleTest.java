@@ -3,6 +3,8 @@ package org.geotoolkit.data.kml;
 import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.List;
 import javax.xml.parsers.ParserConfigurationException;
@@ -61,7 +63,7 @@ public class StyleTest {
     }
 
     @Test
-    public void styleReadTest() throws IOException, XMLStreamException {
+    public void styleReadTest() throws IOException, XMLStreamException, URISyntaxException {
 
         final KmlReader reader = new KmlReader();
         reader.setInput(new File(pathToTestFile));
@@ -102,27 +104,27 @@ public class StyleTest {
         Placemark placemark0 = (Placemark) abstractFeatures.get(0);
         assertEquals("Google Earth - New Polygon", placemark0.getName());
         assertEquals("Here is some descriptive text", placemark0.getDescription());
-        assertEquals("#myDefaultStyles", placemark0.getStyleUrl());
+        assertEquals(new URI("#myDefaultStyles"), placemark0.getStyleUrl());
 
         assertTrue(abstractFeatures.get(1) instanceof Placemark);
         Placemark placemark1 = (Placemark) abstractFeatures.get(1);
         assertEquals("Google Earth - New Path", placemark1.getName());
-        assertEquals("#myDefaultStyles", placemark1.getStyleUrl());
+        assertEquals(new URI("#myDefaultStyles"), placemark1.getStyleUrl());
 
     }
 
     @Test
-    public void styleWriteTest() throws KmlException, IOException, XMLStreamException, ParserConfigurationException, SAXException {
+    public void styleWriteTest() throws KmlException, IOException, XMLStreamException, ParserConfigurationException, SAXException, URISyntaxException {
         final KmlFactory kmlFactory = new DefaultKmlFactory();
 
         Placemark placemark0 = kmlFactory.createPlacemark();
         placemark0.setName("Google Earth - New Polygon");
         placemark0.setDescription("Here is some descriptive text");
-        placemark0.setStyleUrl("#myDefaultStyles");
+        placemark0.setStyleUrl(new URI("#myDefaultStyles"));
 
         Placemark placemark1 = kmlFactory.createPlacemark();
         placemark1.setName("Google Earth - New Path");
-        placemark1.setStyleUrl("#myDefaultStyles");
+        placemark1.setStyleUrl(new URI("#myDefaultStyles"));
 
         IconStyle iconStyle = kmlFactory.createIconStyle();
         BasicLink icon = kmlFactory.createBasicLink();

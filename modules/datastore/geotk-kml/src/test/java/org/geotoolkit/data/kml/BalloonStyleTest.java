@@ -4,6 +4,8 @@ import com.vividsolutions.jts.geom.Coordinate;
 import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Arrays;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
@@ -60,7 +62,7 @@ public class BalloonStyleTest {
     }
 
     @Test
-    public void balloonStyleReadTest() throws IOException, XMLStreamException {
+    public void balloonStyleReadTest() throws IOException, XMLStreamException, URISyntaxException {
 
         final KmlReader reader = new KmlReader();
         reader.setInput(new File(pathToTestFile));
@@ -96,7 +98,7 @@ public class BalloonStyleTest {
         final Placemark placemark = (Placemark) document.getAbstractFeatures().get(0);
         assertEquals("BalloonStyle", placemark.getName());
         assertEquals("An example of BalloonStyle", placemark.getDescription());
-        assertEquals("#exampleBalloonStyle",placemark.getStyleUrl());
+        assertEquals(new URI("#exampleBalloonStyle"),placemark.getStyleUrl());
 
         assertTrue(placemark.getAbstractGeometry() instanceof Point);
         final Point point = (Point) placemark.getAbstractGeometry();
@@ -110,7 +112,7 @@ public class BalloonStyleTest {
     }
 
     @Test
-    public void balloonStyleWriteTest() throws KmlException, IOException, XMLStreamException, ParserConfigurationException, SAXException {
+    public void balloonStyleWriteTest() throws KmlException, IOException, XMLStreamException, ParserConfigurationException, SAXException, URISyntaxException {
         final KmlFactory kmlFactory = new DefaultKmlFactory();
 
         final Coordinate coordinate = kmlFactory.createCoordinate(-122.370533,37.823842,0.0);
@@ -120,7 +122,7 @@ public class BalloonStyleTest {
         final Placemark placemark = kmlFactory.createPlacemark();
         placemark.setName("BalloonStyle");
         placemark.setDescription("An example of BalloonStyle");
-        placemark.setStyleUrl("#exampleBalloonStyle");
+        placemark.setStyleUrl(new URI("#exampleBalloonStyle"));
         placemark.setAbstractGeometry(point);
 
         final BalloonStyle balloonStyle = kmlFactory.createBalloonStyle();

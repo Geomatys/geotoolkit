@@ -1,11 +1,11 @@
 package org.geotoolkit.data.kml.model;
 
+import java.net.URI;
 import java.util.List;
 import org.geotoolkit.data.atom.model.AtomPersonConstruct;
 import org.geotoolkit.data.atom.model.AtomLink;
 import org.geotoolkit.data.kml.xsd.SimpleType;
 import org.geotoolkit.data.xal.model.AddressDetails;
-import static java.util.Collections.*;
 
 /**
  *
@@ -49,7 +49,7 @@ public class DefaultAbstractContainer extends DefaultAbstractFeature implements 
             String phoneNumber, Object snippet,
             Object description, AbstractView view,
             AbstractTimePrimitive timePrimitive,
-            String styleUrl, List<AbstractStyleSelector> styleSelector,
+            URI styleUrl, List<AbstractStyleSelector> styleSelector,
             Region region, Object extendedData,
             List<SimpleType> abstractFeatureSimpleExtensions,
             List<AbstractObject> abstractFeatureObjectExtensions,

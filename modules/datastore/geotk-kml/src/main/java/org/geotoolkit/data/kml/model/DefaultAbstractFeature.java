@@ -1,5 +1,6 @@
 package org.geotoolkit.data.kml.model;
 
+import java.net.URI;
 import java.util.List;
 import org.geotoolkit.data.atom.model.AtomPersonConstruct;
 import org.geotoolkit.data.atom.model.AtomLink;
@@ -27,7 +28,7 @@ public abstract class DefaultAbstractFeature extends DefaultAbstractObject imple
     protected Object description;
     protected AbstractView view;
     protected AbstractTimePrimitive timePrimitive;
-    protected String styleUrl;
+    protected URI styleUrl;
     protected List<AbstractStyleSelector> styleSelector;
     protected Region region;
     protected Object extendedData;
@@ -73,7 +74,7 @@ public abstract class DefaultAbstractFeature extends DefaultAbstractObject imple
             String phoneNumber, Object snippet,
             Object description, AbstractView view,
             AbstractTimePrimitive timePrimitive,
-            String styleUrl, List<AbstractStyleSelector> styleSelector,
+            URI styleUrl, List<AbstractStyleSelector> styleSelector,
             Region region, Object extendedData,
             List<SimpleType> abstractFeatureSimpleExtensions,
             List<AbstractObject> abstractFeatureObjectExtensions) {
@@ -100,7 +101,7 @@ public abstract class DefaultAbstractFeature extends DefaultAbstractObject imple
         this.styleSelector = (styleSelector == null) ? EMPTY_LIST : styleSelector;
         this.region = region;
         if(extendedData instanceof ExtendedData
-                || extendedData instanceof MetaData)
+                || extendedData instanceof Metadata)
             this.extendedData = extendedData;
         else if (extendedData != null)
             throw new IllegalArgumentException("snippet muts be an ExtendedData or MetaData (deprecated) instance.");
@@ -225,7 +226,7 @@ public abstract class DefaultAbstractFeature extends DefaultAbstractObject imple
      * @{@inheritDoc }
      */
     @Override
-    public String getStyleUrl() {
+    public URI getStyleUrl() {
         return this.styleUrl;
     }
 
@@ -388,7 +389,7 @@ public abstract class DefaultAbstractFeature extends DefaultAbstractObject imple
      * @{@inheritDoc }
      */
     @Override
-    public void setStyleUrl(String styleUrl) {
+    public void setStyleUrl(URI styleUrl) {
         this.styleUrl = styleUrl;
     }
 
@@ -425,7 +426,7 @@ public abstract class DefaultAbstractFeature extends DefaultAbstractObject imple
      */
     @Override
     @Deprecated
-    public void setExtendedData(MetaData metaData) {
+    public void setExtendedData(Metadata metaData) {
         this.extendedData = metaData;
     }
 

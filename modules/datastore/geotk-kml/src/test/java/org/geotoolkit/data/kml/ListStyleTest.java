@@ -4,6 +4,8 @@ import com.vividsolutions.jts.geom.Coordinate;
 import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Arrays;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
@@ -60,7 +62,7 @@ public class ListStyleTest {
     }
 
     @Test
-    public void listStyleReadTest() throws IOException, XMLStreamException {
+    public void listStyleReadTest() throws IOException, XMLStreamException, URISyntaxException {
 
         final KmlReader reader = new KmlReader();
         reader.setInput(new File(pathToTestFile));
@@ -103,7 +105,7 @@ public class ListStyleTest {
         final Folder folder0 = (Folder) folder.getAbstractFeatures().get(0);
         assertEquals("bgColor example", folder0.getName());
         assertTrue(folder0.getOpen());
-        assertEquals("#bgColorExample", folder0.getStyleUrl());
+        assertEquals(new URI("#bgColorExample"), folder0.getStyleUrl());
 
             assertEquals(3, folder0.getAbstractFeatures().size());
 
@@ -141,7 +143,7 @@ public class ListStyleTest {
         final Folder folder1 = (Folder) folder.getAbstractFeatures().get(1);
         assertEquals("checkHideChildren example", folder1.getName());
         assertTrue(folder1.getOpen());
-        assertEquals("#checkHideChildrenExample", folder1.getStyleUrl());
+        assertEquals(new URI("#checkHideChildrenExample"), folder1.getStyleUrl());
 
         assertEquals(3, folder1.getAbstractFeatures().size());
 
@@ -179,7 +181,7 @@ public class ListStyleTest {
         final Folder folder2 = (Folder) folder.getAbstractFeatures().get(2);
         assertEquals("radioFolder example", folder2.getName());
         assertTrue(folder2.getOpen());
-        assertEquals("#radioFolderExample", folder2.getStyleUrl());
+        assertEquals(new URI("#radioFolderExample"), folder2.getStyleUrl());
 
         assertEquals(3, folder2.getAbstractFeatures().size());
 
@@ -216,7 +218,7 @@ public class ListStyleTest {
     }
 
     @Test
-    public void listStyleWriteTest() throws KmlException, IOException, XMLStreamException, ParserConfigurationException, SAXException {
+    public void listStyleWriteTest() throws KmlException, IOException, XMLStreamException, ParserConfigurationException, SAXException, URISyntaxException {
         final KmlFactory kmlFactory = new DefaultKmlFactory();
 
         final Coordinate coordinate000 = kmlFactory.createCoordinate(-122.362815, 37.822931, 0);
@@ -280,7 +282,7 @@ public class ListStyleTest {
         final Folder folder0 = kmlFactory.createFolder();
         folder0.setName("bgColor example");
         folder0.setOpen(true);
-        folder0.setStyleUrl("#bgColorExample");
+        folder0.setStyleUrl(new URI("#bgColorExample"));
         folder0.setAbstractFeatures(Arrays.asList(
                 (AbstractFeature) placemark00,
                 (AbstractFeature) placemark01,
@@ -288,7 +290,7 @@ public class ListStyleTest {
         final Folder folder1 = kmlFactory.createFolder();
         folder1.setName("checkHideChildren example");
         folder1.setOpen(true);
-        folder1.setStyleUrl("#checkHideChildrenExample");
+        folder1.setStyleUrl(new URI("#checkHideChildrenExample"));
         folder1.setAbstractFeatures(Arrays.asList(
                 (AbstractFeature) placemark10,
                 (AbstractFeature) placemark11,
@@ -296,7 +298,7 @@ public class ListStyleTest {
         final Folder folder2 = kmlFactory.createFolder();
         folder2.setName("radioFolder example");
         folder2.setOpen(true);
-        folder2.setStyleUrl("#radioFolderExample");
+        folder2.setStyleUrl(new URI("#radioFolderExample"));
         folder2.setAbstractFeatures(Arrays.asList(
                 (AbstractFeature) placemark20,
                 (AbstractFeature) placemark21,

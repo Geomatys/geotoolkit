@@ -1,5 +1,6 @@
 package org.geotoolkit.data.kml.model;
 
+import java.net.URI;
 import java.util.List;
 import org.geotoolkit.data.kml.xsd.SimpleType;
 
@@ -9,8 +10,8 @@ import org.geotoolkit.data.kml.xsd.SimpleType;
  */
 public class DefaultAlias extends DefaultAbstractObject implements Alias {
 
-    private String targetHref;
-    private String sourceHref;
+    private URI targetHref;
+    private URI sourceHref;
 
     public DefaultAlias() {
     }
@@ -26,7 +27,7 @@ public class DefaultAlias extends DefaultAbstractObject implements Alias {
      */
     public DefaultAlias(List<SimpleType> objectSimpleExtensions,
             IdAttributes idAttributes,
-            String targetHref, String sourceHref,
+            URI targetHref, URI sourceHref,
             List<SimpleType> abstractAliasSimpleExtensions,
             List<AbstractObject> abstractAliasObjectExtensions) {
         super(objectSimpleExtensions, idAttributes);
@@ -45,7 +46,7 @@ public class DefaultAlias extends DefaultAbstractObject implements Alias {
      * @{@inheritDoc }
      */
     @Override
-    public String getTargetHref() {
+    public URI getTargetHref() {
         return this.targetHref;
     }
 
@@ -54,7 +55,7 @@ public class DefaultAlias extends DefaultAbstractObject implements Alias {
      * @{@inheritDoc }
      */
     @Override
-    public String getSourceHref() {
+    public URI getSourceHref() {
         return this.sourceHref;
     }
 
@@ -62,7 +63,7 @@ public class DefaultAlias extends DefaultAbstractObject implements Alias {
      * @{@inheritDoc }
      */
     @Override
-    public void setTargetHref(String targetHref) {
+    public void setTargetHref(URI targetHref) {
         this.targetHref = targetHref;
     }
 
@@ -71,7 +72,7 @@ public class DefaultAlias extends DefaultAbstractObject implements Alias {
      * @{@inheritDoc }
      */
     @Override
-    public void setSourceHref(String sourceHref) {
+    public void setSourceHref(URI sourceHref) {
         this.sourceHref = sourceHref;
     }
 }

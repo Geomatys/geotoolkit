@@ -1,5 +1,6 @@
 package org.geotoolkit.data.kml.model;
 
+import java.net.URI;
 import java.util.List;
 import org.geotoolkit.data.kml.xsd.SimpleType;
 import static org.geotoolkit.data.kml.xml.KmlModelConstants.*;
@@ -11,7 +12,7 @@ import static org.geotoolkit.data.kml.xml.KmlModelConstants.*;
 public class DefaultPair extends DefaultAbstractObject implements Pair {
 
     private StyleState key;
-    private String styleUrl;
+    private URI styleUrl;
     private AbstractStyleSelector styleSelector;
 
     /**
@@ -33,7 +34,7 @@ public class DefaultPair extends DefaultAbstractObject implements Pair {
      */
     public DefaultPair(List<SimpleType> objectSimpleExtensions,
             IdAttributes idAttributes,
-            StyleState key, String styleUrl, AbstractStyleSelector styleSelector,
+            StyleState key, URI styleUrl, AbstractStyleSelector styleSelector,
             List<SimpleType> pairSimpleExtensions,
             List<AbstractObject> pairObjectExtensions) {
         super(objectSimpleExtensions, idAttributes);
@@ -62,7 +63,7 @@ public class DefaultPair extends DefaultAbstractObject implements Pair {
      * @{@inheritDoc }
      */
     @Override
-    public String getStyleUrl() {
+    public URI getStyleUrl() {
         return this.styleUrl;
     }
 
@@ -89,7 +90,7 @@ public class DefaultPair extends DefaultAbstractObject implements Pair {
      * @{@inheritDoc }
      */
     @Override
-    public void setStyleUrl(String styleUrl) {
+    public void setStyleUrl(URI styleUrl) {
         this.styleUrl = styleUrl;
     }
 

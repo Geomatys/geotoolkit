@@ -7,7 +7,7 @@ import java.util.List;
  * @author Samuel Andrés
  */
 @Deprecated
-public interface MetaData {
+public interface Metadata {
 
     /**
      *

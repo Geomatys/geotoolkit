@@ -2,6 +2,8 @@ package org.geotoolkit.data.kml;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Arrays;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
@@ -59,7 +61,7 @@ public class ModelTest {
     }
 
     @Test
-    public void regionReadTest() throws IOException, XMLStreamException {
+    public void regionReadTest() throws IOException, XMLStreamException, URISyntaxException {
 
         final KmlReader reader = new KmlReader();
         reader.setInput(new File(pathToTestFile));
@@ -99,33 +101,33 @@ public class ModelTest {
         assertEquals(3, resourceMap.getAliases().size());
 
         final Alias alias0 = resourceMap.getAliases().get(0);
-        assertEquals("../files/CU-Macky---Center-StairsnoCulling.jpg", alias0.getTargetHref());
-        assertEquals("CU-Macky---Center-StairsnoCulling.jpg", alias0.getSourceHref());
+        assertEquals(new URI("../files/CU-Macky---Center-StairsnoCulling.jpg"), alias0.getTargetHref());
+        assertEquals(new URI("CU-Macky---Center-StairsnoCulling.jpg"), alias0.getSourceHref());
 
         final Alias alias1 = resourceMap.getAliases().get(1);
-        assertEquals("../files/CU-Macky-4sideturretnoCulling.jpg", alias1.getTargetHref());
-        assertEquals("CU-Macky-4sideturretnoCulling.jpg", alias1.getSourceHref());
+        assertEquals(new URI("../files/CU-Macky-4sideturretnoCulling.jpg"), alias1.getTargetHref());
+        assertEquals(new URI("CU-Macky-4sideturretnoCulling.jpg"), alias1.getSourceHref());
 
         final Alias alias2 = resourceMap.getAliases().get(2);
-        assertEquals("../files/CU-Macky-Back-NorthnoCulling.jpg", alias2.getTargetHref());
-        assertEquals("CU-Macky-Back-NorthnoCulling.jpg", alias2.getSourceHref());
+        assertEquals(new URI("../files/CU-Macky-Back-NorthnoCulling.jpg"), alias2.getTargetHref());
+        assertEquals(new URI("CU-Macky-Back-NorthnoCulling.jpg"), alias2.getSourceHref());
     }
 
     @Test
-    public void regionWriteTest() throws KmlException, IOException, XMLStreamException, ParserConfigurationException, SAXException{
+    public void regionWriteTest() throws KmlException, IOException, XMLStreamException, ParserConfigurationException, SAXException, URISyntaxException{
         final KmlFactory kmlFactory = new DefaultKmlFactory();
 
         final Alias alias0 = kmlFactory.createAlias();
-        alias0.setTargetHref("../files/CU-Macky---Center-StairsnoCulling.jpg");
-        alias0.setSourceHref("CU-Macky---Center-StairsnoCulling.jpg");
+        alias0.setTargetHref(new URI("../files/CU-Macky---Center-StairsnoCulling.jpg"));
+        alias0.setSourceHref(new URI("CU-Macky---Center-StairsnoCulling.jpg"));
 
         final Alias alias1 = kmlFactory.createAlias();
-        alias1.setTargetHref("../files/CU-Macky-4sideturretnoCulling.jpg");
-        alias1.setSourceHref("CU-Macky-4sideturretnoCulling.jpg");
+        alias1.setTargetHref(new URI("../files/CU-Macky-4sideturretnoCulling.jpg"));
+        alias1.setSourceHref(new URI("CU-Macky-4sideturretnoCulling.jpg"));
 
         final Alias alias2 = kmlFactory.createAlias();
-        alias2.setTargetHref("../files/CU-Macky-Back-NorthnoCulling.jpg");
-        alias2.setSourceHref("CU-Macky-Back-NorthnoCulling.jpg");
+        alias2.setTargetHref(new URI("../files/CU-Macky-Back-NorthnoCulling.jpg"));
+        alias2.setSourceHref(new URI("CU-Macky-Back-NorthnoCulling.jpg"));
 
         final ResourceMap resourceMap = kmlFactory.createResourceMap();
         resourceMap.setAliases(Arrays.asList(alias0, alias1, alias2));

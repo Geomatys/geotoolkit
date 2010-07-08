@@ -4,6 +4,8 @@ import com.vividsolutions.jts.geom.Coordinate;
 import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.List;
 import javax.xml.parsers.ParserConfigurationException;
@@ -61,7 +63,7 @@ public class IconStyleTest {
     }
 
     @Test
-    public void iconStyleReadTest() throws IOException, XMLStreamException {
+    public void iconStyleReadTest() throws IOException, XMLStreamException, URISyntaxException {
 
         final KmlReader reader = new KmlReader();
         reader.setInput(new File(pathToTestFile));
@@ -89,7 +91,7 @@ public class IconStyleTest {
         assertTrue(document.getAbstractFeatures().get(0) instanceof Placemark);
         Placemark placemark = (Placemark) document.getAbstractFeatures().get(0);
         assertEquals("IconStyle.kml", placemark.getName());
-        assertEquals("#randomColorIcon", placemark.getStyleUrl());
+        assertEquals(new URI("#randomColorIcon"), placemark.getStyleUrl());
         assertTrue(placemark.getAbstractGeometry() instanceof Point);
         Point point = (Point) placemark.getAbstractGeometry();
         Coordinates coordinates = point.getCoordinateSequence();
@@ -101,7 +103,7 @@ public class IconStyleTest {
     }
 
     @Test
-    public void iconStyleWriteTest() throws KmlException, IOException, XMLStreamException, ParserConfigurationException, SAXException {
+    public void iconStyleWriteTest() throws KmlException, IOException, XMLStreamException, ParserConfigurationException, SAXException, URISyntaxException {
         final KmlFactory kmlFactory = new DefaultKmlFactory();
 
         Coordinate coordinate = kmlFactory.createCoordinate(-122.36868, 37.831145, 0);
@@ -110,7 +112,7 @@ public class IconStyleTest {
 
         Placemark placemark = kmlFactory.createPlacemark();
         placemark.setName("IconStyle.kml");
-        placemark.setStyleUrl("#randomColorIcon");
+        placemark.setStyleUrl(new URI("#randomColorIcon"));
         placemark.setAbstractGeometry(point);
 
         Style style = kmlFactory.createStyle();

@@ -133,6 +133,7 @@ public final class KmlModelConstants {
     public static final String TAG_MAX_WIDTH = "maxWidth";
     public static final String TAG_MAX_SESSION_LENGTH = "maxSessionLength";
     public static final String TAG_MESSAGE = "message";
+    public static final String TAG_META_DATA = "Metadata";
     public static final String TAG_MIN_ALTITUDE = "minAltitude";
     public static final String TAG_MIN_FADE_EXTENT = "minFadeExtent";
     public static final String TAG_MIN_LOD_PIXELS = "minLodPixels";
@@ -180,6 +181,7 @@ public final class KmlModelConstants {
     public static final String TAG_TITLE_SIZE = "tileSize";
     public static final String TAG_TOP_FOV = "topFov";
     public static final String TAG_UPDATE = "Update";
+    public static final String TAG_URL = "Url";
     public static final String TAG_VALUE = "value";
     public static final String TAG_VIEW_FORMAT = "viewFormat";
     public static final String TAG_VIEW_BOUND_SCALE = "viewBoundScale";

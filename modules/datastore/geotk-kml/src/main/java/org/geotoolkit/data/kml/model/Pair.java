@@ -1,5 +1,7 @@
 package org.geotoolkit.data.kml.model;
 
+import java.net.URI;
+
 /**
  * <p>This interface maps Pair element.</p>
  *
@@ -38,7 +40,7 @@ public interface Pair extends AbstractObject {
      *
      * @return
      */
-    public String getStyleUrl();
+    public URI getStyleUrl();
 
     /**
      *
@@ -56,7 +58,7 @@ public interface Pair extends AbstractObject {
      *
      * @param styleUrl
      */
-    public void setStyleUrl(String styleUrl);
+    public void setStyleUrl(URI styleUrl);
 
     /**
      * 

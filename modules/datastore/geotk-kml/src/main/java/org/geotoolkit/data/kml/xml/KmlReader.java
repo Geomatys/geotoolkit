@@ -68,6 +68,7 @@ import org.geotoolkit.data.kml.model.ListStyle;
 import org.geotoolkit.data.kml.model.Location;
 import org.geotoolkit.data.kml.model.Lod;
 import org.geotoolkit.data.kml.model.LookAt;
+import org.geotoolkit.data.kml.model.Metadata;
 import org.geotoolkit.data.kml.model.Model;
 import org.geotoolkit.data.kml.model.MultiGeometry;
 import org.geotoolkit.data.kml.model.NetworkLink;
@@ -97,6 +98,7 @@ import org.geotoolkit.data.kml.model.TimeSpan;
 import org.geotoolkit.data.kml.model.TimeStamp;
 import org.geotoolkit.data.kml.model.Units;
 import org.geotoolkit.data.kml.model.Update;
+import org.geotoolkit.data.kml.model.Url;
 import org.geotoolkit.data.kml.model.Vec2;
 import org.geotoolkit.data.kml.model.ViewRefreshMode;
 import org.geotoolkit.data.kml.model.ViewVolume;
@@ -267,7 +269,7 @@ public class KmlReader extends StaxStreamReader {
         Object description = null;
         AbstractView view = null;
         AbstractTimePrimitive timePrimitive = null;
-        String styleUrl = null;
+        URI styleUrl = null;
         List<AbstractStyleSelector> styleSelector = new ArrayList<AbstractStyleSelector>();
         Region region = null;
         Object extendedData = null;
@@ -306,18 +308,20 @@ public class KmlReader extends StaxStreamReader {
                             snippet = this.readSnippet();
                         } else if (TAG_DESCRIPTION.equals(eName)) {
                             description = this.readElementText();
-                        } else if (TAG_STYLE_URL.equals(eName)) {
-                            styleUrl = reader.getElementText();
                         } else if (isAbstractView(eName)) {
                             view = this.readAbstractView(eName);
                         } else if (isAbstractTimePrimitive(eName)) {
                             timePrimitive = this.readAbstractTimePrimitive(eName);
+                        } else if (TAG_STYLE_URL.equals(eName)) {
+                            styleUrl = new URI(reader.getElementText());
                         } else if (isAbstractStyleSelector(eName)) {
                             styleSelector.add(this.readAbstractStyleSelector(eName));
                         } else if (TAG_REGION.equals(eName)) {
                             region = this.readRegion();
                         } else if (TAG_EXTENDED_DATA.equals(eName)) {
                             extendedData = this.readExtendedData();
+                        } else if (TAG_META_DATA.equals(eName)) {
+                            extendedData = this.readMetaData();
                         }
 
                         // PLACEMARK
@@ -353,7 +357,8 @@ public class KmlReader extends StaxStreamReader {
         }
 
         return KmlReader.kmlFactory.createPlacemark(objectSimpleExtensions, idAttributes,
-                name, visibility, open, author, link, address, addressDetails, phoneNumber, snippet, description, view, timePrimitive, styleUrl,
+                name, visibility, open, author, link, address, addressDetails,
+                phoneNumber, snippet, description, view, timePrimitive, styleUrl,
                 styleSelector, region, extendedData, featureSimpleExtensions, featureObjectExtensions,
                 abstractGeometry, placemarkSimpleExtensions, placemarkObjectExtensions);
     }
@@ -500,6 +505,17 @@ public class KmlReader extends StaxStreamReader {
         }
         
         return KmlReader.kmlFactory.createExtendedData(datas, schemaDatas, anyOtherElements);
+    }
+
+    /**
+     * 
+     * @return
+     * @throws XMLStreamException
+     * @deprecated
+     */
+    @Deprecated
+    private Metadata readMetaData() throws XMLStreamException{
+        return KmlReader.kmlFactory.createMetadata();
     }
 
     /**
@@ -965,7 +981,7 @@ public class KmlReader extends StaxStreamReader {
      * @throws XMLStreamException
      * @throws KmlException
      */
-    private AbstractGeometry readAbstractGeometry(String eName) throws XMLStreamException, KmlException {
+    private AbstractGeometry readAbstractGeometry(String eName) throws XMLStreamException, KmlException, URISyntaxException {
         AbstractGeometry resultat = null;
         if (TAG_MULTI_GEOMETRY.equals(eName)) {
             resultat = readMultiGeometry();
@@ -1096,7 +1112,7 @@ public class KmlReader extends StaxStreamReader {
      * @throws XMLStreamException
      * @throws KmlException
      */
-    private Model readModel() throws XMLStreamException, KmlException {
+    private Model readModel() throws XMLStreamException, KmlException, URISyntaxException {
         // AbstractObject
         List<SimpleType> objectSimpleExtensions = null;
         IdAttributes idAttributes = this.readIdAttributes();
@@ -1161,7 +1177,7 @@ public class KmlReader extends StaxStreamReader {
      * @return
      * @throws XMLStreamException
      */
-    private ResourceMap readResourceMap() throws XMLStreamException{
+    private ResourceMap readResourceMap() throws XMLStreamException, URISyntaxException{
         // AbstractObject
         List<SimpleType> objectSimpleExtensions = null;
         IdAttributes idAttributes = this.readIdAttributes();
@@ -1207,14 +1223,14 @@ public class KmlReader extends StaxStreamReader {
      * @return
      * @throws XMLStreamException
      */
-     private Alias readAlias() throws XMLStreamException{
+     private Alias readAlias() throws XMLStreamException, URISyntaxException{
         // AbstractObject
         List<SimpleType> objectSimpleExtensions = null;
         IdAttributes idAttributes = this.readIdAttributes();
 
         // Alias
-        String targetHref = null;
-        String sourceHref = null;
+        URI targetHref = null;
+        URI sourceHref = null;
         List<SimpleType> alaisSimpleExtensions = null;
         List<AbstractObject> aliasObjectExtensions = null;
 
@@ -1230,9 +1246,9 @@ public class KmlReader extends StaxStreamReader {
                     // ALIAS
                     if (URI_KML.equals(eUri)) {
                         if (TAG_TARGET_HREF.equals(eName)) {
-                            targetHref = reader.getElementText();
+                            targetHref = new URI(reader.getElementText());
                         } else if (TAG_SOURCE_HREF.equals(eName)) {
-                            sourceHref = reader.getElementText();
+                            sourceHref = new URI(reader.getElementText());
                         }
                     }
                     break;
@@ -1531,7 +1547,7 @@ public class KmlReader extends StaxStreamReader {
      * @throws XMLStreamException
      * @throws KmlException
      */
-    private MultiGeometry readMultiGeometry() throws XMLStreamException, KmlException{
+    private MultiGeometry readMultiGeometry() throws XMLStreamException, KmlException, URISyntaxException{
         // AbstractObject
         List<SimpleType> objectSimpleExtensions = null;
         IdAttributes idAttributes = this.readIdAttributes();
@@ -1644,7 +1660,7 @@ public class KmlReader extends StaxStreamReader {
         Object description = null;
         AbstractView view = null;
         AbstractTimePrimitive timePrimitive = null;
-        String styleUrl = null;
+        URI styleUrl = null;
         List<AbstractStyleSelector> styleSelector = new ArrayList<AbstractStyleSelector>();
         Region region = null;
         Object extendedData = null;
@@ -1692,20 +1708,20 @@ public class KmlReader extends StaxStreamReader {
                             snippet = this.readSnippet();
                         } else if (TAG_DESCRIPTION.equals(eName)) {
                             description = this.readElementText();
-                        } else if (TAG_STYLE_URL.equals(eName)) {
-                            styleUrl = reader.getElementText();
-                        } else if (isAbstractView(eName)) {
+                        }else if (isAbstractView(eName)) {
                             view = this.readAbstractView(eName);
                         } else if (isAbstractTimePrimitive(eName)) {
                             timePrimitive = this.readAbstractTimePrimitive(eName);
                         } else if (TAG_STYLE_URL.equals(eName)) {
-                            styleUrl = reader.getElementText();
+                            styleUrl = new URI(reader.getElementText());
                         } else if (isAbstractStyleSelector(eName)) {
                             styleSelector.add(this.readAbstractStyleSelector(eName));
                         } else if (TAG_REGION.equals(eName)) {
                             region = this.readRegion();
                         } else if (TAG_EXTENDED_DATA.equals(eName)) {
                             extendedData = this.readExtendedData();
+                        } else if (TAG_META_DATA.equals(eName)) {
+                            extendedData = this.readMetaData();
                         }
 
                         // ABSTRACT OVERLAY
@@ -1850,6 +1866,16 @@ public class KmlReader extends StaxStreamReader {
      */
     private Icon readIcon(String stopName) throws XMLStreamException{
         return KmlReader.kmlFactory.createIcon(this.readLink(stopName));
+    }
+
+    /**
+     *
+     * @return
+     * @throws XMLStreamException
+     */
+    @Deprecated
+    private Url readUrl(String stopName) throws XMLStreamException{
+        return KmlReader.kmlFactory.createUrl(this.readLink(stopName));
     }
 
     /**
@@ -2126,7 +2152,7 @@ public class KmlReader extends StaxStreamReader {
         Object description = null;
         AbstractView view = null;
         AbstractTimePrimitive timePrimitive = null;
-        String styleUrl = null;
+        URI styleUrl = null;
         List<AbstractStyleSelector> styleSelector = new ArrayList<AbstractStyleSelector>();
         Region region = null;
         Object extendedData = null;
@@ -2176,20 +2202,20 @@ public class KmlReader extends StaxStreamReader {
                             snippet = this.readSnippet();
                         } else if (TAG_DESCRIPTION.equals(eName)) {
                             description = this.readElementText();
-                        } else if (TAG_STYLE_URL.equals(eName)) {
-                            styleUrl = reader.getElementText();
                         } else if (isAbstractView(eName)) {
                             view = this.readAbstractView(eName);
                         } else if (isAbstractTimePrimitive(eName)) {
                             timePrimitive = this.readAbstractTimePrimitive(eName);
                         } else if (TAG_STYLE_URL.equals(eName)) {
-                            styleUrl = reader.getElementText();
+                            styleUrl = new URI(reader.getElementText());
                         } else if (isAbstractStyleSelector(eName)) {
                             styleSelector.add(this.readAbstractStyleSelector(eName));
                         } else if (TAG_REGION.equals(eName)) {
                             region = this.readRegion();
                         } else if (TAG_EXTENDED_DATA.equals(eName)) {
                             extendedData = this.readExtendedData();
+                        } else if (TAG_META_DATA.equals(eName)) {
+                            extendedData = this.readMetaData();
                         }
 
                         // ABSTRACT OVERLAY
@@ -2276,7 +2302,7 @@ public class KmlReader extends StaxStreamReader {
         Object description = null;
         AbstractView view = null;
         AbstractTimePrimitive timePrimitive = null;
-        String styleUrl = null;
+        URI styleUrl = null;
         List<AbstractStyleSelector> styleSelector = new ArrayList<AbstractStyleSelector>();
         Region region = null;
         Object extendedData = null;
@@ -2326,20 +2352,20 @@ public class KmlReader extends StaxStreamReader {
                             snippet = this.readSnippet();
                         } else if (TAG_DESCRIPTION.equals(eName)) {
                             description = this.readElementText();
-                        } else if (TAG_STYLE_URL.equals(eName)) {
-                            styleUrl = reader.getElementText();
                         } else if (isAbstractView(eName)) {
                             view = this.readAbstractView(eName);
                         } else if (isAbstractTimePrimitive(eName)) {
                             timePrimitive = this.readAbstractTimePrimitive(eName);
                         } else if (TAG_STYLE_URL.equals(eName)) {
-                            styleUrl = reader.getElementText();
+                            styleUrl = new URI(reader.getElementText());
                         } else if (isAbstractStyleSelector(eName)) {
                             styleSelector.add(this.readAbstractStyleSelector(eName));
                         } else if (TAG_REGION.equals(eName)) {
                             region = this.readRegion();
                         } else if (TAG_EXTENDED_DATA.equals(eName)) {
                             extendedData = this.readExtendedData();
+                        } else if (TAG_META_DATA.equals(eName)) {
+                            extendedData = this.readMetaData();
                         }
 
                         // ABSTRACT OVERLAY
@@ -2572,7 +2598,7 @@ public class KmlReader extends StaxStreamReader {
      * @return
      * @throws XMLStreamException
      */
-    private AbstractStyleSelector readAbstractStyleSelector(String eName) throws XMLStreamException, KmlException {
+    private AbstractStyleSelector readAbstractStyleSelector(String eName) throws XMLStreamException, KmlException, URISyntaxException {
         AbstractStyleSelector resultat = null;
         if (TAG_STYLE.equals(eName)) {
             resultat = readStyle();
@@ -2588,7 +2614,7 @@ public class KmlReader extends StaxStreamReader {
      * @throws XMLStreamException
      * @throws KmlException
      */
-    private StyleMap readStyleMap() throws XMLStreamException, KmlException {
+    private StyleMap readStyleMap() throws XMLStreamException, KmlException, URISyntaxException {
         // AbstractObject
         List<SimpleType> objectSimpleExtensions = null;
         IdAttributes idAttributes = this.readIdAttributes();
@@ -2638,14 +2664,14 @@ public class KmlReader extends StaxStreamReader {
      * @throws XMLStreamException
      * @throws KmlException
      */
-    private Pair readPair() throws XMLStreamException, KmlException {
+    private Pair readPair() throws XMLStreamException, KmlException, URISyntaxException {
         // AbstractObject
         List<SimpleType> objectSimpleExtensions = null;
         IdAttributes idAttributes = this.readIdAttributes();
 
         // Pair
         StyleState key = DEF_STYLE_STATE;
-        String styleUrl = null;
+        URI styleUrl = null;
         AbstractStyleSelector styleSelector = null;
         List<SimpleType> pairSimpleExtensions = null;
         List<AbstractObject> pairObjectExtensions = null;
@@ -2664,7 +2690,7 @@ public class KmlReader extends StaxStreamReader {
                         if (TAG_KEY.equals(eName)) {
                             key = StyleState.transform(reader.getElementText());
                         } else if (TAG_STYLE_URL.equals(eName)) {
-                            styleUrl = reader.getElementText();
+                            styleUrl = new URI(reader.getElementText());
                         } else if (isAbstractStyleSelector(eName)) {
                             styleSelector = this.readAbstractStyleSelector(eName);
                         }
@@ -3506,7 +3532,7 @@ public class KmlReader extends StaxStreamReader {
         Object description = null;
         AbstractView view = null;
         AbstractTimePrimitive timePrimitive = null;
-        String styleUrl = null;
+        URI styleUrl = null;
         List<AbstractStyleSelector> styleSelector = new ArrayList<AbstractStyleSelector>();
         Region region = null;
         Object extendedData = null;
@@ -3549,20 +3575,20 @@ public class KmlReader extends StaxStreamReader {
                             snippet = this.readSnippet();
                         } else if (TAG_DESCRIPTION.equals(eName)) {
                             description = this.readElementText();
-                        } else if (TAG_STYLE_URL.equals(eName)) {
-                            styleUrl = reader.getElementText();
                         } else if (isAbstractView(eName)) {
                             view = this.readAbstractView(eName);
                         } else if (isAbstractTimePrimitive(eName)) {
                             timePrimitive = this.readAbstractTimePrimitive(eName);
                         } else if (TAG_STYLE_URL.equals(eName)) {
-                            styleUrl = reader.getElementText();
+                            styleUrl = new URI(reader.getElementText());
                         } else if (isAbstractStyleSelector(eName)) {
                             styleSelector.add(this.readAbstractStyleSelector(eName));
                         } else if (TAG_REGION.equals(eName)) {
                             region = this.readRegion();
                         } else if (TAG_EXTENDED_DATA.equals(eName)) {
                             extendedData = this.readExtendedData();
+                        } else if (TAG_META_DATA.equals(eName)) {
+                            extendedData = this.readMetaData();
                         }
 
                         // FOLDER
@@ -3629,7 +3655,7 @@ public class KmlReader extends StaxStreamReader {
         Object description = null;
         AbstractView view = null;
         AbstractTimePrimitive timePrimitive = null;
-        String styleUrl = null;
+        URI styleUrl = null;
         List<AbstractStyleSelector> styleSelector = new ArrayList<AbstractStyleSelector>();
         Region region = null;
         Object extendedData = null;
@@ -3673,20 +3699,20 @@ public class KmlReader extends StaxStreamReader {
                             snippet = this.readSnippet();
                         } else if (TAG_DESCRIPTION.equals(eName)) {
                             description = this.readElementText();
-                        } else if (TAG_STYLE_URL.equals(eName)) {
-                            styleUrl = reader.getElementText();
                         } else if (isAbstractView(eName)) {
                             view = this.readAbstractView(eName);
                         } else if (isAbstractTimePrimitive(eName)) {
                             timePrimitive = this.readAbstractTimePrimitive(eName);
                         } else if (TAG_STYLE_URL.equals(eName)) {
-                            styleUrl = reader.getElementText();
+                            styleUrl = new URI(reader.getElementText());
                         } else if (isAbstractStyleSelector(eName)) {
                             styleSelector.add(this.readAbstractStyleSelector(eName));
                         } else if (TAG_REGION.equals(eName)) {
                             region = this.readRegion();
                         } else if (TAG_EXTENDED_DATA.equals(eName)) {
                             extendedData = this.readExtendedData();
+                        } else if (TAG_META_DATA.equals(eName)) {
+                            extendedData = this.readMetaData();
                         }
 
                         // DOCUMENT
@@ -3837,7 +3863,7 @@ public class KmlReader extends StaxStreamReader {
         Object description = null;
         AbstractView view = null;
         AbstractTimePrimitive timePrimitive = null;
-        String styleUrl = null;
+        URI styleUrl = null;
         List<AbstractStyleSelector> styleSelector = new ArrayList<AbstractStyleSelector>();
         Region region = null;
         Object extendedData = null;
@@ -3878,18 +3904,20 @@ public class KmlReader extends StaxStreamReader {
                             snippet = this.readSnippet();
                         } else if (TAG_DESCRIPTION.equals(eName)) {
                             description = this.readElementText();
-                        } else if (TAG_STYLE_URL.equals(eName)) {
-                            styleUrl = reader.getElementText();
                         } else if (isAbstractView(eName)) {
                             view = this.readAbstractView(eName);
                         } else if (isAbstractTimePrimitive(eName)) {
                             timePrimitive = this.readAbstractTimePrimitive(eName);
+                        } else if (TAG_STYLE_URL.equals(eName)) {
+                            styleUrl = new URI(reader.getElementText());
                         } else if (isAbstractStyleSelector(eName)) {
                             styleSelector.add(this.readAbstractStyleSelector(eName));
                         } else if (TAG_REGION.equals(eName)) {
                             region = this.readRegion();
                         } else if (TAG_EXTENDED_DATA.equals(eName)) {
                             extendedData = this.readExtendedData();
+                        } else if (TAG_META_DATA.equals(eName)) {
+                            extendedData = this.readMetaData();
                         }
 
                         // NETWORK LINK
@@ -3897,8 +3925,10 @@ public class KmlReader extends StaxStreamReader {
                             refreshVisibility = parseBoolean(reader.getElementText());
                         } else if (TAG_FLY_TO_VIEW.equals(eName)) {
                             flyToView = parseBoolean(reader.getElementText());
-                        } else if (TAG_STYLE_URL.equals(eName)) {
+                        } else if (TAG_LINK.equals(eName)) {
                             link = this.readLink(eName);
+                        } else if (TAG_URL.equals(eName)) {
+                            link = this.readUrl(eName);
                         }
 
 

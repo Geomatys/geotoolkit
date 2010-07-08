@@ -4,6 +4,8 @@ import com.vividsolutions.jts.geom.Coordinate;
 import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.List;
 import javax.xml.parsers.ParserConfigurationException;
@@ -60,7 +62,7 @@ public class DocumentTest {
     }
 
     @Test
-    public void documentReadTest() throws IOException, XMLStreamException {
+    public void documentReadTest() throws IOException, XMLStreamException, URISyntaxException {
 
         final KmlReader reader = new KmlReader();
         reader.setInput(new File(pathToTestFile));
@@ -87,7 +89,7 @@ public class DocumentTest {
         Placemark placemark1 = (Placemark) document.getAbstractFeatures().get(1);
 
         assertEquals("Document Feature 1",placemark0.getName());
-        assertEquals("#exampleStyleDocument",placemark0.getStyleUrl());
+        assertEquals(new URI("#exampleStyleDocument"),placemark0.getStyleUrl());
         AbstractGeometry abstractGeometry0 = placemark0.getAbstractGeometry();
         assertTrue(abstractGeometry0 instanceof Point);
         Point point0 = (Point) abstractGeometry0;
@@ -99,7 +101,7 @@ public class DocumentTest {
         assertEquals(0, coordinate00.z, DELTA);
 
         assertEquals("Document Feature 2",placemark1.getName());
-        assertEquals("#exampleStyleDocument",placemark1.getStyleUrl());
+        assertEquals(new URI("#exampleStyleDocument"),placemark1.getStyleUrl());
         AbstractGeometry abstractGeometry1 = placemark1.getAbstractGeometry();
         assertTrue(abstractGeometry1 instanceof Point);
         Point point1 = (Point) abstractGeometry1;
@@ -112,7 +114,7 @@ public class DocumentTest {
     }
     
     @Test
-    public void documentWriteTest() throws KmlException, IOException, XMLStreamException, ParserConfigurationException, SAXException{
+    public void documentWriteTest() throws KmlException, IOException, XMLStreamException, ParserConfigurationException, SAXException, URISyntaxException{
         final KmlFactory kmlFactory = new DefaultKmlFactory();
 
         final Placemark placemark0 = kmlFactory.createPlacemark();
@@ -124,7 +126,7 @@ public class DocumentTest {
         final Point point0 = kmlFactory.createPoint(coordinates0);
         placemark0.setAbstractGeometry(point0);
         placemark0.setName("Document Feature 1");
-        placemark0.setStyleUrl("#exampleStyleDocument");
+        placemark0.setStyleUrl(new URI("#exampleStyleDocument"));
 
         final Placemark placemark1 = kmlFactory.createPlacemark();
         final double longitude10 = -122.370;
@@ -135,7 +137,7 @@ public class DocumentTest {
         final Point point1 = kmlFactory.createPoint(coordinates1);
         placemark1.setAbstractGeometry(point1);
         placemark1.setName("Document Feature 2");
-        placemark1.setStyleUrl("#exampleStyleDocument");
+        placemark1.setStyleUrl(new URI("#exampleStyleDocument"));
 
         Style style = kmlFactory.createStyle();
         Color color = new Color(204,0,0,255);

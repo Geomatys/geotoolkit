@@ -83,6 +83,7 @@ import org.geotoolkit.data.kml.model.Lod;
 import org.geotoolkit.data.kml.model.DefaultLod;
 import org.geotoolkit.data.kml.model.LookAt;
 import org.geotoolkit.data.kml.model.DefaultLookAt;
+import org.geotoolkit.data.kml.model.DefaultMetaData;
 import org.geotoolkit.data.kml.model.Model;
 import org.geotoolkit.data.kml.model.DefaultModel;
 import org.geotoolkit.data.kml.model.MultiGeometry;
@@ -137,11 +138,14 @@ import org.geotoolkit.data.kml.model.DefaultTimeStamp;
 import org.geotoolkit.data.kml.model.Units;
 import org.geotoolkit.data.kml.model.Update;
 import org.geotoolkit.data.kml.model.DefaultUpdate;
+import org.geotoolkit.data.kml.model.DefaultUrl;
 import org.geotoolkit.data.kml.model.Vec2;
 import org.geotoolkit.data.kml.model.DefaultVec2;
 import org.geotoolkit.data.kml.model.ViewRefreshMode;
 import org.geotoolkit.data.kml.model.ViewVolume;
 import org.geotoolkit.data.kml.model.DefaultViewVolume;
+import org.geotoolkit.data.kml.model.Metadata;
+import org.geotoolkit.data.kml.model.Url;
 import org.geotoolkit.data.xal.model.AddressDetails;
 import org.geotoolkit.data.kml.xsd.SimpleType;
 
@@ -179,7 +183,7 @@ public class DefaultKmlFactory implements KmlFactory{
     @Override
     public Alias createAlias(
             List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
-            String targetHref, String sourceHref,
+            URI targetHref, URI sourceHref,
             List<SimpleType> aliasSimpleExtensions, List<AbstractObject> aliasObjectExtensions) {
         return new DefaultAlias(objectSimpleExtensions, idAttributes,
                 targetHref, sourceHref, aliasSimpleExtensions, aliasObjectExtensions);
@@ -393,7 +397,7 @@ public class DefaultKmlFactory implements KmlFactory{
             String address, AddressDetails addressDetails, 
             String phoneNumber, Object snippet,
             Object description, AbstractView view, AbstractTimePrimitive timePrimitive,
-            String styleUrl, List<AbstractStyleSelector> styleSelector,
+            URI styleUrl, List<AbstractStyleSelector> styleSelector,
             Region region, Object extendedData,
             List<SimpleType> abstractFeatureSimpleExtensions,
             List<AbstractObject> abstractFeatureObjectExtensions,
@@ -448,7 +452,7 @@ public class DefaultKmlFactory implements KmlFactory{
             String address, AddressDetails addressDetails, 
             String phoneNumber, Object snippet,
             Object description, AbstractView view, AbstractTimePrimitive timePrimitive,
-            String styleUrl, List<AbstractStyleSelector> styleSelector,
+            URI styleUrl, List<AbstractStyleSelector> styleSelector,
             Region region, Object extendedData,
             List<SimpleType> abstractFeatureSimpleExtensions,
             List<AbstractObject> abstractFeatureObjectExtensions,
@@ -485,7 +489,7 @@ public class DefaultKmlFactory implements KmlFactory{
             String address, AddressDetails addressDetails, 
             String phoneNumber, Object snippet,
             Object description, AbstractView view, AbstractTimePrimitive timePrimitive,
-            String styleUrl, List<AbstractStyleSelector> styleSelector,
+            URI styleUrl, List<AbstractStyleSelector> styleSelector,
             Region region, Object extendedData,
             List<SimpleType> abstractFeatureSimpleExtensions,
             List<AbstractObject> abstractFeatureObjectExtensions,
@@ -523,6 +527,16 @@ public class DefaultKmlFactory implements KmlFactory{
     @Override
     public Icon createIcon(Link link) {
         return new DefaultIcon(link);
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    @Deprecated
+    public Url createUrl(Link link) {
+        return new DefaultUrl(link);
     }
 
     /**
@@ -902,6 +916,29 @@ public class DefaultKmlFactory implements KmlFactory{
     }
 
     /**
+     *
+     * @param content
+     * @return
+     * @deprecated
+     */
+    @Deprecated
+    @Override
+    public Metadata createMetadata(List<Object> content){
+        return new DefaultMetaData(content);
+    }
+
+    /**
+     *
+     * @return
+     * @deprecated
+     */
+    @Deprecated
+    @Override
+    public Metadata createMetadata(){
+        return new DefaultMetaData();
+    }
+
+    /**
      * @{@inheritDoc }
      */
     @Override
@@ -962,7 +999,7 @@ public class DefaultKmlFactory implements KmlFactory{
             String address, AddressDetails addressDetails, String phoneNumber, 
             Object snippet, Object description,
             AbstractView view, AbstractTimePrimitive timePrimitive,
-            String styleUrl, List<AbstractStyleSelector> styleSelector,
+            URI styleUrl, List<AbstractStyleSelector> styleSelector,
             Region region, Object extendedData,
             List<SimpleType> abstractFeatureSimpleExtensions,
             List<AbstractObject> abstractFeatureObjectExtensions,
@@ -1039,7 +1076,7 @@ public class DefaultKmlFactory implements KmlFactory{
     @Override
     public Pair createPair(
             List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
-            StyleState key, String styleUrl, AbstractStyleSelector styleSelector,
+            StyleState key, URI styleUrl, AbstractStyleSelector styleSelector,
             List<SimpleType> pairSimpleExtensions,
             List<AbstractObject> pairObjectExtensions) {
         return new DefaultPair(objectSimpleExtensions, idAttributes,
@@ -1067,7 +1104,7 @@ public class DefaultKmlFactory implements KmlFactory{
             String phoneNumber, Object snippet,
             Object description, AbstractView view,
             AbstractTimePrimitive timePrimitive,
-            String styleUrl, List<AbstractStyleSelector> styleSelector,
+            URI styleUrl, List<AbstractStyleSelector> styleSelector,
             Region region, Object extendedData,
             List<SimpleType> abstractFeatureSimpleExtensions,
             List<AbstractObject> abstractFeatureObjectExtensions,
@@ -1113,7 +1150,7 @@ public class DefaultKmlFactory implements KmlFactory{
             String phoneNumber, Object snippet,
             Object description, AbstractView view,
             AbstractTimePrimitive timePrimitive,
-            String styleUrl, List<AbstractStyleSelector> styleSelector,
+            URI styleUrl, List<AbstractStyleSelector> styleSelector,
             Region region, Object extendedData,
             List<SimpleType> abstractFeatureSimpleExtensions,
             List<AbstractObject> abstractFeatureObjectExtensions,
@@ -1332,7 +1369,7 @@ public class DefaultKmlFactory implements KmlFactory{
             String address, AddressDetails addressDetails,
             String phoneNumber, Object snippet,
             Object description, AbstractView view, AbstractTimePrimitive timePrimitive,
-            String styleUrl, List<AbstractStyleSelector> styleSelector,
+            URI styleUrl, List<AbstractStyleSelector> styleSelector,
             Region region, Object extendedData,
             List<SimpleType> abstractFeatureSimpleExtensions,
             List<AbstractObject> abstractFeatureObjectExtensions,

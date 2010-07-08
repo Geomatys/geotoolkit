@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2"
+xmlns:atom="http://www.w3.org/2005/Atom"
+xmlns:xal="urn:oasis:names:tc:ciq:xsdschema:xAL:2.0">
+<NetworkLink>
+  <name>NE US Radar</name>
+  <flyToView>1</flyToView>
+  <Url>
+    <href>http://www.example.com/geotiff/NE/MergedReflectivityQComposite.kml</href>
+    <refreshMode>onInterval</refreshMode>
+    <refreshInterval>30.0</refreshInterval>
+    <viewRefreshMode>onStop</viewRefreshMode>
+    <viewRefreshTime>7.0</viewRefreshTime>
+    <viewFormat>BBOX=[bboxWest],[bboxSouth],[bboxEast],[bboxNorth];CAMERA=\
+      [lookatLon],[lookatLat],[lookatRange],[lookatTilt],[lookatHeading];VIEW=\
+      [horizFov],[vertFov],[horizPixels],[vertPixels],[terrainEnabled]</viewFormat>
+  </Url>
+</NetworkLink>
+</kml>

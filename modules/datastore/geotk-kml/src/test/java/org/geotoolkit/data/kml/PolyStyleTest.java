@@ -4,6 +4,8 @@ import com.vividsolutions.jts.geom.Coordinate;
 import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.List;
 import javax.xml.parsers.ParserConfigurationException;
@@ -63,7 +65,7 @@ public class PolyStyleTest {
     }
 
     @Test
-    public void polyStyleReadTest() throws IOException, XMLStreamException {
+    public void polyStyleReadTest() throws IOException, XMLStreamException, URISyntaxException {
 
         final KmlReader reader = new KmlReader();
         reader.setInput(new File(pathToTestFile));
@@ -90,7 +92,7 @@ public class PolyStyleTest {
         assertTrue(document.getAbstractFeatures().get(0) instanceof Placemark);
         Placemark placemark = (Placemark) document.getAbstractFeatures().get(0);
         assertEquals("hollow box", placemark.getName());
-        assertEquals("#examplePolyStyle", placemark.getStyleUrl());
+        assertEquals(new URI("#examplePolyStyle"), placemark.getStyleUrl());
         assertTrue(placemark.getAbstractGeometry() instanceof Polygon);
         Polygon polygon = (Polygon) placemark.getAbstractGeometry();
         assertTrue(polygon.getExtrude());
@@ -162,7 +164,7 @@ public class PolyStyleTest {
     }
 
     @Test
-    public void polyStyleWriteTest() throws KmlException, IOException, XMLStreamException, ParserConfigurationException, SAXException {
+    public void polyStyleWriteTest() throws KmlException, IOException, XMLStreamException, ParserConfigurationException, SAXException, URISyntaxException {
         final KmlFactory kmlFactory = new DefaultKmlFactory();
 
         Coordinate coordinate0 = kmlFactory.createCoordinate(
@@ -209,7 +211,7 @@ public class PolyStyleTest {
 
         Placemark placemark = kmlFactory.createPlacemark();
         placemark.setName("hollow box");
-        placemark.setStyleUrl("#examplePolyStyle");
+        placemark.setStyleUrl(new URI("#examplePolyStyle"));
         placemark.setAbstractGeometry(polygon);
 
         Style style = kmlFactory.createStyle();

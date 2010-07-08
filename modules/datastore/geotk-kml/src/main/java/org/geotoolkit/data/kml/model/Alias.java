@@ -1,5 +1,7 @@
 package org.geotoolkit.data.kml.model;
 
+import java.net.URI;
+
 /**
  *
  * <p>This interface maps Alias element.</p>
@@ -32,24 +34,24 @@ public interface Alias extends AbstractObject {
      *
      * @return the target href
      */
-    public String getTargetHref();
+    public URI getTargetHref();
 
     /**
      *
      * @return the source href
      */
-    public String getSourceHref();
+    public URI getSourceHref();
 
     /**
      *
      * @param targetHref
      */
-    public void setTargetHref(String targetHref);
+    public void setTargetHref(URI targetHref);
 
     /**
      *
      * @param sourceHref
      */
-    public void setSourceHref(String sourceHref);
+    public void setSourceHref(URI sourceHref);
 
 }

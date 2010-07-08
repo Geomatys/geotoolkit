@@ -51,6 +51,7 @@ import org.geotoolkit.data.kml.model.ListStyle;
 import org.geotoolkit.data.kml.model.Location;
 import org.geotoolkit.data.kml.model.Lod;
 import org.geotoolkit.data.kml.model.LookAt;
+import org.geotoolkit.data.kml.model.Metadata;
 import org.geotoolkit.data.kml.model.Model;
 import org.geotoolkit.data.kml.model.MultiGeometry;
 import org.geotoolkit.data.kml.model.NetworkLink;
@@ -80,6 +81,7 @@ import org.geotoolkit.data.kml.model.TimeSpan;
 import org.geotoolkit.data.kml.model.TimeStamp;
 import org.geotoolkit.data.kml.model.Units;
 import org.geotoolkit.data.kml.model.Update;
+import org.geotoolkit.data.kml.model.Url;
 import org.geotoolkit.data.kml.model.Vec2;
 import org.geotoolkit.data.kml.model.ViewRefreshMode;
 import org.geotoolkit.data.kml.model.ViewVolume;
@@ -125,7 +127,7 @@ public interface KmlFactory {
      */
     public Alias createAlias(List<SimpleType> objectSimpleExtensions,
             IdAttributes idAttributes,
-            String targetHref, String sourceHref,
+            URI targetHref, URI sourceHref,
             List<SimpleType> aliasSimpleExtensions, List<AbstractObject> aliasObjectExtensions);
 
     /**
@@ -348,7 +350,7 @@ public interface KmlFactory {
             String address, AddressDetails addressDetails,
             String phoneNumber, Object snippet,
             Object description, AbstractView view, AbstractTimePrimitive timePrimitive,
-            String styleUrl, List<AbstractStyleSelector> styleSelector,
+            URI styleUrl, List<AbstractStyleSelector> styleSelector,
             Region region, Object extendedData,
             List<SimpleType> abstractFeatureSimpleExtensions,
             List<AbstractObject> abstractFeatureObjectExtensions,
@@ -416,7 +418,7 @@ public interface KmlFactory {
             String address, AddressDetails addressDetails, 
             String phoneNumber, Object snippet,
             Object description, AbstractView view, AbstractTimePrimitive timePrimitive,
-            String styleUrl, List<AbstractStyleSelector> styleSelector,
+            URI styleUrl, List<AbstractStyleSelector> styleSelector,
             Region region, Object extendedData,
             List<SimpleType> abstractFeatureSimpleExtensions,
             List<AbstractObject> abstractFeatureObjectExtensions,
@@ -473,7 +475,7 @@ public interface KmlFactory {
             String address, AddressDetails addressDetails, 
             String phoneNumber, Object snippet,
             Object description, AbstractView view, AbstractTimePrimitive timePrimitive,
-            String styleUrl, List<AbstractStyleSelector> styleSelector,
+            URI styleUrl, List<AbstractStyleSelector> styleSelector,
             Region region, Object extendedData,
             List<SimpleType> abstractFeatureSimpleExtensions,
             List<AbstractObject> abstractFeatureObjectExtensions,
@@ -494,6 +496,15 @@ public interface KmlFactory {
      * @return
      */
     public Icon createIcon(Link link);
+
+    /**
+     * 
+     * @param link
+     * @return
+     * @deprecated
+     */
+    @Deprecated
+    public Url createUrl(Link link);
 
     /**
      *
@@ -898,6 +909,23 @@ public interface KmlFactory {
 
     /**
      *
+     * @param content
+     * @return
+     * @deprecated
+     */
+    @Deprecated
+    public Metadata createMetadata(List<Object> content);
+
+    /**
+     * 
+     * @return
+     * @deprecated
+     */
+    @Deprecated
+    public Metadata createMetadata();
+
+    /**
+     *
      * @param objectSimpleExtensions
      * @param idAttributes
      * @param abstractGeometrySimpleExtensions
@@ -987,7 +1015,7 @@ public interface KmlFactory {
             String phoneNumber, Object snippet,
             Object description, AbstractView view,
             AbstractTimePrimitive timePrimitive,
-            String styleUrl, List<AbstractStyleSelector> styleSelector,
+            URI styleUrl, List<AbstractStyleSelector> styleSelector,
             Region region, Object extendedData,
             List<SimpleType> abstractFeatureSimpleExtensions,
             List<AbstractObject> abstractFeatureObjectExtensions,
@@ -1065,7 +1093,7 @@ public interface KmlFactory {
      */
     public Pair createPair(
             List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
-            StyleState key, String styleUrl, AbstractStyleSelector styleSelector,
+            StyleState key, URI styleUrl, AbstractStyleSelector styleSelector,
             List<SimpleType> pairSimpleExtensions,
             List<AbstractObject> pairObjectExtensions);
 
@@ -1118,7 +1146,7 @@ public interface KmlFactory {
             String address, AddressDetails addressDetails, String phoneNumber, 
             Object snippet, Object description, AbstractView view,
             AbstractTimePrimitive timePrimitive,
-            String styleUrl, List<AbstractStyleSelector> styleSelector,
+            URI styleUrl, List<AbstractStyleSelector> styleSelector,
             Region region, Object extendedData,
             List<SimpleType> abstractFeatureSimpleExtensions,
             List<AbstractObject> abstractFeatureObjectExtensions,
@@ -1175,7 +1203,7 @@ public interface KmlFactory {
             String phoneNumber, Object snippet,
             Object description, AbstractView view,
             AbstractTimePrimitive timePrimitive,
-            String styleUrl, List<AbstractStyleSelector> styleSelector,
+            URI styleUrl, List<AbstractStyleSelector> styleSelector,
             Region region, Object extendedData,
             List<SimpleType> abstractFeatureSimpleExtensions,
             List<AbstractObject> abstractFeatureObjectExtensions,
@@ -1424,7 +1452,7 @@ public interface KmlFactory {
             String address, AddressDetails addressDetails, 
             String phoneNumber, Object snippet,
             Object description, AbstractView view, AbstractTimePrimitive timePrimitive,
-            String styleUrl, List<AbstractStyleSelector> styleSelector,
+            URI styleUrl, List<AbstractStyleSelector> styleSelector,
             Region region, Object extendedData,
             List<SimpleType> abstractFeatureSimpleExtensions,
             List<AbstractObject> abstractFeatureObjectExtensions,

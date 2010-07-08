@@ -4,6 +4,8 @@ import com.vividsolutions.jts.geom.Coordinate;
 import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.List;
 import javax.xml.parsers.ParserConfigurationException;
@@ -64,7 +66,7 @@ public class StyleMapTest {
     }
 
     @Test
-    public void styleMapReadTest() throws IOException, XMLStreamException {
+    public void styleMapReadTest() throws IOException, XMLStreamException, URISyntaxException {
 
         final KmlReader reader = new KmlReader();
         reader.setInput(new File(pathToTestFile));
@@ -104,16 +106,16 @@ public class StyleMapTest {
         assertEquals("styleMapExample", style2.getIdAttributes().getId());
         assertEquals(2, style2.getPairs().size());
             Pair pair0 = style2.getPairs().get(0);
-            assertEquals("#normalState", pair0.getStyleUrl());
+            assertEquals(new URI("#normalState"), pair0.getStyleUrl());
         Pair pair1 = style2.getPairs().get(1);
         assertEquals(StyleState.HIGHLIGHT, pair1.getKey());
-        assertEquals("#highlightState", pair1.getStyleUrl());
+        assertEquals(new URI("#highlightState"), pair1.getStyleUrl());
 
         assertEquals(1, document.getAbstractFeatures().size());
         assertTrue(document.getAbstractFeatures().get(0) instanceof Placemark);
         Placemark placemark = (Placemark) document.getAbstractFeatures().get(0);
         assertEquals("StyleMap example", placemark.getName());
-        assertEquals("#styleMapExample", placemark.getStyleUrl());
+        assertEquals(new URI("#styleMapExample"), placemark.getStyleUrl());
         assertTrue(placemark.getAbstractGeometry() instanceof Point);
         Point point = (Point) placemark.getAbstractGeometry();
         Coordinates coordinates = point.getCoordinateSequence();
@@ -125,7 +127,7 @@ public class StyleMapTest {
     }
 
     @Test
-    public void styleMapWriteTest() throws KmlException, IOException, XMLStreamException, ParserConfigurationException, SAXException {
+    public void styleMapWriteTest() throws KmlException, IOException, XMLStreamException, ParserConfigurationException, SAXException, URISyntaxException {
         final KmlFactory kmlFactory = new DefaultKmlFactory();
 
         Coordinate coordinate = kmlFactory.createCoordinate(-122.368987, 37.817634, 0);
@@ -134,7 +136,7 @@ public class StyleMapTest {
 
         Placemark placemark = kmlFactory.createPlacemark();
         placemark.setName("StyleMap example");
-        placemark.setStyleUrl("#styleMapExample");
+        placemark.setStyleUrl(new URI("#styleMapExample"));
         placemark.setAbstractGeometry(point);
 
         Style style0 = kmlFactory.createStyle();
@@ -166,11 +168,11 @@ public class StyleMapTest {
 
         StyleMap styleMap = kmlFactory.createStyleMap();
             Pair pair0 = kmlFactory.createPair();
-            pair0.setStyleUrl("#normalState");
+            pair0.setStyleUrl(new URI("#normalState"));
 
             Pair pair1 = kmlFactory.createPair();
             pair1.setKey(StyleState.HIGHLIGHT);
-            pair1.setStyleUrl("#highlightState");
+            pair1.setStyleUrl(new URI("#highlightState"));
         styleMap.setPairs(Arrays.asList(pair0, pair1));
         IdAttributes idAttributes2 = kmlFactory.createIdAttributes("styleMapExample", null);
         styleMap.setIdAttributes(idAttributes2);

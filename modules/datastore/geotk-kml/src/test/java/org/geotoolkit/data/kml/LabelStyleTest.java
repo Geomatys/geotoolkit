@@ -4,6 +4,8 @@ import com.vividsolutions.jts.geom.Coordinate;
 import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.List;
 import javax.xml.parsers.ParserConfigurationException;
@@ -61,7 +63,7 @@ public class LabelStyleTest {
     }
 
     @Test
-    public void labelStyleReadTest() throws IOException, XMLStreamException {
+    public void labelStyleReadTest() throws IOException, XMLStreamException, URISyntaxException {
 
         final KmlReader reader = new KmlReader();
         reader.setInput(new File(pathToTestFile));
@@ -87,7 +89,7 @@ public class LabelStyleTest {
         assertTrue(document.getAbstractFeatures().get(0) instanceof Placemark);
         Placemark placemark = (Placemark) document.getAbstractFeatures().get(0);
         assertEquals("LabelStyle.kml", placemark.getName());
-        assertEquals("#randomLabelColor", placemark.getStyleUrl());
+        assertEquals(new URI("#randomLabelColor"), placemark.getStyleUrl());
         assertTrue(placemark.getAbstractGeometry() instanceof Point);
         Point point = (Point) placemark.getAbstractGeometry();
         Coordinates coordinates = point.getCoordinateSequence();
@@ -99,7 +101,7 @@ public class LabelStyleTest {
     }
 
     @Test
-    public void labelStyleWriteTest() throws KmlException, IOException, XMLStreamException, ParserConfigurationException, SAXException {
+    public void labelStyleWriteTest() throws KmlException, IOException, XMLStreamException, ParserConfigurationException, SAXException, URISyntaxException {
         final KmlFactory kmlFactory = new DefaultKmlFactory();
 
         Coordinate coordinate = kmlFactory.createCoordinate(-122.367375, 37.829192, 0);
@@ -108,7 +110,7 @@ public class LabelStyleTest {
 
         Placemark placemark = kmlFactory.createPlacemark();
         placemark.setName("LabelStyle.kml");
-        placemark.setStyleUrl("#randomLabelColor");
+        placemark.setStyleUrl(new URI("#randomLabelColor"));
         placemark.setAbstractGeometry(point);
 
         Style style = kmlFactory.createStyle();

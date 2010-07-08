@@ -1,5 +1,6 @@
 package org.geotoolkit.data.kml.model;
 
+import java.net.URI;
 import java.util.List;
 import org.geotoolkit.data.atom.model.AtomPersonConstruct;
 import org.geotoolkit.data.atom.model.AtomLink;
@@ -135,7 +136,7 @@ public interface AbstractFeature extends AbstractObject {
      *
      * @return The AbstractFeature style url.
      */
-    public String getStyleUrl();
+    public URI getStyleUrl();
 
     /**
      *
@@ -245,7 +246,7 @@ public interface AbstractFeature extends AbstractObject {
      *
      * @param styleUrl
      */
-    public void setStyleUrl(String styleUrl);
+    public void setStyleUrl(URI styleUrl);
 
     /**
      *
@@ -271,6 +272,6 @@ public interface AbstractFeature extends AbstractObject {
      * @deprecated
      */
     @Deprecated
-    public void setExtendedData(MetaData metaData);
+    public void setExtendedData(Metadata metaData);
 
 }

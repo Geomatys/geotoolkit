@@ -4,6 +4,8 @@ import com.vividsolutions.jts.geom.Coordinate;
 import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.List;
 import javax.xml.parsers.ParserConfigurationException;
@@ -59,7 +61,7 @@ public class LineStyleTest {
     }
 
     @Test
-    public void lineStyleReadTest() throws IOException, XMLStreamException {
+    public void lineStyleReadTest() throws IOException, XMLStreamException, URISyntaxException {
 
         final KmlReader reader = new KmlReader();
         reader.setInput(new File(pathToTestFile));
@@ -86,7 +88,7 @@ public class LineStyleTest {
         assertTrue(document.getAbstractFeatures().get(0) instanceof Placemark);
         Placemark placemark = (Placemark) document.getAbstractFeatures().get(0);
         assertEquals("LineStyle Example", placemark.getName());
-        assertEquals("#linestyleExample", placemark.getStyleUrl());
+        assertEquals(new URI("#linestyleExample"), placemark.getStyleUrl());
         assertTrue(placemark.getAbstractGeometry() instanceof LineString);
         LineString lineString = (LineString) placemark.getAbstractGeometry();
         assertTrue(lineString.getExtrude());
@@ -104,7 +106,7 @@ public class LineStyleTest {
     }
 
     @Test
-    public void lineStyleWriteTest() throws KmlException, IOException, XMLStreamException, ParserConfigurationException, SAXException {
+    public void lineStyleWriteTest() throws KmlException, IOException, XMLStreamException, ParserConfigurationException, SAXException, URISyntaxException {
         final KmlFactory kmlFactory = new DefaultKmlFactory();
 
         Coordinate coordinate0 = kmlFactory.createCoordinate(-122.364383, 37.824664, 0);
@@ -116,7 +118,7 @@ public class LineStyleTest {
 
         Placemark placemark = kmlFactory.createPlacemark();
         placemark.setName("LineStyle Example");
-        placemark.setStyleUrl("#linestyleExample");
+        placemark.setStyleUrl(new URI("#linestyleExample"));
         placemark.setAbstractGeometry(lineString);
 
         Style style = kmlFactory.createStyle();

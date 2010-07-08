@@ -4,6 +4,7 @@ import org.geotoolkit.data.xal.xml.XalWriter;
 import org.geotoolkit.data.atom.xml.AtomWriter;
 import java.awt.Color;
 import java.io.IOException;
+import java.net.URI;
 import java.util.Calendar;
 import java.util.List;
 import java.util.logging.Level;
@@ -62,6 +63,7 @@ import org.geotoolkit.data.kml.model.ListStyle;
 import org.geotoolkit.data.kml.model.Location;
 import org.geotoolkit.data.kml.model.Lod;
 import org.geotoolkit.data.kml.model.LookAt;
+import org.geotoolkit.data.kml.model.Metadata;
 import org.geotoolkit.data.kml.model.Model;
 import org.geotoolkit.data.kml.model.MultiGeometry;
 import org.geotoolkit.data.kml.model.NetworkLink;
@@ -90,6 +92,7 @@ import org.geotoolkit.data.kml.model.StyleState;
 import org.geotoolkit.data.kml.model.TimeSpan;
 import org.geotoolkit.data.kml.model.TimeStamp;
 import org.geotoolkit.data.kml.model.Update;
+import org.geotoolkit.data.kml.model.Url;
 import org.geotoolkit.data.kml.model.Vec2;
 import org.geotoolkit.data.kml.model.ViewRefreshMode;
 import org.geotoolkit.data.kml.model.ViewVolume;
@@ -257,7 +260,7 @@ public class KmlWriter extends StaxStreamWriter {
     private void writeUpdate(Update update) throws XMLStreamException{
         writer.writeStartElement(URI_KML, TAG_UPDATE);
         if(update.getTargetHref() != null){
-            this.writeTargetHref(update.getTargetHref().toString());
+            this.writeTargetHref(update.getTargetHref());
         }
         for (Create create : update.getCreates()){
             this.writeCreate(create);
@@ -459,7 +462,10 @@ public class KmlWriter extends StaxStreamWriter {
         this.writeRefreshVisibility(networkLink.getRefreshVisibility());
         this.writeFlyToView(networkLink.getFlyToView());
         if (networkLink.getLink() != null){
-            this.writeLink(networkLink.getLink());
+            if (networkLink.getLink() instanceof Url)
+                this.writeUrl((Url) networkLink.getLink());
+            else
+                this.writeLink(networkLink.getLink());
         }
         if (networkLink.extensions().simples(Names.NETWORK_LINK) != null){
         }
@@ -528,24 +534,45 @@ public class KmlWriter extends StaxStreamWriter {
     }
 
     /**
-     * 
-     * @param extendedData
+     *
+     * @param dataContainer
      * @throws XMLStreamException
      */
     private void writeExtendedData(Object dataContainer) throws XMLStreamException{
         if(dataContainer instanceof ExtendedData){
-            ExtendedData extendedData = (ExtendedData) dataContainer;
-            writer.writeStartElement(URI_KML, TAG_EXTENDED_DATA);
-            for (Data data : extendedData.getDatas()){
-                this.writeData(data);
-            }
-            for (SchemaData schemaData : extendedData.getSchemaData()){
-                this.writeSchemaData(schemaData);
-            }
-            if (extendedData.getAnyOtherElements() != null){
-
-            }
+            this.writeExtendedData((ExtendedData) dataContainer);
+        } else if (dataContainer instanceof Metadata){
+            this.writeMetaData((Metadata) dataContainer);
         }
+    }
+
+    /**
+     *
+     * @param extendedData
+     * @throws XMLStreamException
+     */
+    private void writeExtendedData(ExtendedData extendedData) throws XMLStreamException{
+        writer.writeStartElement(URI_KML, TAG_EXTENDED_DATA);
+        for (Data data : extendedData.getDatas()){
+            this.writeData(data);
+        }
+        for (SchemaData schemaData : extendedData.getSchemaData()){
+            this.writeSchemaData(schemaData);
+        }
+        if (extendedData.getAnyOtherElements() != null){
+
+        }
+        writer.writeEndElement();
+    }
+
+    /**
+     *
+     * @param metadata
+     * @deprecated
+     */
+    @Deprecated
+    private void writeMetaData(Metadata metadata) throws XMLStreamException{
+        writer.writeStartElement(URI_KML, TAG_META_DATA);
         writer.writeEndElement();
     }
 
@@ -1159,6 +1186,19 @@ public class KmlWriter extends StaxStreamWriter {
     private void writeLink(Link link) throws XMLStreamException{
         writer.writeStartElement(URI_KML, TAG_LINK);
         this.writeLink_structure(link);
+        writer.writeEndElement();
+    }
+
+    /**
+     * 
+     * @param url
+     * @throws XMLStreamException
+     * @deprecated
+     */
+    @Deprecated
+    private void writeUrl(Url url) throws XMLStreamException{
+        writer.writeStartElement(URI_KML, TAG_URL);
+        this.writeLink_structure(url);
         writer.writeEndElement();
     }
 
@@ -2104,12 +2144,12 @@ public class KmlWriter extends StaxStreamWriter {
 
     /**
      *
-     * @param text
+     * @param uri
      * @throws XMLStreamException
      */
-    private void writeStyleUrl(String text) throws XMLStreamException{
+    private void writeStyleUrl(URI uri) throws XMLStreamException{
         writer.writeStartElement(URI_KML, TAG_STYLE_URL);
-        writer.writeCharacters(text);
+        writer.writeCharacters(uri.toString());
         writer.writeEndElement();
     }
 
@@ -2140,9 +2180,9 @@ public class KmlWriter extends StaxStreamWriter {
      * @param targetHref
      * @throws XMLStreamException
      */
-    private void writeTargetHref(String targetHref) throws XMLStreamException {
+    private void writeTargetHref(URI targetHref) throws XMLStreamException {
         writer.writeStartElement(URI_KML, TAG_TARGET_HREF);
-        writer.writeCharacters(targetHref);
+        writer.writeCharacters(targetHref.toString());
         writer.writeEndElement();
     }
 
@@ -2151,9 +2191,9 @@ public class KmlWriter extends StaxStreamWriter {
      * @param sourceHref
      * @throws XMLStreamException
      */
-    private void writeSourceHref(String sourceHref) throws XMLStreamException {
+    private void writeSourceHref(URI sourceHref) throws XMLStreamException {
         writer.writeStartElement(URI_KML, TAG_SOURCE_HREF);
-        writer.writeCharacters(sourceHref);
+        writer.writeCharacters(sourceHref.toString());
         writer.writeEndElement();
     }
 

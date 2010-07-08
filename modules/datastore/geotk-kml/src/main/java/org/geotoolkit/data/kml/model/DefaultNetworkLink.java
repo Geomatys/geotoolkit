@@ -1,5 +1,6 @@
 package org.geotoolkit.data.kml.model;
 
+import java.net.URI;
 import java.util.List;
 import org.geotoolkit.data.atom.model.AtomLink;
 import org.geotoolkit.data.atom.model.AtomPersonConstruct;
@@ -61,7 +62,7 @@ public class DefaultNetworkLink extends DefaultAbstractFeature implements Networ
             String phoneNumber, Object snippet,
             Object description, AbstractView view,
             AbstractTimePrimitive timePrimitive,
-            String styleUrl, List<AbstractStyleSelector> styleSelector,
+            URI styleUrl, List<AbstractStyleSelector> styleSelector,
             Region region, Object extendedData,
             List<SimpleType> abstractFeatureSimpleExtensions,
             List<AbstractObject> abstractFeatureObjectExtensions,
