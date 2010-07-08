@@ -55,6 +55,14 @@ public interface Update {
     public List<Change> getChanges();
 
     /**
+     * 
+     * @return
+     * @deprecated
+     */
+    @Deprecated
+    public List<AbstractFeature> getReplaces();
+
+    /**
      *
      * @return
      */
@@ -89,6 +97,14 @@ public interface Update {
      * @param changes
      */
     public void setChanges(List<Change> changes);
+
+    /**
+     * 
+     * @param replaces
+     * @deprecated
+     */
+    @Deprecated
+    public void setReplaces(List<AbstractFeature> replaces);
 
     /**
      *

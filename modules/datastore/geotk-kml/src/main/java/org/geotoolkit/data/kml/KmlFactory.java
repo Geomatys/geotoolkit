@@ -1600,12 +1600,14 @@ public interface KmlFactory {
      * @param creates
      * @param deletes
      * @param changes
+     * @param replaces
      * @param updateOpExtensions
      * @param updateExtensions
      * @return
      */
     public Update createUpdate(URI targetHref, List<Create> creates,
             List<Delete> deletes, List<Change> changes,
+            List<AbstractFeature> replaces,
             List<Object> updateOpExtensions, List<Object> updateExtensions);
 
     /**

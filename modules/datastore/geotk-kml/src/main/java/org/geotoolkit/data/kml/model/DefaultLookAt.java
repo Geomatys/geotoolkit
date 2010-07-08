@@ -31,7 +31,7 @@ public class DefaultLookAt extends DefaultAbstractView implements LookAt {
     }
 
     /**
-     *
+     * 
      * @param objectSimpleExtensions
      * @param idAttributes
      * @param abstractViewSimpleExtensions
@@ -176,5 +176,15 @@ public class DefaultLookAt extends DefaultAbstractView implements LookAt {
     @Override
     public void setRange(double range) {
         this.range = range;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    @Deprecated
+    public void setTilt_v2_1(double tilt) {
+        this.tilt = KmlUtilities.checkAnglePos90(tilt);
     }
 }

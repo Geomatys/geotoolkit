@@ -10,11 +10,13 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
 import org.geotoolkit.data.kml.model.AbstractFeature;
 import org.geotoolkit.data.kml.model.Delete;
+import org.geotoolkit.data.kml.model.GroundOverlay;
 import org.geotoolkit.data.kml.model.Kml;
 import org.geotoolkit.data.kml.model.KmlException;
 import org.geotoolkit.data.kml.model.NetworkLinkControl;
 import org.geotoolkit.data.kml.model.Placemark;
 import org.geotoolkit.data.kml.model.Update;
+import org.geotoolkit.data.kml.xml.KmlModelConstants;
 import org.geotoolkit.data.kml.xml.KmlWriter;
 import org.geotoolkit.xml.DomCompare;
 import org.junit.After;
@@ -29,12 +31,12 @@ import org.xml.sax.SAXException;
  *
  * @author Samuel Andrés
  */
-public class DeleteTest {
+public class ReplaceTest {
 
     private static final double DELTA = 0.000000000001;
-    private static final String pathToTestFile = "src/test/resources/org/geotoolkit/data/kml/delete.kml";
+    private static final String pathToTestFile = "src/test/resources/org/geotoolkit/data/kml/replace.kml";
 
-    public DeleteTest() {
+    public ReplaceTest() {
     }
 
     @BeforeClass
@@ -54,7 +56,7 @@ public class DeleteTest {
     }
 
     @Test
-    public void deleteReadTest() throws IOException, XMLStreamException {
+    public void replaceReadTest() throws IOException, XMLStreamException {
 
         final KmlReader reader = new KmlReader();
         reader.setInput(new File(pathToTestFile));
@@ -64,48 +66,53 @@ public class DeleteTest {
         final NetworkLinkControl networkLinkControl = kmlObjects.getNetworkLinkControl();
         final Update update = networkLinkControl.getUpdate();
         final URI targetHref = update.getTargetHref();
-        assertEquals("http://www.foo.com/Point.kml", targetHref.toString());
+        assertEquals("http://chezmoi.com/tests.kml", targetHref.toString());
 
-        assertEquals(1, update.getDeletes().size());
-        Delete delete = update.getDeletes().get(0);
+        assertEquals(2, update.getReplaces().size());
+        System.out.println(update.getReplaces());
+        assertTrue(update.getReplaces().get(0) instanceof Placemark);
+        assertEquals("Replace placemark",((Placemark)update.getReplaces().get(0)).getName());
 
-        assertEquals(1, delete.getFeatures().size());
-        assertTrue(delete.getFeatures().get(0) instanceof Placemark);
-        final Placemark placemark = (Placemark) delete.getFeatures().get(0);
-        assertEquals("pa3556", placemark.getIdAttributes().getTargetId());
+        assertTrue(update.getReplaces().get(1) instanceof GroundOverlay);
+        assertEquals("Replace overlay",((GroundOverlay)update.getReplaces().get(1)).getName());
 
     }
 
     @Test
-    public void deleteWriteTest() throws KmlException, IOException, XMLStreamException, ParserConfigurationException, SAXException, URISyntaxException {
+    public void replaceWriteTest() 
+            throws KmlException, IOException,
+            XMLStreamException, ParserConfigurationException,
+            SAXException, URISyntaxException {
+
         final KmlFactory kmlFactory = new DefaultKmlFactory();
 
-        Placemark placemark = kmlFactory.createPlacemark();
-        placemark.setIdAttributes(kmlFactory.createIdAttributes(null, "pa3556"));
+        final Placemark placemark = kmlFactory.createPlacemark();
+        placemark.setName("Replace placemark");
 
-        Delete delete = kmlFactory.createDelete();
-        delete.setFeatures(Arrays.asList((AbstractFeature) placemark));
+        final GroundOverlay groundOverlay = kmlFactory.createGroundOverlay();
+        groundOverlay.setName("Replace overlay");
 
-        URI targetHref = new URI("http://www.foo.com/Point.kml");
+        URI targetHref = new URI("http://chezmoi.com/tests.kml");
 
         Update update = kmlFactory.createUpdate();
-        update.setDeletes(Arrays.asList(delete));
         update.setTargetHref(targetHref);
+        update.setReplaces(Arrays.asList(placemark, groundOverlay));
 
         NetworkLinkControl networkLinkControl = kmlFactory.createNetworkLinkControl();
         networkLinkControl.setUpdate(update);
 
 
         final Kml kml = kmlFactory.createKml(networkLinkControl, null, null, null);
+        kml.setVersion(KmlModelConstants.URI_KML_2_1);
 
-        File temp = File.createTempFile("testDelete", ".kml");
+        File temp = File.createTempFile("testReplace", ".kml");
         temp.deleteOnExit();
 
         KmlWriter writer = new KmlWriter();
         writer.setOutput(temp);
         writer.write(kml);
         writer.dispose();
-
+        
         DomCompare.compare(
                 new File(pathToTestFile), temp);
 

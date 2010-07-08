@@ -153,6 +153,7 @@ public final class KmlModelConstants {
     public static final String TAG_REFRESH_MODE = "refreshMode";
     public static final String TAG_REFRESH_VISIBILITY = "refreshVisibility";
     public static final String TAG_REGION = "Region";
+    public static final String TAG_REPLACE = "Replace";
     public static final String TAG_RESOURCE_MAP = "ResourceMap";
     public static final String TAG_RIGHT_FOV = "rightFov";
     public static final String TAG_ROLL = "roll";

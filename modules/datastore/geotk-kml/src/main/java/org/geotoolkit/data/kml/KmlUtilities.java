@@ -2,10 +2,6 @@ package org.geotoolkit.data.kml;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import java.awt.Color;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import org.geotoolkit.data.kml.model.Coordinates;
 import org.geotoolkit.data.kml.model.KmlException;
 
@@ -262,6 +258,5 @@ public class KmlUtilities {
 
         return c;
     }
-
 
 }

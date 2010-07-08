@@ -1530,8 +1530,9 @@ public class DefaultKmlFactory implements KmlFactory{
     @Override
     public Update createUpdate(URI targetHref, List<Create> creates,
             List<Delete> deletes, List<Change> changes,
+            List<AbstractFeature> replaces,
             List<Object> updateOpExtensions, List<Object> updateExtensions) {
-        return new DefaultUpdate(targetHref, creates, deletes, changes,
+        return new DefaultUpdate(targetHref, creates, deletes, changes, replaces,
                 updateOpExtensions, updateExtensions);
     }
 
