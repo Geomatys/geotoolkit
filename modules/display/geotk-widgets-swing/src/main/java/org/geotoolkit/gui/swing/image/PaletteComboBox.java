@@ -22,21 +22,34 @@ import java.util.List;
 import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.EventObject;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.BorderLayout;
+import java.awt.event.MouseEvent;
+import java.util.concurrent.Callable;
+import javax.swing.JTable;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
+import javax.swing.ComboBoxModel;
+import javax.swing.AbstractCellEditor;
+import javax.swing.table.TableCellEditor;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumn;
 
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.image.io.Palette;
 import org.geotoolkit.image.io.PaletteFactory;
 import org.geotoolkit.internal.image.ColorUtilities;
-import org.geotoolkit.internal.swing.table.ColorRampRenderer;
+import org.geotoolkit.internal.coverage.ColorPalette;
 
 
 /**
  * A combo box for selecting a color {@linkplain Palette palette}. The choices of available
  * palettes is provided by a {@linkplain PaletteFactory palette factory} given to the constructor.
+ * <p>
+ * This combo box can also be used as a cell editor in a {@link JTable},
+ * by invoking the {@link #useAsTableCellEditor(TableColumn)} method.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.14
@@ -61,16 +74,20 @@ public class PaletteComboBox extends JComponent {
      * {@linkplain PaletteFactory#getDefault() default palette factory}.
      */
     public PaletteComboBox() {
-        this(PaletteFactory.getDefault());
+        this(null);
     }
 
     /**
      * Creates a new combo box using the given palette factory. The combo box content will be
-     * initialized to the {@linkplain PaletteFactory#getAvailableNames() available names}
+     * initialized to the {@linkplain PaletteFactory#getAvailableNames() available names}.
      *
-     * @param factory The factory to use for loading colors from a palette name.
+     * @param factory The factory to use for loading colors from a palette name, or
+     *        {@code null} for the {@linkplain PaletteFactory#getDefault() default}.
      */
-    public PaletteComboBox(final PaletteFactory factory) {
+    public PaletteComboBox(PaletteFactory factory) {
+        if (factory == null) {
+            factory = PaletteFactory.getDefault();
+        }
         this.factory = factory;
         final Vocabulary resources = Vocabulary.getResources(getLocale());
         Set<String> names = factory.getAvailableNames();
@@ -87,11 +104,11 @@ public class PaletteComboBox extends JComponent {
         final List<Object> items = new ArrayList<Object>(names.size() + 1);
         items.add(resources.getString(Vocabulary.Keys.NONE));
         for (final String name : names) {
-            items.add(new ColorRampRenderer.Gradiant(name));
+            items.add(new ColorPalette(name));
         }
         comboBox = new JComboBox(items.toArray());
         comboBox.setPrototypeDisplayValue("grayscale"); // For preventing pre-rendering of all palettes.
-        comboBox.setRenderer(new ColorRampRenderer(factory));
+        comboBox.setRenderer(new PaletteCellRenderer(comboBox.getModel(), factory));
         setLayout(new BorderLayout());
         add(comboBox, BorderLayout.CENTER);
     }
@@ -141,8 +158,8 @@ public class PaletteComboBox extends JComponent {
      */
     public String getSelectedItem() {
         final Object item = comboBox.getSelectedItem();
-        if (item instanceof ColorRampRenderer.Gradiant) {
-            return item.toString();
+        if (item instanceof ColorPalette) {
+            return ((ColorPalette) item).paletteName;
         } else if (item instanceof Color) {
             return ColorUtilities.toString((Color) item);
         }
@@ -170,19 +187,17 @@ public class PaletteComboBox extends JComponent {
     public void setSelectedItem(String name) {
         int index = 0; // Index of the "none" choice.
         if (name != null) {
-            boolean asString = true;
             index = comboBox.getItemCount();
             Object toSearch = name = name.trim();
             if (name.startsWith("#")) try {
                 toSearch = Color.decode(name);
-                asString = false;
             } catch (NumberFormatException e) {
                 // Ignore: we will search for the name as a string.
             }
             while (--index != 0) {
                 Object candidate = comboBox.getItemAt(index);
-                if (asString) {
-                    candidate = candidate.toString();
+                if (candidate instanceof ColorPalette) {
+                    candidate = ((ColorPalette) candidate).paletteName;
                 }
                 if (toSearch.equals(candidate)) {
                     break;
@@ -201,8 +216,8 @@ public class PaletteComboBox extends JComponent {
      */
     public Color[] getSelectedColors() {
         final Object item = comboBox.getSelectedItem();
-        if (item instanceof ColorRampRenderer.Gradiant) {
-            return ((ColorRampRenderer.Gradiant) item).getColors(factory);
+        if (item instanceof ColorPalette) {
+            return ((ColorPalette) item).getColors(factory);
         } else if (item instanceof Color) {
             return new Color[] {(Color) item};
         }
@@ -228,13 +243,81 @@ public class PaletteComboBox extends JComponent {
                 if (singleton != null && singleton.equals(candidate)) {
                     break;
                 }
-                if (candidate instanceof ColorRampRenderer.Gradiant && Arrays.equals(colors,
-                        ((ColorRampRenderer.Gradiant) candidate).getColors(factory)))
-                {
-                    break;
+                if (candidate instanceof ColorPalette) {
+                    final ColorPalette cp = (ColorPalette) candidate;
+                    if (Arrays.equals(colors, cp.getColors(factory))) {
+                        break;
+                    }
                 }
             }
         }
         comboBox.setSelectedIndex(index);
+    }
+
+    /**
+     * Uses this {@code PaletteComboBox} as the {@linkplain TableCellEditor table cell editor}
+     * and the {@linkplain TableCellRenderer table cell renderer} of the given table column.
+     * <p>
+     * This {@code PaletteComboBox} instance should not be used for any other purpose after
+     * this method call.
+     *
+     * @param column The table column on which to set this combo box as the editor and renderer.
+     *
+     * @since 3.14
+     */
+    public void useAsTableCellEditor(final TableColumn column) {
+        // See javax.swing.DefaultCellEditor(JComboBox) source code.
+        comboBox.putClientProperty("JComboBox.isTableCellEditor", Boolean.TRUE);
+        column.setCellEditor(new CellEditor());
+        column.setCellRenderer((TableCellRenderer) comboBox.getRenderer());
+    }
+
+    /**
+     * A cell editor for using {@link PaletteComboBox} in a {@linkplain javax.swing.JTable}.
+     *
+     * @author Martin Desruisseaux (Geomatys)
+     * @version 3.14
+     *
+     * @since 3.14
+     * @module
+     */
+    @SuppressWarnings("serial")
+    private final class CellEditor extends AbstractCellEditor implements TableCellEditor, Callable<ComboBoxModel> {
+        /**
+         * Returns {@code true} if the cell can be edited. We require a double click,
+         * otherwise the combo box drop down list appears and disaspears too often.
+         */
+        @Override
+        public boolean isCellEditable(final EventObject event) {
+	    return !(event instanceof MouseEvent) || ((MouseEvent) event).getClickCount() >= 2;
+	}
+
+        /**
+         * Gets the name of the selected palette, or the opaque color code.
+         */
+        @Override
+        public String getCellEditorValue() {
+            return PaletteComboBox.this.getSelectedItem();
+        }
+
+        /**
+         * Configures the {@link PaletteComboBox} to the given value, and returns it.
+         */
+        @Override
+        public Component getTableCellEditorComponent(final JTable table, Object value,
+                final boolean isSelected, final int row, final int column)
+        {
+            PaletteComboBox.this.setSelectedItem((String) value);
+            return PaletteComboBox.this;
+        }
+
+        /**
+         * A trick for allowing {@link org.geotoolkit.gui.swing.coverage.CategoryTable}
+         * to get the list of available palettes. Should not be invoked by client code.
+         */
+        @Override
+        public ComboBoxModel call() {
+            return comboBox.getModel();
+        }
     }
 }

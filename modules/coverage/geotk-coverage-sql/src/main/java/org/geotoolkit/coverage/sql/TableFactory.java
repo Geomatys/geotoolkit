@@ -20,15 +20,17 @@ package org.geotoolkit.coverage.sql;
 import java.util.Properties;
 import javax.sql.DataSource;
 
+import org.geotoolkit.image.io.PaletteFactory;
 import org.geotoolkit.internal.sql.table.TablePool;
 import org.geotoolkit.internal.sql.table.SpatialDatabase;
 
 
 /**
  * A {@link SpatialDatabase} with a few commonly-used table pooled.
+ * Contains also a few additional factories, like {@link PaletteFactory}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.10
+ * @version 3.14
  *
  * @since 3.10 (derived from Seagis)
  * @module
@@ -47,6 +49,13 @@ final class TableFactory extends SpatialDatabase {
             new TablePool<GridCoverageTable>(this, GridCoverageTable.class, new GridCoverageTable[4]);
 
     /**
+     * The factory for color palettes.
+     *
+     * @since 3.14
+     */
+    final PaletteFactory paletteFactory;
+
+    /**
      * Creates a new instance using the same configuration than the given instance.
      * The new instance will have its own, initially empty, cache.
      *
@@ -54,6 +63,7 @@ final class TableFactory extends SpatialDatabase {
      */
     public TableFactory(final TableFactory toCopy) {
         super(toCopy);
+        paletteFactory = toCopy.paletteFactory;
     }
 
     /**
@@ -65,5 +75,6 @@ final class TableFactory extends SpatialDatabase {
      */
     public TableFactory(final DataSource datasource, final Properties properties) {
         super(datasource, properties);
+        paletteFactory = PaletteFactory.getDefault();
     }
 }

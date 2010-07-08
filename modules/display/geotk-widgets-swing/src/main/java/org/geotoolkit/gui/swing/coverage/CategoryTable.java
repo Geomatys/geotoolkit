@@ -25,13 +25,13 @@ import java.util.List;
 import java.util.Locale;
 import java.util.ArrayList;
 import java.util.EventObject;
+import java.util.concurrent.Callable;
 import javax.swing.JComboBox;
 import javax.swing.ComboBoxModel;
 import javax.swing.JTable;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.AbstractCellEditor;
-import javax.swing.CellEditor;
 import javax.swing.DefaultCellEditor;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -43,6 +43,7 @@ import javax.swing.table.TableColumn;
 import org.opengis.metadata.content.TransferFunctionType;
 
 import org.geotoolkit.util.NumberRange;
+import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.coverage.Category;
 import org.geotoolkit.gui.swing.ListTableModel;
 import org.geotoolkit.gui.swing.image.PaletteComboBox;
@@ -169,6 +170,17 @@ public class CategoryTable extends ListTableModel<CategoryRecord> {
     final PaletteFactory paletteFactory;
 
     /**
+     * The collection of {@link org.geotoolkit.internal.swing.table.ColorRampChoice}s.
+     * We opportunistly keep this information after {@link #configure(JTable)} has been
+     * invoked, in order leverage the cached colors.
+     * <p>
+     * This collection depends only on {@link #paletteFactory}, which is final. So it is
+     * not a big deal if the field is computed more than once. It can also be {@code null},
+     * in which case a temporary list will be created when needed (may be costly).
+     */
+    private transient ComboBoxModel paletteChoices;
+
+    /**
      * Creates a new, initially empty, table.
      *
      * @param locale The locale to use for the column headers.
@@ -248,24 +260,10 @@ public class CategoryTable extends ListTableModel<CategoryRecord> {
      * @param categories The categories to show, or {@code null} for clearing the table.
      */
     public void setCategories(final List<Category> categories) {
-        setCategories(categories, null);
-    }
-
-    /**
-     * Implementation of {@link #setCategories(List)} with opportunist reuse of an existing list
-     * of palettes. This avoid the cost of creating this list in the {@link CategoryRecord}
-     * constructor.
-     *
-     * @param categories The categories to show, or {@code null} for clearing the table.
-     * @param palettes A list of palettes to use for inferring the palettes names,
-     *        or {@code null} if none. This can be used for the common case where
-     *        this list is already available from the {@link SampleDimensionPanel} GUI.
-     */
-    final void setCategories(final List<Category> categories, final ComboBoxModel palettes) {
         elements.clear();
-        if (categories != null) {
+        if (categories != null && !categories.isEmpty()) {
             for (final Category category : categories) {
-                elements.add(new CategoryRecord(category, locale, paletteFactory, palettes));
+                elements.add(new CategoryRecord(category, locale, paletteFactory, paletteChoices));
             }
         }
         fireTableDataChanged();
@@ -472,15 +470,26 @@ public class CategoryTable extends ListTableModel<CategoryRecord> {
      * @param table The table in which to install the cell renderes and editors.
      */
     public void configure(final JTable table) {
-        final NumberEditor  numberEditor  = new NumberEditor(true);
-        final PaletteEditor paletteEditor = new PaletteEditor(paletteFactory);
-        final CellRenderer  renderer      = new CellRenderer(locale, numberEditor.getFormat());
+        final NumberEditor numberEditor = new NumberEditor(true);
+        final CellRenderer renderer     = new CellRenderer(locale, numberEditor.getFormat());
         table.setDefaultRenderer(Double.class,               renderer);
         table.setDefaultRenderer(TransferFunctionType.class, renderer);
         table.setDefaultEditor  (TransferFunctionType.class, new FunctionEditor(renderer.functionLabels));
         table.setDefaultEditor  (Integer.class, new NumberEditor(false));
         table.setDefaultEditor  (Double.class,  numberEditor);
-        table.getColumnModel().getColumn(COLORS).setCellEditor(paletteEditor);
+
+        TableColumn column = table.getColumnModel().getColumn(COLORS);
+        final PaletteComboBox palettesChoice = new PaletteComboBox(paletteFactory);
+        palettesChoice.addDefaultColors();
+        palettesChoice.useAsTableCellEditor(column);
+        try {
+            paletteChoices = (ComboBoxModel) ((Callable<?>) column.getCellEditor()).call();
+        } catch (Exception e) {
+            // Should never happen. If it happen anyway, this is not a fatal error.
+            // But log a complete warning with full stack trace so we can fix.
+            Logging.unexpectedException(CategoryTable.class, "configure", e);
+        }
+
         table.setRowHeight(ROW_HEIGHT);
         final TableColumnModel columns = table.getColumnModel();
         final int n = columns.getColumnCount();
@@ -493,31 +502,11 @@ public class CategoryTable extends ListTableModel<CategoryRecord> {
                 case COLORS: width =  80; break;
                 default:     width =  70; break;
             }
-            final TableColumn column = columns.getColumn(i);
+            column = columns.getColumn(i);
             column.setPreferredWidth(width);
             total += width;
         }
         table.setPreferredSize(new Dimension(total, ROW_HEIGHT*4));
-    }
-
-    /**
-     * Returns the choices of color palettes, or {@code null} if none. This method can be
-     * invoked for tables configured with {@link #configure(JTable)}.
-     * <p>
-     * The elements in the combo box model will be instances of different types. The interresting
-     * type is {@link org.geotoolkit.internal.swing.table.ColorRampRenderer.Gradiant}.
-     *
-     */
-    static ComboBoxModel getPaletteChoices(final JTable table) {
-        final CellEditor editor = table.getColumnModel().getColumn(COLORS).getCellEditor();
-        if (editor instanceof CellEditor) {
-            for (final Component c : ((PaletteEditor) editor).comboBox.getComponents()) {
-                if (c instanceof JComboBox) {
-                    return ((JComboBox) c).getModel();
-                }
-            }
-        }
-        return null;
     }
 
 
@@ -780,69 +769,6 @@ public class CategoryTable extends ListTableModel<CategoryRecord> {
         @Override
         public void stateChanged(final ChangeEvent event) {
             setValueAt(getCellEditorValue(), row, column);
-        }
-    }
-
-    /**
-     * A cell editor for the color palette in the enclosing {@link CategoryTable}.
-     * This editor uses a {@link PaletteComboBox}.
-     *
-     * @author Martin Desruisseaux (Geomatys)
-     * @version 3.14
-     *
-     * @since 3.14
-     * @module
-     */
-    @SuppressWarnings("serial")
-    private static final class PaletteEditor extends AbstractCellEditor implements TableCellEditor {
-        /**
-         * The combo box to use as an editor.
-         */
-        final PaletteComboBox comboBox;
-
-        /**
-         * Creates a new editor for the given palette factory.
-         */
-        PaletteEditor(PaletteFactory factory) {
-            if (factory == null) {
-                factory = PaletteFactory.getDefault();
-            }
-            comboBox = new PaletteComboBox(factory);
-            comboBox.addDefaultColors();
-            for (final Component c : comboBox.getComponents()) {
-                if (c instanceof JComboBox) {
-                    // See javax.swing.DefaultCellEditor(JComboBox) source code.
-                    ((JComboBox) c).putClientProperty("JComboBox.isTableCellEditor", Boolean.TRUE);
-                }
-            }
-        }
-
-        /**
-         * Returns {@code true} if the cell can be edited. We require a double click,
-         * otherwise the combo box drop down list appears and disaspears too often.
-         */
-        @Override
-        public boolean isCellEditable(final EventObject event) {
-	    return !(event instanceof MouseEvent) || ((MouseEvent) event).getClickCount() >= 2;
-	}
-
-        /**
-         * Gets the name of the selected palette, or the opaque color code.
-         */
-        @Override
-        public String getCellEditorValue() {
-            return comboBox.getSelectedItem();
-        }
-
-        /**
-         * Configures the {@link PaletteComboBox} to the given value, and returns it.
-         */
-        @Override
-        public Component getTableCellEditorComponent(final JTable table, Object value,
-                final boolean isSelected, final int row, final int column)
-        {
-            comboBox.setSelectedItem((String) value);
-            return comboBox;
         }
     }
 }

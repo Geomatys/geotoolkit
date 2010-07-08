@@ -107,7 +107,7 @@ import org.geotoolkit.resources.IndexedResourceBundle;
  * }
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.11
+ * @version 3.14
  *
  * @since 1.2
  * @module
@@ -751,17 +751,29 @@ public class PaletteFactory {
      * factory, then the fallback (if any fallback was specified to the constructor) will
      * be queried.
      *
+     * {@section Special case for single color}
+     * If the given name starts with the {@code '#'} character, then the string is decoded as
+     * a color using the {@link Color#decode(String)} method (i.e., the string is interpreted
+     * as a hexadecimal RGB value) and the decoded color is returned in an array of length 1.
+     *
      * @param  name The name of the palette to load.
      * @return The set of colors, or {@code null} if no palette was found for the given name.
      * @throws IOException if an error occurs during reading.
      */
     public Color[] getColors(final String name) throws IOException {
-        final LineNumberReader reader = getPaletteReader(name);
-        if (reader == null) {
-            return (fallback != null) ? fallback.getColors(name) : null;
+        final Color[] colors;
+        if (name.startsWith("#")) try {
+            colors = new Color[] {Color.decode(name)};
+        } catch (NumberFormatException e) {
+            return null;
+        } else {
+            final LineNumberReader reader = getPaletteReader(name);
+            if (reader == null) {
+                return (fallback != null) ? fallback.getColors(name) : null;
+            }
+            colors = getColors(reader, name);
+            reader.close();
         }
-        final Color[] colors = getColors(reader, name);
-        reader.close();
         return colors;
     }
 

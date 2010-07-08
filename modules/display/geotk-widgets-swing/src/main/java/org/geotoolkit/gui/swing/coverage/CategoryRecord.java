@@ -18,9 +18,6 @@
 package org.geotoolkit.gui.swing.coverage;
 
 import java.awt.Color;
-import java.util.Set;
-import java.util.Vector;
-import java.util.Arrays;
 import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
@@ -29,7 +26,6 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.io.ObjectInputStream;
 import javax.swing.ComboBoxModel;
-import javax.swing.DefaultComboBoxModel;
 
 import org.opengis.util.InternationalString;
 import org.opengis.referencing.operation.MathTransform1D;
@@ -43,9 +39,8 @@ import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.coverage.Category;
 import org.geotoolkit.image.io.PaletteFactory;
-import org.geotoolkit.internal.image.ColorUtilities;
+import org.geotoolkit.internal.coverage.ColorPalette;
 import org.geotoolkit.internal.coverage.TransferFunction;
-import org.geotoolkit.internal.swing.table.ColorRampRenderer;
 import org.geotoolkit.referencing.operation.transform.LinearTransform1D;
 import org.geotoolkit.referencing.operation.transform.ConcatenatedTransform;
 import org.geotoolkit.referencing.operation.transform.LogarithmicTransform1D;
@@ -164,7 +159,8 @@ public class CategoryRecord implements Cloneable, Serializable {
      * @param category The category from which to infer the values.
      * @param locale The locale to use for the localization of the category name,
      *        or {@code null} for an implementation-dependent default locale.
-     * @param paletteFactory The factory to use for fetching the colors from their name.
+     * @param paletteFactory The factory to use for fetching the colors from their name,
+     *        or {@code null} for the {@linkplain PaletteFactory#getDefault() default one}.
      * @param palettes A list of palettes to use for inferring the palettes names,
      *        or {@code null} if none. This can be used for the common case where
      *        this list is already available from the {@link SampleDimensionPanel} GUI.
@@ -191,47 +187,7 @@ public class CategoryRecord implements Cloneable, Serializable {
         if (tf.warning != null) {
             warning("<init>", tf.warning);
         }
-        /*
-         * Determines the palette name or RGB code. In the simpliest
-         * case, we have a single Color object to format as "#RRGGBB".
-         */
-        final Color[] colors = category.getColors();
-        if (colors.length == 1) {
-            final Color singleton = colors[0];
-            if (singleton != null) {
-                paletteName = ColorUtilities.toString(singleton);
-            }
-        } else if (colors.length != 0) {
-            /*
-             * More complex case. Compares the colors against every palettes
-             * defined in the given list. We will create the list ourself if
-             * it was not explicitly provided.
-             */
-            if (paletteFactory == null) {
-                paletteFactory = PaletteFactory.getDefault();
-            }
-            if (palettes == null) {
-                final Set<String> names = paletteFactory.getAvailableNames();
-                if (names == null) {
-                    return;
-                }
-                final Vector<Object> items = new Vector<Object>(names.size());
-                for (final String n : names) {
-                    items.add(new ColorRampRenderer.Gradiant(n));
-                }
-                palettes = new DefaultComboBoxModel(items);
-            }
-            int index = palettes.getSize();
-            while (--index >= 0) {
-                final Object candidate = palettes.getElementAt(index);
-                if (candidate instanceof ColorRampRenderer.Gradiant && Arrays.equals(colors,
-                        ((ColorRampRenderer.Gradiant) candidate).getColors(paletteFactory)))
-                {
-                    paletteName = candidate.toString();
-                    break;
-                }
-            }
-        }
+        paletteName = ColorPalette.findName(category.getColors(), palettes, paletteFactory);
     }
 
     /**

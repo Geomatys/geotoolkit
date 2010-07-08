@@ -27,6 +27,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.PreparedStatement;
 import java.sql.Types;
+import javax.swing.ComboBoxModel;
 
 import org.opengis.util.FactoryException;
 import org.opengis.parameter.ParameterValueGroup;
@@ -39,6 +40,7 @@ import org.geotoolkit.coverage.Category;
 import org.geotoolkit.internal.coverage.TransferFunction;
 import org.geotoolkit.referencing.operation.matrix.Matrix2;
 import org.geotoolkit.image.io.PaletteFactory;
+import org.geotoolkit.internal.coverage.ColorPalette;
 import org.geotoolkit.resources.Errors;
 
 import org.geotoolkit.internal.sql.table.Table;
@@ -57,7 +59,7 @@ import org.geotoolkit.internal.sql.table.SpatialDatabase;
  * required for creating a {@link org.geotoolkit.coverage.grid.GridCoverage2D}.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.13
+ * @version 3.14
  *
  * @since 3.09 (derived from Seagis)
  * @module
@@ -75,6 +77,13 @@ final class CategoryTable extends Table {
     private static final Color[] TRANSPARENT = new Color[] {
         new Color(0,0,0,0)
     };
+
+    /**
+     * The choices of available palette names. Build only when first needed and cached
+     * in order to avoid reloading the colors from the files for every images inserted
+     * in the database.
+     */
+    private transient ComboBoxModel paletteChoices;
 
     /**
      * Creates a category table.
@@ -157,7 +166,7 @@ final class CategoryTable extends Table {
                             colors = new Color[] {Color.decode(id)};
                          } else {
                             if (palettes == null) {
-                                palettes = PaletteFactory.getDefault();
+                                palettes = ((TableFactory) getDatabase()).paletteFactory;
                                 palettes.setWarningLocale(getLocale());
                             }
                             colors = palettes.getColors(colorID);
@@ -326,7 +335,12 @@ final class CategoryTable extends Table {
                             statement.setNull(c1Index, Types.DOUBLE);
                             statement.setNull(functionIndex, Types.VARCHAR);
                         }
-                        statement.setNull(colorsIndex, Types.VARCHAR); // TODO
+                        final String paletteName = getPaletteName(category.getColors());
+                        if (paletteName != null) {
+                            statement.setString(colorsIndex, paletteName);
+                        } else {
+                            statement.setNull(colorsIndex, Types.VARCHAR);
+                        }
                         final int count = statement.executeUpdate();
                         if (count != 1) {
                             throw new IllegalUpdateException(locale, count);
@@ -339,5 +353,20 @@ final class CategoryTable extends Table {
                 transactionEnd(success);
             }
         }
+    }
+
+    /**
+     * Returns the name of the color palette for the given colors, or {@code null} if none.
+     * This method is invoked only during the insertion of new entries.
+     */
+    private String getPaletteName(final Color... colors) {
+        if (colors != null && colors.length != 0) {
+            final PaletteFactory paletteFactory = ((TableFactory) getDatabase()).paletteFactory;
+            if (paletteChoices == null) {
+                paletteChoices = ColorPalette.getChoices(paletteFactory);
+            }
+            return ColorPalette.findName(colors, paletteChoices, paletteFactory);
+        }
+        return null;
     }
 }

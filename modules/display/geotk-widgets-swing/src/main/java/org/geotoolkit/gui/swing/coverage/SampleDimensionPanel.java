@@ -32,7 +32,6 @@ import javax.swing.JComponent;
 import javax.swing.JScrollPane;
 import javax.swing.JFormattedTextField;
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.ComboBoxModel;
 import java.text.ParseException;
 
 import org.opengis.util.InternationalString;
@@ -98,11 +97,6 @@ public class SampleDimensionPanel extends JComponent {
     private final JComboBox nameField;
 
     /**
-     * The list of available color palettes, or {@code null} if unknown.
-     */
-    private final ComboBoxModel paletteChoices;
-
-    /**
      * Units of measurement.
      */
     private final JFormattedTextField unitField;
@@ -134,19 +128,22 @@ public class SampleDimensionPanel extends JComponent {
     private int selectedBandIndex = -1;
 
     /**
-     * Creates a new, initially empty, panel.
+     * Creates a new panel which will use the
+     * {@linkplain PaletteFactory#getDefault() default palette factory}.
      */
     public SampleDimensionPanel() {
         this(null);
     }
 
     /**
-     * Creates a new, initially empty, panel.
+     * Creates a new panel which will use the given factory for creating color palettes.
      *
      * @param paletteFactory The factory to use for loading colors from a palette name,
      *        or {@code null} for the {@linkplain PaletteFactory#getDefault() default}.
+     *
+     * @since 3.14
      */
-    SampleDimensionPanel(final PaletteFactory paletteFactory) {
+    public SampleDimensionPanel(final PaletteFactory paletteFactory) {
         setLayout(new GridBagLayout());
         final Locale     locale    = getLocale();
         final Vocabulary resources = Vocabulary.getResources(locale);
@@ -157,7 +154,6 @@ public class SampleDimensionPanel extends JComponent {
         categories.configure(table);
         table.setRowSelectionAllowed(false);
         table.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
-        paletteChoices = CategoryTable.getPaletteChoices(table);
 
         nameField = new JComboBox();
         unitField = new JFormattedTextField(new UnitFormatter(locale));
@@ -301,7 +297,7 @@ public class SampleDimensionPanel extends JComponent {
                 /*
                  * Otherwise create a new set of CategoryRecords.
                  */
-                categories.setCategories(band.getCategories(), paletteChoices);
+                categories.setCategories(band.getCategories());
             }
             unitField.setValue(units[bandIndex]);
             selectedBandIndex = bandIndex;
