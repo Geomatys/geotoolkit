@@ -16,6 +16,10 @@
  */
 package org.geotoolkit.display2d;
 
+import javax.imageio.ImageIO;
+import org.geotoolkit.display2d.service.OutputDef;
+import java.io.File;
+import java.io.IOException;
 import java.util.Set;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
@@ -293,7 +297,6 @@ public class ColorModelTest {
         assertEquals(3, img.getColorModel().getNumColorComponents());
     }
 
-
     @Test
     public void testAlphaColorBackground() throws NoSuchAuthorityCodeException, FactoryException, PortrayalException {
         final MapContext context = MapBuilder.createContext();
@@ -396,6 +399,41 @@ public class ColorModelTest {
         assertEquals(3, img.getColorModel().getNumComponents());
         assertEquals(3, img.getColorModel().getNumColorComponents());
 
+    }
+
+    /**
+     * Test that when asking a jpeg output, the resulting writen image has been
+     * configured with a white background.
+     */
+    @Test
+    public void testJPEGOutput() throws NoSuchAuthorityCodeException, FactoryException, IOException, PortrayalException{
+        final MapContext context = MapBuilder.createContext();
+
+        final GeneralEnvelope env = new GeneralEnvelope(CRS.decode("EPSG:4326"));
+        env.setRange(0, -180, 180);
+        env.setRange(1, -90, 90);
+
+        File tempFile = File.createTempFile("testjpeg", ".jpg");
+        tempFile.deleteOnExit();
+
+        DefaultPortrayalService.portray(
+                new CanvasDef(new Dimension(800, 600), null),
+                new SceneDef(context),
+                new ViewDef(env),
+                new OutputDef("image/jpeg", tempFile));
+
+        //we should obtain a white background image
+        final BufferedImage img = ImageIO.read(tempFile);
+
+        //jpeg can't encode a perfect white image, CMY to RGB conversion lost I guess.
+        //it's R:253 G:255 B:255
+        final int white = new Color(253, 255, 255, 255).getRGB();
+
+        for(int x=0; x<img.getWidth(); x++){
+            for(int y=0; y<img.getHeight(); y++){
+                assertEquals(white, img.getRGB(x, y));
+            }
+        }
     }
 
 

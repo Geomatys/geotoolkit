@@ -39,12 +39,15 @@ import javax.imageio.spi.ImageWriterSpi;
 import javax.imageio.stream.ImageOutputStream;
 
 import org.geotoolkit.coverage.grid.GridCoverage2D;
+import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.canvas.J2DCanvasBuffered;
 import org.geotoolkit.display.canvas.CanvasController2D;
 import org.geotoolkit.display.canvas.GraphicVisitor;
 import org.geotoolkit.display.canvas.VisitFilter;
 import org.geotoolkit.display.canvas.control.CanvasMonitor;
 import org.geotoolkit.display.exception.PortrayalException;
+import org.geotoolkit.display2d.canvas.painter.BackgroundPainter;
+import org.geotoolkit.display2d.canvas.painter.BackgroundPainterGroup;
 import org.geotoolkit.display2d.canvas.painter.SolidColorPainter;
 import org.geotoolkit.display2d.container.ContextContainer2D;
 import org.geotoolkit.display2d.container.DefaultContextContainer2D;
@@ -328,6 +331,25 @@ public class DefaultPortrayalService implements PortrayalService{
      */
     public static void portray(CanvasDef canvasDef, SceneDef sceneDef, ViewDef viewDef,
             OutputDef outputDef) throws PortrayalException{
+
+        final String mime = outputDef.getMime();
+        if(mime.contains("jpeg") || mime.contains("jpg")){
+            //special case for jpeg format, the writer generate incorrect colors
+            //if he find out an alpha channel, so we ensure to have a opaque background
+            //which will result in at least an RGB palette
+            sceneDef.extensions().add(0,new PortrayalExtension() {
+                @Override
+                public void completeCanvas(J2DCanvas canvas) throws PortrayalException {
+                    BackgroundPainter bgPainter = canvas.getBackgroundPainter();
+                    if(bgPainter == null){
+                        canvas.setBackgroundPainter(new SolidColorPainter(Color.WHITE));
+                    }else{
+                        canvas.setBackgroundPainter(BackgroundPainterGroup.wrap(
+                                new SolidColorPainter(Color.WHITE), bgPainter));
+                    }
+                }
+            });
+        }
 
         final BufferedImage image = portray(canvasDef,sceneDef,viewDef);
 

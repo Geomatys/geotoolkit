@@ -27,9 +27,12 @@ import java.awt.Shape;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.IndexColorModel;
+import java.util.Comparator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import org.geotoolkit.display.container.AbstractContainer2D;
 import org.geotoolkit.factory.Hints;
@@ -295,9 +298,22 @@ public class J2DCanvasBuffered extends J2DCanvas{
      * @param graphics graphics to explore
      * @return Set of colors used by the graphics or null if unpredictable.
      */
-    private static Set<Integer> extractColors(List<Graphic> graphics){
+    private static SortedSet<Integer> extractColors(List<Graphic> graphics){
 
-        Set<Integer> colors = new LinkedHashSet<Integer>();
+        SortedSet<Integer> colors = new TreeSet<Integer>(new Comparator<Integer>(){
+            @Override
+            public int compare(Integer o1, Integer o2) {
+                //place 0 always first
+                if(o1 == 0){
+                    return -1;
+                }if(o2 == 0){
+                    return +1;
+                }else{
+                    return o1.compareTo(o2);
+                }
+            }
+
+        });
 
         for(Graphic gra : graphics){
             if(gra instanceof StatelessContextJ2D){
@@ -315,7 +331,7 @@ public class J2DCanvasBuffered extends J2DCanvas{
         return colors;
     }
 
-    private static Set<Integer> extractColors(MapContext context, Set<Integer> buffer){
+    private static SortedSet<Integer> extractColors(MapContext context, SortedSet<Integer> buffer){
         for(MapLayer layer : context.layers()){
             buffer = extractColors(layer, buffer);
             if(buffer == null){
@@ -326,7 +342,7 @@ public class J2DCanvasBuffered extends J2DCanvas{
         return buffer;
     }
 
-    private static Set<Integer> extractColors(MapLayer layer, Set<Integer> buffer){
+    private static SortedSet<Integer> extractColors(MapLayer layer, SortedSet<Integer> buffer){
 
         final GraphicBuilder customBuilder = layer.getGraphicBuilder(GraphicJ2D.class);
 
