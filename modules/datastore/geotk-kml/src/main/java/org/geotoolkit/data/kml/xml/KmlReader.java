@@ -331,7 +331,7 @@ public class KmlReader extends StaxStreamReader {
 
 
                     } else if (URI_ATOM.equals(eUri)) {
-
+                        checkVersion(URI_KML_2_2);
                         // ABSTRACT FEATURE
                         if (TAG_ATOM_AUTHOR.equals(eName)) {
                             author = this.readAtomPersonConstruct();
@@ -340,6 +340,7 @@ public class KmlReader extends StaxStreamReader {
                         }
                     }
                     if (URI_XAL.equals(eUri)) {
+                        checkVersion(URI_KML_2_2);
                         // ABSTRACT FEATURE
                         if (TAG_XAL_ADDRESS_DETAILS.equals(eName)) {
                             addressDetails = this.readXalAddressDetails();
@@ -1787,7 +1788,7 @@ public class KmlReader extends StaxStreamReader {
 
 
                     } else if (URI_ATOM.equals(eUri)) {
-
+                        checkVersion(URI_KML_2_2);
                         // ABSTRACT FEATURE
                         if (TAG_ATOM_AUTHOR.equals(eName)) {
                             author = this.readAtomPersonConstruct();
@@ -1796,7 +1797,7 @@ public class KmlReader extends StaxStreamReader {
                         }
                     }
                     if (URI_XAL.equals(eUri)) {
-
+                        checkVersion(URI_KML_2_2);
                         // ABSTRACT FEATURE
                         if (TAG_XAL_ADDRESS_DETAILS.equals(eName)) {
                             addressDetails = this.readXalAddressDetails();
@@ -2285,7 +2286,7 @@ public class KmlReader extends StaxStreamReader {
 
 
                     } else if (URI_ATOM.equals(eUri)) {
-
+                        checkVersion(URI_KML_2_2);
                         // ABSTRACT FEATURE
                         if (TAG_ATOM_AUTHOR.equals(eName)) {
                             author = this.readAtomPersonConstruct();
@@ -2294,7 +2295,7 @@ public class KmlReader extends StaxStreamReader {
                         }
                     }
                     if (URI_XAL.equals(eUri)) {
-
+                        checkVersion(URI_KML_2_2);
                         // ABSTRACT FEATURE
                         if (TAG_XAL_ADDRESS_DETAILS.equals(eName)) {
                             addressDetails = this.readXalAddressDetails();
@@ -2435,7 +2436,7 @@ public class KmlReader extends StaxStreamReader {
 
 
                     } else if (URI_ATOM.equals(eUri)) {
-
+                        checkVersion(URI_KML_2_2);
                         // ABSTRACT FEATURE
                         if (TAG_ATOM_AUTHOR.equals(eName)) {
                             author = this.readAtomPersonConstruct();
@@ -2444,7 +2445,7 @@ public class KmlReader extends StaxStreamReader {
                         }
                     }
                     if (URI_XAL.equals(eUri)) {
-
+                        checkVersion(URI_KML_2_2);
                         // ABSTRACT FEATURE
                         if (TAG_XAL_ADDRESS_DETAILS.equals(eName)) {
                             addressDetails = this.readXalAddressDetails();
@@ -3651,7 +3652,7 @@ public class KmlReader extends StaxStreamReader {
                         }
 
                     } else if (URI_ATOM.equals(eUri)) {
-
+                        checkVersion(URI_KML_2_2);
                         // ABSTRACT FEATURE
                         if (TAG_ATOM_AUTHOR.equals(eName)) {
                             author = this.readAtomPersonConstruct();
@@ -3660,7 +3661,7 @@ public class KmlReader extends StaxStreamReader {
                         }
                     }
                     if (URI_XAL.equals(eUri)) {
-
+                        checkVersion(URI_KML_2_2);
                         // ABSTRACT FEATURE
                         if (TAG_XAL_ADDRESS_DETAILS.equals(eName)) {
                             addressDetails = this.readXalAddressDetails();
@@ -3779,7 +3780,7 @@ public class KmlReader extends StaxStreamReader {
 
 
                     } else if (URI_ATOM.equals(eUri)) {
-
+                        checkVersion(URI_KML_2_2);
                         // ABSTRACT FEATURE
                         if (TAG_ATOM_AUTHOR.equals(eName)) {
                             author = this.readAtomPersonConstruct();
@@ -3788,7 +3789,7 @@ public class KmlReader extends StaxStreamReader {
                         }
                     }
                     if (URI_XAL.equals(eUri)) {
-
+                        checkVersion(URI_KML_2_2);
                         // ABSTRACT FEATURE
                         if (TAG_XAL_ADDRESS_DETAILS.equals(eName)) {
                             addressDetails = this.readXalAddressDetails();
@@ -3988,7 +3989,7 @@ public class KmlReader extends StaxStreamReader {
 
 
                     } else if (URI_ATOM.equals(eUri)) {
-
+                        checkVersion(URI_KML_2_2);
                         // ABSTRACT FEATURE
                         if (TAG_ATOM_AUTHOR.equals(eName)) {
                             author = this.readAtomPersonConstruct();
@@ -3997,7 +3998,7 @@ public class KmlReader extends StaxStreamReader {
                         }
                     }
                     if (URI_XAL.equals(eUri)) {
-
+                        checkVersion(URI_KML_2_2);
                         // ABSTRACT FEATURE
                         if (TAG_XAL_ADDRESS_DETAILS.equals(eName)) {
                             addressDetails = this.readXalAddressDetails();

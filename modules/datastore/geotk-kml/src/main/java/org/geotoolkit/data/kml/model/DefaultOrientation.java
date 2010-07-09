@@ -41,7 +41,7 @@ public class DefaultOrientation extends DefaultAbstractObject implements Orienta
             List<AbstractObject> orientationObjectExtensions) {
         super(objectSimpleExtensions, idAttributes);
         this.heading = KmlUtilities.checkAngle360(heading);
-        this.tilt = KmlUtilities.checkAnglePos180(tilt);
+        this.tilt = KmlUtilities.checkAngle360(tilt);
         this.roll = KmlUtilities.checkAngle180(roll);
         if (orientationSimpleExtensions != null) {
             this.extensions().simples(Extensions.Names.ORIENTATION).addAll(orientationSimpleExtensions);
@@ -93,7 +93,7 @@ public class DefaultOrientation extends DefaultAbstractObject implements Orienta
      */
     @Override
     public void setTilt(double tilt) {
-        this.tilt = KmlUtilities.checkAnglePos180(tilt);
+        this.tilt = KmlUtilities.checkAngle360(tilt);
     }
 
     /**

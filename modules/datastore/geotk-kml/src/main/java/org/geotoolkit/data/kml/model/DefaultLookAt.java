@@ -60,7 +60,7 @@ public class DefaultLookAt extends DefaultAbstractView implements LookAt {
         this.latitude = KmlUtilities.checkAngle90(latitude);
         this.altitude = altitude;
         this.heading = KmlUtilities.checkAngle360(heading);
-        this.tilt = KmlUtilities.checkAnglePos180(tilt);
+        this.tilt = KmlUtilities.checkAnglePos90(tilt);
         this.range = range;
         if (lookAtSimpleExtensions != null) {
             this.extensions().simples(Extensions.Names.LOOK_AT).addAll(lookAtSimpleExtensions);
@@ -166,7 +166,7 @@ public class DefaultLookAt extends DefaultAbstractView implements LookAt {
      */
     @Override
     public void setTilt(double tilt) {
-        this.tilt = KmlUtilities.checkAnglePos180(tilt);
+        this.tilt = KmlUtilities.checkAnglePos90(tilt);
     }
 
     /**
