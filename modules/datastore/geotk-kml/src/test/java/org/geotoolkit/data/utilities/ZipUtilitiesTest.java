@@ -111,7 +111,11 @@ public class ZipUtilitiesTest {
         archive.deleteOnExit();
 
         ZipUtilities.zip(archive, ZipOutputStream.DEFLATED, 9, CHECKSUM, dir);
-        File extract = new File ("/tmp/extract");
+        File tempFile = File.createTempFile("extract", null, new File("/tmp"));
+        String temporaryPath = tempFile.getAbsolutePath();
+        tempFile.delete();
+        
+        File extract = new File (temporaryPath);
         ZipUtilities.unzip(archive,extract,CHECKSUM);
 
         List<String> files = new ArrayList<String>();
