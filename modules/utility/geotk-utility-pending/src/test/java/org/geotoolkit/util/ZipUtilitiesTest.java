@@ -63,84 +63,144 @@ public class ZipUtilitiesTest {
     }
 
     @Test
-    public void fileTestStored() throws IOException{
+    public void fileTestStored() throws IOException {
 
-        File file1 = File.createTempFile("file1",".txt");
-        File archive = File.createTempFile("archive",".zip");
+        File file1 = File.createTempFile("file1", ".txt");
+        File archive = File.createTempFile("archive", ".zip");
         file1.deleteOnExit();
         archive.deleteOnExit();
 
-        FileUtilities.zip(archive,CHECKSUM,file1);
-        FileUtilities.unzip(archive,CHECKSUM);
-        
-        List<String> zipContent = listContent(archive);
-        assertEquals(zipContent.get(0), file1.getName());
-    }
-
-    @Test
-    public void fileTest() throws IOException{
-
-        File file1 = File.createTempFile("file1",".txt");
-        File archive = File.createTempFile("archive",".zip");
-        file1.deleteOnExit();
-        archive.deleteOnExit();
-
-        FileUtilities.zip(archive,ZipOutputStream.DEFLATED,9,CHECKSUM,file1);
-        FileUtilities.unzip(archive,CHECKSUM);
+        FileUtilities.zip(archive, CHECKSUM, file1);
+        FileUtilities.unzip(archive, CHECKSUM);
 
         List<String> zipContent = listContent(archive);
         assertEquals(zipContent.get(0), file1.getName());
     }
 
     @Test
-    public void stringTest() throws IOException{
+    public void fileTest() throws IOException {
 
-        File file1 = File.createTempFile("file1",".txt");
-        File archive = File.createTempFile("archive",".zip");
+        File file1 = File.createTempFile("file1", ".txt");
+        File archive = File.createTempFile("archive", ".zip");
+        file1.deleteOnExit();
+        archive.deleteOnExit();
+
+        FileUtilities.zip(archive, ZipOutputStream.DEFLATED, 9, CHECKSUM, file1);
+        FileUtilities.unzip(archive, CHECKSUM);
+
+        List<String> zipContent = listContent(archive);
+        assertEquals(zipContent.get(0), file1.getName());
+    }
+
+    @Test
+    public void directoryTest() throws IOException {
+
+        final File dir = File.createTempFile("directory", null);
+        dir.delete();
+        dir.mkdir();
+        dir.deleteOnExit();
+        final File file1 = File.createTempFile("file1", ".txt", dir);
+        file1.deleteOnExit();
+        final File file2 = File.createTempFile("file2", ".txt", dir);
+        file2.deleteOnExit();
+        final File dir2 = new File(dir, "directory2");
+        dir2.mkdir();
+        dir2.deleteOnExit();
+        final File file3 = File.createTempFile("file3", ".txt", dir2);
+        file3.deleteOnExit();
+        final File archive = File.createTempFile("archive", ".zip");
+        archive.deleteOnExit();
+
+        FileUtilities.zip(archive, ZipOutputStream.DEFLATED, 9, CHECKSUM, dir);
+        final File extract = File.createTempFile("extract", null);
+        extract.delete();
+
+        FileUtilities.unzip(archive, extract, CHECKSUM);
+
+        final List<String> files = new ArrayList<String>();
+        for (String file : extract.list()) {
+            files.add(file);
+        }
+
+        // Checking extracted folder location.
+        assertTrue(files.contains(dir.getName()));
+
+        // Checking dir content
+        files.clear();
+        File currentFile = new File(extract, dir.getName());
+        assertEquals(dir.listFiles().length, currentFile.listFiles().length);
+        for (String file : currentFile.list()) {
+            files.add(file);
+        }
+
+        for (String element : dir.list()) {
+            assertTrue(files.contains(element));
+        }
+
+        // Checking dir2 content.
+        files.clear();
+        currentFile = new File(currentFile, dir2.getName());
+        assertEquals(dir2.listFiles().length, currentFile.listFiles().length);
+        for (String file : currentFile.list()) {
+            files.add(file);
+        }
+
+        for (String element : dir2.list()) {
+            assertTrue(files.contains(element));
+        }
+
+        org.geotoolkit.util.FileUtilities.deleteDirectory(extract);
+    }
+
+    @Test
+    public void stringTest() throws IOException {
+
+        File file1 = File.createTempFile("file1", ".txt");
+        File archive = File.createTempFile("archive", ".zip");
         file1.deleteOnExit();
         archive.deleteOnExit();
 
         String file1Path = file1.getAbsolutePath();
         String archivePath = archive.getAbsolutePath();
 
-        FileUtilities.zip(archivePath,ZipOutputStream.DEFLATED,9,CHECKSUM,file1Path);
-        FileUtilities.unzip(archivePath,CHECKSUM);
+        FileUtilities.zip(archivePath, ZipOutputStream.DEFLATED, 9, CHECKSUM, file1Path);
+        FileUtilities.unzip(archivePath, CHECKSUM);
 
         List<String> zipContent = listContent(archive);
         assertEquals(zipContent.get(0), file1.getName());
     }
 
     @Test
-    public void urlTest() throws IOException{
+    public void urlTest() throws IOException {
 
-        File file1 = File.createTempFile("file1",".txt");
-        File archive = File.createTempFile("archive",".zip");
+        File file1 = File.createTempFile("file1", ".txt");
+        File archive = File.createTempFile("archive", ".zip");
         file1.deleteOnExit();
         archive.deleteOnExit();
 
-        URL url1 = new URL("file://"+file1.getAbsolutePath());
-        URL urlArchive = new URL("file://"+archive.getAbsolutePath());
+        URL url1 = new URL("file://" + file1.getAbsolutePath());
+        URL urlArchive = new URL("file://" + archive.getAbsolutePath());
 
-        FileUtilities.zip(archive,ZipOutputStream.DEFLATED,9,CHECKSUM,url1);
-        FileUtilities.unzip(urlArchive,CHECKSUM);
+        FileUtilities.zip(archive, ZipOutputStream.DEFLATED, 9, CHECKSUM, url1);
+        FileUtilities.unzip(urlArchive, CHECKSUM);
 
         List<String> zipContent = listContent(archive);
         assertEquals(zipContent.get(0), file1.getName());
     }
 
     @Test
-    public void uriTest() throws IOException{
+    public void uriTest() throws IOException {
 
-        File file1 = File.createTempFile("file1",".txt");
-        File archive = File.createTempFile("archive",".zip");
+        File file1 = File.createTempFile("file1", ".txt");
+        File archive = File.createTempFile("archive", ".zip");
         file1.deleteOnExit();
         archive.deleteOnExit();
 
-        URI uri1 = URI.create("file://"+file1.getAbsolutePath());
-        URI uriArchive = URI.create("file://"+archive.getAbsolutePath());
+        URI uri1 = URI.create("file://" + file1.getAbsolutePath());
+        URI uriArchive = URI.create("file://" + archive.getAbsolutePath());
 
-        FileUtilities.zip(archive,ZipOutputStream.DEFLATED,9,CHECKSUM,uri1);
-        FileUtilities.unzip(uriArchive,CHECKSUM);
+        FileUtilities.zip(archive, ZipOutputStream.DEFLATED, 9, CHECKSUM, uri1);
+        FileUtilities.unzip(uriArchive, CHECKSUM);
 
         List<String> zipContent = listContent(archive);
         assertEquals(zipContent.get(0), file1.getName());
@@ -154,25 +214,24 @@ public class ZipUtilitiesTest {
      * @throws IOException
      */
     public static List<String> listContent(final Object archive)
-            throws IOException{
+            throws IOException {
 
         final List<String> out = new ArrayList<String>();
         ZipFile zf = null;
 
-        if(archive instanceof ZipFile){
+        if (archive instanceof ZipFile) {
             zf = (ZipFile) archive;
-        } else if(archive instanceof File){
+        } else if (archive instanceof File) {
             zf = new ZipFile((File) archive);
-        } else if (archive instanceof String){
+        } else if (archive instanceof String) {
             zf = new ZipFile((String) archive);
         }
 
         Enumeration entries = zf.entries();
-        while (entries.hasMoreElements()){
+        while (entries.hasMoreElements()) {
             ZipEntry entry = (ZipEntry) entries.nextElement();
             out.add(entry.getName());
         }
         return out;
     }
-
 }
