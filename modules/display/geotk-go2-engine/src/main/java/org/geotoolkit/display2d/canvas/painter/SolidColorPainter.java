@@ -43,12 +43,10 @@ public class SolidColorPainter implements BackgroundPainter{
     
     @Override
     public void paint(RenderingContext2D context) {
-        if(color != null){
-            Graphics2D g = context.getGraphics();
-            Rectangle rect = context.getCanvasDisplayBounds();
-            g.setPaint(color);
-            g.fillRect(rect.x, rect.y, rect.width, rect.height);
-        }
+        final Graphics2D g = context.getGraphics();
+        final Rectangle rect = context.getCanvasDisplayBounds();
+        g.setPaint(color);
+        g.fillRect(rect.x, rect.y, rect.width, rect.height);
     }
 
     @Override
