@@ -520,7 +520,7 @@ public abstract class SingletonTable<E extends Entry> extends Table {
      *
      * @since 3.11
      */
-    protected String searchFreeIdentifier(final String base) throws SQLException {
+    public String searchFreeIdentifier(final String base) throws SQLException {
         if (generator == null) {
             if (pkParam.length == 0) {
                 throw new UnsupportedOperationException();

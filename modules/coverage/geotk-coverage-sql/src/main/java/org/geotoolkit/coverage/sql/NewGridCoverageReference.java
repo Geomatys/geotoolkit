@@ -24,6 +24,7 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Collection;
 import javax.imageio.ImageReader;
@@ -423,7 +424,7 @@ public final class NewGridCoverageReference {
                                 bands[i] = new GridSampleDimension(band.getDescription(), new Category[] {
                                         Category.NODATA,
                                         new Category(c.getName(), c.getColors(), PACKED_RANGE, c.getRange())
-                                }, band.getUnits());
+                                }, band.getUnits()).geophysics(true);
                             }
                             break;
                         }
@@ -446,12 +447,12 @@ public final class NewGridCoverageReference {
          * in the database yet.
          */
         final FormatTable formatTable = database.getTable(FormatTable.class);
-        FormatEntry candidate = formatTable.find(imageFormat, sampleDimensions);
-        formatTable.release();
+        FormatEntry candidate = formatTable.find(imageFormat, Arrays.asList(bands));
         if (candidate == null) {
-            candidate = new FormatEntry(imageFormat, imageFormat, null, bands,
-                    isGeophysics ? ViewType.GEOPHYSICS : ViewType.NATIVE, null);
+            candidate = new FormatEntry(formatTable.searchFreeIdentifier(imageFormat), imageFormat,
+                    null, bands, isGeophysics ? ViewType.GEOPHYSICS : ViewType.NATIVE, null);
         }
+        formatTable.release();
         bestFormat = candidate;
         format = candidate.getIdentifier();
         this.sampleDimensions = (candidate.sampleDimensions != null) ?

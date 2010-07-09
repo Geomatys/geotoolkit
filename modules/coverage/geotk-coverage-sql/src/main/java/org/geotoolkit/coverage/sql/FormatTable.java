@@ -249,8 +249,18 @@ next:   for (final FormatEntry candidate : getEntries()) {
                         final int numCategories = size(categories1);
                         if (size(categories2) == numCategories) {
                             for (int j=0; j<numCategories; j++) {
-                                final Category category1 = categories1.get(j);
-                                final Category category2 = categories2.get(j);
+                                Category category1 = categories1.get(j);
+                                Category category2 = categories2.get(j);
+                                /*
+                                 * Converts the two categories to non-geophysics categories.
+                                 * If we detect in this process that one category is geophysics
+                                 * while the other is not, consider that we don't have a match.
+                                 */
+                                if ((category1 == (category1 = category1.geophysics(false))) !=
+                                    (category2 == (category2 = category2.geophysics(false))))
+                                {
+                                    continue next;
+                                }
                                 /*
                                  * Compares the sample value range (not the geophysics one) because
                                  * the former is definitive in the database. However do not convert
@@ -323,7 +333,7 @@ check:  for (final GridSampleDimension band : bands) {
                  */
                 if (name == null) {
                     final FormatEntry candidate = find(imageFormat, bands);
-                    if (candidate != null) {
+                    if (candidate != null && type.equals(candidate.viewType)) {
                         return candidate.getIdentifier();
                     }
                     name = searchFreeIdentifier(imageFormat);
