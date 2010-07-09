@@ -13,7 +13,6 @@ import org.geotoolkit.data.kml.model.Placemark;
 import org.geotoolkit.data.kml.model.TimeSpan;
 import org.geotoolkit.data.kml.xml.KmlReader;
 import org.geotoolkit.data.kml.xml.KmlWriter;
-import org.geotoolkit.data.utilities.DateUtilities;
 import org.geotoolkit.temporal.object.FastDateParser;
 import org.geotoolkit.xml.DomCompare;
 import org.junit.After;
@@ -69,7 +68,7 @@ public class TimeSpanTest {
         TimeSpan timeSpan = (TimeSpan) placemark.getTimePrimitive();
         String begin = "1876-08-02T22:31:54.543+01:00";
 
-        DateUtilities du = new DateUtilities();
+        FastDateParser du = new FastDateParser();
         Calendar calendarBegin = du.getCalendar(begin);
         assertEquals(calendarBegin, timeSpan.getBegin());
         assertEquals(begin, du.getFormatedString(false));

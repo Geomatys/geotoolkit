@@ -10,11 +10,10 @@ import org.geotoolkit.data.kml.model.AbstractFeature;
 import org.geotoolkit.data.kml.model.Kml;
 import org.geotoolkit.data.kml.model.KmlException;
 import org.geotoolkit.data.kml.model.Placemark;
-import org.geotoolkit.data.kml.model.TimeSpan;
 import org.geotoolkit.data.kml.model.TimeStamp;
 import org.geotoolkit.data.kml.xml.KmlReader;
 import org.geotoolkit.data.kml.xml.KmlWriter;
-import org.geotoolkit.data.utilities.DateUtilities;
+import org.geotoolkit.temporal.object.FastDateParser;
 import org.geotoolkit.xml.DomCompare;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -69,7 +68,7 @@ public class TimeStampTest {
         TimeStamp timeStamp = (TimeStamp) placemark.getTimePrimitive();
         String when = "1876-08-02T22:31:54.543+01:00";
 
-        DateUtilities du = new DateUtilities();
+        FastDateParser du = new FastDateParser();
         Calendar calendarWhen = du.getCalendar(when);
         assertEquals(calendarWhen, timeStamp.getWhen());
         assertEquals(when, du.getFormatedString(false));

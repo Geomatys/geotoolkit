@@ -100,7 +100,7 @@ import org.geotoolkit.data.xal.model.AddressDetails;
 import org.geotoolkit.data.xal.model.XalException;
 import org.geotoolkit.data.kml.xsd.SimpleType;
 import org.geotoolkit.data.utilities.Cdata;
-import org.geotoolkit.data.utilities.DateUtilities;
+import org.geotoolkit.temporal.object.FastDateParser;
 import org.geotoolkit.xml.StaxStreamWriter;
 import static org.geotoolkit.data.kml.xml.KmlModelConstants.*;
 
@@ -2262,7 +2262,7 @@ public class KmlWriter extends StaxStreamWriter {
      * @throws XMLStreamException
      */
     private void writeCalendar(Calendar calendar) throws XMLStreamException{
-        writer.writeCharacters(DateUtilities.getFormatedString(calendar, true));
+        writer.writeCharacters(FastDateParser.getFormatedString(calendar, true));
     }
 
     /**

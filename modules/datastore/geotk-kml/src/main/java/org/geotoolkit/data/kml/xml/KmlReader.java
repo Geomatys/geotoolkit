@@ -105,8 +105,8 @@ import org.geotoolkit.data.kml.model.ViewVolume;
 import org.geotoolkit.data.xal.model.AddressDetails;
 import org.geotoolkit.data.xal.model.XalException;
 import org.geotoolkit.data.kml.xsd.SimpleType;
-import org.geotoolkit.data.utilities.DateUtilities;
 import org.geotoolkit.data.utilities.DefaultCdata;
+import org.geotoolkit.temporal.object.FastDateParser;
 import org.geotoolkit.xml.StaxStreamReader;
 import static org.geotoolkit.data.kml.xml.KmlModelConstants.*;
 
@@ -120,7 +120,7 @@ public class KmlReader extends StaxStreamReader {
     private static final KmlFactory kmlFactory = new DefaultKmlFactory();
     private final XalReader xalReader = new XalReader();
     private final AtomReader atomReader = new AtomReader();
-    private final DateUtilities fastDateParser = new DateUtilities();
+    private final FastDateParser fastDateParser = new FastDateParser();
 
     public KmlReader() {
         super();
