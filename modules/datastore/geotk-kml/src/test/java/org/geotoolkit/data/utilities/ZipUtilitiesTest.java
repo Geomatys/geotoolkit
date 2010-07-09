@@ -114,10 +114,36 @@ public class ZipUtilitiesTest {
         File extract = new File ("/tmp/extract");
         ZipUtilities.unzip(archive,extract,CHECKSUM);
 
-        List<String> zipContent = listContent(archive);
-//        assertEquals("/tmp/"+zipContent.get(0), file1.getPath());
-//        assertEquals("/tmp/"+zipContent.get(1), file2.getPath());
-//        assertEquals("/tmp/"+zipContent.get(2), file3.getPath());
+        List<String> files = new ArrayList<String>();
+        for(String file : extract.list())
+            files.add(file);
+
+        // Checking extracted folder location.
+        assertTrue(files.contains(dir.getName()));
+
+        // Checking dir content
+        files.clear();
+        File currentFile = new File(extract, dir.getName());
+        assertEquals(dir.listFiles().length, currentFile.listFiles().length);
+        for(String file : currentFile.list())
+            files.add(file);
+
+        for(String element : dir.list()){
+            assertTrue(files.contains(element));
+        }
+
+        // Checking dir2 content.
+        files.clear();
+        currentFile = new File(currentFile, dir2.getName());
+        assertEquals(dir2.listFiles().length, currentFile.listFiles().length);
+        for(String file : currentFile.list())
+            files.add(file);
+
+        for(String element : dir2.list()){
+            assertTrue(files.contains(element));
+        }
+
+        org.geotoolkit.util.FileUtilities.deleteDirectory(extract);
     }
 
     @Test
