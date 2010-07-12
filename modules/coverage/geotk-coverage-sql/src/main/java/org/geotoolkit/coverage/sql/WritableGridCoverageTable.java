@@ -69,20 +69,6 @@ import org.geotoolkit.internal.io.IOUtilities;
  */
 final class WritableGridCoverageTable extends GridCoverageTable {
     /**
-     * {@code true} if {@code WritableGridCoverageTable} is allowed to insert new entries in
-     * existing series which seems a good match, or {@code false} to be strict. The default
-     * value is {@code false}.
-     * <p>
-     * This flag can be set to {@code true} if the information declared in the database have
-     * been edited manually in such a way that the strict mode would never use that series.
-     * For example the series may have been given a more specialized image format than the
-     * one automatically detected, or may locate the files in a different directory because
-     * the directory structure is different on the server than on the desktop running the
-     * {@code WritableGridCoverageTable} code.
-     */
-    boolean lenientSeries;
-
-    /**
      * The object to use for writting in the {@code "Tiles"} table. Created only if needed.
      * This is used for adding tiles (as opposed to ordinary images), and is encapsulated
      * in this {@code WritableGridCoverageTable} because we will also need to write an entry
@@ -249,19 +235,6 @@ final class WritableGridCoverageTable extends GridCoverageTable {
                     throw (IOException) cause;
                 }
                 throw exception.unwrapOrRethrow(SQLException.class);
-            }
-            /*
-             * If no destination series were explicitly specified, and if we are allowed to
-             * "guess" the series, perform the guess now. We do that before to notify the
-             * controller because the guess performed here depends only on information that
-             * the controller can not modify.
-             */
-            if (entry.series == null && lenientSeries) {
-                final LayerEntry layer = getLayerEntry(true);
-                final Collection<SeriesEntry> candidates = layer.getSeries();
-                if (!candidates.isEmpty()) {
-                    entry.selectSeries(candidates);
-                }
             }
             /*
              * Notifies the controller (if any), then the listeners (if any) after the
