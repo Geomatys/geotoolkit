@@ -17,12 +17,18 @@
  */
 package org.geotoolkit.coverage.sql;
 
+import java.io.File;
 import java.awt.Rectangle;
 import java.sql.SQLException;
 import java.util.Collections;
+import java.util.Locale;
+import java.util.Set;
 
 import org.geotoolkit.test.Depend;
+import org.geotoolkit.test.TestData;
 import org.geotoolkit.internal.sql.table.CatalogTestBase;
+import org.geotoolkit.image.io.plugin.WorldFileImageReader;
+import org.geotoolkit.image.io.plugin.TextMatrixImageReader;
 
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -32,7 +38,7 @@ import static org.junit.Assert.*;
  * Tests {@link WritableGridCoverageTable}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.12
+ * @version 3.14
  *
  * @since 3.12
  */
@@ -52,6 +58,23 @@ public final class WritableGridCoverageTableTest extends CatalogTestBase {
      * {@code true} if {@link #createTemporaryLayer()} has created a temporary layer.
      */
     private boolean layerCreated;
+
+    /**
+     * Registers <cite>World File Readers</cite>.
+     * They are required by {@link #textMatrix()}.
+     */
+    @BeforeClass
+    public static void registerWorldFiles() {
+        WorldFileImageReader.Spi.registerDefaults(null);
+    }
+
+    /**
+     * Unregisters the <cite>World File Readers</cite>.
+     */
+    @AfterClass
+    public static void unregisterWorldFiles() {
+        WorldFileImageReader.Spi.unregisterDefaults(null);
+    }
 
     /**
      * Creates a new temporary layer in which to insert the new images.
@@ -79,7 +102,62 @@ public final class WritableGridCoverageTableTest extends CatalogTestBase {
             final LayerTable table = getDatabase().getTable(LayerTable.class);
             assertEquals(1, table.delete(TEMPORARY_LAYER));
             table.release();
+            layerCreated = false;
         }
+    }
+
+    /**
+     * Tests insertion for ASCII data. This test reuses the {@code "matrix.txt"} test file
+     * from the {@code geotk-coverageio} module. The {@code ".txt"} file is completed by
+     * {@code "matrix.tfw"} and {@code "matrix.prj"} files.
+     *
+     * @throws Exception If a SQL, I/O or referencing error occured.
+     *
+     * @since 3.14
+     */
+    @Test
+    public void testMatrix() throws Exception {
+        final WritableGridCoverageTable table = getDatabase().getTable(WritableGridCoverageTable.class);
+        final CoverageDatabase database = new CoverageDatabase((TableFactory) getDatabase());
+        final CoverageDatabaseController controller = new CoverageDatabaseController() {
+            /**
+             * Checks the parameter values before their insertion in the database.
+             */
+            @Override
+            public void coverageAdding(CoverageDatabaseEvent event, NewGridCoverageReference reference) {
+                assertEquals("test-data",           reference.path.getName());
+                assertEquals("matrix",              reference.filename);
+                assertEquals("txt",                 reference.extension);
+                assertEquals("matrix",              reference.format);
+                assertEquals(new Rectangle(20, 42), reference.imageBounds);
+                assertEquals(3395,                  reference.horizontalSRID);
+                assertEquals(0,                     reference.verticalSRID);
+                assertNull  (                       reference.verticalValues);
+                assertNull  (                       reference.dateRanges);
+            }
+        };
+        final Set<File> files = Collections.singleton(TestData.file(TextMatrixImageReader.class, "matrix.txt"));
+        table.setLayer(TEMPORARY_LAYER);
+        /*
+         * TODO: Ugly patch below: set the locale the an anglo-saxon one, so we can parse the
+         * matrix numbers. We should find an other way to provide the locale to the reader...
+         */
+        final Locale locale = Locale.getDefault();
+        try {
+            Locale.setDefault(Locale.CANADA);
+            assertEquals(1, table.addEntries(files, 0, database, controller));
+        } finally {
+            Locale.setDefault(locale);
+        }
+        table.release();
+        /*
+         * Clean-up: delete the "matrix" format, so that the next execution will
+         * recreate a new format. Note that we need to delete the layer first.
+         */
+        deleteTemporaryLayer();
+        final FormatTable ft = getDatabase().getTable(FormatTable.class);
+        assertEquals(1, ft.delete("matrix"));
+        ft.release();
     }
 
     /**
@@ -119,8 +197,9 @@ public final class WritableGridCoverageTableTest extends CatalogTestBase {
             }
         };
         requireImageData();
+        final Set<File> files = Collections.singleton(toImageFile(GEOSTROPHIC_CURRENT_FILE));
         table.setLayer(TEMPORARY_LAYER);
-        table.addEntries(Collections.singleton(toImageFile(GEOSTROPHIC_CURRENT_FILE)), 0, database, controller);
+        assertEquals(1, table.addEntries(files, 0, database, controller));
         table.release();
     }
 }

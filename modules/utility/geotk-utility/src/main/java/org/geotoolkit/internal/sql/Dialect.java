@@ -31,7 +31,7 @@ import org.geotoolkit.util.XArrays;
  * The SQL dialect used by a connection.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.10
+ * @version 3.14
  *
  * @since 3.00
  * @module
@@ -61,8 +61,16 @@ public enum Dialect {
     /**
      * The database uses PostgreSQL syntax. This is ANSI, but provided an a separated
      * enum because it allows a few additional commands like {@code VACUUM}.
+     * <p>
+     * While enums were introduced in PostgreSQL 8.3, we require PostgreSQL 8.4
+     * because we need the {@code CAST ... WITH INOUT} feature.
      */
-    POSTGRESQL("org.postgresql.", "jdbc:postgresql:"),
+    POSTGRESQL("org.postgresql.", "jdbc:postgresql:") {
+        @Override public boolean isEnumSupported(final DatabaseMetaData metadata) throws SQLException {
+            return metadata.getDatabaseMajorVersion() >= 8 &&
+                   metadata.getDatabaseMinorVersion() >= 4;
+        }
+    },
 
     /**
      * The database uses Access SQL syntax.
@@ -133,6 +141,20 @@ public enum Dialect {
             }
         }
         return null;
+    }
+
+    /**
+     * Returns {@code true} if the database supports enums. The default implementation
+     * returns {@code false}, because enums are not a standard feature.
+     *
+     * @param  metadata The database metadata
+     * @return {@code true} if the database supports enums.
+     * @throws SQLException If an error occured while querying the metadata.
+     *
+     * @since 3.14
+     */
+    public boolean isEnumSupported(final DatabaseMetaData metadata) throws SQLException {
+        return false;
     }
 
     /**

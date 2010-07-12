@@ -17,7 +17,7 @@ GRANT USAGE ON SCHEMA coverages TO PUBLIC;
 
 COMMENT ON SCHEMA coverages IS 'Metadata for grid coverages';
 
-SET search_path = coverages, postgis;
+SET search_path = coverages, metadata, postgis;
 
 
 
@@ -28,6 +28,7 @@ SET search_path = coverages, postgis;
 --------------------------------------------------------------------------------------------------
 
 CREATE TYPE "PackMode" AS ENUM ('native', 'packed', 'geophysics', 'photographic');
+CREATE CAST (character varying AS "PackMode") WITH INOUT AS ASSIGNMENT;
 COMMENT ON TYPE "PackMode" IS
 'Indicates the relationship between the coefficients declared in the "Categories" table and the sample values in the file for a given format:
 
@@ -85,7 +86,7 @@ CREATE TABLE "SampleDimensions" (
     "format" character varying NOT NULL REFERENCES "Formats" ON UPDATE CASCADE ON DELETE CASCADE,
     "band"   smallint          NOT NULL DEFAULT 1 CHECK (band >= 1),
     "name"   character varying NOT NULL,
-    "units"  character varying NOT NULL DEFAULT '',
+    "units"  character varying,
     PRIMARY KEY ("format", "band")
 );
 
@@ -120,8 +121,6 @@ COMMENT ON INDEX "SampleDimensions_index" IS
 -- Dependencies: "SampleDimensions"                                                             --
 --------------------------------------------------------------------------------------------------
 
-CREATE TYPE "TransferFunctionType" AS ENUM ('linear', 'logarithmic', 'exponential');
-
 CREATE TABLE "Categories" (
     "format"   character varying NOT NULL,
     "band"     smallint          NOT NULL DEFAULT 1,
@@ -130,7 +129,7 @@ CREATE TABLE "Categories" (
     "upper"    integer           NOT NULL,
     "c0"       double precision,
     "c1"       double precision,
-    "function" "TransferFunctionType",
+    "function" "MI_TransferFunctionTypeCode",
     "colors"   character varying,
     PRIMARY KEY ("format", "band", "name"),
     FOREIGN KEY ("format", "band") REFERENCES "SampleDimensions" ON UPDATE CASCADE ON DELETE CASCADE,

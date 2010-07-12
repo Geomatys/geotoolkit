@@ -292,7 +292,7 @@ public final class CoverageDatabaseWizard extends AbstractWizard {
             schemas = new String[] {
                 PostgisInstaller.DEFAULT_SCHEMA,
                 EpsgInstaller.DEFAULT_SCHEMA,
-                "metadata",
+                CoverageDatabaseInstaller.METADATA_SCHEMA,
                 schema
             };
             // NOTE: CoverageDatabaseCreator expect the label to be added directly

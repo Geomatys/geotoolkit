@@ -43,7 +43,7 @@ import org.geotoolkit.referencing.factory.epsg.EpsgInstaller;
  * invoke {@link #install()}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.11
+ * @version 3.14
  *
  * @since 3.11
  * @module
@@ -60,9 +60,34 @@ public class CoverageDatabaseInstaller extends ScriptRunner {
     public static final String USER = "geouser";
 
     /**
-     * The default schema.
+     * The default coverages schema.
      */
     public static final String SCHEMA = "coverages";
+
+    /**
+     * The default metadata schema.
+     *
+     * @since 3.14
+     */
+    public static final String METADATA_SCHEMA = "metadata";
+
+    /**
+     * The enums created by the SQL scripts. They will need to be erased from the SQL
+     * scripts before {@linkplain #execute execution} if the database doesn't support
+     * enums.
+     */
+    private static final String[] ENUMS = {
+        "\"PackMode\"",
+        "\"MI_TransferFunctionTypeCode\""
+    };
+
+    /**
+     * Whatever enums are supported. Enums are not a standard feature;
+     * consequently they are supported only for a few specific databases.
+     *
+     * @since 3.14
+     */
+    private final boolean supportsEnum;
 
     /**
      * The directory of PostGIS installation scripts, or {@code null} if none.
@@ -112,6 +137,8 @@ public class CoverageDatabaseInstaller extends ScriptRunner {
             connection.close();
             throw new UnsupportedOperationException(dialect.toString());
         }
+        final DatabaseMetaData metadata = connection.getMetaData();
+        supportsEnum = dialect.isEnumSupported(metadata);
         setEncoding("UTF-8");
     }
 
@@ -174,9 +201,14 @@ public class CoverageDatabaseInstaller extends ScriptRunner {
             epsg.call();
         }
         /*
+         * Creates the metadata schema.
+         */
+        progress(75, METADATA_SCHEMA);
+        n += run("metadata-create.sql");
+        /*
          * Creates the coverages schema.
          */
-        progress(80, "coverages");
+        progress(80, SCHEMA);
         n += run("coverages-create.sql");
         final DatabaseMetaData md = getConnection().getMetaData();
         if (Dialect.POSTGRESQL.equals(dialect)) {
@@ -184,7 +216,8 @@ public class CoverageDatabaseInstaller extends ScriptRunner {
             if (database != null) {
                 final String quote = md.getIdentifierQuoteString();
                 final LineNumberReader reader = new LineNumberReader(new StringReader(
-                        "ALTER DATABASE " + quote + database + quote + " SET search_path=public, " + schema + ", postgis" + END_OF_STATEMENT + '\n' +
+                        "ALTER DATABASE " + quote + database + quote + " SET search_path=public, " +
+                        schema + ", " + METADATA_SCHEMA + ", " + PostgisInstaller.DEFAULT_SCHEMA + END_OF_STATEMENT + '\n' +
                         "COMMENT ON DATABASE " + quote + database + quote + " IS 'Geotoolkit.org source of coverages.'" + END_OF_STATEMENT));
                 n = run(reader);
                 reader.close();
@@ -223,6 +256,18 @@ public class CoverageDatabaseInstaller extends ScriptRunner {
      */
     @Override
     protected int execute(final StringBuilder sql) throws SQLException, IOException {
+        if (!supportsEnum) {
+            for (final String e : ENUMS) {
+                final int i = sql.indexOf(e);
+                if (i >= 0) {
+                    if (sql.indexOf("CREATE TABLE") >= 0) {
+                        sql.replace(i, i + e.length(), "varchar");
+                    } else {
+                        return 0;
+                    }
+                }
+            }
+        }
         if (!createRoles) {
             if (sql.indexOf("CREATE ROLE") >= 0) {
                 return 0;
