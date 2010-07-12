@@ -49,7 +49,7 @@ import org.geotoolkit.util.XArrays;
  * </ul>
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.09
+ * @version 3.14
  *
  * @since 3.08 (derived from 2.4)
  * @module
@@ -266,6 +266,25 @@ scan:   for (int i=0; i<missingCount; i++) {
             }
         }
         fillValues = (count != 0) ? XArrays.resize(missings, count) : null;
+    }
+
+    /**
+     * Returns {@code true} if at least one {@linkplain #fillValues fill value} is included
+     * in the range of value values. In such case, we will consider the range of values as
+     * invalid (the NetCDF library seems to set the range to maximal floating point values
+     * when the range is actually not specified).
+     *
+     * @since 3.14
+     */
+    final boolean hasCollisions(final EnhanceScaleMissing variable) {
+        if (fillValues != null) {
+            for (final double fillValue : fillValues) {
+                if (!variable.isInvalidData(fillValue)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     /**

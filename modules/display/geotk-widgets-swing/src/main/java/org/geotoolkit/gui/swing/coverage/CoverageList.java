@@ -71,6 +71,7 @@ import org.geotoolkit.internal.swing.ToolBar;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
 import org.geotoolkit.resources.Widgets;
+import org.jdesktop.swingx.JXBusyLabel;
 
 
 /**
@@ -79,7 +80,7 @@ import org.geotoolkit.resources.Widgets;
  * selected file on the right side.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.13
+ * @version 3.14
  *
  * @see CoverageTableModel
  *
@@ -96,7 +97,7 @@ public class CoverageList extends JComponent {
     /**
      * Layout parameters for the components put in {@link #selectionPanel}.
      */
-    static final String TABLE="TABLE", FILES="FILES", CONTROLLER="CONTROLLER";
+    static final String TABLE="TABLE", FILES="FILES", CONTROLLER="CONTROLLER", BUZY="BUZY";
 
     /**
      * The name of the panel currently selected in {@link #selectionPanel}.
@@ -138,6 +139,12 @@ public class CoverageList extends JComponent {
      * The properties of the selected image.
      */
     final ImageFileProperties properties;
+
+    /**
+     * The label to display when the widget is buzy loading the properties of an image.
+     * This happen before the {@link #addController} is initialized with the new values.
+     */
+    private JXBusyLabel busyLabel;
 
     /**
      * The panel for adding new files. Will be created only when first needed.
@@ -508,10 +515,18 @@ public class CoverageList extends JComponent {
             }
             selectionPanel.add(new JXTitledPanel(Widgets.getResources(getLocale())
                     .getString(Widgets.Keys.SELECT_FILE), fileChooser), FILES);
+            /*
+             * Creates the busy panel.
+             */
+            busyLabel = new JXBusyLabel(new Dimension(60, 60));
+            busyLabel.setHorizontalAlignment(JXBusyLabel.CENTER);
+            selectionPanel.add(busyLabel, BUZY);
         }
         if (!confirm) {
             setSelectionPanel(FILES);
         } else {
+            setSelectionPanel(BUZY);
+            busyLabel.setBusy(true);
             /*
              * If the user confirmed his selection, create the controller (if not already
              * done), then starts the image addition process in a background thread.
@@ -553,6 +568,7 @@ public class CoverageList extends JComponent {
                         }
                         EventQueue.invokeLater(new Runnable() {
                             @Override public void run() {
+                                busyLabel.setBusy(false);
                                 setSelectionPanel(TABLE);
                                 refresh();
                             }

@@ -86,13 +86,20 @@ import org.geotoolkit.gui.swing.Dialog;
  * </td></tr></table>
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.13
+ * @version 3.14
  *
  * @since 2.3
  * @module
  */
 @SuppressWarnings("serial")
 public class CoordinateChooser extends JComponent implements Dialog {
+    /**
+     * The factory by which to multiply the resolution. Current value is 60, because
+     * the resolution is displayed in minutes of angle. A future Geotk version may
+     * replace that factor by something inferred from the CRS.
+     */
+    private static final double RESOLUTION_FACTOR = 60;
+
     /**
      * An enumeration constant for showing or hidding the geographic area selector.
      * Used as argument for {@link #isSelectorVisible} and {@link #setSelectorVisible}.
@@ -410,11 +417,27 @@ public class CoordinateChooser extends JComponent implements Dialog {
     }
 
     /**
+     * Same as {@link Math#min(double, double}, except that the {@code ceil}
+     * argument is returned if the {@code value} argument is {@code NaN}.
+     */
+    private static double min(final double ceil, final double value) {
+        return (value < ceil) ? value : ceil;
+    }
+
+    /**
+     * Same as {@link Math#min(double, double}, except that the {@code floor}
+     * argument is returned if the {@code value} argument is {@code NaN}.
+     */
+    private static double max(final double floor, final double value) {
+        return (value > floor) ? value : floor;
+    }
+
+    /**
      * Returns the value for the specified number, or NaN if {@code value} is not a number.
      */
     private static double doubleValue(final JSpinner spinner) {
         final Object value = spinner.getValue();
-        return (value instanceof Number) ? ((Number)value).doubleValue() : Double.NaN;
+        return (value instanceof Number) ? ((Number) value).doubleValue() : Double.NaN;
     }
 
     /**
@@ -441,8 +464,9 @@ public class CoordinateChooser extends JComponent implements Dialog {
         final double ymin = degrees(this.ymin,  true);
         final double xmax = degrees(this.xmax, false);
         final double ymax = degrees(this.ymax,  true);
-        return new Rectangle2D.Double(Math.min(xmin,xmax), Math.min(ymin,ymax),
-                                      Math.abs(xmax-xmin), Math.abs(ymax-ymin));
+        return new Rectangle2D.Double(
+                Math.min(xmin,  xmax), Math.min(ymin,  ymax),
+                Math.abs(xmax - xmin), Math.abs(ymax - ymin));
     }
 
     /**
@@ -451,10 +475,10 @@ public class CoordinateChooser extends JComponent implements Dialog {
      * @param area The new geographic area of interest.
      */
     public void setGeographicArea(final Rectangle2D area) {
-        xmin.setValue(new Longitude(Math.max(Longitude.MIN_VALUE, area.getMinX())));
-        xmax.setValue(new Longitude(Math.min(Longitude.MAX_VALUE, area.getMaxX())));
-        ymin.setValue(new  Latitude(Math.max( Latitude.MIN_VALUE, area.getMinY())));
-        ymax.setValue(new  Latitude(Math.min( Latitude.MAX_VALUE, area.getMaxY())));
+        xmin.setValue(new Longitude(max(Longitude.MIN_VALUE, area.getMinX())));
+        xmax.setValue(new Longitude(min(Longitude.MAX_VALUE, area.getMaxX())));
+        ymin.setValue(new  Latitude(max( Latitude.MIN_VALUE, area.getMinY())));
+        ymax.setValue(new  Latitude(min( Latitude.MAX_VALUE, area.getMaxY())));
     }
 
     /**
@@ -465,7 +489,9 @@ public class CoordinateChooser extends JComponent implements Dialog {
      */
     public Dimension2D getPreferredResolution() {
         if (radioPrefRes.isSelected()) {
-            return new DoubleDimension2D(doubleValue(xres), doubleValue(yres));
+            return new DoubleDimension2D(
+                    doubleValue(xres) / RESOLUTION_FACTOR,
+                    doubleValue(yres) / RESOLUTION_FACTOR);
         }
         return null;
     }
@@ -478,8 +504,8 @@ public class CoordinateChooser extends JComponent implements Dialog {
      */
     public void setPreferredResolution(final Dimension2D resolution) {
         if (resolution != null) {
-            xres.setValue(Double.valueOf(resolution.getWidth ()*60));
-            yres.setValue(Double.valueOf(resolution.getHeight()*60));
+            xres.setValue(Double.valueOf(max(0, resolution.getWidth () * RESOLUTION_FACTOR)));
+            yres.setValue(Double.valueOf(max(0, resolution.getHeight() * RESOLUTION_FACTOR)));
             radioPrefRes.setSelected(true);
         }  else {
             radioBestRes.setSelected(true);

@@ -100,12 +100,16 @@ public final class DimensionAccessor extends MetadataAccessor {
      * Sets the {@code "validSampleValues"} attribute to the given range. This is the range of
      * values encoded in the file, before the transformation by the transfert function if there
      * is one.
+     * <p>
+     * This method does nothing if the given range is infinite.
      *
      * @param minimum The minimal sample value, inclusive.
      * @param maximum The maximal sample value, inclusive.
      */
     public void setValidSampleValue(final double minimum, final double maximum) {
-        setValidSampleValue(NumberRange.createBestFit(minimum, true, maximum, true));
+        if (minimum <= maximum && !Double.isInfinite(minimum) && !Double.isInfinite(maximum)) {
+            setValidSampleValue(NumberRange.createBestFit(minimum, true, maximum, true));
+        }
     }
 
     /**
@@ -230,11 +234,9 @@ nextPixel:          do {
                     } while (!iter.nextPixelDone());
                 }
             } while (!iter.nextLineDone());
-            if (min < max) {
-                setValidSampleValue(min, max);
-                // Do not invoke setValueRange(min, max) because the
-                // later is about geophysics values, not sample values.
-            }
+            setValidSampleValue(min, max);
+            // Do not invoke setValueRange(min, max) because the
+            // later is about geophysics values, not sample values.
             bandIndex++;
         } while (!iter.nextBandDone());
     }
@@ -254,14 +256,17 @@ nextPixel:          do {
         final int numChilds = childCount();
         for (int i=0; i<numChilds; i++) {
             selectChild(i);
-            if ((getAttribute("minValue") == null) &&
-                (getAttribute("maxValue") == null) &&
-                (getAttribute("validSampleValues") == null))
-            {
-                // Stop the band scanning whatever happen: if a scan is recommanded for at least
-                // one band, do the scan. If we don't have float type, we don't need to continue
-                // since this method will never returns 'true' in such case.
-                return ImageUtilities.isFloatType(reader.getRawImageType(imageIndex).getSampleModel().getDataType());
+            if (getAttribute("validSampleValues") == null) {
+                final Double minValue = getAttributeAsDouble("minValue");
+                final Double maxValue = getAttributeAsDouble("maxValue");
+                if (minValue == null || maxValue == null || !(minValue <= maxValue)) { // Une '!' for catching NaN.
+                    /*
+                     * Stop the band scanning whatever happen: if a scan is recommanded for at least
+                     * one band, do the scan. If we don't have float type, we don't need to continue
+                     * since this method will never returns 'true' in such case.
+                     */
+                    return ImageUtilities.isFloatType(reader.getRawImageType(imageIndex).getSampleModel().getDataType());
+                }
             }
         }
         return false;

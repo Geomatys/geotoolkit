@@ -37,7 +37,7 @@ import static org.geotoolkit.test.Commons.*;
  * Tests {@link NetcdfImageReader}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.11
+ * @version 3.14
  *
  * @since 3.08
  */
@@ -109,8 +109,14 @@ public final class NetcdfImageReaderTest extends ImageReaderTestBase {
             "│   │               ├───maximumValue=“20975.0”\n" +
             "│   │               └───unit=“d”\n" +
             "│   ├───OffsetVectors\n" +
+            "│   │   ├───OffsetVector\n" +
+            "│   │   │   └───values=“0.5 0.0 0.0 0.0”\n" +
+            "│   │   ├───OffsetVector\n" +
+            "│   │   │   └───values=“0.0 NaN 0.0 0.0”\n" +
+            "│   │   ├───OffsetVector\n" +
+            "│   │   │   └───values=“0.0 0.0 NaN 0.0”\n" +
             "│   │   └───OffsetVector\n" +
-            "│   │       └───values=“0.5 0.0 0.0 0.0”\n" +
+            "│   │       └───values=“0.0 0.0 0.0 0.0”\n" +
             "│   └───Limits\n" +
             "│       ├───low=“0 0 0 0”\n" +
             "│       └───high=“719 498 58 0”\n";

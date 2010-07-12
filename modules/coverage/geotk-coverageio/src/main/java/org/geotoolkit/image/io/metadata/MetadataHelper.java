@@ -64,7 +64,7 @@ import org.geotoolkit.referencing.operation.matrix.MatrixFactory;
  * Instances of ISO 19115-2 metadata are typically obtained from {@link SpatialMetadata} objects.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.13
+ * @version 3.14
  *
  * @since 3.07
  * @module
@@ -366,22 +366,28 @@ public class MetadataHelper implements Localized {
      * @param  param Optional Image I/O parameters, or {@code null} if none.
      * @return The affine transform extracted from the given domain.
      * @throws ImageMetadataException If a mandatory attribute is missing from the given domain,
-     *         or is not two dimensional.
+     *         or if this method can not extract the two first dimensions from the domain.
      */
     public AffineTransform getAffineTransform(final RectifiedGrid domain, final IIOParam param)
             throws ImageMetadataException
     {
-        final DirectPosition origin = domain.getOrigin();
-        ensureMetadataExists("origin", -1, origin);
-        ensureDimensionMatch("origin", -1, origin.getDimension(), 2);
         final List<double[]> vectors = domain.getOffsetVectors();
         ensureVectorsExist(vectors);
-        ensureDimensionMatch("OffsetVectors", -1, vectors.size(), 2);
+        final int dimSource = vectors.size();
+        if (dimSource < 2) {
+            ensureDimensionMatch("OffsetVectors", -1, dimSource, 2);
+        }
+        final DirectPosition origin = domain.getOrigin();
+        ensureMetadataExists("origin", -1, origin);
+        final int dimTarget = origin.getDimension();
+        if (dimTarget < 2 || !isSeparable(vectors)) {
+            ensureDimensionMatch("origin", -1, dimTarget, 2);
+        }
         final double matrix[] = new double[6];
         for (int i=0; i<=1; i++) {
             final double[] v = vectors.get(i);
             ensureMetadataExists("OffsetVector", i, v);
-            ensureDimensionMatch("OffsetVector", i, v.length, 2);
+            ensureDimensionMatch("OffsetVector", i, v.length, dimTarget);
             System.arraycopy(v, 0, matrix, i*2, 2);
             matrix[i+4] = origin.getOrdinate(i);
         }
@@ -403,6 +409,33 @@ public class MetadataHelper implements Localized {
             }
         }
         return tr;
+    }
+
+    /**
+     * Returns {@code true} if the two first dimensions in the given array of vectors
+     * are separable from all other dimensions. This is used in order to determine if
+     * we can extract a two dimensional affine transform from the domain.
+     */
+    private static boolean isSeparable(final List<double[]> vectors) {
+        for (int i=vectors.size(); --i>=0;) {
+            final double[] vector = vectors.get(i);
+            if (vector != null) {
+                int lower, upper;
+                if (i >= 2) {
+                    lower = 0;
+                    upper = 2;
+                } else {
+                    lower = 2;
+                    upper = vector.length;
+                }
+                while (lower < upper) {
+                    if (vector[lower++] != 0) {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
     }
 
     /**

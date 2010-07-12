@@ -69,7 +69,7 @@ import org.geotoolkit.util.collection.UnmodifiableArrayList;
  * would not know what to do with the extra coordinate systems anyway.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.11
+ * @version 3.14
  *
  * @since 3.08 (derived from 2.4)
  * @module
@@ -227,20 +227,13 @@ final class NetcdfMetadata extends SpatialMetadata {
         final int[]    upper  = new int   [dim];
         final double[] origin = new double[dim];
         final double[] vector = new double[dim];
-        boolean isRegular = true; // Will stop offset vectors at the first irregular axis.
         for (int i=0; i<dim; i++) {
             final CoordinateAxis1D axis = netcdfCRS.getAxis(i).delegate();
             upper [i] = axis.getDimension(0).getLength() - 1;
             origin[i] = axis.getStart();
-            if (isRegular) {
-                if (axis.isRegular()) {
-                    vector[i] = axis.getIncrement();
-                    accessor.addOffsetVector(vector);
-                    vector[i] = 0;
-                } else {
-                    isRegular = false;
-                }
-            }
+            vector[i] = axis.isRegular() ? axis.getIncrement() : Double.NaN;
+            accessor.addOffsetVector(vector);
+            vector[i] = 0;
         }
         accessor.setOrigin(origin);
         accessor.setLimits(lower, upper);
@@ -264,7 +257,9 @@ final class NetcdfMetadata extends SpatialMetadata {
             accessor.setUnits(m.units);
             if (variable instanceof EnhanceScaleMissing) {
                 final EnhanceScaleMissing ev = (EnhanceScaleMissing) variable;
-                accessor.setValueRange(ev.getValidMin(), ev.getValidMax());
+                if (!m.hasCollisions(ev)) {
+                    accessor.setValueRange(ev.getValidMin(), ev.getValidMax());
+                }
             }
             accessor.setValidSampleValue(m.minimum, m.maximum);
             accessor.setFillSampleValues(m.fillValues);
