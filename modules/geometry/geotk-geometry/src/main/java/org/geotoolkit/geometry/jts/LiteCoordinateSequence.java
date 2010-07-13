@@ -1,9 +1,9 @@
 /*
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
- * 
+ *
  *    (C) 2004-2008, Open Source Geospatial Foundation (OSGeo)
- *    
+ *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
  *    License as published by the Free Software Foundation;
@@ -22,7 +22,7 @@ import com.vividsolutions.jts.geom.impl.PackedCoordinateSequence;
 
 /**
  * @todo class description
- * 
+ *
  * @author jeichar
  * @module pending
  * @since 2.1.x
@@ -43,7 +43,7 @@ public class LiteCoordinateSequence extends PackedCoordinateSequence {
      * Builds a new packed coordinate sequence
      *
      * @param coords
-     * 
+     *
      */
     public LiteCoordinateSequence(double[] coords) {
         this.dimension = 2;
@@ -63,9 +63,7 @@ public class LiteCoordinateSequence extends PackedCoordinateSequence {
         this.coords = new double[coordinates.length];
         this.dimension = 2;
         this.size = coords.length / dimension;
-        for (int i = 0; i < coordinates.length; i++) {
-            this.coords[i] = coordinates[i];
-        }
+        System.arraycopy(coordinates, 0, this.coords, 0, coordinates.length);
     }
 
     /**
@@ -79,31 +77,28 @@ public class LiteCoordinateSequence extends PackedCoordinateSequence {
         }
         this.dimension = 2;
 
-        coords = new double[coordinates.length * this.dimension];
+        this.coords = new double[coordinates.length * this.dimension];
         for (int i = 0; i < coordinates.length; i++) {
             coords[i * this.dimension] = coordinates[i].x;
-            if (this.dimension >= 2) {
-                coords[i * this.dimension + 1] = coordinates[i].y;
-            }
+            coords[i * this.dimension + 1] = coordinates[i].y;
         }
         this.size = coordinates.length;
     }
 
     /**
      * Builds a new empty packed coordinate sequence of a given size and dimension
-     * 
+     *
      * @param size
      * @param dimension
-     * 
+     *
      */
     public LiteCoordinateSequence(int size, int dimension) {
         if (dimension != 2) {
             throw new IllegalArgumentException("This type of sequence is always 2 dimensional");
         }
         this.dimension = 2;
-        coords = new double[size * this.dimension];
+        this.coords = new double[size * this.dimension];
         this.size = coords.length / dimension;
-
     }
 
     /**
@@ -115,10 +110,9 @@ public class LiteCoordinateSequence extends PackedCoordinateSequence {
         // than calling clone on the array.
         this.dimension = seq.dimension;
         this.size = seq.size;
-        double[] orig = seq.getArray();
+        final double[] orig = seq.getArray();
         this.coords = new double[orig.length];
         System.arraycopy(orig, 0, coords, 0, coords.length);
-
     }
 
     /**
@@ -126,9 +120,9 @@ public class LiteCoordinateSequence extends PackedCoordinateSequence {
      */
     @Override
     public Coordinate getCoordinateInternal(int i) {
-        double x = coords[i * dimension];
-        double y = coords[i * dimension + 1];
-        double z = dimension == 2 ? java.lang.Double.NaN : coords[i * dimension + 2];
+        final double x = coords[i * dimension];
+        final double y = coords[i * dimension + 1];
+        final double z = dimension == 2 ? java.lang.Double.NaN : coords[i * dimension + 2];
         return new Coordinate(x, y, z);
     }
 
@@ -145,7 +139,7 @@ public class LiteCoordinateSequence extends PackedCoordinateSequence {
      */
     @Override
     public Object clone() {
-        double[] clone = new double[coords.length];
+        final double[] clone = new double[coords.length];
         System.arraycopy(coords, 0, clone, 0, coords.length);
         return new LiteCoordinateSequence(clone);
     }
@@ -196,13 +190,14 @@ public class LiteCoordinateSequence extends PackedCoordinateSequence {
         double miny = coords[1];
         double maxy = miny;
         for (int i = 0; i < coords.length; i += dimension) {
-            double x = coords[i];
+            final double x = coords[i];
+            final double y = coords[i + 1];
+
             if (x < minx) {
                 minx = x;
             } else if (x > maxx) {
                 maxx = x;
             }
-            double y = coords[i + 1];
             if (y < miny) {
                 miny = y;
             } else if (y > maxy) {
@@ -237,8 +232,8 @@ public class LiteCoordinateSequence extends PackedCoordinateSequence {
             return coords;
         }
         // this should never run, but its here for the future...
-        int n = size();
-        double[] result = new double[n * 2];
+        final int n = size();
+        final double[] result = new double[n * 2];
         for (int t = 0; t < n; t++) {
             result[t * 2] = getOrdinate(t, 0);
             result[t * 2 + 1] = getOrdinate(t, 1);

@@ -29,6 +29,11 @@ import com.vividsolutions.jts.geom.CoordinateSequenceFactory;
  */
 public class LiteCoordinateSequenceFactory implements CoordinateSequenceFactory {
 
+    private static final LiteCoordinateSequenceFactory INSTANCE = new LiteCoordinateSequenceFactory();
+
+    private LiteCoordinateSequenceFactory(){}
+
+
     /* (non-Javadoc)
      * @see com.vividsolutions.jts.geom.CoordinateSequenceFactory#create(com.vividsolutions.jts.geom.Coordinate[])
      */
@@ -59,4 +64,9 @@ public class LiteCoordinateSequenceFactory implements CoordinateSequenceFactory 
     public CoordinateSequence create(double[] points) {
         return new LiteCoordinateSequence(points);
     }
+
+    public static LiteCoordinateSequenceFactory instance() {
+        return INSTANCE;
+    }
+
 }

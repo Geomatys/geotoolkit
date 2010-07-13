@@ -1,7 +1,7 @@
 /*
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
- * 
+ *
  *    (C) 2004-2008, Open Source Geospatial Foundation (OSGeo)
  *
  *    This library is free software; you can redistribute it and/or
@@ -45,7 +45,7 @@ public class DefaultCoordinateSequenceTransformer implements CoordinateSequenceT
     /**
      * The coordinate sequence factory to use.
      */
-    private static final CoordinateSequenceFactory CS_FACTORY = CoordinateArraySequenceFactory.instance();
+    private static final CoordinateSequenceFactory DEFAULT_CS_FACTORY = CoordinateArraySequenceFactory.instance();
     /**
      * A buffer for coordinate transformations. We choose a length which is divisible by
      * both 2 and 3, since JTS coordinates may be up to three-dimensional. If the number
@@ -56,17 +56,30 @@ public class DefaultCoordinateSequenceTransformer implements CoordinateSequenceT
      */
     private final transient double[] buffer = new double[96];
 
+    private final CoordinateSequenceFactory csf;
+
     /**
      * Constructs a default coordinate sequence transformer.
      */
     public DefaultCoordinateSequenceTransformer() {
+        this(null);
+    }
+
+    /**
+     * Constructs a coordinate sequence transformer with the given CoordinateSequenceFactory.
+     */
+    public DefaultCoordinateSequenceTransformer(CoordinateSequenceFactory csf) {
+        if(csf == null){
+            this.csf = DEFAULT_CS_FACTORY;
+        }else{
+            this.csf = csf;
+        }
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    @SuppressWarnings("fallthrough")
     public CoordinateSequence transform(final CoordinateSequence sequence, final MathTransform transform)
             throws TransformException {
         final int sourceDim = transform.getSourceDimensions();
@@ -124,6 +137,6 @@ public class DefaultCoordinateSequenceTransformer implements CoordinateSequenceT
         }
         assert it == tcs.length : tcs.length - it;
 
-        return CS_FACTORY.create(tcs);
+        return csf.create(tcs);
     }
 }
