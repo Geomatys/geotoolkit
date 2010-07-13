@@ -39,6 +39,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.xml.bind.JAXBException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
@@ -46,6 +48,8 @@ import javax.xml.stream.XMLStreamException;
 import org.geotoolkit.data.DataUtilities;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
+import org.geotoolkit.data.query.QueryBuilder;
+import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
@@ -66,12 +70,15 @@ import org.junit.Test;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.filter.FilterFactory;
+import org.opengis.filter.sort.SortOrder;
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import static org.junit.Assert.*;
 import static org.geotoolkit.data.AbstractDataStore.*;
+import org.geotoolkit.data.AbstractFeatureCollection;
 import org.xml.sax.SAXException;
 
 /**
@@ -81,17 +88,21 @@ import org.xml.sax.SAXException;
  */
 public class XmlFeatureTest {
 
+    private static final FilterFactory FF = FactoryFinder.getFilterFactory(null);
+
     private final SimpleFeatureType simpleTypeBasic;
     private final SimpleFeatureType simpleTypeFull;
     private final SimpleFeature simpleFeatureFull;
     private final SimpleFeature simpleFeature1;
     private final SimpleFeature simpleFeature2;
     private final SimpleFeature simpleFeature3;
-    private final FeatureCollection collectionSimple;
+    private FeatureCollection collectionSimple;
 
     private final FeatureType complexType;
 
     public XmlFeatureTest() throws NoSuchAuthorityCodeException, FactoryException, ParseException {
+
+
         final CoordinateReferenceSystem crs = CRS.decode("EPSG:4326");
 
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
@@ -218,6 +229,14 @@ public class XmlFeatureTest {
         collectionSimple.add(simpleFeature1);
         collectionSimple.add(simpleFeature2);
         collectionSimple.add(simpleFeature3);
+        try {
+            collectionSimple = collectionSimple.subCollection(
+                    QueryBuilder.sorted(collectionSimple.getFeatureType().getName(), FF.sort("attDouble", SortOrder.ASCENDING)));
+            ((AbstractFeatureCollection)collectionSimple).setId("one of a kind ID");
+        } catch (DataStoreException ex) {
+            Logger.getLogger(XmlFeatureTest.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
     }
 
     @BeforeClass
@@ -314,6 +333,14 @@ public class XmlFeatureTest {
         assertTrue(obj instanceof FeatureCollection);
 
         FeatureCollection result = (FeatureCollection) obj;
+        try {
+            String id = result.getID();
+            result = result.subCollection(QueryBuilder.sorted(
+                    result.getFeatureType().getName(), FF.sort("attDouble", SortOrder.ASCENDING)));
+            ((AbstractFeatureCollection)result).setId(id);
+        } catch (DataStoreException ex) {
+            Logger.getLogger(XmlFeatureTest.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
         FeatureIterator resultIte = result.iterator();
         FeatureIterator expectedIte = collectionSimple.iterator();

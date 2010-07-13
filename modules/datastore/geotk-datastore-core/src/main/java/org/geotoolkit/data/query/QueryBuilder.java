@@ -225,7 +225,7 @@ public class QueryBuilder {
      * @param filter
      * @return Immutable query
      */
-    public static Query sorted(Name name, SortBy[] sorts){
+    public static Query sorted(Name name, SortBy ... sorts){
         final QueryBuilder builder = new QueryBuilder();
         builder.setTypeName(name);
         builder.setSortBy(sorts);
