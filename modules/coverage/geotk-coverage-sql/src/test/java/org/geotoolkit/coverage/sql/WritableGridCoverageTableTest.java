@@ -29,6 +29,8 @@ import org.geotoolkit.test.TestData;
 import org.geotoolkit.internal.sql.table.CatalogTestBase;
 import org.geotoolkit.image.io.plugin.WorldFileImageReader;
 import org.geotoolkit.image.io.plugin.TextMatrixImageReader;
+import org.geotoolkit.coverage.grid.ViewType;
+import org.geotoolkit.util.MeasurementRange;
 
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -153,11 +155,24 @@ public final class WritableGridCoverageTableTest extends CatalogTestBase {
         /*
          * Clean-up: delete the "matrix" format, so that the next execution will
          * recreate a new format. Note that we need to delete the layer first.
+         * We also perform an opportunist check of the format inserted by the above code.
          */
         deleteTemporaryLayer();
         final FormatTable ft = getDatabase().getTable(FormatTable.class);
+        final FormatEntry format = ft.getEntry("matrix");
         assertEquals(1, ft.delete("matrix"));
         ft.release();
+
+        assertEquals("matrix",    format.identifier);
+        assertEquals("matrix",    format.imageFormat);
+        assertEquals("grayscale", format.paletteName);
+        assertEquals(ViewType.GEOPHYSICS, format.viewType);
+        final MeasurementRange<?>[] range = format.getSampleValueRanges();
+        assertNotNull(range);
+        assertEquals(1, range.length);
+        // The minimum value is actually -1.893, but we didn't specified the pad value.
+        assertEquals(-9999,  range[0].getMinimum(true), 1E-4);
+        assertEquals(31.140, range[0].getMaximum(true), 1E-4);
     }
 
     /**

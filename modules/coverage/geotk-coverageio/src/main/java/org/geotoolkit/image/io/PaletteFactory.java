@@ -592,6 +592,9 @@ public class PaletteFactory {
              */
             return found;
         }
+        if (dir == null) {
+            return found;
+        }
         final String[] list = dir.list(new DefaultFileFilter('*' + extension));
         if (list == null) {
             return found; // Not a directory.
@@ -599,7 +602,7 @@ public class PaletteFactory {
         final int extLg = extension.length();
         for (final String filename : list) {
             final int lg = filename.length();
-            if (lg > extLg && filename.regionMatches(true, lg-extLg, extension, 0, extLg)) {
+            if (lg > extLg && filename.regionMatches(true, lg - extLg, extension, 0, extLg)) {
                 names.add(filename.substring(0, lg-extLg));
             }
         }

@@ -165,7 +165,11 @@ final class PackOutput implements Closeable {
         final Manifest manifest = new Manifest();
         final Attributes attributes = manifest.getMainAttributes();
         attributes.put(Attributes.Name.MANIFEST_VERSION,       "1.0");
-        attributes.put(Attributes.Name.SPECIFICATION_VENDOR,   "Geotoolkit");
+        attributes.put(Attributes.Name.SPECIFICATION_TITLE,    "Geotoolkit.org");
+        attributes.put(Attributes.Name.SPECIFICATION_VENDOR,   "Geotoolkit.org");
+        attributes.put(Attributes.Name.SPECIFICATION_VERSION,  packer.version);
+        attributes.put(Attributes.Name.IMPLEMENTATION_TITLE,   "Geotoolkit.org");
+        attributes.put(Attributes.Name.IMPLEMENTATION_VENDOR,  "Geotoolkit.org");
         attributes.put(Attributes.Name.IMPLEMENTATION_VERSION, packer.version);
         attributes.put(Attributes.Name.IMPLEMENTATION_URL,     "http://www.geotoolkit.org/");
         if (mainClass != null) {
