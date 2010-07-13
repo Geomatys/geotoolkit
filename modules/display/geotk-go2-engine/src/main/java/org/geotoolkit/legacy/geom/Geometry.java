@@ -37,7 +37,6 @@ import java.io.Serializable;
 import org.opengis.referencing.operation.OperationNotFoundException;
 import org.opengis.util.Cloneable;
 import org.opengis.util.FactoryException;
-import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.GeographicCRS;
@@ -688,10 +687,10 @@ public abstract class Geometry implements Shape, Cloneable, Serializable {
             maxY   = new Latitude (bounds.getMaxY());
             format = new AngleFormat();
         } else {
-            minX   = new Double(bounds.getMinX());
-            minY   = new Double(bounds.getMinY());
-            maxX   = new Double(bounds.getMaxX());
-            maxY   = new Double(bounds.getMaxY());
+            minX   = Double.valueOf(bounds.getMinX());
+            minY   = Double.valueOf(bounds.getMinY());
+            maxX   = Double.valueOf(bounds.getMaxX());
+            maxY   = Double.valueOf(bounds.getMaxY());
             format = NumberFormat.getNumberInstance();
         }
         final String         name = getName(Locale.getDefault());

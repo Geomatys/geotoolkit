@@ -47,10 +47,7 @@ public class DefaultPathWalker implements PathWalker{
             final int type = pathIterator.currentSegment(currentPoint);
             switch (type) {
                 case PathIterator.SEG_MOVETO:
-                    //copy last point values
-                    for (int i = 0; i < 6; i++) {
-                        lastPoint[i] = currentPoint[i];
-                    }
+                    System.arraycopy(currentPoint, 0, lastPoint, 0, 6);
                     segmentStartX = lastPoint[0];
                     segmentStartY = lastPoint[1];
                     segmentEndX = currentPoint[0];
@@ -72,11 +69,7 @@ public class DefaultPathWalker implements PathWalker{
                     first = false;
                     break;
             }
-
-            //copy last point values
-            for (int i = 0; i < 6; i++) {
-                lastPoint[i] = currentPoint[i];
-            }
+            System.arraycopy(currentPoint, 0, lastPoint, 0, 6);
             pathIterator.next();
         }
 
@@ -100,10 +93,7 @@ public class DefaultPathWalker implements PathWalker{
                 final int type = pathIterator.currentSegment(currentPoint);
                 switch (type) {
                     case PathIterator.SEG_MOVETO:
-                        //copy last point values
-                        for (int i = 0; i < 6; i++) {
-                            lastPoint[i] = currentPoint[i];
-                        }
+                        System.arraycopy(currentPoint, 0, lastPoint, 0, 6);
                         segmentStartX = lastPoint[0];
                         segmentStartY = lastPoint[1];
                         segmentEndX = currentPoint[0];
@@ -124,11 +114,7 @@ public class DefaultPathWalker implements PathWalker{
                         remaining = segmentLenght;
                         break;
                 }
-
-                //copy last point values
-                for (int i = 0; i < 6; i++) {
-                    lastPoint[i] = currentPoint[i];
-                }
+                System.arraycopy(currentPoint, 0, lastPoint, 0, 6);
                 pathIterator.next();
 
                 if (remaining >= distance) {

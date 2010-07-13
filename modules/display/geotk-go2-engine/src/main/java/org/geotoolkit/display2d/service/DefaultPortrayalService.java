@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.display2d.service;
 
+import java.util.Map.Entry;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -209,8 +210,8 @@ public class DefaultPortrayalService implements PortrayalService{
 
         final Hints hints = sceneDef.getHints();
         if(hints != null){
-            for(Object key : hints.keySet()){
-                canvas.setRenderingHint((Key)key, hints.get(key));
+            for(Entry<?,?> entry : hints.entrySet()){
+                canvas.setRenderingHint((Key)entry.getKey(), entry.getValue());
             }
         }
 

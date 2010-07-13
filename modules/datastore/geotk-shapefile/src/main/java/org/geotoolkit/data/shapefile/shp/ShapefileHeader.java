@@ -76,11 +76,13 @@ public class ShapefileHeader {
 
     @Override
     public String toString() {
-        String res = new String("ShapeFileHeader[ size " + fileLength
-                + " version " + version + " shapeType " + shapeType
-                + " bounds " + minX + "," + minY + "," + maxX + "," + maxY
-                + " ]");
-        return res;
+        final StringBuilder sb = new StringBuilder("ShapeFileHeader[");
+        sb.append(" size ").append(fileLength);
+        sb.append(" version ").append(version);
+        sb.append(" shapeType ").append(shapeType);
+        sb.append(" bounds ").append(minX).append(',').append(minY).append(',').append(maxX).append(',').append(maxY);
+        sb.append(" ]");
+        return sb.toString();
     }
 
     private static void checkMagic(int fileCode, final boolean strict) throws IOException {

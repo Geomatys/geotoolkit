@@ -54,11 +54,15 @@ import org.geotoolkit.util.logging.Logging;
 /**
  *
  * @author Guilhem Legal (Geomatys)
+ * @module pending
+ * @Static
  */
 public class FileUtilities {
 
     private static final Logger LOGGER = Logging.getLogger(FileUtilities.class);
     private static final int BUFFER = 2048;
+
+    private FileUtilities(){}
 
     /**
      * This method delete recursively a file or a folder.
@@ -148,11 +152,11 @@ public class FileUtilities {
                     final URI uri = url.toURI();
                     result = scanDir(uri, fileP);
                 } catch (URISyntaxException e) {
-                    LOGGER.severe("URL, " + url + "cannot be converted to a URI");
+                    LOGGER.log(Level.SEVERE, "URL, {0}cannot be converted to a URI", url);
                 }
             }
         } catch (IOException ex) {
-            LOGGER.severe("The resources for the package" + packagee + ", could not be obtained.\nCause:" + ex.getMessage());
+            LOGGER.log(Level.SEVERE, "The resources for the package{0}, could not be obtained.\nCause:{1}", new Object[]{packagee, ex.getMessage()});
         }
 
         return result;
@@ -180,11 +184,11 @@ public class FileUtilities {
                     final URI uri = url.toURI();
                     result = scanFile(uri, fileP);
                 } catch (URISyntaxException e) {
-                    LOGGER.severe("URL, " + url + "cannot be converted to a URI");
+                    LOGGER.log(Level.SEVERE, "URL, {0}cannot be converted to a URI", url);
                 }
             }
         } catch (IOException ex) {
-            LOGGER.severe("The resources for the package" + packagee + ", could not be obtained.\nCause:" + ex.getMessage());
+            LOGGER.log(Level.SEVERE, "The resources for the package{0}, could not be obtained.\nCause:{1}", new Object[]{packagee, ex.getMessage()});
         }
 
 
@@ -336,11 +340,11 @@ public class FileUtilities {
                     final URI uri = url.toURI();
                     result.addAll(scan(uri, fileP, false));
                 } catch (URISyntaxException e) {
-                    LOGGER.severe("URL, " + url + "cannot be converted to a URI");
+                    LOGGER.log(Level.SEVERE, "URL, {0}cannot be converted to a URI", url);
                 }
             }
         } catch (IOException ex) {
-            LOGGER.severe("The resources for the package " + packagee + ", could not be obtained. \ncause:" + ex.getMessage());
+            LOGGER.log(Level.SEVERE, "The resources for the package {0}, could not be obtained. \ncause:{1}", new Object[]{packagee, ex.getMessage()});
         }
         return result;
     }
@@ -372,7 +376,7 @@ public class FileUtilities {
                             }
                         }
                     } catch (URISyntaxException e) {
-                        LOGGER.severe("URL, " + url + "cannot be converted to a URI");
+                        LOGGER.log(Level.SEVERE, "URL, {0} cannot be converted to a URI", url);
                     }
                 }
             } catch (IOException ex) {
@@ -421,7 +425,7 @@ public class FileUtilities {
                 }
 
             } catch (IllegalArgumentException ex) {
-                LOGGER.warning("unable to scan jar file: " + u.getSchemeSpecificPart() + "\n cause:" + ex.getMessage());
+                LOGGER.log(Level.WARNING, "unable to scan jar file: {0}\n cause:{1}", new Object[]{u.getSchemeSpecificPart(), ex.getMessage()});
             }
         }
         return result;

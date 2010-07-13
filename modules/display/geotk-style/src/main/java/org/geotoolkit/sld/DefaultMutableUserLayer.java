@@ -374,21 +374,21 @@ class DefaultMutableUserLayer implements MutableUserLayer{
      */
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
+        final StringBuilder builder = new StringBuilder();
         builder.append("[MutableUserLayer : ");
         if(name != null){
             builder.append(" Name=");
-            builder.append(name.toString());
+            builder.append(name);
         }
         builder.append(" Description=");
-        builder.append(description.toString());
+        builder.append(description);
         if(source != null){
             builder.append(" Source=");
-            builder.append(source.toString());
+            builder.append(source);
         }
         if(constraints != null){
             builder.append(" Constraints=");
-            builder.append(constraints.toString());
+            builder.append(constraints);
         }
         builder.append(" StyleSize=");
         builder.append(styles.size());

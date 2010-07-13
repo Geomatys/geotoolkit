@@ -93,5 +93,5 @@ public class GO2Hints {
      * Going under 1 doesnt bring much more details 
      * going above 2.5 makes small geometries disapear or look sharp.
      */
-    public static final Number GENERALIZE_FACTOR_DEFAULT = new Float(1.3f);
+    public static final Number GENERALIZE_FACTOR_DEFAULT = Float.valueOf(1.3f);
 }

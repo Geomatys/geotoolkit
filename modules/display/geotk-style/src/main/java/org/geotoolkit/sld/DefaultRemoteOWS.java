@@ -98,11 +98,11 @@ class DefaultRemoteOWS implements RemoteOWS{
      */
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
+        final StringBuilder builder = new StringBuilder();
         builder.append("[RemoteOWS : Service=");
-        builder.append(service.toString());
+        builder.append(service);
         builder.append(" OnlineResource=");
-        builder.append(online.toString());
+        builder.append(online);
         builder.append(']');
         return builder.toString();
     }

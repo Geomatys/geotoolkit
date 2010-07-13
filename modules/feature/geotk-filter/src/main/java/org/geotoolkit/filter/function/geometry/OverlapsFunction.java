@@ -48,6 +48,6 @@ public class OverlapsFunction extends AbstractFunction {
                     "Filter Function problem for function overlaps argument #1 - expected type Geometry");
         }
 
-        return new Boolean(StaticGeometry.overlaps(arg0, arg1));
+        return StaticGeometry.overlaps(arg0, arg1);
     }
 }

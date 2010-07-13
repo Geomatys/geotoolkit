@@ -47,6 +47,6 @@ public class DisjointFunction extends AbstractFunction {
                     "Filter Function problem for function disjoint argument #1 - expected type Geometry");
         }
 
-        return new Boolean(StaticGeometry.disjoint(arg0, arg1));
+        return StaticGeometry.disjoint(arg0, arg1);
     }
 }

@@ -67,6 +67,8 @@ import org.opengis.filter.spatial.Within;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.io.WKTWriter;
 
+import org.geotoolkit.util.logging.Logging;
+
 
 /**
  * This is a utility class used by CQL.encode( Filter ) method to do the
@@ -90,7 +92,7 @@ import com.vividsolutions.jts.io.WKTWriter;
  */
 class FilterToCQL implements FilterVisitor, ExpressionVisitor {
     /** Standard java logger */
-    private static Logger LOGGER = org.geotoolkit.util.logging.Logging.getLogger("org.geotoolkit.filter");
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.filter");
     private static final String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss'Z'";
 
     /**

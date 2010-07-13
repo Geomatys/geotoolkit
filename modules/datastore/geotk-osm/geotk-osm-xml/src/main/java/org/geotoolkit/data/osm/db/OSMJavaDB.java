@@ -180,7 +180,7 @@ public class OSMJavaDB {
             pathName = pathName.substring(lastSlash+1, pathName.length());
         }
 
-        final int stop = pathName.lastIndexOf(".");
+        final int stop = pathName.lastIndexOf('.');
 
         final String name;
         if(stop >= 0){

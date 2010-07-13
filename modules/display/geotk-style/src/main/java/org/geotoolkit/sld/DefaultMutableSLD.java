@@ -390,17 +390,17 @@ class DefaultMutableSLD implements MutableStyledLayerDescriptor{
      */
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
+        final StringBuilder builder = new StringBuilder();
         builder.append("[MutableSLD : ");
         if(name != null){
             builder.append(" Name=");
-            builder.append(name.toString());
+            builder.append(name);
         }
         builder.append(" Description=");
-        builder.append(description.toString());
+        builder.append(description);
         if(version != null){
             builder.append(" Version=");
-            builder.append(version.toString());
+            builder.append(version);
         }
         builder.append(" LayerSize=");
         builder.append(layers.size());

@@ -39,6 +39,6 @@ public class IntToDdoubleFunction extends AbstractFunction {
                     "Filter Function problem for function int2ddouble argument #0 - expected type int");
         }
 
-        return new Double(StaticGeometry.int2ddouble(arg0));
+        return StaticGeometry.int2ddouble(arg0);
     }
 }

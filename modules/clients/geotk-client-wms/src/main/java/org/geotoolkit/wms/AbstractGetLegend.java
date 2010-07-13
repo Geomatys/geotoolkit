@@ -211,27 +211,9 @@ public abstract class AbstractGetLegend extends AbstractRequest implements GetLe
         return super.getURL();
     }
 
-    private String toString(String[] vars){
-        if(vars == null || vars.length == 0) return "";
-
-        if(vars.length == 1 && vars[0] == null){
-            return "";
-        }
-
-        final StringBuilder sb = new StringBuilder();
-        int i=0;
-        for(;i<vars.length-1;i++){
-            sb.append(vars[i]).append(',');
-        }
-        sb.append(vars[i]);
-
-        return sb.toString();
-    }
-
     @Override
     public InputStream getResponseStream() throws IOException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
-
 
 }

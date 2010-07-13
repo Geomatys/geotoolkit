@@ -48,6 +48,6 @@ public class WithinFunction extends AbstractFunction {
                     "Filter Function problem for function within argument #1 - expected type Geometry");
         }
 
-        return new Boolean(StaticGeometry.within(arg0, arg1));
+        return StaticGeometry.within(arg0, arg1);
     }
 }

@@ -198,7 +198,7 @@ public class QuadTree {
      */
     public CloseableCollection<Data> search(Envelope bounds) throws StoreException {
         if (LOGGER.isLoggable(Level.FINEST)) {
-            LOGGER.log(Level.FINEST, "Querying " + bounds);
+            LOGGER.log(Level.FINEST, "Querying {0}", bounds);
         }
 
         LazySearchCollection lazySearchCollection;

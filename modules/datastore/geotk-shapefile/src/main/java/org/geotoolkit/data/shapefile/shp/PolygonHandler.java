@@ -206,7 +206,7 @@ public class PolygonHandler implements ShapeHandler {
         }
         // if for some reason, there is only one hole, we just reverse it and
         // carry on.
-        else if (holes.size() == 1 && shells.size() == 0) {
+        else if (holes.size() == 1 && shells.isEmpty()) {
             org.geotoolkit.util.logging.Logging.getLogger(
                     "org.geotoolkit.data.shapefile").warning(
                     "only one hole in this polygon record");
@@ -257,14 +257,15 @@ public class PolygonHandler implements ShapeHandler {
 
         // this will do nothing for the "only holes case"
         for (int i = 0; i < shells.size(); i++) {
-            polygons[i] = GEOMETRY_FACTORY.createPolygon((LinearRing) shells
-                    .get(i), (LinearRing[]) ((ArrayList) holesForShells.get(i))
-                    .toArray(new LinearRing[0]));
+            final List lst = (ArrayList) holesForShells.get(i);
+            polygons[i] = GEOMETRY_FACTORY.createPolygon(
+                    (LinearRing) shells.get(i),
+                    (LinearRing[]) lst.toArray(new LinearRing[lst.size()]));
         }
 
         // this will take care of the "only holes case"
         // we just reverse each hole
-        if (shells.size() == 0) {
+        if (shells.isEmpty()) {
             for (int i = 0, ii = holes.size(); i < ii; i++) {
                 LinearRing hole = (LinearRing) holes.get(i);
                 polygons[i] = GEOMETRY_FACTORY.createPolygon(JTSUtilities
@@ -355,6 +356,7 @@ public class PolygonHandler implements ShapeHandler {
         return GEOMETRY_FACTORY.createMultiPolygon(null);
     }
 
+    @Override
     public void write(ByteBuffer buffer, Object geometry) {
         MultiPolygon multi;
         

@@ -55,7 +55,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  */
 public class JAXBFeatureTypeReader implements XmlFeatureTypeReader {
 
-    private static Logger LOGGER = Logger.getLogger("org.geotoolkit.feature.xml.jaxp");
+    private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.feature.xml.jaxp");
     
     private static MarshallerPool marshallpool;
     static {
@@ -159,7 +159,7 @@ public class JAXBFeatureTypeReader implements XmlFeatureTypeReader {
                 final TopLevelComplexType type = schema.getComplexTypeByName(typeName.getLocalPart());
                 return getFeatureTypeFromSchema(type, typeName.getNamespaceURI());
             } else {
-                LOGGER.warning("the element:" + name + " has no type");
+                LOGGER.log(Level.WARNING, "the element:{0} has no type", name);
             }
         }
         return null;

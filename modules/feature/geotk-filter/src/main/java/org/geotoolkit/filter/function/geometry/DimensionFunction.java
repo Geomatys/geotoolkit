@@ -39,6 +39,6 @@ public class DimensionFunction extends AbstractFunction {
                     "Filter Function problem for function dimension argument #0 - expected type Geometry");
         }
 
-        return new Integer(StaticGeometry.dimension(arg0));
+        return StaticGeometry.dimension(arg0);
     }
 }

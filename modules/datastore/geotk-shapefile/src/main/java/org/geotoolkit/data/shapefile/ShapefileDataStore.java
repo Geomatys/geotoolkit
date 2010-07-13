@@ -183,7 +183,7 @@ public class ShapefileDataStore extends AbstractDataStore{
         }
 
         if(namespace != null){
-            this.namespace = namespace.toString();
+            this.namespace = namespace;
         }else{
             this.namespace = "http://geotoolkit.org";
         }

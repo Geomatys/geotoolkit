@@ -128,7 +128,7 @@ public class DbaseFileReader {
      */
     public DbaseFileReader(ShpFiles shapefileFiles,
             boolean useMemoryMappedBuffer, Charset charset) throws IOException {
-        ReadableByteChannel dbfChannel = shapefileFiles.getReadChannel(ShpFileType.DBF, this);
+        final ReadableByteChannel dbfChannel = shapefileFiles.getReadChannel(ShpFileType.DBF, this);
         init(dbfChannel, useMemoryMappedBuffer, charset);
     }
 
@@ -548,7 +548,7 @@ public class DbaseFileReader {
                     // okay, now whatever we got was truly undigestable. Lets go
                     // with
                     // a zero Double.
-                    object = new Double(0.0);
+                    object = Double.valueOf(0.0);
                 }
                 break;
             default:

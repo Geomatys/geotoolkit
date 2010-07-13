@@ -18,16 +18,16 @@ package org.geotoolkit.data.postgis;
 
 import java.io.IOException;
 import java.io.Writer;
-
 import java.util.ArrayList;
 import java.util.List;
+
 import org.geotoolkit.data.jdbc.FilterToSQL;
 import org.geotoolkit.filter.capability.DefaultFilterCapabilities;
 import org.geotoolkit.filter.capability.DefaultSpatialCapabilities;
 import org.geotoolkit.filter.capability.DefaultSpatialOperator;
 import org.geotoolkit.filter.capability.DefaultSpatialOperators;
 import org.geotoolkit.jdbc.dialect.AbstractSQLDialect;
-import org.geotoolkit.jdbc.dialect.SQLDialect;
+
 import org.opengis.filter.capability.GeometryOperand;
 import org.opengis.filter.capability.SpatialCapabilities;
 import org.opengis.filter.capability.SpatialOperator;
@@ -88,7 +88,7 @@ class FilterToSqlHelper {
         spatialOptsList.add(operatorTouches);
         spatialOptsList.add(operatorWithin);
 
-        final SpatialOperators spatialOpts = new DefaultSpatialOperators(spatialOptsList.toArray(new SpatialOperator[]{}));
+        final SpatialOperators spatialOpts = new DefaultSpatialOperators(spatialOptsList.toArray(new SpatialOperator[spatialOptsList.size()]));
         final SpatialCapabilities spatialCaps = new DefaultSpatialCapabilities(
                 AbstractSQLDialect.BASE_DBMS_CAPABILITIES.getSpatialCapabilities().getGeometryOperands().toArray(new GeometryOperand[]{}),
                 spatialOpts);

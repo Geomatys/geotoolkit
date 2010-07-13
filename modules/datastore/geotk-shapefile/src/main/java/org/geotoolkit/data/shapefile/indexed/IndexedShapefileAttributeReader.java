@@ -47,7 +47,7 @@ public class IndexedShapefileAttributeReader extends ShapefileAttributeReader
     public IndexedShapefileAttributeReader(
             List<AttributeDescriptor> attributes, ShapefileReader shp,
             IndexedDbaseFileReader dbf, CloseableCollection<Data> goodRecs) {
-        this(attributes.toArray(new AttributeDescriptor[0]), shp, dbf, goodRecs);
+        this(attributes.toArray(new AttributeDescriptor[attributes.size()]), shp, dbf, goodRecs);
     }
 
     /**

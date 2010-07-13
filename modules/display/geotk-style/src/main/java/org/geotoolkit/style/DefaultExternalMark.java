@@ -155,11 +155,11 @@ public class DefaultExternalMark implements ExternalMark{
      */
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
+        final StringBuilder builder = new StringBuilder();
         builder.append("[ExternalMark : Type=");
         builder.append( (online == null) ? "Inline Mark" : "Online Mark" );
         builder.append(" Format=");
-        builder.append((format != null) ? format.toString() : "");
+        builder.append((format != null) ? format : "");
         builder.append(" Index=");
         builder.append(index);
         builder.append(']');

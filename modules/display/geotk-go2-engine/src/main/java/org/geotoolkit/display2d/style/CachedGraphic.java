@@ -120,7 +120,7 @@ public class CachedGraphic<C extends Graphic> extends Cache<C>{
 
         // Opacity -------------------------------------
         if(GO2Utilities.isStatic(expOpacity)){
-            cachedOpacity = GO2Utilities.evaluate(expOpacity, null, Float.class, 1f);
+            cachedOpacity = GO2Utilities.evaluate(expOpacity, null, Number.class, 1f).floatValue();
             //we return false, opacity is 0 no need to cache or draw anything
             if(cachedOpacity == 0){
                 isStaticVisible = VisibilityState.UNVISIBLE;
@@ -139,7 +139,7 @@ public class CachedGraphic<C extends Graphic> extends Cache<C>{
         
         // Rotation ------------------------------------
         if(GO2Utilities.isStatic(expRotation)){
-            cachedRotation = (float) Math.toRadians(GO2Utilities.evaluate(expRotation, null, Float.class, 0f));
+            cachedRotation = (float) Math.toRadians(GO2Utilities.evaluate(expRotation, null, Number.class, 0d).doubleValue());
         }else{ 
             isStatic = false; 
             GO2Utilities.getRequieredAttributsName(expRotation,requieredAttributs);
@@ -148,7 +148,7 @@ public class CachedGraphic<C extends Graphic> extends Cache<C>{
         
         // Size ----------------------------------------
         if(GO2Utilities.isStatic(expSize)){
-            cachedSize = GO2Utilities.evaluate(expSize, null, Float.class, Float.NaN);
+            cachedSize = GO2Utilities.evaluate(expSize, null, Number.class, Float.NaN).floatValue();
             //we return false, size is 0 no need to cache or draw anything
             if(cachedSize == 0){
                 isStaticVisible = VisibilityState.UNVISIBLE;
@@ -306,18 +306,18 @@ public class CachedGraphic<C extends Graphic> extends Cache<C>{
 
         if(Float.isNaN(candidateOpacity)){
             final Expression expOpacity = styleElement.getOpacity();
-            candidateOpacity = GO2Utilities.evaluate(expOpacity, feature, Float.class, 1f);
+            candidateOpacity = GO2Utilities.evaluate(expOpacity, feature, Number.class, 1f).floatValue();
         }
 
         if(Float.isNaN(candidateRotation)){
             final Expression expRotation = styleElement.getRotation();
-            final Float rot = GO2Utilities.evaluate(expRotation, feature, Float.class, 0f);
-            candidateRotation = new Float(Math.toRadians(rot));
+            final Number rot = GO2Utilities.evaluate(expRotation, feature, Number.class, 0f);
+            candidateRotation = (float) Math.toRadians(rot.doubleValue());
         }
 
         if(candidateSize.isNaN()){
             final Expression expSize = styleElement.getSize();
-            candidateSize = GO2Utilities.evaluate(expSize, feature, Float.class, Float.NaN);
+            candidateSize = GO2Utilities.evaluate(expSize, feature, Number.class, Float.NaN).floatValue();
         }
         
         //the subbuffer image
@@ -414,20 +414,20 @@ public class CachedGraphic<C extends Graphic> extends Cache<C>{
 
         if(Float.isNaN(candidateOpacity)){
             final Expression expOpacity = styleElement.getOpacity();
-            candidateOpacity = GO2Utilities.evaluate(expOpacity, feature, Float.class, 1f);
+            candidateOpacity = GO2Utilities.evaluate(expOpacity, feature, Number.class, 1f).floatValue();
         }
 
         if(candidateOpacity == 0) return 0;
         
         if(Float.isNaN(candidateRotation)){
             final Expression expRotation = styleElement.getRotation();
-            final Float rot = GO2Utilities.evaluate(expRotation, feature, Float.class, 0f);
-            candidateRotation = new Float(Math.toRadians(rot));
+            final Number rot = GO2Utilities.evaluate(expRotation, feature, Number.class, 0f);
+            candidateRotation = (float) Math.toRadians(rot.doubleValue());
         }
 
         if(Float.isNaN(candidateSize)){
             final Expression expSize = styleElement.getSize();
-            candidateSize = GO2Utilities.evaluate(expSize, feature, Float.class, 16f);
+            candidateSize = GO2Utilities.evaluate(expSize, feature, Number.class, 16f).floatValue();
         }
 
         if(candidateSize == 0) return 0;
@@ -497,14 +497,14 @@ public class CachedGraphic<C extends Graphic> extends Cache<C>{
             //test dynamic opacity
             if(Float.isNaN(cachedOpacity)){
                 final Expression expopacity = styleElement.getOpacity();
-                float j2dOpacity = GO2Utilities.evaluate(expopacity, feature, Float.class, 1f);
+                float j2dOpacity = GO2Utilities.evaluate(expopacity, feature, Number.class, 1f).floatValue();
                 if(j2dOpacity == 0) return false;
             }
             
             //test dynamic size
             if(Float.isNaN(cachedSize)){
                 final Expression expSize = styleElement.getSize();
-                float j2dSize = GO2Utilities.evaluate(expSize, feature, Float.class, 16f);
+                float j2dSize = GO2Utilities.evaluate(expSize, feature, Number.class, 16f).floatValue();
                 if(j2dSize == 0) return false;
             }
             

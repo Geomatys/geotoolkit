@@ -212,7 +212,7 @@ public class LayerFeaturePropertyPanel extends javax.swing.JPanel implements Pro
             selected = String.valueOf(selection.getIDs().size());
         }
 
-        guiCount.setText("Selection : "+ selected +" / "+String.valueOf(tab_data.getModel().getRowCount()));
+        guiCount.setText("Selection : "+ selected +" / "+tab_data.getModel().getRowCount());
 
         weakListener = new WeakLayerListener(this, layer);
         layer.addLayerListener(weakListener);

@@ -37,6 +37,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
+import org.geotoolkit.util.logging.Logging;
 
 /**
  * Extract a maximal envelope from the provided Filter.
@@ -67,8 +68,7 @@ import com.vividsolutions.jts.geom.Geometry;
 public class ExtractBoundsFilterVisitor extends NullFilterVisitor {
     static public NullFilterVisitor BOUNDS_VISITOR = new ExtractBoundsFilterVisitor();
     
-    private static Logger LOGGER = org.geotoolkit.util.logging.Logging
-            .getLogger("org.geotoolkit.index.rtree");
+    private static final Logger LOGGER = Logging.getLogger(ExtractBoundsFilterVisitor.class);
 
     /**
      * This FilterVisitor is stateless - use ExtractBoundsFilterVisitor.BOUNDS_VISITOR.

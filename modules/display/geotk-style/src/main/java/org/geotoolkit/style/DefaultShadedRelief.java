@@ -108,7 +108,7 @@ public class DefaultShadedRelief implements ShadedRelief{
         builder.append("[ShadedRelief : Bright=");
         builder.append(bright);
         builder.append(" Factor=");
-        builder.append(relief.toString());
+        builder.append(relief);
         builder.append(']');
         return builder.toString();
     }

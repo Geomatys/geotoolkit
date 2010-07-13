@@ -150,7 +150,8 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
 
             //update the rules filters
             for(final Rule rule : selectionRules){
-                final MutableRule mixedRule = STYLE_FACTORY.rule(rule.symbolizers().toArray(new Symbolizer[0]));
+                final List<? extends Symbolizer> symbols = rule.symbolizers();
+                final MutableRule mixedRule = STYLE_FACTORY.rule(symbols.toArray(new Symbolizer[symbols.size()]));
                 Filter f = rule.getFilter();
                 if(f == null){
                     f = selectionFilter;
@@ -430,7 +431,7 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
         try {
             params = prepareContextParams(renderingContext, features.getFeatureType().getCoordinateReferenceSystem(), null);
         } catch (FactoryException ex) {
-            ex.printStackTrace();
+            renderingContext.getMonitor().exceptionOccured(ex, Level.WARNING);
             return graphics;
         }
 
@@ -441,7 +442,7 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
         try{
             iterator = features.iterator();
         }catch(DataStoreRuntimeException ex){
-            ex.printStackTrace();
+            renderingContext.getMonitor().exceptionOccured(ex, Level.WARNING);
             return graphics;
         }
 

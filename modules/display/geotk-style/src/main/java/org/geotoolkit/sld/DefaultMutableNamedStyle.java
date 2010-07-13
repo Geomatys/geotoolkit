@@ -188,14 +188,14 @@ class DefaultMutableNamedStyle implements MutableNamedStyle{
      */
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
+        final StringBuilder builder = new StringBuilder();
         builder.append("[MutableNamedStyle : ");
         if(name != null){
             builder.append(" Name=");
-            builder.append(name.toString());
+            builder.append(name);
         }
         builder.append(" Description=");
-        builder.append(description.toString());
+        builder.append(description);
         builder.append(']');
         return builder.toString();
     }

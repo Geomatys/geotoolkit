@@ -96,10 +96,10 @@ public class DefaultColorMap implements ColorMap{
      */
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
+        final StringBuilder builder = new StringBuilder();
         builder.append("[ColorMap : Function=");
         if(function != null){
-            builder.append(function.toString());
+            builder.append(function);
         }
         builder.append("]");
         return builder.toString();
