@@ -18,6 +18,7 @@
 package org.geotoolkit.coverage.io;
 
 import java.util.Locale;
+import java.util.MissingResourceException;
 import java.util.concurrent.CancellationException;
 
 import org.geotoolkit.resources.Errors;
@@ -28,12 +29,30 @@ import org.geotoolkit.util.Localized;
  * Base class of {@link GridCoverageReader} and {@link GridCoverageWriter}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.12
+ * @version 3.14
  *
  * @since 3.12
  * @module
  */
 public abstract class GridCoverageStore implements Localized {
+    /**
+     * The dimension of <var>x</var> ordinates, which is {@value}. This is used for example with
+     * multi-dimensional dataset (e.g. cubes), in order to determine which dataset dimension to
+     * associated the {@link java.awt.image.RenderedImage#getWidth() image width}.
+     *
+     * @since 3.14
+     */
+    static final int X_DIMENSION = 0;
+
+    /**
+     * The dimension of <var>y</var> ordinates, which is {@value}. This is used for example with
+     * multi-dimensional dataset (e.g. cubes), in order to determine which dataset dimension to
+     * associated the {@link java.awt.image.RenderedImage#getHeight() image height}.
+     *
+     * @since 3.14
+     */
+    static final int Y_DIMENSION = 1;
+
     /**
      * The locale to use for formatting messages, or {@code null} for a default locale.
      */
@@ -80,6 +99,50 @@ public abstract class GridCoverageStore implements Localized {
      */
     public void setLocale(final Locale locale) {
         this.locale = locale;
+    }
+
+    /**
+     * Returns the locale from the given list which is equals to the given locale, or which
+     * is using the same language.
+     *
+     * @param  locale The user supplied locale.
+     * @param  list The list of locales allowed by the reader or the writer.
+     * @return The locale from the given list which is equals, or using the same language,
+     *         than the specified locale.
+     *
+     * @since 3.14
+     */
+    static Locale select(final Locale locale, final Locale[] list) {
+        for (int i=list.length; --i>=0;) {
+            final Locale candidate = list[i];
+            if (locale.equals(candidate)) {
+                return candidate;
+            }
+        }
+        final String language = getISO3Language(locale);
+        if (language != null) {
+            for (int i=list.length; --i>=0;) {
+                final Locale candidate = list[i];
+                if (language.equals(getISO3Language(candidate))) {
+                    return candidate;
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Returns the ISO language code for the specified locale, or {@code null} if not available.
+     * This is used for finding a match when the locale given to the {@link #setLocale(Locale)}
+     * method does not match exactly the locale supported by the image reader or writer. In such
+     * case, we will pickup a locale for the same language even if it is not the same country.
+     */
+    private static String getISO3Language(final Locale locale) {
+        try {
+            return locale.getISO3Language();
+        } catch (MissingResourceException exception) {
+            return null;
+        }
     }
 
     /**

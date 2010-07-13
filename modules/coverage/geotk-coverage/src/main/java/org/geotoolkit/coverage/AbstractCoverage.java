@@ -122,6 +122,8 @@ public abstract class AbstractCoverage extends PropertySourceImpl implements Cov
 
     /**
      * The sample dimension to make visible by {@link #getRenderableImage}.
+     *
+     * @see org.geotoolkit.coverage.io.ImageReaderAdapter#VISIBLE_BAND
      */
     private static final int VISIBLE_BAND = 0;
 

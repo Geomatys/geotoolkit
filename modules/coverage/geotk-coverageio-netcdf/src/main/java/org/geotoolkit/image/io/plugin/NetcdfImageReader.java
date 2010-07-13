@@ -586,7 +586,9 @@ public class NetcdfImageReader extends FileImageReader implements NamedImageStor
             prepareVariable(imageIndex);
             variables = new Variable[] {variable};
         }
-        return new NetcdfMetadata(this, variables);
+        final NetcdfMetadata metadata = new NetcdfMetadata(this, variables);
+        metadata.workaroundNonStandard(dataset);
+        return metadata;
     }
 
     /**

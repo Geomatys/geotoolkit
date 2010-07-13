@@ -20,6 +20,7 @@ package org.geotoolkit.image.io.plugin;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
+import java.io.IOException;
 import javax.imageio.ImageReader;
 import javax.imageio.metadata.IIOMetadataNode;
 import javax.imageio.metadata.IIOMetadataFormat;
@@ -27,10 +28,12 @@ import javax.imageio.metadata.IIOMetadataFormat;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Node;
 
+import ucar.ma2.Array;
 import ucar.nc2.Group;
 import ucar.ma2.DataType;
 import ucar.nc2.Attribute;
 import ucar.nc2.NetcdfFile;
+import ucar.nc2.Variable;
 import ucar.nc2.VariableIF;
 import ucar.nc2.VariableSimpleIF;
 import ucar.nc2.dataset.CoordinateAxis1D;
@@ -38,6 +41,7 @@ import ucar.nc2.dataset.CoordinateSystem;
 import ucar.nc2.dataset.CoordSysBuilderIF;
 import ucar.nc2.dataset.EnhanceScaleMissing;
 import ucar.nc2.dataset.Enhancements;
+import ucar.ma2.InvalidRangeException;
 
 import org.opengis.util.FactoryException;
 import org.opengis.metadata.content.TransferFunctionType;
@@ -109,6 +113,14 @@ final class NetcdfMetadata extends SpatialMetadata {
      * After {@code getAsTree("NetCDF")} has been invoked, the metadata tree we have built.
      */
     private Object netcdf;
+
+    /**
+     * {@code true} if the sample dimensions declare at least one range of value. This is
+     * always {@code true} for CF-conformant variables. However it may be {@code false}
+     * for some non-standard variable which store their range in other variables rather
+     * than attributes (case of IFREMER <cite>Caraïbes</cite> data).
+     */
+    private boolean hasValueRange;
 
     /**
      * Creates image metadata from the specified file. Note that
@@ -242,7 +254,7 @@ final class NetcdfMetadata extends SpatialMetadata {
     /**
      * Adds sample dimension information for the specified variables.
      *
-     * @param variables The variables to add as sample dimensions.
+     * @param  variables The variables to add as sample dimensions.
      */
     private void addSampleDimension(final VariableIF... variables) {
         final DimensionAccessor accessor = new DimensionAccessor(this);
@@ -264,7 +276,72 @@ final class NetcdfMetadata extends SpatialMetadata {
             accessor.setValidSampleValue(m.minimum, m.maximum);
             accessor.setFillSampleValues(m.fillValues);
             accessor.setTransfertFunction(m.scale, m.offset, TransferFunctionType.LINEAR);
+            hasValueRange |= !(Double.isInfinite(m.minimum) && Double.isInfinite(m.maximum));
         }
+    }
+
+    /**
+     * Workaround for non-standard NetCDF data. For CF-compliant data, the
+     * {@link #hasValueRange} flag is {@code true} and this method does nothing.
+     * <p>
+     * Current implementation handles the following special cases:
+     * <p>
+     * <ul>
+     *   <li>IFREMER <cite>Caraïbes</cite> data</li>
+     * </ul>
+     *
+     * @param file The NetCDF file which contains the variables.
+     * @throws IOException If an error occured while reading the variable.
+     *
+     * @since 3.14
+     */
+    final void workaroundNonStandard(final NetcdfFile file) throws IOException {
+        if (!hasValueRange) {
+            final DimensionAccessor accessor = new DimensionAccessor(this);
+            final int n = accessor.childCount();
+            final double[] min = readVariable(file, "Minimum_value", n);
+            final double[] max = readVariable(file, "Maximum_value", n);
+            if (min != null && max != null) {
+                for (int i=0; i<n; i++) {
+                    accessor.selectChild(i);
+                    accessor.setValidSampleValue(min[i], max[i]);
+                }
+            }
+        }
+    }
+
+    /**
+     * Returns the data of the given variable, provided that its length is equals or greater than
+     * the given value. This method is invoked by {@link #workaroundNonStandard(NetcdfFile)} when
+     * there is a chance that the minimum and maximum values are stored in separated variables
+     * instead than attributes of the variable of interest.
+     *
+     * @param file The NetCDF file which contains the variables.
+     * @param name The name of the variable which contaisn the minimum or maximum values.
+     * @param n    The expected number of values.
+     * @return An array of length <var>n</var> containing the values, or {@code null} if none.
+     * @throws IOException If an error occured while reading the variable.
+     *
+     * @since 3.14
+     */
+    private static double[] readVariable(final NetcdfFile file, final String name, final int n)
+            throws IOException
+    {
+        Variable variable = file.findVariable(name);
+        if (variable != null && variable.getRank() == 1 && variable.getShape(0) >= n) {
+            final Array array;
+            try {
+                array = variable.read(new int[] {0}, new int[] {n});
+            } catch (InvalidRangeException e) { // Should never happen.
+                throw new IOException(e);
+            }
+            final double[] data = new double[n];
+            for (int i=0; i<n; i++) {
+                data[i] = array.getDouble(i);
+            }
+            return data;
+        }
+        return null;
     }
 
     /**

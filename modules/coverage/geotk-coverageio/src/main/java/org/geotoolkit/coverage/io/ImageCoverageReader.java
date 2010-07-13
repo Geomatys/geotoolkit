@@ -24,7 +24,6 @@ import java.util.Locale;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Collections;
-import java.util.MissingResourceException;
 import java.util.concurrent.CancellationException;
 import java.io.Closeable;
 import java.io.IOException;
@@ -117,7 +116,7 @@ import org.geotoolkit.referencing.operation.transform.ConcatenatedTransform;
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Johann Sorel (Geomatys)
- * @version 3.13
+ * @version 3.14
  *
  * @since 3.09 (derived from 2.2)
  * @module
@@ -253,44 +252,13 @@ public class ImageCoverageReader extends GridCoverageReader {
 
     /**
      * Sets the given locale to the given {@link ImageReader}, provided that the image reader
-     * supports the language of that locale. Otherwise set the reader locale to {@code null}.
+     * supports the language of that locale. Otherwise sets the reader locale to {@code null}.
      *
      * @see ImageReader#setLocale(Locale)
      */
     private static void setLocale(final ImageReader reader, final Locale locale) {
         if (reader != null && locale != null) {
-            final Locale[] list = reader.getAvailableLocales();
-            for (int i=list.length; --i>=0;) {
-                if (locale.equals(list[i])) {
-                    reader.setLocale(locale);
-                    return;
-                }
-            }
-            final String language = getISO3Language(locale);
-            if (language != null) {
-                for (int i=list.length; --i>=0;) {
-                    final Locale candidate = list[i];
-                    if (language.equals(getISO3Language(candidate))) {
-                        reader.setLocale(candidate);
-                        return;
-                    }
-                }
-            }
-            reader.setLocale(null);
-        }
-    }
-
-    /**
-     * Returns the ISO language code for the specified locale, or {@code null} if not available.
-     * This is used for finding a match when the locale given to the {@link #setLocale(Locale)}
-     * method does not match exactly the locale supported by the image reader. In such case, we
-     * will pickup a locale for the same language even if it is not the same country.
-     */
-    private static String getISO3Language(final Locale locale) {
-        try {
-            return locale.getISO3Language();
-        } catch (MissingResourceException exception) {
-            return null;
+            reader.setLocale(select(locale, reader.getAvailableLocales()));
         }
     }
 
@@ -623,8 +591,8 @@ public class ImageCoverageReader extends GridCoverageReader {
         final int[] lower = new int[dimension];
         final int[] upper = new int[dimension];
         Arrays.fill(upper, 1);
-        upper[0] = width;
-        upper[1] = height;
+        upper[X_DIMENSION] = width;
+        upper[Y_DIMENSION] = height;
         final GeneralGridEnvelope gridRange = new GeneralGridEnvelope(lower, upper, false);
         return new GridGeometry2D(gridRange, pointInPixel, gridToCRS, crs, null);
     }
@@ -808,8 +776,8 @@ public class ImageCoverageReader extends GridCoverageReader {
             change = AffineTransform.getTranslateInstance(imageBounds.x, imageBounds.y);
             imageParam.setSourceRegion(imageBounds);
             if (resolution != null) {
-                final double sx = resolution[0]; // Really 0, not gridGeometry.axisDimensionX
-                final double sy = resolution[1]; // Really 1, not gridGeometry.axisDimensionY
+                final double sx = resolution[X_DIMENSION]; // Really 0, not gridGeometry.axisDimensionX
+                final double sy = resolution[Y_DIMENSION]; // Really 1, not gridGeometry.axisDimensionY
                 imageParam.setSourceSubsampling((int) sx, (int) sy, 0, 0);
                 /*
                  * Conceptually we should invoke the following code now. However this implementation
@@ -983,8 +951,8 @@ public class ImageCoverageReader extends GridCoverageReader {
         }
         if (envelope != null) {
             final XRectangle2D requestRect = XRectangle2D.createFromExtremums(
-                    envelope.getMinimum(0), envelope.getMinimum(1),
-                    envelope.getMaximum(0), envelope.getMaximum(1));
+                    envelope.getMinimum(X_DIMENSION), envelope.getMinimum(Y_DIMENSION),
+                    envelope.getMaximum(X_DIMENSION), envelope.getMaximum(Y_DIMENSION));
             if (requestRect.isEmpty() || !XRectangle2D.intersectInclusive(requestRect, geodeticBounds)) {
                 return null;
             }
@@ -1037,18 +1005,18 @@ public class ImageCoverageReader extends GridCoverageReader {
             double[] transformed = resolution;
             if (toTargetCRS != null) {
                 final double[] center = new double[toTargetCRS.getSourceDimensions()];
-                center[0] = imageRegion.getCenterX();
-                center[1] = imageRegion.getCenterY();
+                center[X_DIMENSION] = imageRegion.getCenterX();
+                center[Y_DIMENSION] = imageRegion.getCenterY();
                 gridToCRS.transform(center, 0, center, 0, 1);
                 toTargetCRS.inverse().transform(center, 0, center, 0, 1);
                 transformed = CRS.deltaTransform(toTargetCRS, new GeneralDirectPosition(center), resolution);
             }
-            sx *= transformed[0];
-            sy *= transformed[1];
+            sx *= transformed[X_DIMENSION];
+            sy *= transformed[Y_DIMENSION];
             xSubsampling = Math.max(1, Math.min(width /MIN_SIZE, (int) (sx + EPS)));
             ySubsampling = Math.max(1, Math.min(height/MIN_SIZE, (int) (sy + EPS)));
-            resolution[0] = xSubsampling;
-            resolution[1] = ySubsampling;
+            resolution[X_DIMENSION] = xSubsampling;
+            resolution[Y_DIMENSION] = ySubsampling;
         } else {
             xSubsampling = 1;
             ySubsampling = 1;

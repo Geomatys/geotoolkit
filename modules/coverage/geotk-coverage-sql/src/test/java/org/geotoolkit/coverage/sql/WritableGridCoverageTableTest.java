@@ -173,6 +173,7 @@ public final class WritableGridCoverageTableTest extends CatalogTestBase {
         // The minimum value is actually -1.893, but we didn't specified the pad value.
         assertEquals(-9999,  range[0].getMinimum(true), 1E-4);
         assertEquals(31.140, range[0].getMaximum(true), 1E-4);
+        assertNull(range[0].getUnits());
     }
 
     /**
