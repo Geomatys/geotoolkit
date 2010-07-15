@@ -34,6 +34,7 @@ import java.util.logging.Logger;
 import org.geotoolkit.data.shapefile.ShpFileType;
 import org.geotoolkit.data.shapefile.ShpFiles;
 import org.geotoolkit.resources.NIOUtilities;
+import org.geotoolkit.util.XInteger;
 import org.geotoolkit.util.logging.Logging;
 
 /**

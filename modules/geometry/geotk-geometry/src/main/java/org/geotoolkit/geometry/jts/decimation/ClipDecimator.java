@@ -35,7 +35,7 @@ import org.opengis.referencing.operation.TransformException;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class DefaultGeometryDecimator extends AbstractGeometryDecimator{
+public class ClipDecimator extends AbstractGeometryDecimator{
 
     /**
      * Region to clip.
@@ -87,7 +87,7 @@ public class DefaultGeometryDecimator extends AbstractGeometryDecimator{
 
     private Geometry currentGeometry;
 
-    public DefaultGeometryDecimator(Rectangle2D clip){
+    public ClipDecimator(Rectangle2D clip){
         super();
         if(clip == null){
             throw new NullPointerException("Clip rectangle must not be null");
@@ -97,7 +97,7 @@ public class DefaultGeometryDecimator extends AbstractGeometryDecimator{
         init();
     }
 
-    public DefaultGeometryDecimator(Rectangle2D clip, CoordinateSequenceFactory csf){
+    public ClipDecimator(Rectangle2D clip, CoordinateSequenceFactory csf){
         super(csf);
         if(clip == null){
             throw new NullPointerException("Clip rectangle must not be null");
@@ -107,7 +107,7 @@ public class DefaultGeometryDecimator extends AbstractGeometryDecimator{
         init();
     }
 
-    public DefaultGeometryDecimator(Rectangle2D clip, GeometryFactory gf){
+    public ClipDecimator(Rectangle2D clip, GeometryFactory gf){
         super(gf);
         if(clip == null){
             throw new NullPointerException("Clip rectangle must not be null");

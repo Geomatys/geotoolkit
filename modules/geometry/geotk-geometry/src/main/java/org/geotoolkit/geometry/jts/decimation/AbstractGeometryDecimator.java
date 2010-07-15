@@ -47,17 +47,19 @@ public abstract class AbstractGeometryDecimator implements GeometryDecimator{
 
     public AbstractGeometryDecimator(CoordinateSequenceFactory csf){
         if(csf == null){
-            this.csf = CoordinateArraySequenceFactory.instance();
+            this.gf = new GeometryFactory();
+            this.csf = gf.getCoordinateSequenceFactory();
         }else{
             this.csf = csf;
+            this.gf = new GeometryFactory(csf);
         }
-        gf = new GeometryFactory(csf);
+        
     }
 
     public AbstractGeometryDecimator(GeometryFactory gf){
         if(gf == null){
-            this.csf = CoordinateArraySequenceFactory.instance();
-            this.gf = new GeometryFactory(csf);
+            this.gf = new GeometryFactory();
+            this.csf = gf.getCoordinateSequenceFactory();
         }else{
             this.csf = gf.getCoordinateSequenceFactory();
             this.gf = gf;
@@ -106,8 +108,11 @@ public abstract class AbstractGeometryDecimator implements GeometryDecimator{
             //nothing to decimate
             return geom;
         }else{
-            final Coordinate[] coords = decimate(geom.getCoordinates());
-            return gf.createMultiPoint(coords);
+            final Coordinate[] coords = new Coordinate[nbGeom];
+            for(int i=0;i<coords.length;i++){
+                coords[i] = geom.getGeometryN(i).getCoordinate();
+            }
+            return gf.createMultiPoint(decimate(coords));
         }
     }
 

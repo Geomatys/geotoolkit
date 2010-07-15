@@ -40,7 +40,7 @@ import com.vividsolutions.jts.geom.Envelope;
  */
 public class LazySearchIterator implements Iterator<Data> {
 
-    static final DataDefinition DATA_DEFINITION = new DataDefinition("US-ASCII");
+    private static final DataDefinition DATA_DEFINITION = new DataDefinition("US-ASCII");
 
     private static final int MAX_INDICES = 32768;
     static {
@@ -48,19 +48,14 @@ public class LazySearchIterator implements Iterator<Data> {
         DATA_DEFINITION.addField(Long.class);
     }
 
-    Data next = null;
+    private final IndexFile indexfile;
+    private final Envelope bounds;
 
-    Node current;
-
-    int idIndex = 0;
-
+    private Data next = null;
+    private Node current;
+    private int idIndex = 0;
     private boolean closed;
-
-    private Envelope bounds;
-
-    Iterator data;
-
-    private IndexFile indexfile;
+    private Iterator data;
 
     public LazySearchIterator(Node root, IndexFile indexfile, Envelope bounds) {
         super();
@@ -71,38 +66,43 @@ public class LazySearchIterator implements Iterator<Data> {
         this.indexfile = indexfile;
     }
 
+    @Override
     public boolean hasNext() {
-        if (closed)
+        if (closed){
             throw new IllegalStateException("Iterator has been closed!");
-        if (next != null)
+        }
+
+        if (next != null){
             return true;
+        }
+
         if (data != null && data.hasNext()) {
             next = (Data) data.next();
         } else {
             fillCache();
-            if (data != null && data.hasNext())
+            if (data != null && data.hasNext()){
                 next = (Data) data.next();
+            }
         }
         return next != null;
     }
 
     private void fillCache() {
-        List indices = new ArrayList();
-        ArrayList dataList = new ArrayList();
+        final List<Integer> indices = new ArrayList<Integer>();
+
         try {
             while (indices.size() < MAX_INDICES && current != null) {
                 if (idIndex < current.getNumShapeIds() && !current.isVisited()
                         && current.getBounds().intersects(bounds)) {
-                    indices.add(new Integer(current.getShapeId(idIndex)));
+                    indices.add(current.getShapeId(idIndex));
                     idIndex++;
                 } else {
                     current.setShapesId(new int[0]);
                     idIndex = 0;
                     boolean foundUnvisited = false;
-                    for (int i = 0; i < current.getNumSubNodes(); i++) {
-                        Node node = current.getSubNode(i);
-                        if (!node.isVisited()
-                                && node.getBounds().intersects(bounds)) {
+                    for (int i=0,n=current.getNumSubNodes(); i<n; i++) {
+                        final Node node = current.getSubNode(i);
+                        if (!node.isVisited() && node.getBounds().intersects(bounds)) {
                             foundUnvisited = true;
                             current = node;
                             break;
@@ -114,32 +114,36 @@ public class LazySearchIterator implements Iterator<Data> {
                     }
                 }
             }
+
             // sort so offset lookup is faster
             Collections.sort(indices);
-            for (Iterator iter = indices.iterator(); iter.hasNext();) {
-                Integer recno = (Integer) iter.next();
-                Data data = new Data(DATA_DEFINITION);
-                data.addValue(new Integer(recno.intValue() + 1));
-                data.addValue(new Long(indexfile.getOffsetInBytes(recno
-                        .intValue())));
+            final List<Data> dataList = new ArrayList<Data>(indices.size());
+            for (Integer recno : indices) {
+                final Data data = new Data(DATA_DEFINITION);
+                data.addValue(recno.intValue() + 1);
+                data.addValue(Long.valueOf(indexfile.getOffsetInBytes(recno)));
                 dataList.add(data);
             }
+            data = dataList.iterator();
         } catch (IOException e) {
             throw new RuntimeException(e);
         } catch (StoreException e) {
             throw new RuntimeException(e);
         }
-        data = dataList.iterator();
+        
     }
 
+    @Override
     public Data next() {
-        if (!hasNext())
+        if (!hasNext()){
             throw new NoSuchElementException("No more elements available");
-        Data temp = next;
+        }
+        final Data temp = next;
         next = null;
         return temp;
     }
 
+    @Override
     public void remove() {
         throw new UnsupportedOperationException();
     }

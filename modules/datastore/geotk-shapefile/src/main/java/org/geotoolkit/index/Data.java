@@ -25,8 +25,8 @@ import java.util.ArrayList;
  * @module pending
  */
 public class Data {
-    private DataDefinition def;
-    private ArrayList values;
+    private final DataDefinition def;
+    private final ArrayList values;
 
     /**
      * DOCUMENT ME!
@@ -48,18 +48,13 @@ public class Data {
             return false;
         }
 
-        boolean ret = true;
-
-        for (int i = 0; i < this.def.getFieldsCount(); i++) {
-            if (!this.def.getField(i).getFieldClass().isInstance(
-                    this.getValue(i))) {
-                ret = false;
-
-                break;
+        for (int i=0,n=this.def.getFieldsCount(); i<n; i++) {
+            if (!this.def.getField(i).getFieldClass().isInstance(this.getValue(i))) {
+                return false;
             }
         }
 
-        return ret;
+        return true;
     }
 
     /**
@@ -72,11 +67,10 @@ public class Data {
      * @throws TreeException
      */
     public Data addValue(Object val) throws TreeException {
-        if (this.values.size() == def.getFieldsCount()) {
+        final int pos = this.values.size();
+        if (pos == def.getFieldsCount()) {
             throw new TreeException("Max number of values reached!");
         }
-
-        int pos = this.values.size();
 
         if (!val.getClass().equals(def.getField(pos).getFieldClass())) {
             throw new TreeException("Wrong class type, was expecting "
@@ -84,7 +78,6 @@ public class Data {
         }
 
         this.values.add(val);
-
         return this;
     }
 
@@ -117,14 +110,14 @@ public class Data {
     /**
      * @see java.lang.Object#toString()
      */
+    @Override
     public String toString() {
-        StringBuffer ret = new StringBuffer();
+        final StringBuilder ret = new StringBuilder();
 
-        for (int i = 0; i < this.values.size(); i++) {
+        for (int i=0,n=this.values.size(); i<n ; i++) {
             if (i > 0) {
                 ret.append(" - ");
             }
-
             ret.append(this.def.getField(i).getFieldClass());
             ret.append(": ");
             ret.append(this.values.get(i));

@@ -16,8 +16,6 @@
  */
 package org.geotoolkit.display2d.container.statefull;
 
-import com.vividsolutions.jts.simplify.DouglasPeuckerSimplifier;
-
 import java.awt.Shape;
 
 import org.geotoolkit.display2d.GO2Utilities;
@@ -102,8 +100,10 @@ public class StatefullProjectedGeometry implements ProjectedGeometry {
     private com.vividsolutions.jts.geom.Geometry getGeometryJTS(){
         if(decimatedGeometryJTS == null){
             decimatedGeometryJTS = dataGeometryJTS;
-            if(params.decimate && params.decimation != 0){
-                decimatedGeometryJTS = DouglasPeuckerSimplifier.simplify(decimatedGeometryJTS, params.decimation);
+            if(params.decimator != null){
+                //System.out.println("BEFORE " + decimatedGeometryJTS);
+                decimatedGeometryJTS = params.decimator.decimate(decimatedGeometryJTS);
+                //System.out.println("AFTER  " + decimatedGeometryJTS);
             }
         }
         return decimatedGeometryJTS;
@@ -143,8 +143,6 @@ public class StatefullProjectedGeometry implements ProjectedGeometry {
     public Shape getDisplayShape() throws TransformException{
         if(displayShape.getGeometry() == null){
             displayShape.setGeometry(getDisplayGeometryJTS());
-            //displayShape = GO2Utilities.toJava2D(getDisplayGeometryJTS());
-            //displayShape = GO2Utilities.toJava2D(getDisplayGeometryJTS(),params.resolutionDisplay);
         }
         return displayShape;
     }

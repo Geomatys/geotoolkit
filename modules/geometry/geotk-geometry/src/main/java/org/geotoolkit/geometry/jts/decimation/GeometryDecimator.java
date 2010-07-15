@@ -28,7 +28,7 @@ import com.vividsolutions.jts.geom.Geometry;
  */
 public interface GeometryDecimator {
 
-    Geometry decimate(Geometry geom);
+    <T extends Geometry> T decimate(T geom);
     
     CoordinateSequence decimate(CoordinateSequence sequence);
 

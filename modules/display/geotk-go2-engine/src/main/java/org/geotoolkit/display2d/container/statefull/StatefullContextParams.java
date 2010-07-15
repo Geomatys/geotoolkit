@@ -24,6 +24,8 @@ import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.geometry.DirectPosition2D;
 import org.geotoolkit.geometry.jts.GeometryCoordinateSequenceTransformer;
+import org.geotoolkit.geometry.jts.decimation.GeometryDecimator;
+import org.geotoolkit.geometry.jts.decimation.ScaleDecimator;
 import org.geotoolkit.map.FeatureMapLayer;
 
 import org.opengis.geometry.DirectPosition;
@@ -47,8 +49,7 @@ public class StatefullContextParams {
     public double[] resolutionDisplay = new double[2];
     public CoordinateReferenceSystem objectiveCRS;
     public CoordinateReferenceSystem displayCRS;
-    public boolean decimate = false;
-    public double decimation = 0;
+    public GeometryDecimator decimator = null;
 
     public MathTransform dataToObjective = null;
 
@@ -63,19 +64,18 @@ public class StatefullContextParams {
         //check if needed generalization
         final Boolean generalize = (Boolean) renderingContext.getCanvas().getRenderingHint(GO2Hints.KEY_GENERALIZE);
         if(generalize != null && generalize.booleanValue() == true){
-            decimate = true;
             try {
                 final MathTransform trs = renderingContext.getMathTransform(renderingContext.getObjectiveCRS(), dataCRS);
                 DirectPosition vect = new DirectPosition2D(resolutionObjective[0], resolutionObjective[1]);
                 vect = trs.transform(vect, vect);
                 resolutionDisplay = vect.getCoordinate();
-                decimation = (resolutionDisplay[0]<resolutionDisplay[1]) ? resolutionDisplay[0] : resolutionDisplay[1] ;
+                decimator = new ScaleDecimator(resolutionDisplay[0] , resolutionDisplay[1]);
             } catch (Exception ex) {
                 ex.printStackTrace();
-                decimation = 0;
+                decimator = null;
             }
         }else{
-            decimate = false;
+            decimator = null;
         }
     }
 
