@@ -29,13 +29,11 @@ import java.nio.channels.ReadableByteChannel;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
 import java.util.Calendar;
-import java.util.logging.Logger;
 
 import org.geotoolkit.data.shapefile.ShpFileType;
 import org.geotoolkit.data.shapefile.ShpFiles;
 import org.geotoolkit.resources.NIOUtilities;
 import org.geotoolkit.util.XInteger;
-import org.geotoolkit.util.logging.Logging;
 
 /**
  * A DbaseFileReader is used to read a dbase III format file. <br>
@@ -68,8 +66,6 @@ import org.geotoolkit.util.logging.Logging;
 public class DbaseFileReader {
 
     public static final Charset DEFAULT_STRING_CHARSET = Charset.forName("ISO-8859-1");
-
-    private static final Logger LOGGER = Logging.getLogger(DbaseFileReader.class);
 
     public final class Row {
         public Object read(int column) throws IOException {
@@ -509,13 +505,13 @@ public class DbaseFileReader {
             case 'N':
                 try {
                     final Class clazz = header.getFieldClass(fieldNum);
-                    final String number = extractNumberString(charBuffer,
+                    final CharSequence number = extractNumberString(charBuffer,
                             fieldOffset, fieldLen);
                     if (clazz == Integer.class) {
-                        object = Integer.valueOf(number);
+                        object = XInteger.parseIntSigned(number, 0, number.length());
                         break;
                     } else if (clazz == Long.class) {
-                        object = Long.valueOf(number);
+                        object = Long.valueOf(number.toString());
                         break;
                     }
                     // else will fall through to the floating point number
@@ -530,7 +526,7 @@ public class DbaseFileReader {
 
                     // Lets try parsing a long instead...
                     try {
-                        object = Long.valueOf(extractNumberString(charBuffer, fieldOffset, fieldLen));
+                        object = Long.valueOf(extractNumberString(charBuffer, fieldOffset, fieldLen).toString());
                         break;
                     } catch (NumberFormatException e2) {
 
@@ -540,7 +536,7 @@ public class DbaseFileReader {
             case 'f':
             case 'F': // floating point number
                 try {
-                    object = Double.valueOf(extractNumberString(charBuffer, fieldOffset, fieldLen));
+                    object = Double.valueOf(extractNumberString(charBuffer, fieldOffset, fieldLen).toString());
                 } catch (NumberFormatException e) {
                     // todo: use progresslistener, this isn't a grave error,
                     // though it
@@ -566,9 +562,11 @@ public class DbaseFileReader {
      * @param fieldOffset
      * @param fieldLen
      */
-    private static String extractNumberString(final CharBuffer charBuffer2,
-            final int fieldOffset, final int fieldLen) {
-        return charBuffer2.subSequence(fieldOffset, fieldOffset+fieldLen).toString().trim();
+    private static CharSequence extractNumberString(final CharBuffer charBuffer2,
+            int fieldOffset, int fieldLen) {
+        fieldLen = fieldOffset+fieldLen;
+        while(charBuffer2.charAt(fieldOffset) <= ' ' && fieldOffset<fieldLen)fieldOffset++;
+        return charBuffer2.subSequence(fieldOffset, fieldLen);
     }
 
     public static void main(String[] args) throws Exception {
