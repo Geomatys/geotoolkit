@@ -19,6 +19,7 @@ package org.geotoolkit.gui.swing.image;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Locale;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -55,6 +56,7 @@ import org.geotoolkit.image.io.metadata.SampleDimension;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.logging.Logging;
+import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.internal.image.io.Formats;
 import org.geotoolkit.internal.swing.SwingUtilities;
 import org.geotoolkit.resources.Vocabulary;
@@ -75,7 +77,7 @@ import org.geotoolkit.resources.Vocabulary;
  * All {@code setImage} methods defined in this class may be slow because they involve I/O
  * operations. It is recommanded to invoke them from an other thread than the Swing thread.
  *
- * {@section Using this component together with a File Chooser}
+ * {@section Using this component together with a FileChooser}
  * This component can be registered to a {@link JFileChooser} for listening to change events.
  * When the file selection change, the {@link #propertyChange(PropertyChangeEvent)} method is
  * automatically invoked. The default implementation invokes in turn {@link #setImage(File)} in
@@ -97,7 +99,7 @@ import org.geotoolkit.resources.Vocabulary;
  * }
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.12
+ * @version 3.14
  *
  * @see ImageProperties
  * @see ImageFileChooser
@@ -193,10 +195,11 @@ public class ImageFileProperties extends ImageProperties implements PropertyChan
         final ImagePane viewer = this.viewer;
         boolean hasWarnings = false;
         for (final Object chunk : chunks) {
-            if (chunk instanceof File) {
+            if (chunk instanceof Worker) {
+                String label = IOUtilities.name(((Worker) chunk).input);
+                label = Vocabulary.getResources(getLocale()).getString(Vocabulary.Keys.LOADING_$1, label);
+                viewer.setProgressLabel(label);
                 viewer.setProgress(0);
-                viewer.setProgressLabel(Vocabulary.getResources(getLocale())
-                        .getString(Vocabulary.Keys.LOADING_$1, ((File) chunk).getName()));
             } else if (chunk instanceof Boolean) {
                 viewer.setProgressVisible((Boolean) chunk);
             } else if (chunk instanceof Integer) {
@@ -234,9 +237,10 @@ public class ImageFileProperties extends ImageProperties implements PropertyChan
      * Sets the specified {@linkplain ImageReader image reader} as the source of metadata
      * and thumbnails, reading the information at the given image index. The information
      * are extracted immediately and no reference to the given image reader is retained.
-     * <p>
+     *
+     * {@section Thread safety}
      * This method can be invoked from any thread. Actually it is recommanded to invoke
-     * it from an other thread than the Swing one.
+     * it from an other thread than the <cite>Swing</cite> one.
      *
      * @param  reader The image reader from which to read the informations.
      * @param  imageIndex The index of the image to read (usually 0).
@@ -352,12 +356,13 @@ public class ImageFileProperties extends ImageProperties implements PropertyChan
      * and thumbnails. The information are extracted immediately and no reference to the
      * given image reader is retained.
      * <p>
-     * This method can be invoked from any thread. Actually it is recommanded to invoke
-     * it from an other thread than the Swing one.
-     * <p>
      * The default implementation delegates to {@link #setImage(ImageReader, int)} with
      * an <cite>image index</cite> of 0. Subclasses should override this method if they
      * want to choose automatically an image index depending on the format and the input.
+     *
+     * {@section Thread safety}
+     * This method can be invoked from any thread. Actually it is recommanded to invoke
+     * it from an other thread than the <cite>Swing</cite> one.
      *
      * @param  reader The image reader from which to read the informations.
      * @throws IOException If an error occured while reading the metadata or the thumbnails.
@@ -367,13 +372,15 @@ public class ImageFileProperties extends ImageProperties implements PropertyChan
     }
 
     /**
-     * Sets the specified {@linkplain File file} as the source of metadata and thumbnails. This
-     * method creates a temporary image reader and delegates to {@link #setImage(ImageReader)}.
-     * If the content of this pane change often, callers should use their own image reader and
-     * recycle it instead.
-     * <p>
+     * Sets the specified {@linkplain File file} as the source of metadata and thumbnails.
+     * This is the method which is invoked in a background thread when a {@link JFileChooser}
+     * is associated to this widget as described in the <a href="#overview">class javadoc</a>.
+     * The default implementation delegates to {@link #setImageInput(Object)}, but subclasses
+     * can override if they want to perform additional processing.
+     *
+     * {@section Thread safety}
      * This method can be invoked from any thread. Actually it is recommanded to invoke
-     * it from an other thread than the Swing one.
+     * it from an other thread than the <cite>Swing</cite> one.
      *
      * @param  file The image file.
      * @throws IOException If the file is not found, or no suitable image reader is found for the
@@ -384,21 +391,33 @@ public class ImageFileProperties extends ImageProperties implements PropertyChan
     }
 
     /**
-     * Sets the specified image input as the source of metadata and thumbnails. This method creates
-     * a temporary image reader and delegates to {@link #setImage(ImageReader)}. If the content of
-     * this pane change often, callers should use their own image reader and recycle it instead.
+     * Sets the specified image input as the source of metadata and thumbnails. This method gets
+     * or creates an {@link ImageReader} for the given input as below:
      * <p>
+     * <u>
+     *   <li>If the given input is an instance of {@link ImageReader}, then it is used
+     *       directly.</li>
+     *   <li>Otherwise this method creates a temporary image reader for the given input.</li>
+     * </u>
+     * <p>
+     * Then, this method delegates to {@link #setImage(ImageReader)}.
+     *
+     * {@section Thread safety}
      * This method can be invoked from any thread. Actually it is recommanded to invoke
-     * it from an other thread than the Swing one.
+     * it from an other thread than the <cite>Swing</cite> one.
      *
      * @param  input The image input.
      * @throws IOException If the file is not found, or no suitable image reader is found for the
      *         given input, or if an error occured while reading the metadata or the thumbnails.
      */
     public void setImageInput(final Object input) throws IOException {
-        final Reader reader = new Reader();
-        SwingUtilities.invokeAndWait(reader);
-        Formats.selectImageReader(input, getLocale(), reader);
+        final ReadInvoker invoker = new ReadInvoker();
+        SwingUtilities.invokeAndWait(invoker);
+        if (input instanceof ImageReader) {
+            invoker.read((ImageReader) input);
+        } else {
+            Formats.selectImageReader(input, invoker.locale, invoker);
+        }
     }
 
     /**
@@ -434,17 +453,22 @@ public class ImageFileProperties extends ImageProperties implements PropertyChan
      * thread. The {@link Formats.ReadCall} part is to be run in the caller thread.
      *
      * @author Martin Desruisseaux (Geomatys)
-     * @version 3.07
+     * @version 3.14
      *
      * @since 3.05
      * @module
      */
-    private final class Reader implements Runnable, Formats.ReadCall {
+    private final class ReadInvoker implements Runnable, Formats.ReadCall {
         /**
          * A copy of the {@link ImageFileProperties#worker} field,
          * used in order to register listeners to the image reader.
          */
         private Worker listener;
+
+        /**
+         * The locale of the enclosing widget.
+         */
+        Locale locale;
 
         /**
          * Executed from the Swing thread in order to initialize {@link #listener} to the
@@ -454,6 +478,7 @@ public class ImageFileProperties extends ImageProperties implements PropertyChan
         @Override
         public void run() {
             listener = worker;
+            locale = getLocale();
         }
 
         /**
@@ -551,7 +576,7 @@ public class ImageFileProperties extends ImageProperties implements PropertyChan
         /**
          * The file to read.
          */
-        private final Object input;
+        final Object input;
 
         /**
          * The image reader. Used only for cancelation.
@@ -571,7 +596,7 @@ public class ImageFileProperties extends ImageProperties implements PropertyChan
          */
         @Override
         protected Object doInBackground() throws IOException {
-            publish(input);
+            publish(this); // A marker value for showing the input name in the widget.
             if (input instanceof File) {
                 setImage((File) input);
             } else {

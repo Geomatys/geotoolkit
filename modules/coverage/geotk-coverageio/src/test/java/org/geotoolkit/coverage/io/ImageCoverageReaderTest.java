@@ -63,7 +63,7 @@ public final class ImageCoverageReaderTest {
     private static final float EPS = 1E-9f;
 
     /**
-     * Register a "matrix" reader forced to the US format.
+     * Registers a "matrix" reader forced to the US format.
      */
     @BeforeClass
     public static void registerReaderUS() {
@@ -76,7 +76,7 @@ public final class ImageCoverageReaderTest {
     }
 
     /**
-     * Deregister the reader defined by {@link #registerReaderUS()}.
+     * Deregisters the reader defined by {@link #registerReaderUS()}.
      */
     @AfterClass
     public static void deregisterReaderUS() {

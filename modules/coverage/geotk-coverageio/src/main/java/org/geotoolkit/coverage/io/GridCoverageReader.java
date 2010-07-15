@@ -27,6 +27,7 @@ import org.opengis.coverage.grid.GridCoverage;
 
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
+import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.util.collection.BackingStoreException;
 import org.geotoolkit.util.MeasurementRange;
 import org.geotoolkit.resources.Vocabulary;
@@ -57,7 +58,7 @@ import org.geotoolkit.internal.io.IOUtilities;
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Johann Sorel (Geomatys)
- * @version 3.10
+ * @version 3.14
  *
  * @see ImageReader
  *
@@ -210,6 +211,37 @@ public abstract class GridCoverageReader extends GridCoverageStore {
     }
 
     /**
+     * Returns the metadata associated with the input source as a whole, or {@code null} if none.
+     * The default implementation returns {@code null} in every cases.
+     *
+     * @return The metadata associated with the input source as a whole, or {@code null}.
+     * @throws CoverageStoreException if an error occurs reading the information from the input source.
+     *
+     * @see ImageReader#getStreamMetadata()
+     *
+     * @since 3.14
+     */
+    public SpatialMetadata getStreamMetadata() throws CoverageStoreException {
+        return null;
+    }
+
+    /**
+     * Returns the metadata associated with the given coverage, or {@code null} if none.
+     * The default implementation returns {@code null} in every cases.
+     *
+     * @param  index The index of the coverage to be queried.
+     * @return The metadata associated with the given coverage, or {@code null}.
+     * @throws CoverageStoreException if an error occurs reading the information from the input source.
+     *
+     * @see ImageReader#getImageMetadata(int)
+     *
+     * @since 3.14
+     */
+    public SpatialMetadata getCoverageMetadata(final int index) throws CoverageStoreException {
+        return null;
+    }
+
+    /**
      * Returns an optional map of properties associated with the coverage at the given index, or
      * {@code null} if none. The properties are implementation-specific; they are available to
      * subclasses for any use. The {@code GridCoverageReader} class will simply gives those
@@ -231,7 +263,7 @@ public abstract class GridCoverageReader extends GridCoverageStore {
     /**
      * Reads the grid coverage.
      *
-     * @param  index The index of the image to be queried.
+     * @param  index The index of the coverage to be queried.
      * @param  param Optional parameters used to control the reading process, or {@code null}.
      * @return The {@link GridCoverage} at the specified index.
      * @throws IllegalStateException if the input source has not been set.

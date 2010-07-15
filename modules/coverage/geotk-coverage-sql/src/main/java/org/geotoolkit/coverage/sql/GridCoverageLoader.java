@@ -19,6 +19,8 @@ package org.geotoolkit.coverage.sql;
 
 import java.awt.Dimension;
 import java.util.List;
+import java.util.Arrays;
+import java.util.Locale;
 import java.util.Collections;
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -26,8 +28,10 @@ import javax.imageio.ImageReader;
 import javax.imageio.ImageReadParam;
 import javax.imageio.spi.ImageReaderSpi;
 
+import org.opengis.util.InternationalString;
 import org.opengis.referencing.cs.AxisDirection;
 
+import org.geotoolkit.coverage.Category;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
@@ -43,17 +47,26 @@ import org.geotoolkit.image.io.DimensionSlice;
 import org.geotoolkit.image.io.NamedImageStore;
 import org.geotoolkit.image.io.SampleConversionType;
 import org.geotoolkit.image.io.XImageIO;
+import org.geotoolkit.image.io.metadata.SpatialMetadata;
+import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
+import org.geotoolkit.internal.coverage.TransferFunction;
+import org.geotoolkit.internal.image.io.DiscoveryAccessor;
+import org.geotoolkit.internal.image.io.DimensionAccessor;
 import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.resources.Errors;
+import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.XArrays;
 
 
 /**
  * An implementation of {@link ImageCoverageReader} when the {@link GridGeometry2D} and the
  * {@link GridSampleDimension}s are obtained from the database instead than from the file.
+ * <p>
+ * The values given to the {@link #setInput(Object)} method must be instances of
+ * {@link GridCoverageEntry}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.12
+ * @version 3.14
  *
  * @since 3.10
  * @module
@@ -62,7 +75,7 @@ final class GridCoverageLoader extends ImageCoverageReader {
     /**
      * A description of the image format.
      */
-    private final FormatEntry format;
+    final FormatEntry format;
 
     /**
      * The entry for the grid coverage to be read.
@@ -120,11 +133,17 @@ final class GridCoverageLoader extends ImageCoverageReader {
     /**
      * Sets the input, which must be a {@link GridCoverageEntry} using the image format
      * given at construction time. In addition, if the image reader is an instance of
-     * {@link NamedImageStore}, then this method set the name of NetCDF (or similar format)
+     * {@link NamedImageStore}, then this method sets the name of NetCDF (or similar format)
      * variable to read as the names declared in the {@code SampleDimensions} table.
      */
     @Override
     public void setInput(Object input) throws CoverageStoreException {
+        while (input instanceof GridCoverageDecorator) {
+            input = ((GridCoverageDecorator) input).reference;
+        }
+        if (input == entry) {
+            return;
+        }
         final GridCoverageEntry e = (GridCoverageEntry) input;
         if (e != null) {
             assert format.equals(e.getIdentifier().series.format) : e;
@@ -222,6 +241,84 @@ final class GridCoverageLoader extends ImageCoverageReader {
     public List<GridSampleDimension> getSampleDimensions(int index) throws CoverageStoreException {
         ensureValidIndex(index);
         return format.sampleDimensions;
+    }
+
+    /**
+     * Returns the metadata associated with the stream as a whole.
+     * This method fetches the metadata from the database only, ignoring the file metadata.
+     */
+    @Override
+    public SpatialMetadata getStreamMetadata() throws CoverageStoreException {
+        final SpatialMetadata metadata = new SpatialMetadata(SpatialMetadataFormat.STREAM);
+        if (entry != null) {
+            final DiscoveryAccessor accessor = new DiscoveryAccessor(metadata);
+            accessor.setGeographicElement(entry.getGeographicBoundingBox());
+        }
+        return metadata;
+    }
+
+    /**
+     * Returns the metadata associated with the given coverage.
+     * This method fetches the metadata from the database only, ignoring the file metadata.
+     */
+    @Override
+    public SpatialMetadata getCoverageMetadata(final int index) throws CoverageStoreException {
+        final List<GridSampleDimension> bands = getSampleDimensions(index);
+        final SpatialMetadata metadata = new SpatialMetadata(SpatialMetadataFormat.IMAGE);
+        if (bands != null) {
+            final Locale locale = getLocale();
+            final DimensionAccessor accessor = new DimensionAccessor(metadata);
+            for (GridSampleDimension band : bands) {
+                accessor.selectChild(accessor.appendChild());
+                final InternationalString title = band.getDescription();
+                if (title != null) {
+                    accessor.setAttribute("descriptor", title.toString(locale));
+                }
+                /*
+                 * Add the range of geophysics values to the metadata.
+                 */
+                band = band.geophysics(true);
+                accessor.setValueRange(band.getMinimumValue(), band.getMaximumValue());
+                accessor.setAttribute("units", band.getUnits());
+                /*
+                 * Add the range of sample values to the metadata. Those values should
+                 * be integers, because the type of the "lower" and "upper" columns in
+                 * the database are integers.
+                 */
+                TransferFunction tf = null;
+                band = band.geophysics(false);
+                NumberRange<?> range = null;
+                int fillValues[] = new int[8];
+                int fillValuesCount = 0;
+                for (final Category category : band.getCategories()) {
+                    final NumberRange<?> r = category.getRange();
+                    if (category.isQuantitative()) {
+                        range = (range == null) ? r : range.union(r);
+                        tf = new TransferFunction(category, locale);
+                    } else {
+                        final int lower = (int) Math.round(r.getMinimum(true));
+                        final int upper = (int) Math.round(r.getMaximum(true));
+                        for (int i=lower; i<=upper; i++) {
+                            if (fillValuesCount >= fillValues.length) {
+                                fillValues = Arrays.copyOf(fillValues, fillValuesCount*2);
+                            }
+                            fillValues[fillValuesCount++] = i;
+                        }
+                    }
+                }
+                accessor.setValidSampleValue(range);
+                if (fillValuesCount != 0) {
+                    accessor.setFillSampleValues(XArrays.resize(fillValues, fillValuesCount));
+                }
+                /*
+                 * Add the transfert function.
+                 */
+                if (tf != null) {
+                    accessor.setTransfertFunction(tf.scale, tf.offset, tf.type);
+                }
+            }
+        }
+        return metadata;
     }
 
     /**

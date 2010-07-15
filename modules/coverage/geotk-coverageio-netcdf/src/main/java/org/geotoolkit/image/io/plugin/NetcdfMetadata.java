@@ -52,6 +52,7 @@ import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
 import org.geotoolkit.image.io.metadata.MetadataAccessor;
 import org.geotoolkit.image.io.metadata.ReferencingBuilder;
 import org.geotoolkit.internal.image.io.SampleMetadataFormat;
+import org.geotoolkit.internal.image.io.DiscoveryAccessor;
 import org.geotoolkit.internal.image.io.DimensionAccessor;
 import org.geotoolkit.internal.image.io.GridDomainAccessor;
 import org.geotoolkit.internal.image.io.Warnings;
@@ -135,7 +136,7 @@ final class NetcdfMetadata extends SpatialMetadata {
         nativeMetadataFormatName = NATIVE_FORMAT;
         Attribute attr = file.findGlobalAttribute("project_name");
         if (attr != null) {
-            final MetadataAccessor ac = new MetadataAccessor(this, "DiscoveryMetadata");
+            final MetadataAccessor ac = new MetadataAccessor(this, DiscoveryAccessor.ROOT);
             ac.setAttribute("citation", attr.getStringValue());
         }
         MetadataAccessor ac = null;
@@ -143,7 +144,7 @@ final class NetcdfMetadata extends SpatialMetadata {
             attr = file.findGlobalAttribute(BBOX[i]);
             if (attr != null) {
                 if (ac == null) {
-                    ac = new MetadataAccessor(this, "DiscoveryMetadata/Extent/GeographicElement");
+                    ac = new MetadataAccessor(this, DiscoveryAccessor.GEOGRAPHIC_ELEMENT);
                     ac.setAttribute("inclusion", true);
                 }
                 ac.setAttribute(BBOX[i+1], attr.getStringValue());

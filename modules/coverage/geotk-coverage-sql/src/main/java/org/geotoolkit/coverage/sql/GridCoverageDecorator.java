@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.awt.geom.Rectangle2D;
 import java.util.concurrent.CancellationException;
+import org.geotoolkit.coverage.io.GridCoverageReader;
 
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.extent.GeographicBoundingBox;
@@ -40,7 +41,7 @@ import org.geotoolkit.coverage.io.CoverageStoreException;
  * Subclasses need to override a few methods in order to make this proxy useful.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.11
+ * @version 3.14
  *
  * @since 3.11 (derived from Seagis)
  * @module
@@ -151,6 +152,14 @@ class GridCoverageDecorator implements GridCoverageReference, Serializable {
     @Override
     public GridSampleDimension[] getSampleDimensions() {
         return reference.getSampleDimensions();
+    }
+
+    /**
+     * Forwards the call to the wrapped {@linkplain #reference}.
+     */
+    @Override
+    public GridCoverageReader getCoverageReader(GridCoverageReader recycle) throws CoverageStoreException {
+        return reference.getCoverageReader(recycle);
     }
 
     /**

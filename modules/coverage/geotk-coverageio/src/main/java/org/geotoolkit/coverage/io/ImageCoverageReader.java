@@ -205,7 +205,17 @@ public class ImageCoverageReader extends GridCoverageReader {
      * The names of coverages, or {@code null} if not yet determined.
      * This is created by {@link #getCoverageNames()} when first needed.
      */
-    private List<String> coverageNames;
+    private transient List<String> coverageNames;
+
+    /**
+     * The value returned by {@link #getGridGeometry(int)}, computed when first needed.
+     */
+    private transient GridGeometry2D gridGeometry;
+
+    /**
+     * The value returned by {@link #getSampleDimensions(int)}, computed when first needed.
+     */
+    private transient List<GridSampleDimension> sampleDimensions;
 
     /**
      * Helper utilities for parsing metadata. Created only when needed.
@@ -539,62 +549,65 @@ public class ImageCoverageReader extends GridCoverageReader {
      */
     @Override
     public GridGeometry2D getGridGeometry(final int index) throws CoverageStoreException {
-        final ImageReader imageReader = this.imageReader; // Protect from changes.
-        if (imageReader == null) {
-            throw new IllegalStateException(formatErrorMessage(Errors.Keys.NO_IMAGE_INPUT));
-        }
-        /*
-         * Get the required information from the SpatialMetadata, if any.
-         * For now we just collect them - they will be processed later.
-         */
-        CoordinateReferenceSystem crs = null;
-        MathTransform       gridToCRS = null;
-        PixelOrientation pointInPixel = null;
-        final int width, height;
-        try {
-            width  = imageReader.getWidth(index);
-            height = imageReader.getHeight(index);
-            final SpatialMetadata metadata = getSpatialMetadata(imageReader, index);
-            if (metadata != null) {
-                crs = metadata.getInstanceForType(CoordinateReferenceSystem.class);
-                final RectifiedGrid grid = metadata.getInstanceForType(RectifiedGrid.class);
-                if (grid != null) {
-                    gridToCRS = getMetadataHelper().getGridToCRS(grid);
-                }
-                final Georectified georect = metadata.getInstanceForType(Georectified.class);
-                if (georect != null) {
-                    pointInPixel = georect.getPointInPixel();
-                }
+        if (gridGeometry == null) {
+            final ImageReader imageReader = this.imageReader; // Protect from changes.
+            if (imageReader == null) {
+                throw new IllegalStateException(formatErrorMessage(Errors.Keys.NO_IMAGE_INPUT));
             }
-        } catch (IOException e) {
-            throw new CoverageStoreException(formatErrorMessage(e), e);
+            /*
+             * Get the required information from the SpatialMetadata, if any.
+             * For now we just collect them - they will be processed later.
+             */
+            CoordinateReferenceSystem crs = null;
+            MathTransform       gridToCRS = null;
+            PixelOrientation pointInPixel = null;
+            final int width, height;
+            try {
+                width  = imageReader.getWidth(index);
+                height = imageReader.getHeight(index);
+                final SpatialMetadata metadata = getSpatialMetadata(imageReader, index);
+                if (metadata != null) {
+                    crs = metadata.getInstanceForType(CoordinateReferenceSystem.class);
+                    final RectifiedGrid grid = metadata.getInstanceForType(RectifiedGrid.class);
+                    if (grid != null) {
+                        gridToCRS = getMetadataHelper().getGridToCRS(grid);
+                    }
+                    final Georectified georect = metadata.getInstanceForType(Georectified.class);
+                    if (georect != null) {
+                        pointInPixel = georect.getPointInPixel();
+                    }
+                }
+            } catch (IOException e) {
+                throw new CoverageStoreException(formatErrorMessage(e), e);
+            }
+            /*
+             * If any metadata are still null, replace them by their default values. Those default
+             * values are selected in order to be as neutral as possible: An ImageCRS which is not
+             * convertible to GeodeticCRS, an identity "grid to CRS" conversion, a PixelOrientation
+             * equivalent to performing no shift at all in the "grid to CRS" conversion.
+             */
+            if (crs == null) {
+                crs = DefaultImageCRS.GRID_2D;
+            }
+            final int dimension = crs.getCoordinateSystem().getDimension();
+            if (gridToCRS == null) {
+                gridToCRS = IdentityTransform.create(dimension);
+            }
+            if (pointInPixel == null) {
+                pointInPixel = PixelOrientation.CENTER;
+            }
+            /*
+             * Now build the grid geometry.
+             */
+            final int[] lower = new int[dimension];
+            final int[] upper = new int[dimension];
+            Arrays.fill(upper, 1);
+            upper[X_DIMENSION] = width;
+            upper[Y_DIMENSION] = height;
+            final GeneralGridEnvelope gridRange = new GeneralGridEnvelope(lower, upper, false);
+            gridGeometry = new GridGeometry2D(gridRange, pointInPixel, gridToCRS, crs, null);
         }
-        /*
-         * If any metadata are still null, replace them by their default values. Those default
-         * values are selected in order to be as neutral as possible: An ImageCRS which is not
-         * convertible to GeodeticCRS, an identity "grid to CRS" conversion, a PixelOrientation
-         * equivalent to performing no shift at all in the "grid to CRS" conversion.
-         */
-        if (crs == null) {
-            crs = DefaultImageCRS.GRID_2D;
-        }
-        final int dimension = crs.getCoordinateSystem().getDimension();
-        if (gridToCRS == null) {
-            gridToCRS = IdentityTransform.create(dimension);
-        }
-        if (pointInPixel == null) {
-            pointInPixel = PixelOrientation.CENTER;
-        }
-        /*
-         * Now build the grid geometry.
-         */
-        final int[] lower = new int[dimension];
-        final int[] upper = new int[dimension];
-        Arrays.fill(upper, 1);
-        upper[X_DIMENSION] = width;
-        upper[Y_DIMENSION] = height;
-        final GeneralGridEnvelope gridRange = new GeneralGridEnvelope(lower, upper, false);
-        return new GridGeometry2D(gridRange, pointInPixel, gridToCRS, crs, null);
+        return gridGeometry;
     }
 
     /**
@@ -618,31 +631,35 @@ public class ImageCoverageReader extends GridCoverageReader {
      */
     @Override
     public List<GridSampleDimension> getSampleDimensions(final int index) throws CoverageStoreException {
-        final ImageReader imageReader = this.imageReader; // Protect from changes.
-        if (imageReader == null) {
-            throw new IllegalStateException(formatErrorMessage(Errors.Keys.NO_IMAGE_INPUT));
-        }
-        /*
-         * Get the required information from the SpatialMetadata, if any.
-         * Here we just collect them - they will be processed by MetadataHelper.
-         */
-        List<SampleDimension> sampleDimensions = null;
-        try {
-            final SpatialMetadata metadata = getSpatialMetadata(imageReader, index);
-            if (metadata != null) {
-                sampleDimensions = metadata.getListForType(SampleDimension.class);
+        if (sampleDimensions == null) {
+            final ImageReader imageReader = this.imageReader; // Protect from changes.
+            if (imageReader == null) {
+                throw new IllegalStateException(formatErrorMessage(Errors.Keys.NO_IMAGE_INPUT));
             }
-        } catch (IOException e) {
-            throw new CoverageStoreException(formatErrorMessage(e), e);
+            /*
+             * Get the required information from the SpatialMetadata, if any.
+             * Here we just collect them - they will be processed by MetadataHelper.
+             */
+            List<SampleDimension> bands = null;
+            try {
+                final SpatialMetadata metadata = getSpatialMetadata(imageReader, index);
+                if (metadata != null) {
+                    bands = metadata.getListForType(SampleDimension.class);
+                }
+            } catch (IOException e) {
+                throw new CoverageStoreException(formatErrorMessage(e), e);
+            }
+            if (bands == null || bands.isEmpty()) {
+                return null;
+            }
+            try {
+                // MetadataHelper default implementation returns an unmodifiable list.
+                sampleDimensions = getMetadataHelper().getGridSampleDimensions(bands);
+            } catch (ImageMetadataException e) {
+                throw new CoverageStoreException(e);
+            }
         }
-        if (sampleDimensions == null || sampleDimensions.isEmpty()) {
-            return null;
-        }
-        try {
-            return getMetadataHelper().getGridSampleDimensions(sampleDimensions);
-        } catch (ImageMetadataException e) {
-            throw new CoverageStoreException(e);
-        }
+        return sampleDimensions;
     }
 
     /**
@@ -692,6 +709,67 @@ public class ImageCoverageReader extends GridCoverageReader {
             }
         }
         return false;
+    }
+
+    /**
+     * Returns the metadata associated with the input source as a whole, or {@code null} if none.
+     * The default implementation delegates to the {@linkplain #imageReader image reader}, wrapping
+     * the {@link IIOMetadata} in a {@code SpatialMetadata} if necessary.
+     *
+     * @return The metadata associated with the input source as a whole, or {@code null}.
+     * @throws CoverageStoreException if an error occurs reading the information from the input source.
+     *
+     * @since 3.14
+     */
+    @Override
+    public SpatialMetadata getStreamMetadata() throws CoverageStoreException {
+        final ImageReader imageReader = this.imageReader; // Protect from changes.
+        if (imageReader == null) {
+            throw new IllegalStateException(formatErrorMessage(Errors.Keys.NO_IMAGE_INPUT));
+        }
+        try {
+            final IIOMetadata metadata = imageReader.getStreamMetadata();
+            if (metadata instanceof SpatialMetadata) {
+                return (SpatialMetadata) metadata;
+            } else if (metadata != null) {
+                return new SpatialMetadata(SpatialMetadataFormat.STREAM, imageReader, metadata);
+            } else {
+                return null;
+            }
+        } catch (IOException e) {
+            throw new CoverageStoreException(e);
+        }
+    }
+
+    /**
+     * Returns the metadata associated with the given coverage, or {@code null} if none.
+     * The default implementation delegates to the {@linkplain #imageReader image reader},
+     * wrapping the {@link IIOMetadata} in a {@code SpatialMetadata} if necessary.
+     *
+     * @param  index The index of the coverage to be queried.
+     * @return The metadata associated with the given coverage, or {@code null}.
+     * @throws CoverageStoreException if an error occurs reading the information from the input source.
+     *
+     * @since 3.14
+     */
+    @Override
+    public SpatialMetadata getCoverageMetadata(final int index) throws CoverageStoreException {
+        final ImageReader imageReader = this.imageReader; // Protect from changes.
+        if (imageReader == null) {
+            throw new IllegalStateException(formatErrorMessage(Errors.Keys.NO_IMAGE_INPUT));
+        }
+        try {
+            final IIOMetadata metadata = imageReader.getImageMetadata(index);
+            if (metadata instanceof SpatialMetadata) {
+                return (SpatialMetadata) metadata;
+            } else if (metadata != null) {
+                return new SpatialMetadata(SpatialMetadataFormat.IMAGE, imageReader, metadata);
+            } else {
+                return null;
+            }
+        } catch (IOException e) {
+            throw new CoverageStoreException(e);
+        }
     }
 
     /**
@@ -1103,7 +1181,9 @@ public class ImageCoverageReader extends GridCoverageReader {
      * @throws IOException if an error occurs while closing the input.
      */
     private void close() throws IOException {
-        coverageNames = null;
+        coverageNames    = null;
+        gridGeometry     = null;
+        sampleDimensions = null;
         final ImageReader imageReader = this.imageReader; // Protect from changes.
         final Object oldInput = input;
         input = null; // Clear now in case the code below fails.

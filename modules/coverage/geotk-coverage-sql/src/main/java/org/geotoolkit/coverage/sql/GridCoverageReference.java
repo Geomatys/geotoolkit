@@ -33,6 +33,7 @@ import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.io.CoverageStoreException;
+import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.DateRange;
 
@@ -49,7 +50,7 @@ import org.geotoolkit.util.DateRange;
  * {@code GridCoverageReference} instances are immutable and thread-safe.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.10
+ * @version 3.14
  *
  * @since 3.10 (derived from Seagis)
  * @module
@@ -185,6 +186,25 @@ public interface GridCoverageReference extends CoverageStack.Element {
      */
     @Override
     GridSampleDimension[] getSampleDimensions();
+
+    /**
+     * Gets a grid coverage reader which can be used for reading the coverage represented by
+     * this {@code GridCoverageReference}. This method is provided for interoperability with
+     * API requirying {@code GridCoverageReader} instances. When possible, callers are encouraged
+     * to use the {@link #read(CoverageEnvelope, IIOListeners)} method instead.
+     * <p>
+     * This method accepts an optional {@code GridCoverageReader} instance in argument. The
+     * provided instance will be recycled if possible, for avoiding the cost of creating a
+     * new reader on each method invocation. If the argument is {@code null} or the given
+     * instance can not be reused, then this method returns a new instance.
+     *
+     * @param  recycle An optional existing instance to recycle if possible, or {@code null}.
+     * @return A reader which can be used for reading the grid coverage.
+     * @throws CoverageStoreException if an error occured while creating the reader.
+     *
+     * @since 3.14
+     */
+    GridCoverageReader getCoverageReader(GridCoverageReader recycle) throws CoverageStoreException;
 
     /**
      * Reads the data if needed and returns the coverage. This method is equivalent to invoking

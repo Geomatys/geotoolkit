@@ -26,9 +26,7 @@ import java.util.Collections;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ExecutionException;
-import java.net.URL;
 import java.io.File;
-import java.io.IOException;
 import java.awt.Dimension;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
@@ -205,7 +203,7 @@ public class CoverageList extends JComponent {
         selectionPanel.setMinimumSize(minimumSize);
         selectionPanelName = TABLE;
 
-        properties = new ImageFileProperties();
+        properties = new CoverageFileProperties();
         properties.setMinimumSize(minimumSize);
         properties.setPreferredSize(new Dimension(440, 400));
         final JSplitPane pane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, selectionPanel, properties);
@@ -436,23 +434,11 @@ public class CoverageList extends JComponent {
      * @param reference The reference to a grid coverage, or {@code null} if none.
      */
     private void setImageProperties(final GridCoverageReference reference) {
-        Object input = null;
-        if (reference != null) try {
-            final File file = reference.getFile(File.class);
-            if (file.exists()) {
-                input = file;
-            } else if (!file.isAbsolute()) {
-                input = reference.getFile(URL.class);
-            }
-        } catch (IOException e) {
-            exceptionOccured(e);
-            return;
-        }
-        properties.setImageLater(input);
+        properties.setImageLater(reference);
     }
 
     /**
-     * Set the selection panel (the component on the left side of the split panel)
+     * Sets the selection panel (the component on the left side of the split panel)
      * to the table or to the file chooser. The component to be show is controlled
      * by a {@link CardLayout}.
      *

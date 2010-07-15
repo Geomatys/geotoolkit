@@ -120,6 +120,10 @@ public abstract class TextImageReaderTestBase extends ImageReaderTestBase {
         final BufferedImage image = reader.read(0, param);
         reader.dispose();
 
+        assertEquals(5, image.getWidth());
+        assertEquals(6, image.getHeight());
+        assertEquals(DataBuffer.TYPE_FLOAT, image.getSampleModel().getDataType());
+
         final Raster raster = image.getRaster();
         assertEquals(  NaN , raster.getSampleFloat(0, 0, 0), EPS);
         assertEquals(16.470, raster.getSampleFloat(1, 0, 0), EPS);

@@ -20,7 +20,6 @@ package org.geotoolkit.image.io.metadata;
 import java.awt.Point;
 import java.util.List;
 import java.util.Locale;
-import java.util.Arrays;
 import java.util.ArrayList;
 import java.text.NumberFormat;
 import java.text.FieldPosition;
@@ -49,6 +48,7 @@ import org.geotoolkit.util.Localized;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.MeasurementRange;
+import org.geotoolkit.util.collection.UnmodifiableArrayList;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.coverage.Category;
 import org.geotoolkit.coverage.GridSampleDimension;
@@ -732,7 +732,7 @@ public class MetadataHelper implements Localized {
                 }
             }
         }
-        return hasSampleDimensions ? Arrays.asList(bands) : null;
+        return hasSampleDimensions ? UnmodifiableArrayList.wrap(bands) : null;
     }
 
     /**

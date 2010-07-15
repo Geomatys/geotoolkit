@@ -47,6 +47,7 @@ import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
+import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageStorePool;
 import org.geotoolkit.coverage.io.CoverageStoreException;
@@ -68,7 +69,7 @@ import org.geotoolkit.resources.Errors;
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Sam Hiatt
- * @version 3.11
+ * @version 3.14
  *
  * @since 3.10 (derived from Seagis)
  * @module
@@ -355,6 +356,27 @@ final class GridCoverageEntry extends DefaultEntry implements GridCoverageRefere
             bands[i] = bands[i].geophysics(true);
         }
         return bands;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public GridCoverageReader getCoverageReader(final GridCoverageReader recycle)
+            throws CoverageStoreException
+    {
+        final GridCoverageIdentifier identifier = getIdentifier();
+        final FormatEntry format = identifier.series.format;
+        GridCoverageLoader reader;
+        if (!(recycle instanceof GridCoverageLoader) ||
+            !(reader = (GridCoverageLoader) recycle).format.equals(format))
+        {
+            reader = new GridCoverageLoader(format);
+        }
+        reader.setInput(this);
+        reader.imageIndex = identifier.getImageIndex();
+        reader.expectedSize = identifier.geometry.getImageSize();
+        return reader;
     }
 
     /**
