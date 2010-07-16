@@ -18,8 +18,6 @@
 
 package org.geotoolkit.data.query;
 
-import java.util.ArrayList;
-import java.util.List;
 import junit.framework.TestCase;
 
 import org.geotoolkit.data.FeatureCollection;
@@ -30,7 +28,6 @@ import org.geotoolkit.data.session.Session;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.FeatureTypeBuilder;
-import org.geotoolkit.filter.sort.DefaultSortBy;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 
 import org.junit.Test;
@@ -178,6 +175,7 @@ public class QueryTest extends TestCase{
         query = QueryBuilder.all(name);
         assertEquals(query.getTypeName(), name);
         assertEquals(query.getCoordinateSystemReproject(), null);
+        assertEquals(query.getResolution(), null);
         assertEquals(query.getFilter(), Filter.INCLUDE);
         assertEquals(query.getMaxFeatures(), null);
         assertEquals(query.getPropertyNames(), null);
@@ -188,6 +186,7 @@ public class QueryTest extends TestCase{
         query = QueryBuilder.fids(name);
         assertEquals(query.getTypeName(), name);
         assertEquals(query.getCoordinateSystemReproject(), null);
+        assertEquals(query.getResolution(), null);
         assertEquals(query.getFilter(), Filter.INCLUDE);
         assertEquals(query.getMaxFeatures(), null);
         assertNotNull(query.getPropertyNames()); //must be an empty array, not null
@@ -199,6 +198,7 @@ public class QueryTest extends TestCase{
         query = QueryBuilder.filtered(name, Filter.EXCLUDE);
         assertEquals(query.getTypeName(), name);
         assertEquals(query.getCoordinateSystemReproject(), null);
+        assertEquals(query.getResolution(), null);
         assertEquals(query.getFilter(), Filter.EXCLUDE);
         assertEquals(query.getMaxFeatures(), null);
         assertEquals(query.getPropertyNames(), null);
@@ -209,6 +209,7 @@ public class QueryTest extends TestCase{
         query = QueryBuilder.sorted(name, new SortBy[]{FF.sort("att1", SortOrder.DESCENDING)});
         assertEquals(query.getTypeName(), name);
         assertEquals(query.getCoordinateSystemReproject(), null);
+        assertEquals(query.getResolution(), null);
         assertEquals(query.getFilter(), Filter.INCLUDE);
         assertEquals(query.getMaxFeatures(), null);
         assertEquals(query.getPropertyNames(), null);
@@ -240,6 +241,7 @@ public class QueryTest extends TestCase{
         //test all parameters---------------------------------------------------
         qb.setTypeName(name);
         qb.setCRS(DefaultGeographicCRS.WGS84);
+        qb.setResolution(new double[]{45,31});
         qb.setFilter(Filter.EXCLUDE);
         qb.setMaxFeatures(10);
         qb.setProperties(new String[]{"att1","att2"});
@@ -249,6 +251,8 @@ public class QueryTest extends TestCase{
 
         assertEquals(query.getTypeName(), name);
         assertEquals(query.getCoordinateSystemReproject(), DefaultGeographicCRS.WGS84);
+        assertEquals(query.getResolution()[0], 45d);
+        assertEquals(query.getResolution()[1], 31d);
         assertEquals(query.getFilter(), Filter.EXCLUDE);
         assertEquals(query.getMaxFeatures(), Integer.valueOf(10));
         assertEquals(query.getPropertyNames()[0], DefaultName.valueOf("att1"));
@@ -265,6 +269,7 @@ public class QueryTest extends TestCase{
 
         assertEquals(query.getTypeName(), name);
         assertEquals(query.getCoordinateSystemReproject(), null);
+        assertEquals(query.getResolution(), null);
         assertEquals(query.getFilter(), Filter.INCLUDE);
         assertEquals(query.getMaxFeatures(), null);
         assertEquals(query.getPropertyNames(), null);
@@ -277,6 +282,8 @@ public class QueryTest extends TestCase{
 
         assertEquals(query.getTypeName(), name);
         assertEquals(query.getCoordinateSystemReproject(), DefaultGeographicCRS.WGS84);
+        assertEquals(query.getResolution()[0], 45d);
+        assertEquals(query.getResolution()[1], 31d);
         assertEquals(query.getFilter(), Filter.EXCLUDE);
         assertEquals(query.getMaxFeatures(), Integer.valueOf(10));
         assertEquals(query.getPropertyNames()[0], DefaultName.valueOf("att1"));
@@ -290,6 +297,8 @@ public class QueryTest extends TestCase{
 
         assertEquals(query.getTypeName(), name);
         assertEquals(query.getCoordinateSystemReproject(), DefaultGeographicCRS.WGS84);
+        assertEquals(query.getResolution()[0], 45d);
+        assertEquals(query.getResolution()[1], 31d);
         assertEquals(query.getFilter(), Filter.EXCLUDE);
         assertEquals(query.getMaxFeatures(), Integer.valueOf(10));
         assertEquals(query.getPropertyNames()[0], DefaultName.valueOf("att1"));
@@ -303,6 +312,7 @@ public class QueryTest extends TestCase{
 
         assertEquals(query.getTypeName(), name);
         assertEquals(query.getCoordinateSystemReproject(), null);
+        assertEquals(query.getResolution(), null);
         assertEquals(query.getFilter(), Filter.INCLUDE);
         assertEquals(query.getMaxFeatures(), null);
         assertEquals(query.getPropertyNames(), null);

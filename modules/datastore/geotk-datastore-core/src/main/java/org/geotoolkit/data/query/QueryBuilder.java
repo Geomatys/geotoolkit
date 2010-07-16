@@ -34,7 +34,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class QueryBuilder {
+public final class QueryBuilder {
 
     private static final Name[] NO_PROPERTIES = new Name[0];
 
@@ -48,6 +48,7 @@ public class QueryBuilder {
     private int startIndex = 0;
     private Integer maxFeatures = null;
     private Hints hints = null;
+    private double[] resolution = null;
 
     public QueryBuilder(){
     }
@@ -68,11 +69,13 @@ public class QueryBuilder {
         crs = null;
         startIndex = 0;
         maxFeatures = null;
+        resolution = null;
         hints = null;
     }
 
     public void copy(Query query){
         this.crs = query.getCoordinateSystemReproject();
+        this.resolution = (query.getResolution()==null)?null:query.getResolution().clone();
         this.filter = query.getFilter();
         this.hints = query.getHints();
         this.maxFeatures = query.getMaxFeatures();
@@ -164,6 +167,14 @@ public class QueryBuilder {
         this.crs = crs;
     }
 
+    public void setResolution(double[] resolution) {
+        this.resolution = resolution;
+    }
+
+    public double[] getResolution() {
+        return resolution;
+    }
+
     public Hints getHints() {
         return hints;
     }
@@ -175,7 +186,7 @@ public class QueryBuilder {
     public Query buildQuery(){
         final Source cs = (source == null) ? new DefaultSelector(null, typeName, "s1") : source;
         checkSource(cs,null);
-        return new DefaultQuery(cs, filter, properties, sortBy, crs, startIndex, maxFeatures, hints);
+        return new DefaultQuery(cs, filter, properties, sortBy, crs, startIndex, maxFeatures, resolution, hints);
     }
 
     /**
