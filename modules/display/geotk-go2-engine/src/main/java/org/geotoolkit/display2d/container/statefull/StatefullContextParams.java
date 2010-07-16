@@ -23,9 +23,11 @@ import org.geotoolkit.display.canvas.ReferencedCanvas2D;
 import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.geometry.DirectPosition2D;
-import org.geotoolkit.geometry.jts.GeometryCoordinateSequenceTransformer;
-import org.geotoolkit.geometry.jts.decimation.GeometryDecimator;
-import org.geotoolkit.geometry.jts.decimation.ScaleDecimator;
+import org.geotoolkit.geometry.jts.transform.CoordinateSequenceMathTransformer;
+import org.geotoolkit.geometry.jts.transform.CoordinateSequenceTransformer;
+import org.geotoolkit.geometry.jts.transform.GeometryCSTransformer;
+import org.geotoolkit.geometry.jts.transform.GeometryScaleTransformer;
+import org.geotoolkit.geometry.jts.transform.GeometryTransformer;
 import org.geotoolkit.map.FeatureMapLayer;
 
 import org.opengis.geometry.DirectPosition;
@@ -43,13 +45,15 @@ public class StatefullContextParams {
     public final ReferencedCanvas2D canvas;
     public final FeatureMapLayer layer;
     public final AffineTransform objectiveToDisplay = new AffineTransform(2,0,0,2,0,0);
-    public final GeometryCoordinateSequenceTransformer dataToObjectiveTransformer = new GeometryCoordinateSequenceTransformer();
-    public final GeometryCoordinateSequenceTransformer dataToDisplayTransformer = new GeometryCoordinateSequenceTransformer();
+    public final GeometryCSTransformer dataToObjectiveTransformer = 
+            new GeometryCSTransformer(new CoordinateSequenceMathTransformer(null));
+    public final GeometryCSTransformer dataToDisplayTransformer = 
+            new GeometryCSTransformer(new CoordinateSequenceMathTransformer(null));
     public double[] resolutionObjective = new double[2];
     public double[] resolutionDisplay = new double[2];
     public CoordinateReferenceSystem objectiveCRS;
     public CoordinateReferenceSystem displayCRS;
-    public GeometryDecimator decimator = null;
+    public GeometryScaleTransformer decimator = null;
 
     public MathTransform dataToObjective = null;
 
@@ -69,7 +73,7 @@ public class StatefullContextParams {
                 DirectPosition vect = new DirectPosition2D(resolutionObjective[0], resolutionObjective[1]);
                 vect = trs.transform(vect, vect);
                 resolutionDisplay = vect.getCoordinate();
-                decimator = new ScaleDecimator(resolutionDisplay[0] , resolutionDisplay[1]);
+                decimator = new GeometryScaleTransformer(resolutionDisplay[0] , resolutionDisplay[1]);
             } catch (Exception ex) {
                 ex.printStackTrace();
                 decimator = null;

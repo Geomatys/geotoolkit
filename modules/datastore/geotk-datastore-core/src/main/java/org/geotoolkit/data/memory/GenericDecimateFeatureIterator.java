@@ -20,6 +20,8 @@ package org.geotoolkit.data.memory;
 import com.vividsolutions.jts.geom.Geometry;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.FeatureReader;
@@ -27,7 +29,7 @@ import org.geotoolkit.data.DataStoreRuntimeException;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.LenientFeatureFactory;
-import org.geotoolkit.geometry.jts.decimation.GeometryDecimator;
+import org.geotoolkit.geometry.jts.transform.GeometryTransformer;
 import org.geotoolkit.util.converter.Classes;
 
 import org.opengis.feature.Feature;
@@ -36,6 +38,7 @@ import org.opengis.feature.GeometryAttribute;
 import org.opengis.feature.Property;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.GeometryDescriptor;
+import org.opengis.referencing.operation.TransformException;
 
 /**
  * Basic support for a FeatureIterator that decimate the geometry attribut.
@@ -50,7 +53,7 @@ public abstract class GenericDecimateFeatureIterator<F extends Feature, R extend
             .getFeatureFactory(new Hints(Hints.FEATURE_FACTORY, LenientFeatureFactory.class));
 
     protected final R iterator;
-    protected final GeometryDecimator decimator;
+    protected final GeometryTransformer decimator;
 
     /**
      * Creates a new instance of GenericDecimateFeatureIterator
@@ -58,7 +61,7 @@ public abstract class GenericDecimateFeatureIterator<F extends Feature, R extend
      * @param iterator FeatureReader to limit
      * @param decimator the geometry decimator to use
      */
-    private GenericDecimateFeatureIterator(final R iterator, GeometryDecimator decimator) {
+    private GenericDecimateFeatureIterator(final R iterator, GeometryTransformer decimator) {
         this.iterator = iterator;
         this.decimator = decimator;
     }
@@ -76,8 +79,12 @@ public abstract class GenericDecimateFeatureIterator<F extends Feature, R extend
                 final GeometryAttribute geoAtt = (GeometryAttribute) prop;
                 Object value = prop.getValue();
                 if(value != null){
-                    //decimate the geometry
-                    value = decimator.decimate((Geometry) value);
+                    try {
+                        //decimate the geometry
+                        value = decimator.transform((Geometry) value);
+                    } catch (TransformException ex) {
+                        Logger.getLogger(GenericDecimateFeatureIterator.class.getName()).log(Level.WARNING, null, ex);
+                    }
                     GeometryDescriptor desc = geoAtt.getDescriptor();
                     prop = FF.createGeometryAttribute(value, desc, null, desc.getCoordinateReferenceSystem());
                 }
@@ -124,7 +131,7 @@ public abstract class GenericDecimateFeatureIterator<F extends Feature, R extend
     private static final class GenericDecimateFeatureReader<T extends FeatureType, F extends Feature, R extends FeatureReader<T,F>>
             extends GenericDecimateFeatureIterator<F,R> implements FeatureReader<T,F>{
 
-        private GenericDecimateFeatureReader(R reader, GeometryDecimator decimator){
+        private GenericDecimateFeatureReader(R reader, GeometryTransformer decimator){
             super(reader,decimator);
         }
 
@@ -143,7 +150,7 @@ public abstract class GenericDecimateFeatureIterator<F extends Feature, R extend
      * Wrap a FeatureReader with a decimator.
      */
     public static <T extends FeatureType, F extends Feature> FeatureReader<T, F> wrap(
-            FeatureReader<T, F> reader, GeometryDecimator decimator) {
+            FeatureReader<T, F> reader, GeometryTransformer decimator) {
         final GeometryDescriptor desc = reader.getFeatureType().getGeometryDescriptor();
         if (desc != null) {
             return new GenericDecimateFeatureReader(reader, decimator);

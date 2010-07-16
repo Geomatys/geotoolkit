@@ -15,7 +15,7 @@
  *    Lesser General Public License for more details.
  */
 
-package org.geotoolkit.geometry.jts.decimation;
+package org.geotoolkit.geometry.jts.transform;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.CoordinateSequence;
@@ -29,23 +29,24 @@ import com.vividsolutions.jts.geom.MultiPoint;
 import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
-import com.vividsolutions.jts.geom.impl.CoordinateArraySequenceFactory;
+import org.geotoolkit.geometry.jts.coordinatesequence.LiteCoordinateSequence;
+import org.opengis.referencing.operation.TransformException;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public abstract class AbstractGeometryDecimator implements GeometryDecimator{
+public abstract class AbstractGeometryTransformer implements GeometryTransformer{
 
     protected final GeometryFactory gf;
     protected final CoordinateSequenceFactory csf;
 
-    public AbstractGeometryDecimator(){
+    public AbstractGeometryTransformer(){
         this((CoordinateSequenceFactory)null);
     }
 
-    public AbstractGeometryDecimator(CoordinateSequenceFactory csf){
+    public AbstractGeometryTransformer(CoordinateSequenceFactory csf){
         if(csf == null){
             this.gf = new GeometryFactory();
             this.csf = gf.getCoordinateSequenceFactory();
@@ -56,7 +57,7 @@ public abstract class AbstractGeometryDecimator implements GeometryDecimator{
         
     }
 
-    public AbstractGeometryDecimator(GeometryFactory gf){
+    public AbstractGeometryTransformer(GeometryFactory gf){
         if(gf == null){
             this.gf = new GeometryFactory();
             this.csf = gf.getCoordinateSequenceFactory();
@@ -67,62 +68,55 @@ public abstract class AbstractGeometryDecimator implements GeometryDecimator{
     }
 
     @Override
-    public abstract CoordinateSequence decimate(CoordinateSequence sequence);
-
-    @Override
-    public abstract double[] decimate(double[] coords, int dimension);
-
-    @Override
-    public abstract Coordinate[] decimate(Coordinate[] coords);
-
-    @Override
-    public Geometry decimate(Geometry geom) {
+    public Geometry transform(Geometry geom) throws TransformException {
         if(geom instanceof Point){
-            return decimate((Point)geom);
+            return transform((Point)geom);
         }else if(geom instanceof MultiPoint){
-            return decimate((MultiPoint)geom);
+            return transform((MultiPoint)geom);
         }else if(geom instanceof LineString){
-            return decimate((LineString)geom);
+            return transform((LineString)geom);
         }else if(geom instanceof LinearRing){
-            return decimate((LinearRing)geom);
+            return transform((LinearRing)geom);
         }else if(geom instanceof MultiLineString){
-            return decimate((MultiLineString)geom);
+            return transform((MultiLineString)geom);
         }else if(geom instanceof Polygon){
-            return decimate((Polygon)geom);
+            return transform((Polygon)geom);
         }else if(geom instanceof MultiPolygon){
-            return decimate((MultiPolygon)geom);
+            return transform((MultiPolygon)geom);
         }else{
             throw new IllegalArgumentException("Geometry type is unknowed or null : " + geom);
         }
     }
 
-    protected Point decimate(Point geom){
+    protected Point transform(Point geom) throws TransformException{
         //nothing to decimate
         return geom;
     }
 
-    protected MultiPoint decimate(MultiPoint geom){
+    protected MultiPoint transform(MultiPoint geom) throws TransformException{
         final int nbGeom = geom.getNumGeometries();
 
         if(nbGeom == 1){
             //nothing to decimate
             return geom;
         }else{
-            final Coordinate[] coords = new Coordinate[nbGeom];
-            for(int i=0;i<coords.length;i++){
-                coords[i] = geom.getGeometryN(i).getCoordinate();
+            final LiteCoordinateSequence cs = new LiteCoordinateSequence(nbGeom, 2);
+            for(int i=0;i<nbGeom;i++){
+                final Coordinate coord = geom.getGeometryN(i).getCoordinate();
+                cs.setX(i, coord.x);
+                cs.setY(i, coord.y);
             }
-            return gf.createMultiPoint(decimate(coords));
+            return gf.createMultiPoint(transform(cs));
         }
     }
 
-    protected LineString decimate(LineString geom){
-        final CoordinateSequence seq = decimate(geom.getCoordinateSequence());
+    protected LineString transform(LineString geom) throws TransformException{
+        final CoordinateSequence seq = transform(geom.getCoordinateSequence());
         return gf.createLineString(seq);
     }
 
-    protected LinearRing decimate(LinearRing geom){
-        final CoordinateSequence seq = decimate(geom.getCoordinateSequence());
+    protected LinearRing transform(LinearRing geom) throws TransformException{
+        final CoordinateSequence seq = transform(geom.getCoordinateSequence());
         return gf.createLinearRing(seq);
     }
 
@@ -130,11 +124,11 @@ public abstract class AbstractGeometryDecimator implements GeometryDecimator{
      * Sub classes may override this method is they wish to remove some of the sub geometries
      * if they are too small.
      */
-    protected MultiLineString decimate(MultiLineString geom){
+    protected MultiLineString transform(MultiLineString geom) throws TransformException{
         final LineString[] subs = new LineString[geom.getNumGeometries()];
         //todo we could remove sub geometries in some cases
         for(int i=0; i<subs.length; i++){
-            subs[i] = decimate((LineString)geom.getGeometryN(i));
+            subs[i] = transform((LineString)geom.getGeometryN(i));
         }
         return gf.createMultiLineString(subs);
     }
@@ -143,11 +137,11 @@ public abstract class AbstractGeometryDecimator implements GeometryDecimator{
      * Sub classes may override this method is they wish to remove some of the sub geometries
      * if they are too small.
      */
-    protected Polygon decimate(Polygon geom){
-        final LinearRing exterior = decimate((LinearRing)geom.getExteriorRing());
+    protected Polygon transform(Polygon geom) throws TransformException{
+        final LinearRing exterior = transform((LinearRing)geom.getExteriorRing());
         final LinearRing[] holes = new LinearRing[geom.getNumInteriorRing()];
         for(int i=0; i<holes.length; i++){
-            holes[i] = decimate((LinearRing)geom.getInteriorRingN(i));
+            holes[i] = transform((LinearRing)geom.getInteriorRingN(i));
         }
         return gf.createPolygon(exterior, holes);
     }
@@ -156,10 +150,10 @@ public abstract class AbstractGeometryDecimator implements GeometryDecimator{
      * Sub classes may override this method is they wish to remove some of the sub geometries
      * if they are too small.
      */
-    protected MultiPolygon decimate(MultiPolygon geom){
+    protected MultiPolygon transform(MultiPolygon geom) throws TransformException{
         final Polygon[] subs = new Polygon[geom.getNumGeometries()];
         for(int i=0; i<subs.length; i++){
-            subs[i] = decimate((Polygon)geom.getGeometryN(i));
+            subs[i] = transform((Polygon)geom.getGeometryN(i));
         }
         return gf.createMultiPolygon(subs);
     }

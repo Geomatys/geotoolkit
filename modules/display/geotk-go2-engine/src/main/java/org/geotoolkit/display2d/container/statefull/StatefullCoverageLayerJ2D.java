@@ -39,6 +39,7 @@ import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.container.stateless.AbstractLayerJ2D;
 import org.geotoolkit.display2d.primitive.DefaultSearchAreaJ2D;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
+import org.geotoolkit.geometry.jts.transform.CoordinateSequenceMathTransformer;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.GraphicBuilder;
 
@@ -99,7 +100,8 @@ public class StatefullCoverageLayerJ2D extends AbstractLayerJ2D<CoverageMapLayer
 
             try {
                 params.dataToObjective = context.getMathTransform(dataCRS, objectiveCRS2D);
-                params.dataToObjectiveTransformer.setMathTransform(params.dataToObjective);
+                ((CoordinateSequenceMathTransformer)params.dataToObjectiveTransformer.getCSTransformer())
+                        .setTransform(params.dataToObjective);
             } catch (FactoryException ex) {
                 Logger.getLogger(StatefullCoverageLayerJ2D.class.getName()).log(Level.WARNING, null, ex);
             }
@@ -115,7 +117,8 @@ public class StatefullCoverageLayerJ2D extends AbstractLayerJ2D<CoverageMapLayer
             params.objectiveToDisplay.setTransform(objtoDisp);
             params.updateGeneralizationFactor(context, dataCRS);
             try {
-                params.dataToDisplayTransformer.setMathTransform(context.getMathTransform(dataCRS, context.getDisplayCRS()));
+                ((CoordinateSequenceMathTransformer)params.dataToDisplayTransformer.getCSTransformer())
+                        .setTransform(context.getMathTransform(dataCRS, context.getDisplayCRS()));
             } catch (FactoryException ex) {
                 ex.printStackTrace();
             }

@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2009, Geomatys
+ *    (C) 2009-2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -42,6 +42,7 @@ import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.geotoolkit.display2d.style.CachedSymbolizer;
 import org.geotoolkit.display2d.style.renderer.AbstractSymbolizerRenderer;
 import org.geotoolkit.geometry.GeneralEnvelope;
+import org.geotoolkit.geometry.jts.transform.CoordinateSequenceMathTransformer;
 import org.geotoolkit.referencing.CRS;
 
 import org.opengis.feature.simple.SimpleFeature;
@@ -104,8 +105,7 @@ public class PatternRenderer extends AbstractSymbolizerRenderer<CachedPatternSym
                         dataCoverage.view(ViewType.NATIVE),
                         renderingContext.getObjectiveCRS());
             }catch(Exception ex){
-                System.out.println("ERROR resample in raster symbolizer renderer: " + ex.getMessage());
-                ex.printStackTrace();
+                LOGGER.log(Level.WARNING, "ERROR resample in raster symbolizer renderer",ex);
             }
         }
 
@@ -128,18 +128,20 @@ public class PatternRenderer extends AbstractSymbolizerRenderer<CachedPatternSym
 
         try {
             params.dataToObjective = renderingContext.getMathTransform(dataCRS, objectiveCRS);
-            params.dataToObjectiveTransformer.setMathTransform(params.dataToObjective);
+            ((CoordinateSequenceMathTransformer)params.dataToObjectiveTransformer.getCSTransformer())
+                    .setTransform(params.dataToObjective);
         } catch (FactoryException ex) {
-            ex.printStackTrace();
+            LOGGER.log(Level.WARNING, null,ex);
         }
 
         final AffineTransform objtoDisp = renderingContext.getObjectiveToDisplay();
         params.objectiveToDisplay.setTransform(objtoDisp);
         params.updateGeneralizationFactor(renderingContext, dataCRS);
         try {
-            params.dataToDisplayTransformer.setMathTransform(renderingContext.getMathTransform(dataCRS, renderingContext.getDisplayCRS()));
+            ((CoordinateSequenceMathTransformer)params.dataToDisplayTransformer.getCSTransformer())
+                    .setTransform(renderingContext.getMathTransform(dataCRS, renderingContext.getDisplayCRS()));
         } catch (FactoryException ex) {
-            ex.printStackTrace();
+            LOGGER.log(Level.WARNING, null,ex);
         }
 
         final StatefullProjectedFeature projectedFeature = new StatefullProjectedFeature(params);

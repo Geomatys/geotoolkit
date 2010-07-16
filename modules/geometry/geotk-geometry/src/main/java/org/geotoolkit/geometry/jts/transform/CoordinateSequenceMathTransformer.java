@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.geometry.jts;
+package org.geotoolkit.geometry.jts.transform;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.CoordinateSequence;
@@ -40,7 +40,7 @@ import org.opengis.referencing.operation.TransformException;
  * @author Andrea Aime
  * @author Martin Desruisseaux
  */
-public class DefaultCoordinateSequenceTransformer implements CoordinateSequenceTransformer {
+public class CoordinateSequenceMathTransformer implements CoordinateSequenceTransformer {
 
     /**
      * The coordinate sequence factory to use.
@@ -58,29 +58,40 @@ public class DefaultCoordinateSequenceTransformer implements CoordinateSequenceT
 
     private final CoordinateSequenceFactory csf;
 
+    private MathTransform transform = null;
+
     /**
      * Constructs a default coordinate sequence transformer.
      */
-    public DefaultCoordinateSequenceTransformer() {
-        this(null);
+    public CoordinateSequenceMathTransformer(MathTransform transform) {
+        this(null,transform);
     }
 
     /**
      * Constructs a coordinate sequence transformer with the given CoordinateSequenceFactory.
      */
-    public DefaultCoordinateSequenceTransformer(CoordinateSequenceFactory csf) {
+    public CoordinateSequenceMathTransformer(CoordinateSequenceFactory csf, MathTransform transform) {
         if(csf == null){
             this.csf = DEFAULT_CS_FACTORY;
         }else{
             this.csf = csf;
         }
+        this.transform =transform;
+    }
+
+    public void setTransform(MathTransform transform) {
+        this.transform = transform;
+    }
+
+    public MathTransform getTransform() {
+        return transform;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public CoordinateSequence transform(final CoordinateSequence sequence, final MathTransform transform)
+    public CoordinateSequence transform(final CoordinateSequence sequence)
             throws TransformException {
         final int sourceDim = transform.getSourceDimensions();
         final int targetDim = transform.getTargetDimensions();

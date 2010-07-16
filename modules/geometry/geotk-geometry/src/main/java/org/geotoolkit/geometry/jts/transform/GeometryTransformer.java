@@ -15,25 +15,18 @@
  *    Lesser General Public License for more details.
  */
 
-package org.geotoolkit.geometry.jts.decimation;
+package org.geotoolkit.geometry.jts.transform;
 
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.CoordinateSequence;
 import com.vividsolutions.jts.geom.Geometry;
+import org.opengis.referencing.operation.TransformException;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public interface GeometryDecimator {
+public interface GeometryTransformer extends CoordinateSequenceTransformer{
 
-    <T extends Geometry> T decimate(T geom);
+    Geometry transform(Geometry geom) throws TransformException;
     
-    CoordinateSequence decimate(CoordinateSequence sequence);
-
-    Coordinate[] decimate(Coordinate[] coords);
-
-    double[] decimate(double[] coords, int dimension);
-
 }

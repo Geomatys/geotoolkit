@@ -31,8 +31,9 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.feature.LenientFeatureFactory;
 import org.geotoolkit.feature.SchemaException;
-import org.geotoolkit.geometry.jts.GeometryCoordinateSequenceTransformer;
+import org.geotoolkit.geometry.jts.transform.GeometryCSTransformer;
 import org.geotoolkit.geometry.jts.SRIDGenerator;
+import org.geotoolkit.geometry.jts.transform.CoordinateSequenceMathTransformer;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.logging.Logging;
@@ -119,7 +120,7 @@ public abstract class GenericReprojectFeatureIterator<F extends Feature, R exten
 
         private final FeatureType schema;
         private final CoordinateReferenceSystem targetCRS;
-        private final GeometryCoordinateSequenceTransformer transformer;
+        private final GeometryCSTransformer transformer;
 
         private GenericReprojectFeatureReader(R reader, CoordinateReferenceSystem targetCRS) throws FactoryException, SchemaException{
             super(reader);
@@ -140,8 +141,9 @@ public abstract class GenericReprojectFeatureIterator<F extends Feature, R exten
 
             if(original != null){
                 //the crs is defined on the feature type
-                transformer = new GeometryCoordinateSequenceTransformer();
-                transformer.setMathTransform(CRS.findMathTransform(original, targetCRS, true));
+                final CoordinateSequenceMathTransformer trs =
+                        new CoordinateSequenceMathTransformer(CRS.findMathTransform(original, targetCRS, true));
+                transformer = new GeometryCSTransformer(trs);
             }else{
                 transformer = null;
             }
@@ -189,8 +191,9 @@ public abstract class GenericReprojectFeatureIterator<F extends Feature, R exten
 
                             if(original != null){
                                 try {
-                                    final GeometryCoordinateSequenceTransformer transformer = new GeometryCoordinateSequenceTransformer();
-                                    transformer.setMathTransform(CRS.findMathTransform(original, targetCRS, true));
+                                    final CoordinateSequenceMathTransformer trs =
+                                            new CoordinateSequenceMathTransformer(CRS.findMathTransform(original, targetCRS, true));
+                                    final GeometryCSTransformer transformer = new GeometryCSTransformer(trs);
                                     Geometry geom = transformer.transform((Geometry) value);
                                     geom.setSRID(SRIDGenerator.toSRID(targetCRS, SRIDGenerator.Version.V1));
                                     prop.setValue(geom);

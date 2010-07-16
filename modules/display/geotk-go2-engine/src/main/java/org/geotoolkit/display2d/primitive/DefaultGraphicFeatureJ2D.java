@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.display2d.primitive;
 
+import org.geotoolkit.geometry.jts.transform.GeometryCSTransformer;
 import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.geom.Rectangle2D;
@@ -36,7 +37,7 @@ import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.primitive.jts.JTSGeometryJ2D;
 import org.geotoolkit.geometry.isoonjts.JTSUtils;
-import org.geotoolkit.geometry.jts.GeometryCoordinateSequenceTransformer;
+import org.geotoolkit.geometry.jts.transform.CoordinateSequenceMathTransformer;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.util.logging.Logging;
@@ -63,8 +64,10 @@ public class DefaultGraphicFeatureJ2D extends AbstractGraphicJ2D implements Proj
 
     private final FeatureMapLayer layer;
 
-    private final GeometryCoordinateSequenceTransformer dataToObjectiveTransformer = new GeometryCoordinateSequenceTransformer();
-    private final GeometryCoordinateSequenceTransformer dataToDisplayTransformer = new GeometryCoordinateSequenceTransformer();
+    private final GeometryCSTransformer dataToObjectiveTransformer =
+            new GeometryCSTransformer(new CoordinateSequenceMathTransformer(null));
+    private final GeometryCSTransformer dataToDisplayTransformer =
+            new GeometryCSTransformer(new CoordinateSequenceMathTransformer(null));
     private final JTSGeometryJ2D objectiveShape = new JTSGeometryJ2D(null);
     private final JTSGeometryJ2D displayShape = new JTSGeometryJ2D(null);
 
@@ -122,9 +125,10 @@ public class DefaultGraphicFeatureJ2D extends AbstractGraphicJ2D implements Proj
             CoordinateReferenceSystem objectiveCRS = getCanvas().getObjectiveCRS();
 
             try {
-                dataToObjectiveTransformer.setMathTransform(CRS.findMathTransform(dataCRS, objectiveCRS,true));
+                ((CoordinateSequenceMathTransformer)dataToObjectiveTransformer.getCSTransformer())
+                        .setTransform(CRS.findMathTransform(dataCRS, objectiveCRS,true));
             } catch (FactoryException ex) {
-                ex.printStackTrace();
+                getLogger().log(Level.WARNING, "", ex);
             }
 
             objectiveGeometry = dataToObjectiveTransformer.transform(defaultGeom);
@@ -140,9 +144,10 @@ public class DefaultGraphicFeatureJ2D extends AbstractGraphicJ2D implements Proj
             CoordinateReferenceSystem displayCRS = getCanvas().getDisplayCRS();
 
             try {
-                dataToDisplayTransformer.setMathTransform(CRS.findMathTransform(dataCRS, displayCRS,true));
+                ((CoordinateSequenceMathTransformer)dataToDisplayTransformer.getCSTransformer())
+                        .setTransform(CRS.findMathTransform(dataCRS, displayCRS,true));
             } catch (FactoryException ex) {
-                ex.printStackTrace();
+                getLogger().log(Level.WARNING, "", ex);
             }
 
             displayGeometry = dataToDisplayTransformer.transform(defaultGeom);
@@ -211,7 +216,7 @@ public class DefaultGraphicFeatureJ2D extends AbstractGraphicJ2D implements Proj
                 Rectangle2D rect = getDisplayShape().getBounds2D();
                 dispBounds = rect.getBounds();
             } catch (TransformException ex) {
-                ex.printStackTrace();
+                getLogger().log(Level.WARNING, "", ex);
             }
         }
         return dispBounds;

@@ -15,27 +15,29 @@
  *    Lesser General Public License for more details.
  */
 
-package org.geotoolkit.geometry.jts.decimation;
+package org.geotoolkit.geometry.jts.transform;
 
-import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.CoordinateSequence;
 import com.vividsolutions.jts.geom.CoordinateSequenceFactory;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LineString;
+
 import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
-import java.util.Arrays;
-import org.geotoolkit.geometry.jts.LiteCoordinateSequence;
+
+import org.geotoolkit.geometry.jts.coordinatesequence.LiteCoordinateSequence;
 import org.geotoolkit.util.XArrays;
+
 import org.opengis.referencing.operation.TransformException;
 
 /**
+ * Clip geometries using the given rectangle.
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class ClipDecimator extends AbstractGeometryDecimator{
+public class GeometryClipTransformer extends AbstractGeometryTransformer{
 
     /**
      * Region to clip.
@@ -87,7 +89,7 @@ public class ClipDecimator extends AbstractGeometryDecimator{
 
     private Geometry currentGeometry;
 
-    public ClipDecimator(Rectangle2D clip){
+    public GeometryClipTransformer(Rectangle2D clip){
         super();
         if(clip == null){
             throw new NullPointerException("Clip rectangle must not be null");
@@ -97,7 +99,7 @@ public class ClipDecimator extends AbstractGeometryDecimator{
         init();
     }
 
-    public ClipDecimator(Rectangle2D clip, CoordinateSequenceFactory csf){
+    public GeometryClipTransformer(Rectangle2D clip, CoordinateSequenceFactory csf){
         super(csf);
         if(clip == null){
             throw new NullPointerException("Clip rectangle must not be null");
@@ -107,7 +109,7 @@ public class ClipDecimator extends AbstractGeometryDecimator{
         init();
     }
 
-    public ClipDecimator(Rectangle2D clip, GeometryFactory gf){
+    public GeometryClipTransformer(Rectangle2D clip, GeometryFactory gf){
         super(gf);
         if(clip == null){
             throw new NullPointerException("Clip rectangle must not be null");
@@ -138,13 +140,13 @@ public class ClipDecimator extends AbstractGeometryDecimator{
     }
 
     @Override
-    public Geometry decimate(Geometry geom) {
+    public Geometry transform(Geometry geom) throws TransformException {
         currentGeometry = geom;
-        return super.decimate(geom);
+        return super.transform(geom);
     }
 
     @Override
-    public CoordinateSequence decimate(CoordinateSequence cs) {
+    public CoordinateSequence transform(CoordinateSequence cs) {
 
         double[] result = null;
 
@@ -541,16 +543,6 @@ public class ClipDecimator extends AbstractGeometryDecimator{
             }
         }
         return result;
-    }
-
-    @Override
-    public double[] decimate(double[] coords, int dimension) {
-        return coords;
-    }
-
-    @Override
-    public Coordinate[] decimate(Coordinate[] coords) {
-        return coords;
     }
 
     /**

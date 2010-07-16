@@ -15,7 +15,7 @@
  *    Lesser General Public License for more details.
  */
 
-package org.geotoolkit.geometry.jts.decimation;
+package org.geotoolkit.geometry.jts.transform;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.CoordinateSequence;
@@ -26,18 +26,18 @@ import com.vividsolutions.jts.geom.CoordinateSequence;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class ScaleDecimator extends AbstractGeometryDecimator{
+public class GeometryScaleTransformer extends AbstractGeometryTransformer{
 
     private final double resX;
     private final double resY;
 
-    public ScaleDecimator(double resX, double resY){
+    public GeometryScaleTransformer(double resX, double resY){
         this.resX = resX;
         this.resY = resY;
     }
 
     @Override
-    public CoordinateSequence decimate(CoordinateSequence cs) {
+    public CoordinateSequence transform(CoordinateSequence cs) {
         final Coordinate[] coords = cs.toCoordinateArray();
         final Coordinate[] deci = decimate(coords,2);
         if(deci.length == coords.length){
@@ -46,16 +46,6 @@ public class ScaleDecimator extends AbstractGeometryDecimator{
         }else{
             return csf.create(deci);
         }
-    }
-
-    @Override
-    public double[] decimate(double[] coords, int dimension) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public Coordinate[] decimate(Coordinate[] coords) {
-        return decimate(coords, 0);
     }
 
     private Coordinate[] decimate(Coordinate[] coords, int minpoint) {

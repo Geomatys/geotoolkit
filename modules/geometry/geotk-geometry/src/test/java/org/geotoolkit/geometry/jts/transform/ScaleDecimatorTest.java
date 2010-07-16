@@ -15,7 +15,7 @@
  *    Lesser General Public License for more details.
  */
 
-package org.geotoolkit.geometry.jts.decimation;
+package org.geotoolkit.geometry.jts.transform;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
@@ -27,6 +27,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import org.opengis.referencing.operation.TransformException;
 
 /**
  *
@@ -57,8 +58,8 @@ public class ScaleDecimatorTest {
     }
 
     @Test
-    public void testPointDecimation() {
-        final GeometryDecimator decimator = new ScaleDecimator(10, 10);
+    public void testPointDecimation() throws TransformException {
+        final GeometryTransformer decimator = new GeometryScaleTransformer(10, 10);
 
         final MultiPoint geom = GF.createMultiPoint(
                 new Coordinate[]{
@@ -70,7 +71,7 @@ public class ScaleDecimatorTest {
                     new Coordinate(-1, 9) //dx 4 , dy 2
                 });
 
-        final MultiPoint decimated = decimator.decimate(geom);
+        final MultiPoint decimated = (MultiPoint) decimator.transform(geom);
 
         assertEquals(4, decimated.getNumGeometries());
         assertEquals(geom.getGeometryN(0).getCoordinate(), decimated.getGeometryN(0).getCoordinate());
@@ -81,8 +82,8 @@ public class ScaleDecimatorTest {
     }
 
     @Test
-    public void testLineStringDecimation() {
-        final GeometryDecimator decimator = new ScaleDecimator(10, 10);
+    public void testLineStringDecimation() throws TransformException {
+        final GeometryTransformer decimator = new GeometryScaleTransformer(10, 10);
 
         final LineString geom = GF.createLineString(
                 new Coordinate[]{
@@ -94,7 +95,7 @@ public class ScaleDecimatorTest {
                     new Coordinate(-1, 9) //dx 4 , dy 2
                 });
 
-        final LineString decimated = decimator.decimate(geom);
+        final LineString decimated = (LineString) decimator.transform(geom);
 
         assertEquals(4, decimated.getNumPoints());
         assertEquals(geom.getGeometryN(0).getCoordinate(), decimated.getGeometryN(0).getCoordinate());
@@ -105,8 +106,8 @@ public class ScaleDecimatorTest {
     }
 
     @Test
-    public void testTinyLineStringDecimation() {
-        final GeometryDecimator decimator = new ScaleDecimator(10, 10);
+    public void testTinyLineStringDecimation() throws TransformException {
+        final GeometryTransformer decimator = new GeometryScaleTransformer(10, 10);
 
         final LineString geom = GF.createLineString(
                 new Coordinate[]{
@@ -116,7 +117,7 @@ public class ScaleDecimatorTest {
                     new Coordinate(1,1)
                 });
 
-        final LineString decimated = decimator.decimate(geom);
+        final LineString decimated = (LineString) decimator.transform(geom);
 
         assertEquals(2, decimated.getNumPoints());
         assertEquals(geom.getGeometryN(0).getCoordinate(), decimated.getGeometryN(0).getCoordinate());

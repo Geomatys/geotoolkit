@@ -53,8 +53,8 @@ import org.geotoolkit.feature.SchemaException;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.LenientFeatureFactory;
-import org.geotoolkit.geometry.jts.decimation.GeometryDecimator;
-import org.geotoolkit.geometry.jts.decimation.ScaleDecimator;
+import org.geotoolkit.geometry.jts.transform.GeometryTransformer;
+import org.geotoolkit.geometry.jts.transform.GeometryScaleTransformer;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 
@@ -451,7 +451,7 @@ public class GenericIteratorTest extends TestCase{
         FeatureReader reader = collection.getSession().getDataStore().getFeatureReader(query);
         
         //create the decimate reader -------------------------------------------
-        GeometryDecimator decim = new ScaleDecimator(10, 10);
+        GeometryTransformer decim = new GeometryScaleTransformer(10, 10);
         FeatureReader retyped = GenericDecimateFeatureIterator.wrap(reader,decim);
         
         assertTrue(retyped.hasNext());

@@ -40,6 +40,7 @@ import org.geotoolkit.display2d.primitive.ProjectedFeature;
 import org.geotoolkit.display2d.style.CachedRule;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRenderer;
+import org.geotoolkit.geometry.jts.transform.CoordinateSequenceMathTransformer;
 import org.geotoolkit.map.FeatureMapLayer;
 
 import org.opengis.display.primitive.Graphic;
@@ -99,7 +100,8 @@ public class StatefullFeatureLayerJ2D extends StatelessFeatureLayerJ2D{
             
             try {
                 params.dataToObjective = context.getMathTransform(sourceCRS, objectiveCRS);
-                params.dataToObjectiveTransformer.setMathTransform(params.dataToObjective);
+                ((CoordinateSequenceMathTransformer)params.dataToObjectiveTransformer.getCSTransformer())
+                        .setTransform(params.dataToObjective);
             } catch (FactoryException ex) {
                 getLogger().log(Level.WARNING, null, ex);
             }
@@ -117,7 +119,8 @@ public class StatefullFeatureLayerJ2D extends StatelessFeatureLayerJ2D{
             params.objectiveToDisplay.setTransform(objtoDisp);
             params.updateGeneralizationFactor(context, sourceCRS);
             try {
-                params.dataToDisplayTransformer.setMathTransform(context.getMathTransform(sourceCRS, context.getDisplayCRS()));
+                ((CoordinateSequenceMathTransformer)params.dataToDisplayTransformer.getCSTransformer())
+                        .setTransform(context.getMathTransform(sourceCRS, context.getDisplayCRS()));
             } catch (FactoryException ex) {
                 getLogger().log(Level.WARNING, "Fail to calculate math transform",ex);
             }

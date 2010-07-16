@@ -17,6 +17,8 @@
 package org.geotoolkit.display2d.container.statefull;
 
 import java.awt.Shape;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.primitive.ProjectedGeometry;
@@ -101,9 +103,12 @@ public class StatefullProjectedGeometry implements ProjectedGeometry {
         if(decimatedGeometryJTS == null){
             decimatedGeometryJTS = dataGeometryJTS;
             if(params.decimator != null){
-                //System.out.println("BEFORE " + decimatedGeometryJTS);
-                decimatedGeometryJTS = params.decimator.decimate(decimatedGeometryJTS);
-                //System.out.println("AFTER  " + decimatedGeometryJTS);
+                try {
+                    decimatedGeometryJTS = params.decimator.transform(decimatedGeometryJTS);
+                } catch (TransformException ex) {
+                    Logger.getLogger(StatefullProjectedGeometry.class.getName()).log(
+                            Level.WARNING, "Could not decimate geometry", ex);
+                }
             }
         }
         return decimatedGeometryJTS;

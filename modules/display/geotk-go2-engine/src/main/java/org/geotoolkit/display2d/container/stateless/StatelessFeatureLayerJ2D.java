@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.display2d.container.stateless;
 
+import org.geotoolkit.geometry.jts.transform.CoordinateSequenceMathTransformer;
 import java.awt.geom.AffineTransform;
 import java.io.Closeable;
 import java.io.IOException;
@@ -737,8 +738,10 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
         params.objectiveToDisplay.setTransform(objtoDisp);
         params.updateGeneralizationFactor(renderingContext, dataCRS);
         params.dataToObjective = renderingContext.getMathTransform(dataCRS, objectiveCRS);
-        params.dataToObjectiveTransformer.setMathTransform(params.dataToObjective);
-        params.dataToDisplayTransformer.setMathTransform(renderingContext.getMathTransform(dataCRS,displayCRS));
+        ((CoordinateSequenceMathTransformer)params.dataToObjectiveTransformer.getCSTransformer())
+                .setTransform(params.dataToObjective);
+        ((CoordinateSequenceMathTransformer)params.dataToDisplayTransformer.getCSTransformer())
+                .setTransform(renderingContext.getMathTransform(dataCRS,displayCRS));
         
         return params;
     }
