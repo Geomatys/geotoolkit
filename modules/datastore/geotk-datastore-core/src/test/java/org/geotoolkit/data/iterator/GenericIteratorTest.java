@@ -19,6 +19,7 @@ package org.geotoolkit.data.iterator;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.Point;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -33,6 +34,7 @@ import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureWriter;
+import org.geotoolkit.data.memory.GenericDecimateFeatureIterator;
 import org.geotoolkit.data.memory.GenericEmptyFeatureIterator;
 import org.geotoolkit.data.memory.GenericFilterFeatureIterator;
 import org.geotoolkit.data.memory.GenericMaxFeatureIterator;
@@ -51,6 +53,8 @@ import org.geotoolkit.feature.SchemaException;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.LenientFeatureFactory;
+import org.geotoolkit.geometry.jts.decimation.GeometryDecimator;
+import org.geotoolkit.geometry.jts.decimation.ScaleDecimator;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 
@@ -414,6 +418,56 @@ public class GenericIteratorTest extends TestCase{
         while(retyped.hasNext()) retyped.next();
         retyped.close();
         assertTrue(checkIte.isClosed());
+    }
+
+    @Test
+    public void testDecimateFeatureIterator() throws DataStoreException{
+        final FeatureTypeBuilder builder = new FeatureTypeBuilder();
+        final DefaultName name = new DefaultName("http://test.com", "TestSchema");
+        builder.reset();
+        builder.setName(name);
+        builder.add("att_geom", LineString.class, DefaultGeographicCRS.WGS84);
+        final SimpleFeatureType type = builder.buildSimpleFeatureType();
+
+        final LineString geom = GF.createLineString(
+                new Coordinate[]{
+                    new Coordinate(0, 0),
+                    new Coordinate(15, 12), //dx 15 , dy 12
+                    new Coordinate(8, 28), //dx 7 , dy 16
+                    new Coordinate(9, 31), //dx 1 , dy 3
+                    new Coordinate(-5, 11), //dx 14 , dy 20
+                    new Coordinate(-1, 9) //dx 4 , dy 2
+                });
+
+        final FeatureCollection collection = DataUtilities.collection("id", type);
+        SimpleFeature sf = SimpleFeatureBuilder.template(type, "");
+        sf.setAttribute("att_geom", geom);
+        collection.add(sf);
+
+        //get the reader -------------------------------------------------------
+        QueryBuilder qb = new QueryBuilder();
+        qb.setTypeName(originalType.getName());
+        Query query = qb.buildQuery();
+        FeatureReader reader = collection.getSession().getDataStore().getFeatureReader(query);
+        
+        //create the decimate reader -------------------------------------------
+        GeometryDecimator decim = new ScaleDecimator(10, 10);
+        FeatureReader retyped = GenericDecimateFeatureIterator.wrap(reader,decim);
+        
+        assertTrue(retyped.hasNext());
+
+        final LineString decimated = (LineString) retyped.next().getDefaultGeometryProperty().getValue();
+
+        assertFalse(retyped.hasNext());
+        retyped.close();
+
+        assertEquals(4, decimated.getNumPoints());
+        assertEquals(geom.getGeometryN(0).getCoordinate(), decimated.getGeometryN(0).getCoordinate());
+        assertEquals(geom.getGeometryN(1).getCoordinate(), decimated.getGeometryN(1).getCoordinate());
+        assertEquals(geom.getGeometryN(2).getCoordinate(), decimated.getGeometryN(2).getCoordinate());
+        assertEquals(geom.getGeometryN(4).getCoordinate(), decimated.getGeometryN(3).getCoordinate());
+
+
     }
 
     @Test
