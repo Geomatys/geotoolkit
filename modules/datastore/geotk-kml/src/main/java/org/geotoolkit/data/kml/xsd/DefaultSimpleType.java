@@ -14,39 +14,13 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.data.xal.model;
+package org.geotoolkit.data.kml.xsd;
 
 /**
  *
  * @author Samuel Andrés
  */
-public class DefaultPremiseLocation implements PremiseLocation{
+public class DefaultSimpleType implements SimpleType {
 
-    private final GrPostal grPostal;
-    private final String content;
-
-    /**
-     *
-     * @param grPostal
-     * @param content
-     */
-    public DefaultPremiseLocation(GrPostal grPostal, String content){
-        this.grPostal = grPostal;
-        this.content = content;
-    }
-
-    /**
-     *
-     * @{@inheritDoc }
-     */
-    @Override
-    public String getContent() {return this.content;}
-
-    /**
-     *
-     * @{@inheritDoc }
-     */
-    @Override
-    public GrPostal getGrPostal() {return this.grPostal;}
 
 }

@@ -1,4 +1,6 @@
-package org.geotoolkit.data.utilities;
+package org.geotoolkit.data.kml.xsd;
+
+import org.geotoolkit.data.kml.xsd.Cdata;
 
 /**
  *

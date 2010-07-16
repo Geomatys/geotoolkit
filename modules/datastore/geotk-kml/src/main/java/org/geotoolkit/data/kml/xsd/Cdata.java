@@ -1,4 +1,4 @@
-package org.geotoolkit.data.utilities;
+package org.geotoolkit.data.kml.xsd;
 
 /**
  *

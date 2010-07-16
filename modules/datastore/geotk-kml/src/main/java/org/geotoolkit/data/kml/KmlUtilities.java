@@ -1,7 +1,25 @@
+/*
+ *    Geotoolkit - An Open Source Java GIS Toolkit
+ *    http://www.geotoolkit.org
+ *
+ *    (C) 2010, Geomatys
+ *
+ *    This library is free software; you can redistribute it and/or
+ *    modify it under the terms of the GNU Lesser General Public
+ *    License as published by the Free Software Foundation; either
+ *    version 2.1 of the License, or (at your option) any later version.
+ *
+ *    This library is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *    Lesser General Public License for more details.
+ */
 package org.geotoolkit.data.kml;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import java.awt.Color;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import org.geotoolkit.data.kml.model.Coordinates;
 import org.geotoolkit.data.kml.model.KmlException;
 
@@ -257,6 +275,83 @@ public class KmlUtilities {
         }
 
         return c;
+    }
+
+    public static String getFormatedString(Calendar calendar, boolean forceDateTime){
+        String result = "";
+
+        int milli = calendar.get(Calendar.MILLISECOND);
+        int seconds = calendar.get(Calendar.SECOND);
+        int minutes = calendar.get(Calendar.MINUTE);
+        int hours = calendar.get(Calendar.HOUR_OF_DAY);
+        int day = calendar.get(Calendar.DAY_OF_MONTH);
+        int month = calendar.get(Calendar.MONTH)+1;
+        int year;
+        if(calendar.get(Calendar.ERA) == GregorianCalendar.BC){
+            year = -calendar.get(Calendar.YEAR);
+        } else {
+            year = calendar.get(Calendar.YEAR);
+        }
+
+        boolean isOffset = (calendar.getTimeZone() != null);
+        boolean isTime = !(hours == 0 && minutes == 0 && seconds == 0 && milli == 0);
+
+
+        if(isOffset){
+            int zoneOffset = calendar.get(Calendar.ZONE_OFFSET);
+            int minutesOffset = zoneOffset / (60 * 1000);
+            int hoursOffset = minutesOffset / 60;
+            minutesOffset = (minutesOffset % 60)*60;
+            String zhh = null, zmm = null, zs= null;
+
+            if(minutesOffset < 10)
+                zmm = "0"+minutesOffset;
+            else
+                zmm = Integer.toString(minutesOffset);
+
+            if(hoursOffset < 10)
+                zhh = "0"+hoursOffset;
+            else
+                zhh = Integer.toString(hoursOffset);
+
+            if(zoneOffset > 0)
+                result = '+'+zhh+':'+zmm;
+            else if (zoneOffset < 0)
+                result = '-'+zhh+':'+zmm;
+            else
+                result = "Z";
+        }
+
+        if (milli != 0){
+            result = "."+milli+result;
+        }
+
+        if (isTime || forceDateTime){
+            if(seconds < 10)
+                result = ":0"+seconds+result;
+            else
+                result = ":"+seconds+result;
+            if(minutes < 10)
+                result = ":0"+minutes+result;
+            else
+                result = ":"+minutes+result;
+            if(hours < 10)
+                result = "T0"+hours+result;
+            else
+                result = "T"+hours+result;
+        }
+
+        String date;
+        if (day > 1 || forceDateTime){
+            date = year+"-"+
+                ((month < 10) ? ("0"+month) : month) +"-"+
+                ((day < 10) ? ("0"+day) : day);}
+        else if (month > 1)
+            date = year+"-"+
+                ((month < 10) ? ("0"+month) : month);
+        else
+            date = Integer.toString(year);
+        return date+result;
     }
 
 }
