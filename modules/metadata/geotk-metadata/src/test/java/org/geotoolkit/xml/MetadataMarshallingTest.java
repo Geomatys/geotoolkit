@@ -22,8 +22,10 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
+import java.util.Collection;
 import javax.xml.bind.JAXBException;
 
+import org.opengis.util.InternationalString;
 import org.opengis.metadata.identification.CharacterSet;
 import org.opengis.metadata.quality.EvaluationMethodType;
 import org.opengis.metadata.spatial.DimensionNameType;
@@ -37,6 +39,7 @@ import org.geotoolkit.metadata.iso.distribution.DefaultDistributor;
 import org.geotoolkit.metadata.iso.identification.DefaultDataIdentification;
 import org.geotoolkit.metadata.iso.lineage.DefaultProcessStep;
 import org.geotoolkit.metadata.iso.lineage.DefaultProcessing;
+import org.geotoolkit.metadata.iso.quality.AbstractElement;
 import org.geotoolkit.metadata.iso.quality.DefaultCompletenessCommission;
 import org.geotoolkit.metadata.iso.quality.DefaultConformanceResult;
 import org.geotoolkit.metadata.iso.quality.DefaultDataQuality;
@@ -63,7 +66,7 @@ import static org.geotoolkit.test.Commons.*;
  *
  * @author Cédric Briançon (Geomatys)
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.07
+ * @version 3.14
  *
  * @since 2.5
  */
@@ -261,11 +264,11 @@ public final class MetadataMarshallingTest {
                    obj instanceof DefaultMetadata);
 
         final DefaultMetadata dataUnmarsh = (DefaultMetadata) obj;
-        assertEquals(metadata.getCharacterSet(), dataUnmarsh.getCharacterSet());
-        assertEquals(metadata.getLanguage(), dataUnmarsh.getLanguage());
+        assertEquals(metadata.getCharacterSet(),       dataUnmarsh.getCharacterSet());
+        assertEquals(metadata.getLanguage(),           dataUnmarsh.getLanguage());
         assertEquals(metadata.getIdentificationInfo(), dataUnmarsh.getIdentificationInfo());
-        assertEquals(metadata.getDataQualityInfo(), dataUnmarsh.getDataQualityInfo());
-        assertEquals(metadata, dataUnmarsh);
+        assertEquals(metadata.getDataQualityInfo(),    dataUnmarsh.getDataQualityInfo());
+        assertEquals(metadata,                         dataUnmarsh);
     }
 
     /**
@@ -286,10 +289,10 @@ public final class MetadataMarshallingTest {
         process.setDescription(new SimpleInternationalString("Some process step."));
         process.setProcessingInformation(info);
         /*
-         * Writes in output buffer.
+         * XML marshalling.
          */
         final String xml = XML.marshal(process);
-        assertFalse("Nothing to write.", xml.length() == 0);
+        assertFalse("Empty XML.", xml.length() == 0);
         assertXmlEquals(TestData.readText(MetadataMarshallingTest.class, "ProcessStep.xml"), xml);
         /*
          * Validation tests.
@@ -297,5 +300,37 @@ public final class MetadataMarshallingTest {
         final Object obj = XML.unmarshal(xml);
         assertTrue(obj instanceof DefaultProcessStep);
         assertEquals(process, obj);
+    }
+
+    /**
+     * Tests the unmarshalling of a text group with a default {@code gco:CharacterString}
+     * element.
+     *
+     * @throws JAXBException If an error occured during the creation of the JAXB context,
+     *                       or during marshalling / unmarshalling processes.
+     * @throws IOException If an error occured while reading the XML file.
+     *
+     * @see <a href="http://jira.geotoolkit.org/browse/GEOTK-107">GEOTK-107</a>
+     *
+     * @since 3.14
+     */
+    @Test
+    public void testTextGroup() throws JAXBException, IOException {
+        final String xml = TestData.readText(MetadataMarshallingTest.class, "AbstractElement.xml");
+        final Object obj = XML.unmarshal(xml);
+        assertTrue(obj instanceof AbstractElement);
+
+        final Collection<InternationalString> nameOfMeasures = ((AbstractElement) obj).getNamesOfMeasure();
+        assertEquals(1, nameOfMeasures.size());
+        final InternationalString nameOfMeasure = nameOfMeasures.iterator().next();
+
+        assertEquals("Mesure qualité quantitative de type pourcentage de représentation de la "
+                + "classe par rapport à la surface totale", nameOfMeasure.toString(Locale.FRENCH));
+        assertEquals("Mesure qualité quantitative de type pourcentage de représentation de la "
+                + "classe par rapport à la surface totale", nameOfMeasure.toString());
+        assertEquals("Quantitative quality measure focusing on the effective class percent "
+                + "regarded to the total surface size", nameOfMeasure.toString(null));
+        assertEquals("Quantitative quality measure focusing on the effective class percent "
+                + "regarded to the total surface size", nameOfMeasure.toString(Locale.ENGLISH));
     }
 }

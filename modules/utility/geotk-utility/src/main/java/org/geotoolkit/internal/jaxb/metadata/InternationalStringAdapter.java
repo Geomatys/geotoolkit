@@ -36,7 +36,7 @@ import org.geotoolkit.internal.jaxb.text.AnchorType;
  * @author Cédric Briançon (Geomatys)
  * @author Martin Desruisseaux (Geomatys)
  * @author Guilhem Legal (Geomatys)
- * @version 3.13
+ * @version 3.14
  *
  * @since 2.5
  * @module
@@ -60,13 +60,35 @@ public class InternationalStringAdapter extends XmlAdapter<CharacterString, Inte
         if (value != null) {
             if (value instanceof FreeText) {
                 final FreeText freeText = (FreeText) value;
+                String defaultValue = freeText.toString();
                 final TextGroup textGroup = freeText.textGroup;
                 if (textGroup == null) {
-                    return null;
+                    if (defaultValue == null) {
+                        return null;
+                    }
+                } else if (defaultValue != null) {
+                    /*
+                     * If the <gco:CharacterString> value is repeated in one of the
+                     * <gmd:LocalisedCharacterString> elements, keep only the localized
+                     * version  (because it specifies the locale, while the unlocalized
+                     * string saids nothing on that matter).
+                     */
+                    for (final LocalisedCharacterString localized : textGroup.localised) {
+                        if (defaultValue.equals(localized.text)) {
+                            defaultValue = null;
+                            break;
+                        }
+                    }
                 }
-                final DefaultInternationalString ist = new DefaultInternationalString();
-                for (final LocalisedCharacterString localized : textGroup.localised) {
-                    ist.add(localized.locale, localized.text);
+                /*
+                 * Create the international string with all locales found in the
+                 * <gml:textGroup> element.
+                 */
+                final DefaultInternationalString ist = new DefaultInternationalString(defaultValue);
+                if (textGroup != null) {
+                    for (final LocalisedCharacterString localized : textGroup.localised) {
+                        ist.add(localized.locale, localized.text);
+                    }
                 }
                 return ist;
             }
