@@ -29,7 +29,13 @@ import javax.imageio.ImageReadParam;
 import javax.imageio.spi.ImageReaderSpi;
 
 import org.opengis.util.InternationalString;
+import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.referencing.cs.AxisDirection;
+import org.opengis.referencing.datum.PixelInCell;
+import org.opengis.referencing.operation.Matrix;
+import org.opengis.referencing.operation.MathTransform;
+import org.opengis.referencing.operation.TransformException;
+import org.opengis.metadata.spatial.PixelOrientation;
 
 import org.geotoolkit.coverage.Category;
 import org.geotoolkit.coverage.GridSampleDimension;
@@ -52,10 +58,14 @@ import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
 import org.geotoolkit.internal.coverage.TransferFunction;
 import org.geotoolkit.internal.image.io.DiscoveryAccessor;
 import org.geotoolkit.internal.image.io.DimensionAccessor;
+import org.geotoolkit.internal.image.io.GridDomainAccessor;
 import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.resources.Errors;
+import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.XArrays;
+import org.geotoolkit.math.XMath;
+import org.geotoolkit.referencing.operation.transform.LinearTransform;
 
 
 /**
@@ -251,7 +261,11 @@ final class GridCoverageLoader extends ImageCoverageReader {
     public SpatialMetadata getStreamMetadata() throws CoverageStoreException {
         final SpatialMetadata metadata = new SpatialMetadata(SpatialMetadataFormat.STREAM);
         if (entry != null) {
-            final DiscoveryAccessor accessor = new DiscoveryAccessor(metadata);
+            final DiscoveryAccessor accessor = new DiscoveryAccessor(metadata) {
+                @Override protected double nice(final double value) {
+                    return GridCoverageLoader.nice(value);
+                }
+            };
             accessor.setGeographicElement(entry.getGeographicBoundingBox());
         }
         return metadata;
@@ -272,14 +286,14 @@ final class GridCoverageLoader extends ImageCoverageReader {
                 accessor.selectChild(accessor.appendChild());
                 final InternationalString title = band.getDescription();
                 if (title != null) {
-                    accessor.setAttribute("descriptor", title.toString(locale));
+                    accessor.setDescriptor(title.toString(locale));
                 }
                 /*
                  * Add the range of geophysics values to the metadata.
                  */
                 band = band.geophysics(true);
-                accessor.setValueRange(band.getMinimumValue(), band.getMaximumValue());
-                accessor.setAttribute("units", band.getUnits());
+                accessor.setValueRange(nice(band.getMinimumValue()), nice(band.getMaximumValue()));
+                accessor.setUnits(band.getUnits());
                 /*
                  * Add the range of sample values to the metadata. Those values should
                  * be integers, because the type of the "lower" and "upper" columns in
@@ -314,7 +328,44 @@ final class GridCoverageLoader extends ImageCoverageReader {
                  * Add the transfert function.
                  */
                 if (tf != null) {
-                    accessor.setTransfertFunction(tf.scale, tf.offset, tf.type);
+                    accessor.setTransfertFunction(nice(tf.scale), nice(tf.offset), tf.type);
+                }
+            }
+        }
+        /*
+         * Add the "SpatialRepresentation" and "RectifiedGridDomain" nodes.
+         */
+        final GridGeometry2D geometry = getGridGeometry(index);
+        if (geometry != null) {
+            final MathTransform      gridToCRS    = geometry.getGridToCRS(PixelInCell.CELL_CORNER);
+            final GridDomainAccessor accessor     = new GridDomainAccessor(metadata);
+            final GridEnvelope       gridEnvelope = geometry.getGridRange();
+            final int                dimension    = gridToCRS.getTargetDimensions();
+            final double[]           ordinates    = new double[dimension];
+            for (int i=gridEnvelope.getDimension(); --i>=0;) {
+                ordinates[i] = 0.5 * (gridEnvelope.getLow(i) + gridEnvelope.getHigh(i));
+            }
+            try {
+                gridToCRS.transform(ordinates, 0, ordinates, 0, 1);
+                accessor.setSpatialRepresentation(nice(ordinates), null, PixelOrientation.UPPER_LEFT);
+            } catch (TransformException e) {
+                // Should not happen. If it happen anyway, this is not a fatal error.
+                // The above metadata will be missing from the IIOMetadata object, but
+                // they were mostly for information purpose anyway.
+                Logging.unexpectedException(GridCoverageLoader.class, "getCoverageMetadata", e);
+            }
+            if (gridToCRS instanceof LinearTransform) {
+                final Matrix matrix = ((LinearTransform) gridToCRS).getMatrix();
+                final int lastColumn = matrix.getNumCol() - 1;
+                for (int j=0; j<dimension; j++) {
+                    ordinates[j] = matrix.getElement(j, lastColumn);
+                }
+                accessor.setOrigin(nice(ordinates));
+                for (int j=0; j<dimension; j++) {
+                    for (int i=0; i<lastColumn; i++) {
+                        ordinates[i] = matrix.getElement(j, i);
+                    }
+                    accessor.addOffsetVector(nice(ordinates));
                 }
             }
         }
@@ -443,6 +494,27 @@ final class GridCoverageLoader extends ImageCoverageReader {
             message = message + '\n' + cause;
         }
         return message;
+    }
+
+    /**
+     * Converts the given number into something nicer to display. This is used only for
+     * formatting attributes in {@link IIOMetadata} and is not used for computation purpose.
+     */
+    private static double nice(final double value) {
+        final double t1 = value * 3600000;
+        final double t2 = XMath.roundIfAlmostInteger(t1, 12);
+        return (t1 != t2) ? t2 / 3600000 : value;
+    }
+
+    /**
+     * Invokes {@link #nice(double)} for all elements in the given array.
+     * Values in the given array will be modified in-place.
+     */
+    private static double[] nice(final double[] values) {
+        for (int i=0; i<values.length; i++) {
+            values[i] = nice(values[i]);
+        }
+        return values;
     }
 
     /**

@@ -38,7 +38,7 @@ import org.geotoolkit.referencing.operation.transform.ExponentialTransform1D;
  * inserted in the coverages database.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.13
+ * @version 3.14
  *
  * @since 3.13
  * @module
@@ -63,6 +63,11 @@ public final class TransferFunction {
      * {@code true} if a transfer function exists.
      */
     public boolean isQuantitative;
+
+    /**
+     * {@code true} if a transfer function exists and is the identity transform.
+     */
+    public boolean isGeophysics;
 
     /**
      * If an error occured while fetching the information, the error message.
@@ -91,6 +96,7 @@ public final class TransferFunction {
         MathTransform1D function = category.getSampleToGeophysics();
         if (function != null) {
             isQuantitative = true;
+            isGeophysics = function.isIdentity();
             if (function instanceof ConcatenatedTransform) {
                 final ConcatenatedTransform ctr = (ConcatenatedTransform) function;
                 function = checkType(ctr.transform1, MathTransform1D.class);

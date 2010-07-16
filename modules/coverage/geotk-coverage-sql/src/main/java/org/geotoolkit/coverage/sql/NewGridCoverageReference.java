@@ -36,12 +36,12 @@ import javax.imageio.stream.ImageInputStream;
 import org.opengis.util.FactoryException;
 import org.opengis.metadata.citation.Citation;
 import org.opengis.metadata.spatial.PixelOrientation;
+import org.opengis.metadata.content.TransferFunctionType;
 import org.opengis.coverage.grid.RectifiedGrid;
 import org.opengis.referencing.IdentifiedObject;
 import org.opengis.referencing.ReferenceIdentifier;
 import org.opengis.referencing.crs.CRSAuthorityFactory;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.operation.MathTransform1D;
 
 import org.geotoolkit.util.Localized;
 import org.geotoolkit.util.DateRange;
@@ -55,6 +55,7 @@ import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.internal.image.io.DimensionAccessor;
 import org.geotoolkit.internal.sql.table.SpatialDatabase;
 import org.geotoolkit.internal.sql.table.NoSuchRecordException;
+import org.geotoolkit.internal.coverage.TransferFunction;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
@@ -64,6 +65,7 @@ import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.Category;
 import org.geotoolkit.resources.Errors;
+import org.geotoolkit.math.XMath;
 
 
 /**
@@ -102,6 +104,11 @@ public final class NewGridCoverageReference {
      * Note that the value 0 is reserved for "no data".
      */
     private static final NumberRange<Integer> PACKED_RANGE = NumberRange.create(1, 255);
+
+    /**
+     * An arbitrary scale used in intermediate calculation for working around rounding errors.
+     */
+    private static final double FIX_ROUNDING_ERROR = 1E+6;
 
     /**
      * The originating database.
@@ -386,59 +393,76 @@ public final class NewGridCoverageReference {
         }
         /*
          * Get the sample dimensions. This code extracts the SampleDimensions from the metadata,
-         * converts them to GridSampleDimensions, then check if the resulting sample dimensions
-         * are geophysics. If every sample dimensions are geophysics, then we will replace them
-         * by new sample dimensions using the [1...255] range of packed values, and 0 for "no data".
-         * We don't do that in the default MetadataHelper implementation because the choosen range
-         * is arbitrary. In the particular case of NewGridCoverageReference, this is okay because
-         * the choosen range (the arbitrary choice) will be saved in the database.
+         * converts them to GridSampleDimensions, then checks if the resulting sample dimensions
+         * are native, packed or geophysics.
          */
-        final List<GridSampleDimension> sampleDimensions;
-        if (metadata == null) {
-            sampleDimensions = null;
-        } else {
+        ViewType packMode = ViewType.NATIVE;
+        List<GridSampleDimension> sampleDimensions = null;
+        if (metadata != null) {
             final DimensionAccessor dimHelper = new DimensionAccessor(metadata);
             if (dimHelper.scanSuggested(reader, imageIndex)) {
                 dimHelper.scanValidSampleValue(reader, imageIndex);
             }
             sampleDimensions = helper.getGridSampleDimensions(metadata.getListForType(SampleDimension.class));
-        }
-        GridSampleDimension[] bands = null;
-        boolean isGeophysics = false;
-        if (sampleDimensions != null) {
-            bands = sampleDimensions.toArray(new GridSampleDimension[sampleDimensions.size()]);
-            for (int i=0; i<bands.length; i++) {
-                final GridSampleDimension band = bands[i];
-                if (band != null) {
+            if (sampleDimensions != null) {
+                /*
+                 * Replaces geophysics sample dimensions by new sample dimensions using the
+                 * [1...255] range of packed values, and 0 for "no data".  We don't do that
+                 * in the default MetadataHelper implementation because the choosen range is
+                 * arbitrary. However this is okay to make such arbitrary choice in the particular
+                 * case of NewGridCoverageReference, because the choosen range will be saved
+                 * in the database (the user can also modify the range).
+                 */
+                final GridSampleDimension[] bands = sampleDimensions.toArray(new GridSampleDimension[sampleDimensions.size()]);
+                for (int i=0; i<bands.length; i++) {
+                    final GridSampleDimension band = bands[i];
                     final List<Category> categories = band.getCategories();
                     for (int j=categories.size(); --j>=0;) {
-                        final Category c = categories.get(j);
-                        /*
-                         * MetadataHelper should have created at most one quantitative category
-                         * for each GridSampleDimension, which can be recognized by a non-null
-                         * transfer function. This is usually the last category.
-                         */
-                        final MathTransform1D transferFunction = c.getSampleToGeophysics();
-                        if (transferFunction != null) {
-                            if (isGeophysics = transferFunction.isIdentity()) {
-                                bands[i] = new GridSampleDimension(band.getDescription(), new Category[] {
-                                        Category.NODATA,
-                                        new Category(c.getName(), c.getColors(), PACKED_RANGE, c.getRange())
-                                }, band.getUnits()).geophysics(true);
+                        Category c = categories.get(j);
+                        final TransferFunction tf = new TransferFunction(c, null);
+                        if (tf.isQuantitative) {
+                            if (tf.isGeophysics) {
+                                /*
+                                 * In the geophysics case, we are free to choose whatever upper
+                                 * value please us.  We are using 255 here, the maximum allowed
+                                 * for a 8-bits indexed image.
+                                 */
+                                c = new Category(c.getName(), c.getColors(), PACKED_RANGE, c.getRange());
+                                bands[i] = packSampleDimension(band, c).geophysics(true);
+                                packMode = ViewType.GEOPHYSICS;
+                            } else if (tf.minimum < 0 && TransferFunctionType.LINEAR.equals(tf.type)) {
+                                /*
+                                 * In the signed integer values case, the offset applied here must
+                                 * be consistent with the sample conversion applied by the image
+                                 * reader when SampleConversionType.SHIFT_SIGNED_INTEGERS is set.
+                                 */
+                                // Upper sample value: Add 1 because value 0 is reserved for
+                                // "no data", and add 1 again because 'upper' is exclusive.
+                                final int upper = (tf.maximum - tf.minimum) + 2;
+                                double offset = tf.offset - tf.scale * (1 - tf.minimum);
+                                if (Math.abs(offset) < FIX_ROUNDING_ERROR) {
+                                    final double t1 = offset * FIX_ROUNDING_ERROR;
+                                    final double t2 = XMath.roundIfAlmostInteger(t1, 12);
+                                    if (t2 != t1) {
+                                        offset = t2 / FIX_ROUNDING_ERROR;
+                                    }
+                                }
+                                c = new Category(c.getName(), c.getColors(), 1, upper, tf.scale, offset);
+                                bands[i] = packSampleDimension(band, c);
+                                packMode = ViewType.PACKED;
                             }
+                            /*
+                             * MetadataHelper should have created at most one quantitative category
+                             * (usually the last one) recognized by its non-null transfer function.
+                             * In the uncommon case were there is more quantitative categories, it
+                             * is the user responsability to edit the fields (using the widget for
+                             * instance). We stop the loop in order to avoid conflicts.
+                             */
                             break;
                         }
                     }
                 }
-                /*
-                 * If we found at least one non-geophysics band, cancel the process.
-                 * Overwrite our bands array with the original GridSampleDimensions,
-                 * so we don't modify them.
-                 */
-                if (!isGeophysics) {
-                    bands = sampleDimensions.toArray(bands);
-                    break;
-                }
+                sampleDimensions = Arrays.asList(bands);
             }
         }
         /*
@@ -447,10 +471,14 @@ public final class NewGridCoverageReference {
          * in the database yet.
          */
         final FormatTable formatTable = database.getTable(FormatTable.class);
-        FormatEntry candidate = formatTable.find(imageFormat, Arrays.asList(bands));
+        FormatEntry candidate = formatTable.find(imageFormat, sampleDimensions);
         if (candidate == null) {
-            candidate = new FormatEntry(formatTable.searchFreeIdentifier(imageFormat), imageFormat,
-                    null, bands, isGeophysics ? ViewType.GEOPHYSICS : ViewType.NATIVE, null);
+            final GridSampleDimension[] bands = new GridSampleDimension[sampleDimensions.size()];
+            for (int i=0; i<bands.length; i++) {
+                bands[i] = sampleDimensions.get(i).geophysics(false);
+            }
+            candidate = new FormatEntry(formatTable.searchFreeIdentifier(imageFormat),
+                    imageFormat, null, bands, packMode, null);
         }
         formatTable.release();
         bestFormat = candidate;
@@ -468,6 +496,15 @@ public final class NewGridCoverageReference {
         } else if (input instanceof ImageInputStream) {
             ((ImageInputStream) input).close();
         }
+    }
+
+    /**
+     * Creates a new sample dimension defined as the "no data" category together with the
+     * given category. The dimension name and units are copied from the old sample dimension.
+     */
+    private static GridSampleDimension packSampleDimension(final GridSampleDimension band, final Category category) {
+        return new GridSampleDimension(band.getDescription(),
+                new Category[] {Category.NODATA, category}, band.getUnits());
     }
 
     /**

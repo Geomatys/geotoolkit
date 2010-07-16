@@ -142,6 +142,7 @@ public final class NetcdfImageReaderTest extends ImageReaderTestBase {
             "└───ImageDescription\n" +
             "    └───Dimensions\n" +
             "        └───Dimension\n" +
+            "            ├───descriptor=“temperature”\n" +
             "            ├───units=“degree_Celsius”\n" +
             "            ├───minValue=“-3.0”\n" +
             "            ├───maxValue=“40.0”\n" +
@@ -173,6 +174,7 @@ public final class NetcdfImageReaderTest extends ImageReaderTestBase {
             "└───ImageDescription\n" +
             "    └───Dimensions\n" +
             "        ├───Dimension\n" +
+            "        │   ├───descriptor=“temperature”\n" +
             "        │   ├───units=“degree_Celsius”\n" +
             "        │   ├───minValue=“-3.0”\n" +
             "        │   ├───maxValue=“40.0”\n" +
@@ -182,6 +184,7 @@ public final class NetcdfImageReaderTest extends ImageReaderTestBase {
             "        │   ├───offset=“20.0”\n" +
             "        │   └───transferFunctionType=“linear”\n" +
             "        └───Dimension\n" +
+            "            ├───descriptor=“pct_variance”\n" +
             "            ├───units=“percent”\n" +
             "            ├───minValue=“0.0”\n" +
             "            ├───maxValue=“1.0”\n" +

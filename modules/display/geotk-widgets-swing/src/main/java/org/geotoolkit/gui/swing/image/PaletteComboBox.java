@@ -40,6 +40,7 @@ import javax.swing.table.TableColumn;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.image.io.Palette;
 import org.geotoolkit.image.io.PaletteFactory;
+import org.geotoolkit.image.io.SpatialImageReadParam;
 import org.geotoolkit.internal.image.ColorUtilities;
 import org.geotoolkit.internal.coverage.ColorPalette;
 
@@ -99,7 +100,7 @@ public class PaletteComboBox extends JComponent {
              * not exist, the current ColorRampRenderer behavior if the color palette is not found
              * is to fallback on a grayscale palette.
              */
-            names = Collections.singleton("grayscale");
+            names = Collections.singleton(SpatialImageReadParam.DEFAULT_PALETTE_NAME);
         }
         final List<Object> items = new ArrayList<Object>(names.size() + 1);
         items.add(resources.getString(Vocabulary.Keys.NONE));
@@ -107,7 +108,7 @@ public class PaletteComboBox extends JComponent {
             items.add(new ColorPalette(name));
         }
         comboBox = new JComboBox(items.toArray());
-        comboBox.setPrototypeDisplayValue("grayscale"); // For preventing pre-rendering of all palettes.
+        comboBox.setPrototypeDisplayValue(SpatialImageReadParam.DEFAULT_PALETTE_NAME); // For preventing pre-rendering of all palettes.
         comboBox.setRenderer(new PaletteCellRenderer(comboBox.getModel(), factory));
         setLayout(new BorderLayout());
         add(comboBox, BorderLayout.CENTER);

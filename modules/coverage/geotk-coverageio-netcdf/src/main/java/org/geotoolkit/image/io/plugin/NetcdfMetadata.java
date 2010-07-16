@@ -267,6 +267,7 @@ final class NetcdfMetadata extends SpatialMetadata {
                 m = new NetcdfVariable(variable);
             }
             accessor.selectChild(accessor.appendChild());
+            accessor.setDescriptor(variable.getName());
             accessor.setUnits(m.units);
             if (variable instanceof EnhanceScaleMissing) {
                 final EnhanceScaleMissing ev = (EnhanceScaleMissing) variable;

@@ -20,6 +20,7 @@ package org.geotoolkit.gui.swing.coverage;
 import java.io.IOException;
 import javax.imageio.ImageReader;
 import javax.imageio.IIOException;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.opengis.coverage.grid.GridCoverage;
 
@@ -27,7 +28,6 @@ import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
-import org.geotoolkit.coverage.io.ImageCoverageReader;
 import org.geotoolkit.coverage.io.ImageReaderAdapter;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.sql.GridCoverageReference;
@@ -48,32 +48,42 @@ import org.geotoolkit.gui.swing.image.ImageFileProperties;
 @SuppressWarnings("serial")
 public class CoverageFileProperties extends ImageFileProperties {
     /**
-     * The coverage reader used in the last call to {@link #setImageInput(Object)}, or
-     * {@code null} if none. All access to this field must be synchronized, because
-     * {@code setImageInput(Object)} is typically invoked from a background thread.
+     * The image reader used in the last call to {@link #setImageInput(Object)}, or
+     * {@code null} if none. Note that this field is typically read and written from
+     * a background thread.
      */
-    private transient GridCoverageReader coverageReader;
-
-    /**
-     * The image reader wrapping {@link #coverageReader}, or {@code null} if none. All access
-     * to this field must be synchronized, because {@code setImageInput(Object)} is typically
-     * invoked from a background thread.
-     */
-    private transient ImageReader imageReader;
-
-    /**
-     * The default {@link ImageReader} instance, defined as an explicit subclass in order
-     * to differentiate it from any user-supplied reader.
-     */
-    private static final class DefaultReader extends ImageCoverageReader {
-    }
+    private final AtomicReference<Adapter> imageReader = new AtomicReference<Adapter>();
 
     /**
      * The adapter used for wrapping {@link GridCoverageReader} as an {@link ImageReader}.
+     *
+     * @author Martin Desruisseaux (Geomatys)
+     * @version 3.14
+     *
+     * @since 3.14
+     * @module
      */
     private static final class Adapter extends ImageReaderAdapter {
+        /**
+         * Creates a new adapter for the given reader.
+         */
         Adapter(final GridCoverageReader reader) {
             super(reader);
+        }
+
+        /**
+         * Returns the wrapped reader.
+         */
+        GridCoverageReader getReader() {
+            return reader;
+        }
+
+        /**
+         * Returns an adapter for the given reader. This method returns {@code this}
+         * if this adapter is still applicable, or a new adapter otherwise.
+         */
+        Adapter setReader(final GridCoverageReader reader) {
+            return (this.reader == reader) ? this : new Adapter(reader);
         }
 
         /**
@@ -111,38 +121,32 @@ public class CoverageFileProperties extends ImageFileProperties {
      */
     @Override
     public void setImageInput(Object input) throws IOException {
-        if (!(input instanceof ImageReader)) {
+        if (input instanceof GridCoverageReference) {
+            /*
+             * Get the GridCoverageReader. The existing instance will be recycled if
+             * possible, provided that it is not an instance provided by the user.
+             */
+            Adapter adapter = imageReader.getAndSet(null);
+            GridCoverageReader reader = (adapter != null) ? adapter.getReader() : null;
+            try {
+                reader = ((GridCoverageReference) input).getCoverageReader(reader);
+            } catch (CoverageStoreException e) {
+                final Throwable cause = e.getCause();
+                if (cause instanceof IOException) {
+                    throw (IOException) cause;
+                }
+                throw new IIOException(e.getLocalizedMessage(), e);
+            }
+            adapter = (adapter != null) ? adapter.setReader(reader) : new Adapter(reader);
+            adapter.setInput(input);
+            input = adapter;
+            super.setImageInput(input);
+            imageReader.compareAndSet(null, adapter);
+        } else {
             if (input instanceof GridCoverageReader) {
                 input = new Adapter((GridCoverageReader) input);
-            } else synchronized (this) {
-                /*
-                 * Get the GridCoverageReader. The existing instance will be recycled if
-                 * possible, provided that it is not an instance provided by the user.
-                 */
-                GridCoverageReader reader = coverageReader;
-                if (input instanceof GridCoverageReference) {
-                    try {
-                        reader = ((GridCoverageReference) input).getCoverageReader(reader);
-                    } catch (CoverageStoreException e) {
-                        final Throwable cause = e.getCause();
-                        if (cause instanceof IOException) {
-                            throw (IOException) cause;
-                        }
-                        throw new IIOException(e.getLocalizedMessage(), e);
-                    }
-                } else if (!(reader instanceof DefaultReader)) {
-                    reader = new DefaultReader();
-                }
-                final ImageReader wrapper = (reader == coverageReader) ? imageReader : new Adapter(reader);
-                wrapper.setInput(input);
-                /*
-                 * Update the fields only on success.
-                 */
-                coverageReader = reader;
-                imageReader = wrapper;
-                input = wrapper;
             }
+            super.setImageInput(input);
         }
-        super.setImageInput(input);
     }
 }

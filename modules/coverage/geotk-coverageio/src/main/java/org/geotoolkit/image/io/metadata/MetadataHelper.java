@@ -655,6 +655,8 @@ public class MetadataHelper implements Localized {
                         untitled = Vocabulary.formatInternational(Vocabulary.Keys.UNTITLED);
                     }
                     dimensionName = untitled;
+                } else {
+                    hasSampleDimensions = true;
                 }
                 /*
                  * Create a qualitative category for each fill value.
@@ -677,7 +679,7 @@ public class MetadataHelper implements Localized {
                 /*
                  * Create a quantitative category for the range of valid sample values.
                  * If there is no offset and scale factor, then the values are assumed
-                 * geophysics values.
+                 * geophysics values (the scale is set to 1 and the offset to 0).
                  */
                 final NumberRange<?> range = getValidSampleValues(sd, fillValues);
                 if (range != null) {
@@ -717,19 +719,25 @@ public class MetadataHelper implements Localized {
                 /*
                  * Create the GridSampleDimension instance.
                  */
-                if (!categories.isEmpty()) {
-                    final Category[] array = categories.toArray(new Category[categories.size()]);
-                    final Unit<?> unit = sd.getUnits();
-                    final GridSampleDimension band;
-                    try {
-                        band = new GridSampleDimension(dimensionName, array, unit);
-                    } catch (IllegalArgumentException e) {
-                        throw new ImageMetadataException(e);
-                    }
-                    bands[i] = band;
-                    categories.clear();
+                final Category[] array;
+                if (categories.isEmpty()) {
+                    array = null;
+                } else {
+                    array = categories.toArray(new Category[categories.size()]);
                     hasSampleDimensions = true;
                 }
+                final Unit<?> unit = sd.getUnits();
+                if (unit != null) {
+                    hasSampleDimensions = true;
+                }
+                final GridSampleDimension band;
+                try {
+                    band = new GridSampleDimension(dimensionName, array, unit);
+                } catch (IllegalArgumentException e) {
+                    throw new ImageMetadataException(e);
+                }
+                bands[i] = band;
+                categories.clear();
             }
         }
         return hasSampleDimensions ? UnmodifiableArrayList.wrap(bands) : null;

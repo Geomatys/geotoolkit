@@ -989,7 +989,7 @@ public class GridSampleDimension implements SampleDimension, Serializable {
      * informations.
      *
      * @return The range of values. May be {@code null} if this sample dimension has no
-     *         quantitative category.
+     *         non-{@code NaN} value.
      *
      * @see Category#getRange
      * @see #getMinimumValue

@@ -163,8 +163,9 @@ public final class GridDomainAccessor extends MetadataAccessor {
 
     /**
      * Sets the values of the {@code "SpatialRepresentation"} attributes. This method computes
-     * the {@code "centerPoint"} attribute from the given {@code "origin"} and {"bounds"} because
-     * this method is typically invoked together with the {@link #setRectifiedGridDomain} method.
+     * the {@code "centerPoint"} attribute from the given {@code "origin"} and {@code "bounds"}
+     * because this method is typically invoked together with the {@link #setRectifiedGridDomain}
+     * method.
      *
      * @param origin       The {@code origin} argument given to the {@code setRectifiedGridDomain} method.
      * @param bounds       The {@code bounds} argument given to the {@code setRectifiedGridDomain} method.

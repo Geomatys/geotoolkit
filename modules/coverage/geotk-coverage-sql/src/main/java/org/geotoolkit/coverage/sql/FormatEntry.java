@@ -129,6 +129,7 @@ final class FormatEntry extends DefaultEntry {
      * @param imageFormat The Image I/O format name (i.e. the plugin to use).
      * @param paletteName The name of the color palette, or {@code null} if unspecified.
      * @param bands       Sample dimensions for coverages encoded with this format, or {@code null}.
+     *                    The bands given to this constructor shall <strong>not</strong> be geophysics.
      */
     protected FormatEntry(final String name, final String imageFormat, final String paletteName,
             final GridSampleDimension[] bands, final ViewType viewType, final String comments)

@@ -31,7 +31,7 @@ import org.geotoolkit.image.io.metadata.MetadataAccessor;
  * @since 3.14
  * @module
  */
-public final class DiscoveryAccessor {
+public class DiscoveryAccessor {
     /**
      * The {@code value} path.
      */
@@ -67,11 +67,23 @@ public final class DiscoveryAccessor {
     public void setGeographicElement(final GeographicBoundingBox box) {
         if (box != null) {
             final MetadataAccessor accessor = new MetadataAccessor(metadata, GEOGRAPHIC_ELEMENT);
-            accessor.setAttribute("westBoundLongitude", box.getWestBoundLongitude());
-            accessor.setAttribute("eastBoundLongitude", box.getEastBoundLongitude());
-            accessor.setAttribute("southBoundLatitude", box.getSouthBoundLatitude());
-            accessor.setAttribute("northBoundLatitude", box.getNorthBoundLatitude());
+            accessor.setAttribute("westBoundLongitude", nice(box.getWestBoundLongitude()));
+            accessor.setAttribute("eastBoundLongitude", nice(box.getEastBoundLongitude()));
+            accessor.setAttribute("southBoundLatitude", nice(box.getSouthBoundLatitude()));
+            accessor.setAttribute("northBoundLatitude", nice(box.getNorthBoundLatitude()));
             accessor.setAttribute("inclusion",          box.getInclusion());
         }
+    }
+
+    /**
+     * Optionnaly replaces the given number by something nicer to display.
+     * The default implementation returns the number unchanged. Subclasses
+     * can override this method if they want to display a slightly different value.
+     *
+     * @param  value The attribute value to be written.
+     * @return The value to write.
+     */
+    protected double nice(final double value) {
+        return value;
     }
 }

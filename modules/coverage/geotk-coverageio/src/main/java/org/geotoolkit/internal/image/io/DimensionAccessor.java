@@ -22,6 +22,7 @@ import javax.imageio.ImageReader;
 import javax.imageio.metadata.IIOMetadata;
 import javax.media.jai.iterator.RectIter;
 import javax.media.jai.iterator.RectIterFactory;
+import javax.measure.unit.Unit;
 
 import org.opengis.metadata.content.TransferFunctionType;
 
@@ -62,11 +63,29 @@ public final class DimensionAccessor extends MetadataAccessor {
     }
 
     /**
+     * Sets the {@code "descriptor"} attribute to the given value.
+     *
+     * @param descriptor The descriptor, or {@code null} if none.
+     */
+    public void setDescriptor(final String descriptor) {
+        setAttribute("descriptor", descriptor);
+    }
+
+    /**
      * Sets the {@code "units"} attribute to the given value.
      *
      * @param units The units, or {@code null} if none.
      */
     public void setUnits(final String units) {
+        setAttribute("units", units);
+    }
+
+    /**
+     * Sets the {@code "units"} attribute to the given value.
+     *
+     * @param units The units, or {@code null} if none.
+     */
+    public void setUnits(final Unit<?> units) {
         setAttribute("units", units);
     }
 
