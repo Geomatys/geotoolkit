@@ -17,7 +17,9 @@
  */
 package org.geotoolkit.coverage.processing;
 
+import java.awt.color.ColorSpace;
 import java.awt.image.ColorModel;
+import java.awt.image.ComponentColorModel;
 import java.awt.image.RenderedImage;
 import java.awt.image.IndexColorModel;
 
@@ -48,7 +50,7 @@ import org.geotoolkit.util.converter.Classes;
  * creates a new grid coverage using the new colors.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @version 3.14
  *
  * @since 1.2
  * @module
@@ -74,6 +76,15 @@ public abstract class IndexColorOperation extends Operation2D {
     }
 
     /**
+     * Returns {@code true} if the given color model is a gray scale.
+     * This method does not check the case of {@link IndexColorModel}.
+     */
+    private static boolean isGrayScale(final ColorModel cm) {
+        return (cm instanceof ComponentColorModel) && (cm.getNumComponents() == 1) &&
+                cm.getColorSpace().getType() == ColorSpace.TYPE_GRAY;
+    }
+
+    /**
      * Performs the color transformation. This method invokes the {@link #transformColormap
      * transformColormap(...)} method with the ARGB colors found in the source image, its
      * {@link GridSampleDimension} and the parameters supplied to this method. The new colors
@@ -95,7 +106,7 @@ public abstract class IndexColorOperation extends Operation2D {
         final RenderedImage         image = source.getRenderedImage();
         final GridSampleDimension[] bands = source.getSampleDimensions();
         final int visibleBand = CoverageUtilities.getVisibleBand(image);
-        ColorModel model = image.getColorModel();
+        ColorModel targetModel = image.getColorModel();
         boolean bandChanged = false;
         for (int i=0; i<bands.length; i++) {
             /*
@@ -103,16 +114,23 @@ public abstract class IndexColorOperation extends Operation2D {
              * transformColormap(...) method, which needs to be defined by subclasses.
              */
             GridSampleDimension band = bands[i];
-            final ColorModel candidate = (i == visibleBand) ? image.getColorModel() : band.getColorModel();
-            if (!(candidate instanceof IndexColorModel)) {
-                // Current implementation supports only sources that use an index color model.
+            final ColorModel sourceModel = (i == visibleBand) ? image.getColorModel() : band.getColorModel();
+            final IndexColorModel colors;
+            final int[] ARGB;
+            if (sourceModel instanceof IndexColorModel) {
+                colors = (IndexColorModel) sourceModel;
+                ARGB = new int[colors.getMapSize()];
+                colors.getRGBs(ARGB);
+            } else if (isGrayScale(sourceModel)) {
+                colors = null;
+                ARGB = new int[1 << sourceModel.getPixelSize()];
+                for (int j=0; j<ARGB.length; j++) {
+                    ARGB[j] = j;
+                }
+            } else {
                 throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_CLASS_$2,
-                        Classes.getClass(candidate), IndexColorModel.class));
+                        Classes.getClass(sourceModel), IndexColorModel.class));
             }
-            final IndexColorModel colors = (IndexColorModel) candidate;
-            final int mapSize = colors.getMapSize();
-            final int[] ARGB = new int[mapSize];
-            colors.getRGBs(ARGB);
             band = transformColormap(ARGB, i, band, parameters);
             /*
              * Checks if there is any change, either as a new GridSampleDimension instance or in
@@ -125,8 +143,9 @@ public abstract class IndexColorOperation extends Operation2D {
                 bandChanged = true;
             }
             boolean colorChanged = false;
-            for (int j=0; j<mapSize; j++) {
-                if (ARGB[j] != colors.getRGB(j)) {
+            for (int j=0; j<ARGB.length; j++) {
+                final int old = (colors != null) ? colors.getRGB(j) : j;
+                if (ARGB[j] != old) {
                     colorChanged = true;
                     bandChanged  = true;
                     break;
@@ -138,7 +157,7 @@ public abstract class IndexColorOperation extends Operation2D {
              * image operator.
              */
             if (colorChanged && (i == visibleBand)) {
-                model = ColorUtilities.getIndexColorModel(ARGB, bands.length, visibleBand, -1);
+                targetModel = ColorUtilities.getIndexColorModel(ARGB, bands.length, visibleBand, -1);
             }
         }
         if (!bandChanged) {
@@ -149,7 +168,7 @@ public abstract class IndexColorOperation extends Operation2D {
          * operation, which merely propagates its first source along the operation chain
          * unmodified (except for the ColorModel given in the layout in this case).
          */
-        final ImageLayout layout = new ImageLayout().setColorModel(model);
+        final ImageLayout layout = new ImageLayout().setColorModel(targetModel);
         final RenderedImage newImage = new NullOpImage(image, layout, null, OpImage.OP_COMPUTE_BOUND);
         final GridCoverage2D target = getFactory(hints).create(
                     source.getName(), newImage,
