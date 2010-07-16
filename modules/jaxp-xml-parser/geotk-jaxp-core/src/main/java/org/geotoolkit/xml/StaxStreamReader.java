@@ -138,7 +138,8 @@ public abstract class StaxStreamReader {
     private static final XMLStreamReader toReader(Object input)
             throws XMLStreamException{
         final XMLInputFactory XMLfactory = XMLInputFactory.newInstance();
-        XMLfactory.setProperty("http://java.sun.com/xml/stream/properties/report-cdata-event", Boolean.FALSE);
+        XMLfactory.setProperty("http://java.sun.com/xml/stream/properties/report-cdata-event", Boolean.TRUE);
+        XMLfactory.setProperty(XMLInputFactory.IS_COALESCING, Boolean.FALSE);
 
         if(input instanceof InputStream){
             return XMLfactory.createXMLStreamReader((InputStream)input);

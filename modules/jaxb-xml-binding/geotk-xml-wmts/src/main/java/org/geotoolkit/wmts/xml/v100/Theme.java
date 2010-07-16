@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2008 - 2009, Geomatys
+ *    (C) 2008 - 2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -57,17 +57,15 @@ import org.geotoolkit.ows.xml.v110.DescriptionType;
     "layerRef"
 })
 @XmlRootElement(name = "Theme")
-public class Theme
-    extends DescriptionType
-{
+public class Theme extends DescriptionType {
 
     @XmlElement(name = "Identifier", namespace = "http://www.opengis.net/ows/1.1", required = true)
-    protected CodeType identifier;
+    private CodeType identifier;
     @XmlElement(name = "Theme")
-    protected List<Theme> theme;
+    private List<Theme> theme;
     @XmlElement(name = "LayerRef")
     @XmlSchemaType(name = "anyURI")
-    protected List<String> layerRef;
+    private List<String> layerRef;
 
     /**
      * Name of the theme
@@ -96,23 +94,6 @@ public class Theme
     /**
      * Metadata describing the child (subordinate) themes of this theme where layers available on this server can be classified Gets the value of the theme property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the theme property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getTheme().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link Theme }
-     * 
      * 
      */
     public List<Theme> getTheme() {
@@ -124,24 +105,6 @@ public class Theme
 
     /**
      * Gets the value of the layerRef property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the layerRef property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getLayerRef().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link String }
-     * 
      * 
      */
     public List<String> getLayerRef() {

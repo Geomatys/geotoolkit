@@ -50,7 +50,6 @@ import java.util.zip.ZipOutputStream;
 import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.util.logging.Logging;
 
-
 /**
  *
  * @author Guilhem Legal (Geomatys)
@@ -371,7 +370,7 @@ public class FileUtilities {
                         final URI uri = url.toURI();
                         List<String> scanned = scan(uri, fileP, true);
                         for (String s : scanned) {
-                            if (!result.contains(s)){
+                            if (!result.contains(s)) {
                                 result.add(s);
                             }
                         }
@@ -413,10 +412,10 @@ public class FileUtilities {
             }
         } else if (scheme.equals("jar") || scheme.equals("zip")) {
             try {
-                String brut    = u.getSchemeSpecificPart();
-                URI uri        = URI.create(brut.replaceAll(" ", "%20"));
+                String brut = u.getSchemeSpecificPart();
+                URI uri = URI.create(brut.replaceAll(" ", "%20"));
                 String jarFile = uri.getPath();
-                jarFile        = jarFile.substring(0, jarFile.indexOf('!'));
+                jarFile = jarFile.substring(0, jarFile.indexOf('!'));
                 List<String> scanned = scanJar(new File(jarFile), filePackageName, directory);
                 for (String s : scanned) {
                     if (!result.contains(s)) {
@@ -498,7 +497,6 @@ public class FileUtilities {
         return result;
     }
 
-
     /**
      * Write the contents of a file into string.
      *
@@ -528,7 +526,7 @@ public class FileUtilities {
      * String representing files paths, URL, URI or InputStream. Cannot be null.
      * @throws IOException
      */
-    public static void zip(final Object zip,  final Checksum checksum, final Object... resources) throws IOException{
+    public static void zip(final Object zip, final Checksum checksum, final Object... resources) throws IOException {
         zip(zip, ZipOutputStream.STORED, 0, checksum, resources);
     }
 
@@ -550,16 +548,24 @@ public class FileUtilities {
      * @throws IOException
      */
     public static void zip(final Object zip, final int method, final int level, final Checksum checksum, final Object... resources)
-            throws IOException{
+            throws IOException {
 
         final BufferedOutputStream buf;
-        if (checksum != null){
+        if (checksum != null) {
             CheckedOutputStream cos = new CheckedOutputStream(toOutputStream(zip), checksum);
             buf = new BufferedOutputStream(cos);
         } else {
             buf = new BufferedOutputStream(toOutputStream(zip));
         }
-        zipCore(buf, method, level, resources);
+
+        final ZipOutputStream zout = new ZipOutputStream(buf);
+        try {
+            zout.setMethod(method);
+            zout.setLevel(level);
+            zipCore(zout, method, level, "", resources);
+        } finally {
+            zout.close();
+        }
     }
 
     /**
@@ -577,61 +583,71 @@ public class FileUtilities {
      * String representing files paths, URL, URI or InputStream. Cannot be null.
      * @throws IOException
      */
-    private static void zipCore(final OutputStream zip, final int method, final int level, final Object... resources)
+    private static void zipCore(final ZipOutputStream zout, final int method, final int level, final String entryPath, final Object... resources)
             throws IOException {
 
-
         final byte[] data = new byte[BUFFER];
-        final ZipOutputStream zout = new ZipOutputStream(zip);
         final CRC32 crc = new CRC32();
         boolean stored = false;
 
-
-        if (ZipOutputStream.STORED == method){
+        if (ZipOutputStream.STORED == method) {
             stored = true;
-            for (Object resource : resources){
-                if (!(resource instanceof File)){
+            for (Object resource : resources) {
+                if (!(resource instanceof File)) {
                     throw new IllegalArgumentException("This compression is supported with File resources only.");
                 }
             }
-        } else if (ZipOutputStream.DEFLATED != method)
+        } else if (ZipOutputStream.DEFLATED != method) {
             throw new IllegalArgumentException("This compression method is not supported.");
-        if (Double.isNaN(level) || Double.isInfinite(level) || level > 9 || level < 0)
+        }
+
+        if (Double.isNaN(level) || Double.isInfinite(level) || level > 9 || level < 0) {
             throw new IllegalArgumentException("Illegal compression level.");
+        }
 
-        try {
-            zout.setMethod(method);
-            zout.setLevel(level);
+        for (int i = 0; i < resources.length; i++) {
+            final ZipEntry entry = new ZipEntry(entryPath + getFileName(resources[i]));
+            if (stored) {
+                final File file = (File) resources[i];
+                entry.setCompressedSize(file.length());
+                entry.setSize(file.length());
+                entry.setCrc(crc.getValue());
+            }
 
-            for (int i = 0; i<resources.length; i++){
-                InputStream fi = toInputStream(resources[i]);
-                BufferedInputStream buffi = new BufferedInputStream(fi, BUFFER);
+            if (resources[i] instanceof File && ((File) resources[i]).isDirectory()) {
+                final String zipName = new StringBuilder(entryPath).append(((File) resources[i]).getName()).
+                        append(((File) resources[i]).isDirectory() ? '/' : "").toString();
+                zipCore(zout, method, level, zipName, (Object[]) ((File) resources[i]).listFiles());
+                continue;
+            }
 
-                crc.reset();
-                    int bytesRead;
-                while ((bytesRead = buffi.read(data)) != -1) {
-                    crc.update(data, 0, bytesRead);
-                }
+            zout.putNextEntry(entry);
 
+            BufferedInputStream buffi = new BufferedInputStream(toInputStream(resources[i]), BUFFER);
+            if (stored) {
                 try {
-                    ZipEntry entry = new ZipEntry(getFileName(resources[i]));
-                    if(stored){
-                        File file = (File) resources[i];
-                        entry.setCompressedSize(file.length());
-                        entry.setSize(file.length());
-                        entry.setCrc(crc.getValue());
+                    crc.reset();
+                    int bytesRead;
+                    while ((bytesRead = buffi.read(data, 0, BUFFER)) != -1) {
+                        crc.update(data, 0, bytesRead);
                     }
-                    zout.putNextEntry(entry);
-                    int count;
-                    while((count = buffi.read(data,0,BUFFER)) != -1){zout.write(data, 0, count);}
                 } finally {
-                    zout.closeEntry();
                     buffi.close();
                 }
+                buffi = new BufferedInputStream(toInputStream(resources[i]), BUFFER);
             }
-        } finally {
-            zout.close();
+
+            try {
+                int count;
+                while (-1 != (count = buffi.read(data, 0, BUFFER))) {
+                    zout.write(data, 0, count);
+                }
+            } finally {
+                zout.closeEntry();
+                buffi.close();
+            }
         }
+
     }
 
     /**
@@ -642,7 +658,7 @@ public class FileUtilities {
      * @param checksum Checksum object (instance of Alder32 or CRC32).
      * @throws IOException
      */
-    public static void unzip(final Object zip, final Checksum checksum) throws IOException{
+    public static void unzip(final Object zip, final Checksum checksum) throws IOException {
         unzip(zip, getParent(zip), checksum);
     }
 
@@ -660,15 +676,15 @@ public class FileUtilities {
      * @throws IOException
      */
     public static void unzip(final Object zip, final Object resource, final Checksum checksum)
-            throws IOException{
+            throws IOException {
         final BufferedInputStream buffi;
-        if (checksum != null){
+        if (checksum != null) {
             CheckedInputStream cis = new CheckedInputStream(toInputStream(zip), checksum);
             buffi = new BufferedInputStream(cis);
         } else {
             buffi = new BufferedInputStream(toInputStream(zip));
         }
-        unzipCore(buffi,resource);
+        unzipCore(buffi, resource);
     }
 
     /**
@@ -687,14 +703,22 @@ public class FileUtilities {
         final ZipInputStream zis = new ZipInputStream(zip);
 
         try {
-            String extractPath = getPath(resource);
+            final String extractPath = getPath(resource);
             ZipEntry entry;
-            while ((entry = zis.getNextEntry()) != null){
-                OutputStream fos = toOutputStream(new File(extractPath, entry.getName()));
-                BufferedOutputStream dest = new BufferedOutputStream(fos, BUFFER);
+            while ((entry = zis.getNextEntry()) != null) {
+                final File file = new File(extractPath, entry.getName());
+                if (entry.isDirectory()) {
+                    file.mkdirs();
+                    continue;
+                }
+                file.getParentFile().mkdirs();
+                final OutputStream fos = toOutputStream(file);
+                final BufferedOutputStream dest = new BufferedOutputStream(fos, BUFFER);
                 try {
                     int count;
-                    while ((count = zis.read(data, 0, BUFFER)) != -1){dest.write(data,0,count);}
+                    while ((count = zis.read(data, 0, BUFFER)) != -1) {
+                        dest.write(data, 0, count);
+                    }
                     dest.flush();
                 } finally {
                     dest.close();
@@ -716,19 +740,19 @@ public class FileUtilities {
      * @throws IOException
      */
     private static OutputStream toOutputStream(final Object resource)
-            throws IOException{
+            throws IOException {
 
         OutputStream fot = null;
-        if(resource instanceof File){
-            fot = new FileOutputStream((File)resource);
-        } else if(resource instanceof String){
+        if (resource instanceof File) {
+            fot = new FileOutputStream((File) resource);
+        } else if (resource instanceof String) {
             fot = new FileOutputStream(new File((String) resource));
-        } else if (resource instanceof OutputStream){
+        } else if (resource instanceof OutputStream) {
             fot = (OutputStream) resource;
-        } else if (resource != null){
-            throw new IllegalArgumentException("This argument must be instance of File, " +
-                    "String (representing a path) or OutputStream.");
-        } else{
+        } else if (resource != null) {
+            throw new IllegalArgumentException("This argument must be instance of File, "
+                    + "String (representing a path) or OutputStream.");
+        } else {
             throw new NullPointerException("This argument cannot be null.");
         }
         return fot;
@@ -745,23 +769,23 @@ public class FileUtilities {
      * @throws IOException
      */
     private static InputStream toInputStream(final Object resource)
-            throws IOException{
+            throws IOException {
 
         InputStream fit = null;
-        if(resource instanceof File){
-            fit = new FileInputStream((File)resource);
-        } else if(resource instanceof URL){
-            fit = ((URL)resource).openStream();
-        } else if(resource instanceof URI){
-            fit = ((URI)resource).toURL().openStream();
-        } else if(resource instanceof String){
+        if (resource instanceof File) {
+            fit = new FileInputStream((File) resource);
+        } else if (resource instanceof URL) {
+            fit = ((URL) resource).openStream();
+        } else if (resource instanceof URI) {
+            fit = ((URI) resource).toURL().openStream();
+        } else if (resource instanceof String) {
             fit = new FileInputStream(new File((String) resource));
-        } else if(resource instanceof InputStream){
+        } else if (resource instanceof InputStream) {
             fit = (InputStream) resource;
-        } else if (resource != null){
-            throw new IllegalArgumentException("This argument must be instance of File, " +
-                    "String (representing a path), URL, URI or InputStream.");
-        } else{
+        } else if (resource != null) {
+            throw new IllegalArgumentException("This argument must be instance of File, "
+                    + "String (representing a path), URL, URI or InputStream.");
+        } else {
             throw new NullPointerException("This argument cannot be null.");
         }
         return fit;
@@ -776,16 +800,16 @@ public class FileUtilities {
      * @throws MalformedURLException
      */
     private static String getPath(final Object resource)
-            throws MalformedURLException{
+            throws MalformedURLException {
 
         String extractPath = null;
-        if(resource instanceof File){
+        if (resource instanceof File) {
             extractPath = ((File) resource).getPath();
-        } else if (resource instanceof URL){
+        } else if (resource instanceof URL) {
             extractPath = ((URL) resource).getPath();
-        } else if (resource instanceof URI){
+        } else if (resource instanceof URI) {
             extractPath = (((URI) resource).toURL()).getPath();
-        } else if (resource instanceof String){
+        } else if (resource instanceof String) {
             extractPath = (String) resource;
         }
         return extractPath;
@@ -801,14 +825,14 @@ public class FileUtilities {
      * @throws MalformedURLException
      */
     private static String getParent(final Object resource)
-            throws MalformedURLException{
+            throws MalformedURLException {
 
         String extractPath = null;
-        if(resource instanceof File){
+        if (resource instanceof File) {
             extractPath = ((File) resource).getParent();
         } else {
             extractPath = getPath(resource);
-            extractPath = extractPath.substring(0, extractPath.lastIndexOf(File.separator)+1);
+            extractPath = extractPath.substring(0, extractPath.lastIndexOf(File.separator) + 1);
         }
         return extractPath;
     }
@@ -823,16 +847,15 @@ public class FileUtilities {
      * @throws MalformedURLException
      */
     private static String getFileName(final Object resource)
-            throws MalformedURLException{
+            throws MalformedURLException {
 
         String fileName = null;
-        if(resource instanceof File){
+        if (resource instanceof File) {
             fileName = ((File) resource).getName();
-        }  else {
+        } else {
             fileName = getPath(resource);
-            fileName = fileName.substring(fileName.lastIndexOf(File.separator)+1, fileName.length());
+            fileName = fileName.substring(fileName.lastIndexOf(File.separator) + 1, fileName.length());
         }
         return fileName;
     }
-
 }

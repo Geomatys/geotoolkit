@@ -53,33 +53,13 @@ import org.geotoolkit.ows.xml.v110.DatasetDescriptionSummaryBaseType;
     "tileMatrixSet"
 })
 @XmlRootElement(name="ContentsType")
-public class ContentsType
-    extends ContentsBaseType
-{
+public class ContentsType extends ContentsBaseType {
 
     @XmlElement(name = "TileMatrixSet")
-    protected List<TileMatrixSet> tileMatrixSet;
+    private List<TileMatrixSet> tileMatrixSet;
 
     /**
      * A description of the geometry of a tile cut Gets the value of the tileMatrixSet property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the tileMatrixSet property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getTileMatrixSet().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link TileMatrixSet }
-     * 
      * 
      */
     public List<TileMatrixSet> getTileMatrixSet() {
@@ -98,6 +78,14 @@ public class ContentsType
             }
         }
         return layers;
+    }
+
+    public void setLayers(List<LayerType> layers) {
+        final ObjectFactory factory = new ObjectFactory();
+        this.datasetDescriptionSummary = new ArrayList<JAXBElement<? extends DatasetDescriptionSummaryBaseType>>(layers.size());
+        for (LayerType elem : layers) {
+            this.datasetDescriptionSummary.add(factory.createLayer(elem));
+        }
     }
 
 }

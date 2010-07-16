@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2008 - 2009, Geomatys
+ *    (C) 2008 - 2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.wmts.xml.v100;
 
-import java.math.BigInteger;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -62,19 +61,19 @@ import javax.xml.bind.annotation.XmlType;
 public class GetFeatureInfo {
 
     @XmlElement(name = "GetTile", required = true)
-    protected GetTile getTile;
+    private GetTile getTile;
     @XmlElement(name = "J", required = true)
     @XmlSchemaType(name = "nonNegativeInteger")
-    protected BigInteger j;
+    private Integer j;
     @XmlElement(name = "I", required = true)
     @XmlSchemaType(name = "nonNegativeInteger")
-    protected BigInteger i;
+    private Integer i;
     @XmlElement(name = "InfoFormat", required = true)
-    protected String infoFormat;
+    private String infoFormat;
     @XmlAttribute(required = true)
-    protected String service;
+    private String service;
     @XmlAttribute(required = true)
-    protected String version;
+    private String version;
 
     /**
      * The corresponding GetTile request parameters
@@ -105,10 +104,10 @@ public class GetFeatureInfo {
      * 
      * @return
      *     possible object is
-     *     {@link BigInteger }
+     *     {@link Integer }
      *     
      */
-    public BigInteger getJ() {
+    public Integer getJ() {
         return j;
     }
 
@@ -117,10 +116,10 @@ public class GetFeatureInfo {
      * 
      * @param value
      *     allowed object is
-     *     {@link BigInteger }
+     *     {@link Integer }
      *     
      */
-    public void setJ(BigInteger value) {
+    public void setJ(Integer value) {
         this.j = value;
     }
 
@@ -129,10 +128,10 @@ public class GetFeatureInfo {
      * 
      * @return
      *     possible object is
-     *     {@link BigInteger }
+     *     {@link Integer }
      *     
      */
-    public BigInteger getI() {
+    public Integer getI() {
         return i;
     }
 
@@ -141,10 +140,10 @@ public class GetFeatureInfo {
      * 
      * @param value
      *     allowed object is
-     *     {@link BigInteger }
+     *     {@link Integer }
      *     
      */
-    public void setI(BigInteger value) {
+    public void setI(Integer value) {
         this.i = value;
     }
 

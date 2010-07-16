@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2008 - 2009, Geomatys
+ *    (C) 2008 - 2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -50,9 +50,9 @@ import javax.xml.bind.annotation.XmlValue;
 public class DimensionNameValue {
 
     @XmlValue
-    protected String value;
+    private String value;
     @XmlAttribute(required = true)
-    protected String name;
+    private String name;
 
     /**
      * Gets the value of the value property.

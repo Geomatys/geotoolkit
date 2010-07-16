@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2008 - 2009, Geomatys
+ *    (C) 2008 - 2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -63,22 +63,39 @@ import org.geotoolkit.ows.xml.v110.DomainMetadataType;
     "value"
 })
 @XmlRootElement(name = "Dimension")
-public class Dimension
-    extends DescriptionType
-{
+public class Dimension extends DescriptionType {
 
     @XmlElement(name = "Identifier", namespace = "http://www.opengis.net/ows/1.1", required = true)
-    protected CodeType identifier;
+    private CodeType identifier;
     @XmlElement(name = "UOM", namespace = "http://www.opengis.net/ows/1.1")
-    protected DomainMetadataType uom;
+    private DomainMetadataType uom;
     @XmlElement(name = "UnitSymbol")
-    protected String unitSymbol;
+    private String unitSymbol;
     @XmlElement(name = "Default")
-    protected String _default;
+    private String _default;
     @XmlElement(name = "Current")
-    protected String current;
+    private String current;
     @XmlElement(name = "Value", required = true)
-    protected List<String> value;
+    private List<String> value;
+
+    public Dimension() {
+
+    }
+
+    public Dimension(String identifier, String unit, String _default) {
+        this.identifier = new CodeType(identifier);
+        this.unitSymbol = unit;
+        this._default   = _default;
+
+    }
+
+    public Dimension(String identifier, String unit, String _default, String value) {
+        this.identifier = new CodeType(identifier);
+        this.unitSymbol = unit;
+        this._default   = _default;
+        this.value = new ArrayList<String>();
+        this.value.add(value);
+    }
 
     /**
      * A name of dimensional axis
@@ -202,31 +219,23 @@ public class Dimension
 
     /**
      * Gets the value of the value property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the value property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getValue().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link String }
-     * 
-     * 
      */
     public List<String> getValue() {
         if (value == null) {
             value = new ArrayList<String>();
         }
         return this.value;
+    }
+
+    public void setValue(List<String> value) {
+        this.value = value;
+    }
+
+    public void setValue(String value) {
+        if (this.value == null) {
+            this.value = new ArrayList<String>();
+        }
+        this.value.add(value);
     }
 
 }

@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2008 - 2009, Geomatys
+ *    (C) 2008 - 2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -59,33 +59,16 @@ import org.geotoolkit.ows.xml.v110.Operation;
 public class Operations {
 
     @XmlElement(name = "Operation", namespace = "http://www.opengis.net/ows/1.1", required = true)
-    protected List<Operation> operation;
+    private List<Operation> operation;
     @XmlElement(name = "Parameter")
-    protected List<DomainType> parameter;
+    private List<DomainType> parameter;
     @XmlElement(name = "Constraint")
-    protected List<DomainType> constraint;
+    private List<DomainType> constraint;
 
     /**
-     * Metadata for unordered list of all the (requests for) operations that this resource. The list of required and optional operations implemented for this service. Gets the value of the operation property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the operation property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getOperation().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link Operation }
-     * 
-     * 
+     * Metadata for unordered list of all the (requests for) operations that this resource. 
+     * The list of required and optional operations implemented for this service.
+     * Gets the value of the operation property.
      */
     public List<Operation> getOperation() {
         if (operation == null) {
@@ -96,25 +79,6 @@ public class Operations {
 
     /**
      * Gets the value of the parameter property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the parameter property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getParameter().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link DomainType }
-     * 
-     * 
      */
     public List<DomainType> getParameter() {
         if (parameter == null) {
@@ -125,25 +89,6 @@ public class Operations {
 
     /**
      * Gets the value of the constraint property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the constraint property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getConstraint().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link DomainType }
-     * 
-     * 
      */
     public List<DomainType> getConstraint() {
         if (constraint == null) {
