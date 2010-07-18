@@ -336,7 +336,8 @@ final class NewGridCoverageDetails extends WindowCreator implements CoverageData
         try {
             wait();
         } catch (InterruptedException e) {
-            // This happen if the CoverateList frame has been made inactive.
+            // This happen if the CoverageList frame has been closed
+            // by CoverageList.Listeners.ancestorRemoved(AncestorEvent).
             throw new DatabaseVetoException(e);
         }
         /*

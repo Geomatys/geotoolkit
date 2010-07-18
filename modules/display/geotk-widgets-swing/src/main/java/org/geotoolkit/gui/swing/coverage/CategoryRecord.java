@@ -236,6 +236,8 @@ public class CategoryRecord implements Cloneable, Serializable {
                     warning("getCategory", e.toString());
                     // Leave 'colors' to null, which let Category chooses a default value.
                 }
+            } else {
+                colors = new Color[] {new Color(0,0,0,0)};
             }
             MathTransform1D sampleToGeophysics = null;
             if (functionType != NONE) {

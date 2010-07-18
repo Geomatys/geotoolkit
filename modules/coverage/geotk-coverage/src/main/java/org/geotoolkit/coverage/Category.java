@@ -210,7 +210,8 @@ public class Category implements Serializable {
      * @param  sample  The sample value as a boolean.
      */
     public Category(final CharSequence name, final Color color, final boolean sample) {
-        this(name, toArray(color), sample ? BYTE_0 : BYTE_1, LinearTransform1D.IDENTITY);
+        this(name, new int[] {color != null ? color.getRGB() : sample ? 0xFFFFFFFF : 0xFF000000},
+                sample ? BYTE_0 : BYTE_1, LinearTransform1D.IDENTITY);
     }
 
     /**
@@ -234,7 +235,7 @@ public class Category implements Serializable {
      * @param  sample  The sample value as a double. May be one of {@code NaN} values.
      */
     public Category(final CharSequence name, final Color color, final double sample) {
-        this(name, toARGB(color, (int) sample), Double.valueOf(sample));
+        this(name, toARGB(color, (int) Math.round(sample)), Double.valueOf(sample));
         assert Double.doubleToRawLongBits(minimum) == Double.doubleToRawLongBits(sample) : minimum;
         assert Double.doubleToRawLongBits(maximum) == Double.doubleToRawLongBits(sample) : maximum;
     }
@@ -250,7 +251,7 @@ public class Category implements Serializable {
     }
 
     /**
-     * Constructs a quantitative category for samples in the specified range.
+     * Constructs a qualitative category for samples in the specified range.
      *
      * @param name
      *          The category name as a {@link String} or {@link InternationalString} object.
@@ -264,7 +265,7 @@ public class Category implements Serializable {
     public Category(final CharSequence name, final Color color, final NumberRange<?> sampleValueRange)
             throws IllegalArgumentException
     {
-        this(name, toArray(color), sampleValueRange, (MathTransform1D) null);
+        this(name, toARGB(color, sampleValueRange), sampleValueRange, (MathTransform1D) null);
     }
 
     /**
@@ -425,7 +426,8 @@ public class Category implements Serializable {
                     final NumberRange<?>  sampleValueRange,
                     final MathTransform1D sampleToGeophysics) throws IllegalArgumentException
     {
-        this(name, toARGB(colors), sampleValueRange, sampleToGeophysics);
+        this(name, (colors == null && sampleToGeophysics == null) ? NODATA.ARGB :
+                toARGB(colors), sampleValueRange, sampleToGeophysics);
     }
 
     /**
@@ -624,14 +626,7 @@ public class Category implements Serializable {
     }
 
     /**
-     * Returns the given color in an array of length 1, or {@code null} if {@code color} is null.
-     */
-    private static Color[] toArray(final Color color) {
-        return (color != null) ? new Color[] {color} : null;
-    }
-
-    /**
-     * Convert an array of colors to an array of ARGB values.
+     * Converts an array of colors to an array of ARGB values.
      * If {@code colors} is null, then a default array will be returned.
      *
      * @param  colors The array of colors to convert (may be null).
@@ -666,6 +661,21 @@ public class Category implements Serializable {
         return new int[] {
             color.getRGB()
         };
+    }
+
+    /**
+     * Returns ARGB values for the specified color. If {@code color}
+     * is null, then a default array of ARGB codes will be returned.
+     */
+    private static int[] toARGB(final Color color, final NumberRange<?> sampleValueRange) {
+        int sample = 0;
+        if (color == null && sampleValueRange != null) {
+            sample = (int) Math.round(sampleValueRange.getMinimum(true));
+            if (sample != Math.round(sampleValueRange.getMaximum(true))) {
+                return DEFAULT;
+            }
+        }
+        return toARGB(color, sample);
     }
 
     /**

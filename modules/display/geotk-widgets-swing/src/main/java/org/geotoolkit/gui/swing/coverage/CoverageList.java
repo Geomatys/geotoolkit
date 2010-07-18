@@ -33,8 +33,6 @@ import java.awt.CardLayout;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -44,6 +42,8 @@ import javax.swing.JSplitPane;
 import javax.swing.JTable;
 import javax.swing.SwingWorker;
 import javax.swing.ListSelectionModel;
+import javax.swing.event.AncestorEvent;
+import javax.swing.event.AncestorListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableCellRenderer;
@@ -224,7 +224,7 @@ public class CoverageList extends JComponent {
          */
         add(BorderLayout.CENTER, pane);
         add(toolbar, BorderLayout.WEST);
-        addPropertyChangeListener("Frame.active", listeners);
+        addAncestorListener(listeners);
     }
 
     /**
@@ -242,7 +242,7 @@ public class CoverageList extends JComponent {
     /**
      * Implement all listeners used by the {@link LayerList} class.
      */
-    private final class Listeners implements ListSelectionListener, ActionListener, PropertyChangeListener {
+    private final class Listeners implements ListSelectionListener, ActionListener, AncestorListener {
         /**
          * The last selected entry. Used in order to detect if the selection changed,
          * in order to avoid unnecessary fetching of image properties.
@@ -302,19 +302,31 @@ public class CoverageList extends JComponent {
         }
 
         /**
-         * Invoked when the frame is made inactive. This method dispose the executor, if any.
-         * Note that a new executor will be created if the frame is made active again.
+         * Not of interest to {@code CoverageList}.
          */
         @Override
-        public void propertyChange(final PropertyChangeEvent event) {
-            if (Boolean.FALSE.equals(event.getNewValue())) {
-                if (executor != null) {
-                    // Use shutdownNow() - not shutdown() - because we need
-                    // InterruptedException to be thrown in the waiting thread.
-                    executor.shutdownNow();
-                    executor = null;
-                }
+        public void ancestorAdded(AncestorEvent event) {
+        }
+
+        /**
+         * Invoked when the frame is closed. This method disposes the executor, if any.
+         * Note that a new executor will be created if the frame is made visible again.
+         */
+        @Override
+        public void ancestorRemoved(AncestorEvent event) {
+            if (executor != null) {
+                // Use shutdownNow() - not shutdown() - because we need
+                // InterruptedException to be thrown in the waiting thread.
+                executor.shutdownNow();
+                executor = null;
             }
+        }
+
+        /**
+         * Not of interest to {@code CoverageList}.
+         */
+        @Override
+        public void ancestorMoved(AncestorEvent event) {
         }
     }
 

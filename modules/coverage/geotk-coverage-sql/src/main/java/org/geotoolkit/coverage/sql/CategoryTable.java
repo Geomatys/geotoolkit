@@ -318,10 +318,9 @@ final class CategoryTable extends Table {
                         if (tf.warning != null) {
                             throw new IllegalUpdateException(tf.warning);
                         }
-                        final NumberRange<?> range = category.getRange();
                         statement.setString(nameIndex, String.valueOf(category.getName()));
-                        statement.setInt(lowerIndex, (int) Math.floor(range.getMinimum(true)));
-                        statement.setInt(upperIndex, (int) Math.ceil (range.getMaximum(true)));
+                        statement.setInt(lowerIndex, tf.minimum);
+                        statement.setInt(upperIndex, tf.maximum);
                         if (tf.isQuantitative) {
                             statement.setDouble(c0Index, tf.offset);
                             statement.setDouble(c1Index, tf.scale);
