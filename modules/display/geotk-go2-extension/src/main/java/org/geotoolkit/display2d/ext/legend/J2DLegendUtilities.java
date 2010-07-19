@@ -39,8 +39,10 @@ import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.MutableStyle;
+import org.opengis.style.Description;
 import org.opengis.style.FeatureTypeStyle;
 import org.opengis.style.Rule;
+import org.opengis.util.InternationalString;
 
 
 /**
@@ -233,11 +235,19 @@ public class J2DLegendUtilities {
 
             for(final MutableFeatureTypeStyle fts :style.featureTypeStyles()){
                 for(final MutableRule rule : fts.rules()){
-                    final String title = rule.getDescription().getTitle().toString();
-                    final int width = glyphWidth + GLYPH_SPACE + ruleFontMetric.stringWidth(title);
-                    dim.height += (glyphHeight > ruleFontHeight) ? glyphHeight : ruleFontHeight;
-                    if(dim.width < width) dim.width = width;
-                    dim.height += template.getGapSize();
+                    final Description description = rule.getDescription();
+                    if (description != null) {
+                        final InternationalString titleTmp = description.getTitle();
+                        if (titleTmp != null) {
+                            final String title = titleTmp.toString();
+                            final int width = glyphWidth + GLYPH_SPACE + ruleFontMetric.stringWidth(title);
+                            dim.height += (glyphHeight > ruleFontHeight) ? glyphHeight : ruleFontHeight;
+                            if (dim.width < width) {
+                                dim.width = width;
+                            }
+                            dim.height += template.getGapSize();
+                        }
+                    }
                 }
             }
 
