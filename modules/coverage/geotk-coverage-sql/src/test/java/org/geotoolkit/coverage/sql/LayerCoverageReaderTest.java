@@ -35,7 +35,7 @@ import static org.junit.Assert.*;
  * Tests {@link LayerCoverageReader}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.11
+ * @version 3.14
  *
  * @since 3.10 (derived from Seagis)
  */
@@ -95,12 +95,20 @@ public final class LayerCoverageReaderTest extends CatalogTestBase {
         param.setResolution(0.703125, 0.703125, 0, 0); // Image of size (512, 256).
 
         requireImageData();
-        final GridCoverage2D coverage = (GridCoverage2D) reader.read(0, param);
+        GridCoverage2D coverage = (GridCoverage2D) reader.read(0, param);
         assertEquals(512, coverage.getRenderedImage().getWidth());
         assertEquals(256, coverage.getRenderedImage().getHeight());
         GridCoverageLoaderTest.checkTemperatureCoverage(coverage);
 
         if (SHOW) show(coverage);
+
+        // Read one more time, in order to ensure that recycling LayerCoverageReader work.
+        // Before we fixed this test, we got an "Input not set" exception in such situation.
+        param.setResolution(1.40625, 1.40625, 0, 0);
+        coverage = (GridCoverage2D) reader.read(0, param);
+        assertEquals(256, coverage.getRenderedImage().getWidth());
+        assertEquals(128, coverage.getRenderedImage().getHeight());
+        GridCoverageLoaderTest.checkTemperatureCoverage(coverage);
     }
 
     /**

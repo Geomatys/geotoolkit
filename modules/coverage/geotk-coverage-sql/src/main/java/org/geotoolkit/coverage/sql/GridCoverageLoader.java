@@ -518,6 +518,24 @@ final class GridCoverageLoader extends ImageCoverageReader {
     }
 
     /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void reset() throws CoverageStoreException {
+        entry = null;
+        super.reset();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void dispose() throws CoverageStoreException {
+        entry = null;
+        super.dispose();
+    }
+
+    /**
      * The pool of {@link GridCoverageLoader}.
      *
      * @author Martin Desruisseaux (Geomatys)
