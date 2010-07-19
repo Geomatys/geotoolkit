@@ -200,8 +200,8 @@ public abstract class GridCoverageStore implements Localized {
      * Allows any resources held by this reader or writer to be released. The result of calling
      * any other method subsequent to a call to this method is undefined.
      * <p>
-     * The default implementation invokes {@link #reset()}. Subclass implementations
-     * should ensure that all resources, especially JCBC connections, are released.
+     * Subclass implementations shall ensure that all resources, especially JCBC connections,
+     * are released.
      *
      * @throws CoverageStoreException if an error occurs while disposing resources.
      *
@@ -209,6 +209,7 @@ public abstract class GridCoverageStore implements Localized {
      * @see javax.imageio.ImageWriter#dispose()
      */
     public void dispose() throws CoverageStoreException {
-        reset();
+        locale = null;
+        abortRequested = false;
     }
 }

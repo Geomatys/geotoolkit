@@ -286,7 +286,21 @@ public abstract class GridCoverageReader extends GridCoverageStore {
      */
     @Override
     public void reset() throws CoverageStoreException {
-        super.reset();
         input = null;
+        super.reset();
+    }
+
+    /**
+     * Allows any resources held by this reader to be released. The result of calling
+     * any other method subsequent to a call to this method is undefined.
+     *
+     * @throws CoverageStoreException if an error occurs while disposing resources.
+     *
+     * @see ImageReader#dispose()
+     */
+    @Override
+    public void dispose() throws CoverageStoreException {
+        input = null;
+        super.dispose();
     }
 }

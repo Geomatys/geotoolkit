@@ -566,20 +566,25 @@ COMMENT ON COLUMN "Tiles"."dy" IS 'Amount of pixels to translate along the y axi
 --------------------------------------------------------------------------------------------------
 
 CREATE VIEW "Tiling" AS
- SELECT "series",
+ SELECT "layer",
         "startTime",
         "endTime",
         count("filename") AS "numTiles",
+        (max("dx") - min("dx")) / max("width") + 1 AS "numXTiles",
+        (max("dy") - min("dy")) / max("height") + 1 AS "numYTiles",
         max("width") = min("width") AND max("height") = min("height") AS "uniformSize",
-        min("width") AS "width",
-        min("height") AS "height",
+        max("width") AS "width",
+        max("height") AS "height",
         sqrt("scaleX" * "scaleX" + "shearX" * "shearX") AS "scaleX",
         sqrt("scaleY" * "scaleY" + "shearY" * "shearY") AS "scaleY",
+        CASE WHEN "scaleX" >= 0 THEN min("translateX") ELSE max("translateX") END AS "xOrigin",
+        CASE WHEN "scaleY" >= 0 THEN min("translateY") ELSE max("translateY") END AS "yOrigin",
         "horizontalSRID"
    FROM "Tiles"
    JOIN "GridGeometries" ON "Tiles"."extent" = "GridGeometries".identifier
-  GROUP BY "series", "endTime", "startTime", "horizontalSRID", "scaleX", "scaleY", "shearX", "shearY"
-  ORDER BY "series", "endTime", "scaleX"*"scaleX" + "shearX"*"shearX" + "scaleY"*"scaleY" + "shearY"*"shearY" DESC;
+   JOIN "Series" ON "Tiles".series = "Series".identifier
+  GROUP BY "layer", "endTime", "startTime", "horizontalSRID", "scaleX", "scaleY", "shearX", "shearY"
+  ORDER BY "layer", "endTime", "scaleX"*"scaleX" + "shearX"*"shearX" + "scaleY"*"scaleY" + "shearY"*"shearY" DESC;
 
 ALTER TABLE "Tiling" OWNER TO geoadmin;
 GRANT ALL ON TABLE "Tiling" TO geoadmin;

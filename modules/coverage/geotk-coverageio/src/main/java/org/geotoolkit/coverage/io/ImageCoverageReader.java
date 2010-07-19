@@ -1247,7 +1247,6 @@ public class ImageCoverageReader extends GridCoverageReader {
         }
         imageReader = null;
         helper = null;
-        // Do not invoke super.dispose(), because it would invoke 'reset()'
-        // which duplicate the work we just done.
+        super.dispose();
     }
 }
