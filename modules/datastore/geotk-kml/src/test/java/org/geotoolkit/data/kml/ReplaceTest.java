@@ -30,7 +30,7 @@ import org.geotoolkit.data.kml.model.KmlException;
 import org.geotoolkit.data.kml.model.NetworkLinkControl;
 import org.geotoolkit.data.kml.model.Placemark;
 import org.geotoolkit.data.kml.model.Update;
-import org.geotoolkit.data.kml.xml.KmlModelConstants;
+import org.geotoolkit.data.kml.xml.KmlConstants;
 import org.geotoolkit.data.kml.xml.KmlWriter;
 import org.geotoolkit.xml.DomCompare;
 import org.junit.After;
@@ -84,10 +84,10 @@ public class ReplaceTest {
 
         assertEquals(2, update.getUpdates().size());
         assertTrue(update.getUpdates().get(0) instanceof Placemark);
-        assertEquals("Replace placemark",((Placemark)update.getUpdates().get(0)).getName());
+        assertEquals("Replace placemark",((Placemark)update.getUpdates().get(0)).getFeatureName());
 
         assertTrue(update.getUpdates().get(1) instanceof GroundOverlay);
-        assertEquals("Replace overlay",((GroundOverlay)update.getUpdates().get(1)).getName());
+        assertEquals("Replace overlay",((GroundOverlay)update.getUpdates().get(1)).getFeatureName());
 
     }
 
@@ -100,10 +100,10 @@ public class ReplaceTest {
         final KmlFactory kmlFactory = new DefaultKmlFactory();
 
         final Placemark placemark = kmlFactory.createPlacemark();
-        placemark.setName("Replace placemark");
+        placemark.setFeatureName("Replace placemark");
 
         final GroundOverlay groundOverlay = kmlFactory.createGroundOverlay();
-        groundOverlay.setName("Replace overlay");
+        groundOverlay.setFeatureName("Replace overlay");
 
         URI targetHref = new URI("http://chezmoi.com/tests.kml");
 
@@ -116,7 +116,7 @@ public class ReplaceTest {
 
 
         final Kml kml = kmlFactory.createKml(networkLinkControl, null, null, null);
-        kml.setVersion(KmlModelConstants.URI_KML_2_1);
+        kml.setVersion(KmlConstants.URI_KML_2_1);
 
         File temp = File.createTempFile("testReplace", ".kml");
         temp.deleteOnExit();

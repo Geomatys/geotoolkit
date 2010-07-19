@@ -24,7 +24,7 @@ import java.util.Arrays;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
 import org.geotoolkit.data.kml.model.AbstractFeature;
-import org.geotoolkit.data.kml.model.AltitudeMode;
+import org.geotoolkit.data.kml.model.EnumAltitudeMode;
 import org.geotoolkit.data.kml.model.Coordinates;
 import org.geotoolkit.data.kml.model.Document;
 import org.geotoolkit.data.kml.model.Kml;
@@ -83,7 +83,7 @@ public class LineStringTest {
         assertTrue(feature instanceof Document);
 
         final Document document = (Document) feature;
-        assertEquals("LineString.kml", document.getName());
+        assertEquals("LineString.kml", document.getFeatureName());
         assertTrue(document.getOpen());
 
         assertTrue(document.getView() instanceof LookAt);
@@ -103,7 +103,7 @@ public class LineStringTest {
         final Placemark placemark0 = (Placemark) document.getAbstractFeatures().get(0);
         final Placemark placemark1 = (Placemark) document.getAbstractFeatures().get(1);
 
-        assertEquals("unextruded", placemark0.getName());
+        assertEquals("unextruded", placemark0.getFeatureName());
         assertTrue(placemark0.getAbstractGeometry() instanceof LineString);
         final LineString lineString0 = (LineString) placemark0.getAbstractGeometry();
         assertTrue(lineString0.getExtrude());
@@ -122,12 +122,12 @@ public class LineStringTest {
         assertEquals(37.824322, coordinate01.y, DELTA);
         assertEquals(0, coordinate01.z, DELTA);
 
-        assertEquals("extruded", placemark1.getName());
+        assertEquals("extruded", placemark1.getFeatureName());
         assertTrue(placemark1.getAbstractGeometry() instanceof LineString);
         final LineString lineString1 = (LineString) placemark1.getAbstractGeometry();
         assertTrue(lineString1.getExtrude());
         assertTrue(lineString1.getTessellate());
-        assertEquals(AltitudeMode.RELATIVE_TO_GROUND, lineString1.getAltitudeMode());
+        assertEquals(EnumAltitudeMode.RELATIVE_TO_GROUND, lineString1.getAltitudeMode());
 
         final Coordinates coordinates1 = lineString1.getCoordinateSequence();
         assertEquals(2, coordinates1.size());
@@ -163,14 +163,14 @@ public class LineStringTest {
         final LineString lineString1 = kmlFactory.createLineString(coordinates1);
         lineString1.setExtrude(true);
         lineString1.setTessellate(true);
-        lineString1.setAltitudeMode(AltitudeMode.RELATIVE_TO_GROUND);
+        lineString1.setAltitudeMode(EnumAltitudeMode.RELATIVE_TO_GROUND);
 
         final Placemark placemark0 = kmlFactory.createPlacemark();
-        placemark0.setName("unextruded");
+        placemark0.setFeatureName("unextruded");
         placemark0.setAbstractGeometry(lineString0);
 
         final Placemark placemark1 = kmlFactory.createPlacemark();
-        placemark1.setName("extruded");
+        placemark1.setFeatureName("extruded");
         placemark1.setAbstractGeometry(lineString1);
 
         final LookAt lookAt = kmlFactory.createLookAt();
@@ -182,7 +182,7 @@ public class LineStringTest {
         lookAt.setRange(150);
 
         Document document = kmlFactory.createDocument();
-        document.setName("LineString.kml");
+        document.setFeatureName("LineString.kml");
         document.setOpen(true);
         document.setView(lookAt);
         document.setAbstractFeatures(Arrays.asList((AbstractFeature) placemark0, (AbstractFeature) placemark1));

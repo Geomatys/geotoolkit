@@ -88,7 +88,7 @@ public class ListStyleTest {
         final AbstractFeature feature = kmlObjects.getAbstractFeature();
         assertTrue(feature instanceof Document);
         final Document document = (Document) feature;
-        assertEquals("ListStyle.kml",document.getName());
+        assertEquals("ListStyle.kml",document.getFeatureName());
         assertTrue(document.getOpen());
 
         assertEquals(3, document.getStyleSelectors().size());
@@ -112,14 +112,14 @@ public class ListStyleTest {
         assertTrue(document.getAbstractFeatures().get(0) instanceof Folder);
         final Folder folder = (Folder) document.getAbstractFeatures().get(0);
 
-        assertEquals("ListStyle Examples", folder.getName());
+        assertEquals("ListStyle Examples", folder.getFeatureName());
         assertTrue(folder.getOpen());
 
         assertEquals(3, folder.getAbstractFeatures().size());
 
         assertTrue(folder.getAbstractFeatures().get(0) instanceof Folder);
         final Folder folder0 = (Folder) folder.getAbstractFeatures().get(0);
-        assertEquals("bgColor example", folder0.getName());
+        assertEquals("bgColor example", folder0.getFeatureName());
         assertTrue(folder0.getOpen());
         assertEquals(new URI("#bgColorExample"), folder0.getStyleUrl());
 
@@ -127,7 +127,7 @@ public class ListStyleTest {
 
             assertTrue(folder0.getAbstractFeatures().get(0) instanceof Placemark);
             final Placemark placemark00 = (Placemark) folder0.getAbstractFeatures().get(0);
-            assertEquals("pl1", placemark00.getName());
+            assertEquals("pl1", placemark00.getFeatureName());
             assertTrue(placemark00.getAbstractGeometry() instanceof Point);
             final Coordinates coordinates00 = ((Point) placemark00.getAbstractGeometry()).getCoordinateSequence();
             assertEquals(1, coordinates00.size());
@@ -137,7 +137,7 @@ public class ListStyleTest {
            
             assertTrue(folder0.getAbstractFeatures().get(1) instanceof Placemark);
             final Placemark placemark01 = (Placemark) folder0.getAbstractFeatures().get(1);
-            assertEquals("pl2", placemark01.getName());
+            assertEquals("pl2", placemark01.getFeatureName());
             assertTrue(placemark01.getAbstractGeometry() instanceof Point);
             final Coordinates coordinates01 = ((Point) placemark01.getAbstractGeometry()).getCoordinateSequence();
             assertEquals(1, coordinates01.size());
@@ -147,7 +147,7 @@ public class ListStyleTest {
 
             assertTrue(folder0.getAbstractFeatures().get(2) instanceof Placemark);
             final Placemark placemark02 = (Placemark) folder0.getAbstractFeatures().get(2);
-            assertEquals("pl3", placemark02.getName());
+            assertEquals("pl3", placemark02.getFeatureName());
             assertTrue(placemark02.getAbstractGeometry() instanceof Point);
             final Coordinates coordinates02 = ((Point) placemark02.getAbstractGeometry()).getCoordinateSequence();
             assertEquals(1, coordinates02.size());
@@ -157,7 +157,7 @@ public class ListStyleTest {
 
         assertTrue(folder.getAbstractFeatures().get(1) instanceof Folder);
         final Folder folder1 = (Folder) folder.getAbstractFeatures().get(1);
-        assertEquals("checkHideChildren example", folder1.getName());
+        assertEquals("checkHideChildren example", folder1.getFeatureName());
         assertTrue(folder1.getOpen());
         assertEquals(new URI("#checkHideChildrenExample"), folder1.getStyleUrl());
 
@@ -165,7 +165,7 @@ public class ListStyleTest {
 
             assertTrue(folder1.getAbstractFeatures().get(0) instanceof Placemark);
             final Placemark placemark10 = (Placemark) folder1.getAbstractFeatures().get(0);
-            assertEquals("pl4", placemark10.getName());
+            assertEquals("pl4", placemark10.getFeatureName());
             assertTrue(placemark10.getAbstractGeometry() instanceof Point);
             final Coordinates coordinates10 = ((Point) placemark10.getAbstractGeometry()).getCoordinateSequence();
             assertEquals(1, coordinates10.size());
@@ -175,7 +175,7 @@ public class ListStyleTest {
 
             assertTrue(folder1.getAbstractFeatures().get(1) instanceof Placemark);
             final Placemark placemark11 = (Placemark) folder1.getAbstractFeatures().get(1);
-            assertEquals("pl5", placemark11.getName());
+            assertEquals("pl5", placemark11.getFeatureName());
             assertTrue(placemark11.getAbstractGeometry() instanceof Point);
             final Coordinates coordinates11 = ((Point) placemark11.getAbstractGeometry()).getCoordinateSequence();
             assertEquals(1, coordinates11.size());
@@ -185,7 +185,7 @@ public class ListStyleTest {
 
             assertTrue(folder1.getAbstractFeatures().get(2) instanceof Placemark);
             final Placemark placemark12 = (Placemark) folder1.getAbstractFeatures().get(2);
-            assertEquals("pl6", placemark12.getName());
+            assertEquals("pl6", placemark12.getFeatureName());
             assertTrue(placemark12.getAbstractGeometry() instanceof Point);
             final Coordinates coordinates12 = ((Point) placemark12.getAbstractGeometry()).getCoordinateSequence();
             assertEquals(1, coordinates12.size());
@@ -195,7 +195,7 @@ public class ListStyleTest {
 
         assertTrue(folder.getAbstractFeatures().get(2) instanceof Folder);
         final Folder folder2 = (Folder) folder.getAbstractFeatures().get(2);
-        assertEquals("radioFolder example", folder2.getName());
+        assertEquals("radioFolder example", folder2.getFeatureName());
         assertTrue(folder2.getOpen());
         assertEquals(new URI("#radioFolderExample"), folder2.getStyleUrl());
 
@@ -203,7 +203,7 @@ public class ListStyleTest {
 
             assertTrue(folder2.getAbstractFeatures().get(0) instanceof Placemark);
             final Placemark placemark20 = (Placemark) folder2.getAbstractFeatures().get(0);
-            assertEquals("pl7", placemark20.getName());
+            assertEquals("pl7", placemark20.getFeatureName());
             assertTrue(placemark20.getAbstractGeometry() instanceof Point);
             final Coordinates coordinates20 = ((Point) placemark20.getAbstractGeometry()).getCoordinateSequence();
             assertEquals(1, coordinates20.size());
@@ -213,7 +213,7 @@ public class ListStyleTest {
 
             assertTrue(folder2.getAbstractFeatures().get(1) instanceof Placemark);
             final Placemark placemark21 = (Placemark) folder2.getAbstractFeatures().get(1);
-            assertEquals("pl8", placemark21.getName());
+            assertEquals("pl8", placemark21.getFeatureName());
             assertTrue(placemark21.getAbstractGeometry() instanceof Point);
             final Coordinates coordinates21 = ((Point) placemark21.getAbstractGeometry()).getCoordinateSequence();
             assertEquals(1, coordinates21.size());
@@ -223,7 +223,7 @@ public class ListStyleTest {
 
             assertTrue(folder2.getAbstractFeatures().get(2) instanceof Placemark);
             final Placemark placemark22 = (Placemark) folder2.getAbstractFeatures().get(2);
-            assertEquals("pl9", placemark22.getName());
+            assertEquals("pl9", placemark22.getFeatureName());
             assertTrue(placemark22.getAbstractGeometry() instanceof Point);
             final Coordinates coordinates22 = ((Point) placemark22.getAbstractGeometry()).getCoordinateSequence();
             assertEquals(1, coordinates22.size());
@@ -268,35 +268,35 @@ public class ListStyleTest {
         final Point point22 = kmlFactory.createPoint(coordinates22);
 
         final Placemark placemark00 = kmlFactory.createPlacemark();
-        placemark00.setName("pl1");
+        placemark00.setFeatureName("pl1");
         placemark00.setAbstractGeometry(point00);
             final Placemark placemark01 = kmlFactory.createPlacemark();
-            placemark01.setName("pl2");
+            placemark01.setFeatureName("pl2");
             placemark01.setAbstractGeometry(point01);
         final Placemark placemark02 = kmlFactory.createPlacemark();
-        placemark02.setName("pl3");
+        placemark02.setFeatureName("pl3");
         placemark02.setAbstractGeometry(point02);
             final Placemark placemark10 = kmlFactory.createPlacemark();
-            placemark10.setName("pl4");
+            placemark10.setFeatureName("pl4");
             placemark10.setAbstractGeometry(point10);
         final Placemark placemark11 = kmlFactory.createPlacemark();
-        placemark11.setName("pl5");
+        placemark11.setFeatureName("pl5");
         placemark11.setAbstractGeometry(point11);
             final Placemark placemark12 = kmlFactory.createPlacemark();
-            placemark12.setName("pl6");
+            placemark12.setFeatureName("pl6");
             placemark12.setAbstractGeometry(point12);
         final Placemark placemark20 = kmlFactory.createPlacemark();
-        placemark20.setName("pl7");
+        placemark20.setFeatureName("pl7");
         placemark20.setAbstractGeometry(point20);
             final Placemark placemark21 = kmlFactory.createPlacemark();
-            placemark21.setName("pl8");
+            placemark21.setFeatureName("pl8");
             placemark21.setAbstractGeometry(point21);
         final Placemark placemark22 = kmlFactory.createPlacemark();
-        placemark22.setName("pl9");
+        placemark22.setFeatureName("pl9");
         placemark22.setAbstractGeometry(point22);
 
         final Folder folder0 = kmlFactory.createFolder();
-        folder0.setName("bgColor example");
+        folder0.setFeatureName("bgColor example");
         folder0.setOpen(true);
         folder0.setStyleUrl(new URI("#bgColorExample"));
         folder0.setAbstractFeatures(Arrays.asList(
@@ -304,7 +304,7 @@ public class ListStyleTest {
                 (AbstractFeature) placemark01,
                 (AbstractFeature) placemark02));
         final Folder folder1 = kmlFactory.createFolder();
-        folder1.setName("checkHideChildren example");
+        folder1.setFeatureName("checkHideChildren example");
         folder1.setOpen(true);
         folder1.setStyleUrl(new URI("#checkHideChildrenExample"));
         folder1.setAbstractFeatures(Arrays.asList(
@@ -312,7 +312,7 @@ public class ListStyleTest {
                 (AbstractFeature) placemark11,
                 (AbstractFeature) placemark12));
         final Folder folder2 = kmlFactory.createFolder();
-        folder2.setName("radioFolder example");
+        folder2.setFeatureName("radioFolder example");
         folder2.setOpen(true);
         folder2.setStyleUrl(new URI("#radioFolderExample"));
         folder2.setAbstractFeatures(Arrays.asList(
@@ -321,7 +321,7 @@ public class ListStyleTest {
                 (AbstractFeature) placemark22));
 
         final Folder folder = kmlFactory.createFolder();
-        folder.setName("ListStyle Examples");
+        folder.setFeatureName("ListStyle Examples");
         folder.setOpen(true);
         folder.setAbstractFeatures(Arrays.asList(
                 (AbstractFeature) folder0,
@@ -350,7 +350,7 @@ public class ListStyleTest {
         style3.setIdAttributes(idAttributes3);
 
         final Document document = kmlFactory.createDocument();
-        document.setName("ListStyle.kml");
+        document.setFeatureName("ListStyle.kml");
         document.setOpen(true);
         document.setStyleSelectors(Arrays.asList(
                 (AbstractStyleSelector) style1,

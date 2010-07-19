@@ -20,7 +20,7 @@ import java.awt.Color;
 import java.util.List;
 import org.geotoolkit.data.kml.KmlUtilities;
 import org.geotoolkit.data.kml.xsd.SimpleType;
-import static org.geotoolkit.data.kml.xml.KmlModelConstants.*;
+import static org.geotoolkit.data.kml.xml.KmlConstants.*;
 
 /**
  *

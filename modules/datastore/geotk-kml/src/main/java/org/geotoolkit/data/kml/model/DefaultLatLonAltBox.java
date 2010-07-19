@@ -18,7 +18,7 @@ package org.geotoolkit.data.kml.model;
 
 import java.util.List;
 import org.geotoolkit.data.kml.xsd.SimpleType;
-import static org.geotoolkit.data.kml.xml.KmlModelConstants.*;
+import static org.geotoolkit.data.kml.xml.KmlConstants.*;
 
 /**
  *
@@ -28,7 +28,7 @@ public class DefaultLatLonAltBox extends DefaultAbstractLatLonBox implements Lat
 
     private double minAltitude;
     private double maxAltitude;
-    private AltitudeMode altitudeMode;
+    private EnumAltitudeMode altitudeMode;
 
     /**
      * 
@@ -60,7 +60,7 @@ public class DefaultLatLonAltBox extends DefaultAbstractLatLonBox implements Lat
             double north, double south, double east, double west,
             List<SimpleType> abstractLatLonBoxSimpleExtensions,
             List<AbstractObject> abstractLatLonBoxObjectExtensions,
-            double minAltitude, double maxAltitude, AltitudeMode altitudeMode,
+            double minAltitude, double maxAltitude, EnumAltitudeMode altitudeMode,
             List<SimpleType> latLonAltBoxSimpleExtensions,
             List<AbstractObject> latLonAltBoxObjectExtensions) {
         super(objectSimpleExtensions, idAttributes,
@@ -101,7 +101,7 @@ public class DefaultLatLonAltBox extends DefaultAbstractLatLonBox implements Lat
      * @{@inheritDoc }
      */
     @Override
-    public AltitudeMode getAltitudeMode() {
+    public EnumAltitudeMode getAltitudeMode() {
         return this.altitudeMode;
     }
 
@@ -128,7 +128,7 @@ public class DefaultLatLonAltBox extends DefaultAbstractLatLonBox implements Lat
      * @{@inheritDoc }
      */
     @Override
-    public void setAltitudeMode(AltitudeMode altitudeMode) {
+    public void setAltitudeMode(EnumAltitudeMode altitudeMode) {
         this.altitudeMode = altitudeMode;
     }
 }

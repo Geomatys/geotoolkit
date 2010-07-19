@@ -92,7 +92,7 @@ public class StyleMapTest {
         final AbstractFeature feature = kmlObjects.getAbstractFeature();
         assertTrue(feature instanceof Document);
         final Document document = ((Document) feature);
-        assertEquals("StyleMap.kml", document.getName());
+        assertEquals("StyleMap.kml", document.getFeatureName());
         assertTrue(document.getOpen());
 
         List<AbstractStyleSelector> styleSelectors = document.getStyleSelectors();
@@ -130,7 +130,7 @@ public class StyleMapTest {
         assertEquals(1, document.getAbstractFeatures().size());
         assertTrue(document.getAbstractFeatures().get(0) instanceof Placemark);
         Placemark placemark = (Placemark) document.getAbstractFeatures().get(0);
-        assertEquals("StyleMap example", placemark.getName());
+        assertEquals("StyleMap example", placemark.getFeatureName());
         assertEquals(new URI("#styleMapExample"), placemark.getStyleUrl());
         assertTrue(placemark.getAbstractGeometry() instanceof Point);
         Point point = (Point) placemark.getAbstractGeometry();
@@ -151,7 +151,7 @@ public class StyleMapTest {
         Point point = kmlFactory.createPoint(coordinates);
 
         Placemark placemark = kmlFactory.createPlacemark();
-        placemark.setName("StyleMap example");
+        placemark.setFeatureName("StyleMap example");
         placemark.setStyleUrl(new URI("#styleMapExample"));
         placemark.setAbstractGeometry(point);
 
@@ -199,7 +199,7 @@ public class StyleMapTest {
                 (AbstractStyleSelector) style1,
                 (AbstractStyleSelector) styleMap));
         document.setAbstractFeatures(Arrays.asList((AbstractFeature) placemark));
-        document.setName("StyleMap.kml");
+        document.setFeatureName("StyleMap.kml");
         document.setOpen(true);
 
         final Kml kml = kmlFactory.createKml(null, document, null, null);

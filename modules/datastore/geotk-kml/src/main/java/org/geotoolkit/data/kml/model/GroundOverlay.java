@@ -66,7 +66,7 @@ public interface GroundOverlay extends AbstractOverlay {
      *
      * @return
      */
-    public AltitudeMode getAltitudeMode();
+    public EnumAltitudeMode getAltitudeMode();
 
     /**
      *
@@ -84,7 +84,7 @@ public interface GroundOverlay extends AbstractOverlay {
      *
      * @param altitudeMode
      */
-    public void setAltitudeMode(AltitudeMode altitudeMode);
+    public void setAltitudeMode(EnumAltitudeMode altitudeMode);
 
     /**
      *

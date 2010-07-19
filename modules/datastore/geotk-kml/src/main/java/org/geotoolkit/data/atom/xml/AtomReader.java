@@ -27,7 +27,7 @@ import org.geotoolkit.data.atom.DefaultAtomFactory;
 import org.geotoolkit.data.atom.model.AtomLink;
 import org.geotoolkit.data.atom.model.AtomPersonConstruct;
 import org.geotoolkit.xml.StaxStreamReader;
-import static org.geotoolkit.data.atom.xml.AtomModelConstants.*;
+import static org.geotoolkit.data.atom.xml.AtomConstants.*;
 
 /**
  *

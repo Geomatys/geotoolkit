@@ -21,7 +21,7 @@ import java.util.List;
 import org.geotoolkit.data.atom.model.AtomPersonConstruct;
 import org.geotoolkit.data.atom.model.AtomLink;
 import org.geotoolkit.data.kml.xsd.Cdata;
-import org.geotoolkit.data.xal.model.AddressDetails;
+import org.geotoolkit.xal.model.AddressDetails;
 
 /**
  * <p>This interface maps AbstractFeatureGroup element.</p>
@@ -80,7 +80,7 @@ public interface AbstractFeature extends AbstractObject {
      *
      * @return The AbstractFeature name.
      */
-    public String getName();
+    public String getFeatureName();
 
     /**
      *
@@ -176,7 +176,7 @@ public interface AbstractFeature extends AbstractObject {
      * 
      * @param name
      */
-    public void setName(String name);
+    public void setFeatureName(String name);
 
     /**
      *

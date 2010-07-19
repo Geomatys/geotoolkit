@@ -78,7 +78,7 @@ public class DataTest {
         final AbstractFeature feature = kmlObjects.getAbstractFeature();
         assertTrue(feature instanceof Placemark);
         Placemark placemark = (Placemark) feature;
-        assertEquals("Club house", placemark.getName());
+        assertEquals("Club house", placemark.getFeatureName());
 
         final Object  dataContainer = placemark.getExtendedData();
         assertTrue(dataContainer instanceof ExtendedData);
@@ -120,7 +120,7 @@ public class DataTest {
 
         extendedData.setDatas(Arrays.asList(data0, data1, data2));
 
-        placemark.setName("Club house");
+        placemark.setFeatureName("Club house");
         placemark.setExtendedData(extendedData);
 
         final Kml kml = kmlFactory.createKml(null, placemark, null, null);

@@ -19,7 +19,7 @@ package org.geotoolkit.data.kml.model;
 import java.util.List;
 import org.geotoolkit.data.kml.KmlUtilities;
 import org.geotoolkit.data.kml.xsd.SimpleType;
-import static org.geotoolkit.data.kml.xml.KmlModelConstants.*;
+import static org.geotoolkit.data.kml.xml.KmlConstants.*;
 
 /**
  *
@@ -33,7 +33,7 @@ public class DefaultCamera extends DefaultAbstractView implements Camera {
     private double heading;
     private double tilt;
     private double roll;
-    private AltitudeMode altitudeMode;
+    private EnumAltitudeMode altitudeMode;
 
     /**
      *
@@ -69,7 +69,7 @@ public class DefaultCamera extends DefaultAbstractView implements Camera {
             List<SimpleType> abstractViewSimpleExtensions,
             List<AbstractObject> abstractViewObjectExtensions,
             double longitude, double latitude, double altitude,
-            double heading, double tilt, double roll, AltitudeMode altitudeMode,
+            double heading, double tilt, double roll, EnumAltitudeMode altitudeMode,
             List<SimpleType> cameraSimpleExtensions,
             List<AbstractObject> cameraObjectExtensions) {
         super(objectSimpleExtensions, idAttributes,
@@ -149,7 +149,7 @@ public class DefaultCamera extends DefaultAbstractView implements Camera {
      * @{@inheritDoc }
      */
     @Override
-    public AltitudeMode getAltitudeMode() {
+    public EnumAltitudeMode getAltitudeMode() {
         return this.altitudeMode;
     }
 
@@ -212,7 +212,7 @@ public class DefaultCamera extends DefaultAbstractView implements Camera {
      * @{@inheritDoc }
      */
     @Override
-    public void setAltitudeMode(AltitudeMode altitudeMode) {
+    public void setAltitudeMode(EnumAltitudeMode altitudeMode) {
         this.altitudeMode = altitudeMode;
     }
 }

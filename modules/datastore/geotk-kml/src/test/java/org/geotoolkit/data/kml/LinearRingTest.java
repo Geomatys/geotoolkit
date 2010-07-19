@@ -81,7 +81,7 @@ public class LinearRingTest {
         final AbstractFeature feature = kmlObjects.getAbstractFeature();
         assertTrue(feature instanceof Placemark);
         final Placemark placemark = (Placemark) feature;
-        assertEquals("LinearRing.kml", placemark.getName());
+        assertEquals("LinearRing.kml", placemark.getFeatureName());
         assertTrue(placemark.getAbstractGeometry() instanceof Polygon);
         final Boundary outerBoundaryIs = ((Polygon) placemark.getAbstractGeometry()).getOuterBoundary();
         final LinearRing linearRing = outerBoundaryIs.getLinearRing();
@@ -139,7 +139,7 @@ public class LinearRingTest {
         final Polygon polygon = kmlFactory.createPolygon(outerBoundaryIs, null);
 
         final Placemark placemark = kmlFactory.createPlacemark();
-        placemark.setName("LinearRing.kml");
+        placemark.setFeatureName("LinearRing.kml");
         placemark.setAbstractGeometry(polygon);
 
         final Kml kml = kmlFactory.createKml(null, placemark, null, null);

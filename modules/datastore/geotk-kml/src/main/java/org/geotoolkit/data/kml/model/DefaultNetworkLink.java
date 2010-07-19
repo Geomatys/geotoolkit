@@ -21,8 +21,8 @@ import java.util.List;
 import org.geotoolkit.data.atom.model.AtomLink;
 import org.geotoolkit.data.atom.model.AtomPersonConstruct;
 import org.geotoolkit.data.kml.xsd.SimpleType;
-import org.geotoolkit.data.xal.model.AddressDetails;
-import static org.geotoolkit.data.kml.xml.KmlModelConstants.*;
+import org.geotoolkit.xal.model.AddressDetails;
+import static org.geotoolkit.data.kml.xml.KmlConstants.*;
 
 /**
  *
@@ -38,6 +38,7 @@ public class DefaultNetworkLink extends DefaultAbstractFeature implements Networ
      * 
      */
     public DefaultNetworkLink() {
+        super(KmlModelConstants.TYPE_KML_ENTITY);
         this.refreshVisibility = DEF_REFRESH_VISIBILITY;
         this.flyToView = DEF_FLY_TO_VIEW;
     }
@@ -85,7 +86,8 @@ public class DefaultNetworkLink extends DefaultAbstractFeature implements Networ
             boolean refreshVisibility, boolean flyToView, Link link,
             List<SimpleType> networkLinkSimpleExtensions,
             List<AbstractObject> networkLinkObjectExtensions) {
-        super(objectSimpleExtensions, idAttributes,
+        super(KmlModelConstants.TYPE_KML_ENTITY,
+                objectSimpleExtensions, idAttributes,
                 name, visibility, open,
                 author, atomLink,
                 address, addressDetails,

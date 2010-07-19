@@ -77,7 +77,7 @@ public class RegionTest {
         final AbstractFeature feature = kmlObjects.getAbstractFeature();
         assertTrue(feature instanceof Placemark);
         final Placemark placemark = (Placemark) feature;
-        assertEquals("Colorado", placemark.getName());
+        assertEquals("Colorado", placemark.getFeatureName());
         final Region region = placemark.getRegion();
         final LatLonAltBox latLonAltBox = region.getLatLonAltBox();
         assertEquals(50.625, latLonAltBox.getNorth(), DELTA);
@@ -116,7 +116,7 @@ public class RegionTest {
 
         final Placemark placemark = kmlFactory.createPlacemark();
         placemark.setRegion(region);
-        placemark.setName("Colorado");
+        placemark.setFeatureName("Colorado");
 
         final Kml kml = kmlFactory.createKml(null, placemark, null, null);
 

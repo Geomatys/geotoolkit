@@ -78,7 +78,7 @@ public class TimeSpanTest {
         final AbstractFeature feature = kmlObjects.getAbstractFeature();
         assertTrue(feature instanceof Placemark);
         Placemark placemark = (Placemark) feature;
-        assertEquals("Colorado", placemark.getName());
+        assertEquals("Colorado", placemark.getFeatureName());
 
         assertTrue(placemark.getTimePrimitive() instanceof TimeSpan);
         TimeSpan timeSpan = (TimeSpan) placemark.getTimePrimitive();
@@ -108,7 +108,7 @@ public class TimeSpanTest {
         timeSpan.setBegin(begin);
 
         Placemark placemark = kmlFactory.createPlacemark();
-        placemark.setName("Colorado");
+        placemark.setFeatureName("Colorado");
         placemark.setTimePrimitive(timeSpan);
         final Kml kml = kmlFactory.createKml(null, placemark, null, null);
 

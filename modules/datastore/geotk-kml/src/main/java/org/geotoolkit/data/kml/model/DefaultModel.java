@@ -18,7 +18,7 @@ package org.geotoolkit.data.kml.model;
 
 import java.util.List;
 import org.geotoolkit.data.kml.xsd.SimpleType;
-import static org.geotoolkit.data.kml.xml.KmlModelConstants.*;
+import static org.geotoolkit.data.kml.xml.KmlConstants.*;
 
 /**
  *
@@ -27,7 +27,7 @@ import static org.geotoolkit.data.kml.xml.KmlModelConstants.*;
 public class DefaultModel extends DefaultAbstractGeometry implements Model {
 
     private final Extensions exts = new Extensions();
-    private AltitudeMode altitudeMode;
+    private EnumAltitudeMode altitudeMode;
     private Location location;
     private Orientation orientation;
     private Scale scale;
@@ -57,7 +57,7 @@ public class DefaultModel extends DefaultAbstractGeometry implements Model {
             IdAttributes idAttributes,
             List<SimpleType> abstractGeometrySimpleExtensions,
             List<AbstractObject> abstractGeometryObjectExtensions,
-            AltitudeMode altitudeMode, Location location, Orientation orientation,
+            EnumAltitudeMode altitudeMode, Location location, Orientation orientation,
             Scale scale, Link link, ResourceMap resourceMap,
             List<SimpleType> modelSimpleExtensions,
             List<AbstractObject> modelObjectExtensions) {
@@ -83,7 +83,7 @@ public class DefaultModel extends DefaultAbstractGeometry implements Model {
      * @{@inheritDoc }
      */
     @Override
-    public AltitudeMode getAltitudeMode() {
+    public EnumAltitudeMode getAltitudeMode() {
         return this.altitudeMode;
     }
 
@@ -137,7 +137,7 @@ public class DefaultModel extends DefaultAbstractGeometry implements Model {
      * @{@inheritDoc }
      */
     @Override
-    public void setAltitudeMode(AltitudeMode altitudeMode) {
+    public void setAltitudeMode(EnumAltitudeMode altitudeMode) {
         this.altitudeMode = altitudeMode;
     }
 

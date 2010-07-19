@@ -25,7 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
-import org.geotoolkit.data.atom.xml.AtomModelConstants;
+import org.geotoolkit.data.atom.xml.AtomConstants;
 import org.geotoolkit.data.atom.model.AtomEmail;
 import org.geotoolkit.data.atom.model.AtomPersonConstruct;
 import org.geotoolkit.xml.DomCompare;
@@ -98,7 +98,7 @@ public class AtomAuthorTest {
         AtomWriter writer = new AtomWriter();
         writer.setOutput(temp);
         writer.getWriter().writeStartDocument("UTF-8", "1.0");
-        writer.getWriter().setDefaultNamespace(AtomModelConstants.URI_ATOM);
+        writer.getWriter().setDefaultNamespace(AtomConstants.URI_ATOM);
 
         writer.writeAuthor(author);
 

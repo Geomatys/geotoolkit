@@ -19,7 +19,7 @@ package org.geotoolkit.data.kml.model;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import java.util.List;
 import org.geotoolkit.data.kml.xsd.SimpleType;
-import static org.geotoolkit.data.kml.xml.KmlModelConstants.*;
+import static org.geotoolkit.data.kml.xml.KmlConstants.*;
 
 /**
  *
@@ -31,7 +31,7 @@ public class DefaultLinearRing extends com.vividsolutions.jts.geom.LinearRing im
     private final Extensions exts = new Extensions();
     private boolean extrude;
     private boolean tessellate;
-    private AltitudeMode altitudeMode;
+    private EnumAltitudeMode altitudeMode;
 
     /**
      *
@@ -64,7 +64,7 @@ public class DefaultLinearRing extends com.vividsolutions.jts.geom.LinearRing im
             List<SimpleType> abstractGeometrySimpleExtensions,
             List<AbstractObject> abstractGeometryObjectExtensions,
             boolean extrude, boolean tessellate,
-            AltitudeMode altitudeMode,
+            EnumAltitudeMode altitudeMode,
             Coordinates coordinates,
             List<SimpleType> lineStringSimpleExtensions,
             List<AbstractObject> lineStringObjectExtensions,
@@ -115,7 +115,7 @@ public class DefaultLinearRing extends com.vividsolutions.jts.geom.LinearRing im
      * @{@inheritDoc }
      */
     @Override
-    public AltitudeMode getAltitudeMode() {
+    public EnumAltitudeMode getAltitudeMode() {
         return this.altitudeMode;
     }
 
@@ -151,7 +151,7 @@ public class DefaultLinearRing extends com.vividsolutions.jts.geom.LinearRing im
      * @{@inheritDoc }
      */
     @Override
-    public void setAltitudeMode(AltitudeMode altitudeMode) {
+    public void setAltitudeMode(EnumAltitudeMode altitudeMode) {
         this.altitudeMode = altitudeMode;
     }
 

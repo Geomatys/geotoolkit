@@ -25,7 +25,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
 import org.geotoolkit.data.kml.model.AbstractFeature;
 import org.geotoolkit.data.kml.model.Alias;
-import org.geotoolkit.data.kml.model.AltitudeMode;
+import org.geotoolkit.data.kml.model.EnumAltitudeMode;
 import org.geotoolkit.data.kml.model.IdAttributes;
 import org.geotoolkit.data.kml.model.Kml;
 import org.geotoolkit.data.kml.model.KmlException;
@@ -87,12 +87,12 @@ public class ModelTest {
         final AbstractFeature feature = kmlObjects.getAbstractFeature();
         assertTrue(feature instanceof Placemark);
         final Placemark placemark = (Placemark) feature;
-        assertEquals("Colorado", placemark.getName());
+        assertEquals("Colorado", placemark.getFeatureName());
         assertTrue(placemark.getAbstractGeometry() instanceof Model);
 
         final Model model = (Model) placemark.getAbstractGeometry();
         assertEquals("khModel543", model.getIdAttributes().getId());
-        assertEquals(AltitudeMode.RELATIVE_TO_GROUND, model.getAltitudeMode());
+        assertEquals(EnumAltitudeMode.RELATIVE_TO_GROUND, model.getAltitudeMode());
 
         final Location location = model.getLocation();
         assertEquals(39.55375305703105, location.getLongitude(), DELTA);
@@ -170,7 +170,7 @@ public class ModelTest {
         final Model model = kmlFactory.createModel();
         final IdAttributes idAttributes = kmlFactory.createIdAttributes("khModel543", null);
         model.setIdAttributes(idAttributes);
-        model.setAltitudeMode(AltitudeMode.RELATIVE_TO_GROUND);
+        model.setAltitudeMode(EnumAltitudeMode.RELATIVE_TO_GROUND);
         model.setLocation(location);
         model.setOrientation(orientation);
         model.setScale(scale);
@@ -178,7 +178,7 @@ public class ModelTest {
         model.setRessourceMap(resourceMap);
         
         final Placemark placemark = kmlFactory.createPlacemark();
-        placemark.setName("Colorado");
+        placemark.setFeatureName("Colorado");
         placemark.setAbstractGeometry(model);
 
 

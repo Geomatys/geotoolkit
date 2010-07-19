@@ -21,7 +21,7 @@ import java.util.List;
 import org.geotoolkit.data.kml.xsd.SimpleType;
 import org.geotoolkit.data.atom.model.AtomPersonConstruct;
 import org.geotoolkit.data.atom.model.AtomLink;
-import org.geotoolkit.data.xal.model.AddressDetails;
+import org.geotoolkit.xal.model.AddressDetails;
 import static java.util.Collections.*;
 
 /**
@@ -37,6 +37,7 @@ public class DefaultDocument extends DefaultAbstractContainer implements Documen
      * 
      */
     public DefaultDocument() {
+        super(KmlModelConstants.TYPE_DOCUMENT);
         this.schemas = EMPTY_LIST;
         this.features = EMPTY_LIST;
     }
@@ -89,7 +90,7 @@ public class DefaultDocument extends DefaultAbstractContainer implements Documen
             List<SimpleType> documentSimpleExtensions,
             List<AbstractObject> documentObjectExtensions) {
 
-        super(objectSimpleExtensions, idAttributes,
+        super(KmlModelConstants.TYPE_DOCUMENT, objectSimpleExtensions, idAttributes,
                 name, visibility, open,
                 author, atomLink,
                 address, addressDetails,

@@ -83,7 +83,7 @@ public class MetadataTest {
         assertTrue(feature instanceof Document);
 
         final Document document = (Document) feature;
-        assertEquals("Document.kml", document.getName());
+        assertEquals("Document.kml", document.getFeatureName());
         assertTrue(document.getOpen());
         assertEquals(2,document.getAbstractFeatures().size());
 
@@ -117,7 +117,7 @@ public class MetadataTest {
         document.setAbstractFeatures(Arrays.asList((AbstractFeature) placemark0,
                 (AbstractFeature) placemark1));
         document.setOpen(true);
-        document.setName("Document.kml");
+        document.setFeatureName("Document.kml");
 
         final Kml kml = kmlFactory.createKml(null, document, null, null);
 

@@ -82,7 +82,7 @@ public class MultiGeometryTest {
         final AbstractFeature feature = kmlObjects.getAbstractFeature();
         assertTrue(feature instanceof Placemark);
         final Placemark placemark = (Placemark) feature;
-        assertEquals("SF Marina Harbor Master", placemark.getName());
+        assertEquals("SF Marina Harbor Master", placemark.getFeatureName());
         assertFalse(placemark.getVisibility());
 
         assertTrue(placemark.getAbstractGeometry() instanceof MultiGeometry);
@@ -141,7 +141,7 @@ public class MultiGeometryTest {
         multiGeometry.setGeometries(Arrays.asList((AbstractGeometry) lineString0, (AbstractGeometry) lineString1));
 
         final Placemark placemark = kmlFactory.createPlacemark();
-        placemark.setName("SF Marina Harbor Master");
+        placemark.setFeatureName("SF Marina Harbor Master");
         placemark.setVisibility(false);
         placemark.setAbstractGeometry(multiGeometry);
 

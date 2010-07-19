@@ -79,7 +79,7 @@ public class ScreenOverlayTest {
         final AbstractFeature feature = kmlObjects.getAbstractFeature();
         assertTrue(feature instanceof ScreenOverlay);
         ScreenOverlay screenOverlay = (ScreenOverlay) feature;
-        assertEquals("Simple crosshairs",screenOverlay.getName());
+        assertEquals("Simple crosshairs",screenOverlay.getFeatureName());
         assertEquals("This screen overlay uses fractional positioning\n"+
                 "   to put the image in the exact center of the screen",
                 screenOverlay.getDescription());
@@ -138,7 +138,7 @@ public class ScreenOverlayTest {
         final IdAttributes idAttributes = kmlFactory.createIdAttributes("khScreenOverlay756", null);
 
         final ScreenOverlay screenOverlay = kmlFactory.createScreenOverlay();
-        screenOverlay.setName("Simple crosshairs");
+        screenOverlay.setFeatureName("Simple crosshairs");
         screenOverlay.setDescription("This screen overlay uses fractional positioning\n"+
                 "   to put the image in the exact center of the screen");
         screenOverlay.setIcon(icon);

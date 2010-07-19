@@ -67,7 +67,7 @@ public interface LatLonAltBox extends AbstractLatLonBox{
      *
      * @return
      */
-    public AltitudeMode getAltitudeMode();
+    public EnumAltitudeMode getAltitudeMode();
 
     /**
      *
@@ -85,6 +85,6 @@ public interface LatLonAltBox extends AbstractLatLonBox{
      *
      * @param altitudeMode
      */
-    public void setAltitudeMode(AltitudeMode altitudeMode);
+    public void setAltitudeMode(EnumAltitudeMode altitudeMode);
 
 }

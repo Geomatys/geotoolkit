@@ -81,7 +81,7 @@ public class PlacemarkTest {
         final AbstractFeature feature = kmlObjects.getAbstractFeature();
         assertTrue(feature instanceof Placemark);
         Placemark placemark = (Placemark) feature;
-        assertEquals("Google Earth - New Placemark",placemark.getName());
+        assertEquals("Google Earth - New Placemark",placemark.getFeatureName());
         assertEquals("Some Descriptive text.",placemark.getDescription());
 
         final AbstractView view = placemark.getView();
@@ -120,7 +120,7 @@ public class PlacemarkTest {
         lookAt.setRange(440.8);
 
         final Placemark placemark = kmlFactory.createPlacemark();
-        placemark.setName("Google Earth - New Placemark");
+        placemark.setFeatureName("Google Earth - New Placemark");
         placemark.setDescription("Some Descriptive text.");
         placemark.setView(lookAt);
         placemark.setAbstractGeometry(point);

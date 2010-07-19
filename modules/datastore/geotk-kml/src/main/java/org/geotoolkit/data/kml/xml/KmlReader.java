@@ -18,7 +18,7 @@ package org.geotoolkit.data.kml.xml;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import java.net.URISyntaxException;
-import org.geotoolkit.data.xal.xml.XalReader;
+import org.geotoolkit.xal.xml.XalReader;
 import org.geotoolkit.data.atom.xml.AtomReader;
 import java.awt.Color;
 import java.io.IOException;
@@ -47,7 +47,7 @@ import org.geotoolkit.data.kml.model.AbstractSubStyle;
 import org.geotoolkit.data.kml.model.AbstractTimePrimitive;
 import org.geotoolkit.data.kml.model.AbstractView;
 import org.geotoolkit.data.kml.model.Alias;
-import org.geotoolkit.data.kml.model.AltitudeMode;
+import org.geotoolkit.data.kml.model.EnumAltitudeMode;
 import org.geotoolkit.data.kml.model.BalloonStyle;
 import org.geotoolkit.data.kml.model.BasicLink;
 import org.geotoolkit.data.kml.model.Boundary;
@@ -118,13 +118,13 @@ import org.geotoolkit.data.kml.model.Url;
 import org.geotoolkit.data.kml.model.Vec2;
 import org.geotoolkit.data.kml.model.ViewRefreshMode;
 import org.geotoolkit.data.kml.model.ViewVolume;
-import org.geotoolkit.data.xal.model.AddressDetails;
-import org.geotoolkit.data.xal.model.XalException;
+import org.geotoolkit.xal.model.AddressDetails;
+import org.geotoolkit.xal.model.XalException;
 import org.geotoolkit.data.kml.xsd.SimpleType;
 import org.geotoolkit.data.kml.xsd.DefaultCdata;
 import org.geotoolkit.temporal.object.FastDateParser;
 import org.geotoolkit.xml.StaxStreamReader;
-import static org.geotoolkit.data.kml.xml.KmlModelConstants.*;
+import static org.geotoolkit.data.kml.xml.KmlConstants.*;
 
 /**
  *
@@ -1081,7 +1081,7 @@ public class KmlReader extends StaxStreamReader {
         // Polygon
         boolean extrude = DEF_EXTRUDE;
         boolean tessellate = DEF_TESSELLATE;
-        AltitudeMode altitudeMode = DEF_ALTITUDE_MODE;
+        EnumAltitudeMode altitudeMode = DEF_ALTITUDE_MODE;
         Boundary outerBoundaryIs = null;
         List<Boundary> innerBoundariesAre = new ArrayList<Boundary>();
         List<SimpleType> polygonSimpleExtensions = null;
@@ -1102,7 +1102,7 @@ public class KmlReader extends StaxStreamReader {
                         } else if (TAG_TESSELLATE.equals(eName)) {
                             tessellate = parseBoolean(reader.getElementText());
                         } else if (TAG_ALTITUDE_MODE.equals(eName)) {
-                            altitudeMode = AltitudeMode.transform(reader.getElementText());
+                            altitudeMode = EnumAltitudeMode.transform(reader.getElementText());
                         } else if (TAG_OUTER_BOUNDARY_IS.equals(eName)) {
                             outerBoundaryIs = this.readBoundary();
                         } else if (TAG_INNER_BOUNDARY_IS.equals(eName)) {
@@ -1181,7 +1181,7 @@ public class KmlReader extends StaxStreamReader {
         List<AbstractObject> abstractGeometryObjectExtensions = null;
 
         // Model
-        AltitudeMode altitudeMode = DEF_ALTITUDE_MODE;
+        EnumAltitudeMode altitudeMode = DEF_ALTITUDE_MODE;
         Location location = null;
         Orientation orientation = null;
         Scale scale = null;
@@ -1201,7 +1201,7 @@ public class KmlReader extends StaxStreamReader {
                     // MODEL
                     if (URI_KML.equals(eUri)) {
                         if (TAG_ALTITUDE_MODE.equals(eName)) {
-                            altitudeMode = AltitudeMode.transform(reader.getElementText());
+                            altitudeMode = EnumAltitudeMode.transform(reader.getElementText());
                         } else if (TAG_LOCATION.equals(eName)) {
                             location = this.readLocation();
                         } else if (TAG_ORIENTATION.equals(eName)) {
@@ -1500,7 +1500,7 @@ public class KmlReader extends StaxStreamReader {
         // LinearRing
         boolean extrude = DEF_EXTRUDE;
         boolean tessellate = DEF_TESSELLATE;
-        AltitudeMode altitudeMode = DEF_ALTITUDE_MODE;
+        EnumAltitudeMode altitudeMode = DEF_ALTITUDE_MODE;
         Coordinates coordinates = null;
         List<SimpleType> linearRingSimpleExtensions = null;
         List<AbstractObject> linearRingObjectExtensions = null;
@@ -1520,7 +1520,7 @@ public class KmlReader extends StaxStreamReader {
                         } else if (TAG_TESSELLATE.equals(eName)) {
                             tessellate = parseBoolean(reader.getElementText());
                         } else if (TAG_ALTITUDE_MODE.equals(eName)) {
-                            altitudeMode = AltitudeMode.transform(reader.getElementText());
+                            altitudeMode = EnumAltitudeMode.transform(reader.getElementText());
                         } else if (TAG_COORDINATES.equals(eName)) {
                             coordinates = readCoordinates(reader.getElementText());
                         }
@@ -1559,7 +1559,7 @@ public class KmlReader extends StaxStreamReader {
         // LineString
         boolean extrude = DEF_EXTRUDE;
         boolean tessellate = DEF_TESSELLATE;
-        AltitudeMode altitudeMode = DEF_ALTITUDE_MODE;
+        EnumAltitudeMode altitudeMode = DEF_ALTITUDE_MODE;
         Coordinates coordinates = null;
         List<SimpleType> lineStringSimpleExtensions = null;
         List<AbstractObject> lineStringObjectExtensions = null;
@@ -1579,7 +1579,7 @@ public class KmlReader extends StaxStreamReader {
                         } else if (TAG_TESSELLATE.equals(eName)) {
                             tessellate = parseBoolean(reader.getElementText());
                         } else if (TAG_ALTITUDE_MODE.equals(eName)) {
-                            altitudeMode = AltitudeMode.transform(reader.getElementText());
+                            altitudeMode = EnumAltitudeMode.transform(reader.getElementText());
                         } else if (TAG_COORDINATES.equals(eName)) {
                             coordinates = readCoordinates(reader.getElementText());
                         }
@@ -1736,7 +1736,7 @@ public class KmlReader extends StaxStreamReader {
 
         // GroundOverlay
         double altitude = DEF_ALTITUDE;
-        AltitudeMode altitudeMode = DEF_ALTITUDE_MODE;
+        EnumAltitudeMode altitudeMode = DEF_ALTITUDE_MODE;
         LatLonBox latLonBox = null;
         List<SimpleType> groundOverlaySimpleExtensions = null;
         List<AbstractObject> groundOverlayObjectExtensions = null;
@@ -1797,7 +1797,7 @@ public class KmlReader extends StaxStreamReader {
                         else if (TAG_ALTITUDE.equals(eName)) {
                             altitude = parseDouble(reader.getElementText());
                         } else if (TAG_ALTITUDE_MODE.equals(eName)) {
-                            altitudeMode = AltitudeMode.transform(reader.getElementText());
+                            altitudeMode = EnumAltitudeMode.transform(reader.getElementText());
                         } else if (TAG_LAT_LON_BOX.equals(eName)) {
                             latLonBox = this.readLatLonBox();
                         }
@@ -2027,7 +2027,7 @@ public class KmlReader extends StaxStreamReader {
         // LatLonAltBox
         double minAltitude = DEF_MIN_ALTITUDE;
         double maxAltitude = DEF_MAX_ALTITUDE;
-        AltitudeMode altitudeMode = DEF_ALTITUDE_MODE;
+        EnumAltitudeMode altitudeMode = DEF_ALTITUDE_MODE;
         List<SimpleType> latLonAltBoxSimpleExtensions = null;
         List<AbstractObject> latLonAltBoxObjectExtensions = null;
 
@@ -2058,7 +2058,7 @@ public class KmlReader extends StaxStreamReader {
                         } else if (TAG_MAX_ALTITUDE.equals(eName)) {
                             maxAltitude = parseDouble(reader.getElementText());
                         } else if (TAG_MIN_ALTITUDE.equals(eName)) {
-                            altitudeMode = AltitudeMode.transform(reader.getElementText());
+                            altitudeMode = EnumAltitudeMode.transform(reader.getElementText());
                         }
 
                     }
@@ -2609,7 +2609,7 @@ public class KmlReader extends StaxStreamReader {
         double heading = DEF_HEADING;
         double tilt = DEF_TILT;
         double roll = DEF_ROLL;
-        AltitudeMode altitudeMode = DEF_ALTITUDE_MODE;
+        EnumAltitudeMode altitudeMode = DEF_ALTITUDE_MODE;
         List<SimpleType> cameraSimpleExtensions = null;
         List<AbstractObject> cameraObjectExtensions = null;
 
@@ -2637,7 +2637,7 @@ public class KmlReader extends StaxStreamReader {
                         } else if (TAG_ROLL.equals(eName)) {
                             roll = parseDouble(reader.getElementText());
                         } else if (TAG_ALTITUDE_MODE.equals(eName)) {
-                            altitudeMode = AltitudeMode.transform(reader.getElementText());
+                            altitudeMode = EnumAltitudeMode.transform(reader.getElementText());
                         }
                     }
                     break;
@@ -4056,7 +4056,7 @@ public class KmlReader extends StaxStreamReader {
 
         // Point
         boolean extrude = DEF_EXTRUDE;
-        AltitudeMode altitudeMode = DEF_ALTITUDE_MODE;
+        EnumAltitudeMode altitudeMode = DEF_ALTITUDE_MODE;
         Coordinates coordinates = null;
         List<SimpleType> pointSimpleExtensions = null;
         List<AbstractObject> pointObjectExtensions = null;
@@ -4074,7 +4074,7 @@ public class KmlReader extends StaxStreamReader {
                         if (TAG_EXTRUDE.equals(eName)) {
                             extrude = parseBoolean(reader.getElementText());
                         } else if (TAG_ALTITUDE_MODE.equals(eName)) {
-                            altitudeMode = AltitudeMode.transform(reader.getElementText());
+                            altitudeMode = EnumAltitudeMode.transform(reader.getElementText());
                         } else if (TAG_COORDINATES.equals(eName)) {
                             coordinates = readCoordinates(reader.getElementText());
                         }

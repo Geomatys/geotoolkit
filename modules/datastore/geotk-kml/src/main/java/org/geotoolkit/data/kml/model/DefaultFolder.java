@@ -21,7 +21,7 @@ import java.util.List;
 import org.geotoolkit.data.kml.xsd.SimpleType;
 import org.geotoolkit.data.atom.model.AtomPersonConstruct;
 import org.geotoolkit.data.atom.model.AtomLink;
-import org.geotoolkit.data.xal.model.AddressDetails;
+import org.geotoolkit.xal.model.AddressDetails;
 import static java.util.Collections.*;
 
 /**
@@ -33,6 +33,7 @@ public class DefaultFolder extends DefaultAbstractContainer implements Folder {
     private List<AbstractFeature> features;
 
     public DefaultFolder() {
+        super(KmlModelConstants.TYPE_FOLDER);
         this.features = EMPTY_LIST;
     }
 
@@ -82,7 +83,8 @@ public class DefaultFolder extends DefaultAbstractContainer implements Folder {
             List<SimpleType> folderSimpleExtensions,
             List<AbstractObject> folderObjectExtensions) {
 
-        super(objectSimpleExtensions, idAttributes,
+        super(KmlModelConstants.TYPE_FOLDER,
+                objectSimpleExtensions, idAttributes,
                 name, visibility, open,
                 author, atomLink,
                 address, addressDetails,

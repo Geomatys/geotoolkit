@@ -23,7 +23,7 @@ import org.geotoolkit.data.atom.model.AtomEmail;
 import org.geotoolkit.data.atom.model.AtomLink;
 import org.geotoolkit.data.atom.model.AtomPersonConstruct;
 import org.geotoolkit.xml.StaxStreamWriter;
-import static org.geotoolkit.data.atom.xml.AtomModelConstants.*;
+import static org.geotoolkit.data.atom.xml.AtomConstants.*;
 
 /**
  *

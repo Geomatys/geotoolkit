@@ -118,13 +118,13 @@ public class StyleTest {
 
         assertTrue(abstractFeatures.get(0) instanceof Placemark);
         Placemark placemark0 = (Placemark) abstractFeatures.get(0);
-        assertEquals("Google Earth - New Polygon", placemark0.getName());
+        assertEquals("Google Earth - New Polygon", placemark0.getFeatureName());
         assertEquals("Here is some descriptive text", placemark0.getDescription());
         assertEquals(new URI("#myDefaultStyles"), placemark0.getStyleUrl());
 
         assertTrue(abstractFeatures.get(1) instanceof Placemark);
         Placemark placemark1 = (Placemark) abstractFeatures.get(1);
-        assertEquals("Google Earth - New Path", placemark1.getName());
+        assertEquals("Google Earth - New Path", placemark1.getFeatureName());
         assertEquals(new URI("#myDefaultStyles"), placemark1.getStyleUrl());
 
     }
@@ -134,12 +134,12 @@ public class StyleTest {
         final KmlFactory kmlFactory = new DefaultKmlFactory();
 
         Placemark placemark0 = kmlFactory.createPlacemark();
-        placemark0.setName("Google Earth - New Polygon");
+        placemark0.setFeatureName("Google Earth - New Polygon");
         placemark0.setDescription("Here is some descriptive text");
         placemark0.setStyleUrl(new URI("#myDefaultStyles"));
 
         Placemark placemark1 = kmlFactory.createPlacemark();
-        placemark1.setName("Google Earth - New Path");
+        placemark1.setFeatureName("Google Earth - New Path");
         placemark1.setStyleUrl(new URI("#myDefaultStyles"));
 
         IconStyle iconStyle = kmlFactory.createIconStyle();

@@ -24,7 +24,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
 import org.geotoolkit.data.kml.model.AbstractFeature;
 import org.geotoolkit.data.kml.model.AbstractView;
-import org.geotoolkit.data.kml.model.AltitudeMode;
+import org.geotoolkit.data.kml.model.EnumAltitudeMode;
 import org.geotoolkit.data.kml.model.Camera;
 import org.geotoolkit.data.kml.model.Kml;
 import org.geotoolkit.data.kml.model.KmlException;
@@ -37,7 +37,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.xml.sax.SAXException;
-import static org.geotoolkit.data.kml.xml.KmlModelConstants.*;
+import static org.geotoolkit.data.kml.xml.KmlConstants.*;
 
 /**
  *
@@ -87,7 +87,7 @@ public class CameraTest {
         assertEquals(2, camera.getHeading(), DELTA);
         assertEquals(1, camera.getTilt(), DELTA);
         assertEquals(2, camera.getRoll(), DELTA);
-        assertEquals(AltitudeMode.RELATIVE_TO_GROUND, camera.getAltitudeMode());
+        assertEquals(EnumAltitudeMode.RELATIVE_TO_GROUND, camera.getAltitudeMode());
 
     }
 
@@ -109,7 +109,7 @@ public class CameraTest {
         camera.setHeading(heading);
         camera.setTilt(tilt);
         camera.setRoll(roll);
-        camera.setAltitudeMode(AltitudeMode.RELATIVE_TO_GROUND);
+        camera.setAltitudeMode(EnumAltitudeMode.RELATIVE_TO_GROUND);
         final PhotoOverlay photoOverlay = kmlFactory.createPhotoOverlay();
         photoOverlay.setView(camera);
         photoOverlay.setVisibility(DEF_VISIBILITY);

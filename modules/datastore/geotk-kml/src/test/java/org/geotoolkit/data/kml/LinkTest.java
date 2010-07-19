@@ -77,7 +77,7 @@ public class LinkTest {
         final AbstractFeature feature = kmlObjects.getAbstractFeature();
         assertTrue(feature instanceof NetworkLink);
         NetworkLink networkLink = (NetworkLink) feature;
-        assertEquals("NE US Radar", networkLink.getName());
+        assertEquals("NE US Radar", networkLink.getFeatureName());
         assertTrue(networkLink.getFlyToView());
 
         assertTrue(networkLink.getLink() instanceof Link);
@@ -99,7 +99,7 @@ public class LinkTest {
         final KmlFactory kmlFactory = new DefaultKmlFactory();
 
         final NetworkLink networkLink = kmlFactory.createNetworkLink();
-        networkLink.setName("NE US Radar");
+        networkLink.setFeatureName("NE US Radar");
         networkLink.setFlyToView(true);
 
         final Link link = kmlFactory.createLink();

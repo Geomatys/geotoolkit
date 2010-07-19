@@ -22,8 +22,8 @@ import java.util.List;
 import org.geotoolkit.data.atom.model.AtomLink;
 import org.geotoolkit.data.atom.model.AtomPersonConstruct;
 import org.geotoolkit.data.kml.xsd.SimpleType;
-import org.geotoolkit.data.xal.model.AddressDetails;
-import static org.geotoolkit.data.kml.xml.KmlModelConstants.*;
+import org.geotoolkit.xal.model.AddressDetails;
+import static org.geotoolkit.data.kml.xml.KmlConstants.*;
 
 /**
  *
@@ -32,19 +32,20 @@ import static org.geotoolkit.data.kml.xml.KmlModelConstants.*;
 public class DefaultGroundOverlay extends DefaultAbstractOverlay implements GroundOverlay {
 
     private double altitude;
-    private AltitudeMode altitudeMode;
+    private EnumAltitudeMode altitudeMode;
     private LatLonBox latLonBox;
 
     /**
      * 
      */
     public DefaultGroundOverlay() {
+        super(KmlModelConstants.TYPE_GROUND_OVERLAY);
         this.altitude = DEF_ALTITUDE;
         this.altitudeMode = DEF_ALTITUDE_MODE;
     }
 
     /**
-     *
+     * 
      * @param objectSimpleExtensions
      * @param idAttributes
      * @param name
@@ -91,10 +92,11 @@ public class DefaultGroundOverlay extends DefaultAbstractOverlay implements Grou
             Color color, int drawOrder, Icon icon,
             List<SimpleType> abstractOverlaySimpleExtensions,
             List<AbstractObject> abstractOverlayObjectExtensions,
-            double altitude, AltitudeMode altitudeMode, LatLonBox latLonBox,
+            double altitude, EnumAltitudeMode altitudeMode, LatLonBox latLonBox,
             List<SimpleType> groundOverlaySimpleExtensions,
             List<AbstractObject> groundOverlayObjectExtensions) {
-        super(objectSimpleExtensions, idAttributes,
+        super(KmlModelConstants.TYPE_GROUND_OVERLAY,
+                objectSimpleExtensions, idAttributes,
                 name, visibility, open,
                 author, atomLink, address, addressDetails,
                 phoneNumber, snippet, description, view,
@@ -130,7 +132,7 @@ public class DefaultGroundOverlay extends DefaultAbstractOverlay implements Grou
      * @{@inheritDoc }
      */
     @Override
-    public AltitudeMode getAltitudeMode() {
+    public EnumAltitudeMode getAltitudeMode() {
         return this.altitudeMode;
     }
 
@@ -157,7 +159,7 @@ public class DefaultGroundOverlay extends DefaultAbstractOverlay implements Grou
      * @{@inheritDoc }
      */
     @Override
-    public void setAltitudeMode(AltitudeMode altitudeMode) {
+    public void setAltitudeMode(EnumAltitudeMode altitudeMode) {
         this.altitudeMode = altitudeMode;
     }
 

@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.data.kml.xml;
 
-import org.geotoolkit.data.xal.xml.XalWriter;
+import org.geotoolkit.xal.xml.XalWriter;
 import org.geotoolkit.data.atom.xml.AtomWriter;
 import java.awt.Color;
 import java.io.IOException;
@@ -41,7 +41,7 @@ import org.geotoolkit.data.kml.model.AbstractSubStyle;
 import org.geotoolkit.data.kml.model.AbstractTimePrimitive;
 import org.geotoolkit.data.kml.model.AbstractView;
 import org.geotoolkit.data.kml.model.Alias;
-import org.geotoolkit.data.kml.model.AltitudeMode;
+import org.geotoolkit.data.kml.model.EnumAltitudeMode;
 import org.geotoolkit.data.kml.model.BalloonStyle;
 import org.geotoolkit.data.kml.model.BasicLink;
 import org.geotoolkit.data.kml.model.Boundary;
@@ -112,12 +112,12 @@ import org.geotoolkit.data.kml.model.Url;
 import org.geotoolkit.data.kml.model.Vec2;
 import org.geotoolkit.data.kml.model.ViewRefreshMode;
 import org.geotoolkit.data.kml.model.ViewVolume;
-import org.geotoolkit.data.xal.model.AddressDetails;
-import org.geotoolkit.data.xal.model.XalException;
+import org.geotoolkit.xal.model.AddressDetails;
+import org.geotoolkit.xal.model.XalException;
 import org.geotoolkit.data.kml.xsd.SimpleType;
 import org.geotoolkit.data.kml.xsd.Cdata;
 import org.geotoolkit.xml.StaxStreamWriter;
-import static org.geotoolkit.data.kml.xml.KmlModelConstants.*;
+import static org.geotoolkit.data.kml.xml.KmlConstants.*;
 
 /**
  * <p>This class provides a method to read KML files, version 2.2.</p>
@@ -519,8 +519,8 @@ public class KmlWriter extends StaxStreamWriter {
      */
     private void writeCommonAbstractFeature(AbstractFeature abstractFeature) throws XMLStreamException, KmlException{
         this.writeCommonAbstractObject(abstractFeature);
-        if (abstractFeature.getName() != null){
-            this.writeName(abstractFeature.getName());
+        if (abstractFeature.getFeatureName() != null){
+            this.writeName(abstractFeature.getFeatureName());
         }
         this.writeVisibility(abstractFeature.getVisibility());
         this.writeOpen(abstractFeature.getOpen());
@@ -2428,7 +2428,7 @@ public class KmlWriter extends StaxStreamWriter {
      * @param altitudeMode
      * @throws XMLStreamException
      */
-    private void writeAltitudeMode(AltitudeMode altitudeMode) throws XMLStreamException{
+    private void writeAltitudeMode(EnumAltitudeMode altitudeMode) throws XMLStreamException{
         if(DEF_ALTITUDE_MODE != altitudeMode){
             writer.writeStartElement(URI_KML, TAG_ALTITUDE_MODE);
             writer.writeCharacters(altitudeMode.getAltitudeMode());

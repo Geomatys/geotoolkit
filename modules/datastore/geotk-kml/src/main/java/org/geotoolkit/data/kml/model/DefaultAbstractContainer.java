@@ -21,7 +21,8 @@ import java.util.List;
 import org.geotoolkit.data.atom.model.AtomPersonConstruct;
 import org.geotoolkit.data.atom.model.AtomLink;
 import org.geotoolkit.data.kml.xsd.SimpleType;
-import org.geotoolkit.data.xal.model.AddressDetails;
+import org.geotoolkit.xal.model.AddressDetails;
+import org.opengis.feature.type.FeatureType;
 
 /**
  *
@@ -29,11 +30,13 @@ import org.geotoolkit.data.xal.model.AddressDetails;
  */
 public class DefaultAbstractContainer extends DefaultAbstractFeature implements AbstractContainer {
 
-    protected DefaultAbstractContainer() {
+    protected DefaultAbstractContainer(FeatureType type) {
+        super(type);
     }
 
     /**
-     *
+     * 
+     * @param type
      * @param objectSimpleExtensions
      * @param idAttributes
      * @param name
@@ -57,7 +60,8 @@ public class DefaultAbstractContainer extends DefaultAbstractFeature implements 
      * @param abstractContainerSimpleExtensions
      * @param abstractContainerObjectExtensions
      */
-    protected DefaultAbstractContainer(List<SimpleType> objectSimpleExtensions,
+    protected DefaultAbstractContainer(FeatureType type,
+            List<SimpleType> objectSimpleExtensions,
             IdAttributes idAttributes,
             String name, boolean visibility, boolean open,
             AtomPersonConstruct author, AtomLink atomLink,
@@ -72,7 +76,7 @@ public class DefaultAbstractContainer extends DefaultAbstractFeature implements 
             List<SimpleType> abstractContainerSimpleExtensions,
             List<AbstractObject> abstractContainerObjectExtensions) {
 
-        super(objectSimpleExtensions, idAttributes,
+        super(type, objectSimpleExtensions, idAttributes,
                 name, visibility, open,
                 author, atomLink,
                 address, addressDetails,

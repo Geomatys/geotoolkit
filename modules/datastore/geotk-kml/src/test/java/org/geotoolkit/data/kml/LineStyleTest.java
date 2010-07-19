@@ -87,7 +87,7 @@ public class LineStyleTest {
         final AbstractFeature feature = kmlObjects.getAbstractFeature();
         assertTrue(feature instanceof Document);
         final Document document = ((Document) feature);
-        assertEquals("LineStyle.kml", document.getName());
+        assertEquals("LineStyle.kml", document.getFeatureName());
         assertTrue(document.getOpen());
 
         List<AbstractStyleSelector> styleSelectors = document.getStyleSelectors();
@@ -103,7 +103,7 @@ public class LineStyleTest {
         assertEquals(1, document.getAbstractFeatures().size());
         assertTrue(document.getAbstractFeatures().get(0) instanceof Placemark);
         Placemark placemark = (Placemark) document.getAbstractFeatures().get(0);
-        assertEquals("LineStyle Example", placemark.getName());
+        assertEquals("LineStyle Example", placemark.getFeatureName());
         assertEquals(new URI("#linestyleExample"), placemark.getStyleUrl());
         assertTrue(placemark.getAbstractGeometry() instanceof LineString);
         LineString lineString = (LineString) placemark.getAbstractGeometry();
@@ -133,7 +133,7 @@ public class LineStyleTest {
         lineString.setExtrude(true);
 
         Placemark placemark = kmlFactory.createPlacemark();
-        placemark.setName("LineStyle Example");
+        placemark.setFeatureName("LineStyle Example");
         placemark.setStyleUrl(new URI("#linestyleExample"));
         placemark.setAbstractGeometry(lineString);
 
@@ -148,7 +148,7 @@ public class LineStyleTest {
         Document document = kmlFactory.createDocument();
         document.setStyleSelectors(Arrays.asList((AbstractStyleSelector) style));
         document.setAbstractFeatures(Arrays.asList((AbstractFeature) placemark));
-        document.setName("LineStyle.kml");
+        document.setFeatureName("LineStyle.kml");
         document.setOpen(true);
 
         final Kml kml = kmlFactory.createKml(null, document, null, null);

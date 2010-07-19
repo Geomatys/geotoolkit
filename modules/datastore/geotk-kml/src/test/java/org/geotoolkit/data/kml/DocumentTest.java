@@ -88,7 +88,7 @@ public class DocumentTest {
         final AbstractFeature feature = kmlObjects.getAbstractFeature();
         assertTrue(feature instanceof Document);
         Document document = (Document) feature;
-        assertEquals("Document.kml",document.getName());
+        assertEquals("Document.kml",document.getFeatureName());
         assertTrue(document.getOpen());
 
         List<AbstractStyleSelector> styleSelectors = document.getStyleSelectors();
@@ -104,7 +104,7 @@ public class DocumentTest {
         Placemark placemark0 = (Placemark) document.getAbstractFeatures().get(0);
         Placemark placemark1 = (Placemark) document.getAbstractFeatures().get(1);
 
-        assertEquals("Document Feature 1",placemark0.getName());
+        assertEquals("Document Feature 1",placemark0.getFeatureName());
         assertEquals(new URI("#exampleStyleDocument"),placemark0.getStyleUrl());
         AbstractGeometry abstractGeometry0 = placemark0.getAbstractGeometry();
         assertTrue(abstractGeometry0 instanceof Point);
@@ -116,7 +116,7 @@ public class DocumentTest {
         assertEquals(37.816, coordinate00.y, DELTA);
         assertEquals(0, coordinate00.z, DELTA);
 
-        assertEquals("Document Feature 2",placemark1.getName());
+        assertEquals("Document Feature 2",placemark1.getFeatureName());
         assertEquals(new URI("#exampleStyleDocument"),placemark1.getStyleUrl());
         AbstractGeometry abstractGeometry1 = placemark1.getAbstractGeometry();
         assertTrue(abstractGeometry1 instanceof Point);
@@ -141,7 +141,7 @@ public class DocumentTest {
         final Coordinates coordinates0 = kmlFactory.createCoordinates(Arrays.asList(coordinate00));
         final Point point0 = kmlFactory.createPoint(coordinates0);
         placemark0.setAbstractGeometry(point0);
-        placemark0.setName("Document Feature 1");
+        placemark0.setFeatureName("Document Feature 1");
         placemark0.setStyleUrl(new URI("#exampleStyleDocument"));
 
         final Placemark placemark1 = kmlFactory.createPlacemark();
@@ -152,7 +152,7 @@ public class DocumentTest {
         final Coordinates coordinates1 = kmlFactory.createCoordinates(Arrays.asList(coordinate10));
         final Point point1 = kmlFactory.createPoint(coordinates1);
         placemark1.setAbstractGeometry(point1);
-        placemark1.setName("Document Feature 2");
+        placemark1.setFeatureName("Document Feature 2");
         placemark1.setStyleUrl(new URI("#exampleStyleDocument"));
 
         Style style = kmlFactory.createStyle();
@@ -165,7 +165,7 @@ public class DocumentTest {
         style.setIdAttributes(idAttributes);
 
         Document document = kmlFactory.createDocument();
-        document.setName("Document.kml");
+        document.setFeatureName("Document.kml");
         document.setOpen(true);
         List<AbstractStyleSelector> styleSelectors = Arrays.asList((AbstractStyleSelector) style);
         document.setStyleSelectors(styleSelectors);

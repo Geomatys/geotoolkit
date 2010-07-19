@@ -81,7 +81,7 @@ public class SnippetsTest {
         assertTrue(feature instanceof Document);
 
         final Document document = (Document) feature;
-        assertEquals("Document.kml", document.getName());
+        assertEquals("Document.kml", document.getFeatureName());
         assertTrue(document.getOpen());
         assertEquals(4,document.getAbstractFeatures().size());
 
@@ -132,7 +132,7 @@ public class SnippetsTest {
                 (AbstractFeature) placemark1,(AbstractFeature) placemark2,
                 (AbstractFeature) placemark3));
         document.setOpen(true);
-        document.setName("Document.kml");
+        document.setFeatureName("Document.kml");
 
         final Kml kml = kmlFactory.createKml(null, document, null, null);
 

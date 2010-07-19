@@ -91,7 +91,7 @@ public class SchemaDataTest {
 
         final Placemark placemark0 = (Placemark) document.getAbstractFeatures().get(0);
 
-        assertEquals("Easy trail", placemark0.getName());
+        assertEquals("Easy trail", placemark0.getFeatureName());
         final Object dataContainer0 = placemark0.getExtendedData();
         assertTrue(dataContainer0 instanceof ExtendedData);
         final ExtendedData extendedData0 = (ExtendedData) dataContainer0;
@@ -125,7 +125,7 @@ public class SchemaDataTest {
 
         final Placemark placemark1 = (Placemark) document.getAbstractFeatures().get(1);
 
-        assertEquals("Difficult trail", placemark1.getName());
+        assertEquals("Difficult trail", placemark1.getFeatureName());
         final Object dataContainer1 = placemark1.getExtendedData();
         assertTrue(dataContainer1 instanceof ExtendedData);
         ExtendedData extendedData1 = (ExtendedData) dataContainer1;
@@ -179,7 +179,7 @@ public class SchemaDataTest {
 
         final Placemark placemark0 = kmlFactory.createPlacemark();
         placemark0.setExtendedData(extendedData0);
-        placemark0.setName("Easy trail");
+        placemark0.setFeatureName("Easy trail");
         placemark0.setAbstractGeometry(point0);
 
         final Coordinate coordinate1 = kmlFactory.createCoordinate(-122, 37.002);
@@ -199,7 +199,7 @@ public class SchemaDataTest {
 
         final Placemark placemark1 = kmlFactory.createPlacemark();
         placemark1.setExtendedData(extendedData1);
-        placemark1.setName("Difficult trail");
+        placemark1.setFeatureName("Difficult trail");
         placemark1.setAbstractGeometry(point1);
 
         final Document document = kmlFactory.createDocument();

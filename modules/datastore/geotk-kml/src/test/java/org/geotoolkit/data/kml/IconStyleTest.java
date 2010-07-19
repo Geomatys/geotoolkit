@@ -106,7 +106,7 @@ public class IconStyleTest {
         assertEquals(1, document.getAbstractFeatures().size());
         assertTrue(document.getAbstractFeatures().get(0) instanceof Placemark);
         Placemark placemark = (Placemark) document.getAbstractFeatures().get(0);
-        assertEquals("IconStyle.kml", placemark.getName());
+        assertEquals("IconStyle.kml", placemark.getFeatureName());
         assertEquals(new URI("#randomColorIcon"), placemark.getStyleUrl());
         assertTrue(placemark.getAbstractGeometry() instanceof Point);
         Point point = (Point) placemark.getAbstractGeometry();
@@ -127,7 +127,7 @@ public class IconStyleTest {
         Point point = kmlFactory.createPoint(coordinates);
 
         Placemark placemark = kmlFactory.createPlacemark();
-        placemark.setName("IconStyle.kml");
+        placemark.setFeatureName("IconStyle.kml");
         placemark.setStyleUrl(new URI("#randomColorIcon"));
         placemark.setAbstractGeometry(point);
 

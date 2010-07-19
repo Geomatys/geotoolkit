@@ -88,7 +88,7 @@ public class BalloonStyleTest {
         final AbstractFeature feature = kmlObjects.getAbstractFeature();
         assertTrue(feature instanceof Document);
         final Document document = (Document) feature;
-        assertEquals("BalloonStyle.kml", document.getName());
+        assertEquals("BalloonStyle.kml", document.getFeatureName());
         assertTrue(document.getOpen());
         assertEquals(1, document.getStyleSelectors().size());
         assertTrue(document.getStyleSelectors().get(0) instanceof Style);
@@ -112,7 +112,7 @@ public class BalloonStyleTest {
         assertEquals(1, document.getAbstractFeatures().size());
         assertTrue(document.getAbstractFeatures().get(0) instanceof Placemark);
         final Placemark placemark = (Placemark) document.getAbstractFeatures().get(0);
-        assertEquals("BalloonStyle", placemark.getName());
+        assertEquals("BalloonStyle", placemark.getFeatureName());
         assertEquals("An example of BalloonStyle", placemark.getDescription());
         assertEquals(new URI("#exampleBalloonStyle"),placemark.getStyleUrl());
 
@@ -136,7 +136,7 @@ public class BalloonStyleTest {
         final Point point = kmlFactory.createPoint(coordinates);
 
         final Placemark placemark = kmlFactory.createPlacemark();
-        placemark.setName("BalloonStyle");
+        placemark.setFeatureName("BalloonStyle");
         placemark.setDescription("An example of BalloonStyle");
         placemark.setStyleUrl(new URI("#exampleBalloonStyle"));
         placemark.setAbstractGeometry(point);
@@ -160,7 +160,7 @@ public class BalloonStyleTest {
         style.setBalloonStyle(balloonStyle);
 
         final Document document = kmlFactory.createDocument();
-        document.setName("BalloonStyle.kml");
+        document.setFeatureName("BalloonStyle.kml");
         document.setOpen(true);
         document.setStyleSelectors(Arrays.asList((AbstractStyleSelector) style));
         document.setAbstractFeatures(Arrays.asList((AbstractFeature) placemark));

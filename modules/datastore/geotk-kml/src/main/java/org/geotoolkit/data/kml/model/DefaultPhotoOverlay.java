@@ -23,7 +23,7 @@ import org.geotoolkit.data.kml.KmlUtilities;
 import org.geotoolkit.data.atom.model.AtomLink;
 import org.geotoolkit.data.atom.model.AtomPersonConstruct;
 import org.geotoolkit.data.kml.xsd.SimpleType;
-import org.geotoolkit.data.xal.model.AddressDetails;
+import org.geotoolkit.xal.model.AddressDetails;
 
 /**
  *
@@ -41,11 +41,11 @@ public class DefaultPhotoOverlay extends DefaultAbstractOverlay implements Photo
      * 
      */
     public DefaultPhotoOverlay() {
-        super();
+        super(KmlModelConstants.TYPE_PHOTO_OVERLAY);
     }
 
     /**
-     *
+     * 
      * @param objectSimpleExtensions
      * @param idAttributes
      * @param name
@@ -99,7 +99,8 @@ public class DefaultPhotoOverlay extends DefaultAbstractOverlay implements Photo
             final Point point, final Shape shape,
             List<SimpleType> photoOverlaySimpleExtensions,
             List<AbstractObject> photoOverlayObjectExtensions) {
-        super(objectSimpleExtensions, idAttributes,
+        super(KmlModelConstants.TYPE_PHOTO_OVERLAY,
+                objectSimpleExtensions, idAttributes,
                 name, visibility, open,
                 author, atomLink, address, addressDetails,
                 phoneNumber, snippet, description, view,

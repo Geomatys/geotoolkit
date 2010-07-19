@@ -81,7 +81,7 @@ public class PhotoOverlayTest {
         final AbstractFeature feature = kmlObjects.getAbstractFeature();
         assertTrue(feature instanceof PhotoOverlay);
         PhotoOverlay photoOverlay = (PhotoOverlay) feature;
-        assertEquals("A simple non-pyramidal photo",photoOverlay.getName());
+        assertEquals("A simple non-pyramidal photo",photoOverlay.getFeatureName());
         assertEquals("High above the ocean", photoOverlay.getDescription());
 
         final Icon icon = photoOverlay.getIcon();
@@ -125,7 +125,7 @@ public class PhotoOverlayTest {
         final Icon icon = kmlFactory.createIcon(link);
 
         final PhotoOverlay photoOverlay = kmlFactory.createPhotoOverlay();
-        photoOverlay.setName("A simple non-pyramidal photo");
+        photoOverlay.setFeatureName("A simple non-pyramidal photo");
         photoOverlay.setDescription("High above the ocean");
         photoOverlay.setIcon(icon);
         photoOverlay.setViewVolume(viewVolume);

@@ -84,7 +84,7 @@ public class FolderTest {
         final AbstractFeature feature = kmlObjects.getAbstractFeature();
         assertTrue(feature instanceof Folder);
         Folder folder = (Folder) feature;
-        assertEquals("Folder.kml", folder.getName());
+        assertEquals("Folder.kml", folder.getFeatureName());
         assertEquals("\n    A folder is a container that can hold multiple other objects\n  ", folder.getDescription());
         assertTrue(folder.getOpen());
 
@@ -96,7 +96,7 @@ public class FolderTest {
         Placemark placemark1 = (Placemark) folder.getAbstractFeatures().get(1);
         Placemark placemark2 = (Placemark) folder.getAbstractFeatures().get(2);
 
-        assertEquals("Folder object 1 (Placemark)", placemark0.getName());
+        assertEquals("Folder object 1 (Placemark)", placemark0.getFeatureName());
         AbstractGeometry abstractGeometry0 = placemark0.getAbstractGeometry();
         assertTrue(abstractGeometry0 instanceof Point);
         Point point = (Point) abstractGeometry0;
@@ -107,7 +107,7 @@ public class FolderTest {
         assertEquals(37.830266, coordinate00.y, DELTA);
         assertEquals(0, coordinate00.z, DELTA);
 
-        assertEquals("Folder object 2 (Polygon)", placemark1.getName());
+        assertEquals("Folder object 2 (Polygon)", placemark1.getFeatureName());
         AbstractGeometry abstractGeometry1 = placemark1.getAbstractGeometry();
         assertTrue(abstractGeometry1 instanceof Polygon);
         Polygon polygon = (Polygon) abstractGeometry1;
@@ -132,7 +132,7 @@ public class FolderTest {
         assertEquals(37.830445, coordinate13.y, DELTA);
         assertEquals(0, coordinate13.z, DELTA);
 
-        assertEquals("Folder object 3 (Path)", placemark2.getName());
+        assertEquals("Folder object 3 (Path)", placemark2.getFeatureName());
         AbstractGeometry abstractGeometry2 = placemark2.getAbstractGeometry();
         assertTrue(abstractGeometry2 instanceof LineString);
         LineString lineString = (LineString) abstractGeometry2;
@@ -161,7 +161,7 @@ public class FolderTest {
         final Coordinates coordinates0 = kmlFactory.createCoordinates(Arrays.asList(coordinate00));
         final Point point = kmlFactory.createPoint(coordinates0);
         placemark0.setAbstractGeometry(point);
-        placemark0.setName("Folder object 1 (Placemark)");
+        placemark0.setFeatureName("Folder object 1 (Placemark)");
 
         final Placemark placemark1 = kmlFactory.createPlacemark();
         final double longitude10 = -122.377830;
@@ -186,7 +186,7 @@ public class FolderTest {
         outerBoundaryIs.setLinearRing(linearRing);
         final Polygon polygon = kmlFactory.createPolygon(outerBoundaryIs, null);
         placemark1.setAbstractGeometry(polygon);
-        placemark1.setName("Folder object 2 (Polygon)");
+        placemark1.setFeatureName("Folder object 2 (Polygon)");
 
         final Placemark placemark2 = kmlFactory.createPlacemark();
         final double longitude20 = -122.378009;
@@ -201,10 +201,10 @@ public class FolderTest {
         final LineString lineString = kmlFactory.createLineString(coordinates2);
         lineString.setTessellate(true);
         placemark2.setAbstractGeometry(lineString);
-        placemark2.setName("Folder object 3 (Path)");
+        placemark2.setFeatureName("Folder object 3 (Path)");
 
         Folder folder = kmlFactory.createFolder();
-        folder.setName("Folder.kml");
+        folder.setFeatureName("Folder.kml");
         folder.setOpen(true);
         folder.setDescription("\n    A folder is a container that can hold multiple other objects\n  ");
         folder.setAbstractFeatures(Arrays.asList((AbstractFeature) placemark0, (AbstractFeature) placemark1, (AbstractFeature) placemark2));

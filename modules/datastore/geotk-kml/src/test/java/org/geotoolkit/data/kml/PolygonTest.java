@@ -24,7 +24,7 @@ import java.util.Arrays;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
 import org.geotoolkit.data.kml.model.AbstractFeature;
-import org.geotoolkit.data.kml.model.AltitudeMode;
+import org.geotoolkit.data.kml.model.EnumAltitudeMode;
 import org.geotoolkit.data.kml.model.Boundary;
 import org.geotoolkit.data.kml.model.Coordinates;
 import org.geotoolkit.data.kml.model.Document;
@@ -83,16 +83,16 @@ public class PolygonTest {
         final AbstractFeature feature = kmlObjects.getAbstractFeature();
         assertTrue(feature instanceof Document);
         final Document document = (Document) feature;
-        assertEquals("Polygon.kml", document.getName());
+        assertEquals("Polygon.kml", document.getFeatureName());
         assertTrue(document.getOpen());
         assertEquals(1,document.getAbstractFeatures().size());
         assertTrue(document.getAbstractFeatures().get(0) instanceof Placemark);
         final Placemark placemark = (Placemark) document.getAbstractFeatures().get(0);
-        assertEquals("hollow box", placemark.getName());
+        assertEquals("hollow box", placemark.getFeatureName());
         assertTrue(placemark.getAbstractGeometry() instanceof Polygon);
         final Polygon polygon = (Polygon) placemark.getAbstractGeometry();
         assertTrue(polygon.getExtrude());
-        assertEquals(AltitudeMode.RELATIVE_TO_GROUND, polygon.getAltitudeMode());
+        assertEquals(EnumAltitudeMode.RELATIVE_TO_GROUND, polygon.getAltitudeMode());
 
         final Boundary outerBoundaryIs = polygon.getOuterBoundary();
         final LinearRing linearRing1 = outerBoundaryIs.getLinearRing();
@@ -192,14 +192,14 @@ public class PolygonTest {
 
         final Polygon polygon = kmlFactory.createPolygon(outerBoundaryIs, Arrays.asList(innerBoundaryIs));
         polygon.setExtrude(true);
-        polygon.setAltitudeMode(AltitudeMode.RELATIVE_TO_GROUND);
+        polygon.setAltitudeMode(EnumAltitudeMode.RELATIVE_TO_GROUND);
 
         final Placemark placemark = kmlFactory.createPlacemark();
-        placemark.setName("hollow box");
+        placemark.setFeatureName("hollow box");
         placemark.setAbstractGeometry(polygon);
 
         final Document document = kmlFactory.createDocument();
-        document.setName("Polygon.kml");
+        document.setFeatureName("Polygon.kml");
         document.setOpen(true);
         document.setAbstractFeatures(Arrays.asList((AbstractFeature) placemark));
 

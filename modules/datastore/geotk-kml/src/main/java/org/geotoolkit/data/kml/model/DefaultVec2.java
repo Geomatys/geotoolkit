@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.data.kml.model;
 
-import static org.geotoolkit.data.kml.xml.KmlModelConstants.*;
+import static org.geotoolkit.data.kml.xml.KmlConstants.*;
 
 /**
  *

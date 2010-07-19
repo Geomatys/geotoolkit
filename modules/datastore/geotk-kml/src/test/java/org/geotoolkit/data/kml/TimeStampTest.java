@@ -78,7 +78,7 @@ public class TimeStampTest {
         final AbstractFeature feature = kmlObjects.getAbstractFeature();
         assertTrue(feature instanceof Placemark);
         Placemark placemark = (Placemark) feature;
-        assertEquals("Colorado", placemark.getName());
+        assertEquals("Colorado", placemark.getFeatureName());
 
         assertTrue(placemark.getTimePrimitive() instanceof TimeStamp);
         TimeStamp timeStamp = (TimeStamp) placemark.getTimePrimitive();
@@ -108,7 +108,7 @@ public class TimeStampTest {
         timeStamp.setWhen(when);
 
         Placemark placemark = kmlFactory.createPlacemark();
-        placemark.setName("Colorado");
+        placemark.setFeatureName("Colorado");
         placemark.setTimePrimitive(timeStamp);
         final Kml kml = kmlFactory.createKml(null, placemark, null, null);
 

@@ -65,7 +65,7 @@ public interface Point extends AbstractGeometry{
      *
      * @return
      */
-    public AltitudeMode getAltitudeMode();
+    public EnumAltitudeMode getAltitudeMode();
 
     /**
      *
@@ -77,5 +77,5 @@ public interface Point extends AbstractGeometry{
      *
      * @param altitudeMode
      */
-    public void setAltitudeMode(AltitudeMode altitudeMode);
+    public void setAltitudeMode(EnumAltitudeMode altitudeMode);
 }

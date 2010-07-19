@@ -88,7 +88,7 @@ public interface Camera extends AbstractView {
      *
      * @return the altitude mode.
      */
-    public AltitudeMode getAltitudeMode();
+    public EnumAltitudeMode getAltitudeMode();
 
     /**
      *
@@ -130,6 +130,6 @@ public interface Camera extends AbstractView {
      *
      * @param altitudeMode
      */
-    public void setAltitudeMode(AltitudeMode altitudeMode);
+    public void setAltitudeMode(EnumAltitudeMode altitudeMode);
 
 }

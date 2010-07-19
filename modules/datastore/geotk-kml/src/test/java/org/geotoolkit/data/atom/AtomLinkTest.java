@@ -23,7 +23,7 @@ import java.io.IOException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
-import org.geotoolkit.data.atom.xml.AtomModelConstants;
+import org.geotoolkit.data.atom.xml.AtomConstants;
 import org.geotoolkit.data.atom.model.AtomLink;
 import org.geotoolkit.xml.DomCompare;
 import org.junit.After;
@@ -74,8 +74,8 @@ public class AtomLinkTest {
                     final String eName = reader.getReader().getLocalName();
                     final String eUri = reader.getReader().getNamespaceURI();
 
-                    if (AtomModelConstants.URI_ATOM.equals(eUri)) {
-                        if (AtomModelConstants.TAG_LINK.equals(eName)) {
+                    if (AtomConstants.URI_ATOM.equals(eUri)) {
+                        if (AtomConstants.TAG_LINK.equals(eName)) {
                             link= reader.readLink();
                         }
                     }
@@ -110,7 +110,7 @@ public class AtomLinkTest {
         AtomWriter writer = new AtomWriter();
         writer.setOutput(temp);
         writer.getWriter().writeStartDocument("UTF-8", "1.0");
-        writer.getWriter().setDefaultNamespace(AtomModelConstants.URI_ATOM);
+        writer.getWriter().setDefaultNamespace(AtomConstants.URI_ATOM);
 
         writer.writeLink(link);
 

@@ -28,7 +28,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
 import org.geotoolkit.data.kml.model.AbstractFeature;
 import org.geotoolkit.data.kml.model.AbstractStyleSelector;
-import org.geotoolkit.data.kml.model.AltitudeMode;
+import org.geotoolkit.data.kml.model.EnumAltitudeMode;
 import org.geotoolkit.data.kml.model.Boundary;
 import org.geotoolkit.data.kml.model.ColorMode;
 import org.geotoolkit.data.kml.model.Coordinates;
@@ -91,7 +91,7 @@ public class PolyStyleTest {
         final AbstractFeature feature = kmlObjects.getAbstractFeature();
         assertTrue(feature instanceof Document);
         final Document document = ((Document) feature);
-        assertEquals("PolygonStyle.kml", document.getName());
+        assertEquals("PolygonStyle.kml", document.getFeatureName());
         assertTrue(document.getOpen());
 
         List<AbstractStyleSelector> styleSelectors = document.getStyleSelectors();
@@ -107,12 +107,12 @@ public class PolyStyleTest {
         assertEquals(1, document.getAbstractFeatures().size());
         assertTrue(document.getAbstractFeatures().get(0) instanceof Placemark);
         Placemark placemark = (Placemark) document.getAbstractFeatures().get(0);
-        assertEquals("hollow box", placemark.getName());
+        assertEquals("hollow box", placemark.getFeatureName());
         assertEquals(new URI("#examplePolyStyle"), placemark.getStyleUrl());
         assertTrue(placemark.getAbstractGeometry() instanceof Polygon);
         Polygon polygon = (Polygon) placemark.getAbstractGeometry();
         assertTrue(polygon.getExtrude());
-        assertEquals(AltitudeMode.RELATIVE_TO_GROUND, polygon.getAltitudeMode());
+        assertEquals(EnumAltitudeMode.RELATIVE_TO_GROUND, polygon.getAltitudeMode());
 
         Boundary outerBoundaryIs = polygon.getOuterBoundary();
         LinearRing linearRing = outerBoundaryIs.getLinearRing();
@@ -223,10 +223,10 @@ public class PolyStyleTest {
 
         Polygon polygon = kmlFactory.createPolygon(outerBoundaryIs, Arrays.asList(innerBoundaryIs));
         polygon.setExtrude(true);
-        polygon.setAltitudeMode(AltitudeMode.RELATIVE_TO_GROUND);
+        polygon.setAltitudeMode(EnumAltitudeMode.RELATIVE_TO_GROUND);
 
         Placemark placemark = kmlFactory.createPlacemark();
-        placemark.setName("hollow box");
+        placemark.setFeatureName("hollow box");
         placemark.setStyleUrl(new URI("#examplePolyStyle"));
         placemark.setAbstractGeometry(polygon);
 
@@ -242,7 +242,7 @@ public class PolyStyleTest {
         Document document = kmlFactory.createDocument();
         document.setStyleSelectors(Arrays.asList((AbstractStyleSelector) style));
         document.setAbstractFeatures(Arrays.asList((AbstractFeature) placemark));
-        document.setName("PolygonStyle.kml");
+        document.setFeatureName("PolygonStyle.kml");
         document.setOpen(true);
 
         final Kml kml = kmlFactory.createKml(null, document, null, null);

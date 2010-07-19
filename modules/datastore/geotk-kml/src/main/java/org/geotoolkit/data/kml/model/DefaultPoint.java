@@ -19,7 +19,7 @@ package org.geotoolkit.data.kml.model;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import java.util.List;
 import org.geotoolkit.data.kml.xsd.SimpleType;
-import static org.geotoolkit.data.kml.xml.KmlModelConstants.*;
+import static org.geotoolkit.data.kml.xml.KmlConstants.*;
 
 /**
  *
@@ -30,7 +30,7 @@ public class DefaultPoint extends com.vividsolutions.jts.geom.Point implements P
     private IdAttributes idAttributes;
     private final Extensions extensions = new Extensions();
     private boolean extrude;
-    private AltitudeMode altitudeMode;
+    private EnumAltitudeMode altitudeMode;
 
     /**
      * 
@@ -61,7 +61,7 @@ public class DefaultPoint extends com.vividsolutions.jts.geom.Point implements P
             List<SimpleType> abstractGeometrySimpleExtensions,
             List<AbstractObject> abstractGeometryObjectExtensions,
             boolean extrude,
-            AltitudeMode altitudeMode,
+            EnumAltitudeMode altitudeMode,
             Coordinates coordinates,
             List<SimpleType> pointSimpleExtensions,
             List<AbstractObject> pointObjectExtensions,
@@ -101,7 +101,7 @@ public class DefaultPoint extends com.vividsolutions.jts.geom.Point implements P
      * @{@inheritDoc }
      */
     @Override
-    public AltitudeMode getAltitudeMode() {
+    public EnumAltitudeMode getAltitudeMode() {
         return this.altitudeMode;
     }
 
@@ -128,7 +128,7 @@ public class DefaultPoint extends com.vividsolutions.jts.geom.Point implements P
      * @{@inheritDoc }
      */
     @Override
-    public void setAltitudeMode(AltitudeMode altitudeMode) {
+    public void setAltitudeMode(EnumAltitudeMode altitudeMode) {
         this.altitudeMode = altitudeMode;
     }
 

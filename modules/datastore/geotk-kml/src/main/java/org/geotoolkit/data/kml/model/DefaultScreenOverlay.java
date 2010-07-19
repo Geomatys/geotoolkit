@@ -23,8 +23,8 @@ import org.geotoolkit.data.kml.KmlUtilities;
 import org.geotoolkit.data.atom.model.AtomLink;
 import org.geotoolkit.data.atom.model.AtomPersonConstruct;
 import org.geotoolkit.data.kml.xsd.SimpleType;
-import org.geotoolkit.data.xal.model.AddressDetails;
-import static org.geotoolkit.data.kml.xml.KmlModelConstants.*;
+import org.geotoolkit.xal.model.AddressDetails;
+import static org.geotoolkit.data.kml.xml.KmlConstants.*;
 
 /**
  *
@@ -42,11 +42,12 @@ public class DefaultScreenOverlay extends DefaultAbstractOverlay implements Scre
      *
      */
     public DefaultScreenOverlay() {
+        super(KmlModelConstants.TYPE_SCREEN_OVERLAY);
         this.rotation = DEF_ROTATION;
     }
 
     /**
-     *
+     * 
      * @param objectSimpleExtensions
      * @param idAttributes
      * @param name
@@ -98,7 +99,8 @@ public class DefaultScreenOverlay extends DefaultAbstractOverlay implements Scre
             Vec2 overlayXY, Vec2 screenXY, Vec2 rotationXY, Vec2 size, double rotation,
             List<SimpleType> screenOverlaySimpleExtensions,
             List<AbstractObject> screendOverlayObjectExtensions) {
-        super(objectSimpleExtensions, idAttributes,
+        super(KmlModelConstants.TYPE_SCREEN_OVERLAY,
+                objectSimpleExtensions, idAttributes,
                 name, visibility, open, author, atomLink,
                 address, addressDetails, phoneNumber, snippet,
                 description, view, timePrimitive, styleUrl, styleSelector,

@@ -104,7 +104,7 @@ public class LabelStyleTest {
         assertEquals(1, document.getAbstractFeatures().size());
         assertTrue(document.getAbstractFeatures().get(0) instanceof Placemark);
         Placemark placemark = (Placemark) document.getAbstractFeatures().get(0);
-        assertEquals("LabelStyle.kml", placemark.getName());
+        assertEquals("LabelStyle.kml", placemark.getFeatureName());
         assertEquals(new URI("#randomLabelColor"), placemark.getStyleUrl());
         assertTrue(placemark.getAbstractGeometry() instanceof Point);
         Point point = (Point) placemark.getAbstractGeometry();
@@ -125,7 +125,7 @@ public class LabelStyleTest {
         Point point = kmlFactory.createPoint(coordinates);
 
         Placemark placemark = kmlFactory.createPlacemark();
-        placemark.setName("LabelStyle.kml");
+        placemark.setFeatureName("LabelStyle.kml");
         placemark.setStyleUrl(new URI("#randomLabelColor"));
         placemark.setAbstractGeometry(point);
 

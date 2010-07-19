@@ -79,7 +79,7 @@ public class GroundOverlayTest {
         final AbstractFeature feature = kmlObjects.getAbstractFeature();
         assertTrue(feature instanceof GroundOverlay);
         final GroundOverlay groundOverlay = (GroundOverlay) feature;
-        assertEquals("GroundOverlay.kml", groundOverlay.getName());
+        assertEquals("GroundOverlay.kml", groundOverlay.getFeatureName());
         assertEquals("7fffffff",KmlUtilities.toKmlColor(groundOverlay.getColor()));
         assertEquals(1,groundOverlay.getDrawOrder());
         final Icon icon = groundOverlay.getIcon();
@@ -127,7 +127,7 @@ public class GroundOverlayTest {
         final int drawOrder = 1;
         
         final GroundOverlay groundOverlay = kmlFactory.createGroundOverlay();
-        groundOverlay.setName(name);
+        groundOverlay.setFeatureName(name);
         groundOverlay.setColor(color);
         groundOverlay.setDrawOrder(drawOrder);
         groundOverlay.setIcon(icon);

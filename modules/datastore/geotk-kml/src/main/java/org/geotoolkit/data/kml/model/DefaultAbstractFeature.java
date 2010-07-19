@@ -17,21 +17,28 @@
 package org.geotoolkit.data.kml.model;
 
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import org.geotoolkit.data.atom.model.AtomPersonConstruct;
 import org.geotoolkit.data.atom.model.AtomLink;
-import org.geotoolkit.data.xal.model.AddressDetails;
+import org.geotoolkit.xal.model.AddressDetails;
 import org.geotoolkit.data.kml.xsd.SimpleType;
 import org.geotoolkit.data.kml.xsd.Cdata;
-import static org.geotoolkit.data.kml.xml.KmlModelConstants.*;
+import org.geotoolkit.feature.type.DefaultAttributeDescriptor;
+import org.opengis.feature.Property;
+import org.opengis.feature.type.FeatureType;
+import static org.geotoolkit.data.kml.xml.KmlConstants.*;
 import static java.util.Collections.*;
 
 /**
  *
  * @author Samuel Andrés
  */
-public abstract class DefaultAbstractFeature extends DefaultAbstractObject implements AbstractFeature {
+public class DefaultAbstractFeature extends org.geotoolkit.feature.AbstractFeature<Collection<Property>> implements AbstractFeature {
 
+    private final Extensions extensions = new Extensions();
+    protected IdAttributes idAttributes;
     protected String name;
     protected boolean visibility;
     protected boolean open;
@@ -52,8 +59,9 @@ public abstract class DefaultAbstractFeature extends DefaultAbstractObject imple
     /**
      * 
      */
-    protected DefaultAbstractFeature() {
-        super();
+    protected DefaultAbstractFeature(FeatureType type) {
+        super(new DefaultAttributeDescriptor( type, type.getName(), 1, 1, true, null), null);
+        value = new ArrayList<Property>();
         this.visibility = DEF_VISIBILITY;
         this.open = DEF_OPEN;
         this.styleSelector = EMPTY_LIST;
@@ -82,7 +90,8 @@ public abstract class DefaultAbstractFeature extends DefaultAbstractObject imple
      * @param abstractFeatureSimpleExtensions
      * @param abstractFeatureObjectExtensions
      */
-    protected DefaultAbstractFeature(List<SimpleType> objectSimpleExtensions,
+    protected DefaultAbstractFeature(FeatureType type,
+            List<SimpleType> objectSimpleExtensions,
             IdAttributes idAttributes,
             String name, boolean visibility, boolean open,
             AtomPersonConstruct author, AtomLink atomLink,
@@ -94,8 +103,12 @@ public abstract class DefaultAbstractFeature extends DefaultAbstractObject imple
             Region region, Object extendedData,
             List<SimpleType> abstractFeatureSimpleExtensions,
             List<AbstractObject> abstractFeatureObjectExtensions) {
+        this(type);
 
-        super(objectSimpleExtensions, idAttributes);
+        if (objectSimpleExtensions != null) {
+            this.extensions().simples(Extensions.Names.OBJECT).addAll(objectSimpleExtensions);
+        }
+        this.idAttributes = idAttributes;
         this.name = name;
         this.visibility = visibility;
         this.open = open;
@@ -134,7 +147,7 @@ public abstract class DefaultAbstractFeature extends DefaultAbstractObject imple
      * @{@inheritDoc }
      */
     @Override
-    public String getName() {
+    public String getFeatureName() {
         return this.name;
     }
 
@@ -278,7 +291,16 @@ public abstract class DefaultAbstractFeature extends DefaultAbstractObject imple
      * @{@inheritDoc }
      */
     @Override
-    public void setName(String name) {
+    public IdAttributes getIdAttributes() {
+        return this.idAttributes;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setFeatureName(String name) {
         this.name = name;
     }
 
@@ -446,28 +468,42 @@ public abstract class DefaultAbstractFeature extends DefaultAbstractObject imple
         this.extendedData = metaData;
     }
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
-    public String toString() {
-        String resultat = "AbstractFeatureDefault : "
-                + "\n\tname : " + this.name
-                + "\n\tvisibility : " + this.visibility
-                + "\n\topen : " + this.open
-                + "\n\tauthor : " + this.author
-                + "\n\tlink : " + this.atomLink
-                + "\n\taddress : " + this.address
-                + "\n\taddressDetails : " + this.addressDetails
-                + "\n\tphoneNumber : " + this.phoneNumber
-                + "\n\tsnippet : " + this.snippet
-                + "\n\tdescription : " + this.description
-                + "\n\tview : " + this.view
-                + "\n\ttimePrimitive : " + this.timePrimitive
-                + "\n\tstyleUrl : " + this.styleUrl
-                + "\n\tstyleSelectors : " + this.styleSelector.size();
-        for (AbstractStyleSelector s : this.styleSelector) {
-            resultat += "\n\tstyleSelector : " + s;
-        }
-        resultat += "\n\tregion : " + this.region
-                + "\n\textendedData : " + this.extendedData;
-        return resultat;
+    public void setIdAttributes(IdAttributes idAttributes) {
+        this.idAttributes = idAttributes;
     }
+
+    @Override
+    public Extensions extensions() {
+        return extensions;
+    }
+
+//    @Override
+//    public String toString() {
+//        String resultat = "AbstractFeatureDefault : "
+//                + "\n\tname : " + this.name
+//                + "\n\tvisibility : " + this.visibility
+//                + "\n\topen : " + this.open
+//                + "\n\tauthor : " + this.author
+//                + "\n\tlink : " + this.atomLink
+//                + "\n\taddress : " + this.address
+//                + "\n\taddressDetails : " + this.addressDetails
+//                + "\n\tphoneNumber : " + this.phoneNumber
+//                + "\n\tsnippet : " + this.snippet
+//                + "\n\tdescription : " + this.description
+//                + "\n\tview : " + this.view
+//                + "\n\ttimePrimitive : " + this.timePrimitive
+//                + "\n\tstyleUrl : " + this.styleUrl
+//                + "\n\tstyleSelectors : " + this.styleSelector.size();
+//        for (AbstractStyleSelector s : this.styleSelector) {
+//            resultat += "\n\tstyleSelector : " + s;
+//        }
+//        resultat += "\n\tregion : " + this.region
+//                + "\n\textendedData : " + this.extendedData;
+//        return resultat;
+//    }
 }

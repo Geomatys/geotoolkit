@@ -17,11 +17,14 @@
 package org.geotoolkit.data.kml.model;
 
 import java.net.URI;
+import java.util.Collection;
 import java.util.List;
 import org.geotoolkit.data.atom.model.AtomPersonConstruct;
 import org.geotoolkit.data.atom.model.AtomLink;
 import org.geotoolkit.data.kml.xsd.SimpleType;
-import org.geotoolkit.data.xal.model.AddressDetails;
+import org.geotoolkit.xal.model.AddressDetails;
+import org.geotoolkit.feature.DefaultGeometryAttribute;
+import org.opengis.feature.Property;
 
 /**
  *
@@ -35,6 +38,7 @@ public class DefaultPlacemark extends DefaultAbstractFeature implements Placemar
      * 
      */
     public DefaultPlacemark() {
+        super(KmlModelConstants.TYPE_PLACEMARK);
     }
 
     /**
@@ -79,7 +83,8 @@ public class DefaultPlacemark extends DefaultAbstractFeature implements Placemar
             List<SimpleType> placemarkSimpleExtensions,
             List<AbstractObject> placemarkObjectExtensions) {
 
-        super(objectSimpleExtensions, idAttributes,
+        super(KmlModelConstants.TYPE_PLACEMARK,
+                objectSimpleExtensions, idAttributes,
                 name, visibility, open,
                 author, atomLink,
                 address, addressDetails,
@@ -87,7 +92,7 @@ public class DefaultPlacemark extends DefaultAbstractFeature implements Placemar
                 styleUrl, styleSelector, region, extendedData,
                 abstractFeatureSimpleExtensions,
                 abstractFeatureObjectExtensions);
-        this.abstractGeometry = abstractGeometry;
+        this.setAbstractGeometry(abstractGeometry);
         if (placemarkSimpleExtensions != null) {
             this.extensions().simples(Extensions.Names.PLACEMARK).addAll(placemarkSimpleExtensions);
         }
@@ -112,6 +117,12 @@ public class DefaultPlacemark extends DefaultAbstractFeature implements Placemar
     @Override
     public void setAbstractGeometry(AbstractGeometry abstractGeometry) {
         this.abstractGeometry = abstractGeometry;
+        Property prop = this.getProperty(KmlModelConstants.ATT_PLACEMARK_GEOMETRY.getName());
+        if (prop == null){
+            value.add(new DefaultGeometryAttribute(this.abstractGeometry, KmlModelConstants.ATT_PLACEMARK_GEOMETRY, null));
+        } else {
+            prop.setValue(abstractGeometry);
+        }
     }
 
     @Override

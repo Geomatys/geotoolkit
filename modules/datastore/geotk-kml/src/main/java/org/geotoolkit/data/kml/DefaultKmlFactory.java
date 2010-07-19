@@ -33,7 +33,7 @@ import org.geotoolkit.data.kml.model.AbstractTimePrimitive;
 import org.geotoolkit.data.kml.model.AbstractView;
 import org.geotoolkit.data.kml.model.Alias;
 import org.geotoolkit.data.kml.model.DefaultAlias;
-import org.geotoolkit.data.kml.model.AltitudeMode;
+import org.geotoolkit.data.kml.model.EnumAltitudeMode;
 import org.geotoolkit.data.kml.model.BalloonStyle;
 import org.geotoolkit.data.kml.model.DefaultBalloonStyle;
 import org.geotoolkit.data.kml.model.BasicLink;
@@ -162,7 +162,7 @@ import org.geotoolkit.data.kml.model.ViewVolume;
 import org.geotoolkit.data.kml.model.DefaultViewVolume;
 import org.geotoolkit.data.kml.model.Metadata;
 import org.geotoolkit.data.kml.model.Url;
-import org.geotoolkit.data.xal.model.AddressDetails;
+import org.geotoolkit.xal.model.AddressDetails;
 import org.geotoolkit.data.kml.xsd.SimpleType;
 
 /**
@@ -284,7 +284,7 @@ public class DefaultKmlFactory implements KmlFactory{
             List<SimpleType> abstractViewSimpleExtensions,
             List<AbstractObject> abstractViewObjectExtensions,
             double longitude, double latitude, double altitude,
-            double heading, double tilt, double roll, AltitudeMode altitudeMode,
+            double heading, double tilt, double roll, EnumAltitudeMode altitudeMode,
             List<SimpleType> cameraSimpleExtensions, 
             List<AbstractObject> cameraObjectExtensions) {
         return new DefaultCamera(objectSimpleExtensions, idAttributes,
@@ -512,7 +512,7 @@ public class DefaultKmlFactory implements KmlFactory{
             Color color, int drawOrder, Icon icon,
             List<SimpleType> abstractOveraySimpleExtensions,
             List<AbstractObject> abstractOverlayObjectExtensions,
-            double altitude, AltitudeMode altitudeMode, LatLonBox latLonBox,
+            double altitude, EnumAltitudeMode altitudeMode, LatLonBox latLonBox,
             List<SimpleType> groundOverlaySimpleExtensions, 
             List<AbstractObject> groundOverlayObjectExtensions) {
         return new DefaultGroundOverlay(objectSimpleExtensions, idAttributes,
@@ -700,7 +700,7 @@ public class DefaultKmlFactory implements KmlFactory{
             double north, double south, double east, double west,
             List<SimpleType> abstractLatLonBoxSimpleExtensions,
             List<AbstractObject> abstractLatLonBoxObjectExtensions,
-            double minAltitude, double maxAltitude, AltitudeMode altitudeMode,
+            double minAltitude, double maxAltitude, EnumAltitudeMode altitudeMode,
             List<SimpleType> latLonAltBoxSimpleExtensions, 
             List<AbstractObject> latLonAltBoxObjectExtensions) {
         return new DefaultLatLonAltBox(objectSimpleExtensions, idAttributes,
@@ -729,7 +729,7 @@ public class DefaultKmlFactory implements KmlFactory{
             List<SimpleType> abstractGeometrySimpleExtensions,
             List<AbstractObject> abstractGeometryObjectExtensions,
             boolean extrude, boolean tessellate,
-            AltitudeMode altitudeMode,
+            EnumAltitudeMode altitudeMode,
             Coordinates coordinates,
             List<SimpleType> linearRingSimpleExtensions,
             List<AbstractObject> linearRingObjectExtensions) {
@@ -757,7 +757,7 @@ public class DefaultKmlFactory implements KmlFactory{
             List<SimpleType> abstractGeometrySimpleExtensions,
             List<AbstractObject> abstractGeometryObjectExtensions,
             boolean extrude, boolean tessellate,
-            AltitudeMode altitudeMode,
+            EnumAltitudeMode altitudeMode,
             Coordinates coordinates,
             List<SimpleType> lineStringSimpleExtensions,
             List<AbstractObject> lineStringObjectExtensions) {
@@ -962,7 +962,7 @@ public class DefaultKmlFactory implements KmlFactory{
             List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
             List<SimpleType> abstractGeometrySimpleExtensions,
             List<AbstractObject> abstractGeometryObjectExtensions,
-            AltitudeMode altitudeMode, Location location,
+            EnumAltitudeMode altitudeMode, Location location,
             Orientation orientation, Scale scale, Link link, ResourceMap resourceMap,
             List<SimpleType> modelSimpleExtensions,
             List<AbstractObject> modelObjectExtensions) {
@@ -1200,7 +1200,7 @@ public class DefaultKmlFactory implements KmlFactory{
             List<SimpleType> abstractGeometrySimpleExtensions,
             List<AbstractObject> abstractGeometryObjectExtensions,
             boolean extrude,
-            AltitudeMode altitudeMode,
+            EnumAltitudeMode altitudeMode,
             Coordinates coordinates,
             List<SimpleType> pointSimpleExtensions,
             List<AbstractObject> pointObjectExtensions) {
@@ -1226,7 +1226,7 @@ public class DefaultKmlFactory implements KmlFactory{
             IdAttributes idAttributes,
             List<SimpleType> abstractGeometrySimpleExtensions,
             List<AbstractObject> abstractGeometryObjectExtensions,
-            boolean extrude, boolean tessellate, AltitudeMode altitudeMode,
+            boolean extrude, boolean tessellate, EnumAltitudeMode altitudeMode,
             Boundary outerBoundary, List<Boundary> innerBoundaries,
             List<SimpleType> polygonSimpleExtensions,
             List<AbstractObject> polygonObjectExtensions) {

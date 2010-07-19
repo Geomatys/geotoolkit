@@ -22,8 +22,9 @@ import java.util.List;
 import org.geotoolkit.data.atom.model.AtomLink;
 import org.geotoolkit.data.atom.model.AtomPersonConstruct;
 import org.geotoolkit.data.kml.xsd.SimpleType;
-import org.geotoolkit.data.xal.model.AddressDetails;
-import static org.geotoolkit.data.kml.xml.KmlModelConstants.*;
+import org.geotoolkit.xal.model.AddressDetails;
+import org.opengis.feature.type.FeatureType;
+import static org.geotoolkit.data.kml.xml.KmlConstants.*;
 
 /**
  *
@@ -38,7 +39,8 @@ public abstract class DefaultAbstractOverlay extends DefaultAbstractFeature impl
     /**
      * 
      */
-    protected DefaultAbstractOverlay() {
+    protected DefaultAbstractOverlay(FeatureType type) {
+        super(type);
     }
 
     /**
@@ -69,7 +71,8 @@ public abstract class DefaultAbstractOverlay extends DefaultAbstractFeature impl
      * @param abstractOverlaySimpleExtensions
      * @param abstractOverlayObjectExtensions
      */
-    protected DefaultAbstractOverlay(List<SimpleType> objectSimpleExtensions,
+    protected DefaultAbstractOverlay(FeatureType type,
+            List<SimpleType> objectSimpleExtensions,
             IdAttributes idAttributes,
             String name, boolean visibility, boolean open,
             AtomPersonConstruct author, AtomLink atomLink,
@@ -84,7 +87,7 @@ public abstract class DefaultAbstractOverlay extends DefaultAbstractFeature impl
             Color color, int drawOrder, Icon icon,
             List<SimpleType> abstractOverlaySimpleExtensions,
             List<AbstractObject> abstractOverlayObjectExtensions) {
-        super(objectSimpleExtensions, idAttributes,
+        super(type, objectSimpleExtensions, idAttributes,
                 name, visibility, open,
                 author, atomLink, address, addressDetails,
                 phoneNumber, snippet, description, view,
