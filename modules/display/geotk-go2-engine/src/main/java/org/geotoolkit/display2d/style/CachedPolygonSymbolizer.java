@@ -28,6 +28,7 @@ import org.opengis.feature.Feature;
 import org.opengis.filter.expression.Expression;
 import org.opengis.style.Displacement;
 import org.opengis.style.PolygonSymbolizer;
+import org.opengis.style.Stroke;
 
 /**
  *
@@ -48,8 +49,13 @@ public class CachedPolygonSymbolizer extends CachedSymbolizer<PolygonSymbolizer>
     public CachedPolygonSymbolizer(PolygonSymbolizer poly,
             SymbolizerRendererService<PolygonSymbolizer,? extends CachedSymbolizer<PolygonSymbolizer>> renderer){
         super(poly,renderer);
-        
-        cacheStroke = CachedStroke.cache(poly.getStroke());
+
+        Stroke str = poly.getStroke();
+        if(str == null){
+            cacheStroke = null;
+        }else{
+            cacheStroke = CachedStroke.cache(poly.getStroke());
+        }
         cacheFill = CachedFill.cache(poly.getFill());
     }
     
@@ -64,7 +70,9 @@ public class CachedPolygonSymbolizer extends CachedSymbolizer<PolygonSymbolizer>
         evaluateOffset();
         evaluateDisplacement();
 
-        cacheStroke.getRequieredAttributsName(requieredAttributs);
+        if(cacheStroke != null){
+            cacheStroke.getRequieredAttributsName(requieredAttributs);
+        }
         cacheFill.getRequieredAttributsName(requieredAttributs);
         
         if(requieredAttributs.isEmpty()) requieredAttributs = EMPTY_ATTRIBUTS;
@@ -116,7 +124,7 @@ public class CachedPolygonSymbolizer extends CachedSymbolizer<PolygonSymbolizer>
     }
 
     public boolean isStrokeVisible(Feature feature){
-        return cacheStroke.isVisible(feature);
+        return cacheStroke != null && cacheStroke.isVisible(feature);
     }
     
     public AlphaComposite getJ2DFillComposite(Feature feature){
@@ -175,7 +183,8 @@ public class CachedPolygonSymbolizer extends CachedSymbolizer<PolygonSymbolizer>
      */
     @Override
     public boolean isVisible(Feature feature){
-        return cacheStroke.isVisible(feature) || cacheFill.isVisible(feature);
+        return (cacheStroke == null || cacheStroke.isVisible(feature))
+                || cacheFill.isVisible(feature);
     }
     
     /**
@@ -183,7 +192,8 @@ public class CachedPolygonSymbolizer extends CachedSymbolizer<PolygonSymbolizer>
      */
     @Override
     public boolean isStatic(){
-        return cacheStroke.isStatic() && cacheFill.isStatic();
+        return (cacheStroke == null || cacheStroke.isStatic())
+                && cacheFill.isStatic();
     }
     
     /**
@@ -191,7 +201,7 @@ public class CachedPolygonSymbolizer extends CachedSymbolizer<PolygonSymbolizer>
      */
     @Override
     public VisibilityState isStaticVisible(){
-        VisibilityState v1 = cacheStroke.isStaticVisible();
+        VisibilityState v1 = (cacheStroke==null)?VisibilityState.UNVISIBLE : cacheStroke.isStaticVisible();
         VisibilityState v2 = cacheFill.isStaticVisible();
         
         if(v1 == VisibilityState.UNVISIBLE && v2 == VisibilityState.UNVISIBLE) return VisibilityState.UNVISIBLE ;
@@ -205,7 +215,12 @@ public class CachedPolygonSymbolizer extends CachedSymbolizer<PolygonSymbolizer>
      */
     @Override
     public float getMargin(Feature feature, float coeff) {
-        return cacheStroke.getMargin(feature,coeff);
+        if(cacheStroke == null){
+            return 0f;
+        }else{
+            return cacheStroke.getMargin(feature,coeff);
+        }
+        
     }
     
 }

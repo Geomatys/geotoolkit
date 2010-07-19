@@ -317,18 +317,28 @@ public final class XMLUtilities {
         final Object obj;
         
         switch(version){
-            case V_1_0_0 :
+            case V_1_0_0:
                 obj = unmarshallV100(source);
-                if(obj instanceof org.geotoolkit.sld.xml.v100.StyledLayerDescriptor){
-                    return transformerGTv100.visit( (org.geotoolkit.sld.xml.v100.StyledLayerDescriptor) obj);
-                }else{
+                if (obj instanceof org.geotoolkit.sld.xml.v100.StyledLayerDescriptor) {
+                    final org.geotoolkit.sld.xml.v100.StyledLayerDescriptor tempsld = (org.geotoolkit.sld.xml.v100.StyledLayerDescriptor) obj;
+                    if ("1.0.0".equals(tempsld.getVersion())) {
+                        return transformerGTv100.visit((org.geotoolkit.sld.xml.v100.StyledLayerDescriptor) obj);
+                    } else {
+                        throw new JAXBException("Source is SLD but not in v1.0.0");
+                    }
+                } else {
                     throw new JAXBException("Source is not a valid OGC SLD v1.0.0");
                 }
             case V_1_1_0 :
                 obj = unmarshallV110(source);
-                if(obj instanceof org.geotoolkit.sld.xml.v110.StyledLayerDescriptor){
-                    return transformerGTv110.visit( (org.geotoolkit.sld.xml.v110.StyledLayerDescriptor) obj);
-                }else{
+                if (obj instanceof org.geotoolkit.sld.xml.v110.StyledLayerDescriptor) {
+                    final org.geotoolkit.sld.xml.v110.StyledLayerDescriptor tempsld = (org.geotoolkit.sld.xml.v110.StyledLayerDescriptor) obj;
+                    if ("1.1.0".equals(tempsld.getVersion())) {
+                        return transformerGTv110.visit((org.geotoolkit.sld.xml.v110.StyledLayerDescriptor) obj);
+                    } else {
+                        throw new JAXBException("Source is SLD but not in v1.1.0");
+                    }
+                } else {
                     throw new JAXBException("Source is not a valid OGC SLD v1.1.0");
                 }
             default :

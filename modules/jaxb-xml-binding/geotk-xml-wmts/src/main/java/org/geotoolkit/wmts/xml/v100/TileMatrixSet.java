@@ -67,18 +67,34 @@ import org.geotoolkit.ows.xml.v110.DescriptionType;
 public class TileMatrixSet extends DescriptionType {
 
     @XmlElement(name = "Identifier", namespace = "http://www.opengis.net/ows/1.1", required = true)
-    protected CodeType identifier;
+    private CodeType identifier;
     @XmlElementRef(name = "BoundingBox", namespace = "http://www.opengis.net/ows/1.1", type = JAXBElement.class)
-    protected JAXBElement<? extends BoundingBoxType> boundingBox;
+    private JAXBElement<? extends BoundingBoxType> boundingBox;
     @XmlElement(name = "SupportedCRS", namespace = "http://www.opengis.net/ows/1.1", required = true)
     @XmlSchemaType(name = "anyURI")
-    protected String supportedCRS;
+    private String supportedCRS;
     @XmlElement(name = "WellKnownScaleSet")
     @XmlSchemaType(name = "anyURI")
-    protected String wellKnownScaleSet;
+    private String wellKnownScaleSet;
     @XmlElement(name = "TileMatrix", required = true)
-    protected List<TileMatrix> tileMatrix;
+    private List<TileMatrix> tileMatrix;
 
+    public TileMatrixSet() {
+
+    }
+
+    public TileMatrixSet(CodeType identifier, String supportedCRS) {
+        this.identifier = identifier;
+        this.supportedCRS = supportedCRS;
+    }
+
+    public TileMatrixSet(CodeType identifier, String supportedCRS, JAXBElement<? extends BoundingBoxType> bbox, String wellKnownScaleSet) {
+        this.identifier        = identifier;
+        this.supportedCRS      = supportedCRS;
+        this.boundingBox       = bbox;
+        this.wellKnownScaleSet = wellKnownScaleSet;
+    }
+    
     /**
      * Tile matrix set identifier
      * 
@@ -179,31 +195,16 @@ public class TileMatrixSet extends DescriptionType {
 
     /**
      * Describes a scale level and its tile matrix.Gets the value of the tileMatrix property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the tileMatrix property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getTileMatrix().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link TileMatrix }
-     * 
-     * 
      */
     public List<TileMatrix> getTileMatrix() {
         if (tileMatrix == null) {
             tileMatrix = new ArrayList<TileMatrix>();
         }
         return this.tileMatrix;
+    }
+
+    public void setTileMatrix(List<TileMatrix> tm) {
+        this.tileMatrix = tm;
     }
 
 }

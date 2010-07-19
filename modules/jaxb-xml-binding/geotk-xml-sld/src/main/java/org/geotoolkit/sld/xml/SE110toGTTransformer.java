@@ -643,7 +643,7 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
     public LineSymbolizer visit(LineSymbolizerType lst) {
         if(lst == null) return null;
 
-        final Stroke stroke = (lst.getStroke() == null)? styleFactory.stroke() : visit(lst.getStroke());
+        final Stroke stroke = visit(lst.getStroke());
         final Expression offset = (lst.getPerpendicularOffset() == null) ? filterFactory.literal(0) : visitExpression(lst.getPerpendicularOffset());
         final Unit uom = visitUOM(lst.getUom());
         final String geom = visitGeom( lst.getGeometry());
@@ -659,8 +659,8 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
     public PolygonSymbolizer visit(PolygonSymbolizerType pst) {
         if(pst == null) return null;
 
-        final Stroke stroke = (pst.getStroke() == null)? styleFactory.stroke() : visit(pst.getStroke());
-        final Fill fill = (pst.getFill() == null)? styleFactory.fill() : visit(pst.getFill());
+        final Stroke stroke = visit(pst.getStroke());
+        final Fill fill = visit(pst.getFill());
         final Displacement disp = (pst.getDisplacement() == null)? styleFactory.displacement(0, 0) : visit(pst.getDisplacement());
         final Expression offset = (pst.getPerpendicularOffset() == null) ? filterFactory.literal(0) : visitExpression(pst.getPerpendicularOffset());
         final Unit uom = visitUOM(pst.getUom());
