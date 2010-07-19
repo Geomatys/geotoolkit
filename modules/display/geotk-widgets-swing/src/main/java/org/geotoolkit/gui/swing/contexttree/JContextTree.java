@@ -90,7 +90,7 @@ public class JContextTree extends JScrollPane implements ContextListener {
     private static final ImageIcon ICON_LAYER_VISIBLE = IconBundle.getInstance().getIcon("16_maplayer_visible");
     private static final ImageIcon ICON_LAYER_UNVISIBLE = IconBundle.getInstance().getIcon("16_maplayer_unvisible");
     private static final ImageIcon ICON_FTS = IconBundle.getInstance().getIcon("16_style_fts");
-    
+
     private final List<TreePopupItem> controls = new ArrayList<TreePopupItem>();
     private final DefaultMutableTreeNode root = new DefaultMutableTreeNode(null);
     private final DefaultTreeModel model = new DefaultTreeModel(root);
@@ -248,7 +248,7 @@ public class JContextTree extends JScrollPane implements ContextListener {
                     layerNode.add(ftsNode);
                 }
             }
-            
+
         }
         return layerNode;
     }
@@ -475,7 +475,7 @@ public class JContextTree extends JScrollPane implements ContextListener {
                     this.label.setText(context.getDescription().getTitle().toString());
                     panel.add(label,gc);
                 }
-                
+
             } else if (obj instanceof MapLayer) {
                 final MapLayer layer = (MapLayer) obj;
 
@@ -544,7 +544,12 @@ public class JContextTree extends JScrollPane implements ContextListener {
                 gc.weightx = 1;
                 gc.weighty = 1;
                 gc.gridx = 1;
-                this.label.setText(rule.getDescription().getTitle().toString());
+                Description desc = rule.getDescription();
+                if(desc != null && desc.getTitle() != null){
+                    this.label.setText(desc.getTitle().toString());
+                }else{
+                    this.label.setText("");
+                }
                 panel.add(label,gc);
             } else if(obj instanceof Image){
                 final Image img = (Image) obj;
@@ -578,9 +583,9 @@ public class JContextTree extends JScrollPane implements ContextListener {
                 layer.setVisible(visibleCheck.isSelected());
             }
 
-            Object value = this.value;
+            Object temp = this.value;
             this.value = null;
-            return value;
+            return temp;
         }
 
         @Override
@@ -688,11 +693,11 @@ public class JContextTree extends JScrollPane implements ContextListener {
 
                 MapContext context = getContext();
                 MapLayer layer = (MapLayer) parent;
-                
+
                 if(layer == transferedLayer){
                     return true;
                 }
-                
+
                 int index = context.layers().indexOf(layer);
                 context.layers().remove(transferedLayer);
                 context.layers().add(index,transferedLayer);
