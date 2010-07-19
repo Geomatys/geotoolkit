@@ -17,13 +17,12 @@
  *    This file is based on an origional contained in the GISToolkit project:
  *    http://gistoolkit.sourceforge.net/
  */
-package org.geotoolkit.data.shapefile.dbf;
+package org.geotoolkit.data.dbf;
 
 import java.io.IOException;
 import java.nio.channels.FileChannel;
+import java.nio.channels.ReadableByteChannel;
 import java.nio.charset.Charset;
-
-import org.geotoolkit.data.shapefile.ShpFiles;
 
 /**
  * A DbaseFileReader is used to read a dbase III format file. <br>
@@ -65,33 +64,32 @@ public class IndexedDbaseFileReader extends DbaseFileReader {
     /**
      * Like calling DbaseFileReader(ReadableByteChannel, true);
      * 
-     * @param shpFiles
+     * @param readChannel
      * @throws IOException
      */
-    public IndexedDbaseFileReader(ShpFiles shpFiles) throws IOException {
-        this(shpFiles, false, DEFAULT_STRING_CHARSET);
+    public IndexedDbaseFileReader(ReadableByteChannel readChannel) throws IOException {
+        this(readChannel, false, DEFAULT_STRING_CHARSET);
     }
 
     /**
      * Creates a new instance of DBaseFileReader
      * 
-     * @param shpFiles The file to use.
+     * @param shpFreadChannel The channel to use.
      * @param useMemoryMappedBuffer Wether or not map the file in memory
      * @throws IOException If an error occurs while initializing.
      */
-    public IndexedDbaseFileReader(ShpFiles shpFiles,
+    public IndexedDbaseFileReader(ReadableByteChannel readChannel,
             boolean useMemoryMappedBuffer) throws IOException {
-        super(shpFiles, useMemoryMappedBuffer,DEFAULT_STRING_CHARSET);
+        super(readChannel, useMemoryMappedBuffer,DEFAULT_STRING_CHARSET);
     }
 
-    public IndexedDbaseFileReader(ShpFiles shpFiles,
+    public IndexedDbaseFileReader(ReadableByteChannel readChannel,
             boolean useMemoryMappedBuffer, Charset stringCharset)
             throws IOException {
-        super(shpFiles, useMemoryMappedBuffer, stringCharset);
+        super(readChannel, useMemoryMappedBuffer, stringCharset);
     }
 
-    public void goTo(int recno) throws IOException,
-            UnsupportedOperationException {
+    public void goTo(int recno) throws IOException, UnsupportedOperationException {
 
         if (this.randomAccessEnabled) {
             int newPosition = this.header.getHeaderLength()
@@ -117,15 +115,6 @@ public class IndexedDbaseFileReader extends DbaseFileReader {
 
     public boolean IsRandomAccessEnabled() {
         return this.randomAccessEnabled;
-    }
-
-    public static void main(String[] args) throws Exception {
-        final IndexedDbaseFileReader reader = new IndexedDbaseFileReader(new ShpFiles(args[0]), false);
-        System.out.println(reader.getHeader());
-        for(int r=0; reader.hasNext();) {
-            System.out.println(++r + ","+ java.util.Arrays.asList(reader.readEntry()));
-        }
-        reader.close();
     }
 
 }

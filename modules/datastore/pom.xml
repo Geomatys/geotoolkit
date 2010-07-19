@@ -95,6 +95,7 @@
   <!-- =========================================================== -->
   <modules>
     <module>geotk-datastore-core</module>
+    <module>geotk-dbf</module>
     <module>geotk-csv</module>
     <module>geotk-gpx</module>
     <module>geotk-shapefile</module>

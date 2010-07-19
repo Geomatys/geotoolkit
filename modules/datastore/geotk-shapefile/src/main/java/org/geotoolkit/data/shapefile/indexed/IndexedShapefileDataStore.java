@@ -49,8 +49,8 @@ import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.shapefile.ShapefileDataStore;
 import org.geotoolkit.data.shapefile.ShapefileDataStoreFactory;
 import org.geotoolkit.data.shapefile.ShpFileType;
-import org.geotoolkit.data.shapefile.dbf.DbaseFileReader;
-import org.geotoolkit.data.shapefile.dbf.IndexedDbaseFileReader;
+import org.geotoolkit.data.dbf.DbaseFileReader;
+import org.geotoolkit.data.dbf.IndexedDbaseFileReader;
 import org.geotoolkit.data.shapefile.shp.IndexFile;
 import org.geotoolkit.data.shapefile.shp.ShapefileReader;
 import org.geotoolkit.data.shapefile.shp.ShapefileReader.Record;
@@ -83,6 +83,7 @@ import org.opengis.filter.identity.Identifier;
 
 import com.vividsolutions.jts.geom.Envelope;
 import org.geotoolkit.data.query.QueryBuilder;
+import org.geotoolkit.data.shapefile.ShpDBF;
 import org.geotoolkit.factory.Hints;
 
 /**
@@ -574,7 +575,7 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
             return null;
         }
         try {
-            return new IndexedDbaseFileReader(shpFiles, false, dbfCharset);
+            return ShpDBF.indexed(shpFiles, false, dbfCharset);
         } catch (IOException ex) {
             throw new DataStoreException(ex);
         }

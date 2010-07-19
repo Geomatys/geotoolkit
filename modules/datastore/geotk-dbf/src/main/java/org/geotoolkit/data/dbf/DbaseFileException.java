@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.data.shapefile.dbf;
+package org.geotoolkit.data.dbf;
 
 import org.geotoolkit.storage.DataStoreException;
 

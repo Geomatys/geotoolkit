@@ -17,7 +17,7 @@
  *    This file is based on an origional contained in the GISToolkit project:
  *    http://gistoolkit.sourceforge.net/
  */
-package org.geotoolkit.data.shapefile.dbf;
+package org.geotoolkit.data.dbf;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -31,8 +31,6 @@ import java.nio.charset.CharsetDecoder;
 import java.util.Calendar;
 import java.util.logging.Logger;
 
-import org.geotoolkit.data.shapefile.ShpFileType;
-import org.geotoolkit.data.shapefile.ShpFiles;
 import org.geotoolkit.resources.NIOUtilities;
 import org.geotoolkit.util.logging.Logging;
 
@@ -123,14 +121,9 @@ public class DbaseFileReader {
     /**
      * Creates a new instance of DBaseFileReader
      * 
-     * @param shapefileFiles The readable channel to use.
+     * @param readChannel The readable channel to use.
      * @throws IOException If an error occurs while initializing.
      */
-    public DbaseFileReader(ShpFiles shapefileFiles,
-            boolean useMemoryMappedBuffer, Charset charset) throws IOException {
-        ReadableByteChannel dbfChannel = shapefileFiles.getReadChannel(ShpFileType.DBF, this);
-        init(dbfChannel, useMemoryMappedBuffer, charset);
-    }
 
     public DbaseFileReader(ReadableByteChannel readChannel, boolean useMemoryMappedBuffer, Charset charset) throws IOException {
         init(readChannel, useMemoryMappedBuffer, charset);
@@ -568,17 +561,6 @@ public class DbaseFileReader {
     private static String extractNumberString(final CharBuffer charBuffer2,
             final int fieldOffset, final int fieldLen) {
         return charBuffer2.subSequence(fieldOffset, fieldOffset+fieldLen).toString().trim();
-    }
-
-    public static void main(String[] args) throws Exception {
-        DbaseFileReader reader = new DbaseFileReader(new ShpFiles(args[0]),
-                false, Charset.forName("ISO-8859-1"));
-        System.out.println(reader.getHeader());
-        int r = 0;
-        while (reader.hasNext()) {
-            System.out.println(++r + "," + java.util.Arrays.asList(reader.readEntry()));
-        }
-        reader.close();
     }
 
 }
