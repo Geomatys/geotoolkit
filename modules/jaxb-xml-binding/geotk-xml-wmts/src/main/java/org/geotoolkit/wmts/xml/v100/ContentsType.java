@@ -69,6 +69,10 @@ public class ContentsType extends ContentsBaseType {
         return this.tileMatrixSet;
     }
 
+    public void setTileMatrixSet(List<TileMatrixSet> tms) {
+        this.tileMatrixSet = tms;
+    }
+
     public List<LayerType> getLayers() {
         final List<LayerType> layers = new ArrayList<LayerType>();
         for (JAXBElement<? extends DatasetDescriptionSummaryBaseType> elem : getDatasetDescriptionSummary()) {

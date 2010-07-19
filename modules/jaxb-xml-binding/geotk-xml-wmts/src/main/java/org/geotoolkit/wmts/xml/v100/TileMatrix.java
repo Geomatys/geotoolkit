@@ -152,23 +152,6 @@ public class TileMatrix extends DescriptionType {
     /**
      * Gets the value of the topLeftCorner property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the topLeftCorner property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getTopLeftCorner().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link Double }
-     * 
      * 
      */
     public List<Double> getTopLeftCorner() {
