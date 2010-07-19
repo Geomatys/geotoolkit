@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.data.kml.xml;
 
-import org.geotoolkit.data.atom.xml.AtomConstants;
+import org.geotoolkit.atom.xml.AtomConstants;
 import java.awt.Color;
 import org.geotoolkit.data.kml.model.EnumAltitudeMode;
 import org.geotoolkit.data.kml.model.ColorMode;

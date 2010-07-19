@@ -14,51 +14,33 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.data.atom.model;
+package org.geotoolkit.atom.model;
 
 /**
+ * <p>This interface maps email atom type.</p>
+ *
+ * <pre>
+ * &lt;simpleType name="atomEmailAddress">
+ *  &lt;restriction base="string">
+ *      &lt;pattern value=".+@.+"/>
+ *  &lt;/restriction>
+ * &lt;/simpleType>
+ * </pre>
  *
  * @author Samuel Andrés
  */
-public class DefaultAtomEmail implements AtomEmail {
-
-    private String address;
+public interface AtomEmail {
 
     /**
      *
+     * @return
      */
-    public DefaultAtomEmail() {
-        this.address = null;
-    }
+    public String getAddress();
 
     /**
      * 
      * @param address
      */
-    public DefaultAtomEmail(String address) {
-        if (address.matches(".+@.+")) {
-            this.address = address;
-        } else {
-            throw new IllegalArgumentException(
-                    "Illegal address format for " + this.getClass());
-        }
-    }
+    public void setAddress(String address);
 
-    /**
-     *
-     * @{@inheritDoc }
-     */
-    @Override
-    public String getAddress() {
-        return this.address;
-    }
-
-    /**
-     *
-     * @{@inheritDoc }
-     */
-    @Override
-    public void setAddress(String address) {
-        this.address = address;
-    }
 }

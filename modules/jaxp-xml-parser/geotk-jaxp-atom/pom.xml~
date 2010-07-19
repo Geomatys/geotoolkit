@@ -18,11 +18,11 @@
     Module description.
   -->
     <groupId>org.geotoolkit.pending</groupId>
-    <artifactId>geotk-jaxp-xal</artifactId>
+    <artifactId>geotk-jaxp-atom</artifactId>
     <packaging>jar</packaging>
-    <name>JAXP Parser XAL</name>
+    <name>JAXP Parser ATOM</name>
     <description>
-        XAL stax readers and writers.
+        ATOM stax readers and writers.
     </description>
 
 
@@ -32,15 +32,15 @@
   -->
     <developers>
         <developer>
-            <name>Johann Sorel</name>
-            <id>eclesia</id>
-            <email>johann.sorel@geomatys.com</email>
+            <name>Samuel Andrés</name>
+            <id>sandres</id>
+            <email>samuel.andres@yahoo.fr</email>
             <organization>Geomatys</organization>
             <organizationUrl>http://www.geomatys.fr/</organizationUrl>
             <timezone>+1</timezone>
             <roles>
-                <role>Administrator</role>
-                <role>Developer</role>
+                <role>Java Developer</role>
+                <role>Module Maintainer</role>
             </roles>
         </developer>
     </developers>
@@ -57,7 +57,6 @@
             <artifactId>geotk-jaxp-core</artifactId>
             <version>${project.version}</version>
         </dependency>
-
     </dependencies>
 
 </project>

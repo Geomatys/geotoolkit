@@ -14,15 +14,15 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.data.atom;
+package org.geotoolkit.atom;
 
 import java.util.List;
-import org.geotoolkit.data.atom.model.AtomEmail;
-import org.geotoolkit.data.atom.model.AtomLink;
-import org.geotoolkit.data.atom.model.DefaultAtomLink;
-import org.geotoolkit.data.atom.model.AtomPersonConstruct;
-import org.geotoolkit.data.atom.model.DefaultAtomEmail;
-import org.geotoolkit.data.atom.model.DefaultAtomPersonConstruct;
+import org.geotoolkit.atom.model.AtomEmail;
+import org.geotoolkit.atom.model.AtomLink;
+import org.geotoolkit.atom.model.DefaultAtomLink;
+import org.geotoolkit.atom.model.AtomPersonConstruct;
+import org.geotoolkit.atom.model.DefaultAtomEmail;
+import org.geotoolkit.atom.model.DefaultAtomPersonConstruct;
 
 /**
  *

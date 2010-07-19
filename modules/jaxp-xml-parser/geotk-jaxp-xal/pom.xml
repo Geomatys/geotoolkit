@@ -32,15 +32,15 @@
   -->
     <developers>
         <developer>
-            <name>Johann Sorel</name>
-            <id>eclesia</id>
-            <email>johann.sorel@geomatys.com</email>
+            <name>Samuel Andrés</name>
+            <id>sandres</id>
+            <email>samuel.andres@yahoo.fr</email>
             <organization>Geomatys</organization>
             <organizationUrl>http://www.geomatys.fr/</organizationUrl>
             <timezone>+1</timezone>
             <roles>
-                <role>Administrator</role>
-                <role>Developer</role>
+                <role>Java Developer</role>
+                <role>Module Maintainer</role>
             </roles>
         </developer>
     </developers>

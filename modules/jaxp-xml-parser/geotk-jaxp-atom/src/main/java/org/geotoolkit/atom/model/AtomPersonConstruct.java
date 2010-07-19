@@ -14,33 +14,36 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.data.atom.model;
+package org.geotoolkit.atom.model;
+
+import java.util.List;
 
 /**
- * <p>This interface maps email atom type.</p>
+ * <p>This interface maps Atom personConstruct type.</p>
  *
  * <pre>
- * &lt;simpleType name="atomEmailAddress">
- *  &lt;restriction base="string">
- *      &lt;pattern value=".+@.+"/>
- *  &lt;/restriction>
- * &lt;/simpleType>
+ * &lt;complexType name="atomPersonConstruct">
+ *  &lt;choice minOccurs="0" maxOccurs="unbounded">
+ *      &lt;element ref="atom:name"/>
+ *      &lt;element ref="atom:uri"/>
+ *      &lt;element ref="atom:email"/>
+ *  &lt;/choice>
+ * &lt;/complexType>
  * </pre>
  *
  * @author Samuel Andrés
  */
-public interface AtomEmail {
+public interface AtomPersonConstruct {
 
     /**
      *
      * @return
      */
-    public String getAddress();
+    public List<Object> getParams();
 
     /**
      * 
-     * @param address
+     * @param params
      */
-    public void setAddress(String address);
-
+    public void setParams(final List<Object> params);
 }

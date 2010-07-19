@@ -17,7 +17,7 @@
 package org.geotoolkit.data.kml.xml;
 
 import org.geotoolkit.xal.xml.XalWriter;
-import org.geotoolkit.data.atom.xml.AtomWriter;
+import org.geotoolkit.atom.xml.AtomWriter;
 import java.awt.Color;
 import java.io.IOException;
 import java.net.URI;
@@ -26,8 +26,8 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.stream.XMLStreamException;
-import org.geotoolkit.data.atom.model.AtomLink;
-import org.geotoolkit.data.atom.model.AtomPersonConstruct;
+import org.geotoolkit.atom.model.AtomLink;
+import org.geotoolkit.atom.model.AtomPersonConstruct;
 import org.geotoolkit.data.kml.KmlUtilities;
 import org.geotoolkit.data.kml.model.AbstractColorStyle;
 import org.geotoolkit.data.kml.model.AbstractContainer;

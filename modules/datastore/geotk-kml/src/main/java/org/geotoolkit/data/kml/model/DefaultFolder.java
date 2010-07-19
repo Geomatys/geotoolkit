@@ -19,8 +19,8 @@ package org.geotoolkit.data.kml.model;
 import java.net.URI;
 import java.util.List;
 import org.geotoolkit.data.kml.xsd.SimpleType;
-import org.geotoolkit.data.atom.model.AtomPersonConstruct;
-import org.geotoolkit.data.atom.model.AtomLink;
+import org.geotoolkit.atom.model.AtomPersonConstruct;
+import org.geotoolkit.atom.model.AtomLink;
 import org.geotoolkit.xal.model.AddressDetails;
 import static java.util.Collections.*;
 

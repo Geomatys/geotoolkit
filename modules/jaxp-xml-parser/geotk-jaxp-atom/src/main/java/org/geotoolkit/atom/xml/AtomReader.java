@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.data.atom.xml;
+package org.geotoolkit.atom.xml;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -22,12 +22,12 @@ import java.util.List;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
-import org.geotoolkit.data.atom.AtomFactory;
-import org.geotoolkit.data.atom.DefaultAtomFactory;
-import org.geotoolkit.data.atom.model.AtomLink;
-import org.geotoolkit.data.atom.model.AtomPersonConstruct;
+import org.geotoolkit.atom.AtomFactory;
+import org.geotoolkit.atom.DefaultAtomFactory;
+import org.geotoolkit.atom.model.AtomLink;
+import org.geotoolkit.atom.model.AtomPersonConstruct;
 import org.geotoolkit.xml.StaxStreamReader;
-import static org.geotoolkit.data.atom.xml.AtomConstants.*;
+import static org.geotoolkit.atom.xml.AtomConstants.*;
 
 /**
  *

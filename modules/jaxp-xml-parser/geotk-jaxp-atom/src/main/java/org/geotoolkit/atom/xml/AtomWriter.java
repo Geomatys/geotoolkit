@@ -14,16 +14,16 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.data.atom.xml;
+package org.geotoolkit.atom.xml;
 
 import java.net.URI;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
-import org.geotoolkit.data.atom.model.AtomEmail;
-import org.geotoolkit.data.atom.model.AtomLink;
-import org.geotoolkit.data.atom.model.AtomPersonConstruct;
+import org.geotoolkit.atom.model.AtomEmail;
+import org.geotoolkit.atom.model.AtomLink;
+import org.geotoolkit.atom.model.AtomPersonConstruct;
 import org.geotoolkit.xml.StaxStreamWriter;
-import static org.geotoolkit.data.atom.xml.AtomConstants.*;
+import static org.geotoolkit.atom.xml.AtomConstants.*;
 
 /**
  *

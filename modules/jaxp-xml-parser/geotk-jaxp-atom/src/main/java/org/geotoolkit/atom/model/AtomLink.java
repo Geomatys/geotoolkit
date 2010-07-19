@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.data.atom.model;
+package org.geotoolkit.atom.model;
 
 /**
  * <p>This interface maps atom link element.</p>
