@@ -159,7 +159,6 @@ public class PatternRenderer extends AbstractSymbolizerRenderer<CachedPatternSym
                 for(final CachedSymbolizer cached : entry.getValue()){
                     GO2Utilities.portray(projectedFeature, cached, renderingContext);
                 }
-
             }
         } catch (TransformException ex) {
             throw new PortrayalException(ex);
