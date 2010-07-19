@@ -46,11 +46,12 @@ public class StatefullProjectedGeometry implements ProjectedGeometry {
     //Geometry in display CRS
     private com.vividsolutions.jts.geom.Geometry    displayGeometryJTS = null;
     private Geometry                                displayGeometryISO = null;
-    private JTSGeometryJ2D                          displayShape = new JTSGeometryJ2D(null);
+    private final JTSGeometryJ2D                    displayShape;
 
     public StatefullProjectedGeometry(StatefullContextParams params, com.vividsolutions.jts.geom.Geometry geom){
         this.params = params;
         this.objectiveGeometryJTS = geom;
+        this.displayShape = new JTSGeometryJ2D(geom, params.objectiveToDisplay);
     }
 
     public StatefullProjectedGeometry(StatefullProjectedGeometry copy){
@@ -60,16 +61,13 @@ public class StatefullProjectedGeometry implements ProjectedGeometry {
         this.objectiveShape = copy.objectiveShape;
         this.displayGeometryJTS = copy.displayGeometryJTS;
         this.displayGeometryISO = copy.displayGeometryISO;
-        this.displayShape.setGeometry(copy.displayShape.getGeometry());
+        this.displayShape = new JTSGeometryJ2D(copy.displayShape.getGeometry(), params.objectiveToDisplay);
     }
 
     public void setObjectiveGeometry(com.vividsolutions.jts.geom.Geometry geom){
-        clearDataCache();
-        this.objectiveGeometryJTS = geom;
-    }
-
-    public void clearDataCache(){
         clearObjectiveCache();
+        this.objectiveGeometryJTS = geom;
+        this.displayShape.setGeometry(objectiveGeometryJTS);
     }
 
     public void clearObjectiveCache(){
@@ -81,7 +79,6 @@ public class StatefullProjectedGeometry implements ProjectedGeometry {
     public void clearDisplayCache(){
         displayGeometryISO = null;
         displayGeometryJTS = null;
-        displayShape.setGeometry(null);
     }
 
     @Override
@@ -113,9 +110,6 @@ public class StatefullProjectedGeometry implements ProjectedGeometry {
      */
     @Override
     public Shape getDisplayShape() throws TransformException{
-        if(displayShape.getGeometry() == null){
-            displayShape.setGeometry(getDisplayGeometryJTS());
-        }
         return displayShape;
     }
 

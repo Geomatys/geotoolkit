@@ -48,13 +48,21 @@ public class JTSGeometryJ2D implements Shape, Cloneable {
     /** The wrapped JTS geometry */
     protected Geometry geometry;
 
+    /** An additional AffineTransform */
+    protected final AffineTransform transform;
+
+    public JTSGeometryJ2D(Geometry geom) {
+        this(geom, new AffineTransform());
+    }
+
     /**
      * Creates a new GeometryJ2D object.
      *
      * @param geom - the wrapped geometry
      */
-    public JTSGeometryJ2D(Geometry geom) {
+    public JTSGeometryJ2D(Geometry geom, AffineTransform trs) {
         this.geometry = geom;
+        this.transform = trs;
     }
 
     /**
@@ -163,20 +171,28 @@ public class JTSGeometryJ2D implements Shape, Cloneable {
     @Override
     public PathIterator getPathIterator(AffineTransform at) {
 
+        final AffineTransform concat;
+        if(at == null){
+            concat = transform;
+        }else{
+            concat = (AffineTransform) transform.clone();
+            concat.concatenate(at);
+        }
+
         if(iterator == null){
             if (this.geometry.isEmpty()) {
                 iterator = JTSEmptyIterator.INSTANCE;
             }else if (this.geometry instanceof Point) {
-                iterator = new JTSPointIterator((Point) geometry, at);
+                iterator = new JTSPointIterator((Point) geometry, concat);
             } else if (this.geometry instanceof Polygon) {
-                iterator = new JTSPolygonIterator((Polygon) geometry, at);
+                iterator = new JTSPolygonIterator((Polygon) geometry, concat);
             } else if (this.geometry instanceof LineString) {
-                iterator = new JTSLineIterator((LineString)geometry, at);
+                iterator = new JTSLineIterator((LineString)geometry, concat);
             } else if (this.geometry instanceof GeometryCollection) {
-                iterator = new JTSGeomCollectionIterator((GeometryCollection)geometry,at);
+                iterator = new JTSGeomCollectionIterator((GeometryCollection)geometry,concat);
             }
         }else{
-            iterator.setTransform(at);
+            iterator.setTransform(concat);
         }
 
         return iterator;
