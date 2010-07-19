@@ -388,7 +388,7 @@ public class SE100toGTTransformer extends OGC100toGTTransformer {
     public LineSymbolizer visit(org.geotoolkit.sld.xml.v100.LineSymbolizer lst) {
         if(lst == null) return null;
 
-        final Stroke stroke = (lst.getStroke() == null)? styleFactory.stroke() : visit(lst.getStroke());
+        final Stroke stroke = visit(lst.getStroke());
         final Expression offset = filterFactory.literal(0);
         final Unit uom = NonSI.PIXEL;
         final String geom = visitGeom( lst.getGeometry());
@@ -404,8 +404,8 @@ public class SE100toGTTransformer extends OGC100toGTTransformer {
     public PolygonSymbolizer visit(org.geotoolkit.sld.xml.v100.PolygonSymbolizer pst) {
         if(pst == null) return null;
 
-        final Stroke stroke = (pst.getStroke() == null)? styleFactory.stroke() : visit(pst.getStroke());
-        final Fill fill = (pst.getFill() == null)? styleFactory.fill() : visit(pst.getFill());
+        final Stroke stroke = visit(pst.getStroke());
+        final Fill fill = visit(pst.getFill());
         final Displacement disp = StyleConstants.DEFAULT_DISPLACEMENT;
         final Expression offset = filterFactory.literal(0);
         final Unit uom = NonSI.PIXEL;
