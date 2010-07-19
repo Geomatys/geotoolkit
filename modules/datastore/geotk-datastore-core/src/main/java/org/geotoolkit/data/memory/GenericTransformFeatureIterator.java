@@ -20,8 +20,6 @@ package org.geotoolkit.data.memory;
 import com.vividsolutions.jts.geom.Geometry;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.FeatureReader;
@@ -41,29 +39,29 @@ import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.referencing.operation.TransformException;
 
 /**
- * Basic support for a FeatureIterator that decimate the geometry attribut.
+ * Basic support for a  FeatureIterator that transform the geometry attribut.
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public abstract class GenericDecimateFeatureIterator<F extends Feature, R extends FeatureIterator<F>>
+public abstract class GenericTransformFeatureIterator<F extends Feature, R extends FeatureIterator<F>>
         implements FeatureIterator<F> {
 
     protected static final FeatureFactory FF = FactoryFinder
             .getFeatureFactory(new Hints(Hints.FEATURE_FACTORY, LenientFeatureFactory.class));
 
     protected final R iterator;
-    protected final GeometryTransformer decimator;
+    protected final GeometryTransformer transformer;
 
     /**
-     * Creates a new instance of GenericDecimateFeatureIterator
+     * Creates a new instance of GenericTransformFeatureIterator
      *
      * @param iterator FeatureReader to limit
-     * @param decimator the geometry decimator to use
+     * @param transformer the transformer to use on each geometry
      */
-    private GenericDecimateFeatureIterator(final R iterator, GeometryTransformer decimator) {
+    private GenericTransformFeatureIterator(final R iterator, GeometryTransformer transformer) {
         this.iterator = iterator;
-        this.decimator = decimator;
+        this.transformer = transformer;
     }
 
     /**
@@ -76,17 +74,19 @@ public abstract class GenericDecimateFeatureIterator<F extends Feature, R extend
         final Collection<Property> properties = new ArrayList<Property>();
         for(Property prop : next.getProperties()){
             if(prop instanceof GeometryAttribute){
-                final GeometryAttribute geoAtt = (GeometryAttribute) prop;
                 Object value = prop.getValue();
                 if(value != null){
+                    //create a new property with the transformed geometry
+                    prop = FF.createGeometryAttribute(value,
+                            (GeometryDescriptor)prop.getDescriptor(), null, null);
+
                     try {
-                        //decimate the geometry
-                        value = decimator.transform((Geometry) value);
-                    } catch (TransformException ex) {
-                        Logger.getLogger(GenericDecimateFeatureIterator.class.getName()).log(Level.WARNING, null, ex);
+                        //transform the geometry
+                        prop.setValue(transformer.transform((Geometry) value));
+                    } catch (TransformException e) {
+                        throw new DataStoreRuntimeException("A transformation exception occurred while reprojecting data on the fly", e);
                     }
-                    GeometryDescriptor desc = geoAtt.getDescriptor();
-                    prop = FF.createGeometryAttribute(value, desc, null, desc.getCoordinateReferenceSystem());
+
                 }
             }
             properties.add(prop);
@@ -113,7 +113,7 @@ public abstract class GenericDecimateFeatureIterator<F extends Feature, R extend
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder(Classes.getShortClassName(this));
-        sb.append(' ').append(decimator);
+        sb.append(" : ").append(transformer);
         sb.append('\n');
         String subIterator = "\u2514\u2500\u2500" + iterator.toString(); //move text to the right
         subIterator = subIterator.replaceAll("\n", "\n\u00A0\u00A0\u00A0"); //move text to the right
@@ -122,22 +122,23 @@ public abstract class GenericDecimateFeatureIterator<F extends Feature, R extend
     }
 
     /**
-     * Wrap a FeatureReader with a decimator.
+     * Wrap a FeatureReader with a reprojection.
      *
      * @param <T> extends FeatureType
      * @param <F> extends Feature
      * @param <R> extends FeatureReader<T,F>
      */
-    private static final class GenericDecimateFeatureReader<T extends FeatureType, F extends Feature, R extends FeatureReader<T,F>>
-            extends GenericDecimateFeatureIterator<F,R> implements FeatureReader<T,F>{
+    private static final class GenericTransformFeatureReader<T extends FeatureType, F extends Feature, R extends FeatureReader<T,F>>
+            extends GenericTransformFeatureIterator<F,R> implements FeatureReader<T,F>{
 
-        private GenericDecimateFeatureReader(R reader, GeometryTransformer decimator){
-            super(reader,decimator);
+
+        private GenericTransformFeatureReader(R reader, GeometryTransformer transformer) {
+            super(reader, transformer);            
         }
 
         @Override
         public T getFeatureType() {
-            return (T) iterator.getFeatureType();
+            return iterator.getFeatureType();
         }
 
         @Override
@@ -147,13 +148,13 @@ public abstract class GenericDecimateFeatureIterator<F extends Feature, R extend
     }
 
     /**
-     * Wrap a FeatureReader with a decimator.
+     * Wrap a FeatureReader with a reprojection.
      */
     public static <T extends FeatureType, F extends Feature> FeatureReader<T, F> wrap(
-            FeatureReader<T, F> reader, GeometryTransformer decimator) {
+            FeatureReader<T, F> reader, GeometryTransformer transformer) {
         final GeometryDescriptor desc = reader.getFeatureType().getGeometryDescriptor();
         if (desc != null) {
-            return new GenericDecimateFeatureReader(reader, decimator);
+            return new GenericTransformFeatureReader(reader, transformer);
         } else {
             return reader;
         }

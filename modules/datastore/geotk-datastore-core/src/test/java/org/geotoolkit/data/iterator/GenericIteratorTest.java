@@ -34,7 +34,6 @@ import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureWriter;
-import org.geotoolkit.data.memory.GenericDecimateFeatureIterator;
 import org.geotoolkit.data.memory.GenericEmptyFeatureIterator;
 import org.geotoolkit.data.memory.GenericFilterFeatureIterator;
 import org.geotoolkit.data.memory.GenericMaxFeatureIterator;
@@ -43,6 +42,7 @@ import org.geotoolkit.data.memory.GenericReprojectFeatureIterator;
 import org.geotoolkit.data.memory.GenericRetypeFeatureIterator;
 import org.geotoolkit.data.memory.GenericSortByFeatureIterator;
 import org.geotoolkit.data.memory.GenericStartIndexFeatureIterator;
+import org.geotoolkit.data.memory.GenericTransformFeatureIterator;
 import org.geotoolkit.data.memory.GenericWrapFeatureIterator;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
@@ -421,7 +421,7 @@ public class GenericIteratorTest extends TestCase{
     }
 
     @Test
-    public void testDecimateFeatureIterator() throws DataStoreException{
+    public void testTransformFeatureIterator() throws DataStoreException{
         final FeatureTypeBuilder builder = new FeatureTypeBuilder();
         final DefaultName name = new DefaultName("http://test.com", "TestSchema");
         builder.reset();
@@ -452,7 +452,7 @@ public class GenericIteratorTest extends TestCase{
         
         //create the decimate reader -------------------------------------------
         GeometryTransformer decim = new GeometryScaleTransformer(10, 10);
-        FeatureReader retyped = GenericDecimateFeatureIterator.wrap(reader,decim);
+        FeatureReader retyped = GenericTransformFeatureIterator.wrap(reader,decim);
         
         assertTrue(retyped.hasNext());
 
