@@ -17,8 +17,7 @@
  */
 package org.geotoolkit.display2d.container.stateless;
 
-import org.geotoolkit.geometry.jts.transform.CoordinateSequenceMathTransformer;
-import java.awt.geom.AffineTransform;
+import java.awt.RenderingHints;
 import java.io.Closeable;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -67,7 +66,9 @@ import org.geotoolkit.display2d.style.renderer.SymbolizerRenderer;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.HintsPending;
 import org.geotoolkit.filter.FilterUtilities;
+import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 import org.geotoolkit.style.StyleUtilities;
+import org.geotoolkit.geometry.jts.transform.CoordinateSequenceMathTransformer;
 
 import org.opengis.display.primitive.Graphic;
 import org.opengis.feature.Feature;
@@ -79,7 +80,6 @@ import org.opengis.filter.expression.Expression;
 import org.opengis.geometry.BoundingBox;
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.extent.GeographicBoundingBox;
-import org.opengis.util.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.style.Rule;
@@ -206,31 +206,19 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
         final Query query = prepareQuery(context, layer, rules);
 
         if(monitor.stopRequested()) return;
+
+        //we do not check if the collection is empty or not since
+        //it can be a very expensive operation
         
+        //prepare the rendering parameters
+        final StatefullContextParams params = prepareContextParams(context, null);
+
         final FeatureCollection<Feature> features;
         try{
             features = ((FeatureCollection<Feature>)layer.getCollection()).subCollection(query);
         }catch(DataStoreException ex){
             context.getMonitor().exceptionOccured(ex, Level.WARNING);
             //can not continue this layer with this error
-            return;
-        }
-                
-        //we do not check if the collection is empty or not since
-        //it can be a very expensive operation
-
-        final CoordinateReferenceSystem dataCRS = features.getFeatureType().getCoordinateReferenceSystem();
-        if(dataCRS == null){
-            monitor.exceptionOccured(new IllegalStateException("Layer has no CRS, can not render it."), Level.WARNING);
-            return;
-        }
-
-        //prepare the rendering parameters
-        final StatefullContextParams params;
-        try {
-            params = prepareContextParams(context, dataCRS, null);
-        } catch (FactoryException ex) {
-            monitor.exceptionOccured(ex, Level.WARNING);
             return;
         }
 
@@ -428,14 +416,7 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
         //we do not check if the collection is empty or not since
         //it can be a very expensive operation
 
-        final StatefullContextParams params;
-        try {
-            params = prepareContextParams(renderingContext, features.getFeatureType().getCoordinateReferenceSystem(), null);
-        } catch (FactoryException ex) {
-            renderingContext.getMonitor().exceptionOccured(ex, Level.WARNING);
-            return graphics;
-        }
-
+        final StatefullContextParams params = prepareContextParams(renderingContext, null);
 
 
         // iterate and find the first graphic that hit the given point
@@ -543,6 +524,7 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
         final CanvasMonitor monitor                              = renderingContext.getMonitor();
         final CoordinateReferenceSystem layerCRS                 = schema.getCoordinateReferenceSystem();
         final String geomAttName                                 = (geomDesc!=null)? geomDesc.getLocalName() : null;
+        final RenderingHints hints                               = renderingContext.getRenderingHints();
 
         if( !CRS.equalsIgnoreMetadata(layerCRS,bboxCRS)){
             //BBox and layer bounds have different CRS. reproject bbox bounds
@@ -713,22 +695,31 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
             }
         }
 
-        //optimize the filter
+        //optimize the filter---------------------------------------------------
         filter = FilterUtilities.prepare(filter,Feature.class);
 
         final QueryBuilder qb = new QueryBuilder();
         qb.setTypeName(schema.getName());
         qb.setFilter(filter);
         qb.setProperties(atts);
-        final Query query = qb.buildQuery();
-        return query;
+
+        //add resampling -------------------------------------------------------
+        Boolean resample = (hints == null) ? null : (Boolean) hints.get(GO2Hints.KEY_GENERALIZE);
+        if(!Boolean.FALSE.equals(resample)){
+            //we only disable resampling if it is explictly specified
+            qb.setResolution(renderingContext.getResolution(layerCRS));
+        }
+
+        //add reprojection -----------------------------------------------------
+        qb.setCRS(renderingContext.getObjectiveCRS2D());
+        
+        return qb.buildQuery();
     }
 
     private StatefullContextParams prepareContextParams(RenderingContext2D renderingContext,
-            CoordinateReferenceSystem dataCRS, StatefullContextParams params) throws FactoryException{
+            StatefullContextParams params){
         final CoordinateReferenceSystem displayCRS   = renderingContext.getDisplayCRS();
-        final CoordinateReferenceSystem objectiveCRS = renderingContext.getObjectiveCRS2D();
-        final AffineTransform objtoDisp              = renderingContext.getObjectiveToDisplay();
+        final AffineTransform2D objtoDisp              = renderingContext.getObjectiveToDisplay();
 
         if(params == null){
             params = new StatefullContextParams(getCanvas(),layer);
@@ -736,12 +727,8 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
 
         params.displayCRS = displayCRS;
         params.objectiveToDisplay.setTransform(objtoDisp);
-        params.updateGeneralizationFactor(renderingContext, dataCRS);
-        params.dataToObjective = renderingContext.getMathTransform(dataCRS, objectiveCRS);
-        ((CoordinateSequenceMathTransformer)params.dataToObjectiveTransformer.getCSTransformer())
-                .setTransform(params.dataToObjective);
-        ((CoordinateSequenceMathTransformer)params.dataToDisplayTransformer.getCSTransformer())
-                .setTransform(renderingContext.getMathTransform(dataCRS,displayCRS));
+        ((CoordinateSequenceMathTransformer)params.objToDisplayTransformer.getCSTransformer())
+                .setTransform(objtoDisp);
         
         return params;
     }

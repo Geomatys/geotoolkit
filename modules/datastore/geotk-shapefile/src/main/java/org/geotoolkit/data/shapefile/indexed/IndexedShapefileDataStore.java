@@ -292,6 +292,8 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
             qb.setProperties(queryPropertyNames);
             qb.setFilter(queryFilter);
             qb.setHints(queryHints);
+            qb.setCRS(query.getCoordinateSystemReproject());
+            qb.setResolution(query.getResolution());
             return handleRemaining(reader, qb.buildQuery());
 
         } catch (IOException se) {

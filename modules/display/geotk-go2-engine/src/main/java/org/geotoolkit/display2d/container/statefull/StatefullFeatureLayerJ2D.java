@@ -17,7 +17,6 @@
  */
 package org.geotoolkit.display2d.container.statefull;
 
-import java.awt.geom.AffineTransform;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -42,12 +41,12 @@ import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRenderer;
 import org.geotoolkit.geometry.jts.transform.CoordinateSequenceMathTransformer;
 import org.geotoolkit.map.FeatureMapLayer;
+import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 
 import org.opengis.display.primitive.Graphic;
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.Name;
 import org.opengis.filter.Filter;
-import org.opengis.util.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 
@@ -98,14 +97,6 @@ public class StatefullFeatureLayerJ2D extends StatelessFeatureLayerJ2D{
             lastObjectiveCRS = objectiveCRS;
             objectiveCleared = true;
             
-            try {
-                params.dataToObjective = context.getMathTransform(sourceCRS, objectiveCRS);
-                ((CoordinateSequenceMathTransformer)params.dataToObjectiveTransformer.getCSTransformer())
-                        .setTransform(params.dataToObjective);
-            } catch (FactoryException ex) {
-                getLogger().log(Level.WARNING, null, ex);
-            }
-
             for(StatefullProjectedFeature gra : cache.values()){
                 gra.clearObjectiveCache();
             }
@@ -113,17 +104,12 @@ public class StatefullFeatureLayerJ2D extends StatelessFeatureLayerJ2D{
         }
 
         //clear display cache if needed ----------------------------------------
-        final AffineTransform objtoDisp = context.getObjectiveToDisplay();
+        final AffineTransform2D objtoDisp = context.getObjectiveToDisplay();
 
         if(!objtoDisp.equals(params.objectiveToDisplay)){
             params.objectiveToDisplay.setTransform(objtoDisp);
-            params.updateGeneralizationFactor(context, sourceCRS);
-            try {
-                ((CoordinateSequenceMathTransformer)params.dataToDisplayTransformer.getCSTransformer())
-                        .setTransform(context.getMathTransform(sourceCRS, context.getDisplayCRS()));
-            } catch (FactoryException ex) {
-                getLogger().log(Level.WARNING, "Fail to calculate math transform",ex);
-            }
+            ((CoordinateSequenceMathTransformer)params.objToDisplayTransformer.getCSTransformer())
+                    .setTransform(objtoDisp);
 
             if(!objectiveCleared){
                 //no need to clear the display cache if the objective clear has already been called

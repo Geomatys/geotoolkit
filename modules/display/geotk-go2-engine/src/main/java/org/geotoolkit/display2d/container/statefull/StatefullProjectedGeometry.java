@@ -17,8 +17,6 @@
 package org.geotoolkit.display2d.container.statefull;
 
 import java.awt.Shape;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.primitive.ProjectedGeometry;
@@ -40,12 +38,6 @@ public class StatefullProjectedGeometry implements ProjectedGeometry {
 
     private final StatefullContextParams params;
 
-    //Geometry in data CRS
-    private com.vividsolutions.jts.geom.Geometry    dataGeometryJTS = null;
-
-    //Geometry in data CRS decimated
-    private com.vividsolutions.jts.geom.Geometry    decimatedGeometryJTS = null;
-
     //Geometry in objective CRS
     private com.vividsolutions.jts.geom.Geometry    objectiveGeometryJTS = null;
     private Geometry                                objectiveGeometryISO = null;
@@ -58,12 +50,11 @@ public class StatefullProjectedGeometry implements ProjectedGeometry {
 
     public StatefullProjectedGeometry(StatefullContextParams params, com.vividsolutions.jts.geom.Geometry geom){
         this.params = params;
-        this.dataGeometryJTS = geom;
+        this.objectiveGeometryJTS = geom;
     }
 
     public StatefullProjectedGeometry(StatefullProjectedGeometry copy){
         this.params = copy.params;
-        this.dataGeometryJTS = copy.dataGeometryJTS;
         this.objectiveGeometryJTS = copy.objectiveGeometryJTS;
         this.objectiveGeometryISO = copy.objectiveGeometryISO;
         this.objectiveShape = copy.objectiveShape;
@@ -72,24 +63,18 @@ public class StatefullProjectedGeometry implements ProjectedGeometry {
         this.displayShape.setGeometry(copy.displayShape.getGeometry());
     }
 
-    public com.vividsolutions.jts.geom.Geometry getDataGeometry(){
-        return this.dataGeometryJTS;
-    }
-
-    public void setDataGeometry(com.vividsolutions.jts.geom.Geometry geom){
+    public void setObjectiveGeometry(com.vividsolutions.jts.geom.Geometry geom){
         clearDataCache();
-        this.dataGeometryJTS = geom;
+        this.objectiveGeometryJTS = geom;
     }
 
     public void clearDataCache(){
         clearObjectiveCache();
-        this.decimatedGeometryJTS = null;
     }
 
     public void clearObjectiveCache(){
         clearDisplayCache();
         objectiveGeometryISO = null;
-        objectiveGeometryJTS = null;
         objectiveShape = null;
     }
     
@@ -99,33 +84,15 @@ public class StatefullProjectedGeometry implements ProjectedGeometry {
         displayShape.setGeometry(null);
     }
 
-    private com.vividsolutions.jts.geom.Geometry getGeometryJTS(){
-        if(decimatedGeometryJTS == null){
-            decimatedGeometryJTS = dataGeometryJTS;
-            if(params.decimator != null){
-                try {
-                    decimatedGeometryJTS = params.decimator.transform(decimatedGeometryJTS);
-                } catch (TransformException ex) {
-                    Logger.getLogger(StatefullProjectedGeometry.class.getName()).log(
-                            Level.WARNING, "Could not decimate geometry", ex);
-                }
-            }
-        }
-        return decimatedGeometryJTS;
-    }
-
     @Override
-    public com.vividsolutions.jts.geom.Geometry getObjectiveGeometryJTS() throws TransformException{
-        if(objectiveGeometryJTS == null){
-            objectiveGeometryJTS = params.dataToObjectiveTransformer.transform(getGeometryJTS());
-        }
+    public com.vividsolutions.jts.geom.Geometry getObjectiveGeometryJTS() {
         return objectiveGeometryJTS;
     }
 
     @Override
     public com.vividsolutions.jts.geom.Geometry getDisplayGeometryJTS() throws TransformException{
         if(displayGeometryJTS == null){
-            displayGeometryJTS = params.dataToDisplayTransformer.transform(getGeometryJTS());
+            displayGeometryJTS = params.objToDisplayTransformer.transform(getObjectiveGeometryJTS());
         }
         return displayGeometryJTS;
     }

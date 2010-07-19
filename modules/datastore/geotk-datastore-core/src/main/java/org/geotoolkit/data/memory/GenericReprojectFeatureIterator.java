@@ -133,10 +133,6 @@ public abstract class GenericReprojectFeatureIterator<F extends Feature, R exten
             this.targetCRS = targetCRS;
             final CoordinateReferenceSystem original = type.getGeometryDescriptor().getCoordinateReferenceSystem();
 
-            if (targetCRS.equals(original)) {
-                throw new IllegalArgumentException("CoordinateSystem " + targetCRS + " already used (check before using wrapper)");
-            }
-
             this.schema = FeatureTypeUtilities.transform(type, targetCRS);
 
             if(original != null){
@@ -231,6 +227,14 @@ public abstract class GenericReprojectFeatureIterator<F extends Feature, R exten
             FeatureReader<T, F> reader, CoordinateReferenceSystem crs) throws FactoryException, SchemaException {
         final GeometryDescriptor desc = reader.getFeatureType().getGeometryDescriptor();
         if (desc != null) {
+
+            final CoordinateReferenceSystem original =desc.getCoordinateReferenceSystem();
+
+            if (CRS.equalsIgnoreMetadata(original, crs)) {
+                //no need to wrap it, already in the asked projection
+                return reader;
+            }
+
             return new GenericReprojectFeatureReader(reader, crs);
         } else {
             return reader;

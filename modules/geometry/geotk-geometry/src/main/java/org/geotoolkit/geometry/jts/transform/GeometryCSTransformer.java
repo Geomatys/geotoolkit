@@ -40,7 +40,7 @@ import org.opengis.referencing.operation.TransformException;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class GeometryCSTransformer {
+public class GeometryCSTransformer implements GeometryTransformer{
 
     private final CoordinateSequenceTransformer csTransformer;
     private CoordinateReferenceSystem crs;
@@ -70,6 +70,7 @@ public class GeometryCSTransformer {
      * @param g
      * @throws TransformException
      */
+    @Override
     public Geometry transform(Geometry g) throws TransformException {
         final GeometryFactory factory = g.getFactory();
         final Geometry transformed;
@@ -191,5 +192,10 @@ public class GeometryCSTransformer {
         final Polygon transformed = gf.createPolygon(exterior, interiors);
         transformed.setUserData( polygon.getUserData() );
         return transformed;
+    }
+
+    @Override
+    public CoordinateSequence transform(CoordinateSequence sequence) throws TransformException {
+        return csTransformer.transform(sequence);
     }
 }

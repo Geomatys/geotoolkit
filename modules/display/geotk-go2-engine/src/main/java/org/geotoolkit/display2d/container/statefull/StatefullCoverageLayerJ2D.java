@@ -16,8 +16,6 @@
  */
 package org.geotoolkit.display2d.container.statefull;
 
-
-import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -42,11 +40,11 @@ import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.geotoolkit.geometry.jts.transform.CoordinateSequenceMathTransformer;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.GraphicBuilder;
+import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 
 import org.opengis.display.primitive.Graphic;
 import org.opengis.feature.type.Name;
 import org.opengis.geometry.Envelope;
-import org.opengis.util.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
@@ -72,7 +70,7 @@ public class StatefullCoverageLayerJ2D extends AbstractLayerJ2D<CoverageMapLayer
                 this.dataCRS = ggg.getCoordinateReferenceSystem();
             }else{
                 Logger.getLogger(StatefullCoverageLayerJ2D.class.getName()).log(
-                        Level.WARNING, "Could not access envelope of layer "+layer.getName());
+                        Level.WARNING, "Could not access envelope of layer {0}", layer.getName());
                 this.dataCRS = null;
             }
             
@@ -97,31 +95,16 @@ public class StatefullCoverageLayerJ2D extends AbstractLayerJ2D<CoverageMapLayer
             params.objectiveToDisplay.setToIdentity();
             lastObjectiveCRS = objectiveCRS2D;
             objectiveCleared = true;
-
-            try {
-                params.dataToObjective = context.getMathTransform(dataCRS, objectiveCRS2D);
-                ((CoordinateSequenceMathTransformer)params.dataToObjectiveTransformer.getCSTransformer())
-                        .setTransform(params.dataToObjective);
-            } catch (FactoryException ex) {
-                Logger.getLogger(StatefullCoverageLayerJ2D.class.getName()).log(Level.WARNING, null, ex);
-            }
-
             projectedCoverage.clearObjectiveCache();
-
         }
 
         //clear display cache if needed ----------------------------------------
-        final AffineTransform objtoDisp = context.getObjectiveToDisplay();
+        final AffineTransform2D objtoDisp = context.getObjectiveToDisplay();
 
         if(!objtoDisp.equals(params.objectiveToDisplay)){
             params.objectiveToDisplay.setTransform(objtoDisp);
-            params.updateGeneralizationFactor(context, dataCRS);
-            try {
-                ((CoordinateSequenceMathTransformer)params.dataToDisplayTransformer.getCSTransformer())
-                        .setTransform(context.getMathTransform(dataCRS, context.getDisplayCRS()));
-            } catch (FactoryException ex) {
-                ex.printStackTrace();
-            }
+            ((CoordinateSequenceMathTransformer)params.objToDisplayTransformer.getCSTransformer())
+                    .setTransform(objtoDisp);
 
             if(!objectiveCleared){
                 //no need to clear the display cache if the objective clear has already been called
