@@ -17,11 +17,7 @@ import org.geotoolkit.index.quadtree.DataReader;
  */
 public class IndexDataReader implements DataReader {
 
-    private static final DataDefinition DATA_DEFINITION = new DataDefinition("US-ASCII");
-    static {
-        DATA_DEFINITION.addField(Integer.class);
-        DATA_DEFINITION.addField(Long.class);
-    }
+    private static final DataDefinition DATA_DEFINITION = new DataDefinition("US-ASCII", Integer.class, Long.class);
 
     private final IndexFile indexfile;
 
@@ -32,8 +28,9 @@ public class IndexDataReader implements DataReader {
     @Override
     public Data create(Integer recno) throws IOException {
         final Data data = new Data(DATA_DEFINITION);
-        data.addValue(new Integer(recno.intValue() + 1));
-        data.addValue(new Long(indexfile.getOffsetInBytes(recno.intValue())));
+        final int no = recno.intValue();
+        data.addValue( no+1 );
+        data.addValue( (long)indexfile.getOffsetInBytes(no) );
         return data;
     }
 

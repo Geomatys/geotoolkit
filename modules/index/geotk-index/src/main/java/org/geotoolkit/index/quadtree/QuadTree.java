@@ -25,6 +25,7 @@ import java.util.logging.Logger;
 
 import org.geotoolkit.index.CloseableCollection;
 import org.geotoolkit.index.Data;
+import org.geotoolkit.util.logging.Logging;
 
 import com.vividsolutions.jts.geom.Envelope;
 
@@ -43,16 +44,15 @@ public class QuadTree {
 
     private static final double SPLITRATIO = 0.55d;
 
-    private static final Logger LOGGER = org.geotoolkit.util.logging.Logging
-            .getLogger("org.geotoolkit.index.quadtree");
+    public static final Logger LOGGER = Logging.getLogger("org.geotoolkit.index.quadtree");
+
+    private final DataReader dataReader;
+    //open iterators
+    private final Set iterators = new HashSet();
 
     private Node root;
     private int numShapes;
     private int maxDepth;
-
-    private DataReader indexfile;
-
-    private Set iterators = new HashSet();
 
     /**
      * Constructor. The maxDepth will be calculated.
@@ -76,19 +76,19 @@ public class QuadTree {
      * @param maxBounds
      *                The bounds of all geometries to be indexed
      */
-    public QuadTree(int numShapes, int maxDepth, Envelope maxBounds,
-            DataReader file) {
+    public QuadTree(int numShapes, int maxDepth, Envelope maxBounds, DataReader reader) {
         if (maxDepth > 65535) {
-            throw new IllegalArgumentException("maxDepth must be <= 65535");
+            throw new IllegalArgumentException("maxDepth must be <= 65535 value is " + maxDepth);
         }
 
         this.numShapes = numShapes;
         this.maxDepth = maxDepth;
 
-        if (maxBounds != null)
+        if (maxBounds != null){
             this.root = new Node(new Envelope(maxBounds), 0, null);
+        }
 
-        if (maxDepth < 1) {
+        if (maxDepth < 1){
             /*
              * No max depth was defined, try to select a reasonable one that
              * implies approximately 8 shapes per node.
@@ -101,7 +101,7 @@ public class QuadTree {
                 numNodes = numNodes * 2;
             }
         }
-        this.indexfile = file;
+        this.dataReader = reader;
     }
 
     /**
@@ -352,7 +352,7 @@ public class QuadTree {
 
     public void close() throws StoreException {
         try {
-            indexfile.close();
+            dataReader.close();
         } catch (IOException e) {
             throw new StoreException("error closing indexfile", e.getCause());
         }
@@ -366,6 +366,6 @@ public class QuadTree {
     }
 
     public DataReader getDataReader() {
-        return indexfile;
+        return dataReader;
     }
 }
