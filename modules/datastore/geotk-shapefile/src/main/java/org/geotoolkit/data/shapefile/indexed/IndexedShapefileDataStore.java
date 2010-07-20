@@ -85,6 +85,7 @@ import com.vividsolutions.jts.geom.Envelope;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.shapefile.ShpDBF;
 import org.geotoolkit.factory.Hints;
+import org.geotoolkit.feature.DefaultName;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.filter.sort.SortBy;
 
@@ -264,7 +265,7 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
             final boolean readGeometry;
 
             if(queryPropertyNames != null){
-                if (propertyNames.length==1 && propertyNames[0].equals(defaultGeomName)){
+                if (propertyNames.length==1 && DefaultName.match(propertyNames[0],defaultGeomName)){
                     readDbf = false;
                     readGeometry = true;
                     newSchema = (SimpleFeatureType) FeatureTypeUtilities.createSubType(originalSchema, propertyNames);
