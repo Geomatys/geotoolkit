@@ -17,10 +17,7 @@
 package org.geotoolkit.index.quadtree;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Iterator;
-import java.util.List;
 import java.util.NoSuchElementException;
 
 import org.geotoolkit.index.Data;
@@ -41,6 +38,8 @@ public class LazySearchIterator implements Iterator<Data> {
 
     private static final int MAX_INDICES = 32768;
 
+    private final int[] indices = new int[MAX_INDICES];
+    private final Data[] datas = new Data[MAX_INDICES];
     private final DataReader dataReader;
     private final Envelope bounds;
 
@@ -107,17 +106,22 @@ public class LazySearchIterator implements Iterator<Data> {
 
     private void fillCache() {
         int indexSize = 0;
-        final List<Integer> indices = new ArrayList<Integer>();
-        final Data[] dataList;
 
         try {
             while (indexSize < MAX_INDICES && current != null) {
+                final int nbShapeIds = current.getNumShapeIds();
+                final int nbShapeRemaining = nbShapeIds - idIndex;
 
-                if (idIndex < current.getNumShapeIds() && !current.isVisited()
+                if (nbShapeRemaining > 0 && !current.isVisited()
                         && current.getBounds().intersects(bounds)) {
-                    indices.add(current.getShapeId(idIndex));
-                    indexSize++;
-                    idIndex++;
+
+                    final int[] shapeIds = current.shapesId;
+                    
+                    //find the max shapeIds we can add in one pass
+                    final int nb = Math.min(nbShapeRemaining, MAX_INDICES-indexSize);
+                    System.arraycopy(shapeIds, idIndex, indices, indexSize, nb);
+                    indexSize += nb;
+                    idIndex += nb;
                 } else {
                     current.setShapesId(new int[0]);
                     idIndex = 0;
@@ -139,12 +143,10 @@ public class LazySearchIterator implements Iterator<Data> {
                 }
             }
 
-            dataList = new Data[indexSize];
-
             // sort so offset lookup is faster
-            Collections.sort(indices);
+            Arrays.sort(indices,0,indexSize);
             for (int i=0; i<indexSize; i++) {
-                dataList[i] = dataReader.create(indices.get(i));
+                datas[i] = dataReader.create(indices[i]);
             }
 
         } catch (IOException e) {
@@ -153,7 +155,33 @@ public class LazySearchIterator implements Iterator<Data> {
             throw new RuntimeException(e);
         }
 
-        data = Arrays.asList(dataList).iterator();
+        data = new LimitedArrayIterator(indexSize);
+    }
+
+    private class LimitedArrayIterator implements Iterator<Data>{
+
+        private final int limit;
+        private int index = 0;
+
+        LimitedArrayIterator(int limit){
+            this.limit = limit;
+        }
+
+        @Override
+        public boolean hasNext() {
+            return index<limit;
+        }
+
+        @Override
+        public Data next() {
+            return datas[index++];
+        }
+
+        @Override
+        public void remove() {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
     }
 
 }

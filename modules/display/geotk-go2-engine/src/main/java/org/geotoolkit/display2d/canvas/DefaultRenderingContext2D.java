@@ -25,6 +25,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.IdentityHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.logging.Level;
@@ -176,7 +177,7 @@ public final class DefaultRenderingContext2D implements RenderingContext2D{
     /**
      * List of coefficients from "Unit" to Objective CRS.
      */
-    private final Map<Unit<Length>,Float> coeffs = new HashMap<Unit<Length>, Float>();
+    private final Map<Unit<Length>,Float> coeffs = new IdentityHashMap<Unit<Length>, Float>();
     
     /**
      * Precalculated resolution, avoid graphics to recalculate it since

@@ -84,6 +84,7 @@ import org.opengis.filter.identity.Identifier;
 import com.vividsolutions.jts.geom.Envelope;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.shapefile.ShpDBF;
+import org.geotoolkit.data.shapefile.indexed.IndexDataReader.ShpData;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.DefaultName;
 import org.opengis.feature.type.FeatureType;
@@ -423,9 +424,6 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
             final IndexFile shx = openIndexFile();
             try {
 
-                DataDefinition def = new DataDefinition("US-ASCII");
-                def.addField(Integer.class);
-                def.addField(Long.class);
                 for (Identifier identifier : idsSet) {
                     String fid = identifier.toString();
                     long recno = reader.findFid(fid);
@@ -436,10 +434,9 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
                         continue;
                     }
                     try {
-                        Data data = new Data(def);
-                        data.addValue(new Integer((int) recno + 1));
-                        data.addValue(new Long(shx
-                                .getOffsetInBytes((int) recno)));
+                        Data data = new ShpData(
+                                (int)(recno+1),
+                                (long)shx.getOffsetInBytes((int) recno));
                         if(getLogger().isLoggable(Level.FINEST)){
                             getLogger().finest("fid " + fid+ " found for record #"
                                     + data.getValue(0) + " at index file offset "
