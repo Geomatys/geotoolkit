@@ -28,8 +28,9 @@ import java.util.Map;
 
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureWriter;
-import org.geotoolkit.data.shapefile.dbf.DbaseFileHeader;
-import org.geotoolkit.data.shapefile.dbf.DbaseFileWriter;
+import org.geotoolkit.data.dbf.DbaseFileException;
+import org.geotoolkit.data.dbf.DbaseFileHeader;
+import org.geotoolkit.data.dbf.DbaseFileWriter;
 import org.geotoolkit.data.shapefile.shp.JTSUtilities;
 import org.geotoolkit.data.shapefile.shp.ShapeHandler;
 import org.geotoolkit.data.shapefile.shp.ShapeType;
@@ -45,7 +46,6 @@ import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.data.DataStoreRuntimeException;
-import org.geotoolkit.data.shapefile.dbf.DbaseFileException;
 
 /**
  * A FeatureWriter for ShapefileDataStore. Uses a write and annotate technique

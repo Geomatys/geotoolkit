@@ -13,7 +13,7 @@
 
   <parent>
     <groupId>org.geotoolkit.pending</groupId>
-    <artifactId>modules</artifactId>
+    <artifactId>index</artifactId>
     <version>SNAPSHOT</version>
   </parent>
 
@@ -22,12 +22,12 @@
   <!--     Module Description                                      -->
   <!-- =========================================================== -->
   <groupId>org.geotoolkit.pending</groupId>
-  <artifactId>utility</artifactId>
-  <packaging>pom</packaging>
-  <name>Utilities</name>
+  <artifactId>geotk-index</artifactId>
+  <packaging>jar</packaging>
+  <name>Index quadtree and rtree</name>
 
   <description>
-    Projects group for miscellaneous utilities.
+    Indexation classes using a quad-tree and r-tree.
   </description>
 
 
@@ -36,25 +36,37 @@
   <!-- =========================================================== -->
   <developers>
     <developer>
-      <name>Martin Desruisseaux</name>
-      <id>desruisseaux</id>
-      <email>desruisseaux@users.sourceforge.net</email>
-      <organization>Geomatys</organization>
-      <organizationUrl>http://www.geomatys.fr/</organizationUrl>
-      <timezone>+1</timezone>
-      <roles>
-        <role>Administrator</role>
-      </roles>
+        <name>Johann Sorel</name>
+        <id>jsorel</id>
+        <email>johann.sorel@geomatys.fr</email>
+        <organization>Geomatys</organization>
+        <organizationUrl>http://www.geomatys.fr/</organizationUrl>
+        <timezone>+1</timezone>
+        <roles>
+            <role>Module Maintainer</role>
+            <role>Java Developer</role>
+        </roles>
     </developer>
-  </developers>
+</developers>
 
 
   <!-- =========================================================== -->
-  <!--     Modules included in the build                           -->
+  <!--     Dependency Management                                   -->
   <!-- =========================================================== -->
-  <modules>
-    <module>geotk-utility-pending</module>
-    <module>geotk-utility-jdbc</module>
-  </modules>
+  <dependencies>
+    <dependency>
+        <groupId>org.geotoolkit</groupId>
+        <artifactId>geotk-utility</artifactId>
+    </dependency>
+    <dependency>
+        <groupId>org.geotoolkit.pending</groupId>
+        <artifactId>geotk-filter</artifactId>
+        <version>${project.version}</version>
+    </dependency>
+    <dependency>
+        <groupId>com.vividsolutions</groupId>
+        <artifactId>jts</artifactId>
+    </dependency>
+  </dependencies>
 
 </project>

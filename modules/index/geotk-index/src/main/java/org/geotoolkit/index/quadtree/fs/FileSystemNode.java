@@ -34,10 +34,10 @@ import com.vividsolutions.jts.geom.Envelope;
  * @module pending
  */
 public class FileSystemNode extends Node {
-
-    private final ScrollingBuffer buffer;
-    private final int subNodeStartByte;
-    private final int subNodesLength;
+    private ScrollingBuffer buffer;
+    private ByteOrder order;
+    private int subNodeStartByte;
+    private int subNodesLength;
     private int numSubNodes;
 
     /**
@@ -66,7 +66,7 @@ public class FileSystemNode extends Node {
      */
     @Override
     public Node copy() throws IOException {
-        final FileSystemNode copy = new FileSystemNode(getBounds(), id, getParent(),
+        FileSystemNode copy = new FileSystemNode(getBounds(), id, getParent(),
                 buffer, subNodeStartByte, subNodesLength);
         copy.numShapesId = numShapesId;
         copy.shapesId = new int[numShapesId];
@@ -116,8 +116,7 @@ public class FileSystemNode extends Node {
      */
     @Override
     public Node getSubNode(int pos) throws StoreException {
-        final int subNodeSize = this.subNodes.size();
-        if (subNodeSize > pos) {
+        if (this.subNodes.size() > pos) {
             return super.getSubNode(pos);
         }
 
@@ -134,7 +133,7 @@ public class FileSystemNode extends Node {
             }
 
             buffer.goTo(offset);
-            for (int i = 0, ii = subNodeSize; i < ((pos + 1) - ii); i++) {
+            for (int i = 0, ii = subNodes.size(); i < ((pos + 1) - ii); i++) {
                 subNode = readNode(pos, this, buffer);
                 this.addSubNode(subNode);
             }
@@ -157,33 +156,38 @@ public class FileSystemNode extends Node {
      */
     public static FileSystemNode readNode(int id, Node parent,
             FileChannel channel, ByteOrder order) throws IOException {
-        final ScrollingBuffer buffer = new ScrollingBuffer(channel, order);
+        ScrollingBuffer buffer = new ScrollingBuffer(channel, order);
         return readNode(id, parent, buffer);
     }
 
     static FileSystemNode readNode(int id, Node parent, ScrollingBuffer buf)
             throws IOException {
         // offset
-        final int offset = buf.getInt();
+        int offset = buf.getInt();
+        double x1;
+        double y1;
+        double x2;
+        double y2;
 
         // envelope
-        final double x1 = buf.getDouble();
-        final double y1 = buf.getDouble();
-        final double x2 = buf.getDouble();
-        final double y2 = buf.getDouble();
-        final Envelope env = new Envelope(x1, x2, y1, y2);
+        x1 = buf.getDouble();
+        y1 = buf.getDouble();
+        x2 = buf.getDouble();
+        y2 = buf.getDouble();
+        Envelope env = new Envelope(x1, x2, y1, y2);
 
         // shapes in this node
-        final int numShapesId = buf.getInt();
-        final int[] ids = new int[numShapesId];
+        int numShapesId = buf.getInt();
+        int[] ids = new int[numShapesId];
         buf.getIntArray(ids);
-        final int numSubNodes = buf.getInt();
+        int numSubNodes = buf.getInt();
 
         // let's create the new node
-        final FileSystemNode node = new FileSystemNode(env, id, parent, buf,
+        FileSystemNode node = new FileSystemNode(env, id, parent, buf,
                 (int) buf.getPosition(), offset);
         node.setShapesId(ids);
         node.setNumSubNodes(numSubNodes);
+
         return node;
     }
 
@@ -192,11 +196,11 @@ public class FileSystemNode extends Node {
      * buffer reading file contents with a minimum of 8kb per access
      */
     private static class ScrollingBuffer {
-        private final FileChannel channel;
-        private final ByteOrder order;
-        private ByteBuffer buffer;
+        FileChannel channel;
+        ByteOrder order;
+        ByteBuffer buffer;
         /** the initial position of the buffer in the channel */
-        private long bufferStart;
+        long bufferStart;
 
         public ScrollingBuffer(FileChannel channel, ByteOrder order)
                 throws IOException {
@@ -224,11 +228,11 @@ public class FileSystemNode extends Node {
         }
 
         public void getIntArray(int[] array) throws IOException {
-            final int size = array.length * 4;
+            int size = array.length * 4;
             if (buffer.remaining() < size)
                 refillBuffer(size);
             // read the array using a view
-            final IntBuffer intView = buffer.asIntBuffer();
+            IntBuffer intView = buffer.asIntBuffer();
             intView.limit(array.length);
             intView.get(array);
             // don't forget to update the original buffer position, since the
@@ -243,7 +247,7 @@ public class FileSystemNode extends Node {
          */
         void refillBuffer(int requiredSize) throws IOException {
             // compute the actual position up to we have read something
-            final long currentPosition = bufferStart + buffer.position();
+            long currentPosition = bufferStart + buffer.position();
             // if the buffer is not big enough enlarge it
             if (buffer.capacity() < requiredSize) {
                 int size = buffer.capacity();

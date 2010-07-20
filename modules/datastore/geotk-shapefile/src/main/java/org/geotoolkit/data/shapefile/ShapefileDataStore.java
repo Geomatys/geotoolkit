@@ -57,9 +57,9 @@ import org.geotoolkit.data.query.DefaultQueryCapabilities;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryCapabilities;
 import org.geotoolkit.data.query.QueryUtilities;
-import org.geotoolkit.data.shapefile.dbf.DbaseFileException;
-import org.geotoolkit.data.shapefile.dbf.DbaseFileHeader;
-import org.geotoolkit.data.shapefile.dbf.DbaseFileReader;
+import org.geotoolkit.data.dbf.DbaseFileException;
+import org.geotoolkit.data.dbf.DbaseFileHeader;
+import org.geotoolkit.data.dbf.DbaseFileReader;
 import org.geotoolkit.data.shapefile.shp.IndexFile;
 import org.geotoolkit.data.shapefile.shp.ShapeType;
 import org.geotoolkit.data.shapefile.shp.ShapefileHeader;
@@ -764,7 +764,7 @@ public class ShapefileDataStore extends AbstractDataStore{
         }
 
         try {
-            return new DbaseFileReader(shpFiles, useMemoryMappedBuffer, dbfCharset);
+            return ShpDBF.reader(shpFiles, useMemoryMappedBuffer, dbfCharset);
         } catch (IOException e) {
             // could happen if dbf file does not exist
             return null;

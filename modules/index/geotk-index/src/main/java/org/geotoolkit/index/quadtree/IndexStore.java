@@ -16,8 +16,6 @@
  */
 package org.geotoolkit.index.quadtree;
 
-import org.geotoolkit.data.shapefile.shp.IndexFile;
-
 /**
  * DOCUMENT ME!
  * 
@@ -42,5 +40,5 @@ public interface IndexStore {
      * 
      * @throws StoreException
      */
-    public QuadTree load(IndexFile indexfile) throws StoreException;
+    public QuadTree load(DataReader reader) throws StoreException;
 }

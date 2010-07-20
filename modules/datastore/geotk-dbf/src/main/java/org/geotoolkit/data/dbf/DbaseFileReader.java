@@ -17,7 +17,7 @@
  *    This file is based on an origional contained in the GISToolkit project:
  *    http://gistoolkit.sourceforge.net/
  */
-package org.geotoolkit.data.shapefile.dbf;
+package org.geotoolkit.data.dbf;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -29,11 +29,11 @@ import java.nio.channels.ReadableByteChannel;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
 import java.util.Calendar;
+import java.util.logging.Logger;
 
-import org.geotoolkit.data.shapefile.ShpFileType;
-import org.geotoolkit.data.shapefile.ShpFiles;
 import org.geotoolkit.resources.NIOUtilities;
 import org.geotoolkit.util.XInteger;
+import org.geotoolkit.util.logging.Logging;
 
 /**
  * A DbaseFileReader is used to read a dbase III format file. <br>
@@ -66,6 +66,8 @@ import org.geotoolkit.util.XInteger;
 public class DbaseFileReader {
 
     public static final Charset DEFAULT_STRING_CHARSET = Charset.forName("ISO-8859-1");
+
+    private static final Logger LOGGER = Logging.getLogger(DbaseFileReader.class);
 
     public final class Row {
         public Object read(int column) throws IOException {
@@ -120,14 +122,9 @@ public class DbaseFileReader {
     /**
      * Creates a new instance of DBaseFileReader
      * 
-     * @param shapefileFiles The readable channel to use.
+     * @param readChannel The readable channel to use.
      * @throws IOException If an error occurs while initializing.
      */
-    public DbaseFileReader(ShpFiles shapefileFiles,
-            boolean useMemoryMappedBuffer, Charset charset) throws IOException {
-        final ReadableByteChannel dbfChannel = shapefileFiles.getReadChannel(ShpFileType.DBF, this);
-        init(dbfChannel, useMemoryMappedBuffer, charset);
-    }
 
     public DbaseFileReader(ReadableByteChannel readChannel, boolean useMemoryMappedBuffer, Charset charset) throws IOException {
         init(readChannel, useMemoryMappedBuffer, charset);
@@ -545,7 +542,7 @@ public class DbaseFileReader {
                     // okay, now whatever we got was truly undigestable. Lets go
                     // with
                     // a zero Double.
-                    object = Double.valueOf(0.0);
+                    object = new Double(0.0);
                 }
                 break;
             default:
@@ -567,17 +564,6 @@ public class DbaseFileReader {
         fieldLen = fieldOffset+fieldLen;
         while(charBuffer2.charAt(fieldOffset) <= ' ' && fieldOffset<fieldLen)fieldOffset++;
         return charBuffer2.subSequence(fieldOffset, fieldLen);
-    }
-
-    public static void main(String[] args) throws Exception {
-        DbaseFileReader reader = new DbaseFileReader(new ShpFiles(args[0]),
-                false, Charset.forName("ISO-8859-1"));
-        System.out.println(reader.getHeader());
-        int r = 0;
-        while (reader.hasNext()) {
-            System.out.println(++r + "," + java.util.Arrays.asList(reader.readEntry()));
-        }
-        reader.close();
     }
 
 }

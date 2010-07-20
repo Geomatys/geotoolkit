@@ -24,9 +24,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.geotoolkit.ShapeTestData;
-import org.geotoolkit.data.shapefile.dbf.DbaseFileHeader;
-import org.geotoolkit.data.shapefile.dbf.DbaseFileReader;
-import org.geotoolkit.data.shapefile.dbf.DbaseFileWriter;
+import org.geotoolkit.data.dbf.DbaseFileHeader;
+import org.geotoolkit.data.dbf.DbaseFileReader;
+import org.geotoolkit.data.dbf.DbaseFileWriter;
 
 /**
  * 
@@ -58,7 +58,7 @@ public class DbaseFileTest extends AbstractTestCaseSupport {
     protected void setUp() throws Exception {
         super.setUp();
         shpFiles = new ShpFiles(ShapeTestData.url(TEST_FILE));
-        dbf = new DbaseFileReader(shpFiles, false,
+        dbf = ShpDBF.reader(shpFiles, false,
                 ShapefileDataStore.DEFAULT_STRING_CHARSET);
     }
 
@@ -86,7 +86,7 @@ public class DbaseFileTest extends AbstractTestCaseSupport {
 
     public void testRowVsEntry() throws Exception {
         Object[] attrs = new Object[dbf.getHeader().getNumFields()];
-        DbaseFileReader dbf2 = new DbaseFileReader(shpFiles, false,
+        DbaseFileReader dbf2 = ShpDBF.reader(shpFiles, false,
                 ShapefileDataStore.DEFAULT_STRING_CHARSET);
         while (dbf.hasNext()) {
             dbf.readEntry(attrs);
@@ -163,7 +163,7 @@ public class DbaseFileTest extends AbstractTestCaseSupport {
         }
         dbf.close();
         ShpFiles tempShpFiles = new ShpFiles(f);
-        DbaseFileReader r = new DbaseFileReader(tempShpFiles, false,
+        DbaseFileReader r = ShpDBF.reader(tempShpFiles, false,
                 ShapefileDataStore.DEFAULT_STRING_CHARSET);
         int cnt = 0;
         while (r.hasNext()) {

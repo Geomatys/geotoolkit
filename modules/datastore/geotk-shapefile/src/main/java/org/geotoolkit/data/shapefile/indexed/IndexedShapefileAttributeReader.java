@@ -21,7 +21,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.geotoolkit.data.shapefile.ShapefileAttributeReader;
-import org.geotoolkit.data.shapefile.dbf.IndexedDbaseFileReader;
+import org.geotoolkit.data.dbf.IndexedDbaseFileReader;
 import org.geotoolkit.data.shapefile.shp.ShapefileReader;
 import org.geotoolkit.index.CloseableCollection;
 import org.geotoolkit.index.Data;

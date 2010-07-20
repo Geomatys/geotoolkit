@@ -17,7 +17,7 @@
  *    This file is based on an origional contained in the GISToolkit project:
  *    http://gistoolkit.sourceforge.net/
  */
-package org.geotoolkit.data.shapefile.dbf;
+package org.geotoolkit.data.dbf;
 
 import java.io.EOFException;
 import java.io.IOException;

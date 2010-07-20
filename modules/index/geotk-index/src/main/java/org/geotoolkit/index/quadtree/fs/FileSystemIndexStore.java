@@ -26,13 +26,13 @@ import java.nio.channels.FileChannel;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.geotoolkit.data.shapefile.shp.IndexFile;
 import org.geotoolkit.index.quadtree.IndexStore;
 import org.geotoolkit.index.quadtree.Node;
 import org.geotoolkit.index.quadtree.QuadTree;
 import org.geotoolkit.index.quadtree.StoreException;
 
 import com.vividsolutions.jts.geom.Envelope;
+import org.geotoolkit.index.quadtree.DataReader;
 
 /**
  * DOCUMENT ME!
@@ -198,7 +198,7 @@ public class FileSystemIndexStore implements IndexStore {
      * @see IndexStore#load(org.geotoolkit.data.shapefile.shp.IndexFile)
      */
     @Override
-    public QuadTree load(IndexFile indexfile) throws StoreException {
+    public QuadTree load(DataReader indexfile) throws StoreException {
         QuadTree tree = null;
 
         try {

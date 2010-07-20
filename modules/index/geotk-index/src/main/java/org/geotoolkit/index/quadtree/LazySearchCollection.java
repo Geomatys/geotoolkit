@@ -21,7 +21,6 @@ import java.util.AbstractCollection;
 import java.util.Iterator;
 import java.util.logging.Level;
 
-import org.geotoolkit.data.shapefile.ShapefileDataStoreFactory;
 import org.geotoolkit.index.CloseableCollection;
 import org.geotoolkit.index.Data;
 
@@ -38,9 +37,9 @@ import com.vividsolutions.jts.geom.Envelope;
 public class LazySearchCollection extends AbstractCollection<Data> implements
         CloseableCollection<Data> {
 
-    private final QuadTree tree;
+    private QuadTree tree;
 
-    private final Envelope bounds;
+    private Envelope bounds;
 
     public LazySearchCollection(QuadTree tree, Envelope bounds) {
         this.tree = tree;
@@ -52,22 +51,20 @@ public class LazySearchCollection extends AbstractCollection<Data> implements
      * 
      * @see java.util.AbstractCollection#iterator()
      */
-    @Override
     public Iterator<Data> iterator() {
-        final LazySearchIterator iterator;
+        LazySearchIterator object;
         try {
-            iterator = new LazySearchIterator(tree.getRoot().copy(), tree
-                    .getIndexfile(), bounds);
+            object = new LazySearchIterator(tree.getRoot().copy(), tree
+                    .getDataReader(), bounds);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        tree.registerIterator(iterator);
-        return iterator;
+        tree.registerIterator(object);
+        return object;
     }
 
-    @Override
     public int size() {
-        final Iterator iter = iterator();
+        Iterator iter = iterator();
         try {
             int count = 0;
             while (iter.hasNext()) {
@@ -79,14 +76,15 @@ public class LazySearchCollection extends AbstractCollection<Data> implements
             try {
                 tree.close(iter);
             } catch (StoreException e) {
-                ShapefileDataStoreFactory.LOGGER.log(Level.WARNING,"Couldn't close iterator",e);
+                org.geotoolkit.util.logging.Logging.getLogger(
+                        "org.geotoolkit.index.quadtree").severe(
+                        "Couldn't close iterator");
             }
         }
     }
 
-    @Override
     public boolean isEmpty() {
-        final Iterator iter = iterator();
+        Iterator iter = iterator();
         boolean isEmtpy = true;
         try {
             isEmtpy = !iter.hasNext();
@@ -94,27 +92,28 @@ public class LazySearchCollection extends AbstractCollection<Data> implements
             try {
                 tree.close(iter);
             } catch (StoreException e) {
-                ShapefileDataStoreFactory.LOGGER.log(Level.WARNING,"Couldn't close iterator",e);
+                org.geotoolkit.util.logging.Logging.getLogger(
+                        "org.geotoolkit.index.quadtree").severe(
+                        "Couldn't close iterator");
             }
         }
         return isEmtpy;
     }
 
-    @Override
     public void close() {
         try {
             tree.close();
         } catch (StoreException e) {
-            ShapefileDataStoreFactory.LOGGER.log(Level.WARNING, "Error closing QuadTree", e);
+            org.geotoolkit.util.logging.Logging.getLogger(
+                        "org.geotoolkit.index.quadtree").log(Level.WARNING, "Error closing QuadTree", e);
         }
     }
 
-    @Override
     public void closeIterator( Iterator<Data> iter ) throws IOException {
         try {
             tree.close(iter);
         } catch (StoreException e) {
-            throw new IOException(e);
+            throw (IOException) new IOException(e.getLocalizedMessage()).initCause(e);
         }
     }
 

@@ -188,7 +188,7 @@ public class DefaultName implements Name {
         }
 
         int index = candidate.lastIndexOf(':');
-        
+
         if(index <= 0){
             return new DefaultName(null, candidate);
         }else{
@@ -230,9 +230,9 @@ public class DefaultName implements Name {
 
     /**
      * Tests that the given string representation matches the given name.
-     * String can be written with only the local part or in extendedform or JCR 
-     * extended form. 
-     * 
+     * String can be written with only the local part or in extendedform or JCR
+     * extended form.
+     *
      * @param name
      * @param candidate
      * @return true if the string match the name
@@ -251,6 +251,16 @@ public class DefaultName implements Name {
             final String uri = candidate.substring(0,index);
             final String local = candidate.substring(index+1,candidate.length());
             return uri.equals(name.getNamespaceURI()) && local.equals(name.getLocalPart());
+        }
+    }
+
+    public static boolean match(Name name, Name candidate){
+        if(name.getNamespaceURI() == null || candidate.getNamespaceURI()==null){
+            //compare only namespaces
+            return name.getLocalPart().equals(candidate.getLocalPart());
+        }else{
+            return name.getNamespaceURI().equals(candidate.getNamespaceURI())
+                && name.getLocalPart().equals(candidate.getLocalPart());
         }
     }
 

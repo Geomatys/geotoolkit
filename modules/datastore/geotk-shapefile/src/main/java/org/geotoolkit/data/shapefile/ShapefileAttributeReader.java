@@ -20,8 +20,8 @@ import java.io.IOException;
 import java.util.List;
 
 import org.geotoolkit.data.AbstractPropertyReader;
-import org.geotoolkit.data.shapefile.dbf.DbaseFileHeader;
-import org.geotoolkit.data.shapefile.dbf.DbaseFileReader;
+import org.geotoolkit.data.dbf.DbaseFileHeader;
+import org.geotoolkit.data.dbf.DbaseFileReader;
 import org.geotoolkit.data.shapefile.shp.ShapefileReader;
 import org.geotoolkit.util.Converters;
 
