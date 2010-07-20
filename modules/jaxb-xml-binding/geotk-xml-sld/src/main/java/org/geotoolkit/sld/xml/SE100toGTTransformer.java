@@ -173,8 +173,7 @@ public class SE100toGTTransformer extends OGC100toGTTransformer {
         if(css.getContent().size() >= 1){
             for(final Object obj : css.getContent()){
                 if(obj instanceof String){
-//                    System.out.println("laaaaa " + obj);
-//                    return filterFactory.literal(obj);
+                    return filterFactory.literal(obj);
                 }else if(obj instanceof JAXBElement){
                     return visitExpression( (JAXBElement<?>)obj );
                 }
@@ -212,8 +211,8 @@ public class SE100toGTTransformer extends OGC100toGTTransformer {
         for(final Serializable ser :sers){
 
             if(ser instanceof String && !ser.toString().trim().isEmpty()){
-//                result = filterFactory.literal((String)ser);
-//                break;
+                result = filterFactory.literal((String)ser);
+                break;
             }else if(ser instanceof JAXBElement<?>){
                 final JAXBElement<?> jax = (JAXBElement<?>) ser;
                 result = visitExpression(jax);
