@@ -55,6 +55,7 @@
   <!-- =========================================================== -->
   <modules>
     <module>geotk-index-quadtree</module>
+    <module>geotk-spatial-lucene</module>
   </modules>
 
 </project>

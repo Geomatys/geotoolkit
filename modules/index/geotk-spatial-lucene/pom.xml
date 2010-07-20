@@ -13,7 +13,7 @@
 
   <parent>
     <groupId>org.geotoolkit.pending</groupId>
-    <artifactId>utility</artifactId>
+    <artifactId>index</artifactId>
     <version>SNAPSHOT</version>
   </parent>
 
@@ -24,7 +24,7 @@
   <groupId>org.geotoolkit.pending</groupId>
   <artifactId>geotk-spatial-lucene</artifactId>
   <packaging>jar</packaging>
-  <name>Utility lucene spatial extension</name>
+  <name>Index lucene spatial</name>
 
   <description>
     Lucene extension for spatial datas.

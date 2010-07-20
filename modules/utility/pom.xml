@@ -55,7 +55,6 @@
   <modules>
     <module>geotk-utility-pending</module>
     <module>geotk-utility-jdbc</module>
-    <module>geotk-spatial-lucene</module>
   </modules>
 
 </project>
