@@ -602,7 +602,7 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
 
             try {
                 final FileSystemIndexStore store = new FileSystemIndexStore(treeFile);
-                return store.load(openIndexFile());
+                return store.load(new IndexDataReader(openIndexFile()));
             } catch (IOException e) {
                 throw new StoreException(e);
             }

@@ -21,7 +21,6 @@ import java.util.AbstractCollection;
 import java.util.Iterator;
 import java.util.logging.Level;
 
-import org.geotoolkit.data.shapefile.ShapefileDataStoreFactory;
 import org.geotoolkit.index.CloseableCollection;
 import org.geotoolkit.index.Data;
 
@@ -56,7 +55,7 @@ public class LazySearchCollection extends AbstractCollection<Data> implements
         LazySearchIterator object;
         try {
             object = new LazySearchIterator(tree.getRoot().copy(), tree
-                    .getIndexfile(), bounds);
+                    .getDataReader(), bounds);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -105,7 +104,8 @@ public class LazySearchCollection extends AbstractCollection<Data> implements
         try {
             tree.close();
         } catch (StoreException e) {
-            ShapefileDataStoreFactory.LOGGER.log(Level.WARNING, "Error closing QuadTree", e);
+            org.geotoolkit.util.logging.Logging.getLogger(
+                        "org.geotoolkit.index.quadtree").log(Level.WARNING, "Error closing QuadTree", e);
         }
     }
 

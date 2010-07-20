@@ -23,7 +23,6 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.geotoolkit.data.shapefile.shp.IndexFile;
 import org.geotoolkit.index.CloseableCollection;
 import org.geotoolkit.index.Data;
 
@@ -51,7 +50,7 @@ public class QuadTree {
     private int numShapes;
     private int maxDepth;
 
-    private IndexFile indexfile;
+    private DataReader indexfile;
 
     private Set iterators = new HashSet();
 
@@ -63,7 +62,7 @@ public class QuadTree {
      * @param maxBounds
      *                The bounds of all geometries to be indexed
      */
-    public QuadTree(int numShapes, Envelope maxBounds, IndexFile file) {
+    public QuadTree(int numShapes, Envelope maxBounds, DataReader file) {
         this(numShapes, 0, maxBounds, file);
     }
 
@@ -78,7 +77,7 @@ public class QuadTree {
      *                The bounds of all geometries to be indexed
      */
     public QuadTree(int numShapes, int maxDepth, Envelope maxBounds,
-            IndexFile file) {
+            DataReader file) {
         if (maxDepth > 65535) {
             throw new IllegalArgumentException("maxDepth must be <= 65535");
         }
@@ -114,7 +113,7 @@ public class QuadTree {
      * @param maxDepth
      *                The max depth of the index, must be <= 65535
      */
-    public QuadTree(int numShapes, int maxDepth, IndexFile file) {
+    public QuadTree(int numShapes, int maxDepth, DataReader file) {
         this(numShapes, maxDepth, null, file);
     }
 
@@ -366,7 +365,7 @@ public class QuadTree {
         iterators.add(object);
     }
 
-    public IndexFile getIndexfile() {
+    public DataReader getDataReader() {
         return indexfile;
     }
 }

@@ -22,6 +22,7 @@ import java.util.Iterator;
 
 import org.geotoolkit.data.shapefile.ShpFiles;
 import org.geotoolkit.data.shapefile.AbstractTestCaseSupport;
+import org.geotoolkit.data.shapefile.indexed.IndexDataReader;
 import org.geotoolkit.data.shapefile.indexed.IndexedShapefileDataStore;
 import org.geotoolkit.data.shapefile.shp.IndexFile;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
@@ -60,7 +61,7 @@ public class LineLazySearchCollectionTest extends AbstractTestCaseSupport {
             ShpFiles shpFiles = new ShpFiles(qixFile);
 
             IndexFile indexFile = new IndexFile(shpFiles, false);
-            return store.load(indexFile);
+            return store.load(new IndexDataReader(indexFile));
 
         } catch (IOException e) {
             throw new StoreException(e);

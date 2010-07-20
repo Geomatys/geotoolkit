@@ -23,7 +23,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-import org.geotoolkit.data.shapefile.shp.IndexFile;
 import org.geotoolkit.index.Data;
 import org.geotoolkit.index.DataDefinition;
 
@@ -40,14 +39,8 @@ import com.vividsolutions.jts.geom.Envelope;
  */
 public class LazySearchIterator implements Iterator<Data> {
 
-    static final DataDefinition DATA_DEFINITION = new DataDefinition("US-ASCII");
-
     private static final int MAX_INDICES = 32768;
-    static {
-        DATA_DEFINITION.addField(Integer.class);
-        DATA_DEFINITION.addField(Long.class);
-    }
-
+    
     Data next = null;
 
     Node current;
@@ -60,9 +53,9 @@ public class LazySearchIterator implements Iterator<Data> {
 
     Iterator data;
 
-    private IndexFile indexfile;
+    private DataReader indexfile;
 
-    public LazySearchIterator(Node root, IndexFile indexfile, Envelope bounds) {
+    public LazySearchIterator(Node root, DataReader indexfile, Envelope bounds) {
         super();
         this.current = root;
         this.bounds = bounds;
@@ -118,10 +111,7 @@ public class LazySearchIterator implements Iterator<Data> {
             Collections.sort(indices);
             for (Iterator iter = indices.iterator(); iter.hasNext();) {
                 Integer recno = (Integer) iter.next();
-                Data data = new Data(DATA_DEFINITION);
-                data.addValue(new Integer(recno.intValue() + 1));
-                data.addValue(new Long(indexfile.getOffsetInBytes(recno
-                        .intValue())));
+                Data data = indexfile.create(recno);
                 dataList.add(data);
             }
         } catch (IOException e) {

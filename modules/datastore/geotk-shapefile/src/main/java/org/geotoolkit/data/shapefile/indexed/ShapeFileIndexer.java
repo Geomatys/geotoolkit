@@ -135,7 +135,7 @@ public class ShapeFileIndexer {
         Envelope bounds = new Envelope(header.minX(), header.maxX(), header
                 .minY(), header.maxY());
 
-        tree = new QuadTree(numRecs, max, bounds, shpIndex);
+        tree = new QuadTree(numRecs, max, bounds, new IndexDataReader(shpIndex));
         try {
             Record rec = null;
 

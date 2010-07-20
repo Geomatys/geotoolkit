@@ -72,6 +72,11 @@
         </dependency>
         <dependency>
             <groupId>org.geotoolkit.pending</groupId>
+            <artifactId>geotk-index</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.geotoolkit.pending</groupId>
             <artifactId>geotk-utility-pending</artifactId>
             <version>${project.version}</version>
         </dependency>
