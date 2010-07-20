@@ -67,6 +67,7 @@ import org.geotoolkit.internal.image.io.SupportFiles;
 import org.geotoolkit.internal.image.io.RawFile;
 import org.geotoolkit.internal.io.TemporaryFile;
 import org.geotoolkit.internal.rmi.RMI;
+import org.geotoolkit.util.converter.Classes;
 
 
 /**
@@ -1669,7 +1670,7 @@ search: for (final Tile tile : tiles) {
      *
      * @author Martin Desruisseaux (Geomatys)
      * @author Cédric Briançon (Geomatys)
-     * @version 3.00
+     * @version 3.14
      *
      * @since 2.5
      * @module
@@ -1689,6 +1690,21 @@ search: for (final Tile tile : tiles) {
             names           = MosaicImageReader.Spi.NAMES;
             outputTypes     = MosaicImageReader.Spi.INPUT_TYPES;
             pluginClassName = "org.geotoolkit.image.io.mosaic.MosaicImageWriter";
+        }
+
+        /**
+         * Returns {@code true} if the image writer can encode the given output. The default
+         * implementation returns {@code true} if the given object is non-null and an instance
+         * of an {@linkplain #outputTypes output types}, or {@code false} otherwise.
+         *
+         * @param  destination The output to be encoded.
+         * @return {@code true} If the image writer can encode the given output.
+         * @throws IOException If an I/O operation was required and failed.
+         *
+         * @since 3.14
+         */
+        public boolean canEncodeOutput(final Object destination) throws IOException {
+            return (destination != null) && Classes.isAssignableTo(destination.getClass(), outputTypes);
         }
 
         /**

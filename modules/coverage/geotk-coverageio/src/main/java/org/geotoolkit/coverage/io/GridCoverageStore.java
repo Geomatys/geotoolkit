@@ -17,12 +17,36 @@
  */
 package org.geotoolkit.coverage.io;
 
+import java.awt.Shape;
+import java.awt.Dimension;
+import java.awt.Rectangle;
+import java.awt.geom.Area;
+import java.awt.geom.Rectangle2D;
+import java.awt.geom.RectangularShape;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.NoninvertibleTransformException;
 import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.concurrent.CancellationException;
+import javax.imageio.IIOParam;
 
-import org.geotoolkit.resources.Errors;
+import org.opengis.geometry.Envelope;
+import org.opengis.util.FactoryException;
+import org.opengis.metadata.spatial.PixelOrientation;
+import org.opengis.referencing.operation.MathTransform;
+import org.opengis.referencing.operation.TransformException;
+import org.opengis.referencing.operation.CoordinateOperation;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+
 import org.geotoolkit.util.Localized;
+import org.geotoolkit.resources.Errors;
+import org.geotoolkit.internal.io.IOUtilities;
+import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
+import org.geotoolkit.coverage.grid.GridGeometry2D;
+import org.geotoolkit.coverage.grid.InvalidGridGeometryException;
+import org.geotoolkit.display.shape.XRectangle2D;
+import org.geotoolkit.geometry.GeneralDirectPosition;
 
 
 /**
@@ -52,6 +76,21 @@ public abstract class GridCoverageStore implements Localized {
      * @since 3.14
      */
     static final int Y_DIMENSION = 1;
+
+    /**
+     * Minimal image width and height, in pixels. If the user requests a smaller image,
+     * then the request will be expanded to that size. The current setting is the minimal
+     * size required for allowing bicubic interpolations.
+     */
+    private static final int MIN_SIZE = 4;
+
+    /**
+     * Small values for rounding errors in floating point calculations. This value shall not be
+     * too small, otherwise {@link #computeBounds} fails to correct for rounding errors and we
+     * get a region to read bigger than necessary. Experience suggests that 1E-6 is too small,
+     * while 1E-5 seems okay.
+     */
+    private static final double EPS = 1E-5;
 
     /**
      * The locale to use for formatting messages, or {@code null} for a default locale.
@@ -152,6 +191,261 @@ public abstract class GridCoverageStore implements Localized {
      */
     final String formatErrorMessage(final int key) {
         return Errors.getResources(locale).getString(key);
+    }
+
+    /**
+     * Returns an error message for the given exception, using the current input or output.
+     * This method is overriden by {@link GridCoverageReader} and {@link GridCoverageWriter},
+     * which will format a better message including the input or output path.
+     */
+    String formatErrorMessage(final Exception e) {
+        return e.getLocalizedMessage();
+    }
+
+    /**
+     * Returns an error message for the given exception. If the input or output is known, then
+     * this method returns "<cite>Can't read/write 'the name'</cite>" followed by the cause
+     * message. Otherwise it returns the localized message of the given exception.
+     *
+     * @param path The input or output.
+     * @param e The exception which occured.
+     * @param isWriting {@code false} If reading, or {@code true} if writing.
+     */
+    final String formatErrorMessage(final Object path, final Exception e, final boolean isWriting) {
+        String message = e.getLocalizedMessage();
+        if (IOUtilities.canProcessAsPath(path)) {
+            final String cause = message;
+            message = Errors.getResources(locale).getString(isWriting ?
+                    Errors.Keys.CANT_WRITE_$1 : Errors.Keys.CANT_READ_$1, IOUtilities.name(path));
+            if (cause != null && cause.indexOf(' ') > 0) { // Append only if we have a sentence.
+                message = message + '\n' + cause;
+            }
+        }
+        return message;
+    }
+
+    /**
+     * Returns the "<cite>Grid to CRS</cite>" conversion as an affine transform.
+     * The conversion will map upper-left corner, as in Java2D conventions.
+     *
+     * @param  gridGeometry The grid geometry from which to extract the conversion.
+     * @return The "<cite>grid to CRS</cite>" conversion.
+     * @throws InvalidGridGeometryException If the conversion is not affine.
+     */
+    private AffineTransform getGridToCRS(final GridGeometry2D gridGeometry) throws InvalidGridGeometryException {
+        final MathTransform gridToCRS = gridGeometry.getGridToCRS2D(PixelOrientation.UPPER_LEFT);
+        if (gridToCRS instanceof AffineTransform) {
+            return (AffineTransform) gridToCRS;
+        }
+        throw new InvalidGridGeometryException(formatErrorMessage(Errors.Keys.NOT_AN_AFFINE_TRANSFORM));
+    }
+
+    /**
+     * Converts geodetic parameters to pixel parameters and stores the result in the given
+     * {@code IIOParam} object. This is a convenience method provided to subclasses implementation.
+     * The default implementation invokes the following methods:
+     * <p>
+     * <ul>
+     *   <li>{@link IIOParam#setSourceRegion(Rectangle)}</li>
+     *   <li>{@link IIOParam#setSourceSubsampling(int, int, int, int)}</li>
+     * </ul>
+     * <p>
+     * All other attributes are left unchanged.
+     *
+     * @param  gridGeometry The grid geometry of the source as a whole (without subsampling).
+     * @param  geodeticParam Parameters containing the geodetic envelope and the resolution
+     *         to use for reading the source.
+     * @param  pixelParam The object where to set the source region in subsampling to
+     *         use for reading the source.
+     * @return The image bounds, returned for convenience. This is the same value than the
+     *         one provided by {@link IIOParam#getSourceRegion()} after this method call.
+     * @throws CoverageStoreException If the region can not be computed.
+     *
+     * @since 3.14
+     */
+    protected Rectangle geodeticToPixelCoordinates(final GridGeometry2D gridGeometry,
+            final GridCoverageStoreParam geodeticParam, final IIOParam pixelParam)
+            throws CoverageStoreException
+    {
+        final Rectangle imageBounds;
+        final double[] resolution = geodeticParam.getResolution();
+        try {
+            imageBounds = computeBounds(gridGeometry, geodeticParam.getValidEnvelope(),
+                    resolution, geodeticParam.getCoordinateReferenceSystem());
+        } catch (Exception e) { // There is many different exceptions thrown by the above.
+            throw new CoverageStoreException(formatErrorMessage(e), e);
+        }
+        if (imageBounds == null) {
+            throw new CoverageStoreException(formatErrorMessage(Errors.Keys.EMPTY_ENVELOPE));
+        }
+        pixelParam.setSourceRegion(imageBounds);
+        int sx=1, sy=1;
+        if (resolution != null) {
+            sx = (int) resolution[X_DIMENSION]; // Really 0, not gridGeometry.axisDimensionX
+            sy = (int) resolution[Y_DIMENSION]; // Really 1, not gridGeometry.axisDimensionY
+        }
+        pixelParam.setSourceSubsampling(sx, sy, 0, 0);
+        return imageBounds;
+    }
+
+    /**
+     * Computes the region to read in pixel coordinates. The main purpose of this method is to
+     * be invoked just before an image is read, but it could also be invoked by some informative
+     * methods like {@code getGridGeometry(GridCoverageReadParam)} (if we decide to add such method).
+     *
+     * @param gridGeometry  The grid geometry for the whole coverage,
+     *                      as provided by {@link GridCoverageReader#getGridGeometry(int)}.
+     * @param envelope      The region to read in "real world" coordinates, or {@code null}.
+     *                      The CRS of this envelope doesn't need to be the coverage CRS.
+     * @param resolution    On input, the requested resolution or {@code null}. On output
+     *                      (if non-null), the subsampling to use for reading the image.
+     * @param sourceCRS     The CRS of the {@code resolution} parameter, or {@code null}.
+     *                      This is usually also the envelope CRS.
+     * @return The region to be read in pixel coordinates, or {@code null} if the coverage
+     *         can't be read because the region to read is empty.
+     */
+    private Rectangle computeBounds(final GridGeometry2D gridGeometry, Envelope envelope,
+            final double[] resolution, final CoordinateReferenceSystem sourceCRS)
+            throws InvalidGridGeometryException, NoninvertibleTransformException, TransformException, FactoryException
+    {
+        final Rectangle gridRange = gridGeometry.getGridRange2D();
+        final int width  = gridRange.width;
+        final int height = gridRange.height;
+        final AffineTransform gridToCRS = getGridToCRS(gridGeometry);
+        final AffineTransform crsToGrid = gridToCRS.createInverse();
+        /*
+         * Get the full coverage envelope in the coverage CRS. The returned shape is likely
+         * (but not garanteed) to be an instance of Rectangle2D. It can be freely modified.
+         */
+        Shape shapeToRead = XAffineTransform.transform(gridToCRS, gridRange, false); // Will be clipped later.
+        Rectangle2D geodeticBounds = (shapeToRead instanceof Rectangle2D) ?
+                (Rectangle2D) shapeToRead : shapeToRead.getBounds2D();
+        if (geodeticBounds.isEmpty()) {
+            return null;
+        }
+        /*
+         * Transform the envelope if needed. We will remember the MathTransform because it will
+         * be needed for transforming the resolution later. Then, check if the requested region
+         * (requestEnvelope) intersects the coverage region (shapeToRead).
+         */
+        final CoordinateReferenceSystem targetCRS = gridGeometry.getCoordinateReferenceSystem2D();
+        MathTransform toTargetCRS = null;
+        if (sourceCRS != null && targetCRS != null && !CRS.equalsIgnoreMetadata(sourceCRS, targetCRS)) {
+            final CoordinateOperation op =
+                    CRS.getCoordinateOperationFactory(true).createOperation(sourceCRS, targetCRS);
+            toTargetCRS = op.getMathTransform();
+            if (toTargetCRS.isIdentity()) {
+                toTargetCRS = null;
+            } else if (envelope != null) {
+                envelope = CRS.transform(op, envelope);
+            }
+        }
+        if (envelope != null) {
+            final XRectangle2D requestRect = XRectangle2D.createFromExtremums(
+                    envelope.getMinimum(X_DIMENSION), envelope.getMinimum(Y_DIMENSION),
+                    envelope.getMaximum(X_DIMENSION), envelope.getMaximum(Y_DIMENSION));
+            if (requestRect.isEmpty() || !XRectangle2D.intersectInclusive(requestRect, geodeticBounds)) {
+                return null;
+            }
+            /*
+             * If the requested envelope contains fully the coverage bounds, we can ignore it
+             * (we will read the full coverage). Otherwise if the coverage contains fully the
+             * requested region, the requested region become the new bounds. Otherwise we need
+             * to compute the intersection.
+             */
+            if (!requestRect.contains(geodeticBounds)) {
+                requestRect.intersect(geodeticBounds);
+                if (shapeToRead == geodeticBounds || shapeToRead.contains(requestRect)) {
+                    shapeToRead = geodeticBounds = requestRect;
+                } else {
+                    // Use Area only if 'shapeToRead' is something more complicated than a
+                    // Rectangle2D. Note that the above call to Rectangle2D.intersect(...)
+                    // is still necessary because 'requestRect' may had infinite values
+                    // before the call to Rectangle2D.intersect(...), and infinite values
+                    // are not handled well by Area.
+                    final Area area = new Area(shapeToRead);
+                    area.intersect(new Area(requestRect));
+                    shapeToRead = area;
+                    geodeticBounds = shapeToRead.getBounds2D();
+                }
+                if (geodeticBounds.isEmpty()) {
+                    return null;
+                }
+            }
+        }
+        /*
+         * Transforms ["real world" envelope] --> [region in pixel coordinates] and computes the
+         * subsampling from the desired resolution.  Note that we transform 'shapeToRead' (which
+         * is a generic shape) rather than Rectangle2D instances, because operating on Shape can
+         * give a smaller envelope when the transform contains rotation terms.
+         */
+        double sx = geodeticBounds.getWidth();  // "Real world" size of the region to be read.
+        double sy = geodeticBounds.getHeight(); // Need to be extracted before the line below.
+        shapeToRead = XAffineTransform.transform(crsToGrid, shapeToRead, shapeToRead != gridRange);
+        final RectangularShape imageRegion = (shapeToRead instanceof RectangularShape) ?
+                (RectangularShape) shapeToRead : shapeToRead.getBounds2D();
+        sx = imageRegion.getWidth()  / sx;  // (sx,sy) are now conversion factors
+        sy = imageRegion.getHeight() / sy;  // from "real world" to pixel coordinates.
+        final int xSubsampling;
+        final int ySubsampling;
+        if (resolution != null) {
+            /*
+             * Transform the resolution if needed. The code below assume that the target
+             * dimension (always 2) is smaller than the source dimension.
+             */
+            double[] transformed = resolution;
+            if (toTargetCRS != null) {
+                final double[] center = new double[toTargetCRS.getSourceDimensions()];
+                center[X_DIMENSION] = imageRegion.getCenterX();
+                center[Y_DIMENSION] = imageRegion.getCenterY();
+                gridToCRS.transform(center, 0, center, 0, 1);
+                toTargetCRS.inverse().transform(center, 0, center, 0, 1);
+                transformed = CRS.deltaTransform(toTargetCRS, new GeneralDirectPosition(center), resolution);
+            }
+            sx *= transformed[X_DIMENSION];
+            sy *= transformed[Y_DIMENSION];
+            xSubsampling = Math.max(1, Math.min(width /MIN_SIZE, (int) (sx + EPS)));
+            ySubsampling = Math.max(1, Math.min(height/MIN_SIZE, (int) (sy + EPS)));
+            resolution[X_DIMENSION] = xSubsampling;
+            resolution[Y_DIMENSION] = ySubsampling;
+        } else {
+            xSubsampling = 1;
+            ySubsampling = 1;
+        }
+        /*
+         * Makes sure that the image region is contained inside the RenderedImage valid bounds.
+         * We need to ensure that in order to prevent Image Reader to perform its own clipping
+         * (at least for the minimal X and Y values), which would cause the gridToCRS transform
+         * to be wrong. In addition we also ensure that the resulting image has the minimal size.
+         * If the subsampling will cause an expansion of the envelope, we distribute the expansion
+         * on each side of the envelope rather than expanding only the bottom and right side (this
+         * is the purpose of the (delta % subsampling) - 1 part).
+         */
+        int xmin = (int) Math.floor(imageRegion.getMinX() + EPS);
+        int ymin = (int) Math.floor(imageRegion.getMinY() + EPS);
+        int xmax = (int) Math.ceil (imageRegion.getMaxX() - EPS);
+        int ymax = (int) Math.ceil (imageRegion.getMaxY() - EPS);
+        int delta = xmax - xmin;
+        delta = Math.max(MIN_SIZE * xSubsampling - delta, (delta % xSubsampling) - 1);
+        if (delta > 0) {
+            final int r = delta & 1;
+            delta >>>= 1;
+            xmin -= delta;
+            xmax += delta + r;
+        }
+        delta = ymax - ymin;
+        delta = Math.max(MIN_SIZE * ySubsampling - delta, (delta % ySubsampling) - 1);
+        if (delta > 0) {
+            final int r = delta & 1;
+            delta >>>= 1;
+            ymin -= delta;
+            ymax += delta + r;
+        }
+        if (xmin < 0)      xmin = 0;
+        if (ymin < 0)      ymin = 0;
+        if (xmax > width)  xmax = width;
+        if (ymax > height) ymax = height;
+        return new Rectangle(xmin, ymin, xmax - xmin, ymax - ymin);
     }
 
     /**

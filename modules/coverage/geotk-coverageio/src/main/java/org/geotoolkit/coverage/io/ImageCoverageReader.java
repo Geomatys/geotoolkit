@@ -28,12 +28,7 @@ import java.util.concurrent.CancellationException;
 import java.io.Closeable;
 import java.io.IOException;
 import java.awt.Rectangle;
-import java.awt.Shape;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Area;
-import java.awt.geom.NoninvertibleTransformException;
-import java.awt.geom.Rectangle2D;
-import java.awt.geom.RectangularShape;
 import java.awt.image.RenderedImage;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
@@ -42,15 +37,11 @@ import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.stream.ImageInputStream;
 
-import org.opengis.geometry.Envelope;
 import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.coverage.grid.RectifiedGrid;
 import org.opengis.metadata.spatial.Georectified;
 import org.opengis.metadata.spatial.PixelOrientation;
-import org.opengis.util.FactoryException;
 import org.opengis.referencing.operation.MathTransform;
-import org.opengis.referencing.operation.TransformException;
-import org.opengis.referencing.operation.CoordinateOperation;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;
 
@@ -61,9 +52,6 @@ import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
 import org.geotoolkit.coverage.grid.GridCoverageFactory;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.geotoolkit.coverage.grid.InvalidGridGeometryException;
-import org.geotoolkit.display.shape.XRectangle2D;
-import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.image.io.ImageMetadataException;
 import org.geotoolkit.image.io.NamedImageStore;
 import org.geotoolkit.image.io.SampleConversionType;
@@ -80,11 +68,9 @@ import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.collection.BackingStoreException;
-import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.crs.DefaultImageCRS;
 import org.geotoolkit.referencing.operation.matrix.XMatrix;
 import org.geotoolkit.referencing.operation.matrix.MatrixFactory;
-import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
 import org.geotoolkit.referencing.operation.transform.IdentityTransform;
 import org.geotoolkit.referencing.operation.transform.ProjectiveTransform;
 import org.geotoolkit.referencing.operation.transform.ConcatenatedTransform;
@@ -122,21 +108,6 @@ import org.geotoolkit.referencing.operation.transform.ConcatenatedTransform;
  * @module
  */
 public class ImageCoverageReader extends GridCoverageReader {
-    /**
-     * Small values for rounding errors in floating point calculations. This value shall not be
-     * too small, otherwise {@link #computeBounds} fails to correct for rounding errors and we
-     * get a region to read bigger than necessary. Experience suggests that 1E-6 is too small,
-     * while 1E-5 seems okay.
-     */
-    private static final double EPS = 1E-5;
-
-    /**
-     * Minimal image width and height, in pixels. If the user requests a smaller image,
-     * then the request will be expanded to that size. The current setting is the minimal
-     * size required for allowing bicubic interpolations.
-     */
-    private static final int MIN_SIZE = 4;
-
     /**
      * The name of metadata nodes we are interrested in. Some implementations of
      * {@link ImageReader} may use this information for reading only the metadata
@@ -302,9 +273,6 @@ public class ImageCoverageReader extends GridCoverageReader {
     @Override
     public void setInput(final Object input) throws CoverageStoreException {
         final ImageReader oldReader = imageReader;
-        final boolean disposeReader = (oldReader != null && oldReader != this.input);
-        // The above must be determined before the call to close(),
-        // because the above-cited method set this.input to null.
         try {
             close();
             assert (oldReader == null) || (oldReader.getInput() == null) : oldReader;
@@ -382,7 +350,7 @@ public class ImageCoverageReader extends GridCoverageReader {
                     }
                 }
                 if (newReader != oldReader) {
-                    if (disposeReader) {
+                    if (oldReader != null) {
                         oldReader.dispose();
                     }
                     setLocale(newReader, locale);
@@ -390,7 +358,7 @@ public class ImageCoverageReader extends GridCoverageReader {
                 imageReader = newReader;
             }
         } catch (IOException e) {
-            throw new CoverageStoreException(formatErrorMessage(input, e), e);
+            throw new CoverageStoreException(formatErrorMessage(input, e, false), e);
         }
         super.setInput(input);
     }
@@ -404,7 +372,7 @@ public class ImageCoverageReader extends GridCoverageReader {
      * The default implementation checks if the suffix of the given input is one of the
      * {@linkplain ImageReaderSpi#getFileSuffixes() file suffixes known to the provider}.
      * If the given object has no suffix (for example if it is an instance of
-     * {@link javax.imageio.stream.ImageInputStream}), then this method fallbacks on
+     * {@link ImageInputStream}), then this method fallbacks on
      * {@link ImageReaderSpi#canDecodeInput(Object)}.
      * <p>
      * Subclasses can override this method if they want to determine in another way
@@ -415,12 +383,12 @@ public class ImageCoverageReader extends GridCoverageReader {
      * @param  input The input to set to the image reader.
      * @return {@code true} if the image reader can be reused.
      * @throws IOException If an error occured while determining if the current
-     *         image reader can use the given input.
+     *         image reader can read the given input.
      */
     protected boolean canReuseImageReader(final ImageReaderSpi provider, final Object input) throws IOException {
         if (IOUtilities.canProcessAsPath(input)) {
             final String[] suffixes = provider.getFileSuffixes();
-            return suffixes != null && XArrays.containsIgnoreCase(suffixes, IOUtilities.extension(input));
+            return (suffixes != null) && XArrays.containsIgnoreCase(suffixes, IOUtilities.extension(input));
         } else {
             return provider.canDecodeInput(input);
         }
@@ -611,22 +579,6 @@ public class ImageCoverageReader extends GridCoverageReader {
     }
 
     /**
-     * Returns the "<cite>Grid to CRS</cite>" conversion as an affine transform.
-     * The conversion will map upper-left corner, as in Java2D conventions.
-     *
-     * @param  gridGeometry The grid geometry from which to extract the conversion.
-     * @return The "<cite>grid to CRS</cite>" conversion.
-     * @throws InvalidGridGeometryException If the conversion is not affine.
-     */
-    private AffineTransform getGridToCRS(final GridGeometry2D gridGeometry) throws InvalidGridGeometryException {
-        final MathTransform gridToCRS = gridGeometry.getGridToCRS2D(PixelOrientation.UPPER_LEFT);
-        if (gridToCRS instanceof AffineTransform) {
-            return (AffineTransform) gridToCRS;
-        }
-        throw new InvalidGridGeometryException(formatErrorMessage(Errors.Keys.NOT_AN_AFFINE_TRANSFORM));
-    }
-
-    /**
      * {@inheritDoc}
      */
     @Override
@@ -773,10 +725,9 @@ public class ImageCoverageReader extends GridCoverageReader {
     }
 
     /**
-     * Converts geodetic parameters to image parameters, reads the image and wraps it in a grid
-     * coverage. First, this method creates an initially empty block of image parameters by invoking
-     * the {@link #createImageReadParam(int)} method, or {@link ImageReader#getDefaultReadParam()}
-     * if the former method returned {@code null}. The image parameter
+     * Converts geodetic parameters to image parameters, reads the image and wraps it in a
+     * grid coverage. First, this method creates an initially empty block of image parameters
+     * by invoking the {@link #createImageReadParam(int)} method. The image parameter
      * {@linkplain ImageReadParam#setSourceRegion source region},
      * {@linkplain ImageReadParam#setSourceSubsampling source subsampling} and
      * {@linkplain ImageReadParam#setSourceBands source bands} are computed from the
@@ -834,39 +785,20 @@ public class ImageCoverageReader extends GridCoverageReader {
             }
             /*
              * Convert geodetic envelope and resolution to pixel coordinates.
-             */
-            final Envelope envelope = param.getValidEnvelope();
-            final double[] resolution = param.getResolution();
-            final Rectangle imageBounds;
-            try {
-                imageBounds = computeBounds(gridGeometry, envelope, resolution, param.getCoordinateReferenceSystem());
-            } catch (Exception e) { // There is many different exceptions thrown by the above.
-                throw new CoverageStoreException(formatErrorMessage(e), e);
-            }
-            if (imageBounds == null) {
-                throw new CoverageStoreException(formatErrorMessage(Errors.Keys.EMPTY_ENVELOPE));
-            }
-            /*
              * Store the result of the above conversions in the ImageReadParam object.
+             */
+            final Rectangle imageBounds = geodeticToPixelCoordinates(gridGeometry, param, imageParam);
+            /*
              * Also keep trace of the change that will need to be applied on the gridToCRS
-             * transform.
+             * transform. Conceptually we should scale right after the translation:
+             *
+             *     change.scale(xSubsampling, ySubsampling);
+             *
+             * However this implementation will scale only after the image has been read,
+             * because the MosaicImageReader may have changed the subsampling to more
+             * efficient values if it was authorized to make such change.
              */
             change = AffineTransform.getTranslateInstance(imageBounds.x, imageBounds.y);
-            imageParam.setSourceRegion(imageBounds);
-            if (resolution != null) {
-                final double sx = resolution[X_DIMENSION]; // Really 0, not gridGeometry.axisDimensionX
-                final double sy = resolution[Y_DIMENSION]; // Really 1, not gridGeometry.axisDimensionY
-                imageParam.setSourceSubsampling((int) sx, (int) sy, 0, 0);
-                /*
-                 * Conceptually we should invoke the following code now. However this implementation
-                 * will invoke it only after the image has been read,  because the MosaicImageReader
-                 * may have changed the subsampling to more efficient values if it was authorized to
-                 * make such change.
-                 */
-                if (false) {
-                    change.scale(sx, sy);
-                }
-            }
             imageParam.setSourceBands(srcBands);
             imageParam.setDestinationBands(dstBands);
         } else {
@@ -976,166 +908,6 @@ public class ImageCoverageReader extends GridCoverageReader {
     }
 
     /**
-     * Computes the region to read in pixel coordinates. The main purpose of this method is to
-     * be invoked just before an image is read, but it could also be invoked by some informative
-     * methods like {@code getGridGeometry(GridCoverageReadParam)} (if we decide to add such method).
-     *
-     * @param gridGeometry  The grid geometry for the whole coverage,
-     *                      as provided by {@link #getGridGeometry(int)}.
-     * @param envelope      The region to read in "real world" coordinates, or {@code null}.
-     *                      The CRS of this envelope doesn't need to be the coverage CRS.
-     * @param resolution    On input, the requested resolution or {@code null}. On output
-     *                      (if non-null), the subsampling to use for reading the image.
-     * @param sourceCRS     The CRS of the {@code resolution} parameter, or {@code null}.
-     *                      This is usually also the envelope CRS.
-     * @return The region to be read in pixel coordinates, or {@code null} if the coverage
-     *         can't be read because the region to read is empty.
-     */
-    private Rectangle computeBounds(final GridGeometry2D gridGeometry, Envelope envelope,
-            final double[] resolution, final CoordinateReferenceSystem sourceCRS)
-            throws InvalidGridGeometryException, NoninvertibleTransformException, TransformException, FactoryException
-    {
-        final Rectangle gridRange = gridGeometry.getGridRange2D();
-        final int width  = gridRange.width;
-        final int height = gridRange.height;
-        final AffineTransform gridToCRS = getGridToCRS(gridGeometry);
-        final AffineTransform crsToGrid = gridToCRS.createInverse();
-        /*
-         * Get the full coverage envelope in the coverage CRS. The returned shape is likely
-         * (but not garanteed) to be an instance of Rectangle2D. It can be freely modified.
-         */
-        Shape shapeToRead = XAffineTransform.transform(gridToCRS, gridRange, false); // Will be clipped later.
-        Rectangle2D geodeticBounds = (shapeToRead instanceof Rectangle2D) ?
-                (Rectangle2D) shapeToRead : shapeToRead.getBounds2D();
-        if (geodeticBounds.isEmpty()) {
-            return null;
-        }
-        /*
-         * Transform the envelope if needed. We will remember the MathTransform because it will
-         * be needed for transforming the resolution later. Then, check if the requested region
-         * (requestEnvelope) intersects the coverage region (shapeToRead).
-         */
-        final CoordinateReferenceSystem targetCRS = gridGeometry.getCoordinateReferenceSystem2D();
-        MathTransform toTargetCRS = null;
-        if (sourceCRS != null && targetCRS != null && !CRS.equalsIgnoreMetadata(sourceCRS, targetCRS)) {
-            final CoordinateOperation op =
-                    CRS.getCoordinateOperationFactory(true).createOperation(sourceCRS, targetCRS);
-            toTargetCRS = op.getMathTransform();
-            if (toTargetCRS.isIdentity()) {
-                toTargetCRS = null;
-            } else if (envelope != null) {
-                envelope = CRS.transform(op, envelope);
-            }
-        }
-        if (envelope != null) {
-            final XRectangle2D requestRect = XRectangle2D.createFromExtremums(
-                    envelope.getMinimum(X_DIMENSION), envelope.getMinimum(Y_DIMENSION),
-                    envelope.getMaximum(X_DIMENSION), envelope.getMaximum(Y_DIMENSION));
-            if (requestRect.isEmpty() || !XRectangle2D.intersectInclusive(requestRect, geodeticBounds)) {
-                return null;
-            }
-            /*
-             * If the requested envelope contains fully the coverage bounds, we can ignore it
-             * (we will read the full coverage). Otherwise if the coverage contains fully the
-             * requested region, the requested region become the new bounds. Otherwise we need
-             * to compute the intersection.
-             */
-            if (!requestRect.contains(geodeticBounds)) {
-                requestRect.intersect(geodeticBounds);
-                if (shapeToRead == geodeticBounds || shapeToRead.contains(requestRect)) {
-                    shapeToRead = geodeticBounds = requestRect;
-                } else {
-                    // Use Area only if 'shapeToRead' is something more complicated than a
-                    // Rectangle2D. Note that the above call to Rectangle2D.intersect(...)
-                    // is still necessary because 'requestRect' may had infinite values
-                    // before the call to Rectangle2D.intersect(...), and infinite values
-                    // are not handled well by Area.
-                    final Area area = new Area(shapeToRead);
-                    area.intersect(new Area(requestRect));
-                    shapeToRead = area;
-                    geodeticBounds = shapeToRead.getBounds2D();
-                }
-                if (geodeticBounds.isEmpty()) {
-                    return null;
-                }
-            }
-        }
-        /*
-         * Transforms ["real world" envelope] --> [region in pixel coordinates] and computes the
-         * subsampling from the desired resolution.  Note that we transform 'shapeToRead' (which
-         * is a generic shape) rather than Rectangle2D instances, because operating on Shape can
-         * give a smaller envelope when the transform contains rotation terms.
-         */
-        double sx = geodeticBounds.getWidth();  // "Real world" size of the region to be read.
-        double sy = geodeticBounds.getHeight(); // Need to be extracted before the line below.
-        shapeToRead = XAffineTransform.transform(crsToGrid, shapeToRead, shapeToRead != gridRange);
-        final RectangularShape imageRegion = (shapeToRead instanceof RectangularShape) ?
-                (RectangularShape) shapeToRead : shapeToRead.getBounds2D();
-        sx = imageRegion.getWidth()  / sx;  // (sx,sy) are now conversion factors
-        sy = imageRegion.getHeight() / sy;  // from "real world" to pixel coordinates.
-        final int xSubsampling;
-        final int ySubsampling;
-        if (resolution != null) {
-            /*
-             * Transform the resolution if needed. The code below assume that the target
-             * dimension (always 2) is smaller than the source dimension.
-             */
-            double[] transformed = resolution;
-            if (toTargetCRS != null) {
-                final double[] center = new double[toTargetCRS.getSourceDimensions()];
-                center[X_DIMENSION] = imageRegion.getCenterX();
-                center[Y_DIMENSION] = imageRegion.getCenterY();
-                gridToCRS.transform(center, 0, center, 0, 1);
-                toTargetCRS.inverse().transform(center, 0, center, 0, 1);
-                transformed = CRS.deltaTransform(toTargetCRS, new GeneralDirectPosition(center), resolution);
-            }
-            sx *= transformed[X_DIMENSION];
-            sy *= transformed[Y_DIMENSION];
-            xSubsampling = Math.max(1, Math.min(width /MIN_SIZE, (int) (sx + EPS)));
-            ySubsampling = Math.max(1, Math.min(height/MIN_SIZE, (int) (sy + EPS)));
-            resolution[X_DIMENSION] = xSubsampling;
-            resolution[Y_DIMENSION] = ySubsampling;
-        } else {
-            xSubsampling = 1;
-            ySubsampling = 1;
-        }
-        /*
-         * Makes sure that the image region is contained inside the RenderedImage valid bounds.
-         * We need to ensure that in order to prevent Image Reader to perform its own clipping
-         * (at least for the minimal X and Y values), which would cause the gridToCRS transform
-         * to be wrong. In addition we also ensure that the resulting image has the minimal size.
-         * If the subsampling will cause an expansion of the envelope, we distribute the expansion
-         * on each side of the envelope rather than expanding only the bottom and right side (this
-         * is the purpose of the (delta % subsampling) - 1 part).
-         */
-        int xmin = (int) Math.floor(imageRegion.getMinX() + EPS);
-        int ymin = (int) Math.floor(imageRegion.getMinY() + EPS);
-        int xmax = (int) Math.ceil (imageRegion.getMaxX() - EPS);
-        int ymax = (int) Math.ceil (imageRegion.getMaxY() - EPS);
-        int delta = xmax - xmin;
-        delta = Math.max(MIN_SIZE * xSubsampling - delta, (delta % xSubsampling) - 1);
-        if (delta > 0) {
-            final int r = delta & 1;
-            delta >>>= 1;
-            xmin -= delta;
-            xmax += delta + r;
-        }
-        delta = ymax - ymin;
-        delta = Math.max(MIN_SIZE * ySubsampling - delta, (delta % ySubsampling) - 1);
-        if (delta > 0) {
-            final int r = delta & 1;
-            delta >>>= 1;
-            ymin -= delta;
-            ymax += delta + r;
-        }
-        if (xmin < 0)      xmin = 0;
-        if (ymin < 0)      ymin = 0;
-        if (xmax > width)  xmax = width;
-        if (ymax > height) ymax = height;
-        return new Rectangle(xmin, ymin, xmax - xmin, ymax - ymin);
-    }
-
-    /**
      * Cancels the read operation. The default implementation forward the call to the
      * {@linkplain #imageReader image reader}, if any. The content of the coverage
      * following the abort will be undefined.
@@ -1154,29 +926,14 @@ public class ImageCoverageReader extends GridCoverageReader {
      * known, this method returns "<cite>Can't read 'the name'</cite>" followed by the cause
      * message. Otherwise it returns the localized message of the given exception.
      */
-    private String formatErrorMessage(final Exception e) {
-        return formatErrorMessage(input, e);
+    @Override
+    final String formatErrorMessage(final Exception e) {
+        return formatErrorMessage(input, e, false);
     }
 
     /**
-     * Same than {@link #formatErrorMessage(Exception)}, but with an explicitly specified input.
-     */
-    private String formatErrorMessage(final Object input, final Exception e) {
-        String message = e.getLocalizedMessage();
-        if (IOUtilities.canProcessAsPath(input)) {
-            final String cause = message;
-            message = Errors.getResources(locale).getString(Errors.Keys.CANT_READ_$1, IOUtilities.name(input));
-            if (cause != null && cause.indexOf(' ') > 0) { // Append only if we have a sentence.
-                message = message + '\n' + cause;
-            }
-        }
-        return message;
-    }
-
-    /**
-     * Closes the input used by the {@link ImageReader}, provided that this is not the input
-     * object explicitly given by the user. The {@link ImageReader} is not disposed, so it
-     * can be reused for the next image to read.
+     * Closes the input used by the {@link ImageReader}. The {@link ImageReader}
+     * is not disposed, so it can be reused for the next image to read.
      *
      * @throws IOException if an error occurs while closing the input.
      */
@@ -1184,18 +941,15 @@ public class ImageCoverageReader extends GridCoverageReader {
         coverageNames    = null;
         gridGeometry     = null;
         sampleDimensions = null;
+        input            = null; // Clear now in case the code below fails.
         final ImageReader imageReader = this.imageReader; // Protect from changes.
-        final Object oldInput = input;
-        input = null; // Clear now in case the code below fails.
         if (imageReader != null) {
             final Object readerInput = imageReader.getInput();
             imageReader.setInput(null);
-            if (readerInput != oldInput) {
-                if (readerInput instanceof Closeable) {
-                    ((Closeable) readerInput).close();
-                } else if (readerInput instanceof ImageInputStream) {
-                    ((ImageInputStream) readerInput).close();
-                }
+            if (readerInput instanceof Closeable) {
+                ((Closeable) readerInput).close();
+            } else if (readerInput instanceof ImageInputStream) {
+                ((ImageInputStream) readerInput).close();
             }
         }
     }
@@ -1207,20 +961,15 @@ public class ImageCoverageReader extends GridCoverageReader {
      */
     @Override
     public void reset() throws CoverageStoreException {
-        final ImageReader reader = imageReader;
-        final boolean ownReader = (reader != input);
         try {
             close();
         } catch (IOException e) {
             throw new CoverageStoreException(e);
         }
-        if (reader != null) {
-            if (ownReader) {
-                reader.reset();
-            } else {
-                imageReader = null;
-            }
+        if (imageReader != null) {
+            imageReader.reset();
         }
+        helper = null;
         super.reset();
     }
 
@@ -1228,24 +977,22 @@ public class ImageCoverageReader extends GridCoverageReader {
      * Allows any resources held by this reader to be released. The result of calling any other
      * method subsequent to a call to this method is undefined.
      * <p>
-     * This method {@linkplain ImageReader#dispose() disposes} the {@linkplain #imageReader
-     * image reader} if and only if it was not an instance provided explicitly by the user.
+     * The default implementation closes the {@linkplain #imageReader image reader} input if
+     * the later is a stream, then {@linkplain ImageReader#dispose() disposes} that reader.
      *
      * @see ImageReader#dispose()
      */
     @Override
     public void dispose() throws CoverageStoreException {
-        final ImageReader reader = imageReader;
-        final boolean ownReader = (reader != null && reader != input);
         try {
             close();
         } catch (IOException e) {
             throw new CoverageStoreException(e);
         }
-        if (ownReader) {
-            reader.dispose();
+        if (imageReader != null) {
+            imageReader.dispose();
+            imageReader = null;
         }
-        imageReader = null;
         helper = null;
         super.dispose();
     }

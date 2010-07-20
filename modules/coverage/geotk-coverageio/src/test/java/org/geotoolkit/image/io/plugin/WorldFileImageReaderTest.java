@@ -173,7 +173,7 @@ public final class WorldFileImageReaderTest extends TextImageReaderTestBase {
                 reader = XImageIO.getReaderByFormatName("matrix", in, true, true);
                 assertTrue(reader instanceof TextMatrixImageReader);
                 // Don't botter to read the image. The purpose of
-                // this test is not to test the JDK PNG ImageReader.
+                // this test is not to test the Matrix ImageReader.
                 reader.dispose();
             } finally {
                 in.close();
