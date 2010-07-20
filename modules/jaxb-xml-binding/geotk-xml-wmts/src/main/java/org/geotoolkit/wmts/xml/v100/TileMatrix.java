@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.wmts.xml.v100;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -83,23 +82,23 @@ public class TileMatrix extends DescriptionType {
     
     @XmlElement(name = "TileWidth", required = true)
     @XmlSchemaType(name = "positiveInteger")
-    private BigInteger tileWidth;
+    private Integer tileWidth;
     @XmlElement(name = "TileHeight", required = true)
     @XmlSchemaType(name = "positiveInteger")
-    private BigInteger tileHeight;
+    private Integer tileHeight;
     @XmlElement(name = "MatrixWidth", required = true)
     @XmlSchemaType(name = "positiveInteger")
-    private BigInteger matrixWidth;
+    private Integer matrixWidth;
     @XmlElement(name = "MatrixHeight", required = true)
     @XmlSchemaType(name = "positiveInteger")
-    private BigInteger matrixHeight;
+    private Integer matrixHeight;
 
     public TileMatrix() {
 
     }
 
-    public TileMatrix(CodeType identifier, double scaleDenominator, TopLeftPoint topLeftPoint, BigInteger tileWidth, BigInteger tileHeight,
-            BigInteger matrixWidth, BigInteger matrixHeight) {
+    public TileMatrix(CodeType identifier, double scaleDenominator, TopLeftPoint topLeftPoint, Integer tileWidth, Integer tileHeight,
+            Integer matrixWidth, Integer matrixHeight) {
         this.identifier       = identifier;
         this.scaleDenominator = scaleDenominator;
         this.matrixHeight     = matrixHeight;
@@ -166,10 +165,10 @@ public class TileMatrix extends DescriptionType {
      * 
      * @return
      *     possible object is
-     *     {@link BigInteger }
+     *     {@link Integer }
      *     
      */
-    public BigInteger getTileWidth() {
+    public Integer getTileWidth() {
         return tileWidth;
     }
 
@@ -178,10 +177,10 @@ public class TileMatrix extends DescriptionType {
      * 
      * @param value
      *     allowed object is
-     *     {@link BigInteger }
+     *     {@link Integer }
      *     
      */
-    public void setTileWidth(BigInteger value) {
+    public void setTileWidth(Integer value) {
         this.tileWidth = value;
     }
 
@@ -190,10 +189,10 @@ public class TileMatrix extends DescriptionType {
      * 
      * @return
      *     possible object is
-     *     {@link BigInteger }
+     *     {@link Integer }
      *     
      */
-    public BigInteger getTileHeight() {
+    public Integer getTileHeight() {
         return tileHeight;
     }
 
@@ -202,10 +201,10 @@ public class TileMatrix extends DescriptionType {
      * 
      * @param value
      *     allowed object is
-     *     {@link BigInteger }
+     *     {@link Integer }
      *     
      */
-    public void setTileHeight(BigInteger value) {
+    public void setTileHeight(Integer value) {
         this.tileHeight = value;
     }
 
@@ -214,10 +213,10 @@ public class TileMatrix extends DescriptionType {
      * 
      * @return
      *     possible object is
-     *     {@link BigInteger }
+     *     {@link Integer }
      *     
      */
-    public BigInteger getMatrixWidth() {
+    public Integer getMatrixWidth() {
         return matrixWidth;
     }
 
@@ -226,10 +225,10 @@ public class TileMatrix extends DescriptionType {
      * 
      * @param value
      *     allowed object is
-     *     {@link BigInteger }
+     *     {@link Integer }
      *     
      */
-    public void setMatrixWidth(BigInteger value) {
+    public void setMatrixWidth(Integer value) {
         this.matrixWidth = value;
     }
 
@@ -238,10 +237,10 @@ public class TileMatrix extends DescriptionType {
      * 
      * @return
      *     possible object is
-     *     {@link BigInteger }
+     *     {@link Integer }
      *     
      */
-    public BigInteger getMatrixHeight() {
+    public Integer getMatrixHeight() {
         return matrixHeight;
     }
 
@@ -250,10 +249,10 @@ public class TileMatrix extends DescriptionType {
      * 
      * @param value
      *     allowed object is
-     *     {@link BigInteger }
+     *     {@link Integer }
      *     
      */
-    public void setMatrixHeight(BigInteger value) {
+    public void setMatrixHeight(Integer value) {
         this.matrixHeight = value;
     }
 

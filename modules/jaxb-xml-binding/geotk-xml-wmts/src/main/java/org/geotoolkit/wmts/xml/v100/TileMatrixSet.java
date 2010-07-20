@@ -207,4 +207,16 @@ public class TileMatrixSet extends DescriptionType {
         this.tileMatrix = tm;
     }
 
+    public TileMatrix getTileMatrixByName(String name) {
+        if (tileMatrix == null) {
+            tileMatrix = new ArrayList<TileMatrix>();
+        }
+        for (TileMatrix tm : tileMatrix) {
+            if (tm.getIdentifier() != null && tm.getIdentifier().getValue().equals(name)) {
+                return tm;
+            }
+        }
+        return null;
+    }
+
 }
