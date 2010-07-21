@@ -71,7 +71,8 @@ public class KmlModelConstants {
     public static final AttributeDescriptor ATT_EXTENSIONS;
 
     public static final FeatureType TYPE_PLACEMARK;
-    public static final GeometryDescriptor ATT_PLACEMARK_GEOMETRY;
+//    public static final GeometryDescriptor ATT_PLACEMARK_GEOMETRY;
+    public static final AttributeDescriptor ATT_PLACEMARK_GEOMETRY;
 
     public static final FeatureType TYPE_NETWORK_LINK;
     public static final AttributeDescriptor ATT_NETWORK_LINK_REFRESH_VISIBILITY;
@@ -178,8 +179,10 @@ public class KmlModelConstants {
         TYPE_KML_ENTITY = ftb.buildFeatureType();
 
         //-------------------- PLACEMARK ------------------------------
-        ATT_PLACEMARK_GEOMETRY = (GeometryDescriptor) adb.create(
-                new DefaultName(KML_NAMESPACE, "geometry"), Geometry.class,KML_CRS,0,1,false,null);
+//        ATT_PLACEMARK_GEOMETRY = (GeometryDescriptor) adb.create(
+//                new DefaultName(KML_NAMESPACE, "geometry"), Geometry.class,KML_CRS,0,1,false,null);
+        ATT_PLACEMARK_GEOMETRY = adb.create(
+                new DefaultName(KML_NAMESPACE, "geometry"), AbstractGeometry.class,0,1,false,null);
 
         ftb.reset();
         ftb.setName(KML_NAMESPACE, KmlConstants.TAG_PLACEMARK);
@@ -363,11 +366,11 @@ public class KmlModelConstants {
 
         //-------------------- GROUND OVERLAY ------------------------------
         ATT_GROUND_OVERLAY_ALTITUDE = adb.create(
-                new DefaultName(KML_NAMESPACE, KmlConstants.TAG_COLOR), Double.class,0,1,false,null);
+                new DefaultName(KML_NAMESPACE, KmlConstants.TAG_ALTITUDE), Double.class,0,1,false,null);
         ATT_GROUND_OVERLAY_ALTITUDE_MODE = adb.create(
-                new DefaultName(KML_NAMESPACE, KmlConstants.TAG_DRAW_ORDER), EnumAltitudeMode.class,0,1,false,null);
+                new DefaultName(KML_NAMESPACE, KmlConstants.TAG_ALTITUDE_MODE), EnumAltitudeMode.class,0,1,false,null);
         ATT_GROUND_OVERLAY_LAT_LON_BOX = adb.create(
-                new DefaultName(KML_NAMESPACE, KmlConstants.TAG_ICON), LatLonBox.class,0,1,false,null);
+                new DefaultName(KML_NAMESPACE, KmlConstants.TAG_LAT_LON_BOX), LatLonBox.class,0,1,false,null);
 
         ftb.reset();
         ftb.setName(KML_NAMESPACE, "Overlay");
@@ -401,15 +404,15 @@ public class KmlModelConstants {
 
         //-------------------- SCREEN OVERLAY ------------------------------
         ATT_SCREEN_OVERLAY_ROTATIONXY = adb.create(
-                new DefaultName(KML_NAMESPACE, KmlConstants.TAG_COLOR), Vec2.class,0,1,false,null);
+                new DefaultName(KML_NAMESPACE, KmlConstants.TAG_ROTATION_XY), Vec2.class,0,1,false,null);
         ATT_SCREEN_OVERLAY_OVERLAYXY = adb.create(
-                new DefaultName(KML_NAMESPACE, KmlConstants.TAG_DRAW_ORDER), Vec2.class,0,1,false,null);
+                new DefaultName(KML_NAMESPACE, KmlConstants.TAG_OVERLAY_XY), Vec2.class,0,1,false,null);
         ATT_SCREEN_OVERLAY_SCREENXY = adb.create(
-                new DefaultName(KML_NAMESPACE, KmlConstants.TAG_ICON), Vec2.class,0,1,false,null);
+                new DefaultName(KML_NAMESPACE, KmlConstants.TAG_SCREEN_XY), Vec2.class,0,1,false,null);
         ATT_SCREEN_OVERLAY_SIZE = adb.create(
-                new DefaultName(KML_NAMESPACE, KmlConstants.TAG_DRAW_ORDER), Vec2.class,0,1,false,null);
+                new DefaultName(KML_NAMESPACE, KmlConstants.TAG_SIZE), Vec2.class,0,1,false,null);
         ATT_SCREEN_OVERLAY_ROTATION = adb.create(
-                new DefaultName(KML_NAMESPACE, KmlConstants.TAG_ICON), Double.class,0,1,false,null);
+                new DefaultName(KML_NAMESPACE, KmlConstants.TAG_ROTATION), Double.class,0,1,false,null);
 
         ftb.reset();
         ftb.setName(KML_NAMESPACE, "Overlay");
@@ -445,15 +448,15 @@ public class KmlModelConstants {
 
         //-------------------- PHOTO OVERLAY ------------------------------
         ATT_PHOTO_OVERLAY_ROTATION = adb.create(
-                new DefaultName(KML_NAMESPACE, KmlConstants.TAG_COLOR), Double.class,0,1,false,null);
+                new DefaultName(KML_NAMESPACE, KmlConstants.TAG_ROTATION), Double.class,0,1,false,null);
         ATT_PHOTO_OVERLAY_VIEW_VOLUME = adb.create(
-                new DefaultName(KML_NAMESPACE, KmlConstants.TAG_DRAW_ORDER), ViewVolume.class,0,1,false,null);
+                new DefaultName(KML_NAMESPACE, KmlConstants.TAG_VIEW_VOLUME), ViewVolume.class,0,1,false,null);
         ATT_PHOTO_OVERLAY_IMAGE_PYRAMID = adb.create(
-                new DefaultName(KML_NAMESPACE, KmlConstants.TAG_ICON), ImagePyramid.class,0,1,false,null);
+                new DefaultName(KML_NAMESPACE, KmlConstants.TAG_IMAGE_PYRAMID), ImagePyramid.class,0,1,false,null);
         ATT_PHOTO_OVERLAY_POINT = adb.create(
-                new DefaultName(KML_NAMESPACE, KmlConstants.TAG_DRAW_ORDER), Point.class,0,1,false,null);
+                new DefaultName(KML_NAMESPACE, KmlConstants.TAG_POINT), Point.class,0,1,false,null);
         ATT_PHOTO_OVERLAY_SHAPE = adb.create(
-                new DefaultName(KML_NAMESPACE, KmlConstants.TAG_ICON), Shape.class,0,1,false,null);
+                new DefaultName(KML_NAMESPACE, KmlConstants.TAG_SHAPE), Shape.class,0,1,false,null);
 
         ftb.reset();
         ftb.setName(KML_NAMESPACE, "Overlay");

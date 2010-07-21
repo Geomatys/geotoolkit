@@ -17,6 +17,7 @@
 package org.geotoolkit.data.kml.model;
 
 import java.util.List;
+import org.opengis.feature.Feature;
 
 /**
  * <p>This interface maps Create element.</p>
@@ -39,11 +40,11 @@ public interface Create {
      *
      * @return the AbstractContainer list.
      */
-    public List<AbstractContainer> getContainers();
+    public List<Feature> getContainers();
 
     /**
      * 
      * @param containers
      */
-    public void setContainers(List<AbstractContainer> containers);
+    public void setContainers(List<Feature> containers);
 }

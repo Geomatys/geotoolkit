@@ -23,29 +23,33 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Iterator;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
-import org.geotoolkit.data.kml.model.AbstractFeature;
-import org.geotoolkit.data.kml.model.AbstractStyleSelector;
 import org.geotoolkit.data.kml.model.Coordinates;
-import org.geotoolkit.data.kml.model.Document;
-import org.geotoolkit.data.kml.model.Folder;
 import org.geotoolkit.data.kml.model.IdAttributes;
 import org.geotoolkit.data.kml.model.Kml;
 import org.geotoolkit.data.kml.model.KmlException;
+import org.geotoolkit.data.kml.model.KmlModelConstants;
 import org.geotoolkit.data.kml.model.ListItem;
 import org.geotoolkit.data.kml.model.ListStyle;
-import org.geotoolkit.data.kml.model.Placemark;
 import org.geotoolkit.data.kml.model.Point;
 import org.geotoolkit.data.kml.model.Style;
 import org.geotoolkit.data.kml.xml.KmlReader;
 import org.geotoolkit.data.kml.xml.KmlWriter;
+import org.geotoolkit.factory.FactoryFinder;
+import org.geotoolkit.factory.Hints;
+import org.geotoolkit.feature.LenientFeatureFactory;
 import org.geotoolkit.xml.DomCompare;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureFactory;
+import org.opengis.feature.Property;
 import org.xml.sax.SAXException;
 import static org.junit.Assert.*;
 
@@ -57,6 +61,8 @@ public class ListStyleTest {
 
     private static final double DELTA = 0.000000000001;
     private static final String pathToTestFile = "src/test/resources/org/geotoolkit/data/kml/listStyle.kml";
+    private static final FeatureFactory FF = FactoryFinder.getFeatureFactory(
+            new Hints(Hints.FEATURE_FACTORY, LenientFeatureFactory.class));
 
     public ListStyleTest() {
     }
@@ -85,152 +91,225 @@ public class ListStyleTest {
         final Kml kmlObjects = reader.read();
         reader.dispose();
 
-        final AbstractFeature feature = kmlObjects.getAbstractFeature();
-        assertTrue(feature instanceof Document);
-        final Document document = (Document) feature;
-        assertEquals("ListStyle.kml",document.getFeatureName());
-        assertTrue(document.getOpen());
+        final Feature document = kmlObjects.getAbstractFeature();
+        assertTrue(document.getType().equals(KmlModelConstants.TYPE_DOCUMENT));
+        assertEquals("ListStyle.kml", document.getProperty(KmlModelConstants.ATT_NAME.getName()).getValue());
+        assertTrue((Boolean) document.getProperty(KmlModelConstants.ATT_OPEN.getName()).getValue());
 
-        assertEquals(3, document.getStyleSelectors().size());
+        assertEquals(3, document.getProperties(KmlModelConstants.ATT_STYLE_SELECTOR.getName()).size());
 
-        assertTrue(document.getStyleSelectors().get(0) instanceof Style);
-        final Style style0 = (Style) document.getStyleSelectors().get(0);
-        assertEquals(new Color(153, 102, 51, 255), style0.getListStyle().getBgColor());
-        assertEquals("bgColorExample",style0.getIdAttributes().getId());
+        Iterator i = document.getProperties(KmlModelConstants.ATT_STYLE_SELECTOR.getName()).iterator();
 
-        assertTrue(document.getStyleSelectors().get(1) instanceof Style);
-        final Style style1 = (Style) document.getStyleSelectors().get(1);
-        assertEquals(ListItem.CHECK_HIDE_CHILDREN, style1.getListStyle().getListItem());
-        assertEquals("checkHideChildrenExample",style1.getIdAttributes().getId());
+        if(i.hasNext()){
+            Object object = ((Property) i.next()).getValue();
+            assertTrue(object instanceof Style);
+            final Style style0 = (Style) object;
+            assertEquals(new Color(153, 102, 51, 255), style0.getListStyle().getBgColor());
+            assertEquals("bgColorExample", style0.getIdAttributes().getId());
+        }
 
-        assertTrue(document.getStyleSelectors().get(2) instanceof Style);
-        final Style style2 = (Style) document.getStyleSelectors().get(2);
-        assertEquals(ListItem.RADIO_FOLDER, style2.getListStyle().getListItem());
-        assertEquals("radioFolderExample", style2.getIdAttributes().getId());
+        if(i.hasNext()){
+            Object object = ((Property) i.next()).getValue();
+            assertTrue(object instanceof Style);
+            final Style style1 = (Style) object;
+            assertEquals(ListItem.CHECK_HIDE_CHILDREN, style1.getListStyle().getListItem());
+            assertEquals("checkHideChildrenExample", style1.getIdAttributes().getId());
+        }
 
-        assertEquals(1, document.getAbstractFeatures().size());
-        assertTrue(document.getAbstractFeatures().get(0) instanceof Folder);
-        final Folder folder = (Folder) document.getAbstractFeatures().get(0);
+        if(i.hasNext()){
+            Object object = ((Property) i.next()).getValue();
+            assertTrue(object instanceof Style);
+            final Style style2 = (Style) object;
+            assertEquals(ListItem.RADIO_FOLDER, style2.getListStyle().getListItem());
+            assertEquals("radioFolderExample", style2.getIdAttributes().getId());
+        }
 
-        assertEquals("ListStyle Examples", folder.getFeatureName());
-        assertTrue(folder.getOpen());
+        assertEquals(1, document.getProperties(KmlModelConstants.ATT_DOCUMENT_FEATURES.getName()).size());
 
-        assertEquals(3, folder.getAbstractFeatures().size());
+        i = document.getProperties(KmlModelConstants.ATT_DOCUMENT_FEATURES.getName()).iterator();
 
-        assertTrue(folder.getAbstractFeatures().get(0) instanceof Folder);
-        final Folder folder0 = (Folder) folder.getAbstractFeatures().get(0);
-        assertEquals("bgColor example", folder0.getFeatureName());
-        assertTrue(folder0.getOpen());
-        assertEquals(new URI("#bgColorExample"), folder0.getStyleUrl());
+        if(i.hasNext()){
+            Object object = ((Property) i.next()).getValue();
+            assertTrue(object instanceof Feature);
+            Feature folder = (Feature) object;
+            assertTrue(folder.getType().equals(KmlModelConstants.TYPE_FOLDER));
 
-            assertEquals(3, folder0.getAbstractFeatures().size());
+            assertEquals("ListStyle Examples", folder.getProperty(KmlModelConstants.ATT_NAME.getName()).getValue());
+            assertTrue((Boolean) folder.getProperty(KmlModelConstants.ATT_OPEN.getName()).getValue());
 
-            assertTrue(folder0.getAbstractFeatures().get(0) instanceof Placemark);
-            final Placemark placemark00 = (Placemark) folder0.getAbstractFeatures().get(0);
-            assertEquals("pl1", placemark00.getFeatureName());
-            assertTrue(placemark00.getAbstractGeometry() instanceof Point);
-            final Coordinates coordinates00 = ((Point) placemark00.getAbstractGeometry()).getCoordinateSequence();
-            assertEquals(1, coordinates00.size());
-            assertEquals(-122.362815, coordinates00.getCoordinate(0).x, DELTA);
-            assertEquals(37.822931, coordinates00.getCoordinate(0).y, DELTA);
-            assertEquals(0, coordinates00.getCoordinate(0).z, DELTA);
-           
-            assertTrue(folder0.getAbstractFeatures().get(1) instanceof Placemark);
-            final Placemark placemark01 = (Placemark) folder0.getAbstractFeatures().get(1);
-            assertEquals("pl2", placemark01.getFeatureName());
-            assertTrue(placemark01.getAbstractGeometry() instanceof Point);
-            final Coordinates coordinates01 = ((Point) placemark01.getAbstractGeometry()).getCoordinateSequence();
-            assertEquals(1, coordinates01.size());
-            assertEquals(-122.362825, coordinates01.getCoordinate(0).x, DELTA);
-            assertEquals(37.822931, coordinates01.getCoordinate(0).y, DELTA);
-            assertEquals(0, coordinates01.getCoordinate(0).z, DELTA);
+            assertEquals(3, folder.getProperties(KmlModelConstants.ATT_FOLDER_FEATURES.getName()).size());
 
-            assertTrue(folder0.getAbstractFeatures().get(2) instanceof Placemark);
-            final Placemark placemark02 = (Placemark) folder0.getAbstractFeatures().get(2);
-            assertEquals("pl3", placemark02.getFeatureName());
-            assertTrue(placemark02.getAbstractGeometry() instanceof Point);
-            final Coordinates coordinates02 = ((Point) placemark02.getAbstractGeometry()).getCoordinateSequence();
-            assertEquals(1, coordinates02.size());
-            assertEquals(-122.362835, coordinates02.getCoordinate(0).x, DELTA);
-            assertEquals(37.822931, coordinates02.getCoordinate(0).y, DELTA);
-            assertEquals(0, coordinates02.getCoordinate(0).z, DELTA);
+            Iterator j = folder.getProperties(KmlModelConstants.ATT_FOLDER_FEATURES.getName()).iterator();
 
-        assertTrue(folder.getAbstractFeatures().get(1) instanceof Folder);
-        final Folder folder1 = (Folder) folder.getAbstractFeatures().get(1);
-        assertEquals("checkHideChildren example", folder1.getFeatureName());
-        assertTrue(folder1.getOpen());
-        assertEquals(new URI("#checkHideChildrenExample"), folder1.getStyleUrl());
+            if (j.hasNext()){
+                final Object obj = ((Property) j.next()).getValue();
+                final Feature folder0 = (Feature) obj;
+                assertEquals("bgColor example", folder0.getProperty(KmlModelConstants.ATT_NAME.getName()).getValue());
+                assertTrue((Boolean) folder0.getProperty(KmlModelConstants.ATT_OPEN.getName()).getValue());
+                assertEquals(new URI("#bgColorExample"), folder0.getProperty(KmlModelConstants.ATT_STYLE_URL.getName()).getValue());
 
-        assertEquals(3, folder1.getAbstractFeatures().size());
+                assertEquals(3, folder0.getProperties(KmlModelConstants.ATT_FOLDER_FEATURES.getName()).size());
 
-            assertTrue(folder1.getAbstractFeatures().get(0) instanceof Placemark);
-            final Placemark placemark10 = (Placemark) folder1.getAbstractFeatures().get(0);
-            assertEquals("pl4", placemark10.getFeatureName());
-            assertTrue(placemark10.getAbstractGeometry() instanceof Point);
-            final Coordinates coordinates10 = ((Point) placemark10.getAbstractGeometry()).getCoordinateSequence();
-            assertEquals(1, coordinates10.size());
-            assertEquals(-122.362845, coordinates10.getCoordinate(0).x, DELTA);
-            assertEquals(37.822941, coordinates10.getCoordinate(0).y, DELTA);
-            assertEquals(0, coordinates10.getCoordinate(0).z, DELTA);
+                Iterator k = folder0.getProperties(KmlModelConstants.ATT_FOLDER_FEATURES.getName()).iterator();
 
-            assertTrue(folder1.getAbstractFeatures().get(1) instanceof Placemark);
-            final Placemark placemark11 = (Placemark) folder1.getAbstractFeatures().get(1);
-            assertEquals("pl5", placemark11.getFeatureName());
-            assertTrue(placemark11.getAbstractGeometry() instanceof Point);
-            final Coordinates coordinates11 = ((Point) placemark11.getAbstractGeometry()).getCoordinateSequence();
-            assertEquals(1, coordinates11.size());
-            assertEquals(-122.362855, coordinates11.getCoordinate(0).x, DELTA);
-            assertEquals(37.822941, coordinates11.getCoordinate(0).y, DELTA);
-            assertEquals(0, coordinates11.getCoordinate(0).z, DELTA);
+                if(k.hasNext()){
+                    final Object o = ((Property) k.next()).getValue();
+                    assertTrue(o instanceof Feature);
+                    final Feature placemark00 = (Feature) o;
 
-            assertTrue(folder1.getAbstractFeatures().get(2) instanceof Placemark);
-            final Placemark placemark12 = (Placemark) folder1.getAbstractFeatures().get(2);
-            assertEquals("pl6", placemark12.getFeatureName());
-            assertTrue(placemark12.getAbstractGeometry() instanceof Point);
-            final Coordinates coordinates12 = ((Point) placemark12.getAbstractGeometry()).getCoordinateSequence();
-            assertEquals(1, coordinates12.size());
-            assertEquals(-122.362865, coordinates12.getCoordinate(0).x, DELTA);
-            assertEquals(37.822941, coordinates12.getCoordinate(0).y, DELTA);
-            assertEquals(0, coordinates12.getCoordinate(0).z, DELTA);
+                    assertEquals("pl1", placemark00.getProperty(KmlModelConstants.ATT_NAME.getName()).getValue());
+                    assertTrue(placemark00.getProperty(KmlModelConstants.ATT_PLACEMARK_GEOMETRY.getName()).getValue() instanceof Point);
+                    final Coordinates coordinates00 = ((Point) placemark00.getProperty(KmlModelConstants.ATT_PLACEMARK_GEOMETRY.getName()).getValue()).getCoordinateSequence();
+                    assertEquals(1, coordinates00.size());
+                    assertEquals(-122.362815, coordinates00.getCoordinate(0).x, DELTA);
+                    assertEquals(37.822931, coordinates00.getCoordinate(0).y, DELTA);
+                    assertEquals(0, coordinates00.getCoordinate(0).z, DELTA);
+                }
 
-        assertTrue(folder.getAbstractFeatures().get(2) instanceof Folder);
-        final Folder folder2 = (Folder) folder.getAbstractFeatures().get(2);
-        assertEquals("radioFolder example", folder2.getFeatureName());
-        assertTrue(folder2.getOpen());
-        assertEquals(new URI("#radioFolderExample"), folder2.getStyleUrl());
+                if(k.hasNext()){
+                    final Object o = ((Property) k.next()).getValue();
+                    assertTrue(o instanceof Feature);
+                    final Feature placemark01 = (Feature) o;
 
-        assertEquals(3, folder2.getAbstractFeatures().size());
+                    assertEquals("pl2", placemark01.getProperty(KmlModelConstants.ATT_NAME.getName()).getValue());
+                    assertTrue(placemark01.getProperty(KmlModelConstants.ATT_PLACEMARK_GEOMETRY.getName()).getValue() instanceof Point);
+                    final Coordinates coordinates01 = ((Point) placemark01.getProperty(KmlModelConstants.ATT_PLACEMARK_GEOMETRY.getName()).getValue()).getCoordinateSequence();
+                    assertEquals(1, coordinates01.size());
+                    assertEquals(-122.362825, coordinates01.getCoordinate(0).x, DELTA);
+                    assertEquals(37.822931, coordinates01.getCoordinate(0).y, DELTA);
+                    assertEquals(0, coordinates01.getCoordinate(0).z, DELTA);
+                }
 
-            assertTrue(folder2.getAbstractFeatures().get(0) instanceof Placemark);
-            final Placemark placemark20 = (Placemark) folder2.getAbstractFeatures().get(0);
-            assertEquals("pl7", placemark20.getFeatureName());
-            assertTrue(placemark20.getAbstractGeometry() instanceof Point);
-            final Coordinates coordinates20 = ((Point) placemark20.getAbstractGeometry()).getCoordinateSequence();
-            assertEquals(1, coordinates20.size());
-            assertEquals(-122.362875, coordinates20.getCoordinate(0).x, DELTA);
-            assertEquals(37.822951, coordinates20.getCoordinate(0).y, DELTA);
-            assertEquals(0, coordinates20.getCoordinate(0).z, DELTA);
+                if(k.hasNext()){
+                    final Object o = ((Property) k.next()).getValue();
+                    assertTrue(o instanceof Feature);
+                    final Feature placemark02 = (Feature) o;
 
-            assertTrue(folder2.getAbstractFeatures().get(1) instanceof Placemark);
-            final Placemark placemark21 = (Placemark) folder2.getAbstractFeatures().get(1);
-            assertEquals("pl8", placemark21.getFeatureName());
-            assertTrue(placemark21.getAbstractGeometry() instanceof Point);
-            final Coordinates coordinates21 = ((Point) placemark21.getAbstractGeometry()).getCoordinateSequence();
-            assertEquals(1, coordinates21.size());
-            assertEquals(-122.362885, coordinates21.getCoordinate(0).x, DELTA);
-            assertEquals(37.822951, coordinates21.getCoordinate(0).y, DELTA);
-            assertEquals(0, coordinates21.getCoordinate(0).z, DELTA);
+                    assertEquals("pl3", placemark02.getProperty(KmlModelConstants.ATT_NAME.getName()).getValue());
+                    assertTrue(placemark02.getProperty(KmlModelConstants.ATT_PLACEMARK_GEOMETRY.getName()).getValue() instanceof Point);
+                    final Coordinates coordinates02 = ((Point) placemark02.getProperty(KmlModelConstants.ATT_PLACEMARK_GEOMETRY.getName()).getValue()).getCoordinateSequence();
+                    assertEquals(1, coordinates02.size());
+                    assertEquals(-122.362835, coordinates02.getCoordinate(0).x, DELTA);
+                    assertEquals(37.822931, coordinates02.getCoordinate(0).y, DELTA);
+                    assertEquals(0, coordinates02.getCoordinate(0).z, DELTA);
+                }
+            }
 
-            assertTrue(folder2.getAbstractFeatures().get(2) instanceof Placemark);
-            final Placemark placemark22 = (Placemark) folder2.getAbstractFeatures().get(2);
-            assertEquals("pl9", placemark22.getFeatureName());
-            assertTrue(placemark22.getAbstractGeometry() instanceof Point);
-            final Coordinates coordinates22 = ((Point) placemark22.getAbstractGeometry()).getCoordinateSequence();
-            assertEquals(1, coordinates22.size());
-            assertEquals(-122.362895, coordinates22.getCoordinate(0).x, DELTA);
-            assertEquals(37.822951, coordinates22.getCoordinate(0).y, DELTA);
-            assertEquals(0, coordinates22.getCoordinate(0).z, DELTA);
+            if (j.hasNext()){
+                final Object obj = ((Property) j.next()).getValue();
+                final Feature folder1 = (Feature) obj;
 
+                assertEquals("checkHideChildren example", folder1.getProperty(KmlModelConstants.ATT_NAME.getName()).getValue());
+                assertTrue((Boolean) folder1.getProperty(KmlModelConstants.ATT_OPEN.getName()).getValue());
+                assertEquals(new URI("#checkHideChildrenExample"), folder1.getProperty(KmlModelConstants.ATT_STYLE_URL.getName()).getValue());
+
+                assertEquals(3, folder1.getProperties(KmlModelConstants.ATT_FOLDER_FEATURES.getName()).size());
+
+                Iterator k = folder1.getProperties(KmlModelConstants.ATT_FOLDER_FEATURES.getName()).iterator();
+
+                if(k.hasNext()){
+                    final Object o = ((Property) k.next()).getValue();
+                    assertTrue(o instanceof Feature);
+                    final Feature placemark10 = (Feature) o;
+
+                    assertEquals("pl4", placemark10.getProperty(KmlModelConstants.ATT_NAME.getName()).getValue());
+                    assertTrue(placemark10.getProperty(KmlModelConstants.ATT_PLACEMARK_GEOMETRY.getName()).getValue() instanceof Point);
+                    final Coordinates coordinates10 = ((Point) placemark10.getProperty(KmlModelConstants.ATT_PLACEMARK_GEOMETRY.getName()).getValue()).getCoordinateSequence();
+                    assertEquals(1, coordinates10.size());
+                    assertEquals(-122.362845, coordinates10.getCoordinate(0).x, DELTA);
+                    assertEquals(37.822941, coordinates10.getCoordinate(0).y, DELTA);
+                    assertEquals(0, coordinates10.getCoordinate(0).z, DELTA);
+
+                }
+
+                if(k.hasNext()){
+                    final Object o = ((Property) k.next()).getValue();
+                    assertTrue(o instanceof Feature);
+                    final Feature placemark11 = (Feature) o;
+
+                    assertEquals("pl5", placemark11.getProperty(KmlModelConstants.ATT_NAME.getName()).getValue());
+                    assertTrue(placemark11.getProperty(KmlModelConstants.ATT_PLACEMARK_GEOMETRY.getName()).getValue() instanceof Point);
+                    final Coordinates coordinates11 = ((Point) placemark11.getProperty(KmlModelConstants.ATT_PLACEMARK_GEOMETRY.getName()).getValue()).getCoordinateSequence();
+                    assertEquals(1, coordinates11.size());
+                    assertEquals(-122.362855, coordinates11.getCoordinate(0).x, DELTA);
+                    assertEquals(37.822941, coordinates11.getCoordinate(0).y, DELTA);
+                    assertEquals(0, coordinates11.getCoordinate(0).z, DELTA);
+
+                }
+
+                if(k.hasNext()){
+                    final Object o = ((Property) k.next()).getValue();
+                    assertTrue(o instanceof Feature);
+                    final Feature placemark12 = (Feature) o;
+
+                    assertEquals("pl6", placemark12.getProperty(KmlModelConstants.ATT_NAME.getName()).getValue());
+                    assertTrue(placemark12.getProperty(KmlModelConstants.ATT_PLACEMARK_GEOMETRY.getName()).getValue() instanceof Point);
+                    final Coordinates coordinates12 = ((Point) placemark12.getProperty(KmlModelConstants.ATT_PLACEMARK_GEOMETRY.getName()).getValue()).getCoordinateSequence();
+                    assertEquals(1, coordinates12.size());
+                    assertEquals(-122.362865, coordinates12.getCoordinate(0).x, DELTA);
+                    assertEquals(37.822941, coordinates12.getCoordinate(0).y, DELTA);
+                    assertEquals(0, coordinates12.getCoordinate(0).z, DELTA);
+
+                }
+            }
+
+            if (j.hasNext()){
+                final Object obj = ((Property) j.next()).getValue();
+                final Feature folder2 = (Feature) obj;
+
+                assertEquals("radioFolder example", folder2.getProperty(KmlModelConstants.ATT_NAME.getName()).getValue());
+                assertTrue((Boolean) folder2.getProperty(KmlModelConstants.ATT_OPEN.getName()).getValue());
+                assertEquals(new URI("#radioFolderExample"), folder2.getProperty(KmlModelConstants.ATT_STYLE_URL.getName()).getValue());
+
+                assertEquals(3, folder2.getProperties(KmlModelConstants.ATT_FOLDER_FEATURES.getName()).size());
+
+                Iterator k = folder2.getProperties(KmlModelConstants.ATT_FOLDER_FEATURES.getName()).iterator();
+
+                if(k.hasNext()){
+                    final Object o = ((Property) k.next()).getValue();
+                    assertTrue(o instanceof Feature);
+                    final Feature placemark20 = (Feature) o;
+
+                    assertEquals("pl7", placemark20.getProperty(KmlModelConstants.ATT_NAME.getName()).getValue());
+                    assertTrue(placemark20.getProperty(KmlModelConstants.ATT_PLACEMARK_GEOMETRY.getName()).getValue() instanceof Point);
+                    final Coordinates coordinates20 = ((Point) placemark20.getProperty(KmlModelConstants.ATT_PLACEMARK_GEOMETRY.getName()).getValue()).getCoordinateSequence();
+                    assertEquals(1, coordinates20.size());
+                    assertEquals(-122.362875, coordinates20.getCoordinate(0).x, DELTA);
+                    assertEquals(37.822951, coordinates20.getCoordinate(0).y, DELTA);
+                    assertEquals(0, coordinates20.getCoordinate(0).z, DELTA);
+                }
+
+                if(k.hasNext()){
+                    final Object o = ((Property) k.next()).getValue();
+                    assertTrue(o instanceof Feature);
+                    final Feature placemark21 = (Feature) o;
+
+                    assertEquals("pl8", placemark21.getProperty(KmlModelConstants.ATT_NAME.getName()).getValue());
+                    assertTrue(placemark21.getProperty(KmlModelConstants.ATT_PLACEMARK_GEOMETRY.getName()).getValue() instanceof Point);
+                    final Coordinates coordinates21 = ((Point) placemark21.getProperty(KmlModelConstants.ATT_PLACEMARK_GEOMETRY.getName()).getValue()).getCoordinateSequence();
+                    assertEquals(1, coordinates21.size());
+                    assertEquals(-122.362885, coordinates21.getCoordinate(0).x, DELTA);
+                    assertEquals(37.822951, coordinates21.getCoordinate(0).y, DELTA);
+                    assertEquals(0, coordinates21.getCoordinate(0).z, DELTA);
+
+                }
+
+                if(k.hasNext()){
+                    final Object o = ((Property) k.next()).getValue();
+                    assertTrue(o instanceof Feature);
+                    final Feature placemark22 = (Feature) o;
+
+                    assertEquals("pl9", placemark22.getProperty(KmlModelConstants.ATT_NAME.getName()).getValue());
+                    assertTrue(placemark22.getProperty(KmlModelConstants.ATT_PLACEMARK_GEOMETRY.getName()).getValue() instanceof Point);
+                    final Coordinates coordinates22 = ((Point) placemark22.getProperty(KmlModelConstants.ATT_PLACEMARK_GEOMETRY.getName()).getValue()).getCoordinateSequence();
+                    assertEquals(1, coordinates22.size());
+                    assertEquals(-122.362895, coordinates22.getCoordinate(0).x, DELTA);
+                    assertEquals(37.822951, coordinates22.getCoordinate(0).y, DELTA);
+                    assertEquals(0, coordinates22.getCoordinate(0).z, DELTA);
+
+                }
+            }
+        }
     }
 
     @Test
@@ -267,66 +346,85 @@ public class ListStyleTest {
             final Point point21 = kmlFactory.createPoint(coordinates21);
         final Point point22 = kmlFactory.createPoint(coordinates22);
 
-        final Placemark placemark00 = kmlFactory.createPlacemark();
-        placemark00.setFeatureName("pl1");
-        placemark00.setAbstractGeometry(point00);
-            final Placemark placemark01 = kmlFactory.createPlacemark();
-            placemark01.setFeatureName("pl2");
-            placemark01.setAbstractGeometry(point01);
-        final Placemark placemark02 = kmlFactory.createPlacemark();
-        placemark02.setFeatureName("pl3");
-        placemark02.setAbstractGeometry(point02);
-            final Placemark placemark10 = kmlFactory.createPlacemark();
-            placemark10.setFeatureName("pl4");
-            placemark10.setAbstractGeometry(point10);
-        final Placemark placemark11 = kmlFactory.createPlacemark();
-        placemark11.setFeatureName("pl5");
-        placemark11.setAbstractGeometry(point11);
-            final Placemark placemark12 = kmlFactory.createPlacemark();
-            placemark12.setFeatureName("pl6");
-            placemark12.setAbstractGeometry(point12);
-        final Placemark placemark20 = kmlFactory.createPlacemark();
-        placemark20.setFeatureName("pl7");
-        placemark20.setAbstractGeometry(point20);
-            final Placemark placemark21 = kmlFactory.createPlacemark();
-            placemark21.setFeatureName("pl8");
-            placemark21.setAbstractGeometry(point21);
-        final Placemark placemark22 = kmlFactory.createPlacemark();
-        placemark22.setFeatureName("pl9");
-        placemark22.setAbstractGeometry(point22);
+        final Feature placemark00 = kmlFactory.createPlacemark();
+        Collection<Property> placemark00Properties = placemark00.getProperties();
+        placemark00Properties.add(FF.createAttribute("pl1", KmlModelConstants.ATT_NAME, null));
+        placemark00Properties.add(FF.createAttribute(point00, KmlModelConstants.ATT_PLACEMARK_GEOMETRY, null));
 
-        final Folder folder0 = kmlFactory.createFolder();
-        folder0.setFeatureName("bgColor example");
-        folder0.setOpen(true);
-        folder0.setStyleUrl(new URI("#bgColorExample"));
-        folder0.setAbstractFeatures(Arrays.asList(
-                (AbstractFeature) placemark00,
-                (AbstractFeature) placemark01,
-                (AbstractFeature) placemark02));
-        final Folder folder1 = kmlFactory.createFolder();
-        folder1.setFeatureName("checkHideChildren example");
-        folder1.setOpen(true);
-        folder1.setStyleUrl(new URI("#checkHideChildrenExample"));
-        folder1.setAbstractFeatures(Arrays.asList(
-                (AbstractFeature) placemark10,
-                (AbstractFeature) placemark11,
-                (AbstractFeature) placemark12));
-        final Folder folder2 = kmlFactory.createFolder();
-        folder2.setFeatureName("radioFolder example");
-        folder2.setOpen(true);
-        folder2.setStyleUrl(new URI("#radioFolderExample"));
-        folder2.setAbstractFeatures(Arrays.asList(
-                (AbstractFeature) placemark20,
-                (AbstractFeature) placemark21,
-                (AbstractFeature) placemark22));
+            final Feature placemark01 = kmlFactory.createPlacemark();
+            Collection<Property> placemark01Properties = placemark01.getProperties();
+            placemark01Properties.add(FF.createAttribute("pl2", KmlModelConstants.ATT_NAME, null));
+            placemark01Properties.add(FF.createAttribute(point01, KmlModelConstants.ATT_PLACEMARK_GEOMETRY, null));
 
-        final Folder folder = kmlFactory.createFolder();
-        folder.setFeatureName("ListStyle Examples");
-        folder.setOpen(true);
-        folder.setAbstractFeatures(Arrays.asList(
-                (AbstractFeature) folder0,
-                (AbstractFeature) folder1,
-                (AbstractFeature) folder2));
+        final Feature placemark02 = kmlFactory.createPlacemark();
+        Collection<Property> placemark02Properties = placemark02.getProperties();
+        placemark02Properties.add(FF.createAttribute("pl3", KmlModelConstants.ATT_NAME, null));
+        placemark02Properties.add(FF.createAttribute(point02, KmlModelConstants.ATT_PLACEMARK_GEOMETRY, null));
+
+            final Feature placemark10 = kmlFactory.createPlacemark();
+            Collection<Property> placemark10Properties = placemark10.getProperties();
+            placemark10Properties.add(FF.createAttribute("pl4", KmlModelConstants.ATT_NAME, null));
+            placemark10Properties.add(FF.createAttribute(point10, KmlModelConstants.ATT_PLACEMARK_GEOMETRY, null));
+
+        final Feature placemark11 = kmlFactory.createPlacemark();
+        Collection<Property> placemark11Properties = placemark11.getProperties();
+        placemark11Properties.add(FF.createAttribute("pl5", KmlModelConstants.ATT_NAME, null));
+        placemark11Properties.add(FF.createAttribute(point11, KmlModelConstants.ATT_PLACEMARK_GEOMETRY, null));
+
+            final Feature placemark12 = kmlFactory.createPlacemark();
+            Collection<Property> placemark12Properties = placemark12.getProperties();
+            placemark12Properties.add(FF.createAttribute("pl6", KmlModelConstants.ATT_NAME, null));
+            placemark12Properties.add(FF.createAttribute(point12, KmlModelConstants.ATT_PLACEMARK_GEOMETRY, null));
+
+        final Feature placemark20 = kmlFactory.createPlacemark();
+        Collection<Property> placemark20Properties = placemark20.getProperties();
+        placemark20Properties.add(FF.createAttribute("pl7", KmlModelConstants.ATT_NAME, null));
+        placemark20Properties.add(FF.createAttribute(point20, KmlModelConstants.ATT_PLACEMARK_GEOMETRY, null));
+
+            final Feature placemark21 = kmlFactory.createPlacemark();
+            Collection<Property> placemark21Properties = placemark21.getProperties();
+            placemark21Properties.add(FF.createAttribute("pl8", KmlModelConstants.ATT_NAME, null));
+            placemark21Properties.add(FF.createAttribute(point21, KmlModelConstants.ATT_PLACEMARK_GEOMETRY, null));
+
+        final Feature placemark22 = kmlFactory.createPlacemark();
+        Collection<Property> placemark22Properties = placemark22.getProperties();
+        placemark22Properties.add(FF.createAttribute("pl9", KmlModelConstants.ATT_NAME, null));
+        placemark22Properties.add(FF.createAttribute(point22, KmlModelConstants.ATT_PLACEMARK_GEOMETRY, null));
+
+        final Feature folder0 = kmlFactory.createFolder();
+        final Collection<Property> folder0Properties = folder0.getProperties();
+        folder0Properties.add(FF.createAttribute("bgColor example", KmlModelConstants.ATT_NAME, null));
+        folder0.getProperty(KmlModelConstants.ATT_OPEN.getName()).setValue(Boolean.TRUE);
+        folder0Properties.add(FF.createAttribute(new URI("#bgColorExample"), KmlModelConstants.ATT_STYLE_URL, null));
+        folder0Properties.add(FF.createAttribute(placemark00, KmlModelConstants.ATT_FOLDER_FEATURES, null));
+        folder0Properties.add(FF.createAttribute(placemark01, KmlModelConstants.ATT_FOLDER_FEATURES, null));
+        folder0Properties.add(FF.createAttribute(placemark02, KmlModelConstants.ATT_FOLDER_FEATURES, null));
+
+        final Feature folder1 = kmlFactory.createFolder();
+        final Collection<Property> folder1Properties = folder1.getProperties();      
+        folder1Properties.add(FF.createAttribute("checkHideChildren example", KmlModelConstants.ATT_NAME, null));
+        folder1.getProperty(KmlModelConstants.ATT_OPEN.getName()).setValue(Boolean.TRUE);
+        folder1Properties.add(FF.createAttribute(new URI("#checkHideChildrenExample"), KmlModelConstants.ATT_STYLE_URL, null));
+        folder1Properties.add(FF.createAttribute(placemark10, KmlModelConstants.ATT_FOLDER_FEATURES, null));
+        folder1Properties.add(FF.createAttribute(placemark11, KmlModelConstants.ATT_FOLDER_FEATURES, null));
+        folder1Properties.add(FF.createAttribute(placemark12, KmlModelConstants.ATT_FOLDER_FEATURES, null));
+
+        final Feature folder2 = kmlFactory.createFolder();
+        final Collection<Property> folder2Properties = folder2.getProperties();
+        folder2Properties.add(FF.createAttribute("radioFolder example", KmlModelConstants.ATT_NAME, null));
+        folder2.getProperty(KmlModelConstants.ATT_OPEN.getName()).setValue(Boolean.TRUE);
+        folder2Properties.add(FF.createAttribute(new URI("#radioFolderExample"), KmlModelConstants.ATT_STYLE_URL, null));
+        folder2Properties.add(FF.createAttribute(placemark20, KmlModelConstants.ATT_FOLDER_FEATURES, null));
+        folder2Properties.add(FF.createAttribute(placemark21, KmlModelConstants.ATT_FOLDER_FEATURES, null));
+        folder2Properties.add(FF.createAttribute(placemark22, KmlModelConstants.ATT_FOLDER_FEATURES, null));
+
+        final Feature folder = kmlFactory.createFolder();
+        final Collection<Property> folderProperties = folder.getProperties();
+        folderProperties.add(FF.createAttribute("ListStyle Examples", KmlModelConstants.ATT_NAME, null));
+        folder.getProperty(KmlModelConstants.ATT_OPEN.getName()).setValue(Boolean.TRUE);
+        folderProperties.add(FF.createAttribute(folder0, KmlModelConstants.ATT_FOLDER_FEATURES, null));
+        folderProperties.add(FF.createAttribute(folder1, KmlModelConstants.ATT_FOLDER_FEATURES, null));
+        folderProperties.add(FF.createAttribute(folder2, KmlModelConstants.ATT_FOLDER_FEATURES, null));
 
         final ListStyle listStyle1 = kmlFactory.createListStyle();
         listStyle1.setBgColor(new Color(153, 102, 51, 255));
@@ -349,14 +447,14 @@ public class ListStyleTest {
         final IdAttributes idAttributes3 = kmlFactory.createIdAttributes("radioFolderExample", null);
         style3.setIdAttributes(idAttributes3);
 
-        final Document document = kmlFactory.createDocument();
-        document.setFeatureName("ListStyle.kml");
-        document.setOpen(true);
-        document.setStyleSelectors(Arrays.asList(
-                (AbstractStyleSelector) style1,
-                (AbstractStyleSelector) style2,
-                (AbstractStyleSelector) style3));
-        document.setAbstractFeatures(Arrays.asList((AbstractFeature) folder));
+        final Feature document = kmlFactory.createDocument();
+        final Collection<Property> documentProperties = document.getProperties();
+        documentProperties.add(FF.createAttribute("ListStyle.kml", KmlModelConstants.ATT_NAME, null));
+        document.getProperty(KmlModelConstants.ATT_OPEN.getName()).setValue(Boolean.TRUE);
+        documentProperties.add(FF.createAttribute(folder, KmlModelConstants.ATT_DOCUMENT_FEATURES, null));
+        documentProperties.add(FF.createAttribute(style1, KmlModelConstants.ATT_STYLE_SELECTOR, null));
+        documentProperties.add(FF.createAttribute(style2, KmlModelConstants.ATT_STYLE_SELECTOR, null));
+        documentProperties.add(FF.createAttribute(style3, KmlModelConstants.ATT_STYLE_SELECTOR, null));
 
         final Kml kml = kmlFactory.createKml(null, document, null, null);
 
@@ -370,6 +468,5 @@ public class ListStyleTest {
 
         DomCompare.compare(
                 new File(pathToTestFile), temp);
-
     }
 }

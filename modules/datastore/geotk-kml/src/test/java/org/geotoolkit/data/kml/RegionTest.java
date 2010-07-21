@@ -18,23 +18,29 @@ package org.geotoolkit.data.kml;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collection;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
-import org.geotoolkit.data.kml.model.AbstractFeature;
 import org.geotoolkit.data.kml.model.Kml;
 import org.geotoolkit.data.kml.model.KmlException;
+import org.geotoolkit.data.kml.model.KmlModelConstants;
 import org.geotoolkit.data.kml.model.LatLonAltBox;
 import org.geotoolkit.data.kml.model.Lod;
-import org.geotoolkit.data.kml.model.Placemark;
 import org.geotoolkit.data.kml.model.Region;
 import org.geotoolkit.data.kml.xml.KmlReader;
 import org.geotoolkit.data.kml.xml.KmlWriter;
+import org.geotoolkit.factory.FactoryFinder;
+import org.geotoolkit.factory.Hints;
+import org.geotoolkit.feature.LenientFeatureFactory;
 import org.geotoolkit.xml.DomCompare;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureFactory;
+import org.opengis.feature.Property;
 import org.xml.sax.SAXException;
 import static org.junit.Assert.*;
 
@@ -46,6 +52,8 @@ public class RegionTest {
 
     private static final double DELTA = 0.000000000001;
     private static final String pathToTestFile = "src/test/resources/org/geotoolkit/data/kml/region.kml";
+    private static final FeatureFactory FF = FactoryFinder.getFeatureFactory(
+            new Hints(Hints.FEATURE_FACTORY, LenientFeatureFactory.class));
 
     public RegionTest() {
     }
@@ -74,11 +82,10 @@ public class RegionTest {
         final Kml kmlObjects = reader.read();
         reader.dispose();
 
-        final AbstractFeature feature = kmlObjects.getAbstractFeature();
-        assertTrue(feature instanceof Placemark);
-        final Placemark placemark = (Placemark) feature;
-        assertEquals("Colorado", placemark.getFeatureName());
-        final Region region = placemark.getRegion();
+        final Feature placemark = kmlObjects.getAbstractFeature();
+        assertTrue(placemark.getType().equals(KmlModelConstants.TYPE_PLACEMARK));
+        assertEquals("Colorado", placemark.getProperty(KmlModelConstants.ATT_NAME.getName()).getValue());
+        final Region region = (Region) placemark.getProperty(KmlModelConstants.ATT_REGION.getName()).getValue();
         final LatLonAltBox latLonAltBox = region.getLatLonAltBox();
         assertEquals(50.625, latLonAltBox.getNorth(), DELTA);
         assertEquals(45, latLonAltBox.getSouth(), DELTA);
@@ -95,7 +102,7 @@ public class RegionTest {
     }
 
     @Test
-    public void regionWriteTest() throws KmlException, IOException, XMLStreamException, ParserConfigurationException, SAXException{
+    public void regionWriteTest() throws KmlException, IOException, XMLStreamException, ParserConfigurationException, SAXException {
         final KmlFactory kmlFactory = new DefaultKmlFactory();
 
         final LatLonAltBox latLonAltBox = kmlFactory.createLatLonAltBox();
@@ -114,13 +121,14 @@ public class RegionTest {
 
         final Region region = kmlFactory.createRegion(null, null, latLonAltBox, lod, null, null);
 
-        final Placemark placemark = kmlFactory.createPlacemark();
-        placemark.setRegion(region);
-        placemark.setFeatureName("Colorado");
+        final Feature placemark = kmlFactory.createPlacemark();
+        Collection<Property> placemarkProperties = placemark.getProperties();
+        placemarkProperties.add(FF.createAttribute(region, KmlModelConstants.ATT_REGION, null));
+        placemarkProperties.add(FF.createAttribute("Colorado", KmlModelConstants.ATT_NAME, null));
 
         final Kml kml = kmlFactory.createKml(null, placemark, null, null);
 
-        File temp = File.createTempFile("testRegion",".kml");
+        File temp = File.createTempFile("testRegion", ".kml");
         temp.deleteOnExit();
 
         KmlWriter writer = new KmlWriter();
@@ -129,8 +137,7 @@ public class RegionTest {
         writer.dispose();
 
         DomCompare.compare(
-                 new File(pathToTestFile), temp);
+                new File(pathToTestFile), temp);
 
     }
-
 }

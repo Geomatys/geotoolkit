@@ -16,8 +16,7 @@
  */
 package org.geotoolkit.data.kml.model;
 
-import java.util.List;
-import org.geotoolkit.data.kml.xsd.SimpleType;
+import org.opengis.feature.Feature;
 
 /**
  * <p>This interface maps a kml element</p>
@@ -59,7 +58,7 @@ public interface Kml {
      *
      * @return The Kml AbstractFeature.
      */
-    public AbstractFeature getAbstractFeature();
+    public Feature getAbstractFeature();
 
     /**
      * 
@@ -77,7 +76,7 @@ public interface Kml {
      * 
      * @param feature
      */
-    public void setAbstractFeature(AbstractFeature feature);
+    public void setAbstractFeature(Feature feature);
 
     /**
      * 

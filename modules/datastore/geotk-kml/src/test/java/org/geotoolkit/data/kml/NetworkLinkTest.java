@@ -18,23 +18,26 @@ package org.geotoolkit.data.kml;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
+import java.util.Iterator;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
-import org.geotoolkit.data.kml.model.AbstractFeature;
-import org.geotoolkit.data.kml.model.Document;
 import org.geotoolkit.data.kml.model.Kml;
 import org.geotoolkit.data.kml.model.KmlException;
-import org.geotoolkit.data.kml.model.NetworkLink;
+import org.geotoolkit.data.kml.model.KmlModelConstants;
 import org.geotoolkit.data.kml.xml.KmlReader;
 import org.geotoolkit.data.kml.xml.KmlWriter;
+import org.geotoolkit.factory.FactoryFinder;
+import org.geotoolkit.factory.Hints;
+import org.geotoolkit.feature.LenientFeatureFactory;
 import org.geotoolkit.xml.DomCompare;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureFactory;
+import org.opengis.feature.Property;
 import org.xml.sax.SAXException;
 import static org.junit.Assert.*;
 
@@ -46,6 +49,8 @@ public class NetworkLinkTest {
 
     private static final double DELTA = 0.000000000001;
     private static final String pathToTestFile = "src/test/resources/org/geotoolkit/data/kml/networkLink.kml";
+    private static final FeatureFactory FF = FactoryFinder.getFeatureFactory(
+            new Hints(Hints.FEATURE_FACTORY, LenientFeatureFactory.class));
 
     public NetworkLinkTest() {
     }
@@ -74,18 +79,21 @@ public class NetworkLinkTest {
         final Kml kmlObjects = reader.read();
         reader.dispose();
 
-        final AbstractFeature feature = kmlObjects.getAbstractFeature();
-        assertTrue(feature instanceof Document);
-        Document document = (Document) feature;
-        assertFalse(document.getVisibility());
+        final Feature document = kmlObjects.getAbstractFeature();
+        assertFalse((Boolean) document.getProperty(KmlModelConstants.ATT_VISIBILITY.getName()).getValue());
 
-        final List<AbstractFeature> features = document.getAbstractFeatures();
-        assertEquals(1,features.size());
-        assertTrue(features.get(0) instanceof NetworkLink);
-        NetworkLink networkLink = (NetworkLink) features.get(0);
-        assertEquals("NE US Radar",networkLink.getFeatureName());
-        assertTrue(networkLink.getRefreshVisibility());
-        assertTrue(networkLink.getFlyToView());
+        assertEquals(1, document.getProperties(KmlModelConstants.ATT_DOCUMENT_FEATURES.getName()).size());
+
+        Iterator i = document.getProperties(KmlModelConstants.ATT_DOCUMENT_FEATURES.getName()).iterator();
+
+        if (i.hasNext()) {
+            Object object = ((Property) i.next()).getValue();
+            assertTrue(object instanceof Feature);
+            Feature networkLink = (Feature) object;
+            assertEquals("NE US Radar", networkLink.getProperty(KmlModelConstants.ATT_NAME.getName()).getValue());
+            assertTrue((Boolean) networkLink.getProperty(KmlModelConstants.ATT_NETWORK_LINK_REFRESH_VISIBILITY.getName()).getValue());
+            assertTrue((Boolean) networkLink.getProperty(KmlModelConstants.ATT_NETWORK_LINK_FLY_TO_VIEW.getName()).getValue());
+        }
 
     }
 
@@ -93,18 +101,18 @@ public class NetworkLinkTest {
     public void networkLinkWriteTest() throws KmlException, IOException, XMLStreamException, ParserConfigurationException, SAXException {
         final KmlFactory kmlFactory = new DefaultKmlFactory();
 
-        final NetworkLink networkLink = kmlFactory.createNetworkLink();
-        networkLink.setFeatureName("NE US Radar");
-        networkLink.setRefreshVisibility(true);
-        networkLink.setFlyToView(true);
+        final Feature networkLink = kmlFactory.createNetworkLink();
+        networkLink.getProperties().add(FF.createAttribute("NE US Radar", KmlModelConstants.ATT_NAME, null));
+        networkLink.getProperty(KmlModelConstants.ATT_NETWORK_LINK_REFRESH_VISIBILITY.getName()).setValue(Boolean.TRUE);
+        networkLink.getProperty(KmlModelConstants.ATT_NETWORK_LINK_FLY_TO_VIEW.getName()).setValue(Boolean.TRUE);
 
-        final Document document = kmlFactory.createDocument();
-        document.setVisibility(false);
-        document.setAbstractFeatures(Arrays.asList((AbstractFeature) networkLink));
+        final Feature document = kmlFactory.createDocument();
+        document.getProperty(KmlModelConstants.ATT_VISIBILITY.getName()).setValue(Boolean.FALSE);
+        document.getProperties().add(FF.createAttribute(networkLink, KmlModelConstants.ATT_DOCUMENT_FEATURES, null));
 
         final Kml kml = kmlFactory.createKml(null, document, null, null);
 
-        File temp = File.createTempFile("testNetworkLink",".kml");
+        File temp = File.createTempFile("testNetworkLink", ".kml");
         temp.deleteOnExit();
 
         KmlWriter writer = new KmlWriter();
@@ -113,7 +121,6 @@ public class NetworkLinkTest {
         writer.dispose();
 
         DomCompare.compare(
-                 new File(pathToTestFile), temp);
+                new File(pathToTestFile), temp);
     }
-
 }

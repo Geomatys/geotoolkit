@@ -22,4 +22,6 @@ package org.geotoolkit.data.kml.model;
  */
 public interface AltitudeMode {
 
+    String getAltitudeMode();
+
 }

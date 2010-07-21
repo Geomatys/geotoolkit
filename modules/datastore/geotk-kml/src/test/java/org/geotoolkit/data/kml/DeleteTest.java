@@ -22,22 +22,29 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.util.Arrays;
+import java.util.Collection;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
-import org.geotoolkit.data.kml.model.AbstractFeature;
 import org.geotoolkit.data.kml.model.Delete;
+import org.geotoolkit.data.kml.model.IdAttributes;
 import org.geotoolkit.data.kml.model.Kml;
 import org.geotoolkit.data.kml.model.KmlException;
+import org.geotoolkit.data.kml.model.KmlModelConstants;
 import org.geotoolkit.data.kml.model.NetworkLinkControl;
-import org.geotoolkit.data.kml.model.Placemark;
 import org.geotoolkit.data.kml.model.Update;
 import org.geotoolkit.data.kml.xml.KmlWriter;
+import org.geotoolkit.factory.FactoryFinder;
+import org.geotoolkit.factory.Hints;
+import org.geotoolkit.feature.LenientFeatureFactory;
 import org.geotoolkit.xml.DomCompare;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureFactory;
+import org.opengis.feature.Property;
 import static org.junit.Assert.*;
 import org.xml.sax.SAXException;
 
@@ -49,7 +56,9 @@ public class DeleteTest {
 
     private static final double DELTA = 0.000000000001;
     private static final String pathToTestFile = "src/test/resources/org/geotoolkit/data/kml/delete.kml";
-
+    private static final FeatureFactory FF = FactoryFinder.getFeatureFactory(
+            new Hints(Hints.FEATURE_FACTORY, LenientFeatureFactory.class));
+    
     public DeleteTest() {
     }
 
@@ -87,9 +96,9 @@ public class DeleteTest {
         final Delete delete = (Delete) update.getUpdates().get(0);
 
         assertEquals(1, delete.getFeatures().size());
-        assertTrue(delete.getFeatures().get(0) instanceof Placemark);
-        final Placemark placemark = (Placemark) delete.getFeatures().get(0);
-        assertEquals("pa3556", placemark.getIdAttributes().getTargetId());
+        assertTrue(((Feature) delete.getFeatures().get(0)).getType().equals(KmlModelConstants.TYPE_PLACEMARK));
+        final Feature placemark = delete.getFeatures().get(0);
+        assertEquals("pa3556", ((IdAttributes) placemark.getProperty(KmlModelConstants.ATT_ID_ATTRIBUTES.getName()).getValue()).getTargetId());
 
     }
 
@@ -97,11 +106,13 @@ public class DeleteTest {
     public void deleteWriteTest() throws KmlException, IOException, XMLStreamException, ParserConfigurationException, SAXException, URISyntaxException {
         final KmlFactory kmlFactory = new DefaultKmlFactory();
 
-        final Placemark placemark = kmlFactory.createPlacemark();
-        placemark.setIdAttributes(kmlFactory.createIdAttributes(null, "pa3556"));
+        final Feature placemark = kmlFactory.createPlacemark();
+        Collection<Property> placemarkProperties = placemark.getProperties();
+        IdAttributes placemarkIdAttributes = kmlFactory.createIdAttributes(null, "pa3556");
+        placemarkProperties.add(FF.createAttribute(placemarkIdAttributes, KmlModelConstants.ATT_ID_ATTRIBUTES, null));
 
         final Delete delete = kmlFactory.createDelete();
-        delete.setFeatures(Arrays.asList((AbstractFeature) placemark));
+        delete.setFeatures(Arrays.asList(placemark));
 
         final URI targetHref = new URI("http://www.foo.com/Point.kml");
 

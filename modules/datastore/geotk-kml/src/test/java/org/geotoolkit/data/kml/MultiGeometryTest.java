@@ -20,28 +20,32 @@ import com.vividsolutions.jts.geom.Coordinate;
 import org.geotoolkit.data.kml.xml.KmlReader;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
-import org.geotoolkit.data.kml.model.AbstractFeature;
 import org.geotoolkit.data.kml.model.AbstractGeometry;
 import org.geotoolkit.data.kml.model.Coordinates;
 import org.geotoolkit.data.kml.model.Kml;
 import org.geotoolkit.data.kml.model.KmlException;
+import org.geotoolkit.data.kml.model.KmlModelConstants;
 import org.geotoolkit.data.kml.model.LineString;
 import org.geotoolkit.data.kml.model.MultiGeometry;
-import org.geotoolkit.data.kml.model.Placemark;
 import org.geotoolkit.data.kml.xml.KmlWriter;
+import org.geotoolkit.factory.FactoryFinder;
+import org.geotoolkit.factory.Hints;
+import org.geotoolkit.feature.LenientFeatureFactory;
 import org.geotoolkit.xml.DomCompare;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureFactory;
+import org.opengis.feature.Property;
 import static org.junit.Assert.*;
 import org.xml.sax.SAXException;
-
 
 /**
  *
@@ -51,6 +55,8 @@ public class MultiGeometryTest {
 
     private static final double DELTA = 0.000000000001;
     private static final String pathToTestFile = "src/test/resources/org/geotoolkit/data/kml/multiGeometry.kml";
+    private static final FeatureFactory FF = FactoryFinder.getFeatureFactory(
+            new Hints(Hints.FEATURE_FACTORY, LenientFeatureFactory.class));
 
     public MultiGeometryTest() {
     }
@@ -79,14 +85,12 @@ public class MultiGeometryTest {
         final Kml kmlObjects = reader.read();
         reader.dispose();
 
-        final AbstractFeature feature = kmlObjects.getAbstractFeature();
-        assertTrue(feature instanceof Placemark);
-        final Placemark placemark = (Placemark) feature;
-        assertEquals("SF Marina Harbor Master", placemark.getFeatureName());
-        assertFalse(placemark.getVisibility());
+        final Feature placemark = kmlObjects.getAbstractFeature();
+        assertEquals("SF Marina Harbor Master", placemark.getProperty(KmlModelConstants.ATT_NAME.getName()).getValue());
+        assertFalse((Boolean) placemark.getProperty(KmlModelConstants.ATT_VISIBILITY.getName()).getValue());
 
-        assertTrue(placemark.getAbstractGeometry() instanceof MultiGeometry);
-        final MultiGeometry multiGeometry = (MultiGeometry) placemark.getAbstractGeometry();
+        assertTrue(placemark.getProperty(KmlModelConstants.ATT_PLACEMARK_GEOMETRY.getName()).getValue() instanceof MultiGeometry);
+        final MultiGeometry multiGeometry = (MultiGeometry) placemark.getProperty(KmlModelConstants.ATT_PLACEMARK_GEOMETRY.getName()).getValue();
         assertEquals(2, multiGeometry.getGeometries().size());
         assertTrue(multiGeometry.getGeometries().get(0) instanceof LineString);
         assertTrue(multiGeometry.getGeometries().get(1) instanceof LineString);
@@ -97,12 +101,12 @@ public class MultiGeometryTest {
         final Coordinates coordinates1 = lineString1.getCoordinateSequence();
         assertEquals(2, coordinates0.size());
         assertEquals(2, coordinates1.size());
-        
+
         final Coordinate coordinate00 = coordinates0.getCoordinate(0);
         final Coordinate coordinate01 = coordinates0.getCoordinate(1);
         final Coordinate coordinate10 = coordinates1.getCoordinate(0);
         final Coordinate coordinate11 = coordinates1.getCoordinate(1);
-        
+
         assertEquals(-122.4425587930444, coordinate00.x, DELTA);
         assertEquals(37.80666418607323, coordinate00.y, DELTA);
         assertEquals(0, coordinate00.z, DELTA);
@@ -140,10 +144,11 @@ public class MultiGeometryTest {
         final MultiGeometry multiGeometry = kmlFactory.createMultiGeometry();
         multiGeometry.setGeometries(Arrays.asList((AbstractGeometry) lineString0, (AbstractGeometry) lineString1));
 
-        final Placemark placemark = kmlFactory.createPlacemark();
-        placemark.setFeatureName("SF Marina Harbor Master");
-        placemark.setVisibility(false);
-        placemark.setAbstractGeometry(multiGeometry);
+        final Feature placemark = kmlFactory.createPlacemark();
+        Collection<Property> placemarkProperties = placemark.getProperties();
+        placemarkProperties.add(FF.createAttribute("SF Marina Harbor Master", KmlModelConstants.ATT_NAME, null));
+        placemark.getProperty(KmlModelConstants.ATT_VISIBILITY.getName()).setValue(Boolean.FALSE);
+        placemarkProperties.add(FF.createAttribute(multiGeometry, KmlModelConstants.ATT_PLACEMARK_GEOMETRY, null));
 
         final Kml kml = kmlFactory.createKml(null, placemark, null, null);
 

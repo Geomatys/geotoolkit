@@ -21,32 +21,35 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Arrays;
-import java.util.List;
+import java.util.Collection;
+import java.util.Iterator;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
-import org.geotoolkit.data.kml.model.AbstractFeature;
-import org.geotoolkit.data.kml.model.AbstractStyleSelector;
 import org.geotoolkit.data.kml.model.BasicLink;
 import org.geotoolkit.data.kml.model.ColorMode;
-import org.geotoolkit.data.kml.model.Document;
 import org.geotoolkit.data.kml.model.IconStyle;
 import org.geotoolkit.data.kml.model.IdAttributes;
 import org.geotoolkit.data.kml.model.Kml;
 import org.geotoolkit.data.kml.model.KmlException;
+import org.geotoolkit.data.kml.model.KmlModelConstants;
 import org.geotoolkit.data.kml.model.LabelStyle;
 import org.geotoolkit.data.kml.model.LineStyle;
-import org.geotoolkit.data.kml.model.Placemark;
 import org.geotoolkit.data.kml.model.PolyStyle;
 import org.geotoolkit.data.kml.model.Style;
 import org.geotoolkit.data.kml.xml.KmlReader;
 import org.geotoolkit.data.kml.xml.KmlWriter;
+import org.geotoolkit.factory.FactoryFinder;
+import org.geotoolkit.factory.Hints;
+import org.geotoolkit.feature.LenientFeatureFactory;
 import org.geotoolkit.xml.DomCompare;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureFactory;
+import org.opengis.feature.Property;
 import org.xml.sax.SAXException;
 import static org.junit.Assert.*;
 
@@ -58,6 +61,8 @@ public class StyleTest {
 
     private static final double DELTA = 0.000000000001;
     private static final String pathToTestFile = "src/test/resources/org/geotoolkit/data/kml/style.kml";
+    private static final FeatureFactory FF = FactoryFinder.getFeatureFactory(
+            new Hints(Hints.FEATURE_FACTORY, LenientFeatureFactory.class));
 
     public StyleTest() {
     }
@@ -86,61 +91,76 @@ public class StyleTest {
         final Kml kmlObjects = reader.read();
         reader.dispose();
 
-        final AbstractFeature feature = kmlObjects.getAbstractFeature();
-        assertTrue(feature instanceof Document);
-        final Document document = ((Document) feature);
-        List<AbstractStyleSelector> styleSelectors = document.getStyleSelectors();
-        assertEquals(1, styleSelectors.size());
-        assertTrue(styleSelectors.get(0) instanceof Style);
-        Style style = (Style) styleSelectors.get(0);
-        assertEquals("myDefaultStyles", style.getIdAttributes().getId());
+        final Feature document = kmlObjects.getAbstractFeature();
+        assertTrue(document.getType().equals(KmlModelConstants.TYPE_DOCUMENT));
 
-        IconStyle iconStyle = style.getIconStyle();
-        assertEquals(new Color(255, 0, 255, 161), iconStyle.getColor());
-        assertEquals(1.399999976158142, iconStyle.getScale(), DELTA);
-        BasicLink icon = iconStyle.getIcon();
-        assertEquals("http://myserver.com/icon.jpg", icon.getHref());
+        assertEquals(1, document.getProperties(KmlModelConstants.ATT_STYLE_SELECTOR.getName()).size());
 
-        LabelStyle labelStyle = style.getLabelStyle();
-        assertEquals(new Color(255, 170, 255, 127), labelStyle.getColor());
-        assertEquals(1.5, labelStyle.getScale(), DELTA);
+        Iterator i = document.getProperties(KmlModelConstants.ATT_STYLE_SELECTOR.getName()).iterator();
 
-        LineStyle lineStyle = style.getLineStyle();
-        assertEquals(new Color(255, 0, 0, 255), lineStyle.getColor());
-        assertEquals(15, lineStyle.getWidth(), DELTA);
+        if (i.hasNext()) {
+            Object object = ((Property) i.next()).getValue();
 
-        PolyStyle polyStyle = style.getPolyStyle();
-        assertEquals(new Color(170, 170, 127, 127), polyStyle.getColor());
-        assertEquals(ColorMode.RANDOM, polyStyle.getColorMode());
+            assertTrue(object instanceof Style);
+            Style style = (Style) object;
+            assertEquals("myDefaultStyles", style.getIdAttributes().getId());
 
-        List<AbstractFeature> abstractFeatures = document.getAbstractFeatures();
-        assertEquals(2, abstractFeatures.size());
+            IconStyle iconStyle = style.getIconStyle();
+            assertEquals(new Color(255, 0, 255, 161), iconStyle.getColor());
+            assertEquals(1.399999976158142, iconStyle.getScale(), DELTA);
+            BasicLink icon = iconStyle.getIcon();
+            assertEquals("http://myserver.com/icon.jpg", icon.getHref());
 
-        assertTrue(abstractFeatures.get(0) instanceof Placemark);
-        Placemark placemark0 = (Placemark) abstractFeatures.get(0);
-        assertEquals("Google Earth - New Polygon", placemark0.getFeatureName());
-        assertEquals("Here is some descriptive text", placemark0.getDescription());
-        assertEquals(new URI("#myDefaultStyles"), placemark0.getStyleUrl());
+            LabelStyle labelStyle = style.getLabelStyle();
+            assertEquals(new Color(255, 170, 255, 127), labelStyle.getColor());
+            assertEquals(1.5, labelStyle.getScale(), DELTA);
 
-        assertTrue(abstractFeatures.get(1) instanceof Placemark);
-        Placemark placemark1 = (Placemark) abstractFeatures.get(1);
-        assertEquals("Google Earth - New Path", placemark1.getFeatureName());
-        assertEquals(new URI("#myDefaultStyles"), placemark1.getStyleUrl());
+            LineStyle lineStyle = style.getLineStyle();
+            assertEquals(new Color(255, 0, 0, 255), lineStyle.getColor());
+            assertEquals(15, lineStyle.getWidth(), DELTA);
 
+            PolyStyle polyStyle = style.getPolyStyle();
+            assertEquals(new Color(170, 170, 127, 127), polyStyle.getColor());
+            assertEquals(ColorMode.RANDOM, polyStyle.getColorMode());
+        }
+
+        assertEquals(2, document.getProperties(KmlModelConstants.ATT_DOCUMENT_FEATURES.getName()).size());
+
+        i = document.getProperties(KmlModelConstants.ATT_DOCUMENT_FEATURES.getName()).iterator();
+
+        if (i.hasNext()) {
+            Object object = ((Property) i.next()).getValue();
+            assertTrue(object instanceof Feature);
+            Feature placemark0 = (Feature) object;
+            assertEquals("Google Earth - New Polygon", placemark0.getProperty(KmlModelConstants.ATT_NAME.getName()).getValue());
+            assertEquals("Here is some descriptive text", placemark0.getProperty(KmlModelConstants.ATT_DESCRIPTION.getName()).getValue());
+            assertEquals(new URI("#myDefaultStyles"), placemark0.getProperty(KmlModelConstants.ATT_STYLE_URL.getName()).getValue());
+        }
+
+        if (i.hasNext()) {
+            Object object = ((Property) i.next()).getValue();
+            assertTrue(object instanceof Feature);
+            Feature placemark1 = (Feature) object;
+            assertEquals("Google Earth - New Path", placemark1.getProperty(KmlModelConstants.ATT_NAME.getName()).getValue());
+            assertEquals(new URI("#myDefaultStyles"), placemark1.getProperty(KmlModelConstants.ATT_STYLE_URL.getName()).getValue());
+        }
     }
 
     @Test
     public void styleWriteTest() throws KmlException, IOException, XMLStreamException, ParserConfigurationException, SAXException, URISyntaxException {
         final KmlFactory kmlFactory = new DefaultKmlFactory();
 
-        Placemark placemark0 = kmlFactory.createPlacemark();
-        placemark0.setFeatureName("Google Earth - New Polygon");
-        placemark0.setDescription("Here is some descriptive text");
-        placemark0.setStyleUrl(new URI("#myDefaultStyles"));
+        Feature placemark0 = kmlFactory.createPlacemark();
+        Collection<Property> placemark0Properties = placemark0.getProperties();
+        placemark0Properties.add(FF.createAttribute("Google Earth - New Polygon", KmlModelConstants.ATT_NAME, null));
+        placemark0Properties.add(FF.createAttribute("Here is some descriptive text", KmlModelConstants.ATT_DESCRIPTION, null));
+        placemark0Properties.add(FF.createAttribute(new URI("#myDefaultStyles"), KmlModelConstants.ATT_STYLE_URL, null));
 
-        Placemark placemark1 = kmlFactory.createPlacemark();
-        placemark1.setFeatureName("Google Earth - New Path");
-        placemark1.setStyleUrl(new URI("#myDefaultStyles"));
+        Feature placemark1 = kmlFactory.createPlacemark();
+        Collection<Property> placemark1Properties = placemark1.getProperties();
+        placemark1Properties.add(FF.createAttribute("Google Earth - New Path", KmlModelConstants.ATT_NAME, null));
+        placemark1Properties.add(FF.createAttribute(new URI("#myDefaultStyles"), KmlModelConstants.ATT_STYLE_URL, null));
+
 
         IconStyle iconStyle = kmlFactory.createIconStyle();
         BasicLink icon = kmlFactory.createBasicLink();
@@ -170,9 +190,11 @@ public class StyleTest {
         style.setLineStyle(lineStyle);
         style.setPolyStyle(polyStyle);
 
-        Document document = kmlFactory.createDocument();
-        document.setStyleSelectors(Arrays.asList((AbstractStyleSelector) style));
-        document.setAbstractFeatures(Arrays.asList((AbstractFeature) placemark0, (AbstractFeature) placemark1));
+        Feature document = kmlFactory.createDocument();
+        Collection<Property> documentProperties = document.getProperties();
+        documentProperties.add(FF.createAttribute(style, KmlModelConstants.ATT_STYLE_SELECTOR, null));
+        documentProperties.add(FF.createAttribute(placemark0, KmlModelConstants.ATT_DOCUMENT_FEATURES, null));
+        documentProperties.add(FF.createAttribute(placemark1, KmlModelConstants.ATT_DOCUMENT_FEATURES, null));
 
 
         final Kml kml = kmlFactory.createKml(null, document, null, null);

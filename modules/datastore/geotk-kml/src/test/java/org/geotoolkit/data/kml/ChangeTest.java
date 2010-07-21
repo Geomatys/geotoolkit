@@ -25,7 +25,6 @@ import java.net.URI;
 import java.util.Arrays;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
-import org.geotoolkit.data.kml.model.AbstractObject;
 import org.geotoolkit.data.kml.model.Change;
 import org.geotoolkit.data.kml.model.Coordinates;
 import org.geotoolkit.data.kml.model.Kml;
@@ -114,7 +113,7 @@ public class ChangeTest {
         Point point = kmlFactory.createPoint(coordinates);
         point.setIdAttributes(kmlFactory.createIdAttributes(null, "point123"));
 
-        Change change = kmlFactory.createChange(Arrays.asList((AbstractObject) point));
+        Change change = kmlFactory.createChange(Arrays.asList((Object) point));
 
         Update update = kmlFactory.createUpdate();
         update.setUpdates(Arrays.asList((Object) change));

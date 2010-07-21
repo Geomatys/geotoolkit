@@ -36,12 +36,9 @@ import org.geotoolkit.atom.model.AtomPersonConstruct;
 import org.geotoolkit.atom.model.AtomLink;
 import org.geotoolkit.data.kml.KmlUtilities;
 import org.geotoolkit.data.kml.model.AbstractColorStyle;
-import org.geotoolkit.data.kml.model.AbstractContainer;
-import org.geotoolkit.data.kml.model.AbstractFeature;
 import org.geotoolkit.data.kml.model.AbstractGeometry;
 import org.geotoolkit.data.kml.model.AbstractLatLonBox;
 import org.geotoolkit.data.kml.model.AbstractObject;
-import org.geotoolkit.data.kml.model.AbstractOverlay;
 import org.geotoolkit.data.kml.model.AbstractStyleSelector;
 import org.geotoolkit.data.kml.model.AbstractSubStyle;
 import org.geotoolkit.data.kml.model.AbstractTimePrimitive;
@@ -59,11 +56,8 @@ import org.geotoolkit.data.kml.model.Create;
 import org.geotoolkit.data.kml.model.Data;
 import org.geotoolkit.data.kml.model.Delete;
 import org.geotoolkit.data.kml.model.DisplayMode;
-import org.geotoolkit.data.kml.model.Document;
 import org.geotoolkit.data.kml.model.ExtendedData;
-import org.geotoolkit.data.kml.model.Folder;
 import org.geotoolkit.data.kml.model.GridOrigin;
-import org.geotoolkit.data.kml.model.GroundOverlay;
 import org.geotoolkit.data.kml.model.Icon;
 import org.geotoolkit.data.kml.model.IconStyle;
 import org.geotoolkit.data.kml.model.IdAttributes;
@@ -87,12 +81,9 @@ import org.geotoolkit.data.kml.model.LookAt;
 import org.geotoolkit.data.kml.model.Metadata;
 import org.geotoolkit.data.kml.model.Model;
 import org.geotoolkit.data.kml.model.MultiGeometry;
-import org.geotoolkit.data.kml.model.NetworkLink;
 import org.geotoolkit.data.kml.model.NetworkLinkControl;
 import org.geotoolkit.data.kml.model.Orientation;
 import org.geotoolkit.data.kml.model.Pair;
-import org.geotoolkit.data.kml.model.PhotoOverlay;
-import org.geotoolkit.data.kml.model.Placemark;
 import org.geotoolkit.data.kml.model.Point;
 import org.geotoolkit.data.kml.model.PolyStyle;
 import org.geotoolkit.data.kml.model.Polygon;
@@ -102,7 +93,6 @@ import org.geotoolkit.data.kml.model.ResourceMap;
 import org.geotoolkit.data.kml.model.Scale;
 import org.geotoolkit.data.kml.model.Schema;
 import org.geotoolkit.data.kml.model.SchemaData;
-import org.geotoolkit.data.kml.model.ScreenOverlay;
 import org.geotoolkit.data.kml.model.Shape;
 import org.geotoolkit.data.kml.model.SimpleData;
 import org.geotoolkit.data.kml.model.SimpleField;
@@ -124,6 +114,7 @@ import org.geotoolkit.data.kml.xsd.SimpleType;
 import org.geotoolkit.data.kml.xsd.DefaultCdata;
 import org.geotoolkit.temporal.object.FastDateParser;
 import org.geotoolkit.xml.StaxStreamReader;
+import org.opengis.feature.Feature;
 import static org.geotoolkit.data.kml.xml.KmlConstants.*;
 
 /**
@@ -228,7 +219,7 @@ public class KmlReader extends StaxStreamReader {
      */
     private Kml readKml() throws XMLStreamException, KmlException, URISyntaxException {
         NetworkLinkControl networkLinkControl = null;
-        AbstractFeature abstractFeature = null;
+        Feature abstractFeature = null;
         List<SimpleType> kmlSimpleExtensions = null;
         List<AbstractObject> kmlObjectExtensions = null;
 
@@ -267,7 +258,7 @@ public class KmlReader extends StaxStreamReader {
      * @throws XMLStreamException
      * @throws KmlException
      */
-    private Placemark readPlacemark() throws XMLStreamException, KmlException, URISyntaxException {
+    private Feature readPlacemark() throws XMLStreamException, KmlException, URISyntaxException {
         // AbstractObject
         List<SimpleType> objectSimpleExtensions = null;
         IdAttributes idAttributes = this.readIdAttributes();
@@ -775,8 +766,8 @@ public class KmlReader extends StaxStreamReader {
      * @deprecated
      */
     @Deprecated
-    private AbstractFeature readReplace() throws XMLStreamException, KmlException, URISyntaxException{
-        AbstractFeature replace = null;
+    private Feature readReplace() throws XMLStreamException, KmlException, URISyntaxException{
+        Feature replace = null;
 
         boucle:
         while (reader.hasNext()) {
@@ -811,7 +802,7 @@ public class KmlReader extends StaxStreamReader {
      * @throws KmlException
      */
     private Create readCreate() throws XMLStreamException, KmlException, URISyntaxException{
-        List<AbstractContainer> containers = new ArrayList<AbstractContainer>();
+        List<Feature> containers = new ArrayList<Feature>();
 
         boucle:
         while (reader.hasNext()) {
@@ -846,7 +837,7 @@ public class KmlReader extends StaxStreamReader {
      * @throws KmlException
      */
     private Delete readDelete() throws XMLStreamException, KmlException, URISyntaxException{
-        List<AbstractFeature> features = new ArrayList<AbstractFeature>();
+        List<Feature> features = new ArrayList<Feature>();
 
         boucle:
         while (reader.hasNext()) {
@@ -881,7 +872,7 @@ public class KmlReader extends StaxStreamReader {
      * @throws KmlException
      */
     private Change readChange() throws XMLStreamException, KmlException, URISyntaxException{
-        List<AbstractObject> objects = new ArrayList<AbstractObject>();
+        List<Object> objects = new ArrayList<Object>();
 
         boucle:
         while (reader.hasNext()) {
@@ -916,8 +907,8 @@ public class KmlReader extends StaxStreamReader {
      * @throws XMLStreamException
      * @throws KmlException
      */
-    private AbstractObject readAbstractObject(String eName) throws XMLStreamException, KmlException, URISyntaxException{
-        AbstractObject resultat = null;
+    private Object readAbstractObject(String eName) throws XMLStreamException, KmlException, URISyntaxException{
+        Object resultat = null;
         if (TAG_REGION.equals(eName)){
             resultat = this.readRegion();
         } else if (TAG_LOD.equals(eName)){
@@ -1659,16 +1650,14 @@ public class KmlReader extends StaxStreamReader {
      * @throws XMLStreamException
      * @throws KmlException
      */
-    private AbstractFeature readAbstractFeature(String eName) throws XMLStreamException, KmlException, URISyntaxException {
-        AbstractFeature resultat = null;
+    private Feature readAbstractFeature(String eName) throws XMLStreamException, KmlException, URISyntaxException {
+        Feature resultat = null;
         if (isAbstractContainer(eName)) {
             resultat = this.readAbstractContainer(eName);
         } else if (isAbstractOverlay(eName)) {
             resultat = this.readAbstractOverlay(eName);
         } else if (TAG_NETWORK_LINK.equals(eName)) {
             resultat = readNetworkLink();
-        } else if (isAbstractOverlay(eName)) {
-            resultat = readAbstractOverlay(eName);
         } else if (TAG_PLACEMARK.equals(eName)) {
             resultat = readPlacemark();
         }
@@ -1681,8 +1670,8 @@ public class KmlReader extends StaxStreamReader {
      * @return
      * @throws XMLStreamException
      */
-    private AbstractOverlay readAbstractOverlay(String eName) throws XMLStreamException, KmlException, URISyntaxException {
-        AbstractOverlay resultat = null;
+    private Feature readAbstractOverlay(String eName) throws XMLStreamException, KmlException, URISyntaxException {
+        Feature resultat = null;
         if (TAG_GROUND_OVERLAY.equals(eName)) {
             resultat = readGroundOverlay();
         }
@@ -1701,7 +1690,7 @@ public class KmlReader extends StaxStreamReader {
      * @throws XMLStreamException
      * @throws KmlException
      */
-    private GroundOverlay readGroundOverlay() throws XMLStreamException, KmlException, URISyntaxException {
+    private Feature readGroundOverlay() throws XMLStreamException, KmlException, URISyntaxException {
 
         // AbstractObject
         List<SimpleType> objectSimpleExtensions = null;
@@ -1796,6 +1785,7 @@ public class KmlReader extends StaxStreamReader {
                         // GROUND OVERLAY
                         else if (TAG_ALTITUDE.equals(eName)) {
                             altitude = parseDouble(reader.getElementText());
+                            System.out.println("READ : "+altitude);
                         } else if (TAG_ALTITUDE_MODE.equals(eName)) {
                             altitudeMode = EnumAltitudeMode.transform(reader.getElementText());
                         } else if (TAG_LAT_LON_BOX.equals(eName)) {
@@ -2193,7 +2183,7 @@ public class KmlReader extends StaxStreamReader {
                 leftFov, rightFov, bottomFov, topFov, near, viewVolumeSimpleExtensions, viewVolumeObjectExtensions);
     }
 
-    private PhotoOverlay readPhotoOverlay() throws XMLStreamException, KmlException, URISyntaxException {
+    private Feature readPhotoOverlay() throws XMLStreamException, KmlException, URISyntaxException {
 
         // AbstractObject
         List<SimpleType> objectSimpleExtensions = null;
@@ -2343,7 +2333,7 @@ public class KmlReader extends StaxStreamReader {
      * @throws XMLStreamException
      * @throws KmlException
      */
-    private ScreenOverlay readScreenOverlay() throws XMLStreamException, KmlException, URISyntaxException {
+    private Feature readScreenOverlay() throws XMLStreamException, KmlException, URISyntaxException {
 
         // AbstractObject
         List<SimpleType> objectSimpleExtensions = null;
@@ -2493,8 +2483,8 @@ public class KmlReader extends StaxStreamReader {
      * @return
      * @throws XMLStreamException
      */
-    private AbstractContainer readAbstractContainer(String eName) throws XMLStreamException, KmlException, URISyntaxException {
-        AbstractContainer resultat = null;
+    private Feature readAbstractContainer(String eName) throws XMLStreamException, KmlException, URISyntaxException {
+        Feature resultat = null;
         if (TAG_FOLDER.equals(eName)) {
             resultat = readFolder();
         } else if (TAG_DOCUMENT.equals(eName)) {
@@ -3585,7 +3575,7 @@ public class KmlReader extends StaxStreamReader {
      * @throws XMLStreamException
      * @throws KmlException
      */
-    private Folder readFolder() throws XMLStreamException, KmlException, URISyntaxException {
+    private Feature readFolder() throws XMLStreamException, KmlException, URISyntaxException {
         // AbstractObject
         List<SimpleType> objectSimpleExtensions = null;
         IdAttributes idAttributes = this.readIdAttributes();
@@ -3615,7 +3605,7 @@ public class KmlReader extends StaxStreamReader {
         List<AbstractObject> abstractContainerObjectExtensions = null;
 
         // Folder
-        List<AbstractFeature> features = new ArrayList<AbstractFeature>();
+        List<Feature> features = new ArrayList<Feature>();
         List<SimpleType> folderSimpleExtensions = null;
         List<AbstractObject> folderObjectExtensions = null;
 
@@ -3707,8 +3697,7 @@ public class KmlReader extends StaxStreamReader {
      * @throws XMLStreamException
      * @throws KmlException
      */
-    private Document readDocument() throws XMLStreamException, KmlException, URISyntaxException {
-
+    private Feature readDocument() throws XMLStreamException, KmlException, URISyntaxException {
         // AbstractObject
         List<SimpleType> objectSimpleExtensions = null;
         IdAttributes idAttributes = this.readIdAttributes();
@@ -3739,7 +3728,7 @@ public class KmlReader extends StaxStreamReader {
 
         // Document
         List<Schema> schemas = new ArrayList<Schema>();
-        List<AbstractFeature> features = new ArrayList<AbstractFeature>();
+        List<Feature> features = new ArrayList<Feature>();
         List<SimpleType> documentSimpleExtensions = null;
         List<AbstractObject> documentObjectExtensions = null;
 
@@ -3917,7 +3906,7 @@ public class KmlReader extends StaxStreamReader {
      * @throws XMLStreamException
      * @throws KmlException
      */
-    private NetworkLink readNetworkLink() throws XMLStreamException, KmlException, URISyntaxException {
+    private Feature readNetworkLink() throws XMLStreamException, KmlException, URISyntaxException {
         // AbstractObject
         List<SimpleType> objectSimpleExtensions = null;
         IdAttributes idAttributes = this.readIdAttributes();

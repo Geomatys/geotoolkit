@@ -20,25 +20,31 @@ import com.vividsolutions.jts.geom.Coordinate;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collection;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
-import org.geotoolkit.data.kml.model.AbstractFeature;
 import org.geotoolkit.data.kml.model.Coordinates;
 import org.geotoolkit.data.kml.model.Icon;
 import org.geotoolkit.data.kml.model.Kml;
 import org.geotoolkit.data.kml.model.KmlException;
+import org.geotoolkit.data.kml.model.KmlModelConstants;
 import org.geotoolkit.data.kml.model.Link;
-import org.geotoolkit.data.kml.model.PhotoOverlay;
 import org.geotoolkit.data.kml.model.Point;
 import org.geotoolkit.data.kml.model.ViewVolume;
 import org.geotoolkit.data.kml.xml.KmlReader;
 import org.geotoolkit.data.kml.xml.KmlWriter;
+import org.geotoolkit.factory.FactoryFinder;
+import org.geotoolkit.factory.Hints;
+import org.geotoolkit.feature.LenientFeatureFactory;
 import org.geotoolkit.xml.DomCompare;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureFactory;
+import org.opengis.feature.Property;
 import org.xml.sax.SAXException;
 import static org.junit.Assert.*;
 
@@ -50,6 +56,8 @@ public class PhotoOverlayTest {
 
     private static final double DELTA = 0.000000000001;
     private static final String pathToTestFile = "src/test/resources/org/geotoolkit/data/kml/photoOverlay.kml";
+    private static final FeatureFactory FF = FactoryFinder.getFeatureFactory(
+            new Hints(Hints.FEATURE_FACTORY, LenientFeatureFactory.class));
 
     public PhotoOverlayTest() {
     }
@@ -78,25 +86,24 @@ public class PhotoOverlayTest {
         final Kml kmlObjects = reader.read();
         reader.dispose();
 
-        final AbstractFeature feature = kmlObjects.getAbstractFeature();
-        assertTrue(feature instanceof PhotoOverlay);
-        PhotoOverlay photoOverlay = (PhotoOverlay) feature;
-        assertEquals("A simple non-pyramidal photo",photoOverlay.getFeatureName());
-        assertEquals("High above the ocean", photoOverlay.getDescription());
+        final Feature photoOverlay = kmlObjects.getAbstractFeature();
+        assertTrue(photoOverlay.getType().equals(KmlModelConstants.TYPE_PHOTO_OVERLAY));
+        assertEquals("A simple non-pyramidal photo", photoOverlay.getProperty(KmlModelConstants.ATT_NAME.getName()).getValue());
+        assertEquals("High above the ocean", photoOverlay.getProperty(KmlModelConstants.ATT_DESCRIPTION.getName()).getValue());
 
-        final Icon icon = photoOverlay.getIcon();
+        final Icon icon = (Icon) photoOverlay.getProperty(KmlModelConstants.ATT_OVERLAY_ICON.getName()).getValue();
         assertEquals("small-photo.jpg", icon.getHref());
 
-        final ViewVolume viewVolume = photoOverlay.getViewVolume();
+        final ViewVolume viewVolume = (ViewVolume) photoOverlay.getProperty(KmlModelConstants.ATT_PHOTO_OVERLAY_VIEW_VOLUME.getName()).getValue();
         assertEquals(-60, viewVolume.getLeftFov(), DELTA);
         assertEquals(60, viewVolume.getRightFov(), DELTA);
         assertEquals(-45, viewVolume.getBottomFov(), DELTA);
         assertEquals(45, viewVolume.getTopFov(), DELTA);
         assertEquals(1000, viewVolume.getNear(), DELTA);
 
-        final Point point = photoOverlay.getPoint();
+        final Point point = (Point) photoOverlay.getProperty(KmlModelConstants.ATT_PHOTO_OVERLAY_POINT.getName()).getValue();
         final Coordinates coordinates = point.getCoordinateSequence();
-        assertEquals(1,coordinates.size());
+        assertEquals(1, coordinates.size());
         assertEquals(1, coordinates.getCoordinate(0).x, DELTA);
         assertEquals(1, coordinates.getCoordinate(0).y, DELTA);
 
@@ -104,7 +111,7 @@ public class PhotoOverlayTest {
     }
 
     @Test
-    public void photoOverlayWriteTest() throws KmlException, IOException, XMLStreamException, ParserConfigurationException, SAXException{
+    public void photoOverlayWriteTest() throws KmlException, IOException, XMLStreamException, ParserConfigurationException, SAXException {
         final KmlFactory kmlFactory = new DefaultKmlFactory();
 
         final double longitude = 1;
@@ -124,13 +131,14 @@ public class PhotoOverlayTest {
         link.setHref("small-photo.jpg");
         final Icon icon = kmlFactory.createIcon(link);
 
-        final PhotoOverlay photoOverlay = kmlFactory.createPhotoOverlay();
-        photoOverlay.setFeatureName("A simple non-pyramidal photo");
-        photoOverlay.setDescription("High above the ocean");
-        photoOverlay.setIcon(icon);
-        photoOverlay.setViewVolume(viewVolume);
-        photoOverlay.setPoint(point);
-       
+        final Feature photoOverlay = kmlFactory.createPhotoOverlay();
+        Collection<Property> photoOverlayProperties = photoOverlay.getProperties();
+        photoOverlayProperties.add(FF.createAttribute("A simple non-pyramidal photo", KmlModelConstants.ATT_NAME, null));
+        photoOverlayProperties.add(FF.createAttribute("High above the ocean", KmlModelConstants.ATT_DESCRIPTION, null));
+        photoOverlayProperties.add(FF.createAttribute(icon, KmlModelConstants.ATT_OVERLAY_ICON, null));
+        photoOverlayProperties.add(FF.createAttribute(viewVolume, KmlModelConstants.ATT_PHOTO_OVERLAY_VIEW_VOLUME, null));
+        photoOverlayProperties.add(FF.createAttribute(point, KmlModelConstants.ATT_PHOTO_OVERLAY_POINT, null));
+
         final Kml kml = kmlFactory.createKml(null, photoOverlay, null, null);
 
         File temp = File.createTempFile("testPhotoOverlay",".kml");
@@ -143,6 +151,5 @@ public class PhotoOverlayTest {
 
         DomCompare.compare(
                  new File(pathToTestFile), temp);
-
     }
 }

@@ -20,25 +20,28 @@ import java.net.URISyntaxException;
 import org.geotoolkit.data.kml.xml.KmlReader;
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
+import java.util.Collection;
+import java.util.Iterator;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
-import org.geotoolkit.data.kml.model.AbstractFeature;
-import org.geotoolkit.data.kml.model.Document;
 import org.geotoolkit.data.kml.model.ExtendedData;
 import org.geotoolkit.data.kml.model.Kml;
 import org.geotoolkit.data.kml.model.KmlException;
+import org.geotoolkit.data.kml.model.KmlModelConstants;
 import org.geotoolkit.data.kml.model.Metadata;
-import org.geotoolkit.data.kml.model.Placemark;
-import org.geotoolkit.data.kml.model.Snippet;
 import org.geotoolkit.data.kml.xml.KmlWriter;
-import org.geotoolkit.data.kml.xsd.DefaultCdata;
+import org.geotoolkit.factory.FactoryFinder;
+import org.geotoolkit.factory.Hints;
+import org.geotoolkit.feature.LenientFeatureFactory;
 import org.geotoolkit.xml.DomCompare;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureFactory;
+import org.opengis.feature.Property;
 import static org.junit.Assert.*;
 import org.xml.sax.SAXException;
 import static java.util.Collections.*;
@@ -51,6 +54,8 @@ public class MetadataTest {
 
     private static final double DELTA = 0.000000000001;
     private static final String pathToTestFile = "src/test/resources/org/geotoolkit/data/kml/metadata.kml";
+    private static final FeatureFactory FF = FactoryFinder.getFeatureFactory(
+            new Hints(Hints.FEATURE_FACTORY, LenientFeatureFactory.class));
 
     public MetadataTest() {
     }
@@ -79,45 +84,56 @@ public class MetadataTest {
         final Kml kmlObjects = reader.read();
         reader.dispose();
 
-        final AbstractFeature feature = kmlObjects.getAbstractFeature();
-        assertTrue(feature instanceof Document);
+        final Feature document = kmlObjects.getAbstractFeature();
+        assertTrue(document.getType().equals(KmlModelConstants.TYPE_DOCUMENT));
 
-        final Document document = (Document) feature;
-        assertEquals("Document.kml", document.getFeatureName());
-        assertTrue(document.getOpen());
-        assertEquals(2,document.getAbstractFeatures().size());
+        assertEquals("Document.kml", document.getProperty(KmlModelConstants.ATT_NAME.getName()).getValue());
+        assertTrue((Boolean) document.getProperty(KmlModelConstants.ATT_OPEN.getName()).getValue());
 
-        assertTrue(document.getAbstractFeatures().get(0) instanceof Placemark);
-        final Placemark placemark0 = (Placemark) document.getAbstractFeatures().get(0);
-        assertTrue(placemark0.getExtendedData() instanceof ExtendedData);
-        assertEquals(EMPTY_LIST, ((ExtendedData) placemark0.getExtendedData()).getDatas());
-        assertEquals(EMPTY_LIST, ((ExtendedData) placemark0.getExtendedData()).getSchemaData());
-        assertEquals(EMPTY_LIST, ((ExtendedData) placemark0.getExtendedData()).getAnyOtherElements());
+        assertEquals(2, document.getProperties(KmlModelConstants.ATT_DOCUMENT_FEATURES.getName()).size());
 
-        assertTrue(document.getAbstractFeatures().get(1) instanceof Placemark);
-        final Placemark placemark1 = (Placemark) document.getAbstractFeatures().get(1);
-        assertTrue(placemark1.getExtendedData() instanceof Metadata);
-        assertEquals(EMPTY_LIST, ((Metadata) placemark1.getExtendedData()).getContent());
+        Iterator i = document.getProperties(KmlModelConstants.ATT_DOCUMENT_FEATURES.getName()).iterator();
 
+        if(i.hasNext()){
+            Object object = ((Property) i.next()).getValue();
+
+            final Feature placemark0 = (Feature) object;
+            assertTrue(placemark0.getProperty(KmlModelConstants.ATT_EXTENDED_DATA.getName()).getValue() instanceof ExtendedData);
+            ExtendedData extendedData = (ExtendedData) placemark0.getProperty(KmlModelConstants.ATT_EXTENDED_DATA.getName()).getValue();
+            assertEquals(EMPTY_LIST, extendedData.getDatas());
+            assertEquals(EMPTY_LIST, extendedData.getSchemaData());
+            assertEquals(EMPTY_LIST, extendedData.getAnyOtherElements());
+
+        }
+
+        if(i.hasNext()){
+            Object object = ((Property) i.next()).getValue();
+
+            final Feature placemark1 = (Feature) object;
+            assertTrue(placemark1.getProperty(KmlModelConstants.ATT_EXTENDED_DATA.getName()).getValue() instanceof Metadata);
+            assertEquals(EMPTY_LIST, ((Metadata) placemark1.getProperty(KmlModelConstants.ATT_EXTENDED_DATA.getName()).getValue()).getContent());
+
+        }
     }
 
     @Test
     public void metadataWriteTest() throws KmlException, IOException, XMLStreamException, ParserConfigurationException, SAXException, URISyntaxException {
         final KmlFactory kmlFactory = new DefaultKmlFactory();
 
-        final Placemark placemark0 = kmlFactory.createPlacemark();
+        final Feature placemark0 = kmlFactory.createPlacemark();
         final ExtendedData extendedData = kmlFactory.createExtendedData();
-        placemark0.setExtendedData(extendedData);
+        placemark0.getProperties().add(FF.createAttribute(extendedData, KmlModelConstants.ATT_EXTENDED_DATA, null));
 
-        final Placemark placemark1 = kmlFactory.createPlacemark();
+        final Feature placemark1 = kmlFactory.createPlacemark();
         final Metadata metadata = kmlFactory.createMetadata();
-        placemark1.setExtendedData(metadata);
+        placemark1.getProperties().add(FF.createAttribute(metadata, KmlModelConstants.ATT_EXTENDED_DATA, null));
 
-        final Document document = kmlFactory.createDocument();
-        document.setAbstractFeatures(Arrays.asList((AbstractFeature) placemark0,
-                (AbstractFeature) placemark1));
-        document.setOpen(true);
-        document.setFeatureName("Document.kml");
+        final Feature document = kmlFactory.createDocument();
+        Collection<Property> documentProperties = document.getProperties();
+        documentProperties.add(FF.createAttribute(placemark0, KmlModelConstants.ATT_DOCUMENT_FEATURES, null));
+        documentProperties.add(FF.createAttribute(placemark1, KmlModelConstants.ATT_DOCUMENT_FEATURES, null));
+        document.getProperty(KmlModelConstants.ATT_OPEN.getName()).setValue(Boolean.TRUE);
+        documentProperties.add(FF.createAttribute("Document.kml", KmlModelConstants.ATT_NAME, null));
 
         final Kml kml = kmlFactory.createKml(null, document, null, null);
 

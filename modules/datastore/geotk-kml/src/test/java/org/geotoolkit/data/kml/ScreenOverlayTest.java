@@ -18,25 +18,31 @@ package org.geotoolkit.data.kml;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collection;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
-import org.geotoolkit.data.kml.model.AbstractFeature;
 import org.geotoolkit.data.kml.model.Icon;
 import org.geotoolkit.data.kml.model.IdAttributes;
 import org.geotoolkit.data.kml.model.Kml;
 import org.geotoolkit.data.kml.model.KmlException;
+import org.geotoolkit.data.kml.model.KmlModelConstants;
 import org.geotoolkit.data.kml.model.Link;
-import org.geotoolkit.data.kml.model.ScreenOverlay;
 import org.geotoolkit.data.kml.model.Vec2;
 import org.geotoolkit.data.kml.model.Units;
 import org.geotoolkit.data.kml.xml.KmlReader;
 import org.geotoolkit.data.kml.xml.KmlWriter;
+import org.geotoolkit.factory.FactoryFinder;
+import org.geotoolkit.factory.Hints;
+import org.geotoolkit.feature.LenientFeatureFactory;
 import org.geotoolkit.xml.DomCompare;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureFactory;
+import org.opengis.feature.Property;
 import org.xml.sax.SAXException;
 import static org.junit.Assert.*;
 
@@ -48,6 +54,8 @@ public class ScreenOverlayTest {
 
     private static final double DELTA = 0.000000000001;
     private static final String pathToTestFile = "src/test/resources/org/geotoolkit/data/kml/screenOverlay.kml";
+    private static final FeatureFactory FF = FactoryFinder.getFeatureFactory(
+            new Hints(Hints.FEATURE_FACTORY, LenientFeatureFactory.class));
 
     public ScreenOverlayTest() {
     }
@@ -76,41 +84,41 @@ public class ScreenOverlayTest {
         final Kml kmlObjects = reader.read();
         reader.dispose();
 
-        final AbstractFeature feature = kmlObjects.getAbstractFeature();
-        assertTrue(feature instanceof ScreenOverlay);
-        ScreenOverlay screenOverlay = (ScreenOverlay) feature;
-        assertEquals("Simple crosshairs",screenOverlay.getFeatureName());
-        assertEquals("This screen overlay uses fractional positioning\n"+
-                "   to put the image in the exact center of the screen",
-                screenOverlay.getDescription());
-        assertEquals("khScreenOverlay756",screenOverlay.getIdAttributes().getId());
+        final Feature screenOverlay = kmlObjects.getAbstractFeature();
+        assertTrue(screenOverlay.getType().equals(KmlModelConstants.TYPE_SCREEN_OVERLAY));
 
-        final Icon icon = screenOverlay.getIcon();
+        assertEquals("Simple crosshairs", screenOverlay.getProperty(KmlModelConstants.ATT_NAME.getName()).getValue());
+        assertEquals("This screen overlay uses fractional positioning\n"
+                + "   to put the image in the exact center of the screen",
+                screenOverlay.getProperty(KmlModelConstants.ATT_DESCRIPTION.getName()).getValue());
+        assertEquals("khScreenOverlay756", ((IdAttributes) screenOverlay.getProperty(KmlModelConstants.ATT_ID_ATTRIBUTES.getName()).getValue()).getId());
+
+        final Icon icon = (Icon) screenOverlay.getProperty(KmlModelConstants.ATT_OVERLAY_ICON.getName()).getValue();
         assertEquals("http://myserver/myimage.jpg", icon.getHref());
 
-        final Vec2 overlayXY = screenOverlay.getOverlayXY();
-        assertEquals(.5,overlayXY.getX(), DELTA);
+        final Vec2 overlayXY = (Vec2) screenOverlay.getProperty(KmlModelConstants.ATT_SCREEN_OVERLAY_OVERLAYXY.getName()).getValue();
+        assertEquals(.5, overlayXY.getX(), DELTA);
         assertEquals(.5, overlayXY.getY(), DELTA);
-        assertEquals(Units.transform("fraction"),overlayXY.getXUnits());
-        assertEquals(Units.transform("fraction"),overlayXY.getYUnits());
+        assertEquals(Units.transform("fraction"), overlayXY.getXUnits());
+        assertEquals(Units.transform("fraction"), overlayXY.getYUnits());
 
-        final Vec2 screenXY = screenOverlay.getScreenXY();
-        assertEquals(.5,screenXY.getX(), DELTA);
+        final Vec2 screenXY = (Vec2) screenOverlay.getProperty(KmlModelConstants.ATT_SCREEN_OVERLAY_SCREENXY.getName()).getValue();
+        assertEquals(.5, screenXY.getX(), DELTA);
         assertEquals(.5, screenXY.getY(), DELTA);
-        assertEquals(Units.transform("fraction"),screenXY.getXUnits());
-        assertEquals(Units.transform("fraction"),screenXY.getYUnits());
+        assertEquals(Units.transform("fraction"), screenXY.getXUnits());
+        assertEquals(Units.transform("fraction"), screenXY.getYUnits());
 
-        final Vec2 size = screenOverlay.getSize();
-        assertEquals(0,size.getX(), DELTA);
+        final Vec2 size = (Vec2) screenOverlay.getProperty(KmlModelConstants.ATT_SCREEN_OVERLAY_SIZE.getName()).getValue();
+        assertEquals(0, size.getX(), DELTA);
         assertEquals(0, size.getY(), DELTA);
-        assertEquals(Units.transform("pixels"),size.getXUnits());
-        assertEquals(Units.transform("pixels"),size.getYUnits());
+        assertEquals(Units.transform("pixels"), size.getXUnits());
+        assertEquals(Units.transform("pixels"), size.getYUnits());
 
-        assertEquals(39.37878630116985,screenOverlay.getRotation(),DELTA);
+        assertEquals(39.37878630116985, (Double) screenOverlay.getProperty(KmlModelConstants.ATT_SCREEN_OVERLAY_ROTATION.getName()).getValue(), DELTA);
     }
 
     @Test
-    public void screenOverlayWriteTest() throws KmlException, IOException, XMLStreamException, ParserConfigurationException, SAXException{
+    public void screenOverlayWriteTest() throws KmlException, IOException, XMLStreamException, ParserConfigurationException, SAXException {
         final KmlFactory kmlFactory = new DefaultKmlFactory();
 //<?xml version="1.0" encoding="UTF-8"?>
 //<kml xmlns="http://www.opengis.net/kml/2.2" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:xal="urn:oasis:names:tc:ciq:xsdschema:xAL:2.0">
@@ -137,20 +145,21 @@ public class ScreenOverlayTest {
 
         final IdAttributes idAttributes = kmlFactory.createIdAttributes("khScreenOverlay756", null);
 
-        final ScreenOverlay screenOverlay = kmlFactory.createScreenOverlay();
-        screenOverlay.setFeatureName("Simple crosshairs");
-        screenOverlay.setDescription("This screen overlay uses fractional positioning\n"+
-                "   to put the image in the exact center of the screen");
-        screenOverlay.setIcon(icon);
-        screenOverlay.setIdAttributes(idAttributes);
-        screenOverlay.setOverlayXY(overlayXY);
-        screenOverlay.setScreenXY(screenXY);
-        screenOverlay.setSize(size);
-        screenOverlay.setRotation(39.37878630116985);
+        final Feature screenOverlay = kmlFactory.createScreenOverlay();
+        Collection<Property> screenOverlayProperties = screenOverlay.getProperties();
+        screenOverlayProperties.add(FF.createAttribute("Simple crosshairs", KmlModelConstants.ATT_NAME, null));
+        screenOverlayProperties.add(FF.createAttribute("This screen overlay uses fractional positioning\n"
+                + "   to put the image in the exact center of the screen", KmlModelConstants.ATT_DESCRIPTION, null));
+        screenOverlayProperties.add(FF.createAttribute(icon, KmlModelConstants.ATT_OVERLAY_ICON, null));
+        screenOverlayProperties.add(FF.createAttribute(idAttributes, KmlModelConstants.ATT_ID_ATTRIBUTES, null));
+        screenOverlayProperties.add(FF.createAttribute(overlayXY, KmlModelConstants.ATT_SCREEN_OVERLAY_OVERLAYXY, null));
+        screenOverlayProperties.add(FF.createAttribute(screenXY, KmlModelConstants.ATT_SCREEN_OVERLAY_SCREENXY, null));
+        screenOverlayProperties.add(FF.createAttribute(size, KmlModelConstants.ATT_SCREEN_OVERLAY_SIZE, null));
+        screenOverlay.getProperty(KmlModelConstants.ATT_SCREEN_OVERLAY_ROTATION.getName()).setValue(39.37878630116985);
 
         final Kml kml = kmlFactory.createKml(null, screenOverlay, null, null);
 
-        File temp = File.createTempFile("testScreenOverlay",".kml");
+        File temp = File.createTempFile("testScreenOverlay", ".kml");
         temp.deleteOnExit();
 
         KmlWriter writer = new KmlWriter();
@@ -159,7 +168,7 @@ public class ScreenOverlayTest {
         writer.dispose();
 
         DomCompare.compare(
-                 new File(pathToTestFile), temp);
+                new File(pathToTestFile), temp);
 
     }
 }

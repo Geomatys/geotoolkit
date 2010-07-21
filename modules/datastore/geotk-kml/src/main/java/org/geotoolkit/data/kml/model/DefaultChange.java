@@ -25,7 +25,7 @@ import static java.util.Collections.*;
  */
 public class DefaultChange implements Change {
 
-    private List<AbstractObject> objects;
+    private List<Object> objects;
 
     public DefaultChange() {
         this.objects = EMPTY_LIST;
@@ -35,7 +35,7 @@ public class DefaultChange implements Change {
      *
      * @param objects
      */
-    public DefaultChange(List<AbstractObject> objects) {
+    public DefaultChange(List<Object> objects) {
         this.objects = (objects == null) ? EMPTY_LIST : objects;
     }
 
@@ -44,7 +44,7 @@ public class DefaultChange implements Change {
      * @{@inheritDoc }
      */
     @Override
-    public List<AbstractObject> getObjects() {
+    public List<Object> getObjects() {
         return this.objects;
     }
 
@@ -53,7 +53,7 @@ public class DefaultChange implements Change {
      * @{@inheritDoc }
      */
     @Override
-    public void setObjects(List<AbstractObject> objects) {
+    public void setObjects(List<Object> objects) {
         this.objects = objects;
     }
 }

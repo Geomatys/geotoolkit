@@ -17,6 +17,7 @@
 package org.geotoolkit.data.kml.model;
 
 import java.util.List;
+import org.opengis.feature.Feature;
 
 /**
  * <p>This interface maps Delete element.</p>
@@ -39,12 +40,12 @@ public interface Delete {
      *
      * @return AbstractFeature list.
      */
-    public List<AbstractFeature> getFeatures();
+    public List<Feature> getFeatures();
 
     /**
      * 
      * @param features
      */
-    public void setFeatures(List<AbstractFeature> features);
+    public void setFeatures(List<Feature> features);
 
 }

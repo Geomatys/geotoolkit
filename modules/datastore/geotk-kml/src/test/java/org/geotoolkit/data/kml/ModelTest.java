@@ -21,30 +21,36 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Arrays;
+import java.util.Collection;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
-import org.geotoolkit.data.kml.model.AbstractFeature;
 import org.geotoolkit.data.kml.model.Alias;
 import org.geotoolkit.data.kml.model.EnumAltitudeMode;
 import org.geotoolkit.data.kml.model.IdAttributes;
 import org.geotoolkit.data.kml.model.Kml;
 import org.geotoolkit.data.kml.model.KmlException;
+import org.geotoolkit.data.kml.model.KmlModelConstants;
 import org.geotoolkit.data.kml.model.Link;
 import org.geotoolkit.data.kml.model.Location;
 import org.geotoolkit.data.kml.model.Model;
 import org.geotoolkit.data.kml.model.Orientation;
-import org.geotoolkit.data.kml.model.Placemark;
 import org.geotoolkit.data.kml.model.RefreshMode;
 import org.geotoolkit.data.kml.model.ResourceMap;
 import org.geotoolkit.data.kml.model.Scale;
 import org.geotoolkit.data.kml.xml.KmlReader;
 import org.geotoolkit.data.kml.xml.KmlWriter;
+import org.geotoolkit.factory.FactoryFinder;
+import org.geotoolkit.factory.Hints;
+import org.geotoolkit.feature.LenientFeatureFactory;
 import org.geotoolkit.xml.DomCompare;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureFactory;
+import org.opengis.feature.Property;
 import org.xml.sax.SAXException;
 import static org.junit.Assert.*;
 
@@ -56,6 +62,9 @@ public class ModelTest {
 
     private static final double DELTA = 0.000000000001;
     private static final String pathToTestFile = "src/test/resources/org/geotoolkit/data/kml/model.kml";
+    private static final FeatureFactory FF = FactoryFinder.getFeatureFactory(
+            new Hints(Hints.FEATURE_FACTORY, LenientFeatureFactory.class));
+
 
     public ModelTest() {
     }
@@ -84,13 +93,11 @@ public class ModelTest {
         final Kml kmlObjects = reader.read();
         reader.dispose();
 
-        final AbstractFeature feature = kmlObjects.getAbstractFeature();
-        assertTrue(feature instanceof Placemark);
-        final Placemark placemark = (Placemark) feature;
-        assertEquals("Colorado", placemark.getFeatureName());
-        assertTrue(placemark.getAbstractGeometry() instanceof Model);
+        final Feature placemark = kmlObjects.getAbstractFeature();
+        assertEquals("Colorado", placemark.getProperty(KmlModelConstants.ATT_NAME.getName()).getValue());
+        assertTrue(placemark.getProperty(KmlModelConstants.ATT_PLACEMARK_GEOMETRY.getName()).getValue() instanceof Model);
 
-        final Model model = (Model) placemark.getAbstractGeometry();
+        final Model model = (Model) placemark.getProperty(KmlModelConstants.ATT_PLACEMARK_GEOMETRY.getName()).getValue();
         assertEquals("khModel543", model.getIdAttributes().getId());
         assertEquals(EnumAltitudeMode.RELATIVE_TO_GROUND, model.getAltitudeMode());
 
@@ -176,10 +183,11 @@ public class ModelTest {
         model.setScale(scale);
         model.setLink(link);
         model.setRessourceMap(resourceMap);
-        
-        final Placemark placemark = kmlFactory.createPlacemark();
-        placemark.setFeatureName("Colorado");
-        placemark.setAbstractGeometry(model);
+
+        final Feature placemark = kmlFactory.createPlacemark();
+        Collection<Property> placemarkProperties = placemark.getProperties();
+        placemarkProperties.add(FF.createAttribute("Colorado", KmlModelConstants.ATT_NAME, null));
+        placemarkProperties.add(FF.createAttribute(model, KmlModelConstants.ATT_PLACEMARK_GEOMETRY, null));
 
 
         final Kml kml = kmlFactory.createKml(null, placemark, null, null);

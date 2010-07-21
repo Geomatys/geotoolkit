@@ -21,28 +21,33 @@ import org.geotoolkit.data.kml.xml.KmlReader;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Iterator;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
-import org.geotoolkit.data.kml.model.AbstractFeature;
 import org.geotoolkit.data.kml.model.EnumAltitudeMode;
 import org.geotoolkit.data.kml.model.Boundary;
 import org.geotoolkit.data.kml.model.Coordinates;
-import org.geotoolkit.data.kml.model.Document;
 import org.geotoolkit.data.kml.model.Kml;
 import org.geotoolkit.data.kml.model.KmlException;
+import org.geotoolkit.data.kml.model.KmlModelConstants;
 import org.geotoolkit.data.kml.model.LinearRing;
-import org.geotoolkit.data.kml.model.Placemark;
 import org.geotoolkit.data.kml.model.Polygon;
 import org.geotoolkit.data.kml.xml.KmlWriter;
+import org.geotoolkit.factory.FactoryFinder;
+import org.geotoolkit.factory.Hints;
+import org.geotoolkit.feature.LenientFeatureFactory;
 import org.geotoolkit.xml.DomCompare;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureFactory;
+import org.opengis.feature.Property;
 import static org.junit.Assert.*;
 import org.xml.sax.SAXException;
-
 
 /**
  *
@@ -52,6 +57,8 @@ public class PolygonTest {
 
     private static final double DELTA = 0.000000000001;
     private static final String pathToTestFile = "src/test/resources/org/geotoolkit/data/kml/polygon.kml";
+    private static final FeatureFactory FF = FactoryFinder.getFeatureFactory(
+            new Hints(Hints.FEATURE_FACTORY, LenientFeatureFactory.class));
 
     public PolygonTest() {
     }
@@ -80,82 +87,89 @@ public class PolygonTest {
         final Kml kmlObjects = reader.read();
         reader.dispose();
 
-        final AbstractFeature feature = kmlObjects.getAbstractFeature();
-        assertTrue(feature instanceof Document);
-        final Document document = (Document) feature;
-        assertEquals("Polygon.kml", document.getFeatureName());
-        assertTrue(document.getOpen());
-        assertEquals(1,document.getAbstractFeatures().size());
-        assertTrue(document.getAbstractFeatures().get(0) instanceof Placemark);
-        final Placemark placemark = (Placemark) document.getAbstractFeatures().get(0);
-        assertEquals("hollow box", placemark.getFeatureName());
-        assertTrue(placemark.getAbstractGeometry() instanceof Polygon);
-        final Polygon polygon = (Polygon) placemark.getAbstractGeometry();
-        assertTrue(polygon.getExtrude());
-        assertEquals(EnumAltitudeMode.RELATIVE_TO_GROUND, polygon.getAltitudeMode());
-
-        final Boundary outerBoundaryIs = polygon.getOuterBoundary();
-        final LinearRing linearRing1 = outerBoundaryIs.getLinearRing();
-        final Coordinates coordinates1 = linearRing1.getCoordinateSequence();
-        assertEquals(5, coordinates1.size());
-
-        final Coordinate coordinate10 = coordinates1.getCoordinate(0);
-        assertEquals(-122.366278, coordinate10.x, DELTA);
-        assertEquals(37.818844, coordinate10.y, DELTA);
-        assertEquals(30, coordinate10.z, DELTA);
-
-        final Coordinate coordinate11 = coordinates1.getCoordinate(1);
-        assertEquals(-122.365248, coordinate11.x, DELTA);
-        assertEquals(37.819267, coordinate11.y, DELTA);
-        assertEquals(30, coordinate11.z, DELTA);
-
-        final Coordinate coordinate12 = coordinates1.getCoordinate(2);
-        assertEquals(-122.365640, coordinate12.x, DELTA);
-        assertEquals(37.819861, coordinate12.y, DELTA);
-        assertEquals(30, coordinate12.z, DELTA);
-
-        final Coordinate coordinate13 = coordinates1.getCoordinate(3);
-        assertEquals(-122.366669, coordinate13.x, DELTA);
-        assertEquals(37.819429, coordinate13.y, DELTA);
-        assertEquals(30, coordinate13.z, DELTA);
-
-        final Coordinate coordinate14 = coordinates1.getCoordinate(4);
-        assertEquals(-122.366278, coordinate14.x, DELTA);
-        assertEquals(37.818844, coordinate14.y, DELTA);
-        assertEquals(30, coordinate14.z, DELTA);
-
-        assertEquals(1, polygon.getInnerBoundaries().size());
-        final Boundary innerBoundaryIs = polygon.getInnerBoundaries().get(0);
-        final LinearRing linearRing2 = innerBoundaryIs.getLinearRing();
-        final Coordinates coordinates2 = linearRing2.getCoordinateSequence();
-        assertEquals(5, coordinates2.size());
-
-        final Coordinate coordinate20 = coordinates2.getCoordinate(0);
-        assertEquals(-122.366212, coordinate20.x, DELTA);
-        assertEquals(37.818977, coordinate20.y, DELTA);
-        assertEquals(30, coordinate20.z, DELTA);
-
-        final Coordinate coordinate21 = coordinates2.getCoordinate(1);
-        assertEquals(-122.365424, coordinate21.x, DELTA);
-        assertEquals(37.819294, coordinate21.y, DELTA);
-        assertEquals(30, coordinate21.z, DELTA);
-
-        final Coordinate coordinate22 = coordinates2.getCoordinate(2);
-        assertEquals(-122.365704, coordinate22.x, DELTA);
-        assertEquals(37.819731, coordinate22.y, DELTA);
-        assertEquals(30, coordinate22.z, DELTA);
-
-        final Coordinate coordinate23 = coordinates2.getCoordinate(3);
-        assertEquals(-122.366488, coordinate23.x, DELTA);
-        assertEquals(37.819402, coordinate23.y, DELTA);
-        assertEquals(30, coordinate23.z, DELTA);
-
-        final Coordinate coordinate24 = coordinates2.getCoordinate(4);
-        assertEquals(-122.366212, coordinate24.x, DELTA);
-        assertEquals(37.818977, coordinate24.y, DELTA);
-        assertEquals(30, coordinate24.z, DELTA);
+        final Feature document = kmlObjects.getAbstractFeature();
+        assertTrue(document.getType().equals(KmlModelConstants.TYPE_DOCUMENT));
+        assertEquals("Polygon.kml", document.getProperty(KmlModelConstants.ATT_NAME.getName()).getValue());
+        assertTrue((Boolean) document.getProperty(KmlModelConstants.ATT_OPEN.getName()).getValue());
 
 
+        assertEquals(1, document.getProperties(KmlModelConstants.ATT_DOCUMENT_FEATURES.getName()).size());
+
+        Iterator i = document.getProperties(KmlModelConstants.ATT_DOCUMENT_FEATURES.getName()).iterator();
+
+        if (i.hasNext()) {
+            Object object = ((Property) i.next()).getValue();
+            assertTrue(object instanceof Feature);
+            Feature placemark = (Feature) object;
+            assertTrue(placemark.getType().equals(KmlModelConstants.TYPE_PLACEMARK));
+
+            assertEquals("hollow box", placemark.getProperty(KmlModelConstants.ATT_NAME.getName()).getValue());
+            assertTrue(placemark.getProperty(KmlModelConstants.ATT_PLACEMARK_GEOMETRY.getName()).getValue() instanceof Polygon);
+            final Polygon polygon = (Polygon) placemark.getProperty(KmlModelConstants.ATT_PLACEMARK_GEOMETRY.getName()).getValue();
+            assertTrue(polygon.getExtrude());
+            assertEquals(EnumAltitudeMode.RELATIVE_TO_GROUND, polygon.getAltitudeMode());
+
+            final Boundary outerBoundaryIs = polygon.getOuterBoundary();
+            final LinearRing linearRing1 = outerBoundaryIs.getLinearRing();
+            final Coordinates coordinates1 = linearRing1.getCoordinateSequence();
+            assertEquals(5, coordinates1.size());
+
+            final Coordinate coordinate10 = coordinates1.getCoordinate(0);
+            assertEquals(-122.366278, coordinate10.x, DELTA);
+            assertEquals(37.818844, coordinate10.y, DELTA);
+            assertEquals(30, coordinate10.z, DELTA);
+
+            final Coordinate coordinate11 = coordinates1.getCoordinate(1);
+            assertEquals(-122.365248, coordinate11.x, DELTA);
+            assertEquals(37.819267, coordinate11.y, DELTA);
+            assertEquals(30, coordinate11.z, DELTA);
+
+            final Coordinate coordinate12 = coordinates1.getCoordinate(2);
+            assertEquals(-122.365640, coordinate12.x, DELTA);
+            assertEquals(37.819861, coordinate12.y, DELTA);
+            assertEquals(30, coordinate12.z, DELTA);
+
+            final Coordinate coordinate13 = coordinates1.getCoordinate(3);
+            assertEquals(-122.366669, coordinate13.x, DELTA);
+            assertEquals(37.819429, coordinate13.y, DELTA);
+            assertEquals(30, coordinate13.z, DELTA);
+
+            final Coordinate coordinate14 = coordinates1.getCoordinate(4);
+            assertEquals(-122.366278, coordinate14.x, DELTA);
+            assertEquals(37.818844, coordinate14.y, DELTA);
+            assertEquals(30, coordinate14.z, DELTA);
+
+            assertEquals(1, polygon.getInnerBoundaries().size());
+            final Boundary innerBoundaryIs = polygon.getInnerBoundaries().get(0);
+            final LinearRing linearRing2 = innerBoundaryIs.getLinearRing();
+            final Coordinates coordinates2 = linearRing2.getCoordinateSequence();
+            assertEquals(5, coordinates2.size());
+
+            final Coordinate coordinate20 = coordinates2.getCoordinate(0);
+            assertEquals(-122.366212, coordinate20.x, DELTA);
+            assertEquals(37.818977, coordinate20.y, DELTA);
+            assertEquals(30, coordinate20.z, DELTA);
+
+            final Coordinate coordinate21 = coordinates2.getCoordinate(1);
+            assertEquals(-122.365424, coordinate21.x, DELTA);
+            assertEquals(37.819294, coordinate21.y, DELTA);
+            assertEquals(30, coordinate21.z, DELTA);
+
+            final Coordinate coordinate22 = coordinates2.getCoordinate(2);
+            assertEquals(-122.365704, coordinate22.x, DELTA);
+            assertEquals(37.819731, coordinate22.y, DELTA);
+            assertEquals(30, coordinate22.z, DELTA);
+
+            final Coordinate coordinate23 = coordinates2.getCoordinate(3);
+            assertEquals(-122.366488, coordinate23.x, DELTA);
+            assertEquals(37.819402, coordinate23.y, DELTA);
+            assertEquals(30, coordinate23.z, DELTA);
+
+            final Coordinate coordinate24 = coordinates2.getCoordinate(4);
+            assertEquals(-122.366212, coordinate24.x, DELTA);
+            assertEquals(37.818977, coordinate24.y, DELTA);
+            assertEquals(30, coordinate24.z, DELTA);
+        }
     }
 
     @Test
@@ -176,14 +190,14 @@ public class PolygonTest {
 
         final Coordinates coordinates1 = kmlFactory.createCoordinates(
                 Arrays.asList(coordinate10, coordinate11, coordinate12, coordinate13, coordinate14));
-        
+
         final Coordinates coordinates2 = kmlFactory.createCoordinates(
                 Arrays.asList(coordinate20, coordinate21, coordinate22, coordinate23, coordinate24));
-        
+
         final LinearRing linearRing1 = kmlFactory.createLinearRing(coordinates1);
-        
+
         final  LinearRing linearRing2 = kmlFactory.createLinearRing(coordinates2);
-        
+
         final Boundary outerBoundaryIs = kmlFactory.createBoundary();
         outerBoundaryIs.setLinearRing(linearRing1);
 
@@ -194,14 +208,16 @@ public class PolygonTest {
         polygon.setExtrude(true);
         polygon.setAltitudeMode(EnumAltitudeMode.RELATIVE_TO_GROUND);
 
-        final Placemark placemark = kmlFactory.createPlacemark();
-        placemark.setFeatureName("hollow box");
-        placemark.setAbstractGeometry(polygon);
+        final Feature placemark = kmlFactory.createPlacemark();
+        Collection<Property> placemarkProperties = placemark.getProperties();
+        placemarkProperties.add(FF.createAttribute("hollow box", KmlModelConstants.ATT_NAME, null));
+        placemarkProperties.add(FF.createAttribute(polygon, KmlModelConstants.ATT_PLACEMARK_GEOMETRY, null));
 
-        final Document document = kmlFactory.createDocument();
-        document.setFeatureName("Polygon.kml");
-        document.setOpen(true);
-        document.setAbstractFeatures(Arrays.asList((AbstractFeature) placemark));
+        final Feature document = kmlFactory.createDocument();
+        Collection<Property> documentProperties = document.getProperties();
+        documentProperties.add(FF.createAttribute("Polygon.kml", KmlModelConstants.ATT_NAME, null));
+        document.getProperty(KmlModelConstants.ATT_OPEN.getName()).setValue(Boolean.TRUE);
+        documentProperties.add(FF.createAttribute(placemark, KmlModelConstants.ATT_DOCUMENT_FEATURES, null));
 
 
         final Kml kml = kmlFactory.createKml(null, document, null, null);
@@ -216,6 +232,5 @@ public class PolygonTest {
 
         DomCompare.compare(
                 new File(pathToTestFile), temp);
-
     }
 }

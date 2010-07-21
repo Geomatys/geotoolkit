@@ -20,15 +20,18 @@ import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.Calendar;
+import java.util.Collection;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
-import org.geotoolkit.data.kml.model.AbstractFeature;
 import org.geotoolkit.data.kml.model.Kml;
 import org.geotoolkit.data.kml.model.KmlException;
-import org.geotoolkit.data.kml.model.Placemark;
+import org.geotoolkit.data.kml.model.KmlModelConstants;
 import org.geotoolkit.data.kml.model.TimeStamp;
 import org.geotoolkit.data.kml.xml.KmlReader;
 import org.geotoolkit.data.kml.xml.KmlWriter;
+import org.geotoolkit.factory.FactoryFinder;
+import org.geotoolkit.factory.Hints;
+import org.geotoolkit.feature.LenientFeatureFactory;
 import org.geotoolkit.temporal.object.FastDateParser;
 import org.geotoolkit.xml.DomCompare;
 import org.junit.After;
@@ -36,6 +39,9 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureFactory;
+import org.opengis.feature.Property;
 import org.xml.sax.SAXException;
 import static org.junit.Assert.*;
 
@@ -47,6 +53,8 @@ public class TimeStampTest {
 
     private static final double DELTA = 0.000000000001;
     private static final String pathToTestFile = "src/test/resources/org/geotoolkit/data/kml/timeStamp.kml";
+        private static final FeatureFactory FF = FactoryFinder.getFeatureFactory(
+            new Hints(Hints.FEATURE_FACTORY, LenientFeatureFactory.class));
 
     public TimeStampTest() {
     }
@@ -75,13 +83,13 @@ public class TimeStampTest {
         final Kml kmlObjects = reader.read();
         reader.dispose();
 
-        final AbstractFeature feature = kmlObjects.getAbstractFeature();
-        assertTrue(feature instanceof Placemark);
-        Placemark placemark = (Placemark) feature;
-        assertEquals("Colorado", placemark.getFeatureName());
+        final Feature placemark = kmlObjects.getAbstractFeature();
+        assertTrue(placemark.getType().equals(KmlModelConstants.TYPE_PLACEMARK));
 
-        assertTrue(placemark.getTimePrimitive() instanceof TimeStamp);
-        TimeStamp timeStamp = (TimeStamp) placemark.getTimePrimitive();
+        assertEquals("Colorado", placemark.getProperty(KmlModelConstants.ATT_NAME.getName()).getValue());
+
+        assertTrue(placemark.getProperty(KmlModelConstants.ATT_TIME_PRIMITIVE.getName()).getValue() instanceof TimeStamp);
+        TimeStamp timeStamp = (TimeStamp) placemark.getProperty(KmlModelConstants.ATT_TIME_PRIMITIVE.getName()).getValue();
         String when = "1876-08-02T22:31:54.543+01:00";
 
         FastDateParser du = new FastDateParser();
@@ -107,9 +115,10 @@ public class TimeStampTest {
         TimeStamp timeStamp = kmlFactory.createTimeStamp();
         timeStamp.setWhen(when);
 
-        Placemark placemark = kmlFactory.createPlacemark();
-        placemark.setFeatureName("Colorado");
-        placemark.setTimePrimitive(timeStamp);
+        Feature placemark = kmlFactory.createPlacemark();
+        Collection<Property> placemarkProperties = placemark.getProperties();
+        placemarkProperties.add(FF.createAttribute("Colorado", KmlModelConstants.ATT_NAME, null));
+        placemarkProperties.add(FF.createAttribute(timeStamp, KmlModelConstants.ATT_TIME_PRIMITIVE, null));
         final Kml kml = kmlFactory.createKml(null, placemark, null, null);
 
         File temp = File.createTempFile("timeStampTest", ".kml");

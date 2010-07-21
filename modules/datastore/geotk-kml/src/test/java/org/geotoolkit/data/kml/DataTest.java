@@ -21,21 +21,27 @@ import org.geotoolkit.data.kml.xml.KmlReader;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collection;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
-import org.geotoolkit.data.kml.model.AbstractFeature;
 import org.geotoolkit.data.kml.model.Data;
 import org.geotoolkit.data.kml.model.ExtendedData;
 import org.geotoolkit.data.kml.model.Kml;
 import org.geotoolkit.data.kml.model.KmlException;
-import org.geotoolkit.data.kml.model.Placemark;
+import org.geotoolkit.data.kml.model.KmlModelConstants;
 import org.geotoolkit.data.kml.xml.KmlWriter;
+import org.geotoolkit.factory.FactoryFinder;
+import org.geotoolkit.factory.Hints;
+import org.geotoolkit.feature.LenientFeatureFactory;
 import org.geotoolkit.xml.DomCompare;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureFactory;
+import org.opengis.feature.Property;
 import static org.junit.Assert.*;
 import org.xml.sax.SAXException;
 
@@ -47,7 +53,9 @@ public class DataTest {
 
     private static final double DELTA = 0.000000000001;
     private static final String pathToTestFile = "src/test/resources/org/geotoolkit/data/kml/data.kml";
-
+    private static final FeatureFactory FF = FactoryFinder.getFeatureFactory(
+            new Hints(Hints.FEATURE_FACTORY, LenientFeatureFactory.class));
+    
     public DataTest() {
     }
 
@@ -75,14 +83,13 @@ public class DataTest {
         final Kml kmlObjects = reader.read();
         reader.dispose();
 
-        final AbstractFeature feature = kmlObjects.getAbstractFeature();
-        assertTrue(feature instanceof Placemark);
-        Placemark placemark = (Placemark) feature;
-        assertEquals("Club house", placemark.getFeatureName());
+        final Feature placemark = kmlObjects.getAbstractFeature();
+        assertTrue(placemark.getType().equals(KmlModelConstants.TYPE_PLACEMARK));
+        assertEquals("Club house", placemark.getProperty(KmlModelConstants.ATT_NAME.getName()).getValue());
 
-        final Object  dataContainer = placemark.getExtendedData();
+        final Object dataContainer = placemark.getProperty(KmlModelConstants.ATT_EXTENDED_DATA.getName()).getValue();
         assertTrue(dataContainer instanceof ExtendedData);
-        final ExtendedData extendedData = (ExtendedData) placemark.getExtendedData();
+        final ExtendedData extendedData = (ExtendedData) dataContainer;
         assertEquals(3, extendedData.getDatas().size());
 
         final Data data0 = extendedData.getDatas().get(0);
@@ -102,7 +109,7 @@ public class DataTest {
     public void dataWriteTest() throws KmlException, IOException, XMLStreamException, ParserConfigurationException, SAXException, URISyntaxException {
         final KmlFactory kmlFactory = new DefaultKmlFactory();
 
-        Placemark placemark = kmlFactory.createPlacemark();
+        Feature placemark = kmlFactory.createPlacemark();
 
         ExtendedData extendedData = kmlFactory.createExtendedData();
 
@@ -120,8 +127,9 @@ public class DataTest {
 
         extendedData.setDatas(Arrays.asList(data0, data1, data2));
 
-        placemark.setFeatureName("Club house");
-        placemark.setExtendedData(extendedData);
+        Collection<Property> placemarkProperties = placemark.getProperties();
+        placemarkProperties.add(FF.createAttribute("Club house", KmlModelConstants.ATT_NAME, null));
+        placemarkProperties.add(FF.createAttribute(extendedData, KmlModelConstants.ATT_EXTENDED_DATA, null));
 
         final Kml kml = kmlFactory.createKml(null, placemark, null, null);
 

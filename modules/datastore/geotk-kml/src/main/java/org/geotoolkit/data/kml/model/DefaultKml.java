@@ -18,6 +18,7 @@ package org.geotoolkit.data.kml.model;
 
 import java.util.List;
 import org.geotoolkit.data.kml.xsd.SimpleType;
+import org.opengis.feature.Feature;
 import static org.geotoolkit.data.kml.xml.KmlConstants.*;
 
 /**
@@ -29,7 +30,7 @@ public class DefaultKml implements Kml {
     private final Extensions extensions = new Extensions();
     private String version = URI_KML_2_2;
     private NetworkLinkControl networkLinkControl;
-    private AbstractFeature abstractFeature;
+    private Feature abstractFeature;
 
     /**
      *
@@ -45,7 +46,7 @@ public class DefaultKml implements Kml {
      * @param kmlObjectExtensions
      */
     public DefaultKml(NetworkLinkControl networkLinkControl,
-            AbstractFeature abstractFeature,
+            Feature abstractFeature,
             List<SimpleType> kmlSimpleExtensions,
             List<AbstractObject> kmlObjectExtensions) {
         this.networkLinkControl = networkLinkControl;
@@ -81,7 +82,7 @@ public class DefaultKml implements Kml {
      * @{@inheritDoc }
      */
     @Override
-    public AbstractFeature getAbstractFeature() {
+    public Feature getAbstractFeature() {
         return this.abstractFeature;
     }
 
@@ -112,7 +113,7 @@ public class DefaultKml implements Kml {
      * @{@inheritDoc }
      */
     @Override
-    public void setAbstractFeature(AbstractFeature feature) {
+    public void setAbstractFeature(Feature feature) {
         this.abstractFeature = feature;
     }
 

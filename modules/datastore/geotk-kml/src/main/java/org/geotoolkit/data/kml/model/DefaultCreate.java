@@ -17,6 +17,7 @@
 package org.geotoolkit.data.kml.model;
 
 import java.util.List;
+import org.opengis.feature.Feature;
 import static java.util.Collections.*;
 
 /**
@@ -25,7 +26,7 @@ import static java.util.Collections.*;
  */
 public class DefaultCreate implements Create {
 
-    private List<AbstractContainer> containers;
+    private List<Feature> containers;
 
     /**
      *
@@ -38,7 +39,7 @@ public class DefaultCreate implements Create {
      * 
      * @param containers
      */
-    public DefaultCreate(List<AbstractContainer> containers) {
+    public DefaultCreate(List<Feature> containers) {
         this.containers = (containers == null) ? EMPTY_LIST : containers;
     }
 
@@ -47,7 +48,7 @@ public class DefaultCreate implements Create {
      * @{@inheritDoc }
      */
     @Override
-    public List<AbstractContainer> getContainers() {
+    public List<Feature> getContainers() {
         return this.containers;
     }
 
@@ -56,7 +57,7 @@ public class DefaultCreate implements Create {
      * @{@inheritDoc }
      */
     @Override
-    public void setContainers(List<AbstractContainer> containers) {
+    public void setContainers(List<Feature> containers) {
         this.containers = containers;
     }
 }

@@ -305,4 +305,5 @@ public final class KmlConstants {
     public static final double DEF_Y = 1.0;
     public static final double DEF_Z = 1.0;
 
+    private KmlConstants(){}
 }

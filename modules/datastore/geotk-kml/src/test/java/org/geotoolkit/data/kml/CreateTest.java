@@ -23,26 +23,32 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Iterator;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
-import org.geotoolkit.data.kml.model.AbstractContainer;
-import org.geotoolkit.data.kml.model.AbstractFeature;
 import org.geotoolkit.data.kml.model.Coordinates;
 import org.geotoolkit.data.kml.model.Create;
-import org.geotoolkit.data.kml.model.Document;
+import org.geotoolkit.data.kml.model.IdAttributes;
 import org.geotoolkit.data.kml.model.Kml;
 import org.geotoolkit.data.kml.model.KmlException;
+import org.geotoolkit.data.kml.model.KmlModelConstants;
 import org.geotoolkit.data.kml.model.NetworkLinkControl;
-import org.geotoolkit.data.kml.model.Placemark;
 import org.geotoolkit.data.kml.model.Point;
 import org.geotoolkit.data.kml.model.Update;
 import org.geotoolkit.data.kml.xml.KmlWriter;
+import org.geotoolkit.factory.FactoryFinder;
+import org.geotoolkit.factory.Hints;
+import org.geotoolkit.feature.LenientFeatureFactory;
 import org.geotoolkit.xml.DomCompare;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureFactory;
+import org.opengis.feature.Property;
 import static org.junit.Assert.*;
 import org.xml.sax.SAXException;
 
@@ -54,7 +60,9 @@ public class CreateTest {
 
     private static final double DELTA = 0.000000000001;
     private static final String pathToTestFile = "src/test/resources/org/geotoolkit/data/kml/create.kml";
-
+    private static final FeatureFactory FF = FactoryFinder.getFeatureFactory(
+            new Hints(Hints.FEATURE_FACTORY, LenientFeatureFactory.class));
+    
     public CreateTest() {
     }
 
@@ -92,25 +100,32 @@ public class CreateTest {
         Create create = (Create) update.getUpdates().get(0);
 
         assertEquals(1, create.getContainers().size());
-        assertTrue(create.getContainers().get(0) instanceof Document);
-        final Document document = (Document) create.getContainers().get(0);
-        assertEquals("region24", document.getIdAttributes().getTargetId());
+        assertTrue(create.getContainers().get(0) instanceof Feature);
+        assertTrue(((Feature) create.getContainers().get(0)).getType().equals(KmlModelConstants.TYPE_DOCUMENT));
+        final Feature document = (Feature) create.getContainers().get(0);
+        assertEquals("region24",((IdAttributes) document.getProperty(KmlModelConstants.ATT_ID_ATTRIBUTES.getName()).getValue()).getTargetId());
 
-        assertEquals(1, document.getAbstractFeatures().size());
-        assertTrue(document.getAbstractFeatures().get(0) instanceof Placemark);
-        final Placemark placemark = (Placemark) document.getAbstractFeatures().get(0);
-        assertTrue(placemark.getAbstractGeometry() instanceof Point);
-        assertEquals("placemark891",placemark.getIdAttributes().getId());
+        assertEquals(1, document.getProperties(KmlModelConstants.ATT_DOCUMENT_FEATURES.getName()).size());
+        Iterator i;
+        i = document.getProperties(KmlModelConstants.ATT_DOCUMENT_FEATURES.getName()).iterator();
+        if(i.hasNext()){
+            final Object object = ((Property) i.next()).getValue();
+            assertTrue(object instanceof Feature);
+            final Feature placemark = (Feature) object;
+            assertTrue(placemark.getType().equals(KmlModelConstants.TYPE_PLACEMARK));
+            assertTrue(placemark.getProperty(KmlModelConstants.ATT_PLACEMARK_GEOMETRY.getName()).getValue() instanceof Point);
 
-        final Point point = (Point) placemark.getAbstractGeometry();
-        final Coordinates coordinates = point.getCoordinateSequence();
-        assertEquals(1, coordinates.size());
+            assertEquals("placemark891",((IdAttributes) placemark.getProperty(KmlModelConstants.ATT_ID_ATTRIBUTES.getName()).getValue()).getId());
+            final Point point = (Point) placemark.getProperty(KmlModelConstants.ATT_PLACEMARK_GEOMETRY.getName()).getValue();
 
-        final Coordinate coordinate = coordinates.getCoordinate(0);
-        assertEquals(-95.48, coordinate.x, DELTA);
-        assertEquals(40.43, coordinate.y, DELTA);
-        assertEquals(0, coordinate.z, DELTA);
+            final Coordinates coordinates = point.getCoordinateSequence();
+            assertEquals(1, coordinates.size());
 
+            final Coordinate coordinate = coordinates.getCoordinate(0);
+            assertEquals(-95.48, coordinate.x, DELTA);
+            assertEquals(40.43, coordinate.y, DELTA);
+            assertEquals(0, coordinate.z, DELTA);
+        }
     }
 
     @Test
@@ -122,16 +137,20 @@ public class CreateTest {
 
         Point point = kmlFactory.createPoint(coordinates);
 
-        Placemark placemark = kmlFactory.createPlacemark();
-        placemark.setIdAttributes(kmlFactory.createIdAttributes("placemark891", null));
-        placemark.setAbstractGeometry(point);
+        Feature placemark = kmlFactory.createPlacemark();
+        Collection<Property> placemarkProperties = placemark.getProperties();
+        IdAttributes placemarkIdAttributes = kmlFactory.createIdAttributes("placemark891", null);
+        placemarkProperties.add(FF.createAttribute(placemarkIdAttributes, KmlModelConstants.ATT_ID_ATTRIBUTES, null));
+        placemarkProperties.add(FF.createAttribute(point, KmlModelConstants.ATT_PLACEMARK_GEOMETRY, null));
 
-        Document document = kmlFactory.createDocument();
-        document.setAbstractFeatures(Arrays.asList((AbstractFeature) placemark));
-        document.setIdAttributes(kmlFactory.createIdAttributes(null, "region24"));
+        Feature document = kmlFactory.createDocument();
+        Collection<Property> documentProperties = document.getProperties();
+        documentProperties.add(FF.createAttribute(placemark, KmlModelConstants.ATT_DOCUMENT_FEATURES, null));
+        IdAttributes documentIdAttributes = kmlFactory.createIdAttributes(null, "region24");
+        documentProperties.add(FF.createAttribute(documentIdAttributes, KmlModelConstants.ATT_ID_ATTRIBUTES, null));
 
         Create create = kmlFactory.createCreate();
-        create.setContainers(Arrays.asList((AbstractContainer) document));
+        create.setContainers(Arrays.asList(document));
 
         URI targetHref = new URI("http://myserver.com/Point.kml");
 

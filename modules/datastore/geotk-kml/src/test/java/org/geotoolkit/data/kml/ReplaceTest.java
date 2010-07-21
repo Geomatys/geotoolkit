@@ -24,20 +24,24 @@ import java.net.URI;
 import java.util.Arrays;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
-import org.geotoolkit.data.kml.model.GroundOverlay;
 import org.geotoolkit.data.kml.model.Kml;
 import org.geotoolkit.data.kml.model.KmlException;
+import org.geotoolkit.data.kml.model.KmlModelConstants;
 import org.geotoolkit.data.kml.model.NetworkLinkControl;
-import org.geotoolkit.data.kml.model.Placemark;
 import org.geotoolkit.data.kml.model.Update;
 import org.geotoolkit.data.kml.xml.KmlConstants;
 import org.geotoolkit.data.kml.xml.KmlWriter;
+import org.geotoolkit.factory.FactoryFinder;
+import org.geotoolkit.factory.Hints;
+import org.geotoolkit.feature.LenientFeatureFactory;
 import org.geotoolkit.xml.DomCompare;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureFactory;
 import static org.junit.Assert.*;
 import org.xml.sax.SAXException;
 
@@ -49,6 +53,8 @@ public class ReplaceTest {
 
     private static final double DELTA = 0.000000000001;
     private static final String pathToTestFile = "src/test/resources/org/geotoolkit/data/kml/replace.kml";
+    private static final FeatureFactory FF = FactoryFinder.getFeatureFactory(
+            new Hints(Hints.FEATURE_FACTORY, LenientFeatureFactory.class));
 
     public ReplaceTest() {
     }
@@ -83,27 +89,30 @@ public class ReplaceTest {
         assertEquals("http://chezmoi.com/tests.kml", targetHref.toString());
 
         assertEquals(2, update.getUpdates().size());
-        assertTrue(update.getUpdates().get(0) instanceof Placemark);
-        assertEquals("Replace placemark",((Placemark)update.getUpdates().get(0)).getFeatureName());
+        assertTrue(update.getUpdates().get(0) instanceof Feature);
+        Feature placemark = (Feature) update.getUpdates().get(0);
+        assertTrue(placemark.getType().equals(KmlModelConstants.TYPE_PLACEMARK));
+        assertEquals("Replace placemark", placemark.getProperty(KmlModelConstants.ATT_NAME.getName()).getValue());
 
-        assertTrue(update.getUpdates().get(1) instanceof GroundOverlay);
-        assertEquals("Replace overlay",((GroundOverlay)update.getUpdates().get(1)).getFeatureName());
+        assertTrue(update.getUpdates().get(1) instanceof Feature);
+        Feature groundOverlay = (Feature) update.getUpdates().get(1);
+        assertTrue(groundOverlay.getType().equals(KmlModelConstants.TYPE_GROUND_OVERLAY));
+        assertEquals("Replace overlay", groundOverlay.getProperty(KmlModelConstants.ATT_NAME.getName()).getValue());
 
     }
 
     @Test
-    public void replaceWriteTest() 
+    public void replaceWriteTest()
             throws KmlException, IOException,
             XMLStreamException, ParserConfigurationException,
             SAXException, URISyntaxException {
-
         final KmlFactory kmlFactory = new DefaultKmlFactory();
 
-        final Placemark placemark = kmlFactory.createPlacemark();
-        placemark.setFeatureName("Replace placemark");
+        final Feature placemark = kmlFactory.createPlacemark();
+        placemark.getProperties().add(FF.createAttribute("Replace placemark", KmlModelConstants.ATT_NAME, null));
 
-        final GroundOverlay groundOverlay = kmlFactory.createGroundOverlay();
-        groundOverlay.setFeatureName("Replace overlay");
+        final Feature groundOverlay = kmlFactory.createGroundOverlay();
+        groundOverlay.getProperties().add(FF.createAttribute("Replace overlay", KmlModelConstants.ATT_NAME, null));
 
         URI targetHref = new URI("http://chezmoi.com/tests.kml");
 
@@ -125,9 +134,8 @@ public class ReplaceTest {
         writer.setOutput(temp);
         writer.write(kml);
         writer.dispose();
-        
+
         DomCompare.compare(
                 new File(pathToTestFile), temp);
-
     }
 }

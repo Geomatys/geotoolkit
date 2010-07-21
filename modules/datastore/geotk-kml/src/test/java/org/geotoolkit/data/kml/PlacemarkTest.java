@@ -20,25 +20,31 @@ import com.vividsolutions.jts.geom.Coordinate;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collection;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
-import org.geotoolkit.data.kml.model.AbstractFeature;
 import org.geotoolkit.data.kml.model.AbstractGeometry;
 import org.geotoolkit.data.kml.model.AbstractView;
 import org.geotoolkit.data.kml.model.Coordinates;
 import org.geotoolkit.data.kml.model.Kml;
 import org.geotoolkit.data.kml.model.KmlException;
+import org.geotoolkit.data.kml.model.KmlModelConstants;
 import org.geotoolkit.data.kml.model.LookAt;
-import org.geotoolkit.data.kml.model.Placemark;
 import org.geotoolkit.data.kml.model.Point;
 import org.geotoolkit.data.kml.xml.KmlReader;
 import org.geotoolkit.data.kml.xml.KmlWriter;
+import org.geotoolkit.factory.FactoryFinder;
+import org.geotoolkit.factory.Hints;
+import org.geotoolkit.feature.LenientFeatureFactory;
 import org.geotoolkit.xml.DomCompare;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureFactory;
+import org.opengis.feature.Property;
 import org.xml.sax.SAXException;
 import static org.junit.Assert.*;
 
@@ -50,6 +56,8 @@ public class PlacemarkTest {
 
     private static final double DELTA = 0.000000000001;
     private static final String pathToTestFile = "src/test/resources/org/geotoolkit/data/kml/placemark.kml";
+    private static final FeatureFactory FF = FactoryFinder.getFeatureFactory(
+            new Hints(Hints.FEATURE_FACTORY, LenientFeatureFactory.class));
 
     public PlacemarkTest() {
     }
@@ -78,13 +86,12 @@ public class PlacemarkTest {
         final Kml kmlObjects = reader.read();
         reader.dispose();
 
-        final AbstractFeature feature = kmlObjects.getAbstractFeature();
-        assertTrue(feature instanceof Placemark);
-        Placemark placemark = (Placemark) feature;
-        assertEquals("Google Earth - New Placemark",placemark.getFeatureName());
-        assertEquals("Some Descriptive text.",placemark.getDescription());
+        final Feature placemark = kmlObjects.getAbstractFeature();
+        assertTrue(placemark.getType().equals(KmlModelConstants.TYPE_PLACEMARK));
+        assertEquals("Google Earth - New Placemark", placemark.getProperty(KmlModelConstants.ATT_NAME.getName()).getValue());
+        assertEquals("Some Descriptive text.", placemark.getProperty(KmlModelConstants.ATT_DESCRIPTION.getName()).getValue());
 
-        final AbstractView view = placemark.getView();
+        final AbstractView view = (AbstractView) placemark.getProperty(KmlModelConstants.ATT_VIEW.getName()).getValue();
         assertTrue(view instanceof LookAt);
         LookAt lookAt = (LookAt) view;
         assertEquals(-90.86879847669974, lookAt.getLongitude(), DELTA);
@@ -93,7 +100,7 @@ public class PlacemarkTest {
         assertEquals(8.3, lookAt.getTilt(), DELTA);
         assertEquals(440.8, lookAt.getRange(), DELTA);
 
-        final AbstractGeometry geometry = placemark.getAbstractGeometry();
+        final AbstractGeometry geometry = (AbstractGeometry) placemark.getProperty(KmlModelConstants.ATT_PLACEMARK_GEOMETRY.getName()).getValue();
         assertTrue(geometry instanceof Point);
         Point point = (Point) geometry;
         final Coordinates coordinates = point.getCoordinateSequence();
@@ -119,11 +126,12 @@ public class PlacemarkTest {
         lookAt.setTilt(8.3);
         lookAt.setRange(440.8);
 
-        final Placemark placemark = kmlFactory.createPlacemark();
-        placemark.setFeatureName("Google Earth - New Placemark");
-        placemark.setDescription("Some Descriptive text.");
-        placemark.setView(lookAt);
-        placemark.setAbstractGeometry(point);
+        final Feature placemark = kmlFactory.createPlacemark();
+        Collection<Property> placemarkProperties = placemark.getProperties();
+        placemarkProperties.add(FF.createAttribute("Google Earth - New Placemark", KmlModelConstants.ATT_NAME, null));
+        placemarkProperties.add(FF.createAttribute("Some Descriptive text.", KmlModelConstants.ATT_DESCRIPTION, null));
+        placemarkProperties.add(FF.createAttribute(lookAt, KmlModelConstants.ATT_VIEW, null));
+        placemarkProperties.add(FF.createAttribute(point, KmlModelConstants.ATT_PLACEMARK_GEOMETRY, null));
 
         final Kml kml = kmlFactory.createKml(null, placemark, null, null);
 
@@ -138,5 +146,4 @@ public class PlacemarkTest {
         DomCompare.compare(
                  new File(pathToTestFile), temp);
     }
-
 }

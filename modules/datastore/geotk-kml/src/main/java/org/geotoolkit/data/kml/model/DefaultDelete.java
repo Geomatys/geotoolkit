@@ -17,6 +17,7 @@
 package org.geotoolkit.data.kml.model;
 
 import java.util.List;
+import org.opengis.feature.Feature;
 import static java.util.Collections.*;
 
 /**
@@ -25,7 +26,7 @@ import static java.util.Collections.*;
  */
 public class DefaultDelete implements Delete {
 
-    private List<AbstractFeature> features;
+    private List<Feature> features;
 
     /**
      * 
@@ -38,7 +39,7 @@ public class DefaultDelete implements Delete {
      * 
      * @param features
      */
-    public DefaultDelete(List<AbstractFeature> features) {
+    public DefaultDelete(List<Feature> features) {
         this.features = (features == null) ? EMPTY_LIST : features;
     }
 
@@ -47,7 +48,7 @@ public class DefaultDelete implements Delete {
      * @{@inheritDoc }
      */
     @Override
-    public List<AbstractFeature> getFeatures() {
+    public List<Feature> getFeatures() {
         return this.features;
     }
 
@@ -56,7 +57,7 @@ public class DefaultDelete implements Delete {
      * @{@inheritDoc }
      */
     @Override
-    public void setFeatures(List<AbstractFeature> features) {
+    public void setFeatures(List<Feature> features) {
         this.features = features;
     }
 }

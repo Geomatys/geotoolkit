@@ -23,8 +23,6 @@ import java.util.Calendar;
 import java.util.List;
 import org.geotoolkit.atom.model.AtomPersonConstruct;
 import org.geotoolkit.atom.model.AtomLink;
-import org.geotoolkit.data.kml.model.AbstractContainer;
-import org.geotoolkit.data.kml.model.AbstractFeature;
 import org.geotoolkit.data.kml.model.AbstractGeometry;
 import org.geotoolkit.data.kml.model.AbstractObject;
 import org.geotoolkit.data.kml.model.AbstractStyleSelector;
@@ -43,11 +41,8 @@ import org.geotoolkit.data.kml.model.Create;
 import org.geotoolkit.data.kml.model.Data;
 import org.geotoolkit.data.kml.model.Delete;
 import org.geotoolkit.data.kml.model.DisplayMode;
-import org.geotoolkit.data.kml.model.Document;
 import org.geotoolkit.data.kml.model.ExtendedData;
-import org.geotoolkit.data.kml.model.Folder;
 import org.geotoolkit.data.kml.model.GridOrigin;
-import org.geotoolkit.data.kml.model.GroundOverlay;
 import org.geotoolkit.data.kml.model.Icon;
 import org.geotoolkit.data.kml.model.IconStyle;
 import org.geotoolkit.data.kml.model.IdAttributes;
@@ -70,12 +65,9 @@ import org.geotoolkit.data.kml.model.LookAt;
 import org.geotoolkit.data.kml.model.Metadata;
 import org.geotoolkit.data.kml.model.Model;
 import org.geotoolkit.data.kml.model.MultiGeometry;
-import org.geotoolkit.data.kml.model.NetworkLink;
 import org.geotoolkit.data.kml.model.NetworkLinkControl;
 import org.geotoolkit.data.kml.model.Orientation;
 import org.geotoolkit.data.kml.model.Pair;
-import org.geotoolkit.data.kml.model.PhotoOverlay;
-import org.geotoolkit.data.kml.model.Placemark;
 import org.geotoolkit.data.kml.model.Point;
 import org.geotoolkit.data.kml.model.PolyStyle;
 import org.geotoolkit.data.kml.model.Polygon;
@@ -85,7 +77,6 @@ import org.geotoolkit.data.kml.model.ResourceMap;
 import org.geotoolkit.data.kml.model.Scale;
 import org.geotoolkit.data.kml.model.Schema;
 import org.geotoolkit.data.kml.model.SchemaData;
-import org.geotoolkit.data.kml.model.ScreenOverlay;
 import org.geotoolkit.data.kml.model.Shape;
 import org.geotoolkit.data.kml.model.SimpleData;
 import org.geotoolkit.data.kml.model.SimpleField;
@@ -103,6 +94,7 @@ import org.geotoolkit.data.kml.model.ViewRefreshMode;
 import org.geotoolkit.data.kml.model.ViewVolume;
 import org.geotoolkit.xal.model.AddressDetails;
 import org.geotoolkit.data.kml.xsd.SimpleType;
+import org.opengis.feature.Feature;
 
 /**
  * <p>This interface recapitulates the methods allowing
@@ -121,7 +113,7 @@ public interface KmlFactory {
      * @return The Kml object.
      */
     public Kml createKml(NetworkLinkControl networkLinkControl,
-            AbstractFeature abstractFeature,
+            Feature abstractFeature,
             List<SimpleType> kmlSimpleExtension,
             List<AbstractObject> kmlObjectExtensions);
 
@@ -245,7 +237,7 @@ public interface KmlFactory {
      * @param objects
      * @return
      */
-    public Change createChange(List<AbstractObject> objects);
+    public Change createChange(List<Object> objects);
 
     /**
      * 
@@ -289,7 +281,7 @@ public interface KmlFactory {
      * @param containers
      * @return
      */
-    public Create createCreate(List<AbstractContainer> containers);
+    public Create createCreate(List<Feature> containers);
 
     /**
      * 
@@ -321,7 +313,7 @@ public interface KmlFactory {
      * @param features
      * @return
      */
-    public Delete createDelete(List<AbstractFeature> features);
+    public Delete createDelete(List<Feature> features);
 
     /**
      * 
@@ -359,7 +351,7 @@ public interface KmlFactory {
      * @param documentObjectExtensions
      * @return
      */
-    public Document createDocument(List<SimpleType> objectSimpleExtensions,
+    public Feature createDocument(List<SimpleType> objectSimpleExtensions,
             IdAttributes idAttributes,
             String name, boolean visibility, boolean open,
             AtomPersonConstruct author, AtomLink link,
@@ -372,7 +364,7 @@ public interface KmlFactory {
             List<AbstractObject> abstractFeatureObjectExtensions,
             List<SimpleType> abstractContainerSimpleExtensions,
             List<AbstractObject> abstractContainerObjectExtensions,
-            List<Schema> schemas, List<AbstractFeature> features,
+            List<Schema> schemas, List<Feature> features,
             List<SimpleType> documentSimpleExtensions,
             List<AbstractObject> documentObjectExtensions);
 
@@ -380,7 +372,7 @@ public interface KmlFactory {
      * 
      * @return
      */
-    public Document createDocument();
+    public Feature createDocument();
 
     /**
      *
@@ -427,7 +419,7 @@ public interface KmlFactory {
      * @param folderObjectExtensions
      * @return
      */
-    public Folder createFolder(List<SimpleType> objectSimpleExtensions,
+    public Feature createFolder(List<SimpleType> objectSimpleExtensions,
             IdAttributes idAttributes,
             String name, boolean visibility, boolean open,
             AtomPersonConstruct author, AtomLink link,
@@ -440,7 +432,7 @@ public interface KmlFactory {
             List<AbstractObject> abstractFeatureObjectExtensions,
             List<SimpleType> abstractContainerSimpleExtensions,
             List<AbstractObject> abstractContainerObjectExtensions,
-            List<AbstractFeature> features,
+            List<Feature> features,
             List<SimpleType> folderSimpleExtensions,
             List<AbstractObject> folderObjectExtensions);
 
@@ -448,7 +440,7 @@ public interface KmlFactory {
      * 
      * @return
      */
-    public Folder createFolder();
+    public Feature createFolder();
 
     /**
      *
@@ -484,7 +476,7 @@ public interface KmlFactory {
      * @param groundOverlayObjectExtensions
      * @return
      */
-    public GroundOverlay createGroundOverlay(List<SimpleType> objectSimpleExtensions,
+    public Feature createGroundOverlay(List<SimpleType> objectSimpleExtensions,
             IdAttributes idAttributes,
             String name, boolean visibility, boolean open,
             AtomPersonConstruct author, AtomLink link,
@@ -504,7 +496,7 @@ public interface KmlFactory {
      * 
      * @return
      */
-    public GroundOverlay createGroundOverlay();
+    public Feature createGroundOverlay();
 
     /**
      * 
@@ -1023,7 +1015,7 @@ public interface KmlFactory {
      * @param networkLinkObjectExtensions
      * @return
      */
-     public NetworkLink createNetworkLink(List<SimpleType> objectSimpleExtensions,
+     public Feature createNetworkLink(List<SimpleType> objectSimpleExtensions,
              IdAttributes idAttributes,
             String name, boolean visibility, boolean open,
             AtomPersonConstruct author, AtomLink atomLink,
@@ -1042,7 +1034,7 @@ public interface KmlFactory {
       * 
       * @return
       */
-     public NetworkLink createNetworkLink();
+     public Feature createNetworkLink();
 
     /**
      *
@@ -1155,7 +1147,7 @@ public interface KmlFactory {
      * @param photoOverlayObjectExtensions
      * @return
      */
-    public PhotoOverlay createPhotoOverlay(
+    public Feature createPhotoOverlay(
             List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
             String name, boolean visibility, boolean open,
             AtomPersonConstruct author, AtomLink link,
@@ -1178,7 +1170,7 @@ public interface KmlFactory {
      * 
      * @return
      */
-    public PhotoOverlay createPhotoOverlay();
+    public Feature createPhotoOverlay();
 
     /**
      *
@@ -1207,7 +1199,7 @@ public interface KmlFactory {
      * @param placemarkObjectExtension
      * @return
      */
-    public Placemark createPlacemark(List<SimpleType> objectSimpleExtensions,
+    public Feature createPlacemark(List<SimpleType> objectSimpleExtensions,
             IdAttributes idAttributes,
             String name,
             boolean visibility,
@@ -1231,7 +1223,7 @@ public interface KmlFactory {
      * 
      * @return
      */
-    public Placemark createPlacemark();
+    public Feature createPlacemark();
 
     /**
      *
@@ -1461,7 +1453,7 @@ public interface KmlFactory {
      * @param screenOverlayObjectExtensions
      * @return
      */
-    public ScreenOverlay createScreenOverlay(List<SimpleType> objectSimpleExtensions,
+    public Feature createScreenOverlay(List<SimpleType> objectSimpleExtensions,
             IdAttributes idAttributes,
             String name, boolean visibility, boolean open,
             AtomPersonConstruct author, AtomLink link,
@@ -1481,7 +1473,7 @@ public interface KmlFactory {
      *
      * @return
      */
-    public ScreenOverlay createScreenOverlay();
+    public Feature createScreenOverlay();
     /**
      *
      * @param name

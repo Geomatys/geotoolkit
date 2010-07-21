@@ -20,24 +20,28 @@ import org.geotoolkit.data.kml.xml.KmlReader;
 import org.geotoolkit.data.kml.xml.KmlWriter;
 import java.io.File;
 import java.io.IOException;
+import java.util.Collection;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
-import org.geotoolkit.data.kml.model.AbstractFeature;
-import org.geotoolkit.data.kml.model.AbstractView;
 import org.geotoolkit.data.kml.model.EnumAltitudeMode;
 import org.geotoolkit.data.kml.model.Camera;
 import org.geotoolkit.data.kml.model.Kml;
 import org.geotoolkit.data.kml.model.KmlException;
-import org.geotoolkit.data.kml.model.PhotoOverlay;
+import org.geotoolkit.data.kml.model.KmlModelConstants;
+import org.geotoolkit.factory.FactoryFinder;
+import org.geotoolkit.factory.Hints;
+import org.geotoolkit.feature.LenientFeatureFactory;
 import org.geotoolkit.xml.DomCompare;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureFactory;
+import org.opengis.feature.Property;
 import static org.junit.Assert.*;
 import org.xml.sax.SAXException;
-import static org.geotoolkit.data.kml.xml.KmlConstants.*;
 
 /**
  *
@@ -47,6 +51,8 @@ public class CameraTest {
 
     private static final double DELTA = 0.000000000001;
     private static final String pathToTestFile = "src/test/resources/org/geotoolkit/data/kml/camera.kml";
+    private static final FeatureFactory FF = FactoryFinder.getFeatureFactory(
+            new Hints(Hints.FEATURE_FACTORY, LenientFeatureFactory.class));
 
     public CameraTest() {
     }
@@ -75,12 +81,11 @@ public class CameraTest {
         final Kml kmlObjects = reader.read();
         reader.dispose();
 
-        final AbstractFeature feature = kmlObjects.getAbstractFeature();
-        assertTrue(feature instanceof PhotoOverlay);
-        final AbstractView view = ((PhotoOverlay) feature).getView();
-        assertTrue(view instanceof Camera);
+        final Feature feature = kmlObjects.getAbstractFeature();
+        assertTrue(feature.getType().equals(KmlModelConstants.TYPE_PHOTO_OVERLAY));
+        assertTrue(feature.getProperty(KmlModelConstants.ATT_VIEW.getName()).getValue() instanceof Camera);
 
-        final Camera camera = (Camera) view;
+        final Camera camera = (Camera) feature.getProperty(KmlModelConstants.ATT_VIEW.getName()).getValue();
         assertEquals(4, camera.getLongitude(), DELTA);
         assertEquals(43, camera.getLatitude(), DELTA);
         assertEquals(625, camera.getAltitude(), DELTA);
@@ -110,12 +115,10 @@ public class CameraTest {
         camera.setTilt(tilt);
         camera.setRoll(roll);
         camera.setAltitudeMode(EnumAltitudeMode.RELATIVE_TO_GROUND);
-        final PhotoOverlay photoOverlay = kmlFactory.createPhotoOverlay();
-        photoOverlay.setView(camera);
-        photoOverlay.setVisibility(DEF_VISIBILITY);
-        photoOverlay.setOpen(DEF_OPEN);
-        photoOverlay.setDrawOrder(DEF_DRAW_ORDER);
-        photoOverlay.setRotation(DEF_ROTATION);
+        final Feature photoOverlay = kmlFactory.createPhotoOverlay();
+
+        Collection<Property> documentProperties = photoOverlay.getProperties();
+        documentProperties.add(FF.createAttribute(camera, KmlModelConstants.ATT_VIEW, null));
         final Kml kml = kmlFactory.createKml(null, photoOverlay, null, null);
 
         File temp = File.createTempFile("testCamera", ".kml");
