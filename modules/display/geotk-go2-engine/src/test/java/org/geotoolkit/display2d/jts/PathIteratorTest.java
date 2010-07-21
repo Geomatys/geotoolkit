@@ -95,14 +95,6 @@ public class PathIteratorTest {
 
         assertFalse(ite.isDone());
         type = ite.currentSegment(buffer);
-        assertEquals(PathIterator.SEG_CLOSE, type);
-        ite.next();
-
-
-
-
-        assertFalse(ite.isDone());
-        type = ite.currentSegment(buffer);
         assertEquals(3, buffer[0], DELTA);
         assertEquals(1, buffer[1], DELTA);
         assertEquals(PathIterator.SEG_MOVETO, type);
@@ -120,11 +112,6 @@ public class PathIteratorTest {
         assertEquals(5, buffer[0], DELTA);
         assertEquals(2, buffer[1], DELTA);
         assertEquals(PathIterator.SEG_LINETO, type);
-        ite.next();
-
-        assertFalse(ite.isDone());
-        type = ite.currentSegment(buffer);
-        assertEquals(PathIterator.SEG_CLOSE, type);
         ite.next();
 
         assertTrue(ite.isDone());

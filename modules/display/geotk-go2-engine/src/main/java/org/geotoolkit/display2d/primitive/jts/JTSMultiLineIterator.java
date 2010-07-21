@@ -125,7 +125,7 @@ public final class JTSMultiLineIterator extends JTSGeometryIterator<MultiLineStr
      */
     @Override
     public void next() {
-        if(++currentCoord > coordinateCount){
+        if(++currentCoord >= coordinateCount){
             //we go to the size, even if we don't have a coordinate at this index,
             //to indicate we close the path
             //no more points in this segment

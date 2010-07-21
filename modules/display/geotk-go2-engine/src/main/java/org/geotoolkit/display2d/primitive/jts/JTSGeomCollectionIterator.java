@@ -37,7 +37,7 @@ public class JTSGeomCollectionIterator extends JTSGeometryIterator<GeometryColle
 
     protected int nbGeom = 1;
     protected int currentGeom;
-    protected PathIterator currentIterator;
+    protected JTSGeometryIterator currentIterator;
     protected boolean done = false;
 
     public JTSGeomCollectionIterator(GeometryCollection gc, AffineTransform trs) {
@@ -83,28 +83,28 @@ public class JTSGeomCollectionIterator extends JTSGeometryIterator<GeometryColle
 
         }else if (candidate instanceof Point) {
             if(currentIterator instanceof JTSPointIterator){
-                ((JTSPointIterator)currentIterator).setGeometry((Point)candidate);
+                currentIterator.setGeometry(candidate);
             }else{
                 currentIterator = new JTSPointIterator((Point)candidate, transform);
             }
 
         } else if (candidate instanceof Polygon) {
             if(currentIterator instanceof JTSPolygonIterator){
-                ((JTSPolygonIterator)currentIterator).setGeometry((Polygon)candidate);
+                currentIterator.setGeometry(candidate);
             }else{
                 currentIterator = new JTSPolygonIterator((Polygon)candidate, transform);
             }
 
         } else if (candidate instanceof LineString) {
             if(currentIterator instanceof JTSLineIterator){
-                ((JTSLineIterator)currentIterator).setGeometry((LineString)candidate);
+                currentIterator.setGeometry(candidate);
             }else{
                 currentIterator = new JTSLineIterator((LineString)candidate, transform);
             }
 
         } else if (candidate instanceof GeometryCollection) {
             if(currentIterator instanceof JTSGeomCollectionIterator){
-                ((JTSGeomCollectionIterator)currentIterator).setGeometry((GeometryCollection)candidate);
+                currentIterator.setGeometry(candidate);
             }else{
                 currentIterator = new JTSGeomCollectionIterator((GeometryCollection)candidate, transform);
             }
@@ -113,6 +113,14 @@ public class JTSGeomCollectionIterator extends JTSGeometryIterator<GeometryColle
             currentIterator = JTSEmptyIterator.INSTANCE;
         }
             
+    }
+
+    @Override
+    public void setTransform(AffineTransform trs) {
+        if(currentIterator != null){
+            currentIterator.setTransform(trs);
+        }
+        super.setTransform(trs);
     }
 
     /**
