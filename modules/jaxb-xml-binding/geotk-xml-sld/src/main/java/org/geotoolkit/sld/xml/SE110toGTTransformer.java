@@ -373,18 +373,22 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
         Expression result = Expression.NIL;
 
         final List<Serializable> sers = param.getContent();
-
-        for(final Serializable ser :sers){
-
-            if(ser instanceof String && !ser.toString().trim().isEmpty()){
-                result = filterFactory.literal((String)ser);
-                break;
-            }else if(ser instanceof JAXBElement<?>){
+        if (sers.size() == 1) {
+            final Serializable ser = sers.get(0);
+            if (ser instanceof String) {
+                result = filterFactory.literal((String) ser);
+            } else if (ser instanceof JAXBElement<?>) {
                 final JAXBElement<?> jax = (JAXBElement<?>) ser;
                 result = visitExpression(jax);
-                break;
             }
-
+        } else {
+            for (final Serializable ser : sers) {
+                if (ser instanceof JAXBElement<?>) {
+                    final JAXBElement<?> jax = (JAXBElement<?>) ser;
+                    result = visitExpression(jax);
+                    break;
+                }
+            }
         }
 
         return result;

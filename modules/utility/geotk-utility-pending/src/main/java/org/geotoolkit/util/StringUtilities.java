@@ -106,6 +106,21 @@ public final class StringUtilities {
     }
 
     /**
+     * Clean a string from its leading and trailing whitespaces, and the tabulation or end of line
+     * characters.
+     *
+     * @param s
+     * @return
+     */
+    public static String clean(String s) {
+        s = s.trim();
+        s = s.replace("\t", "");
+        s = s.replace("\n", "");
+        s = s.replace("\r", "");
+        return s;
+    }
+
+    /**
      * Clean a list of String by removing all the white space, tabulation and carriage in all the strings.
      *
      * @param list

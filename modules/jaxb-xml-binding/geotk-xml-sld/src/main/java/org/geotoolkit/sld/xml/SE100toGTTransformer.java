@@ -40,6 +40,7 @@ import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.StyleConstants;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.util.SimpleInternationalString;
+import org.geotoolkit.util.StringUtilities;
 
 import org.geotoolkit.util.logging.Logging;
 import org.opengis.filter.FilterFactory2;
@@ -169,17 +170,29 @@ public class SE100toGTTransformer extends OGC100toGTTransformer {
 
         }
 
-
-        if(css.getContent().size() >= 1){
-            for(final Object obj : css.getContent()){
-                if(obj instanceof String){
+        final List<Serializable> sers = css.getContent();
+        if (sers.size() > 1) {
+            for (Object obj : css.getContent()) {
+                if (obj instanceof String) {
+                    obj = StringUtilities.clean((String) obj);
+                    if (((String)obj).isEmpty()) {
+                        continue;
+                    }
                     return filterFactory.literal(obj);
-                }else if(obj instanceof JAXBElement){
-                    return visitExpression( (JAXBElement<?>)obj );
+                } else if (obj instanceof JAXBElement) {
+                    return visitExpression((JAXBElement<?>) obj);
                 }
             }
+        } else if (sers.size() == 1) {
+            Object obj = css.getContent().get(0);
+            if (obj instanceof String) {
+                obj = StringUtilities.clean((String) obj);
+                return filterFactory.literal(obj);
+            } else if (obj instanceof JAXBElement) {
+                return visitExpression((JAXBElement<?>) obj);
+            }
         }
-        
+
         return null;
     }
 
@@ -207,18 +220,22 @@ public class SE100toGTTransformer extends OGC100toGTTransformer {
         Expression result = Expression.NIL;
 
         final List<Serializable> sers = param.getContent();
-
-        for(final Serializable ser :sers){
-
-            if(ser instanceof String && !ser.toString().trim().isEmpty()){
-                result = filterFactory.literal((String)ser);
-                break;
-            }else if(ser instanceof JAXBElement<?>){
+        if (sers.size() == 1) {
+            final Serializable ser = sers.get(0);
+            if (ser instanceof String) {
+                result = filterFactory.literal((String) ser);
+            } else if (ser instanceof JAXBElement<?>) {
                 final JAXBElement<?> jax = (JAXBElement<?>) ser;
                 result = visitExpression(jax);
-                break;
             }
-
+        } else {
+            for (final Serializable ser : sers) {
+                if (ser instanceof JAXBElement<?>) {
+                    final JAXBElement<?> jax = (JAXBElement<?>) ser;
+                    result = visitExpression(jax);
+                    break;
+                }
+            }
         }
 
         return result;

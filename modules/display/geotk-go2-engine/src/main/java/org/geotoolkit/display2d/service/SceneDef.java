@@ -33,7 +33,7 @@ import org.geotoolkit.map.MapContext;
 public class SceneDef {
 
     private final List<PortrayalExtension> extensions = new ArrayList<PortrayalExtension>();
-    private Hints hints = null;
+    private Hints hints = new Hints();
     private MapContext context = null;
 
     public SceneDef() {
