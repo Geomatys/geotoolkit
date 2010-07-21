@@ -3,7 +3,7 @@
  *    http://www.geotoolkit.org
  *
  *    (C) 2004 - 2008, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2008 - 2009, Geomatys
+ *    (C) 2008 - 2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -17,25 +17,18 @@
  */
 package org.geotoolkit.display2d.primitive.jts;
 
-import java.awt.Rectangle;
-import java.awt.Shape;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.PathIterator;
-import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
-import java.util.logging.Level;
 
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryCollection;
 import com.vividsolutions.jts.geom.LineString;
-import com.vividsolutions.jts.geom.LinearRing;
+import com.vividsolutions.jts.geom.MultiLineString;
+import com.vividsolutions.jts.geom.MultiPoint;
+import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 
-import org.geotoolkit.util.logging.Logging;
 
 /**
  * A thin wrapper that adapts a JTS geometry to the Shape interface so that the geometry can be used
@@ -45,18 +38,12 @@ import org.geotoolkit.util.logging.Logging;
  * @version 2.9
  * @module pending
  */
-public class JTSGeometryJ2D implements Shape, Cloneable {
+public class JTSGeometryJ2D extends AbstractJTSGeometryJ2D<Geometry> {
 
     protected JTSGeometryIterator<? extends Geometry> iterator = null;
 
-    /** The wrapped JTS geometry */
-    protected Geometry geometry;
-
-    /** An additional AffineTransform */
-    protected final AffineTransform transform;
-
     public JTSGeometryJ2D(Geometry geom) {
-        this(geom, new AffineTransform());
+        super(geom);
     }
 
     /**
@@ -65,8 +52,7 @@ public class JTSGeometryJ2D implements Shape, Cloneable {
      * @param geom - the wrapped geometry
      */
     public JTSGeometryJ2D(Geometry geom, AffineTransform trs) {
-        this.geometry = geom;
-        this.transform = trs;
+        super(geom, trs);
     }
 
     /**
@@ -75,8 +61,9 @@ public class JTSGeometryJ2D implements Shape, Cloneable {
      *
      * @param g
      */
+    @Override
     public void setGeometry(Geometry g) {
-        this.geometry = g;
+        super.setGeometry(g);
 
         //change iterator only if necessary
         if(iterator != null && geometry != null){
@@ -96,92 +83,6 @@ public class JTSGeometryJ2D implements Shape, Cloneable {
             }
         }
 
-    }
-
-    /**
-     * @return the current wrapped geometry
-     */
-    public Geometry getGeometry() {
-        return geometry;
-    }
-
-    public AffineTransform getInverse(){
-        try {
-            return transform.createInverse();
-        } catch (NoninvertibleTransformException ex) {
-            Logging.getLogger(JTSGeometryJ2D.class.getName()).log(Level.SEVERE, null, ex);
-            return null;
-        }
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public boolean contains(Rectangle2D r) {
-        return contains(r.getMinX(),r.getMinY(),r.getWidth(),r.getHeight());
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public boolean contains(Point2D p) {
-        final AffineTransform inverse = getInverse();
-        inverse.transform(p, p);
-        final Coordinate coord = new Coordinate(p.getX(), p.getY());
-        final Geometry point = geometry.getFactory().createPoint(coord);
-        return geometry.contains(point);
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public boolean contains(double x, double y) {
-        final Point2D p = new Point2D.Double(x, y);
-        return contains(p);
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public boolean contains(double x, double y, double w, double h) {
-        Geometry rect = createRectangle(x, y, w, h);
-        return geometry.contains(rect);
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public Rectangle getBounds() {
-        final Envelope env = geometry.getEnvelopeInternal();
-        final Point2D p1 = new Point2D.Double(env.getMinX(), env.getMinY());
-        transform.transform(p1, p1);
-        final Point2D p2 = new Point2D.Double(env.getMaxX(), env.getMaxY());
-        transform.transform(p2, p2);
-        return new Rectangle(
-                (int)p1.getX(), (int)p1.getY(),
-                (int)(p2.getX()-p1.getX()),
-                (int)(p2.getY()-p1.getY()));
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public Rectangle2D getBounds2D() {
-        final Envelope env = geometry.getEnvelopeInternal();
-        final Point2D p1 = new Point2D.Double(env.getMinX(), env.getMinY());
-        transform.transform(p1, p1);
-        final Point2D p2 = new Point2D.Double(env.getMaxX(), env.getMaxY());
-        transform.transform(p2, p2);
-        return new Rectangle2D.Double(
-                p1.getX(),p1.getY(),
-                p2.getX()-p1.getX(),
-                p2.getY()-p1.getY());
     }
 
     /**
@@ -217,62 +118,30 @@ public class JTSGeometryJ2D implements Shape, Cloneable {
         return iterator;
     }
 
-    /**
-     * {@inheritDoc }
-     */
     @Override
-    public PathIterator getPathIterator(AffineTransform at, double flatness) {
-        return getPathIterator(at);
+    public AbstractJTSGeometryJ2D clone() {
+        return new JTSGeometryJ2D(this.geometry,this.transform);
     }
 
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public boolean intersects(Rectangle2D r) {
-        Geometry rect = createRectangle(
-                r.getMinX(),
-                r.getMinY(),
-                r.getWidth(),
-                r.getHeight());
-        return geometry.intersects(rect);
-    }
+    public static AbstractJTSGeometryJ2D best(Class clazz, AffineTransform trs){
+        if(Point.class.isAssignableFrom(clazz)){
+            return new JTSGeometryJ2D(null,trs);
+        }else if(MultiPoint.class.isAssignableFrom(clazz)){
+            return new JTSGeometryJ2D(null,trs);
+        }else if(LineString.class.isAssignableFrom(clazz)){
+            return new JTSGeometryJ2D(null,trs);
+        }else if(MultiLineString.class.isAssignableFrom(clazz)){
+            return new JTSMultiLineStringJ2D(null,trs);
+        }else if(Polygon.class.isAssignableFrom(clazz)){
+            return new JTSGeometryJ2D(null,trs);
+        }else if(MultiPolygon.class.isAssignableFrom(clazz)){
+            return new JTSGeometryJ2D(null,trs);
+        }else if(Geometry.class.isAssignableFrom(clazz)){
+            //undeterminated type
+            return new JTSGeometryJ2D(null,trs);
+        }
 
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public boolean intersects(double x, double y, double w, double h) {
-        Geometry rect = createRectangle(x, y, w, h);
-        return geometry.intersects(rect);
-    }
-
-    /**
-     * Creates a jts Geometry object representing a rectangle with the given
-     * parameters
-     *
-     * @param x left coordinate
-     * @param y bottom coordinate
-     * @param w width
-     * @param h height     *
-     * @return a rectangle with the specified position and size
-     */
-    private Geometry createRectangle(double x, double y, double w, double h) {
-        final AffineTransform inverse = getInverse();
-        final Point2D p1 = new Point2D.Double(x, y);
-        inverse.transform(p1, p1);
-        final Point2D p2 = new Point2D.Double(x+w, y+h);
-        inverse.transform(p2, p2);
-
-        final Coordinate[] coords = {
-            new Coordinate(p1.getX(), p1.getY()),
-            new Coordinate(p1.getX(), p2.getY()),
-            new Coordinate(p2.getX(), p2.getY()),
-            new Coordinate(p2.getX(), p1.getY()),
-            new Coordinate(p1.getX(), p1.getY())
-        };
-        final LinearRing lr = geometry.getFactory().createLinearRing(coords);
-        return geometry.getFactory().createPolygon(lr, null);
+        throw new IllegalArgumentException("Unexpected geometry class : " + clazz);
     }
 
 }

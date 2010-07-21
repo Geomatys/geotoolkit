@@ -20,6 +20,7 @@ import java.awt.Shape;
 
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.primitive.ProjectedGeometry;
+import org.geotoolkit.display2d.primitive.jts.AbstractJTSGeometryJ2D;
 import org.geotoolkit.display2d.primitive.jts.JTSGeometryJ2D;
 import org.geotoolkit.geometry.isoonjts.JTSUtils;
 
@@ -46,12 +47,14 @@ public class StatefullProjectedGeometry implements ProjectedGeometry {
     //Geometry in display CRS
     private com.vividsolutions.jts.geom.Geometry    displayGeometryJTS = null;
     private Geometry                                displayGeometryISO = null;
-    private final JTSGeometryJ2D                    displayShape;
+    private final AbstractJTSGeometryJ2D            displayShape;
 
-    public StatefullProjectedGeometry(StatefullContextParams params, com.vividsolutions.jts.geom.Geometry geom){
+    public StatefullProjectedGeometry(StatefullContextParams params, Class GeometryClazz,
+            com.vividsolutions.jts.geom.Geometry geom){
         this.params = params;
         this.objectiveGeometryJTS = geom;
-        this.displayShape = new JTSGeometryJ2D(geom, params.objectiveToDisplay);
+        this.displayShape = JTSGeometryJ2D.best(GeometryClazz,params.objectiveToDisplay);
+        this.displayShape.setGeometry(objectiveGeometryJTS);
     }
 
     public StatefullProjectedGeometry(StatefullProjectedGeometry copy){
@@ -61,7 +64,7 @@ public class StatefullProjectedGeometry implements ProjectedGeometry {
         this.objectiveShape = copy.objectiveShape;
         this.displayGeometryJTS = copy.displayGeometryJTS;
         this.displayGeometryISO = copy.displayGeometryISO;
-        this.displayShape = new JTSGeometryJ2D(copy.displayShape.getGeometry(), params.objectiveToDisplay);
+        this.displayShape = copy.displayShape.clone();
     }
 
     public void setObjectiveGeometry(com.vividsolutions.jts.geom.Geometry geom){

@@ -105,6 +105,7 @@ import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.GeometryType;
 import org.opengis.feature.type.Name;
+import org.opengis.feature.type.PropertyDescriptor;
 import org.opengis.filter.FilterFactory2;
 import org.opengis.filter.Id;
 import org.opengis.filter.expression.Expression;
@@ -863,6 +864,23 @@ public final class GO2Utilities {
                     "This object is not a geometry, maybe you ask the wrong" +
                     " attribut or the feature doesnt match it's feature type définition.\n"+
                     feature);
+        }
+    }
+
+    public static Class getGeometryClass(final FeatureType featuretype, final String geomName){
+        final PropertyDescriptor prop;
+        if (geomName != null && !geomName.trim().isEmpty()) {
+            prop = featuretype.getDescriptor(geomName);
+        }else if(featuretype != null){
+            prop = featuretype.getGeometryDescriptor();
+        }else{
+            prop = null;
+        }
+
+        if(prop != null){
+            return prop.getType().getBinding();
+        }else{
+            return Geometry.class;
         }
     }
 

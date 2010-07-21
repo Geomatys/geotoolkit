@@ -92,7 +92,8 @@ public class StatefullProjectedFeature implements ProjectedFeature,Graphic {
         if(proj == null){
             Geometry geom = GO2Utilities.getGeometry(feature, name);
             if(geom != null){
-                StatefullProjectedGeometry projectedGeom = new StatefullProjectedGeometry(params, geom);
+                final Class geomClass = GO2Utilities.getGeometryClass(feature.getType(), name);
+                final StatefullProjectedGeometry projectedGeom = new StatefullProjectedGeometry(params, geomClass, geom);
                 geometries.put(name, projectedGeom);
                 return projectedGeom;
             }

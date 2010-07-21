@@ -121,11 +121,27 @@ public final class DecimateJTSLineIterator extends JTSGeometryIterator<LineStrin
         }
     }
 
-	/**
+    /**
      * {@inheritDoc }
      */
     @Override
     public int currentSegment(double[] coords) {
+        if (currentIndex == 0) {
+            transform.transform(currentCoord, 0, coords, 0, 1);
+            return SEG_MOVETO;
+        } else if ((currentIndex == coordinateCount) && isClosed) {
+            return SEG_CLOSE;
+        } else {
+            transform.transform(currentCoord, 0, coords, 0, 1);
+            return SEG_LINETO;
+        }
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public int currentSegment(float[] coords) {
         if (currentIndex == 0) {
             transform.transform(currentCoord, 0, coords, 0, 1);
             return SEG_MOVETO;

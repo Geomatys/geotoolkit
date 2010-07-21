@@ -35,9 +35,10 @@ import com.vividsolutions.jts.geom.Polygon;
  */
 public class JTSGeomCollectionIterator extends JTSGeometryIterator<GeometryCollection> {
 
-    protected  int currentGeom;
-    protected  PathIterator currentIterator;
-    protected  boolean done = false;
+    protected int nbGeom = 1;
+    protected int currentGeom;
+    protected PathIterator currentIterator;
+    protected boolean done = false;
 
     public JTSGeomCollectionIterator(GeometryCollection gc, AffineTransform trs) {
         super(gc,trs);
@@ -50,6 +51,16 @@ public class JTSGeomCollectionIterator extends JTSGeometryIterator<GeometryColle
         done = false;
         if(geometry != null){
             prepareIterator(geometry.getGeometryN(0));
+        }
+    }
+
+    @Override
+    public void setGeometry(GeometryCollection geom) {
+        super.setGeometry(geom);
+        if(geom == null){
+            nbGeom = 0;
+        }else{
+            nbGeom = geom.getNumGeometries();
         }
     }
 
@@ -147,7 +158,7 @@ public class JTSGeomCollectionIterator extends JTSGeometryIterator<GeometryColle
     @Override
     public void next() {
         if (currentIterator.isDone()) {
-            if (currentGeom < (geometry.getNumGeometries() - 1)) {
+            if (currentGeom < (nbGeom - 1)) {
                 currentGeom++;
                 prepareIterator(geometry.getGeometryN(currentGeom));
             } else {
