@@ -46,6 +46,7 @@ import org.geotoolkit.lang.Decorator;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.internal.image.io.Formats;
+import org.geotoolkit.internal.image.io.CheckedImageInputStream;
 import org.geotoolkit.util.NullArgumentException;
 import org.geotoolkit.util.XArrays;
 
@@ -203,7 +204,10 @@ public abstract class ImageReaderAdapter extends SpatialImageReader {
                 }
             }
         }
-        return acceptStream ? ImageIO.createImageInputStream(input) : null;
+        ImageInputStream in = acceptStream ? ImageIO.createImageInputStream(input) : null;
+        assert CheckedImageInputStream.isValid(in = // Intentional side effect.
+               CheckedImageInputStream.wrap(in));
+        return in;
     }
 
     /**
@@ -1025,7 +1029,7 @@ public abstract class ImageReaderAdapter extends SpatialImageReader {
          * to the subclass to initialize all other instance variables in order to provide working
          * versions of all methods.
          * <p>
-         * For efficienty reasons, the {@code inputTypes} field is initialized to a shared array.
+         * For efficiency reasons, the {@code inputTypes} field is initialized to a shared array.
          * Subclasses can assign new arrays, but should not modify the default array content.
          *
          * @param main The provider of the readers to use for reading the pixel values.

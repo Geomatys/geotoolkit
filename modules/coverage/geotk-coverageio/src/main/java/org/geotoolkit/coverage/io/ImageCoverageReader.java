@@ -65,6 +65,7 @@ import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
 import org.geotoolkit.image.io.mosaic.MosaicImageReader;
 import org.geotoolkit.image.io.mosaic.MosaicImageReadParam;
 import org.geotoolkit.internal.io.IOUtilities;
+import org.geotoolkit.internal.image.io.CheckedImageInputStream;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.collection.BackingStoreException;
@@ -332,6 +333,8 @@ public class ImageCoverageReader extends GridCoverageReader {
                             }
                             if (needStream) {
                                 imageInput = ImageIO.createImageInputStream(input);
+                                assert CheckedImageInputStream.isValid((ImageInputStream) (imageInput =
+                                       CheckedImageInputStream.wrap((ImageInputStream) imageInput)));
                                 if (imageInput == null) {
                                     final int messageKey;
                                     final Object argument;

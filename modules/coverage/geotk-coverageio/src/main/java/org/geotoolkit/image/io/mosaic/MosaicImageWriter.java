@@ -1208,7 +1208,7 @@ search: for (final Tile tile : tiles) {
      * @param  The parameters given by the user, or {@code null} if none.
      * @return The image reader that seems to be the most appropriated (never {@code null}).
      * @throws IOException If no suitable image reader has been found or if an error occurred
-     *         while creating an image reader or initiazing it.
+     *         while creating an image reader or initializing it.
      */
     private ImageReader getImageReader(final Object input, final int inputIndex,
             final ImageWriteParam parameters) throws IOException
@@ -1326,7 +1326,7 @@ search: for (final Tile tile : tiles) {
      * @param  input The input to read.
      * @return The image reader that seems to be the most appropriated (never {@code null}).
      * @throws IOException If no suitable image reader has been found or if an error occurred
-     *         while creating an image reader or initiazing it.
+     *         while creating an image reader or initializing it.
      */
     private ImageReader getImageReader(final Object input) throws IOException {
         /*
@@ -1356,7 +1356,7 @@ search: for (final Tile tile : tiles) {
         do {
             final Object candidate;
             if (createStream) {
-                stream = ImageIO.createImageInputStream(input);
+                stream = Tile.createImageInputStream(input);
                 if (stream == null) {
                     continue;
                 }
@@ -1399,7 +1399,7 @@ search: for (final Tile tile : tiles) {
      * @param  cache An initially empty list of image writers created during the write process.
      * @return The image writer that seems to be the most appropriated (never {@code null}).
      * @throws IOException If no suitable image writer has been found or if an error occurred
-     *         while creating an image writer or initiazing it.
+     *         while creating an image writer or initializing it.
      */
     private ReaderInputPair.WithWriter getImageWriter(final Tile tile, final RenderedImage image,
             final Queue<ReaderInputPair.WithWriter> cache) throws IOException

@@ -45,7 +45,7 @@ import org.geotoolkit.internal.io.IOUtilities;
  * Utility methods about image formats.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.10
+ * @version 3.14
  *
  * @since 3.01
  * @module
@@ -227,7 +227,7 @@ attmpt: while (true) {
                             // it ourself. So let just create an other one.
                             callback.recoverableException(e);
                             ((ImageInputStream) inputOrStream).close();
-                            inputOrStream = stream = ImageIO.createImageInputStream(input);
+                            inputOrStream = stream = createImageInputStream(input);
                             if (stream == null) {
                                 throw e;
                             }
@@ -287,7 +287,7 @@ attmpt: while (true) {
                      * Wraps it in an ImageInputStream and try again.
                      */
                     if (stream == null) {
-                        stream = ImageIO.createImageInputStream(input);
+                        stream = createImageInputStream(input);
                         if (stream == null) {
                             if (!useSuffix) {
                                 break;
@@ -512,5 +512,23 @@ attmpt: while (true) {
             return fallback.createInputStreamInstance(input, false, ImageIO.getCacheDirectory());
         }
         return null;
+    }
+
+    /**
+     * Creates an image input stream for the given source. This method first delegates
+     * to {@link ImageIO#createImageInputStream(Object)}, then wraps the result in a
+     * {@link CheckedImageInputStream} if assertions are enabled.
+     *
+     * @param  input The input for which an image input is desired.
+     * @return The image input stream, or {@code null}.
+     * @throws IOException If an error occurred while creating the stream.
+     *
+     * @since 3.14
+     */
+    private static ImageInputStream createImageInputStream(final Object input) throws IOException {
+        ImageInputStream in = ImageIO.createImageInputStream(input);
+        assert CheckedImageInputStream.isValid(in = // Intentional side effect.
+               CheckedImageInputStream.wrap(in));
+        return in;
     }
 }

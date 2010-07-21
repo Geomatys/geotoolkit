@@ -33,6 +33,7 @@ import org.opengis.util.FactoryException;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.image.io.mosaic.Tile;
+import org.geotoolkit.internal.image.io.CheckedImageInputStream;
 import org.geotoolkit.internal.sql.table.SpatialDatabase;
 import org.geotoolkit.util.collection.BackingStoreException;
 import org.geotoolkit.util.converter.Classes;
@@ -195,6 +196,8 @@ final class NewGridCoverageIterator implements Iterator<NewGridCoverageReference
             if (!Classes.isAssignableTo(input.getClass(), readerInputTypes)) {
                 if (Classes.isAssignableTo(ImageInputStream.class, readerInputTypes)) {
                     imageInput = ImageIO.createImageInputStream(input);
+                    assert CheckedImageInputStream.isValid((ImageInputStream) (imageInput =
+                           CheckedImageInputStream.wrap((ImageInputStream) imageInput)));
                 }
             }
             // Need metadata, but no need for backward seeks.

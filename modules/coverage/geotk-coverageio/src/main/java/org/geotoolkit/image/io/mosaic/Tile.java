@@ -46,6 +46,7 @@ import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.internal.image.io.Formats;
 import org.geotoolkit.internal.image.io.SupportFiles;
 import org.geotoolkit.image.io.plugin.WorldFileImageReader;
+import org.geotoolkit.internal.image.io.CheckedImageInputStream;
 
 import static java.lang.Math.min;
 import static java.lang.Math.max;
@@ -691,6 +692,21 @@ public class Tile implements Comparable<Tile>, Serializable {
     }
 
     /**
+     * Creates an image input stream for the given source. This method first delegates
+     * to {@link ImageIO#createImageInputStream(Object)}, then wraps the result in a
+     * {@link CheckedImageInputStream} if assertions are enabled.
+     *
+     * @param  input The input for which an image input is desired.
+     * @return The image input stream, or {@code null}.
+     */
+    static ImageInputStream createImageInputStream(final Object input) throws IOException {
+        ImageInputStream in = ImageIO.createImageInputStream(input);
+        assert CheckedImageInputStream.isValid(in = // Intentional side effect.
+               CheckedImageInputStream.wrap(in));
+        return in;
+    }
+
+    /**
      * Creates an image input stream from the input. If no suitable input stream can be created,
      * then this method throws an exception. This method never returns {@code null}.
      *
@@ -699,7 +715,7 @@ public class Tile implements Comparable<Tile>, Serializable {
      */
     private ImageInputStream getInputStream() throws IOException {
         final Object input = getInput();
-        ImageInputStream stream = ImageIO.createImageInputStream(input);
+        ImageInputStream stream = createImageInputStream(input);
         if (stream != null) {
             return stream;
         }
@@ -716,7 +732,7 @@ public class Tile implements Comparable<Tile>, Serializable {
             } else {
                 url = new File(path);
             }
-            stream = ImageIO.createImageInputStream(url);
+            stream = createImageInputStream(url);
             if (stream != null) {
                 return stream;
             }

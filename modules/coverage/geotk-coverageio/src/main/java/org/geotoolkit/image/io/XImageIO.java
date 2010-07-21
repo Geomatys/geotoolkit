@@ -36,14 +36,15 @@ import javax.imageio.spi.ImageReaderWriterSpi;
 import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.ImageOutputStream;
 import java.awt.image.RenderedImage;
-import org.geotoolkit.image.io.plugin.WorldFileImageReader;
 
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.util.XArrays;
-import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.NullArgumentException;
+import org.geotoolkit.image.io.plugin.WorldFileImageReader;
 import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.internal.image.io.Formats;
+import org.geotoolkit.internal.image.io.CheckedImageInputStream;
+import org.geotoolkit.resources.Errors;
 
 
 /**
@@ -311,7 +312,7 @@ public final class XImageIO {
          * ImageInputStream, create the stream and check again.
          */
         if (tryAgain != null) {
-            final ImageInputStream stream = ImageIO.createImageInputStream(input);
+            final ImageInputStream stream = createImageInputStream(input);
             if (stream != null) {
                 it = tryAgain.iterator();
                 while (it.hasNext()) {
@@ -761,5 +762,23 @@ public final class XImageIO {
     public static ImageWriterSpi getWriterSpiByFormatName(final String format) {
         ensureNonNull("format", format);
         return Formats.getWriterByFormatName(format, null);
+    }
+
+    /**
+     * Creates an image input stream for the given source. This method first delegates
+     * to {@link ImageIO#createImageInputStream(Object)}, then wraps the result in a
+     * {@link CheckedImageInputStream} if assertions are enabled.
+     *
+     * @param  input The input for which an image input is desired.
+     * @return The image input stream, or {@code null}.
+     * @throws IOException If an error occurred while creating the stream.
+     *
+     * @since 3.14
+     */
+    private static ImageInputStream createImageInputStream(final Object input) throws IOException {
+        ImageInputStream in = ImageIO.createImageInputStream(input);
+        assert CheckedImageInputStream.isValid(in = // Intentional side effect.
+               CheckedImageInputStream.wrap(in));
+        return in;
     }
 }
