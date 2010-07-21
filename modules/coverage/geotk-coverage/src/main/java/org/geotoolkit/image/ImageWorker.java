@@ -905,7 +905,7 @@ public class ImageWorker extends ImageInspector {
                     default: {
                         /*
                          * Reuses the current transparent pixel, which may still -1.
-                         * forceBitmaskIndexColorModel(-1) will searchs for the pixel
+                         * forceBitmaskIndexColorModel(-1) will searches for the pixel
                          * having the smallest alpha value, or use 0 if none are found.
                          */
                         transparent = icm.getTransparentPixel();

@@ -57,12 +57,12 @@ import org.geotoolkit.util.logging.Logging;
  *   <li>Optionaly configure that instance by calling its setter methods.</li>
  *   <li>Perform a search by invoking the {@link #find(IdentifiedObject)} or
  *       {@link #findIdentifier(IdentifiedObject)} methods.</li>
- *   <li>Reuse the same {@code IdentifiedObjectFinder} instance for consecutive searchs.</li>
+ *   <li>Reuse the same {@code IdentifiedObjectFinder} instance for consecutive searches.</li>
  * </ol>
  *
  * {@section Thread safety}
  * {@code IdentifiedObjectFinder} are <strong>not</strong> garanteed to be thread-safe
- * even if the underlying factory is thread-safe. If concurrent searchs are desired,
+ * even if the underlying factory is thread-safe. If concurrent searches are desired,
  * then a new instance should be created for each thread.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)

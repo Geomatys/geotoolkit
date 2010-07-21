@@ -68,7 +68,7 @@ public class HomePageMojo extends AbstractMojo {
     }
 
     /**
-     * Modifies the given home page. This method searchs for the two first
+     * Modifies the given home page. This method searches for the two first
      * {@code <div class="section">} strings. A {@code <table>} with a single
      * cell is opened after the first section and closed before the second section.
      * The purpose of the table is to prevent the second question to be layout at

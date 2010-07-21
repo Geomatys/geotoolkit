@@ -73,7 +73,7 @@ public final class Formats {
         /**
          * Invoked when a suitable image reader has been found. If the operation fails with
          * an {@link IOException}, then {@link Formats#selectImageReader selectImageReader}
-         * will searchs for an other image reader. If none are found, then the first exception
+         * will searches for an other image reader. If none are found, then the first exception
          * will be rethrown.
          * <p>
          * This method should not retain a reference to the image reader, because it will be
@@ -87,7 +87,7 @@ public final class Formats {
         /**
          * Invoked when a recoverable error occurred. Implementors will typically delegate to
          * {@link org.geotoolkit.util.logging.Logging#recoverableException(Class, String, Throwable)}
-         * whith appropriate class an method name.
+         * with appropriate class an method name.
          *
          * @param error The error which occurred.
          */
@@ -95,7 +95,7 @@ public final class Formats {
     }
 
     /**
-     * Searchs {@link ImageReader}s that claim to be able to decode the given input, and call
+     * Searches {@link ImageReader}s that claim to be able to decode the given input, and call
      * {@link ReadCall#read(ImageReader)} for each of them until a call succeed. If every
      * readers fail with an {@link IOException}, the exception of the first reader is rethrown
      * by this method.

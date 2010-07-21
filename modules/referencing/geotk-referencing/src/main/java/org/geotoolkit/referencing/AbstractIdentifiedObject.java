@@ -562,7 +562,7 @@ nextKey:for (final Map.Entry<String,?> entry : properties.entrySet()) {
     }
 
     /**
-     * The {@code gml:id}, which is mandatory. The current implementation searchs for the first
+     * The {@code gml:id}, which is mandatory. The current implementation searches for the first
      * identifier, regardless its authority. If no identifier is found, then the name is used.
      * If no name is found (which should not occur for valid objects), then this method returns
      * {@code null}.

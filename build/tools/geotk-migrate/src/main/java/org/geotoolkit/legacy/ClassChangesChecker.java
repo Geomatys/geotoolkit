@@ -22,7 +22,7 @@ import java.util.*;
 
 
 /**
- * Verifies the content of the {@code ClassChanges.properties} file. This tool searchs
+ * Verifies the content of the {@code ClassChanges.properties} file. This tool searches
  * for {@code *.java} files in {@code src/main/java} directories. Classes declared in
  * the properties file but for which no corresponding Java file were found will be listed
  * to standard output.

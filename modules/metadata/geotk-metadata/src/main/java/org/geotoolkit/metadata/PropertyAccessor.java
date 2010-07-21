@@ -144,7 +144,7 @@ final class PropertyAccessor {
 
     /**
      * Index of getter or setter for a given name. Original names are duplicated with the same name
-     * converted to lower cases according {@link #LOCALE} conventions, for case-insensitive searchs.
+     * converted to lower cases according {@link #LOCALE} conventions, for case-insensitive searches.
      * This map must be considered as immutable after construction.
      * <p>
      * The keys in this map are both inferred from the method names and fetched from the UML

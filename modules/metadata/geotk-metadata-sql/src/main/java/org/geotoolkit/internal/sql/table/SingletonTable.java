@@ -506,7 +506,7 @@ public abstract class SingletonTable<E extends Entry> extends Table {
     }
 
     /**
-     * Searchs for an identifier not already in use. If the given string is not in use, then
+     * Searches for an identifier not already in use. If the given string is not in use, then
      * it is returned as-is. Otherwise, this method appends a decimal number to the specified
      * base and check if the resulting identifier is not in use. If it is, then the decimal
      * number is incremented until a unused identifier is found.

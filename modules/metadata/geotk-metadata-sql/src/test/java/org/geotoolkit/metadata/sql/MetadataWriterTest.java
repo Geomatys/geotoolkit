@@ -118,7 +118,7 @@ public final class MetadataWriterTest {
     }
 
     /**
-     * Searchs known entries in the database.
+     * Searches known entries in the database.
      *
      * @throws SQLException If an error occurred while reading the database.
      */

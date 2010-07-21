@@ -226,7 +226,7 @@ public class PaletteComboBox extends JComponent {
     }
 
     /**
-     * Sets the currently selected item by its color. This method searchs for a choices
+     * Sets the currently selected item by its color. This method searches for a choices
      * providing the same colors than the given array. If such choices is found, it is
      * selected. Otherwise this method selects the "<cite>none</cite>" choice.
      *

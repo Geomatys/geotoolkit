@@ -875,7 +875,7 @@ search:             if (DefaultCoordinateSystemAxis.isCompassDirection(axis.getD
     }
 
     /**
-     * Returns the declared identifier, or {@code null} if none. This method searchs for the first
+     * Returns the declared identifier, or {@code null} if none. This method searches for the first
      * identifier (which is usually the main one) explicitly declared in the {@link IdentifiedObject}.
      * At the opposite of {@link #lookupIdentifier(IdentifiedObject, boolean) lookupIdentifier},
      * <em>this method does not verify the identifier validity</em>.
@@ -1015,7 +1015,7 @@ search:             if (DefaultCoordinateSystemAxis.isCompassDirection(axis.getD
      * @since 2.5
      */
     // Note on method signature: the type is restricted to CoordinateReferenceSystem instead than
-    // IdentifiedObject because current implementation searchs using only CRS authority factory.
+    // IdentifiedObject because current implementation searches using only CRS authority factory.
     public static String lookupIdentifier(final Citation authority,
                                           final CoordinateReferenceSystem crs,
                                           final boolean fullScan)

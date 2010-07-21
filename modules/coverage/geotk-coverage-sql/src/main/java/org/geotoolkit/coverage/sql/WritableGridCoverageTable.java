@@ -333,7 +333,7 @@ final class WritableGridCoverageTable extends GridCoverageTable {
     }
 
     /**
-     * Searchs for new files in the {@linkplain #getLayer current layer} and {@linkplain #addEntries
+     * Searches for new files in the {@linkplain #getLayer current layer} and {@linkplain #addEntries
      * adds} them to the database. The {@link #setLayer(Layer) setLayer} method must be invoked prior
      * this method. This method will process every {@linkplain Series series} for the current layer.
      *

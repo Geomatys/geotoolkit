@@ -51,7 +51,7 @@ import org.geotoolkit.lang.ThreadSafe;
  * This factory requires that every codes given to a {@code createXXX(String)} method are prefixed
  * by the authority name, for example {@code "EPSG:4326"}. When a {@code createXXX(String)} method
  * is invoked, this class extracts the authority name from the {@code "authority:code"} argument.
- * Then is searchs for a factory for that authority in the first of the following sets:
+ * Then is searches for a factory for that authority in the first of the following sets:
  * <p>
  * <ol>
  *   <li>The factories given at construction time under the {@link #USER_FACTORIES_KEY} key, if
@@ -194,7 +194,7 @@ typeLoop:   for (int i=0; ; i++) {
                  * more specific, the intend is actually to exclude the URN or HTTP wrappers.
                  * This is necessary because this method is invoked indirectly by the Finder
                  * inner class (see MultiAuthoritiesFactory.Finder.getFactories()) and we want
-                 * to avoid duplicated searchs.
+                 * to avoid duplicated searches.
                  */
                 for (final AuthorityFactory f : c) {
                     if (!isExcluded(f)) {

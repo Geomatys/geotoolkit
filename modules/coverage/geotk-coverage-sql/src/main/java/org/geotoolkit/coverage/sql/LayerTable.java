@@ -123,7 +123,7 @@ final class LayerTable extends SingletonTable<LayerEntry> {
     }
 
     /**
-     * Searchs for a layer name not already in use. If the given string is not in use, then
+     * Searches for a layer name not already in use. If the given string is not in use, then
      * it is returned as-is. Otherwise this method appends a unused decimal number to the
      * specified name.
      *

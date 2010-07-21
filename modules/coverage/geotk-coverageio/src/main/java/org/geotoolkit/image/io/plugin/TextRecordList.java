@@ -257,7 +257,7 @@ final class TextRecordList {
             Arrays.fill(array, count, oldCount, Float.NaN); // For safety.
         }
         /*
-         * Searchs the smallest interval between two records. Next, checks if the interval
+         * Searches the smallest interval between two records. Next, checks if the interval
          * between every consecutive records is a multiple of that value. This algorithm
          * allow the check to be tolerant to missing records.
          */

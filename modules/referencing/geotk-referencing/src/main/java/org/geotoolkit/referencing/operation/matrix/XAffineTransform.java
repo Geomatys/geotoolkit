@@ -468,7 +468,7 @@ public class XAffineTransform extends AffineTransform {
                 final Rectangle2D rect = (Rectangle2D) shape;
                 return transform(transform, rect, overwrite ? rect : null);
             }
-            // For other rectangular shapes, we restrict to cases whithout
+            // For other rectangular shapes, we restrict to cases without
             // rotation or flip because we don't know if the shape is symetric.
             if ((type & (TYPE_FLIP & TYPE_MASK_ROTATION)) == 0) {
                 if (shape instanceof RectangularShape) {

@@ -30,7 +30,7 @@ import org.geotoolkit.lang.Static;
  * database for geocentric CRS.
  * <p>
  * This class does not know about {@link DirectionAlongMeridian}. The later is a parser
- * which may create new directions, while the {@code Directions} class searchs only in a
+ * which may create new directions, while the {@code Directions} class searches only in a
  * set of predefined directions and never create new ones.
  *
  * @author Martin Desruisseaux (Geomatys)
@@ -57,7 +57,7 @@ final class Directions {
         AxisDirection candidate = find(directions, name);
         if (candidate == null) {
             /*
-             * No match found when using the pre-defined axis name. Searchs among
+             * No match found when using the pre-defined axis name. Searches among
              * the set of geocentric directions. Expected directions are:
              *
              *    Geocentre > equator/PM      or    Geocentre > equator/0°E
@@ -97,7 +97,7 @@ final class Directions {
                 }
             }
             /*
-             * No match found in the set of geocentric directions neither. Searchs again
+             * No match found in the set of geocentric directions neither. Searches again
              * among the standard set of names, replacing space by underscore.
              */
             String modified = name.replace('-', '_');

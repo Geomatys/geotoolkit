@@ -343,7 +343,7 @@ public class MosaicBuilderEditor extends JComponent implements MosaicPerformance
     }
 
     /**
-     * Searchs for a rectangle that encompass every tiles.
+     * Searches for a rectangle that encompass every tiles.
      */
     private static Rectangle bounds(final TileManager... managers) throws IOException {
         Rectangle bounds = null;

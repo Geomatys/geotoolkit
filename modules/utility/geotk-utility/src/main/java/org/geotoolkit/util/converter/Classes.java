@@ -351,7 +351,7 @@ public final class Classes {
 
     /**
      * Returns the set of every interfaces implemented by the given class or interface. This is
-     * similar to {@link Class#getInterfaces()} except that this method searchs recursively in
+     * similar to {@link Class#getInterfaces()} except that this method searches recursively in
      * the super-interfaces. For example if the given type is {@link java.util.ArrayList}, then
      * the returned set will contains {@link java.util.List} (which is implemented directly)
      * together with its parent interfaces {@link Collection} and {@link Iterable}.

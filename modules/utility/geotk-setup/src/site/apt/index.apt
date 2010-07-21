@@ -9,7 +9,7 @@ Geotoolkit.org installer
   grids are large (about 2 Mb, including approximatively 1 Mb for Alaska alone) while applicable to
   only one country.
 
-  Optional data like NADCON need to be saved in some specific directory. By default Geotk searchs
+  Optional data like NADCON need to be saved in some specific directory. By default Geotk searches
   for the "<<<Geotoolkit.org>>>" sub-directory in the application directory. This is always a sub-directory
   of the user home directory, but the exact location is platform dependent. For example this is under
   "<<<Application Data>>>" on Windows, "<<<Library>>>" on MacOS and the home directory on Linux.

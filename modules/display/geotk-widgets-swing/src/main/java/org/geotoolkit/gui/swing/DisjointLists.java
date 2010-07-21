@@ -109,7 +109,7 @@ public class DisjointLists extends JComponent implements Dialog {
         }
 
         /**
-         * Searchs the insertion point. This method returns always a positive value such that
+         * Searches the insertion point. This method returns always a positive value such that
          * {@code value <= visibles[i]}. Note that the returned index may be {@link #size} if
          * the given value is greater than the last {@link #visibles} value.
          */

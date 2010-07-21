@@ -284,7 +284,7 @@ public class MetadataSource {
     }
 
     /**
-     * Searchs for the given metadata in the database. If such metadata is found, then its
+     * Searches for the given metadata in the database. If such metadata is found, then its
      * identifier (primary key) is returned. Otherwise this method returns {@code null}.
      *
      * @param  metadata The metadata to search for.
@@ -318,7 +318,7 @@ public class MetadataSource {
     }
 
     /**
-     * Searchs for the given metadata in the database. If such metadata is found, then its
+     * Searches for the given metadata in the database. If such metadata is found, then its
      * identifier (primary key) is returned. Otherwise this method returns {@code null}.
      *
      * @param  table The table where to search.

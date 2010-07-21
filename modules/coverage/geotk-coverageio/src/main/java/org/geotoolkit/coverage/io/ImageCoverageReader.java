@@ -643,7 +643,7 @@ public class ImageCoverageReader extends GridCoverageReader {
                 if (dstBands != null && dstBands.length < bandCount) bandCount = dstBands.length;
                 final GridSampleDimension[] selectedBands = new GridSampleDimension[bandCount];
                 /*
-                 * Searchs for 'GridSampleDimension' from the given source band index and
+                 * Searches for 'GridSampleDimension' from the given source band index and
                  * stores their reference at the position given by destination band index.
                  */
                 for (int j=0; j<bandCount; j++) {

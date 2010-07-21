@@ -249,7 +249,7 @@ public class DirectPostgisFactory extends WKTParsingAuthorityFactory implements 
 
     /**
      * Returns the primary key for the specified authority code. If the supplied code contains an
-     * <cite>authority</cite> part as in {@code "EPSG:4326"}, then this method searchs for a row
+     * <cite>authority</cite> part as in {@code "EPSG:4326"}, then this method searches for a row
      * with the given authority ({@code "EPSG"}) in the {@value #AUTHORITY_COLUMN} column and the
      * given integer code ({@code 4326}) in the {@value #CODE_COLUMN} column. If such row is found,
      * then the value of its {@value #PRIMARY_KEY} column is returned.

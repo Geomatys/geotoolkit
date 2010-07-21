@@ -159,7 +159,7 @@ final class SpatialRefSysMap extends AbstractMap<String,String> {
     }
 
     /**
-     * Returns the primary key for the specified authority code. This method searchs for a row
+     * Returns the primary key for the specified authority code. This method searches for a row
      * with the given authority in the <cite>authority name</cite> column and the given integer
      * code in the <cite>authority SRID</cite> column. If such row is found, the value of its
      * <cite>SRID</cite> column is returned. Otherwise this method returns {@code null}.

@@ -701,7 +701,7 @@ public class DimensionSlice implements WarningProducer {
             }
         }
         /*
-         * No explicit dimension found. Now searchs for an element from the
+         * No explicit dimension found. Now searches for an element from the
          * given iterator which would be one of the declared identifiers.
          */
         if (properties != null && identifiers != null) {

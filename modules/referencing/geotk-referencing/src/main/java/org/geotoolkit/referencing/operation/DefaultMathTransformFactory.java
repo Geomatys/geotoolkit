@@ -273,7 +273,7 @@ public class DefaultMathTransformFactory extends ReferencingFactory implements M
             }
         }
         /*
-         * No matching name found. If the given method is of the form EPSG:9624, searchs among the
+         * No matching name found. If the given method is of the form EPSG:9624, searches among the
          * identifiers. This is not the usual way to use this class (we rather use the names), but
          * this approach is provided as a convenience and for backward compatibility.
          */

@@ -401,7 +401,7 @@ public abstract class TileManager implements Serializable {
     }
 
     /**
-     * Returns the root directory of all tiles, or {@code null} if unknown. This method searchs
+     * Returns the root directory of all tiles, or {@code null} if unknown. This method searches
      * for a common {@linkplain File#getParentFile() parent directory} of every tiles.
      *
      * @return The root directory, or {@code null} if unknown.

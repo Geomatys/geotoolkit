@@ -48,7 +48,7 @@ import org.geotoolkit.util.collection.UnmodifiableArrayList;
  * This factory requires that every codes given to a {@code createXXX(String)} method are prefixed
  * by the authority name, for example {@code "EPSG:4326"}. When a {@code createXXX(String)} method
  * is invoked, this class extracts the authority name from the {@code "authority:code"} argument
- * and searchs for a factory for that authority in the list of factories given at construction
+ * and searches for a factory for that authority in the list of factories given at construction
  * time. If a factory is found, then the work is delegated to that factory. Otherwise a
  * {@link NoSuchAuthorityCodeException} is thrown.
  * <p>

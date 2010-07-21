@@ -310,7 +310,7 @@ public abstract class Factory {
          * Specifies that the enclosing factory should be selected before the specified factory.
          * In other words, the enclosing factory should have precedence over the given one.
          * <p>
-         * If {@code subclasses} is {@code false}, then this method searchs for a factory of
+         * If {@code subclasses} is {@code false}, then this method searches for a factory of
          * exactly the given class. Invoking this method has no effect on the ordering relative
          * to subclasses of the given factory class, unless {@code subclasses} is {@code true}.
          *
@@ -341,7 +341,7 @@ public abstract class Factory {
          * Specifies that the enclosing factory should be selected after the specified factory.
          * In other words, the given factory should have precedence over the enclosing one.
          * <p>
-         * If {@code subclasses} is {@code false}, then this method searchs for a factory of
+         * If {@code subclasses} is {@code false}, then this method searches for a factory of
          * exactly the given class. Invoking this method has no effect on the ordering relative
          * to subclasses of the given factory class, unless {@code subclasses} is {@code true}.
          *
@@ -559,7 +559,7 @@ public abstract class Factory {
      * In the default implementation, the conformance result passes as long as this factory
      * has not been {@linkplain #dispose disposed}.
      *
-     * @return A conformance result whith {@code pass() == true} if this factory is ready for use.
+     * @return A conformance result with {@code pass() == true} if this factory is ready for use.
      *
      * @since 3.03
      */

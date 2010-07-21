@@ -523,7 +523,7 @@ public abstract class CommandLine implements Runnable {
     }
 
     /**
-     * Runs the command line. The default implementation searchs for a no-argument method annotated
+     * Runs the command line. The default implementation searches for a no-argument method annotated
      * with {@link Action} and having a name matching the first argument which is not an option.
      * If no action is given or if it was not recognized, then {@link #unknownAction(String)}
      * method is invoked.

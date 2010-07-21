@@ -185,7 +185,7 @@ final class GridTileManager extends TileManager {
 
     /**
      * Returns a reference to the tiles used internally by this tile manager.
-     * This implementation returns an instance of {@link FrequencySortedSet} whith
+     * This implementation returns an instance of {@link FrequencySortedSet} with
      * {@linkplain FrequencySortedSet#frequencies frequency values} greater than 1
      * for the tiles that actually represent a pattern.
      */

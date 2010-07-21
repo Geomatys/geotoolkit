@@ -181,7 +181,7 @@ public class AnsiDialectEpsgFactory extends DirectEpsgFactory {
     /**
      * Invokes {@link #setSchema setSchema(...)} and {@link #useOriginalTableNames useOriginalTableNames(...)}
      * automatically according the {@linkplain DatabaseMetaData database metadata}. The default
-     * implementation searchs for a schema containing one of the following table:
+     * implementation searches for a schema containing one of the following table:
      * <p>
      * <ul>
      *   <li>{@code "epsg_coordinatereferencesystem"}</li>

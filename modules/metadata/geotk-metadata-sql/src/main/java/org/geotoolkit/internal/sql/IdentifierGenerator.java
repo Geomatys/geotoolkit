@@ -32,7 +32,7 @@ import org.geotoolkit.lang.ThreadSafe;
  * efficient to rely on the ID numbers generated automatically by the database.
  * <p>
  * This class checks if a given identifier exists in the database. If it exists, then
- * it searchs for an unused {@code "proposal-n"} identifier, where {@code "proposal"}
+ * it searches for an unused {@code "proposal-n"} identifier, where {@code "proposal"}
  * is the given identifier and {@code "n"} is a number. The algorithm in this class
  * takes advantage of the fact that alphabetical order is not the same than numerical
  * order for scaning a slightly smaller amount of records (however the advantage is
@@ -218,7 +218,7 @@ public abstract class IdentifierGenerator<K, V extends StatementEntry> {
     }
 
     /**
-     * Searchs for an identifier in the given table. If the given proposal is already in use,
+     * Searches for an identifier in the given table. If the given proposal is already in use,
      * then this method will search for an identifier of the form {@code "proposal-n"} not in
      * use, where {@code "n"} is a number.
      *
@@ -289,7 +289,7 @@ searchValidRecord:  while (rs.next()) {
     }
 
     /**
-     * Searchs for an available identifier, assuming that the elements in the given
+     * Searches for an available identifier, assuming that the elements in the given
      * {@code ResultSet} are sorted in alphabetical (not numerical) order.
      *
      * @param rs

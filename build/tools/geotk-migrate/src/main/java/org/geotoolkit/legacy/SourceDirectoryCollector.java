@@ -60,7 +60,7 @@ final class SourceDirectoryCollector implements FileFilter {
     }
 
     /**
-     * Searchs for {@code src/main/java} directories. We assume a maven-compliant
+     * Searches for {@code src/main/java} directories. We assume a maven-compliant
      * directory layout.
      */
     private void searchSourceDirectories(File directory) {
@@ -81,7 +81,7 @@ final class SourceDirectoryCollector implements FileFilter {
     }
 
     /**
-     * Searchs for source {@code ".java"} files and add them in the given set.
+     * Searches for source {@code ".java"} files and add them in the given set.
      * The name stored in the set are fully-qualified Java name.
      *
      * @param dir    The directory to scan.
