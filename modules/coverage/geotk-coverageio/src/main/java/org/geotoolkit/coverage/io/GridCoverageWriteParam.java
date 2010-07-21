@@ -17,6 +17,8 @@
  */
 package org.geotoolkit.coverage.io;
 
+import javax.imageio.ImageWriter;
+
 
 /**
  * Describes how a stream is to be encoded. Instances of this class are used to supply

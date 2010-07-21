@@ -29,6 +29,7 @@ import javax.imageio.ImageWriteParam;
 import javax.imageio.spi.ImageWriterSpi;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.stream.ImageOutputStream;
+import javax.media.jai.RenderedImageAdapter;
 
 import org.opengis.coverage.grid.GridCoverage;
 
@@ -49,7 +50,15 @@ import org.geotoolkit.resources.Errors;
  * coordinates</cite> (for example the region to read) to <cite>pixel coordinates</cite>
  * before to pass them to the wrapped {@code ImageWriter}, and conversely: from pixel
  * coordinates to geodetic coordinates. The later conversion is called "<cite>grid to CRS</cite>"
- * and is determined from the {@link GridGeometry} provided by the {@link GridCoverage}.
+ * and is determined from the {@link GridGeometry2D} provided by the {@link GridCoverage}.
+ *
+ * {@section Closing the output stream}
+ * An {@linkplain ImageOutputStream Image Output Stream} may be created automatically from various
+ * output types like {@linkplain java.io.File} or {@linkplain java.net.URL}. That output stream is
+ * <strong>not</strong> closed after a write operation, because many consecutive write operations
+ * may be performed for the same output. To ensure that the output stream is closed, user shall
+ * invoke the {@link #setOutput(Object)} method with a {@code null} input, or invoke the
+ * {@link #reset()} or {@link #dispose()} methods.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.14
@@ -60,8 +69,8 @@ import org.geotoolkit.resources.Errors;
 public class ImageCoverageWriter extends GridCoverageWriter {
     /**
      * The {@link ImageWriter} to use for encoding {@link RenderedImage}s. This writer is initially
-     * {@code null} and lazily created the first time {@link #setImageOutput(RenderedImage)} is
-     * invoked. Once created, it is reused for subsequent outputs if possible.
+     * {@code null} and lazily created when first needed. Once created, it is reused for subsequent
+     * outputs if possible.
      */
     protected ImageWriter imageWriter;
 
@@ -123,7 +132,7 @@ public class ImageCoverageWriter extends GridCoverageWriter {
     /**
      * Sets the image writer output. This method ensures that the {@link #imageWriter} field is
      * set to a suitable {@link ImageWriter} instance. This is done by invoking the following
-     * methods, which can be overriden by subclasses:
+     * methods, which can be overridden by subclasses:
      * <p>
      * <ol>
      *   <li>If the current {@link #imageWriter} is non-null, invoke
@@ -148,83 +157,91 @@ public class ImageCoverageWriter extends GridCoverageWriter {
             throws CoverageStoreException
     {
         final Object output = this.output;
-        final ImageWriter oldWriter = imageWriter;
-        try {
-            close();
-            assert (oldWriter == null) || (oldWriter.getOutput() == null) : oldWriter;
-            if (output != null) {
-                ImageWriter newWriter = null;
-                if (output instanceof ImageWriter) {
-                    newWriter = (ImageWriter) output;
-                    // The old writer will be disposed and the locale will be set below.
-                } else {
-                    /*
-                     * First, check if the current writer can be reused. If the user
-                     * didn't overriden the canReuseImageWriter(...) method, then the
-                     * default implementation is to look at the file extension.
-                     */
-                    if (oldWriter != null) {
-                        final ImageWriterSpi provider = oldWriter.getOriginatingProvider();
-                        if (provider != null && canReuseImageWriter(provider, formatName, output, image)) {
-                            newWriter = oldWriter;
-                        }
-                    }
-                    /*
-                     * If we can't reuse the old writer, create a new one. If the user didn't
-                     * overriden the createImageWriter(...) method, then the default behavior
-                     * is to get an image writer by the extension.
-                     */
-                    if (newWriter == null) {
-                        newWriter = createImageWriter(formatName, output, image);
-                    }
-                    /*
-                     * Set the output if it was not already done. In the default implementation,
-                     * this is done by 'createImageWriter' but not by 'canReuseImageWriter'.
-                     * However the user could have overriden the above-cited methods with a
-                     * different behavior.
-                     */
-                    if (newWriter != output && newWriter.getOutput() == null) {
-                        Object imageOutput = output;
-                        final ImageWriterSpi provider = newWriter.getOriginatingProvider();
-                        if (provider != null) {
-                            boolean needStream = false;
-                            for (final Class<?> outputType : provider.getOutputTypes()) {
-                                if (outputType.isInstance(imageOutput)) {
-                                    needStream = false;
-                                    break;
-                                }
-                                if (outputType.isAssignableFrom(ImageOutputStream.class)) {
-                                    needStream = true;
-                                    // Do not break - maybe the output type is accepted later.
-                                }
-                            }
-                            if (needStream) {
-                                imageOutput = ImageIO.createImageOutputStream(output);
-                                if (imageOutput == null) {
-                                    final int messageKey;
-                                    final Object argument;
-                                    if (IOUtilities.canProcessAsPath(output)) {
-                                        messageKey = Errors.Keys.CANT_WRITE_$1;
-                                        argument = IOUtilities.name(output);
-                                    } else {
-                                        messageKey = Errors.Keys.UNKNOWN_TYPE_$1;
-                                        argument = output.getClass();
-                                    }
-                                    throw new IOException(Errors.getResources(locale).getString(messageKey, argument));
-                                }
-                            }
-                        }
-                        newWriter.setOutput(imageOutput);
+        if (output != null) try {
+            final ImageWriter oldWriter = imageWriter;
+            ImageWriter newWriter = null;
+            if (output instanceof ImageWriter) {
+                newWriter = (ImageWriter) output;
+                // The old writer will be disposed and the locale will be set below.
+            } else {
+                /*
+                 * First, check if the current writer can be reused. If the user
+                 * didn't overriden the canReuseImageWriter(...) method, then the
+                 * default implementation is to look at the file extension.
+                 */
+                if (oldWriter != null) {
+                    final ImageWriterSpi provider = oldWriter.getOriginatingProvider();
+                    if (provider != null && canReuseImageWriter(provider, formatName, output, image)) {
+                        newWriter = oldWriter;
                     }
                 }
-                if (newWriter != oldWriter) {
-                    if (oldWriter != null) {
-                        oldWriter.dispose();
-                    }
-                    setLocale(newWriter, locale);
+                /*
+                 * If we can't reuse the old writer, create a new one. If the user didn't
+                 * overriden the createImageWriter(...) method, then the default behavior
+                 * is to get an image writer by the extension.
+                 */
+                if (newWriter == null) {
+                    newWriter = createImageWriter(formatName, output, image);
                 }
-                imageWriter = newWriter;
+                /*
+                 * Set the output if it was not already done. In the default implementation,
+                 * this is done by 'createImageWriter' but not by 'canReuseImageWriter'.
+                 * However the user could have overriden the above-cited methods with a
+                 * different behavior.
+                 */
+                if (newWriter != output && newWriter.getOutput() == null) {
+                    Object imageOutput = output;
+                    final ImageWriterSpi provider = newWriter.getOriginatingProvider();
+                    if (provider != null) {
+                        boolean needStream = false;
+                        for (final Class<?> outputType : provider.getOutputTypes()) {
+                            if (outputType.isInstance(imageOutput)) {
+                                needStream = false;
+                                break;
+                            }
+                            if (outputType.isAssignableFrom(ImageOutputStream.class)) {
+                                needStream = true;
+                                // Do not break - maybe the output type is accepted later.
+                            }
+                        }
+                        if (needStream) {
+                            imageOutput = ImageIO.createImageOutputStream(output);
+                            if (imageOutput == null) {
+                                final int messageKey;
+                                final Object argument;
+                                if (IOUtilities.canProcessAsPath(output)) {
+                                    messageKey = Errors.Keys.CANT_WRITE_$1;
+                                    argument = IOUtilities.name(output);
+                                } else {
+                                    messageKey = Errors.Keys.UNKNOWN_TYPE_$1;
+                                    argument = output.getClass();
+                                }
+                                throw new IOException(Errors.getResources(locale).getString(messageKey, argument));
+                            }
+                        }
+                    }
+                    newWriter.setOutput(imageOutput);
+                }
             }
+            /*
+             * If the writer has changed, close the output of the old writer,
+             * unless the new writer is using the same output.
+             */
+            if (newWriter != oldWriter) {
+                if (oldWriter != null) {
+                    final Object oldOutput = oldWriter.getOutput();
+                    oldWriter.dispose();
+                    if (oldOutput != newWriter.getOutput()) {
+                        if (oldOutput instanceof Closeable) {
+                            ((Closeable) oldOutput).close();
+                        } else if (oldOutput instanceof ImageOutputStream) {
+                            ((ImageOutputStream) oldOutput).close();
+                        }
+                    }
+                }
+                setLocale(newWriter, locale);
+            }
+            imageWriter = newWriter;
         } catch (IOException e) {
             throw new CoverageStoreException(formatErrorMessage(output, e, true), e);
         }
@@ -261,7 +278,7 @@ public class ImageCoverageWriter extends GridCoverageWriter {
      * @param  output The output to set to the image writer.
      * @param  image The image to be written, or {@code null} if unknown.
      * @return {@code true} if the image writer can be reused.
-     * @throws IOException If an error occured while determining if the current
+     * @throws IOException If an error occurred while determining if the current
      *         image writer can write the given image to the given output.
      */
     protected boolean canReuseImageWriter(final ImageWriterSpi provider, final String formatName,
@@ -300,7 +317,7 @@ public class ImageCoverageWriter extends GridCoverageWriter {
      * @param  output The output destination.
      * @param  image The image to be written, or {@code null} if unknown.
      * @return An initialized image writer for writing to the given output.
-     * @throws IOException If no suitable image writer has been found, or if an error occured
+     * @throws IOException If no suitable image writer has been found, or if an error occurred
      *         while creating it.
      */
     protected ImageWriter createImageWriter(final String formatName, final Object output,
@@ -329,19 +346,20 @@ public class ImageCoverageWriter extends GridCoverageWriter {
      * {@linkplain ImageWriteParam#setSourceBands source bands} settings may be overwritten
      * by the {@code write} method, which perform its own computation.
      *
+     * @param  image The image which will be written.
      * @return A default Java I/O parameters object to use for controlling the writing process.
      * @throws IOException If an I/O operation was required and failed.
      *
      * @see #write(GridCoverage, GridCoverageWriteParam)
      */
-    protected ImageWriteParam createImageWriteParam() throws IOException {
+    protected ImageWriteParam createImageWriteParam(RenderedImage image) throws IOException {
         return imageWriter.getDefaultWriteParam();
     }
 
     /**
      * Converts geodetic parameters to image parameters, gets the image from the coverage and
      * writes it. First, this method creates an initially empty block of image parameters by
-     * invoking the {@link #createImageWriteParam(int)} method. The image parameter
+     * invoking the {@link #createImageWriteParam(RenderedImage)} method. The image parameter
      * {@linkplain ImageWriteParam#setSourceRegion source region},
      * {@linkplain ImageWriteParam#setSourceSubsampling source subsampling} and
      * {@linkplain ImageWriteParam#setSourceBands source bands} are computed from the
@@ -352,23 +370,25 @@ public class ImageCoverageWriter extends GridCoverageWriter {
             throws CoverageStoreException, CancellationException
     {
         abortRequested = false;
+        RenderedImage image = coverage.getRenderableImage(X_DIMENSION, Y_DIMENSION).createDefaultRendering();
+        while (image instanceof RenderedImageAdapter) {
+            image = ((RenderedImageAdapter) image).getWrappedImage();
+        }
+        final String imageFormat = (param != null) ? param.getFormatName() : null;
+        setImageOutput(image, imageFormat);
         final ImageWriter imageWriter = this.imageWriter; // Protect from changes.
         if (imageWriter == null) {
             throw new IllegalStateException(formatErrorMessage(Errors.Keys.NO_IMAGE_OUTPUT));
         }
         final GridGeometry2D gridGeometry = GridGeometry2D.wrap(coverage.getGridGeometry());
-        final RenderedImage image = coverage.getRenderableImage(X_DIMENSION, Y_DIMENSION).createDefaultRendering();
         final IIOMetadata streamMetadata = null; // TODO
         final IIOImage bundle = new IIOImage(image, null, null);
         try {
-            String imageFormat = null;
-            final ImageWriteParam imageParam = createImageWriteParam();
+            final ImageWriteParam imageParam = createImageWriteParam(image);
             if (param != null) {
-                imageFormat = param.getFormatName();
                 geodeticToPixelCoordinates(gridGeometry, param, imageParam);
                 imageParam.setSourceBands(param.getSourceBands());
             }
-            setImageOutput(image, imageFormat);
             imageWriter.write(streamMetadata, bundle, imageParam);
         } catch (IOException e) {
             throw new CoverageStoreException(formatErrorMessage(e), e);
@@ -391,7 +411,7 @@ public class ImageCoverageWriter extends GridCoverageWriter {
 
     /**
      * Returns an error message for the given exception. If the {@linkplain #output output} is
-     * known, this method returns "<cite>Can't write 'the name'</cite>" followed by the cause
+     * known, this method returns "<cite>Can't write {the name}</cite>" followed by the cause
      * message. Otherwise it returns the localized message of the given exception.
      */
     @Override

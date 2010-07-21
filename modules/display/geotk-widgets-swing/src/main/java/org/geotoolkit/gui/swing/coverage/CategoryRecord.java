@@ -126,8 +126,6 @@ public class CategoryRecord implements Cloneable, Serializable {
     /**
      * The name of a color palette, or the RGB code of a single color, or {@code null} if unknown.
      * This is used for selection in a {@link org.geotoolkit.gui.swing.image.PaletteComboBox}.
-     *
-     * @see org.geotoolkit.internal.swing.table.ColorRampRenderer.Gradiant#paletteName
      */
     private String paletteName;
 

@@ -238,6 +238,12 @@ public class ImageFileProperties extends ImageProperties implements PropertyChan
      * and thumbnails, reading the information at the given image index. The information
      * are extracted immediately and no reference to the given image reader is retained.
      *
+     * {@section Resources management}
+     * This method does <strong>not</strong> close the
+     * {@linkplain javax.imageio.stream.ImageInputStream Image Input Stream} (if any).
+     * It is caller responsability to dispose reader resources (including closing the
+     * input stream) after this method call, if desired.
+     *
      * {@section Thread safety}
      * This method can be invoked from any thread. Actually it is recommanded to invoke
      * it from an other thread than the <cite>Swing</cite> one.
@@ -396,8 +402,11 @@ public class ImageFileProperties extends ImageProperties implements PropertyChan
      * <p>
      * <u>
      *   <li>If the given input is an instance of {@link ImageReader}, then it is used
-     *       directly.</li>
-     *   <li>Otherwise this method creates a temporary image reader for the given input.</li>
+     *       directly. Note that this method does <strong>not</strong> close the image
+     *       input stream after usage, as specified by {@link #setImage(ImageReader, int)}.</li>
+     *   <li>Otherwise this method creates a temporary image reader for the given input,
+     *       passes it to {@link #setImage(ImageReader)}, then disposes the resources
+     *       (reader and input stream).</li>
      * </u>
      * <p>
      * Then, this method delegates to {@link #setImage(ImageReader)}.
@@ -483,6 +492,9 @@ public class ImageFileProperties extends ImageProperties implements PropertyChan
 
         /**
          * Reads the image. This is run from the caller (preferably a background) thread.
+         * Note that if this method is called by {@link Formats#selectImageReader}, then
+         * it will be disposed automatically after the call. Otherwise (if this method is
+         * invoked directly), it is caller responsability to dispose the reader.
          */
         @Override
         public void read(final ImageReader reader) throws IOException {

@@ -479,6 +479,7 @@ final class GridCoverageEntry extends DefaultEntry implements GridCoverageRefere
                     p.nextInUse = reader.nextInUse;
                 }
             }
+            reader.setInput(null); // Close the image input stream.
         }
         pool.release(reader);
         return coverage;

@@ -197,6 +197,11 @@ public interface GridCoverageReference extends CoverageStack.Element {
      * provided instance will be recycled if possible, for avoiding the cost of creating a
      * new reader on each method invocation. If the argument is {@code null} or the given
      * instance can not be reused, then this method returns a new instance.
+     * <p>
+     * Callers should invoke {@linkplain GridCoverageReader#setInput(Object) set the input}
+     * to {@code null}, {@linkplain GridCoverageReader#reset() reset} or
+     * {@linkplain GridCoverageReader#dispose() dispose} the reader as soon as the reading
+     * process is completed, in order to close the underlying image input stream.
      *
      * @param  recycle An optional existing instance to recycle if possible, or {@code null}.
      * @return A reader which can be used for reading the grid coverage.

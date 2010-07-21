@@ -114,10 +114,17 @@ public class CoverageFileProperties extends ImageFileProperties {
      * <p>
      * <ul>
      *   <li>{@link GridCoverageReference}</li>
-     *   <li>{@link GridCoverageReader}</li>
-     *   <li>{@link ImageReader}</li>
+     *   <li>{@link GridCoverageReader} with its input set (see <cite>Resources management</cite> below).</li>
+     *   <li>{@link ImageReader} with its input set (see <cite>Resources management</cite> below).</li>
      *   <li>Paths as {@link java.io.File}, {@link java.net.URL}, <i>etc.</i></li>
      * </ul>
+     *
+     * {@section Resources management}
+     * If an {@code GridCoverageReader} or {@code ImageReader} is given to this method, and if the
+     * reader uses an {@linkplain javax.imageio.stream.ImageInputStream Image Input Stream} or other
+     * kind of {@linkplain java.io.Closeable closeable} input, then note that this method does
+     * <strong>not</strong> close such input. It is caller responsability to close the reader
+     * input after this method call.
      */
     @Override
     public void setImageInput(Object input) throws IOException {
@@ -127,21 +134,24 @@ public class CoverageFileProperties extends ImageFileProperties {
              * possible, provided that it is not an instance provided by the user.
              */
             Adapter adapter = imageReader.getAndSet(null);
-            GridCoverageReader reader = (adapter != null) ? adapter.getReader() : null;
             try {
-                reader = ((GridCoverageReference) input).getCoverageReader(reader);
-            } catch (CoverageStoreException e) {
-                final Throwable cause = e.getCause();
-                if (cause instanceof IOException) {
-                    throw (IOException) cause;
+                GridCoverageReader reader = (adapter != null) ? adapter.getReader() : null;
+                try {
+                    reader = ((GridCoverageReference) input).getCoverageReader(reader);
+                } catch (CoverageStoreException e) {
+                    final Throwable cause = e.getCause();
+                    if (cause instanceof IOException) {
+                        throw (IOException) cause;
+                    }
+                    throw new IIOException(e.getLocalizedMessage(), e);
                 }
-                throw new IIOException(e.getLocalizedMessage(), e);
+                adapter = (adapter != null) ? adapter.setReader(reader) : new Adapter(reader);
+                adapter.setInput(input);
+                super.setImageInput(adapter);
+                adapter.setInput(null); // Close the input stream.
+            } finally {
+                imageReader.compareAndSet(null, adapter);
             }
-            adapter = (adapter != null) ? adapter.setReader(reader) : new Adapter(reader);
-            adapter.setInput(input);
-            input = adapter;
-            super.setImageInput(input);
-            imageReader.compareAndSet(null, adapter);
         } else {
             if (input instanceof GridCoverageReader) {
                 input = new Adapter((GridCoverageReader) input);

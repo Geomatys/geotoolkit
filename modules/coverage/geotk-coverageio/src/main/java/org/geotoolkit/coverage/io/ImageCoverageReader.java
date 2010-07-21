@@ -87,6 +87,14 @@ import org.geotoolkit.referencing.operation.transform.ConcatenatedTransform;
  * coordinates to geodetic coordinates. The later conversion is called "<cite>grid to CRS</cite>"
  * and is determined from the {@link SpatialMetadata} provided by the {@code ImageReader}.
  *
+ * {@section Closing the input stream}
+ * An {@linkplain ImageInputStream Image Input Stream} may be created automatically from various
+ * input types like {@linkplain java.io.File} or {@linkplain java.net.URL}. That input stream is
+ * <strong>not</strong> closed after a read operation, because many consecutive read operations
+ * may be performed for the same input. To ensure that the input stream is closed, user shall
+ * invoke the {@link #setInput(Object)} method with a {@code null} input, or invoke the
+ * {@link #reset()} or {@link #dispose()} methods.
+ *
  * {@section Default metadata value}
  * If no {@linkplain CoordinateReferenceSystem Coordinate Reference System} or no
  * <cite>grid to CRS</cite> {@linkplain MathTransform Math Transform} can be created

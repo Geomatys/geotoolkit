@@ -77,7 +77,7 @@ public final class Formats {
          * will be rethrown.
          * <p>
          * This method should not retain a reference to the image reader, because it will be
-         * disposed by the caller.
+         * disposed by the caller after this method call.
          *
          * @param  reader The image reader.
          * @throws IOException If an I/O error occured.
@@ -99,6 +99,9 @@ public final class Formats {
      * {@link ReadCall#read(ImageReader)} for each of them until a call succeed. If every
      * readers fail with an {@link IOException}, the exception of the first reader is rethrown
      * by this method.
+     * <p>
+     * Every {@link ImageReader} instances created by this method are disposed after usage.
+     * Their input streams (if any) will be closed.
      *
      * @param  input     The input for which image reader are searched.
      * @param  locale    The locale to set to the image readers, or {@code null} if none.

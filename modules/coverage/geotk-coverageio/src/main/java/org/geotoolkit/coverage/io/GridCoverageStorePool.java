@@ -122,7 +122,7 @@ public class GridCoverageStorePool {
      * @throws CoverageStoreException If an error occured while reseting or disposing the reader.
      */
     public void release(final GridCoverageReader reader) throws CoverageStoreException {
-        reader.reset();
+        reader.reset(); // Close the image input stream, if any.
         synchronized (readers) {
             if (readerCount != readers.length) {
                 readers[readerCount++] = reader;

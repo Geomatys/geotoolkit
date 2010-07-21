@@ -51,7 +51,7 @@ import org.geotoolkit.image.SampleModels;
  * is the easiest one to debug.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.10
+ * @version 3.14
  *
  * @since 3.09
  */
@@ -140,6 +140,7 @@ public final class ImageCoverageReaderTest {
         assertEquals(-1.251f,   raster.getSampleFloat(19,  0, 0), EPS);
         assertEquals(-1.075f,   raster.getSampleFloat( 0, 41, 0), EPS);
         assertEquals(Float.NaN, raster.getSampleFloat(19, 41, 0), EPS);
+        reader.dispose();
     }
 
     /**
@@ -183,6 +184,7 @@ public final class ImageCoverageReaderTest {
         assertEquals(Float.NaN, raster.getSampleFloat(8,  0, 0), EPS);
         assertEquals(26.769f,   raster.getSampleFloat(0, 13, 0), EPS);
         assertEquals(27.949f,   raster.getSampleFloat(8, 13, 0), EPS);
+        reader.dispose();
     }
 
     /**
@@ -226,6 +228,7 @@ public final class ImageCoverageReaderTest {
         assertEquals(Float.NaN, raster.getSampleFloat(4, 0, 0), EPS);
         assertEquals(25.454f,   raster.getSampleFloat(0, 4, 0), EPS);
         assertEquals(28.902f,   raster.getSampleFloat(4, 4, 0), EPS);
+        reader.dispose();
     }
 
     /**
@@ -245,5 +248,6 @@ public final class ImageCoverageReaderTest {
         reader.reset();
         reader.setInput(file);
         assertNotNull(reader.read(0, null));
+        reader.dispose();
     }
 }

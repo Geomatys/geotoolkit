@@ -72,8 +72,10 @@ import org.geotoolkit.referencing.operation.transform.LinearTransform;
  * An implementation of {@link ImageCoverageReader} when the {@link GridGeometry2D} and the
  * {@link GridSampleDimension}s are obtained from the database instead than from the file.
  * <p>
- * The values given to the {@link #setInput(Object)} method must be instances of
- * {@link GridCoverageEntry}.
+ * The values given to the {@link #setInput(Object)} method must be instances
+ * of {@link GridCoverageEntry}. The caller shall {@linkplain #reset() reset}
+ * or {@linkplain #dispose() dispose} the reader as soon as the reading is
+ * finished, in order to close the underlying input stream.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.14
@@ -169,7 +171,7 @@ final class GridCoverageLoader extends ImageCoverageReader {
          * For the NetCDF format, set the names of the variables to read.
          * The names declared in the SampleDimensions table.
          */
-        if (imageReader instanceof NamedImageStore) {
+        if (input != null && imageReader instanceof NamedImageStore) {
             String[] names = null;
             String imageName = null;
             final NamedImageStore store = (NamedImageStore) imageReader;
