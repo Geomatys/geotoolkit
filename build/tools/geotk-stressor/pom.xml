@@ -13,7 +13,7 @@
 
   <parent>
     <groupId>org.geotoolkit.project</groupId>
-    <artifactId>build</artifactId>
+    <artifactId>tools</artifactId>
     <version>SNAPSHOT</version>
   </parent>
 
@@ -22,12 +22,14 @@
   <!--     Module Description                                      -->
   <!-- =========================================================== -->
   <groupId>org.geotoolkit.project</groupId>
-  <artifactId>tools</artifactId>
-  <packaging>pom</packaging>
-  <name>Tools</name>
+  <artifactId>geotk-stress</artifactId>
+  <packaging>jar</packaging>
+  <name>Scalability test</name>
 
   <description>
-    Projects group for miscellaneous tools that are not Maven plugins.
+    Test the scalability of some Geotk modules. This test is executed
+    from the console on arbitrary data which must be supplied by the
+    user.
   </description>
 
 
@@ -43,49 +45,24 @@
       <organizationUrl>http://www.geomatys.fr/</organizationUrl>
       <timezone>+1</timezone>
       <roles>
-        <role>Administrator</role>
+        <role>Module Maintainer</role>
+        <role>Java Developer</role>
       </roles>
     </developer>
   </developers>
 
 
-  <!-- =========================================================== -->
-  <!--     Modules included in the build                           -->
-  <!--                                                             -->
-  <!-- We don't include "geotk-provided" in the list because we    -->
-  <!-- don't want it to be processed in the aggregated javadoc.    -->
-  <!-- We can't use the javadoc "exclude package" option since     -->
-  <!-- we don't want to exclude the real classes defined in an     -->
-  <!-- other module. Concequently "geotk-provided" needs to be     -->
-  <!-- deployed manually. Hopefully the changes in that module     -->
-  <!-- are exceptional enough.                                     -->
-  <!--                                                             -->
-  <!-- See: http://jira.codehaus.org/browse/MJAVADOC-134           -->
-  <!--      http://jira.codehaus.org/browse/MJAVADOC-227           -->
-  <!-- =========================================================== -->
-  <modules>
-    <module>geotk-test</module>
-    <module>geotk-stressor</module>
-    <module>geotk-migrate</module>
-    <module>geotk-epsg-pack</module>
-  </modules>
 
-  <!--
-    The modules excluded from the above list. We will keep them when
-    we are not generating the web site, in order to reduce the risk
-    of build failure for users just running "mvn install".
-  -->
-  <profiles>
-    <profile>
-      <id>no-site</id>
-      <activation>
-        <activeByDefault>true</activeByDefault>
-      </activation>
-      <modules>
-        <module>geotk-provided</module>
-      </modules>
-    </profile>
-  </profiles>
+  <!-- =========================================================== -->
+  <!--     Dependencies                                            -->
+  <!-- =========================================================== -->
+  <dependencies>
+    <dependency>
+      <groupId>org.geotoolkit</groupId>
+      <artifactId>geotk-coverage-sql</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+  </dependencies>
 
 
 </project>
