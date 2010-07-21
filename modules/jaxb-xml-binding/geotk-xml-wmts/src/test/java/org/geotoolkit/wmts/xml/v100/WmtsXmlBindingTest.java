@@ -92,10 +92,10 @@ public class WmtsXmlBindingTest {
         TileMatrix expResult = new TileMatrix(new CodeType("16d"),
                                               55218.001386,
                                               new TopLeftPoint(pt),
-                                              new BigInteger("256"),
-                                              new BigInteger("256"),
-                                              new BigInteger("3"),
-                                              new BigInteger("3"));
+                                              256,
+                                              256,
+                                              3,
+                                              3);
 
         assertEquals(expResult, result);
     
@@ -113,10 +113,10 @@ public class WmtsXmlBindingTest {
         TileMatrix matrix = new TileMatrix(new CodeType("16d"),
                                               55218.001386,
                                               new TopLeftPoint(pt),
-                                              new BigInteger("256"),
-                                              new BigInteger("256"),
-                                              new BigInteger("3"),
-                                              new BigInteger("3"));
+                                              256,
+                                              256,
+                                              3,
+                                              3);
 
 
         StringWriter sw = new StringWriter();
