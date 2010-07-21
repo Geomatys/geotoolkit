@@ -99,9 +99,9 @@ class DefaultSLDLibrary implements SLDLibrary{
      */
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
+        final StringBuilder builder = new StringBuilder();
         builder.append("[SLDLibrary : Online=");
-        builder.append(online.toString());
+        builder.append(online);
         builder.append(']');
         return builder.toString();
     }

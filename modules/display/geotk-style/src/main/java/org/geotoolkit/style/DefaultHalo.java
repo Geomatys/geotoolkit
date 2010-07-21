@@ -105,11 +105,9 @@ public class DefaultHalo implements Halo{
      */
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("[Halo : Radius=");
-        builder.append(radius.toString());
-        builder.append(" Fill=");
-        builder.append(fill.toString());
+        final StringBuilder builder = new StringBuilder();
+        builder.append("[Halo : Radius=").append(radius);
+        builder.append(" Fill=").append(fill);
         builder.append(']');
         return builder.toString();
     }

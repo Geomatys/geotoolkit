@@ -18,7 +18,10 @@
 package org.geotoolkit.data.memory;
 
 import java.io.IOException;
-import java.util.List;
+import java.util.AbstractMap.SimpleEntry;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.geotoolkit.data.AbstractPropertyReader;
 import org.geotoolkit.util.Converters;
@@ -34,15 +37,12 @@ import org.opengis.feature.type.PropertyDescriptor;
  */
 class ArrayPropertyRW extends AbstractPropertyReader{
 
-    private final int startIndex;
-    private final List<Object[]> datas;
-    private Object[] current = null;
-    private int iteIndex = 0;
+    private final Iterator<Entry<String,Object[]>> ite;
+    private Entry<String,Object[]> current = null;
 
-    ArrayPropertyRW(PropertyDescriptor[] desc, int startIndex, List<Object[]> datas) {
+    ArrayPropertyRW(PropertyDescriptor[] desc, Map<String,Object[]> features) {
         super(desc);
-        this.startIndex = startIndex;
-        this.datas = datas;
+        ite = features.entrySet().iterator();
     }
 
     @Override
@@ -51,35 +51,39 @@ class ArrayPropertyRW extends AbstractPropertyReader{
 
     @Override
     public boolean hasNext() throws IOException {
-        return iteIndex < datas.size();
+        return ite.hasNext();
     }
 
     @Override
     public void next() throws IOException {
-        current = datas.get(iteIndex);
-        iteIndex++;
+        if(hasNext()){
+            current = ite.next();
+        }else{
+            //switch to append mode
+            current = new SimpleEntry<String, Object[]>("", new Object[getPropertyCount()]);
+        }
     }
 
     @Override
     public Object read(int index) throws IOException, ArrayIndexOutOfBoundsException {
-        return current[startIndex+index];
+        return current.getValue()[index];
     }
 
     @Override
     public void read(Object[] buffer) throws IOException {
+        final Object[] vals = current.getValue();
         for(int i=0,n=getPropertyCount(); i<n; i++){
-            buffer[i] = current[startIndex+i];
+            buffer[i] = vals[i];
         }
     }
 
     public void setValue(int index, Object value){
-        current[startIndex+index] = Converters.convert(
+        current.getValue()[index] = Converters.convert(
                 value, metaData[index].getType().getBinding());
     }
 
     public void remove(){
-        //must use -- since iteIndex is already on the next feature
-        datas.remove(--iteIndex);
+        ite.remove();
     }
 
 }

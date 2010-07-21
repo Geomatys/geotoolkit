@@ -3,6 +3,7 @@
  *    http://www.geotoolkit.org
  *
  *    (C) 2005-2008, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -24,16 +25,17 @@ import java.util.List;
 import com.vividsolutions.jts.geom.Envelope;
 
 /**
- * DOCUMENT ME!
  * 
  * @author Tommaso Nolli
+ * @author Johann Sorel (Geomatys)
  * @module pending
  */
 public class Node {
+
     private Envelope bounds;
     protected int numShapesId;
     protected int[] shapesId;
-    protected List subNodes;
+    protected final List<Node> subNodes;
     protected Node parent;
     private boolean visited = false;
     private boolean childrenVisited = false;
@@ -43,7 +45,7 @@ public class Node {
         this.parent = parent;
         this.id = id;
         this.bounds = new Envelope(bounds);
-        this.subNodes = new ArrayList(4);
+        this.subNodes = new ArrayList<Node>(4);
         this.shapesId = new int[4];
         Arrays.fill(this.shapesId, -1);
     }
@@ -60,8 +62,7 @@ public class Node {
     /**
      * DOCUMENT ME!
      * 
-     * @param bounds
-     *                The bounds to set.
+     * @param bounds The bounds to set.
      */
     public void setBounds(Envelope bounds) {
         this.bounds = bounds;
@@ -78,7 +79,7 @@ public class Node {
 
     /**
      * DOCUMENT ME!
-     * 
+     *
      * @return Returns the number of records stored.
      */
     public int getNumShapeIds() {
@@ -89,9 +90,7 @@ public class Node {
      * DOCUMENT ME!
      * 
      * @param node
-     * 
-     * @throws NullPointerException
-     *                 DOCUMENT ME!
+     * @throws NullPointerException DOCUMENT ME!
      */
     public void addSubNode(Node node) {
         if (node == null) {
@@ -104,19 +103,13 @@ public class Node {
     /**
      * Removes a subnode
      * 
-     * @param node
-     *                The subnode to remove
-     * 
+     * @param node The subnode to remove
      * @return true if the subnode has been removed
      */
     public boolean removeSubNode(Node node) {
         return this.subNodes.remove(node);
     }
 
-    /**
-     * 
-     * 
-     */
     public void clearSubNodes() {
         this.subNodes.clear();
     }
@@ -124,16 +117,12 @@ public class Node {
     /**
      * Gets the Node at the requested position
      * 
-     * @param pos
-     *                The position
-     * 
+     * @param pos The position
      * @return A Node
-     * 
-     * @throws StoreException
-     *                 DOCUMENT ME!
+     * @throws StoreException DOCUMENT ME!
      */
     public Node getSubNode(int pos) throws StoreException {
-        return (Node) this.subNodes.get(pos);
+        return this.subNodes.get(pos);
     }
 
     /**
@@ -144,7 +133,7 @@ public class Node {
     public void addShapeId(int id) {
         if (this.shapesId.length == this.numShapesId) {
             // Increase the array
-            int[] newIds = new int[this.numShapesId * 2];
+            final int[] newIds = new int[this.numShapesId * 2];
             Arrays.fill(newIds, -1);
             System.arraycopy(this.shapesId, 0, newIds, 0, this.numShapesId);
             this.shapesId = newIds;
@@ -157,13 +146,9 @@ public class Node {
     /**
      * Gets a shape id
      * 
-     * @param pos
-     *                The position
-     * 
+     * @param pos The position
      * @return The shape id (or recno) at the requested position
-     * 
-     * @throws ArrayIndexOutOfBoundsException
-     *                 DOCUMENT ME!
+     * @throws ArrayIndexOutOfBoundsException DOCUMENT ME!
      */
     public int getShapeId(int pos) {
         if (pos >= this.numShapesId) {
@@ -176,7 +161,6 @@ public class Node {
 
     /**
      * Sets the shape ids
-     * 
      * @param ids
      */
     public void setShapesId(int[] ids) {
@@ -186,11 +170,10 @@ public class Node {
             this.shapesId = ids;
             this.numShapesId = 0;
 
-            for (int i = 0; i < ids.length; i++) {
-                if (ids[i] == -1) {
+            for(int i : ids) {
+                if (i == -1) {
                     break;
                 }
-
                 this.numShapesId++;
             }
         }
@@ -198,7 +181,6 @@ public class Node {
 
     /**
      * DOCUMENT ME!
-     * 
      * @return Returns the shapesId.
      */
     public int[] getShapesId() {

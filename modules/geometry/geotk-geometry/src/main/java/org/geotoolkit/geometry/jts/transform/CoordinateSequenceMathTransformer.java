@@ -1,7 +1,7 @@
 /*
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
- * 
+ *
  *    (C) 2004-2008, Open Source Geospatial Foundation (OSGeo)
  *
  *    This library is free software; you can redistribute it and/or
@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.geometry.jts;
+package org.geotoolkit.geometry.jts.transform;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.CoordinateSequence;
@@ -40,12 +40,12 @@ import org.opengis.referencing.operation.TransformException;
  * @author Andrea Aime
  * @author Martin Desruisseaux
  */
-public class DefaultCoordinateSequenceTransformer implements CoordinateSequenceTransformer {
+public class CoordinateSequenceMathTransformer implements CoordinateSequenceTransformer {
 
     /**
      * The coordinate sequence factory to use.
      */
-    private static final CoordinateSequenceFactory CS_FACTORY = CoordinateArraySequenceFactory.instance();
+    private static final CoordinateSequenceFactory DEFAULT_CS_FACTORY = CoordinateArraySequenceFactory.instance();
     /**
      * A buffer for coordinate transformations. We choose a length which is divisible by
      * both 2 and 3, since JTS coordinates may be up to three-dimensional. If the number
@@ -56,18 +56,42 @@ public class DefaultCoordinateSequenceTransformer implements CoordinateSequenceT
      */
     private final transient double[] buffer = new double[96];
 
+    private final CoordinateSequenceFactory csf;
+
+    private MathTransform transform = null;
+
     /**
      * Constructs a default coordinate sequence transformer.
      */
-    public DefaultCoordinateSequenceTransformer() {
+    public CoordinateSequenceMathTransformer(MathTransform transform) {
+        this(null,transform);
+    }
+
+    /**
+     * Constructs a coordinate sequence transformer with the given CoordinateSequenceFactory.
+     */
+    public CoordinateSequenceMathTransformer(CoordinateSequenceFactory csf, MathTransform transform) {
+        if(csf == null){
+            this.csf = DEFAULT_CS_FACTORY;
+        }else{
+            this.csf = csf;
+        }
+        this.transform =transform;
+    }
+
+    public void setTransform(MathTransform transform) {
+        this.transform = transform;
+    }
+
+    public MathTransform getTransform() {
+        return transform;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    @SuppressWarnings("fallthrough")
-    public CoordinateSequence transform(final CoordinateSequence sequence, final MathTransform transform)
+    public CoordinateSequence transform(final CoordinateSequence sequence)
             throws TransformException {
         final int sourceDim = transform.getSourceDimensions();
         final int targetDim = transform.getTargetDimensions();
@@ -124,6 +148,6 @@ public class DefaultCoordinateSequenceTransformer implements CoordinateSequenceT
         }
         assert it == tcs.length : tcs.length - it;
 
-        return CS_FACTORY.create(tcs);
+        return csf.create(tcs);
     }
 }

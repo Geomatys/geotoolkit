@@ -3,6 +3,7 @@
  *    http://www.geotoolkit.org
  *
  *    (C) 2004-2008, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2009-2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -24,26 +25,27 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.channels.FileChannel;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
+import org.geotoolkit.index.quadtree.DataReader;
 import org.geotoolkit.index.quadtree.IndexStore;
 import org.geotoolkit.index.quadtree.Node;
 import org.geotoolkit.index.quadtree.QuadTree;
 import org.geotoolkit.index.quadtree.StoreException;
 
 import com.vividsolutions.jts.geom.Envelope;
-import org.geotoolkit.index.quadtree.DataReader;
+
+import static org.geotoolkit.index.quadtree.fs.IndexHeader.*;
 
 /**
  * DOCUMENT ME!
  * 
  * @author Tommaso Nolli
+ * @author Johann Sorel (Geomatys)
  * @module pending
  */
 public class FileSystemIndexStore implements IndexStore {
-    private static final Logger LOGGER = org.geotoolkit.util.logging.Logging
-            .getLogger("org.geotoolkit.index.quadtree");
-    private File file;
+
+    private final File file;
     private byte byteOrder;
 
     /**
@@ -53,7 +55,7 @@ public class FileSystemIndexStore implements IndexStore {
      */
     public FileSystemIndexStore(File file) {
         this.file = file;
-        this.byteOrder = IndexHeader.NEW_MSB_ORDER;
+        this.byteOrder = NEW_MSB_ORDER;
     }
 
     /**
@@ -83,18 +85,18 @@ public class FileSystemIndexStore implements IndexStore {
             fos = new FileOutputStream(file);
             channel = fos.getChannel();
 
-            ByteBuffer buf = ByteBuffer.allocate(8);
+            final ByteBuffer buf = ByteBuffer.allocate(8);
 
-            if (this.byteOrder > IndexHeader.NATIVE_ORDER) {
-                LOGGER.finest("Writing file header");
+            if (this.byteOrder > NATIVE_ORDER) {
+                QuadTree.LOGGER.finest("Writing file header");
 
-                IndexHeader header = new IndexHeader(byteOrder);
+                final IndexHeader header = new IndexHeader(byteOrder);
                 header.writeTo(buf);
                 buf.flip();
                 channel.write(buf);
             }
 
-            ByteOrder order = byteToOrder(this.byteOrder);
+            final ByteOrder order = byteToOrder(this.byteOrder);
 
             buf.clear();
             buf.order(order);
@@ -137,32 +139,35 @@ public class FileSystemIndexStore implements IndexStore {
      */
     private void writeNode(Node node, FileChannel channel, ByteOrder order)
             throws IOException, StoreException {
-        int offset = this.getSubNodeOffset(node);
+        final int offset = this.getSubNodeOffset(node);
 
-        ByteBuffer buf = ByteBuffer.allocate((4 * 8) + (3 * 4)
-                + (node.getNumShapeIds() * 4));
+        final int numShapeIds = node.getNumShapeIds();
+        final int numSubNodes = node.getNumSubNodes();
+
+        final ByteBuffer buf = ByteBuffer.allocate((4 * 8) + (3 * 4)
+                + (numShapeIds * 4));
 
         buf.order(order);
         buf.putInt(offset);
 
-        Envelope env = node.getBounds();
+        final Envelope env = node.getBounds();
         buf.putDouble(env.getMinX());
         buf.putDouble(env.getMinY());
         buf.putDouble(env.getMaxX());
         buf.putDouble(env.getMaxY());
 
-        buf.putInt(node.getNumShapeIds());
+        buf.putInt(numShapeIds);
 
-        for (int i = 0; i < node.getNumShapeIds(); i++) {
+        for (int i=0; i<numShapeIds; i++) {
             buf.putInt(node.getShapeId(i));
         }
 
-        buf.putInt(node.getNumSubNodes());
+        buf.putInt(numSubNodes);
         buf.flip();
 
         channel.write(buf);
 
-        for (int i = 0; i < node.getNumSubNodes(); i++) {
+        for (int i=0; i<numSubNodes; i++) {
             this.writeNode(node.getSubNode(i), channel, order);
         }
     }
@@ -178,10 +183,9 @@ public class FileSystemIndexStore implements IndexStore {
      */
     private int getSubNodeOffset(Node node) throws StoreException {
         int offset = 0;
-        Node tmp = null;
 
-        for (int i = 0; i < node.getNumSubNodes(); i++) {
-            tmp = node.getSubNode(i);
+        for (int i=0,n=node.getNumSubNodes(); i<n; i++) {
+            Node tmp = node.getSubNode(i);
             offset += (4 * 8); // Envelope size
             offset += ((tmp.getNumShapeIds() + 3) * 4); // Entries size + 3
             offset += this.getSubNodeOffset(tmp);
@@ -202,32 +206,33 @@ public class FileSystemIndexStore implements IndexStore {
         QuadTree tree = null;
 
         try {
-            if (LOGGER.isLoggable(Level.FINEST)) {
-                LOGGER.finest("Opening QuadTree "
-                        + this.file.getCanonicalPath());
+            if (QuadTree.LOGGER.isLoggable(Level.FINEST)) {
+                QuadTree.LOGGER.log(Level.FINEST, "Opening QuadTree {0}", this.file.getCanonicalPath());
             }
 
             final FileInputStream fis = new FileInputStream(file);
             final FileChannel channel = fis.getChannel();
 
-            IndexHeader header = new IndexHeader(channel);
+            final IndexHeader header = new IndexHeader(channel);
 
-            ByteOrder order = byteToOrder(header.getByteOrder());
-            ByteBuffer buf = ByteBuffer.allocate(8);
+            final ByteOrder order = byteToOrder(header.getByteOrder());
+            final ByteBuffer buf = ByteBuffer.allocate(8);
             buf.order(order);
             channel.read(buf);
             buf.flip();
 
             tree = new QuadTree(buf.getInt(), buf.getInt(), indexfile) {
+                @Override
                 public void insert(int recno, Envelope bounds) {
-                    throw new UnsupportedOperationException(
-                            "File quadtrees are immutable");
+                    throw new UnsupportedOperationException("File quadtrees are immutable");
                 }
 
+                @Override
                 public boolean trim() {
                     return false;
                 }
 
+                @Override
                 public void close() throws StoreException {
                     super.close();
                     try {
@@ -241,7 +246,7 @@ public class FileSystemIndexStore implements IndexStore {
 
             tree.setRoot(FileSystemNode.readNode(0, null, channel, order));
 
-            LOGGER.finest("QuadTree opened");
+            QuadTree.LOGGER.finest("QuadTree opened");
         } catch (IOException e) {
             throw new StoreException(e);
         }
@@ -259,22 +264,16 @@ public class FileSystemIndexStore implements IndexStore {
         ByteOrder ret = null;
 
         switch (order) {
-        case IndexHeader.NATIVE_ORDER:
-            ret = ByteOrder.nativeOrder();
+            case NATIVE_ORDER:
+                ret = ByteOrder.nativeOrder();break;
 
-            break;
+            case LSB_ORDER:
+            case NEW_LSB_ORDER:
+                ret = ByteOrder.LITTLE_ENDIAN;break;
 
-        case IndexHeader.LSB_ORDER:
-        case IndexHeader.NEW_LSB_ORDER:
-            ret = ByteOrder.LITTLE_ENDIAN;
-
-            break;
-
-        case IndexHeader.MSB_ORDER:
-        case IndexHeader.NEW_MSB_ORDER:
-            ret = ByteOrder.BIG_ENDIAN;
-
-            break;
+            case MSB_ORDER:
+            case NEW_MSB_ORDER:
+                ret = ByteOrder.BIG_ENDIAN;break;
         }
 
         return ret;

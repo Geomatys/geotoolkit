@@ -26,7 +26,7 @@ import org.geotoolkit.index.Data;
  */
 public interface DataReader {
 
-    Data create(Integer id) throws IOException;
+    Data create(int id) throws IOException;
 
     void close() throws IOException;
 

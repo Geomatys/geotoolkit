@@ -68,7 +68,7 @@ public class PropertyExistsFunction extends AbstractFunction {
         String propName = getPropertyName();
         AttributeDescriptor attributeType = feature.getFeatureType().getDescriptor(propName);
 
-        return Boolean.valueOf(attributeType != null);
+        return attributeType != null;
     }
 
     /**
@@ -102,13 +102,10 @@ public class PropertyExistsFunction extends AbstractFunction {
 
     @Override
     public String toString() {
-        StringBuffer sb = new StringBuffer("PropertyExists('");
+        final StringBuilder sb = new StringBuilder("PropertyExists('");
         sb.append(getPropertyName());
         sb.append("')");
-
-        String stringVal = sb.toString();
-
-        return stringVal;
+        return sb.toString();
     }
 
     @Override

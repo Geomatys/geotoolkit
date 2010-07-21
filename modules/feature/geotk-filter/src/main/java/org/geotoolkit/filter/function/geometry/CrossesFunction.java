@@ -48,6 +48,6 @@ public class CrossesFunction extends AbstractFunction {
                     "Filter Function problem for function crosses argument #1 - expected type Geometry");
         }
 
-        return new Boolean(StaticGeometry.crosses(arg0, arg1));
+        return StaticGeometry.crosses(arg0, arg1);
     }
 }

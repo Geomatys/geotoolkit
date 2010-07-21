@@ -153,7 +153,7 @@ public class DefaultOnlineResource implements OnlineResource{
      */
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
+        final StringBuilder builder = new StringBuilder();
         builder.append("[OnlineResource : URI=");
         builder.append(href);
         builder.append(']');

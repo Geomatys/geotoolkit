@@ -174,11 +174,11 @@ public class DefaultExternalGraphic implements ExternalGraphic{
      */
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
+        final StringBuilder builder = new StringBuilder();
         builder.append("[ExternalGraphic : Type=");
         builder.append( (resource == null) ? "Inline Image" : "Online Image" );
         builder.append(" Format=");
-        builder.append((format != null) ?format.toString() : "");
+        builder.append((format != null) ?format : "");
         builder.append(']');
         return builder.toString();
     }

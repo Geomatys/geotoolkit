@@ -16,8 +16,6 @@
  */
 package org.geotoolkit.display2d.container.statefull;
 
-import com.vividsolutions.jts.simplify.DouglasPeuckerSimplifier;
-
 import java.awt.Shape;
 
 import org.geotoolkit.display2d.GO2Utilities;
@@ -40,12 +38,6 @@ public class StatefullProjectedGeometry implements ProjectedGeometry {
 
     private final StatefullContextParams params;
 
-    //Geometry in data CRS
-    private com.vividsolutions.jts.geom.Geometry    dataGeometryJTS = null;
-
-    //Geometry in data CRS decimated
-    private com.vividsolutions.jts.geom.Geometry    decimatedGeometryJTS = null;
-
     //Geometry in objective CRS
     private com.vividsolutions.jts.geom.Geometry    objectiveGeometryJTS = null;
     private Geometry                                objectiveGeometryISO = null;
@@ -54,73 +46,50 @@ public class StatefullProjectedGeometry implements ProjectedGeometry {
     //Geometry in display CRS
     private com.vividsolutions.jts.geom.Geometry    displayGeometryJTS = null;
     private Geometry                                displayGeometryISO = null;
-    private JTSGeometryJ2D                          displayShape = new JTSGeometryJ2D(null);
+    private final JTSGeometryJ2D                    displayShape;
 
     public StatefullProjectedGeometry(StatefullContextParams params, com.vividsolutions.jts.geom.Geometry geom){
         this.params = params;
-        this.dataGeometryJTS = geom;
+        this.objectiveGeometryJTS = geom;
+        this.displayShape = new JTSGeometryJ2D(geom, params.objectiveToDisplay);
     }
 
     public StatefullProjectedGeometry(StatefullProjectedGeometry copy){
         this.params = copy.params;
-        this.dataGeometryJTS = copy.dataGeometryJTS;
         this.objectiveGeometryJTS = copy.objectiveGeometryJTS;
         this.objectiveGeometryISO = copy.objectiveGeometryISO;
         this.objectiveShape = copy.objectiveShape;
         this.displayGeometryJTS = copy.displayGeometryJTS;
         this.displayGeometryISO = copy.displayGeometryISO;
-        this.displayShape.setGeometry(copy.displayShape.getGeometry());
+        this.displayShape = new JTSGeometryJ2D(copy.displayShape.getGeometry(), params.objectiveToDisplay);
     }
 
-    public com.vividsolutions.jts.geom.Geometry getDataGeometry(){
-        return this.dataGeometryJTS;
-    }
-
-    public void setDataGeometry(com.vividsolutions.jts.geom.Geometry geom){
-        clearDataCache();
-        this.dataGeometryJTS = geom;
-    }
-
-    public void clearDataCache(){
+    public void setObjectiveGeometry(com.vividsolutions.jts.geom.Geometry geom){
         clearObjectiveCache();
-        this.decimatedGeometryJTS = null;
+        this.objectiveGeometryJTS = geom;
+        this.displayShape.setGeometry(objectiveGeometryJTS);
     }
 
     public void clearObjectiveCache(){
         clearDisplayCache();
         objectiveGeometryISO = null;
-        objectiveGeometryJTS = null;
         objectiveShape = null;
     }
     
     public void clearDisplayCache(){
         displayGeometryISO = null;
         displayGeometryJTS = null;
-        displayShape.setGeometry(null);
-    }
-
-    private com.vividsolutions.jts.geom.Geometry getGeometryJTS(){
-        if(decimatedGeometryJTS == null){
-            decimatedGeometryJTS = dataGeometryJTS;
-            if(params.decimate && params.decimation != 0){
-                decimatedGeometryJTS = DouglasPeuckerSimplifier.simplify(decimatedGeometryJTS, params.decimation);
-            }
-        }
-        return decimatedGeometryJTS;
     }
 
     @Override
-    public com.vividsolutions.jts.geom.Geometry getObjectiveGeometryJTS() throws TransformException{
-        if(objectiveGeometryJTS == null){
-            objectiveGeometryJTS = params.dataToObjectiveTransformer.transform(getGeometryJTS());
-        }
+    public com.vividsolutions.jts.geom.Geometry getObjectiveGeometryJTS() {
         return objectiveGeometryJTS;
     }
 
     @Override
     public com.vividsolutions.jts.geom.Geometry getDisplayGeometryJTS() throws TransformException{
         if(displayGeometryJTS == null){
-            displayGeometryJTS = params.dataToDisplayTransformer.transform(getGeometryJTS());
+            displayGeometryJTS = params.objToDisplayTransformer.transform(getObjectiveGeometryJTS());
         }
         return displayGeometryJTS;
     }
@@ -141,11 +110,6 @@ public class StatefullProjectedGeometry implements ProjectedGeometry {
      */
     @Override
     public Shape getDisplayShape() throws TransformException{
-        if(displayShape.getGeometry() == null){
-            displayShape.setGeometry(getDisplayGeometryJTS());
-            //displayShape = GO2Utilities.toJava2D(getDisplayGeometryJTS());
-            //displayShape = GO2Utilities.toJava2D(getDisplayGeometryJTS(),params.resolutionDisplay);
-        }
         return displayShape;
     }
 

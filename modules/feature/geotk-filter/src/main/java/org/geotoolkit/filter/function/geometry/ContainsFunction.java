@@ -48,6 +48,6 @@ public class ContainsFunction extends AbstractFunction {
                     "Filter Function problem for function contains argument #1 - expected type Geometry");
         }
 
-        return new Boolean(StaticGeometry.contains(arg0, arg1));
+        return StaticGeometry.contains(arg0, arg1);
     }
 }

@@ -149,17 +149,14 @@ public class DefaultFont implements Font{
      */
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
+        final StringBuilder builder = new StringBuilder();
         builder.append("[Font : family=");
         for(Expression ex : family){
-            builder.append(ex.toString() +",");
+            builder.append(ex).append(',');
         }
-        builder.append(" Style=");
-        builder.append(style.toString());
-        builder.append(" Weight=");
-        builder.append(weight.toString());
-        builder.append(" Size=");
-        builder.append(size.toString());
+        builder.append(" Style=").append(style);
+        builder.append(" Weight=").append(weight);
+        builder.append(" Size=").append(size);
         builder.append(']');
         return builder.toString();
     }

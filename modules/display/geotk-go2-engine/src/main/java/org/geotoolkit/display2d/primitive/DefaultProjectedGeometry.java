@@ -23,7 +23,8 @@ import com.vividsolutions.jts.geom.Geometry;
 import java.awt.Shape;
 
 import org.geotoolkit.display2d.primitive.jts.JTSGeometryJ2D;
-import org.geotoolkit.geometry.jts.GeometryCoordinateSequenceTransformer;
+import org.geotoolkit.geometry.jts.transform.CoordinateSequenceMathTransformer;
+import org.geotoolkit.geometry.jts.transform.GeometryCSTransformer;
 
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
@@ -36,7 +37,8 @@ import org.opengis.referencing.operation.TransformException;
  */
 public class DefaultProjectedGeometry implements ProjectedGeometry {
 
-    private final GeometryCoordinateSequenceTransformer objToDisplayTransformer = new GeometryCoordinateSequenceTransformer();
+    private final GeometryCSTransformer objToDisplayTransformer =
+            new GeometryCSTransformer(new CoordinateSequenceMathTransformer(null));
 
     private final Geometry objectiveGeometry;
     private Geometry displayGeometry = null;
@@ -51,16 +53,18 @@ public class DefaultProjectedGeometry implements ProjectedGeometry {
     }
 
     public void setObjToDisplay(MathTransform trs){
-        objToDisplayTransformer.setMathTransform(trs);
+        ((CoordinateSequenceMathTransformer)objToDisplayTransformer.getCSTransformer()).setTransform(trs);
         displayGeometry = null;
         isObjectiveCalculated = false;
         isDisplayCalculated = false;
     }
 
+    @Override
     public Geometry getObjectiveGeometryJTS() throws TransformException{
         return objectiveGeometry;
     }
 
+    @Override
     public Geometry getDisplayGeometryJTS() throws TransformException{
         //TODO decimation
         if(displayGeometry == null){

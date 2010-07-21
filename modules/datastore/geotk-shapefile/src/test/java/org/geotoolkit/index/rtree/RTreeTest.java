@@ -24,6 +24,7 @@ import org.geotoolkit.index.rtree.fs.FileSystemPageStore;
 import org.geotoolkit.index.rtree.memory.MemoryPageStore;
 import java.io.File;
 import java.util.Collection;
+import org.geotoolkit.index.DefaultData;
 
 /**
  * DOCUMENT ME!
@@ -78,7 +79,7 @@ public class RTreeTest extends TestCase {
 
         for (int i = 0; i < 200; i += 2) {
             env = new Envelope(i, i + 1, i, i + 1);
-            data = new Data(dd);
+            data = new DefaultData(dd);
             data.addValue(new Integer(i));
             idx.insert(env, data);
         }

@@ -48,6 +48,6 @@ public class GreaterThanFunction extends AbstractFunction {
                     "Filter Function problem for function greaterThan argument #1 - expected type Object");
         }
 
-        return new Boolean(StaticGeometry.greaterThan(arg0, arg1));
+        return StaticGeometry.greaterThan(arg0, arg1);
     }
 }

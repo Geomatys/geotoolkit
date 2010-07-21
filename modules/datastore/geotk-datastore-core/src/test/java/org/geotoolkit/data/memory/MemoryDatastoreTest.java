@@ -42,6 +42,7 @@ import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.feature.FeatureTypeBuilder;
+import org.geotoolkit.filter.sort.DefaultSortBy;
 import org.geotoolkit.referencing.CRS;
 
 import org.junit.After;
@@ -223,7 +224,7 @@ public class MemoryDatastoreTest extends TestCase{
         }
 
         //check that we really have 10 features now
-        reader = store.getFeatureReader(QueryBuilder.all(name));
+        reader = store.getFeatureReader(QueryBuilder.sorted(name,new SortBy[]{new DefaultSortBy(FF.property("att1"), SortOrder.ASCENDING)}));
         count = 0;
         try{
             while(reader.hasNext()){

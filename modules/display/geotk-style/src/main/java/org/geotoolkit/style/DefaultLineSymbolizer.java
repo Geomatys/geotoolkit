@@ -127,20 +127,20 @@ public class DefaultLineSymbolizer extends AbstractSymbolizer implements LineSym
      */
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
+        final StringBuilder builder = new StringBuilder();
         builder.append("[Line Symbolizer : Stroke=");
         if(stroke != null){
-            builder.append(stroke.toString());
+            builder.append(stroke);
         }
         builder.append(" Offset=");
-        builder.append(offset.toString());
+        builder.append(offset);
         if(uom != null){
             builder.append(" Unit=");
-            builder.append(uom.toString());
+            builder.append(uom);
         }
         if(geom != null){
             builder.append(" Geometry=");
-            builder.append(geom.toString());
+            builder.append(geom);
         }
         builder.append(']');
         return builder.toString();

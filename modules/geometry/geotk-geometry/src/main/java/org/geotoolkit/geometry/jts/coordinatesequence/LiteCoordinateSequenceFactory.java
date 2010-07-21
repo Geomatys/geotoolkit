@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.geometry.jts;
+package org.geotoolkit.geometry.jts.coordinatesequence;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.CoordinateSequence;
@@ -28,6 +28,11 @@ import com.vividsolutions.jts.geom.CoordinateSequenceFactory;
  * @since 2.1.x
  */
 public class LiteCoordinateSequenceFactory implements CoordinateSequenceFactory {
+
+    private static final LiteCoordinateSequenceFactory INSTANCE = new LiteCoordinateSequenceFactory();
+
+    private LiteCoordinateSequenceFactory(){}
+
 
     /* (non-Javadoc)
      * @see com.vividsolutions.jts.geom.CoordinateSequenceFactory#create(com.vividsolutions.jts.geom.Coordinate[])
@@ -59,4 +64,9 @@ public class LiteCoordinateSequenceFactory implements CoordinateSequenceFactory 
     public CoordinateSequence create(double[] points) {
         return new LiteCoordinateSequence(points);
     }
+
+    public static LiteCoordinateSequenceFactory instance() {
+        return INSTANCE;
+    }
+
 }

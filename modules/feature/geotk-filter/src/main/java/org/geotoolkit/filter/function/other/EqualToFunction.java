@@ -48,6 +48,6 @@ public class EqualToFunction extends AbstractFunction {
                     "Filter Function problem for function equalTo argument #1 - expected type Object");
         }
 
-        return new Boolean(StaticGeometry.equalTo(arg0, arg1));
+        return StaticGeometry.equalTo(arg0, arg1);
     }
 }

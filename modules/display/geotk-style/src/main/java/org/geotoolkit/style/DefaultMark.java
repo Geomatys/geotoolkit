@@ -161,9 +161,9 @@ public class DefaultMark implements Mark{
      */
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
+        final StringBuilder builder = new StringBuilder();
         builder.append("[Mark : Type=");
-        builder.append( (wkn != null) ? "WKN:"+wkn.toString() : "ExternalMark" );
+        builder.append( (wkn != null) ? "WKN:"+wkn : "ExternalMark" );
         builder.append(" Stroke=");
         builder.append(stroke);
         builder.append(" Fill=");

@@ -41,6 +41,7 @@ class DefaultQuery implements Query {
     private final SortBy[] sortBy;
     private final Hints hints;
     private final CoordinateReferenceSystem crs;
+    private final double[] resolution;
 
     /**
      * Query with typeName.
@@ -64,11 +65,13 @@ class DefaultQuery implements Query {
                 null,
                 0,
                 null,
+                null,
                 null);
     }
 
     DefaultQuery(final Source source, Filter filter, Name[] attributs, SortBy[] sort,
-            CoordinateReferenceSystem crs, int startIndex, Integer MaxFeature,Hints hints){
+            CoordinateReferenceSystem crs, int startIndex, Integer MaxFeature, 
+            double[] resolution, Hints hints){
 
         if(source == null){
             throw new NullPointerException("Query source can not be null");
@@ -85,6 +88,7 @@ class DefaultQuery implements Query {
         this.crs = crs;
         this.startIndex = startIndex;
         this.maxFeatures = MaxFeature;
+        this.resolution = resolution;
 
         if(hints == null){
             this.hints = new Hints();
@@ -97,7 +101,7 @@ class DefaultQuery implements Query {
      * Copy attributs from the given query
      * @param query : query to copy
      */
-    public DefaultQuery(final Query query) {
+    DefaultQuery(final Query query) {
         this(query.getSource(),
              query.getFilter(),
              query.getPropertyNames(),
@@ -105,6 +109,7 @@ class DefaultQuery implements Query {
              query.getCoordinateSystemReproject(),
              query.getStartIndex(),
              query.getMaxFeatures(),
+             (query.getResolution()==null)?null:query.getResolution().clone(),
              query.getHints());
     }
 
@@ -182,12 +187,12 @@ class DefaultQuery implements Query {
      */
     @Override
     public String toString() {
-        StringBuilder returnString = new StringBuilder("Query:");
+        final StringBuilder returnString = new StringBuilder("Query:");
 
-        returnString.append("\n   feature type: " + source);
+        returnString.append("\n   feature type: ").append(source);
 
         if (filter != null) {
-            returnString.append("\n   filter: " + filter.toString());
+            returnString.append("\n   filter: ").append(filter.toString());
         }
 
         returnString.append("\n   [properties: ");
@@ -252,6 +257,14 @@ class DefaultQuery implements Query {
      * {@inheritDoc }
      */
     @Override
+    public double[] getResolution() {
+        return resolution;
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public boolean equals(Object obj) {
         if (obj == null) {
             return false;
@@ -303,6 +316,5 @@ class DefaultQuery implements Query {
         hash = 83 * hash + (this.crs != null ? this.crs.hashCode() : 0);
         return hash;
     }
-
 
 }

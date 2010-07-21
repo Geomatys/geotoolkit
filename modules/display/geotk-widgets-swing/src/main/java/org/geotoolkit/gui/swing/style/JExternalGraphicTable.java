@@ -22,6 +22,7 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import javax.swing.AbstractCellEditor;
 import javax.swing.GroupLayout;
@@ -236,14 +237,12 @@ public class JExternalGraphicTable extends StyleElementEditor<ExternalGraphic[]>
     private JTable tabMarks;
     // End of variables declaration//GEN-END:variables
 
-    class ExternalGraphicModel extends AbstractTableModel {
+    private static class ExternalGraphicModel extends AbstractTableModel {
 
         private List<ExternalGraphic> externals = new ArrayList<ExternalGraphic>();
 
         ExternalGraphicModel(ExternalGraphic[] externals) {
-            for (ExternalGraphic m : externals) {
-                this.externals.add(m);
-            }
+            this.externals.addAll(Arrays.asList(externals));
         }
 
         public void newExternalGraphic() {
@@ -281,9 +280,7 @@ public class JExternalGraphicTable extends StyleElementEditor<ExternalGraphic[]>
             this.externals.clear();
 
             if (externals != null) {
-                for (ExternalGraphic m : externals) {
-                    this.externals.add(m);
-                }
+                this.externals.addAll(Arrays.asList(externals));
             }
             fireTableDataChanged();
         }
@@ -318,7 +315,7 @@ public class JExternalGraphicTable extends StyleElementEditor<ExternalGraphic[]>
         }
     }
 
-    class ExternalGraphicRenderer extends DefaultTableCellRenderer {
+    private static class ExternalGraphicRenderer extends DefaultTableCellRenderer {
 
         private String text = "SsIiGg84";
 
@@ -333,7 +330,7 @@ public class JExternalGraphicTable extends StyleElementEditor<ExternalGraphic[]>
         }
     }
 
-    class ExternalGraphicEditor extends AbstractCellEditor implements TableCellEditor {//implements TableCellEditor{
+    private static class ExternalGraphicEditor extends AbstractCellEditor implements TableCellEditor {//implements TableCellEditor{
 
         private MapLayer layer = null;
         private JExternalGraphicPane editpane = new JExternalGraphicPane();

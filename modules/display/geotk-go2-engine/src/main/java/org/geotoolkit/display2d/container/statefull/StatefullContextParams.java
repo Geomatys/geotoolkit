@@ -20,15 +20,13 @@ package org.geotoolkit.display2d.container.statefull;
 import java.awt.geom.AffineTransform;
 
 import org.geotoolkit.display.canvas.ReferencedCanvas2D;
-import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
-import org.geotoolkit.geometry.DirectPosition2D;
-import org.geotoolkit.geometry.jts.GeometryCoordinateSequenceTransformer;
+import org.geotoolkit.geometry.jts.transform.CoordinateSequenceMathTransformer;
+import org.geotoolkit.geometry.jts.transform.GeometryCSTransformer;
 import org.geotoolkit.map.FeatureMapLayer;
+import org.geotoolkit.util.converter.Classes;
 
-import org.opengis.geometry.DirectPosition;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.operation.MathTransform;
 
 /**
  *
@@ -41,53 +39,23 @@ public class StatefullContextParams {
     public final ReferencedCanvas2D canvas;
     public final FeatureMapLayer layer;
     public final AffineTransform objectiveToDisplay = new AffineTransform(2,0,0,2,0,0);
-    public final GeometryCoordinateSequenceTransformer dataToObjectiveTransformer = new GeometryCoordinateSequenceTransformer();
-    public final GeometryCoordinateSequenceTransformer dataToDisplayTransformer = new GeometryCoordinateSequenceTransformer();
-    public double[] resolutionObjective = new double[2];
-    public double[] resolutionDisplay = new double[2];
+    public final GeometryCSTransformer objToDisplayTransformer =
+            new GeometryCSTransformer(new CoordinateSequenceMathTransformer(null));
     public CoordinateReferenceSystem objectiveCRS;
     public CoordinateReferenceSystem displayCRS;
-    public boolean decimate = false;
-    public double decimation = 0;
-
-    public MathTransform dataToObjective = null;
 
     public StatefullContextParams(ReferencedCanvas2D canvas, FeatureMapLayer layer){
         this.canvas = canvas;
         this.layer = layer;
     }
 
-    public void updateGeneralizationFactor(RenderingContext2D renderingContext, CoordinateReferenceSystem dataCRS){
-        resolutionObjective = renderingContext.getResolution();
-
-        //check if needed generalization
-        final Boolean generalize = (Boolean) renderingContext.getCanvas().getRenderingHint(GO2Hints.KEY_GENERALIZE);
-        if(generalize != null && generalize.booleanValue() == true){
-            decimate = true;
-            try {
-                final MathTransform trs = renderingContext.getMathTransform(renderingContext.getObjectiveCRS(), dataCRS);
-                DirectPosition vect = new DirectPosition2D(resolutionObjective[0], resolutionObjective[1]);
-                vect = trs.transform(vect, vect);
-                resolutionDisplay = vect.getCoordinate();
-                decimation = (resolutionDisplay[0]<resolutionDisplay[1]) ? resolutionDisplay[0] : resolutionDisplay[1] ;
-            } catch (Exception ex) {
-                ex.printStackTrace();
-                decimation = 0;
-            }
-        }else{
-            decimate = false;
-        }
-    }
-
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder();
-        sb.append(super.toString());
+        sb.append(Classes.getShortName(StatefullContextParams.class));
         sb.append("  ");
         sb.append(objectiveToDisplay);
         return sb.toString();
     }
-
-
 
 }

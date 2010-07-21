@@ -67,7 +67,7 @@ public class Any
      */
     public BigInteger getMinOccurs() {
         if (minOccurs == null) {
-            return new BigInteger("1");
+            return BigInteger.ONE;
         } else {
             return minOccurs;
         }

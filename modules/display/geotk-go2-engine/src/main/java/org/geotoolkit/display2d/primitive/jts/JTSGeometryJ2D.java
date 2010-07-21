@@ -20,9 +20,11 @@ package org.geotoolkit.display2d.primitive.jts;
 import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.PathIterator;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.util.logging.Level;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Envelope;
@@ -32,6 +34,8 @@ import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
+
+import org.geotoolkit.util.logging.Logging;
 
 /**
  * A thin wrapper that adapts a JTS geometry to the Shape interface so that the geometry can be used
@@ -48,13 +52,21 @@ public class JTSGeometryJ2D implements Shape, Cloneable {
     /** The wrapped JTS geometry */
     protected Geometry geometry;
 
+    /** An additional AffineTransform */
+    protected final AffineTransform transform;
+
+    public JTSGeometryJ2D(Geometry geom) {
+        this(geom, new AffineTransform());
+    }
+
     /**
      * Creates a new GeometryJ2D object.
      *
      * @param geom - the wrapped geometry
      */
-    public JTSGeometryJ2D(Geometry geom) {
+    public JTSGeometryJ2D(Geometry geom, AffineTransform trs) {
         this.geometry = geom;
+        this.transform = trs;
     }
 
     /**
@@ -93,17 +105,21 @@ public class JTSGeometryJ2D implements Shape, Cloneable {
         return geometry;
     }
 
+    public AffineTransform getInverse(){
+        try {
+            return transform.createInverse();
+        } catch (NoninvertibleTransformException ex) {
+            Logging.getLogger(JTSGeometryJ2D.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
+    }
+
     /**
      * {@inheritDoc }
      */
     @Override
     public boolean contains(Rectangle2D r) {
-        Geometry rect = createRectangle(
-                r.getMinX(),
-                r.getMinY(),
-                r.getWidth(),
-                r.getHeight());
-        return geometry.contains(rect);
+        return contains(r.getMinX(),r.getMinY(),r.getWidth(),r.getHeight());
     }
 
     /**
@@ -111,8 +127,10 @@ public class JTSGeometryJ2D implements Shape, Cloneable {
      */
     @Override
     public boolean contains(Point2D p) {
-        Coordinate coord = new Coordinate(p.getX(), p.getY());
-        Geometry point = geometry.getFactory().createPoint(coord);
+        final AffineTransform inverse = getInverse();
+        inverse.transform(p, p);
+        final Coordinate coord = new Coordinate(p.getX(), p.getY());
+        final Geometry point = geometry.getFactory().createPoint(coord);
         return geometry.contains(point);
     }
 
@@ -121,9 +139,8 @@ public class JTSGeometryJ2D implements Shape, Cloneable {
      */
     @Override
     public boolean contains(double x, double y) {
-        Coordinate coord = new Coordinate(x, y);
-        Geometry point = geometry.getFactory().createPoint(coord);
-        return geometry.contains(point);
+        final Point2D p = new Point2D.Double(x, y);
+        return contains(p);
     }
 
     /**
@@ -140,12 +157,15 @@ public class JTSGeometryJ2D implements Shape, Cloneable {
      */
     @Override
     public Rectangle getBounds() {
-        Envelope env = geometry.getEnvelopeInternal();
+        final Envelope env = geometry.getEnvelopeInternal();
+        final Point2D p1 = new Point2D.Double(env.getMinX(), env.getMinY());
+        transform.transform(p1, p1);
+        final Point2D p2 = new Point2D.Double(env.getMaxX(), env.getMaxY());
+        transform.transform(p2, p2);
         return new Rectangle(
-                (int)(env.getMinX()),
-                (int)(env.getMinY()),
-                (int)(env.getWidth()),
-                (int)(env.getHeight()));
+                (int)p1.getX(), (int)p1.getY(),
+                (int)(p2.getX()-p1.getX()),
+                (int)(p2.getY()-p1.getY()));
     }
 
     /**
@@ -153,8 +173,15 @@ public class JTSGeometryJ2D implements Shape, Cloneable {
      */
     @Override
     public Rectangle2D getBounds2D() {
-        Envelope env = geometry.getEnvelopeInternal();
-        return new Rectangle2D.Double(env.getMinX(), env.getMinY(), env.getWidth(), env.getHeight());
+        final Envelope env = geometry.getEnvelopeInternal();
+        final Point2D p1 = new Point2D.Double(env.getMinX(), env.getMinY());
+        transform.transform(p1, p1);
+        final Point2D p2 = new Point2D.Double(env.getMaxX(), env.getMaxY());
+        transform.transform(p2, p2);
+        return new Rectangle2D.Double(
+                p1.getX(),p1.getY(),
+                p2.getX()-p1.getX(),
+                p2.getY()-p1.getY());
     }
 
     /**
@@ -163,20 +190,28 @@ public class JTSGeometryJ2D implements Shape, Cloneable {
     @Override
     public PathIterator getPathIterator(AffineTransform at) {
 
+        final AffineTransform concat;
+        if(at == null){
+            concat = transform;
+        }else{
+            concat = (AffineTransform) transform.clone();
+            concat.preConcatenate(at);
+        }
+
         if(iterator == null){
             if (this.geometry.isEmpty()) {
                 iterator = JTSEmptyIterator.INSTANCE;
             }else if (this.geometry instanceof Point) {
-                iterator = new JTSPointIterator((Point) geometry, at);
+                iterator = new JTSPointIterator((Point) geometry, concat);
             } else if (this.geometry instanceof Polygon) {
-                iterator = new JTSPolygonIterator((Polygon) geometry, at);
+                iterator = new JTSPolygonIterator((Polygon) geometry, concat);
             } else if (this.geometry instanceof LineString) {
-                iterator = new JTSLineIterator((LineString)geometry, at);
+                iterator = new JTSLineIterator((LineString)geometry, concat);
             } else if (this.geometry instanceof GeometryCollection) {
-                iterator = new JTSGeomCollectionIterator((GeometryCollection)geometry,at);
+                iterator = new JTSGeomCollectionIterator((GeometryCollection)geometry,concat);
             }
         }else{
-            iterator.setTransform(at);
+            iterator.setTransform(concat);
         }
 
         return iterator;
@@ -223,12 +258,20 @@ public class JTSGeometryJ2D implements Shape, Cloneable {
      * @return a rectangle with the specified position and size
      */
     private Geometry createRectangle(double x, double y, double w, double h) {
-        Coordinate[] coords = {
-            new Coordinate(x, y), new Coordinate(x, y + h),
-            new Coordinate(x + w, y + h), new Coordinate(x + w, y),
-            new Coordinate(x, y)
+        final AffineTransform inverse = getInverse();
+        final Point2D p1 = new Point2D.Double(x, y);
+        inverse.transform(p1, p1);
+        final Point2D p2 = new Point2D.Double(x+w, y+h);
+        inverse.transform(p2, p2);
+
+        final Coordinate[] coords = {
+            new Coordinate(p1.getX(), p1.getY()),
+            new Coordinate(p1.getX(), p2.getY()),
+            new Coordinate(p2.getX(), p2.getY()),
+            new Coordinate(p2.getX(), p1.getY()),
+            new Coordinate(p1.getX(), p1.getY())
         };
-        LinearRing lr = geometry.getFactory().createLinearRing(coords);
+        final LinearRing lr = geometry.getFactory().createLinearRing(coords);
         return geometry.getFactory().createPolygon(lr, null);
     }
 

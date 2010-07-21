@@ -115,13 +115,13 @@ public class OSMMemoryDataStore extends AbstractDataStore{
         }
     };
 
-    private final MemoryDataStore store;
+    private final MemoryDataStore memoryStore;
 
     public OSMMemoryDataStore(Object input) throws IOException, XMLStreamException, DataStoreException{
-        store = new MemoryDataStore();
-        store.createSchema(TYPE_NODE.getName(), TYPE_NODE);
-        store.createSchema(TYPE_WAY.getName(), TYPE_WAY);
-        store.createSchema(TYPE_RELATION.getName(), TYPE_RELATION);
+        memoryStore = new MemoryDataStore();
+        memoryStore.createSchema(TYPE_NODE.getName(), TYPE_NODE);
+        memoryStore.createSchema(TYPE_WAY.getName(), TYPE_WAY);
+        memoryStore.createSchema(TYPE_RELATION.getName(), TYPE_RELATION);
 
         final OSMXMLReader reader = new OSMXMLReader();
         try{
@@ -133,11 +133,11 @@ public class OSMMemoryDataStore extends AbstractDataStore{
                     final Feature feature = (Feature) obj;
                     final FeatureType ft = feature.getType();
 
-                    if(!store.getNames().contains(ft.getName())){
-                        store.createSchema(ft.getName(), ft);
+                    if(!memoryStore.getNames().contains(ft.getName())){
+                        memoryStore.createSchema(ft.getName(), ft);
                     }
 
-                    store.addFeatures(ft.getName(), Collections.singleton(feature));
+                    memoryStore.addFeatures(ft.getName(), Collections.singleton(feature));
                 }
 
             }
@@ -172,7 +172,7 @@ public class OSMMemoryDataStore extends AbstractDataStore{
     public FeatureReader getFeatureReader(Query query) throws DataStoreException {
         final FeatureType ft = getFeatureType(query.getTypeName());
 
-        FeatureReader fr = store.getFeatureReader(QueryBuilder.all(query.getTypeName()));
+        FeatureReader fr = memoryStore.getFeatureReader(QueryBuilder.all(query.getTypeName()));
 
         //Add calculated attributs.
         if(ft.getName().equals(TYPE_WAY_EXTENDED.getName())){
@@ -242,7 +242,7 @@ public class OSMMemoryDataStore extends AbstractDataStore{
 
             FeatureReader reader= null;
             try {
-                reader = getFeatureReader(qb.buildQuery());
+                reader = memoryStore.getFeatureReader(qb.buildQuery());
                 return reader.next();
             } catch (DataStoreException ex) {
                 throw new DataStoreRuntimeException(ex);

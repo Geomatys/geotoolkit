@@ -3,6 +3,7 @@
  *    http://www.geotoolkit.org
  *
  *    (C) 2003-2008, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2010, Geomatys
  * 
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -18,25 +19,42 @@ package org.geotoolkit.index;
 
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Field definition
  * 
  * @author Tommaso Nolli
+ * @author Johann Sorel (Geomatys)
  * @module pending
  */
 public class DataDefinition {
-    private Charset charset;
-    private ArrayList<Field> fields;
 
-    public DataDefinition(String charset) {
-        fields = new ArrayList<Field>();
+    private final Charset charset;
+    private final List<Field> fields;
+
+    public DataDefinition(String charset, Class ... fields) {
+
+        if(charset == null){
+            throw new IllegalArgumentException("Charset can not be null");
+        }
+        
         this.charset = Charset.forName(charset);
+
+        if(fields == null){
+            this.fields = new ArrayList<Field>();
+        }else{
+            this.fields = new ArrayList<Field>(fields.length);
+            for(Class clazz : fields){
+                addField(clazz);
+            }
+
+        }
+
     }
 
     public final boolean isValid() {
-        return (this.charset != null) && !this.charset.equals("")
-                && (this.fields.size() > 0);
+        return !this.fields.isEmpty();
     }
 
     public int getFieldsCount() {
@@ -66,16 +84,16 @@ public class DataDefinition {
      *                 DOCUMENT ME!
      */
     public void addField(Class clazz) {
-        if (clazz.isAssignableFrom(Short.class)) {
+        if (clazz == Short.class) {
             this.fields.add(new Field(clazz, 2));
-        } else if (clazz.isAssignableFrom(Integer.class)) {
+        } else if (clazz == Integer.class) {
             this.fields.add(new Field(clazz, 4));
-        } else if (clazz.isAssignableFrom(Long.class)) {
+        } else if (clazz == Long.class) {
             this.fields.add(new Field(clazz, 8));
-        } else if (clazz.isAssignableFrom(Float.class)) {
+        } else if (clazz == Float.class) {
             // TODO: Are you sure of 4 bytes?
             this.fields.add(new Field(clazz, 4));
-        } else if (clazz.isAssignableFrom(Double.class)) {
+        } else if (clazz == Double.class) {
             this.fields.add(new Field(clazz, 8));
         } else {
             throw new IllegalArgumentException("Unknow len of class " + clazz
@@ -106,14 +124,9 @@ public class DataDefinition {
      */
     public int getLen() {
         int len = 0;
-
-        Field field = null;
-
-        for (int i = 0; i < this.fields.size(); i++) {
-            field = (Field) this.fields.get(i);
+        for(Field field : fields) {
             len += field.getLen();
         }
-
         return len;
     }
 
@@ -124,14 +137,9 @@ public class DataDefinition {
      */
     public int getEncodedLen() {
         int len = 0;
-
-        Field field = null;
-
-        for (int i = 0; i < this.fields.size(); i++) {
-            field = (Field) this.fields.get(i);
+        for(Field field : fields) {
             len += field.getEncodedLen();
         }
-
         return len;
     }
 
@@ -141,34 +149,22 @@ public class DataDefinition {
      * @author Tommaso Nolli
      */
     public class Field {
-        private Class clazz;
-        private int len;
+        private final Class clazz;
+        private final int len;
 
         public Field(Class clazz, int len) {
             this.clazz = clazz;
             this.len = len;
         }
 
-        /**
-         * DOCUMENT ME!
-         * 
-         */
         public Class getFieldClass() {
             return clazz;
         }
 
-        /**
-         * DOCUMENT ME!
-         * 
-         */
         public int getLen() {
             return len;
         }
 
-        /**
-         * DOCUMENT ME!
-         * 
-         */
         public int getEncodedLen() {
             int ret = this.len;
 

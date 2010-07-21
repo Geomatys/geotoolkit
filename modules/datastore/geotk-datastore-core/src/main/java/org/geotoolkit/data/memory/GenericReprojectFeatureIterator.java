@@ -31,8 +31,9 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.feature.LenientFeatureFactory;
 import org.geotoolkit.feature.SchemaException;
-import org.geotoolkit.geometry.jts.GeometryCoordinateSequenceTransformer;
+import org.geotoolkit.geometry.jts.transform.GeometryCSTransformer;
 import org.geotoolkit.geometry.jts.SRIDGenerator;
+import org.geotoolkit.geometry.jts.transform.CoordinateSequenceMathTransformer;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.logging.Logging;
@@ -119,7 +120,7 @@ public abstract class GenericReprojectFeatureIterator<F extends Feature, R exten
 
         private final FeatureType schema;
         private final CoordinateReferenceSystem targetCRS;
-        private final GeometryCoordinateSequenceTransformer transformer;
+        private final GeometryCSTransformer transformer;
 
         private GenericReprojectFeatureReader(R reader, CoordinateReferenceSystem targetCRS) throws FactoryException, SchemaException{
             super(reader);
@@ -132,16 +133,13 @@ public abstract class GenericReprojectFeatureIterator<F extends Feature, R exten
             this.targetCRS = targetCRS;
             final CoordinateReferenceSystem original = type.getGeometryDescriptor().getCoordinateReferenceSystem();
 
-            if (targetCRS.equals(original)) {
-                throw new IllegalArgumentException("CoordinateSystem " + targetCRS + " already used (check before using wrapper)");
-            }
-
             this.schema = FeatureTypeUtilities.transform(type, targetCRS);
 
             if(original != null){
                 //the crs is defined on the feature type
-                transformer = new GeometryCoordinateSequenceTransformer();
-                transformer.setMathTransform(CRS.findMathTransform(original, targetCRS, true));
+                final CoordinateSequenceMathTransformer trs =
+                        new CoordinateSequenceMathTransformer(CRS.findMathTransform(original, targetCRS, true));
+                transformer = new GeometryCSTransformer(trs);
             }else{
                 transformer = null;
             }
@@ -189,8 +187,9 @@ public abstract class GenericReprojectFeatureIterator<F extends Feature, R exten
 
                             if(original != null){
                                 try {
-                                    final GeometryCoordinateSequenceTransformer transformer = new GeometryCoordinateSequenceTransformer();
-                                    transformer.setMathTransform(CRS.findMathTransform(original, targetCRS, true));
+                                    final CoordinateSequenceMathTransformer trs =
+                                            new CoordinateSequenceMathTransformer(CRS.findMathTransform(original, targetCRS, true));
+                                    final GeometryCSTransformer transformer = new GeometryCSTransformer(trs);
                                     Geometry geom = transformer.transform((Geometry) value);
                                     geom.setSRID(SRIDGenerator.toSRID(targetCRS, SRIDGenerator.Version.V1));
                                     prop.setValue(geom);
@@ -228,6 +227,14 @@ public abstract class GenericReprojectFeatureIterator<F extends Feature, R exten
             FeatureReader<T, F> reader, CoordinateReferenceSystem crs) throws FactoryException, SchemaException {
         final GeometryDescriptor desc = reader.getFeatureType().getGeometryDescriptor();
         if (desc != null) {
+
+            final CoordinateReferenceSystem original =desc.getCoordinateReferenceSystem();
+
+            if (CRS.equalsIgnoreMetadata(original, crs)) {
+                //no need to wrap it, already in the asked projection
+                return reader;
+            }
+
             return new GenericReprojectFeatureReader(reader, crs);
         } else {
             return reader;

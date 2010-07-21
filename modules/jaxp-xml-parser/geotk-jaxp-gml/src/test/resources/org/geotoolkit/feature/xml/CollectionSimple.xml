@@ -2,23 +2,23 @@
 <wfs:FeatureCollection gml:id="one of a kind ID" xmlns:gml="http://www.opengis.net/gml" xmlns:wfs="http://www.opengis.net/wfs">
 
     <gml:featureMember>
-        <gml:TestSimpleBasic gml:id="id-89">
-            <gml:attString>some text with words.</gml:attString>
-            <gml:attDouble>56.14</gml:attDouble>
+        <gml:TestSimpleBasic gml:id="id-412">
+            <gml:attString>a text composed of words.</gml:attString>
+            <gml:attDouble>12.31</gml:attDouble>
         </gml:TestSimpleBasic>
     </gml:featureMember>
-    
+
     <gml:featureMember>
         <gml:TestSimpleBasic gml:id="id-36">
             <gml:attString>some words assembled in a text.</gml:attString>
             <gml:attDouble>39.45</gml:attDouble>
         </gml:TestSimpleBasic>
     </gml:featureMember>
-    
+
     <gml:featureMember>
-        <gml:TestSimpleBasic gml:id="id-412">
-            <gml:attString>a text composed of words.</gml:attString>
-            <gml:attDouble>12.31</gml:attDouble>
+        <gml:TestSimpleBasic gml:id="id-89">
+            <gml:attString>some text with words.</gml:attString>
+            <gml:attDouble>56.14</gml:attDouble>
         </gml:TestSimpleBasic>
     </gml:featureMember>
     

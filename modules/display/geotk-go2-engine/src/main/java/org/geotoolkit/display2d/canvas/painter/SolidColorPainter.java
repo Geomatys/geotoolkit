@@ -31,17 +31,27 @@ public class SolidColorPainter implements BackgroundPainter{
     private final Color color;
 
     public SolidColorPainter(Color color){
+        if(color == null){
+            throw new NullPointerException("Color can not be null.");
+        }
         this.color = color;
     }
 
+    public Color getColor() {
+        return color;
+    }
+    
     @Override
     public void paint(RenderingContext2D context) {
-        if(color != null){
-            Graphics2D g = context.getGraphics();
-            Rectangle rect = context.getCanvasDisplayBounds();
-            g.setPaint(color);
-            g.fillRect(rect.x, rect.y, rect.width, rect.height);
-        }
+        final Graphics2D g = context.getGraphics();
+        final Rectangle rect = context.getCanvasDisplayBounds();
+        g.setPaint(color);
+        g.fillRect(rect.x, rect.y, rect.width, rect.height);
+    }
+
+    @Override
+    public boolean isOpaque() {
+        return color.getAlpha() == 255;
     }
 
 }

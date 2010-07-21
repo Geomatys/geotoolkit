@@ -16,6 +16,9 @@
  */
 package org.geotoolkit.geometry.jts;
 
+import org.geotoolkit.geometry.jts.transform.CoordinateSequenceMathTransformer;
+import org.geotoolkit.geometry.jts.transform.GeometryCSTransformer;
+import org.geotoolkit.geometry.jts.transform.CoordinateSequenceTransformer;
 import java.awt.Shape;
 import java.awt.geom.IllegalPathStateException;
 import java.awt.geom.PathIterator;
@@ -53,7 +56,6 @@ import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.MultiLineString;
 import com.vividsolutions.jts.geom.Polygon;
-import org.geotoolkit.geometry.GeneralEnvelope;
 
 /**
  * JTS Geometry utility methods, bringing GeotoolKit to JTS.
@@ -214,9 +216,8 @@ public final class JTS {
      */
     public static Geometry transform(final Geometry geom, final MathTransform transform)
             throws MismatchedDimensionException, TransformException {
-        final GeometryCoordinateSequenceTransformer transformer = new GeometryCoordinateSequenceTransformer();
-        transformer.setMathTransform(transform);
-
+        final CoordinateSequenceTransformer cstrs = new CoordinateSequenceMathTransformer(transform);
+        final GeometryCSTransformer transformer = new GeometryCSTransformer(cstrs);
         return transformer.transform(geom);
     }
 

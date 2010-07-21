@@ -39,6 +39,6 @@ public class IntToBbool extends AbstractFunction {
                     "Filter Function problem for function int2bbool argument #0 - expected type int");
         }
 
-        return new Boolean(StaticGeometry.int2bbool(arg0));
+        return StaticGeometry.int2bbool(arg0);
     }
 }
