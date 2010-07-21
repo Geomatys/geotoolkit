@@ -16,12 +16,14 @@
  */
 package org.geotoolkit.data.shapefile.shp;
 
+import com.vividsolutions.jts.geom.Coordinate;
 import java.nio.ByteBuffer;
 
 import com.vividsolutions.jts.geom.CoordinateSequence;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.MultiLineString;
+import com.vividsolutions.jts.geom.impl.CoordinateArraySequence;
 import com.vividsolutions.jts.geom.impl.PackedCoordinateSequence;
 import java.nio.DoubleBuffer;
 
@@ -113,10 +115,10 @@ public class MultiLineHandler implements ShapeHandler {
         }
 
         // read the first two coordinates and start building the coordinate sequences
-        final double[][] lines = new double[numParts][0];
+        final Coordinate[][] lines = new Coordinate[numParts][0];
         //use a double buffer to increase bulk reading
         final DoubleBuffer dbuffer = buffer.asDoubleBuffer();
-
+        
         for (int part = 0; part < numParts; part++) {
 
             final int finish;
@@ -135,27 +137,16 @@ public class MultiLineHandler implements ShapeHandler {
                 clonePoint = false;
             }
 
-            lines[part] = new double[length*dimensions];
-            if(dimensions==2){
-                //read in one step [X1,Y1 ... Xn,Yn]
-                dbuffer.get(lines[part]);
+            final Coordinate[] coords = new Coordinate[length];
+            lines[part] = coords;
 
-                if (clonePoint) {
-                    // [X1,Y1, X2,Y2]
-                    lines[part][2] = lines[part][0];
-                    lines[part][3] = lines[part][1];
-                }
-            }else{
-                for(int i=0;i<length*3;i+=2){
-                    lines[part][i] = dbuffer.get();
-                    lines[part][++i] = dbuffer.get();
-                }
+            for(int i=0,n=coords.length; i<n; i++){
+                coords[i] = new Coordinate(dbuffer.get(), dbuffer.get());
+            }
 
-                if (clonePoint) {
-                    // [X1,Y1,Z1, X2,Y2,Z2]
-                    lines[part][3] = lines[part][0];
-                    lines[part][4] = lines[part][1];
-                }
+            if (clonePoint) {
+                coords[1].x= coords[0].x;
+                coords[1].y= coords[0].y;
             }
         }
 
@@ -182,9 +173,8 @@ public class MultiLineHandler implements ShapeHandler {
                     clonePoint = false;
                 }
 
-                // [X1,Y1,Z1 ... Xn,Yn,Zn]
-                for(int i=2;i<length*3;i+=3){
-                    lines[part][i] = dbuffer.get();
+                for(Coordinate coord : lines[part]){
+                    coord.z = dbuffer.get();
                 }
             }
         }
@@ -192,7 +182,7 @@ public class MultiLineHandler implements ShapeHandler {
         // Prepare line strings and return the multilinestring
         final LineString[] lineStrings = new LineString[numParts];
         for (int part = 0; part < numParts; part++) {
-            lineStrings[part] = GEOMETRY_FACTORY.createLineString(new PackedCoordinateSequence.Double(lines[part], dimensions));
+            lineStrings[part] = GEOMETRY_FACTORY.createLineString(new CoordinateArraySequence(lines[part]));
         }
 
         return GEOMETRY_FACTORY.createMultiLineString(lineStrings);
