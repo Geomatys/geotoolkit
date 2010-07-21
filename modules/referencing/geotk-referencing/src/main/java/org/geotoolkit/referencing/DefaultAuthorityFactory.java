@@ -68,7 +68,7 @@ final class DefaultAuthorityFactory extends CachingAuthorityFactory implements C
      * List of codes without authority space. We can not defines them in an ordinary
      * authority factory.
      */
-    private static List<String> AUTHORITY_LESS = UnmodifiableArrayList.wrap(
+    private static final List<String> AUTHORITY_LESS = UnmodifiableArrayList.wrap(
         "WGS84(DD)"  // (longitude,latitude) with decimal degrees.
     );
 

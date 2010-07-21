@@ -196,7 +196,7 @@ public final class PrjFiles {
      * @param  crs The PRJ file content as a coordinate reference system.
      * @param  file The file to create. It usually has the {@code ".prj"} suffix,
      * @throws ContentFormatException if the given CRS is not formattable as a WKT.
-     * @throws IOException If an other error occured while writing the file.
+     * @throws IOException If an other error occurred while writing the file.
      */
     public static void write(final CoordinateReferenceSystem crs, final File file)
             throws ContentFormatException, IOException
@@ -217,7 +217,7 @@ public final class PrjFiles {
      * @param  crs The PRJ file content as a coordinate reference system.
      * @param  out The channel where to write.
      * @throws ContentFormatException if the given CRS is not formattable as a WKT.
-     * @throws IOException If an other error occured while writing the file.
+     * @throws IOException If an other error occurred while writing the file.
      *
      * @since 3.07
      */
@@ -234,7 +234,7 @@ public final class PrjFiles {
      * @param  crs The PRJ file content as a coordinate reference system.
      * @param  out The stream where to write.
      * @throws ContentFormatException if the given CRS is not formattable as a WKT.
-     * @throws IOException If an other error occured while writing the file.
+     * @throws IOException If an other error occurred while writing the file.
      */
     public static void write(final CoordinateReferenceSystem crs, final OutputStream out)
             throws ContentFormatException, IOException
@@ -252,7 +252,7 @@ public final class PrjFiles {
      * @param  crs The PRJ file content as a coordinate reference system.
      * @param  out The writer.
      * @throws ContentFormatException if the given CRS is not formattable as a WKT.
-     * @throws IOException If an other error occured while writing the file.
+     * @throws IOException If an other error occurred while writing the file.
      */
     public static void write(final CoordinateReferenceSystem crs, final Writer out)
             throws ContentFormatException, IOException

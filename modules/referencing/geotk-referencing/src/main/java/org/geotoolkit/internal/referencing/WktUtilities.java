@@ -47,7 +47,7 @@ public class WktUtilities {
      * <var>{@linkplain DefaultCoordinateSystemAxis#NORTHING Northing}</var>
      * in metres, where the "Other" axis is toward prime meridian.
      */
-    public static DefaultCartesianCS LEGACY = new DefaultCartesianCS("Legacy",
+    public static final DefaultCartesianCS LEGACY = new DefaultCartesianCS("Legacy",
             new DefaultCoordinateSystemAxis("X", AxisDirection.OTHER, SI.METRE),
             new DefaultCoordinateSystemAxis("Y", AxisDirection.EAST,  SI.METRE),
             new DefaultCoordinateSystemAxis("Z", AxisDirection.NORTH, SI.METRE));

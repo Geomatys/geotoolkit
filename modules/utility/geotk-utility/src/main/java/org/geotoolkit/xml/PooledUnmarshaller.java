@@ -75,7 +75,7 @@ final class PooledUnmarshaller extends Pooled implements Catching.Unmarshaller {
      *
      * @param  key The property to reset.
      * @param  value The initial value to give to the property.
-     * @throws JAXBException If an error occured while restoring a property.
+     * @throws JAXBException If an error occurred while restoring a property.
      */
     @Override
     @SuppressWarnings({"unchecked","rawtypes"})

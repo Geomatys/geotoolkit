@@ -91,7 +91,7 @@ public class ThreadedEpsgFactoryTest extends EpsgFactoryTestCase {
     /**
      * Tests creations of CRS objects.
      *
-     * @throws FactoryException if an error occured while querying the factory.
+     * @throws FactoryException if an error occurred while querying the factory.
      */
     @Test
     public final void testCreationCRS() throws FactoryException {
@@ -173,7 +173,7 @@ public class ThreadedEpsgFactoryTest extends EpsgFactoryTestCase {
     /**
      * Tests creations of operation objects.
      *
-     * @throws FactoryException if an error occured while querying the factory.
+     * @throws FactoryException if an error occurred while querying the factory.
      */
     @Test
     public final void testCreationOperations() throws FactoryException {
@@ -232,7 +232,7 @@ public class ThreadedEpsgFactoryTest extends EpsgFactoryTestCase {
     /**
      * Tests the creation of CRS using name instead of primary keys.
      *
-     * @throws FactoryException if an error occured while querying the factory.
+     * @throws FactoryException if an error occurred while querying the factory.
      */
     @Test
     public final void testNameUsage() throws FactoryException {
@@ -287,7 +287,7 @@ public class ThreadedEpsgFactoryTest extends EpsgFactoryTestCase {
     /**
      * Tests the {@link AuthorityFactory#getDescriptionText} method.
      *
-     * @throws FactoryException if an error occured while querying the factory.
+     * @throws FactoryException if an error occurred while querying the factory.
      */
     @Test
     public final void testDescriptionText() throws FactoryException {
@@ -303,7 +303,7 @@ public class ThreadedEpsgFactoryTest extends EpsgFactoryTestCase {
      * Tests the {@code getAuthorityCodes()} method.
      * This test is very slow - the most costly parts are identified in the source code.
      *
-     * @throws FactoryException if an error occured while querying the factory.
+     * @throws FactoryException if an error occurred while querying the factory.
      */
     @Test
     public final void testAuthorityCodes() throws FactoryException {
@@ -430,7 +430,7 @@ public class ThreadedEpsgFactoryTest extends EpsgFactoryTestCase {
     /**
      * Tests {@link CRS#getEnvelope} and {@link CRS#getGeographicBoundingBox}.
      *
-     * @throws FactoryException if an error occured while querying the factory.
+     * @throws FactoryException if an error occurred while querying the factory.
      * @throws TransformException if a coordinate can't be transformed.
      */
     @Test
@@ -462,8 +462,8 @@ public class ThreadedEpsgFactoryTest extends EpsgFactoryTestCase {
     /**
      * Tests the serialization of many {@link CoordinateOperation} objects.
      *
-     * @throws FactoryException if an error occured while querying the factory.
-     * @throws IOException If an error occured during the serialization process.
+     * @throws FactoryException if an error occurred while querying the factory.
+     * @throws IOException If an error occurred during the serialization process.
      * @throws ClassNotFoundException Should never occur.
      */
     @Test
@@ -520,7 +520,7 @@ public class ThreadedEpsgFactoryTest extends EpsgFactoryTestCase {
     /**
      * Tests the creation of {@link Conversion} objects.
      *
-     * @throws FactoryException if an error occured while querying the factory.
+     * @throws FactoryException if an error occurred while querying the factory.
      */
     @Test
     public final void testConversions() throws FactoryException {
@@ -562,7 +562,7 @@ public class ThreadedEpsgFactoryTest extends EpsgFactoryTestCase {
     /**
      * Tests the creation of {@link Transformation} objects.
      *
-     * @throws FactoryException if an error occured while querying the factory.
+     * @throws FactoryException if an error occurred while querying the factory.
      */
     @Test
     public final void testTransformations() throws FactoryException {
@@ -655,7 +655,7 @@ public class ThreadedEpsgFactoryTest extends EpsgFactoryTestCase {
     /**
      * Fetchs the accuracy declared in all coordinate operations found in the database.
      *
-     * @throws FactoryException if an error occured while querying the factory.
+     * @throws FactoryException if an error occurred while querying the factory.
      */
     @Test
     public final void testAccuracy() throws FactoryException {
@@ -705,7 +705,7 @@ public class ThreadedEpsgFactoryTest extends EpsgFactoryTestCase {
     /**
      * Compares a WKT found in the field with the EPSG equivalent.
      *
-     * @throws FactoryException if an error occured while querying the factory.
+     * @throws FactoryException if an error occurred while querying the factory.
      *
      * @see http://jira.codehaus.org/browse/GEOT-1268
      */
@@ -720,7 +720,7 @@ public class ThreadedEpsgFactoryTest extends EpsgFactoryTestCase {
     /**
      * Tests {@link DefaultFactory#find} method.
      *
-     * @throws FactoryException if an error occured while querying the factory.
+     * @throws FactoryException if an error occurred while querying the factory.
      */
     @Test
     public final void testFind() throws FactoryException {
@@ -815,7 +815,7 @@ public class ThreadedEpsgFactoryTest extends EpsgFactoryTestCase {
      * Answer is no because we lost metadata information in WKT formatting;
      * however two instances created with the same WKT work out okay.
      *
-     * @throws FactoryException if an error occured while querying the factory.
+     * @throws FactoryException if an error occurred while querying the factory.
      */
     @Test
     public final void testUnique() throws FactoryException {

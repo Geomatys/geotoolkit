@@ -289,7 +289,7 @@ public class MetadataSource {
      *
      * @param  metadata The metadata to search for.
      * @return The identifier of the given metadata, or {@code null} if none.
-     * @throws SQLException If an error occured while searching in the database.
+     * @throws SQLException If an error occurred while searching in the database.
      * @throws ClassCastException if the metadata object doesn't implement a metadata
      *         interface of the expected package.
      */
@@ -327,7 +327,7 @@ public class MetadataSource {
      * @param  stmt The statement to use for executing the query.
      * @param  buffer An initially buffer for creating the SQL query.
      * @return The identifier of the given metadata, or {@code null} if none.
-     * @throws SQLException If an error occured while searching in the database.
+     * @throws SQLException If an error occurred while searching in the database.
      */
     final String search(final String table, Set<String> columns, final Map<String,Object> metadata,
             final Statement stmt, final SQLBuilder buffer) throws SQLException
@@ -419,7 +419,7 @@ public class MetadataSource {
      * @param  table The name of the table for which to get the columns.
      * @return The set of columns. This is a direct reference to the cached set and should
      *         be modified in-place if new columns are added in the database table.
-     * @throws SQLException If an error occured while querying the database.
+     * @throws SQLException If an error occurred while querying the database.
      */
     final Set<String> getColumns(final String table) throws SQLException {
         assert Thread.holdsLock(statements);
@@ -627,7 +627,7 @@ public class MetadataSource {
     /**
      * Closes the database connection used by this object.
      *
-     * @throws SQLException If an error occured while closing the connection.
+     * @throws SQLException If an error occurred while closing the connection.
      */
     public void close() throws SQLException {
         statements.close();

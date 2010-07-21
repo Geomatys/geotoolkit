@@ -95,7 +95,7 @@ public class DefaultCitation extends MetadataEntity implements Citation {
     private InternationalString edition;
 
     /**
-     * Date of the edition in millisecondes ellapsed sine January 1st, 1970,
+     * Date of the edition in millisecondes elapsed sine January 1st, 1970,
      * or {@link Long#MIN_VALUE} if none.
      */
     private long editionDate = Long.MIN_VALUE;

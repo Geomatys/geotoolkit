@@ -151,7 +151,7 @@ final class TileTable extends Table implements Comparator<TileManager> {
      * @param  srid      The numeric identifier of the CRS.
      * @return The tile managers for the given series and date range.
      * @throws CatalogException if an inconsistent record is found in the database.
-     * @throws SQLException if an error occured while reading the database.
+     * @throws SQLException if an error occurred while reading the database.
      */
     public TileManager[] getTiles(final LayerEntry layer, final Timestamp startTime,
             final Timestamp endTime, final int srid) throws SQLException, IOException
@@ -258,7 +258,7 @@ final class TileTable extends Table implements Comparator<TileManager> {
      * @param  o1 The first tile manager to compare.
      * @param  o2 The second tile manager to compare.
      * @return A negative number if o1 has more times than o2.
-     * @throws BackingStoreException If an {@link IOException} occured.
+     * @throws BackingStoreException If an {@link IOException} occurred.
      */
     @Override
     public int compare(final TileManager o1, final TileManager o2) throws BackingStoreException {

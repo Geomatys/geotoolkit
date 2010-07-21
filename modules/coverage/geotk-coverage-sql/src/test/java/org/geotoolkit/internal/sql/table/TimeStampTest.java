@@ -44,7 +44,7 @@ public final class TimeStampTest extends CatalogTestBase {
     /**
      * Tests {@link ResultSet#getTimestamp(int,Calendar)}.
      *
-     * @throws SQLException if an SQL error occured.
+     * @throws SQLException if an SQL error occurred.
      */
     @Test
     public void testGet() throws SQLException {

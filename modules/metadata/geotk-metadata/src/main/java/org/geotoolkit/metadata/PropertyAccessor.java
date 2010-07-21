@@ -389,7 +389,7 @@ final class PropertyAccessor {
                          * contract for those methods.
                          *
                          * Note that testing candidate.getDeclaringClass().equals(Object.class)
-                         * is not suffisient because the method may be overriden in a subclass.
+                         * is not suffisient because the method may be overridden in a subclass.
                          */
                         final String name = candidate.getName();
                         if (!name.startsWith(SET) && !isExcluded(name)) {
@@ -811,10 +811,10 @@ final class PropertyAccessor {
                  * We expect a collection. Collections are handled in one of the two ways below:
                  *
                  *   - If the user gives a collection, the user's collection replaces any
-                 *     previous one. The content of the previous collection is discarted.
+                 *     previous one. The content of the previous collection is discarded.
                  *
                  *   - If the user gives a single value, it will be added to the existing
-                 *     collection (if any). The previous values are not discarted. This
+                 *     collection (if any). The previous values are not discarded. This
                  *     allow for incremental filling of a property.
                  *
                  * The code below prepares an array of elements to be converted and wraps that

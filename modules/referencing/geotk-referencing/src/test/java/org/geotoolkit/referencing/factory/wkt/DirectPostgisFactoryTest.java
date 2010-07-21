@@ -82,8 +82,8 @@ public class DirectPostgisFactoryTest {
      * if this database is found.
      *
      * @throws FactoryException Should not happen.
-     * @throws IOException If an error occured while reading the properties file.
-     * @throws SQLException If an error occured while reading the PostGIS tables.
+     * @throws IOException If an error occurred while reading the properties file.
+     * @throws SQLException If an error occurred while reading the PostGIS tables.
      */
     @Test
     public void testUsingCoverageSQL() throws FactoryException, IOException, SQLException {
@@ -142,7 +142,7 @@ public class DirectPostgisFactoryTest {
      * Tests the wrapping of {@link DirectPostgisFactory} in {@link CachingPostgisFactory}.
      *
      * @throws FactoryException Should not happen.
-     * @throws IOException If an error occured while reading the properties file.
+     * @throws IOException If an error occurred while reading the properties file.
      */
     @Test
     public void testCaching() throws FactoryException, IOException {

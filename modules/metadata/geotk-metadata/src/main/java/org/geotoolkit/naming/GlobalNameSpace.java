@@ -45,7 +45,7 @@ final class GlobalNameSpace extends DefaultNameSpace {
     /**
      * The unique global namespace.
      */
-    public static GlobalNameSpace GLOBAL = new GlobalNameSpace();
+    public static final GlobalNameSpace GLOBAL = new GlobalNameSpace();
 
     /**
      * Creates the global namespace.

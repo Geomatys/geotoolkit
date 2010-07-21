@@ -124,7 +124,7 @@ public final class NetcdfImageReaderTest extends ImageReaderTestBase {
     /**
      * Tests the metadata.
      *
-     * @throws IOException if an error occured while reading the file.
+     * @throws IOException if an error occurred while reading the file.
      */
     @Test
     public void testMetadata() throws IOException {
@@ -157,7 +157,7 @@ public final class NetcdfImageReaderTest extends ImageReaderTestBase {
     /**
      * Tests the metadata with two named bands.
      *
-     * @throws IOException if an error occured while reading the file.
+     * @throws IOException if an error occurred while reading the file.
      */
     @Test
     public void testMetadataTwoBands() throws IOException {

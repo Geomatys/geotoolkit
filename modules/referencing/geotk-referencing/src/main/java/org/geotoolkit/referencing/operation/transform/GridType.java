@@ -40,7 +40,7 @@ package org.geotoolkit.referencing.operation.transform;
 public enum GridType {
     /**
      * The grid values give directly the target coordinates. The source coordinates
-     * are discarted after the interpolation.
+     * are discarded after the interpolation.
      */
     LOCALIZATION,
 

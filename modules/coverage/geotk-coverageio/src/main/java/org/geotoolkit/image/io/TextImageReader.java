@@ -259,7 +259,7 @@ public abstract class TextImageReader extends StreamImageReader {
      * the reader is the {@linkplain #input input} instance given by the user rather
      * than a reader created by this class from a {@link File} or {@link URL} input.
      *
-     * @throws IOException If an error occured while closing the reader.
+     * @throws IOException If an error occurred while closing the reader.
      *
      * @see #closeOnReset
      */
@@ -415,7 +415,7 @@ public abstract class TextImageReader extends StreamImageReader {
          *
          * @param  source The object (typically an {@link ImageInputStream}) to be decoded.
          * @return {@code true} if the source <em>seems</em> readable.
-         * @throws IOException If an error occured during reading.
+         * @throws IOException If an error occurred during reading.
          */
         @Override
         public boolean canDecodeInput(final Object source) throws IOException {
@@ -439,7 +439,7 @@ public abstract class TextImageReader extends StreamImageReader {
          *         but this method still unable to make a choice, then it conservatively returns
          *         {@code false}.
          * @return {@code true} if the source <em>seems</em> readable.
-         * @throws IOException If an error occured during reading.
+         * @throws IOException If an error occurred during reading.
          */
         protected boolean canDecodeInput(final Object source, final int readAheadLimit)
                 throws IOException

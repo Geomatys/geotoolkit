@@ -117,7 +117,7 @@ public class CatalogTestBase {
     /**
      * Closes the connection to the database.
      *
-     * @throws SQLException If an error occured while closing the connection.
+     * @throws SQLException If an error occurred while closing the connection.
      */
     @AfterClass
     public static synchronized void shutdown() throws SQLException {

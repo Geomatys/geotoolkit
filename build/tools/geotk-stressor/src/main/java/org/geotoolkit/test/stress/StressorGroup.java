@@ -71,7 +71,7 @@ public class StressorGroup {
     public void run() throws InterruptedException {
         final List<Future<Statistics>> tasks = executor.invokeAll(stressors);
         if (!executor.awaitTermination(duration + 60000, TimeUnit.MILLISECONDS)) {
-            System.err.println("Timeout ellapsed.");
+            System.err.println("Timeout elapsed.");
             return;
         }
         final Statistics global = new Statistics();

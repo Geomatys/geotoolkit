@@ -171,7 +171,7 @@ final class DataPanel extends JComponent {
             private Exception failure;
 
             /*
-             * Invoked in a background thread for checking the existance of various items.
+             * Invoked in a background thread for checking the existence of various items.
              */
             @Override
             protected Object doInBackground() {
@@ -328,7 +328,7 @@ final class DataPanel extends JComponent {
          *
          * @param  in The input stream to copy. The stream will be closed.
          * @param  target The destination file.
-         * @throws IOException If an error occured while copying the entries.
+         * @throws IOException If an error occurred while copying the entries.
          */
         private void copy(final URL url, final File target) throws IOException {
             final URLConnection connection = url.openConnection();
@@ -355,7 +355,7 @@ final class DataPanel extends JComponent {
          *
          * @param  in The input stream to unzip. The stream will be closed.
          * @param  target The destination directory.
-         * @throws IOException If an error occured while unzipping the entries.
+         * @throws IOException If an error occurred while unzipping the entries.
          */
         private void unzip(final URL url, final File target) throws IOException {
             final URLConnection connection = url.openConnection();

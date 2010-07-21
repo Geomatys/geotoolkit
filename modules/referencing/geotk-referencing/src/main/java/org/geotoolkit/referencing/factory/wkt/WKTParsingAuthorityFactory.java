@@ -210,7 +210,7 @@ public class WKTParsingAuthorityFactory extends DirectAuthorityFactory {
 
     /**
      * Returns all authority names. The default implementation returns the authority given
-     * to the constructor. This method <strong>must</strong> be overriden if the subclass
+     * to the constructor. This method <strong>must</strong> be overridden if the subclass
      * used the constructor without authority list. This method is not allowed to return
      * {@code null}.
      * <p>
@@ -270,7 +270,7 @@ public class WKTParsingAuthorityFactory extends DirectAuthorityFactory {
      * or {@code null} if none. The returned value (if non-null) shall also be one of the
      * elements returned by {@link #getAuthorities()}.
      * <p>
-     * The default implementation returns {@code null} in all cases. This method is overriden
+     * The default implementation returns {@code null} in all cases. This method is overridden
      * and made public by implementations that are backed by a SQL database. For example the
      * {@link DirectPostgisFactory} overrides this method in order to return
      * {@link Citations#POSTGIS}.
@@ -427,7 +427,7 @@ public class WKTParsingAuthorityFactory extends DirectAuthorityFactory {
      *
      * @param  type The type of the object being created, or {@code null} if unknown.
      * @param  code The code of the object being created, or {@code null} if unknown.
-     * @param  exception The exception that occured while querying the backing store.
+     * @param  exception The exception that occurred while querying the backing store.
      * @return A factory exception wrapping the given exception.
      */
     static FactoryException databaseFailure(final Class<?> type, final String code, final Throwable exception) {
@@ -552,14 +552,14 @@ public class WKTParsingAuthorityFactory extends DirectAuthorityFactory {
 
     /**
      * Returns the primary key for the specified authority code. The default implementation
-     * returns the given code with the "authority" part trimmed. This method is overriden by
+     * returns the given code with the "authority" part trimmed. This method is overridden by
      * {@link DirectPostgisFactory}. Note that {@code DirectPostgisFactory} will trim
      * the authority itself, because it needs the authority part of the code.
      *
      * @param  type The type of the object being created.
      * @param  code The authority code to convert to primary key value.
      * @return The primary key for the supplied code.
-     * @throws FactoryException if an error occured while querying the database.
+     * @throws FactoryException if an error occurred while querying the database.
      *
      * @see #getPrimaryKeyAuthority()
      */
@@ -598,7 +598,7 @@ public class WKTParsingAuthorityFactory extends DirectAuthorityFactory {
         /**
          * Creates an object from the given code.
          *
-         * @throws FactoryException if an error occured while creating the object.
+         * @throws FactoryException if an error occurred while creating the object.
          */
         @Override
         protected final IdentifiedObject create(final String code, final int attempt) throws FactoryException {

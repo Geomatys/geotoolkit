@@ -405,12 +405,12 @@ public abstract class Formulas extends WeakBase implements XAddIn, XServiceName,
     }
 
     /**
-     * Reports an exception. This is used if an exception occured in a method which can't returns
+     * Reports an exception. This is used if an exception occurred in a method which can't returns
      * a {@link String} object. This method log the stack trace at the FINE level. We don't use
      * the WARNING level since this is not a program disfunction; the failure is probably caused
      * by wrong user-specified parameters.
      *
-     * @param method    The method from which an exception occured.
+     * @param method    The method from which an exception occurred.
      * @param exception The exception.
      */
     protected void reportException(final String method, final Throwable exception) {

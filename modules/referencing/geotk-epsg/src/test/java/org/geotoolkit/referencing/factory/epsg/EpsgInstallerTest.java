@@ -89,8 +89,8 @@ public final class EpsgInstallerTest {
      * the test on disk only occasionally.
      *
      * @throws FactoryException Should never happen.
-     * @throws SQLException If an error occured while accessing the database.
-     * @throws IOException If an error occured while reading or writing to disk.
+     * @throws SQLException If an error occurred while accessing the database.
+     * @throws IOException If an error occurred while reading or writing to disk.
      *
      * @since 3.10
      */

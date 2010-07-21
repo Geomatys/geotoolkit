@@ -73,13 +73,13 @@ public class ObjectConverters {
 
     /**
      * Creates a default {@code ObjectConverters}. This is for subclasses only,
-     * since new instances are useful only if at least one method is overriden.
+     * since new instances are useful only if at least one method is overridden.
      */
     protected ObjectConverters() {
     }
 
     /**
-     * Invoked when an exception occured in any {@code toXXX(...)} method. The default implementation
+     * Invoked when an exception occurred in any {@code toXXX(...)} method. The default implementation
      * does nothing and return {@code false}, which will cause the (un)marshalling process of the
      * whole XML document to fail.
      * <p>
@@ -95,7 +95,7 @@ public class ObjectConverters {
      *         type of the method that catched the exception. For example the source type is always
      *         {@code URI.class} if the exception has been catched by the {@link #toURL(URI)} method.
      * @param  targetType The expected type of the converted object.
-     * @param  exception The exception that occured during the attempt to convert.
+     * @param  exception The exception that occurred during the attempt to convert.
      * @return {@code true} if the (un)marshalling process should continue despite this error,
      *         or {@code false} (the default) if the exception should be propagated, thus causing
      *         the (un)marshalling to fail.

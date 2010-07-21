@@ -86,7 +86,7 @@ class PseudoTransform extends AbstractMathTransform {
      * Pseudo-transform a point in the given array.
      *
      * @throws TransformException should never occurs in this class,
-     *         but can occur in method overriden in subclasses.
+     *         but can occur in method overridden in subclasses.
      */
     @Override
     protected void transform(double[] srcPts, int srcOff, double[] dstPts, int dstOff)

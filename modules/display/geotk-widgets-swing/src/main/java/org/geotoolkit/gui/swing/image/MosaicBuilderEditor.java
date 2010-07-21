@@ -647,13 +647,13 @@ public class MosaicBuilderEditor extends JComponent implements MosaicPerformance
 
     /**
      * Notifies that the creation of a {@link TileManager} failed with the given exception. This
-     * method is invoked instead than {@link #done(TileManager)} if an exception occured during
+     * method is invoked instead than {@link #done(TileManager)} if an exception occurred during
      * the execution of {@link MosaicPerformanceGraph#plotEfficiency(String, TileManager)}.
      * <p>
      * The default implementation does nothing. Subclasses can override this method in order
      * to report the error in the way that best suite their application.
      *
-     * @param exception The exception which occured.
+     * @param exception The exception which occurred.
      */
     @Override
     public void failed(Throwable exception) {

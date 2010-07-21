@@ -173,7 +173,7 @@ public final class IOUtilities {
      *
      * @param  path The path to convert to a {@link File} if possible.
      * @return The path as a {@link File} if this conversion was possible.
-     * @throws IOException If an error occured while converting the path to a file.
+     * @throws IOException If an error occurred while converting the path to a file.
      *
      * @since 3.07
      */
@@ -323,7 +323,7 @@ public final class IOUtilities {
      *
      * @param  path The file to open,
      * @return The input stream for the given file.
-     * @throws IOException If an error occured while opening the given file.
+     * @throws IOException If an error occurred while opening the given file.
      * @throws ClassCastException If the given object is not a known type.
      */
     public static InputStream open(Object path) throws IOException, ClassCastException {
@@ -342,7 +342,7 @@ public final class IOUtilities {
      *
      * @param  path The file to open, as a {@link String}, {@link File}, {@link URL} or {@link URI}.
      * @return The buffered reader for the given file.
-     * @throws IOException If an error occured while opening the given file.
+     * @throws IOException If an error occurred while opening the given file.
      * @throws ClassCastException If the given object is not a known type.
      */
     public static LineNumberReader openLatin(final Object path) throws IOException, ClassCastException {
@@ -355,7 +355,7 @@ public final class IOUtilities {
      *
      * @param  path The file to open,
      * @return The output stream for the given file.
-     * @throws IOException If an error occured while opening the given file.
+     * @throws IOException If an error occurred while opening the given file.
      * @throws ClassCastException If the given object is not a known type.
      *
      * @since 3.07
@@ -379,7 +379,7 @@ public final class IOUtilities {
      * {@code ImageInputStream}, and consequently doesn't need to be checked explicitly.
      *
      * @param  stream The object to close if it is closeable.
-     * @throws IOException If an error occured while closing the stream.
+     * @throws IOException If an error occurred while closing the stream.
      *
      * @since 3.07
      */
@@ -398,7 +398,7 @@ public final class IOUtilities {
      * @param  grid   Where to store the values.
      * @param  offset Index of the first value to write in {@code grid}.
      * @param  numCol Expected number of columns.
-     * @throws IOException if an error occured while reading the row.
+     * @throws IOException if an error occurred while reading the row.
      */
     public static void readMatrixRow(final BufferedReader in, final double[] grid,
             final int offset, final int numCol) throws IOException
@@ -436,7 +436,7 @@ public final class IOUtilities {
      * @param  grid   Where to store the values.
      * @param  offset Index of the first value to write in {@code grid}.
      * @param  numCol Expected number of columns.
-     * @throws IOException if an error occured while reading the row.
+     * @throws IOException if an error occurred while reading the row.
      */
     public static void readMatrixRow(final BufferedReader in, final float[] grid,
             final int offset, final int numCol) throws IOException
@@ -473,7 +473,7 @@ public final class IOUtilities {
      *
      * @param  in The input stream to unzip. The stream will be closed.
      * @param  target The destination directory.
-     * @throws IOException If an error occured while unzipping the entries.
+     * @throws IOException If an error occurred while unzipping the entries.
      */
     public static void unzip(final InputStream in, final File target) throws IOException {
         final ZipInputStream def = new ZipInputStream(in);

@@ -147,7 +147,7 @@ public class Range<T extends Comparable<? super T>> implements Serializable  {
 
     /**
      * Creates a new range using the same element class than this range. This method will
-     * be overriden by subclasses in order to create a range of a more specific type.
+     * be overridden by subclasses in order to create a range of a more specific type.
      */
     Range<T> create(final T minValue, final boolean isMinIncluded,
                     final T maxValue, final boolean isMaxIncluded)
@@ -186,14 +186,14 @@ public class Range<T extends Comparable<? super T>> implements Serializable  {
 
     /**
      * Ensures that {@link #elementClass} is compatible with the type expected by this range class.
-     * Used at construction time for argument check. To be overriden by {@link NumberRange} and
+     * Used at construction time for argument check. To be overridden by {@link NumberRange} and
      * {@link DateRange}.
      */
     void checkElementClass() throws IllegalArgumentException {
     }
 
     /**
-     * Returns an initially empty array of the given length. To be overriden by {@link NumberRange}
+     * Returns an initially empty array of the given length. To be overridden by {@link NumberRange}
      * and subclasses in order to create arrays of more specific type.
      */
     @SuppressWarnings({"unchecked","rawtypes"}) // Generic array creation.
@@ -615,7 +615,7 @@ public class Range<T extends Comparable<? super T>> implements Serializable  {
     }
 
     /**
-     * To be overriden by {@link MeasurementRange} only.
+     * To be overridden by {@link MeasurementRange} only.
      */
     Unit<?> getUnits() {
         return null;

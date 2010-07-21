@@ -96,7 +96,7 @@ public final class ThreadedAuthorityFactoryTest {
         assertEquals("Expected one valid worker.",  1, threaded.countBackingStores());
         assertFalse ("Should not be disposed yet.", factories.get(1).isDisposed());
         /*
-         * Ask again for a new element before the timeout is ellapsed and
+         * Ask again for a new element before the timeout is elapsed and
          * check that the disposal of the backing store has been reported.
          */
         assertNotNull(threaded.createObject("WGS84-new2"));
@@ -139,7 +139,7 @@ public final class ThreadedAuthorityFactoryTest {
         int n = 10, c;
         while ((c = threaded.countBackingStores()) != 0) {
             final long delay = StoreDisposer.INSTANCE.getDelay();
-            String message = "ThreadedAuthorityFactory should have discarted its worker factory.\n"
+            String message = "ThreadedAuthorityFactory should have discarded its worker factory.\n"
                     + "The factory active flag is '" + threaded.isActive() + "' (expected 'false').\n"
                     + "Maximum number of additional workers is " + threaded.remainingBackingStores() + ".\n"
                     + "There is " + c + " workers in the factory cache, " + (delay == 0
@@ -153,7 +153,7 @@ public final class ThreadedAuthorityFactoryTest {
             System.gc();
         }
         /*
-         * Now the worker factory has been discarted by ThreadedAuthorityFactory, but maybe
+         * Now the worker factory has been discarded by ThreadedAuthorityFactory, but maybe
          * not yet disposed because the call to worker.dispose() is performed in yet an other
          * background thread. So we need again to be lenient because of thread scheduling hazard.
          */

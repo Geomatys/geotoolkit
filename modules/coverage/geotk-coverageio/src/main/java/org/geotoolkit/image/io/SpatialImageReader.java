@@ -98,7 +98,7 @@ import static org.geotoolkit.image.io.SampleConversionType.*;
  *     implementations, which return 1. This default behavior matches simple image formats
  *     like {@linkplain org.geotoolkit.image.io.plugin.RawImageReader RAW} or
  *     {@linkplain org.geotoolkit.image.io.plugin.AsciiGridReader ASCII} files.
- *     Those methods need to be overriden for more complex image formats.</p></li>
+ *     Those methods need to be overridden for more complex image formats.</p></li>
  *
  *   <li><p>Provides {@link #checkImageIndex(int)} and {@link #checkBandIndex(int,int)} convenience
  *     methods. Those methods are invoked by most implementation of public methods. They perform
@@ -360,7 +360,7 @@ public abstract class SpatialImageReader extends ImageReader implements WarningP
      *
      * @param  imageIndex -1 for stream metadata, or the image index for image metadata.
      * @return The requested metadata, or {@code null} if none.
-     * @throws IOException If an error occured while reading metadata.
+     * @throws IOException If an error occurred while reading metadata.
      */
     protected SpatialMetadata createMetadata(final int imageIndex) throws IOException {
         return null;
@@ -429,7 +429,7 @@ public abstract class SpatialImageReader extends ImageReader implements WarningP
      *     return getImageType(imageIndex, getDefaultReadParam(), null);
      * }
      *
-     * If this method needs to be overriden, consider overriding the later instead.
+     * If this method needs to be overridden, consider overriding the later instead.
      *
      * @param  imageIndex The index of the image to be queried.
      * @return The image type (never {@code null}).
@@ -1182,7 +1182,7 @@ public abstract class SpatialImageReader extends ImageReader implements WarningP
     }
 
     /**
-     * Invoked when a warning occured. The default implementation makes the following choice:
+     * Invoked when a warning occurred. The default implementation makes the following choice:
      * <p>
      * <ul>
      *   <li>If at least one {@linkplain IIOReadWarningListener warning listener}
@@ -1217,7 +1217,7 @@ public abstract class SpatialImageReader extends ImageReader implements WarningP
     /**
      * Invokes {@link #close} and logs the exception if any. This method is invoked from
      * methods that do not allow {@link IOException} to be thrown. Since we will not use
-     * the stream anymore after closing it, it should not be a big deal if an error occured.
+     * the stream anymore after closing it, it should not be a big deal if an error occurred.
      */
     final void closeSilently() {
         try {
@@ -1232,11 +1232,11 @@ public abstract class SpatialImageReader extends ImageReader implements WarningP
      * clears the internal cache. Sub-classes can override this method if they have more resources
      * to dispose, but should always invoke {@code super.close()}.
      * <p>
-     * This method is overriden and given {@code protected} access by {@link StreamImageReader}
+     * This method is overridden and given {@code protected} access by {@link StreamImageReader}
      * and {@link ImageReaderAdapter}. It is called "{@code close}" in order to match the
      * purpose which appear in the public API of those classes.
      *
-     * @throws IOException If an error occured while closing a stream (applicable to subclasses only).
+     * @throws IOException If an error occurred while closing a stream (applicable to subclasses only).
      */
     void close() throws IOException {
         metadata = null;

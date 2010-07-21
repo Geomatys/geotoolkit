@@ -62,7 +62,7 @@ public final class GridCoverageLoaderTest extends CatalogTestBase {
      *
      * @throws SQLException If the test can't connect to the database.
      * @throws IOException If the image can not be read.
-     * @throws CoverageStoreException If a logical error occured.
+     * @throws CoverageStoreException If a logical error occurred.
      */
     @Test
     public void testTemperature2D() throws SQLException, IOException, CoverageStoreException {
@@ -140,7 +140,7 @@ public final class GridCoverageLoaderTest extends CatalogTestBase {
      *
      * @throws SQLException If the test can't connect to the database.
      * @throws IOException If the image can not be read.
-     * @throws CoverageStoreException If a logical error occured.
+     * @throws CoverageStoreException If a logical error occurred.
      */
     @Test
     public void testCoriolis() throws SQLException, IOException, CoverageStoreException {
@@ -218,7 +218,7 @@ public final class GridCoverageLoaderTest extends CatalogTestBase {
      *
      * @throws SQLException If the test can't connect to the database.
      * @throws IOException If the image can not be read.
-     * @throws CoverageStoreException If a logical error occured.
+     * @throws CoverageStoreException If a logical error occurred.
      */
     @Test
     public void testBluemarble() throws SQLException, IOException, CoverageStoreException {
@@ -263,7 +263,7 @@ public final class GridCoverageLoaderTest extends CatalogTestBase {
      *
      * @throws SQLException If the test can't connect to the database.
      * @throws IOException If the image can not be read.
-     * @throws CoverageStoreException If a logical error occured.
+     * @throws CoverageStoreException If a logical error occurred.
      */
     @Test
     public void testMars2D() throws SQLException, IOException, CoverageStoreException {

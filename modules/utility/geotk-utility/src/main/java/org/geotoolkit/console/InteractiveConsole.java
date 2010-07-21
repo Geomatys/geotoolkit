@@ -132,7 +132,7 @@ public abstract class InteractiveConsole implements Runnable {
     private char[] closingBrackets = openingBrackets;
 
     /**
-     * The last error that occured while processing an instruction.
+     * The last error that occurred while processing an instruction.
      * Used in order to print the stack trace on request.
      */
     private transient Exception lastError;
@@ -501,7 +501,7 @@ public abstract class InteractiveConsole implements Runnable {
     }
 
     /**
-     * Invoked by {@link #run} if an exception occured in the {@link #execute execute} method.
+     * Invoked by {@link #run} if an exception occurred in the {@link #execute execute} method.
      * The default implementation prints a message to the {@linkplain #err error stream}. The
      * error message includes the line number if this information is available.
      *

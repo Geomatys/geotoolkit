@@ -47,7 +47,7 @@ public final class ImagePaneTest extends SwingBase<ImagePane> {
      * This is the case when testing from an IDE like NetBeans, but not during Maven test phase
      * because the {@code "QL95209.png"} file is stored in a different module (geotk-coverage).
      *
-     * @throws IOException If an error occured while reading the test file.
+     * @throws IOException If an error occurred while reading the test file.
      */
     @Override
     protected ImagePane create() throws IOException {

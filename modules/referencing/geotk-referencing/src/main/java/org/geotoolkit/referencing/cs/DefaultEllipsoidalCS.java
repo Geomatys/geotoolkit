@@ -71,7 +71,7 @@ public class DefaultEllipsoidalCS extends AbstractCS implements EllipsoidalCS {
      * <var>{@linkplain DefaultCoordinateSystemAxis#GEODETIC_LATITUDE geodetic latitude}</var>
      * axis in decimal degrees.
      */
-    public static DefaultEllipsoidalCS GEODETIC_2D = new DefaultEllipsoidalCS(
+    public static final DefaultEllipsoidalCS GEODETIC_2D = new DefaultEllipsoidalCS(
                     name(Vocabulary.Keys.GEODETIC_2D),
                     DefaultCoordinateSystemAxis.GEODETIC_LONGITUDE,
                     DefaultCoordinateSystemAxis.GEODETIC_LATITUDE);
@@ -83,7 +83,7 @@ public class DefaultEllipsoidalCS extends AbstractCS implements EllipsoidalCS {
      * <var>{@linkplain DefaultCoordinateSystemAxis#ELLIPSOIDAL_HEIGHT ellipsoidal height}</var>
      * axis.
      */
-    public static DefaultEllipsoidalCS GEODETIC_3D = new DefaultEllipsoidalCS(
+    public static final DefaultEllipsoidalCS GEODETIC_3D = new DefaultEllipsoidalCS(
                     name(Vocabulary.Keys.GEODETIC_3D),
                     DefaultCoordinateSystemAxis.GEODETIC_LONGITUDE,
                     DefaultCoordinateSystemAxis.GEODETIC_LATITUDE,

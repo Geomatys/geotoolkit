@@ -50,7 +50,7 @@ public class NoSuchRecordException extends CatalogException {
      * Creates an exception from the specified result set. The table and column names are
      * obtained from the {@code results} argument if non-null. <strong>Note that the result
      * set will be closed</strong>, because this exception is always thrown when an error
-     * occured while reading this result set.
+     * occurred while reading this result set.
      *
      * @param table   The table that produced the result set, or {@code null} if unknown.
      * @param results The result set used in order to look for a record.

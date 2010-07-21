@@ -250,7 +250,7 @@ public class AsciiGridWriter extends TextImageWriter {
      *
      * @param  header The content of the header to be written.
      * @param  out The streal where to write the header.
-     * @throws IOException If an error occured while writing the header.
+     * @throws IOException If an error occurred while writing the header.
      *
      * @todo Overriding not yet allowed. We are waiting to see if this API is really appropriate.
      */
@@ -283,7 +283,7 @@ public class AsciiGridWriter extends TextImageWriter {
      * @param  streamMetadata The stream metadata (ignored in default implementation).
      * @param  image The image or raster to be written.
      * @param  parameters The write parameters, or null if the whole image will be written.
-     * @throws IOException If an error occured while writing to the stream.
+     * @throws IOException If an error occurred while writing to the stream.
      */
     @Override
     public void write(final IIOMetadata streamMetadata, final IIOImage image,

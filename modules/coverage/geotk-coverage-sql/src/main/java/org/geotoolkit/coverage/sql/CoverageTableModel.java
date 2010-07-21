@@ -650,7 +650,7 @@ public class CoverageTableModel extends AbstractTableModel {
     /**
      * Returns the string buffer to use for formatting purpose.
      */
-    private final StringBuffer getBuffer() {
+    private StringBuffer getBuffer() {
         if (buffer == null) {
             buffer = new StringBuffer();
         }
@@ -878,7 +878,7 @@ public class CoverageTableModel extends AbstractTableModel {
     }
 
     /**
-     * Background task checking for file existance.
+     * Background task checking for file existence.
      *
      * @author Martin Desruisseaux (IRD, Geomatys)
      * @version 3.11

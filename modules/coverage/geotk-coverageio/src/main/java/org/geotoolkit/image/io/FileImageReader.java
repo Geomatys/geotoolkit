@@ -178,7 +178,7 @@ public abstract class FileImageReader extends StreamImageReader {
      * Returns {@code true} since image readers backed by {@link File}
      * object usually supports random access efficiently.
      *
-     * @throws IOException If an error occured while fetching the information.
+     * @throws IOException If an error occurred while fetching the information.
      */
     @Override
     public boolean isRandomAccessEasy(final int imageIndex) throws IOException {
@@ -189,7 +189,7 @@ public abstract class FileImageReader extends StreamImageReader {
      * Closes the stream {@linkplain StreamImageReader#close() as documented in the super-class},
      * then deletes the temporary file (if any).
      *
-     * @throws IOException If an error occured while disposing resources.
+     * @throws IOException If an error occurred while disposing resources.
      */
     @Override
     protected void close() throws IOException {

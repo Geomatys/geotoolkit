@@ -53,7 +53,7 @@ public final class XMLBindingsTest {
      * an XML document which complies with the one expected.
      *
      * @throws JAXBException if the marshalling process fails.
-     * @throws IOException if an error occured while reading the resource file.
+     * @throws IOException if an error occurred while reading the resource file.
      */
     @Test
     public void marshallingTest() throws JAXBException, IOException {
@@ -72,7 +72,7 @@ public final class XMLBindingsTest {
      * document produces an object containing all the information.
      *
      * @throws JAXBException if the unmarshalling process fails.
-     * @throws IOException if an error occured while reading the resource file.
+     * @throws IOException if an error occurred while reading the resource file.
      */
     @Test
     public void UnmarshallingTest() throws JAXBException, IOException {

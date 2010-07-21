@@ -64,7 +64,7 @@ public final class LayerEntryTest extends CatalogTestBase {
      * Tests the calculation of the range of sample values.
      *
      * @throws SQLException If the test can't connect to the database.
-     * @throws CoverageStoreException If an error occured while querying the layer.
+     * @throws CoverageStoreException If an error occurred while querying the layer.
      */
     @Test
     public void testSampleValueRanges() throws SQLException, CoverageStoreException {
@@ -81,7 +81,7 @@ public final class LayerEntryTest extends CatalogTestBase {
      * Tests the calculation of typical resolution.
      *
      * @throws SQLException If the test can't connect to the database.
-     * @throws CoverageStoreException If an error occured while querying the layer.
+     * @throws CoverageStoreException If an error occurred while querying the layer.
      */
     @Test
     public void testTypicalResolution() throws SQLException, CoverageStoreException {
@@ -97,7 +97,7 @@ public final class LayerEntryTest extends CatalogTestBase {
      * Tests the count of entries.
      *
      * @throws SQLException If the test can't connect to the database.
-     * @throws CoverageStoreException If an error occured while querying the layer.
+     * @throws CoverageStoreException If an error occurred while querying the layer.
      */
     @Test
     public void testCoverageCount() throws SQLException, CoverageStoreException {
@@ -112,7 +112,7 @@ public final class LayerEntryTest extends CatalogTestBase {
      * Tests the count of formats.
      *
      * @throws SQLException If the test can't connect to the database.
-     * @throws CoverageStoreException If an error occured while querying the layer.
+     * @throws CoverageStoreException If an error occurred while querying the layer.
      */
     @Test
     public void testImageFormats() throws SQLException, CoverageStoreException {
@@ -126,7 +126,7 @@ public final class LayerEntryTest extends CatalogTestBase {
      * Tests the calculation of the grid geometry.
      *
      * @throws SQLException If the test can't connect to the database.
-     * @throws CoverageStoreException If an error occured while querying the layer.
+     * @throws CoverageStoreException If an error occurred while querying the layer.
      */
     @Test
     public void testGridGeometries() throws SQLException, CoverageStoreException {
@@ -152,7 +152,7 @@ public final class LayerEntryTest extends CatalogTestBase {
      * Tests the envelope calculation.
      *
      * @throws SQLException If the test can't connect to the database.
-     * @throws CoverageStoreException If an error occured while querying the layer.
+     * @throws CoverageStoreException If an error occurred while querying the layer.
      */
     @Test
     public void testEnvelope() throws SQLException, CoverageStoreException {
@@ -172,7 +172,7 @@ public final class LayerEntryTest extends CatalogTestBase {
      * Tests the date of available data.
      *
      * @throws SQLException If the test can't connect to the database.
-     * @throws CoverageStoreException If an error occured while querying the layer.
+     * @throws CoverageStoreException If an error occurred while querying the layer.
      */
     @Test
     public void testAvailableTimes() throws SQLException, CoverageStoreException {
@@ -196,7 +196,7 @@ public final class LayerEntryTest extends CatalogTestBase {
      * Tests the altitude of available data.
      *
      * @throws SQLException If the test can't connect to the database.
-     * @throws CoverageStoreException If an error occured while querying the layer.
+     * @throws CoverageStoreException If an error occurred while querying the layer.
      */
     @Test
     public void testAvailableElevations() throws SQLException, CoverageStoreException {

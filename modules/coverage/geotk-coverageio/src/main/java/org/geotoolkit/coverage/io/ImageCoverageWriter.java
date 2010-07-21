@@ -166,7 +166,7 @@ public class ImageCoverageWriter extends GridCoverageWriter {
             } else {
                 /*
                  * First, check if the current writer can be reused. If the user
-                 * didn't overriden the canReuseImageWriter(...) method, then the
+                 * didn't overridden the canReuseImageWriter(...) method, then the
                  * default implementation is to look at the file extension.
                  */
                 if (oldWriter != null) {
@@ -177,7 +177,7 @@ public class ImageCoverageWriter extends GridCoverageWriter {
                 }
                 /*
                  * If we can't reuse the old writer, create a new one. If the user didn't
-                 * overriden the createImageWriter(...) method, then the default behavior
+                 * overridden the createImageWriter(...) method, then the default behavior
                  * is to get an image writer by the extension.
                  */
                 if (newWriter == null) {
@@ -186,7 +186,7 @@ public class ImageCoverageWriter extends GridCoverageWriter {
                 /*
                  * Set the output if it was not already done. In the default implementation,
                  * this is done by 'createImageWriter' but not by 'canReuseImageWriter'.
-                 * However the user could have overriden the above-cited methods with a
+                 * However the user could have overridden the above-cited methods with a
                  * different behavior.
                  */
                 if (newWriter != output && newWriter.getOutput() == null) {

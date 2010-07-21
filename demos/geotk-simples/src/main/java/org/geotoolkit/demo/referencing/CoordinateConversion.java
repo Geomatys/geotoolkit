@@ -37,8 +37,8 @@ public class CoordinateConversion {
      * This demo uses predefined CRS constants for simplicity. The
      * coordinate is Everest Mount (27°59'17"N 86°55'31"E﻿).
      *
-     * @throws FactoryException If an error occured while searching for a conversion.
-     * @throws TransformException If an error occured while performing the conversion.
+     * @throws FactoryException If an error occurred while searching for a conversion.
+     * @throws TransformException If an error occurred while performing the conversion.
      */
     public static void geocentricToGeographic() throws FactoryException, TransformException {
         CoordinateReferenceSystem sourceCRS = DefaultGeocentricCRS.CARTESIAN;
@@ -68,8 +68,8 @@ public class CoordinateConversion {
      * a separated download, but still need to be declared explicitly on the classpath.
      * It is usually located in a "db" folder in the Java installation directory.}
      *
-     * @throws FactoryException If an error occured while searching for a conversion.
-     * @throws TransformException If an error occured while performing the conversion.
+     * @throws FactoryException If an error occurred while searching for a conversion.
+     * @throws TransformException If an error occurred while performing the conversion.
      */
     public static void geocentricToProjected() throws FactoryException, TransformException {
         CoordinateReferenceSystem sourceCRS = DefaultGeocentricCRS.CARTESIAN;
@@ -89,8 +89,8 @@ public class CoordinateConversion {
      * Runs the demo from the command line.
      *
      * @param  args Command-line arguments (ignored).
-     * @throws FactoryException If an error occured while searching for a conversion.
-     * @throws TransformException If an error occured while performing the conversion.
+     * @throws FactoryException If an error occurred while searching for a conversion.
+     * @throws TransformException If an error occurred while performing the conversion.
      */
     public static void main(String[] args) throws FactoryException, TransformException {
         System.out.println("Geocentric to Geographic CRS");

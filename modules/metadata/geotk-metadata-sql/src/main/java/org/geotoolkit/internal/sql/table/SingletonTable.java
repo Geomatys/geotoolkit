@@ -182,7 +182,7 @@ public abstract class SingletonTable<E extends Entry> extends Table {
      * @param  results The result set.
      * @param  pkIndex The index of the column to inspect (typically the primary key), or 0 if none.
      * @return {@code true} If the given column in the given result set is numeric.
-     * @throws SQLException If an error occured while fetching the metadata.
+     * @throws SQLException If an error occurred while fetching the metadata.
      */
     private static boolean isNumeric(final ResultSet results, final int pkIndex) throws SQLException {
         if (pkIndex != 0) {
@@ -205,7 +205,7 @@ public abstract class SingletonTable<E extends Entry> extends Table {
 
     /**
      * Creates an identifier for the current row in the given result set. This method needs to
-     * be overriden by subclasses using {@link MultiColumnIdentifier}. Other subclasses don't
+     * be overridden by subclasses using {@link MultiColumnIdentifier}. Other subclasses don't
      * need to override this method: a {@link String} or {@link Integer} identifier will be
      * used as needed.
      * <p>
@@ -214,7 +214,7 @@ public abstract class SingletonTable<E extends Entry> extends Table {
      * @param  results The result set.
      * @param  pkIndices The indices of the column to inspect (typically the primary keys).
      * @return The {@linkplain MultiColumnIdentifier multi-column identifier}.
-     * @throws SQLException If an error occured while fetching the data.
+     * @throws SQLException If an error occurred while fetching the data.
      *
      * @since 3.10
      */
@@ -235,7 +235,7 @@ public abstract class SingletonTable<E extends Entry> extends Table {
      * @param  identifier The identifier of the entry being created.
      * @return The element for the current row in the specified {@code results}.
      * @throws CatalogException if a logical error has been detected in the database content.
-     * @throws SQLException if an error occured will reading from the database.
+     * @throws SQLException if an error occurred will reading from the database.
      */
     protected abstract E createEntry(final ResultSet results, final Comparable<?> identifier)
             throws CatalogException, SQLException;
@@ -244,8 +244,8 @@ public abstract class SingletonTable<E extends Entry> extends Table {
      * Invokes the user's {@link #createEntry(ResultSet)} method, but wraps {@link SQLException}
      * into {@link CatalogException} because the later provides more informations.
      *
-     * @throws CatalogException If an error occured during {@link #createEntry(ResultSet)}.
-     * @throws SQLException If an error occured during {@link CatalogException#setMetadata}.
+     * @throws CatalogException If an error occurred during {@link #createEntry(ResultSet)}.
+     * @throws SQLException If an error occurred during {@link CatalogException#setMetadata}.
      *         Note that this is not an error occuring during normal execution, but rather
      *         an error occuring while querying database metadata for building the exception.
      */
@@ -274,7 +274,7 @@ public abstract class SingletonTable<E extends Entry> extends Table {
      * @param  identifier The name or numeric identifier of the element to fetch.
      * @return The element for the given identifier, or {@code null} if {@code identifier} was null.
      * @throws NoSuchRecordException if no record was found for the specified key.
-     * @throws SQLException if an error occured will reading from the database.
+     * @throws SQLException if an error occurred will reading from the database.
      */
     public E getEntry(final Comparable<?> identifier) throws NoSuchRecordException, SQLException {
         if (identifier == null) {
@@ -317,7 +317,7 @@ public abstract class SingletonTable<E extends Entry> extends Table {
      * Returns all entries available in the database.
      *
      * @return The set of entries. May be empty, but never {@code null}.
-     * @throws SQLException if an error occured will reading from the database.
+     * @throws SQLException if an error occurred will reading from the database.
      */
     public Set<E> getEntries() throws SQLException {
         final Set<E> entries = new LinkedHashSet<E>();
@@ -367,7 +367,7 @@ public abstract class SingletonTable<E extends Entry> extends Table {
      * more economical than {@link #getEntries()} when only the identifiers are wanted.
      *
      * @return The set of entry identifiers. May be empty, but never {@code null}.
-     * @throws SQLException if an error occured will reading from the database.
+     * @throws SQLException if an error occurred will reading from the database.
      */
     public Set<String> getIdentifiers() throws SQLException {
         final Set<String> identifiers = new LinkedHashSet<String>();
@@ -390,7 +390,7 @@ public abstract class SingletonTable<E extends Entry> extends Table {
      *
      * @param  identifier The identifier of the entry to fetch.
      * @return {@code true} if an entry of the given identifier was found.
-     * @throws SQLException if an error occured will reading from the database.
+     * @throws SQLException if an error occurred will reading from the database.
      */
     public boolean exists(final Comparable<?> identifier) throws SQLException {
         if (identifier == null) {
@@ -417,7 +417,7 @@ public abstract class SingletonTable<E extends Entry> extends Table {
      *
      * @param  identifier The identifier of the entry to delete.
      * @return The number of entries deleted.
-     * @throws SQLException if an error occured will reading from or writting to the database.
+     * @throws SQLException if an error occurred will reading from or writting to the database.
      */
     public int delete(final Comparable<?> identifier) throws SQLException {
         if (identifier == null) {
@@ -450,7 +450,7 @@ public abstract class SingletonTable<E extends Entry> extends Table {
      * foreigner tables.
      *
      * @return The number of elements deleted.
-     * @throws SQLException if an error occured will reading from or writting to the database.
+     * @throws SQLException if an error occurred will reading from or writting to the database.
      */
     public int deleteAll() throws SQLException {
         final int count;
@@ -476,7 +476,7 @@ public abstract class SingletonTable<E extends Entry> extends Table {
      *
      * @param  statement The statement to execute.
      * @return The number of elements updated.
-     * @throws SQLException if an error occured.
+     * @throws SQLException if an error occurred.
      */
     private int update(final PreparedStatement statement) throws SQLException {
         final Database database = getDatabase();
@@ -493,7 +493,7 @@ public abstract class SingletonTable<E extends Entry> extends Table {
      * @param  statement The statement to execute.
      * @return {@code true} if the singleton has been found and updated.
      * @throws IllegalUpdateException if more than one elements has been updated.
-     * @throws SQLException if an error occured.
+     * @throws SQLException if an error occurred.
      */
     protected final boolean updateSingleton(final PreparedStatement statement)
             throws IllegalUpdateException, SQLException
@@ -516,7 +516,7 @@ public abstract class SingletonTable<E extends Entry> extends Table {
      *
      * @param  base The base for the identifier.
      * @return A unused identifier.
-     * @throws SQLException if an error occured while reading the database.
+     * @throws SQLException if an error occurred while reading the database.
      *
      * @since 3.11
      */

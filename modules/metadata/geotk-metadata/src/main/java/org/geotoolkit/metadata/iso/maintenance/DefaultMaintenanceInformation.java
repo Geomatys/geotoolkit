@@ -69,7 +69,7 @@ public class DefaultMaintenanceInformation extends MetadataEntity implements Mai
     private MaintenanceFrequency maintenanceAndUpdateFrequency;
 
     /**
-     * Scheduled revision date for resource, in milliseconds ellapsed
+     * Scheduled revision date for resource, in milliseconds elapsed
      * since January 1st, 1970. If there is no such date, then this field
      * is set to the special value {@link Long#MIN_VALUE}.
      */

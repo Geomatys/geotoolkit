@@ -408,7 +408,7 @@ public abstract class AbstractMathTransform extends FormattableObject
                 transform(srcPts, srcOff, dstPts, dstOff);
             } catch (TransformException exception) {
                 /*
-                 * If an exception occured, let it propagate if we reached the maximum amount
+                 * If an exception occurred, let it propagate if we reached the maximum amount
                  * of exceptions we try to handle. We do NOT invoke setLastCompletedTransform
                  * in this case since we gave up.
                  */
@@ -551,7 +551,7 @@ public abstract class AbstractMathTransform extends FormattableObject
                 transform(buffer, bufferedSrcOff, buffer, 0, numBufferedPts);
             } catch (TransformException exception) {
                 /*
-                 * If an exception occured but the transform nevertheless declares having been
+                 * If an exception occurred but the transform nevertheless declares having been
                  * able to process all coordinate points (setting to NaN those that can't be
                  * transformed), we will keep the first exception (to be propagated at the end
                  * of this method) and continue. Otherwise we will stop immediately.

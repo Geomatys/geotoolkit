@@ -148,7 +148,7 @@ public final class FallbackConverterTest {
      * @param expected  The expected result, or {@code null} if the conversion is expected to
      *                  thrown an exception.
      *
-     * @throws NonconvertibleObjectException if an exception was not expected but occured.
+     * @throws NonconvertibleObjectException if an exception was not expected but occurred.
      */
     private static void assertConvert(final ObjectConverter<String,?> converter,
             final String value, final Object expected) throws NonconvertibleObjectException

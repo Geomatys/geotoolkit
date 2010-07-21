@@ -166,7 +166,7 @@ public class CoverageDatabase implements Localized {
      * module.
      *
      * @return The default instance, or {@code null} if none.
-     * @throws CoverageStoreException If an error occured while fetching the default instance.
+     * @throws CoverageStoreException If an error occurred while fetching the default instance.
      *
      * @since 3.11
      */
@@ -682,7 +682,7 @@ public class CoverageDatabase implements Localized {
      *
      * @param  layer The name of the initial layer to be read by the returned reader, or {@code null}.
      * @return A grid coverage reader using the given layer as input.
-     * @throws CoverageStoreException If an error occured while querying the database.
+     * @throws CoverageStoreException If an error occurred while querying the database.
      */
     public LayerCoverageReader createGridCoverageReader(final String layer) throws CoverageStoreException {
         final FutureQuery<Layer> future = (layer != null) ? getLayer(layer) : null;

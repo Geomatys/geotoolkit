@@ -126,7 +126,7 @@ public final class LayerTableTest extends CatalogTestBase {
      * {@link LayerEntry} object.
      *
      * @throws SQLException If the test can't connect to the database.
-     * @throws CoverageStoreException If an error occured while querying the layer.
+     * @throws CoverageStoreException If an error occurred while querying the layer.
      */
     @Test
     public void testTemperature() throws SQLException, CoverageStoreException {
@@ -147,7 +147,7 @@ public final class LayerTableTest extends CatalogTestBase {
      * Tests the layer for BlueMarble images, which are tiled.
      *
      * @throws SQLException If the test can't connect to the database.
-     * @throws CoverageStoreException If an error occured while querying the layer.
+     * @throws CoverageStoreException If an error occurred while querying the layer.
      */
     @Test
     public void testBluemarble() throws SQLException, CoverageStoreException {
@@ -166,7 +166,7 @@ public final class LayerTableTest extends CatalogTestBase {
      * Tests the layer for NetCDF images, which use the Mercator CRS and has depths.
      *
      * @throws SQLException If the test can't connect to the database.
-     * @throws CoverageStoreException If an error occured while querying the layer.
+     * @throws CoverageStoreException If an error occurred while querying the layer.
      */
     @Test
     public void testNetCDF() throws SQLException, CoverageStoreException {
@@ -185,7 +185,7 @@ public final class LayerTableTest extends CatalogTestBase {
      * Tests the layer for NetCDF images with two bands.
      *
      * @throws SQLException If the test can't connect to the database.
-     * @throws CoverageStoreException If an error occured while querying the layer.
+     * @throws CoverageStoreException If an error occurred while querying the layer.
      */
     @Test
     public void testGeostrophicCurrent() throws SQLException, CoverageStoreException {

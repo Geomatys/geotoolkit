@@ -268,7 +268,7 @@ public abstract class Vector extends AbstractList<Number> implements CheckedColl
 
     /**
      * If this vector is a view over an other vector, returns the backing vector.
-     * Otherwise returns {@code this}. If this method is overriden, it should be
+     * Otherwise returns {@code this}. If this method is overridden, it should be
      * together with the {@link #toBacking} method.
      */
     Vector backingVector() {
@@ -404,7 +404,7 @@ public abstract class Vector extends AbstractList<Number> implements CheckedColl
     }
 
     /**
-     * Implementation of {@link #subList(int,int,int)} to be overriden by subclasses.
+     * Implementation of {@link #subList(int,int,int)} to be overridden by subclasses.
      */
     Vector createSubList(final int first, final int step, final int length) {
         return new SubList(first, step, length);
@@ -430,7 +430,7 @@ public abstract class Vector extends AbstractList<Number> implements CheckedColl
     }
 
     /**
-     * Implementation of {@link #concatenate(Vector)} to be overriden by subclasses.
+     * Implementation of {@link #concatenate(Vector)} to be overridden by subclasses.
      */
     Vector createConcatenate(final Vector toAppend) {
         return new ConcatenatedVector(this, toAppend);

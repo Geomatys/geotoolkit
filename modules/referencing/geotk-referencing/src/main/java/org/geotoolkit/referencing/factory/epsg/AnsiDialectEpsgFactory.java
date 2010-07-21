@@ -193,7 +193,7 @@ public class AnsiDialectEpsgFactory extends DirectEpsgFactory {
      * that table. Otherwise {@code setSchema(...)} is not invoked.
      *
      * @param  metadata The database metadata.
-     * @throws SQLException If an error occured while querying the database metadata.
+     * @throws SQLException If an error occurred while querying the database metadata.
      *
      * @since 3.00
      */

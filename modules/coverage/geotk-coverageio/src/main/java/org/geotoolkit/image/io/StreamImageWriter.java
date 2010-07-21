@@ -171,7 +171,7 @@ public abstract class StreamImageWriter extends SpatialImageWriter {
      * or {@link #finalize} methods and doesn't need to be invoked explicitly. It has protected
      * access only in order to allow overriding by subclasses.
      *
-     * @throws IOException if an error occured while closing the stream.
+     * @throws IOException if an error occurred while closing the stream.
      *
      * @see #closeOnReset
      */

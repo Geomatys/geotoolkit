@@ -163,21 +163,21 @@ final class LoggingTableModel extends Handler implements TableModel {
     /**
      * The last {@link Record}s stored. This array will grows as needed up to
      * {@link #capacity}. Once the maximal capacity is reached, early records
-     * are discarted.
+     * are discarded.
      */
     private Record[] records = new Record[16];
 
     /**
      * The maximum amount of records that can be stored in this logging panel.
      * If more than {@link #capacity} messages are logged, early messages will
-     * be discarted.
+     * be discarded.
      */
     private int capacity = 500;
 
     /**
      * The total number of logging messages published by this panel. This number may be
      * greater than the amount of {@link Record} actually memorized, since early records
-     * may have been discarted. The slot in {@code records} where to write the next
+     * may have been discarded. The slot in {@code records} where to write the next
      * message is defined by {@code recordCount % capacity}.
      */
     private int recordCount;
@@ -202,7 +202,7 @@ final class LoggingTableModel extends Handler implements TableModel {
 
     /**
      * Returns the capacity. This is the maximum number of {@link LogRecord}s this handler
-     * can memorize. If more messages are logged, then the oldiest messages will be discarted.
+     * can memorize. If more messages are logged, then the oldiest messages will be discarded.
      */
     public int getCapacity() {
         return capacity;
@@ -210,7 +210,7 @@ final class LoggingTableModel extends Handler implements TableModel {
 
     /**
      * Sets the capacity. This is the maximum number of {@link LogRecord}s this handler can
-     * memorize. If more messages are logged, then the oldiest messages will be discarted.
+     * memorize. If more messages are logged, then the oldiest messages will be discarded.
      */
     public synchronized void setCapacity(final int capacity) {
         if (recordCount != 0) {
@@ -221,7 +221,7 @@ final class LoggingTableModel extends Handler implements TableModel {
 
     /**
      * Publishes a {@link LogRecord}. If the maximal capacity has been reached,
-     * then the oldiest record will be discarted.
+     * then the oldest record will be discarded.
      */
     @Override
     public synchronized void publish(final LogRecord record) {
@@ -232,7 +232,6 @@ final class LoggingTableModel extends Handler implements TableModel {
          * Wraps the LogRecord in exactly one Record instances (typicaly case), or more
          * Record instances if the LogRecord message spans more than one line.
          */
-        final int firstSlot = recordCount % capacity;
         final Record[] toAdd = Record.create(record, getFormatter().formatMessage(record));
         for (final Record item : toAdd) {
             final int nextSlot = recordCount % capacity;

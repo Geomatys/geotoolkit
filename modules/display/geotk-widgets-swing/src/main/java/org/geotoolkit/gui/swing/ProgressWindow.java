@@ -363,7 +363,7 @@ public class ProgressWindow implements ProgressListener, Disposable {
      *          filename in process of being parsed or the URL of the data being processed.
      * @param location
      *          Text to write on the left side of the warning message, or {@code null} if none.
-     *          This is typically the line number where the error occured in the {@code source}
+     *          This is typically the line number where the error occurred in the {@code source}
      *          file or the feature ID of the feature that produced the message.
      * @param warning
      *          The warning message.

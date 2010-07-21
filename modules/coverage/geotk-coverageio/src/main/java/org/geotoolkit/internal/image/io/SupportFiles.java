@@ -275,7 +275,7 @@ attmpt: for (int caseNumber=0; ; caseNumber++) {
      *
      * @param  file The filename of the <strong>image</strong>. The suffix will be replaced.
      * @param  tr The affine transform to write.
-     * @throws IOException if an error occured while writing the file.
+     * @throws IOException if an error occurred while writing the file.
      */
     public static void writeTFW(File file, final AffineTransform tr) throws IOException {
         final String suffix = toSuffixTFW(file);
@@ -295,7 +295,7 @@ attmpt: for (int caseNumber=0; ; caseNumber++) {
      *
      * @param  stream The output stream where to write. This stream will be closed by this method.
      * @param  tr The affine transform to write.
-     * @throws IOException if an error occured while writing the file.
+     * @throws IOException if an error occurred while writing the file.
      */
     public static void writeTFW(final OutputStream stream, final AffineTransform tr) throws IOException {
         final BufferedWriter out = new BufferedWriter(new OutputStreamWriter(stream, ENCODING));
@@ -315,7 +315,7 @@ attmpt: for (int caseNumber=0; ; caseNumber++) {
      *         file) or {@code ".jgw"} suffix (for JPEG file), then the suffix of the given file
      *         will be replaced by the appropriate suffix.
      * @return The TFW file content as an affine transform.
-     * @throws IOException If an error occured while parsing the file, including
+     * @throws IOException If an error occurred while parsing the file, including
      *         errors while parsing the numbers.
      */
     public static AffineTransform parseTFW(File file) throws IOException {
@@ -334,7 +334,7 @@ attmpt: for (int caseNumber=0; ; caseNumber++) {
      * @param  filename The name of the file being parsed. Used only for formatting error message.
      *         Can be a {@link String}, {@link File}, {@link URL} or {@link URI}.
      * @return The TFW file content as an affine transform.
-     * @throws IOException If an error occured while parsing the file, including
+     * @throws IOException If an error occurred while parsing the file, including
      *         errors while parsing the numbers.
      *
      * @since 3.07

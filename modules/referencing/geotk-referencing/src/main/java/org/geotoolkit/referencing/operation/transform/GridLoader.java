@@ -77,7 +77,7 @@ class GridLoader {
      * @param  latitudeGridFile  The file with latitude data. May be the same than the longitude file.
      * @param  creator           The method to call if a new grid needs to be loaded.
      * @return The cached or the newly created loader.
-     * @throws FactoryException If an error occured while creating the loader.
+     * @throws FactoryException If an error occurred while creating the loader.
      */
     protected static <T extends GridLoader> T loadIfAbsent(final Class<T> type,
             final Object longitudeGridFile, final Object latitudeGridFile,

@@ -68,7 +68,7 @@ public class DefaultUsage extends MetadataEntity implements Usage {
 
     /**
      * Date and time of the first use or range of uses of the resource and/or resource series.
-     * Values are milliseconds ellapsed since January 1st, 1970,
+     * Values are milliseconds elapsed since January 1st, 1970,
      * or {@link Long#MIN_VALUE} if this value is not set.
      */
     private long usageDate = Long.MIN_VALUE;

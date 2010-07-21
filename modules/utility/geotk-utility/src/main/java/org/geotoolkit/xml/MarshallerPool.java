@@ -264,10 +264,10 @@ public class MarshallerPool {
      *
      * Note that this is not strictly required to release the marshaller in a {@code finally}
      * block. Actually it is safer to let the garbage collector disposes the marshaller if an
-     * error occured while marshalling the object.
+     * error occurred while marshalling the object.
      *
      * @return A marshaller configured for formatting OGC/ISO XML.
-     * @throws JAXBException If an error occured while creating and configuring a marshaller.
+     * @throws JAXBException If an error occurred while creating and configuring a marshaller.
      */
     public Catching.Marshaller acquireMarshaller() throws JAXBException {
         Catching.Marshaller marshaller = acquire(marshallers);
@@ -291,10 +291,10 @@ public class MarshallerPool {
      *
      * Note that this is not strictly required to release the unmarshaller in a {@code finally}
      * block. Actually it is safer to let the garbage collector disposes the unmarshaller if an
-     * error occured while unmarshalling the object.
+     * error occurred while unmarshalling the object.
      *
      * @return A unmarshaller configured for parsing OGC/ISO XML.
-     * @throws JAXBException If an error occured while creating and configuring the unmarshaller.
+     * @throws JAXBException If an error occurred while creating and configuring the unmarshaller.
      */
     public Catching.Unmarshaller acquireUnmarshaller() throws JAXBException {
         Catching.Unmarshaller unmarshaller = acquire(unmarshallers);
@@ -332,7 +332,7 @@ public class MarshallerPool {
      * Creates an configure a new JAXB marshaller.
      *
      * @return A new marshaller configured for formatting OGC/ISO XML.
-     * @throws JAXBException If an error occured while creating and configuring the marshaller.
+     * @throws JAXBException If an error occurred while creating and configuring the marshaller.
      */
     protected Marshaller createMarshaller() throws JAXBException {
         final String mapperKey = internal ?
@@ -355,7 +355,7 @@ public class MarshallerPool {
      * Creates an configure a new JAXB unmarshaller.
      *
      * @return A new unmarshaller configured for parsing OGC/ISO XML.
-     * @throws JAXBException If an error occured while creating and configuring the unmarshaller.
+     * @throws JAXBException If an error occurred while creating and configuring the unmarshaller.
      */
     protected Unmarshaller createUnmarshaller() throws JAXBException {
         final Unmarshaller unmarshaller = context.createUnmarshaller();

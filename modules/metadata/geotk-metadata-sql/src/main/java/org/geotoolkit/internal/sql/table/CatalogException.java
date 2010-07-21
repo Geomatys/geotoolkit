@@ -45,17 +45,17 @@ public class CatalogException extends SQLNonTransientException {
     private static final long serialVersionUID = 3838293108990270182L;
 
     /**
-     * The table name where a problem occured, or {@code null} if unknown.
+     * The table name where a problem occurred, or {@code null} if unknown.
      */
     private String table;
 
     /**
-     * The column name where a problem occured, or {@code null} if unknown.
+     * The column name where a problem occurred, or {@code null} if unknown.
      */
     private String column;
 
     /**
-     * The primary key for the record where a problem occured, or {@code null} if unknown.
+     * The primary key for the record where a problem occurred, or {@code null} if unknown.
      */
     private Comparable<?> key;
 
@@ -109,8 +109,8 @@ public class CatalogException extends SQLNonTransientException {
     /**
      * Sets the table and column names from the given column.
      *
-     * @param column  The column where a problem occured.
-     * @param key     The key value for the record where a problem occured, or {@code null} if none.
+     * @param column  The column where a problem occurred.
+     * @param key     The key value for the record where a problem occurred, or {@code null} if none.
      *                The key shall be either a {@link String} or {@link Integer} instance.
      */
     final void setMetadata(final Column column, final Comparable<?> key) {
@@ -122,12 +122,12 @@ public class CatalogException extends SQLNonTransientException {
     /**
      * Sets the table and column names from the {@linkplain ResultSetMetaData result set metadata}.
      * <strong>Note that the result set will be closed</strong>, because this exception is always
-     * thrown when an error occured while reading this result set.
+     * thrown when an error occurred while reading this result set.
      *
      * @param table   The table that produced the result set, or {@code null} if unknown.
-     * @param results The result set in which a problem occured, or {@code null} if none.
-     * @param column  The column index where a problem occured (number starts at 1), or {@code 0} if unknow.
-     * @param key     The key value for the record where a problem occured, or {@code null} if none.
+     * @param results The result set in which a problem occurred, or {@code null} if none.
+     * @param column  The column index where a problem occurred (number starts at 1), or {@code 0} if unknow.
+     * @param key     The key value for the record where a problem occurred, or {@code null} if none.
      *                The key shall be either a {@link String} or {@link Integer} instance.
      * @throws SQLException if the metadata can't be read from the result set.
      */
@@ -172,28 +172,28 @@ public class CatalogException extends SQLNonTransientException {
     }
 
     /**
-     * Returns the table name where a problem occured, or {@code null} if unknown.
+     * Returns the table name where a problem occurred, or {@code null} if unknown.
      *
-     * @return The table where a problem occured, or {@code null} if unknown.
+     * @return The table where a problem occurred, or {@code null} if unknown.
      */
     public String getTableName() {
         return table;
     }
 
     /**
-     * Returns the column name where a problem occured, or {@code null} if unknown.
+     * Returns the column name where a problem occurred, or {@code null} if unknown.
      *
-     * @return The column where a problem occured, or {@code null} if unknown.
+     * @return The column where a problem occurred, or {@code null} if unknown.
      */
     public String getColumnName() {
         return column;
     }
 
     /**
-     * Returns the primary key for the record where a problem occured, or {@code null} if unknown.
+     * Returns the primary key for the record where a problem occurred, or {@code null} if unknown.
      * The primary key is either a {@link String} or an {@link Integer} instance.
      *
-     * @return The identifier of the entry where a problem occured, or {@code null} if unknown.
+     * @return The identifier of the entry where a problem occurred, or {@code null} if unknown.
      */
     public Comparable<?> getPrimaryKey() {
         return key;
@@ -208,7 +208,7 @@ public class CatalogException extends SQLNonTransientException {
 
     /**
      * Returns a concatenation of the {@linkplain #getMessage details message} and the table
-     * and column name where the error occured.
+     * and column name where the error occurred.
      */
     @Override
     public String getLocalizedMessage() {

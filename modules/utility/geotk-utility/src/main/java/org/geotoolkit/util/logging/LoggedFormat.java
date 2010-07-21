@@ -290,7 +290,7 @@ public class LoggedFormat<T> extends Format {
      *
      * @param  text The unparsable string.
      * @param  index The parse position. This is usually {@link ParsePosition#getIndex}.
-     * @param  errorIndex The index where the error occured. This is usually
+     * @param  errorIndex The index where the error occurred. This is usually
      *         {@link ParsePosition#getErrorIndex}.
      * @param  locale The locale for the message, or {@code null} for the default one.
      * @return A formatted error message.
@@ -311,7 +311,7 @@ public class LoggedFormat<T> extends Format {
      *
      * @param  text The unparsable string.
      * @param  index The parse position. This is usually {@link ParsePosition#getIndex}.
-     * @param  errorIndex The index where the error occured. This is usually
+     * @param  errorIndex The index where the error occurred. This is usually
      *         {@link ParsePosition#getErrorIndex}.
      * @param  locale The locale for the log message, or {@code null} for the default one.
      * @param  level The log record level.

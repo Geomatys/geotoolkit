@@ -69,7 +69,7 @@ import org.geotoolkit.util.collection.Cache;
  * construction time. If a greater amount of objects are cached, the oldest ones will
  * be retained through a {@linkplain WeakReference weak reference} instead of a strong
  * one. This means that this caching factory will continue to returns them as long as
- * they are in use somewhere else in the Java virtual machine, but will be discarted
+ * they are in use somewhere else in the Java virtual machine, but will be discarded
  * (and recreated on the fly if needed) otherwise.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
@@ -244,7 +244,7 @@ public class CachingAuthorityFactory extends AbstractAuthorityFactory {
 
     /**
      * Releases the backing store previously obtained with {@link #getBackingStore}. The default
-     * implementation does nothing. But if a subclass has overriden the {@code getBackingStore}
+     * implementation does nothing. But if a subclass has overridden the {@code getBackingStore}
      * method, then it must override this method as well.
      */
     void release() {
@@ -433,7 +433,7 @@ public class CachingAuthorityFactory extends AbstractAuthorityFactory {
      * Returns a description of the underlying backing store, or {@code null} if unknow.
      * This is for example the database software used for storing the data.
      *
-     * @throws FactoryException if a failure occured while fetching the engine description.
+     * @throws FactoryException if a failure occurred while fetching the engine description.
      */
     @Override
     public String getBackingStoreDescription() throws FactoryException {
@@ -504,7 +504,7 @@ public class CachingAuthorityFactory extends AbstractAuthorityFactory {
      * @param  proxy The proxy to use for creating the object.
      * @param  code  The code of the object to create.
      * @return The object extracted from the cache or created.
-     * @throws FactoryException If an error occured while creating the object.
+     * @throws FactoryException If an error occurred while creating the object.
      */
     private <T> T create(final AbstractAuthorityFactoryProxy<T> proxy, final String code)
             throws FactoryException
@@ -1056,7 +1056,7 @@ public class CachingAuthorityFactory extends AbstractAuthorityFactory {
         private void release() {
             assert Thread.holdsLock(this);
             if (acquireCount == 0) {
-                // May happen only if a failure occured during getBackingStore() execution.
+                // May happen only if a failure occurred during getBackingStore() execution.
                 return;
             }
             if (--acquireCount == 0) {
@@ -1140,7 +1140,7 @@ public class CachingAuthorityFactory extends AbstractAuthorityFactory {
                 try {
                     acquire();
                     // Must delegates to 'finder' (not to 'super') in order to take
-                    // advantage of the method overriden by AllAuthoritiesFactory.
+                    // advantage of the method overridden by AllAuthoritiesFactory.
                     candidate = finder.find(object);
                 } finally {
                     release();
@@ -1177,7 +1177,7 @@ public class CachingAuthorityFactory extends AbstractAuthorityFactory {
                 try {
                     acquire();
                     // We don't rely on super-class implementation, because we want to
-                    // take advantage of the method overriden by AllAuthoritiesFactory.
+                    // take advantage of the method overridden by AllAuthoritiesFactory.
                     return finder.findIdentifier(object);
                 } finally {
                     release();

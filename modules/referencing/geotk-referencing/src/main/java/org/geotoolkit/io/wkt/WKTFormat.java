@@ -330,7 +330,7 @@ public class WKTFormat extends Format {
      * does nothing if the definitions map is empty.
      *
      * @param  out writer The output stream where to write the table.
-     * @throws IOException if an error occured while writing to the output stream.
+     * @throws IOException if an error occurred while writing to the output stream.
      */
     public void printDefinitions(final Writer out) throws IOException {
         if (definitions != null && !definitions.isEmpty()) {
@@ -513,7 +513,7 @@ public class WKTFormat extends Format {
      * @param  in  The input stream.
      * @param  out The output stream.
      * @param  err The error stream.
-     * @throws IOException if an error occured while reading from the input stream
+     * @throws IOException if an error occurred while reading from the input stream
      *         or writing to the output stream.
      */
     public void reformat(final Reader in, final Writer out, final PrintWriter err)
@@ -597,7 +597,7 @@ copy:       while (true) {
     }
 
     /**
-     * If a warning occured during the last WKT {@linkplain #format formatting},
+     * If a warning occurred during the last WKT {@linkplain #format formatting},
      * returns the warning. Otherwise returns {@code null}. The warning is cleared
      * every time a new object is formatted.
      *

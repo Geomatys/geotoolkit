@@ -160,7 +160,7 @@ final class OverviewLevel implements Comparable<OverviewLevel>, Serializable {
      *
      * @param  pattern The tile to use as a pattern.
      * @param  region  The region encompassing every tiles at this level, in relative coordinates.
-     * @throws IOException if an error occured while reading tile information.
+     * @throws IOException if an error occurred while reading tile information.
      */
     OverviewLevel(final Tile pattern, Rectangle region) throws IOException {
         final Dimension subsampling = pattern.getSubsampling();
@@ -191,7 +191,7 @@ final class OverviewLevel implements Comparable<OverviewLevel>, Serializable {
      * @param tile The tile to wrap.
      * @param subsampling The tile subsampling, provided as an explicit argument only
      *        in order to avoid creating a temporary {@link Dimension} object again.
-     * @throws IOException if an error occured while reading tile information.
+     * @throws IOException if an error occurred while reading tile information.
      */
     OverviewLevel(final Tile tile, final Dimension subsampling) throws IOException {
         mosaic = tile.getRegion();
@@ -245,7 +245,7 @@ final class OverviewLevel implements Comparable<OverviewLevel>, Serializable {
      *
      * @param ordinal The overview level of this {@code OverviewLevel}. 0 is finest subsampling.
      * @param finer A level with finer (smaller) subsampling value than this level, or {@code null}.
-     * @throws MalformedURLException if an error occured while creating the URL for the tile.
+     * @throws MalformedURLException if an error occurred while creating the URL for the tile.
      */
     final void createLinkedList(final int ordinal, final OverviewLevel finer)
             throws MalformedURLException
@@ -627,7 +627,7 @@ final class OverviewLevel implements Comparable<OverviewLevel>, Serializable {
      * @param  x,y The tile location, with (0,0) as the upper-left tile.
      * @return The tile at the given location, or {@code null} if none.
      * @throws IndexOutOfBoundsException if the given index is out of bounds.
-     * @throws MalformedURLException if an error occured while creating the URL for the tile.
+     * @throws MalformedURLException if an error occurred while creating the URL for the tile.
      */
     final Tile getTile(int x, int y) throws IndexOutOfBoundsException, MalformedURLException {
         final int index = getIndex(x, y);
@@ -740,7 +740,7 @@ final class OverviewLevel implements Comparable<OverviewLevel>, Serializable {
      *         than the given number, stop the search and returns {@code null}.
      * @return The cost of reading the tiles, or {@code -1} if the cost limit has been reached
      *         (in which case no tiles has been added to the list).
-     * @throws IOException if an error occured while creating the URL for the tiles.
+     * @throws IOException if an error occurred while creating the URL for the tiles.
      */
     final long getTiles(final ArrayList<Tile> addTo, final Rectangle search,
             final Dimension subsampling, final long costLimit) throws IOException
@@ -828,7 +828,7 @@ nextTile:   for (int x=xmin; x<xmax; x++) {
      *
      * @param  search The region (in absolute coordinates) where to search for tiles.
      * @return {@code true} if at least one tile intersects the given region.
-     * @throws IOException if an error occured while fetching a tile size.
+     * @throws IOException if an error occurred while fetching a tile size.
      */
     final boolean intersects(final Rectangle search) throws IOException {
         final Rectangle index = toTileIndex(search);

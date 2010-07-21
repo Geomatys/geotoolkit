@@ -264,7 +264,7 @@ public class TextRecordImageReader extends TextImageReader {
      * @param  fromImage The index of the first image (inclusive).
      * @param  toIndex The index of the last image (inclusive) for which to measure the stream length.
      * @return The number of bytes in the given portion of the stream, or -1 if unknown.
-     * @throws IOException If an error occured while reading the stream.
+     * @throws IOException If an error occurred while reading the stream.
      *
      * @see #getStreamLength()
      *
@@ -378,13 +378,13 @@ public class TextRecordImageReader extends TextImageReader {
      * in a previous call to this method, then the cached {@code TextRecordList} will be returned
      * immediately. Otherwise the records will be read from the input source. This will force
      * the loading of every images before the given {@code imageIndex} that has not yet been
-     * read. Those previous images will be discarted immediately if {@link #seekForwardOnly}
+     * read. Those previous images will be discarded immediately if {@link #seekForwardOnly}
      * is {@code true}.
      *
      * @param  imageIndex The image index.
      * @param  allowCancel {@code false} if cancelation should throw an exception.
      * @return The list of records for the requested image (never {@code null}).
-     * @throws IOException if an error occured while reading, including badly formatted numbers.
+     * @throws IOException if an error occurred while reading, including badly formatted numbers.
      * @throws IndexOutOfBoundsException If the given image index is outside the range of index
      *         that this method can process.
      */
@@ -419,7 +419,7 @@ public class TextRecordImageReader extends TextImageReader {
                 }
                 /*
                  * Parse the line read from the input source. Those lines will be immediately
-                 * discarted if seekForwardOnly is true and the current image index is lower
+                 * discarded if seekForwardOnly is true and the current image index is lower
                  * than the requested one (because we need to parse previous images before to
                  * reach the requested one).
                  */
@@ -503,7 +503,7 @@ public class TextRecordImageReader extends TextImageReader {
         }
         /*
          * Following should never be null if checkImageIndex(int) did its work properly.
-         * We check nevertheless as a safety (user could have overriden checkImageIndex(int)
+         * We check nevertheless as a safety (user could have overridden checkImageIndex(int)
          * for instance).
          */
         if (data != null && imageIndex < data.length) {

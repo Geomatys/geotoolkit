@@ -40,7 +40,7 @@ public final class NetcdfCoverageReaderTest extends NetcdfTestBase {
     /**
      * Tests a {@link ImageCoverageReader#read} operation.
      *
-     * @throws CoverageStoreException If an error occured while reading the NetCDF file.
+     * @throws CoverageStoreException If an error occurred while reading the NetCDF file.
      */
     @Test
     public void testRead() throws CoverageStoreException {

@@ -389,7 +389,7 @@ public class ObjectiveAnalysis {
      * are available for those stations, then this method shall returns the correlation
      * coefficient between the data at station 1 and the data at station 2.
      * <p>
-     * This method should be overriden by subclasses, typically with a correlation estimated
+     * This method should be overridden by subclasses, typically with a correlation estimated
      * from the distance between the two stations. The value returned by this method must be
      * in the [0&hellip;1] range.
      *

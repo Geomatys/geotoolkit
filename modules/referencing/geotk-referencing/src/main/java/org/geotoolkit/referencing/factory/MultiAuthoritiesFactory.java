@@ -352,7 +352,7 @@ public class MultiAuthoritiesFactory extends AuthorityFactoryAdapter implements 
     /**
      * Returns a description of the underlying backing store, or {@code null} if unknow.
      *
-     * @throws FactoryException if a failure occured while fetching the engine description.
+     * @throws FactoryException if a failure occurred while fetching the engine description.
      */
     @Override
     public String getBackingStoreDescription() throws FactoryException {
@@ -767,7 +767,7 @@ scanForType:    for (int i=0; i<FACTORY_TYPES.length; i++) {
     }
 
     /**
-     * Returns an arbitrary object from a code. This method is the only one to be overriden in this
+     * Returns an arbitrary object from a code. This method is the only one to be overridden in this
      * class because it needs to try every kind of factories (datum, CS, CRS, <i>etc.</i>)
      * instead than using a specific type known at compile time.
      *

@@ -154,7 +154,7 @@ public class ImageFileProperties extends ImageProperties implements PropertyChan
      *
      * @param  file The image file.
      * @throws IOException If the file is not found, or no suitable image reader is found for the
-     *         given file, or if an error occured while reading the metadata or the thumbnails.
+     *         given file, or if an error occurred while reading the metadata or the thumbnails.
      */
     public ImageFileProperties(final File file) throws IOException {
         this();
@@ -250,7 +250,7 @@ public class ImageFileProperties extends ImageProperties implements PropertyChan
      *
      * @param  reader The image reader from which to read the informations.
      * @param  imageIndex The index of the image to read (usually 0).
-     * @throws IOException If an error occured while reading the metadata or the thumbnails.
+     * @throws IOException If an error occurred while reading the metadata or the thumbnails.
      *
      * @since 3.07
      */
@@ -371,7 +371,7 @@ public class ImageFileProperties extends ImageProperties implements PropertyChan
      * it from an other thread than the <cite>Swing</cite> one.
      *
      * @param  reader The image reader from which to read the informations.
-     * @throws IOException If an error occured while reading the metadata or the thumbnails.
+     * @throws IOException If an error occurred while reading the metadata or the thumbnails.
      */
     public void setImage(final ImageReader reader) throws IOException {
         setImage(reader, 0);
@@ -390,7 +390,7 @@ public class ImageFileProperties extends ImageProperties implements PropertyChan
      *
      * @param  file The image file.
      * @throws IOException If the file is not found, or no suitable image reader is found for the
-     *         given file, or if an error occured while reading the metadata or the thumbnails.
+     *         given file, or if an error occurred while reading the metadata or the thumbnails.
      */
     public void setImage(final File file) throws IOException {
         setImageInput(file);
@@ -417,7 +417,7 @@ public class ImageFileProperties extends ImageProperties implements PropertyChan
      *
      * @param  input The image input.
      * @throws IOException If the file is not found, or no suitable image reader is found for the
-     *         given input, or if an error occured while reading the metadata or the thumbnails.
+     *         given input, or if an error occurred while reading the metadata or the thumbnails.
      */
     public void setImageInput(final Object input) throws IOException {
         final ReadInvoker invoker = new ReadInvoker();
@@ -514,7 +514,7 @@ public class ImageFileProperties extends ImageProperties implements PropertyChan
         }
 
         /**
-         * Invoked when a recoverable error (not during image read) occured.
+         * Invoked when a recoverable error (not during image read) occurred.
          */
         @Override
         public void recoverableException(final Throwable error) {

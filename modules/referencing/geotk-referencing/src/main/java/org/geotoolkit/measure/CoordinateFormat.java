@@ -154,7 +154,7 @@ public class CoordinateFormat extends Format {
     /**
      * The type for each value in the {@code formats} array.
      * Types are: 0=number, 1=longitude, 2=latitude, 3=other angle,
-     * 4=date, 5=ellapsed time. This array is never {@code null}.
+     * 4=date, 5=elapsed time. This array is never {@code null}.
      */
     private transient byte[] types;
 
@@ -308,7 +308,7 @@ public class CoordinateFormat extends Format {
                 }
                 types[i] = TIME;
                 // Fallthrough: formatted as number for now.
-                // TODO: Provide ellapsed time formatting later.
+                // TODO: Provide elapsed time formatting later.
             }
             /*
              * Formatter for all other units. Do NOT set types[i] since it may have been set

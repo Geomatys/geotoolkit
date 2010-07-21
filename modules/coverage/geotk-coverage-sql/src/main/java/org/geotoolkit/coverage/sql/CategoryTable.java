@@ -119,7 +119,7 @@ final class CategoryTable extends Table {
      *
      * @param  format The name of the format for which the categories are defined.
      * @return The categories for each sample dimension in the given format.
-     * @throws SQLException if an error occured while reading the database.
+     * @throws SQLException if an error occurred while reading the database.
      */
     public CategoryEntry getCategories(final String format) throws SQLException {
         int paletteRange = 0;
@@ -287,7 +287,7 @@ final class CategoryTable extends Table {
      *
      * @param  format The newly created format for which to write the sample dimensions.
      * @param  categories The categories to add for each band.
-     * @throws SQLException if an error occured while writing to the database.
+     * @throws SQLException if an error occurred while writing to the database.
      *
      * @since 3.13
      */

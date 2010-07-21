@@ -151,7 +151,7 @@ public class ScriptRunner implements FilenameFilter {
      * Creates a new runner which will execute the statements using the given connection.
      *
      * @param connection The connection to the database, or {@code null} if none.
-     * @throws SQLException If an error occured while executing a SQL statement.
+     * @throws SQLException If an error occurred while executing a SQL statement.
      */
     public ScriptRunner(final Connection connection) throws SQLException {
         if (connection != null) {
@@ -226,8 +226,8 @@ public class ScriptRunner implements FilenameFilter {
      *
      * @param  file The file or directory of the script(s) to run.
      * @return The number of rows added or modified as a result of the script(s) execution.
-     * @throws IOException If an error occured while reading the input.
-     * @throws SQLException If an error occured while executing a SQL statement.
+     * @throws IOException If an error occurred while reading the input.
+     * @throws SQLException If an error occurred while executing a SQL statement.
      */
     public int run(final File file) throws IOException, SQLException {
         if (file.isDirectory()) {
@@ -243,8 +243,8 @@ public class ScriptRunner implements FilenameFilter {
      * @param  directory The directory of the script(s) to run.
      * @param  files The filename of the script(s) to run in the above directory.
      * @return The number of rows added or modified as a result of the script(s) execution.
-     * @throws IOException If an error occured while reading the input.
-     * @throws SQLException If an error occured while executing a SQL statement.
+     * @throws IOException If an error occurred while reading the input.
+     * @throws SQLException If an error occurred while executing a SQL statement.
      */
     final int run(final File directory, String[] files) throws IOException, SQLException {
         if (files.length == 0) {
@@ -320,8 +320,8 @@ public class ScriptRunner implements FilenameFilter {
      *
      * @param  file The file of the script to run.
      * @return The number of rows added or modified as a result of the script execution.
-     * @throws IOException If an error occured while reading the input.
-     * @throws SQLException If an error occured while executing a SQL statement.
+     * @throws IOException If an error occurred while reading the input.
+     * @throws SQLException If an error occurred while executing a SQL statement.
      */
     int runFile(final File file) throws IOException, SQLException {
         final String encoding = this.encoding;
@@ -345,8 +345,8 @@ public class ScriptRunner implements FilenameFilter {
      *
      * @param  in The stream to read. Will be read up to the end-of-stream but will not be closed.
      * @return The number of rows added or modified as a result of the script execution.
-     * @throws IOException If an error occured while reading the input.
-     * @throws SQLException If an error occured while executing a SQL statement.
+     * @throws IOException If an error occurred while reading the input.
+     * @throws SQLException If an error occurred while executing a SQL statement.
      */
     public int run(final InputStream in) throws IOException, SQLException {
         final Reader reader;
@@ -364,8 +364,8 @@ public class ScriptRunner implements FilenameFilter {
      *
      * @param  in The stream to read. Will be read up to the end-of-stream but will not be closed.
      * @return The number of rows added or modified as a result of the script execution.
-     * @throws IOException If an error occured while reading the input.
-     * @throws SQLException If an error occured while executing a SQL statement.
+     * @throws IOException If an error occurred while reading the input.
+     * @throws SQLException If an error occurred while executing a SQL statement.
      */
     public int run(final LineNumberReader in) throws IOException, SQLException {
         int count = 0;
@@ -521,7 +521,7 @@ scanLine:   for (; i<length; i++) {
      *
      * @param  sql The SQL statement to execute.
      * @return The number of rows added or modified as a result of the statement execution.
-     * @throws SQLException If an error occured while executing the SQL statement.
+     * @throws SQLException If an error occurred while executing the SQL statement.
      * @throws IOException If an I/O operation was required and failed.
      */
     protected int execute(final StringBuilder sql) throws SQLException, IOException {
@@ -550,7 +550,7 @@ scanLine:   for (; i<length; i++) {
      * explicitly by the caller.
      *
      * @param  vacuum {@code true} for performing a database vacuum (PostgreSQL).
-     * @throws SQLException If an error occured while closing the statement.
+     * @throws SQLException If an error occurred while closing the statement.
      */
     public void close(final boolean vacuum) throws SQLException {
         if (statement != null) {
@@ -569,7 +569,7 @@ scanLine:   for (; i<length; i++) {
     /**
      * Returns the current position (current file and current line in that file). The returned
      * string may also contains the SQL statement under execution. The main purpose of this
-     * method is to provides informations on the position where an exception occured.
+     * method is to provides informations on the position where an exception occurred.
      *
      * @return A string representation of the current position.
      */
@@ -591,7 +591,7 @@ scanLine:   for (; i<length; i++) {
     /**
      * Returns a string representation of this runner for debugging purpose. Current implementation
      * returns the current position in the script being executed, and the SQL statement. This method
-     * may be invoked after a {@link SQLException} occured in order to determine the line in the SQL
+     * may be invoked after a {@link SQLException} occurred in order to determine the line in the SQL
      * script that caused the error.
      *
      * @return The current position in the script being executed.

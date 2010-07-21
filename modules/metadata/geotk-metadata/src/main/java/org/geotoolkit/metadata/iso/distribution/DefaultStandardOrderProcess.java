@@ -68,7 +68,7 @@ public class DefaultStandardOrderProcess extends MetadataEntity implements Stand
 
     /**
      * Date and time when the dataset will be available,
-     * in milliseconds ellapsed since January 1st, 1970.
+     * in milliseconds elapsed since January 1st, 1970.
      */
     private long plannedAvailableDateTime = Long.MIN_VALUE;
 

@@ -129,7 +129,7 @@ public class CoverageDatabaseInstaller extends ScriptRunner {
      * Creates a new runner which will execute the statements using the given connection.
      *
      * @param connection The connection to the database.
-     * @throws SQLException If an error occured while executing a SQL statement.
+     * @throws SQLException If an error occurred while executing a SQL statement.
      */
     public CoverageDatabaseInstaller(final Connection connection) throws SQLException {
         super(connection);
@@ -167,9 +167,9 @@ public class CoverageDatabaseInstaller extends ScriptRunner {
      * about the line which caused the error.
      *
      * @return The number of rows added or modified as a result of the script execution.
-     * @throws IOException If an error occured while reading the input.
-     * @throws SQLException If an error occured while executing a SQL statement.
-     * @throws FactoryException If an error occured during the installation of the EPSG database.
+     * @throws IOException If an error occurred while reading the input.
+     * @throws SQLException If an error occurred while executing a SQL statement.
+     * @throws FactoryException If an error occurred during the installation of the EPSG database.
      */
     public int install() throws IOException, SQLException, FactoryException {
         user   = ensureNonNull(user,   USER);
@@ -232,8 +232,8 @@ public class CoverageDatabaseInstaller extends ScriptRunner {
      *
      * @param  file The resource file to run.
      * @return The number of rows added or modified as a result of the script execution.
-     * @throws IOException If an error occured while reading the input.
-     * @throws SQLException If an error occured while executing a SQL statement.
+     * @throws IOException If an error occurred while reading the input.
+     * @throws SQLException If an error occurred while executing a SQL statement.
      */
     private int run(final String file) throws IOException, SQLException {
         runner = null;
@@ -251,7 +251,7 @@ public class CoverageDatabaseInstaller extends ScriptRunner {
      *
      * @param  sql The SQL statement to execute.
      * @return The number of rows added or modified as a result of the statement execution.
-     * @throws SQLException If an error occured while executing the SQL statement.
+     * @throws SQLException If an error occurred while executing the SQL statement.
      * @throws IOException If an I/O operation was required and failed.
      */
     @Override
@@ -281,7 +281,7 @@ public class CoverageDatabaseInstaller extends ScriptRunner {
 
     /**
      * Returns the current position (current file and current line in that file). The main purpose
-     * of this method is to provides informations on the position where an exception occured.
+     * of this method is to provides informations on the position where an exception occurred.
      */
     @Override
     public String getCurrentPosition() {
@@ -293,7 +293,7 @@ public class CoverageDatabaseInstaller extends ScriptRunner {
 
     /**
      * Returns a string representation of this runner for debugging purpose. This method
-     * may be invoked after a {@link SQLException} occured in order to determine the line
+     * may be invoked after a {@link SQLException} occurred in order to determine the line
      * in the SQL script that caused the error.
      */
     @Override

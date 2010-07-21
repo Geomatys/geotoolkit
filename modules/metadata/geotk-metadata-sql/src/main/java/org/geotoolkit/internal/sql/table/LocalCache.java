@@ -71,7 +71,7 @@ public interface LocalCache {
      * }
      *
      * @return The connection to the database.
-     * @throws SQLException if an error occured while fetching the connection.
+     * @throws SQLException if an error occurred while fetching the connection.
      */
     Connection connection() throws SQLException;
 
@@ -82,7 +82,7 @@ public interface LocalCache {
      * @param  creator The table which is invoking this method.
      * @param  sql The SQL query.
      * @return The prepared statement.
-     * @throws SQLException if an error occured while creating the statement.
+     * @throws SQLException if an error occurred while creating the statement.
      */
     Stmt prepareStatement(Table creator, String sql) throws SQLException;
 

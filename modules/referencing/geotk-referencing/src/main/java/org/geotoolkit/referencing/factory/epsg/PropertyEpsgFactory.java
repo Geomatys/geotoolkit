@@ -132,7 +132,7 @@ public class PropertyEpsgFactory extends PropertyAuthorityFactory implements CRS
     /**
      * Constructs a default authority factory.
      *
-     * @throws IOException If an error occured while reading the definition files.
+     * @throws IOException If an error occurred while reading the definition files.
      *         Note that do exception is thrown if there is no file - in this case
      *         the factory is only considered not {@linkplain #availability available}.
      */
@@ -154,7 +154,7 @@ public class PropertyEpsgFactory extends PropertyAuthorityFactory implements CRS
      * {@code FACTORY} hints.
      *
      * @param userHints An optional set of hints, or {@code null} if none.
-     * @throws IOException If an error occured while reading the definition files.
+     * @throws IOException If an error occurred while reading the definition files.
      *         Note that do exception is thrown if there is no file - in this case
      *         the factory is only considered not {@linkplain #availability available}.
      */
@@ -178,7 +178,7 @@ public class PropertyEpsgFactory extends PropertyAuthorityFactory implements CRS
      * @param authorities
      *          The organizations or parties responsible for definition and maintenance of the
      *          database. Should contains at least {@link Citations#EPSG}.
-     * @throws IOException If an error occured while reading the definition files.
+     * @throws IOException If an error occurred while reading the definition files.
      *         Note that do exception is thrown if there is no file - in this case
      *         the factory is only considered not {@linkplain #availability available}.
      *
@@ -213,7 +213,7 @@ public class PropertyEpsgFactory extends PropertyAuthorityFactory implements CRS
      *
      * @param  out The writer where to print the report.
      * @return The set of duplicated codes.
-     * @throws FactoryException if an error occured.
+     * @throws FactoryException if an error occurred.
      *
      * @see org.geotoolkit.console.ReferencingCommands#test
      *
@@ -273,7 +273,7 @@ public class PropertyEpsgFactory extends PropertyAuthorityFactory implements CRS
      *
      * @param  out The writer where to print the report.
      * @return The set of codes that can't be instantiated.
-     * @throws FactoryException if an error occured while
+     * @throws FactoryException if an error occurred while
      *         {@linkplain #getAuthorityCodes fetching authority codes}.
      *
      * @see org.geotoolkit.console.ReferencingCommands#test

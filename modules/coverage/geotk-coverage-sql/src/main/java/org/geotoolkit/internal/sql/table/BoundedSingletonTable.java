@@ -139,7 +139,7 @@ public abstract class BoundedSingletonTable<E extends Entry> extends SingletonTa
      * Then the envelope is altered in such a way that the {@code getXXX(...)} method returns
      * an identical or smaller envelope intercepting the same set of elements.
      *
-     * @throws SQLException if an error occured while reading the database.
+     * @throws SQLException if an error occurred while reading the database.
      */
     public void trimEnvelope() throws SQLException {
         if (trimmed) {
@@ -194,7 +194,7 @@ public abstract class BoundedSingletonTable<E extends Entry> extends SingletonTa
      *
      * @param  type The query type (mat be {@code null}).
      * @param  statement The statement to configure (never {@code null}).
-     * @throws SQLException if a SQL error occured while configuring the statement.
+     * @throws SQLException if a SQL error occurred while configuring the statement.
      */
     @Override
     protected void configure(final QueryType type, final PreparedStatement statement) throws SQLException {

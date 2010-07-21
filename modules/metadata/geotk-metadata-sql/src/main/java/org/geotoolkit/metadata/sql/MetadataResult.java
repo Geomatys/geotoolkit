@@ -139,7 +139,7 @@ final class MetadataResult extends StatementEntry {
      * Closes this statement and free all resources. After this method
      * has been invoked, this object can't be used anymore.
      *
-     * @throws SQLException If an error occured while closing the statement.
+     * @throws SQLException If an error occurred while closing the statement.
      */
     @Override
     public void close() throws SQLException {

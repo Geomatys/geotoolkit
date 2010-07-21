@@ -306,9 +306,9 @@ public class Resample extends Operation2D {
     }
 
     /**
-     * Invoked when an error occured but the application can fallback on a reasonable default.
+     * Invoked when an error occurred but the application can fallback on a reasonable default.
      *
-     * @param method The method where the error occured.
+     * @param method The method where the error occurred.
      * @param exception The error.
      */
     private static void recoverableException(final String method, final Exception exception) {

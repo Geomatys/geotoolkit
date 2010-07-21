@@ -106,7 +106,7 @@ final class PackFiles implements FileFilter, Comparator<File> {
      *
      * @param  source The source directory containing the file to ZIP.
      * @param  targetFilename The name of the file to create.
-     * @throws IOException if an error occured while packing the javadoc.
+     * @throws IOException if an error occurred while packing the javadoc.
      */
     public void pack(final File sourceDirectory, final String targetFilename) throws IOException {
         sourcePath = sourceDirectory.getPath();

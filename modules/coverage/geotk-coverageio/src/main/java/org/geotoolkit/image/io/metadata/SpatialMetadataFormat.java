@@ -310,7 +310,7 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
      * We use JavaBeans names instead of UML identifiers in order to get the plural
      * form for collections.
      */
-    private static KeyNamePolicy NAME_POLICY = KeyNamePolicy.JAVABEANS_PROPERTY;
+    private static final KeyNamePolicy NAME_POLICY = KeyNamePolicy.JAVABEANS_PROPERTY;
 
     /**
      * The default instance for <cite>stream</cite> metadata format. This is the metadata

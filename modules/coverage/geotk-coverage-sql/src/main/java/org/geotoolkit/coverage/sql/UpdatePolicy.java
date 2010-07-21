@@ -30,7 +30,7 @@ package org.geotoolkit.coverage.sql;
  */
 enum UpdatePolicy {
     /**
-     * The new record is discarted and the existing one is keept unchanged.
+     * The new record is discarded and the existing one is keept unchanged.
      */
     SKIP_EXISTING,
 

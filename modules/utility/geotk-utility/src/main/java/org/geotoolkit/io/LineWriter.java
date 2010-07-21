@@ -59,7 +59,7 @@ public class LineWriter extends FilterWriter {
      * in this buffer before to be written. If whitespaces are followed
      * by a character, they are written to the underlying stream before
      * the character. Otherwise, if whitespaces are followed by a line
-     * separator, then they are discarted. The buffer capacity will be
+     * separator, then they are discarded. The buffer capacity will be
      * expanded as needed.
      */
     private char[] buffer = new char[64];

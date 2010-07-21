@@ -63,7 +63,7 @@ class RemoteExecutor extends RemoteService implements TaskExecutor {
      *
      * @param  master The master if this executor is a slave, or {@code null} if this
      *         executor is itself a master.
-     * @throws RemoteException If an error occured while exporting this executor.
+     * @throws RemoteException If an error occurred while exporting this executor.
      */
     public RemoteExecutor(final TaskExecutor master) throws RemoteException {
         super(NAME);
@@ -91,7 +91,7 @@ class RemoteExecutor extends RemoteService implements TaskExecutor {
     /**
      * Executes the given task and wait for completion before to return the value.
      *
-     * @throws RemoteException If a RMI error occured.
+     * @throws RemoteException If a RMI error occurred.
      */
     @Override
     public synchronized <Input,Output> TaskFuture<Output> submit(final ShareableTask<Input,Output> task)
@@ -118,14 +118,14 @@ class RemoteExecutor extends RemoteService implements TaskExecutor {
     /**
      * {@inheritDoc}
      *
-     * @throws RemoteException If a RMI error occured.
+     * @throws RemoteException If a RMI error occurred.
      */
     @Override
     public synchronized void slave(final TaskExecutor slave, final boolean available)
             throws RemoteException
     {
         /*
-         * A side effect of logging the message first is that if a RMI error occured,
+         * A side effect of logging the message first is that if a RMI error occurred,
          * the slave will not be registered. So this is a way to test the connection
          * before doing the actual registration.
          */
@@ -140,7 +140,7 @@ class RemoteExecutor extends RemoteService implements TaskExecutor {
     /**
      * Shutdown the executor and all its slaves.
      *
-     * @throws RemoteException If a RMI error occured.
+     * @throws RemoteException If a RMI error occurred.
      */
     @Override
     public void shutdown() throws RemoteException {

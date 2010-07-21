@@ -126,7 +126,7 @@ public final class ImagingParametersTest {
     }
 
     /**
-     * Tests the wrapper with a parameter overriden.
+     * Tests the wrapper with a parameter overridden.
      */
     @Test
     public void testExtensions() {

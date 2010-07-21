@@ -95,7 +95,7 @@ public class IIOListeners implements Serializable {
 
     /**
      * Sets the list of listeners in this object to the same listeners than the given object.
-     * Any listeners previously hold by this {@code IIOListeners} are discarted.
+     * Any listeners previously hold by this {@code IIOListeners} are discarded.
      *
      * @param other The other object from which to copy the list of listeners.
      *

@@ -116,7 +116,7 @@ public final class HSQL {
      * the one given to the {@link #createURL(File)} method.
      *
      * @param  path The path (without extension) to the database.
-     * @throws IOException If an error occured while reading or writting the property file.
+     * @throws IOException If an error occurred while reading or writting the property file.
      */
     public static void setReadOnly(final File path) throws IOException {
         final File file = new File(path.getParentFile(), path.getName() + ".properties");

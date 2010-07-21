@@ -62,7 +62,7 @@ public abstract class TextImageWriterTestBase {
      * This arbitrary locale is fixed in order to keep the build locale-independent.
      *
      * @return The reader to test.
-     * @throws IOException If an error occured while creating the format.
+     * @throws IOException If an error occurred while creating the format.
      */
     protected abstract SpatialImageWriter createImageWriter() throws IOException;
 

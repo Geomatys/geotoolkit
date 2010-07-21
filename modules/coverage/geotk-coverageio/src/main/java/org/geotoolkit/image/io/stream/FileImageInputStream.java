@@ -61,7 +61,7 @@ public class FileImageInputStream extends FileChannelImageInputStream {
      * Creates a new image input stream for the given file.
      *
      * @param  file The file for which to create an image input stream.
-     * @throws IOException If an error occured while opening the channel.
+     * @throws IOException If an error occurred while opening the channel.
      */
     public FileImageInputStream(final File file) throws IOException {
         this(new RandomAccessFile(file, "r"), file);
@@ -73,7 +73,7 @@ public class FileImageInputStream extends FileChannelImageInputStream {
      * to that handler exists outside this class.
      *
      * @param  raf The handler to the file for which to create an image input stream.
-     * @throws IOException If an error occured while opening the channel.
+     * @throws IOException If an error occurred while opening the channel.
      */
     private FileImageInputStream(final RandomAccessFile raf, final File file) throws IOException {
         super(raf.getChannel());
@@ -84,7 +84,7 @@ public class FileImageInputStream extends FileChannelImageInputStream {
     /**
      * Closes this stream and its underlying channel.
      *
-     * @throws IOException If an error occured while closing the stream.
+     * @throws IOException If an error occurred while closing the stream.
      */
     @Override
     public void close() throws IOException {

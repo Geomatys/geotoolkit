@@ -79,7 +79,7 @@ public final class ImageReaderAdapterTest {
      * Tests the full image. This test is a modified copy of
      * {@link org.geotoolkit.image.io.plugin.TextMatrixImageReaderTest#testReadFile()};
      *
-     * @throws IOException if an error occured while reading the file.
+     * @throws IOException if an error occurred while reading the file.
      */
     @Test
     public void testReadFile() throws IOException {
@@ -107,7 +107,7 @@ public final class ImageReaderAdapterTest {
      * Reads a region of the image. This test is a modified copy of
      * {@link org.geotoolkit.image.io.plugin.TextMatrixImageReaderTest#testSubRegion()};
      *
-     * @throws IOException if an error occured while reading the file.
+     * @throws IOException if an error occurred while reading the file.
      */
     @Test
     public void testSubRegion() throws IOException {

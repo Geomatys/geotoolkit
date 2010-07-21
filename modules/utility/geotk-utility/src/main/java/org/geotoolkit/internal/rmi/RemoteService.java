@@ -77,7 +77,7 @@ class RemoteService extends UnicastRemoteObject {
      * Creates a new remote service.
      *
      * @param name The name of the object to lookup from the RMI registry.
-     * @throws RemoteException If an error occured while exporting this service.
+     * @throws RemoteException If an error occurred while exporting this service.
      */
     protected RemoteService(final String name) throws RemoteException {
         this.name = name;
@@ -108,7 +108,7 @@ class RemoteService extends UnicastRemoteObject {
      * is null), a new one will be created in the current JVM.
      *
      * @return The RMI registry.
-     * @throws RemoteException If an error occured while fething or creating the registry.
+     * @throws RemoteException If an error occurred while fething or creating the registry.
      */
     public static synchronized Registry getRegistry() throws RemoteException {
         final Registry registry;
@@ -127,7 +127,7 @@ class RemoteService extends UnicastRemoteObject {
     /**
      * Binds this object to the RMI registry, if not already done.
      *
-     * @throws RemoteException If an error occured while binding this object.
+     * @throws RemoteException If an error occurred while binding this object.
      * @throws AlreadyBoundException If an object of the same name is already bound.
      */
     public synchronized void bind() throws RemoteException, AlreadyBoundException {
@@ -140,7 +140,7 @@ class RemoteService extends UnicastRemoteObject {
     /**
      * Shutdown this service.
      *
-     * @throws RemoteException If a RMI error occured.
+     * @throws RemoteException If a RMI error occurred.
      */
     public synchronized void shutdown() throws RemoteException {
         if (registry != null) try {

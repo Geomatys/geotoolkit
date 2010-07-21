@@ -53,7 +53,7 @@ final class RemoteStream<E> extends UnicastRemoteObject implements ObjectStream<
      * Creates a new wrapper for the given stream.
      *
      * @param stream The stream to wrap.
-     * @throws RemoteException If an error occured while exporting the server object.
+     * @throws RemoteException If an error occurred while exporting the server object.
      */
     public RemoteStream(final ObjectStream<E> stream) throws RemoteException {
         this.stream = stream;
@@ -62,7 +62,7 @@ final class RemoteStream<E> extends UnicastRemoteObject implements ObjectStream<
     /**
      * {@inheritDoc}
      *
-     * @throws IOException If an I/O or RMI error occured.
+     * @throws IOException If an I/O or RMI error occurred.
      */
     @Override
     public E next() throws IOException {
@@ -72,7 +72,7 @@ final class RemoteStream<E> extends UnicastRemoteObject implements ObjectStream<
     /**
      * {@inheritDoc}
      *
-     * @throws IOException If an I/O or RMI error occured.
+     * @throws IOException If an I/O or RMI error occurred.
      */
     @Override
     public void close() throws IOException {

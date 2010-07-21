@@ -63,7 +63,7 @@ public final class PostgisInstaller extends ScriptRunner {
      * It will be caller responsability to close this connection after the install.
      *
      * @param connection The connection to the database.
-     * @throws SQLException If an error occured while executing a SQL statement.
+     * @throws SQLException If an error occurred while executing a SQL statement.
      */
     public PostgisInstaller(final Connection connection) throws SQLException {
         super(connection);
@@ -80,8 +80,8 @@ public final class PostgisInstaller extends ScriptRunner {
      *
      * @param  directory The directory of the script(s) to run.
      * @return The number of rows added or modified as a result of the script(s) execution.
-     * @throws IOException If an error occured while reading the input.
-     * @throws SQLException If an error occured while executing a SQL statement.
+     * @throws IOException If an error occurred while reading the input.
+     * @throws SQLException If an error occurred while executing a SQL statement.
      */
     @Override
     public int run(final File directory) throws IOException, SQLException {

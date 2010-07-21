@@ -148,7 +148,7 @@ public class AnyConverter {
      * implementation logs the exception at the {@link java.util.logging.Level#FINE FINE} level.
      * Subclasses can override this method if they want to logs the message in a different way.
      *
-     * @param exception The exception that occured while trying to convert an object.
+     * @param exception The exception that occurred while trying to convert an object.
      */
     protected void conversionFailed(final NonconvertibleObjectException exception) {
         Logging.recoverableException(AnyConverter.class, "tryConvert", exception);

@@ -433,7 +433,7 @@ public class ImageTableModel extends AbstractTableModel {
          * an event for this model as well except if the change was not a change in the table
          * structure.
          *
-         * @param event The change that occured in the image table model.
+         * @param event The change that occurred in the image table model.
          */
         @Override
         public void tableChanged(final TableModelEvent event) {

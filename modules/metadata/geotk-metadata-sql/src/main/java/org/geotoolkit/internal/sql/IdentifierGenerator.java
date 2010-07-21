@@ -147,7 +147,7 @@ public abstract class IdentifierGenerator<K, V extends StatementEntry> {
      *
      * @param  pool The pool of prepared statements.
      * @param  column The name of the identifier (primary key) column. If the name should be quoted,
-     *         then the {@link #quoteColumn()} method shall be overriden. This class does not
+     *         then the {@link #quoteColumn()} method shall be overridden. This class does not
      *         add the quotes by itself, because some applications really want unquoted identifiers.
      * @throws SQLException If the connection to the database can not be etablished.
      */
@@ -160,7 +160,7 @@ public abstract class IdentifierGenerator<K, V extends StatementEntry> {
      *
      * @param pool The pool of prepared statements.
      * @param column The name of the identifier (primary key) column. If the name should be quoted,
-     *        then the {@link #quoteColumn()} method shall be overriden. This class does not
+     *        then the {@link #quoteColumn()} method shall be overridden. This class does not
      *        add the quotes by itself, because some applications really want unquoted identifiers.
      * @param buffer A helper object for building SQL statements, determined from database metadata.
      *        This is an opportunist argument to be given only if a buffer already exists.
@@ -178,7 +178,7 @@ public abstract class IdentifierGenerator<K, V extends StatementEntry> {
      *
      * @param other The other generator from which to share the pool and the SQL builder.
      * @param column The name of the identifier (primary key) column. If the name should be quoted,
-     *        then the {@link #quoteColumn()} method shall be overriden. This class does not
+     *        then the {@link #quoteColumn()} method shall be overridden. This class does not
      *        add the quotes by itself, because some applications really want unquoted identifiers.
      */
     protected IdentifierGenerator(final IdentifierGenerator<? super K, V> other, final String column) {
@@ -201,7 +201,7 @@ public abstract class IdentifierGenerator<K, V extends StatementEntry> {
      * @param  key   The key for which the statement has been prepared.
      * @param  query The prepared statement to be given to the entry.
      * @return The {@code StatementEntry} for the given statement.
-     * @throws SQLException If an error occured while creating the entry.
+     * @throws SQLException If an error occurred while creating the entry.
      */
     protected abstract V value(final K key, final PreparedStatement query) throws SQLException;
 
@@ -227,7 +227,7 @@ public abstract class IdentifierGenerator<K, V extends StatementEntry> {
      *         name should not be quoted; quotes will be added if needed.
      * @param  proposal The proposed identifier. It will be returned if not currently used.
      * @return An identifier which doesn't exist at the time this method has been invoked.
-     * @throws SQLException If an error occured while searching for an identifier.
+     * @throws SQLException If an error occurred while searching for an identifier.
      */
     public final String identifier(final String schema, final String table, String proposal) throws SQLException {
         synchronized (pool) {
@@ -313,7 +313,7 @@ searchValidRecord:  while (rs.next()) {
      *      The ID that stopped the search (which is going to be the first element of the next
      *      iteration), or {@code null} if we should stop the search.
      * @throws SQLException
-     *      If an error occured while querying the database.
+     *      If an error occurred while querying the database.
      */
     private static String search(final ResultSet rs, String current, final String prefix,
             int expected, final int parseAt, final int[] result) throws SQLException

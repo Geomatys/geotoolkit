@@ -57,7 +57,7 @@ import org.geotoolkit.lang.ThreadSafe;
  *     # By default, the monoline formatter display only the level
  *     # and the message. Additional fields can be specified here:
  *     #
- *     #  time:   If set, writes the time ellapsed since the initialization.
+ *     #  time:   If set, writes the time elapsed since the initialization.
  *     #          The argument specifies the output pattern. For example, the
  *     #          pattern "HH:mm:ss.SSSS" displays the hours, minutes, seconds
  *     #          and milliseconds.
@@ -174,12 +174,12 @@ public class MonolineFormatter extends Formatter {
 
     /**
      * Time of {@code MonolineFormatter} creation,
-     * in milliseconds ellapsed since January 1, 1970.
+     * in milliseconds elapsed since January 1, 1970.
      */
     private final long startMillis;
 
     /**
-     * The format to use for formatting ellapsed time, or {@code null} if there is none.
+     * The format to use for formatting elapsed time, or {@code null} if there is none.
      */
     private SimpleDateFormat timeFormat = null;
 
@@ -280,7 +280,7 @@ loop:   for (int i=0; ; i++) {
     }
 
     /**
-     * Returns the format for displaying ellapsed time. This is the pattern specified
+     * Returns the format for displaying elapsed time. This is the pattern specified
      * to the last call to {@link #setTimeFormat}, or the patten specified in the
      * {@code org.geotoolkit.util.logging.MonolineFormatter.time} property in the
      * {@code jre/lib/logging.properties} file.
@@ -292,9 +292,9 @@ loop:   for (int i=0; ; i++) {
     }
 
     /**
-     * Sets the format for displaying ellapsed time. The pattern must matches the format specified
+     * Sets the format for displaying elapsed time. The pattern must matches the format specified
      * in {@link SimpleDateFormat}, but for the time part only (not the date). For example, the
-     * pattern {@code "HH:mm:ss.SSS"} will display the ellapsed time in hours, minutes, seconds
+     * pattern {@code "HH:mm:ss.SSS"} will display the elapsed time in hours, minutes, seconds
      * and milliseconds.
      *
      * @param pattern The time patter, or {@code null} to disable time formatting.

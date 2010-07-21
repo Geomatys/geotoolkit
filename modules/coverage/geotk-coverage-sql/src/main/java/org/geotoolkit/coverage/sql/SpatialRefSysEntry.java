@@ -175,7 +175,7 @@ final class SpatialRefSysEntry {
      * cache before to create the CRS.
      *
      * @param  database The database.
-     * @throws FactoryException if an error occured while creating the CRS.
+     * @throws FactoryException if an error occurred while creating the CRS.
      */
     final void createSpatioTemporalCRS(final SpatialDatabase database) throws FactoryException {
         assert uninitialized() != 0 : this;

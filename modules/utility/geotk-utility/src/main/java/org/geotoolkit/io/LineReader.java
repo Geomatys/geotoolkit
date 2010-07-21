@@ -47,7 +47,7 @@ public interface LineReader {
      * a linefeed.
      *
      * @return The next line, or {@code null} on <cite>End Of File</cite> (EOF).
-     * @throws IOException If an error occured while reading the line.
+     * @throws IOException If an error occurred while reading the line.
      */
     String readLine() throws IOException;
 }

@@ -172,7 +172,7 @@ public abstract class ModifiableMetadata extends AbstractMetadata implements Clo
             }
             candidate.freeze();
             // Set the field only after success. The 'unmodifiable' field must
-            // stay null if an exception occured during clone() or freeze().
+            // stay null if an exception occurred during clone() or freeze().
             unmodifiable = candidate;
         }
         assert !unmodifiable.isModifiable();

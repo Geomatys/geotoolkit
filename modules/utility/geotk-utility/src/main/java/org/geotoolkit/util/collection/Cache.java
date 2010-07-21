@@ -119,7 +119,7 @@ import org.geotoolkit.internal.ReferenceQueueConsumer;
  * </ul>
  *
  * The total cost is given at construction time. If the {@link #cost} method has not been
- * overriden, then the total cost is the maximal amount of values to keep by strong references.
+ * overridden, then the total cost is the maximal amount of values to keep by strong references.
  *
  *
  * {@section Circular dependencies}
@@ -357,7 +357,7 @@ public class Cache<K,V> extends AbstractMap<K,V> {
      *         cached for the given key.
      * @return The value for the given key, which may have been created as a result of this
      *         method call.
-     * @throws Exception If an exception occured during the execution of {@code creator.call()}.
+     * @throws Exception If an exception occurred during the execution of {@code creator.call()}.
      */
     public V getOrCreate(final K key, final Callable<? extends V> creator) throws Exception {
         V value = peek(key);
@@ -500,7 +500,7 @@ public class Cache<K,V> extends AbstractMap<K,V> {
                     return new Simple<V>(result);
                 }
                 /*
-                 * The weak reference is invalid but not yet discarted (it looks like that this
+                 * The weak reference is invalid but not yet discarded (it looks like that this
                  * thread is going faster than WeakCollectionCleaner). Try to replace it by our
                  * handler.
                  */

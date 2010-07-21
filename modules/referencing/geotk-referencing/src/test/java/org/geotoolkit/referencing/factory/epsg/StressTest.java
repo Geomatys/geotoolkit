@@ -75,7 +75,7 @@ public class StressTest extends EpsgFactoryTestCase {
     /**
      * Tests the execution of many concurrent threads.
      *
-     * @throws Exception If any kind of error occured (may be from a client thread).
+     * @throws Exception If any kind of error occurred (may be from a client thread).
      */
     @Test
     public final void testRunners() throws Exception {
@@ -90,7 +90,7 @@ public class StressTest extends EpsgFactoryTestCase {
         }
         /*
          * Lets every threads go and wait for them to complete.
-         * We measure the time ellapsed in this process.
+         * We measure the time elapsed in this process.
          */
         long timeElapsed = System.currentTimeMillis();
         lock.countDown();

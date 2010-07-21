@@ -49,13 +49,13 @@ public class DateGraduation extends AbstractGraduation {
     private static final long serialVersionUID = -7590383805990568769L;
 
     /**
-     * The minimal value for this graduation, in milliseconds ellapsed since January 1st,
+     * The minimal value for this graduation, in milliseconds elapsed since January 1st,
      * 1970 (no matter what the graduation units are). Default to current time (today).
      */
     private long minimum = System.currentTimeMillis();
 
     /**
-     * The maximal value for this graduation, in milliseconds ellapsed since January 1st,
+     * The maximal value for this graduation, in milliseconds elapsed since January 1st,
      * 1970 (no matter what the graduation units are). Default to tomorrow.
      */
     private long maximum = minimum + 24*60*60*1000L;
@@ -249,7 +249,7 @@ public class DateGraduation extends AbstractGraduation {
 
     /**
      * Returns the minimal value for this graduation. The value is in units of {@link #getUnit}.
-     * By default, it is the number of millisecondes ellapsed since January 1st, 1970 at 00:00 UTC.
+     * By default, it is the number of millisecondes elapsed since January 1st, 1970 at 00:00 UTC.
      *
      * @see #setMinimum(double)
      * @see #getMaximum
@@ -262,7 +262,7 @@ public class DateGraduation extends AbstractGraduation {
 
     /**
      * Returns the maximal value for this graduation. The value is in units of {@link #getUnit}.
-     * By default, it is the number of millisecondes ellapsed since January 1st, 1970 at 00:00 UTC.
+     * By default, it is the number of millisecondes elapsed since January 1st, 1970 at 00:00 UTC.
      *
      * @see #setMaximum(double)
      * @see #getMinimum

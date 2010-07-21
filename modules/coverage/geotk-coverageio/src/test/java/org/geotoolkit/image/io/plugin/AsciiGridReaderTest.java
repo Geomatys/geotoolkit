@@ -64,7 +64,7 @@ public class AsciiGridReaderTest extends TextImageReaderTestBase {
     /**
      * Tests the metadata of the {@link "grid.asc"} file.
      *
-     * @throws IOException if an error occured while reading the file.
+     * @throws IOException if an error occurred while reading the file.
      */
     @Test
     public void testMetadata() throws IOException {
@@ -179,7 +179,7 @@ public class AsciiGridReaderTest extends TextImageReaderTestBase {
      * @param  xSubsampling     Subsampling along the <var>x</var> axis (1 if none).
      * @param  ySubsampling     Subsampling along the <var>y</var> axis (1 if none).
      * @param  headerLineCount  The number of header lines to skip.
-     * @throws IOException If an error occured while reading the file.
+     * @throws IOException If an error occurred while reading the file.
      */
     public static void verify(final File input, final int width, final Raster raster, final Rectangle region,
             final int xSubsampling, final int ySubsampling, final int headerLineCount) throws IOException

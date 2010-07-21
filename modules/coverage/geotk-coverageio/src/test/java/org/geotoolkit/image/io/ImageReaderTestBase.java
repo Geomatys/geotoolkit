@@ -51,7 +51,7 @@ public abstract class ImageReaderTestBase extends org.geotoolkit.test.image.Imag
      * @param  xSubsampling Subsampling along the <var>x</var> axis (1 if none).
      * @param  ySubsampling Subsampling along the <var>y</var> axis (1 if none).
      * @return The raster which have been read.
-     * @throws IOException In an error occured while reading.
+     * @throws IOException In an error occurred while reading.
      */
     public static Raster loadAndPrint(final ImageReaderSpi provider, final File input,
             final Rectangle region, final int xSubsampling, final int ySubsampling) throws IOException

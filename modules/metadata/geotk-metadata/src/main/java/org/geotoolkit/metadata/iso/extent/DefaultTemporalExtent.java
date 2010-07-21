@@ -58,14 +58,14 @@ public class DefaultTemporalExtent extends MetadataEntity implements TemporalExt
 
     /**
      * The start date and time for the content of the dataset,
-     * in milliseconds ellapsed since January 1st, 1970. A value
+     * in milliseconds elapsed since January 1st, 1970. A value
      * of {@link Long#MIN_VALUE} means that this attribute is not set.
      */
     private long startTime = Long.MIN_VALUE;
 
     /**
      * The end date and time for the content of the dataset,
-     * in milliseconds ellapsed since January 1st, 1970. A value
+     * in milliseconds elapsed since January 1st, 1970. A value
      * of {@link Long#MIN_VALUE} means that this attribute is not set.
      */
     private long endTime = Long.MIN_VALUE;

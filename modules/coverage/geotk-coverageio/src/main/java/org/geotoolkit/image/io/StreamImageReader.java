@@ -135,7 +135,7 @@ public abstract class StreamImageReader extends SpatialImageReader {
      * accordingly.
      *
      * @return The stream length, or -1 is unknown.
-     * @throws IOException if an I/O error occured.
+     * @throws IOException if an I/O error occurred.
      */
     protected long getStreamLength() throws IOException {
         final Object input = getInput();
@@ -267,7 +267,7 @@ public abstract class StreamImageReader extends SpatialImageReader {
      * Overriding methods shall make sure that {@code super.close()} is invoked
      * even if their own code fail.
      *
-     * @throws IOException if an error occured while closing the stream.
+     * @throws IOException if an error occurred while closing the stream.
      *
      * @see #closeOnReset
      */

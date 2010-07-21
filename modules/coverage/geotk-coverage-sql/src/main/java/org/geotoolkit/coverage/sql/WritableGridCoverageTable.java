@@ -167,7 +167,7 @@ final class WritableGridCoverageTable extends GridCoverageTable {
      *                    interest to this method.
      * @param  controller An optional controller to invoke before the listeners, or {@code null}.
      * @return The number of images inserted.
-     * @throws SQLException If an error occured while querying the database.
+     * @throws SQLException If an error occurred while querying the database.
      * @throws IOException If an I/O operation was required and failed.
      */
     public int addEntries(final Collection<?>              inputs,
@@ -315,7 +315,7 @@ final class WritableGridCoverageTable extends GridCoverageTable {
      *         argument is of kind {@link CoverageDatabase}, only the listeners are of interest
      *         to this method.
      * @param  controller An optional controller to invoke before the listeners, or {@code null}.
-     * @throws SQLException If an error occured while querying the database.
+     * @throws SQLException If an error occurred while querying the database.
      * @throws IOException If an I/O operation was required and failed.
      */
     public void addTiles(final Collection<Tile>           tiles,
@@ -345,7 +345,7 @@ final class WritableGridCoverageTable extends GridCoverageTable {
      *         to this method.
      * @param  controller An optional controller to invoke before the listeners, or {@code null}.
      * @return The number of images inserted.
-     * @throws SQLException If an error occured while querying the database.
+     * @throws SQLException If an error occurred while querying the database.
      * @throws IOException If an I/O operation was required and failed.
      */
     public int updateLayer(final boolean                    includeSubdirectories,

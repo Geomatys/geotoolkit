@@ -47,7 +47,7 @@ public final class ScriptRunner extends ReferencingConsole {
     private int testRun, testPassed;
 
     /**
-     * The first error that occured, or {@code null} if none.
+     * The first error that occurred, or {@code null} if none.
      */
     Exception firstError;
 
@@ -75,7 +75,7 @@ public final class ScriptRunner extends ReferencingConsole {
     }
 
     /**
-     * Invoked when an error occured.
+     * Invoked when an error occurred.
      */
     @Override
     protected void reportError(final Exception exception) {

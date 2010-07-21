@@ -506,7 +506,7 @@ search:     while (configs.hasMoreElements()) try {
      * {@code "org.geotoolkit.imageio"}.
      *
      * @param  logger Where to log the error.
-     * @param  error  The error that occured.
+     * @param  error  The error that occurred.
      * @return {@code true} if the error has been logged, or {@code false} if the logger
      *         doesn't log anything at the {@link Level#WARNING WARNING} level.
      */
@@ -527,7 +527,7 @@ search:     while (configs.hasMoreElements()) try {
      * <ul>
      *   <li><p>Automatic inference is not 100% reliable, since the Java Virtual Machine
      *       is free to omit stack frame in optimized code.</p></li>
-     *   <li><p>When an exception occured in a private method used internally by a public
+     *   <li><p>When an exception occurred in a private method used internally by a public
      *       method, we sometime want to log the warning for the public method instead,
      *       since the user is not expected to know anything about the existence of the
      *       private method. If a developper really want to know about the private method,

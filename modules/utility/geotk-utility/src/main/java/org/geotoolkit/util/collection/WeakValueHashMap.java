@@ -65,7 +65,7 @@ import org.geotoolkit.internal.ReferenceQueueConsumer;
  * statement blocking all other access to the map. This is okay if that particular map instance
  * is not expected to be used in a highly concurrent environment.
  * <p>
- * Note that this class is <strong>not</strong> a cache, because the entries are discarted
+ * Note that this class is <strong>not</strong> a cache, because the entries are discarded
  * as soon as the garbage collector determines that they are no longuer in use. If caching
  * service are wanted, or if concurrency are wanted, consider using {@link Cache} instead.
  *
@@ -277,7 +277,7 @@ public class WeakValueHashMap<K,V> extends AbstractMap<K,V> {
         final int i = toRemove.index;
         // Index 'i' may not be valid if the reference 'toRemove'
         // has been already removed in a previous rehash.
-        Entry[] table = this.table;
+        final Entry[] table = this.table;
         if (i < table.length) {
             Entry prev = null;
             Entry e = table[i];
@@ -294,7 +294,7 @@ public class WeakValueHashMap<K,V> extends AbstractMap<K,V> {
                     // If the number of elements has dimunished
                     // significatively, rehash the table.
                     if (count <= threshold/4) {
-                        table = rehash(false);
+                        this.table = rehash(false);
                     }
                     // We must not continue the loop, since
                     // variable 'e' is no longer valid.
@@ -318,7 +318,7 @@ public class WeakValueHashMap<K,V> extends AbstractMap<K,V> {
      * @param  augmentation {@code true} if this method is invoked for augmenting {@link #table},
      *         or {@code false} if it is invoked for making the table smaller.
      * @return The new table array. This is actually the value of the {@link #table} field, but is
-     *         returned as a paranoic safety for making sure that the caller use the table we just
+     *         returned as a paranoiac safety for making sure that the caller use the table we just
      *         created (in case of synchronization bug).
      */
     private Entry[] rehash(final boolean augmentation) {

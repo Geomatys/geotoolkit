@@ -271,7 +271,7 @@ public class Query {
      * @param  metadata The database metadata.
      * @param  table The table name.
      * @return The columns in the specified table.
-     * @throws SQLException if an error occured while reading the database.
+     * @throws SQLException if an error occurred while reading the database.
      */
     private Set<String> getColumnNames(final DatabaseMetaData metadata, final String table)
             throws SQLException
@@ -294,7 +294,7 @@ public class Query {
      * @param  metadata   The database metadata, used for inspection of primary and foreigner keys.
      * @param  joinParameters {@code true} if we should take parameters in account for determining
      *         the {@code JOIN ... ON} clauses.
-     * @throws SQLException if an error occured while reading the database.
+     * @throws SQLException if an error occurred while reading the database.
      */
     private void selectAll(final StringBuilder buffer, final QueryType type,
                            final DatabaseMetaData metadata, final boolean joinParameters)
@@ -494,7 +494,7 @@ scan:       while (!tables.isEmpty()) {
      * @param  buffer The buffer in which to write the SQL statement.
      * @param  type The query type.
      * @param  metadata The database metadata.
-     * @throws SQLException if an error occured while reading the database.
+     * @throws SQLException if an error occurred while reading the database.
      */
     private void appendParameters(final StringBuilder buffer, final QueryType type,
                                   final DatabaseMetaData metadata) throws SQLException
@@ -517,7 +517,7 @@ scan:       while (!tables.isEmpty()) {
      * @param  buffer The buffer in which to write the SQL statement.
      * @param  type The query type.
      * @param  metadata The database metadata.
-     * @throws SQLException if an error occured while reading the database.
+     * @throws SQLException if an error occurred while reading the database.
      */
     private void appendOrdering(final StringBuilder buffer, final QueryType type,
                                 final DatabaseMetaData metadata) throws SQLException
@@ -553,7 +553,7 @@ scan:       while (!tables.isEmpty()) {
      *
      * @param  type The query type.
      * @return The SQL statement.
-     * @throws SQLException if an error occured while reading the database.
+     * @throws SQLException if an error occurred while reading the database.
      */
     final String selectAll(final QueryType type) throws SQLException {
         final DatabaseMetaData metadata = getMetaData();
@@ -568,7 +568,7 @@ scan:       while (!tables.isEmpty()) {
      *
      * @param  type The query type.
      * @return The SQL statement.
-     * @throws SQLException if an error occured while reading the database.
+     * @throws SQLException if an error occurred while reading the database.
      */
     public String select(final QueryType type) throws SQLException {
         String sql;
@@ -593,7 +593,7 @@ scan:       while (!tables.isEmpty()) {
      *
      * @param  type The query type (should be {@link QueryType#INSERT}).
      * @return The SQL statement, or {@code null} if there is no column in the query.
-     * @throws SQLException if an error occured while reading the database.
+     * @throws SQLException if an error occurred while reading the database.
      */
     public String insert(final QueryType type) throws SQLException {
         String sql;
@@ -656,7 +656,7 @@ scan:       while (!tables.isEmpty()) {
      *
      * @param  type The query type (should be {@link QueryType#DELETE}).
      * @return The SQL statement, or {@code null} if none.
-     * @throws SQLException if an error occured while reading the database.
+     * @throws SQLException if an error occurred while reading the database.
      */
     public String delete(final QueryType type) throws SQLException {
         String sql;
@@ -685,7 +685,7 @@ scan:       while (!tables.isEmpty()) {
      * @param  type The query type (typically {@link QueryType#COUNT}).
      * @param  column The column to be counted.
      * @return The SQL statement, or {@code null} if none.
-     * @throws SQLException if an error occured while reading the database.
+     * @throws SQLException if an error occurred while reading the database.
      *
      * @since 3.10
      */

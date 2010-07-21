@@ -371,7 +371,7 @@ public class ImageWorker extends ImageInspector {
                         icm.hasAlpha(), transparent, icm.getTransferType());
             }
             final RenderingHints hints = getRenderingHints();
-            setColorModel(hints, cm);
+            setColorModel(hints, icm);
             if (alphaChannel != null) {
                 // Uses the alpha channel as a mask for replacing pixels by the transparent value.
                 image = JAI.create(Mask.OPERATION_NAME, new ParameterBlockJAI(Mask.OPERATION_NAME)
@@ -672,7 +672,7 @@ public class ImageWorker extends ImageInspector {
 
     /**
      * Retains the bands in the range {@code first} to {@code last} inclusive. All other bands
-     * (if any) are discarted without any further processing. This method does nothing if the
+     * (if any) are discarded without any further processing. This method does nothing if the
      * given range include all bands.
      * <p>
      * For convenience, negative parameter values are relative to the {@linkplain #getNumBands()

@@ -293,7 +293,7 @@ final class NetcdfMetadata extends SpatialMetadata {
      * </ul>
      *
      * @param file The NetCDF file which contains the variables.
-     * @throws IOException If an error occured while reading the variable.
+     * @throws IOException If an error occurred while reading the variable.
      *
      * @since 3.14
      */
@@ -322,7 +322,7 @@ final class NetcdfMetadata extends SpatialMetadata {
      * @param name The name of the variable which contaisn the minimum or maximum values.
      * @param n    The expected number of values.
      * @return An array of length <var>n</var> containing the values, or {@code null} if none.
-     * @throws IOException If an error occured while reading the variable.
+     * @throws IOException If an error occurred while reading the variable.
      *
      * @since 3.14
      */

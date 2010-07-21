@@ -196,7 +196,7 @@ public abstract class Parser {
      * @param  position   In input, the position where to start parsing from.
      *                    In output, the first character after the separator.
      * @return The tree of elements to parse.
-     * @throws ParseException If an parsing error occured while creating the tree.
+     * @throws ParseException If an parsing error occurred while creating the tree.
      */
     final Element getTree(final String text, final ParsePosition position) throws ParseException {
         return new Element(new Element(this, text, position));

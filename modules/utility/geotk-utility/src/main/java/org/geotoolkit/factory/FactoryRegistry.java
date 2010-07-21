@@ -312,7 +312,7 @@ public class FactoryRegistry extends ServiceRegistry {
 
     /**
      * Makes this {@code FactoryRegistry} ready for next use. This method is
-     * overriden by {@link DynamicFactoryRegistry} with additional cleanup.
+     * overridden by {@link DynamicFactoryRegistry} with additional cleanup.
      */
     void reset() {
     }
@@ -888,7 +888,7 @@ public class FactoryRegistry extends ServiceRegistry {
                 continue;
             } catch (ExceptionInInitializerError error) {
                 /*
-                 * If an exception occured during class initialization, log the cause.
+                 * If an exception occurred during class initialization, log the cause.
                  * The ExceptionInInitializerError alone doesn't help enough.
                  */
                 final Throwable cause = error.getCause();

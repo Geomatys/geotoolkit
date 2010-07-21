@@ -51,7 +51,7 @@ public final class ConformanceTest extends ReferencingTestCase {
     /**
      * Tests the conformance of EPSG codes.
      *
-     * @throws FactoryException If an error occured while querying the database.
+     * @throws FactoryException If an error occurred while querying the database.
      */
     @Test
     public void testEPSG() throws FactoryException {
@@ -62,7 +62,7 @@ public final class ConformanceTest extends ReferencingTestCase {
     /**
      * Tests the conformance of GeoTIFF codes.
      *
-     * @throws FactoryException If an error occured while querying the database.
+     * @throws FactoryException If an error occurred while querying the database.
      */
     @Test
     public void testGeoTIFF() throws FactoryException {
@@ -75,7 +75,7 @@ public final class ConformanceTest extends ReferencingTestCase {
      *
      * @param  authority The authority to test.
      * @param  factory The factory for the operation method, or {@code null} if none.
-     * @throws FactoryException If an error occured while querying the database.
+     * @throws FactoryException If an error occurred while querying the database.
      */
     private static void run(final Citation authority, final CoordinateOperationAuthorityFactory factory)
             throws FactoryException

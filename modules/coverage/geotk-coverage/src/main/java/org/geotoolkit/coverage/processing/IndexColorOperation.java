@@ -135,7 +135,7 @@ public abstract class IndexColorOperation extends Operation2D {
             /*
              * Checks if there is any change, either as a new GridSampleDimension instance or in
              * the ARGB array. Note that if the new GridSampleDimension is equals to the old one,
-             * then the new one will be discarted since the old one is more likely to be a shared
+             * then the new one will be discarded since the old one is more likely to be a shared
              * instance.
              */
             if (!bands[i].equals(band)) {

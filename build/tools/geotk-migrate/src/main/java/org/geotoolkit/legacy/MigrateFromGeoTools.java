@@ -203,7 +203,7 @@ public class MigrateFromGeoTools {
      * future version.
      *
      * @param  args The command line arguments.
-     * @throws IOException If an error occured while reading or writing the source files.
+     * @throws IOException If an error occurred while reading or writing the source files.
      */
     public static void main(String[] args) throws IOException {
         switch (args.length) {

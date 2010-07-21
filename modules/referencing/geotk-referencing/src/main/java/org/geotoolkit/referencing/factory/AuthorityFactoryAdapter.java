@@ -183,7 +183,7 @@ public class AuthorityFactoryAdapter extends AbstractAuthorityFactory {
     private CoordinateOperationAuthorityFactory operationFactory;
 
     /**
-     * If we failed to instantiated the backing factories, when the last attempt occured.
+     * If we failed to instantiated the backing factories, when the last attempt occurred.
      * This is used in order to wait a little while before to try a new attempt, in order
      * to avoid too many connection attempts.
      *
@@ -418,7 +418,7 @@ public class AuthorityFactoryAdapter extends AbstractAuthorityFactory {
     }
 
     /**
-     * A hook to be overriden by {@link OrderedAxisAuthorityFactory} only. This method is invoked
+     * A hook to be overridden by {@link OrderedAxisAuthorityFactory} only. This method is invoked
      * soon after {@link #putFactoryHints}, but not from {@link AuthorityFactoryAdapter} constructors
      * because the construction of {@code OrderedAxisAuthorityFactory} is not completed at this time.
      */
@@ -724,7 +724,7 @@ public class AuthorityFactoryAdapter extends AbstractAuthorityFactory {
     /**
      * Returns a description of the underlying backing store, or {@code null} if unknow.
      *
-     * @throws FactoryException if a failure occured while fetching the engine description.
+     * @throws FactoryException if a failure occurred while fetching the engine description.
      */
     @Override
     public String getBackingStoreDescription() throws FactoryException {
@@ -1299,7 +1299,7 @@ public class AuthorityFactoryAdapter extends AbstractAuthorityFactory {
          * object using the backing store and returns it. On the second attempt, it modifies
          * the object and returns the modified version.
          *
-         * @throws FactoryException if an error occured while creating the object.
+         * @throws FactoryException if an error occurred while creating the object.
          */
         @Override
         protected final IdentifiedObject create(final String code, final int attempt) throws FactoryException {
@@ -1558,7 +1558,7 @@ public class AuthorityFactoryAdapter extends AbstractAuthorityFactory {
      * a factory. Subclasses can modify this set of hints in-place before they are
      * given to {@code AuthorityFactoryFinder}.
      * <p>
-     * This is a hook to be overriden by {@link OrderedAxisAuthorityFactory}.
+     * This is a hook to be overridden by {@link OrderedAxisAuthorityFactory}.
      *
      * @param hints The hints to modify in-place.
      */
@@ -1583,7 +1583,7 @@ public class AuthorityFactoryAdapter extends AbstractAuthorityFactory {
     }
 
     /**
-     * Returns {@code true} if the {@link #toBackingFactoryCode} method is overriden.
+     * Returns {@code true} if the {@link #toBackingFactoryCode} method is overridden.
      */
     final boolean isCodeMethodOverriden() {
         final Class<?>[] arguments = new Class<?>[] {String.class};
@@ -1592,13 +1592,13 @@ public class AuthorityFactoryAdapter extends AbstractAuthorityFactory {
             try {
                 type.getDeclaredMethod("toBackingFactoryCode", arguments);
             } catch (NoSuchMethodException e) {
-                // The method is not overriden in this class.
+                // The method is not overridden in this class.
                 // Checks in the super-class.
                 type = type.getSuperclass();
                 continue;
             } catch (SecurityException e) {
                 // We are not allowed to get this information.
-                // Conservatively assumes that the method is overriden.
+                // Conservatively assumes that the method is overridden.
             }
             return true;
         }

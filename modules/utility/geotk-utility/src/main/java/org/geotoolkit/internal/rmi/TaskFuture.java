@@ -43,9 +43,9 @@ public interface TaskFuture<Output> extends Remote {
      * Waits for the task completion and returns its result.
      *
      * @return The task result.
-     * @throws RemoteException If a RMI error occured. This is usually not an issue with the
+     * @throws RemoteException If a RMI error occurred. This is usually not an issue with the
      *         task itself, but more likely a network or RMI configuration problem.
-     * @throws ExecutionException If an error occured during the execution of the task.
+     * @throws ExecutionException If an error occurred during the execution of the task.
      * @throws InterruptedException If the worker thread was interrupted while waiting.
      */
     Output get() throws RemoteException, ExecutionException, InterruptedException;
@@ -54,7 +54,7 @@ public interface TaskFuture<Output> extends Remote {
      * Invoked in case of failures for deleting resources created by this task.
      * The resources may be for example temporary files.
      *
-     * @throws RemoteException If a RMI error occured.
+     * @throws RemoteException If a RMI error occurred.
      */
     void rollback() throws RemoteException;
 }

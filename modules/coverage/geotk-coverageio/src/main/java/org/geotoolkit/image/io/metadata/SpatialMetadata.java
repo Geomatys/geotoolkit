@@ -897,7 +897,7 @@ public class SpatialMetadata extends IIOMetadata implements WarningProducer {
 
     /**
      * Resets all the data stored in this object to default values.
-     * All nodes below the root node are discarted.
+     * All nodes below the root node are discarded.
      *
      * @throws IllegalStateException If this metadata is {@linkplain #isReadOnly() read only}.
      */

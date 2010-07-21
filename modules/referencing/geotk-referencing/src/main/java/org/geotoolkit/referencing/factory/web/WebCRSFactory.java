@@ -180,7 +180,7 @@ public class WebCRSFactory extends DirectAuthorityFactory implements CRSAuthorit
     /**
      * Returns the CRS name for the given code.
      *
-     * @throws FactoryException if an error occured while fetching the description.
+     * @throws FactoryException if an error occurred while fetching the description.
      */
     @Override
     public InternationalString getDescriptionText(final String code) throws FactoryException {

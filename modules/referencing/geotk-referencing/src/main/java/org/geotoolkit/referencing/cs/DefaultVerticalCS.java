@@ -63,7 +63,7 @@ public class DefaultVerticalCS extends AbstractCS implements VerticalCS {
      * <var>{@linkplain DefaultCoordinateSystemAxis#ELLIPSOIDAL_HEIGHT
      * ellipsoidal height}</var> axis in metres.
      */
-    public static DefaultVerticalCS ELLIPSOIDAL_HEIGHT = new DefaultVerticalCS(
+    public static final DefaultVerticalCS ELLIPSOIDAL_HEIGHT = new DefaultVerticalCS(
                     DefaultCoordinateSystemAxis.ELLIPSOIDAL_HEIGHT);
 
     /**
@@ -73,7 +73,7 @@ public class DefaultVerticalCS extends AbstractCS implements VerticalCS {
      *
      * @since 2.5
      */
-    public static DefaultVerticalCS GRAVITY_RELATED_HEIGHT = new DefaultVerticalCS(
+    public static final DefaultVerticalCS GRAVITY_RELATED_HEIGHT = new DefaultVerticalCS(
                     DefaultCoordinateSystemAxis.GRAVITY_RELATED_HEIGHT);
 
     /**
@@ -81,7 +81,7 @@ public class DefaultVerticalCS extends AbstractCS implements VerticalCS {
      * <var>{@linkplain DefaultCoordinateSystemAxis#DEPTH depth}</var>
      * axis in metres.
      */
-    public static DefaultVerticalCS DEPTH = new DefaultVerticalCS(
+    public static final DefaultVerticalCS DEPTH = new DefaultVerticalCS(
                     DefaultCoordinateSystemAxis.DEPTH);
 
     /**

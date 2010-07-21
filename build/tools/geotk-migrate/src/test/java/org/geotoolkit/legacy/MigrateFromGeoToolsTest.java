@@ -36,7 +36,7 @@ public final class MigrateFromGeoToolsTest {
     /**
      * Tests the migrate of the GT2 test file.
      *
-     * @throws IOException If an error occured while reading the test files.
+     * @throws IOException If an error occurred while reading the test files.
      */
     @Test
     public void testUpgradeGT2() throws IOException {
@@ -62,7 +62,7 @@ public final class MigrateFromGeoToolsTest {
      *
      * @param filename The name of the resource to load.
      * @return The given resources as a reader.
-     * @throws IOException If an error occured while fetching the resources.
+     * @throws IOException If an error occurred while fetching the resources.
      */
     private static BufferedReader getResources(final String filename) throws IOException {
         final InputStream stream = MigrateFromGeoToolsTest.class.getResourceAsStream(filename);

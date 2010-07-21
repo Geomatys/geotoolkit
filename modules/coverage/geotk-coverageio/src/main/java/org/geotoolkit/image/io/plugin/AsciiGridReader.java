@@ -262,7 +262,7 @@ public class AsciiGridReader extends TextImageReader {
      * Reads the header, if it was not already read. If successful, then all the instance
      * variables declared in this class should be assigned to their final value.
      *
-     * @throws IOException If an error occured while reading the header.
+     * @throws IOException If an error occurred while reading the header.
      */
     private void ensureHeaderRead() throws IOException {
         if (!headerValid) {
@@ -352,7 +352,7 @@ public class AsciiGridReader extends TextImageReader {
      * contains a number.
      *
      * @return The header as a new, modifiable, map.
-     * @throws IOException If an error occured while reading.
+     * @throws IOException If an error occurred while reading.
      */
     private Map<String,String> readHeader() throws IOException {
         final ReadableByteChannel channel = getChannel();
@@ -555,7 +555,7 @@ readLine:   while (true) {
      * The default implementation does nothing.
      *
      * @param  header A modifiable map of (<var>key</var>, <var>value</var>) pairs.
-     * @throws IOException If an error occured while processing the header values.
+     * @throws IOException If an error occurred while processing the header values.
      */
     protected void processHeader(final Map<String,String> header) throws IOException {
     }
@@ -658,7 +658,7 @@ loop:       for (int y=0; /* stop condition inside */; y++) {
                     /*
                      * Skip whitespaces or EOL (if any), then copy the next character in the
                      * string buffer until the next space. If we are outside the region to be
-                     * read, those characters will be discarted immediatly except in case of
+                     * read, those characters will be discarded immediatly except in case of
                      * error.
                      */
                     int nChar = 0;
@@ -748,7 +748,7 @@ loop:       for (int y=0; /* stop condition inside */; y++) {
      * @param  input The file, URL or URI to the binary file.
      * @param  param The parameter of the image to be read.
      * @return The image, or {@code null} if this method can not process.
-     * @throws IOException If an error occured while reading the binary file.
+     * @throws IOException If an error occurred while reading the binary file.
      */
     private BufferedImage readBinary(final int imageIndex, final ImageReadParam param) throws IOException {
         Object binaryInput = IOUtilities.changeExtension(input, "raw");

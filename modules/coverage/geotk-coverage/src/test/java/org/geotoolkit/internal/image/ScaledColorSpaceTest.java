@@ -108,7 +108,7 @@ public final class ScaledColorSpaceTest {
      * Runs the visual test.
      *
      * @param  args The command line arguments (ignored).
-     * @throws Exception if any error occured.
+     * @throws Exception if any error occurred.
      */
     public static void main(final String[] args) throws Exception {
         final ScaledColorSpaceTest test = new ScaledColorSpaceTest();

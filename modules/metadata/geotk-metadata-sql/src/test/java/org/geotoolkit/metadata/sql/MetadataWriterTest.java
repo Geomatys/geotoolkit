@@ -51,7 +51,7 @@ public final class MetadataWriterTest {
     /**
      * Runs all tests on JavaDB in the required order.
      *
-     * @throws SQLException If an error occured while writing or reading the database.
+     * @throws SQLException If an error occurred while writing or reading the database.
      */
     @Test
     public void testDerby() throws SQLException {
@@ -72,7 +72,7 @@ public final class MetadataWriterTest {
      * Runs all tests on PostgreSQL in the required order. This test is disabled by default
      * because it requires manual setup of a test database.
      *
-     * @throws SQLException If an error occured while writing or reading the database.
+     * @throws SQLException If an error occurred while writing or reading the database.
      */
     @Test
     @Ignore
@@ -97,7 +97,7 @@ public final class MetadataWriterTest {
     /**
      * Creates a new temporary database and write elements in it.
      *
-     * @throws SQLException If an error occured while writing or reading the database.
+     * @throws SQLException If an error occurred while writing or reading the database.
      */
     private void write() throws SQLException {
         assertEquals("OGC",            source.add(Citations.OGC));
@@ -110,7 +110,7 @@ public final class MetadataWriterTest {
      * Writes more complex elements, which require the support of table inheritance.
      * PostgreSQL supports this feature but Derby does not.
      *
-     * @throws SQLException If an error occured while writing or reading the database.
+     * @throws SQLException If an error occurred while writing or reading the database.
      */
     private void writeHierarchical() throws SQLException {
         assertNotNull(source.add(AbstractPositionalAccuracy.DATUM_SHIFT_APPLIED));
@@ -120,7 +120,7 @@ public final class MetadataWriterTest {
     /**
      * Searchs known entries in the database.
      *
-     * @throws SQLException If an error occured while reading the database.
+     * @throws SQLException If an error occurred while reading the database.
      */
     private void search() throws SQLException {
         assertNull(source.search(Citations.ORACLE));
@@ -136,7 +136,7 @@ public final class MetadataWriterTest {
     /**
      * Reads known entries in the database.
      *
-     * @throws SQLException If an error occured while reading the database.
+     * @throws SQLException If an error occurred while reading the database.
      */
     private void read() throws SQLException {
         Citation c = source.getEntry(Citation.class, "EPSG");

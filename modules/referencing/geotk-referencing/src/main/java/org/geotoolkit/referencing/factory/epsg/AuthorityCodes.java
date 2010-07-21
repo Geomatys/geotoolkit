@@ -370,7 +370,7 @@ final class AuthorityCodes extends AbstractSet<String> implements Serializable {
     }
 
     /**
-     * Invoked when an exception occured. This method just log a warning.
+     * Invoked when an exception occurred. This method just log a warning.
      */
     private static void unexpectedException(final String       method,
                                             final SQLException exception)
@@ -379,7 +379,7 @@ final class AuthorityCodes extends AbstractSet<String> implements Serializable {
     }
 
     /**
-     * Invoked when an exception occured. This method just log a warning.
+     * Invoked when an exception occurred. This method just log a warning.
      */
     static void unexpectedException(final Class<?>     classe,
                                     final String       method,
@@ -389,7 +389,7 @@ final class AuthorityCodes extends AbstractSet<String> implements Serializable {
     }
 
     /**
-     * Invoked when a recoverable exception occured.
+     * Invoked when a recoverable exception occurred.
      */
     private static void recoverableException(final String method, final SQLException exception) {
         // Uses the FINE level instead of WARNING because it may be a recoverable error.

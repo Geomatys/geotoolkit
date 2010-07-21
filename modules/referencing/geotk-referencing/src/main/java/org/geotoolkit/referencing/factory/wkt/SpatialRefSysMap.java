@@ -75,7 +75,7 @@ final class SpatialRefSysMap extends AbstractMap<String,String> {
      * the {@code "spatial_ref_sys"} table is declared.
      *
      * @param connection The connection to the database.
-     * @throws SQLException If an error occured while fetching metadata from the database.
+     * @throws SQLException If an error occurred while fetching metadata from the database.
      */
     public SpatialRefSysMap(final Connection connection) throws SQLException {
         this.connection = connection;
@@ -133,7 +133,7 @@ final class SpatialRefSysMap extends AbstractMap<String,String> {
      * @param category The type of objects to search for (typically <code>{@linkplain
      *                 org.opengis.referencing.crs.CoordinateReferenceSystem}.class</code>).
      * @return The set of available codes.
-     * @throws SQLException if an error occured while querying the database.
+     * @throws SQLException if an error occurred while querying the database.
      */
     Set<String> getAuthorityCodes(final Class<? extends IdentifiedObject> category) throws SQLException {
         final StringBuilder sql = new StringBuilder("SELECT CASE WHEN ")
@@ -168,7 +168,7 @@ final class SpatialRefSysMap extends AbstractMap<String,String> {
      * @param  authority The authority part of the above code.
      * @param  srid The integer code part of the above code.
      * @return The primary key for the supplied code, or {@code null} if it has not been found.
-     * @throws SQLException if an error occured while querying the database.
+     * @throws SQLException if an error occurred while querying the database.
      */
     Integer getPrimaryKey(final String code, final String authority, final int srid) throws SQLException {
         if (selectPK == null) {
@@ -190,7 +190,7 @@ final class SpatialRefSysMap extends AbstractMap<String,String> {
      * @param  type The type of the value to fetch.
      * @param  code The authority code, for formatting an error message if needed.
      * @return The singleton value found, or {@code null} if none.
-     * @throws SQLException if an error occured while querying the database.
+     * @throws SQLException if an error occurred while querying the database.
      */
     private static <T> T singleton(final PreparedStatement statement, final Class<T> type, final String code)
             throws SQLException
@@ -222,7 +222,7 @@ final class SpatialRefSysMap extends AbstractMap<String,String> {
      *
      * @param  code The code of the CRS object to query, as an {@link Integer}.
      * @return The Well Known Text (WKT) for the given code, or {@code null} if none.
-     * @throws BackingStoreException if an error occured while querying the database.
+     * @throws BackingStoreException if an error occurred while querying the database.
      */
     @Override
     public String get(final Object key) throws BackingStoreException {
@@ -244,7 +244,7 @@ final class SpatialRefSysMap extends AbstractMap<String,String> {
      * Returns {@code true} if the database contains the given code.
      *
      * @param  code The code of the CRS object to query, as an {@link Integer}.
-     * @throws BackingStoreException if an error occured while querying the database.
+     * @throws BackingStoreException if an error occurred while querying the database.
      */
     @Override
     public boolean containsKey(final Object key) throws BackingStoreException {

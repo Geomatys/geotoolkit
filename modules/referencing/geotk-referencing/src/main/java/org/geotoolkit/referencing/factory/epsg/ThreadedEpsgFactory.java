@@ -335,7 +335,7 @@ public class ThreadedEpsgFactory extends ThreadedAuthorityFactory implements CRS
      * no configuration file can be found. The search path is documented in {@link #getDataSource}.
      *
      * @return The properties, or {@code null} if none wer found.
-     * @throws FactoryException if an error occured while reading the properties.
+     * @throws FactoryException if an error occurred while reading the properties.
      */
     private static Properties properties() throws FactoryException {
         File file = new File(CONFIGURATION_FILE);

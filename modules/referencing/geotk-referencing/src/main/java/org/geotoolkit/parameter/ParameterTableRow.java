@@ -194,7 +194,7 @@ final class ParameterTableRow {
      * @param  colorsForTitle  {@code true} if syntax coloring should be applied for table title.
      * @param  colorsForRows   {@code true} if syntax coloring should be applied for table rows.
      * @param  lineSeparator   The system-dependent line separator.
-     * @throws IOException     If an exception occured while writing.
+     * @throws IOException     If an exception occurred while writing.
      */
     final void write(final Writer out, final boolean colorsForTitle,
             final boolean colorsForRows, final String lineSeparator) throws IOException

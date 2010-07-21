@@ -71,7 +71,7 @@ import org.geotoolkit.resources.Errors;
  * }
  *
  * This code can work as well with dates instead of numbers. In this case, the values returned
- * will be microseconds ellapsed since January 1st, 1970.
+ * will be microseconds elapsed since January 1st, 1970.
  * <p>
  * A {@link ParseException} may be thrown because a string can't be parsed, because an object
  * can't be converted into a number or because a line don't have the expected number of columns.

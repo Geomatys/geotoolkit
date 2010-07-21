@@ -609,7 +609,7 @@ public class MosaicBuilder {
             }
         }
         // Delegates to setSubsamplings(Dimension[]) instead of performing the same work in-place
-        // (which would have been more efficient) because the user may have overriden the former.
+        // (which would have been more efficient) because the user may have overridden the former.
         setSubsamplings(newSubsamplings);
     }
 
@@ -932,7 +932,7 @@ public class MosaicBuilder {
 
         /**
          * Returns {@code true} if the writer is allows to cache the tiles for performance.
-         * This method is overriden in order to disallow caching if the subsampling is greater
+         * This method is overridden in order to disallow caching if the subsampling is greater
          * than (1,1). Caching every pixels in this case would be more costly than needed since
          * we going the use only a small fraction of them.
          */
@@ -1006,7 +1006,7 @@ public class MosaicBuilder {
             /*
              * Sets the listeners and we are done. We use the listeners field instead than
              * the method in order to avoid giving the ImageReader to client code (which
-             * could happen if addListenersTo(ImageReader) has been overriden).
+             * could happen if addListenersTo(ImageReader) has been overridden).
              */
             listeners.addListenersTo(reader);
             return super.filter(reader);
@@ -1035,7 +1035,7 @@ public class MosaicBuilder {
      *
      * @param input The image input, typically as a {@link File} or an other {@link TileManager}.
      * @return The tiles, or {@code null} if the process has been aborted.
-     * @throws IOException if an error occured while reading the untiled image.
+     * @throws IOException if an error occurred while reading the untiled image.
      */
     public synchronized TileManager createTileManager(final Object input) throws IOException {
         final MosaicImageWriteParam param = new MosaicImageWriteParam();
@@ -1056,7 +1056,7 @@ public class MosaicBuilder {
      * @param  param The parameter to be given to {@link MosaicImageWriter}, or {@code null}
      *         for the default parameters.
      * @return The tiles, or {@code null} if the process has been aborted while writing tiles.
-     * @throws IOException if an error occured while reading the untiled image or while writing
+     * @throws IOException if an error occurred while reading the untiled image or while writing
      *         the tiles to disk.
      *
      * @since 3.01
@@ -1080,7 +1080,7 @@ public class MosaicBuilder {
      * @param  param The parameter to be given to {@link MosaicImageWriter}, or {@code null}
      *         for the default parameters.
      * @return The tiles, or {@code null} if the process has been aborted while writing tiles.
-     * @throws IOException if an error occured while reading the untiled image or while writing
+     * @throws IOException if an error occurred while reading the untiled image or while writing
      *         the tiles to disk.
      *
      * @since 3.01
@@ -1157,7 +1157,7 @@ public class MosaicBuilder {
     /**
      * Returns {@code true} if we can create {@link TileManager} using a regular pattern instead
      * than enumerating every tiles. This method returns {@code true} if {@link #generateFilename}
-     * has not be overriden, otherwise we can't guess at this stage the pattern that the user is
+     * has not be overridden, otherwise we can't guess at this stage the pattern that the user is
      * applying.
      */
     private boolean canUsePattern() {

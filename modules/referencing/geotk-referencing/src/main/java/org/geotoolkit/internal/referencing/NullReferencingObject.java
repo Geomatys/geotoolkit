@@ -63,7 +63,7 @@ public final class NullReferencingObject implements GeocentricCRS, GeographicCRS
     /**
      * The unique instance.
      */
-    public static NullReferencingObject INSTANCE = new NullReferencingObject();
+    public static final NullReferencingObject INSTANCE = new NullReferencingObject();
 
     /**
      * An arbitrary date to be used as the origin

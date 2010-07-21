@@ -236,7 +236,7 @@ public class DefaultNameSpace implements NameSpace, Serializable {
      */
     @Override
     public boolean isGlobal() {
-        return false; // To be overriden by GlobalNameSpace.
+        return false; // To be overridden by GlobalNameSpace.
     }
 
     /**

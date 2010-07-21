@@ -369,7 +369,7 @@ public class NetcdfImageReader extends FileImageReader implements NamedImageStor
     /**
      * Returns the image width.
      *
-     * @throws IOException If an error occured while reading the NetCDF file.
+     * @throws IOException If an error occurred while reading the NetCDF file.
      */
     @Override
     public int getWidth(final int imageIndex) throws IOException {
@@ -380,7 +380,7 @@ public class NetcdfImageReader extends FileImageReader implements NamedImageStor
     /**
      * Returns the image height.
      *
-     * @throws IOException If an error occured while reading the NetCDF file.
+     * @throws IOException If an error occurred while reading the NetCDF file.
      */
     @Override
     public int getHeight(final int imageIndex) throws IOException {
@@ -485,7 +485,7 @@ public class NetcdfImageReader extends FileImageReader implements NamedImageStor
      * @param  param The parameters supplied by the user to the {@code read} method.
      * @param  rank The number of dimensions (the rank) in the {@linkplain #variable}.
      * @return The indices as a value from 0 inclusive to {@link Dimension#getLength} exclusive.
-     * @throws IOException If an error occured while reading the NetCDF file.
+     * @throws IOException If an error occurred while reading the NetCDF file.
      */
     @SuppressWarnings("fallthrough")
     private int[] getSourceIndices(final ImageReadParam param, final int rank) throws IOException {
@@ -522,7 +522,7 @@ public class NetcdfImageReader extends FileImageReader implements NamedImageStor
      *
      * @param  rank The number of dimensions (the rank) in the {@linkplain #variable}.
      * @return The axis having a length equals or greater than {@code dimension}, or {@code null}.
-     * @throws IOException If an error occured while reading the NetCDF file.
+     * @throws IOException If an error occurred while reading the NetCDF file.
      */
     private List<CoordinateAxis> getAxes(final int rank) throws IOException {
         if (variable instanceof Enhancements) {
@@ -600,7 +600,7 @@ public class NetcdfImageReader extends FileImageReader implements NamedImageStor
      *
      * @param  imageIndex The index of the image to be queried.
      * @return The data type, or {@link DataBuffer#TYPE_UNDEFINED} if unknown.
-     * @throws IOException If an error occured while reading the NetCDF file.
+     * @throws IOException If an error occurred while reading the NetCDF file.
      */
     @Override
     protected int getRawDataType(final int imageIndex) throws IOException {
@@ -774,7 +774,7 @@ public class NetcdfImageReader extends FileImageReader implements NamedImageStor
      *         or {@code false} if the current value is already appropriate.
      * @throws IndexOutOfBoundsException if the specified index is outside the expected range.
      * @throws IllegalStateException If {@link #input} is not set.
-     * @throws IOException If an error occured while reading the NetCDF file.
+     * @throws IOException If an error occurred while reading the NetCDF file.
      */
     protected boolean prepareVariable(final int imageIndex) throws IOException {
         if (variable == null || variableIndex != imageIndex) {
@@ -804,7 +804,7 @@ public class NetcdfImageReader extends FileImageReader implements NamedImageStor
      *
      * @param  name The name of the variable to search.
      * @return The variable for the given name.
-     * @throws IOException If an error occured while reading the NetCDF file.
+     * @throws IOException If an error occurred while reading the NetCDF file.
      */
     protected Variable findVariable(final String name) throws IOException {
         ensureFileOpen();
@@ -837,7 +837,7 @@ public class NetcdfImageReader extends FileImageReader implements NamedImageStor
     /**
      * Creates an image from the specified parameters.
      *
-     * @throws IOException If an error occured while reading the NetCDF file.
+     * @throws IOException If an error occurred while reading the NetCDF file.
      */
     @Override
     public BufferedImage read(final int imageIndex, final ImageReadParam param) throws IOException {
@@ -993,7 +993,7 @@ public class NetcdfImageReader extends FileImageReader implements NamedImageStor
             }
             /*
              * Checks for abort requests after reading. It would be a waste of a potentially
-             * good image (maybe the abort request occured after we just finished the reading)
+             * good image (maybe the abort request occurred after we just finished the reading)
              * if we didn't implemented the 'isCancel()' method. But because of the later, which
              * is checked by the NetCDF library, we can't assume that the image is complete.
              */
@@ -1034,7 +1034,7 @@ public class NetcdfImageReader extends FileImageReader implements NamedImageStor
     }
 
     /**
-     * Invoked by the NetCDF library when an error occured during the read operation.
+     * Invoked by the NetCDF library when an error occurred during the read operation.
      * Users should not invoke this method directly.
      *
      * @param message An error message to report.
@@ -1054,7 +1054,7 @@ public class NetcdfImageReader extends FileImageReader implements NamedImageStor
     /**
      * Closes the NetCDF file.
      *
-     * @throws IOException If an error occured while accessing the NetCDF file.
+     * @throws IOException If an error occurred while accessing the NetCDF file.
      */
     @Override
     protected void close() throws IOException {
@@ -1151,7 +1151,7 @@ public class NetcdfImageReader extends FileImageReader implements NamedImageStor
          *
          * @param  source the object (typically a {@link File}) to be decoded.
          * @return {@code true} if it is likely that the given source can be decoded.
-         * @throws IOException If an error occured while opening the file.
+         * @throws IOException If an error occurred while opening the file.
          */
         @Override
         public boolean canDecodeInput(final Object source) throws IOException {

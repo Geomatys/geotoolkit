@@ -52,7 +52,7 @@ public final class XImageIOTest {
      * Tests the {@link XImageIO#getReaderBySuffix(Object, Boolean, Boolean)} method,
      * followed by {@link XImageIO#getWriterBySuffix(Object, RenderedImage)}.
      *
-     * @throws IOException If an I/O error occured while writing or reading the image.
+     * @throws IOException If an I/O error occurred while writing or reading the image.
      */
     @Test
     public void testGetBySuffix() throws IOException {

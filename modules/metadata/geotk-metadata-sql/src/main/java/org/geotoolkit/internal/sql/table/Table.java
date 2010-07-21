@@ -173,7 +173,7 @@ public abstract class Table implements Localized {
      * }
      *
      * @return The connection.
-     * @throws SQLException If an exception occured while fetching the connection.
+     * @throws SQLException If an exception occurred while fetching the connection.
      *
      * @since 3.11
      */
@@ -215,7 +215,7 @@ public abstract class Table implements Localized {
      *
      * @param  query The SQL query to prepare.
      * @return The prepared statement.
-     * @throws SQLException if a SQL error occured while configuring the statement.
+     * @throws SQLException if a SQL error occurred while configuring the statement.
      */
     private final LocalCache.Stmt getStatement(final String query) throws SQLException {
         final LocalCache cache = getDatabase().getLocalCache();
@@ -259,7 +259,7 @@ public abstract class Table implements Localized {
      *
      * @param  type The query type.
      * @return The prepared statement.
-     * @throws SQLException if a SQL error occured while configuring the statement.
+     * @throws SQLException if a SQL error occurred while configuring the statement.
      */
     protected final LocalCache.Stmt getStatement(final QueryType type) throws SQLException {
         final String sql;
@@ -281,7 +281,7 @@ public abstract class Table implements Localized {
      * @param  type The query type.
      * @param  column The column on which to perform aggregation.
      * @return The prepared statement.
-     * @throws SQLException if a SQL error occured while configuring the statement.
+     * @throws SQLException if a SQL error occurred while configuring the statement.
      */
     protected final LocalCache.Stmt getStatement(final QueryType type, final Column column)
             throws SQLException
@@ -303,7 +303,7 @@ public abstract class Table implements Localized {
      * not needed anymore.
      *
      * @param statement The statement to release.
-     * @throws SQLException If an error occured while releasing the statement.
+     * @throws SQLException If an error occurred while releasing the statement.
      */
     protected final void release(final LocalCache.Stmt statement) throws SQLException {
         final Database database = query.database;
@@ -356,7 +356,7 @@ public abstract class Table implements Localized {
      *
      * @param  type The query type.
      * @param  statement The statement to configure (never {@code null}).
-     * @throws SQLException if a SQL error occured while configuring the statement.
+     * @throws SQLException if a SQL error occurred while configuring the statement.
      */
     protected void configure(QueryType type, PreparedStatement statement) throws SQLException {
     }
@@ -475,9 +475,9 @@ public abstract class Table implements Localized {
     }
 
     /**
-     * Notifies that a recoverable error occured.
+     * Notifies that a recoverable error occurred.
      *
-     * @param method The method name in which the error occured.
+     * @param method The method name in which the error occurred.
      * @param exception The error.
      */
     final void unexpectedException(final String method, final Throwable exception) {

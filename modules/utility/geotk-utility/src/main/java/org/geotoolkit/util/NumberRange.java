@@ -360,7 +360,7 @@ public class NumberRange<T extends Number & Comparable<? super T>> extends Range
 
     /**
      * Creates a new range using the same element class than this range. This method will
-     * be overriden by subclasses in order to create a range of a more specific type.
+     * be overridden by subclasses in order to create a range of a more specific type.
      */
     @Override
     NumberRange<T> create(final T minValue, final boolean isMinIncluded,
@@ -433,7 +433,7 @@ public class NumberRange<T extends Number & Comparable<? super T>> extends Range
     /**
      * Casts the specified range to the specified type. If this class is associated to a unit of
      * measurement, then this method convert the {@code range} units to the same units than this
-     * instance. This method is overriden by {@link MeasurementRange} only in the way described
+     * instance. This method is overridden by {@link MeasurementRange} only in the way described
      * above.
      *
      * @param  type The class to cast to. Must be one of {@link Byte}, {@link Short},

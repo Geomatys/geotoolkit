@@ -213,7 +213,7 @@ final class PackOutput implements Closeable {
      *
      * @param  buffer The buffer containing the bytes to write.
      * @param  n The number of bytes to write.
-     * @throws IOException if an exception occured while writing the bytes.
+     * @throws IOException if an exception occurred while writing the bytes.
      */
     void write(final byte[] buffer, final int n) throws IOException {
         out.write(buffer, 0, n);
@@ -222,7 +222,7 @@ final class PackOutput implements Closeable {
     /**
      * Close the current entry.
      *
-     * @throws IOException If an error occured while closing the entry.
+     * @throws IOException If an error occurred while closing the entry.
      */
     void closeEntry() throws IOException {
         out.closeEntry();
@@ -231,7 +231,7 @@ final class PackOutput implements Closeable {
     /**
      * Closes this output.
      *
-     * @throws IOException if an error occured while closing the file.
+     * @throws IOException if an error occurred while closing the file.
      */
     @Override
     public void close() throws IOException {
@@ -244,7 +244,7 @@ final class PackOutput implements Closeable {
     /**
      * Packs the output JAR.
      *
-     * @throws IOException if an error occured while packing the JAR.
+     * @throws IOException if an error occurred while packing the JAR.
      */
     void pack() throws IOException {
         if (out != null) {

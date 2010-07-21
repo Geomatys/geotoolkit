@@ -126,7 +126,7 @@ final class SampleDimensionTable extends Table {
      *
      * @param  format The format name.
      * @return An entry containing the sample dimensions for the given format, or {@code null} if none.
-     * @throws SQLException if an error occured while reading the database.
+     * @throws SQLException if an error occurred while reading the database.
      */
     public CategoryEntry getSampleDimensions(final String format) throws SQLException {
         final SampleDimensionQuery query = (SampleDimensionQuery) super.query;
@@ -208,7 +208,7 @@ final class SampleDimensionTable extends Table {
      *
      * @param  format The newly created format for which to write the sample dimensions.
      * @param  bands The sample dimensions to add.
-     * @throws SQLException if an error occured while writing to the database.
+     * @throws SQLException if an error occurred while writing to the database.
      *
      * @since 3.13
      */

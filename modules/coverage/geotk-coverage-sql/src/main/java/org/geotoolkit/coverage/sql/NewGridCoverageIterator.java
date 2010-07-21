@@ -80,7 +80,7 @@ final class NewGridCoverageIterator implements Iterator<NewGridCoverageReference
     /**
      * An iterator over the inputs to read. If elements are {@link java.util.Map.Entry}, then the
      * key is selected as the input provided that the value is equals to the {@linkplain #series}.
-     * Otherwise the entry is discarted.
+     * Otherwise the entry is discarded.
      * <p>
      * If {@link #series} if non-null, the {@link Iterator#remove} method will be invoked for each
      * elements which has not been omitted. This is required by {@link WritableGridCoverageTable}.

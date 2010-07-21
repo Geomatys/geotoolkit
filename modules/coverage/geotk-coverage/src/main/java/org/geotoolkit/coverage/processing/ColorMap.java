@@ -49,14 +49,14 @@ import org.geotoolkit.internal.image.ColorUtilities;
  * {@link org.geotoolkit.coverage.processing.operation.Recolor} operation.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.00
+ * @version 3.14
  *
  * @see org.geotoolkit.coverage.processing.operation.Recolor
  *
  * @since 2.4
  * @module
  *
- * @todo We need to investigage if this object should be defined as an implementation of
+ * @todo We need to investigate if this object should be defined as an implementation of
  *       {@link org.geotoolkit.styling.ColorMap}.
  */
 public class ColorMap implements Serializable {
@@ -87,7 +87,7 @@ public class ColorMap implements Serializable {
      * The {@link #ANY_QUANTITATIVE_CATEGORY} key is replaced by {@code null} in
      * order to avoid confusion with user-specified category with the exact name.
      */
-    private Map<String,NumberRange> colorRanges;
+    private Map<String,NumberRange<?>> colorRanges;
 
     /**
      * If {@code true}, the ARGB values corresponding to any {@linkplain Category category}
@@ -286,7 +286,7 @@ public class ColorMap implements Serializable {
      * @see #recolor
      */
     public void setRelativeRange(final CharSequence category, final NumberRange<?> range) {
-        if (range instanceof MeasurementRange) {
+        if (range instanceof MeasurementRange<?>) {
             // The MeasurementRange type is reserved for geophysics ranges.
             throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_ARGUMENT_$1, "range"));
         }
@@ -305,7 +305,7 @@ public class ColorMap implements Serializable {
         final String name = unlocalized(category);
         if (range != null) {
             if (colorRanges == null) {
-                colorRanges = new HashMap<String,NumberRange>();
+                colorRanges = new HashMap<String,NumberRange<?>>();
             }
             colorRanges.put(name, range);
         } else if (colorRanges != null) {
@@ -326,7 +326,7 @@ public class ColorMap implements Serializable {
      */
     public MeasurementRange<?> getGeophysicsRange(final CharSequence category) {
         final NumberRange<?> range = getRange(category);
-        return (range instanceof MeasurementRange) ? (MeasurementRange) range : null;
+        return (range instanceof MeasurementRange<?>) ? (MeasurementRange<?>) range : null;
     }
 
     /**
@@ -339,7 +339,7 @@ public class ColorMap implements Serializable {
      */
     public NumberRange<?> getRelativeRange(final CharSequence category) {
         final NumberRange<?> range = getRange(category);
-        return (range instanceof MeasurementRange) ? null : range;
+        return (range instanceof MeasurementRange<?>) ? null : range;
     }
 
     /**
@@ -386,18 +386,19 @@ public class ColorMap implements Serializable {
                 return null;
             }
         }
-        double  minimum     = scale.getMinimum();
-        double  maximum     = scale.getMaximum();
+        double minimum, maximum;
         boolean minIncluded = scale.isMinIncluded();
         boolean maxIncluded = scale.isMaxIncluded();
-        if (scale instanceof MeasurementRange) {
+        if (scale instanceof MeasurementRange<?>) {
             try {
-                final MeasurementRange<?> range = (MeasurementRange) scale;
+                final MeasurementRange<?> range = (MeasurementRange<?>) scale;
                 scale = range.convertTo(units);
             } catch (ConversionException e) {
                 Logging.unexpectedException(AbstractCoverageProcessor.LOGGER, ColorMap.class, "recolor", e);
                 return null; // This is allowed by this method contract.
             }
+            minimum = scale.getMinimum();
+            maximum = scale.getMaximum();
             MathTransform1D tr = category.getSampleToGeophysics();
             if (tr != null) try {
                 tr = tr.inverse();
@@ -408,6 +409,8 @@ public class ColorMap implements Serializable {
                 return null; // This is allowed by this method contract.
             }
         } else {
+            minimum = scale.getMinimum();
+            maximum = scale.getMaximum();
             final NumberRange<?> range = category.getRange();
             final double lower  = range.getMinimum();
             final double extent = range.getMaximum() - lower;
@@ -645,11 +648,11 @@ public class ColorMap implements Serializable {
             final CharSequence name = names[i];
             writer.write(name.toString());
             if (colorRanges != null) {
-                final NumberRange range = getRange(name);
+                final NumberRange<?> range = getRange(name);
                 if (range != null) {
                     writer.write(' ');
                     writer.write(range.toString());
-                    if (!(range instanceof MeasurementRange)) {
+                    if (!(range instanceof MeasurementRange<?>)) {
                         writer.write('%');
                     }
                 }

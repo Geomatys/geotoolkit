@@ -80,7 +80,7 @@ public final class RawFile implements Serializable {
      * Returns the input stream to use for reading the RAW image represented by this object.
      *
      * @return The input stream.
-     * @throws IOException If an error occured while creating the input stream.
+     * @throws IOException If an error occurred while creating the input stream.
      *
      * @since 3.01
      */

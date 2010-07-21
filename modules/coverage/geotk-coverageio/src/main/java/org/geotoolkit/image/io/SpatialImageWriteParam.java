@@ -52,7 +52,7 @@ public class SpatialImageWriteParam extends ImageWriteParam implements WarningPr
     }
 
     /**
-     * Invoked when a warning occured. The default implementation
+     * Invoked when a warning occurred. The default implementation
      * {@linkplain SpatialImageWriter#warningOccurred forwards the warning to the image writer}
      * given at construction time if possible, or logs the warning otherwise.
      */

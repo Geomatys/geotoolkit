@@ -250,7 +250,7 @@ class GridCoverageTable extends BoundedSingletonTable<GridCoverageEntry> {
      * {@linkplain #getEnvelope current spatio-temporal envelope}.
      *
      * @return List of coverages in the current envelope of interest.
-     * @throws SQLException if an error occured while reading the database.
+     * @throws SQLException if an error occurred while reading the database.
      */
     @Override
     public final Set<GridCoverageEntry> getEntries() throws SQLException {
@@ -296,7 +296,7 @@ loop:   for (final GridCoverageEntry newEntry : entries) {
      * will be selected using the default {@link GridCoverageComparator}.
      *
      * @return A coverage intercepting the given envelope, or {@code null} if none.
-     * @throws SQLException if an error occured while reading the database.
+     * @throws SQLException if an error occurred while reading the database.
      */
     public final GridCoverageEntry getEntry() throws SQLException {
         final Iterator<GridCoverageEntry> entries = getEntries().iterator();
@@ -352,7 +352,7 @@ loop:   for (final GridCoverageEntry newEntry : entries) {
      * the currently {@linkplain #getEnvelope selected envelope} are considered.
      *
      * @return The set of dates.
-     * @throws SQLException if an error occured while reading the database.
+     * @throws SQLException if an error occurred while reading the database.
      */
     public final SortedSet<Date> getAvailableTimes() throws SQLException {
         final Set<Long> dates = new HashSet<Long>();
@@ -396,7 +396,7 @@ loop:   for (final GridCoverageEntry newEntry : entries) {
      * @param  addTo If non-null, the set where to add the time range of available coverages.
      * @return The time range of available coverages. This method returns {@code addTo} if it
      *         was non-null or a new object otherwise.
-     * @throws SQLException if an error occured while reading the database.
+     * @throws SQLException if an error occurred while reading the database.
      */
     public final RangeSet<Date> getAvailableTimeRanges(RangeSet<Date> addTo) throws SQLException {
         final GridCoverageQuery query = (GridCoverageQuery) super.query;
@@ -443,7 +443,7 @@ loop:   for (final GridCoverageEntry newEntry : entries) {
      * Configures the specified query. This method is invoked automatically after this table
      * {@linkplain #fireStateChanged changed its state}.
      *
-     * @throws SQLException if a SQL error occured while configuring the statement.
+     * @throws SQLException if a SQL error occurred while configuring the statement.
      */
     @Override
     protected final void configure(final QueryType type, final PreparedStatement statement) throws SQLException {
@@ -512,7 +512,7 @@ loop:   for (final GridCoverageEntry newEntry : entries) {
     /**
      * Creates an entry from the current row in the specified result set.
      *
-     * @throws SQLException if an error occured while reading the database.
+     * @throws SQLException if an error occurred while reading the database.
      */
     @Override
     protected final GridCoverageEntry createEntry(final ResultSet results, final Comparable<?> identifier)

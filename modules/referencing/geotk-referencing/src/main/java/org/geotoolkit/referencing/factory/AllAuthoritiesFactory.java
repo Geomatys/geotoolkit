@@ -198,7 +198,7 @@ typeLoop:   for (int i=0; ; i++) {
                  */
                 for (final AuthorityFactory f : c) {
                     if (!isExcluded(f)) {
-                        // Add the factory only if it is not overriden by a user-specified one.
+                        // Add the factory only if it is not overridden by a user-specified one.
                         if (!names.contains(Citations.getIdentifier(f.getAuthority()))) {
                             factories.add(f);
                         }

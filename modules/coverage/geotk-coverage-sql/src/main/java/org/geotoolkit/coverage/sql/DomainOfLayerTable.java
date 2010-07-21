@@ -85,7 +85,7 @@ final class DomainOfLayerTable extends SingletonTable<DomainOfLayerEntry> {
      * @param  results The result set to read.
      * @param  identifier The name of the layer for the entry being read.
      * @return The entry for current row in the specified result set.
-     * @throws SQLException if an error occured while reading the database.
+     * @throws SQLException if an error occurred while reading the database.
      */
     @Override
     protected DomainOfLayerEntry createEntry(final ResultSet results, final Comparable<?> identifier) throws SQLException {

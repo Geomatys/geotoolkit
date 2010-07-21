@@ -250,7 +250,7 @@ public class LoggingPanel extends JComponent implements Disposable {
 
     /**
      * Returns the maximum number of {@link java.util.logging.LogRecord}s the handler can
-     * memorize. If more messages are logged, then the earliest messages will be discarted.
+     * memorize. If more messages are logged, then the earliest messages will be discarded.
      *
      * @return The current maximum number of record.
      */
@@ -260,7 +260,7 @@ public class LoggingPanel extends JComponent implements Disposable {
 
     /**
      * Sets the maximum number of {@link java.util.logging.LogRecord}s the handler can memorize.
-     * If more messages are logged, then the earliest messages will be discarted.
+     * If more messages are logged, then the earliest messages will be discarded.
      *
      * @param capacity The new maximum number of record.
      */
@@ -442,7 +442,7 @@ public class LoggingPanel extends JComponent implements Disposable {
      * This method is invoked automatically when the user closes the windows created with
      * {@link #show(Component)}. If this {@code LoggingPanel} is displayed by some other ways
      * (for example if it has been added into a {@link JPanel}), then this {@code dispose()}
-     * method must be invoked explicitly when the container is being discarted.
+     * method must be invoked explicitly when the container is being discarded.
      */
     @Override
     public void dispose() {

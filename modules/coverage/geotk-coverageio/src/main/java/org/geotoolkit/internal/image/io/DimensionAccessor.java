@@ -217,7 +217,7 @@ public final class DimensionAccessor extends MetadataAccessor {
      *
      * @param  reader The image reader to use for reading the pixel values.
      * @param  imageIndex The index of the image to read (usually 0).
-     * @throws IOException If an error occured while reading the image.
+     * @throws IOException If an error occurred while reading the image.
      *
      * @since 3.14
      */
@@ -267,7 +267,7 @@ nextPixel:          do {
      * @param  reader The image reader to use for reading information.
      * @param  imageIndex The index of the image to query (usually 0).
      * @return {@code true} if a call to {@code scanValidSampleValue} is recommanded.
-     * @throws IOException If an error occured while querying the image.
+     * @throws IOException If an error occurred while querying the image.
      *
      * @since 3.14
      */

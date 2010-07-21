@@ -261,7 +261,7 @@ public abstract class AbstractCoverageProcessor extends Factory implements GridC
      * Lists a summary of all operations to the specified stream.
      *
      * @param  out The destination stream.
-     * @throws IOException if an error occured will writing to the stream.
+     * @throws IOException if an error occurred will writing to the stream.
      */
     public void listOperations(final Writer out) throws IOException {
         final Collection<Operation> operations = getOperations();
@@ -282,7 +282,7 @@ public abstract class AbstractCoverageProcessor extends Factory implements GridC
      *
      * @param  out The destination stream.
      * @param  names The operation to print, or an empty array for none, or {@code null} for all.
-     * @throws IOException if an error occured will writing to the stream.
+     * @throws IOException if an error occurred will writing to the stream.
      * @throws OperationNotFoundException if an operation named in {@code names} was not found.
      */
     public void printOperations(final Writer out, final String[] names)

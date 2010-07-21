@@ -371,7 +371,7 @@ skip:   while (it.hasNext()) {
     /**
      * Returns the selected file. If the user has selected a file which contains a list of images
      * (as proposed if {@code setListFileFilterUsed(true)} has been invoked), then this method
-     * opens that file using the platform encoding and returns its content. If an I/O error occured
+     * opens that file using the platform encoding and returns its content. If an I/O error occurred
      * while reading that file, then its content is not included in the returned array.
      *
      * @return The list of selected files, including the content of text files that are
@@ -472,7 +472,7 @@ verify:     for (final File file : getSelectedFiles()) {
     /**
      * Creates and returns a new dialog wrapping this {@code ImageFileChooser}, optionally
      * with its {@link ImageFileProperties} pane. This method is invoked automatically by
-     * the {@link #showDialog showDialog} methods and is overriden for adding the optional
+     * the {@link #showDialog showDialog} methods and is overridden for adding the optional
      * properties pane, if presents.
      *
      * @param  parent he parent component of the dialog, or {@code null}.

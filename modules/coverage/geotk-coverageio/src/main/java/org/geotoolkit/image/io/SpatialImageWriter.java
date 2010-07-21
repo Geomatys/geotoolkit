@@ -432,7 +432,7 @@ public abstract class SpatialImageWriter extends ImageWriter implements WarningP
     }
 
     /**
-     * Invoked when a warning occured. The default implementation makes the following choice:
+     * Invoked when a warning occurred. The default implementation makes the following choice:
      * <p>
      * <ul>
      *   <li>If at least one {@linkplain IIOWriteWarningListener warning listener}
@@ -467,7 +467,7 @@ public abstract class SpatialImageWriter extends ImageWriter implements WarningP
     /**
      * Invokes {@link #close} and logs the exception if any. This method is invoked from
      * methods that do not allow {@link IOException} to be thrown. Since we will not use
-     * the stream anymore after closing it, it should not be a big deal if an error occured.
+     * the stream anymore after closing it, it should not be a big deal if an error occurred.
      */
     final void closeSilently() {
         try {
@@ -482,11 +482,11 @@ public abstract class SpatialImageWriter extends ImageWriter implements WarningP
      * clears the internal cache. Sub-classes can override this method if they have more resources
      * to dispose, but should always invoke {@code super.close()}.
      * <p>
-     * This method is overriden and given {@code protected} access by {@link StreamImageWriter}
+     * This method is overridden and given {@code protected} access by {@link StreamImageWriter}
      * and {@link ImageWriterAdapter}. It is called "{@code close}" in order to match the
      * purpose which appear in the public API of those classes.
      *
-     * @throws IOException If an error occured while closing a stream (applicable to subclasses only).
+     * @throws IOException If an error occurred while closing a stream (applicable to subclasses only).
      */
     void close() throws IOException {
         imageIndex = 0;

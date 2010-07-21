@@ -67,13 +67,13 @@ public class IllegalRecordException extends CatalogException {
      * Creates an exception from the specified result set. The table and column names are
      * obtained from the {@code results} argument if non-null. <strong>Note that the result
      * set will be closed</strong>, because this exception is always thrown when an error
-     * occured while reading this result set.
+     * occurred while reading this result set.
      *
      * @param message The details message.
      * @param table   The table that produced the result set, or {@code null} if unknown.
-     * @param results The result set in which a problem occured, or {@code null} if none.
-     * @param column  The column index where a problem occured (number starts at 1), or {@code 0} if unknow.
-     * @param key     The key value for the record where a problem occured, or {@code null} if none.
+     * @param results The result set in which a problem occurred, or {@code null} if none.
+     * @param column  The column index where a problem occurred (number starts at 1), or {@code 0} if unknow.
+     * @param key     The key value for the record where a problem occurred, or {@code null} if none.
      *                The key shall be either a {@link String} or {@link Integer} instance.
      * @throws SQLException if the metadata can't be read from the result set.
      */
@@ -88,13 +88,13 @@ public class IllegalRecordException extends CatalogException {
      * Creates an exception from the specified result set. The table and column names are
      * obtained from the {@code results} argument if non-null. <strong>Note that the result
      * set will be closed</strong>, because this exception is always thrown when an error
-     * occured while reading this result set.
+     * occurred while reading this result set.
      *
      * @param cause   The cause for this exception.
      * @param table   The table that produced the result set, or {@code null} if unknown.
-     * @param results The result set in which a problem occured, or {@code null} if none.
-     * @param column  The column index where a problem occured (number starts at 1), or {@code 0} if unknow.
-     * @param key     The key value for the record where a problem occured, or {@code null} if none.
+     * @param results The result set in which a problem occurred, or {@code null} if none.
+     * @param column  The column index where a problem occurred (number starts at 1), or {@code 0} if unknow.
+     * @param key     The key value for the record where a problem occurred, or {@code null} if none.
      *                The key shall be either a {@link String} or {@link Integer} instance.
      * @throws SQLException if the metadata can't be read from the result set.
      */

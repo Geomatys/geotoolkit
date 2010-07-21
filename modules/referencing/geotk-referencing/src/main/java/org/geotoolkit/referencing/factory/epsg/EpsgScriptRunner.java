@@ -100,7 +100,7 @@ final class EpsgScriptRunner extends ScriptRunner {
      * files provided by EPSG.
      *
      * @param connection The connection to the database.
-     * @throws SQLException If an error occured while executing a SQL statement.
+     * @throws SQLException If an error occurred while executing a SQL statement.
      */
     public EpsgScriptRunner(final Connection connection) throws SQLException {
         super(connection);
@@ -271,7 +271,7 @@ final class EpsgScriptRunner extends ScriptRunner {
     /**
      * Modifies the SQL statement before to execute it, or ommit unsupported statements.
      *
-     * @throws SQLException If an error occured while executing the SQL statement.
+     * @throws SQLException If an error occurred while executing the SQL statement.
      * @throws IOException If an I/O operation was required and failed.
      */
     @Override

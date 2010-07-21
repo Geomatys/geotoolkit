@@ -239,7 +239,7 @@ public final class Trees {
      *
      * @param text The string representation of the tree to parse.
      * @return The root of the parsed tree.
-     * @throws IllegalArgumentException If an error occured while parsing the tree.
+     * @throws IllegalArgumentException If an error occurred while parsing the tree.
      *
      * @since 3.02
      */
@@ -261,7 +261,7 @@ public final class Trees {
      *
      * @param  input A {@code LineReader} for reading the lines.
      * @return The root of the parsed tree.
-     * @throws IOException If an error occured while parsing the tree.
+     * @throws IOException If an error occurred while parsing the tree.
      *
      * @since 3.02
      */
@@ -387,7 +387,7 @@ public final class Trees {
      * @param  tree          The tree to format.
      * @param  buffer        Where to format the tree.
      * @param  lineSeparator The line separator, or {@code null} for the system default.
-     * @throws IOException if an error occured while writing in the given buffer.
+     * @throws IOException if an error occurred while writing in the given buffer.
      *
      * @since 2.5
      */
@@ -409,7 +409,7 @@ public final class Trees {
      * @param  node          The root node of the tree to format.
      * @param  buffer        Where to format the tree.
      * @param  lineSeparator The line separator, or {@code null} for the system default.
-     * @throws IOException if an error occured while writing in the given buffer.
+     * @throws IOException if an error occurred while writing in the given buffer.
      *
      * @since 2.5
      */

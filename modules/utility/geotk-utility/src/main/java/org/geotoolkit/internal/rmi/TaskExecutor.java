@@ -43,7 +43,7 @@ public interface TaskExecutor extends Remote {
      * It will typically be the name of the machine hosting the executor.
      *
      * @return The name of this executor.
-     * @throws RemoteException If a RMI error occured.
+     * @throws RemoteException If a RMI error occurred.
      */
     String name() throws RemoteException;
 
@@ -54,7 +54,7 @@ public interface TaskExecutor extends Remote {
      * @param  <Output> The type of return value.
      * @param  task The task to execute.
      * @return The pending result of the task.
-     * @throws RemoteException If a RMI error occured. This is usually not an issue with the
+     * @throws RemoteException If a RMI error occurred. This is usually not an issue with the
      *         task itself, but more likely a network or RMI configuration problem.
      */
     <Input,Output> TaskFuture<Output> submit(ShareableTask<Input,Output> task) throws RemoteException;
@@ -66,14 +66,14 @@ public interface TaskExecutor extends Remote {
      *
      * @param  slave The slave to add or remove.
      * @param  available {@code true} for adding a slave, or {@code false} for removing it.
-     * @throws RemoteException If a RMI error occured.
+     * @throws RemoteException If a RMI error occurred.
      */
     void slave(TaskExecutor slave, boolean available) throws RemoteException;
 
     /**
      * Shutdown the executor. This will also shutdown every slaves, if there is any.
      *
-     * @throws RemoteException If a RMI error occured.
+     * @throws RemoteException If a RMI error occurred.
      */
     void shutdown() throws RemoteException;
 }

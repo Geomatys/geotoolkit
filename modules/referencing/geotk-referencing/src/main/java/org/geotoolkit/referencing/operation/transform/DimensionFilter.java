@@ -440,8 +440,8 @@ public class DimensionFilter {
         /*
          * If the transform is affine (or at least projective), express the transform as a matrix.
          * Then, select output dimensions that depends only on selected input dimensions. If an
-         * output dimension depends on at least one discarted input dimension, then this output
-         * dimension will be discarted as well.
+         * output dimension depends on at least one discarded input dimension, then this output
+         * dimension will be discarded as well.
          */
         if (transform instanceof LinearTransform) {
             int           nRows = 0;
@@ -454,8 +454,8 @@ reduce:     for (int j=0; j<rows.length; j++) {
                 final double[] row = new double[dimInput+1];
                 /*
                  * For each output dimension (i.e. a matrix row), find the matrix elements for
-                 * each input dimension to be kept. If a dependance to at least one discarted
-                 * input dimension is found, then the whole output dimension is discarted.
+                 * each input dimension to be kept. If a dependance to at least one discarded
+                 * input dimension is found, then the whole output dimension is discarded.
                  *
                  * NOTE: The following loop stops at matrix.getNumCol()-1 because we don't
                  *       want to check the translation term.
@@ -467,8 +467,8 @@ reduce:     for (int j=0; j<rows.length; j++) {
                         row[nCols++] = element;
                         scan++;
                     } else if (element != 0) {
-                        // Output dimension 'j' depends on one of discarted input dimension 'i'.
-                        // The whole row will be discarted.
+                        // Output dimension 'j' depends on one of discarded input dimension 'i'.
+                        // The whole row will be discarded.
                         continue reduce;
                     }
                 }

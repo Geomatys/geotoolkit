@@ -130,7 +130,7 @@ public class UnmodifiableArrayList<E> extends AbstractList<E>
 
     /**
      * Returns the index of the first valid element.
-     * To be overriden by {@link SubList} only.
+     * To be overridden by {@link SubList} only.
      */
     int lower() {
         return 0;

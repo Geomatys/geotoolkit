@@ -97,7 +97,7 @@ public final class TablePool<T extends Table> {
     }
 
     /**
-     * Returns the given table to the pool. The table is discarted if the pool is full.
+     * Returns the given table to the pool. The table is discarded if the pool is full.
      *
      * @param table The table to give back to the pool.
      */

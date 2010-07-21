@@ -106,7 +106,7 @@ import org.geotoolkit.internal.image.io.Formats;
  * method depending on whatever the {@code seekForwardOnly} and {@code ignoreMetadata} arguments
  * are non-null or not. For example if those two {@link Boolean} arguments are null, then the
  * {@code setInput(Object)} flavor is invoked. This is usually equivalent to setting the two
- * boolean argument to {@code false}, but this behavior could have been overriden by the plugin.
+ * boolean argument to {@code false}, but this behavior could have been overridden by the plugin.
  *
  * {@section Example}
  * The following example reads a TIFF image. Because we use an input of type {@link java.io.File}
@@ -235,7 +235,7 @@ public final class XImageIO {
      *         order from the input source.
      * @param  ignoreMetadata If {@code true}, metadata may be ignored during reads. 
      * @return The new image reader instance with its input initialized.
-     * @throws IOException If an error occured while creating the image reader instance.
+     * @throws IOException If an error occurred while creating the image reader instance.
      */
     private static ImageReader createReaderInstance(final ImageReaderSpi spi, final Object input,
             Boolean seekForwardOnly, Boolean ignoreMetadata) throws IOException
@@ -265,7 +265,7 @@ public final class XImageIO {
      *         order from the input source.
      * @param  ignoreMetadata If {@code true}, metadata may be ignored during reads.
      * @return The new image reader instance with its input initialized.
-     * @throws IOException If an error occured while creating the image reader instance.
+     * @throws IOException If an error occurred while creating the image reader instance.
      */
     private static ImageReader getReader(final int mode, final String name, final Object input,
             Boolean seekForwardOnly, Boolean ignoreMetadata) throws IOException
@@ -422,7 +422,7 @@ public final class XImageIO {
      *          will be parsed. If {@code null}, this parameter is not given to the reader which
      *          is free to use a plugin-dependent default (usually {@code false}).
      * @return The new image reader instance with its input initialized.
-     * @throws IOException If no suitable image reader has been found, or if an error occured
+     * @throws IOException If no suitable image reader has been found, or if an error occurred
      *         while creating it.
      *
      * @see ImageIO#getImageReaders(Object)
@@ -450,7 +450,7 @@ public final class XImageIO {
      * @param  ignoreMetadata Optional parameter to be given (if non-null) to the
      *         {@link ImageReader#setInput(Object, boolean, boolean) setInput} method.
      * @return The new image reader instance with its input initialized.
-     * @throws IOException If no suitable image reader has been found, or if an error occured
+     * @throws IOException If no suitable image reader has been found, or if an error occurred
      *         while creating it.
      *
      * @see ImageIO#getImageReadersBySuffix(String)
@@ -478,7 +478,7 @@ public final class XImageIO {
      * @param  ignoreMetadata Optional parameter to be given (if non-null) to the
      *         {@link ImageReader#setInput(Object, boolean, boolean) setInput} method.
      * @return The new image reader instance with its input initialized (if {@code input} is not null).
-     * @throws IOException If no suitable image reader has been found, or if an error occured
+     * @throws IOException If no suitable image reader has been found, or if an error occurred
      *         while creating it.
      *
      * @see ImageIO#getImageReadersBySuffix(String)
@@ -503,7 +503,7 @@ public final class XImageIO {
      * @param  ignoreMetadata Optional parameter to be given (if non-null) to the
      *         {@link ImageReader#setInput(Object, boolean, boolean) setInput} method.
      * @return The new image reader instance with its input initialized (if {@code input} is not null).
-     * @throws IOException If no suitable image reader has been found, or if an error occured
+     * @throws IOException If no suitable image reader has been found, or if an error occurred
      *         while creating it.
      *
      * @see ImageIO#getImageReadersByFormatName(String)
@@ -528,7 +528,7 @@ public final class XImageIO {
      * @param  ignoreMetadata Optional parameter to be given (if non-null) to the
      *         {@link ImageReader#setInput(Object, boolean, boolean) setInput} method.
      * @return The new image reader instance with its input initialized (if {@code input} is not null).
-     * @throws IOException If no suitable image reader has been found, or if an error occured
+     * @throws IOException If no suitable image reader has been found, or if an error occurred
      *         while creating it.
      *
      * @see ImageIO#getImageReadersByMIMEType(String)
@@ -544,7 +544,7 @@ public final class XImageIO {
      * Closes the input stream of the given reader.
      *
      * @param  reader The reader for which to close the input stream.
-     * @throws IOException If an error occured while closing the stream.
+     * @throws IOException If an error occurred while closing the stream.
      */
     public static void close(final ImageReader reader) throws IOException {
         ensureNonNull("reader", reader);
@@ -570,7 +570,7 @@ public final class XImageIO {
      * @param  spi The provider to use for creating a new writer instance.
      * @param  output The output to be given to the new writer instance.
      * @return The new image writer instance with its output initialized.
-     * @throws IOException If an error occured while creating the image writer instance.
+     * @throws IOException If an error occurred while creating the image writer instance.
      */
     private static ImageWriter createWriterInstance(final ImageWriterSpi spi, final Object output)
             throws IOException
@@ -590,7 +590,7 @@ public final class XImageIO {
      * @param  output The output to be given to the new writer instance.
      * @param  image  The image to encode, or {@code null} if unknown.
      * @return The new image writer instance with its output initialized.
-     * @throws IOException If an error occured while creating the image writer instance.
+     * @throws IOException If an error occurred while creating the image writer instance.
      */
     private static ImageWriter getWriter(final int mode, final String name,
             final Object output, final RenderedImage image) throws IOException
@@ -648,7 +648,7 @@ public final class XImageIO {
      * @param  output A mandatory output to be given to the new writer instance.
      * @param  image  The image to encode, or {@code null} if unknown.
      * @return The new image writer instance with its output initialized.
-     * @throws IOException If no suitable image writer has been found, or if an error occured
+     * @throws IOException If no suitable image writer has been found, or if an error occurred
      *         while creating it.
      *
      * @see ImageIO#getImageWritersBySuffix(String)
@@ -670,7 +670,7 @@ public final class XImageIO {
      * @param  output An optional output to be given to the new writer instance, or {@code null} if none.
      * @param  image  The image to encode, or {@code null} if unknown.
      * @return The new image writer instance with its output initialized (if {@code output} is not null).
-     * @throws IOException If no suitable image writer has been found, or if an error occured
+     * @throws IOException If no suitable image writer has been found, or if an error occurred
      *         while creating it.
      *
      * @see ImageIO#getImageWritersBySuffix(String)
@@ -692,7 +692,7 @@ public final class XImageIO {
      * @param  output An optional output to be given to the new writer instance, or {@code null} if none.
      * @param  image  The image to encode, or {@code null} if unknown.
      * @return The new image writer instance with its output initialized (if {@code output} is not null).
-     * @throws IOException If no suitable image writer has been found, or if an error occured
+     * @throws IOException If no suitable image writer has been found, or if an error occurred
      *         while creating it.
      *
      * @see ImageIO#getImageWritersByFormatName(String)
@@ -714,7 +714,7 @@ public final class XImageIO {
      * @param  output An optional output to be given to the new writer instance, or {@code null} if none.
      * @param  image  The image to encode, or {@code null} if unknown.
      * @return The new image writer instance with its output initialized (if {@code output} is not null).
-     * @throws IOException If no suitable image writer has been found, or if an error occured
+     * @throws IOException If no suitable image writer has been found, or if an error occurred
      *         while creating it.
      *
      * @see ImageIO#getImageWritersByMIMEType(String)
@@ -730,7 +730,7 @@ public final class XImageIO {
      * Closes the output stream of the given writer.
      *
      * @param  writer The writer for which to close the output stream.
-     * @throws IOException If an error occured while closing the stream.
+     * @throws IOException If an error occurred while closing the stream.
      */
     public static void close(final ImageWriter writer) throws IOException {
         ensureNonNull("writer", writer);

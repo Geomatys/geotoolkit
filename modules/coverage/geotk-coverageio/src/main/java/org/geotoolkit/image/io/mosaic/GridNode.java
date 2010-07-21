@@ -175,7 +175,7 @@ final class GridNode extends TreeNode implements Comparable<GridNode> {
          * then there is no need to keep the special root TreeNode with the tile field set to null.
          * We can keep directly the first node instead. Note that this special case should NOT be
          * extended further the first node, otherwise the tiles prior the retained node would be
-         * discarted.
+         * discarded.
          */
         GridNode root = null;
         if (nodes.length != 0) {

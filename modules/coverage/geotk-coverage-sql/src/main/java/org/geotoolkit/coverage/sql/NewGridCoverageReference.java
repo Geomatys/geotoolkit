@@ -253,7 +253,7 @@ public final class NewGridCoverageReference {
      *
      * @param  database The database where the new entry will be added.
      * @param  tile The tile to use for the entry.
-     * @throws IOException if an error occured while reading the image.
+     * @throws IOException if an error occurred while reading the image.
      */
     NewGridCoverageReference(final SpatialDatabase database, final Tile tile)
             throws SQLException, IOException, FactoryException
@@ -270,7 +270,7 @@ public final class NewGridCoverageReference {
      * @param  input      The original input. May not be the same than {@link ImageReader#getInput()}
      *                    because the later may have been transformed in an image input stream.
      * @param  imageIndex Index of the image to read.
-     * @throws IOException if an error occured while reading the image.
+     * @throws IOException if an error occurred while reading the image.
      */
     NewGridCoverageReference(final SpatialDatabase database, final ImageReader reader,
             final Object input, final int imageIndex)
@@ -290,7 +290,7 @@ public final class NewGridCoverageReference {
      *                    because the later may have been transformed in an image input stream.
      * @param  imageIndex Index of the image to read.
      * @param  tile       The tile for which a reference is created, or {@code null} if none.
-     * @throws IOException if an error occured while reading the image.
+     * @throws IOException if an error occurred while reading the image.
      */
     private NewGridCoverageReference(final SpatialDatabase database, final ImageReader reader,
             Object input, final int imageIndex, final Tile tile)
@@ -517,7 +517,7 @@ public final class NewGridCoverageReference {
      * @param  crs The CRS for which the identifier is wanted.
      * @param  crsFactory The PostGIS CRS factory, or {@code null} if none.
      * @return The identifier, or {@code null} if none.
-     * @throws FactoryException If an error occured while searching for the identifier.
+     * @throws FactoryException If an error occurred while searching for the identifier.
      */
     private static Integer getIdentifier(final CoordinateReferenceSystem crs, final CRSAuthorityFactory crsFactory)
             throws FactoryException
@@ -616,7 +616,7 @@ public final class NewGridCoverageReference {
      * choice to user.
      *
      * @return A list of formats which may be used as an alternative to {@link #format}.
-     * @throws CoverageStoreException If an error occured while fetching the list of
+     * @throws CoverageStoreException If an error occurred while fetching the list of
      *         alternative formats from the database.
      *
      * @since 3.13
@@ -643,7 +643,7 @@ public final class NewGridCoverageReference {
      * or {@code false} if this is a new format.
      *
      * @return {@code true} if the current format is defined in the database.
-     * @throws CoverageStoreException If an error occured while reading from the database.
+     * @throws CoverageStoreException If an error occurred while reading from the database.
      *
      * @since 3.13
      */
@@ -674,7 +674,7 @@ public final class NewGridCoverageReference {
      *   <li>{@link #sampleDimensions}</li>
      * </ul>
      *
-     * @throws CoverageStoreException If an error occured while reading from the database.
+     * @throws CoverageStoreException If an error occurred while reading from the database.
      *
      * @since 3.13
      */

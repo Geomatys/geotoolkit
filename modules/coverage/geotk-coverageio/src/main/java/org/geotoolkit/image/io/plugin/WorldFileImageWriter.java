@@ -79,7 +79,7 @@ public class WorldFileImageWriter extends ImageWriterAdapter {
      * If the provider is unknown, use the next constructor below instead.
      *
      * @param  provider The {@link ImageWriterSpi} that is constructing this object.
-     * @throws IOException If an error occured while creating the {@linkplain #main main} writer.
+     * @throws IOException If an error occurred while creating the {@linkplain #main main} writer.
      */
     public WorldFileImageWriter(final Spi provider) throws IOException {
         super(provider);
@@ -122,7 +122,7 @@ public class WorldFileImageWriter extends ImageWriterAdapter {
      *         identifiers are allowed but subclass-specific.
      * @return The given kind of output typically as a {@link File} or {@link java.net.URL}
      *         object, or {@code null} if there is no output for the given identifier.
-     * @throws IOException If an error occured while creating the output.
+     * @throws IOException If an error occurred while creating the output.
      *
      * @see WorldFileImageReader#createInput(String)
      */

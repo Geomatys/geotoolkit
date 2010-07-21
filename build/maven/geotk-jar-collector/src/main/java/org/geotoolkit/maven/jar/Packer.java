@@ -147,7 +147,7 @@ public final class Packer implements FilenameFilter {
     /**
      * Creates the JAR files from the packages declared with {@link #addPack}.
      *
-     * @throws IOException if an error occured while reading existing JAR files
+     * @throws IOException if an error occurred while reading existing JAR files
      *         or writing to the packed files.
      */
     public void createJars() throws IOException {
@@ -250,7 +250,7 @@ public final class Packer implements FilenameFilter {
      * @param  out    Where to copy the input stream content.
      * @param  count  Number of valid entries in the {@code out} array.
      * @param  buffer Temporary buffer to reuse at each method call.
-     * @throws IOException If an error occured during the copy.
+     * @throws IOException If an error occurred during the copy.
      */
     private static void copy(final InputStream in, final PackOutput[] out, final int count,
                              final byte[] buffer) throws IOException
@@ -267,7 +267,7 @@ public final class Packer implements FilenameFilter {
     /**
      * Closes all streams.
      *
-     * @throws IOException If an error occured while closing the stream.
+     * @throws IOException If an error occurred while closing the stream.
      */
     public void close() throws IOException {
         for (final PackOutput jar : outputs.values()) {
@@ -281,7 +281,7 @@ public final class Packer implements FilenameFilter {
     /**
      * Launch Pack200 after output JAR files have been created.
      *
-     * @throws IOException If an error occured while creating the PACK200 file.
+     * @throws IOException If an error occurred while creating the PACK200 file.
      */
     public void pack() throws IOException {
         for (final PackOutput jar : outputs.values()) {
@@ -307,7 +307,7 @@ public final class Packer implements FilenameFilter {
      * contains all JAR files collected by {@code geotk-jar-collector} plugin.
      *
      * @param  args The command-line arguments.
-     * @throws IOException if an error occured while reading existing JAR files
+     * @throws IOException if an error occurred while reading existing JAR files
      *         or writing to the packed files.
      */
     public static void main(final String[] args) throws IOException {

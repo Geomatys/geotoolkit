@@ -769,13 +769,13 @@ public abstract class CommandLine implements Runnable {
     }
 
     /**
-     * Invoked when an exception occured because of user's error. The default implementation
+     * Invoked when an exception occurred because of user's error. The default implementation
      * prints only a summary of the given exception, except if {@link #debug} is {@code true}
      * in which case the full stack trace is printed.
      * <p>
      * The exception is expected to be a user's error, not a programming error (the later are
      * propagated like ordinary exceptions; they do not pass through this method). For example
-     * this method is invoked if a {@link java.io.FileNotFoundException} occured while trying
+     * this method is invoked if a {@link java.io.FileNotFoundException} occurred while trying
      * to open a file given on the command line. Callers are expected to invoke {@link #exit}
      * after this method.
      *
@@ -805,13 +805,13 @@ public abstract class CommandLine implements Runnable {
     }
 
     /**
-     * Invoked when an error occured while processing the command-line arguments or
+     * Invoked when an error occurred while processing the command-line arguments or
      * during action execution. The default implementation flushs the streams and invokes
      * {@link System#exit}. Subclasses can override this method if they want to perform
      * some other action.
      * <p>
      * Callers should not assume that JVM will stop execution after this method call, because
-     * the default behavior may be overriden in some cases. Callers should exit their method
+     * the default behavior may be overridden in some cases. Callers should exit their method
      * (usually with a {@code return} statement) immediately after the call to this method.
      * <p>
      * Note that this method may be invoked at any time, including construction time.

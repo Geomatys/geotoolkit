@@ -45,7 +45,7 @@ public class ImageFilePropertiesTest extends SwingBase<ImageFileProperties> {
      * NetBeans, but not during Maven test phase because the {@code "QL95209.png"} file is stored
      * in a different module (geotk-coverage).
      *
-     * @throws IOException If an error occured while reading the test file.
+     * @throws IOException If an error occurred while reading the test file.
      */
     @Override
     protected ImageFileProperties create() throws IOException {

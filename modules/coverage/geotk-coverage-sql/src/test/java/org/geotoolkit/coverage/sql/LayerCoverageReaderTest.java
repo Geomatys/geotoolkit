@@ -77,7 +77,7 @@ public final class LayerCoverageReaderTest extends CatalogTestBase {
      *
      * @throws SQLException If the test can't connect to the database.
      * @throws IOException If the image can not be read.
-     * @throws CoverageStoreException If a logical error occured.
+     * @throws CoverageStoreException If a logical error occurred.
      */
     @Test
     public void testTemperature() throws SQLException, IOException, CoverageStoreException {
@@ -116,7 +116,7 @@ public final class LayerCoverageReaderTest extends CatalogTestBase {
      *
      * @throws SQLException If the test can't connect to the database.
      * @throws IOException If the image can not be read.
-     * @throws CoverageStoreException If a logical error occured.
+     * @throws CoverageStoreException If a logical error occurred.
      */
     @Test
     public void testCoriolis() throws SQLException, IOException, CoverageStoreException {
@@ -146,7 +146,7 @@ public final class LayerCoverageReaderTest extends CatalogTestBase {
      *
      * @throws SQLException If the test can't connect to the database.
      * @throws IOException If the image can not be read.
-     * @throws CoverageStoreException If a logical error occured.
+     * @throws CoverageStoreException If a logical error occurred.
      */
     @Test
     public void testBluemarble() throws SQLException, IOException, CoverageStoreException {

@@ -65,7 +65,7 @@ final class RemoteFuture<Output> extends UnicastRemoteObject implements TaskFutu
      *
      * @param  task The task for which results are being computed.
      * @param  future The future to be returned by this wrapper.
-     * @throws RemoteException If an error occured while exporting this future.
+     * @throws RemoteException If an error occurred while exporting this future.
      */
     RemoteFuture(final ShareableTask<?,Output> task, final List<TaskFuture<Output>> futures) throws RemoteException {
         this.task = task;
@@ -75,8 +75,8 @@ final class RemoteFuture<Output> extends UnicastRemoteObject implements TaskFutu
     /**
      * Returns the task result.
      *
-     * @throws RemoteException If a RMI error occured.
-     * @throws ExecutionException If an error occured during the execution of the task.
+     * @throws RemoteException If a RMI error occurred.
+     * @throws ExecutionException If an error occurred during the execution of the task.
      * @throws InterruptedException If the worker thread was interrupted while waiting.
      */
     @Override
@@ -94,7 +94,7 @@ final class RemoteFuture<Output> extends UnicastRemoteObject implements TaskFutu
     /**
      * Invoked in case of failures for deleting the resources that the task may have created.
      *
-     * @throws RemoteException If a RMI error occured.
+     * @throws RemoteException If a RMI error occurred.
      */
     @Override
     public synchronized void rollback() throws RemoteException {

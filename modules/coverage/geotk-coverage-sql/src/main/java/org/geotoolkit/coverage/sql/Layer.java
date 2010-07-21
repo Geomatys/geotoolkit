@@ -61,7 +61,7 @@ public interface Layer {
      * to look in the mounthly averaged SST coverage as a fallback.
      *
      * @return The fallback layer, or {@code null} if none.
-     * @throws CoverageStoreException If an error occured while fetching the information.
+     * @throws CoverageStoreException If an error occurred while fetching the information.
      */
     Layer getFallback() throws CoverageStoreException;
 
@@ -80,7 +80,7 @@ public interface Layer {
      * Returns the number of coverages in this layer.
      *
      * @return The number of coverages in this layer.
-     * @throws CoverageStoreException if an error occured while counting the coverages.
+     * @throws CoverageStoreException if an error occurred while counting the coverages.
      */
     int getCoverageCount() throws CoverageStoreException;
 
@@ -88,7 +88,7 @@ public interface Layer {
      * Returns a time range encompassing all coverages in this layer, or {@code null} if none.
      *
      * @return The time range encompassing all coverages, or {@code null}.
-     * @throws CoverageStoreException if an error occured while fetching the time range.
+     * @throws CoverageStoreException if an error occurred while fetching the time range.
      */
     DateRange getTimeRange() throws CoverageStoreException;
 
@@ -96,7 +96,7 @@ public interface Layer {
      * Returns the set of dates when a coverage is available.
      *
      * @return The set of dates, or {@code null} if unknown.
-     * @throws CoverageStoreException if an error occured while fetching the set.
+     * @throws CoverageStoreException if an error occurred while fetching the set.
      */
     SortedSet<Date> getAvailableTimes() throws CoverageStoreException;
 
@@ -106,7 +106,7 @@ public interface Layer {
      * set.
      *
      * @return The set of altitudes, or {@code null} if unknown.
-     * @throws CoverageStoreException if an error occured while fetching the set.
+     * @throws CoverageStoreException if an error occurred while fetching the set.
      */
     SortedSet<Number> getAvailableElevations() throws CoverageStoreException;
 
@@ -116,7 +116,7 @@ public interface Layer {
      * returns the union of their ranges.
      *
      * @return The range of valid sample values.
-     * @throws CoverageStoreException If an error occured while fetching the information.
+     * @throws CoverageStoreException If an error occurred while fetching the information.
      */
     List<MeasurementRange<?>> getSampleValueRanges() throws CoverageStoreException;
 
@@ -127,7 +127,7 @@ public interface Layer {
      * Some elements of the returned array may be {@link Double#NaN NaN} if they are unnkown.
      *
      * @return The typical pixel resolution.
-     * @throws CoverageStoreException if an error occured while fetching the resolution.
+     * @throws CoverageStoreException if an error occurred while fetching the resolution.
      */
     double[] getTypicalResolution() throws CoverageStoreException;
 
@@ -137,7 +137,7 @@ public interface Layer {
      * Java Image I/O} framework.
      *
      * @return The image formats, with the most frequently used format first.
-     * @throws CoverageStoreException if an error occured while querying the database.
+     * @throws CoverageStoreException if an error occurred while querying the database.
      */
     SortedSet<String> getImageFormats() throws CoverageStoreException;
 
@@ -146,7 +146,7 @@ public interface Layer {
      * of use.
      *
      * @return The image directories, with the most frequently used directory first.
-     * @throws CoverageStoreException if an error occured while querying the database.
+     * @throws CoverageStoreException if an error occurred while querying the database.
      *
      * @since 3.12
      */
@@ -157,7 +157,7 @@ public interface Layer {
      * frequency of use.
      *
      * @return The grid geometries, with the most frequently used geometry first.
-     * @throws CoverageStoreException if an error occured while querying the database.
+     * @throws CoverageStoreException if an error occurred while querying the database.
      */
     SortedSet<GeneralGridGeometry> getGridGeometries() throws CoverageStoreException;
 
@@ -167,7 +167,7 @@ public interface Layer {
      * will transform the layer envelope to a geographic CRS.
      *
      * @return The layer geographic bounding box, or {@code null} if none.
-     * @throws CoverageStoreException if an error occured while querying the database
+     * @throws CoverageStoreException if an error occurred while querying the database
      *         or while projecting the layer envelope.
      *
      * @since 3.11
@@ -182,7 +182,7 @@ public interface Layer {
      * @param  time The central date, or {@code null}.
      * @param  elevation The central elevation, or {@code null}.
      * @return A default envelope instance.
-     * @throws CoverageStoreException if an error occured while querying the database.
+     * @throws CoverageStoreException if an error occurred while querying the database.
      */
     CoverageEnvelope getEnvelope(Date time, Number elevation) throws CoverageStoreException;
 
@@ -196,7 +196,7 @@ public interface Layer {
      *
      * @param  envelope The envelope for filtering the coverages, or {@code null} for no filtering.
      * @return The set of coverages in the layer which intersect the given envelope.
-     * @throws CoverageStoreException if an error occured while querying the database.
+     * @throws CoverageStoreException if an error occurred while querying the database.
      */
     Set<GridCoverageReference> getCoverageReferences(CoverageEnvelope envelope) throws CoverageStoreException;
 
@@ -210,7 +210,7 @@ public interface Layer {
      *         filtering. A {@code null} value is useful for layers that are expected to
      *         contain only one coverage, but should be avoided otherwise.
      * @return A reference to a coverage, or {@code null} if no coverage was found.
-     * @throws CoverageStoreException if an error occured while querying the database.
+     * @throws CoverageStoreException if an error occurred while querying the database.
      */
     GridCoverageReference getCoverageReference(CoverageEnvelope envelope) throws CoverageStoreException;
 
@@ -243,7 +243,7 @@ public interface Layer {
      *         before they are written in the database.
      * @throws DatabaseVetoException If a {@linkplain CoverageDatabaseListener listener}
      *         vetoed against the operation.
-     * @throws CoverageStoreException If an error occured while accessing the database.
+     * @throws CoverageStoreException If an error occurred while accessing the database.
      *
      * @since 3.12
      */

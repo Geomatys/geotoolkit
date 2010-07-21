@@ -299,7 +299,7 @@ final class LayerEntry extends DefaultEntry implements Layer {
      * this method is executed twice concurrently, because {@code Table.getEntry(Comparable)}
      * has its own synchronization lock on its shared cache.
      *
-     * @throws SQLException If an error occured while fetching the domain.
+     * @throws SQLException If an error occurred while fetching the domain.
      */
     private DomainOfLayerEntry getDomain() throws SQLException {
         DomainOfLayerEntry entry = domain;
@@ -321,7 +321,7 @@ final class LayerEntry extends DefaultEntry implements Layer {
     /**
      * Returns all series in this layer.
      *
-     * @throws SQLException If an error occured while fetching the series.
+     * @throws SQLException If an error occurred while fetching the series.
      */
     final Collection<SeriesEntry> getSeries() throws SQLException {
         return getSeriesMap().values();
@@ -332,7 +332,7 @@ final class LayerEntry extends DefaultEntry implements Layer {
      *
      * @param  name The series identifier.
      * @return The series in this layer for the given identifier, or {@code null} if none.
-     * @throws SQLException If an error occured while fetching the series.
+     * @throws SQLException If an error occurred while fetching the series.
      */
     final SeriesEntry getSeries(int identifier) throws SQLException {
         return getSeriesMap().get(identifier);
@@ -341,7 +341,7 @@ final class LayerEntry extends DefaultEntry implements Layer {
     /**
      * Returns all series in this layer as (<var>identifier</var>, <var>series</var>) pairs.
      *
-     * @throws SQLException If an error occured while fetching the series.
+     * @throws SQLException If an error occurred while fetching the series.
      */
     private synchronized Map<Integer,SeriesEntry> getSeriesMap() throws SQLException {
         Map<Integer,SeriesEntry> map = series;
@@ -368,7 +368,7 @@ final class LayerEntry extends DefaultEntry implements Layer {
      * shared cache so we will get the same {@code LayerEntry} instance anyway.
      *
      * @return The fallback layer, or {@code null} if none.
-     * @throws CoverageStoreException If an error occured while fetching the fallback.
+     * @throws CoverageStoreException If an error occurred while fetching the fallback.
      */
     @Override
     public LayerEntry getFallback() throws CoverageStoreException {
@@ -461,7 +461,7 @@ final class LayerEntry extends DefaultEntry implements Layer {
      * Returns a time range encompassing all coverages in this layer, or {@code null} if none.
      *
      * @return The time range encompassing all coverages, or {@code null}.
-     * @throws CoverageStoreException if an error occured while fetching the time range.
+     * @throws CoverageStoreException if an error occurred while fetching the time range.
      */
     @Override
     public DateRange getTimeRange() throws CoverageStoreException {
@@ -533,7 +533,7 @@ final class LayerEntry extends DefaultEntry implements Layer {
      * returns the union of their ranges.
      *
      * @return The range of valid sample values.
-     * @throws CoverageStoreException If an error occured while computing the ranges.
+     * @throws CoverageStoreException If an error occurred while computing the ranges.
      */
     @Override
     public synchronized List<MeasurementRange<?>> getSampleValueRanges() throws CoverageStoreException {

@@ -65,7 +65,7 @@ final class IteratorWrapper<E> implements ObjectStream<E> { // Must NOT implemen
      * This method is synchronized. See the thread-safety section in the {@link ObjectStream}
      * javadoc for the rational.
      *
-     * @throws IOException If an I/O error occured.
+     * @throws IOException If an I/O error occurred.
      */
     @Override
     public synchronized E next() throws IOException {
@@ -90,7 +90,7 @@ final class IteratorWrapper<E> implements ObjectStream<E> { // Must NOT implemen
      * Closes the stream. This method delegates to the backing iterator
      * if it is {@linkplain Closeable closeable}.
      *
-     * @throws IOException If an I/O error occured.
+     * @throws IOException If an I/O error occurred.
      */
     @Override
     public synchronized void close() throws IOException {

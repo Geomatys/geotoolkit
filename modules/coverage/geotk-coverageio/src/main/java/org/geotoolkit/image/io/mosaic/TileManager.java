@@ -384,7 +384,7 @@ public abstract class TileManager implements Serializable {
      * Returns the greatest number of pixels found in all tiles.
      *
      * @return The greatest number of pixels found in all tiles.
-     * @throws IOException If an I/O error occured.
+     * @throws IOException If an I/O error occurred.
      *
      * @since 3.00
      */
@@ -405,7 +405,7 @@ public abstract class TileManager implements Serializable {
      * for a common {@linkplain File#getParentFile() parent directory} of every tiles.
      *
      * @return The root directory, or {@code null} if unknown.
-     * @throws IOException If an I/O error occured.
+     * @throws IOException If an I/O error occurred.
      *
      * @since 3.00
      */
@@ -457,7 +457,7 @@ public abstract class TileManager implements Serializable {
      * This method is not public because of the above-cited "single banded" assumption.
      *
      * @return The required disk space for uncompressed tiles.
-     * @throws IOException If an I/O error occured.
+     * @throws IOException If an I/O error occurred.
      *
      * @since 3.00
      */

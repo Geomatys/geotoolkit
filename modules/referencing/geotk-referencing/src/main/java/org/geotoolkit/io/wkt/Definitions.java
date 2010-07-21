@@ -382,7 +382,7 @@ final class Definitions extends AbstractMap<String,String> implements Serializab
      *
      * @param  out writer The output stream where to write the table.
      * @param  colors {@code true} if X3.64 colors are enabled.
-     * @throws IOException if an error occured while writing to the output stream.
+     * @throws IOException if an error occurred while writing to the output stream.
      */
     final void print(final Writer out, final boolean colors) throws IOException {
         final Locale locale = null;

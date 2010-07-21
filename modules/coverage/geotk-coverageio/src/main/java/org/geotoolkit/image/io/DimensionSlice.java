@@ -746,7 +746,7 @@ public class DimensionSlice implements WarningProducer {
     }
 
     /**
-     * Invoked when a warning occured. The default implementation
+     * Invoked when a warning occurred. The default implementation
      * {@linkplain SpatialImageReader#warningOccurred forwards the warning to the image reader} or
      * {@linkplain SpatialImageWriter#warningOccurred writer} if possible, or logs the warning
      * otherwise.

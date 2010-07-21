@@ -201,7 +201,7 @@ public class ParameterWriter extends FilterWriter implements Localized {
      * Prints the elements of an operation to the output stream.
      *
      * @param  operation The operation method to format.
-     * @throws IOException if an error occured will writing to the stream.
+     * @throws IOException if an error occurred will writing to the stream.
      */
     public void format(final OperationMethod operation) throws IOException {
         synchronized (lock) {
@@ -213,7 +213,7 @@ public class ParameterWriter extends FilterWriter implements Localized {
      * Prints the elements of a descriptor group to the output stream.
      *
      * @param  descriptor The descriptor group to format.
-     * @throws IOException if an error occured will writing to the stream.
+     * @throws IOException if an error occurred will writing to the stream.
      */
     public void format(final ParameterDescriptorGroup descriptor) throws IOException {
         synchronized (lock) {
@@ -225,7 +225,7 @@ public class ParameterWriter extends FilterWriter implements Localized {
      * Prints the elements of a parameter group to the output stream.
      *
      * @param  values The parameter group to format.
-     * @throws IOException if an error occured will writing to the stream.
+     * @throws IOException if an error occurred will writing to the stream.
      */
     public void format(final ParameterValueGroup values) throws IOException {
         final ParameterDescriptorGroup descriptor = values.getDescriptor();
@@ -241,7 +241,7 @@ public class ParameterWriter extends FilterWriter implements Localized {
      * @param  descriptor The parameter descriptor. Should be equal to
      *         {@code values.getDescriptor()} if {@code values} is non null.
      * @param  values The parameter values, or {@code null} if none.
-     * @throws IOException if an error occured will writing to the stream.
+     * @throws IOException if an error occurred will writing to the stream.
      */
     private void format(final String name, final ParameterDescriptorGroup group,
                         final ParameterValueGroup values) throws IOException
@@ -446,7 +446,7 @@ header: for (int i=0; ; i++) {
      * to display.
      *
      * @param  objects The collection of objects to format.
-     * @throws IOException if an error occured will writing to the stream.
+     * @throws IOException if an error occurred will writing to the stream.
      */
     public void summary(final Collection<? extends IdentifiedObject> objects) throws IOException {
         // synchronized(lock) performed later in this method.

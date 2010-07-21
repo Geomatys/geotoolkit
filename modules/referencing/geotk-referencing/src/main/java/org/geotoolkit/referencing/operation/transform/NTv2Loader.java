@@ -48,7 +48,7 @@ import static org.geotoolkit.internal.io.Installation.NTv2;
 
 /**
  * Loaders of {@link NTV2Transform} data. This is a temporary object used only at loading time
- * and discarted once the transform is built.
+ * and discarded once the transform is built.
  *
  * @author Simon Reynard (Geomatys)
  * @author Martin Desruisseaux (Geomatys)

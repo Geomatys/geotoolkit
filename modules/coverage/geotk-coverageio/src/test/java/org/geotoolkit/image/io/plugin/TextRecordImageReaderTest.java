@@ -81,7 +81,7 @@ public final class TextRecordImageReaderTest extends TextImageReaderTestBase {
      * Ensures that {@link TextImageReader.Spi#canDecodeInput(Object)}
      * correctly detect that it can not parse the {@code "matrix.txt"} file.
      *
-     * @throws IOException if an error occured while reading the file.
+     * @throws IOException if an error occurred while reading the file.
      */
     @Test
     public void testCanNotRead() throws IOException {
@@ -95,7 +95,7 @@ public final class TextRecordImageReaderTest extends TextImageReaderTestBase {
      * {@code "records"} file is not supposed to be an integer, while the
      * values are formatted as integers.
      *
-     * @throws IOException if an error occured while reading the file.
+     * @throws IOException if an error occurred while reading the file.
      */
     @Test
     public void testGridRegularity() throws IOException {
@@ -111,7 +111,7 @@ public final class TextRecordImageReaderTest extends TextImageReaderTestBase {
     /**
      * Tests the metadata of the {@link "records.txt"} file.
      *
-     * @throws IOException if an error occured while reading the file.
+     * @throws IOException if an error occurred while reading the file.
      */
     @Test
     public void testMetadata() throws IOException {

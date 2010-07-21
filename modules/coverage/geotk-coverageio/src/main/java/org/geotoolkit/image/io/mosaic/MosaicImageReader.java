@@ -73,7 +73,7 @@ public class MosaicImageReader extends ImageReader implements Disposable {
 
     /**
      * Type arguments made of a single {@code int} value. Used with reflections in order to check
-     * if a method has been overriden (knowing that it is not the case allows some optimizations).
+     * if a method has been overridden (knowing that it is not the case allows some optimizations).
      */
     private static final Class<?>[] INTEGER_ARGUMENTS = {
         int.class
@@ -1477,7 +1477,7 @@ public class MosaicImageReader extends ImageReader implements Disposable {
      * Closes any image input streams thay may be held by tiles.
      * The streams will be opened again when they will be first needed.
      *
-     * @throws IOException if error occured while closing a stream.
+     * @throws IOException if error occurred while closing a stream.
      */
     public void close() throws IOException {
         for (final Map.Entry<ImageReader,Object> entry : readerInputs.entrySet()) {

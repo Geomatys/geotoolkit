@@ -1561,7 +1561,7 @@ search: for (int j=0; j<targets.size(); j++) {
              * If we have found the source component of the same kind than the target element
              * (either a GeodeticDatum or a VerticalDatum), check if there is a need for a datum
              * shift. The other source components are ignored, which is okay if the target CRS is
-             * only 1D or 2D since this means that the extra source components will be discarted
+             * only 1D or 2D since this means that the extra source components will be discarded
              * anyway. The case where the target CRS is 3D is handled at the end of this method.
              */
             if (!needDatumShift && sourceIsGeodetic == targetIsGeodetic) {

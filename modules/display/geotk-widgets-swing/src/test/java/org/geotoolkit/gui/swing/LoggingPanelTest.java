@@ -91,7 +91,7 @@ public final class LoggingPanelTest extends SwingBase<LoggingPanel> {
     /**
      * Displays some dummy logging messages in the panel.
      *
-     * @throws Exception If an exception occured while creating the widget.
+     * @throws Exception If an exception occurred while creating the widget.
      */
     @Test
     @Override

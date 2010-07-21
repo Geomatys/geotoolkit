@@ -49,7 +49,7 @@ import static java.awt.GridBagConstraints.*;
 /**
  * Base class for widget with a zoomable content. User can perform zooms using keyboard, menu
  * or mouse. Subclasses must provide the content to be paint with the following methods, which
- * need to be overriden:
+ * need to be overridden:
  *
  * <ul>
  *   <li><p>{@link #getArea()}, which must return a bounding box for the content to paint. This

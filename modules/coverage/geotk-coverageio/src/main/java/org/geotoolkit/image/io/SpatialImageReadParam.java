@@ -558,7 +558,7 @@ public class SpatialImageReadParam extends ImageReadParam implements WarningProd
     }
 
     /**
-     * Invoked when a warning occured. The default implementation
+     * Invoked when a warning occurred. The default implementation
      * {@linkplain SpatialImageReader#warningOccurred forwards the warning to the image reader}
      * given at construction time if possible, or logs the warning otherwise.
      *

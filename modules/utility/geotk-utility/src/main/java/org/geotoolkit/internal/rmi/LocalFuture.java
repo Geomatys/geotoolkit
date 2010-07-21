@@ -64,7 +64,7 @@ final class LocalFuture<Output> implements TaskFuture<Output> {
     /**
      * Returns the task result.
      *
-     * @throws ExecutionException If an error occured during the execution of the task.
+     * @throws ExecutionException If an error occurred during the execution of the task.
      * @throws InterruptedException If the worker thread was interrupted while waiting.
      */
     @Override

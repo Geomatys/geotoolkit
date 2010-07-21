@@ -552,7 +552,7 @@ public class PaletteFactory {
             /*
              * We can iterate only with ClassLoader because there is no Class.getResources(...)
              * method. Note that this iteration (when performed) is not completly redundant with
-             * the above call to 'getReader' because the user may have overriden
+             * the above call to 'getReader' because the user may have overridden
              * PaletteFactory.getResourceAsStream(String).
              */
             if (classloader != null) {
@@ -692,8 +692,8 @@ public class PaletteFactory {
      * @param  input The stream to read.
      * @param  name  The palette name to read. Used for formatting error message only.
      * @return The colors.
-     * @throws IOException if an I/O error occured.
-     * @throws IIOException if a syntax error occured.
+     * @throws IOException if an I/O error occurred.
+     * @throws IIOException if a syntax error occurred.
      */
     @SuppressWarnings("fallthrough")
     private Color[] getColors(final LineNumberReader input, final String name) throws IOException {

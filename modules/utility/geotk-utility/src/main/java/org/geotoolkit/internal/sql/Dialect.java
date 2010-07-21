@@ -108,7 +108,7 @@ public enum Dialect {
      *
      * @param  metadata The database metadata.
      * @return The presumed SQL syntax.
-     * @throws SQLException if an error occured while querying the metadata.
+     * @throws SQLException if an error occurred while querying the metadata.
      */
     public static Dialect guess(final DatabaseMetaData metadata) throws SQLException {
         String product = metadata.getDatabaseProductName();
@@ -149,7 +149,7 @@ public enum Dialect {
      *
      * @param  metadata The database metadata
      * @return {@code true} if the database supports enums.
-     * @throws SQLException If an error occured while querying the metadata.
+     * @throws SQLException If an error occurred while querying the metadata.
      *
      * @since 3.14
      */

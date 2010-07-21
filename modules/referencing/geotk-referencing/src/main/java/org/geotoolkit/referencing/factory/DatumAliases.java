@@ -99,7 +99,7 @@ public class DatumAliases extends ReferencingFactory implements DatumFactory {
     private static final String SEPARATORS = ";";
 
     /**
-     * Array used as a marker for alias that has been discarted because never used.
+     * Array used as a marker for alias that has been discarded because never used.
      * This array may appears in {@link #aliasMap} values.
      *
      * @see #freeUnused
@@ -245,7 +245,7 @@ public class DatumAliases extends ReferencingFactory implements DatumFactory {
 
     /**
      * Reads again the {@value #ALIAS_TABLE} file into {@link #aliasMap}. This method
-     * may be invoked more than once in order to reload entries that have been discarted
+     * may be invoked more than once in order to reload entries that have been discarded
      * by {@link #freeUnused}. This method assumes that the file content didn't change
      * between two calls.
      *
@@ -355,12 +355,12 @@ public class DatumAliases extends ReferencingFactory implements DatumFactory {
             reload();
         } catch (IOException exception) {
             log(exception);
-            // Continue in case the requested alias has been read before the failure occured.
+            // Continue in case the requested alias has been read before the failure occurred.
         }
         /*
          * Gets the aliases for the specified name.  If an entry exists for this name with a null
          * value, this means that 'freeUnused()' has been invoked previously. Reload the file and
-         * try again since the requested name may be one of the set of discarted aliases.
+         * try again since the requested name may be one of the set of discarded aliases.
          */
         name = toCaseless(name);
         Object[] aliases = aliasMap.get(name);
@@ -370,12 +370,12 @@ public class DatumAliases extends ReferencingFactory implements DatumFactory {
         }
         if (aliases == NEED_LOADING) {
             // Known name, but the list of alias has been previously
-            // discarted because never used. Reload the file.
+            // discarded because never used. Reload the file.
             try {
                 reload();
             } catch (IOException exception) {
                 log(exception);
-                // Continue in case the requested alias has been read before the failure occured.
+                // Continue in case the requested alias has been read before the failure occurred.
             }
             aliases = aliasMap.get(name);
             if (aliases == NEED_LOADING) {

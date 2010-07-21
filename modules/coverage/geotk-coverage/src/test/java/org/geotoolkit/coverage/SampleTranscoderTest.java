@@ -84,7 +84,7 @@ public final class SampleTranscoderTest {
     /**
      * Tests the transformation using a random raster with only one band.
      *
-     * @throws TransformException If an error occured while transforming a value.
+     * @throws TransformException If an error occurred while transforming a value.
      */
     @Test
     public void testOneBand() throws TransformException {

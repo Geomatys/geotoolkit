@@ -236,7 +236,7 @@ public class AbstractCoordinateOperation extends AbstractIdentifiedObject implem
 
     /**
      * Checks the validity of this operation. This method is invoked by the constructor after
-     * every fields have been assigned. It can be overriden by subclasses if different rules
+     * every fields have been assigned. It can be overridden by subclasses if different rules
      * should be applied.
      * <p>
      * {@link DefaultConversion} overrides this method in order to allow null values, providing

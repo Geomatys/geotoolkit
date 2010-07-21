@@ -79,7 +79,7 @@ final class LayerTable extends SingletonTable<LayerEntry> {
      * @param  results The result set to read.
      * @param  identifier The identifier of the layer to create.
      * @return The entry for current row in the specified result set.
-     * @throws SQLException if an error occured while reading the database.
+     * @throws SQLException if an error occurred while reading the database.
      */
     @Override
     protected LayerEntry createEntry(final ResultSet results, final Comparable<?> identifier) throws SQLException {
@@ -98,7 +98,7 @@ final class LayerTable extends SingletonTable<LayerEntry> {
      *
      * @param  name The name of the layer.
      * @return {@code true} if a new layer has been created, or {@code false} if it already exists.
-     * @throws SQLException if an error occured while reading or writing the database.
+     * @throws SQLException if an error occurred while reading or writing the database.
      */
     final boolean createIfAbsent(final String name) throws SQLException {
         ensureNonNull("name", name);

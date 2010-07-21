@@ -191,7 +191,7 @@ public final class QueryTest extends CatalogTestBase {
      * Tries to executes the specified query statement and to read one row.
      *
      * @param  query the statement to test.
-     * @throws SQLException if an query error occured.
+     * @throws SQLException if an query error occurred.
      */
     private static void trySelectStatement(final String query) throws SQLException {
         final LocalCache lc = getDatabase().getLocalCache();

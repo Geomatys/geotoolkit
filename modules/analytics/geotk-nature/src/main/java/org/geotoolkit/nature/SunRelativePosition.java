@@ -138,7 +138,7 @@ public class SunRelativePosition {
 
     /**
      * Date and time when the current elevation and azimuth were computed.
-     * Value is in milliseconds ellapsed since midnight UTC, January 1st, 1970.
+     * Value is in milliseconds elapsed since midnight UTC, January 1st, 1970.
      */
     private long time = System.currentTimeMillis();
 
@@ -413,8 +413,8 @@ public class SunRelativePosition {
         // Inverse the sign, in order to be closer to OpenGIS convention.
         longitude = -longitude;
 
-        // Compute: 1) Julian day (days ellapsed since January 1, 4723 BC at 12:00 GMT).
-        //          2) Time as the centuries ellapsed since January 1, 2000 at 12:00 GMT.
+        // Compute: 1) Julian day (days elapsed since January 1, 4723 BC at 12:00 GMT).
+        //          2) Time as the centuries elapsed since January 1, 2000 at 12:00 GMT.
         final double julianDay = Calendar.julianDay(this.time);
         final double time      = (julianDay-2451545)/36525;
 

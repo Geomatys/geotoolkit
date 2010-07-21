@@ -379,7 +379,7 @@ public class IdentifiedObjectSet<T extends IdentifiedObject> extends AbstractSet
      *   <li>{@link OptionalFactoryOperationException}</li>
      * </ul>
      *
-     * @param  exception The exception that occured while creating an object.
+     * @param  exception The exception that occurred while creating an object.
      * @return {@code true} if the given exception should be considered recoverable, or
      *         {@code false} if it should be considered fatal.
      */

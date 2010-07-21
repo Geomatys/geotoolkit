@@ -71,7 +71,7 @@ final class PooledMarshaller extends Pooled implements Catching.Marshaller {
      *
      * @param  key The property to reset.
      * @param  value The initial value to give to the property.
-     * @throws JAXBException If an error occured while restoring a property.
+     * @throws JAXBException If an error occurred while restoring a property.
      */
     @Override
     @SuppressWarnings({"unchecked","rawtypes"})

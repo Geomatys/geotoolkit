@@ -61,7 +61,7 @@ public final class RawFiles implements ServiceRegistry.Filter {
      *
      * @param  input The input to decode, or {@code null} for not using that information.
      * @return The RAW image reader (preferrably the Geotk one), or {@code null} if none.
-     * @throws IOException If an error occured while testing the input.
+     * @throws IOException If an error occurred while testing the input.
      */
     public static ImageReader getImageReader(final Object input) throws IOException {
         ImageReaderSpi provider = null;

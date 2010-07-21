@@ -162,7 +162,7 @@ public abstract class Palette {
      * @return  The color model for this palette.
      * @throws  FileNotFoundException If the RGB values need to be read from a file
      *          and this file (typically inferred from {@link #name}) is not found.
-     * @throws  IOException  If an other kind of I/O error occured.
+     * @throws  IOException  If an other kind of I/O error occurred.
      */
     public synchronized ColorModel getColorModel() throws FileNotFoundException, IOException {
         if (colors != null) {
@@ -182,7 +182,7 @@ public abstract class Palette {
      * @return  The image type specified for this palette.
      * @throws  FileNotFoundException If the RGB values need to be read from a file
      *          and this file (typically inferred from {@link #name}) is not found.
-     * @throws  IOException  If an other kind of I/O error occured.
+     * @throws  IOException  If an other kind of I/O error occurred.
      */
     public synchronized ImageTypeSpecifier getImageTypeSpecifier() throws FileNotFoundException, IOException {
         if (specifier != null) {
@@ -213,7 +213,7 @@ public abstract class Palette {
      * @return  The image type specified for this palette.
      * @throws  FileNotFoundException If the RGB values need to be read from a file
      *          and this file (typically inferred from {@link #name}) is not found.
-     * @throws  IOException  If an other kind of I/O error occured.
+     * @throws  IOException  If an other kind of I/O error occurred.
      *
      * @since 3.11
      */

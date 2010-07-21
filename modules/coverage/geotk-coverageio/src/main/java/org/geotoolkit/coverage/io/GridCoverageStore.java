@@ -195,7 +195,7 @@ public abstract class GridCoverageStore implements Localized {
 
     /**
      * Returns an error message for the given exception, using the current input or output.
-     * This method is overriden by {@link GridCoverageReader} and {@link GridCoverageWriter},
+     * This method is overridden by {@link GridCoverageReader} and {@link GridCoverageWriter},
      * which will format a better message including the input or output path.
      */
     String formatErrorMessage(final Exception e) {
@@ -208,7 +208,7 @@ public abstract class GridCoverageStore implements Localized {
      * message. Otherwise it returns the localized message of the given exception.
      *
      * @param path The input or output.
-     * @param e The exception which occured.
+     * @param e The exception which occurred.
      * @param isWriting {@code false} If reading, or {@code true} if writing.
      */
     final String formatErrorMessage(final Object path, final Exception e, final boolean isWriting) {

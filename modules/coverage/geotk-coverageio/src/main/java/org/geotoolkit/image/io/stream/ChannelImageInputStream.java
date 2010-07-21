@@ -242,7 +242,7 @@ public class ChannelImageInputStream extends InputStream implements ImageInputSt
     /**
      * Ensures that there is at least one byte remaining in the buffer.
      *
-     * @throws IOException If an error occured while reading (including EOF).
+     * @throws IOException If an error occurred while reading (including EOF).
      */
     private void ensureRemaining() throws IOException {
         if (!buffer.hasRemaining() && fillBuffer() <= 0) {
@@ -259,7 +259,7 @@ public class ChannelImageInputStream extends InputStream implements ImageInputSt
      * The {@link #bitOffset} is set to zero by this method.
      *
      * @param  n The requested amount of bytes.
-     * @throws IOException If an error occured while reading (including EOF).
+     * @throws IOException If an error occurred while reading (including EOF).
      */
     private void ensureRemaining(final int n) throws IOException {
         bitOffset = 0;
@@ -285,7 +285,7 @@ public class ChannelImageInputStream extends InputStream implements ImageInputSt
     /**
      * Returns the length of the stream (in bytes), or -1 if unknown.
      *
-     * @throws IOException If an error occured while fetching the stream length.
+     * @throws IOException If an error occurred while fetching the stream length.
      */
     @Override
     public long length() throws IOException {
@@ -360,7 +360,7 @@ public class ChannelImageInputStream extends InputStream implements ImageInputSt
      * If EOF is reached, -1 is returned.
      *
      * @return The value of the next byte in the stream, or {@code -1} on EOF.
-     * @throws IOException If an error occured while reading.
+     * @throws IOException If an error occurred while reading.
      */
     @Override
     public int read() throws IOException {
@@ -379,7 +379,7 @@ public class ChannelImageInputStream extends InputStream implements ImageInputSt
      * to 0 by every {@code read} methods except {@code readBit()} and {@link #readBits(int)}.
      *
      * @return The value of the next bit from the stream.
-     * @throws IOException If an error occured while reading (including EOF).
+     * @throws IOException If an error occurred while reading (including EOF).
      */
     @Override
     public int readBit() throws IOException {
@@ -402,7 +402,7 @@ public class ChannelImageInputStream extends InputStream implements ImageInputSt
      *
      * @param  numBits The number of bits to read.
      * @return The value of the next bits from the stream.
-     * @throws IOException If an error occured while reading (including EOF).
+     * @throws IOException If an error occurred while reading (including EOF).
      */
     @Override
     public long readBits(int numBits) throws IOException {
@@ -445,7 +445,7 @@ public class ChannelImageInputStream extends InputStream implements ImageInputSt
      * }
      *
      * @return The value of the next boolean from the stream.
-     * @throws IOException If an error occured while reading (including EOF).
+     * @throws IOException If an error occurred while reading (including EOF).
      */
     @Override
     public boolean readBoolean() throws IOException {
@@ -458,7 +458,7 @@ public class ChannelImageInputStream extends InputStream implements ImageInputSt
      * then delegates to {@link ByteBuffer#get()}.
      *
      * @return The value of the next byte from the stream.
-     * @throws IOException If an error occured while reading (including EOF).
+     * @throws IOException If an error occurred while reading (including EOF).
      */
     @Override
     public byte readByte() throws IOException {
@@ -475,7 +475,7 @@ public class ChannelImageInputStream extends InputStream implements ImageInputSt
      * }
      *
      * @return The value of the next byte from the stream.
-     * @throws IOException If an error occured while reading (including EOF).
+     * @throws IOException If an error occurred while reading (including EOF).
      */
     @Override
     public int readUnsignedByte() throws IOException {
@@ -488,7 +488,7 @@ public class ChannelImageInputStream extends InputStream implements ImageInputSt
      * then delegates to {@link ByteBuffer#getShort()}.
      *
      * @return The value of the next short from the stream.
-     * @throws IOException If an error occured while reading (including EOF).
+     * @throws IOException If an error occurred while reading (including EOF).
      */
     @Override
     public short readShort() throws IOException {
@@ -504,7 +504,7 @@ public class ChannelImageInputStream extends InputStream implements ImageInputSt
      * }
      *
      * @return The value of the next short from the stream.
-     * @throws IOException If an error occured while reading (including EOF).
+     * @throws IOException If an error occurred while reading (including EOF).
      */
     @Override
     public int readUnsignedShort() throws IOException {
@@ -517,7 +517,7 @@ public class ChannelImageInputStream extends InputStream implements ImageInputSt
      * then delegates to {@link ByteBuffer#getChar()}.
      *
      * @return The value of the next character from the stream.
-     * @throws IOException If an error occured while reading (including EOF).
+     * @throws IOException If an error occurred while reading (including EOF).
      */
     @Override
     public char readChar() throws IOException {
@@ -531,7 +531,7 @@ public class ChannelImageInputStream extends InputStream implements ImageInputSt
      * then delegates to {@link ByteBuffer#getInt()}.
      *
      * @return The value of the next integer from the stream.
-     * @throws IOException If an error occured while reading (including EOF).
+     * @throws IOException If an error occurred while reading (including EOF).
      */
     @Override
     public int readInt() throws IOException {
@@ -547,7 +547,7 @@ public class ChannelImageInputStream extends InputStream implements ImageInputSt
      * }
      *
      * @return The value of the next integer from the stream.
-     * @throws IOException If an error occured while reading (including EOF).
+     * @throws IOException If an error occurred while reading (including EOF).
      */
     @Override
     public long readUnsignedInt() throws IOException {
@@ -560,7 +560,7 @@ public class ChannelImageInputStream extends InputStream implements ImageInputSt
      * then delegates to {@link ByteBuffer#getLong()}.
      *
      * @return The value of the next long from the stream.
-     * @throws IOException If an error occured while reading (including EOF).
+     * @throws IOException If an error occurred while reading (including EOF).
      */
     @Override
     public long readLong() throws IOException {
@@ -574,7 +574,7 @@ public class ChannelImageInputStream extends InputStream implements ImageInputSt
      * then delegates to {@link ByteBuffer#getFloat()}.
      *
      * @return The value of the next float from the stream.
-     * @throws IOException If an error occured while reading (including EOF).
+     * @throws IOException If an error occurred while reading (including EOF).
      */
     @Override
     public float readFloat() throws IOException {
@@ -588,7 +588,7 @@ public class ChannelImageInputStream extends InputStream implements ImageInputSt
      * then delegates to {@link ByteBuffer#getDouble()}.
      *
      * @return The value of the next double from the stream.
-     * @throws IOException If an error occured while reading (including EOF).
+     * @throws IOException If an error occurred while reading (including EOF).
      */
     @Override
     public double readDouble() throws IOException {
@@ -600,7 +600,7 @@ public class ChannelImageInputStream extends InputStream implements ImageInputSt
      * Reads the new bytes until the next EOL.
      *
      * @return The next line, or {@code null} if the EOF has been reached.
-     * @throws IOException If an error occured while reading.
+     * @throws IOException If an error occurred while reading.
      */
     @Override
     public String readLine() throws IOException {
@@ -633,7 +633,7 @@ loop:   while ((c = read()) >= 0) {
      * Reads in a string that has been encoded using a UTF-8 string.
      *
      * @return The string reads from the stream.
-     * @throws IOException If an error occured while reading (including EOF).
+     * @throws IOException If an error occurred while reading (including EOF).
      */
     @Override
     public String readUTF() throws IOException {
@@ -672,7 +672,7 @@ loop:   while ((c = read()) >= 0) {
      *
      * @param  dest The buffer to be written to.
      * @param  length The maximum number of bytes to read.
-     * @throws IOException If an error occured while reading.
+     * @throws IOException If an error occurred while reading.
      */
     @Override
     public void readBytes(final IIOByteBuffer dest, int length) throws IOException {
@@ -693,7 +693,7 @@ loop:   while ((c = read()) >= 0) {
      *
      * @param  dest An array of bytes to be written to.
      * @return The number of bytes actually read, or -1 on EOF.
-     * @throws IOException If an error occured while reading.
+     * @throws IOException If an error occurred while reading.
      */
     @Override
     public int read(final byte[] dest) throws IOException {
@@ -709,7 +709,7 @@ loop:   while ((c = read()) >= 0) {
      * @param  offset The starting position withing {@code dest} to write.
      * @param  length The maximum number of bytes to read.
      * @return The number of bytes actually read, or -1 on EOF.
-     * @throws IOException If an error occured while reading.
+     * @throws IOException If an error occurred while reading.
      */
     @Override
     public int read(final byte[] dest, int offset, int length) throws IOException {
@@ -742,7 +742,7 @@ loop:   while ((c = read()) >= 0) {
      * }
      *
      * @param  dest An array of bytes to be written to.
-     * @throws IOException If an error occured while reading.
+     * @throws IOException If an error occurred while reading.
      */
     @Override
     public void readFully(final byte[] dest) throws IOException {
@@ -756,7 +756,7 @@ loop:   while ((c = read()) >= 0) {
      * @param  dest   An array of bytes to be written to.
      * @param  offset The starting position withing {@code dest} to write.
      * @param  length The number of bytes to read.
-     * @throws IOException If an error occured while reading (including EOF).
+     * @throws IOException If an error occurred while reading (including EOF).
      */
     @Override
     public void readFully(final byte[] dest, int offset, int length) throws IOException {
@@ -778,7 +778,7 @@ loop:   while ((c = read()) >= 0) {
      * @param  dest   An array of characters to be written to.
      * @param  offset The starting position withing {@code dest} to write.
      * @param  length The number of characters to read.
-     * @throws IOException If an error occured while reading (including EOF).
+     * @throws IOException If an error occurred while reading (including EOF).
      */
     @Override
     public void readFully(final char[] dest, int offset, int length) throws IOException {
@@ -804,7 +804,7 @@ loop:   while ((c = read()) >= 0) {
      * @param  dest   An array of shorts to be written to.
      * @param  offset The starting position withing {@code dest} to write.
      * @param  length The number of shorts to read.
-     * @throws IOException If an error occured while reading (including EOF).
+     * @throws IOException If an error occurred while reading (including EOF).
      */
     @Override
     public void readFully(final short[] dest, int offset, int length) throws IOException {
@@ -830,7 +830,7 @@ loop:   while ((c = read()) >= 0) {
      * @param  dest   An array of ints to be written to.
      * @param  offset The starting position withing {@code dest} to write.
      * @param  length The number of ints to read.
-     * @throws IOException If an error occured while reading (including EOF).
+     * @throws IOException If an error occurred while reading (including EOF).
      */
     @Override
     public void readFully(final int[] dest, int offset, int length) throws IOException {
@@ -856,7 +856,7 @@ loop:   while ((c = read()) >= 0) {
      * @param  dest   An array of longs to be written to.
      * @param  offset The starting position withing {@code dest} to write.
      * @param  length The number of longs to read.
-     * @throws IOException If an error occured while reading (including EOF).
+     * @throws IOException If an error occurred while reading (including EOF).
      */
     @Override
     public void readFully(final long[] dest, int offset, int length) throws IOException {
@@ -882,7 +882,7 @@ loop:   while ((c = read()) >= 0) {
      * @param  dest   An array of floats to be written to.
      * @param  offset The starting position withing {@code dest} to write.
      * @param  length The number of floats to read.
-     * @throws IOException If an error occured while reading (including EOF).
+     * @throws IOException If an error occurred while reading (including EOF).
      */
     @Override
     public void readFully(final float[] dest, int offset, int length) throws IOException {
@@ -908,7 +908,7 @@ loop:   while ((c = read()) >= 0) {
      * @param  dest   An array of doubles to be written to.
      * @param  offset The starting position withing {@code dest} to write.
      * @param  length The number of shorts to read.
-     * @throws IOException If an error occured while reading (including EOF).
+     * @throws IOException If an error occurred while reading (including EOF).
      */
     @Override
     public void readFully(final double[] dest, int offset, int length) throws IOException {
@@ -941,7 +941,7 @@ loop:   while ((c = read()) >= 0) {
      *
      * @param  target   The buffer to synchronize with the {@link #buffer}.
      * @param  dataSize The size of each data element in the {@code target} buffer, in bytes.
-     * @throws IOException If an error occured while reading (including EOF).
+     * @throws IOException If an error occurred while reading (including EOF).
      */
     private void syncView(final Buffer target, final int dataSize) throws IOException {
         int p = buffer.position();
@@ -980,7 +980,7 @@ loop:   while ((c = read()) >= 0) {
      *
      * @param  n The number of bytes to seek forward.
      * @return The number of bytes skipped.
-     * @throws IOException If an error occured while skiping.
+     * @throws IOException If an error occurred while skiping.
      */
     @Override
     public int skipBytes(final int n) throws IOException {
@@ -993,7 +993,7 @@ loop:   while ((c = read()) >= 0) {
      *
      * @param  n The number of bytes to seek forward.
      * @return The number of bytes skipped.
-     * @throws IOException If an error occured while skiping.
+     * @throws IOException If an error occurred while skiping.
      */
     @Override
     public long skipBytes(long n) throws IOException {
@@ -1033,7 +1033,7 @@ loop:   while ((c = read()) >= 0) {
      * location. The bit offset is set to 0.
      *
      * @param  pos The new stream position.
-     * @throws IOException If an I/O error occured.
+     * @throws IOException If an I/O error occurred.
      * @throws IllegalArgumentException If the given position is before the
      *         {@linkplain #getFlushedPosition flushed position}.
      */
@@ -1087,7 +1087,7 @@ loop:   while ((c = read()) >= 0) {
      *     flushBefore(getStreamPosition());
      * }
      *
-     * @throws IOException If an I/O error occured.
+     * @throws IOException If an I/O error occurred.
      */
     @Override
     public void flush() throws IOException {
@@ -1100,7 +1100,7 @@ loop:   while ((c = read()) >= 0) {
      * portion of the stream will result in an {@link IndexOutOfBoundsException}.
      *
      * @param  pos The length of the stream prefix that may be flushed.
-     * @throws IOException If an I/O error occured.
+     * @throws IOException If an I/O error occurred.
      */
     @Override
     public void flushBefore(final long pos) throws IOException {
@@ -1163,7 +1163,7 @@ loop:   while ((c = read()) >= 0) {
     /**
      * Closes the {@linkplain #channel}.
      *
-     * @throws IOException If an error occured while closing the channel.
+     * @throws IOException If an error occurred while closing the channel.
      */
     @Override
     public void close() throws IOException {

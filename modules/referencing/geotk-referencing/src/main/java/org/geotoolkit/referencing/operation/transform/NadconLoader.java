@@ -44,7 +44,7 @@ import static org.geotoolkit.internal.io.Installation.NADCON;
 
 /**
  * Base class for loaders of {@link NadconTransform} data. This is a temporary
- * object used only at loading time and discarted once the transform is built.
+ * object used only at loading time and discarded once the transform is built.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.10

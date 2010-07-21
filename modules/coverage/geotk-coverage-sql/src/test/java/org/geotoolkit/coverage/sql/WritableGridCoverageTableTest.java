@@ -81,7 +81,7 @@ public final class WritableGridCoverageTableTest extends CatalogTestBase {
     /**
      * Creates a new temporary layer in which to insert the new images.
      *
-     * @throws SQLException If an error occured while creating the temporary layer.
+     * @throws SQLException If an error occurred while creating the temporary layer.
      */
     @Before
     public void createTemporaryLayer() throws SQLException {
@@ -96,7 +96,7 @@ public final class WritableGridCoverageTableTest extends CatalogTestBase {
     /**
      * Deletes the temporary layer and all coverages included in it.
      *
-     * @throws SQLException If an error occured while deleting the temporary layer.
+     * @throws SQLException If an error occurred while deleting the temporary layer.
      */
     @After
     public void deleteTemporaryLayer() throws SQLException {
@@ -113,7 +113,7 @@ public final class WritableGridCoverageTableTest extends CatalogTestBase {
      * from the {@code geotk-coverageio} module. The {@code ".txt"} file is completed by
      * {@code "matrix.tfw"} and {@code "matrix.prj"} files.
      *
-     * @throws Exception If a SQL, I/O or referencing error occured.
+     * @throws Exception If a SQL, I/O or referencing error occurred.
      *
      * @since 3.14
      */
@@ -183,7 +183,7 @@ public final class WritableGridCoverageTableTest extends CatalogTestBase {
      * This test creates a temporary layer and fills it with the same data than
      * the ones declared in the {@value LayerTableTest#GEOSTROPHIC_CURRENT} layer.
      *
-     * @throws Exception If a SQL, I/O or referencing error occured.
+     * @throws Exception If a SQL, I/O or referencing error occurred.
      */
     @Test
     public void testGeostrophicCurrent2D() throws Exception {

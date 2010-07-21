@@ -72,7 +72,7 @@ public final class CategoryTest {
     /**
      * Makes sure that qualitative category produce the expected result.
      *
-     * @throws TransformException If an error occured while transforming a value.
+     * @throws TransformException If an error occurred while transforming a value.
      */
     @Test
     public void testQualitativeCategory() throws TransformException {
@@ -108,7 +108,7 @@ public final class CategoryTest {
      * This test check also if the default {@link MathTransform1D}
      * for a linear relation is right.
      *
-     * @throws TransformException If an error occured while transforming a value.
+     * @throws TransformException If an error occurred while transforming a value.
      */
     @Test
     public void testLinearCategory() throws TransformException {

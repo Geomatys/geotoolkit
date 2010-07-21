@@ -165,7 +165,7 @@ public class IntegerList extends AbstractList<Integer> implements RandomAccess, 
 
     /**
      * Sets the list size to the given value. If the new size is lower than previous size,
-     * then the elements after the new size are discarted. If the new size is greater than
+     * then the elements after the new size are discarded. If the new size is greater than
      * the previous one, then the extra elements are initialized to 0.
      *
      * @param size The new size.

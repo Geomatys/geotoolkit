@@ -145,7 +145,7 @@ public class EarthGravitationalModel extends VerticalTransform {
      * @return The model.
      * @throws IllegalArgumentException If {@code nmax} is not greater than zero,
      *         or if the given datum is not a supported one.
-     * @throws FactoryException If an error occured while loading the data.
+     * @throws FactoryException If an error occurred while loading the data.
      */
     public static EarthGravitationalModel create(final GeodeticDatum datum, final int nmax)
             throws IllegalArgumentException, FactoryException
@@ -165,7 +165,7 @@ public class EarthGravitationalModel extends VerticalTransform {
     /**
      * Creates a model for the WGS84 datum with the default maximum degree and order.
      *
-     * @throws FactoryException If an error occured while loading the data.
+     * @throws FactoryException If an error occurred while loading the data.
      */
     protected EarthGravitationalModel() throws FactoryException {
         this(DefaultGeodeticDatum.WGS84, DEFAULT_ORDER);
@@ -180,7 +180,7 @@ public class EarthGravitationalModel extends VerticalTransform {
      * @param  nmax  The maximum degree and order.
      * @throws IllegalArgumentException If {@code nmax} is not greater than zero,
      *         or if the given datum is not a supported one.
-     * @throws FactoryException If an error occured while loading the data.
+     * @throws FactoryException If an error occurred while loading the data.
      */
     protected EarthGravitationalModel(final GeodeticDatum datum, final int nmax)
             throws IllegalArgumentException, FactoryException

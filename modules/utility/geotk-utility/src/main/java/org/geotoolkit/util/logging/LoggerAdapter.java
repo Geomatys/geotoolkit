@@ -36,7 +36,7 @@ import java.util.regex.Pattern;
  * ones. Subclasses should implement those methods in order to map Java logging levels to
  * the backend logging framework.
  * <p>
- * All {@link #log(Level,String) log} methods are overriden in order to redirect to one of the
+ * All {@link #log(Level,String) log} methods are overridden in order to redirect to one of the
  * above-cited methods. Note that this is the opposite approach than the Java logging framework
  * one, which implements everything on top of {@link Logger#log(LogRecord)}. This adapter is
  * defined in terms of {@link #severe(String) severe} &hellip; {@link #finest(String) finest}
@@ -395,7 +395,7 @@ public abstract class LoggerAdapter extends Logger {
             }
         } else {
             // The message needs to be localized. The bundle was null but maybe bundleName is not.
-            // Futhermore subclass may have overriden the 'logrb' methods.
+            // Futhermore subclass may have overridden the 'logrb' methods.
             if (useThrown) {
                 logrb(level, sourceClass, sourceMethod, bundleName, message, thrown);
             } else {
@@ -523,8 +523,8 @@ public abstract class LoggerAdapter extends Logger {
      * sourceMethod, message, params)</code> where the {@code params} array is built from the
      * {@code param} object.
      * <p>
-     * Note that {@code sourceClass} and {@code sourceMethod} will be discarted unless the
-     * target {@link #logp(Level,String,String,String) logp} method has been overriden.
+     * Note that {@code sourceClass} and {@code sourceMethod} will be discarded unless the
+     * target {@link #logp(Level,String,String,String) logp} method has been overridden.
      *
      * @param level        One of the message level identifiers.
      * @param sourceClass  Name of class that issued the logging request.
@@ -546,8 +546,8 @@ public abstract class LoggerAdapter extends Logger {
      * immediately, then delegates to <code>{@linkplain #logp(Level,String,String,String)
      * logp}(level, sourceClass, sourceMethod, message)</code>.
      * <p>
-     * Note that {@code sourceClass} and {@code sourceMethod} will be discarted unless the
-     * target {@link #logp(Level,String,String,String) logp} method has been overriden.
+     * Note that {@code sourceClass} and {@code sourceMethod} will be discarded unless the
+     * target {@link #logp(Level,String,String,String) logp} method has been overridden.
      *
      * @param level        One of the message level identifiers.
      * @param sourceClass  Name of class that issued the logging request.

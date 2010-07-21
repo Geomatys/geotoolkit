@@ -57,7 +57,7 @@ public final class SQLBuilder {
      * Creates a new {@code SQLBuilder} initialized from the given database metadata.
      *
      * @param  metadata The database metadata.
-     * @throws SQLException If an error occured while fetching the database metadata.
+     * @throws SQLException If an error occurred while fetching the database metadata.
      */
     public SQLBuilder(final DatabaseMetaData metadata) throws SQLException {
         dialect = Dialect.guess(metadata);

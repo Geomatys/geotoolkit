@@ -274,7 +274,7 @@ public class OperationJAI extends Operation2D {
      * @param  parameters List of name value pairs for the parameters required for the operation.
      * @param  hints A set of rendering hints, or {@code null} if none.
      * @return The result as a grid coverage.
-     * @throws CoverageProcessingException If an error occured while applying the operation.
+     * @throws CoverageProcessingException If an error occurred while applying the operation.
      *
      * @see #deriveGridCoverage
      */

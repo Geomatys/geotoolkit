@@ -80,7 +80,7 @@ public class DefaultProcessStep extends MetadataEntity implements ProcessStep {
 
     /**
      * Date and time or range of date and time on or over which the process step occurred,
-     * in milliseconds ellapsed since January 1st, 1970. If there is no such date, then this
+     * in milliseconds elapsed since January 1st, 1970. If there is no such date, then this
      * field is set to the special value {@link Long#MIN_VALUE}.
      */
     private long date;

@@ -199,7 +199,7 @@ public class ImagingParameters extends AbstractParameter implements ParameterVal
      *
      * @return The array which is backing {@link #values}. This array is returned only in order
      *         to allow {@link #clone} to modify the values right after the clone. In other cases,
-     *         this array should be discarted.
+     *         this array should be discarded.
      */
     private GeneralParameterValue[] createElements() {
         final ImagingParameterDescriptors descriptor = (ImagingParameterDescriptors) this.descriptor;

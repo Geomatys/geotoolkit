@@ -205,7 +205,7 @@ public interface GridCoverageReference extends CoverageStack.Element {
      *
      * @param  recycle An optional existing instance to recycle if possible, or {@code null}.
      * @return A reader which can be used for reading the grid coverage.
-     * @throws CoverageStoreException if an error occured while creating the reader.
+     * @throws CoverageStoreException if an error occurred while creating the reader.
      *
      * @since 3.14
      */
@@ -223,7 +223,7 @@ public interface GridCoverageReference extends CoverageStack.Element {
      * @param  listeners Objects to inform about progress, or {@code null} if none.
      * @return The coverage.
      *
-     * @throws IOException if an error occured while reading the image.
+     * @throws IOException if an error occurred while reading the image.
      * @throws CancellationException if {@link #abort()} has been invoked during the reading process.
      */
     @Override
@@ -241,7 +241,7 @@ public interface GridCoverageReference extends CoverageStack.Element {
      * @param  listeners Objects to inform about progress, or {@code null} if none.
      * @return The coverage.
      *
-     * @throws CoverageStoreException if an error occured while reading the image.
+     * @throws CoverageStoreException if an error occurred while reading the image.
      * @throws CancellationException if {@link #abort()} has been invoked during the reading process.
      */
     GridCoverage2D read(CoverageEnvelope envelope, IIOListeners listeners)

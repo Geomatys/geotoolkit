@@ -82,7 +82,7 @@ public class IdentifiedObjectFinder {
      * in use.
      * <p>
      * If this field is initialized only when needed, then the following methods
-     * must be overriden and ensure that the initialization has been performed:
+     * must be overridden and ensure that the initialization has been performed:
      * <p>
      * <ul>
      *   <li>{@link #getAuthority}</li>
@@ -91,7 +91,7 @@ public class IdentifiedObjectFinder {
      *   <li>{@link #findIdentifier} (see note below)</li>
      * </ul>
      * <p>
-     * Note: the {@code find} methods do not need to be overriden if all other methods
+     * Note: the {@code find} methods do not need to be overridden if all other methods
      * are overrided and the {@link #create} method in overrided too.
      */
     AuthorityFactoryProxy proxy;
@@ -126,7 +126,7 @@ public class IdentifiedObjectFinder {
 
     /**
      * Returns the type of the objects to be created by the proxy instance.
-     * This method needs to be overriden by the sub-classes that do not define a proxy.
+     * This method needs to be overridden by the sub-classes that do not define a proxy.
      */
     Class<? extends IdentifiedObject> getObjectType() {
         return proxy.getObjectType();
@@ -148,7 +148,7 @@ public class IdentifiedObjectFinder {
      * Returns the authority of the factory examined by this finder.
      *
      * @return The authority of the factory used for the searches.
-     * @throws FactoryException If an error occured while fetching the authority.
+     * @throws FactoryException If an error occurred while fetching the authority.
      */
     public Citation getAuthority() throws FactoryException {
         return proxy.getAuthorityFactory().getAuthority();
@@ -211,7 +211,7 @@ public class IdentifiedObjectFinder {
      *
      * @param  object The object looked up.
      * @return The identified object, or {@code null} if not found.
-     * @throws FactoryException if an error occured while creating an object.
+     * @throws FactoryException if an error occurred while creating an object.
      */
     public IdentifiedObject find(final IdentifiedObject object) throws FactoryException {
         /*
@@ -244,7 +244,7 @@ public class IdentifiedObjectFinder {
      *
      * @param  object The object looked up.
      * @return The identifier of the given object, or {@code null} if none were found.
-     * @throws FactoryException if an error occured while creating an object.
+     * @throws FactoryException if an error occurred while creating an object.
      */
     public String findIdentifier(final IdentifiedObject object) throws FactoryException {
         final IdentifiedObject candidate = find(object);
@@ -254,9 +254,9 @@ public class IdentifiedObjectFinder {
     /**
      * Returns the identifier for the specified object. This method is invoked only from
      * {@link #findIdentifier(IdentifiedObject)}, either the method defined above or its
-     * overriden implementation defined in {@link CachingAuthorityFactory}.
+     * overridden implementation defined in {@link CachingAuthorityFactory}.
      *
-     * @throws FactoryException If an error occured while fetching the identifier.
+     * @throws FactoryException If an error occurred while fetching the identifier.
      */
     final String getIdentifier(final IdentifiedObject object) throws FactoryException {
         Citation authority = getAuthority();
@@ -292,7 +292,7 @@ public class IdentifiedObjectFinder {
      *
      * @param  object The object looked up.
      * @return The identified object, or {@code null} if not found.
-     * @throws FactoryException if an error occured while creating an object.
+     * @throws FactoryException if an error occurred while creating an object.
      *
      * @see #createFromCodes
      * @see #createFromNames
@@ -335,7 +335,7 @@ public class IdentifiedObjectFinder {
      *
      * @param  object The object looked up.
      * @return The identified object, or {@code null} if not found.
-     * @throws FactoryException if an error occured while creating an object.
+     * @throws FactoryException if an error occurred while creating an object.
      *
      * @see #createFromCodes
      * @see #createFromIdentifiers
@@ -396,7 +396,7 @@ public class IdentifiedObjectFinder {
      *
      * @param  object The object looked up.
      * @return The identified object, or {@code null} if not found.
-     * @throws FactoryException if an error occured while scanning through authority codes.
+     * @throws FactoryException if an error occurred while scanning through authority codes.
      *
      * @see #createFromIdentifiers
      * @see #createFromNames
@@ -445,14 +445,14 @@ public class IdentifiedObjectFinder {
      * the first attempt {@code (attempt == 0)}, and returns {@code null} in all other cases.
      *
      * {@section Overriding}
-     * This method is aimed to be overriden, but subclasses shall <strong>not</strong>
+     * This method is aimed to be overridden, but subclasses shall <strong>not</strong>
      * override it with caching service. For example do not delegate the creation to a
      * {@link CachingAuthorityFactory} instance.
      *
      * @param  code The authority code for which to create an object.
      * @param  attempt The number of previous attempt before this one.
      * @return The identified object for the given code, or {@code null} to stop attempts.
-     * @throws FactoryException if an error occured while creating the object.
+     * @throws FactoryException if an error occurred while creating the object.
      *
      * @since 3.10
      */
@@ -481,7 +481,7 @@ public class IdentifiedObjectFinder {
      *
      * @param  object The object looked up.
      * @return A set of code candidates.
-     * @throws FactoryException if an error occured while fetching the set of code candidates.
+     * @throws FactoryException if an error occurred while fetching the set of code candidates.
      */
     protected Set<String> getCodeCandidates(final IdentifiedObject object) throws FactoryException {
         return proxy.getAuthorityCodes();

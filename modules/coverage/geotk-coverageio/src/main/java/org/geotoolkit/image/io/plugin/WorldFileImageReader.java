@@ -98,7 +98,7 @@ public class WorldFileImageReader extends ImageReaderAdapter {
      * If the provider is unknown, use the next constructor below instead.
      *
      * @param  provider The {@link ImageReaderSpi} that is constructing this object.
-     * @throws IOException If an error occured while creating the {@linkplain #main main} reader.
+     * @throws IOException If an error occurred while creating the {@linkplain #main main} reader.
      */
     public WorldFileImageReader(final Spi provider) throws IOException {
         super(provider);
@@ -147,7 +147,7 @@ public class WorldFileImageReader extends ImageReaderAdapter {
      *         identifiers are allowed but subclass-specific.
      * @return The given kind of input typically as a {@link File} or {@link java.net.URL}
      *         object, or {@code null} if there is no input for the given identifier.
-     * @throws IOException If an error occured while creating the input.
+     * @throws IOException If an error occurred while creating the input.
      *
      * @see WorldFileImageWriter#createOutput(String)
      */
@@ -348,7 +348,7 @@ public class WorldFileImageReader extends ImageReaderAdapter {
          *
          * @param  source The input (typically a {@link File}) to be decoded.
          * @return {@code true} if it is likely that the file can be decoded.
-         * @throws IOException If an error occured while reading the file.
+         * @throws IOException If an error occurred while reading the file.
          */
         @Override
         public boolean canDecodeInput(Object source) throws IOException {

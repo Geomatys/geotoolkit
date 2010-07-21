@@ -73,7 +73,7 @@ abstract class AbstractAuthorityFactoryProxy<T> {
      * @param  factory The factory to use for creating the object.
      * @param  code    The code for which to create an object.
      * @return The object created from the given code.
-     * @throws FactoryException If an error occured while creating the object.
+     * @throws FactoryException If an error occurred while creating the object.
      */
     public abstract T create(AbstractAuthorityFactory factory, String code) throws FactoryException;
 

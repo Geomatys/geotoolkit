@@ -746,7 +746,7 @@ public class IndexedResourceBundle extends ResourceBundle {
     }
 
     /**
-     * Invoked when an unexpected exception occured in the {@link #format} method.
+     * Invoked when an unexpected exception occurred in the {@link #format} method.
      */
     private static void unexpectedException(final RuntimeException exception) {
         Logging.unexpectedException(IndexedResourceBundle.class, "format", exception);

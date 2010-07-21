@@ -151,7 +151,7 @@ public final class MosaicReadWriteTest {
      * If this test fails, then all other tests in the file are likely to
      * fail as well.
      *
-     * @throws IOException If an I/O error occured.
+     * @throws IOException If an I/O error occurred.
      */
     @Test
     public void testInputTiles() throws IOException {
@@ -178,7 +178,7 @@ public final class MosaicReadWriteTest {
      * {@linkplain MosaicImageReadParam#setSubsamplingChangeAllowed(boolean) subsampling changes}.
      * This is aimed to be a relatively simple and straightforward test.
      *
-     * @throws IOException If an I/O error occured.
+     * @throws IOException If an I/O error occurred.
      */
     @Test
     public void testInputMosaic() throws IOException {
@@ -249,7 +249,7 @@ public final class MosaicReadWriteTest {
      * Tests writing the mosaic. After the test, the created tiles will be
      * read and their pixel values compared against the expected checksum.
      *
-     * @throws IOException If an I/O error occured.
+     * @throws IOException If an I/O error occurred.
      */
     @Test
     public void testWriteMosaic() throws IOException {
@@ -301,7 +301,7 @@ public final class MosaicReadWriteTest {
      * Tests again writing a mosaic, but this time with an operation applied.
      * This operation add an alpha channel to the tiles.
      *
-     * @throws IOException If an I/O error occured.
+     * @throws IOException If an I/O error occurred.
      */
     @Test
     public void testTransparency() throws IOException {

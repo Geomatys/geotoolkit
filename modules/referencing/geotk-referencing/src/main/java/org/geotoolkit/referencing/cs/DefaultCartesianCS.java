@@ -73,7 +73,7 @@ public class DefaultCartesianCS extends DefaultAffineCS implements CartesianCS {
      * <var>{@linkplain DefaultCoordinateSystemAxis#NORTHING Northing}</var>
      * axis in metres.
      */
-    public static DefaultCartesianCS PROJECTED = new DefaultCartesianCS(
+    public static final DefaultCartesianCS PROJECTED = new DefaultCartesianCS(
                     name(Vocabulary.Keys.PROJECTED),
                     DefaultCoordinateSystemAxis.EASTING,
                     DefaultCoordinateSystemAxis.NORTHING);
@@ -87,7 +87,7 @@ public class DefaultCartesianCS extends DefaultAffineCS implements CartesianCS {
      *
      * @see DefaultSphericalCS#GEOCENTRIC
      */
-    public static DefaultCartesianCS GEOCENTRIC = new DefaultCartesianCS(
+    public static final DefaultCartesianCS GEOCENTRIC = new DefaultCartesianCS(
                     name(Vocabulary.Keys.GEOCENTRIC),
                     DefaultCoordinateSystemAxis.GEOCENTRIC_X,
                     DefaultCoordinateSystemAxis.GEOCENTRIC_Y,
@@ -99,7 +99,7 @@ public class DefaultCartesianCS extends DefaultAffineCS implements CartesianCS {
      * <var>{@linkplain DefaultCoordinateSystemAxis#Y y}</var>
      * axis in metres.
      */
-    public static DefaultCartesianCS GENERIC_2D = new DefaultCartesianCS(
+    public static final DefaultCartesianCS GENERIC_2D = new DefaultCartesianCS(
                     name(Vocabulary.Keys.CARTESIAN_2D),
                     DefaultCoordinateSystemAxis.X,
                     DefaultCoordinateSystemAxis.Y);
@@ -111,7 +111,7 @@ public class DefaultCartesianCS extends DefaultAffineCS implements CartesianCS {
      * <var>{@linkplain DefaultCoordinateSystemAxis#Z z}</var>
      * axis in metres.
      */
-    public static DefaultCartesianCS GENERIC_3D = new DefaultCartesianCS(
+    public static final DefaultCartesianCS GENERIC_3D = new DefaultCartesianCS(
                     name(Vocabulary.Keys.CARTESIAN_3D),
                     DefaultCoordinateSystemAxis.X,
                     DefaultCoordinateSystemAxis.Y,
@@ -123,7 +123,7 @@ public class DefaultCartesianCS extends DefaultAffineCS implements CartesianCS {
      * <var>{@linkplain DefaultCoordinateSystemAxis#ROW row}</var>
      * axis.
      */
-    public static DefaultCartesianCS GRID = new DefaultCartesianCS(
+    public static final DefaultCartesianCS GRID = new DefaultCartesianCS(
                     name(Vocabulary.Keys.GRID),
                     DefaultCoordinateSystemAxis.COLUMN,
                     DefaultCoordinateSystemAxis.ROW);
@@ -136,7 +136,7 @@ public class DefaultCartesianCS extends DefaultAffineCS implements CartesianCS {
      *
      * @since 2.2
      */
-    public static DefaultCartesianCS DISPLAY = new DefaultCartesianCS(
+    public static final DefaultCartesianCS DISPLAY = new DefaultCartesianCS(
                     name(Vocabulary.Keys.DISPLAY),
                     DefaultCoordinateSystemAxis.DISPLAY_X,
                     DefaultCoordinateSystemAxis.DISPLAY_Y);

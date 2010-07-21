@@ -967,7 +967,7 @@ search:             if (DefaultCoordinateSystemAxis.isCompassDirection(axis.getD
      *         should be performed (may be slow). Otherwise only a fast lookup based on embedded
      *         identifiers and names will be performed.
      * @return The identifier, or {@code null} if not found.
-     * @throws FactoryException If an unexpected failure occured during the search.
+     * @throws FactoryException If an unexpected failure occurred during the search.
      *
      * @see AbstractAuthorityFactory#getIdentifiedObjectFinder(Class)
      * @see IdentifiedObjectFinder#findIdentifier(IdentifiedObject)
@@ -1009,7 +1009,7 @@ search:             if (DefaultCoordinateSystemAxis.isCompassDirection(axis.getD
      *         should be performed (may be slow). Otherwise only a fast lookup based on embedded
      *         identifiers and names will be performed.
      * @return The CRS identifier, or {@code null} if none was found or if the given CRS was null.
-     * @throws FactoryException If an unexpected failure occured during the search.
+     * @throws FactoryException If an unexpected failure occurred during the search.
      *
      * @category information
      * @since 2.5
@@ -1055,7 +1055,7 @@ search:             if (DefaultCoordinateSystemAxis.isCompassDirection(axis.getD
      *         should be performed (may be slow). Otherwise only a fast lookup based on embedded
      *         identifiers and names will be performed.
      * @return The CRS identifier, or {@code null} if none was found or if the given CRS was null.
-     * @throws FactoryException If an unexpected failure occured during the search.
+     * @throws FactoryException If an unexpected failure occurred during the search.
      *
      * @category information
      * @since 2.5
@@ -1869,7 +1869,7 @@ search:             if (DefaultCoordinateSystemAxis.isCompassDirection(axis.getD
     }
 
     /**
-     * Invoked when an unexpected exception occured. Those exceptions must be non-fatal,
+     * Invoked when an unexpected exception occurred. Those exceptions must be non-fatal,
      * i.e. the caller <strong>must</strong> have a raisonable fallback (otherwise it
      * should propagate the exception).
      */

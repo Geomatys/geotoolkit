@@ -184,7 +184,7 @@ public class TransformedAuthorityFactory extends AuthorityFactoryAdapter {
      *
      * @param  units The units to replace.
      * @return The new units, or {@code units} if no change were needed.
-     * @throws FactoryException if an error occured while creating the new units.
+     * @throws FactoryException if an error occurred while creating the new units.
      */
     @Override
     protected Unit<?> replace(final Unit<?> units) throws FactoryException {
@@ -198,7 +198,7 @@ public class TransformedAuthorityFactory extends AuthorityFactoryAdapter {
      *
      * @param  direction The axis direction to replace.
      * @return The new direction, or {@code direction} if no change were needed.
-     * @throws FactoryException if an error occured while creating the new axis direction.
+     * @throws FactoryException if an error occurred while creating the new axis direction.
      */
     protected AxisDirection replace(final AxisDirection direction) throws FactoryException {
         return direction;
@@ -210,7 +210,7 @@ public class TransformedAuthorityFactory extends AuthorityFactoryAdapter {
      *
      * @param  axis The coordinate system axis to replace.
      * @return The new coordinate system axis, or {@code axis} if no change were needed.
-     * @throws FactoryException if an error occured while creating the new coordinate system axis.
+     * @throws FactoryException if an error occurred while creating the new coordinate system axis.
      */
     @Override
     protected CoordinateSystemAxis replace(CoordinateSystemAxis axis) throws FactoryException {
@@ -260,7 +260,7 @@ public class TransformedAuthorityFactory extends AuthorityFactoryAdapter {
      *
      * @param  cs The coordinate system to replace.
      * @return The new coordinate system, or {@code cs} if no change were needed.
-     * @throws FactoryException if an error occured while creating the new coordinate system.
+     * @throws FactoryException if an error occurred while creating the new coordinate system.
      */
     @Override
     @SuppressWarnings("unchecked") // Parameterized type must not appear in public API.
@@ -292,7 +292,7 @@ public class TransformedAuthorityFactory extends AuthorityFactoryAdapter {
      *
      * @param  datum The datum to replace.
      * @return The new datum, or {@code datum} if no change were needed.
-     * @throws FactoryException if an error occured while creating the new datum.
+     * @throws FactoryException if an error occurred while creating the new datum.
      */
     @Override
     @SuppressWarnings("unchecked") // Parameterized type must not appear in public API.
@@ -309,7 +309,7 @@ public class TransformedAuthorityFactory extends AuthorityFactoryAdapter {
      *
      * @param  crs The coordinate reference system to replace.
      * @return A new CRS, or {@code crs} if no change were needed.
-     * @throws FactoryException if an error occured while creating the new CRS object.
+     * @throws FactoryException if an error occurred while creating the new CRS object.
      */
     @Override
     @SuppressWarnings("unchecked") // Parameterized type must not appear in public API.
@@ -408,7 +408,7 @@ public class TransformedAuthorityFactory extends AuthorityFactoryAdapter {
      *
      * @param  operation The coordinate operation to replace.
      * @return A new operation, or {@code operation} if no change were needed.
-     * @throws FactoryException if an error occured while creating the new operation object.
+     * @throws FactoryException if an error occurred while creating the new operation object.
      */
     @Override
     @SuppressWarnings("unchecked") // Parameterized type must not appear in public API.

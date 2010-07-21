@@ -510,7 +510,7 @@ public class GeneralMatrix extends GMatrix implements XMatrix {
      *
      * @param  file The file to read.
      * @return The matrix parsed from the file.
-     * @throws IOException if an error occured while reading the file.
+     * @throws IOException if an error occurred while reading the file.
      *
      * @since 2.2
      */
@@ -529,7 +529,7 @@ public class GeneralMatrix extends GMatrix implements XMatrix {
      * @param  in The stream to read.
      * @param  locale The locale for the numbers to be parsed.
      * @return The matrix parsed from the stream.
-     * @throws IOException if an error occured while reading the stream.
+     * @throws IOException if an error occurred while reading the stream.
      *
      * @since 2.2
      */

@@ -114,7 +114,7 @@ public abstract class ImageWriterAdapter extends SpatialImageWriter {
      * If the provider is unknown, use the next constructor below instead.
      *
      * @param  provider The {@link ImageWriterSpi} that is constructing this object.
-     * @throws IOException If an error occured while creating the {@linkplain #main} writer.
+     * @throws IOException If an error occurred while creating the {@linkplain #main} writer.
      */
     protected ImageWriterAdapter(final Spi provider) throws IOException {
         this(provider, provider.main.createWriterInstance());
@@ -181,7 +181,7 @@ public abstract class ImageWriterAdapter extends SpatialImageWriter {
      * @return The output to give to the identified writer, or {@code null} if this method can
      *         not create such output.
      * @throws IllegalStateException if the {@linkplain #output output} has not been set.
-     * @throws IOException If an error occured while creating the output for the writer.
+     * @throws IOException If an error occurred while creating the output for the writer.
      *
      * @see ImageReaderAdapter#createInput(String)
      */
@@ -211,7 +211,7 @@ public abstract class ImageWriterAdapter extends SpatialImageWriter {
      * The default implementation does nothing. Subclasses can override this method
      * for performing additional initialization.
      *
-     * @throws IOException If an error occured while initializing the main writer.
+     * @throws IOException If an error occurred while initializing the main writer.
      */
     protected void initialize() throws IOException {
     }
@@ -270,7 +270,7 @@ public abstract class ImageWriterAdapter extends SpatialImageWriter {
      * writing spatial metadata.
      *
      * @param  metadata    The stream metadata, or {@code null} if none.
-     * @throws IOException If an error occured while writing the metadata.
+     * @throws IOException If an error occurred while writing the metadata.
      *
      * @see org.geotoolkit.image.io.metadata.MetadataHelper
      */
@@ -287,7 +287,7 @@ public abstract class ImageWriterAdapter extends SpatialImageWriter {
      * @param  metadata    The stream metadata, or {@code null} if none.
      * @param  imageIndex  The index of the image being written.
      * @param  param       The user-specified parameter, or {@code null} if none.
-     * @throws IOException If an error occured while writing the metadata.
+     * @throws IOException If an error occurred while writing the metadata.
      *
      * @see org.geotoolkit.image.io.metadata.MetadataHelper
      */
@@ -590,7 +590,7 @@ public abstract class ImageWriterAdapter extends SpatialImageWriter {
      * overriding by subclasses. Overriding methods shall make sure that {@code super.close()}
      * is invoked even in case of failure.
      *
-     * @throws IOException if an error occured while closing the stream.
+     * @throws IOException if an error occurred while closing the stream.
      */
     @Override
     protected void close() throws IOException {

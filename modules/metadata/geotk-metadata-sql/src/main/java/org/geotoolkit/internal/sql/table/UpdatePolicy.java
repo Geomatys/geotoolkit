@@ -30,7 +30,7 @@ package org.geotoolkit.internal.sql.table;
  */
 public enum UpdatePolicy {
     /**
-     * The new record is discarted and the existing one is keept unchanged.
+     * The new record is discarded and the existing one is keept unchanged.
      */
     KEEP_EXISTING,
 

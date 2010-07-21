@@ -243,7 +243,7 @@ public class EpsgInstaller implements Callable<EpsgInstaller.Result> {
      *
      * @param  md The database metadata, used for determining the identifier case.
      * @return The schema name, or {@code ""} if there is none.
-     * @throws SQLException If an error occured while querying metadata.
+     * @throws SQLException If an error occurred while querying metadata.
      *
      * @since 3.05
      */
@@ -316,7 +316,7 @@ public class EpsgInstaller implements Callable<EpsgInstaller.Result> {
      * EPSG schema.
      *
      * @return {@code true} if the database exists, or {@code false} otherwise.
-     * @throws FactoryException If an error occured while querying the database.
+     * @throws FactoryException If an error occurred while querying the database.
      *
      * @since 3.05
      */
@@ -354,7 +354,7 @@ public class EpsgInstaller implements Callable<EpsgInstaller.Result> {
      * Processes to the creation of the EPSG database.
      *
      * @return The result of the EPSG database creation.
-     * @throws FactoryException If an error occured while running the scripts.
+     * @throws FactoryException If an error occurred while running the scripts.
      */
     @Override
     public synchronized Result call() throws FactoryException {
@@ -398,8 +398,8 @@ public class EpsgInstaller implements Callable<EpsgInstaller.Result> {
      *
      * @param  runner A newly initialized runner. It will be configured by this method.
      * @return The result of the EPSG database creation.
-     * @throws IOException If an error occured while reading the input.
-     * @throws SQLException If an error occured while executing a SQL statement.
+     * @throws IOException If an error occurred while reading the input.
+     * @throws SQLException If an error occurred while executing a SQL statement.
      */
     final synchronized Result call(final EpsgScriptRunner runner) throws SQLException, IOException {
         final long start = System.currentTimeMillis();
@@ -454,16 +454,16 @@ public class EpsgInstaller implements Callable<EpsgInstaller.Result> {
         public final int numRows;
 
         /**
-         * The ellapsed time, in milliseconds.
+         * The elapsed time, in milliseconds.
          */
-        public final long ellapsedTime;
+        public final long elapsedTime;
 
         /**
          * Do not allow instantiation from outside this package.
          */
         Result(final int numRows, final long time) {
             this.numRows = numRows;
-            this.ellapsedTime = time;
+            this.elapsedTime = time;
         }
 
         /**
@@ -472,7 +472,7 @@ public class EpsgInstaller implements Callable<EpsgInstaller.Result> {
          */
         @Override
         public String toString() {
-            return Descriptions.format(Descriptions.Keys.INSERTED_ROWS_$2, numRows, ellapsedTime/1000.0);
+            return Descriptions.format(Descriptions.Keys.INSERTED_ROWS_$2, numRows, elapsedTime/1000.0);
         }
     }
 }

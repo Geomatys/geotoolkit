@@ -563,7 +563,7 @@ public class Database implements Localized {
      *
      * @param  pk The name of the primary key column.
      * @return An identifier generator for the given column.
-     * @throws SQLException If an error occured while creating the generator.
+     * @throws SQLException If an error occurred while creating the generator.
      */
     final NameGenerator getIdentifierGenerator(final String pk) throws SQLException {
         final Session s = getLocalCache();
@@ -590,7 +590,7 @@ public class Database implements Localized {
     /**
      * Closes all connections and restores the attributes to their initial state.
      *
-     * @throws SQLException If an error occured while closing the connection.
+     * @throws SQLException If an error occurred while closing the connection.
      */
     public void reset() throws SQLException {
         final Session[] s;

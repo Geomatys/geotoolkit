@@ -343,7 +343,7 @@ public class MosaicPerformanceGraph extends Plot2D implements Dialog {
      *   <li><p>An instance of {@code Delayed} is given to the {@code plotLater} method.</p></li>
      *   <li><p>A background thread will sleep the specified amount of time. If {@code plotLater}
      *       is invoked again while the background thread is sleeping, then the old {@code Delayed}
-     *       instance is discarted and replaced by the new one.</p></li>
+     *       instance is discarded and replaced by the new one.</p></li>
      *   <li><p>After the above delay, the {@link #getTileManager()} method is
      *       invoked in the background thread. The returned mosaic is given to
      *       {@link MosaicPerformanceGraph#plotEfficiency(String, TileManager)}.</p></li>
@@ -380,9 +380,9 @@ public class MosaicPerformanceGraph extends Plot2D implements Dialog {
         void done(TileManager mosaic);
 
         /**
-         * Invoked on the <cite>Swing</cite> thread if an exception occured during the profiling.
+         * Invoked on the <cite>Swing</cite> thread if an exception occurred during the profiling.
          *
-         * @param exception The exception which occured.
+         * @param exception The exception which occurred.
          */
         void failed(Throwable exception);
     }

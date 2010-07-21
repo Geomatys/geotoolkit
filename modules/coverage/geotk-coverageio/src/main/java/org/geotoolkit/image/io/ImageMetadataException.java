@@ -21,7 +21,7 @@ import javax.imageio.IIOException;
 
 
 /**
- * Thrown if an error occured while reading or writing the image metadata.
+ * Thrown if an error occurred while reading or writing the image metadata.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.13

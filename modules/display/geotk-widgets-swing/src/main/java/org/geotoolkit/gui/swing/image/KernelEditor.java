@@ -282,7 +282,7 @@ public class KernelEditor extends JComponent implements Dialog {
      * @param category The kernel's category name, or {@code null} if none.
      * @param name The kernel name. Kernels will be displayed in alphabetic order.
      * @param kernel The kernel. If an other kernel was registered with the same
-     *        name, the previous kernel will be discarted.
+     *        name, the previous kernel will be discarded.
      */
     public void addKernel(String category, final String name, final KernelJAI kernel) {
         if (category == null) {
@@ -696,7 +696,7 @@ public class KernelEditor extends JComponent implements Dialog {
          *        null value.
          * @param name The kernel name. Kernels will be displayed in alphabetic order.
          * @param kernel The kernel. If an other kernel was registered with the same
-         *        name, the previous kernel will be discarted.
+         *        name, the previous kernel will be discarded.
          *
          * @see KernelEditor#addKernel
          */

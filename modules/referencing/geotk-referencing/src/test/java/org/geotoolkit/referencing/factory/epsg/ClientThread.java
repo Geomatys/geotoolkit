@@ -52,7 +52,7 @@ final class ClientThread extends Thread {
     final int id;
 
     /**
-     * The first exception that occured, or {@code null} if everything was successfull.
+     * The first exception that occurred, or {@code null} if everything was successfull.
      */
     Exception exception;
 

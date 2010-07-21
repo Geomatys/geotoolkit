@@ -117,7 +117,7 @@ public abstract class ImageReaderAdapter extends SpatialImageReader {
      * If the provider is unknown, use the next constructor below instead.
      *
      * @param  provider The {@link ImageReaderSpi} that is constructing this object.
-     * @throws IOException If an error occured while creating the {@linkplain #main} reader.
+     * @throws IOException If an error occurred while creating the {@linkplain #main} reader.
      */
     protected ImageReaderAdapter(final Spi provider) throws IOException {
         this(provider, provider.main.createReaderInstance());
@@ -184,7 +184,7 @@ public abstract class ImageReaderAdapter extends SpatialImageReader {
      * @return The input to give to the identified reader, or {@code null} if this
      *         method can not create such input.
      * @throws IllegalStateException if the {@linkplain #input input} source has not been set.
-     * @throws IOException If an error occured while creating the input for the reader.
+     * @throws IOException If an error occurred while creating the input for the reader.
      *
      * @see ImageWriterAdapter#createOutput(String)
      */
@@ -214,7 +214,7 @@ public abstract class ImageReaderAdapter extends SpatialImageReader {
      * The default implementation does nothing. Subclasses can override this method
      * for performing additional initialization.
      *
-     * @throws IOException If an error occured while initializing the main reader.
+     * @throws IOException If an error occurred while initializing the main reader.
      */
     protected void initialize() throws IOException {
     }
@@ -910,7 +910,7 @@ public abstract class ImageReaderAdapter extends SpatialImageReader {
      * Overriding methods shall make sure that {@code super.close()} is invoked
      * even in case of failure.
      *
-     * @throws IOException if an error occured while closing the stream.
+     * @throws IOException if an error occurred while closing the stream.
      */
     @Override
     protected void close() throws IOException {
@@ -1139,7 +1139,7 @@ public abstract class ImageReaderAdapter extends SpatialImageReader {
          *
          * @param  source The input (typically a {@link File}) to be decoded.
          * @return {@code true} if it is likely that the file can be decoded.
-         * @throws IOException If an error occured while reading the file.
+         * @throws IOException If an error occurred while reading the file.
          */
         @Override
         public boolean canDecodeInput(final Object source) throws IOException {

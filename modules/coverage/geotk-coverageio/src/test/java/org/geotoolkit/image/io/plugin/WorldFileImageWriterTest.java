@@ -96,7 +96,7 @@ public final class WorldFileImageWriterTest extends TextImageWriterTestBase {
     /**
      * Tests the write operation.
      *
-     * @throws IOException If an error occured while writing to the temporary file.
+     * @throws IOException If an error occurred while writing to the temporary file.
      */
     @Test
     public void testWrite() throws IOException {
@@ -159,7 +159,7 @@ public final class WorldFileImageWriterTest extends TextImageWriterTestBase {
      * Tests writing an image though the standard {@link ImageIO} API and
      * the {@link XImageIO} extension.
      *
-     * @throws IOException If an error occured while reading the test image or
+     * @throws IOException If an error occurred while reading the test image or
      *         writing it to the temporary file.
      *
      * @since 3.10

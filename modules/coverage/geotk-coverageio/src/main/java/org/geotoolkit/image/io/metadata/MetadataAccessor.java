@@ -1367,7 +1367,7 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
      *          for throwing exceptions instead than logging warnings.
      * @return The attribute values, or {@code null} if none.
      * @throws NumberFormatException if {@code logFailures} if {@code false} and an exception
-     *         occured while parsing a number.
+     *         occurred while parsing a number.
      */
     private Object parseSequence(final String sequence, final Class<?> type, final boolean unique,
             final String caller) throws NumberFormatException
@@ -1768,13 +1768,13 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
     }
 
     /**
-     * Invoked when a warning occured. This method is invoked when some inconsistency
+     * Invoked when a warning occurred. This method is invoked when some inconsistency
      * has been detected in the spatial metadata. The default implementation tries to
      * send the message to the warning listeners, if possible. The record is actually
      * logged only if no listener can be reached.
      * <p>
      * More specifically, the typical chain of method calls is as below. Note that the
-     * actual chain may be different since any of those methods can be overriden, and
+     * actual chain may be different since any of those methods can be overridden, and
      * the {@code ImageReader} can be an {@code ImageWriter} instead.
      * <p>
      * <ol>

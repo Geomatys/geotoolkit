@@ -68,7 +68,7 @@ public class DisjointSet<E> extends AbstractSet<E> implements Serializable {
      *       <li>the key is the element to add;</li>
      *       <li>the value is this {@code DisjointSet}.</li>
      *     </ul>
-     *     If an other value was mapped to the key, the old value is discarted.
+     *     If an other value was mapped to the key, the old value is discarded.
      *     This is equivalents to removing the element from an other {@code DisjointSet}
      *     prior to add it to this set (in other words, moving the element).</li>
      * </ul>

@@ -57,7 +57,7 @@ public class DefaultCitationDate extends MetadataEntity implements CitationDate 
     private static final long serialVersionUID = -2884791484254008454L;
 
     /**
-     * Reference date for the cited resource in millisecondes ellapsed sine January 1st, 1970,
+     * Reference date for the cited resource in millisecondes elapsed sine January 1st, 1970,
      * or {@link Long#MIN_VALUE} if none.
      */
     private long date = Long.MIN_VALUE;

@@ -80,16 +80,16 @@ public final class Formats {
          * disposed by the caller after this method call.
          *
          * @param  reader The image reader.
-         * @throws IOException If an I/O error occured.
+         * @throws IOException If an I/O error occurred.
          */
         void read(ImageReader reader) throws IOException;
 
         /**
-         * Invoked when a recoverable error occured. Implementors will typically delegate to
+         * Invoked when a recoverable error occurred. Implementors will typically delegate to
          * {@link org.geotoolkit.util.logging.Logging#recoverableException(Class, String, Throwable)}
          * whith appropriate class an method name.
          *
-         * @param error The error which occured.
+         * @param error The error which occurred.
          */
         void recoverableException(Throwable error);
     }
@@ -489,7 +489,7 @@ attmpt: while (true) {
      *
      * @param  input The input for which we want an image input stream.
      * @return The image input stream, or {@code null} if no suitable stream were found.
-     * @throws IOException If an error occured while creating the stream.
+     * @throws IOException If an error occurred while creating the stream.
      *
      * @since 3.07
      */

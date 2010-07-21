@@ -166,7 +166,7 @@ public class MetadataWriter extends MetadataSource {
      * @param  metadata The metadata object to add.
      * @return The identifier (primary key) of the metadata just added, or the identifier
      *         of the existing metadata is one exists.
-     * @throws SQLException If an exception occured while reading or writing the database.
+     * @throws SQLException If an exception occurred while reading or writing the database.
      *         In such case, the database content is left unchanged (i.e. this method is a
      *         <cite>all or nothing</cite> operation).
      * @throws ClassCastException if the metadata object doesn't implement a metadata
@@ -210,7 +210,7 @@ public class MetadataWriter extends MetadataSource {
      * @param  done     The metadata objects already added.
      * @param  parent   The identifier of the parent, or {@code null} if there is no parent.
      * @return The identifier (primary key) of the metadata just added.
-     * @throws SQLException If an exception occured while reading or writing the database.
+     * @throws SQLException If an exception occurred while reading or writing the database.
      * @throws ClassCastException if the metadata object doesn't implement a metadata
      *         interface of the expected package.
      */
@@ -420,7 +420,7 @@ public class MetadataWriter extends MetadataSource {
      * @param  type    The interface class.
      * @param  table   The name of the table (should be consistent with the type).
      * @param  columns The existing columns, as an empty set if the table does not exist yet.
-     * @throws SQLException If an error occured while creating the table.
+     * @throws SQLException If an error occurred while creating the table.
      */
     private void createTable(final Statement stmt, final Class<?> type, final String table,
             final Set<String> columns) throws SQLException

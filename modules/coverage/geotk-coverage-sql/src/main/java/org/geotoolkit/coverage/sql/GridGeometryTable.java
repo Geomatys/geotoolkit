@@ -112,7 +112,7 @@ final class GridGeometryTable extends SingletonTable<GridGeometryEntry> {
      *
      * @param  crs The CRS to search.
      * @return The identifier for the given CRS, or 0 if none.
-     * @throws FactoryException if an error occured while searching for the CRS.
+     * @throws FactoryException if an error occurred while searching for the CRS.
      */
     public int getSRID(final CoordinateReferenceSystem crs) throws FactoryException {
         final SpatialDatabase database = (SpatialDatabase) getDatabase();
@@ -136,7 +136,7 @@ final class GridGeometryTable extends SingletonTable<GridGeometryEntry> {
      * @param  results The result set to read.
      * @param  identifier The identifier of the grid geometry to create.
      * @return The entry for current row in the specified result set.
-     * @throws SQLException if an error occured while reading the database.
+     * @throws SQLException if an error occurred while reading the database.
      */
     @Override
     @SuppressWarnings("fallthrough")

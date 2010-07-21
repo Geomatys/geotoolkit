@@ -529,7 +529,7 @@ public class GeodeticCalculator {
      * The {@linkplain #getAzimuth() azimuth},
      * the {@linkplain #getOrthodromicDistance() orthodromic distance} and
      * the {@linkplain #getDestinationGeographicPoint() destination point}
-     * are discarted. They will need to be specified again.
+     * are discarded. They will need to be specified again.
      *
      * @param  longitude The longitude in decimal degrees between -180 and +180°
      * @param  latitude  The latitude  in decimal degrees between  -90 and  +90°

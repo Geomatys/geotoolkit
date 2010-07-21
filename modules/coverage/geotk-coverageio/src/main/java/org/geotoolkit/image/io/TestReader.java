@@ -184,12 +184,12 @@ final class TestReader extends TextImageReader {
      *   </li>
      * </ul>
      * <p>
-     * If a different behavior is wanted, those two methods should be made accessible and overriden.
+     * If a different behavior is wanted, those two methods should be made accessible and overridden.
      *
      * @param  readAheadLimit Maximum number of characters to read. If this amount is reached
      *         but this method still unable to make a choice, then it returns {@code null}.
      * @return {@code true} if the source <em>seems</em> readable, {@code false} otherwise.
-     * @throws IOException If an error occured during reading.
+     * @throws IOException If an error occurred during reading.
      */
     final boolean canDecode(int readAheadLimit) throws IOException {
         final Reader input = getReader(readAheadLimit);
@@ -272,7 +272,7 @@ scan:   while (lower < readAheadLimit) {
      *
      * @param  line The line to parse.
      * @return {@code true} if the line is valid, or {@code false} otherwise.
-     * @throws IOException If an error occured while processing the line.
+     * @throws IOException If an error occurred while processing the line.
      *
      * @since 3.07
      */
@@ -331,7 +331,7 @@ scan:   while (lower < readAheadLimit) {
      * and the {@link #rows} to {@link TextImageReader.Spi#isValidContent(double[][])}.
      *
      * @return {@code true} if the content is valid, or {@code false} otherwise.
-     * @throws IOException If an error occured.
+     * @throws IOException If an error occurred.
      *
      * @since 3.07
      */

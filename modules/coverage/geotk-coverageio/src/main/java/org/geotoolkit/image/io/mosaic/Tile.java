@@ -433,7 +433,7 @@ public class Tile implements Comparable<Tile>, Serializable {
      *          The image index to be given to the image reader for reading this tile.
      * @throws IOException
      *          If no {@code ".tfw} or {@code ".jgw"} file (depending on the extension of the
-     *          input file) is found, or if an error occured while reading that file.
+     *          input file) is found, or if an error occurred while reading that file.
      */
     public Tile(final ImageReaderSpi provider, final File input, final int imageIndex) throws IOException {
         this(provider, input, imageIndex, null, SupportFiles.parseTFW(input));
@@ -497,7 +497,7 @@ public class Tile implements Comparable<Tile>, Serializable {
      * Closes the specified stream, if it is closeable.
      *
      * @param  input The stream to close.
-     * @throws IOException if an error occured while closing the input stream.
+     * @throws IOException if an error occurred while closing the input stream.
      */
     static void close(final Object input) throws IOException {
         if (input instanceof ImageInputStream) {
@@ -512,7 +512,7 @@ public class Tile implements Comparable<Tile>, Serializable {
      * This method can be used for disposing the reader created by {@link #getImageReader()}.
      *
      * @param  reader The reader to dispose.
-     * @throws IOException if an error occured while closing the input stream.
+     * @throws IOException if an error occurred while closing the input stream.
      */
     static void dispose(final ImageReader reader) throws IOException {
         final Object input = reader.getInput();
@@ -695,7 +695,7 @@ public class Tile implements Comparable<Tile>, Serializable {
      * then this method throws an exception. This method never returns {@code null}.
      *
      * @return The image input stream.
-     * @throws IOException if an error occured while creating the input stream.
+     * @throws IOException if an error occurred while creating the input stream.
      */
     private ImageInputStream getInputStream() throws IOException {
         final Object input = getInput();
@@ -995,7 +995,7 @@ public class Tile implements Comparable<Tile>, Serializable {
      * Returns {@code true} if the tile size is equal to the given dimension.
      * This method should be invoked when we know that this instance is not a
      * subclass of {@link Tile}, otherwise we should use {@link #getRegion} in
-     * case the user overriden the method.
+     * case the user overridden the method.
      */
     final boolean isSizeEquals(final int dx, final int dy) {
         assert getClass().equals(Tile.class) && (width != 0) && (height != 0) : this;
@@ -1092,7 +1092,7 @@ public class Tile implements Comparable<Tile>, Serializable {
 
     /**
      * Sets the tile size to the given values, making sure that they can be stored as unsigned
-     * short. This method is overriden by {@link LargeTile} but should never been invoked by
+     * short. This method is overridden by {@link LargeTile} but should never been invoked by
      * anyone else than {@link Tile}.
      *
      * @param dx The tile width.
@@ -1474,7 +1474,7 @@ public class Tile implements Comparable<Tile>, Serializable {
      *          formatted below the table. A reasonable value like 5000 is recommanded since
      *          attempt to format millions of tiles leads to {@link OutOfMemoryError}.
      * @throws IOException
-     *          If an error occured while writing to the given writer.
+     *          If an error occurred while writing to the given writer.
      *
      * @see java.util.Collections#sort(List)
      */
@@ -1504,7 +1504,7 @@ public class Tile implements Comparable<Tile>, Serializable {
             table.nextColumn();
             /*
              * Extracts now the tile information that we are going to format, but those
-             * informations may be overriden later if the current tile is some subclass
+             * informations may be overridden later if the current tile is some subclass
              * of Tile. We format Tile instances in a special way since it allows us to
              * left a blank for subsampling and tile size if they are not yet computed,
              * rather than throwing an exception.

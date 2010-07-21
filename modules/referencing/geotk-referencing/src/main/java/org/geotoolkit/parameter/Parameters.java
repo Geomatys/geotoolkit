@@ -98,7 +98,7 @@ public final class Parameters {
     /**
      * An empty parameter group. This group contains no parameters.
      */
-    public static ParameterDescriptorGroup EMPTY_GROUP =
+    public static final ParameterDescriptorGroup EMPTY_GROUP =
             new DefaultParameterDescriptorGroup(Vocabulary.format(Vocabulary.Keys.EMPTY));
 
     /**

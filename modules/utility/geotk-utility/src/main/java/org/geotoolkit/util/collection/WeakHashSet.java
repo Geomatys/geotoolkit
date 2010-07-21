@@ -205,7 +205,7 @@ public class WeakHashSet<E> extends AbstractSet<E> implements CheckedCollection<
      */
     private synchronized void removeEntry(final Entry toRemove) {
         assert valid() : count;
-        Entry[] table = this.table;
+        final Entry[] table = this.table;
         final int i = toRemove.hash % table.length;
         /*
          * Index 'i' may not be valid if the reference 'toRemove'
@@ -228,7 +228,7 @@ public class WeakHashSet<E> extends AbstractSet<E> implements CheckedCollection<
                      * We can't continue the loop pass that point, since 'e' is no longer valid.
                      */
                     if (count <= threshold/4) {
-                        table = rehash("remove");
+                        this.table = rehash("remove");
                     }
                     return;
                 }

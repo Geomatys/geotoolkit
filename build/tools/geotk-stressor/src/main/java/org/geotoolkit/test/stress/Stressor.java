@@ -56,12 +56,12 @@ public abstract class Stressor extends RequestGenerator implements Callable<Stat
 
     /**
      * Invokes {@link #executeQuery(GeneralGridGeometry)} with random grid geometries
-     * until the execution time has been ellapsed. A slight pause is performed between
+     * until the execution time has been elapsed. A slight pause is performed between
      * each query. Note that many threads may be running concurrently, so the CPU may
      * still busy at 100% despite this pause.
      *
      * @return The statistics about the execution time, in seconds.
-     * @throws CoverageStoreException If an error occured during the test.
+     * @throws CoverageStoreException If an error occurred during the test.
      */
     @Override
     public Statistics call() throws CoverageStoreException {
@@ -85,7 +85,7 @@ public abstract class Stressor extends RequestGenerator implements Callable<Stat
      * Runs a query for the given grid geometry.
      *
      * @param  request The grid geometry to request.
-     * @throws CoverageStoreException If an error occured during the test.
+     * @throws CoverageStoreException If an error occurred during the test.
      */
     protected abstract void executeQuery(GeneralGridGeometry request) throws CoverageStoreException;
 }

@@ -304,7 +304,7 @@ public abstract class TextImageWriter extends StreamImageWriter {
      * if the writer is the {@linkplain #output output} instance given by the user rather than
      * a writer created by this class from a {@link File} or {@link URL} output.
      *
-     * @throws IOException If an error occured while closing the writer.
+     * @throws IOException If an error occurred while closing the writer.
      *
      * @see #closeOnReset
      */

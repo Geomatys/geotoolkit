@@ -74,7 +74,7 @@ public class StatementEntry {
      * because some subclasses override this method in order to release additional resources
      * hold by this {@code StatementEntry}.
      *
-     * @throws SQLException If an error occured while closing the statement.
+     * @throws SQLException If an error occurred while closing the statement.
      */
     public void close() throws SQLException {
         statement.close();

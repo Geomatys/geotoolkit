@@ -265,7 +265,7 @@ public class FactoryDependencies {
      * Prints the dependencies as a tree to the specified writer.
      *
      * @param  out Where to write the dependencies tree.
-     * @throws IOException if an error occured while writing to the stream.
+     * @throws IOException if an error occurred while writing to the stream.
      */
     public void print(final Appendable out) throws IOException {
         out.append(Trees.toString(asTree()));

@@ -91,7 +91,7 @@ abstract class Pooled implements Catching {
     /**
      * Resets the marshaller in its initial state.
      *
-     * @throws JAXBException If an error occured while restoring a property.
+     * @throws JAXBException If an error occurred while restoring a property.
      */
     public final void reset() throws JAXBException {
         for (final Map.Entry<Object,Object> entry : initial.entrySet()) {
@@ -109,7 +109,7 @@ abstract class Pooled implements Catching {
      *
      * @param  key The property to reset.
      * @param  value The initial value to give to the property.
-     * @throws JAXBException If an error occured while restoring a property.
+     * @throws JAXBException If an error occurred while restoring a property.
      */
     protected abstract void reset(final Object key, final Object value) throws JAXBException;
 

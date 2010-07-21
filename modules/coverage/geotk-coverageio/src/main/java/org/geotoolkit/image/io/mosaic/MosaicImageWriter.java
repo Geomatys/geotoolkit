@@ -209,7 +209,7 @@ public class MosaicImageWriter extends ImageWriter implements Disposable {
      * @param  metadata The stream metadata.
      * @param  image    The image to write.
      * @param  param    The parameter for the image to write.
-     * @throws IOException if an error occured while writing the image.
+     * @throws IOException if an error occurred while writing the image.
      */
     @Override
     public void write(final IIOMetadata metadata, final IIOImage image, ImageWriteParam param)
@@ -266,7 +266,7 @@ public class MosaicImageWriter extends ImageWriter implements Disposable {
      * @param  input The image input, typically as a {@link File}.
      * @param  param The write parameters, or {@code null} for the default.
      * @return {@code true} on success, or {@code false} if the process has been aborted.
-     * @throws IOException If an error occured while reading or writing.
+     * @throws IOException If an error occurred while reading or writing.
      *
      * @since 3.00
      */
@@ -284,7 +284,7 @@ public class MosaicImageWriter extends ImageWriter implements Disposable {
      * @param  inputIndex The image index to read from the given input file.
      * @param  param The write parameters, or {@code null} for the default.
      * @return {@code true} on success, or {@code false} if the process has been aborted.
-     * @throws IOException If an error occured while reading or writing.
+     * @throws IOException If an error occurred while reading or writing.
      *
      * @todo Current implementation do not yet supports source region and subsampling settings.
      *       An exception will be thrown if any of those parameters are set.
@@ -366,7 +366,7 @@ public class MosaicImageWriter extends ImageWriter implements Disposable {
         processImageStarted(outputIndex);
         /*
          * Gets the reader first - especially before getOutput() - because the user may have
-         * overriden filter(ImageReader) and set the output accordingly. TileBuilder does that.
+         * overridden filter(ImageReader) and set the output accordingly. TileBuilder does that.
          */
         final TileManager[] managers = getOutput();
         if (managers == null) {
@@ -566,7 +566,7 @@ public class MosaicImageWriter extends ImageWriter implements Disposable {
                     /*
                      * Get an image writer (maybe from the cache) and configure it. We do the
                      * configuration here because we want the 'filter' and 'onTileWrite' methods
-                     * (which may be overriden by the user) to be invoked in this thread.
+                     * (which may be overridden by the user) to be invoked in this thread.
                      */
                     final ReaderInputPair.WithWriter cacheEntry = getImageWriter(tile, image, cache);
                     final ImageWriteParam wp = cacheEntry.writer.getDefaultWriteParam();
@@ -666,7 +666,7 @@ public class MosaicImageWriter extends ImageWriter implements Disposable {
                     }
                 }
                 /*
-                 * The current tile has been processed. It may have been discarted because it
+                 * The current tile has been processed. It may have been discarded because it
                  * contains only transparent pixels, or it may have been enqueued for writing
                  * in a background thread. Remove this tile from the list of tiles to process,
                  * and inspect the next tile.
@@ -1133,7 +1133,7 @@ search: for (final Tile tile : tiles) {
      * @param  reader The image reader created and configured by {@code MosaicImageWriter}.
      * @return {@code true} If the given reader is ready for use, or {@code false} if an other
      *         reader should be fetched.
-     * @throws IOException if an error occured while inspecting or configuring the reader.
+     * @throws IOException if an error occurred while inspecting or configuring the reader.
      */
     protected boolean filter(final ImageReader reader) throws IOException {
         return true;
@@ -1148,7 +1148,7 @@ search: for (final Tile tile : tiles) {
      * @param  writer The image writer created and configured by {@code MosaicImageWriter}.
      * @return {@code true} If the given writer is ready for use, or {@code false} if an other
      *         writer should be fetched.
-     * @throws IOException if an error occured while inspecting or configuring the writer.
+     * @throws IOException if an error occurred while inspecting or configuring the writer.
      */
     protected boolean filter(final ImageWriter writer) throws IOException {
         return true;
@@ -1207,7 +1207,7 @@ search: for (final Tile tile : tiles) {
      * @param  inputIndex The image index to read from the given input file.
      * @param  The parameters given by the user, or {@code null} if none.
      * @return The image reader that seems to be the most appropriated (never {@code null}).
-     * @throws IOException If no suitable image reader has been found or if an error occured
+     * @throws IOException If no suitable image reader has been found or if an error occurred
      *         while creating an image reader or initiazing it.
      */
     private ImageReader getImageReader(final Object input, final int inputIndex,
@@ -1325,7 +1325,7 @@ search: for (final Tile tile : tiles) {
      *
      * @param  input The input to read.
      * @return The image reader that seems to be the most appropriated (never {@code null}).
-     * @throws IOException If no suitable image reader has been found or if an error occured
+     * @throws IOException If no suitable image reader has been found or if an error occurred
      *         while creating an image reader or initiazing it.
      */
     private ImageReader getImageReader(final Object input) throws IOException {
@@ -1398,7 +1398,7 @@ search: for (final Tile tile : tiles) {
      * @param  image The image associated to the specified tile.
      * @param  cache An initially empty list of image writers created during the write process.
      * @return The image writer that seems to be the most appropriated (never {@code null}).
-     * @throws IOException If no suitable image writer has been found or if an error occured
+     * @throws IOException If no suitable image writer has been found or if an error occurred
      *         while creating an image writer or initiazing it.
      */
     private ReaderInputPair.WithWriter getImageWriter(final Tile tile, final RenderedImage image,

@@ -172,7 +172,7 @@ final class PackInput implements Closeable {
     /**
      * Closes this input.
      *
-     * @throws IOException if an error occured while closing the file.
+     * @throws IOException if an error occurred while closing the file.
      */
     @Override
     public void close() throws IOException {

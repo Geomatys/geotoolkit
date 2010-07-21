@@ -190,7 +190,7 @@ public abstract class ListTableModel<E> extends AbstractTableModel {
     }
 
     /**
-     * Sets the elements. All previous elements are discarted before to add the new ones.
+     * Sets the elements. All previous elements are discarded before to add the new ones.
      *
      * @param elts The new elements.
      *

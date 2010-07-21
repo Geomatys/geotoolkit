@@ -395,7 +395,7 @@ public class TextMatrixImageReader extends TextImageReader {
     /**
      * Closes the input stream and disposes the resources that was specific to that stream.
      *
-     * @throws IOException If an error occured while closing the reader.
+     * @throws IOException If an error occurred while closing the reader.
      */
     @Override
     protected void close() throws IOException {

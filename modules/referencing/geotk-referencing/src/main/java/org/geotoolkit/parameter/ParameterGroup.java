@@ -69,7 +69,7 @@ public class ParameterGroup extends AbstractParameter implements ParameterValueG
     /**
      * An empty parameter value group. This group contains no parameter value.
      */
-    public static ParameterValueGroup EMPTY = new ParameterGroup(
+    public static final ParameterValueGroup EMPTY = new ParameterGroup(
             Collections.singletonMap(ParameterDescriptorGroup.NAME_KEY, "Void"),
             new ParameterValue<?>[0]);
 

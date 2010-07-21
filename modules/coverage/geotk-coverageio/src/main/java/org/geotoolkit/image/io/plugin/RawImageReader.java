@@ -124,7 +124,7 @@ public class RawImageReader extends SpatialImageReader {
      * input stream if it is of kind {@link RawImageInputStream}, or thrown an exception otherwise.
      * Subclasses can override this method if they can get the image width in an other way.
      *
-     * @throws IOException If the width can not be obtained of an I/O error occured.
+     * @throws IOException If the width can not be obtained of an I/O error occurred.
      */
     @Override
     public int getWidth(final int imageIndex) throws IOException {
@@ -143,7 +143,7 @@ public class RawImageReader extends SpatialImageReader {
      * input stream if it is of kind {@link RawImageInputStream}, or thrown an exception otherwise.
      * Subclasses can override this method if they can get the height width in an other way.
      *
-     * @throws IOException If the height can not be obtained of an I/O error occured.
+     * @throws IOException If the height can not be obtained of an I/O error occurred.
      */
     @Override
     public int getHeight(final int imageIndex) throws IOException {

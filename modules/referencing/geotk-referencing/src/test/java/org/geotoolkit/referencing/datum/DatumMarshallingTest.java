@@ -53,7 +53,7 @@ public final class DatumMarshallingTest {
      * Creates the pool of marshallers/unmarshallers. It is created only once
      * before the first test, and reused for every tests in this class.
      *
-     * @throws JAXBException If an error occured while creating the pool.
+     * @throws JAXBException If an error occurred while creating the pool.
      */
     @BeforeClass
     public static void createPool() throws JAXBException {
@@ -73,7 +73,7 @@ public final class DatumMarshallingTest {
      * Generates a XML tree using the annotations on the {@link SecondDefiningParameter} class,
      * and writes it in a temporary buffer.
      *
-     * @throws JAXBException If an error occured during the marshalling process.
+     * @throws JAXBException If an error occurred during the marshalling process.
      * @throws IOException Should never happen since we are writing to a buffer.
      */
     @Test
@@ -95,7 +95,7 @@ public final class DatumMarshallingTest {
     /**
      * Creates a {@link SecondDefiningParameter} from a XML tree.
      *
-     * @throws JAXBException If an error occured during the unmarshalling process.
+     * @throws JAXBException If an error occurred during the unmarshalling process.
      * @throws IOException Should never happen since we are reading from a buffer.
      */
     @Test

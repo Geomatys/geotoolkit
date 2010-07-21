@@ -520,7 +520,7 @@ public class Statistics implements Cloneable, Serializable {
      * @param  header     The column headers in the table, or {@code null} if none.
      * @param  statistics The statistics to format.
      * @param  locale     The locale, or {@code null} for the default locale.
-     * @throws IOException if an error occured while writing to {@code out}.
+     * @throws IOException if an error occurred while writing to {@code out}.
      *
      * @since 3.00
      */

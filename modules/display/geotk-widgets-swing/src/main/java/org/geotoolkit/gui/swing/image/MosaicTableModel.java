@@ -431,7 +431,7 @@ public class MosaicTableModel extends ListTableModel<Tile> {
      * (it is safe to invoke this particular method from non-Swing thread).
      *
      * @return The tile managers for the current list of tiles.
-     * @throws IOException if an error occured while reading a tile.
+     * @throws IOException if an error occurred while reading a tile.
      */
     public TileManager[] getTileManager() throws IOException {
         final Tile[] elements = getElements();

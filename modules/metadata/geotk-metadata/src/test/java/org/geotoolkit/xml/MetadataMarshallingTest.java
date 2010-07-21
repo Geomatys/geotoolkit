@@ -101,9 +101,9 @@ public final class MetadataMarshallingTest {
      * and writes it in a temporary buffer. The buffer is then read by the unmarshaller.
      * Some assertions about the validity of the unmarshalled data are checked.
      *
-     * @throws JAXBException If an error occured during the creation of the JAXB context,
+     * @throws JAXBException If an error occurred during the creation of the JAXB context,
      *                       or during marshalling / unmarshalling processes.
-     * @throws IOException If an error occured while reading the XML file.
+     * @throws IOException If an error occurred while reading the XML file.
      */
     @Test
     public void testMetadata() throws JAXBException, IOException {
@@ -275,9 +275,9 @@ public final class MetadataMarshallingTest {
      * Tests the marshalling of {@link DefaultProcessStep}.
      * This metadata mixes elements from ISO 19115 and ISO 19115-2 standards.
      *
-     * @throws JAXBException If an error occured during the creation of the JAXB context,
+     * @throws JAXBException If an error occurred during the creation of the JAXB context,
      *                       or during marshalling / unmarshalling processes.
-     * @throws IOException If an error occured while reading the XML file.
+     * @throws IOException If an error occurred while reading the XML file.
      *
      * @since 3.07
      */
@@ -306,9 +306,9 @@ public final class MetadataMarshallingTest {
      * Tests the unmarshalling of a text group with a default {@code gco:CharacterString}
      * element.
      *
-     * @throws JAXBException If an error occured during the creation of the JAXB context,
+     * @throws JAXBException If an error occurred during the creation of the JAXB context,
      *                       or during marshalling / unmarshalling processes.
-     * @throws IOException If an error occured while reading the XML file.
+     * @throws IOException If an error occurred while reading the XML file.
      *
      * @see <a href="http://jira.geotoolkit.org/browse/GEOTK-107">GEOTK-107</a>
      *

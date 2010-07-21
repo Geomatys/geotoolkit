@@ -265,7 +265,7 @@ public class URN_AuthorityFactory extends AuthorityFactoryAdapter implements CRS
      * This method invokes {@link #createVersionedFactory} the first time it is invoked
      * for a given version and cache the factory.
      *
-     * @throws FactoryException if an error occured while creating the factory.
+     * @throws FactoryException if an error occurred while creating the factory.
      */
     private synchronized AuthorityFactory getVersionedFactory(final URN_Parser parser) throws FactoryException {
         final Version version = parser.version;
@@ -290,7 +290,7 @@ public class URN_AuthorityFactory extends AuthorityFactoryAdapter implements CRS
      *
      * @param  version The version for the factory to create.
      * @return The factory, of {@code null} if there is none for the specified version.
-     * @throws FactoryException if an error occured while creating the factory.
+     * @throws FactoryException if an error occurred while creating the factory.
      */
     protected AuthorityFactory createVersionedFactory(final Version version) throws FactoryException {
         final Hints hints = EMPTY_HINTS.clone();

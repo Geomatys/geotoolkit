@@ -137,7 +137,7 @@ public class StatementPool<K,V extends StatementEntry> extends LinkedHashMap<K,V
      * for preventing the background thread to close the connection too early.
      *
      * @return The connection to the database.
-     * @throws SQLException If an error occured while fetching the connection.
+     * @throws SQLException If an error occurred while fetching the connection.
      */
     public final Connection connection() throws SQLException {
         assert Thread.holdsLock(this);
@@ -312,7 +312,7 @@ sleep:  while (true) {
     /**
      * Closes all statements and removes them from the map.
      *
-     * @throws SQLException If an error occured while closing the statements.
+     * @throws SQLException If an error occurred while closing the statements.
      */
     public final synchronized void close() throws SQLException {
         final Iterator<V> it = values().iterator();

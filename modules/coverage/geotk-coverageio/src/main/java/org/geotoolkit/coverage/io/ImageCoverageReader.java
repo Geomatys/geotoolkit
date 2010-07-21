@@ -264,7 +264,7 @@ public class ImageCoverageReader extends GridCoverageReader {
      * {@section Implementation note}
      * This method ensures that the {@link #imageReader} field is set to a suitable
      * {@link ImageReader} instance. This is done by invoking the following methods,
-     * which can be overriden by subclasses:
+     * which can be overridden by subclasses:
      * <p>
      * <ol>
      *   <li>If the current {@link #imageReader} is non-null, invoke
@@ -292,7 +292,7 @@ public class ImageCoverageReader extends GridCoverageReader {
                 } else {
                     /*
                      * First, check if the current reader can be reused. If the user
-                     * didn't overriden the canReuseImageReader(...) method, then the
+                     * didn't overridden the canReuseImageReader(...) method, then the
                      * default implementation is to look at the file extension.
                      */
                     if (oldReader != null) {
@@ -303,7 +303,7 @@ public class ImageCoverageReader extends GridCoverageReader {
                     }
                     /*
                      * If we can't reuse the old reader, create a new one. If the user didn't
-                     * overriden the createImageReader(...) method, then the default behavior
+                     * overridden the createImageReader(...) method, then the default behavior
                      * is to get an image reader by the extension.
                      */
                     if (newReader == null) {
@@ -312,7 +312,7 @@ public class ImageCoverageReader extends GridCoverageReader {
                     /*
                      * Set the input if it was not already done. In the default implementation,
                      * this is done by 'createImageReader' but not by 'canReuseImageReader'.
-                     * However the user could have overriden the above-cited methods with a
+                     * However the user could have overridden the above-cited methods with a
                      * different behavior.
                      */
                     if (newReader != input && newReader.getInput() == null) {
@@ -390,7 +390,7 @@ public class ImageCoverageReader extends GridCoverageReader {
      * @param  provider The provider of the image reader.
      * @param  input The input to set to the image reader.
      * @return {@code true} if the image reader can be reused.
-     * @throws IOException If an error occured while determining if the current
+     * @throws IOException If an error occurred while determining if the current
      *         image reader can read the given input.
      */
     protected boolean canReuseImageReader(final ImageReaderSpi provider, final Object input) throws IOException {
@@ -416,7 +416,7 @@ public class ImageCoverageReader extends GridCoverageReader {
      *
      * @param  input The input source.
      * @return An initialized image reader for reading the given input.
-     * @throws IOException If no suitable image reader has been found, or if an error occured
+     * @throws IOException If no suitable image reader has been found, or if an error occurred
      *         while creating it.
      */
     protected ImageReader createImageReader(final Object input) throws IOException {
@@ -485,7 +485,7 @@ public class ImageCoverageReader extends GridCoverageReader {
      * @param  imageReader The image reader from which to get the metadata.
      * @param  index The index of the image to be queried.
      * @return The metadata of the given index, or {@code null} if none.
-     * @throws IOException If an error occured while reading the metadata.
+     * @throws IOException If an error occurred while reading the metadata.
      */
     private static SpatialMetadata getSpatialMetadata(final ImageReader imageReader, final int index)
             throws IOException

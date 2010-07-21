@@ -1029,7 +1029,7 @@ public class CoverageStack extends AbstractCoverage {
      *
      * @param  element The coverage to load.
      * @return The loaded coverage.
-     * @throws IOException if an error occured while loading image.
+     * @throws IOException if an error occurred while loading image.
      */
     private Coverage load(final Element element) throws IOException {
         assert Thread.holdsLock(this);
@@ -1057,7 +1057,7 @@ public class CoverageStack extends AbstractCoverage {
      * Loads a single image at the given index.
      *
      * @param  index Index in {@link #elements} for the image to load.
-     * @throws IOException if an error occured while loading image.
+     * @throws IOException if an error occurred while loading image.
      */
     private void load(final int index) throws IOException {
         final Element element = elements[index];
@@ -1071,7 +1071,7 @@ public class CoverageStack extends AbstractCoverage {
     /**
      * Loads images for the given elements.
      *
-     * @throws IOException if an error occured while loading images.
+     * @throws IOException if an error occurred while loading images.
      */
     private void load(final Element lowerElement, final Element upperElement) throws IOException {
         logLoading(Vocabulary.Keys.LOADING_IMAGES_$2, new String[] {

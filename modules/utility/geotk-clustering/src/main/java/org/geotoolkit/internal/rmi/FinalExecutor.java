@@ -40,7 +40,7 @@ final class FinalExecutor extends RemoteExecutor implements Runnable {
     /**
      * Creates a new remote executor with the given master, which may be {@code null).
      *
-     * @throws RemoteException If an error occured while exporting this executor.
+     * @throws RemoteException If an error occurred while exporting this executor.
      */
     FinalExecutor(final TaskExecutor master) throws RemoteException {
         super(master);

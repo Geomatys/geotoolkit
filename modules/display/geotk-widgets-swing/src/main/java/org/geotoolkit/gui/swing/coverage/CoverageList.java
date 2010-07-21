@@ -588,11 +588,11 @@ public class CoverageList extends JComponent {
     }
 
     /**
-     * Invoked when an exception occured while querying the {@linkplain Layer layer}.
+     * Invoked when an exception occurred while querying the {@linkplain Layer layer}.
      * The default implementation reports the error in an {@link ExceptionMonitor}.
      * Subclasses can override this method in order to report the error in a different way.
      *
-     * @param ex The exception which occured.
+     * @param ex The exception which occurred.
      */
     protected void exceptionOccured(final Exception ex) {
         ExceptionMonitor.show(this, ex);

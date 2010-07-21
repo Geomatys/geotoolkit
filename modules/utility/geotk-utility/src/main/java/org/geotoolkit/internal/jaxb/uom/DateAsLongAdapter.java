@@ -22,7 +22,7 @@ import javax.xml.bind.annotation.adapters.XmlAdapter;
 
 
 /**
- * JAXB adapter wrapping the date value (as milliseconds ellapsed since January 1st, 1970)
+ * JAXB adapter wrapping the date value (as milliseconds elapsed since January 1st, 1970)
  * in a {@code <gco:Date>} element, for ISO-19139 compliance.
  * <p>
  * The {@link Long#MIN_VALUE} is used as a sentinal value meaning "no date".

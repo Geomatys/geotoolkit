@@ -153,7 +153,7 @@ final class SeriesTable extends SingletonTable<SeriesEntry> {
      * @param  results The result set to read.
      * @param  identifier The identifier of the series to create.
      * @return The entry for current row in the specified result set.
-     * @throws SQLException if an error occured while reading the database.
+     * @throws SQLException if an error occurred while reading the database.
      */
     @Override
     protected SeriesEntry createEntry(final ResultSet results, final Comparable<?> identifier) throws SQLException {
@@ -193,7 +193,7 @@ final class SeriesTable extends SingletonTable<SeriesEntry> {
      * @param  extension The extension to add to filenames.
      * @param  format    The format for the series considered.
      * @return The identifier of a matching entry, or {@code null} if none.
-     * @throws SQLException if an error occured while reading from the database.
+     * @throws SQLException if an error occurred while reading from the database.
      */
     Integer find(final String path, final String extension, final String format) throws SQLException {
         ensureNonNull("path",      path);
@@ -246,7 +246,7 @@ final class SeriesTable extends SingletonTable<SeriesEntry> {
      * @param  extension The extension to add to filenames.
      * @param  format    The format for the series considered.
      * @return The identifier of a matching entry (never {@code null}).
-     * @throws SQLException if an error occured while reading from or writing to the database.
+     * @throws SQLException if an error occurred while reading from or writing to the database.
      */
     int findOrCreate(final String path, final String extension, final String format) throws SQLException {
         synchronized (getLock()) {

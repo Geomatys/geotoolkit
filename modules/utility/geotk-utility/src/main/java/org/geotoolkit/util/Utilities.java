@@ -241,7 +241,7 @@ public final class Utilities {
      *   <li>Otherwise if both objects are arrays (e.g. {@code Expression[]}, {@code String[]},
      *   {@code int[]}, <i>etc.</i>), use {@link Arrays#equals(Object[],Object[])}. This
      *   rule is applicable to arrays of primitive type too, since {@code Arrays.equals} is
-     *   overriden with primitive counter-parts.</li>
+     *   overridden with primitive counter-parts.</li>
      *
      *   <li>Otherwise if at least one object is anything else than {@code Object} (e.g.
      *   {@code String}, {@code Expression}, <i>etc.</i>), use {@link #equals(Object,Object)}.

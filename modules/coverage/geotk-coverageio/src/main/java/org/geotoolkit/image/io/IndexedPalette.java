@@ -148,7 +148,7 @@ final class IndexedPalette extends Palette {
      *
      * @throws  FileNotFoundException If the RGB values need to be read from a file and this file
      *                                (typically inferred from {@link #name}) is not found.
-     * @throws  IOException           If an other find of I/O error occured.
+     * @throws  IOException           If an other find of I/O error occurred.
      * @throws  IIOException          If an other kind of error prevent this method to complete.
      */
     private int[] createARGB() throws IOException {

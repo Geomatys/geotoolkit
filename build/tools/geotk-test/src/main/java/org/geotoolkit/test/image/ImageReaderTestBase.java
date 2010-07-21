@@ -54,7 +54,7 @@ public abstract class ImageReaderTestBase {
      * Creates the image reader initialized to the input to read.
      *
      * @return The reader to test.
-     * @throws IOException If an error occured while creating the format.
+     * @throws IOException If an error occurred while creating the format.
      */
     protected abstract ImageReader createImageReader() throws IOException;
 
@@ -62,7 +62,7 @@ public abstract class ImageReaderTestBase {
      * Loads the full image, then load random regions.
      * The results are then compared with the pixels in the original image.
      *
-     * @throws IOException If an error occured while reading the images.
+     * @throws IOException If an error occurred while reading the images.
      */
     @Test
     public void testRandomRegions() throws IOException {
@@ -73,7 +73,7 @@ public abstract class ImageReaderTestBase {
      * Loads the full image, then load with random subsamplings.
      * The results are then compared with the pixels in the original image.
      *
-     * @throws IOException If an error occured while reading the images.
+     * @throws IOException If an error occurred while reading the images.
      */
     @Test
     public void testRandomSubsamplings() throws IOException {
@@ -84,7 +84,7 @@ public abstract class ImageReaderTestBase {
      * Loads the full image, then load random regions with random subsamplings.
      * The results are then compared with the pixels in the original image.
      *
-     * @throws IOException If an error occured while reading the images.
+     * @throws IOException If an error occurred while reading the images.
      */
     @Test
     public void testRandomRegionsAndSubsamplings() throws IOException {
@@ -96,7 +96,7 @@ public abstract class ImageReaderTestBase {
      *
      * @param  regions      {@code true} for setting random regions.
      * @param  subsamplings {@code true} for setting random subsamplings.
-     * @throws IOException  If an error occured while reading the images.
+     * @throws IOException  If an error occurred while reading the images.
      */
     private void testRandom(final boolean regions, final boolean subsamplings) throws IOException {
         final ImageReader reader   = createImageReader();
@@ -167,7 +167,7 @@ public abstract class ImageReaderTestBase {
      *
      * @param  raster The raster to write in binary format.
      * @param  file The file to create.
-     * @throws IOException If an error occured while writing the file.
+     * @throws IOException If an error occurred while writing the file.
      */
     public static void saveBinary(final Raster raster, final File file) throws IOException {
         final DataOutputStream out = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(file)));
@@ -191,7 +191,7 @@ public abstract class ImageReaderTestBase {
      *
      * @param  raster The raster to write in PNG format.
      * @param  file The file to create.
-     * @throws IOException If an error occured while writing the file.
+     * @throws IOException If an error occurred while writing the file.
      */
     public static void savePNG(final Raster raster, final File file) throws IOException {
         float min = Float.POSITIVE_INFINITY;

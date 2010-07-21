@@ -564,7 +564,7 @@ public class LayerList extends WindowCreator {
      * @param formats The format names, or {@code null} if none.
      * @param ranges  The ranges of measure, or {@code null} if none.
      * @param rangeText The text to display for the ranges, or {@code null} for computing
-     *        it from the {@code ranges} argument. This is non-null only if an error occured
+     *        it from the {@code ranges} argument. This is non-null only if an error occurred
      *        while computing the range, because of incompatibles units.
      */
     final void setFormat(final Set<String> formats, final List<MeasurementRange<?>> ranges, String rangeText) {
@@ -898,11 +898,11 @@ public class LayerList extends WindowCreator {
     }
 
     /**
-     * Invoked when an exception occured while querying the {@linkplain #database}.
+     * Invoked when an exception occurred while querying the {@linkplain #database}.
      * The default implementation reports the error in an {@link ExceptionMonitor}.
      * Subclasses can override this method in order to report the error in a different way.
      *
-     * @param ex The exception which occured.
+     * @param ex The exception which occurred.
      */
     protected void exceptionOccured(final CoverageStoreException ex) {
         ExceptionMonitor.show(this, ex);

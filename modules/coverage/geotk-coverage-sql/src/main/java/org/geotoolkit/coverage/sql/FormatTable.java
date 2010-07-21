@@ -130,7 +130,7 @@ final class FormatTable extends SingletonTable<FormatEntry> {
      * @param  results The result set to read.
      * @param  identifier The identifier of the format to create.
      * @return The entry for current row in the specified result set.
-     * @throws SQLException if an error occured while reading the database.
+     * @throws SQLException if an error occurred while reading the database.
      */
     @Override
     protected FormatEntry createEntry(final ResultSet results, final Comparable<?> identifier) throws SQLException {
@@ -228,7 +228,7 @@ final class FormatTable extends SingletonTable<FormatEntry> {
      * @param  codecName  The name of the Image I/O plugin.
      * @param  bands      The sample dimensions to look for.
      * @return An existing format, or {@code null} if none.
-     * @throws SQLException If an error occured while querying the database.
+     * @throws SQLException If an error occurred while querying the database.
      *
      * @since 3.13
      */
@@ -294,7 +294,7 @@ next:   for (final FormatEntry candidate : getEntries()) {
      * @param  imageFormat The name of the Image I/O plugin.
      * @param  bands       The sample dimensions to add to the database.
      * @return The format name.
-     * @throws SQLException if an error occured while writing to the database.
+     * @throws SQLException if an error occurred while writing to the database.
      *
      * @since 3.13
      */

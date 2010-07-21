@@ -300,7 +300,7 @@ public class CoverageEnvelope extends AbstractEnvelope implements Cloneable {
      * @param  envelope The envelope, or {@code null} to reset to full coverage.
      * @return {@code true} if the envelope changed as a result of this call, or
      *         {@code false} if the specified envelope is equals to the one already set.
-     * @throws TransformException if an error occured during coordinate transformation.
+     * @throws TransformException if an error occurred during coordinate transformation.
      */
     public boolean setEnvelope(Envelope envelope) throws TransformException {
         if (envelope == null) {
@@ -557,7 +557,7 @@ public class CoverageEnvelope extends AbstractEnvelope implements Cloneable {
      * <p>
      * The {@link #setHorizontalRange(Rectangle2D)} or {@link #setEnvelope(Envelope)} method
      * must have been invoked with a finite envelope before this {@code setPreferredImageSize}
-     * method. The previous preferred resolution, if any, is discarted.
+     * method. The previous preferred resolution, if any, is discarded.
      *
      * @param  size The new preferred image size, or {@code null}.
      * @return {@code true} if the resolution changed as a result of this call, or

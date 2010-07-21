@@ -353,7 +353,7 @@ public class ProgressPrinter implements ProgressListener, Disposable {
      * @param source The source of the warning, or {@code null} if none. This is typically the
      *        filename in process of being parsed.
      * @param margin Text to write on the left side of the warning message, or {@code null} if none.
-     *        This is typically the line number where the error occured in the {@code source} file.
+     *        This is typically the line number where the error occurred in the {@code source} file.
      * @param warning The warning message. If this string is longer than the maximal length
      *        specified at construction time (80 characters by default), then it will be splitted
      *        in as many lines as needed and indented according the marging width.

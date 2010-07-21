@@ -119,7 +119,7 @@ public class GridCoverageStorePool {
      * full, then this method {@linkplain GridCoverageReader#dispose() disposes} the given reader.
      *
      * @param  reader The reader to return to the pool.
-     * @throws CoverageStoreException If an error occured while reseting or disposing the reader.
+     * @throws CoverageStoreException If an error occurred while reseting or disposing the reader.
      */
     public void release(final GridCoverageReader reader) throws CoverageStoreException {
         reader.reset(); // Close the image input stream, if any.

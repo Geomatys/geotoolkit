@@ -1086,7 +1086,7 @@ public class RangeSet<T extends Comparable<? super T>> extends AbstractSet<Range
                 final T lower = get(position++);
                 final T upper = get(position++);
                 if (RangeSet.this.modCount != modCount) {
-                    // Check it last, in case a change occured
+                    // Check it last, in case a change occurred
                     // while we was constructing the element.
                     throw new ConcurrentModificationException();
                 }

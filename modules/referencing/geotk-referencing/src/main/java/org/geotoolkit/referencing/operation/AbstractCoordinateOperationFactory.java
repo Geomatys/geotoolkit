@@ -171,7 +171,7 @@ public abstract class AbstractCoordinateOperationFactory extends ReferencingFact
     }
 
     /**
-     * To be overriden by {@link CachingAuthorityFactory} only.
+     * To be overridden by {@link CachingAuthorityFactory} only.
      */
     CoordinateOperationFactory getBackingFactory() {
         return null;

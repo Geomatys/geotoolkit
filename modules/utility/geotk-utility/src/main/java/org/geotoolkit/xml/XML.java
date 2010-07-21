@@ -64,7 +64,7 @@ public final class XML {
      *
      * @param  object The root of content tree to be marshalled.
      * @return The XML representation of the given object.
-     * @throws JAXBException If an error occured during the marshalling.
+     * @throws JAXBException If an error occurred during the marshalling.
      */
     public static String marshal(final Object object) throws JAXBException {
         final StringWriter output = new StringWriter();
@@ -79,7 +79,7 @@ public final class XML {
      *
      * @param  object The root of content tree to be marshalled.
      * @param  output The stream where to write.
-     * @throws JAXBException If an error occured during the marshalling.
+     * @throws JAXBException If an error occurred during the marshalling.
      */
     public static void marshal(final Object object, final OutputStream output) throws JAXBException {
         final Marshaller marshaller = POOL.acquireMarshaller();
@@ -92,7 +92,7 @@ public final class XML {
      *
      * @param  object The root of content tree to be marshalled.
      * @param  output The file to be written.
-     * @throws JAXBException If an error occured during the marshalling.
+     * @throws JAXBException If an error occurred during the marshalling.
      */
     public static void marshal(final Object object, final File output) throws JAXBException {
         final Marshaller marshaller = POOL.acquireMarshaller();
@@ -105,7 +105,7 @@ public final class XML {
      *
      * @param  input The XML representation of an object.
      * @return The object unmarshalled from the given input.
-     * @throws JAXBException If an error occured during the unmarshalling.
+     * @throws JAXBException If an error occurred during the unmarshalling.
      */
     public static Object unmarshal(final String input) throws JAXBException {
         final StringReader in = new StringReader(input);
@@ -120,7 +120,7 @@ public final class XML {
      *
      * @param  input The stream from which to read a XML representation.
      * @return The object unmarshalled from the given input.
-     * @throws JAXBException If an error occured during the unmarshalling.
+     * @throws JAXBException If an error occurred during the unmarshalling.
      */
     public static Object unmarshal(final InputStream input) throws JAXBException {
         final Unmarshaller unmarshaller = POOL.acquireUnmarshaller();
@@ -134,7 +134,7 @@ public final class XML {
      *
      * @param  input The file from which to read a XML representation.
      * @return The object unmarshalled from the given input.
-     * @throws JAXBException If an error occured during the unmarshalling.
+     * @throws JAXBException If an error occurred during the unmarshalling.
      */
     public static Object unmarshal(final File input) throws JAXBException {
         final Unmarshaller unmarshaller = POOL.acquireUnmarshaller();

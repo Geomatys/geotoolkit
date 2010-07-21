@@ -70,7 +70,7 @@ public final class TransferFunction {
     public boolean isGeophysics;
 
     /**
-     * If an error occured while fetching the information, the error message.
+     * If an error occurred while fetching the information, the error message.
      * Otherwise {@code null}.
      */
     public String warning;

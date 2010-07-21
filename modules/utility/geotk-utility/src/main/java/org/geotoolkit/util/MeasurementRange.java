@@ -325,7 +325,7 @@ public class MeasurementRange<T extends Number & Comparable<? super T>> extends 
     public MeasurementRange<?> union(final Range<?> range) throws IllegalArgumentException {
         return (MeasurementRange<?>) super.union(range);
         // Should never throw ClassCastException because super.union(Range) invokes create(...),
-        // which is overriden in this class with MeasurementRange return type.
+        // which is overridden in this class with MeasurementRange return type.
     }
 
     /**
@@ -335,7 +335,7 @@ public class MeasurementRange<T extends Number & Comparable<? super T>> extends 
     public MeasurementRange<?> intersect(final Range<?> range) throws IllegalArgumentException {
         return (MeasurementRange<?>) super.intersect(range);
         // Should never throw ClassCastException because super.intersect(Range) invokes
-        // convertAndCast(...),  which is overriden in this class with MeasurementRange
+        // convertAndCast(...),  which is overridden in this class with MeasurementRange
         // return type.
     }
 
@@ -346,7 +346,7 @@ public class MeasurementRange<T extends Number & Comparable<? super T>> extends 
     public MeasurementRange<?>[] subtract(final Range<?> range) throws IllegalArgumentException {
         return (MeasurementRange<?>[]) super.subtract(range);
         // Should never throw ClassCastException because super.subtract(Range) invokes newArray(int)
-        // and create(...), which are overriden in this class with MeasurementRange return type.
+        // and create(...), which are overridden in this class with MeasurementRange return type.
     }
 
     /**

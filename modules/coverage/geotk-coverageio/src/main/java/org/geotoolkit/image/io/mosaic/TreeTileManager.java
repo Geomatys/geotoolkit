@@ -233,7 +233,7 @@ final class TreeTileManager extends TileManager implements TreeNodeFilter {
             tree.inUse = true;
             return tree;
         }
-        // Every instances are in use. Returns a clone to be discarted after usage.
+        // Every instances are in use. Returns a clone to be discarded after usage.
         return trees[0].clone();
     }
 

@@ -77,7 +77,7 @@ public interface WarningProducer extends Localized {
     Logger LOGGER = Logging.getLogger(WarningProducer.class);
 
     /**
-     * Invoked when a warning occured. This method is typically invoked by the class implementing
+     * Invoked when a warning occurred. This method is typically invoked by the class implementing
      * this {@code WarningProducer} interface. However it can also be invoked by other classes that
      * forward their warnings, like below:
      *
@@ -90,7 +90,7 @@ public interface WarningProducer extends Localized {
      * 
      * This method is public for allowing such forwarding.
      *
-     * @param  record The warning that occured.
+     * @param  record The warning that occurred.
      * @return {@code true} if the message has been sent to at least one warning listener,
      *         or {@code false} if it has been sent to the logging system as a fallback.
      */

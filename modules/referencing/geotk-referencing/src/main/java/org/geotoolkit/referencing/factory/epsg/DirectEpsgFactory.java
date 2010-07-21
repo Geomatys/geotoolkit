@@ -685,7 +685,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
      * @param  columnIndex The column index (1-based).
      * @param  code The identifier of the record where the string was found.
      * @return The string at the specified column.
-     * @throws SQLException if a SQL error occured.
+     * @throws SQLException if a SQL error occurred.
      * @throws FactoryException If a null value was found.
      */
     private static String getString(final ResultSet result, final int columnIndex, final Object code)
@@ -724,7 +724,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
      * @param  columnIndex The column index (1-based).
      * @param  code The identifier of the record where the string was found.
      * @return The double at the specified column.
-     * @throws SQLException if a SQL error occured.
+     * @throws SQLException if a SQL error occurred.
      * @throws FactoryException If a null value was found.
      */
     private static double getDouble(final ResultSet result, final int columnIndex, final Object code)
@@ -743,7 +743,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
      * @param  columnIndex The column index (1-based).
      * @param  code The identifier of the record where the string was found.
      * @return The integer at the specified column.
-     * @throws SQLException if a SQL error occured.
+     * @throws SQLException if a SQL error occurred.
      * @throws FactoryException If a null value was found.
      */
     private static int getInt(final ResultSet result, final int columnIndex, final Object code)
@@ -779,7 +779,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
      * @param  stmt The prepared statement in which to set the primary key.
      * @param  primaryKey The primary key.
      * @throws NoSuchIdentifierException If the primary key has not been found.
-     * @throws SQLException If an error occured while querying the database.
+     * @throws SQLException If an error occurred while querying the database.
      */
     static ResultSet executeQuery(final PreparedStatement stmt, final String primaryKey)
             throws NoSuchIdentifierException, SQLException
@@ -804,7 +804,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
      *
      * @param  stmt The prepared statement in which to set the primary key.
      * @param  primaryKey The primary key.
-     * @throws SQLException If an error occured.
+     * @throws SQLException If an error occurred.
      */
     private static ResultSet executeQuery(final PreparedStatement stmt, final String key1, final String key2)
             throws NoSuchIdentifierException, SQLException
@@ -838,7 +838,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
      * @param  codeColumn The column name for the code.
      * @param  nameColumn The column name for the name.
      * @return The numerical identifier (i.e. the table primary key value).
-     * @throws SQLException if an error occured while reading the database.
+     * @throws SQLException if an error occurred while reading the database.
      */
     private String toPrimaryKey(final Class<?> type, final String code, final String table,
             final String codeColumn, final String nameColumn) throws SQLException, FactoryException
@@ -1029,7 +1029,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
      * @param  code The EPSG value.
      * @return The object.
      * @throws NoSuchAuthorityCodeException if this method can't find the requested code.
-     * @throws FactoryException if some other kind of failure occured in the backing
+     * @throws FactoryException if some other kind of failure occurred in the backing
      *         store. This exception usually have {@link SQLException} as its cause.
      */
     @Override
@@ -1147,7 +1147,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
      * @param  code Value allocated by authority.
      * @return The unit object.
      * @throws NoSuchAuthorityCodeException if this method can't find the requested code.
-     * @throws FactoryException if some other kind of failure occured in the backing
+     * @throws FactoryException if some other kind of failure occurred in the backing
      *         store. This exception usually have {@link SQLException} as its cause.
      */
     @Override
@@ -1205,7 +1205,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
      * @param  code The EPSG value.
      * @return The ellipsoid object.
      * @throws NoSuchAuthorityCodeException if this method can't find the requested code.
-     * @throws FactoryException if some other kind of failure occured in the backing
+     * @throws FactoryException if some other kind of failure occurred in the backing
      *         store. This exception usually have {@link SQLException} as its cause.
      */
     @Override
@@ -1289,7 +1289,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
      * @param  code Value allocated by authority.
      * @return The prime meridian object.
      * @throws NoSuchAuthorityCodeException if this method can't find the requested code.
-     * @throws FactoryException if some other kind of failure occured in the backing
+     * @throws FactoryException if some other kind of failure occurred in the backing
      *         store. This exception usually have {@link SQLException} as its cause.
      */
     @Override
@@ -1339,7 +1339,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
      * @param  code Value allocated by authority.
      * @return The area of use.
      * @throws NoSuchAuthorityCodeException if this method can't find the requested code.
-     * @throws FactoryException if some other kind of failure occured in the backing
+     * @throws FactoryException if some other kind of failure occurred in the backing
      *         store. This exception usually have {@link SQLException} as its cause.
      */
     @Override
@@ -1536,7 +1536,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
      * @param  code Value allocated by authority.
      * @return The datum object.
      * @throws NoSuchAuthorityCodeException if this method can't find the requested code.
-     * @throws FactoryException if some other kind of failure occured in the backing
+     * @throws FactoryException if some other kind of failure occurred in the backing
      *         store. This exception usually have {@link SQLException} as its cause.
      *
      * @todo Current implementation maps all "vertical" datum to
@@ -1739,7 +1739,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
      * @param  code the EPSG code for coordinate system owner.
      * @param  dimension of the coordinate system, which is also the size of the returned array.
      * @return An array of coordinate system axis.
-     * @throws SQLException if an error occured during database access.
+     * @throws SQLException if an error occurred during database access.
      * @throws FactoryException if the code has not been found.
      */
     private CoordinateSystemAxis[] createAxesForCoordinateSystem(final String code, final int dimension)
@@ -1779,7 +1779,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
      * @param  code Value allocated by authority.
      * @return The coordinate system object.
      * @throws NoSuchAuthorityCodeException if this method can't find the requested code.
-     * @throws FactoryException if some other kind of failure occured in the backing
+     * @throws FactoryException if some other kind of failure occurred in the backing
      *         store. This exception usually have {@link SQLException} as its cause.
      */
     @Override
@@ -1884,7 +1884,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
      * @param  code Value allocated by authority.
      * @return The coordinate reference system object.
      * @throws NoSuchAuthorityCodeException if this method can't find the requested code.
-     * @throws FactoryException if some other kind of failure occured in the backing
+     * @throws FactoryException if some other kind of failure occurred in the backing
      *         store. This exception usually have {@link SQLException} as its cause.
      */
     @Override
@@ -2071,7 +2071,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
      *
      * @param  code The parameter descriptor code allocated by EPSG authority.
      * @throws NoSuchAuthorityCodeException if this method can't find the requested code.
-     * @throws FactoryException if some other kind of failure occured in the backing
+     * @throws FactoryException if some other kind of failure occurred in the backing
      *         store. This exception usually have {@link SQLException} as its cause.
      */
     @Override
@@ -2254,7 +2254,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
      *
      * @param  code The operation method code allocated by EPSG authority.
      * @throws NoSuchAuthorityCodeException if this method can't find the requested code.
-     * @throws FactoryException if some other kind of failure occured in the backing
+     * @throws FactoryException if some other kind of failure occurred in the backing
      *         store. This exception usually have {@link SQLException} as its cause.
      */
     @Override
@@ -2364,7 +2364,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
      * the designed operation is a {@linkplain Conversion conversion} before to invoke this method.
      *
      * @throws NoSuchIdentifierException If the code has not been found.
-     * @throws SQLException If an error occured while querying the database.
+     * @throws SQLException If an error occurred while querying the database.
      */
     final boolean isProjection(final String code) throws NoSuchIdentifierException, SQLException {
         final PreparedStatement stmt;
@@ -2392,7 +2392,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
      * @param  code Value allocated by authority.
      * @return The coordinate operation object.
      * @throws NoSuchAuthorityCodeException if this method can't find the requested code.
-     * @throws FactoryException if some other kind of failure occured in the backing
+     * @throws FactoryException if some other kind of failure occurred in the backing
      *         store. This exception usually have {@link SQLException} as its cause.
      */
     @Override
@@ -2934,7 +2934,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
      *
      * @param  code The code the inspect.
      * @return {@code true} if the code is probably a primary key.
-     * @throws FactoryException if an unexpected error occured while inspecting the code.
+     * @throws FactoryException if an unexpected error occurred while inspecting the code.
      */
     protected boolean isPrimaryKey(final String code) throws FactoryException {
         final int length = code.length();
@@ -3020,7 +3020,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
     /**
      * Invokes {@link #dispose dispose(false)} when this factory is garbage collected.
      *
-     * @throws Throwable if an error occured while closing the connection.
+     * @throws Throwable if an error occurred while closing the connection.
      */
     @Override
     protected final void finalize() throws Throwable {

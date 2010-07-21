@@ -1019,7 +1019,7 @@ public class FallbackAuthorityFactory extends AuthorityFactoryAdapter {
      * {@link Level#FINE FINE} level.
      *
      * @param method The name of the invoked method.
-     * @param exception The exception that occured. It is often possible to
+     * @param exception The exception that occurred. It is often possible to
      *        get the authority code from some subclasses of this exception.
      */
     private static void notifyFailure(final String method, final FactoryException exception) {

@@ -453,7 +453,7 @@ public class ReferencingConsole extends InteractiveConsole {
      *
      * @throws FactoryException if the transform can't be computed.
      * @throws TransformException if a transform failed.
-     * @throws IOException if an error occured while writing to the output stream.
+     * @throws IOException if an error occurred while writing to the output stream.
      */
     private void printPts() throws FactoryException, TransformException, IOException {
         update();
@@ -511,7 +511,7 @@ public class ReferencingConsole extends InteractiveConsole {
      * This helper method is for use by {@link #printPts}.
      *
      * @param  point The point to print, or {@code null} if none.
-     * @throws IOException if an error occured while writing to the output stream.
+     * @throws IOException if an error occurred while writing to the output stream.
      */
     private void print(final DirectPosition point, final TableWriter table) throws IOException {
         if (point != null) {

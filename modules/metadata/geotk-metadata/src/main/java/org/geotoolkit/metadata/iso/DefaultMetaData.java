@@ -142,7 +142,7 @@ public class DefaultMetadata extends MetadataEntity implements Metadata {
     private String dataSetUri;
 
     /**
-     * Date that the metadata was created, in milliseconds ellapsed since January 1st, 1970.
+     * Date that the metadata was created, in milliseconds elapsed since January 1st, 1970.
      * If not defined, then then value is {@link Long#MIN_VALUE}.
      */
     private long dateStamp = Long.MIN_VALUE;

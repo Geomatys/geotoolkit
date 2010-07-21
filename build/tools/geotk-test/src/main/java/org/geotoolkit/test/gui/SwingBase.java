@@ -107,7 +107,7 @@ public abstract class SwingBase<T extends JComponent> {
      *
      * @return The created widget, or {@code null} if the widget can not be created for
      *         an acceptable raison.
-     * @throws Exception If an exception occured while creating the widget.
+     * @throws Exception If an exception occurred while creating the widget.
      */
     protected abstract JComponent create() throws Exception;
 
@@ -116,7 +116,7 @@ public abstract class SwingBase<T extends JComponent> {
      * system property is set to "{@code true}", then the widget will be show as an internal
      * frame in the desktop.
      *
-     * @throws Exception If an exception occured while creating the widget.
+     * @throws Exception If an exception occurred while creating the widget.
      */
     @Test
     public void display() throws Exception {
@@ -155,7 +155,7 @@ public abstract class SwingBase<T extends JComponent> {
      * does nothing. Subclasses can override this method for testing an animation.
      *
      * @param component The widget that were created.
-     * @throws Exception If an exception occured while animating the widget.
+     * @throws Exception If an exception occurred while animating the widget.
      *
      * @since 3.07
      */

@@ -51,7 +51,7 @@ public abstract class TextImageReaderTestBase extends ImageReaderTestBase {
      * content shall be the same than the {@code "test-data/matrix.txt"} file.
      *
      * @return The reader to test.
-     * @throws IOException If an error occured while creating the format.
+     * @throws IOException If an error occurred while creating the format.
      */
     @Override
     protected abstract SpatialImageReader createImageReader() throws IOException;
@@ -59,7 +59,7 @@ public abstract class TextImageReaderTestBase extends ImageReaderTestBase {
     /**
      * Tests the {@link TextImageReader.Spi#canDecodeInput(Object)}.
      *
-     * @throws IOException if an error occured while reading the file.
+     * @throws IOException if an error occurred while reading the file.
      */
     @Test
     public void testCanRead() throws IOException {
@@ -79,7 +79,7 @@ public abstract class TextImageReaderTestBase extends ImageReaderTestBase {
     /**
      * Tests the reading of the {@link "matrix.txt"} file.
      *
-     * @throws IOException if an error occured while reading the file.
+     * @throws IOException if an error occurred while reading the file.
      */
     @Test
     public void testReadFile() throws IOException {
@@ -108,7 +108,7 @@ public abstract class TextImageReaderTestBase extends ImageReaderTestBase {
     /**
      * Tests the reading of a sub-region.
      *
-     * @throws IOException if an error occured while reading the file.
+     * @throws IOException if an error occurred while reading the file.
      */
     @Test
     public void testSubRegion() throws IOException {
@@ -136,7 +136,7 @@ public abstract class TextImageReaderTestBase extends ImageReaderTestBase {
      * Tests the reading with conversion to the {@link DataBuffer#TYPE_FLOAT}.
      * The floating point numbers will be casted to integer types.
      *
-     * @throws IOException if an error occured while reading the file.
+     * @throws IOException if an error occurred while reading the file.
      */
     @Test
     public void testByteType() throws IOException {

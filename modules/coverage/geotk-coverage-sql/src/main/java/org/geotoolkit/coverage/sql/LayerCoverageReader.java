@@ -257,7 +257,7 @@ public class LayerCoverageReader extends GridCoverageReader {
      * @param  param Optional read parameters (including the envelope and resolution to request),
      *         or {@code null} if none.
      * @return The coverage, or {@code null} if none.
-     * @throws CoverageStoreException If an error occured while querying the database or reading
+     * @throws CoverageStoreException If an error occurred while querying the database or reading
      *         the image.
      */
     @Override
@@ -275,7 +275,7 @@ public class LayerCoverageReader extends GridCoverageReader {
      * @param  param Optional read parameters (including the envelope and resolution to request),
      *         or {@code null} if none.
      * @return The coverage, or {@code null} if none.
-     * @throws CoverageStoreException If an error occured while querying the database or reading
+     * @throws CoverageStoreException If an error occurred while querying the database or reading
      *         the image.
      *
      * @see CoverageDatabase#readSlice(CoverageQuery)

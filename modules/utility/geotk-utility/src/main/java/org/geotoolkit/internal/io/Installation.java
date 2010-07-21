@@ -316,7 +316,7 @@ public enum Installation {
      * or {@code null} if the file does not exist.
      *
      * @return The content of the {@value #DATASOURCE_FILE} file, or {@code null}.
-     * @throws IOException If an error occured while reading the file.
+     * @throws IOException If an error occurred while reading the file.
      *
      * @since 3.11
      */

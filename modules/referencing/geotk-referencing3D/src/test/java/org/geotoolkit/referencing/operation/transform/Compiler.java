@@ -124,7 +124,7 @@ public final class Compiler {
      * Runs this command with no argument for a summary of the expected arguments.
      *
      * @param  args The command-line arguments.
-     * @throws IOException If an error occured while reading the ASCII file or writing the binary file.
+     * @throws IOException If an error occurred while reading the ASCII file or writing the binary file.
      */
     public static void main(final String[] args) throws IOException {
         if (args.length != 2) {

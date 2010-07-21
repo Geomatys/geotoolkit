@@ -74,7 +74,7 @@ public final class MosaicImageViewer extends JPanel implements ChangeListener {
 
     /**
      * The last {@link RenderedImage} read, or an instance of {@link Exception}
-     * if an error occured, or {@code null} if a reading is under progress.
+     * if an error occurred, or {@code null} if a reading is under progress.
      */
     private transient Object image;
 

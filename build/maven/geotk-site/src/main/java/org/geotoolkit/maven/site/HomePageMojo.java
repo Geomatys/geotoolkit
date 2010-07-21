@@ -75,7 +75,7 @@ public class HomePageMojo extends AbstractMojo {
      * the right side of the image.
      *
      * @param file The file to the home page to modify.
-     * @throws IOException If an error occured while reading or writing the page.
+     * @throws IOException If an error occurred while reading or writing the page.
      */
     private static void process(final File file) throws IOException {
         final BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(file), ENCODING));

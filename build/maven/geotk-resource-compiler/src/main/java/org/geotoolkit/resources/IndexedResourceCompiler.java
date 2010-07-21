@@ -132,7 +132,7 @@ public class IndexedResourceCompiler implements FilenameFilter, Comparator<Objec
     /**
      * Run the resource compiler.
      *
-     * @throws ResourceCompilerException If an error occured.
+     * @throws ResourceCompilerException If an error occurred.
      * @return The number of errors found.
      */
     public int run() throws ResourceCompilerException {
@@ -157,7 +157,7 @@ public class IndexedResourceCompiler implements FilenameFilter, Comparator<Objec
      * Loads the existing key values from the source file. This is used in order to avoid
      * the need to recompile the whole application when new entries are added.
      *
-     * @throws IOException If an error occured while reading the source file.
+     * @throws IOException If an error occurred while reading the source file.
      */
     private void loadKeyValues() throws IOException {
         final BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(bundleClass), JAVA_ENCODING));

@@ -200,7 +200,7 @@ public class SpatialDatabase extends Database {
      * @param  properties  The configuration properties, or {@code null} if none.
      * @param  spatialCRS  The spatial CRS, not including the temporal component.
      * @param  temporalCRS The temporal CRS, or {@code null} if none.
-     * @throws FactoryException If an error occured while fetching the SRID of the horizontal CRS.
+     * @throws FactoryException If an error occurred while fetching the SRID of the horizontal CRS.
      */
     public SpatialDatabase(final DataSource datasource, final Properties properties,
             final CoordinateReferenceSystem spatialCRS, final TemporalCRS temporalCRS)

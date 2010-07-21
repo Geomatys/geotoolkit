@@ -104,7 +104,7 @@ public interface NamedImageStore {
      * @param  imageNames The set of names to be assigned to image index, or
      *         {@code (String[]) null} for the default set of names declared in the file.
      * @throws IOException If the given names can not be assigned to this image reader or
-     *         writer, or if an I/O error occured while processing.
+     *         writer, or if an I/O error occurred while processing.
      */
     void setImageNames(String... imageNames) throws IOException;
 
@@ -129,7 +129,7 @@ public interface NamedImageStore {
      * @param  bandNames The variable names of the bands for the given image,
      *         or {@code null} for removing any naming.
      * @throws IOException If the given names can not be assigned to this image reader or
-     *         writer, or if an I/O error occured while processing.
+     *         writer, or if an I/O error occurred while processing.
      *
      * @since 3.11
      */

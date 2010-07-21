@@ -105,7 +105,7 @@ public class DirectPostgisFactory extends WKTParsingAuthorityFactory implements 
      *
      * @param hints The hints, or {@code null} if none.
      * @param connection The connection to the database.
-     * @throws SQLException If an error occured while fetching metadata from the database.
+     * @throws SQLException If an error occurred while fetching metadata from the database.
      */
     public DirectPostgisFactory(final Hints hints, final Connection connection) throws SQLException {
         super(hints, new SpatialRefSysMap(connection));
@@ -234,7 +234,7 @@ public class DirectPostgisFactory extends WKTParsingAuthorityFactory implements 
      * @param category The type of objects to search for (typically
      *        <code>{@linkplain CoordinateReferenceSystem}.class</code>).
      * @return The set of available codes.
-     * @throws FactoryException if an error occured while querying the database.
+     * @throws FactoryException if an error occurred while querying the database.
      */
     @Override
     public synchronized Set<String> getAuthorityCodes(final Class<? extends IdentifiedObject> category)
@@ -267,7 +267,7 @@ public class DirectPostgisFactory extends WKTParsingAuthorityFactory implements 
      *         (this method may or may not query the database).
      * @throws NoSuchAuthorityCodeException if a code can't be parsed as an integer or can't
      *         be found in the database.
-     * @throws FactoryException if an error occured while querying the database.
+     * @throws FactoryException if an error occurred while querying the database.
      *
      * @see #getPrimaryKeyAuthority()
      */

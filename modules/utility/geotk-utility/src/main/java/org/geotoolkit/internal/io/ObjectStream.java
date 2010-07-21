@@ -61,7 +61,7 @@ public interface ObjectStream<E> extends Closeable, Remote {
      * in a single method in order to make synchronization for thread-safety easier.
      *
      * @return The next element to return, or {@code null} if none.
-     * @throws IOException If an I/O error occured.
+     * @throws IOException If an I/O error occurred.
      */
     E next() throws IOException;
 
