@@ -20,6 +20,7 @@ package org.geotoolkit.image.io;
 import java.util.List;
 import java.util.Arrays;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.io.File;
 import java.io.IOException;
@@ -28,6 +29,7 @@ import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.ImageWriter;
 import javax.imageio.IIOException;
+import javax.imageio.spi.ServiceRegistry;
 import javax.imageio.spi.IIORegistry;
 import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.spi.ImageWriterSpi;
@@ -39,6 +41,7 @@ import java.awt.image.RenderedImage;
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.NullArgumentException;
+import org.geotoolkit.util.collection.FrequencySortedSet;
 import org.geotoolkit.image.io.plugin.WorldFileImageReader;
 import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.internal.image.io.Formats;
@@ -750,6 +753,78 @@ public final class XImageIO {
     public static ImageWriterSpi getWriterSpiByFormatName(final String format) {
         ensureNonNull("format", format);
         return Formats.getWriterByFormatName(format, null);
+    }
+
+    /**
+     * Returns the format names of all {@link ImageReaderSpi} and/or {@link ImageWriterSpi}
+     * instances registered for the given MIME type. If there is many format names for the
+     * same MIME type, then the most frequently used names will be sorted first.
+     *
+     * @param mime  The MIME type to search for.
+     * @param read  {@code true} if the format name is required to be supported by at least one {@code ImageReader}.
+     * @param write {@code true} if the format name is required to be supported by at least one {@code ImageWriter}.
+     * @return The format names, or an empty array if none.
+     *
+     * @since 3.14
+     */
+    public static String[] getFormatNamesByMimeType(final String mime, final boolean read, final boolean write) {
+        ensureNonNull("mime", mime);
+        final IIORegistry registry = IIORegistry.getDefaultInstance();
+        final FrequencySortedSet<String> formats = new FrequencySortedSet<String>(true);
+        if (read != write) {
+            /*
+             * Caller asked for read support, or write support, but not both.
+             * Query only the appropriate type.
+             */
+            getFormatNamesByMimeType(registry, mime, read ? ImageReaderSpi.class : ImageWriterSpi.class, formats);
+        } else if (!read) {
+            /*
+             * Read or write support was not explicitly required: returns the union of
+             * all formats, regardless if they are supported by readers or writers.
+             */
+            getFormatNamesByMimeType(registry, mime, ImageReaderSpi.class, formats);
+            getFormatNamesByMimeType(registry, mime, ImageWriterSpi.class, formats);
+        } else {
+            /*
+             * Caller asked for read and write support.
+             * Computes the intersection of both sets.
+             */
+            final List<String> readers = new ArrayList<String>();
+            final List<String> writers = new ArrayList<String>();
+            getFormatNamesByMimeType(registry, mime, ImageReaderSpi.class, readers);
+            getFormatNamesByMimeType(registry, mime, ImageWriterSpi.class, writers);
+            // First, add all formats in order to compute their frequencies.
+            formats.addAll(readers);
+            formats.addAll(writers);
+            // Next, compute the intersection.
+            formats.retainAll(readers);
+            formats.retainAll(writers);
+        }
+        return formats.toArray(new String[formats.size()]);
+    }
+
+    /**
+     * Adds to the given set the format names of every {@link ImageReaderSpi} or
+     * {@link ImageWriterSpi} instances registered for the given MIME type.
+     *
+     * @param registry The registry from which to get the provider.
+     * @param mime     The MIME type to search for.
+     * @param type     {@link ImageReaderSpi} or {@link ImageWriterSpi}.
+     * @param addTo    The set in which to add the format names.
+     */
+    private static void getFormatNamesByMimeType(final ServiceRegistry registry, final String mime,
+            final Class<? extends ImageReaderWriterSpi> type, final Collection<String> addTo)
+    {
+        final Iterator<? extends ImageReaderWriterSpi> it = registry.getServiceProviders(type, false);
+        while (it.hasNext()) {
+            final ImageReaderWriterSpi spi = it.next();
+            if (XArrays.containsIgnoreCase(spi.getMIMETypes(), mime)) {
+                final String[] names = spi.getFormatNames();
+                if (names != null) {
+                    addTo.addAll(Arrays.asList(names));
+                }
+            }
+        }
     }
 
     /**

@@ -43,7 +43,7 @@ import static org.junit.Assert.*;
  * Tests {@link XImageIO}. Also ensure that every plugins are correctly registered.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.10
+ * @version 3.14
  *
  * @since 3.07
  */
@@ -109,5 +109,22 @@ public final class XImageIOTest {
             WorldFileImageReader.Spi.unregisterDefaults(registry);
             WorldFileImageWriter.Spi.unregisterDefaults(registry);
         }
+    }
+
+    /**
+     * Tests {@link XImageIO#getFormatNamesByMimeType}.
+     *
+     * @since 3.14
+     */
+    @Test
+    public void testGetFormatNamesByMimeType() {
+        assertArrayEquals("Geotk has no RAW writer at this time.", new String[0],
+                XImageIO.getFormatNamesByMimeType("image/x-raw", false, true));
+        assertArrayEquals("The RAW reader should has been found.", new String[] {"raw"},
+                XImageIO.getFormatNamesByMimeType("image/x-raw", true, false));
+        assertArrayEquals("Geotk has no RAW writer at this time.", new String[0],
+                XImageIO.getFormatNamesByMimeType("image/x-raw", true, true));
+        assertArrayEquals("The RAW reader should has been found.", new String[] {"raw"},
+                XImageIO.getFormatNamesByMimeType("image/x-raw", false, false));
     }
 }

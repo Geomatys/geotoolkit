@@ -1145,7 +1145,8 @@ public final class XArrays {
      *
      * @param  array The array to search in. May be {@code null}.
      * @param  value The value to search.
-     * @return {@code true} if the array contains the value.
+     * @return {@code true} if the array is non-null and contains the given value,
+     *         or {@code false} otherwise.
      */
     public static boolean containsIgnoreCase(final String[] array, final String value) {
         if (array != null) {
