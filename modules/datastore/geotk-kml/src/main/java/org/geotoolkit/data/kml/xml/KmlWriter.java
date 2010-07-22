@@ -22,13 +22,18 @@ import java.awt.Color;
 import java.io.IOException;
 import java.net.URI;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.stream.XMLStreamException;
 import org.geotoolkit.atom.model.AtomLink;
 import org.geotoolkit.atom.model.AtomPersonConstruct;
+import org.geotoolkit.data.gx.model.GxModelConstants;
+import org.geotoolkit.data.gx.xml.GxConstants;
+import org.geotoolkit.data.gx.xml.GxWriter;
 import org.geotoolkit.data.kml.KmlUtilities;
 import org.geotoolkit.data.kml.model.AbstractColorStyle;
 import org.geotoolkit.data.kml.model.AbstractGeometry;
@@ -52,6 +57,7 @@ import org.geotoolkit.data.kml.model.Data;
 import org.geotoolkit.data.kml.model.Delete;
 import org.geotoolkit.data.kml.model.DisplayMode;
 import org.geotoolkit.data.kml.model.ExtendedData;
+import org.geotoolkit.data.kml.model.Extensions;
 import org.geotoolkit.data.kml.model.Extensions.Names;
 import org.geotoolkit.data.kml.model.GridOrigin;
 import org.geotoolkit.data.kml.model.Icon;
@@ -124,6 +130,7 @@ public class KmlWriter extends StaxStreamWriter {
     private String URI_KML;
     private final XalWriter xalWriter = new XalWriter();
     private final AtomWriter atomWriter = new AtomWriter();
+    private final Map<String, StaxStreamWriter> extensionWriters = new HashMap<String, StaxStreamWriter>();
 
     public KmlWriter(){
         super();
@@ -143,8 +150,6 @@ public class KmlWriter extends StaxStreamWriter {
         super.setOutput(output);
         this.xalWriter.setOutput(writer);
         this.atomWriter.setOutput(writer);
-        this.writer.setPrefix(PREFIX_XAL, URI_XAL);
-        this.writer.setPrefix(PREFIX_ATOM, URI_ATOM);
     }
 
     /**
@@ -167,7 +172,40 @@ public class KmlWriter extends StaxStreamWriter {
     }
 
     /**
-     * <p>This method writes a Kml 2.2 document into the file assigned to the KmlWriter.</p>
+     * <p>This method adds a writer for given uri extensions.</p>
+     *
+     * @param uri
+     * @param writer
+     * @throws KmlException
+     * @throws IOException
+     * @throws XMLStreamException
+     */
+    public void addExtensionWriter(String uri, StaxStreamWriter writer)
+            throws KmlException, IOException, XMLStreamException{
+        if(this.extensionWriters.get(uri) == null){
+            this.extensionWriters.put(uri, writer);
+            writer.setOutput(this.writer);
+        } else {
+            throw new KmlException(uri+" uri is already associated with an extension writer.");
+        }
+    }
+
+    /**
+     * <p>This method retrieves the writer for indicated uri.</p>
+     *
+     * @param uri
+     * @return
+     * @throws KmlException
+     */
+    protected StaxStreamWriter getExtensionWriter(String uri) throws KmlException{
+        if(this.extensionWriters.get(uri) == null){
+            throw new KmlException("There is no available writer for "+uri+" extension.");
+        }
+        return this.extensionWriters.get(uri);
+    }
+
+    /**
+     * <p>This method writes a Kml 2.2 / 2.1 document into the file assigned to the KmlWriter.</p>
      *
      * @param kml The Kml object to write.
      */
@@ -176,20 +214,30 @@ public class KmlWriter extends StaxStreamWriter {
 
             // FACULTATIF : INDENTATION DE LA SORTIE
             //streamWriter = new IndentingXMLStreamWriter(streamWriter);
+
             writer.writeStartDocument("UTF-8", "1.0");
             URI_KML = kml.getVersion();
             writer.setDefaultNamespace(URI_KML);
             writer.writeStartElement(URI_KML,TAG_KML);
             //writer.writeDefaultNamespace(URI_KML);
+
             if(URI_KML.equals(URI_KML_2_2)){
-                writer.writeNamespace(PREFIX_ATOM, URI_ATOM);
-                writer.writeNamespace(PREFIX_XAL, URI_XAL);
+                // Atom and xAL default values.
+//                writer.writeNamespace(PREFIX_ATOM, URI_ATOM);
+//                writer.writeNamespace(PREFIX_XAL, URI_XAL);
+//                writer.setPrefix(PREFIX_XAL, URI_XAL);
+//                writer.setPrefix(PREFIX_ATOM, URI_ATOM);
+
+                for (String uri : kml.getExtensionsUris().keySet()){
+                    writer.writeNamespace(kml.getExtensionsUris().get(uri), uri);
+                    writer.setPrefix(kml.getExtensionsUris().get(uri), uri);
+                }
             }
-            /*streamWriter.writeNamespace(PREFIX_XSI, URI_XSI);
-            streamWriter.writeAttribute(URI_XSI,
-                    "schemaLocation",
-                    URI_KML+" C:/Users/w7mainuser/Documents/OGC_SCHEMAS/sld/1.1.0/StyledLayerDescriptor.xsd");
-            streamWriter.writeAttribute("version", "0");*/
+//            writer.writeNamespace(PREFIX_XSI, URI_XSI);
+//            writer.writeAttribute(URI_XSI,
+//                    "schemaLocation",
+//                    URI_KML+" C:/Users/w7mainuser/Documents/OGC_SCHEMAS/sld/1.1.0/StyledLayerDescriptor.xsd");
+//            writer.writeAttribute("version", "0");
             this.writeKml(kml);
             writer.writeEndElement();
             writer.writeEndDocument();
@@ -395,6 +443,11 @@ public class KmlWriter extends StaxStreamWriter {
         }
     }
 
+    /**
+     * 
+     * @param abstractLatLonBox
+     * @throws XMLStreamException
+     */
     private void writeAbstractLatLonBox(AbstractLatLonBox abstractLatLonBox) throws XMLStreamException{
         if(abstractLatLonBox instanceof LatLonAltBox){
             this.writeLatLonAltBox((LatLonAltBox) abstractLatLonBox);
@@ -513,7 +566,7 @@ public class KmlWriter extends StaxStreamWriter {
      * @param abstractFeature The AbstractFeature to write.
      * @throws XMLStreamException
      */
-    private void writeCommonAbstractFeature(Feature abstractFeature) throws XMLStreamException, KmlException{
+    public void writeCommonAbstractFeature(Feature abstractFeature) throws XMLStreamException, KmlException{
         Iterator i;
         if (abstractFeature.getProperty(KmlModelConstants.ATT_ID_ATTRIBUTES.getName()) != null){
             IdAttributes idAttributes = (IdAttributes) abstractFeature.getProperty(KmlModelConstants.ATT_ID_ATTRIBUTES.getName()).getValue();
@@ -1718,6 +1771,14 @@ public class KmlWriter extends StaxStreamWriter {
             while(i.hasNext()){
                 this.writeAbstractFeature((Feature) ((Property) i.next()).getValue());
             }
+        }
+        if(document.getProperty(KmlModelConstants.ATT_EXTENSIONS.getName()) != null){
+            this.writeObjectExtensions(
+                    ((Extensions) document.getProperty(KmlModelConstants.ATT_EXTENSIONS.getName()).getValue())
+                    .complexes(Names.DOCUMENT), TAG_DOCUMENT);
+            this.writeSimpleExtensions(
+                    ((Extensions) document.getProperty(KmlModelConstants.ATT_EXTENSIONS.getName()).getValue())
+                    .simples(Names.DOCUMENT), TAG_DOCUMENT);
         }
 //        if (document.extensions().simples(Names.DOCUMENT) != null){
 //        }
@@ -3211,12 +3272,23 @@ public class KmlWriter extends StaxStreamWriter {
         writer.writeEndElement();
     }
     
-    private void writeSimpleExtensions(List<SimpleType> simpleExtensions){
+    private void writeSimpleExtensions(List<SimpleType> simpleExtensions, String elementTag){
 
     }
 
-    private void writeObjectExtensions(List<AbstractObject> objectExtensions){
-
+    private void writeObjectExtensions(List<Object> objectExtensions, String elementTag) 
+            throws KmlException, XMLStreamException{
+        if(TAG_DOCUMENT.equals(elementTag)){
+            for(Object object : objectExtensions){
+                if(object instanceof Feature){
+                    Feature feature = (Feature) object;
+                    if(feature.getType().equals(GxModelConstants.TYPE_TOUR)){
+                        GxWriter gxWriter = (GxWriter) this.getExtensionWriter(GxConstants.URI_GX);
+                        gxWriter.writeTour(feature);
+                    }
+                }
+            }
+        }
     }
 
     /**

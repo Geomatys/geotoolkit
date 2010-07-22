@@ -17,13 +17,35 @@
 package org.geotoolkit.data.gx.model;
 
 /**
+ * <p>This interface maps SoundCue element.</p>
  *
+ * <pre>
+ * &lt;element name="SoundCue" type="gx:SoundCueType" substitutionGroup="gx:AbstractTourPrimitiveGroup"/>
+ *
+ * &lt;complexType name="SoundCueType">
+ *  &lt;complexContent>
+ *      &lt;extension base="gx:AbstractTourPrimitiveType">
+ *          &lt;sequence>
+ *              &lt;element ref="kml:href" minOccurs="0"/>
+ *          &lt;/sequence>
+ *      &lt;/extension>
+ *  &lt;/complexContent>
+ * &lt;/complexType>
+ * </pre>
  * @author Samuel Andrés
  */
 public interface SoundCue extends AbstractTourPrimitive {
 
+    /**
+     *
+     * @return
+     */
     String getHref();
 
+    /**
+     *
+     * @param href
+     */
     void setHref(String href);
 
 }

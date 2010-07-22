@@ -39,11 +39,11 @@ public interface Change {
      *
      * @return the lis of AbstractObjects
      */
-    public List<Object> getObjects();
+    List<Object> getObjects();
 
     /**
      * 
      * @param objects
      */
-    public void setObjects(List<Object> objects);
+    void setObjects(List<Object> objects);
 }

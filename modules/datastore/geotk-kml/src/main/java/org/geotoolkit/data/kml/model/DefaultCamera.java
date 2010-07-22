@@ -49,7 +49,7 @@ public class DefaultCamera extends DefaultAbstractView implements Camera {
     }
 
     /**
-     *
+     * 
      * @param objectSimpleExtensions
      * @param idAttributes
      * @param abstractViewSimpleExtensions

@@ -52,84 +52,84 @@ public interface Camera extends AbstractView {
      *
      * @return the camera longitude position.
      */
-    public double getLongitude();
+    double getLongitude();
 
     /**
      *
      * @return the camera latitude position.
      */
-    public double getLatitude();
+    double getLatitude();
 
     /**
      *
      * @return the camera altitude position.
      */
-    public double getAltitude();
+    double getAltitude();
 
     /**
      *
      * @return the camera heading angle.
      */
-    public double getHeading();
+    double getHeading();
 
     /**
      *
      * @return the tilt angle.
      */
-    public double getTilt();
+    double getTilt();
 
     /**
      *
      * @return the roll angle.
      */
-    public double getRoll();
+    double getRoll();
 
     /**
      *
      * @return the altitude mode.
      */
-    public EnumAltitudeMode getAltitudeMode();
+    EnumAltitudeMode getAltitudeMode();
 
     /**
      *
      * @param longitude
      */
-    public void setLongitude(double longitude);
+    void setLongitude(double longitude);
 
     /**
      *
      * @param latitude
      */
-    public void setLatitude(double latitude);
+    void setLatitude(double latitude);
 
     /**
      *
      * @param atitude
      */
-    public void setAltitude(double altitude);
+    void setAltitude(double altitude);
 
     /**
      *
      * @param heading
      */
-    public void setHeading(double heading);
+    void setHeading(double heading);
 
     /**
      *
      * @param tilt
      */
-    public void setTilt(double tilt);
+    void setTilt(double tilt);
 
     /**
      *
      * @param roll
      */
-    public void setRoll(double roll);
+    void setRoll(double roll);
 
     /**
      *
      * @param altitudeMode
      */
-    public void setAltitudeMode(EnumAltitudeMode altitudeMode);
+    void setAltitudeMode(EnumAltitudeMode altitudeMode);
 
 }

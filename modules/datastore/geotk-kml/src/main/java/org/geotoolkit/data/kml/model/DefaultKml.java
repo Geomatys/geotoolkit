@@ -16,10 +16,14 @@
  */
 package org.geotoolkit.data.kml.model;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import org.geotoolkit.data.kml.xsd.SimpleType;
 import org.opengis.feature.Feature;
 import static org.geotoolkit.data.kml.xml.KmlConstants.*;
+import static java.util.Collections.*;
 
 /**
  *
@@ -31,6 +35,7 @@ public class DefaultKml implements Kml {
     private String version = URI_KML_2_2;
     private NetworkLinkControl networkLinkControl;
     private Feature abstractFeature;
+    private Map<String, String> extensionsUris = new HashMap<String, String>();
 
     /**
      *
@@ -124,8 +129,39 @@ public class DefaultKml implements Kml {
         return resultat;
     }
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public Extensions extensions() {
         return this.extensions;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public Map<String, String> getExtensionsUris() {
+        return this.extensionsUris;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setExtensionsUris(Map<String, String> extensionsUris) {
+        this.extensionsUris = extensionsUris;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void addExtensionUri(String uri, String prefix){
+        this.extensionsUris.put(uri, prefix);
     }
 }

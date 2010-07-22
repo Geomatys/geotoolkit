@@ -18,10 +18,16 @@ package org.geotoolkit.data.kml.model;
 
 /**
  *
+ * <p>This interface maps altitudeMode enumerations.</p>
+ *
  * @author Samuel Andrés
  */
 public interface AltitudeMode {
 
+    /**
+     * 
+     * @return
+     */
     String getAltitudeMode();
 
 }

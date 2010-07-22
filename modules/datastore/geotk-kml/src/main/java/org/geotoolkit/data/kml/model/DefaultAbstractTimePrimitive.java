@@ -32,7 +32,7 @@ public class DefaultAbstractTimePrimitive extends DefaultAbstractObject implemen
     }
 
     /**
-     *
+     * 
      * @param objectSimpleExtensions
      * @param idAttributes
      * @param abstractTimePrimitiveSimpleExtensions

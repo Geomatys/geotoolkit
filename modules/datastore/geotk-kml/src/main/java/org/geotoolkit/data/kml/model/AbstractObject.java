@@ -40,17 +40,17 @@ public interface AbstractObject {
      *
      * @return The list of simple extensions.
      */
-    public Extensions extensions();
+    Extensions extensions();
 
     /**
      *
      * @return The identification attributes.
      */
-    public IdAttributes getIdAttributes();
+    IdAttributes getIdAttributes();
 
     /**
      *
      * @param idAttributes
      */
-    public void setIdAttributes(IdAttributes idAttributes);
+    void setIdAttributes(IdAttributes idAttributes);
 }

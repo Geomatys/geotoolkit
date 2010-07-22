@@ -29,6 +29,9 @@ public class DefaultAlias extends DefaultAbstractObject implements Alias {
     private URI targetHref;
     private URI sourceHref;
 
+    /**
+     *
+     */
     public DefaultAlias() {
     }
 

@@ -36,7 +36,7 @@ public abstract class DefaultAbstractColorStyle extends DefaultAbstractSubStyle 
     }
 
     /**
-     *
+     * 
      * @param objectSimpleExtensions
      * @param idAttributes
      * @param abstractSubStyleSimpleExtensions

@@ -37,7 +37,7 @@ public class DefaultLatLonBox extends DefaultAbstractLatLonBox implements LatLon
     }
 
     /**
-     *
+     * 
      * @param objectSimpleExtensions
      * @param idAttributes
      * @param north

@@ -18,8 +18,7 @@ package org.geotoolkit.data.gx.model;
 
 /**
  *
- * <p>Thi enumeration maps altitudeMode whose altitudeModeEnumType
- * is the only one imlementation.</p>
+ * <p>This enumeration maps playMode element.</p>
  *
  * <pre>
  * &lt;element name="playMode" type="gx:playModeEnumType" default="pause"/>

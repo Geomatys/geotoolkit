@@ -34,7 +34,7 @@ public class DefaultLineString extends com.vividsolutions.jts.geom.LineString im
     private EnumAltitudeMode altitudeMode;
 
     /**
-     * 
+     *
      * @param coordinates
      * @param factory
      */
@@ -46,7 +46,7 @@ public class DefaultLineString extends com.vividsolutions.jts.geom.LineString im
     }
 
     /**
-     * 
+     *
      * @param objectSimpleExtensions
      * @param idAttributes
      * @param abstractGeometrySimpleExtensions
@@ -155,16 +155,28 @@ public class DefaultLineString extends com.vividsolutions.jts.geom.LineString im
         this.altitudeMode = altitudeMode;
     }
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public Extensions extensions() {
         return this.extensions;
     }
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public IdAttributes getIdAttributes() {
         return this.idAttributes;
     }
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public void setIdAttributes(IdAttributes idAttributes) {
         this.idAttributes = idAttributes;

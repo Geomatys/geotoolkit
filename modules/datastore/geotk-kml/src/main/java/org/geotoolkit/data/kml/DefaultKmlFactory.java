@@ -170,6 +170,7 @@ public class DefaultKmlFactory implements KmlFactory{
             new Hints(Hints.FEATURE_FACTORY, LenientFeatureFactory.class));
 
     /**
+     *
      * @{@inheritDoc }
      */
     @Override
@@ -182,6 +183,7 @@ public class DefaultKmlFactory implements KmlFactory{
     }
 
     /**
+     *
      * @{@inheritDoc }
      */
     @Override
@@ -190,6 +192,7 @@ public class DefaultKmlFactory implements KmlFactory{
     }
 
     /**
+     *
      * @{@inheritDoc }
      */
     @Override
@@ -202,6 +205,7 @@ public class DefaultKmlFactory implements KmlFactory{
     }
 
     /**
+     *
      * @{@inheritDoc }
      */
     @Override
@@ -210,6 +214,7 @@ public class DefaultKmlFactory implements KmlFactory{
     }
 
     /**
+     *
      * @{@inheritDoc }
      */
     @Override
@@ -225,6 +230,7 @@ public class DefaultKmlFactory implements KmlFactory{
     }
 
     /**
+     *
      * @{@inheritDoc }
      */
     @Override
@@ -233,6 +239,7 @@ public class DefaultKmlFactory implements KmlFactory{
     }
 
     /**
+     *
      * @{@inheritDoc }
      */
     @Override
@@ -245,6 +252,7 @@ public class DefaultKmlFactory implements KmlFactory{
     }
 
     /**
+     *
      * @{@inheritDoc }
      */
     @Override
@@ -253,6 +261,7 @@ public class DefaultKmlFactory implements KmlFactory{
     }
 
     /**
+     *
      * @{@inheritDoc }
      */
     @Override
@@ -264,6 +273,7 @@ public class DefaultKmlFactory implements KmlFactory{
     }
 
     /**
+     *
      * @{@inheritDoc }
      */
     @Override
@@ -272,6 +282,7 @@ public class DefaultKmlFactory implements KmlFactory{
     }
 
     /**
+     *
      * @{@inheritDoc }
      */
     @Override
@@ -290,6 +301,7 @@ public class DefaultKmlFactory implements KmlFactory{
     }
 
     /**
+     *
      * @{@inheritDoc }
      */
     @Override
@@ -298,6 +310,7 @@ public class DefaultKmlFactory implements KmlFactory{
     }
 
     /**
+     *
      * @{@inheritDoc }
      */
     @Override
@@ -306,6 +319,7 @@ public class DefaultKmlFactory implements KmlFactory{
     }
 
     /**
+     *
      * @{@inheritDoc }
      */
     @Override
@@ -314,6 +328,7 @@ public class DefaultKmlFactory implements KmlFactory{
     }
 
     /**
+     *
      * @{@inheritDoc }
      */
     @Override
@@ -322,6 +337,7 @@ public class DefaultKmlFactory implements KmlFactory{
     }
 
     /**
+     *
      * @{@inheritDoc }
      */
     @Override
@@ -331,6 +347,7 @@ public class DefaultKmlFactory implements KmlFactory{
     }
 
     /**
+     *
      * @{@inheritDoc }
      */
     @Override
@@ -340,6 +357,7 @@ public class DefaultKmlFactory implements KmlFactory{
     }
 
     /**
+     *
      * @{@inheritDoc }
      */
     @Override
@@ -348,6 +366,7 @@ public class DefaultKmlFactory implements KmlFactory{
     }
 
     /**
+     *
      * @{@inheritDoc }
      */
     @Override
@@ -356,6 +375,7 @@ public class DefaultKmlFactory implements KmlFactory{
     }
 
     /**
+     *
      * @{@inheritDoc }
      */
     @Override
@@ -364,6 +384,7 @@ public class DefaultKmlFactory implements KmlFactory{
     }
 
     /**
+     *
      * @{@inheritDoc }
      */
     @Override
@@ -375,6 +396,7 @@ public class DefaultKmlFactory implements KmlFactory{
     }
 
     /**
+     *
      * @{@inheritDoc }
      */
     @Override
@@ -383,6 +405,7 @@ public class DefaultKmlFactory implements KmlFactory{
     }
 
     /**
+     *
      * @{@inheritDoc }
      */
     @Override
@@ -391,6 +414,7 @@ public class DefaultKmlFactory implements KmlFactory{
     }
 
     /**
+     *
      * @{@inheritDoc }
      */
     @Override
@@ -399,6 +423,7 @@ public class DefaultKmlFactory implements KmlFactory{
     }
 
     /**
+     *
      * @{@inheritDoc }
      */
     @Override
@@ -417,7 +442,7 @@ public class DefaultKmlFactory implements KmlFactory{
             List<AbstractObject> abstractContainerObjectExtensions,
             List<Schema> schemas, List<Feature> features,
             List<SimpleType> documentSimpleExtensions,
-            List<AbstractObject> documentObjectExtensions) {
+            List<Object> documentObjectExtensions) {
 
         List<Property> properties = new ArrayList<Property>();
 
@@ -478,6 +503,7 @@ public class DefaultKmlFactory implements KmlFactory{
     }
 
     /**
+     *
      * @{@inheritDoc }
      */
     @Override
@@ -493,6 +519,7 @@ public class DefaultKmlFactory implements KmlFactory{
     }
 
     /**
+     *
      * @{@inheritDoc }
      */
     @Override
@@ -501,8 +528,8 @@ public class DefaultKmlFactory implements KmlFactory{
         return new DefaultExtendedData(datas, schemaDatas, anyOtherElements);
     }
 
-
     /**
+     *
      * @{@inheritDoc }
      */
     @Override
@@ -511,6 +538,7 @@ public class DefaultKmlFactory implements KmlFactory{
     }
 
     /**
+     *
      * @{@inheritDoc }
      */
     @Override
@@ -587,6 +615,7 @@ public class DefaultKmlFactory implements KmlFactory{
     }
 
     /**
+     *
      * @{@inheritDoc }
      */
     @Override
@@ -602,6 +631,7 @@ public class DefaultKmlFactory implements KmlFactory{
     }
 
     /**
+     *
      * @{@inheritDoc }
      */
     @Override
@@ -682,6 +712,7 @@ public class DefaultKmlFactory implements KmlFactory{
     }
 
     /**
+     *
      * @{@inheritDoc }
      */
     @Override
@@ -701,7 +732,7 @@ public class DefaultKmlFactory implements KmlFactory{
     }
 
     /**
-     * 
+     *
      * @{@inheritDoc }
      */
     @Override
@@ -720,6 +751,7 @@ public class DefaultKmlFactory implements KmlFactory{
     }
 
     /**
+     *
      * @{@inheritDoc }
      */
     @Override
@@ -741,12 +773,17 @@ public class DefaultKmlFactory implements KmlFactory{
                 iconStyleSimpleExtensions, iconStyleObjectExtensions);
     }
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public IconStyle createIconStyle() {
         return new DefaultIconStyle();
     }
 
     /**
+     *
      * @{@inheritDoc }
      */
     @Override
@@ -755,6 +792,7 @@ public class DefaultKmlFactory implements KmlFactory{
     }
 
     /**
+     *
      * @{@inheritDoc }
      */
     @Override
@@ -763,6 +801,7 @@ public class DefaultKmlFactory implements KmlFactory{
     }
 
     /**
+     *
      * @{@inheritDoc }
      */
     @Override
@@ -776,6 +815,7 @@ public class DefaultKmlFactory implements KmlFactory{
     }
     
     /**
+     *
      * @{@inheritDoc }
      */
     @Override
@@ -784,6 +824,7 @@ public class DefaultKmlFactory implements KmlFactory{
     }
 
     /**
+     *
      * @{@inheritDoc }
      */
     @Override
@@ -797,6 +838,7 @@ public class DefaultKmlFactory implements KmlFactory{
     }
 
     /**
+     *
      * @{@inheritDoc }
      */
     @Override
@@ -805,6 +847,7 @@ public class DefaultKmlFactory implements KmlFactory{
     }
 
     /**
+     *
      * @{@inheritDoc }
      */
     @Override
@@ -824,12 +867,17 @@ public class DefaultKmlFactory implements KmlFactory{
                 scale, labelStyleSimpleExtensions, labelStyleObjectExtensions);
     }
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public LabelStyle createLabelStyle() {
         return new DefaultLabelStyle();
     }
 
     /**
+     *
      * @{@inheritDoc }
      */
     @Override
@@ -848,6 +896,7 @@ public class DefaultKmlFactory implements KmlFactory{
     }
 
     /**
+     *
      * @{@inheritDoc }
      */
     @Override
@@ -856,6 +905,7 @@ public class DefaultKmlFactory implements KmlFactory{
     }
 
     /**
+     *
      * @{@inheritDoc }
      */
     @Override
@@ -877,6 +927,7 @@ public class DefaultKmlFactory implements KmlFactory{
     }
 
     /**
+     *
      * @{@inheritDoc }
      */
     @Override
@@ -885,6 +936,7 @@ public class DefaultKmlFactory implements KmlFactory{
     }
 
     /**
+     *
      * @{@inheritDoc }
      */
     @Override
@@ -905,6 +957,7 @@ public class DefaultKmlFactory implements KmlFactory{
     }
 
     /**
+     *
      * @{@inheritDoc }
      */
     @Override
@@ -913,6 +966,7 @@ public class DefaultKmlFactory implements KmlFactory{
     }
 
     /**
+     *
      * @{@inheritDoc }
      */
     @Override
@@ -935,6 +989,7 @@ public class DefaultKmlFactory implements KmlFactory{
     }
 
     /**
+     *
      * @{@inheritDoc }
      */
     @Override
@@ -943,6 +998,7 @@ public class DefaultKmlFactory implements KmlFactory{
     }
 
     /**
+     *
      * @{@inheritDoc }
      */
     @Override
@@ -963,6 +1019,7 @@ public class DefaultKmlFactory implements KmlFactory{
     }
 
     /**
+     *
      * @{@inheritDoc }
      */
     @Override
@@ -971,6 +1028,7 @@ public class DefaultKmlFactory implements KmlFactory{
     }
 
     /**
+     *
      * @{@inheritDoc }
      */
     @Override
@@ -978,12 +1036,12 @@ public class DefaultKmlFactory implements KmlFactory{
             List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
             String href, 
             List<SimpleType> basicLinkSimpleExtensions,
-            List<AbstractObject> basicLinkObjectExtensions,
+            List<Object> basicLinkObjectExtensions,
             RefreshMode refreshMode, double refreshInterval,
             ViewRefreshMode viewRefreshMode, double viewRefreshTime,
             double viewBoundScale, String viewFormat, String httpQuery,
             List<SimpleType> linkSimpleExtensions, 
-            List<AbstractObject> linkObjectExtensions) {
+            List<Object> linkObjectExtensions) {
         return new DefaultLink(objectSimpleExtensions, idAttributes,
                 href, basicLinkSimpleExtensions, basicLinkObjectExtensions,
                 refreshMode, refreshInterval, viewRefreshMode,
@@ -992,6 +1050,7 @@ public class DefaultKmlFactory implements KmlFactory{
     }
 
     /**
+     *
      * @{@inheritDoc }
      */
     @Override
@@ -1000,6 +1059,7 @@ public class DefaultKmlFactory implements KmlFactory{
     }
 
     /**
+     *
      * @{@inheritDoc }
      */
     @Override
@@ -1017,6 +1077,7 @@ public class DefaultKmlFactory implements KmlFactory{
     }
 
     /**
+     *
      * @{@inheritDoc }
      */
     @Override
@@ -1025,6 +1086,7 @@ public class DefaultKmlFactory implements KmlFactory{
     }
 
     /**
+     *
      * @{@inheritDoc }
      */
     @Override
@@ -1039,6 +1101,7 @@ public class DefaultKmlFactory implements KmlFactory{
     }
 
     /**
+     *
      * @{@inheritDoc }
      */
     @Override
@@ -1047,6 +1110,7 @@ public class DefaultKmlFactory implements KmlFactory{
     }
 
     /**
+     *
      * @{@inheritDoc }
      */
     @Override
@@ -1062,6 +1126,7 @@ public class DefaultKmlFactory implements KmlFactory{
     }
 
     /**
+     *
      * @{@inheritDoc }
      */
     @Override
@@ -1070,6 +1135,7 @@ public class DefaultKmlFactory implements KmlFactory{
     }
 
     /**
+     *
      * @{@inheritDoc }
      */
     @Override
@@ -1088,6 +1154,7 @@ public class DefaultKmlFactory implements KmlFactory{
     }
 
     /**
+     *
      * @{@inheritDoc }
      */
     @Override
@@ -1097,9 +1164,7 @@ public class DefaultKmlFactory implements KmlFactory{
 
     /**
      *
-     * @param content
-     * @return
-     * @deprecated
+     * @{@inheritDoc }
      */
     @Deprecated
     @Override
@@ -1109,8 +1174,7 @@ public class DefaultKmlFactory implements KmlFactory{
 
     /**
      *
-     * @return
-     * @deprecated
+     * @{@inheritDoc }
      */
     @Deprecated
     @Override
@@ -1119,6 +1183,7 @@ public class DefaultKmlFactory implements KmlFactory{
     }
 
     /**
+     *
      * @{@inheritDoc }
      */
     @Override
@@ -1137,6 +1202,7 @@ public class DefaultKmlFactory implements KmlFactory{
     }
 
     /**
+     *
      * @{@inheritDoc }
      */
     @Override
@@ -1145,6 +1211,7 @@ public class DefaultKmlFactory implements KmlFactory{
     }
 
     /**
+     *
      * @{@inheritDoc }
      */
     @Override
@@ -1161,6 +1228,7 @@ public class DefaultKmlFactory implements KmlFactory{
     }
 
     /**
+     *
      * @{@inheritDoc }
      */
     @Override
@@ -1169,6 +1237,7 @@ public class DefaultKmlFactory implements KmlFactory{
     }
     
     /**
+     *
      * @{@inheritDoc }
      */
     @Override
@@ -1235,6 +1304,7 @@ public class DefaultKmlFactory implements KmlFactory{
     }
 
     /**
+     *
      * @{@inheritDoc }
      */
     @Override
@@ -1252,6 +1322,7 @@ public class DefaultKmlFactory implements KmlFactory{
     }
 
     /**
+     *
      * @{@inheritDoc }
      */
     @Override
@@ -1268,6 +1339,7 @@ public class DefaultKmlFactory implements KmlFactory{
     }
 
     /**
+     *
      * @{@inheritDoc }
      */
     @Override
@@ -1290,6 +1362,7 @@ public class DefaultKmlFactory implements KmlFactory{
     }
 
     /**
+     *
      * @{@inheritDoc }
      */
     @Override
@@ -1298,6 +1371,7 @@ public class DefaultKmlFactory implements KmlFactory{
     }
 
     /**
+     *
      * @{@inheritDoc }
      */
     @Override
@@ -1312,6 +1386,7 @@ public class DefaultKmlFactory implements KmlFactory{
     }
 
     /**
+     *
      * @{@inheritDoc }
      */
     @Override
@@ -1404,6 +1479,7 @@ public class DefaultKmlFactory implements KmlFactory{
     }
 
     /**
+     *
      * @{@inheritDoc }
      */
     @Override
@@ -1422,6 +1498,7 @@ public class DefaultKmlFactory implements KmlFactory{
     }
 
     /**
+     *
      * @{@inheritDoc }
      */
     @Override
@@ -1491,6 +1568,7 @@ public class DefaultKmlFactory implements KmlFactory{
     }
 
     /**
+     *
      * @{@inheritDoc }
      */
     @Override
@@ -1505,6 +1583,7 @@ public class DefaultKmlFactory implements KmlFactory{
     }
 
     /**
+     *
      * @{@inheritDoc }
      */
     @Override
@@ -1524,6 +1603,7 @@ public class DefaultKmlFactory implements KmlFactory{
     }
 
     /**
+     *
      * @{@inheritDoc }
      */
     @Override
@@ -1532,6 +1612,7 @@ public class DefaultKmlFactory implements KmlFactory{
     }
 
     /**
+     *
      * @{@inheritDoc }
      */
     @Override
@@ -1553,6 +1634,7 @@ public class DefaultKmlFactory implements KmlFactory{
     }
 
     /**
+     *
      * @{@inheritDoc }
      */
     @Override
@@ -1561,6 +1643,7 @@ public class DefaultKmlFactory implements KmlFactory{
     }
 
     /**
+     *
      * @{@inheritDoc }
      */
     @Override
@@ -1581,6 +1664,7 @@ public class DefaultKmlFactory implements KmlFactory{
     }
 
     /**
+     *
      * @{@inheritDoc }
      */
     @Override
@@ -1589,6 +1673,7 @@ public class DefaultKmlFactory implements KmlFactory{
     }
 
     /**
+     *
      * @{@inheritDoc }
      */
     @Override
@@ -1602,6 +1687,7 @@ public class DefaultKmlFactory implements KmlFactory{
     }
 
     /**
+     *
      * @{@inheritDoc }
      */
     @Override
@@ -1610,6 +1696,7 @@ public class DefaultKmlFactory implements KmlFactory{
     }
 
     /**
+     *
      * @{@inheritDoc }
      */
     @Override
@@ -1623,6 +1710,7 @@ public class DefaultKmlFactory implements KmlFactory{
     }
 
     /**
+     *
      * @{@inheritDoc }
      */
     @Override
@@ -1631,6 +1719,7 @@ public class DefaultKmlFactory implements KmlFactory{
     }
 
     /**
+     *
      * @{@inheritDoc }
      */
     @Override
@@ -1644,6 +1733,7 @@ public class DefaultKmlFactory implements KmlFactory{
     }
 
     /**
+     *
      * @{@inheritDoc }
      */
     @Override
@@ -1652,6 +1742,7 @@ public class DefaultKmlFactory implements KmlFactory{
     }
 
     /**
+     *
      * @{@inheritDoc }
      */
     @Override
@@ -1661,6 +1752,7 @@ public class DefaultKmlFactory implements KmlFactory{
     }
 
     /**
+     *
      * @{@inheritDoc }
      */
     @Override
@@ -1669,6 +1761,7 @@ public class DefaultKmlFactory implements KmlFactory{
     }
 
     /**
+     *
      * @{@inheritDoc }
      */
     @Override
@@ -1680,6 +1773,7 @@ public class DefaultKmlFactory implements KmlFactory{
     }
 
     /**
+     *
      * @{@inheritDoc }
      */
     @Override
@@ -1688,6 +1782,7 @@ public class DefaultKmlFactory implements KmlFactory{
     }
 
     /**
+     *
      * @{@inheritDoc }
      */
     @Override
@@ -1769,6 +1864,10 @@ public class DefaultKmlFactory implements KmlFactory{
                 properties, KmlModelConstants.TYPE_SCREEN_OVERLAY, "ScreenOverlay");
     }
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public Feature createScreenOverlay() {
         List<Property> properties = new ArrayList<Property>();
@@ -1785,6 +1884,7 @@ public class DefaultKmlFactory implements KmlFactory{
     }
 
     /**
+     *
      * @{@inheritDoc }
      */
     @Override
@@ -1793,6 +1893,7 @@ public class DefaultKmlFactory implements KmlFactory{
     }
 
     /**
+     *
      * @{@inheritDoc }
      */
     @Override
@@ -1802,6 +1903,7 @@ public class DefaultKmlFactory implements KmlFactory{
     }
 
     /**
+     *
      * @{@inheritDoc }
      */
     @Override
@@ -1810,6 +1912,7 @@ public class DefaultKmlFactory implements KmlFactory{
     }
 
     /**
+     *
      * @{@inheritDoc }
      */
     @Override
@@ -1818,6 +1921,7 @@ public class DefaultKmlFactory implements KmlFactory{
     }
 
     /**
+     *
      * @{@inheritDoc }
      */
     @Override
@@ -1836,6 +1940,7 @@ public class DefaultKmlFactory implements KmlFactory{
     }
 
     /**
+     *
      * @{@inheritDoc }
      */
     @Override
@@ -1844,6 +1949,7 @@ public class DefaultKmlFactory implements KmlFactory{
     }
 
     /**
+     *
      * @{@inheritDoc }
      */
     @Override
@@ -1859,6 +1965,7 @@ public class DefaultKmlFactory implements KmlFactory{
     }
 
     /**
+     *
      * @{@inheritDoc }
      */
     @Override
@@ -1867,6 +1974,7 @@ public class DefaultKmlFactory implements KmlFactory{
     }
 
     /**
+     *
      * @{@inheritDoc }
      */
     @Override
@@ -1882,6 +1990,7 @@ public class DefaultKmlFactory implements KmlFactory{
     }
 
     /**
+     *
      * @{@inheritDoc }
      */
     @Override
@@ -1890,6 +1999,7 @@ public class DefaultKmlFactory implements KmlFactory{
     }
 
     /**
+     *
      * @{@inheritDoc }
      */
     @Override
@@ -1905,6 +2015,7 @@ public class DefaultKmlFactory implements KmlFactory{
     }
 
     /**
+     *
      * @{@inheritDoc }
      */
     @Override
@@ -1913,6 +2024,7 @@ public class DefaultKmlFactory implements KmlFactory{
     }
 
     /**
+     *
      * @{@inheritDoc }
      */
     @Override
@@ -1923,6 +2035,7 @@ public class DefaultKmlFactory implements KmlFactory{
     }
 
     /**
+     *
      * @{@inheritDoc }
      */
     @Override
@@ -1931,6 +2044,7 @@ public class DefaultKmlFactory implements KmlFactory{
     }
 
     /**
+     *
      * @{@inheritDoc }
      */
     @Override
@@ -1939,6 +2053,7 @@ public class DefaultKmlFactory implements KmlFactory{
     }
 
     /**
+     *
      * @{@inheritDoc }
      */
     @Override
@@ -1947,6 +2062,7 @@ public class DefaultKmlFactory implements KmlFactory{
     }
 
     /**
+     *
      * @{@inheritDoc }
      */
     @Override
@@ -1961,6 +2077,7 @@ public class DefaultKmlFactory implements KmlFactory{
     }
 
     /**
+     *
      * @{@inheritDoc }
      */
     @Override

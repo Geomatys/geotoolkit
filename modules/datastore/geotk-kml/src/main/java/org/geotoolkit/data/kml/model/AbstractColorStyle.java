@@ -49,23 +49,23 @@ public interface AbstractColorStyle extends AbstractSubStyle {
      *
      * @return The AbstractColorStyle color.
      */
-    public Color getColor();
+    Color getColor();
 
     /**
      *
      * @return The AbstractColorStyle color mode.
      */
-    public ColorMode getColorMode();
+    ColorMode getColorMode();
 
     /**
      *
      * @param color
      */
-    public void setColor(Color color);
+    void setColor(Color color);
 
     /**
      *
      * @param colorMode
      */
-    public void setColorMode(ColorMode colorMode);
+    void setColorMode(ColorMode colorMode);
 }

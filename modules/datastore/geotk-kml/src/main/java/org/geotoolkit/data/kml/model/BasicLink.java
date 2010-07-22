@@ -16,9 +16,6 @@
  */
 package org.geotoolkit.data.kml.model;
 
-import java.util.List;
-import org.geotoolkit.data.kml.xsd.SimpleType;
-
 /**
  *
  * <p>This interface maps BasicLinkType type.</p>
@@ -55,29 +52,29 @@ public interface BasicLink {
      *
      * @return the identification attributes.
      */
-    public IdAttributes getIdAttributes();
+    IdAttributes getIdAttributes();
 
     /**
      *
      * @return the href.
      */
-    public String getHref();
+    String getHref();
 
     /**
      *
      * @param idAttributes
      */
-    public void setIdAttributes(IdAttributes idAttributes);
+    void setIdAttributes(IdAttributes idAttributes);
 
     /**
      *
      * @param href
      */
-    public void setHref(String href);
+    void setHref(String href);
 
     /**
      * 
      * @return
      */
-    public Extensions extensions();
+    Extensions extensions();
 }

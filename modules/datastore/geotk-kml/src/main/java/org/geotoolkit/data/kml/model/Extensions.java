@@ -30,17 +30,17 @@ import org.opengis.util.CodeList;
  */
 public final class Extensions {
 
-    private final Map<Names, Entry<List<SimpleType>, List<AbstractObject>>> map =
-            new HashMap<Names, Entry<List<SimpleType>, List<AbstractObject>>>() {
+    private final Map<Names, Entry<List<SimpleType>, List<Object>>> map =
+            new HashMap<Names, Entry<List<SimpleType>, List<Object>>>() {
 
                 @Override
-                public Entry<List<SimpleType>, List<AbstractObject>> get(Object key) {
-                    Entry<List<SimpleType>, List<AbstractObject>> entry = super.get(key);
+                public Entry<List<SimpleType>, List<Object>> get(Object key) {
+                    Entry<List<SimpleType>, List<Object>> entry = super.get(key);
 
                     if (entry == null) {
-                        entry = new SimpleImmutableEntry<List<SimpleType>, List<AbstractObject>>(
+                        entry = new SimpleImmutableEntry<List<SimpleType>, List<Object>>(
                                 new ArrayList<SimpleType>(),
-                                new ArrayList<AbstractObject>());
+                                new ArrayList<Object>());
                         map.put((Names) key, entry);
                     }
                     return entry;
@@ -54,7 +54,7 @@ public final class Extensions {
         return map.get(name).getKey();
     }
 
-    public List<AbstractObject> complexes(Names name) {
+    public List<Object> complexes(Names name) {
         return map.get(name).getValue();
     }
 

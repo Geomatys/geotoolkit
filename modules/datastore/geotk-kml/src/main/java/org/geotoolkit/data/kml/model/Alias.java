@@ -50,24 +50,24 @@ public interface Alias extends AbstractObject {
      *
      * @return the target href
      */
-    public URI getTargetHref();
+    URI getTargetHref();
 
     /**
      *
      * @return the source href
      */
-    public URI getSourceHref();
+    URI getSourceHref();
 
     /**
      *
      * @param targetHref
      */
-    public void setTargetHref(URI targetHref);
+    void setTargetHref(URI targetHref);
 
     /**
      *
      * @param sourceHref
      */
-    public void setSourceHref(URI sourceHref);
+    void setSourceHref(URI sourceHref);
 
 }

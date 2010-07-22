@@ -44,7 +44,7 @@ public abstract class DefaultAbstractLatLonBox extends DefaultAbstractObject imp
     }
 
     /**
-     *
+     * 
      * @param objectSimpleExtensions
      * @param idAttributes
      * @param north

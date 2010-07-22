@@ -35,7 +35,7 @@ public class DefaultBoundary implements Boundary {
     }
 
     /**
-     *
+     * 
      * @param linearRing
      * @param boundarySimpleExtensions
      * @param boundaryObjectExtensions

@@ -58,48 +58,48 @@ public interface BalloonStyle extends AbstractSubStyle {
      *
      * @return the background color.
      */
-    public Color getBgColor();
+    Color getBgColor();
 
     /**
      *
      * @return the text color.
      */
-    public Color getTextColor();
+    Color getTextColor();
 
     /**
      *
      * @return the text content.
      */
-    public Object getText();
+    Object getText();
 
     /**
      *
      * @return the display mode
      */
-    public DisplayMode getDisplayMode();
+    DisplayMode getDisplayMode();
     
     /**
      *
      * @param bgColor
      */
-    public void setBgColor(Color bgColor);
+    void setBgColor(Color bgColor);
 
     /**
      *
      * @param textColor
      */
-    public void setTextColor(Color textColor);
+    void setTextColor(Color textColor);
 
     /**
      *
      * @param text
      */
-    public void setText(Object text);
+    void setText(Object text);
 
     /**
      *
      * @param displayMode
      */
-    public void setDisplayMode(DisplayMode displayMode);
+    void setDisplayMode(DisplayMode displayMode);
 
 }

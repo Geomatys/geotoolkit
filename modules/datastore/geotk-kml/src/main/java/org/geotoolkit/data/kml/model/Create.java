@@ -40,11 +40,11 @@ public interface Create {
      *
      * @return the AbstractContainer list.
      */
-    public List<Feature> getContainers();
+    List<Feature> getContainers();
 
     /**
      * 
      * @param containers
      */
-    public void setContainers(List<Feature> containers);
+    void setContainers(List<Feature> containers);
 }

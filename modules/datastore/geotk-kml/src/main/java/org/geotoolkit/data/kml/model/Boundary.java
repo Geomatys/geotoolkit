@@ -47,17 +47,17 @@ public interface Boundary {
      *
      * @return the linear ring geometry.
      */
-    public LinearRing getLinearRing();
+    LinearRing getLinearRing();
 
     /**
      * 
      * @param linearRing
      */
-    public void setLinearRing(LinearRing linearRing);
+    void setLinearRing(LinearRing linearRing);
 
     /**
      * 
      * @return
      */
-    public Extensions extensions();
+    Extensions extensions();
 }

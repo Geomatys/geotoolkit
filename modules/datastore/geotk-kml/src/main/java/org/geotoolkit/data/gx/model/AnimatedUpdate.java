@@ -20,15 +20,48 @@ import org.geotoolkit.data.kml.model.Update;
 
 /**
  *
+ * <p>This interface maps AnimatedUpdate element.</p>
+ *
+ * <pre>
+ * &lt;element name="AnimatedUpdate" type="gx:AnimatedUpdateType" substitutionGroup="gx:AbstractTourPrimitiveGroup"/>
+ *
+ * &lt;complexType name="AnimatedUpdateType">
+ *  &lt;complexContent>
+ *      &lt;extension base="gx:AbstractTourPrimitiveType">
+ *          &lt;sequence>
+ *              &lt;element ref="gx:duration" minOccurs="0"/>
+ *              &lt;element ref="kml:Update" minOccurs="0"/>
+ *          &lt;/sequence>
+ *      &lt;/extension>
+ *  &lt;/complexContent>
+ * &lt;/complexType>
+ * </pre>
+ *
  * @author Samuel Andrés
  */
 public interface AnimatedUpdate extends AbstractTourPrimitive {
 
+    /**
+     *
+     * @return
+     */
     double getDuration();
 
+    /**
+     *
+     * @return
+     */
     Update getUpdate();
 
+    /**
+     *
+     * @param duration
+     */
     void setDuration(double duration);
 
+    /**
+     * 
+     * @param update
+     */
     void setUpdate(Update update);
 }

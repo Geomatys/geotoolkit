@@ -16,10 +16,23 @@
  */
 package org.geotoolkit.data.gx.model;
 
+import org.geotoolkit.data.kml.model.AbstractObject;
+
 /**
+ * <p>This interface maps AbstractTourPrimitive element.</p>
+ *
+ * <pre>
+ * &lt;element name="AbstractTourPrimitiveGroup" type="gx:AbstractTourPrimitiveType" abstract="true" substitutionGroup="kml:AbstractObjectGroup"/>
+ *
+ * &lt;complexType name="AbstractTourPrimitiveType">
+ *  &lt;complexContent>
+ *      &lt;extension base="kml:AbstractObjectType"/>
+ *  &lt;/complexContent>
+ * &lt;/complexType>
+ * </pre>
  *
  * @author Samuel Andrés
  */
-public interface AbstractTourPrimitive {
+public interface AbstractTourPrimitive extends AbstractObject {
 
 }

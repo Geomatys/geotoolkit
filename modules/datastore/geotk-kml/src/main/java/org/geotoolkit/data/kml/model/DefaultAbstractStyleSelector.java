@@ -25,6 +25,9 @@ import org.geotoolkit.data.kml.xsd.SimpleType;
  */
 public abstract class DefaultAbstractStyleSelector extends DefaultAbstractObject implements AbstractStyleSelector {
 
+    /*
+     *
+     */
     protected DefaultAbstractStyleSelector() {
     }
 

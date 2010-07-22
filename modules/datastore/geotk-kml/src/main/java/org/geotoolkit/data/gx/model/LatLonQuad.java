@@ -20,12 +20,35 @@ import org.geotoolkit.data.kml.model.AbstractObject;
 import org.geotoolkit.data.kml.model.Coordinates;
 
 /**
+ * <p>This interface maps LatLonQuad element.</p>
+ *
+ * <pre>
+ * &lt;element name="LatLonQuad" type="gx:LatLonQuadType" substitutionGroup="kml:GroundOverlayObjectExtensionGroup"/>
+ *
+ * &lt;complexType name="LatLonQuadType">
+ *  &lt;complexContent>
+ *      &lt;extension base="kml:AbstractObjectType">
+ *          &lt;sequence>
+ *              &lt;element ref="kml:coordinates" minOccurs="0"/>
+ *          &lt;/sequence>
+ *      &lt;/extension>
+ *  &lt;/complexContent>
+ * &lt;/complexType>
+ * </pre>
  *
  * @author Samuel Andrés
  */
 public interface LatLonQuad extends AbstractObject {
 
+    /**
+     *
+     * @return
+     */
     Coordinates getCoordinates();
 
+    /**
+     * 
+     * @param coordinates
+     */
     void setCoordinates(Coordinates coordinates);
 }

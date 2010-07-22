@@ -20,20 +20,62 @@ import org.geotoolkit.data.kml.model.AbstractView;
 
 /**
  *
+ * <p>This interface maps FlyTo element.</p>
+ *
+ * <pre>
+ * &lt;element name="FlyTo" type="gx:FlyToType" substitutionGroup="gx:AbstractTourPrimitiveGroup"/>
+ *
+ * &lt;complexType name="FlyToType">
+ *  &lt;complexContent>
+ *      &lt;extension base="gx:AbstractTourPrimitiveType">
+ *          &lt;sequence>
+ *              &lt;element ref="gx:duration" minOccurs="0"/>
+ *              &lt;element ref="gx:flyToMode" minOccurs="0"/>
+ *              &lt;element ref="kml:AbstractViewGroup" minOccurs="0"/>
+ *          &lt;/sequence>
+ *      &lt;/extension>
+ *  &lt;/complexContent>
+ * &lt;/complexType>
+ * </pre>
+ *
  * @author Samuel Andrés
  */
 public interface FlyTo extends AbstractTourPrimitive {
 
+    /**
+     *
+     * @return
+     */
     double getDuration();
 
+    /**
+     *
+     * @return
+     */
     EnumFlyToMode getFlyToMode();
 
+    /**
+     *
+     * @return
+     */
     AbstractView getView();
 
+    /**
+     *
+     * @param duration
+     */
     void setDuration(double duration);
 
+    /**
+     *
+     * @param flyToMode
+     */
     void setFlyToMode(EnumFlyToMode flyToMode);
 
+    /**
+     * 
+     * @param view
+     */
     void setView(AbstractView view);
 
 }

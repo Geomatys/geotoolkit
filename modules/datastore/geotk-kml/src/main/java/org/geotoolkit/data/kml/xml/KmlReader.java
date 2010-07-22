@@ -25,7 +25,9 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.stream.XMLStreamConstants;
@@ -34,6 +36,8 @@ import org.geotoolkit.data.kml.KmlFactory;
 import org.geotoolkit.data.kml.DefaultKmlFactory;
 import org.geotoolkit.atom.model.AtomPersonConstruct;
 import org.geotoolkit.atom.model.AtomLink;
+import org.geotoolkit.data.gx.xml.GxConstants;
+import org.geotoolkit.data.gx.xml.GxReader;
 import org.geotoolkit.data.kml.KmlUtilities;
 import org.geotoolkit.data.kml.model.AbstractColorStyle;
 import org.geotoolkit.data.kml.model.AbstractGeometry;
@@ -128,6 +132,7 @@ public class KmlReader extends StaxStreamReader {
     private final XalReader xalReader = new XalReader();
     private final AtomReader atomReader = new AtomReader();
     private final FastDateParser fastDateParser = new FastDateParser();
+    private final Map<String, StaxStreamReader> extensionReaders = new HashMap<String, StaxStreamReader>();
 
     public KmlReader() {
         super();
@@ -173,6 +178,23 @@ public class KmlReader extends StaxStreamReader {
             throw new KmlException("Bad Kml version Uri. This reader supports 2.1 and 2.2 versions.");
     }
 
+    public void addExtensionReader(String uri, StaxStreamReader reader) 
+            throws KmlException, IOException, XMLStreamException{
+        if(this.extensionReaders.get(uri) == null){
+            this.extensionReaders.put(uri, reader);
+            reader.setInput(this.reader);
+        } else {
+            throw new KmlException(uri+" uri is already associated with an extension reader.");
+        }
+    }
+
+    protected StaxStreamReader getExtensionReader(String uri) throws KmlException{
+        if(this.extensionReaders.get(uri) == null){
+            throw new KmlException("There is no available reader for "+uri+" extension.");
+        }
+        return this.extensionReaders.get(uri);
+    }
+
     /**
      * <p>This method reads the Kml document assigned to the KmlReader.</p>
      *
@@ -194,7 +216,15 @@ public class KmlReader extends StaxStreamReader {
                                 || URI_KML_2_1.equals(eUri)) {
                             if (TAG_KML.equals(eName)) {
                                 this.URI_KML = eUri;
+
+                                Map<String, String> extensionsUris = new HashMap<String, String>();
+                                for(int i = 0; i<reader.getNamespaceCount(); i++){
+                                    if(reader.getNamespacePrefix(i) != null){
+                                        extensionsUris.put(reader.getNamespaceURI(i), reader.getNamespacePrefix(i));
+                                    }
+                                }
                                 root = this.readKml();
+                                root.setExtensionsUris(extensionsUris);
                                 root.setVersion(URI_KML);
                             }
                         }
@@ -377,7 +407,7 @@ public class KmlReader extends StaxStreamReader {
      * @throws XMLStreamException
      * @throws KmlException
      */
-    private Region readRegion() throws XMLStreamException, KmlException {
+    public Region readRegion() throws XMLStreamException, KmlException {
         // AbstractObject
         List<SimpleType> objectSimpleExtensions = null;
         IdAttributes idAttributes = this.readIdAttributes();
@@ -479,7 +509,7 @@ public class KmlReader extends StaxStreamReader {
      * @return
      * @throws XMLStreamException
      */
-    private ExtendedData readExtendedData() throws XMLStreamException, URISyntaxException {
+    public ExtendedData readExtendedData() throws XMLStreamException, URISyntaxException {
         List<Data> datas = new ArrayList<Data>();
         List<SchemaData> schemaDatas = new ArrayList<SchemaData>();
         List<Object> anyOtherElements = null;
@@ -522,7 +552,7 @@ public class KmlReader extends StaxStreamReader {
      * @deprecated
      */
     @Deprecated
-    private Metadata readMetaData() throws XMLStreamException{
+    public Metadata readMetaData() throws XMLStreamException{
         return KmlReader.kmlFactory.createMetadata();
     }
 
@@ -616,7 +646,7 @@ public class KmlReader extends StaxStreamReader {
 
         }
 
-        return KmlReader.kmlFactory.createSchemaData(objectSimpleExtensions, 
+        return KmlReader.kmlFactory.createSchemaData(objectSimpleExtensions,
                 idAttributes, schemaURL, simpleDatas, schemaDataExtensions);
     }
 
@@ -710,8 +740,10 @@ public class KmlReader extends StaxStreamReader {
      * 
      * @return
      * @throws XMLStreamException
+     * @throws KmlException
+     * @throws URISyntaxException
      */
-    private Update readUpdate() throws XMLStreamException, KmlException, URISyntaxException{
+    public Update readUpdate() throws XMLStreamException, KmlException, URISyntaxException{
         URI targetHref = null;
         List<Object> updates = new ArrayList<Object>();
         List<Object> updateOpExtensions = null;
@@ -1015,7 +1047,7 @@ public class KmlReader extends StaxStreamReader {
      * @return
      * @throws XMLStreamException
      */
-    private Snippet readSnippet() throws XMLStreamException{
+    public Snippet readSnippet() throws XMLStreamException{
         int maxLines = DEF_MAX_SNIPPET_LINES_ATT;
         if (reader.getAttributeValue(null, ATT_MAX_LINES) != null){
             maxLines = Integer.parseInt(reader.getAttributeValue(null, ATT_MAX_LINES));
@@ -1846,7 +1878,7 @@ public class KmlReader extends StaxStreamReader {
 
         String href = null;
         List<SimpleType> basicLinkSimpleExtensions = null;
-        List<AbstractObject> basicLinkObjectExtensions = null;
+        List<Object> basicLinkObjectExtensions = null;
 
         // Spécifique à Link
         RefreshMode refreshMode = DEF_REFRESH_MODE;
@@ -1857,7 +1889,7 @@ public class KmlReader extends StaxStreamReader {
         String viewFormat = null;
         String httpQuery = null;
         List<SimpleType> linkSimpleExtensions = null;
-        List<AbstractObject> linkObjectExtensions = null;
+        List<Object> linkObjectExtensions = null;
         
         boucle:
         while (reader.hasNext()) {
@@ -2499,7 +2531,7 @@ public class KmlReader extends StaxStreamReader {
      * @return
      * @throws XMLStreamException
      */
-    private AbstractView readAbstractView(String eName) throws XMLStreamException, KmlException {
+    public AbstractView readAbstractView(String eName) throws XMLStreamException, KmlException {
         AbstractView resultat = null;
         if (TAG_LOOK_AT.equals(eName)) {
             resultat = readLookAt();
@@ -2651,7 +2683,7 @@ public class KmlReader extends StaxStreamReader {
      * @return
      * @throws XMLStreamException
      */
-    private AbstractStyleSelector readAbstractStyleSelector(String eName) throws XMLStreamException, KmlException, URISyntaxException {
+    public AbstractStyleSelector readAbstractStyleSelector(String eName) throws XMLStreamException, KmlException, URISyntaxException {
         AbstractStyleSelector resultat = null;
         if (TAG_STYLE.equals(eName)) {
             resultat = readStyle();
@@ -3177,7 +3209,7 @@ public class KmlReader extends StaxStreamReader {
      * @return
      * @throws XMLStreamException
      */
-    private Object readElementText() throws XMLStreamException{
+    public Object readElementText() throws XMLStreamException{
         Object resultat = null;
         boucle:
         while (reader.hasNext()) {
@@ -3429,7 +3461,7 @@ public class KmlReader extends StaxStreamReader {
      * @return
      * @throws XMLStreamException
      */
-    private AbstractTimePrimitive readAbstractTimePrimitive(String eName) throws XMLStreamException {
+    public AbstractTimePrimitive readAbstractTimePrimitive(String eName) throws XMLStreamException {
         AbstractTimePrimitive resultat = null;
         if (TAG_TIME_STAMP.equals(eName)) {
             resultat = readTimeStamp();
@@ -3541,7 +3573,7 @@ public class KmlReader extends StaxStreamReader {
      * @return
      * @throws XMLStreamException
      */
-    private AtomPersonConstruct readAtomPersonConstruct() throws XMLStreamException {
+    public AtomPersonConstruct readAtomPersonConstruct() throws XMLStreamException {
         return this.atomReader.readAuthor();
     }
 
@@ -3550,7 +3582,7 @@ public class KmlReader extends StaxStreamReader {
      * @return
      * @throws XMLStreamException
      */
-    private AtomLink readAtomLink() throws XMLStreamException {
+    public AtomLink readAtomLink() throws XMLStreamException {
         return this.atomReader.readLink();
     }
 
@@ -3559,7 +3591,7 @@ public class KmlReader extends StaxStreamReader {
      * @return
      * @throws XMLStreamException
      */
-    private AddressDetails readXalAddressDetails() throws XMLStreamException {
+    public AddressDetails readXalAddressDetails() throws XMLStreamException {
         AddressDetails resultat = null;
         try {
             resultat = this.xalReader.readAddressDetails();
@@ -3729,8 +3761,8 @@ public class KmlReader extends StaxStreamReader {
         // Document
         List<Schema> schemas = new ArrayList<Schema>();
         List<Feature> features = new ArrayList<Feature>();
-        List<SimpleType> documentSimpleExtensions = null;
-        List<AbstractObject> documentObjectExtensions = null;
+        List<SimpleType> documentSimpleExtensions = new ArrayList<SimpleType>();
+        List<Object> documentObjectExtensions = new ArrayList<Object>();
 
         boucle:
         while (reader.hasNext()) {
@@ -3792,13 +3824,18 @@ public class KmlReader extends StaxStreamReader {
                         } else if (TAG_ATOM_LINK.equals(eName)) {
                             link = this.readAtomLink();
                         }
-                    }
-                    if (URI_XAL.equals(eUri)) {
+                    } else if (URI_XAL.equals(eUri)) {
                         checkVersion(URI_KML_2_2);
                         // ABSTRACT FEATURE
                         if (TAG_XAL_ADDRESS_DETAILS.equals(eName)) {
                             addressDetails = this.readXalAddressDetails();
                         }
+                    } else {
+                        Object ext = this.readExtension(eUri, eName, TAG_DOCUMENT);
+                        if(ext instanceof AbstractObject || ext instanceof Feature){
+                            documentObjectExtensions.add(ext);
+                        }
+                        //CAS SIMPLE !!!!
                     }
                     break;
 
@@ -3816,6 +3853,22 @@ public class KmlReader extends StaxStreamReader {
                 view, timePrimitive, styleUrl, styleSelector, region, extendedData, featureSimpleExtensions, featureObjectExtensions,
                 abstractContainerSimpleExtensions, abstractContainerObjectExtensions,
                 schemas, features, documentSimpleExtensions, documentObjectExtensions);
+    }
+
+    public Object readExtension(String uri, String name, String elementTag)
+            throws KmlException, XMLStreamException, URISyntaxException{
+        StaxStreamReader r = this.getExtensionReader(uri);
+        Object resultat = null;
+        
+        if(TAG_DOCUMENT.equals(elementTag)){
+          if(r instanceof GxReader){
+              GxReader gxReader = (GxReader) r;
+              if(GxConstants.TAG_TOUR.equals(name)){
+                  resultat = gxReader.readTour();
+              }
+          }
+        }
+        return resultat;
     }
 
     /**
@@ -4108,7 +4161,7 @@ public class KmlReader extends StaxStreamReader {
      *
      * @return
      */
-    private IdAttributes readIdAttributes() {
+    public IdAttributes readIdAttributes() {
         return KmlReader.kmlFactory.createIdAttributes(
                 reader.getAttributeValue(null, ATT_ID), reader.getAttributeValue(null, ATT_TARGET_ID));
     }
@@ -4123,7 +4176,7 @@ public class KmlReader extends StaxStreamReader {
      * @param eName the tag name.
      * @return true if the tag name is an AbstractGeometry element.
      */
-    private boolean isAbstractGeometry(String eName) {
+    public boolean isAbstractGeometry(String eName) {
         return (TAG_MULTI_GEOMETRY.equals(eName)
                 || TAG_LINE_STRING.equals(eName)
                 || TAG_POLYGON.equals(eName)
@@ -4137,7 +4190,7 @@ public class KmlReader extends StaxStreamReader {
      * @param eName the tag name.
      * @return true if the tag name is an AbstractFeature element.
      */
-    private boolean isAbstractFeature(String eName) {
+    public boolean isAbstractFeature(String eName) {
         return (TAG_FOLDER.equals(eName)
                 || TAG_GROUND_OVERLAY.equals(eName)
                 || TAG_PHOTO_OVERLAY.equals(eName)
@@ -4152,7 +4205,7 @@ public class KmlReader extends StaxStreamReader {
      * @param eName the tag name.
      * @return true if the tag name is an AbstractContainer element.
      */
-    private boolean isAbstractContainer(String eName) {
+    public boolean isAbstractContainer(String eName) {
         return (TAG_FOLDER.equals(eName)
                 || TAG_DOCUMENT.equals(eName));
     }
@@ -4162,7 +4215,7 @@ public class KmlReader extends StaxStreamReader {
      * @param eName the tag name.
      * @return true if the tag name is an AbstractOverlay element.
      */
-    private boolean isAbstractOverlay(String eName) {
+    public boolean isAbstractOverlay(String eName) {
         return (TAG_GROUND_OVERLAY.equals(eName)
                 || TAG_PHOTO_OVERLAY.equals(eName)
                 || TAG_SCREEN_OVERLAY.equals(eName));
@@ -4173,7 +4226,7 @@ public class KmlReader extends StaxStreamReader {
      * @param eName the tag name.
      * @return true if the tag name is an AbstractView element.
      */
-    private boolean isAbstractView(String eName) {
+    public boolean isAbstractView(String eName) {
         return (TAG_LOOK_AT.equals(eName)
                 || TAG_CAMERA.equals(eName));
     }
@@ -4183,7 +4236,7 @@ public class KmlReader extends StaxStreamReader {
      * @param eName the tag name.
      * @return true if the tag name is an AbstractTimePrimitive element.
      */
-    private boolean isAbstractTimePrimitive(String eName) {
+    public boolean isAbstractTimePrimitive(String eName) {
         return (TAG_TIME_STAMP.equals(eName)
                 || TAG_TIME_SPAN.equals(eName));
     }
@@ -4193,7 +4246,7 @@ public class KmlReader extends StaxStreamReader {
      * @param eName the tag name.
      * @return true if the tag name is an AbstractStyleSelector element.
      */
-    private boolean isAbstractStyleSelector(String eName) {
+    public boolean isAbstractStyleSelector(String eName) {
         return (TAG_STYLE.equals(eName)
                 || TAG_STYLE_MAP.equals(eName));
     }
@@ -4214,7 +4267,7 @@ public class KmlReader extends StaxStreamReader {
      * @param eName
      * @return
      */
-    private boolean isAbstractColorStyle(String eName){
+    public boolean isAbstractColorStyle(String eName){
         return (TAG_ICON_STYLE.equals(eName)
                 || TAG_LABEL_STYLE.equals(eName)
                 || TAG_POLY_STYLE.equals(eName)
@@ -4226,13 +4279,20 @@ public class KmlReader extends StaxStreamReader {
      * @param eName
      * @return
      */
-    private boolean isAbstractObject(String eName) {
-        // Compléter avec les autres types hériant de AbstractObject
+    public boolean isAbstractObject(String eName) {
+        // Traiter le cas particuloer du TAG_ICON qui peut être un basicLink
         return (isAbstractFeature(eName)
                 || isAbstractGeometry(eName)
                 || isAbstractStyleSelector(eName)
                 || isAbstractSubStyle(eName)
-                || isAbstractView(eName));
+                || isAbstractView(eName)
+                || TAG_PAIR.equals(eName)
+                || TAG_LINK.equals(eName)
+                || TAG_VIEW_VOLUME.equals(eName)
+                || TAG_REGION.equals(eName)
+                || TAG_LOD.equals(eName)
+                || TAG_ORIENTATION.equals(eName)
+                || TAG_SCHEMA_DATA.equals(eName));
     }
 
     /**
@@ -4240,7 +4300,7 @@ public class KmlReader extends StaxStreamReader {
      * @param eName
      * @return
      */
-    private boolean isAbstractLatLonBox(String eName) {
+    public boolean isAbstractLatLonBox(String eName) {
         return (TAG_LAT_LON_ALT_BOX.equals(eName)
                 || TAG_LAT_LON_BOX.equals(eName));
     }
@@ -4250,7 +4310,7 @@ public class KmlReader extends StaxStreamReader {
      * @param versions
      * @throws KmlException
      */
-    private void checkVersion(String... versions) throws KmlException{
+    public void checkVersion(String... versions) throws KmlException{
         for(String version : versions)
             if(this.URI_KML.equals(version))
                 return;
@@ -4263,7 +4323,7 @@ public class KmlReader extends StaxStreamReader {
      * @param version
      * @return
      */
-    private boolean checkVersionSimple(String version){
+    public boolean checkVersionSimple(String version){
         return this.URI_KML.equals(version);
     }
 }

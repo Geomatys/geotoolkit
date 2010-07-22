@@ -32,7 +32,7 @@ public abstract class DefaultAbstractSubStyle extends DefaultAbstractObject impl
     }
 
     /**
-     *
+     * 
      * @param objectSimpleExtensions
      * @param idAttributes
      * @param abstractSubStyleSimpleExtensions

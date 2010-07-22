@@ -47,48 +47,48 @@ public interface AbstractLatLonBox extends AbstractObject {
      *
      * @return the north angle.
      */
-    public double getNorth();
+    double getNorth();
 
     /**
      *
      * @return the south angle.
      */
-    public double getSouth();
+    double getSouth();
 
     /**
      *
      * @return the east angle.
      */
-    public double getEast();
+    double getEast();
 
     /**
      *
      * @return the west angle.
      */
-    public double getWest();
+    double getWest();
 
     /**
      *
      * @param north
      */
-    public void setNorth(double north);
+    void setNorth(double north);
 
     /**
      *
      * @param south
      */
-    public void setSouth(double south);
+    void setSouth(double south);
 
     /**
      *
      * @param east
      */
-    public void setEast(double east);
+    void setEast(double east);
 
     /**
      *
      * @param west
      */
-    public void setWest(double west);
+    void setWest(double west);
 
 }

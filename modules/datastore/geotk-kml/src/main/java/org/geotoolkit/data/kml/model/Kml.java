@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.data.kml.model;
 
+import java.util.Map;
 import org.opengis.feature.Feature;
 
 /**
@@ -61,6 +62,12 @@ public interface Kml {
     public Feature getAbstractFeature();
 
     /**
+     *
+     * @return A lis of extensions used by the Kml object.
+     */
+    public Map<String, String> getExtensionsUris();
+
+    /**
      * 
      * @param version
      */
@@ -77,6 +84,14 @@ public interface Kml {
      * @param feature
      */
     public void setAbstractFeature(Feature feature);
+
+    /**
+     * 
+     * @param extensionsUris
+     */
+    public void setExtensionsUris(Map<String, String> extensionsUris);
+
+    public void addExtensionUri(String uri, String prefix);
 
     /**
      * 

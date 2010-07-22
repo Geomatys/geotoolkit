@@ -164,7 +164,7 @@ public class LabelStyleTest {
         final Kml kml = kmlFactory.createKml(null, document, null, null);
 
         File temp = File.createTempFile("testLabelStyle", ".kml");
-        //temp.deleteOnExit();
+        temp.deleteOnExit();
 
         KmlWriter writer = new KmlWriter();
         writer.setOutput(temp);

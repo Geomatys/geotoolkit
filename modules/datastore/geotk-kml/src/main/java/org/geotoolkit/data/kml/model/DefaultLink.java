@@ -67,12 +67,12 @@ public class DefaultLink extends DefaultAbstractObject implements Link {
             IdAttributes idAttributes,
             String href,
             List<SimpleType> basicLinkSimpleExtensions,
-            List<AbstractObject> basicLinkObjectExtension,
+            List<Object> basicLinkObjectExtension,
             RefreshMode refreshMode, double refreshInterval,
             ViewRefreshMode viewRefreshMode, double viewRefreshTime,
             double viewBoundScale, String viewFormat, String httpQuery,
             List<SimpleType> linkSimpleExtensions,
-            List<AbstractObject> linkObjectExtension) {
+            List<Object> linkObjectExtension) {
         super(objectSimpleExtensions, idAttributes);
         this.href = href;
         if (basicLinkSimpleExtensions != null) {

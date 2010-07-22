@@ -17,12 +17,35 @@
 package org.geotoolkit.data.gx.model;
 
 /**
+ * <p>This interface maps Wait element.</p>
+ *
+ * <pre>
+ * &lt;element name="Wait" type="gx:WaitType" substitutionGroup="gx:AbstractTourPrimitiveGroup"/>
+ *
+ * &lt;complexType name="WaitType">
+ *  &lt;complexContent>
+ *      &lt;extension base="gx:AbstractTourPrimitiveType">
+ *          &lt;sequence>
+ *              &lt;element ref="gx:duration" minOccurs="0"/>
+ *          &lt;/sequence>
+ *      &lt;/extension>
+ *  &lt;/complexContent>
+ * &lt;/complexType>
+ * </pre>
  *
  * @author Samuel Andrés
  */
 public interface Wait extends AbstractTourPrimitive {
 
+    /**
+     *
+     * @return
+     */
     double getDuration();
 
+    /**
+     * 
+     * @param duration
+     */
     void setDuration(double duration);
 }

@@ -42,7 +42,7 @@ public class DefaultBalloonStyle extends DefaultAbstractSubStyle implements Ball
     }
 
     /**
-     *
+     * 
      * @param objectSimpleExtensions
      * @param idAttributes
      * @param abstractSubStyleSimpleExtensions

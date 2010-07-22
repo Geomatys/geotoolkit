@@ -50,7 +50,7 @@ public class GxConstants {
     public static final String TAG_LAT_LON_QUAD = "LatLonQuad";
 
     /*
-     * VALEURS PAR DEFAUT
+     * DEFAULT VALUES
      */
 
     public static final AltitudeMode DEF_ALTITUDE_MODE = KmlConstants.DEF_ALTITUDE_MODE;

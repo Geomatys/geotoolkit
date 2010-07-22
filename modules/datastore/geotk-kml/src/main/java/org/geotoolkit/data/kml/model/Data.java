@@ -49,47 +49,47 @@ public interface Data extends AbstractObject {
      *
      * @return the name.
      */
-    public String getName();
+    String getName();
 
     /**
      *
      * @return the display name.
      */
-    public Object getDisplayName();
+    Object getDisplayName();
 
     /**
      *
      * @return the value.
      */
-    public String getValue();
+    String getValue();
 
     /**
      *
      * @return the list of data extensions.
      */
-    public List<Object> getDataExtensions();
+    List<Object> getDataExtensions();
 
     /**
      *
      * @param name
      */
-    public void setName(String name);
+    void setName(String name);
 
     /**
      *
      * @param displayName
      */
-    public void setDisplayName(String displayName);
+    void setDisplayName(String displayName);
 
     /**
      *
      * @param value
      */
-    public void setValue(String value);
+    void setValue(String value);
 
     /**
      *
      * @param dataExtensions
      */
-    public void setDataExtensions(List<Object> dataExtensions);
+    void setDataExtensions(List<Object> dataExtensions);
 }

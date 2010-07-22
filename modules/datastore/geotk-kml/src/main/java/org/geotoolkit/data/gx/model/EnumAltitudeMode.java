@@ -20,8 +20,7 @@ import org.geotoolkit.data.kml.model.AltitudeMode;
 
 /**
  *
- * <p>Thi enumeration maps altitudeMode whose altitudeModeEnumType
- * is the only one imlementation.</p>
+ * <p>Thi enumeration maps altitudeMode element (gx extension).</p>
  *
  * <pre>
  * &lt;element name="altitudeMode" type="gx:altitudeModeEnumType" substitutionGroup="kml:altitudeModeGroup"/>
@@ -55,6 +54,7 @@ public enum EnumAltitudeMode implements AltitudeMode {
      *
      * @return The String value of the enumeration.
      */
+    @Override
     public String getAltitudeMode(){
         return this.altitudeMode;
     }

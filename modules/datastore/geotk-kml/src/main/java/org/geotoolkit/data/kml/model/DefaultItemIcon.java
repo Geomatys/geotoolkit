@@ -37,7 +37,7 @@ public class DefaultItemIcon extends DefaultAbstractObject implements ItemIcon {
     }
 
     /**
-     *
+     * 
      * @param objectSimpleExtensions
      * @param idAttributes
      * @param states

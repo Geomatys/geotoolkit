@@ -46,7 +46,7 @@ public class DefaultLinearRing extends com.vividsolutions.jts.geom.LinearRing im
     }
 
     /**
-     * 
+     *
      * @param objectSimpleExtensions
      * @param idAttributes
      * @param abstractGeometrySimpleExtensions
@@ -89,7 +89,6 @@ public class DefaultLinearRing extends com.vividsolutions.jts.geom.LinearRing im
         if (lineStringObjectExtensions != null) {
             this.extensions().complexes(Extensions.Names.LINAR_RING).addAll(lineStringObjectExtensions);
         }
-
     }
 
     /**

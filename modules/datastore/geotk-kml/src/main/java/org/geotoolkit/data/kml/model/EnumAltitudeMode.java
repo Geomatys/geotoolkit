@@ -55,6 +55,7 @@ public enum EnumAltitudeMode implements AltitudeMode {
      *
      * @return The String value of the enumeration.
      */
+    @Override
     public String getAltitudeMode(){
         return this.altitudeMode;
     }

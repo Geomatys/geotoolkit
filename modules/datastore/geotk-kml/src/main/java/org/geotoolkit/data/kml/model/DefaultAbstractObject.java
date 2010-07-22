@@ -28,11 +28,15 @@ public abstract class DefaultAbstractObject implements AbstractObject {
     private final Extensions extensions = new Extensions();
     protected IdAttributes idAttributes;
 
+    /**
+     * 
+     */
     protected DefaultAbstractObject() {
     }
 
     /**
      * 
+     * @param objectSimpleExtensions
      * @param idAttributes
      */
     protected DefaultAbstractObject(List<SimpleType> objectSimpleExtensions,
@@ -67,6 +71,10 @@ public abstract class DefaultAbstractObject implements AbstractObject {
         return resultat;
     }
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public Extensions extensions() {
         return extensions;

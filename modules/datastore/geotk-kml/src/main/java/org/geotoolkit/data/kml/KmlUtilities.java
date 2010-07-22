@@ -24,7 +24,7 @@ import org.geotoolkit.data.kml.model.Coordinates;
 import org.geotoolkit.data.kml.model.KmlException;
 
 /**
- * <p>This clss provides utilities for reading and writting KML files.</p>
+ * <p>This class provides utilities for reading and writting KML files.</p>
  *
  * @author Samuel Andrés
  */
