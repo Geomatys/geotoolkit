@@ -27,6 +27,7 @@ import javax.imageio.ImageReadParam;
 import javax.imageio.spi.ImageReaderSpi;
 
 import org.geotoolkit.math.Statistics;
+import org.junit.After;
 
 
 /**
@@ -36,11 +37,27 @@ import org.geotoolkit.math.Statistics;
  * for manual testings.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.08
+ * @version 3.14
  *
  * @since 3.06
  */
 public abstract class ImageReaderTestBase extends org.geotoolkit.test.image.ImageReaderTestBase {
+    /**
+     * Checks in a "best effort" way if the {@linkplain javax.imageio.stream.ImageInputStream}s
+     * have been closed. This method relies on the {@code finalize()} method declared in the
+     * {@link org.geotoolkit.internal.image.io.CheckedImageInputStream} class.
+     * <p>
+     * This method is invoked automatically by JUnit after each test and doesn't need to be
+     * invoked explicitly.
+     *
+     * @since 3.14
+     */
+    @After
+    public final void ensureStreamAreClosed() {
+        System.gc();
+        System.runFinalization();
+    }
+
     /**
      * Loads the given image using the given provider, and prints information about it.
      * This is used only as a helper tools for tuning the test suites.

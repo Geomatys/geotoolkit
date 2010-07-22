@@ -150,6 +150,7 @@ public final class WorldFileImageReaderTest extends TextImageReaderTestBase {
              */
             ImageReader reader = XImageIO.getReaderBySuffix(file, true, null);
             assertFalse(reader instanceof WorldFileImageReader);
+            ((ImageInputStream) reader.getInput()).close();
             reader.dispose();
             /*
              * Test again, but now using a file which have a TFW file.
