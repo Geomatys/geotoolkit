@@ -263,7 +263,7 @@ public class WorldFileImageReader extends ImageReaderAdapter {
      * users must invoke {@link #registerDefaults(ServiceRegistry)} explicitly.
      *
      * @author Martin Desruisseaux (Geomatys)
-     * @version 3.12
+     * @version 3.14
      *
      * @see WorldFileImageWriter.Spi
      *
@@ -293,6 +293,26 @@ public class WorldFileImageReader extends ImageReaderAdapter {
          */
         public Spi(final String format) throws IllegalArgumentException {
             this(Formats.getReaderByFormatName(format, Spi.class));
+        }
+
+        /**
+         * If the given provider is an instance of {@code WorldFileImageReader.Spi}, returns
+         * the underlying {@linkplain #main main} provider. Otherwise returns the given provider
+         * unchanged.
+         * <p>
+         * This method is convenient when the caller is not interested in spatial metadata,
+         * in order to ensure that the cost of parsing TFW and PRJ files is avoided.
+         *
+         * @param  spi An image reader provider, or {@code null}.
+         * @return The wrapped image reader provider, or {@code null}.
+         *
+         * @since 3.14
+         */
+        public static ImageReaderSpi unwrap(ImageReaderSpi spi) {
+            while (spi instanceof Spi) {
+                spi = ((Spi) spi).main;
+            }
+            return spi;
         }
 
         /**

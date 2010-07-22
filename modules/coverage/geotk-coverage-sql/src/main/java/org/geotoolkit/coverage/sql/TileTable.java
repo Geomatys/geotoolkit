@@ -39,6 +39,7 @@ import javax.imageio.spi.ImageReaderSpi;
 import org.geotoolkit.image.io.mosaic.Tile;
 import org.geotoolkit.image.io.mosaic.TileManager;
 import org.geotoolkit.image.io.mosaic.TileManagerFactory;
+import org.geotoolkit.image.io.plugin.WorldFileImageReader;
 import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.collection.Cache;
 import org.geotoolkit.util.collection.BackingStoreException;
@@ -278,8 +279,10 @@ final class TileTable extends Table implements Comparator<TileManager> {
         Iterator<ImageReaderSpi> providers = registry.getServiceProviders(ImageReaderSpi.class, true);
         while (providers.hasNext()) {
             final ImageReaderSpi provider = providers.next();
-            if (XArrays.contains(provider.getFormatNames(), format)) {
-                return provider;
+            if (!(provider instanceof WorldFileImageReader.Spi)) {
+                if (XArrays.containsIgnoreCase(provider.getFormatNames(), format)) {
+                    return provider;
+                }
             }
         }
         /*
@@ -291,8 +294,10 @@ final class TileTable extends Table implements Comparator<TileManager> {
         providers = registry.getServiceProviders(ImageReaderSpi.class, true);
         while (providers.hasNext()) {
             final ImageReaderSpi provider = providers.next();
-            if (XArrays.contains(provider.getMIMETypes(), format)) {
-                return provider;
+            if (!(provider instanceof WorldFileImageReader.Spi)) {
+                if (XArrays.containsIgnoreCase(provider.getMIMETypes(), format)) {
+                    return provider;
+                }
             }
         }
         throw new IIOException(Errors.format(Errors.Keys.NO_IMAGE_READER));

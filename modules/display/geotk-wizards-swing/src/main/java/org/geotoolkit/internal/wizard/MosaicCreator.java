@@ -97,7 +97,7 @@ final class MosaicCreator extends DeferredWizardResult implements IIOWriteProgre
                     new File(builder.getTileDirectory(), "TileManager.serialized")));
             out.writeObject(tiles);
             out.close();
-        } catch (Exception exception) {
+        } catch (Throwable exception) { // We also want to catch OutOfMemoryError.
             progress.failed(exception.getLocalizedMessage(), false);
             ExceptionMonitor.show((Component) settings.get(MosaicWizard.CONFIRM), exception);
             return;

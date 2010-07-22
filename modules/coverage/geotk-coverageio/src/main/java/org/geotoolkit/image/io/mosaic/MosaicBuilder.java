@@ -46,6 +46,7 @@ import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.coverage.grid.GridEnvelope2D;
 import org.geotoolkit.coverage.grid.ImageGeometry;
 import org.geotoolkit.image.io.IIOListeners;
+import org.geotoolkit.image.io.plugin.WorldFileImageReader;
 import org.geotoolkit.internal.image.ImageUtilities;
 import org.geotoolkit.internal.image.io.Formats;
 import org.geotoolkit.referencing.operation.builder.GridToEnvelopeMapper;
@@ -297,7 +298,7 @@ public class MosaicBuilder {
      */
     public void setTileReaderSpi(final String format) throws IllegalArgumentException {
         // No need to synchronize.
-        setTileReaderSpi(Formats.getReaderByFormatName(format, null));
+        setTileReaderSpi(Formats.getReaderByFormatName(format, WorldFileImageReader.Spi.class));
     }
 
     /**

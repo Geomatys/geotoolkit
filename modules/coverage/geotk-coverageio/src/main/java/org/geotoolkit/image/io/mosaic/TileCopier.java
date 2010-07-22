@@ -44,6 +44,7 @@ import com.sun.media.imageio.stream.FileChannelImageOutputStream;
 
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Loggings;
+import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.internal.rmi.RMI;
 import org.geotoolkit.internal.io.ObjectStream;
@@ -146,6 +147,7 @@ final class TileCopier extends ShareableTask<Tile,Map<Tile,RawFile>> {
             final int imageIndex = tile.getImageIndex();
             final ImageReader reader = tile.getImageReader();
             ImageReadParam param = null;
+            final ImageTypeSpecifier type = reader.getRawImageType(imageIndex);
             if (sourceImage != null) {
                 /*
                  * Recycles the current BufferedImage if it still suitable for the next tile
@@ -155,10 +157,9 @@ final class TileCopier extends ShareableTask<Tile,Map<Tile,RawFile>> {
                  * image (which may be very big) reclaimed before to attempt to create a new
                  * one.
                  */
-                final ImageTypeSpecifier type = reader.getRawImageType(imageIndex);
                 if (reader.getWidth (imageIndex) == sourceImage.getWidth()  &&
                     reader.getHeight(imageIndex) == sourceImage.getHeight() &&
-                    (sourceType != null && sourceType.equals(type)))
+                    Utilities.equals(sourceType, type))
                 {
                     param = reader.getDefaultReadParam();
                     param.setDestination(sourceImage);
@@ -167,8 +168,8 @@ final class TileCopier extends ShareableTask<Tile,Map<Tile,RawFile>> {
                     targetImage = null;
                     System.gc(); // Image may be huge - give GC an additional chance.
                 }
-                sourceType = type;
             }
+            sourceType = type;
             /*
              * Reads the image, applies an optional operation and remember the color/sample
              * model (as an ImageTypeIdentifier) of the result. In the majority of cases, the

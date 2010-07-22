@@ -445,7 +445,8 @@ public class MosaicBuilderEditor extends JComponent implements MosaicPerformance
         /**
          * Replaces all current values by the given ones.
          */
-        public void setElements(final Dimension[] sub) {
+        @Override
+        public void setElements(final Dimension... sub) {
             elements.clear();
             if (sub != null) {
                 elements.addAll(Arrays.asList(sub));
@@ -605,7 +606,7 @@ public class MosaicBuilderEditor extends JComponent implements MosaicPerformance
      * Implementation of {@link #getTileManager} when the last step (the invocation of
      * {@link MosaicBuilder#createTileManager()}) is disabled if {@code run} is {@code false}.
      * This method exists because we want {@code builder.createTileManager()} to be invoked in
-     * the same synchronization block than the one that configured the builer.
+     * the same synchronization block than the one that configured the builder.
      */
     private TileManager getTileManager(final boolean run) throws IOException {
         final File directory;
