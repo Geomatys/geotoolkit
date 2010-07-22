@@ -458,7 +458,7 @@ public abstract class Vector extends AbstractList<Number> implements CheckedColl
 
         /**
          * Creates a new view over the values at the given indexes. This constructor
-         * does not clone the array; it is caller responsability to clone it if needed.
+         * does not clone the array; it is caller responsibility to clone it if needed.
          */
         public View(int[] index) {
             this.index = index;

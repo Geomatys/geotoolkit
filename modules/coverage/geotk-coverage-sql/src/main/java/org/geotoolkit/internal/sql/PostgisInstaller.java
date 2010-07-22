@@ -60,7 +60,7 @@ public final class PostgisInstaller extends ScriptRunner {
 
     /**
      * Creates a new runner which will execute the statements using the given connection.
-     * It will be caller responsability to close this connection after the install.
+     * It will be caller responsibility to close this connection after the install.
      *
      * @param connection The connection to the database.
      * @throws SQLException If an error occurred while executing a SQL statement.

@@ -125,7 +125,7 @@ public class Krovak extends UnitaryProjection {
     /**
      * Creates a Krovak projection from the given parameters. The descriptor argument is usually
      * {@link org.geotoolkit.referencing.operation.provider.Krovak#PARAMETERS}, but is not restricted
-     * to. If a different descriptor is supplied, it is user's responsability to ensure that it is
+     * to. If a different descriptor is supplied, it is user's responsibility to ensure that it is
      * suitable to a Krovak projection.
      *
      * @param  descriptor Typically {@code Krovak.PARAMETERS}.

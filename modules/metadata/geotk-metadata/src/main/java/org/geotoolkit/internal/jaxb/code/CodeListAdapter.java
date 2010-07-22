@@ -130,7 +130,7 @@ public abstract class CodeListAdapter<ValueType extends CodeListAdapter<ValueTyp
 
     /*
      * We do not define setter method (even abstract) since it seems to confuse JAXB.
-     * It is subclasses responsability to define the setter method. The existence of
+     * It is subclasses responsibility to define the setter method. The existence of
      * this setter will be tested by MetadataAnnotationsTest.
      */
 }

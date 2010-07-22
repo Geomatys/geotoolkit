@@ -136,7 +136,7 @@ public final class AnchorType implements InternationalString {
     private String value;
 
     /**
-     * Creates a unitialized {@code AnchorType}.
+     * Creates a uninitialized {@code AnchorType}.
      * This constructor is required by JAXB.
      */
     public AnchorType() {

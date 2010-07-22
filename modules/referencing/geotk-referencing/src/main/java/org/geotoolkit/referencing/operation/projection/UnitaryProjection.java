@@ -323,7 +323,7 @@ public abstract class UnitaryProjection extends AbstractMathTransform2D implemen
 
     /**
      * Verifies if the given coordinates are in the range of geographic coordinates. If they are
-     * not, then this method creates a log message; this is caller's responsability to send that
+     * not, then this method creates a log message; this is caller's responsibility to send that
      * message to the logger. Otherwise this method does nothing and returns {@code null}.
      * <p>
      * This method should be invoked only if {@link #verifyCoordinateRange()}
@@ -482,7 +482,7 @@ public abstract class UnitaryProjection extends AbstractMathTransform2D implemen
      * and [-&pi;/2..&pi;/2] respectively. However values outside those ranges are accepted on the
      * assumption that most implementations use those values only in trigonometric functions like
      * {@linkplain Math#sin sin} and {@linkplain Math#cos cos}. If this assumption is not applicable
-     * to a particular subclass, then it is implementor's responsability to check the range.
+     * to a particular subclass, then it is implementor's responsibility to check the range.
      * <p>
      * Input coordinate shall have the {@linkplain Parameters#centralMeridian central meridian}
      * removed from the longitude before this method is invoked. After this method is invoked,

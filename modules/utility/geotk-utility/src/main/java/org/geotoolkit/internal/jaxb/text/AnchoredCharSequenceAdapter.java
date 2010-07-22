@@ -68,7 +68,7 @@ public final class AnchoredCharSequenceAdapter extends CharSequenceAdapter {
     public final AnchoredInternationalStringAdapter international;
 
     /**
-     * Creates a unitialized adapter.
+     * Creates a uninitialized adapter.
      */
     public AnchoredCharSequenceAdapter() {
         anchors       = new HashMap<String,URI>();

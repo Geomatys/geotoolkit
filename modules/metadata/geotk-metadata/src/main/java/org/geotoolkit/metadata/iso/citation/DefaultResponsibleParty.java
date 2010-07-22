@@ -336,7 +336,7 @@ public class DefaultResponsibleParty extends MetadataEntity implements Responsib
     }
 
     /**
-     * Constructs a responsability party with the given role.
+     * Constructs a responsibility party with the given role.
      *
      * @param role The function performed by the responsible party.
      */

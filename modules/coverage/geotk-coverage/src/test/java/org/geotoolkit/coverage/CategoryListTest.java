@@ -135,7 +135,7 @@ public final class CategoryListTest {
                 // This is the expected exception.
             }
         }
-        // Removes the wrong category. Now, construction should succed.
+        // Removes the wrong category. Now, construction should succeed.
         categories = Arrays.copyOf(categories, categories.length-1);
         new CategoryList(categories, null);
     }

@@ -263,7 +263,7 @@ public class IIOMetadataPanel extends JComponent {
 
         /**
          * Shows the {@code TreeTable} associated with the given choice.
-         * It is the caller's responsability to ensure that the given
+         * It is the caller's responsibility to ensure that the given
          * format is the one selected in the combo box.
          */
         final void show(final IIOMetadataChoice newFormat) {

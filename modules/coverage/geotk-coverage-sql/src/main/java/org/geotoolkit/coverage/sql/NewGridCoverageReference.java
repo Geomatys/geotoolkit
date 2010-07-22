@@ -454,7 +454,7 @@ public final class NewGridCoverageReference {
                              * MetadataHelper should have created at most one quantitative category
                              * (usually the last one) recognized by its non-null transfer function.
                              * In the uncommon case were there is more quantitative categories, it
-                             * is the user responsability to edit the fields (using the widget for
+                             * is the user responsibility to edit the fields (using the widget for
                              * instance). We stop the loop in order to avoid conflicts.
                              */
                             break;

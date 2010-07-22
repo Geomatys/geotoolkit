@@ -199,7 +199,7 @@ public class EpsgInstaller implements Callable<EpsgInstaller.Result> {
      * {@code setMetadata} methods, in that invoking this method resets the database
      * URL and user name to values fetched from the given connection.
      * <p>
-     * It is the caller's responsability to close the given connection when it is
+     * It is the caller's responsibility to close the given connection when it is
      * no longer needed.
      *
      * @param  connection   The connection to use for installing the EPSG database.
@@ -264,7 +264,7 @@ public class EpsgInstaller implements Callable<EpsgInstaller.Result> {
     }
 
     /**
-     * Returns the connection to the database. It is caller's responsability to close
+     * Returns the connection to the database. It is caller's responsibility to close
      * this connection.
      *
      * @param  create {@code true} if this method should create the database directory (JavaDB only).

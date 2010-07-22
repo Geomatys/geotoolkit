@@ -76,7 +76,7 @@ public class Equirectangular extends UnitaryProjection {
      * Creates an Equidistant Cylindrical projection from the given parameters. The
      * descriptor argument is usually one of the {@code PARAMETERS} constants defined
      * in the {@link EquidistantCylindrical} class or a subclass, but is not restricted to.
-     * If a different descriptor is supplied, it is user's responsability to ensure that it
+     * If a different descriptor is supplied, it is user's responsibility to ensure that it
      * is suitable to an Equidistant Cylindrical projection.
      *
      * @param  descriptor Typically {@link EquidistantCylindrical#PARAMETERS}.

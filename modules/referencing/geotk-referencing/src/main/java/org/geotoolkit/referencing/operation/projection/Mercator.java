@@ -104,7 +104,7 @@ public class Mercator extends UnitaryProjection {
      * Creates a Mercator projection from the given parameters. The descriptor argument is
      * usually one of the {@code PARAMETERS} constants defined in {@link Mercator1SP} or
      * {@link Mercator2SP}, but is not restricted to. If a different descriptor is supplied,
-     * it is user's responsability to ensure that it is suitable to a Mercator projection.
+     * it is user's responsibility to ensure that it is suitable to a Mercator projection.
      *
      * @param  descriptor Typically one of {@link Mercator1SP#PARAMETERS} or
      *         {@link Mercator2SP#PARAMETERS}.

@@ -112,7 +112,7 @@ public abstract class TestBase {
     public final void initTileManager() throws IOException {
         assertTrue("Assertions should be enabled.", MosaicBuilder.class.desiredAssertionStatus());
         /*
-         * Creates now an unitialized MosaicBuilder, except for the ImageReaderSpi.
+         * Creates now an uninitialized MosaicBuilder, except for the ImageReaderSpi.
          * This is a convenient way to get that ImageReaderSpi from a format name.
          */
         builder = new MosaicBuilder(getTileManagerFactory());

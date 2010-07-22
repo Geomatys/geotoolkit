@@ -462,7 +462,7 @@ public abstract class TransformTestCase extends org.opengis.test.referencing.Tra
     /**
      * Stress the current {@linkplain #transform transform} using the given coordinates.
      * This method do not {@linkplain #validate validate} the transform. This is caller's
-     * responsability to do so if applicable.
+     * responsibility to do so if applicable.
      *
      * @param  source The input coordinates to use for testing.
      * @throws TransformException If at transformation failed.

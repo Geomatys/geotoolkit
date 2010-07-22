@@ -189,7 +189,7 @@ public class TestData implements Runnable {
 
     /**
      * Provides a non-null {@link InputStream} for named test data.
-     * It is the caller responsability to close this stream after usage.
+     * It is the caller responsibility to close this stream after usage.
      *
      * @param  caller Calling class or object used to locate {@code test-data}.
      * @param  name Filename of test data to load.
@@ -208,7 +208,7 @@ public class TestData implements Runnable {
     /**
      * Provides a {@link BufferedReader} for named test data in UTF-8 encoding. The buffered
      * reader is provided as a {@link LineNumberReader} instance, which is useful for displaying
-     * line numbers where error occur. It is the caller responsability to close this reader after
+     * line numbers where error occur. It is the caller responsibility to close this reader after
      * usage.
      *
      * @param  caller The class of the object associated with named data.
@@ -226,7 +226,7 @@ public class TestData implements Runnable {
     }
 
     /**
-     * Provides a channel for named test data. It is the caller responsability to close this
+     * Provides a channel for named test data. It is the caller responsibility to close this
      * chanel after usage.
      *
      * @param  caller The class of the object associated with named data.

@@ -74,7 +74,7 @@ public class Polyconic extends CassiniOrMercator {
     /**
      * Creates a Polyconic projection from the given parameters. The descriptor argument is
      * usually {@link org.geotoolkit.referencing.operation.provider.Polyconic#PARAMETERS},
-     * but is not restricted to. If a different descriptor is supplied, it is user's responsability
+     * but is not restricted to. If a different descriptor is supplied, it is user's responsibility
      * to ensure that it is suitable to a Polyconic projection.
      *
      * @param  descriptor Typically one of {@code Polyconic.PARAMETERS}.

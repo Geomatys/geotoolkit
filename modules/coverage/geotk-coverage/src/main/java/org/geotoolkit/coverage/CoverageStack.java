@@ -117,7 +117,7 @@ import static org.geotoolkit.referencing.CRS.equalsIgnoreMetadata;
  * This {@code CoverageStack} implementation remember the last coverage elements used;
  * it will not trig new data loading as long as consecutive calls to {@code evaluate(...)}
  * methods require the same coverage elements. Apart from this very simple caching mechanism,
- * caching is the responsability of {@link Element} implementations. Note that this simple
+ * caching is the responsibility of {@link Element} implementations. Note that this simple
  * caching mechanism is suffisient if {@code evaluate(...)} methods are invoked with increasing
  * <var>z</var> values.
  *
@@ -143,7 +143,7 @@ public class CoverageStack extends AbstractCoverage {
      * range of z-values} without loading the coverage data. If an expensive loading is required,
      * it should be delayed until the {@link #getCoverage(IIOListeners)} method is invoked. If
      * {@code getCoverage} is invoked more than once, caching (if desirable) is implementor's
-     * responsability.
+     * responsibility.
      * <p>
      * All methods declare {@link IOException} in their {@code throws} clause in case I/O operations
      * are required. Subclasses of {@code IOException} include {@link javax.imageio.IIOException}
@@ -216,7 +216,7 @@ public class CoverageStack extends AbstractCoverage {
         /**
          * Returns the coverage, loading the data if needed. Implementations should invokes the
          * {@link IIOListeners#addListenersTo(ImageReader)} method if they use an image reader
-         * for loading data. Caching (if desired) is implementor's responsability. The default
+         * for loading data. Caching (if desired) is implementor's responsibility. The default
          * {@link CoverageStack} implementation caches only the last coverages used.
          *
          * @param  listeners Listeners to register to the {@linkplain ImageReader image I/O reader},

@@ -931,7 +931,7 @@ public class ReferencingObjectFactory extends ReferencingFactory
 
     /**
      * Creates a derived coordinate reference system from a conversion.
-     * It is the user's responsability to ensure that the conversion performs all required steps,
+     * It is the user's responsibility to ensure that the conversion performs all required steps,
      * including {@linkplain AbstractCS#swapAndScaleAxis unit conversions and change of axis order},
      * if needed.
      *

@@ -180,7 +180,7 @@ public class Stereographic extends UnitaryProjection {
     /**
      * Creates a Stereographic projection from the given parameters. The descriptor argument is
      * usually {@link org.geotoolkit.referencing.operation.provider.Stereographic#PARAMETERS}, but
-     * is not restricted to. If a different descriptor is supplied, it is user's responsability
+     * is not restricted to. If a different descriptor is supplied, it is user's responsibility
      * to ensure that it is suitable to a Stereographic projection.
      *
      * @param  descriptor Typically {@code Stereographic.PARAMETERS}.

@@ -383,7 +383,7 @@ public class ObliqueMercator extends UnitaryProjection {
      * The descriptor argument is usually the {@code PARAMETERS} constant defined in
      * {@link org.geotoolkit.referencing.operation.provider.ObliqueMercator} or a subclass,
      * but is not restricted to. If a different descriptor is supplied, it is user's
-     * responsability to ensure that it is suitable to an Oblique Mercator projection.
+     * responsibility to ensure that it is suitable to an Oblique Mercator projection.
      *
      * @param  descriptor Typically
      *         {@link org.geotoolkit.referencing.operation.provider.ObliqueMercator#PARAMETERS},

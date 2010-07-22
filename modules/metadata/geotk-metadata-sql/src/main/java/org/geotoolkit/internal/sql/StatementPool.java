@@ -41,7 +41,7 @@ import org.geotoolkit.util.collection.XCollections;
  *
  * {@section Synchronization}
  * Every access to this pool <strong>must</strong> be synchronized on {@code this}.
- * Synchronization is user-responsability; this class is not thread safe alone. It
+ * Synchronization is user-responsibility; this class is not thread safe alone. It
  * will be verified if assertions are enabled.
  * <p>
  * Synchronization must be provided by the user because we typically need synchronized block

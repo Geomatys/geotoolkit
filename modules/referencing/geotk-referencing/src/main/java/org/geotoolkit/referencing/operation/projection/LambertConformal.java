@@ -112,7 +112,7 @@ public class LambertConformal extends UnitaryProjection {
      * Creates a Lambert projection from the given parameters. The descriptor argument is
      * usually one of the {@code PARAMETERS} constants defined in {@link LambertConformal1SP}
      * or {@link LambertConformal2SP}, but is not restricted to. If a different descriptor is
-     * supplied, it is user's responsability to ensure that it is suitable to a Lambert Conformal
+     * supplied, it is user's responsibility to ensure that it is suitable to a Lambert Conformal
      * projection.
      *
      * @param  descriptor Typically one of {@link LambertConformal1SP#PARAMETERS} or

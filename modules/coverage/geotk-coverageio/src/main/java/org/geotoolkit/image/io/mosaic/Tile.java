@@ -625,7 +625,7 @@ public class Tile implements Comparable<Tile>, Serializable {
      * reading the image from the {@linkplain #getInput input}. This method returns a new reader
      * on each invocation.
      * <p>
-     * It is the user's responsability to close the {@linkplain ImageReader#getInput reader input}
+     * It is the user's responsibility to close the {@linkplain ImageReader#getInput reader input}
      * after usage and {@linkplain ImageReader#dispose() dispose} the reader.
      *
      * @return An image reader with its {@linkplain ImageReader#getInput input} set.

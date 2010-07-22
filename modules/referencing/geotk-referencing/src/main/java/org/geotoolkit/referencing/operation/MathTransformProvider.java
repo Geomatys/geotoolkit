@@ -212,7 +212,7 @@ public abstract class MathTransformProvider extends DefaultOperationMethod {
         /*
          * Copies the all values from the user-supplied group to the provider-supplied group.
          * The provider group should performs all needed checks. Furthermore, it is suppliers
-         * responsability to know about alias (e.g. OGC, EPSG, ESRI), while the user will
+         * responsibility to know about alias (e.g. OGC, EPSG, ESRI), while the user will
          * probably use the name from only one authority. With a copy, we gives a chances to
          * the provider-supplied parameters to uses its alias for understanding the user
          * parameter names.

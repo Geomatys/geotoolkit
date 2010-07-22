@@ -34,7 +34,7 @@ import org.geotoolkit.lang.ThreadSafe;
  * indicates the end of stream.
  *
  * {@section Thread safety}
- * It is implementor responsability to ensure that {@code ObjectStream} is thread-safe
+ * It is implementor responsibility to ensure that {@code ObjectStream} is thread-safe
  * (only the stream; the returned objects don't need to be thread-safe). Thread-safety
  * is a requirement because a stream can be wrapped in RMI objects, in which case many
  * calls from different remote machines may happen simultaneously.

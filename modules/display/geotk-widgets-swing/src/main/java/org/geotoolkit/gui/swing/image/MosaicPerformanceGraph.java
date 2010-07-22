@@ -164,7 +164,7 @@ public class MosaicPerformanceGraph extends Plot2D implements Dialog {
      * will be used.
      * <p>
      * The given progress bar is not displayed in this widget. It is caller
-     * responsability to provide a progress bar visible in his own widget.
+     * responsibility to provide a progress bar visible in his own widget.
      *
      * @param bar The progress bar, or {@code null} if none.
      */

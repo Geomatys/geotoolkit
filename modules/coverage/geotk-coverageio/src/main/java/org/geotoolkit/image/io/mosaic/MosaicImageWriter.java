@@ -343,7 +343,7 @@ public class MosaicImageWriter extends ImageWriter implements Disposable {
 
     /**
      * Reads the image from the given reader and writes it as a set of tiles.
-     * It is the caller responsability to dispose the reader when writing is done.
+     * It is the caller responsibility to dispose the reader when writing is done.
      *
      * @param reader The image reader configured for reading the image to mosaic. This reader
      *        should have been created by {@link #getImageReader(Object, int, ImageWriteParam)}.
@@ -1196,7 +1196,7 @@ search: for (final Tile tile : tiles) {
      * {@linkplain BufferedImageOp#filter filtered} input. The returned reader has its
      * {@linkplain ImageReader#setInput input} already set. If the reader input is different than
      * the specified one, then it is probably an {@linkplain ImageInputStream image input stream}
-     * and closing it is caller's responsability.
+     * and closing it is caller's responsibility.
      *
      * @param  input The input to read.
      * @param  inputIndex The image index to read from the given input file.
@@ -1316,7 +1316,7 @@ search: for (final Tile tile : tiles) {
      * Gets and initializes an {@linkplain ImageReader image reader} that can decode the specified
      * input. The returned reader has its {@linkplain ImageReader#setInput input} already set. If
      * the reader input is different than the specified one, then it is probably an {@linkplain
-     * ImageInputStream image input stream} and closing it is caller's responsability.
+     * ImageInputStream image input stream} and closing it is caller's responsibility.
      *
      * @param  input The input to read.
      * @return The image reader that seems to be the most appropriated (never {@code null}).
@@ -1382,11 +1382,11 @@ search: for (final Tile tile : tiles) {
      * image. The returned writer has its {@linkplain ImageWriter#setOutput output} already set.
      * If the output is different than the {@linkplain Tile#getInput tile input}, then it is
      * probably an {@linkplain ImageOutputStream image output stream} and closing it is caller's
-     * responsability.
+     * responsibility.
      * <p>
      * This method extracts an {@code ImageWriter} instance from the given cache, if possible.
      * If no suitable writer is available, then a new one is created but <strong>not</strong>
-     * cached; it is caller responsability to reset and cache the writer when the write operation
+     * cached; it is caller responsibility to reset and cache the writer when the write operation
      * is done.
      *
      * @param  tile  The tile to encode.

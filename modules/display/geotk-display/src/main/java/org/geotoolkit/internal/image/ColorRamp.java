@@ -289,7 +289,7 @@ public class ColorRamp implements Serializable {
 
     /**
      * Returns the graduation and the colors from a sample dimension. This is caller
-     * responsability to invoke {@code setColors} and {@code setGraduation} with the
+     * responsibility to invoke {@code setColors} and {@code setGraduation} with the
      * returned values.
      *
      * @param  band The sample dimension, or {@code null} if none.

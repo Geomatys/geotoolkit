@@ -241,7 +241,7 @@ public class ImageFileProperties extends ImageProperties implements PropertyChan
      * {@section Resources management}
      * This method does <strong>not</strong> close the
      * {@linkplain javax.imageio.stream.ImageInputStream Image Input Stream} (if any).
-     * It is caller responsability to dispose reader resources (including closing the
+     * It is caller responsibility to dispose reader resources (including closing the
      * input stream) after this method call, if desired.
      *
      * {@section Thread safety}
@@ -494,7 +494,7 @@ public class ImageFileProperties extends ImageProperties implements PropertyChan
          * Reads the image. This is run from the caller (preferably a background) thread.
          * Note that if this method is called by {@link Formats#selectImageReader}, then
          * it will be disposed automatically after the call. Otherwise (if this method is
-         * invoked directly), it is caller responsability to dispose the reader.
+         * invoked directly), it is caller responsibility to dispose the reader.
          */
         @Override
         public void read(final ImageReader reader) throws IOException {

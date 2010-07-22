@@ -110,7 +110,7 @@ public class ValueRestriction implements Serializable {
 
     /**
      * Creates a new {@code Restriction} instance. This constructor does not clone any
-     * argument; this is caller responsability to provide immutable instance of them,
+     * argument; this is caller responsibility to provide immutable instance of them,
      * especially {@code validValues}.
      *
      * {@note This constructor is not public in order to force subclassing. Subclasses

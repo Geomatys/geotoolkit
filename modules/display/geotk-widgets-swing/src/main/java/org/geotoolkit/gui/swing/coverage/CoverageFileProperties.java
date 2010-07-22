@@ -123,7 +123,7 @@ public class CoverageFileProperties extends ImageFileProperties {
      * If an {@code GridCoverageReader} or {@code ImageReader} is given to this method, and if the
      * reader uses an {@linkplain javax.imageio.stream.ImageInputStream Image Input Stream} or other
      * kind of {@linkplain java.io.Closeable closeable} input, then note that this method does
-     * <strong>not</strong> close such input. It is caller responsability to close the reader
+     * <strong>not</strong> close such input. It is caller responsibility to close the reader
      * input after this method call.
      */
     @Override

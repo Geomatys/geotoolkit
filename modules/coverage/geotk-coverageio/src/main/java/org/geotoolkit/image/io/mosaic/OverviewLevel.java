@@ -730,7 +730,7 @@ final class OverviewLevel implements Comparable<OverviewLevel>, Serializable {
 
     /**
      * Adds to the given list every tiles that intersect the given region. This is
-     * caller responsability to ensure that this level uses the subsampling of interest.
+     * caller responsibility to ensure that this level uses the subsampling of interest.
      *
      * @param  addTo The list where to add the tiles.
      * @param  search The region of interest in absolute coordinates.

@@ -41,7 +41,7 @@ final class Dimensions {
     int occurences;
 
     /**
-     * Creates an unitialized {@code Dimensions}.
+     * Creates an uninitialized {@code Dimensions}.
      */
     Dimensions() {
     }

@@ -77,7 +77,7 @@ public class Line implements Cloneable, Serializable {
     private double x0;
 
     /**
-     * Construct an initially unitialized line. All methods will returns {@link Double#NaN}.
+     * Construct an initially uninitialized line. All methods will returns {@link Double#NaN}.
      */
     public Line() {
         slope = y0 = x0 = NaN;

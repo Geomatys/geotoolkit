@@ -123,7 +123,7 @@ public class LambertAzimuthalEqualArea extends UnitaryProjection {
     /**
      * Creates an Albers Equal Area projection from the given parameters. The descriptor argument is
      * usually {@link org.geotoolkit.referencing.operation.provider.LambertAzimuthalEqualArea#PARAMETERS},
-     * but is not restricted to. If a different descriptor is supplied, it is user's responsability
+     * but is not restricted to. If a different descriptor is supplied, it is user's responsibility
      * to ensure that it is suitable to a Lambert Azimuthal Equal Area projection.
      *
      * @param  descriptor Typically {@code LambertAzimuthalEqualArea.PARAMETERS}.

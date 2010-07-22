@@ -157,7 +157,7 @@ final class SpatialRefSysEntry {
 
     /**
      * If all CRS are initialized, returns 0. Otherwise returns the code of the first
-     * unitialized CRS: 1 for horizontal, 2 for vertical, 3 for temporal or 4 for the
+     * uninitialized CRS: 1 for horizontal, 2 for vertical, 3 for temporal or 4 for the
      * 4D CRS. This method is used only for checking error conditions.
      */
     final int uninitialized() {

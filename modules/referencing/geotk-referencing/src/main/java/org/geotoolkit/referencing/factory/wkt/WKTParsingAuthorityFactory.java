@@ -155,7 +155,7 @@ public class WKTParsingAuthorityFactory extends DirectAuthorityFactory {
     }
 
     /**
-     * Creates a factory without authorities. This is subclass responsability to initialize
+     * Creates a factory without authorities. This is subclass responsibility to initialize
      * the {@link #authorities} field when first needed.
      */
     WKTParsingAuthorityFactory(final Hints userHints, final Map<String,String> definitions) {

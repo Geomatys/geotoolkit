@@ -212,7 +212,7 @@ public final class PrjFiles {
 
     /**
      * Formats a coordinate reference system as a PRJ file in the given channel. The channel
-     * is <strong>not</strong> closed by this method. It is caller responsability to close it.
+     * is <strong>not</strong> closed by this method. It is caller responsibility to close it.
      *
      * @param  crs The PRJ file content as a coordinate reference system.
      * @param  out The channel where to write.
@@ -229,7 +229,7 @@ public final class PrjFiles {
 
     /**
      * Formats a coordinate reference system as a PRJ file in the given stream. The stream
-     * is <strong>not</strong> closed by this method. It is caller responsability to close it.
+     * is <strong>not</strong> closed by this method. It is caller responsibility to close it.
      *
      * @param  crs The PRJ file content as a coordinate reference system.
      * @param  out The stream where to write.
@@ -247,7 +247,7 @@ public final class PrjFiles {
 
     /**
      * Formats a coordinate reference system as a PRJ file in the given writer. The writer
-     * is <strong>not</strong> closed by this method. It is caller responsability to close it.
+     * is <strong>not</strong> closed by this method. It is caller responsibility to close it.
      *
      * @param  crs The PRJ file content as a coordinate reference system.
      * @param  out The writer.
@@ -259,6 +259,6 @@ public final class PrjFiles {
     {
         out.write(format(crs));
         out.write('\n'); // Use Unix EOL for cross-platform consistency.
-        // No close - this is caller responsability.
+        // No close - this is caller responsibility.
     }
 }

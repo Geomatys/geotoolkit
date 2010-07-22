@@ -359,7 +359,7 @@ public class MetadataHelper implements Localized {
      * <p>
      * Note that the returned transform may maps pixel corner or pixel center, depending on the
      * value returned by {@link org.opengis.metadata.spatial.Georectified#getPointInPixel()}.
-     * It is caller responsability to make the necessary adjustements (tip:
+     * It is caller responsibility to make the necessary adjustements (tip:
      * {@link org.geotoolkit.metadata.iso.spatial.PixelTranslation} may be useful).
      *
      * @param  domain The domain from which to extract the origin and offset vectors.

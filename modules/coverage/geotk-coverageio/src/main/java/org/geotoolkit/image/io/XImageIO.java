@@ -92,9 +92,9 @@ import org.geotoolkit.resources.Errors;
  * {@section How the input/output is defined in the returned reader/writer}
  * The {@link ImageReader} and {@link ImageWriter} returned by the methods in this class will have
  * their input or output set. This is different than the standard {@code ImageIO} API (which returns
- * unitialized readers or writers) and is done that way because the input or output may be different
+ * uninitialized readers or writers) and is done that way because the input or output may be different
  * than the one specified by the caller if it was necessary to create an {@link ImageInputStream} or
- * {@link ImageOutputStream}. If such stream has been created, then it is the caller responsability
+ * {@link ImageOutputStream}. If such stream has been created, then it is the caller responsibility
  * to close it after usage. The {@link #close(ImageReader)} and {@link #close(ImageWriter)}
  * convenience methods can be used for this purpose.
  * <p>

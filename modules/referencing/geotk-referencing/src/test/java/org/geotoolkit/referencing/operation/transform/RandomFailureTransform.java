@@ -47,14 +47,14 @@ final class RandomFailureTransform extends PseudoTransform {
 
     /**
      * The {@link #ordinal} values of coordinates that failed to be transformed. This is provided
-     * for information purpose but not used by this class. This is user's responsability to clear
+     * for information purpose but not used by this class. This is user's responsibility to clear
      * this set before to start transforming a new array.
      */
     public final Set<Integer> failures;
 
     /**
      * Incremented after every transformed point and stored in the {@link #failures} set in
-     * case of failure. This is user's responsability to set this field to O before to start
+     * case of failure. This is user's responsibility to set this field to O before to start
      * transforming a new array.
      */
     public int ordinal;

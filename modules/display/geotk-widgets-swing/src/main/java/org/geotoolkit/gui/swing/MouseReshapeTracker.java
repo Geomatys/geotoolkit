@@ -463,7 +463,7 @@ class MouseReshapeTracker extends MouseInputAdapter implements Shape {
      * Declares the affine transform which will transform the logical coordinates into pixel
      * coordinates. This is the affine transform specified in {@link java.awt.Graphics2D#transform}
      * at the moment that {@code this} is drawn. The information contained in this affine transform
-     * is necessary for several of this class's methods to work. It is the programmer's responsability
+     * is necessary for several of this class's methods to work. It is the programmer's responsibility
      * to ensure that this information is always up-to-date.  By default, {@code MouseReshapeTracker}
      * assumes an identity transform.
      *

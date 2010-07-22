@@ -184,7 +184,7 @@ public class ColorMapTest {
     }
 
     /**
-     * Ensures that the {@link #ARGB} array contains no unitialized element.
+     * Ensures that the {@link #ARGB} array contains no uninitialized element.
      */
     private void ensureFilledARGB() {
         for (int i=0; i<ARGB.length; i++) {

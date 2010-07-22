@@ -103,7 +103,7 @@ public abstract class ShareableTask<Input,Output> implements Callable<Output>, S
     /**
      * Invoked for aggregating the results after the execution is finished. If the task has
      * been divised in many sub-tasks, then the collection may contain more than one element.
-     * It is subclass responsability to aggregate sub-tasks result in a single result.
+     * It is subclass responsibility to aggregate sub-tasks result in a single result.
      *
      * {@section Default implementation}
      * If the given collection contains at most one non-null element, than that element is

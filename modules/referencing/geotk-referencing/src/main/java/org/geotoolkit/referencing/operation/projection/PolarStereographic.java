@@ -60,7 +60,7 @@ public class PolarStereographic extends Stereographic {
     /**
      * Creates a Polar Stereographic projection from the given parameters. The descriptor argument
      * is usually {@link org.geotoolkit.referencing.operation.provider.PolarStereographic#PARAMETERS},
-     * but is not restricted to. If a different descriptor is supplied, it is user's responsability
+     * but is not restricted to. If a different descriptor is supplied, it is user's responsibility
      * to ensure that it is suitable to a Polar Stereographic projection.
      *
      * @param  descriptor Typically {@code Polar Stereographic.PARAMETERS}.

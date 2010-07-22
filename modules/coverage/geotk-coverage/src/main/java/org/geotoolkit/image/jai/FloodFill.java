@@ -262,7 +262,7 @@ public abstract class FloodFill extends OpImage {
             assert y >= ymin && y <= ymax : y;
             do if (--x < xmin) {
                 // We have reached the left border. The inspection will need to continue in
-                // the tile at the left, if any. It will be caller's responsability to use
+                // the tile at the left, if any. It will be caller's responsibility to use
                 // the information that we put in 'globalStack'.
                 if (imageBounds.contains(x,y)) {
                     synchronized (globalStack) {

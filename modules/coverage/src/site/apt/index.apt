@@ -15,7 +15,7 @@ Coverage
 
   A <Coverage> can be backed by any mathematical function. It may be the output of a numerical model
   on an irregular grid. The current Geotk implementation does not provide a framework for the general
-  case - it is user's responsability to implement the GeoAPI <<<Coverage>>> interface.
+  case - it is user's responsibility to implement the GeoAPI <<<Coverage>>> interface.
 
   In the particular case where the coverage values are located on a rectangular grid where each cell
   have the same size (not necessarly in spatial coordinates), then we have a <Grid Coverage>. A Grid
