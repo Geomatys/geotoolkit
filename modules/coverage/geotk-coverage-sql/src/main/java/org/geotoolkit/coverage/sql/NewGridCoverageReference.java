@@ -20,7 +20,6 @@ package org.geotoolkit.coverage.sql;
 import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.io.File;
-import java.io.Closeable;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
@@ -31,7 +30,6 @@ import javax.imageio.ImageReader;
 import javax.imageio.IIOException;
 import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.metadata.IIOMetadata;
-import javax.imageio.stream.ImageInputStream;
 
 import org.opengis.util.FactoryException;
 import org.opengis.metadata.citation.Citation;
@@ -64,6 +62,7 @@ import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.Category;
+import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.math.XMath;
 
@@ -489,13 +488,7 @@ public final class NewGridCoverageReference {
         /*
          * Close the reader but do not dispose it, since it may be used for the next entry.
          */
-        input = reader.getInput();
-        reader.reset();
-        if (input instanceof Closeable) {
-            ((Closeable) input).close();
-        } else if (input instanceof ImageInputStream) {
-            ((ImageInputStream) input).close();
-        }
+        XImageIO.close(reader);
     }
 
     /**

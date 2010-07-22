@@ -47,6 +47,7 @@ import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.collection.FrequencySortedSet;
 import org.geotoolkit.internal.image.io.MetadataUtilities;
 import org.geotoolkit.internal.image.io.Formats;
+import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
 
@@ -257,7 +258,7 @@ public class MosaicImageReader extends ImageReader implements Disposable {
                     final Object rawInput = readerInputs.remove(reader);
                     final Object tileInput = reader.getInput();
                     if (rawInput != tileInput) try {
-                        Tile.close(tileInput);
+                        IOUtilities.close(tileInput);
                     } catch (IOException exception) {
                         Logging.unexpectedException(MosaicImageReader.class, "setInput", exception);
                     }
@@ -1487,7 +1488,7 @@ public class MosaicImageReader extends ImageReader implements Disposable {
             entry .setValue(null);
             reader.setInput(null);
             if (input != rawInput) {
-                Tile.close(input);
+                IOUtilities.close(input);
             }
         }
     }

@@ -22,7 +22,6 @@ import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.io.File;
-import java.io.Closeable;
 import java.io.IOException;
 import java.io.FileNotFoundException;
 import javax.imageio.ImageIO;
@@ -129,7 +128,7 @@ import org.geotoolkit.resources.Errors;
  * the first argument. All other arguments are optional and can be {@code null}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.10
+ * @version 3.14
  *
  * @since 3.07
  * @module
@@ -551,18 +550,7 @@ public final class XImageIO {
         ensureNonNull("reader", reader);
         final Object input = reader.getInput();
         reader.setInput(null);
-        close(input);
-    }
-
-    /**
-     * Closes the given stream.
-     */
-    private static void close(final Object stream) throws IOException {
-        if (stream instanceof ImageInputStream) {
-            ((ImageInputStream) stream).close();
-        } else if (stream instanceof Closeable) {
-            ((Closeable) stream).close();
-        }
+        IOUtilities.close(input);
     }
 
     /**
@@ -737,7 +725,7 @@ public final class XImageIO {
         ensureNonNull("writer", writer);
         final Object output = writer.getOutput();
         writer.setOutput(null);
-        close(output);
+        IOUtilities.close(output);
     }
 
     /**

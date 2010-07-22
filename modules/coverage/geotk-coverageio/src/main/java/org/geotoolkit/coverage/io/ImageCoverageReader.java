@@ -25,7 +25,6 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Collections;
 import java.util.concurrent.CancellationException;
-import java.io.Closeable;
 import java.io.IOException;
 import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
@@ -955,13 +954,7 @@ public class ImageCoverageReader extends GridCoverageReader {
         input            = null; // Clear now in case the code below fails.
         final ImageReader imageReader = this.imageReader; // Protect from changes.
         if (imageReader != null) {
-            final Object readerInput = imageReader.getInput();
-            imageReader.setInput(null);
-            if (readerInput instanceof Closeable) {
-                ((Closeable) readerInput).close();
-            } else if (readerInput instanceof ImageInputStream) {
-                ((ImageInputStream) readerInput).close();
-            }
+            XImageIO.close(imageReader);
         }
     }
 

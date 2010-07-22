@@ -43,6 +43,7 @@ import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.NullArgumentException;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
+import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.internal.image.io.Formats;
 import org.geotoolkit.internal.image.io.SupportFiles;
 import org.geotoolkit.image.io.plugin.WorldFileImageReader;
@@ -481,7 +482,7 @@ public class Tile implements Comparable<Tile>, Serializable {
      * <b>Note:</b> It is not strictly necessary to synchronize this method since update to a
      * {@code int} field is atomic according Java language specification, the {@link #xSubsampling} and
      * {@link #ySubsampling} fields do not change anymore as soon as they have a non-zero value (this is
-     * checked by setSubsampling(Dimension) implementation) and this method succed only if both
+     * checked by setSubsampling(Dimension) implementation) and this method succeed only if both
      * fields are set. Most callers are already synchronized anyway, except {@link TileManager}
      * constructor which invoke this method only has a sanity check. It is okay to conservatively
      * get the exception in situations where a synchronized block would not have thrown it.
@@ -495,20 +496,6 @@ public class Tile implements Comparable<Tile>, Serializable {
     }
 
     /**
-     * Closes the specified stream, if it is closeable.
-     *
-     * @param  input The stream to close.
-     * @throws IOException if an error occurred while closing the input stream.
-     */
-    static void close(final Object input) throws IOException {
-        if (input instanceof ImageInputStream) {
-            ((ImageInputStream) input).close();
-        } else if (input instanceof Closeable) {
-            ((Closeable) input).close();
-        }
-    }
-
-    /**
      * Disposes the given reader after closing its {@linkplain ImageReader#getInput input stream}.
      * This method can be used for disposing the reader created by {@link #getImageReader()}.
      *
@@ -518,7 +505,7 @@ public class Tile implements Comparable<Tile>, Serializable {
     static void dispose(final ImageReader reader) throws IOException {
         final Object input = reader.getInput();
         reader.dispose();
-        close(input);
+        IOUtilities.close(input);
     }
 
     /**

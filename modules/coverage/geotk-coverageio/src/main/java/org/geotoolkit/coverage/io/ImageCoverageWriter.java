@@ -20,7 +20,6 @@ package org.geotoolkit.coverage.io;
 import java.util.Locale;
 import java.util.concurrent.CancellationException;
 import java.awt.image.RenderedImage;
-import java.io.Closeable;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.imageio.IIOImage;
@@ -232,11 +231,7 @@ public class ImageCoverageWriter extends GridCoverageWriter {
                     final Object oldOutput = oldWriter.getOutput();
                     oldWriter.dispose();
                     if (oldOutput != newWriter.getOutput()) {
-                        if (oldOutput instanceof Closeable) {
-                            ((Closeable) oldOutput).close();
-                        } else if (oldOutput instanceof ImageOutputStream) {
-                            ((ImageOutputStream) oldOutput).close();
-                        }
+                        IOUtilities.close(oldOutput);
                     }
                 }
                 setLocale(newWriter, locale);
@@ -429,13 +424,7 @@ public class ImageCoverageWriter extends GridCoverageWriter {
         output = null; // Clear now in case the code below fails.
         final ImageWriter imageWriter = this.imageWriter; // Protect from changes.
         if (imageWriter != null) {
-            final Object writerOutput = imageWriter.getOutput();
-            imageWriter.setOutput(null);
-            if (writerOutput instanceof Closeable) {
-                ((Closeable) writerOutput).close();
-            } else if (writerOutput instanceof ImageOutputStream) {
-                ((ImageOutputStream) writerOutput).close();
-            }
+            XImageIO.close(imageWriter);
         }
     }
 

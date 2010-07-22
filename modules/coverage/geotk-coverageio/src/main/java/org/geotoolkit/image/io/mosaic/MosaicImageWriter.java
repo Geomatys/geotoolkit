@@ -28,7 +28,6 @@ import java.awt.image.BufferedImage;
 import java.awt.image.BufferedImageOp;
 import java.awt.geom.AffineTransform;
 import java.io.File;
-import java.io.Closeable;
 import java.io.IOException;
 import java.io.InterruptedIOException;
 import javax.imageio.*; // Lot of them in this class.
@@ -66,6 +65,7 @@ import org.geotoolkit.internal.image.io.Compressions;
 import org.geotoolkit.internal.image.io.SupportFiles;
 import org.geotoolkit.internal.image.io.RawFile;
 import org.geotoolkit.internal.io.TemporaryFile;
+import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.internal.rmi.RMI;
 import org.geotoolkit.util.converter.Classes;
 
@@ -701,12 +701,7 @@ public class MosaicImageWriter extends ImageWriter implements Disposable {
      */
     private static void close(final Object stream, final Object user) throws IOException {
         if (stream != user) {
-            if (stream instanceof Closeable) {
-                ((Closeable) stream).close();
-            } else if (stream instanceof ImageInputStream) {
-                ((ImageInputStream) stream).close();
-            }
-            // Note: ImageOutputStream extends ImageInputStream, so the above check is suffisient.
+            IOUtilities.close(stream);
         }
     }
 
@@ -1294,7 +1289,7 @@ search: for (final Tile tile : tiles) {
                     throw new UnsupportedImageFormatException(Errors.format(Errors.Keys.NO_IMAGE_READER));
                 }
             }
-            Tile.close(reader.getInput());
+            IOUtilities.close(reader.getInput());
             reader.setInput(raw.getImageInputStream());
             return reader;
         }
@@ -1306,7 +1301,7 @@ search: for (final Tile tile : tiles) {
         public void dispose() {
             if (reader != null) {
                 try {
-                    Tile.close(reader.getInput());
+                    IOUtilities.close(reader.getInput());
                 } catch (IOException e) {
                     Logging.unexpectedException(Tile.class, "close", e);
                 }
