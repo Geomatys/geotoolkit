@@ -17,8 +17,6 @@
 package org.geotoolkit.wms;
 
 import java.awt.Dimension;
-import java.io.IOException;
-import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
@@ -326,10 +324,4 @@ public abstract class AbstractGetMap extends AbstractRequest implements GetMapRe
             }
         }
     }
-
-    @Override
-    public InputStream getResponseStream() throws IOException {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
 }

@@ -16,8 +16,6 @@
  */
 package org.geotoolkit.data.wfs;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import org.geotoolkit.client.AbstractRequest;
@@ -47,11 +45,6 @@ public abstract class AbstractGetCapabilities extends AbstractRequest implements
         requestParameters.put("REQUEST",    "GetCapabilities");
         requestParameters.put("VERSION",    version);        
         return super.getURL();
-    }
-
-    @Override
-    public InputStream getResponseStream() throws IOException {
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 
 }

@@ -17,8 +17,6 @@
 package org.geotoolkit.wms;
 
 import java.awt.Dimension;
-import java.io.IOException;
-import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.logging.Logger;
@@ -227,11 +225,5 @@ public abstract class AbstractGetLegend extends AbstractRequest implements GetLe
 
         return sb.toString();
     }
-
-    @Override
-    public InputStream getResponseStream() throws IOException {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
 
 }
