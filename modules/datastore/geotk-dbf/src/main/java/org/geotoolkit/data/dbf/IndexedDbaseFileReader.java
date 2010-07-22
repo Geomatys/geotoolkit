@@ -19,7 +19,9 @@
  */
 package org.geotoolkit.data.dbf;
 
+import java.io.File;
 import java.io.IOException;
+import java.io.RandomAccessFile;
 import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.charset.Charset;
@@ -115,6 +117,16 @@ public class IndexedDbaseFileReader extends DbaseFileReader {
 
     public boolean IsRandomAccessEnabled() {
         return this.randomAccessEnabled;
+    }
+
+    public static void main(String[] args) throws Exception {
+        final IndexedDbaseFileReader reader = new IndexedDbaseFileReader(
+                new RandomAccessFile(new File(args[0]),"r").getChannel(), false);
+        System.out.println(reader.getHeader());
+        for(int r=0; reader.hasNext();) {
+            System.out.println(++r + ","+ java.util.Arrays.asList(reader.readEntry()));
+        }
+        reader.close();
     }
 
 }

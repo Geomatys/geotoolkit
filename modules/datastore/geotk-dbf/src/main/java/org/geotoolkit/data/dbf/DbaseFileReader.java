@@ -19,7 +19,9 @@
  */
 package org.geotoolkit.data.dbf;
 
+import java.io.File;
 import java.io.IOException;
+import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.CharBuffer;
@@ -561,6 +563,17 @@ public class DbaseFileReader {
     private static String extractNumberString(final CharBuffer charBuffer2,
             final int fieldOffset, final int fieldLen) {
         return charBuffer2.subSequence(fieldOffset, fieldOffset+fieldLen).toString().trim();
+    }
+
+    public static void main(String[] args) throws Exception {
+        DbaseFileReader reader = new DbaseFileReader(new RandomAccessFile(new File(args[0]),"r").getChannel(),
+                false, Charset.forName("ISO-8859-1"));
+        System.out.println(reader.getHeader());
+        int r = 0;
+        while (reader.hasNext()) {
+            System.out.println(++r + "," + java.util.Arrays.asList(reader.readEntry()));
+        }
+        reader.close();
     }
 
 }
