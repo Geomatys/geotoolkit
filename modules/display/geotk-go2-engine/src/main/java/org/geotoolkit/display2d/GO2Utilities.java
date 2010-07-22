@@ -1204,4 +1204,29 @@ public final class GO2Utilities {
         CACHE.clear();
     }
 
+    ////////////////////////////////////////////////////////////////////////////
+    // OTHER UTILS /////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Merge colors, the first color is placed at the back.
+     * The first color is expected to be opaque.
+     *
+     * @return Opaque color resulting from the merge
+     * @throws IllegalArgumentException if first color is not opaque
+     */
+    public static Color mergeColors(Color c1, Color c2) throws IllegalArgumentException{
+
+        if(c1.getAlpha() != 255){
+            throw new IllegalArgumentException("First color must be opaque");
+        }
+
+        final float alpha = (float)c2.getAlpha()/255f;
+        final int r = Math.min(c1.getRed(), c2.getRed())        + (int) (Math.abs(c1.getRed()-c2.getRed())*alpha);
+        final int g = Math.min(c1.getGreen(), c2.getGreen())    + (int) (Math.abs(c1.getGreen()-c2.getGreen())*alpha);
+        final int b = Math.min(c1.getBlue(), c2.getBlue())      + (int) (Math.abs(c1.getBlue()-c2.getBlue())*alpha);
+
+        return new Color(r, g, b);
+    }
+
 }
