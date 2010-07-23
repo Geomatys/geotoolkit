@@ -187,6 +187,8 @@ public class PropertyIsBetweenType extends ComparisonOpsType implements Property
         final Object value = expression.getValue();
         if (value instanceof String) {
             return (String)value;
+        } else if (value instanceof PropertyNameType) {
+            return ((PropertyNameType)value).getPropertyName();
         }
         return null;
     }
@@ -213,4 +215,19 @@ public class PropertyIsBetweenType extends ComparisonOpsType implements Property
         return visitor.visit(this,extraData);
     }
 
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder(super.toString());
+        if (expression != null) {
+            sb.append("expression:\nname=").append(expression.getName());
+            sb.append("value=").append(expression.getValue()).append('\n');
+        }
+        if (lowerBoundary != null) {
+            sb.append("lower boundary:").append(lowerBoundary).append('\n');
+        }
+        if (upperBoundary != null) {
+            sb.append("upper boundary:").append(upperBoundary).append('\n');
+        }
+        return sb.toString();
+    }
 }

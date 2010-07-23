@@ -59,6 +59,7 @@ import org.geotoolkit.ogc.xml.v110.IntersectsType;
 import org.geotoolkit.ogc.xml.v110.LiteralType;
 import org.geotoolkit.ogc.xml.v110.LowerBoundaryType;
 import org.geotoolkit.ogc.xml.v110.NotType;
+import org.geotoolkit.ogc.xml.v110.ObjectFactory;
 import org.geotoolkit.ogc.xml.v110.OrType;
 import org.geotoolkit.ogc.xml.v110.OverlapsType;
 import org.geotoolkit.ogc.xml.v110.PropertyIsBetweenType;
@@ -188,9 +189,22 @@ public class FilterFactoryImpl implements FilterFactory2 {
     }
 
     public PropertyIsBetween between(Expression expr, Expression lower, Expression upper) {
-        return new PropertyIsBetweenType( (ExpressionType)    expr, 
-                                          (LowerBoundaryType) lower, 
-                                          (UpperBoundaryType) upper);
+        if (lower instanceof LiteralType) {
+            lower = new LowerBoundaryType((LiteralType)lower);
+        }
+        if (upper instanceof LiteralType) {
+            upper = new UpperBoundaryType((LiteralType)upper);
+        }
+        if (expr instanceof PropertyNameType) {
+            ObjectFactory factory = new ObjectFactory();
+            return new PropertyIsBetweenType( factory.createPropertyName((PropertyNameType) expr),
+                                              (LowerBoundaryType) lower,
+                                              (UpperBoundaryType) upper);
+        } else {
+            return new PropertyIsBetweenType( (ExpressionType)    expr,
+                                              (LowerBoundaryType) lower,
+                                              (UpperBoundaryType) upper);
+        }
     }
 
     public PropertyIsEqualTo equals(Expression expr1, Expression expr2) {

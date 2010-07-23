@@ -54,7 +54,20 @@ import org.opengis.filter.expression.ExpressionVisitor;
 public class UpperBoundaryType implements Expression {
 
     @XmlElementRef(name = "expression", namespace = "http://www.opengis.net/ogc", type = JAXBElement.class)
-    protected JAXBElement<?> expression;
+    private JAXBElement<?> expression;
+
+    public UpperBoundaryType() {
+
+    }
+
+    public UpperBoundaryType(JAXBElement<?> expression) {
+        this.expression = expression;
+    }
+
+    public UpperBoundaryType(LiteralType literal) {
+        ObjectFactory factory = new ObjectFactory();
+        this.expression = factory.createLiteral(literal);
+    }
 
     /**
      * Gets the value of the expression property.
@@ -165,5 +178,15 @@ public class UpperBoundaryType implements Expression {
 
     public Object accept(ExpressionVisitor visitor, Object extraData) {
         return extraData;
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("[UpperBoundaryType]\n");
+        if (expression != null) {
+            sb.append("expression:\nQname:").append(expression.getName()).append('\n');
+            sb.append(expression.getValue());
+        }
+        return sb.toString();
     }
 }
