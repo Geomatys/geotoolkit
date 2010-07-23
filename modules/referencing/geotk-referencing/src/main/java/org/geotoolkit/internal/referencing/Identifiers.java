@@ -65,7 +65,7 @@ import static org.geotoolkit.util.collection.XCollections.hashMapCapacity;
  * The current approach is too specific to deserve a public API.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @version 3.14
  *
  * @since 3.00
  * @module
@@ -398,10 +398,10 @@ public final class Identifiers extends DefaultParameterDescriptor<Double> {
         }
         /*
          * If some identifiers were selected as a result of explicit requirement through the
-         * names array, discarts all other identifiers of that authority. Otherwise if a new
-         * authority is found but that authority declares only one identifier, inherits that
+         * names array, discarts all other identifiers of that authority. Otherwise if there
+         * is some remaining authorities declaring exactly one identifier, inherits that
          * identifier silently. If more than one identifier if found for the same authority,
-         * we consider that as an error since there is ambiguity.
+         * do not add this authority name.
          */
         int n=0;
         for (int i=0; i<selected.length; i++) {
@@ -410,12 +410,21 @@ public final class Identifiers extends DefaultParameterDescriptor<Double> {
                 final Citation authority = candidate.getAuthority();
                 final Boolean explicit = authorities.get(authority);
                 if (explicit == null) {
+                    // Inherit silently an identifier for a new authority.
                     authorities.put(authority, FALSE);
-                } else if (explicit.equals(TRUE)) {
-                    continue;
                 } else {
-                    throw new IllegalStateException(Errors.format(
-                            Errors.Keys.VALUE_ALREADY_DEFINED_$1, authority));
+                    // An identifier was already specified for this authority.
+                    // If the identifier was specified explicitly by the user,
+                    // do nothing. Otherwise we have ambiguity, so remove the
+                    // identifier we added previously.
+                    if (explicit.equals(FALSE)) {
+                        for (int j=0; j<n; j++) {
+                            if (authority.equals(selected[j].getAuthority())) {
+                                System.arraycopy(selected, j+1, selected, j, (--n)-j);
+                            }
+                        }
+                    }
+                    continue;
                 }
             }
             selected[n++] = candidate;

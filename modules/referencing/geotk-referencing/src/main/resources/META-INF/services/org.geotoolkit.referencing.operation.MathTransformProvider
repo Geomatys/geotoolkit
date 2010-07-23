@@ -14,6 +14,7 @@ org.geotoolkit.referencing.operation.provider.PlateCarree
 org.geotoolkit.referencing.operation.provider.Mercator1SP
 org.geotoolkit.referencing.operation.provider.Mercator2SP
 org.geotoolkit.referencing.operation.provider.PseudoMercator
+org.geotoolkit.referencing.operation.provider.MillerCylindrical
 org.geotoolkit.referencing.operation.provider.LambertConformal1SP
 org.geotoolkit.referencing.operation.provider.LambertConformal2SP
 org.geotoolkit.referencing.operation.provider.LambertConformal2SP$Belgium

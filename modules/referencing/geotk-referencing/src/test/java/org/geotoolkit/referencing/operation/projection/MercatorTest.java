@@ -38,7 +38,7 @@ import static org.geotoolkit.referencing.operation.projection.UnitaryProjectionT
  *
  * @author Martin Desruisseaux (Geomatys)
  * @author Simon Reynard (Geomatys)
- * @version 3.12
+ * @version 3.14
  *
  * @since 3.00
  */
@@ -314,6 +314,27 @@ public final class MercatorTest extends ProjectionTestCase {
         assertTrue(isSpherical());
         final double[] point    = new double[] {-(100+20.0/60), 24+(22+54.433/60)/60};
         final double[] expected = new double[] {-11169055.58, 2800000.00};
+        tolerance = 0.005;
+        verifyTransform(point, expected);
+    }
+
+    /**
+     * Creates a projection using the {@link MillerCylindrical}
+     * provider and projects the point given in the "example" section of
+     * <a href="http://api.ign.fr/geoportail/api/doc/fr/developpeur/wmsc.html">IGN documentation</a>
+     *
+     * @throws FactoryException   Should never happen.
+     * @throws TransformException Should never happen.
+     */
+    @Test
+    public void testMiller() throws FactoryException, TransformException {
+        final ParameterValueGroup parameters = mtFactory.getDefaultParameters("Miller_Cylindrical");
+        parameters.parameter("semi-major axis").setValue(6378137);
+        parameters.parameter("semi-minor axis").setValue(6378137);
+        transform = mtFactory.createParameterizedTransform(parameters);
+
+        final double[] point    = new double[] {2.478917, 48.805639};
+        final double[] expected = new double[] {275951.78, 5910061.78};
         tolerance = 0.005;
         verifyTransform(point, expected);
     }

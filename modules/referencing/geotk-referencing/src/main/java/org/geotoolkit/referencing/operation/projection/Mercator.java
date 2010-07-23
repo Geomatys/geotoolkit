@@ -36,6 +36,7 @@ import org.geotoolkit.referencing.operation.matrix.Matrix2;
 import org.geotoolkit.referencing.operation.provider.Mercator1SP;
 import org.geotoolkit.referencing.operation.provider.Mercator2SP;
 import org.geotoolkit.referencing.operation.provider.PseudoMercator;
+import org.geotoolkit.referencing.operation.provider.MillerCylindrical;
 
 import static java.lang.Math.*;
 import static java.lang.Double.*;
@@ -48,8 +49,10 @@ import static org.geotoolkit.referencing.operation.projection.UnitaryProjection.
  * for an overview. See any of the following providers for a list of programmatic parameters:
  * <p>
  * <ul>
- *   <li>{@link org.geotoolkit.referencing.operation.provider.Mercator1SP}</li>
- *   <li>{@link org.geotoolkit.referencing.operation.provider.Mercator2SP}</li>
+ *   <li>{@link Mercator1SP}</li>
+ *   <li>{@link Mercator2SP}</li>
+ *   <li>{@link PseudoMercator}</li>
+ *   <li>{@link MillerCylindrical}</li>
  * </ul>
  *
  * {@section Description}
@@ -62,7 +65,7 @@ import static org.geotoolkit.referencing.operation.projection.UnitaryProjection.
  * maritime navigation because all the straight lines on the chart are <em>loxodrome</em> lines,
  * i.e. a ship following this line would keep a constant azimuth on its compass.
  * <p>
- * This implementation handles both the 1 and 2 stardard parallel cases.
+ * This implementation handles both the 1 and 2 standard parallel cases.
  * For {@code Mercator_1SP} (EPSG code 9804), the line of contact is the equator.
  * For {@code Mercator_2SP} (EPSG code 9805) lines of contact are symmetrical
  * about the equator.
@@ -85,7 +88,7 @@ import static org.geotoolkit.referencing.operation.projection.UnitaryProjection.
  * @author Martin Desruisseaux (MPO, IRD, Geomatys)
  * @author Rueben Schulz (UBC)
  * @author Simon Reynard (Geomatys)
- * @version 3.12
+ * @version 3.14
  *
  * @see TransverseMercator
  * @see ObliqueMercator
@@ -106,8 +109,8 @@ public class Mercator extends UnitaryProjection {
      * {@link Mercator2SP}, but is not restricted to. If a different descriptor is supplied,
      * it is user's responsibility to ensure that it is suitable to a Mercator projection.
      *
-     * @param  descriptor Typically one of {@link Mercator1SP#PARAMETERS} or
-     *         {@link Mercator2SP#PARAMETERS}.
+     * @param  descriptor Typically one of {@link Mercator1SP#PARAMETERS},
+     *         {@link Mercator2SP#PARAMETERS} or {@link MillerCylindrical#PARAMETERS}.
      * @param  values The parameter values of the projection to create.
      * @return The map projection.
      *
@@ -135,6 +138,7 @@ public class Mercator extends UnitaryProjection {
      */
     protected Mercator(final Parameters parameters) {
         super(parameters);
+        final boolean miller = parameters.nameMatches(MillerCylindrical.PARAMETERS);
         switch (parameters.standardParallels.length) {
             default: {
                 // A "standard_parallel_2" argument is presents.
@@ -180,7 +184,7 @@ public class Mercator extends UnitaryProjection {
         final double phi    = toRadians(parameters.latitudeOfOrigin);
         final double sinPhi = sin(phi);
         final double scale  = cos(phi) / sqrt(1 - excentricitySquared * (sinPhi*sinPhi));
-        denormalize.scale(scale, scale);
+        denormalize.scale(scale, miller ? scale*1.25 : scale);
         /*
          * Moves the longitude rotation from "normalize" to "denormalize" transform.  This is
          * possible in the particular case of the Mercator projection because its "transform"
@@ -194,6 +198,9 @@ public class Mercator extends UnitaryProjection {
                 normalize.setTransform(normalize.getScaleX(), 0, 0, normalize.getScaleY(), 0, normalize.getTranslateY());
                 denormalize.translate(dx, 0);
             }
+        }
+        if (miller) {
+            normalize.scale(1, 0.8);
         }
         finish();
     }
@@ -291,7 +298,7 @@ public class Mercator extends UnitaryProjection {
      * <b>Implementation note:</b> this class contains explicit checks for latitude values at
      * poles. If floating point arithmetic had infinite precision, those checks would not be
      * necessary since the formulas lead naturally to infinite values at poles, which is the
-     * correct answer. In practive the infinite value emerges by itself at only one pole, and
+     * correct answer. In practice the infinite value emerges by itself at only one pole, and
      * the other one produces a high value (approximatively 1E+16). This is because there is
      * no accurate representation of PI/2 in base 2, and consequently {@code tan(PI/2)} does
      * not returns the infinite value.
@@ -321,7 +328,7 @@ public class Mercator extends UnitaryProjection {
         private final boolean pseudo;
 
         /**
-         * Constructs a new map projection from the suplied parameters.
+         * Constructs a new map projection from the supplied parameters.
          *
          * @param parameters The parameters of the projection to be created.
          */
@@ -330,7 +337,7 @@ public class Mercator extends UnitaryProjection {
         }
 
         /**
-         * Constructs a new map projection from the suplied parameters.
+         * Constructs a new map projection from the supplied parameters.
          *
          * @param parameters The parameters of the projection to be created.
          * @param pseudo {@code true} if we are in the "Pseudo Mercator" case.
