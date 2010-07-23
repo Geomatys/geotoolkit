@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.display2d.service;
 
+import java.util.Map;
 import java.util.Map.Entry;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -32,6 +33,7 @@ import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -60,6 +62,7 @@ import org.geotoolkit.display2d.canvas.painter.SolidColorPainter;
 import org.geotoolkit.display2d.container.ContextContainer2D;
 import org.geotoolkit.display2d.container.DefaultContextContainer2D;
 import org.geotoolkit.factory.Hints;
+import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
@@ -88,6 +91,12 @@ public class DefaultPortrayalService implements PortrayalService{
      * Cache the last CoverageWriter.
      */
     private static final AtomicReference<GridCoverageWriter> WRITER_CACHE = new AtomicReference<GridCoverageWriter>();
+
+    /**
+     * Cache the link between mime-type -> java-type
+     * exemple : image/png -> png
+     */
+    private static final Map<String,String> MIME_CACHE = new ConcurrentHashMap<String, String>();
 
     private DefaultPortrayalService(){}
     
@@ -455,7 +464,24 @@ public class DefaultPortrayalService implements PortrayalService{
      */
     private static void writeCoverage(GridCoverage coverage, Envelope env, double[] resolution,
             OutputDef outputDef) throws PortrayalException{
-        final String mime = outputDef.getMime();
+        final String mimeType = outputDef.getMime();
+
+        String javaType = MIME_CACHE.get(mimeType);
+        if(javaType == null){
+            //search the mime type
+            final String[] candidates = XImageIO.getFormatNamesByMimeType(mimeType, false, true);
+            if(candidates.length > 0){
+                javaType = candidates[0];
+                //cache the resulting java type
+                MIME_CACHE.put(mimeType, javaType);
+            }
+        }
+
+        if(javaType == null){
+            //no related java type, incorrect mime type
+            throw new PortrayalException("No java type found for mime type : " + mimeType);
+        }
+        
 
         //get a writer
         GridCoverageWriter writer = WRITER_CACHE.getAndSet(null);
@@ -479,7 +505,7 @@ public class DefaultPortrayalService implements PortrayalService{
             final GridCoverageWriteParam writeParam = new GridCoverageWriteParam();
             writeParam.setEnvelope(env);
             writeParam.setResolution(resolution);
-            writeParam.setFormatName(mime);
+            writeParam.setFormatName(javaType);
 
             writer.setOutput(outputDef.getOutput());
             writer.write(coverage, writeParam);
