@@ -472,9 +472,12 @@ public final class NewGridCoverageReference {
         final FormatTable formatTable = database.getTable(FormatTable.class);
         FormatEntry candidate = formatTable.find(imageFormat, sampleDimensions);
         if (candidate == null) {
-            final GridSampleDimension[] bands = new GridSampleDimension[sampleDimensions.size()];
-            for (int i=0; i<bands.length; i++) {
-                bands[i] = sampleDimensions.get(i).geophysics(false);
+            GridSampleDimension[] bands = null;
+            if (sampleDimensions != null) {
+                bands = new GridSampleDimension[sampleDimensions.size()];
+                for (int i=0; i<bands.length; i++) {
+                    bands[i] = sampleDimensions.get(i).geophysics(false);
+                }
             }
             candidate = new FormatEntry(formatTable.searchFreeIdentifier(imageFormat),
                     imageFormat, null, bands, packMode, null);
