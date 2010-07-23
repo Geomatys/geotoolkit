@@ -100,7 +100,7 @@ public enum ShapeType {
      * @return true if multipoint, false otherwise.
      */
     public boolean isMultiPoint() {
-        return !(this==UNDEFINED || this==NULL || this==POINT);
+        return !(this==UNDEFINED || this==NULL || this==POINT || this==POINTZ || this==POINTM);
     }
 
     public boolean isPointType() {
