@@ -16,8 +16,6 @@
  */
 package org.geotoolkit.wms;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import org.geotoolkit.util.StringUtilities;
@@ -108,13 +106,4 @@ public abstract class AbstractGetFeatureInfo extends AbstractGetMap implements G
 
         return super.getURL();
     }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public InputStream getResponseStream() throws IOException {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
 }

@@ -16,8 +16,6 @@
  */
 package org.geotoolkit.wcs;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import org.geotoolkit.client.AbstractRequest;
@@ -62,10 +60,4 @@ public abstract class AbstractDescribeCoverage extends AbstractRequest implement
         requestParameters.put("COVERAGE", StringUtilities.toCommaSeparatedValues(coverage));
         return super.getURL();
     }
-
-    @Override
-    public InputStream getResponseStream() throws IOException {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
 }

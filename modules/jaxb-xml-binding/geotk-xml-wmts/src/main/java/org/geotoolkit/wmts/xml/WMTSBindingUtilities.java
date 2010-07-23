@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.wms.xml;
+package org.geotoolkit.wmts.xml;
 
 import java.io.File;
 import java.io.InputStream;
@@ -29,6 +29,7 @@ import javax.xml.stream.XMLStreamReader;
 import javax.xml.transform.Source;
 
 import org.geotoolkit.util.logging.Logging;
+import org.geotoolkit.wmts.xml.v100.Capabilities;
 import org.geotoolkit.xml.MarshallerPool;
 
 import org.opengis.metadata.citation.OnlineResource;
@@ -38,48 +39,35 @@ import org.xml.sax.InputSource;
 
 /**
  *
- * @author Johann Sorel (Geomatys)
  * @author Guilhem Legal (Geomatys)
  * @module pending
  */
- public class WMSBindingUtilities {
+ public class WMTSBindingUtilities {
 
-    private static final MarshallerPool jaxbContext111;
-    private static final MarshallerPool jaxbContext130;
+    private static final MarshallerPool jaxbContext100;
 
     static{
         MarshallerPool temp = null;
         try{
-            temp = new MarshallerPool(org.geotoolkit.wms.xml.v111.WMT_MS_Capabilities.class);
+            temp = new MarshallerPool(org.geotoolkit.wmts.xml.v100.Capabilities.class);
         }catch(JAXBException ex){
             ex.printStackTrace();
         }
-        jaxbContext111 = temp;
-
-        temp = null;
-        try{
-            temp = new MarshallerPool(org.geotoolkit.wms.xml.v130.WMSCapabilities.class);
-        }catch(JAXBException ex){
-            ex.printStackTrace();
-        }
-        jaxbContext130 = temp;
+        jaxbContext100 = temp;
     }
 
-     public static AbstractWMSCapabilities unmarshall(Object source, WMSVersion version) throws JAXBException{
+     public static Capabilities unmarshall(Object source, WMTSVersion version) throws JAXBException{
          
          Unmarshaller unMarshaller   = null;
          MarshallerPool selectedPool = null;
          try {
             switch(version) {
-                case v111 : unMarshaller = jaxbContext111.acquireUnmarshaller(); 
-                            selectedPool = jaxbContext111;
-                            break;
-                case v130 : unMarshaller = jaxbContext130.acquireUnmarshaller(); 
-                            selectedPool = jaxbContext130;
+                case v100 : unMarshaller = jaxbContext100.acquireUnmarshaller();
+                            selectedPool = jaxbContext100;
                             break;
                 default: throw new IllegalArgumentException("unknonwed version");
             }
-            return (AbstractWMSCapabilities) unmarshall(source, unMarshaller);
+            return (Capabilities) unmarshall(source, unMarshaller);
          } finally {
              if (selectedPool != null && unMarshaller != null) {
                 selectedPool.release(unMarshaller);
@@ -113,7 +101,7 @@ import org.xml.sax.InputSource;
                 final URL url = online.getLinkage().toURL();
                 return unMarshaller.unmarshal(url);
             } catch (MalformedURLException ex) {
-                Logging.getLogger(WMSBindingUtilities.class).log(Level.WARNING, null, ex);
+                Logging.getLogger(WMTSBindingUtilities.class).log(Level.WARNING, null, ex);
                 return null;
             }
 

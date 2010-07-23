@@ -129,6 +129,14 @@ public class JContextTree extends JScrollPane implements ContextListener {
         return tree.isRootVisible();
     }
 
+    public boolean isEditable(){
+        return tree.isEditable();
+    }
+
+    public void setEditable(boolean edit){
+        tree.setEditable(edit);
+    }
+
     public void setContext(MapContext context) {
         if(this.context != null && weakListener != null){
             context.removeContextListener(weakListener);

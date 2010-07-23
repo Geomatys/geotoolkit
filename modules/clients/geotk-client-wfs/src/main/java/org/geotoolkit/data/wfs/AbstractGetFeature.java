@@ -17,7 +17,6 @@
 package org.geotoolkit.data.wfs;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
@@ -197,10 +196,4 @@ public abstract class AbstractGetFeature extends AbstractRequest implements GetF
 
         return super.getURL();
     }
-
-    @Override
-    public InputStream getResponseStream() throws IOException {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
 }
