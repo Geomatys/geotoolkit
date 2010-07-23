@@ -221,7 +221,7 @@ public interface KmlFactory {
      * @return
      */
     Camera createCamera(List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
-            List<SimpleType> abstractViewSimpleExtensions, List<AbstractObject> abstractViewObjectExtensions,
+            List<SimpleType> abstractViewSimpleExtensions, List<Object> abstractViewObjectExtensions,
             double longitude, double latitude, double altitude,
             double heading, double tilt, double roll, EnumAltitudeMode altitudeMode,
             List<SimpleType> cameraSimpleExtensions, List<AbstractObject> cameraObjectExtensions);
@@ -490,7 +490,7 @@ public interface KmlFactory {
             Color color, int drawOrder, Icon icon,
             List<SimpleType> abstractOveraySimpleExtensions, List<AbstractObject> abstractOverlayObjectExtensions,
             double altitude, EnumAltitudeMode altitudeMode, LatLonBox latLonBox,
-            List<SimpleType> groundOverlaySimpleExtensions, List<AbstractObject> groundOverlayObjectExtensions);
+            List<SimpleType> groundOverlaySimpleExtensions, List<Object> groundOverlayObjectExtensions);
 
     /**
      *
@@ -905,7 +905,7 @@ public interface KmlFactory {
      * @return
      */
     LookAt createLookAt(List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
-            List<SimpleType> abstractViewSimpleExtensions, List<AbstractObject> abstractViewObjectExtensions,
+            List<SimpleType> abstractViewSimpleExtensions, List<Object> abstractViewObjectExtensions,
             double longitude, double latitude, double altitude,
             double heading, double tilt, double range,
             List<SimpleType> lookAtSimpleExtensions, List<AbstractObject> lookAtObjectExtensions);

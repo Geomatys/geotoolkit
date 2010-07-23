@@ -38,7 +38,7 @@ public abstract class DefaultAbstractView extends DefaultAbstractObject implemen
     protected DefaultAbstractView(List<SimpleType> objectSimpleExtensions,
             IdAttributes idAttributes,
             List<SimpleType> abstractViewSimpleExtensions,
-            List<AbstractObject> abstractViewObjectExtensions) {
+            List<Object> abstractViewObjectExtensions) {
         super(objectSimpleExtensions, idAttributes);
         if (abstractViewSimpleExtensions != null) {
             this.extensions().simples(Extensions.Names.VIEW).addAll(abstractViewSimpleExtensions);

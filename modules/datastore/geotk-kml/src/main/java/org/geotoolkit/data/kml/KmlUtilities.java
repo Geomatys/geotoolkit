@@ -309,9 +309,11 @@ public class KmlUtilities {
             else
                 zmm = Integer.toString(minutesOffset);
 
-            if(hoursOffset < 10)
+            if(hoursOffset < 10 && hoursOffset > -10){
+                if(hoursOffset < 0)
+                    hoursOffset = -hoursOffset;
                 zhh = "0"+hoursOffset;
-            else
+            }else
                 zhh = Integer.toString(hoursOffset);
 
             if(zoneOffset > 0)
@@ -352,6 +354,10 @@ public class KmlUtilities {
         else
             date = Integer.toString(year);
         return date+result;
+    }
+
+    public static boolean isFiniteNumber(double d){
+        return !(Double.isInfinite(d) && Double.isNaN(d));
     }
 
 }

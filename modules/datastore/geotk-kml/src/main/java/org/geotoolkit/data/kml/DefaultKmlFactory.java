@@ -289,7 +289,7 @@ public class DefaultKmlFactory implements KmlFactory{
     public Camera createCamera(
             List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
             List<SimpleType> abstractViewSimpleExtensions,
-            List<AbstractObject> abstractViewObjectExtensions,
+            List<Object> abstractViewObjectExtensions,
             double longitude, double latitude, double altitude,
             double heading, double tilt, double roll, EnumAltitudeMode altitudeMode,
             List<SimpleType> cameraSimpleExtensions, 
@@ -651,7 +651,7 @@ public class DefaultKmlFactory implements KmlFactory{
             List<AbstractObject> abstractOverlayObjectExtensions,
             double altitude, EnumAltitudeMode altitudeMode, LatLonBox latLonBox,
             List<SimpleType> groundOverlaySimpleExtensions, 
-            List<AbstractObject> groundOverlayObjectExtensions) {
+            List<Object> groundOverlayObjectExtensions) {
 
         List<Property> properties = new ArrayList<Property>();
 
@@ -1142,7 +1142,7 @@ public class DefaultKmlFactory implements KmlFactory{
     public LookAt createLookAt(
             List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
             List<SimpleType> abstractViewSimpleExtensions,
-            List<AbstractObject> abstractViewObjectExtensions,
+            List<Object> abstractViewObjectExtensions,
             double longitude, double latitude, double altitude,
             double heading, double tilt, double range,
             List<SimpleType> lookAtSimpleExtensions,

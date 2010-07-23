@@ -18,9 +18,7 @@ package org.geotoolkit.data.gx.model;
 
 import java.util.List;
 import org.geotoolkit.data.kml.model.DefaultAbstractObject;
-import org.geotoolkit.data.kml.model.Extensions;
 import org.geotoolkit.data.kml.model.IdAttributes;
-import org.geotoolkit.data.kml.model.Update;
 import org.geotoolkit.data.kml.xsd.SimpleType;
 import static org.geotoolkit.data.gx.xml.GxConstants.*;
 
@@ -28,20 +26,18 @@ import static org.geotoolkit.data.gx.xml.GxConstants.*;
  *
  * @author Samuel Andrés
  */
-public class DefaultAnimatedUpdate extends DefaultAbstractObject implements AnimatedUpdate {
+public class DefaultWait extends DefaultAbstractObject implements Wait {
 
     private double duration;
-    private Update update;
 
-    public DefaultAnimatedUpdate(){
+    public DefaultWait(){
         this.duration = DEF_DURATION;
     }
 
-    public DefaultAnimatedUpdate(List<SimpleType> objectSimpleExtensions,
-        IdAttributes idAttributes, double duration, Update update){
+    public DefaultWait(List<SimpleType> objectSimpleExtensions,
+            IdAttributes idAttributes, double duration){
         super(objectSimpleExtensions, idAttributes);
         this.duration = duration;
-        this.update = update;
     }
 
     @Override
@@ -50,18 +46,8 @@ public class DefaultAnimatedUpdate extends DefaultAbstractObject implements Anim
     }
 
     @Override
-    public Update getUpdate() {
-        return this.update;
-    }
-
-    @Override
     public void setDuration(double duration) {
         this.duration = duration;
-    }
-
-    @Override
-    public void setUpdate(Update update) {
-        this.update = update;
     }
 
 }

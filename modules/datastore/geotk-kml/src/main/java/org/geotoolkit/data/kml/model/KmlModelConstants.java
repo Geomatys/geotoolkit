@@ -17,7 +17,6 @@
 
 package org.geotoolkit.data.kml.model;
 
-import com.vividsolutions.jts.geom.Geometry;
 import java.awt.Color;
 import java.net.URI;
 import org.geotoolkit.atom.model.AtomLink;
@@ -35,7 +34,6 @@ import org.opengis.feature.FeatureFactory;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.FeatureTypeFactory;
-import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**

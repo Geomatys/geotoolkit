@@ -20,6 +20,7 @@ import java.util.List;
 import org.geotoolkit.data.kml.model.DefaultAbstractObject;
 import org.geotoolkit.data.kml.model.IdAttributes;
 import org.geotoolkit.data.kml.xsd.SimpleType;
+import static java.util.Collections.*;
 
 /**
  *
@@ -29,7 +30,9 @@ public class DefaultPlayList extends DefaultAbstractObject implements PlayList {
 
     private List<AbstractTourPrimitive> tourPrimitives;
 
-    public DefaultPlayList(){}
+    public DefaultPlayList(){
+        this.tourPrimitives = EMPTY_LIST;
+    }
 
     public DefaultPlayList(List<SimpleType> objectSimpleExtensions,
             IdAttributes idAttributes,

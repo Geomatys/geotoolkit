@@ -16,6 +16,8 @@
  */
 package org.geotoolkit.data.gx.xml;
 
+import org.geotoolkit.data.gx.model.EnumFlyToMode;
+import org.geotoolkit.data.gx.model.EnumPlayMode;
 import org.geotoolkit.data.kml.model.AltitudeMode;
 import org.geotoolkit.data.kml.xml.KmlConstants;
 
@@ -56,5 +58,7 @@ public class GxConstants {
     public static final AltitudeMode DEF_ALTITUDE_MODE = KmlConstants.DEF_ALTITUDE_MODE;
     public static final boolean DEF_BALLOON_VISIBILITY = true;
     public static final double DEF_DURATION = 0.0;
+    public static final EnumFlyToMode DEF_FLY_TO_MODE = EnumFlyToMode.BOUNCE;
+    public static final EnumPlayMode DEF_PLAY_MODE = EnumPlayMode.PAUSE;
 
 }

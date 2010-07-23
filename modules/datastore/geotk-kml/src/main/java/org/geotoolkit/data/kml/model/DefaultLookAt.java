@@ -64,7 +64,7 @@ public class DefaultLookAt extends DefaultAbstractView implements LookAt {
     public DefaultLookAt(List<SimpleType> objectSimpleExtensions,
             IdAttributes idAttributes,
             List<SimpleType> abstractViewSimpleExtensions,
-            List<AbstractObject> abstractViewObjectExtensions,
+            List<Object> abstractViewObjectExtensions,
             double longitude, double latitude, double altitude,
             double heading, double tilt, double range,
             List<SimpleType> lookAtSimpleExtensions,

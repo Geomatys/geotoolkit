@@ -17,51 +17,35 @@
 package org.geotoolkit.data.gx.model;
 
 import java.util.List;
+import org.geotoolkit.data.kml.model.Coordinates;
 import org.geotoolkit.data.kml.model.DefaultAbstractObject;
-import org.geotoolkit.data.kml.model.Extensions;
 import org.geotoolkit.data.kml.model.IdAttributes;
-import org.geotoolkit.data.kml.model.Update;
 import org.geotoolkit.data.kml.xsd.SimpleType;
-import static org.geotoolkit.data.gx.xml.GxConstants.*;
 
 /**
  *
  * @author Samuel Andrés
  */
-public class DefaultAnimatedUpdate extends DefaultAbstractObject implements AnimatedUpdate {
+public class DefaultLatLonQuad extends DefaultAbstractObject implements LatLonQuad {
 
-    private double duration;
-    private Update update;
+    private Coordinates coordinates;
 
-    public DefaultAnimatedUpdate(){
-        this.duration = DEF_DURATION;
-    }
+    public DefaultLatLonQuad(){}
 
-    public DefaultAnimatedUpdate(List<SimpleType> objectSimpleExtensions,
-        IdAttributes idAttributes, double duration, Update update){
+    public DefaultLatLonQuad(List<SimpleType> objectSimpleExtensions,
+            IdAttributes idAttributes, Coordinates coordinates){
         super(objectSimpleExtensions, idAttributes);
-        this.duration = duration;
-        this.update = update;
+        this.coordinates = coordinates;
     }
 
     @Override
-    public double getDuration() {
-        return this.duration;
+    public Coordinates getCoordinates() {
+        return this.coordinates;
     }
 
     @Override
-    public Update getUpdate() {
-        return this.update;
-    }
-
-    @Override
-    public void setDuration(double duration) {
-        this.duration = duration;
-    }
-
-    @Override
-    public void setUpdate(Update update) {
-        this.update = update;
+    public void setCoordinates(Coordinates coordinates) {
+        this.coordinates = coordinates;
     }
 
 }

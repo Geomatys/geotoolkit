@@ -24,13 +24,26 @@ import org.geotoolkit.atom.model.AtomPersonConstruct;
 import org.geotoolkit.data.gx.model.AbstractTourPrimitive;
 import org.geotoolkit.data.gx.model.AnimatedUpdate;
 import org.geotoolkit.data.gx.model.DefaultAnimatedUpdate;
+import org.geotoolkit.data.gx.model.DefaultFlyTo;
+import org.geotoolkit.data.gx.model.DefaultLatLonQuad;
 import org.geotoolkit.data.gx.model.DefaultPlayList;
+import org.geotoolkit.data.gx.model.DefaultSoundCue;
+import org.geotoolkit.data.gx.model.DefaultTourControl;
+import org.geotoolkit.data.gx.model.DefaultWait;
+import org.geotoolkit.data.gx.model.EnumFlyToMode;
+import org.geotoolkit.data.gx.model.EnumPlayMode;
+import org.geotoolkit.data.gx.model.FlyTo;
 import org.geotoolkit.data.gx.model.GxModelConstants;
+import org.geotoolkit.data.gx.model.LatLonQuad;
 import org.geotoolkit.data.gx.model.PlayList;
+import org.geotoolkit.data.gx.model.SoundCue;
+import org.geotoolkit.data.gx.model.TourControl;
+import org.geotoolkit.data.gx.model.Wait;
 import org.geotoolkit.data.kml.model.AbstractObject;
 import org.geotoolkit.data.kml.model.AbstractStyleSelector;
 import org.geotoolkit.data.kml.model.AbstractTimePrimitive;
 import org.geotoolkit.data.kml.model.AbstractView;
+import org.geotoolkit.data.kml.model.Coordinates;
 import org.geotoolkit.data.kml.model.Extensions;
 import org.geotoolkit.data.kml.model.IdAttributes;
 import org.geotoolkit.data.kml.model.KmlModelConstants;
@@ -62,8 +75,34 @@ public class DefaultGxFactory implements GxFactory {
     }
 
     @Override
-    public AnimatedUpdate createAnimatedUpdate(double duration, Update update) {
-        return new DefaultAnimatedUpdate(duration, update);
+    public AnimatedUpdate createAnimatedUpdate(List<SimpleType> objectSimpleExtensions,
+        IdAttributes idAttributes, double duration, Update update) {
+        return new DefaultAnimatedUpdate(objectSimpleExtensions,
+       idAttributes, duration, update);
+    }
+
+    @Override
+    public FlyTo createFlyTo() {
+        return new DefaultFlyTo();
+    }
+
+    @Override
+    public FlyTo createFlyTo(List<SimpleType> objectSimpleExtensions,
+            IdAttributes idAttributes, double duration,
+            EnumFlyToMode flyToMOde, AbstractView view) {
+        return new DefaultFlyTo(objectSimpleExtensions, idAttributes,
+                duration, flyToMOde, view);
+    }
+
+    @Override
+    public LatLonQuad createLatLonQuad() {
+        return new DefaultLatLonQuad();
+    }
+
+    @Override
+    public LatLonQuad createLatLonQuad(List<SimpleType> objectSimpleExtensions,
+            IdAttributes idAttributes, Coordinates coordinates) {
+        return new DefaultLatLonQuad(objectSimpleExtensions, idAttributes, coordinates);
     }
 
     @Override
@@ -141,6 +180,38 @@ public class DefaultGxFactory implements GxFactory {
 
         return FF.createFeature(
                 properties, GxModelConstants.TYPE_TOUR, "Tour");
+    }
+
+    @Override
+    public SoundCue createSoundCue() {
+        return new DefaultSoundCue();
+    }
+
+    @Override
+    public SoundCue createSoundCue(List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes, String href) {
+        return new DefaultSoundCue(objectSimpleExtensions, idAttributes, href);
+    }
+
+    @Override
+    public TourControl createTourControl() {
+        return new DefaultTourControl();
+    }
+
+    @Override
+    public TourControl createTourControl(List<SimpleType> objectSimpleExtensions,
+            IdAttributes idAttributes, EnumPlayMode playMode) {
+        return new DefaultTourControl(objectSimpleExtensions, idAttributes, playMode);
+    }
+
+    @Override
+    public Wait createWait() {
+        return new DefaultWait();
+    }
+
+    @Override
+    public Wait createWait(List<SimpleType> objectSimpleExtensions,
+            IdAttributes idAttributes, double duration) {
+        return new DefaultWait(objectSimpleExtensions, idAttributes, duration);
     }
 
 }

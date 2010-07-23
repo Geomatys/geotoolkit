@@ -67,7 +67,7 @@ public class DefaultCamera extends DefaultAbstractView implements Camera {
     public DefaultCamera(List<SimpleType> objectSimpleExtensions,
             IdAttributes idAttributes,
             List<SimpleType> abstractViewSimpleExtensions,
-            List<AbstractObject> abstractViewObjectExtensions,
+            List<Object> abstractViewObjectExtensions,
             double longitude, double latitude, double altitude,
             double heading, double tilt, double roll, EnumAltitudeMode altitudeMode,
             List<SimpleType> cameraSimpleExtensions,

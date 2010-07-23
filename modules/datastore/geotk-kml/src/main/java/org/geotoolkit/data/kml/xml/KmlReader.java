@@ -939,7 +939,8 @@ public class KmlReader extends StaxStreamReader {
      * @throws XMLStreamException
      * @throws KmlException
      */
-    private Object readAbstractObject(String eName) throws XMLStreamException, KmlException, URISyntaxException{
+    private Object readAbstractObject(String eName)
+            throws XMLStreamException, KmlException, URISyntaxException{
         Object resultat = null;
         if (TAG_REGION.equals(eName)){
             resultat = this.readRegion();
@@ -1760,7 +1761,7 @@ public class KmlReader extends StaxStreamReader {
         EnumAltitudeMode altitudeMode = DEF_ALTITUDE_MODE;
         LatLonBox latLonBox = null;
         List<SimpleType> groundOverlaySimpleExtensions = null;
-        List<AbstractObject> groundOverlayObjectExtensions = null;
+        List<Object> groundOverlayObjectExtensions = new ArrayList<Object>();
 
         boucle:
         while (reader.hasNext()) {
@@ -1833,13 +1834,18 @@ public class KmlReader extends StaxStreamReader {
                         } else if (TAG_ATOM_LINK.equals(eName)) {
                             link = this.readAtomLink();
                         }
-                    }
-                    if (URI_XAL.equals(eUri)) {
+                    } else if (URI_XAL.equals(eUri)) {
                         checkVersion(URI_KML_2_2);
                         // ABSTRACT FEATURE
                         if (TAG_XAL_ADDRESS_DETAILS.equals(eName)) {
                             addressDetails = this.readXalAddressDetails();
                         }
+                    } else {
+                        Object ext = this.readExtensionsScheduler(eUri, eName, TAG_GROUND_OVERLAY);
+                        if(ext instanceof AbstractObject || ext instanceof Feature){
+                            groundOverlayObjectExtensions.add(ext);
+                        }
+                        //CAS SIMPLE !!!!
                     }
                     break;
 
@@ -2531,7 +2537,7 @@ public class KmlReader extends StaxStreamReader {
      * @return
      * @throws XMLStreamException
      */
-    public AbstractView readAbstractView(String eName) throws XMLStreamException, KmlException {
+    public AbstractView readAbstractView(String eName) throws XMLStreamException, KmlException, URISyntaxException {
         AbstractView resultat = null;
         if (TAG_LOOK_AT.equals(eName)) {
             resultat = readLookAt();
@@ -2554,7 +2560,7 @@ public class KmlReader extends StaxStreamReader {
 
         // AbstractView
         List<SimpleType> abstractViewSimpleExtensions = null;
-        List<AbstractObject> abstractViewObjectExtensions = null;
+        List<Object> abstractViewObjectExtensions = null;
 
         // LookAt
         double longitude = DEF_LONGITUDE;
@@ -2615,14 +2621,14 @@ public class KmlReader extends StaxStreamReader {
      * @throws XMLStreamException
      * @throws KmlException
      */
-    private Camera readCamera() throws XMLStreamException, KmlException {
+    private Camera readCamera() throws XMLStreamException, KmlException, URISyntaxException {
         // AbstractObject
         List<SimpleType> objectSimpleExtensions = null;
         IdAttributes idAttributes = this.readIdAttributes();
 
         // AbstractView
         List<SimpleType> abstractViewSimpleExtensions = null;
-        List<AbstractObject> abstractViewObjectExtensions = null;
+        List<Object> abstractViewObjectExtensions = new ArrayList<Object>();
 
         // Camera
         double longitude = DEF_LONGITUDE;
@@ -2661,6 +2667,12 @@ public class KmlReader extends StaxStreamReader {
                         } else if (TAG_ALTITUDE_MODE.equals(eName)) {
                             altitudeMode = EnumAltitudeMode.transform(reader.getElementText());
                         }
+                    } else {
+                        Object ext = this.readExtensionsScheduler(eUri, eName, TAG_CAMERA);
+                        if(ext instanceof AbstractObject || ext instanceof Feature){
+                            abstractViewObjectExtensions.add(ext);
+                        }
+                        //CAS SIMPLE !!!!
                     }
                     break;
 
@@ -3501,9 +3513,9 @@ public class KmlReader extends StaxStreamReader {
 
                     if (URI_KML.equals(eUri)) {
                         if (TAG_BEGIN.equals(eName)) {
-                            begin = fastDateParser.getCalendar(reader.getElementText());
+                            begin = (Calendar) fastDateParser.getCalendar(reader.getElementText()).clone();
                         } else if (TAG_END.equals(eName)) {
-                            end = fastDateParser.getCalendar(reader.getElementText());
+                            end = (Calendar) fastDateParser.getCalendar(reader.getElementText()).clone();
                         }
                     }
                     break;
@@ -3550,7 +3562,7 @@ public class KmlReader extends StaxStreamReader {
 
                     if (URI_KML.equals(eUri)) {
                         if (TAG_WHEN.equals(eName)) {
-                            when = fastDateParser.getCalendar(reader.getElementText());
+                            when = (Calendar) fastDateParser.getCalendar(reader.getElementText()).clone();
                         }
                     }
                     break;
@@ -3831,7 +3843,7 @@ public class KmlReader extends StaxStreamReader {
                             addressDetails = this.readXalAddressDetails();
                         }
                     } else {
-                        Object ext = this.readExtension(eUri, eName, TAG_DOCUMENT);
+                        Object ext = this.readExtensionsScheduler(eUri, eName, TAG_DOCUMENT);
                         if(ext instanceof AbstractObject || ext instanceof Feature){
                             documentObjectExtensions.add(ext);
                         }
@@ -3845,7 +3857,6 @@ public class KmlReader extends StaxStreamReader {
                     }
                     break;
             }
-
         }
 
         return KmlReader.kmlFactory.createDocument(objectSimpleExtensions, idAttributes,
@@ -3853,22 +3864,6 @@ public class KmlReader extends StaxStreamReader {
                 view, timePrimitive, styleUrl, styleSelector, region, extendedData, featureSimpleExtensions, featureObjectExtensions,
                 abstractContainerSimpleExtensions, abstractContainerObjectExtensions,
                 schemas, features, documentSimpleExtensions, documentObjectExtensions);
-    }
-
-    public Object readExtension(String uri, String name, String elementTag)
-            throws KmlException, XMLStreamException, URISyntaxException{
-        StaxStreamReader r = this.getExtensionReader(uri);
-        Object resultat = null;
-        
-        if(TAG_DOCUMENT.equals(elementTag)){
-          if(r instanceof GxReader){
-              GxReader gxReader = (GxReader) r;
-              if(GxConstants.TAG_TOUR.equals(name)){
-                  resultat = gxReader.readTour();
-              }
-          }
-        }
-        return resultat;
     }
 
     /**
@@ -4143,7 +4138,7 @@ public class KmlReader extends StaxStreamReader {
      * @param coordinates The coordinates String.
      * @return
      */
-    private Coordinates readCoordinates(String coordinates) {
+    public Coordinates readCoordinates(String coordinates) {
         List<Coordinate> coordinatesList = new ArrayList<Coordinate>();
 
         String[] coordinatesStringList = coordinates.split("[\\s]+");
@@ -4164,6 +4159,42 @@ public class KmlReader extends StaxStreamReader {
     public IdAttributes readIdAttributes() {
         return KmlReader.kmlFactory.createIdAttributes(
                 reader.getAttributeValue(null, ATT_ID), reader.getAttributeValue(null, ATT_TARGET_ID));
+    }
+
+    /*
+     * METHODE DE LECTURE DES EXTENSIONS
+     */
+
+    public Object readExtensionsScheduler(String uri, String name, String elementTag)
+            throws KmlException, XMLStreamException, URISyntaxException{
+        StaxStreamReader r = this.getExtensionReader(uri);
+        Object resultat = null;
+
+        if(TAG_DOCUMENT.equals(elementTag)){
+          if(r instanceof GxReader){
+              GxReader gxReader = (GxReader) r;
+              if(GxConstants.TAG_TOUR.equals(name)){
+                  resultat = gxReader.readTour();
+              }
+          }
+        } else if (TAG_GROUND_OVERLAY.equals(elementTag)){
+          if(r instanceof GxReader){
+              GxReader gxReader = (GxReader) r;
+              if(GxConstants.TAG_LAT_LON_QUAD.equals(name)){
+                  resultat = gxReader.readLatLonQuad();
+              }
+          }
+        } else if (TAG_CAMERA.equals(elementTag)){
+          if(r instanceof GxReader){
+              GxReader gxReader = (GxReader) r;
+              if(GxConstants.TAG_TIME_SPAN.equals(name)){
+                  resultat = gxReader.readTimeSpan();
+              } else if(GxConstants.TAG_TIME_STAMP.equals(name)){
+                  resultat = gxReader.readTimeStamp();
+              }
+          }
+        }
+        return resultat;
     }
 
 

@@ -18,9 +18,7 @@ package org.geotoolkit.data.gx.model;
 
 import java.util.List;
 import org.geotoolkit.data.kml.model.DefaultAbstractObject;
-import org.geotoolkit.data.kml.model.Extensions;
 import org.geotoolkit.data.kml.model.IdAttributes;
-import org.geotoolkit.data.kml.model.Update;
 import org.geotoolkit.data.kml.xsd.SimpleType;
 import static org.geotoolkit.data.gx.xml.GxConstants.*;
 
@@ -28,40 +26,28 @@ import static org.geotoolkit.data.gx.xml.GxConstants.*;
  *
  * @author Samuel Andrés
  */
-public class DefaultAnimatedUpdate extends DefaultAbstractObject implements AnimatedUpdate {
+public class DefaultTourControl extends DefaultAbstractObject implements TourControl {
 
-    private double duration;
-    private Update update;
+    private EnumPlayMode playMode;
 
-    public DefaultAnimatedUpdate(){
-        this.duration = DEF_DURATION;
+    public DefaultTourControl(){
+        this.playMode = DEF_PLAY_MODE;
     }
 
-    public DefaultAnimatedUpdate(List<SimpleType> objectSimpleExtensions,
-        IdAttributes idAttributes, double duration, Update update){
+    public DefaultTourControl(List<SimpleType> objectSimpleExtensions,
+            IdAttributes idAttributes, EnumPlayMode playMode){
         super(objectSimpleExtensions, idAttributes);
-        this.duration = duration;
-        this.update = update;
+        this.playMode = playMode;
     }
 
     @Override
-    public double getDuration() {
-        return this.duration;
+    public EnumPlayMode getPlayMode() {
+        return this.playMode;
     }
 
     @Override
-    public Update getUpdate() {
-        return this.update;
-    }
-
-    @Override
-    public void setDuration(double duration) {
-        this.duration = duration;
-    }
-
-    @Override
-    public void setUpdate(Update update) {
-        this.update = update;
+    public void setPlayMode(EnumPlayMode playMode) {
+        this.playMode = playMode;
     }
 
 }

@@ -5,9 +5,9 @@
   <name>gx:AnimatedUpdate example</name>
   <Style id="pushpin">
     <IconStyle id="mystyle">
+      <scale>2.0</scale>
       <Icon>
         <href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>
-        <scale>1.0</scale>
       </Icon>
     </IconStyle>
   </Style>
@@ -15,27 +15,27 @@
     <name>Pin on a mountaintop</name>
     <styleUrl>#pushpin</styleUrl>
     <Point>
-      <coordinates>170.1435558771009,-43.60505741890396,0</coordinates>
+      <coordinates>170.1435558771009,-43.60505741890396,0.0</coordinates>
     </Point>
   </Placemark>
   <gx:Tour>
     <name>Play me!</name>
     <gx:Playlist>
       <gx:FlyTo>
-        <gx:flyToMode>bounce</gx:flyToMode>
-        <gx:duration>3</gx:duration>
+        <gx:duration>3.0</gx:duration>
+        <gx:flyToMode>smooth</gx:flyToMode>
         <Camera>
           <longitude>170.157</longitude>
           <latitude>-43.671</latitude>
-          <altitude>9700</altitude>
+          <altitude>9700.0</altitude>
           <heading>-6.333</heading>
           <tilt>33.5</tilt>
         </Camera>
       </gx:FlyTo>
       <gx:AnimatedUpdate>
-        <gx:duration>5</gx:duration>
+        <gx:duration>5.0</gx:duration>
         <Update>
-          <targetHref></targetHref>
+          <targetHref>http://moncoco.com</targetHref>
           <Change>
             <IconStyle targetId="mystyle">
               <scale>10.0</scale>
@@ -44,7 +44,7 @@
         </Update>
       </gx:AnimatedUpdate>
       <gx:Wait>
-        <gx:duration>5</gx:duration>
+        <gx:duration>5.0</gx:duration>
       </gx:Wait>
     </gx:Playlist>
   </gx:Tour>

@@ -22,11 +22,19 @@ import org.geotoolkit.atom.model.AtomLink;
 import org.geotoolkit.atom.model.AtomPersonConstruct;
 import org.geotoolkit.data.gx.model.AbstractTourPrimitive;
 import org.geotoolkit.data.gx.model.AnimatedUpdate;
+import org.geotoolkit.data.gx.model.EnumFlyToMode;
+import org.geotoolkit.data.gx.model.EnumPlayMode;
+import org.geotoolkit.data.gx.model.FlyTo;
+import org.geotoolkit.data.gx.model.LatLonQuad;
 import org.geotoolkit.data.gx.model.PlayList;
+import org.geotoolkit.data.gx.model.SoundCue;
+import org.geotoolkit.data.gx.model.TourControl;
+import org.geotoolkit.data.gx.model.Wait;
 import org.geotoolkit.data.kml.model.AbstractObject;
 import org.geotoolkit.data.kml.model.AbstractStyleSelector;
 import org.geotoolkit.data.kml.model.AbstractTimePrimitive;
 import org.geotoolkit.data.kml.model.AbstractView;
+import org.geotoolkit.data.kml.model.Coordinates;
 import org.geotoolkit.data.kml.model.IdAttributes;
 import org.geotoolkit.data.kml.model.Region;
 import org.geotoolkit.data.kml.model.Update;
@@ -42,7 +50,14 @@ public interface GxFactory {
 
     AnimatedUpdate createAnimatedUpdate();
 
-    AnimatedUpdate createAnimatedUpdate(double duration, Update update);
+    AnimatedUpdate createAnimatedUpdate(List<SimpleType> objectSimpleExtensions,
+        IdAttributes idAttributes, double duration, Update update);
+
+    FlyTo createFlyTo();
+
+    FlyTo createFlyTo(List<SimpleType> objectSimpleExtensions,
+            IdAttributes idAttributes, double duration,
+            EnumFlyToMode flyToMOde, AbstractView view);
 
     PlayList createPlayList();
 
@@ -70,4 +85,23 @@ public interface GxFactory {
             List<AbstractObject> abstractFeatureObjectExtensions,
             List<PlayList> playLists);
 
+    LatLonQuad createLatLonQuad();
+
+    LatLonQuad createLatLonQuad(List<SimpleType> objectSimpleExtensions,
+            IdAttributes idAttributes, Coordinates coordinates);
+
+    SoundCue createSoundCue();
+
+    SoundCue createSoundCue(List<SimpleType> objectSimpleExtensions,
+            IdAttributes idAttributes, String href);
+
+    TourControl createTourControl();
+
+    TourControl createTourControl(List<SimpleType> objectSimpleExtensions,
+            IdAttributes idAttributes, EnumPlayMode playMode);
+
+    Wait createWait();
+
+    Wait createWait(List<SimpleType> objectSimpleExtensions,
+            IdAttributes idAttributes, double duration);
 }

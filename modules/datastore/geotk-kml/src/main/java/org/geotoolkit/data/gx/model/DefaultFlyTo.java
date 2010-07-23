@@ -17,10 +17,9 @@
 package org.geotoolkit.data.gx.model;
 
 import java.util.List;
+import org.geotoolkit.data.kml.model.AbstractView;
 import org.geotoolkit.data.kml.model.DefaultAbstractObject;
-import org.geotoolkit.data.kml.model.Extensions;
 import org.geotoolkit.data.kml.model.IdAttributes;
-import org.geotoolkit.data.kml.model.Update;
 import org.geotoolkit.data.kml.xsd.SimpleType;
 import static org.geotoolkit.data.gx.xml.GxConstants.*;
 
@@ -28,20 +27,25 @@ import static org.geotoolkit.data.gx.xml.GxConstants.*;
  *
  * @author Samuel Andrés
  */
-public class DefaultAnimatedUpdate extends DefaultAbstractObject implements AnimatedUpdate {
+public class DefaultFlyTo extends DefaultAbstractObject implements FlyTo {
 
     private double duration;
-    private Update update;
+    private EnumFlyToMode flyToMode;
+    private AbstractView view;
 
-    public DefaultAnimatedUpdate(){
+    public DefaultFlyTo(){
+        super();
         this.duration = DEF_DURATION;
+        this.flyToMode = DEF_FLY_TO_MODE;
     }
 
-    public DefaultAnimatedUpdate(List<SimpleType> objectSimpleExtensions,
-        IdAttributes idAttributes, double duration, Update update){
+    public DefaultFlyTo(List<SimpleType> objectSimpleExtensions,
+            IdAttributes idAttributes, double duration,
+            EnumFlyToMode flyToMOde, AbstractView view){
         super(objectSimpleExtensions, idAttributes);
         this.duration = duration;
-        this.update = update;
+        this.flyToMode = flyToMOde;
+        this.view = view;
     }
 
     @Override
@@ -50,8 +54,13 @@ public class DefaultAnimatedUpdate extends DefaultAbstractObject implements Anim
     }
 
     @Override
-    public Update getUpdate() {
-        return this.update;
+    public EnumFlyToMode getFlyToMode() {
+        return this.flyToMode;
+    }
+
+    @Override
+    public AbstractView getView() {
+        return this.view;
     }
 
     @Override
@@ -60,8 +69,13 @@ public class DefaultAnimatedUpdate extends DefaultAbstractObject implements Anim
     }
 
     @Override
-    public void setUpdate(Update update) {
-        this.update = update;
+    public void setFlyToMode(EnumFlyToMode flyToMode) {
+        this.flyToMode = flyToMode;
+    }
+
+    @Override
+    public void setView(AbstractView view) {
+        this.view = view;
     }
 
 }

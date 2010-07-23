@@ -20,7 +20,10 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import org.geotoolkit.atom.model.AtomLink;
@@ -29,14 +32,26 @@ import org.geotoolkit.data.gx.DefaultGxFactory;
 import org.geotoolkit.data.gx.GxFactory;
 import org.geotoolkit.data.gx.model.AbstractTourPrimitive;
 import org.geotoolkit.data.gx.model.AnimatedUpdate;
+import org.geotoolkit.data.gx.model.EnumFlyToMode;
+import org.geotoolkit.data.gx.model.EnumPlayMode;
+import org.geotoolkit.data.gx.model.FlyTo;
+import org.geotoolkit.data.gx.model.LatLonQuad;
 import org.geotoolkit.data.gx.model.PlayList;
+import org.geotoolkit.data.gx.model.SoundCue;
+import org.geotoolkit.data.gx.model.TourControl;
+import org.geotoolkit.data.gx.model.Wait;
+import org.geotoolkit.data.kml.DefaultKmlFactory;
+import org.geotoolkit.data.kml.KmlFactory;
 import org.geotoolkit.data.kml.model.AbstractObject;
 import org.geotoolkit.data.kml.model.AbstractStyleSelector;
 import org.geotoolkit.data.kml.model.AbstractTimePrimitive;
 import org.geotoolkit.data.kml.model.AbstractView;
+import org.geotoolkit.data.kml.model.Coordinates;
 import org.geotoolkit.data.kml.model.IdAttributes;
 import org.geotoolkit.data.kml.model.KmlException;
 import org.geotoolkit.data.kml.model.Region;
+import org.geotoolkit.data.kml.model.TimeSpan;
+import org.geotoolkit.data.kml.model.TimeStamp;
 import org.geotoolkit.data.kml.model.Update;
 import org.geotoolkit.data.kml.xml.KmlConstants;
 import org.geotoolkit.data.kml.xml.KmlReader;
@@ -55,6 +70,7 @@ public class GxReader extends StaxStreamReader {
 
     private String URI_KML = KmlConstants.URI_KML_2_2;
     private static final GxFactory gxFactory = new DefaultGxFactory();
+    private static final KmlFactory kmlFactory = new DefaultKmlFactory();
     private final KmlReader kmlReader = new KmlReader();
     private final FastDateParser fastDateParser = new FastDateParser();
 
@@ -63,7 +79,7 @@ public class GxReader extends StaxStreamReader {
     }
 
     /**
-     * <p>Set input.</p>
+     * <p>Set input (use KML 2.2).</p>
      *
      * @param input
      * @throws IOException
@@ -72,7 +88,11 @@ public class GxReader extends StaxStreamReader {
     @Override
     public void setInput(Object input) throws IOException, XMLStreamException {
         super.setInput(input);
-        this.kmlReader.setInput(reader);
+        try {
+            this.kmlReader.setInput(reader, URI_KML);
+        } catch (KmlException ex) {
+            Logger.getLogger(GxReader.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /**
@@ -84,6 +104,11 @@ public class GxReader extends StaxStreamReader {
      */
     private AnimatedUpdate readAnimatedUpdate() 
             throws XMLStreamException, KmlException, URISyntaxException {
+        // AbstractObject
+        List<SimpleType> objectSimpleExtensions = null;
+        IdAttributes idAttributes = kmlReader.readIdAttributes();
+
+        // AnimatedUpdate
         double duration = DEF_DURATION;
         Update update = null;
 
@@ -115,7 +140,9 @@ public class GxReader extends StaxStreamReader {
                     break;
             }
         }
-        return GxReader.gxFactory.createAnimatedUpdate(duration, update);
+        AnimatedUpdate u;
+        return GxReader.gxFactory.createAnimatedUpdate(objectSimpleExtensions,
+                idAttributes,duration, update);
     }
 
     /**
@@ -151,7 +178,7 @@ public class GxReader extends StaxStreamReader {
         List<AbstractObject> featureObjectExtensions = null;
 
         // Tour
-        List<PlayList> playlists = new ArrayList<PlayList>();;
+        List<PlayList> playlists = new ArrayList<PlayList>();
 
         boucle:
         while (reader.hasNext()) {
@@ -235,7 +262,7 @@ public class GxReader extends StaxStreamReader {
      * @return
      * @throws XMLStreamException
      */
-    private PlayList readPlayList() throws XMLStreamException{
+    private PlayList readPlayList() throws XMLStreamException, KmlException, URISyntaxException{
         // AbstractObject
         List<SimpleType> objectSimpleExtensions = null;
         IdAttributes idAttributes = kmlReader.readIdAttributes();
@@ -259,7 +286,7 @@ public class GxReader extends StaxStreamReader {
                     break;
 
                 case XMLStreamConstants.END_ELEMENT:
-                    if (TAG_ANIMATED_UPDATE.equals(reader.getLocalName())
+                    if (TAG_PLAYLIST.equals(reader.getLocalName())
                             && URI_GX.contains(reader.getNamespaceURI())) {
                         break boucle;
                     }
@@ -274,10 +301,322 @@ public class GxReader extends StaxStreamReader {
      *
      * @param eName
      * @return
+     * @throws XMLStreamException
+     * @throws KmlException
+     * @throws URISyntaxException
      */
-    public AbstractTourPrimitive readAbstractTourPrimitive(String eName){
-        return null;
+    private AbstractTourPrimitive readAbstractTourPrimitive(String eName)
+            throws XMLStreamException, KmlException, URISyntaxException{
+        AbstractTourPrimitive resultat = null;
+        if (TAG_FLY_TO.equals(eName)){
+            resultat = this.readFlyTo();
+        } else if (TAG_ANIMATED_UPDATE.equals(eName)){
+            resultat = this.readAnimatedUpdate();
+        } else if (TAG_TOUR_CONTROL.equals(eName)){
+            resultat = this.readTourControl();
+        } else if (TAG_WAIT.equals(eName)){
+            resultat = this.readWait();
+        } else if (TAG_SOUND_CUE.equals(eName)){
+            resultat = this.readSoundCue();
+        }
+        return resultat;
     }
+
+    /**
+     *
+     * @return
+     * @throws XMLStreamException
+     * @throws KmlException
+     * @throws URISyntaxException
+     */
+    private FlyTo readFlyTo() throws XMLStreamException, KmlException, URISyntaxException{
+        // AbstractObject
+        List<SimpleType> objectSimpleExtensions = null;
+        IdAttributes idAttributes = kmlReader.readIdAttributes();
+
+        // FlyTo
+        double duration = DEF_DURATION;
+        EnumFlyToMode flyToMode = DEF_FLY_TO_MODE;
+        AbstractView view = null;
+
+        boucle:
+        while (reader.hasNext()) {
+
+            switch (reader.next()) {
+                case XMLStreamConstants.START_ELEMENT:
+                    final String eName = reader.getLocalName();
+                    final String eUri = reader.getNamespaceURI();
+
+                    if (URI_GX.equals(eUri)) {
+                        if (TAG_DURATION.equals(eName)) {
+                            duration = parseDouble(reader.getElementText());
+                        } else if (TAG_FLY_TO_MODE.equals(eName)) {
+                            flyToMode = EnumFlyToMode.transform(reader.getElementText());
+                        }
+                    } else if (URI_KML.equals(eUri)) {
+                        if (kmlReader.isAbstractView(eName)) {
+                            view = this.kmlReader.readAbstractView(eName);
+                        }
+                    }
+                    break;
+
+                case XMLStreamConstants.END_ELEMENT:
+                    if (TAG_FLY_TO.equals(reader.getLocalName())
+                            && URI_GX.contains(reader.getNamespaceURI())) {
+                        break boucle;
+                    }
+                    break;
+            }
+        }
+        return GxReader.gxFactory.createFlyTo(objectSimpleExtensions, idAttributes,
+                duration, flyToMode, view);
+    }
+
+    /**
+     *
+     * @return
+     * @throws XMLStreamException
+     */
+    private TourControl readTourControl() throws XMLStreamException{
+        // AbstractObject
+        List<SimpleType> objectSimpleExtensions = null;
+        IdAttributes idAttributes = kmlReader.readIdAttributes();
+
+        // TourControl
+        EnumPlayMode playMode = DEF_PLAY_MODE;
+
+        boucle:
+        while (reader.hasNext()) {
+
+            switch (reader.next()) {
+                case XMLStreamConstants.START_ELEMENT:
+                    final String eName = reader.getLocalName();
+                    final String eUri = reader.getNamespaceURI();
+
+                    if (URI_GX.equals(eUri)) {
+                        if (TAG_PLAY_MODE.equals(eName)) {
+                            playMode = EnumPlayMode.transform(reader.getElementText());
+                        }
+                    }
+                    break;
+
+                case XMLStreamConstants.END_ELEMENT:
+                    if (TAG_TOUR_CONTROL.equals(reader.getLocalName())
+                            && URI_GX.contains(reader.getNamespaceURI())) {
+                        break boucle;
+                    }
+                    break;
+            }
+        }
+        return GxReader.gxFactory.createTourControl(objectSimpleExtensions, idAttributes, playMode);
+    }
+
+    /**
+     *
+     * @return
+     * @throws XMLStreamException
+     */
+    private Wait readWait() throws XMLStreamException{
+        // AbstractObject
+        List<SimpleType> objectSimpleExtensions = null;
+        IdAttributes idAttributes = kmlReader.readIdAttributes();
+
+        // Wait
+        double duration = DEF_DURATION;
+
+        boucle:
+        while (reader.hasNext()) {
+
+            switch (reader.next()) {
+                case XMLStreamConstants.START_ELEMENT:
+                    final String eName = reader.getLocalName();
+                    final String eUri = reader.getNamespaceURI();
+
+                    if (URI_GX.equals(eUri)) {
+                        if (TAG_DURATION.equals(eName)) {
+                            duration = parseDouble(reader.getElementText());
+                        }
+                    }
+                    break;
+
+                case XMLStreamConstants.END_ELEMENT:
+                    if (TAG_FLY_TO.equals(reader.getLocalName())
+                            && URI_GX.contains(reader.getNamespaceURI())) {
+                        break boucle;
+                    }
+                    break;
+            }
+        }
+        return GxReader.gxFactory.createWait(objectSimpleExtensions, idAttributes, duration);
+    }
+
+    /**
+     *
+     * @return
+     * @throws XMLStreamException
+     */
+    private SoundCue readSoundCue() throws XMLStreamException{
+        // AbstractObject
+        List<SimpleType> objectSimpleExtensions = null;
+        IdAttributes idAttributes = kmlReader.readIdAttributes();
+
+        // SoundCue
+        String href = null;
+
+        boucle:
+        while (reader.hasNext()) {
+
+            switch (reader.next()) {
+                case XMLStreamConstants.START_ELEMENT:
+                    final String eName = reader.getLocalName();
+                    final String eUri = reader.getNamespaceURI();
+
+                    if (URI_KML.equals(eUri)) {
+                        if (KmlConstants.TAG_HREF.equals(eName)) {
+                            href = reader.getElementText();
+                        }
+                    }
+                    break;
+
+                case XMLStreamConstants.END_ELEMENT:
+                    if (TAG_SOUND_CUE.equals(reader.getLocalName())
+                            && URI_GX.contains(reader.getNamespaceURI())) {
+                        break boucle;
+                    }
+                    break;
+            }
+        }
+        return GxReader.gxFactory.createSoundCue(objectSimpleExtensions, idAttributes, href);
+    }
+
+    public LatLonQuad readLatLonQuad() throws XMLStreamException{
+        // AbstractObject
+        List<SimpleType> objectSimpleExtensions = null;
+        IdAttributes idAttributes = kmlReader.readIdAttributes();
+
+        // LatLonQuad
+        Coordinates coordinates = null;
+
+        boucle:
+        while (reader.hasNext()) {
+
+            switch (reader.next()) {
+                case XMLStreamConstants.START_ELEMENT:
+                    final String eName = reader.getLocalName();
+                    final String eUri = reader.getNamespaceURI();
+
+                    if (URI_KML.equals(eUri)) {
+                        if (KmlConstants.TAG_COORDINATES.equals(eName)) {
+                            coordinates = kmlReader.readCoordinates(reader.getElementText());
+                        }
+                    }
+                    break;
+
+                case XMLStreamConstants.END_ELEMENT:
+                    if (TAG_SOUND_CUE.equals(reader.getLocalName())
+                            && URI_GX.contains(reader.getNamespaceURI())) {
+                        break boucle;
+                    }
+                    break;
+            }
+        }
+        return GxReader.gxFactory.createLatLonQuad(objectSimpleExtensions, idAttributes, coordinates);
+    }
+
+    public TimeSpan readTimeSpan() throws XMLStreamException{
+        // AbstractObject
+        List<SimpleType> objectSimpleExtensions = null;
+        IdAttributes idAttributes = kmlReader.readIdAttributes();
+
+        // AbstractTimePrimitive
+        List<SimpleType> AbstractTimePrimitiveSimpleExtensions = null;
+        List<AbstractObject> AbstractTimePrimitiveObjectExtensions = null;
+
+        // TimeSpan
+        Calendar begin = null;
+        Calendar end = null;
+        List<SimpleType> TimeSpanSimpleExtensions = null;
+        List<AbstractObject> TimeSpanObjectExtensions = null;
+
+        boucle:
+        while (reader.hasNext()) {
+
+            switch (reader.next()) {
+                case XMLStreamConstants.START_ELEMENT:
+                    final String eName = reader.getLocalName();
+                    final String eUri = reader.getNamespaceURI();
+
+                    if (URI_KML.equals(eUri)) {
+                        if (KmlConstants.TAG_BEGIN.equals(eName)) {
+                            begin = (Calendar) fastDateParser.getCalendar(reader.getElementText()).clone();
+                        } else if (KmlConstants.TAG_END.equals(eName)) {
+                            end = (Calendar) fastDateParser.getCalendar(reader.getElementText()).clone();
+                        }
+                    }
+                    break;
+
+                case XMLStreamConstants.END_ELEMENT:
+                    if (TAG_TIME_SPAN.equals(reader.getLocalName())
+                            && URI_GX.contains(reader.getNamespaceURI())) {
+                        break boucle;
+                    }
+                    break;
+            }
+
+        }
+        return kmlFactory.createTimeSpan(objectSimpleExtensions, idAttributes,
+                AbstractTimePrimitiveSimpleExtensions, AbstractTimePrimitiveObjectExtensions,
+                begin, end, TimeSpanSimpleExtensions, TimeSpanObjectExtensions);
+    }
+
+    /**
+     * 
+     * @return
+     * @throws XMLStreamException
+     */
+    public TimeStamp readTimeStamp() throws XMLStreamException{
+        // AbstractObject
+        List<SimpleType> objectSimpleExtensions = null;
+        IdAttributes idAttributes = kmlReader.readIdAttributes();
+
+        // AbstractTimePrimitive
+        List<SimpleType> AbstractTimePrimitiveSimpleExtensions = null;
+        List<AbstractObject> AbstractTimePrimitiveObjectExtensions = null;
+
+        // TimeStamp
+        Calendar when = null;
+        List<SimpleType> TimeStampSimpleExtensions = null;
+        List<AbstractObject> TimeStampObjectExtensions = null;
+
+        boucle:
+        while (reader.hasNext()) {
+
+            switch (reader.next()) {
+                case XMLStreamConstants.START_ELEMENT:
+                    final String eName = reader.getLocalName();
+                    final String eUri = reader.getNamespaceURI();
+
+                    if (URI_KML.equals(eUri)) {
+                        if (KmlConstants.TAG_WHEN.equals(eName)) {
+                            when = (Calendar) fastDateParser.getCalendar(reader.getElementText()).clone();
+                        }
+                    }
+                    break;
+
+                case XMLStreamConstants.END_ELEMENT:
+                    if (TAG_TIME_STAMP.equals(reader.getLocalName()) 
+                            && URI_GX.contains(reader.getNamespaceURI())) {
+                        break boucle;
+                    }
+                    break;
+            }
+
+        }
+        return kmlFactory.createTimeStamp(objectSimpleExtensions, idAttributes,
+                AbstractTimePrimitiveSimpleExtensions, AbstractTimePrimitiveObjectExtensions,
+                when, TimeStampSimpleExtensions, TimeStampObjectExtensions);
+    }
+
 
     /**
      * 
