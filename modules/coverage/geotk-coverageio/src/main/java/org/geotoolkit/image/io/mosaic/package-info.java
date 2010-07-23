@@ -176,7 +176,7 @@
  *     MosaicImageReader reader = new MosaicImageReader();
  *     reader.setInput(newMosaic);
  *     MosaicImageReadParam param = reader.getDefaultReadParam();
- *     param.setSubsamplingChangeAllowed(true); // Strongly recommanded.
+ *     param.setSubsamplingChangeAllowed(true); // Strongly recommended.
  *     param.setSourceRegion(new Rectangle(2000, 2000, 800, 600));
  *     param.setSourceSubsampling(2, 2, 0, 0);
  *     RenderedImage image = reader.read(0, param);

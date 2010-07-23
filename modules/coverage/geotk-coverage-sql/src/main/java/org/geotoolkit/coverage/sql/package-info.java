@@ -19,7 +19,7 @@
 /**
  * A schema for storing coverages metadata in a SQL database. The coverage sample values are
  * stored as ordinary files encoded in arbitrary image formats (PNG, RAW, ASCII, JPEG-2000,
- * <i>etc.</i> - note that the classic JPEG format is not recommanded).
+ * <i>etc.</i> - note that the classic JPEG format is not recommended).
  *
  * A <A HREF="http://www.postgresql.org/">PostgreSQL</A> database is used for storing coverage
  * <em>metadata</em> like geographic envelopes and meaning of pixel values. The database is also

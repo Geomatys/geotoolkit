@@ -377,7 +377,7 @@ public class TransverseMercator extends CassiniOrMercator {
         private static final long serialVersionUID = 8903592710452235162L;
 
         /**
-         * Constructs a new map projection from the suplied parameters.
+         * Constructs a new map projection from the supplied parameters.
          *
          * @param parameters The parameters of the projection to be created.
          */

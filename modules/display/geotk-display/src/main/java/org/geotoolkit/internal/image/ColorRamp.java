@@ -142,7 +142,7 @@ public class ColorRamp implements Serializable {
     /**
      * Returns {@code false} if the methods having a {@code Color[][]} return type are allowed
      * to return {@code null} inconditionaly. This is more efficient for callers which are not
-     * interrested to fire property change events.
+     * interested to fire property change events.
      * <p>
      * The default implementation returns {@code false} in every cases. Subclasses shall
      * override this method with a cheap test if they want to be informed about changes.

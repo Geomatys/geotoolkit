@@ -228,7 +228,7 @@ public class GeneralGridGeometry implements GridGeometry, Serializable {
      * @param gridToCRS
      *          The math transform which allows for the transformations from grid coordinates
      *          (pixel's <em>center</em>) to real world earth coordinates. May be {@code null},
-     *          but this is not recommanded.
+     *          but this is not recommended.
      * @param crs
      *          The coordinate reference system for the "real world" coordinates, or {@code null}
      *          if unknown. This CRS is given to the {@linkplain #getEnvelope envelope}.
@@ -262,7 +262,7 @@ public class GeneralGridGeometry implements GridGeometry, Serializable {
      *          {@link PixelInCell#CELL_CORNER CELL_CORNER} for Java2D/JAI conventions.
      * @param gridToCRS
      *          The math transform which allows for the transformations from grid coordinates to
-     *          real world earth coordinates. May be {@code null}, but this is not recommanded.
+     *          real world earth coordinates. May be {@code null}, but this is not recommended.
      * @param crs
      *          The coordinate reference system for the "real world" coordinates, or {@code null}
      *          if unknown. This CRS is given to the {@linkplain #getEnvelope envelope}.

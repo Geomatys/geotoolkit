@@ -227,7 +227,7 @@ public class PropertyAuthorityFactory extends WKTParsingAuthorityFactory
                 }
             } catch (SecurityException exception) {
                 // Not considered "unexpected" because this error is actually common in server
-                // environment. The Class.getResource(...) method is the recommanded method,
+                // environment. The Class.getResource(...) method is the recommended method,
                 // but has no API returning the enumeration of all occurence of the file.
                 Logging.recoverableException(LOGGER, PropertyAuthorityFactory.class, "<init>", exception);
             }

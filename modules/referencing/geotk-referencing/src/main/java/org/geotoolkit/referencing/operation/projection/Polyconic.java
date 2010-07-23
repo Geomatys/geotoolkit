@@ -213,7 +213,7 @@ public class Polyconic extends CassiniOrMercator {
         private final double phi0;
 
         /**
-         * Constructs a new map projection from the suplied parameters.
+         * Constructs a new map projection from the supplied parameters.
          *
          * @param parameters The parameters of the projection to be created.
          */

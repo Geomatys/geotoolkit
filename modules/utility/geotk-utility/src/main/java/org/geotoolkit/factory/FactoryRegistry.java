@@ -577,7 +577,7 @@ public class FactoryRegistry extends ServiceRegistry {
                     unavailable(factory);
                     if (!wantCause || failureCause != null) {
                         /*
-                         * If the caller is not interrested about the cause of the failure,
+                         * If the caller is not interested about the cause of the failure,
                          * or if a cause has already been reported for a previous factory,
                          * we can return immediately. Otherwise we need to remember that we
                          * failed, but continue nevertheless for making sure that the cause

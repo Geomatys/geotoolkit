@@ -85,7 +85,7 @@ final class AuthorityCodeRenderer extends JPanel implements ListCellRenderer {
 
     /**
      * Return a component that has been configured to display the specified value.
-     * Note that it is recommanded to fix the list cell size to a fixed value in
+     * Note that it is recommended to fix the list cell size to a fixed value in
      * order to avoid invoking this method for computing the preferred size.
      */
     @Override

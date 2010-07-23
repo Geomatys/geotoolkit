@@ -449,7 +449,7 @@ public final class ColorUtilities {
     }
 
     /**
-     * Tries to guess the number of bands from the specified color model. The recommanded approach
+     * Tries to guess the number of bands from the specified color model. The recommended approach
      * is to invoke {@link java.awt.image.SampleModel#getNumBands}. This method should be used only
      * as a fallback when the sample model is not available. This method uses some heuristic rules
      * for guessing the number of bands, so the return value may not be exact in all cases.

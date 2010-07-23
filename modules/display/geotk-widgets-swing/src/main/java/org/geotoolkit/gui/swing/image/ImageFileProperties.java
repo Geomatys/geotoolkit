@@ -75,7 +75,7 @@ import org.geotoolkit.resources.Vocabulary;
  * </ul>
  * <p>
  * All {@code setImage} methods defined in this class may be slow because they involve I/O
- * operations. It is recommanded to invoke them from an other thread than the Swing thread.
+ * operations. It is recommended to invoke them from an other thread than the Swing thread.
  *
  * {@section Using this component together with a FileChooser}
  * This component can be registered to a {@link JFileChooser} for listening to change events.
@@ -245,7 +245,7 @@ public class ImageFileProperties extends ImageProperties implements PropertyChan
      * input stream) after this method call, if desired.
      *
      * {@section Thread safety}
-     * This method can be invoked from any thread. Actually it is recommanded to invoke
+     * This method can be invoked from any thread. Actually it is recommended to invoke
      * it from an other thread than the <cite>Swing</cite> one.
      *
      * @param  reader The image reader from which to read the informations.
@@ -367,7 +367,7 @@ public class ImageFileProperties extends ImageProperties implements PropertyChan
      * want to choose automatically an image index depending on the format and the input.
      *
      * {@section Thread safety}
-     * This method can be invoked from any thread. Actually it is recommanded to invoke
+     * This method can be invoked from any thread. Actually it is recommended to invoke
      * it from an other thread than the <cite>Swing</cite> one.
      *
      * @param  reader The image reader from which to read the informations.
@@ -385,7 +385,7 @@ public class ImageFileProperties extends ImageProperties implements PropertyChan
      * can override if they want to perform additional processing.
      *
      * {@section Thread safety}
-     * This method can be invoked from any thread. Actually it is recommanded to invoke
+     * This method can be invoked from any thread. Actually it is recommended to invoke
      * it from an other thread than the <cite>Swing</cite> one.
      *
      * @param  file The image file.
@@ -412,7 +412,7 @@ public class ImageFileProperties extends ImageProperties implements PropertyChan
      * Then, this method delegates to {@link #setImage(ImageReader)}.
      *
      * {@section Thread safety}
-     * This method can be invoked from any thread. Actually it is recommanded to invoke
+     * This method can be invoked from any thread. Actually it is recommended to invoke
      * it from an other thread than the <cite>Swing</cite> one.
      *
      * @param  input The image input.

@@ -22,7 +22,7 @@
  * redirection of logs to some other frameworks like <a href="http://logging.apache.org/log4j/">Log4J</a>.
  *
  * {@section Using Log4J or Apache logging}
- * We recommand to stick to standard Java logging when possible. However if interoperability
+ * We recommend to stick to standard Java logging when possible. However if interoperability
  * with an other logging framework is required, then the only action needed is to include
  * <strong>one</strong> of the following JAR on the classpath:
  * <p>

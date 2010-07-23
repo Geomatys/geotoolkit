@@ -285,7 +285,7 @@ public class UUIDs {
             if (other instanceof Reference<?>) {
                 return same((Reference<?>) other);
             }
-            // Actually we are not interrested in the check below,
+            // Actually we are not interested in the check below,
             // but we perform it anyway as a matter of principle.
             return (other instanceof StrongRef) && ((StrongRef) other).referent == referent;
         }

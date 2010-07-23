@@ -43,7 +43,7 @@ import org.geotoolkit.resources.Errors;
  * The example below profiles a mosaic for different subsampling values.
  * See {@link MosaicImageReadParam} for an explanation about why invoking
  * <code>{@linkplain #setSubsamplingChangeAllowed setSubsamplingChangeAllowed}(true)</code>
- * is strongly recommanded.
+ * is strongly recommended.
  *
  * {@preformat java
  *     MosaicProfiler profiler = new MosaicProfiler(mosaic);

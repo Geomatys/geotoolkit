@@ -75,7 +75,7 @@
  * the standard types (image input or output stream) defined by the Java Image I/O specification.
  *
  * {@section System initialization}
- * While not mandatory, it is recommanded to invoke the following methods at least once before
+ * While not mandatory, it is recommended to invoke the following methods at least once before
  * to use the Geotk library. Those methods are not invoked automatically in order to let users
  * control their application configuration.
  * <p>

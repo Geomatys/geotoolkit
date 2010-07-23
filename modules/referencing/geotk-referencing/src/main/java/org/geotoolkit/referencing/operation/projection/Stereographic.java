@@ -360,7 +360,7 @@ public class Stereographic extends UnitaryProjection {
         private static final long serialVersionUID = -8558594307755820783L;
 
         /**
-         * Constructs a new map projection from the suplied parameters.
+         * Constructs a new map projection from the supplied parameters.
          *
          * @param parameters The parameters of the projection to be created.
          */

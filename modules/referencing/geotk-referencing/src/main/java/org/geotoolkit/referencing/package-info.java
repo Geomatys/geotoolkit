@@ -34,7 +34,7 @@
  * {@linkplain org.geotoolkit.referencing.AbstractIdentifiedObject identified object}.
  * <p>
  * All factory methods are capable to find an object using an unscoped (or local) name. However,
- * in order to avoid potential conflict, it is recommanded to use scoped name when possible. For
+ * in order to avoid potential conflict, it is recommended to use scoped name when possible. For
  * example even if both can work, prefer {@code "EPSG:9624"} instead of {@code "9624"} for the
  * affine transform in order to avoid potential conflict with an other authority using the same
  * code number.

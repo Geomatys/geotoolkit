@@ -61,7 +61,7 @@ import org.geotoolkit.resources.Errors;
  * After definitions have been added, any call to a parsing method will replace all occurences
  * of a short name by the associated long string.
  * <p>
- * The short names must comply with the rules of Java identifiers. It is recommanded, but not
+ * The short names must comply with the rules of Java identifiers. It is recommended, but not
  * required, to prefix the names by some symbol like {@code "$"} in order to avoid ambiguity.
  * Note however that this class doesn't replace occurences between quoted text, so string
  * expansion still relatively safe even when used with non-prefixed identifiers.

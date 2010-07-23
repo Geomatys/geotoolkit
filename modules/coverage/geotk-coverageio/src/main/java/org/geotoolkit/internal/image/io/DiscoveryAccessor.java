@@ -52,7 +52,7 @@ public class DiscoveryAccessor {
      *
      * @param metadata The Image I/O metadata. An instance of the
      *        {@link org.geotoolkit.image.io.metadata.SpatialMetadata}
-     *        sub-class is recommanded, but not mandatory.
+     *        sub-class is recommended, but not mandatory.
      */
     public DiscoveryAccessor(final IIOMetadata metadata) {
         this.metadata = metadata;

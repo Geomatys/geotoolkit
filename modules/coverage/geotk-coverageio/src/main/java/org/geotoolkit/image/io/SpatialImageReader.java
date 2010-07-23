@@ -540,7 +540,7 @@ public abstract class SpatialImageReader extends ImageReader implements WarningP
      * @param imageIndex
      *          The index of the image to be queried.
      * @param parameters
-     *          The user-supplied parameters, or {@code null}. Note: we recommand to supply
+     *          The user-supplied parameters, or {@code null}. Note: we recommend to supply
      *          {@link #getDefaultReadParam} instead of {@code null} since subclasses may
      *          override the later with default values suitable to a particular format.
      * @param converters

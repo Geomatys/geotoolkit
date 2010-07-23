@@ -56,7 +56,7 @@ public final class DimensionAccessor extends MetadataAccessor {
      *
      * @param metadata The Image I/O metadata. An instance of the
      *        {@link org.geotoolkit.image.io.metadata.SpatialMetadata}
-     *        sub-class is recommanded, but not mandatory.
+     *        sub-class is recommended, but not mandatory.
      */
     public DimensionAccessor(final IIOMetadata metadata) {
         super(metadata, FORMAT_NAME, "ImageDescription/Dimensions", "Dimension");
@@ -262,11 +262,11 @@ nextPixel:          do {
 
     /**
      * Returns {@code true} if a call to {@link #scanValidSampleValue(ImageReader, int)} is
-     * recommanded. This method uses heuristic rules that may be changed in any future version.
+     * recommended. This method uses heuristic rules that may be changed in any future version.
      *
      * @param  reader The image reader to use for reading information.
      * @param  imageIndex The index of the image to query (usually 0).
-     * @return {@code true} if a call to {@code scanValidSampleValue} is recommanded.
+     * @return {@code true} if a call to {@code scanValidSampleValue} is recommended.
      * @throws IOException If an error occurred while querying the image.
      *
      * @since 3.14
@@ -280,7 +280,7 @@ nextPixel:          do {
                 final Double maxValue = getAttributeAsDouble("maxValue");
                 if (minValue == null || maxValue == null || !(minValue <= maxValue)) { // Une '!' for catching NaN.
                     /*
-                     * Stop the band scanning whatever happen: if a scan is recommanded for at least
+                     * Stop the band scanning whatever happen: if a scan is recommended for at least
                      * one band, do the scan. If we don't have float type, we don't need to continue
                      * since this method will never returns 'true' in such case.
                      */

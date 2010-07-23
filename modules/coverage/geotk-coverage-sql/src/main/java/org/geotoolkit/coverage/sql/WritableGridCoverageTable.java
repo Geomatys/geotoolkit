@@ -69,7 +69,7 @@ import org.geotoolkit.internal.io.IOUtilities;
  */
 final class WritableGridCoverageTable extends GridCoverageTable {
     /**
-     * The object to use for writting in the {@code "Tiles"} table. Created only if needed.
+     * The object to use for writing in the {@code "Tiles"} table. Created only if needed.
      * This is used for adding tiles (as opposed to ordinary images), and is encapsulated
      * in this {@code WritableGridCoverageTable} because we will also need to write an entry
      * in the {@code "GridCoverages"} table for the mosaic as a whole.

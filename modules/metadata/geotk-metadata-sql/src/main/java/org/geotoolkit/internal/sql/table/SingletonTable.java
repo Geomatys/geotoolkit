@@ -417,7 +417,7 @@ public abstract class SingletonTable<E extends Entry> extends Table {
      *
      * @param  identifier The identifier of the entry to delete.
      * @return The number of entries deleted.
-     * @throws SQLException if an error occurred will reading from or writting to the database.
+     * @throws SQLException if an error occurred will reading from or writing to the database.
      */
     public int delete(final Comparable<?> identifier) throws SQLException {
         if (identifier == null) {
@@ -450,7 +450,7 @@ public abstract class SingletonTable<E extends Entry> extends Table {
      * foreigner tables.
      *
      * @return The number of elements deleted.
-     * @throws SQLException if an error occurred will reading from or writting to the database.
+     * @throws SQLException if an error occurred will reading from or writing to the database.
      */
     public int deleteAll() throws SQLException {
         final int count;

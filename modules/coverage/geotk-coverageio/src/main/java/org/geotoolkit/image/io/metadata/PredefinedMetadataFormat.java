@@ -128,7 +128,7 @@ public class PredefinedMetadataFormat extends SpatialMetadataFormat {
         substitution.put(BrowseGraphic.class,             null);  // Redundant with Image I/O Thumbnails.
         substitution.put(SpatialRepresentationType.class, null);  // Fixed to "grid" for Image I/O.
         /*
-         * Metadata excluded because we are not interrested in (at this time). Their
+         * Metadata excluded because we are not interested in (at this time). Their
          * inclusion introduce large sub-trees that would need to be simplified.  We
          * may revisit some of those exclusion in a future version, when we get more
          * experience about what are needed.

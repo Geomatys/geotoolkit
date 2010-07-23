@@ -62,7 +62,7 @@ public final class GridDomainAccessor extends MetadataAccessor {
      *
      * @param metadata The Image I/O metadata. An instance of the
      *        {@link org.geotoolkit.image.io.metadata.SpatialMetadata}
-     *        sub-class is recommanded, but not mandatory.
+     *        sub-class is recommended, but not mandatory.
      */
     public GridDomainAccessor(final IIOMetadata metadata) {
         super(metadata, FORMAT_NAME, "RectifiedGridDomain", null);

@@ -19,7 +19,7 @@ Building Geotoolkit.org
 
 
   The following free softwares are optional. They are included in the Geotk dependencies for
-  convenience, but installation on the local machine is recommanded.
+  convenience, but installation on the local machine is recommended.
 
   * {{{https://jai-imageio.dev.java.net/binary-builds.html}Image I/O extensions for JAI}} version 1.1 or later.
 
@@ -58,7 +58,7 @@ mvn install -DskipTests
 
 * Building the javadoc
 
-  Execute the following command from the same directory than above. It is recommanded to run
+  Execute the following command from the same directory than above. It is recommended to run
   this command only after a successful build.
 
 ---------------------
@@ -81,7 +81,7 @@ mvn org.geotoolkit.project:geotk-jar-collector:pack-specific --non-recursive
 * Updating the source code
 
   This work only if the source code was obtained from the Mercurial repository.
-  The recommand steps are as below, in that order (note that the clean is performed
+  The recommend steps are as below, in that order (note that the clean is performed
   before the update):
 
 ----------------

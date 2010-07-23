@@ -470,7 +470,7 @@ public class CoordinateFormat extends Format {
      *
      * {@note This method returns a direct reference to the internal format. Any change to
      *        the returned <code>Format</code> object will impact the formatting performed
-     *        by this <code>CoordinateFormat</code> object. We recommand to avoid such
+     *        by this <code>CoordinateFormat</code> object. We recommend to avoid such
      *        changes for now since it may not be compatible with future versions. Use
      *        the public setter methods instead.}
      *

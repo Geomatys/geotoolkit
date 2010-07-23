@@ -266,7 +266,7 @@ public final class Registry {
      * <p>
      * <strong>TIP:</strong> Experience suggests that on some platforms, new codecs appear
      * magically after an AWT window has been created (e.g. "Standard TIFF image reader").
-     * If this method is to be invoked for a graphical application, it is recommanded to
+     * If this method is to be invoked for a graphical application, it is recommended to
      * invoke this method <strong>after</strong> the {@linkplain java.awt.Window} has been
      * created but before it is made visible.
      *

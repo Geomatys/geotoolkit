@@ -252,7 +252,7 @@ public class TreeTableModelAdapter extends AbstractTreeTableModel {
      * is null, or if the node or the child don't belong to this tree model, returns {@code -1}.
      *
      * @param  node  A note in the tree.
-     * @param  child The node we are interrested in.
+     * @param  child The node we are interested in.
      * @return The index of the child in the node, or -1.
      */
     @Override

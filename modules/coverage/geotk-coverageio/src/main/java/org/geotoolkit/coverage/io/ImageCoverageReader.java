@@ -117,9 +117,9 @@ import org.geotoolkit.referencing.operation.transform.ConcatenatedTransform;
  */
 public class ImageCoverageReader extends GridCoverageReader {
     /**
-     * The name of metadata nodes we are interrested in. Some implementations of
+     * The name of metadata nodes we are interested in. Some implementations of
      * {@link ImageReader} may use this information for reading only the metadata
-     * we are interrested in.
+     * we are interested in.
      *
      * @see SpatialMetadataFormat
      */

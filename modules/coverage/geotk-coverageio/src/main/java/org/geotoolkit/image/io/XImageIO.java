@@ -280,7 +280,7 @@ public final class XImageIO {
             final ImageReaderSpi spi = it.next();
             if (Boolean.TRUE.equals(ignoreMetadata)) {
                 /*
-                 * If the caller is not interrested in metadata, avoid the WorldFileImageReader.Spi
+                 * If the caller is not interested in metadata, avoid the WorldFileImageReader.Spi
                  * wrapper in order to avoid the cost of reading the TFW/PRJ files.  We will rather
                  * use directly the wrapped reader, which should be somewhere next in the iteration.
                  */

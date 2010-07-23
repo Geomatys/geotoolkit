@@ -221,7 +221,7 @@ attmpt: for (int caseNumber=0; ; caseNumber++) {
      * The {@code "tfw"} extension is handled especially, in that {@code "tfw} will actually be
      * used only as a fallback if no file exist with the extension for <cite>World File</cite>.
      * <p>
-     * While not mandatory, it is recommanded to invoke {@link IOUtilities#tryToFile(Object)}
+     * While not mandatory, it is recommended to invoke {@link IOUtilities#tryToFile(Object)}
      * before this method in order to increase the chances to pass a {@link File} argument.
      * This allows us to check if the file exists.
      *

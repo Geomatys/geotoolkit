@@ -132,7 +132,7 @@ final class MetadataProxyList<T> extends AbstractList<T> implements CheckedColle
              *         └───values
              *
              * Note that this practice (element with a single attribute called "value") is used
-             * in the standard Image I/O metadata format. For now are interrested only in arrays
+             * in the standard Image I/O metadata format. For now are interested only in arrays
              * of primitive ints, doubles or Strings, which is why "values" is plural.
              */
             final Class<T> type = parent.interfaceType;

@@ -145,7 +145,7 @@ public class ReferencingBuilder {
      * Creates a new metadata helper for the given metadata.
      *
      * @param  metadata The Image I/O metadata. An instance of the {@link SpatialMetadata}
-     *                  sub-class is recommanded, but not mandatory.
+     *                  sub-class is recommended, but not mandatory.
      * @throws NoSuchElementException If the underlying {@code IIOMetadata}
      *         {@linkplain IIOMetadata#isReadOnly() is read only} and doesn't
      *         contains a node for the element to fetch.

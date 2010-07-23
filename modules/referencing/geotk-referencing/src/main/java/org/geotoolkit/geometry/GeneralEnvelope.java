@@ -640,7 +640,7 @@ scanNumber: while (++i < length) {
      * constructor.
      *
      * @param factor The factor by which to multiply ordinates before rounding
-     *               and divide after rounding. A recommanded value is 360.
+     *               and divide after rounding. A recommended value is 360.
      * @param maxULP The maximal change allowed in ULPs (Unit in the Last Place).
      *
      * @see XMath#roundIfAlmostInteger(double, int)

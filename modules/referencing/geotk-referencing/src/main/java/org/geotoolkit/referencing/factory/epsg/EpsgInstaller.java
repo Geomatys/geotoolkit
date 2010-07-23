@@ -134,7 +134,7 @@ public class EpsgInstaller implements Callable<EpsgInstaller.Result> {
      *   <li>{@code EPSG_v6_18.mdb_Tables_PostgreSQL.sql}</li>
      *   <li>{@code EPSG_v6_18.mdb_Data_PostgreSQL.sql}</li>
      *   <li>{@code EPSG_v6_18.mdb_FKeys_PostgreSQL.sql}</li>
-     *   <li>Optional but recommanded: {@code EPSG_v6_18.mdb_Indexes_PostgreSQL.sql} using
+     *   <li>Optional but recommended: {@code EPSG_v6_18.mdb_Indexes_PostgreSQL.sql} using
      *       a copy of the script embedded in the {@code geotk-epsg.jar} file.</li>
      * </ul>
      * <p>

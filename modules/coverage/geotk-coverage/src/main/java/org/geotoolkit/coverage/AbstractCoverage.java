@@ -1289,7 +1289,7 @@ public abstract class AbstractCoverage extends PropertySourceImpl implements Cov
      * determined by the {@code force} argument:
      *
      * <ul>
-     *   <li><p>If {@code force} is {@code false} (the recommanded value), this method may process
+     *   <li><p>If {@code force} is {@code false} (the recommended value), this method may process
      *   only under some conditions. For example a grid coverage may dispose its planar image only
      *   if it has no {@linkplain PlanarImage#getSinks sinks}. This method returns {@code true} if
      *   it disposed all resources, or {@code false} if this method vetoed against the disposal.
@@ -1305,7 +1305,7 @@ public abstract class AbstractCoverage extends PropertySourceImpl implements Cov
      * whatever this coverage still in use or not, it is safer to rely on the garbage collector.
      *
      * @param  force {@code true} for forcing an inconditionnal disposal, or {@code false} for
-     *         performing a conservative disposal. The recommanded value is {@code false}.
+     *         performing a conservative disposal. The recommended value is {@code false}.
      * @return {@code true} if this method disposed at least some resources, or {@code false}
      *         if this method vetoed against the disposal.
      *

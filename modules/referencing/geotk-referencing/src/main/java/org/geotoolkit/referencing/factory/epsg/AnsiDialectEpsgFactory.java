@@ -135,7 +135,7 @@ public class AnsiDialectEpsgFactory extends DirectEpsgFactory {
      * {@linkplain Connection#close() closed} when this factory is
      * {@linkplain #dispose(boolean) disposed}.
      * <p>
-     * <b>Note:</b> we recommand to avoid keeping the connection open for a long time. An easy
+     * <b>Note:</b> we recommend to avoid keeping the connection open for a long time. An easy
      * way to get the connection created only when first needed and closed automatically after
      * a short timeout is to instantiate this {@code AnsiDialectEpsgFactory} class only in a
      * {@link org.geotoolkit.referencing.factory.ThreadedAuthorityFactory}. This approach also

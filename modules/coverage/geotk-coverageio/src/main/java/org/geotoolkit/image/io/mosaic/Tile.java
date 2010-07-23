@@ -1483,7 +1483,7 @@ public class Tile implements Comparable<Tile>, Serializable {
      *          The tiles to format in a table.
      * @param maximum
      *          The maximum number of tiles to format. If there is more tiles, a message will be
-     *          formatted below the table. A reasonable value like 5000 is recommanded since
+     *          formatted below the table. A reasonable value like 5000 is recommended since
      *          attempt to format millions of tiles leads to {@link OutOfMemoryError}.
      * @return A string representation of the given tiles as a table.
      *
@@ -1511,7 +1511,7 @@ public class Tile implements Comparable<Tile>, Serializable {
      *          Where to write the table.
      * @param maximum
      *          The maximum number of tiles to format. If there is more tiles, a message will be
-     *          formatted below the table. A reasonable value like 5000 is recommanded since
+     *          formatted below the table. A reasonable value like 5000 is recommended since
      *          attempt to format millions of tiles leads to {@link OutOfMemoryError}.
      * @throws IOException
      *          If an error occurred while writing to the given writer.

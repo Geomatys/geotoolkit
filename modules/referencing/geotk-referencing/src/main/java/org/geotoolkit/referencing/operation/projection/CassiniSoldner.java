@@ -172,7 +172,7 @@ public class CassiniSoldner extends CassiniOrMercator {
         private static final long serialVersionUID = 8808830539248891527L;
 
         /**
-         * Constructs a new map projection from the suplied parameters.
+         * Constructs a new map projection from the supplied parameters.
          *
          * @param parameters The parameters of the projection to be created.
          */

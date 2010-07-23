@@ -424,7 +424,7 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
      *
      *   <li><p>Exclude a particular class. This is conceptually equivalent to setting the target
      *   type to {@code null}. This is used for excluding metadata type which bring a large tree
-     *   of dependencies that we may not be interrested in. Example:</p>
+     *   of dependencies that we may not be interested in. Example:</p>
      *
      * <blockquote><pre>substitution.put({@linkplain Objective}.class, null);</pre></blockquote></li>
      *

@@ -560,7 +560,7 @@ final class LayerEntry extends DefaultEntry implements Layer {
                                 ranges[i] = ranges[i].union(candidates[i]);
                             } catch (IllegalArgumentException e) {
                                 // May occurs if the units are not convertible.
-                                // We are interrested in the ConversionException cause.
+                                // We are interested in the ConversionException cause.
                                 final Throwable cause = e.getCause();
                                 throw new CoverageStoreException(e.getLocalizedMessage(),
                                         (cause instanceof Exception) ? (Exception) cause : e);

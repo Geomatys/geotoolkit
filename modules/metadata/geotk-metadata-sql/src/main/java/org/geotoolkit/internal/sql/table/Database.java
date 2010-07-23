@@ -53,7 +53,7 @@ import org.geotoolkit.internal.sql.AuthenticatedDataSource;
  * The connection is specified by a {@link DataSource}, which should create pooled connections.
  *
  * {@section Concurrency}
- * This class is thread-safe and concurrent. However it is recommanded to access it only from a
+ * This class is thread-safe and concurrent. However it is recommended to access it only from a
  * limited number of threads (for example from a {@link java.util.concurrent.ThreadPoolExecutor})
  * and to recycle those threads, because this class may use a new connection for each thread.
  *
@@ -71,7 +71,7 @@ public class Database implements Localized {
     private static final int TIMEOUT = 2;
 
     /**
-     * The data source, which is mandatory. It is recommanded to provide a data source that
+     * The data source, which is mandatory. It is recommended to provide a data source that
      * create pooled connections, because connections may be created and closed often.
      */
     private final AuthenticatedDataSource source;

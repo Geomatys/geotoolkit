@@ -230,7 +230,7 @@ final class ProjectionAnalyzer {
          * by 'projectedScale'. However there is no way I can see to ensure that since
          * it is really a matter of how the map projection is implemented (for example
          * the unit conversion factor could be merged with the "scale_factor" -- not a
-         * clean approach and I do not recommand, but some could do in order to save a
+         * clean approach and I do not recommend, but some could do in order to save a
          * few multiplications).
          *
          * We need "false easting" and "false northing" offsets in either user's unit or

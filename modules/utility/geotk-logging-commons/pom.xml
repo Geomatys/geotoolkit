@@ -30,7 +30,7 @@
     An adapter for using Apache's commons-logging in Geotk. Geotk will
     automatically redirect all its logging events to commons-logging if this
     JAR is on the classpath. If there is no need for commons-logging interoperability,
-    we recommand to NOT include this JAR on the classpath in order to use the
+    we recommend to NOT include this JAR on the classpath in order to use the
     default Java logging framework instead.
   </description>
 

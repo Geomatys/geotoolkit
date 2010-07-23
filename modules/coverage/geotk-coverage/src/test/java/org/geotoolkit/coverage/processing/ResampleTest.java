@@ -228,7 +228,7 @@ public final class ResampleTest extends GridProcessingTestCase {
 
     /**
      * Ensures that the resampling takes in account the system-wide "lenient datum shift" hint.
-     * The actual data doesn't matter for this test. We are interrested only in the exception.
+     * The actual data doesn't matter for this test. We are interested only in the exception.
      *
      * @throws FactoryException Should never happen.
      *

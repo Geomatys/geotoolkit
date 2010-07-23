@@ -56,7 +56,7 @@ import org.geotoolkit.resources.Vocabulary;
  * An image reader built from a mosaic of other image readers. The mosaic is specified as a
  * collection of {@link Tile} objects, organized in a {@link TileManager}. Images are read
  * using the {@link #read(int,ImageReadParam)} method. The {@code ImageReadParam} argument
- * is optional by strongly recommanded, since the whole purpose of {@code MosaicImageReader}
+ * is optional by strongly recommended, since the whole purpose of {@code MosaicImageReader}
  * is to read efficiently only subsets of big tiled images.
  *
  * @author Martin Desruisseaux (Geomatys)
@@ -1062,10 +1062,10 @@ public class MosaicImageReader extends ImageReader implements Disposable {
 
     /**
      * Reads the image indexed by {@code imageIndex} using a supplied parameters. While optional,
-     * it is strongly recommanded to supply parameters as an instance of {@link MosaicImageReadParam}
+     * it is strongly recommended to supply parameters as an instance of {@link MosaicImageReadParam}
      * on which {@code param.setSubsamplingChangeAllowed(true)} has been invoked.
      * <p>
-     * If the above recommandation has been followed, then the supplied {@code param} object will
+     * If the above recommendation has been followed, then the supplied {@code param} object will
      * be modified by call to this method since the subsampling effectively used will be written
      * back in the given parameters.
      *

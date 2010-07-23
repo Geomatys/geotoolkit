@@ -26,7 +26,7 @@ package org.geotoolkit.util;
  *
  * {@note We could argue that this exception should extend <code>IllegalArgumentException</code>.
  *        However <code>NullPointerException</code> has become a more widely adopted practice and
- *        is now the recommanded one in the <cite>Effective Java</cite> book.}
+ *        is now the recommended one in the <cite>Effective Java</cite> book.}
  *
  * @author Martin Desruisseaux (IRD)
  * @version 3.00

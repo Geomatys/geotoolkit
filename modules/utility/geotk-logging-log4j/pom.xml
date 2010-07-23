@@ -29,7 +29,7 @@
   <description>
     An adapter for using Log4J in Geotk. Geotk will automatically redirect
     all its logging events to Log4J if this JAR is on the classpath. If there is
-    no need for Log4J interoperability, we recommand to NOT include this JAR on
+    no need for Log4J interoperability, we recommend to NOT include this JAR on
     the classpath in order to use the default Java logging framework instead.
   </description>
 

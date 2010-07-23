@@ -327,7 +327,7 @@ public class AlbersEqualArea extends UnitaryProjection {
         private static final long serialVersionUID = 9090765015127854096L;
 
         /**
-         * Constructs a new map projection from the suplied parameters.
+         * Constructs a new map projection from the supplied parameters.
          *
          * @param parameters The parameters of the projection to be created.
          */

@@ -227,7 +227,7 @@ public abstract class UnitaryProjection extends AbstractMathTransform2D implemen
     private static int globalRangeCheckSemaphore;
 
     /**
-     * Constructs a new map projection from the suplied parameters. Subclass constuctors
+     * Constructs a new map projection from the supplied parameters. Subclass constuctors
      * must invoke {@link #finish} when they have finished their work.
      *
      * @param parameters The parameters of the projection to be created.

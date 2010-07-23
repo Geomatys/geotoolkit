@@ -392,7 +392,7 @@ public class LambertAzimuthalEqualArea extends UnitaryProjection {
         private static final long serialVersionUID = 2091431369806844342L;
 
         /**
-         * Constructs a new map projection from the suplied parameters.
+         * Constructs a new map projection from the supplied parameters.
          *
          * @param parameters The parameters of the projection to be created.
          */

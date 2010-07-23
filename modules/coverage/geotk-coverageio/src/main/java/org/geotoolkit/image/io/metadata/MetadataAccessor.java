@@ -187,7 +187,7 @@ public class MetadataAccessor implements WarningProducer {
 
     /**
      * The Image I/O metadata for which this accessor is a wrapper. An instance
-     * of the {@link SpatialMetadata} subclass is recommanded, but not mandatory.
+     * of the {@link SpatialMetadata} subclass is recommended, but not mandatory.
      *
      * @since 3.06
      */
@@ -324,7 +324,7 @@ public class MetadataAccessor implements WarningProducer {
      * with {@code formatName} and {@code childPath} argument set to {@code "#auto"} value.
      *
      * @param  metadata    The Image I/O metadata. An instance of the {@link SpatialMetadata}
-     *                     sub-class is recommanded, but not mandatory.
+     *                     sub-class is recommended, but not mandatory.
      * @param  parentPath  The path to the {@linkplain Node node} of interest, or {@code null}
      *                     if the {@code metadata} root node is directly the node of interest.
      *
@@ -363,7 +363,7 @@ public class MetadataAccessor implements WarningProducer {
      * </ul>
      *
      * @param  metadata    The Image I/O metadata. An instance of the {@link SpatialMetadata}
-     *                     sub-class is recommanded, but not mandatory.
+     *                     sub-class is recommended, but not mandatory.
      * @param  formatName  The name of the {@linkplain IIOMetadata#getMetadataFormat(String) format
      *                     to use}, or {@code null} or {@code "#auto"} for an automatic selection.
      * @param  parentPath  The path to the {@linkplain Node node} of interest, or {@code null}
@@ -399,7 +399,7 @@ public class MetadataAccessor implements WarningProducer {
      * }
      *
      * @param  metadata    The Image I/O metadata. An instance of the {@link SpatialMetadata}
-     *                     sub-class is recommanded, but not mandatory.
+     *                     sub-class is recommended, but not mandatory.
      * @param  formatName  The name of the {@linkplain IIOMetadata#getMetadataFormat(String) format
      *                     to use}, or {@code null} or {@code "#auto"} for an automatic selection.
      * @param  objectClass The {@linkplain IIOMetadataFormat#getObjectClass(String) class of user

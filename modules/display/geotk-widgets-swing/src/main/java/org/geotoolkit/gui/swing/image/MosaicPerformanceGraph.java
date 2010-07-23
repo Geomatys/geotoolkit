@@ -220,7 +220,7 @@ public class MosaicPerformanceGraph extends Plot2D implements Dialog {
      * inclusives.
      * <p>
      * This method can be invoked from any thread - it doesn't need to be the <cite>Swing</cite>
-     * one. Since this method may take a while, it is recommanded to invoke it from a background
+     * one. Since this method may take a while, it is recommended to invoke it from a background
      * thread.
      *
      * @param  name The name to given to the plot, or {@code null} if none.
