@@ -46,6 +46,7 @@ import org.jdesktop.swingx.JXBusyLabel;
 import org.geotoolkit.gui.swing.Dialog;
 import org.geotoolkit.image.io.mosaic.Tile;
 import org.geotoolkit.image.io.mosaic.TileManager;
+import org.geotoolkit.image.io.plugin.WorldFileImageReader;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.resources.Descriptions;
 import org.geotoolkit.internal.swing.SwingUtilities;
@@ -356,7 +357,7 @@ public class MosaicChooser extends JComponent implements Dialog {
                 progress = null;
             } else {
                 files    = fileChooser.getSelectedFiles();
-                provider = (ImageReaderSpi) fileChooser.getCurrentProvider();
+                provider = WorldFileImageReader.Spi.unwrap((ImageReaderSpi) fileChooser.getCurrentProvider());
                 progress = new ProgressWindow(MosaicChooser.this);
             }
         }

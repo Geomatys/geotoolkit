@@ -281,6 +281,14 @@ public class MosaicBuilder {
      * Sets the {@linkplain ImageReader image reader} provider for each tiles to be read.
      * A {@code null} value means that the provider should be automatically detected by
      * {@link #createTileManager(Object)}.
+     * <p>
+     * It is recommended to avoid {@link WorldFileImageReader} provider, in order to avoid
+     * unnecessary attempts to read the {@code ".tfw"} and {@code ".prj"} files. Callers
+     * can use the following code:
+     *
+     * {@preformat java
+     *     setTileReaderSpi(WorldFileImageReader.Spi.unwrap(provider));
+     * }
      *
      * @param provider The new image reader provider for tiles.
      */
