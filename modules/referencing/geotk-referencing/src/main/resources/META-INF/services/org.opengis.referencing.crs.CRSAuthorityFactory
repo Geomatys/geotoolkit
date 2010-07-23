@@ -10,3 +10,4 @@ org.geotoolkit.referencing.factory.web.AutoCRSFactory
 org.geotoolkit.referencing.factory.epsg.ThreadedEpsgFactory
 org.geotoolkit.referencing.factory.epsg.LongitudeFirstEpsgFactory
 org.geotoolkit.referencing.factory.epsg.PropertyEpsgFactory
+org.geotoolkit.internal.referencing.factory.IGNF

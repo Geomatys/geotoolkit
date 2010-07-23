@@ -22,6 +22,7 @@ import java.awt.geom.Rectangle2D;
 import java.awt.geom.AffineTransform;
 
 import org.opengis.util.FactoryException;
+import org.opengis.referencing.crs.ProjectedCRS;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.CoordinateOperation;
 import org.opengis.referencing.operation.MathTransform;
@@ -442,5 +443,18 @@ public final class CRS_Test {
         for (int i=0; i<expected.length; i++) {
             assertEquals(expected[i], result[i], 1E-10);
         }
+    }
+
+    /**
+     * Tests a few CRS from the IGNF authority.
+     *
+     * @throws FactoryException Should never happen.
+     *
+     * @since 3.14
+     */
+    @Test
+    public void testIGNF() throws FactoryException {
+        final CoordinateReferenceSystem crs = CRS.decode("IGNF:MILLER");
+        assertTrue(crs instanceof ProjectedCRS);
     }
 }

@@ -64,7 +64,7 @@ final class CitationConstant extends DefaultCitation {
      * Constructs a citation with the specified responsible party.
      *
      * @param party The name for an organization that is responsible for the resource.
-     * @param name  he name of a field in the {@link Citations} class.
+     * @param name  The name of a field in the {@link Citations} class.
      */
     public CitationConstant(final ResponsibleParty party, final String name) {
         super(party);
