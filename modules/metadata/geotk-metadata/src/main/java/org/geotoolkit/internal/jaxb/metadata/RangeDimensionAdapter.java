@@ -18,7 +18,11 @@
 package org.geotoolkit.internal.jaxb.metadata;
 
 import javax.xml.bind.annotation.XmlElementRef;
+
+import org.opengis.metadata.content.Band;
 import org.opengis.metadata.content.RangeDimension;
+
+import org.geotoolkit.metadata.iso.content.DefaultBand;
 import org.geotoolkit.metadata.iso.content.DefaultRangeDimension;
 
 
@@ -27,7 +31,8 @@ import org.geotoolkit.metadata.iso.content.DefaultRangeDimension;
  * package documentation for more information about JAXB and interface.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.05
+ * @author Martin Desruisseaux (Geomatys)
+ * @version 3.14
  *
  * @since 2.5
  * @module
@@ -71,8 +76,13 @@ public final class RangeDimensionAdapter
     @XmlElementRef
     public DefaultRangeDimension getElement() {
         final RangeDimension metadata = this.metadata;
-        return (metadata instanceof DefaultRangeDimension) ?
-            (DefaultRangeDimension) metadata : new DefaultRangeDimension(metadata);
+        if (metadata instanceof DefaultRangeDimension) {
+            return (DefaultRangeDimension) metadata;
+        }
+        if (metadata instanceof Band) {
+            return new DefaultBand((Band) metadata);
+        }
+        return new DefaultRangeDimension(metadata);
     }
 
     /**

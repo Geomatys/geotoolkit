@@ -18,8 +18,12 @@
 package org.geotoolkit.internal.jaxb.metadata;
 
 import javax.xml.bind.annotation.XmlElementRef;
+
 import org.opengis.metadata.extent.TemporalExtent;
+import org.opengis.metadata.extent.SpatialTemporalExtent;
+
 import org.geotoolkit.metadata.iso.extent.DefaultTemporalExtent;
+import org.geotoolkit.metadata.iso.extent.DefaultSpatialTemporalExtent;
 
 
 /**
@@ -27,7 +31,8 @@ import org.geotoolkit.metadata.iso.extent.DefaultTemporalExtent;
  * package documentation for more information about JAXB and interface.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.05
+ * @author Martin Desruisseaux (Geomatys)
+ * @version 3.14
  *
  * @since 2.5
  * @module
@@ -69,8 +74,13 @@ public final class TemporalExtentAdapter extends MetadataAdapter<TemporalExtentA
     @XmlElementRef
     public DefaultTemporalExtent getElement() {
         final TemporalExtent metadata = this.metadata;
-        return (metadata instanceof DefaultTemporalExtent) ?
-            (DefaultTemporalExtent) metadata : new DefaultTemporalExtent(metadata);
+        if (metadata instanceof DefaultTemporalExtent) {
+            return (DefaultTemporalExtent) metadata;
+        }
+        if (metadata instanceof SpatialTemporalExtent) {
+            return new DefaultSpatialTemporalExtent((SpatialTemporalExtent) metadata);
+        }
+        return new DefaultTemporalExtent(metadata);
     }
 
     /**

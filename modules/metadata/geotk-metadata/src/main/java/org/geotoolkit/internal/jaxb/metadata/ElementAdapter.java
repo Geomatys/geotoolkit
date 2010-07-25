@@ -18,8 +18,8 @@
 package org.geotoolkit.internal.jaxb.metadata;
 
 import javax.xml.bind.annotation.XmlElementRef;
-import org.geotoolkit.metadata.iso.quality.AbstractElement;
-import org.opengis.metadata.quality.Element;
+import org.opengis.metadata.quality.*;
+import org.geotoolkit.metadata.iso.quality.*;
 
 
 /**
@@ -27,7 +27,8 @@ import org.opengis.metadata.quality.Element;
  * package documentation for more information about JAXB and interface.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.05
+ * @author Martin Desruisseaux (Geomatys)
+ * @version 3.14
  *
  * @since 3.02
  * @module
@@ -69,8 +70,73 @@ public final class ElementAdapter extends MetadataAdapter<ElementAdapter,Element
     @XmlElementRef
     public AbstractElement getElement() {
         final Element metadata = this.metadata;
-        return (metadata instanceof AbstractElement) ?
-            (AbstractElement) metadata : new AbstractElement(metadata);
+        if (metadata instanceof AbstractElement) {
+            return (AbstractElement) metadata;
+        }
+        if (metadata instanceof PositionalAccuracy) {
+            if (metadata instanceof AbsoluteExternalPositionalAccuracy) {
+                return new DefaultAbsoluteExternalPositionalAccuracy((AbsoluteExternalPositionalAccuracy) metadata);
+            }
+            if (metadata instanceof GriddedDataPositionalAccuracy) {
+                return new DefaultGriddedDataPositionalAccuracy((GriddedDataPositionalAccuracy) metadata);
+            }
+            if (metadata instanceof RelativeInternalPositionalAccuracy) {
+                return new DefaultRelativeInternalPositionalAccuracy((RelativeInternalPositionalAccuracy) metadata);
+            }
+            return new AbstractPositionalAccuracy((PositionalAccuracy) metadata);
+        }
+        if (metadata instanceof TemporalAccuracy) {
+            if (metadata instanceof AccuracyOfATimeMeasurement) {
+                return new DefaultAccuracyOfATimeMeasurement((AccuracyOfATimeMeasurement) metadata);
+            }
+            if (metadata instanceof TemporalConsistency) {
+                return new DefaultTemporalConsistency((TemporalConsistency) metadata);
+            }
+            if (metadata instanceof TemporalValidity) {
+                return new DefaultTemporalValidity((TemporalValidity) metadata);
+            }
+            return new AbstractTemporalAccuracy((TemporalAccuracy) metadata);
+        }
+        if (metadata instanceof ThematicAccuracy) {
+            if (metadata instanceof QuantitativeAttributeAccuracy) {
+                return new DefaultQuantitativeAttributeAccuracy((QuantitativeAttributeAccuracy) metadata);
+            }
+            if (metadata instanceof NonQuantitativeAttributeAccuracy) {
+                return new DefaultNonQuantitativeAttributeAccuracy((NonQuantitativeAttributeAccuracy) metadata);
+            }
+            if (metadata instanceof ThematicClassificationCorrectness) {
+                return new DefaultThematicClassificationCorrectness((ThematicClassificationCorrectness) metadata);
+            }
+            return new AbstractThematicAccuracy((ThematicAccuracy) metadata);
+        }
+        if (metadata instanceof LogicalConsistency) {
+            if (metadata instanceof ConceptualConsistency) {
+                return new DefaultConceptualConsistency((ConceptualConsistency) metadata);
+            }
+            if (metadata instanceof DomainConsistency) {
+                return new DefaultDomainConsistency((DomainConsistency) metadata);
+            }
+            if (metadata instanceof FormatConsistency) {
+                return new DefaultFormatConsistency((FormatConsistency) metadata);
+            }
+            if (metadata instanceof TopologicalConsistency) {
+                return new DefaultTopologicalConsistency((TopologicalConsistency) metadata);
+            }
+            return new AbstractLogicalConsistency((LogicalConsistency) metadata);
+        }
+        if (metadata instanceof Completeness) {
+            if (metadata instanceof CompletenessCommission) {
+                return new DefaultCompletenessCommission((CompletenessCommission) metadata);
+            }
+            if (metadata instanceof CompletenessOmission) {
+                return new DefaultCompletenessOmission((CompletenessOmission) metadata);
+            }
+            return new AbstractCompleteness((Completeness) metadata);
+        }
+        if (metadata instanceof Usability) {
+            return new DefaultUsability((Usability) metadata);
+        }
+        return new AbstractElement(metadata);
     }
 
     /**

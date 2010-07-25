@@ -18,8 +18,16 @@
 package org.geotoolkit.internal.jaxb.metadata;
 
 import javax.xml.bind.annotation.XmlElementRef;
+
 import org.opengis.metadata.content.ContentInformation;
+import org.opengis.metadata.content.CoverageDescription;
+import org.opengis.metadata.content.FeatureCatalogueDescription;
+import org.opengis.metadata.content.ImageDescription;
+
 import org.geotoolkit.metadata.iso.content.AbstractContentInformation;
+import org.geotoolkit.metadata.iso.content.DefaultCoverageDescription;
+import org.geotoolkit.metadata.iso.content.DefaultFeatureCatalogueDescription;
+import org.geotoolkit.metadata.iso.content.DefaultImageDescription;
 
 
 /**
@@ -27,7 +35,8 @@ import org.geotoolkit.metadata.iso.content.AbstractContentInformation;
  * package documentation for more information about JAXB and interface.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.05
+ * @author Martin Desruisseaux (Geomatys)
+ * @version 3.14
  *
  * @since 2.5
  * @module
@@ -71,8 +80,19 @@ public final class ContentInformationAdapter
     @XmlElementRef
     public AbstractContentInformation getElement() {
         final ContentInformation metadata = this.metadata;
-        return (metadata instanceof AbstractContentInformation) ?
-            (AbstractContentInformation) metadata : new AbstractContentInformation(metadata);
+        if (metadata instanceof AbstractContentInformation) {
+            return (AbstractContentInformation) metadata;
+        }
+        if (metadata instanceof ImageDescription) {
+            return new DefaultImageDescription((ImageDescription) metadata);
+        }
+        if (metadata instanceof CoverageDescription) {
+            return new DefaultCoverageDescription((CoverageDescription) metadata);
+        }
+        if (metadata instanceof FeatureCatalogueDescription) {
+            return new DefaultFeatureCatalogueDescription((FeatureCatalogueDescription) metadata);
+        }
+        return new AbstractContentInformation(metadata);
     }
 
     /**

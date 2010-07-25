@@ -18,8 +18,18 @@
 package org.geotoolkit.internal.jaxb.metadata;
 
 import javax.xml.bind.annotation.XmlElementRef;
+
+import org.opengis.metadata.spatial.Georectified;
+import org.opengis.metadata.spatial.Georeferenceable;
 import org.opengis.metadata.spatial.SpatialRepresentation;
+import org.opengis.metadata.spatial.GridSpatialRepresentation;
+import org.opengis.metadata.spatial.VectorSpatialRepresentation;
+
+import org.geotoolkit.metadata.iso.spatial.DefaultGeorectified;
+import org.geotoolkit.metadata.iso.spatial.DefaultGeoreferenceable;
 import org.geotoolkit.metadata.iso.spatial.AbstractSpatialRepresentation;
+import org.geotoolkit.metadata.iso.spatial.DefaultGridSpatialRepresentation;
+import org.geotoolkit.metadata.iso.spatial.DefaultVectorSpatialRepresentation;
 
 
 /**
@@ -27,6 +37,7 @@ import org.geotoolkit.metadata.iso.spatial.AbstractSpatialRepresentation;
  * package documentation for more information about JAXB and interface.
  *
  * @author Cédric Briançon (Geomatys)
+ * @author Martin Desruisseaux (Geomatys)
  * @version 3.05
  *
  * @since 2.5
@@ -72,8 +83,22 @@ public final class SpatialRepresentationAdapter
     @XmlElementRef
     public AbstractSpatialRepresentation getElement() {
         final SpatialRepresentation metadata = this.metadata;
-        return (metadata instanceof AbstractSpatialRepresentation) ?
-            (AbstractSpatialRepresentation) metadata : new AbstractSpatialRepresentation(metadata);
+        if (metadata instanceof AbstractSpatialRepresentation) {
+            return (AbstractSpatialRepresentation) metadata;
+        }
+        if (metadata instanceof GridSpatialRepresentation) {
+            if (metadata instanceof Georectified) {
+                return new DefaultGeorectified((Georectified) metadata);
+            }
+            if (metadata instanceof Georeferenceable) {
+                return new DefaultGeoreferenceable((Georeferenceable) metadata);
+            }
+            return new DefaultGridSpatialRepresentation((GridSpatialRepresentation) metadata);
+        }
+        if (metadata instanceof VectorSpatialRepresentation) {
+            return new DefaultVectorSpatialRepresentation((VectorSpatialRepresentation) metadata);
+        }
+        return new AbstractSpatialRepresentation(metadata);
     }
 
     /**

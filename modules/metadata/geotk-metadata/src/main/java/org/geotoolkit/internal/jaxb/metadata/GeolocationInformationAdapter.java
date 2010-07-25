@@ -18,8 +18,12 @@
 package org.geotoolkit.internal.jaxb.metadata;
 
 import javax.xml.bind.annotation.XmlElementRef;
-import org.geotoolkit.metadata.iso.spatial.AbstractGeolocationInformation;
+
+import org.opengis.metadata.spatial.GCPCollection;
 import org.opengis.metadata.spatial.GeolocationInformation;
+
+import org.geotoolkit.metadata.iso.spatial.DefaultGCPCollection;
+import org.geotoolkit.metadata.iso.spatial.AbstractGeolocationInformation;
 
 
 /**
@@ -27,7 +31,8 @@ import org.opengis.metadata.spatial.GeolocationInformation;
  * package documentation for more information about JAXB and interface.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.05
+ * @author Martin Desruisseaux (Geomatys)
+ * @version 3.14
  *
  * @since 3.02
  * @module
@@ -69,8 +74,13 @@ public final class GeolocationInformationAdapter extends MetadataAdapter<Geoloca
     @XmlElementRef
     public AbstractGeolocationInformation getElement() {
         final GeolocationInformation metadata = this.metadata;
-        return (metadata instanceof AbstractGeolocationInformation) ?
-            (AbstractGeolocationInformation) metadata : new AbstractGeolocationInformation(metadata);
+        if (metadata instanceof AbstractGeolocationInformation) {
+            return (AbstractGeolocationInformation) metadata;
+        }
+        if (metadata instanceof GCPCollection) {
+            return new DefaultGCPCollection((GCPCollection) metadata);
+        }
+        return new AbstractGeolocationInformation(metadata);
     }
 
     /**

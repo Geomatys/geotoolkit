@@ -30,5 +30,23 @@ if (uml != null) {
         directly from a SQL database.</p>
       </answer>
     </faq>
+    <faq id="unknownClass">
+      <question>
+        I can't marshall my custom implementation (<code>JAXBException</code>)
+      </question>
+      <answer>
+        <p>The classes given to the JAXB marshaller must contain JAXB annotations,
+        otherwise the following exception is thrown:</p>
+
+        <blockquote><code>javax.xml.bind.JAXBException:</code> class <cite>MyCustomClass</cite>
+        nor any of its super class is known to this context.</blockquote>
+
+        <p>The easiest workaround is to wrap the custom implementation into one of the implementations
+        provided in the <code>org.geotoolkit.metadata.iso</code> package. All those Geotk implementation
+        classes provide shallow copy constructor for making that easy. Note that you need to wrap
+        only the root class, not the attributes. The attribute values will be wrapped automatically
+        as needed by JAXB adapters.</p>
+      </answer>
+    </faq>
   </part>
 </faqs>

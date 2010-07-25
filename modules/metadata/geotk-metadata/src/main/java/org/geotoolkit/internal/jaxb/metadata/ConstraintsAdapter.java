@@ -18,8 +18,14 @@
 package org.geotoolkit.internal.jaxb.metadata;
 
 import javax.xml.bind.annotation.XmlElementRef;
+
 import org.opengis.metadata.constraint.Constraints;
+import org.opengis.metadata.constraint.LegalConstraints;
+import org.opengis.metadata.constraint.SecurityConstraints;
+
 import org.geotoolkit.metadata.iso.constraint.DefaultConstraints;
+import org.geotoolkit.metadata.iso.constraint.DefaultLegalConstraints;
+import org.geotoolkit.metadata.iso.constraint.DefaultSecurityConstraints;
 
 
 /**
@@ -27,7 +33,8 @@ import org.geotoolkit.metadata.iso.constraint.DefaultConstraints;
  * package documentation for more information about JAXB and interface.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.05
+ * @author Martin Desruisseaux (Geomatys)
+ * @version 3.14
  *
  * @since 2.5
  * @module
@@ -69,8 +76,16 @@ public final class ConstraintsAdapter extends MetadataAdapter<ConstraintsAdapter
     @XmlElementRef
     public DefaultConstraints getElement() {
         final Constraints metadata = this.metadata;
-        return (metadata instanceof DefaultConstraints) ?
-            (DefaultConstraints) metadata : new DefaultConstraints(metadata);
+        if (metadata instanceof DefaultConstraints) {
+            return (DefaultConstraints) metadata;
+        }
+        if (metadata instanceof LegalConstraints) {
+            return new DefaultLegalConstraints((LegalConstraints) metadata);
+        }
+        if (metadata instanceof SecurityConstraints) {
+            return new DefaultSecurityConstraints((SecurityConstraints) metadata);
+        }
+        return new DefaultConstraints(metadata);
     }
 
     /**

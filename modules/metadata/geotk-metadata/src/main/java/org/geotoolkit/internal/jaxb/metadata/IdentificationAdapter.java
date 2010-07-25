@@ -18,8 +18,14 @@
 package org.geotoolkit.internal.jaxb.metadata;
 
 import javax.xml.bind.annotation.XmlElementRef;
+
 import org.opengis.metadata.identification.Identification;
+import org.opengis.metadata.identification.DataIdentification;
+import org.opengis.metadata.identification.ServiceIdentification;
+
 import org.geotoolkit.metadata.iso.identification.AbstractIdentification;
+import org.geotoolkit.metadata.iso.identification.DefaultDataIdentification;
+import org.geotoolkit.metadata.iso.identification.DefaultServiceIdentification;
 
 
 /**
@@ -27,7 +33,8 @@ import org.geotoolkit.metadata.iso.identification.AbstractIdentification;
  * package documentation for more information about JAXB and interface.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.05
+ * @author Martin Desruisseaux (Geomatys)
+ * @version 3.14
  *
  * @since 2.5
  * @module
@@ -69,8 +76,16 @@ public final class IdentificationAdapter extends MetadataAdapter<IdentificationA
     @XmlElementRef
     public AbstractIdentification getElement() {
         final Identification metadata = this.metadata;
-        return (metadata instanceof AbstractIdentification) ?
-            (AbstractIdentification) metadata : new AbstractIdentification(metadata);
+        if (metadata instanceof AbstractIdentification) {
+            return (AbstractIdentification) metadata;
+        }
+        if (metadata instanceof DataIdentification) {
+            return new DefaultDataIdentification((DataIdentification) metadata);
+        }
+        if (metadata instanceof ServiceIdentification) {
+            return new DefaultServiceIdentification((ServiceIdentification) metadata);
+        }
+        return new AbstractIdentification(metadata);
     }
 
     /**
