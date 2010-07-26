@@ -28,6 +28,7 @@ import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 import java.math.BigDecimal;
+import java.net.URI;
 import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -109,13 +110,20 @@ public class Utils {
                 return Long.class;
             } else if ("integer".equals(name.getLocalPart())) {
                 return Integer.class;
+            } else if ("int".equals(name.getLocalPart())) {
+                return int.class;
+            } else if ("QName".equals(name.getLocalPart())) {
+                return QName.class;
+            } else if ("anyURI".equals(name.getLocalPart())) {
+                return URI.class;
+            } else if ("byte".equals(name.getLocalPart())) {
+                return byte.class;
             } else if ("string".equals(name.getLocalPart())) {
                 return String.class;
             } else if ("decimal".equals(name.getLocalPart())) {
                 return BigDecimal.class;
             } else if ("short".equals(name.getLocalPart())) {
                 return Short.class;
-
             } else if ("boolean".equals(name.getLocalPart())) {
                 return Boolean.class;
             } else if ("dateTime".equals(name.getLocalPart())) {
@@ -124,6 +132,8 @@ public class Utils {
                 return Date.class;
             } else if ("double".equals(name.getLocalPart())) {
                 return Double.class;
+
+            // GML geometry types
             } else if ("GeometryPropertyType".equals(name.getLocalPart())) {
                 return Geometry.class;
             } else if ("MultiPoint".equals(name.getLocalPart())) {
