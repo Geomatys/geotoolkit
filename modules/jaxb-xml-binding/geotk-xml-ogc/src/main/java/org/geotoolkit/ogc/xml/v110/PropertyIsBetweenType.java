@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlType;
 import org.opengis.filter.FilterVisitor;
 import org.opengis.filter.PropertyIsBetween;
+import org.opengis.filter.expression.Expression;
 
 
 /**
@@ -161,10 +162,12 @@ public class PropertyIsBetweenType extends ComparisonOpsType implements Property
      * Gets the value of the expression property.
      */
     @Override
-    public ExpressionType getExpression() {
+    public Expression getExpression() {
         final Object value = expression.getValue();
         if (value instanceof ExpressionType) {
             return (ExpressionType)value;
+        } if (value instanceof PropertyNameType) {
+            return (PropertyNameType)value;
         }
         return null;
     }
