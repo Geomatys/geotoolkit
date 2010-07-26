@@ -59,6 +59,64 @@ public class FileUtilities {
     private static final Logger LOGGER = Logging.getLogger(FileUtilities.class);
     private static final int BUFFER = 2048;
 
+    private FileUtilities() {
+    }
+
+    /**
+     * Copy all files and directories, from the given source to the target destination.
+     *
+     * @param src The source file to copy.
+     * @param dest The destination directory.
+     * @throws IOException
+     */
+    public static void copy(File src, File dest) throws IOException {
+        if (src == null || dest == null) {
+            LOGGER.warning("Source and destination files must not be null for the copy");
+            return;
+        }
+        if (!src.exists()) {
+            LOGGER.warning("The source file does not exist: "+ src);
+            return;
+        }
+        if (src.isDirectory()) {
+            if (!dest.exists()) {
+                dest.mkdir();
+            }
+            String files[] = src.list();
+            for (int i = 0; i < files.length; i++) {
+                copy(new File(src, files[i]), new File(dest, files[i]));
+            }
+        } else {
+            FileInputStream from = null;
+            FileOutputStream to = null;
+            try {
+                from = new FileInputStream(src);
+                to = new FileOutputStream(dest);
+                byte[] buffer = new byte[4096];
+                int bytesRead;
+
+                while ((bytesRead = from.read(buffer)) != -1) {
+                    to.write(buffer, 0, bytesRead); // write
+                }
+            } finally {
+                if (from != null) {
+                    try {
+                        from.close();
+                    } catch (IOException e) {
+                        LOGGER.log(Level.FINE, e.getLocalizedMessage(), e);
+                    }
+                }
+                if (to != null) {
+                    try {
+                        to.close();
+                    } catch (IOException e) {
+                        LOGGER.log(Level.FINE, e.getLocalizedMessage(), e);
+                    }
+                }
+            }
+        }
+    }
+
     /**
      * This method delete recursively a file or a folder.
      * 
@@ -854,4 +912,5 @@ public class FileUtilities {
         }
         return fileName;
     }
+
 }

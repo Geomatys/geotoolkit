@@ -17,6 +17,7 @@
 package org.geotoolkit.wms.xml;
 
 import javax.xml.bind.annotation.XmlTransient;
+import org.opengis.metadata.extent.GeographicBoundingBox;
 
 /**
  *
@@ -24,14 +25,10 @@ import javax.xml.bind.annotation.XmlTransient;
  * @module pending
  */
 @XmlTransient
-public abstract class AbstractGeographicBoundingBox {
-    
-    public abstract double getWestBoundLongitude();
-    
-    public abstract double getEastBoundLongitude();
-    
-    public abstract double getSouthBoundLatitude();
-            
-    public abstract double getNorthBoundLatitude();
+public abstract class AbstractGeographicBoundingBox implements GeographicBoundingBox {
+    @Override
+    public Boolean getInclusion() {
+        return Boolean.TRUE;
+    }
 
 }
