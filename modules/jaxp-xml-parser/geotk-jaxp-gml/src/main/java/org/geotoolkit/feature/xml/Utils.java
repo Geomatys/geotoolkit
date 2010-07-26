@@ -117,7 +117,7 @@ public class Utils {
             } else if ("anyURI".equals(name.getLocalPart())) {
                 return URI.class;
             } else if ("byte".equals(name.getLocalPart())) {
-                return byte.class;
+                return Byte.class;
             } else if ("string".equals(name.getLocalPart())) {
                 return String.class;
             } else if ("decimal".equals(name.getLocalPart())) {
@@ -194,6 +194,14 @@ public class Utils {
                 return new QName("http://www.w3.org/2001/XMLSchema", "decimal");
             } else if (Short.class.equals(binding)) {
                 return new QName("http://www.w3.org/2001/XMLSchema", "short");
+            } else if (int.class.equals(binding)) {
+                return new QName("http://www.w3.org/2001/XMLSchema", "int");
+            } else if (QName.class.equals(binding)) {
+                return new QName("http://www.w3.org/2001/XMLSchema", "QName");
+            } else if (URI.class.equals(binding)) {
+                return new QName("http://www.w3.org/2001/XMLSchema", "anyURI");
+            } else if (Byte.class.equals(binding)) {
+                return new QName("http://www.w3.org/2001/XMLSchema", "byte");
 
 
             } else if (Geometry.class.isAssignableFrom(binding)) {
