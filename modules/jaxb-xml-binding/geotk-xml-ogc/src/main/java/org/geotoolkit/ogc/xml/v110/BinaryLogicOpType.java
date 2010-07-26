@@ -22,8 +22,8 @@ import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElementRef;
-import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
+import org.opengis.filter.BinaryLogicOperator;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterVisitor;
 
@@ -56,7 +56,7 @@ import org.opengis.filter.FilterVisitor;
     "logicOps",
     "spatialOps"
 })
-public class BinaryLogicOpType extends LogicOpsType {
+public class BinaryLogicOpType extends LogicOpsType implements BinaryLogicOperator {
 
     @XmlElementRef(name = "comparisonOps", namespace = "http://www.opengis.net/ogc", type = JAXBElement.class)
     private List<JAXBElement<? extends ComparisonOpsType>> comparisonOps;

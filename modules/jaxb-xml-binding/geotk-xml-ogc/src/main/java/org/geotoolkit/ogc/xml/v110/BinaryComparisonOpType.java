@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.namespace.QName;
+import org.opengis.filter.BinaryComparisonOperator;
 import org.opengis.filter.FilterVisitor;
 import org.opengis.filter.expression.Expression;
 
@@ -58,7 +59,7 @@ import org.opengis.filter.expression.Expression;
 @XmlType(name = "BinaryComparisonOpType", propOrder = {
     "expression"
 })
-public class BinaryComparisonOpType extends ComparisonOpsType {
+public class BinaryComparisonOpType extends ComparisonOpsType  implements BinaryComparisonOperator {
 
     @XmlElementRef(name = "expression", namespace = "http://www.opengis.net/ogc", type = JAXBElement.class)
     protected List<JAXBElement<?>> expression;
