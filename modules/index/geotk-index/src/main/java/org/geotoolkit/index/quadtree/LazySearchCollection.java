@@ -53,14 +53,10 @@ public class LazySearchCollection extends AbstractCollection<Data> implements
      */
     @Override
     public Iterator<Data> iterator() {
-        final LazySearchIterator object;
-        try {
-            object = new LazySearchIterator(tree.getRoot().copy(), tree.getDataReader(), bounds);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        tree.registerIterator(object);
-        return object;
+        final LazySearchIterator iterator = new LazySearchIterator(
+                tree.getRoot(), tree.getDataReader(), bounds);
+        tree.registerIterator(iterator);
+        return iterator;
     }
 
     @Override

@@ -87,6 +87,7 @@ import org.geotoolkit.data.shapefile.ShpDBF;
 import org.geotoolkit.data.shapefile.indexed.IndexDataReader.ShpData;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.DefaultName;
+import org.geotoolkit.index.quadtree.Node;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.filter.sort.SortBy;
 
@@ -555,9 +556,8 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
         CloseableCollection<Data> tmp = null;
 
         try {
-            QuadTree quadTree = openQuadTree();
-            if ((quadTree != null)
-                    && !bbox.contains(quadTree.getRoot().getBounds())) {
+            final QuadTree quadTree = openQuadTree();
+            if ((quadTree != null) && !bbox.contains(quadTree.getRoot().getBounds(new Envelope()))) {
                 tmp = quadTree.search(bbox);
 
                 if (tmp == null || !tmp.isEmpty())

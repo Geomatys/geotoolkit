@@ -17,13 +17,16 @@
 package org.geotoolkit.index.quadtree;
 
 import java.io.IOException;
+import java.util.AbstractMap.SimpleEntry;
+import java.util.Map.Entry;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 import org.geotoolkit.index.Data;
 
 import com.vividsolutions.jts.geom.Envelope;
-import java.util.Arrays;
 
 /**
  * Iterator that search the quad tree depth first. 32000 indices are cached at a
@@ -36,25 +39,30 @@ import java.util.Arrays;
  */
 public class LazySearchIterator implements Iterator<Data> {
 
-    private static final int MAX_INDICES = 32768;
-
-    private final int[] indices = new int[MAX_INDICES];
-    private final Data[] datas = new Data[MAX_INDICES];
     private final DataReader dataReader;
     private final Envelope bounds;
-
-    private Data next = null;
-    private Node current;
-    private int idIndex = 0;
     private boolean closed;
-    private Iterator<Data> data;
 
-    public LazySearchIterator(Node root, DataReader dataReader, Envelope bounds) {
+    //the current path where we are, Integer is the current visited child node index.
+    private final List<Entry<Node,Integer>> path = new ArrayList<Entry<Node,Integer>>(10);
+    private final Envelope buffer = new Envelope();
+
+    //curent visited node
+    private Node current = null;
+    private int nbShp = 0;
+    private int idShp = 0;
+    private Data next = null;
+
+    public LazySearchIterator(Node node, DataReader dataReader, Envelope bounds) {
         this.dataReader = dataReader;
-        this.current = root;
         this.bounds = bounds;
         this.closed = false;
         this.next = null;
+
+        if(node.getBounds(buffer).intersects(bounds)){
+            path.add(new SimpleEntry<Node, Integer>(node, -1));
+        }
+        
     }
 
     @Override
@@ -90,97 +98,102 @@ public class LazySearchIterator implements Iterator<Data> {
         }
 
         if(next != null){
+            //we already have the next one
             return;
         }
 
-        //search for the next value.
-        if (data != null && data.hasNext()) {
-            next = data.next();
-        } else {
-            fillCache();
-            if (data != null && data.hasNext())
-                next = data.next();
+        if(current == null){
+            try {
+                //search the next node that has shpIds
+                findNextNode();
+            } catch (StoreException ex) {
+                throw new RuntimeException(ex);
+            }
+
+            if(current == null){
+                //there are no more datas to read.
+                return;
+            }else{
+                //reset index
+                idShp = 0;
+            }
         }
-    }
-
-
-    private void fillCache() {
-        int indexSize = 0;
-
         try {
-            while (indexSize < MAX_INDICES && current != null) {
-                final int nbShapeIds = current.getNumShapeIds();
-                final int nbShapeRemaining = nbShapeIds - idIndex;
-
-                if (nbShapeRemaining > 0 && !current.isVisited()
-                        && current.getBounds().intersects(bounds)) {
-
-                    final int[] shapeIds = current.shapesId;
-                    
-                    //find the max shapeIds we can add in one pass
-                    final int nb = Math.min(nbShapeRemaining, MAX_INDICES-indexSize);
-                    System.arraycopy(shapeIds, idIndex, indices, indexSize, nb);
-                    indexSize += nb;
-                    idIndex += nb;
-                } else {
-                    current.setShapesId(new int[0]);
-                    idIndex = 0;
-
-                    boolean foundUnvisited = false;
-                    for (int i=0,n=current.getNumSubNodes(); i<n ; i++) {
-                        final Node node = current.getSubNode(i);
-                        if (!node.isVisited() && node.getBounds().intersects(bounds)) {
-                            foundUnvisited = true;
-                            current = node;
-                            break;
-                        }
-                    }
-
-                    if (!foundUnvisited) {
-                        current.setVisited(true);
-                        current = current.getParent();
-                    }
-                }
-            }
-
-            // sort so offset lookup is faster
-            Arrays.sort(indices,0,indexSize);
-            for (int i=0; i<indexSize; i++) {
-                datas[i] = dataReader.create(indices[i]);
-            }
-
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        } catch (StoreException e) {
-            throw new RuntimeException(e);
+            next = dataReader.create(current.getShapeId(idShp));
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
         }
 
-        data = new LimitedArrayIterator(indexSize);
+        //prepare next id
+        idShp++;
+        if(idShp == nbShp){
+            //no more ids in this node, we will search for a new node next time.
+            current = null;
+        }
+
     }
 
-    private class LimitedArrayIterator implements Iterator<Data>{
+    private void findNextNode() throws StoreException {
 
-        private final int limit;
-        private int index = 0;
-
-        LimitedArrayIterator(int limit){
-            this.limit = limit;
+        if(current != null){
+            return;
         }
+       
+        nodeLoop:
+        do{
+            //nothing left
+            if(path.isEmpty()){
+                current = null;
+                return;
+            }
 
-        @Override
-        public boolean hasNext() {
-            return index<limit;
-        }
+            final int lastIndex = path.size()-1;
+            final Entry<Node,Integer> segment = path.get(lastIndex);
+            final Node candidate = segment.getKey();
+            int idNode = segment.getValue();
 
-        @Override
-        public Data next() {
-            return datas[index++];
-        }
+            if(idNode == -1){
+                //prepare for next node search
+                idNode = 0;
+                segment.setValue(idNode);
 
-        @Override
-        public void remove() {
-            throw new UnsupportedOperationException("Not supported yet.");
-        }
+                //we have not yet explore this node ids
+                //we use the node shpIds if he has some
+                final int nb = candidate.getNumShapeIds();
+                if(nb>0){
+                    //we have some ids in this node
+                    current = candidate;
+                    nbShp = nb;
+                    idShp = 0;
+                    return;
+                }
+
+            }
+
+            final int nbNodes = candidate.getNumSubNodes();
+            childLoop:
+            while(idNode < nbNodes){
+                final Node child = candidate.getSubNode(idNode);
+                if(bounds != null && !child.getBounds(buffer).intersects(bounds)){
+                    //not in the area we requested
+                    idNode++;
+                    continue childLoop;
+                }
+
+                path.add(new SimpleEntry<Node, Integer>(candidate.getSubNode(idNode),-1));
+                
+                //prepare next node sarch
+                idNode++;
+                segment.setValue(idNode);
+
+                //explore the sub node
+                continue nodeLoop;
+            }
+            
+            //we have nothing left to explore in this node, go back to the parent
+            //to explore next branch
+            path.remove(lastIndex);
+        }while(current == null);
 
     }
 

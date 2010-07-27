@@ -107,7 +107,7 @@ public class FileSystemIndexStore implements IndexStore {
 
             channel.write(buf);
 
-            this.writeNode(tree.getRoot(), channel, order);
+            this.writeNode(tree, tree.getRoot(), channel, order);
         } catch (IOException e) {
             throw new StoreException(e);
         } finally {
@@ -137,24 +137,22 @@ public class FileSystemIndexStore implements IndexStore {
      * @throws StoreException
      *                 DOCUMENT ME!
      */
-    private void writeNode(Node node, FileChannel channel, ByteOrder order)
+    private void writeNode(QuadTree tree, Node node, FileChannel channel, ByteOrder order)
             throws IOException, StoreException {
         final int offset = this.getSubNodeOffset(node);
 
         final int numShapeIds = node.getNumShapeIds();
         final int numSubNodes = node.getNumSubNodes();
 
-        final ByteBuffer buf = ByteBuffer.allocate((4 * 8) + (3 * 4)
-                + (numShapeIds * 4));
-
+        final ByteBuffer buf = ByteBuffer.allocate((4 * 8) + (3 * 4) + (numShapeIds * 4));
         buf.order(order);
         buf.putInt(offset);
 
-        final Envelope env = node.getBounds();
-        buf.putDouble(env.getMinX());
-        buf.putDouble(env.getMinY());
-        buf.putDouble(env.getMaxX());
-        buf.putDouble(env.getMaxY());
+        final double[] env = node.getEnvelope();
+        buf.putDouble(env[0]);
+        buf.putDouble(env[1]);
+        buf.putDouble(env[2]);
+        buf.putDouble(env[3]);
 
         buf.putInt(numShapeIds);
 
@@ -168,7 +166,7 @@ public class FileSystemIndexStore implements IndexStore {
         channel.write(buf);
 
         for (int i=0; i<numSubNodes; i++) {
-            this.writeNode(node.getSubNode(i), channel, order);
+            this.writeNode(tree, node.getSubNode(i), channel, order);
         }
     }
 
@@ -244,7 +242,7 @@ public class FileSystemIndexStore implements IndexStore {
                 }
             };
 
-            tree.setRoot(FileSystemNode.readNode(0, null, channel, order));
+            tree.setRoot(FileSystemNode.readNode(channel, order));
 
             QuadTree.LOGGER.finest("QuadTree opened");
         } catch (IOException e) {

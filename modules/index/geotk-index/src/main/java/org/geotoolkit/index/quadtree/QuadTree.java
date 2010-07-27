@@ -3,6 +3,7 @@
  *    http://www.geotoolkit.org
  *
  *    (C) 2005-2008, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -17,6 +18,8 @@
 package org.geotoolkit.index.quadtree;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -85,7 +88,8 @@ public class QuadTree {
         this.maxDepth = maxDepth;
 
         if (maxBounds != null){
-            this.root = new Node(new Envelope(maxBounds), 0, null);
+            this.root = new Node(maxBounds.getMinX(), maxBounds.getMinY(),
+                                 maxBounds.getMaxX(), maxBounds.getMaxY());
         }
 
         if (maxDepth < 1){
@@ -141,6 +145,8 @@ public class QuadTree {
     private void insert(Node node, int recno, Envelope bounds, int md)
             throws StoreException {
 
+        final Envelope buffer = new Envelope();
+
         if (md > 1 && node.getNumSubNodes() > 0) {
             /*
              * If there are subnodes, then consider whether this object will fit
@@ -149,7 +155,7 @@ public class QuadTree {
             Node subNode = null;
             for (int i = 0; i < node.getNumSubNodes(); i++) {
                 subNode = node.getSubNode(i);
-                if (subNode.getBounds().contains(bounds)) {
+                if (subNode.getBounds(buffer).contains(bounds)) {
                     this.insert(subNode, recno, bounds, md - 1);
                     return;
                 }
@@ -159,26 +165,16 @@ public class QuadTree {
              * Otherwise, consider creating four subnodes if could fit into
              * them, and adding to the appropriate subnode.
              */
-            Envelope half1, half2, quad1, quad2, quad3, quad4;
+            final Envelope[] quads = this.splitBounds(node.getBounds(buffer));
 
-            Envelope[] tmp = this.splitBounds(node.getBounds());
-            half1 = tmp[0];
-            half2 = tmp[1];
-
-            tmp = this.splitBounds(half1);
-            quad1 = tmp[0];
-            quad2 = tmp[1];
-
-            tmp = this.splitBounds(half2);
-            quad3 = tmp[0];
-            quad4 = tmp[1];
-
-            if (quad1.contains(bounds) || quad2.contains(bounds)
-                    || quad3.contains(bounds) || quad4.contains(bounds)) {
-                node.addSubNode(new Node(quad1, 0, node));
-                node.addSubNode(new Node(quad2, 1, node));
-                node.addSubNode(new Node(quad3, 2, node));
-                node.addSubNode(new Node(quad4, 3, node));
+            if (quads[0].contains(bounds) || quads[1].contains(bounds)
+             || quads[2].contains(bounds) || quads[3].contains(bounds)) {
+                node.setSubNodes(new Node[]{
+                    new Node(quads[0]),
+                    new Node(quads[1]),
+                    new Node(quads[2]),
+                    new Node(quads[3])
+                    });
 
                 // recurse back on this node now that it has subnodes
                 this.insert(node, recno, bounds, md);
@@ -197,7 +193,7 @@ public class QuadTree {
      */
     public CloseableCollection<Data> search(Envelope bounds) throws StoreException {
         if (LOGGER.isLoggable(Level.FINEST)) {
-            LOGGER.log(Level.FINEST, "Querying " + bounds);
+            LOGGER.log(Level.FINEST, "Querying {0}", bounds);
         }
 
         LazySearchCollection lazySearchCollection;
@@ -232,20 +228,21 @@ public class QuadTree {
     /**
      * Trim subtrees, and free subnodes that come back empty.
      * 
-     * @param node
-     *                The node to trim
+     * @param node The node to trim
      * @return true if this node has been trimmed
      */
     private boolean trim(Node node) throws StoreException {
-        Node[] dummy = new Node[node.getNumSubNodes()];
-        for (int i = 0; i < node.getNumSubNodes(); i++) {
-            dummy[i] = node.getSubNode(i);
-        }
+        final int nbSub = node.getNumSubNodes();
 
-        for (int i = 0; i < dummy.length; i++) {
-            if (this.trim(dummy[i])) {
-                node.removeSubNode(dummy[i]);
+        if(nbSub>0){
+            final List<Node> dummy = new ArrayList<Node>(nbSub);
+            for (int i=0; i<nbSub; i++) {
+                final Node n = node.getSubNode(i);
+                if(!this.trim(n)) {
+                    dummy.add(n);
+                }
             }
+            node.setSubNodes(dummy.toArray(new Node[dummy.size()]));
         }
 
         /*
@@ -253,15 +250,16 @@ public class QuadTree {
          * to my position.
          */
         if (node.getNumSubNodes() == 1 && node.getNumShapeIds() == 0) {
-            Node subNode = node.getSubNode(0);
+            final Node subNode = node.getSubNode(0);
 
-            node.clearSubNodes();
-            for (int i = 0; i < subNode.getNumSubNodes(); i++) {
-                node.addSubNode(subNode.getSubNode(i));
+            final int nbssn = subNode.getNumSubNodes();
+            final Node[] ssn = new Node[nbssn];
+            for(int i=0;i<nbssn;i++){
+                ssn[i] = subNode.getSubNode(i);
             }
-
+            node.setSubNodes(ssn);
             node.setShapesId(subNode.getShapesId());
-            node.setBounds(subNode.getBounds());
+            node.setEnvelope(subNode.getEnvelope());
         }
 
         return (node.getNumSubNodes() == 0 && node.getNumShapeIds() == 0);
@@ -270,38 +268,26 @@ public class QuadTree {
     /**
      * Splits the specified Envelope
      * 
-     * @param in
-     *                an Envelope to split
-     * @return an array of 2 Envelopes
+     * @param in an Envelope to split
+     * @return an array of 4 Envelopes
+     * +---+---+
+     * | 0 | 1 |
+     * +---+---+
+     * | 2 | 3 |
+     * +---+---+
      */
     private Envelope[] splitBounds(Envelope in) {
-        Envelope[] ret = new Envelope[2];
-        double range, calc;
-
-        if ((in.getMaxX() - in.getMinX()) > (in.getMaxY() - in.getMinY())) {
-            // Split in X direction
-            range = in.getMaxX() - in.getMinX();
-
-            calc = in.getMinX() + range * SPLITRATIO;
-            ret[0] = new Envelope(in.getMinX(), calc, in.getMinY(), in
-                    .getMaxY());
-
-            calc = in.getMaxX() - range * SPLITRATIO;
-            ret[1] = new Envelope(calc, in.getMaxX(), in.getMinY(), in
-                    .getMaxY());
-        } else {
-            // Split in Y direction
-            range = in.getMaxY() - in.getMinY();
-
-            calc = in.getMinY() + range * SPLITRATIO;
-            ret[0] = new Envelope(in.getMinX(), in.getMaxX(), in.getMinY(),
-                    calc);
-
-            calc = in.getMaxY() - range * SPLITRATIO;
-            ret[1] = new Envelope(in.getMinX(), in.getMaxX(), calc, in
-                    .getMaxY());
-        }
-
+        final Envelope[] ret = new Envelope[4];
+        final double minx = in.getMinX();
+        final double miny = in.getMinY();
+        final double maxx = in.getMaxX();
+        final double maxy = in.getMaxY();
+        final double middlex = minx + (in.getWidth()/2);
+        final double middley = miny + (in.getHeight()/2);
+        ret[0] = new Envelope(minx,     middlex,    middley,    maxy);
+        ret[1] = new Envelope(middlex,  maxx,       middley,    maxy);
+        ret[2] = new Envelope(minx,     middlex,    miny,       middley);
+        ret[3] = new Envelope(middlex,  maxx,       miny,       middley);
         return ret;
     }
 

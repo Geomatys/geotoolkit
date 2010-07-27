@@ -75,6 +75,11 @@ public class IndexDataReader implements DataReader {
             }
         }
 
+        @Override
+        public String toString() {
+            return v1 +" "+ v2;
+        }
+
     }
 
 }

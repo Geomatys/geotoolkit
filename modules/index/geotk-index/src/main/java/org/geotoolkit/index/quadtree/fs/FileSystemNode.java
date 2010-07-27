@@ -26,8 +26,6 @@ import java.nio.channels.FileChannel;
 import org.geotoolkit.index.quadtree.Node;
 import org.geotoolkit.index.quadtree.StoreException;
 
-import com.vividsolutions.jts.geom.Envelope;
-
 /**
  * DOCUMENT ME!
  * 
@@ -40,38 +38,14 @@ public class FileSystemNode extends Node {
     private final ScrollingBuffer buffer;
     private final int subNodeStartByte;
     private final int subNodesLength;
-    private int numSubNodes;
+    private byte numSubNodes;
 
-    /**
-     * DOCUMENT ME!
-     * 
-     * @param bounds
-     * @param channel DOCUMENT ME!
-     * @param order DOCUMENT ME!
-     * @param startByte DOCUMENT ME!
-     * @param subNodesLengt DOCUMENT ME!
-     */
-    FileSystemNode(Envelope bounds, int id, Node parent,
+    FileSystemNode(double minx, double miny, double maxx, double maxy,
             ScrollingBuffer buffer, int startByte, int subNodesLength) {
-        super(bounds, id, parent);
+        super(minx,miny,maxx,maxy);
         this.buffer = buffer;
         this.subNodeStartByte = startByte;
         this.subNodesLength = subNodesLength;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public Node copy() throws IOException {
-        final FileSystemNode copy = new FileSystemNode(
-                getBounds(), id, getParent(),
-                buffer, subNodeStartByte, subNodesLength);
-        copy.numShapesId = numShapesId;
-        copy.shapesId = new int[numShapesId];
-        System.arraycopy(shapesId, 0, copy.shapesId, 0, numShapesId);
-        copy.numSubNodes = numSubNodes;
-        return copy;
     }
 
     /**
@@ -89,7 +63,7 @@ public class FileSystemNode extends Node {
      *                The numSubNodes to set.
      */
     public void setNumSubNodes(int numSubNodes) {
-        this.numSubNodes = numSubNodes;
+        this.numSubNodes = (byte) numSubNodes;
     }
 
     /**
@@ -114,52 +88,49 @@ public class FileSystemNode extends Node {
      * {@inheritDoc }
      */
     @Override
-    public Node getSubNode(int pos) throws StoreException {
-        if (this.subNodes.size() > pos) {
-            return super.getSubNode(pos);
+    public Node getSubNode(int index) throws StoreException {
+        if (this.n0 != null) {
+            return super.getSubNode(index);
         }
 
-        try {
-            FileSystemNode subNode = null;
+        //read the subnodes
+        try {            
+            final Node[] subNodes = new Node[numSubNodes];
+            for(int i = 0;i<subNodes.length; i++){
 
-            // Getting prec subNode...
-            int offset = this.subNodeStartByte;
-
-            if (pos > 0) {
-                subNode = (FileSystemNode) getSubNode(pos - 1);
-                offset = subNode.getSubNodeStartByte()
-                        + subNode.getSubNodesLength();
+                final int offset;
+                if(i>0){
+                    //skip the previous nodes
+                    final FileSystemNode previousNode = (FileSystemNode) subNodes[i-1];
+                    offset = previousNode.getSubNodeStartByte()+ previousNode.getSubNodesLength();
+                }else{
+                    offset = subNodeStartByte;
+                }
+                buffer.goTo(offset);
+                subNodes[i] = readNode(buffer);
             }
+            setSubNodes(subNodes);
 
-            buffer.goTo(offset);
-            for (int i = 0, ii = subNodes.size(); i < ((pos + 1) - ii); i++) {
-                subNode = readNode(pos, this, buffer);
-                this.addSubNode(subNode);
-            }
         } catch (IOException e) {
             throw new StoreException(e);
         }
 
-        return super.getSubNode(pos);
+        return super.getSubNode(index);
     }
 
     /**
      * DOCUMENT ME!
      * 
      * @param channel
-     * @param order
-     *                DOCUMENT ME!
-     * 
-     * 
+     * @param order DOCUMENT ME!
      * @throws IOException
      */
-    public static FileSystemNode readNode(int id, Node parent,
-            FileChannel channel, ByteOrder order) throws IOException {
+    public static FileSystemNode readNode(FileChannel channel, ByteOrder order) throws IOException {
         final ScrollingBuffer buffer = new ScrollingBuffer(channel, order);
-        return readNode(id, parent, buffer);
+        return readNode(buffer);
     }
 
-    static FileSystemNode readNode(int id, Node parent, ScrollingBuffer buf)
+    static FileSystemNode readNode(ScrollingBuffer buf)
             throws IOException {
         // offset
         final int offset = buf.getInt();
@@ -169,7 +140,6 @@ public class FileSystemNode extends Node {
         final double y1 = buf.getDouble();
         final double x2 = buf.getDouble();
         final double y2 = buf.getDouble();
-        final Envelope env = new Envelope(x1, x2, y1, y2);
 
         // shapes in this node
         final int numShapesId = buf.getInt();
@@ -179,8 +149,7 @@ public class FileSystemNode extends Node {
 
         // let's create the new node
         final FileSystemNode node = new FileSystemNode(
-                env, id, parent, buf,
-                (int) buf.getPosition(), offset);
+                x1,y1,x2,y2, buf,(int)buf.getPosition(),offset);
         node.setShapesId(ids);
         node.setNumSubNodes(numSubNodes);
 

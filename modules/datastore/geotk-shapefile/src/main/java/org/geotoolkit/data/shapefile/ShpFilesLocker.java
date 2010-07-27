@@ -47,7 +47,8 @@ class ShpFilesLocker {
 
     private void setTraceException() {
         String name = Thread.currentThread().getName();
-        trace = new Trace("Locking " + url + " for " + ((write)? "write" : "read") + " by " + holder + " in thread " + name);
+        trace = new Trace("Locking ");
+        //trace = new Trace("Locking " + url + " for " + ((write)? "write" : "read") + " by " + holder + " in thread " + name);
     }
 
     /**

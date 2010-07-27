@@ -27,7 +27,6 @@ import java.nio.charset.Charset;
 import java.nio.charset.UnsupportedCharsetException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -57,9 +56,7 @@ import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.filter.Filter;
-import org.opengis.filter.FilterFactory;
 import org.opengis.filter.FilterFactory2;
-import org.opengis.filter.Id;
 import org.opengis.filter.identity.FeatureId;
 import org.opengis.filter.identity.Identifier;
 import org.opengis.geometry.BoundingBox;
@@ -331,37 +328,14 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
             }
             assertFalse(indexIter.hasNext());
             assertFalse(baselineIter.hasNext());
-            assertEquals(baselineFeatures, indexedFeatures);
+            assertTrue(baselineFeatures.containsAll(indexedFeatures));
+            assertTrue(indexedFeatures.containsAll(baselineFeatures));
         } finally {
             indexIter.close();
             baselineIter.close();
         }
         return indexedFeatures;
     }
-//
-//    public void testCreateAndReadGRX() throws Exception {
-//        URL url = TestData.url(STATE_POP);
-//        String filename = url.getFile();
-//        filename = filename.substring(0, filename.lastIndexOf("."));
-//
-//        File file = new File(filename + ".grx");
-//
-//        if (file.exists()) {
-//            file.delete();
-//        }
-//
-//        IndexedShapefileDataStore ds = new IndexedShapefileDataStore(url, null,
-//                true, true, IndexType.EXPERIMENTAL_UNSUPPORTED_GRX);
-//        FeatureCollection<SimpleFeatureType, SimpleFeature> features = ds.getFeatureSource().getFeatures();
-//        Iterator iter = features.iterator();
-//
-//        while (iter.hasNext()) {
-//            iter.next();
-//        }
-//
-//        // TODO: The following assertion fails
-//        // assertTrue(file.exists());
-//    }
 
     public void testLoadAndVerify() throws Exception {
         FeatureCollection<SimpleFeature> features = loadFeatures(STATE_POP, null);
